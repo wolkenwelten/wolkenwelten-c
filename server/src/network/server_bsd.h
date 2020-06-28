@@ -62,14 +62,14 @@ void serverAccept(){
 		return;
 	}
 
-	clients[clientCount].c               = characterNew();
-	clients[clientCount].socket          = clientSock;
-	clients[clientCount].recvBufLen      = 0;
-	clients[clientCount].sendBufSent     = 0;
-	clients[clientCount].sendBufLen      = 0;
-	clients[clientCount].chngReqQueueLen = 0;
-	clients[clientCount].chnkReqQueueLen = 0;
-	clients[clientCount].state           = 0;
+	clients[clientCount].c                   = characterNew();
+	clients[clientCount].socket              = clientSock;
+	clients[clientCount].recvBufLen          = 0;
+	clients[clientCount].sendBufSent         = 0;
+	clients[clientCount].sendBufLen          = 0;
+	clients[clientCount].chngReqQueueLen     = 0;
+	clients[clientCount].chnkReqQueueLen     = 0;
+	clients[clientCount].state               = 0;
 	clientCount++;
 	printf("Client Connected\n");
 }

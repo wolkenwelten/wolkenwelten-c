@@ -7,6 +7,7 @@
 #include "../game/itemDrop.h"
 #include "../game/grenade.h"
 #include "../main.h"
+#include "../misc/sha1.h"
 #include "../misc/misc.h"
 #include "../misc/options.h"
 #include "../network/messages.h"
@@ -225,8 +226,67 @@ void serverParsePacket(int i){
 	}
 }
 
-void serverParseWebSocketHeader(int c,int end){
+void serverParseWebSocketHeaderField(int c,const char *key, const char *val){
+	static SHA1_CTX ctx;
+	static char buf[256];
+	static uint8_t webSocketKeyHash[20];
+	const char *b64hash;
+	int len=0;
+	if(strncmp(key,"Sec-WebSocket-Key",18) != 0){return;}
+	len = snprintf(buf,sizeof(buf),"%s%s",val,"258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
+	printf("Sec-WebSocket-Key = '%s'\nConcat: '%s'\n",val,buf);
 
+	SHA1Init(&ctx);
+	SHA1Update(&ctx,(unsigned char *)buf,len);
+	SHA1Final(webSocketKeyHash,&ctx);
+	b64hash = base64_encode(webSocketKeyHash,20,NULL);
+
+	printf("SHA1 = ");
+	for(int i=0;i<20;i++){
+		printf("%X ",webSocketKeyHash[i]);
+	}
+	printf("\n");
+	printf("B64 = %s\n",b64hash);
+
+	len = snprintf(buf,sizeof(buf),"HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Protocol: binary\r\nSec-WebSocket-Accept: %s\r\n\r\n",b64hash);
+	sendToClient(c,buf,len);
+	serverSendClient(c);
+}
+
+void serverParseWebSocketHeader(int c,int end){
+	int lb=0;
+	char *key=NULL;
+	char *val=NULL;
+	for(int i=0;i<end;i++){
+		if(clients[c].recvBuf[i] == '\n'){
+			clients[c].recvBuf[i]=0;
+			if(lb==5){
+				serverParseWebSocketHeaderField(c,key,val);
+				lb=0;
+			}
+			lb|=1;
+			continue;
+		}
+		if(clients[c].recvBuf[i] == '\r'){
+			clients[c].recvBuf[i]=0;
+			if(lb==5){
+				serverParseWebSocketHeaderField(c,key,val);
+				lb=0;
+			}
+			lb|=2;
+			continue;
+		}
+		if(lb==3){
+			key = (char *) &clients[c].recvBuf[i];
+			lb=4;
+		}
+		if(lb && (clients[c].recvBuf[i] == ':')){
+			clients[c].recvBuf[i]=0;
+			val = (char *) &clients[c].recvBuf[i+1];
+			if(*val == ' '){val++;}
+			lb=5;
+		}
+	}
 }
 
 void serverParseWebSocket(int c,int end){
