@@ -226,6 +226,39 @@ void serverParsePacket(int i){
 	}
 }
 
+void serverParseWSPacket(int i){
+	return;
+	for(int max=16;max > 0;--max){
+		if(clients[i].recvBufLen < 20){ return; }
+		//unsigned int mLen = clients[i].recvBuf[0];
+		unsigned int pLen = packetLen(clients[i].recvBuf);
+		if(pLen <= 0){ return; }
+		if(pLen > clients[i].recvBufLen){ return; }
+
+		switch(pLen){
+			case sizeof(packetSmall):
+				serverParsePacketSmall (i, (packetSmall *)  clients[i].recvBuf);
+			break;
+			case sizeof(packetMedium):
+				serverParsePacketMedium(i, (packetMedium *) clients[i].recvBuf);
+			break;
+			case sizeof(packetLarge):
+				serverParsePacketLarge (i, (packetLarge *)  clients[i].recvBuf);
+			break;
+			case sizeof(packetHuge):
+				serverParsePacketHuge  (i, (packetHuge *)   clients[i].recvBuf);
+			break;
+		}
+
+		if(clients[i].recvBufLen != pLen){
+			for(unsigned int ii=0;ii < (clients[i].recvBufLen - pLen);++ii){
+				clients[i].recvBuf[ii] = clients[i].recvBuf[ii+pLen];
+			}
+		}
+		clients[i].recvBufLen -= pLen;
+	}
+}
+
 void serverParseWebSocketHeaderField(int c,const char *key, const char *val){
 	static SHA1_CTX ctx;
 	static char buf[256];
@@ -251,6 +284,7 @@ void serverParseWebSocketHeaderField(int c,const char *key, const char *val){
 	len = snprintf(buf,sizeof(buf),"HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Protocol: binary\r\nSec-WebSocket-Accept: %s\r\n\r\n",b64hash);
 	sendToClient(c,buf,len);
 	serverSendClient(c);
+	clients[c].flags |= 1;
 }
 
 void serverParseWebSocketHeader(int c,int end){
@@ -323,7 +357,11 @@ void serverParse(){
 				break;
 			default:
 			case 1:
-				serverParsePacket(i);
+				if(clients[i].flags&1){
+					serverParseWSPacket(i);
+				}else{
+					serverParsePacket(i);
+				}
 				break;
 		}
 	}
@@ -428,10 +466,14 @@ void serverHandleEvents(){
 
 void sendToClient(int c,void *data,int len){
 	int ret;
+	int tlen = len;
 	if(c < 0){return;}
 	if(c >= clientCount){return;}
+	if(clients[c].flags&1){
+		tlen += 4;
+	}
 
-	while(clients[c].sendBufLen+len > (int)sizeof(clients[c].sendBuf)){
+	while(clients[c].sendBufLen+tlen > (int)sizeof(clients[c].sendBuf)){
 		ret = serverSendClient(c);
 		if(ret == 1){
 			printf("Buffer blocking\n");
@@ -439,6 +481,13 @@ void sendToClient(int c,void *data,int len){
 		}else if(ret == 2){
 			return;
 		}
+	}
+	if(clients[c].flags & 1){
+		fprintf(stderr,"Sending WS shit\n");
+		clients[c].sendBuf[clients[c].sendBufLen++] = 0x82;
+		clients[c].sendBuf[clients[c].sendBufLen++] = 0x7E;
+		clients[c].sendBuf[clients[c].sendBufLen++] = (len   ) & 0xFF;
+		clients[c].sendBuf[clients[c].sendBufLen++] = (len>>8) & 0xFF;
 	}
 	memcpy(clients[c].sendBuf+clients[c].sendBufLen,data,len);
 	clients[c].sendBufLen += len;

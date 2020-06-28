@@ -197,7 +197,9 @@ void clientSendName(){
 }
 
 void clientSendIntroduction(){
+	#ifndef __EMSCRIPTEN__
 	queueToServer("NATIVE\r\n\r\n",10);
+	#endif
 }
 
 void clientGreetServer(){

@@ -5,6 +5,7 @@ typedef struct {
 	char playerName[32];
 	character *c;
 	int state;
+	int flags;
 
 	unsigned int chngReqQueueLen;
 	uint64_t chngReqQueue[128];

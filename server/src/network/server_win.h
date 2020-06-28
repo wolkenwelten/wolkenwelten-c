@@ -80,6 +80,7 @@ void serverAccept(){
 	clients[clientCount].chngReqQueueLen     = 0;
 	clients[clientCount].chnkReqQueueLen     = 0;
 	clients[clientCount].state               = 0;
+	clients[clientCount].flags               = 0;
 	clientCount++;
 	printf("Client Connected: Socket=%i\n",clientSock);
 }
