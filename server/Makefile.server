@@ -1,10 +1,12 @@
-SERVER_CFLAGS    = $(CFLAGS)
-SERVER_CINCLUDES =
-SERVER_LIBS      = $(LIBS)
+SERVER_CFLAGS    := $(CFLAGS)
+SERVER_CINCLUDES :=
+SERVER_LIBS      := $(LIBS)
 
 SERVER_HDRS     := $(shell find server/src -type f -name '*.h')
 SERVER_SRCS     := $(shell find server/src -type f -name '*.c')
 SERVER_OBJS     := ${SERVER_SRCS:.c=.o}
+
+$(SERVER_OBJS): CFLAGS = $(SERVER_CFLAGS)
 
 wolkenwelten-server: server/make.deps $(SERVER_OBJS)
 	$(CC) $(SERVER_OBJS) -g -o wolkenwelten-server $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES) $(SERVER_LIBS)

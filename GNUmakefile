@@ -3,7 +3,8 @@ OPTIMIZATION := -O3 -march=x86-64
 CINCLUDES    :=
 LIBS         := -lm
 WARNINGS     := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align -Wno-missing-braces -Wno-unused-parameter -Wno-unused-const-variable
-CFLAGS       := $(WARNINGS) -std=c99
+CFLAGS       := 
+CSTD         := -std=c99 
 
 include client/Makefile.client
 include server/Makefile.server
@@ -40,7 +41,7 @@ endif
 .PHONY: .deps
 
 %.o: %.c
-	$(CC) $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) -g -c $< -o $@
+	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -g -c $< -o $@
 
 .PHONY: clean
 clean:
