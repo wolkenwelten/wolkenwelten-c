@@ -82,7 +82,6 @@ void serverAccept(){
 	clients[clientCount].state               = 0;
 	clients[clientCount].flags               = 0;
 	clientCount++;
-	printf("Client Connected: Socket=%i\n",clientSock);
 }
 
 void serverKill(int c){
