@@ -12,7 +12,7 @@ typedef struct {
 	unsigned int chnkReqQueueLen;
 	uint64_t chnkReqQueue[4096];
 
-	int socket;
+	long long unsigned int socket;
 
 	unsigned int recvBufLen;
 	uint8_t recvBuf[1<<16];

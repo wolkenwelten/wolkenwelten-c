@@ -2,7 +2,7 @@
 
 #include <winsock2.h>
 
-int serverSocket;
+long long unsigned int serverSocket;
 
 void serverInit(){
 	struct sockaddr_in serv_addr;
@@ -55,7 +55,7 @@ void serverFree(){
 }
 
 void serverAccept(){
-	int clientSock;
+	long long unsigned int clientSock;
 	int err,yes=1;
 
 	clientSock = accept(serverSocket,NULL, NULL);
