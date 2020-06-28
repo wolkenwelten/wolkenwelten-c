@@ -1,0 +1,11 @@
+#!/bin/sh
+if [ -x "$(command -v gmake)" ]
+then
+	gmake -j8
+else
+	make -j8
+fi
+if [ $? -eq 0 ]; then
+	echo ""
+	./wolkenwelten -soundVolume=5 -worldSeed=31 -debugInfo=1
+fi

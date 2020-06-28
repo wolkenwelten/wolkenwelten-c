@@ -1,0 +1,88 @@
+CC          := clang
+CLIENT_LIBS  =-F /Library/Frameworks -framework SDL2 -framework SDL2_mixer -framework OpenGL
+CFLAGS      += -mmacosx-version-min=10.10 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.10.sdk
+CINCLUDES    = -I/usr/local/include/ -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_mixer.framework/Headers
+WEBEXCLUDE  += --exclude=releases/macos/wolkenwelten.app --exclude=releases/macos/wolkenwelten.iconset/
+
+.PHONY: all
+all: wolkenwelten wolkenwelten-server
+
+.PHONY: release.macos
+release: release.macos
+release.macos: releases/macos/wolkenwelten-macos.tgz
+
+releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/Info.plist
+releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten
+releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten-server
+releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/Frameworks/SDL2.framework
+releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/Frameworks/SDL2_mixer.framework
+releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns
+	cd releases/macos/ && tar -czf wolkenwelten-macos.tgz wolkenwelten.app
+
+releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
+releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
+releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
+releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: client/src/tmp/cto.c client/src/tmp/cto.h
+	mkdir -p releases/macos/wolkenwelten.app/Contents/MacOS
+	$(CC) $(CLIENT_SRCS) -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(CLIENT_LIBS)
+	strip -SxX $@
+	install_name_tool -change "@rpath/SDL2.framework/Versions/A/SDL2" "@executable_path/../Frameworks/SDL2.framework/SDL2" $@
+	install_name_tool -change "@rpath/SDL2_mixer.framework/Versions/A/SDL2_mixer" "@executable_path/../Frameworks/SDL2_mixer.framework/SDL2_mixer" $@
+
+releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
+releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten-server: client/src/tmp/cto.c client/src/tmp/cto.h
+	mkdir -p releases/macos/wolkenwelten.app/Contents/MacOS
+	$(CC) $(SERVER_SRCS) -o $@ $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES) $(SERVER_LIBS)
+	strip -SxX $@
+
+releases/macos/wolkenwelten.app/Contents/Info.plist:  platform/macos/Info.plist
+	mkdir -p releases/macos/wolkenwelten.app/Contents
+	cp -f platform/macos/Info.plist releases/macos/wolkenwelten.app/Contents/Info.plist
+
+releases/macos/wolkenwelten.app/Contents/Frameworks/SDL2.framework: ~/ReleaseFrameworks/SDL2.framework
+	mkdir -p releases/macos/wolkenwelten.app/Contents/Frameworks/
+	rsync -a $< releases/macos/wolkenwelten.app/Contents/Frameworks/
+
+releases/macos/wolkenwelten.app/Contents/Frameworks/SDL2_mixer.framework: ~/ReleaseFrameworks/SDL2_mixer.framework
+	mkdir -p releases/macos/wolkenwelten.app/Contents/Frameworks/
+	rsync -a $< releases/macos/wolkenwelten.app/Contents/Frameworks/
+
+releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns: releases/macos/wolkenwelten.iconset/icon_16x16.png
+releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns: releases/macos/wolkenwelten.iconset/icon_16x16@2x.png
+releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns: releases/macos/wolkenwelten.iconset/icon_32x32.png
+releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns: releases/macos/wolkenwelten.iconset/icon_32x32@2x.png
+releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns: releases/macos/wolkenwelten.iconset/icon_64x64.png
+releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns: releases/macos/wolkenwelten.iconset/icon_64x64@2x.png
+releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns: releases/macos/wolkenwelten.iconset/icon_128x128.png
+releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns: releases/macos/wolkenwelten.iconset/icon_128x128@2x.png
+releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns: releases/macos/wolkenwelten.iconset/icon_256x256.png
+	mkdir -p releases/macos/wolkenwelten.app/Contents/Resources/
+	iconutil -c icns -o $@ releases/macos/wolkenwelten.iconset
+
+releases/macos/wolkenwelten.iconset/icon_16x16.png: web/favicon16.png
+	mkdir -p releases/macos/wolkenwelten.iconset/
+	convert -resize "16x16" $< $@
+releases/macos/wolkenwelten.iconset/icon_32x32.png: web/favicon32.png
+	mkdir -p releases/macos/wolkenwelten.iconset/
+	convert -resize "32x32" $< $@
+releases/macos/wolkenwelten.iconset/icon_16x16@2x.png: web/favicon32.png
+	mkdir -p releases/macos/wolkenwelten.iconset/
+	convert -resize "32x32" $< $@
+releases/macos/wolkenwelten.iconset/icon_32x32@2x.png: web/favicon.png
+	mkdir -p releases/macos/wolkenwelten.iconset/
+	convert -resize "64x64" $< $@
+releases/macos/wolkenwelten.iconset/icon_64x64.png: web/favicon.png
+	mkdir -p releases/macos/wolkenwelten.iconset/
+	convert -resize "64x64" $< $@
+releases/macos/wolkenwelten.iconset/icon_64x64@2x.png: web/favicon.png
+	mkdir -p releases/macos/wolkenwelten.iconset/
+	convert -resize "128x128" $< $@
+releases/macos/wolkenwelten.iconset/icon_128x128.png: web/favicon.png
+	mkdir -p releases/macos/wolkenwelten.iconset/
+	convert -resize "128x128" $< $@
+releases/macos/wolkenwelten.iconset/icon_128x128@2x.png: web/favicon.png
+	mkdir -p releases/macos/wolkenwelten.iconset/
+	convert -resize "256x256" $< $@
+releases/macos/wolkenwelten.iconset/icon_256x256.png: web/favicon.png
+	mkdir -p releases/macos/wolkenwelten.iconset/
+	convert -resize "256x256" $< $@

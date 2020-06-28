@@ -1,0 +1,88 @@
+#include "item.h"
+
+#include "../game/blockType.h"
+#include "../game/character.h"
+#include "../game/grenade.h"
+#include "../mods/mods.h"
+#include "../voxel/bigchungus.h"
+
+
+item itemNew(uint16_t ID, int16_t amount){
+	item i;
+	i.amount = amount;
+	i.ID     = ID;
+	return i;
+}
+
+item itemEmpty(){
+	item i;
+	i.amount = i.ID = 0;
+	return i;
+}
+
+void itemDiscard(item *i){
+	i->amount = i->ID = 0;
+}
+
+bool itemIsEmpty(const item *i){
+	return ((i->amount==0) || (i->ID==0));
+}
+
+int itemBlockDamage(const item *i, blockCategory cat){
+	return blockDamageDispatch(i,cat);
+}
+
+bool itemIsSingle(const item *i){
+	return isSingleItemDispatch(i);
+}
+
+bool itemHasMineAction(const item *i){
+	return hasMineActionDispatch(i);
+}
+
+bool itemMineAction(item *i, character *chr, int to){
+	return mineActionDispatch(i,chr,to);
+}
+
+bool itemCanStack(const item *i, uint16_t ID){
+	if(itemIsSingle(i)){return false;}
+	if(i->ID != ID)    {return false;}
+	if(i->amount >= 99){return false;}
+	if(i->amount ==  0){return false;}
+	return true;
+}
+
+bool itemIncStack(item *i, int16_t amount){
+	if((i->amount+amount)>99){return false;}
+	i->amount += amount;
+	return true;
+}
+bool itemDecStack(item *i, int16_t amount){
+	if(i->amount < amount){return false;}
+	i->amount -= amount;
+	return true;
+}
+
+bool itemActivateBlock(item *i, character *chr){
+	int cx,cy,cz;
+	if(characterLOSBlock(chr,&cx,&cy,&cz,true)){
+		if((characterCollision(chr,chr->x,chr->y,chr->z,0.3f)&0xFF0)){ return false; }
+		if(!itemDecStack(i,1)){ return false; }
+		worldSetB(cx,cy,cz,i->ID);
+		if((characterCollision(chr,chr->x,chr->y,chr->z,0.3f)&0xFF0) != 0){
+			worldSetB(cx,cy,cz,0);
+			itemIncStack(i,1);
+			return false;
+		} else {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool itemActivate(item *i, character *chr){
+	if(i->ID < 256){
+		return itemActivateBlock(i,chr);
+	}
+	return activateItemDispatch(i,chr);
+}

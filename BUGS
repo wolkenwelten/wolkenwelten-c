@@ -1,0 +1,8 @@
+Sometimes weird horizontal green lines (T420), texture scaling? - still there t.K
+Reducing Hook rope length still can lead to weird collision issues
+You can't build one block wide bunkers, placing the block not possible.
+Collision is getting weird in 1x2 mine shafts
+itemDrops get lost if placing a block over them
+Sometimes one spawns inside a block
+sometimes the client segfaults, occurs more often when connected over the internet (sigPipe?)
+Spawn bei login und sterben teilweise unterschiedlich

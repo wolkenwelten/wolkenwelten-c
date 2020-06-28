@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+for dir in arch_pkgs/*; do
+	cd $dir && makepkg
+	cd ../../
+done
+sudo pacman -U arch_pkgs/*/*.pkg.tar.[gx]z
+

@@ -1,0 +1,31 @@
+CC           = gcc
+CINCLUDES   := $(shell pkg-config --cflags glew) $(shell sdl2-config --cflags) -DGLEW_NO_GLU -DGLEW_STATIC -DSDL_SOUND
+
+CLIENT_LIBS := $(shell sdl2-config --cflags) -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lGLEW
+DYNLIBS     := $(shell sdl2-config --cflags) -lGL -lm -lpthread -ldl
+STATICLIBS  := /usr/lib/libGLEW.a -static-libgcc /usr/lib/libSDL2.a /usr/lib/libSDL2_mixer.a
+WEBEXCLUDE  += --exclude=releases/linux/wolkenwelten
+
+.PHONY: all
+all: wolkenwelten wolkenwelten-server
+
+.PHONY: release.linux
+release: release.linux
+
+release.linux: releases/linux/wolkenwelten-linux.tar.xz
+releases/linux/wolkenwelten-linux.tar.xz: releases/linux/wolkenwelten/wolkenwelten
+releases/linux/wolkenwelten-linux.tar.xz: releases/linux/wolkenwelten/wolkenwelten-server
+	cd releases/wolkenwelten/ && tar -cJf wolkenwelten-linux.tar.xz wolkenwelten/
+
+releases/linux/wolkenwelten/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
+releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
+releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
+releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/cto.c client/src/tmp/cto.h
+	mkdir -p releases/linux/wolkenwelten/
+	$(CC) $(CLIENT_SRCS) -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
+	strip -gxX $@
+
+releases/linux/wolkenwelten/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
+	mkdir -p releases/linux/wolkenwelten/
+	musl-gcc -static $(SERVER_SRCS) -o $@ $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES)
+	strip -gxX $@

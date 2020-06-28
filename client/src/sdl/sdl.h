@@ -1,0 +1,20 @@
+#pragma once
+#include <stdbool.h>
+
+extern int frameTimeLast;
+extern int frameCountSinceLast;
+extern float curFPS;
+extern bool sdlGamepadInit;
+extern bool sdlHapticInit;
+
+void fpsTick();
+void initSDL();
+void handleEvents();
+void sdlResize(int newW,int newH);
+void closeSDL();
+
+void swapWindow();
+void setRelativeMouseMode(bool ra);
+void warpMouse(int nMouseX,int nMouseY);
+unsigned int getMouseState(int *mx, int *my);
+unsigned int getTicks();

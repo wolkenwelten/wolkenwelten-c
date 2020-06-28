@@ -1,0 +1,24 @@
+#!/bin/sh
+VERSION=`git describe --abbrev=0 --tags`
+COMMIT=`git rev-parse HEAD | tr '[:lower:]' '[:upper:]'`
+BUILDDATE=`date "+%F %k:%M"`
+
+HPP_FILE="$1.h"
+CPP_FILE="$1.c"
+
+echo "#pragma once"                   > $HPP_FILE
+echo ""                              >> $HPP_FILE
+echo "extern const char *VERSION;"   >> $HPP_FILE
+echo "extern const char *BUILDDATE;" >> $HPP_FILE
+echo "extern const char *COMMIT;"    >> $HPP_FILE
+
+echo "#include \"cto.h\""                     > $CPP_FILE
+echo ""                                      >> $CPP_FILE
+echo "const char *VERSION=\"$VERSION\";"     >> $CPP_FILE
+echo "const char *BUILDDATE=\"$BUILDDATE\";" >> $CPP_FILE
+echo "const char *COMMIT=\"$COMMIT\";"       >> $CPP_FILE
+
+echo "Version:   $VERSION"
+echo "Builddate: $BUILDDATE"
+echo "Commit:    $COMMIT"
+echo ""

@@ -1,0 +1,48 @@
+CC            := /mingw64/bin/gcc
+OPTIMIZATION  := -O3 -msse -msse2 -mfpmath=sse -ffast-math
+CFLAGS        += -DGLEW_NO_GLU -DGLEW_STATIC -DSDL_SOUND -mwindows -Wl,-subsystem,windows
+CINCLUDES     := $(shell pkg-config --cflags sdl2 sdl2_mixer glew)
+SERVER_LIBS   := -lmingw32 -static-libgcc -lws2_32 -luser32
+SERVER_CFLAGS := -mconsole
+WINLIBS       := -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -lgdi32 -lopengl32 -lshlwapi -lsetupapi -lws2_32
+STATICLIBS    := -static-libgcc -static -lmingw32 -lm -lstdc++ -lpthread -lglew32 -lopengl32 -lSDL2main -lSDL2 -lSDL2_mixer $(WINLIBS)
+CLIENT_LIBS    = $(WINLIBS) $(shell pkg-config --cflags sdl2 sdl2_mixer glew) -lglew32 -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer
+WEBEXCLUDE    += --exclude=releases/win/wolkenwelten.exe
+
+.PHONY: all
+all: wolkenwelten.exe wolkenwelten-server.exe
+
+.PHONY: release.win
+release: release.win
+
+release.win: releases/win/wolkenwelten-win.zip
+releases/win/wolkenwelten-win.zip: releases/win/wolkenwelten/wolkenwelten.exe
+releases/win/wolkenwelten-win.zip: releases/win/wolkenwelten/wolkenwelten-server.exe
+	cd releases/win/ && zip -r wolkenwelten-win.zip wolkenwelten/
+
+releases/win/wolkenwelten/wolkenwelten.exe: $(CLIENT_SRCS) $(CLIENT_HDRS)
+releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/assets.c client/src/tmp/assets.h
+releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
+releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/cto.c client/src/tmp/cto.h
+releases/win/wolkenwelten/wolkenwelten.exe: releases/win/wolkenwelten.res
+	mkdir -p releases/win/wolkenwelten/
+	$(CC) $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(CLIENT_SRCS) releases/win/wolkenwelten.res -o $@  $(STATICLIBS)
+	strip -gxX $@
+
+releases/win/wolkenwelten/wolkenwelten-server.exe: $(SERVER_SRCS) $(SERVER_HDRS)
+releases/win/wolkenwelten/wolkenwelten-server.exe: server/src/tmp/cto.c server/src/tmp/cto.h
+releases/win/wolkenwelten/wolkenwelten-server.exe: releases/win/wolkenwelten-server.res
+	mkdir -p releases/win/wolkenwelten/
+	$(CC) $(SERVER_SRCS) releases/win/wolkenwelten-server.res -o $@ $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES) $(SERVER_LIBS)
+	strip -gxX $@
+
+wolkenwelten-server.exe: $(SERVER_SRCS) $(SERVER_HDRS)
+	$(CC) $(SERVER_SRCS) -g -o $@ $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES) $(SERVER_LIBS)
+
+releases/win/wolkenwelten-server.res: platform/win/wolkenwelten-server.rc platform/win/icon.ico
+	mkdir -p releases/win/wolkenwelten/
+	windres $< -O coff -o $@
+
+releases/win/wolkenwelten.res: platform/win/wolkenwelten.rc platform/win/icon.ico
+	mkdir -p releases/win/wolkenwelten/
+	windres $< -O coff -o $@

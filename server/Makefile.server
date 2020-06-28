@@ -1,0 +1,24 @@
+SERVER_CFLAGS    = $(CFLAGS)
+SERVER_CINCLUDES =
+SERVER_LIBS      = $(LIBS)
+
+SERVER_HDRS     := $(shell find server/src -type f -name '*.h')
+SERVER_SRCS     := $(shell find server/src -type f -name '*.c')
+SERVER_OBJS     := ${SERVER_SRCS:.c=.o}
+
+wolkenwelten-server: server/make.deps $(SERVER_OBJS)
+	$(CC) $(SERVER_OBJS) -g -o wolkenwelten-server $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES) $(SERVER_LIBS)
+
+server/src/tmp/cto.c: tools/infogen
+	mkdir -p server/src/tmp/
+	tools/infogen server/src/tmp/cto
+server/src/tmp/cto.h: server/src/tmp/cto.c
+	@true
+
+.deps: server/make.deps
+server/make.deps: server/src/tmp/cto.h
+	$(CC) -MM $(SERVER_SRCS) $(SERVER_CINCLUDES) > server/make.deps
+
+ifneq ($(MAKECMDGOALS),clean)
+-include server/make.deps
+endif

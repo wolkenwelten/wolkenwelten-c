@@ -1,0 +1,50 @@
+CLIENT_CFLAGS     = $(CFLAGS)
+CLIENT_CINCLUDES  = $(CINCLUDES) $(shell pkg-config --cflags sdl2 glew)
+CLIENT_LIBS       = $(LIBS) $(shell sdl2-config --libs) -lGLEW -lGL -lSDL2_mixer
+
+GFX_ASSETS       := $(shell find client/gfx -type f -name '*')
+SFX_ASSETS       := $(shell find client/sfx -type f -name '*')
+SHD_ASSETS       := $(shell find client/src/shader -type f -name '*.glsl')
+ASSETS           := $(GFX_ASSETS) $(SFX_ASSETS) $(SHD_ASSETS)
+MESHASSETS       := $(shell find client/mesh -type f -name '*')
+
+CLIENT_HDRS      := $(shell find client/src -type f -name '*.h')
+CLIENT_SRCS      := $(shell find client/src -type f -name '*.c')
+CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
+
+.PHONY: all
+all: wolkenwelten
+wolkenwelten: client/make.deps $(CLIENT_OBJS)
+	$(CC) $(CLIENT_OBJS) -g -o wolkenwelten $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(CLIENT_LIBS)
+
+.deps: client/make.deps
+client/make.deps: | client/src/tmp/assets.h client/src/tmp/meshassets.h client/src/tmp/cto.h
+	$(CC) -MM $(CLIENT_SRCS) $(CLIENT_CINCLUDES) > client/make.deps
+
+client/src/tmp/cto.c: tools/infogen
+	mkdir -p client/src/tmp/
+	tools/infogen client/src/tmp/cto
+client/src/tmp/cto.h: client/src/tmp/cto.c
+	@true
+
+client/src/tmp/assets.c: client/tools/assets $(ASSETS)
+	mkdir -p client/src/tmp/
+	client/tools/assets $(ASSETS)
+client/src/tmp/assets.h: client/src/tmp/assets.c
+	@true
+
+client/tools/assets: client/tools/assets.c
+	$(CC) $(OPTIMIZATION) $(CFLAGS) $< -o $@
+
+client/src/tmp/meshassets.c: client/tools/objparser $(MESHASSETS)
+	mkdir -p client/src/tmp/
+	client/tools/objparser $(MESHASSETS)
+client/src/tmp/meshassets.h: client/src/tmp/meshassets.c
+	@true
+
+client/tools/objparser: client/tools/objparser.c
+	$(CC) $(OPTIMIZATION) $(CFLAGS) $< -o $@
+
+ifneq ($(MAKECMDGOALS),clean)
+-include client/make.deps
+endif

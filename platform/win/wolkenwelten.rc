@@ -1,0 +1,25 @@
+1 VERSIONINFO
+FILEVERSION     0,0,9,0
+PRODUCTVERSION  0,0,9,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "Moon Computing"
+      VALUE "FileDescription", "Game with floating Islands"
+      VALUE "FileVersion", "0.0.8"
+      VALUE "InternalName", "wolkenwelten"
+      VALUE "LegalCopyright", "Wolkenwelten"
+      VALUE "OriginalFilename", "wolkenwelten.exe"
+      VALUE "ProductName", "Wolkenwelten"
+      VALUE "ProductVersion", "0.0.9"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1252
+  END
+END
+
+wolkenweltenicon ICON "icon.ico"
