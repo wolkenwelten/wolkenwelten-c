@@ -1,9 +1,11 @@
-CC           = gcc
-CINCLUDES   := $(shell pkg-config --cflags glew) $(shell sdl2-config --cflags) -DGLEW_NO_GLU -DGLEW_STATIC -DSDL_SOUND
+CC          := gcc
 
+CLIENT_CINCLUDES := $(shell pkg-config --cflags glew) $(shell sdl2-config --cflags) -DGLEW_NO_GLU -DGLEW_STATIC -DSDL_SOUND
 CLIENT_LIBS := $(shell sdl2-config --cflags) -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lGLEW
+
 DYNLIBS     := $(shell sdl2-config --cflags) -lGL -lm -lpthread -ldl
 STATICLIBS  := /usr/lib/libGLEW.a -static-libgcc /usr/lib/libSDL2.a /usr/lib/libSDL2_mixer.a
+
 WEBEXCLUDE  += --exclude=releases/linux/wolkenwelten
 
 .PHONY: all

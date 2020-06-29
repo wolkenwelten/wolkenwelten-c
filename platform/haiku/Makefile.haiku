@@ -1,7 +1,6 @@
 CC = gcc
-CFLAGS += -DGLEW_NO_GLU -DGLEW_STATIC -DSDL_SOUND
-CINCLUDES := $(shell pkg-config --cflags glew) $(shell sdl2-config --cflags)
-
+CLIENT_CFLAGS += -DGLEW_NO_GLU -DGLEW_STATIC -DSDL_SOUND
+CLIENT_CINCLUDES := $(shell pkg-config --cflags glew) $(shell sdl2-config --cflags)
 CLIENT_LIBS := $(shell sdl2-config --cflags) -lGL -lpthread -lSDL2 -lSDL2_mixer -lGLEW
 
 .PHONY: all
@@ -19,5 +18,5 @@ releases/haiku/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
 releases/haiku/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
 releases/haiku/wolkenwelten: client/src/tmp/cto.c client/src/tmp/cto.h
 	mkdir -p releases/haiku/
-	$(CC) $(CLIENT_SRCS) -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(DYNLIBS) $(STATICLIBS)
+	$(CC) $(CLIENT_SRCS) -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(CLIENT_LIBS)
 	strip -gxX $@

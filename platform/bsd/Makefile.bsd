@@ -1,8 +1,8 @@
-CC            := clang
-CFLAGS        += -DGLEW_NO_GLU -DGLEW_STATIC -DSDL_SOUND
-CINCLUDES     := -I/usr/include/ -I/usr/include/SDL2/ -I/usr/local/include/ -I/usr/local/include/SDL2/ -I/usr/X11R6/include/
-CLIENT_LIBS   := $(shell sdl2-config --cflags) -lm -L/usr/X11R6/lib/ -lGL -L/usr/local/lib/ -lGLEW -lSDL2 -lSDL2_mixer
-SERVER_LIBS   := -lm
+CC               := clang
+CLIENT_CFLAGS    += -DGLEW_NO_GLU -DGLEW_STATIC -DSDL_SOUND
+CLIENT_CINCLUDES := -I/usr/include/ -I/usr/include/SDL2/ -I/usr/local/include/ -I/usr/local/include/SDL2/ -I/usr/X11R6/include/
+CLIENT_LIBS      := $(shell sdl2-config --cflags) -lm -L/usr/X11R6/lib/ -lGL -L/usr/local/lib/ -lGLEW -lSDL2 -lSDL2_mixer
+SERVER_LIBS      := -lm
 
 .PHONY: all
 all: wolkenwelten wolkenwelten-server

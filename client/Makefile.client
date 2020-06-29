@@ -1,5 +1,5 @@
-CLIENT_CFLAGS    := $(CFLAGS)
-CLIENT_CINCLUDES := $(CINCLUDES) $(shell pkg-config --cflags sdl2 glew)
+CLIENT_CFLAGS    :=
+CLIENT_CINCLUDES := $(shell pkg-config --cflags sdl2 glew)
 CLIENT_LIBS      := $(LIBS) $(shell sdl2-config --libs) -lGLEW -lGL -lSDL2_mixer
 
 GFX_ASSETS       := $(shell find client/gfx -type f -name '*')
@@ -12,7 +12,8 @@ CLIENT_HDRS      := $(shell find client/src -type f -name '*.h')
 CLIENT_SRCS      := $(shell find client/src -type f -name '*.c')
 CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
 
-$(CLIENT_OBJS): CFLAGS = $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES)
+$(CLIENT_OBJS): CFLAGS += $(CLIENT_CFLAGS)
+$(CLIENT_OBJS): CINCLUDES += $(CLIENT_CINCLUDES)
 
 .PHONY: all
 all: wolkenwelten
