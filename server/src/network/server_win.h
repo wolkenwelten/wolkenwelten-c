@@ -7,6 +7,7 @@ long long unsigned int serverSocket;
 void serverInit(){
 	struct sockaddr_in serv_addr;
 	int err;
+	unsigned long yesl=1;
 	const char yes=1;
 	WSADATA wsaData;
 	err = WSAStartup(MAKEWORD(2,2), &wsaData);
@@ -21,7 +22,7 @@ void serverInit(){
 		exit(1);
 	}
 
-	err = ioctlsocket(serverSocket, FIONBIO, (unsigned long *) &yes);
+	err = ioctlsocket(serverSocket, FIONBIO, &yesl);
 	if (err == SOCKET_ERROR){
 		fprintf(stderr,"ioctl Socket Error: %i\n",WSAGetLastError());
 		exit(1);
