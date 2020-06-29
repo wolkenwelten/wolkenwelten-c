@@ -1,5 +1,5 @@
 CC = gcc
-CLIENT_CFLAGS += -DGLEW_NO_GLU -DGLEW_STATIC -DSDL_SOUND
+CLIENT_CFLAGS += -DGLEW_STATIC
 CLIENT_CINCLUDES := $(shell pkg-config --cflags glew) $(shell sdl2-config --cflags)
 CLIENT_LIBS := $(shell sdl2-config --cflags) -lGL -lpthread -lSDL2 -lSDL2_mixer -lGLEW
 
