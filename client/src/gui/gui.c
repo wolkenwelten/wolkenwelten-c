@@ -169,10 +169,10 @@ void drawDebuginfo(){
 	textMeshPrintf(textm,"Player Shake: %04.2f\n",player->shake);
 	textMeshPrintf(textm,"Active Tris.: %i\n", tris);
 	textMeshPrintf(textm,"Player Layer: %2i\n",((int)player->y/CHUNGUS_SIZE));
-	textMeshPrintf(textm,"Entities    : %i\n",entityCount);
+	textMeshPrintf(textm,"Entities    : %2i\n",entityCount);
 	textMeshPrintf(textm,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
 	textMeshPrintf(textm,"ActiveChunks: %2i\n",chunkGetActive());
-	textMeshPrintf(textm,"FreeChunks:   %2i\n",chunkGetFree());
+	textMeshPrintf(textm,"FreeChunks  : %2i\n",chunkGetFree());
 	textMeshPrintf(textm,"ActiveChungi: %2i\n",chungusGetActiveCount());
 
 }

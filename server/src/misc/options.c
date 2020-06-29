@@ -15,17 +15,20 @@ void parseOptions(int argc,const char *argv[]){
 		if(strncmp(argv[i]+1,"worldSeed",strlen("worldSeed")) == 0){
 			if(argv[i][1+strlen("worldSeed")] == '='){
 				optionWorldSeed = atoi(argv[i]+2+strlen("worldSeed"));
+				continue;
 			}
 		}
 		if(strncmp(argv[i]+1,"port",strlen("port")) == 0){
 			if(argv[i][1+strlen("port")] == '='){
 				optionPort = atoi(argv[i]+2+strlen("port"));
+				continue;
 			}
 		}
 		if(strncmp(argv[i]+1,"singleplayer",strlen("singleplayer")) == 0){
 			if(argv[i][1+strlen("singleplayer")] == '='){
 				if(atoi(argv[i]+2+strlen("singleplayer")) != 0){
 					optionSingleplayer = true;
+					continue;
 				}
 			}
 		}
