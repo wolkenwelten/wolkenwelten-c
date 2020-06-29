@@ -52,6 +52,8 @@ void entityFree(entity *e){
 }
 
 uint32_t entityCollision(entity *e, float cx, float cy, float cz,float wd){
+	(void)e;
+
 	uint32_t col = 0;
 	const float WD = wd*2.f;
 

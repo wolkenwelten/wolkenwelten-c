@@ -65,6 +65,7 @@ void entityFree(entity *e){
 
 uint32_t entityCollision(entity *e, float cx, float cy, float cz,float wd){
 	uint32_t col = 0;
+	(void)e;
 
 	if(checkCollision(cx-wd,cy-0.1f,cz   )){col |= 0x100;}
 	if(checkCollision(cx+wd,cy-0.1f,cz   )){col |= 0x200;}
@@ -160,7 +161,7 @@ int entityUpdate(entity *e){
 	return ret;
 }
 
-void entityDraw(entity *e, character *cam){
+void entityDraw(entity *e){
 	float matMVP[16];
 	if(e == NULL){return;}
 	if(e->eMesh == NULL){return;}
@@ -176,11 +177,11 @@ void entityDraw(entity *e, character *cam){
 }
 
 
-void entityDrawAll(character *cam){
+void entityDrawAll(){
 	shaderBind(sMesh);
 	for(int i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL){ continue; }
-		entityDraw(&entityList[i],cam);
+		entityDraw(&entityList[i]);
 	}
 }
 

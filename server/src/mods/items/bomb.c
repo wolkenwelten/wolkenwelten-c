@@ -10,8 +10,10 @@ void bombInit(){
 }
 
 bool bombActivateItem(item *cItem,character *cChar){
+	(void)cItem;
+	(void)cChar;
+
 	if(itemDecStack(cItem,1)){
-		//grenadeNew(cChar->ent,3);
 		return true;
 	}
 	return false;

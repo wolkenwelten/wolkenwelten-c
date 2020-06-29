@@ -12,6 +12,8 @@ void bombInit(){
 }
 
 bool bombActivateItem(item *cItem,character *cChar){
+	(void)cItem;
+
 	if(itemDecStack(cItem,1)){
 		grenadeNew(cChar,3);
 		return true;
@@ -20,5 +22,7 @@ bool bombActivateItem(item *cItem,character *cChar){
 }
 
 mesh *bombGetMesh(item *cItem){
+	(void)cItem;
+
 	return meshBomb;
 }

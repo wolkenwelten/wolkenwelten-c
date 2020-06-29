@@ -131,6 +131,7 @@ void chunkAddFront(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w,
 	chunkAddVert(c, x  ,y  ,z+d,texXa,texYb,2);
 }
 void chunkAddBack(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, uint8_t h, uint8_t d) {
+	(void)d;
 	const uint16_t texXa = blockTypeGetTexX(b,1)<<8;
 	const uint16_t texYa = blockTypeGetTexY(b,1)<<8;
 	const uint16_t texXb = texXa|w;
@@ -155,6 +156,7 @@ void chunkAddTop(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, u
 	chunkAddVert(c, x  ,y+h,z  ,texXa,texYa,3);
 }
 void chunkAddBottom(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, uint8_t h, uint8_t d) {
+	(void)h;
 	const uint16_t texXa = blockTypeGetTexX(b,3)<<8;
 	const uint16_t texYa = blockTypeGetTexY(b,3)<<8;
 	const uint16_t texXb = texXa|w;
@@ -179,6 +181,7 @@ void chunkAddRight(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w,
 	chunkAddVert(c, x+w,y  ,z  ,texXb,texYb,2);
 }
 void chunkAddLeft(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, uint8_t h, uint8_t d) {
+	(void)w;
 	const uint16_t texXa = blockTypeGetTexX(b,5)<<8;
 	const uint16_t texYa = blockTypeGetTexY(b,5)<<8;
 	const uint16_t texXb = texXa|d;

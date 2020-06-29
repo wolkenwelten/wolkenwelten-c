@@ -1,10 +1,10 @@
 CC           := cc
-OPTIMIZATION := -O3 -march=x86-64
+OPTIMIZATION := -O3
 CINCLUDES    :=
 LIBS         := -lm
-WARNINGS     := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align -Wno-missing-braces -Wno-unused-parameter -Wno-unused-const-variable
-CFLAGS       := 
-CSTD         := -std=c99 
+WARNINGS     := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align=strict
+CFLAGS       := -g
+CSTD         := -std=c99
 
 include client/Makefile.client
 include server/Makefile.server
@@ -41,7 +41,7 @@ endif
 .PHONY: .deps
 
 %.o: %.c
-	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -g -c $< -o $@
+	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -c $< -o $@
 
 .PHONY: clean
 clean:

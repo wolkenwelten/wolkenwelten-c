@@ -91,8 +91,10 @@ void closeSingleplayerServer(){
 
 void zombieKiller(int sig){
 	int status;
-	waitpid(singlePlayerPID, &status, 0);
-	singlePlayerPID = 0;
+	if(sig > 0){
+		waitpid(singlePlayerPID, &status, 0);
+		singlePlayerPID = 0;
+	}
 }
 
 void clientInit(){

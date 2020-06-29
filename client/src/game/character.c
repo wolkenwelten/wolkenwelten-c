@@ -27,6 +27,7 @@ character *characterFirstFree = NULL;
 character *playerList[32];
 
 uint32_t characterCollision(character *c, float cx, float cy, float cz,float wd){
+	(void)c;
 	uint32_t col = 0;
 	const float WD=wd*2.f;
 
@@ -90,7 +91,7 @@ void characterSetPos(character *c, float x, float y, float z){
 }
 
 void characterSetPlayerCount(int c){
-	for(int i=0;i<32;i++){
+	for(int i=0;i<c;i++){
 		if(playerList[i] != NULL){
 			characterFree(playerList[i]);
 			playerList[i] = NULL;
@@ -149,6 +150,8 @@ void characterUpdateHitOff(character *c){
 }
 
 void characterUpdateWindVolume(character *c, float wvx, float wvy, float wvz){
+	(void)c;
+
 	float windVol = fabsf(wvx)+fabsf(wvy)+fabsf(wvz);
 	if(windVol < 0.1f){
 		sfxLoop(atmosfxWind,0.f);

@@ -46,6 +46,7 @@ char *ansiColors[16] = {
 };
 
 void signalQuit(int signo){
+	(void)signo;
 	quit = true;
 }
 

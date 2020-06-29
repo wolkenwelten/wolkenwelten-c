@@ -10,6 +10,8 @@ void axeInit(){
 }
 
 int axeBlockDamage(const item *cItem, blockCategory blockCat){
+	(void)cItem;
+
 	if(blockCat == WOOD){
 		return 4;
 	}
@@ -17,5 +19,7 @@ int axeBlockDamage(const item *cItem, blockCategory blockCat){
 }
 
 bool axeIsSingleItem(const item *cItem){
+	(void)cItem;
+
 	return true;
 }

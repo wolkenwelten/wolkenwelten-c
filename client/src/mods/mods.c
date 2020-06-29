@@ -11,21 +11,36 @@ inline mesh *getMeshDefault(item *cItem){
 	return NULL;
 }
 inline int blockDamageDefault(item *cItem, blockCategory blockCat){
+	(void)cItem;
+	(void)blockCat;
+
 	return 1;
 }
 inline bool activateItemDefault(item *cItem, character *cChar){
+	(void)cItem;
+	(void)cChar;
+
 	return false;
 }
 inline bool mineActionDefault(item *cItem, character *cChar, int to){
+	(void)cItem;
+	(void)cChar;
+	(void)to;
+
 	return false;
 }
 inline bool hasMineActionDefault(item *cItem){
+	(void)cItem;
+
 	return false;
 }
 inline bool isSingleItemDefault(item *cItem){
+	(void)cItem;
+
 	return false;
 }
 
+void assblasterInit();
 mesh *assblasterGetMesh(item *cItem);
 bool assblasterIsSingleItem(item *cItem);
 bool assblasterHasMineAction(item *cItem);
@@ -44,6 +59,7 @@ void grenadeInit();
 bool grenadeActivateItem(item *cItem,character *cChar);
 mesh *grenadeGetMesh(item *cItem);
 
+void pearInit();
 bool pearActivateItem(item *cItem,character *cChar);
 mesh *pearGetMesh(item *cItem);
 
@@ -53,10 +69,12 @@ mesh *pickaxeGetMesh(item *cItem);
 bool pickaxeIsSingleItem(item *cItem);
 
 void modsInit(){
+	assblasterInit();
 	grenadeInit();
 	bombInit();
 	axeInit();
 	pickaxeInit();
+	pearInit();
 }
 
 int blockDamageDispatch(item *cItem, blockCategory blockCat){

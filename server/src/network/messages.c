@@ -100,6 +100,7 @@ void msgUpdatePlayer(int c){
 }
 
 void msgRequestPlayerSpawnPos(int c, const packetSmall *pr){
+	(void)pr;
 	packetSmall p;
 	int sx,sy,sz;
 	worldGetSpawnPos(&sx,&sy,&sz);

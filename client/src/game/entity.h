@@ -33,6 +33,6 @@ void     entitySetVel    (entity *e, float vx, float vy, float vz);
 void     entitySetRot    (entity *e, float yaw, float pitch, float roll);
 uint32_t entityCollision (entity *e, float cx, float cy, float cz, float wd);
 int      entityUpdate    (entity *e);
-void     entityDraw      (entity *e, character *cam);
-void     entityDrawAll   (character *cam);
+void     entityDraw      (entity *e);
+void     entityDrawAll   ();
 void     entityUpdateAll ();

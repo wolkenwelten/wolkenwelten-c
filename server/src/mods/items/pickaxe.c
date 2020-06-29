@@ -10,6 +10,8 @@ void pickaxeInit(){
 }
 
 int pickaxeBlockDamage(const item *cItem, blockCategory blockCat){
+	(void)cItem;
+
 	if(blockCat == STONE){
 		return 5;
 	} else if(blockCat == DIRT){
@@ -19,5 +21,6 @@ int pickaxeBlockDamage(const item *cItem, blockCategory blockCat){
 }
 
 bool pickaxeIsSingleItem(const item *cItem){
+	(void)cItem;
 	return true;
 }

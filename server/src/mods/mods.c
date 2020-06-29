@@ -3,21 +3,36 @@
 #include "../game/character.h"
 
 inline int blockDamageDefault(const item *cItem, blockCategory blockCat){
+	(void)cItem;
+	(void)blockCat;
+
 	return 1;
 }
 inline bool activateItemDefault(item *cItem, character *cChar){
+	(void)cItem;
+	(void)cChar;
+
 	return false;
 }
 inline bool mineActionDefault(item *cItem, character *cChar, int to){
+	(void)cItem;
+	(void)cChar;
+	(void)to;
+
 	return false;
 }
 inline bool hasMineActionDefault(const item *cItem){
+	(void)cItem;
+
 	return false;
 }
 inline bool isSingleItemDefault(const item *cItem){
+	(void)cItem;
+
 	return false;
 }
 
+void assblasterInit();
 bool assblasterIsSingleItem(const item *cItem);
 bool assblasterHasMineAction(const item *cItem);
 bool assblasterMineAction(item *cItem, character *cChar, int to);
@@ -32,6 +47,7 @@ bool bombActivateItem(item *cItem,character *cChar);
 void grenadeInit();
 bool grenadeActivateItem(item *cItem,character *cChar);
 
+void pearInit();
 bool pearActivateItem(item *cItem,character *cChar);
 
 void pickaxeInit();
@@ -39,9 +55,11 @@ int pickaxeBlockDamage(const item *cItem, blockCategory blockCat);
 bool pickaxeIsSingleItem(const item *cItem);
 
 void modsInit(){
+	assblasterInit();
 	grenadeInit();
 	bombInit();
 	axeInit();
+	pearInit();
 	pickaxeInit();
 }
 

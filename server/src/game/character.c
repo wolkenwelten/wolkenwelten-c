@@ -15,6 +15,8 @@ int characterCount = 0;
 character *characterFirstFree = NULL;
 
 uint32_t characterCollision(const character *c, float cx, float cy, float cz,float wd){
+	(void)c;
+
 	uint32_t col = 0;
 	const float WD = wd*2.f;
 

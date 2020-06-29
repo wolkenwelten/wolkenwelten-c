@@ -12,6 +12,8 @@ void axeInit(){
 }
 
 int axeBlockDamage(item *cItem, blockCategory blockCat){
+	(void)cItem;
+
 	if(blockCat == WOOD){
 		return 4;
 	}
@@ -19,9 +21,13 @@ int axeBlockDamage(item *cItem, blockCategory blockCat){
 }
 
 mesh *axeGetMesh(item *cItem){
+	(void)cItem;
+
 	return meshAxe;
 }
 
 bool axeIsSingleItem(item *cItem){
+	(void)cItem;
+
 	return true;
 }
