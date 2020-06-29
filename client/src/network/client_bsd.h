@@ -73,13 +73,19 @@ void startSingleplayerServer(){
 		return;
 	}
 	strncpy(serverName,"localhost",sizeof(serverName)-1);
+	usleep(100);
 }
 
 void closeSingleplayerServer(){
 	int tries = 10;
+	fprintf(stderr,"Goodbye, and thanks for all the fish.\n");
 	while(singlePlayerPID > 0){
-		if(--tries <= 0){return;}
-		sleep(1);
+		if(--tries <= 0){
+			kill(singlePlayerPID,SIGKILL);
+			return;
+		}
+		kill(singlePlayerPID,SIGTERM);
+		usleep(100000);
 	}
 }
 
