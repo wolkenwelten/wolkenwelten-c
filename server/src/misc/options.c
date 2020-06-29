@@ -10,7 +10,7 @@ int   optionPort         = 0;
 bool  optionSingleplayer = false;
 
 void parseOptions(int argc,const char *argv[]){
-	for(int i=1;i<argc;i++){
+	for(int i=0;i<argc;i++){
 		if(argv[i][0] != '-'){continue;}
 		if(strncmp(argv[i]+1,"worldSeed",strlen("worldSeed")) == 0){
 			if(argv[i][1+strlen("worldSeed")] == '='){
@@ -29,6 +29,7 @@ void parseOptions(int argc,const char *argv[]){
 				}
 			}
 		}
+		break;
 	}
 }
 

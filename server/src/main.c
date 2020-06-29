@@ -103,7 +103,7 @@ int main( int argc, const char* argv[] ){
 	blockTypeInit();
 	recipeInit();
 	modsInit();
-	bigchungusGenSpawn(&world);\
+	bigchungusGenSpawn(&world);
 	while(!quit){
 		bigchungusFreeFarChungi(&world);
 		updateWorld();
