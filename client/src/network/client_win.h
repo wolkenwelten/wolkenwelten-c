@@ -19,7 +19,7 @@ void startSingleplayerServer(){
 		optionWorldSeed = (int)(time(NULL)&0xFFFF);
 	}
 	snprintf(seed,sizeof(seed)-1,"-worldSeed=%i",optionWorldSeed);
-	_spawnl( _P_DETACH , "wolkenwelten-server.exe", seed, "-singleplayer=1",NULL);
+	_spawnl( _P_DETACH , "wolkenwelten-server.exe", seed, "-singleplayer=1",(const char *)NULL);
 	spSpawned = true;
 	singlePlayerPID = 1;
 	strncpy(serverName,"localhost",sizeof(serverName)-1);

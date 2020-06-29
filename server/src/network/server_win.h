@@ -6,7 +6,8 @@ long long unsigned int serverSocket;
 
 void serverInit(){
 	struct sockaddr_in serv_addr;
-	int err,yes=1;
+	int err;
+	const char yes=1;
 	WSADATA wsaData;
 	err = WSAStartup(MAKEWORD(2,2), &wsaData);
 	if(err != NO_ERROR){
@@ -25,6 +26,9 @@ void serverInit(){
 		fprintf(stderr,"ioctl Socket Error: %i\n",WSAGetLastError());
 		exit(1);
 	}
+	
+	err = setsockopt(serverSocket,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(yes));
+	if (err < 0){ perror("setsockopt: SO_REUSEADDR"); exit(1); }
 
 	memset((char *) &serv_addr,0,sizeof(serv_addr));
 	serv_addr.sin_family      = AF_INET;
