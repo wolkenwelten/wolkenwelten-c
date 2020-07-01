@@ -37,20 +37,23 @@ void fxExplosionBomb(float x,float y,float z,float pw){
 }
 void fxGrenadeTrail(float x,float y,float z,float pw){
 	(void)pw;
-	float vx = (rngValf()-0.5f)/32.f;
-	float vy = (rngValf()-0.5f)/32.f;
-	float vz = (rngValf()-0.5f)/32.f;
+	float vx,vy,vz;
+	
+	if((rngValR()&3)!=0){return;}
+	vx = (rngValf()-0.5f)/32.f;
+	vy = (rngValf()-0.5f)/32.f;
+	vz = (rngValf()-0.5f)/32.f;
 	newParticle(x,y,z,vx,vy,vz,vx/64.f,vy/64.f,vz/64.f,0xFF44AAFF,64);
 }
 
 void fxExplosionBlaster(float x,float y,float z,float pw){
-	for(int i=0;i<128;i++){
+	for(int i=0;i<256;i++){
 		float vx = (rngValf()-0.5f)/8.f*pw;
 		float vy = (rngValf()-0.5f)/8.f*pw;
 		float vz = (rngValf()-0.5f)/8.f*pw;
 		newParticle(x,y,z,vx,vy,vz,vx/-64.f,vy/-64.f,vz/-64.f,0xFF3A1F90,64);
 	}
-	for(int i=0;i<128;i++){
+	for(int i=0;i<256;i++){
 		float vx = (rngValf()-0.5f)/12.f*pw;
 		float vy = (rngValf()-0.5f)/12.f*pw;
 		float vz = (rngValf()-0.5f)/12.f*pw;
