@@ -31,6 +31,9 @@ int sendBufSent = 0;
 int sendBufLen = 0;
 uint8_t sendBuf[1<<20];
 
+size_t sentBytesCurrentSession = 0;
+size_t recvBytesCurrentSession = 0;
+
 int serverPort = 6309;
 pid_t singlePlayerPID = 0;
 

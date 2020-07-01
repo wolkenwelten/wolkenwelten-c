@@ -19,6 +19,7 @@
 #include "../gfx/mat.h"
 #include "../gui/textInput.h"
 #include "../network/chat.h"
+#include "../network/client.h"
 
 #include <string.h>
 
@@ -137,6 +138,20 @@ void updateMouse(){
 	}
 }
 
+const char *getHumanReadableSize(size_t n){
+	static char buf[32];
+	const char *suffix[] = {"B","KB","MB","GB","TB"};
+	int i;
+	
+	for(i=0;i<5;i++){
+		if(n<1024){break;}
+		n = n >> 10;
+	}
+	i = snprintf(buf,sizeof(buf),"%llu%s",n,suffix[i]);
+	buf[sizeof(buf)-1] = 0;
+	return buf;
+}
+
 void drawDebuginfo(){
 	if(!playerChunkActive){
 		textm->sx = screenWidth/2-(8*16);
@@ -145,8 +160,8 @@ void drawDebuginfo(){
 		textMeshPrintf(textm,"Loading World!!!");
 	}
 
-	textm->sx = 4;
-	textm->sy = screenHeight-40;
+	textm->sx   = 4;
+	textm->sy   = screenHeight-40;
 	textm->size = 2;
 
 	textMeshPrintf(textm,"FPS %.0f\n",curFPS);
@@ -155,8 +170,8 @@ void drawDebuginfo(){
 	int tris = vboTrisCount;
 	vboTrisCount = 0;
 	if(!optionDebugInfo){return;}
-	textm->sx = 4;
-	textm->sy = 76;
+	textm->sx   = 4;
+	textm->sy   = 76;
 	textm->size = 1;
 
 	textMeshPrintf(textm,"Player     X: %05.2f VX: %02.4f\n",player->x,player->vx);
@@ -174,6 +189,9 @@ void drawDebuginfo(){
 	textMeshPrintf(textm,"ActiveChunks: %2i\n",chunkGetActive());
 	textMeshPrintf(textm,"FreeChunks  : %2i\n",chunkGetFree());
 	textMeshPrintf(textm,"ActiveChungi: %2i\n",chungusGetActiveCount());
+	textMeshPrintf(textm,"Bytes Sent  : %s\n",getHumanReadableSize(sentBytesCurrentSession));
+	textMeshPrintf(textm,"Bytes Recvd : %s\n",getHumanReadableSize(recvBytesCurrentSession));
+	
 
 }
 

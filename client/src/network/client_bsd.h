@@ -192,6 +192,7 @@ void clientRead(){
 		len = recv(serverSocket,recvBuf + recvBufLen,sizeof(recvBuf) - recvBufLen, 0);
 		if(len > 0){
 			recvBufLen += len;
+			recvBytesCurrentSession += len;
 		}
 	}
 	if(len < 0){
@@ -216,6 +217,7 @@ void clientSendAllToServer(){
 			}
 		}else{
 			sendBufSent += ret;
+			sentBytesCurrentSession += ret;
 		}
 	}
 	sendBufSent = 0;

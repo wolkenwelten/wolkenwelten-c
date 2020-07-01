@@ -1,6 +1,10 @@
 #pragma once
 #include <unistd.h>
 #include <sys/types.h>
+#include <stdint.h>
+
+extern size_t sentBytesCurrentSession;
+extern size_t recvBytesCurrentSession;
 
 void clientInit();
 void clientFree();

@@ -115,6 +115,7 @@ void clientRead(){
 			clientFree();
 		}else{
 			recvBufLen += len;
+			recvBytesCurrentSession += len;
 		}
 	}
 }
@@ -134,6 +135,7 @@ void clientSendAllToServer(){
 			return;
 		}else{
 			sendBufSent += ret;
+			sentBytesCurrentSession += ret;
 		}
 	}
 	sendBufSent = 0;
