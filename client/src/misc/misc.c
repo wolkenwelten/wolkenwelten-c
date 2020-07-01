@@ -2,29 +2,30 @@
 #include <stdio.h>
 #include <math.h>
 
-unsigned long long int RNGValue = 1;
+uint64_t RNGValue = 1;
 
-void seedRNG(unsigned int seed){
+void seedRNG(uint64_t seed){
 	RNGValue = seed;
 }
 
-unsigned int getRNGSeed(){
+uint64_t getRNGSeed(){
 	return RNGValue;
 }
 
-float rngValf(){
-	RNGValue = ((RNGValue * 1103515245)) + 12345;
-	return (float)(((RNGValue&0xFFFF)<<16) | ((RNGValue>>16)&0xFFFF)) / ((float)0xffffffff);
-}
-
-unsigned int rngValR(){
+uint64_t rngValR(){
 	RNGValue = ((RNGValue * 1103515245)) + 12345;
 	return ((RNGValue&0xFFFF)<<16) | ((RNGValue>>16)&0xFFFF);
 }
-unsigned int rngValM(unsigned int max){
+
+float rngValf(){
+	return (float)rngValR() / ((float)0xffffffff);
+}
+
+uint64_t rngValM(uint64_t max){
 	if(max == 0){return 0;}
 	return rngValR() % max;
 }
-int rngValMM(int min,int max){
+
+int64_t rngValMM(int64_t min,int64_t max){
 	return rngValM(max - min) + min;
 }

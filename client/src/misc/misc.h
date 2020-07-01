@@ -1,8 +1,9 @@
 #pragma once
+#include<stdint.h>
 
-void         seedRNG(unsigned int seed);
-unsigned int getRNGSeed();
-float        rngValf();
-unsigned int rngValR();
-unsigned int rngValM(unsigned int max);
-int          rngValMM(int min,int max);
+void     seedRNG(uint64_t seed);
+uint64_t getRNGSeed();
+float    rngValf();
+uint64_t rngValR();
+uint64_t rngValM(uint64_t max);
+int64_t  rngValMM(int64_t min,int64_t max);
