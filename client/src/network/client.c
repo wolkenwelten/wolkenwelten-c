@@ -25,11 +25,11 @@
 char playerName[28];
 
 int recvBufLen = 0;
-uint8_t recvBuf[1<<22];
+uint8_t recvBuf[1<<20];
 
 int sendBufSent = 0;
 int sendBufLen = 0;
-uint8_t sendBuf[1<<20];
+uint8_t sendBuf[1<<16];
 
 size_t sentBytesCurrentSession = 0;
 size_t recvBytesCurrentSession = 0;

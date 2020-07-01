@@ -128,8 +128,8 @@ void clientSendAllToServer(){
 		const int ret = send(serverSocket,(void *)(sendBuf+sendBufSent),sendBufLen-sendBufSent, 0);
 		if(ret == SOCKET_ERROR){
 			const int err = WSAGetLastError();
-			if(err == WSAEWOULDBLOCK){return;}
-			if(err == WSAEINPROGRESS){return;}
+			if(err == WSAEWOULDBLOCK){break;}
+			if(err == WSAEINPROGRESS){break;}
 			fprintf(stderr,"ERROR sending: %i\n",err);
 			clientFree();
 			return;
