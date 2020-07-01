@@ -1,3 +1,8 @@
+/*
+ * Most of this code is directly from Mark Morley's Tutorials
+ * which can be found here:
+ * http://www.crownandcutlass.com/features/technicaldetails/frustum.html
+ */
 #include "frustum.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
