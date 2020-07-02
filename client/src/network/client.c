@@ -212,9 +212,13 @@ void clientGreetServer(){
 }
 
 void clientHandleEvents(){
+	static int ps=0;
 	clientRead();
 	clientParse();
-	msgSendPlayerPos();
+	if(!ps){
+		msgSendPlayerPos();
+		ps=1;
+	}
 }
 
 void queueToServer(void *data, unsigned int len){

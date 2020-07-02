@@ -282,9 +282,11 @@ void serverParseWebSocketHeaderField(int c,const char *key, const char *val){
 	printf("B64 = %s\n",b64hash);
 
 	len = snprintf(buf,sizeof(buf),"HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Protocol: binary\r\nSec-WebSocket-Accept: %s\r\n\r\n",b64hash);
+	clients[c].flags &= !1;
 	sendToClient(c,buf,len);
 	serverSendClient(c);
 	clients[c].flags |= 1;
+
 }
 
 void serverParseWebSocketHeader(int c,int end){
@@ -325,7 +327,6 @@ void serverParseWebSocketHeader(int c,int end){
 
 void serverParseWebSocket(int c,int end){
 	clients[c].recvBuf[end-2] = 0;
-	printf("Client %i introduction[%i]\n%s\n",c,end,clients[c].recvBuf);
 	if((clients[c].recvBuf[0] == 'G') && (clients[c].recvBuf[1] == 'E') && (clients[c].recvBuf[2] == 'T') && (clients[c].recvBuf[3] == ' ')){
 		serverParseWebSocketHeader(c,end);
 	}
@@ -483,11 +484,25 @@ void sendToClient(int c,void *data,int len){
 		}
 	}
 	if(clients[c].flags & 1){
-		fprintf(stderr,"Sending WS shit\n");
+		printf("send WS Data %i\n",len);
 		clients[c].sendBuf[clients[c].sendBufLen++] = 0x82;
-		clients[c].sendBuf[clients[c].sendBufLen++] = 0x7E;
-		clients[c].sendBuf[clients[c].sendBufLen++] = (len   ) & 0xFF;
-		clients[c].sendBuf[clients[c].sendBufLen++] = (len>>8) & 0xFF;
+		if(len < 126){
+			clients[c].sendBuf[clients[c].sendBufLen++] = len;
+		}else if(len < 0xFFFF){
+			clients[c].sendBuf[clients[c].sendBufLen++] = 0x7E;
+			clients[c].sendBuf[clients[c].sendBufLen++] = (len>>8) & 0xFF;
+			clients[c].sendBuf[clients[c].sendBufLen++] = (len   ) & 0xFF;
+		}else{
+			clients[c].sendBuf[clients[c].sendBufLen++] = 0x7F;
+			clients[c].sendBuf[clients[c].sendBufLen++] = 0;
+			clients[c].sendBuf[clients[c].sendBufLen++] = 0;
+			clients[c].sendBuf[clients[c].sendBufLen++] = 0;
+			clients[c].sendBuf[clients[c].sendBufLen++] = 0;
+			clients[c].sendBuf[clients[c].sendBufLen++] = (len>>24) & 0xFF;
+			clients[c].sendBuf[clients[c].sendBufLen++] = (len>>16) & 0xFF;
+			clients[c].sendBuf[clients[c].sendBufLen++] = (len>> 8) & 0xFF;
+			clients[c].sendBuf[clients[c].sendBufLen++] = (len    ) & 0xFF;
+		}
 	}
 	memcpy(clients[c].sendBuf+clients[c].sendBufLen,data,len);
 	clients[c].sendBufLen += len;
