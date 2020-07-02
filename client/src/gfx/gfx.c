@@ -100,8 +100,8 @@ void renderWorld(character *cam){
 	bigchungusDraw(&world,cam);
 	blockMiningDraw();
 	grapplingHookDrawRopes();
-	entityDrawAll(cam);
-	characterDrawAll(cam);
+	entityDrawAll();
+	characterDrawAll();
 	particleDraw();
 	glDepthFunc( GL_LEQUAL );
 }

@@ -705,10 +705,10 @@ void characterMoveDelta(character *c, packetMedium *p){
 	c->shake  = (fabsf(p->val.f[0]) + fabsf(p->val.f[1]) + fabsf(p->val.f[2]))*96.f;
 }
 
-void characterDraw(const character *c,const character *cam){
+void characterDraw(const character *c){
 	float matMVP[16];
 	if(c == NULL)       {return;}
-	if(c == cam)        {return;}
+	if(c == player)     {return;}
 	if(c->eMesh == NULL){return;}
 
 	matMov(matMVP,matView);
@@ -719,10 +719,10 @@ void characterDraw(const character *c,const character *cam){
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(c->eMesh);
 }
-void characterDrawAll(const character *cam){
+void characterDrawAll(){
 	shaderBind(sMesh);
 	for(int i=0;i<characterCount;i++){
 		if(characterList[i].nextFree != NULL){ continue; }
-		characterDraw(&characterList[i],cam);
+		characterDraw(&characterList[i]);
 	}
 }
