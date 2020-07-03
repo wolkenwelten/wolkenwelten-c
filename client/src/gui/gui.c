@@ -147,7 +147,7 @@ const char *getHumanReadableSize(size_t n){
 		if(n<1024){break;}
 		n = n >> 10;
 	}
-	i = snprintf(buf,sizeof(buf),"%lu%s",n,suffix[i]);
+	i = snprintf(buf,sizeof(buf),"%"PRIuPTR"%s",n,suffix[i]);
 	buf[sizeof(buf)-1] = 0;
 	return buf;
 }
