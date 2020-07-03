@@ -1,4 +1,3 @@
-(0) Add WebSocket compatibility to server so the wasm client can work again
 (0) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
 
 (A) Rework grappling hooks, the code is shit
