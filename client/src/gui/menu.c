@@ -32,11 +32,13 @@ void updateMenu(){
 	if(mouseLClicked){
 		if((mousex > (screenWidth-256-32)) && (mousex < screenWidth-32)){
 			if((mousey > 32) && (mousey < 64)){
+				#ifndef __EMSCRIPTEN__
 				singleplayer = true;
 				gameRunning = true;
 				textInputLock = 0;
 				textInputActive = false;
 				hideMouseCursor();
+				#endif
 			} else if((mousey > 80) && (mousey < 112)){
 				if(!textInputActive){
 					textInput(8,screenHeight-24,256,16,2);
@@ -56,9 +58,6 @@ void menuBackground(){
 	int y = 0;
 	int w = screenWidth;
 	int h = screenHeight;
-
-
-
 
 	textMeshAddVert(menuM,x,y,u  ,v  ,0xFFFFAF63);
 	textMeshAddVert(menuM,x,h,u  ,v+s,0xFFFF6825);
@@ -89,6 +88,7 @@ void renderMenu(){
 		1.f/8.f, 1.f/8.f,
 		0xFFFFFFFF);
 
+	#ifndef __EMSCRIPTEN__
 	textMeshBox(menuM,
 		screenWidth-256-32, 32,
 		256, 32,
@@ -96,6 +96,7 @@ void renderMenu(){
 		1.f/16.f, 1.f/16.f,
 		0xFF555555);
 	textMeshAddStrPS(menuM,screenWidth-256-32,40,2,"  Singleplayer");
+	#endif
 
 	textMeshBox(menuM,
 		screenWidth-256-32, 80,
