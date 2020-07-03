@@ -17,6 +17,9 @@ typedef struct {
 	unsigned int recvBufLen;
 	uint8_t recvBuf[1<<16];
 
+	unsigned int recvWSBufLen;
+	uint8_t recvWSBuf[1<<16];
+
 	unsigned int sendBufSent;
 	unsigned int sendBufLen;
 	uint8_t sendBuf[1<<22];

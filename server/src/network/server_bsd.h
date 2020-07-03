@@ -98,9 +98,17 @@ void serverRead(){
 	for(int i=0;i<clientCount;i++){
 		int len = 1;
 		while(len > 0){
-			len = recv(clients[i].socket,clients[i].recvBuf + clients[i].recvBufLen,sizeof(clients[i].recvBuf) - clients[i].recvBufLen,0);
+			if(clients[i].flags&1){
+				len = recv(clients[i].socket,clients[i].recvWSBuf + clients[i].recvWSBufLen,sizeof(clients[i].recvWSBuf) - clients[i].recvWSBufLen,0);
+			}else{
+				len = recv(clients[i].socket,clients[i].recvBuf + clients[i].recvBufLen,sizeof(clients[i].recvBuf) - clients[i].recvBufLen,0);
+			}
 			if(len > 0){
-				clients[i].recvBufLen += len;
+				if(clients[i].flags&1){
+					clients[i].recvWSBufLen += len;
+				}else{
+					clients[i].recvBufLen += len;
+				}
 			}
 		}
 		if(len < 0){

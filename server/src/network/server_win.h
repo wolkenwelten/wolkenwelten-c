@@ -27,7 +27,7 @@ void serverInit(){
 		fprintf(stderr,"ioctl Socket Error: %i\n",WSAGetLastError());
 		exit(1);
 	}
-	
+
 	err = setsockopt(serverSocket,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(yes));
 	if (err < 0){ perror("setsockopt: SO_REUSEADDR"); exit(1); }
 
@@ -112,7 +112,11 @@ void serverRead(){
 	for(int i=0;i<clientCount;i++){
 		int len = 1;
 		while(len > 0){
-			len = recv(clients[i].socket,(void *)(clients[i].recvBuf + clients[i].recvBufLen),sizeof(clients[i].recvBuf) - clients[i].recvBufLen,0);
+			if(clients[i].flags&1){
+				len = recv(clients[i].socket,(void *)(clients[i].recvWSBuf + clients[i].recvWSBufLen),sizeof(clients[i].recvWSBuf) - clients[i].recvWSBufLen,0);
+			}else{
+				len = recv(clients[i].socket,(void *)(clients[i].recvBuf + clients[i].recvBufLen),sizeof(clients[i].recvBuf) - clients[i].recvBufLen,0);
+			}
 			if(len == SOCKET_ERROR){
 				const int err = WSAGetLastError();
 				if(err == WSAEWOULDBLOCK){break;}
@@ -121,7 +125,11 @@ void serverRead(){
 				serverKill(i);
 				break;
 			}else{
-				clients[i].recvBufLen += len;
+				if(clients[i].flags&1){
+					clients[i].recvWSBufLen += len;
+				}else{
+					clients[i].recvBufLen += len;
+				}
 			}
 		}
 	}

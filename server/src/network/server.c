@@ -106,21 +106,25 @@ void serverParsePacketSmall(int c, packetSmall *p){
 
 		case 1: // requestPlayerSpawnPos
 			msgRequestPlayerSpawnPos(c,p);
+			if(verbose){printf("[%02i] requestPlayerSpawnPos\n",c);}
 		break;
 
 		case 2: // requestChungus
 			msgRequestChungus(c,p);
+			if(verbose){printf("[%02i] requestChungus\n",c);}
 		break;
 
 		case 3: // placeBlock
 			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],p->target);
 			sendToAllExcept(c,p,sizeof(packetSmall));
+			if(verbose){printf("[%02i] placeBlock\n",c);}
 		break;
 
 		case 4: // mineBlock
 			blockMiningDropItemsPos(p->val.i[0],p->val.i[1],p->val.i[2],worldGetB(p->val.i[0],p->val.i[1],p->val.i[2]));
 			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],0);
 			sendToAllExcept(c,p,sizeof(packetSmall));
+			if(verbose){printf("[%02i] mineBlock\n",c);}
 		break;
 
 		default:
@@ -140,18 +144,22 @@ void serverParsePacketMedium(int c, packetMedium *p){
 			memcpy(clients[c].playerName,p->val.c,sizeof(p->val.c));
 			clients[c].playerName[sizeof(clients[c].playerName)-1] = 0;
 			sendPlayerJoinMessage(c);
+			if(verbose){printf("[%02i] sendPlayerName\n",c);}
 		break;
 
 		case 2:
 			itemDropNewC(p);
+			if(verbose){printf("[%02i] itemDropNewC\n",c);}
 		break;
 
 		case 3:
 			grenadeNew(p);
+			if(verbose){printf("[%02i] grenadeNew\n",c);}
 		break;
 
 		case 4:
 			beamblast(c,p);
+			if(verbose){printf("[%02i] beamblast\n",c);}
 		break;
 
 		default:
@@ -169,10 +177,12 @@ void serverParsePacketLarge(int c, packetLarge *p){
 
 		case 1:
 			serverParsePlayerPos(c,p);
+			//if(verbose){printf("[%02i] sendPlayerPos\n",c);}
 		break;
 
 		case 2:
 			serverParseChatMsg(c,p);
+			if(verbose){printf("[%02i] sendChatMsg\n",c);}
 		break;
 
 		default:
@@ -227,37 +237,55 @@ void serverParsePacket(int i){
 }
 
 void serverParseWSPacket(int i){
-	return;
 	for(int max=16;max > 0;--max){
-		if(clients[i].recvBufLen < 20){ return; }
-		//unsigned int mLen = clients[i].recvBuf[0];
-		unsigned int pLen = packetLen(clients[i].recvBuf);
-		if(pLen <= 0){ return; }
-		if(pLen > clients[i].recvBufLen){ return; }
+		if(clients[i].recvWSBufLen < 16){ return; }
+		uint8_t  opcode  = clients[i].recvWSBuf[0];
+		uint8_t  masklen = clients[i].recvWSBuf[1];
+		uint64_t mlen    = 0;
+		uint8_t  mask[4];
+		unsigned int ii=0;
+		if(opcode != 0x82){
+			fprintf(stderr,"oh noes: %X\n",opcode);
+			serverKill(i);
+		}
+		if((masklen&0x80) == 0){
+			//See: https://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-17
+			fprintf(stderr,"Clients MUST mask: %X\n",masklen);
+			serverKill(i);
+		}
+		if((masklen&0x7F) == 0x7E){
+			mlen = (clients[i].recvWSBuf[2]<<8) | clients[i].recvWSBuf[3];
+			ii = 4;
+		}else if((masklen&0x7F) == 0x7F){
+			// > 4GB Messages are not supported, therefore the upper 32-bits are ignored
+			mlen |= clients[i].recvWSBuf[6] << 24;
+			mlen |= clients[i].recvWSBuf[7] << 16;
+			mlen |= clients[i].recvWSBuf[8] <<  8;
+			mlen |= clients[i].recvWSBuf[9]      ;
+			ii = 10;
+		}else{
+			mlen = masklen&0x7F;
+			ii = 2;
+		}
+		mask[0] = clients[i].recvWSBuf[ii++];
+		mask[1] = clients[i].recvWSBuf[ii++];
+		mask[2] = clients[i].recvWSBuf[ii++];
+		mask[3] = clients[i].recvWSBuf[ii++];
 
-		switch(pLen){
-			case sizeof(packetSmall):
-				serverParsePacketSmall (i, (packetSmall *)  clients[i].recvBuf);
-			break;
-			case sizeof(packetMedium):
-				serverParsePacketMedium(i, (packetMedium *) clients[i].recvBuf);
-			break;
-			case sizeof(packetLarge):
-				serverParsePacketLarge (i, (packetLarge *)  clients[i].recvBuf);
-			break;
-			case sizeof(packetHuge):
-				serverParsePacketHuge  (i, (packetHuge *)   clients[i].recvBuf);
-			break;
+		for(uint64_t iii=0;iii<mlen;iii++){
+			clients[i].recvBuf[clients[i].recvBufLen++] = clients[i].recvWSBuf[ii+iii] ^ mask[iii&3];
 		}
 
-		if(clients[i].recvBufLen != pLen){
-			for(unsigned int ii=0;ii < (clients[i].recvBufLen - pLen);++ii){
-				clients[i].recvBuf[ii] = clients[i].recvBuf[ii+pLen];
+		ii += mlen;
+		if(clients[i].recvWSBufLen != ii){
+			for(unsigned int iii=0;iii < (clients[i].recvWSBufLen - ii);++iii){
+				clients[i].recvWSBuf[iii] = clients[i].recvWSBuf[iii+ii];
 			}
 		}
-		clients[i].recvBufLen -= pLen;
+		clients[i].recvWSBufLen -= ii;
 	}
 }
+
 
 void serverParseWebSocketHeaderField(int c,const char *key, const char *val){
 	static SHA1_CTX ctx;
@@ -360,9 +388,8 @@ void serverParse(){
 			case 1:
 				if(clients[i].flags&1){
 					serverParseWSPacket(i);
-				}else{
-					serverParsePacket(i);
 				}
+				serverParsePacket(i);
 				break;
 		}
 	}
@@ -484,7 +511,6 @@ void sendToClient(int c,void *data,int len){
 		}
 	}
 	if(clients[c].flags & 1){
-		printf("send WS Data %i\n",len);
 		clients[c].sendBuf[clients[c].sendBufLen++] = 0x82;
 		if(len < 126){
 			clients[c].sendBuf[clients[c].sendBufLen++] = len;

@@ -8,6 +8,7 @@
 int   optionWorldSeed    = 0;
 int   optionPort         = 0;
 bool  optionSingleplayer = false;
+bool  verbose            = false;
 
 void parseOptions(int argc,const char *argv[]){
 	for(int i=0;i<argc;i++){
@@ -23,6 +24,10 @@ void parseOptions(int argc,const char *argv[]){
 				optionPort = atoi(argv[i]+2+strlen("port"));
 				continue;
 			}
+		}
+		if(strncmp(argv[i]+1,"verbose",strlen("verbose")) == 0){
+			verbose = true;
+			continue;
 		}
 		if(strncmp(argv[i]+1,"singleplayer",strlen("singleplayer")) == 0){
 			if(argv[i][1+strlen("singleplayer")] == '='){
