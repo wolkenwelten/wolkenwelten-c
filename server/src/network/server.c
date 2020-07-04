@@ -492,6 +492,35 @@ void serverHandleEvents(){
 	serverSend();
 }
 
+int addWSMessagePrefix(uint8_t *d, int len, int maxlen){
+	if(len < 126){
+		if(maxlen <= 2){return 0;}
+		*d++ = 0x82; // Opcode - Binary Data / Fin Bit
+		*d++ = len;
+		return 2;
+	}else if(len < 0xFFFF){
+		if(maxlen <= 3){return 0;}
+		*d++ = 0x82; // Opcode - Binary Data / Fin Bit
+		*d++ = 0x7E;
+		*d++ = (len>>8) & 0xFF;
+		*d++ = (len   ) & 0xFF;
+		return 4;
+	}else{
+		if(maxlen <= 9){return 0;}
+		*d++ = 0x82; // Opcode - Binary Data / Fin Bit
+		*d++ = 0x7F;
+		*d++ = 0;
+		*d++ = 0;
+		*d++ = 0;
+		*d++ = 0;
+		*d++ = (len>>24) & 0xFF;
+		*d++ = (len>>16) & 0xFF;
+		*d++ = (len>> 8) & 0xFF;
+		*d++ = (len    ) & 0xFF;
+		return 10;
+	}
+}
+
 void sendToClient(int c,void *data,int len){
 	int ret;
 	int tlen = len;
@@ -511,23 +540,12 @@ void sendToClient(int c,void *data,int len){
 		}
 	}
 	if(clients[c].flags & 1){
-		clients[c].sendBuf[clients[c].sendBufLen++] = 0x82;
-		if(len < 126){
-			clients[c].sendBuf[clients[c].sendBufLen++] = len;
-		}else if(len < 0xFFFF){
-			clients[c].sendBuf[clients[c].sendBufLen++] = 0x7E;
-			clients[c].sendBuf[clients[c].sendBufLen++] = (len>>8) & 0xFF;
-			clients[c].sendBuf[clients[c].sendBufLen++] = (len   ) & 0xFF;
+		ret = addWSMessagePrefix(clients[c].sendBuf + clients[c].sendBufLen,len,sizeof(clients[c].sendBuf)-clients[c].sendBufLen);
+		if(ret <= 0){
+			serverKill(c);
+			return;
 		}else{
-			clients[c].sendBuf[clients[c].sendBufLen++] = 0x7F;
-			clients[c].sendBuf[clients[c].sendBufLen++] = 0;
-			clients[c].sendBuf[clients[c].sendBufLen++] = 0;
-			clients[c].sendBuf[clients[c].sendBufLen++] = 0;
-			clients[c].sendBuf[clients[c].sendBufLen++] = 0;
-			clients[c].sendBuf[clients[c].sendBufLen++] = (len>>24) & 0xFF;
-			clients[c].sendBuf[clients[c].sendBufLen++] = (len>>16) & 0xFF;
-			clients[c].sendBuf[clients[c].sendBufLen++] = (len>> 8) & 0xFF;
-			clients[c].sendBuf[clients[c].sendBufLen++] = (len    ) & 0xFF;
+			clients[c].sendBufLen += ret;
 		}
 	}
 	memcpy(clients[c].sendBuf+clients[c].sendBufLen,data,len);

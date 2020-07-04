@@ -22,7 +22,11 @@ typedef struct {
 
 	unsigned int sendBufSent;
 	unsigned int sendBufLen;
-	uint8_t sendBuf[1<<22];
+	uint8_t sendBuf[1<<20];
+	
+	unsigned int sendBufZSent;
+	unsigned int sendBufZLen;
+	uint8_t sendBufZ[1<<20];
 } clientConnection;
 
 extern clientConnection clients[32];

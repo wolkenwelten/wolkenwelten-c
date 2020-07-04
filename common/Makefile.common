@@ -1,0 +1,3 @@
+COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
+COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
+COMMON_OBJS      := ${COMMON_SRCS:.c=.o}

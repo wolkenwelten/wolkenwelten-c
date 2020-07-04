@@ -17,8 +17,8 @@ $(CLIENT_OBJS): CINCLUDES += $(CLIENT_CINCLUDES)
 
 .PHONY: all
 all: wolkenwelten
-wolkenwelten: client/make.deps $(CLIENT_OBJS)
-	$(CC) $(CLIENT_OBJS) -g -o wolkenwelten $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(CLIENT_LIBS)
+wolkenwelten: client/make.deps $(CLIENT_OBJS) $(COMMON_OBJS)
+	$(CC) $(CLIENT_OBJS) $(COMMON_OBJS) -g -o wolkenwelten $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(CLIENT_LIBS)
 
 .deps: client/make.deps
 client/make.deps: | client/src/tmp/assets.h client/src/tmp/meshassets.h client/src/tmp/cto.h

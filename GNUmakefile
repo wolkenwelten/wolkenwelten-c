@@ -6,6 +6,7 @@ WARNINGS     := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align
 CFLAGS       := -g
 CSTD         := -std=c99
 
+include common/Makefile.common
 include client/Makefile.client
 include server/Makefile.server
 
