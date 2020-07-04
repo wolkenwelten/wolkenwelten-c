@@ -1,22 +1,23 @@
 #include "gui.h"
 
-#include "../gfx/glew.h"
+
 #include "../main.h"
+#include "../misc/options.h"
 #include "../game/blockType.h"
-#include "../gfx/mesh.h"
 #include "../game/entity.h"
 #include "../game/item.h"
-#include "../misc/options.h"
 #include "../sdl/sdl.h"
+#include "../gfx/glew.h"
+#include "../gfx/mesh.h"
 #include "../gfx/objs.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
+#include "../gfx/mat.h"
 #include "../gfx/texture.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../gui/inventory.h"
 #include "../tmp/cto.h"
-#include "../gfx/mat.h"
 #include "../gui/textInput.h"
 #include "../network/chat.h"
 #include "../network/client.h"
@@ -34,8 +35,8 @@ textMesh *cursorMesh;
 
 bool mouseLClicked = false;
 bool mouseRClicked = false;
+bool mouseHidden   = false;
 int mousex,mousey;
-bool mouseHidden = false;
 
 float matOrthoProj[16];
 
@@ -68,17 +69,17 @@ void resizeUI(){
 }
 
 void initUI(){
-	itemMesh      = textMeshNew();
-	cursorMesh    = textMeshNew();
-	crosshairMesh = textMeshNew();
-	guim          = textMeshNew();
-	textm         = textMeshNew();
+	itemMesh             = textMeshNew();
+	cursorMesh           = textMeshNew();
+	crosshairMesh        = textMeshNew();
+	guim                 = textMeshNew();
+	textm                = textMeshNew();
 
-	itemMesh->tex      = tItems;
-	cursorMesh->tex    = tCursor;
-	guim->tex          = tGui;
-	textm->tex         = tGui;
-	crosshairMesh->tex = tCrosshair;
+	itemMesh->tex        = tItems;
+	cursorMesh->tex      = tCursor;
+	guim->tex            = tGui;
+	textm->tex           = tGui;
+	crosshairMesh->tex   = tCrosshair;
 
 	crosshairMesh->usage = GL_STATIC_DRAW;
 
@@ -105,36 +106,29 @@ void updateMouse(){
 	const int oldmx = mousex;
 	const int oldmy = mousey;
 	int btn = getMouseState(&mousex,&mousey);
+
 	if(mouseHidden){
 		if((mousex != oldmx) || (mousey != oldmy) || (btn != 0)){
 			mouseHidden = false;
 		}
 	}
 	drawCursor();
-	if(btn & 1){
-		if(!mouseLClicked){
-			mouseLClicked = true;
-			if(isInventoryOpen()){
-				updateInventoryClick(mousex,mousey,1);
-			}
-		}
-	}else{
-		if(mouseLClicked){
-			mouseLClicked = false;
-		}
-	}
 
-	if(btn & 4){
-		if(!mouseRClicked){
-			mouseRClicked = true;
-			if(isInventoryOpen()){
-				updateInventoryClick(mousex,mousey,3);
-			}
+	if((btn & 1) && !mouseLClicked){
+		mouseLClicked = true;
+		if(isInventoryOpen()){
+			updateInventoryClick(mousex,mousey,1);
 		}
-	}else{
-		if(mouseRClicked){
-			mouseRClicked = false;
+	}else if(mouseLClicked){
+		mouseLClicked = false;
+	}
+	if((btn & 4) && !mouseRClicked){
+		mouseRClicked = true;
+		if(isInventoryOpen()){
+			updateInventoryClick(mousex,mousey,3);
 		}
+	}else if(mouseRClicked){
+		mouseRClicked = false;
 	}
 }
 
@@ -147,15 +141,15 @@ const char *getHumanReadableSize(size_t n){
 		if(n<1024){break;}
 		n = n >> 10;
 	}
-	i = snprintf(buf,sizeof(buf),"%"PRIuPTR"%s",n,suffix[i]);
+	i = snprintf(buf,sizeof(buf),"%llu%s",(long long unsigned int)n,suffix[i]);
 	buf[sizeof(buf)-1] = 0;
 	return buf;
 }
 
 void drawDebuginfo(){
 	if(!playerChunkActive){
-		textm->sx = screenWidth/2-(8*16);
-		textm->sy = screenHeight/2+32;
+		textm->sx   = screenWidth/2-(8*16);
+		textm->sy   = screenHeight/2+32;
 		textm->size = 2;
 		textMeshPrintf(textm,"Loading World!!!");
 	}
@@ -191,8 +185,6 @@ void drawDebuginfo(){
 	textMeshPrintf(textm,"ActiveChungi: %2i\n",chungusGetActiveCount());
 	textMeshPrintf(textm,"Bytes Sent  : %s\n",getHumanReadableSize(sentBytesCurrentSession));
 	textMeshPrintf(textm,"Bytes Recvd : %s\n",getHumanReadableSize(recvBytesCurrentSession));
-
-
 }
 
 void drawItemBar(){
@@ -287,7 +279,7 @@ void drawActiveItem(){
 	if(aiMesh == NULL){return;}
 
 	float animOff = player->yoff;
-	float hitOff = player->hitOff;
+	float hitOff  = player->hitOff;
 
 	shaderBind(sMesh);
 	if(itemHasMineAction(activeItem)){
@@ -307,8 +299,8 @@ void drawActiveItem(){
 }
 
 void drawChat(){
-	textm->sy = screenHeight - (13*16);
-	textm->sx = 4;
+	textm->sy   = screenHeight - (13*16);
+	textm->sx   = 4;
 	textm->size = 1;
 	for(int i=0;i<8;i++){
 		textMeshAddString(textm,chatLog[i]);
