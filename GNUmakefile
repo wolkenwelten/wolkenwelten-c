@@ -2,7 +2,7 @@ CC           := cc
 OPTIMIZATION := -O3 -flto -ffast-math
 CINCLUDES    :=
 LIBS         := -lm
-WARNINGS     := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align=strict
+WARNINGS     := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align
 CFLAGS       := -g
 CSTD         := -std=c99
 
