@@ -499,14 +499,14 @@ int addWSMessagePrefix(uint8_t *d, int len, int maxlen){
 		*d++ = len;
 		return 2;
 	}else if(len < 0xFFFF){
-		if(maxlen <= 3){return 0;}
+		if(maxlen <= 4){return 0;}
 		*d++ = 0x82; // Opcode - Binary Data / Fin Bit
 		*d++ = 0x7E;
 		*d++ = (len>>8) & 0xFF;
 		*d++ = (len   ) & 0xFF;
 		return 4;
 	}else{
-		if(maxlen <= 9){return 0;}
+		if(maxlen < 10){return 0;}
 		*d++ = 0x82; // Opcode - Binary Data / Fin Bit
 		*d++ = 0x7F;
 		*d++ = 0;
@@ -539,7 +539,7 @@ void sendToClient(int c,void *data,int len){
 		}
 	}
 	if(clients[c].flags & 1){
-		clients[c].sendBufLen = addWSMessagePrefix(clients[c].sendBuf + clients[c].sendBufLen,len,sizeof(clients[c].sendBuf)-clients[c].sendBufLen);
+		clients[c].sendBufLen += addWSMessagePrefix(clients[c].sendBuf + clients[c].sendBufLen,len,sizeof(clients[c].sendBuf)-clients[c].sendBufLen);
 	}
 	memcpy(clients[c].sendBuf+clients[c].sendBufLen,data,len);
 	clients[c].sendBufLen += len;

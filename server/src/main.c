@@ -98,6 +98,7 @@ int main( int argc, const char* argv[] ){
 	initOptions(argc,argv);
 	seedRNG(time(NULL));
 
+
 	printf("%sWolkenwelten%s %s %s[%.16s]%s built %s\n",termColors[2],termColors[6],VERSION,termColors[3],COMMIT,termReset,BUILDDATE);
 	serverInit();
 	bigchungusInit(&world);
