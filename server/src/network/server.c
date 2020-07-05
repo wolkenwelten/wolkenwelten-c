@@ -527,26 +527,19 @@ void sendToClient(int c,void *data,int len){
 	if(c < 0){return;}
 	if(c >= clientCount){return;}
 	if(clients[c].flags&1){
-		tlen += 4;
+		tlen += 10;
 	}
 
 	while(clients[c].sendBufLen+tlen > (int)sizeof(clients[c].sendBuf)){
 		ret = serverSendClient(c);
 		if(ret == 1){
-			printf("Buffer blocking\n");
 			usleep(10);
 		}else if(ret == 2){
 			return;
 		}
 	}
 	if(clients[c].flags & 1){
-		ret = addWSMessagePrefix(clients[c].sendBuf + clients[c].sendBufLen,len,sizeof(clients[c].sendBuf)-clients[c].sendBufLen);
-		if(ret <= 0){
-			serverKill(c);
-			return;
-		}else{
-			clients[c].sendBufLen += ret;
-		}
+		clients[c].sendBufLen = addWSMessagePrefix(clients[c].sendBuf + clients[c].sendBufLen,len,sizeof(clients[c].sendBuf)-clients[c].sendBufLen);
 	}
 	memcpy(clients[c].sendBuf+clients[c].sendBufLen,data,len);
 	clients[c].sendBufLen += len;
