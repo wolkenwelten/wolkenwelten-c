@@ -39,9 +39,11 @@ releases/win/wolkenwelten/wolkenwelten-server.exe: releases/win/wolkenwelten-ser
 	strip -gxX $@
 
 wolkenwelten.exe: client/make.deps releases/win/wolkenwelten.res $(CLIENT_OBJS)
+	rm -f wolkenwelten.exe
 	$(CC) $(CLIENT_OBJS) $(COMMON_OBJS) releases/win/wolkenwelten.res -g -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(CLIENT_LIBS)
 
 wolkenwelten-server.exe: server/make.deps releases/win/wolkenwelten-server.res $(SERVER_OBJS)
+	rm -f wolkenwelten-server.exe
 	$(CC) $(SERVER_OBJS) $(COMMON_OBJS) releases/win/wolkenwelten-server.res -g -o $@ $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES) $(SERVER_LIBS)
 
 releases/win/wolkenwelten-server.res: platform/win/wolkenwelten-server.rc platform/win/icon.ico
