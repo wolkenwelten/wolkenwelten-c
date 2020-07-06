@@ -65,17 +65,20 @@ void initSignals(){
 
 void initTermColors(){
 	char *clicolor = getenv("CLICOLOR");
-	for(int i=0;i<16;i++){
-		termColors[i] = nop;
-	}
-	termReset = "";
-	if(clicolor == NULL){return;}
-	if(*clicolor == 0){return;}
-	if(atoi(clicolor) == 0){return;}
-	termReset = "\033[0m";
-	for(int i=0;i<16;i++){
-		termColors[i] = ansiColors[i];
-	}
+	setvbuf(stdout, NULL, _IONBF, 0);
+	setvbuf(stderr, NULL, _IONBF, 0);
+
+	if((clicolor == NULL) || (*clicolor == 0) || (atoi(clicolor) == 0)){
+		termReset = "";
+		for(int i=0;i<16;i++){
+			termColors[i] = nop;
+		}
+	}else{
+		termReset = "\033[0m";
+		for(int i=0;i<16;i++){
+			termColors[i] = ansiColors[i];
+		}
+	}	
 }
 
 void updateWorldStep(){
@@ -93,13 +96,10 @@ void updateWorld(){
 }
 
 int main( int argc, const char* argv[] ){
-	setvbuf(stdout, NULL, _IONBF, 0);
-	setvbuf(stderr, NULL, _IONBF, 0);
 	initSignals();
 	initTermColors();
 	initOptions(argc,argv);
 	seedRNG(time(NULL));
-
 
 	printf("%sWolkenwelten%s %s %s[%.16s]%s built %s\n",termColors[2],termColors[6],VERSION,termColors[3],COMMIT,termReset,BUILDDATE);
 	serverInit();
