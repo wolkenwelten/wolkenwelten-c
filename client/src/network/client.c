@@ -194,7 +194,6 @@ void clientParse(){
 
 void clientSendName(){
 	packetMedium p;
-	clientGetName();
 	strncpy((char *)p.val.c,playerName,28);
 	packetQueueM(&p,1);
 }
@@ -215,6 +214,11 @@ void clientHandleEvents(){
 	clientRead();
 	clientParse();
 	msgSendPlayerPos();
+}
+
+void clientGoodbye(){
+	msgGoodbye();
+	clientSendAllToServer();
 }
 
 void queueToServer(void *data, unsigned int len){

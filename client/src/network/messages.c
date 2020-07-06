@@ -105,6 +105,11 @@ void msgRequestPlayerSpawnPos(){
 	packetQueueS(&p,1);
 }
 
+void msgGoodbye(){
+	packetSmall p;
+	packetQueueS(&p,5);
+}
+
 void msgRequestChungus(int x, int y, int z){
 	packetSmall p;
 	p.val.i[0] = x;

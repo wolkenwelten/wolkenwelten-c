@@ -95,6 +95,7 @@ int main( int argc, char* argv[] ){
 	initOptions(argc,argv);
 	initSDL();
 	seedRNG(time(NULL));
+	
 
 	bigchungusInit(&world);
 	shaderInit();
@@ -113,8 +114,9 @@ int main( int argc, char* argv[] ){
 	modsInit();
 	textureBuildBlockIcons();
 
+	
 	player = characterNew();
-
+	clientGetName();
 	#ifdef __EMSCRIPTEN__
 		emscripten_set_main_loop(mainloop, 0, true);
 	#else
@@ -125,6 +127,7 @@ int main( int argc, char* argv[] ){
 	meshFreeAll();
 	textureFree();
 	shaderFree();
+	clientGoodbye();
 	clientFree();
 	closeSDL();
 	closeSingleplayerServer();

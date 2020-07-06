@@ -10,7 +10,21 @@ bool winsockInit        = false;
 bool spSpawned          = false;
 PROCESS_INFORMATION pi;
 
+void tryWinsockInit(){
+	int err;
+	if(!winsockInit){
+		WSADATA wsaData;
+		err = WSAStartup(MAKEWORD(2,2), &wsaData);
+		if(err != 0){
+			fprintf(stderr,"WSAStartup failed with error %i\n", WSAGetLastError());
+			return;
+		}
+		winsockInit = true;
+	}
+}
+
 void clientGetName(){
+	tryWinsockInit();
 	gethostname(playerName,28);
 }
 
@@ -58,15 +72,7 @@ void clientInit(){
 	struct sockaddr_in serv_addr;
 	struct hostent *serveraddr;
 	int err,yes=1;
-	if(!winsockInit){
-		WSADATA wsaData;
-		err = WSAStartup(MAKEWORD(2,2), &wsaData);
-		if(err != 0){
-			fprintf(stderr,"WSAStartup failed with error %i\n", WSAGetLastError());
-			return;
-		}
-		winsockInit = true;
-	}
+	tryWinsockInit();
 
 	if(serverSocket != 0){return;}
 	if(singleplayer && (singlePlayerPID == 0)){

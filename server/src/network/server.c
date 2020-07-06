@@ -126,6 +126,11 @@ void serverParsePacketSmall(int c, packetSmall *p){
 			sendToAllExcept(c,p,sizeof(packetSmall));
 			if(verbose){printf("[%02i] mineBlock\n",c);}
 		break;
+		
+		case 5: // Goodbye
+			errno=0;
+			serverKill(c);
+		break;
 
 		default:
 			printf("%i S->%i\n",c,ptype);
