@@ -2,30 +2,54 @@
 
 #include <process.h>
 #include <winsock2.h>
+#include <windows.h>
 
 bool signalHandlerBound = false;
 int  serverSocket       = 0;
 bool winsockInit        = false;
 bool spSpawned          = false;
+PROCESS_INFORMATION pi;
 
 void clientGetName(){
 	gethostname(playerName,28);
 }
 
 void startSingleplayerServer(){
-	char seed[64];
+	static char cmd[128];
+	STARTUPINFO si;
+
 	if(spSpawned){return;}
 	if(optionWorldSeed == 0){
 		optionWorldSeed = (int)(time(NULL)&0xFFFF);
 	}
-	snprintf(seed,sizeof(seed)-1,"-worldSeed=%i",optionWorldSeed);
-	_spawnl( _P_NOWAIT , "wolkenwelten-server.exe", seed, "-singleplayer=1",(const char *)NULL);
-	spSpawned = true;
-	singlePlayerPID = 1;
+	snprintf(cmd,sizeof(cmd)-1,"wolkenwelten-server.exe -singleplayer=1 -worldSeed=%i",optionWorldSeed);
+	ZeroMemory( &si, sizeof(si) );
+	ZeroMemory( &pi, sizeof(pi) );
+	si.cb = sizeof(si);
+	// tell the application that we are setting the window display
+	// information within this structure
+	si.dwFlags = STARTF_USESHOWWINDOW;
+	// set the window display to HIDE
+	si.wShowWindow = SW_HIDE;
+	
+	if(CreateProcess( NULL,   // No module name (use command line)
+		cmd,            // Command line
+		NULL,           // Process handle not inheritable
+		NULL,           // Thread handle not inheritable
+		FALSE,          // Set handle inheritance to FALSE
+		0,              // No creation flags
+		NULL,           // Use parent's environment block
+		NULL,           // Use parent's starting directory 
+		&si,            // Pointer to STARTUPINFO structure
+		&pi )){         // Pointer to PROCESS_INFORMATION structure
+		spSpawned = true;
+		singlePlayerPID = pi.dwProcessId;
+	}
 	strncpy(serverName,"localhost",sizeof(serverName)-1);
 }
 
 void closeSingleplayerServer(){
+	TerminateProcess(pi.hProcess,0);
 	spSpawned = false;
 	singlePlayerPID = 0;
 }
@@ -91,7 +115,6 @@ void clientInit(){
 
 void clientFree(){
 	if(serverSocket > 0){
-		fprintf(stderr,"Client Free!\n");
 		closesocket(serverSocket);
 		serverSocket = 0;
 		menuError = "Connection closed";
