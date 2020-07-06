@@ -586,64 +586,85 @@ void worldgenRemoveDirt(worldgen *wgen){
 	}
 }
 
-void worldgenIsland(worldgen *wgen, int x,int y,int z,int size){
+void worldgenDirtIsland(worldgen *wgen, int x,int y,int z,int size){
 	int w,h,d;
+	w = h = d = size;
+	switch(rngValM(48)){
+		case 1:
+			w/=2;
+		break;
+		case 2:
+		case 3:
+			h/=2;
+		break;
+		case 4:
+			d/=2;
+		break;
+	}
+	worldgenRock(wgen,x,y,z,w,h,d);
+	worldgenRemoveDirt(wgen);
+}
+
+void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
+	int b=12;
+	switch(rngValM(2)){
+		case 0:
+			b = 9;
+		break;
+		default:
+		case 1:
+			b = 12;
+		break;
+	}
+
+	x &= 0xF0;
+	y &= 0xF0;
+	z &= 0xF0;
+	if(x == 0){x += 0x10;}
+	if(y == 0){y += 0x10;}
+	if(z == 0){z += 0x10;}
+	if(x == 0xF0){x -= 0x10;}
+	if(y == 0xF0){y -= 0x10;}
+	if(z == 0xF0){z -= 0x10;}
+	
+	switch(rngValM(64)){
+		case 0:
+			size *= 8;
+		break;
+		
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			size *= 3;
+		break;
+	}
+
+	switch(rngValM(3)){
+		default:
+		case 0:
+			chungusBox(wgen->clay,x,y,z,size,size,size,b);
+		break;
+		case 1:
+			worldgenPrism(wgen,x,y,z,size,b);
+		break;
+		case 2:
+			worldgenPyramid(wgen,x,y,z,size,b);
+		break;
+	}
+}
+
+void worldgenIsland(worldgen *wgen, int x,int y,int z,int size){
 	wgen->minX = wgen->maxX = x;
 	wgen->minY = wgen->maxY = y;
 	wgen->minZ = wgen->maxZ = z;
 	wgen->vegetationChance = wgen->vegetationConcentration/32;
 
-	w = h = d = size;
 	wgen->iterChance = rngValM(4)*8;
 	if(wgen->geoIslands){
-		int b=12;
-		switch(rngValM(2)){
-			case 0:
-				b = 9;
-			break;
-			default:
-			case 1:
-				b = 12;
-			break;
-		}
-
-		x &= 0xF0;
-		y &= 0xF0;
-		z &= 0xF0;
-		if(x == 0){x += 0x10;}
-		if(y == 0){y += 0x10;}
-		if(z == 0){z += 0x10;}
-		if(x == 0xF0){x -= 0x10;}
-		if(y == 0xF0){y -= 0x10;}
-		if(z == 0xF0){z -= 0x10;}
-
-		switch(rngValM(3)){
-			default:
-			case 0:
-				chungusBox(wgen->clay,x,y,z,size,size,size,b);
-			break;
-			case 1:
-				worldgenPrism(wgen,x,y,z,size,b);
-			break;
-			case 2:
-				worldgenPyramid(wgen,x,y,z,size,b);
-			break;
-		}
+		worldgenGeoIsland(wgen,x,y,z,size);
 	}else{
-		switch(rngValM(48)){
-			case 1:
-				w/=2;
-			break;
-			case 2:
-			case 3:
-				h/=2;
-			break;
-			case 4:
-				d/=2;
-			break;
-		}
-		worldgenRock(wgen,x,y,z,w,h,d);
-		worldgenRemoveDirt(wgen);
+		worldgenDirtIsland(wgen,x,y,z,size);
 	}
 }
 
@@ -697,6 +718,11 @@ void worldgenCluster(worldgen *wgen, int size, int iSize, int iMin,int iMax){
 		worldgenIsland(wgen,CHUNGUS_SIZE/2+xoff,CHUNGUS_SIZE/2+yoff,CHUNGUS_SIZE/2+zoff,size);
 	}else{
 		iMin*=2;
+	}
+	if(wgen->geoIslands){
+		iMin *= 12;
+		iMax *= 12;
+		iSize /= 2;
 	}
 	for(int i=rngValMM(iMin,iMax);i>0;i--){
 		int nx = rngValM(CHUNGUS_SIZE-CHUNGUS_SIZE/8)+CHUNGUS_SIZE/16;
