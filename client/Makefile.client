@@ -51,3 +51,6 @@ client/tools/objparser: client/tools/objparser.c
 ifneq ($(MAKECMDGOALS),clean)
 -include client/make.deps
 endif
+
+client/src/network/client.o: client/src/network/client_bsd.h
+client/src/network/client.o: client/src/network/client_win.h

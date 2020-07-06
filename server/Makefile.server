@@ -25,3 +25,6 @@ server/make.deps: server/src/tmp/cto.h
 ifneq ($(MAKECMDGOALS),clean)
 -include server/make.deps
 endif
+
+server/src/network/server.o: server/src/network/server_bsd.h
+server/src/network/server.o: server/src/network/server_win.h
