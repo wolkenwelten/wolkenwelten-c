@@ -7,5 +7,5 @@ else
 fi
 if [ $? -eq 0 ]; then
 	echo ""
-	./wolkenwelten -soundVolume=5 -worldSeed=31 -debugInfo=1
+	./wolkenwelten -soundVolume=5 -worldSeed=11 -debugInfo=1
 fi
