@@ -396,8 +396,6 @@ void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b){
 			for(int cz = -size;cz <= size;cz++){
 				if(((cx*cx)+(cz*cz)+(cy*cy)) < rsq){
 					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,b);
-				}else{
-					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,0);
 				}
 			}
 		}
@@ -412,8 +410,6 @@ void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b){
 			for(int cz = -r;cz <= r;cz++){
 				if(((cx*cx)+(cz*cz)) < rsq){
 					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,b);
-				}else{
-					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,0);
 				}
 			}
 		}
