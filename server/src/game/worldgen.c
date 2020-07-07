@@ -404,22 +404,6 @@ void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b){
 	}
 }
 
-void worldgenRoundPyramid(worldgen *wgen, int x,int y,int z,int size,int b){
-	for(int cy=-size;cy<=size;cy++){
-		int r = cosf((((float)cy/(float)size)) * PI) * (float)size/2.f + (float)size/2.f;
-		float rsq = (r*r)*0.8f;
-		for(int cx = -r;cx <= r;cx++){
-			for(int cz = -r;cz <= r;cz++){
-				if(((cx*cx)+(cz*cz)) < rsq){
-					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,b);
-				}else{
-					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,0);
-				}
-			}
-		}
-	}
-}
-
 void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b){
 	for(int cy=-size;cy<=size;cy++){
 		int r = (size-abs(cy))/2;
@@ -689,7 +673,7 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 		break;
 	}
 
-	switch(rngValM(6)){
+	switch(rngValM(5)){
 		default:
 		case 0:
 			chungusBox(wgen->clay,x,y,z,size,size,size,b);
@@ -704,9 +688,6 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 			worldgenRoundPrism(wgen,x,y,z,size,b);
 		break;
 		case 4:
-			worldgenRoundPyramid(wgen,x,y,z,size,b);
-		break;
-		case 5:
 			worldgenSphere(wgen,x,y,z,size,b);
 		break;
 	}
