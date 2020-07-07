@@ -656,15 +656,17 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 	if(y == 0xF0){y -= 0x10;}
 	if(z == 0xF0){z -= 0x10;}
 
-	switch(rngValM(64)){
+	switch(rngValM(96)){
 		case 0:
-			size *= 8;
+			size *= 9;
 		break;
 
 		case 1:
 		case 2:
 		case 3:
 		case 4:
+		case 5:
+		case 6:
 			size *= 3;
 		break;
 	}
