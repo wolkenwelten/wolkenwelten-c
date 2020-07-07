@@ -55,7 +55,6 @@ bool fileExists(char *fn){
 				}
 			}
 		}
-		printf("ServerPath: %s\n",serverPath);
 		return serverPath;
 	}
 #endif
@@ -78,7 +77,6 @@ void startSingleplayerServer(){
 
 void closeSingleplayerServer(){
 	int tries = 10;
-	fprintf(stderr,"Goodbye, and thanks for all the fish.\n");
 	while(singlePlayerPID > 0){
 		if(--tries <= 0){
 			kill(singlePlayerPID,SIGKILL);
@@ -174,7 +172,6 @@ void clientInit(){
 
 void clientFree(){
 	if(serverSocket > 0){
-		fprintf(stderr,"Client Free!\n");
 		close(serverSocket);
 		serverSocket = 0;
 		menuError = "Connection closed";
