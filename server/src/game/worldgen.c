@@ -1,8 +1,10 @@
 #include "../game/worldgen.h"
 
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "../main.h"
 #include "../misc/options.h"
 #include "../misc/misc.h"
 #include "../voxel/chunk.h"
@@ -387,6 +389,53 @@ void worldgenMonolith(worldgen *wgen, int x,int y,int z){
 	}
 }
 
+void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b){
+	float rsq = (size*size);
+	for(int cy=-size;cy<=size;cy++){
+		for(int cx = -size;cx <= size;cx++){
+			for(int cz = -size;cz <= size;cz++){
+				if(((cx*cx)+(cz*cz)+(cy*cy)) < rsq){
+					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,b);
+				}else{
+					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,0);
+				}
+			}
+		}
+	}
+}
+
+void worldgenRoundPyramid(worldgen *wgen, int x,int y,int z,int size,int b){
+	for(int cy=-size;cy<=size;cy++){
+		int r = cosf((((float)cy/(float)size)) * PI) * (float)size/2.f + (float)size/2.f;
+		float rsq = (r*r)*0.8f;
+		for(int cx = -r;cx <= r;cx++){
+			for(int cz = -r;cz <= r;cz++){
+				if(((cx*cx)+(cz*cz)) < rsq){
+					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,b);
+				}else{
+					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,0);
+				}
+			}
+		}
+	}
+}
+
+void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b){
+	for(int cy=-size;cy<=size;cy++){
+		int r = (size-abs(cy))/2;
+		float rsq = (r*r)*0.8f;
+		for(int cx = -r;cx <= r;cx++){
+			for(int cz = -r;cz <= r;cz++){
+				if(((cx*cx)+(cz*cz)) < rsq){
+					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,b);
+				}else{
+					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,0);
+				}
+			}
+		}
+	}
+}
+
 void worldgenPrism(worldgen *wgen, int x,int y,int z,int size,int b){
 	for(int cy=-size;cy<=size;cy++){
 		int r = (size-abs(cy))/2;
@@ -640,7 +689,7 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 		break;
 	}
 
-	switch(rngValM(3)){
+	switch(rngValM(6)){
 		default:
 		case 0:
 			chungusBox(wgen->clay,x,y,z,size,size,size,b);
@@ -650,6 +699,15 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 		break;
 		case 2:
 			worldgenPyramid(wgen,x,y,z,size,b);
+		break;
+		case 3:
+			worldgenRoundPrism(wgen,x,y,z,size,b);
+		break;
+		case 4:
+			worldgenRoundPyramid(wgen,x,y,z,size,b);
+		break;
+		case 5:
+			worldgenSphere(wgen,x,y,z,size,b);
 		break;
 	}
 }
