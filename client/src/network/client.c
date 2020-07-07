@@ -8,7 +8,7 @@
 #include "../game/entity.h"
 #include "../game/grenade.h"
 #include "../game/itemDrop.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
 #include "../network/messages.h"

@@ -1,6 +1,6 @@
 #include "../voxel/chunk.h"
 
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../game/blockType.h"
 
 #include <math.h>

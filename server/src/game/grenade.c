@@ -3,7 +3,7 @@
 #include "../main.h"
 #include "../network/messages.h"
 #include "../game/entity.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../voxel/bigchungus.h"
 
 #include <math.h>

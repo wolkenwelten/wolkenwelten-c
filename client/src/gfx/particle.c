@@ -1,6 +1,6 @@
 #include "particle.h"
 #include "../tmp/assets.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
 #include "../gfx/mat.h"

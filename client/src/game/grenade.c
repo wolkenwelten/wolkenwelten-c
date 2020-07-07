@@ -5,7 +5,7 @@
 #include "../gfx/mesh.h"
 #include "../gfx/effects.h"
 #include "../gfx/objs.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../network/messages.h"
 #include "../voxel/bigchungus.h"
 

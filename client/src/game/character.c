@@ -10,7 +10,7 @@
 #include "../gfx/objs.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../network/packet.h"
 #include "../network/messages.h"
 #include "../sdl/sdl.h"

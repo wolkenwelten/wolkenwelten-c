@@ -8,7 +8,7 @@
 #include "../gfx/effects.h"
 #include "../gfx/texture.h"
 #include "../gfx/objs.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../sdl/sfx.h"
 #include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"

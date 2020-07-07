@@ -8,7 +8,7 @@
 #include "../gfx/mat.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../misc/noise.h"
 #include "../misc/options.h"
 #include "../network/messages.h"

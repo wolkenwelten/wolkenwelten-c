@@ -1,6 +1,6 @@
 #include "noise.h"
 #include <string.h>
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 
 unsigned char heightmap[256][256];
 unsigned char tmp[256][256];

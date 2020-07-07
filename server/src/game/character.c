@@ -8,7 +8,7 @@
 #include "../game/blockType.h"
 #include "../game/itemDrop.h"
 #include "../game/blockMining.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 
 character characterList[128];
 int characterCount = 0;

@@ -2,7 +2,7 @@
 #include "../main.h"
 #include "../game/blockType.h"
 #include "../gfx/texture.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../network/messages.h"
 
 #include <math.h>

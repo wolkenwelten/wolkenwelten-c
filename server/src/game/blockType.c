@@ -1,5 +1,5 @@
 #include "../game/blockType.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 
 #include <string.h>
 

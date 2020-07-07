@@ -2,7 +2,7 @@
 
 #include "../game/blockType.h"
 #include "../game/itemDrop.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../network/packet.h"
 #include "../network/messages.h"
 #include "../network/server.h"

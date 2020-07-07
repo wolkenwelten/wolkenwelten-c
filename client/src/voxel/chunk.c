@@ -4,7 +4,7 @@
 #include "../gfx/gfx.h"
 #include "../gfx/glew.h"
 #include "../gfx/shader.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 
 #include <math.h>
 #include <string.h>

@@ -8,7 +8,7 @@
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../network/messages.h"
 #include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"

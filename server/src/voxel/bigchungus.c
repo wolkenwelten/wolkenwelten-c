@@ -4,7 +4,7 @@
 #include "../game/entity.h"
 #include "../game/blockType.h"
 #include "../game/blockMining.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../misc/noise.h"
 #include "../misc/options.h"
 #include "../voxel/chungus.h"

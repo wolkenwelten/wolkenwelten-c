@@ -6,7 +6,7 @@
 
 #include "../main.h"
 #include "../misc/options.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../voxel/chunk.h"
 #include "../voxel/chungus.h"
 #include "../voxel/bigchungus.h"
@@ -675,12 +675,12 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 	if(x == 0xF0){x -= 0x10;}
 	if(y == 0xF0){y -= 0x10;}
 	if(z == 0xF0){z -= 0x10;}
-	
+
 	switch(rngValM(64)){
 		case 0:
 			size *= 8;
 		break;
-		
+
 		case 1:
 		case 2:
 		case 3:

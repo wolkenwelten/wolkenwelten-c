@@ -9,7 +9,7 @@
 #include "game/blockType.h"
 #include "game/recipe.h"
 #include "voxel/bigchungus.h"
-#include "misc/misc.h"
+#include "../../common/src/misc.h"
 #include "mods/mods.h"
 #include "network/server.h"
 #include "tmp/cto.h"
@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 
@@ -44,6 +45,12 @@ char *ansiColors[16] = {
 	"\033[1;36m",
 	"\033[1;37m"
 };
+
+uint64_t getMillis(){
+	struct timeval tv;
+	gettimeofday(&tv,NULL);
+	return (tv.tv_usec / 1000) + (tv.tv_sec * 1000);
+}
 
 void signalQuit(int signo){
 	(void)signo;
@@ -78,7 +85,7 @@ void initTermColors(){
 		for(int i=0;i<16;i++){
 			termColors[i] = ansiColors[i];
 		}
-	}	
+	}
 }
 
 void updateWorldStep(){

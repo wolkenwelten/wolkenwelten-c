@@ -3,7 +3,7 @@
 #include "../game/blockType.h"
 #include "../gfx/particle.h"
 #include "../sdl/sfx.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../sdl/input_gamepad.h"
 
 
@@ -38,7 +38,7 @@ void fxExplosionBomb(float x,float y,float z,float pw){
 void fxGrenadeTrail(float x,float y,float z,float pw){
 	(void)pw;
 	float vx,vy,vz;
-	
+
 	if((rngValR()&3)!=0){return;}
 	vx = (rngValf()-0.5f)/32.f;
 	vy = (rngValf()-0.5f)/32.f;

@@ -17,7 +17,7 @@
 #include "game/recipe.h"
 #include "voxel/chungus.h"
 #include "voxel/bigchungus.h"
-#include "misc/misc.h"
+#include "../../common/src/misc.h"
 #include "gfx/objs.h"
 #include "mods/mods.h"
 #include "network/client.h"
@@ -95,7 +95,7 @@ int main( int argc, char* argv[] ){
 	initOptions(argc,argv);
 	initSDL();
 	seedRNG(time(NULL));
-	
+
 
 	bigchungusInit(&world);
 	shaderInit();
@@ -114,7 +114,7 @@ int main( int argc, char* argv[] ){
 	modsInit();
 	textureBuildBlockIcons();
 
-	
+
 	player = characterNew();
 	clientGetName();
 	#ifdef __EMSCRIPTEN__

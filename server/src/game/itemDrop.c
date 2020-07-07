@@ -7,7 +7,7 @@
 #include "../network/messages.h"
 #include "../network/server.h"
 #include "../game/blockType.h"
-#include "../misc/misc.h"
+#include "../../../common/src/misc.h"
 #include "../main.h"
 
 typedef struct {
