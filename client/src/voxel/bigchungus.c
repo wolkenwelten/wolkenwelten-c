@@ -9,7 +9,6 @@
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
 #include "../../../common/src/misc.h"
-#include "../misc/noise.h"
 #include "../misc/options.h"
 #include "../network/messages.h"
 #include "../voxel/chungus.h"
@@ -46,17 +45,6 @@ float chungusRoughDistance(const character *cam, float x, float y,float z) {
 
 void bigchungusInit(bigchungus *c){
 	memset(c->chungi,0,256*128*256*sizeof(chunk *));
-
-	generateNoise(optionWorldSeed ^ 0x84407db3);
-	memcpy(c->vegetationConcentration,heightmap,sizeof(heightmap));
-	generateNoise(optionWorldSeed ^ 0xc2fb18f4);
-	memcpy(c->islandSizeModifier,heightmap,sizeof(heightmap));
-	generateNoise(optionWorldSeed ^ 0x1ab033cF);
-	memcpy(c->islandCountModifier,heightmap,sizeof(heightmap));
-	generateNoise(optionWorldSeed ^ 0x5CA28C8A);
-	memcpy(c->jaggynessMap,heightmap,sizeof(heightmap));
-	generateNoise(optionWorldSeed ^ 0xF79610E3);
-	memcpy(c->geoworldMap,heightmap,sizeof(heightmap));
 }
 
 void bigchungusFree(bigchungus *c){

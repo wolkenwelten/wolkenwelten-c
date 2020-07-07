@@ -9,11 +9,6 @@
 
 typedef struct {
 	chungus *chungi[256][128][256];
-	unsigned char vegetationConcentration[256][256];
-	unsigned char islandSizeModifier[256][256];
-	unsigned char islandCountModifier[256][256];
-	unsigned char jaggynessMap[256][256];
-	unsigned char geoworldMap[256][256];
 
 } bigchungus;
 
