@@ -108,7 +108,12 @@ int main( int argc, const char* argv[] ){
 	initOptions(argc,argv);
 	seedRNG(time(NULL));
 
-	printf("%sWolkenwelten%s %s %s[%.16s]%s Seed[%u] built %s\n",termColors[2],termColors[6],VERSION,termColors[3],COMMIT,termReset,optionWorldSeed,BUILDDATE);
+	printf("%sWolkenwelten",termColors[2]                );
+	printf(" %s%s"         ,termColors[6],VERSION        );
+	printf(" %s[%.16s]"    ,termColors[3],COMMIT         );
+	printf(" %sSeed[%u]"   ,termColors[4],optionWorldSeed);
+	printf(" %sbuilt %s\n" ,termReset    ,BUILDDATE      );
+
 	serverInit();
 	bigchungusInit(&world);
 	blockTypeInit();
