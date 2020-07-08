@@ -1,11 +1,11 @@
-(0) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
+(0) Enable hitting air/other players with damage + blowback
+(0) Enable damaging other players with grenades/beamblasts
+(0) Show the activeItem for other Characters
+(0) Send chunks compressed
 
-(A) Rework grappling hooks, the code is shit
-(A) Enable hitting air/other players with damage + blowback
-(A) Enable damaging other players with grenades/beamblasts
+(A) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
 (A) Rework the GUI Code, it is trash!
 (A) Proper Character Models
-(A) Show the activeItem for other Characters
 (A) MacOS Code signing
 
 (B) Some kind of jumping at the end of some grappling hook action
@@ -18,8 +18,8 @@
 (B) Fix wasm fullscreen problems
 (B) Good sfx for the beamblast
 (B) Add inventory class
-(B) Send chunks compressed
 
+(C) Rework grappling hooks, the code is shit
 (C) Add VoiceChat (G.711 ulaw FTW)
 (C) More worldgen variety
 (C) Fluids / Clouds
