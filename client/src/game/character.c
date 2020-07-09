@@ -4,6 +4,7 @@
 #include "../game/itemDrop.h"
 #include "../game/grapplingHook.h"
 #include "../game/blockMining.h"
+#include "../gui/gui.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
@@ -185,6 +186,7 @@ void characterUpdateDamage(character *c, int damage){
 		if(damage > 8){
 			sfxPlay(sfxImpact,1.f);
 			sfxPlay(sfxUngh,1.f);
+			setOverlayColor(0xFF0000FF,0);
 			characterHP(c,damage / -8);
 		}else{
 			sfxPlay(sfxStomp,1.f);
@@ -399,6 +401,7 @@ void characterDropItem(character *c, int i){
 
 void characterDie(character *c){
 	characterInit(c);
+	setOverlayColor(0xFF000000,0);
 }
 
 item *characterGetItemBarSlot(character *c, int i){
@@ -614,11 +617,15 @@ void characterUpdate(character *c){
 	c->vz = nvz;
 
 	if(c->fallingSound && (c->y > -32)){ c->fallingSound = false; }
-	if(c->y < -240){ characterDie(c); }
-	if((c->y < -64) && !c->fallingSound){
-		c->fallingSound = true;
-		sfxPlay(sfxFalling,1.f);
+	if(c->y < -500){ characterDie(c); }
+	if(c->y < -64){
+		setOverlayColor(0xFF000000,600);
+		if(!c->fallingSound){
+			c->fallingSound = true;
+			sfxPlay(sfxFalling,1.f);
+		}
 	}
+	
 
 	const int damage = characterPhysics(c);
 	characterUpdateDamage(c,damage);

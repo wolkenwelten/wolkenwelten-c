@@ -69,7 +69,9 @@ void playerUpdate(){
 				characterPlaceBlock(player);
 			}
 		}
+		resetOverlayColor();
 		characterUpdate(player);
+		commitOverlayColor();
 		grenadeUpdate();
 		entityUpdateAll();
 		itemDropUpdate();
