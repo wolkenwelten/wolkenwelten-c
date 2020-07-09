@@ -2,15 +2,15 @@ SERVER_CFLAGS    :=
 SERVER_CINCLUDES :=
 SERVER_LIBS      := $(LIBS)
 
-SERVER_HDRS     := $(shell find server/src -type f -name '*.h')
-SERVER_SRCS     := $(shell find server/src -type f -name '*.c')
+SERVER_HDRS     := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
+SERVER_SRCS     := $(shell find server/src -type f -name '*.c') $(COMMON_SRCS)
 SERVER_OBJS     := ${SERVER_SRCS:.c=.o}
 
 $(SERVER_OBJS): CFLAGS += $(SERVER_CFLAGS)
 $(SERVER_OBJS): CINCLUDES += $(SERVER_CINCLUDES)
 
 wolkenwelten-server: server/make.deps $(SERVER_OBJS) $(COMMON_OBJS)
-	$(CC) $(SERVER_OBJS) $(COMMON_OBJS) -g -o wolkenwelten-server $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES) $(SERVER_LIBS)
+	$(CC) $(SERVER_OBJS) -g -o wolkenwelten-server $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES) $(SERVER_LIBS)
 
 server/src/tmp/cto.c: tools/infogen
 	mkdir -p server/src/tmp/

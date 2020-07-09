@@ -1,5 +1,5 @@
 CC           := cc
-OPTIMIZATION := -O3 -flto -ffast-math
+OPTIMIZATION := -O3 -flto
 CINCLUDES    :=
 LIBS         := -lm
 WARNINGS     := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align

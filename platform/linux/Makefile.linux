@@ -24,7 +24,7 @@ releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/assets.c client/src/tmp
 releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
 releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/cto.c client/src/tmp/cto.h
 	mkdir -p releases/linux/wolkenwelten/
-	$(CC) $(CLIENT_SRCS) $(COMMON_SRCS) -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
+	$(CC) $(CLIENT_SRCS) -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(DYNLIBS) $(STATICLIBS)
 	strip -gxX $@
 
 releases/linux/wolkenwelten/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
