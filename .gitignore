@@ -14,6 +14,8 @@ xcuserdata/
 
 gmon.out
 
+/platform/wasm/emsdk
+
 # Arch makepkg files
 platform/linux/arch_pkgs/glew/*
 !platform/linux/arch_pkgs/glew/PKGBUILD

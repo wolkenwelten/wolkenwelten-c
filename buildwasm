@@ -1,0 +1,18 @@
+#!/bin/sh
+EMSDK_TESTED_VERSION="1.38.48"
+EMSDK_REPO_URL="https://github.com/emscripten-core/emsdk.git"
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+if [ ! -d "$DIR/platform/wasm/emsdk" ]; then
+	cd "$DIR/platform/wasm/"
+	git clone "$EMSDK_REPO_URL"
+fi
+cd "$DIR/platform/wasm/emsdk"
+git pull
+./emsdk install "$EMSDK_TESTED_VERSION"
+./emsdk activate "$EMSDK_TESTED_VERSION"
+cd "$DIR"
+
+
+source "$DIR/platform/wasm/emsdk/emsdk_env.sh"
+make release.wasm
