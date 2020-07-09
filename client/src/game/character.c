@@ -186,7 +186,7 @@ void characterUpdateDamage(character *c, int damage){
 		if(damage > 8){
 			sfxPlay(sfxImpact,1.f);
 			sfxPlay(sfxUngh,1.f);
-			setOverlayColor(0xFF0000FF,0);
+			setOverlayColor(0xA03020F0,0);
 			characterHP(c,damage / -8);
 		}else{
 			sfxPlay(sfxStomp,1.f);
@@ -619,7 +619,7 @@ void characterUpdate(character *c){
 	if(c->fallingSound && (c->y > -32)){ c->fallingSound = false; }
 	if(c->y < -500){ characterDie(c); }
 	if(c->y < -64){
-		setOverlayColor(0xFF000000,600);
+		setOverlayColor(0xFF000000,1000);
 		if(!c->fallingSound){
 			c->fallingSound = true;
 			sfxPlay(sfxFalling,1.f);

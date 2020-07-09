@@ -325,22 +325,22 @@ uint32_t colorInterpolate(uint32_t c1,uint32_t c2,float i){
 	if(i < 0.f){return c1;}
 	if(i > 1.f){return c2;}
 	
-	const unsigned int r1 = (c1    ) & 0xFF;
-	const unsigned int r2 = (c2    ) & 0xFF;
-	const unsigned int g1 = (c1>> 8) & 0xFF;
-	const unsigned int g2 = (c2>> 8) & 0xFF;
-	const unsigned int b1 = (c1>>16) & 0xFF;
-	const unsigned int b2 = (c2>>16) & 0xFF;
-	const unsigned int a1 = (c1>>24) & 0xFF;
-	const unsigned int a2 = (c2>>24) & 0xFF;
+	const float r1 = (c1    ) & 0xFF;
+	const float r2 = (c2    ) & 0xFF;
+	const float g1 = (c1>> 8) & 0xFF;
+	const float g2 = (c2>> 8) & 0xFF;
+	const float b1 = (c1>>16) & 0xFF;
+	const float b2 = (c2>>16) & 0xFF;
+	const float a1 = (c1>>24) & 0xFF;
+	const float a2 = (c2>>24) & 0xFF;
 	const float        i2 = 1.f-i;
 	
-	const unsigned int r = (((float)r1 * i2) + ((float)r2 * i))/2.f;
-	const unsigned int g = (((float)g1 * i2) + ((float)g2 * i))/2.f;
-	const unsigned int b = (((float)b1 * i2) + ((float)b2 * i))/2.f;
-	const unsigned int a = (((float)a1 * i2) + ((float)a2 * i))/2.f;
+	const float r = (((float)r1 * i2) + ((float)r2 * i));
+	const float g = (((float)g1 * i2) + ((float)g2 * i));
+	const float b = (((float)b1 * i2) + ((float)b2 * i));
+	const float a = (((float)a1 * i2) + ((float)a2 * i));
 	
-	return r | (g<<8) | (b<<16) | (a << 24);
+	return (uint32_t)r | ((uint32_t)g<<8) | ((uint32_t)b<<16) | ((uint32_t)a << 24);
 }
 
 
