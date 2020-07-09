@@ -70,6 +70,7 @@ void playerUpdate(){
 			}
 		}
 		resetOverlayColor();
+		if(isInventoryOpen()){setOverlayColor(0x80000000,600);}
 		characterUpdate(player);
 		commitOverlayColor();
 		grenadeUpdate();

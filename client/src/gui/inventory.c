@@ -66,7 +66,6 @@ void drawInventory(textMesh *guim, textMesh *textm, textMesh *itemMesh){
 		sel = -1;
 	}
 
-	textMeshBox(guim,0,0,screenWidth,screenHeight,0.f,1.f/8.f,1.f/8.f,1.f/8.f,0x44000000);
 	textMeshBox(guim,(screenWidth/2-5*tilesize)-tilesize/2,screenHeight/2-4*tilesize,11*tilesize,9*tilesize,0.f,1.f/8.f,1.f/8.f,1.f/8.f,~1);
 
 	textm->sx = (screenWidth/2-5*tilesize);
