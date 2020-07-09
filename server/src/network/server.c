@@ -109,7 +109,7 @@ void serverSendChatMsg(const char *msg){
 void sendPlayerJoinMessage(int c){
 	char msg[256];
 	if((clientCount == 1) && optionSingleplayer){
-		snprintf(msg,sizeof(msg),"Started Singleplayer Server [seed=%X]",optionWorldSeed);
+		snprintf(msg,sizeof(msg),"Started Singleplayer Server [seed=%i]",optionWorldSeed);
 		serverSendChatMsg(msg);
 		return;
 	}
