@@ -147,6 +147,7 @@ const char *getHumanReadableSize(size_t n){
 }
 
 void drawDebuginfo(){
+	int tris = vboTrisCount;
 	if(!playerChunkActive){
 		textm->sx   = screenWidth/2-(8*16);
 		textm->sy   = screenHeight/2+32;
@@ -161,12 +162,12 @@ void drawDebuginfo(){
 	textMeshPrintf(textm,"FPS %.0f\n",curFPS);
 	textMeshPrintf(textm,"Ver. %s [%.8s]",VERSION,COMMIT);
 
-	int tris = vboTrisCount;
 	vboTrisCount = 0;
 	if(!optionDebugInfo){return;}
-	textm->sx   = 4;
+
+	textm->sx   =  4;
 	textm->sy   = 76;
-	textm->size = 1;
+	textm->size =  1;
 
 	textMeshPrintf(textm,"Player     X: %05.2f VX: %02.4f\n",player->x,player->vx);
 	textMeshPrintf(textm,"Player     Y: %05.2f VY: %02.4f\n",player->y,player->vy);
