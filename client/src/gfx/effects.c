@@ -1,6 +1,7 @@
 #include "effects.h"
 
 #include "../game/blockType.h"
+#include "../game/character.h"
 #include "../gfx/particle.h"
 #include "../sdl/sfx.h"
 #include "../../../common/src/misc.h"
@@ -62,6 +63,7 @@ void fxExplosionBlaster(float x,float y,float z,float pw){
 }
 void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float pw){
 	int steps = 0;
+	float minPlayerDist = 100.f;
 	float cx = x1;
 	float cy = y1;
 	float cz = z1;
@@ -102,6 +104,15 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 		cx += vx;
 		cy += vy;
 		cz += vz;
+
+		const float pdx = cx - player->x;
+		const float pdy = cy - player->y;
+		const float pdz = cz - player->z;
+		const float pd  = (pdx*pdx)+(pdy*pdy)+(pdz*pdz);
+		if(pd < minPlayerDist){minPlayerDist = pd;}
+	}
+	if(minPlayerDist < 0.5f){
+		characterHP(player,(0.6f-minPlayerDist) * -24.f);
 	}
 }
 
