@@ -3,6 +3,7 @@
 #include "../game/blockType.h"
 #include "../game/character.h"
 #include "../gfx/particle.h"
+#include "../gui/gui.h"
 #include "../sdl/sfx.h"
 #include "../../../common/src/misc.h"
 #include "../sdl/input_gamepad.h"
@@ -113,6 +114,8 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 	}
 	if((damageMultiplier > 0.f) && (minPlayerDist < 0.5f)){
 		characterHP(player,(0.6f-minPlayerDist) * -24.f * damageMultiplier);
+		setOverlayColor(0xA03020F0,0);
+		commitOverlayColor();
 	}
 }
 
