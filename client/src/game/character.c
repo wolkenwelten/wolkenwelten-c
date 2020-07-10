@@ -480,7 +480,6 @@ bool characterHP(character *c, int addhp){
 	}
 	if(c->hp > c->maxhp){
 		c->hp = c->maxhp;
-		return true;
 	}
 	return false;
 }

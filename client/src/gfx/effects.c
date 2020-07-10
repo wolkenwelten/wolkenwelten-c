@@ -5,6 +5,7 @@
 #include "../gfx/particle.h"
 #include "../gui/gui.h"
 #include "../sdl/sfx.h"
+#include "../network/chat.h"
 #include "../../../common/src/misc.h"
 #include "../sdl/input_gamepad.h"
 
@@ -62,7 +63,7 @@ void fxExplosionBlaster(float x,float y,float z,float pw){
 		newParticle(x,y,z,vx,vy,vz,vx/-96.f,vy/-96.f,vz/-96.f,0xFF7730A0,128);
 	}
 }
-void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float pw, float damageMultiplier){
+void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float pw, int originatingCharacter){
 	int steps = 0;
 	float minPlayerDist = 100.f;
 	float cx = x1;
@@ -94,7 +95,6 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 		}
 	}
 	sfxPlay(sfxPhaser,1.f);
-
 	for(;steps > 0;steps--){
 		float pvx = (rngValf()-0.5f)/8.f;
 		float pvy = (rngValf()-0.5f)/8.f;
@@ -112,10 +112,15 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 		const float pd  = (pdx*pdx)+(pdy*pdy)+(pdz*pdz);
 		if(pd < minPlayerDist){minPlayerDist = pd;}
 	}
-	if((damageMultiplier > 0.f) && (minPlayerDist < 0.5f)){
-		characterHP(player,(0.6f-minPlayerDist) * -24.f * damageMultiplier);
-		setOverlayColor(0xA03020F0,0);
-		commitOverlayColor();
+	if((originatingCharacter != 65535) && (minPlayerDist < 0.5f)){
+		if(characterHP(player,(0.6f-minPlayerDist) * -24.f * pw)){
+			msgSendDyingMessage("Beamblasted", originatingCharacter);
+			setOverlayColor(0x00000000,0);
+			commitOverlayColor();
+		}else{
+			setOverlayColor(0xA03020F0,0);
+			commitOverlayColor();
+		}
 	}
 }
 

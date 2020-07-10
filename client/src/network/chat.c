@@ -44,3 +44,11 @@ void chatPrintDebug(const char *msg){
 	}
 	strncpy(chatLog[11],msg,256-1);
 }
+
+void msgSendDyingMessage(char *msg, int c){
+	packetLarge p;
+	strncpy((char *)p.val.c,msg,sizeof(p.val.c)-1);
+	p.target = c;
+	p.val.c[sizeof(p.val.c)-1] = 0;
+	packetQueueL(&p,3);
+}

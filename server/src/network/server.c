@@ -123,6 +123,16 @@ void serverParseChatMsg(int c, packetLarge *m){
 	serverSendChatMsg(msg);
 }
 
+void serverParseDyingMsg(int c, packetLarge *m){
+	char msg[256];
+	if((m->target != 65535) && (m->target < clientCount)){
+		snprintf(msg,sizeof(msg),"%s %s %s",clients[m->target].playerName,(char *)m->val.c,clients[c].playerName);
+	}else{
+		snprintf(msg,sizeof(msg),"%s %s",clients[c].playerName,(char *)m->val.c);
+	}
+	serverSendChatMsg(msg);
+}
+
 void serverParsePlayerPos(int c, packetLarge *p){
 	clients[c].c->x            = p->val.f[ 0];
 	clients[c].c->y            = p->val.f[ 1];
@@ -236,6 +246,11 @@ void serverParsePacketLarge(int c, packetLarge *p){
 		case 2:
 			serverParseChatMsg(c,p);
 			if(verbose){printf("[%02i] sendChatMsg\n",c);}
+		break;
+
+		case 3:
+			serverParseDyingMsg(c,p);
+			if(verbose){printf("[%02i] sendDyingMsg\n",c);}
 		break;
 
 		default:

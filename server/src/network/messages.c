@@ -42,7 +42,7 @@ void msgGrenadeExplode(float x, float y, float z,float pwr, int style){
 
 void msgFxBeamBlaster(int c, float x1, float y1, float z1, float x2, float y2, float z2, float pwr){
 	packetMedium p;
-	p.target = 1;
+	p.target   = c;
 	p.val.f[0] = x1;
 	p.val.f[1] = y1;
 	p.val.f[2] = z1;
@@ -51,13 +51,13 @@ void msgFxBeamBlaster(int c, float x1, float y1, float z1, float x2, float y2, f
 	p.val.f[5] = z2;
 	p.val.f[6] = pwr;
 	packetQueueExceptM(&p,4,c);
-	p.target = 0;
+	p.target = 65535;
 	packetQueueM(&p,4,c);
 }
 
 void msgPlayerMove(int c, float dvx, float dvy, float dvz, float dyaw, float dpitch, float droll){
 	packetMedium p;
-	p.target = c;
+	p.target   = c;
 	p.val.f[0] = dvx;
 	p.val.f[1] = dvy;
 	p.val.f[2] = dvz;
