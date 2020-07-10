@@ -12,6 +12,7 @@
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
 #include "../../../common/src/misc.h"
+#include "../network/chat.h"
 #include "../network/packet.h"
 #include "../network/messages.h"
 #include "../sdl/sdl.h"
@@ -187,7 +188,11 @@ void characterUpdateDamage(character *c, int damage){
 			sfxPlay(sfxImpact,1.f);
 			sfxPlay(sfxUngh,1.f);
 			setOverlayColor(0xA03020F0,0);
-			characterHP(c,damage / -8);
+			if(characterHP(c,damage / -8)){
+				msgSendDyingMessage("fell too deep", 65535);
+				setOverlayColor(0x00000000,0);
+				commitOverlayColor();
+			}
 		}else{
 			sfxPlay(sfxStomp,1.f);
 		}
@@ -616,7 +621,10 @@ void characterUpdate(character *c){
 	c->vz = nvz;
 
 	if(c->fallingSound && (c->y > -32)){ c->fallingSound = false; }
-	if(c->y < -500){ characterDie(c); }
+	if(c->y < -500){ 
+		characterDie(c);
+		msgSendDyingMessage("fell into the abyss", 65535);
+	}
 	if(c->y < -64){
 		setOverlayColor(0xFF000000,1000);
 		if(!c->fallingSound){
