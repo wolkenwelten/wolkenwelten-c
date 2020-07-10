@@ -147,12 +147,19 @@ const char *getHumanReadableSize(size_t n){
 }
 
 void drawDebuginfo(){
+	static unsigned int ticks=0;
 	int tris = vboTrisCount;
-	if(!playerChunkActive){
+
+	if(recvBytesCurrentSession <= 0){
+		textm->sx   = screenWidth/2-(10*16);
+		textm->sy   = screenHeight/2+32;
+		textm->size = 2;
+		textMeshPrintf(textm,"%.*s",20 + ((ticks++ >> 4)&3),"Connecting to server...");
+	}else if(!playerChunkActive){
 		textm->sx   = screenWidth/2-(8*16);
 		textm->sy   = screenHeight/2+32;
 		textm->size = 2;
-		textMeshPrintf(textm,"Loading World!!!");
+		textMeshPrintf(textm,"%.*s",13 + ((ticks++ >> 4)&3),"Loading World...");
 	}
 
 	textm->sx   = 4;
@@ -324,7 +331,7 @@ static unsigned int overlayColorAnimDur      = 0;
 uint32_t colorInterpolate(uint32_t c1,uint32_t c2,float i){
 	if(i < 0.f){return c1;}
 	if(i > 1.f){return c2;}
-	
+
 	const float r1 = (c1    ) & 0xFF;
 	const float r2 = (c2    ) & 0xFF;
 	const float g1 = (c1>> 8) & 0xFF;
@@ -334,12 +341,12 @@ uint32_t colorInterpolate(uint32_t c1,uint32_t c2,float i){
 	const float a1 = (c1>>24) & 0xFF;
 	const float a2 = (c2>>24) & 0xFF;
 	const float        i2 = 1.f-i;
-	
+
 	const float r = (((float)r1 * i2) + ((float)r2 * i));
 	const float g = (((float)g1 * i2) + ((float)g2 * i));
 	const float b = (((float)b1 * i2) + ((float)b2 * i));
 	const float a = (((float)a1 * i2) + ((float)a2 * i));
-	
+
 	return (uint32_t)r | ((uint32_t)g<<8) | ((uint32_t)b<<16) | ((uint32_t)a << 24);
 }
 
