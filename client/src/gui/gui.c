@@ -374,7 +374,7 @@ void setOverlayColor(unsigned int color, unsigned int animationDuration){
 }
 
 void resetOverlayColor(){
-	setOverlayColor(overlayColorAnimDst&0x00FFFFFF,300);
+	setOverlayColor(overlayColorAnimDst&0x000000,300);
 }
 
 void drawOverlay(){
