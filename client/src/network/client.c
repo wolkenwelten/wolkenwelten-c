@@ -106,7 +106,7 @@ void clientParsePacketMedium(packetMedium *p){
 		break;
 
 		case 4: // fxBeamBlaster
-			fxBeamBlaster(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6]);
+			fxBeamBlaster(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6],p->target);
 		break;
 
 		case 5: // playerMoveDelta

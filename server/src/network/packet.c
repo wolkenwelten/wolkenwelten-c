@@ -55,6 +55,26 @@ void packetQueueH(packetHuge   *p, uint16_t ptype, int c){
 	}
 }
 
+void packetQueueExceptS(packetSmall  *p, uint16_t ptype, int c){
+	packetReadyS(p,ptype);
+	sendToAllExcept(c,p,sizeof(packetSmall));
+}
+
+void packetQueueExceptM(packetMedium *p, uint16_t ptype, int c){
+	packetReadyM(p,ptype);
+	sendToAllExcept(c,p,sizeof(packetMedium));
+}
+
+void packetQueueExceptL(packetLarge  *p, uint16_t ptype, int c){
+	packetReadyL(p,ptype);
+	sendToAllExcept(c,p,sizeof(packetLarge));
+}
+
+void packetQueueExceptH(packetHuge   *p, uint16_t ptype, int c){
+	packetReadyH(p,ptype);
+	sendToAllExcept(c,p,sizeof(packetHuge));
+}
+
 unsigned int packetLen(const void *p){
 	if(p == NULL){return -1;}
 	const packetSmall *ps = (const packetSmall *)p;

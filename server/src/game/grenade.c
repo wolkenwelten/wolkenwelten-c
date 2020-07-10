@@ -134,6 +134,6 @@ void beamblast(int c, const packetMedium *p){
 			break;
 		}
 	}
-	msgFxBeamBlaster(sx,sy,sz,x,y,z,1.f);
+	msgFxBeamBlaster(c,sx,sy,sz,x,y,z,1.f);
 	msgPlayerMove(c, (vx * -0.75f), (vy * -0.75f), (vz * -0.75f), rngValf(), -.5f, 0.f);
 }

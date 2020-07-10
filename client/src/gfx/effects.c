@@ -61,7 +61,7 @@ void fxExplosionBlaster(float x,float y,float z,float pw){
 		newParticle(x,y,z,vx,vy,vz,vx/-96.f,vy/-96.f,vz/-96.f,0xFF7730A0,128);
 	}
 }
-void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float pw){
+void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float pw, float damageMultiplier){
 	int steps = 0;
 	float minPlayerDist = 100.f;
 	float cx = x1;
@@ -111,8 +111,8 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 		const float pd  = (pdx*pdx)+(pdy*pdy)+(pdz*pdz);
 		if(pd < minPlayerDist){minPlayerDist = pd;}
 	}
-	if(minPlayerDist < 0.5f){
-		characterHP(player,(0.6f-minPlayerDist) * -24.f);
+	if((damageMultiplier > 0.f) && (minPlayerDist < 0.5f)){
+		characterHP(player,(0.6f-minPlayerDist) * -24.f * damageMultiplier);
 	}
 }
 

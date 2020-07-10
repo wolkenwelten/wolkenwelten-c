@@ -64,3 +64,7 @@ void         packetQueueL(packetLarge  *p, uint16_t ptype, int c);
 void         packetQueueH(packetHuge   *p, uint16_t ptype, int c);
 unsigned int packetLen(const void *p);
 
+void         packetQueueExceptS(packetSmall  *p, uint16_t ptype, int c);
+void         packetQueueExceptM(packetMedium *p, uint16_t ptype, int c);
+void         packetQueueExceptL(packetLarge  *p, uint16_t ptype, int c);
+void         packetQueueExceptH(packetHuge   *p, uint16_t ptype, int c);
