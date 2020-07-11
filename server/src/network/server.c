@@ -625,3 +625,20 @@ void sendToAllExcept(int e,void *data, int len){
 		sendToClient(i,data,len);
 	}
 }
+
+void serverCloseClient(int c){
+	packetSmall p;
+	char *msg = getPlayerLeaveMessage(c);
+	if(clients[c].c != NULL){
+		characterFree(clients[c].c);
+		clients[c].c = NULL;
+	}
+	clients[c] = clients[--clientCount];
+	p.target = c;
+	p.val.u[0] = clientCount;
+	packetQueueS(&p,2,-1);
+	serverSendChatMsg(msg);
+	if((clientCount == 0) && (optionSingleplayer)){
+		quit = true;
+	}
+}

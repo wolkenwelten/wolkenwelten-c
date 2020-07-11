@@ -46,3 +46,4 @@ void serverSendChatMsg  (const char *msg);
 int  serverSendClient   (int c);
 void serverAccept       ();
 void serverRead         ();
+void serverCloseClient  (int c);

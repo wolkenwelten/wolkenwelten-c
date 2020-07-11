@@ -55,7 +55,7 @@ void clientParsePacketSmall(packetSmall *p){
 		break;
 
 		case 2: // setClientCount
-			characterSetPlayerCount(p->target);
+			characterRemovePlayer(p->target,p->val.u[0]);
 		break;
 
 		case 3: // placeBlock

@@ -74,4 +74,4 @@ uint32_t characterCollision   (character *c, float cx, float cy, float cz, float
 
 void characterMoveDelta       (character *c, packetMedium *p);
 void characterSetPlayerPos    (int i, packetLarge *p);
-void characterSetPlayerCount  (int c);
+void characterRemovePlayer    (int c, int len);

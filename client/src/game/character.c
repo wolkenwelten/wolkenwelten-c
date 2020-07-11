@@ -92,11 +92,13 @@ void characterSetPos(character *c, float x, float y, float z){
 	c->z = z;
 }
 
-void characterSetPlayerCount(int c){
-	for(int i=0;i<c;i++){
-		if(playerList[i] != NULL){
-			characterFree(playerList[i]);
-			playerList[i] = NULL;
+void characterRemovePlayer(int c, int len){
+	if(playerList[c] != NULL){
+		characterFree(playerList[c]);
+		playerList[c] = NULL;
+		if(playerList[len] != NULL){
+			playerList[c] = playerList[len];
+			playerList[len] = NULL;
 		}
 	}
 }

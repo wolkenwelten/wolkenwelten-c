@@ -76,22 +76,8 @@ void serverAccept(){
 }
 
 void serverKill(int c){
-	packetSmall p;
-	char *msg = getPlayerLeaveMessage(c);
 	close(clients[c].socket);
-	if(clients[c].c != NULL){
-		characterFree(clients[c].c);
-		clients[c].c = NULL;
-	}
-	clients[c] = clients[--clientCount];
-	printf("Client disconnect: %i = %s\n",errno,strerror(errno));
-	p.target = clientCount;
-	packetQueueS(&p,2,-1);
-	serverSendChatMsg(msg);
-	if((clientCount == 0) && (optionSingleplayer)){
-		quit = true;
-	}
-	return;
+	serverCloseClient(c);
 }
 
 void serverRead(){
