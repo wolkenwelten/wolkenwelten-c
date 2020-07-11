@@ -16,7 +16,7 @@
 		</style>
 	</head>
 	<body>
-		<canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" onclick="Module.requestFullscreen(document.getElementById('pointerLock').checked,document.getElementById('resize').checked)"></canvas>	
+		<canvas class="emscripten" id="canvas"></canvas>
 		<script type='text/javascript'>
 			var Module = {
 				preRun: [],
@@ -44,14 +44,14 @@
 					return canvas;
 				})(),
 				setStatus: function(text) {
-					
+
 				},
 				totalDependencies: 0,
 				monitorRunDependencies: function(left) {
 					this.totalDependencies = Math.max(this.totalDependencies, left);
 				}
 			};
-			
+
 		</script>
 		{{{ SCRIPT }}}
 	</body>
