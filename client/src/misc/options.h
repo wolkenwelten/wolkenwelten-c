@@ -1,6 +1,7 @@
 #pragma once
 #include <stdbool.h>
 
+extern char playerName[28];
 extern char serverName[64];
 extern float optionMusicVolume;
 extern float optionSoundVolume;

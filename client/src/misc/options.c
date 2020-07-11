@@ -7,6 +7,7 @@
 #include <string.h>
 #include <time.h>
 
+char playerName[28];
 char serverName[64];
 
 float optionMusicVolume = 0.75f;
@@ -47,6 +48,11 @@ void parseOptions(int argc,char *argv[]){
 		if(strncmp(argv[i]+1,"debugInfo",strlen("debugInfo")) == 0){
 			if(argv[i][1+strlen("debugInfo")] == '='){
 				optionDebugInfo = atoi(argv[i]+2+strlen("debugInfo")) != 0;
+			}
+		}
+		if(strncmp(argv[i]+1,"playerName",strlen("playerName")) == 0){
+			if(argv[i][1+strlen("playerName")] == '='){
+				strncpy(playerName,argv[i]+2+strlen("playerName"),sizeof(playerName)-1);
 			}
 		}
 		if(strncmp(argv[i]+1,"serverName",strlen("serverName")) == 0){

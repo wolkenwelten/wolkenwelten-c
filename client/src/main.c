@@ -95,6 +95,7 @@ void mainloop(){
 }
 
 int main( int argc, char* argv[] ){
+	clientGetName();
 	initOptions(argc,argv);
 	initSDL();
 	seedRNG(time(NULL));
@@ -119,7 +120,6 @@ int main( int argc, char* argv[] ){
 
 
 	player = characterNew();
-	clientGetName();
 	#ifdef __EMSCRIPTEN__
 		emscripten_set_main_loop(mainloop, 0, true);
 	#else

@@ -22,7 +22,6 @@
 #include <errno.h>
 #include <time.h>
 
-char playerName[28];
 
 int recvBufLen = 0;
 uint8_t recvBuf[1<<20];
