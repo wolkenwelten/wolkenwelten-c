@@ -27,14 +27,15 @@ int recvBufLen = 0;
 uint8_t recvBuf[1<<20];
 
 int sendBufSent = 0;
-int sendBufLen = 0;
+int sendBufLen  = 0;
 uint8_t sendBuf[1<<16];
 
 size_t sentBytesCurrentSession = 0;
 size_t recvBytesCurrentSession = 0;
 
-int serverPort = 6309;
+int serverPort        = 6309;
 pid_t singlePlayerPID = 0;
+int connectionTries   = 0;
 
 #ifdef __MINGW32__
 #include "client_win.h"

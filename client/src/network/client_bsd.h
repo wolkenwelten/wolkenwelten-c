@@ -109,6 +109,7 @@ void clientInit(){
 		startSingleplayerServer();
 		return;
 	}
+	++connectionTries;
 
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(serverSocket <= 0){
@@ -149,20 +150,33 @@ void clientInit(){
 			clientFree();
 			return;
 		}else if(errno == EINPROGRESS){
+			if(connectionTries > 10){
+				clientFree();
+				menuError = "Error connecting to host";
+				gameRunning = false;
+				return;
+			}
 			break;
 		}else if(errno == ECONNREFUSED){
+			if(connectionTries > 10){
+				clientFree();
+				menuError = "Error connecting to host";
+				gameRunning = false;
+				return;
+			}
 			if(singleplayer){continue;}
 			clientFree();
 			return;
 		}
 		if(!singleplayer){
-			perror("Error connecting");
+			fprintf(stderr,"Error connecting\n");
 			clientFree();
 			menuError = "Error connecting to host";
 			gameRunning = false;
 			return;
 		}
 	}
+	connectionTries = 0;
 	fcntl(serverSocket, F_SETFL, O_NONBLOCK);
 	err = setsockopt(serverSocket,IPPROTO_TCP,TCP_NODELAY,&yes,sizeof(yes));
 	sendBufLen              = 0;

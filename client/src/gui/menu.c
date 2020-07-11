@@ -25,11 +25,12 @@ void updateMenu(){
 	if(!textInputActive && (textInputLock == 2)){
 		char *buf = textInputGetBuffer();
 		strncpy(serverName,buf,sizeof(serverName)-1);
-		textInputLock = 0;
+		textInputLock   = 0;
+		connectionTries = 0;
 		gameRunning = true;
 		hideMouseCursor();
 	}
-	
+
 	if(!textInputActive && (textInputLock == 3)){
 		snprintf(playerName,sizeof(playerName),"%s",textInputGetBuffer());
 		textInputLock = 0;
@@ -43,6 +44,7 @@ void updateMenu(){
 				gameRunning     = true;
 				textInputLock   = 0;
 				textInputActive = false;
+				connectionTries = 0;
 				hideMouseCursor();
 				#endif
 			} else if((mousey > 80) && (mousey < 112)){
@@ -81,7 +83,7 @@ void menuBackground(){
 void renderMenu(){
 	int buttonY = 32;
 	char playerNameBuf[48];
-	
+
 	shaderBind(sTextMesh);
 	shaderMatrix(sTextMesh,matOrthoProj);
 	if(mouseHidden){
@@ -100,7 +102,7 @@ void renderMenu(){
 		7.f/8.f, 2.f/8.f,
 		1.f/8.f, 1.f/8.f,
 		0xFFFFFFFF);
-	
+
 	snprintf(playerNameBuf,sizeof(playerNameBuf),"Your Name: %s",playerName);
 	textMeshAddStrPS(menuM,32,176,2,playerNameBuf);
 
@@ -123,7 +125,7 @@ void renderMenu(){
 		0xFF555555);
 	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"  Multiplayer");
 	buttonY += 32 + 16;
-	
+
 	textMeshBox(menuM,
 		screenWidth-256-32, buttonY,
 		256, 32,

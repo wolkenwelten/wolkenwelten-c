@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <stdint.h>
 
-extern char playerName[28]; 
+extern int connectionTries;
 extern size_t sentBytesCurrentSession;
 extern size_t recvBytesCurrentSession;
 
