@@ -18,7 +18,17 @@
 	<body>
 		<canvas class="emscripten" id="canvas"></canvas>
 		<script type='text/javascript'>
+			var args = window.location.search+'';
+			if(args.charAt(0) == '?'){
+				args = args.substr(1);
+			}
+			args = args.split('&');
+			for(var i=0;i<args.length;i++){
+				args[i] = '-'+args[i];
+			}
+
 			var Module = {
+				arguments: args,
 				preRun: [],
 				postRun: [],
 				print: (function() {
