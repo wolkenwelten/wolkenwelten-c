@@ -101,7 +101,7 @@ void grapplingHookUpdateRope(grapplingHook *ghk){
 
 	meshAddVert(m,hx,hy+.05f,hz,1.f,rlen);
 	meshAddVert(m,px,py-.05f,pz,0.f, 0.f);
-	meshAddVert(m,hx,hy-.50f,hz,0.f,rlen);
+	meshAddVert(m,hx,hy-.05f,hz,0.f,rlen);
 
 
 	meshAddVert(m,px,py,pz-.05f,0.f, 0.f);
