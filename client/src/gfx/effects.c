@@ -37,6 +37,21 @@ void fxExplosionBomb(float x,float y,float z,float pw){
 		float vz = (rngValf()-0.5f)/32.f*pw*2;
 		newParticle(x,y,z,vx,vy,vz,0.f,0.f,0.f,0xFF082299,128);
 	}
+	
+	const float pdx = x - player->x;
+	const float pdy = y - player->y;
+	const float pdz = z - player->z;
+	const float pd  = (pdx*pdx)+(pdy*pdy)+(pdz*pdz);
+	if(pd < (pw*4.f)){
+		if(characterHP(player,((pw*4.f)-pd) * -2.f * pw)){
+			msgSendDyingMessage("got bombed", 65535);
+			setOverlayColor(0x00000000,0);
+			commitOverlayColor();
+		}else{
+			setOverlayColor(0xA03020F0,0);
+			commitOverlayColor();
+		}
+	}
 }
 void fxGrenadeTrail(float x,float y,float z,float pw){
 	(void)pw;
