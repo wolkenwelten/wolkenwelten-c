@@ -189,7 +189,7 @@ void characterUpdateDamage(character *c, int damage){
 			sfxPlay(sfxUngh,1.f);
 			setOverlayColor(0xA03020F0,0);
 			if(characterHP(c,damage / -8)){
-				msgSendDyingMessage("fell too deep", 65535);
+				msgSendDyingMessage("did not bounce", 65535);
 				setOverlayColor(0x00000000,0);
 				commitOverlayColor();
 			}
