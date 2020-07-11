@@ -84,6 +84,8 @@ void characterSetPlayerPos(int i, packetLarge *p){
 			playerList[i]->hook = NULL;
 		}
 	}
+	playerList[i]->inventory[0] = itemNew(p->val.u[17],1);
+	playerList[i]->activeItem = 0;
 }
 
 void characterSetPos(character *c, float x, float y, float z){
@@ -721,7 +723,28 @@ void characterMoveDelta(character *c, packetMedium *p){
 	c->shake  = (fabsf(p->val.f[0]) + fabsf(p->val.f[1]) + fabsf(p->val.f[2]))*96.f;
 }
 
-void characterDraw(const character *c){
+void characterActiveItemDraw(character *c){
+	float matMVP[16];
+	item *activeItem;
+	mesh *aiMesh;
+	
+	activeItem = &c->inventory[c->activeItem];
+	if(activeItem == NULL)     {return;}
+	if(itemIsEmpty(activeItem)){return;}
+	aiMesh = itemGetMesh(activeItem);
+	if(aiMesh == NULL)         {return;}
+	
+	matMov(matMVP,matView);
+	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
+	matMulRotYX(matMVP,-c->yaw,-c->pitch);
+	matMulTrans(matMVP,.4f,-0.2f,-0.3f);
+	matMulScale(matMVP,0.5f,0.5f,0.5f);
+	matMul(matMVP,matMVP,matProjection);
+	shaderMatrix(sMesh,matMVP);
+	meshDraw(aiMesh);
+}
+
+void characterDraw(character *c){
 	float matMVP[16];
 	if(c == NULL)       {return;}
 	if(c == player)     {return;}
@@ -729,11 +752,11 @@ void characterDraw(const character *c){
 
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
-	matMulRotYX(matMVP,c->yaw,c->pitch);
+	matMulRotYX(matMVP,-c->yaw,-c->pitch);
 	matMul(matMVP,matMVP,matProjection);
-
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(c->eMesh);
+	characterActiveItemDraw(c);
 }
 void characterDrawAll(){
 	shaderBind(sMesh);
