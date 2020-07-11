@@ -165,8 +165,10 @@ void clientInit(){
 	}
 	fcntl(serverSocket, F_SETFL, O_NONBLOCK);
 	err = setsockopt(serverSocket,IPPROTO_TCP,TCP_NODELAY,&yes,sizeof(yes));
-	sendBufLen  = 0;
-	sendBufSent = 0;
+	sendBufLen              = 0;
+	sendBufSent             = 0;
+	sentBytesCurrentSession = 0;
+	recvBytesCurrentSession = 0;
 	clientGreetServer();
 }
 

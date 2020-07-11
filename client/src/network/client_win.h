@@ -45,7 +45,7 @@ void startSingleplayerServer(){
 	si.dwFlags = STARTF_USESHOWWINDOW;
 	// set the window display to HIDE
 	si.wShowWindow = SW_HIDE;
-	
+
 	if(CreateProcess( NULL,   // No module name (use command line)
 		cmd,            // Command line
 		NULL,           // Process handle not inheritable
@@ -53,7 +53,7 @@ void startSingleplayerServer(){
 		FALSE,          // Set handle inheritance to FALSE
 		0,              // No creation flags
 		NULL,           // Use parent's environment block
-		NULL,           // Use parent's starting directory 
+		NULL,           // Use parent's starting directory
 		&si,            // Pointer to STARTUPINFO structure
 		&pi )){         // Pointer to PROCESS_INFORMATION structure
 		spSpawned = true;
@@ -114,8 +114,10 @@ void clientInit(){
 		}
 	}
 	err = ioctlsocket(serverSocket, FIONBIO, (unsigned long *) &yes);
-	sendBufLen  = 0;
-	sendBufSent = 0;
+	sendBufLen              = 0;
+	sendBufSent             = 0;
+	sentBytesCurrentSession = 0;
+	recvBytesCurrentSession = 0;
 	clientGreetServer();
 }
 
