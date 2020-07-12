@@ -158,13 +158,27 @@ void characterUpdateHitOff(character *c){
 }
 
 void characterHitCheck(character *c, int origin, float x, float y, float z, float yaw, float pitch, float roll, float pwr){
-	const float pdx = x - c->x;
-	const float pdy = y - c->y;
-	const float pdz = z - c->z;
-	const float pd  = (pdx*pdx)+(pdy*pdy)+(pdz*pdz);
+	float dx = x - c->x;
+	float dy = y - c->y;
+	float dz = z - c->z;
+	float d  = (dx*dx)+(dy*dy)+(dz*dz);
 	
-	if(pd < 1.f){
-		characterHP(c,pwr*-1.f);
+	if(d < 1.f){
+		if(characterHP(c,pwr*-1.f)){
+			msgSendDyingMessage("got clubbed",origin);
+		}
+		
+		float dm = fabsf(dx);
+		if(fabsf(dy) > dm){dm = fabsf(dy);}
+		if(fabsf(dz) > dm){dm = fabsf(dz);}
+
+		dx /= dm;
+		dy /= dm;
+		dz /= dm;
+		dm = sqrtf((16*pwr*pwr)/dm);
+		c->vx += dx * dm * -0.02f;
+		c->vy += dy * dm * -0.02f;
+		c->vz += dz * dm * -0.02f;
 	}
 	
 	(void)origin;
