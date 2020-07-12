@@ -4,23 +4,23 @@ static const int ITEMID=266;
 #include "../../game/item.h"
 #include "../../game/character.h"
 
-void assblasterInit(){
+void masterblasterInit(){
 	(void)ITEMID;
 }
 
-bool assblasterIsSingleItem(const item *cItem){
+bool masterblasterIsSingleItem(const item *cItem){
 	(void)cItem;
 
 	return true;
 }
 
-bool assblasterHasMineAction(const item *cItem){
+bool masterblasterHasMineAction(const item *cItem){
 	(void)cItem;
 
 	return true;
 }
 
-bool assblasterMineAction(item *cItem, character *cChar, int to){
+bool masterblasterMineAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 	(void)cChar;
 

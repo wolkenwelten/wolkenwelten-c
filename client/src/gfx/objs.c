@@ -21,38 +21,38 @@ texture *texAxe;
 mesh *meshPickaxe;
 texture *texPickaxe;
 
-mesh *meshAssblaster;
-texture *texAssblaster;
+mesh *meshMasterblaster;
+texture *texMasterblaster;
 
 void initMeshobjs(){
-	meshPear       = meshNewRO( pear_verts,             pear_count );
-	meshHook       = meshNewRO( hook_verts,             hook_count );
-	meshGrenade    = meshNewRO( grenade_verts,       grenade_count );
-	meshBomb       = meshNewRO( bomb_verts,             bomb_count );
-	meshAxe        = meshNewRO( axe_verts,               axe_count );
-	meshPickaxe    = meshNewRO( pickaxe_verts,       pickaxe_count );
-	meshAssblaster = meshNewRO( assblaster_verts, assblaster_count );
+	meshPear          = meshNewRO( pear_verts,                   pear_count );
+	meshHook          = meshNewRO( hook_verts,                   hook_count );
+	meshGrenade       = meshNewRO( grenade_verts,             grenade_count );
+	meshBomb          = meshNewRO( bomb_verts,                   bomb_count );
+	meshAxe           = meshNewRO( axe_verts,                     axe_count );
+	meshPickaxe       = meshNewRO( pickaxe_verts,             pickaxe_count );
+	meshMasterblaster = meshNewRO( masterblaster_verts, masterblaster_count );
 
-	texPear        = textureNew( gfx_pear_png_data,             gfx_pear_png_len );
-	texHook        = textureNew( gfx_hook_png_data,             gfx_hook_png_len );
-	texGrenade     = textureNew( gfx_grenade_png_data,       gfx_grenade_png_len );
-	texAxe         = textureNew( gfx_axe_png_data,               gfx_axe_png_len );
-	texPickaxe     = textureNew( gfx_pickaxe_png_data,       gfx_pickaxe_png_len );
-	texAssblaster  = textureNew( gfx_assblaster_png_data, gfx_assblaster_png_len );
+	texPear           = textureNew( gfx_pear_png_data,                   gfx_pear_png_len );
+	texHook           = textureNew( gfx_hook_png_data,                   gfx_hook_png_len );
+	texGrenade        = textureNew( gfx_grenade_png_data,             gfx_grenade_png_len );
+	texAxe            = textureNew( gfx_axe_png_data,                     gfx_axe_png_len );
+	texPickaxe        = textureNew( gfx_pickaxe_png_data,             gfx_pickaxe_png_len );
+	texMasterblaster  = textureNew( gfx_masterblaster_png_data, gfx_masterblaster_png_len );
 
-	meshPear->tex       = texPear;
-	meshHook->tex       = texHook;
-	meshGrenade->tex    = texGrenade;
-	meshBomb->tex       = texGrenade;
-	meshAxe->tex        = texAxe;
-	meshPickaxe->tex    = texPickaxe;
-	meshAssblaster->tex = texAssblaster;
+	meshPear->tex          = texPear;
+	meshHook->tex          = texHook;
+	meshGrenade->tex       = texGrenade;
+	meshBomb->tex          = texGrenade;
+	meshAxe->tex           = texAxe;
+	meshPickaxe->tex       = texPickaxe;
+	meshMasterblaster->tex = texMasterblaster;
 
-	meshFinish( meshPear,       GL_STATIC_DRAW );
-	meshFinish( meshHook,       GL_STATIC_DRAW );
-	meshFinish( meshGrenade,    GL_STATIC_DRAW );
-	meshFinish( meshBomb,       GL_STATIC_DRAW );
-	meshFinish( meshAxe,        GL_STATIC_DRAW );
-	meshFinish( meshPickaxe,    GL_STATIC_DRAW );
-	meshFinish( meshAssblaster, GL_STATIC_DRAW );
+	meshFinish( meshPear,          GL_STATIC_DRAW );
+	meshFinish( meshHook,          GL_STATIC_DRAW );
+	meshFinish( meshGrenade,       GL_STATIC_DRAW );
+	meshFinish( meshBomb,          GL_STATIC_DRAW );
+	meshFinish( meshAxe,           GL_STATIC_DRAW );
+	meshFinish( meshPickaxe,       GL_STATIC_DRAW );
+	meshFinish( meshMasterblaster, GL_STATIC_DRAW );
 }

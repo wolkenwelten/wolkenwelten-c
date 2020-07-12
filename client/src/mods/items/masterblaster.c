@@ -6,29 +6,29 @@ static const int ITEMID=266;
 #include "../../game/item.h"
 #include "../../game/character.h"
 
-void assblasterInit(){
+void masterblasterInit(){
 	(void)ITEMID;
 }
 
-mesh *assblasterGetMesh(item *cItem){
+mesh *masterblasterGetMesh(item *cItem){
 	(void)cItem;
 
-	return meshAssblaster;
+	return meshMasterblaster;
 }
 
-bool assblasterIsSingleItem(item *cItem){
-	(void)cItem;
-
-	return true;
-}
-
-bool assblasterHasMineAction(item *cItem){
+bool masterblasterIsSingleItem(item *cItem){
 	(void)cItem;
 
 	return true;
 }
 
-bool assblasterMineAction(item *cItem, character *cChar, int to){
+bool masterblasterHasMineAction(item *cItem){
+	(void)cItem;
+
+	return true;
+}
+
+bool masterblasterMineAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 120){return false;}

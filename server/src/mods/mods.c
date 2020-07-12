@@ -32,10 +32,10 @@ inline bool isSingleItemDefault(const item *cItem){
 	return false;
 }
 
-void assblasterInit();
-bool assblasterIsSingleItem(const item *cItem);
-bool assblasterHasMineAction(const item *cItem);
-bool assblasterMineAction(item *cItem, character *cChar, int to);
+void masterblasterInit();
+bool masterblasterIsSingleItem(const item *cItem);
+bool masterblasterHasMineAction(const item *cItem);
+bool masterblasterMineAction(item *cItem, character *cChar, int to);
 
 void axeInit();
 int axeBlockDamage(const item *cItem, blockCategory blockCat);
@@ -55,7 +55,7 @@ int pickaxeBlockDamage(const item *cItem, blockCategory blockCat);
 bool pickaxeIsSingleItem(const item *cItem);
 
 void modsInit(){
-	assblasterInit();
+	masterblasterInit();
 	grenadeInit();
 	bombInit();
 	axeInit();
@@ -75,21 +75,21 @@ bool isSingleItemDispatch(const item *cItem){
 	switch(cItem->ID){
 		case 259: return axeIsSingleItem(cItem);
 		case 260: return pickaxeIsSingleItem(cItem);
-		case 261: return assblasterIsSingleItem(cItem);
+		case 261: return masterblasterIsSingleItem(cItem);
 	}
 	return isSingleItemDefault(cItem);
 }
 
 bool hasMineActionDispatch(const item *cItem){
 	switch(cItem->ID){
-		case 261: return assblasterHasMineAction(cItem);
+		case 261: return masterblasterHasMineAction(cItem);
 	}
 	return hasMineActionDefault(cItem);
 }
 
 bool mineActionDispatch(item *cItem, character *cChar, int to){
 	switch(cItem->ID){
-		case 261: return assblasterMineAction(cItem,cChar,to);
+		case 261: return masterblasterMineAction(cItem,cChar,to);
 	}
 	return mineActionDefault(cItem,cChar,to);
 }

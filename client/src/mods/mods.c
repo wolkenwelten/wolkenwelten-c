@@ -40,11 +40,11 @@ inline bool isSingleItemDefault(item *cItem){
 	return false;
 }
 
-void assblasterInit();
-mesh *assblasterGetMesh(item *cItem);
-bool assblasterIsSingleItem(item *cItem);
-bool assblasterHasMineAction(item *cItem);
-bool assblasterMineAction(item *cItem, character *cChar, int to);
+void masterblasterInit();
+mesh *masterblasterGetMesh(item *cItem);
+bool masterblasterIsSingleItem(item *cItem);
+bool masterblasterHasMineAction(item *cItem);
+bool masterblasterMineAction(item *cItem, character *cChar, int to);
 
 void axeInit();
 int axeBlockDamage(item *cItem, blockCategory blockCat);
@@ -69,7 +69,7 @@ mesh *pickaxeGetMesh(item *cItem);
 bool pickaxeIsSingleItem(item *cItem);
 
 void modsInit(){
-	assblasterInit();
+	masterblasterInit();
 	grenadeInit();
 	bombInit();
 	axeInit();
@@ -92,7 +92,7 @@ mesh *getMeshDispatch(item *cItem){
 		case 258: return pearGetMesh(cItem);
 		case 259: return axeGetMesh(cItem);
 		case 260: return pickaxeGetMesh(cItem);
-		case 261: return assblasterGetMesh(cItem);
+		case 261: return masterblasterGetMesh(cItem);
 	}
 	return getMeshDefault(cItem);
 }
@@ -101,21 +101,21 @@ bool isSingleItemDispatch(item *cItem){
 	switch(cItem->ID){
 		case 259: return axeIsSingleItem(cItem);
 		case 260: return pickaxeIsSingleItem(cItem);
-		case 261: return assblasterIsSingleItem(cItem);
+		case 261: return masterblasterIsSingleItem(cItem);
 	}
 	return isSingleItemDefault(cItem);
 }
 
 bool hasMineActionDispatch(item *cItem){
 	switch(cItem->ID){
-		case 261: return assblasterHasMineAction(cItem);
+		case 261: return masterblasterHasMineAction(cItem);
 	}
 	return hasMineActionDefault(cItem);
 }
 
 bool mineActionDispatch(item *cItem, character *cChar, int to){
 	switch(cItem->ID){
-		case 261: return assblasterMineAction(cItem,cChar,to);
+		case 261: return masterblasterMineAction(cItem,cChar,to);
 	}
 	return mineActionDefault(cItem,cChar,to);
 }
