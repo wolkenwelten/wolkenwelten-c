@@ -157,16 +157,23 @@ void characterUpdateHitOff(character *c){
 	}
 }
 
+// TODO: move x/y/z vector in direction of yaw/pitch/roll for more accurate hit detection
+// TODO: send a broadcast message informing of the hit so other clients may start playing sfx
 void characterHitCheck(character *c, int origin, float x, float y, float z, float yaw, float pitch, float roll, float pwr){
 	float dx = x - c->x;
 	float dy = y - c->y;
 	float dz = z - c->z;
 	float d  = (dx*dx)+(dy*dy)+(dz*dz);
 	
-	if(d < 1.f){
-		if(characterHP(c,pwr*-1.f)){
+	if(d < 2.f){
+		sfxPlay(sfxImpact,1.f);
+		sfxPlay(sfxUngh,1.f);
+		setOverlayColor(0xA03020F0,0);
+		if(characterHP(c,pwr*-4.f)){
 			msgSendDyingMessage("got clubbed",origin);
+			setOverlayColor(0x00000000,0);
 		}
+		commitOverlayColor();
 		
 		float dm = fabsf(dx);
 		if(fabsf(dy) > dm){dm = fabsf(dy);}

@@ -42,6 +42,7 @@ void msgGrenadeExplode(float x, float y, float z,float pwr, int style){
 
 void msgCharacterHit(int c, float x, float y, float z, float yaw, float pitch, float roll, float pwr){
 	packetMedium p;
+	p.target = c;
 	p.val.f[0] = x;
 	p.val.f[1] = y;
 	p.val.f[2] = z;
