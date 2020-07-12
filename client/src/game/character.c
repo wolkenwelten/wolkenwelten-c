@@ -740,10 +740,22 @@ void characterActiveItemDraw(character *c){
 	matMulRotYX(matMVP,-c->yaw,-c->pitch);
 	matMulTrans(matMVP,.4f,-0.2f,-0.3f);
 	matMulScale(matMVP,0.5f,0.5f,0.5f);
+	
+	if(itemHasMineAction(activeItem)){
+		matMulTrans(matMVP,0.2f,-0.1f,-0.1f + c->hitOff*0.03f);
+		matMulRotYX(matMVP,c->hitOff*10.f,c->hitOff*45.f);
+	}else{
+		float y = -0.09f+c->yoff-(c->hitOff/80);
+		matMulTrans(matMVP,0.2f-c->hitOff*0.1f,y+(c->hitOff/32),-0.1f - c->hitOff*0.1f);
+		matMulRotYX(matMVP,c->hitOff*10.f,c->hitOff*-35.f);
+	}
+	
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(aiMesh);
 }
+
+
 
 void characterDraw(character *c){
 	float matMVP[16];

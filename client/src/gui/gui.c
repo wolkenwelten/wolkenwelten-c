@@ -295,7 +295,6 @@ void drawActiveItem(){
 		matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
 		matMul(matViewAI, matViewAI, matProjection);
 		shaderMatrix(sMesh, matViewAI);
-
 	}else{
 		float y = -0.9f+animOff-(hitOff/8);
 		matTranslation(matViewAI,1.8f-hitOff*1.2f,y+(hitOff/3),-1.3f - hitOff*1.1f);
