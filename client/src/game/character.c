@@ -174,6 +174,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 			setOverlayColor(0x00000000,0);
 		}
 		commitOverlayColor();
+		msgCharacterGotHit(pwr);
 		
 		float dm = fabsf(dx);
 		if(fabsf(dy) > dm){dm = fabsf(dy);}
@@ -192,6 +193,15 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 	(void)yaw;
 	(void)pitch;
 	(void)roll;
+}
+
+// TODO: decrease volume with increasign distance from player
+void characterGotHitBroadcast(int c,float pwr){
+	(void)c;
+	(void)pwr;
+	
+	sfxPlay(sfxImpact,1.f);
+	sfxPlay(sfxUngh,1.f);
 }
 
 void characterUpdateWindVolume(character *c, float wvx, float wvy, float wvz){

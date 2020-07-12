@@ -4,6 +4,7 @@
 
 void msgSendPlayerPos();
 void msgRequestPlayerSpawnPos();
+void msgCharacterGotHit(float pwr);
 void msgCharacterHit(float x, float y, float z, float yaw, float pitch, float roll, float pwr);
 void msgNewGrenade(int ID, float x, float y, float z, float yaw, float pitch, float roll, float pwr);
 void msgBeamBlast(int ID, float x, float y, float z, float yaw, float pitch, float roll, float pwr);

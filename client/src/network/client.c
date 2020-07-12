@@ -79,6 +79,10 @@ void clientParsePacketSmall(packetSmall *p){
 		case 7:
 			worldSetChungusLoaded(p->val.i[0],p->val.i[1],p->val.i[2]);
 		break;
+		
+		case 8:
+			characterGotHitBroadcast(p->target,p->val.f[0]);
+		break;
 
 		default:
 			printf("S->%i\n",ptype);

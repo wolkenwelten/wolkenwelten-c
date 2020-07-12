@@ -190,6 +190,10 @@ void serverParsePacketSmall(int c, packetSmall *p){
 			errno=0;
 			serverKill(c);
 		break;
+		
+		case 8:
+			msgCharacterGotHitBroadcast(c,p->val.f[0]);
+		break;
 
 		default:
 			printf("%i S->%i\n",c,ptype);

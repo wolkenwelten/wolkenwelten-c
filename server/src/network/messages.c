@@ -40,6 +40,13 @@ void msgGrenadeExplode(float x, float y, float z,float pwr, int style){
 	packetQueueM(&p,2,-1);
 }
 
+void msgCharacterGotHitBroadcast(int c,float pwr){
+	packetSmall p;
+	p.target = c;
+	p.val.f[0] = pwr;
+	packetQueueExceptS(&p,8,c);
+}
+
 void msgCharacterHit(int c, float x, float y, float z, float yaw, float pitch, float roll, float pwr){
 	packetMedium p;
 	p.target = c;

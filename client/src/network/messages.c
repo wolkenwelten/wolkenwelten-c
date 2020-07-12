@@ -44,6 +44,12 @@ void msgSendPlayerPos(){
 	packetQueueL(&p,1);
 }
 
+void msgCharacterGotHit(float pwr){
+	packetSmall p;
+	p.val.f[0] = pwr;
+	packetQueueS(&p,8);
+}
+
 void msgCharacterHit(float x, float y, float z, float yaw, float pitch, float roll, float pwr){
 	packetMedium p;
 	p.val.f[0] = x;
