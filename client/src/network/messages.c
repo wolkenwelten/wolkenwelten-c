@@ -39,6 +39,7 @@ void msgSendPlayerPos(){
 	p.val.i[15] = player->blockMiningY;
 	p.val.i[16] = player->blockMiningZ;
 	p.val.i[17] = itm->ID;
+	p.val.f[18] = player->hitOff;
 
 	packetQueueL(&p,1);
 }

@@ -86,6 +86,7 @@ void characterSetPlayerPos(int i, packetLarge *p){
 	}
 	playerList[i]->inventory[0] = itemNew(p->val.u[17],1);
 	playerList[i]->activeItem = 0;
+	playerList[i]->hitOff = p->val.f[18];
 }
 
 void characterSetPos(character *c, float x, float y, float z){

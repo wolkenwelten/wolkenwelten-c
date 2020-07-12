@@ -152,6 +152,7 @@ void serverParsePlayerPos(int c, packetLarge *p){
 	clients[c].c->blockMiningY = p->val.i[15];
 	clients[c].c->blockMiningZ = p->val.i[16];
 	clients[c].c->activeItem   = p->val.i[17];
+	clients[c].c->hitOff       = p->val.i[18];
 	msgUpdatePlayer(c);
 }
 

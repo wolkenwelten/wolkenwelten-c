@@ -70,7 +70,6 @@ void msgPlayerMove(int c, float dvx, float dvy, float dvz, float dyaw, float dpi
 void msgUpdatePlayer(int c){
 	packetLarge rp;
 
-
 	for(int i=0;i<clientCount;++i){
 		if(i==c){continue;}
 		if(clients[i].c == NULL){continue;}
@@ -93,6 +92,7 @@ void msgUpdatePlayer(int c){
 		rp.val.i[15] = clients[i].c->blockMiningY;
 		rp.val.i[16] = clients[i].c->blockMiningZ;
 		rp.val.i[17] = clients[i].c->activeItem;
+		rp.val.i[18] = clients[i].c->hitOff;
 		rp.target = i;
 		packetQueueL(&rp,1,c);
 	}
