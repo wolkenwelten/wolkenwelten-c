@@ -71,6 +71,7 @@ void  characterSetPos         (character *c, float x, float y, float z);
 void  characterDraw           (character *c);
 void  characterDrawAll        ();
 uint32_t characterCollision   (character *c, float cx, float cy, float cz, float wd);
+void  characterHitCheck       (character *c, int origin, float x, float y, float z, float yaw, float pitch, float roll, float pwr);
 
 void characterMoveDelta       (character *c, packetMedium *p);
 void characterSetPlayerPos    (int i, packetLarge *p);

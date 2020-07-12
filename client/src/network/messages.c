@@ -44,6 +44,18 @@ void msgSendPlayerPos(){
 	packetQueueL(&p,1);
 }
 
+void msgCharacterHit(float x, float y, float z, float yaw, float pitch, float roll, float pwr){
+	packetMedium p;
+	p.val.f[0] = x;
+	p.val.f[1] = y;
+	p.val.f[2] = z;
+	p.val.f[3] = yaw;
+	p.val.f[4] = pitch;
+	p.val.f[5] = roll;
+	p.val.f[6] = pwr;
+	packetQueueM(&p,6);
+}
+
 void msgBeamBlast(int ID, float x, float y, float z, float yaw, float pitch, float roll, float pwr){
 	packetMedium p;
 	p.target = ID;
@@ -53,7 +65,7 @@ void msgBeamBlast(int ID, float x, float y, float z, float yaw, float pitch, flo
 	p.val.f[3] = yaw;
 	p.val.f[4] = pitch;
 	p.val.f[5] = roll;
-	p.val.i[6] = pwr;
+	p.val.f[6] = pwr;
 	packetQueueM(&p,4);
 }
 
@@ -66,7 +78,7 @@ void msgNewGrenade(int ID, float x, float y, float z, float yaw, float pitch, fl
 	p.val.f[3] = yaw;
 	p.val.f[4] = pitch;
 	p.val.f[5] = roll;
-	p.val.i[6] = pwr;
+	p.val.f[6] = pwr;
 	packetQueueM(&p,3);
 }
 

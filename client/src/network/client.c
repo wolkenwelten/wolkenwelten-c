@@ -112,6 +112,10 @@ void clientParsePacketMedium(packetMedium *p){
 		case 5: // playerMoveDelta
 			characterMoveDelta(player,p);
 		break;
+		
+		case 6: // characterHit
+			characterHitCheck(player,p->target,p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6]);
+		break;
 
 		default:
 			printf("M->%i\n",ptype);

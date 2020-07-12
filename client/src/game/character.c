@@ -147,6 +147,7 @@ void characterUpdateHitOff(character *c){
 		c->hitOff += (c->hitOff*0.1f)+0.05f;
 		if(c->hitOff > 1.f){
 			c->hasHit = false;
+			msgCharacterHit(c->x,c->y,c->z,c->yaw,c->pitch,c->roll,1.f);
 		}
 	}else if(c->hitOff > 0.f){
 		c->hitOff -= c->hitOff*0.02f;
@@ -154,6 +155,22 @@ void characterUpdateHitOff(character *c){
 			c->hitOff = 0.f;
 		}
 	}
+}
+
+void characterHitCheck(character *c, int origin, float x, float y, float z, float yaw, float pitch, float roll, float pwr){
+	const float pdx = x - c->x;
+	const float pdy = y - c->y;
+	const float pdz = z - c->z;
+	const float pd  = (pdx*pdx)+(pdy*pdy)+(pdz*pdz);
+	
+	if(pd < 1.f){
+		characterHP(c,pwr*-1.f);
+	}
+	
+	(void)origin;
+	(void)yaw;
+	(void)pitch;
+	(void)roll;
 }
 
 void characterUpdateWindVolume(character *c, float wvx, float wvy, float wvz){
@@ -369,15 +386,19 @@ void characterMineBlock(character *c){
 			c->hasHit = true;
 			c->actionTimeout = 0;
 		}
-	}else if(characterLOSBlock(c,&cx,&cy,&cz,0)){
-		c->blockMiningX = cx;
-		c->blockMiningY = cy;
-		c->blockMiningZ = cz;
+	}else{
+		if(characterLOSBlock(c,&cx,&cy,&cz,0)){
+			c->blockMiningX = cx;
+			c->blockMiningY = cy;
+			c->blockMiningZ = cz;
+			if(c->actionTimeout >= 60){
+				sfxPlay(sfxTock,1.f);
+				vibrate(0.3f);
+			}
+		}
 		if(c->actionTimeout >= 60){
 			c->hasHit = true;
 			c->actionTimeout = 0;
-			sfxPlay(sfxTock,1.f);
-			vibrate(0.3f);
 		}
 	}
 }

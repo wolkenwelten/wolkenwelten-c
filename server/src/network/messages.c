@@ -40,6 +40,18 @@ void msgGrenadeExplode(float x, float y, float z,float pwr, int style){
 	packetQueueM(&p,2,-1);
 }
 
+void msgCharacterHit(int c, float x, float y, float z, float yaw, float pitch, float roll, float pwr){
+	packetMedium p;
+	p.val.f[0] = x;
+	p.val.f[1] = y;
+	p.val.f[2] = z;
+	p.val.f[3] = yaw;
+	p.val.f[4] = pitch;
+	p.val.f[5] = roll;
+	p.val.f[6] = pwr;
+	packetQueueExceptM(&p,6,c);
+}
+
 void msgFxBeamBlaster(int c, float x1, float y1, float z1, float x2, float y2, float z2, float pwr){
 	packetMedium p;
 	p.target   = c;
