@@ -157,14 +157,17 @@ void characterUpdateHitOff(character *c){
 	}
 }
 
-// TODO: move x/y/z vector in direction of yaw/pitch/roll for more accurate hit detection
+// TODO: knochback direction gets calculated from the center of the hit sphere and NOT the attackign character, leading to unintuitive knocback directions
 void characterHitCheck(character *c, int origin, float x, float y, float z, float yaw, float pitch, float roll, float pwr){
-	float dx = x - c->x;
-	float dy = y - c->y;
-	float dz = z - c->z;
+	const float vx = cos((yaw-90.f)*PI/180) * cos((-pitch)*PI/180);
+	const float vy = sin((-pitch)*PI/180);
+	const float vz = sin((yaw-90.f)*PI/180) * cos((-pitch)*PI/180);
+	float dx = (x+vx) - c->x;
+	float dy = (y+vy) - c->y;
+	float dz = (z+vz) - c->z;
 	float d  = (dx*dx)+(dy*dy)+(dz*dz);
 	
-	if(d < 2.f){
+	if(d < 1.f){
 		sfxPlay(sfxImpact,1.f);
 		sfxPlay(sfxUngh,  1.f);
 		setOverlayColor(0xA03020F0,0);
@@ -189,8 +192,6 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 	}
 	
 	(void)origin;
-	(void)yaw;
-	(void)pitch;
 	(void)roll;
 }
 
