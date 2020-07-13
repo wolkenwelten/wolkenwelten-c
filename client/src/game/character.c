@@ -172,7 +172,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 		sfxPlay(sfxUngh,  1.f);
 		setOverlayColor(0xA03020F0,0);
 		if(characterHP(c,pwr*-4.f)){
-			msgSendDyingMessage("got clubbed",origin);
+			msgSendDyingMessage("got clubbed by",origin);
 			setOverlayColor(0x00000000,0);
 		}
 		commitOverlayColor();
@@ -186,9 +186,9 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 		dy /= dm;
 		dz /= dm;
 		dm = sqrtf((16.f*pwr*pwr)/dm);
-		c->vx += dx * dm * -0.02f;
-		c->vy += dy * dm * -0.02f;
-		c->vz += dz * dm * -0.02f;
+		c->vx += dx * dm * -0.01f;
+		c->vy += dy * dm * -0.01f;
+		c->vz += dz * dm * -0.01f;
 	}
 	
 	(void)origin;
