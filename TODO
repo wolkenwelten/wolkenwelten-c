@@ -1,6 +1,3 @@
-(0) Enable hitting air/other players with damage + blowback
-(0) Enable damaging other players with grenades/beamblasts
-(0) Show the activeItem for other Characters
 (0) Send chunks compressed
 
 (A) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
