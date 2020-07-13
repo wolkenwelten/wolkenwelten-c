@@ -158,7 +158,6 @@ void characterUpdateHitOff(character *c){
 }
 
 // TODO: move x/y/z vector in direction of yaw/pitch/roll for more accurate hit detection
-// TODO: send a broadcast message informing of the hit so other clients may start playing sfx
 void characterHitCheck(character *c, int origin, float x, float y, float z, float yaw, float pitch, float roll, float pwr){
 	float dx = x - c->x;
 	float dy = y - c->y;
@@ -167,7 +166,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 	
 	if(d < 2.f){
 		sfxPlay(sfxImpact,1.f);
-		sfxPlay(sfxUngh,1.f);
+		sfxPlay(sfxUngh,  1.f);
 		setOverlayColor(0xA03020F0,0);
 		if(characterHP(c,pwr*-4.f)){
 			msgSendDyingMessage("got clubbed",origin);
@@ -175,15 +174,15 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 		}
 		commitOverlayColor();
 		msgCharacterGotHit(pwr);
-		
-		float dm = fabsf(dx);
+
+		float              dm = fabsf(dx);
 		if(fabsf(dy) > dm){dm = fabsf(dy);}
 		if(fabsf(dz) > dm){dm = fabsf(dz);}
 
 		dx /= dm;
 		dy /= dm;
 		dz /= dm;
-		dm = sqrtf((16*pwr*pwr)/dm);
+		dm = sqrtf((16.f*pwr*pwr)/dm);
 		c->vx += dx * dm * -0.02f;
 		c->vy += dy * dm * -0.02f;
 		c->vz += dz * dm * -0.02f;
@@ -796,8 +795,8 @@ void characterActiveItemDraw(character *c){
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
 	matMulRotYX(matMVP,-c->yaw,-c->pitch);
-	matMulTrans(matMVP,.4f,-0.2f,-0.3f);
-	matMulScale(matMVP,0.5f,0.5f,0.5f);
+	matMulTrans(matMVP, .4f,-0.2f,-0.3f);
+	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
 	
 	if(itemHasMineAction(activeItem)){
 		matMulTrans(matMVP,0.2f,-0.1f,-0.1f + c->hitOff*0.03f);
@@ -813,8 +812,6 @@ void characterActiveItemDraw(character *c){
 	meshDraw(aiMesh);
 }
 
-
-
 void characterDraw(character *c){
 	float matMVP[16];
 	if(c == NULL)       {return;}
@@ -823,12 +820,13 @@ void characterDraw(character *c){
 
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
-	matMulRotYX(matMVP,-c->yaw,-c->pitch);
+	matMulRotYX(matMVP,-c->yaw,-c->pitch/6.f);
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(c->eMesh);
 	characterActiveItemDraw(c);
 }
+
 void characterDrawAll(){
 	shaderBind(sMesh);
 	for(int i=0;i<characterCount;i++){
