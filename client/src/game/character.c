@@ -195,13 +195,19 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 	(void)roll;
 }
 
-// TODO: decrease volume with increasign distance from player
-void characterGotHitBroadcast(int c,float pwr){
-	(void)c;
-	(void)pwr;
+void characterGotHitBroadcast(int i,float pwr){
+	if(playerList[i] == NULL){return;}
+	character *c = playerList[i];
+	const float dx = player->x - c->x;
+	const float dy = player->y - c->y;
+	const float dz = player->z - c->z;
+	const float d  = sqrtf((dx*dx)+(dy*dy)+(dz*dz));
+	if(d > 128.f){return;}
+	const float vol = (128.f-d)/128.f;
 	
-	sfxPlay(sfxImpact,1.f);
-	sfxPlay(sfxUngh,1.f);
+	sfxPlay(sfxImpact,vol);
+	sfxPlay(sfxUngh,vol);
+	(void)pwr;
 }
 
 void characterUpdateWindVolume(character *c, float wvx, float wvy, float wvz){

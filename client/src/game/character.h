@@ -47,6 +47,7 @@ typedef struct {
 #include "../game/item.h"
 
 extern character *player;
+
 character *characterNew       ();
 void  characterFree           (character *c);
 bool  characterLOSBlock       (character *c, int *retX,int *retY,int *retZ,int returnBeforeBlock);
@@ -72,8 +73,8 @@ void  characterDraw           (character *c);
 void  characterDrawAll        ();
 uint32_t characterCollision   (character *c, float cx, float cy, float cz, float wd);
 void  characterHitCheck       (character *c, int origin, float x, float y, float z, float yaw, float pitch, float roll, float pwr);
-void characterGotHitBroadcast (int c,float pwr);
+void  characterGotHitBroadcast(int c,float pwr);
 
-void characterMoveDelta       (character *c, packetMedium *p);
-void characterSetPlayerPos    (int i, packetLarge *p);
-void characterRemovePlayer    (int c, int len);
+void  characterMoveDelta      (character *c, packetMedium *p);
+void  characterSetPlayerPos   (int i, packetLarge *p);
+void  characterRemovePlayer   (int c, int len);
