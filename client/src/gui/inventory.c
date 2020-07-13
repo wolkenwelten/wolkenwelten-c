@@ -190,6 +190,7 @@ void updateInventoryClick(int x,int y, int btn){
 	item *cItem;
 	int tilesize;
 	if(!isInventoryOpen()){return;}
+	
 	if(screenWidth < 1024){
 		tilesize = 48;
 	}else if(screenWidth < 1536){
@@ -197,10 +198,10 @@ void updateInventoryClick(int x,int y, int btn){
 	}else {
 		tilesize = 80;
 	}
-	if(x < (screenWidth/2-5*tilesize)){inventoryClickOutside(btn);return;}
-	if(x > (screenWidth/2+5*tilesize)){inventoryClickOutside(btn);return;}
-	if(y < ((screenHeight/2)-(3*tilesize))){inventoryClickOutside(btn);return;}
-	if(y > (screenHeight/2+(4*tilesize)+tilesize/2)){inventoryClickOutside(btn);return;}
+	if(x < ((screenWidth /2)-(5*tilesize)))           {inventoryClickOutside(btn);return;}
+	if(x > ((screenWidth /2)+(5*tilesize)))           {inventoryClickOutside(btn);return;}
+	if(y < ((screenHeight/2)-(3*tilesize)))           {inventoryClickOutside(btn);return;}
+	if(y > ((screenHeight/2)+(4*tilesize)+tilesize/2)){inventoryClickOutside(btn);return;}
 
 	int xsel = (x - (screenWidth/2-5*tilesize))/tilesize;
 	int ysel = 4-(((y+tilesize) - (screenHeight/2))/tilesize);
@@ -268,6 +269,7 @@ void changeInventorySelection(int x,int y){
 	gamepadSelection = xsel + ysel*10;
 }
 
+// TODO: keeping a button pressed over a recipe should start crafting the recipe automaticaly (typematic?)
 void updateInventoryGamepad(int btn){
 	mouseHidden = true;
 	if(gamepadSelection == -1){

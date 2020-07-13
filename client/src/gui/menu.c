@@ -35,29 +35,35 @@ void updateMenu(){
 		snprintf(playerName,sizeof(playerName),"%s",textInputGetBuffer());
 		textInputLock = 0;
 	}
+}
 
-	if(mouseLClicked){
-		if((mousex > (screenWidth-256-32)) && (mousex < screenWidth-32)){
-			if((mousey > 32) && (mousey < 64)){
-				#ifndef __EMSCRIPTEN__
-				singleplayer    = true;
-				gameRunning     = true;
-				textInputLock   = 0;
-				textInputActive = false;
-				connectionTries = 0;
-				hideMouseCursor();
-				#endif
-			} else if((mousey > 80) && (mousey < 112)){
-				if(!textInputActive){
-					textInput(8,screenHeight-24,256,16,2);
-				}
-			} else if((mousey > 130) && (mousey < 162)){
-				if(!textInputActive){
-					textInput(8,screenHeight-24,256,16,3);
-				}
-			} else if((mousey > 178) && (mousey < 200)){
-				quit=true;
+void startSingleplayer(){
+	singleplayer    = true;
+	gameRunning     = true;
+	textInputLock   = 0;
+	textInputActive = false;
+	connectionTries = 0;
+	hideMouseCursor();
+}
+
+void updateMenuClick(int x, int y, int btn){
+	if(gameRunning){return;}
+
+	if((btn == 1) && (x > (screenWidth-256-32)) && (x < screenWidth-32)){
+		if((y > 32) && (y < 64)){
+			#ifndef __EMSCRIPTEN__
+			startSingleplayer();
+			#endif
+		} else if((y > 80) && (y < 112)){
+			if(!textInputActive){
+				textInput(8,screenHeight-24,256,16,2);
 			}
+		} else if((y > 130) && (y < 162)){
+			if(!textInputActive){
+				textInput(8,screenHeight-24,256,16,3);
+			}
+		} else if((y > 178) && (y < 200)){
+			quit=true;
 		}
 	}
 }

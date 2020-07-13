@@ -6,6 +6,7 @@
 #include "../game/blockType.h"
 #include "../game/entity.h"
 #include "../game/item.h"
+#include "../gui/menu.h"
 #include "../sdl/sdl.h"
 #include "../gfx/glew.h"
 #include "../gfx/mesh.h"
@@ -32,9 +33,6 @@ textMesh *itemMesh;
 textMesh *crosshairMesh;
 textMesh *cursorMesh;
 
-
-bool mouseLClicked = false;
-bool mouseRClicked = false;
 bool mouseHidden   = false;
 int mousex,mousey;
 
@@ -99,10 +97,11 @@ void drawCursor(){
 	textMeshAddVert(cursorMesh,x+32,y+32,128.f,128.f,~1);
 	textMeshAddVert(cursorMesh,x+32,   y,128.f,  0.f,~1);
 	textMeshAddVert(cursorMesh,   x,   y,  0.f,  0.f,~1);
-	textMeshDraw(cursorMesh);
+	textMeshDraw   (cursorMesh);
 }
 
 void updateMouse(){
+	static bool mouseClicked[3] = false;
 	const int oldmx = mousex;
 	const int oldmy = mousey;
 	int btn = getMouseState(&mousex,&mousey);
@@ -114,21 +113,20 @@ void updateMouse(){
 	}
 	drawCursor();
 
-	if((btn & 1) && !mouseLClicked){
-		mouseLClicked = true;
-		if(isInventoryOpen()){
-			updateInventoryClick(mousex,mousey,1);
-		}
-	}else if(mouseLClicked){
-		mouseLClicked = false;
+	if(!(btn & 1)){
+		mouseClicked[0] = false;
+	}else if((btn & 1) && !mouseClicked[0]){
+		mouseClicked[0] = true;
+		updateInventoryClick(mousex,mousey,1);
+		updateMenuClick(mousex,mousey,1);
 	}
-	if((btn & 4) && !mouseRClicked){
-		mouseRClicked = true;
-		if(isInventoryOpen()){
-			updateInventoryClick(mousex,mousey,3);
-		}
-	}else if(mouseRClicked){
-		mouseRClicked = false;
+	
+	if(!(btn & 4)){
+		mouseClicked[2] = false;
+	}else if((btn & 4) && !mouseClicked[2]){
+		mouseClicked[2] = true;
+		updateInventoryClick(mousex,mousey,3);
+		updateMenuClick(mousex,mousey,3);
 	}
 }
 
