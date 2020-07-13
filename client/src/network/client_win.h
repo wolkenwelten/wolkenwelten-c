@@ -3,6 +3,7 @@
 #include <process.h>
 #include <winsock2.h>
 #include <windows.h>
+#include <Lmcons.h>
 
 bool signalHandlerBound = false;
 int  serverSocket       = 0;
@@ -24,9 +25,17 @@ void tryWinsockInit(){
 }
 
 void clientGetName(){
-	tryWinsockInit();
-	gethostname(playerName,28);
+	TCHAR infoBuf[28];
+	DWORD bufCharCount = sizeof(infoBuf);
+	if(!GetUserName(infoBuf,&bufCharCount)){
+		tryWinsockInit();
+		gethostname(playerName,28);
+	}else{
+		snprintf(playerName,sizeof(playerName)-1,"%s",infoBuf);
+		playerName[sizeof(playerName)-1]=0;
+	}
 }
+
 
 void startSingleplayerServer(){
 	static char cmd[128];
