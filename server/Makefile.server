@@ -1,16 +1,19 @@
 SERVER_CFLAGS    :=
 SERVER_CINCLUDES :=
-SERVER_LIBS      := $(LIBS)
+SERVER_LIBS      := 
 
-SERVER_HDRS     := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
-SERVER_SRCS     := $(shell find server/src -type f -name '*.c') $(COMMON_SRCS)
-SERVER_OBJS     := ${SERVER_SRCS:.c=.o}
+SERVER_HDRS      := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
+SERVER_SRCS      := $(shell find server/src -type f -name '*.c') $(COMMON_SRCS)
+SERVER_OBJS      := ${SERVER_SRCS:.c=.o}
 
-$(SERVER_OBJS): CFLAGS += $(SERVER_CFLAGS)
+$(SERVER_OBJS): CFLAGS    += $(SERVER_CFLAGS)
 $(SERVER_OBJS): CINCLUDES += $(SERVER_CINCLUDES)
 
-wolkenwelten-server: server/make.deps $(SERVER_OBJS) $(COMMON_OBJS)
-	$(CC) $(SERVER_OBJS) -g -o wolkenwelten-server $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES) $(SERVER_LIBS)
+wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
+wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
+wolkenwelten-server: LIBS      += $(SERVER_LIBS)
+wolkenwelten-server: server/make.deps $(SERVER_OBJS)
+	$(CC) $(SERVER_OBJS) -o wolkenwelten-server $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 
 server/src/tmp/cto.c: tools/infogen
 	mkdir -p server/src/tmp/
@@ -20,7 +23,7 @@ server/src/tmp/cto.h: server/src/tmp/cto.c
 
 .deps: server/make.deps
 server/make.deps: server/src/tmp/cto.h
-	$(CC) -MM $(SERVER_SRCS) $(SERVER_CINCLUDES) > server/make.deps
+	$(CC) -MM $(SERVER_SRCS) $(CINCLUDES) $(SERVER_CINCLUDES) > server/make.deps
 
 ifneq ($(MAKECMDGOALS),clean)
 -include server/make.deps

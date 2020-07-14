@@ -19,15 +19,20 @@ releases/linux/wolkenwelten-linux.tar.xz: releases/linux/wolkenwelten/wolkenwelt
 releases/linux/wolkenwelten-linux.tar.xz: releases/linux/wolkenwelten/wolkenwelten-server
 	cd releases/wolkenwelten/ && tar -cJf wolkenwelten-linux.tar.xz wolkenwelten/
 
+
+releases/linux/wolkenwelten/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
+releases/linux/wolkenwelten/wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
 releases/linux/wolkenwelten/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
 releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
 releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
 releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/cto.c client/src/tmp/cto.h
 	mkdir -p releases/linux/wolkenwelten/
-	$(CC) $(CLIENT_SRCS) -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(DYNLIBS) $(STATICLIBS)
+	$(CC) $(CLIENT_SRCS) -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
 	strip -gxX $@
 
+releases/linux/wolkenwelten/wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
+releases/linux/wolkenwelten/wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
 releases/linux/wolkenwelten/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
 	mkdir -p releases/linux/wolkenwelten/
-	musl-gcc -static $(SERVER_SRCS) -o $@ $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES)
+	musl-gcc -static $(SERVER_SRCS) -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES)
 	strip -gxX $@

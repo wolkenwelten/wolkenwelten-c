@@ -12,17 +12,21 @@ CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
 CLIENT_SRCS      := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
 CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
 
-$(CLIENT_OBJS): CFLAGS += $(CLIENT_CFLAGS)
+$(CLIENT_OBJS): CFLAGS    += $(CLIENT_CFLAGS)
 $(CLIENT_OBJS): CINCLUDES += $(CLIENT_CINCLUDES)
 
 .PHONY: all
 all: wolkenwelten
-wolkenwelten: client/make.deps $(CLIENT_OBJS) $(COMMON_OBJS)
-	$(CC) $(CLIENT_OBJS)  -g -o wolkenwelten $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(CLIENT_LIBS)
+
+wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
+wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
+wolkenwelten: LIBS      += $(CLIENT_LIBS)
+wolkenwelten: client/make.deps $(CLIENT_OBJS)
+	$(CC) $(CLIENT_OBJS) -o wolkenwelten $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 
 .deps: client/make.deps
 client/make.deps: | client/src/tmp/assets.h client/src/tmp/meshassets.h client/src/tmp/cto.h
-	$(CC) -MM $(CLIENT_SRCS) $(CLIENT_CINCLUDES) > client/make.deps
+	$(CC) -MM $(CLIENT_SRCS) $(CINCLUDES) $(CLIENT_CINCLUDES) > client/make.deps
 
 client/src/tmp/cto.c: tools/infogen
 	mkdir -p client/src/tmp/
