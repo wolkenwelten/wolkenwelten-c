@@ -24,7 +24,7 @@ int chunkCount     = 0;
 int chunksGeneratedThisFrame = 0;
 chunk *chunkFirstFree = NULL;
 
-const float CHUNK_RENDER_DISTANCE = 384.f;
+const float CHUNK_RENDER_DISTANCE = 512.f;
 const float CHUNK_FADEOUT_DISTANCE = 64.f;
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
