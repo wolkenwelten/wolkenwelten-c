@@ -101,7 +101,7 @@ void drawCursor(){
 }
 
 void updateMouse(){
-	static bool mouseClicked[3] = false;
+	static unsigned int mouseClicked[3] = {0,0,0};
 	const int oldmx = mousex;
 	const int oldmy = mousey;
 	int btn = getMouseState(&mousex,&mousey);
@@ -113,20 +113,18 @@ void updateMouse(){
 	}
 	drawCursor();
 
-	if(!(btn & 1)){
-		mouseClicked[0] = false;
-	}else if((btn & 1) && !mouseClicked[0]){
-		mouseClicked[0] = true;
-		updateInventoryClick(mousex,mousey,1);
-		updateMenuClick(mousex,mousey,1);
-	}
-	
-	if(!(btn & 4)){
-		mouseClicked[2] = false;
-	}else if((btn & 4) && !mouseClicked[2]){
-		mouseClicked[2] = true;
-		updateInventoryClick(mousex,mousey,3);
-		updateMenuClick(mousex,mousey,3);
+	for(int cbtn = 0;cbtn < 3;cbtn++){
+		if(!(btn & (1<<cbtn))){
+			mouseClicked[cbtn] = 0;
+		}else if((btn & (1<<cbtn)) && (getTicks() > (mouseClicked[cbtn]+500))){
+			if(mouseClicked[cbtn] == 0){
+				mouseClicked[cbtn] = getTicks();
+			}else{
+				mouseClicked[cbtn]+=50;
+			}
+			updateInventoryClick(mousex,mousey,cbtn+1);
+			updateMenuClick(mousex,mousey,cbtn+1);
+		}
 	}
 }
 
