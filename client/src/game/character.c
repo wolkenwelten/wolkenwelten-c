@@ -166,7 +166,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 	float dy = (y+vy) - c->y;
 	float dz = (z+vz) - c->z;
 	float d  = (dx*dx)+(dy*dy)+(dz*dz);
-	
+
 	if(d < 1.f){
 		sfxPlay(sfxImpact,1.f);
 		sfxPlay(sfxUngh,  1.f);
@@ -190,7 +190,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 		c->vy += dy * dm * -0.01f;
 		c->vz += dz * dm * -0.01f;
 	}
-	
+
 	(void)roll;
 }
 
@@ -203,7 +203,7 @@ void characterGotHitBroadcast(int i,float pwr){
 	const float d  = sqrtf((dx*dx)+(dy*dy)+(dz*dz));
 	if(d > 128.f){return;}
 	const float vol = (128.f-d)/128.f;
-	
+
 	sfxPlay(sfxImpact,vol);
 	sfxPlay(sfxUngh,vol);
 	(void)pwr;
@@ -432,7 +432,7 @@ void characterMineBlock(character *c){
 				vibrate(0.3f);
 			}
 		}
-		if(c->actionTimeout >= 60){
+		if(c->actionTimeout >= 100){
 			c->hasHit = true;
 			c->actionTimeout = 0;
 		}
@@ -683,7 +683,7 @@ void characterUpdate(character *c){
 	c->vz = nvz;
 
 	if(c->fallingSound && (c->y > -32)){ c->fallingSound = false; }
-	if(c->y < -500){ 
+	if(c->y < -500){
 		characterDie(c);
 		msgSendDyingMessage("fell into the abyss", 65535);
 	}
@@ -694,7 +694,7 @@ void characterUpdate(character *c){
 			sfxPlay(sfxFalling,1.f);
 		}
 	}
-	
+
 
 	const int damage = characterPhysics(c);
 	characterUpdateDamage(c,damage);
@@ -785,19 +785,19 @@ void characterActiveItemDraw(character *c){
 	float matMVP[16];
 	item *activeItem;
 	mesh *aiMesh;
-	
+
 	activeItem = &c->inventory[c->activeItem];
 	if(activeItem == NULL)     {return;}
 	if(itemIsEmpty(activeItem)){return;}
 	aiMesh = itemGetMesh(activeItem);
 	if(aiMesh == NULL)         {return;}
-	
+
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
 	matMulRotYX(matMVP,-c->yaw,-c->pitch);
 	matMulTrans(matMVP, .4f,-0.2f,-0.3f);
 	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
-	
+
 	if(itemHasMineAction(activeItem)){
 		matMulTrans(matMVP,0.2f,-0.1f,-0.1f + c->hitOff*0.03f);
 		matMulRotYX(matMVP,c->hitOff*10.f,c->hitOff*45.f);
@@ -806,7 +806,7 @@ void characterActiveItemDraw(character *c){
 		matMulTrans(matMVP,0.2f-c->hitOff*0.1f,y+(c->hitOff/32),-0.1f - c->hitOff*0.1f);
 		matMulRotYX(matMVP,c->hitOff*10.f,c->hitOff*-35.f);
 	}
-	
+
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(aiMesh);
