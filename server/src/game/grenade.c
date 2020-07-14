@@ -62,8 +62,7 @@ void grenadeNew(packetMedium *p){
 	float yaw   = p->val.f[3];
 	float pitch = p->val.f[4];
 	float roll  = p->val.f[5];
-	float pwr   = p->val.i[6];
-	//int   ID    = p->target;
+	float pwr   = p->val.f[6];
 
 	grenadeList[g].ent = entityNew(x,y,z,yaw,pitch,roll);
 	if(pwr < 1.5f){

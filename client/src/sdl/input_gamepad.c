@@ -1,4 +1,5 @@
 #include "input_gamepad.h"
+#include "sdl.h"
 #include "../game/character.h"
 #include "../gui/inventory.h"
 #include "../main.h"
@@ -96,6 +97,7 @@ void controllerDeviceEvent(const SDL_Event *e){
 }
 
 void doGamepadupdate(float *vx,float *vy,float *vz){
+	static unsigned int lastDown[16] = {0};
 	if(!gamepadActive){return;}
 	if( fabsf(gamepadLeftAxisX) > 0.2f){ *vx = gamepadLeftAxisX; }
 	if( fabsf(gamepadLeftAxisY) > 0.2f){ *vz = gamepadLeftAxisY; }
@@ -109,10 +111,17 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 			characterRotate(player,(float)mx,(float)my,0.f);
 		}
 	}
+	unsigned int curticks = getTicks();
 
-	if(gamepadButtons[0]){
+	if(!gamepadButtons[0]){
+		lastDown[0] = 0;
+	}else if(gamepadButtons[0] && (curticks > (lastDown[0] + 600))){
 		if(isInventoryOpen()){
-			gamepadButtons[0] = false;
+			if(lastDown[0] == 0){
+				lastDown[0] = curticks;
+			}else{
+				lastDown[0] += 50;
+			}
 			updateInventoryGamepad(1);
 		}else{
 			*vy = 1.f;
