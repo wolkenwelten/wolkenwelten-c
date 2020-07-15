@@ -1,5 +1,4 @@
 For some reason the starting position/rotation of the player is different when compiled using clang under linux as compared to gcc which hast the expected position/rotation, although the worldgen seems unaffected by this.
-Sometimes weird horizontal green lines (T420), texture scaling? - still there t.K
 Reducing Hook rope length still can lead to weird collision issues
 You can't build one block wide bunkers, placing the block not possible.
 Collision is getting weird in 1x2 mine shafts
