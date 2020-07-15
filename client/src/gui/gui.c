@@ -130,7 +130,7 @@ void updateMouse(){
 
 const char *getHumanReadableSize(size_t n){
 	static char buf[32];
-	const char *suffix[] = {"B","KB","MB","GB","TB"};
+	const char *suffix[] = {"","K","M","G","T"};
 	int i;
 
 	for(i=0;i<5;i++){
@@ -180,15 +180,15 @@ void drawDebuginfo(){
 	textMeshPrintf(textm,"Player  Roll: %04.2f\n",player->roll);
 	textMeshPrintf(textm,"Player  Hoff: %04.2f\n",player->hitOff);
 	textMeshPrintf(textm,"Player Shake: %04.2f\n",player->shake);
-	textMeshPrintf(textm,"Active Tris.: %i\n", tris);
+	textMeshPrintf(textm,"Active Tris.: %s\n", getHumanReadableSize(tris));
 	textMeshPrintf(textm,"Player Layer: %2i\n",((int)player->y/CHUNGUS_SIZE));
 	textMeshPrintf(textm,"Entities    : %2i\n",entityCount);
 	textMeshPrintf(textm,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
-	textMeshPrintf(textm,"ActiveChunks: %2i\n",chunkGetActive());
+	textMeshPrintf(textm,"ActiveChunks: %s\n",getHumanReadableSize(chunkGetActive()));
 	textMeshPrintf(textm,"FreeChunks  : %2i\n",chunkGetFree());
 	textMeshPrintf(textm,"ActiveChungi: %2i\n",chungusGetActiveCount());
-	textMeshPrintf(textm,"Bytes Sent  : %s\n",getHumanReadableSize(sentBytesCurrentSession));
-	textMeshPrintf(textm,"Bytes Recvd : %s\n",getHumanReadableSize(recvBytesCurrentSession));
+	textMeshPrintf(textm,"Bytes Sent  : %sB\n",getHumanReadableSize(sentBytesCurrentSession));
+	textMeshPrintf(textm,"Bytes Recvd : %sB\n",getHumanReadableSize(recvBytesCurrentSession));
 }
 
 void drawItemBar(){
