@@ -1,6 +1,6 @@
 SERVER_CFLAGS    :=
 SERVER_CINCLUDES :=
-SERVER_LIBS      := 
+SERVER_LIBS      :=
 
 SERVER_HDRS      := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
 SERVER_SRCS      := $(shell find server/src -type f -name '*.c') $(COMMON_SRCS)

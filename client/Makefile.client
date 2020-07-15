@@ -1,6 +1,6 @@
 CLIENT_CFLAGS    :=
 CLIENT_CINCLUDES := $(shell pkg-config --cflags sdl2 glew)
-CLIENT_LIBS      := $(LIBS) $(shell sdl2-config --libs) -lGLEW -lGL -lSDL2_mixer
+CLIENT_LIBS      := $(shell sdl2-config --libs) -lGLEW -lGL -lSDL2_mixer
 
 GFX_ASSETS       := $(shell find client/gfx -type f -name '*')
 SFX_ASSETS       := $(shell find client/sfx -type f -name '*')
@@ -22,7 +22,7 @@ wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
 wolkenwelten: LIBS      += $(CLIENT_LIBS)
 wolkenwelten: client/make.deps $(CLIENT_OBJS)
-	$(CC) $(CLIENT_OBJS) -o wolkenwelten $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
+	$(CC) $(CLIENT_OBJS) -o wolkenwelten $(OPTIMIZATION) $(CFLAGS) $(LIBS)
 
 .deps: client/make.deps
 client/make.deps: | client/src/tmp/assets.h client/src/tmp/meshassets.h client/src/tmp/cto.h
