@@ -31,7 +31,7 @@ bool masterblasterHasMineAction(item *cItem){
 bool masterblasterMineAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
-	if(to < 120){return false;}
+	if(to < 240){return false;}
 	beamblast(cChar,1,64);
 	return true;
 }
