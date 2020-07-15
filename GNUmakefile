@@ -48,6 +48,7 @@ endif
 .PHONY: clean
 clean:
 	rm -f gmon.out client/make.deps client/tools/assets client/tools/objparser callgrind.out.* vgcore.* platform/win/wolkenwelten.res
+	rm -f $(shell find common/src -type f -name '*.o')
 	rm -f wolkenwelten wolkenwelten.exe $(shell find client/src -type f -name '*.o')
 	rm -f wolkenwelten-server wolkenwelten-server.exe $(shell find server/src -type f -name '*.o')
 	rm -rf client/src/tmp/ server/src/tmp/
