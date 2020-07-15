@@ -7,3 +7,4 @@ Sometimes one spawns inside a block
 sometimes the client segfaults, occurs more often when connected over the internet (sigPipe?)
 Spawn bei login und sterben teilweise unterschiedlich
 When a Server is already running, choosing singleplayer joins this server instead (Not Sure if truly bug)
+Using the grappling hook resets the cooldown for the blaster et al
