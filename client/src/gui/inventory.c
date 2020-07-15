@@ -129,7 +129,7 @@ void drawInventory(textMesh *guim, textMesh *textm, textMesh *itemMesh){
 		textm->sy = y+(itemtilesize-itemtilesizeoff);
 		textMeshNumber(textm,a);
 
-		if((mousex > x) && (mousex < x+tilesize) && (mousey > y) && (mousey < y+tilesize)){
+		if(((mousex > x) && (mousex < x+tilesize) && (mousey > y) && (mousey < y+tilesize)) || (mouseHidden && (i == (gamepadSelection-50)))){
 			const int yy = y + tilesize + tilesize/2;
 			int ii,xx;
 			const int animX = sin((float)ticks/16.f)*tilesize/8;
