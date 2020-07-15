@@ -1,5 +1,5 @@
 CC                   := cc
-OPTIMIZATION         := -O2
+OPTIMIZATION         := -O2 -fno-lto
 RELEASE_OPTIMIZATION := -O3 -flto
 CINCLUDES            :=
 LIBS                 := -lm
