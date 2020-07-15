@@ -10,6 +10,9 @@
 
 #include <math.h>
 
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
 const float ITEMTILE = (1.f/32.f);
 bool inventoryOpen = false;
 bool inventoryPickup = false;
@@ -253,9 +256,11 @@ void changeInventorySelection(int x,int y){
 	int xsel = gamepadSelection % 10;
 	int ysel = gamepadSelection / 10;
 
+	int xmax = 9;
+	if(ysel == 5){xmax = MIN(9,recipeGetCount()-1);}
 	xsel += x;
-	if(xsel < 0){xsel = 9;}
-	if(xsel > 9){xsel = 0;}
+	if(xsel < 0){xsel = xmax;}
+	if(xsel > xmax){xsel = 0;}
 	ysel += y;
 	if(ysel < 0){ysel = 5;}
 	if(ysel == 4){
@@ -269,7 +274,6 @@ void changeInventorySelection(int x,int y){
 	gamepadSelection = xsel + ysel*10;
 }
 
-// TODO: keeping a button pressed over a recipe should start crafting the recipe automaticaly (typematic?)
 void updateInventoryGamepad(int btn){
 	mouseHidden = true;
 	if(gamepadSelection == -1){
