@@ -75,6 +75,14 @@ profile: all
 sanitize: CFLAGS += -fsanitize=address
 sanitize: all
 
+.PHONY: rund
+rund: all
+	./wolkenwelten -soundVolume=10 -worldSeed=11 -debugInfo=1
+
+.PHONY: run
+run: all
+	./wolkenwelten
+
 .PHONY: archive
 archive:
 	git archive --format=tar --prefix=wolkenwelten-HEAD.tar.gz/ HEAD | gzip > wolkenwelten-HEAD.tar.gz
