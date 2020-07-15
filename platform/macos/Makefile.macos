@@ -27,7 +27,7 @@ releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: client/src/tmp/asse
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: client/src/tmp/cto.c client/src/tmp/cto.h
 	mkdir -p releases/macos/wolkenwelten.app/Contents/MacOS
-	$(CC) $(CLIENT_SRCS) -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
+	$(CC) $(CLIENT_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 	strip -SxX $@
 	install_name_tool -change "@rpath/SDL2.framework/Versions/A/SDL2" "@executable_path/../Frameworks/SDL2.framework/SDL2" $@
 	install_name_tool -change "@rpath/SDL2_mixer.framework/Versions/A/SDL2_mixer" "@executable_path/../Frameworks/SDL2_mixer.framework/SDL2_mixer" $@
@@ -38,7 +38,7 @@ releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: LIBS      += $(SERV
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten-server: client/src/tmp/cto.c client/src/tmp/cto.h
 	mkdir -p releases/macos/wolkenwelten.app/Contents/MacOS
-	$(CC) $(SERVER_SRCS) -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
+	$(CC) $(SERVER_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 	strip -SxX $@
 
 releases/macos/wolkenwelten.app/Contents/Info.plist:  platform/macos/Info.plist

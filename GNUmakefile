@@ -1,10 +1,11 @@
-CC           := cc
-OPTIMIZATION := -O3 -flto
-CINCLUDES    :=
-LIBS         := -lm
-WARNINGS     := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align
-CFLAGS       := -g
-CSTD         := -std=c99
+CC                   := cc
+OPTIMIZATION         := -O2
+RELEASE_OPTIMIZATION := -O3 -flto
+CINCLUDES            :=
+LIBS                 := -lm
+WARNINGS             := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align
+CFLAGS               := -g
+CSTD                 := -std=c99
 
 include common/Makefile.common
 include client/Makefile.client
