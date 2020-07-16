@@ -3,7 +3,7 @@ OPTIMIZATION         := -O2 -fno-lto
 RELEASE_OPTIMIZATION := -O3 -flto
 CINCLUDES            :=
 LIBS                 := -lm
-WARNINGS             := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align
+WARNINGS             := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align -Wno-stringop-truncation
 CFLAGS               := -g
 CSTD                 := -std=c99
 
