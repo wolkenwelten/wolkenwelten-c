@@ -287,7 +287,7 @@ void drawActiveItem(){
 
 	shaderBind(sMesh);
 	if(itemHasMineAction(activeItem)){
-		matTranslation(matViewAI,1.8f,-0.9f,-1.3f + hitOff*0.3f);
+		matTranslation(matViewAI,1.8f,animOff-0.9f,-1.3f + hitOff*0.3f);
 		matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
 		matMul(matViewAI, matViewAI, matProjection);
 		shaderMatrix(sMesh, matViewAI);
