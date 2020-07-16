@@ -142,6 +142,7 @@ void msgParseGetChunk(packetHuge *p){
 	int y = p->val.i[1025];
 	int z = p->val.i[1026];
 	chungus *chng =  worldGetChungus(x>>8,y>>8,z>>8);
+	if(chng == NULL){return;}
 	chunk *chnk = chungusGetChunkOrNew(chng,x,y,z);
 	if(chnk == NULL){return;}
 	memcpy(chnk->data,p->val.c,sizeof(chnk->data));
