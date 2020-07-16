@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-chungus chungusList[1<<10];
+chungus chungusList[1<<8];
 int chungusCount=0;
 chungus *chungusFirstFree = NULL;
 
