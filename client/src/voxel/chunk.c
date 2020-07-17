@@ -18,7 +18,7 @@ typedef struct vertexTiny {
 #pragma pack(pop)
 
 vertexTiny blockMeshBuffer[1<<16];
-chunk chunkList[1<<17];
+chunk chunkList[1<<18];
 int chunkFreeCount = 0;
 int chunkCount     = 0;
 int chunksGeneratedThisFrame = 0;
