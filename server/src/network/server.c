@@ -190,13 +190,14 @@ void serverParsePacketSmall(int c, packetSmall *p){
 			errno=0;
 			serverKill(c);
 		break;
-		
+
 		case 8:
 			msgCharacterGotHitBroadcast(c,p->val.f[0]);
 		break;
 
 		default:
-			printf("%i S->%i\n",c,ptype);
+			fprintf(stderr,"INVALID MSG: %i S->%i\n",c,ptype);
+			serverKill(c);
 		break;
 	}
 }
@@ -229,19 +230,20 @@ void serverParsePacketMedium(int c, packetMedium *p){
 			beamblast(c,p);
 			if(verbose){printf("[%02i] beamblast\n",c);}
 		break;
-		
+
 		case 5:
 			fprintf(stderr,"playerMoveDelta received from client, which should never happen\n");
 			serverKill(c);
 		break;
-		
+
 		case 6:
 			msgCharacterHit(c,p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6]);
 			if(verbose){printf("[%02i] characterHit\n",c);}
 		break;
 
 		default:
-			printf("%i M->%i\n",c,ptype);
+			fprintf(stderr,"INVALID MSG: %i M->%i\n",c,ptype);
+			serverKill(c);
 		break;
 	}
 }
@@ -269,7 +271,8 @@ void serverParsePacketLarge(int c, packetLarge *p){
 		break;
 
 		default:
-			printf("%i L->%i\n",c,ptype);
+			fprintf(stderr,"INVALID MSG: %i L->%i\n",c,ptype);
+			serverKill(c);
 		break;
 	}
 }
@@ -283,7 +286,8 @@ void serverParsePacketHuge(int c, packetHuge *p){
 		break;
 
 		default:
-			printf("%i H->%i\n",c,ptype);
+			fprintf(stderr,"INVALID MSG: %i H->%i\n",c,ptype);
+			serverKill(c);
 		break;
 	}
 }
