@@ -367,6 +367,7 @@ void serverParseWSPacket(int i){
 
 		ii += mlen;
 		if(clients[i].recvWSBufLen != ii){
+			//printf("%i %i\n",ii,clients[i].recvWSBufLen);
 			for(unsigned int iii=0;iii < (clients[i].recvWSBufLen - ii);++iii){
 				clients[i].recvWSBuf[iii] = clients[i].recvWSBuf[iii+ii];
 			}

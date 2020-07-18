@@ -8,3 +8,8 @@ sometimes the client segfaults, occurs more often when connected over the intern
 Spawn bei login und sterben teilweise unterschiedlich
 When a Server is already running, choosing singleplayer joins this server instead (Not Sure if truly bug)
 Using the grappling hook resets the cooldown for the blaster et al
+Mining SFX gets played multiple times
+Mining SFX too loud
+Jumping SFX do not get reduced volume the further away the source is
+Firefox mouse capture does not work
+Chrome WASM over internet sometimes segfaults the server in serverParseWSPacket in the for loop at the end moving the bytes around
