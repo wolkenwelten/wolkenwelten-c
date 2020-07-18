@@ -294,6 +294,7 @@ void serverParsePacketHuge(int c, packetHuge *p){
 
 void serverParsePacket(int i){
 	for(int max=16;max > 0;--max){
+		if((i < 0) || (i >= clientCount)){return;}
 		if(clients[i].recvBufLen < 16){ return; }
 		unsigned int pLen = packetLen(clients[i].recvBuf);
 		if(pLen <= 0){ return; }
@@ -325,6 +326,7 @@ void serverParsePacket(int i){
 
 void serverParseWSPacket(int i){
 	for(int max=16;max > 0;--max){
+		if((i < 0) || (i >= clientCount)){return;}
 		if(clients[i].recvWSBufLen < 16){ return; }
 		uint8_t  opcode  = clients[i].recvWSBuf[0];
 		uint8_t  masklen = clients[i].recvWSBuf[1];
@@ -365,6 +367,7 @@ void serverParseWSPacket(int i){
 
 		ii += mlen;
 		if(clients[i].recvWSBufLen != ii){
+			//printf("%i %i\n",ii,clients[i].recvWSBufLen);
 			for(unsigned int iii=0;iii < (clients[i].recvWSBufLen - ii);++iii){
 				clients[i].recvWSBuf[iii] = clients[i].recvWSBuf[iii+ii];
 			}
