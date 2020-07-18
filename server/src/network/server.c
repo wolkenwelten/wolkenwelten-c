@@ -289,49 +289,33 @@ void serverParsePacketHuge(int c, packetHuge *p){
 }
 
 void serverParsePacket(int i){
-	unsigned int off = 0;
-	
-	if(clients[i].recvBufLen < 16){return;}
 	for(int max=16;max > 0;--max){
-		if((clients[i].recvBufLen - off) < 16)  { break; }
-		unsigned int pLen = packetLen(clients[i].recvBuf + off);
-		if(pLen > (clients[i].recvBufLen - off)){ break; }
+		if(clients[i].recvBufLen < 16){ return; }
+		unsigned int pLen = packetLen(clients[i].recvBuf);
+		if(pLen <= 0){ return; }
+		if(pLen > clients[i].recvBufLen){ return; }
 
 		switch(pLen){
 			case sizeof(packetSmall):
-				serverParsePacketSmall (i, (packetSmall *)  (clients[i].recvBuf+off));
+				serverParsePacketSmall (i, (packetSmall *)  clients[i].recvBuf);
 			break;
 			case sizeof(packetMedium):
-				serverParsePacketMedium(i, (packetMedium *) (clients[i].recvBuf+off));
+				serverParsePacketMedium(i, (packetMedium *) clients[i].recvBuf);
 			break;
 			case sizeof(packetLarge):
-				serverParsePacketLarge (i, (packetLarge *)  (clients[i].recvBuf+off));
+				serverParsePacketLarge (i, (packetLarge *)  clients[i].recvBuf);
 			break;
 			case sizeof(packetHuge):
-				serverParsePacketHuge  (i, (packetHuge *)   (clients[i].recvBuf+off));
-			break;
-			default:
-				fprintf(stderr,"Unknown packet size: %i \n",pLen);
-				serverKill(i);
-				break;
+				serverParsePacketHuge  (i, (packetHuge *)   clients[i].recvBuf);
 			break;
 		}
-		off += pLen;
-	}
-	
-	if(off > clients[i].recvBufLen){
-		fprintf(stderr,"Error, offset bigger than buffer length, this should never happen.\n");
-		serverKill(i);
-		return;
-	}else if(off == clients[i].recvBufLen){
-		fprintf(stderr,"ZERO\n");
-		clients[i].recvBufLen = 0;
-	}else{
-		fprintf(stderr,"MOVE off:%i len:%i\n",off,clients[i].recvBufLen);
-		for(unsigned int ii=0;ii < (clients[i].recvBufLen - off);++ii){
-			clients[i].recvBuf[ii] = clients[i].recvBuf[ii+off];
+
+		if(clients[i].recvBufLen != pLen){
+			for(unsigned int ii=0;ii < (clients[i].recvBufLen - pLen);++ii){
+				clients[i].recvBuf[ii] = clients[i].recvBuf[ii+pLen];
+			}
 		}
-		clients[i].recvBufLen -= off;
+		clients[i].recvBufLen -= pLen;
 	}
 }
 
@@ -553,7 +537,6 @@ void dumpQueue(int c){
 
 void addQueuedChunks(int c){
 	while(clients[c].sendBufLen < ((1<<22)-8192)){
-		if((c < 0) || (c >= clientCount)){return;}
 		if(clients[c].chnkReqQueueLen == 0){
 			if(clients[c].chngReqQueueLen == 0){
 				return;
@@ -624,7 +607,6 @@ int addWSMessagePrefix(uint8_t *d, int len, int maxlen){
 void sendToClient(int c,void *data,int len){
 	int ret;
 	int tlen = len;
-	int tries = 10;
 	if(c < 0){return;}
 	if(c >= clientCount){return;}
 	if(clients[c].flags&1){
@@ -636,10 +618,6 @@ void sendToClient(int c,void *data,int len){
 		if(ret == 1){
 			usleep(10);
 		}else if(ret == 2){
-			return;
-		}
-		if(--tries < 0){
-			serverKill(c);
 			return;
 		}
 	}
