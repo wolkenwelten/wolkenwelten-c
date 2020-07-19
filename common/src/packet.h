@@ -6,8 +6,6 @@ typedef struct {
 	uint32_t typesize;
 
 	/*  type     = typesize & 0xFF
-	 *  compress = typesize & 0x100
-	 *  reserved = typesize & 0x200
 	 *  size     = typesize >> 10
 	 */
 
