@@ -10,6 +10,7 @@
 #include "../tmp/cto.h"
 #include "../main.h"
 
+#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 

@@ -3,7 +3,7 @@
 #include "../game/blockType.h"
 #include "../gfx/texture.h"
 #include "../../../common/src/misc.h"
-#include "../network/messages.h"
+#include "../../../common/src/messages.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -47,7 +47,8 @@ void itemDropUpdate(){
 	}
 }
 
-void itemDropUpdateFromServer(packetMedium *p){
+void itemDropUpdateFromServer(packet *p){
+	const int index = p->val.i[7];
 	for(int i=p->val.i[6];i<itemDropCount;i++){
 		if(itemDrops[i].ent != NULL){
 			entityFree(itemDrops[i].ent);
@@ -55,15 +56,15 @@ void itemDropUpdateFromServer(packetMedium *p){
 		itemDrops[i].ent = NULL;
 	}
 	itemDropCount = p->val.i[6];
-	if(p->target >= itemDropCount){return;}
-	if(itemDrops[p->target].ent == NULL){
-		itemDrops[p->target].ent = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
+	if(index >= itemDropCount){return;}
+	if(itemDrops[index].ent == NULL){
+		itemDrops[index].ent = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
 	}
-	itemDrops[p->target].ent->x     = p->val.f[0];
-	itemDrops[p->target].ent->y     = p->val.f[1];
-	itemDrops[p->target].ent->z     = p->val.f[2];
-	itemDrops[p->target].aniStep    = p->val.f[3];
-	itemDrops[p->target].itm.ID     = p->val.i[4];
-	itemDrops[p->target].itm.amount = p->val.i[5];
-	itemDrops[p->target].ent->eMesh = itemGetMesh(&itemDrops[p->target].itm);
+	itemDrops[index].ent->x     = p->val.f[0];
+	itemDrops[index].ent->y     = p->val.f[1];
+	itemDrops[index].ent->z     = p->val.f[2];
+	itemDrops[index].aniStep    = p->val.f[3];
+	itemDrops[index].itm.ID     = p->val.i[4];
+	itemDrops[index].itm.amount = p->val.i[5];
+	itemDrops[index].ent->eMesh = itemGetMesh(&itemDrops[index].itm);
 }

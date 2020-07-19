@@ -1,98 +1,25 @@
-#include "packet.h"
-
+#include "../../../common/src/packet.h"
 #include "server.h"
-#include <string.h>
 
-void packetReadyS(packetSmall  *p, uint16_t ptype){
-	p->ptype = (ptype & (~0xC000));
-}
+#include <stdio.h>
 
-void packetReadyM(packetMedium *p, uint16_t ptype){
-	p->ptype = (ptype & (~0xC000)) | (0x4000);
-}
-
-void packetReadyL(packetLarge  *p, uint16_t ptype){
-	p->ptype = (ptype & (~0xC000)) | (0x8000);
-}
-
-void packetReadyH(packetHuge   *p, uint16_t ptype){
-	p->ptype = ptype | 0xC000;
-}
-
-void packetQueueS(packetSmall  *p, uint16_t ptype, int c){
-	packetReadyS(p,ptype);
+void packetQueue(packet *p, uint8_t ptype, unsigned int len, int c){
+	p->typesize = (len << 10) | (ptype);
 	if(c >= 0){
-		sendToClient(c,p,sizeof(packetSmall));
+		sendToClient(c,p,len+4);
 	}else{
-		sendToAll(p,sizeof(packetSmall));
+		sendToAll(p,len+4);
 	}
 }
 
-void packetQueueM(packetMedium *p, uint16_t ptype, int c){
-	packetReadyM(p,ptype);
-	if(c >= 0){
-		sendToClient(c,p,sizeof(packetMedium));
-	}else{
-		sendToAll(p,sizeof(packetMedium));
-	}
+void packetQueueExcept(packet *p, uint8_t ptype, unsigned int len, int c){
+	p->typesize = (len << 10) | (ptype);
+	sendToAllExcept(c,p,len+4);
 }
 
-void packetQueueL(packetLarge  *p, uint16_t ptype, int c){
-	packetReadyL(p,ptype);
-	if(c >= 0){
-		sendToClient(c,p,sizeof(packetLarge));
-	}else{
-		sendToAll(p,sizeof(packetLarge));
-	}
+void packetQueueToServer(packet *p, uint8_t ptype, unsigned int len){
+	(void)p;
+	(void)ptype;
+	(void)len;
+	fprintf(stderr,"Called a function intended for client use only from the Server\n");
 }
-
-void packetQueueH(packetHuge   *p, uint16_t ptype, int c){
-	packetReadyH(p,ptype);
-	if(c >= 0){
-		sendToClient(c,p,sizeof(packetHuge));
-	}else{
-		sendToAll(p,sizeof(packetHuge));
-	}
-}
-
-void packetQueueExceptS(packetSmall  *p, uint16_t ptype, int c){
-	packetReadyS(p,ptype);
-	sendToAllExcept(c,p,sizeof(packetSmall));
-}
-
-void packetQueueExceptM(packetMedium *p, uint16_t ptype, int c){
-	packetReadyM(p,ptype);
-	sendToAllExcept(c,p,sizeof(packetMedium));
-}
-
-void packetQueueExceptL(packetLarge  *p, uint16_t ptype, int c){
-	packetReadyL(p,ptype);
-	sendToAllExcept(c,p,sizeof(packetLarge));
-}
-
-void packetQueueExceptH(packetHuge   *p, uint16_t ptype, int c){
-	packetReadyH(p,ptype);
-	sendToAllExcept(c,p,sizeof(packetHuge));
-}
-
-unsigned int packetLen(const void *p){
-	if(p == NULL){return -1;}
-	const packetSmall *ps = (const packetSmall *)p;
-	switch(ps->ptype >> 14){
-		case 0:
-			return sizeof(packetSmall);
-
-		case 1:
-			return sizeof(packetMedium);
-
-		case 2:
-			return sizeof(packetLarge);
-
-		case 3:
-			return sizeof(packetHuge);
-
-		default:
-			return -1;
-	}
-}
-

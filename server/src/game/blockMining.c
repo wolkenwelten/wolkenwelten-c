@@ -2,11 +2,11 @@
 
 #include "../game/blockType.h"
 #include "../game/itemDrop.h"
-#include "../../../common/src/misc.h"
-#include "../network/packet.h"
-#include "../network/messages.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/misc.h"
+#include "../../../common/src/packet.h"
+#include "../../../common/src/messages.h"
 
 #include <math.h>
 #include <stddef.h>
@@ -118,19 +118,12 @@ void blockMiningUpdate(){
 }
 
 void blockMiningUpdatePlayer(int c){
-	packetSmall p;
-
 	if(blockMiningCount == 0){
-		p.target = 10;
-		p.val.i[2] = blockMiningCount;
-		packetQueueS(&p,6,c);
+		msgBlockMiningUpdate(c,0,0,0,0,0,10);
+		return;
 	}
 	for(int i=0;i<blockMiningCount;++i){
-		blockMining *bm = &blockMiningList[i];
-		p.target = i;
-		p.val.i[0] = (bm->x & 0xFFFF) | ((bm->y & 0xFFFF)<<16) ;
-		p.val.i[1] = (bm->z & 0xFFFF) | ((bm->damage & 0xFFFF)<<16) ;
-		p.val.i[2] = blockMiningCount;
-		packetQueueS(&p,6,c);
+		const blockMining *bm = &blockMiningList[i];
+		msgBlockMiningUpdate(c,bm->x,bm->y,bm->z,bm->damage,blockMiningCount,i);
 	}
 }

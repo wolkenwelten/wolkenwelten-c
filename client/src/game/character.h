@@ -1,6 +1,6 @@
 #pragma once
 #include "../gfx/mesh.h"
-#include "../network/packet.h"
+#include "../../../common/src/packet.h"
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -75,6 +75,6 @@ uint32_t characterCollision   (character *c, float cx, float cy, float cz, float
 void  characterHitCheck       (character *c, int origin, float x, float y, float z, float yaw, float pitch, float roll, float pwr);
 void  characterGotHitBroadcast(int c,float pwr);
 
-void  characterMoveDelta      (character *c, packetMedium *p);
-void  characterSetPlayerPos   (int i, packetLarge *p);
+void  characterMoveDelta      (character *c, packet *p);
+void  characterSetPlayerPos   (const packet *p);
 void  characterRemovePlayer   (int c, int len);

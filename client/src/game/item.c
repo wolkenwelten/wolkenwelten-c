@@ -4,7 +4,7 @@
 #include "../game/character.h"
 #include "../game/grenade.h"
 #include "../gfx/objs.h"
-#include "../network/messages.h"
+#include "../../../common/src/messages.h"
 #include "../sdl/sfx.h"
 #include "../voxel/bigchungus.h"
 

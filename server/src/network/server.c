@@ -1,18 +1,18 @@
 #define _DEFAULT_SOURCE
 #include "server.h"
 
+#include "../main.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../game/grenade.h"
-#include "../main.h"
 #include "../misc/sha1.h"
-#include "../../../common/src/misc.h"
 #include "../misc/options.h"
-#include "../network/messages.h"
-#include "../network/packet.h"
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/misc.h"
+#include "../../../common/src/messages.h"
+#include "../../../common/src/packet.h"
 
 #include <errno.h>
 
@@ -99,10 +99,10 @@ void serverKeepalive(){
 }
 
 void serverSendChatMsg(const char *msg){
-	packetLarge p;
-	strncpy((char *)p.val.c,msg,sizeof(p.val.c)-1);
-	p.val.c[sizeof(p.val.c)-1] = 0;
-	packetQueueL(&p,2,-1);
+	packet *p = alloca(4+256);
+	strncpy((char *)(p->val.c+2),msg,254);
+	p->val.c[255] = 0;
+	packetQueue(p,16,256,-1);
 	printf("%s[MSG]%s %s\n",termColors[6],termReset,msg);
 }
 
@@ -117,23 +117,68 @@ void sendPlayerJoinMessage(int c){
 	serverSendChatMsg(msg);
 }
 
-void serverParseChatMsg(int c, packetLarge *m){
+void serverParseChatMsg(int c, packet *m){
 	char msg[256];
-	snprintf(msg,sizeof(msg),"%s: %s",clients[c].playerName,(char *)m->val.c);
+	snprintf(msg,sizeof(msg),"%s: %s",clients[c].playerName,(char *)(m->val.c+2));
 	serverSendChatMsg(msg);
 }
 
-void serverParseDyingMsg(int c, packetLarge *m){
+void serverParseDyingMsg(int c, packet *m){
 	char msg[256];
-	if((m->target != 65535) && (m->target < clientCount)){
-		snprintf(msg,sizeof(msg),"%s %s %s",clients[m->target].playerName,(char *)m->val.c,clients[c].playerName);
+	if((m->val.s[0] != 65535) && (m->val.s[0] < clientCount)){
+		snprintf(msg,sizeof(msg),"%s %s %s",clients[m->val.s[0]].playerName,(char *)(m->val.c+2),clients[c].playerName);
 	}else{
-		snprintf(msg,sizeof(msg),"%s %s",clients[c].playerName,(char *)m->val.c);
+		snprintf(msg,sizeof(msg),"%s %s",clients[c].playerName,(char *)(m->val.c+2));
 	}
 	serverSendChatMsg(msg);
 }
 
-void serverParsePlayerPos(int c, packetLarge *p){
+void msgPlayerSpawnPos(int c){
+	packet *p = alloca(4+3*4);
+	int sx,sy,sz;
+	worldGetSpawnPos(&sx,&sy,&sz);
+	p->val.f[0] = ((float)sx)+0.5f;
+	p->val.f[1] = ((float)sy)+2.0f;
+	p->val.f[2] = ((float)sz)+0.5f;
+	packetQueue(p,1,3*4,c);
+}
+
+void msgUpdatePlayer(int c){
+	packet *rp = alloca(4+20*4);
+
+	for(int i=0;i<clientCount;++i){
+		if(i==c)                {continue;}
+		if(clients[i].c == NULL){continue;}
+
+		rp->val.f[ 0] = clients[i].c->x;
+		rp->val.f[ 1] = clients[i].c->y;
+		rp->val.f[ 2] = clients[i].c->z;
+		rp->val.f[ 3] = clients[i].c->yaw;
+		rp->val.f[ 4] = clients[i].c->pitch;
+		rp->val.f[ 5] = clients[i].c->roll;
+		rp->val.f[ 6] = clients[i].c->vx;
+		rp->val.f[ 7] = clients[i].c->vy;
+		rp->val.f[ 8] = clients[i].c->vz;
+		rp->val.f[ 9] = clients[i].c->yoff;
+		rp->val.i[10] = clients[i].c->hook;
+		rp->val.f[11] = clients[i].c->hookx;
+		rp->val.f[12] = clients[i].c->hooky;
+		rp->val.f[13] = clients[i].c->hookz;
+		rp->val.i[14] = clients[i].c->blockMiningX;
+		rp->val.i[15] = clients[i].c->blockMiningY;
+		rp->val.i[16] = clients[i].c->blockMiningZ;
+		rp->val.i[17] = clients[i].c->activeItem;
+		rp->val.i[18] = clients[i].c->hitOff;
+		rp->val.i[19] = i;
+		packetQueue(rp,15,20*4,c);
+	}
+
+	itemDropUpdatePlayer(c);
+	grenadeUpdatePlayer(c);
+	blockMiningUpdatePlayer(c);
+}
+
+void serverParsePlayerPos(int c, packet *p){
 	clients[c].c->x            = p->val.f[ 0];
 	clients[c].c->y            = p->val.f[ 1];
 	clients[c].c->z            = p->val.f[ 2];
@@ -156,33 +201,44 @@ void serverParsePlayerPos(int c, packetLarge *p){
 	msgUpdatePlayer(c);
 }
 
-void serverParsePacketSmall(int c, packetSmall *p){
-	int ptype = (p->ptype & (~0xC000));
+void msgSendChunk(int c, const chunk *chnk){
+	packet *p = alloca(4+1027*4);
+	memcpy(p->val.c,chnk->data,sizeof(chnk->data));
+	p->val.i[1024] = chnk->x;
+	p->val.i[1025] = chnk->y;
+	p->val.i[1026] = chnk->z;
+	packetQueue(p,18,1027*4,c);
+}
 
-	switch(ptype){
-		case 0:
+void serverParseSinglePacket(int c, packet *p){
+	const int pLen  = p->typesize >> 10;
+	const int pType = p->typesize & 0xFF;
+
+	switch(pType){
+		case 0: // Keepalive
+			if(verbose){printf("[%02i] keepalive %i:%i\n",c,pType,pLen);}
 		break;
 
 		case 1: // requestPlayerSpawnPos
-			msgRequestPlayerSpawnPos(c,p);
+			msgPlayerSpawnPos(c);
 			if(verbose){printf("[%02i] requestPlayerSpawnPos\n",c);}
 		break;
 
 		case 2: // requestChungus
-			msgRequestChungus(c,p);
+			addChungusToQueue(c,p->val.i[0],p->val.i[1],p->val.i[2]);
 			if(verbose){printf("[%02i] requestChungus\n",c);}
 		break;
 
 		case 3: // placeBlock
-			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],p->target);
-			sendToAllExcept(c,p,sizeof(packetSmall));
+			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],p->val.i[3]);
+			sendToAllExcept(c,p,pLen+4);
 			if(verbose){printf("[%02i] placeBlock\n",c);}
 		break;
 
 		case 4: // mineBlock
 			blockMiningDropItemsPos(p->val.i[0],p->val.i[1],p->val.i[2],worldGetB(p->val.i[0],p->val.i[1],p->val.i[2]));
 			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],0);
-			sendToAllExcept(c,p,sizeof(packetSmall));
+			sendToAllExcept(c,p,pLen+4);
 			if(verbose){printf("[%02i] mineBlock\n",c);}
 		break;
 
@@ -191,136 +247,132 @@ void serverParsePacketSmall(int c, packetSmall *p){
 			serverKill(c);
 		break;
 
-		case 8:
-			msgCharacterGotHitBroadcast(c,p->val.f[0]);
-		break;
-
-		default:
-			fprintf(stderr,"INVALID MSG: %i S->%i\n",c,ptype);
+		case 6: // blockMiningUpdate
+			fprintf(stderr,"blockMiningUpdate received from client, which should never happen\n");
 			serverKill(c);
 		break;
-	}
-}
 
-void serverParsePacketMedium(int c, packetMedium *p){
-	int ptype = (p->ptype & (~0xC000));
-
-	switch(ptype){
-		case 0:
+		case 7:
+			fprintf(stderr,"worldSetChungusLoaded received from client, which should never happen\n");
+			serverKill(c);
 		break;
 
-		case 1:
-			memcpy(clients[c].playerName,p->val.c,sizeof(p->val.c));
+		case 8: // CharacterGotHit
+			msgCharacterGotHit(c,p->val.f[0]);
+			if(verbose){printf("[%02i] msgCharacterGotHit\n",c);}
+		break;
+
+		case 9: // PlayerJoin
+			memcpy(clients[c].playerName,p->val.c,28);
 			clients[c].playerName[sizeof(clients[c].playerName)-1] = 0;
 			sendPlayerJoinMessage(c);
 			if(verbose){printf("[%02i] sendPlayerName\n",c);}
 		break;
 
-		case 2:
+		case 10: // itemDropNew
 			itemDropNewC(p);
 			if(verbose){printf("[%02i] itemDropNewC\n",c);}
 		break;
 
-		case 3:
+		case 11:
 			grenadeNew(p);
 			if(verbose){printf("[%02i] grenadeNew\n",c);}
 		break;
 
-		case 4:
+		case 12:
 			beamblast(c,p);
 			if(verbose){printf("[%02i] beamblast\n",c);}
 		break;
 
-		case 5:
+		case 13:
 			fprintf(stderr,"playerMoveDelta received from client, which should never happen\n");
 			serverKill(c);
 		break;
 
-		case 6:
+		case 14:
 			msgCharacterHit(c,p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6]);
 			if(verbose){printf("[%02i] characterHit\n",c);}
 		break;
 
-		default:
-			fprintf(stderr,"INVALID MSG: %i M->%i\n",c,ptype);
-			serverKill(c);
-		break;
-	}
-}
-
-void serverParsePacketLarge(int c, packetLarge *p){
-	int ptype = (p->ptype & (~0xC000));
-
-	switch(ptype){
-		case 0:
-		break;
-
-		case 1:
+		case 15:
 			serverParsePlayerPos(c,p);
-			//if(verbose){printf("[%02i] sendPlayerPos\n",c);}
+			if(verbose){printf("[%02i] sendPlayerPos\n",c);}
 		break;
 
-		case 2:
+		case 16:
 			serverParseChatMsg(c,p);
 			if(verbose){printf("[%02i] sendChatMsg\n",c);}
 		break;
 
-		case 3:
+		case 17:
 			serverParseDyingMsg(c,p);
 			if(verbose){printf("[%02i] sendDyingMsg\n",c);}
 		break;
 
-		default:
-			fprintf(stderr,"INVALID MSG: %i L->%i\n",c,ptype);
+		case 18:
+			fprintf(stderr,"chunkData received from client, which should never happen\n");
 			serverKill(c);
 		break;
-	}
-}
 
-void serverParsePacketHuge(int c, packetHuge *p){
-	int ptype = (p->ptype & (~0xC000));
-	printf("%i H->%i\n",c,ptype);
+		case 19:
+			fprintf(stderr,"setPlayerCount received from client, which should never happen\n");
+			serverKill(c);
+		break;
 
-	switch(ptype){
-		case 0:
+		case 20:
+			fprintf(stderr,"playerPickupItem received from client, which should never happen\n");
+			serverKill(c);
+		break;
+
+		case 21:
+			fprintf(stderr,"itemDropUpdate received from client, which should never happen\n");
+			serverKill(c);
+		break;
+
+		case 22:
+			fprintf(stderr,"grenadeExplode received from client, which should never happen\n");
+			serverKill(c);
+		break;
+
+		case 23:
+			fprintf(stderr,"grenadeUpdate received from client, which should never happen\n");
+			serverKill(c);
+		break;
+
+		case 24:
+			fprintf(stderr,"fxBeamBlaster received from client, which should never happen\n");
+			serverKill(c);
 		break;
 
 		default:
-			fprintf(stderr,"INVALID MSG: %i H->%i\n",c,ptype);
+			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
 			serverKill(c);
 		break;
 	}
 }
 
 void serverParsePacket(int i){
-	for(int max=16;max > 0;--max){
-		if((i < 0) || (i >= clientCount)){return;}
-		if(clients[i].recvBufLen < 16){ return; }
-		unsigned int pLen = packetLen(clients[i].recvBuf);
-		if(pLen <= 0){ return; }
-		if(pLen > clients[i].recvBufLen){ return; }
+	unsigned int off = 0;
 
-		switch(pLen){
-			case sizeof(packetSmall):
-				serverParsePacketSmall (i, (packetSmall *)  clients[i].recvBuf);
-			break;
-			case sizeof(packetMedium):
-				serverParsePacketMedium(i, (packetMedium *) clients[i].recvBuf);
-			break;
-			case sizeof(packetLarge):
-				serverParsePacketLarge (i, (packetLarge *)  clients[i].recvBuf);
-			break;
-			case sizeof(packetHuge):
-				serverParsePacketHuge  (i, (packetHuge *)   clients[i].recvBuf);
-			break;
-		}
+	for(int max=32;max > 0;--max){
+		if((i < 0) || (i >= clientCount)){break;}
+		if((clients[i].recvBufLen-off) < 4){ break; }
+		unsigned int pLen = packetLen((packet *)(clients[i].recvBuf+off));
+		if((pLen+4) > clients[i].recvBufLen-off){ break; }
+		serverParseSinglePacket(i,(packet *)(clients[i].recvBuf+off));
+		off += pLen+4;
+	}
 
-		if(clients[i].recvBufLen != pLen){
-			for(unsigned int ii=0;ii < (clients[i].recvBufLen - pLen);++ii){
-				clients[i].recvBuf[ii] = clients[i].recvBuf[ii+pLen];
-			}
+	if(off > clients[i].recvBufLen){
+		fprintf(stderr,"Offset greater than buffer length, sumething went horribly wrong...\n");
+		serverKill(i);
+	} else if(off == clients[i].recvBufLen){
+		clients[i].recvBufLen = 0;
+	} else {
+		for(unsigned int ii=0;ii < (clients[i].recvBufLen - off);++ii){
+			clients[i].recvBuf[ii] = clients[i].recvBuf[ii+off];
 		}
-		clients[i].recvBufLen -= pLen;
+		clients[i].recvBufLen -= off;
 	}
 }
 
@@ -367,7 +419,6 @@ void serverParseWSPacket(int i){
 
 		ii += mlen;
 		if(clients[i].recvWSBufLen != ii){
-			//printf("%i %i\n",ii,clients[i].recvWSBufLen);
 			for(unsigned int iii=0;iii < (clients[i].recvWSBufLen - ii);++iii){
 				clients[i].recvWSBuf[iii] = clients[i].recvWSBuf[iii+ii];
 			}
@@ -649,16 +700,13 @@ void sendToAllExcept(int e,void *data, int len){
 }
 
 void serverCloseClient(int c){
-	packetSmall p;
 	char *msg = getPlayerLeaveMessage(c);
 	if(clients[c].c != NULL){
 		characterFree(clients[c].c);
 		clients[c].c = NULL;
 	}
 	clients[c] = clients[--clientCount];
-	p.target = c;
-	p.val.u[0] = clientCount;
-	packetQueueS(&p,2,-1);
+	msgSetPlayerCount(c,clientCount);
 	serverSendChatMsg(msg);
 	if((clientCount == 0) && (optionSingleplayer)){
 		quit = true;

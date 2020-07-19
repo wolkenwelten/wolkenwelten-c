@@ -7,12 +7,13 @@
 #include "../game/blockMining.h"
 #include "../game/entity.h"
 #include "../game/grenade.h"
+#include "../game/grapplingHook.h"
 #include "../game/itemDrop.h"
 #include "../../../common/src/misc.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
-#include "../network/messages.h"
-#include "../network/packet.h"
+#include "../../../common/src/messages.h"
+#include "../../../common/src/packet.h"
 #include "../voxel/bigchungus.h"
 
 #include <stdio.h>
@@ -43,10 +44,55 @@ int connectionTries   = 0;
 #include "client_bsd.h"
 #endif
 
+void msgParseGetChunk(packet *p){
+	int x = p->val.i[1024];
+	int y = p->val.i[1025];
+	int z = p->val.i[1026];
+	chungus *chng =  worldGetChungus(x>>8,y>>8,z>>8);
+	if(chng == NULL){return;}
+	chunk *chnk = chungusGetChunkOrNew(chng,x,y,z);
+	if(chnk == NULL){return;}
+	memcpy(chnk->data,p->val.c,sizeof(chnk->data));
+	chnk->ready &= ~15;
+}
 
-void clientParsePacketSmall(packetSmall *p){
-	const int ptype = (p->ptype & (~0xC000));
-	switch(ptype){
+void msgSendPlayerPos(){
+	packet *p = alloca(4+19*4);
+	item *itm = characterGetItemBarSlot(player,player->activeItem);
+
+	p->val.f[ 0] = player->x;
+	p->val.f[ 1] = player->y;
+	p->val.f[ 2] = player->z;
+	p->val.f[ 3] = player->yaw;
+	p->val.f[ 4] = player->pitch;
+	p->val.f[ 5] = player->roll;
+	p->val.f[ 6] = player->vx;
+	p->val.f[ 7] = player->vy;
+	p->val.f[ 8] = player->vz;
+	p->val.f[ 9] = player->yoff;
+
+	if(player->hook != NULL){
+		p->val.i[10] = 1;
+		p->val.f[11] = player->hook->ent->x;
+		p->val.f[12] = player->hook->ent->y;
+		p->val.f[13] = player->hook->ent->z;
+	} else {
+		p->val.i[10] = 0;
+	}
+	p->val.i[14] = player->blockMiningX;
+	p->val.i[15] = player->blockMiningY;
+	p->val.i[16] = player->blockMiningZ;
+	p->val.i[17] = itm->ID;
+	p->val.f[18] = player->hitOff;
+
+	packetQueueToServer(p,15,19*4);
+}
+
+void clientParsePacket(packet *p){
+	const int pLen  = p->typesize >> 10;
+	const int pType = p->typesize & 0xFF;
+
+	switch(pType){
 		case 0: // Keepalive
 		break;
 
@@ -54,22 +100,22 @@ void clientParsePacketSmall(packetSmall *p){
 			characterSetPos(player,p->val.f[0],p->val.f[1],p->val.f[2]);
 		break;
 
-		case 2: // setClientCount
-			characterRemovePlayer(p->target,p->val.u[0]);
+		case 2: // requestChungus
+			fprintf(stderr,"Received a requestChungus packet from the server which should never happen.\n");
 		break;
 
 		case 3: // placeBlock
-			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],p->target);
+			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],p->val.i[3]);
 		break;
 
 		case 4: // mineBlock
 			if(worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],0)){
-				fxBlockBreak(p->val.i[0],p->val.i[1],p->val.i[2],p->target);
+				fxBlockBreak(p->val.i[0],p->val.i[1],p->val.i[2],p->val.i[3]);
 			}
 		break;
 
-		case 5: // playerPickupItem
-			characterPickupItem(player,p->val.i[0],p->val.i[1]);
+		case 5: // Goodbye
+			fprintf(stderr,"Received a Goodbye packet from the server which should never happen.\n");
 		break;
 
 		case 6: // blockMiningUpdate
@@ -79,103 +125,77 @@ void clientParsePacketSmall(packetSmall *p){
 		case 7:
 			worldSetChungusLoaded(p->val.i[0],p->val.i[1],p->val.i[2]);
 		break;
-		
+
 		case 8:
-			characterGotHitBroadcast(p->target,p->val.f[0]);
+			characterGotHitBroadcast(p->val.i[1],p->val.f[0]);
 		break;
 
-		default:
-			printf("S->%i\n",ptype);
-		break;
-	}
-
-}
-
-void clientParsePacketMedium(packetMedium *p){
-	int ptype = (p->ptype & (~0xC000));
-	switch(ptype){
-		case 0: // Keepalive
+		case 9:
+			fprintf(stderr,"Received a PlayerJoin packet from the server which should never happen.\n");
 		break;
 
-		case 1: // itemDropUpdate
-			itemDropUpdateFromServer(p);
+		case 10:
+			fprintf(stderr,"Received a itemDropNew packet from the server which should never happen.\n");
 		break;
 
-		case 2: // grenadeExplode
-			grenadeExplode(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->target);
+		case 11:
+			fprintf(stderr,"Received a grenadeNew packet from the server which should never happen.\n");
 		break;
 
-		case 3: // grenadeUpdate
-			grenadeUpdateFromServer(p);
+		case 12:
+			fprintf(stderr,"Received a beamblast packet from the server which should never happen.\n");
 		break;
 
-		case 4: // fxBeamBlaster
-			fxBeamBlaster(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6],p->target);
-		break;
-
-		case 5: // playerMoveDelta
+		case 13: // playerMoveDelta
 			characterMoveDelta(player,p);
 		break;
-		
-		case 6: // characterHit
-			characterHitCheck(player,p->target,p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6]);
+
+		case 14: // characterHit
+			characterHitCheck(player,p->val.i[7],p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6]);
 		break;
 
-		default:
-			printf("M->%i\n",ptype);
-		break;
-	}
-}
-
-void clientParsePacketLarge(packetLarge *p){
-	int ptype = (p->ptype & (~0xC000));
-	switch(ptype){
-		case 0: // Keepalive
+		case 15: // playerPos
+			characterSetPlayerPos(p);
 		break;
 
-		case 1: // playerPos
-			characterSetPlayerPos(p->target,p);
-		break;
-
-		case 2: // chatMsg
+		case 16: // chatMsg
 			chatParsePacket(p);
 		break;
 
-		default:
-			printf("L->%i\n",ptype);
-		break;
-	}
-}
-
-void clientParsePacketHuge(packetHuge *p){
-	int ptype = (p->ptype & (~0xC000));
-	switch(ptype){
-		case 0:
+		case 17: // dyingMsg
+			fprintf(stderr,"Received a dying message packet from the server which should never happen.\n");
 		break;
 
-		case 3:
+		case 18:
 			msgParseGetChunk(p);
 		break;
 
-		default:
-			printf("S->%i\n",ptype);
+		case 19: // setPlayerCount
+			characterRemovePlayer(p->val.u[1],p->val.u[0]);
 		break;
-	}
-}
 
-void clientParsePacket(void *p, int pLen){
-	switch(pLen){
-		case sizeof(packetSmall):
-			clientParsePacketSmall((packetSmall *)p);
+		case 20: // playerPickupItem
+			characterPickupItem(player,p->val.s[0],p->val.s[1]);
 		break;
-		case sizeof(packetMedium):
-			clientParsePacketMedium((packetMedium *)p);
+
+		case 21: // itemDropUpdate
+			itemDropUpdateFromServer(p);
 		break;
-		case sizeof(packetLarge):
-			clientParsePacketLarge((packetLarge *)p);
+
+		case 22: // grenadeExplode
+			grenadeExplode(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.i[4]);
 		break;
-		case sizeof(packetHuge):
-			clientParsePacketHuge((packetHuge *)p);
+
+		case 23: // grenadeUpdate
+			grenadeUpdateFromServer(p);
+		break;
+
+		case 24: // fxBeamBlaster
+			fxBeamBlaster(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6],p->val.i[7]);
+		break;
+
+		default:
+			fprintf(stderr,"%i[%i] UNKNOWN PACKET\n",pType,pLen);
 		break;
 	}
 }
@@ -186,24 +206,17 @@ void clientParse(){
 	if(recvBufLen == 0){return;}
 
 	while(off < recvBufLen){
-		int pLen = packetLen(recvBuf+off);
-		if(pLen <= 0){ return; }
-		if((pLen+off) > recvBufLen){
+		int pLen = packetLen((packet *)(recvBuf+off));
+		if((pLen+off+4) > recvBufLen){
 			for(int i=0;i<recvBufLen-off;i++){
 				recvBuf[i] = recvBuf[i+off];
 			}
 			break;
 		}
-		clientParsePacket(recvBuf+off,pLen);
-		off += pLen;
+		clientParsePacket((packet *)(recvBuf+off));
+		off += pLen + 4;
 	}
 	recvBufLen -= off;
-}
-
-void clientSendName(){
-	packetMedium p;
-	strncpy((char *)p.val.c,playerName,28);
-	packetQueueM(&p,1);
 }
 
 void clientSendIntroduction(){
@@ -214,7 +227,7 @@ void clientSendIntroduction(){
 
 void clientGreetServer(){
 	clientSendIntroduction();
-	clientSendName();
+	msgPlayerJoinSendName(playerName);
 	msgRequestPlayerSpawnPos();
 }
 

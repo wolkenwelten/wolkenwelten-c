@@ -6,7 +6,7 @@
 #include "../gfx/effects.h"
 #include "../gfx/objs.h"
 #include "../../../common/src/misc.h"
-#include "../network/messages.h"
+#include "../../../common/src/messages.h"
 #include "../voxel/bigchungus.h"
 
 #include <math.h>
@@ -54,9 +54,7 @@ void grenadeExplode(float x, float y, float z, float pw, int style){
 }
 
 void grenadeNew(character *ent, float pwr){
-	int ID = 256;
-	if(pwr > 1.5f){ID = 257;}
-	msgNewGrenade(ID, ent->x, ent->y+0.5f, ent->z, ent->yaw, ent->pitch, ent->roll, pwr);
+	msgNewGrenade(ent->x, ent->y+0.5f, ent->z, ent->yaw, ent->pitch, ent->roll, pwr);
 }
 
 void grenadeUpdate(){
@@ -74,7 +72,10 @@ void grenadeUpdate(){
 	}
 }
 
-void grenadeUpdateFromServer(packetMedium *p){
+void grenadeUpdateFromServer(packet *p){
+	const int index = p->val.i[7];
+	//printf("X:%f\nY:%f\nZ:%f\nVX:%f\nVY:%f\nVZ:%f\nIndex
+	
 	for(int i=p->val.i[6];i<grenadeCount;i++){
 		if(grenadeList[i].ent != NULL){
 			entityFree(grenadeList[i].ent);
@@ -82,20 +83,20 @@ void grenadeUpdateFromServer(packetMedium *p){
 		grenadeList[i].ent = NULL;
 	}
 	grenadeCount = p->val.i[6];
-	if(p->target >= grenadeCount){return;}
+	if(index >= grenadeCount){return;}
 
-	if(grenadeList[p->target].ent == NULL){
-		grenadeList[p->target].ent = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
+	if(grenadeList[index].ent == NULL){
+		grenadeList[index].ent = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
 	}
-	grenadeList[p->target].ent->x     = p->val.f[0];
-	grenadeList[p->target].ent->y     = p->val.f[1];
-	grenadeList[p->target].ent->z     = p->val.f[2];
-	grenadeList[p->target].ent->vx    = p->val.f[3];
-	grenadeList[p->target].ent->vy    = p->val.f[4];
-	grenadeList[p->target].ent->vz    = p->val.f[5];
-	grenadeList[p->target].ent->eMesh = meshBomb;
+	grenadeList[index].ent->x     = p->val.f[0];
+	grenadeList[index].ent->y     = p->val.f[1];
+	grenadeList[index].ent->z     = p->val.f[2];
+	grenadeList[index].ent->vx    = p->val.f[3];
+	grenadeList[index].ent->vy    = p->val.f[4];
+	grenadeList[index].ent->vz    = p->val.f[5];
+	grenadeList[index].ent->eMesh = meshBomb;
 }
 
 void beamblast(character *ent, float pwr, int hitsLeft){
-	msgBeamBlast(hitsLeft, ent->x, ent->y, ent->z, ent->yaw, ent->pitch, ent->roll, pwr);
+	msgBeamBlast(ent->x, ent->y, ent->z, ent->yaw, ent->pitch, ent->roll, pwr, hitsLeft);
 }

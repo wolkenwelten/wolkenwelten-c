@@ -1,9 +1,9 @@
 #pragma once
 #include "../game/entity.h"
-#include "../network/packet.h"
+#include "../../../common/src/packet.h"
 
 void explode             (float x, float y, float z, float pwr, int style);
-void grenadeNew          (packetMedium *p);
+void grenadeNew          (packet *p);
 void grenadeUpdate       ();
 void grenadeUpdatePlayer (int c);
-void beamblast           (int c, const packetMedium *p);
+void beamblast           (int c, const packet *p);

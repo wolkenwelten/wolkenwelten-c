@@ -13,8 +13,8 @@
 #include "../gfx/texture.h"
 #include "../../../common/src/misc.h"
 #include "../network/chat.h"
-#include "../network/packet.h"
-#include "../network/messages.h"
+#include "../../../common/src/packet.h"
+#include "../../../common/src/messages.h"
 #include "../sdl/sdl.h"
 #include "../sdl/sfx.h"
 #include "../sdl/input_gamepad.h"
@@ -51,7 +51,8 @@ uint32_t characterCollision(character *c, float cx, float cy, float cz,float wd)
 	return col;
 }
 
-void characterSetPlayerPos(int i, packetLarge *p){
+void characterSetPlayerPos(const packet *p){
+	const int i = p->val.i[19];
 	if(playerList[i] == NULL){
 		playerList[i] = characterNew();
 	}
@@ -66,7 +67,7 @@ void characterSetPlayerPos(int i, packetLarge *p){
 	playerList[i]->vz    = p->val.f[8];
 	playerList[i]->yoff  = p->val.f[9];
 
-	if(p->val.i[10] > 0){
+	if(p->val.i[10]){
 		if(playerList[i]->hook == NULL){
 			playerList[i]->hook = grapplingHookNew(playerList[i]);
 		}
@@ -147,7 +148,7 @@ void characterUpdateHitOff(character *c){
 		c->hitOff += (c->hitOff*0.1f)+0.05f;
 		if(c->hitOff > 1.f){
 			c->hasHit = false;
-			msgCharacterHit(c->x,c->y,c->z,c->yaw,c->pitch,c->roll,1.f);
+			msgCharacterHit(-1,c->x,c->y,c->z,c->yaw,c->pitch,c->roll,1.f);
 		}
 	}else if(c->hitOff > 0.f){
 		c->hitOff -= c->hitOff*0.02f;
@@ -176,7 +177,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 			setOverlayColor(0x00000000,0);
 		}
 		commitOverlayColor();
-		msgCharacterGotHit(pwr);
+		msgCharacterGotHit(-1,pwr);
 
 		float              dm = fabsf(dx);
 		if(fabsf(dy) > dm){dm = fabsf(dy);}
@@ -771,7 +772,7 @@ void characterFireHook(character *c){
 	}
 }
 
-void characterMoveDelta(character *c, packetMedium *p){
+void characterMoveDelta(character *c, packet *p){
 	c->vx    += p->val.f[0];
 	c->vy    += p->val.f[1];
 	c->vz    += p->val.f[2];

@@ -10,7 +10,7 @@
 #include "../gfx/texture.h"
 #include "../../../common/src/misc.h"
 #include "../misc/options.h"
-#include "../network/messages.h"
+#include "../../../common/src/messages.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 

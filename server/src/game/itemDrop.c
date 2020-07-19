@@ -1,14 +1,15 @@
 #include "itemDrop.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
-#include "../network/packet.h"
-#include "../network/messages.h"
+#include "../main.h"
 #include "../network/server.h"
 #include "../game/blockType.h"
 #include "../../../common/src/misc.h"
-#include "../main.h"
+#include "../../../common/src/packet.h"
+#include "../../../common/src/messages.h"
 
 typedef struct {
 	entity    *ent;
@@ -20,21 +21,22 @@ itemDrop itemDrops[1<<16];
 int      itemDropCount = 0;
 
 void itemDropUpdatePlayer(int c){
-	packetMedium p;
-	for(int i=0;i<itemDropCount;i++){
-		p.target = i;
-		p.val.f[0] = itemDrops[i].ent->x;
-		p.val.f[1] = itemDrops[i].ent->y;
-		p.val.f[2] = itemDrops[i].ent->z;
-		p.val.f[3] = itemDrops[i].aniStep;
-		p.val.i[4] = itemDrops[i].itm.ID;
-		p.val.i[5] = itemDrops[i].itm.amount;
-		p.val.i[6] = itemDropCount;
-		packetQueueM(&p,1,c);
-	}
 	if(itemDropCount == 0){
-		p.val.i[6] = 0;
-		packetQueueM(&p,1,c);
+		msgItemDropUpdatePlayer(c, 0.f, 0.f, 0.f, 0.f, 0, 0, 0, 0);
+	}else{
+		for(int i=0;i<itemDropCount;i++){
+			msgItemDropUpdatePlayer(
+				c,
+				itemDrops[i].ent->x,
+				itemDrops[i].ent->y,
+				itemDrops[i].ent->z,
+				itemDrops[i].aniStep,
+				itemDrops[i].itm.ID,
+				itemDrops[i].itm.amount,
+				itemDropCount,
+				i
+			);
+		}
 	}
 }
 
@@ -47,20 +49,19 @@ void itemDropNewP(float x, float y, float z,const item *itm){
 	itemDrops[d].ent = entityNew(x,y,z,0.f,0.f,0.f);
 }
 
-void itemDropNewC(const packetMedium *p){
+void itemDropNewC(const packet *p){
 	int d = itemDropCount++;
 
+	itemDrops[d].ent        = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
+	itemDrops[d].ent->x     = p->val.f[0];
+	itemDrops[d].ent->y     = p->val.f[1];
+	itemDrops[d].ent->z     = p->val.f[2];
+	itemDrops[d].ent->vx    = p->val.f[3];
+	itemDrops[d].ent->vy    = p->val.f[4];
+	itemDrops[d].ent->vz    = p->val.f[5];
 	itemDrops[d].itm.ID     = p->val.i[6];
-	itemDrops[d].itm.amount = p->target;
-	itemDrops[d].aniStep=0.f;
-
-	itemDrops[d].ent = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
-	itemDrops[d].ent->x  = p->val.f[0];
-	itemDrops[d].ent->y  = p->val.f[1];
-	itemDrops[d].ent->z  = p->val.f[2];
-	itemDrops[d].ent->vx = p->val.f[3];
-	itemDrops[d].ent->vy = p->val.f[4];
-	itemDrops[d].ent->vz = p->val.f[5];
+	itemDrops[d].itm.amount = p->val.i[7];
+	itemDrops[d].aniStep    = 0.f;
 }
 
 void itemDropDel(int d){
@@ -77,7 +78,7 @@ bool itemDropCheckPickup(int d){
 		float dy = clients[i].c->y - itemDrops[d].ent->y;
 		float dz = clients[i].c->z - itemDrops[d].ent->z;
 		if(sqrtf((dx*dx)+(dy*dy)+(dz*dz)) < 1.5f){
-			msgPickupItem(i,&itemDrops[d].itm);
+			msgPickupItem(i,itemDrops[d].itm.ID,itemDrops[d].itm.amount);
 			return true;
 		}
 	}

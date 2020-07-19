@@ -1,9 +1,9 @@
 #include "../game/grenade.h"
 
 #include "../main.h"
-#include "../network/messages.h"
 #include "../game/entity.h"
 #include "../../../common/src/misc.h"
+#include "../../../common/src/messages.h"
 #include "../voxel/bigchungus.h"
 
 #include <math.h>
@@ -53,7 +53,7 @@ void grenadeExplode(int g){
 	explode(ent->x,ent->y,ent->z,grenadeList[g].pwr,0);
 }
 
-void grenadeNew(packetMedium *p){
+void grenadeNew(packet *p){
 	int g       = grenadeCount++;
 	float speed = 0.12f;
 	float x     = p->val.f[0];
@@ -89,25 +89,26 @@ void grenadeUpdate(){
 }
 
 void grenadeUpdatePlayer(int c){
-	packetMedium p;
-	for(int i=0;i<grenadeCount;i++){
-		p.target = i;
-		p.val.f[0] = grenadeList[i].ent->x;
-		p.val.f[1] = grenadeList[i].ent->y;
-		p.val.f[2] = grenadeList[i].ent->z;
-		p.val.f[3] = grenadeList[i].ent->vx;
-		p.val.f[4] = grenadeList[i].ent->vy;
-		p.val.f[5] = grenadeList[i].ent->vz;
-		p.val.i[6] = grenadeCount;
-		packetQueueM(&p,3,c);
-	}
 	if(grenadeCount == 0){
-		p.val.i[6] = 0;
-		packetQueueM(&p,3,c);
+		msgGrenadeUpdate(c,0.f,0.f,0.f,0.f,0.f,0.f,0,0);
+	}else{
+		for(int i=0;i<grenadeCount;i++){
+			msgGrenadeUpdate(
+				c,
+				grenadeList[i].ent->x,
+				grenadeList[i].ent->y,
+				grenadeList[i].ent->z,
+				grenadeList[i].ent->vx,
+				grenadeList[i].ent->vy,
+				grenadeList[i].ent->vz,
+				grenadeCount,
+				i
+			);
+		}
 	}
 }
 
-void beamblast(int c, const packetMedium *p){
+void beamblast(int c, const packet *p){
 	float sx,sy,sz;
 	float x,y,z,vx,vy,vz;
 	float yaw = p->val.f[3];

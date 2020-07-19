@@ -9,7 +9,7 @@
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
 #include "../../../common/src/misc.h"
-#include "../network/messages.h"
+#include "../../../common/src/messages.h"
 #include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
 
@@ -121,14 +121,14 @@ void blockMiningInit(){
 	blockMiningProgressMesh->tex = tBlockMining;
 }
 
-void blockMiningUpdateFromServer(packetSmall *p){
+void blockMiningUpdateFromServer(packet *p){
 	if(p->val.i[2] < blockMiningCount){
 		blockMiningCount = p->val.i[2];
 	}
-	if((p->target >= blockMiningCount) && (p->target < p->val.i[2])){
-		blockMiningCount = p->target+1;
+	if((p->val.i[3] >= blockMiningCount) && (p->val.i[3] < p->val.i[2])){
+		blockMiningCount = p->val.i[3]+1;
 	}
-	blockMining *bm = &blockMiningList[p->target];
+	blockMining *bm = &blockMiningList[p->val.i[3]];
 	bm->x      =  p->val.i[0]        & 0xFFFF;
 	bm->y      = (p->val.i[0] >> 16) & 0xFFFF;
 	bm->z      =  p->val.i[1]        & 0xFFFF;

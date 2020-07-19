@@ -1,9 +1,13 @@
 #define _DEFAULT_SOURCE
 #include "chat.h"
+
 #include "../gfx/gfx.h"
 #include "../gui/textInput.h"
-#include "../network/packet.h"
+#include "../../../common/src/packet.h"
+
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 char chatLog[12][256];
 
@@ -12,10 +16,11 @@ void chatStartInput(){
 }
 
 void msgSendChatMessage(char *msg){
-	packetLarge p;
-	strncpy((char *)p.val.c,msg,sizeof(p.val.c)-1);
-	p.val.c[sizeof(p.val.c)-1] = 0;
-	packetQueueL(&p,2);
+	packet *p = alloca(256+4);
+	p->val.s[0]=0;
+	strncpy((char *)(p->val.c+2),msg,254);
+	p->val.c[255] = 0;
+	packetQueueToServer(p,16,256);
 }
 
 void chatCheckInput(){
@@ -31,11 +36,12 @@ void chatCheckInput(){
 	msgSendChatMessage(textInputGetBuffer());
 }
 
-void chatParsePacket(packetLarge *p){
+void chatParsePacket(packet *p){
 	for(int i=0;i<11;i++){
 		memcpy(chatLog[i],chatLog[i+1],256);
 	}
-	strncpy(chatLog[11],(char *)p->val.c,256);
+	strncpy(chatLog[11],(char *)(p->val.c+2),254);
+	chatLog[11][255]=0;
 }
 
 void chatPrintDebug(const char *msg){
@@ -43,12 +49,13 @@ void chatPrintDebug(const char *msg){
 		memcpy(chatLog[i],chatLog[i+1],256-1);
 	}
 	strncpy(chatLog[11],msg,256-1);
+	chatLog[11][255]=0;
 }
 
 void msgSendDyingMessage(char *msg, int c){
-	packetLarge p;
-	strncpy((char *)p.val.c,msg,sizeof(p.val.c)-1);
-	p.target = c;
-	p.val.c[sizeof(p.val.c)-1] = 0;
-	packetQueueL(&p,3);
+	packet *p = alloca(256+4);
+	strncpy((char *)(p->val.c+2),msg,254);
+	p->val.s[0] = c;
+	p->val.c[255] = 0;
+	packetQueueToServer(p,17,256);
 }
