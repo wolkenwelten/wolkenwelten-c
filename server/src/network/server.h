@@ -29,6 +29,8 @@ typedef struct {
 	uint8_t sendBufZ[1<<20];
 } clientConnection;
 
+#define CONNECTION_WEBSOCKET        (1)
+
 extern clientConnection clients[32];
 extern int clientCount;
 

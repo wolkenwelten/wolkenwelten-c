@@ -451,10 +451,10 @@ void serverParseWebSocketHeaderField(int c,const char *key, const char *val){
 	printf("B64 = %s\n",b64hash);
 
 	len = snprintf(buf,sizeof(buf),"HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Protocol: binary\r\nSec-WebSocket-Accept: %s\r\n\r\n",b64hash);
-	clients[c].flags &= !1;
+	clients[c].flags &= !CONNECTION_WEBSOCKET;
 	sendToClient(c,buf,len);
 	serverSendClient(c);
-	clients[c].flags |= 1;
+	clients[c].flags |= CONNECTION_WEBSOCKET;
 
 }
 
@@ -527,7 +527,7 @@ void serverParse(){
 				break;
 			default:
 			case 1:
-				if(clients[i].flags&1){
+				if(clients[i].flags & CONNECTION_WEBSOCKET){
 					serverParseWSPacket(i);
 				}
 				serverParsePacket(i);
@@ -568,6 +568,7 @@ void addChunksToQueue(int c){
 	uint16_t cx =  entry        & 0xFFFF;
 	uint16_t cy = (entry >> 16) & 0xFFFF;
 	uint16_t cz = (entry >> 32) & 0xFFFF;
+	printf("%i %i %i\n",cx,cy,cz);
 
 	chungus *chng = worldGetChungus(cx>>8,cy>>8,cz>>8);
 	if(chng == NULL){return;}
@@ -667,7 +668,7 @@ void sendToClient(int c,void *data,int len){
 	int tlen = len;
 	if(c < 0){return;}
 	if(c >= clientCount){return;}
-	if(clients[c].flags&1){
+	if(clients[c].flags & CONNECTION_WEBSOCKET){
 		tlen += 10;
 	}
 
@@ -679,7 +680,7 @@ void sendToClient(int c,void *data,int len){
 			return;
 		}
 	}
-	if(clients[c].flags & 1){
+	if(clients[c].flags & CONNECTION_WEBSOCKET){
 		clients[c].sendBufLen += addWSMessagePrefix(clients[c].sendBuf + clients[c].sendBufLen,len,sizeof(clients[c].sendBuf)-clients[c].sendBufLen);
 	}
 	memcpy(clients[c].sendBuf+clients[c].sendBufLen,data,len);

@@ -156,8 +156,10 @@ void bigchungusDraw(bigchungus *c, character *cam){
 	}
 	if(loadQueueLen > 0){
 		quicksortQueue(loadQueue,0,loadQueueLen-1);
-		for(int i=loadQueueLen-1;i>=0;i--){
+		//for(int i=loadQueueLen-1;i>=0;i--){
+		for(int i=0;i<loadQueueLen;i++){
 			chungus *chng = loadQueue[i].chng;
+			//printf("[%i] %f\n",i,loadQueue[i].distance);
 			msgRequestChungus(chng->x,chng->y,chng->z);
 		}
 	}

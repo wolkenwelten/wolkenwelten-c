@@ -205,16 +205,19 @@ void clientParse(){
 	int off=0;
 	if(recvBufLen == 0){return;}
 
-	while(off < recvBufLen){
+	for(int max=128;max > 0;--max){
+		if(off >= recvBufLen){break;}
 		int pLen = packetLen((packet *)(recvBuf+off));
-		if((pLen+off+4) > recvBufLen){
-			for(int i=0;i<recvBufLen-off;i++){
-				recvBuf[i] = recvBuf[i+off];
-			}
+		if((pLen+4+off) > recvBufLen){
 			break;
 		}
 		clientParsePacket((packet *)(recvBuf+off));
 		off += pLen + 4;
+	}
+	if(off < recvBufLen){
+		for(int i=0;i<recvBufLen-off;i++){
+			recvBuf[i] = recvBuf[i+off];
+		}
 	}
 	recvBufLen -= off;
 }

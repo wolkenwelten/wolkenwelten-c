@@ -9,7 +9,6 @@
 
 typedef struct {
 	chungus *chungi[256][128][256];
-
 } bigchungus;
 
 void        bigchungusInit          (bigchungus *c);
