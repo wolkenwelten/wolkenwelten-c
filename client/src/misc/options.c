@@ -14,14 +14,20 @@ float optionMusicVolume = 0.75f;
 float optionSoundVolume = 1.f;
 int   optionWorldSeed   = 0;
 bool  optionDebugInfo   = false;
-bool  optionFullscreen  = true;
+bool  optionFullscreen  = false;
 
 void printVersion(){
 	printf("Wolkenwelten Pre-Alpha\n");
 	printf("Version:   %s\n",VERSION);
 	printf("Builddate: %s\n",BUILDDATE);
 	printf("Commit:    %s\n",COMMIT);
-	exit(0);
+}
+
+int checkString(const char *a, const char *b){
+	int len = strlen(b);
+	if(strncmp(a,b,len) == 0){return 1;}
+	if(a[0] == '-' && (strncmp(a+1,b,len) == 0)){return 1;}
+	return 0;
 }
 
 void parseOptions(int argc,char *argv[]){
@@ -29,52 +35,36 @@ void parseOptions(int argc,char *argv[]){
 
 	for(int i=1;i<argc;i++){
 		if(argv[i][0] != '-'){continue;}
-		if(strncmp(argv[i]+1,"musicVolume",strlen("musicVolume")) == 0){
-			if(argv[i][1+strlen("musicVolume")] == '='){
-				tmp = atoi(argv[i]+2+strlen("musicVolume"));
-				optionMusicVolume = (float)tmp / 100.f;
-			}
+		if(checkString(argv[i]+1,"musicVolume=")){
+			tmp = atoi(argv[i]+2+strlen("musicVolume"));
+			optionMusicVolume = (float)tmp / 100.f;
 		}
-		if(strncmp(argv[i]+1,"soundVolume",strlen("soundVolume")) == 0){
-			if(argv[i][1+strlen("soundVolume")] == '='){
-				tmp = atoi(argv[i]+2+strlen("soundVolume"));
-				optionSoundVolume = (float)tmp / 100.f;
-			}
+		if(checkString(argv[i]+1,"soundVolume=")){
+			tmp = atoi(argv[i]+2+strlen("soundVolume"));
+			optionSoundVolume = (float)tmp / 100.f;
 		}
-		if(strncmp(argv[i]+1,"worldSeed",strlen("worldSeed")) == 0){
-			if(argv[i][1+strlen("worldSeed")] == '='){
-				optionWorldSeed = atoi(argv[i]+2+strlen("worldSeed"));
-			}
+		if(checkString(argv[i]+1,"worldSeed=")){
+			optionWorldSeed = atoi(argv[i]+2+strlen("worldSeed"));
 		}
-		if(strncmp(argv[i]+1,"debugInfo",strlen("debugInfo")) == 0){
-			if(argv[i][1+strlen("debugInfo")] == '='){
-				optionDebugInfo = atoi(argv[i]+2+strlen("debugInfo")) != 0;
-			}
+		if(checkString(argv[i]+1,"debugInfo=")){
+			optionDebugInfo = atoi(argv[i]+2+strlen("debugInfo")) != 0;
 		}
-		if(strncmp(argv[i]+1,"playerName",strlen("playerName")) == 0){
-			if(argv[i][1+strlen("playerName")] == '='){
-				strncpy(playerName,argv[i]+2+strlen("playerName"),sizeof(playerName)-1);
-			}
+		if(checkString(argv[i]+1,"playerName=")){
+			strncpy(playerName,argv[i]+2+strlen("playerName"),sizeof(playerName)-1);
 		}
-		if(strncmp(argv[i]+1,"serverName",strlen("serverName")) == 0){
-			if(argv[i][1+strlen("serverName")] == '='){
-				strncpy(serverName,argv[i]+2+strlen("serverName"),sizeof(serverName)-1);
-				gameRunning = true;
-			}
+		if(checkString(argv[i]+1,"serverName=")){
+			strncpy(serverName,argv[i]+2+strlen("serverName"),sizeof(serverName)-1);
+			gameRunning = true;
 		}
-
-		if(strncmp(argv[i]+1,"windowed",strlen("windowed")) == 0){
+		if(checkString(argv[i]+1,"windowed")){
 			optionFullscreen = false;
 		}
-		if(strncmp(argv[i]+1,"-windowed",strlen("-windowed")) == 0){
-			optionFullscreen = false;
+		if(checkString(argv[i]+1,"fullscreen")){
+			optionFullscreen = true;
 		}
-
-		if(strncmp(argv[i]+1,"version",strlen("version")) == 0){
+		if(checkString(argv[i]+1,"version")){
 			printVersion();
-		}
-		if(strncmp(argv[i]+1,"-version",strlen("-version")) == 0){
-			printVersion();
+			exit(0);
 		}
 	}
 }
