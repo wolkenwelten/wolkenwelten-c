@@ -3,6 +3,7 @@
 #include "../game/character.h"
 #include "../gfx/gfx.h"
 #include "../gui/gui.h"
+#include "../gui/menu.h"
 #include "../gui/inventory.h"
 #include "../misc/options.h"
 #include "../sdl/sfx.h"
@@ -72,6 +73,9 @@ void initSDL(){
 	#else
 		if(optionFullscreen){
 			cwflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		}else{
+			screenWidth = 800;
+			screenHeight = 600;
 		}
 	#endif
 	gWindow = SDL_CreateWindow( "Wolkenwelten", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, cwflags);
@@ -92,7 +96,6 @@ void initSDL(){
 	mousex = screenWidth/2;
 	mousey = screenHeight/2;
 	SDL_ShowCursor(SDL_FALSE);
-	setRelativeMouseMode(true);
 	SDL_DisableScreenSaver();
 
 	if(Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, 2, 1024)==-1) {
@@ -129,8 +132,11 @@ void handleEvents(){
 }
 
 void sdlResize(int newW,int newH){
+	if((newW == screenWidth) && (newH == screenHeight)){return;}
 	screenWidth  = newW;
 	screenHeight = newH;
+	//SDL_SetVideoMode(screenWidth,screenHeight,32, 0);
+	SDL_SetWindowSize(gWindow,screenWidth,screenHeight);
 	initGL();
 	resizeUI();
 }

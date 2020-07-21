@@ -21,8 +21,8 @@
 
 float matProjection[16], matView[16];
 
-int screenWidth     = 1024;
-int screenHeight    = 768;
+int screenWidth     = 800;
+int screenHeight    = 600;
 size_t vboTrisCount = 0;
 
 GLenum glCheckError_(const char *file, int line){
@@ -45,6 +45,7 @@ GLenum glCheckError_(const char *file, int line){
 void initGL(){
 	INITGLEW();
 	glClearColor( 0.00f, 0.05f, 0.2f, 1.f );
+	glViewport(0,0,screenWidth,screenHeight);
 
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
