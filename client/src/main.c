@@ -118,6 +118,12 @@ int main( int argc, char* argv[] ){
 	modsInit();
 	textureBuildBlockIcons();
 
+	if(gameRunning){
+		hideMouseCursor();
+	}else{
+		showMouseCursor();
+	}
+
 
 	player = characterNew();
 	#ifdef __EMSCRIPTEN__
