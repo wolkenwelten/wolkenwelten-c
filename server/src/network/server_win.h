@@ -137,6 +137,5 @@ int serverSendClient(int c){
 	}
 	clients[c].sendBufSent = 0;
 	clients[c].sendBufLen  = 0;
-	addQueuedChunks(c);
 	return 1;
 }

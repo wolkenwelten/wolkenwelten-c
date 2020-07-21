@@ -585,17 +585,8 @@ void addChunksToQueue(int c){
 	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = entry;
 }
 
-void dumpQueue(int c){
-	static unsigned int lastSize=0;
-	if(clients[c].sendBufLen <= lastSize){return;}
-	lastSize = clients[c].sendBufLen;
-	FILE *f = fopen("dump.dat","w");
-	fwrite(clients[c].sendBuf,1,clients[c].sendBufLen,f);
-	fclose(f);
-}
-
 void addQueuedChunks(int c){
-	while(clients[c].sendBufLen < ((1<<22)-8192)){
+	while(clients[c].sendBufLen < (sizeof(clients[c].sendBuf)-(1<<16))){
 		if(clients[c].chnkReqQueueLen == 0){
 			if(clients[c].chngReqQueueLen == 0){
 				return;
@@ -659,6 +650,7 @@ void serverSend(){
 		if(clients[i].sendBufLen == 0){ continue; }
 		serverCheckCompression(i);
 		serverSendClient(i);
+		addQueuedChunks(i);
 	}
 }
 

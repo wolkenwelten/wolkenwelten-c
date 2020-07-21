@@ -127,7 +127,7 @@ int main( int argc, const char* argv[] ){
 		if(clientCount == 0){
 			usleep(100000);
 		}else{
-			usleep(10000);
+			usleep(1000);
 		}
 	}
 	printf("Exiting cleanly\n");
