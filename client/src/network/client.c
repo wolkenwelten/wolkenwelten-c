@@ -32,8 +32,9 @@ int sendBufSent = 0;
 int sendBufLen  = 0;
 uint8_t sendBuf[1<<16];
 
-size_t sentBytesCurrentSession = 0;
-size_t recvBytesCurrentSession = 0;
+size_t sentBytesCurrentSession             = 0;
+size_t recvBytesCurrentSession             = 0;
+size_t recvUncompressedBytesCurrentSession = 0;
 
 int serverPort        = 6309;
 pid_t singlePlayerPID = 0;
@@ -97,8 +98,6 @@ void decompressPacket(packet *p){
 		fprintf(stderr,"Decompression return %i\n",len);
 		exit(1);
 	}
-	fprintf(stderr,"compLen: %i\nlen: %i\n",packetLen(p),len);
-	fflush(stderr);
 	for(t=buf;(t-buf)<len;t+=alignedLen(packetLen((packet *)t)) + 4){
 		clientParsePacket((packet *)t);
 	}
@@ -107,8 +106,8 @@ void decompressPacket(packet *p){
 void clientParsePacket(packet *p){
 	const int pLen  = packetLen(p);
 	const int pType = packetType(p);
-	if(pType != 0){
-		fprintf(stderr,"[%i]:%i\n",pType,pLen);
+	if(pType != 0xFF){
+		recvUncompressedBytesCurrentSession += pLen+4;
 	}
 
 	switch(pType){
@@ -234,7 +233,7 @@ void clientParse(){
 			break;
 		}
 		clientParsePacket((packet *)(recvBuf+off));
-		fprintf(stderr,"pLen: %i[%i]\noff: %i\nrecvBufLen: %i\n",pLen,alignedLen(pLen),off,recvBufLen);
+		//fprintf(stderr,"pLen: %i[%i]\noff: %i\nrecvBufLen: %i\n",pLen,alignedLen(pLen),off,recvBufLen);
 		fflush(stderr);
 		off += alignedLen(pLen) + 4;
 	}

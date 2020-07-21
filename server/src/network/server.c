@@ -638,9 +638,9 @@ void serverCheckCompression(int c){
 	uint8_t *start;
 	uint8_t compressBuf[LZ4_COMPRESSBOUND(sizeof(clients[c].sendBuf))];
 
-	if(clients[c].sendBufLen < (int)(sizeof(clients[c].sendBuf)/2)){return;}
+	if(clients[c].sendBufLen < (int)(sizeof(clients[c].sendBuf)/32)){return;}
 	start = serverFindCompressibleStart(c,&len);
-	if(len <= (1<<18)){return;}
+	if(len <= (1<<16)){return;}
 
 	compressLen = LZ4_compress_default((const char *)start, (char *)compressBuf, len, sizeof(compressBuf));
 	if(compressLen > len){
