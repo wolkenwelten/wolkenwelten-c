@@ -622,7 +622,7 @@ void *serverFindCompressibleStart(int c, int *len){
 	uint8_t *t = NULL;
 	uint8_t *ret = NULL;
 	*len = 0;
-	for(t=clients[c].sendBuf;(t-clients[c].sendBuf) < clients[c].sendBufLen;t+=packetLen((packet *)t)){
+	for(t=clients[c].sendBuf;(t-clients[c].sendBuf) < clients[c].sendBufLen;t+=4+alignedLen(packetLen((packet *)t))){
 		if(packetType((packet *)t) != 0xFF){
 			ret = t;
 			break;
@@ -637,17 +637,17 @@ void serverCheckCompression(int c){
 	int len,compressLen;
 	uint8_t *start;
 	uint8_t compressBuf[LZ4_COMPRESSBOUND(sizeof(clients[c].sendBuf))];
-	
+
 	if(clients[c].sendBufLen < (int)(sizeof(clients[c].sendBuf)/2)){return;}
 	start = serverFindCompressibleStart(c,&len);
 	if(len <= (1<<18)){return;}
-	
+
 	compressLen = LZ4_compress_default((const char *)start, (char *)compressBuf, len, sizeof(compressBuf));
 	if(compressLen > len){
 		fprintf(stderr,"%i > %i = Compression does not decrease size\n",compressLen,len);
 		return;
 	}
-	//fprintf(stderr,"Off: %i\nLen: %i\nBufLen: %i\nCompLen: %i\nRatio: %f\n",(int)(start-clients[c].sendBuf),len,clients[c].sendBufLen,compressLen,(float)len/(float)compressLen);
+	//fprintf(stderr,"Off: %i Len: %i BufLen: %i CompLen: %i Ratio: %f\n",(int)(start-clients[c].sendBuf),len,clients[c].sendBufLen,compressLen,(float)len/(float)compressLen);
 	clients[c].sendBufLen -= len;
 	memcpy(start + 4,compressBuf,compressLen);
 	packetSet((packet *)start,0xFF,compressLen);
