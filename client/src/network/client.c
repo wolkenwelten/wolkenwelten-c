@@ -9,9 +9,10 @@
 #include "../game/grenade.h"
 #include "../game/grapplingHook.h"
 #include "../game/itemDrop.h"
-#include "../../../common/src/misc.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
+#include "../../../common/src/lz4.h"
+#include "../../../common/src/misc.h"
 #include "../../../common/src/messages.h"
 #include "../../../common/src/packet.h"
 #include "../voxel/bigchungus.h"
@@ -88,9 +89,24 @@ void msgSendPlayerPos(){
 	packetQueueToServer(p,15,19*4);
 }
 
+void decompressPacket(packet *p){
+	uint8_t *t;
+	uint8_t buf[1<<20];
+	int len = LZ4_decompress_safe((const char *)&p->val.c, (char *)buf, packetLen(p), sizeof(buf));
+	if(len <= 0){
+		fprintf(stderr,"Decompression return %i\n",len);
+		exit(1);
+	}
+	fprintf(stderr,"compLen: %i\nlen: %i\n",packetLen(p),len);
+	fflush(stderr);
+	for(t=buf;(t-buf)<len;t+=packetLen((packet *)t) + 4){
+		clientParsePacket((packet *)t);
+	}
+}
+
 void clientParsePacket(packet *p){
-	const int pLen  = p->typesize >> 10;
-	const int pType = p->typesize & 0xFF;
+	const int pLen  = packetLen(p);
+	const int pType = packetType(p);
 
 	switch(pType){
 		case 0: // Keepalive
@@ -193,6 +209,10 @@ void clientParsePacket(packet *p){
 		case 24: // fxBeamBlaster
 			fxBeamBlaster(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6],p->val.i[7]);
 		break;
+		
+		case 0xFF: // compressedMultiPacket
+			decompressPacket(p);
+		break;
 
 		default:
 			fprintf(stderr,"%i[%i] UNKNOWN PACKET\n",pType,pLen);
@@ -212,7 +232,9 @@ void clientParse(){
 			break;
 		}
 		clientParsePacket((packet *)(recvBuf+off));
-		off += pLen + 4;
+		fprintf(stderr,"pLen: %i[%i]\noff: %i\nrecvBufLen: %i\n",pLen,alignedLen(pLen),off,recvBufLen);
+		fflush(stderr);
+		off += alignedLen(pLen) + 4;
 	}
 	if(off < recvBufLen){
 		for(int i=0;i<recvBufLen-off;i++){

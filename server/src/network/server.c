@@ -10,6 +10,7 @@
 #include "../misc/sha1.h"
 #include "../misc/options.h"
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/lz4.h"
 #include "../../../common/src/misc.h"
 #include "../../../common/src/messages.h"
 #include "../../../common/src/packet.h"
@@ -568,7 +569,6 @@ void addChunksToQueue(int c){
 	uint16_t cx =  entry        & 0xFFFF;
 	uint16_t cy = (entry >> 16) & 0xFFFF;
 	uint16_t cz = (entry >> 32) & 0xFFFF;
-	printf("%i %i %i\n",cx,cy,cz);
 
 	chungus *chng = worldGetChungus(cx>>8,cy>>8,cz>>8);
 	if(chng == NULL){return;}
@@ -616,12 +616,48 @@ void addQueuedChunks(int c){
 			}
 		}
 	}
-	//dumpQueue(c);
+}
+
+void *serverFindCompressibleStart(int c, int *len){
+	uint8_t *t = NULL;
+	uint8_t *ret = NULL;
+	*len = 0;
+	for(t=clients[c].sendBuf;(t-clients[c].sendBuf) < clients[c].sendBufLen;t+=packetLen((packet *)t)){
+		if(packetType((packet *)t) != 0xFF){
+			ret = t;
+			break;
+		}
+	}
+	if(ret == NULL){return NULL;}
+	*len = clients[c].sendBufLen - (t-clients[c].sendBuf);
+	return ret;
+}
+
+void serverCheckCompression(int c){
+	int len,compressLen;
+	uint8_t *start;
+	uint8_t compressBuf[LZ4_COMPRESSBOUND(sizeof(clients[c].sendBuf))];
+	
+	if(clients[c].sendBufLen < (int)(sizeof(clients[c].sendBuf)/2)){return;}
+	start = serverFindCompressibleStart(c,&len);
+	if(len <= (1<<18)){return;}
+	
+	compressLen = LZ4_compress_default((const char *)start, (char *)compressBuf, len, sizeof(compressBuf));
+	if(compressLen > len){
+		fprintf(stderr,"%i > %i = Compression does not decrease size\n",compressLen,len);
+		return;
+	}
+	//fprintf(stderr,"Off: %i\nLen: %i\nBufLen: %i\nCompLen: %i\nRatio: %f\n",(int)(start-clients[c].sendBuf),len,clients[c].sendBufLen,compressLen,(float)len/(float)compressLen);
+	clients[c].sendBufLen -= len;
+	memcpy(start + 4,compressBuf,compressLen);
+	packetSet((packet *)start,0xFF,compressLen);
+	clients[c].sendBufLen += alignedLen(compressLen)+4;
 }
 
 void serverSend(){
 	for(int i=0;i<clientCount;i++){
 		if(clients[i].sendBufLen == 0){ continue; }
+		serverCheckCompression(i);
 		serverSendClient(i);
 	}
 }
@@ -672,6 +708,7 @@ void sendToClient(int c,void *data,int len){
 		tlen += 10;
 	}
 
+	serverCheckCompression(c);
 	while(clients[c].sendBufLen+tlen > (int)sizeof(clients[c].sendBuf)){
 		ret = serverSendClient(c);
 		if(ret == 1){

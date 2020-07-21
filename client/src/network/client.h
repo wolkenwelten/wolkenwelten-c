@@ -1,4 +1,5 @@
 #pragma once
+#include "../../../common/src/packet.h"
 #include <unistd.h>
 #include <sys/types.h>
 #include <stdint.h>
@@ -14,6 +15,8 @@ void clientGoodbye();
 void clientGreetServer();
 void clientSendAllToServer();
 void closeSingleplayerServer();
+void decompressPacket(packet *p);
+void clientParsePacket(packet *p);
 
 void clientHandleEvents();
 void queueToServer(void *data, unsigned int len);

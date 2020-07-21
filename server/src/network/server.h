@@ -23,10 +23,6 @@ typedef struct {
 	unsigned int sendBufSent;
 	unsigned int sendBufLen;
 	uint8_t sendBuf[1<<20];
-	
-	unsigned int sendBufZSent;
-	unsigned int sendBufZLen;
-	uint8_t sendBufZ[1<<20];
 } clientConnection;
 
 #define CONNECTION_WEBSOCKET        (1)
