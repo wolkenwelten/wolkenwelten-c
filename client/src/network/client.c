@@ -32,8 +32,9 @@ int sendBufSent = 0;
 int sendBufLen  = 0;
 uint8_t sendBuf[1<<16];
 
-size_t sentBytesCurrentSession = 0;
-size_t recvBytesCurrentSession = 0;
+size_t sentBytesCurrentSession             = 0;
+size_t recvBytesCurrentSession             = 0;
+size_t recvUncompressedBytesCurrentSession = 0;
 
 int serverPort        = 6309;
 pid_t singlePlayerPID = 0;
@@ -97,9 +98,7 @@ void decompressPacket(packet *p){
 		fprintf(stderr,"Decompression return %i\n",len);
 		exit(1);
 	}
-	fprintf(stderr,"compLen: %i\nlen: %i\n",packetLen(p),len);
-	fflush(stderr);
-	for(t=buf;(t-buf)<len;t+=packetLen((packet *)t) + 4){
+	for(t=buf;(t-buf)<len;t+=alignedLen(packetLen((packet *)t)) + 4){
 		clientParsePacket((packet *)t);
 	}
 }
@@ -107,6 +106,9 @@ void decompressPacket(packet *p){
 void clientParsePacket(packet *p){
 	const int pLen  = packetLen(p);
 	const int pType = packetType(p);
+	if(pType != 0xFF){
+		recvUncompressedBytesCurrentSession += pLen+4;
+	}
 
 	switch(pType){
 		case 0: // Keepalive
@@ -182,7 +184,7 @@ void clientParsePacket(packet *p){
 			fprintf(stderr,"Received a dying message packet from the server which should never happen.\n");
 		break;
 
-		case 18:
+		case 18: // chunkData
 			msgParseGetChunk(p);
 		break;
 
@@ -209,7 +211,7 @@ void clientParsePacket(packet *p){
 		case 24: // fxBeamBlaster
 			fxBeamBlaster(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6],p->val.i[7]);
 		break;
-		
+
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);
 		break;
@@ -219,7 +221,6 @@ void clientParsePacket(packet *p){
 		break;
 	}
 }
-
 
 void clientParse(){
 	int off=0;
@@ -232,7 +233,7 @@ void clientParse(){
 			break;
 		}
 		clientParsePacket((packet *)(recvBuf+off));
-		fprintf(stderr,"pLen: %i[%i]\noff: %i\nrecvBufLen: %i\n",pLen,alignedLen(pLen),off,recvBufLen);
+		//fprintf(stderr,"pLen: %i[%i]\noff: %i\nrecvBufLen: %i\n",pLen,alignedLen(pLen),off,recvBufLen);
 		fflush(stderr);
 		off += alignedLen(pLen) + 4;
 	}

@@ -127,6 +127,7 @@ void clientInit(){
 	sendBufSent             = 0;
 	sentBytesCurrentSession = 0;
 	recvBytesCurrentSession = 0;
+	recvUncompressedBytesCurrentSession = 0;
 	clientGreetServer();
 }
 

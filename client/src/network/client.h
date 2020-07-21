@@ -7,6 +7,7 @@
 extern int connectionTries;
 extern size_t sentBytesCurrentSession;
 extern size_t recvBytesCurrentSession;
+extern size_t recvUncompressedBytesCurrentSession;
 
 void clientInit();
 void clientFree();

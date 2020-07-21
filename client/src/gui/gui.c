@@ -189,6 +189,8 @@ void drawDebuginfo(){
 	textMeshPrintf(textm,"ActiveChungi: %2i\n",chungusGetActiveCount());
 	textMeshPrintf(textm,"Bytes Sent  : %sB\n",getHumanReadableSize(sentBytesCurrentSession));
 	textMeshPrintf(textm,"Bytes Recvd : %sB\n",getHumanReadableSize(recvBytesCurrentSession));
+	textMeshPrintf(textm,"Uncompressed: %sB\n",getHumanReadableSize(recvUncompressedBytesCurrentSession));
+	textMeshPrintf(textm,"Comp Ratio  : %2.2f\n",(float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession);
 }
 
 void drawItemBar(){
