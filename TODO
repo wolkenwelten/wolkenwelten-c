@@ -1,5 +1,3 @@
-(0) Send chunks compressed
-
 (A) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
 (A) Rework the GUI Code, it is trash!
 (A) Proper Character Models
