@@ -70,7 +70,9 @@ void initSDL(){
 	#ifdef __EMSCRIPTEN__
 		cwflags |= SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_INPUT_GRABBED;
 	#else
-		cwflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		if(optionFullscreen){
+			cwflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		}
 	#endif
 	gWindow = SDL_CreateWindow( "Wolkenwelten", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, cwflags);
 	if( gWindow == NULL ) {

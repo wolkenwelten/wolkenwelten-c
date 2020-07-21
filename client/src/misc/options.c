@@ -14,6 +14,7 @@ float optionMusicVolume = 0.75f;
 float optionSoundVolume = 1.f;
 int   optionWorldSeed   = 0;
 bool  optionDebugInfo   = false;
+bool  optionFullscreen  = true;
 
 void printVersion(){
 	printf("Wolkenwelten Pre-Alpha\n");
@@ -61,6 +62,14 @@ void parseOptions(int argc,char *argv[]){
 				gameRunning = true;
 			}
 		}
+
+		if(strncmp(argv[i]+1,"windowed",strlen("windowed")) == 0){
+			optionFullscreen = false;
+		}
+		if(strncmp(argv[i]+1,"-windowed",strlen("-windowed")) == 0){
+			optionFullscreen = false;
+		}
+
 		if(strncmp(argv[i]+1,"version",strlen("version")) == 0){
 			printVersion();
 		}
