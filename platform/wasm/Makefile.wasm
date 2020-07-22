@@ -14,7 +14,7 @@ releases/wasm/wolkenwelten.html: client/src/tmp/assets.c client/src/tmp/assets.h
 releases/wasm/wolkenwelten.html: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
 releases/wasm/wolkenwelten.html: client/src/tmp/cto.c client/src/tmp/cto.h
 releases/wasm/wolkenwelten.html: releases/wasm/manifest.json
-	$(EMCC) $(CLIENT_SRCS) -Wno-array-bounds -std=c99 -O3 -fno-rtti --closure 0 -s WASM=1 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 $(EMMEM) -s USE_WEBGL2=1 $(EMLIBS) --shell-file platform/wasm/shell.html -o releases/wasm/index.html
+	$(EMCC) $(CLIENT_SRCS) -std=c99 -O3 -fno-rtti --closure 0 -s WASM=1 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 $(EMMEM) -s USE_WEBGL2=1 $(EMLIBS) --shell-file platform/wasm/shell.html -o releases/wasm/index.html
 
 releases/wasm/manifest.json: platform/wasm/manifest.json
 	mkdir -p releases/wasm/
