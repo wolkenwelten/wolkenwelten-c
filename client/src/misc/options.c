@@ -25,37 +25,39 @@ void printVersion(){
 
 int checkString(const char *a, const char *b){
 	int len = strlen(b);
-	if(strncmp(a,b,len) == 0){return 1;}
-	if(a[0] == '-' && (strncmp(a+1,b,len) == 0)){return 1;}
+	if(strncmp(a,b,len) == 0){return 1+len;}
+	if(a[0] == '-' && (strncmp(a+1,b,len) == 0)){return 2+len;}
 	return 0;
 }
 
 void parseOptions(int argc,char *argv[]){
-	int tmp;
+	int tmp,l;
 
 	for(int i=1;i<argc;i++){
 		if(argv[i][0] != '-'){continue;}
-		if(checkString(argv[i]+1,"musicVolume=")){
-			tmp = atoi(argv[i]+2+strlen("musicVolume"));
+
+		if((l = checkString(argv[i]+1,"musicVolume="))){
+			tmp = atoi(argv[i]+l);
 			optionMusicVolume = (float)tmp / 100.f;
 		}
-		if(checkString(argv[i]+1,"soundVolume=")){
-			tmp = atoi(argv[i]+2+strlen("soundVolume"));
+		if((l = checkString(argv[i]+1,"soundVolume="))){
+			tmp = atoi(argv[i]+l);
 			optionSoundVolume = (float)tmp / 100.f;
 		}
-		if(checkString(argv[i]+1,"worldSeed=")){
-			optionWorldSeed = atoi(argv[i]+2+strlen("worldSeed"));
+		if((l = checkString(argv[i]+1,"worldSeed="))){
+			optionWorldSeed = atoi(argv[i]+l);
 		}
-		if(checkString(argv[i]+1,"debugInfo=")){
-			optionDebugInfo = atoi(argv[i]+2+strlen("debugInfo")) != 0;
+		if((l = checkString(argv[i]+1,"debugInfo="))){
+			optionDebugInfo = atoi(argv[i]+l) != 0;
 		}
-		if(checkString(argv[i]+1,"playerName=")){
-			strncpy(playerName,argv[i]+2+strlen("playerName"),sizeof(playerName)-1);
+		if((l = checkString(argv[i]+1,"playerName="))){
+			strncpy(playerName,argv[i]+l,sizeof(playerName)-1);
 		}
-		if(checkString(argv[i]+1,"serverName=")){
-			strncpy(serverName,argv[i]+2+strlen("serverName"),sizeof(serverName)-1);
+		if((l = checkString(argv[i]+1,"serverName="))){
+			strncpy(serverName,argv[i]+l,sizeof(serverName)-1);
 			gameRunning = true;
 		}
+
 		if(checkString(argv[i]+1,"windowed")){
 			optionFullscreen = false;
 		}

@@ -10,31 +10,34 @@ int   optionPort         = 0;
 bool  optionSingleplayer = false;
 bool  verbose            = false;
 
+int checkString(const char *a, const char *b){
+	int len = strlen(b);
+	if(strncmp(a,b,len) == 0){return 1+len;}
+	if(a[0] == '-' && (strncmp(a+1,b,len) == 0)){return 2+len;}
+	return 0;
+}
+
 void parseOptions(int argc,const char *argv[]){
+	int l;
 	for(int i=0;i<argc;i++){
 		if(argv[i][0] != '-'){continue;}
-		if(strncmp(argv[i]+1,"worldSeed",strlen("worldSeed")) == 0){
-			if(argv[i][1+strlen("worldSeed")] == '='){
-				optionWorldSeed = atoi(argv[i]+2+strlen("worldSeed"));
-				continue;
-			}
+		
+		if((l = checkString(argv[i]+1,"worldSeed="))){
+			optionWorldSeed = atoi(argv[i]+l);
+			continue;
 		}
-		if(strncmp(argv[i]+1,"port",strlen("port")) == 0){
-			if(argv[i][1+strlen("port")] == '='){
-				optionPort = atoi(argv[i]+2+strlen("port"));
-				continue;
-			}
+		if((l = checkString(argv[i]+1,"port="))){
+			optionPort = atoi(argv[i]+l);
+			continue;
 		}
-		if(strncmp(argv[i]+1,"verbose",strlen("verbose")) == 0){
+		if((l = checkString(argv[i]+1,"verbose"))){
 			verbose = true;
 			continue;
 		}
-		if(strncmp(argv[i]+1,"singleplayer",strlen("singleplayer")) == 0){
-			if(argv[i][1+strlen("singleplayer")] == '='){
-				if(atoi(argv[i]+2+strlen("singleplayer")) != 0){
-					optionSingleplayer = true;
-					continue;
-				}
+		if((l = checkString(argv[i]+1,"singleplayer="))){
+			if(atoi(argv[i]+l) != 0){
+				optionSingleplayer = true;
+				continue;
 			}
 		}
 		break;
