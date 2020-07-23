@@ -33,6 +33,6 @@ bool masterblasterMineAction(item *cItem, character *cChar, int to){
 
 	
 	if(to < 400){return false;}
-	beamblast(cChar,2.f,8.f,4.f,512);
+	beamblast(cChar,3.f,8.f,4.f,512);
 	return true;
 }

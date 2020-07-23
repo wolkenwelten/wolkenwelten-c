@@ -32,6 +32,6 @@ bool blasterMineAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 100){return false;}
-	beamblast(cChar,0.5f,1.f,0.25f,4);
+	beamblast(cChar,0.75f,1.f,0.25f,6);
 	return true;
 }

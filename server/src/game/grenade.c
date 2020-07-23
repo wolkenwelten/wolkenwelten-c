@@ -133,7 +133,7 @@ void beamblast(int c, const packet *p){
 		z += vz;
 
 		if(worldGetB(x,y,z) != 0){
-			explode(x,y,z,0.5f,1);
+			explode(x,y,z,0.5f*beamSize,1);
 			if(--hitsLeft <= 0){break;}
 		}
 		if(y < -256.f){
