@@ -24,10 +24,10 @@ typedef struct particle {
 
 unsigned int particleVBO = 0;
 
-glParticle glParticles[65536];
+glParticle glParticles[1<<16];
 int glParticleCount = 0;
 
-particle particles[65536];
+particle particles[1<<16];
 int particleCount = 0;
 
 void particleInit(){

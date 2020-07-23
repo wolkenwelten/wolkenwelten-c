@@ -24,8 +24,8 @@ int chunksGeneratedThisFrame = 0;
 chunk *chunkFirstFree = NULL;
 
 #ifdef __EMSCRIPTEN__
-	chunk chunkList[1<<17];
-	const float CHUNK_RENDER_DISTANCE = 384.f;
+	chunk chunkList[1<<16];
+	const float CHUNK_RENDER_DISTANCE = 320.f;
 	const float CHUNK_FADEOUT_DISTANCE = 64.f;
 #else
 	chunk chunkList[1<<18];
