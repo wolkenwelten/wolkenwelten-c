@@ -97,6 +97,6 @@ void grenadeUpdateFromServer(packet *p){
 	grenadeList[index].ent->eMesh = meshBomb;
 }
 
-void beamblast(character *ent, float pwr, int hitsLeft){
-	msgBeamBlast(ent->x, ent->y, ent->z, ent->yaw, ent->pitch, ent->roll, pwr, hitsLeft);
+void beamblast(character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){
+	msgBeamBlast(ent->x, ent->y, ent->z, ent->yaw, ent->pitch, beamSize, damageMultiplier, recoilMultiplier, hitsLeft);
 }

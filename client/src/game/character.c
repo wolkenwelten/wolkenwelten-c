@@ -112,14 +112,15 @@ void characterEmptyInventory(character *c){
 		c->inventory[i] = itemEmpty();
 	}
 	c->inventory[0] = itemNew(261, 1);
-	c->inventory[1] = itemNew(259, 1);
-	c->inventory[2] = itemNew(260, 1);
-	c->inventory[3] = itemNew(256,99);
-	c->inventory[4] = itemNew(257,99);
-	c->inventory[5] = itemNew(258,99);
-	c->inventory[6] = itemNew(  1,99);
-	c->inventory[7] = itemNew(  2,99);
-	c->inventory[8] = itemNew(  3,99);
+	c->inventory[1] = itemNew(262, 1);
+	c->inventory[2] = itemNew(263, 1);
+	c->inventory[3] = itemNew(259, 1);
+	c->inventory[4] = itemNew(260, 1);
+	c->inventory[5] = itemNew(256,99);
+	c->inventory[6] = itemNew(257,99);
+	c->inventory[7] = itemNew(258,99);
+	c->inventory[8] = itemNew(  1,99);
+	c->inventory[9] = itemNew(  2,99);
 }
 
 void characterUpdateHook(character *c){

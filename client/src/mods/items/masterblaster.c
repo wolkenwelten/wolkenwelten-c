@@ -1,4 +1,4 @@
-static const int ITEMID=266;
+static const int ITEMID=262;
 
 #include "../../gfx/mesh.h"
 #include "../../gfx/objs.h"
@@ -31,7 +31,8 @@ bool masterblasterHasMineAction(item *cItem){
 bool masterblasterMineAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
-	if(to < 240){return false;}
-	beamblast(cChar,1,64);
+	
+	if(to < 400){return false;}
+	beamblast(cChar,2.f,8.f,4.f,512);
 	return true;
 }

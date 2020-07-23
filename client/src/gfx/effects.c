@@ -78,7 +78,7 @@ void fxExplosionBlaster(float x,float y,float z,float pw){
 		newParticle(x,y,z,vx,vy,vz,vx/-96.f,vy/-96.f,vz/-96.f,0xFF7730A0,128);
 	}
 }
-void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float pw, int originatingCharacter){
+void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int originatingCharacter){
 	int steps = 0;
 	float minPlayerDist = 100.f;
 	float cx = x1;
@@ -92,9 +92,9 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 	if(fabsf(dy) > dm){dm = fabsf(dy);}
 	if(fabsf(dz) > dm){dm = fabsf(dz);}
 
-	float vx = (dx / dm)/16.f*pw;
-	float vy = (dy / dm)/16.f*pw;
-	float vz = (dz / dm)/16.f*pw;
+	float vx = (dx / dm)/16.f;
+	float vy = (dy / dm)/16.f;
+	float vz = (dz / dm)/16.f;
 
 	if(fabsf(vx) > fabsf(vy)){
 		if(fabsf(vx) > fabsf(vz)){
@@ -109,11 +109,11 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 			steps = (z2 - z1) / vz;
 		}
 	}
-	sfxPlay(sfxPhaser,1.f);
+	sfxPlay(sfxPhaser,recoilMultiplier);
 	for(;steps > 0;steps--){
-		float pvx = (rngValf()-0.5f)/8.f;
-		float pvy = (rngValf()-0.5f)/8.f;
-		float pvz = (rngValf()-0.5f)/8.f;
+		float pvx = (rngValf()-0.5f)/8.f*beamSize;
+		float pvy = (rngValf()-0.5f)/8.f*beamSize;
+		float pvz = (rngValf()-0.5f)/8.f*beamSize;
 		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/4.f,pvy/4.f,pvz/4.f,-pvx/192.f,-pvy/192.f,-pvz/192.f,0xFF8F56FF,128);
 		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/6.f,pvy/6.f,pvz/6.f,-pvx/256.f,-pvy/256.f,-pvz/256.f,0xFFAF76FF,178);
 		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/8.f,pvy/8.f,pvz/8.f,-pvx/512.f,-pvy/512.f,-pvz/512.f,0x6FBF26FF,192);
@@ -128,7 +128,7 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 		if(pd < minPlayerDist){minPlayerDist = pd;}
 	}
 	if((originatingCharacter != 65535) && (minPlayerDist < 0.5f)){
-		if(characterHP(player,(0.6f-minPlayerDist) * -24.f * pw)){
+		if(characterHP(player,(0.6f-minPlayerDist) * -24.f * damageMultiplier)){
 			msgSendDyingMessage("Beamblasted", originatingCharacter);
 			setOverlayColor(0x00000000,0);
 			commitOverlayColor();
@@ -137,6 +137,7 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 			commitOverlayColor();
 		}
 	}
+	(void)hitsLeft;
 }
 
 void fxBlockBreak(float x,float y,float z, unsigned char b){

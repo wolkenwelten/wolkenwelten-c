@@ -114,6 +114,11 @@ void beamblast(int c, const packet *p){
 	float yaw = p->val.f[3];
 	float pitch = p->val.f[4];
 	float speed = 0.1f;
+	int hitsLeft = p->val.i[8];
+	float beamSize = p->val.f[5];
+	float damageMultiplier = p->val.f[6];
+	float recoilMultiplier = p->val.f[7];
+	
 	sx = x = p->val.f[0];
 	sy = y = p->val.f[1];
 	sz = z = p->val.f[2];
@@ -129,11 +134,12 @@ void beamblast(int c, const packet *p){
 
 		if(worldGetB(x,y,z) != 0){
 			explode(x,y,z,0.5f,1);
+			if(--hitsLeft <= 0){break;}
 		}
 		if(y < -256.f){
 			break;
 		}
 	}
-	msgFxBeamBlaster(c,sx,sy,sz,x,y,z,1.f);
-	msgPlayerMove(c, (vx * -0.75f), (vy * -0.75f), (vz * -0.75f), rngValf(), -.5f, 0.f);
+	msgFxBeamBlaster(c,sx,sy,sz,x,y,z,beamSize,damageMultiplier,recoilMultiplier,p->val.i[8]);
+	msgPlayerMove(c, (vx * -0.75f * recoilMultiplier), (vy * -0.75f * recoilMultiplier), (vz * -0.75f * recoilMultiplier), rngValf() * recoilMultiplier, -.5f * recoilMultiplier, 0.f);
 }

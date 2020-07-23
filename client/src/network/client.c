@@ -209,7 +209,7 @@ void clientParsePacket(packet *p){
 		break;
 
 		case 24: // fxBeamBlaster
-			fxBeamBlaster(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6],p->val.i[7]);
+			fxBeamBlaster(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6],p->val.f[7],p->val.f[8],p->val.i[9],p->val.i[10]);
 		break;
 
 		case 0xFF: // compressedMultiPacket

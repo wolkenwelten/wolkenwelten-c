@@ -101,17 +101,18 @@ void msgNewGrenade(float x, float y, float z, float yaw, float pitch, float roll
 	packetQueueToServer(p,11,7*4);
 }
 
-void msgBeamBlast(float x, float y, float z, float yaw, float pitch, float roll, float pwr, int hitsLeft){
-	packet *p = alloca(4+8*4);
+void msgBeamBlast(float x, float y, float z, float yaw, float pitch, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){
+	packet *p = alloca(4+9*4);
 	p->val.f[0] = x;
 	p->val.f[1] = y;
 	p->val.f[2] = z;
 	p->val.f[3] = yaw;
 	p->val.f[4] = pitch;
-	p->val.f[5] = roll;
-	p->val.f[6] = pwr;
-	p->val.i[7] = hitsLeft;
-	packetQueueToServer(p,12,8*4);
+	p->val.f[5] = beamSize;
+	p->val.f[6] = damageMultiplier;
+	p->val.f[7] = recoilMultiplier;
+	p->val.i[8] = hitsLeft;
+	packetQueueToServer(p,12,9*4);
 }
 
 void msgPlayerMove(int c, float dvx, float dvy, float dvz, float dyaw, float dpitch, float droll){
@@ -197,7 +198,7 @@ void msgGrenadeUpdate(int c, float x, float y, float z, float vx, float vy, floa
 	packetQueue(p,23,8*4,c);
 }
 
-void msgFxBeamBlaster(int c, float x1, float y1, float z1, float x2, float y2, float z2, float pwr){
+void msgFxBeamBlaster(int c, float x1, float y1, float z1, float x2, float y2, float z2, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){
 	packet *p = alloca(4+8*4);
 	p->val.f[0] = x1;
 	p->val.f[1] = y1;
@@ -205,9 +206,13 @@ void msgFxBeamBlaster(int c, float x1, float y1, float z1, float x2, float y2, f
 	p->val.f[3] = x2;
 	p->val.f[4] = y2;
 	p->val.f[5] = z2;
-	p->val.f[6] = pwr;
-	p->val.i[7] = c;
+	p->val.f[6] = beamSize;
+	p->val.f[7] = damageMultiplier;
+	p->val.f[8] = recoilMultiplier;
+	p->val.i[9] = hitsLeft;
+
+	p->val.i[10] = c;
 	packetQueueExcept(p,24,8*4,c);
-	p->val.i[7] = 65535;
-	packetQueue(p,24,8*4,c);
+	p->val.i[10] = 65535;
+	packetQueue(p,24,11*4,c);
 }
