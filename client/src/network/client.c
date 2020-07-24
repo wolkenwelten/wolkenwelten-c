@@ -233,7 +233,6 @@ void clientParse(){
 			break;
 		}
 		clientParsePacket((packet *)(recvBuf+off));
-		//fprintf(stderr,"pLen: %i[%i]\noff: %i\nrecvBufLen: %i\n",pLen,alignedLen(pLen),off,recvBufLen);
 		fflush(stderr);
 		off += alignedLen(pLen) + 4;
 	}

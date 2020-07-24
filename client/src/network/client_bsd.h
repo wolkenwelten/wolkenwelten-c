@@ -15,7 +15,8 @@ bool signalHandlerBound = false;
 int serverSocket        = 0;
 
 void clientGetName(){
-	getlogin_r(playerName,28);
+	getlogin_r(playerName,sizeof(playerName)-1);
+	playerName[sizeof(playerName)-1]=0;
 }
 
 bool fileExists(char *fn){
@@ -72,7 +73,8 @@ void startSingleplayerServer(){
 		return;
 	}
 	strncpy(serverName,"localhost",sizeof(serverName)-1);
-	usleep(100);
+	serverName[sizeof(serverName)-1]=0;
+	usleep(1000);
 }
 
 void closeSingleplayerServer(){
@@ -93,6 +95,25 @@ void zombieKiller(int sig){
 		waitpid(singlePlayerPID, &status, 0);
 		singlePlayerPID = 0;
 	}
+}
+
+void clientFree(){
+	if(serverSocket > 0){
+		close(serverSocket);
+		serverSocket = 0;
+		menuError = "Connection closed";
+		if(!singleplayer){
+			*serverName = 0;
+		}
+	}
+}
+
+void clientFreeRetry(){
+	if(serverSocket > 0){
+		close(serverSocket);
+		serverSocket = 0;
+	}
+	usleep(1000);
 }
 
 void clientInit(){
@@ -146,8 +167,7 @@ void clientInit(){
 
 	while(connect(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0){
 		if(errno == EINVAL){
-			fprintf(stderr,"ERROR, connect EINVAL\n");
-			clientFree();
+			clientFreeRetry();
 			return;
 		}else if(errno == EINPROGRESS){
 			if(connectionTries > 10){
@@ -164,8 +184,7 @@ void clientInit(){
 				gameRunning = false;
 				return;
 			}
-			if(singleplayer){continue;}
-			clientFree();
+			clientFreeRetry();
 			return;
 		}
 		if(!singleplayer){
@@ -185,17 +204,6 @@ void clientInit(){
 	recvBytesCurrentSession = 0;
 	recvUncompressedBytesCurrentSession = 0;
 	clientGreetServer();
-}
-
-void clientFree(){
-	if(serverSocket > 0){
-		close(serverSocket);
-		serverSocket = 0;
-		menuError = "Connection closed";
-		if(singleplayer){
-			*serverName = 0;
-		}
-	}
 }
 
 void clientRead(){

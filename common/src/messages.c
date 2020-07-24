@@ -73,7 +73,7 @@ void msgPlayerJoinSendName(const char *name){
 	packet *p = alloca(4+28);
 	strncpy((char *)p->val.c,name,28);
 	p->val.c[27]=0;
-	packetQueueToServer(p,9,32);
+	packetQueueToServer(p,9,28);
 }
 
 void msgItemDropNew(float x, float y, float z, float vx, float vy, float vz, int ID, int amount){
