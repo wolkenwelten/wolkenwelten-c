@@ -13,3 +13,4 @@ Mining SFX too loud
 Jumping SFX do not get reduced volume the further away the source is
 Firefox mouse capture does not work
 Chrome WASM over internet sometimes segfaults the server in serverParseWSPacket in the for loop at the end moving the bytes around
+Have a better way of waiting for the singleplayer server to start up instead of periodicaly retrying after a short sleep
