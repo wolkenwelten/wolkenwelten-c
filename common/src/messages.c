@@ -1,11 +1,6 @@
 #include "messages.h"
 #include "packet.h"
 
-#ifndef __MINGW32__
-#include <alloca.h>
-#endif
-
-#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
