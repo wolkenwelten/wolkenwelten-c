@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+extern uint8_t packetBuffer[4120];
 
 void msgRequestPlayerSpawnPos    ();
 void msgRequestChungus           (int x, int y, int z);

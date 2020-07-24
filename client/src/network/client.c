@@ -59,7 +59,7 @@ void msgParseGetChunk(packet *p){
 }
 
 void msgSendPlayerPos(){
-	packet *p = alloca(4+19*4);
+	packet *p = (packet *)packetBuffer;
 	item *itm = characterGetItemBarSlot(player,player->activeItem);
 
 	p->val.f[ 0] = player->x;

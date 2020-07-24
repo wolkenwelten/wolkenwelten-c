@@ -3,6 +3,7 @@
 
 #include "../gfx/gfx.h"
 #include "../gui/textInput.h"
+#include "../../../common/src/messages.h"
 #include "../../../common/src/packet.h"
 
 #include <string.h>
@@ -16,7 +17,7 @@ void chatStartInput(){
 }
 
 void msgSendChatMessage(char *msg){
-	packet *p = alloca(256+4);
+	packet *p = (packet *)packetBuffer;
 	p->val.s[0]=0;
 	strncpy((char *)(p->val.c+2),msg,254);
 	p->val.c[255] = 0;
@@ -53,7 +54,7 @@ void chatPrintDebug(const char *msg){
 }
 
 void msgSendDyingMessage(char *msg, int c){
-	packet *p = alloca(256+4);
+	packet *p = (packet *)packetBuffer;
 	strncpy((char *)(p->val.c+2),msg,254);
 	p->val.s[0] = c;
 	p->val.c[255] = 0;

@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-static uint8_t packetBuffer[1024];
+uint8_t packetBuffer[4120];
 
 void msgRequestPlayerSpawnPos(){
 	packet *p = (packet *)packetBuffer;
