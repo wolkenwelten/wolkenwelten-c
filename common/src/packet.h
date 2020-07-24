@@ -11,11 +11,11 @@ typedef struct {
 	 */
 
 	union {
-		float    f[1];
-		int32_t  i[1];
-		uint32_t u[1];
-		uint16_t s[2];
-		uint8_t  c[4];
+		float    f[1030];
+		int32_t  i[1030];
+		uint32_t u[1030];
+		uint16_t s[2060];
+		uint8_t  c[4120];
 	} val;
 } packet;
 
