@@ -7,6 +7,7 @@ xcuserdata/
 *.xccheckout
 /DerivedData/
 /*.tar.gz
+/client/tools/*.dSYM/
 
 # debugging/profiling data
 /callgrind.out.*
