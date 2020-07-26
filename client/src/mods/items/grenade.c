@@ -8,7 +8,7 @@ static const int ITEMID=256;
 #include "../../game/recipe.h"
 
 void grenadeInit(){
-	recipeAdd2I(ITEMID,1, 258,1, 3,1); // Pear(1) + Stone(1) -> Grenade(1)
+	recipeAdd2I(ITEMID,2, 4,1, 13,1); // Coal(1) + Hematite Ore(1) -> Grenade(1)
 }
 
 bool grenadeActivateItem(item *cItem,character *cChar){
