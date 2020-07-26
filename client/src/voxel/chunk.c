@@ -27,6 +27,10 @@ chunk *chunkFirstFree = NULL;
 	chunk chunkList[1<<16];
 	const float CHUNK_RENDER_DISTANCE = 320.f;
 	const float CHUNK_FADEOUT_DISTANCE = 64.f;
+#elif __HAIKU__
+	chunk chunkList[1<<16];
+	const float CHUNK_RENDER_DISTANCE = 256.f;
+	const float CHUNK_FADEOUT_DISTANCE = 32.f;
 #else
 	chunk chunkList[1<<18];
 	const float CHUNK_RENDER_DISTANCE = 512.f;
