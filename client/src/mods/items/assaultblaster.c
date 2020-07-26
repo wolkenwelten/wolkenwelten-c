@@ -5,9 +5,11 @@ static const int ITEMID=263;
 #include "../../game/grenade.h"
 #include "../../game/item.h"
 #include "../../game/character.h"
+#include "../../game/recipe.h"
 
 void assaultblasterInit(){
 	(void)ITEMID;
+	recipeAdd2I(ITEMID,1, 18,24, 13,12); // Crystal(24) + Hematite Ore(12) -> Assaultblaster(1)
 }
 
 mesh *assaultblasterGetMesh(item *cItem){

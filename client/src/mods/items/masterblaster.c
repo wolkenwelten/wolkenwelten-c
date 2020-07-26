@@ -4,10 +4,12 @@ static const int ITEMID=262;
 #include "../../gfx/objs.h"
 #include "../../game/grenade.h"
 #include "../../game/item.h"
+#include "../../game/recipe.h"
 #include "../../game/character.h"
 
 void masterblasterInit(){
 	(void)ITEMID;
+	recipeAdd2I(ITEMID,1, 18,24, 13,12); // Crystal(24) + Hematite Ore(12) -> Masterblaster(1)
 }
 
 mesh *masterblasterGetMesh(item *cItem){
