@@ -4,13 +4,11 @@ You can't build one block wide bunkers, placing the block not possible.
 Collision is getting weird in 1x2 mine shafts
 itemDrops get lost if placing a block over them
 Sometimes one spawns inside a block
-sometimes the client segfaults, occurs more often when connected over the internet (sigPipe?)
-Spawn bei login und sterben teilweise unterschiedlich
+Spawn position may differ when one logins or when one respawns
 When a Server is already running, choosing singleplayer joins this server instead (Not Sure if truly bug)
 Using the grappling hook resets the cooldown for the blaster et al
 Mining SFX gets played multiple times
 Mining SFX too loud
 Jumping SFX do not get reduced volume the further away the source is
 Firefox mouse capture does not work
-Chrome WASM over internet sometimes segfaults the server in serverParseWSPacket in the for loop at the end moving the bytes around
 Have a better way of waiting for the singleplayer server to start up instead of periodicaly retrying after a short sleep
