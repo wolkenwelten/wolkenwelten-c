@@ -89,9 +89,11 @@ void initSDL(){
 		fprintf(stderr, "OpenGL context could not be created! SDL Error: %s\n", SDL_GetError() );
 		exit(1);
 	}
+	#ifndef __HAIKU__
 	if( SDL_GL_SetSwapInterval( 1 ) < 0 ){ //Use Vsync
 		fprintf(stderr, "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError() );
 	}
+	#endif
 
 	mousex = screenWidth/2;
 	mousey = screenHeight/2;
