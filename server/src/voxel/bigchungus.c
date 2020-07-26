@@ -133,10 +133,33 @@ void bigchungusBoxMine(bigchungus *c, int x,int y,int z, int w,int h,int d){
 			for(int cz=0;cz<d;cz++){
 				uint8_t b = bigchungusGetB(c,cx+x,cy+y,cz+z);
 				if(b==0){continue;}
-				bigchungusSetB(c,cx+x,cy+y,cz+z,0);/*
-				if(rngValM(8)==0){
-					blockMiningDropItemsPos(cx+x,cy+y,cz+z,b);
-				}*/
+				bigchungusSetB(c,cx+x,cy+y,cz+z,0);
+			}
+		}
+	}
+}
+
+int bigchungusTrySpawn(bigchungus *c, int sx, int sy, int sz){
+	return( (bigchungusGetB(c,sx,sy  ,sz)!=0) &&
+	        (bigchungusGetB(c,sx,sy+1,sz)==0) &&
+	        (bigchungusGetB(c,sx,sy+2,sz)==0));
+}
+
+void bigchungusDetermineSpawn(bigchungus *c, int sx, int sy, int sz){
+	sx &= ~0xFF;
+	sy &= ~0xFF;
+	sz &= ~0xFF;
+	for(int step = CHUNGUS_SIZE; step >= 1;step/=2){
+		for(int x = step/2;x<CHUNGUS_SIZE;x+=step){
+			for(int y = step/2;y<CHUNGUS_SIZE;y+=step){
+				for(int z = step/2;z<CHUNGUS_SIZE;z+=step){
+					if(bigchungusTrySpawn(c,sx|x,sy|y,sz|z)){
+						c->spawnx = sx|x;
+						c->spawny = sy|y;
+						c->spawnz = sz|z;
+						return;
+					}
+				}
 			}
 		}
 	}
@@ -157,9 +180,15 @@ void bigchungusGenSpawn(bigchungus *c){
 			}
 		}
 	}
+	if(!bigchungusTrySpawn(c,c->spawnx,c->spawny,c->spawnz)){
+		bigchungusDetermineSpawn(c,c->spawnx,c->spawny,c->spawnz);
+	}
 }
 
 void bigchungusGetSpawnPos(bigchungus *c, int *x, int *y, int *z){
+	if(!bigchungusTrySpawn(c,c->spawnx,c->spawny,c->spawnz)){
+		bigchungusDetermineSpawn(c,c->spawnx,c->spawny,c->spawnz);
+	}
 	*x = c->spawnx;
 	*y = c->spawny;
 	*z = c->spawnz;
