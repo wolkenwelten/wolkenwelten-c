@@ -18,6 +18,7 @@
 #include "../sdl/sdl.h"
 #include "../sdl/sfx.h"
 #include "../sdl/input_gamepad.h"
+#include "../misc/options.h"
 #include "../voxel/bigchungus.h"
 
 #include <math.h>
@@ -111,16 +112,18 @@ void characterEmptyInventory(character *c){
 	for(unsigned int i=0;i<40;i++){
 		c->inventory[i] = itemEmpty();
 	}
-	c->inventory[0] = itemNew(261, 1);
-	c->inventory[1] = itemNew(262, 1);
-	c->inventory[2] = itemNew(263, 1);
-	c->inventory[3] = itemNew(259, 1);
-	c->inventory[4] = itemNew(260, 1);
-	c->inventory[5] = itemNew(256,99);
-	c->inventory[6] = itemNew(257,99);
-	c->inventory[7] = itemNew(258,99);
-	c->inventory[8] = itemNew(  1,99);
-	c->inventory[9] = itemNew(  2,99);
+	if(optionDebugInfo){
+		c->inventory[0] = itemNew(261, 1);
+		c->inventory[1] = itemNew(262, 1);
+		c->inventory[2] = itemNew(263, 1);
+		c->inventory[3] = itemNew(259, 1);
+		c->inventory[4] = itemNew(260, 1);
+		c->inventory[5] = itemNew(256,99);
+		c->inventory[6] = itemNew(257,99);
+		c->inventory[7] = itemNew(258,99);
+		c->inventory[8] = itemNew(  1,99);
+		c->inventory[9] = itemNew(  2,99);
+	}
 }
 
 void characterUpdateHook(character *c){
