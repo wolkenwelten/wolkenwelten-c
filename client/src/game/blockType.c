@@ -88,6 +88,7 @@ void blockTypeInit(){
 	blockTypeInitBlock(15,14, STONE, "Marble Blocks", 1600, 0xFFF0F0F0,0xFFEBEBEB);
 	blockTypeInitBlock(16,16, WOOD,  "Hewn Log",       400, 0xFF09678f,0xFF1380af); blockTypeSetTex(16,2,15); blockTypeSetTex(16,3,15);
 	blockTypeInitBlock(17,17, WOOD,  "Boards",         300, 0xFF09678f,0xFF1380af);
+	blockTypeInitBlock(18,18, STONE, "Crystals",      2500, 0xFF997CE8,0xFF4D25B5);
 
 	blockTypeGenMeshes();
 }

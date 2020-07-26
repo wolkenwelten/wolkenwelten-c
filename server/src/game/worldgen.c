@@ -306,10 +306,10 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 						continue;
 					}
 					if((cx == -lsize  ) && (cz == -lsize  )){continue;}
-					if((cx == -lsize  ) && (cz ==  lsize)){continue;}
-					if((cx ==  lsize) && (cz == -lsize  )){continue;}
-					if((cx ==  lsize) && (cz ==  lsize)){continue;}
-					if((rngValM(sparseness)) == 0){continue;}
+					if((cx == -lsize  ) && (cz ==  lsize))  {continue;}
+					if((cx ==  lsize) && (cz == -lsize  ))  {continue;}
+					if((cx ==  lsize) && (cz ==  lsize))    {continue;}
+					if((rngValM(sparseness)) == 0)          {continue;}
 					chungusSetB(clay,cx+x,cy+y,cz+z,11);
 				}
 			}
@@ -339,7 +339,7 @@ void worldgenBigOak(worldgen *wgen, int x,int y,int z){
 					if((cx == -lsize  ) && (cz ==  lsize+1)){continue;}
 					if((cx ==  lsize+1) && (cz == -lsize  )){continue;}
 					if((cx ==  lsize+1) && (cz ==  lsize+1)){continue;}
-					if(rngValM(sparseness) == 0){continue;}
+					if(rngValM(sparseness) == 0)            {continue;}
 					chungusSetB(clay,cx+x,cy+y,cz+z,11);
 				}
 			}
@@ -390,11 +390,17 @@ void worldgenMonolith(worldgen *wgen, int x,int y,int z){
 }
 
 void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b){
-	float rsq = (size*size);
+	float rsq      = (size*size);
+	float crystalr = rsq / 2.f;
+	if(crystalr > 16.f){crystalr = 0.f;}
+	
 	for(int cy=-size;cy<=size;cy++){
 		for(int cx = -size;cx <= size;cx++){
 			for(int cz = -size;cz <= size;cz++){
-				if(((cx*cx)+(cz*cz)+(cy*cy)) < rsq){
+				const float d = (cx*cx)+(cz*cz)+(cy*cy);
+				if(d < crystalr){
+					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,18);
+				}else if(d < rsq){
 					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,b);
 				}
 			}
@@ -404,11 +410,16 @@ void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b){
 
 void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b){
 	for(int cy=-size;cy<=size;cy++){
-		int r = (size-abs(cy))/2;
+		int r     = (size-abs(cy))/2;
 		float rsq = (r*r)*0.8f;
+		float crystalr = rsq / 2.f;
+		if(crystalr < 16.f){crystalr = 0.f;}
 		for(int cx = -r;cx <= r;cx++){
 			for(int cz = -r;cz <= r;cz++){
-				if(((cx*cx)+(cz*cz)) < rsq){
+				const float d = (cx*cx)+(cz*cz);
+				if(d < crystalr){
+					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,18);
+				} else if(d < rsq){
 					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,b);
 				}
 			}
@@ -418,10 +429,18 @@ void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b){
 
 void worldgenPrism(worldgen *wgen, int x,int y,int z,int size,int b){
 	for(int cy=-size;cy<=size;cy++){
-		int r = (size-abs(cy))/2;
+		int r  = (size-abs(cy))/2;
+		int cr = r / 2;
+		if(r < 2){cr = 0;}
 		for(int cx = -r;cx <= r;cx++){
 			for(int cz = -r;cz <= r;cz++){
 				chungusSetB(wgen->clay,x+cx,y+cy,z+cz,b);
+			}
+		}
+		if(cr == 0){continue;}
+		for(int cx = -cr;cx <= cr;cx++){
+			for(int cz = -cr;cz <= cr;cz++){
+				chungusSetB(wgen->clay,x+cx,y+cy,z+cz,18);
 			}
 		}
 	}
@@ -429,12 +448,27 @@ void worldgenPrism(worldgen *wgen, int x,int y,int z,int size,int b){
 
 void worldgenPyramid(worldgen *wgen, int x,int y,int z,int size,int b){
 	for(int cy=-size;cy<=size;cy++){
-		int r = size-abs(cy);
+		int r  = size-abs(cy);
+		int cr = r / 2;
+		if(r < 2){cr = 0;}
 		for(int cx = -r;cx <= r;cx++){
 			for(int cz = -r;cz <= r;cz++){
 				chungusSetB(wgen->clay,x+cx,y+cy,z+cz,b);
 			}
 		}
+		if(cr == 0){continue;}
+		for(int cx = -cr;cx <= cr;cx++){
+			for(int cz = -cr;cz <= cr;cz++){
+				chungusSetB(wgen->clay,x+cx,y+cy,z+cz,18);
+			}
+		}
+	}
+}
+
+void worldgenCube(worldgen *wgen, int x, int y, int z, int size, int b){
+	chungusBox(wgen->clay,x,y,z,size,size,size,b);
+	if(size > 4){
+		chungusBox(wgen->clay,x+size/4,y+size/4,z+size/4,size/2,size/2,size/2,18);
 	}
 }
 
@@ -674,7 +708,7 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 	switch(rngValM(5)){
 		default:
 		case 0:
-			chungusBox(wgen->clay,x,y,z,size,size,size,b);
+			worldgenCube(wgen,x,y,z,size,b);
 		break;
 		case 1:
 			worldgenPrism(wgen,x,y,z,size,b);
