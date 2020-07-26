@@ -1,7 +1,10 @@
 CC = gcc
-CLIENT_CFLAGS += -DGLEW_STATIC
+
 CLIENT_CINCLUDES := $(shell pkg-config --cflags glew) $(shell sdl2-config --cflags)
-CLIENT_LIBS := $(shell sdl2-config --cflags) -lGL -lpthread -lSDL2 -lSDL2_mixer -lGLEW
+CLIENT_LIBS := -lnetwork $(shell sdl2-config --cflags) -lGL -lpthread -lSDL2 -lSDL2_mixer -lGLEW
+
+SERVER_LIBS := -lnetwork -lm
+
 
 .PHONY: all
 all: wolkenwelten wolkenwelten-server
@@ -11,12 +14,15 @@ release: release.haiku
 
 release.haiku: releases/haiku/wolkenwelten-haiku.tar.xz
 releases/haiku/wolkenwelten-haiku.tar.xz: releases/haiku/wolkenwelten
-	cd releases/haiku/ && tar -cJf wolkenwelten-haiku.tar.xz wolkenwelten
+	cd releases/haiku/ && tar -cJf wolkenwelten-haiku.tar.xz wolkenwelten/
 
-releases/haiku/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
-releases/haiku/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
-releases/haiku/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
-releases/haiku/wolkenwelten: client/src/tmp/cto.c client/src/tmp/cto.h
-	mkdir -p releases/haiku/
-	$(CC) $(CLIENT_SRCS) -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(CLIENT_LIBS)
+releases/haiku/wolkenwelten/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
+releases/haiku/wolkenwelten/wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
+releases/haiku/wolkenwelten/wolkenwelten: LIBS      += $(CLIENT_LIBS)
+releases/haiku/wolkenwelten/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
+releases/haiku/wolkenwelten/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
+releases/haiku/wolkenwelten/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
+releases/haiku/wolkenwelten/wolkenwelten: client/src/tmp/cto.c client/src/tmp/cto.h
+	mkdir -p releases/haiku/wolkenwelten
+	$(CC) $(CLIENT_SRCS) -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 	strip -gxX $@
