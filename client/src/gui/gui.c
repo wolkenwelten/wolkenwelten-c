@@ -287,16 +287,19 @@ void drawActiveItem(){
 
 	float animOff = player->yoff;
 	float hitOff  = player->hitOff;
+	const float ix =  1.3f;
+	const float iy = -0.9f;
+	const float iz = -1.5f;
 
 	shaderBind(sMesh);
 	if(itemHasMineAction(activeItem)){
-		matTranslation(matViewAI,1.8f,animOff-0.9f,-1.3f + hitOff*0.3f);
+		matTranslation(matViewAI,ix,animOff+iy,iz + hitOff*0.3f);
 		matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
 		matMul(matViewAI, matViewAI, matProjection);
 		shaderMatrix(sMesh, matViewAI);
 	}else{
-		float y = -0.9f+animOff-(hitOff/8);
-		matTranslation(matViewAI,1.8f-hitOff*1.2f,y+(hitOff/3),-1.3f - hitOff*1.1f);
+		float y = iy+animOff-(hitOff/8);
+		matTranslation(matViewAI,(0.5f+ix)-hitOff*1.2f,y+(hitOff/3),iz - hitOff*1.1f);
 		matMulRotYX(matViewAI,hitOff*10.f,hitOff*-35.f);
 		matMul(matViewAI, matViewAI, matProjection);
 		shaderMatrix(sMesh, matViewAI);
