@@ -133,6 +133,7 @@ void bigchungusBoxMine(bigchungus *c, int x,int y,int z, int w,int h,int d){
 			for(int cz=0;cz<d;cz++){
 				uint8_t b = bigchungusGetB(c,cx+x,cy+y,cz+z);
 				if(b==0){continue;}
+				blockMiningDropItemsPos(cx+x,cy+y,cz+z,b);
 				bigchungusSetB(c,cx+x,cy+y,cz+z,0);
 			}
 		}
