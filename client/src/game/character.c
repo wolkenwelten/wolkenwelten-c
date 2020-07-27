@@ -432,12 +432,13 @@ void characterMineBlock(character *c){
 			c->blockMiningX = cx;
 			c->blockMiningY = cy;
 			c->blockMiningZ = cz;
-			if(c->actionTimeout >= 60){
+			if(c->actionTimeout >= 80){
 				sfxPlay(sfxTock,1.f);
 				vibrate(0.3f);
+				c->hasHit = true;
+				c->actionTimeout = 0;
 			}
-		}
-		if(c->actionTimeout >= 100){
+		}else if(c->actionTimeout >= 80){
 			c->hasHit = true;
 			c->actionTimeout = 0;
 		}
