@@ -14,7 +14,6 @@
 typedef struct {
 	entity    *ent;
 	item       itm;
-	float  aniStep;
 } itemDrop;
 
 itemDrop itemDrops[1<<16];
@@ -47,7 +46,6 @@ void itemDropNewP(float x, float y, float z,const item *itm){
 	int d = itemDropCount++;
 
 	itemDrops[d].itm     = *itm;
-	itemDrops[d].aniStep = 0.f;
 	itemDrops[d].ent     = entityNew(x,y,z,0.f,0.f,0.f);
 	msgItemDropNew(-1, x, y, z, 0.f, 0.f, 0.f, itm->ID, itm->amount);
 }
@@ -64,7 +62,6 @@ void itemDropNewC(const packet *p){
 	itemDrops[d].ent->vz    = p->val.f[5];
 	itemDrops[d].itm.ID     = p->val.i[6];
 	itemDrops[d].itm.amount = p->val.i[7];
-	itemDrops[d].aniStep    = 0.f;
 
 	msgItemDropNew(
 		-1,
@@ -104,12 +101,7 @@ bool itemDropCheckPickup(int d){
 
 void itemDropUpdate(){
 	for(int i=0;i<itemDropCount;i++){
-		float aniStep = itemDrops[i].aniStep++;
-		itemDrops[i].ent->yaw = aniStep / 4.f;
-		itemDrops[i].ent->pitch = cosf(aniStep/ 96.f)*24;
-		itemDrops[i].ent->yoff = (cosf(aniStep/192.f)/16.f)+0.1f;
 		entityUpdate(itemDrops[i].ent);
-
 		if(itemDropCheckPickup(i) || (itemDrops[i].ent->y < -256)){
 			itemDropDel(i--);
 			continue;
