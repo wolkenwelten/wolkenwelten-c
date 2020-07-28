@@ -57,22 +57,22 @@ the custom_zlib field of the compress and decompress settings*/
 
 /*deflate&zlib encoder and png encoder*/
 #ifndef LODEPNG_NO_COMPILE_ENCODER
-#define LODEPNG_COMPILE_ENCODER
+//#define LODEPNG_COMPILE_ENCODER
 #endif
 
 /*the optional built in harddisk file loading and saving functions*/
 #ifndef LODEPNG_NO_COMPILE_DISK
-#define LODEPNG_COMPILE_DISK
+//#define LODEPNG_COMPILE_DISK
 #endif
 
 /*support for chunks other than IHDR, IDAT, PLTE, tRNS, IEND: ancillary and unknown chunks*/
 #ifndef LODEPNG_NO_COMPILE_ANCILLARY_CHUNKS
-#define LODEPNG_COMPILE_ANCILLARY_CHUNKS
+//#define LODEPNG_COMPILE_ANCILLARY_CHUNKS
 #endif
 
 /*ability to convert error numerical codes to English text string*/
 #ifndef LODEPNG_NO_COMPILE_ERROR_TEXT
-#define LODEPNG_COMPILE_ERROR_TEXT
+//#define LODEPNG_COMPILE_ERROR_TEXT
 #endif
 
 /*Compile the default allocators (C's free, malloc and realloc). If you disable this,
