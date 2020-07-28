@@ -52,11 +52,15 @@ void entityFree(entity *e){
 }
 
 uint32_t entityCollision(entity *e, float cx, float cy, float cz,float wd){
+	uint32_t col = 0;
 	(void)e;
 
-	uint32_t col = 0;
-	const float WD = wd*2.f;
+	if(checkCollision(cx-wd,cy-0.1f,cz   )){col |= 0x100;}
+	if(checkCollision(cx+wd,cy-0.1f,cz   )){col |= 0x200;}
+	if(checkCollision(cx   ,cy-0.1f,cz-wd)){col |= 0x400;}
+	if(checkCollision(cx   ,cy-0.1f,cz+wd)){col |= 0x800;}
 
+	wd = wd*0.5f;
 	if(checkCollision(cx-wd,cy+0.5f,cz   )){col |=  0x10;}
 	if(checkCollision(cx+wd,cy+0.5f,cz   )){col |=  0x20;}
 	if(checkCollision(cx   ,cy+0.5f,cz-wd)){col |=  0x40;}
@@ -66,11 +70,6 @@ uint32_t entityCollision(entity *e, float cx, float cy, float cz,float wd){
 	if(checkCollision(cx+wd,cy-0.5f,cz   )){col |=   0x2;}
 	if(checkCollision(cx   ,cy-0.5f,cz-wd)){col |=   0x4;}
 	if(checkCollision(cx   ,cy-0.5f,cz+wd)){col |=   0x8;}
-
-	if(checkCollision(cx-WD,cy-0.1f,cz   )){col |= 0x100;}
-	if(checkCollision(cx+WD,cy-0.1f,cz   )){col |= 0x200;}
-	if(checkCollision(cx   ,cy-0.1f,cz-WD)){col |= 0x400;}
-	if(checkCollision(cx   ,cy-0.1f,cz+WD)){col |= 0x800;}
 
 	return col;
 }

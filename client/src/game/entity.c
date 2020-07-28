@@ -20,9 +20,9 @@ entity *entityFirstFree = NULL;
 
 
 void entityReset(entity *e){
-	e->x = e->y = e->z = 0.f;
-	e->vx = e->vy = e->vz = 0.f;
-	e->yaw = e->pitch = e->roll = 0.f;
+	e->x    = e->y     = e->z    = 0.f;
+	e->vx   = e->vy    = e->vz   = 0.f;
+	e->yaw  = e->pitch = e->roll = 0.f;
 	e->yoff = 0.f;
 
 	e->falling     = false;
@@ -31,8 +31,8 @@ void entityReset(entity *e){
 	e->collide     = false;
 	e->noRepulsion = false;
 
-	e->nextFree = NULL;
-	e->eMesh    = NULL;
+	e->nextFree    = NULL;
+	e->eMesh       = NULL;
 }
 
 
