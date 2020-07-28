@@ -11,7 +11,7 @@
 typedef struct {
 	entity    *ent;
 	item       itm;
-	float  aniStep;
+	int    aniStep;
 } itemDrop;
 
 itemDrop itemDrops[1<<16];
@@ -40,7 +40,7 @@ void itemDropDel(int d){
 
 void itemDropUpdate(){
 	for(int i=0;i<itemDropCount;i++){
-		float aniStep = ++itemDrops[i].aniStep;
+		int aniStep = ++itemDrops[i].aniStep;
 		if(itemDrops[i].ent == NULL){continue;}
 		itemDrops[i].ent->yaw = aniStep / 4.f;
 		itemDrops[i].ent->pitch = cosf(aniStep/ 96.f)*24;
@@ -50,6 +50,7 @@ void itemDropUpdate(){
 
 void itemDropNewFromServer(packet *p){
 	int index = itemDropCount++;
+	itemDrops[index].aniStep    = rngValM(1024);
 	itemDrops[index].ent        = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
 	itemDrops[index].ent->x     = p->val.f[0];
 	itemDrops[index].ent->y     = p->val.f[1];
