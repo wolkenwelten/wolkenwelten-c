@@ -25,11 +25,11 @@ void entityReset(entity *e){
 	e->yaw = e->pitch = e->roll = 0.f;
 	e->yoff = 0.f;
 
-	e->falling              = false;
-	e->noClip               = false;
-	e->updated              = false;
-	e->collide              = false;
-	e->noRepulsion          = false;
+	e->falling     = false;
+	e->noClip      = false;
+	e->updated     = false;
+	e->collide     = false;
+	e->noRepulsion = false;
 
 	e->nextFree = NULL;
 	e->eMesh    = NULL;
@@ -47,12 +47,12 @@ entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll
 
 	entityReset(e);
 	e->nextFree = NULL;
-	e->x = x;
-	e->y = y;
-	e->z = z;
-	e->yaw   = yaw;
-	e->pitch = pitch;
-	e->roll  = roll;
+	e->x        = x;
+	e->y        = y;
+	e->z        = z;
+	e->yaw      = yaw;
+	e->pitch    = pitch;
+	e->roll     = roll;
 	return e;
 }
 

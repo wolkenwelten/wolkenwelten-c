@@ -72,7 +72,6 @@ void serverAccept(){
 	clients[clientCount].state               = 0;
 	clients[clientCount].flags               = 0;
 	clientCount++;
-	printf("Client Connected\n");
 }
 
 void serverKill(int c){

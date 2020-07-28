@@ -173,19 +173,6 @@ void serverParseWebSocketHeader(int c,int end){
 	}
 }
 
-void serverParseWebSocket(int c,int end){
-	clients[c].recvBuf[end-2] = 0;
-	if((clients[c].recvBuf[0] == 'G') && (clients[c].recvBuf[1] == 'E') && (clients[c].recvBuf[2] == 'T') && (clients[c].recvBuf[3] == ' ')){
-		serverParseWebSocketHeader(c,end);
-	}
-	for(unsigned int i=0;i<clients[c].recvBufLen-end;i++){
-		clients[c].recvBuf[i] = clients[c].recvBuf[i+end];
-	}
-	clients[c].recvBufLen -= end;
-	clients[c].state = 1;
-	serverParsePacket(c);
-}
-
 int addWSMessagePrefix(uint8_t *d, int len, int maxlen){
 	if(len < 126){
 		if(maxlen <= 2){return 0;}

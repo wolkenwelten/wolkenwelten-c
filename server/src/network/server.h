@@ -6,6 +6,8 @@ typedef struct {
 	character *c;
 	int state;
 	int flags;
+	
+	unsigned int itemDropUpdateOffset;
 
 	unsigned int chngReqQueueLen;
 	uint64_t chngReqQueue[128];

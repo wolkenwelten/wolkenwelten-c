@@ -6,6 +6,7 @@
 #include "../game/blockType.h"
 #include "../game/entity.h"
 #include "../game/item.h"
+#include "../game/itemDrop.h"
 #include "../gui/menu.h"
 #include "../sdl/sdl.h"
 #include "../gfx/glew.h"
@@ -192,6 +193,7 @@ void drawDebuginfo(){
 	textMeshPrintf(textm,"Uncompressed: %sB\n",getHumanReadableSize(recvUncompressedBytesCurrentSession));
 	textMeshPrintf(textm,"Comp. Ratio : %2.2fX\n",(float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession);
 	textMeshPrintf(textm,"Canvas Size : %ix%i\n",screenWidth,screenHeight);
+	textMeshPrintf(textm,"Itemdrops   : %i\n",itemDropCount);
 }
 
 void drawItemBar(){

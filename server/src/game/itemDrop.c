@@ -20,33 +20,36 @@ typedef struct {
 itemDrop itemDrops[1<<16];
 int      itemDropCount = 0;
 
-void itemDropUpdatePlayer(int c){
-	if(itemDropCount == 0){
-		msgItemDropUpdatePlayer(c, 0.f, 0.f, 0.f, 0.f, 0, 0, 0, 0);
-	}else{
-		for(int i=0;i<itemDropCount;i++){
-			msgItemDropUpdatePlayer(
-				c,
-				itemDrops[i].ent->x,
-				itemDrops[i].ent->y,
-				itemDrops[i].ent->z,
-				itemDrops[i].aniStep,
-				itemDrops[i].itm.ID,
-				itemDrops[i].itm.amount,
-				itemDropCount,
-				i
-			);
-		}
+#define ITEM_DROPS_PER_UPDATE 16
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
+unsigned int itemDropUpdatePlayer(int c, unsigned int offset){
+	const int max = MIN((int)(offset+ITEM_DROPS_PER_UPDATE),itemDropCount);
+	for(int i=offset;i<max;i++){
+		msgItemDropUpdate(\
+			c,
+			itemDrops[i].ent->x,
+			itemDrops[i].ent->y,
+			itemDrops[i].ent->z,
+			itemDrops[i].ent->vx,
+			itemDrops[i].ent->vy,
+			itemDrops[i].ent->vz,
+			i
+		);
 	}
+	offset += ITEM_DROPS_PER_UPDATE;
+	if((int)offset >= itemDropCount){offset=0;}
+	return offset;
 }
 
 void itemDropNewP(float x, float y, float z,const item *itm){
+	if(itm == NULL){return;}
 	int d = itemDropCount++;
 
-	itemDrops[d].itm = *itm;
-	itemDrops[d].aniStep=0.f;
-
-	itemDrops[d].ent = entityNew(x,y,z,0.f,0.f,0.f);
+	itemDrops[d].itm     = *itm;
+	itemDrops[d].aniStep = 0.f;
+	itemDrops[d].ent     = entityNew(x,y,z,0.f,0.f,0.f);
+	msgItemDropNew(-1, x, y, z, 0.f, 0.f, 0.f, itm->ID, itm->amount);
 }
 
 void itemDropNewC(const packet *p){
@@ -62,6 +65,18 @@ void itemDropNewC(const packet *p){
 	itemDrops[d].itm.ID     = p->val.i[6];
 	itemDrops[d].itm.amount = p->val.i[7];
 	itemDrops[d].aniStep    = 0.f;
+
+	msgItemDropNew(
+		-1,
+		itemDrops[d].ent->x,
+		itemDrops[d].ent->y,
+		itemDrops[d].ent->z,
+		itemDrops[d].ent->vx,
+		itemDrops[d].ent->vy,
+		itemDrops[d].ent->vz,
+		itemDrops[d].itm.ID,
+		itemDrops[d].itm.amount
+	);
 }
 
 void itemDropDel(int d){
@@ -70,6 +85,8 @@ void itemDropDel(int d){
 	entityFree(itemDrops[d].ent);
 	itemDrops[d].ent = NULL;
 	itemDrops[d] = itemDrops[--itemDropCount];
+
+	msgItemDropDel(d);
 }
 
 bool itemDropCheckPickup(int d){
@@ -97,5 +114,21 @@ void itemDropUpdate(){
 			itemDropDel(i--);
 			continue;
 		}
+	}
+}
+
+void itemDropIntro(int c){
+	for(int d=0;d<itemDropCount;d++){
+		msgItemDropNew(
+			c,
+			itemDrops[d].ent->x,
+			itemDrops[d].ent->y,
+			itemDrops[d].ent->z,
+			itemDrops[d].ent->vx,
+			itemDrops[d].ent->vy,
+			itemDrops[d].ent->vz,
+			itemDrops[d].itm.ID,
+			itemDrops[d].itm.amount
+		);
 	}
 }

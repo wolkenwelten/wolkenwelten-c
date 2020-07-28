@@ -96,6 +96,10 @@ void msgPlayerSpawnPos(int c){
 	packetQueue(p,1,3*4,c);
 }
 
+void serverIntro(int c){
+	itemDropIntro(c);
+}
+
 void msgUpdatePlayer(int c){
 	packet *rp = (packet *)packetBuffer;
 
@@ -126,7 +130,7 @@ void msgUpdatePlayer(int c){
 		packetQueue(rp,15,20*4,c);
 	}
 
-	itemDropUpdatePlayer(c);
+	clients[c].itemDropUpdateOffset = itemDropUpdatePlayer(c,clients[c].itemDropUpdateOffset);
 	grenadeUpdatePlayer(c);
 	blockMiningUpdatePlayer(c);
 }
@@ -327,6 +331,20 @@ void serverParsePacket(int i){
 		}
 		clients[i].recvBufLen -= off;
 	}
+}
+
+void serverParseWebSocket(int c,int end){
+	clients[c].recvBuf[end-2] = 0;
+	if((clients[c].recvBuf[0] == 'G') && (clients[c].recvBuf[1] == 'E') && (clients[c].recvBuf[2] == 'T') && (clients[c].recvBuf[3] == ' ')){
+		serverParseWebSocketHeader(c,end);
+	}
+	for(unsigned int i=0;i<clients[c].recvBufLen-end;i++){
+		clients[c].recvBuf[i] = clients[c].recvBuf[i+end];
+	}
+	clients[c].recvBufLen -= end;
+	clients[c].state = 1;
+	serverIntro(c);
+	serverParsePacket(c);
 }
 
 void serverParseIntroduction(int i){

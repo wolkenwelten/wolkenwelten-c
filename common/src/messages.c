@@ -73,7 +73,7 @@ void msgPlayerJoinSendName(const char *name){
 	packetQueueToServer(p,9,28);
 }
 
-void msgItemDropNew(float x, float y, float z, float vx, float vy, float vz, int ID, int amount){
+void msgItemDropNew(int c, float x, float y, float z, float vx, float vy, float vz, int ID, int amount){
 	packet *p = (packet *)packetBuffer;
 	p->val.f[0] = x;
 	p->val.f[1] = y;
@@ -83,7 +83,7 @@ void msgItemDropNew(float x, float y, float z, float vx, float vy, float vz, int
 	p->val.f[5] = vz;
 	p->val.i[6] = ID;
 	p->val.i[7] = amount;
-	packetQueueToServer(p,10,8*4);
+	packetQueue(p,10,8*4,c);
 }
 
 void msgNewGrenade(float x, float y, float z, float yaw, float pitch, float roll, float pwr){
@@ -159,17 +159,10 @@ void msgPickupItem(int c, uint16_t ID, uint16_t amount){
 	packetQueue(p,20,2*2,c);
 }
 
-void msgItemDropUpdatePlayer(int c, float x, float y, float z, float aniStep, int ID, int amount, int count, int i){
+void msgItemDropDel(int i){
 	packet *p = (packet *)packetBuffer;
-	p->val.f[0] = x;
-	p->val.f[1] = y;
-	p->val.f[2] = z;
-	p->val.f[3] = aniStep;
-	p->val.i[4] = ID;
-	p->val.i[5] = amount;
-	p->val.i[6] = count;
-	p->val.i[7] = i;
-	packetQueue(p,21,4*8,c);
+	p->val.u[0] = i;
+	packetQueue(p,21,4,-1);
 }
 
 void msgGrenadeExplode(float x, float y, float z,float pwr, int style){
@@ -212,4 +205,17 @@ void msgFxBeamBlaster(int c, float x1, float y1, float z1, float x2, float y2, f
 	packetQueueExcept(p,24,8*4,c);
 	p->val.i[10] = 65535;
 	packetQueue(p,24,11*4,c);
+}
+
+void msgItemDropUpdate(int c, float x, float y, float z, float vx, float vy, float vz, int i){
+	packet *p = (packet *)packetBuffer;
+	p->val.f[0] = x;
+	p->val.f[1] = y;
+	p->val.f[2] = z;
+	p->val.f[3] = vx;
+	p->val.f[4] = vy;
+	p->val.f[5] = vz;
+	p->val.i[6] = i;
+	
+	packetQueue(p,25,7*4,c);
 }

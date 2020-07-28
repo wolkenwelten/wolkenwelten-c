@@ -153,7 +153,7 @@ void clientParsePacket(packet *p){
 		break;
 
 		case 10:
-			fprintf(stderr,"Received a itemDropNew packet from the server which should never happen.\n");
+			itemDropNewFromServer(p);
 		break;
 
 		case 11:
@@ -197,7 +197,8 @@ void clientParsePacket(packet *p){
 		break;
 
 		case 21: // itemDropUpdate
-			itemDropUpdateFromServer(p);
+			itemDropDel(p->val.u[0]);
+			//itemDropUpdateFromServer(p);
 		break;
 
 		case 22: // grenadeExplode
@@ -210,6 +211,10 @@ void clientParsePacket(packet *p){
 
 		case 24: // fxBeamBlaster
 			fxBeamBlaster(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6],p->val.f[7],p->val.f[8],p->val.i[9],p->val.i[10]);
+		break;
+		
+		case 25: // msgItemDropUpdate
+			itemDropUpdateFromServer(p);
 		break;
 
 		case 0xFF: // compressedMultiPacket

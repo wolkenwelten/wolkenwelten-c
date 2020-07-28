@@ -4,8 +4,10 @@
 #include "../game/item.h"
 #include "../../../common/src/packet.h"
 
+extern int itemDropCount;
 
 void itemDropNewC(character *chr, item *itm);
 void itemDropUpdate();
+void itemDropDel(int d);
+void itemDropNewFromServer(packet *p);
 void itemDropUpdateFromServer(packet *p);
-
