@@ -17,7 +17,7 @@ void chatStartInput(){
 }
 
 void msgSendChatMessage(char *msg){
-	packet *p = (packet *)packetBuffer;
+	packet *p = &packetBuffer;
 	p->val.s[0]=0;
 	strncpy((char *)(p->val.c+2),msg,254);
 	p->val.c[255] = 0;
@@ -54,7 +54,7 @@ void chatPrintDebug(const char *msg){
 }
 
 void msgSendDyingMessage(char *msg, int c){
-	packet *p = (packet *)packetBuffer;
+	packet *p = &packetBuffer;
 	strncpy((char *)(p->val.c+2),msg,254);
 	p->val.s[0] = c;
 	p->val.c[255] = 0;

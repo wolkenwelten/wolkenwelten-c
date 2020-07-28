@@ -52,7 +52,7 @@ void serverKeepalive(){
 }
 
 void serverSendChatMsg(const char *msg){
-	packet *p = (packet *)packetBuffer;
+	packet *p = &packetBuffer;
 	strncpy((char *)(p->val.c+2),msg,254);
 	p->val.c[255] = 0;
 	packetQueue(p,16,256,-1);
@@ -87,7 +87,7 @@ void serverParseDyingMsg(int c, packet *m){
 }
 
 void msgPlayerSpawnPos(int c){
-	packet *p = (packet *)packetBuffer;
+	packet *p = &packetBuffer;
 	int sx,sy,sz;
 	worldGetSpawnPos(&sx,&sy,&sz);
 	p->val.f[0] = ((float)sx)+0.5f;
@@ -101,7 +101,7 @@ void serverIntro(int c){
 }
 
 void msgUpdatePlayer(int c){
-	packet *rp = (packet *)packetBuffer;
+	packet *rp = &packetBuffer;
 
 	for(int i=0;i<clientCount;++i){
 		if(i==c)                {continue;}
@@ -159,7 +159,7 @@ void serverParsePlayerPos(int c, packet *p){
 }
 
 void msgSendChunk(int c, const chunk *chnk){
-	packet *p = (packet *)packetBuffer;
+	packet *p = &packetBuffer;
 	memcpy(p->val.c,chnk->data,sizeof(chnk->data));
 	p->val.i[1024] = chnk->x;
 	p->val.i[1025] = chnk->y;
