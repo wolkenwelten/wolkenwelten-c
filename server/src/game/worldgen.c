@@ -293,6 +293,8 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 	int size       = rngValMM(8,12);
 	int sparseness = rngValMM(2,3);
 	int lsize      = 3;
+	int leafes     = 11;
+	if(rngValM(16) == 0){leafes = 19;} // We Sakura now
 
 	for(int cy = 0;cy < size;cy++){
 		if(cy == size-1){lsize=2;}
@@ -302,7 +304,7 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 			for(int cz = -lsize;cz<=lsize;cz++){
 				for(int cx = -lsize;cx<=lsize;cx++){
 					if((cx == 0) && (cz == 0)){
-						chungusSetB(clay,cx+x,cy+y,cz+z,11);
+						chungusSetB(clay,cx+x,cy+y,cz+z,leafes);
 						continue;
 					}
 					if((cx == -lsize  ) && (cz == -lsize  )){continue;}
@@ -310,7 +312,7 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 					if((cx ==  lsize) && (cz == -lsize  ))  {continue;}
 					if((cx ==  lsize) && (cz ==  lsize))    {continue;}
 					if((rngValM(sparseness)) == 0)          {continue;}
-					chungusSetB(clay,cx+x,cy+y,cz+z,11);
+					chungusSetB(clay,cx+x,cy+y,cz+z,leafes);
 				}
 			}
 		}

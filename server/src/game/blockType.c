@@ -51,4 +51,5 @@ void blockTypeInit(){
 	blockTypeInitBlock(16, WOOD,  "Hewn Log",       400);
 	blockTypeInitBlock(17, WOOD,  "Boards",         300);
 	blockTypeInitBlock(18, STONE, "Crystals",      2500);
+	blockTypeInitBlock(19, WOOD,  "Sakura Leaves",   50);
 }
