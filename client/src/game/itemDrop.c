@@ -14,7 +14,7 @@ typedef struct {
 	int    aniStep;
 } itemDrop;
 
-itemDrop itemDrops[1<<16];
+itemDrop itemDrops[1<<14];
 int      itemDropCount = 0;
 
 void itemDropNewC(character *chr, item *itm){
@@ -72,5 +72,5 @@ void itemDropUpdateFromServer(packet *p){
 	itemDrops[index].ent->vx = p->val.f[3];
 	itemDrops[index].ent->vy = p->val.f[4];
 	itemDrops[index].ent->vz = p->val.f[5];
-	
+
 }

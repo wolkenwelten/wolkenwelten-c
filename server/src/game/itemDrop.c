@@ -16,7 +16,7 @@ typedef struct {
 	item       itm;
 } itemDrop;
 
-itemDrop itemDrops[1<<16];
+itemDrop itemDrops[1<<14];
 int      itemDropCount = 0;
 
 #define ITEM_DROPS_PER_UPDATE 32
@@ -43,6 +43,7 @@ unsigned int itemDropUpdatePlayer(int c, unsigned int offset){
 
 void itemDropNewP(float x, float y, float z,const item *itm){
 	if(itm == NULL){return;}
+	if((itemDropCount) >= (int)(sizeof(itemDrops) / sizeof(itemDrop) - 1)){return;}
 	int d = itemDropCount++;
 
 	itemDrops[d].itm     = *itm;
@@ -51,6 +52,7 @@ void itemDropNewP(float x, float y, float z,const item *itm){
 }
 
 void itemDropNewC(const packet *p){
+	if((itemDropCount) >= (int)(sizeof(itemDrops) / sizeof(itemDrop) - 1)){return;}
 	int d = itemDropCount++;
 
 	itemDrops[d].ent        = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
