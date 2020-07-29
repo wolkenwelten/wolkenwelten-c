@@ -32,6 +32,13 @@ void itemDropNewC(character *chr, item *itm){
 	msgItemDropNew(-1,x,y,z,vx,vy,vz,itm->ID,itm->amount);
 }
 
+void itemDropNewD(float x, float y, float z, item *itm){
+	const float vx = rngValf()*0.03f;
+	const float vy = rngValf()*0.03f;
+	const float vz = rngValf()*0.03f;
+	msgItemDropNew(-1,x,y,z,vx,vy,vz,itm->ID,itm->amount);
+}
+
 void itemDropDel(int d){
 	entityFree(itemDrops[d].ent);
 	itemDrops[d].ent = NULL;

@@ -473,6 +473,12 @@ void characterDropItem(character *c, int i){
 }
 
 void characterDie(character *c){
+	for(int i=0;i<40;i++){
+		item *cItem = characterGetItemBarSlot(c,i);
+		if(cItem == NULL)     { continue; }
+		if(itemIsEmpty(cItem)){ continue; }
+		itemDropNewD(c->x,c->y+3.f,c->z, cItem);
+	}
 	characterInit(c);
 	setOverlayColor(0xFF000000,0);
 }
