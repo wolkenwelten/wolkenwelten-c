@@ -22,7 +22,7 @@ typedef struct {
 	void *nextFree;
 } entity;
 
-extern entity entityList[1<<16];
+extern entity entityList[1<<14];
 extern int entityCount;
 
 entity  *entityNew       (float x, float y, float z, float yaw, float pitch, float roll);

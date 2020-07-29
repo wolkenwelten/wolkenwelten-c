@@ -14,7 +14,7 @@
 #include <math.h>
 #include "../gfx/glew.h"
 
-entity entityList[1<<16];
+entity entityList[1<<14];
 int entityCount = 0;
 entity *entityFirstFree = NULL;
 

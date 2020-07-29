@@ -6,7 +6,7 @@
 #include "../main.h"
 #include "../voxel/bigchungus.h"
 
-entity entityList[1<<16];
+entity entityList[1<<14];
 int entityCount = 0;
 entity *entityFirstFree = NULL;
 
