@@ -1,4 +1,3 @@
-#include "../../../common/src/packet.h"
 #include "../network/client.h"
 
 void packetQueue(packet *p, uint8_t ptype, unsigned int len, int c){

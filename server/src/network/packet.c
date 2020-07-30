@@ -1,4 +1,5 @@
-#include "../../../common/src/packet.h"
+#include "../../../common/src/network/packet.h"
+
 #include "server.h"
 
 #include <stdio.h>

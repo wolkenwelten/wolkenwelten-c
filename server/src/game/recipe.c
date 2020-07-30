@@ -1,9 +1,9 @@
 #include "recipe.h"
 
-#include <stdarg.h>
-
 #include "../game/character.h"
 #include "../game/item.h"
+
+#include <stdarg.h>
 
 typedef struct {
 	unsigned short resultID;

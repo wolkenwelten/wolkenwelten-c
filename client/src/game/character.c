@@ -11,14 +11,13 @@
 #include "../gfx/objs.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
-#include "../../../common/src/misc.h"
 #include "../network/chat.h"
-#include "../../../common/src/packet.h"
-#include "../../../common/src/messages.h"
+#include "../misc/options.h"
+#include "../../../common/src/misc/misc.h"
+#include "../../../common/src/network/messages.h"
 #include "../sdl/sdl.h"
 #include "../sdl/sfx.h"
 #include "../sdl/input_gamepad.h"
-#include "../misc/options.h"
 #include "../voxel/bigchungus.h"
 
 #include <math.h>

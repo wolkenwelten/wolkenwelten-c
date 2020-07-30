@@ -10,13 +10,11 @@
 #include "../misc/options.h"
 #include "../network/server_ws.h"
 #include "../voxel/bigchungus.h"
-#include "../../../common/src/lz4.h"
-#include "../../../common/src/misc.h"
-#include "../../../common/src/messages.h"
-#include "../../../common/src/packet.h"
+#include "../../../common/src/misc/lz4.h"
+#include "../../../common/src/misc/misc.h"
+#include "../../../common/src/network/messages.h"
 
 #include <errno.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

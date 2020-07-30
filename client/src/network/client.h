@@ -1,10 +1,12 @@
 #pragma once
-#include "../../../common/src/packet.h"
+
+#include "../../../common/src/network/packet.h"
+
 #include <unistd.h>
 #include <sys/types.h>
 #include <stdint.h>
 
-extern int connectionTries;
+extern int    connectionTries;
 extern size_t sentBytesCurrentSession;
 extern size_t recvBytesCurrentSession;
 extern size_t recvUncompressedBytesCurrentSession;

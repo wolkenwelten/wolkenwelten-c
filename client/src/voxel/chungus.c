@@ -4,7 +4,7 @@
 #include "../game/blockType.h"
 #include "../gfx/frustum.h"
 #include "../gfx/texture.h"
-#include "../../../common/src/misc.h"
+#include "../../../common/src/misc/misc.h"
 #include "../voxel/chunk.h"
 
 #include <math.h>

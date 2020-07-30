@@ -8,10 +8,10 @@
 #include "../gfx/effects.h"
 #include "../gfx/texture.h"
 #include "../gfx/objs.h"
-#include "../../../common/src/misc.h"
 #include "../sdl/sfx.h"
 #include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/misc/misc.h"
 
 #include <math.h>
 #include <stdio.h>

@@ -6,7 +6,7 @@
 #include "../gui/gui.h"
 #include "../sdl/sfx.h"
 #include "../network/chat.h"
-#include "../../../common/src/misc.h"
+#include "../../../common/src/misc/misc.h"
 #include "../sdl/input_gamepad.h"
 
 
@@ -37,7 +37,7 @@ void fxExplosionBomb(float x,float y,float z,float pw){
 		float vz = (rngValf()-0.5f)/32.f*pw*2;
 		newParticle(x,y,z,vx,vy,vz,0.f,0.f,0.f,0xFF082299,128);
 	}
-	
+
 	const float pdx = x - player->x;
 	const float pdy = y - player->y;
 	const float pdz = z - player->z;

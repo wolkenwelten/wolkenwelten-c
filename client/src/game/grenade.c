@@ -5,8 +5,8 @@
 #include "../gfx/mesh.h"
 #include "../gfx/effects.h"
 #include "../gfx/objs.h"
-#include "../../../common/src/misc.h"
-#include "../../../common/src/messages.h"
+#include "../../../common/src/misc/misc.h"
+#include "../../../common/src/network/messages.h"
 #include "../voxel/bigchungus.h"
 
 #include <math.h>
@@ -75,7 +75,7 @@ void grenadeUpdate(){
 void grenadeUpdateFromServer(packet *p){
 	const int index = p->val.i[7];
 	//printf("X:%f\nY:%f\nZ:%f\nVX:%f\nVY:%f\nVZ:%f\nIndex
-	
+
 	for(int i=p->val.i[6];i<grenadeCount;i++){
 		if(grenadeList[i].ent != NULL){
 			entityFree(grenadeList[i].ent);

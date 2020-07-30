@@ -1,9 +1,9 @@
-#include "../game/grenade.h"
+#include "grenade.h"
 
 #include "../main.h"
 #include "../game/entity.h"
-#include "../../../common/src/misc.h"
-#include "../../../common/src/messages.h"
+#include "../../../common/src/misc/misc.h"
+#include "../../../common/src/network/messages.h"
 #include "../voxel/bigchungus.h"
 
 #include <math.h>
@@ -118,7 +118,7 @@ void beamblast(int c, const packet *p){
 	float beamSize = p->val.f[5];
 	float damageMultiplier = p->val.f[6];
 	float recoilMultiplier = p->val.f[7];
-	
+
 	sx = x = p->val.f[0];
 	sy = y = p->val.f[1];
 	sz = z = p->val.f[2];

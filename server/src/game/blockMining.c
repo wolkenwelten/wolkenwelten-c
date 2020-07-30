@@ -1,12 +1,11 @@
-#include "../game/blockMining.h"
+#include "blockMining.h"
 
 #include "../game/blockType.h"
 #include "../game/itemDrop.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
-#include "../../../common/src/misc.h"
-#include "../../../common/src/packet.h"
-#include "../../../common/src/messages.h"
+#include "../../../common/src/misc/misc.h"
+#include "../../../common/src/network/messages.h"
 
 #include <math.h>
 #include <stddef.h>

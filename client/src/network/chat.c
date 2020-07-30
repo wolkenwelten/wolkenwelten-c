@@ -3,8 +3,7 @@
 
 #include "../gfx/gfx.h"
 #include "../gui/textInput.h"
-#include "../../../common/src/messages.h"
-#include "../../../common/src/packet.h"
+#include "../../../common/src/network/messages.h"
 
 #include <string.h>
 #include <stdio.h>

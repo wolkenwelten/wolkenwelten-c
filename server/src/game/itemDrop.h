@@ -2,7 +2,7 @@
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/item.h"
-#include "../../../common/src/packet.h"
+#include "../../../common/src/network/packet.h"
 
 void         itemDropNewP         (float x, float y, float z,const item *itm);
 void         itemDropNewC         (const packet *p);

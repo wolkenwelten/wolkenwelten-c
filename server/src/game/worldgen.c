@@ -1,15 +1,15 @@
-#include "../game/worldgen.h"
+#include "worldgen.h"
+
+#include "../main.h"
+#include "../misc/options.h"
+#include "../voxel/chunk.h"
+#include "../voxel/chungus.h"
+#include "../voxel/bigchungus.h"
+#include "../../../common/src/misc/misc.h"
 
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "../main.h"
-#include "../misc/options.h"
-#include "../../../common/src/misc.h"
-#include "../voxel/chunk.h"
-#include "../voxel/chungus.h"
-#include "../voxel/bigchungus.h"
 
 worldgen worldgenList[4];
 int worldgenCount = 0;
@@ -395,7 +395,7 @@ void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b){
 	float rsq      = (size*size);
 	float crystalr = rsq / 2.f;
 	if(crystalr > 16.f){crystalr = 0.f;}
-	
+
 	for(int cy=-size;cy<=size;cy++){
 		for(int cx = -size;cx <= size;cx++){
 			for(int cz = -size;cz <= size;cz++){

@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../common/src/packet.h"
+#include "../../../common/src/network/packet.h"
 
 extern char chatLog[12][256];
 

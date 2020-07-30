@@ -11,10 +11,9 @@
 #include "../game/itemDrop.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
-#include "../../../common/src/lz4.h"
-#include "../../../common/src/misc.h"
-#include "../../../common/src/messages.h"
-#include "../../../common/src/packet.h"
+#include "../../../common/src/misc/lz4.h"
+#include "../../../common/src/misc/misc.h"
+#include "../../../common/src/network/messages.h"
 #include "../voxel/bigchungus.h"
 
 #include <stdio.h>

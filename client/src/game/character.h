@@ -1,6 +1,6 @@
 #pragma once
 #include "../gfx/mesh.h"
-#include "../../../common/src/packet.h"
+#include "../../../common/src/network/packet.h"
 
 #include <stdbool.h>
 #include <stdint.h>

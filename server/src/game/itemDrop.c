@@ -1,15 +1,14 @@
 #include "itemDrop.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
 #include "../main.h"
 #include "../network/server.h"
 #include "../game/blockType.h"
-#include "../../../common/src/misc.h"
-#include "../../../common/src/packet.h"
-#include "../../../common/src/messages.h"
+#include "../../../common/src/misc/misc.h"
+#include "../../../common/src/network/messages.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 typedef struct {
 	entity    *ent;

@@ -1,14 +1,14 @@
-#include "../game/character.h"
-
-#include <math.h>
-#include <stdio.h>
+#include "character.h"
 
 #include "../main.h"
 #include "../voxel/bigchungus.h"
 #include "../game/blockType.h"
 #include "../game/itemDrop.h"
 #include "../game/blockMining.h"
-#include "../../../common/src/misc.h"
+#include "../../../common/src/misc/misc.h"
+
+#include <math.h>
+#include <stdio.h>
 
 character characterList[128];
 int characterCount = 0;

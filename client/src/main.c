@@ -17,7 +17,7 @@
 #include "game/recipe.h"
 #include "voxel/chungus.h"
 #include "voxel/bigchungus.h"
-#include "../../common/src/misc.h"
+#include "../../common/src/misc/misc.h"
 #include "gfx/objs.h"
 #include "mods/mods.h"
 #include "network/client.h"

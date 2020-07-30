@@ -1,9 +1,9 @@
+#include "options.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-
-#include "options.h"
 
 int   optionWorldSeed    = 0;
 int   optionPort         = 0;
@@ -21,7 +21,7 @@ void parseOptions(int argc,const char *argv[]){
 	int l;
 	for(int i=0;i<argc;i++){
 		if(argv[i][0] != '-'){continue;}
-		
+
 		if((l = checkString(argv[i]+1,"worldSeed="))){
 			optionWorldSeed = atoi(argv[i]+l);
 			continue;

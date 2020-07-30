@@ -4,9 +4,9 @@
 #include "../game/character.h"
 #include "../game/grenade.h"
 #include "../gfx/objs.h"
-#include "../../../common/src/messages.h"
 #include "../sdl/sfx.h"
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/network/messages.h"
 
 item itemNew(uint16_t ID, int16_t amount){
 	item i;

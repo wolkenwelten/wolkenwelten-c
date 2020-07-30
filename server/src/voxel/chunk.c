@@ -1,7 +1,7 @@
-#include "../voxel/chunk.h"
+#include "chunk.h"
 
-#include "../../../common/src/misc.h"
 #include "../game/blockType.h"
+#include "../../../common/src/misc/misc.h"
 
 #include <math.h>
 #include <stdio.h>
