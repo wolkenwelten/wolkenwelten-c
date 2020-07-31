@@ -70,8 +70,8 @@ void updateMenuClick(int x, int y, int btn){
 }
 
 void menuBackground(){
-	float u = 8.f/16.f*128.f;
-	float v = 8.f/32.f*128.f;
+	float u = 19.f/32.f*128.f;
+	float v = 31.f/32.f*128.f;
 	float s = 1.f/32.f*128.f;
 	int   x = 0;
 	int   y = 0;
@@ -106,8 +106,8 @@ void renderMenu(){
 	textMeshBox(menuM,
 		128, 96,
 		64, 64,
-		7.f/8.f, 2.f/8.f,
-		1.f/8.f, 1.f/8.f,
+		26.f/32.f, 31.f/32.f,
+		1.f/32.f,  1.f/32.f,
 		0xFFFFFFFF);
 
 	snprintf(playerNameBuf,sizeof(playerNameBuf),"Your Name: %s",playerName);
@@ -117,8 +117,8 @@ void renderMenu(){
 	textMeshBox(menuM,
 		screenWidth-256-32, buttonY,
 		256, 32,
-		8.f/16.f, 4.f/16.f,
-		1.f/16.f, 1.f/16.f,
+		19.f/32.f, 31.f/32.f,
+		1.f/32.f,   1.f/32.f,
 		0xFF555555);
 	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"  Singleplayer");
 	#endif
@@ -127,8 +127,8 @@ void renderMenu(){
 	textMeshBox(menuM,
 		screenWidth-256-32, buttonY,
 		256, 32,
-		8.f/16.f, 4.f/16.f,
-		1.f/16.f, 1.f/16.f,
+		19.f/32.f, 31.f/32.f,
+		1.f/32.f,   1.f/32.f,
 		0xFF555555);
 	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"  Multiplayer");
 	buttonY += 32 + 16;
@@ -136,8 +136,8 @@ void renderMenu(){
 	textMeshBox(menuM,
 		screenWidth-256-32, buttonY,
 		256, 32,
-		8.f/16.f, 4.f/16.f,
-		1.f/16.f, 1.f/16.f,
+		19.f/32.f, 31.f/32.f,
+		1.f/32.f,   1.f/32.f,
 		0xFF555555);
 	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"  Change Name");
 	buttonY += 32 + 16;
@@ -145,8 +145,8 @@ void renderMenu(){
 	textMeshBox(menuM,
 		screenWidth-256-32, buttonY,
 		256, 32,
-		8.f/16.f, 4.f/16.f,
-		1.f/16.f, 1.f/16.f,
+		19.f/32.f, 31.f/32.f,
+		1.f/32.f,   1.f/32.f,
 		0xFF555555);
 	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"      Quit");
 	buttonY += 32 + 16;

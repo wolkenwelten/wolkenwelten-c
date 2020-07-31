@@ -69,7 +69,7 @@ void drawInventory(textMesh *guim, textMesh *textm, textMesh *itemMesh){
 		sel = -1;
 	}
 
-	textMeshBox(guim,(screenWidth/2-5*tilesize)-tilesize/2,screenHeight/2-4*tilesize,11*tilesize,9*tilesize,0.f,1.f/8.f,1.f/8.f,1.f/8.f,~1);
+	textMeshBox(guim,(screenWidth/2-5*tilesize)-tilesize/2,screenHeight/2-4*tilesize,11*tilesize,9*tilesize,23.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 
 	textm->sx = (screenWidth/2-5*tilesize);
 	textm->sy = screenHeight/2-4*tilesize+tilesize/2+tilesize/8;
@@ -84,9 +84,9 @@ void drawInventory(textMesh *guim, textMesh *textm, textMesh *itemMesh){
 		int y = screenHeight/2 + (4*tilesize) - (i/10*tilesize) - tilesize;
 		if(i < 10){ y += tilesize/2; }
 		if((i == sel) || (i == gamepadSelection) || (mouseHidden && (i == inventoryPickupSel))){
-			textMeshBox(guim,x,y,tilesize,tilesize,5.f/8.f,1.f/8.f,1.f/8.f,1.f/8.f,~1);
+			textMeshBox(guim,x,y,tilesize,tilesize,21.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 		}else{
-			textMeshBox(guim,x,y,tilesize,tilesize,4.f/8.f,1.f/8.f,1.f/8.f,1.f/8.f,~1);
+			textMeshBox(guim,x,y,tilesize,tilesize,20.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 		}
 		cItem = &player->inventory[i];
 		if(cItem == NULL){continue;}
@@ -116,11 +116,11 @@ void drawInventory(textMesh *guim, textMesh *textm, textMesh *itemMesh){
 		int u = b % 32;
 		int v = b / 32;
 		if((i == (sel-50)) || (i == (gamepadSelection-50))){
-			textMeshBox(guim,x,y,tilesize,tilesize,5.f/8.f,1.f/8.f,1.f/8.f,1.f/8.f,~1);
+			textMeshBox(guim,x,y,tilesize,tilesize,21.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 		}else if(a <= 0){
-			textMeshBox(guim,x,y,tilesize,tilesize,6.f/8.f,1.f/8.f,1.f/8.f,1.f/8.f,~1);
+			textMeshBox(guim,x,y,tilesize,tilesize,22.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 		}else{
-			textMeshBox(guim,x,y,tilesize,tilesize,4.f/8.f,1.f/8.f,1.f/8.f,1.f/8.f,~1);
+			textMeshBox(guim,x,y,tilesize,tilesize,20.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 		}
 
 		textMeshBox(itemMesh,x+itemtilesizeoff,y+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);

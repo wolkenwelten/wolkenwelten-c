@@ -74,12 +74,12 @@ void initUI(){
 	guim                 = textMeshNew();
 	textm                = textMeshNew();
 
-	itemMesh->tex        = tItems;
-	cursorMesh->tex      = tCursor;
+	itemMesh->tex        = tGui;
 	guim->tex            = tGui;
 	textm->tex           = tGui;
+	
+	cursorMesh->tex      = tCursor;
 	crosshairMesh->tex   = tCrosshair;
-
 	crosshairMesh->usage = GL_STATIC_DRAW;
 
 	resizeUI();
@@ -219,9 +219,9 @@ void drawItemBar(){
 		int x = (screenWidth-10*tilesize)+(i*tilesize);
 		int y = screenHeight-tilesize;
 		if(i == playerSelection){
-			textMeshBox(guim,x,y,tilesize,tilesize,5.f/8.f,1.f/8.f,1.f/8.f,1.f/8.f,~1);
+			textMeshBox(guim,x,y,tilesize,tilesize,21.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 		}else{
-			textMeshBox(guim,x,y,tilesize,tilesize,4.f/8.f,1.f/8.f,1.f/8.f,1.f/8.f,~1);
+			textMeshBox(guim,x,y,tilesize,tilesize,20.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 		}
 		cItem = &player->inventory[i];
 		if(cItem == NULL){continue;}
@@ -251,8 +251,8 @@ void drawHealthbar(){
 	}
 
 	tilesizeoff = tilesize+tilesize/4;
-	lastsize = tilesize+(tilesize/2);
-	lastoff = tilesize/4;
+	lastsize    = tilesize+(tilesize/2);
+	lastoff     = tilesize/4;
 	x = y = tilesize/2;
 
 	int heartBeat = --ticks & 0x7F;
@@ -261,18 +261,18 @@ void drawHealthbar(){
 	ticks = ticks & 0xFF;
 	for(int i=0;i<5;i++){
 		if(player->hp == ((i+1)*4)){
-			textMeshBox(guim,x-hbOff,y-lastoff-hbOff,lastsize+hbOff*2,lastsize+hbOff*2,7.f/8.f,0.f,1.f/8.f,1.f/8.f,hbRGBA);
-			textMeshBox(guim,x,y-lastoff,lastsize,lastsize,7.f/8.f,0.f,1.f/8.f,1.f/8.f,~1);
+			textMeshBox(guim,x-hbOff,y-lastoff-hbOff,lastsize+hbOff*2,lastsize+hbOff*2,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,hbRGBA);
+			textMeshBox(guim,x,y-lastoff,lastsize,lastsize,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 			x += tilesizeoff + lastoff;
 		}else if(player->hp >= ((i+1)*4)){
-			textMeshBox(guim,x,y,tilesize,tilesize,7.f/8.f,0.f,1.f/8.f,1.f/8.f,~1);
+			textMeshBox(guim,x,y,tilesize,tilesize,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 			x += tilesizeoff;
 		}else if(((player->hp-1)/4) == i){
-			textMeshBox(guim,x-hbOff,y-lastoff-hbOff,lastsize+hbOff*2,lastsize+hbOff*2,7.f/8.f,0.f,1.f/8.f,1.f/8.f,hbRGBA);
-			textMeshBox(guim,x,y-lastoff,lastsize,lastsize,(4+((player->hp-1)%4))/8.f,0.f,1.f/8.f,1.f/8.f,~1);
+			textMeshBox(guim,x-hbOff,y-lastoff-hbOff,lastsize+hbOff*2,lastsize+hbOff*2,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,hbRGBA);
+			textMeshBox(guim,x,y-lastoff,lastsize,lastsize,(28+((player->hp-1)%4))/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 			x += tilesizeoff + lastoff;
 		}else{
-			textMeshBox(guim,x,y,tilesize,tilesize,7.f/8.f,1.f/8.f,1.f/8.f,1.f/8.f,~1);
+			textMeshBox(guim,x,y,tilesize,tilesize,27.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 			x += tilesizeoff;
 		}
 	}
@@ -383,7 +383,7 @@ void resetOverlayColor(){
 void drawOverlay(){
 	uint32_t c = getOverlayColor();
 	if((c&0xFF000000) == 0){return;}
-	textMeshBox(guim, 0, 0, screenWidth, screenHeight, 0.5f, 0.25f, 1.f/16.f, 1.f/16.f, getOverlayColor());
+	textMeshBox(guim, 0, 0, screenWidth, screenHeight, 19.f/32.f, 31.f/32.f, 1.f/32.f, 1.f/32.f, getOverlayColor());
 }
 
 void drawHud(){

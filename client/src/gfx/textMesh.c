@@ -27,13 +27,13 @@ textMesh *textMeshNew(){
 		}
 		m = &textMeshList[textMeshCount++];
 	}
-	m->vboSize = 0;
+	m->vboSize  = 0;
 	m->vbo = m->dataCount = 0;
 	m->sx = m->sy = 0;
-	m->size = 1;
-	m->tex = tGui;
+	m->size     = 1;
+	m->tex      = tGui;
 	m->finished = 0;
-	m->usage = GL_STREAM_DRAW;
+	m->usage    = GL_STREAM_DRAW;
 
 	return m;
 }
@@ -88,20 +88,20 @@ void textMeshAddGlyph(textMesh *m, int x, int y, int size, unsigned char c){
 	float gx;
 	float gy;
 	int   glyphWidth = 8*size;
-	float glyphSize  = 1.f / 16.f;
+	float glyphSize  = 1.f / 64.f;
 
 	if(c==0)  {return;}
 	if(c==' '){return;}
 	if(c>127) {return;}
 
 	if(size == 1){
-		glyphSize = 1.f / 32.f;
+		glyphSize = 1.f / 128.f;
 	}
 
 	gx = ((float)(c&0x0f))*glyphSize;
-	gy = ((float)(15-((c>>4)&0x0f)))*glyphSize;
+	gy = ((float)(63-((c>>4)&0x0f)))*glyphSize;
 	if(size == 1){
-		gy = ((float)(15-((c>>4)&0x0f)))*glyphSize;
+		gy = ((float)(15-((c>>4)&0x0f)))*glyphSize + 24.f/32.f;
 	}
 
 	textMeshAddVert( m, x           , y           , ((gx          )*128.f), ((gy          )*128.f),0xFFFFFFFF);
@@ -170,9 +170,9 @@ void textMeshPrintf(textMesh *m, const char *format, ...){
 
 void textMeshDigit(textMesh *m, int digit,int x,int y){
 	const int   glyphWidth = 16;
-	const float glyphSize  = 1.f / 16.f;
-	const float gx = 0.5f + (((float)(digit&0x07))*glyphSize);
-	const float gy = (0.5f-glyphSize) - ((digit>>3)*glyphSize);
+	const float glyphSize  = 1.f / 64.f;
+	const float gx = 4.f/32.f + (((float)(digit&0x07))*glyphSize);
+	const float gy = (28.f/32.f-glyphSize) - ((digit>>3)*glyphSize);
 
 	textMeshAddVert( m, x           , y           , (gx          )*128.f, (gy          )*128.f,0xFFFFFFFF);
 	textMeshAddVert( m, x+glyphWidth, y+glyphWidth, (gx+glyphSize)*128.f, (gy+glyphSize)*128.f,0xFFFFFFFF);

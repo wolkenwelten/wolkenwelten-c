@@ -98,10 +98,10 @@ uint32_t interpol(uint32_t c1,uint32_t c2,uint32_t c3,uint32_t c4){
 
 
 void textureBuildBlockIcons(){
-	uint32_t *tblocks, *titems;
+	uint32_t *tblocks, *tgui;
 	unsigned int bw,bh,iw,ih;
 	lodepng_decode32((unsigned char **)&tblocks, &bw, &bh, gfx_blocks_png_data, gfx_blocks_png_len);
-	lodepng_decode32((unsigned char **)&titems, &iw, &ih, gfx_items_png_data, gfx_items_png_len);
+	lodepng_decode32((unsigned char **)&tgui, &iw, &ih, gfx_gui_png_data, gfx_gui_png_len);
 
 	for(int i=0;i<256;i++){
 		if(!blockTypeValid(i)){continue;}
@@ -110,7 +110,7 @@ void textureBuildBlockIcons(){
 		int sx,sy;
 		for(int y=0;y<32;y++){
 			for(int x=0;x<32;x++){
-				titems[((y+dy)<<10) | (x+dx)] = 0x000000FF;
+				tgui[((y+dy)*iw) | (x+dx)] = 0x000000FF;
 			}
 		}
 		sx = blockTypeGetTexX(i,0) << 5;
@@ -123,7 +123,7 @@ void textureBuildBlockIcons(){
 					tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)  )],
 					tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)+1)]
 				);
-				titems[((y+dy+8+(x>>1))<<10) | (x+dx)] = darken(c);
+				tgui[((y+dy+8+(x>>1))*iw) | (x+dx)] = darken(c);
 			}
 		}
 		sx = blockTypeGetTexX(i,4) << 5;
@@ -136,7 +136,7 @@ void textureBuildBlockIcons(){
 					tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)  )],
 					tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)+1)]
 				);
-				titems[((y+dy+8+(7-(x>>1)))<<10) | (x+dx+16)] = darken(c);
+				tgui[((y+dy+8+(7-(x>>1)))*iw) | (x+dx+16)] = darken(c);
 			}
 		}
 		sx = blockTypeGetTexX(i,2) << 5;
@@ -145,20 +145,19 @@ void textureBuildBlockIcons(){
 			for(int x=0;x<32;x++){
 				int ndx = 16 + (x>>1) - (y >> 1);
 				int ndy = (x>>2) + (y>>2) + (x&1);
-				titems[((ndy+dy)<<10) | (ndx+dx)] = tblocks[((sy+y)<<9) | (sx+x)];
+				tgui[((ndy+dy)*iw) | (ndx+dx)] = tblocks[((sy+y)<<9) | (sx+x)];
 			}
 		}
 	}
-	textureLoadSurface(tItems,iw,ih,titems);
+	textureLoadSurface(tGui,iw,ih,tgui);
 	free(tblocks);
-	free(titems);
+	free(tgui);
 }
 
 void textureInit(){
 	tBlocks      = textureNew(gfx_blocks_png_data,    gfx_blocks_png_len    );
 	tCursor      = textureNew(gfx_cursor_png_data,    gfx_cursor_png_len    );
 	tGui         = textureNew(gfx_gui_png_data,       gfx_gui_png_len       );
-	tItems       = textureNew(gfx_items_png_data,     gfx_items_png_len     );
 	tCrosshair   = textureNew(gfx_crosshair_png_data, gfx_crosshair_png_len );
 	tRope        = textureNew(gfx_rope_png_data,      gfx_rope_png_len      );
 	tBlockMining = textureNew(gfx_mining_png_data,    gfx_mining_png_len    );

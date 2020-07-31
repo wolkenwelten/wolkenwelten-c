@@ -14,7 +14,6 @@ void     textureBuildBlockIcons();
 extern texture *tBlocks;
 extern texture *tGui;
 extern texture *tCursor;
-extern texture *tItems;
 extern texture *tCrosshair;
 extern texture *tRope;
 extern texture *tBlockMining;
