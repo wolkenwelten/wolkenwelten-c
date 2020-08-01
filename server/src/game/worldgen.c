@@ -294,7 +294,9 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 	int sparseness = rngValMM(2,3);
 	int lsize      = 3;
 	int leafes     = 11;
+	int log        = 10;
 	if(rngValM(16) == 0){leafes = 19;} // We Sakura now
+	if(rngValM(16) == 0){log    = 20;} // We Birch now
 
 	for(int cy = 0;cy < size;cy++){
 		if(cy == size-1){lsize=2;}
@@ -317,7 +319,7 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 			}
 		}
 		if(cy < size-2){
-			chungusSetB(clay,x,cy+y,z,10);
+			chungusSetB(clay,x,cy+y,z,log);
 		}
 	}
 	worldgenRoots(wgen,x,y-1,z);
