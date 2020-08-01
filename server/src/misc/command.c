@@ -1,3 +1,4 @@
+#define _DEFAULT_SOURCE
 #include "command.h"
 
 #include <stdlib.h>
