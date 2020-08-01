@@ -35,7 +35,7 @@ bool isInventoryOpen(){
 	return inventoryOpen;
 }
 
-void drawInventory(textMesh *guim, textMesh *textm, textMesh *itemMesh){
+void drawInventory(textMesh *guim){
 	item *cItem;
 	static int ticks = 0;
 	unsigned char a;
@@ -54,7 +54,7 @@ void drawInventory(textMesh *guim, textMesh *textm, textMesh *itemMesh){
 	}
 	++ticks;
 	itemtilesizeoff = (tilesize-itemtilesize)/2;
-	textm->size = 2;
+	guim->size = 2;
 
 	int xraw = (mousex - (screenWidth/2-5*tilesize));
 	int xsel = xraw/tilesize;
@@ -71,13 +71,13 @@ void drawInventory(textMesh *guim, textMesh *textm, textMesh *itemMesh){
 
 	textMeshBox(guim,(screenWidth/2-5*tilesize)-tilesize/2,screenHeight/2-4*tilesize,11*tilesize,9*tilesize,23.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 
-	textm->sx = (screenWidth/2-5*tilesize);
-	textm->sy = screenHeight/2-4*tilesize+tilesize/2+tilesize/8;
-	textMeshPrintf(textm,"Crafting");
+	guim->sx = (screenWidth/2-5*tilesize);
+	guim->sy = screenHeight/2-4*tilesize+tilesize/2+tilesize/8;
+	textMeshPrintf(guim,"Crafting");
 
-	textm->sx = (screenWidth/2-5*tilesize);
-	textm->sy = screenHeight/2-1*tilesize+tilesize/2+tilesize/8;
-	textMeshPrintf(textm,"Inventory");
+	guim->sx = (screenWidth/2-5*tilesize);
+	guim->sy = screenHeight/2-1*tilesize+tilesize/2+tilesize/8;
+	textMeshPrintf(guim,"Inventory");
 
 	for(int i = 0;i<40;i++){
 		int x = (screenWidth/2-5*tilesize)+(i%10*tilesize);
@@ -96,11 +96,11 @@ void drawInventory(textMesh *guim, textMesh *textm, textMesh *itemMesh){
 		if((inventoryPickupSel != i) || (mouseHidden)){
 			int u = b % 32;
 			int v = b / 32;
-			textMeshBox(itemMesh,x+itemtilesizeoff,y+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
+			textMeshBox(guim,x+itemtilesizeoff,y+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
 			if(!itemIsSingle(cItem)){
-				textm->sx = x+tilesize-tilesize/4;
-				textm->sy = y+(itemtilesize-itemtilesizeoff)+tilesize/32;
-				textMeshNumber(textm,a);
+				guim->sx = x+tilesize-tilesize/4;
+				guim->sy = y+(itemtilesize-itemtilesizeoff)+tilesize/32;
+				textMeshNumber(guim,a);
 			}
 		}
 	}
@@ -123,11 +123,11 @@ void drawInventory(textMesh *guim, textMesh *textm, textMesh *itemMesh){
 			textMeshBox(guim,x,y,tilesize,tilesize,20.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 		}
 
-		textMeshBox(itemMesh,x+itemtilesizeoff,y+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
+		textMeshBox(guim,x+itemtilesizeoff,y+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
 
-		textm->sx = x+tilesize-tilesize/3;
-		textm->sy = y+(itemtilesize-itemtilesizeoff);
-		textMeshNumber(textm,a);
+		guim->sx = x+tilesize-tilesize/3;
+		guim->sy = y+(itemtilesize-itemtilesizeoff);
+		textMeshNumber(guim,a);
 
 		if(((mousex > x) && (mousex < x+tilesize) && (mousey > y) && (mousey < y+tilesize)) || (mouseHidden && (i == (gamepadSelection-50)))){
 			const int yy = y + tilesize + tilesize/2;
@@ -143,24 +143,24 @@ void drawInventory(textMesh *guim, textMesh *textm, textMesh *itemMesh){
 				u = b % 32;
 				v = b / 32;
 				if(ii > 0){
-					textMeshBox(guim,xx-tilesize+tilesize/4+animX/2,yy+tilesize/4+animY/2,tilesize/2,tilesize/2,0.f,0.f,1.f/8.f,1.f/8.f,~1);
+					textMeshBox(guim,xx-tilesize+tilesize/4+animX/2,yy+tilesize/4+animY/2,tilesize/2,tilesize/2,24.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 				}
 
-				textMeshBox(itemMesh,xx+itemtilesizeoff,yy+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
-				textm->sx = xx+tilesize-tilesize/3;
-				textm->sy = yy+(itemtilesize-itemtilesizeoff);
-				textMeshNumber(textm,a);
+				textMeshBox(guim,xx+itemtilesizeoff,yy+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
+				guim->sx = xx+tilesize-tilesize/3;
+				guim->sy = yy+(itemtilesize-itemtilesizeoff);
+				textMeshNumber(guim,a);
 			}
 			b = recipeGetResultID(r);
 			u = b % 32;
 			v = b / 32;
 			xx = (screenWidth/2)+((ii*2-5)*tilesize);
-			textMeshBox(guim,xx-tilesize/2-tilesize/4+animY,yy+tilesize/2-tilesize/4,tilesize/2,tilesize/2,1.f/8.f,0.f,1.f/8.f,1.f/8.f,~1);
-			textMeshBox(itemMesh,xx+itemtilesizeoff,yy+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
+			textMeshBox(guim,xx-tilesize/2-tilesize/4+animY,yy+tilesize/2-tilesize/4,tilesize/2,tilesize/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+			textMeshBox(guim,xx+itemtilesizeoff,yy+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
 
-			textm->sx = xx+tilesize-tilesize/3;
-			textm->sy = yy+(itemtilesize-itemtilesizeoff);
-			textMeshNumber(textm,recipeGetResultAmount(r));
+			guim->sx = xx+tilesize-tilesize/3;
+			guim->sy = yy+(itemtilesize-itemtilesizeoff);
+			textMeshNumber(guim,recipeGetResultAmount(r));
 		}
 	}
 
@@ -172,11 +172,11 @@ void drawInventory(textMesh *guim, textMesh *textm, textMesh *itemMesh){
 		if(a == 0){return;}
 		int u = b % 32;
 		int v = b / 32;
-		textMeshBox(itemMesh,mousex,mousey,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
+		textMeshBox(guim,mousex,mousey,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
 		if(!itemIsSingle(cItem)){
-			textm->sx = mousex+tilesize-tilesize/3;
-			textm->sy = mousey+(itemtilesize-itemtilesizeoff);
-			textMeshNumber(textm,a);
+			guim->sx = mousex+tilesize-tilesize/3;
+			guim->sy = mousey+(itemtilesize-itemtilesizeoff);
+			textMeshNumber(guim,a);
 		}
 	}
 }

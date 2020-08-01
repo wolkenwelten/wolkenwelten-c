@@ -29,8 +29,6 @@
 #define ITEMTILE (1.f/32.f)
 
 textMesh *guim;
-textMesh *textm;
-textMesh *itemMesh;
 textMesh *crosshairMesh;
 textMesh *cursorMesh;
 
@@ -68,19 +66,15 @@ void resizeUI(){
 }
 
 void initUI(){
-	itemMesh             = textMeshNew();
 	cursorMesh           = textMeshNew();
-	crosshairMesh        = textMeshNew();
-	guim                 = textMeshNew();
-	textm                = textMeshNew();
-
-	itemMesh->tex        = tGui;
-	guim->tex            = tGui;
-	textm->tex           = tGui;
-	
 	cursorMesh->tex      = tCursor;
+	
+	crosshairMesh        = textMeshNew();
 	crosshairMesh->tex   = tCrosshair;
 	crosshairMesh->usage = GL_STATIC_DRAW;
+	
+	guim                 = textMeshNew();
+	guim->tex            = tGui;
 
 	resizeUI();
 }
@@ -148,52 +142,52 @@ void drawDebuginfo(){
 	int tris = vboTrisCount;
 
 	if(recvBytesCurrentSession <= 0){
-		textm->sx   = screenWidth/2-(10*16);
-		textm->sy   = screenHeight/2+32;
-		textm->size = 2;
-		textMeshPrintf(textm,"%.*s",20 + ((ticks++ >> 4)&3),"Connecting to server...");
+		guim->sx   = screenWidth/2-(10*16);
+		guim->sy   = screenHeight/2+32;
+		guim->size = 2;
+		textMeshPrintf(guim,"%.*s",20 + ((ticks++ >> 4)&3),"Connecting to server...");
 	}else if(!playerChunkActive){
-		textm->sx   = screenWidth/2-(8*16);
-		textm->sy   = screenHeight/2+32;
-		textm->size = 2;
-		textMeshPrintf(textm,"%.*s",13 + ((ticks++ >> 4)&3),"Loading World...");
+		guim->sx   = screenWidth/2-(8*16);
+		guim->sy   = screenHeight/2+32;
+		guim->size = 2;
+		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Loading World...");
 	}
 
-	textm->sx   = 4;
-	textm->sy   = screenHeight-40;
-	textm->size = 2;
+	guim->sx   = 4;
+	guim->sy   = screenHeight-40;
+	guim->size = 2;
 
-	textMeshPrintf(textm,"FPS %.0f\n",curFPS);
-	textMeshPrintf(textm,"Ver. %s [%.8s]",VERSION,COMMIT);
+	textMeshPrintf(guim,"FPS %.0f\n",curFPS);
+	textMeshPrintf(guim,"Ver. %s [%.8s]",VERSION,COMMIT);
 
 	vboTrisCount = 0;
 	if(!optionDebugInfo){return;}
 
-	textm->sx   =  4;
-	textm->sy   = 76;
-	textm->size =  1;
+	guim->sx   =  4;
+	guim->sy   = 76;
+	guim->size =  1;
 
-	textMeshPrintf(textm,"Player     X: %05.2f VX: %02.4f\n",player->x,player->vx);
-	textMeshPrintf(textm,"Player     Y: %05.2f VY: %02.4f\n",player->y,player->vy);
-	textMeshPrintf(textm,"Player     Z: %05.2f VZ: %02.4f\n",player->z,player->vz);
-	textMeshPrintf(textm,"Player   Yaw: %04.2f\n",player->yaw);
-	textMeshPrintf(textm,"Player Pitch: %04.2f\n",player->pitch);
-	textMeshPrintf(textm,"Player  Roll: %04.2f\n",player->roll);
-	textMeshPrintf(textm,"Player  Hoff: %04.2f\n",player->hitOff);
-	textMeshPrintf(textm,"Player Shake: %04.2f\n",player->shake);
-	textMeshPrintf(textm,"Active Tris.: %s\n", getHumanReadableSize(tris));
-	textMeshPrintf(textm,"Player Layer: %2i\n",((int)player->y/CHUNGUS_SIZE));
-	textMeshPrintf(textm,"Entities    : %2i\n",entityCount);
-	textMeshPrintf(textm,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
-	textMeshPrintf(textm,"ActiveChunks: %s\n",getHumanReadableSize(chunkGetActive()));
-	textMeshPrintf(textm,"FreeChunks  : %2i\n",chunkGetFree());
-	textMeshPrintf(textm,"ActiveChungi: %2i\n",chungusGetActiveCount());
-	textMeshPrintf(textm,"Bytes Sent  : %sB\n",getHumanReadableSize(sentBytesCurrentSession));
-	textMeshPrintf(textm,"Bytes Recvd : %sB\n",getHumanReadableSize(recvBytesCurrentSession));
-	textMeshPrintf(textm,"Uncompressed: %sB\n",getHumanReadableSize(recvUncompressedBytesCurrentSession));
-	textMeshPrintf(textm,"Comp. Ratio : %2.2fX\n",(float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession);
-	textMeshPrintf(textm,"Canvas Size : %ix%i\n",screenWidth,screenHeight);
-	textMeshPrintf(textm,"Itemdrops   : %i\n",itemDropCount);
+	textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f\n",player->x,player->vx);
+	textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f\n",player->y,player->vy);
+	textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f\n",player->z,player->vz);
+	textMeshPrintf(guim,"Player   Yaw: %04.2f\n",player->yaw);
+	textMeshPrintf(guim,"Player Pitch: %04.2f\n",player->pitch);
+	textMeshPrintf(guim,"Player  Roll: %04.2f\n",player->roll);
+	textMeshPrintf(guim,"Player  Hoff: %04.2f\n",player->hitOff);
+	textMeshPrintf(guim,"Player Shake: %04.2f\n",player->shake);
+	textMeshPrintf(guim,"Active Tris.: %s\n", getHumanReadableSize(tris));
+	textMeshPrintf(guim,"Player Layer: %2i\n",((int)player->y/CHUNGUS_SIZE));
+	textMeshPrintf(guim,"Entities    : %2i\n",entityCount);
+	textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
+	textMeshPrintf(guim,"ActiveChunks: %s\n",getHumanReadableSize(chunkGetActive()));
+	textMeshPrintf(guim,"FreeChunks  : %2i\n",chunkGetFree());
+	textMeshPrintf(guim,"ActiveChungi: %2i\n",chungusGetActiveCount());
+	textMeshPrintf(guim,"Bytes Sent  : %sB\n",getHumanReadableSize(sentBytesCurrentSession));
+	textMeshPrintf(guim,"Bytes Recvd : %sB\n",getHumanReadableSize(recvBytesCurrentSession));
+	textMeshPrintf(guim,"Uncompressed: %sB\n",getHumanReadableSize(recvUncompressedBytesCurrentSession));
+	textMeshPrintf(guim,"Comp. Ratio : %2.2fX\n",(float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession);
+	textMeshPrintf(guim,"Canvas Size : %ix%i\n",screenWidth,screenHeight);
+	textMeshPrintf(guim,"Itemdrops   : %i\n",itemDropCount);
 }
 
 void drawItemBar(){
@@ -214,7 +208,7 @@ void drawItemBar(){
 	}
 	itemtilesizeoff = (tilesize-itemtilesize)/2;
 
-	textm->size = 2;
+	guim->size = 2;
 	for(int i = 0;i<10;i++){
 		int x = (screenWidth-10*tilesize)+(i*tilesize);
 		int y = screenHeight-tilesize;
@@ -230,11 +224,11 @@ void drawItemBar(){
 		if(a == 0){continue;}
 		int u = b % 32;
 		int v = b / 32;
-		textMeshBox(itemMesh,x+itemtilesizeoff,y+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
+		textMeshBox(guim,x+itemtilesizeoff,y+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
 		if(!itemIsSingle(cItem)){
-			textm->sx = x+tilesize-tilesize/4;
-			textm->sy = y+(itemtilesize-itemtilesizeoff)+tilesize/32;
-			textMeshNumber(textm,a);
+			guim->sx = x+tilesize-tilesize/4;
+			guim->sy = y+(itemtilesize-itemtilesizeoff)+tilesize/32;
+			textMeshNumber(guim,a);
 		}
 	}
 }
@@ -310,17 +304,17 @@ void drawActiveItem(){
 }
 
 void drawChat(){
-	textm->sy   = screenHeight - (13*16);
-	textm->sx   = 4;
-	textm->size = 1;
+	guim->sy   = screenHeight - (13*16);
+	guim->sx   = 4;
+	guim->size = 1;
 	for(int i=0;i<8;i++){
-		textMeshAddString(textm,chatLog[i]);
-		textm->sy += 8;
+		textMeshAddString(guim,chatLog[i]);
+		guim->sy += 8;
 	}
-	textm->size = 2;
+	guim->size = 2;
 	for(int i=8;i<12;i++){
-		textMeshAddString(textm,chatLog[i]);
-		textm->sy += 16;
+		textMeshAddString(guim,chatLog[i]);
+		guim->sy += 16;
 	}
 }
 
@@ -387,22 +381,18 @@ void drawOverlay(){
 }
 
 void drawHud(){
-	textMeshEmpty(textm);
 	textMeshEmpty(guim);
-	textMeshEmpty(itemMesh);
 
 	drawOverlay();
 	drawHealthbar();
 	drawDebuginfo();
 	if(isInventoryOpen()){
-		drawInventory(guim, textm, itemMesh);
+		drawInventory(guim);
 	}else{
 		drawItemBar();
 	}
 	drawChat();
 	textMeshDraw(guim);
-	textMeshDraw(itemMesh);
-	textMeshDraw(textm);
 }
 
 void renderUI(){
