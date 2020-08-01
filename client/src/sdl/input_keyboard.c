@@ -1,5 +1,6 @@
 #include "input_keyboard.h"
 
+#include "sdl.h"
 #include "../gui/textInput.h"
 #include "../network/chat.h"
 #include "../gui/inventory.h"
@@ -79,6 +80,12 @@ void keyboardEventHandler(const SDL_Event *e){
 				case SDLK_q:
 					keysPressed[6] = 0;
 				break;
+				
+				#ifndef __EMSCRIPTEN__
+				case SDLK_F11:
+					setFullscreen(!optionFullscreen);
+				break;
+				#endif
 
 				default:
 				break;

@@ -110,6 +110,17 @@ void initSDL(){
 	gamepadInit();
 }
 
+void setFullscreen(bool fs){
+	if(fs){
+		SDL_SetWindowFullscreen(gWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
+	}else{
+		SDL_SetWindowFullscreen(gWindow,0);
+		SDL_SetWindowSize(gWindow,800,600);
+		SDL_SetWindowPosition(gWindow,SDL_WINDOWPOS_CENTERED ,SDL_WINDOWPOS_CENTERED);
+	}
+	optionFullscreen = fs;
+}
+
 void handleEvents(){
 	SDL_Event e;
 
@@ -137,7 +148,6 @@ void sdlResize(int newW,int newH){
 	if((newW == screenWidth) && (newH == screenHeight)){return;}
 	screenWidth  = newW;
 	screenHeight = newH;
-	//SDL_SetVideoMode(screenWidth,screenHeight,32, 0);
 	SDL_SetWindowSize(gWindow,screenWidth,screenHeight);
 	initGL();
 	resizeUI();
