@@ -7,6 +7,7 @@
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../game/grenade.h"
+#include "../misc/command.h"
 #include "../misc/options.h"
 #include "../network/server_ws.h"
 #include "../voxel/bigchungus.h"
@@ -70,6 +71,7 @@ void sendPlayerJoinMessage(int c){
 
 void serverParseChatMsg(int c, packet *m){
 	char msg[256];
+	if(parseCommand(c,(const char *)(m->val.c+2))){return;}
 	snprintf(msg,sizeof(msg),"%s: %s",clients[c].playerName,(char *)(m->val.c+2));
 	serverSendChatMsg(msg);
 }
@@ -296,6 +298,16 @@ void serverParseSinglePacket(int c, packet *p){
 
 		case 24:
 			fprintf(stderr,"fxBeamBlaster received from client, which should never happen\n");
+			serverKill(c);
+		break;
+		
+		case 25:
+			fprintf(stderr,"msgItemDropUpdate received from client, which should never happen\n");
+			serverKill(c);
+		break;
+		
+		case 26:
+			fprintf(stderr,"msgPlayerDamage received from client, which should never happen\n");
 			serverKill(c);
 		break;
 
@@ -548,4 +560,13 @@ void serverCloseClient(int c){
 	if((clientCount == 0) && (optionSingleplayer)){
 		quit = true;
 	}
+}
+
+int getClientByName(const char *name){
+	for(int i=0;i<clientCount;i++){
+		if(strncmp(clients[i].playerName,name,32) == 0){
+			return i;
+		}
+	}
+	return -1;
 }

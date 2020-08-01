@@ -57,6 +57,7 @@ void  characterStopMining     (character *c);
 void  characterPlaceBlock     (character *c);
 void  characterDie            (character *c);
 bool  characterHP             (character *c, int addhp);
+bool  characterDamage         (character *c, int hp);
 int   characterGetItemAmount  (character *c, uint16_t itemID);
 bool  characterDecItemAmount  (character *c, uint16_t itemID,int amount);
 bool  characterPickupItem     (character *c, uint16_t itemID,int amount);
@@ -76,5 +77,6 @@ void  characterHitCheck       (character *c, int origin, float x, float y, float
 void  characterGotHitBroadcast(int c,float pwr);
 
 void  characterMoveDelta      (character *c, packet *p);
+void  characterDamagePacket   (character *c, packet *p);
 void  characterSetPlayerPos   (const packet *p);
 void  characterRemovePlayer   (int c, int len);

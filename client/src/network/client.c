@@ -215,6 +215,10 @@ void clientParsePacket(packet *p){
 		case 25: // msgItemDropUpdate
 			itemDropUpdateFromServer(p);
 		break;
+		
+		case 26: // msgPlayerDamage
+			characterDamagePacket(player,p);
+		break;
 
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);

@@ -562,6 +562,10 @@ bool characterHP(character *c, int addhp){
 	return false;
 }
 
+bool characterDamage(character *c, int hp){
+	return characterHP(c,-hp);
+}
+
 
 int characterPhysics(character *c){
 	int ret=0;
@@ -843,5 +847,11 @@ void characterDrawAll(){
 	for(int i=0;i<characterCount;i++){
 		if(characterList[i].nextFree != NULL){ continue; }
 		characterDraw(&characterList[i]);
+	}
+}
+
+void characterDamagePacket(character *c, packet *p){
+	if(characterDamage(c,p->val.i[0])){
+		msgSendDyingMessage("died by command", 65535);
 	}
 }

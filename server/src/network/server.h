@@ -43,6 +43,7 @@ void addChungusToQueue     (int c, uint16_t x, uint16_t y, uint16_t z);
 void addQueuedChunks       (int c);
 void serverSendChatMsg     (const char *msg);
 
+int  getClientByName       (const char *name);
 int  serverSendClient      (int c);
 void serverAccept          ();
 void serverRead            ();

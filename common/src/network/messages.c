@@ -219,3 +219,9 @@ void msgItemDropUpdate(int c, float x, float y, float z, float vx, float vy, flo
 
 	packetQueue(p,25,7*4,c);
 }
+
+void msgPlayerDamage(int c, int hp){
+	packet *p = &packetBuffer;
+	p->val.i[0]=hp;
+	packetQueue(p,26,4,c);
+}
