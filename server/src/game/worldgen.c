@@ -208,14 +208,14 @@ void worldgenBigDeadTree(worldgen *wgen, int x,int y,int z){
 	int size       = rngValMM(20,34);
 	for(int cy = -5;cy < size;cy++){
 		if(cy < -2){
-			chungusSetB(clay,x,cy+y,z,8);
-			chungusSetB(clay,x+1,cy+y,z,8);
-			chungusSetB(clay,x,cy+y,z+1,8);
+			chungusSetB(clay,x  ,cy+y,z  ,8);
+			chungusSetB(clay,x+1,cy+y,z  ,8);
+			chungusSetB(clay,x  ,cy+y,z+1,8);
 			chungusSetB(clay,x+1,cy+y,z+1,8);
 		}else{
-			chungusSetB(clay,x,cy+y,z,5);
-			chungusSetB(clay,x+1,cy+y,z,5);
-			chungusSetB(clay,x,cy+y,z+1,5);
+			chungusSetB(clay,x  ,cy+y,z  ,5);
+			chungusSetB(clay,x+1,cy+y,z  ,5);
+			chungusSetB(clay,x  ,cy+y,z+1,5);
 			chungusSetB(clay,x+1,cy+y,z+1,5);
 		}
 	}
@@ -244,7 +244,7 @@ void worldgenSpruce(worldgen *wgen, int x,int y,int z){
 		}
 		chungusSetB(clay,x,cy+y,z,5);
 	}
-	chungusSetB(clay,x,size+y,z,6);
+	chungusSetB(clay,x,size+y  ,z,6);
 	chungusSetB(clay,x,size+y+1,z,6);
 	worldgenRoots(wgen, x,y-1,z);
 }
@@ -267,14 +267,14 @@ void worldgenBigSpruce(worldgen *wgen, int x,int y,int z){
 			}
 		}
 		if(cy < -2){
-			chungusSetB(clay,x,cy+y,z,8);
-			chungusSetB(clay,x+1,cy+y,z,8);
-			chungusSetB(clay,x,cy+y,z+1,8);
+			chungusSetB(clay,x  ,cy+y,z  ,8);
+			chungusSetB(clay,x+1,cy+y,z  ,8);
+			chungusSetB(clay,x  ,cy+y,z+1,8);
 			chungusSetB(clay,x+1,cy+y,z+1,8);
 		}else{
-			chungusSetB(clay,x,cy+y,z,5);
-			chungusSetB(clay,x+1,cy+y,z,5);
-			chungusSetB(clay,x,cy+y,z+1,5);
+			chungusSetB(clay,x  ,cy+y,z  ,5);
+			chungusSetB(clay,x+1,cy+y,z  ,5);
+			chungusSetB(clay,x  ,cy+y,z+1,5);
 			chungusSetB(clay,x+1,cy+y,z+1,5);
 		}
 	}
@@ -294,9 +294,9 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 	int sparseness = rngValMM(2,3);
 	int lsize      = 3;
 	int leafes     = 11;
-	int log        = 10;
-	if(rngValM(16) == 0){leafes = 19;} // We Sakura now
-	if(rngValM(16) == 0){log    = 20;} // We Birch now
+	int logblock   = 10;
+	if(rngValM(16) == 0){leafes   = 19;} // We Sakura now
+	if(rngValM(16) == 0){logblock = 20;} // We Birch now
 
 	for(int cy = 0;cy < size;cy++){
 		if(cy == size-1){lsize=2;}
@@ -309,17 +309,17 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 						chungusSetB(clay,cx+x,cy+y,cz+z,leafes);
 						continue;
 					}
-					if((cx == -lsize  ) && (cz == -lsize  )){continue;}
-					if((cx == -lsize  ) && (cz ==  lsize))  {continue;}
-					if((cx ==  lsize) && (cz == -lsize  ))  {continue;}
-					if((cx ==  lsize) && (cz ==  lsize))    {continue;}
-					if((rngValM(sparseness)) == 0)          {continue;}
+					if((cx == -lsize) && (cz == -lsize  )){continue;}
+					if((cx == -lsize) && (cz ==  lsize  )){continue;}
+					if((cx ==  lsize) && (cz == -lsize  )){continue;}
+					if((cx ==  lsize) && (cz ==  lsize  )){continue;}
+					if((rngValM(sparseness)) == 0)        {continue;}
 					chungusSetB(clay,cx+x,cy+y,cz+z,leafes);
 				}
 			}
 		}
 		if(cy < size-2){
-			chungusSetB(clay,x,cy+y,z,log);
+			chungusSetB(clay,x,cy+y,z,logblock);
 		}
 	}
 	worldgenRoots(wgen,x,y-1,z);
@@ -330,6 +330,10 @@ void worldgenBigOak(worldgen *wgen, int x,int y,int z){
 	int size       = rngValMM(18,24);
 	int sparseness = rngValMM(2,4);
 	int lsize      = 8;
+	int leafes     = 11;
+	int logblock   = 10;
+	if(rngValM(16) == 0){leafes   = 19;} // We Sakura now
+	if(rngValM(16) == 0){logblock = 20;} // We Birch now
 
 	for(int cy = -5;cy < size;cy++){
 		lsize = (cy-9);
@@ -344,20 +348,20 @@ void worldgenBigOak(worldgen *wgen, int x,int y,int z){
 					if((cx ==  lsize+1) && (cz == -lsize  )){continue;}
 					if((cx ==  lsize+1) && (cz ==  lsize+1)){continue;}
 					if(rngValM(sparseness) == 0)            {continue;}
-					chungusSetB(clay,cx+x,cy+y,cz+z,11);
+					chungusSetB(clay,cx+x,cy+y,cz+z,leafes);
 				}
 			}
 		}
 		if(cy < -2){
-			chungusSetB(clay,x,cy+y,z,8);
-			chungusSetB(clay,x+1,cy+y,z,8);
-			chungusSetB(clay,x,cy+y,z+1,8);
+			chungusSetB(clay,x  ,cy+y,z  ,8);
+			chungusSetB(clay,x+1,cy+y,z  ,8);
+			chungusSetB(clay,x  ,cy+y,z+1,8);
 			chungusSetB(clay,x+1,cy+y,z+1,8);
 		}else if(cy < size-2){
-			chungusSetB(clay,x,cy+y,z,10);
-			chungusSetB(clay,x+1,cy+y,z,10);
-			chungusSetB(clay,x,cy+y,z+1,10);
-			chungusSetB(clay,x+1,cy+y,z+1,10);
+			chungusSetB(clay,x  ,cy+y,z  ,logblock);
+			chungusSetB(clay,x+1,cy+y,z  ,logblock);
+			chungusSetB(clay,x  ,cy+y,z+1,logblock);
+			chungusSetB(clay,x+1,cy+y,z+1,logblock);
 		}
 	}
 	worldgenBigRoots(wgen,x,y-5,z);
