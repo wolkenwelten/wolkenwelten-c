@@ -22,10 +22,7 @@ int     grenadeCount = 0;
 void explode(float x, float y, float z, float pw, int style){
 	entity *exEnt;
 	float dm;
-
-	worldBoxMine(x-(pw*3),y-(pw*3),z-(pw*3),(pw*6),(pw*6),(pw*6));
-	worldBoxMine(x-(pw*4),y-(pw*2),z-(pw*4),(pw*8),(pw*4),(pw*8));
-	worldBoxMine(x-(pw*2),y-(pw*4),z-(pw*2),(pw*4),(pw*8),(pw*4));
+	worldBoxMineSphere(x,y,z,pw*4.f);
 	
 	for(int i=0;i<entityCount;i++){
 		exEnt = &entityList[i];

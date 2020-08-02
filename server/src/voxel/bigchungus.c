@@ -140,6 +140,22 @@ void bigchungusBoxMine(bigchungus *c, int x,int y,int z, int w,int h,int d){
 	}
 }
 
+void bigchungusBoxMineSphere(bigchungus *c, int x,int y,int z, int r){
+	const int md = r*r;
+	for(int cx=-r;cx<=r;cx++){
+		for(int cy=-r;cy<=r;cy++){
+			for(int cz=-r;cz<=r;cz++){
+				uint8_t b = bigchungusGetB(c,cx+x,cy+y,cz+z);
+				if(b==0){continue;}
+				const int d = (cx*cx)+(cy*cy)+(cz*cz);
+				if(d >= md){continue;}
+				blockMiningDropItemsPos(cx+x,cy+y,cz+z,b);
+				bigchungusSetB(c,cx+x,cy+y,cz+z,0);
+			}
+		}
+	}
+}
+
 int bigchungusTrySpawn(bigchungus *c, int sx, int sy, int sz){
 	return( (bigchungusGetB(c,sx,sy  ,sz)!=0) &&
 	        (bigchungusGetB(c,sx,sy+1,sz)==0) &&

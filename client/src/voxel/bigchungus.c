@@ -156,10 +156,8 @@ void bigchungusDraw(bigchungus *c, character *cam){
 	}
 	if(loadQueueLen > 0){
 		quicksortQueue(loadQueue,0,loadQueueLen-1);
-		//for(int i=loadQueueLen-1;i>=0;i--){
 		for(int i=0;i<loadQueueLen;i++){
 			chungus *chng = loadQueue[i].chng;
-			//printf("[%i] %f\n",i,loadQueue[i].distance);
 			msgRequestChungus(chng->x,chng->y,chng->z);
 		}
 	}
@@ -190,9 +188,24 @@ void bigchungusFreeFarChungi(bigchungus *c, character *cam){
 		int y = (int)chng->y>>8;
 		int z = (int)chng->z>>8;
 		float d = chungusRoughDistance(cam,x,y,z);
-		if(d > 768.f){
+		if(d > (CHUNK_RENDER_DISTANCE * 1.5f)){
 			chungusFree(c->chungi[x][y][z]);
 			c->chungi[x][y][z] = NULL;
 		}
 	}
 }
+
+
+void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, uint8_t block){
+	const int md = r*r;
+	for(int cx=-r;cx<=r;cx++){
+		for(int cy=-r;cy<=r;cy++){
+			for(int cz=-r;cz<=r;cz++){
+				const int d = (cx*cx)+(cy*cy)+(cz*cz);
+				if(d >= md){continue;}
+				bigchungusSetB(c,cx+x,cy+y,cz+z,block);
+			}
+		}
+	}
+}
+
