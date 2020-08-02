@@ -6,7 +6,7 @@ typedef struct {
 	character *c;
 	int state;
 	int flags;
-	
+
 	unsigned int itemDropUpdateOffset;
 
 	unsigned int chngReqQueueLen;
@@ -27,7 +27,7 @@ typedef struct {
 	uint8_t sendBuf[1<<20];
 } clientConnection;
 
-#define CONNECTION_WEBSOCKET (1<<0)
+#define CONNECTION_WEBSOCKET (1   )
 
 extern clientConnection clients[32];
 extern int clientCount;
