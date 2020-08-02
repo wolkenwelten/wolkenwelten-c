@@ -400,7 +400,7 @@ void worldgenMonolith(worldgen *wgen, int x,int y,int z){
 void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b){
 	float rsq      = (size*size);
 	float crystalr = rsq / 2.f;
-	if(crystalr > 16.f){crystalr = 0.f;}
+	if(crystalr < 9.f){crystalr = 0.f;}
 
 	for(int cy=-size;cy<=size;cy++){
 		for(int cx = -size;cx <= size;cx++){
@@ -421,7 +421,7 @@ void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b){
 		int r     = (size-abs(cy))/2;
 		float rsq = (r*r)*0.8f;
 		float crystalr = rsq / 2.f;
-		if(crystalr < 16.f){crystalr = 0.f;}
+		if(crystalr < 9.f){crystalr = 0.f;}
 		for(int cx = -r;cx <= r;cx++){
 			for(int cz = -r;cz <= r;cz++){
 				const float d = (cx*cx)+(cz*cz);
