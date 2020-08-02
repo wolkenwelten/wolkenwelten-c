@@ -1103,7 +1103,7 @@ void worldgenGenerate(worldgen *wgen){
 				for(int y=0;y<CHUNK_SIZE;y+=2){
 					for(int z=0;z<CHUNK_SIZE;z+=2){
 						chungusFill(wgen->clay,x*CHUNK_SIZE,y*CHUNK_SIZE,z*CHUNK_SIZE,b);
-						if(++b > 12){b=1;}
+						if(++b > 20){b=1;}
 					}
 				}
 			}
