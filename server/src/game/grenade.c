@@ -26,6 +26,7 @@ void explode(float x, float y, float z, float pw, int style){
 	worldBoxMine(x-(pw*3),y-(pw*3),z-(pw*3),(pw*6),(pw*6),(pw*6));
 	worldBoxMine(x-(pw*4),y-(pw*2),z-(pw*4),(pw*8),(pw*4),(pw*8));
 	worldBoxMine(x-(pw*2),y-(pw*4),z-(pw*2),(pw*4),(pw*8),(pw*4));
+	
 	for(int i=0;i<entityCount;i++){
 		exEnt = &entityList[i];
 		float dx = x - exEnt->x;
@@ -41,9 +42,9 @@ void explode(float x, float y, float z, float pw, int style){
 		dy /= dm;
 		dz /= dm;
 		dm = sqrtf((16*pw*pw)/dm);
-		exEnt->vx = dx * dm * -0.02f;
-		exEnt->vy = dy * dm * -0.02f;
-		exEnt->vz = dz * dm * -0.02f;
+		exEnt->vx += dx * dm * -0.02f;
+		exEnt->vy += dy * dm * -0.02f;
+		exEnt->vz += dz * dm * -0.02f;
 	}
 	msgGrenadeExplode(x, y, z, pw, style);
 }
