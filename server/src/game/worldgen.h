@@ -17,6 +17,7 @@ typedef struct {
 
 	int iterChance;
 	bool geoIslands;
+	bool geoIslandChance;
 
 	void *nextFree;
 } worldgen;

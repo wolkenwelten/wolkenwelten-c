@@ -42,6 +42,7 @@ worldgen *worldgenNew(chungus *nclay){
 	wgen->islandSizeModifier      = world.islandSizeModifier     [gx][gz];
 	wgen->islandCountModifier     = world.islandCountModifier    [gx][gz];
 	wgen->geoworld                = world.geoworldMap            [gx][gz] + ((gy & 0xF0) << 2);
+	wgen->geoIslandChance         = wgen->geoIslands = false;
 
 	return wgen;
 }
@@ -400,7 +401,7 @@ void worldgenMonolith(worldgen *wgen, int x,int y,int z){
 void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b){
 	float rsq      = (size*size);
 	float crystalr = rsq / 2.f;
-	if(crystalr < 9.f){crystalr = 0.f;}
+	if(crystalr < 5.f){crystalr = 0.f;}
 
 	for(int cy=-size;cy<=size;cy++){
 		for(int cx = -size;cx <= size;cx++){
@@ -421,7 +422,7 @@ void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b){
 		int r     = (size-abs(cy))/2;
 		float rsq = (r*r)*0.8f;
 		float crystalr = rsq / 2.f;
-		if(crystalr < 9.f){crystalr = 0.f;}
+		if(crystalr < 5.f){crystalr = 0.f;}
 		for(int cx = -r;cx <= r;cx++){
 			for(int cz = -r;cz <= r;cz++){
 				const float d = (cx*cx)+(cz*cz);
@@ -700,7 +701,9 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 
 	switch(rngValM(96)){
 		case 0:
-			size *= 9;
+			if(size > 6){
+				size *= 9;
+			}
 		break;
 
 		case 1:
@@ -709,7 +712,9 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 		case 4:
 		case 5:
 		case 6:
-			size *= 3;
+			if(size > 6){
+				size *= 3;
+			}
 		break;
 	}
 
@@ -742,6 +747,8 @@ void worldgenIsland(worldgen *wgen, int x,int y,int z,int size){
 	wgen->iterChance = rngValM(4)*8;
 	if(wgen->geoIslands){
 		worldgenGeoIsland(wgen,x,y,z,size);
+	}else if(wgen->geoIslandChance && (rngValM(8)==0)){
+		worldgenGeoIsland(wgen,x,y,z,MIN(6,size));
 	}else{
 		worldgenDirtIsland(wgen,x,y,z,size);
 	}
@@ -783,10 +790,10 @@ void worldgenCluster(worldgen *wgen, int size, int iSize, int iMin,int iMax){
 		iMax += ((float)iMax*((wgen->islandCountModifier-128.f)/128.f));
 	}
 	if(wgen->islandSizeModifier < 128){
-		size -= ((float)size*((128.f-wgen->islandSizeModifier)/128.f));
+		size  -= ((float)size*((128.f-wgen->islandSizeModifier)/128.f));
 		iSize -= ((float)iSize*((128.f-wgen->islandSizeModifier)/128.f));
 	}else{
-		size += ((float)size*((wgen->islandSizeModifier-128.f)/128.f));
+		size  += ((float)size*((wgen->islandSizeModifier-128.f)/128.f));
 		iSize += ((float)iSize*((wgen->islandSizeModifier-128.f)/128.f));
 	}
 
@@ -819,7 +826,6 @@ void worldgenLabyrinth(worldgen *wgen, int labLayer){
 	int pb = 14;
 	int fb = 15;
 	memset(labMap,0,sizeof(labMap));
-	//if(geoworld > 128){ b = 12;}
 	for(int cx = 15; cx >= 0; cx--){
 		for(int cy = 15; cy >= 0; cy--){
 			for(int cz = 15; cz >= 0; cz--){
@@ -1092,9 +1098,14 @@ void worldgenGenerate(worldgen *wgen){
 
 	seedRNG(seed);
 	if(wgen->geoworld > 188){
-		wgen->geoIslands = true;
+		wgen->geoIslandChance = false;
+		wgen->geoIslands      = true;
+	}else if(wgen->geoworld > 156){
+		wgen->geoIslandChance = true;
+		wgen->geoIslands      = false;
 	}else{
-		wgen->geoIslands = false;
+		wgen->geoIslandChance = false;
+		wgen->geoIslands      = false;
 	}
 	switch(wgen->layer){
 		default:
