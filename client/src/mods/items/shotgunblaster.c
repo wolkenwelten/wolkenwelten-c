@@ -38,7 +38,7 @@ bool shotgunblasterMineAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 256){return false;}
-	for(int i=18;i>0;i--){
+	for(int i=24;i>0;i--){
 		const float yaw   = cChar->yaw   + (rngValf()-0.5f)*24.f;
 		const float pitch = cChar->pitch + (rngValf()-0.5f)*24.f;
 		//fprintf(stderr,"yaw:%f[%f] pitch:%f[%f]\n",yaw,yaw-cChar->yaw,pitch,pitch-cChar->pitch);

@@ -13,6 +13,7 @@
 #include "../gfx/mesh.h"
 #include "../gfx/objs.h"
 #include "../gfx/gfx.h"
+#include "../gfx/particle.h"
 #include "../gfx/shader.h"
 #include "../gfx/mat.h"
 #include "../gfx/texture.h"
@@ -176,6 +177,7 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"Player  Hoff: %04.2f\n",player->hitOff);
 	textMeshPrintf(guim,"Player Shake: %04.2f\n",player->shake);
 	textMeshPrintf(guim,"Active Tris.: %s\n", getHumanReadableSize(tris));
+	textMeshPrintf(guim,"Active Part.: %s\n", getHumanReadableSize(particleCount));
 	textMeshPrintf(guim,"Player Layer: %2i\n",((int)player->y/CHUNGUS_SIZE));
 	textMeshPrintf(guim,"Entities    : %2i\n",entityCount);
 	textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
