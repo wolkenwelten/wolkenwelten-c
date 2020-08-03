@@ -24,10 +24,10 @@ typedef struct particle {
 
 unsigned int particleVBO = 0;
 
-glParticle glParticles[1<<16];
+glParticle glParticles[1<<18];
 int glParticleCount = 0;
 
-particle particles[1<<16];
+particle particles[1<<18];
 int particleCount = 0;
 
 void particleInit(){
@@ -35,44 +35,44 @@ void particleInit(){
 }
 
 void newParticleS(float x,float y,float z, unsigned int nrgba,float power,int nttl){
-	if((glParticleCount >= 65536) || (particleCount >= 65536)){
+	if((glParticleCount >= (1<<18)) || (particleCount >= (1<<18))){
 		return;
 	}
-	glParticles[glParticleCount].x = x;
-	glParticles[glParticleCount].y = y;
-	glParticles[glParticleCount].z = z;
+	glParticles[glParticleCount].x    = x;
+	glParticles[glParticleCount].y    = y;
+	glParticles[glParticleCount].z    = z;
 	glParticles[glParticleCount].rgba = nrgba;
 	glParticleCount++;
 
-	particles[particleCount].vx = ((rngValf()-0.5f)/64.f)*power;
-	particles[particleCount].vy = (0.02f)*power;
-	particles[particleCount].vz = ((rngValf()-0.5f)/64.f)*power;
-	particles[particleCount].vvx = 0.f;
-	particles[particleCount].vvy = -0.0005f;
-	particles[particleCount].vvz = 0.f;
+	particles[particleCount].vx   = ((rngValf()-0.5f)/64.f)*power;
+	particles[particleCount].vy   = (0.02f)*power;
+	particles[particleCount].vz   = ((rngValf()-0.5f)/64.f)*power;
+	particles[particleCount].vvx  = 0.f;
+	particles[particleCount].vvy  = -0.0005f;
+	particles[particleCount].vvz  = 0.f;
 	particles[particleCount].rgba = nrgba;
-	particles[particleCount].ttl = nttl;
+	particles[particleCount].ttl  = nttl;
 	particleCount++;
 }
 
 void newParticle(float x,float y,float z,float vx,float vy,float vz,float vvx,float vvy,float vvz,unsigned int nrgba,int nttl){
-	if((glParticleCount >= 65536) || (particleCount >= 65536)){
+	if((glParticleCount >= (1<<18)) || (particleCount >= (1<<18))){
 		return;
 	}
-	glParticles[glParticleCount].x = x;
-	glParticles[glParticleCount].y = y;
-	glParticles[glParticleCount].z = z;
+	glParticles[glParticleCount].x    = x;
+	glParticles[glParticleCount].y    = y;
+	glParticles[glParticleCount].z    = z;
 	glParticles[glParticleCount].rgba = nrgba;
 	glParticleCount++;
 
-	particles[particleCount].vx = vx;
-	particles[particleCount].vy = vy;
-	particles[particleCount].vz = vz;
-	particles[particleCount].vvx = vvx;
-	particles[particleCount].vvy = vvy;
-	particles[particleCount].vvz = vvz;
+	particles[particleCount].vx   = vx;
+	particles[particleCount].vy   = vy;
+	particles[particleCount].vz   = vz;
+	particles[particleCount].vvx  = vvx;
+	particles[particleCount].vvy  = vvy;
+	particles[particleCount].vvz  = vvz;
 	particles[particleCount].rgba = nrgba;
-	particles[particleCount].ttl = nttl;
+	particles[particleCount].ttl  = nttl;
 	particleCount++;
 }
 
@@ -89,9 +89,9 @@ void particleUpdate(){
 		glParticles[i].x += particles[i].vx;
 		glParticles[i].y += particles[i].vy;
 		glParticles[i].z += particles[i].vz;
-		particles[i].vx += particles[i].vvx;
-		particles[i].vy += particles[i].vvy;
-		particles[i].vz += particles[i].vvz;
+		particles[i].vx  += particles[i].vvx;
+		particles[i].vy  += particles[i].vvy;
+		particles[i].vz  += particles[i].vvz;
 	}
 }
 
