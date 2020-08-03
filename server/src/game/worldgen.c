@@ -138,8 +138,7 @@ void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
 
 void worldgenShrub(worldgen *wgen,int x,int y,int z){
 	chungus *clay = wgen->clay;
-	int leaveBlock = 11;
-	if(rngValM(2) == 0){leaveBlock = 6;}
+	int leaveBlock = 21;
 	chungusSetB(clay,x,y,z,8);
 
 	chungusSetB(clay,x,y+1,z,leaveBlock);

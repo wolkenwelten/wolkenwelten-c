@@ -46,7 +46,7 @@ void blockMiningDropItemsPos(int x, int y, int z, uint8_t b){
 	if(b == 7){return;}  // Roots
 	if(b == 2){ID = 1;}  // Grass
 	if(b == 8){ID = 1;}  // Roots
-	if((b == 6) || (b == 11) || (b == 19)){ // Leaves
+	if((b == 6) || (b == 11) || (b == 19) || (b == 21)){ // Leaves
 		if(rngValM(8)==0){
 			ID = 258;
 		}else{

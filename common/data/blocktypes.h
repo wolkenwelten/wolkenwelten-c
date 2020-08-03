@@ -18,3 +18,4 @@ blockTypeInitBlock(17,17, WOOD,  "Boards",         300, 0xFF09678f,0xFF1380af);
 blockTypeInitBlock(18,18, STONE, "Crystals",      2500, 0xFF997CE8,0xFF4D25B5);
 blockTypeInitBlock(19,19, WOOD,  "Sakura Leaves",   50, 0xFF997CE8,0xFF4D25B5);
 blockTypeInitBlock(20,20, WOOD,  "Birch Log",      500, 0xFF525255,0xFF525555);
+blockTypeInitBlock(21,21, LEAVES,"Flower Bush",     60, 0xFF004227,0xFF003318);
