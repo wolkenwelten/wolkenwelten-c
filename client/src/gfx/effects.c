@@ -92,9 +92,9 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 	if(fabsf(dy) > dm){dm = fabsf(dy);}
 	if(fabsf(dz) > dm){dm = fabsf(dz);}
 
-	float vx = (dx / dm)/4.f;
-	float vy = (dy / dm)/4.f;
-	float vz = (dz / dm)/4.f;
+	float vx = (dx / dm)/(4.f*beamSize);
+	float vy = (dy / dm)/(4.f*beamSize);
+	float vz = (dz / dm)/(4.f*beamSize);
 
 	if(fabsf(vx) > fabsf(vy)){
 		if(fabsf(vx) > fabsf(vz)){

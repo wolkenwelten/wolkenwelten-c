@@ -36,7 +36,9 @@ void particleInit(){
 
 void newParticleS(float x,float y,float z, unsigned int nrgba,float power,int nttl){
 	if((glParticleCount >= (1<<18)) || (particleCount >= (1<<18))){
-		return;
+		int i = rngValM(1<<18);
+		particles[i]   = particles[--particleCount];
+		glParticles[i] = glParticles[--glParticleCount];
 	}
 	glParticles[glParticleCount].x    = x;
 	glParticles[glParticleCount].y    = y;
@@ -57,7 +59,9 @@ void newParticleS(float x,float y,float z, unsigned int nrgba,float power,int nt
 
 void newParticle(float x,float y,float z,float vx,float vy,float vz,float vvx,float vvy,float vvz,unsigned int nrgba,int nttl){
 	if((glParticleCount >= (1<<18)) || (particleCount >= (1<<18))){
-		return;
+		int i = rngValM(1<<18);
+		particles[i]   = particles[--particleCount];
+		glParticles[i] = glParticles[--glParticleCount];
 	}
 	glParticles[glParticleCount].x    = x;
 	glParticles[glParticleCount].y    = y;
