@@ -58,6 +58,12 @@ bool assaultblasterIsSingleItem(item *cItem);
 bool assaultblasterHasMineAction(item *cItem);
 bool assaultblasterMineAction(item *cItem, character *cChar, int to);
 
+void shotgunblasterInit();
+mesh *shotgunblasterGetMesh(item *cItem);
+bool shotgunblasterIsSingleItem(item *cItem);
+bool shotgunblasterHasMineAction(item *cItem);
+bool shotgunblasterMineAction(item *cItem, character *cChar, int to);
+
 void axeInit();
 int axeBlockDamage(item *cItem, blockCategory blockCat);
 mesh *axeGetMesh(item *cItem);
@@ -84,6 +90,7 @@ void modsInit(){
 	blasterInit();
 	masterblasterInit();
 	assaultblasterInit();
+	shotgunblasterInit();
 	grenadeInit();
 	bombInit();
 	axeInit();
@@ -109,6 +116,7 @@ mesh *getMeshDispatch(item *cItem){
 		case 261: return blasterGetMesh(cItem);
 		case 262: return masterblasterGetMesh(cItem);
 		case 263: return assaultblasterGetMesh(cItem);
+		case 264: return shotgunblasterGetMesh(cItem);
 	}
 	return getMeshDefault(cItem);
 }
@@ -120,6 +128,7 @@ bool isSingleItemDispatch(item *cItem){
 		case 261: return blasterIsSingleItem(cItem);
 		case 262: return masterblasterIsSingleItem(cItem);
 		case 263: return assaultblasterIsSingleItem(cItem);
+		case 264: return shotgunblasterIsSingleItem(cItem);
 	}
 	return isSingleItemDefault(cItem);
 }
@@ -129,6 +138,7 @@ bool hasMineActionDispatch(item *cItem){
 		case 261: return blasterHasMineAction(cItem);
 		case 262: return masterblasterHasMineAction(cItem);
 		case 263: return assaultblasterHasMineAction(cItem);
+		case 264: return shotgunblasterHasMineAction(cItem);
 	}
 	return hasMineActionDefault(cItem);
 }
@@ -138,6 +148,7 @@ bool mineActionDispatch(item *cItem, character *cChar, int to){
 		case 261: return blasterMineAction(cItem,cChar,to);
 		case 262: return masterblasterMineAction(cItem,cChar,to);
 		case 263: return assaultblasterMineAction(cItem,cChar,to);
+		case 264: return shotgunblasterMineAction(cItem,cChar,to);
 	}
 	return mineActionDefault(cItem,cChar,to);
 }

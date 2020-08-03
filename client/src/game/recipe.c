@@ -104,7 +104,7 @@ void recipeDoCraft(int r, character *c,int amount){
 }
 
 void recipeInit(){
-	recipeAdd1I(16,1,  5,1);
+	//recipeAdd1I(16,1,  5,1);
 	recipeAdd1I(16,1, 10,1);
 	recipeAdd1I(17,2, 16,1);
 	//recipeAdd1I(14,1, 12,1);
