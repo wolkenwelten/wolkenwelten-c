@@ -92,9 +92,9 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 	if(fabsf(dy) > dm){dm = fabsf(dy);}
 	if(fabsf(dz) > dm){dm = fabsf(dz);}
 
-	float vx = (dx / dm)/16.f;
-	float vy = (dy / dm)/16.f;
-	float vz = (dz / dm)/16.f;
+	float vx = (dx / dm)/8.f;
+	float vy = (dy / dm)/8.f;
+	float vz = (dz / dm)/8.f;
 
 	if(fabsf(vx) > fabsf(vy)){
 		if(fabsf(vx) > fabsf(vz)){
@@ -116,7 +116,7 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 		float pvz = (rngValf()-0.5f)/8.f*beamSize;
 		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/4.f,pvy/4.f,pvz/4.f,-pvx/192.f,-pvy/192.f,-pvz/192.f,0xFF8F56FF,128);
 		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/6.f,pvy/6.f,pvz/6.f,-pvx/256.f,-pvy/256.f,-pvz/256.f,0xFFAF76FF,178);
-		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/8.f,pvy/8.f,pvz/8.f,-pvx/512.f,-pvy/512.f,-pvz/512.f,0x6FBF26FF,192);
+		//newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/8.f,pvy/8.f,pvz/8.f,-pvx/512.f,-pvy/512.f,-pvz/512.f,0x6FBF26FF,192);
 		cx += vx;
 		cy += vy;
 		cz += vz;
