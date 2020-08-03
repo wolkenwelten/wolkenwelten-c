@@ -57,3 +57,4 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 
 client/src/network/client.o: client/src/network/client_bsd.h client/src/network/client_win.h
+client/src/game/blockType.o: common/data/blockType.h

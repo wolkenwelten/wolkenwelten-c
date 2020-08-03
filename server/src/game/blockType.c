@@ -16,7 +16,7 @@ void blockTypeInitBlock(uint8_t b, uint8_t tex, blockCategory ncat,const char *b
 	blocks[b].name = (char *)bname;
 	blocks[b].hp   = nhp;
 	blocks[b].cat  = ncat;
-	
+
 	(void)tex;
 	(void)c1;
 	(void)c2;
@@ -44,5 +44,5 @@ bool blockTypeValid(uint8_t b){
 }
 
 void blockTypeInit(){
-	#include "../../../common/data/blocktypes.h"
+	#include "../../../common/data/blockType.h"
 }

@@ -71,7 +71,7 @@ bool blockTypeValid(uint8_t b){
 }
 
 void blockTypeInit(){
-	#include "../../../common/data/blocktypes.h"
+	#include "../../../common/data/blockType.h"
 
 	blockTypeGenMeshes();
 }
