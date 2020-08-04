@@ -450,9 +450,8 @@ void characterStopMining(character *c){
 
 void characterPlaceBlock(character *c){
 	item *cItem;
-	if(c->actionTimeout <= 50){ return; }
 	cItem = characterGetItemBarSlot(c,c->activeItem);
-	if(!itemIsEmpty(cItem) && itemActivate(cItem,c)){
+	if(!itemIsEmpty(cItem) && itemActivate(cItem,c,c->actionTimeout)){
 		c->actionTimeout=0;
 		c->hasHit = true;
 	}

@@ -63,6 +63,7 @@ mesh *shotgunblasterGetMesh(item *cItem);
 bool shotgunblasterIsSingleItem(item *cItem);
 bool shotgunblasterHasMineAction(item *cItem);
 bool shotgunblasterMineAction(item *cItem, character *cChar, int to);
+bool shotgunblasterActivateItem(item *cItem, character *cChar, int to);
 
 void axeInit();
 int axeBlockDamage(item *cItem, blockCategory blockCat);
@@ -70,15 +71,15 @@ mesh *axeGetMesh(item *cItem);
 bool axeIsSingleItem(item *cItem);
 
 void bombInit();
-bool bombActivateItem(item *cItem,character *cChar);
+bool bombActivateItem(item *cItem,character *cChar, int to);
 mesh *bombGetMesh(item *cItem);
 
 void grenadeInit();
-bool grenadeActivateItem(item *cItem,character *cChar);
+bool grenadeActivateItem(item *cItem,character *cChar, int to);
 mesh *grenadeGetMesh(item *cItem);
 
 void pearInit();
-bool pearActivateItem(item *cItem,character *cChar);
+bool pearActivateItem(item *cItem,character *cChar, int to);
 mesh *pearGetMesh(item *cItem);
 
 void pickaxeInit();
@@ -153,11 +154,12 @@ bool mineActionDispatch(item *cItem, character *cChar, int to){
 	return mineActionDefault(cItem,cChar,to);
 }
 
-bool activateItemDispatch(item *cItem, character *cChar){
+bool activateItemDispatch(item *cItem, character *cChar, int to){
 	switch(cItem->ID){
-		case 256: return grenadeActivateItem(cItem,cChar);
-		case 257: return bombActivateItem(cItem,cChar);
-		case 258: return pearActivateItem(cItem,cChar);
+		case 256: return grenadeActivateItem(cItem,cChar,to);
+		case 257: return bombActivateItem(cItem,cChar,to);
+		case 258: return pearActivateItem(cItem,cChar,to);
+		case 264: return shotgunblasterActivateItem(cItem,cChar,to);
 	}
 	return activateItemDefault(cItem,cChar);
 }

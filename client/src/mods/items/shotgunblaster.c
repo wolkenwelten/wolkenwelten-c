@@ -45,3 +45,15 @@ bool shotgunblasterMineAction(item *cItem, character *cChar, int to){
 	}
 	return true;
 }
+
+bool shotgunblasterActivateItem(item *cItem,character *cChar, int to){
+	(void)cItem;
+
+	if(to < 128){return false;}
+	for(int i=32;i>0;i--){
+		const float yaw   = cChar->yaw   + (rngValf()-0.5f)*24.f;
+		const float pitch = cChar->pitch + (rngValf()-0.5f)*24.f;
+		msgBeamBlast(cChar->x, cChar->y, cChar->z, yaw, pitch, 0.5f,1.f,0.04f,4);
+	}
+	return true;
+}

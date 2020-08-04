@@ -68,8 +68,9 @@ bool itemDecStack(item *i, int16_t amount){
 	return true;
 }
 
-bool itemActivateBlock(item *i, character *chr){
+bool itemActivateBlock(item *i, character *chr, int to){
 	int cx,cy,cz;
+	if(to < 50){return false;}
 	if(characterLOSBlock(chr,&cx,&cy,&cz,true)){
 		if((characterCollision(chr,chr->x,chr->y,chr->z,0.3f)&0xFF0)){ return false; }
 		if(!itemDecStack(i,1)){ return false; }
@@ -87,9 +88,9 @@ bool itemActivateBlock(item *i, character *chr){
 	return false;
 }
 
-bool itemActivate(item *i, character *chr){
+bool itemActivate(item *i, character *chr, int to){
 	if(i->ID < 256){
-		return itemActivateBlock(i,chr);
+		return itemActivateBlock(i,chr, to);
 	}
-	return activateItemDispatch(i,chr);
+	return activateItemDispatch(i,chr,to);
 }
