@@ -92,7 +92,7 @@ bool itemDropCheckPickup(int d){
 		float dx = clients[i].c->x - itemDrops[d].ent->x;
 		float dy = clients[i].c->y - itemDrops[d].ent->y;
 		float dz = clients[i].c->z - itemDrops[d].ent->z;
-		if(sqrtf((dx*dx)+(dy*dy)+(dz*dz)) < 1.5f){
+		if(((dx*dx)+(dy*dy)+(dz*dz)) < (1.5f*1.5f)){
 			msgPickupItem(i,itemDrops[d].itm.ID,itemDrops[d].itm.amount);
 			return true;
 		}
