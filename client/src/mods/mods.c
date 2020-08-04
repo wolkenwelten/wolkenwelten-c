@@ -58,6 +58,7 @@ mesh *assaultblasterGetMesh      (item *cItem);
 bool assaultblasterIsSingleItem  (item *cItem);
 bool assaultblasterHasMineAction (item *cItem);
 bool assaultblasterMineAction    (item *cItem, character *cChar, int to);
+bool assaultblasterActivateItem  (item *cItem, character *cChar, int to);
 
 void shotgunblasterInit          ();
 mesh *shotgunblasterGetMesh      (item *cItem);
@@ -161,6 +162,7 @@ bool activateItemDispatch(item *cItem, character *cChar, int to){
 		case 256: return grenadeActivateItem(cItem,cChar,to);
 		case 257: return bombActivateItem(cItem,cChar,to);
 		case 258: return pearActivateItem(cItem,cChar,to);
+		case 263: return assaultblasterActivateItem(cItem,cChar,to);
 		case 264: return shotgunblasterActivateItem(cItem,cChar,to);
 	}
 	return activateItemDefault(cItem,cChar,to);

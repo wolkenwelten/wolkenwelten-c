@@ -37,3 +37,11 @@ bool assaultblasterMineAction(item *cItem, character *cChar, int to){
 	beamblast(cChar,0.75f,0.2f,0.05f,1,1,8.f,1.f);
 	return true;
 }
+
+bool assaultblasterActivateItem(item *cItem, character *cChar, int to){
+	(void)cItem;
+
+	if(to < 64){return false;}
+	beamblast(cChar,0.75f,0.2f,0.05f,1,3,8.f,1.f);
+	return true;
+}

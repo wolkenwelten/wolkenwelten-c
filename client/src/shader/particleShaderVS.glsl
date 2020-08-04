@@ -7,6 +7,6 @@ varying vec4 frontColor;
 
 void main(){
 	gl_Position  = matMVP * pos;
-	gl_PointSize = 128.0/(gl_Position.z);
+	gl_PointSize = 64.0/(gl_Position.z);
 	frontColor   = color;
 }
