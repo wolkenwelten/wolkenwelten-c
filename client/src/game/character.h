@@ -17,7 +17,7 @@ typedef struct {
 	float vx,vy,vz;
 	float gvx,gvy,gvz;
 	float yaw,pitch,roll;
-	float yoff,shake;
+	float yoff,shake,inaccuracy;
 	float gyoff;
 	float hitOff;
 
@@ -70,6 +70,7 @@ void  characterRotate         (character *c, float vYaw,float vPitch,float vRoll
 void  characterUpdate         (character *c);
 void  characterFireHook       (character *c);
 void  characterSetPos         (character *c, float x, float y, float z);
+void  characterAddInaccuracy  (character *c, float inc);
 void  characterDraw           (character *c);
 void  characterDrawAll        ();
 uint32_t characterCollision   (character *c, float cx, float cy, float cz, float wd);

@@ -11,6 +11,7 @@ item  itemEmpty         ();
 void  itemDiscard       (item *i);
 bool  itemIsEmpty       (item *i);
 int   itemBlockDamage   (item *i, blockCategory cat);
+float itemGetInaccuracy (item *i);
 mesh *itemGetMesh       (item *i);
 bool  itemIsSingle      (item *i);
 bool  itemHasMineAction (item *i);

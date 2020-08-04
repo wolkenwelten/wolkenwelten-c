@@ -125,6 +125,24 @@ void characterEmptyInventory(character *c){
 	}
 }
 
+void characterUpdateInaccuracy(character *c){
+	item *itm = &c->inventory[c->activeItem];
+	float minInaccuracy = itemGetInaccuracy(itm);
+
+	if(c->shake > c->inaccuracy){c->inaccuracy = c->shake;}
+	if(c->inaccuracy > 64.f){
+		c->inaccuracy = 64.f;
+	}else if(c->inaccuracy > minInaccuracy){
+		c->inaccuracy -= 0.4f;
+	}else{
+		c->inaccuracy = minInaccuracy;
+	}
+}
+
+void characterAddInaccuracy(character *c, float inc){
+	c->inaccuracy += inc;
+}
+
 void characterUpdateHook(character *c){
 	if(c->hook == NULL){ return; }
 	if(grapplingHookUpdate(c->hook)){
@@ -309,6 +327,7 @@ void characterInit(character *c){
 	int sx=-1024,sy=1024,sz=-1024;
 	c->gyoff = 0.f;
 	c->gvx = c->gvy = c->gvz = 0.f;
+	c->shake = c->inaccuracy = 0.f;
 
 	c->collide      = false;
 	c->noClip       = false;
@@ -717,6 +736,9 @@ void characterUpdate(character *c){
 	} else if((nvy < -0.05f) && c->vy > -0.01f){
 		sfxPlay(sfxStomp,1.f);
 	}
+
+
+	characterUpdateInaccuracy(c);
 	characterUpdateYOff(c);
 	characterUpdateHook(c);
 	characterUpdateHitOff(c);

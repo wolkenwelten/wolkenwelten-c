@@ -16,9 +16,10 @@ inline int blockDamageDefault(item *cItem, blockCategory blockCat){
 
 	return 1;
 }
-inline bool activateItemDefault(item *cItem, character *cChar){
+inline bool activateItemDefault(item *cItem, character *cChar, int to){
 	(void)cItem;
 	(void)cChar;
+	(void)to;
 
 	return false;
 }
@@ -40,52 +41,53 @@ inline bool isSingleItemDefault(item *cItem){
 	return false;
 }
 
-void masterblasterInit();
-mesh *masterblasterGetMesh(item *cItem);
-bool masterblasterIsSingleItem(item *cItem);
-bool masterblasterHasMineAction(item *cItem);
-bool masterblasterMineAction(item *cItem, character *cChar, int to);
+void masterblasterInit           ();
+mesh *masterblasterGetMesh       (item *cItem);
+bool masterblasterIsSingleItem   (item *cItem);
+bool masterblasterHasMineAction  (item *cItem);
+bool masterblasterMineAction     (item *cItem, character *cChar, int to);
 
-void blasterInit();
-mesh *blasterGetMesh(item *cItem);
-bool blasterIsSingleItem(item *cItem);
-bool blasterHasMineAction(item *cItem);
-bool blasterMineAction(item *cItem, character *cChar, int to);
+void blasterInit                 ();
+mesh *blasterGetMesh             (item *cItem);
+bool blasterIsSingleItem         (item *cItem);
+bool blasterHasMineAction        (item *cItem);
+bool blasterMineAction           (item *cItem, character *cChar, int to);
 
-void assaultblasterInit();
-mesh *assaultblasterGetMesh(item *cItem);
-bool assaultblasterIsSingleItem(item *cItem);
-bool assaultblasterHasMineAction(item *cItem);
-bool assaultblasterMineAction(item *cItem, character *cChar, int to);
+void assaultblasterInit          ();
+mesh *assaultblasterGetMesh      (item *cItem);
+bool assaultblasterIsSingleItem  (item *cItem);
+bool assaultblasterHasMineAction (item *cItem);
+bool assaultblasterMineAction    (item *cItem, character *cChar, int to);
 
-void shotgunblasterInit();
-mesh *shotgunblasterGetMesh(item *cItem);
-bool shotgunblasterIsSingleItem(item *cItem);
-bool shotgunblasterHasMineAction(item *cItem);
-bool shotgunblasterMineAction(item *cItem, character *cChar, int to);
-bool shotgunblasterActivateItem(item *cItem, character *cChar, int to);
+void shotgunblasterInit          ();
+mesh *shotgunblasterGetMesh      (item *cItem);
+bool shotgunblasterIsSingleItem  (item *cItem);
+bool shotgunblasterHasMineAction (item *cItem);
+bool shotgunblasterMineAction    (item *cItem, character *cChar, int to);
+bool shotgunblasterActivateItem  (item *cItem, character *cChar, int to);
+float shotgunblasterGetInaccuracy (item *cItem);
 
-void axeInit();
-int axeBlockDamage(item *cItem, blockCategory blockCat);
-mesh *axeGetMesh(item *cItem);
-bool axeIsSingleItem(item *cItem);
+void axeInit         ();
+int  axeBlockDamage  (item *cItem, blockCategory blockCat);
+mesh *axeGetMesh     (item *cItem);
+bool axeIsSingleItem (item *cItem);
 
-void bombInit();
-bool bombActivateItem(item *cItem,character *cChar, int to);
-mesh *bombGetMesh(item *cItem);
+void bombInit         ();
+bool bombActivateItem (item *cItem,character *cChar, int to);
+mesh *bombGetMesh     (item *cItem);
 
-void grenadeInit();
-bool grenadeActivateItem(item *cItem,character *cChar, int to);
-mesh *grenadeGetMesh(item *cItem);
+void grenadeInit         ();
+bool grenadeActivateItem (item *cItem,character *cChar, int to);
+mesh *grenadeGetMesh     (item *cItem);
 
-void pearInit();
-bool pearActivateItem(item *cItem,character *cChar, int to);
-mesh *pearGetMesh(item *cItem);
+void pearInit         ();
+bool pearActivateItem (item *cItem,character *cChar, int to);
+mesh *pearGetMesh     (item *cItem);
 
-void pickaxeInit();
-int pickaxeBlockDamage(item *cItem, blockCategory blockCat);
-mesh *pickaxeGetMesh(item *cItem);
-bool pickaxeIsSingleItem(item *cItem);
+void pickaxeInit         ();
+int pickaxeBlockDamage   (item *cItem, blockCategory blockCat);
+mesh *pickaxeGetMesh     (item *cItem);
+bool pickaxeIsSingleItem (item *cItem);
 
 void modsInit(){
 	blasterInit();
@@ -161,5 +163,12 @@ bool activateItemDispatch(item *cItem, character *cChar, int to){
 		case 258: return pearActivateItem(cItem,cChar,to);
 		case 264: return shotgunblasterActivateItem(cItem,cChar,to);
 	}
-	return activateItemDefault(cItem,cChar);
+	return activateItemDefault(cItem,cChar,to);
+}
+
+float getInaccuracyDispatch (item *cItem){
+	switch(cItem->ID){
+		case 264: return shotgunblasterGetInaccuracy(cItem);
+	}
+	return 4.f;
 }

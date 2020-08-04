@@ -52,26 +52,26 @@ void hideMouseCursor(){
 
 void drawCrosshair(){
 	textMeshEmpty(crosshairMesh);
-	int  off = player->shake*16;
+	int  off = (int)player->inaccuracy;
 	int size = 16;
-	if(off > 48){off=48;}
-	
+	if(off > 64){off=64;}
+
 	textMeshAddVert(crosshairMesh,(screenWidth/2)     ,(screenHeight/2)     +off, 64.f, 64.f,~1);
 	textMeshAddVert(crosshairMesh,(screenWidth/2)+size,(screenHeight/2)+size+off,128.f,128.f,~1);
 	textMeshAddVert(crosshairMesh,(screenWidth/2)-size,(screenHeight/2)+size+off,  0.f,128.f,~1);
-	
+
 	textMeshAddVert(crosshairMesh,(screenWidth/2)     -off,(screenHeight/2)     , 64.f, 64.f,~1);
 	textMeshAddVert(crosshairMesh,(screenWidth/2)-size-off,(screenHeight/2)-size,  0.f,  0.f,~1);
 	textMeshAddVert(crosshairMesh,(screenWidth/2)-size-off,(screenHeight/2)+size,  0.f,128.f,~1);
-	
+
 	textMeshAddVert(crosshairMesh,(screenWidth/2)     ,(screenHeight/2)     -off, 64.f, 64.f,~1);
 	textMeshAddVert(crosshairMesh,(screenWidth/2)-size,(screenHeight/2)-size-off,  0.f,128.f,~1);
 	textMeshAddVert(crosshairMesh,(screenWidth/2)+size,(screenHeight/2)-size-off,128.f,128.f,~1);
-	
+
 	textMeshAddVert(crosshairMesh,(screenWidth/2)     +off,(screenHeight/2)     , 64.f, 64.f,~1);
 	textMeshAddVert(crosshairMesh,(screenWidth/2)+size+off,(screenHeight/2)+size,128.f,128.f,~1);
 	textMeshAddVert(crosshairMesh,(screenWidth/2)+size+off,(screenHeight/2)-size,128.f,  0.f,~1);
-	
+
 	textMeshDraw(crosshairMesh);
 }
 
@@ -82,11 +82,11 @@ void resizeUI(){
 void initUI(){
 	cursorMesh           = textMeshNew();
 	cursorMesh->tex      = tCursor;
-	
+
 	crosshairMesh        = textMeshNew();
 	crosshairMesh->tex   = tCrosshair;
 	crosshairMesh->usage = GL_STREAM_DRAW;
-	
+
 	guim                 = textMeshNew();
 	guim->tex            = tGui;
 

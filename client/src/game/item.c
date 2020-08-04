@@ -37,6 +37,10 @@ mesh *itemGetMesh(item *i){
 	return getMeshDispatch(i);
 }
 
+float itemGetInaccuracy(item *i){
+	return getInaccuracyDispatch(i);
+}
+
 bool itemIsSingle(item *i){
 	return isSingleItemDispatch(i);
 }

@@ -33,7 +33,7 @@ bool assaultblasterHasMineAction(item *cItem){
 bool assaultblasterMineAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
-	if(to < 10){return false;}
-	beamblast(cChar,0.75f,0.2f,0.05f,1);
+	if(to < 15){return false;}
+	beamblast(cChar,0.75f,0.2f,0.05f,1,1,8.f,1.f);
 	return true;
 }
