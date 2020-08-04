@@ -96,10 +96,20 @@ void grenadeUpdateFromServer(packet *p){
 }
 
 void beamblast(character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult){
+	float x = ent->x;
+	float y = ent->y;
+	float z = ent->z;
+
+	const float mx = 0.5f;
+	const float mz = -1.f;
+	x += ((cos((ent->yaw+90.f)*PI/180) * cos(ent->pitch*PI/180))*mz) + cos((ent->yaw)*PI/180)*mx;
+	y += (sin(ent->pitch*PI/180)*mz);
+	z += ((sin((ent->yaw+90.f)*PI/180) * cos(ent->pitch*PI/180))*mz) + sin((ent->yaw)*PI/180)*mx;
+
 	for(int i=shots;i>0;i--){
 		const float yaw   = ent->yaw   + (rngValf()-0.5f)*ent->inaccuracy*inaccuracyMult;
 		const float pitch = ent->pitch + (rngValf()-0.5f)*ent->inaccuracy*inaccuracyMult;
-		msgBeamBlast(ent->x, ent->y, ent->z, yaw, pitch, beamSize, damageMultiplier, recoilMultiplier, hitsLeft);
+		msgBeamBlast(x, y, z, yaw, pitch, beamSize, damageMultiplier, recoilMultiplier, hitsLeft);
 	}
 	characterAddInaccuracy(ent,inaccuracyInc);
 }
