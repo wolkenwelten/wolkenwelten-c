@@ -2,6 +2,7 @@
 
 #include "../main.h"
 #include "../sdl/sfx.h"
+#include "../game/character.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
@@ -18,6 +19,7 @@ entity entityList[1<<14];
 int entityCount = 0;
 entity *entityFirstFree = NULL;
 
+#define ENTITY_FADEOUT (128.f)
 
 void entityReset(entity *e){
 	e->x    = e->y     = e->z    = 0.f;
@@ -161,9 +163,16 @@ int entityUpdate(entity *e){
 	return ret;
 }
 
+float entityDistance(entity *e, character *c){
+	const float dx = e->x - c->x;
+	const float dy = e->y - c->y;
+	const float dz = e->z - c->z;
+	return (dx*dx)+(dy*dy)+(dz*dz);
+}
+
 void entityDraw(entity *e){
 	float matMVP[16];
-	if(e == NULL){return;}
+	if(e        == NULL){return;}
 	if(e->eMesh == NULL){return;}
 
 	matMov(matMVP,matView);
@@ -181,6 +190,7 @@ void entityDrawAll(){
 	shaderBind(sMesh);
 	for(int i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL){ continue; }
+		if(entityDistance(&entityList[i],player) > (ENTITY_FADEOUT * ENTITY_FADEOUT)){ continue; }
 		entityDraw(&entityList[i]);
 	}
 }

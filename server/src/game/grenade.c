@@ -139,5 +139,5 @@ void beamblast(int c, const packet *p){
 		}
 	}
 	msgFxBeamBlaster(c,sx,sy,sz,x,y,z,beamSize,damageMultiplier,recoilMultiplier,p->val.i[8]);
-	msgPlayerMove(c, (vx * -0.75f * recoilMultiplier), (vy * -0.75f * recoilMultiplier), (vz * -0.75f * recoilMultiplier), rngValf() * recoilMultiplier, -.5f * recoilMultiplier, 0.f);
+	msgPlayerMove(c, (vx * -0.75f * recoilMultiplier), (vy * -0.75f * recoilMultiplier), (vz * -0.75f * recoilMultiplier), (rngValf()-0.5f) * 64.f * recoilMultiplier, (rngValf()-.8f) * 64.f * recoilMultiplier, 0.f);
 }

@@ -4,6 +4,7 @@
 #include "../main.h"
 #include "../misc/options.h"
 #include "../game/blockType.h"
+#include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/item.h"
 #include "../game/itemDrop.h"
@@ -49,20 +50,32 @@ void hideMouseCursor(){
 	mouseHidden = true;
 }
 
-void initCrosshair(){
+void drawCrosshair(){
 	textMeshEmpty(crosshairMesh);
-
-	textMeshAddVert(crosshairMesh,(screenWidth/2)-16,(screenHeight/2)-16,  0.f,  0.f,~1);
-	textMeshAddVert(crosshairMesh,(screenWidth/2)-16,(screenHeight/2)+16,  0.f,128.f,~1);
-	textMeshAddVert(crosshairMesh,(screenWidth/2)+16,(screenHeight/2)+16,128.f,128.f,~1);
-
-	textMeshAddVert(crosshairMesh,(screenWidth/2)+16,(screenHeight/2)+16,128.f,128.f,~1);
-	textMeshAddVert(crosshairMesh,(screenWidth/2)+16,(screenHeight/2)-16,128.f,  0.f,~1);
-	textMeshAddVert(crosshairMesh,(screenWidth/2)-16,(screenHeight/2)-16,  0.f,  0.f,~1);
+	int  off = player->shake*16;
+	int size = 16;
+	if(off > 48){off=48;}
+	
+	textMeshAddVert(crosshairMesh,(screenWidth/2)     ,(screenHeight/2)     +off, 64.f, 64.f,~1);
+	textMeshAddVert(crosshairMesh,(screenWidth/2)+size,(screenHeight/2)+size+off,128.f,128.f,~1);
+	textMeshAddVert(crosshairMesh,(screenWidth/2)-size,(screenHeight/2)+size+off,  0.f,128.f,~1);
+	
+	textMeshAddVert(crosshairMesh,(screenWidth/2)     -off,(screenHeight/2)     , 64.f, 64.f,~1);
+	textMeshAddVert(crosshairMesh,(screenWidth/2)-size-off,(screenHeight/2)-size,  0.f,  0.f,~1);
+	textMeshAddVert(crosshairMesh,(screenWidth/2)-size-off,(screenHeight/2)+size,  0.f,128.f,~1);
+	
+	textMeshAddVert(crosshairMesh,(screenWidth/2)     ,(screenHeight/2)     -off, 64.f, 64.f,~1);
+	textMeshAddVert(crosshairMesh,(screenWidth/2)-size,(screenHeight/2)-size-off,  0.f,128.f,~1);
+	textMeshAddVert(crosshairMesh,(screenWidth/2)+size,(screenHeight/2)-size-off,128.f,128.f,~1);
+	
+	textMeshAddVert(crosshairMesh,(screenWidth/2)     +off,(screenHeight/2)     , 64.f, 64.f,~1);
+	textMeshAddVert(crosshairMesh,(screenWidth/2)+size+off,(screenHeight/2)+size,128.f,128.f,~1);
+	textMeshAddVert(crosshairMesh,(screenWidth/2)+size+off,(screenHeight/2)-size,128.f,  0.f,~1);
+	
+	textMeshDraw(crosshairMesh);
 }
 
 void resizeUI(){
-	initCrosshair();
 	matOrtho(matOrthoProj,0.f,(float)screenWidth,(float)screenHeight,0.f,-1.f,10.f);
 }
 
@@ -72,7 +85,7 @@ void initUI(){
 	
 	crosshairMesh        = textMeshNew();
 	crosshairMesh->tex   = tCrosshair;
-	crosshairMesh->usage = GL_STATIC_DRAW;
+	crosshairMesh->usage = GL_STREAM_DRAW;
 	
 	guim                 = textMeshNew();
 	guim->tex            = tGui;
@@ -410,7 +423,7 @@ void renderUI(){
 	if(isInventoryOpen()){
 		updateMouse();
 	}else{
-		textMeshDraw(crosshairMesh);
+		drawCrosshair();
 	}
 	textInputDraw();
 
