@@ -9,9 +9,9 @@ void pearInit(){
 	(void)ITEMID;
 }
 
-bool pearActivateItem(item *cItem,character *cChar){
+bool pearActivateItem(item *cItem,character *cChar, int to){
 	(void)cItem;
-
+	if(to < 200){return false;}
 	if(cChar->hp == cChar->maxhp){return false;}
 	if(itemDecStack(cItem,1)){
 		characterHP(cChar,4);
