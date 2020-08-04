@@ -39,8 +39,8 @@ bool shotgunblasterMineAction(item *cItem, character *cChar, int to){
 
 	if(to < 256){return false;}
 	for(int i=48;i>0;i--){
-		const float yaw   = cChar->yaw   + (rngValf()-0.5f)*24.f;
-		const float pitch = cChar->pitch + (rngValf()-0.5f)*24.f;
+		const float yaw   = cChar->yaw   + (rngValf()-0.5f)*8.f;
+		const float pitch = cChar->pitch + (rngValf()-0.5f)*8.f;
 		msgBeamBlast(cChar->x, cChar->y, cChar->z, yaw, pitch, 0.5f,1.f,0.04f,4);
 	}
 	return true;
@@ -49,10 +49,10 @@ bool shotgunblasterMineAction(item *cItem, character *cChar, int to){
 bool shotgunblasterActivateItem(item *cItem,character *cChar, int to){
 	(void)cItem;
 
-	if(to < 128){return false;}
+	if(to < 96){return false;}
 	for(int i=32;i>0;i--){
-		const float yaw   = cChar->yaw   + (rngValf()-0.5f)*24.f;
-		const float pitch = cChar->pitch + (rngValf()-0.5f)*24.f;
+		const float yaw   = cChar->yaw   + (rngValf()-0.5f)*48.f;
+		const float pitch = cChar->pitch + (rngValf()-0.5f)*48.f;
 		msgBeamBlast(cChar->x, cChar->y, cChar->z, yaw, pitch, 0.5f,1.f,0.04f,4);
 	}
 	return true;
