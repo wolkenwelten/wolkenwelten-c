@@ -7,9 +7,7 @@
 #include "game/itemDrop.h"
 #include "game/grenade.h"
 #include "game/blockType.h"
-#include "game/recipe.h"
 #include "voxel/bigchungus.h"
-#include "mods/mods.h"
 #include "network/server.h"
 #include "tmp/cto.h"
 #include "../../common/src/misc/misc.h"
@@ -117,8 +115,6 @@ int main( int argc, const char* argv[] ){
 	serverInit();
 	bigchungusInit(&world);
 	blockTypeInit();
-	recipeInit();
-	modsInit();
 	bigchungusGenSpawn(&world);
 	while(!quit){
 		bigchungusFreeFarChungi(&world);
