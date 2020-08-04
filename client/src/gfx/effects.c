@@ -109,14 +109,18 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 			steps = (z2 - z1) / vz;
 		}
 	}
+	//uint32_t pac = 0xFF8F56FF;
+	//uint32_t pbc = 0xFFAF76FF;
+	uint32_t pac = 0xFF0000FF | ((0x50 + rngValM(0x30)) << 16) | ((0x30 + rngValM(0x30)) << 8);
+	uint32_t pbc = pac + 0x00202000;
+
 	sfxPlay(sfxPhaser,recoilMultiplier);
 	for(;steps > 0;steps--){
 		float pvx = (rngValf()-0.5f)/8.f*beamSize;
 		float pvy = (rngValf()-0.5f)/8.f*beamSize;
 		float pvz = (rngValf()-0.5f)/8.f*beamSize;
-		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/4.f,pvy/4.f,pvz/4.f,-pvx/192.f,-pvy/192.f,-pvz/192.f,0xFF8F56FF,128);
-		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/6.f,pvy/6.f,pvz/6.f,-pvx/256.f,-pvy/256.f,-pvz/256.f,0xFFAF76FF,178);
-		//newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/8.f,pvy/8.f,pvz/8.f,-pvx/512.f,-pvy/512.f,-pvz/512.f,0x6FBF26FF,192);
+		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/4.f,pvy/4.f,pvz/4.f,-pvx/192.f,-pvy/192.f,-pvz/192.f,pac,64);
+		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/6.f,pvy/6.f,pvz/6.f,-pvx/256.f,-pvy/256.f,-pvz/256.f,pbc,96);
 		cx += vx;
 		cy += vy;
 		cz += vz;
