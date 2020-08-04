@@ -100,7 +100,7 @@ void beamblast(character *ent, float beamSize, float damageMultiplier, float rec
 	float y = ent->y;
 	float z = ent->z;
 
-	const float mx = 0.5f;
+	const float mx =  0.75f;
 	const float mz = -1.f;
 	x += ((cos((ent->yaw+90.f)*PI/180) * cos(ent->pitch*PI/180))*mz) + cos((ent->yaw)*PI/180)*mx;
 	y += (sin(ent->pitch*PI/180)*mz);
