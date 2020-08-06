@@ -422,6 +422,10 @@ span.key {
 	height:auto;
 }
 
+.pics img {
+	margin-bottom:1em;
+}
+
 @media only screen and (max-device-width: 480px) {
 	img.tinythumb,
 	img.smallthumb,
