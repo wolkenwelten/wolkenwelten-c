@@ -423,7 +423,10 @@ span.key {
 }
 
 .pics img {
-	margin-bottom:1em;
+	width:30%;
+	height:auto;
+	display:inline-block;
+	margin:0px 0.5em
 }
 
 @media only screen and (max-device-width: 480px) {
