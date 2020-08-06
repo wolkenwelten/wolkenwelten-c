@@ -56,11 +56,11 @@ clean:
 
 .PHONY: webrelease
 webrelease: release
-	rsync -avhe ssh $(WEBEXCLUDE) releases cocz.net:/var/www/htdocs/wolkenwelten/
+	rsync -avhe ssh $(WEBEXCLUDE) releases wolkenwelten.net:/var/www/wolkenwelten.net/
 
 .PHONY: website
 website:
-	rsync -avhe ssh web/ cocz.net:/var/www/htdocs/wolkenwelten/
+	rsync -avhe ssh web/ wolkenwelten.net:/var/www/wolkenwelten.net/
 
 .PHONY: web
 web: webrelease website
