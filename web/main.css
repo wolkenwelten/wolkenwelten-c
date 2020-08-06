@@ -368,57 +368,59 @@ header:after {
 }
 
 span.key {
-		display:inline-block;
-		font-family:monospace,mono;
-		background:#444;
-		border:solid 1px #666;
-		min-width:1.5em;
-		padding:0px 0.25em;
-		line-height:1.2em;
-		text-align:center;
-		border-radius:2px;
-		margin-bottom:0.2em;
-	}
+	display:inline-block;
+	font-family:monospace,mono;
+	background:#444;
+	border:solid 1px #666;
+	min-width:1.5em;
+	padding:0px 0.25em;
+	line-height:1.2em;
+	text-align:center;
+	border-radius:2px;
+	margin-bottom:0.2em;
+}
 
-	.button {
-		text-decoration:none;
-		color:#fff;
-		font-weight:bold;
-		background:#11aa44;
-		border-radius:4px;
-		padding:0px 1em;
-		text-align:center;
-		display:inline-block;
-		cursor:pointer;
-		font-size:1.25em;
+.button {
+	text-decoration:none;
+	color:#fff;
+	font-weight:bold;
+	background:#11aa44;
+	border-radius:4px;
+	padding:0px 1em;
+	text-align:center;
+	display:inline-block;
+	cursor:pointer;
+	font-size:1.25em;
 
-		margin-bottom:0.25em;
-	}
+	margin-bottom:0.25em;
+}
 
-	.buttonlabel {
-		padding:0.2em 0.25em;
-		display:inline-block;
-	}
-	.buttonicon {
-		display:inline-block;
-		vertical-align:middle;
-		margin:0px 0px 0px 8px;
-	}
-	.wasmdl .buttonicon {
-		vertical-align:top;
-	}
+.buttonlabel {
+	padding:0.2em 0.25em;
+	display:inline-block;
+}
+.buttonicon {
+	display:inline-block;
+	vertical-align:middle;
+	margin:0px 0px 0px 8px;
+	width:auto !important;
+	height:auto !important;
+}
+.wasmdl .buttonicon {
+	vertical-align:top;
+}
 
-	.wasmdl img {
-		position:relative;
-		top:7px;
-	}
+.wasmdl img {
+	position:relative;
+	top:7px;
+}
 
-	.imgfw {
-		display:block;
-		margin:0px 0px 2em 0px;
-		width:100%;
-		height:auto;
-	}
+.imgfw {
+	display:block;
+	margin:0px 0px 2em 0px;
+	width:100%;
+	height:auto;
+}
 
 @media only screen and (max-device-width: 480px) {
 	img.tinythumb,
