@@ -5,7 +5,8 @@ CLIENT_LIBS      := $(shell sdl2-config --libs) -lGLEW -lGL -lSDL2_mixer
 GFX_ASSETS       := $(shell find client/gfx -type f -name '*')
 SFX_ASSETS       := $(shell find client/sfx -type f -name '*')
 SHD_ASSETS       := $(shell find client/src/shader -type f -name '*.glsl')
-ASSETS           := $(GFX_ASSETS) $(SFX_ASSETS) $(SHD_ASSETS)
+TXT_ASSETS       := $(shell find client/txt -type f -name '*')
+ASSETS           := $(GFX_ASSETS) $(SFX_ASSETS) $(SHD_ASSETS) $(TXT_ASSETS)
 MESHASSETS       := $(shell find client/mesh -type f -name '*')
 
 CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)

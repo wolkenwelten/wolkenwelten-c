@@ -1,5 +1,6 @@
 #include "options.h"
 #include "../tmp/cto.h"
+#include "../tmp/assets.h"
 #include "../main.h"
 
 #include <stdio.h>
@@ -21,6 +22,7 @@ void printVersion(){
 	printf("Version:   %s\n",VERSION);
 	printf("Builddate: %s\n",BUILDDATE);
 	printf("Commit:    %s\n",COMMIT);
+	printf("\nAttribution:\n%s\n",txt_attribution_txt_data);
 }
 
 int checkString(const char *a, const char *b){
