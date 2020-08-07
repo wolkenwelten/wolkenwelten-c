@@ -60,15 +60,32 @@ entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll
 
 void entityFree(entity *e){
 	if(e == NULL){return;}
-	e->eMesh        = NULL;
-	e->nextFree     = entityFirstFree;
+	e->eMesh = NULL;
+	e->nextFree = entityFirstFree;
 	entityFirstFree = e;
 }
 
 uint32_t entityCollision(entity *e, float cx, float cy, float cz,float wd){
+	uint32_t col = 0;
 	(void)e;
-	(void)wd;
-	return checkCollision(cx,cy,cz);
+
+	if(checkCollision(cx-wd,cy-0.1f,cz   )){col |= 0x100;}
+	if(checkCollision(cx+wd,cy-0.1f,cz   )){col |= 0x200;}
+	if(checkCollision(cx   ,cy-0.1f,cz-wd)){col |= 0x400;}
+	if(checkCollision(cx   ,cy-0.1f,cz+wd)){col |= 0x800;}
+
+	wd = wd*0.5f;
+	if(checkCollision(cx-wd,cy+0.5f,cz   )){col |=  0x10;}
+	if(checkCollision(cx+wd,cy+0.5f,cz   )){col |=  0x20;}
+	if(checkCollision(cx   ,cy+0.5f,cz-wd)){col |=  0x40;}
+	if(checkCollision(cx   ,cy+0.5f,cz+wd)){col |=  0x80;}
+
+	if(checkCollision(cx-wd,cy-0.5f,cz   )){col |=   0x1;}
+	if(checkCollision(cx+wd,cy-0.5f,cz   )){col |=   0x2;}
+	if(checkCollision(cx   ,cy-0.5f,cz-wd)){col |=   0x4;}
+	if(checkCollision(cx   ,cy-0.5f,cz+wd)){col |=   0x8;}
+
+	return col;
 }
 
 int entityUpdate(entity *e){
@@ -89,41 +106,41 @@ int entityUpdate(entity *e){
 	e->falling = true;
 	e->collide = false;
 	col = entityCollision(e,e->x,e->y,e->z,0.3f);
-	e->collide = col;
+	if(col){ e->collide = true; }
 	e->updated = true;
-	if(!col || e->noRepulsion){ return 0; }
-	if(e->vx < 0.f){
+	if(e->noRepulsion){ return 0; }
+	if((col&0x110) && (e->vx < 0.f)){
 		if(e->vx < -0.1f){ ret += (int)(fabsf(e->vx)*128.f); }
 		const float nx = floor(e->x)+0.3f;
 		if(nx > e->x){e->x = nx;}
 		e->vx = e->vx*-0.3f;
 	}
-	if(e->vx > 0.f){
+	if((col&0x220) && (e->vx > 0.f)){
 		if(e->vx >  0.1f){ ret += (int)(fabsf(e->vx)*128.f); }
 		const float nx = floorf(e->x)+0.7f;
 		if(nx < e->x){e->x = nx;}
 		e->x = floorf(e->x)+0.7f;
 		e->vx = e->vx*-0.3f;
 	}
-	if(e->vz > 0.f){
+	if((col&0x880) && (e->vz > 0.f)){
 		if(e->vz >  0.1f){ ret += (int)(fabsf(e->vz)*128.f); }
 		const float nz = floorf(e->z)+0.7f;
 		if(nz < e->z){e->z = nz;}
 		e->vz = e->vz*-0.3f;
 	}
-	if(e->vz < 0.f){
+	if((col&0x440) && (e->vz < 0.f)){
 		if(e->vz < -0.1f){ ret += (int)(fabsf(e->vz)*128.f); }
 		const float nz = floorf(e->z)+0.3f;
 		if(nz > e->z){e->z = nz;}
 		e->vz = e->vz*-0.3f;
 	}
-	if(e->vy > 0.f){
+	if((col&0x0F0) && (e->vy > 0.f)){
 		if(e->vy >  0.1f){ ret += (int)(fabsf(e->vy)*128.f); }
 		const float ny = floorf(e->y)+0.5f;
 		if(ny < e->y){e->y = ny;}
 		e->vy = e->vy*-0.3f;
 	}
-	if(e->vy < 0.f){
+	if((col&0x00F) && (e->vy < 0.f)){
 		e->falling=false;
 		if(e->vy < -0.15f){
 			e->yoff = -0.8f;
@@ -137,7 +154,6 @@ int entityUpdate(entity *e){
 		e->vy = 0.f;
 		e->vz *= 0.97f;
 	}
-
 	if(e->shake > 0.f){
 		e->shake -= 0.2f;
 	}else if(e->shake < 0.f){
@@ -161,7 +177,7 @@ void entityDraw(entity *e){
 
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,e->x,e->y+e->yoff,e->z);
-	//matMulScale(matMVP,0.25f,0.25f,0.25f);
+	matMulScale(matMVP,0.25f,0.25f,0.25f);
 	matMulRotYX(matMVP,e->yaw,e->pitch);
 	matMul(matMVP,matMVP,matProjection);
 
