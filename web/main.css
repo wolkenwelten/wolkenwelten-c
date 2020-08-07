@@ -384,8 +384,10 @@ span.key {
 	text-decoration:none;
 	color:#fff;
 	font-weight:bold;
-	background:#11aa44;
+	border:solid 1px #44ee99;
+	background:#ee4499;
 	border-radius:4px;
+	box-shadow:inset 0px 0px 8px #44ee99;
 	padding:0px 1em;
 	text-align:center;
 	display:inline-block;
