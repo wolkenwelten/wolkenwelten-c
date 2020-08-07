@@ -11,7 +11,7 @@ typedef struct vertex2D {
 #pragma pack(pop)
 
 typedef struct {
-	vertex2D dataBuffer[8192];
+	vertex2D dataBuffer[1<<14];
 	int sx,sy,size;
 	int dataCount;
 	int vboSize;

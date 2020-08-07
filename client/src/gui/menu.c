@@ -7,6 +7,7 @@
 #include "../gfx/textMesh.h"
 #include "../network/client.h"
 #include "../misc/options.h"
+#include "../tmp/assets.h"
 #include "../tmp/cto.h"
 #include "../main.h"
 
@@ -17,9 +18,18 @@
 textMesh *menuM;
 char *menuError = "";
 
+bool showAttribution = false;
+int  attributionLines = 0;
+
 void initMenu(){
 	menuM = textMeshNew();
 	menuM->tex = tGui;
+	
+	attributionLines = 0;
+	unsigned char *s = txt_attribution_txt_data;
+	while(*s++ != 0){
+		if(*s == '\n'){attributionLines++;}
+	}
 }
 
 void updateMenu(){
@@ -49,6 +59,11 @@ void startSingleplayer(){
 
 void updateMenuClick(int x, int y, int btn){
 	if(gameRunning){return;}
+	
+	if(showAttribution){
+		showAttribution = false;
+		return;
+	}
 
 	if((btn == 1) && (x > (screenWidth-256-32)) && (x < screenWidth-32)){
 		if((y > 32) && (y < 64)){
@@ -64,6 +79,8 @@ void updateMenuClick(int x, int y, int btn){
 				textInput(8,screenHeight-24,256,16,3);
 			}
 		} else if((y > 178) && (y < 200)){
+			showAttribution=true;
+		} else if((y > 216) && (y < 248)){
 			quit=true;
 		}
 	}
@@ -87,20 +104,27 @@ void menuBackground(){
 	textMeshAddVert(menuM,x,y,u  ,v  ,0xFFFFAF63);
 }
 
-void renderMenu(){
+void drawMenuAttributions(){
+	static int scroll = 0;
+	static int scrollDir = 1;
+	
+	const int textHeight = attributionLines * 16;
+	
+	if(scroll > textHeight-screenHeight){
+		scrollDir=-1;
+	}
+	if(scroll < 0){
+		scrollDir=1;
+	}
+	scroll+=scrollDir;
+	
+	textMeshPrintfPS(menuM,16,16-scroll,2,"Attribution:\n%s",txt_attribution_txt_data);
+}
+
+void drawMenuButtons(){
 	int buttonY = 32;
 	char playerNameBuf[48];
-
-	shaderBind(sTextMesh);
-	shaderMatrix(sTextMesh,matOrthoProj);
-	if(mouseHidden){
-		showMouseCursor();
-	}
-	updateMouse();
-	updateMenu();
-	textMeshEmpty(menuM);
-	menuBackground();
-
+	
 	textMeshAddStrPS(menuM,32,32,4,"Wolkenwelten");
 	textMeshPrintfPS(menuM,32,72,2,"Pre-Alpha %s [%.8s]",VERSION,COMMIT);
 	textMeshBox(menuM,
@@ -141,7 +165,17 @@ void renderMenu(){
 		0xFF555555);
 	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"  Change Name");
 	buttonY += 32 + 16;
+	
+	textMeshBox(menuM,
+		screenWidth-256-32, buttonY,
+		256, 32,
+		19.f/32.f, 31.f/32.f,
+		1.f/32.f,   1.f/32.f,
+		0xFF555555);
+	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"  Attribution");
+	buttonY += 32 + 16;
 
+	#ifndef __EMSCRIPTEN__
 	textMeshBox(menuM,
 		screenWidth-256-32, buttonY,
 		256, 32,
@@ -150,6 +184,7 @@ void renderMenu(){
 		0xFF555555);
 	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"      Quit");
 	buttonY += 32 + 16;
+	#endif
 
 	if(textInputActive && (textInputLock == 2)){
 		textMeshAddStrPS(menuM,8,screenHeight-42,2,"Servername:");
@@ -159,6 +194,24 @@ void renderMenu(){
 	}
 	if((menuError != NULL) && (*menuError != 0)){
 		textMeshAddStrPS(menuM,8,screenHeight-58,2,menuError);
+	}
+}
+
+void renderMenu(){
+	shaderBind(sTextMesh);
+	shaderMatrix(sTextMesh,matOrthoProj);
+	if(mouseHidden){
+		showMouseCursor();
+	}
+	updateMouse();
+	updateMenu();
+	textMeshEmpty(menuM);
+	menuBackground();
+	
+	if(showAttribution){
+		drawMenuAttributions();
+	}else{
+		drawMenuButtons();
 	}
 
 	textMeshDraw(menuM);

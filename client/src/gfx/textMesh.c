@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include "../gfx/glew.h"
 
-char stringBuffer[256];
+char stringBuffer[8192];
 textMesh textMeshList[8];
 int  textMeshCount = 0;
 textMesh *textMeshFirstFree = NULL;
@@ -28,8 +28,8 @@ textMesh *textMeshNew(){
 		m = &textMeshList[textMeshCount++];
 	}
 	m->vboSize  = 0;
-	m->vbo = m->dataCount = 0;
-	m->sx = m->sy = 0;
+	m->vbo      = m->dataCount = 0;
+	m->sx       = m->sy        = 0;
 	m->size     = 1;
 	m->tex      = tGui;
 	m->finished = 0;
@@ -55,6 +55,10 @@ void textMeshEmpty(textMesh *m){
 }
 
 void textMeshAddVert(textMesh *m, int16_t x, int16_t y, int16_t u, int16_t v, uint32_t rgba){
+	if(m->dataCount >= (int)(sizeof(m->dataBuffer) / sizeof(vertex2D))){
+		fprintf(stderr,"textMeh dataBuffer OVERFLOW\n");
+		return;
+	}
 	m->dataBuffer[m->dataCount++] = (vertex2D){x,y,u,v,rgba};
 }
 
@@ -89,10 +93,12 @@ void textMeshAddGlyph(textMesh *m, int x, int y, int size, unsigned char c){
 	float gy;
 	int   glyphWidth = 8*size;
 	float glyphSize  = 1.f / 64.f;
-
-	if(c==0)  {return;}
-	if(c==' '){return;}
-	if(c>127) {return;}
+	
+	if(x < -size){return;}
+	if(y < -size){return;}
+	if(c==0)     {return;}
+	if(c==' ')   {return;}
+	if(c>127)    {return;}
 
 	if(size == 1){
 		glyphSize = 1.f / 128.f;
@@ -118,26 +124,33 @@ void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 	const int lineHeight = 10*size;
 
 	while(*str != 0){
+		if(y > screenHeight){
+			return;
+		}
 		if(x+glyphWidth > screenWidth){
 			x = m->sx;
 			y += lineHeight;
-			continue;
+			if(x+glyphWidth > screenWidth){
+				return;
+			}else{
+				continue;
+			}
 		}
 		if(*str == '\n'){
 			x = m->sx;
 			m->sy += lineHeight;
+			y += lineHeight;
 			str++;
 			continue;
-		}
-		if(*str == '\r'){
+		}else if(*str == '\r'){
 			str++;
 			continue;
-		}
-		if(*str == '\t'){
+		}else if(*str == '\t'){
 			str++;
 			x = (((x - m->sx) / (glyphWidth*4) ) + 1 ) * (glyphWidth*4);
 			continue;
 		}
+		
 		textMeshAddGlyph(m,x,y,size,*str);
 		x += glyphWidth;
 		str++;
@@ -145,24 +158,28 @@ void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 }
 
 void textMeshAddString(textMesh *m, const char *str){
-	textMeshAddStrPS(m,m->sx,m->sy,m->size,str);
+	return textMeshAddStrPS(m,m->sx,m->sy,m->size,str);
 }
 
 void textMeshPrintfPS(textMesh *m, int x, int y, int size, const char *format, ...){
 	va_list ap;
 	va_start(ap,format);
-	vsprintf(stringBuffer,format,ap);
+	vsnprintf(stringBuffer,sizeof(stringBuffer),format,ap);
 	va_end(ap);
+	stringBuffer[sizeof(stringBuffer)-1]=0;
 	if(stringBuffer[0]==0){return;}
 
+	m->sx = x;
+	m->sy = y;
 	textMeshAddStrPS(m,x,y,size,stringBuffer);
 }
 
 void textMeshPrintf(textMesh *m, const char *format, ...){
 	va_list ap;
 	va_start(ap,format);
-	vsprintf(stringBuffer,format,ap);
+	vsnprintf(stringBuffer,sizeof(stringBuffer),format,ap);
 	va_end(ap);
+	stringBuffer[sizeof(stringBuffer)-1]=0;
 	if(stringBuffer[0]==0){return;}
 
 	textMeshAddString(m,stringBuffer);
