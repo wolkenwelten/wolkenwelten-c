@@ -1,5 +1,8 @@
 #include "options.h"
 
+#include "../main.h"
+#include "../tmp/cto.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -9,6 +12,20 @@ int   optionWorldSeed    = 0;
 int   optionPort         = 0;
 bool  optionSingleplayer = false;
 bool  verbose            = false;
+
+char *attribution_info =
+"Test\n"
+"\n"
+"Third line"
+;
+
+void printVersion(){
+	printf("%sWolkenwelten Pre-Alpha Dedicated Server%s\n",termColors[2],termReset);
+	printf("%sVersion:   %s%s\n",termColors[6],VERSION,termReset);
+	printf("%sBuilddate: %s%s\n",termColors[5],BUILDDATE,termReset);
+	printf("%sCommit:    %s%s\n",termColors[3],COMMIT,termReset);
+	printf("\nAttribution:\n%s\n",attribution_info);
+}
 
 int checkString(const char *a, const char *b){
 	int len = strlen(b);
@@ -22,6 +39,11 @@ void parseOptions(int argc,const char *argv[]){
 	for(int i=0;i<argc;i++){
 		if(argv[i][0] != '-'){continue;}
 
+		if((l = checkString(argv[i]+1,"version"))){
+			printVersion();
+			exit(0);
+			return;
+		}
 		if((l = checkString(argv[i]+1,"worldSeed="))){
 			optionWorldSeed = atoi(argv[i]+l);
 			continue;
