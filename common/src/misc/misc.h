@@ -1,5 +1,6 @@
 #pragma once
-#include<stdint.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 void     seedRNG(uint64_t seed);
 uint64_t getRNGSeed();
