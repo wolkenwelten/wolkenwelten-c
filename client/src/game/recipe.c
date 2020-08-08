@@ -10,8 +10,39 @@ typedef struct {
 	unsigned char ingredientAmount[4];
 } recipe;
 
-recipe recipes[512];
+struct ingredientSubstitute;
+struct ingredientSubstitute {
+	unsigned short ingredient;
+	unsigned short substitute;
+	
+	struct ingredientSubstitute *next;
+};
+typedef struct ingredientSubstitute ingredientSubstitute;
+
+recipe recipes[16];
 int recipeCount = 0;
+
+ingredientSubstitute *substitutes[512];
+ingredientSubstitute substitutePool[16];
+int substitutePoolUsed=0;
+
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
+void ingredientSubstituteAdd(unsigned short ingredient, unsigned short substitute){
+	ingredientSubstitute *s,*sub = &substitutePool[substitutePoolUsed++];
+	
+	sub->ingredient = ingredient;
+	sub->substitute = substitute;
+	sub->next       = NULL;
+	
+	if(substitutes[ingredient] == NULL){
+		substitutes[ingredient] = sub;
+	}else{
+		for(s = substitutes[ingredient];s->next != NULL;s = s->next){}
+		s->next = sub;
+	}
+}
 
 int recipeGetCount(){
 	return recipeCount;
@@ -63,13 +94,42 @@ void recipeAdd1I(unsigned short nResultID, unsigned char nResultAmount, unsigned
 
 void recipeAdd2I(unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID1, unsigned char nIngredAmount1, unsigned short nIngredID2, unsigned char nIngredAmount2){
 	int r = recipeCount++;
-	recipes[r].resultID = nResultID;
-	recipes[r].resultAmount = nResultAmount;
-	recipes[r].ingredientID[0] = nIngredID1;
+	recipes[r].resultID            = nResultID;
+	recipes[r].resultAmount        = nResultAmount;
+	recipes[r].ingredientID[0]     = nIngredID1;
 	recipes[r].ingredientAmount[0] = nIngredAmount1;
-	recipes[r].ingredientID[1] = nIngredID2;
+	recipes[r].ingredientID[1]     = nIngredID2;
 	recipes[r].ingredientAmount[1] = nIngredAmount2;
-	recipes[r].ingredientID[2] = recipes[r].ingredientAmount[2] = 0;
+	recipes[r].ingredientID[2]     = recipes[r].ingredientAmount[2] = 0;
+}
+
+int characterGetItemOrSubstituteAmount(character *c, unsigned short i){
+	ingredientSubstitute *s;
+	int ret = characterGetItemAmount(c,i);
+	if(substitutes[i] == NULL){return ret;}
+	
+	for(s = substitutes[i];s->next != NULL;s = s->next){
+		ret += characterGetItemAmount(c,s->substitute);
+	}
+	return ret + characterGetItemAmount(c,s->substitute);
+}
+
+int characterDecItemOrSubstituteAmount(character *c, unsigned short i, int a){
+	ingredientSubstitute *s;
+	int retAmount = a;
+	int ret = characterGetItemAmount(c,i);
+	a -= characterDecItemAmount(c,i,MIN(ret,a));
+	if(a <= 0){return retAmount;}
+	if(substitutes[i] == NULL){return retAmount-a;}
+	
+	for(s = substitutes[i];s->next != NULL;s = s->next){
+		ret = characterGetItemAmount(c,s->substitute);
+		a  -= characterDecItemAmount(c,s->substitute,MIN(ret,a));
+		if(a <= 0){return retAmount;}
+	}
+	ret = characterGetItemAmount(c,s->substitute);
+	a  -= characterDecItemAmount(c,s->substitute,MIN(ret,a));
+	return retAmount-a;
 }
 
 int recipeCanCraft(int r,character *c){
@@ -79,7 +139,8 @@ int recipeCanCraft(int r,character *c){
 		if(recipes[r].ingredientID[i] == 0){continue;}
 		if(recipes[r].ingredientAmount[i] == 0){continue;}
 
-		const int camount = characterGetItemAmount(c,recipes[r].ingredientID[i]) / recipes[r].ingredientAmount[i];
+		//const int camount = characterGetItemAmount(c,recipes[r].ingredientID[i]) / recipes[r].ingredientAmount[i];
+		const int camount = characterGetItemOrSubstituteAmount(c,recipes[r].ingredientID[i]) / recipes[r].ingredientAmount[i];
 		if(camount < amount){amount = camount;}
 	}
 	if(amount  < 0){return 0;}
@@ -98,12 +159,14 @@ void recipeDoCraft(int r, character *c,int amount){
 		if(recipes[r].ingredientID[i] == 0){continue;}
 		if(recipes[r].ingredientAmount[i] == 0){continue;}
 
-		characterDecItemAmount(c,recipes[r].ingredientID[i],recipes[r].ingredientAmount[i]*amount);
+		characterDecItemOrSubstituteAmount(c,recipes[r].ingredientID[i],recipes[r].ingredientAmount[i]*amount);
 	}
 	characterPickupItem(c,recipes[r].resultID,amount*recipes[r].resultAmount);
 }
 
 void recipeInit(){
+	ingredientSubstituteAdd(10,5);
+	ingredientSubstituteAdd(10,20);
 	//recipeAdd1I(16,1,  5,1);
 	recipeAdd1I(16,1, 10,1);
 	recipeAdd1I(17,2, 16,1);

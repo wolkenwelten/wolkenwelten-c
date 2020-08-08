@@ -531,21 +531,23 @@ int characterGetItemAmount(character *c, uint16_t itemID){
 	return amount;
 }
 
-bool characterDecItemAmount(character *c, uint16_t itemID,int amount){
+int characterDecItemAmount(character *c, uint16_t itemID,int amount){
+	int ret=0;
+	
+	if(amount == 0){return 0;}
 	for(unsigned int i=0;i<40;i++){
-		if(amount == 0){return true;}
 		if(c->inventory[i].ID == itemID){
 			if(c->inventory[i].amount > amount){
 				itemDecStack(&c->inventory[i],amount);
-				return true;
+				return amount;
 			}else{
 				amount -= c->inventory[i].amount;
+				ret    += c->inventory[i].amount;
 				c->inventory[i] = itemEmpty();
 			}
 		}
 	}
-	if(amount == 0){return true;}
-	return false;
+	return ret;
 }
 
 bool characterPickupItem(character *c, uint16_t itemID,int amount){

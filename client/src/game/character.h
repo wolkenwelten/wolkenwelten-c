@@ -59,7 +59,7 @@ void  characterDie            (character *c);
 bool  characterHP             (character *c, int addhp);
 bool  characterDamage         (character *c, int hp);
 int   characterGetItemAmount  (character *c, uint16_t itemID);
-bool  characterDecItemAmount  (character *c, uint16_t itemID,int amount);
+int   characterDecItemAmount  (character *c, uint16_t itemID,int amount);
 bool  characterPickupItem     (character *c, uint16_t itemID,int amount);
 item *characterGetItemBarSlot (character *c, int i);
 void  characterSetActiveItem  (character *c, int i);

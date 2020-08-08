@@ -6,7 +6,6 @@
 (A) Proper Character Models
 (A) MacOS Code signing
 (A) Order Chunks sent to player by distance to player
-(A) Enable alternative ingredients for recipes, which should fix the wood log issue we have right now
 (A) Instead of broadcasting explosions mark chunks as dirty and then transmit them to clients in need
 
 (B) Beam Cannon, like the green gun from UT
