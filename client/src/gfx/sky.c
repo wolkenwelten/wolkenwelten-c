@@ -17,8 +17,8 @@ texture *tSky;
 texture *tSun;
 
 void initSky(){
-	tSky = textureNew(gfx_sky_png_data, gfx_sky_png_len);
-	tSun = textureNew(gfx_sun_png_data, gfx_sun_png_len);
+	tSky = textureNew(gfx_sky_png_data, gfx_sky_png_len, "client/gfx/sky.png");
+	tSun = textureNew(gfx_sun_png_data, gfx_sun_png_len, "client/gfx/sun.png");
 
 	skyMesh = meshNew();
 	skyMesh->tex = tSky;

@@ -1,6 +1,7 @@
 #include "input_keyboard.h"
 
 #include "sdl.h"
+#include "../gfx/texture.h"
 #include "../gui/textInput.h"
 #include "../network/chat.h"
 #include "../gui/inventory.h"
@@ -82,6 +83,10 @@ void keyboardEventHandler(const SDL_Event *e){
 				break;
 				
 				#ifndef __EMSCRIPTEN__
+				case SDLK_F5:
+					textureReload();
+				break;
+				
 				case SDLK_F11:
 					setFullscreen(!optionFullscreen);
 				break;

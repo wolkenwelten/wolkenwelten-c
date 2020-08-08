@@ -33,12 +33,12 @@ void initMeshobjs(){
 	meshPickaxe       = meshNewRO( pickaxe_verts,             pickaxe_count );
 	meshMasterblaster = meshNewRO( masterblaster_verts, masterblaster_count );
 
-	texPear           = textureNew( gfx_pear_png_data,                   gfx_pear_png_len );
-	texHook           = textureNew( gfx_hook_png_data,                   gfx_hook_png_len );
-	texGrenade        = textureNew( gfx_grenade_png_data,             gfx_grenade_png_len );
-	texAxe            = textureNew( gfx_axe_png_data,                     gfx_axe_png_len );
-	texPickaxe        = textureNew( gfx_pickaxe_png_data,             gfx_pickaxe_png_len );
-	texMasterblaster  = textureNew( gfx_masterblaster_png_data, gfx_masterblaster_png_len );
+	texPear           = textureNew( gfx_pear_png_data,                   gfx_pear_png_len,"client/gfx/pear.png");
+	texHook           = textureNew( gfx_hook_png_data,                   gfx_hook_png_len,"client/gfx/hook.png");
+	texGrenade        = textureNew( gfx_grenade_png_data,             gfx_grenade_png_len,"client/gfx/grenade.png");
+	texAxe            = textureNew( gfx_axe_png_data,                     gfx_axe_png_len,"client/gfx/axe.png");
+	texPickaxe        = textureNew( gfx_pickaxe_png_data,             gfx_pickaxe_png_len,"client/gfx/pickaxe.png");
+	texMasterblaster  = textureNew( gfx_masterblaster_png_data, gfx_masterblaster_png_len,"client/gfx/masterblaster.png");
 
 	meshPear->tex          = texPear;
 	meshHook->tex          = texHook;

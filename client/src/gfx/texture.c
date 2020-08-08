@@ -1,5 +1,6 @@
 #include "../gfx/texture.h"
 #include "../game/blockType.h"
+#include "../../../common/src/misc/misc.h"
 #include "../tmp/assets.h"
 
 #include "../gfx/glew.h"
@@ -48,9 +49,10 @@ void textureLoad(texture *t, const unsigned char *data, const size_t dataLen){
 	free(pixels);
 }
 
-texture *textureNew(const unsigned char *data, size_t dataLen){
+texture *textureNew(const unsigned char *data, size_t dataLen, char *filename){
 	texture *tex = &textureList[textureCount++];
 	tex->ID = 0;
+	tex->filename = filename;
 	textureLoad(tex,data,dataLen);
 	return tex;
 }
@@ -97,11 +99,30 @@ uint32_t interpol(uint32_t c1,uint32_t c2,uint32_t c3,uint32_t c4){
 }
 
 
-void textureBuildBlockIcons(){
+void textureBuildBlockIcons(int loadFromFile){
 	uint32_t *tblocks, *tgui;
 	unsigned int bw,bh,iw,ih;
-	lodepng_decode32((unsigned char **)&tblocks, &bw, &bh, gfx_blocks_png_data, gfx_blocks_png_len);
-	lodepng_decode32((unsigned char **)&tgui, &iw, &ih, gfx_gui_png_data, gfx_gui_png_len);
+	
+	size_t blocks_len,gui_len;
+	void *blocks_data,*gui_data;
+	
+	if(loadFromFile){
+		blocks_data = loadFile(tBlocks->filename,&blocks_len);
+		gui_data    = loadFile(tGui->filename,&gui_len);
+	}else{
+		blocks_data = gfx_blocks_png_data;
+		blocks_len  = gfx_blocks_png_len;
+		gui_data    = gfx_gui_png_data;
+		gui_len     = gfx_gui_png_len;
+	}
+	
+	lodepng_decode32((unsigned char **)&tblocks, &bw, &bh, blocks_data, blocks_len);
+	lodepng_decode32((unsigned char **)&tgui, &iw, &ih, gui_data, gui_len);
+	
+	if(loadFromFile){
+		free(blocks_data);
+		free(gui_data);
+	}
 
 	for(int i=0;i<256;i++){
 		if(!blockTypeValid(i)){continue;}
@@ -155,10 +176,30 @@ void textureBuildBlockIcons(){
 }
 
 void textureInit(){
-	tBlocks      = textureNew(gfx_blocks_png_data,    gfx_blocks_png_len    );
-	tCursor      = textureNew(gfx_cursor_png_data,    gfx_cursor_png_len    );
-	tGui         = textureNew(gfx_gui_png_data,       gfx_gui_png_len       );
-	tCrosshair   = textureNew(gfx_crosshair_png_data, gfx_crosshair_png_len );
-	tRope        = textureNew(gfx_rope_png_data,      gfx_rope_png_len      );
-	tBlockMining = textureNew(gfx_mining_png_data,    gfx_mining_png_len    );
+	tBlocks      = textureNew(gfx_blocks_png_data,    gfx_blocks_png_len   ,"client/gfx/blocks.png");
+	tCursor      = textureNew(gfx_cursor_png_data,    gfx_cursor_png_len   ,"client/gfx/cursor.png");
+	tGui         = textureNew(gfx_gui_png_data,       gfx_gui_png_len      ,"client/gfx/gui.png");
+	tCrosshair   = textureNew(gfx_crosshair_png_data, gfx_crosshair_png_len,"client/gfx/crosshair.png");
+	tRope        = textureNew(gfx_rope_png_data,      gfx_rope_png_len     ,"client/gfx/rope.png");
+	tBlockMining = textureNew(gfx_mining_png_data,    gfx_mining_png_len   ,"client/gfx/mining.png");
+}
+
+void reloadTexture(texture *tex){
+	size_t dataLen;
+	void *data;
+	if((tex->filename == NULL) || (tex->filename[0] == 0)){return;}
+	data = loadFile(tex->filename,&dataLen);
+	if(data != NULL){
+		fprintf(stderr,"Loading %s\n",tex->filename);
+		textureLoad(tex,data,dataLen);
+		free(data);
+	}
+}
+
+void textureReload(){
+	fprintf(stderr,"Reloading all textures\n");
+	for(int i=0;i<textureCount;i++){
+		reloadTexture(&textureList[i]);
+	}
+	textureBuildBlockIcons(1);
 }

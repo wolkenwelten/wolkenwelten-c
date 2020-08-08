@@ -99,6 +99,9 @@ int main( int argc, char* argv[] ){
 	initOptions(argc,argv);
 	initSDL();
 	seedRNG(time(NULL));
+	
+	setvbuf(stdout, NULL, _IONBF, 0);
+	setvbuf(stderr, NULL, _IONBF, 0);
 
 
 	bigchungusInit(&world);
@@ -116,7 +119,7 @@ int main( int argc, char* argv[] ){
 	recipeInit();
 
 	modsInit();
-	textureBuildBlockIcons();
+	textureBuildBlockIcons(0);
 
 	if(gameRunning){
 		hideMouseCursor();
