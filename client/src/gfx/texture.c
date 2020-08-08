@@ -193,6 +193,9 @@ void reloadTexture(texture *tex){
 		fprintf(stderr,"Loading %s\n",tex->filename);
 		textureLoad(tex,data,dataLen);
 		free(data);
+		if((tex == tBlocks) || (tex == tGui)){
+			textureBuildBlockIcons(1);
+		}
 	}
 }
 
@@ -201,5 +204,4 @@ void textureReload(){
 	for(int i=0;i<textureCount;i++){
 		reloadTexture(&textureList[i]);
 	}
-	textureBuildBlockIcons(1);
 }
