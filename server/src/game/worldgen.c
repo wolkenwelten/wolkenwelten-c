@@ -58,16 +58,31 @@ void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
 
 	if((w < 8) || (h < 8) || (d < 8)){
 		if((w <= 4) && (h <= 4) && (d <= 4)){
-			int r = rngValM(16);
+			int r = rngValM(64);
 			switch(r){
 				case 0:
+				case 1:
+				case 2:
+				case 3:
 					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,13);
 				break;
-				case 1:
+				
+				case 4:
+				case 5:
+				case 6:
+				case 7:
 					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,4);
 				break;
-				case 2:
+				
+				case 8:
+				case 9:
+				case 10:
+				case 11:
 					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,1);
+				break;
+				
+				case 63:
+					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,18);
 				break;
 				default:
 					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,3);
