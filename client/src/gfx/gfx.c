@@ -119,10 +119,13 @@ void renderFrame(){
 	renderUI();
 	swapWindow();
 	fpsTick();
+	checkTexturesForReloading();
 }
 
 void renderMenuFrame(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderMenu();
 	swapWindow();
+	fpsTick();
+	checkTexturesForReloading();
 }

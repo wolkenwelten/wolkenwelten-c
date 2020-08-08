@@ -1,9 +1,11 @@
 #pragma once
 #include <stddef.h>
+#include <time.h>
 
 typedef struct {
 	unsigned int ID,w,h;
 	char *filename;
+	time_t modTime;
 } texture;
 
 texture *textureNew (const unsigned char *data, size_t dataLen, char *filename);
@@ -12,6 +14,7 @@ void     textureBind(const texture *tex);
 void     textureInit();
 void     textureBuildBlockIcons(int loadFromFile);
 void     textureReload();
+void     checkTexturesForReloading();
 
 extern texture *tBlocks;
 extern texture *tGui;

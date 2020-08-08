@@ -11,11 +11,12 @@
 char playerName[28];
 char serverName[64];
 
-float optionMusicVolume = 0.75f;
-float optionSoundVolume = 1.f;
-int   optionWorldSeed   = 0;
-bool  optionDebugInfo   = false;
-bool  optionFullscreen  = false;
+float optionMusicVolume      = 0.75f;
+float optionSoundVolume      = 1.f;
+int   optionWorldSeed        = 0;
+bool  optionDebugInfo        = false;
+bool  optionFullscreen       = false;
+bool  optionRuntimeReloading = false;
 
 void printVersion(){
 	printf("Wolkenwelten Pre-Alpha\n");
@@ -65,6 +66,9 @@ void parseOptions(int argc,char *argv[]){
 		}
 		if(checkString(argv[i]+1,"fullscreen")){
 			optionFullscreen = true;
+		}
+		if(checkString(argv[i]+1,"runtimeReloading")){
+			optionRuntimeReloading = true;
 		}
 		if(checkString(argv[i]+1,"version")){
 			printVersion();

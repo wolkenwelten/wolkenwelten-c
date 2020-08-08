@@ -1,5 +1,6 @@
 #include "../gfx/texture.h"
 #include "../game/blockType.h"
+#include "../misc/options.h"
 #include "../../../common/src/misc/misc.h"
 #include "../tmp/assets.h"
 
@@ -7,6 +8,7 @@
 #include "../gfx/lodepng.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
 unsigned int boundTexture = 0;
 int textureCount          = 0;
@@ -53,6 +55,7 @@ texture *textureNew(const unsigned char *data, size_t dataLen, char *filename){
 	texture *tex = &textureList[textureCount++];
 	tex->ID = 0;
 	tex->filename = filename;
+	tex->modTime  = time(NULL);
 	textureLoad(tex,data,dataLen);
 	return tex;
 }
@@ -197,6 +200,21 @@ void reloadTexture(texture *tex){
 			textureBuildBlockIcons(1);
 		}
 	}
+}
+
+void checkIfTextureNeedsReloading(texture *tex){
+	struct stat statbuf;
+	if(stat(tex->filename,&statbuf)){return;}
+	if(statbuf.st_mtime <= tex->modTime){return;}
+	tex->modTime = statbuf.st_mtime;
+	reloadTexture(tex);
+}
+
+void checkTexturesForReloading(){
+	static int i=0;
+	if(!optionRuntimeReloading){return;}
+	if(++i >= textureCount){i=0;}
+	checkIfTextureNeedsReloading(&textureList[i]);
 }
 
 void textureReload(){
