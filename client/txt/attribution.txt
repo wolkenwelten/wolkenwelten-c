@@ -4,6 +4,14 @@ covered by its own separate license and copyright notice.
 These projects are listed here with their authors, permission notices,
 disclaimers, and copyright notices.
 
+======== Short Summary =======================================================
+
+SDL2       - https://www.libsdl.org/
+SDL2_mixer - https://www.libsdl.org/projects/SDL_mixer/
+GLEW       - http://glew.sourceforge.net/
+LZ4        - https://github.com/lz4/lz4
+lodepng    - https://github.com/lvandeve/lodepng
+
 ==============================================================================
 
 SDL2
