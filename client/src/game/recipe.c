@@ -85,11 +85,11 @@ void recipeAddIngred(int r,unsigned short nIngredientID,unsigned char nIngredien
 
 void recipeAdd1I(unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID, unsigned char nIngredAmount){
 	int r = recipeCount++;
-	recipes[r].resultID = nResultID;
-	recipes[r].resultAmount = nResultAmount;
-	recipes[r].ingredientID[0] = nIngredID;
+	recipes[r].resultID            = nResultID;
+	recipes[r].resultAmount        = nResultAmount;
+	recipes[r].ingredientID[0]     = nIngredID;
 	recipes[r].ingredientAmount[0] = nIngredAmount;
-	recipes[r].ingredientID[1] = recipes[r].ingredientAmount[1] = 0;
+	recipes[r].ingredientID[1]     = recipes[r].ingredientAmount[1] = 0;
 }
 
 void recipeAdd2I(unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID1, unsigned char nIngredAmount1, unsigned short nIngredID2, unsigned char nIngredAmount2){
@@ -139,7 +139,6 @@ int recipeCanCraft(int r,character *c){
 		if(recipes[r].ingredientID[i] == 0){continue;}
 		if(recipes[r].ingredientAmount[i] == 0){continue;}
 
-		//const int camount = characterGetItemAmount(c,recipes[r].ingredientID[i]) / recipes[r].ingredientAmount[i];
 		const int camount = characterGetItemOrSubstituteAmount(c,recipes[r].ingredientID[i]) / recipes[r].ingredientAmount[i];
 		if(camount < amount){amount = camount;}
 	}
@@ -167,7 +166,6 @@ void recipeDoCraft(int r, character *c,int amount){
 void recipeInit(){
 	ingredientSubstituteAdd(10,5);
 	ingredientSubstituteAdd(10,20);
-	//recipeAdd1I(16,1,  5,1);
 	recipeAdd1I(16,1, 10,1);
 	recipeAdd1I(17,2, 16,1);
 	//recipeAdd1I(14,1, 12,1);

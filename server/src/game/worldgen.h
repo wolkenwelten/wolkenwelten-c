@@ -39,8 +39,8 @@ void worldgenRoots      (worldgen *wgen,int x,int y,int z);
 void worldgenBigRoots   (worldgen *wgen,int x,int y,int z);
 
 void worldgenRock       (worldgen *wgen,int x,int y,int z,int w,int h,int d);
-void worldgenPrism      (worldgen *wgen,int x,int y,int z,int size,int b);
-void worldgenPyramid    (worldgen *wgen,int x,int y,int z,int size,int b);
+void worldgenPrism      (worldgen *wgen,int x,int y,int z,int size,int b,int fb);
+void worldgenPyramid    (worldgen *wgen,int x,int y,int z,int size,int b,int fb);
 void worldgenIsland     (worldgen *wgen,int x,int y,int z,int size);
 void worldgenSCluster   (worldgen *wgen,int x,int y,int z,int size, int csize);
 void worldgenCluster    (worldgen *wgen,int size, int iSize, int iMin,int iMax);

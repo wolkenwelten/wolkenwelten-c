@@ -412,7 +412,7 @@ void worldgenMonolith(worldgen *wgen, int x,int y,int z){
 	}
 }
 
-void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b){
+void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b, int fb){
 	float rsq      = (size*size);
 	float crystalr = rsq / 2.f;
 	if(crystalr < 5.f){crystalr = 0.f;}
@@ -422,7 +422,7 @@ void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b){
 			for(int cz = -size;cz <= size;cz++){
 				const float d = (cx*cx)+(cz*cz)+(cy*cy);
 				if(d < crystalr){
-					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,18);
+					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,fb);
 				}else if(d < rsq){
 					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,b);
 				}
@@ -431,7 +431,7 @@ void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b){
 	}
 }
 
-void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b){
+void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b,int fb){
 	for(int cy=-size;cy<=size;cy++){
 		int r     = (size-abs(cy))/2;
 		float rsq = (r*r)*0.8f;
@@ -441,7 +441,7 @@ void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b){
 			for(int cz = -r;cz <= r;cz++){
 				const float d = (cx*cx)+(cz*cz);
 				if(d < crystalr){
-					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,18);
+					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,fb);
 				} else if(d < rsq){
 					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,b);
 				}
@@ -450,7 +450,7 @@ void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b){
 	}
 }
 
-void worldgenPrism(worldgen *wgen, int x,int y,int z,int size,int b){
+void worldgenPrism(worldgen *wgen, int x,int y,int z,int size,int b,int fb){
 	for(int cy=-size;cy<=size;cy++){
 		int r  = (size-abs(cy))/2;
 		int cr = r / 2;
@@ -463,13 +463,13 @@ void worldgenPrism(worldgen *wgen, int x,int y,int z,int size,int b){
 		if(cr == 0){continue;}
 		for(int cx = -cr;cx <= cr;cx++){
 			for(int cz = -cr;cz <= cr;cz++){
-				chungusSetB(wgen->clay,x+cx,y+cy,z+cz,18);
+				chungusSetB(wgen->clay,x+cx,y+cy,z+cz,fb);
 			}
 		}
 	}
 }
 
-void worldgenPyramid(worldgen *wgen, int x,int y,int z,int size,int b){
+void worldgenPyramid(worldgen *wgen, int x,int y,int z,int size,int b,int fb){
 	for(int cy=-size;cy<=size;cy++){
 		int r  = size-abs(cy);
 		int cr = r / 2;
@@ -482,16 +482,16 @@ void worldgenPyramid(worldgen *wgen, int x,int y,int z,int size,int b){
 		if(cr == 0){continue;}
 		for(int cx = -cr;cx <= cr;cx++){
 			for(int cz = -cr;cz <= cr;cz++){
-				chungusSetB(wgen->clay,x+cx,y+cy,z+cz,18);
+				chungusSetB(wgen->clay,x+cx,y+cy,z+cz,fb);
 			}
 		}
 	}
 }
 
-void worldgenCube(worldgen *wgen, int x, int y, int z, int size, int b){
+void worldgenCube(worldgen *wgen, int x, int y, int z, int size, int b, int fb){
 	chungusBox(wgen->clay,x,y,z,size,size,size,b);
 	if(size > 4){
-		chungusBox(wgen->clay,x+size/4,y+size/4,z+size/4,size/2,size/2,size/2,18);
+		chungusBox(wgen->clay,x+size/4,y+size/4,z+size/4,size/2,size/2,size/2,fb);
 	}
 }
 
@@ -693,6 +693,7 @@ void worldgenDirtIsland(worldgen *wgen, int x,int y,int z,int size){
 
 void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 	int b=12;
+	int fb=18;
 	switch(rngValM(2)){
 		case 0:
 			b = 9;
@@ -731,23 +732,38 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 			}
 		break;
 	}
+	
+	switch(rngValM(4)){
+		case 0:
+			fb=18;
+		break;
+		case 1:
+			fb=13;
+		break;
+		case 2:
+			fb=4;
+		break;
+		case 3:
+			fb=0;
+		break;
+	}
 
 	switch(rngValM(5)){
 		default:
 		case 0:
-			worldgenCube(wgen,x,y,z,size,b);
+			worldgenCube(wgen,x,y,z,size,b,fb);
 		break;
 		case 1:
-			worldgenPrism(wgen,x,y,z,size,b);
+			worldgenPrism(wgen,x,y,z,size,b,fb);
 		break;
 		case 2:
-			worldgenPyramid(wgen,x,y,z,size,b);
+			worldgenPyramid(wgen,x,y,z,size,b,fb);
 		break;
 		case 3:
-			worldgenRoundPrism(wgen,x,y,z,size,b);
+			worldgenRoundPrism(wgen,x,y,z,size,b,fb);
 		break;
 		case 4:
-			worldgenSphere(wgen,x,y,z,size,b);
+			worldgenSphere(wgen,x,y,z,size,b,fb);
 		break;
 	}
 }
