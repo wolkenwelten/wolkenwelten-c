@@ -79,7 +79,7 @@ sanitize: all
 
 .PHONY: rund
 rund: all
-	./wolkenwelten -soundVolume=10 -worldSeed=11 -debugInfo=1 -fullscreen -runtimeReloading
+	./wolkenwelten -soundVolume=10 -worldSeed=18 -debugInfo=1 -fullscreen -runtimeReloading
 
 .PHONY: run
 run: all
