@@ -40,6 +40,8 @@ void bigchungusInit(bigchungus *c){
 	memcpy(c->islandCountModifier,heightmap,sizeof(heightmap));
 	generateNoise(optionWorldSeed ^ 0xF79610E3);
 	memcpy(c->geoworldMap,heightmap,sizeof(heightmap));
+	generateNoise(optionWorldSeed ^ 0x36AC5890);
+	memcpy(c->heightModifier,heightmap,sizeof(heightmap));
 }
 
 void bigchungusFree(bigchungus *c){

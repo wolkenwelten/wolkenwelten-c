@@ -15,11 +15,10 @@ void worldgenLandmass(worldgen *wgen, int layer){
 	generateNoise(wgen->gx ^ wgen->gy ^ wgen->gz ^ 0xA39C13F1);
 	for(int x=0;x<CHUNGUS_SIZE;x++){
 		for(int z=0;z<CHUNGUS_SIZE;z++){
-			int h = MAX(heightmap[x][z],2)/8;
-			if(h < 26){
+			int h = heightmap[x][z]/8 + wgen->heightModifier/4;
+			if(h < 56){
 				chungusBox (wgen->clay,x,CHUNGUS_SIZE/2,z,1,h/2,1,1);
 				chungusBox (wgen->clay,x,(CHUNGUS_SIZE/2)-h/2,z,1,h/2,1,1);
-				//chungusSetB(wgen->clay,x,(CHUNGUS_SIZE/2)+h/2,z,2);
 			}else{
 				chungusBox(wgen->clay,x,CHUNGUS_SIZE/2,z,1,h/2,1,3);
 				chungusBox(wgen->clay,x,(CHUNGUS_SIZE/2)-h/2,z,1,h/2,1,3);

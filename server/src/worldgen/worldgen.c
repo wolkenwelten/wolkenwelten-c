@@ -43,6 +43,7 @@ worldgen *worldgenNew(chungus *nclay){
 	int gy = wgen->gy;
 	int gz = wgen->gz >> 8;
 
+	wgen->heightModifier          = world.heightModifier         [gx][gz];
 	wgen->vegetationConcentration = world.vegetationConcentration[gx][gz];
 	wgen->islandSizeModifier      = world.islandSizeModifier     [gx][gz];
 	wgen->islandCountModifier     = world.islandCountModifier    [gx][gz];

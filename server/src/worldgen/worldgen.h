@@ -11,6 +11,7 @@ typedef struct {
 	int jaggyness;
 	int geoworld;
 
+	unsigned char heightModifier;
 	unsigned char vegetationConcentration;
 	unsigned char islandSizeModifier;
 	unsigned char islandCountModifier;

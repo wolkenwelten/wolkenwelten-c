@@ -8,10 +8,11 @@
 typedef struct {
 	int spawnx, spawny, spawnz;
 	chungus *chungi[256][128][256];
-	unsigned char vegetationConcentration[256][256];
-	unsigned char islandSizeModifier[256][256];
-	unsigned char islandCountModifier[256][256];
-	unsigned char geoworldMap[256][256];
+	unsigned char heightModifier          [256][256];
+	unsigned char vegetationConcentration [256][256];
+	unsigned char islandSizeModifier      [256][256];
+	unsigned char islandCountModifier     [256][256];
+	unsigned char geoworldMap             [256][256];
 
 } bigchungus;
 
