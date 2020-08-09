@@ -116,7 +116,6 @@ void worldgenRemoveDirt(worldgen *wgen){
 	int stoneChance    = 0;
 	int dirtChance     = 0;
 	int monolithChance = 0;
-	//int obeliskChance  = 0;
 	int treeType = rngValM(2);
 	bool hasSpecial = false;
 	if(wgen->minX < 0){wgen->minX = 0;}
@@ -128,52 +127,50 @@ void worldgenRemoveDirt(worldgen *wgen){
 
 	switch(wgen->vegetationChance){
 		case 7:
-			bigTreeChance = 148;
-			treeChance    = 28;
-			shrubChance   = 20;
-			//obeliskChance = 32000;
+			bigTreeChance  =   148;
+			treeChance     =    28;
+			shrubChance    =    20;
 		break;
 		case 6:
-			bigTreeChance = 192;
-			treeChance    = 32;
-			shrubChance   = 24;
-			//obeliskChance = 32000;
+			bigTreeChance  =   192;
+			treeChance     =    32;
+			shrubChance    =    24;
 		break;
 		default:
 		case 5:
-			bigTreeChance = 256;
-			treeChance    = 48;
-			shrubChance   = 48;
+			bigTreeChance  =   256;
+			treeChance     =    48;
+			shrubChance    =    48;
 		break;
 		case 4:
-			bigTreeChance = 512;
-			treeChance    = 96;
-			shrubChance   = 64;
+			bigTreeChance  =   512;
+			treeChance     =    96;
+			shrubChance    =    64;
 		break;
 		case 3:
-			treeChance    = 256;
-			shrubChance   = 96;
-			stoneChance   = 256;
+			treeChance     =   256;
+			shrubChance    =    96;
+			stoneChance    =   256;
 		break;
 		case 2:
-			shrubChance   = 64;
-			dirtChance    = 32;
-			stoneChance   = 128;
+			shrubChance    =    64;
+			dirtChance     =    32;
+			stoneChance    =   128;
 		break;
 		case 1:
-			shrubChance    = 256;
-			dirtChance     = 3;
-			stoneChance    = 64;
-			treeChance     = 1024;
-			treeType       = 2;
+			shrubChance    =   256;
+			dirtChance     =     3;
+			stoneChance    =    64;
+			treeChance     =  1024;
+			treeType       =     2;
 		break;
 		case 0:
-			shrubChance    = 1024;
-			dirtChance     = 2;
-			stoneChance    = 32;
+			shrubChance    =  1024;
+			dirtChance     =     2;
+			stoneChance    =    32;
 			monolithChance = 32000;
-			treeChance     = 2048;
-			treeType       = 2;
+			treeChance     =  2048;
+			treeType       =     2;
 		break;
 	}
 
@@ -181,8 +178,8 @@ void worldgenRemoveDirt(worldgen *wgen){
 		int z = cz&0xF;
 		for(int cx=wgen->minX;cx<wgen->maxX;cx++){
 			int x = cx&0xF;
-			int airBlocks=8;
-			uint8_t lastBlock=0;
+			int airBlocks = 8;
+			uint8_t lastBlock = 0;
 			chunk *chnk = NULL;
 			for(int cy=wgen->maxY;cy>=wgen->minY;cy--){
 				if((chnk == NULL) || ((cy&0xF)==0xF)){
@@ -207,14 +204,6 @@ void worldgenRemoveDirt(worldgen *wgen){
 
 					case 1:
 						if(!hasSpecial){
-							/*
-							if(obeliskChance && (rngVal(obeliskChance)==12)){
-								generateObelisk(cx,cy,cz);
-								lastBlock = 12;
-								airBlocks = 0;
-								hasSpecial = true;
-								continue;
-							}*/
 							if(monolithChance && (rngValM(monolithChance)==12)){
 								worldgenMonolith(wgen,cx,cy,cz);
 								lastBlock = 9;
@@ -341,10 +330,10 @@ void worldgenCluster(worldgen *wgen, int size, int iSize, int iMin,int iMax){
 		iMax += ((float)iMax*((wgen->islandCountModifier-128.f)/128.f));
 	}
 	if(wgen->islandSizeModifier < 128){
-		size  -= ((float)size*((128.f-wgen->islandSizeModifier)/128.f));
+		size  -= ((float) size*((128.f-wgen->islandSizeModifier)/128.f));
 		iSize -= ((float)iSize*((128.f-wgen->islandSizeModifier)/128.f));
 	}else{
-		size  += ((float)size*((wgen->islandSizeModifier-128.f)/128.f));
+		size  += ((float) size*((wgen->islandSizeModifier-128.f)/128.f));
 		iSize += ((float)iSize*((wgen->islandSizeModifier-128.f)/128.f));
 	}
 
