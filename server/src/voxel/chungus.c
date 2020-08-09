@@ -2,7 +2,7 @@
 
 #include "../game/entity.h"
 #include "../game/blockType.h"
-#include "../game/worldgen.h"
+#include "../worldgen/worldgen.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/misc/misc.h"
 
