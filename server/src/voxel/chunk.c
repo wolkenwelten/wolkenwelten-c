@@ -7,10 +7,10 @@
 #include <stdio.h>
 #include <string.h>
 
-chunk chunkList[1 << 17];
-unsigned int chunkFreeCount=0;
-unsigned int chunkCount=0;
-chunk *chunkFirstFree = NULL;
+chunk chunkList[1 << 18];
+unsigned int chunkFreeCount = 0;
+unsigned int chunkCount     = 0;
+chunk *chunkFirstFree       = NULL;
 
 chunk *chunkNew(uint16_t x,uint16_t y,uint16_t z){
 	chunk *c = NULL;

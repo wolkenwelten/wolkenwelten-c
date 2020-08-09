@@ -12,6 +12,7 @@
 #include "geoworld.h"
 #include "island.h"
 #include "labyrinth.h"
+#include "landmass.h"
 #include "vegetation.h"
 
 #include <math.h>
@@ -101,11 +102,22 @@ void worldgenFindSpawn(worldgen *wgen, int x,int z,int tries){
 	}
 }
 
+void worldgenTestpattern(worldgen *wgen){
+	uint8_t b=1;
+	for(int x=0;x<CHUNK_SIZE;x+=2){
+		for(int y=0;y<CHUNK_SIZE;y+=2){
+			for(int z=0;z<CHUNK_SIZE;z+=2){
+				chungusFill(wgen->clay,x*CHUNK_SIZE,y*CHUNK_SIZE,z*CHUNK_SIZE,b);
+				if(++b > 21){b=1;}
+			}
+		}
+	}
+}
+
 void worldgenGenerate(worldgen *wgen){
 	//static unsigned int averageTicks=0;
 	static unsigned int averageRuns=0;
-
-	uint8_t b;
+	
 	int oldSeed = getRNGSeed();
 	//unsigned int startTicks = getTicks();
 	unsigned int seed = (optionWorldSeed | (optionWorldSeed << 16));
@@ -126,15 +138,15 @@ void worldgenGenerate(worldgen *wgen){
 	}
 	switch(wgen->layer){
 		default:
-			b=1;
-			for(int x=0;x<CHUNK_SIZE;x+=2){
-				for(int y=0;y<CHUNK_SIZE;y+=2){
-					for(int z=0;z<CHUNK_SIZE;z+=2){
-						chungusFill(wgen->clay,x*CHUNK_SIZE,y*CHUNK_SIZE,z*CHUNK_SIZE,b);
-						if(++b > 21){b=1;}
-					}
-				}
-			}
+			worldgenTestpattern(wgen);
+		break;
+		
+		case 15:
+		case 14:
+			worldgenCluster(wgen,CHUNGUS_SIZE/56,CHUNGUS_SIZE/56,1,4);
+		break;
+		case 13:
+			worldgenLandmass(wgen,wgen->layer - 13);
 		break;
 
 		case 12:
