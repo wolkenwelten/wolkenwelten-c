@@ -1,10 +1,12 @@
 #include "worldgen.h"
 
+
 #include "../main.h"
 #include "../misc/options.h"
 #include "../voxel/chunk.h"
 #include "../voxel/chungus.h"
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
 
 #include <math.h>
@@ -14,9 +16,6 @@
 worldgen worldgenList[4];
 int worldgenCount = 0;
 worldgen *worldgenFirstFree = NULL;
-
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 worldgen *worldgenNew(chungus *nclay){
 	worldgen *wgen = NULL;

@@ -1,7 +1,6 @@
 #pragma once
+#include "../../../common/src/common.h"
 #include "../gfx/textMesh.h"
-
-#include <stdbool.h>
 
 void showInventory();
 void hideInventory();

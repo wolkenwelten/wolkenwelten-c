@@ -1,9 +1,7 @@
 #pragma once
-
+#include "../../../common/src/common.h"
 #include "../game/entity.h"
 #include "../voxel/chungus.h"
-
-#include <stdint.h>
 
 #define WORLD_SIZE (16*16*256)
 

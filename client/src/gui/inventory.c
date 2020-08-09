@@ -10,9 +10,6 @@
 
 #include <math.h>
 
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
 const float ITEMTILE = (1.f/32.f);
 bool inventoryOpen = false;
 bool inventoryPickup = false;

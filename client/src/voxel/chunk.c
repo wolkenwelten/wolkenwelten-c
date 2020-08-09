@@ -8,6 +8,7 @@
 
 #include <math.h>
 #include <string.h>
+#include <stdio.h>
 
 
 #pragma pack(push, 1)
@@ -36,9 +37,6 @@ chunk *chunkFirstFree = NULL;
 	const float CHUNK_RENDER_DISTANCE = 512.f;
 	const float CHUNK_FADEOUT_DISTANCE = 64.f;
 #endif
-
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 int     chunkGetFree()               { return chunkFreeCount;           }
 int     chunkGetActive()             { return chunkCount;               }

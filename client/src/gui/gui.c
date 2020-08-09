@@ -27,6 +27,7 @@
 #include "../network/client.h"
 
 #include <string.h>
+#include <stdio.h>
 
 #define ITEMTILE (1.f/32.f)
 

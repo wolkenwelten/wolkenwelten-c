@@ -1,4 +1,5 @@
 #pragma once
+#include "../../../common/src/common.h"
 #include "../game/item.h"
 #include "../game/character.h"
 

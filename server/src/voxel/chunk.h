@@ -1,5 +1,5 @@
 #pragma once
-#include <stdint.h>
+#include "../../../common/src/common.h"
 
 #define CHUNK_SIZE (16)
 extern const float CHUNK_RENDER_DISTANCE;

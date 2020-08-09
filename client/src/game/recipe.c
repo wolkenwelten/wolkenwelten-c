@@ -26,9 +26,6 @@ ingredientSubstitute *substitutes[512];
 ingredientSubstitute substitutePool[16];
 int substitutePoolUsed=0;
 
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
 void ingredientSubstituteAdd(unsigned short ingredient, unsigned short substitute){
 	ingredientSubstitute *s,*sub = &substitutePool[substitutePoolUsed++];
 	

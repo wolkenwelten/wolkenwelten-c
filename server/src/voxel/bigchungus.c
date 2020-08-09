@@ -15,9 +15,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
 bigchungus world;
 
 float chungusRoughDistance(character *cam, float x, float y,float z) {

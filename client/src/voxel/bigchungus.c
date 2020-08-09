@@ -19,9 +19,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
 bigchungus world;
 
 bool chungusInFrustum(float x,float y,float z) {
