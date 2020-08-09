@@ -9,7 +9,8 @@ SERVER_CFLAGS    :=
 WINLIBS          := -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -lgdi32 -lopengl32 -lshlwapi -lsetupapi -lws2_32
 STATICLIBS       := -static-libgcc -static -lmingw32 -lm -lstdc++ -lpthread -lglew32 -lopengl32 -lSDL2main -lSDL2 -lSDL2_mixer $(WINLIBS)
 CLIENT_LIBS      := $(WINLIBS) $(shell pkg-config --cflags sdl2 sdl2_mixer glew) -lglew32 -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer
-WEBEXCLUDE       += --exclude=releases/win/wolkenwelten.exe
+
+WEBEXCLUDE       += --exclude=releases/win/wolkenwelten/ --exclude=releases/win/*.res
 
 .PHONY: all
 all: wolkenwelten.exe wolkenwelten-server.exe
