@@ -12,7 +12,10 @@ unsigned short recipeGetResultID        (int r);
 unsigned char  recipeGetResultAmount    (int r);
 unsigned short recipeGetIngredientID    (int r, int i);
 unsigned char  recipeGetIngredientAmount(int r, int i);
-void           ingredientSubstituteAdd  (unsigned short ingredient, unsigned short substitute);
+
+void           ingredientSubstituteAdd      (unsigned short ingredient, unsigned short substitute);
+int            ingredientSubstituteGetAmount(unsigned short ingredient);
+unsigned short ingredientSubstituteGetSub   (unsigned short ingredient, int i);
 
 int  recipeGetCount();
 int  recipeCanCraft(int r,character *c);

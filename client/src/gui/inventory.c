@@ -137,12 +137,13 @@ void drawInventory(textMesh *guim){
 				b = recipeGetIngredientID(r,ii);
 				a = recipeGetIngredientAmount(r,ii);
 				if((b == 0) || (a <= 0)){ break;}
+				b = ingredientSubstituteGetSub(b,(ticks/96) % (ingredientSubstituteGetAmount(b)+1));
+				
 				u = b % 32;
 				v = b / 32;
 				if(ii > 0){
 					textMeshBox(guim,xx-tilesize+tilesize/4+animX/2,yy+tilesize/4+animY/2,tilesize/2,tilesize/2,24.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 				}
-
 				textMeshBox(guim,xx+itemtilesizeoff,yy+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
 				guim->sx = xx+tilesize-tilesize/3;
 				guim->sy = yy+(itemtilesize-itemtilesizeoff);

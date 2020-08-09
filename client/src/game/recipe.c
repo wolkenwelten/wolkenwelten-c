@@ -41,6 +41,24 @@ void ingredientSubstituteAdd(unsigned short ingredient, unsigned short substitut
 	}
 }
 
+int ingredientSubstituteGetAmount(unsigned short ingredient){
+	int ret = 0;
+
+	for(ingredientSubstitute *s = substitutes[ingredient];s != NULL;s = s->next){
+		ret++;
+	}
+
+	return ret;
+}
+
+unsigned short ingredientSubstituteGetSub(unsigned short ingredient, int i){
+	for(ingredientSubstitute *s = substitutes[ingredient];s != NULL;s = s->next){
+		if(i-- == 0){ return s->substitute; }
+	}
+
+	return ingredient;
+}
+
 int recipeGetCount(){
 	return recipeCount;
 }
@@ -103,12 +121,11 @@ void recipeAdd2I(unsigned short nResultID, unsigned char nResultAmount, unsigned
 int characterGetItemOrSubstituteAmount(character *c, unsigned short i){
 	ingredientSubstitute *s;
 	int ret = characterGetItemAmount(c,i);
-	if(substitutes[i] == NULL){return ret;}
 	
-	for(s = substitutes[i];s->next != NULL;s = s->next){
+	for(s = substitutes[i];s != NULL;s = s->next){
 		ret += characterGetItemAmount(c,s->substitute);
 	}
-	return ret + characterGetItemAmount(c,s->substitute);
+	return ret;
 }
 
 int characterDecItemOrSubstituteAmount(character *c, unsigned short i, int a){
@@ -117,15 +134,12 @@ int characterDecItemOrSubstituteAmount(character *c, unsigned short i, int a){
 	int ret = characterGetItemAmount(c,i);
 	a -= characterDecItemAmount(c,i,MIN(ret,a));
 	if(a <= 0){return retAmount;}
-	if(substitutes[i] == NULL){return retAmount-a;}
 	
-	for(s = substitutes[i];s->next != NULL;s = s->next){
+	for(s = substitutes[i];s != NULL;s = s->next){
 		ret = characterGetItemAmount(c,s->substitute);
 		a  -= characterDecItemAmount(c,s->substitute,MIN(ret,a));
 		if(a <= 0){return retAmount;}
 	}
-	ret = characterGetItemAmount(c,s->substitute);
-	a  -= characterDecItemAmount(c,s->substitute,MIN(ret,a));
 	return retAmount-a;
 }
 
