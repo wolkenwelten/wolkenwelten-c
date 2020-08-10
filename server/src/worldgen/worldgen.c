@@ -144,7 +144,7 @@ void worldgenGenerate(worldgen *wgen){
 		
 		case 15:
 		case 14:
-			worldgenCluster(wgen,CHUNGUS_SIZE/56,CHUNGUS_SIZE/56,1,4);
+			worldgenCluster(wgen,CHUNGUS_SIZE/64,CHUNGUS_SIZE/64,1,2);
 		break;
 		case 13:
 			worldgenLandmass(wgen,wgen->layer - 13);
