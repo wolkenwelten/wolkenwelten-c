@@ -159,6 +159,18 @@ void worldgenBigSpruce(worldgen *wgen, int x,int y,int z){
 	worldgenBigRoots(wgen,x,y-5,z);
 }
 
+void worldgenSurroundWithLeafes(worldgen *wgen, int x, int y, int z, int leafes){
+	for(int cx=-1;cx<=1;cx++){
+		for(int cy=0;cy<=1;cy++){
+			for(int cz=-1;cz<=1;cz++){
+				if(chungusGetB(wgen->clay,x+cx,y+cy,z+cz) == 0){
+					chungusSetB(wgen->clay,x+cx,y+cy,z+cz,leafes);
+				}
+			}
+		}
+	}
+}
+
 void worldgenOak(worldgen *wgen, int x,int y,int z){
 	chungus *clay = wgen->clay;
 	int size       = rngValMM(8,12);
@@ -166,6 +178,7 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 	int lsize      = 3;
 	int leafes     = 11;
 	int logblock   = 10;
+	int r;
 	if(rngValM(16) == 0){leafes   = 19;} // We Sakura now
 	if(rngValM(16) == 0){logblock = 20;} // We Birch now
 
@@ -191,6 +204,46 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 		}
 		if(cy < size-2){
 			chungusSetB(clay,x,cy+y,z,logblock);
+			if(cy > 3){
+				r = rngValM(8);
+				switch(r){
+					case 1:
+						chungusSetB(clay,x+1,cy+y,z,logblock);
+						worldgenSurroundWithLeafes(wgen,x+1,cy+y,z,leafes);
+						if(rngValM(4) == 0){
+							chungusSetB(clay,x+2,cy+y,z,logblock);
+							worldgenSurroundWithLeafes(wgen,x+2,cy+y,z,leafes);
+						}
+					break;
+					
+					case 2:
+						chungusSetB(clay,x-1,cy+y,z,logblock);
+						worldgenSurroundWithLeafes(wgen,x-1,cy+y,z,leafes);
+						if(rngValM(4) == 0){
+							chungusSetB(clay,x-2,cy+y,z,logblock);
+							worldgenSurroundWithLeafes(wgen,x-2,cy+y,z,leafes);
+						}
+					break;
+					
+					case 3:
+						chungusSetB(clay,x,cy+y,z+1,logblock);
+						worldgenSurroundWithLeafes(wgen,x,cy+y,z+1,leafes);
+						if(rngValM(4) == 0){
+							chungusSetB(clay,x,cy+y,z+2,logblock);
+							worldgenSurroundWithLeafes(wgen,x,cy+y,z+2,leafes);
+						}
+					break;
+					
+					case 4:
+						chungusSetB(clay,x,cy+y,z-1,logblock);
+						worldgenSurroundWithLeafes(wgen,x,cy+y,z-1,leafes);
+						if(rngValM(4) == 0){
+							chungusSetB(clay,x,cy+y,z-2,logblock);
+							worldgenSurroundWithLeafes(wgen,x,cy+y,z-2,leafes);
+						}
+					break;
+				}
+			}
 		}
 	}
 	worldgenRoots(wgen,x,y-1,z);
