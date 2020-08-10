@@ -271,6 +271,7 @@ void clientHandleEvents(){
 }
 
 void clientGoodbye(){
+	if(serverSocket <= 0){return;}
 	msgGoodbye();
 	clientSendAllToServer();
 }
