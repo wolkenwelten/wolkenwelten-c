@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
+#include "../gui/widget.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
@@ -138,53 +139,23 @@ void drawMenuButtons(){
 	textMeshAddStrPS(menuM,32,176,2,playerNameBuf);
 
 	#ifndef __EMSCRIPTEN__
-	textMeshBox(menuM,
-		screenWidth-256-32, buttonY,
-		256, 32,
-		19.f/32.f, 31.f/32.f,
-		1.f/32.f,   1.f/32.f,
-		0xFF555555);
-	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"  Singleplayer");
+	drawButton(menuM,"Singleplayer",0,screenWidth-256-32,buttonY,256,32);
 	#endif
 	buttonY += 32 + 16;
 
-	textMeshBox(menuM,
-		screenWidth-256-32, buttonY,
-		256, 32,
-		19.f/32.f, 31.f/32.f,
-		1.f/32.f,   1.f/32.f,
-		0xFF555555);
-	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"  Multiplayer");
+	drawButton(menuM,"Multiplayer",0,screenWidth-256-32,buttonY,256,32);
 	buttonY += 32 + 16;
 
-	textMeshBox(menuM,
-		screenWidth-256-32, buttonY,
-		256, 32,
-		19.f/32.f, 31.f/32.f,
-		1.f/32.f,   1.f/32.f,
-		0xFF555555);
-	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"  Change Name");
+	drawButton(menuM,"Change Name",0,screenWidth-256-32,buttonY,256,32);
 	buttonY += 32 + 16;
 	
-	textMeshBox(menuM,
-		screenWidth-256-32, buttonY,
-		256, 32,
-		19.f/32.f, 31.f/32.f,
-		1.f/32.f,   1.f/32.f,
-		0xFF555555);
-	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"  Attribution");
+	drawButton(menuM,"Attribution",0,screenWidth-256-32,buttonY,256,32);
 	buttonY += 32 + 16;
 
 	#ifndef __EMSCRIPTEN__
-	textMeshBox(menuM,
-		screenWidth-256-32, buttonY,
-		256, 32,
-		19.f/32.f, 31.f/32.f,
-		1.f/32.f,   1.f/32.f,
-		0xFF555555);
-	textMeshAddStrPS(menuM,screenWidth-256-32,buttonY+8,2,"      Quit");
-	buttonY += 32 + 16;
+	drawButton(menuM,"Quit",0,screenWidth-256-32,buttonY,256,32);
 	#endif
+	buttonY += 32 + 16;
 
 	if(textInputActive && (textInputLock == 2)){
 		textMeshAddStrPS(menuM,8,screenHeight-42,2,"Servername:");

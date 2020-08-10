@@ -1,7 +1,7 @@
 #pragma once
 #include <stdbool.h>
 
-extern int mousex,mousey;
+extern int mousex,mousey,mouseClicked[3];
 extern bool mouseHidden;
 extern float matOrthoProj[16];
 

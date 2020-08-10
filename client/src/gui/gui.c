@@ -37,6 +37,7 @@ textMesh *cursorMesh;
 
 bool mouseHidden   = false;
 int mousex,mousey;
+int mouseClicked[3] = {0,0,0};
 
 float matOrthoProj[16];
 
@@ -111,7 +112,6 @@ void drawCursor(){
 }
 
 void updateMouse(){
-	static unsigned int mouseClicked[3] = {0,0,0};
 	const int oldmx = mousex;
 	const int oldmy = mousey;
 	int btn = getMouseState(&mousex,&mousey);
@@ -125,15 +125,17 @@ void updateMouse(){
 
 	for(int cbtn = 0;cbtn < 3;cbtn++){
 		if(!(btn & (1<<cbtn))){
+			if(mouseClicked[cbtn]){
+				updateMenuClick(mousex,mousey,cbtn+1);
+			}
 			mouseClicked[cbtn] = 0;
-		}else if((btn & (1<<cbtn)) && (getTicks() > (mouseClicked[cbtn]+500))){
+		}else if((btn & (1<<cbtn)) && ((int)getTicks() > (mouseClicked[cbtn]+500))){
 			if(mouseClicked[cbtn] == 0){
 				mouseClicked[cbtn] = getTicks();
 			}else{
 				mouseClicked[cbtn]+=50;
 			}
 			updateInventoryClick(mousex,mousey,cbtn+1);
-			updateMenuClick(mousex,mousey,cbtn+1);
 		}
 	}
 }
