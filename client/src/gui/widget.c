@@ -1,3 +1,4 @@
+#define _DEFAULT_SOURCE
 #include "widget.h"
 
 #include "gui.h"
@@ -9,7 +10,7 @@ void drawButton(textMesh *m, const char *label, int state, int x, int y, int w, 
 	uint32_t bcolor = 0xFF333333;
 	int textYOff    = (h - (2*8))/2;
 	int textXOff    = (w-(strnlen(label,w/16)*16))/2;
-	
+
 	if(state == 0){
 		if(mouseInBox(x,y,w,h)){
 			if(mouseClicked[0]){
@@ -19,7 +20,7 @@ void drawButton(textMesh *m, const char *label, int state, int x, int y, int w, 
 			}
 		}
 	}
-	
+
 	if(state == 1){
 		color = 0xFF444444;
 	}else if(state == 2){
@@ -30,14 +31,14 @@ void drawButton(textMesh *m, const char *label, int state, int x, int y, int w, 
 		tcolor = bcolor;
 		bcolor = tmp;
 	}
-	
+
 	textMeshBox(m,
 		x+1, y+1,
 		w-1, h-1,
 		19.f/32.f, 31.f/32.f,
 		 1.f/32.f,  1.f/32.f,
 		color);
-	
+
 	textMeshBox(m,
 		x, y,
 		w, 1,
@@ -50,7 +51,7 @@ void drawButton(textMesh *m, const char *label, int state, int x, int y, int w, 
 		19.f/32.f, 31.f/32.f,
 		 1.f/32.f,  1.f/32.f,
 		tcolor);
-	
+
 	textMeshBox(m,
 		x, y+h,
 		w, 1,
@@ -63,7 +64,7 @@ void drawButton(textMesh *m, const char *label, int state, int x, int y, int w, 
 		19.f/32.f, 31.f/32.f,
 		 1.f/32.f,  1.f/32.f,
 		bcolor);
-	
+
 	textMeshAddStrPS(m,x+textXOff,y+textYOff,2,label);
 }
 
