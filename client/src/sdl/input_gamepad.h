@@ -8,6 +8,7 @@ void checkForGamepad();
 void checkForHaptic();
 void controllerDeviceEvent(const SDL_Event *e);
 
+void doGamepadMenuUpdate();
 void doGamepadupdate(float *vx,float *vy,float *vz);
 void gamepadEventHandler(const SDL_Event *e);
 bool gamepadSneak();

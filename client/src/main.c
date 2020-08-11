@@ -90,6 +90,7 @@ void mainloop(){
 		chatCheckInput();
 		clientSendAllToServer();
 	}else{
+		doGamepadMenuUpdate();
 		renderMenuFrame();
 	}
 }

@@ -1,6 +1,7 @@
 #include "input_gamepad.h"
 #include "sdl.h"
 #include "../game/character.h"
+#include "../gui/menu.h"
 #include "../gui/inventory.h"
 #include "../main.h"
 
@@ -96,6 +97,21 @@ void controllerDeviceEvent(const SDL_Event *e){
 	}
 }
 
+void doGamepadMenuUpdate(){
+	if(gamepadButtons[0]){
+		gamepadButtons[0] = false;
+		updateMenuGamepad(1);
+	}
+	if(gamepadButtons[11]){
+		gamepadButtons[11] = false;
+		changeMenuSelection(-1);
+	}
+	if(gamepadButtons[12]){
+		gamepadButtons[12] = false;
+		changeMenuSelection(1);
+	}
+}
+
 void doGamepadupdate(float *vx,float *vy,float *vz){
 	static unsigned int lastDown[16] = {0};
 	if(!gamepadActive){return;}
@@ -116,6 +132,7 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 	if(!gamepadButtons[0]){
 		lastDown[0] = 0;
 	}else if(gamepadButtons[0] && (curticks > (lastDown[0] + 600))){
+		
 		if(isInventoryOpen()){
 			if(lastDown[0] == 0){
 				lastDown[0] = curticks;
@@ -151,12 +168,14 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 
 	if(gamepadButtons[11]){
 		gamepadButtons[11] = false;
+		changeMenuSelection(1);
 		if(isInventoryOpen()){
 			changeInventorySelection(0,1);
 		}
 	}
 	if(gamepadButtons[12]){
 		gamepadButtons[12] = false;
+		changeMenuSelection(-1);
 		if(isInventoryOpen()){
 			changeInventorySelection(0,-1);
 		}

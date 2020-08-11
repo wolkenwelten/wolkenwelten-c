@@ -19,8 +19,9 @@
 textMesh *menuM;
 char *menuError = "";
 
-bool showAttribution = false;
+bool showAttribution  = false;
 int  attributionLines = 0;
+static int gamepadSelection = -1;
 
 void initMenu(){
 	menuM = textMeshNew();
@@ -125,6 +126,7 @@ void drawMenuAttributions(){
 void drawMenuButtons(){
 	int buttonY = 32;
 	char playerNameBuf[48];
+	int ci = gamepadSelection;
 	
 	textMeshAddStrPS(menuM,32,32,4,"Wolkenwelten");
 	textMeshPrintfPS(menuM,32,72,2,"Pre-Alpha %s [%.8s]",VERSION,COMMIT);
@@ -139,21 +141,23 @@ void drawMenuButtons(){
 	textMeshAddStrPS(menuM,32,176,2,playerNameBuf);
 
 	#ifndef __EMSCRIPTEN__
-	drawButton(menuM,"Singleplayer",0,screenWidth-256-32,buttonY,256,32);
+	drawButton(menuM,"Singleplayer",ci-- == 0,screenWidth-256-32,buttonY,256,32);
+	#else
+	ci--;
 	#endif
 	buttonY += 32 + 16;
 
-	drawButton(menuM,"Multiplayer",0,screenWidth-256-32,buttonY,256,32);
+	drawButton(menuM,"Multiplayer",ci-- == 0,screenWidth-256-32,buttonY,256,32);
 	buttonY += 32 + 16;
 
-	drawButton(menuM,"Change Name",0,screenWidth-256-32,buttonY,256,32);
+	drawButton(menuM,"Change Name",ci-- == 0,screenWidth-256-32,buttonY,256,32);
 	buttonY += 32 + 16;
 	
-	drawButton(menuM,"Attribution",0,screenWidth-256-32,buttonY,256,32);
+	drawButton(menuM,"Attribution",ci-- == 0,screenWidth-256-32,buttonY,256,32);
 	buttonY += 32 + 16;
 
 	#ifndef __EMSCRIPTEN__
-	drawButton(menuM,"Quit",0,screenWidth-256-32,buttonY,256,32);
+	drawButton(menuM,"Quit",ci-- == 0,screenWidth-256-32,buttonY,256,32);
 	#endif
 	buttonY += 32 + 16;
 
@@ -190,3 +194,52 @@ void renderMenu(){
 	drawCursor();
 }
 
+void updateMenuGamepad(int btn){
+	mouseHidden = true;
+	
+	if(showAttribution){
+		showAttribution = false;
+		return;
+	}
+	
+	if(btn != 1){return;}
+	switch(gamepadSelection){
+		case 0:
+			#ifndef __EMSCRIPTEN__
+			startSingleplayer();
+			#endif
+		break;
+		
+		case 1:
+			if(!textInputActive){
+				textInput(8,screenHeight-24,256,16,2);
+			}
+		break;
+		
+		case 2:
+			if(!textInputActive){
+				textInput(8,screenHeight-24,256,16,3);
+			}
+		break;
+		
+		case 3:
+			showAttribution=true;
+		break;
+		
+		case 4:
+			quit=true;
+		break;
+	}
+}
+
+void changeMenuSelection(int off){
+	
+	gamepadSelection += off;
+	if(gamepadSelection < 0){
+		gamepadSelection = 4;
+	}
+	if(gamepadSelection > 4){
+		gamepadSelection = 0;
+	}
+	//fprintf(stderr,"Gamepadselection: %i\n",gamepadSelection);
+}

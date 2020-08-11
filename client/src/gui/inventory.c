@@ -10,12 +10,11 @@
 
 #include <math.h>
 
-const float ITEMTILE = (1.f/32.f);
-bool inventoryOpen = false;
-bool inventoryPickup = false;
+const float ITEMTILE    = (1.f/32.f);
+bool inventoryOpen      = false;
+bool inventoryPickup    = false;
 int  inventoryPickupSel = -1;
-
-int gamepadSelection = -1;
+int  gamepadSelection   = -1;
 
 
 void showInventory(){
