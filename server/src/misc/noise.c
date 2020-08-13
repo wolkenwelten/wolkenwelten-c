@@ -26,13 +26,11 @@ void perlin_step(int size,int amp,float steep){
 
 	for(int x=0;x<256/size;x++){
 		for(int y=0;y<256/size;y++){
-			const unsigned char h = rngValM(amp);
 			if((x==0)||(y==0)){
 				tmp[x][y] = 0;
 			}else{
-				tmp[x][y] = h;
+				tmp[x][y] = rngValM(amp);
 			}
-
 		}
 	}
 	for(int xs=0;xs<256/size;xs++){
