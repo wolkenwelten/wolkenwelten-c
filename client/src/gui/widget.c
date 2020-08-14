@@ -32,38 +32,11 @@ void drawButton(textMesh *m, const char *label, int state, int x, int y, int w, 
 		bcolor = tmp;
 	}
 
-	textMeshBox(m,
-		x+1, y+1,
-		w-1, h-1,
-		19.f/32.f, 31.f/32.f,
-		 1.f/32.f,  1.f/32.f,
-		color);
-
-	textMeshBox(m,
-		x, y,
-		w, 1,
-		19.f/32.f, 31.f/32.f,
-		 1.f/32.f,  1.f/32.f,
-		tcolor);
-	textMeshBox(m,
-		x, y,
-		1, h,
-		19.f/32.f, 31.f/32.f,
-		 1.f/32.f,  1.f/32.f,
-		tcolor);
-
-	textMeshBox(m,
-		x, y+h,
-		w, 1,
-		19.f/32.f, 31.f/32.f,
-		 1.f/32.f,  1.f/32.f,
-		bcolor);
-	textMeshBox(m,
-		x+w, y,
-		1, h,
-		19.f/32.f, 31.f/32.f,
-		 1.f/32.f,  1.f/32.f,
-		bcolor);
+	textMeshSolidBox(m,x+1,y+1,w-1,h-1,color);
+	textMeshSolidBox(m,x  , y  ,w, 1,tcolor);
+	textMeshSolidBox(m,x  , y  ,1, h,tcolor);
+	textMeshSolidBox(m,x  , y+h,w, 1,bcolor);
+	textMeshSolidBox(m,x+w, y  ,1, h,bcolor);
 
 	textMeshAddStrPS(m,x+textXOff,y+textYOff,2,label);
 }

@@ -223,3 +223,7 @@ void textMeshBox(textMesh *m, int x, int y, int w, int h, float u, float v, floa
 	textMeshAddVert( m, x  ,y+h,(u   )*128.f,(v+vh)*128.f,rgba);
 	textMeshAddVert( m, x+w,y+h,(u+uw)*128.f,(v+vh)*128.f,rgba);
 }
+
+void textMeshSolidBox(textMesh *m, int x, int y, int w, int h, uint32_t rgba){
+	textMeshBox(m,x, y,w, h,19.f/32.f, 31.f/32.f,1.f/32.f,1.f/32.f,rgba);
+}
