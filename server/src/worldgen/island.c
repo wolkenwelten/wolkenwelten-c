@@ -174,9 +174,9 @@ void worldgenRemoveDirt(worldgen *wgen){
 		break;
 	}
 
-	for(int cz=wgen->minZ;cz<wgen->maxZ;cz++){
+	for(int cz=wgen->minZ;cz<=wgen->maxZ;cz++){
 		int z = cz&0xF;
-		for(int cx=wgen->minX;cx<wgen->maxX;cx++){
+		for(int cx=wgen->minX;cx<=wgen->maxX;cx++){
 			int x = cx&0xF;
 			int airBlocks = 8;
 			uint8_t lastBlock = 0;
