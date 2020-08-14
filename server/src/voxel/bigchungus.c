@@ -31,17 +31,11 @@ float chungusRoughDistance(character *cam, float x, float y,float z) {
 
 void bigchungusInit(bigchungus *c){
 	memset(c->chungi,0,256*128*256*sizeof(chunk *));
-
-	generateNoise(optionWorldSeed ^ 0x84407db3);
-	memcpy(c->vegetationConcentration,heightmap,sizeof(heightmap));
-	generateNoise(optionWorldSeed ^ 0xc2fb18f4);
-	memcpy(c->islandSizeModifier,heightmap,sizeof(heightmap));
-	generateNoise(optionWorldSeed ^ 0x1ab033cF);
-	memcpy(c->islandCountModifier,heightmap,sizeof(heightmap));
-	generateNoise(optionWorldSeed ^ 0xF79610E3);
-	memcpy(c->geoworldMap,heightmap,sizeof(heightmap));
-	generateNoise(optionWorldSeed ^ 0x36AC5890);
-	memcpy(c->heightModifier,heightmap,sizeof(heightmap));
+	generateNoise(optionWorldSeed ^ 0x84407db3, c->vegetationConcentration);
+	generateNoise(optionWorldSeed ^ 0xc2fb18f4, c->islandSizeModifier);
+	generateNoise(optionWorldSeed ^ 0x1ab033cF, c->islandCountModifier);
+	generateNoise(optionWorldSeed ^ 0xF79610E3, c->geoworldMap);
+	generateNoise(optionWorldSeed ^ 0x36AC5890, c->heightModifier);
 }
 
 void bigchungusFree(bigchungus *c){

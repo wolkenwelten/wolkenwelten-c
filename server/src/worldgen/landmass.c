@@ -11,8 +11,9 @@
 
 void worldgenLandmass(worldgen *wgen, int layer){
 	(void)layer;
+	static unsigned char heightmap[256][256];
 	
-	generateNoise(wgen->gx ^ wgen->gy ^ wgen->gz ^ 0xA39C13F1);
+	generateNoise(wgen->gx ^ wgen->gy ^ wgen->gz ^ 0xA39C13F1, heightmap);
 	for(int x=0;x<CHUNGUS_SIZE;x++){
 		for(int z=0;z<CHUNGUS_SIZE;z++){
 			int h = heightmap[x][z]/8 + wgen->heightModifier/4;

@@ -1,11 +1,11 @@
 #include "noise.h"
 #include "../../../common/src/misc/misc.h"
+#include <stdio.h>
 #include <string.h>
 
-unsigned char heightmap[256][256];
 unsigned char tmp[256][256];
 
-inline void addh(int x,int y,unsigned char h){
+inline void addh(int x, int y,unsigned char h, unsigned char heightmap[256][256]){
 	heightmap[x&0xFF][y&0xFF] += h;
 }
 
@@ -13,15 +13,11 @@ inline unsigned char gett(int x,int y){
 	return tmp[x&0xFF][y&0xFF];
 }
 
-inline unsigned char geth(int x,int y){
-	return heightmap[x&0xFF][y&0xFF];
-}
-
 inline unsigned char interpolate(float v1,float v2,float d){
 	return (unsigned char)((v1*(1.0-d))+(v2*d));
 }
 
-void perlin_step(int size,int amp,float steep){
+void perlin_step(int size,int amp,float steep, unsigned char heightmap[256][256]){
 	if(amp==0){return;}
 
 	for(int x=0;x<256/size;x++){
@@ -41,22 +37,46 @@ void perlin_step(int size,int amp,float steep){
 					const unsigned char h1 = interpolate(gett(xs,ys  ),gett(xs+1,ys  ),d);
 					const unsigned char h2 = interpolate(gett(xs,ys+1),gett(xs+1,ys+1),d);
 					const unsigned char  h = interpolate(h1,h2,((float)y)/((float)size));
-					addh(x+(xs*size),y+(ys*size),h);
+					addh(x+(xs*size),y+(ys*size),h,heightmap);
 				}
 			}
 		}
 	}
 	if(size>1){
-		perlin_step(size/2,(int)(((float)amp)*steep),steep);
+		perlin_step(size/2,(int)(((float)amp)*steep),steep,heightmap);
 	}
 }
 
-void generateNoise(unsigned int seed){
+void dumpHeightmap(unsigned char heightmap[256][256]){
+	printf("Dump heightmap\n");
+	for(int y=0;y<256;y++){
+		for(int x=0;x<256;x++){
+			const unsigned char h = heightmap[x][y];
+			if(h > 192){
+				putchar('M');
+			}else if(h > 128){
+				putchar('O');
+			}else if(h > 64){
+				putchar('o');
+			}else if(h > 32){
+				putchar('.');
+			}else{
+				putchar(' ');
+			}
+		}
+		putchar('|');
+		putchar('\n');
+	}
+	putchar('\n');
+}
+
+void generateNoise(unsigned int seed, unsigned char heightmap[256][256]){
 	unsigned int oldSeed = getRNGSeed();
-	memset(heightmap,0,sizeof(heightmap));
+	memset(heightmap,0,256*256);
 	memset(tmp,0,sizeof(tmp));
 
 	seedRNG(seed);
-	perlin_step(16,142,0.5);
+	perlin_step(16,142,0.5,heightmap);
 	seedRNG(oldSeed);
+	//dumpHeightmap(heightmap);
 }
