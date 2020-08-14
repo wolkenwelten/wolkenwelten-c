@@ -13,7 +13,7 @@
 
 
 
-chungus chungusList[1 << 10];
+chungus chungusList[1 << 12];
 unsigned int chungusCount=0;
 chungus *chungusFirstFree = NULL;
 

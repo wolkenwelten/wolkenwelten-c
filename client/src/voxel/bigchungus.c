@@ -185,7 +185,7 @@ void bigchungusFreeFarChungi(bigchungus *c, character *cam){
 		int y = (int)chng->y>>8;
 		int z = (int)chng->z>>8;
 		float d = chungusRoughDistance(cam,x,y,z);
-		if(d > (CHUNK_RENDER_DISTANCE * 1.5f)){
+		if(d > (CHUNK_RENDER_DISTANCE + 256.f)){
 			chungusFree(c->chungi[x][y][z]);
 			c->chungi[x][y][z] = NULL;
 		}
