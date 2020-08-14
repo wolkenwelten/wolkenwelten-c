@@ -13,9 +13,10 @@ void grenadeInit(){
 
 bool grenadeActivateItem(item *cItem,character *cChar, int to){
 	(void)cItem;
-	if(to < 200){return false;}
+	if(to < 0){return false;}
 	if(itemDecStack(cItem,1)){
 		grenadeNew(cChar,1);
+		characterAddCooldown(cChar,200);
 		return true;
 	}
 	return false;

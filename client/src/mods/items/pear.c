@@ -11,10 +11,11 @@ void pearInit(){
 
 bool pearActivateItem(item *cItem,character *cChar, int to){
 	(void)cItem;
-	if(to < 200){return false;}
+	if(to < 0){return false;}
 	if(cChar->hp == cChar->maxhp){return false;}
 	if(itemDecStack(cItem,1)){
 		characterHP(cChar,4);
+		characterAddCooldown(cChar,100);
 		return true;
 	}
 	return false;

@@ -33,7 +33,8 @@ bool assaultblasterHasMineAction(item *cItem){
 bool assaultblasterMineAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
-	if(to < 15){return false;}
+	if(to < 0){return false;}
+	characterAddCooldown(cChar,15);
 	beamblast(cChar,0.75f,0.2f,0.05f,1,1,8.f,1.f);
 	return true;
 }
@@ -41,7 +42,8 @@ bool assaultblasterMineAction(item *cItem, character *cChar, int to){
 bool assaultblasterActivateItem(item *cItem, character *cChar, int to){
 	(void)cItem;
 
-	if(to < 64){return false;}
+	if(to < 0){return false;}
+	characterAddCooldown(cChar,64);
 	beamblast(cChar,0.75f,0.2f,0.05f,1,3,8.f,1.f);
 	return true;
 }

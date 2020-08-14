@@ -37,7 +37,8 @@ bool shotgunblasterHasMineAction(item *cItem){
 bool shotgunblasterMineAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
-	if(to < 256){return false;}
+	if(to < 0){return false;}
+	characterAddCooldown(cChar,256);
 	beamblast(cChar,0.5f,1.f,0.04f,4,48,32.f,1.f);
 	return true;
 }
@@ -45,7 +46,8 @@ bool shotgunblasterMineAction(item *cItem, character *cChar, int to){
 bool shotgunblasterActivateItem(item *cItem,character *cChar, int to){
 	(void)cItem;
 
-	if(to < 512){return false;}
+	if(to < 0){return false;}
+	characterAddCooldown(cChar,512);
 	beamblast(cChar,0.5f,1.f,0.02f,4,128,32.f,4.f);
 	return true;
 }

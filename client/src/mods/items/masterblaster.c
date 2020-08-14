@@ -33,7 +33,8 @@ bool masterblasterHasMineAction(item *cItem){
 bool masterblasterMineAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
-	if(to < 400){return false;}
+	if(to < 0){return false;}
+	characterAddCooldown(cChar,400);
 	beamblast(cChar,3.f,8.f,2.f,1024,1,32.f,1.f);
 	return true;
 }
@@ -41,7 +42,8 @@ bool masterblasterMineAction(item *cItem, character *cChar, int to){
 bool masterblasterActivateItem(item *cItem, character *cChar, int to){
 	(void)cItem;
 
-	if(to < 20){return false;}
+	if(to < 0){return false;}
+	characterAddCooldown(cChar,20);
 	beamblast(cChar,0.5f,0.1f,2.f,1024,1,32.f,1.f);
 	return true;
 }

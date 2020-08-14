@@ -437,28 +437,31 @@ bool characterLOSBlock(character *c, int *retX, int *retY, int *retZ, int return
 	return false;
 }
 
+void characterAddCooldown(character *c, int cooldown){
+	c->actionTimeout = -cooldown;
+}
+
 void characterMineBlock(character *c){
 	int cx,cy,cz;
 	item *itm = &c->inventory[c->activeItem];
 	if(itemHasMineAction(itm)){
 		if(itemMineAction(itm,c,c->actionTimeout)){
 			c->hasHit = true;
-			c->actionTimeout = 0;
 		}
 	}else{
 		if(characterLOSBlock(c,&cx,&cy,&cz,0)){
 			c->blockMiningX = cx;
 			c->blockMiningY = cy;
 			c->blockMiningZ = cz;
-			if(c->actionTimeout >= 80){
+			if(c->actionTimeout >= 0){
 				sfxPlay(sfxTock,1.f);
 				vibrate(0.3f);
 				c->hasHit = true;
-				c->actionTimeout = 0;
+				characterAddCooldown(c,80);
 			}
-		}else if(c->actionTimeout >= 80){
+		}else if(c->actionTimeout >= 0){
 			c->hasHit = true;
-			c->actionTimeout = 0;
+			characterAddCooldown(c,80);
 		}
 	}
 }
@@ -471,19 +474,18 @@ void characterPlaceBlock(character *c){
 	item *cItem;
 	cItem = characterGetItemBarSlot(c,c->activeItem);
 	if(!itemIsEmpty(cItem) && itemActivate(cItem,c,c->actionTimeout)){
-		c->actionTimeout=0;
 		c->hasHit = true;
 	}
 }
 
 void characterDropItem(character *c, int i){
 	item *cItem;
-	if(c->actionTimeout <= 50){ return; }
+	if(c->actionTimeout < 0){ return; }
 	cItem = characterGetItemBarSlot(c,i);
 	if(cItem == NULL)      { return; }
 	if(itemIsEmpty(cItem)) { return; }
 	c->hasHit = true;
-	c->actionTimeout=0;
+	characterAddCooldown(c,50);
 
 	itemDropNewC(c, cItem);
 	itemDiscard(cItem);
@@ -665,7 +667,7 @@ void characterUpdate(character *c){
 	float nvx,nvy,nvz;
 	uint32_t col,wcl;
 
-	if(c->actionTimeout < 1024){ c->actionTimeout++; }
+	if(c->actionTimeout < 0){ c->actionTimeout++; }
 	if(c->noClip){
 		c->vx = c->gvx;
 		c->vy = c->gvy;
@@ -797,8 +799,8 @@ void characterRotate(character *c, float vYaw,float vPitch,float vRoll){
 }
 
 void characterFireHook(character *c){
-	if(c->actionTimeout < 60){return;}
-	c->actionTimeout = 0;
+	if(c->actionTimeout < 0){return;}
+	characterAddCooldown(c,60);
 	if(c->hook == NULL){
 		c->hook = grapplingHookNew(c);
 		sfxPlay(sfxHookFire,1.f);
