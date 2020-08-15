@@ -187,7 +187,7 @@ void grapplingHookPullTowards(grapplingHook *ghk,character *pull){
 	dy = (dy / dm) * dist;
 	dz = (dz / dm) * dist;
 
-	uint32_t col = entityCollision(ghk->ent,pull->x,pull->y,pull->z,0.3f);
+	uint32_t col = entityCollision(pull->x,pull->y,pull->z);
 	if(((dx > 0) && !((col & 0x110))) || ((dx < 0) && !((col & 0x220)))){
 		pull->x -= dx;
 		vx -= dx*0.2f;
