@@ -23,7 +23,7 @@ void explode(float x, float y, float z, float pw, int style){
 	entity *exEnt;
 	float dm;
 	worldBoxMineSphere(x,y,z,pw*4.f);
-	
+
 	for(int i=0;i<entityCount;i++){
 		exEnt = &entityList[i];
 		float dx = x - exEnt->x;
@@ -51,7 +51,7 @@ void grenadeExplode(int g){
 	explode(ent->x,ent->y,ent->z,grenadeList[g].pwr,0);
 }
 
-void grenadeNew(packet *p){
+void grenadeNewP(packet *p){
 	int g       = grenadeCount++;
 	float speed = 0.12f;
 	float x     = p->val.f[0];
@@ -106,7 +106,7 @@ void grenadeUpdatePlayer(int c){
 	}
 }
 
-void beamblast(int c, const packet *p){
+void beamblastNewP(int c, const packet *p){
 	float sx,sy,sz;
 	float x,y,z,vx,vy,vz;
 	float yaw = p->val.f[3];

@@ -45,3 +45,23 @@ void ingredientSubstituteAdd(unsigned short ingredient, unsigned short substitut
 
 	fprintf(stderr,"ingredientSubstituteAdd got called on the serverside\n");
 }
+
+void grenadeNew(character *ent, float pwr){
+	(void)ent;
+	(void)pwr;
+
+	fprintf(stderr,"grenadeNew got called on the serverside\n");
+}
+
+void beamblast(character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult){
+	(void)ent;
+	(void)beamSize;
+	(void)damageMultiplier;
+	(void)recoilMultiplier;
+	(void)hitsLeft;
+	(void)shots;
+	(void)inaccuracyInc;
+	(void)inaccuracyMult;
+
+	fprintf(stderr,"beamblast got called on the serverside\n");
+}

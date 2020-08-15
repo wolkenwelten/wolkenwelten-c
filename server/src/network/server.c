@@ -228,12 +228,12 @@ void serverParseSinglePacket(int c, packet *p){
 		break;
 
 		case 11:
-			grenadeNew(p);
+			grenadeNewP(p);
 			if(verbose){printf("[%02i] grenadeNew\n",c);}
 		break;
 
 		case 12:
-			beamblast(c,p);
+			beamblastNewP(c,p);
 			if(verbose){printf("[%02i] beamblast\n",c);}
 		break;
 
@@ -296,12 +296,12 @@ void serverParseSinglePacket(int c, packet *p){
 			fprintf(stderr,"fxBeamBlaster received from client, which should never happen\n");
 			serverKill(c);
 		break;
-		
+
 		case 25:
 			fprintf(stderr,"msgItemDropUpdate received from client, which should never happen\n");
 			serverKill(c);
 		break;
-		
+
 		case 26:
 			fprintf(stderr,"msgPlayerDamage received from client, which should never happen\n");
 			serverKill(c);
