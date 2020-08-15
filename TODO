@@ -3,7 +3,6 @@
 (A) Proper Character Models
 (A) MacOS Code signing
 (A) Instead of broadcasting explosions mark chunks as dirty and then transmit them to clients in need
-(A) Add switch generator for modded items/blocks
 
 (B) Beam Cannon, like the green gun from UT
 (B) Gatling Gun
