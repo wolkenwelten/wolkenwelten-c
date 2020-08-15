@@ -220,3 +220,15 @@ bool characterHP(character *c, int addhp){
 	}
 	return false;
 }
+
+int characterGetHP(const character *c){
+	return c->hp;
+}
+
+int characterGetMaxHP(const character *c){
+	return c->maxhp;
+}
+
+void characterAddCooldown(character *c, int cooldown){
+	c->actionTimeout = -cooldown;
+}

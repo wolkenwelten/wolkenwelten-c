@@ -1,11 +1,6 @@
 static const int ITEMID=261;
 
-#include "../../gfx/mesh.h"
-#include "../../gfx/objs.h"
-#include "../../game/grenade.h"
-#include "../../game/item.h"
-#include "../../game/character.h"
-#include "../../game/recipe.h"
+#include "../api_v1.h"
 
 void blasterInit(){
 	(void)ITEMID;

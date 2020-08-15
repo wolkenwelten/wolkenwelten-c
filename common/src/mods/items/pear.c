@@ -1,9 +1,6 @@
 static const int ITEMID=258;
 
-#include "../../gfx/mesh.h"
-#include "../../gfx/objs.h"
-#include "../../game/item.h"
-#include "../../game/character.h"
+#include "../api_v1.h"
 
 void pearInit(){
 	(void)ITEMID;
@@ -11,8 +8,9 @@ void pearInit(){
 
 bool pearActivateItem(item *cItem,character *cChar, int to){
 	(void)cItem;
+
 	if(to < 0){return false;}
-	if(cChar->hp == cChar->maxhp){return false;}
+	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
 	if(itemDecStack(cItem,1)){
 		characterHP(cChar,4);
 		characterAddCooldown(cChar,100);

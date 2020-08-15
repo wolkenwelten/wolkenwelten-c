@@ -1,11 +1,6 @@
 static const int ITEMID=256;
 
-#include "../../gfx/mesh.h"
-#include "../../gfx/objs.h"
-#include "../../game/grenade.h"
-#include "../../game/item.h"
-#include "../../game/character.h"
-#include "../../game/recipe.h"
+#include "../api_v1.h"
 
 void grenadeInit(){
 	recipeAdd2I(ITEMID,2, 4,1, 13,1); // Coal(1) + Hematite Ore(1) -> Grenade(1)

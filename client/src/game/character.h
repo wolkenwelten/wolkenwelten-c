@@ -57,6 +57,8 @@ void  characterStopMining     (character *c);
 void  characterPlaceBlock     (character *c);
 void  characterDie            (character *c);
 bool  characterHP             (character *c, int addhp);
+int   characterGetHP          (character *c);
+int   characterGetMaxHP       (character *c);
 bool  characterDamage         (character *c, int hp);
 int   characterGetItemAmount  (character *c, uint16_t itemID);
 int   characterDecItemAmount  (character *c, uint16_t itemID,int amount);

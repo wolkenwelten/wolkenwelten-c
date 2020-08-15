@@ -535,7 +535,7 @@ int characterGetItemAmount(character *c, uint16_t itemID){
 
 int characterDecItemAmount(character *c, uint16_t itemID,int amount){
 	int ret=0;
-	
+
 	if(amount == 0){return 0;}
 	for(unsigned int i=0;i<40;i++){
 		if(c->inventory[i].ID == itemID){
@@ -588,6 +588,13 @@ bool characterDamage(character *c, int hp){
 	return characterHP(c,-hp);
 }
 
+int characterGetHP(character *c){
+	return c->hp;
+}
+
+int characterGetMaxHP(character *c){
+	return c->maxhp;
+}
 
 int characterPhysics(character *c){
 	int ret=0;

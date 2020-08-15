@@ -1,11 +1,6 @@
 static const int ITEMID=260;
 
-#include "../../gfx/mesh.h"
-#include "../../gfx/objs.h"
-#include "../../game/item.h"
-#include "../../game/character.h"
-#include "../../game/blockType.h"
-#include "../../game/recipe.h"
+#include "../api_v1.h"
 
 void pickaxeInit(){
 	recipeAdd2I(ITEMID,1, 17,2, 3,2);
