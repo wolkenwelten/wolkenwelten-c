@@ -14,6 +14,7 @@ void worldgenLabyrinth(worldgen *wgen, int labLayer){
 	int pb = 14;
 	int fb = 15;
 	memset(labMap,0,sizeof(labMap));
+	// First lets randomly set some coordinates
 	for(int cx = 15; cx >= 0; cx--){
 		for(int cy = 15; cy >= 0; cy--){
 			for(int cz = 15; cz >= 0; cz--){
@@ -34,6 +35,7 @@ void worldgenLabyrinth(worldgen *wgen, int labLayer){
 		}
 	}
 
+	// Now free some when there are too many, especially if immediatly above/below
 	for(int i=0;i<4;i++){
 		for(int cx = 15; cx >= 0; cx--){
 			for(int cy = 15; cy >= 0; cy--){
@@ -63,6 +65,7 @@ void worldgenLabyrinth(worldgen *wgen, int labLayer){
 				const int bz = (cz<<4)+3;
 				if(!labMap[cx][cy][cz]){continue;}
 
+				// First draw the default platform
 				chungusBox(clay,bx+1,by-1,bz+1, 8,1, 8,b);
 				chungusBox(clay,bx  ,by  ,bz  ,10,1,10,fb);
 
@@ -72,7 +75,8 @@ void worldgenLabyrinth(worldgen *wgen, int labLayer){
 				chungusBox(clay,bx  ,by+1,bz  , 1,1,10,b);
 				chungusBox(clay,bx+9,by+1,bz  , 1,1,10,b);
 
-				switch(rngValM(16)){
+				// Change the base platform up a bit
+				switch(rngValM(32)){
 					default:
 					case 0:
 					break;
@@ -86,6 +90,24 @@ void worldgenLabyrinth(worldgen *wgen, int labLayer){
 						chungusBox(clay,bx  ,by+7,bz  ,10,1,10,b);
 						chungusBox(clay,bx+1,by+7,bz+1, 8,1, 8,0);
 						chungusBox(clay,bx+1,by+8,bz+1, 8,1, 8,b);
+						
+						chungusBox(clay,bx+3,by+1,bz+3,4,2,4,13);
+					break;
+					
+					case 2:
+						chungusBox(clay,bx  ,by+2,bz  ,1,5,1,pb);
+						chungusBox(clay,bx+9,by+2,bz  ,1,5,1,pb);
+						chungusBox(clay,bx  ,by+2,bz+9,1,5,1,pb);
+						chungusBox(clay,bx+9,by+2,bz+9,1,5,1,pb);
+
+						chungusBox(clay,bx  ,by+7,bz  ,10,1,10,4);
+						chungusBox(clay,bx+1,by+7,bz+1, 8,1, 8,0);
+						chungusBox(clay,bx+1,by+8,bz+1, 8,1, 8,4);
+					break;
+					
+					case 3:
+						chungusBox(clay,bx+4,by  ,bz+4,2,5,2,18);
+
 					break;
 				}
 
