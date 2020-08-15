@@ -24,15 +24,15 @@ void itemDiscard(item *i){
 	i->amount = i->ID = 0;
 }
 
-bool itemIsEmpty(const item *i){
+bool itemIsEmpty(item *i){
 	return ((i->amount==0) || (i->ID==0));
 }
 
-int itemBlockDamage(const item *i, blockCategory cat){
+int itemBlockDamage(item *i, blockCategory cat){
 	return blockDamageDispatch(i,cat);
 }
 
-bool itemCanStack(const item *i, uint16_t ID){
+bool itemCanStack(item *i, uint16_t ID){
 	if(i->ID != ID)    {return false;}
 	if(i->amount >= 99){return false;}
 	if(i->amount ==  0){return false;}

@@ -51,8 +51,8 @@ clean:
 	rm -f $(shell find common/src -type f -name '*.o')
 	rm -f wolkenwelten wolkenwelten.exe $(shell find client/src -type f -name '*.o')
 	rm -f wolkenwelten-server wolkenwelten-server.exe $(shell find server/src -type f -name '*.o')
-	rm -rf client/src/tmp/ server/src/tmp/
-	rm -rf web/releases releases client/src/tmp
+	rm -rf client/src/tmp server/src/tmp
+	rm -rf web/releases releases
 
 .PHONY: webrelease
 webrelease: release
@@ -88,3 +88,7 @@ run: all
 .PHONY: archive
 archive:
 	git archive --format=tar --prefix=wolkenwelten-HEAD.tar.gz/ HEAD | gzip > wolkenwelten-HEAD.tar.gz
+
+
+tools/modscg: tools/modscg.c
+	$(CC) $(OPTIMIZATION) $(CFLAGS) $< -o $@

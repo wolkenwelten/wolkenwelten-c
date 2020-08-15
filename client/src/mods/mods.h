@@ -19,3 +19,4 @@ bool activateItemDefault (item *cItem, character *cChar, int to);
 bool mineActionDefault   (item *cItem, character *cChar, int to);
 bool hasMineActionDefault(item *cItem);
 bool isSingleItemDefault (item *cItem);
+float getInaccuracyDefault(item *cItem);

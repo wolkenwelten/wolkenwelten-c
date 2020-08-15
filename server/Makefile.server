@@ -4,7 +4,7 @@ SERVER_LIBS      :=
 
 SERVER_HDRS      := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
 SERVER_SRCS      := $(shell find server/src -type f -name '*.c') $(COMMON_SRCS)
-SERVER_OBJS      := ${SERVER_SRCS:.c=.o}
+SERVER_OBJS      := ${SERVER_SRCS:.c=.o} server/src/tmp/mods_tmp.o
 
 $(SERVER_OBJS): CFLAGS    += $(SERVER_CFLAGS)
 $(SERVER_OBJS): CINCLUDES += $(SERVER_CINCLUDES)
@@ -28,6 +28,10 @@ server/make.deps: server/src/tmp/cto.h
 ifneq ($(MAKECMDGOALS),clean)
 -include server/make.deps
 endif
+
+server/src/tmp/mods_tmp.o: server/src/tmp/mods_tmp.c
+server/src/tmp/mods_tmp.c: tools/modscg
+	tools/modscg $(shell find common/src/mods/items -type f -name '*.c') > server/src/tmp/mods_tmp.c
 
 server/src/network/server.o: server/src/network/server_bsd.h server/src/network/server_win.h
 server/src/game/blockType.o: common/data/blockType.h

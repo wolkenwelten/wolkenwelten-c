@@ -40,4 +40,8 @@ bool isSingleItemDefault(item *cItem){
 
 	return false;
 }
-
+float getInaccuracyDefault(item *cItem){
+	(void)cItem;
+	
+	return 4.f;
+}

@@ -64,7 +64,7 @@ void blockMiningDropItems(blockMining *bm){
 	blockMiningDropItemsPos(bm->x,bm->y,bm->z,bm->b);
 }
 
-void blockMiningMine(int i, const item *itm){
+void blockMiningMine(int i, item *itm){
 	blockMining *bm = &blockMiningList[i];
 
 	bm->damage += itemBlockDamage(itm,blockTypeGetCat(bm->b));
@@ -77,7 +77,7 @@ void blockMiningMine(int i, const item *itm){
 	}
 }
 
-void blockMiningMinePos(const item *itm, int x, int y, int z){
+void blockMiningMinePos(item *itm, int x, int y, int z){
 	for(int i=0;i<blockMiningCount;i++){
 		blockMining *bm = &blockMiningList[i];
 		if(bm->x != x){continue;}
