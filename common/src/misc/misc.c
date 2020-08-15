@@ -1,6 +1,9 @@
 #include "misc.h"
+
+#include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 
 uint64_t RNGValue = 1;
@@ -35,17 +38,17 @@ void *loadFile(char *filename,size_t *len){
 	FILE *fp;
 	size_t filelen,readlen,read;
 	uint8_t *buf = NULL;
-	
+
 	fp = fopen(filename,"rb");
 	if(fp == NULL){return NULL;}
-	
+
 	fseek(fp,0,SEEK_END);
 	filelen = ftell(fp);
 	fseek(fp,0,SEEK_SET);
-	
+
 	buf = malloc(filelen);
 	if(buf == NULL){return NULL;}
-	
+
 	readlen = 0;
 	while(readlen < filelen){
 		read = fread(buf+readlen,1,filelen-readlen,fp);
@@ -56,7 +59,7 @@ void *loadFile(char *filename,size_t *len){
 		readlen += read;
 	}
 	fclose(fp);
-	
+
 	*len = filelen;
 	return buf;
 }
@@ -74,4 +77,38 @@ const char *getHumanReadableSize(size_t n){
 	i = snprintf(buf,sizeof(buf),"%llu%s",(long long unsigned int)n,suffix[i]);
 	buf[sizeof(buf)-1] = 0;
 	return buf;
+}
+
+char **splitArgs(const char *cmd,int *rargc){
+	static char *argv[32];
+	static char buf[1024];
+	int mode = 1;
+	int argc=0;
+
+	strncpy(buf,cmd,sizeof(buf));
+	buf[sizeof(buf)-1] = 0;
+
+	for(char *s = buf;*s!=0;s++){
+		if(mode == 2){
+			if(*s == '"'){
+				*s = 0;
+				mode =1;
+			}
+		} else if(isspace(*s)){
+			*s = 0;
+			mode = 1;
+		}else if(mode == 1){
+			if(*s == '"'){
+				argv[argc++] = s+1;
+				mode = 2;
+			}else{
+				argv[argc++] = s;
+				mode = 0;
+			}
+			if(argc >= (int)(sizeof(argv)/sizeof(char *))){break;}
+		}
+	}
+
+	*rargc = argc;
+	return argv;
 }

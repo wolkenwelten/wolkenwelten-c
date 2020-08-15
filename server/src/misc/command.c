@@ -8,41 +8,9 @@
 
 #include "../network/server.h"
 #include "../../../common/src/network/messages.h"
+#include "../../../common/src/misc/misc.h"
 
 char replyBuf[256];
-
-static char **splitCmdArgs(const char *cmd,int *rargc){
-	static char *argv[16];
-	static char buf[256];
-	int mode = 1;
-	int argc=0;
-	
-	strncpy(buf,cmd,sizeof(buf));
-	buf[sizeof(buf)-1] = 0;
-	
-	for(char *s = buf;*s!=0;s++){
-		if(mode == 2){
-			if(*s == '"'){
-				*s = 0;
-				mode =1;
-			}
-		} else if(isspace(*s)){
-			*s = 0;
-			mode = 1;
-		}else if(mode == 1){
-			if(*s == '"'){
-				argv[argc++] = s+1;
-				mode = 2;
-			}else{
-				argv[argc++] = s;
-				mode = 0;
-			}
-		}
-	}
-	
-	*rargc = argc;
-	return argv;
-}
 
 static void cmdDmg(int c, const char *cmd){
 	int cmdLen = strnlen(cmd,252);
@@ -111,8 +79,8 @@ static void cmdTp(int c, const char *cmd){
 	(void)c;
 	int argc;
 	char **argv;
-	
-	argv = splitCmdArgs(cmd,&argc);
+
+	argv = splitArgs(cmd,&argc);
 	if(argc != 4){
 		snprintf(replyBuf,sizeof(replyBuf),".tp : You need to pass 3 integer values\n");
 		return;
@@ -128,8 +96,8 @@ static void cmdTpr(int c, const char *cmd){
 	(void)c;
 	int argc;
 	char **argv;
-	
-	argv = splitCmdArgs(cmd,&argc);
+
+	argv = splitArgs(cmd,&argc);
 	if(argc != 4){
 		snprintf(replyBuf,sizeof(replyBuf),".tpr : You need to pass 3 integer values\n");
 		return;
@@ -143,37 +111,37 @@ static void cmdTpr(int c, const char *cmd){
 int parseCommand(int c, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
-	
+
 	if(strncmp(tcmp,"dmg",3) == 0){
 		cmdDmg(c,tcmp);
 		return 1;
 	}
-	
+
 	if(strncmp(tcmp,"die",3) == 0){
 		cmdDie(c,tcmp);
 		return 1;
 	}
-	
+
 	if(strncmp(tcmp,"heal",4) == 0){
 		cmdHeal(c,tcmp);
 		return 1;
 	}
-	
+
 	if(strncmp(tcmp,"give",4) == 0){
 		cmdGive(c,tcmp);
 		return 1;
 	}
-	
+
 	if(strncmp(tcmp,"tpr",3) == 0){
 		cmdTpr(c,tcmp);
 		return 1;
 	}
-	
+
 	if(strncmp(tcmp,"tp",2) == 0){
 		cmdTp(c,tcmp);
 		return 1;
 	}
-		
+
 	fprintf(stderr,"CMD [%s]\n",cmd);
 	return 1;
 }
