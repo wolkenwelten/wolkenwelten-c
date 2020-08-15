@@ -60,3 +60,18 @@ void *loadFile(char *filename,size_t *len){
 	*len = filelen;
 	return buf;
 }
+
+
+const char *getHumanReadableSize(size_t n){
+	static char buf[32];
+	const char *suffix[] = {"","K","M","G","T"};
+	int i;
+
+	for(i=0;i<5;i++){
+		if(n<1024){break;}
+		n = n >> 10;
+	}
+	i = snprintf(buf,sizeof(buf),"%llu%s",(long long unsigned int)n,suffix[i]);
+	buf[sizeof(buf)-1] = 0;
+	return buf;
+}

@@ -5,6 +5,7 @@
 extern packet packetBuffer;
 
 void msgRequestPlayerSpawnPos    ();
+void msgPlayerSetPos             (int c, float x, float y, float z);
 void msgRequestChungus           (int x, int y, int z);
 void msgPlaceBlock               (int x, int y, int z, uint8_t b);
 void msgMineBlock                (int x, int y, int z, uint8_t b);

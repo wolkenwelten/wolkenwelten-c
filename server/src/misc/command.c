@@ -11,6 +11,39 @@
 
 char replyBuf[256];
 
+static char **splitCmdArgs(const char *cmd,int *rargc){
+	static char *argv[16];
+	static char buf[256];
+	int mode = 1;
+	int argc=0;
+	
+	strncpy(buf,cmd,sizeof(buf));
+	buf[sizeof(buf)-1] = 0;
+	
+	for(char *s = buf;*s!=0;s++){
+		if(mode == 2){
+			if(*s == '"'){
+				*s = 0;
+				mode =1;
+			}
+		} else if(isspace(*s)){
+			*s = 0;
+			mode = 1;
+		}else if(mode == 1){
+			if(*s == '"'){
+				argv[argc++] = s+1;
+				mode = 2;
+			}else{
+				argv[argc++] = s;
+				mode = 0;
+			}
+		}
+	}
+	
+	*rargc = argc;
+	return argv;
+}
+
 static void cmdDmg(int c, const char *cmd){
 	int cmdLen = strnlen(cmd,252);
 	if((cmdLen > 3) && (cmd[3] == ' ')){
@@ -73,6 +106,40 @@ static void cmdGive(int c, const char *cmd){
 	serverSendChatMsg(replyBuf);
 }
 
+static void cmdTp(int c, const char *cmd){
+	float coords[3];
+	(void)c;
+	int argc;
+	char **argv;
+	
+	argv = splitCmdArgs(cmd,&argc);
+	if(argc != 4){
+		snprintf(replyBuf,sizeof(replyBuf),".tp : You need to pass 3 integer values\n");
+		return;
+	}
+	coords[0] = atof(argv[1]);
+	coords[1] = atof(argv[2]);
+	coords[2] = atof(argv[3]);
+	msgPlayerSetPos(c,coords[0],coords[1],coords[2]);
+}
+
+static void cmdTpr(int c, const char *cmd){
+	float coords[3];
+	(void)c;
+	int argc;
+	char **argv;
+	
+	argv = splitCmdArgs(cmd,&argc);
+	if(argc != 4){
+		snprintf(replyBuf,sizeof(replyBuf),".tpr : You need to pass 3 integer values\n");
+		return;
+	}
+	coords[0] = atof(argv[1]);
+	coords[1] = atof(argv[2]);
+	coords[2] = atof(argv[3]);
+	msgPlayerSetPos(c,clients[c].c->x + coords[0],clients[c].c->y + coords[1],clients[c].c->z + coords[2]);
+}
+
 int parseCommand(int c, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
@@ -94,6 +161,16 @@ int parseCommand(int c, const char *cmd){
 	
 	if(strncmp(tcmp,"give",4) == 0){
 		cmdGive(c,tcmp);
+		return 1;
+	}
+	
+	if(strncmp(tcmp,"tpr",3) == 0){
+		cmdTpr(c,tcmp);
+		return 1;
+	}
+	
+	if(strncmp(tcmp,"tp",2) == 0){
+		cmdTp(c,tcmp);
 		return 1;
 	}
 		

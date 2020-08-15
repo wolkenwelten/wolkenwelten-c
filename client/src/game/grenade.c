@@ -72,7 +72,6 @@ void grenadeUpdate(){
 
 void grenadeUpdateFromServer(packet *p){
 	const int index = p->val.i[7];
-	//printf("X:%f\nY:%f\nZ:%f\nVX:%f\nVY:%f\nVZ:%f\nIndex
 
 	for(int i=p->val.i[6];i<grenadeCount;i++){
 		if(grenadeList[i].ent != NULL){

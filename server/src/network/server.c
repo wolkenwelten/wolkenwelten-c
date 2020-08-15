@@ -87,13 +87,9 @@ void serverParseDyingMsg(int c, packet *m){
 }
 
 void msgPlayerSpawnPos(int c){
-	packet *p = &packetBuffer;
 	int sx,sy,sz;
 	worldGetSpawnPos(&sx,&sy,&sz);
-	p->val.f[0] = ((float)sx)+0.5f;
-	p->val.f[1] = ((float)sy)+2.0f;
-	p->val.f[2] = ((float)sz)+0.5f;
-	packetQueue(p,1,3*4,c);
+	msgPlayerSetPos(c,((float)sx)+0.5f,((float)sy)+2.f,((float)sz)+0.5f);
 }
 
 void serverIntro(int c){

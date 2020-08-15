@@ -11,6 +11,14 @@ void msgRequestPlayerSpawnPos(){
 	packetQueueToServer(p,1,0);
 }
 
+void msgPlayerSetPos(int c, float x, float y, float z){
+	packet *p = &packetBuffer;
+	p->val.f[0] = x;
+	p->val.f[1] = y;
+	p->val.f[2] = z;
+	packetQueue(p,1,3*4,c);
+}
+
 void msgRequestChungus(int x, int y, int z){
 	packet *p = &packetBuffer;
 	p->val.i[0] = x;

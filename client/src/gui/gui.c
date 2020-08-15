@@ -26,6 +26,7 @@
 #include "../gui/textInput.h"
 #include "../network/chat.h"
 #include "../network/client.h"
+#include "../../../common/src/misc/misc.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -36,7 +37,7 @@ textMesh *guim;
 textMesh *crosshairMesh;
 textMesh *cursorMesh;
 
-bool mouseHidden   = false;
+bool mouseHidden = false;
 int mousex,mousey;
 int mouseClicked[3] = {0,0,0};
 
@@ -139,20 +140,6 @@ void updateMouse(){
 			updateInventoryClick(mousex,mousey,cbtn+1);
 		}
 	}
-}
-
-const char *getHumanReadableSize(size_t n){
-	static char buf[32];
-	const char *suffix[] = {"","K","M","G","T"};
-	int i;
-
-	for(i=0;i<5;i++){
-		if(n<1024){break;}
-		n = n >> 10;
-	}
-	i = snprintf(buf,sizeof(buf),"%llu%s",(long long unsigned int)n,suffix[i]);
-	buf[sizeof(buf)-1] = 0;
-	return buf;
 }
 
 void drawDebuginfo(){
