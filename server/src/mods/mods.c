@@ -1,21 +1,37 @@
 #include "mods.h"
-#include "../game/item.h"
-#include "../game/character.h"
 
-inline int blockDamageDefault(const item *cItem, blockCategory blockCat){
+mesh *getMeshDefault(item *cItem){
+	(void)cItem;
+	
+	return NULL;
+}
+int blockDamageDefault(item *cItem, blockCategory blockCat){
 	(void)cItem;
 	(void)blockCat;
 
 	return 1;
 }
+bool activateItemDefault(item *cItem, character *cChar, int to){
+	(void)cItem;
+	(void)cChar;
+	(void)to;
 
-int axeBlockDamage(const item *cItem, blockCategory blockCat);
-int pickaxeBlockDamage(const item *cItem, blockCategory blockCat);
+	return false;
+}
+bool mineActionDefault(item *cItem, character *cChar, int to){
+	(void)cItem;
+	(void)cChar;
+	(void)to;
 
-int blockDamageDispatch(const item *cItem, blockCategory blockCat){
-	switch(cItem->ID){
-		case 259: return axeBlockDamage(cItem,blockCat);
-		case 260: return pickaxeBlockDamage(cItem,blockCat);
-	}
-	return blockDamageDefault(cItem,blockCat);
+	return false;
+}
+bool hasMineActionDefault(item *cItem){
+	(void)cItem;
+
+	return false;
+}
+bool isSingleItemDefault(item *cItem){
+	(void)cItem;
+
+	return false;
 }
