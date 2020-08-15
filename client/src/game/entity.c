@@ -73,17 +73,8 @@ uint32_t entityCollision(entity *e, float cx, float cy, float cz,float wd){
 	if(checkCollision(cx+wd,cy-0.1f,cz   )){col |= 0x200;}
 	if(checkCollision(cx   ,cy-0.1f,cz-wd)){col |= 0x400;}
 	if(checkCollision(cx   ,cy-0.1f,cz+wd)){col |= 0x800;}
-
-	wd = wd*0.5f;
-	if(checkCollision(cx-wd,cy+0.5f,cz   )){col |=  0x10;}
-	if(checkCollision(cx+wd,cy+0.5f,cz   )){col |=  0x20;}
-	if(checkCollision(cx   ,cy+0.5f,cz-wd)){col |=  0x40;}
-	if(checkCollision(cx   ,cy+0.5f,cz+wd)){col |=  0x80;}
-
-	if(checkCollision(cx-wd,cy-0.5f,cz   )){col |=   0x1;}
-	if(checkCollision(cx+wd,cy-0.5f,cz   )){col |=   0x2;}
-	if(checkCollision(cx   ,cy-0.5f,cz-wd)){col |=   0x4;}
-	if(checkCollision(cx   ,cy-0.5f,cz+wd)){col |=   0x8;}
+	if(checkCollision(cx   ,cy+0.5f,cz   )){col |=  0xF0;}
+	if(checkCollision(cx   ,cy-0.5f,cz   )){col |=   0xF;}
 
 	return col;
 }
