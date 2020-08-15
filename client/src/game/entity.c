@@ -65,16 +65,11 @@ void entityFree(entity *e){
 	entityFirstFree = e;
 }
 
-uint32_t entityCollision(entity *e, float cx, float cy, float cz,float wd){
+uint32_t entityCollision(float cx, float cy, float cz){
 	uint32_t col = 0;
-	(void)e;
 
-	if(checkCollision(cx-wd,cy-0.1f,cz   )){col |= 0x100;}
-	if(checkCollision(cx+wd,cy-0.1f,cz   )){col |= 0x200;}
-	if(checkCollision(cx   ,cy-0.1f,cz-wd)){col |= 0x400;}
-	if(checkCollision(cx   ,cy-0.1f,cz+wd)){col |= 0x800;}
-	if(checkCollision(cx   ,cy+0.5f,cz   )){col |=  0xF0;}
-	if(checkCollision(cx   ,cy-0.5f,cz   )){col |=   0xF;}
+	if(checkCollision(cx   ,cy+0.5f,cz   )){col |= 0xFF0;}
+	if(checkCollision(cx   ,cy-0.5f,cz   )){col |= 0xF0F;}
 
 	return col;
 }
@@ -86,7 +81,7 @@ int entityUpdate(entity *e){
 	e->y += e->vy;
 	e->z += e->vz;
 	if(e->noClip){
-		e->collide = entityCollision(e,e->x,e->y,e->z,0.3f);
+		e->collide = entityCollision(e->x,e->y,e->z);
 		return 0;
 	}
 
@@ -96,7 +91,7 @@ int entityUpdate(entity *e){
 
 	e->falling = true;
 	e->collide = false;
-	col = entityCollision(e,e->x,e->y,e->z,0.3f);
+	col = entityCollision(e->x,e->y,e->z);
 	if(col){ e->collide = true; }
 	e->updated = true;
 	if(e->noRepulsion){ return 0; }
