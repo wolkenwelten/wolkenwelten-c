@@ -19,8 +19,7 @@ typedef struct {
 	itemProcedure *proc;
 } item;
 
-item *items[512];
-int itemCount=0;
+item *items[1024];
 
 
 void *loadFile(const char *filename,size_t *len){
@@ -150,7 +149,7 @@ void parseFile(const char *filename){
 		}
 	}
 	
-	items[itemCount++] = itm;
+	items[itm->id] = itm;
 }
 
 void printFunctionPrototypes(item *itm){
@@ -166,7 +165,7 @@ void printTypeCaller(const char *procName, const char *typeName){
 	size_t tnLen = strlen(typeName);
 	
 	printf("void %s(){\n",procName);
-	for(int i=0;i<itemCount;i++){
+	for(int i=0;i<1024;i++){
 		item *itm = items[i];
 		itemProcedure *p;
 		if(itm       == NULL){continue;}
@@ -187,7 +186,7 @@ void printItemTypeDispatch(const char *typeName, const char *argsAndTypes, const
 	printf("%s%sDispatch(%s){\n",retType,lcType,argsAndTypes);
 	puts("\tswitch(cItem->ID){");
 	
-	for(int i=0;i<itemCount;i++){
+	for(int i=0;i<1024;i++){
 		item *itm = items[i];
 		itemProcedure *p;
 		if(itm       == NULL){continue;}
@@ -211,13 +210,13 @@ int main(int argc, char *argv[]){
 		fprintf(stderr,"USAGE: modscg [FILES]\n");
 		return 1;
 	}
-	
+	memset(items,0,sizeof(items));
 	puts("#include \"../mods/mods.h\"\n");
 	for(int i=1;i<argc;i++){
 		parseFile(argv[i]);
 	}
 	
-	for(int i=0;i<itemCount;i++){
+	for(int i=0;i<1024;i++){
 		printFunctionPrototypes(items[i]);
 	}
 	
