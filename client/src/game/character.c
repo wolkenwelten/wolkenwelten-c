@@ -96,6 +96,12 @@ void characterSetPos(character *c, float x, float y, float z){
 	c->z = z;
 }
 
+void characterSetVelocity(character *c, float vx, float vy, float vz){
+	c->vx = vx;
+	c->vy = vy;
+	c->vz = vz;
+}
+
 void characterRemovePlayer(int c, int len){
 	if(playerList[c] != NULL){
 		characterFree(playerList[c]);
@@ -815,6 +821,13 @@ void characterFireHook(character *c){
 	}else{
 		grapplingHookReturnHook(c->hook);
 		c->hasHit = true;
+	}
+}
+
+void characterFreeHook(character *c){
+	if(c->hook != NULL){
+		grapplingHookFree(c->hook);
+		c->hook = NULL;
 	}
 }
 

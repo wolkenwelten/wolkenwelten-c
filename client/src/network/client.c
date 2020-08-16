@@ -115,6 +115,8 @@ void clientParsePacket(packet *p){
 
 		case 1: // requestPlayerSpawnPos
 			characterSetPos(player,p->val.f[0],p->val.f[1],p->val.f[2]);
+			characterSetVelocity(player,0.f,0.f,0.f);
+			characterFreeHook(player);
 		break;
 
 		case 2: // requestChungus
