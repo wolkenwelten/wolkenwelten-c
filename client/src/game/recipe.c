@@ -55,7 +55,6 @@ unsigned short ingredientSubstituteGetSub(unsigned short ingredient, int i){
 	for(ingredientSubstitute *s = substitutes[ingredient];s != NULL;s = s->next){
 		if(i-- == 0){ return s->substitute; }
 	}
-
 	return ingredient;
 }
 
@@ -177,8 +176,8 @@ void recipeDoCraft(int r, character *c,int amount){
 void recipeInit(){
 	ingredientSubstituteAdd(10,5);
 	ingredientSubstituteAdd(10,20);
-	recipeAdd1I(16,1, 10,1);
-	recipeAdd1I(17,2, 16,1);
+	//recipeAdd1I(16,1, 10,1);
+	recipeAdd1I(17,2, 10,1);
 	//recipeAdd1I(14,1, 12,1);
 	//recipeAdd1I(15,1, 12,1);
 }
