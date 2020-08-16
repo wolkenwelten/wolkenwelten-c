@@ -22,3 +22,9 @@ mesh *grenadeGetMesh(item *cItem){
 
 	return meshGrenade;
 }
+
+int grenadeGetAmmunition(item *cItem){
+	(void)cItem;
+	
+	return ITEMID;
+}

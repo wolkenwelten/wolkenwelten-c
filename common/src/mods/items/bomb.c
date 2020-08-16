@@ -21,3 +21,9 @@ mesh *bombGetMesh(item *cItem){
 
 	return meshBomb;
 }
+
+int bombGetAmmunition(item *cItem){
+	(void)cItem;
+	
+	return ITEMID;
+}

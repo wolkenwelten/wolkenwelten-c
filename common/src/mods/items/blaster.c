@@ -29,6 +29,8 @@ bool blasterMineAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 0){return false;}
+	if(characterGetItemAmount(cChar,18) <= 0){return false;}
+	characterDecItemAmount(cChar, 18, 1);
 	characterAddCooldown(cChar,100);
 	beamblast(cChar,1.2f,1.0f,0.15f,6,1,18.f,1.f);
 	return true;
@@ -38,7 +40,15 @@ bool blasterActivateItem(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 0){return false;}
+	if(characterGetItemAmount(cChar,18) <= 0){return false;}
+	characterDecItemAmount(cChar, 18, 1);
 	characterAddCooldown(cChar,20);
 	beamblast(cChar,0.8f,0.5f,0.05f,6,1,18.f,1.f);
 	return true;
+}
+
+int blasterGetAmmunition(item *cItem){
+	(void)cItem;
+	
+	return 18;
 }

@@ -11,7 +11,7 @@ MESHASSETS       := $(shell find client/mesh -type f -name '*')
 
 CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
 CLIENT_SRCS      := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
-CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o} client/src/tmp/mods_tmp.o
+CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
 
 $(CLIENT_OBJS): CFLAGS    += $(CLIENT_CFLAGS)
 $(CLIENT_OBJS): CINCLUDES += $(CLIENT_CINCLUDES)
@@ -26,7 +26,7 @@ wolkenwelten: client/make.deps $(CLIENT_OBJS)
 	$(CC) $(CLIENT_OBJS) -o wolkenwelten $(OPTIMIZATION) $(CFLAGS) $(LIBS)
 
 .deps: client/make.deps
-client/make.deps: | client/src/tmp/assets.h client/src/tmp/meshassets.h client/src/tmp/cto.h
+client/make.deps: | client/src/tmp/assets.h client/src/tmp/meshassets.h client/src/tmp/cto.h client/src/tmp/mods_tmp.c
 	$(CC) -MM $(CLIENT_SRCS) $(CINCLUDES) $(CLIENT_CINCLUDES) > client/make.deps
 
 client/src/tmp/cto.c: tools/infogen

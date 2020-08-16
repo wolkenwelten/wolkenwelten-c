@@ -24,3 +24,9 @@ mesh *pearGetMesh(item *cItem){
 
 	return meshPear;
 }
+
+int pearGetAmmunition(item *cItem){
+	(void)cItem;
+	
+	return ITEMID;
+}

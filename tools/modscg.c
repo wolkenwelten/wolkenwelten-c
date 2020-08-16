@@ -228,6 +228,7 @@ int main(int argc, char *argv[]){
 	printItemTypeDispatch("MineAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
 	printItemTypeDispatch("ActivateItem","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
 	printItemTypeDispatch("GetInaccuracy","item *cItem","cItem","float ");
+	printItemTypeDispatch("GetAmmunition","item *cItem","cItem","int ");
 	
 	return 0;
 }

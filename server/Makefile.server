@@ -4,7 +4,7 @@ SERVER_LIBS      :=
 
 SERVER_HDRS      := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
 SERVER_SRCS      := $(shell find server/src -type f -name '*.c') $(COMMON_SRCS)
-SERVER_OBJS      := ${SERVER_SRCS:.c=.o} server/src/tmp/mods_tmp.o
+SERVER_OBJS      := ${SERVER_SRCS:.c=.o}
 
 $(SERVER_OBJS): CFLAGS    += $(SERVER_CFLAGS)
 $(SERVER_OBJS): CINCLUDES += $(SERVER_CINCLUDES)
@@ -22,7 +22,7 @@ server/src/tmp/cto.h: server/src/tmp/cto.c
 	@true
 
 .deps: server/make.deps
-server/make.deps: server/src/tmp/cto.h
+server/make.deps: server/src/tmp/cto.h server/src/tmp/mods_tmp.c
 	$(CC) -MM $(SERVER_SRCS) $(CINCLUDES) $(SERVER_CINCLUDES) > server/make.deps
 
 ifneq ($(MAKECMDGOALS),clean)

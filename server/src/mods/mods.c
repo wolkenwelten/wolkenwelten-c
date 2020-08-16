@@ -40,3 +40,10 @@ float getInaccuracyDefault(item *cItem){
 	
 	return 4.f;
 }
+int getAmmunitionDefault(item *cItem){
+	int ID = cItem->ID;
+	if(ID < 256){
+		return ID;
+	}
+	return 0;
+}

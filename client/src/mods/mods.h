@@ -12,6 +12,7 @@ bool  isSingleItemDispatch  (item *cItem);
 bool  hasMineActionDispatch (item *cItem);
 bool  mineActionDispatch    (item *cItem, character *cChar, int to);
 bool  activateItemDispatch  (item *cItem, character *cChar, int to);
+int   getAmmunitionDispatch (item *cItem);
 
 mesh *getMeshDefault     (item *cItem);
 int blockDamageDefault   (item *cItem, blockCategory blockCat);
@@ -20,3 +21,4 @@ bool mineActionDefault   (item *cItem, character *cChar, int to);
 bool hasMineActionDefault(item *cItem);
 bool isSingleItemDefault (item *cItem);
 float getInaccuracyDefault(item *cItem);
+int   getAmmunitionDefault  (item *cItem);

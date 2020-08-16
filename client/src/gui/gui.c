@@ -8,6 +8,7 @@
 #include "../game/entity.h"
 #include "../game/item.h"
 #include "../game/itemDrop.h"
+#include "../mods/mods.h"
 #include "../gui/menu.h"
 #include "../sdl/sdl.h"
 #include "../gfx/glew.h"
@@ -309,6 +310,34 @@ void drawActiveItem(){
 	meshDraw(aiMesh);
 }
 
+
+void drawAmmunition(){
+	item *activeItem = &player->inventory[player->activeItem];
+	if(activeItem == NULL){return;}
+	if(itemIsEmpty(activeItem)){return;}
+	int ammo = getAmmunitionDispatch(activeItem);
+	if(ammo <= 0){return;}
+	int amount = characterGetItemAmount(player,ammo);
+	
+	int tilesize;
+	if(screenWidth < 1024){
+		tilesize = 48;
+	}else if(screenWidth < 1536){
+		tilesize = 64;
+	}else {
+		tilesize = 80;
+	}
+	//itemtilesizeoff = (tilesize-itemtilesize)/2;
+	
+	guim->sx = screenWidth-(tilesize*12)+(tilesize*0.75f);
+	guim->sy = screenHeight-tilesize+(tilesize*0.4f);
+	textMeshNumber(guim,amount);
+	
+	int u = ammo % 32;
+	int v = ammo / 32;
+	textMeshBox(guim,guim->sx+24,guim->sy-22,64,64,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
+}
+
 void drawChat(){
 	guim->sy   = screenHeight - (13*16);
 	guim->sx   = 4;
@@ -330,6 +359,7 @@ void drawHud(){
 	drawOverlay(guim);
 	drawHealthbar();
 	drawDebuginfo();
+	drawAmmunition();
 	if(isInventoryOpen()){
 		drawInventory(guim);
 	}else{
