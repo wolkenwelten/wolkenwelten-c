@@ -1,8 +1,10 @@
 #include "mods.h"
 
+#include <stdlib.h>
+
 mesh *getMeshDefault(item *cItem){
 	(void)cItem;
-	
+
 	return NULL;
 }
 int blockDamageDefault(item *cItem, blockCategory blockCat){
@@ -37,7 +39,7 @@ bool isSingleItemDefault(item *cItem){
 }
 float getInaccuracyDefault(item *cItem){
 	(void)cItem;
-	
+
 	return 4.f;
 }
 int getAmmunitionDefault(item *cItem){

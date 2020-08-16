@@ -53,6 +53,8 @@ platform/win/msys2_pkgs/mingw-w64-SDL2_mixer/*
 /wolkenwelten-server.exe
 /client/tools/assets
 /client/tools/objparser
+/tools/modscg
+/tools/modscg.exe
 /client/src/shader/*.h
 /client/src/tmp/
 /server/src/tmp/
