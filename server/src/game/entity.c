@@ -54,8 +54,12 @@ void entityFree(entity *e){
 uint32_t entityCollision(float cx, float cy, float cz){
 	uint32_t col = 0;
 
-	if(checkCollision(cx   ,cy+0.5f,cz   )){col |= 0xFF0;}
-	if(checkCollision(cx   ,cy-0.5f,cz   )){col |= 0xF0F;}
+	if(checkCollision(cx-0.3f,cy-0.1f,cz     )){col |= 0x100;}
+	if(checkCollision(cx+0.3f,cy-0.1f,cz     )){col |= 0x200;}
+	if(checkCollision(cx     ,cy-0.1f,cz-0.3f)){col |= 0x400;}
+	if(checkCollision(cx     ,cy-0.1f,cz+0.3f)){col |= 0x800;}
+	if(checkCollision(cx     ,cy+0.5f,cz     )){col |=  0xF0;}
+	if(checkCollision(cx     ,cy-0.5f,cz     )){col |=   0xF;}
 
 	return col;
 }
