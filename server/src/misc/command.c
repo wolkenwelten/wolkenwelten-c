@@ -13,19 +13,27 @@
 char replyBuf[256];
 
 static void cmdDmg(int c, const char *cmd){
-	int cmdLen = strnlen(cmd,252);
-	if((cmdLen > 3) && (cmd[3] == ' ')){
-		int target = getClientByName(cmd+4);
-		if(target >= 0){
-			msgPlayerDamage(target,1);
+	int dmg = 4;
+	int target = c;
+	int argc;
+	char **argv;
+
+	argv = splitArgs(cmd,&argc);
+	if(argc > 1){
+		int tmp = getClientByName(argv[1]);
+		if(tmp >= 0){
+			target = tmp;
 		}else{
 			snprintf(replyBuf,sizeof(replyBuf),".dmg : Can't find '%s'\n",cmd+4);
 			replyBuf[sizeof(replyBuf)-1]=0;
 			serverSendChatMsg(replyBuf);
 		}
-		return;
 	}
-	msgPlayerDamage(c,1);
+	if(argc > 2){
+		dmg = atoi(argv[2]);
+	}
+
+	msgPlayerDamage(target,dmg);
 }
 
 static void cmdDie(int c, const char *cmd){
@@ -45,33 +53,69 @@ static void cmdDie(int c, const char *cmd){
 }
 
 static void cmdHeal(int c, const char *cmd){
-	int cmdLen = strnlen(cmd,252);
-	if((cmdLen > 4) && (cmd[4] == ' ')){
-		int target = getClientByName(cmd+5);
-		if(target >= 0){
-			msgPlayerDamage(target,-1000);
+	int dmg = 4;
+	int target = c;
+	int argc;
+	char **argv;
+
+	argv = splitArgs(cmd,&argc);
+	if(argc > 1){
+		int tmp = getClientByName(argv[1]);
+		if(tmp >= 0){
+			target = tmp;
 		}else{
-			snprintf(replyBuf,sizeof(replyBuf),".heal : Can't find '%s'\n",cmd+5);
+			snprintf(replyBuf,sizeof(replyBuf),".heal : Can't find '%s'\n",cmd+4);
 			replyBuf[sizeof(replyBuf)-1]=0;
 			serverSendChatMsg(replyBuf);
 		}
-		return;
 	}
-	msgPlayerDamage(c,-1000);
+	if(argc > 2){
+		dmg = atoi(argv[2]);
+	}
+
+	msgPlayerDamage(target,-dmg);
 }
 
 static void cmdGive(int c, const char *cmd){
-	int cmdLen = strnlen(cmd,252);
-	if((cmdLen > 4) && (cmd[4] == ' ') && (isdigit(cmd[5]))){
-		int target = atoi(cmd+5);
-		if(target > 0){
-			msgPickupItem(c,target,1);
+	int amount = 1;
+	int id = 0;
+	int target = c;
+	int argc;
+	char **argv;
+
+	argv = splitArgs(cmd,&argc);
+	if(argc == 1){
+		snprintf(replyBuf,sizeof(replyBuf),".give ID [PLAYER] [AMOUNT]\n");
+		replyBuf[sizeof(replyBuf)-1]=0;
+		serverSendChatMsg(replyBuf);
+		return;
+	}
+	if(argc > 1){
+		id = atoi(argv[1]);
+		if(id <= 0){
+			snprintf(replyBuf,sizeof(replyBuf),".give: error with ID %i\n",id);
+			replyBuf[sizeof(replyBuf)-1]=0;
+			serverSendChatMsg(replyBuf);
 			return;
 		}
 	}
-	snprintf(replyBuf,sizeof(replyBuf),".give : You have to type in an ItemID\n");
-	replyBuf[sizeof(replyBuf)-1]=0;
-	serverSendChatMsg(replyBuf);
+	if(argc > 2){
+		int tmp = getClientByName(argv[2]);
+		if(tmp >= 0){
+			target = tmp;
+		}
+	}
+	if(argc > 3){
+		amount = atoi(argv[3]);
+		if(amount <= 0){
+			snprintf(replyBuf,sizeof(replyBuf),".give: error with amount %i\n",amount);
+			replyBuf[sizeof(replyBuf)-1]=0;
+			serverSendChatMsg(replyBuf);
+			return;
+		}
+	}
+
+	msgPickupItem(target,id,amount);
 }
 
 static void cmdTp(int c, const char *cmd){
