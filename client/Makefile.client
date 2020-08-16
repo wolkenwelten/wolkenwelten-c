@@ -54,6 +54,7 @@ client/tools/objparser: client/tools/objparser.c
 	$(CC) $(OPTIMIZATION) $(CFLAGS) $< -o $@
 
 client/src/tmp/mods_tmp.o: client/src/tmp/mods_tmp.c
+client/src/tmp/mods_tmp.c: $(MODS_SRCS)
 client/src/tmp/mods_tmp.c: tools/modscg
 	tools/modscg $(shell find common/src/mods/items -type f -name '*.c') > client/src/tmp/mods_tmp.c
 

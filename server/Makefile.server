@@ -30,6 +30,7 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 
 server/src/tmp/mods_tmp.o: server/src/tmp/mods_tmp.c
+server/src/tmp/mods_tmp.c: $(MODS_SRCS)
 server/src/tmp/mods_tmp.c: tools/modscg
 	tools/modscg $(shell find common/src/mods/items -type f -name '*.c') > server/src/tmp/mods_tmp.c
 
