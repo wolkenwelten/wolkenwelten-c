@@ -233,9 +233,7 @@ void drawItemBar(){
 		int v = b / 32;
 		textMeshBox(guim,x+itemtilesizeoff,y+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
 		if(!itemIsSingle(cItem)){
-			guim->sx = x+tilesize-tilesize/4;
-			guim->sy = y+(itemtilesize-itemtilesizeoff)+tilesize/32;
-			textMeshNumber(guim,a);
+			textMeshNumber(guim,x+tilesize-tilesize/4,y+(itemtilesize-itemtilesizeoff)+tilesize/32,1,a);
 		}
 	}
 }
@@ -318,7 +316,7 @@ void drawAmmunition(){
 	int ammo = getAmmunitionDispatch(activeItem);
 	if(ammo <= 0){return;}
 	int amount = characterGetItemAmount(player,ammo);
-	
+
 	int tilesize;
 	if(screenWidth < 1024){
 		tilesize = 48;
@@ -327,15 +325,14 @@ void drawAmmunition(){
 	}else {
 		tilesize = 80;
 	}
-	//itemtilesizeoff = (tilesize-itemtilesize)/2;
-	
-	guim->sx = screenWidth-(tilesize*12)+(tilesize*0.75f);
-	guim->sy = screenHeight-tilesize+(tilesize*0.4f);
-	textMeshNumber(guim,amount);
-	
+
+	guim->sx = screenWidth-(tilesize*12)+(tilesize*0.3f);
+	guim->sy = screenHeight-tilesize+(tilesize*0.3f);
+	textMeshNumber(guim,guim->sx,guim->sy,2,amount);
+
 	int u = ammo % 32;
 	int v = ammo / 32;
-	textMeshBox(guim,guim->sx+24,guim->sy-22,64,64,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
+	textMeshBox(guim,guim->sx+32,guim->sy-18,64,64,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
 }
 
 void drawChat(){

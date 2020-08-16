@@ -93,7 +93,7 @@ void textMeshAddGlyph(textMesh *m, int x, int y, int size, unsigned char c){
 	float gy;
 	int   glyphWidth = 8*size;
 	float glyphSize  = 1.f / 64.f;
-	
+
 	if(x < -size){return;}
 	if(y < -size){return;}
 	if(c==0)     {return;}
@@ -150,7 +150,7 @@ void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 			x = (((x - m->sx) / (glyphWidth*4) ) + 1 ) * (glyphWidth*4);
 			continue;
 		}
-		
+
 		textMeshAddGlyph(m,x,y,size,*str);
 		x += glyphWidth;
 		str++;
@@ -185,8 +185,8 @@ void textMeshPrintf(textMesh *m, const char *format, ...){
 	textMeshAddString(m,stringBuffer);
 }
 
-void textMeshDigit(textMesh *m, int digit,int x,int y){
-	const int   glyphWidth = 16;
+static void textMeshDigit(textMesh *m, int x, int y, int size, int digit){
+	const int   glyphWidth = 16*size;
 	const float glyphSize  = 1.f / 64.f;
 	const float gx = 4.f/32.f + (((float)(digit&0x07))*glyphSize);
 	const float gy = (28.f/32.f-glyphSize) - ((digit>>3)*glyphSize);
@@ -200,18 +200,15 @@ void textMeshDigit(textMesh *m, int digit,int x,int y){
 	textMeshAddVert( m, x           , y+glyphWidth, (gx          )*128.f, (gy+glyphSize)*128.f,0xFFFFFFFF);
 }
 
-void textMeshNumber(textMesh *m, int number){
-	int x = m->sx;
-	int y = m->sy;
-
+void textMeshNumber(textMesh *m, int x, int y, int size, int number){
 	if(number == 0){
-		textMeshDigit(m,0,x,y);
+		textMeshDigit(m,x,y,size,0);
 		return;
 	}
 	while(number != 0){
-		textMeshDigit(m,number % 10,x,y);
+		textMeshDigit(m,x,y,size,number % 10);
 		number = number / 10;
-		x-= 12;
+		x-= 12*size;
 	}
 }
 
