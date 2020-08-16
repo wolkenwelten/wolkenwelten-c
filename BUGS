@@ -1,3 +1,4 @@
+itemdrops do add considerable latency to everything on the serverside
 Reducing Hook rope length still can lead to weird collision issues
 You can't build one block wide bunkers, placing the block not possible.
 Collision is getting weird in 1x2 mine shafts
