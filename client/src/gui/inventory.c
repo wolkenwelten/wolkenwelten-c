@@ -34,7 +34,7 @@ bool isInventoryOpen(){
 void drawInventory(textMesh *guim){
 	item *cItem;
 	static int ticks = 0;
-	unsigned char a;
+	unsigned short a;
 	unsigned short b;
 	int tilesize,itemtilesize,itemtilesizeoff;
 	if(!isInventoryOpen()){return;}

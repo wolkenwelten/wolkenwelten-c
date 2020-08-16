@@ -35,11 +35,6 @@ bool hasMineActionDefault(item *cItem){
 
 	return false;
 }
-bool isSingleItemDefault(item *cItem){
-	(void)cItem;
-
-	return false;
-}
 float getInaccuracyDefault(item *cItem){
 	(void)cItem;
 	
@@ -51,4 +46,9 @@ int getAmmunitionDefault(item *cItem){
 		return ID;
 	}
 	return 0;
+}
+int getStackSizeDefault (item *cItem){
+	(void)cItem;
+	
+	return 99;
 }

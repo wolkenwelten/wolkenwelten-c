@@ -223,12 +223,12 @@ int main(int argc, char *argv[]){
 	printTypeCaller("modsInit","Init");
 	printItemTypeDispatch("BlockDamage","item *cItem, blockCategory blockCat","cItem, blockCat","int ");
 	printItemTypeDispatch("GetMesh","item *cItem","cItem","mesh *");
-	printItemTypeDispatch("IsSingleItem","item *cItem","cItem","bool ");
 	printItemTypeDispatch("HasMineAction","item *cItem","cItem","bool ");
 	printItemTypeDispatch("MineAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
 	printItemTypeDispatch("ActivateItem","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
 	printItemTypeDispatch("GetInaccuracy","item *cItem","cItem","float ");
 	printItemTypeDispatch("GetAmmunition","item *cItem","cItem","int ");
+	printItemTypeDispatch("GetStackSize","item *cItem","cItem","int ");
 	
 	return 0;
 }

@@ -13,10 +13,10 @@ mesh *blasterGetMesh(item *cItem){
 	return meshMasterblaster;
 }
 
-bool blasterIsSingleItem(item *cItem){
+int blasterGetStackSize(item *cItem){
 	(void)cItem;
 
-	return true;
+	return 1;
 }
 
 bool blasterHasMineAction(item *cItem){

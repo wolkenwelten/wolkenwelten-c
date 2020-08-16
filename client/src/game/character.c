@@ -561,6 +561,7 @@ int characterDecItemAmount(character *c, uint16_t itemID,int amount){
 bool characterPickupItem(character *c, uint16_t itemID,int amount){
 	int a = 0;
 	
+	
 	for(unsigned int i=0;i<40;i++){
 		if(a >= amount){break;}
 		if(itemCanStack(&c->inventory[i],itemID)){

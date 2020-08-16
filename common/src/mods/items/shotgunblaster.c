@@ -13,10 +13,10 @@ mesh *shotgunblasterGetMesh(item *cItem){
 	return meshMasterblaster;
 }
 
-bool shotgunblasterIsSingleItem(item *cItem){
+int shotgunblasterGetStackSize(item *cItem){
 	(void)cItem;
 
-	return true;
+	return 1;
 }
 
 bool shotgunblasterHasMineAction(item *cItem){

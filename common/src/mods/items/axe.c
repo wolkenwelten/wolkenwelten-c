@@ -21,8 +21,8 @@ mesh *axeGetMesh(item *cItem){
 	return meshAxe;
 }
 
-bool axeIsSingleItem(item *cItem){
+int axeGetStackSize(item *cItem){
 	(void)cItem;
 
-	return true;
+	return 1;
 }

@@ -10,8 +10,8 @@
 
 item itemNew(uint16_t ID, int16_t amount){
 	item i;
-	i.amount = MIN(99,amount);
 	i.ID     = ID;
+	i.amount = MIN(getStackSizeDispatch(&i),amount);
 	return i;
 }
 
@@ -42,7 +42,7 @@ float itemGetInaccuracy(item *i){
 }
 
 bool itemIsSingle(item *i){
-	return isSingleItemDispatch(i);
+	return (getStackSizeDispatch(i) == 1);
 }
 
 bool itemHasMineAction(item *i){
@@ -54,14 +54,16 @@ bool itemMineAction(item *i, character *chr, int to){
 }
 
 int itemCanStack(item *i, uint16_t ID){
+	const int ma = getStackSizeDispatch(i);
 	if(itemIsSingle(i)){return 0;}
 	if(i->ID != ID)    {return 0;}
-	if(i->amount >= 99){return 0;}
+	if(i->amount >= ma){return 0;}
 	if(i->amount ==  0){return 0;}
-	return 99-i->amount;
+	return ma-i->amount;
 }
 int itemIncStack(item *i, int16_t amount){
-	if((i->amount+amount)>99){amount = 99 - i->amount;}
+	const int ma = getStackSizeDispatch(i);
+	if((i->amount+amount)>ma){amount = ma - i->amount;}
 	i->amount += amount;
 	return amount;
 }

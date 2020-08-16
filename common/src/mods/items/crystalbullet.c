@@ -11,3 +11,9 @@ mesh *crystalbulletGetMesh(item *cItem){
 
 	return meshPear;
 }
+
+int crystalbulletGetStackSize(item *cItem){
+	(void)cItem;
+	
+	return 999;
+}

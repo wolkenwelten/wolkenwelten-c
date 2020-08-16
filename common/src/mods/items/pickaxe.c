@@ -23,8 +23,8 @@ mesh *pickaxeGetMesh(item *cItem){
 	return meshPickaxe;
 }
 
-bool pickaxeIsSingleItem(item *cItem){
+int pickaxeGetStackSize(item *cItem){
 	(void)cItem;
 
-	return true;
+	return 1;
 }
