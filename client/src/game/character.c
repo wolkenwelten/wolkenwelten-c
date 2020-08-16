@@ -559,20 +559,25 @@ int characterDecItemAmount(character *c, uint16_t itemID,int amount){
 }
 
 bool characterPickupItem(character *c, uint16_t itemID,int amount){
+	int a = 0;
+	
 	for(unsigned int i=0;i<40;i++){
+		if(a >= amount){break;}
 		if(itemCanStack(&c->inventory[i],itemID)){
-			if(itemIncStack(&c->inventory[i],amount)){
-				sfxPlay(sfxPock,.8f);
-				return true;
-			}
+			a += itemIncStack(&c->inventory[i],amount - a);
 		}
 	}
 	for(unsigned int i=0;i<40;i++){
+		if(a >= amount){break;}
 		if(itemIsEmpty(&c->inventory[i])){
-			c->inventory[i] = itemNew(itemID,amount);
-			sfxPlay(sfxPock,.8f);
-			return true;
+			c->inventory[i] = itemNew(itemID,amount - a);
+			a += c->inventory[i].amount;
 		}
+	}
+	
+	if(a == amount){
+		sfxPlay(sfxPock,.8f);
+		return true;
 	}
 	return false;
 }

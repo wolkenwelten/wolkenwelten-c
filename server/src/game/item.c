@@ -9,7 +9,7 @@
 
 item itemNew(uint16_t ID, int16_t amount){
 	item i;
-	i.amount = amount;
+	i.amount = MIN(99,amount);
 	i.ID     = ID;
 	return i;
 }
@@ -32,20 +32,19 @@ int itemBlockDamage(item *i, blockCategory cat){
 	return blockDamageDispatch(i,cat);
 }
 
-bool itemCanStack(item *i, uint16_t ID){
-	if(i->ID != ID)    {return false;}
-	if(i->amount >= 99){return false;}
-	if(i->amount ==  0){return false;}
-	return true;
+int itemCanStack(item *i, uint16_t ID){
+	if(i->ID != ID)    {return 0;}
+	if(i->amount >= 99){return 0;}
+	if(i->amount ==  0){return 0;}
+	return 99-i->amount;
 }
-
-bool itemIncStack(item *i, int16_t amount){
-	if((i->amount+amount)>99){return false;}
+int itemIncStack(item *i, int16_t amount){
+	if((i->amount+amount)>99){amount = 99 - i->amount;}
 	i->amount += amount;
-	return true;
+	return amount;
 }
-bool itemDecStack(item *i, int16_t amount){
-	if(i->amount < amount){return false;}
+int itemDecStack(item *i, int16_t amount){
+	if(i->amount < amount){amount = i->amount;}
 	i->amount -= amount;
-	return true;
+	return amount;
 }
