@@ -35,7 +35,7 @@ bool gamepadSecondary(){
 	return (gamepadLeftTrigger > 0.5f);
 }
 bool gamepadTertiary(){
-	return false;
+	return gamepadButtons[1];
 }
 
 void gamepadInit(){
