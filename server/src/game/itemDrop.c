@@ -15,10 +15,10 @@ typedef struct {
 	item       itm;
 } itemDrop;
 
-itemDrop itemDrops[1<<14];
+itemDrop itemDrops[1<<12];
 int      itemDropCount = 0;
 
-#define ITEM_DROPS_PER_UPDATE 32
+#define ITEM_DROPS_PER_UPDATE 64
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 unsigned int itemDropUpdatePlayer(int c, unsigned int offset){

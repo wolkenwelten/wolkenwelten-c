@@ -14,7 +14,7 @@ typedef struct {
 	int    aniStep;
 } itemDrop;
 
-itemDrop itemDrops[1<<14];
+itemDrop itemDrops[1<<12];
 int      itemDropCount = 0;
 
 void itemDropNewC(character *chr, item *itm){
