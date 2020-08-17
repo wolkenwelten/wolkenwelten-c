@@ -30,9 +30,9 @@ bool blasterMineAction(item *cItem, character *cChar, int to){
 
 	if(to < 0){return false;}
 	if(characterGetItemAmount(cChar,265) < 2){return false;}
-	characterDecItemAmount(cChar, 265, 2);
+	characterDecItemAmount(cChar, 265, 3);
 	characterAddCooldown(cChar,100);
-	beamblast(cChar,1.2f,1.0f,0.15f,6,1,18.f,1.f);
+	beamblast(cChar,1.2f,1.0f,0.15f,6,1,16.f,1.f);
 	return true;
 }
 
@@ -42,8 +42,8 @@ bool blasterActivateItem(item *cItem, character *cChar, int to){
 	if(to < 0){return false;}
 	if(characterGetItemAmount(cChar,265) <= 0){return false;}
 	characterDecItemAmount(cChar, 265, 1);
-	characterAddCooldown(cChar,20);
-	beamblast(cChar,0.8f,0.5f,0.05f,6,1,18.f,1.f);
+	characterAddCooldown(cChar,6);
+	beamblast(cChar,0.8f,0.5f,0.05f,6,1,4.f,1.f);
 	return true;
 }
 

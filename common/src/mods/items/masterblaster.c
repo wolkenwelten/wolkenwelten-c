@@ -31,8 +31,8 @@ bool masterblasterMineAction(item *cItem, character *cChar, int to){
 	if(to < 0){return false;}
 	if(characterGetItemAmount(cChar,265) < 32){return false;}
 	characterDecItemAmount(cChar, 265, 32);
-	characterAddCooldown(cChar,400);
-	beamblast(cChar,3.f,8.f,2.f,1024,1,32.f,1.f);
+	characterAddCooldown(cChar,350);
+	beamblast(cChar,4.f,8.f,2.f,1024,1,32.f,1.f);
 	return true;
 }
 
@@ -41,9 +41,9 @@ bool masterblasterActivateItem(item *cItem, character *cChar, int to){
 
 	if(to < 0){return false;}
 	if(characterGetItemAmount(cChar,265) <= 0){return false;}
-	characterDecItemAmount(cChar, 265, 1);
-	characterAddCooldown(cChar,20);
-	beamblast(cChar,0.5f,0.1f,2.f,1024,1,32.f,1.f);
+	characterDecItemAmount(cChar, 265, 4);
+	characterAddCooldown(cChar,50);
+	beamblast(cChar,3.f,0.1f,2.f,1,1,16.f,1.f);
 	return true;
 }
 
