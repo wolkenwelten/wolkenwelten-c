@@ -698,6 +698,7 @@ void characterUpdate(character *c){
 		c->vz = c->gvz;
 		characterUpdateHook(c);
 		characterUpdateHitOff(c);
+		characterUpdateInaccuracy(c);
 		characterPhysics(c);
 		return;
 	}
