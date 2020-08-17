@@ -19,12 +19,6 @@ int blasterGetStackSize(item *cItem){
 	return 1;
 }
 
-bool blasterHasPrimaryAction(item *cItem){
-	(void)cItem;
-
-	return true;
-}
-
 bool blasterPrimaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 

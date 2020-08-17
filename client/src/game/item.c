@@ -43,7 +43,7 @@ bool itemIsSingle(item *i){
 	return (getStackSizeDispatch(i) == 1);
 }
 bool itemHasPrimaryAction(item *i){
-	return hasPrimaryActionDispatch(i);
+	return hasPrimaryAction(i);
 }
 bool itemPrimaryAction(item *i, character *chr, int to){
 	return primaryActionDispatch(i,chr,to);

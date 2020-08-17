@@ -190,7 +190,7 @@ void printItemTypeDispatch(const char *typeName, const char *argsAndTypes, const
 	for(int i=0;i<1024;i++){
 		item *itm = items[i];
 		itemProcedure *p;
-		if(itm       == NULL){continue;}
+		if(itm == NULL){continue;}
 		for(p = itm->proc;p != NULL;p = p->next){
 			if(strncmp(p->type,typeName,tnLen) == 0){
 				printf("\t\tcase %i: return %s(%s);\n",itm->id,p->name,args);
@@ -200,6 +200,29 @@ void printItemTypeDispatch(const char *typeName, const char *argsAndTypes, const
 	
 	puts("\t}");
 	printf("\treturn %sDefault(%s);\n",lcType,args);
+	puts("}");
+	puts("");
+}
+
+void printHasTypeSwitch(const char *typeName){
+	size_t tnLen = strlen(typeName);
+	
+	printf("bool has%s(item *cItem){\n",typeName);
+	puts("\tswitch(cItem->ID){");
+	
+	for(int i=0;i<1024;i++){
+		item *itm = items[i];
+		itemProcedure *p;
+		if(itm == NULL){continue;}
+		for(p = itm->proc;p != NULL;p = p->next){
+			if(strncmp(p->type,typeName,tnLen) == 0){
+				printf("\t\tcase %i: return true;\n",itm->id);
+			}
+		}
+	}
+	
+	puts("\t\tdefault: return false;");
+	puts("\t}");
 	puts("}");
 	puts("");
 }
@@ -224,10 +247,12 @@ int main(int argc, char *argv[]){
 	printTypeCaller("modsInit","Init");
 	printItemTypeDispatch("BlockDamage","item *cItem, blockCategory blockCat","cItem, blockCat","int ");
 	printItemTypeDispatch("GetMesh","item *cItem","cItem","mesh *");
-	printItemTypeDispatch("HasPrimaryAction","item *cItem","cItem","bool ");
 	printItemTypeDispatch("PrimaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
+	printHasTypeSwitch   ("PrimaryAction");
 	printItemTypeDispatch("SecondaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
+	printHasTypeSwitch   ("SecondaryAction");
 	printItemTypeDispatch("TertiaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
+	printHasTypeSwitch   ("TertiaryAction");
 	printItemTypeDispatch("GetInaccuracy","item *cItem","cItem","float ");
 	printItemTypeDispatch("GetAmmunition","item *cItem","cItem","int ");
 	printItemTypeDispatch("GetStackSize","item *cItem","cItem","int ");

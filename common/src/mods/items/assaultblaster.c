@@ -19,12 +19,6 @@ int assaultblasterGetStackSize(item *cItem){
 	return 1;
 }
 
-bool assaultblasterHasPrimaryAction(item *cItem){
-	(void)cItem;
-
-	return true;
-}
-
 bool assaultblasterPrimaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 

@@ -19,12 +19,6 @@ int shotgunblasterGetStackSize(item *cItem){
 	return 1;
 }
 
-bool shotgunblasterHasPrimaryAction(item *cItem){
-	(void)cItem;
-
-	return true;
-}
-
 bool shotgunblasterPrimaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
