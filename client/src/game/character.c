@@ -125,8 +125,8 @@ void characterEmptyInventory(character *c){
 		c->inventory[4] = itemNew(259, 1);
 		c->inventory[5] = itemNew(260, 1);
 		c->inventory[6] = itemNew(256,99);
-		c->inventory[7] = itemNew(257,99);
-		c->inventory[8] = itemNew(258,99);
+		c->inventory[7] = itemNew(258,99);
+		c->inventory[8] = itemNew(265,999);
 		c->inventory[9] = itemNew(  1,99);
 	}
 }
