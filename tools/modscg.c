@@ -112,6 +112,7 @@ void parseLine(int lineNumber, const char *line, item *itm){
 	if(*line == '\t'){return;}
 	if(*line == '\r'){return;}
 	if(*line == '\n'){return;}
+	if(*line == '/') {return;}
 	
 	if(*line == '}') {return;}
 	if(*line == '#') {return;}
