@@ -198,43 +198,25 @@ void drawDebuginfo(){
 }
 
 void drawItemBar(){
-	item *cItem;
-	unsigned char a;
-	unsigned short b;
 	int playerSelection = player->activeItem;
-	int tilesize,itemtilesize,itemtilesizeoff;
+	int tilesize;
 	if(screenWidth < 1024){
 		tilesize = 48;
-		itemtilesize = 32;
 	}else if(screenWidth < 1536){
 		tilesize = 64;
-		itemtilesize = 48;
 	}else {
 		tilesize = 80;
-		itemtilesize = 64;
 	}
-	itemtilesizeoff = (tilesize-itemtilesize)/2;
 
 	guim->size = 2;
 	for(int i = 0;i<10;i++){
 		int x = (screenWidth-10*tilesize)+(i*tilesize);
 		int y = screenHeight-tilesize;
+		int style = 0;
 		if(i == playerSelection){
-			textMeshBox(guim,x,y,tilesize,tilesize,21.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
-		}else{
-			textMeshBox(guim,x,y,tilesize,tilesize,20.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+			style = 1;
 		}
-		cItem = &player->inventory[i];
-		if(cItem == NULL){continue;}
-		b = cItem->ID;
-		a = cItem->amount;
-		if(a == 0){continue;}
-		int u = b % 32;
-		int v = b / 32;
-		textMeshBox(guim,x+itemtilesizeoff,y+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
-		if(!itemIsSingle(cItem)){
-			textMeshNumber(guim,x+tilesize-tilesize/4,y+(itemtilesize-itemtilesizeoff)+tilesize/32,1,a);
-		}
+		textMeshItem(guim,x,y,tilesize,style,&player->inventory[i]);
 	}
 }
 

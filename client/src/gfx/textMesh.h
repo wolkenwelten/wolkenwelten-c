@@ -1,4 +1,5 @@
 #pragma once
+#include "../game/item.h"
 #include "../gfx/texture.h"
 #include <stdint.h>
 
@@ -34,3 +35,7 @@ void      textMeshPrintf    (textMesh *m, const char *format, ...);
 void      textMeshNumber    (textMesh *m, int x, int y, int size, int number);
 void      textMeshBox       (textMesh *m, int x, int y, int w, int h, float u, float v, float uw, float vh, uint32_t rgba);
 void      textMeshSolidBox  (textMesh *m, int x, int y, int w, int h, uint32_t rgba);
+void      textMeshItemSprite(textMesh *m, int x, int y, int size, int itemID);
+void      textMeshSlot      (textMesh *m, int x, int y, int size, int style);
+void      textMeshItemSlot  (textMesh *m, int x, int y, int size, int style, int itemID, int amount);
+void      textMeshItem      (textMesh *m, int x, int y, int size, int style, item *itm);

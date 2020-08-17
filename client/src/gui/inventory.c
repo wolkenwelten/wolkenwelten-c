@@ -1,7 +1,9 @@
 #include "inventory.h"
 #include "../main.h"
 #include "../gfx/mesh.h"
+#include "../game/character.h"
 #include "../game/item.h"
+#include "../game/itemdrop.h"
 #include "../gfx/gfx.h"
 #include "../sdl/sdl.h"
 #include "../gui/gui.h"
@@ -12,9 +14,8 @@
 
 const float ITEMTILE    = (1.f/32.f);
 bool inventoryOpen      = false;
-bool inventoryPickup    = false;
-int  inventoryPickupSel = -1;
 int  gamepadSelection   = -1;
+item inventoryCurrentPickup;
 
 
 void showInventory(){
@@ -25,31 +26,51 @@ void showInventory(){
 void hideInventory(){
 	inventoryOpen = false;
 	hideMouseCursor();
+	if(!itemIsEmpty(&inventoryCurrentPickup)){
+		itemDropNewC(player, &inventoryCurrentPickup);
+		itemDiscard(&inventoryCurrentPickup);
+	}
 }
 
 bool isInventoryOpen(){
 	return inventoryOpen;
 }
 
+void inventoryGamepadSelToXY(int sel,int *rx, int *ry){
+	int xsel = (sel % 10)-5;
+	int ysel = 5 - (sel / 10);
+	
+	int tilesize;
+	if(screenWidth < 1024){
+		tilesize = 48;
+	}else if(screenWidth < 1536){
+		tilesize = 64;
+	}else {
+		tilesize = 80;
+	}
+	
+	*rx = (xsel * tilesize) + screenWidth/2 + tilesize/4;
+	*ry = (ysel * tilesize) + (screenHeight/2-2*tilesize) + tilesize/4;
+	if(ysel == 0){
+		*ry -= tilesize;
+	}else if(ysel == 5){
+		*ry += tilesize/2;
+	}
+}
+
 void drawInventory(textMesh *guim){
-	item *cItem;
 	static int ticks = 0;
-	unsigned short a;
-	unsigned short b;
-	int tilesize,itemtilesize,itemtilesizeoff;
+	
+	int tilesize;
 	if(!isInventoryOpen()){return;}
 	if(screenWidth < 1024){
 		tilesize = 48;
-		itemtilesize = 32;
 	}else if(screenWidth < 1536){
 		tilesize = 64;
-		itemtilesize = 48;
 	}else {
 		tilesize = 80;
-		itemtilesize = 64;
 	}
 	++ticks;
-	itemtilesizeoff = (tilesize-itemtilesize)/2;
 	guim->size = 2;
 
 	int xraw = (mousex - (screenWidth/2-5*tilesize));
@@ -79,47 +100,28 @@ void drawInventory(textMesh *guim){
 		int x = (screenWidth/2-5*tilesize)+(i%10*tilesize);
 		int y = screenHeight/2 + (4*tilesize) - (i/10*tilesize) - tilesize;
 		if(i < 10){ y += tilesize/2; }
-		if((i == sel) || (i == gamepadSelection) || (mouseHidden && (i == inventoryPickupSel))){
-			textMeshBox(guim,x,y,tilesize,tilesize,21.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
-		}else{
-			textMeshBox(guim,x,y,tilesize,tilesize,20.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+		int style = 0;
+		if((i == sel) || (i == gamepadSelection)){
+			style = 1;
 		}
-		cItem = &player->inventory[i];
-		if(cItem == NULL){continue;}
-		b = cItem->ID;
-		a = cItem->amount;
-		if(a == 0){continue;}
-		if((inventoryPickupSel != i) || (mouseHidden)){
-			int u = b % 32;
-			int v = b / 32;
-			textMeshBox(guim,x+itemtilesizeoff,y+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
-			if(!itemIsSingle(cItem)){
-				textMeshNumber(guim,x+tilesize-tilesize/4,y+(itemtilesize-itemtilesizeoff)+tilesize/32,1,a);
-			}
-		}
+		textMeshItem(guim,x,y,tilesize, style, &player->inventory[i]);
 	}
 
-
 	for(int i=0;i<10;i++){
+		if(i >= recipeGetCount()){break;}
 		const int y = screenHeight/2 - tilesize*3;
 		const int x = (screenWidth/2)+((i-5)*tilesize);
-		if(i >= recipeGetCount()){break;}
 		int r = i;
-		b = recipeGetResultID(r);
-		a = recipeCanCraft(r,player);
-		int u = b % 32;
-		int v = b / 32;
+		unsigned short b = recipeGetResultID(r);
+		unsigned short a = recipeCanCraft(r,player);
+		int style = 0;
 		if((i == (sel-50)) || (i == (gamepadSelection-50))){
-			textMeshBox(guim,x,y,tilesize,tilesize,21.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+			style = 1;
 		}else if(a <= 0){
-			textMeshBox(guim,x,y,tilesize,tilesize,22.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
-		}else{
-			textMeshBox(guim,x,y,tilesize,tilesize,20.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+			style = 2;
 		}
-
-		textMeshBox(guim,x+itemtilesizeoff,y+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
-		textMeshNumber(guim,x+tilesize-tilesize/3,y+(itemtilesize-itemtilesizeoff),1,a);
-
+		textMeshItemSlot(guim,x,y,tilesize,style,b,a);
+		
 		if(((mousex > x) && (mousex < x+tilesize) && (mousey > y) && (mousey < y+tilesize)) || (mouseHidden && (i == (gamepadSelection-50)))){
 			const int yy = y + tilesize + tilesize/2;
 			int ii,xx;
@@ -132,50 +134,96 @@ void drawInventory(textMesh *guim){
 				a = recipeGetIngredientAmount(r,ii);
 				if((b == 0) || (a <= 0)){ break;}
 				b = ingredientSubstituteGetSub(b,(ticks/96) % (ingredientSubstituteGetAmount(b)+1));
-
-				u = b % 32;
-				v = b / 32;
+				
 				if(ii > 0){
 					textMeshBox(guim,xx-tilesize+tilesize/4+animX/2,yy+tilesize/4+animY/2,tilesize/2,tilesize/2,24.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 				}
-				textMeshBox(guim,xx+itemtilesizeoff,yy+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
-				textMeshNumber(guim,xx+tilesize-tilesize/3,yy+(itemtilesize-itemtilesizeoff),1,a);
+				textMeshItemSlot(guim,xx,yy,tilesize,3,b,a);
 			}
 			b = recipeGetResultID(r);
-			u = b % 32;
-			v = b / 32;
+			
 			xx = (screenWidth/2)+((ii*2-5)*tilesize);
-			textMeshBox(guim,xx-tilesize/2-tilesize/4+animY,yy+tilesize/2-tilesize/4,tilesize/2,tilesize/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
-			textMeshBox(guim,xx+itemtilesizeoff,yy+itemtilesizeoff,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
-			textMeshNumber(guim,xx+tilesize-tilesize/3,yy+(itemtilesize-itemtilesizeoff),1,recipeGetResultAmount(r));
+			textMeshBox(guim,xx-tilesize+tilesize/4+animX,yy+tilesize/4,tilesize/2,tilesize/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+			textMeshItemSlot(guim,xx,yy,tilesize,3,b,recipeGetResultAmount(r));
 		}
 	}
 
-	if((inventoryPickup) &&  (!mouseHidden)){
-		cItem = characterGetItemBarSlot(player,inventoryPickupSel);
-		if(cItem == NULL){return;}
-		b = cItem->ID;
-		a = cItem->amount;
-		if(a == 0){return;}
-		int u = b % 32;
-		int v = b / 32;
-		textMeshBox(guim,mousex,mousey,itemtilesize,itemtilesize,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
-		if(!itemIsSingle(cItem)){
-			textMeshNumber(guim,mousex+tilesize-tilesize/3,mousey+(itemtilesize-itemtilesizeoff),1,a);
-		}
+	if(mouseHidden){
+		int gx,gy;
+		const int animX = sin((float)ticks/24.f)*tilesize/8;
+		const int animY = cos((float)ticks/24.f)*tilesize/8;
+		inventoryGamepadSelToXY(gamepadSelection,&gx,&gy);
+		textMeshItem(guim,gx+animX,gy+animY,tilesize,3,&inventoryCurrentPickup);
+	}else{
+		const int animX = sin((float)ticks/24.f)*tilesize/8;
+		const int animY = cos((float)ticks/24.f)*tilesize/8;
+		textMeshItem(guim,mousex+animX-tilesize/8,mousey+animY-tilesize/8,tilesize,3,&inventoryCurrentPickup);
 	}
 }
 
 void inventoryClickOutside(int btn){
-	if((btn == 1) && inventoryPickup){
-		inventoryPickup = false;
-		characterDropItem(player,inventoryPickupSel);
-		inventoryPickupSel = -1;
+	if((btn == 1) && !itemIsEmpty(&inventoryCurrentPickup)){
+		itemDropNewC(player, &inventoryCurrentPickup);
+		itemDiscard(&inventoryCurrentPickup);
+	}
+}
+
+void doInventoryClick(int btn, int sel){
+	item *cItem;
+	
+	if((sel >= 50) && (sel < 60)){
+		int r = sel-50;
+		if(btn == 1){
+			recipeDoCraft(r,player,1);
+		}else if(btn == 3){
+			recipeDoCraft(r,player,recipeCanCraft(r,player));
+		}
+		return;
+	}
+	
+	if(btn == 1){
+		if(itemIsEmpty(&inventoryCurrentPickup)){
+			cItem = characterGetItemBarSlot(player,sel);
+			if(itemIsEmpty(cItem)){return;}
+			inventoryCurrentPickup = *cItem;
+			itemDiscard(cItem);
+		}else{
+			cItem = characterGetItemBarSlot(player,sel);
+			if(itemCanStack(cItem,inventoryCurrentPickup.ID) || (cItem->ID == inventoryCurrentPickup.ID)){
+				inventoryCurrentPickup.amount -= itemIncStack(cItem,inventoryCurrentPickup.amount);
+			}else{
+				item tmp = inventoryCurrentPickup;
+				inventoryCurrentPickup = *cItem;
+				*cItem = tmp;
+			}
+		}
+		sfxPlay(sfxPock,1.f);
+	}
+	if(btn == 2){
+		cItem = characterGetItemBarSlot(player,sel);
+		if(itemIsEmpty(cItem)){return;}
+		characterDropItem(player,sel);
+		sfxPlay(sfxPock,1.f);
+	}
+	if(btn == 3){
+		if(itemIsEmpty(&inventoryCurrentPickup)){
+			cItem = characterGetItemBarSlot(player,sel);
+			if(itemIsEmpty(cItem)){return;}
+			inventoryCurrentPickup = *cItem;
+			cItem->amount /= 2;
+			inventoryCurrentPickup.amount -= cItem->amount;
+		}else{
+			cItem = characterGetItemBarSlot(player,sel);
+			if(!itemCanStack(cItem,inventoryCurrentPickup.ID) && !itemIsEmpty(cItem)){return;}
+			cItem->ID = inventoryCurrentPickup.ID;
+			itemIncStack(cItem,1);
+			itemDecStack(&inventoryCurrentPickup,1);
+		}
+		sfxPlay(sfxPock,1.f);
 	}
 }
 
 void updateInventoryClick(int x,int y, int btn){
-	item *cItem;
 	int tilesize;
 	if(!isInventoryOpen()){return;}
 
@@ -200,36 +248,7 @@ void updateInventoryClick(int x,int y, int btn){
 	}
 	int sel = xsel + ysel*10;
 	if(ysel == 4){return;}
-	if(ysel == 5){
-		int r = xsel;
-		if(btn == 1){
-			recipeDoCraft(r,player,1);
-		}else if(btn == 3){
-			recipeDoCraft(r,player,recipeCanCraft(r,player));
-		}
-		sfxPlay(sfxPock,1.f);
-		return;
-	}
-
-	if(btn == 1){
-		if(!inventoryPickup){
-			cItem = characterGetItemBarSlot(player,sel);
-			if(cItem == NULL){return;}
-			inventoryPickup = true;
-			inventoryPickupSel = sel;
-		}else{
-			inventoryPickup = false;
-			characterSwapItemSlots(player,inventoryPickupSel,sel);
-			inventoryPickupSel = -1;
-		}
-		sfxPlay(sfxPock,1.f);
-	}
-	if(btn == 3){
-		cItem = characterGetItemBarSlot(player,sel);
-		if(cItem == NULL){return;}
-		characterDropItem(player,sel);
-		sfxPlay(sfxPock,1.f);
-	}
+	doInventoryClick(btn,sel);
 }
 
 void changeInventorySelection(int x,int y){
@@ -265,30 +284,10 @@ void updateInventoryGamepad(int btn){
 		gamepadSelection = 0;
 		return;
 	}
-
-	if((gamepadSelection >= 50) && (gamepadSelection < 60)){
-		int r = gamepadSelection-50;
-		if(btn == 1){
-			recipeDoCraft(r,player,1);
-		}else if(btn == 3){
-			recipeDoCraft(r,player,recipeCanCraft(r,player));
-		}
-	}else if((gamepadSelection >= 0) && (gamepadSelection < 40)){
-		if(btn == 1){
-			if(!inventoryPickup){
-				item *cItem = characterGetItemBarSlot(player,gamepadSelection);
-				if(cItem == NULL){return;}
-				inventoryPickup = true;
-				inventoryPickupSel = gamepadSelection;
-			}else{
-				inventoryPickup = false;
-				characterSwapItemSlots(player,inventoryPickupSel,gamepadSelection);
-				inventoryPickupSel = -1;
-			}
-		}else if(btn == 3){
-			item *cItem = characterGetItemBarSlot(player,gamepadSelection);
-			if(cItem == NULL){return;}
-			characterDropItem(player,gamepadSelection);
-		}
+	if(btn == 2){
+		btn = 3;
+	}else if(btn == 3){
+		btn = 2;
 	}
+	doInventoryClick(btn,gamepadSelection);
 }

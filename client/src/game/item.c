@@ -26,7 +26,7 @@ void itemDiscard(item *i){
 }
 
 bool itemIsEmpty(item *i){
-	return ((i->amount==0) || (i->ID==0));
+	return ((i == NULL) || (i->amount==0) || (i->ID==0));
 }
 
 int itemBlockDamage(item *i, blockCategory cat){

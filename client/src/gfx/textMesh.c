@@ -224,3 +224,37 @@ void textMeshBox(textMesh *m, int x, int y, int w, int h, float u, float v, floa
 void textMeshSolidBox(textMesh *m, int x, int y, int w, int h, uint32_t rgba){
 	textMeshBox(m,x, y,w, h,19.f/32.f, 31.f/32.f,1.f/32.f,1.f/32.f,rgba);
 }
+
+void textMeshItemSprite(textMesh *m, int x, int y, int size, int itemID){
+	const float ITEMTILE = (1.f/32.f);
+	int u = itemID % 32;
+	int v = itemID / 32;
+	textMeshBox(m,x,y,size,size,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
+}
+
+void textMeshSlot(textMesh *m, int x, int y, int size, int style){
+	float u = 20.f;
+	if(style == 1)     { u = 21.f; }
+	else if(style == 2){ u = 22.f; }
+	else if(style == 3){return;    }
+	textMeshBox(m,x,y,size,size,u/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+}
+
+void textMeshItemSlot(textMesh *m, int x, int y, int size, int style, int itemID, int amount){
+	textMeshSlot(m,x,y,size,style);
+	if(itemID <= 0){return;}
+	const int itemsize    = size - size / 6;
+	const int itemsizeoff = (size-itemsize)/2;
+	textMeshItemSprite(m,x+itemsizeoff,y+itemsizeoff,itemsize,itemID);
+	textMeshNumber(m,x+size-size/4,y+(size-size/4-size/32),1,amount);
+}
+
+void textMeshItem(textMesh *m, int x, int y, int size, int style, item *itm){
+	textMeshSlot(m,x,y,size,style);
+	if(itemIsEmpty(itm)){return;}
+	const int itemsize    = size - size / 6;
+	const int itemsizeoff = (size-itemsize)/2;
+	textMeshItemSprite(m,x+itemsizeoff,y+itemsizeoff,itemsize,itm->ID);
+	if(itemIsSingle(itm)){return;}
+	textMeshNumber(m,x+size-size/4,y+(size-size/4-size/32),1,itm->amount);
+}

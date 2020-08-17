@@ -145,6 +145,12 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 		}
 	}
 
+	if(gamepadButtons[2]){
+		gamepadButtons[2] = false;
+		if(isInventoryOpen()){
+			updateInventoryGamepad(2);
+		}
+	}
 	if(gamepadButtons[3]){
 		gamepadButtons[3] = false;
 		if(isInventoryOpen()){

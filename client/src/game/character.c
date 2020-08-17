@@ -513,6 +513,11 @@ item *characterGetItemBarSlot(character *c, int i){
 	if(i > 40){return NULL;}
 	return &c->inventory[i];
 }
+void characterSetItemBarSlot(character *c, int i, item *itm){
+	if(i <  0){return;}
+	if(i > 40){return;}
+	c->inventory[i] = *itm;
+}
 void characterSetActiveItem(character *c, int i){
 	if(i > 9){i = 0;}
 	if(i < 0){i = 9;}
