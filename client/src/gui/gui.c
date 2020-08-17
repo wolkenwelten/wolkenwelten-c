@@ -265,7 +265,7 @@ void drawActiveItem(){
 	if(activeItem == NULL){return;}
 	if(itemIsEmpty(activeItem)){return;}
 
-	mesh *aiMesh = itemGetMesh(activeItem);
+	mesh *aiMesh = getMeshDispatch(activeItem);
 	if(aiMesh == NULL){return;}
 
 	float animOff = player->yoff;
@@ -275,7 +275,7 @@ void drawActiveItem(){
 	const float iz = -1.5f;
 
 	shaderBind(sMesh);
-	if(itemHasPrimaryAction(activeItem)){
+	if(hasPrimaryAction(activeItem)){
 		matTranslation(matViewAI,ix,animOff+iy,iz + hitOff*0.3f);
 		matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
 		matMul(matViewAI, matViewAI, matProjection);

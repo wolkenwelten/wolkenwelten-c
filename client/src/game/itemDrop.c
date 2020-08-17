@@ -2,6 +2,7 @@
 #include "../main.h"
 #include "../game/blockType.h"
 #include "../gfx/texture.h"
+#include "../mods/mods.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
@@ -67,7 +68,7 @@ void itemDropNewFromServer(packet *p){
 	itemDrops[index].ent->vz    = p->val.f[5];
 	itemDrops[index].itm.ID     = p->val.i[6];
 	itemDrops[index].itm.amount = p->val.i[7];
-	itemDrops[index].ent->eMesh = itemGetMesh(&itemDrops[index].itm);
+	itemDrops[index].ent->eMesh = getMeshDispatch(&itemDrops[index].itm);
 }
 
 void itemDropUpdateFromServer(packet *p){

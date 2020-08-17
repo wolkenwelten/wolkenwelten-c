@@ -5,6 +5,7 @@
 #include "../game/grapplingHook.h"
 #include "../game/blockMining.h"
 #include "../gui/gui.h"
+#include "../mods/mods.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
@@ -133,7 +134,7 @@ void characterEmptyInventory(character *c){
 
 void characterUpdateInaccuracy(character *c){
 	item *itm = &c->inventory[c->activeItem];
-	float minInaccuracy = itemGetInaccuracy(itm);
+	float minInaccuracy = getInaccuracyDispatch(itm);
 
 	if(c->shake > c->inaccuracy){c->inaccuracy = c->shake;}
 	if(c->inaccuracy > 64.f){
@@ -450,8 +451,8 @@ void characterAddCooldown(character *c, int cooldown){
 void characterPrimary(character *c){
 	int cx,cy,cz;
 	item *itm = &c->inventory[c->activeItem];
-	if(itemHasPrimaryAction(itm)){
-		if(itemPrimaryAction(itm,c,c->actionTimeout)){
+	if(hasPrimaryAction(itm)){
+		if(primaryActionDispatch(itm,c,c->actionTimeout)){
 			c->hasHit = true;
 		}
 	}else{
@@ -478,14 +479,14 @@ void characterStopMining(character *c){
 
 void characterSecondary(character *c){
 	item *cItem = characterGetItemBarSlot(c,c->activeItem);
-	if(!itemIsEmpty(cItem) && itemSecondaryAction(cItem,c,c->actionTimeout)){
+	if(!itemIsEmpty(cItem) && secondaryActionDispatch(cItem,c,c->actionTimeout)){
 		c->hasHit = true;
 	}
 }
 
 void characterTertiary(character *c){
 	item *cItem = characterGetItemBarSlot(c,c->activeItem);
-	if(!itemIsEmpty(cItem) && itemTertiaryAction(cItem,c,c->actionTimeout)){
+	if(!itemIsEmpty(cItem) && tertiaryActionDispatch(cItem,c,c->actionTimeout)){
 		c->hasHit = true;
 	}
 }
@@ -867,7 +868,7 @@ void characterActiveItemDraw(character *c){
 	activeItem = &c->inventory[c->activeItem];
 	if(activeItem == NULL)     {return;}
 	if(itemIsEmpty(activeItem)){return;}
-	aiMesh = itemGetMesh(activeItem);
+	aiMesh = getMeshDispatch(activeItem);
 	if(aiMesh == NULL)         {return;}
 
 	matMov(matMVP,matView);
@@ -876,7 +877,7 @@ void characterActiveItemDraw(character *c){
 	matMulTrans(matMVP, .4f,-0.2f,-0.3f);
 	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
 
-	if(itemHasPrimaryAction(activeItem)){
+	if(hasPrimaryAction(activeItem)){
 		matMulTrans(matMVP,0.2f,-0.1f,-0.1f + c->hitOff*0.03f);
 		matMulRotYX(matMVP,c->hitOff*10.f,c->hitOff*45.f);
 	}else{

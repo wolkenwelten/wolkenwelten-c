@@ -29,35 +29,9 @@ bool itemIsEmpty(item *i){
 	return ((i == NULL) || (i->amount==0) || (i->ID==0));
 }
 
-int itemBlockDamage(item *i, blockCategory cat){
-	return blockDamageDispatch(i,cat);
-}
-
-mesh *itemGetMesh(item *i){
-	return getMeshDispatch(i);
-}
-float itemGetInaccuracy(item *i){
-	return getInaccuracyDispatch(i);
-}
-bool itemIsSingle(item *i){
-	return (getStackSizeDispatch(i) == 1);
-}
-bool itemHasPrimaryAction(item *i){
-	return hasPrimaryAction(i);
-}
-bool itemPrimaryAction(item *i, character *chr, int to){
-	return primaryActionDispatch(i,chr,to);
-}
-bool itemSecondaryAction(item *i, character *chr, int to){
-	return secondaryActionDispatch(i,chr,to);
-}
-bool itemTertiaryAction(item *i, character *chr, int to){
-	return tertiaryActionDispatch(i,chr,to);
-}
-
 int itemCanStack(item *i, uint16_t ID){
 	const int ma = getStackSizeDispatch(i);
-	if(itemIsSingle(i)){return 0;}
+	if(ma == 1)        {return 0;}
 	if(i->ID != ID)    {return 0;}
 	if(i->amount >= ma){return 0;}
 	if(i->amount ==  0){return 0;}
