@@ -36,21 +36,23 @@ int itemBlockDamage(item *i, blockCategory cat){
 mesh *itemGetMesh(item *i){
 	return getMeshDispatch(i);
 }
-
 float itemGetInaccuracy(item *i){
 	return getInaccuracyDispatch(i);
 }
-
 bool itemIsSingle(item *i){
 	return (getStackSizeDispatch(i) == 1);
 }
-
-bool itemHasMineAction(item *i){
-	return hasMineActionDispatch(i);
+bool itemHasPrimaryAction(item *i){
+	return hasPrimaryActionDispatch(i);
 }
-
-bool itemMineAction(item *i, character *chr, int to){
-	return mineActionDispatch(i,chr,to);
+bool itemPrimaryAction(item *i, character *chr, int to){
+	return primaryActionDispatch(i,chr,to);
+}
+bool itemSecondaryAction(item *i, character *chr, int to){
+	return secondaryActionDispatch(i,chr,to);
+}
+bool itemTertiaryAction(item *i, character *chr, int to){
+	return tertiaryActionDispatch(i,chr,to);
 }
 
 int itemCanStack(item *i, uint16_t ID){
@@ -73,7 +75,7 @@ int itemDecStack(item *i, int16_t amount){
 	return amount;
 }
 
-bool itemActivateBlock(item *i, character *chr, int to){
+bool itemPlaceBlock(item *i, character *chr, int to){
 	int cx,cy,cz;
 	if(to < 0){return false;}
 	if(characterLOSBlock(chr,&cx,&cy,&cz,true)){
@@ -92,11 +94,4 @@ bool itemActivateBlock(item *i, character *chr, int to){
 		}
 	}
 	return false;
-}
-
-bool itemActivate(item *i, character *chr, int to){
-	if(i->ID < 256){
-		return itemActivateBlock(i,chr, to);
-	}
-	return activateItemDispatch(i,chr,to);
 }

@@ -19,13 +19,13 @@ int assaultblasterGetStackSize(item *cItem){
 	return 1;
 }
 
-bool assaultblasterHasMineAction(item *cItem){
+bool assaultblasterHasPrimaryAction(item *cItem){
 	(void)cItem;
 
 	return true;
 }
 
-bool assaultblasterMineAction(item *cItem, character *cChar, int to){
+bool assaultblasterPrimaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 0){return false;}
@@ -36,7 +36,7 @@ bool assaultblasterMineAction(item *cItem, character *cChar, int to){
 	return true;
 }
 
-bool assaultblasterActivateItem(item *cItem, character *cChar, int to){
+bool assaultblasterSecondaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 0){return false;}

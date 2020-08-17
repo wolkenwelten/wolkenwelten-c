@@ -16,21 +16,27 @@ int blockDamageDefault(item *cItem, blockCategory blockCat){
 
 	return 1;
 }
-bool activateItemDefault(item *cItem, character *cChar, int to){
+bool primaryActionDefault(item *cItem, character *cChar, int to){
 	(void)cItem;
 	(void)cChar;
 	(void)to;
 
 	return false;
 }
-bool mineActionDefault(item *cItem, character *cChar, int to){
+bool secondaryActionDefault(item *cItem, character *cChar, int to){
+	if(cItem->ID < 256){
+		return itemPlaceBlock(cItem,cChar, to);
+	}
+	return false;
+}
+bool tertiaryActionDefault(item *cItem, character *cChar, int to){
 	(void)cItem;
 	(void)cChar;
 	(void)to;
 
 	return false;
 }
-bool hasMineActionDefault(item *cItem){
+bool hasPrimaryActionDefault(item *cItem){
 	(void)cItem;
 
 	return false;

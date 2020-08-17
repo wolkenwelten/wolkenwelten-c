@@ -447,11 +447,11 @@ void characterAddCooldown(character *c, int cooldown){
 	c->actionTimeout = -cooldown;
 }
 
-void characterMineBlock(character *c){
+void characterPrimary(character *c){
 	int cx,cy,cz;
 	item *itm = &c->inventory[c->activeItem];
-	if(itemHasMineAction(itm)){
-		if(itemMineAction(itm,c,c->actionTimeout)){
+	if(itemHasPrimaryAction(itm)){
+		if(itemPrimaryAction(itm,c,c->actionTimeout)){
 			c->hasHit = true;
 		}
 	}else{
@@ -476,10 +476,16 @@ void characterStopMining(character *c){
 	c->blockMiningX = c->blockMiningY = c->blockMiningZ = -1;
 }
 
-void characterPlaceBlock(character *c){
-	item *cItem;
-	cItem = characterGetItemBarSlot(c,c->activeItem);
-	if(!itemIsEmpty(cItem) && itemActivate(cItem,c,c->actionTimeout)){
+void characterSecondary(character *c){
+	item *cItem = characterGetItemBarSlot(c,c->activeItem);
+	if(!itemIsEmpty(cItem) && itemSecondaryAction(cItem,c,c->actionTimeout)){
+		c->hasHit = true;
+	}
+}
+
+void characterTertiary(character *c){
+	item *cItem = characterGetItemBarSlot(c,c->activeItem);
+	if(!itemIsEmpty(cItem) && itemTertiaryAction(cItem,c,c->actionTimeout)){
 		c->hasHit = true;
 	}
 }
@@ -870,7 +876,7 @@ void characterActiveItemDraw(character *c){
 	matMulTrans(matMVP, .4f,-0.2f,-0.3f);
 	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
 
-	if(itemHasMineAction(activeItem)){
+	if(itemHasPrimaryAction(activeItem)){
 		matMulTrans(matMVP,0.2f,-0.1f,-0.1f + c->hitOff*0.03f);
 		matMulRotYX(matMVP,c->hitOff*10.f,c->hitOff*45.f);
 	}else{

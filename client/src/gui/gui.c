@@ -275,7 +275,7 @@ void drawActiveItem(){
 	const float iz = -1.5f;
 
 	shaderBind(sMesh);
-	if(itemHasMineAction(activeItem)){
+	if(itemHasPrimaryAction(activeItem)){
 		matTranslation(matViewAI,ix,animOff+iy,iz + hitOff*0.3f);
 		matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
 		matMul(matViewAI, matViewAI, matProjection);

@@ -6,7 +6,7 @@ void bombInit(){
 	recipeAdd1I(ITEMID,1, 256,3);
 }
 
-bool bombActivateItem(item *cItem,character *cChar, int to){
+bool bombSecondaryAction(item *cItem,character *cChar, int to){
 	(void)cItem;
 	if(to < 200){return false;}
 	if(itemDecStack(cItem,1)){

@@ -19,13 +19,13 @@ int shotgunblasterGetStackSize(item *cItem){
 	return 1;
 }
 
-bool shotgunblasterHasMineAction(item *cItem){
+bool shotgunblasterHasPrimaryAction(item *cItem){
 	(void)cItem;
 
 	return true;
 }
 
-bool shotgunblasterMineAction(item *cItem, character *cChar, int to){
+bool shotgunblasterPrimaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 0){return false;}
@@ -36,7 +36,7 @@ bool shotgunblasterMineAction(item *cItem, character *cChar, int to){
 	return true;
 }
 
-bool shotgunblasterActivateItem(item *cItem,character *cChar, int to){
+bool shotgunblasterSecondaryAction(item *cItem,character *cChar, int to){
 	(void)cItem;
 
 	if(to < 0){return false;}

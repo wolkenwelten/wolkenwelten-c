@@ -19,3 +19,8 @@ void setRelativeMouseMode(bool ra);
 void warpMouse(int nMouseX,int nMouseY);
 unsigned int getMouseState(int *mx, int *my);
 unsigned int getTicks();
+
+bool inputSneak();
+bool inputPrimary();
+bool inputSecondary();
+bool inputTertiary();

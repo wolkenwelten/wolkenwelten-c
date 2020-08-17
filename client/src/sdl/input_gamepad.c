@@ -25,6 +25,19 @@ float gamepadLeftTrigger  = 0.f;
 float gamepadRightTrigger = 0.f;
 bool  gamepadButtons[16];
 
+bool gamepadSneak(){
+	return gamepadButtons[9];
+}
+bool gamepadPrimary(){
+	return (gamepadRightTrigger > 0.5f);
+}
+bool gamepadSecondary(){
+	return (gamepadLeftTrigger > 0.5f);
+}
+bool gamepadTertiary(){
+	return false;
+}
+
 void gamepadInit(){
 	if(SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) == 0){
 		sdlGamepadInit = true;
@@ -211,16 +224,6 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 			if(++player->activeItem > 9){player->activeItem = 0;}
 		}
 	}
-}
-
-bool gamepadSneak(){
-	return gamepadButtons[9];
-}
-bool gamepadMine(){
-	return (gamepadRightTrigger > 0.5f);
-}
-bool gamepadActivate(){
-	return (gamepadLeftTrigger > 0.5f);
 }
 
 void gamepadEventHandler(const SDL_Event *e){

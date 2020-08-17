@@ -17,6 +17,19 @@ int rightFingerID = -1;
 float rightFingerX = 0;
 float rightFingerY = 0;
 
+bool touchSneak(){
+	return false;
+}
+bool touchPrimary(){
+	return touchzonesPressed[2];
+}
+bool touchSecondary(){
+	return touchzonesPressed[3];
+}
+bool touchTertiary(){
+	return false;
+}
+
 void doTouchupdate(float *vx,float *vy,float *vz){
 	if(leftFingerID != -1){
 		float xoff = leftFingerX*2;
@@ -52,16 +65,6 @@ void doTouchupdate(float *vx,float *vy,float *vz){
 		touchzonesPressed[1] = false;
 		characterFireHook(player);
 	}
-}
-
-bool touchSneak(){
-	return false;
-}
-bool touchMine(){
-	return touchzonesPressed[2];
-}
-bool touchActivate(){
-	return touchzonesPressed[3];
 }
 
 void touchEventHandler(const SDL_Event *e){

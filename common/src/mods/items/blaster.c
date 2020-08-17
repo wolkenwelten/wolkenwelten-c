@@ -19,13 +19,13 @@ int blasterGetStackSize(item *cItem){
 	return 1;
 }
 
-bool blasterHasMineAction(item *cItem){
+bool blasterHasPrimaryAction(item *cItem){
 	(void)cItem;
 
 	return true;
 }
 
-bool blasterMineAction(item *cItem, character *cChar, int to){
+bool blasterPrimaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 0){return false;}
@@ -36,7 +36,18 @@ bool blasterMineAction(item *cItem, character *cChar, int to){
 	return true;
 }
 
-bool blasterActivateItem(item *cItem, character *cChar, int to){
+bool blasterSecondaryAction(item *cItem, character *cChar, int to){
+	(void)cItem;
+
+	if(to < 0){return false;}
+	if(characterGetItemAmount(cChar,265) <= 0){return false;}
+	characterDecItemAmount(cChar, 265, 8);
+	characterAddCooldown(cChar,200);
+	beamblast(cChar,1.2f,1.0f,0.05f,6,24,6.f,3.f);
+	return true;
+}
+
+bool blasterTertiaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 0){return false;}

@@ -9,11 +9,14 @@ bool mouseButtonsPressed[5];
 bool mouseSneak(){
 	return false;
 }
-bool mouseMine(){
+bool mousePrimary(){
 	return mouseButtonsPressed[0];
 }
-bool mouseActivate(){
+bool mouseSecondary(){
 	return mouseButtonsPressed[2];
+}
+bool mouseTertiary(){
+	return false;
 }
 
 void mouseEventHandler(const SDL_Event *e){

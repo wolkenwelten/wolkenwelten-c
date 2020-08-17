@@ -16,11 +16,14 @@ bool keysPressed[16];
 bool keyboardSneak(){
 	return keysPressed[5];
 }
-bool keyboardMine(){
+bool keyboardPrimary(){
 	return false;
 }
-bool keyboardActivate(){
+bool keyboardSecondary(){
 	return false;
+}
+bool keyboardTertiary(){
+	return keysPressed[7];
 }
 
 void doKeyboardupdate(float *vx,float *vy,float *vz){
@@ -81,6 +84,9 @@ void keyboardEventHandler(const SDL_Event *e){
 				case SDLK_q:
 					keysPressed[6] = 0;
 				break;
+				case SDLK_r:
+					keysPressed[7] = 0;
+				break;
 				
 				#ifndef __EMSCRIPTEN__
 				case SDLK_F5:
@@ -123,6 +129,9 @@ void keyboardEventHandler(const SDL_Event *e){
 				break;
 				case SDLK_q:
 					keysPressed[6] = 1;
+				break;
+				case SDLK_r:
+					keysPressed[7] = 1;
 				break;
 				case SDLK_e:
 					characterFireHook(player);

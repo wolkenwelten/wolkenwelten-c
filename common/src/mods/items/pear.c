@@ -6,7 +6,7 @@ void pearInit(){
 	(void)ITEMID;
 }
 
-bool pearActivateItem(item *cItem,character *cChar, int to){
+bool pearSecondaryAction(item *cItem,character *cChar, int to){
 	(void)cItem;
 
 	if(to < 0){return false;}

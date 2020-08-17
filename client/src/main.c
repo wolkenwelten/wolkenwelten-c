@@ -27,6 +27,7 @@
 #include "sdl/input_keyboard.h"
 #include "sdl/input_gamepad.h"
 #include "sdl/input_touch.h"
+#include "sdl/sdl.h"
 
 #include <stdbool.h>
 #include <time.h>
@@ -49,7 +50,7 @@ void playerUpdate(){
 	chungus *chng = worldGetChungus((int)player->x >> 8,(int)player->y >> 8,(int)player->z >> 8);
 	if(chng != NULL){ playerChunkActive = chng->loaded; }
 	if(!playerChunkActive){return;}
-	player->sneak = (mouseSneak() | keyboardSneak() | gamepadSneak() | touchSneak());
+	player->sneak = inputSneak();
 
 	doKeyboardupdate(&vx,&vy,&vz);
 	doTouchupdate   (&vx,&vy,&vz);
@@ -60,13 +61,16 @@ void playerUpdate(){
 	curTick = SDL_GetTicks();
 	for(;lastTick < curTick;lastTick+=5){
 		if(!isInventoryOpen()){
-			if(mouseMine() || keyboardMine() || touchMine() || gamepadMine()){
-				characterMineBlock(player);
+			if(inputPrimary()){
+				characterPrimary(player);
 			}else{
 				characterStopMining(player);
 			}
-			if(mouseActivate() || keyboardActivate() || touchActivate() || gamepadActivate()){
-				characterPlaceBlock(player);
+			if(inputSecondary()){
+				characterSecondary(player);
+			}
+			if(inputTertiary()){
+				characterTertiary(player);
 			}
 		}
 		resetOverlayColor();

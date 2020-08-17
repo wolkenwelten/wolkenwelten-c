@@ -6,7 +6,7 @@ void grenadeInit(){
 	recipeAdd2I(ITEMID,2, 4,1, 13,1); // Coal(1) + Hematite Ore(1) -> Grenade(1)
 }
 
-bool grenadeActivateItem(item *cItem,character *cChar, int to){
+bool grenadeSecondaryAction(item *cItem,character *cChar, int to){
 	(void)cItem;
 	if(to < 0){return false;}
 	if(itemDecStack(cItem,1)){

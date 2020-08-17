@@ -2,7 +2,9 @@
 #include <stdbool.h>
 #include <SDL.h>
 
-void mouseEventHandler(const SDL_Event *e);
 bool mouseSneak();
-bool mouseMine();
-bool mouseActivate();
+bool mousePrimary();
+bool mouseSecondary();
+bool mouseTertiary();
+
+void mouseEventHandler(const SDL_Event *e);

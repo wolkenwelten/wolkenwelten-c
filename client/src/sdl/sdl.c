@@ -179,3 +179,16 @@ unsigned int getMouseState(int *mx, int *my){
 unsigned int getTicks(){
 	return SDL_GetTicks();
 }
+
+bool inputSneak(){
+	return gamepadSneak()     || keyboardSneak()     || mouseSneak()     || touchSneak();
+}
+bool inputPrimary(){
+	return gamepadPrimary()   || keyboardPrimary()   || mousePrimary()   || touchPrimary();
+}
+bool inputSecondary(){
+	return gamepadSecondary() || keyboardSecondary() || mouseSecondary() || touchSecondary();
+}
+bool inputTertiary(){
+	return gamepadTertiary()  || keyboardTertiary()  || mouseTertiary()  || touchTertiary();
+}

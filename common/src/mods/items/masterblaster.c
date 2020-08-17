@@ -19,13 +19,13 @@ int masterblasterGetStackSize(item *cItem){
 	return 1;
 }
 
-bool masterblasterHasMineAction(item *cItem){
+bool masterblasterHasPrimaryAction(item *cItem){
 	(void)cItem;
 
 	return true;
 }
 
-bool masterblasterMineAction(item *cItem, character *cChar, int to){
+bool masterblasterPrimaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 0){return false;}
@@ -36,7 +36,7 @@ bool masterblasterMineAction(item *cItem, character *cChar, int to){
 	return true;
 }
 
-bool masterblasterActivateItem(item *cItem, character *cChar, int to){
+bool masterblasterSecondaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 0){return false;}
