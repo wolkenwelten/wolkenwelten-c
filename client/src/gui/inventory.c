@@ -60,7 +60,6 @@ void inventoryGamepadSelToXY(int sel,int *rx, int *ry){
 
 void drawInventory(textMesh *guim){
 	static int ticks = 0;
-	
 	int tilesize;
 	if(!isInventoryOpen()){return;}
 	if(screenWidth < 1024){
@@ -70,6 +69,8 @@ void drawInventory(textMesh *guim){
 	}else {
 		tilesize = 80;
 	}
+	const int animX = sin((float)ticks/24.f)*tilesize/8;
+	const int animY = cos((float)ticks/24.f)*tilesize/8;
 	++ticks;
 	guim->size = 2;
 
@@ -125,8 +126,6 @@ void drawInventory(textMesh *guim){
 		if(((mousex > x) && (mousex < x+tilesize) && (mousey > y) && (mousey < y+tilesize)) || (mouseHidden && (i == (gamepadSelection-50)))){
 			const int yy = y + tilesize + tilesize/2;
 			int ii,xx;
-			const int animX = sin((float)ticks/16.f)*tilesize/8;
-			const int animY = cos((float)ticks/16.f)*tilesize/8;
 
 			for(ii=0;ii<4;ii++){
 				xx = (screenWidth/2)+((ii*2-5)*tilesize);
@@ -136,27 +135,23 @@ void drawInventory(textMesh *guim){
 				b = ingredientSubstituteGetSub(b,(ticks/96) % (ingredientSubstituteGetAmount(b)+1));
 				
 				if(ii > 0){
-					textMeshBox(guim,xx-tilesize+tilesize/4+animX/2,yy+tilesize/4+animY/2,tilesize/2,tilesize/2,24.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+					textMeshBox(guim,xx-tilesize+tilesize/4+animX,yy+tilesize/4+animY,tilesize/2,tilesize/2,24.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 				}
 				textMeshItemSlot(guim,xx,yy,tilesize,3,b,a);
 			}
 			b = recipeGetResultID(r);
 			
 			xx = (screenWidth/2)+((ii*2-5)*tilesize);
-			textMeshBox(guim,xx-tilesize+tilesize/4+animX,yy+tilesize/4,tilesize/2,tilesize/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+			textMeshBox(guim,xx-tilesize+tilesize/4+animX*2,yy+tilesize/4,tilesize/2,tilesize/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 			textMeshItemSlot(guim,xx,yy,tilesize,3,b,recipeGetResultAmount(r));
 		}
 	}
 
 	if(mouseHidden){
 		int gx,gy;
-		const int animX = sin((float)ticks/24.f)*tilesize/8;
-		const int animY = cos((float)ticks/24.f)*tilesize/8;
 		inventoryGamepadSelToXY(gamepadSelection,&gx,&gy);
 		textMeshItem(guim,gx+animX,gy+animY,tilesize,3,&inventoryCurrentPickup);
 	}else{
-		const int animX = sin((float)ticks/24.f)*tilesize/8;
-		const int animY = cos((float)ticks/24.f)*tilesize/8;
 		textMeshItem(guim,mousex+animX-tilesize/8,mousey+animY-tilesize/8,tilesize,3,&inventoryCurrentPickup);
 	}
 }
