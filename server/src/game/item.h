@@ -18,3 +18,6 @@ bool  itemActivateBlock (item *i, character *chr);
 int   itemCanStack      (item *i, uint16_t ID);
 int   itemIncStack      (item *i, int16_t amount);
 int   itemDecStack      (item *i, int16_t amount);
+int   itemGetAmmo       (item *i);
+int   itemIncAmmo       (item *i, int16_t amount);
+int   itemDecAmmo       (item *i, int16_t amount);

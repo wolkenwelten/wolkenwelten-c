@@ -1,4 +1,5 @@
 static const int ITEMID=263;
+static const int MAGSIZE=60;
 
 #include "../api_v1.h"
 
@@ -21,10 +22,10 @@ int assaultblasterGetStackSize(item *cItem){
 
 bool assaultblasterPrimaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
-
+	
 	if(to < 0){return false;}
-	if(characterGetItemAmount(cChar,265) < 1){return false;}
-	characterDecItemAmount(cChar, 265, 1);
+	if(itemGetAmmo(cItem) < 1){return false;}
+	itemDecAmmo(cItem,1);
 	characterAddCooldown(cChar,15);
 	beamblast(cChar,1.f,0.2f,0.05f,6,1,8.f,1.f);
 	return true;
@@ -34,10 +35,23 @@ bool assaultblasterSecondaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
 
 	if(to < 0){return false;}
-	if(characterGetItemAmount(cChar,265) <= 2){return false;}
-	characterDecItemAmount(cChar, 265, 3);
+	if(itemGetAmmo(cItem) < 3){return false;}
+	itemDecAmmo(cItem,3);
 	characterAddCooldown(cChar,64);
 	beamblast(cChar,1.f,0.2f,0.05f,6,3,8.f,1.f);
+	return true;
+}
+
+bool assaultblasterTertiaryAction(item *cItem, character *cChar, int to){
+	(void)cItem;
+
+	if(to < 0){return false;}
+	if(itemGetAmmo(cItem) == MAGSIZE){return false;}
+	int ammoleft = characterGetItemAmount(cChar,265);
+	if(ammoleft <= 0){return false;}
+	ammoleft = MIN(MAGSIZE,ammoleft);
+	characterDecItemAmount(cChar, 265, itemIncAmmo(cItem,ammoleft));
+	characterAddCooldown(cChar,50);
 	return true;
 }
 
@@ -45,4 +59,10 @@ int assaultblasterGetAmmunition(item *cItem){
 	(void)cItem;
 	
 	return 265;
+}
+
+int assaultblasterGetMagSize(item *cItem){
+	(void)cItem;
+	
+	return MAGSIZE;
 }

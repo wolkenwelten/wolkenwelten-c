@@ -56,3 +56,8 @@ int getStackSizeDefault (item *cItem){
 	
 	return 99;
 }
+int getMagSizeDefault (item *cItem){
+	(void)cItem;
+	
+	return 0;
+}

@@ -311,10 +311,16 @@ void drawAmmunition(){
 	guim->sx = screenWidth-(tilesize*12)+(tilesize*0.3f);
 	guim->sy = screenHeight-tilesize+(tilesize*0.3f);
 	textMeshNumber(guim,guim->sx,guim->sy,2,amount);
-
-	int u = ammo % 32;
-	int v = ammo / 32;
-	textMeshBox(guim,guim->sx+32,guim->sy-18,64,64,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
+	textMeshItemSprite(guim,guim->sx+32,guim->sy-18,64,ammo);
+	
+	if(getStackSizeDispatch(activeItem) <= 1){
+		if(hasGetMagSize(activeItem)){
+			guim->sx += 4;
+			textMeshNumber(guim,guim->sx-32,guim->sy-tilesize+tilesize/3,2,itemGetAmmo(activeItem));
+			textMeshNumber(guim,guim->sx+32,guim->sy-tilesize+tilesize/3,2,getMagSizeDispatch(activeItem));
+			textMeshDigit(guim,guim->sx-12,guim->sy-tilesize+tilesize/3, 2, 10);
+		}
+	}
 }
 
 void drawChat(){

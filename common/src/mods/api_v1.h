@@ -2,6 +2,9 @@
 
 #include "../common.h"
 
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
 struct item;
 typedef struct item item;
 struct mesh;
@@ -40,10 +43,11 @@ void characterAddCooldown  (character *c, int cooldown);
 int  characterGetItemAmount(character *c, uint16_t itemID);
 int  characterDecItemAmount(character *c, uint16_t itemID, int amount);
 
-void  itemDiscard       (item *i);
-bool  itemIsEmpty       (item *i);
-float itemGetInaccuracy (item *i);
-bool  itemIsSingle      (item *i);
-bool  itemCanStack      (item *i, uint16_t ID);
-bool  itemIncStack      (item *i, int16_t amount);
-bool  itemDecStack      (item *i, int16_t amount);
+void  itemDiscard  (item *i);
+bool  itemIsEmpty  (item *i);
+int   itemCanStack (item *i, uint16_t ID);
+int   itemIncStack (item *i, int16_t amount);
+int   itemDecStack (item *i, int16_t amount);
+int   itemGetAmmo  (item *i);
+int   itemIncAmmo  (item *i, int16_t amount);
+int   itemDecAmmo  (item *i, int16_t amount);

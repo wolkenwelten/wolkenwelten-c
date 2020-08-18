@@ -32,6 +32,7 @@ void      textMeshAddStrPS  (textMesh *m, int x, int y, int size, const char *st
 void      textMeshAddString (textMesh *m, const char *str);
 void      textMeshPrintfPS  (textMesh *m, int x, int y, int size, const char *format, ...);
 void      textMeshPrintf    (textMesh *m, const char *format, ...);
+void      textMeshDigit     (textMesh *m, int x, int y, int size, int digit);
 void      textMeshNumber    (textMesh *m, int x, int y, int size, int number);
 void      textMeshBox       (textMesh *m, int x, int y, int w, int h, float u, float v, float uw, float vh, uint32_t rgba);
 void      textMeshSolidBox  (textMesh *m, int x, int y, int w, int h, uint32_t rgba);

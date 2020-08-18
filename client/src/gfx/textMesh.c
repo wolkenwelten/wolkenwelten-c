@@ -186,7 +186,7 @@ void textMeshPrintf(textMesh *m, const char *format, ...){
 	textMeshAddString(m,stringBuffer);
 }
 
-static void textMeshDigit(textMesh *m, int x, int y, int size, int digit){
+void textMeshDigit(textMesh *m, int x, int y, int size, int digit){
 	const int   glyphWidth = 16*size;
 	const float glyphSize  = 1.f / 64.f;
 	const float gx = 4.f/32.f + (((float)(digit&0x07))*glyphSize);
@@ -256,6 +256,13 @@ void textMeshItem(textMesh *m, int x, int y, int size, int style, item *itm){
 	const int itemsize    = size - size / 6;
 	const int itemsizeoff = (size-itemsize)/2;
 	textMeshItemSprite(m,x+itemsizeoff,y+itemsizeoff,itemsize,itm->ID);
-	if(getStackSizeDispatch(itm) <= 1){return;}
-	textMeshNumber(m,x+size-size/4,y+(size-size/4-size/32),1,itm->amount);
+	if(getStackSizeDispatch(itm) <= 1){
+		if(hasGetMagSize(itm)){
+			textMeshNumber(m,x+size/4,y+size/8,1,itemGetAmmo(itm));
+			textMeshNumber(m,x+size-size/4,y+size/8,1,getMagSizeDispatch(itm));
+			textMeshDigit (m,x+size/2-size/16,y+size/8, 1, 10);
+		}
+	}else{
+		textMeshNumber(m,x+size-size/4,y+(size-size/4-size/32),1,itm->amount);
+	}
 }

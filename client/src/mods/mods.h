@@ -17,6 +17,8 @@ bool  hasTertiaryAction       (item *cItem);
 float getInaccuracyDispatch   (item *cItem);
 int   getAmmunitionDispatch   (item *cItem);
 int   getStackSizeDispatch    (item *cItem);
+int   getMagSizeDispatch      (item *cItem);
+bool  hasGetMagSize           (item *cItem);
 
 int   blockDamageDefault      (item *cItem, blockCategory blockCat);
 mesh *getMeshDefault          (item *cItem);
@@ -26,3 +28,4 @@ bool  tertiaryActionDefault   (item *cItem, character *cChar, int to);
 float getInaccuracyDefault    (item *cItem);
 int   getAmmunitionDefault    (item *cItem);
 int   getStackSizeDefault     (item *cItem); 
+int   getMagSizeDefault       (item *cItem);

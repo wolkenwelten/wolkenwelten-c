@@ -48,6 +48,20 @@ int itemDecStack(item *i, int16_t amount){
 	i->amount -= amount;
 	return amount;
 }
+int itemGetAmmo(item *i){
+	return i->amount-1;
+}
+int itemIncAmmo(item *i, int16_t amount){
+	const int ma = getMagSizeDispatch(i)+1;
+	if((i->amount+amount)>ma){amount = ma - i->amount;}
+	i->amount += amount;
+	return amount;
+}
+int itemDecAmmo(item *i, int16_t amount){
+	if((i->amount-1) < amount){amount = i->amount-1;}
+	i->amount -= amount;
+	return amount;
+}
 
 bool itemPlaceBlock(item *i, character *chr, int to){
 	int cx,cy,cz;

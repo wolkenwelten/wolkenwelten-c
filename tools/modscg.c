@@ -121,6 +121,9 @@ void parseLine(int lineNumber, const char *line, item *itm){
 		itm->id = atoi(line+24);
 		return;
 	}
+	if(strncmp("static",line,6) == 0){
+		return;
+	}
 	
 	itemProcedure *proc = calloc(1,sizeof(itemProcedure));
 	parseFunctionPrototype(line,proc);
@@ -256,6 +259,8 @@ int main(int argc, char *argv[]){
 	printItemTypeDispatch("GetInaccuracy","item *cItem","cItem","float ");
 	printItemTypeDispatch("GetAmmunition","item *cItem","cItem","int ");
 	printItemTypeDispatch("GetStackSize","item *cItem","cItem","int ");
+	printItemTypeDispatch("GetMagSize","item *cItem","cItem","int ");
+	printHasTypeSwitch   ("GetMagSize");
 	
 	return 0;
 }

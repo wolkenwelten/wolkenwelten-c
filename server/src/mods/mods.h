@@ -7,6 +7,7 @@ struct mesh;
 typedef struct mesh mesh;
 
 int   blockDamageDispatch     (item *cItem, blockCategory blockCat);
+int   getMagSizeDispatch      (item *cItem);
 
 mesh *getMeshDefault          (item *cItem);
 int   blockDamageDefault      (item *cItem, blockCategory blockCat);
@@ -18,3 +19,4 @@ bool  isSingleItemDefault     (item *cItem);
 float getInaccuracyDefault    (item *cItem);
 int   getAmmunitionDefault    (item *cItem);
 int   getStackSizeDefault     (item *cItem);
+int   getMagSizeDefault       (item *cItem);
