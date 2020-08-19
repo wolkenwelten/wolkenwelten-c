@@ -1,8 +1,9 @@
 #include "itemDrop.h"
 #include "../main.h"
 #include "../game/blockType.h"
+#include "../game/entity.h"
 #include "../gfx/texture.h"
-#include "../mods/mods.h"
+#include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 

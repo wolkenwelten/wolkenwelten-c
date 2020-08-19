@@ -1,6 +1,5 @@
 #include "recipe.h"
 #include "../game/character.h"
-#include "../game/item.h"
 
 typedef struct {
 	unsigned short resultID;
@@ -14,7 +13,7 @@ struct ingredientSubstitute;
 struct ingredientSubstitute {
 	unsigned short ingredient;
 	unsigned short substitute;
-	
+
 	struct ingredientSubstitute *next;
 };
 typedef struct ingredientSubstitute ingredientSubstitute;
@@ -28,11 +27,11 @@ int substitutePoolUsed=0;
 
 void ingredientSubstituteAdd(unsigned short ingredient, unsigned short substitute){
 	ingredientSubstitute *s,*sub = &substitutePool[substitutePoolUsed++];
-	
+
 	sub->ingredient = ingredient;
 	sub->substitute = substitute;
 	sub->next       = NULL;
-	
+
 	if(substitutes[ingredient] == NULL){
 		substitutes[ingredient] = sub;
 	}else{
@@ -120,7 +119,7 @@ void recipeAdd2I(unsigned short nResultID, unsigned char nResultAmount, unsigned
 int characterGetItemOrSubstituteAmount(character *c, unsigned short i){
 	ingredientSubstitute *s;
 	int ret = characterGetItemAmount(c,i);
-	
+
 	for(s = substitutes[i];s != NULL;s = s->next){
 		ret += characterGetItemAmount(c,s->substitute);
 	}
@@ -133,7 +132,7 @@ int characterDecItemOrSubstituteAmount(character *c, unsigned short i, int a){
 	int ret = characterGetItemAmount(c,i);
 	a -= characterDecItemAmount(c,i,MIN(ret,a));
 	if(a <= 0){return retAmount;}
-	
+
 	for(s = substitutes[i];s != NULL;s = s->next){
 		ret = characterGetItemAmount(c,s->substitute);
 		a  -= characterDecItemAmount(c,s->substitute,MIN(ret,a));

@@ -1,6 +1,5 @@
 #pragma once
-#include "../game/character.h"
-#include "../../../common/src/network/packet.h"
+#include "../../../common/src/common.h"
 
 void grenadeExplode(float x, float y, float z, float pw, int style);
 void grenadeNew(character *ent, float pwr);

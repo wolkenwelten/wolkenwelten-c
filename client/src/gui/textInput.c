@@ -3,9 +3,6 @@
 #include "../sdl/sdl.h"
 #include "../gfx/textMesh.h"
 
-
-#include <stdint.h>
-#include <stdbool.h>
 #include <string.h>
 #include <SDL.h>
 

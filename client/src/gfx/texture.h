@@ -1,12 +1,5 @@
 #pragma once
-#include <stddef.h>
-#include <time.h>
-
-typedef struct {
-	unsigned int ID,w,h;
-	char *filename;
-	time_t modTime;
-} texture;
+#include "../../../common/src/common.h"
 
 texture *textureNew (const unsigned char *data, size_t dataLen, char *filename);
 void     textureFree();

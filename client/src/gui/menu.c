@@ -13,7 +13,6 @@
 #include "../main.h"
 
 #include <stdio.h>
-#include <stdbool.h>
 #include <string.h>
 
 textMesh *menuM;
@@ -26,7 +25,7 @@ static int gamepadSelection = -1;
 void initMenu(){
 	menuM = textMeshNew();
 	menuM->tex = tGui;
-	
+
 	attributionLines = 0;
 	unsigned char *s = txt_attribution_txt_data;
 	while(*s++ != 0){
@@ -61,7 +60,7 @@ void startSingleplayer(){
 
 void updateMenuClick(int x, int y, int btn){
 	if(gameRunning){return;}
-	
+
 	if(showAttribution){
 		showAttribution = false;
 		return;
@@ -109,9 +108,9 @@ void menuBackground(){
 void drawMenuAttributions(){
 	static int scroll = 0;
 	static int scrollDir = 1;
-	
+
 	const int textHeight = attributionLines * 16;
-	
+
 	if(scroll > textHeight-screenHeight){
 		scrollDir=-1;
 	}
@@ -119,7 +118,7 @@ void drawMenuAttributions(){
 		scrollDir=1;
 	}
 	scroll+=scrollDir;
-	
+
 	textMeshPrintfPS(menuM,16,16-scroll,2,"Attribution:\n%s",txt_attribution_txt_data);
 }
 
@@ -127,7 +126,7 @@ void drawMenuButtons(){
 	int buttonY = 32;
 	char playerNameBuf[48];
 	int ci = gamepadSelection;
-	
+
 	textMeshAddStrPS(menuM,32,32,4,"Wolkenwelten");
 	textMeshPrintfPS(menuM,32,72,2,"Pre-Alpha %s [%.8s]",VERSION,COMMIT);
 	textMeshBox(menuM,
@@ -152,7 +151,7 @@ void drawMenuButtons(){
 
 	drawButton(menuM,"Change Name",ci-- == 0,screenWidth-256-32,buttonY,256,32);
 	buttonY += 32 + 16;
-	
+
 	drawButton(menuM,"Attribution",ci-- == 0,screenWidth-256-32,buttonY,256,32);
 	buttonY += 32 + 16;
 
@@ -182,7 +181,7 @@ void renderMenu(){
 	updateMenu();
 	textMeshEmpty(menuM);
 	menuBackground();
-	
+
 	if(showAttribution){
 		drawMenuAttributions();
 	}else{
@@ -196,12 +195,12 @@ void renderMenu(){
 
 void updateMenuGamepad(int btn){
 	mouseHidden = true;
-	
+
 	if(showAttribution){
 		showAttribution = false;
 		return;
 	}
-	
+
 	if(btn != 1){return;}
 	switch(gamepadSelection){
 		case 0:
@@ -209,23 +208,23 @@ void updateMenuGamepad(int btn){
 			startSingleplayer();
 			#endif
 		break;
-		
+
 		case 1:
 			if(!textInputActive){
 				textInput(8,screenHeight-24,256,16,2);
 			}
 		break;
-		
+
 		case 2:
 			if(!textInputActive){
 				textInput(8,screenHeight-24,256,16,3);
 			}
 		break;
-		
+
 		case 3:
 			showAttribution=true;
 		break;
-		
+
 		case 4:
 			quit=true;
 		break;
@@ -233,7 +232,7 @@ void updateMenuGamepad(int btn){
 }
 
 void changeMenuSelection(int off){
-	
+
 	gamepadSelection += off;
 	if(gamepadSelection < 0){
 		gamepadSelection = 4;

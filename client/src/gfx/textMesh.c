@@ -3,7 +3,8 @@
 #include "../gfx/texture.h"
 #include "../gfx/shader.h"
 #include "../tmp/assets.h"
-#include "../mods/mods.h"
+
+#include "../../../common/src/mods/mods.h"
 
 #include <stdarg.h>
 #include <stdio.h>

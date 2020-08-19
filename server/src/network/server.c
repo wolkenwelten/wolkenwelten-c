@@ -113,7 +113,7 @@ void msgUpdatePlayer(int c){
 		rp->val.f[ 7] = clients[i].c->vy;
 		rp->val.f[ 8] = clients[i].c->vz;
 		rp->val.f[ 9] = clients[i].c->yoff;
-		rp->val.i[10] = clients[i].c->hook;
+		rp->val.i[10] = clients[i].c->hook != NULL;
 		rp->val.f[11] = clients[i].c->hookx;
 		rp->val.f[12] = clients[i].c->hooky;
 		rp->val.f[13] = clients[i].c->hookz;
@@ -142,7 +142,12 @@ void serverParsePlayerPos(int c, packet *p){
 	clients[c].c->vy           = p->val.f[ 7];
 	clients[c].c->vz           = p->val.f[ 8];
 	clients[c].c->yoff         = p->val.f[ 9];
-	clients[c].c->hook         = p->val.i[10];
+	if(p->val.i[10]){
+		clients[c].c->hook     = (grapplingHook *)0x8;
+	}else{
+		clients[c].c->hook     = NULL;
+	}
+
 	clients[c].c->hookx        = p->val.f[11];
 	clients[c].c->hooky        = p->val.f[12];
 	clients[c].c->hookz        = p->val.f[13];

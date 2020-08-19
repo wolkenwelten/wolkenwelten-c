@@ -1,26 +1,5 @@
 #pragma once
-#include "../game/item.h"
-#include "../gfx/texture.h"
-#include <stdint.h>
-
-#pragma pack(push, 1)
-typedef struct vertex2D {
-	 int16_t x,y;
-	 int16_t u,v;
-	uint32_t rgba;
-} vertex2D;
-#pragma pack(pop)
-
-typedef struct {
-	vertex2D dataBuffer[1<<14];
-	int sx,sy,size;
-	int dataCount;
-	int vboSize;
-	unsigned int vbo,usage;
-	texture *tex;
-	int finished;
-	void *nextFree;
-} textMesh;
+#include "../../../common/src/common.h"
 
 textMesh *textMeshNew       ();
 void      textMeshFree      (textMesh *m);

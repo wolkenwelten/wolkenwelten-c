@@ -5,7 +5,6 @@
 #include "../game/grapplingHook.h"
 #include "../game/blockMining.h"
 #include "../gui/gui.h"
-#include "../mods/mods.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
@@ -14,6 +13,8 @@
 #include "../gfx/texture.h"
 #include "../network/chat.h"
 #include "../misc/options.h"
+#include "../../../common/src/game/item.h"
+#include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 #include "../sdl/sdl.h"
@@ -572,8 +573,7 @@ int characterDecItemAmount(character *c, uint16_t itemID,int amount){
 
 bool characterPickupItem(character *c, uint16_t itemID,int amount){
 	int a = 0;
-	
-	
+
 	for(unsigned int i=0;i<40;i++){
 		if(a >= amount){break;}
 		if(itemCanStack(&c->inventory[i],itemID)){
@@ -587,7 +587,7 @@ bool characterPickupItem(character *c, uint16_t itemID,int amount){
 			a += c->inventory[i].amount;
 		}
 	}
-	
+
 	if(a == amount){
 		sfxPlay(sfxPock,.8f);
 		return true;
@@ -918,4 +918,25 @@ void characterDamagePacket(character *c, packet *p){
 	if(characterDamage(c,p->val.i[0])){
 		msgSendDyingMessage("died by command", 65535);
 	}
+}
+
+bool itemPlaceBlock(item *i, character *chr, int to){
+	int cx,cy,cz;
+	if(to < 0){return false;}
+	if(characterLOSBlock(chr,&cx,&cy,&cz,true)){
+		if((characterCollision(chr,chr->x,chr->y,chr->z,0.3f)&0xFF0)){ return false; }
+		if(!itemDecStack(i,1)){ return false; }
+		worldSetB(cx,cy,cz,i->ID);
+		if((characterCollision(chr,chr->x,chr->y,chr->z,0.3f)&0xFF0) != 0){
+			worldSetB(cx,cy,cz,0);
+			itemIncStack(i,1);
+			return false;
+		} else {
+			msgPlaceBlock(cx,cy,cz,i->ID);
+			sfxPlay(sfxPock,1.f);
+			characterAddCooldown(chr,50);
+			return true;
+		}
+	}
+	return false;
 }

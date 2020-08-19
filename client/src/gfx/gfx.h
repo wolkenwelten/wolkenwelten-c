@@ -1,6 +1,5 @@
 #pragma once
-
-#include "../game/character.h"
+#include "../../../common/src/common.h"
 
 extern float matProjection[16], matView[16];
 extern int screenWidth;

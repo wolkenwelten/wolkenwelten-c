@@ -1,14 +1,5 @@
 #pragma once
-#include <stdbool.h>
-#include <stdint.h>
-
-typedef enum blockCategory {
-	NONE,
-	DIRT,
-	STONE,
-	WOOD,
-	LEAVES
-} blockCategory;
+#include "../../../common/src/common.h"
 
 void          blockTypeInit();
 const char   *blockTypeGetName (uint8_t b);

@@ -5,21 +5,6 @@
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-struct item;
-typedef struct item item;
-struct mesh;
-typedef struct mesh mesh;
-struct character;
-typedef struct character character;
-
-typedef enum blockCategory {
-	NONE,
-	DIRT,
-	STONE,
-	WOOD,
-	LEAVES
-} blockCategory;
-
 extern mesh *meshPear;
 extern mesh *meshHook;
 extern mesh *meshGrenade;

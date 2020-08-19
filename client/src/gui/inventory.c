@@ -2,7 +2,7 @@
 #include "../main.h"
 #include "../gfx/mesh.h"
 #include "../game/character.h"
-#include "../game/item.h"
+#include "../../../common/src/game/item.h"
 #include "../game/itemDrop.h"
 #include "../gfx/gfx.h"
 #include "../sdl/sdl.h"

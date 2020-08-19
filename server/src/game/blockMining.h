@@ -1,5 +1,5 @@
 #pragma once
-#include "../game/item.h"
+#include "../../../common/src/common.h"
 
 void blockMiningDropItemsPos (int x, int y, int z, uint8_t b);
 void blockMiningMinePos      (item *itm, int x, int y, int z);

@@ -6,3 +6,7 @@
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
+#include "network/packet.h"
+#include "gfx_structs.h"
+#include "game_structs.h"

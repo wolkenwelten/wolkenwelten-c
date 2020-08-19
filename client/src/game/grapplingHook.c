@@ -5,6 +5,7 @@
 #include "../gfx/mat.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
+#include "../gfx/mesh.h"
 #include "../gfx/effects.h"
 #include "../gfx/texture.h"
 #include "../gfx/objs.h"

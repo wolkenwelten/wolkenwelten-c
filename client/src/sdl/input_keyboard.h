@@ -1,5 +1,5 @@
 #pragma once
-#include <stdbool.h>
+#include "../../../common/src/common.h"
 #include <SDL.h>
 
 bool keyboardSneak();

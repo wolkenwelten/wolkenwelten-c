@@ -1,5 +1,7 @@
-#include "mods.h"
-#include "../game/item.h"
+#include "../../../common/src/common.h"
+#include "../../../common/src/mods/mods.h"
+
+#include "../game/blockType.h"
 #include "../game/character.h"
 
 mesh *getMeshDefault(item *cItem){
@@ -43,7 +45,7 @@ bool hasPrimaryActionDefault(item *cItem){
 }
 float getInaccuracyDefault(item *cItem){
 	(void)cItem;
-	
+
 	return 4.f;
 }
 int getAmmunitionDefault(item *cItem){
@@ -55,7 +57,7 @@ int getAmmunitionDefault(item *cItem){
 }
 int getStackSizeDefault (item *cItem){
 	(void)cItem;
-	
+
 	return 99;
 }
 int getMagSizeDefault(item *cItem){

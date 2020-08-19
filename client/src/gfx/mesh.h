@@ -1,22 +1,5 @@
 #pragma once
-#include "../gfx/texture.h"
-#include <stdint.h>
-
-#pragma pack(push, 1)
-typedef struct vertex {
-	float x,y,z;
-	float u,v;
-	float c;
-} vertex;
-#pragma pack(pop)
-
-typedef struct {
-	texture *tex;
-	vertex *roData;
-	unsigned int dataCount;
-	unsigned int vbo;
-	void *nextFree;
-} mesh;
+#include "../../../common/src/common.h"
 
 mesh *meshNew      ();
 mesh *meshNewRO    (vertex *nroData,size_t roSize);

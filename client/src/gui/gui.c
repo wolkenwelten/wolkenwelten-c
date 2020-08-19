@@ -1,14 +1,16 @@
 #include "gui.h"
 
+#include "../../../common/src/game/item.h"
+#include "../../../common/src/misc/misc.h"
 
 #include "../main.h"
 #include "../misc/options.h"
 #include "../game/blockType.h"
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../game/item.h"
+
 #include "../game/itemDrop.h"
-#include "../mods/mods.h"
+#include "../../../common/src/mods/mods.h"
 #include "../gui/menu.h"
 #include "../sdl/sdl.h"
 #include "../gfx/glew.h"
@@ -27,7 +29,6 @@
 #include "../gui/textInput.h"
 #include "../network/chat.h"
 #include "../network/client.h"
-#include "../../../common/src/misc/misc.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -312,7 +313,7 @@ void drawAmmunition(){
 	guim->sy = screenHeight-tilesize+(tilesize*0.3f);
 	textMeshNumber(guim,guim->sx,guim->sy,2,amount);
 	textMeshItemSprite(guim,guim->sx+32,guim->sy-18,64,ammo);
-	
+
 	if(getStackSizeDispatch(activeItem) <= 1){
 		if(hasGetMagSize(activeItem)){
 			guim->sx += 4;

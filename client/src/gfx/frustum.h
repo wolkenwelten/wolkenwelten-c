@@ -1,5 +1,5 @@
 #pragma once
-#include <stdbool.h>
+#include "../../../common/src/common.h"
 extern float frustum[6][4];
 
 void extractFrustum();

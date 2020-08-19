@@ -8,6 +8,7 @@ xcuserdata/
 /DerivedData/
 /*.tar.gz
 /client/tools/*.dSYM/
+/tools/*.dSYM/
 
 # debugging/profiling data
 /callgrind.out.*

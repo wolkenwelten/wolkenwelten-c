@@ -1,8 +1,6 @@
 #pragma once
-#include "../game/blockType.h"
-#include "../game/item.h"
-#include "../game/character.h"
-#include "../gfx/mesh.h"
+#include "../../../common/src/common.h"
+#include "api_v1.h"
 
 void  modsInit                ();
 
@@ -27,5 +25,5 @@ bool  secondaryActionDefault  (item *cItem, character *cChar, int to);
 bool  tertiaryActionDefault   (item *cItem, character *cChar, int to);
 float getInaccuracyDefault    (item *cItem);
 int   getAmmunitionDefault    (item *cItem);
-int   getStackSizeDefault     (item *cItem); 
+int   getStackSizeDefault     (item *cItem);
 int   getMagSizeDefault       (item *cItem);

@@ -1,9 +1,5 @@
 #pragma once
-#include "../game/blockType.h"
-#include "../game/character.h"
-
-#include <stdbool.h>
-#include <stdint.h>
+#include "../../../common/src/common.h"
 
 item  itemNew           (uint16_t ID, int16_t amount);
 item  itemEmpty         ();

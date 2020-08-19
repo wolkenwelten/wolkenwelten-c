@@ -1,5 +1,5 @@
 #pragma once
-#include "../game/entity.h"
+#include "../../../common/src/common.h"
 
 extern int particleCount;
 

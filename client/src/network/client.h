@@ -1,5 +1,4 @@
 #pragma once
-
 #include "../../../common/src/network/packet.h"
 
 #include <unistd.h>

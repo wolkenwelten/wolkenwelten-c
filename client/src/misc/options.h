@@ -1,5 +1,5 @@
 #pragma once
-#include <stdbool.h>
+#include "../../../common/src/common.h"
 
 extern char  playerName[28];
 extern char  serverName[64];

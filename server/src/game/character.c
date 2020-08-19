@@ -5,6 +5,8 @@
 #include "../game/blockType.h"
 #include "../game/itemDrop.h"
 #include "../game/blockMining.h"
+#include "../../../common/src/game/item.h"
+#include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
 
 #include <math.h>
@@ -14,7 +16,7 @@ character characterList[128];
 int characterCount = 0;
 character *characterFirstFree = NULL;
 
-uint32_t characterCollision(const character *c, float cx, float cy, float cz,float wd){
+uint32_t characterCollision(character *c, float cx, float cy, float cz,float wd){
 	(void)c;
 
 	uint32_t col = 0;
@@ -112,7 +114,7 @@ void characterFree(character *c){
 	characterFirstFree = c;
 }
 
-bool characterLOSBlock(const character *c, int *retX, int *retY, int *retZ, int returnBeforeBlock) {
+bool characterLOSBlock(character *c, int *retX, int *retY, int *retZ, int returnBeforeBlock) {
 	float cvx,cvy,cvz;
 	float cx,cy,cz;
 	float lx,ly,lz;
@@ -165,7 +167,7 @@ void characterSetActiveItem(character *c, int i){
 	c->activeItem = i;
 }
 
-int characterGetItemAmount(const character *c, uint16_t itemID){
+int characterGetItemAmount(character *c, uint16_t itemID){
 	int amount = 0;
 	for(unsigned int i=0;i<40;i++){
 		if(c->inventory[i].ID == itemID){
@@ -175,26 +177,28 @@ int characterGetItemAmount(const character *c, uint16_t itemID){
 	return amount;
 }
 
-bool characterDecItemAmount(character *c, uint16_t itemID,int amount){
+int characterDecItemAmount(character *c, uint16_t itemID,int amount){
+	int ret=0;
+
+	if(amount == 0){return 0;}
 	for(unsigned int i=0;i<40;i++){
-		if(amount == 0){return true;}
 		if(c->inventory[i].ID == itemID){
 			if(c->inventory[i].amount > amount){
 				itemDecStack(&c->inventory[i],amount);
-				return true;
+				return amount;
 			}else{
 				amount -= c->inventory[i].amount;
+				ret    += c->inventory[i].amount;
 				c->inventory[i] = itemEmpty();
 			}
 		}
 	}
-	if(amount == 0){return true;}
-	return false;
+	return ret;
 }
 
 bool characterPickupItem(character *c, uint16_t itemID,int amount){
 	int a = 0;
-	
+
 	for(unsigned int i=0;i<40;i++){
 		if(a >= amount){break;}
 		if(itemCanStack(&c->inventory[i],itemID)){
@@ -208,8 +212,11 @@ bool characterPickupItem(character *c, uint16_t itemID,int amount){
 			a += c->inventory[i].amount;
 		}
 	}
-	
-	return (a == amount);
+
+	if(a == amount){
+		return true;
+	}
+	return false;
 }
 
 
@@ -226,11 +233,11 @@ bool characterHP(character *c, int addhp){
 	return false;
 }
 
-int characterGetHP(const character *c){
+int characterGetHP(character *c){
 	return c->hp;
 }
 
-int characterGetMaxHP(const character *c){
+int characterGetMaxHP(character *c){
 	return c->maxhp;
 }
 

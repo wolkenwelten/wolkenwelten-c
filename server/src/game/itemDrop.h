@@ -1,8 +1,5 @@
 #pragma once
-#include "../game/character.h"
-#include "../game/entity.h"
-#include "../game/item.h"
-#include "../../../common/src/network/packet.h"
+#include "../../../common/src/common.h"
 
 void         itemDropNewP         (float x, float y, float z,const item *itm);
 void         itemDropNewC         (const packet *p);

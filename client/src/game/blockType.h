@@ -1,19 +1,8 @@
 #pragma once
-#include "../gfx/mesh.h"
-#include <stdbool.h>
-#include <stdint.h>
-
-typedef enum blockCategory {
-	NONE,
-	DIRT,
-	STONE,
-	WOOD,
-	LEAVES
-} blockCategory;
+#include "../../../common/src/common.h"
 
 void          blockTypeInit();
 void          blockTypeGenMeshes();
-
 
 void          blockTypeSetTex          (uint8_t b, int side, uint32_t tex);
 const char   *blockTypeGetName         (uint8_t b);

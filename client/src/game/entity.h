@@ -1,26 +1,5 @@
 #pragma once
-#include "../gfx/mesh.h"
-#include "../game/character.h"
-
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-
-typedef struct {
-	float  x, y, z;
-	float vx,vy,vz;
-	float yaw,pitch,roll;
-	float yoff,shake;
-
-	bool falling;
-	bool noClip;
-	bool updated;
-	bool collide;
-	bool noRepulsion;
-
-	mesh *eMesh;
-	void *nextFree;
-} entity;
+#include "../../../common/src/common.h"
 
 extern entity entityList[1<<14];
 extern int entityCount;

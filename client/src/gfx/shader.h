@@ -1,12 +1,5 @@
 #pragma once
-
-typedef struct {
-	unsigned int pID;
-	unsigned int vsID,fsID;
-	char *vss,*fss;
-	unsigned int attrMask;
-	int lMVP,lAlpha,lTransform,lTex;
-} shader;
+#include "../../../common/src/common.h"
 
 void    shaderInit();
 void    shaderFree();

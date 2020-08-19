@@ -4,11 +4,12 @@
 #include "../game/itemDrop.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/game/item.h"
+#include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
 #include <math.h>
-#include <stddef.h>
 #include <stdlib.h>
 
 typedef struct {
@@ -67,7 +68,7 @@ void blockMiningDropItems(blockMining *bm){
 void blockMiningMine(int i, item *itm){
 	blockMining *bm = &blockMiningList[i];
 
-	bm->damage += itemBlockDamage(itm,blockTypeGetCat(bm->b));
+	bm->damage += blockDamageDispatch(itm,blockTypeGetCat(bm->b));
 	bm->wasMined = true;
 	if(bm->damage > blockTypeGetHP(bm->b)){
 		msgMineBlock(bm->x,bm->y,bm->z,bm->b);

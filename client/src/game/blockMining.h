@@ -1,6 +1,5 @@
 #pragma once
-#include "../game/item.h"
-#include "../../../common/src/network/packet.h"
+#include "../../../common/src/common.h"
 
 void blockMiningMinePos(item *itm, int x, int y, int z);
 void blockMiningInit();

@@ -1,8 +1,5 @@
 #pragma once
-#include "../game/character.h"
-#include "../game/entity.h"
-#include "../game/item.h"
-#include "../../../common/src/network/packet.h"
+#include "../../../common/src/common.h"
 
 extern int itemDropCount;
 

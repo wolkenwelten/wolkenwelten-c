@@ -74,7 +74,7 @@ void parseFunctionPrototype(const char *line, itemProcedure *proc){
 
 void parseFunctionName(const char *line, itemProcedure *proc){
 	int mode=0;
-	
+
 	proc->name = strdup(line);
 	for(char *s=proc->name;*s!=0;s++){
 		if(mode == 0){
@@ -88,14 +88,14 @@ void parseFunctionName(const char *line, itemProcedure *proc){
 			}
 		}
 	}
-	
+
 	for(char *s=proc->name;*s!=0;s++){
 		if(isspace(*s) || (*s == '(')){
 			*s = 0;
 			break;
 		}
 	}
-	
+
 	for(char *s=proc->name;*s!=0;s++){
 		if(isupper(*s)){
 			proc->type = s;
@@ -113,10 +113,10 @@ void parseLine(int lineNumber, const char *line, item *itm){
 	if(*line == '\r'){return;}
 	if(*line == '\n'){return;}
 	if(*line == '/') {return;}
-	
+
 	if(*line == '}') {return;}
 	if(*line == '#') {return;}
-	
+
 	if(strncmp("static const int ITEMID=",line,24) == 0){
 		itm->id = atoi(line+24);
 		return;
@@ -124,11 +124,11 @@ void parseLine(int lineNumber, const char *line, item *itm){
 	if(strncmp("static",line,6) == 0){
 		return;
 	}
-	
+
 	itemProcedure *proc = calloc(1,sizeof(itemProcedure));
 	parseFunctionPrototype(line,proc);
 	parseFunctionName(line,proc);
-	
+
 	addItemProcedure(itm,proc);
 }
 
@@ -144,7 +144,7 @@ void parseFile(const char *filename){
 	}
 	itm = calloc(1,sizeof(item));
 	itm->filename = filename;
-	
+
 	for(int i=0;i<len;i++){
 		if(file[i] == '\n'){
 			file[i] = 0;
@@ -152,7 +152,7 @@ void parseFile(const char *filename){
 			line = file+i+1;
 		}
 	}
-	
+
 	items[itm->id] = itm;
 }
 
@@ -167,7 +167,7 @@ void printFunctionPrototypes(item *itm){
 
 void printTypeCaller(const char *procName, const char *typeName){
 	size_t tnLen = strlen(typeName);
-	
+
 	printf("void %s(){\n",procName);
 	for(int i=0;i<1024;i++){
 		item *itm = items[i];
@@ -186,10 +186,10 @@ void printItemTypeDispatch(const char *typeName, const char *argsAndTypes, const
 	size_t tnLen = strlen(typeName);
 	char *lcType = strdup(typeName);
 	*lcType = tolower(*lcType);
-	
+
 	printf("%s%sDispatch(%s){\n",retType,lcType,argsAndTypes);
 	puts("\tswitch(cItem->ID){");
-	
+
 	for(int i=0;i<1024;i++){
 		item *itm = items[i];
 		itemProcedure *p;
@@ -200,7 +200,7 @@ void printItemTypeDispatch(const char *typeName, const char *argsAndTypes, const
 			}
 		}
 	}
-	
+
 	puts("\t}");
 	printf("\treturn %sDefault(%s);\n",lcType,args);
 	puts("}");
@@ -209,10 +209,10 @@ void printItemTypeDispatch(const char *typeName, const char *argsAndTypes, const
 
 void printHasTypeSwitch(const char *typeName){
 	size_t tnLen = strlen(typeName);
-	
+
 	printf("bool has%s(item *cItem){\n",typeName);
 	puts("\tswitch(cItem->ID){");
-	
+
 	for(int i=0;i<1024;i++){
 		item *itm = items[i];
 		itemProcedure *p;
@@ -223,7 +223,7 @@ void printHasTypeSwitch(const char *typeName){
 			}
 		}
 	}
-	
+
 	puts("\t\tdefault: return false;");
 	puts("\t}");
 	puts("}");
@@ -238,15 +238,15 @@ int main(int argc, char *argv[]){
 		return 1;
 	}
 	memset(items,0,sizeof(items));
-	puts("#include \"../mods/mods.h\"\n");
+	puts("#include \"../../../common/src/mods/mods.h\"\n");
 	for(int i=1;i<argc;i++){
 		parseFile(argv[i]);
 	}
-	
+
 	for(int i=0;i<1024;i++){
 		printFunctionPrototypes(items[i]);
 	}
-	
+
 	printTypeCaller("modsInit","Init");
 	printItemTypeDispatch("BlockDamage","item *cItem, blockCategory blockCat","cItem, blockCat","int ");
 	printItemTypeDispatch("GetMesh","item *cItem","cItem","mesh *");
@@ -261,6 +261,6 @@ int main(int argc, char *argv[]){
 	printItemTypeDispatch("GetStackSize","item *cItem","cItem","int ");
 	printItemTypeDispatch("GetMagSize","item *cItem","cItem","int ");
 	printHasTypeSwitch   ("GetMagSize");
-	
+
 	return 0;
 }

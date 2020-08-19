@@ -1,7 +1,5 @@
 #pragma once
-
-#include "../gfx/texture.h"
-#include "../gfx/mesh.h"
+#include "../../../common/src/common.h"
 
 extern mesh *meshPear;
 extern texture *texPear;

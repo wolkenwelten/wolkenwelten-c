@@ -1,4 +1,5 @@
-#include "mods.h"
+#include "../../../common/src/common.h"
+#include "../../../common/src/mods/mods.h"
 
 #include <stdlib.h>
 
@@ -53,11 +54,11 @@ int getAmmunitionDefault(item *cItem){
 }
 int getStackSizeDefault (item *cItem){
 	(void)cItem;
-	
+
 	return 99;
 }
 int getMagSizeDefault (item *cItem){
 	(void)cItem;
-	
+
 	return 0;
 }

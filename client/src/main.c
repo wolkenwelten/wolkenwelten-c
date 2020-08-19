@@ -3,13 +3,16 @@
 #include "misc/options.h"
 #include "sdl/sdl.h"
 #include "sdl/sfx.h"
-#include "gfx/sky.h"
-#include "gfx/gfx.h"
-#include "gfx/shader.h"
 #include "gui/gui.h"
 #include "gui/menu.h"
+#include "gfx/sky.h"
+#include "gfx/gfx.h"
+#include "gfx/mesh.h"
+#include "gfx/shader.h"
 #include "gfx/particle.h"
+#include "gfx/texture.h"
 #include "gui/inventory.h"
+#include "game/entity.h"
 #include "game/itemDrop.h"
 #include "game/grenade.h"
 #include "game/blockType.h"
@@ -17,9 +20,9 @@
 #include "game/recipe.h"
 #include "voxel/chungus.h"
 #include "voxel/bigchungus.h"
-#include "../../common/src/misc/misc.h"
 #include "gfx/objs.h"
-#include "mods/mods.h"
+#include "../../common/src/misc/misc.h"
+#include "../../common/src/mods/mods.h"
 #include "network/client.h"
 #include "network/chat.h"
 
@@ -104,7 +107,7 @@ int main( int argc, char* argv[] ){
 	initOptions(argc,argv);
 	initSDL();
 	seedRNG(time(NULL));
-	
+
 	setvbuf(stdout, NULL, _IONBF, 0);
 	setvbuf(stderr, NULL, _IONBF, 0);
 

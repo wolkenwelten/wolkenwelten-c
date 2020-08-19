@@ -1,7 +1,8 @@
 #include "../game/blockType.h"
 
-#include "../gfx/texture.h"
 #include "../../../common/src/misc/misc.h"
+#include "../gfx/mesh.h"
+#include "../gfx/texture.h"
 #include "../gfx/glew.h"
 
 typedef struct {

@@ -1,23 +1,5 @@
 #pragma once
-
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
-
-typedef struct {
-	float  x, y, z;
-	float vx,vy,vz;
-	float yaw,pitch,roll;
-	float yoff;
-
-	bool falling;
-	bool noClip;
-	bool updated;
-	bool collide;
-	bool noRepulsion;
-
-	void *nextFree;
-} entity;
+#include "../../../common/src/common.h"
 
 extern entity entityList[1<<14];
 extern int entityCount;

@@ -1,50 +1,5 @@
 #pragma once
-#include "../gfx/mesh.h"
-#include "../../../common/src/network/packet.h"
-
-#include <stdbool.h>
-#include <stdint.h>
-
-struct grapplingHook;
-
-typedef struct {
-	uint16_t ID;
-	 int16_t amount;
-} item;
-
-typedef struct {
-	float  x, y, z;
-	float vx,vy,vz;
-	float gvx,gvy,gvz;
-	float yaw,pitch,roll;
-	float yoff,shake,inaccuracy;
-	float gyoff;
-	float hitOff;
-
-	bool falling;
-	bool noClip;
-	bool collide;
-	bool fallingSound;
-	bool sneak;
-	bool hasHit;
-
-	mesh *eMesh;
-	struct grapplingHook *hook;
-
-	short hp,maxhp;
-
-	int blockMiningX,blockMiningY,blockMiningZ;
-
-	int actionTimeout;
-	unsigned int stepTimeout;
-
-	unsigned int activeItem;
-	item inventory[40];
-
-	void *nextFree;
-} character;
-
-#include "../game/item.h"
+#include "../../../common/src/common.h"
 
 extern character *player;
 
@@ -88,3 +43,5 @@ void  characterMoveDelta      (character *c, packet *p);
 void  characterDamagePacket   (character *c, packet *p);
 void  characterSetPlayerPos   (const packet *p);
 void  characterRemovePlayer   (int c, int len);
+
+bool  itemPlaceBlock          (item *i, character *chr, int to);
