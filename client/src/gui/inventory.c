@@ -3,7 +3,7 @@
 #include "../gfx/mesh.h"
 #include "../game/character.h"
 #include "../game/item.h"
-#include "../game/itemdrop.h"
+#include "../game/itemDrop.h"
 #include "../gfx/gfx.h"
 #include "../sdl/sdl.h"
 #include "../gui/gui.h"
@@ -39,7 +39,7 @@ bool isInventoryOpen(){
 void inventoryGamepadSelToXY(int sel,int *rx, int *ry){
 	int xsel = (sel % 10)-5;
 	int ysel = 5 - (sel / 10);
-	
+
 	int tilesize;
 	if(screenWidth < 1024){
 		tilesize = 48;
@@ -48,7 +48,7 @@ void inventoryGamepadSelToXY(int sel,int *rx, int *ry){
 	}else {
 		tilesize = 80;
 	}
-	
+
 	*rx = (xsel * tilesize) + screenWidth/2 + tilesize/4;
 	*ry = (ysel * tilesize) + (screenHeight/2-2*tilesize) + tilesize/4;
 	if(ysel == 0){
@@ -122,7 +122,7 @@ void drawInventory(textMesh *guim){
 			style = 2;
 		}
 		textMeshItemSlot(guim,x,y,tilesize,style,b,a);
-		
+
 		if(((mousex > x) && (mousex < x+tilesize) && (mousey > y) && (mousey < y+tilesize)) || (mouseHidden && (i == (gamepadSelection-50)))){
 			const int yy = y + tilesize + tilesize/2;
 			int ii,xx;
@@ -133,14 +133,14 @@ void drawInventory(textMesh *guim){
 				a = recipeGetIngredientAmount(r,ii);
 				if((b == 0) || (a <= 0)){ break;}
 				b = ingredientSubstituteGetSub(b,(ticks/96) % (ingredientSubstituteGetAmount(b)+1));
-				
+
 				if(ii > 0){
 					textMeshBox(guim,xx-tilesize+tilesize/4+animX,yy+tilesize/4+animY,tilesize/2,tilesize/2,24.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 				}
 				textMeshItemSlot(guim,xx,yy,tilesize,3,b,a);
 			}
 			b = recipeGetResultID(r);
-			
+
 			xx = (screenWidth/2)+((ii*2-5)*tilesize);
 			textMeshBox(guim,xx-tilesize+tilesize/4+animX*2,yy+tilesize/4,tilesize/2,tilesize/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 			textMeshItemSlot(guim,xx,yy,tilesize,3,b,recipeGetResultAmount(r));
@@ -165,7 +165,7 @@ void inventoryClickOutside(int btn){
 
 void doInventoryClick(int btn, int sel){
 	item *cItem;
-	
+
 	if((sel >= 50) && (sel < 60)){
 		int r = sel-50;
 		if(btn == 1){
@@ -175,7 +175,7 @@ void doInventoryClick(int btn, int sel){
 		}
 		return;
 	}
-	
+
 	if(btn == 1){
 		if(itemIsEmpty(&inventoryCurrentPickup)){
 			cItem = characterGetItemBarSlot(player,sel);
