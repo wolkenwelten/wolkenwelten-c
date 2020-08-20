@@ -10,7 +10,26 @@ struct mesh;
 typedef struct mesh mesh;
 struct character;
 typedef struct character character;
+struct sfx;
+typedef struct sfx sfx;
 
+sfx *sfxFalling;
+sfx *sfxHoho;
+sfx *sfxHoo;
+sfx *sfxImpact;
+sfx *sfxPhaser;
+sfx *sfxBomb;
+sfx *sfxTock;
+sfx *sfxPock;
+sfx *sfxStomp;
+sfx *sfxStep;
+sfx *sfxUngh;
+sfx *sfxYahoo;
+sfx *sfxHookFire;
+sfx *sfxHookHit;
+sfx *sfxHookReturned;
+sfx *atmosfxHookRope;
+sfx *atmosfxWind;
 
 mesh *meshPear;
 mesh *meshHook;
@@ -65,29 +84,6 @@ void beamblast(character *ent, float beamSize, float damageMultiplier, float rec
 
 	fprintf(stderr,"beamblast got called on the serverside\n");
 }
-
-struct sfx {
-	int a;
-};
-typedef struct sfx sfx;
-
-sfx *sfxFalling;
-sfx *sfxHoho;
-sfx *sfxHoo;
-sfx *sfxImpact;
-sfx *sfxPhaser;
-sfx *sfxBomb;
-sfx *sfxTock;
-sfx *sfxPock;
-sfx *sfxStomp;
-sfx *sfxStep;
-sfx *sfxUngh;
-sfx *sfxYahoo;
-sfx *sfxHookFire;
-sfx *sfxHookHit;
-sfx *sfxHookReturned;
-sfx *atmosfxHookRope;
-sfx *atmosfxWind;
 
 void sfxPlay(sfx *b, float volume){
 	(void)b;
