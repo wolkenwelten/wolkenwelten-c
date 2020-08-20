@@ -103,7 +103,7 @@ void initSDL(){
 	if(Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, 2, 1024)==-1) {
 		fprintf(stderr,"Mix_OpenAudio: %s\n", Mix_GetError());
 	}
-	Mix_AllocateChannels(16);
+	Mix_AllocateChannels(128);
 	sfxEnable = 1;
 
 	initGL();

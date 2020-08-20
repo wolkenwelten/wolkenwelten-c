@@ -78,7 +78,6 @@ bgm *bgmNew(unsigned char *data,size_t dataLen){
 	b->mixMusic = NULL;
 	if(data == NULL){ return NULL; }
 	b->mixMusic = Mix_LoadMUS_RW(SDL_RWFromConstMem(data,dataLen),0);
-	//mixMusic=Mix_LoadMUS(file);
 	if(!b->mixMusic) { return NULL; }
 	return b;
 }
@@ -101,7 +100,6 @@ sfx *sfxNew(unsigned char *data,size_t dataLen){
 	b->mixChunk = NULL;
 	if(data == NULL){ return NULL; }
 	b->mixChunk = Mix_LoadWAV_RW(SDL_RWFromConstMem(data,dataLen),0);
-	//mixChunk=Mix_LoadWAV(file);
 	if(!b->mixChunk) { return NULL; }
 
 	return b;

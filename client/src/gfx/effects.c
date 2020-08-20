@@ -79,6 +79,7 @@ void fxExplosionBlaster(float x,float y,float z,float pw){
 	}
 }
 void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int originatingCharacter){
+	(void)recoilMultiplier;
 	int steps = 0;
 	float minPlayerDist = 100.f;
 	float cx = x1;
@@ -109,12 +110,10 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 			steps = (z2 - z1) / vz;
 		}
 	}
-	//uint32_t pac = 0xFF8F56FF;
-	//uint32_t pbc = 0xFFAF76FF;
 	uint32_t pac = 0xFF0000FF | ((0x50 + rngValM(0x30)) << 16) | ((0x30 + rngValM(0x30)) << 8);
 	uint32_t pbc = pac + 0x00202000;
 
-	sfxPlay(sfxPhaser,recoilMultiplier);
+	sfxPlay(sfxPhaser,MAX(0.5f,damageMultiplier));
 	for(;steps > 0;steps--){
 		float pvx = (rngValf()-0.5f)/8.f*beamSize;
 		float pvy = (rngValf()-0.5f)/8.f*beamSize;
