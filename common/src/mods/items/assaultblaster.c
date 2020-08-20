@@ -22,7 +22,7 @@ int assaultblasterGetStackSize(item *cItem){
 
 bool assaultblasterPrimaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
-	
+
 	if(to < 0){return false;}
 	if(itemGetAmmo(cItem) < 1){return false;}
 	itemDecAmmo(cItem,1);
@@ -52,17 +52,18 @@ bool assaultblasterTertiaryAction(item *cItem, character *cChar, int to){
 	ammoleft = MIN(MAGSIZE,ammoleft);
 	characterDecItemAmount(cChar, 265, itemIncAmmo(cItem,ammoleft));
 	characterAddCooldown(cChar,50);
+	sfxPlay(sfxHookReturned,0.7f);
 	return true;
 }
 
 int assaultblasterGetAmmunition(item *cItem){
 	(void)cItem;
-	
+
 	return 265;
 }
 
 int assaultblasterGetMagSize(item *cItem){
 	(void)cItem;
-	
+
 	return MAGSIZE;
 }

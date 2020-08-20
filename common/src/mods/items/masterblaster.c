@@ -52,17 +52,18 @@ bool masterblasterTertiaryAction(item *cItem, character *cChar, int to){
 	ammoleft = MIN(MAGSIZE,ammoleft);
 	characterDecItemAmount(cChar, 265, itemIncAmmo(cItem,ammoleft));
 	characterAddCooldown(cChar,50);
+	sfxPlay(sfxHookReturned,0.7f);
 	return true;
 }
 
 int masterblasterGetAmmunition(item *cItem){
 	(void)cItem;
-	
+
 	return 265;
 }
 
 int masterblasterGetMagSize(item *cItem){
 	(void)cItem;
-	
+
 	return MAGSIZE;
 }
