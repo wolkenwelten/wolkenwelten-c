@@ -30,27 +30,87 @@ int characterCount = 0;
 character *characterFirstFree = NULL;
 character *playerList[32];
 
-uint32_t characterCollision(character *c, float cx, float cy, float cz,float wd){
-	(void)c;
-	uint32_t col = 0;
-	const float WD=wd*2.f;
+void characterInit(character *c){
+	int sx=-1024,sy=1024,sz=-1024;
+	c->gyoff = 0.f;
+	c->gvx = c->gvy = c->gvz = 0.f;
+	c->shake = c->inaccuracy = 0.f;
 
-	if(checkCollision(cx-wd,cy+0.5f,cz   )){col |=  0x10;}
-	if(checkCollision(cx+wd,cy+0.5f,cz   )){col |=  0x20;}
-	if(checkCollision(cx   ,cy+0.5f,cz-wd)){col |=  0x40;}
-	if(checkCollision(cx   ,cy+0.5f,cz+wd)){col |=  0x80;}
+	c->collide      = false;
+	c->noClip       = false;
+	c->falling      = false;
+	c->fallingSound = false;
+	c->sneak        = false;
+	c->hasHit       = false;
 
-	if(checkCollision(cx-wd,cy-1.f ,cz   )){col |=   0x1;}
-	if(checkCollision(cx+wd,cy-1.f ,cz   )){col |=   0x2;}
-	if(checkCollision(cx   ,cy-1.f ,cz-wd)){col |=   0x4;}
-	if(checkCollision(cx   ,cy-1.f ,cz+wd)){col |=   0x8;}
+	c->actionTimeout = 0;
+	c->stepTimeout   = 0;
 
-	if(checkCollision(cx-WD,cy-0.7f,cz   )){col |= 0x100;}
-	if(checkCollision(cx+WD,cy-0.7f,cz   )){col |= 0x200;}
-	if(checkCollision(cx   ,cy-0.7f,cz-WD)){col |= 0x400;}
-	if(checkCollision(cx   ,cy-0.7f,cz+WD)){col |= 0x800;}
+	c->maxhp = c->hp = 20;
+	c->activeItem = 0;
+	c->hitOff     = 0.f;
+	c->blockMiningX = c->blockMiningY = c->blockMiningZ = -1;
 
-	return col;
+	c->x     = sx+0.5f;
+	c->y     = sy+1.0f;
+	c->z     = sz+0.5f;
+	c->yaw   = 135.f;
+	c->pitch = 0.f;
+	c->roll  = 0.f;
+	c->yoff  = 0.f;
+	c->eMesh = meshPear;
+	c->vx = c->vy = c->vz = 0.f;
+
+	if(c->hook != NULL){
+		grapplingHookFree(c->hook);
+		c->hook = NULL;
+	}
+	if(c == player){
+		sfxLoop(atmosfxWind,0.f);
+		sfxLoop(atmosfxHookRope,0.f);
+		msgRequestPlayerSpawnPos();
+	}
+
+	characterEmptyInventory(c);
+	if(optionDebugInfo){
+		c->inventory[0] = itemNew(261, 1);
+		c->inventory[1] = itemNew(262, 1);
+		c->inventory[2] = itemNew(263, 1);
+		c->inventory[3] = itemNew(264, 1);
+		c->inventory[4] = itemNew(259, 1);
+		c->inventory[5] = itemNew(260, 1);
+		c->inventory[6] = itemNew(256,99);
+		c->inventory[7] = itemNew(258,99);
+		c->inventory[8] = itemNew(265,999);
+		c->inventory[9] = itemNew(  1,99);
+	}
+}
+
+character *characterNew(){
+	character *c = NULL;
+	if(characterFirstFree != NULL){
+		c = characterFirstFree;
+		characterFirstFree = c->nextFree;
+	}
+	if(c == NULL){
+		if(characterCount >= (int)(sizeof(characterList) / sizeof(character))-1){
+			fprintf(stderr,"characterList Overflow!\n");
+			return NULL;
+		}
+		c = &characterList[characterCount++];
+	}
+	characterInit(c);
+	return c;
+}
+
+void characterFree(character *c){
+	c->eMesh = NULL;
+	if(c->hook != NULL){
+		grapplingHookFree(c->hook);
+		c->hook = NULL;
+	}
+	c->nextFree = characterFirstFree;
+	characterFirstFree = c;
 }
 
 void characterSetPlayerPos(const packet *p){
@@ -92,18 +152,6 @@ void characterSetPlayerPos(const packet *p){
 	playerList[i]->hitOff = p->val.f[18];
 }
 
-void characterSetPos(character *c, float x, float y, float z){
-	c->x = x;
-	c->y = y;
-	c->z = z;
-}
-
-void characterSetVelocity(character *c, float vx, float vy, float vz){
-	c->vx = vx;
-	c->vy = vy;
-	c->vz = vz;
-}
-
 void characterRemovePlayer(int c, int len){
 	if(playerList[c] != NULL){
 		characterFree(playerList[c]);
@@ -112,24 +160,6 @@ void characterRemovePlayer(int c, int len){
 			playerList[c] = playerList[len];
 			playerList[len] = NULL;
 		}
-	}
-}
-
-void characterEmptyInventory(character *c){
-	for(unsigned int i=0;i<40;i++){
-		c->inventory[i] = itemEmpty();
-	}
-	if(optionDebugInfo){
-		c->inventory[0] = itemNew(261, 1);
-		c->inventory[1] = itemNew(262, 1);
-		c->inventory[2] = itemNew(263, 1);
-		c->inventory[3] = itemNew(264, 1);
-		c->inventory[4] = itemNew(259, 1);
-		c->inventory[5] = itemNew(260, 1);
-		c->inventory[6] = itemNew(256,99);
-		c->inventory[7] = itemNew(258,99);
-		c->inventory[8] = itemNew(265,999);
-		c->inventory[9] = itemNew(  1,99);
 	}
 }
 
@@ -145,10 +175,6 @@ void characterUpdateInaccuracy(character *c){
 	}else{
 		c->inaccuracy = minInaccuracy;
 	}
-}
-
-void characterAddInaccuracy(character *c, float inc){
-	c->inaccuracy += inc;
 }
 
 void characterUpdateHook(character *c){
@@ -331,124 +357,6 @@ void characterUpdateYOff(character *c){
 	}
 }
 
-void characterInit(character *c){
-	int sx=-1024,sy=1024,sz=-1024;
-	c->gyoff = 0.f;
-	c->gvx = c->gvy = c->gvz = 0.f;
-	c->shake = c->inaccuracy = 0.f;
-
-	c->collide      = false;
-	c->noClip       = false;
-	c->falling      = false;
-	c->fallingSound = false;
-	c->sneak        = false;
-	c->hasHit       = false;
-
-	c->actionTimeout = 0;
-	c->stepTimeout   = 0;
-
-	c->maxhp = c->hp = 20;
-	c->activeItem = 0;
-	c->hitOff     = 0.f;
-	c->blockMiningX = c->blockMiningY = c->blockMiningZ = -1;
-
-	c->x     = sx+0.5f;
-	c->y     = sy+1.0f;
-	c->z     = sz+0.5f;
-	c->yaw   = 135.f;
-	c->pitch = 0.f;
-	c->roll  = 0.f;
-	c->yoff  = 0.f;
-	c->eMesh = meshPear;
-	c->vx = c->vy = c->vz = 0.f;
-
-	if(c->hook != NULL){
-		grapplingHookFree(c->hook);
-		c->hook = NULL;
-	}
-	if(c == player){
-		sfxLoop(atmosfxWind,0.f);
-		sfxLoop(atmosfxHookRope,0.f);
-		msgRequestPlayerSpawnPos();
-	}
-
-	characterEmptyInventory(c);
-}
-
-character *characterNew(){
-	character *c = NULL;
-	if(characterFirstFree != NULL){
-		c = characterFirstFree;
-		characterFirstFree = c->nextFree;
-	}
-	if(c == NULL){
-		if(characterCount >= (int)(sizeof(characterList) / sizeof(character))-1){
-			fprintf(stderr,"characterList Overflow!\n");
-			return NULL;
-		}
-		c = &characterList[characterCount++];
-	}
-	characterInit(c);
-	return c;
-}
-
-void characterFree(character *c){
-	c->eMesh = NULL;
-	if(c->hook != NULL){
-		grapplingHookFree(c->hook);
-		c->hook = NULL;
-	}
-	c->nextFree = characterFirstFree;
-	characterFirstFree = c;
-}
-
-bool characterLOSBlock(character *c, int *retX, int *retY, int *retZ, int returnBeforeBlock) {
-	float cvx,cvy,cvz;
-	float cx,cy,cz;
-	float lx,ly,lz;
-	int   lastBlock=-1;
-	const float yaw   = c->yaw;
-	const float pitch = c->pitch;
-
-	cvx = (cos((yaw-90.f)*PI/180) * cos((-pitch)*PI/180))*0.1f;
-	cvy = (sin((-pitch)*PI/180))*0.1f;
-	cvz = (sin((yaw-90.f)*PI/180) * cos((-pitch)*PI/180))*0.1f;
-
-	cx = lx = c->x;
-	cy = ly = c->y+0.5f;
-	cz = lz = c->z;
-
-	for(int i=0;i<50;i++){
-		if((lastBlock == -1) || (fabsf(lx - floorf(cx)) > 0.1f) || (fabsf(ly - floorf(cy)) > 0.1f) || (fabsf(lz - floorf(cz)) > 0.1f)){
-			lastBlock = worldGetB(cx,cy,cz);
-			if(lastBlock > 0){
-				if(returnBeforeBlock){
-					*retX = lx;
-					*retY = ly;
-					*retZ = lz;
-				}else{
-					*retX = cx;
-					*retY = cy;
-					*retZ = cz;
-				}
-				return true;
-			}
-			lx = floorf(cx);
-			ly = floorf(cy);
-			lz = floorf(cz);
-		}
-
-		cx += cvx;
-		cy += cvy;
-		cz += cvz;
-	}
-	return false;
-}
-
-void characterAddCooldown(character *c, int cooldown){
-	c->actionTimeout = -cooldown;
-}
-
 void characterPrimary(character *c){
 	int cx,cy,cz;
 	item *itm = &c->inventory[c->activeItem];
@@ -514,110 +422,6 @@ void characterDie(character *c){
 	}
 	characterInit(c);
 	setOverlayColor(0xFF000000,0);
-}
-
-item *characterGetItemBarSlot(character *c, int i){
-	if(i <  0){return NULL;}
-	if(i > 40){return NULL;}
-	return &c->inventory[i];
-}
-void characterSetItemBarSlot(character *c, int i, item *itm){
-	if(i <  0){return;}
-	if(i > 40){return;}
-	c->inventory[i] = *itm;
-}
-void characterSetActiveItem(character *c, int i){
-	if(i > 9){i = 0;}
-	if(i < 0){i = 9;}
-	c->activeItem = i;
-}
-void characterSwapItemSlots(character *c, int a,int b){
-	if(a <  0){return;}
-	if(b <  0){return;}
-	if(a > 39){return;}
-	if(b > 39){return;}
-
-	item tmp = c->inventory[a];
-	c->inventory[a] = c->inventory[b];
-	c->inventory[b] = tmp;
-}
-
-int characterGetItemAmount(character *c, uint16_t itemID){
-	int amount = 0;
-	for(unsigned int i=0;i<40;i++){
-		if(c->inventory[i].ID == itemID){
-			amount += c->inventory[i].amount;
-		}
-	}
-	return amount;
-}
-
-int characterDecItemAmount(character *c, uint16_t itemID,int amount){
-	int ret=0;
-
-	if(amount == 0){return 0;}
-	for(unsigned int i=0;i<40;i++){
-		if(c->inventory[i].ID == itemID){
-			if(c->inventory[i].amount > amount){
-				itemDecStack(&c->inventory[i],amount);
-				return amount;
-			}else{
-				amount -= c->inventory[i].amount;
-				ret    += c->inventory[i].amount;
-				c->inventory[i] = itemEmpty();
-			}
-		}
-	}
-	return ret;
-}
-
-bool characterPickupItem(character *c, uint16_t itemID,int amount){
-	int a = 0;
-
-	for(unsigned int i=0;i<40;i++){
-		if(a >= amount){break;}
-		if(itemCanStack(&c->inventory[i],itemID)){
-			a += itemIncStack(&c->inventory[i],amount - a);
-		}
-	}
-	for(unsigned int i=0;i<40;i++){
-		if(a >= amount){break;}
-		if(itemIsEmpty(&c->inventory[i])){
-			c->inventory[i] = itemNew(itemID,amount - a);
-			a += c->inventory[i].amount;
-		}
-	}
-
-	if(a == amount){
-		sfxPlay(sfxPock,.8f);
-		return true;
-	}
-	return false;
-}
-
-
-bool characterHP(character *c, int addhp){
-	c->hp += addhp;
-	if(c->hp <= 0){
-		characterDie(c);
-		return true;
-	}
-	if(c->hp > c->maxhp){
-		c->hp = c->maxhp;
-	}
-	return false;
-}
-
-bool characterDamage(character *c, int hp){
-	return characterHP(c,-hp);
-}
-
-int characterGetHP(character *c){
-	return c->hp;
-}
-
-int characterGetMaxHP(character *c){
-	return c->maxhp;
 }
 
 int characterPhysics(character *c){
@@ -779,55 +583,6 @@ void characterUpdate(character *c){
 	characterUpdateHook(c);
 	characterUpdateHitOff(c);
 	characterUpdateWindVolume(c,c->vx,c->vy,c->vz);
-}
-
-void characterMove(character *c, float mx,float my,float mz){
-	float speed;
-	const float yaw   = c->yaw;
-	const float pitch = c->pitch;
-
-	if(c->noClip){
-		if(c->sneak){
-			speed = 1.f;
-		}else{
-			speed = 0.15f;
-		}
-		c->gvx = (cos((yaw+90.f)*PI/180) * cos(pitch*PI/180))*mz*speed;
-		c->gvy = sin(pitch*PI/180)*mz*speed;
-		c->gvz = (sin((yaw+90.f)*PI/180) * cos(pitch*PI/180))*mz*speed;
-
-		c->gvx += cos((yaw)*PI/180)*mx*speed;
-		c->gvz += sin((yaw)*PI/180)*mx*speed;
-	}else{
-		if(c->sneak){
-			speed = 0.01f;
-		}else{
-			speed = 0.05f;
-		}
-		c->gvy = my;
-		c->gvx = (cos((yaw+90)*PI/180)*mz)*speed;
-		c->gvz = (sin((yaw+90)*PI/180)*mz)*speed;
-
-		c->gvx += cos((yaw)*PI/180)*mx*speed;
-		c->gvz += sin((yaw)*PI/180)*mx*speed;
-	}
-}
-
-void characterRotate(character *c, float vYaw,float vPitch,float vRoll){
-	float yaw   = c->yaw   +   vYaw;
-	float pitch = c->pitch + vPitch;
-	float roll  = c->roll  +  vRoll;
-
-	if(yaw   > 360.f){yaw   -= 360.f;}
-	if(yaw   <   0.f){yaw   += 360.f;}
-	if(pitch >  90.f){pitch  =  90.f;}
-	if(pitch < -90.f){pitch  = -90.f;}
-	if(roll  > 360.f){roll  -= 360.f;}
-	if(roll  <   0.f){roll  += 360.f;}
-
-	c->yaw   = yaw;
-	c->pitch = pitch;
-	c->roll  = roll;
 }
 
 void characterFireHook(character *c){

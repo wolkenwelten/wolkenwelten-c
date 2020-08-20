@@ -19,8 +19,6 @@
 #include <signal.h>
 #include <unistd.h>
 
-
-const float PI = 3.1415926535897932384626433832795;
 bool quit = false;
 char *termColors[16];
 char *termReset;

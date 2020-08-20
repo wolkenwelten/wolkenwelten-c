@@ -98,7 +98,7 @@ bool bigchungusGetHighestP(bigchungus *c, int x,int *retY, int z) {
 	return false;
 }
 
-void bigchungusSetB(bigchungus *c, int x,int y,int z,uint8_t block){
+bool bigchungusSetB(bigchungus *c, int x,int y,int z,uint8_t block){
 	chungus *chng;
 	int cx = (x / CHUNGUS_SIZE) & 0xFF;
 	int cy = (y / CHUNGUS_SIZE) & 0x7F;
@@ -106,14 +106,29 @@ void bigchungusSetB(bigchungus *c, int x,int y,int z,uint8_t block){
 	chng = c->chungi[cx][cy][cz];
 	if(chng == NULL){
 		c->chungi[cx][cy][cz] = chng = chungusNew(cx*CHUNGUS_SIZE,cy*CHUNGUS_SIZE,cz*CHUNGUS_SIZE);
+		return true;
 	}
 	chungusSetB(chng,x%CHUNGUS_SIZE,y%CHUNGUS_SIZE,z%CHUNGUS_SIZE,block);
+	return false;
 }
 
 void bigchungusBox(bigchungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
 	for(int cx=0;cx<w;cx++){
 		for(int cy=0;cy<h;cy++){
 			for(int cz=0;cz<d;cz++){
+				bigchungusSetB(c,cx+x,cy+y,cz+z,block);
+			}
+		}
+	}
+}
+
+void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, uint8_t block){
+	const int md = r*r;
+	for(int cx=-r;cx<=r;cx++){
+		for(int cy=-r;cy<=r;cy++){
+			for(int cz=-r;cz<=r;cz++){
+				const int d = (cx*cx)+(cy*cy)+(cz*cz);
+				if(d >= md){continue;}
 				bigchungusSetB(c,cx+x,cy+y,cz+z,block);
 			}
 		}
@@ -221,4 +236,26 @@ void bigchungusFreeFarChungi(bigchungus *c){
 		c->chungi[x][y][z] = NULL;
 		chungiDontFree:;
 	}
+}
+
+void worldBox(int x, int y,int z, int w,int h,int d,uint8_t block){
+	bigchungusBox(&world,x,y,z,w,h,d,block);
+}
+void worldBoxSphere(int x, int y,int z, int r,uint8_t block){
+	bigchungusBoxSphere(&world,x,y,z,r,block);
+}
+uint8_t worldGetB(int x, int y, int z){
+	return bigchungusGetB(&world,x,y,z);
+}
+chungus* worldGetChungus(int x, int y, int z){
+	return bigchungusGetChungus(&world,x,y,z);
+}
+chunk* worldGetChunk(int x, int y, int z){
+	return bigchungusGetChunk(&world,x,y,z);
+}
+bool worldSetB(int x, int y, int z, uint8_t block){
+	return bigchungusSetB(&world,x,y,z,block);
+}
+int checkCollision(int x, int y, int z){
+	return bigchungusGetB(&world,x,y,z) != 0;
 }

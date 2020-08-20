@@ -55,6 +55,13 @@ void bigchungusFree(bigchungus *c){
 	memset(c->chungi,0,256*128*256*sizeof(chunk *));
 }
 
+chunk *bigchungusGetChunk(bigchungus *c, int x, int y, int z){
+	chungus *chng = bigchungusGetChungus(c,(x>>8)&0xFF,(y>>8)&0xFF,(z>>8)&0xFF);
+	if(chng == NULL){return NULL;}
+	chunk *chnk = chungusGetChunk(chng,x&0xFF,y&0xFF,z&0xFF);
+	return chnk;
+}
+
 chungus *bigchungusGetChungus(bigchungus *c, int x,int y,int z) {
 	if((x|y|z)&(~0xFF)){return NULL;}
 	chungus *chng = c->chungi[x&0xFF][y&0x7F][z&0xFF];
@@ -192,7 +199,6 @@ void bigchungusFreeFarChungi(bigchungus *c, character *cam){
 	}
 }
 
-
 void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, uint8_t block){
 	const int md = r*r;
 	for(int cx=-r;cx<=r;cx++){
@@ -206,3 +212,28 @@ void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, uint8_t block)
 	}
 }
 
+void worldBox(int x, int y,int z, int w,int h,int d,uint8_t block){
+	bigchungusBox(&world,x,y,z,w,h,d,block);
+}
+void worldBoxSphere(int x, int y,int z, int r,uint8_t block){
+	bigchungusBoxSphere(&world,x,y,z,r,block);
+}
+uint8_t worldGetB(int x, int y, int z){
+	return bigchungusGetB(&world,x,y,z);
+}
+chungus* worldGetChungus(int x, int y, int z){
+	return bigchungusGetChungus(&world,x,y,z);
+}
+chunk* worldGetChunk(int x, int y, int z){
+	return bigchungusGetChunk(&world,x,y,z);
+}
+bool worldSetB(int x, int y, int z, uint8_t block){
+	return bigchungusSetB(&world,x,y,z,block);
+}
+void worldSetChungusLoaded(int x, int y, int z){
+	chungus *chng = bigchungusGetChungus(&world,x>>8,y>>8,z>>8);
+	if(chng != NULL){chng->loaded = 1;}
+}
+int checkCollision(int x, int y, int z){
+	return bigchungusGetB(&world,x,y,z) != 0;
+}

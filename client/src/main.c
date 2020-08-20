@@ -38,7 +38,6 @@
 	#include <emscripten.h>
 #endif
 
-const float PI         = 3.1415926535897932384626433832795f;
 bool quit              = false;
 bool gameRunning       = false;
 bool playerChunkActive = false;

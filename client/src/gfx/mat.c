@@ -1,8 +1,8 @@
 #include "mat.h"
+#include "../../../common/src/common.h"
 
 #include <stdio.h>
 #include <math.h>
-#include "../main.h"
 
 void matFrustum(float out[16], float left, float right, float bottom, float top, float znear, float zfar){
 	float temp  = 2.f * znear;

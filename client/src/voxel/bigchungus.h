@@ -15,6 +15,7 @@ void        bigchungusBox           (bigchungus *c, int x,int y,int z, int w,int
 void        bigchungusBoxSphere     (bigchungus *c, int x,int y,int z, int r, uint8_t block);
 void        bigchungusFreeFarChungi (bigchungus *c, character *cam);
 chungus    *bigchungusGetChungus    (bigchungus *c, int x, int y, int z);
+chunk      *bigchungusGetChunk      (bigchungus *c, int x, int y, int z);
 uint8_t     bigchungusGetB          (bigchungus *c, int x, int y, int z);
 bool        bigchungusSetB          (bigchungus *c, int x, int y, int z, uint8_t b);
 void        bigchungusDraw          (bigchungus *c, character *cam);
@@ -22,26 +23,13 @@ void        bigchungusGenSpawn      (bigchungus *c);
 void        bigchungusGetSpawnPos   (bigchungus *c, int *x, int *y, int *z);
 
 extern bigchungus world;
-inline void        worldBox           (int x, int y,int z, int w,int h,int d,uint8_t block){
-	bigchungusBox(&world,x,y,z,w,h,d,block);
-}
-inline void        worldBoxSphere     (int x, int y,int z, int r,uint8_t block){
-	bigchungusBoxSphere(&world,x,y,z,r,block);
-}
-inline uint8_t     worldGetB          (int x, int y, int z){
-	return bigchungusGetB(&world,x,y,z);
-}
-inline chungus*    worldGetChungus    (int x, int y, int z){
-	return bigchungusGetChungus(&world,x,y,z);
-}
-inline bool        worldSetB(int x, int y, int z, uint8_t b){
-	return bigchungusSetB(&world,x,y,z,b);
-}
-inline void        worldSetChungusLoaded(int x, int y, int z){
-	chungus *chng = bigchungusGetChungus(&world,x>>8,y>>8,z>>8);
-	if(chng != NULL){chng->loaded = 1;}
-}
 
-inline int checkCollision(int cx, int cy, int cz){
-	return worldGetB(cx,cy,cz) != 0;
-}
+void     worldBox              (int x, int y, int z, int w, int h, int d, uint8_t block);
+void     worldBoxSphere        (int x, int y, int z, int r, uint8_t block);
+uint8_t  worldGetB             (int x, int y, int z);
+chungus* worldGetChungus       (int x, int y, int z);
+chunk*   worldGetChunk         (int x, int y, int z);
+bool     worldSetB             (int x, int y, int z, uint8_t block);
+void     worldSetChungusLoaded (int x, int y, int z);
+int      checkCollision        (int x, int y, int z);
+

@@ -5,19 +5,21 @@
 #else
 	#include <SDL_mixer.h>
 #endif
+#include "../../../common/src/common.h"
+
 extern int sfxEnable;
 void sfxInit();
 void sfxFreeAll();
 
-typedef struct {
+struct bgm {
 	Mix_Music *mixMusic;
 	int chan;
-} bgm;
+};
 
-typedef struct {
+struct sfx {
 	Mix_Chunk *mixChunk;
 	int chan;
-} sfx;
+};
 
 extern sfx *sfxFalling;
 extern sfx *sfxHoho;
