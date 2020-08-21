@@ -22,22 +22,18 @@ int masterblasterGetStackSize(item *cItem){
 
 bool masterblasterPrimaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
+	(void)to;
 
-	if(to < 0){return false;}
-	if(itemGetAmmo(cItem) < 45){return false;}
-	itemDecAmmo(cItem,45);
-	characterAddCooldown(cChar,350);
+	if(!characterTryToShoot(cChar,cItem,350,45)){return false;}
 	beamblast(cChar,4.f,8.f,2.f,1024,1,32.f,1.f);
 	return true;
 }
 
 bool masterblasterSecondaryAction(item *cItem, character *cChar, int to){
 	(void)cItem;
+	(void)to;
 
-	if(to < 0){return false;}
-	if(itemGetAmmo(cItem) < 5){return false;}
-	itemDecAmmo(cItem,5);
-	characterAddCooldown(cChar,50);
+	if(!characterTryToShoot(cChar,cItem,50,5)){return false;}
 	beamblast(cChar,3.f,0.1f,2.f,1,1,16.f,1.f);
 	return true;
 }

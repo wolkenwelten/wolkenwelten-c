@@ -41,14 +41,14 @@ void characterInit(character *c){
 	c->falling      = false;
 	c->fallingSound = false;
 	c->sneak        = false;
-	c->hasHit       = false;
+	
+	c->animationIndex = c->animationTicksMax = c->animationTicksLeft = 0;
 
 	c->actionTimeout = 0;
 	c->stepTimeout   = 0;
 
 	c->maxhp = c->hp = 20;
 	c->activeItem = 0;
-	c->hitOff     = 0.f;
 	c->blockMiningX = c->blockMiningY = c->blockMiningZ = -1;
 
 	c->x     = sx+0.5f;
@@ -149,7 +149,10 @@ void characterSetPlayerPos(const packet *p){
 	}
 	playerList[i]->inventory[0] = itemNew(p->val.u[17],1);
 	playerList[i]->activeItem = 0;
-	playerList[i]->hitOff = p->val.f[18];
+	
+	playerList[i]->animationIndex     = p->val.i[18];
+	playerList[i]->animationTicksMax  = p->val.i[20];
+	playerList[i]->animationTicksLeft = p->val.i[21];
 }
 
 void characterRemovePlayer(int c, int len){
@@ -198,18 +201,12 @@ void characterUpdateHook(character *c){
 	}
 }
 
-void characterUpdateHitOff(character *c){
-	if(c->hasHit){
-		c->hitOff += (c->hitOff*0.1f)+0.05f;
-		if(c->hitOff > 1.f){
-			c->hasHit = false;
-			msgCharacterHit(-1,c->x,c->y,c->z,c->yaw,c->pitch,c->roll,1.f);
-		}
-	}else if(c->hitOff > 0.f){
-		c->hitOff -= c->hitOff*0.02f;
-		if(c->hitOff < 0.f){
-			c->hitOff = 0.f;
-		}
+void characterUpdateAnimation(character *c){
+	c->animationTicksLeft -= MS_PER_TICK;
+	if(c->animationTicksLeft <= 0){
+		c->animationTicksLeft = 0;
+		c->animationTicksMax  = 0;
+		c->animationIndex     = 0;
 	}
 }
 
@@ -361,9 +358,7 @@ void characterPrimary(character *c){
 	int cx,cy,cz;
 	item *itm = &c->inventory[c->activeItem];
 	if(hasPrimaryAction(itm)){
-		if(primaryActionDispatch(itm,c,c->actionTimeout)){
-			c->hasHit = true;
-		}
+		primaryActionDispatch(itm,c,c->actionTimeout);
 	}else{
 		if(characterLOSBlock(c,&cx,&cy,&cz,0)){
 			c->blockMiningX = cx;
@@ -372,11 +367,11 @@ void characterPrimary(character *c){
 			if(c->actionTimeout >= 0){
 				sfxPlay(sfxTock,1.f);
 				vibrate(0.3f);
-				c->hasHit = true;
+				characterStartAnimation(c,0,300);
 				characterAddCooldown(c,80);
 			}
 		}else if(c->actionTimeout >= 0){
-			c->hasHit = true;
+			characterStartAnimation(c,0,240);
 			characterAddCooldown(c,80);
 		}
 	}
@@ -388,15 +383,15 @@ void characterStopMining(character *c){
 
 void characterSecondary(character *c){
 	item *cItem = characterGetItemBarSlot(c,c->activeItem);
-	if(!itemIsEmpty(cItem) && secondaryActionDispatch(cItem,c,c->actionTimeout)){
-		c->hasHit = true;
+	if(!itemIsEmpty(cItem)){
+		secondaryActionDispatch(cItem,c,c->actionTimeout);
 	}
 }
 
 void characterTertiary(character *c){
 	item *cItem = characterGetItemBarSlot(c,c->activeItem);
-	if(!itemIsEmpty(cItem) && tertiaryActionDispatch(cItem,c,c->actionTimeout)){
-		c->hasHit = true;
+	if(!itemIsEmpty(cItem)){
+		tertiaryActionDispatch(cItem,c,c->actionTimeout);
 	}
 }
 
@@ -406,7 +401,6 @@ void characterDropItem(character *c, int i){
 	cItem = characterGetItemBarSlot(c,i);
 	if(cItem == NULL)      { return; }
 	if(itemIsEmpty(cItem)) { return; }
-	c->hasHit = true;
 	characterAddCooldown(c,50);
 
 	itemDropNewC(c, cItem);
@@ -508,7 +502,7 @@ void characterUpdate(character *c){
 		c->vy = c->gvy;
 		c->vz = c->gvz;
 		characterUpdateHook(c);
-		characterUpdateHitOff(c);
+		characterUpdateAnimation(c);
 		characterUpdateInaccuracy(c);
 		characterPhysics(c);
 		return;
@@ -568,7 +562,6 @@ void characterUpdate(character *c){
 		}
 	}
 
-
 	const int damage = characterPhysics(c);
 	characterUpdateDamage(c,damage);
 	if((nvy < -0.2f) && c->vy > -0.01f){
@@ -577,11 +570,10 @@ void characterUpdate(character *c){
 		sfxPlay(sfxStomp,1.f);
 	}
 
-
 	characterUpdateInaccuracy(c);
 	characterUpdateYOff(c);
 	characterUpdateHook(c);
-	characterUpdateHitOff(c);
+	characterUpdateAnimation(c);
 	characterUpdateWindVolume(c,c->vx,c->vy,c->vz);
 }
 
@@ -591,10 +583,10 @@ void characterFireHook(character *c){
 	if(c->hook == NULL){
 		c->hook = grapplingHookNew(c);
 		sfxPlay(sfxHookFire,1.f);
-		c->hasHit = true;
+		characterStartAnimation(c,0,350);
 	}else{
 		grapplingHookReturnHook(c->hook);
-		c->hasHit = true;
+		characterStartAnimation(c,0,350);
 	}
 }
 
@@ -632,6 +624,7 @@ void characterActiveItemDraw(character *c){
 	matMulTrans(matMVP, .4f,-0.2f,-0.3f);
 	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
 
+	/*
 	if(hasPrimaryAction(activeItem)){
 		matMulTrans(matMVP,0.2f,-0.1f,-0.1f + c->hitOff*0.03f);
 		matMulRotYX(matMVP,c->hitOff*10.f,c->hitOff*45.f);
@@ -639,7 +632,7 @@ void characterActiveItemDraw(character *c){
 		float y = -0.09f+c->yoff-(c->hitOff/80);
 		matMulTrans(matMVP,0.2f-c->hitOff*0.1f,y+(c->hitOff/32),-0.1f - c->hitOff*0.1f);
 		matMulRotYX(matMVP,c->hitOff*10.f,c->hitOff*-35.f);
-	}
+	}*/
 
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);

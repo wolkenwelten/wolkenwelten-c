@@ -84,7 +84,9 @@ void msgSendPlayerPos(){
 	p->val.i[15] = player->blockMiningY;
 	p->val.i[16] = player->blockMiningZ;
 	p->val.i[17] = itm->ID;
-	p->val.f[18] = player->hitOff;
+	p->val.f[18] = player->animationIndex;
+	p->val.f[20] = player->animationTicksMax;
+	p->val.f[21] = player->animationTicksLeft;
 
 	packetQueueToServer(p,15,19*4);
 }

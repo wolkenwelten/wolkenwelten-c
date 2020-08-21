@@ -40,14 +40,16 @@ typedef struct {
 	float yaw,pitch,roll;
 	float yoff,shake,inaccuracy;
 	float gyoff;
-	float hitOff;
+	
+	int animationIndex;
+	int animationTicksMax;
+	int animationTicksLeft;
 
 	bool falling;
 	bool noClip;
 	bool collide;
 	bool fallingSound;
 	bool sneak;
-	bool hasHit;
 
 	mesh *eMesh;
 	grapplingHook *hook;

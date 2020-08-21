@@ -11,6 +11,8 @@ void  characterAddCooldown    (character *c, int cooldown);
 void  characterSetPos         (character *c, float x, float y, float z);
 void  characterSetVelocity    (character *c, float vx, float vy, float vz);
 void  characterAddInaccuracy  (character *c, float inc);
+void  characterStartAnimation (character *c, int index, int duration);
+bool  characterTryToShoot     (character *c, item *i, int cooldown, int bulletcount);
 bool  characterHP             (character *c, int addhp);
 bool  characterDamage         (character *c, int hp);
 int   characterGetItemAmount  (character *c, uint16_t itemID);

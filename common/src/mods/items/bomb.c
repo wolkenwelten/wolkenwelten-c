@@ -8,9 +8,11 @@ void bombInit(){
 
 bool bombSecondaryAction(item *cItem,character *cChar, int to){
 	(void)cItem;
-	if(to < 200){return false;}
+	if(to < 0){return false;}
 	if(itemDecStack(cItem,1)){
 		grenadeNew(cChar,3);
+		characterAddCooldown(cChar,200);
+		characterStartAnimation(cChar,0,240);
 		return true;
 	}
 	return false;

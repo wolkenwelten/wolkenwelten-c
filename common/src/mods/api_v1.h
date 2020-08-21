@@ -20,14 +20,16 @@ void ingredientSubstituteAdd(unsigned short ingredient, unsigned short substitut
 void grenadeNew(character *ent, float pwr);
 void beamblast (character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult);
 
-bool characterHP           (character *c, int addhp);
-int  characterGetHP        (character *c);
-int  characterGetMaxHP     (character *c);
-bool characterDamage       (character *c, int hp);
-void characterAddCooldown  (character *c, int cooldown);
-int  characterGetItemAmount(character *c, uint16_t itemID);
-int  characterDecItemAmount(character *c, uint16_t itemID, int amount);
-bool characterItemReload   (character *c, item *i, int cooldown);
+bool characterHP             (character *c, int addhp);
+int  characterGetHP          (character *c);
+int  characterGetMaxHP       (character *c);
+bool characterDamage         (character *c, int hp);
+void characterAddCooldown    (character *c, int cooldown);
+int  characterGetItemAmount  (character *c, uint16_t itemID);
+int  characterDecItemAmount  (character *c, uint16_t itemID, int amount);
+bool characterItemReload     (character *c, item *i, int cooldown);
+void characterStartAnimation (character *c, int index, int duration);
+bool characterTryToShoot     (character *c, item *i, int cooldown, int bulletcount);
 
 void  itemDiscard  (item *i);
 bool  itemIsEmpty  (item *i);

@@ -12,6 +12,7 @@ bool grenadeSecondaryAction(item *cItem,character *cChar, int to){
 	if(itemDecStack(cItem,1)){
 		grenadeNew(cChar,1);
 		characterAddCooldown(cChar,200);
+		characterStartAnimation(cChar,0,300);
 		return true;
 	}
 	return false;

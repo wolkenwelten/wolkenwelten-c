@@ -255,6 +255,11 @@ void characterRotate(character *c, float vYaw,float vPitch,float vRoll){
 	c->roll  = roll;
 }
 
+void characterStartAnimation(character *c, int index, int duration){
+	c->animationIndex = index;
+	c->animationTicksLeft = c->animationTicksMax = duration;
+}
+
 bool characterItemReload(character *c, item *i, int cooldown){
 	const int MAGSIZE = getMagSizeDispatch(i);
 	const int AMMO    = getAmmunitionDispatch(i);
@@ -269,6 +274,21 @@ bool characterItemReload(character *c, item *i, int cooldown){
 
 	characterAddCooldown(c,cooldown);
 	sfxPlay(sfxHookReturned,1.f);
+	characterStartAnimation(c,2,500);
 
+	return true;
+}
+
+bool characterTryToShoot(character *c, item *i, int cooldown, int bulletcount){
+	if(c->actionTimeout < 0){return false;}
+	if(itemGetAmmo(i) < bulletcount){
+		sfxPlay(sfxHookFire,0.3f);
+		characterAddCooldown(c,64);
+		characterStartAnimation(c,3,250);
+		return false;
+	}
+	itemDecAmmo(i,bulletcount);
+	characterAddCooldown(c,cooldown);
+	characterStartAnimation(c,1,250);
 	return true;
 }

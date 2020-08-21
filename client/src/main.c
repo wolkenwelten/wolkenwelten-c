@@ -61,7 +61,7 @@ void playerUpdate(){
 
 	if(lastTick == 0){lastTick = SDL_GetTicks();}
 	curTick = SDL_GetTicks();
-	for(;lastTick < curTick;lastTick+=5){
+	for(;lastTick < curTick;lastTick+=MS_PER_TICK){
 		if(!isInventoryOpen()){
 			if(inputPrimary()){
 				characterPrimary(player);

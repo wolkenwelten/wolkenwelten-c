@@ -19,7 +19,6 @@ character *characterFirstFree = NULL;
 void characterInit(character *c){
 	int sx,sy,sz;
 
-	c->hitOff = 0.f;
 	c->gyoff  = 0.f;
 	c->gvx = c->gvy = c->gvz = 0.f;
 
@@ -27,12 +26,13 @@ void characterInit(character *c){
 	c->falling       = false;
 	c->fallingSound  = false;
 	c->sneak         = false;
-	c->hasHit        = false;
+	
+	c->animationIndex = c->animationTicksMax = c->animationTicksLeft = 0;
 
 	c->actionTimeout = 0;
 	c->stepTimeout   = 0;
 	c->activeItem    = 0;
-	c->hitOff        = 0.f;
+	
 	c->blockMiningX  = c->blockMiningY = c->blockMiningZ = -1;
 	c->hp = c->maxhp = 20;
 

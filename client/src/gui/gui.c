@@ -179,9 +179,6 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f\n",player->z,player->vz);
 	textMeshPrintf(guim,"Player   Yaw: %04.2f\n",player->yaw);
 	textMeshPrintf(guim,"Player Pitch: %04.2f\n",player->pitch);
-	textMeshPrintf(guim,"Player  Roll: %04.2f\n",player->roll);
-	textMeshPrintf(guim,"Player  Hoff: %04.2f\n",player->hitOff);
-	textMeshPrintf(guim,"Player Shake: %04.2f\n",player->shake);
 	textMeshPrintf(guim,"Active Tris.: %s\n", getHumanReadableSize(tris));
 	textMeshPrintf(guim,"Active Part.: %s\n", getHumanReadableSize(particleCount));
 	textMeshPrintf(guim,"Player Layer: %2i\n",((int)player->y/CHUNGUS_SIZE));
@@ -260,6 +257,30 @@ void drawHealthbar(){
 	}
 }
 
+float animationInterpolation(int left, int max , float midPoint){
+	if(max  == 0){return 0.f;}
+	if(left <= 0){return 0.f;}
+	float ret = 1.f - ((float)left / (float)max);
+	if(ret > midPoint){
+		return 1.f - ((ret - midPoint)/(1.f - midPoint));
+	}else{
+		return ret / midPoint;
+	}
+}
+
+float animationInterpolationSustain(int left, int max , float startPoint, float stopPoint){
+	if(max  == 0){return 0.f;}
+	if(left <= 0){return 0.f;}
+	float ret = 1.f - ((float)left / (float)max);
+	if(ret > stopPoint){
+		return 1.f - ((ret - stopPoint)/(1.f - stopPoint));
+	}else if(ret < startPoint){
+		return ret / startPoint;
+	}else{
+		return 1.f;
+	}
+}
+
 void drawActiveItem(){
 	float matViewAI[16];
 	item *activeItem = &player->inventory[player->activeItem];
@@ -269,25 +290,67 @@ void drawActiveItem(){
 	mesh *aiMesh = getMeshDispatch(activeItem);
 	if(aiMesh == NULL){return;}
 
-	float animOff = player->yoff;
-	float hitOff  = player->hitOff;
-	const float ix =  1.3f;
+	const float ix =  1.6f;
 	const float iy = -0.9f;
 	const float iz = -1.5f;
+	float hitOff,y;
 
 	shaderBind(sMesh);
-	if(hasPrimaryAction(activeItem)){
-		matTranslation(matViewAI,ix,animOff+iy,iz + hitOff*0.3f);
-		matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
-		matMul(matViewAI, matViewAI, matProjection);
-		shaderMatrix(sMesh, matViewAI);
-	}else{
-		float y = iy+animOff-(hitOff/8);
-		matTranslation(matViewAI,(0.5f+ix)-hitOff*1.2f,y+(hitOff/3),iz - hitOff*1.1f);
-		matMulRotYX(matViewAI,hitOff*10.f,hitOff*-35.f);
-		matMul(matViewAI, matViewAI, matProjection);
-		shaderMatrix(sMesh, matViewAI);
-	}
+	switch(player->animationIndex){
+		default:
+			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.3f);
+			y = iy+player->yoff-(hitOff/8);
+			matTranslation(matViewAI,ix-hitOff*1.2f,y+(hitOff/3),iz - hitOff*1.1f);
+			matMulRotYX(matViewAI,hitOff*10.f,hitOff*-35.f);
+			matMul(matViewAI, matViewAI, matProjection);
+			shaderMatrix(sMesh, matViewAI);
+		break;
+		
+		case 1:
+			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
+			matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff*0.3f);
+			matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
+			matMul(matViewAI, matViewAI, matProjection);
+			shaderMatrix(sMesh, matViewAI);
+		break;
+		
+		case 2:
+			hitOff = animationInterpolationSustain(player->animationTicksLeft,player->animationTicksMax,0.3f,0.5f);
+			y = iy+player->yoff-(hitOff/8);
+			matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
+			matMulRotYX(matViewAI,hitOff*15.f,hitOff*-55.f);
+			matMul(matViewAI, matViewAI, matProjection);
+			shaderMatrix(sMesh, matViewAI);
+		break;
+		
+		case 3:
+			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
+			matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff*0.1f);
+			matMulRotYX(matViewAI,hitOff*3.f,hitOff*9.f);
+			matMul(matViewAI, matViewAI, matProjection);
+			shaderMatrix(sMesh, matViewAI);
+		break;
+		
+		case 4:
+			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,1.f)*3.f;
+			if(hitOff < 1.f){
+				matTranslation(matViewAI,ix-hitOff*1.4,player->yoff+iy,iz + hitOff*0.3f);
+				matMulRotYX(matViewAI,hitOff*20.f,hitOff*40.f);
+			}else if(hitOff < 2.f){
+				hitOff = hitOff-1.f;
+				matTranslation(matViewAI,ix-1.4f,player->yoff+iy-hitOff*0.2f,iz + 0.3f);
+				matMulRotYX(matViewAI,hitOff*60.f+20.f,hitOff*120.f+40.f);
+				matMulScale(matViewAI, 1.f-hitOff, 1.f-hitOff, 1.f-hitOff);
+			}else if(hitOff < 3.f){
+				hitOff = hitOff-2.f;
+				matTranslation(matViewAI,ix,player->yoff+iy-(1.f-hitOff)*2.f,iz);
+				matMulRotYX(matViewAI,(1.f-hitOff)*3.f,(1.f-hitOff)*9.f);
+			}
+			matMul(matViewAI, matViewAI, matProjection);
+			shaderMatrix(sMesh, matViewAI);
+		break;
+	};
+	//fprintf(stderr,"max:%i left:%i hitOff:%f\n",player->animationTicksMax,player->animationTicksLeft,hitOff);
 	meshDraw(aiMesh);
 }
 

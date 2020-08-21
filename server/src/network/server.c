@@ -121,9 +121,11 @@ void msgUpdatePlayer(int c){
 		rp->val.i[15] = clients[i].c->blockMiningY;
 		rp->val.i[16] = clients[i].c->blockMiningZ;
 		rp->val.i[17] = clients[i].c->activeItem;
-		rp->val.i[18] = clients[i].c->hitOff;
+		rp->val.i[18] = clients[i].c->animationIndex;
 		rp->val.i[19] = i;
-		packetQueue(rp,15,20*4,c);
+		rp->val.i[20] = clients[i].c->animationTicksMax;
+		rp->val.i[21] = clients[i].c->animationTicksLeft;
+		packetQueue(rp,15,22*4,c);
 	}
 
 	clients[c].itemDropUpdateOffset = itemDropUpdatePlayer(c,clients[c].itemDropUpdateOffset);
@@ -132,30 +134,32 @@ void msgUpdatePlayer(int c){
 }
 
 void serverParsePlayerPos(int c, packet *p){
-	clients[c].c->x            = p->val.f[ 0];
-	clients[c].c->y            = p->val.f[ 1];
-	clients[c].c->z            = p->val.f[ 2];
-	clients[c].c->yaw          = p->val.f[ 3];
-	clients[c].c->pitch        = p->val.f[ 4];
-	clients[c].c->roll         = p->val.f[ 5];
-	clients[c].c->vx           = p->val.f[ 6];
-	clients[c].c->vy           = p->val.f[ 7];
-	clients[c].c->vz           = p->val.f[ 8];
-	clients[c].c->yoff         = p->val.f[ 9];
+	clients[c].c->x                  = p->val.f[ 0];
+	clients[c].c->y                  = p->val.f[ 1];
+	clients[c].c->z                  = p->val.f[ 2];
+	clients[c].c->yaw                = p->val.f[ 3];
+	clients[c].c->pitch              = p->val.f[ 4];
+	clients[c].c->roll               = p->val.f[ 5];
+	clients[c].c->vx                 = p->val.f[ 6];
+	clients[c].c->vy                 = p->val.f[ 7];
+	clients[c].c->vz                 = p->val.f[ 8];
+	clients[c].c->yoff               = p->val.f[ 9];
 	if(p->val.i[10]){
-		clients[c].c->hook     = (grapplingHook *)0x8;
+		clients[c].c->hook           = (grapplingHook *)0x8;
 	}else{
-		clients[c].c->hook     = NULL;
+		clients[c].c->hook           = NULL;
 	}
 
-	clients[c].c->hookx        = p->val.f[11];
-	clients[c].c->hooky        = p->val.f[12];
-	clients[c].c->hookz        = p->val.f[13];
-	clients[c].c->blockMiningX = p->val.i[14];
-	clients[c].c->blockMiningY = p->val.i[15];
-	clients[c].c->blockMiningZ = p->val.i[16];
-	clients[c].c->activeItem   = p->val.i[17];
-	clients[c].c->hitOff       = p->val.i[18];
+	clients[c].c->hookx              = p->val.f[11];
+	clients[c].c->hooky              = p->val.f[12];
+	clients[c].c->hookz              = p->val.f[13];
+	clients[c].c->blockMiningX       = p->val.i[14];
+	clients[c].c->blockMiningY       = p->val.i[15];
+	clients[c].c->blockMiningZ       = p->val.i[16];
+	clients[c].c->activeItem         = p->val.i[17];
+	clients[c].c->animationIndex     = p->val.i[18];
+	clients[c].c->animationTicksMax  = p->val.i[20];
+	clients[c].c->animationTicksLeft = p->val.i[21];
 	msgUpdatePlayer(c);
 }
 
