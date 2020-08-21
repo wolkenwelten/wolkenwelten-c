@@ -627,6 +627,11 @@ void characterActiveItemDraw(character *c){
 	const float iz = -0.3f;
 	float hitOff,y;
 	
+	if(c->animationTicksLeft != 0){
+		fprintf(stderr,"left: %i max: %i index: %i\n",c->animationTicksLeft,c->animationTicksMax,c->animationIndex);
+	}
+	
+	
 	switch(c->animationIndex){
 		default:
 			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.3f);
@@ -638,7 +643,7 @@ void characterActiveItemDraw(character *c){
 		case 1:
 			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
 			matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.3f);
-			matMulRotYX(matMVP,hitOff*10.f,hitOff*45.f);
+			matMulRotYX(matMVP,hitOff*30.f,hitOff*145.f);
 		break;
 		
 		case 2:
