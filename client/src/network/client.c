@@ -88,7 +88,7 @@ void msgSendPlayerPos(){
 	p->val.f[20] = player->animationTicksMax;
 	p->val.f[21] = player->animationTicksLeft;
 
-	packetQueueToServer(p,15,21*4);
+	packetQueueToServer(p,15,22*4);
 }
 
 void decompressPacket(packet *p){
