@@ -1,6 +1,7 @@
 #include "character.h"
 #include "item.h"
 #include "../mods/api_v1.h"
+#include "../mods/mods.h"
 
 #include <math.h>
 
@@ -254,3 +255,20 @@ void characterRotate(character *c, float vYaw,float vPitch,float vRoll){
 	c->roll  = roll;
 }
 
+bool characterItemReload(character *c, item *i, int cooldown){
+	const int MAGSIZE = getMagSizeDispatch(i);
+	const int AMMO    = getAmmunitionDispatch(i);
+	int ammoleft      = characterGetItemAmount(c,AMMO);
+
+	if(c->actionTimeout < 0)      {return false;}
+	if(itemGetAmmo(i) == MAGSIZE) {return false;}
+	if(ammoleft <= 0)             {return false;}
+
+	ammoleft = MIN(MAGSIZE,ammoleft);
+	characterDecItemAmount(c, AMMO, itemIncAmmo(i,ammoleft));
+
+	characterAddCooldown(c,cooldown);
+	sfxPlay(sfxHookReturned,1.f);
+
+	return true;
+}

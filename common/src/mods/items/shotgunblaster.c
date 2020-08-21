@@ -43,17 +43,8 @@ bool shotgunblasterSecondaryAction(item *cItem,character *cChar, int to){
 }
 
 bool shotgunblasterTertiaryAction(item *cItem, character *cChar, int to){
-	(void)cItem;
-
-	if(to < 0){return false;}
-	if(itemGetAmmo(cItem) == MAGSIZE){return false;}
-	int ammoleft = characterGetItemAmount(cChar,265);
-	if(ammoleft <= 0){return false;}
-	ammoleft = MIN(MAGSIZE,ammoleft);
-	characterDecItemAmount(cChar, 265, itemIncAmmo(cItem,ammoleft));
-	characterAddCooldown(cChar,50);
-	sfxPlay(sfxHookReturned,0.7f);
-	return true;
+	(void)to;
+	return characterItemReload(cChar, cItem, 200);
 }
 
 float shotgunblasterGetInaccuracy(item *cItem){

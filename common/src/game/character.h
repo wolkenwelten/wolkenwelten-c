@@ -25,3 +25,4 @@ void  characterSwapItemSlots  (character *c, int a,int b);
 void  characterMove           (character *c, float mx,float my,float mz);
 void  characterRotate         (character *c, float vYaw,float vPitch,float vRoll);
 bool  characterLOSBlock       (character *c, int *retX, int *retY, int *retZ, int returnBeforeBlock);
+bool  characterItemReload     (character *c, item *i, int cooldown);
