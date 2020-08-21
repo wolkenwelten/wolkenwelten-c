@@ -112,6 +112,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 	chungus *clay = wgen->clay;
 	int bigTreeChance  = 0;
 	int treeChance     = 0;
+	int deadTreeChance = 0;
 	int shrubChance    = 0;
 	int stoneChance    = 0;
 	int dirtChance     = 0;
@@ -148,29 +149,31 @@ void worldgenRemoveDirt(worldgen *wgen){
 			shrubChance    =    64;
 		break;
 		case 3:
-			treeChance     =   256;
+			treeChance     =   768;
 			shrubChance    =    96;
+			dirtChance     =    32;
 			stoneChance    =   256;
 		break;
 		case 2:
+			treeChance     =  1024;
 			shrubChance    =    64;
-			dirtChance     =    32;
+			dirtChance     =    12;
 			stoneChance    =   128;
 		break;
 		case 1:
 			shrubChance    =   256;
-			dirtChance     =     3;
+			dirtChance     =     4;
 			stoneChance    =    64;
-			treeChance     =  1024;
-			treeType       =     2;
+			treeChance     =  4096;
+			deadTreeChance =  4096;
 		break;
 		case 0:
 			shrubChance    =  1024;
 			dirtChance     =     2;
 			stoneChance    =    32;
 			monolithChance = 32000;
-			treeChance     =  2048;
-			treeType       =     2;
+			treeChance     =  8192*2;
+			deadTreeChance =  8192;
 		break;
 	}
 
@@ -230,9 +233,13 @@ void worldgenRemoveDirt(worldgen *wgen){
 								worldgenSpruce(wgen,cx,cy,cz);
 							}else if(treeType == 1){
 								worldgenOak(wgen,cx,cy,cz);
-							}else{
-								worldgenDeadTree(wgen,cx,cy,cz);
 							}
+							lastBlock = 5;
+							airBlocks = 0;
+							continue;
+						}
+						if(deadTreeChance && (airBlocks > 16) && (rngValM(deadTreeChance)==12)){
+							worldgenDeadTree(wgen,cx,cy,cz);
 							lastBlock = 5;
 							airBlocks = 0;
 							continue;

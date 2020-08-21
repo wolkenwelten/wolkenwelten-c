@@ -107,7 +107,25 @@ void worldgenLabyrinth(worldgen *wgen, int labLayer){
 					
 					case 3:
 						chungusBox(clay,bx+4,by  ,bz+4,2,5,2,18);
+					break;
+					
+					case 4:
+						chungusBox(clay,bx+4,by  ,bz+4,2,5,2,13);
+					break;
+					
+					case 5:
+						chungusBox(clay,bx+4,by  ,bz+4,2,5,2,4);
+					break;
+					
+					case 6:
+						chungusBox(clay,bx  ,by+2,bz  ,1,5,1,pb);
+						chungusBox(clay,bx+9,by+2,bz  ,1,5,1,pb);
+						chungusBox(clay,bx  ,by+2,bz+9,1,5,1,pb);
+						chungusBox(clay,bx+9,by+2,bz+9,1,5,1,pb);
 
+						chungusBox(clay,bx  ,by+7,bz  ,10,1,10,18);
+						chungusBox(clay,bx+1,by+7,bz+1, 8,1, 8,0);
+						chungusBox(clay,bx+1,by+8,bz+1, 8,1, 8,18);
 					break;
 				}
 

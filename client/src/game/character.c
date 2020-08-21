@@ -583,10 +583,10 @@ void characterFireHook(character *c){
 	if(c->hook == NULL){
 		c->hook = grapplingHookNew(c);
 		sfxPlay(sfxHookFire,1.f);
-		characterStartAnimation(c,0,350);
+		characterStartAnimation(c,1,350);
 	}else{
 		grapplingHookReturnHook(c->hook);
-		characterStartAnimation(c,0,350);
+		characterStartAnimation(c,1,350);
 	}
 }
 
