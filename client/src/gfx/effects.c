@@ -42,8 +42,8 @@ void fxExplosionBomb(float x,float y,float z,float pw){
 	const float pdy = y - player->y;
 	const float pdz = z - player->z;
 	const float pd  = (pdx*pdx)+(pdy*pdy)+(pdz*pdz);
-	if(pd < (pw*4.f)){
-		if(characterHP(player,((pw*4.f)-pd) * -2.f * pw)){
+	if(pd < (pw*8.f)){
+		if(characterHP(player,((pw*8.f)-pd) * -3.f * pw)){
 			msgSendDyingMessage("got bombed", 65535);
 			setOverlayColor(0x00000000,0);
 			commitOverlayColor();
