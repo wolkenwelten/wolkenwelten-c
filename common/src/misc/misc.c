@@ -34,6 +34,30 @@ int64_t rngValMM(int64_t min,int64_t max){
 	return rngValM(max - min) + min;
 }
 
+float animationInterpolation(int left, int max , float midPoint){
+	if(max  == 0){return 0.f;}
+	if(left <= 0){return 0.f;}
+	float ret = 1.f - ((float)left / (float)max);
+	if(ret > midPoint){
+		return 1.f - ((ret - midPoint)/(1.f - midPoint));
+	}else{
+		return ret / midPoint;
+	}
+}
+
+float animationInterpolationSustain(int left, int max , float startPoint, float stopPoint){
+	if(max  == 0){return 0.f;}
+	if(left <= 0){return 0.f;}
+	float ret = 1.f - ((float)left / (float)max);
+	if(ret > stopPoint){
+		return 1.f - ((ret - stopPoint)/(1.f - stopPoint));
+	}else if(ret < startPoint){
+		return ret / startPoint;
+	}else{
+		return 1.f;
+	}
+}
+
 void *loadFile(char *filename,size_t *len){
 	FILE *fp;
 	size_t filelen,readlen,read;

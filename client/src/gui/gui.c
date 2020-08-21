@@ -257,30 +257,6 @@ void drawHealthbar(){
 	}
 }
 
-float animationInterpolation(int left, int max , float midPoint){
-	if(max  == 0){return 0.f;}
-	if(left <= 0){return 0.f;}
-	float ret = 1.f - ((float)left / (float)max);
-	if(ret > midPoint){
-		return 1.f - ((ret - midPoint)/(1.f - midPoint));
-	}else{
-		return ret / midPoint;
-	}
-}
-
-float animationInterpolationSustain(int left, int max , float startPoint, float stopPoint){
-	if(max  == 0){return 0.f;}
-	if(left <= 0){return 0.f;}
-	float ret = 1.f - ((float)left / (float)max);
-	if(ret > stopPoint){
-		return 1.f - ((ret - stopPoint)/(1.f - stopPoint));
-	}else if(ret < startPoint){
-		return ret / startPoint;
-	}else{
-		return 1.f;
-	}
-}
-
 void drawActiveItem(){
 	float matViewAI[16];
 	item *activeItem = &player->inventory[player->activeItem];
@@ -302,16 +278,12 @@ void drawActiveItem(){
 			y = iy+player->yoff-(hitOff/8);
 			matTranslation(matViewAI,ix-hitOff*1.2f,y+(hitOff/3),iz - hitOff*1.1f);
 			matMulRotYX(matViewAI,hitOff*10.f,hitOff*-35.f);
-			matMul(matViewAI, matViewAI, matProjection);
-			shaderMatrix(sMesh, matViewAI);
 		break;
 		
 		case 1:
 			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
 			matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff*0.3f);
 			matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
-			matMul(matViewAI, matViewAI, matProjection);
-			shaderMatrix(sMesh, matViewAI);
 		break;
 		
 		case 2:
@@ -319,16 +291,12 @@ void drawActiveItem(){
 			y = iy+player->yoff-(hitOff/8);
 			matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
 			matMulRotYX(matViewAI,hitOff*15.f,hitOff*-55.f);
-			matMul(matViewAI, matViewAI, matProjection);
-			shaderMatrix(sMesh, matViewAI);
 		break;
 		
 		case 3:
 			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
 			matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff*0.1f);
 			matMulRotYX(matViewAI,hitOff*3.f,hitOff*9.f);
-			matMul(matViewAI, matViewAI, matProjection);
-			shaderMatrix(sMesh, matViewAI);
 		break;
 		
 		case 4:
@@ -346,11 +314,11 @@ void drawActiveItem(){
 				matTranslation(matViewAI,ix,player->yoff+iy-(1.f-hitOff)*2.f,iz);
 				matMulRotYX(matViewAI,(1.f-hitOff)*3.f,(1.f-hitOff)*9.f);
 			}
-			matMul(matViewAI, matViewAI, matProjection);
-			shaderMatrix(sMesh, matViewAI);
+			
 		break;
 	};
-	//fprintf(stderr,"max:%i left:%i hitOff:%f\n",player->animationTicksMax,player->animationTicksLeft,hitOff);
+	matMul(matViewAI, matViewAI, matProjection);
+	shaderMatrix(sMesh, matViewAI);
 	meshDraw(aiMesh);
 }
 

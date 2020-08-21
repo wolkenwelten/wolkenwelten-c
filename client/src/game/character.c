@@ -621,8 +621,57 @@ void characterActiveItemDraw(character *c){
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
 	matMulRotYX(matMVP,-c->yaw,-c->pitch);
-	matMulTrans(matMVP, .4f,-0.2f,-0.3f);
-	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
+	
+	const float ix =  0.4f;
+	const float iy = -0.2f;
+	const float iz = -0.3f;
+	float hitOff,y;
+	
+	switch(c->animationIndex){
+		default:
+			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.3f);
+			y = iy+c->yoff-(hitOff/8);
+			matMulTrans(matMVP,ix-hitOff*1.2f,y+(hitOff/3),iz - hitOff*1.1f);
+			matMulRotYX(matMVP,hitOff*10.f,hitOff*-35.f);
+		break;
+		
+		case 1:
+			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
+			matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.3f);
+			matMulRotYX(matMVP,hitOff*10.f,hitOff*45.f);
+		break;
+		
+		case 2:
+			hitOff = animationInterpolationSustain(c->animationTicksLeft,c->animationTicksMax,0.3f,0.5f);
+			y = iy+c->yoff-(hitOff/8);
+			matMulTrans(matMVP,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
+			matMulRotYX(matMVP,hitOff*15.f,hitOff*-55.f);
+		break;
+		
+		case 3:
+			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
+			matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.1f);
+			matMulRotYX(matMVP,hitOff*3.f,hitOff*9.f);
+		break;
+		
+		case 4:
+			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,1.f)*3.f;
+			if(hitOff < 1.f){
+				matMulTrans(matMVP,ix-hitOff*1.4,c->yoff+iy,iz + hitOff*0.3f);
+				matMulRotYX(matMVP,hitOff*20.f,hitOff*40.f);
+			}else if(hitOff < 2.f){
+				hitOff = hitOff-1.f;
+				matMulTrans(matMVP,ix-1.4f,c->yoff+iy-hitOff*0.2f,iz + 0.3f);
+				matMulRotYX(matMVP,hitOff*60.f+20.f,hitOff*120.f+40.f);
+				matMulScale(matMVP, 1.f-hitOff, 1.f-hitOff, 1.f-hitOff);
+			}else if(hitOff < 3.f){
+				hitOff = hitOff-2.f;
+				matMulTrans(matMVP,ix,c->yoff+iy-(1.f-hitOff)*2.f,iz);
+				matMulRotYX(matMVP,(1.f-hitOff)*3.f,(1.f-hitOff)*9.f);
+			}
+			
+		break;
+	};
 
 	/*
 	if(hasPrimaryAction(activeItem)){
@@ -633,6 +682,7 @@ void characterActiveItemDraw(character *c){
 		matMulTrans(matMVP,0.2f-c->hitOff*0.1f,y+(c->hitOff/32),-0.1f - c->hitOff*0.1f);
 		matMulRotYX(matMVP,c->hitOff*10.f,c->hitOff*-35.f);
 	}*/
+	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
 
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);
