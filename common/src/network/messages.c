@@ -210,7 +210,7 @@ void msgFxBeamBlaster(int c, float x1, float y1, float z1, float x2, float y2, f
 	p->val.i[9] = hitsLeft;
 
 	p->val.i[10] = c;
-	packetQueueExcept(p,24,8*4,c);
+	packetQueueExcept(p,24,11*4,c);
 	p->val.i[10] = 65535;
 	packetQueue(p,24,11*4,c);
 }
