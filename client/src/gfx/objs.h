@@ -20,4 +20,7 @@ extern texture *texPickaxe;
 extern mesh *meshMasterblaster;
 extern texture *texMasterblaster;
 
+extern mesh *meshBlaster;
+extern texture *texBlaster;
+
 void initMeshobjs();

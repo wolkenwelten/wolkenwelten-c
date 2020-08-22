@@ -11,7 +11,8 @@ extern mesh *meshGrenade;
 extern mesh *meshBomb;
 extern mesh *meshAxe;
 extern mesh *meshPickaxe;
-extern mesh *meshMasterblaster;;
+extern mesh *meshMasterblaster;
+extern mesh *meshBlaster;
 
 void recipeAdd1I            (unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID, unsigned char nIngredAmount);
 void recipeAdd2I            (unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID1, unsigned char nIngredAmount1, unsigned short nIngredID2, unsigned char nIngredAmount2);

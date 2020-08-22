@@ -11,7 +11,7 @@ void blasterInit(){
 mesh *blasterGetMesh(item *cItem){
 	(void)cItem;
 
-	return meshMasterblaster;
+	return meshBlaster;
 }
 
 int blasterGetStackSize(item *cItem){
