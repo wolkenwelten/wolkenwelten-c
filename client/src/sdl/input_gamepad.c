@@ -133,16 +133,8 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 
 	if( (fabsf(gamepadRightAxisX) > 0.2f) || (fabsf(gamepadRightAxisY) > 0.2f)){
 		int mx,my;
-		if(fabsf(gamepadRightAxisX) > 0.9f){
-			mx = gamepadRightAxisX*8.f;
-		}else{
-			mx = gamepadRightAxisX*2.f;
-		}
-		if(fabsf(gamepadRightAxisY) > 0.9f){
-			my = gamepadRightAxisY*8.f;
-		}else{
-			my = gamepadRightAxisY*2.f;
-		}
+		mx = gamepadRightAxisX*4.f;
+		my = gamepadRightAxisY*4.f;
 		if(fabsf(gamepadRightAxisX) < 0.2f){ mx = 0;}
 		if(fabsf(gamepadRightAxisY) < 0.2f){ my = 0;}
 		if(!isInventoryOpen()){
