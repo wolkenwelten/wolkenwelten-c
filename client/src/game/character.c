@@ -667,10 +667,12 @@ void characterMoveDelta(character *c, packet *p){
 
 void characterShadesDraw(character *c){
 	float matMVP[16];
+	float sneakOff = 0.f;
+	if(c->flags & CHAR_SNEAK){sneakOff = 1.f;}
 	
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
-	matMulRotYX(matMVP,-c->yaw,-c->pitch/3.f);
+	matMulRotYX(matMVP,-c->yaw,-(c->pitch+sneakOff*30.f)/3.f);
 	matMulTrans(matMVP,0.f,0.1f,-0.2f);
 	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
 	matMul(matMVP,matMVP,matProjection);
@@ -695,6 +697,8 @@ void characterActiveItemDraw(character *c){
 	float matMVP[16];
 	item *activeItem;
 	mesh *aiMesh;
+	float sneakOff = 0.f;
+	if(c->flags & CHAR_SNEAK){sneakOff = 1.f;}
 
 	activeItem = &c->inventory[c->activeItem];
 	if(activeItem == NULL)     {return;}
@@ -704,9 +708,9 @@ void characterActiveItemDraw(character *c){
 
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
-	matMulRotYX(matMVP,-c->yaw,-c->pitch);
+	matMulRotYX(matMVP,-c->yaw+(15.f*sneakOff),-c->pitch);
 	
-	const float ix =  0.4f;
+	const float ix =  0.4f - (sneakOff/20.f);
 	const float iy = -0.2f;
 	const float iz = -0.3f;
 	float hitOff,y;
