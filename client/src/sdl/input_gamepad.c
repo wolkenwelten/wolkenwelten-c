@@ -181,6 +181,12 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 			showInventory();
 		}
 	}
+	if(gamepadButtons[9]){
+		if(player->flags & CHAR_FALLING){
+			gamepadButtons[9] = false;
+			player->flags ^= CHAR_GLIDE;
+		}
+	}
 	if(gamepadButtons[10]){
 		gamepadButtons[10] = false;
 		characterFireHook(player);
