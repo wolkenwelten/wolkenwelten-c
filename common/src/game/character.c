@@ -274,7 +274,7 @@ bool characterItemReload(character *c, item *i, int cooldown){
 
 	characterAddCooldown(c,cooldown);
 	sfxPlay(sfxHookReturned,1.f);
-	characterStartAnimation(c,2,500);
+	characterStartAnimation(c,2,MAX(cooldown,400));
 
 	return true;
 }
