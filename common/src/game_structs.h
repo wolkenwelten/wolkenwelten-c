@@ -10,6 +10,16 @@ typedef enum blockCategory {
 } blockCategory;
 
 typedef struct {
+	unsigned char texX[6];
+	unsigned char texY[6];
+	unsigned int color[2];
+	mesh *singleBlock;
+	int hp;
+	blockCategory cat;
+	char *name;
+} blockType;
+
+typedef struct {
 	uint16_t ID;
 	 int16_t amount;
 } item;
@@ -40,7 +50,7 @@ typedef struct {
 	float yaw,pitch,roll;
 	float yoff,shake,inaccuracy;
 	float gyoff;
-	
+
 	int animationIndex;
 	int animationTicksMax;
 	int animationTicksLeft;

@@ -2,7 +2,7 @@
 
 #include "../main.h"
 #include "../voxel/bigchungus.h"
-#include "../game/blockType.h"
+#include "../../../common/src/game/blockType.h"
 #include "../game/itemDrop.h"
 #include "../game/blockMining.h"
 #include "../../../common/src/game/item.h"
@@ -26,13 +26,13 @@ void characterInit(character *c){
 	c->falling       = false;
 	c->fallingSound  = false;
 	c->sneak         = false;
-	
+
 	c->animationIndex = c->animationTicksMax = c->animationTicksLeft = 0;
 
 	c->actionTimeout = 0;
 	c->stepTimeout   = 0;
 	c->activeItem    = 0;
-	
+
 	c->blockMiningX  = c->blockMiningY = c->blockMiningZ = -1;
 	c->hp = c->maxhp = 20;
 

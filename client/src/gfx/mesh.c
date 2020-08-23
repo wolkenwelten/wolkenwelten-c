@@ -10,7 +10,7 @@
 #include "../gfx/glew.h"
 
 vertex meshBuffer[16384];
-mesh meshList[512];
+mesh meshList[1024];
 int  meshCount = 0;
 mesh *meshFirstFree = NULL;
 

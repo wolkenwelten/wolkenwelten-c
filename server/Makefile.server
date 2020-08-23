@@ -35,4 +35,3 @@ server/src/tmp/mods_tmp.c: tools/modscg
 	tools/modscg $(shell find common/src/mods/items -type f -name '*.c') > server/src/tmp/mods_tmp.c
 
 server/src/network/server.o: server/src/network/server_bsd.h server/src/network/server_win.h
-server/src/game/blockType.o: common/data/blockType.h

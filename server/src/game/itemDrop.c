@@ -2,7 +2,7 @@
 
 #include "../main.h"
 #include "../network/server.h"
-#include "../game/blockType.h"
+#include "../../../common/src/game/blockType.h"
 #include "../game/entity.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"

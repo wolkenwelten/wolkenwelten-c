@@ -6,7 +6,7 @@
 #include "game/blockMining.h"
 #include "game/itemDrop.h"
 #include "game/grenade.h"
-#include "game/blockType.h"
+#include "../../common/src/game/blockType.h"
 #include "voxel/bigchungus.h"
 #include "network/server.h"
 #include "tmp/cto.h"

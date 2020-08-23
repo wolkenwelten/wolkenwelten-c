@@ -5,76 +5,17 @@
 #include "../gfx/texture.h"
 #include "../gfx/glew.h"
 
-typedef struct {
-	unsigned char texX[6];
-	unsigned char texY[6];
-	unsigned int color[2];
-	mesh singleBlock;
-	int hp;
-	blockCategory cat;
-	char *name;
-} blockType;
-
-blockType blocks[256];
-
 
 void blockTypeGenMeshes(){
 	for(int i=0;i<256;i++){
 		if(!blockTypeValid(i)){continue;}
-		mesh *singleBlock = &blocks[i].singleBlock;
+		blocks[i].singleBlock = meshNew();
+		mesh *singleBlock = blocks[i].singleBlock;
 		singleBlock->dataCount = 0;
 		singleBlock->tex = tBlocks;
 		blockTypeAddToMesh(i,singleBlock,-0.5f,-0.5f,-0.5f,1.f,1.f,1.f);
 		meshFinish(singleBlock, GL_STATIC_DRAW);
 	}
-}
-
-void blockTypeInitBlock(uint8_t b, uint32_t tex, blockCategory ncat,const char *bname,int nhp,unsigned int ncolor1,unsigned int ncolor2){
-	for(int i=0;i<6;i++){
-		blockTypeSetTex(b,i,tex);
-	}
-	blocks[b].name = (char *)bname;
-	blocks[b].hp = nhp;
-	blocks[b].cat = ncat;
-	blocks[b].color[0] = ncolor1;
-	blocks[b].color[1] = ncolor2;
-}
-
-const char *blockTypeGetName(uint8_t b){
-	return blocks[b].name;
-}
-
-int blockTypeGetHP(uint8_t b){
-	return blocks[b].hp;
-}
-blockCategory blockTypeGetCat(uint8_t b){
-	return blocks[b].cat;
-}
-
-uint16_t blockTypeGetTexX(uint8_t b, int side){
-	return blocks[b].texX[side];
-}
-
-uint16_t blockTypeGetTexY(uint8_t b, int side){
-	return blocks[b].texY[side];
-}
-
-mesh *blockTypeGetMesh(uint8_t b){
-	return &blocks[b].singleBlock;
-}
-
-uint32_t blockTypeGetParticleColor(unsigned char b) {
-	return blocks[b].color[rngValR()&1];
-}
-
-bool blockTypeValid(uint8_t b){
-	return blocks[b].name != NULL;
-}
-
-void blockTypeInit(){
-	#include "../../../common/data/blockType.h"
-
-	blockTypeGenMeshes();
 }
 
 void blockTypeSetTex(uint8_t b, int side, uint32_t tex){

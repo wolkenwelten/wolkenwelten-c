@@ -3,6 +3,7 @@
  */
 
 #include <stdio.h>
+#include <stdint.h>
 
 struct item;
 typedef struct item item;
@@ -96,4 +97,11 @@ void sfxPlay(sfx *b, float volume){
 void sfxLoop(sfx *b, float volume){
 	(void)b;
 	(void)volume;
+}
+
+void blockTypeGenMeshes(){}
+void blockTypeSetTex(uint8_t b, int side, uint32_t tex){
+	(void)b;
+	(void)side;
+	(void)tex;
 }

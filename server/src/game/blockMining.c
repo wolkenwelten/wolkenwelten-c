@@ -1,6 +1,6 @@
 #include "blockMining.h"
 
-#include "../game/blockType.h"
+#include "../../../common/src/game/blockType.h"
 #include "../game/itemDrop.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
