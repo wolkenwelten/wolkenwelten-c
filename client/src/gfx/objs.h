@@ -35,4 +35,7 @@ extern texture *texCrystalbullet;
 extern mesh *meshSunglasses;
 extern texture *texSunglasses;
 
+extern mesh *meshGlider;
+extern texture *texGlider;
+
 void initMeshobjs();

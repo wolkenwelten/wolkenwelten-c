@@ -39,6 +39,9 @@ texture *texShotgunblaster;
 mesh *meshSunglasses;
 texture *texSunglasses;
 
+mesh *meshGlider;
+texture *texGlider;
+
 void initMeshobjs(){
 	meshPear           = meshNewRO( pear_verts,                     pear_count );
 	meshHook           = meshNewRO( hook_verts,                     hook_count );
@@ -52,6 +55,7 @@ void initMeshobjs(){
 	meshAssaultblaster = meshNewRO( assaultblaster_verts, assaultblaster_count );
 	meshShotgunblaster = meshNewRO( shotgunblaster_verts, shotgunblaster_count );
 	meshSunglasses     = meshNewRO( sunglasses_verts,         sunglasses_count );
+	meshGlider         = meshNewRO( glider_verts,                 glider_count );
 
 	texPear           = textureNew( gfx_pear_png_data,                   gfx_pear_png_len,"client/gfx/pear.png");
 	texHook           = textureNew( gfx_hook_png_data,                   gfx_hook_png_len,"client/gfx/hook.png");
@@ -64,6 +68,7 @@ void initMeshobjs(){
 	texAssaultblaster = textureNew( gfx_assaultblaster_png_data, gfx_assaultblaster_png_len,"client/gfx/assaultblaster.png");
 	texShotgunblaster = textureNew( gfx_shotgunblaster_png_data, gfx_shotgunblaster_png_len,"client/gfx/shotgunblaster.png");
 	texSunglasses     = textureNew( gfx_sunglasses_png_data, gfx_sunglasses_png_len,"client/gfx/sunglasses.png");
+	texGlider         = textureNew( gfx_glider_png_data, gfx_glider_png_len,"client/gfx/glider.png");
 
 	meshPear->tex           = texPear;
 	meshHook->tex           = texHook;
@@ -77,6 +82,7 @@ void initMeshobjs(){
 	meshAssaultblaster->tex = texAssaultblaster;
 	meshShotgunblaster->tex = texShotgunblaster;
 	meshSunglasses->tex     = texSunglasses;
+	meshGlider->tex         = texGlider;
 
 	meshFinish( meshPear,           GL_STATIC_DRAW );
 	meshFinish( meshHook,           GL_STATIC_DRAW );
@@ -90,4 +96,5 @@ void initMeshobjs(){
 	meshFinish( meshAssaultblaster, GL_STATIC_DRAW );
 	meshFinish( meshShotgunblaster, GL_STATIC_DRAW );
 	meshFinish( meshSunglasses,     GL_STATIC_DRAW );
+	meshFinish( meshGlider,         GL_STATIC_DRAW );
 }

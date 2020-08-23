@@ -667,29 +667,28 @@ void characterMoveDelta(character *c, packet *p){
 
 void characterShadesDraw(character *c){
 	float matMVP[16];
-	item *activeItem;
-	mesh *aiMesh;
-
-	activeItem = &c->inventory[c->activeItem];
-	if(activeItem == NULL)     {return;}
-	if(itemIsEmpty(activeItem)){return;}
-	aiMesh = getMeshDispatch(activeItem);
-	if(aiMesh == NULL)         {return;}
-
+	
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
 	matMulRotYX(matMVP,-c->yaw,-c->pitch/3.f);
-	
-	const float ix =  0.0f;
-	const float iy =  0.1f;
-	const float iz = -0.2f;
-	
-	matMulTrans(matMVP,ix,iy,iz);
-
+	matMulTrans(matMVP,0.f,0.1f,-0.2f);
 	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(meshSunglasses);
+}
+
+void characterGliderDraw(character *c){
+	float matMVP[16];
+	if(!(c->flags & CHAR_GLIDE)){return;}
+	
+	matMov(matMVP,matView);
+	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
+	matMulRotYX(matMVP,-c->yaw,-c->pitch);
+	matMulTrans(matMVP,0.f,0.4f,-0.2f);
+	matMul(matMVP,matMVP,matProjection);
+	shaderMatrix(sMesh,matMVP);
+	meshDraw(meshGlider);
 }
 
 void characterActiveItemDraw(character *c){
@@ -778,6 +777,7 @@ void characterDraw(character *c){
 	meshDraw(c->eMesh);
 	characterActiveItemDraw(c);
 	characterShadesDraw(c);
+	characterGliderDraw(c);
 }
 
 void characterDrawAll(){

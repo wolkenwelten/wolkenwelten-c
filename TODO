@@ -1,4 +1,5 @@
 (A) REMOVE GLEW
+(A) Autogenerate the objs.c/objs.h files
 (A) Do part of the beamblast calculatiosn clientside so the latency is not as noticeable
 (A) Sunglasses on the character
 (A) Remove blockCategory alltogether
