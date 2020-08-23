@@ -11,7 +11,7 @@ void shotgunblasterInit(){
 mesh *shotgunblasterGetMesh(item *cItem){
 	(void)cItem;
 
-	return meshMasterblaster;
+	return meshShotgunblaster;
 }
 
 int shotgunblasterGetStackSize(item *cItem){

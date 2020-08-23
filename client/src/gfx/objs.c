@@ -27,16 +27,27 @@ texture *texMasterblaster;
 mesh *meshBlaster;
 texture *texBlaster;
 
-void initMeshobjs(){
-	meshPear          = meshNewRO( pear_verts,                   pear_count );
-	meshHook          = meshNewRO( hook_verts,                   hook_count );
-	meshGrenade       = meshNewRO( grenade_verts,             grenade_count );
-	meshBomb          = meshNewRO( bomb_verts,                   bomb_count );
-	meshAxe           = meshNewRO( axe_verts,                     axe_count );
-	meshPickaxe       = meshNewRO( pickaxe_verts,             pickaxe_count );
-	meshMasterblaster = meshNewRO( masterblaster_verts, masterblaster_count );
-	meshBlaster       = meshNewRO( blaster_verts,             blaster_count );
+mesh *meshCrystalbullet;
+texture *texCrystalbullet;
 
+mesh *meshAssaultblaster;
+texture *texAssaultblaster;
+
+mesh *meshShotgunblaster;
+texture *texShotgunblaster;
+
+void initMeshobjs(){
+	meshPear           = meshNewRO( pear_verts,                     pear_count );
+	meshHook           = meshNewRO( hook_verts,                     hook_count );
+	meshGrenade        = meshNewRO( grenade_verts,               grenade_count );
+	meshBomb           = meshNewRO( bomb_verts,                     bomb_count );
+	meshAxe            = meshNewRO( axe_verts,                       axe_count );
+	meshPickaxe        = meshNewRO( pickaxe_verts,               pickaxe_count );
+	meshMasterblaster  = meshNewRO( masterblaster_verts,   masterblaster_count );
+	meshBlaster        = meshNewRO( blaster_verts,               blaster_count );
+	meshCrystalbullet  = meshNewRO( crystalbullet_verts,   crystalbullet_count );
+	meshAssaultblaster = meshNewRO( assaultblaster_verts, assaultblaster_count );
+	meshShotgunblaster = meshNewRO( shotgunblaster_verts, shotgunblaster_count );
 
 	texPear           = textureNew( gfx_pear_png_data,                   gfx_pear_png_len,"client/gfx/pear.png");
 	texHook           = textureNew( gfx_hook_png_data,                   gfx_hook_png_len,"client/gfx/hook.png");
@@ -45,22 +56,31 @@ void initMeshobjs(){
 	texPickaxe        = textureNew( gfx_pickaxe_png_data,             gfx_pickaxe_png_len,"client/gfx/pickaxe.png");
 	texMasterblaster  = textureNew( gfx_masterblaster_png_data, gfx_masterblaster_png_len,"client/gfx/masterblaster.png");
 	texBlaster        = textureNew( gfx_blaster_png_data,             gfx_blaster_png_len,"client/gfx/blaster.png");
+	texCrystalbullet  = textureNew( gfx_crystalbullet_png_data, gfx_crystalbullet_png_len,"client/gfx/crystalbullet.png");
+	texAssaultblaster = textureNew( gfx_assaultblaster_png_data, gfx_assaultblaster_png_len,"client/gfx/assaultblaster.png");
+	texShotgunblaster = textureNew( gfx_shotgunblaster_png_data, gfx_shotgunblaster_png_len,"client/gfx/assaultblaster.png");
 
-	meshPear->tex          = texPear;
-	meshHook->tex          = texHook;
-	meshGrenade->tex       = texGrenade;
-	meshBomb->tex          = texGrenade;
-	meshAxe->tex           = texAxe;
-	meshPickaxe->tex       = texPickaxe;
-	meshMasterblaster->tex = texMasterblaster;
-	meshBlaster->tex       = texBlaster;
+	meshPear->tex           = texPear;
+	meshHook->tex           = texHook;
+	meshGrenade->tex        = texGrenade;
+	meshBomb->tex           = texGrenade;
+	meshAxe->tex            = texAxe;
+	meshPickaxe->tex        = texPickaxe;
+	meshMasterblaster->tex  = texMasterblaster;
+	meshBlaster->tex        = texBlaster;
+	meshCrystalbullet->tex  = texCrystalbullet;
+	meshAssaultblaster->tex = texAssaultblaster;
+	meshShotgunblaster->tex = texShotgunblaster;
 
-	meshFinish( meshPear,          GL_STATIC_DRAW );
-	meshFinish( meshHook,          GL_STATIC_DRAW );
-	meshFinish( meshGrenade,       GL_STATIC_DRAW );
-	meshFinish( meshBomb,          GL_STATIC_DRAW );
-	meshFinish( meshAxe,           GL_STATIC_DRAW );
-	meshFinish( meshPickaxe,       GL_STATIC_DRAW );
-	meshFinish( meshMasterblaster, GL_STATIC_DRAW );
-	meshFinish( meshBlaster,       GL_STATIC_DRAW );
+	meshFinish( meshPear,           GL_STATIC_DRAW );
+	meshFinish( meshHook,           GL_STATIC_DRAW );
+	meshFinish( meshGrenade,        GL_STATIC_DRAW );
+	meshFinish( meshBomb,           GL_STATIC_DRAW );
+	meshFinish( meshAxe,            GL_STATIC_DRAW );
+	meshFinish( meshPickaxe,        GL_STATIC_DRAW );
+	meshFinish( meshMasterblaster,  GL_STATIC_DRAW );
+	meshFinish( meshBlaster,        GL_STATIC_DRAW );
+	meshFinish( meshCrystalbullet,  GL_STATIC_DRAW );
+	meshFinish( meshAssaultblaster, GL_STATIC_DRAW );
+	meshFinish( meshShotgunblaster, GL_STATIC_DRAW );
 }

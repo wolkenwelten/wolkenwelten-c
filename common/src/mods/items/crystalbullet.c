@@ -9,7 +9,7 @@ void crystalbulletInit(){
 mesh *crystalbulletGetMesh(item *cItem){
 	(void)cItem;
 
-	return meshPear;
+	return meshCrystalbullet;
 }
 
 int crystalbulletGetStackSize(item *cItem){

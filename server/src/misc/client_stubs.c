@@ -39,6 +39,9 @@ mesh *meshAxe;
 mesh *meshPickaxe;
 mesh *meshMasterblaster;
 mesh *meshBlaster;
+mesh *meshCrystalbullet;
+mesh *meshAssaultblaster;
+mesh *meshShotgunblaster;
 
 void recipeAdd1I(unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID, unsigned char nIngredAmount){
 	(void)nResultID;

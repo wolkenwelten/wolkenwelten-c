@@ -17,10 +17,19 @@ extern texture *texAxe;
 extern mesh *meshPickaxe;
 extern texture *texPickaxe;
 
+extern mesh *meshBlaster;
+extern texture *texBlaster;
+
 extern mesh *meshMasterblaster;
 extern texture *texMasterblaster;
 
-extern mesh *meshBlaster;
-extern texture *texBlaster;
+extern mesh *meshAssaultblaster;
+extern texture *texAssaultblaster;
+
+extern mesh *meshShotgunblaster;
+extern texture *texShotgunblaster;
+
+extern mesh *meshCrystalbullet;
+extern texture *texCrystalbullet;
 
 void initMeshobjs();
