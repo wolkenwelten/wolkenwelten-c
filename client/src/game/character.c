@@ -665,6 +665,33 @@ void characterMoveDelta(character *c, packet *p){
 	c->shake  = (fabsf(p->val.f[0]) + fabsf(p->val.f[1]) + fabsf(p->val.f[2]))*96.f;
 }
 
+void characterShadesDraw(character *c){
+	float matMVP[16];
+	item *activeItem;
+	mesh *aiMesh;
+
+	activeItem = &c->inventory[c->activeItem];
+	if(activeItem == NULL)     {return;}
+	if(itemIsEmpty(activeItem)){return;}
+	aiMesh = getMeshDispatch(activeItem);
+	if(aiMesh == NULL)         {return;}
+
+	matMov(matMVP,matView);
+	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
+	matMulRotYX(matMVP,-c->yaw,-c->pitch/3.f);
+	
+	const float ix =  0.0f;
+	const float iy =  0.1f;
+	const float iz = -0.2f;
+	
+	matMulTrans(matMVP,ix,iy,iz);
+
+	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
+	matMul(matMVP,matMVP,matProjection);
+	shaderMatrix(sMesh,matMVP);
+	meshDraw(meshSunglasses);
+}
+
 void characterActiveItemDraw(character *c){
 	float matMVP[16];
 	item *activeItem;
@@ -750,6 +777,7 @@ void characterDraw(character *c){
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(c->eMesh);
 	characterActiveItemDraw(c);
+	characterShadesDraw(c);
 }
 
 void characterDrawAll(){
