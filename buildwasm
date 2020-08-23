@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 EMSDK_TESTED_VERSION="1.38.48"
 EMSDK_REPO_URL="https://github.com/emscripten-core/emsdk.git"
 
