@@ -35,13 +35,8 @@ void characterInit(character *c){
 	c->gyoff = 0.f;
 	c->gvx = c->gvy = c->gvz = 0.f;
 	c->shake = c->inaccuracy = 0.f;
-
-	c->collide      = false;
-	c->noClip       = false;
-	c->falling      = false;
-	c->fallingSound = false;
-	c->sneak        = false;
 	
+	c->flags = 0;	
 	c->animationIndex = c->animationTicksMax = c->animationTicksLeft = 0;
 
 	c->actionTimeout = 0;
@@ -153,6 +148,7 @@ void characterSetPlayerPos(const packet *p){
 	playerList[i]->animationIndex     = p->val.i[18];
 	playerList[i]->animationTicksMax  = p->val.i[20];
 	playerList[i]->animationTicksLeft = p->val.i[21];
+	playerList[i]->flags              = p->val.i[22];
 }
 
 void characterRemovePlayer(int c, int len){
@@ -192,7 +188,7 @@ void characterUpdateHook(character *c){
 		if((c->gvy > 0) && (gl > 1.f)){
 			grapplingHookSetGoalLength(c->hook,gl-0.05f);
 		}
-		if((c->sneak) && (gl < 96.f)){
+		if((c->flags & CHAR_SNEAK) && (gl < 96.f)){
 			grapplingHookSetGoalLength(c->hook,gl+0.05f);
 		}
 		if(grapplingHookGetLength(c->hook) > gl){
@@ -278,7 +274,7 @@ void characterUpdateWindVolume(character *c, float wvx, float wvy, float wvz){
 
 
 int characterUpdateJumping(character *c){
-	if((c->gvy > 0) && !c->falling && ((c->hook == NULL) || (!grapplingHookGetHooked(c->hook)))){
+	if((c->gvy > 0) && !(c->flags & CHAR_FALLING) && ((c->hook == NULL) || (!grapplingHookGetHooked(c->hook)))){
 		if((rngValR()&15)==0){
 			sfxPlay(sfxYahoo,1.f);
 		}else{
@@ -311,8 +307,8 @@ void characterUpdateDamage(character *c, int damage){
 }
 
 void characterUpdateYOff(character *c){
-	if(!c->falling && ((fabsf(c->gvx) > 0.001f) || (fabsf(c->gvz) > 0.001f))){
-		if(c->sneak){
+	if(!(c->flags & CHAR_FALLING) && ((fabsf(c->gvx) > 0.001f) || (fabsf(c->gvz) > 0.001f))){
+		if(c->flags & CHAR_SNEAK){
 			if(getTicks() > (c->stepTimeout + 600)){
 				c->stepTimeout = getTicks();
 				if(c->gyoff > -0.1f){
@@ -340,13 +336,13 @@ void characterUpdateYOff(character *c){
 	if(fabsf(c->gyoff - c->yoff) < 0.001f){
 		c->yoff = c->gyoff;
 	}else if(c->gyoff < c->yoff){
-		if(c->sneak){
+		if(c->flags & CHAR_SNEAK){
 			c->yoff = c->yoff - (0.015f * (c->yoff - c->gyoff));
 		}else{
 			c->yoff = c->yoff - (0.03f * (c->yoff - c->gyoff));
 		}
 	}else{
-		if(c->sneak){
+		if(c->flags & CHAR_SNEAK){
 			c->yoff = c->yoff + (0.015f*(c->gyoff - c->yoff));
 		}else{
 			c->yoff = c->yoff + (0.03f*(c->gyoff - c->yoff));
@@ -431,8 +427,9 @@ int characterPhysics(character *c){
 	}else if(c->shake < 0.f){
 		c->shake = 0.f;
 	}
-	if(c->noClip){
-		c->collide = characterCollision(c,c->x,c->y,c->z,0.3f);
+	if(c->flags & CHAR_NOCLIP){
+		col = characterCollision(c,c->x,c->y,c->z,0.3f);
+		if(col){ c->flags |= CHAR_COLLIDE; }
 		return 0;
 	}
 
@@ -440,10 +437,10 @@ int characterPhysics(character *c){
 	if(c->vy < -1.0f){c->vy+=0.005f;}
 	if(c->vy >  1.0f){c->vy-=0.005f;}
 
-	c->falling = true;
-	c->collide = false;
+	c->flags |= CHAR_FALLING;
+	c->flags &= ~CHAR_COLLIDE;
 	col = characterCollision(c,c->x,c->y,c->z,0.3f);
-	if(col){ c->collide = true; }
+	if(col){ c->flags |= CHAR_COLLIDE; }
 	if((col&0x110) && (c->vx < 0.f)){
 		if(c->vx < -0.1f){ ret += (int)(fabsf(c->vx)*512.f); }
 		const float nx = floor(c->x)+0.3f;
@@ -476,7 +473,7 @@ int characterPhysics(character *c){
 		c->vy = c->vy*-0.3f;
 	}
 	if((col&0x00F) && (c->vy < 0.f)){
-		c->falling=false;
+		c->flags &= ~CHAR_FALLING;
 		if(c->vy < -0.15f){
 			c->yoff = -0.8f;
 			ret += (int)(fabsf(c->vy)*512.f);
@@ -499,7 +496,7 @@ void characterUpdate(character *c){
 	uint32_t col,wcl;
 
 	if(c->actionTimeout < 0){ c->actionTimeout++; }
-	if(c->noClip){
+	if(c->flags & CHAR_NOCLIP){
 		c->vx = c->gvx;
 		c->vy = c->gvy;
 		c->vz = c->gvz;
@@ -513,7 +510,7 @@ void characterUpdate(character *c){
 	nvy = c->vy;
 	nvz = c->vz;
 
-	if(c->falling){ walkFactor = 0.2f; }
+	if(c->flags & CHAR_FALLING){ walkFactor = 0.2f; }
 	if(c->gvx < nvx){
 		nvx -= 0.05f * (nvx - c->gvx) * walkFactor;
 		if(nvx < c->gvx){ nvx = c->gvx; }
@@ -537,7 +534,7 @@ void characterUpdate(character *c){
 		if((c->gvz >  0.001) && (nvz < c->vz)){ nvz = c->vz; }
 	}
 
-	if(c->sneak){
+	if(c->flags & CHAR_SNEAK){
 		wcl = characterCollision(c,c->x,c->y,c->z,0.6f);
 		col = characterCollision(c,c->x,c->y,c->z,-0.2f);
 		if(!(col&0x1) && (wcl&0x2) && (nvx < 0.f)){ nvx =  0.001f;}
@@ -551,15 +548,15 @@ void characterUpdate(character *c){
 	c->vy = nvy;
 	c->vz = nvz;
 
-	if(c->fallingSound && (c->y > -32)){ c->fallingSound = false; }
+	if((c->flags & CHAR_FALLINGSOUND) && (c->y > -32)){ c->flags &= ~CHAR_FALLINGSOUND; }
 	if(c->y < -500){
 		characterDie(c);
 		msgSendDyingMessage("fell into the abyss", 65535);
 	}
 	if(c->y < -64){
 		setOverlayColor(0xFF000000,1000);
-		if(!c->fallingSound){
-			c->fallingSound = true;
+		if(!(c->flags & CHAR_FALLINGSOUND)){
+			c->flags |= CHAR_FALLINGSOUND;
 			sfxPlay(sfxFalling,1.f);
 		}
 	}

@@ -211,8 +211,8 @@ void characterMove(character *c, float mx,float my,float mz){
 	const float yaw   = c->yaw;
 	const float pitch = c->pitch;
 
-	if(c->noClip){
-		if(c->sneak){
+	if(c->flags & CHAR_NOCLIP){
+		if(c->flags & CHAR_SNEAK){
 			speed = 1.f;
 		}else{
 			speed = 0.15f;
@@ -224,7 +224,7 @@ void characterMove(character *c, float mx,float my,float mz){
 		c->gvx += cos((yaw)*PI/180)*mx*speed;
 		c->gvz += sin((yaw)*PI/180)*mx*speed;
 	}else{
-		if(c->sneak){
+		if(c->flags & CHAR_SNEAK){
 			speed = 0.01f;
 		}else{
 			speed = 0.05f;

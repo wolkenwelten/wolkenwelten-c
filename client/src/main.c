@@ -52,7 +52,11 @@ void playerUpdate(){
 	chungus *chng = worldGetChungus((int)player->x >> 8,(int)player->y >> 8,(int)player->z >> 8);
 	if(chng != NULL){ playerChunkActive = chng->loaded; }
 	if(!playerChunkActive){return;}
-	player->sneak = inputSneak();
+	if(inputSneak()){
+		player->flags |= CHAR_SNEAK;
+	}else{
+		player->flags &= ~CHAR_SNEAK;
+	}
 
 	doKeyboardupdate(&vx,&vy,&vz);
 	doTouchupdate   (&vx,&vy,&vz);

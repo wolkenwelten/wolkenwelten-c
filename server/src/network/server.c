@@ -125,7 +125,8 @@ void msgUpdatePlayer(int c){
 		rp->val.i[19] = i;
 		rp->val.i[20] = clients[i].c->animationTicksMax;
 		rp->val.i[21] = clients[i].c->animationTicksLeft;
-		packetQueue(rp,15,22*4,c);
+		rp->val.i[22] = clients[i].c->flags;
+		packetQueue(rp,15,23*4,c);
 	}
 
 	clients[c].itemDropUpdateOffset = itemDropUpdatePlayer(c,clients[c].itemDropUpdateOffset);
@@ -160,6 +161,7 @@ void serverParsePlayerPos(int c, packet *p){
 	clients[c].c->animationIndex     = p->val.i[18];
 	clients[c].c->animationTicksMax  = p->val.i[20];
 	clients[c].c->animationTicksLeft = p->val.i[21];
+	clients[c].c->flags              = p->val.i[22];
 	msgUpdatePlayer(c);
 }
 

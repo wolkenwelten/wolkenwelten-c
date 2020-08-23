@@ -55,11 +55,7 @@ typedef struct {
 	int animationTicksMax;
 	int animationTicksLeft;
 
-	bool falling;
-	bool noClip;
-	bool collide;
-	bool fallingSound;
-	bool sneak;
+	uint32_t flags;
 
 	mesh *eMesh;
 	grapplingHook *hook;
@@ -77,6 +73,12 @@ typedef struct {
 
 	void *nextFree;
 } character;
+
+#define CHAR_FALLING      (1   )
+#define CHAR_NOCLIP       (1<<1)
+#define CHAR_COLLIDE      (1<<2)
+#define CHAR_FALLINGSOUND (1<<3)
+#define CHAR_SNEAK        (1<<4)
 
 struct grapplingHook {
 	entity       *ent;

@@ -22,11 +22,7 @@ void characterInit(character *c){
 	c->gyoff  = 0.f;
 	c->gvx = c->gvy = c->gvz = 0.f;
 
-	c->noClip        = false;
-	c->falling       = false;
-	c->fallingSound  = false;
-	c->sneak         = false;
-
+	c->flags = 0;
 	c->animationIndex = c->animationTicksMax = c->animationTicksLeft = 0;
 
 	c->actionTimeout = 0;

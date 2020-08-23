@@ -179,7 +179,7 @@ void keyboardEventHandler(const SDL_Event *e){
 					optionDebugInfo = 1 - optionDebugInfo;
 				break;
 				case SDLK_n:
-					player->noClip = 1 - player->noClip;
+					player->flags ^= CHAR_NOCLIP;
 				break;
 			}
 		break;
