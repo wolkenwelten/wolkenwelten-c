@@ -32,4 +32,7 @@ extern texture *texShotgunblaster;
 extern mesh *meshCrystalbullet;
 extern texture *texCrystalbullet;
 
+extern mesh *meshSunglasses;
+extern texture *texSunglasses;
+
 void initMeshobjs();

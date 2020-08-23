@@ -416,6 +416,47 @@ void characterDie(character *c){
 	setOverlayColor(0xFF000000,0);
 }
 
+void updateGlideNew(character *c){
+	float vm = fabsf(c->vx);
+	if(fabsf(c->vy) > vm){vm = fabsf(c->vy);}
+	if(fabsf(c->vz) > vm){vm = fabsf(c->vz);}
+	float nx = c->vx / vm;
+	float ny = c->vy / vm;
+	float nz = c->vz / vm;
+	
+	float fx = cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180);
+	float fy = sin((-c->pitch)*PI/180);
+	float fz = sin((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180);
+	
+	float  v = ((fabsf(fx-nx)+fabsf(fy-ny)+fabsf(fz-nz))/6.f)*0.005f;
+	
+	c->vx += cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
+	c->vy += sin((-c->pitch)*PI/180)*v;
+	c->vz += sin((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
+	
+	c->vx -= c->vx*0.001f;
+	c->vy -= c->vy*0.001f;
+	c->vz -= c->vz*0.001f;
+}
+
+void updateGlide(character *c){
+	float v = (fabsf(c->vy)*((90.f-fabsf(c->pitch))/90.f))*0.03f;
+	
+	if(c->vy > 0.f){
+		c->vy -= v;
+	}else{
+		c->vy += v;
+	}
+	
+	c->vx += cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
+	c->vy += sin((-c->pitch)*PI/180)*v;
+	c->vz += sin((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
+	
+	c->vx -= c->vx*0.001f;
+	c->vy -= c->vy*0.001f;
+	c->vz -= c->vz*0.001f;
+}
+
 int characterPhysics(character *c){
 	int ret=0;
 	uint32_t col;
@@ -436,8 +477,12 @@ int characterPhysics(character *c){
 	c->vy -= 0.0005f;
 	if(c->vy < -1.0f){c->vy+=0.005f;}
 	if(c->vy >  1.0f){c->vy-=0.005f;}
+	if(c->vx < -1.0f){c->vx+=0.005f;}
+	if(c->vx >  1.0f){c->vx-=0.005f;}
+	if(c->vz < -1.0f){c->vz+=0.005f;}
+	if(c->vz >  1.0f){c->vz-=0.005f;}
 
-	c->flags |= CHAR_FALLING;
+	c->flags |=  CHAR_FALLING;
 	c->flags &= ~CHAR_COLLIDE;
 	col = characterCollision(c,c->x,c->y,c->z,0.3f);
 	if(col){ c->flags |= CHAR_COLLIDE; }
@@ -486,6 +531,10 @@ int characterPhysics(character *c){
 		c->vy  = 0.f;
 		c->vz *= 0.97f;
 	}
+	
+	if(c->flags & CHAR_GLIDE){
+		updateGlide(c);
+	}
 
 	return ret;
 }
@@ -494,6 +543,20 @@ void characterUpdate(character *c){
 	float walkFactor = 1.f;
 	float nvx,nvy,nvz;
 	uint32_t col,wcl;
+	
+	
+	if((c->flags & CHAR_FALLINGSOUND) && (c->y > -32)){ c->flags &= ~CHAR_FALLINGSOUND; }
+	if(c->y < -500){
+		characterDie(c);
+		msgSendDyingMessage("fell into the abyss", 65535);
+	}
+	if(c->y < -64){
+		setOverlayColor(0xFF000000,1000);
+		if(!(c->flags & CHAR_FALLINGSOUND)){
+			c->flags |= CHAR_FALLINGSOUND;
+			sfxPlay(sfxFalling,1.f);
+		}
+	}
 
 	if(c->actionTimeout < 0){ c->actionTimeout++; }
 	if(c->flags & CHAR_NOCLIP){
@@ -504,6 +567,15 @@ void characterUpdate(character *c){
 		characterUpdateAnimation(c);
 		characterUpdateInaccuracy(c);
 		characterPhysics(c);
+		return;
+	}
+	if((c->flags & (CHAR_GLIDE | CHAR_FALLING)) == (CHAR_GLIDE | CHAR_FALLING)){
+		characterUpdateHook(c);
+		characterUpdateAnimation(c);
+		characterUpdateInaccuracy(c);
+		const int damage = characterPhysics(c);
+		characterUpdateDamage(c,damage);
+		characterUpdateWindVolume(c,c->vx,c->vy,c->vz);
 		return;
 	}
 	nvx = c->vx;
@@ -547,19 +619,6 @@ void characterUpdate(character *c){
 	c->vx = nvx;
 	c->vy = nvy;
 	c->vz = nvz;
-
-	if((c->flags & CHAR_FALLINGSOUND) && (c->y > -32)){ c->flags &= ~CHAR_FALLINGSOUND; }
-	if(c->y < -500){
-		characterDie(c);
-		msgSendDyingMessage("fell into the abyss", 65535);
-	}
-	if(c->y < -64){
-		setOverlayColor(0xFF000000,1000);
-		if(!(c->flags & CHAR_FALLINGSOUND)){
-			c->flags |= CHAR_FALLINGSOUND;
-			sfxPlay(sfxFalling,1.f);
-		}
-	}
 
 	const int damage = characterPhysics(c);
 	characterUpdateDamage(c,damage);

@@ -79,6 +79,7 @@ typedef struct {
 #define CHAR_COLLIDE      (1<<2)
 #define CHAR_FALLINGSOUND (1<<3)
 #define CHAR_SNEAK        (1<<4)
+#define CHAR_GLIDE        (1<<5)
 
 struct grapplingHook {
 	entity       *ent;

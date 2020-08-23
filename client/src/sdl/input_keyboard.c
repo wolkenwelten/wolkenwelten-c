@@ -181,6 +181,9 @@ void keyboardEventHandler(const SDL_Event *e){
 				case SDLK_n:
 					player->flags ^= CHAR_NOCLIP;
 				break;
+				case SDLK_v:
+					player->flags ^= CHAR_GLIDE;
+				break;
 			}
 		break;
 	}

@@ -179,6 +179,8 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f\n",player->z,player->vz);
 	textMeshPrintf(guim,"Player   Yaw: %04.2f\n",player->yaw);
 	textMeshPrintf(guim,"Player Pitch: %04.2f\n",player->pitch);
+	textMeshPrintf(guim,"Player  Roll: %04.2f\n",player->roll);
+	textMeshPrintf(guim,"Player Flags: %08X\n",player->flags);
 	textMeshPrintf(guim,"Active Tris.: %s\n", getHumanReadableSize(tris));
 	textMeshPrintf(guim,"Active Part.: %s\n", getHumanReadableSize(particleCount));
 	textMeshPrintf(guim,"Player Layer: %2i\n",((int)player->y/CHUNGUS_SIZE));

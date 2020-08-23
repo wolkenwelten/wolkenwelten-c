@@ -36,6 +36,9 @@ texture *texAssaultblaster;
 mesh *meshShotgunblaster;
 texture *texShotgunblaster;
 
+mesh *meshSunglasses;
+texture *texSunglasses;
+
 void initMeshobjs(){
 	meshPear           = meshNewRO( pear_verts,                     pear_count );
 	meshHook           = meshNewRO( hook_verts,                     hook_count );
@@ -48,6 +51,7 @@ void initMeshobjs(){
 	meshCrystalbullet  = meshNewRO( crystalbullet_verts,   crystalbullet_count );
 	meshAssaultblaster = meshNewRO( assaultblaster_verts, assaultblaster_count );
 	meshShotgunblaster = meshNewRO( shotgunblaster_verts, shotgunblaster_count );
+	meshSunglasses     = meshNewRO( sunglasses_verts,         sunglasses_count );
 
 	texPear           = textureNew( gfx_pear_png_data,                   gfx_pear_png_len,"client/gfx/pear.png");
 	texHook           = textureNew( gfx_hook_png_data,                   gfx_hook_png_len,"client/gfx/hook.png");
@@ -58,7 +62,8 @@ void initMeshobjs(){
 	texBlaster        = textureNew( gfx_blaster_png_data,             gfx_blaster_png_len,"client/gfx/blaster.png");
 	texCrystalbullet  = textureNew( gfx_crystalbullet_png_data, gfx_crystalbullet_png_len,"client/gfx/crystalbullet.png");
 	texAssaultblaster = textureNew( gfx_assaultblaster_png_data, gfx_assaultblaster_png_len,"client/gfx/assaultblaster.png");
-	texShotgunblaster = textureNew( gfx_shotgunblaster_png_data, gfx_shotgunblaster_png_len,"client/gfx/assaultblaster.png");
+	texShotgunblaster = textureNew( gfx_shotgunblaster_png_data, gfx_shotgunblaster_png_len,"client/gfx/shotgunblaster.png");
+	texSunglasses     = textureNew( gfx_sunglasses_png_data, gfx_sunglasses_png_len,"client/gfx/sunglasses.png");
 
 	meshPear->tex           = texPear;
 	meshHook->tex           = texHook;
@@ -71,6 +76,7 @@ void initMeshobjs(){
 	meshCrystalbullet->tex  = texCrystalbullet;
 	meshAssaultblaster->tex = texAssaultblaster;
 	meshShotgunblaster->tex = texShotgunblaster;
+	meshSunglasses->tex     = texSunglasses;
 
 	meshFinish( meshPear,           GL_STATIC_DRAW );
 	meshFinish( meshHook,           GL_STATIC_DRAW );
@@ -83,4 +89,5 @@ void initMeshobjs(){
 	meshFinish( meshCrystalbullet,  GL_STATIC_DRAW );
 	meshFinish( meshAssaultblaster, GL_STATIC_DRAW );
 	meshFinish( meshShotgunblaster, GL_STATIC_DRAW );
+	meshFinish( meshSunglasses,     GL_STATIC_DRAW );
 }
