@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-chungus chungusList[1<<8];
+chungus chungusList[1<<9];
 int chungusCount=0;
 chungus *chungusFirstFree = NULL;
 
@@ -44,7 +44,7 @@ chungus *chungusNew(int x, int y, int z){
 	chungus *c = NULL;
 	if(chungusFirstFree == NULL){
 		if(chungusCount >= (int)(sizeof(chungusList) / sizeof(chungus))-1){
-			fprintf(stderr,"chungusList Overflow!\n");
+			fprintf(stderr,"client chungusList Overflow!\n");
 			return NULL;
 		}
 		c = &chungusList[chungusCount++];

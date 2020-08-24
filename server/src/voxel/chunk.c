@@ -16,7 +16,7 @@ chunk *chunkNew(uint16_t x,uint16_t y,uint16_t z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){
 		if(chunkCount >= (int)(sizeof(chunkList) / sizeof(chunk))-1){
-			fprintf(stderr,"chunkList Overflow!\n");
+			fprintf(stderr,"server chunkList Overflow!\n");
 			return NULL;
 		}
 		c = &chunkList[chunkCount++];

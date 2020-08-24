@@ -38,7 +38,7 @@ chungus *chungusNew(int x, int y, int z){
 	chungus *c = NULL;
 	if(chungusFirstFree == NULL){
 		if(chungusCount >= (int)(sizeof(chungusList) / sizeof(chungus))-1){
-			fprintf(stderr,"chungusList Overflow!\n");
+			fprintf(stderr,"server chungusList Overflow!\n");
 			return NULL;
 		}
 		c = &chungusList[chungusCount++];
