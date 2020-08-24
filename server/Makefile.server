@@ -25,7 +25,7 @@ endif
 
 server/src/tmp/objs.c: server/tools/objgen
 	mkdir -p server/src/tmp/
-	server/tools/objgen server/src/tmp/objs
+	server/tools/objgen server/src/tmp/objs client/mesh/
 server/src/tmp/objs.h: server/src/tmp/objs.c
 	@true
 

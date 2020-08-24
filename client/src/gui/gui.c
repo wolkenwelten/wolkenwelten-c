@@ -8,27 +8,26 @@
 #include "../game/blockType.h"
 #include "../game/character.h"
 #include "../game/entity.h"
-
 #include "../game/itemDrop.h"
-#include "../../../common/src/mods/mods.h"
-#include "../gui/menu.h"
 #include "../sdl/sdl.h"
 #include "../gfx/glew.h"
 #include "../gfx/mesh.h"
-#include "../gfx/objs.h"
 #include "../gfx/gfx.h"
 #include "../gfx/particle.h"
 #include "../gfx/shader.h"
 #include "../gfx/mat.h"
 #include "../gfx/texture.h"
-#include "../voxel/chungus.h"
-#include "../voxel/chunk.h"
-#include "../../../common/src/tmp/cto.h"
+#include "../gui/menu.h"
 #include "../gui/inventory.h"
 #include "../gui/overlay.h"
 #include "../gui/textInput.h"
 #include "../network/chat.h"
 #include "../network/client.h"
+#include "../tmp/objs.h"
+#include "../voxel/chungus.h"
+#include "../voxel/chunk.h"
+#include "../../../common/src/tmp/cto.h"
+#include "../../../common/src/mods/mods.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -281,26 +280,26 @@ void drawActiveItem(){
 			matTranslation(matViewAI,ix-hitOff*1.2f,y+(hitOff/3),iz - hitOff*1.1f);
 			matMulRotYX(matViewAI,hitOff*10.f,hitOff*-35.f);
 		break;
-		
+
 		case 1:
 			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
 			matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff*0.3f);
 			matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
 		break;
-		
+
 		case 2:
 			hitOff = animationInterpolationSustain(player->animationTicksLeft,player->animationTicksMax,0.3f,0.5f);
 			y = iy+player->yoff-(hitOff/8);
 			matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
 			matMulRotYX(matViewAI,hitOff*15.f,hitOff*-55.f);
 		break;
-		
+
 		case 3:
 			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
 			matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff*0.1f);
 			matMulRotYX(matViewAI,hitOff*3.f,hitOff*9.f);
 		break;
-		
+
 		case 4:
 			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,1.f)*3.f;
 			if(hitOff < 1.f){
@@ -316,7 +315,7 @@ void drawActiveItem(){
 				matTranslation(matViewAI,ix,player->yoff+iy-(1.f-hitOff)*2.f,iz);
 				matMulRotYX(matViewAI,(1.f-hitOff)*3.f,(1.f-hitOff)*9.f);
 			}
-			
+
 		break;
 	};
 	matMul(matViewAI, matViewAI, matProjection);

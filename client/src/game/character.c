@@ -8,7 +8,7 @@
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
-#include "../gfx/objs.h"
+#include "../tmp/objs.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
 #include "../network/chat.h"
@@ -35,8 +35,8 @@ void characterInit(character *c){
 	c->gyoff = 0.f;
 	c->gvx = c->gvy = c->gvz = 0.f;
 	c->shake = c->inaccuracy = 0.f;
-	
-	c->flags = 0;	
+
+	c->flags = 0;
 	c->animationIndex = c->animationTicksMax = c->animationTicksLeft = 0;
 
 	c->actionTimeout = 0;
@@ -144,7 +144,7 @@ void characterSetPlayerPos(const packet *p){
 	}
 	playerList[i]->inventory[0] = itemNew(p->val.u[17],1);
 	playerList[i]->activeItem = 0;
-	
+
 	playerList[i]->animationIndex     = p->val.i[18];
 	playerList[i]->animationTicksMax  = p->val.i[20];
 	playerList[i]->animationTicksLeft = p->val.i[21];
@@ -423,17 +423,17 @@ void updateGlideNew(character *c){
 	float nx = c->vx / vm;
 	float ny = c->vy / vm;
 	float nz = c->vz / vm;
-	
+
 	float fx = cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180);
 	float fy = sin((-c->pitch)*PI/180);
 	float fz = sin((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180);
-	
+
 	float  v = ((fabsf(fx-nx)+fabsf(fy-ny)+fabsf(fz-nz))/6.f)*0.005f;
-	
+
 	c->vx += cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
 	c->vy += sin((-c->pitch)*PI/180)*v;
 	c->vz += sin((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
-	
+
 	c->vx -= c->vx*0.001f;
 	c->vy -= c->vy*0.001f;
 	c->vz -= c->vz*0.001f;
@@ -441,17 +441,17 @@ void updateGlideNew(character *c){
 
 void updateGlide(character *c){
 	float v = (fabsf(c->vy)*((90.f-fabsf(c->pitch))/90.f))*0.03f;
-	
+
 	if(c->vy > 0.f){
 		c->vy -= v;
 	}else{
 		c->vy += v;
 	}
-	
+
 	c->vx += cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
 	c->vy += sin((-c->pitch)*PI/180)*v;
 	c->vz += sin((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
-	
+
 	c->vx -= c->vx*0.001f;
 	c->vy -= c->vy*0.001f;
 	c->vz -= c->vz*0.001f;
@@ -531,7 +531,7 @@ int characterPhysics(character *c){
 		c->vy  = 0.f;
 		c->vz *= 0.97f;
 	}
-	
+
 	if(c->flags & CHAR_GLIDE){
 		updateGlide(c);
 	}
@@ -543,8 +543,8 @@ void characterUpdate(character *c){
 	float walkFactor = 1.f;
 	float nvx,nvy,nvz;
 	uint32_t col,wcl;
-	
-	
+
+
 	if((c->flags & CHAR_FALLINGSOUND) && (c->y > -32)){ c->flags &= ~CHAR_FALLINGSOUND; }
 	if(c->y < -500){
 		characterDie(c);
@@ -669,7 +669,7 @@ void characterShadesDraw(character *c){
 	float matMVP[16];
 	float sneakOff = 0.f;
 	if(c->flags & CHAR_SNEAK){sneakOff = 1.f;}
-	
+
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
 	matMulRotYX(matMVP,-c->yaw,-(c->pitch+sneakOff*30.f)/3.f);
@@ -683,7 +683,7 @@ void characterShadesDraw(character *c){
 void characterGliderDraw(character *c){
 	float matMVP[16];
 	if(!(c->flags & CHAR_GLIDE)){return;}
-	
+
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
 	matMulRotYX(matMVP,-c->yaw,-c->pitch);
@@ -709,12 +709,12 @@ void characterActiveItemDraw(character *c){
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
 	matMulRotYX(matMVP,-c->yaw+(15.f*sneakOff),-c->pitch);
-	
+
 	const float ix =  0.4f - (sneakOff/20.f);
 	const float iy = -0.2f;
 	const float iz = -0.3f;
 	float hitOff,y;
-		
+
 	switch(c->animationIndex){
 		default:
 			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.3f);
@@ -722,26 +722,26 @@ void characterActiveItemDraw(character *c){
 			matMulTrans(matMVP,ix-hitOff*0.2f,y+(hitOff/3),iz - hitOff*0.5f);
 			matMulRotYX(matMVP,hitOff*5.f,hitOff*-20.f);
 		break;
-		
+
 		case 1:
 			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
 			matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.3f);
 			matMulRotYX(matMVP,hitOff*10.f,hitOff*45.f);
 		break;
-		
+
 		case 2:
 			hitOff = animationInterpolationSustain(c->animationTicksLeft,c->animationTicksMax,0.3f,0.5f);
 			y = iy+c->yoff-(hitOff/8);
 			matMulTrans(matMVP,ix-hitOff*0.5f,y-(hitOff*0.5f),iz - hitOff*0.2f);
 			matMulRotYX(matMVP,hitOff*15.f,hitOff*-55.f);
 		break;
-		
+
 		case 3:
 			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
 			matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.1f);
 			matMulRotYX(matMVP,hitOff*3.f,hitOff*9.f);
 		break;
-		
+
 		case 4:
 			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,1.f)*3.f;
 			if(hitOff < 1.f){
@@ -757,7 +757,7 @@ void characterActiveItemDraw(character *c){
 				matMulTrans(matMVP,ix-hitOff*0.4,c->yoff+iy,iz + hitOff*0.4f);
 				matMulRotYX(matMVP,hitOff*20.f,hitOff*40.f);
 			}
-			
+
 		break;
 	};
 

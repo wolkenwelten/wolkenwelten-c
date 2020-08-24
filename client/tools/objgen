@@ -2,17 +2,51 @@
 
 C_FILE="$1.c"
 H_FILE="$1.h"
-
-echo "#include \"objs.h\""               > $C_FILE
-echo "#include \"../tmp/assets.h\""     >> $C_FILE
-echo "#include \"../tmp/meshassets.h\"" >> $C_FILE
-echo "#include \"../gfx/texture.h\""    >> $C_FILE
-echo "#include \"../gfx/mesh.h\""       >> $C_FILE
-echo "#include \"../gfx/glew.h\""       >> $C_FILE
-echo ""                                 >> $C_FILE
+shift
 
 echo "#pragma once"                               > $H_FILE
 echo "#include \"../../../common/src/common.h\"" >> $H_FILE
 echo ""                                          >> $H_FILE
 echo "void initMeshobjs();"                      >> $H_FILE
 echo ""                                          >> $H_FILE
+
+echo "#include \"objs.h\""                        > $C_FILE
+echo "#include \"../tmp/assets.h\""              >> $C_FILE
+echo "#include \"../tmp/meshassets.h\""          >> $C_FILE
+echo "#include \"../gfx/texture.h\""             >> $C_FILE
+echo "#include \"../gfx/mesh.h\""                >> $C_FILE
+echo "#include \"../gfx/glew.h\""                >> $C_FILE
+echo ""                                          >> $C_FILE
+
+meshs=""
+while (("$#")); do
+	for filename in $1*.obj; do
+		file=${filename##*/}
+		name=${file%.obj}
+		uname=${name^}
+
+		echo "mesh *mesh$uname;"          >> $C_FILE
+		echo "texture *tex$uname;"        >> $C_FILE
+		echo ""                           >> $C_FILE
+
+		echo "extern mesh *mesh$uname;"   >> $H_FILE
+		echo "extern texture *tex$uname;" >> $H_FILE
+		echo ""                           >> $H_FILE
+
+		meshs="$meshs
+	mesh$uname = meshNewRO(""$name""_verts,""$name""_count);"
+		meshs="$meshs
+	tex$uname = textureNew(gfx_""$name""_png_data,gfx_""$name""_png_len,\"client/gfx/$name.png\");"
+		meshs="$meshs
+	mesh$uname->tex = tex$uname;"
+		meshs="$meshs
+	meshFinish( mesh$uname, GL_STATIC_DRAW );"
+		meshs="$meshs
+	"
+	done
+	shift
+done
+
+echo "void initMeshobjs(){" >> $C_FILE
+echo "$meshs" >> $C_FILE
+echo "}" >> $C_FILE

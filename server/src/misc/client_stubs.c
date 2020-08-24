@@ -32,20 +32,6 @@ sfx *sfxHookReturned;
 sfx *atmosfxHookRope;
 sfx *atmosfxWind;
 
-mesh *meshPear;
-mesh *meshHook;
-mesh *meshGrenade;
-mesh *meshBomb;
-mesh *meshAxe;
-mesh *meshPickaxe;
-mesh *meshMasterblaster;
-mesh *meshBlaster;
-mesh *meshCrystalbullet;
-mesh *meshAssaultblaster;
-mesh *meshShotgunblaster;
-mesh *meshSunglasses;
-mesh *meshGlider;
-
 void recipeAdd1I(unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID, unsigned char nIngredAmount){
 	(void)nResultID;
 	(void)nResultAmount;

@@ -4,10 +4,10 @@
 #include "../game/character.h"
 #include "../gfx/mesh.h"
 #include "../gfx/effects.h"
-#include "../gfx/objs.h"
+#include "../tmp/objs.h"
+#include "../voxel/bigchungus.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
-#include "../voxel/bigchungus.h"
 
 #include <math.h>
 #include <stdio.h>

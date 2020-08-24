@@ -8,9 +8,9 @@
 #include "../gfx/mesh.h"
 #include "../gfx/effects.h"
 #include "../gfx/texture.h"
-#include "../gfx/objs.h"
 #include "../sdl/sfx.h"
 #include "../tmp/assets.h"
+#include "../tmp/objs.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/misc/misc.h"
 

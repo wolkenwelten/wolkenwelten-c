@@ -52,7 +52,7 @@ client/src/tmp/mods_tmp.c: tools/modscg
 
 client/src/tmp/objs.c: client/tools/objgen
 	mkdir -p client/src/tmp/
-	client/tools/objgen client/src/tmp/objs
+	client/tools/objgen client/src/tmp/objs client/mesh/
 client/src/tmp/objs.h: client/src/tmp/objs.c
 	@true
 

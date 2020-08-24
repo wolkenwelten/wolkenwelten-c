@@ -6,9 +6,9 @@
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
-#include "../gfx/objs.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
+#include "../tmp/objs.h"
 #include "../voxel/bigchungus.h"
 
 #include <stdlib.h>

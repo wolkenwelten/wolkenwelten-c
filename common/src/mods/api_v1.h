@@ -5,19 +5,7 @@
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-extern mesh *meshPear;
-extern mesh *meshHook;
-extern mesh *meshGrenade;
-extern mesh *meshBomb;
-extern mesh *meshAxe;
-extern mesh *meshPickaxe;
-extern mesh *meshMasterblaster;
-extern mesh *meshBlaster;
-extern mesh *meshCrystalbullet;
-extern mesh *meshAssaultblaster;
-extern mesh *meshShotgunblaster;
-extern mesh *meshSunglasses;
-extern mesh *meshGlider;
+#include "../../../server/src/tmp/objs.h"
 
 void recipeAdd1I            (unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID, unsigned char nIngredAmount);
 void recipeAdd2I            (unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID1, unsigned char nIngredAmount1, unsigned short nIngredID2, unsigned char nIngredAmount2);
