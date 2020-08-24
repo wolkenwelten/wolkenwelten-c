@@ -66,6 +66,7 @@ void worldUpdate(){
 	int curTick;
 
 	if(lastTick == 0){lastTick = SDL_GetTicks();}
+	if(!playerChunkActive){lastTick = SDL_GetTicks();return;}
 	curTick = SDL_GetTicks();
 	for(;lastTick < curTick;lastTick+=MS_PER_TICK){
 		if(!isInventoryOpen()){
@@ -83,7 +84,6 @@ void worldUpdate(){
 		}
 		resetOverlayColor();
 		if(isInventoryOpen()){setOverlayColor(0x80000000,300);}
-		//characterUpdate(player);
 		charactersUpdate();
 		commitOverlayColor();
 		grenadeUpdate();
