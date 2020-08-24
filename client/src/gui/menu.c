@@ -9,7 +9,7 @@
 #include "../network/client.h"
 #include "../misc/options.h"
 #include "../tmp/assets.h"
-#include "../tmp/cto.h"
+#include "../../../common/src/tmp/cto.h"
 #include "../main.h"
 
 #include <stdio.h>

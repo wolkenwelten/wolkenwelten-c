@@ -1,0 +1,18 @@
+#!/bin/sh
+
+C_FILE="$1.c"
+H_FILE="$1.h"
+
+echo "#include \"objs.h\""               > $C_FILE
+echo "#include \"../tmp/assets.h\""     >> $C_FILE
+echo "#include \"../tmp/meshassets.h\"" >> $C_FILE
+echo "#include \"../gfx/texture.h\""    >> $C_FILE
+echo "#include \"../gfx/mesh.h\""       >> $C_FILE
+echo "#include \"../gfx/glew.h\""       >> $C_FILE
+echo ""                                 >> $C_FILE
+
+echo "#pragma once"                               > $H_FILE
+echo "#include \"../../../common/src/common.h\"" >> $H_FILE
+echo ""                                          >> $H_FILE
+echo "void initMeshobjs();"                      >> $H_FILE
+echo ""                                          >> $H_FILE

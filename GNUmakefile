@@ -51,7 +51,7 @@ clean:
 	rm -f $(shell find common/src -type f -name '*.o')
 	rm -f wolkenwelten wolkenwelten.exe $(shell find client/src -type f -name '*.o')
 	rm -f wolkenwelten-server wolkenwelten-server.exe $(shell find server/src -type f -name '*.o')
-	rm -rf client/src/tmp server/src/tmp
+	rm -rf client/src/tmp server/src/tmp common/src/tmp
 	rm -rf web/releases releases
 
 .PHONY: webrelease

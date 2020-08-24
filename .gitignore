@@ -57,6 +57,7 @@ platform/win/msys2_pkgs/mingw-w64-SDL2_mixer/*
 /tools/modscg
 /tools/modscg.exe
 /client/src/shader/*.h
+/common/src/tmp/
 /client/src/tmp/
 /server/src/tmp/
 /build/

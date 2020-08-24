@@ -2,3 +2,12 @@ MODS_SRCS        := $(shell find common/src/mods -type f -name '*.c')
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
 COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
+
+.PHONY: all
+all: wolkenwelten
+
+common/src/tmp/cto.c: tools/infogen
+	mkdir -p common/src/tmp/
+	tools/infogen common/src/tmp/cto
+common/src/tmp/cto.h: common/src/tmp/cto.c
+	@true

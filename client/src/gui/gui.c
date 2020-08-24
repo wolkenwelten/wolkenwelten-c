@@ -23,7 +23,7 @@
 #include "../gfx/texture.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
-#include "../tmp/cto.h"
+#include "../../../common/src/tmp/cto.h"
 #include "../gui/inventory.h"
 #include "../gui/overlay.h"
 #include "../gui/textInput.h"

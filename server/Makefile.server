@@ -15,23 +15,24 @@ wolkenwelten-server: LIBS      += $(SERVER_LIBS)
 wolkenwelten-server: server/make.deps $(SERVER_OBJS)
 	$(CC) $(SERVER_OBJS) -o wolkenwelten-server $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 
-server/src/tmp/cto.c: tools/infogen
-	mkdir -p server/src/tmp/
-	tools/infogen server/src/tmp/cto
-server/src/tmp/cto.h: server/src/tmp/cto.c
-	@true
-
 .deps: server/make.deps
-server/make.deps: server/src/tmp/cto.h server/src/tmp/mods_tmp.c
+server/make.deps: common/src/tmp/cto.h server/src/tmp/objs.h server/src/tmp/mods_tmp.c
 	$(CC) -MM $(SERVER_SRCS) $(CINCLUDES) $(SERVER_CINCLUDES) > server/make.deps
 
 ifneq ($(MAKECMDGOALS),clean)
 -include server/make.deps
 endif
 
+server/src/tmp/objs.c: server/tools/objgen
+	mkdir -p server/src/tmp/
+	server/tools/objgen server/src/tmp/objs
+server/src/tmp/objs.h: server/src/tmp/objs.c
+	@true
+
 server/src/tmp/mods_tmp.o: server/src/tmp/mods_tmp.c
 server/src/tmp/mods_tmp.c: $(MODS_SRCS)
 server/src/tmp/mods_tmp.c: tools/modscg
+	mkdir -p server/src/tmp/
 	tools/modscg $(shell find common/src/mods/items -type f -name '*.c') > server/src/tmp/mods_tmp.c
 
 server/src/network/server.o: server/src/network/server_bsd.h server/src/network/server_win.h

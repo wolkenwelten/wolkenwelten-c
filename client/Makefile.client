@@ -16,9 +16,6 @@ CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
 $(CLIENT_OBJS): CFLAGS    += $(CLIENT_CFLAGS)
 $(CLIENT_OBJS): CINCLUDES += $(CLIENT_CINCLUDES)
 
-.PHONY: all
-all: wolkenwelten
-
 wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
 wolkenwelten: LIBS      += $(CLIENT_LIBS)
@@ -26,14 +23,8 @@ wolkenwelten: client/make.deps $(CLIENT_OBJS)
 	$(CC) $(CLIENT_OBJS) -o wolkenwelten $(OPTIMIZATION) $(CFLAGS) $(LIBS)
 
 .deps: client/make.deps
-client/make.deps: | client/src/tmp/assets.h client/src/tmp/meshassets.h client/src/tmp/cto.h client/src/tmp/mods_tmp.c
+client/make.deps: | client/src/tmp/assets.h client/src/tmp/meshassets.h common/src/tmp/cto.h client/src/tmp/objs.h client/src/tmp/mods_tmp.c
 	$(CC) -MM $(CLIENT_SRCS) $(CINCLUDES) $(CLIENT_CINCLUDES) > client/make.deps
-
-client/src/tmp/cto.c: tools/infogen
-	mkdir -p client/src/tmp/
-	tools/infogen client/src/tmp/cto
-client/src/tmp/cto.h: client/src/tmp/cto.c
-	@true
 
 client/src/tmp/assets.c: client/tools/assets $(ASSETS)
 	mkdir -p client/src/tmp/
@@ -56,8 +47,14 @@ client/tools/objparser: client/tools/objparser.c
 client/src/tmp/mods_tmp.o: client/src/tmp/mods_tmp.c
 client/src/tmp/mods_tmp.c: $(MODS_SRCS)
 client/src/tmp/mods_tmp.c: tools/modscg
+	mkdir -p server/src/tmp/
 	tools/modscg $(shell find common/src/mods/items -type f -name '*.c') > client/src/tmp/mods_tmp.c
 
+client/src/tmp/objs.c: client/tools/objgen
+	mkdir -p client/src/tmp/
+	client/tools/objgen client/src/tmp/objs
+client/src/tmp/objs.h: client/src/tmp/objs.c
+	@true
 
 ifneq ($(MAKECMDGOALS),clean)
 -include client/make.deps

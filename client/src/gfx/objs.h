@@ -1,6 +1,8 @@
 #pragma once
 #include "../../../common/src/common.h"
 
+void initMeshobjs();
+
 extern mesh *meshPear;
 extern texture *texPear;
 
@@ -37,5 +39,3 @@ extern texture *texSunglasses;
 
 extern mesh *meshGlider;
 extern texture *texGlider;
-
-void initMeshobjs();

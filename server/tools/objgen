@@ -1,0 +1,13 @@
+#!/bin/sh
+
+C_FILE="$1.c"
+H_FILE="$1.h"
+
+echo "#include \"objs.h\""               > $C_FILE
+echo ""                                 >> $C_FILE
+
+echo "#pragma once"                               > $H_FILE
+echo "#include \"../../../common/src/common.h\"" >> $H_FILE
+echo ""                                          >> $H_FILE
+echo "void initMeshobjs();"                      >> $H_FILE
+echo ""                                          >> $H_FILE

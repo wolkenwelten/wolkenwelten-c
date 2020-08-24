@@ -12,8 +12,10 @@ mesh *meshHook;
 texture *texHook;
 
 mesh *meshGrenade;
-mesh *meshBomb;
 texture *texGrenade;
+
+mesh *meshBomb;
+texture *texBomb;
 
 mesh *meshAxe;
 texture *texAxe;
@@ -59,6 +61,7 @@ void initMeshobjs(){
 
 	texPear           = textureNew( gfx_pear_png_data,                   gfx_pear_png_len,"client/gfx/pear.png");
 	texHook           = textureNew( gfx_hook_png_data,                   gfx_hook_png_len,"client/gfx/hook.png");
+	texBomb           = textureNew( gfx_bomb_png_data,             gfx_bomb_png_len,"client/gfx/bomb.png");
 	texGrenade        = textureNew( gfx_grenade_png_data,             gfx_grenade_png_len,"client/gfx/grenade.png");
 	texAxe            = textureNew( gfx_axe_png_data,                     gfx_axe_png_len,"client/gfx/axe.png");
 	texPickaxe        = textureNew( gfx_pickaxe_png_data,             gfx_pickaxe_png_len,"client/gfx/pickaxe.png");
@@ -73,7 +76,7 @@ void initMeshobjs(){
 	meshPear->tex           = texPear;
 	meshHook->tex           = texHook;
 	meshGrenade->tex        = texGrenade;
-	meshBomb->tex           = texGrenade;
+	meshBomb->tex           = texBomb;
 	meshAxe->tex            = texAxe;
 	meshPickaxe->tex        = texPickaxe;
 	meshMasterblaster->tex  = texMasterblaster;
