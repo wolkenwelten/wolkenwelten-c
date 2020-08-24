@@ -142,11 +142,7 @@ bool grapplingHookReturnToParent(grapplingHook *ghk,float speed){
 	if(fabsf(dy) > dm){dm = fabsf(dy);}
 	if(fabsf(dz) > dm){dm = fabsf(dz);}
 	if(dm <= 3.1f){
-		sfxLoop(sfxHookRope,0.f);
-		sfxPlay(sfxHookReturned,1.f);
 		return true;
-	}else{
-		sfxLoop(sfxHookRope,1.f);
 	}
 	dx /= dm;
 	dy /= dm;

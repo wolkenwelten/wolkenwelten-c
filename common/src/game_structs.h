@@ -56,6 +56,7 @@ typedef struct {
 	int animationTicksLeft;
 
 	uint32_t flags;
+	float gliderFade;
 
 	mesh *eMesh;
 	grapplingHook *hook;

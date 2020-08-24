@@ -43,8 +43,6 @@ bool playerChunkActive = false;
 bool singleplayer      = false;
 
 void playerUpdate(){
-	static int lastTick=0;
-	int curTick;
 	float vx=0.f;
 	float vz=0.f;
 	float vy=0.f;
@@ -61,6 +59,11 @@ void playerUpdate(){
 	doTouchupdate   (&vx,&vy,&vz);
 	doGamepadupdate (&vx,&vy,&vz);
 	characterMove   (player,vx,vy,vz);
+}
+
+void worldUpdate(){
+	static int lastTick=0;
+	int curTick;
 
 	if(lastTick == 0){lastTick = SDL_GetTicks();}
 	curTick = SDL_GetTicks();
@@ -80,7 +83,8 @@ void playerUpdate(){
 		}
 		resetOverlayColor();
 		if(isInventoryOpen()){setOverlayColor(0x80000000,300);}
-		characterUpdate(player);
+		//characterUpdate(player);
+		charactersUpdate();
 		commitOverlayColor();
 		grenadeUpdate();
 		entityUpdateAll();
@@ -94,6 +98,7 @@ void mainloop(){
 	if(gameRunning){
 		clientHandleEvents();
 		playerUpdate();
+		worldUpdate();
 		renderFrame();
 		bigchungusFreeFarChungi(&world,player);
 		chatCheckInput();

@@ -10,6 +10,7 @@ void  characterTertiary       (character *c);
 void  characterStopMining     (character *c);
 float characterMineProgress   (character *c);
 void  characterUpdate         (character *c);
+void  charactersUpdate        ();
 void  characterFireHook       (character *c);
 void  characterFreeHook       (character *c);
 void  characterDraw           (character *c);

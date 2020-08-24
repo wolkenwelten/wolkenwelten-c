@@ -325,11 +325,13 @@ void drawActiveItem(){
 
 void drawActiveGlider(){
 	float matViewAI[16];
-	if(!(player->flags & CHAR_GLIDE)){return;}
+	if(player->gliderFade < 0.01f){return;}
+	//if(!(player->flags & CHAR_GLIDE)){return;}
 
 	shaderBind(sMesh);
 	matTranslation(matViewAI,0.f,player->yoff+0.9f,-0.65f);
 	matMulRotYX(matViewAI,0.f,player->pitch*-0.08f);
+	matMulScale(matViewAI,player->gliderFade, player->gliderFade, player->gliderFade);
 	matMul(matViewAI, matViewAI, matProjection);
 	shaderMatrix(sMesh, matViewAI);
 	meshDraw(meshGlider);

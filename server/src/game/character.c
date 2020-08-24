@@ -23,6 +23,7 @@ void characterInit(character *c){
 	c->gvx = c->gvy = c->gvz = 0.f;
 
 	c->flags = 0;
+	c->gliderFade = 0.f;
 	c->animationIndex = c->animationTicksMax = c->animationTicksLeft = 0;
 
 	c->actionTimeout = 0;

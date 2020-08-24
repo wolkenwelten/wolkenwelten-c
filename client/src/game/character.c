@@ -25,7 +25,7 @@
 #include <math.h>
 
 character *player;
-character characterList[128];
+character characterList[64];
 int characterCount = 0;
 character *characterFirstFree = NULL;
 character *playerList[32];
@@ -37,6 +37,7 @@ void characterInit(character *c){
 	c->shake = c->inaccuracy = 0.f;
 
 	c->flags = 0;
+	c->gliderFade = 0.f;
 	c->animationIndex = c->animationTicksMax = c->animationTicksLeft = 0;
 
 	c->actionTimeout = 0;
@@ -181,8 +182,16 @@ void characterUpdateHook(character *c){
 	if(grapplingHookUpdate(c->hook)){
 		grapplingHookFree(c->hook);
 		c->hook = NULL;
+		if(c == player){
+			sfxLoop(sfxHookRope,0.f);
+			sfxPlay(sfxHookReturned,1.f);
+		}
 		return;
 	}
+	if(c == player){
+		sfxLoop(sfxHookRope,1.f);
+	}
+		
 	if(grapplingHookGetHooked(c->hook)){
 		float gl = grapplingHookGetGoalLength(c->hook);
 		if((c->gvy > 0) && (gl > 1.f)){
@@ -203,6 +212,13 @@ void characterUpdateAnimation(character *c){
 		c->animationTicksLeft = 0;
 		c->animationTicksMax  = 0;
 		c->animationIndex     = 0;
+	}
+	if(c->flags & CHAR_GLIDE){
+		c->gliderFade += 0.05f;
+		if(c->gliderFade > 1.f){c->gliderFade = 1.f;}
+	}else{
+		c->gliderFade -= 0.05f;
+		if(c->gliderFade < 0.f){c->gliderFade = 0.f;}
 	}
 }
 
@@ -406,6 +422,7 @@ void characterDropItem(character *c, int i){
 }
 
 void characterDie(character *c){
+	if(c != player){return;}
 	for(int i=0;i<40;i++){
 		item *cItem = characterGetItemBarSlot(c,i);
 		if(cItem == NULL)     { continue; }
@@ -427,8 +444,7 @@ void updateGlideNew(character *c){
 	float fx = cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180);
 	float fy = sin((-c->pitch)*PI/180);
 	float fz = sin((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180);
-
-	float  v = ((fabsf(fx-nx)+fabsf(fy-ny)+fabsf(fz-nz))/6.f)*0.005f;
+	float  v = ((fabsf(fx-nx)+fabsf(fy-ny)+fabsf(fz-nz))/6.f)*0.006f;
 
 	c->vx += cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
 	c->vy += sin((-c->pitch)*PI/180)*v;
@@ -535,7 +551,6 @@ int characterPhysics(character *c){
 	if(c->flags & CHAR_GLIDE){
 		updateGlide(c);
 	}
-
 	return ret;
 }
 
@@ -621,18 +636,26 @@ void characterUpdate(character *c){
 	c->vz = nvz;
 
 	const int damage = characterPhysics(c);
-	characterUpdateDamage(c,damage);
-	if((nvy < -0.2f) && c->vy > -0.01f){
-		sfxPlay(sfxImpact,1.f);
-	} else if((nvy < -0.05f) && c->vy > -0.01f){
-		sfxPlay(sfxStomp,1.f);
+	if(c == player){
+		characterUpdateDamage(c,damage);
+		if((nvy < -0.2f) && c->vy > -0.01f){
+			sfxPlay(sfxImpact,1.f);
+		} else if((nvy < -0.05f) && c->vy > -0.01f){
+			sfxPlay(sfxStomp,1.f);
+		}
+		characterUpdateWindVolume(c,c->vx,c->vy,c->vz);
 	}
 
 	characterUpdateInaccuracy(c);
 	characterUpdateYOff(c);
 	characterUpdateHook(c);
 	characterUpdateAnimation(c);
-	characterUpdateWindVolume(c,c->vx,c->vy,c->vz);
+}
+
+void charactersUpdate(){
+	for(int i=0;i<characterCount;i++){
+		characterUpdate(&characterList[i]);
+	}
 }
 
 void characterFireHook(character *c){
@@ -688,6 +711,7 @@ void characterGliderDraw(character *c){
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
 	matMulRotYX(matMVP,-c->yaw,-c->pitch);
 	matMulTrans(matMVP,0.f,0.4f,-0.2f);
+	matMulScale(matMVP,c->gliderFade, c->gliderFade, c->gliderFade);
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(meshGlider);
