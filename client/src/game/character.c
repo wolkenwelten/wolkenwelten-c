@@ -61,8 +61,8 @@ void characterInit(character *c){
 		c->hook = NULL;
 	}
 	if(c == player){
-		sfxLoop(atmosfxWind,0.f);
-		sfxLoop(atmosfxHookRope,0.f);
+		sfxLoop(sfxWind,0.f);
+		sfxLoop(sfxHookRope,0.f);
 		msgRequestPlayerSpawnPos();
 	}
 
@@ -263,12 +263,12 @@ void characterUpdateWindVolume(character *c, float wvx, float wvy, float wvz){
 
 	float windVol = fabsf(wvx)+fabsf(wvy)+fabsf(wvz);
 	if(windVol < 0.1f){
-		sfxLoop(atmosfxWind,0.f);
+		sfxLoop(sfxWind,0.f);
 	}else{
 		windVol = (windVol - 0.1f)/4.f;
 		if(windVol > 1.f){windVol = 1.f;}
 		vibrate(windVol);
-		sfxLoop(atmosfxWind,windVol);
+		sfxLoop(sfxWind,windVol);
 	}
 }
 

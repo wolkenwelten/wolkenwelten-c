@@ -14,24 +14,6 @@ typedef struct character character;
 struct sfx;
 typedef struct sfx sfx;
 
-sfx *sfxFalling;
-sfx *sfxHoho;
-sfx *sfxHoo;
-sfx *sfxImpact;
-sfx *sfxPhaser;
-sfx *sfxBomb;
-sfx *sfxTock;
-sfx *sfxPock;
-sfx *sfxStomp;
-sfx *sfxStep;
-sfx *sfxUngh;
-sfx *sfxYahoo;
-sfx *sfxHookFire;
-sfx *sfxHookHit;
-sfx *sfxHookReturned;
-sfx *atmosfxHookRope;
-sfx *atmosfxWind;
-
 void recipeAdd1I(unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID, unsigned char nIngredAmount){
 	(void)nResultID;
 	(void)nResultAmount;

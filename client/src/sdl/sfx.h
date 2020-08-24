@@ -21,23 +21,7 @@ struct sfx {
 	int chan;
 };
 
-extern sfx *sfxFalling;
-extern sfx *sfxHoho;
-extern sfx *sfxHoo;
-extern sfx *sfxImpact;
-extern sfx *sfxPhaser;
-extern sfx *sfxBomb;
-extern sfx *sfxTock;
-extern sfx *sfxPock;
-extern sfx *sfxStomp;
-extern sfx *sfxStep;
-extern sfx *sfxUngh;
-extern sfx *sfxYahoo;
-extern sfx *sfxHookFire;
-extern sfx *sfxHookHit;
-extern sfx *sfxHookReturned;
-extern sfx *atmosfxHookRope;
-extern sfx *atmosfxWind;
+#include "../tmp/sfx.h"
 
 sfx *sfxNew(unsigned char *data,size_t dataLen);
 void sfxFree(sfx *b);

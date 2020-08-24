@@ -142,11 +142,11 @@ bool grapplingHookReturnToParent(grapplingHook *ghk,float speed){
 	if(fabsf(dy) > dm){dm = fabsf(dy);}
 	if(fabsf(dz) > dm){dm = fabsf(dz);}
 	if(dm <= 3.1f){
-		sfxLoop(atmosfxHookRope,0.f);
+		sfxLoop(sfxHookRope,0.f);
 		sfxPlay(sfxHookReturned,1.f);
 		return true;
 	}else{
-		sfxLoop(atmosfxHookRope,1.f);
+		sfxLoop(sfxHookRope,1.f);
 	}
 	dx /= dm;
 	dy /= dm;
@@ -227,13 +227,13 @@ bool grapplingHookUpdate(grapplingHook *ghk){
 			ghk->hooked = true;
 			ghk->goalLength = grapplingHookGetLength(ghk);
 			sfxPlay(sfxHookHit,1.f);
-			sfxLoop(atmosfxHookRope,0.f);
+			sfxLoop(sfxHookRope,0.f);
 			unsigned char b = worldGetB(ghk->ent->x,ghk->ent->y,ghk->ent->z);
 			if(b){
 				fxBlockBreak(ghk->ent->x,ghk->ent->y,ghk->ent->z,b);
 			}
 		}else if(!ghk->hooked && !ghk->returning){
-			sfxLoop(atmosfxHookRope,1.f);
+			sfxLoop(sfxHookRope,1.f);
 			if(grapplingHookGetLength(ghk) > 256.f){
 				grapplingHookReturnHook(ghk);
 			}

@@ -16,12 +16,18 @@ wolkenwelten-server: server/make.deps $(SERVER_OBJS)
 	$(CC) $(SERVER_OBJS) -o wolkenwelten-server $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 
 .deps: server/make.deps
-server/make.deps: common/src/tmp/cto.h server/src/tmp/objs.h server/src/tmp/mods_tmp.c
+server/make.deps: common/src/tmp/cto.h server/src/tmp/objs.h server/src/tmp/sfx.h server/src/tmp/mods_tmp.c server/src/tmp/sfx.h
 	$(CC) -MM $(SERVER_SRCS) $(CINCLUDES) $(SERVER_CINCLUDES) > server/make.deps
 
 ifneq ($(MAKECMDGOALS),clean)
 -include server/make.deps
 endif
+
+server/src/tmp/sfx.c: server/tools/sfxgen
+	mkdir -p server/src/tmp/
+	server/tools/sfxgen server/src/tmp/sfx client/sfx/
+server/src/tmp/sfx.h: server/src/tmp/sfx.c
+	@true
 
 server/src/tmp/objs.c: server/tools/objgen
 	mkdir -p server/src/tmp/

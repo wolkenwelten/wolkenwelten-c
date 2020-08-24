@@ -1,0 +1,25 @@
+#!/bin/sh
+
+C_FILE="$1.c"
+H_FILE="$1.h"
+shift
+
+echo "#include \"sfx.h\""                        > $C_FILE
+echo ""                                          >> $C_FILE
+
+echo "#pragma once"                               > $H_FILE
+echo "struct sfx;"                               >> $H_FILE
+echo "typedef struct sfx sfx;"                   >> $H_FILE
+echo ""                                          >> $H_FILE
+
+
+while (("$#")); do
+	for filename in $1*.aif; do
+		file=${filename##*/}
+		file=${file%.aif}
+		file=${file^}
+		echo "sfx *sfx$file;" >> $C_FILE
+		echo "extern sfx *sfx$file;" >> $H_FILE
+	done
+	shift
+done

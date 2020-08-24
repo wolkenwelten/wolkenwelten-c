@@ -1,28 +1,9 @@
 #include "sfx.h"
 #include "../misc/options.h"
-#include "../tmp/assets.h"
 
 #include <stdio.h>
 
 int sfxEnable = 0;
-
-sfx *sfxFalling;
-sfx *sfxHoho;
-sfx *sfxHoo;
-sfx *sfxImpact;
-sfx *sfxPhaser;
-sfx *sfxBomb;
-sfx *sfxTock;
-sfx *sfxPock;
-sfx *sfxStomp;
-sfx *sfxStep;
-sfx *sfxUngh;
-sfx *sfxYahoo;
-sfx *sfxHookFire;
-sfx *sfxHookHit;
-sfx *sfxHookReturned;
-sfx *atmosfxHookRope;
-sfx *atmosfxWind;
 
 sfx sfxList[32];
 int sfxCount=0;
@@ -30,47 +11,7 @@ int sfxCount=0;
 bgm bgmList[8];
 int bgmCount=0;
 
-void sfxInit(){
-	if(!sfxEnable){return;}
-
-	sfxFalling      = sfxNew(sfx_falling_aif_data,      sfx_falling_aif_len      );
-	sfxHoho         = sfxNew(sfx_hoho_aif_data,         sfx_hoho_aif_len         );
-	sfxHoo          = sfxNew(sfx_hoo_aif_data,          sfx_hoo_aif_len          );
-	sfxImpact       = sfxNew(sfx_impact_aif_data,       sfx_impact_aif_len       );
-	sfxPhaser       = sfxNew(sfx_phaser_aif_data,       sfx_phaser_aif_len       );
-	sfxBomb         = sfxNew(sfx_bomb_aif_data,         sfx_bomb_aif_len         );
-	sfxTock         = sfxNew(sfx_tock_aif_data,         sfx_tock_aif_len         );
-	sfxPock         = sfxNew(sfx_pock_aif_data,         sfx_pock_aif_len         );
-	sfxStomp        = sfxNew(sfx_stomp_aif_data,        sfx_stomp_aif_len        );
-	sfxStep         = sfxNew(sfx_step_aif_data,         sfx_step_aif_len         );
-	sfxUngh         = sfxNew(sfx_ungh_aif_data,         sfx_ungh_aif_len         );
-	sfxYahoo        = sfxNew(sfx_yahoo_aif_data,        sfx_yahoo_aif_len        );
-	sfxHookFire     = sfxNew(sfx_hookfire_aif_data,     sfx_hookfire_aif_len     );
-	sfxHookHit      = sfxNew(sfx_hookhit_aif_data,      sfx_hookhit_aif_len      );
-	sfxHookReturned = sfxNew(sfx_hookreturned_aif_data, sfx_hookreturned_aif_len );
-	atmosfxHookRope = sfxNew(sfx_hookrope_aif_data,     sfx_hookrope_aif_len     );
-	atmosfxWind     = sfxNew(sfx_wind_aif_data,         sfx_wind_aif_len         );
-}
-
-void sfxFreeAll(){
-	sfxFree(sfxFalling);
-	sfxFree(sfxHoho);
-	sfxFree(sfxHoo);
-	sfxFree(sfxImpact);
-	sfxFree(sfxPhaser);
-	sfxFree(sfxBomb);
-	sfxFree(sfxTock);
-	sfxFree(sfxPock);
-	sfxFree(sfxStomp);
-	sfxFree(sfxStep);
-	sfxFree(sfxUngh);
-	sfxFree(sfxYahoo);
-	sfxFree(sfxHookFire);
-	sfxFree(sfxHookHit);
-	sfxFree(sfxHookReturned);
-	sfxFree(atmosfxHookRope);
-	sfxFree(atmosfxWind);
-}
+#include "../tmp/sfx.h"
 
 bgm *bgmNew(unsigned char *data,size_t dataLen){
 	bgm *b = &bgmList[bgmCount++];

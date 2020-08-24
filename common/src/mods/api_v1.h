@@ -6,6 +6,8 @@
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 #include "../../../server/src/tmp/objs.h"
+#include "../../../server/src/tmp/sfx.h"
+
 
 void recipeAdd1I            (unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID, unsigned char nIngredAmount);
 void recipeAdd2I            (unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID1, unsigned char nIngredAmount1, unsigned short nIngredID2, unsigned char nIngredAmount2);
@@ -39,25 +41,6 @@ void    worldBoxSphere  (int x, int y, int z, int r, uint8_t block);
 uint8_t worldGetB       (int x, int y, int z);
 bool    worldSetB       (int x, int y, int z, uint8_t block);
 int     checkCollision  (int x, int y, int z);
-
-
-extern sfx *sfxFalling;
-extern sfx *sfxHoho;
-extern sfx *sfxHoo;
-extern sfx *sfxImpact;
-extern sfx *sfxPhaser;
-extern sfx *sfxBomb;
-extern sfx *sfxTock;
-extern sfx *sfxPock;
-extern sfx *sfxStomp;
-extern sfx *sfxStep;
-extern sfx *sfxUngh;
-extern sfx *sfxYahoo;
-extern sfx *sfxHookFire;
-extern sfx *sfxHookHit;
-extern sfx *sfxHookReturned;
-extern sfx *atmosfxHookRope;
-extern sfx *atmosfxWind;
 
 void sfxPlay(sfx *b, float volume);
 void sfxLoop(sfx *b, float volume);
