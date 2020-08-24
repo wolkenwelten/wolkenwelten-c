@@ -1,6 +1,5 @@
 (A) REMOVE GLEW
 (A) Do part of the beamblast calculatiosn clientside so the latency is not as noticeable
-(A) Remove blockCategory alltogether
 (A) Rework the GUI Code, it is trash!
 (A) Proper Character Models
 (A) MacOS Code signing
