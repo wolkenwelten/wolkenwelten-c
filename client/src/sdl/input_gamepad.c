@@ -26,7 +26,7 @@ float gamepadRightTrigger = 0.f;
 bool  gamepadButtons[16];
 
 bool gamepadSneak(){
-	return gamepadButtons[9];
+	return gamepadButtons[7];
 }
 bool gamepadPrimary(){
 	return (gamepadRightTrigger > 0.5f);
@@ -182,10 +182,8 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 		}
 	}
 	if(gamepadButtons[9]){
-		if(player->flags & CHAR_FALLING){
-			gamepadButtons[9] = false;
-			player->flags ^= CHAR_GLIDE;
-		}
+		gamepadButtons[9] = false;
+		player->flags ^= CHAR_GLIDE;
 	}
 	if(gamepadButtons[10]){
 		gamepadButtons[10] = false;
