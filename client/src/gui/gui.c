@@ -323,6 +323,18 @@ void drawActiveItem(){
 	meshDraw(aiMesh);
 }
 
+void drawActiveGlider(){
+	float matViewAI[16];
+	if(!(player->flags & CHAR_GLIDE)){return;}
+
+	shaderBind(sMesh);
+	matTranslation(matViewAI,0.f,player->yoff+0.9f,-0.65f);
+	matMulRotYX(matViewAI,0.f,player->pitch*-0.08f);
+	matMul(matViewAI, matViewAI, matProjection);
+	shaderMatrix(sMesh, matViewAI);
+	meshDraw(meshGlider);
+}
+
 
 void drawAmmunition(){
 	item *activeItem = &player->inventory[player->activeItem];
@@ -389,6 +401,7 @@ void drawHud(){
 
 void renderUI(){
 	drawActiveItem();
+	drawActiveGlider();
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
