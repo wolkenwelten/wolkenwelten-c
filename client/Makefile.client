@@ -50,12 +50,14 @@ client/src/tmp/mods_tmp.c: tools/modscg
 	mkdir -p server/src/tmp/
 	tools/modscg $(shell find common/src/mods/items -type f -name '*.c') > client/src/tmp/mods_tmp.c
 
+client/src/tmp/objs.c: $(MESHASSETS)
 client/src/tmp/objs.c: client/tools/objgen
 	mkdir -p client/src/tmp/
 	client/tools/objgen client/src/tmp/objs client/mesh/
 client/src/tmp/objs.h: client/src/tmp/objs.c
 	@true
 
+client/src/tmp/sfx.c: $(SFX_ASSETS)
 client/src/tmp/sfx.c: client/tools/sfxgen
 	mkdir -p client/src/tmp/
 	client/tools/sfxgen client/src/tmp/sfx client/sfx/

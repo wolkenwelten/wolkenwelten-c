@@ -6,6 +6,9 @@ SERVER_HDRS      := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
 SERVER_SRCS      := $(shell find server/src -type f -name '*.c') $(COMMON_SRCS)
 SERVER_OBJS      := ${SERVER_SRCS:.c=.o}
 
+SFX_ASSETS       := $(shell find client/sfx -type f -name '*')
+MESHASSETS       := $(shell find client/mesh -type f -name '*')
+
 $(SERVER_OBJS): CFLAGS    += $(SERVER_CFLAGS)
 $(SERVER_OBJS): CINCLUDES += $(SERVER_CINCLUDES)
 
@@ -23,12 +26,14 @@ ifneq ($(MAKECMDGOALS),clean)
 -include server/make.deps
 endif
 
+server/src/tmp/sfx.c: $(SFX_ASSETS)
 server/src/tmp/sfx.c: server/tools/sfxgen
 	mkdir -p server/src/tmp/
 	server/tools/sfxgen server/src/tmp/sfx client/sfx/
 server/src/tmp/sfx.h: server/src/tmp/sfx.c
 	@true
 
+server/src/tmp/objs.c: $(MESHASSETS)
 server/src/tmp/objs.c: server/tools/objgen
 	mkdir -p server/src/tmp/
 	server/tools/objgen server/src/tmp/objs client/mesh/
