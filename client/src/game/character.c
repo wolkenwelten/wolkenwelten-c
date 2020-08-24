@@ -214,10 +214,10 @@ void characterUpdateAnimation(character *c){
 		c->animationIndex     = 0;
 	}
 	if(c->flags & CHAR_GLIDE){
-		c->gliderFade += 0.05f;
+		c->gliderFade += 0.01f;
 		if(c->gliderFade > 1.f){c->gliderFade = 1.f;}
 	}else{
-		c->gliderFade -= 0.05f;
+		c->gliderFade -= 0.01f;
 		if(c->gliderFade < 0.f){c->gliderFade = 0.f;}
 	}
 }
@@ -705,11 +705,11 @@ void characterShadesDraw(character *c){
 
 void characterGliderDraw(character *c){
 	float matMVP[16];
-	if(!(c->flags & CHAR_GLIDE)){return;}
+	if(c->gliderFade < 0.01f){return;}
 
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
-	matMulRotYX(matMVP,-c->yaw,-c->pitch);
+	matMulRotYX(matMVP,-c->yaw,-(c->pitch-((1.f - c->gliderFade)*90.f)));
 	matMulTrans(matMVP,0.f,0.4f,-0.2f);
 	matMulScale(matMVP,c->gliderFade, c->gliderFade, c->gliderFade);
 	matMul(matMVP,matMVP,matProjection);
