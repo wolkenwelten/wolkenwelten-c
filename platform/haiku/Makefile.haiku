@@ -22,7 +22,7 @@ releases/haiku/wolkenwelten/wolkenwelten: LIBS      += $(CLIENT_LIBS)
 releases/haiku/wolkenwelten/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
 releases/haiku/wolkenwelten/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
 releases/haiku/wolkenwelten/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
-releases/haiku/wolkenwelten/wolkenwelten: client/src/tmp/cto.c client/src/tmp/cto.h
+releases/haiku/wolkenwelten/wolkenwelten: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p releases/haiku/wolkenwelten
 	$(CC) $(CLIENT_SRCS) -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 	strip -gxX $@

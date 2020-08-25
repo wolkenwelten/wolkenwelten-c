@@ -26,7 +26,7 @@ releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: LIBS      += $(CLIE
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
-releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: client/src/tmp/cto.c client/src/tmp/cto.h
+releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p releases/macos/wolkenwelten.app/Contents/MacOS
 	$(CC) $(CLIENT_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WARNINGS) $(LIBS)
 	strip -SxX $@
@@ -37,7 +37,7 @@ releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: CFLAGS    += $(SERV
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: CINCLUDES += $(SERVER_CINCLUDES)
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: LIBS      += $(SERVER_LIBS)
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
-releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten-server: client/src/tmp/cto.c client/src/tmp/cto.h
+releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten-server: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p releases/macos/wolkenwelten.app/Contents/MacOS
 	$(CC) $(SERVER_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WARNINGS) $(LIBS)
 	strip -SxX $@

@@ -18,29 +18,18 @@ gmon.out
 
 /platform/wasm/emsdk
 
-# Arch makepkg files
-platform/linux/arch_pkgs/glew/*
-!platform/linux/arch_pkgs/glew/PKGBUILD
-platform/linux/arch_pkgs/libjpeg-turbo/*
-!platform/linux/arch_pkgs/libjpeg-turbo/PKGBUILD
-platform/linux/arch_pkgs/libpng/*
-!platform/linux/arch_pkgs/libpng/PKGBUILD
-platform/linux/arch_pkgs/sdl2/*
-!platform/linux/arch_pkgs/sdl2/PKGBUILD
-platform/linux/arch_pkgs/sdl2_image/*
-!platform/linux/arch_pkgs/sdl2_image/PKGBUILD
-platform/linux/arch_pkgs/sdl2_mixer/*
-!platform/linux/arch_pkgs/sdl2_mixer/PKGBUILD
-platform/linux/arch_pkgs/zlib/*
-!platform/linux/arch_pkgs/zlib/PKGBUILD
-
 # msys2 makepkg files
-platform/win/msys2_pkgs/mingw-w64-SDL2_image/*
-!platform/win/msys2_pkgs/mingw-w64-SDL2_image/PKGBUILD
 platform/win/msys2_pkgs/mingw-w64-SDL2_mixer/*
 !platform/win/msys2_pkgs/mingw-w64-SDL2_mixer/PKGBUILD
 !platform/win/msys2_pkgs/mingw-w64-SDL2_mixer/SDL2_mixer-2.0.1-find_lib.mingw.patch
 !platform/win/msys2_pkgs/mingw-w64-SDL2_mixer/SDL2_mixer-2.0.1-libtool_windres.mingw.patch
+
+platform/win/msys2_pkgs/mingw-w64-SDL2/*
+!platform/win/msys2_pkgs/mingw-w64-SDL2/PKGBUILD
+!platform/win/msys2_pkgs/mingw-w64-SDL2/001-fix-cmake-target-relocation.patch
+!platform/win/msys2_pkgs/mingw-w64-SDL2/002-fix-link-order.patch
+!platform/win/msys2_pkgs/mingw-w64-SDL2/003-fix-static-library-name.patch
+!platform/win/msys2_pkgs/mingw-w64-SDL2/004-dont-duplicate-libs-in-libs-private.patch
 
 
 # Executables/Object files
