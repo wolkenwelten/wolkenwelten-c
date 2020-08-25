@@ -8,6 +8,7 @@
 #include "../../../common/src/network/messages.h"
 
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 typedef struct {
@@ -81,5 +82,4 @@ void itemDropUpdateFromServer(packet *p){
 	itemDrops[index].ent->vx = p->val.f[3];
 	itemDrops[index].ent->vy = p->val.f[4];
 	itemDrops[index].ent->vz = p->val.f[5];
-
 }

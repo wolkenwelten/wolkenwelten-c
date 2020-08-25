@@ -3,6 +3,7 @@
 #include "../mods/api_v1.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 extern entity entityList[1<<14];
@@ -10,19 +11,7 @@ extern int entityCount;
 extern entity *entityFirstFree;
 
 void entityReset(entity *e){
-	e->x    = e->y     = e->z    = 0.f;
-	e->vx   = e->vy    = e->vz   = 0.f;
-	e->yaw  = e->pitch = e->roll = 0.f;
-	e->yoff = 0.f;
-
-	e->falling     = false;
-	e->noClip      = false;
-	e->updated     = false;
-	e->collide     = false;
-	e->noRepulsion = false;
-
-	e->nextFree    = NULL;
-	e->eMesh       = NULL;
+	memset(e,0,sizeof(entity));
 }
 
 entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll){
@@ -31,18 +20,15 @@ entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll
 		e = &entityList[entityCount++];
 	}else{
 		e = entityFirstFree;
-		entityFirstFree = (entity *)e->nextFree;
+		entityFirstFree = e->nextFree;
 	}
-
 	entityReset(e);
-	e->nextFree = NULL;
-	e->x        = x;
-	e->y        = y;
-	e->z        = z;
-	e->yaw      = yaw;
-	e->pitch    = pitch;
-	e->roll     = roll;
-
+	e->x     = x;
+	e->y     = y;
+	e->z     = z;
+	e->yaw   = yaw;
+	e->pitch = pitch;
+	e->roll  = roll;
 	return e;
 }
 
@@ -144,11 +130,9 @@ int entityUpdate(entity *e){
 void entityUpdateAll(){
 	for(int i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL){ continue; }
-		if(entityList[i].updated){
-			entityList[i].updated = false;
-			continue;
+		if(!entityList[i].updated){
+			entityUpdate(&entityList[i]);
 		}
-		entityUpdate(&entityList[i]);
 		entityList[i].updated = false;
 	}
 }
