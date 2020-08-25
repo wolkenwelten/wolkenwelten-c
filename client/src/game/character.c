@@ -191,7 +191,7 @@ void characterUpdateHook(character *c){
 	if(c == player){
 		sfxLoop(sfxHookRope,1.f);
 	}
-		
+
 	if(grapplingHookGetHooked(c->hook)){
 		float gl = grapplingHookGetGoalLength(c->hook);
 		if((c->gvy > 0) && (gl > 1.f)){
@@ -214,10 +214,10 @@ void characterUpdateAnimation(character *c){
 		c->animationIndex     = 0;
 	}
 	if(c->flags & CHAR_GLIDE){
-		c->gliderFade += 0.01f;
+		c->gliderFade += 0.03f;
 		if(c->gliderFade > 1.f){c->gliderFade = 1.f;}
 	}else{
-		c->gliderFade -= 0.01f;
+		c->gliderFade -= 0.03f;
 		if(c->gliderFade < 0.f){c->gliderFade = 0.f;}
 	}
 }
