@@ -21,7 +21,6 @@ int shotgunblasterGetStackSize(item *cItem){
 }
 
 bool shotgunblasterPrimaryAction(item *cItem, character *cChar, int to){
-	(void)cItem;
 	(void)to;
 
 	if(!characterTryToShoot(cChar,cItem,96,30)){return false;}
@@ -30,7 +29,6 @@ bool shotgunblasterPrimaryAction(item *cItem, character *cChar, int to){
 }
 
 bool shotgunblasterSecondaryAction(item *cItem,character *cChar, int to){
-	(void)cItem;
 	(void)to;
 
 	if(!characterTryToShoot(cChar,cItem,96,30)){return false;}

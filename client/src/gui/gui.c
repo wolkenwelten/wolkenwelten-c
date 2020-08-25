@@ -184,6 +184,7 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"Active Part.: %s\n", getHumanReadableSize(particleCount));
 	textMeshPrintf(guim,"Player Layer: %2i\n",((int)player->y/CHUNGUS_SIZE));
 	textMeshPrintf(guim,"Entities    : %2i\n",entityCount);
+	textMeshPrintf(guim,"Itemdrops   : %i\n",itemDropCount);
 	textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
 	textMeshPrintf(guim,"ActiveChunks: %s\n",getHumanReadableSize(chunkGetActive()));
 	textMeshPrintf(guim,"FreeChunks  : %2i\n",chunkGetFree());
@@ -193,7 +194,6 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"Uncompressed: %sB\n",getHumanReadableSize(recvUncompressedBytesCurrentSession));
 	textMeshPrintf(guim,"Comp. Ratio : %2.2fX\n",(float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession);
 	textMeshPrintf(guim,"Canvas Size : %ix%i\n",screenWidth,screenHeight);
-	textMeshPrintf(guim,"Itemdrops   : %i\n",itemDropCount);
 }
 
 void drawItemBar(){

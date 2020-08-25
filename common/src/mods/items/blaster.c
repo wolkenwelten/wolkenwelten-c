@@ -21,7 +21,6 @@ int blasterGetStackSize(item *cItem){
 }
 
 bool blasterPrimaryAction(item *cItem, character *cChar, int to){
-	(void)cItem;
 	(void)to;
 
 	if(!characterTryToShoot(cChar,cItem,80,3)){return false;}
@@ -30,7 +29,6 @@ bool blasterPrimaryAction(item *cItem, character *cChar, int to){
 }
 
 bool blasterSecondaryAction(item *cItem, character *cChar, int to){
-	(void)cItem;
 	(void)to;
 
 	if(!characterTryToShoot(cChar,cItem,200,3)){return false;}
