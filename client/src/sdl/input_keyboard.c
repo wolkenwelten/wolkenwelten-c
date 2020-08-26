@@ -87,12 +87,12 @@ void keyboardEventHandler(const SDL_Event *e){
 				case SDLK_r:
 					keysPressed[7] = 0;
 				break;
-				
+
 				#ifndef __EMSCRIPTEN__
 				case SDLK_F5:
 					textureReload();
 				break;
-				
+
 				case SDLK_F11:
 					setFullscreen(!optionFullscreen);
 				break;

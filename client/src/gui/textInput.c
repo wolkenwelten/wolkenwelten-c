@@ -1,5 +1,6 @@
 #define _DEFAULT_SOURCE
 #include "textInput.h"
+#include "../sdl/input_keyboard.h"
 #include "../sdl/sdl.h"
 #include "../gfx/textMesh.h"
 
@@ -88,7 +89,16 @@ void textInputAppend(const char *s){
 	textInputBuffer[textInputBufferLen] = 0;
 }
 
+void textInputPaste(){
+	if(!SDL_HasClipboardText()){return;}
+	char *text = SDL_GetClipboardText();
+	if(text == NULL){return;}
+	textInputAppend(text);
+	SDL_free(text);
+}
+
 bool textInputEvent(const SDL_Event *e){
+	SDL_Keymod mod;
 	if(!textInputActive){return false;}
 
 	switch(e->type){
@@ -124,8 +134,23 @@ bool textInputEvent(const SDL_Event *e){
 				++textInputCursorPos;
 			}
 		break;
+
+		case SDLK_INSERT:
+			textInputPaste();
+			return true;
+		break;
+
+		case SDLK_v:
+			mod = SDL_GetModState();
+			#ifdef __APPLE__
+			if(mod & KMOD_GUI){textInputPaste(); return true;}
+			#elif __HAIKU__
+			if(mod & KMOD_ALT){textInputPaste(); return true;}
+			#else
+			if(mod & KMOD_CTRL){textInputPaste(); return true;}
+			#endif
+		break;
 		}
-	break;
 	}
 	return false;
 }
