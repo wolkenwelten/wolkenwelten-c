@@ -50,7 +50,7 @@ void itemDropDel(int d){
 
 void itemDropUpdate(){
 	for(int i=0;i<itemDropCount;i++){
-		int aniStep = ++itemDrops[i].aniStep;
+		float aniStep = ++itemDrops[i].aniStep;
 		if(itemDrops[i].ent == NULL){continue;}
 		itemDrops[i].ent->yaw = aniStep / 4.f;
 		itemDrops[i].ent->pitch = cosf(aniStep/ 96.f)*24;

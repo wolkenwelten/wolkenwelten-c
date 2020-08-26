@@ -21,14 +21,18 @@ entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll
 	}else{
 		e = entityFirstFree;
 		entityFirstFree = e->nextFree;
+		if(entityFirstFree == e){
+			entityFirstFree = NULL;
+		}
 	}
 	entityReset(e);
-	e->x     = x;
-	e->y     = y;
-	e->z     = z;
-	e->yaw   = yaw;
-	e->pitch = pitch;
-	e->roll  = roll;
+	e->x        = x;
+	e->y        = y;
+	e->z        = z;
+	e->yaw      = yaw;
+	e->pitch    = pitch;
+	e->roll     = roll;
+	e->nextFree = NULL;
 	return e;
 }
 
@@ -36,6 +40,9 @@ void entityFree(entity *e){
 	if(e == NULL){return;}
 	e->nextFree = entityFirstFree;
 	entityFirstFree = e;
+	if(e->nextFree == NULL){
+		e->nextFree = e;
+	}
 }
 
 uint32_t entityCollision(float cx, float cy, float cz){
