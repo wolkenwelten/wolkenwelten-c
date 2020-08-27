@@ -26,6 +26,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef __APPLE__
+
 #include "gl3w.h"
 #include <stdlib.h>
 
@@ -818,3 +820,5 @@ static void load_procs(GL3WGetProcAddressProc proc)
 	for (i = 0; i < ARRAY_SIZE(proc_names); i++)
 		gl3wProcs.ptr[i] = proc(proc_names[i]);
 }
+
+#endif
