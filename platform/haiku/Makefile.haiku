@@ -8,21 +8,3 @@ SERVER_LIBS := -lnetwork -lm
 
 .PHONY: all
 all: wolkenwelten wolkenwelten-server
-
-.PHONY: release.haiku
-release: release.haiku
-
-release.haiku: releases/haiku/wolkenwelten-haiku.tar.xz
-releases/haiku/wolkenwelten-haiku.tar.xz: releases/haiku/wolkenwelten
-	cd releases/haiku/ && tar -cJf wolkenwelten-haiku.tar.xz wolkenwelten/
-
-releases/haiku/wolkenwelten/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
-releases/haiku/wolkenwelten/wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
-releases/haiku/wolkenwelten/wolkenwelten: LIBS      += $(CLIENT_LIBS)
-releases/haiku/wolkenwelten/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
-releases/haiku/wolkenwelten/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
-releases/haiku/wolkenwelten/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
-releases/haiku/wolkenwelten/wolkenwelten: common/src/tmp/cto.c common/src/tmp/cto.h
-	mkdir -p releases/haiku/wolkenwelten
-	$(CC) $(CLIENT_SRCS) -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
-	strip -gxX $@
