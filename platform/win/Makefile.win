@@ -28,16 +28,22 @@ releases/win/wolkenwelten/wolkenwelten.exe: CINCLUDES += $(CLIENT_CINCLUDES)
 releases/win/wolkenwelten/wolkenwelten.exe: $(CLIENT_SRCS) $(CLIENT_HDRS)
 releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/assets.c client/src/tmp/assets.h
 releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
+releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/mods_tmp.c client/src/tmp/mods_tmp.h
+releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/objs.c client/src/tmp/objs.h
+releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/sfx.c client/src/tmp/sfx.h
 releases/win/wolkenwelten/wolkenwelten.exe: common/src/tmp/cto.c common/src/tmp/cto.h
 releases/win/wolkenwelten/wolkenwelten.exe: releases/win/wolkenwelten.res
 	mkdir -p releases/win/wolkenwelten/
-	$(CC) $(CLIENT_SRCS) $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(STATICLIBS) releases/win/wolkenwelten.res -o $@ 
+	$(CC) $(CLIENT_SRCS) $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(STATICLIBS) releases/win/wolkenwelten.res -o $@
 	strip -gxX $@
 
 releases/win/wolkenwelten/wolkenwelten-server.exe: CFLAGS    += $(SERVER_CFLAGS)
 releases/win/wolkenwelten/wolkenwelten-server.exe: CINCLUDES += $(SERVER_CINCLUDES)
 releases/win/wolkenwelten/wolkenwelten-server.exe: LIBS      += $(SERVER_LIBS)
 releases/win/wolkenwelten/wolkenwelten-server.exe: $(SERVER_SRCS) $(SERVER_HDRS)
+releases/win/wolkenwelten/wolkenwelten-server.exe: server/src/tmp/sfx.c server/src/tmp/sfx.h
+releases/win/wolkenwelten/wolkenwelten-server.exe: server/src/tmp/objs.c server/src/tmp/objs.h
+releases/win/wolkenwelten/wolkenwelten-server.exe: server/src/tmp/mods_tmp.c server/src/tmp/mods_tmp.h
 releases/win/wolkenwelten/wolkenwelten-server.exe: common/src/tmp/cto.c common/src/tmp/cto.h
 releases/win/wolkenwelten/wolkenwelten-server.exe: releases/win/wolkenwelten-server.res
 	mkdir -p releases/win/wolkenwelten/
