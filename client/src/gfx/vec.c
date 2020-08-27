@@ -1,4 +1,5 @@
 #include "vec.h"
+#include "../../../common/src/common.h"
 
 #include <math.h>
 #include <string.h>
@@ -12,40 +13,40 @@ vec vecZero(){
 	return ret;
 }
 
-vec   vecAdd (const vec a, const vec b){
+vec vecAdd (const vec a, const vec b){
 	vec ret = {{{a.x+b.x,a.y+b.y,a.z+b.z}}};
 	return ret;
 }
-vec   vecAddS(const vec a, const float b){
+vec vecAddS(const vec a, const float b){
 	vec ret = {{{a.x+b,a.y+b,a.z+b}}};
 	return ret;
 }
 
-vec   vecSub (const vec a, const vec b){
+vec vecSub (const vec a, const vec b){
 	vec ret = {{{a.x-b.x,a.y-b.y,a.z-b.z}}};
-	return ret;	
+	return ret;
 }
-vec   vecSubS(const vec a, const float b){
+vec vecSubS(const vec a, const float b){
 	vec ret = {{{a.x-b,a.y-b,a.z-b}}};
-	return ret;	
+	return ret;
 }
 
-vec   vecMul (const vec a, const vec b){
+vec vecMul (const vec a, const vec b){
 	vec ret = {{{a.x*b.x,a.y*b.y,a.z*b.z}}};
-	return ret;		
+	return ret;
 }
-vec   vecMulS(const vec a, const float b){
+vec vecMulS(const vec a, const float b){
 	vec ret = {{{a.x*b,a.y*b,a.z*b}}};
-	return ret;		
+	return ret;
 }
 
-vec   vecDiv (const vec a, const vec b){
+vec vecDiv (const vec a, const vec b){
 	vec ret = {{{a.x/b.x,a.y/b.y,a.z/b.z}}};
-	return ret;		
+	return ret;
 }
-vec   vecDivS(const vec a, const float b){
+vec vecDivS(const vec a, const float b){
 	vec ret = {{{a.x/b,a.y/b,a.z/b}}};
-	return ret;		
+	return ret;
 }
 
 float vecDot (const vec a, const vec b){
@@ -61,11 +62,11 @@ float vecMag (const vec a){
 	}
 }
 
-vec   vecNorm(const vec a){
+vec vecNorm(const vec a){
 	vec ret = a;
 	float mag = vecMag(a);
-	if (mag > 0) { 
-		float invLen = 1 / mag; 
+	if (mag > 0) {
+		float invLen = 1 / mag;
 		ret.x *= invLen;
 		ret.y *= invLen;
 		ret.z *= invLen;
@@ -73,24 +74,41 @@ vec   vecNorm(const vec a){
 	return ret;
 }
 
-vec   vecSqrt(const vec a){
+vec vecSqrt(const vec a){
 	vec ret = {{{sqrtf(a.x),sqrtf(a.y),sqrtf(a.z)}}};
 	return ret;
 }
 
-vec   vecCross(const vec a, const vec b){
+vec vecCross(const vec a, const vec b){
 	vec ret;
 	ret.x =   a.y * b.z - a.z * b.y;
 	ret.y = -(a.x * b.z - a.z * b.x);
-	ret.z =   a.x * b.y - a.y * b.x;	
+	ret.z =   a.x * b.y - a.y * b.x;
 	return ret;
 }
 
-vec  vecRotate(const vec a, const vec b, const float rad){
+vec vecRotate(const vec a, const vec b, const float rad){
 	float cos_theta = cosf(rad);
 	float sin_theta = sinf(rad);
 	vec ret = vecMulS(vecMulS(b,vecDot(a,b)),1-cos_theta);
 	ret = vecAdd(ret,vecMulS(vecCross(b,a),sin_theta));
 	ret = vecAdd(ret,vecMulS(a,cos_theta));
+	return ret;
+}
+
+//TODO: y/pitch is not exact
+vec vecVecToDeg(const vec a){
+	vec ret;
+	ret.x =   atan2f( a.z,a.x)*180/PI + 90.f;
+	ret.y =   atan2f(-a.y,a.z)*180/PI;
+	ret.z = 0.f;
+	return ret;
+}
+
+vec vecDegToVec(const vec a){
+	vec ret;
+	ret.x = cosf((a.x-90.f)*PI180) * cosf((-a.y)*PI180);
+	ret.y = sinf((-a.y)*PI180);
+	ret.z = sinf((a.x-90.f)*PI180) * cosf((-a.y)*PI180);
 	return ret;
 }
