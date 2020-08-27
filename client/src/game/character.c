@@ -8,6 +8,7 @@
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
+#include "../gfx/vec.h"
 #include "../tmp/objs.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
@@ -433,30 +434,35 @@ void characterDie(character *c){
 	setOverlayColor(0xFF000000,0);
 }
 
-void updateGlideNew(character *c){
+void updateGlideWeird(character *c){
 	float vm = fabsf(c->vx);
 	if(fabsf(c->vy) > vm){vm = fabsf(c->vy);}
 	if(fabsf(c->vz) > vm){vm = fabsf(c->vz);}
 	float nx = c->vx / vm;
 	float ny = c->vy / vm;
 	float nz = c->vz / vm;
-
+	
 	float fx = cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180);
 	float fy = sin((-c->pitch)*PI/180);
 	float fz = sin((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180);
 	float  v = ((fabsf(fx-nx)+fabsf(fy-ny)+fabsf(fz-nz))/6.f)*0.006f;
-
+	
 	c->vx += cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
 	c->vy += sin((-c->pitch)*PI/180)*v;
 	c->vz += sin((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
-
+	
 	c->vx -= c->vx*0.001f;
 	c->vy -= c->vy*0.001f;
 	c->vz -= c->vz*0.001f;
 }
 
 void updateGlide(character *c){
-	float v = (fabsf(c->vy)*((90.f-fabsf(c->pitch))/90.f))*0.03f;
+	//vec dir = vecZero();
+	//dir.x = cosf((c->yaw-90.f)*PI/180) * cosf((-c->pitch)*PI/180);
+	//dir.y = sinf((-c->pitch)*PI/180);
+	//dir.z = sinf((c->yaw-90.f)*PI/180) * cosf((-c->pitch)*PI/180);
+	
+	float v = (fabsf(c->vy)*((90.f-fabsf(c->pitch))/90.f))*0.01f;
 
 	if(c->vy > 0.f){
 		c->vy -= v;
@@ -464,9 +470,9 @@ void updateGlide(character *c){
 		c->vy += v;
 	}
 
-	c->vx += cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
-	c->vy += sin((-c->pitch)*PI/180)*v;
-	c->vz += sin((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
+	c->vx += cosf((c->yaw-90.f)*PI/180) * cosf((-c->pitch)*PI/180)*v;
+	c->vy += sinf((-c->pitch)*PI/180)*v;
+	c->vz += sinf((c->yaw-90.f)*PI/180) * cosf((-c->pitch)*PI/180)*v;
 
 	c->vx -= c->vx*0.001f;
 	c->vy -= c->vy*0.001f;
