@@ -190,7 +190,11 @@ void characterUpdateHook(character *c){
 		return;
 	}
 	if(c == player){
-		sfxLoop(sfxHookRope,1.f);
+		if(c->hook->hooked){
+			sfxLoop(sfxHookRope,0.f);
+		}else{
+			sfxLoop(sfxHookRope,1.f);
+		}
 	}
 
 	if(grapplingHookGetHooked(c->hook)){
