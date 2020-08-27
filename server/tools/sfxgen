@@ -8,8 +8,7 @@ echo "#include \"sfx.h\""                        > $C_FILE
 echo ""                                          >> $C_FILE
 
 echo "#pragma once"                               > $H_FILE
-echo "struct sfx;"                               >> $H_FILE
-echo "typedef struct sfx sfx;"                   >> $H_FILE
+echo "#include \"../../../common/src/common.h\"" >> $H_FILE
 echo ""                                          >> $H_FILE
 
 
