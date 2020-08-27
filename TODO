@@ -4,7 +4,6 @@
 (A) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
 (A) Port to newer Emscripten version
 
-(B) REMOVE GLEW
 (B) Rework the GUI Code, it is trash!
 (B) Proper Character Models
 (B) Persistent World / Savegames
