@@ -1,7 +1,7 @@
 CC = gcc
 
-CLIENT_CINCLUDES := $(shell pkg-config --cflags glew) $(shell sdl2-config --cflags)
-CLIENT_LIBS := -lnetwork $(shell sdl2-config --cflags) -lGL -lpthread -lSDL2 -lSDL2_mixer -lGLEW
+CLIENT_CINCLUDES := $(shell sdl2-config --cflags)
+CLIENT_LIBS := -lnetwork $(shell sdl2-config --cflags) -lGL -lpthread -lSDL2 -lSDL2_mixer
 
 SERVER_LIBS := -lnetwork -lm
 

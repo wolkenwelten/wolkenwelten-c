@@ -1,10 +1,10 @@
 CC               := gcc
 
-CLIENT_CINCLUDES := $(shell pkg-config --cflags glew) $(shell sdl2-config --cflags) -DGLEW_STATIC
-CLIENT_LIBS      := $(shell sdl2-config --cflags) -lGL -lpthread -ldl -lSDL2 -lSDL2_mixer -lGLEW
+CLIENT_CINCLUDES := $(shell sdl2-config --cflags)
+CLIENT_LIBS      := $(shell sdl2-config --cflags) -lGL -lpthread -ldl -lSDL2 -lSDL2_mixer
 
 DYNLIBS          := $(shell sdl2-config --cflags) -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer
-STATICLIBS       := /usr/lib64/libGLEW.a
+STATICLIBS       := 
 
 WEBEXCLUDE       += --exclude=releases/linux/wolkenwelten
 

@@ -13,7 +13,7 @@
 
 #include <stdlib.h>
 #include <math.h>
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 
 entity entityList[1<<14];
 int entityCount = 0;

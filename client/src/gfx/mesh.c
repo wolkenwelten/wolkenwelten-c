@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 
 vertex meshBuffer[16384];
 mesh meshList[1024];

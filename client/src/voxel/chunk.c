@@ -2,7 +2,7 @@
 
 #include "../game/blockType.h"
 #include "../gfx/gfx.h"
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 #include "../gfx/shader.h"
 #include "../../../common/src/misc/misc.h"
 

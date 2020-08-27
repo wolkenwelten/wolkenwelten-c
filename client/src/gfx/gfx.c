@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 
 float matProjection[16], matView[16];
 
@@ -45,7 +45,7 @@ GLenum glCheckError_(const char *file, int line){
 #define glCheckError() glCheckError_(__FILE__, __LINE__)
 
 void initGL(){
-	INITGLEW();
+	INITGLEXT();
 	glClearColor( 0.00f, 0.05f, 0.2f, 1.f );
 	glViewport(0,0,screenWidth,screenHeight);
 

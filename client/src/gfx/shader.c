@@ -1,5 +1,5 @@
 #include "../gfx/shader.h"
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 #include "../tmp/assets.h"
 
 #include <stdio.h>

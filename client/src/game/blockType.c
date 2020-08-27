@@ -3,7 +3,7 @@
 #include "../../../common/src/misc/misc.h"
 #include "../gfx/mesh.h"
 #include "../gfx/texture.h"
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 
 
 void blockTypeGenMeshes(){

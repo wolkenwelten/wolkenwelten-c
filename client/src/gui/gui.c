@@ -10,7 +10,7 @@
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../sdl/sdl.h"
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 #include "../gfx/mesh.h"
 #include "../gfx/gfx.h"
 #include "../gfx/particle.h"

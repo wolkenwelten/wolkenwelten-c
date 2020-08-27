@@ -9,7 +9,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 
 char stringBuffer[8192];
 textMesh textMeshList[8];

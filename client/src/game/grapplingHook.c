@@ -17,7 +17,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 
 grapplingHook grapplingHookList[128];
 int grapplingHookCount = 0;

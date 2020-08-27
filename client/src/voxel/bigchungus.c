@@ -4,7 +4,7 @@
 #include "../game/entity.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 #include "../gfx/mat.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"

@@ -4,7 +4,7 @@
 #include "../../../common/src/misc/misc.h"
 #include "../tmp/assets.h"
 
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 #include "../gfx/lodepng.h"
 #include <stdio.h>
 #include <stdlib.h>

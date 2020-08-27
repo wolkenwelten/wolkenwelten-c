@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 
 #pragma pack(push, 1)
 typedef struct glParticle {

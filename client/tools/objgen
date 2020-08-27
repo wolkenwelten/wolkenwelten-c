@@ -15,7 +15,7 @@ echo "#include \"../tmp/assets.h\""              >> $C_FILE
 echo "#include \"../tmp/meshassets.h\""          >> $C_FILE
 echo "#include \"../gfx/texture.h\""             >> $C_FILE
 echo "#include \"../gfx/mesh.h\""                >> $C_FILE
-echo "#include \"../gfx/glew.h\""                >> $C_FILE
+echo "#include \"../gfx/gl.h\""                  >> $C_FILE
 echo ""                                          >> $C_FILE
 
 meshs=""

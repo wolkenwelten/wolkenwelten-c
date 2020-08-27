@@ -1,14 +1,14 @@
 CC               := /mingw64/bin/gcc
 
-CLIENT_CFLAGS    := -DGLEW_NO_GLU -DGLEW_STATIC -DSDL_SOUND -mwindows -Wl,-subsystem,windows
-CLIENT_CINCLUDES := $(shell pkg-config --cflags sdl2 sdl2_mixer glew)
+CLIENT_CFLAGS    := -DSDL_SOUND -mwindows -Wl,-subsystem,windows
+CLIENT_CINCLUDES := $(shell pkg-config --cflags sdl2 sdl2_mixer)
 
 SERVER_LIBS      := -lmingw32 -static-libgcc -lws2_32 -luser32
 SERVER_CFLAGS    :=
 
 WINLIBS          := -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -lgdi32 -lopengl32 -lshlwapi -lsetupapi -lws2_32
-STATICLIBS       := -static-libgcc -static -lmingw32 -lm -lstdc++ -lpthread -lglew32 -lopengl32 -lSDL2main -lSDL2 -lSDL2_mixer $(WINLIBS)
-CLIENT_LIBS      := $(WINLIBS) $(shell pkg-config --cflags sdl2 sdl2_mixer glew) -lglew32 -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer
+STATICLIBS       := -static-libgcc -static -lmingw32 -lm -lstdc++ -lpthread -lopengl32 -lSDL2main -lSDL2 -lSDL2_mixer $(WINLIBS)
+CLIENT_LIBS      := $(WINLIBS) $(shell pkg-config --cflags sdl2 sdl2_mixer) -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer
 
 WEBEXCLUDE       += --exclude=releases/win/wolkenwelten/ --exclude=releases/win/*.res
 

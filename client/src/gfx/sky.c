@@ -1,6 +1,6 @@
 #include "sky.h"
 
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 #include "../gfx/mat.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"

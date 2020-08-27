@@ -15,7 +15,7 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include "../gfx/glew.h"
+#include "../gfx/gl.h"
 
 typedef struct {
 	int x,y,z;
