@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
+
 VERSION=`git describe --abbrev=0 --tags`
 COMMIT=`git rev-parse HEAD | tr '[:lower:]' '[:upper:]'`
 BUILDDATE=`date "+%F %k:%M"`

@@ -469,7 +469,7 @@ void *serverFindCompressibleStart(int c, int *len){
 	uint8_t *t = NULL;
 	uint8_t *ret = NULL;
 	*len = 0;
-	for(t=clients[c].sendBuf;(t-clients[c].sendBuf) < clients[c].sendBufLen;t+=4+alignedLen(packetLen((packet *)t))){
+	for(t=clients[c].sendBuf;(t-clients[c].sendBuf) < (int)clients[c].sendBufLen;t+=4+alignedLen(packetLen((packet *)t))){
 		if(packetType((packet *)t) != 0xFF){
 			ret = t;
 			break;

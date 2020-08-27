@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 C_FILE="$1.c"
 H_FILE="$1.h"
