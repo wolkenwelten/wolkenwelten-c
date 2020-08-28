@@ -5,48 +5,41 @@
 #include <string.h>
 
 vec vecNew (float x, float y, float z){
-	vec ret = {{{ x,y,z }}};
-	return ret;
+	return (vec){{{ x,y,z }}};
 }
 vec vecZero(){
-	vec ret = {{{0.f,0.f,0.f}}};
-	return ret;
+	return (vec){{{0.f,0.f,0.f}}};
+}
+vec vecInvert(const vec a){
+	return (vec){{{-a.x,-a.y,-a.z}}};
 }
 
 vec vecAdd (const vec a, const vec b){
-	vec ret = {{{a.x+b.x,a.y+b.y,a.z+b.z}}};
-	return ret;
+	return (vec){{{a.x+b.x,a.y+b.y,a.z+b.z}}};
 }
 vec vecAddS(const vec a, const float b){
-	vec ret = {{{a.x+b,a.y+b,a.z+b}}};
-	return ret;
+	return (vec){{{a.x+b,a.y+b,a.z+b}}};
 }
 
 vec vecSub (const vec a, const vec b){
-	vec ret = {{{a.x-b.x,a.y-b.y,a.z-b.z}}};
-	return ret;
+	return (vec){{{a.x-b.x,a.y-b.y,a.z-b.z}}};
 }
 vec vecSubS(const vec a, const float b){
-	vec ret = {{{a.x-b,a.y-b,a.z-b}}};
-	return ret;
+	return (vec){{{a.x-b,a.y-b,a.z-b}}};
 }
 
 vec vecMul (const vec a, const vec b){
-	vec ret = {{{a.x*b.x,a.y*b.y,a.z*b.z}}};
-	return ret;
+	return (vec){{{a.x*b.x,a.y*b.y,a.z*b.z}}};
 }
 vec vecMulS(const vec a, const float b){
-	vec ret = {{{a.x*b,a.y*b,a.z*b}}};
-	return ret;
+	return (vec){{{a.x*b,a.y*b,a.z*b}}};
 }
 
 vec vecDiv (const vec a, const vec b){
-	vec ret = {{{a.x/b.x,a.y/b.y,a.z/b.z}}};
-	return ret;
+	return (vec){{{a.x/b.x,a.y/b.y,a.z/b.z}}};
 }
 vec vecDivS(const vec a, const float b){
-	vec ret = {{{a.x/b,a.y/b,a.z/b}}};
-	return ret;
+	return (vec){{{a.x/b,a.y/b,a.z/b}}};
 }
 
 float vecDot (const vec a, const vec b){
@@ -57,9 +50,8 @@ float vecMag (const vec a){
 	float dot = vecDot(a,a);
 	if(dot > 0){
 		return sqrtf(dot);
-	}else{
-		return 0;
 	}
+	return 0;
 }
 
 vec vecNorm(const vec a){
@@ -75,8 +67,7 @@ vec vecNorm(const vec a){
 }
 
 vec vecSqrt(const vec a){
-	vec ret = {{{sqrtf(a.x),sqrtf(a.y),sqrtf(a.z)}}};
-	return ret;
+	return (vec){{{sqrtf(a.x),sqrtf(a.y),sqrtf(a.z)}}};
 }
 
 vec vecCross(const vec a, const vec b){

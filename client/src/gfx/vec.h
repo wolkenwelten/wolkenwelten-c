@@ -18,6 +18,7 @@ typedef struct {
 
 vec   vecNew     (float x, float y, float z);
 vec   vecZero    ();
+vec   vecInvert  (const vec a);
 
 vec   vecAdd     (const vec a, const vec   b);
 vec   vecAddS    (const vec a, const float b);
