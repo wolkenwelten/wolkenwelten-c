@@ -1,5 +1,6 @@
 #!/bin/bash
-EMSDK_TESTED_VERSION="1.38.48"
+EMSDK_TESTED_VERSION="2.0.1"
+#EMSDK_TESTED_VERSION="1.38.48"
 EMSDK_REPO_URL="https://github.com/emscripten-core/emsdk.git"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
