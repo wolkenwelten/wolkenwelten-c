@@ -460,27 +460,27 @@ void updateGlideWeird(character *c){
 	c->vz -= c->vz*0.001f;
 }
 
+float cdrag;
+float clift;
+
 void updateGlide(character *c){
-	//vec dir = vecZero();
-	//dir.x = cosf((c->yaw-90.f)*PI/180) * cosf((-c->pitch)*PI/180);
-	//dir.y = sinf((-c->pitch)*PI/180);
-	//dir.z = sinf((c->yaw-90.f)*PI/180) * cosf((-c->pitch)*PI/180);
+	//vec  dir = vecDegToVec(vecNew(c->yaw,c->pitch,c->roll));
+	vec   up = vecDegToVec(vecNew(c->yaw,c->pitch-90.f,c->roll));
+	vec  vel = vecNew(c->vx,c->vy,c->vz);
+	vec vdeg = vecVecToDeg(vecNorm(vel));
 
-	float v = (fabsf(c->vy)*((90.f-fabsf(c->pitch))/90.f))*0.01f;
+	float aoa  = fabsf(vdeg.y - c->pitch);
+	float drag = sinf(aoa*PI180);
+	cdrag = drag;
+	clift = aoa;
 
-	if(c->vy > 0.f){
-		c->vy -= v;
-	}else{
-		c->vy += v;
-	}
+	up = vecMul(up,vecInvert(vel));
+	vel = vecAdd(vel,vecMulS(up,drag*0.02f));
 
-	c->vx += cosf((c->yaw-90.f)*PI/180) * cosf((-c->pitch)*PI/180)*v;
-	c->vy += sinf((-c->pitch)*PI/180)*v;
-	c->vz += sinf((c->yaw-90.f)*PI/180) * cosf((-c->pitch)*PI/180)*v;
-
-	c->vx -= c->vx*0.001f;
-	c->vy -= c->vy*0.001f;
-	c->vz -= c->vz*0.001f;
+	c->vx = vel.x;
+	c->vy = vel.y;
+	c->vz = vel.z;
+	//fprintf(stderr,"%f\n",drag);
 }
 
 int characterPhysics(character *c){

@@ -3,6 +3,8 @@
 #include "../../../common/src/game/character.h"
 
 extern character *player;
+extern float cdrag;
+extern float clift;
 
 void  characterPrimary        (character *c);
 void  characterSecondary      (character *c);
