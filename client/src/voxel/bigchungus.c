@@ -195,7 +195,6 @@ void bigchungusFreeFarChungi(bigchungus *c, character *cam){
 		if(d > (CHUNK_RENDER_DISTANCE + 256.f)){
 			chungusFree(c->chungi[x][y][z]);
 			c->chungi[x][y][z] = NULL;
-			msgUnsubChungus(x,y,z);
 		}
 	}
 }

@@ -238,47 +238,6 @@ void bigchungusFreeFarChungi(bigchungus *c){
 	}
 }
 
-void bigchungusUpdateClient(bigchungus *c, int p){
-	character *chara = clients[p].c;
-	int unsubs = 0;
-	int cx = ((int)chara->x)>>8;
-	int cy = ((int)chara->y)>>8;
-	int cz = ((int)chara->z)>>8;
-	
- 	chungusUpdateClient(world.chungi[cx][cy][cz],p);
-	for(int ix=0;ix < 12; ix++){
-		for(int iy=0;iy < 12; iy++){
-			for(int iz=0;iz < 12; iz++){
-				
-				int ox = ix >> 1;
-				if(ix & 1){ox = -ox;}
-				ox = cx+ox;
-				if(ox <   0){goto xcontinue;}
-				if(ox > 255){goto xcontinue;}
-				
-				int oy = iy >> 1;
-				if(iy & 1){oy = -oy;}
-				oy = cy+oy;
-				if(oy <   0){goto ycontinue;}
-				if(oy > 127){goto ycontinue;}
-				
-				int oz = iz >> 1;
-				if(iz & 1){oz = -oz;}
-				oz = cz+oz;
-				if(oz <   0){continue;}
-				if(oz > 255){continue;}
-				
-				//fprintf(stderr,"%i:%i:%i\n",ox,oy,oz);
-				//if(++unsubs > 100){return;};
-				chungus *chng = c->chungi[ox][oy][oz];
-				if(chungusUpdateClient(chng,p)){if(++unsubs > 8){return;}}
-			}
-			ycontinue: (void)c;
-		}
-		xcontinue: (void)c;
-	}
-}
-
 void worldBox(int x, int y,int z, int w,int h,int d,uint8_t block){
 	bigchungusBox(&world,x,y,z,w,h,d,block);
 }

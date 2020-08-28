@@ -18,10 +18,10 @@ typedef struct {
 
 void        bigchungusInit          (bigchungus *c);
 void        bigchungusFree          (bigchungus *c);
-void        bigchungusBox           (bigchungus *c, int x, int y, int z, int w,int h,int d,uint8_t block);
-void        bigchungusBoxSphere     (bigchungus *c, int x, int y, int z, int r, uint8_t block);
-void        bigchungusBoxMine       (bigchungus *c, int x, int y, int z, int w,int h,int d);
-void        bigchungusBoxMineSphere (bigchungus *c, int x, int y, int z, int r);
+void        bigchungusBox           (bigchungus *c, int x,int y,int z, int w,int h,int d,uint8_t block);
+void        bigchungusBoxSphere     (bigchungus *c, int x,int y,int z, int r, uint8_t block);
+void        bigchungusBoxMine       (bigchungus *c, int x,int y,int z, int w,int h,int d);
+void        bigchungusBoxMineSphere (bigchungus *c, int x,int y,int z, int r);
 chunk      *bigchungusGetChunk      (bigchungus *c, int x, int y, int z);
 chungus    *bigchungusGetChungus    (bigchungus *c, int x, int y, int z);
 bool        bigchungusGetHighestP   (bigchungus *c, int x, int *rety, int z);
@@ -30,7 +30,6 @@ bool        bigchungusSetB          (bigchungus *c, int x, int y, int z, uint8_t
 void        bigchungusGenSpawn      (bigchungus *c);
 void        bigchungusGetSpawnPos   (bigchungus *c, int *x, int *y, int *z);
 void        bigchungusFreeFarChungi (bigchungus *c);
-void        bigchungusUpdateClient  (bigchungus *c, int p);
 
 extern bigchungus world;
 

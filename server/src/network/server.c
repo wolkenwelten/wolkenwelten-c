@@ -132,8 +132,6 @@ void msgUpdatePlayer(int c){
 	clients[c].itemDropUpdateOffset = itemDropUpdatePlayer(c,clients[c].itemDropUpdateOffset);
 	grenadeUpdatePlayer(c);
 	blockMiningUpdatePlayer(c);
-	bigchungusUpdateClient(&world,c);
-	addQueuedChunks(c);
 }
 
 void serverParsePlayerPos(int c, packet *p){
@@ -197,14 +195,14 @@ void serverParseSinglePacket(int c, packet *p){
 
 		case 3: // placeBlock
 			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],p->val.i[3]);
-			//sendToAllExcept(c,p,pLen+4);
+			sendToAllExcept(c,p,pLen+4);
 			if(verbose){printf("[%02i] placeBlock\n",c);}
 		break;
 
 		case 4: // mineBlock
 			blockMiningDropItemsPos(p->val.i[0],p->val.i[1],p->val.i[2],worldGetB(p->val.i[0],p->val.i[1],p->val.i[2]));
 			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],0);
-			//sendToAllExcept(c,p,pLen+4);
+			sendToAllExcept(c,p,pLen+4);
 			if(verbose){printf("[%02i] mineBlock\n",c);}
 		break;
 
@@ -319,10 +317,6 @@ void serverParseSinglePacket(int c, packet *p){
 			fprintf(stderr,"msgPlayerDamage received from client, which should never happen\n");
 			serverKill(c);
 		break;
-		
-		case 27:
-			chungusUnsubscribePlayer(world.chungi[p->val.i[0]][p->val.i[1]][p->val.i[2]],c);
-			break;
 
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
@@ -434,7 +428,6 @@ void addChunksToQueue(int c){
 
 	chungus *chng = worldGetChungus(cx>>8,cy>>8,cz>>8);
 	if(chng == NULL){return;}
-	chungusSubscribePlayer(chng,c);
 	for(int x=15;x>= 0;--x){
 		for(int y=15;y>= 0;--y){
 			for(int z=15;z>= 0;--z){
@@ -444,8 +437,8 @@ void addChunksToQueue(int c){
 			}
 		}
 	}
-	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = entry | (uint64_t)1<<62;
-	chungusSetUpdated(chng,c);
+	entry |= (uint64_t)1<<62;
+	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = entry;
 }
 
 void addQueuedChunks(int c){
@@ -461,17 +454,12 @@ void addQueuedChunks(int c){
 		uint16_t cx =  entry        & 0xFFFF;
 		uint16_t cy = (entry >> 16) & 0xFFFF;
 		uint16_t cz = (entry >> 32) & 0xFFFF;
-		fprintf(stderr,"%i addQueuedChunks\n",c);
 		if(entry & ((uint64_t)1<<62)){
 			msgSendChungusComplete(c,cx,cy,cz);
 		}else{
 			chunk *chnk = worldGetChunk(cx,cy,cz);
-			fprintf(stderr,"%i sendChunk\n",c);
 			if(chnk != NULL){
-				//if(!chunkIsUpdated(chnk,c)){
-					msgSendChunk(c,chnk);
-					//chunkSetUpdated(chnk,c);
-				//}
+				msgSendChunk(c,chnk);
 			}
 		}
 	}

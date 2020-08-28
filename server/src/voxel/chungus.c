@@ -1,16 +1,16 @@
 #include "chungus.h"
 
 #include "../game/entity.h"
-#include "../network/server.h"
+#include "../../../common/src/game/blockType.h"
 #include "../worldgen/worldgen.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/misc/misc.h"
-#include "../../../common/src/game/blockType.h"
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 
 
 chungus chungusList[1 << 12];
@@ -52,8 +52,6 @@ chungus *chungusNew(int x, int y, int z){
 	c->z = z;
 	c->nextFree = NULL;
 	c->spawnx = c->spawny = c->spawnz = -1;
-	c->clientsSubscribed  = 0;
-	c->clientsUpdated     = 0;
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 	worldgen *wgen = worldgenNew(c);
 	worldgenGenerate(wgen);
@@ -124,7 +122,6 @@ void chungusSetB(chungus *c, int x,int y,int z,uint8_t block){
 		c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+(cx << 4),c->y+(cy << 4),c->z+(cz << 4));
 	}
 	chunkSetB(chnk,x,y,z,block);
-	c->clientsUpdated = 0;
 }
 
 void chungusBoxF(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
@@ -172,7 +169,6 @@ void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
 			}
 		}
 	}
-	c->clientsUpdated = 0;
 }
 
 void chungusRoughBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
@@ -190,7 +186,6 @@ void chungusRoughBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t bl
 			}
 		}
 	}
-	c->clientsUpdated = 0;
 }
 
 void chungusRandomBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block,int chance){
@@ -206,7 +201,6 @@ void chungusRandomBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t b
 			}
 		}
 	}
-	c->clientsUpdated = 0;
 }
 
 void chungusFill(chungus *c, int x,int y,int z,uint8_t b){
@@ -219,35 +213,5 @@ void chungusFill(chungus *c, int x,int y,int z,uint8_t b){
 		c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+cx*CHUNK_SIZE,c->y+cy*CHUNK_SIZE,c->z+cz*CHUNK_SIZE);
 	}
 	chunkFill(chnk,b);
-	c->clientsUpdated = 0;
 }
 
-void chungusSubscribePlayer(chungus *c, int p){
-	if(c == NULL){return;}
-	c->clientsSubscribed |= 1 << p;
-}
-void chungusUnsubscribePlayer(chungus *c, int p){
-	if(c == NULL){return;}
-	c->clientsSubscribed &= ~(1 << p);
-}
-int chungusIsSubscribed(chungus *c, int p){
-	return c->clientsSubscribed & (1 << p);
-}
-int chungusIsUpdated(chungus *c, int p){
-	if(c == NULL){return 1;}
-	return c->clientsUpdated & (1 << p);
-}
-void chungusSetUpdated(chungus *c, int p){
-	if( c == NULL){return;}
-	c->clientsUpdated |= 1 << p;
-}
-int chungusUpdateClient(chungus *c, int p){
-	if(c == NULL){return 1;}
-	if(!chungusIsSubscribed(c,p)){return 1;}
-	if( chungusIsUpdated(c,p)){return 0;}
-	fprintf(stderr,"%i:%i:%i UPDATE!!!\n",c->x,c->y,c->z);
-	addChungusToQueue(p,c->x<<8,c->y<<8,c->z<<8);
-	chungusSetUpdated(c,p);
-	return 0;
-	
-}

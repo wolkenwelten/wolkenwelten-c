@@ -233,11 +233,3 @@ void msgPlayerDamage(int c, int hp){
 	p->val.i[0]=hp;
 	packetQueue(p,26,4,c);
 }
-
-void msgUnsubChungus(int x, int y, int z){
-	packet *p = &packetBuffer;
-	p->val.i[0] = x;
-	p->val.i[1] = y;
-	p->val.i[2] = z;
-	packetQueueToServer(p,27,3*4);
-}
