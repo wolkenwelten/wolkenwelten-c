@@ -465,17 +465,16 @@ float clift;
 
 void updateGlide(character *c){
 	//vec  dir = vecDegToVec(vecNew(c->yaw,c->pitch,c->roll));
-	vec   up = vecDegToVec(vecNew(c->yaw,c->pitch-90.f,c->roll));
+	//vec   up = vecDegToVec(vecNew(c->yaw,c->pitch-90.f,c->roll));
 	vec  vel = vecNew(c->vx,c->vy,c->vz);
 	vec vdeg = vecVecToDeg(vecNorm(vel));
 
 	float aoa  = fabsf(vdeg.y - c->pitch);
-	float drag = sinf(aoa*PI180);
+	float drag = fabsf(sinf(aoa*PI180));
 	cdrag = drag;
-	clift = aoa;
+	//fprintf(stderr,"%f*%f + %f*%f + %f*%f = %f\n",vel.x,vel.x,vel.y,vel.y,vel.z,vel.z,clift);
 
-	up = vecMul(up,vecInvert(vel));
-	vel = vecAdd(vel,vecMulS(up,drag*0.02f));
+	vel = vecAdd(vel,vecMulS(vecInvert(vel),drag * 0.02f));
 
 	c->vx = vel.x;
 	c->vy = vel.y;

@@ -43,7 +43,7 @@ vec vecDivS(const vec a, const float b){
 }
 
 float vecDot (const vec a, const vec b){
-	return a.x*b.x+a.y*b.y+a.z*b.z;
+	return (a.x*b.x)+(a.y*b.y)+(a.z*b.z);
 }
 
 float vecMag (const vec a){
