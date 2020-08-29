@@ -24,8 +24,6 @@ int     grenadeCount = 0;
 
 
 void grenadeExplode(float x, float y, float z, float pw, int style){
-	worldBoxSphere(x,y,z,pw*4.f,0);
-
 	float dx = x - player->x;
 	float dy = y - player->y;
 	float dz = z - player->z;
