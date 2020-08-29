@@ -1,6 +1,5 @@
 (A) Do part of the beamblast calculatiosn clientside so the latency is not as noticeable
 (A) MacOS Code signing
-(A) Instead of broadcasting explosions mark chunks as dirty and then transmit them to clients in need
 (A) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
 (A) Port to newer Emscripten version
 
