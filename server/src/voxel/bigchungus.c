@@ -282,16 +282,16 @@ void bigchungusUnsubscribeClient(bigchungus *c, int p){
 	int unsubs = 0;
 	int cx,cy,cz;
 	if(chara != NULL){
-		cx = ((int)chara->x)>>8;
-		cy = ((int)chara->y)>>8;
-		cz = ((int)chara->z)>>8;
+		cx = ((int)chara->x) >> 8;
+		cy = ((int)chara->y) >> 8;
+		cz = ((int)chara->z) >> 8;
 	}else{
 		cx = 128;
-		cy = 4;
+		cy =   4;
 		cz = 128;
 	}
 	
-	chungusUnsubscribePlayer(world.chungi[cx][cy][cz],p);
+	chungusUnsubscribePlayer(c->chungi[cx][cy][cz],p);
 	for(int ix=0;ix < 12; ix++){
 		for(int iy=0;iy < 12; iy++){
 			for(int iz=0;iz < 12; iz++){
