@@ -18,7 +18,7 @@ int ironaxeBlockDamage(item *cItem, blockCategory blockCat){
 mesh *ironaxeGetMesh(item *cItem){
 	(void)cItem;
 
-	return meshAxe;
+	return meshIronaxe;
 }
 
 int ironaxeGetStackSize(item *cItem){

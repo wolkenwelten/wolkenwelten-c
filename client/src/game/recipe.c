@@ -18,11 +18,11 @@ struct ingredientSubstitute {
 };
 typedef struct ingredientSubstitute ingredientSubstitute;
 
-recipe recipes[16];
+recipe recipes[256];
 int recipeCount = 0;
 
 ingredientSubstitute *substitutes[512];
-ingredientSubstitute substitutePool[16];
+ingredientSubstitute substitutePool[64];
 int substitutePoolUsed=0;
 
 void ingredientSubstituteAdd(unsigned short ingredient, unsigned short substitute){

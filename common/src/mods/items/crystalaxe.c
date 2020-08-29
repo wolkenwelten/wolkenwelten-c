@@ -18,7 +18,7 @@ int crystalaxeBlockDamage(item *cItem, blockCategory blockCat){
 mesh *crystalaxeGetMesh(item *cItem){
 	(void)cItem;
 
-	return meshAxe;
+	return meshCrystalaxe;
 }
 
 int crystalaxeGetStackSize(item *cItem){

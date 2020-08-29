@@ -18,7 +18,7 @@ int stoneaxeBlockDamage(item *cItem, blockCategory blockCat){
 mesh *stoneaxeGetMesh(item *cItem){
 	(void)cItem;
 
-	return meshAxe;
+	return meshStoneaxe;
 }
 
 int stoneaxeGetStackSize(item *cItem){

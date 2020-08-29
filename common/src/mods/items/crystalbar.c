@@ -9,6 +9,6 @@ void crystalbarInit(){
 mesh *crystalbarGetMesh(item *cItem){
 	(void)cItem;
 
-	return meshCrystalbullet;
+	return meshCrystalbar;
 }
 

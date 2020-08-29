@@ -20,7 +20,7 @@ int crystalpickaxeBlockDamage(item *cItem, blockCategory blockCat){
 mesh *crystalpickaxeGetMesh(item *cItem){
 	(void)cItem;
 
-	return meshPickaxe;
+	return meshCrystalpickaxe;
 }
 
 int crystalpickaxeGetStackSize(item *cItem){
