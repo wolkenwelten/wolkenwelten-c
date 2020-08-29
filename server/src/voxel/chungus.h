@@ -26,7 +26,7 @@ uint8_t      chungusGetB             (chungus *c, int x, int y, int z);
 chunk       *chungusGetChunk         (chungus *c, int x, int y, int z);
 void         chungusSetSpawn         (chungus *c, int x, int y, int z);
 void         chungusSubscribePlayer  (chungus *c, int p);
-void         chungusUnsubscribePlayer(chungus *c, int p);
+int          chungusUnsubscribePlayer(chungus *c, int p);
 int          chungusIsSubscribed     (chungus *c, int p);
 int          chungusUpdateClient     (chungus *c, int p);
 int          chungusIsUpdated        (chungus *c, int p);
