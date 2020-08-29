@@ -8,8 +8,8 @@
 typedef struct {
 	int x,y,z;
 	int spawnx,spawny,spawnz;
-	uint32_t clientsSubscribed;
-	uint32_t clientsUpdated;
+	uint64_t clientsSubscribed;
+	uint64_t clientsUpdated;
 	void *nextFree;
 	chunk *chunks[16][16][16];
 } chungus;

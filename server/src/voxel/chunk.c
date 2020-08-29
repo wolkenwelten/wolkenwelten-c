@@ -29,7 +29,8 @@ chunk *chunkNew(uint16_t x,uint16_t y,uint16_t z){
 	c->y = y & (~0xF);
 	c->z = z & (~0xF);
 	c->nextFree = NULL;
-	c->clientsUpdated = 0;
+	c->clientsUpdated = 1 << 63;
+	
 	memset(c->data,0,sizeof(c->data));
 	return c;
 }

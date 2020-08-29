@@ -7,7 +7,7 @@ extern const float CHUNK_FADEOUT_DISTANCE;
 
 typedef struct {
 	uint16_t x,y,z;
-	uint32_t clientsUpdated;
+	uint64_t clientsUpdated;
 	void *nextFree;
 	uint8_t data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 } chunk;
