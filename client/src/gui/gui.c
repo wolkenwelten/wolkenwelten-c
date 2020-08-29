@@ -196,6 +196,8 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"Uncompressed: %sB\n",getHumanReadableSize(recvUncompressedBytesCurrentSession));
 	textMeshPrintf(guim,"Comp. Ratio : %2.2fX\n",(float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession);
 	textMeshPrintf(guim,"Canvas Size : %ix%i\n",screenWidth,screenHeight);
+	textMeshPrintf(guim,"ChunkDataMsg: %i\n",msgTypeCount[18]);
+	
 }
 
 void drawItemBar(){
