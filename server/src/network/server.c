@@ -319,7 +319,7 @@ void serverParseSinglePacket(int c, packet *p){
 			fprintf(stderr,"msgPlayerDamage received from client, which should never happen\n");
 			serverKill(c);
 		break;
-		
+
 		case 27:
 			chungusUnsubscribePlayer(world.chungi[p->val.i[0]][p->val.i[1]][p->val.i[2]],c);
 			break;
@@ -433,7 +433,9 @@ void addChunksToQueue(int c){
 	uint16_t cz = (entry >> 32) & 0xFFFF;
 
 	chungus *chng = worldGetChungus(cx>>8,cy>>8,cz>>8);
-	if(chng == NULL){return;}
+	if(chng == NULL){
+		return;
+	}
 	chungusSubscribePlayer(chng,c);
 	for(int x=15;x>= 0;--x){
 		for(int y=15;y>= 0;--y){
@@ -461,17 +463,15 @@ void addQueuedChunks(int c){
 		uint16_t cx =  entry        & 0xFFFF;
 		uint16_t cy = (entry >> 16) & 0xFFFF;
 		uint16_t cz = (entry >> 32) & 0xFFFF;
-		fprintf(stderr,"%i addQueuedChunks\n",c);
 		if(entry & ((uint64_t)1<<62)){
 			msgSendChungusComplete(c,cx,cy,cz);
 		}else{
 			chunk *chnk = worldGetChunk(cx,cy,cz);
-			fprintf(stderr,"%i sendChunk\n",c);
 			if(chnk != NULL){
-				//if(!chunkIsUpdated(chnk,c)){
+				if(!chunkIsUpdated(chnk,c)){
 					msgSendChunk(c,chnk);
-					//chunkSetUpdated(chnk,c);
-				//}
+					chunkSetUpdated(chnk,c);
+				}
 			}
 		}
 	}

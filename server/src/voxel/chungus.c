@@ -245,9 +245,8 @@ int chungusUpdateClient(chungus *c, int p){
 	if(c == NULL){return 1;}
 	if(!chungusIsSubscribed(c,p)){return 1;}
 	if( chungusIsUpdated(c,p)){return 0;}
-	fprintf(stderr,"%i:%i:%i UPDATE!!!\n",c->x,c->y,c->z);
-	addChungusToQueue(p,c->x<<8,c->y<<8,c->z<<8);
+	addChungusToQueue(p,c->x,c->y,c->z);
 	chungusSetUpdated(c,p);
 	return 0;
-	
+
 }
