@@ -229,6 +229,7 @@ void chungusSubscribePlayer(chungus *c, int p){
 int chungusUnsubscribePlayer(chungus *c, int p){
 	fprintf(stderr,"TRY chungusUnsubscribePlayer\n");
 	if(c == NULL)                         {return 0;}
+	fprintf(stderr,"NNULL chungusUnsubscribePlayer\n");
 	if(!(c->clientsSubscribed & (1 << p))){return 1;}
 	fprintf(stderr,"DO chungusUnsubscribePlayer\n");
 	
