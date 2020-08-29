@@ -845,6 +845,7 @@ bool itemPlaceBlock(item *i, character *chr, int to){
 		} else {
 			msgPlaceBlock(cx,cy,cz,i->ID);
 			sfxPlay(sfxPock,1.f);
+			characterStartAnimation(chr,0,240);
 			characterAddCooldown(chr,50);
 			return true;
 		}

@@ -11,6 +11,7 @@
 #include "../game/itemDrop.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/lz4.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
@@ -83,7 +84,11 @@ void msgSendPlayerPos(){
 	p->val.i[14] = player->blockMiningX;
 	p->val.i[15] = player->blockMiningY;
 	p->val.i[16] = player->blockMiningZ;
-	p->val.i[17] = itm->ID;
+	if(itemIsEmpty(itm)){
+		p->val.i[17] = 0;
+	}else{
+		p->val.i[17] = itm->ID;
+	}
 	p->val.i[18] = player->animationIndex;
 	p->val.i[20] = player->animationTicksMax;
 	p->val.i[21] = player->animationTicksLeft;
