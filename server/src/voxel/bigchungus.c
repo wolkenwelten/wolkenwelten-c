@@ -291,6 +291,7 @@ void bigchungusUnsubscribeClient(bigchungus *c, int p){
 		cz = 128;
 	}
 	
+	fprintf(stderr,"UNsubscribing %i\n",p);
 	chungusUnsubscribePlayer(c->chungi[cx][cy][cz],p);
 	for(int ix=0;ix < 12; ix++){
 		for(int iy=0;iy < 12; iy++){
