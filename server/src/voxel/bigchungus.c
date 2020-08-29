@@ -280,9 +280,16 @@ void bigchungusUpdateClient(bigchungus *c, int p){
 void bigchungusUnsubscribeClient(bigchungus *c, int p){
 	character *chara = clients[p].c;
 	int unsubs = 0;
-	int cx = ((int)chara->x)>>8;
-	int cy = ((int)chara->y)>>8;
-	int cz = ((int)chara->z)>>8;
+	int cx,cy,cz;
+	if(chara != NULL){
+		cx = ((int)chara->x)>>8;
+		cy = ((int)chara->y)>>8;
+		cz = ((int)chara->z)>>8;
+	}else{
+		cx = 128;
+		cy = 4;
+		cz = 128;
+	}
 	
 	chungusUnsubscribePlayer(world.chungi[cx][cy][cz],p);
 	for(int ix=0;ix < 12; ix++){
