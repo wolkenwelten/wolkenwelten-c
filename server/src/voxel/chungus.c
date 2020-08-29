@@ -234,7 +234,9 @@ void chungusUnsubscribePlayer(chungus *c, int p){
 	for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){
 			for(int z=0;z<16;z++){
-				c->chunks[x][y][z]->clientsUpdated &= mask;
+				if(c->chunks[x][y][z] != NULL){
+					c->chunks[x][y][z]->clientsUpdated &= mask;
+				}
 			}
 		}
 	}
