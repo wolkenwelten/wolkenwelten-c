@@ -228,7 +228,16 @@ void chungusSubscribePlayer(chungus *c, int p){
 }
 void chungusUnsubscribePlayer(chungus *c, int p){
 	if(c == NULL){return;}
-	c->clientsSubscribed &= ~(1 << p);
+	uint32_t mask = ~(1 << p);
+	c->clientsSubscribed &= mask;
+	c->clientsUpdated    &= mask;
+	for(int x=0;x<16;x++){
+		for(int y=0;y<16;y++){
+			for(int z=0;z<16;z++){
+				c->chunks[x][y][z]->clientsUpdated &= mask;
+			}
+		}
+	}
 }
 int chungusIsSubscribed(chungus *c, int p){
 	return c->clientsSubscribed & (1 << p);
