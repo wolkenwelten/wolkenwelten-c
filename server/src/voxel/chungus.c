@@ -242,6 +242,7 @@ int chungusUnsubscribePlayer(chungus *c, int p){
 			}
 		}
 	}
+	return 0;
 }
 int chungusIsSubscribed(chungus *c, int p){
 	return c->clientsSubscribed & (1 << p);

@@ -277,7 +277,7 @@ void bigchungusUpdateClient(bigchungus *c, int p){
 	}
 }
 
-void bigchungusUpdateClient(bigchungus *c, int p){
+void bigchungusUnsubscribeClient(bigchungus *c, int p){
 	character *chara = clients[p].c;
 	int unsubs = 0;
 	int cx = ((int)chara->x)>>8;
