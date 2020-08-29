@@ -227,8 +227,10 @@ void chungusSubscribePlayer(chungus *c, int p){
 	c->clientsSubscribed |= 1 << p;
 }
 int chungusUnsubscribePlayer(chungus *c, int p){
+	fprintf(stderr,"TRY chungusUnsubscribePlayer\n");
 	if(c == NULL)                         {return 0;}
 	if(!(c->clientsSubscribed & (1 << p))){return 1;}
+	fprintf(stderr,"DO chungusUnsubscribePlayer\n");
 	
 	uint32_t mask = ~(1 << p);
 	c->clientsSubscribed &= mask;
