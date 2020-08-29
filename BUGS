@@ -1,5 +1,3 @@
-activeItem gets drawn even if amount == 0
-missing animatino when placing blocks
 itemdrops do add considerable latency to everything on the serverside
 Reducing Hook rope length still can lead to weird collision issues
 You can't build one block wide bunkers, placing the block not possible.
