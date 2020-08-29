@@ -53,7 +53,7 @@ chungus *chungusNew(int x, int y, int z){
 	c->nextFree = NULL;
 	c->spawnx = c->spawny = c->spawnz = -1;
 	c->clientsSubscribed  = 0;
-	c->clientsUpdated     = 1 << 63;
+	c->clientsUpdated     = (uint64_t)1 << 63;
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 	worldgen *wgen = worldgenNew(c);
 	worldgenGenerate(wgen);

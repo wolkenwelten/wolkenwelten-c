@@ -16,6 +16,8 @@ int            ingredientSubstituteGetAmount(unsigned short ingredient);
 unsigned short ingredientSubstituteGetSub   (unsigned short ingredient, int i);
 
 int  recipeGetCount();
+int  recipeGetCraftableCount(character *c);
+int  recipeGetCraftableIndex(character *c,int i);
 int  recipeCanCraft(int r,character *c);
 void recipeDoCraft (int r,character *c,int amount);
 

@@ -108,11 +108,11 @@ void drawInventory(textMesh *guim){
 		textMeshItem(guim,x,y,tilesize, style, &player->inventory[i]);
 	}
 
-	for(int i=0;i<10;i++){
+	for(int i=0;i<MIN(10,recipeGetCraftableCount(player));i++){
 		if(i >= recipeGetCount()){break;}
 		const int y = screenHeight/2 - tilesize*3;
 		const int x = (screenWidth/2)+((i-5)*tilesize);
-		int r = i;
+		int r = recipeGetCraftableIndex(player,i);
 		unsigned short b = recipeGetResultID(r);
 		unsigned short a = recipeCanCraft(r,player);
 		int style = 0;
@@ -166,8 +166,8 @@ void inventoryClickOutside(int btn){
 void doInventoryClick(int btn, int sel){
 	item *cItem;
 
-	if((sel >= 50) && (sel < 60)){
-		int r = sel-50;
+	if((sel >= 50) && (sel < (50+MIN(10,recipeGetCraftableCount(player))))){
+		int r = recipeGetCraftableIndex(player,sel-50);
 		if(btn == 1){
 			recipeDoCraft(r,player,1);
 		}else if(btn == 3){
@@ -256,7 +256,7 @@ void changeInventorySelection(int x,int y){
 	int ysel = gamepadSelection / 10;
 
 	int xmax = 9;
-	if(ysel == 5){xmax = MIN(9,recipeGetCount()-1);}
+	if(ysel == 5){xmax = MIN(9,recipeGetCraftableCount(player)-1);}
 	xsel += x;
 	if(xsel < 0){xsel = xmax;}
 	if(xsel > xmax){xsel = 0;}

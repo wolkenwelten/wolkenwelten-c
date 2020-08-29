@@ -116,9 +116,11 @@ void recipeAdd2I(unsigned short nResultID, unsigned char nResultAmount, unsigned
 	recipes[r].ingredientID[2]     = recipes[r].ingredientAmount[2] = 0;
 }
 
+#include <stdio.h>
 int characterGetItemOrSubstituteAmount(character *c, unsigned short i){
 	ingredientSubstitute *s;
 	int ret = characterGetItemAmount(c,i);
+	if(i >= (sizeof(substitutes)/sizeof(ingredientSubstitute *))){return 0;}
 
 	for(s = substitutes[i];s != NULL;s = s->next){
 		ret += characterGetItemAmount(c,s->substitute);
@@ -172,11 +174,30 @@ void recipeDoCraft(int r, character *c,int amount){
 	characterPickupItem(c,recipes[r].resultID,amount*recipes[r].resultAmount);
 }
 
+int  recipeGetCraftableCount(character *c){
+	int ret=0;
+	for(int r=0;r<recipeCount;r++){
+		if(recipeCanCraft(r,c) > 0){ret++;}
+	}
+	return ret;
+}
+int recipeGetCraftableIndex(character *c,int i){
+	int ret=0;
+	for(int r=0;r<recipeCount;r++){
+		if(recipeCanCraft(r,c) > 0){
+			if(ret++ == i){
+				return r;	
+			}
+		}
+	}
+	return -1;
+}
+
 void recipeInit(){
 	ingredientSubstituteAdd(10,5);
 	ingredientSubstituteAdd(10,20);
 	//recipeAdd1I(16,1, 10,1);
 	recipeAdd1I(17,2, 10,1);
-	//recipeAdd1I(14,1, 12,1);
-	//recipeAdd1I(15,1, 12,1);
+	recipeAdd1I(14,1, 12,1);
+	recipeAdd1I(15,1, 12,1);
 }
