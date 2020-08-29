@@ -319,7 +319,13 @@ void drawActiveItem(){
 				matTranslation(matViewAI,ix,player->yoff+iy-(1.f-hitOff)*2.f,iz);
 				matMulRotYX(matViewAI,(1.f-hitOff)*3.f,(1.f-hitOff)*9.f);
 			}
-
+		break;
+		
+		case 5:
+			hitOff = (float)player->animationTicksLeft / (float)player->animationTicksMax;
+			y = iy+player->yoff-hitOff;
+			matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
+			matMulRotYX(matViewAI,hitOff*30.f,hitOff*-70.f);
 		break;
 	};
 	matMul(matViewAI, matViewAI, matProjection);

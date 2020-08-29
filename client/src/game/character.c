@@ -790,7 +790,13 @@ void characterActiveItemDraw(character *c){
 				matMulTrans(matMVP,ix-hitOff*0.4,c->yoff+iy,iz + hitOff*0.4f);
 				matMulRotYX(matMVP,hitOff*20.f,hitOff*40.f);
 			}
-
+		break;
+		
+		case 5:
+			hitOff = (float)c->animationTicksLeft / (float)c->animationTicksMax;
+			y = iy+c->yoff-(hitOff/2);
+			matMulTrans(matMVP,ix-hitOff*0.5f,y-(hitOff*0.5f),iz - hitOff*0.2f);
+			matMulRotYX(matMVP,hitOff*30.f,hitOff*-70.f);
 		break;
 	};
 

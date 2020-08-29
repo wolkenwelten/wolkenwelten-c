@@ -209,7 +209,9 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 		if(isInventoryOpen()){
 			changeInventorySelection(-1,0);
 		}else{
-			if(--player->activeItem > 9){player->activeItem = 9;}
+			unsigned int nai = player->activeItem+1;
+			if(nai > 9){nai=9;}
+			characterSetActiveItem(player,nai);
 		}
 	}
 	if(gamepadButtons[14]){
@@ -217,7 +219,9 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 		if(isInventoryOpen()){
 			changeInventorySelection(1,0);
 		}else{
-			if(++player->activeItem > 9){player->activeItem = 0;}
+			unsigned int nai = player->activeItem+1;
+			if(nai > 9){nai=0;}
+			characterSetActiveItem(player,nai);
 		}
 	}
 }

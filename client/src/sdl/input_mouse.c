@@ -69,11 +69,13 @@ void mouseEventHandler(const SDL_Event *e){
 
 		case SDL_MOUSEWHEEL:
 			if(!isInventoryOpen() && gameRunning){
+				unsigned int nai = player->activeItem;
 				if(e->wheel.y > 0){
-					if(--player->activeItem > 9){player->activeItem = 9;}
+					if(--nai > 9){nai = 9;}
 				}else if(e->wheel.y < 0){
-					if(++player->activeItem > 9){player->activeItem = 0;}
+					if(++nai > 9){nai = 0;}
 				}
+				characterSetActiveItem(player,nai);
 			}
 		break;
 	}

@@ -146,34 +146,34 @@ void keyboardEventHandler(const SDL_Event *e){
 				break;
 
 				case SDLK_1:
-					player->activeItem = 0;
+					characterSetActiveItem(player,0);
 				break;
 				case SDLK_2:
-					player->activeItem = 1;
+					characterSetActiveItem(player,1);
 				break;
 				case SDLK_3:
-					player->activeItem = 2;
+					characterSetActiveItem(player,2);
 				break;
 				case SDLK_4:
-					player->activeItem = 3;
+					characterSetActiveItem(player,3);
 				break;
 				case SDLK_5:
-					player->activeItem = 4;
+					characterSetActiveItem(player,4);
 				break;
 				case SDLK_6:
-					player->activeItem = 5;
+					characterSetActiveItem(player,5);
 				break;
 				case SDLK_7:
-					player->activeItem = 6;
+					characterSetActiveItem(player,6);
 				break;
 				case SDLK_8:
-					player->activeItem = 7;
+					characterSetActiveItem(player,7);
 				break;
 				case SDLK_9:
-					player->activeItem = 8;
+					characterSetActiveItem(player,8);
 				break;
 				case SDLK_0:
-					player->activeItem = 9;
+					characterSetActiveItem(player,9);
 				break;
 				case SDLK_m:
 					optionDebugInfo = 1 - optionDebugInfo;

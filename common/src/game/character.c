@@ -125,6 +125,9 @@ void characterSetItemBarSlot(character *c, int i, item *itm){
 void characterSetActiveItem(character *c, int i){
 	if(i > 9){i = 0;}
 	if(i < 0){i = 9;}
+	if((unsigned int)i != c->activeItem){
+		characterStartAnimation(c,5,300);
+	}
 	c->activeItem = i;
 }
 
