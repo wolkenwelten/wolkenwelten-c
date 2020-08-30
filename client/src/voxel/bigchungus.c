@@ -115,7 +115,7 @@ void quicksortQueue(queueEntry *a, int lo, int hi){
 void bigchungusDraw(bigchungus *c, character *cam){
 	float matMVP[16];
 	static queueEntry drawQueue[8192*4];
-	static queueEntry loadQueue[128];
+	static queueEntry loadQueue[1<<9];
 	int drawQueueLen=0,loadQueueLen=0;
 
 	glEnable(GL_BLEND);
@@ -144,14 +144,12 @@ void bigchungusDraw(bigchungus *c, character *cam){
 			if((y <= 0) || (y >= 127)){continue;}
 			for(int z=minCZ;z<maxCZ;z++){
 				if((z <= 0) || (z >= 255)){continue;}
-
 				float d = chungusRoughDistance(cam,x,y,z);
 				if((d < (CHUNK_RENDER_DISTANCE+CHUNGUS_SIZE)) && (chungusInFrustum(x,y,z))){
 					if(c->chungi[x][y][z] == NULL){
 						c->chungi[x][y][z] = chungusNew(x*CHUNGUS_SIZE,y*CHUNGUS_SIZE,z*CHUNGUS_SIZE);
 						loadQueue[loadQueueLen].distance = d;
-						loadQueue[loadQueueLen].chng     = c->chungi[x][y][z];
-						++loadQueueLen;
+						loadQueue[loadQueueLen++].chng   = c->chungi[x][y][z];
 					}
 					chungusQueueDraws(c->chungi[x][y][z],cam,drawQueue,&drawQueueLen);
 				}

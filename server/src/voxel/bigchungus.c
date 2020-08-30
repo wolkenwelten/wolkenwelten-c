@@ -240,7 +240,6 @@ void bigchungusFreeFarChungi(bigchungus *c){
 
 void bigchungusUpdateClient(bigchungus *c, int p){
 	character *chara = clients[p].c;
-	int unsubs = 0;
 	int cx = ((int)chara->x)>>8;
 	int cy = ((int)chara->y)>>8;
 	int cz = ((int)chara->z)>>8;
@@ -270,8 +269,7 @@ void bigchungusUpdateClient(bigchungus *c, int p){
 				if(oz <   0){continue;}
 				if(oz > 255){continue;}
 				
-				chungus *chng = c->chungi[ox][oy][oz];
-				if(chungusUpdateClient(chng,p)){if(++unsubs > 8){return;}}
+				chungusUpdateClient(c->chungi[ox][oy][oz],p);
 			}
 			ycontinue: (void)c;
 		}
