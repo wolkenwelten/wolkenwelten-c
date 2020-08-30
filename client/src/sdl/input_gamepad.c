@@ -209,7 +209,7 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 		if(isInventoryOpen()){
 			changeInventorySelection(-1,0);
 		}else{
-			unsigned int nai = player->activeItem+1;
+			unsigned int nai = player->activeItem-1;
 			if(nai > 9){nai=9;}
 			characterSetActiveItem(player,nai);
 		}
