@@ -9,7 +9,7 @@ void crystalaxeInit(){
 float crystalaxeDamage(item *cItem){
 	(void)cItem;
 	
-	return 4.f;
+	return 2.f;
 }
 
 int crystalaxeBlockDamage(item *cItem, blockCategory blockCat){
