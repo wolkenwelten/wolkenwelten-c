@@ -126,7 +126,7 @@ void characterSetActiveItem(character *c, int i){
 	if(i > 9){i = 0;}
 	if(i < 0){i = 9;}
 	if((unsigned int)i != c->activeItem){
-		characterStartAnimation(c,5,300);
+		characterStartAnimation(c,5,200);
 	}
 	c->activeItem = i;
 }
