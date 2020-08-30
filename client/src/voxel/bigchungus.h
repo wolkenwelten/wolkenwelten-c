@@ -5,9 +5,9 @@
 
 #define WORLD_SIZE (16*16*256)
 
-typedef struct {
+struct bigchungus {
 	chungus *chungi[256][128][256];
-} bigchungus;
+};
 
 void        bigchungusInit          (bigchungus *c);
 void        bigchungusFree          (bigchungus *c);

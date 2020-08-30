@@ -127,3 +127,12 @@ void itemDropIntro(int c){
 		);
 	}
 }
+
+void itemDropDelChungus(chungus *c){
+	for(int i=0;i<itemDropCount;i++){
+		if(itemDrops[i].ent->curChungus == c){
+			itemDropDel(i--);
+			continue;
+		}
+	}
+}

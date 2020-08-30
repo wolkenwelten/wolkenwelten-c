@@ -5,7 +5,7 @@
 
 #define WORLD_SIZE (16*16*256)
 
-typedef struct {
+struct bigchungus {
 	int spawnx, spawny, spawnz;
 	chungus *chungi[256][128][256];
 	unsigned char heightModifier          [256][256];
@@ -14,7 +14,7 @@ typedef struct {
 	unsigned char islandCountModifier     [256][256];
 	unsigned char geoworldMap             [256][256];
 
-} bigchungus;
+};
 
 void        bigchungusInit              (bigchungus *c);
 void        bigchungusFree              (bigchungus *c);

@@ -1,6 +1,7 @@
 #include "chungus.h"
 
 #include "../game/entity.h"
+#include "../game/itemDrop.h"
 #include "../network/server.h"
 #include "../worldgen/worldgen.h"
 #include "../voxel/chunk.h"
@@ -64,6 +65,7 @@ chungus *chungusNew(int x, int y, int z){
 
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
+	itemDropDelChungus(c);
 	for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){
 			for(int z=0;z<16;z++){

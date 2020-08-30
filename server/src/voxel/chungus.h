@@ -5,14 +5,14 @@
 
 #define CHUNGUS_SIZE (16*16)
 
-typedef struct {
+struct chungus {
 	int x,y,z;
 	int spawnx,spawny,spawnz;
 	uint64_t clientsSubscribed;
 	uint64_t clientsUpdated;
 	void *nextFree;
 	chunk *chunks[16][16][16];
-} chungus;
+};
 
 chungus     *chungusNew              (int x,int y, int z);
 void         chungusFree             (chungus *c);

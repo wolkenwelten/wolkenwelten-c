@@ -1,4 +1,5 @@
 #pragma once
+#include "../../../common/src/common.h"
 #include "../game/character.h"
 #include "../voxel/chunk.h"
 
@@ -7,11 +8,11 @@
 
 #define CHUNGUS_SIZE (16*16)
 
-typedef struct {
+struct chungus {
 	int x,y,z,loaded;
 	void *nextFree;
 	chunk *chunks[16][16][16];
-} chungus;
+};
 
 typedef struct {
 	float distance;

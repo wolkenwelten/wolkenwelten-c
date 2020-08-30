@@ -58,6 +58,13 @@ uint32_t entityCollision(float cx, float cy, float cz){
 	return col;
 }
 
+void entityUpdateCurChungus(entity *e){
+	const int cx = (int)e->x >> 8;
+	const int cy = (int)e->y >> 8;
+	const int cz = (int)e->z >> 8;
+	e->curChungus = worldGetChungus(cx,cy,cz);
+}
+
 int entityUpdate(entity *e){
 	int ret=0;
 	uint32_t col;
@@ -66,6 +73,7 @@ int entityUpdate(entity *e){
 	e->z += e->vz;
 	if(e->noClip){
 		e->collide = entityCollision(e->x,e->y,e->z);
+		entityUpdateCurChungus(e);
 		return 0;
 	}
 
@@ -78,7 +86,10 @@ int entityUpdate(entity *e){
 	col = entityCollision(e->x,e->y,e->z);
 	if(col){ e->collide = true; }
 	e->updated = true;
-	if(e->noRepulsion){ return 0; }
+	if(e->noRepulsion){
+		entityUpdateCurChungus(e);
+		return 0; 
+	}
 	if((col&0x110) && (e->vx < 0.f)){
 		if(e->vx < -0.1f){ ret += (int)(fabsf(e->vx)*128.f); }
 		const float nx = floor(e->x)+0.3f;
@@ -89,7 +100,6 @@ int entityUpdate(entity *e){
 		if(e->vx >  0.1f){ ret += (int)(fabsf(e->vx)*128.f); }
 		const float nx = floorf(e->x)+0.7f;
 		if(nx < e->x){e->x = nx;}
-		e->x = floorf(e->x)+0.7f;
 		e->vx = e->vx*-0.3f;
 	}
 	if((col&0x880) && (e->vz > 0.f)){
@@ -131,6 +141,7 @@ int entityUpdate(entity *e){
 		e->shake = 0.f;
 	}
 
+	entityUpdateCurChungus(e);
 	return ret;
 }
 

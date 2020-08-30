@@ -27,6 +27,13 @@ typedef struct {
 struct grapplingHook;
 typedef struct grapplingHook grapplingHook;
 
+struct bigchungus;
+typedef struct bigchungus bigchungus;
+struct chungus;
+typedef struct chungus chungus;
+struct chunk;
+typedef struct chunk chunk;
+
 typedef struct {
 	float  x, y, z;
 	float vx,vy,vz;
@@ -39,8 +46,9 @@ typedef struct {
 	bool collide;
 	bool noRepulsion;
 
-	mesh *eMesh;
-	void *nextFree;
+	mesh    *eMesh;
+	chungus *curChungus;
+	void    *nextFree;
 } entity;
 
 typedef struct {
