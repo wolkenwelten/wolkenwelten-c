@@ -245,7 +245,9 @@ void bigchungusUpdateClient(bigchungus *c, int p){
 	int cy = ((int)chara->y)>>8;
 	int cz = ((int)chara->z)>>8;
 	
- 	chungusUpdateClient(world.chungi[cx][cy][cz],p);
+	if((cx >= 0) && (cx < 256) && (cy >= 0) && (cy < 128) && (cz >= 0) && (cz < 256)){
+		chungusUpdateClient(world.chungi[cx][cy][cz],p);
+	}
 	for(int ix=0;ix < 12; ix++){
 		for(int iy=0;iy < 12; iy++){
 			for(int iz=0;iz < 12; iz++){
@@ -291,8 +293,9 @@ void bigchungusUnsubscribeClient(bigchungus *c, int p){
 		cz = 128;
 	}
 	
-	fprintf(stderr,"UNsubscribing %i\n",p);
-	chungusUnsubscribePlayer(c->chungi[cx][cy][cz],p);
+	if((cx >= 0) && (cx < 256) && (cy >= 0) && (cy < 128) && (cz >= 0) && (cz < 256)){
+		chungusUnsubscribePlayer(c->chungi[cx][cy][cz],p);
+	}
 	for(int ix=0;ix < 12; ix++){
 		for(int iy=0;iy < 12; iy++){
 			for(int iz=0;iz < 12; iz++){

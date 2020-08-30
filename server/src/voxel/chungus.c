@@ -243,6 +243,7 @@ int chungusUnsubscribePlayer(chungus *c, int p){
 	return 0;
 }
 int chungusIsSubscribed(chungus *c, int p){
+	if(c == NULL){return 0;}
 	return c->clientsSubscribed & (1 << p);
 }
 int chungusIsUpdated(chungus *c, int p){
@@ -254,8 +255,8 @@ void chungusSetUpdated(chungus *c, int p){
 	c->clientsUpdated |= 1 << p;
 }
 int chungusUpdateClient(chungus *c, int p){
-	if(c == NULL){return 1;}
-	if(!chungusIsSubscribed(c,p)){return 1;}
+	if(c == NULL){return 0;}
+	if(!(c->clientsSubscribed & (1 << p))){return 1;}
 	if( chungusIsUpdated(c,p)){return 0;}
 	addChungusToQueue(p,c->x,c->y,c->z);
 	chungusSetUpdated(c,p);
