@@ -386,10 +386,10 @@ void characterPrimary(character *c){
 				vibrate(0.3f);
 				characterStartAnimation(c,0,300);
 				characterAddCooldown(c,80);
-				msgCharacterHit(-1,c->x,c->y,c->z,c->yaw,c->pitch,c->roll,1.f);
+				msgCharacterHit(-1,c->x,c->y,c->z,c->yaw,c->pitch,c->roll,damageDispatch(itm));
 			}
 		}else if(c->actionTimeout >= 0){
-			msgCharacterHit(-1,c->x,c->y,c->z,c->yaw,c->pitch,c->roll,1.f);
+			msgCharacterHit(-1,c->x,c->y,c->z,c->yaw,c->pitch,c->roll,damageDispatch(itm));
 			characterStartAnimation(c,0,240);
 			characterAddCooldown(c,80);
 		}

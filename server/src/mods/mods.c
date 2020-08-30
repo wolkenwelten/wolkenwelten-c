@@ -8,6 +8,11 @@ mesh *getMeshDefault(item *cItem){
 
 	return NULL;
 }
+float damageDefault(item *cItem){
+	(void)cItem;
+	
+	return 1.f;
+}
 int blockDamageDefault(item *cItem, blockCategory blockCat){
 	(void)cItem;
 	(void)blockCat;

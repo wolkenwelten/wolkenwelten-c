@@ -4,6 +4,7 @@
 
 void  modsInit                ();
 
+float damageDispatch          (item *cItem);
 int   blockDamageDispatch     (item *cItem, blockCategory blockCat);
 mesh *getMeshDispatch         (item *cItem);
 bool  primaryActionDispatch   (item *cItem, character *cChar, int to);
@@ -18,6 +19,7 @@ int   getStackSizeDispatch    (item *cItem);
 int   getMagSizeDispatch      (item *cItem);
 bool  hasGetMagSize           (item *cItem);
 
+float damageDefault           (item *cItem);
 int   blockDamageDefault      (item *cItem, blockCategory blockCat);
 mesh *getMeshDefault          (item *cItem);
 bool  primaryActionDefault    (item *cItem, character *cChar, int to);

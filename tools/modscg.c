@@ -248,6 +248,7 @@ int main(int argc, char *argv[]){
 	}
 
 	printTypeCaller("modsInit","Init");
+	printItemTypeDispatch("Damage","item *cItem","cItem","float ");
 	printItemTypeDispatch("BlockDamage","item *cItem, blockCategory blockCat","cItem, blockCat","int ");
 	printItemTypeDispatch("GetMesh","item *cItem","cItem","mesh *");
 	printItemTypeDispatch("PrimaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
