@@ -12,13 +12,13 @@ void msgMineBlock                (int x, int y, int z, uint8_t b);
 void msgGoodbye                  ();
 void msgBlockMiningUpdate        (int c, uint16_t x, uint16_t y, uint16_t z, uint16_t damage, int count, int i);
 void msgSendChungusComplete      (int c, int x, int y, int z);
-void msgCharacterGotHit          (int c,float pwr);
+void msgCharacterGotHit          (int c,int pwr);
 void msgPlayerJoinSendName       (const char *name);
 void msgItemDropNew              (int c, float x, float y, float z, float vx, float vy, float vz, int ID, int amount);
 void msgNewGrenade               (float x, float y, float z, float yaw, float pitch, float roll, float pwr);
 void msgBeamBlast                (float x, float y, float z, float yaw, float pitch, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft);
 void msgPlayerMove               (int c, float dvx, float dvy, float dvz, float dyaw, float ypitch, float droll);
-void msgCharacterHit             (int c, float x, float y, float z, float yaw, float pitch, float roll, float pwr);
+void msgCharacterHit             (int c, float x, float y, float z, float yaw, float pitch, float roll, int pwr);
 // 15 = parsePlayerPos ???
 // 16 = parseChatMsg ???
 // 17 = parseDyingMsg ???

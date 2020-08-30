@@ -67,9 +67,9 @@ void msgSendChungusComplete(int c, int x, int y, int z){
 	packetQueue(p,7,3*4,c);
 }
 
-void msgCharacterGotHit(int c,float pwr){
+void msgCharacterGotHit(int c,int pwr){
 	packet *p = &packetBuffer;
-	p->val.f[0] = pwr;
+	p->val.i[0] = pwr;
 	p->val.i[1] = c;
 	packetQueueExcept(p,8,2*4,c);
 }
@@ -132,7 +132,7 @@ void msgPlayerMove(int c, float dvx, float dvy, float dvz, float dyaw, float dpi
 	packetQueue(p,13,7*4,c);
 }
 
-void msgCharacterHit(int c, float x, float y, float z, float yaw, float pitch, float roll, float pwr){
+void msgCharacterHit(int c, float x, float y, float z, float yaw, float pitch, float roll, int pwr){
 	packet *p = &packetBuffer;
 	p->val.f[0] = x;
 	p->val.f[1] = y;
@@ -140,7 +140,7 @@ void msgCharacterHit(int c, float x, float y, float z, float yaw, float pitch, f
 	p->val.f[3] = yaw;
 	p->val.f[4] = pitch;
 	p->val.f[5] = roll;
-	p->val.f[6] = pwr;
+	p->val.i[6] = pwr;
 	p->val.i[7] = c;
 	packetQueueExcept(p,14,8*4,c);
 }

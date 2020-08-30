@@ -156,7 +156,7 @@ void clientParsePacket(packet *p){
 		break;
 
 		case 8:
-			characterGotHitBroadcast(p->val.i[1],p->val.f[0]);
+			characterGotHitBroadcast(p->val.i[1],p->val.i[0]);
 		break;
 
 		case 9:
@@ -180,7 +180,7 @@ void clientParsePacket(packet *p){
 		break;
 
 		case 14: // characterHit
-			characterHitCheck(player,p->val.i[7],p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6]);
+			characterHitCheck(player,p->val.i[7],p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.i[6]);
 		break;
 
 		case 15: // playerPos

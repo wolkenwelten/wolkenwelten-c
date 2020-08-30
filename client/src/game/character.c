@@ -228,7 +228,7 @@ void characterUpdateAnimation(character *c){
 }
 
 // TODO: knochback direction gets calculated from the center of the hit sphere and NOT the attackign character, leading to unintuitive knocback directions
-void characterHitCheck(character *c, int origin, float x, float y, float z, float yaw, float pitch, float roll, float pwr){
+void characterHitCheck(character *c, int origin, float x, float y, float z, float yaw, float pitch, float roll, int pwr){
 	const float vx = cos((yaw-90.f)*PI/180) * cos((-pitch)*PI/180);
 	const float vy = sin((-pitch)*PI/180);
 	const float vz = sin((yaw-90.f)*PI/180) * cos((-pitch)*PI/180);
@@ -241,7 +241,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 		sfxPlay(sfxImpact,1.f);
 		sfxPlay(sfxUngh,  1.f);
 		setOverlayColor(0xA03020F0,0);
-		if(characterHP(c,pwr*-4.f)){
+		if(characterHP(c,-pwr)){
 			msgSendDyingMessage("clubbed",origin);
 			setOverlayColor(0x00000000,0);
 		}
@@ -264,7 +264,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 	(void)roll;
 }
 
-void characterGotHitBroadcast(int i,float pwr){
+void characterGotHitBroadcast(int i,int pwr){
 	if(playerList[i] == NULL){return;}
 	character *c = playerList[i];
 	const float dx = player->x - c->x;

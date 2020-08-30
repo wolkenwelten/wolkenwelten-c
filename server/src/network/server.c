@@ -227,7 +227,7 @@ void serverParseSinglePacket(int c, packet *p){
 		break;
 
 		case 8: // CharacterGotHit
-			msgCharacterGotHit(c,p->val.f[0]);
+			msgCharacterGotHit(c,p->val.i[0]);
 			if(verbose){printf("[%02i] msgCharacterGotHit\n",c);}
 		break;
 
@@ -259,7 +259,7 @@ void serverParseSinglePacket(int c, packet *p){
 		break;
 
 		case 14:
-			msgCharacterHit(c,p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6]);
+			msgCharacterHit(c,p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.i[6]);
 			if(verbose){printf("[%02i] characterHit\n",c);}
 		break;
 

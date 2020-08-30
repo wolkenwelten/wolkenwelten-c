@@ -6,10 +6,10 @@ void crystalaxeInit(){
 	recipeAdd2I(ITEMID,1, 17,4, 269,4);
 }
 
-float crystalaxeDamage(item *cItem){
+int crystalaxeDamage(item *cItem){
 	(void)cItem;
 	
-	return 2.f;
+	return 4;
 }
 
 int crystalaxeBlockDamage(item *cItem, blockCategory blockCat){
