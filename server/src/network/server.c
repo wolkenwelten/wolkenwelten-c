@@ -135,6 +135,7 @@ void msgUpdatePlayer(int c){
 	blockMiningUpdatePlayer(c);
 	bigchungusUpdateClient(&world,c);
 	addQueuedChunks(c);
+	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 }
 
 void serverParsePlayerPos(int c, packet *p){
@@ -165,7 +166,8 @@ void serverParsePlayerPos(int c, packet *p){
 	clients[c].c->animationTicksMax  = p->val.i[20];
 	clients[c].c->animationTicksLeft = p->val.i[21];
 	clients[c].c->flags              = p->val.i[22];
-	msgUpdatePlayer(c);
+
+	clients[c].flags |= CONNECTION_DO_UPDATE;
 }
 
 void msgSendChunk(int c, const chunk *chnk){
@@ -515,6 +517,7 @@ void serverCheckCompression(int c){
 
 void serverSend(){
 	for(int i=0;i<clientCount;i++){
+		if(clients[i].flags & CONNECTION_DO_UPDATE){msgUpdatePlayer(i);}
 		if(clients[i].sendBufLen == 0){ continue; }
 		serverCheckCompression(i);
 		serverSendClient(i);

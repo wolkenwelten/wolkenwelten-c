@@ -28,6 +28,7 @@ typedef struct {
 } clientConnection;
 
 #define CONNECTION_WEBSOCKET (1   )
+#define CONNECTION_DO_UPDATE (1<<1)
 
 extern clientConnection clients[32];
 extern int clientCount;
