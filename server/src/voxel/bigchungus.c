@@ -280,50 +280,13 @@ void bigchungusUpdateClient(bigchungus *c, int p){
 }
 
 void bigchungusUnsubscribeClient(bigchungus *c, int p){
-	character *chara = clients[p].c;
-	int unsubs = 0;
-	int cx,cy,cz;
-	if(chara != NULL){
-		cx = ((int)chara->x) >> 8;
-		cy = ((int)chara->y) >> 8;
-		cz = ((int)chara->z) >> 8;
-	}else{
-		cx = 128;
-		cy =   4;
-		cz = 128;
-	}
-	
-	if((cx >= 0) && (cx < 256) && (cy >= 0) && (cy < 128) && (cz >= 0) && (cz < 256)){
-		chungusUnsubscribePlayer(c->chungi[cx][cy][cz],p);
-	}
-	for(int ix=0;ix < 12; ix++){
-		for(int iy=0;iy < 12; iy++){
-			for(int iz=0;iz < 12; iz++){
-				
-				int ox = ix >> 1;
-				if(ix & 1){ox = -ox;}
-				ox = cx+ox;
-				if(ox <   0){goto xcontinue;}
-				if(ox > 255){goto xcontinue;}
-				
-				int oy = iy >> 1;
-				if(iy & 1){oy = -oy;}
-				oy = cy+oy;
-				if(oy <   0){goto ycontinue;}
-				if(oy > 127){goto ycontinue;}
-				
-				int oz = iz >> 1;
-				if(iz & 1){oz = -oz;}
-				oz = cz+oz;
-				if(oz <   0){continue;}
-				if(oz > 255){continue;}
-				
+	for(int ox=0;ox < 256; ox++){
+		for(int oy=0;oy < 128; oy++){
+			for(int oz=0;oz < 256; oz++){
 				chungus *chng = c->chungi[ox][oy][oz];
-				if(chungusUnsubscribePlayer(chng,p)){if(++unsubs > 8){return;}}
+				chungusUnsubscribePlayer(chng,p);
 			}
-			ycontinue: (void)c;
 		}
-		xcontinue: (void)c;
 	}
 }
 

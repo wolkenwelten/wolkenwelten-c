@@ -227,7 +227,7 @@ void chungusSubscribePlayer(chungus *c, int p){
 	c->clientsSubscribed |= 1 << p;
 }
 int chungusUnsubscribePlayer(chungus *c, int p){
-	if(c == NULL)                         {return 0;}
+	if(c == NULL){return 0;}
 	uint32_t mask = ~(1 << p);
 	c->clientsSubscribed &= mask;
 	c->clientsUpdated    &= mask;

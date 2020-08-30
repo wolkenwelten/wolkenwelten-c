@@ -94,6 +94,7 @@ void msgPlayerSpawnPos(int c){
 
 void serverIntro(int c){
 	itemDropIntro(c);
+	bigchungusUnsubscribeClient(&world,c);
 }
 
 void msgUpdatePlayer(int c){
@@ -573,8 +574,6 @@ void serverCloseClient(int c){
 		characterFree(clients[c].c);
 		clients[c].c = NULL;
 	}
-	bigchungusUnsubscribeClient(&world,c);
-	clients[c] = clients[--clientCount];
 	msgSetPlayerCount(c,clientCount);
 	serverSendChatMsg(msg);
 	if((clientCount == 0) && (optionSingleplayer)){
