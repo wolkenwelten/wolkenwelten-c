@@ -6,6 +6,12 @@ void pearInit(){
 	(void)ITEMID;
 }
 
+int pearDamage(item *cItem){
+	(void)cItem;
+	
+	return 12;
+}
+
 bool pearSecondaryAction(item *cItem,character *cChar, int to){
 	(void)cItem;
 

@@ -6,6 +6,12 @@ void ironpickaxeInit(){
 	recipeAdd2I(ITEMID,1, 17,2, 266,2);
 }
 
+int ironpickaxeDamage(item *cItem){
+	(void)cItem;
+	
+	return 6;
+}
+
 int ironpickaxeBlockDamage(item *cItem, blockCategory blockCat){
 	(void)cItem;
 

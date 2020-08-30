@@ -6,6 +6,12 @@ void stonepickaxeInit(){
 	recipeAdd2I(ITEMID,1, 17,2, 3,2);
 }
 
+int stonepickaxeDamage(item *cItem){
+	(void)cItem;
+	
+	return 4;
+}
+
 int stonepickaxeBlockDamage(item *cItem, blockCategory blockCat){
 	(void)cItem;
 

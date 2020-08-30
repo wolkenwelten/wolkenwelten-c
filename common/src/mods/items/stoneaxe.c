@@ -6,6 +6,12 @@ void stoneaxeInit(){
 	recipeAdd2I(ITEMID,1, 17,2, 3,2);
 }
 
+int stoneaxeDamage(item *cItem){
+	(void)cItem;
+	
+	return 4;
+}
+
 int stoneaxeBlockDamage(item *cItem, blockCategory blockCat){
 	(void)cItem;
 

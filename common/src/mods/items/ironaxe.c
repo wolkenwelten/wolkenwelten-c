@@ -6,6 +6,12 @@ void ironaxeInit(){
 	recipeAdd2I(ITEMID,1, 17,2, 266,2);
 }
 
+int ironaxeDamage(item *cItem){
+	(void)cItem;
+	
+	return 6;
+}
+
 int ironaxeBlockDamage(item *cItem, blockCategory blockCat){
 	(void)cItem;
 

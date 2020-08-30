@@ -6,6 +6,12 @@ void crystalpickaxeInit(){
 	recipeAdd2I(ITEMID,1, 17,4, 269,4);
 }
 
+int crystalpickaxeDamage(item *cItem){
+	(void)cItem;
+	
+	return 8;
+}
+
 int crystalpickaxeBlockDamage(item *cItem, blockCategory blockCat){
 	(void)cItem;
 

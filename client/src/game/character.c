@@ -237,7 +237,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 	float dz = (z+vz) - c->z;
 	float d  = (dx*dx)+(dy*dy)+(dz*dz);
 
-	if(d < 1.f){
+	if(d < 1.f){ 
 		sfxPlay(sfxImpact,1.f);
 		sfxPlay(sfxUngh,  1.f);
 		setOverlayColor(0xA03020F0,0);
@@ -255,7 +255,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 		dx /= dm;
 		dy /= dm;
 		dz /= dm;
-		dm = sqrtf((16.f*pwr*pwr)/dm);
+		dm = sqrtf((4.f*pwr)/dm);
 		c->vx += dx * dm * -0.01f;
 		c->vy += dy * dm * -0.01f;
 		c->vz += dz * dm * -0.01f;
