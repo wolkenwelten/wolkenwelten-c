@@ -3,7 +3,7 @@ static const int ITEMID=260;
 #include "../api_v1.h"
 
 void stonepickaxeInit(){
-	recipeAdd2I(ITEMID,1, 17,2, 3,2);
+	recipeAdd2I(ITEMID,1, 17,4, 3,2);
 }
 
 int stonepickaxeDamage(item *cItem){

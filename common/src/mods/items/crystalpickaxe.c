@@ -3,7 +3,7 @@ static const int ITEMID=271;
 #include "../api_v1.h"
 
 void crystalpickaxeInit(){
-	recipeAdd2I(ITEMID,1, 17,4, 269,4);
+	recipeAdd2I(ITEMID,1, 17,4, 269,2);
 }
 
 int crystalpickaxeDamage(item *cItem){
