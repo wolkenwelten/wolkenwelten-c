@@ -255,11 +255,6 @@ void changeInventorySelection(int x,int y){
 	int xsel = gamepadSelection % 10;
 	int ysel = gamepadSelection / 10;
 
-	int xmax = 9;
-	if(ysel == 5){xmax = MIN(9,recipeGetCraftableCount(player)-1);}
-	xsel += x;
-	if(xsel < 0){xsel = xmax;}
-	if(xsel > xmax){xsel = 0;}
 	ysel += y;
 	if(ysel < 0){ysel = 5;}
 	if(ysel == 4){
@@ -270,6 +265,11 @@ void changeInventorySelection(int x,int y){
 		}
 	}
 	if(ysel > 5){ysel = 0;}
+	int xmax = 9;
+	if(ysel == 5){xmax = MIN(9,recipeGetCraftableCount(player)-1);}
+	xsel += x;
+	if(xsel < 0){xsel = xmax;}
+	if(xsel > xmax){xsel = 0;}
 	gamepadSelection = xsel + ysel*10;
 }
 
