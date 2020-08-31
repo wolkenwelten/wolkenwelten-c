@@ -12,6 +12,7 @@ int   optionWorldSeed    = 0;
 int   optionPort         = 0;
 bool  optionSingleplayer = false;
 bool  verbose            = false;
+bool  optionPersistent   = false;
 
 char *attribution_info =
 "LZ4\n"
@@ -81,6 +82,10 @@ void parseOptions(int argc,const char *argv[]){
 		}
 		if((l = checkString(argv[i]+1,"port="))){
 			optionPort = atoi(argv[i]+l);
+			continue;
+		}
+		if((l = checkString(argv[i]+1,"persistent"))){
+			optionPersistent = true;
 			continue;
 		}
 		if((l = checkString(argv[i]+1,"verbose"))){

@@ -2,9 +2,11 @@
 
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
+#include "../misc/options.h"
 #include "../network/server.h"
 #include "../worldgen/worldgen.h"
 #include "../voxel/chunk.h"
+#include "../../../common/src/misc/lz4.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/game/blockType.h"
 
@@ -17,6 +19,9 @@
 chungus chungusList[1 << 12];
 unsigned int chungusCount=0;
 chungus *chungusFirstFree = NULL;
+
+uint8_t *saveLoadBuffer   = NULL;
+uint8_t *compressedBuffer = NULL;
 
 unsigned int chungusGetActiveCount(){
 	return chungusCount;
@@ -33,6 +38,104 @@ float chunkDistance(const entity *cam, float x, float y,float z){
 	float ydiff = (float)y-cam->y;
 	float zdiff = (float)z-cam->z;
 	return sqrtf((xdiff*xdiff)+(ydiff*ydiff)+(zdiff*zdiff));
+}
+
+const char *chungusGetFilename(chungus *c){
+	static char buf[64];
+	snprintf(buf,sizeof(buf)-1,"save/%02X%02X%02X.chunk",(c->x >> 8)&0xFF,(c->y >> 8)&0xFF,(c->z >> 8)&0xFF);
+	buf[sizeof(buf)-1] = 0;
+	return buf;
+}
+
+void chungusSetClientUpdated(chungus *c,uint64_t updated){
+	c->clientsUpdated = updated;
+	for(int x=0;x<16;x++){
+		for(int y=0;y<16;y++){
+			for(int z=0;z<16;z++){
+				if(c->chunks[x][y][z] == NULL){continue;}
+				c->chunks[x][y][z]->clientsUpdated = updated;
+			}
+		}
+	}
+}
+
+void chungusLoad(chungus *c){
+	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
+	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
+	size_t read=0,len=0;
+	int i;
+	
+	FILE *fp = fopen(chungusGetFilename(c),"rb");
+	if(fp == NULL){return;}
+	fseek(fp,0,SEEK_END);
+	len = ftell(fp);
+	fseek(fp,0,SEEK_SET);
+	for(i=0;i<64;i++){
+		read += fread(compressedBuffer+read,1,len-read,fp);
+		if(read >= len){break;}
+	}
+	if(i==64){
+		fprintf(stderr,"Error reading chungus %i:%i:%i\n",c->x>>8,c->y>>8,c->z>>8);
+		return;
+	}
+	
+	len = LZ4_decompress_safe((const char *)compressedBuffer, (char *)saveLoadBuffer, len, 4100*4096);
+	
+	read=0;
+	for(i=0;i<4096;i++){
+		read++;
+		int cx = saveLoadBuffer[read++] & 0xF;
+		int cy = saveLoadBuffer[read++] & 0xF;
+		int cz = saveLoadBuffer[read++] & 0xF;
+		chunk *chnk = c->chunks[cx][cy][cz];
+		if(chnk == NULL){
+			c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+(cx<<4),c->y+(cy<<4),c->z+(cz<<4));
+		}
+		chnk->clientsUpdated = 0;
+		memcpy(chnk->data,saveLoadBuffer+read,4096);
+		read += 4096;
+		if(read >= len){break;}
+	}
+	
+	fclose(fp);
+}
+
+void chungusSave(chungus *c){
+	if((c->clientsUpdated & ((uint64_t)1 << 31)) != 0){return;}
+	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
+	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
+	
+	uint8_t *cbuf = saveLoadBuffer;
+	for(int x=0;x<16;x++){
+		for(int y=0;y<16;y++){
+			for(int z=0;z<16;z++){
+				if(c->chunks[x][y][z] == NULL){continue;}
+				cbuf = chunkSave(c->chunks[x][y][z],cbuf);
+			}
+		}
+	}
+	size_t len = LZ4_compress_default((const char *)saveLoadBuffer, (char *)compressedBuffer, cbuf - saveLoadBuffer, 4100*4096);
+	
+	if(len == 0){
+		fprintf(stderr,"No Data for chungus %i:%i:%i\n",c->x,c->y,c->z);
+		return;
+	}
+	size_t written = 0;
+	FILE *fp = fopen(chungusGetFilename(c),"wb");
+	if(fp == NULL){
+		fprintf(stderr,"Error opening %s for writing\n",chungusGetFilename(c));
+		return;
+	}
+	for(int i=0;i<64;i++){
+		written += fwrite(compressedBuffer+written,1,len-written,fp);
+		if(written >= len){
+			fclose(fp);
+			fprintf(stderr,"Successfully chungus %i:%i:%i\n",c->x,c->y,c->z);
+			return;
+		}
+	}
+	fclose(fp);
+	fprintf(stderr,"Write error on chungus (%llu / %llu) %i:%i:%i\n",written,len,c->x,c->y,c->z);
 }
 
 chungus *chungusNew(int x, int y, int z){
@@ -54,17 +157,21 @@ chungus *chungusNew(int x, int y, int z){
 	c->nextFree = NULL;
 	c->spawnx = c->spawny = c->spawnz = -1;
 	c->clientsSubscribed  = 0;
-	c->clientsUpdated     = (uint64_t)1 << 63;
+	c->clientsUpdated     = (uint64_t)1 << 31;
+	
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 	worldgen *wgen = worldgenNew(c);
 	worldgenGenerate(wgen);
 	worldgenFree(wgen);
+	chungusSetClientUpdated(c,(uint64_t)1 << 31);
+	if(optionPersistent){chungusLoad(c);}
 
 	return c;
 }
 
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
+	if(optionPersistent){chungusSave(c);}
 	itemDropDelChungus(c);
 	for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){

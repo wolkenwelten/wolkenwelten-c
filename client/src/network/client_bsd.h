@@ -69,7 +69,7 @@ void startSingleplayerServer(){
 	snprintf(seed,sizeof(seed)-1,"-worldSeed=%i",optionWorldSeed);
 	singlePlayerPID = fork();
 	if (singlePlayerPID == 0){
-		execl(wolkenweltenServer,"wolkenwelten-server",seed,"-singleplayer=1", (char *)NULL);
+		execl(wolkenweltenServer,"wolkenwelten-server",seed,"-singleplayer=1"," -persistent=1", (char *)NULL);
 		return;
 	}
 	strncpy(serverName,"localhost",sizeof(serverName)-1);

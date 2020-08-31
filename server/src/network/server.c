@@ -43,6 +43,7 @@ void serverKeepalive(){
 	if(ct > lastKA+1000){
 		lastKA = ct;
 		for(int i=0;i<clientCount;i++){
+			if(clients[i].state == 2){ continue; }
 			sendToAll(buffer,16);
 		}
 	}else if(ct < lastKA){
@@ -398,6 +399,8 @@ void serverParse(){
 				}
 				serverParsePacket(i);
 				break;
+			case 2:
+				break;
 		}
 	}
 }
@@ -517,6 +520,7 @@ void serverCheckCompression(int c){
 
 void serverSend(){
 	for(int i=0;i<clientCount;i++){
+		if(clients[i].state == 2){ continue; }
 		if(clients[i].flags & CONNECTION_DO_UPDATE){msgUpdatePlayer(i);}
 		if(clients[i].sendBufLen == 0){ continue; }
 		serverCheckCompression(i);
@@ -577,6 +581,7 @@ void serverCloseClient(int c){
 		characterFree(clients[c].c);
 		clients[c].c = NULL;
 	}
+	clients[c].state = 2;
 	msgSetPlayerCount(c,clientCount);
 	serverSendChatMsg(msg);
 	if((clientCount == 0) && (optionSingleplayer)){

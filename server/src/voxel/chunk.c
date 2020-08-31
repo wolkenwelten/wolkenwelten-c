@@ -29,7 +29,7 @@ chunk *chunkNew(uint16_t x,uint16_t y,uint16_t z){
 	c->y = y & (~0xF);
 	c->z = z & (~0xF);
 	c->nextFree = NULL;
-	c->clientsUpdated = (uint64_t)1 << 63;
+	c->clientsUpdated = (uint64_t)1 << 31;
 	
 	memset(c->data,0,sizeof(c->data));
 	return c;
@@ -42,6 +42,16 @@ void chunkFree(chunk *c){
 	chunkFirstFree = c;
 }
 
+uint8_t *chunkSave(chunk *c, uint8_t *buf){
+	if((c->clientsUpdated & ((uint64_t)1 << 31)) != 0){return buf;}
+	buf[0] = 0xFF;
+	buf[1] = (c->x >> 4)&0xF;
+	buf[2] = (c->y >> 4)&0xF;
+	buf[3] = (c->z >> 4)&0xF;
+	memcpy(buf+4,c->data,16*16*16);
+	return buf+4100;
+}
+
 void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,uint8_t block){
 	for(int cx=x;cx<gx;cx++){
 		for(int cy=y;cy<gy;cy++){
@@ -50,6 +60,7 @@ void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,uint8_t block){
 			}
 		}
 	}
+	c->clientsUpdated = 0;
 }
 
 void chunkSetB(chunk *c,int x,int y,int z,uint8_t block){

@@ -62,6 +62,7 @@ platform/win/msys2_pkgs/mingw-w64-SDL2/*
 *.dll
 *.core
 *.res
+/save/
 
 # Blender Backups
 *.blend1

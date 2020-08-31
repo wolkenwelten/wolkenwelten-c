@@ -18,6 +18,7 @@
 bigchungus world;
 
 float chungusRoughDistance(character *cam, float x, float y,float z) {
+	if(cam == NULL){return 8192.f;}
 	x = x * CHUNGUS_SIZE + CHUNGUS_SIZE/2;
 	y = y * CHUNGUS_SIZE + CHUNGUS_SIZE/2;
 	z = z * CHUNGUS_SIZE + CHUNGUS_SIZE/2;

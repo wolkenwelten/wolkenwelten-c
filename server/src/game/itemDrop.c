@@ -91,6 +91,7 @@ void itemDropDel(int d){
 
 bool itemDropCheckPickup(int d){
 	for(int i=0;i<clientCount;++i){
+		if(clients[i].c == NULL){continue;}
 		float dx = clients[i].c->x - itemDrops[d].ent->x;
 		float dy = clients[i].c->y - itemDrops[d].ent->y;
 		float dz = clients[i].c->z - itemDrops[d].ent->z;

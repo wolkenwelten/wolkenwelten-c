@@ -96,6 +96,7 @@ void serverKill(int c){
 
 void serverRead(){
 	for(int i=0;i<clientCount;i++){
+		if(clients[i].state == 2){ continue; }
 		int len = 1;
 		while(len > 0){
 			if(clients[i].flags&1){

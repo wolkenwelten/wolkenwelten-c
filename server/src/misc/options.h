@@ -4,6 +4,7 @@
 extern int  optionWorldSeed;
 extern int  optionPort;
 extern bool optionSingleplayer;
+extern bool optionPersistent;
 extern bool verbose;
 
 void parseOptions(int argc,const char *argv[]);

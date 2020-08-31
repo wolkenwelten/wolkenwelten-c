@@ -108,6 +108,9 @@ int main( int argc, const char* argv[] ){
 	printf(" %s%s"         ,termColors[6],VERSION        );
 	printf(" %s[%.16s]"    ,termColors[3],COMMIT         );
 	printf(" %sSeed[%u]"   ,termColors[4],optionWorldSeed);
+	if(optionPersistent){
+		printf(" %sPERSISTENT"   ,termColors[5]);
+	}
 	printf(" %sbuilt %s\n" ,termReset    ,BUILDDATE      );
 
 	serverInit();
