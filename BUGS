@@ -1,4 +1,3 @@
-itemdrops do add considerable latency to everything on the serverside
 Reducing Hook rope length still can lead to weird collision issues
 You can't build one block wide bunkers, placing the block not possible.
 Collision is getting weird in 1x2 mine shafts
@@ -8,4 +7,3 @@ Jumping SFX do not get reduced volume the further away the source is
 ? Firefox mouse capture does not work
 Have a better way of waiting for the singleplayer server to start up instead of periodicaly retrying after a short sleep
 Blaster SFX seem to have broken
-Too many itemDrops lead to high latency on win32 singleplayer
