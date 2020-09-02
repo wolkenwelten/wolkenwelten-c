@@ -45,8 +45,6 @@ build() {
     --disable-music-ogg \
     --disable-music-flac-shared \
     --disable-music-flac \
-	--disable-music-modplug \
-	--disable-music-modplug-shared \
 	--disable-music-midi-fluidsynth \
 	--disable-music-midi-fluidsynth-shared \
 	--disable-music-mod \
