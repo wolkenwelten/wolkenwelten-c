@@ -49,6 +49,8 @@ client/src/tmp/mods_tmp.c: $(MODS_SRCS)
 client/src/tmp/mods_tmp.c: tools/modscg
 	mkdir -p server/src/tmp/
 	tools/modscg $(shell find common/src/mods/items -type f -name '*.c') > client/src/tmp/mods_tmp.c
+client/src/tmp/mods_tmp.h: client/src/tmp/mods_tmp.c
+	@true
 
 client/src/tmp/objs.c: $(MESHASSETS)
 client/src/tmp/objs.c: client/tools/objgen

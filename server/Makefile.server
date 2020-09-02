@@ -45,5 +45,7 @@ server/src/tmp/mods_tmp.c: $(MODS_SRCS)
 server/src/tmp/mods_tmp.c: tools/modscg
 	mkdir -p server/src/tmp/
 	tools/modscg $(shell find common/src/mods/items -type f -name '*.c') > server/src/tmp/mods_tmp.c
+server/src/tmp/mods_tmp.h: server/src/tmp/mods_tmp.c
+	@true
 
 server/src/network/server.o: server/src/network/server_bsd.h server/src/network/server_win.h
