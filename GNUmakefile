@@ -20,6 +20,7 @@ else
 	endif
 	ifeq ($(UNAME_S),Linux)
 		include platform/linux/Makefile.linux
+		include platform/win_cross/Makefile.win
 	endif
 	ifeq ($(UNAME_S),Haiku)
 		include platform/haiku/Makefile.haiku

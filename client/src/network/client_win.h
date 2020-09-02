@@ -3,7 +3,7 @@
 #include <process.h>
 #include <winsock2.h>
 #include <windows.h>
-#include <Lmcons.h>
+#include <lmcons.h>
 
 bool signalHandlerBound = false;
 int  serverSocket       = 0;
