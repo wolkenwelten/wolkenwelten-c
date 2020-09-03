@@ -237,7 +237,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 	float dz = (z+vz) - c->z;
 	float d  = (dx*dx)+(dy*dy)+(dz*dz);
 
-	if(d < 1.f){ 
+	if(d < 1.f){
 		sfxPlay(sfxImpact,1.f);
 		sfxPlay(sfxUngh,  1.f);
 		setOverlayColor(0xA03020F0,0);
@@ -464,22 +464,22 @@ float cdrag;
 float clift;
 
 void updateGlide(character *c){
-	//vec  dir = vecDegToVec(vecNew(c->yaw,c->pitch,c->roll));
-	//vec   up = vecDegToVec(vecNew(c->yaw,c->pitch-90.f,c->roll));
+	vec  dir = vecDegToVec(vecNew(c->yaw,c->pitch,c->roll));
 	vec  vel = vecNew(c->vx,c->vy,c->vz);
+
 	vec vdeg = vecVecToDeg(vecNorm(vel));
 
 	float aoa  = fabsf(vdeg.y - c->pitch);
-	float drag = fabsf(sinf(aoa*PI180));
+	float drag = fabsf(sinf(aoa*PI180)) * 0.9f + 0.1f;
 	cdrag = drag;
-	//fprintf(stderr,"%f*%f + %f*%f + %f*%f = %f\n",vel.x,vel.x,vel.y,vel.y,vel.z,vel.z,clift);
 
-	vel = vecAdd(vel,vecMulS(vecInvert(vel),drag * 0.02f));
+	vec vdrg = vecMulS(vecInvert(vel),drag * 0.03f);
+	vel = vecAdd(vel,vdrg);
+	vel = vecAdd(vel,vecMulS(dir,vecMag(vdrg)*0.95f));
 
 	c->vx = vel.x;
 	c->vy = vel.y;
 	c->vz = vel.z;
-	//fprintf(stderr,"%f\n",drag);
 }
 
 int characterPhysics(character *c){
@@ -791,7 +791,7 @@ void characterActiveItemDraw(character *c){
 				matMulRotYX(matMVP,hitOff*20.f,hitOff*40.f);
 			}
 		break;
-		
+
 		case 5:
 			hitOff = (float)c->animationTicksLeft / (float)c->animationTicksMax;
 			y = iy+c->yoff-(hitOff/8);
