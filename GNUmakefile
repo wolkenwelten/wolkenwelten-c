@@ -20,7 +20,9 @@ else
 	endif
 	ifeq ($(UNAME_S),Linux)
 		include platform/linux/Makefile.linux
-		include platform/win_cross/Makefile.win
+		ifeq (, $(shell which x86_64-w64-mingw32-gcc))
+			include platform/win_cross/Makefile.win
+		endif
 	endif
 	ifeq ($(UNAME_S),Haiku)
 		include platform/haiku/Makefile.haiku
@@ -39,57 +41,3 @@ endif
 ifdef EMSDK
 	include platform/wasm/Makefile.wasm
 endif
-
-.PHONY: release
-.PHONY: .deps
-
-%.o: %.c
-	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -c $< -o $@
-
-.PHONY: clean
-clean:
-	rm -f gmon.out client/make.deps client/tools/assets client/tools/objparser callgrind.out.* vgcore.* platform/win/wolkenwelten.res
-	rm -f $(shell find common/src -type f -name '*.o')
-	rm -f wolkenwelten wolkenwelten.exe $(shell find client/src -type f -name '*.o')
-	rm -f wolkenwelten-server wolkenwelten-server.exe $(shell find server/src -type f -name '*.o')
-	rm -rf client/src/tmp server/src/tmp common/src/tmp
-	rm -rf web/releases releases
-
-.PHONY: webrelease
-webrelease: release
-	rsync -avhe ssh $(WEBEXCLUDE) releases wolkenwelten.net:/var/www/wolkenwelten.net/
-
-.PHONY: website
-website:
-	rsync -avhe ssh web/ wolkenwelten.net:/var/www/wolkenwelten.net/
-
-.PHONY: web
-web: webrelease website
-
-.PHONY: debug
-debug: CFLAGS += -O0
-debug: all
-
-.PHONY: profile
-profile: CFLAGS += -pg
-profile: all
-
-.PHONY: sanitize
-sanitize: CFLAGS += -fsanitize=address
-sanitize: all
-
-.PHONY: rund
-rund: all
-	./wolkenwelten -soundVolume=10 -worldSeed=18 -debugInfo=1 -fullscreen -runtimeReloading
-
-.PHONY: run
-run: all
-	./wolkenwelten
-
-.PHONY: archive
-archive:
-	git archive --format=tar --prefix=wolkenwelten-HEAD.tar.gz/ HEAD | gzip > wolkenwelten-HEAD.tar.gz
-
-
-tools/modscg: tools/modscg.c
-	$(CC) $(OPTIMIZATION) $(CFLAGS) $< -o $@
