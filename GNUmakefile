@@ -20,7 +20,7 @@ else
 	endif
 	ifeq ($(UNAME_S),Linux)
 		include platform/linux/Makefile.linux
-		ifeq (, $(shell which x86_64-w64-mingw32-gcc))
+		ifdef MINGWCROSS
 			include platform/win_cross/Makefile.win
 		endif
 	endif
