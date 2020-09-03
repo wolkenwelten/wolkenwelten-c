@@ -1,7 +1,7 @@
-(A) Do part of the beamblast calculatiosn clientside so the latency is not as noticeable
 (A) MacOS Code signing
-(A) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
 
+(B) Do part of the beamblast calculatiosn clientside so the latency is not as noticeable
+(B) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
 (B) Rework the GUI Code, it is trash!
 (B) Proper Character Models
 (B) Persistent World / Savegames
