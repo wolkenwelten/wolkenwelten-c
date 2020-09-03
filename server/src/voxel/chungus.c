@@ -64,7 +64,7 @@ void chungusLoad(chungus *c){
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
 	size_t read=0,len=0;
 	int i;
-	
+
 	FILE *fp = fopen(chungusGetFilename(c),"rb");
 	if(fp == NULL){return;}
 	fseek(fp,0,SEEK_END);
@@ -78,9 +78,9 @@ void chungusLoad(chungus *c){
 		fprintf(stderr,"Error reading chungus %i:%i:%i\n",c->x>>8,c->y>>8,c->z>>8);
 		return;
 	}
-	
+
 	len = LZ4_decompress_safe((const char *)compressedBuffer, (char *)saveLoadBuffer, len, 4100*4096);
-	
+
 	read=0;
 	for(i=0;i<4096;i++){
 		read++;
@@ -96,7 +96,7 @@ void chungusLoad(chungus *c){
 		read += 4096;
 		if(read >= len){break;}
 	}
-	
+
 	fclose(fp);
 }
 
@@ -104,7 +104,7 @@ void chungusSave(chungus *c){
 	if((c->clientsUpdated & ((uint64_t)1 << 31)) != 0){return;}
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
-	
+
 	uint8_t *cbuf = saveLoadBuffer;
 	for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){
@@ -115,7 +115,7 @@ void chungusSave(chungus *c){
 		}
 	}
 	size_t len = LZ4_compress_default((const char *)saveLoadBuffer, (char *)compressedBuffer, cbuf - saveLoadBuffer, 4100*4096);
-	
+
 	if(len == 0){
 		fprintf(stderr,"No Data for chungus %i:%i:%i\n",c->x,c->y,c->z);
 		return;
@@ -135,7 +135,7 @@ void chungusSave(chungus *c){
 		}
 	}
 	fclose(fp);
-	fprintf(stderr,"Write error on chungus (%llu / %llu) %i:%i:%i\n",written,len,c->x,c->y,c->z);
+	fprintf(stderr,"Write error on chungus %i:%i:%i\n",c->x,c->y,c->z);
 }
 
 chungus *chungusNew(int x, int y, int z){
@@ -158,7 +158,7 @@ chungus *chungusNew(int x, int y, int z){
 	c->spawnx = c->spawny = c->spawnz = -1;
 	c->clientsSubscribed  = 0;
 	c->clientsUpdated     = (uint64_t)1 << 31;
-	
+
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 	worldgen *wgen = worldgenNew(c);
 	worldgenGenerate(wgen);
