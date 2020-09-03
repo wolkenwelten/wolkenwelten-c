@@ -173,9 +173,9 @@ void drawDebuginfo(){
 	guim->sy   = 76;
 	guim->size =  1;
 
-	textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f\n",player->x,player->vx);
-	textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f\n",player->y,player->vy);
-	textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f\n",player->z,player->vz);
+	textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f GVX: %02.4f\n",player->x,player->vx,player->gvx);
+	textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f GVY: %02.4f\n",player->y,player->vy,player->gvy);
+	textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f GVZ: %02.4f\n",player->z,player->vz,player->gvz);
 	textMeshPrintf(guim,"Player   Yaw: %04.2f\n",player->yaw);
 	textMeshPrintf(guim,"Player Pitch: %04.2f\n",player->pitch);
 	textMeshPrintf(guim,"Player  Roll: %04.2f\n",player->roll);
