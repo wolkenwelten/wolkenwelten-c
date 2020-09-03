@@ -7,3 +7,4 @@ Jumping SFX do not get reduced volume the further away the source is
 ? Firefox mouse capture does not work
 Have a better way of waiting for the singleplayer server to start up instead of periodicaly retrying after a short sleep
 Blaster SFX seem to have broken
+Blasters shoot off center
