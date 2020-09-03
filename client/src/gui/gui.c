@@ -179,8 +179,6 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"Player   Yaw: %04.2f\n",player->yaw);
 	textMeshPrintf(guim,"Player Pitch: %04.2f\n",player->pitch);
 	textMeshPrintf(guim,"Player  Roll: %04.2f\n",player->roll);
-	textMeshPrintf(guim,"Player  Drag: %04.2f\n",cdrag);
-	textMeshPrintf(guim,"Player  Lift: %04.2f\n",clift);
 	textMeshPrintf(guim,"Player Flags: %08X\n",player->flags);
 	textMeshPrintf(guim,"Active Tris.: %s\n", getHumanReadableSize(tris));
 	textMeshPrintf(guim,"Active Part.: %s\n", getHumanReadableSize(particleCount));
@@ -197,7 +195,7 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"Comp. Ratio : %2.2fX\n",(float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession);
 	textMeshPrintf(guim,"Canvas Size : %ix%i\n",screenWidth,screenHeight);
 	textMeshPrintf(guim,"ChunkDataMsg: %i\n",msgTypeCount[18]);
-	
+
 }
 
 void drawItemBar(){
@@ -320,7 +318,7 @@ void drawActiveItem(){
 				matMulRotYX(matViewAI,(1.f-hitOff)*3.f,(1.f-hitOff)*9.f);
 			}
 		break;
-		
+
 		case 5:
 			hitOff = (float)player->animationTicksLeft / (float)player->animationTicksMax;
 			y = iy+player->yoff-hitOff;

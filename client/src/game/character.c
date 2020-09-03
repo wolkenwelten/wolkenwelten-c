@@ -438,44 +438,18 @@ void characterDie(character *c){
 	setOverlayColor(0xFF000000,0);
 }
 
-void updateGlideWeird(character *c){
-	float vm = fabsf(c->vx);
-	if(fabsf(c->vy) > vm){vm = fabsf(c->vy);}
-	if(fabsf(c->vz) > vm){vm = fabsf(c->vz);}
-	float nx = c->vx / vm;
-	float ny = c->vy / vm;
-	float nz = c->vz / vm;
-
-	float fx = cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180);
-	float fy = sin((-c->pitch)*PI/180);
-	float fz = sin((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180);
-	float  v = ((fabsf(fx-nx)+fabsf(fy-ny)+fabsf(fz-nz))/6.f)*0.006f;
-
-	c->vx += cos((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
-	c->vy += sin((-c->pitch)*PI/180)*v;
-	c->vz += sin((c->yaw-90.f)*PI/180) * cos((-c->pitch)*PI/180)*v;
-
-	c->vx -= c->vx*0.001f;
-	c->vy -= c->vy*0.001f;
-	c->vz -= c->vz*0.001f;
-}
-
-float cdrag;
-float clift;
-
 void updateGlide(character *c){
 	vec  dir = vecDegToVec(vecNew(c->yaw,c->pitch,c->roll));
 	vec  vel = vecNew(c->vx,c->vy,c->vz);
-
 	vec vdeg = vecVecToDeg(vecNorm(vel));
 
 	float aoa  = fabsf(vdeg.y - c->pitch);
 	float drag = fabsf(sinf(aoa*PI180)) * 0.9f + 0.1f;
-	cdrag = drag;
 
-	vec vdrg = vecMulS(vecInvert(vel),drag * 0.03f);
+	vec vdrg = vecMulS(vecInvert(vel),drag * 0.1f);
+	float mag = vecMag(vdrg);
 	vel = vecAdd(vel,vdrg);
-	vel = vecAdd(vel,vecMulS(dir,vecMag(vdrg)*0.95f));
+	vel = vecAdd(vel,vecMulS(dir,mag*0.95f));
 
 	c->vx = vel.x;
 	c->vy = vel.y;
