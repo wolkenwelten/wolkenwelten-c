@@ -66,15 +66,16 @@ void initGL(){
 
 double gfxCurFOV = 80.0;
 void calcFOV(character *cam){
-	double off = 0;
+	float off = 0.f;
 
-	off = fabsf(cam->vx)+fabsf(cam->vy)+fabsf(cam->vz);
-	if(off < 0.025){
-		off = 0;
+	off = sqrtf(cam->vx*cam->vx + cam->vy*cam->vy + cam->vz*cam->vz);
+	
+	if(off < 0.025f){
+		off = 0.f;
 	}else{
-		off = (off - 0.025)*50;
+		off = (off - 0.025f)*50.f;
 	}
-	off += 80.0;
+	off += 80.0f;
 	if(off > gfxCurFOV){
 		gfxCurFOV += (off-gfxCurFOV)/8;
 	}else if(off < gfxCurFOV){
