@@ -45,7 +45,7 @@ void startSingleplayerServer(){
 	if(optionWorldSeed == 0){
 		optionWorldSeed = (int)(time(NULL)&0xFFFF);
 	}
-	snprintf(cmd,sizeof(cmd)-1,"wolkenwelten-server.exe -singleplayer=1 -persistent=1 -worldSeed=%i",optionWorldSeed);
+	snprintf(cmd,sizeof(cmd)-1,"wolkenwelten-server.exe -singleplayer=1 -worldSeed=%i",optionWorldSeed);
 	ZeroMemory( &si, sizeof(si) );
 	ZeroMemory( &pi, sizeof(pi) );
 	si.cb = sizeof(si);
