@@ -86,9 +86,11 @@ void calcFOV(character *cam){
 }
 
 void calcShake(character *cam, float *pitch, float *yaw){
+	static uint64_t ticks=0;
 	if(cam->shake < 0.001f){return;}
-	*pitch = cos(cam->shake*2.1f)*(cam->shake/2.f);
-	*yaw   = sin(cam->shake*1.3f)*(cam->shake/2.f);
+	float deg = ((float)++ticks)*0.4f;
+	*pitch = cos(deg*2.1f)*(cam->shake/2.f);
+	*yaw   = sin(deg*1.3f)*(cam->shake/2.f);
 }
 
 void calcView(character *cam){
