@@ -164,7 +164,7 @@ void drawDebuginfo(){
 	guim->sy   = screenHeight-56;
 	guim->size = 2;
 
-	textMeshPrintf(guim,"Speed %.0f\n",sqrtf(player->vx*player->vx + player->vy*player->vy + player->vz*player->vz)*256.f);
+	textMeshPrintf(guim,"Speed %.0f\n",sqrtf(player->vx*player->vx + player->vy*player->vy + player->vz*player->vz)*200.f);
 	textMeshPrintf(guim,"FPS %.0f\n",curFPS);
 	textMeshPrintf(guim,"Ver. %s [%.8s]",VERSION,COMMIT);
 

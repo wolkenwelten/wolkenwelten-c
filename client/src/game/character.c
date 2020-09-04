@@ -444,9 +444,9 @@ void updateGlide(character *c){
 	vec vdeg   = vecVecToDeg(vecNorm(vel));
 
 	float aoa  = fabsf(vdeg.y - c->pitch);
-	float drag = fabsf(sinf(aoa*PI180)) * 0.97f + 0.03f;
+	float drag = fabsf(sinf(aoa*PI180)) * 0.98f + 0.02f;
 
-	vec vdrg   = vecMulS(vecInvert(vel),drag * 0.05f);
+	vec vdrg   = vecMulS(vecInvert(vel),drag * 0.1f);
 	float mag  = vecMag(vdrg);
 	vel        = vecAdd(vel,vdrg);
 	vel        = vecAdd(vel,vecMulS(dir,mag*0.98f));
