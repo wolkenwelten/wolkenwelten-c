@@ -248,19 +248,19 @@ int main(int argc, char *argv[]){
 	}
 
 	printTypeCaller("modsInit","Init");
-	printItemTypeDispatch("Damage","item *cItem","cItem","int   ");
-	printItemTypeDispatch("BlockDamage","item *cItem, blockCategory blockCat","cItem, blockCat","int   ");
+	printItemTypeDispatch("Damage","item *cItem","cItem","int ");
+	printItemTypeDispatch("BlockDamage","item *cItem, blockCategory blockCat","cItem, blockCat","int ");
 	printItemTypeDispatch("GetMesh","item *cItem","cItem","mesh *");
-	printItemTypeDispatch("PrimaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool  ");
+	printItemTypeDispatch("PrimaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
 	printHasTypeSwitch   ("PrimaryAction");
-	printItemTypeDispatch("SecondaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool  ");
+	printItemTypeDispatch("SecondaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
 	printHasTypeSwitch   ("SecondaryAction");
-	printItemTypeDispatch("TertiaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool  ");
+	printItemTypeDispatch("TertiaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
 	printHasTypeSwitch   ("TertiaryAction");
 	printItemTypeDispatch("GetInaccuracy","item *cItem","cItem","float ");
-	printItemTypeDispatch("GetAmmunition","item *cItem","cItem","int   ");
-	printItemTypeDispatch("GetStackSize","item *cItem","cItem","int   ");
-	printItemTypeDispatch("GetMagSize","item *cItem","cItem","int   ");
+	printItemTypeDispatch("GetAmmunition","item *cItem","cItem","int ");
+	printItemTypeDispatch("GetStackSize","item *cItem","cItem","int ");
+	printItemTypeDispatch("GetMagSize","item *cItem","cItem","int ");
 	printHasTypeSwitch   ("GetMagSize");
 
 	return 0;
