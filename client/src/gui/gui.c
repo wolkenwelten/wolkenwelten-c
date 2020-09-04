@@ -31,6 +31,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 #define ITEMTILE (1.f/32.f)
 
@@ -160,9 +161,10 @@ void drawDebuginfo(){
 	}
 
 	guim->sx   = 4;
-	guim->sy   = screenHeight-40;
+	guim->sy   = screenHeight-56;
 	guim->size = 2;
 
+	textMeshPrintf(guim,"Speed %.0f\n",sqrtf(player->vx*player->vx + player->vy*player->vy + player->vz*player->vz)*256.f);
 	textMeshPrintf(guim,"FPS %.0f\n",curFPS);
 	textMeshPrintf(guim,"Ver. %s [%.8s]",VERSION,COMMIT);
 
