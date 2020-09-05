@@ -116,7 +116,6 @@ void recipeAdd2I(unsigned short nResultID, unsigned char nResultAmount, unsigned
 	recipes[r].ingredientID[2]     = recipes[r].ingredientAmount[2] = 0;
 }
 
-#include <stdio.h>
 int characterGetItemOrSubstituteAmount(character *c, unsigned short i){
 	ingredientSubstitute *s;
 	int ret = characterGetItemAmount(c,i);
