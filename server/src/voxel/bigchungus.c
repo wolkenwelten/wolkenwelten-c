@@ -1,5 +1,6 @@
 #include "bigchungus.h"
 
+#include "../main.h"
 #include "../network/server.h"
 #include "../game/entity.h"
 #include "../game/blockMining.h"
@@ -284,6 +285,20 @@ void bigchungusUnsubscribeClient(bigchungus *c, int p){
 			for(int oz=0;oz < 256; oz++){
 				chungus *chng = c->chungi[ox][oy][oz];
 				chungusUnsubscribePlayer(chng,p);
+			}
+		}
+	}
+}
+
+void bigchungusSafeSave(bigchungus *c){
+	static uint64_t lastSave = 0;
+	if(getMillis() < lastSave+1000){return;}
+	lastSave = getMillis();
+	for(int x=127;x <= 129;x++){
+		for(int y=1;y <= 3;y++){
+			for(int z=127;z <= 129;z++){
+				if(c->chungi[x][y][z] == NULL){continue;}
+				chungusSave(c->chungi[x][y][z]);
 			}
 		}
 	}

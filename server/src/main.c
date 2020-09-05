@@ -6,11 +6,11 @@
 #include "game/blockMining.h"
 #include "game/itemDrop.h"
 #include "game/grenade.h"
-#include "../../common/src/game/blockType.h"
 #include "voxel/bigchungus.h"
 #include "network/server.h"
 #include "../../common/src/tmp/cto.h"
 #include "../../common/src/misc/misc.h"
+#include "../../common/src/game/blockType.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -119,6 +119,7 @@ int main( int argc, const char* argv[] ){
 	bigchungusGenSpawn(&world);
 	while(!quit){
 		bigchungusFreeFarChungi(&world);
+		bigchungusSafeSave(&world);
 		updateWorld();
 		serverHandleEvents();
 		if(clientCount == 0){

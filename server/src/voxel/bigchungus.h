@@ -32,6 +32,7 @@ void        bigchungusGetSpawnPos       (bigchungus *c, int *x, int *y, int *z);
 void        bigchungusFreeFarChungi     (bigchungus *c);
 void        bigchungusUpdateClient      (bigchungus *c, int p);
 void        bigchungusUnsubscribeClient (bigchungus *c, int p);
+void        bigchungusSafeSave          (bigchungus *c);
 
 extern bigchungus world;
 
