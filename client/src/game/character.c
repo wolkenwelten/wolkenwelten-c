@@ -565,7 +565,7 @@ void characterUpdate(character *c){
 		}
 	}
 	if(c->pitch < -90.f){
-		c->pitch = 90.f;
+		c->pitch = -90.f;
 	}else if(c->pitch > 90.f){
 		c->pitch = 90.f;
 	}
