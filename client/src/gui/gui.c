@@ -334,12 +334,17 @@ void drawActiveItem(){
 }
 
 void drawActiveGlider(){
+	static uint64_t ticks = 0;
 	float matViewAI[16];
 	if(player->gliderFade < 0.01f){return;}
+	
+	float deg  = ((float)++ticks*0.4f);
+	float yoff = cos(deg*2.1f)*player->shake;
+	float xoff = sin(deg*1.3f)*player->shake;
 
 	shaderBind(sMesh);
 	matTranslation(matViewAI,0.f,player->yoff+0.9f,-0.65f);
-	matMulRotYX(matViewAI,0.f,player->pitch*-0.08f);
+	matMulRotYX(matViewAI,0.f+xoff,player->pitch*-0.08f + yoff);
 	matMulScale(matViewAI,player->gliderFade, player->gliderFade, player->gliderFade);
 	matMul(matViewAI, matViewAI, matProjection);
 	shaderMatrix(sMesh, matViewAI);
