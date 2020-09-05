@@ -12,7 +12,10 @@ WEBEXCLUDE       += --exclude=releases/linux/wolkenwelten
 all: wolkenwelten wolkenwelten-server
 
 .PHONY:  release.linux
-release: release.linux
+
+ifndef NOLINUXRELEASE
+	release: release.linux
+endif
 
 release.linux: releases/linux/wolkenwelten-linux.tar.xz
 releases/linux/wolkenwelten-linux.tar.xz: releases/linux/wolkenwelten/wolkenwelten
