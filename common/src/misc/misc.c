@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 uint64_t RNGValue = 1;
 
@@ -135,4 +137,26 @@ char **splitArgs(const char *cmd,int *rargc){
 
 	*rargc = argc;
 	return argv;
+}
+
+int isDir(const char *name){
+	DIR *dp = opendir(name);
+	if(dp == NULL){
+		return 0;
+	}
+	closedir(dp);
+	return 1;
+}
+
+int isFile(const char *name){
+	FILE *fp = fopen(name,"r");
+	if(fp == NULL){
+		return 0;
+	}
+	fclose(fp);
+	return 1;
+}
+
+void makeDir(const char *name){
+	mkdir(name);
 }

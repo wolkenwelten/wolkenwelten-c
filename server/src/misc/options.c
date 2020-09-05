@@ -12,7 +12,7 @@ int   optionWorldSeed    = 0;
 int   optionPort         = 0;
 bool  optionSingleplayer = false;
 bool  verbose            = false;
-bool  optionPersistent   = false;
+char  optionSavegame[9];
 
 char *attribution_info =
 "LZ4\n"
@@ -84,8 +84,9 @@ void parseOptions(int argc,const char *argv[]){
 			optionPort = atoi(argv[i]+l);
 			continue;
 		}
-		if((l = checkString(argv[i]+1,"persistent"))){
-			optionPersistent = true;
+		if((l = checkString(argv[i]+1,"savegame="))){
+			strncpy(optionSavegame,argv[i]+l,sizeof(optionSavegame)-1);
+			optionSavegame[sizeof(optionSavegame)-1]=0;
 			continue;
 		}
 		if((l = checkString(argv[i]+1,"verbose"))){
@@ -105,6 +106,10 @@ void parseOptions(int argc,const char *argv[]){
 void sanityCheckOptions(){
 	if(optionWorldSeed == 0){
 		optionWorldSeed = (int)(time(NULL)&0xFFFF);
+	}
+	if(*optionSavegame == 0){
+		snprintf(optionSavegame,sizeof(optionSavegame)-1,"%04X",optionWorldSeed);
+		optionSavegame[sizeof(optionSavegame)-1]=0;
 	}
 	if(optionPort <= 0){
 		optionPort = 6309;

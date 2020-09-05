@@ -98,19 +98,26 @@ void updateWorld(){
 	}
 }
 
+void checkValidSavegame(const char *name){
+	char buf[16];
+	if(!isDir("save")){makeDir("save");}
+	snprintf(buf,sizeof(buf)-1,"save/%s",name);
+	buf[sizeof(buf)-1] = 0;
+	if(!isDir(buf)){makeDir(buf);}
+}
+
 int main( int argc, const char* argv[] ){
 	initSignals();
 	initTermColors();
 	initOptions(argc,argv);
+	checkValidSavegame(optionSavegame);
 	seedRNG(time(NULL));
 
 	printf("%sWolkenwelten",termColors[2]                );
 	printf(" %s%s"         ,termColors[6],VERSION        );
 	printf(" %s[%.16s]"    ,termColors[3],COMMIT         );
 	printf(" %sSeed[%u]"   ,termColors[4],optionWorldSeed);
-	if(optionPersistent){
-		printf(" %sPERSISTENT"   ,termColors[5]);
-	}
+	printf(" %s{%s}"       ,termColors[5],optionSavegame );
 	printf(" %sbuilt %s\n" ,termReset    ,BUILDDATE      );
 
 	serverInit();

@@ -13,3 +13,6 @@ float       animationInterpolationSustain(int left, int max , float startPoint, 
 void       *loadFile(char *filename,size_t *len);
 const char *getHumanReadableSize(size_t n);
 char      **splitArgs(const char *cmd,int *rargc);
+int         isDir(const char *name);
+int         isFile(const char *name);
+void        makeDir(const char *name);

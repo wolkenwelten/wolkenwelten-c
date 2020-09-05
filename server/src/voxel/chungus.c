@@ -42,7 +42,7 @@ float chunkDistance(const entity *cam, float x, float y,float z){
 
 const char *chungusGetFilename(chungus *c){
 	static char buf[64];
-	snprintf(buf,sizeof(buf)-1,"save/%02X%02X%02X.chunk",(c->x >> 8)&0xFF,(c->y >> 8)&0xFF,(c->z >> 8)&0xFF);
+	snprintf(buf,sizeof(buf)-1,"save/%s/%02X%02X%02X.chunk",optionSavegame,(c->x >> 8)&0xFF,(c->y >> 8)&0xFF,(c->z >> 8)&0xFF);
 	buf[sizeof(buf)-1] = 0;
 	return buf;
 }
@@ -60,7 +60,6 @@ void chungusSetClientUpdated(chungus *c,uint64_t updated){
 }
 
 void chungusLoad(chungus *c){
-	if(!optionPersistent)       {return;}
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
 	size_t read=0,len=0;
@@ -102,7 +101,6 @@ void chungusLoad(chungus *c){
 }
 
 void chungusSave(chungus *c){
-	if(!optionPersistent)                             {return;}
 	if((c->clientsUpdated & ((uint64_t)1 << 31)) != 0){return;}
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
