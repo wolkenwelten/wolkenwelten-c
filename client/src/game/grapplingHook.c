@@ -34,15 +34,15 @@ grapplingHook *grapplingHookNew(character *p){
 		ghk = &grapplingHookList[grapplingHookCount++];
 	}
 
-	ghk->parent = p;
-	ghk->ent = entityNew(p->x,p->y+1.f,p->z,-p->yaw,-p->pitch-90.f,p->roll);
-	ghk->ent->vx = p->vx + 1.2f * (cos((p->yaw-90.f)*PI/180) * cos(-p->pitch*PI/180));
-	ghk->ent->vy = p->vy + 1.2f *  sin(-p->pitch*PI/180);
-	ghk->ent->vz = p->vz + 1.2f * (sin((p->yaw-90.f)*PI/180) * cos(-p->pitch*PI/180));
-	ghk->ent->eMesh = meshHook;
+	ghk->parent           = p;
+	ghk->ent              = entityNew(p->x,p->y+1.f,p->z,-p->yaw,-p->pitch-90.f,p->roll);
+	ghk->ent->vx          = p->vx + 1.2f * (cos((p->yaw-90.f)*PI/180) * cos(-p->pitch*PI/180));
+	ghk->ent->vy          = p->vy + 1.2f *  sin(-p->pitch*PI/180);
+	ghk->ent->vz          = p->vz + 1.2f * (sin((p->yaw-90.f)*PI/180) * cos(-p->pitch*PI/180));
+	ghk->ent->eMesh       = meshHook;
 	ghk->ent->noRepulsion = 1;
-	ghk->rope = meshNew();
-	ghk->rope->tex = tRope;
+	ghk->rope             = meshNew();
+	ghk->rope->tex        = tRope;
 
 	ghk->hooked     = false;
 	ghk->returning  = false;
