@@ -563,7 +563,7 @@ void characterUpdate(character *c){
 			c->flags |= CHAR_FALLINGSOUND;
 			sfxPlay(sfxFalling,1.f);
 		}
-	}
+	} 
 	if(c->pitch < -90.f){
 		c->pitch = -90.f;
 	}else if(c->pitch > 90.f){

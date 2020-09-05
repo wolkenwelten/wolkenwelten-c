@@ -26,13 +26,14 @@ entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll
 		}
 	}
 	entityReset(e);
-	e->x        = x;
-	e->y        = y;
-	e->z        = z;
-	e->yaw      = yaw;
-	e->pitch    = pitch;
-	e->roll     = roll;
-	e->nextFree = NULL;
+	e->x          = x;
+	e->y          = y;
+	e->z          = z;
+	e->yaw        = yaw;
+	e->pitch      = pitch;
+	e->roll       = roll;
+	e->nextFree   = NULL;
+	e->curChungus = NULL;
 	return e;
 }
 

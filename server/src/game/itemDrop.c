@@ -1,9 +1,10 @@
 #include "itemDrop.h"
 
 #include "../main.h"
-#include "../network/server.h"
-#include "../../../common/src/game/blockType.h"
 #include "../game/entity.h"
+#include "../network/server.h"
+#include "../voxel/chungus.h"
+#include "../../../common/src/game/blockType.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
@@ -26,7 +27,7 @@ int      itemDropCount = 0;
 unsigned int itemDropUpdatePlayer(int c, unsigned int offset){
 	const int max = MIN((int)(offset+ITEM_DROPS_PER_UPDATE),itemDropCount);
 	for(int i=offset;i<max;i++){
-		msgItemDropUpdate(\
+		msgItemDropUpdate(
 			c,
 			itemDrops[i].ent->x,
 			itemDrops[i].ent->y,
@@ -42,40 +43,45 @@ unsigned int itemDropUpdatePlayer(int c, unsigned int offset){
 	return offset;
 }
 
+static itemDrop *itemDropNew(){
+	if((itemDropCount) >= (int)(sizeof(itemDrops) / sizeof(itemDrop) - 1)){return NULL;}
+	return &itemDrops[itemDropCount++];
+}
+
 void itemDropNewP(float x, float y, float z,const item *itm){
 	if(itm == NULL){return;}
-	if((itemDropCount) >= (int)(sizeof(itemDrops) / sizeof(itemDrop) - 1)){return;}
-	int d = itemDropCount++;
+	itemDrop *id = itemDropNew();
+	if(id == NULL){return;}
 
-	itemDrops[d].itm     = *itm;
-	itemDrops[d].ent     = entityNew(x,y,z,0.f,0.f,0.f);
+	id->itm     = *itm;
+	id->ent     = entityNew(x,y,z,0.f,0.f,0.f);
 	msgItemDropNew(-1, x, y, z, 0.f, 0.f, 0.f, itm->ID, itm->amount);
 }
 
 void itemDropNewC(const packet *p){
-	if((itemDropCount) >= (int)(sizeof(itemDrops) / sizeof(itemDrop) - 1)){return;}
-	int d = itemDropCount++;
+	itemDrop *id = itemDropNew();
+	if(id == NULL){return;}
 
-	itemDrops[d].ent        = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
-	itemDrops[d].ent->x     = p->val.f[0];
-	itemDrops[d].ent->y     = p->val.f[1];
-	itemDrops[d].ent->z     = p->val.f[2];
-	itemDrops[d].ent->vx    = p->val.f[3];
-	itemDrops[d].ent->vy    = p->val.f[4];
-	itemDrops[d].ent->vz    = p->val.f[5];
-	itemDrops[d].itm.ID     = p->val.i[6];
-	itemDrops[d].itm.amount = p->val.i[7];
+	id->ent        = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
+	id->ent->x     = p->val.f[0];
+	id->ent->y     = p->val.f[1];
+	id->ent->z     = p->val.f[2];
+	id->ent->vx    = p->val.f[3];
+	id->ent->vy    = p->val.f[4];
+	id->ent->vz    = p->val.f[5];
+	id->itm.ID     = p->val.i[6];
+	id->itm.amount = p->val.i[7];
 
 	msgItemDropNew(
 		-1,
-		itemDrops[d].ent->x,
-		itemDrops[d].ent->y,
-		itemDrops[d].ent->z,
-		itemDrops[d].ent->vx,
-		itemDrops[d].ent->vy,
-		itemDrops[d].ent->vz,
-		itemDrops[d].itm.ID,
-		itemDrops[d].itm.amount
+		id->ent->x,
+		id->ent->y,
+		id->ent->z,
+		id->ent->vx,
+		id->ent->vy,
+		id->ent->vz,
+		id->itm.ID,
+		id->itm.amount
 	);
 }
 
@@ -84,6 +90,7 @@ void itemDropDel(int d){
 	if(d >= itemDropCount){return;}
 	entityFree(itemDrops[d].ent);
 	itemDrops[d].ent = NULL;
+	
 	itemDrops[d] = itemDrops[--itemDropCount];
 
 	msgItemDropDel(d);
@@ -104,9 +111,25 @@ bool itemDropCheckPickup(int d){
 }
 
 void itemDropUpdate(){
+	const uint64_t mask = ~((uint64_t)1 << 31);
+
 	for(int i=0;i<itemDropCount;i++){
-		entityUpdate(itemDrops[i].ent);
-		if(itemDropCheckPickup(i) || (itemDrops[i].ent->y < -256)){
+		int oldp,newp;
+		entity *e = itemDrops[i].ent;
+		chungus *oldc = e->curChungus;
+		
+		oldp = ((int)e->x&0xFF)|(((int)e->y&0xFF)<<8)|(((int)e->z&0xFF)<<16);
+		entityUpdate(e);
+		newp = ((int)e->x&0xFF)|(((int)e->y&0xFF)<<8)|(((int)e->z&0xFF)<<16);
+		
+		if(oldc != e->curChungus){
+			if(oldc != NULL){oldc->clientsUpdated &= mask;}
+			oldp = 1<<30;
+		}
+		if((oldp != newp) && (e->curChungus != NULL)){
+			e->curChungus->clientsUpdated &= mask;
+		}
+		if(itemDropCheckPickup(i) || (e->y < -256)){
 			itemDropDel(i--);
 			continue;
 		}
@@ -127,6 +150,53 @@ void itemDropIntro(int c){
 			itemDrops[d].itm.amount
 		);
 	}
+}
+
+uint8_t *itemDropSave(itemDrop *i, uint8_t *b){
+	uint16_t *s = (uint16_t *)b;
+	float    *f = (float *)s;
+
+	b[0] = 0x02;
+	b[1] = 0;
+
+	s[1] = i->itm.ID;
+	s[2] = i->itm.amount;
+	s[3] = 0;
+
+	f[2] = i->ent->x;
+	f[3] = i->ent->y;
+	f[4] = i->ent->z;
+	f[5] = i->ent->vx;
+	f[6] = i->ent->vy;
+	f[7] = i->ent->vz;
+
+	return b+32;
+}
+
+uint8_t *itemDropLoad(uint8_t *b){
+	uint16_t *s = (uint16_t *)b;
+	float    *f = (float *)s;
+
+	if(*b != 0x02){return b;}
+	itemDrop *id = itemDropNew();
+	if(id == NULL){return b;}
+	id->itm.ID     = s[1];
+	id->itm.amount = s[2];
+
+	id->ent = entityNew(f[2],f[3],f[4],0.f,0.f,0.f);
+	id->ent->vx = f[5];
+	id->ent->vx = f[6];
+	id->ent->vx = f[7];
+
+	return b+32;
+}
+
+uint8_t *itemDropSaveChungus(chungus *c,uint8_t *b){
+	for(int i=0;i<itemDropCount;i++){
+		if(itemDrops[i].ent->curChungus != c){continue;}
+		b = itemDropSave(&itemDrops[i],b);
+	}
+	return b;
 }
 
 void itemDropDelChungus(chungus *c){

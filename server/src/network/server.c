@@ -540,6 +540,7 @@ void serverHandleEvents(){
 void sendToClient(int c,void *data,int len){
 	int ret;
 	int tlen = len;
+	if(clients[c].state == 2){ return; }
 	if(c < 0){return;}
 	if(c >= clientCount){return;}
 	if(clients[c].flags & CONNECTION_WEBSOCKET){

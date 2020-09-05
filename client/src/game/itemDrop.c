@@ -43,6 +43,8 @@ void itemDropNewD(float x, float y, float z, item *itm){
 }
 
 void itemDropDel(int d){
+	if(d < 0){return;}
+	if(d >= itemDropCount){return;}
 	entityFree(itemDrops[d].ent);
 	itemDrops[d].ent = NULL;
 	itemDrops[d] = itemDrops[--itemDropCount];

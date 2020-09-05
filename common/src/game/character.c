@@ -246,13 +246,6 @@ void characterRotate(character *c, float vYaw,float vPitch,float vRoll){
 	float pitch = c->pitch + vPitch;
 	float roll  = c->roll  +  vRoll;
 
-	if(yaw   > 360.f){yaw   -= 360.f;}
-	if(yaw   <   0.f){yaw   += 360.f;}
-	if(pitch >  90.f){pitch  =  90.f;}
-	if(pitch < -90.f){pitch  = -90.f;}
-	if(roll  > 360.f){roll  -= 360.f;}
-	if(roll  <   0.f){roll  += 360.f;}
-
 	c->yaw   = yaw;
 	c->pitch = pitch;
 	c->roll  = roll;

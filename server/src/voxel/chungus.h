@@ -18,6 +18,7 @@ chungus     *chungusNew              (int x,int y, int z);
 void         chungusFree             (chungus *c);
 void         chungusLoad             (chungus *c);
 void         chungusSave             (chungus *c);
+uint8_t     *chunkLoad               (chungus *c, uint8_t *b);
 void         chungusRoughBox         (chungus *c, int x, int y, int z, int w, int h, int d, uint8_t block);
 void         chungusRandomBox        (chungus *c, int x, int y, int z, int w, int h, int d, uint8_t block, int chance);
 void         chungusBox              (chungus *c, int x, int y, int z, int w, int h, int d, uint8_t block);

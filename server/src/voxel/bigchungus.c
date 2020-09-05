@@ -247,7 +247,7 @@ void bigchungusUpdateClient(bigchungus *c, int p){
 	int cz = ((int)chara->z)>>8;
 	
 	if((cx >= 0) && (cx < 256) && (cy >= 0) && (cy < 128) && (cz >= 0) && (cz < 256)){
-		chungusUpdateClient(world.chungi[cx][cy][cz],p);
+		chungusUpdateClient(c->chungi[cx][cy][cz],p);
 	}
 	for(int ix=0;ix < 12; ix++){
 		for(int iy=0;iy < 12; iy++){
@@ -290,10 +290,50 @@ void bigchungusUnsubscribeClient(bigchungus *c, int p){
 	}
 }
 
+void bigchungusSafeSaveClient(bigchungus *c, int p){
+	character *chara = clients[p].c;
+	int cx = ((int)chara->x)>>8;
+	int cy = ((int)chara->y)>>8;
+	int cz = ((int)chara->z)>>8;
+	
+	if((cx >= 0) && (cx < 256) && (cy >= 0) && (cy < 128) && (cz >= 0) && (cz < 256)){
+		chungusSave(c->chungi[cx][cy][cz]);
+	}
+	for(int ix=0;ix < 12; ix++){
+		for(int iy=0;iy < 12; iy++){
+			for(int iz=0;iz < 12; iz++){
+				
+				int ox = ix >> 1;
+				if(ix & 1){ox = -ox;}
+				ox = cx+ox;
+				if(ox <   0){goto xcontinue;}
+				if(ox > 255){goto xcontinue;}
+				
+				int oy = iy >> 1;
+				if(iy & 1){oy = -oy;}
+				oy = cy+oy;
+				if(oy <   0){goto ycontinue;}
+				if(oy > 127){goto ycontinue;}
+				
+				int oz = iz >> 1;
+				if(iz & 1){oz = -oz;}
+				oz = cz+oz;
+				if(oz <   0){continue;}
+				if(oz > 255){continue;}
+				
+				chungusSave(c->chungi[ox][oy][oz]);
+			}
+			ycontinue: (void)c;
+		}
+		xcontinue: (void)c;
+	}
+}
+
 void bigchungusSafeSave(bigchungus *c){
 	static uint64_t lastSave = 0;
 	if(getMillis() < lastSave+1000){return;}
 	lastSave = getMillis();
+	
 	for(int x=127;x <= 129;x++){
 		for(int y=1;y <= 3;y++){
 			for(int z=127;z <= 129;z++){
@@ -301,6 +341,12 @@ void bigchungusSafeSave(bigchungus *c){
 				chungusSave(c->chungi[x][y][z]);
 			}
 		}
+	}
+	
+	for(int i=0;i<clientCount;i++){
+		if(clients[i].state == 2){ continue; }
+		if(clients[i].c == NULL ){ continue; }
+		bigchungusSafeSaveClient(c,i);
 	}
 }
 

@@ -59,10 +59,28 @@ void chungusSetClientUpdated(chungus *c,uint64_t updated){
 	}
 }
 
+uint8_t *chunkLoad(chungus *c, uint8_t *buf){
+	if(buf[0] != 0x01){return buf;}
+	
+	int cx = buf[1] & 0xF;
+	int cy = buf[2] & 0xF;
+	int cz = buf[3] & 0xF;
+	chunk *chnk = c->chunks[cx][cy][cz];
+	if(chnk == NULL){
+		c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+(cx<<4),c->y+(cy<<4),c->z+(cz<<4));
+	}
+	chnk->clientsUpdated = 0;
+	memcpy(chnk->data,&buf[4],4096);
+	
+	return buf+4100;
+}
+
 void chungusLoad(chungus *c){
+	if(c == NULL)               {return;}
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
 	size_t read=0,len=0;
+	uint8_t *end,*b;
 	int i;
 
 	FILE *fp = fopen(chungusGetFilename(c),"rb");
@@ -80,27 +98,30 @@ void chungusLoad(chungus *c){
 	}
 
 	len = LZ4_decompress_safe((const char *)compressedBuffer, (char *)saveLoadBuffer, len, 4100*4096);
+	end = &saveLoadBuffer[len];
 
-	read=0;
-	for(i=0;i<4096;i++){
-		read++;
-		int cx = saveLoadBuffer[read++] & 0xF;
-		int cy = saveLoadBuffer[read++] & 0xF;
-		int cz = saveLoadBuffer[read++] & 0xF;
-		chunk *chnk = c->chunks[cx][cy][cz];
-		if(chnk == NULL){
-			c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+(cx<<4),c->y+(cy<<4),c->z+(cz<<4));
+	for(b=saveLoadBuffer;b<end;){
+		uint8_t id = *b;
+		switch(id){
+			case 1:
+				b = chunkLoad(c,b);
+				break;
+			case 2:
+				b = itemDropLoad(b);
+				break;
+			default:
+				fprintf(stderr,"Unknown id found in %i:%i:%i savestate\n",c->x>>8,c->y>>8,c->z>>8);
+				goto chungusLoadEnd;
 		}
-		chnk->clientsUpdated = 0;
-		memcpy(chnk->data,saveLoadBuffer+read,4096);
-		read += 4096;
-		if(read >= len){break;}
+		if(b >= end){break;}
 	}
 
+	chungusLoadEnd:
 	fclose(fp);
 }
 
 void chungusSave(chungus *c){
+	if(c == NULL)                                     {return;}
 	if((c->clientsUpdated & ((uint64_t)1 << 31)) != 0){return;}
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
@@ -114,8 +135,9 @@ void chungusSave(chungus *c){
 			}
 		}
 	}
+	cbuf = itemDropSaveChungus(c,cbuf);
+	
 	size_t len = LZ4_compress_default((const char *)saveLoadBuffer, (char *)compressedBuffer, cbuf - saveLoadBuffer, 4100*4096);
-
 	if(len == 0){
 		fprintf(stderr,"No Data for chungus %i:%i:%i\n",c->x,c->y,c->z);
 		return;
