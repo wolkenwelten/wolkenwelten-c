@@ -445,7 +445,7 @@ void updateGlide(character *c){
 
 	float aoa   = fabsf(vdeg.y - c->pitch);
 	float drag  = fabsf(sinf(aoa*PI180)) * 0.98f + 0.02f;
-	
+
 	float speed = vecMag(vel);
 	if((speed < 0.1f) && (c->flags & CHAR_FALLING)){
 		float pd = 0.1f - speed;
@@ -572,7 +572,7 @@ void characterUpdate(character *c){
 	if(c->yaw < 0.f){
 		c->yaw += 360.f;
 	}else if(c->yaw > 360.f){
-		c->pitch -= 360.f;
+		c->yaw -= 360.f;
 	}
 
 	if(c->actionTimeout < 0){ c->actionTimeout++; }
