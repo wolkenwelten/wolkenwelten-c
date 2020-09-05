@@ -650,7 +650,9 @@ void characterUpdate(character *c){
 
 	characterUpdateInaccuracy(c);
 	characterUpdateYOff(c);
-	characterUpdateHook(c);
+	if(c == player){
+		characterUpdateHook(c);
+	}
 	characterUpdateAnimation(c);
 }
 
