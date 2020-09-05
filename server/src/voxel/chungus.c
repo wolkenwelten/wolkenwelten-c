@@ -60,6 +60,7 @@ void chungusSetClientUpdated(chungus *c,uint64_t updated){
 }
 
 void chungusLoad(chungus *c){
+	if(!optionPersistent)       {return;}
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
 	size_t read=0,len=0;
@@ -101,6 +102,7 @@ void chungusLoad(chungus *c){
 }
 
 void chungusSave(chungus *c){
+	if(!optionPersistent)                             {return;}
 	if((c->clientsUpdated & ((uint64_t)1 << 31)) != 0){return;}
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
@@ -165,14 +167,14 @@ chungus *chungusNew(int x, int y, int z){
 	worldgenGenerate(wgen);
 	worldgenFree(wgen);
 	chungusSetClientUpdated(c,(uint64_t)1 << 31);
-	if(optionPersistent){chungusLoad(c);}
+	chungusLoad(c);
 
 	return c;
 }
 
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
-	if(optionPersistent){chungusSave(c);}
+	chungusSave(c);
 	itemDropDelChungus(c);
 	for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){
