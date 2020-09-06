@@ -26,10 +26,9 @@ void msgCharacterHit             (int c, float x, float y, float z, float yaw, f
 // 19 = setPlayerCount ???
 void msgSetPlayerCount           (int playerLeaving, int playerMax);
 void msgPickupItem               (int c, uint16_t ID, uint16_t amount);
-void msgItemDropDel              (int i);
 void msgGrenadeExplode           (float x, float y, float z,float pwr, int style);
 void msgGrenadeUpdate            (int c, float x, float y, float z, float vx, float vy, float vz, int count, int i);
 void msgFxBeamBlaster            (int c, float x1, float y1, float z1, float x2, float y2, float z2, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft);
-void msgItemDropUpdate           (int c, float x, float y, float z, float vx, float vy, float vz, int i);
+void msgItemDropUpdate           (int c, float x, float y, float z, float vx, float vy, float vz, uint16_t i, uint16_t len, uint16_t itemID, uint16_t amount);
 void msgPlayerDamage             (int c, int hp);
 void msgUnsubChungus             (int x, int y, int z);

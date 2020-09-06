@@ -21,22 +21,33 @@ typedef struct {
 itemDrop itemDrops[1<<12];
 int      itemDropCount = 0;
 
-#define ITEM_DROPS_PER_UPDATE 32
+#define ITEM_DROPS_PER_UPDATE 16
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
+inline void itemDropUpdateMsg(int c, int i){
+	msgItemDropUpdate(
+		c,
+		itemDrops[i].ent->x,
+		itemDrops[i].ent->y,
+		itemDrops[i].ent->z,
+		itemDrops[i].ent->vx,
+		itemDrops[i].ent->vy,
+		itemDrops[i].ent->vz,
+		i,
+		itemDropCount,
+		itemDrops[i].itm.ID,
+		itemDrops[i].itm.amount
+	);
+}
 
 unsigned int itemDropUpdatePlayer(int c, unsigned int offset){
 	const int max = MIN((int)(offset+ITEM_DROPS_PER_UPDATE),itemDropCount);
+	for(unsigned int i=0;i<clients[c].itemDropPriorityQueueLen;i++){
+		itemDropUpdateMsg(c,clients[c].itemDropPriorityQueue[i]);
+	}
+	clients[c].itemDropPriorityQueueLen = 0;
 	for(int i=offset;i<max;i++){
-		msgItemDropUpdate(
-			c,
-			itemDrops[i].ent->x,
-			itemDrops[i].ent->y,
-			itemDrops[i].ent->z,
-			itemDrops[i].ent->vx,
-			itemDrops[i].ent->vy,
-			itemDrops[i].ent->vz,
-			i
-		);
+		itemDropUpdateMsg(c,i);
 	}
 	offset += ITEM_DROPS_PER_UPDATE;
 	if((int)offset >= itemDropCount){offset=0;}
@@ -45,6 +56,7 @@ unsigned int itemDropUpdatePlayer(int c, unsigned int offset){
 
 static itemDrop *itemDropNew(){
 	if((itemDropCount) >= (int)(sizeof(itemDrops) / sizeof(itemDrop) - 1)){return NULL;}
+	addPriorityItemDrop(itemDropCount);
 	return &itemDrops[itemDropCount++];
 }
 
@@ -55,7 +67,6 @@ void itemDropNewP(float x, float y, float z,const item *itm){
 
 	id->itm     = *itm;
 	id->ent     = entityNew(x,y,z,0.f,0.f,0.f);
-	msgItemDropNew(-1, x, y, z, 0.f, 0.f, 0.f, itm->ID, itm->amount);
 }
 
 void itemDropNewC(const packet *p){
@@ -71,18 +82,6 @@ void itemDropNewC(const packet *p){
 	id->ent->vz    = p->val.f[5];
 	id->itm.ID     = p->val.i[6];
 	id->itm.amount = p->val.i[7];
-
-	msgItemDropNew(
-		-1,
-		id->ent->x,
-		id->ent->y,
-		id->ent->z,
-		id->ent->vx,
-		id->ent->vy,
-		id->ent->vz,
-		id->itm.ID,
-		id->itm.amount
-	);
 }
 
 void itemDropDel(int d){
@@ -92,8 +91,6 @@ void itemDropDel(int d){
 	entityFree(itemDrops[d].ent);
 	itemDrops[d].ent = NULL;
 	itemDrops[d]     = itemDrops[--itemDropCount];
-
-	msgItemDropDel(d);
 }
 
 bool itemDropCheckPickup(int d){
@@ -104,6 +101,7 @@ bool itemDropCheckPickup(int d){
 		float dz = clients[i].c->z - itemDrops[d].ent->z;
 		if(((dx*dx)+(dy*dy)+(dz*dz)) < (1.5f*1.5f)){
 			msgPickupItem(i,itemDrops[d].itm.ID,itemDrops[d].itm.amount);
+			addPriorityItemDrop(d);
 			return true;
 		}
 	}
@@ -137,17 +135,19 @@ void itemDropUpdate(){
 }
 
 void itemDropIntro(int c){
-	for(int d=0;d<itemDropCount;d++){
-		msgItemDropNew(
+	for(int i=0;i<itemDropCount;i++){
+		msgItemDropUpdate(
 			c,
-			itemDrops[d].ent->x,
-			itemDrops[d].ent->y,
-			itemDrops[d].ent->z,
-			itemDrops[d].ent->vx,
-			itemDrops[d].ent->vy,
-			itemDrops[d].ent->vz,
-			itemDrops[d].itm.ID,
-			itemDrops[d].itm.amount
+			itemDrops[i].ent->x,
+			itemDrops[i].ent->y,
+			itemDrops[i].ent->z,
+			itemDrops[i].ent->vx,
+			itemDrops[i].ent->vy,
+			itemDrops[i].ent->vz,
+			i,
+			itemDropCount,
+			itemDrops[i].itm.ID,
+			itemDrops[i].itm.amount
 		);
 	}
 }
@@ -194,7 +194,8 @@ uint8_t *itemDropLoad(uint8_t *b){
 	return b+32;
 }
 
-uint8_t *itemDropSaveChungus(chungus *c,uint8_t *b){	
+uint8_t *itemDropSaveChungus(chungus *c,uint8_t *b){
+	if(c == NULL){return b;}	
 	for(int i=0;i<itemDropCount;i++){
 		if(itemDrops[i].ent->curChungus != c){continue;}
 		b = itemDropSave(&itemDrops[i],b);
@@ -203,9 +204,9 @@ uint8_t *itemDropSaveChungus(chungus *c,uint8_t *b){
 }
 
 void itemDropDelChungus(chungus *c){
+	if(c == NULL){return;}
 	for(int i=itemDropCount-1;i>=0;i--){
-		if(itemDrops[i].ent->curChungus == c){
-			itemDropDel(i);
-		}
+		if(itemDrops[i].ent->curChungus != c){continue;}
+		itemDropDel(i);
 	}
 }

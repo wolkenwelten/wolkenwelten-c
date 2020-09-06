@@ -76,17 +76,8 @@ void serverAccept(){
 		close(clientSock);
 		return;
 	}
-
-	clients[clientCount].c                   = characterNew();
-	clients[clientCount].socket              = clientSock;
-	clients[clientCount].recvBufLen          = 0;
-	clients[clientCount].sendBufSent         = 0;
-	clients[clientCount].sendBufLen          = 0;
-	clients[clientCount].chngReqQueueLen     = 0;
-	clients[clientCount].chnkReqQueueLen     = 0;
-	clients[clientCount].state               = 0;
-	clients[clientCount].flags               = 0;
-	clientCount++;
+	clients[clientCount].socket = clientSock;
+	serverInitClient(clientCount++);
 }
 
 void serverKill(int c){

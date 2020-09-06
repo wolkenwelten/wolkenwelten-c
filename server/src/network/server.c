@@ -98,6 +98,32 @@ void serverIntro(int c){
 	bigchungusUnsubscribeClient(&world,c);
 }
 
+void serverInitClient(int c){
+	clients[c].c                        = characterNew();
+	clients[c].recvBufLen               = 0;
+	clients[c].sendBufSent              = 0;
+	clients[c].sendBufLen               = 0;
+	clients[c].chngReqQueueLen          = 0;
+	clients[c].chnkReqQueueLen          = 0;
+	clients[c].state                    = 0;
+	clients[c].flags                    = 0;
+	clients[c].itemDropPriorityQueueLen = 0;
+}
+
+void addPriorityItemDrop(uint16_t d){
+	for(int c=0;c<clientCount;c++){
+		if(clients[c].state == 2)                     {continue;}
+		if(clients[c].itemDropPriorityQueueLen > 127) {continue;}
+		
+		for(unsigned int i=0;i<clients[c].itemDropPriorityQueueLen;i++){
+			if(clients[c].itemDropPriorityQueue[i] == d){goto continueClientLoop;}
+		}
+		clients[c].itemDropPriorityQueue[clients[c].itemDropPriorityQueueLen++] = d;
+		continueClientLoop:
+		(void)d;
+	}
+}
+
 void msgUpdatePlayer(int c){
 	packet *rp = &packetBuffer;
 

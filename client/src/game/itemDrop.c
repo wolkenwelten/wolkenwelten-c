@@ -14,7 +14,7 @@
 typedef struct {
 	entity    *ent;
 	item       itm;
-	int    aniStep;
+	uint32_t aniStep;
 } itemDrop;
 
 itemDrop itemDrops[1<<12];
@@ -42,15 +42,6 @@ void itemDropNewD(float x, float y, float z, item *itm){
 	msgItemDropNew(-1,x,y,z,vx,vy,vz,itm->ID,itm->amount);
 }
 
-void itemDropDel(int d){
-	if(d < 0)              {return;}
-	if(d >= itemDropCount) {return;}
-	fprintf(stderr,"itemDropDel %i\n",d);
-	entityFree(itemDrops[d].ent);
-	itemDrops[d].ent = NULL;
-	itemDrops[d]     = itemDrops[--itemDropCount];
-}
-
 void itemDropUpdate(){
 	for(int i=0;i<itemDropCount;i++){
 		float aniStep = ++itemDrops[i].aniStep;
@@ -61,31 +52,34 @@ void itemDropUpdate(){
 	}
 }
 
-void itemDropNewFromServer(packet *p){
-	int index = itemDropCount++;
-	itemDrops[index].aniStep    = rngValM(1024);
-	itemDrops[index].itm.ID     = p->val.i[6];
-	itemDrops[index].itm.amount = p->val.i[7];
-	
-	itemDrops[index].ent        = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
-	itemDrops[index].ent->x     = p->val.f[0];
-	itemDrops[index].ent->y     = p->val.f[1];
-	itemDrops[index].ent->z     = p->val.f[2];
-	itemDrops[index].ent->vx    = p->val.f[3];
-	itemDrops[index].ent->vy    = p->val.f[4];
-	itemDrops[index].ent->vz    = p->val.f[5];
-	itemDrops[index].ent->eMesh = getMeshDispatch(&itemDrops[index].itm);
-}
-
 void itemDropUpdateFromServer(packet *p){
-	int i = p->val.i[6];
-	if(i < 0)                    {return;}
-	if(i >= itemDropCount)       {return;}
-	if(itemDrops[i].ent == NULL) {return;}
-	itemDrops[i].ent->x  = p->val.f[0];
-	itemDrops[i].ent->y  = p->val.f[1];
-	itemDrops[i].ent->z  = p->val.f[2];
-	itemDrops[i].ent->vx = p->val.f[3];
-	itemDrops[i].ent->vy = p->val.f[4];
-	itemDrops[i].ent->vz = p->val.f[5];
+	uint16_t d   = p->val.s[0];
+	uint16_t len = p->val.s[1];
+	
+	if(len < itemDropCount){
+		for(int i=len;i<itemDropCount;i++){
+			if(itemDrops[i].ent != NULL){
+				entityFree(itemDrops[i].ent);
+				itemDrops[i].ent = NULL;
+			}
+		}
+	}
+	itemDropCount = len;
+	
+	if(itemDrops[d].ent == NULL) {
+		itemDrops[d].ent = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
+	}
+	if(itemDrops[d].aniStep == 0){
+		itemDrops[d].aniStep = rngValM(1024);
+	}
+	itemDrops[d].itm.ID     = p->val.s[2];
+	itemDrops[d].itm.amount = p->val.s[3];
+	
+	itemDrops[d].ent->eMesh = getMeshDispatch(&itemDrops[d].itm);
+	itemDrops[d].ent->x     = p->val.f[2];
+	itemDrops[d].ent->y     = p->val.f[3];
+	itemDrops[d].ent->z     = p->val.f[4];
+	itemDrops[d].ent->vx    = p->val.f[5];
+	itemDrops[d].ent->vy    = p->val.f[6];
+	itemDrops[d].ent->vz    = p->val.f[7];
 }

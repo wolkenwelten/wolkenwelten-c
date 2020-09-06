@@ -164,7 +164,7 @@ void clientParsePacket(packet *p){
 		break;
 
 		case 10:
-			itemDropNewFromServer(p);
+			fprintf(stderr,"Received an itemDropNew msg from the server, this should never happen.\n");
 		break;
 
 		case 11:
@@ -208,8 +208,7 @@ void clientParsePacket(packet *p){
 		break;
 
 		case 21: // itemDropUpdate
-			itemDropDel(p->val.u[0]);
-			//itemDropUpdateFromServer(p);
+			fprintf(stderr,"Received an itemDropDel msg from the server, this should never happen.\n");
 		break;
 
 		case 22: // grenadeExplode

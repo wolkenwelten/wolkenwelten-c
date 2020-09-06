@@ -167,12 +167,6 @@ void msgPickupItem(int c, uint16_t ID, uint16_t amount){
 	packetQueue(p,20,2*2,c);
 }
 
-void msgItemDropDel(int i){
-	packet *p = &packetBuffer;
-	p->val.u[0] = i;
-	packetQueue(p,21,4,-1);
-}
-
 void msgGrenadeExplode(float x, float y, float z,float pwr, int style){
 	packet *p = &packetBuffer;
 	p->val.f[0] = x;
@@ -215,17 +209,23 @@ void msgFxBeamBlaster(int c, float x1, float y1, float z1, float x2, float y2, f
 	packetQueue(p,24,11*4,c);
 }
 
-void msgItemDropUpdate(int c, float x, float y, float z, float vx, float vy, float vz, int i){
+void msgItemDropUpdate(int c, float x, float y, float z, float vx, float vy, float vz, uint16_t i, uint16_t len, uint16_t itemID, uint16_t amount){
 	packet *p = &packetBuffer;
-	p->val.f[0] = x;
-	p->val.f[1] = y;
-	p->val.f[2] = z;
-	p->val.f[3] = vx;
-	p->val.f[4] = vy;
-	p->val.f[5] = vz;
-	p->val.i[6] = i;
+	
+	p->val.s[0] = i;
+	p->val.s[1] = len;
+	
+	p->val.s[2] = itemID;
+	p->val.s[3] = amount;
+	
+	p->val.f[2] = x;
+	p->val.f[3] = y;
+	p->val.f[4] = z;
+	p->val.f[5] = vx;
+	p->val.f[6] = vy;
+	p->val.f[7] = vz;
 
-	packetQueue(p,25,7*4,c);
+	packetQueue(p,25,8*4,c);
 }
 
 void msgPlayerDamage(int c, int hp){
