@@ -63,7 +63,7 @@ void entityUpdateCurChungus(entity *e){
 	const int cx = (int)e->x >> 8;
 	const int cy = (int)e->y >> 8;
 	const int cz = (int)e->z >> 8;
-	e->curChungus = worldGetChungus(cx,cy,cz);
+	e->curChungus = worldTryChungus(cx,cy,cz);
 }
 
 int entityUpdate(entity *e){
@@ -89,7 +89,7 @@ int entityUpdate(entity *e){
 	e->updated = true;
 	if(e->noRepulsion){
 		entityUpdateCurChungus(e);
-		return 0; 
+		return 0;
 	}
 	if((col&0x110) && (e->vx < 0.f)){
 		if(e->vx < -0.1f){ ret += (int)(fabsf(e->vx)*128.f); }

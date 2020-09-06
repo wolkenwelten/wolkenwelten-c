@@ -39,6 +39,7 @@ int   itemDecAmmo  (item *i, int16_t amount);
 void     worldBox        (int x, int y, int z, int w, int h, int d, uint8_t block);
 void     worldBoxSphere  (int x, int y, int z, int r, uint8_t block);
 uint8_t  worldGetB       (int x, int y, int z);
+chungus *worldTryChungus (int x, int y, int z);
 chungus *worldGetChungus (int x, int y, int z);
 bool     worldSetB       (int x, int y, int z, uint8_t block);
 int      checkCollision  (int x, int y, int z);

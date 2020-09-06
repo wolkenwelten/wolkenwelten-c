@@ -23,6 +23,7 @@ void        bigchungusBoxSphere         (bigchungus *c, int x, int y, int z, int
 void        bigchungusBoxMine           (bigchungus *c, int x, int y, int z, int w,int h,int d);
 void        bigchungusBoxMineSphere     (bigchungus *c, int x, int y, int z, int r);
 chunk      *bigchungusGetChunk          (bigchungus *c, int x, int y, int z);
+chungus    *bigchungusTryChungus        (bigchungus *c, int x, int y, int z);
 chungus    *bigchungusGetChungus        (bigchungus *c, int x, int y, int z);
 bool        bigchungusGetHighestP       (bigchungus *c, int x, int *rety, int z);
 uint8_t     bigchungusGetB              (bigchungus *c, int x, int y, int z);
@@ -50,6 +51,7 @@ inline void        worldGetSpawnPos   (int *x, int *y, int *z){
 void     worldBox              (int x, int y, int z, int w, int h, int d, uint8_t block);
 void     worldBoxSphere        (int x, int y, int z, int r, uint8_t block);
 uint8_t  worldGetB             (int x, int y, int z);
+chungus* worldTryChungus       (int x, int y, int z);
 chungus* worldGetChungus       (int x, int y, int z);
 chunk*   worldGetChunk         (int x, int y, int z);
 bool     worldSetB             (int x, int y, int z, uint8_t block);

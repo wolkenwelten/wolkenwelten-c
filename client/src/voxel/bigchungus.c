@@ -210,6 +210,13 @@ void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, uint8_t block)
 		}
 	}
 }
+chungus *bigchungusTryChungus(bigchungus *c, int x,int y,int z) {
+	if((x|y|z)&(~0xFF)){return NULL;}
+	return c->chungi[x&0xFF][y&0x7F][z&0xFF];
+}
+chungus *worldTryChungus(int x, int y, int z){
+	return bigchungusTryChungus(&world,x,y,z);
+}
 
 void worldBox(int x, int y,int z, int w,int h,int d,uint8_t block){
 	bigchungusBox(&world,x,y,z,w,h,d,block);

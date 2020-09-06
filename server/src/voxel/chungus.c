@@ -61,7 +61,7 @@ void chungusSetClientUpdated(chungus *c,uint64_t updated){
 
 uint8_t *chunkLoad(chungus *c, uint8_t *buf){
 	if(buf[0] != 0x01){return buf;}
-	
+
 	int cx = buf[1] & 0xF;
 	int cy = buf[2] & 0xF;
 	int cz = buf[3] & 0xF;
@@ -71,7 +71,7 @@ uint8_t *chunkLoad(chungus *c, uint8_t *buf){
 	}
 	chnk->clientsUpdated = 0;
 	memcpy(chnk->data,&buf[4],4096);
-	
+
 	return buf+4100;
 }
 
@@ -136,7 +136,7 @@ void chungusSave(chungus *c){
 		}
 	}
 	cbuf = itemDropSaveChungus(c,cbuf);
-	
+
 	size_t len = LZ4_compress_default((const char *)saveLoadBuffer, (char *)compressedBuffer, cbuf - saveLoadBuffer, 4100*4096);
 	if(len == 0){
 		fprintf(stderr,"No Data for chungus %i:%i:%i\n",c->x,c->y,c->z);
