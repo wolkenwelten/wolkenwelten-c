@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
 
@@ -158,5 +159,11 @@ int isFile(const char *name){
 }
 
 void makeDir(const char *name){
+	#ifdef __MINGW32__
 	mkdir(name);
+	#elif __EMSCRIPTEN__
+	(void)name;
+	#else
+	mkdir(name,0755);
+	#endif
 }
