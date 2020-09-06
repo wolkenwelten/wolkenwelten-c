@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../game/entity.h"
+#include "../game/itemDrop.h"
 #include "../network/server.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/misc/misc.h"
@@ -24,7 +26,7 @@ static void cmdDmg(int c, const char *cmd){
 		if(tmp >= 0){
 			target = tmp;
 		}else{
-			snprintf(replyBuf,sizeof(replyBuf),".dmg : Can't find '%s'\n",cmd+4);
+			snprintf(replyBuf,sizeof(replyBuf),".dmg : Can't find '%s'",cmd+4);
 			replyBuf[sizeof(replyBuf)-1]=0;
 			serverSendChatMsg(replyBuf);
 		}
@@ -43,7 +45,7 @@ static void cmdDie(int c, const char *cmd){
 		if(target >= 0){
 			msgPlayerDamage(target,1000);
 		}else{
-			snprintf(replyBuf,sizeof(replyBuf),".die : Can't find '%s'\n",cmd+4);
+			snprintf(replyBuf,sizeof(replyBuf),".die : Can't find '%s'",cmd+4);
 			replyBuf[sizeof(replyBuf)-1]=0;
 			serverSendChatMsg(replyBuf);
 		}
@@ -64,7 +66,7 @@ static void cmdHeal(int c, const char *cmd){
 		if(tmp >= 0){
 			target = tmp;
 		}else{
-			snprintf(replyBuf,sizeof(replyBuf),".heal : Can't find '%s'\n",cmd+4);
+			snprintf(replyBuf,sizeof(replyBuf),".heal : Can't find '%s'",cmd+4);
 			replyBuf[sizeof(replyBuf)-1]=0;
 			serverSendChatMsg(replyBuf);
 		}
@@ -85,7 +87,7 @@ static void cmdGive(int c, const char *cmd){
 
 	argv = splitArgs(cmd,&argc);
 	if(argc == 1){
-		snprintf(replyBuf,sizeof(replyBuf),".give ID [PLAYER] [AMOUNT]\n");
+		snprintf(replyBuf,sizeof(replyBuf),".give ID [PLAYER] [AMOUNT]");
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return;
@@ -93,7 +95,7 @@ static void cmdGive(int c, const char *cmd){
 	if(argc > 1){
 		id = atoi(argv[1]);
 		if(id <= 0){
-			snprintf(replyBuf,sizeof(replyBuf),".give: error with ID %i\n",id);
+			snprintf(replyBuf,sizeof(replyBuf),".give: error with ID %i",id);
 			replyBuf[sizeof(replyBuf)-1]=0;
 			serverSendChatMsg(replyBuf);
 			return;
@@ -108,7 +110,7 @@ static void cmdGive(int c, const char *cmd){
 	if(argc > 3){
 		amount = atoi(argv[3]);
 		if(amount <= 0){
-			snprintf(replyBuf,sizeof(replyBuf),".give: error with amount %i\n",amount);
+			snprintf(replyBuf,sizeof(replyBuf),".give: error with amount %i",amount);
 			replyBuf[sizeof(replyBuf)-1]=0;
 			serverSendChatMsg(replyBuf);
 			return;
@@ -126,7 +128,9 @@ static void cmdTp(int c, const char *cmd){
 
 	argv = splitArgs(cmd,&argc);
 	if(argc != 4){
-		snprintf(replyBuf,sizeof(replyBuf),".tp : You need to pass 3 integer values\n");
+		snprintf(replyBuf,sizeof(replyBuf),".tp : You need to pass 3 integer values");
+		replyBuf[sizeof(replyBuf)-1]=0;
+		serverSendChatMsg(replyBuf);
 		return;
 	}
 	coords[0] = atof(argv[1]);
@@ -143,7 +147,9 @@ static void cmdTpr(int c, const char *cmd){
 
 	argv = splitArgs(cmd,&argc);
 	if(argc != 4){
-		snprintf(replyBuf,sizeof(replyBuf),".tpr : You need to pass 3 integer values\n");
+		snprintf(replyBuf,sizeof(replyBuf),".tpr : You need to pass 3 integer values");
+		replyBuf[sizeof(replyBuf)-1]=0;
+		serverSendChatMsg(replyBuf);
 		return;
 	}
 	coords[0] = atof(argv[1]);
@@ -183,6 +189,20 @@ int parseCommand(int c, const char *cmd){
 
 	if(strncmp(tcmp,"tp",2) == 0){
 		cmdTp(c,tcmp);
+		return 1;
+	}
+	
+	if(strncmp(tcmp,"itemdropcount",2) == 0){
+		snprintf(replyBuf,sizeof(replyBuf),".itemdropcount : %i",itemDropCount);
+		replyBuf[sizeof(replyBuf)-1]=0;
+		serverSendChatMsg(replyBuf);
+		return 1;
+	}
+	
+	if(strncmp(tcmp,"entitycount",2) == 0){
+		snprintf(replyBuf,sizeof(replyBuf),".entitycount : %i",entityCount);
+		replyBuf[sizeof(replyBuf)-1]=0;
+		serverSendChatMsg(replyBuf);
 		return 1;
 	}
 

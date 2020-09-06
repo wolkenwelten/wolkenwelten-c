@@ -43,26 +43,30 @@ void itemDropNewD(float x, float y, float z, item *itm){
 }
 
 void itemDropDel(int d){
-	if(d < 0){return;}
-	if(d >= itemDropCount){return;}
+	if(d < 0)              {return;}
+	if(d >= itemDropCount) {return;}
+	fprintf(stderr,"itemDropDel %i\n",d);
 	entityFree(itemDrops[d].ent);
 	itemDrops[d].ent = NULL;
-	itemDrops[d] = itemDrops[--itemDropCount];
+	itemDrops[d]     = itemDrops[--itemDropCount];
 }
 
 void itemDropUpdate(){
 	for(int i=0;i<itemDropCount;i++){
 		float aniStep = ++itemDrops[i].aniStep;
 		if(itemDrops[i].ent == NULL){continue;}
-		itemDrops[i].ent->yaw = aniStep / 4.f;
+		itemDrops[i].ent->yaw   = aniStep / 4.f;
 		itemDrops[i].ent->pitch = cosf(aniStep/ 96.f)*24;
-		itemDrops[i].ent->yoff = (cosf(aniStep/192.f)/16.f)+0.1f;
+		itemDrops[i].ent->yoff  = (cosf(aniStep/192.f)/16.f)+0.1f;
 	}
 }
 
 void itemDropNewFromServer(packet *p){
 	int index = itemDropCount++;
 	itemDrops[index].aniStep    = rngValM(1024);
+	itemDrops[index].itm.ID     = p->val.i[6];
+	itemDrops[index].itm.amount = p->val.i[7];
+	
 	itemDrops[index].ent        = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
 	itemDrops[index].ent->x     = p->val.f[0];
 	itemDrops[index].ent->y     = p->val.f[1];
@@ -70,18 +74,18 @@ void itemDropNewFromServer(packet *p){
 	itemDrops[index].ent->vx    = p->val.f[3];
 	itemDrops[index].ent->vy    = p->val.f[4];
 	itemDrops[index].ent->vz    = p->val.f[5];
-	itemDrops[index].itm.ID     = p->val.i[6];
-	itemDrops[index].itm.amount = p->val.i[7];
 	itemDrops[index].ent->eMesh = getMeshDispatch(&itemDrops[index].itm);
 }
 
 void itemDropUpdateFromServer(packet *p){
-	int index = p->val.i[6];
-	if(itemDrops[index].ent == NULL){return;}
-	itemDrops[index].ent->x  = p->val.f[0];
-	itemDrops[index].ent->y  = p->val.f[1];
-	itemDrops[index].ent->z  = p->val.f[2];
-	itemDrops[index].ent->vx = p->val.f[3];
-	itemDrops[index].ent->vy = p->val.f[4];
-	itemDrops[index].ent->vz = p->val.f[5];
+	int i = p->val.i[6];
+	if(i < 0)                    {return;}
+	if(i >= itemDropCount)       {return;}
+	if(itemDrops[i].ent == NULL) {return;}
+	itemDrops[i].ent->x  = p->val.f[0];
+	itemDrops[i].ent->y  = p->val.f[1];
+	itemDrops[i].ent->z  = p->val.f[2];
+	itemDrops[i].ent->vx = p->val.f[3];
+	itemDrops[i].ent->vy = p->val.f[4];
+	itemDrops[i].ent->vz = p->val.f[5];
 }

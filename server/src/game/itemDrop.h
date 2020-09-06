@@ -1,6 +1,8 @@
 #pragma once
 #include "../../../common/src/common.h"
 
+extern int   itemDropCount;
+
 void         itemDropNewP         (float x, float y, float z,const item *itm);
 void         itemDropNewC         (const packet *p);
 void         itemDropUpdate       ();

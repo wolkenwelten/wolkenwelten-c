@@ -21,7 +21,7 @@ typedef struct {
 itemDrop itemDrops[1<<12];
 int      itemDropCount = 0;
 
-#define ITEM_DROPS_PER_UPDATE 16
+#define ITEM_DROPS_PER_UPDATE 32
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 unsigned int itemDropUpdatePlayer(int c, unsigned int offset){
@@ -86,12 +86,12 @@ void itemDropNewC(const packet *p){
 }
 
 void itemDropDel(int d){
-	if(d < 0){return;}
-	if(d >= itemDropCount){return;}
+	if(d < 0)              {return;}
+	if(d >= itemDropCount) {return;}
+
 	entityFree(itemDrops[d].ent);
 	itemDrops[d].ent = NULL;
-	
-	itemDrops[d] = itemDrops[--itemDropCount];
+	itemDrops[d]     = itemDrops[--itemDropCount];
 
 	msgItemDropDel(d);
 }
@@ -154,7 +154,10 @@ void itemDropIntro(int c){
 
 uint8_t *itemDropSave(itemDrop *i, uint8_t *b){
 	uint16_t *s = (uint16_t *)b;
-	float    *f = (float *)s;
+	float    *f = (float *)   b;
+
+	if(i      == NULL){return b;}
+	if(i->ent == NULL){return b;}
 
 	b[0] = 0x02;
 	b[1] = 0;
@@ -162,7 +165,7 @@ uint8_t *itemDropSave(itemDrop *i, uint8_t *b){
 	s[1] = i->itm.ID;
 	s[2] = i->itm.amount;
 	s[3] = 0;
-
+	
 	f[2] = i->ent->x;
 	f[3] = i->ent->y;
 	f[4] = i->ent->z;
@@ -175,23 +178,23 @@ uint8_t *itemDropSave(itemDrop *i, uint8_t *b){
 
 uint8_t *itemDropLoad(uint8_t *b){
 	uint16_t *s = (uint16_t *)b;
-	float    *f = (float *)s;
+	float    *f = (float *)   b;
 
-	if(*b != 0x02){return b;}
 	itemDrop *id = itemDropNew();
-	if(id == NULL){return b;}
+	if(id == NULL){return b+32;}
 	id->itm.ID     = s[1];
 	id->itm.amount = s[2];
 
 	id->ent = entityNew(f[2],f[3],f[4],0.f,0.f,0.f);
+	if(id->ent == NULL){return b+32;}
 	id->ent->vx = f[5];
-	id->ent->vx = f[6];
-	id->ent->vx = f[7];
+	id->ent->vy = f[6];
+	id->ent->vz = f[7];
 
 	return b+32;
 }
 
-uint8_t *itemDropSaveChungus(chungus *c,uint8_t *b){
+uint8_t *itemDropSaveChungus(chungus *c,uint8_t *b){	
 	for(int i=0;i<itemDropCount;i++){
 		if(itemDrops[i].ent->curChungus != c){continue;}
 		b = itemDropSave(&itemDrops[i],b);
@@ -200,10 +203,9 @@ uint8_t *itemDropSaveChungus(chungus *c,uint8_t *b){
 }
 
 void itemDropDelChungus(chungus *c){
-	for(int i=0;i<itemDropCount;i++){
+	for(int i=itemDropCount-1;i>=0;i--){
 		if(itemDrops[i].ent->curChungus == c){
-			itemDropDel(i--);
-			continue;
+			itemDropDel(i);
 		}
 	}
 }

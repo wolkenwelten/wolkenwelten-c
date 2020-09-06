@@ -21,6 +21,42 @@ entity *entityFirstFree = NULL;
 
 #define ENTITY_FADEOUT (128.f)
 
+entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll){
+	entity *e = NULL;
+	if(entityFirstFree == NULL){
+		e = &entityList[entityCount++];
+	}else{
+		e = entityFirstFree;
+		entityFirstFree = e->nextFree;
+		if(entityFirstFree == e){
+			entityFirstFree = NULL;
+		}
+	}
+	entityReset(e);
+
+	e->x          = x;
+	e->y          = y;
+	e->z          = z;
+	e->yaw        = yaw;
+	e->pitch      = pitch;
+	e->roll       = roll;
+
+	e->nextFree   = NULL;
+	e->curChungus = NULL;
+	e->eMesh      = NULL;
+
+	return e;
+}
+
+void entityFree(entity *e){
+	if(e == NULL){return;}
+	e->nextFree = entityFirstFree;
+	entityFirstFree = e;
+	if(e->nextFree == NULL){
+		e->nextFree = e;
+	}
+}
+
 void entityDraw(entity *e){
 	float matMVP[16];
 	if(e        == NULL){return;}
@@ -42,5 +78,15 @@ void entityDrawAll(){
 		if(entityList[i].nextFree != NULL){ continue; }
 		if(entityDistance(&entityList[i],player) > (ENTITY_FADEOUT * ENTITY_FADEOUT)){ continue; }
 		entityDraw(&entityList[i]);
+	}
+}
+
+void entityUpdateAll(){
+	for(int i=0;i<entityCount;i++){
+		if(entityList[i].nextFree != NULL){ continue; }
+		if(!entityList[i].updated){
+			entityUpdate(&entityList[i]);
+		}
+		entityList[i].updated = false;
 	}
 }
