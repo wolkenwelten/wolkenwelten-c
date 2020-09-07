@@ -22,7 +22,6 @@ typedef struct {
 grenade grenadeList[512];
 int     grenadeCount = 0;
 
-
 void grenadeExplode(float x, float y, float z, float pw, int style){
 	float dx = x - player->x;
 	float dy = y - player->y;
@@ -40,6 +39,26 @@ void grenadeExplode(float x, float y, float z, float pw, int style){
 		player->vy = dy * dm * -0.02f;
 		player->vz = dz * dm * -0.02f;
 		player->shake = dm*4.f;
+	}
+	
+	for(int i=0;i<entityCount;i++){
+		entity *exEnt = &entityList[i];
+		dx = x - exEnt->x;
+		dy = y - exEnt->y;
+		dz = z - exEnt->z;
+		
+		dm = fabsf(dx);
+		if(fabsf(dy) > dm){dm = fabsf(dy);}
+		if(fabsf(dz) > dm){dm = fabsf(dz);}
+		
+		if(dm > (16*pw*pw)){continue;}
+		dx /= dm;
+		dy /= dm;
+		dz /= dm;
+		dm = sqrtf((16*pw*pw)/dm);
+		exEnt->vx += dx * dm * -0.02f;
+		exEnt->vy += dy * dm * -0.02f;
+		exEnt->vz += dz * dm * -0.02f;
 	}
 
 	if(style == 0){
