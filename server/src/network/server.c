@@ -43,7 +43,7 @@ void serverKeepalive(){
 	if(ct > lastKA+1000){
 		lastKA = ct;
 		for(int i=0;i<clientCount;i++){
-			if(clients[i].state == 2){ continue; }
+			if(clients[i].state){ continue; }
 			sendToAll(buffer,16);
 		}
 	}else if(ct < lastKA){
@@ -95,7 +95,6 @@ void msgPlayerSpawnPos(int c){
 
 void serverIntro(int c){
 	itemDropIntro(c);
-	bigchungusUnsubscribeClient(&world,c);
 }
 
 void serverInitClient(int c){
@@ -105,14 +104,16 @@ void serverInitClient(int c){
 	clients[c].sendBufLen               = 0;
 	clients[c].chngReqQueueLen          = 0;
 	clients[c].chnkReqQueueLen          = 0;
-	clients[c].state                    = 0;
+	clients[c].state                    = STATE_CONNECTING;
 	clients[c].flags                    = 0;
 	clients[c].itemDropPriorityQueueLen = 0;
+
+	bigchungusUnsubscribeClient(&world,c);
 }
 
 void addPriorityItemDrop(uint16_t d){
 	for(int c=0;c<clientCount;c++){
-		if(clients[c].state == 2)                     {continue;}
+		if(clients[c].state)                          {continue;}
 		if(clients[c].itemDropPriorityQueueLen > 127) {continue;}
 		
 		for(unsigned int i=0;i<clients[c].itemDropPriorityQueueLen;i++){
@@ -259,15 +260,13 @@ void serverParseSinglePacket(int c, packet *p){
 		break;
 
 		case 9: // PlayerJoin
-			memcpy(clients[c].playerName,p->val.c,28);
-			clients[c].playerName[sizeof(clients[c].playerName)-1] = 0;
-			sendPlayerJoinMessage(c);
-			if(verbose){printf("[%02i] sendPlayerName\n",c);}
+			fprintf(stderr,"PlayerJoin received from client, which should never happen\n");
+			serverKill(c);
 		break;
 
 		case 10: // itemDropNew
 			itemDropNewC(p);
-			if(verbose){printf("[%02i] itemDropNewC\n",c);}
+			if(verbose){printf("[%02i][%i] itemDropNewC\n",c,pLen);}
 		break;
 
 		case 11:
@@ -363,6 +362,9 @@ void serverParseSinglePacket(int c, packet *p){
 
 void serverParsePacket(int i){
 	unsigned int off = 0;
+	if(clients[i].flags & CONNECTION_WEBSOCKET){
+		serverParseWebSocketPacket(i);
+	}
 
 	for(int max=32;max > 0;--max){
 		if((i < 0) || (i >= clientCount)){break;}
@@ -386,46 +388,60 @@ void serverParsePacket(int i){
 	}
 }
 
-void serverParseWebSocket(int c,int end){
-	clients[c].recvBuf[end-2] = 0;
-	if((clients[c].recvBuf[0] == 'G') && (clients[c].recvBuf[1] == 'E') && (clients[c].recvBuf[2] == 'T') && (clients[c].recvBuf[3] == ' ')){
-		serverParseWebSocketHeader(c,end);
+/* TODO: what happens on a HEAD request */
+void serverParseConnection(int c){
+	for(unsigned int ii=3;ii<clients[c].recvBufLen;ii++){
+		if(clients[c].recvBuf[ii  ] != '\n'){ continue; }
+		if(clients[c].recvBuf[ii-1] != '\r'){ continue; }
+		if(clients[c].recvBuf[ii-2] != '\n'){ continue; }
+		if(clients[c].recvBuf[ii-3] != '\r'){ continue; }
+		
+		clients[c].recvBuf[ii-1] = 0;
+		if( (clients[c].recvBuf[0] == 'G') && 
+			(clients[c].recvBuf[1] == 'E') &&
+			(clients[c].recvBuf[2] == 'T') &&
+			(clients[c].recvBuf[3] == ' ')
+		){
+			serverParseWebSocketHeader(c,ii-1);
+		}
+		for(unsigned int i=0;i<clients[c].recvBufLen-(ii);i++){
+			clients[c].recvBuf[i] = clients[c].recvBuf[i+(ii+1)];
+		}
+		clients[c].recvBufLen -= ii+1;
+		clients[c].state       = STATE_INTRO;
+		return;
 	}
-	for(unsigned int i=0;i<clients[c].recvBufLen-end;i++){
-		clients[c].recvBuf[i] = clients[c].recvBuf[i+end];
-	}
-	clients[c].recvBufLen -= end;
-	clients[c].state = 1;
-	serverIntro(c);
-	serverParsePacket(c);
 }
 
-void serverParseIntroduction(int i){
-	if(clients[i].recvBufLen < 4){ return; }
-	for(unsigned int ii=3;ii<clients[i].recvBufLen;ii++){
-		if(clients[i].recvBuf[ii  ] != '\n'){ continue; }
-		if(clients[i].recvBuf[ii-1] != '\r'){ continue; }
-		if(clients[i].recvBuf[ii-2] != '\n'){ continue; }
-		if(clients[i].recvBuf[ii-3] != '\r'){ continue; }
-		serverParseWebSocket(i,ii+1);
-		break;
+void serverParseIntro(int c){
+	for(unsigned int ii=0;ii<clients[c].recvBufLen;ii++){
+		if(clients[c].recvBuf[ii] != '\n'){ continue; }
+		memcpy(clients[c].playerName,clients[c].recvBuf,MIN(sizeof(clients[c].playerName)-1,ii-1));
+		clients[c].playerName[sizeof(clients[c].playerName)-1] = 0;
+		for(unsigned int i=0;i<clients[c].recvBufLen-(ii);i++){
+			clients[c].recvBuf[i] = clients[c].recvBuf[i+(ii+1)];
+		}
+		clients[c].recvBufLen -= ii+1;
+		clients[c].state = STATE_READY;
+		sendPlayerJoinMessage(c);
+		serverIntro(c);
 	}
 }
 
 void serverParse(){
 	for(int i=0;i<clientCount;i++){
 		switch(clients[i].state){
-			case 0:
-				serverParseIntroduction(i);
-				break;
-			default:
-			case 1:
-				if(clients[i].flags & CONNECTION_WEBSOCKET){
-					serverParseWebSocketPacket(i);
-				}
+			case STATE_READY:
 				serverParsePacket(i);
 				break;
-			case 2:
+			case STATE_CONNECTING:
+				serverParseConnection(i);
+				break;
+			case STATE_INTRO:
+				serverParseIntro(i);
+				break;
+			default:
+			case STATE_CLOSED:
 				break;
 		}
 	}
@@ -546,7 +562,7 @@ void serverCheckCompression(int c){
 
 void serverSend(){
 	for(int i=0;i<clientCount;i++){
-		if(clients[i].state == 2){ continue; }
+		if(clients[i].state){ continue; }
 		if(clients[i].flags & CONNECTION_DO_UPDATE){msgUpdatePlayer(i);}
 		if(clients[i].sendBufLen == 0){ continue; }
 		serverCheckCompression(i);
@@ -566,7 +582,7 @@ void serverHandleEvents(){
 void sendToClient(int c,void *data,int len){
 	int ret;
 	int tlen = len;
-	if(clients[c].state == 2){ return; }
+	if(clients[c].state){ return; }
 	if(c < 0){return;}
 	if(c >= clientCount){return;}
 	if(clients[c].flags & CONNECTION_WEBSOCKET){
@@ -608,7 +624,7 @@ void serverCloseClient(int c){
 		characterFree(clients[c].c);
 		clients[c].c = NULL;
 	}
-	clients[c].state = 2;
+	clients[c].state = STATE_CLOSED;
 	msgSetPlayerCount(c,clientCount);
 	serverSendChatMsg(msg);
 	if((clientCount == 0) && (optionSingleplayer)){

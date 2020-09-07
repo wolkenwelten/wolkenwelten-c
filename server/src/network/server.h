@@ -29,6 +29,11 @@ typedef struct {
 	uint8_t sendBuf[1<<20];
 } clientConnection;
 
+#define STATE_READY      0
+#define STATE_CONNECTING 1
+#define STATE_CLOSED     2
+#define STATE_INTRO      3
+
 #define CONNECTION_WEBSOCKET (1   )
 #define CONNECTION_DO_UPDATE (1<<1)
 

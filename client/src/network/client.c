@@ -267,11 +267,12 @@ void clientSendIntroduction(){
 	#ifndef __EMSCRIPTEN__
 	queueToServer("NATIVE\r\n\r\n",10);
 	#endif
+	queueToServer(playerName,strnlen(playerName,sizeof(playerName)-1));
+	queueToServer("\n",1);
 }
 
 void clientGreetServer(){
 	clientSendIntroduction();
-	msgPlayerJoinSendName(playerName);
 	msgRequestPlayerSpawnPos();
 }
 

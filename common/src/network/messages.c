@@ -74,13 +74,6 @@ void msgCharacterGotHit(int c,int pwr){
 	packetQueueExcept(p,8,2*4,c);
 }
 
-void msgPlayerJoinSendName(const char *name){
-	packet *p = &packetBuffer;
-	strncpy((char *)p->val.c,name,28);
-	p->val.c[27]=0;
-	packetQueueToServer(p,9,28);
-}
-
 void msgItemDropNew(int c, float x, float y, float z, float vx, float vy, float vz, int ID, int amount){
 	packet *p = &packetBuffer;
 	p->val.f[0] = x;
