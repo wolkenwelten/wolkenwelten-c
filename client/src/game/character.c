@@ -449,9 +449,9 @@ void updateGlide(character *c){
 	float speed = vecMag(vel);
 	if((speed < 0.1f) && (c->flags & CHAR_FALLING)){
 		float pd = 0.1f - speed;
-		pd = pd * 100.f;
+		pd = pd * 6.f;
 		pd = pd * pd;
-		c->pitch += pd / 32.f;
+		c->pitch += pd;
 	}
 
 	vec vdrg    = vecMulS(vecInvert(vel),drag * 0.1f);
