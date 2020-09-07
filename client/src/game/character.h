@@ -18,9 +18,9 @@ void  characterDrawAll        ();
 void  characterHitCheck       (character *c, int origin, float x, float y, float z, float yaw, float pitch, float roll, int pwr);
 void  characterGotHitBroadcast(int c,int pwr);
 void  characterDropItem       (character *c, int i);
-
-void  characterMoveDelta      (character *c, packet *p);
-void  characterDamagePacket   (character *c, packet *p);
+void  characterMoveDelta      (character *c, const packet *p);
+void  characterDamagePacket   (character *c, const packet *p);
+void  characterSetData        (character *c, const packet *p);
 void  characterSetPlayerPos   (const packet *p);
 void  characterRemovePlayer   (int c, int len);
 

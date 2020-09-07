@@ -136,7 +136,7 @@ static void cmdTp(int c, const char *cmd){
 	coords[0] = atof(argv[1]);
 	coords[1] = atof(argv[2]);
 	coords[2] = atof(argv[3]);
-	msgPlayerSetPos(c,coords[0],coords[1],coords[2]);
+	msgPlayerSetPos(c,coords[0],coords[1],coords[2],0.f,0.f,0.f);
 }
 
 static void cmdTpr(int c, const char *cmd){
@@ -155,7 +155,7 @@ static void cmdTpr(int c, const char *cmd){
 	coords[0] = atof(argv[1]);
 	coords[1] = atof(argv[2]);
 	coords[2] = atof(argv[3]);
-	msgPlayerSetPos(c,clients[c].c->x + coords[0],clients[c].c->y + coords[1],clients[c].c->z + coords[2]);
+	msgPlayerSetPos(c,clients[c].c->x + coords[0],clients[c].c->y + coords[1],clients[c].c->z + coords[2],0.f,0.f,0.f);
 }
 
 int parseCommand(int c, const char *cmd){

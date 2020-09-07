@@ -94,8 +94,9 @@ void msgSendPlayerPos(){
 	p->val.i[20] = player->animationTicksMax;
 	p->val.i[21] = player->animationTicksLeft;
 	p->val.i[22] = player->flags;
+	p->val.i[23] = player->hp;
 
-	packetQueueToServer(p,15,23*4);
+	packetQueueToServer(p,15,24*4);
 }
 
 void decompressPacket(packet *p){
@@ -121,123 +122,100 @@ void clientParsePacket(packet *p){
 
 	switch(pType){
 		case 0: // Keepalive
-		break;
-
-		case 1: // requestPlayerSpawnPos
+			break;
+		case 1: // playerPos
 			characterSetPos(player,p->val.f[0],p->val.f[1],p->val.f[2]);
+			characterSetRot(player,p->val.f[3],p->val.f[4],p->val.f[5]);
 			characterSetVelocity(player,0.f,0.f,0.f);
 			characterFreeHook(player);
-		break;
-
+			break;
 		case 2: // requestChungus
 			fprintf(stderr,"Received a requestChungus packet from the server which should never happen.\n");
-		break;
-
+			break;
 		case 3: // placeBlock
 			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],p->val.i[3]);
-		break;
-
+			break;
 		case 4: // mineBlock
 			if(worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],0)){
 				fxBlockBreak(p->val.i[0],p->val.i[1],p->val.i[2],p->val.i[3]);
 			}
-		break;
-
+			break;
 		case 5: // Goodbye
 			fprintf(stderr,"Received a Goodbye packet from the server which should never happen.\n");
-		break;
-
+			break;
 		case 6: // blockMiningUpdate
 			blockMiningUpdateFromServer(p);
-		break;
-
+			break;
 		case 7:
 			worldSetChungusLoaded(p->val.i[0],p->val.i[1],p->val.i[2]);
-		break;
-
+			break;
 		case 8:
 			characterGotHitBroadcast(p->val.i[1],p->val.i[0]);
-		break;
-
+			break;
 		case 9:
 			fprintf(stderr,"Received a PlayerJoin packet from the server which should never happen.\n");
-		break;
-
+			break;
 		case 10:
 			fprintf(stderr,"Received an itemDropNew msg from the server, this should never happen.\n");
-		break;
-
+			break;
 		case 11:
 			fprintf(stderr,"Received a grenadeNew packet from the server which should never happen.\n");
-		break;
-
+			break;
 		case 12:
 			fprintf(stderr,"Received a beamblast packet from the server which should never happen.\n");
-		break;
-
+			break;
 		case 13: // playerMoveDelta
 			characterMoveDelta(player,p);
-		break;
-
+			break;
 		case 14: // characterHit
 			characterHitCheck(player,p->val.i[7],p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.i[6]);
-		break;
-
+			break;
 		case 15: // playerPos
 			characterSetPlayerPos(p);
-		break;
-
+			break;
 		case 16: // chatMsg
 			chatParsePacket(p);
-		break;
-
+			break;
 		case 17: // dyingMsg
 			fprintf(stderr,"Received a dying message packet from the server which should never happen.\n");
-		break;
-
+			break;
 		case 18: // chunkData
 			msgParseGetChunk(p);
-		break;
-
+			break;
 		case 19: // setPlayerCount
 			characterRemovePlayer(p->val.u[1],p->val.u[0]);
-		break;
-
+			break;
 		case 20: // playerPickupItem
 			characterPickupItem(player,p->val.s[0],p->val.s[1]);
-		break;
-
+			break;
 		case 21: // itemDropUpdate
 			fprintf(stderr,"Received an itemDropDel msg from the server, this should never happen.\n");
-		break;
-
+			break;
 		case 22: // grenadeExplode
 			grenadeExplode(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.i[4]);
-		break;
-
+			break;
 		case 23: // grenadeUpdate
 			grenadeUpdateFromServer(p);
-		break;
-
+			break;
 		case 24: // fxBeamBlaster
 			fxBeamBlaster(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6],p->val.f[7],p->val.f[8],p->val.i[9],p->val.i[10]);
-		break;
-
+			break;
 		case 25: // msgItemDropUpdate
 			itemDropUpdateFromServer(p);
-		break;
-		
+			break;
 		case 26: // msgPlayerDamage
 			characterDamagePacket(player,p);
-		break;
+			break;
+		case 28:
+			characterSetData(player,p);
+			break;
 
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);
-		break;
-
+			break;
 		default:
 			fprintf(stderr,"%i[%i] UNKNOWN PACKET\n",pType,pLen);
-		break;
+			break;
 	}
 }
 
@@ -273,7 +251,6 @@ void clientSendIntroduction(){
 
 void clientGreetServer(){
 	clientSendIntroduction();
-	msgRequestPlayerSpawnPos();
 }
 
 void clientHandleEvents(){

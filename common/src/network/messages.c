@@ -11,12 +11,15 @@ void msgRequestPlayerSpawnPos(){
 	packetQueueToServer(p,1,0);
 }
 
-void msgPlayerSetPos(int c, float x, float y, float z){
+void msgPlayerSetPos(int c, float x, float y, float z, float yaw, float pitch, float roll){
 	packet *p = &packetBuffer;
 	p->val.f[0] = x;
 	p->val.f[1] = y;
 	p->val.f[2] = z;
-	packetQueue(p,1,3*4,c);
+	p->val.f[3] = yaw;
+	p->val.f[4] = pitch;
+	p->val.f[5] = roll;
+	packetQueue(p,1,6*4,c);
 }
 
 void msgRequestChungus(int x, int y, int z){
@@ -150,7 +153,7 @@ void msgSetPlayerCount(int playerLeaving, int playerMax){
 	packet *p = &packetBuffer;
 	p->val.u[0] = playerMax;
 	p->val.u[1] = playerLeaving;
-	packetQueue(p,19,4*4,-1);
+	packetQueue(p,19,2*4,-1);
 }
 
 void msgPickupItem(int c, uint16_t ID, uint16_t amount){
@@ -233,4 +236,10 @@ void msgUnsubChungus(int x, int y, int z){
 	p->val.i[1] = y;
 	p->val.i[2] = z;
 	packetQueueToServer(p,27,3*4);
+}
+
+void msgPlayerSetData(int c, int hp){
+	packet *p = &packetBuffer;
+	p->val.i[0] = hp;
+	packetQueue(p,28,1*4,c);
 }

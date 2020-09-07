@@ -5,3 +5,5 @@
 extern character characterList[128];
 extern int characterCount;
 
+void characterSaveData(int c);
+void characterLoadSendData(int c);

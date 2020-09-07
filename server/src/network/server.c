@@ -90,11 +90,7 @@ void serverParseDyingMsg(int c, packet *m){
 void msgPlayerSpawnPos(int c){
 	int sx,sy,sz;
 	worldGetSpawnPos(&sx,&sy,&sz);
-	msgPlayerSetPos(c,((float)sx)+0.5f,((float)sy)+2.f,((float)sz)+0.5f);
-}
-
-void serverIntro(int c){
-	itemDropIntro(c);
+	msgPlayerSetPos(c,((float)sx)+0.5f,((float)sy)+2.f,((float)sz)+0.5f,0.f,0.f,0.f);
 }
 
 void serverInitClient(int c){
@@ -155,7 +151,8 @@ void msgUpdatePlayer(int c){
 		rp->val.i[20] = clients[i].c->animationTicksMax;
 		rp->val.i[21] = clients[i].c->animationTicksLeft;
 		rp->val.i[22] = clients[i].c->flags;
-		packetQueue(rp,15,23*4,c);
+		rp->val.i[23] = clients[i].c->hp;
+		packetQueue(rp,15,24*4,c);
 	}
 
 	clients[c].itemDropUpdateOffset = itemDropUpdatePlayer(c,clients[c].itemDropUpdateOffset);
@@ -194,6 +191,7 @@ void serverParsePlayerPos(int c, packet *p){
 	clients[c].c->animationTicksMax  = p->val.i[20];
 	clients[c].c->animationTicksLeft = p->val.i[21];
 	clients[c].c->flags              = p->val.i[22];
+	clients[c].c->hp                 = p->val.i[23];
 
 	clients[c].flags |= CONNECTION_DO_UPDATE;
 }
@@ -214,149 +212,121 @@ void serverParseSinglePacket(int c, packet *p){
 	switch(pType){
 		case 0: // Keepalive
 			if(verbose){printf("[%02i] keepalive %i:%i\n",c,pType,pLen);}
-		break;
-
+			break;
 		case 1: // requestPlayerSpawnPos
 			msgPlayerSpawnPos(c);
 			if(verbose){printf("[%02i] requestPlayerSpawnPos\n",c);}
-		break;
-
+			break;
 		case 2: // requestChungus
 			addChungusToQueue(c,p->val.i[0],p->val.i[1],p->val.i[2]);
 			if(verbose){printf("[%02i] requestChungus\n",c);}
-		break;
-
+			break;
 		case 3: // placeBlock
 			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],p->val.i[3]);
 			//sendToAllExcept(c,p,pLen+4);
 			if(verbose){printf("[%02i] placeBlock\n",c);}
-		break;
-
+			break;
 		case 4: // mineBlock
 			blockMiningDropItemsPos(p->val.i[0],p->val.i[1],p->val.i[2],worldGetB(p->val.i[0],p->val.i[1],p->val.i[2]));
 			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],0);
 			//sendToAllExcept(c,p,pLen+4);
 			if(verbose){printf("[%02i] mineBlock\n",c);}
-		break;
-
+			break;
 		case 5: // Goodbye
 			errno=0;
 			serverKill(c);
-		break;
-
+			break;
 		case 6: // blockMiningUpdate
 			fprintf(stderr,"blockMiningUpdate received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 7:
 			fprintf(stderr,"worldSetChungusLoaded received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 8: // CharacterGotHit
 			msgCharacterGotHit(c,p->val.i[0]);
 			if(verbose){printf("[%02i] msgCharacterGotHit\n",c);}
-		break;
-
+			break;
 		case 9: // PlayerJoin
 			fprintf(stderr,"PlayerJoin received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 10: // itemDropNew
 			itemDropNewC(p);
 			if(verbose){printf("[%02i][%i] itemDropNewC\n",c,pLen);}
-		break;
-
+			break;
 		case 11:
 			grenadeNewP(p);
 			if(verbose){printf("[%02i] grenadeNew\n",c);}
-		break;
-
+			break;
 		case 12:
 			beamblastNewP(c,p);
 			if(verbose){printf("[%02i] beamblast\n",c);}
-		break;
-
+			break;
 		case 13:
 			fprintf(stderr,"playerMoveDelta received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 14:
 			msgCharacterHit(c,p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.i[6]);
 			if(verbose){printf("[%02i] characterHit\n",c);}
-		break;
-
+			break;
 		case 15:
 			serverParsePlayerPos(c,p);
 			if(verbose){printf("[%02i] sendPlayerPos\n",c);}
-		break;
-
+			break;
 		case 16:
 			serverParseChatMsg(c,p);
 			if(verbose){printf("[%02i] sendChatMsg\n",c);}
-		break;
-
+			break;
 		case 17:
 			serverParseDyingMsg(c,p);
 			if(verbose){printf("[%02i] sendDyingMsg\n",c);}
-		break;
-
+			break;
 		case 18:
 			fprintf(stderr,"chunkData received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 19:
 			fprintf(stderr,"setPlayerCount received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 20:
 			fprintf(stderr,"playerPickupItem received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 21:
 			fprintf(stderr,"itemDropUpdate received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 22:
 			fprintf(stderr,"grenadeExplode received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 23:
 			fprintf(stderr,"grenadeUpdate received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 24:
 			fprintf(stderr,"fxBeamBlaster received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 25:
 			fprintf(stderr,"msgItemDropUpdate received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 26:
 			fprintf(stderr,"msgPlayerDamage received from client, which should never happen\n");
 			serverKill(c);
-		break;
-
+			break;
 		case 27:
 			chungusUnsubscribePlayer(world.chungi[p->val.i[0]][p->val.i[1]][p->val.i[2]],c);
-			break;
-
+				break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
 			serverKill(c);
-		break;
+			break;
 	}
 }
 
@@ -416,15 +386,16 @@ void serverParseConnection(int c){
 void serverParseIntro(int c){
 	for(unsigned int ii=0;ii<clients[c].recvBufLen;ii++){
 		if(clients[c].recvBuf[ii] != '\n'){ continue; }
-		memcpy(clients[c].playerName,clients[c].recvBuf,MIN(sizeof(clients[c].playerName)-1,ii-1));
+		memcpy(clients[c].playerName,clients[c].recvBuf,MIN(sizeof(clients[c].playerName)-1,ii));
 		clients[c].playerName[sizeof(clients[c].playerName)-1] = 0;
 		for(unsigned int i=0;i<clients[c].recvBufLen-(ii);i++){
 			clients[c].recvBuf[i] = clients[c].recvBuf[i+(ii+1)];
 		}
 		clients[c].recvBufLen -= ii+1;
 		clients[c].state = STATE_READY;
+		characterLoadSendData(c);
 		sendPlayerJoinMessage(c);
-		serverIntro(c);
+		itemDropIntro(c);
 	}
 }
 
@@ -620,6 +591,7 @@ void sendToAllExcept(int e,void *data, int len){
 
 void serverCloseClient(int c){
 	char *msg = getPlayerLeaveMessage(c);
+	characterSaveData(c);
 	if(clients[c].c != NULL){
 		characterFree(clients[c].c);
 		clients[c].c = NULL;

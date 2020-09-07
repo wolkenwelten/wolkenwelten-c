@@ -9,6 +9,7 @@ int   characterGetHP          (character *c);
 int   characterGetMaxHP       (character *c);
 void  characterAddCooldown    (character *c, int cooldown);
 void  characterSetPos         (character *c, float x, float y, float z);
+void  characterSetRot         (character *c, float yaw, float pitch, float roll);
 void  characterSetVelocity    (character *c, float vx, float vy, float vz);
 void  characterAddInaccuracy  (character *c, float inc);
 void  characterStartAnimation (character *c, int index, int duration);

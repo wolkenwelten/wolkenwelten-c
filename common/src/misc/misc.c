@@ -91,6 +91,20 @@ void *loadFile(char *filename,size_t *len){
 	return buf;
 }
 
+void saveFile(char *filename,void *buf, size_t len){
+	FILE *fp;
+	size_t written,wlen = 0;
+	
+	fp = fopen(filename,"wb");
+	if(fp == NULL){return;}
+	
+	while(wlen < len){
+		written = fwrite(buf+wlen,1,len-wlen,fp);
+		if(written == 0){return;}
+		wlen += written;
+	}
+	fclose(fp);
+}
 
 const char *getHumanReadableSize(size_t n){
 	static char buf[32];

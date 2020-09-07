@@ -1,15 +1,20 @@
 #include "character.h"
 
 #include "../main.h"
-#include "../voxel/bigchungus.h"
-#include "../../../common/src/game/blockType.h"
+#include "../misc/options.h"
 #include "../game/itemDrop.h"
 #include "../game/blockMining.h"
+#include "../network/server.h"
+#include "../voxel/bigchungus.h"
+#include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/network/messages.h"
 
+#include <ctype.h>
 #include <math.h>
+#include <string.h>
 #include <stdio.h>
 
 character characterList[128];
@@ -74,4 +79,76 @@ void characterFree(character *c){
 
 void characterDie(character *c){
 	characterInit(c);
+}
+
+void characterParseDataLine(int c,const char *line){
+	int argc;
+	char **argv;
+	
+	argv = splitArgs(line,&argc);
+	if(argc == 0)          {return;}
+	if(argv[0][0] == 0)    {return;}
+	if(isspace(argv[0][0])){return;}
+	
+	if(strcmp(argv[0],"Position") == 0){
+		if(argc < 7){return;}
+		msgPlayerSetPos(c,atof(argv[1]),atof(argv[2]),atof(argv[3]),atof(argv[4]),atof(argv[5]),atof(argv[6]));
+		return;
+	}
+	
+	if(strcmp(argv[0],"Health") == 0){
+		if(argc < 2){return;}
+		msgPlayerSetData(c,atoi(argv[1]));
+		return;
+	}
+}
+
+char *characterFileName(const char *name){
+	static char filename[128];
+	snprintf(filename,sizeof(filename)-1,"save/%s/%s.player",optionSavegame,name);
+	filename[sizeof(filename)-1] = 0;
+	return filename;
+}
+
+void characterSaveData(int c){
+	static char buf[4096];
+	char *b;
+	if(clients[c].c == NULL){return;}
+	
+	b = buf;
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"Position %f %f %f %f %f %f\n",clients[c].c->x,clients[c].c->y,clients[c].c->z,clients[c].c->yaw,clients[c].c->pitch,clients[c].c->roll);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"Health %i\n",clients[c].c->hp);
+	
+	*b = 0;
+	buf[sizeof(buf)-1]=0;
+	saveFile(characterFileName(clients[c].playerName),buf,strlen(buf));
+}
+
+int characterLoadData(int c){
+	size_t len = 0;
+	char *filename,*b,*line;
+	filename = characterFileName(clients[c].playerName);
+	b = loadFile(filename,&len);
+	if((b == NULL) || (len == 0)){return 0;}
+	
+	line = b;
+	for(unsigned int i=0;i<len;i++){
+		if(b[i] == '\r'){b[i] = 0;}
+		if(b[i] == '\n'){
+			b[i] = 0;
+			characterParseDataLine(c,line);
+			line = &b[i+1];
+		}
+	}
+	characterParseDataLine(c,line);
+	
+	return 1;
+}
+
+void characterLoadSendData(int c){
+	int sx,sy,sz;
+	if(characterLoadData(c)){return;}
+	
+	bigchungusGetSpawnPos(&world,&sx,&sy,&sz);
+	msgPlayerSetPos(c,((float)sx)+0.5f,((float)sy)+2.f,((float)sz)+0.5f,0.f,0.f,0.f);
 }

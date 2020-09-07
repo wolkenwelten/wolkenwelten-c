@@ -23,6 +23,12 @@ void characterSetPos(character *c, float x, float y, float z){
 	c->z = z;
 }
 
+void characterSetRot(character *c, float yaw, float pitch, float roll){
+	c->yaw   = yaw;
+	c->pitch = pitch;
+	c->roll  = roll;
+}
+
 void characterSetVelocity(character *c, float vx, float vy, float vz){
 	c->vx = vx;
 	c->vy = vy;

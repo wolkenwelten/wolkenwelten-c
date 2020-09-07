@@ -151,6 +151,7 @@ void characterSetPlayerPos(const packet *p){
 	playerList[i]->animationTicksMax  = p->val.i[20];
 	playerList[i]->animationTicksLeft = p->val.i[21];
 	playerList[i]->flags              = p->val.i[22];
+	playerList[i]->hp                 = p->val.i[23];
 }
 
 void characterRemovePlayer(int c, int len){
@@ -682,7 +683,7 @@ void characterFreeHook(character *c){
 	}
 }
 
-void characterMoveDelta(character *c, packet *p){
+void characterMoveDelta(character *c, const packet *p){
 	c->vx    += p->val.f[0];
 	c->vy    += p->val.f[1];
 	c->vz    += p->val.f[2];
@@ -826,7 +827,7 @@ void characterDrawAll(){
 	}
 }
 
-void characterDamagePacket(character *c, packet *p){
+void characterDamagePacket(character *c, const packet *p){
 	if(characterDamage(c,p->val.i[0])){
 		msgSendDyingMessage("died by command", 65535);
 	}
@@ -852,4 +853,8 @@ bool itemPlaceBlock(item *i, character *chr, int to){
 		}
 	}
 	return false;
+}
+
+void characterSetData(character *c, const packet *p){
+	c->hp = p->val.i[0];
 }

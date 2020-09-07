@@ -5,7 +5,7 @@
 extern packet packetBuffer;
 
 void msgRequestPlayerSpawnPos    ();
-void msgPlayerSetPos             (int c, float x, float y, float z);
+void msgPlayerSetPos             (int c, float x, float y, float z, float yaw, float pitch, float roll);
 void msgRequestChungus           (int x, int y, int z);
 void msgPlaceBlock               (int x, int y, int z, uint8_t b);
 void msgMineBlock                (int x, int y, int z, uint8_t b);
@@ -19,7 +19,7 @@ void msgNewGrenade               (float x, float y, float z, float yaw, float pi
 void msgBeamBlast                (float x, float y, float z, float yaw, float pitch, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft);
 void msgPlayerMove               (int c, float dvx, float dvy, float dvz, float dyaw, float ypitch, float droll);
 void msgCharacterHit             (int c, float x, float y, float z, float yaw, float pitch, float roll, int pwr);
-// 15 = parsePlayerPos ???
+// 15 = playerPos ???
 // 16 = parseChatMsg ???
 // 17 = parseDyingMsg ???
 // 18 = chunkData ???
@@ -32,3 +32,4 @@ void msgFxBeamBlaster            (int c, float x1, float y1, float z1, float x2,
 void msgItemDropUpdate           (int c, float x, float y, float z, float vx, float vy, float vz, uint16_t i, uint16_t len, uint16_t itemID, uint16_t amount);
 void msgPlayerDamage             (int c, int hp);
 void msgUnsubChungus             (int x, int y, int z);
+void msgPlayerSetData            (int c, int hp);
