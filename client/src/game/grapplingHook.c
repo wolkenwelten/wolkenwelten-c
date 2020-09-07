@@ -200,6 +200,7 @@ void grapplingHookPullTowards(grapplingHook *ghk,character *pull){
 	pull->vx = vx;
 	pull->vy = vy;
 	pull->vz = vz;
+	pull->shake = vx + vy + vz;
 }
 
 bool grapplingHookUpdate(grapplingHook *ghk){
