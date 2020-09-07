@@ -250,6 +250,7 @@ void bigchungusFreeFarChungi(bigchungus *c){
 
 void bigchungusUpdateClient(bigchungus *c, int p){
 	character *chara = clients[p].c;
+	if(chara == NULL){return;}
 	int cx = ((int)chara->x)>>8;
 	int cy = ((int)chara->y)>>8;
 	int cz = ((int)chara->z)>>8;

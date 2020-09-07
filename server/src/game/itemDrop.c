@@ -24,7 +24,9 @@ int      itemDropCount = 0;
 #define ITEM_DROPS_PER_UPDATE 16
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-inline void itemDropUpdateMsg(int c, int i){
+inline void itemDropUpdateMsg(int c,unsigned int i){
+	if(i >= 4096)                {return;}
+	if(itemDrops[i].ent == NULL) {return;}
 	msgItemDropUpdate(
 		c,
 		itemDrops[i].ent->x,
