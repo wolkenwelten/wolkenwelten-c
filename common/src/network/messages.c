@@ -239,11 +239,12 @@ void msgUnsubChungus(int x, int y, int z){
 	packetQueueToServer(p,27,3*4);
 }
 
-void msgPlayerSetData(int c, int hp, int activeItem){
+void msgPlayerSetData(int c, int hp, int activeItem, uint32_t flags){
 	packet *p = &packetBuffer;
 	p->val.i[0] = hp;
 	p->val.i[1] = activeItem;
-	packetQueue(p,28,2*4,c);
+	p->val.u[2] = flags;
+	packetQueue(p,28,3*4,c);
 }
 
 void msgPlayerSetInventory(int c, item *itm, size_t itemCount){

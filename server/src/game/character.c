@@ -103,6 +103,12 @@ void characterParseDataLine(int c,const char *line){
 		return;
 	}
 
+	if(strcmp(argv[0],"Flags") == 0){
+		if(argc < 2){return;}
+		p->flags = atoi(argv[1]);
+		return;
+	}
+
 	if(strcmp(argv[0],"ActiveItem") == 0){
 		if(argc < 2){return;}
 		p->activeItem = atoi(argv[1]);
@@ -126,7 +132,7 @@ char *characterFileName(const char *name){
 }
 
 void characterSaveData(int c){
-	static char buf[4096];
+	static char buf[8192];
 	char *b;
 	character *p = clients[c].c;
 	if(p == NULL){return;}
@@ -135,6 +141,7 @@ void characterSaveData(int c){
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"Position %f %f %f %f %f %f\n",p->x,p->y,p->z,p->yaw,p->pitch,p->roll);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"ActiveItem %i\n",p->activeItem);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"Health %i\n",p->hp);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"Flags %u\n",p->flags);
 
 	for(int i=0;i<40;i++){
 		if(itemIsEmpty(&p->inventory[i])){continue;}
@@ -164,7 +171,7 @@ int characterLoadData(int c){
 	}
 	characterParseDataLine(c,line);
 	msgPlayerSetInventory(c,clients[c].c->inventory,40);
-	msgPlayerSetData(c,clients[c].c->hp,clients[c].c->activeItem);
+	msgPlayerSetData(c,clients[c].c->hp,clients[c].c->activeItem,clients[c].c->flags);
 
 	return 1;
 }
@@ -175,7 +182,7 @@ void characterLoadSendData(int c){
 	if(characterLoadData(c)){return;}
 
 	bigchungusGetSpawnPos(&world,&sx,&sy,&sz);
-	msgPlayerSetPos(c,((float)sx)+0.5f,((float)sy)+2.f,((float)sz)+0.5f,0.f,0.f,0.f);
+	msgPlayerSetPos(c,((float)sx)+0.5f,((float)sy)+2.f,((float)sz)+0.5f,135.f,15.f,0.f);
 	msgPlayerSetInventory(c,emptyInventory,40);
-	msgPlayerSetData(c,20,0);
+	msgPlayerSetData(c,20,0,0);
 }

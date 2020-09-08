@@ -848,4 +848,5 @@ bool itemPlaceBlock(item *i, character *chr, int to){
 void characterSetData(character *c, const packet *p){
 	c->hp         = p->val.i[0];
 	c->activeItem = p->val.i[1];
+	c->flags      = p->val.u[2];
 }
