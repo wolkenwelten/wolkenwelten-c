@@ -36,9 +36,9 @@ void fpsTick() {
 	frameCountSinceLast++;
 
 	if(curTicks > frameTimeLast+1000){
-		curFPS = (curTicks - frameTimeLast) / frameCountSinceLast;
+		curFPS = ((float)curTicks - (float)frameTimeLast) / (float)frameCountSinceLast;
 		curFPS = 1000.f / curFPS;
-		frameTimeLast += 1000;
+		frameTimeLast += (curTicks - frameTimeLast);
 		frameCountSinceLast = 0;
 	}
 }
