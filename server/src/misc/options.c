@@ -95,6 +95,7 @@ void parseOptions(int argc,const char *argv[]){
 		}
 		if((l = checkString(argv[i]+1,"singleplayer"))){
 			optionSingleplayer = true;
+			continue;
 		}
 		break;
 	}
