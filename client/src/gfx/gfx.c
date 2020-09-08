@@ -69,7 +69,7 @@ void calcFOV(character *cam){
 	float off = 0.f;
 
 	off = sqrtf(cam->vx*cam->vx + cam->vy*cam->vy + cam->vz*cam->vz);
-	
+
 	if(off < 0.025f){
 		off = 0.f;
 	}else{
@@ -82,7 +82,7 @@ void calcFOV(character *cam){
 		gfxCurFOV -= (gfxCurFOV-off)/8;
 	}
 	if(gfxCurFOV < 80.1){gfxCurFOV = 80.0;}
-	matPerspective(matProjection, gfxCurFOV, (float)screenWidth / (float)screenHeight, 0.1f, 4096.0f);
+	matPerspective(matProjection, gfxCurFOV, (float)screenWidth / (float)screenHeight, 0.2f, 4096.0f);
 }
 
 void calcShake(character *cam, float *pitch, float *yaw){
