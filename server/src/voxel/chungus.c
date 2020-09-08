@@ -152,7 +152,6 @@ void chungusSave(chungus *c){
 		written += fwrite(compressedBuffer+written,1,len-written,fp);
 		if(written >= len){
 			fclose(fp);
-			fprintf(stderr,"Successfully chungus %i:%i:%i\n",c->x,c->y,c->z);
 			c->clientsUpdated |= ((uint64_t)1 << 31);
 			return;
 		}
