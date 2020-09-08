@@ -60,8 +60,12 @@ void msgParseGetChunk(packet *p){
 }
 
 void msgSendPlayerPos(){
+	static int inventoryCountDown=0;
+	if(--inventoryCountDown < 0){
+		msgPlayerSetInventory(-1,player->inventory,40);
+		inventoryCountDown = 16;
+	}
 	packet *p = &packetBuffer;
-	item *itm = characterGetItemBarSlot(player,player->activeItem);
 
 	p->val.f[ 0] = player->x;
 	p->val.f[ 1] = player->y;
@@ -85,11 +89,7 @@ void msgSendPlayerPos(){
 	p->val.i[14] = player->blockMiningX;
 	p->val.i[15] = player->blockMiningY;
 	p->val.i[16] = player->blockMiningZ;
-	if(itemIsEmpty(itm)){
-		p->val.i[17] = 0;
-	}else{
-		p->val.i[17] = itm->ID;
-	}
+	p->val.i[17] = player->activeItem;
 	p->val.i[18] = player->animationIndex;
 	p->val.i[20] = player->animationTicksMax;
 	p->val.i[21] = player->animationTicksLeft;
@@ -97,8 +97,6 @@ void msgSendPlayerPos(){
 	p->val.i[23] = player->hp;
 
 	packetQueueToServer(p,15,24*4);
-	
-	msgPlayerSetInventory(-1,player->inventory,40);
 }
 
 void decompressPacket(packet *p){

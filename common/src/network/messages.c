@@ -208,13 +208,13 @@ void msgFxBeamBlaster(int c, float x1, float y1, float z1, float x2, float y2, f
 
 void msgItemDropUpdate(int c, float x, float y, float z, float vx, float vy, float vz, uint16_t i, uint16_t len, uint16_t itemID, uint16_t amount){
 	packet *p = &packetBuffer;
-	
+
 	p->val.s[0] = i;
 	p->val.s[1] = len;
-	
+
 	p->val.s[2] = itemID;
 	p->val.s[3] = amount;
-	
+
 	p->val.f[2] = x;
 	p->val.f[3] = y;
 	p->val.f[4] = z;
@@ -239,10 +239,11 @@ void msgUnsubChungus(int x, int y, int z){
 	packetQueueToServer(p,27,3*4);
 }
 
-void msgPlayerSetData(int c, int hp){
+void msgPlayerSetData(int c, int hp, int activeItem){
 	packet *p = &packetBuffer;
 	p->val.i[0] = hp;
-	packetQueue(p,28,1*4,c);
+	p->val.i[1] = activeItem;
+	packetQueue(p,28,2*4,c);
 }
 
 void msgPlayerSetInventory(int c, item *itm, size_t itemCount){

@@ -140,8 +140,8 @@ void characterSetPlayerPos(const packet *p){
 	playerList[i]->animationTicksLeft = p->val.i[21];
 	playerList[i]->flags              = p->val.i[22];
 	playerList[i]->hp                 = p->val.i[23];
-	
-	
+
+
 }
 
 void characterRemovePlayer(int c, int len){
@@ -554,7 +554,7 @@ void characterUpdate(character *c){
 			c->flags |= CHAR_FALLINGSOUND;
 			sfxPlay(sfxFalling,1.f);
 		}
-	} 
+	}
 	if(c->pitch < -90.f){
 		c->pitch = -90.f;
 	}else if(c->pitch > 90.f){
@@ -846,5 +846,6 @@ bool itemPlaceBlock(item *i, character *chr, int to){
 }
 
 void characterSetData(character *c, const packet *p){
-	c->hp = p->val.i[0];
+	c->hp         = p->val.i[0];
+	c->activeItem = p->val.i[1];
 }

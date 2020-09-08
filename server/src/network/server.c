@@ -111,7 +111,7 @@ void addPriorityItemDrop(uint16_t d){
 	for(int c=0;c<clientCount;c++){
 		if(clients[c].state)                          {continue;}
 		if(clients[c].itemDropPriorityQueueLen > 127) {continue;}
-		
+
 		for(unsigned int i=0;i<clients[c].itemDropPriorityQueueLen;i++){
 			if(clients[c].itemDropPriorityQueue[i] == d){goto continueClientLoop;}
 		}
@@ -127,6 +127,7 @@ void msgUpdatePlayer(int c){
 	for(int i=0;i<clientCount;++i){
 		if(i==c)                {continue;}
 		if(clients[i].c == NULL){continue;}
+		item *itm = characterGetItemBarSlot(clients[i].c,clients[i].c->activeItem);
 
 		rp->val.f[ 0] = clients[i].c->x;
 		rp->val.f[ 1] = clients[i].c->y;
@@ -145,7 +146,11 @@ void msgUpdatePlayer(int c){
 		rp->val.i[14] = clients[i].c->blockMiningX;
 		rp->val.i[15] = clients[i].c->blockMiningY;
 		rp->val.i[16] = clients[i].c->blockMiningZ;
-		rp->val.i[17] = clients[i].c->activeItem;
+		if(itm == NULL){
+			rp->val.i[17] = 0;
+		}else{
+			rp->val.i[17] = itm->ID;
+		}
 		rp->val.i[18] = clients[i].c->animationIndex;
 		rp->val.i[19] = i;
 		rp->val.i[20] = clients[i].c->animationTicksMax;
@@ -372,9 +377,9 @@ void serverParseConnection(int c){
 		if(clients[c].recvBuf[ii-1] != '\r'){ continue; }
 		if(clients[c].recvBuf[ii-2] != '\n'){ continue; }
 		if(clients[c].recvBuf[ii-3] != '\r'){ continue; }
-		
+
 		clients[c].recvBuf[ii-1] = 0;
-		if( (clients[c].recvBuf[0] == 'G') && 
+		if( (clients[c].recvBuf[0] == 'G') &&
 			(clients[c].recvBuf[1] == 'E') &&
 			(clients[c].recvBuf[2] == 'T') &&
 			(clients[c].recvBuf[3] == ' ')

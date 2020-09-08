@@ -85,24 +85,30 @@ void characterParseDataLine(int c,const char *line){
 	int argc;
 	char **argv;
 	character *p = clients[c].c;
-	
+
 	argv = splitArgs(line,&argc);
 	if(argc == 0)          {return;}
 	if(argv[0][0] == 0)    {return;}
 	if(isspace(argv[0][0])){return;}
-	
+
 	if(strcmp(argv[0],"Position") == 0){
 		if(argc < 7){return;}
 		msgPlayerSetPos(c,atof(argv[1]),atof(argv[2]),atof(argv[3]),atof(argv[4]),atof(argv[5]),atof(argv[6]));
 		return;
 	}
-	
+
 	if(strcmp(argv[0],"Health") == 0){
 		if(argc < 2){return;}
-		msgPlayerSetData(c,atoi(argv[1]));
+		p->hp = atoi(argv[1]);
 		return;
 	}
-	
+
+	if(strcmp(argv[0],"ActiveItem") == 0){
+		if(argc < 2){return;}
+		p->activeItem = atoi(argv[1]);
+		return;
+	}
+
 	if(strcmp(argv[0],"Item") == 0){
 		if(argc < 4){return;}
 		int i = atoi(argv[1]);
@@ -124,16 +130,17 @@ void characterSaveData(int c){
 	char *b;
 	character *p = clients[c].c;
 	if(p == NULL){return;}
-	
+
 	b = buf;
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"Position %f %f %f %f %f %f\n",p->x,p->y,p->z,p->yaw,p->pitch,p->roll);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"ActiveItem %i\n",p->activeItem);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"Health %i\n",p->hp);
-	
+
 	for(int i=0;i<40;i++){
 		if(itemIsEmpty(&p->inventory[i])){continue;}
 		b += snprintf(b,sizeof(buf)-(b-buf+1),"Item %i %i %i\n",i,p->inventory[i].ID,p->inventory[i].amount);
 	}
-	
+
 	*b = 0;
 	buf[sizeof(buf)-1]=0;
 	saveFile(characterFileName(clients[c].playerName),buf,strlen(buf));
@@ -145,7 +152,7 @@ int characterLoadData(int c){
 	filename = characterFileName(clients[c].playerName);
 	b = loadFile(filename,&len);
 	if((b == NULL) || (len == 0)){return 0;}
-	
+
 	line = b;
 	for(unsigned int i=0;i<len;i++){
 		if(b[i] == '\r'){b[i] = 0;}
@@ -157,7 +164,8 @@ int characterLoadData(int c){
 	}
 	characterParseDataLine(c,line);
 	msgPlayerSetInventory(c,clients[c].c->inventory,40);
-	
+	msgPlayerSetData(c,clients[c].c->hp,clients[c].c->activeItem);
+
 	return 1;
 }
 
@@ -165,9 +173,9 @@ void characterLoadSendData(int c){
 	int sx,sy,sz;
 	item emptyInventory[40] = {0};
 	if(characterLoadData(c)){return;}
-	
+
 	bigchungusGetSpawnPos(&world,&sx,&sy,&sz);
 	msgPlayerSetPos(c,((float)sx)+0.5f,((float)sy)+2.f,((float)sz)+0.5f,0.f,0.f,0.f);
-	msgPlayerSetData(c,20);
 	msgPlayerSetInventory(c,emptyInventory,40);
+	msgPlayerSetData(c,20,0);
 }

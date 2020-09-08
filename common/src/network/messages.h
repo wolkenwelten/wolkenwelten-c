@@ -33,5 +33,5 @@ void msgFxBeamBlaster            (int c, float x1, float y1, float z1, float x2,
 void msgItemDropUpdate           (int c, float x, float y, float z, float vx, float vy, float vz, uint16_t i, uint16_t len, uint16_t itemID, uint16_t amount);
 void msgPlayerDamage             (int c, int hp);
 void msgUnsubChungus             (int x, int y, int z);
-void msgPlayerSetData            (int c, int hp);
+void msgPlayerSetData            (int c, int hp, int activeItem);
 void msgPlayerSetInventory       (int c, item *itm, size_t itemCount);
