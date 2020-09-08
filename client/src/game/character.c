@@ -702,13 +702,17 @@ void characterShadesDraw(character *c){
 }
 
 void characterGliderDraw(character *c){
+	static uint64_t ticks = 0;
 	float matMVP[16];
 	if(c->gliderFade < 0.01f){return;}
 	const float breath = sinf((float)(c->breathing-384)/512.f)*4.f;
+	float deg  = ((float)++ticks*0.4f);
+	float yoff = cos(deg*2.1f)*player->shake;
+	float xoff = sin(deg*1.3f)*player->shake;
 
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
-	matMulRotYX(matMVP,-c->yaw,-(c->pitch-((1.f - c->gliderFade)*90.f)-breath));
+	matMulRotYX(matMVP,-c->yaw+xoff,-(c->pitch-((1.f - c->gliderFade)*90.f)-breath+yoff));
 	matMulTrans(matMVP,0.f,0.4f,-0.2f);
 	matMulScale(matMVP,c->gliderFade, c->gliderFade, c->gliderFade);
 	matMul(matMVP,matMVP,matProjection);
