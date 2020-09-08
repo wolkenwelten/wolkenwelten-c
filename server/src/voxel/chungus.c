@@ -17,7 +17,7 @@
 
 
 chungus chungusList[1 << 12];
-unsigned int chungusCount=0;
+unsigned int chungusCount = 0;
 chungus *chungusFirstFree = NULL;
 
 uint8_t *saveLoadBuffer   = NULL;
@@ -65,6 +65,7 @@ uint8_t *chunkLoad(chungus *c, uint8_t *buf){
 	int cx = buf[1] & 0xF;
 	int cy = buf[2] & 0xF;
 	int cz = buf[3] & 0xF;
+
 	chunk *chnk = c->chunks[cx][cy][cz];
 	if(chnk == NULL){
 		c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+(cx<<4),c->y+(cy<<4),c->z+(cz<<4));
@@ -121,8 +122,8 @@ void chungusLoad(chungus *c){
 }
 
 void chungusSave(chungus *c){
-	if(c == NULL)                                     {return;}
-	if((c->clientsUpdated & ((uint64_t)1 << 31)) != 0){return;}
+	if(c == NULL)                                      { return; }
+	if((c->clientsUpdated & ((uint64_t)1 << 31)) != 0) { return; }
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
 
@@ -162,6 +163,7 @@ void chungusSave(chungus *c){
 
 chungus *chungusNew(int x, int y, int z){
 	chungus *c = NULL;
+
 	if(chungusFirstFree == NULL){
 		if(chungusCount >= (int)(sizeof(chungusList) / sizeof(chungus))-1){
 			fprintf(stderr,"server chungusList Overflow!\n");
@@ -213,17 +215,14 @@ chunk *chungusGetChunk(chungus *c, int x,int y,int z){
 }
 
 uint8_t chungusGetB(chungus *c, int x,int y,int z){
-	chunk *chnk;
-	if(((x|y|z)>>4)&(~0xF)){return 0;}
-	chnk = c->chunks[x>>4][y>>4][z>>4];
-	if(chnk == NULL){return 0;}
+	if(((x|y|z)>>4)&(~0xF)) { return 0; }
+	chunk *chnk = c->chunks[x>>4][y>>4][z>>4];
+	if(chnk == NULL)        { return 0; }
+
 	return chnk->data[x&0xF][y&0xF][z&0xF];
 }
 
 int chungusGetHighestP(chungus *c, int x, int *retY, int z){
-	uint8_t b;
-	chunk *chnk;
-
 	if((x|z)&(~0xFF)){return 0;}
 	int cx = x >> 4;
 	int cz = z >> 4;
@@ -231,40 +230,43 @@ int chungusGetHighestP(chungus *c, int x, int *retY, int z){
 	z &= 0xF;
 
 	for(int cy=15;cy >= 0;cy--){
-		chnk = c->chunks[cx][cy][cz];
+		chunk *chnk = c->chunks[cx][cy][cz];
 		if(chnk == NULL){continue;}
 		for(int y=CHUNK_SIZE-1;y>=0;y--){
-			b = chnk->data[x&0xF][y&0xF][z&0xF];
+			uint8_t b = chnk->data[x&0xF][y&0xF][z&0xF];
 			if(b != 0){
 				*retY = (cy*CHUNK_SIZE)+y;
 				return 1;
 			}
 		}
 	}
+
 	return 0;
 }
 
 void chungusSetB(chungus *c, int x,int y,int z,uint8_t block){
-	chunk *chnk;
 	if((x|y|z)&(~0xFF)){return;}
 	int cx = (x >> 4) & 0xF;
 	int cy = (y >> 4) & 0xF;
 	int cz = (z >> 4) & 0xF;
-	chnk = c->chunks[cx][cy][cz];
+	chunk *chnk = c->chunks[cx][cy][cz];
 	if(chnk == NULL){
-		c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+(cx << 4),c->y+(cy << 4),c->z+(cz << 4));
+		chnk = chunkNew(c->x+(cx << 4),c->y+(cy << 4),c->z+(cz << 4));
+		c->chunks[cx][cy][cz] = chnk;
 	}
 	chunkSetB(chnk,x,y,z,block);
 	c->clientsUpdated = 0;
 }
 
-void chungusBoxF(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
-	const int gx = (x+w)>>4;
-	const int gy = (y+h)>>4;
-	const int gz = (z+d)>>4;
-	if((x|y|z)&(~0xFF)){return;}
-	if(((x+w)|(y+h)|(z+d))&(~0xFF)){return;}
-	int sx = x&0xF;
+void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,uint8_t block){
+	int gx = (x+w)>>4;
+	int gy = (y+h)>>4;
+	int gz = (z+d)>>4;
+
+	if( (x  |  y  |  z  ) &(~0xFF)) { return; }
+	if(((x+w)|(y+h)|(z+d))&(~0xFF)) { return; }
+
+	int sx = x & 0xF;
 	int sw = CHUNK_SIZE;
 	for(int cx=x>>4;cx<=gx;cx++){
 		int sy = y&0xF;
@@ -281,7 +283,8 @@ void chungusBoxF(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block)
 			for(int cz=z>>4;cz<=gz;cz++){
 				chunk *chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF];
 				if(chnk == NULL){
-					c->chunks[cx&0xF][cy&0xF][cz&0xF] = chnk = chunkNew(c->x+(cx<<4),c->y+(cy<<4),c->z+(cz<<4));
+					chnk = chunkNew(c->x+(cx<<4),c->y+(cy<<4),c->z+(cz<<4));
+					c->chunks[cx&0xF][cy&0xF][cz&0xF] = chnk;
 				}
 				if(cz == gz){
 					sd = (z+d)&0xF;
@@ -306,7 +309,7 @@ void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
 	c->clientsUpdated = 0;
 }
 
-void chungusRoughBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
+void chungusRoughBox(chungus *c,int x,int y,int z,int w,int h,int d,uint8_t block){
 	int dx = x+w-1;
 	int dy = y+h-1;
 	int dz = z+d-1;
@@ -341,11 +344,10 @@ void chungusRandomBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t b
 }
 
 void chungusFill(chungus *c, int x,int y,int z,uint8_t b){
-	chunk *chnk;
 	int cx = (x / CHUNK_SIZE) & 0xF;
 	int cy = (y / CHUNK_SIZE) & 0xF;
 	int cz = (z / CHUNK_SIZE) & 0xF;
-	chnk = c->chunks[cx][cy][cz];
+	chunk *chnk = c->chunks[cx][cy][cz];
 	if(chnk == NULL){
 		c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+cx*CHUNK_SIZE,c->y+cy*CHUNK_SIZE,c->z+cz*CHUNK_SIZE);
 	}
@@ -355,11 +357,14 @@ void chungusFill(chungus *c, int x,int y,int z,uint8_t b){
 
 void chungusSubscribePlayer(chungus *c, int p){
 	if(c == NULL){return;}
+
 	c->clientsSubscribed |= 1 << p;
 }
+
 int chungusUnsubscribePlayer(chungus *c, int p){
 	if(c == NULL){return 0;}
 	uint32_t mask = ~(1 << p);
+
 	c->clientsSubscribed &= mask;
 	c->clientsUpdated    &= mask;
 	for(int x=0;x<16;x++){
@@ -371,24 +376,33 @@ int chungusUnsubscribePlayer(chungus *c, int p){
 			}
 		}
 	}
+
 	return 0;
 }
+
 int chungusIsSubscribed(chungus *c, int p){
 	if(c == NULL){return 0;}
+
 	return c->clientsSubscribed & (1 << p);
 }
+
 int chungusIsUpdated(chungus *c, int p){
 	if(c == NULL){return 1;}
+
 	return c->clientsUpdated & (1 << p);
 }
+
 void chungusSetUpdated(chungus *c, int p){
 	if( c == NULL){return;}
+
 	c->clientsUpdated |= 1 << p;
 }
+
 int chungusUpdateClient(chungus *c, int p){
-	if(c == NULL){return 0;}
-	if(!(c->clientsSubscribed & (1 << p))){return 1;}
-	if( chungusIsUpdated(c,p)){return 0;}
+	if(c == NULL)                          { return 0; }
+	if(!(c->clientsSubscribed & (1 << p))) { return 1; }
+	if( chungusIsUpdated(c,p))             { return 0; }
+
 	addChungusToQueue(p,c->x,c->y,c->z);
 	chungusSetUpdated(c,p);
 	return 0;
