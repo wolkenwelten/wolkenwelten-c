@@ -45,6 +45,10 @@ void fpsTick() {
 
 void initSDL(){
 	SDL_DisplayMode dm;
+	int desktopWidth  = optionWindowWidth;
+	int desktopHeight = optionWindowHeight;
+	char windowTitle[64];
+	snprintf(windowTitle,sizeof(windowTitle)-1,"Wolkenwelten - %s",playerName);
 
 	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS,"0");
 	unsigned int initFlags = SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS | SDL_INIT_AUDIO;
@@ -63,8 +67,8 @@ void initSDL(){
 	#endif
 
 	if( SDL_GetDesktopDisplayMode(0, &dm) == 0){
-		screenWidth = dm.w;
-		screenHeight = dm.h;
+		desktopWidth  = screenWidth  = dm.w;
+		desktopHeight = screenHeight = dm.h;
 	}
 
 	int cwflags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_MOUSE_CAPTURE | SDL_WINDOW_RESIZABLE;
@@ -74,11 +78,25 @@ void initSDL(){
 		if(optionFullscreen){
 			cwflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}else{
-			screenWidth = 800;
-			screenHeight = 600;
+			screenWidth = optionWindowWidth;
+			screenHeight = optionWindowHeight;
 		}
 	#endif
-	gWindow = SDL_CreateWindow( "Wolkenwelten", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, cwflags);
+	
+	int windowx = SDL_WINDOWPOS_CENTERED;
+	int windowy = SDL_WINDOWPOS_CENTERED;
+	if((optionWindowOrientation & 0x0F) == 0x01){
+		windowx = 0;
+	}else if((optionWindowOrientation & 0x0F) == 0x02){
+		windowx = desktopWidth - screenWidth;
+	}
+	if((optionWindowOrientation & 0xF0) == 0x10){
+		windowy = 0;
+	}else if((optionWindowOrientation & 0xF0) == 0x20){
+		windowy = desktopHeight - screenHeight;
+	}
+	
+	gWindow = SDL_CreateWindow( windowTitle, windowx, windowy, screenWidth, screenHeight, cwflags);
 	if( gWindow == NULL ) {
 		fprintf(stderr, "Window could not be created! SDL Error: %s\n", SDL_GetError() );
 		exit(1);

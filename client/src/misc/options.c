@@ -3,6 +3,7 @@
 #include "../tmp/assets.h"
 #include "../main.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,12 +12,15 @@
 char playerName[28];
 char serverName[64];
 
-float optionMusicVolume      = 0.75f;
-float optionSoundVolume      = 1.f;
-int   optionWorldSeed        = 0;
-bool  optionDebugInfo        = false;
-bool  optionFullscreen       = false;
-bool  optionRuntimeReloading = false;
+float optionMusicVolume       = 0.75f;
+float optionSoundVolume       = 1.f;
+int   optionWorldSeed         = 0;
+bool  optionDebugInfo         = false;
+bool  optionFullscreen        = false;
+bool  optionRuntimeReloading  = false;
+int   optionWindowOrientation = 0;
+int   optionWindowWidth       = 0;
+int   optionWindowHeight      = 0;
 
 void printVersion(){
 	printf("Wolkenwelten Pre-Alpha\n");
@@ -60,6 +64,30 @@ void parseOptions(int argc,char *argv[]){
 			strncpy(serverName,argv[i]+l,sizeof(serverName)-1);
 			gameRunning = true;
 		}
+		if((l = checkString(argv[i]+1,"windowOrientation="))){
+			int newOrientation = 0;
+			if(argv[i][l] != 0){
+				uint8_t chr = toupper(argv[i][l]);
+				if(chr == 'T'){newOrientation |= 0x10;}
+				if(chr == 'B'){newOrientation |= 0x20;}
+				if(chr == 'L'){newOrientation |= 0x01;}
+				if(chr == 'R'){newOrientation |= 0x02;}
+				if(argv[i][l+1] != 0){
+					chr = toupper(argv[i][l+1]);
+					if(chr == 'T'){newOrientation |= 0x10;}
+					if(chr == 'B'){newOrientation |= 0x20;}
+					if(chr == 'L'){newOrientation |= 0x01;}
+					if(chr == 'R'){newOrientation |= 0x02;}
+				}
+			}
+			optionWindowOrientation = newOrientation;
+		}
+		if((l = checkString(argv[i]+1,"windowWidth="))){
+			optionWindowWidth = atoi(argv[i]+l);
+		}
+		if((l = checkString(argv[i]+1,"windowHeight="))){
+			optionWindowHeight = atoi(argv[i]+l);
+		}
 
 		if(checkString(argv[i]+1,"windowed")){
 			optionFullscreen = false;
@@ -93,6 +121,12 @@ void sanityCheckOptions(){
 	if(optionSoundVolume > 1.f){
 		optionSoundVolume = 1.f;
 		printf("Using Maximum soundVolume of 100\n");
+	}
+	if(optionWindowWidth <= 0){
+		optionWindowWidth = 800;
+	}
+	if(optionWindowHeight <= 0){
+		optionWindowHeight = 480;
 	}
 	if(serverName[0] == 0){
 		strncpy(serverName,"localhost",sizeof(serverName)-1);

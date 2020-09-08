@@ -146,7 +146,7 @@ int recipeCanCraft(int r,character *c){
 	if((r < 0) || (r >= recipeCount)){return 0;}
 	int amount = 99999;
 	for(int i=0;i<4;i++){
-		if(recipes[r].ingredientID[i] == 0){continue;}
+		if(recipes[r].ingredientID[i]     == 0){continue;}
 		if(recipes[r].ingredientAmount[i] == 0){continue;}
 
 		const int camount = characterGetItemOrSubstituteAmount(c,recipes[r].ingredientID[i]) / recipes[r].ingredientAmount[i];
@@ -165,7 +165,7 @@ void recipeDoCraft(int r, character *c,int amount){
 	if(canCraftAmount < amount){amount = canCraftAmount;}
 
 	for(int i=0;i<4;i++){
-		if(recipes[r].ingredientID[i] == 0){continue;}
+		if(recipes[r].ingredientID[i]     == 0){continue;}
 		if(recipes[r].ingredientAmount[i] == 0){continue;}
 
 		characterDecItemOrSubstituteAmount(c,recipes[r].ingredientID[i],recipes[r].ingredientAmount[i]*amount);

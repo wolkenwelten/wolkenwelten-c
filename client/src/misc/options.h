@@ -7,8 +7,12 @@ extern float optionMusicVolume;
 extern float optionSoundVolume;
 extern int   optionWorldSeed;
 extern bool  optionDebugInfo;
-extern bool  optionFullscreen;
 extern bool  optionRuntimeReloading;
+
+extern int   optionWindowOrientation;
+extern int   optionWindowWidth;
+extern int   optionWindowHeight;
+extern bool  optionFullscreen;
 
 void parseOptions(int argc,char *argv[]);
 void initOptions (int argc,char *argv[]);
