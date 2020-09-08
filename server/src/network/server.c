@@ -620,7 +620,7 @@ void serverCloseClient(int c){
 	}
 	clientCount = lowestClient+1;
 	
-	if((clients[0].state == STATE_CLOSED) && (optionSingleplayer)){
+	if((clientCount == 1) && (clients[0].state == STATE_CLOSED) && (optionSingleplayer)){
 		quit = true;
 	}
 }

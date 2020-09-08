@@ -118,14 +118,14 @@ void characterSetPlayerPos(const packet *p){
 		if(playerList[i]->hook == NULL){
 			playerList[i]->hook = grapplingHookNew(playerList[i]);
 		}
-		playerList[i]->hook->hooked  = true;
+		playerList[i]->hook->hooked      = true;
 		playerList[i]->hook->ent->noClip = 1;
-		playerList[i]->hook->ent->x  = p->val.f[11];
-		playerList[i]->hook->ent->y  = p->val.f[12];
-		playerList[i]->hook->ent->z  = p->val.f[13];
-		playerList[i]->hook->ent->vx = 0.f;
-		playerList[i]->hook->ent->vy = 0.f;
-		playerList[i]->hook->ent->vz = 0.f;
+		playerList[i]->hook->ent->x      = p->val.f[11];
+		playerList[i]->hook->ent->y      = p->val.f[12];
+		playerList[i]->hook->ent->z      = p->val.f[13];
+		playerList[i]->hook->ent->vx     = 0.f;
+		playerList[i]->hook->ent->vy     = 0.f;
+		playerList[i]->hook->ent->vz     = 0.f;
 	}else{
 		if(playerList[i]->hook != NULL){
 			grapplingHookFree(playerList[i]->hook);
@@ -133,7 +133,7 @@ void characterSetPlayerPos(const packet *p){
 		}
 	}
 	playerList[i]->inventory[0] = itemNew(p->val.u[17],1);
-	playerList[i]->activeItem = 0;
+	playerList[i]->activeItem   = 0;
 
 	playerList[i]->animationIndex     = p->val.i[18];
 	playerList[i]->animationTicksMax  = p->val.i[20];
