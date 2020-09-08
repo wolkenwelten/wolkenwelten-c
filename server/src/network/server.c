@@ -611,7 +611,16 @@ void serverCloseClient(int c){
 	clients[c].state = STATE_CLOSED;
 	msgSetPlayerCount(c,clientCount);
 	serverSendChatMsg(msg);
-	if((clientCount == 0) && (optionSingleplayer)){
+	
+	int lowestClient=0;
+	for(int i=0;i<clientCount;i++){
+		if(clients[i].state != STATE_CLOSED){
+			lowestClient=i;
+		}
+	}
+	clientCount = lowestClient+1;
+	
+	if((clients[0].state == STATE_CLOSED) && (optionSingleplayer)){
 		quit = true;
 	}
 }

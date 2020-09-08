@@ -93,11 +93,8 @@ void parseOptions(int argc,const char *argv[]){
 			verbose = true;
 			continue;
 		}
-		if((l = checkString(argv[i]+1,"singleplayer="))){
-			if(atoi(argv[i]+l) != 0){
-				optionSingleplayer = true;
-				continue;
-			}
+		if((l = checkString(argv[i]+1,"singleplayer"))){
+			optionSingleplayer = true;
 		}
 		break;
 	}
