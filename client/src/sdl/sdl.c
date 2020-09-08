@@ -90,8 +90,10 @@ void initSDL(){
 		exit(1);
 	}
 	#ifndef __HAIKU__
-	if( SDL_GL_SetSwapInterval( 1 ) < 0 ){ //Use Vsync
-		fprintf(stderr, "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError() );
+	if( SDL_GL_SetSwapInterval(-1) != 0 ){ //Use AdaptiveVsync
+		if( SDL_GL_SetSwapInterval(1) != 0 ){ //Use Vsync
+			fprintf(stderr, "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError() );
+		}
 	}
 	#endif
 
