@@ -76,13 +76,13 @@ endif
 client/src/network/client.o: client/src/network/client_bsd.h client/src/network/client_win.h
 
 .PHONY: run
-rund: all
+run: all
 	./wolkenwelten -soundVolume=10 -worldSeed=18 -debugInfo=1 -fullscreen -runtimeReloading
 .PHONY: runl
 runl: all
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost
 .PHONY: rund
-runt: all
+rund: all
 	./wolkenwelten-server -worldSeed=18 -singleplayer &
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=Captain     -windowOrientation=tl -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberTwo   -windowOrientation=bl -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
