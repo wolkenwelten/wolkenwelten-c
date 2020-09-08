@@ -62,6 +62,7 @@ typedef struct {
 	int animationIndex;
 	int animationTicksMax;
 	int animationTicksLeft;
+	unsigned int breathing;
 
 	uint32_t flags;
 	float gliderFade;

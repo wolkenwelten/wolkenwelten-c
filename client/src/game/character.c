@@ -43,10 +43,11 @@ void characterInit(character *c){
 
 	c->actionTimeout = 0;
 	c->stepTimeout   = 0;
+	c->breathing     = rngValM(1024);
 
 	c->maxhp = c->hp = 20;
-	c->activeItem = 0;
-	c->blockMiningX = c->blockMiningY = c->blockMiningZ = -1;
+	c->activeItem    = 0;
+	c->blockMiningX  = c->blockMiningY = c->blockMiningZ = -1;
 
 	c->x     = sx+0.5f;
 	c->y     = sy+1.0f;
@@ -204,6 +205,7 @@ void characterUpdateHook(character *c){
 
 void characterUpdateAnimation(character *c){
 	c->animationTicksLeft -= MS_PER_TICK;
+	c->breathing          += MS_PER_TICK;
 	if(c->animationTicksLeft <= 0){
 		c->animationTicksLeft = 0;
 		c->animationTicksMax  = 0;
@@ -687,10 +689,11 @@ void characterShadesDraw(character *c){
 	float matMVP[16];
 	float sneakOff = 0.f;
 	if(c->flags & CHAR_SNEAK){sneakOff = 1.f;}
+	const float breath = sinf((float)(c->breathing-256)/512.f)*6.f;
 
 	matMov(matMVP,matView);
-	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
-	matMulRotYX(matMVP,-c->yaw,-(c->pitch+sneakOff*30.f)/3.f);
+	matMulTrans(matMVP,c->x,c->y+c->yoff+breath/128.f,c->z);
+	matMulRotYX(matMVP,-c->yaw,-(c->pitch+sneakOff*30.f)/3.f + breath);
 	matMulTrans(matMVP,0.f,0.1f,-0.2f);
 	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
 	matMul(matMVP,matMVP,matProjection);
@@ -701,10 +704,11 @@ void characterShadesDraw(character *c){
 void characterGliderDraw(character *c){
 	float matMVP[16];
 	if(c->gliderFade < 0.01f){return;}
+	const float breath = sinf((float)(c->breathing-384)/512.f)*4.f;
 
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
-	matMulRotYX(matMVP,-c->yaw,-(c->pitch-((1.f - c->gliderFade)*90.f)));
+	matMulRotYX(matMVP,-c->yaw,-(c->pitch-((1.f - c->gliderFade)*90.f)-breath));
 	matMulTrans(matMVP,0.f,0.4f,-0.2f);
 	matMulScale(matMVP,c->gliderFade, c->gliderFade, c->gliderFade);
 	matMul(matMVP,matMVP,matProjection);
@@ -724,10 +728,12 @@ void characterActiveItemDraw(character *c){
 	if(itemIsEmpty(activeItem)){return;}
 	aiMesh = getMeshDispatch(activeItem);
 	if(aiMesh == NULL)         {return;}
+	
+	const float breath = cosf((float)c->breathing/512.f)*4.f;
 
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
-	matMulRotYX(matMVP,-c->yaw+(15.f*sneakOff),-c->pitch);
+	matMulRotYX(matMVP,-c->yaw+(15.f*sneakOff),-c->pitch+breath);
 
 	const float ix =  0.4f - (sneakOff/20.f);
 	const float iy = -0.2f;
@@ -797,10 +803,12 @@ void characterDraw(character *c){
 	if(c == NULL)       {return;}
 	if(c == player)     {return;}
 	if(c->eMesh == NULL){return;}
+	
+	const float breath = sinf((float)c->breathing/512.f)*6.f;
 
 	matMov(matMVP,matView);
-	matMulTrans(matMVP,c->x,c->y+c->yoff,c->z);
-	matMulRotYX(matMVP,-c->yaw,-c->pitch/6.f);
+	matMulTrans(matMVP,c->x,c->y+c->yoff+breath/128.f,c->z);
+	matMulRotYX(matMVP,-c->yaw,-c->pitch/6.f + breath);
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(c->eMesh);
