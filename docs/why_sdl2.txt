@@ -1,0 +1,4 @@
+Mostly because it works with plain C, is not terribly bloated, supports
+most platforms and even has an emscripten port that works really well.
+And it is the Library I have the most experience in and is supported by the
+SteamSDK, so it seemed like the most obvious choice.
