@@ -44,6 +44,7 @@ inline void itemDropUpdateMsg(int c,unsigned int i){
 
 unsigned int itemDropUpdatePlayer(int c, unsigned int offset){
 	const int max = MIN((int)(offset+ITEM_DROPS_PER_UPDATE),itemDropCount);
+	if(itemDropCount == 0){msgItemDropUpdate(c,0,0,0,0,0,0,0,0,0,0);}
 	for(unsigned int i=0;i<clients[c].itemDropPriorityQueueLen;i++){
 		itemDropUpdateMsg(c,clients[c].itemDropPriorityQueue[i]);
 	}
