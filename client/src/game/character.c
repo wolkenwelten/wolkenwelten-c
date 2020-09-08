@@ -191,10 +191,10 @@ void characterUpdateHook(character *c){
 	if(grapplingHookGetHooked(c->hook)){
 		float gl = grapplingHookGetGoalLength(c->hook);
 		if((c->gvy > 0) && (gl > 1.f)){
-			grapplingHookSetGoalLength(c->hook,gl-0.05f);
+			grapplingHookSetGoalLength(c->hook,gl-0.1f);
 		}
 		if((c->flags & CHAR_SNEAK) && (gl < 96.f)){
-			grapplingHookSetGoalLength(c->hook,gl+0.05f);
+			grapplingHookSetGoalLength(c->hook,gl+0.1f);
 		}
 		if(grapplingHookGetLength(c->hook) > gl){
 			grapplingHookPullTowards(c->hook,c);
