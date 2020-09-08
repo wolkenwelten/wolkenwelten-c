@@ -24,6 +24,8 @@ int chunkCount     = 0;
 int chunksGeneratedThisFrame = 0;
 chunk *chunkFirstFree = NULL;
 
+#define MAX_CHUNKS_GEN_PER_FRAME 128
+
 #ifdef __EMSCRIPTEN__
 	chunk chunkList[1<<16];
 	const float CHUNK_RENDER_DISTANCE = 320.f;
@@ -211,7 +213,7 @@ void chunkGenMesh(chunk *c) {
 	static uint8_t sideCache[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	static uint32_t   aplane[CHUNK_SIZE][CHUNK_SIZE];
 	static uint32_t   bplane[CHUNK_SIZE][CHUNK_SIZE];
-	if(++chunksGeneratedThisFrame > 64){return;}
+	if(++chunksGeneratedThisFrame > MAX_CHUNKS_GEN_PER_FRAME){return;}
 	c->dataCount = 0;
 
 	for(int x=CS-1;x>=0;--x){
