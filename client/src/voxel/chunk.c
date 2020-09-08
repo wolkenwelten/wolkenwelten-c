@@ -34,7 +34,7 @@ chunk *chunkFirstFree = NULL;
 	const float CHUNK_FADEOUT_DISTANCE = 32.f;
 #else
 	chunk chunkList[1<<18];
-	const float CHUNK_RENDER_DISTANCE = 420.f;
+	const float CHUNK_RENDER_DISTANCE = 512.f;
 	const float CHUNK_FADEOUT_DISTANCE = 78.f;
 #endif
 
