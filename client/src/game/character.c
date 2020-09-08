@@ -69,18 +69,6 @@ void characterInit(character *c){
 	}
 
 	characterEmptyInventory(c);
-	if(optionDebugInfo){
-		c->inventory[0] = itemNew(261, 1);
-		c->inventory[1] = itemNew(262, 1);
-		c->inventory[2] = itemNew(263, 1);
-		c->inventory[3] = itemNew(264, 1);
-		c->inventory[4] = itemNew(270, 1);
-		c->inventory[5] = itemNew(271, 1);
-		c->inventory[6] = itemNew(256,99);
-		c->inventory[7] = itemNew(258,99);
-		c->inventory[8] = itemNew(265,999);
-		c->inventory[9] = itemNew(  1,99);
-	}
 }
 
 character *characterNew(){
@@ -152,6 +140,8 @@ void characterSetPlayerPos(const packet *p){
 	playerList[i]->animationTicksLeft = p->val.i[21];
 	playerList[i]->flags              = p->val.i[22];
 	playerList[i]->hp                 = p->val.i[23];
+	
+	
 }
 
 void characterRemovePlayer(int c, int len){

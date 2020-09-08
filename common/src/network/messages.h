@@ -1,4 +1,5 @@
 #pragma once
+#include "../common.h"
 
 #include <stdint.h>
 #include "packet.h"
@@ -33,3 +34,4 @@ void msgItemDropUpdate           (int c, float x, float y, float z, float vx, fl
 void msgPlayerDamage             (int c, int hp);
 void msgUnsubChungus             (int x, int y, int z);
 void msgPlayerSetData            (int c, int hp);
+void msgPlayerSetInventory       (int c, item *itm, size_t itemCount);

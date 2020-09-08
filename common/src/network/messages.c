@@ -1,5 +1,6 @@
 #include "messages.h"
 #include "packet.h"
+#include "../common.h"
 
 #include <string.h>
 #include <time.h>
@@ -242,4 +243,13 @@ void msgPlayerSetData(int c, int hp){
 	packet *p = &packetBuffer;
 	p->val.i[0] = hp;
 	packetQueue(p,28,1*4,c);
+}
+
+void msgPlayerSetInventory(int c, item *itm, size_t itemCount){
+	packet *p = &packetBuffer;
+	for(unsigned int i=0;i<itemCount;i++){
+		p->val.s[(i<<1)  ] = itm[i].ID;
+		p->val.s[(i<<1)+1] = itm[i].amount;
+	}
+	packetQueue(p,29,itemCount*4,c);
 }

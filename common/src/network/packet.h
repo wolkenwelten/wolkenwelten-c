@@ -27,10 +27,10 @@ inline unsigned int alignedLen(unsigned int size){
 		return (size & (~0x3));
 	}
 }
-inline unsigned int packetLen(packet *p){
+inline unsigned int packetLen(const packet *p){
 	return p->typesize >> 10;
 }
-inline unsigned int packetType(packet *p){
+inline unsigned int packetType(const packet *p){
 	return p->typesize & 0xFF;
 }
 inline void packetSet(packet *p, uint8_t ptype, uint32_t len){

@@ -97,6 +97,8 @@ void msgSendPlayerPos(){
 	p->val.i[23] = player->hp;
 
 	packetQueueToServer(p,15,24*4);
+	
+	msgPlayerSetInventory(-1,player->inventory,40);
 }
 
 void decompressPacket(packet *p){
@@ -209,7 +211,9 @@ void clientParsePacket(packet *p){
 		case 28:
 			characterSetData(player,p);
 			break;
-
+		case 29:
+			characterSetInventoryP(player,p);
+			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);
 			break;

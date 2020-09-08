@@ -322,7 +322,14 @@ void serverParseSinglePacket(int c, packet *p){
 			break;
 		case 27:
 			chungusUnsubscribePlayer(world.chungi[p->val.i[0]][p->val.i[1]][p->val.i[2]],c);
-				break;
+			break;
+		case 28:
+			fprintf(stderr,"characterSetData received from client, which should never happen\n");
+			serverKill(c);
+			break;
+		case 29:
+			characterSetInventoryP(clients[c].c,p);
+			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
 			serverKill(c);

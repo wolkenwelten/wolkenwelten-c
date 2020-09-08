@@ -84,6 +84,7 @@ void characterDie(character *c){
 void characterParseDataLine(int c,const char *line){
 	int argc;
 	char **argv;
+	character *p = clients[c].c;
 	
 	argv = splitArgs(line,&argc);
 	if(argc == 0)          {return;}
@@ -101,6 +102,14 @@ void characterParseDataLine(int c,const char *line){
 		msgPlayerSetData(c,atoi(argv[1]));
 		return;
 	}
+	
+	if(strcmp(argv[0],"Item") == 0){
+		if(argc < 4){return;}
+		int i = atoi(argv[1]);
+		p->inventory[i].ID     = atoi(argv[2]);
+		p->inventory[i].amount = atoi(argv[3]);
+		return;
+	}
 }
 
 char *characterFileName(const char *name){
@@ -113,11 +122,17 @@ char *characterFileName(const char *name){
 void characterSaveData(int c){
 	static char buf[4096];
 	char *b;
-	if(clients[c].c == NULL){return;}
+	character *p = clients[c].c;
+	if(p == NULL){return;}
 	
 	b = buf;
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"Position %f %f %f %f %f %f\n",clients[c].c->x,clients[c].c->y,clients[c].c->z,clients[c].c->yaw,clients[c].c->pitch,clients[c].c->roll);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"Health %i\n",clients[c].c->hp);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"Position %f %f %f %f %f %f\n",p->x,p->y,p->z,p->yaw,p->pitch,p->roll);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"Health %i\n",p->hp);
+	
+	for(int i=0;i<40;i++){
+		if(itemIsEmpty(&p->inventory[i])){continue;}
+		b += snprintf(b,sizeof(buf)-(b-buf+1),"Item %i %i %i\n",i,p->inventory[i].ID,p->inventory[i].amount);
+	}
 	
 	*b = 0;
 	buf[sizeof(buf)-1]=0;
@@ -141,14 +156,18 @@ int characterLoadData(int c){
 		}
 	}
 	characterParseDataLine(c,line);
+	msgPlayerSetInventory(c,clients[c].c->inventory,40);
 	
 	return 1;
 }
 
 void characterLoadSendData(int c){
 	int sx,sy,sz;
+	item emptyInventory[40] = {0};
 	if(characterLoadData(c)){return;}
 	
 	bigchungusGetSpawnPos(&world,&sx,&sy,&sz);
 	msgPlayerSetPos(c,((float)sx)+0.5f,((float)sy)+2.f,((float)sz)+0.5f,0.f,0.f,0.f);
+	msgPlayerSetData(c,20);
+	msgPlayerSetInventory(c,emptyInventory,40);
 }

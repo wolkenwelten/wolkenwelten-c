@@ -294,3 +294,12 @@ bool characterTryToShoot(character *c, item *i, int cooldown, int bulletcount){
 	characterStartAnimation(c,1,250);
 	return true;
 }
+
+void characterSetInventoryP(character *c, const packet *p){
+	if(c == NULL){return;}
+	int max = MIN(40,packetLen(p)/4);
+	for(int i=0;i<max;i++){
+		c->inventory[i].ID     = p->val.s[(i<<1)  ];
+		c->inventory[i].amount = p->val.s[(i<<1)+1];
+	}
+}
