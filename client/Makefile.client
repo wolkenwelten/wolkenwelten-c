@@ -13,6 +13,9 @@ CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
 CLIENT_SRCS      := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
 CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
 
+WINDOW_WIDTH     := 960
+WINDOW_HEIGHT    := 524
+
 $(CLIENT_OBJS): CFLAGS    += $(CLIENT_CFLAGS)
 $(CLIENT_OBJS): CINCLUDES += $(CLIENT_CINCLUDES)
 
@@ -81,12 +84,12 @@ runl: all
 .PHONY: rund
 runt: all
 	./wolkenwelten-server -worldSeed=18 -singleplayer &
-	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=Captain -windowOrientation=tl -worldSeed=18 &
-	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberTwo -windowOrientation=bl &
+	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=Captain     -windowOrientation=tl -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
+	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberTwo   -windowOrientation=bl -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
 .PHONY: runq
 runq: all
 	./wolkenwelten-server -worldSeed=18 -singleplayer &
-	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=Captain     -windowOrientation=tl -windowWidth=960 -windowHeight=512 &
-	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberTwo   -windowOrientation=tr -windowWidth=960 -windowHeight=512 &
-	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberThree -windowOrientation=bl -windowWidth=960 -windowHeight=512 &
-	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberFour  -windowOrientation=br -windowWidth=960 -windowHeight=512 &
+	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=Captain     -windowOrientation=tl -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
+	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberTwo   -windowOrientation=tr -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
+	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberThree -windowOrientation=bl -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
+	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberFour  -windowOrientation=br -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
