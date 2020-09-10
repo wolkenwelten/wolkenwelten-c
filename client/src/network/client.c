@@ -24,8 +24,6 @@
 #include <errno.h>
 #include <time.h>
 
-int msgTypeCount[32];
-
 int recvBufLen = 0;
 uint8_t recvBuf[1<<20];
 
@@ -118,7 +116,6 @@ void clientParsePacket(packet *p){
 	if(pType != 0xFF){
 		recvUncompressedBytesCurrentSession += pLen+4;
 	}
-	msgTypeCount[pType]++;
 
 	switch(pType){
 		case 0: // Keepalive

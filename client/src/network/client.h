@@ -5,7 +5,6 @@
 #include <sys/types.h>
 #include <stdint.h>
 
-extern int    msgTypeCount[32];
 extern int    connectionTries;
 extern size_t sentBytesCurrentSession;
 extern size_t recvBytesCurrentSession;

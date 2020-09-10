@@ -70,6 +70,17 @@ int characterDecItemAmount(character *c, uint16_t itemID,int amount){
 
 bool characterPickupItem(character *c, uint16_t itemID,int amount){
 	int a = 0;
+	item ci = itemNew(itemID,amount);
+	if(getStackSizeDispatch(&ci) == 1){
+		ci.amount = amount;
+		for(unsigned int i=0;i<40;i++){
+			if(itemIsEmpty(&c->inventory[i])){
+				c->inventory[i] = ci;
+				return true;
+			}
+		}
+		return false;
+	}
 
 	for(unsigned int i=0;i<40;i++){
 		if(a >= amount){break;}
