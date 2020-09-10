@@ -40,18 +40,35 @@ static void cmdDmg(int c, const char *cmd){
 
 static void cmdDie(int c, const char *cmd){
 	int cmdLen = strnlen(cmd,252);
+	int target = c;
 	if((cmdLen > 3) && (cmd[3] == ' ')){
-		int target = getClientByName(cmd+4);
-		if(target >= 0){
-			msgPlayerDamage(target,1000);
-		}else{
+		target = getClientByName(cmd+4);
+		if(target < 0){
 			snprintf(replyBuf,sizeof(replyBuf),".die : Can't find '%s'",cmd+4);
 			replyBuf[sizeof(replyBuf)-1]=0;
 			serverSendChatMsg(replyBuf);
 		}
-		return;
 	}
-	msgPlayerDamage(c,1000);
+	msgPlayerDamage(target,1000);
+}
+
+static void cmdDbgitem(int c, const char *cmd){
+	int cmdLen = strnlen(cmd,252);
+	int target = c;
+	if((cmdLen > 3) && (cmd[3] == ' ')){
+		target = getClientByName(cmd+4);
+		if(target < 0){
+			snprintf(replyBuf,sizeof(replyBuf),".dbgitem : Can't find '%s'",cmd+4);
+			replyBuf[sizeof(replyBuf)-1]=0;
+			serverSendChatMsg(replyBuf);
+		}
+	}
+	msgPickupItem(target,261,1);
+	msgPickupItem(target,262,1);
+	msgPickupItem(target,263,1);
+	msgPickupItem(target,264,1);
+	msgPickupItem(target,265,808);
+	msgPickupItem(target,258,42);
 }
 
 static void cmdHeal(int c, const char *cmd){
@@ -167,6 +184,11 @@ int parseCommand(int c, const char *cmd){
 		return 1;
 	}
 
+	if(strncmp(tcmp,"dbgitem",3) == 0){
+		cmdDbgitem(c,tcmp);
+		return 1;
+	}
+
 	if(strncmp(tcmp,"die",3) == 0){
 		cmdDie(c,tcmp);
 		return 1;
@@ -191,14 +213,14 @@ int parseCommand(int c, const char *cmd){
 		cmdTp(c,tcmp);
 		return 1;
 	}
-	
+
 	if(strncmp(tcmp,"itemdropcount",2) == 0){
 		snprintf(replyBuf,sizeof(replyBuf),".itemdropcount : %i",itemDropCount);
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;
 	}
-	
+
 	if(strncmp(tcmp,"entitycount",2) == 0){
 		snprintf(replyBuf,sizeof(replyBuf),".entitycount : %i",entityCount);
 		replyBuf[sizeof(replyBuf)-1]=0;
