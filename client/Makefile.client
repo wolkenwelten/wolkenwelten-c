@@ -1,6 +1,6 @@
 CLIENT_CFLAGS    :=
-CLIENT_CINCLUDES := $(shell pkg-config --cflags sdl2 glew)
-CLIENT_LIBS      := $(shell sdl2-config --libs) -lGLEW -lGL -lSDL2_mixer
+CLIENT_CINCLUDES :=
+CLIENT_LIBS      :=
 
 GFX_ASSETS       := $(shell find client/gfx -type f -name '*')
 SFX_ASSETS       := $(shell find client/sfx -type f -name '*')
@@ -15,9 +15,6 @@ CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
 
 WINDOW_WIDTH     := 960
 WINDOW_HEIGHT    := 524
-
-$(CLIENT_OBJS): CFLAGS    += $(CLIENT_CFLAGS)
-$(CLIENT_OBJS): CINCLUDES += $(CLIENT_CINCLUDES)
 
 wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)

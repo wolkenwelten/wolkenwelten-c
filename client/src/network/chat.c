@@ -12,7 +12,7 @@
 char chatLog[12][256];
 
 void chatStartInput(){
-	textInput(4, screenHeight-76, 256, 16, 1);
+	textInput(4, screenHeight-20, 256, 16, 1);
 }
 
 void msgSendChatMessage(char *msg){

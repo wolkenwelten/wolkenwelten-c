@@ -159,22 +159,25 @@ void drawDebuginfo(){
 		guim->size = 2;
 		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Loading World...");
 	}
+	guim->size = 1;
 
-	guim->sx   = 4;
-	guim->sy   = screenHeight-56;
-	guim->size = 2;
 
-	textMeshPrintf(guim,"Speed %.0f\n",sqrtf(player->vx*player->vx + player->vy*player->vy + player->vz*player->vz)*200.f);
-	textMeshPrintf(guim,"FPS %.0f\n",curFPS);
+
+	//textMeshPrintf(guim,"Speed %.0f\n",sqrtf(player->vx*player->vx + player->vy*player->vy + player->vz*player->vz)*200.f);
+
+	guim->sx   = screenWidth-168;
+	guim->sy   = 4;
 	textMeshPrintf(guim,"Ver. %s [%.8s]",VERSION,COMMIT);
+
+	guim->sx   = screenWidth-48;
+	guim->sy   = 14;
+	textMeshPrintf(guim,"FPS %02.0f\n",curFPS);
 
 	vboTrisCount = 0;
 	if(!optionDebugInfo){return;}
 
 	guim->sx   =  4;
-	guim->sy   = 76;
-	guim->size =  1;
-
+	guim->sy   = 56;
 	textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f GVX: %02.4f\n",player->x,player->vx,player->gvx);
 	textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f GVY: %02.4f\n",player->y,player->vy,player->gvy);
 	textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f GVZ: %02.4f\n",player->z,player->vz,player->gvz);
@@ -337,7 +340,7 @@ void drawActiveGlider(){
 	static uint64_t ticks = 0;
 	float matViewAI[16];
 	if(player->gliderFade < 0.01f){return;}
-	
+
 	float deg  = ((float)++ticks*0.4f);
 	float yoff = cos(deg*2.1f)*player->shake;
 	float xoff = sin(deg*1.3f)*player->shake;
@@ -369,8 +372,8 @@ void drawAmmunition(){
 		tilesize = 80;
 	}
 
-	guim->sx = screenWidth-(tilesize*12)+(tilesize*0.3f);
-	guim->sy = screenHeight-tilesize+(tilesize*0.3f);
+	guim->sx = screenWidth-(tilesize*1.5f);
+	guim->sy = screenHeight-tilesize*1.75f;
 	textMeshNumber(guim,guim->sx,guim->sy,2,amount);
 	textMeshItemSprite(guim,guim->sx+32,guim->sy-18,64,ammo);
 
@@ -385,7 +388,7 @@ void drawAmmunition(){
 }
 
 void drawChat(){
-	guim->sy   = screenHeight - (13*16);
+	guim->sy   = screenHeight - (9*16) - 8;
 	guim->sx   = 4;
 	guim->size = 1;
 	for(int i=0;i<8;i++){

@@ -1,9 +1,9 @@
 CC               := gcc
 
 CLIENT_CINCLUDES := $(shell sdl2-config --cflags)
-CLIENT_LIBS      := $(shell sdl2-config --cflags) -lGL -lpthread -ldl -lSDL2 -lSDL2_mixer
+CLIENT_LIBS      := -lGL -lpthread -ldl -lSDL2 -lSDL2_mixer
 
-DYNLIBS          := $(shell sdl2-config --cflags) -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer
+DYNLIBS          := -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer
 STATICLIBS       :=
 
 WEBEXCLUDE       += --exclude=releases/linux/wolkenwelten
