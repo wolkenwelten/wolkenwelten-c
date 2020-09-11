@@ -10,6 +10,7 @@
 #include "gui/gui.h"
 #include "gui/menu.h"
 #include "gui/inventory.h"
+#include "game/animal.h"
 #include "game/entity.h"
 #include "game/itemDrop.h"
 #include "game/grenade.h"
@@ -87,6 +88,7 @@ void worldUpdate(){
 		charactersUpdate();
 		commitOverlayColor();
 		grenadeUpdate();
+		animalUpdateAll();
 		entityUpdateAll();
 		itemDropUpdate();
 		particleUpdate();

@@ -1,0 +1,92 @@
+#include "../game/animal.h"
+
+#include "../main.h"
+#include "../sdl/sfx.h"
+#include "../game/character.h"
+#include "../gfx/gfx.h"
+#include "../gfx/mat.h"
+#include "../gfx/mesh.h"
+#include "../gfx/shader.h"
+#include "../gfx/texture.h"
+#include "../tmp/objs.h"
+#include "../voxel/bigchungus.h"
+
+#include <stdlib.h>
+#include <math.h>
+#include "../gfx/gl.h"
+
+animal  animalList[1<<10];
+int     animalCount = 0;
+animal *animalFirstFree = NULL;
+
+#define ANIMAL_FADEOUT (128.f)
+
+animal *animalNew(float x, float y, float z , int type){
+	animal *e = NULL;
+	if(animalFirstFree == NULL){
+		e = &animalList[animalCount++];
+	}else{
+		e = animalFirstFree;
+		animalFirstFree = e->nextFree;
+		if(animalFirstFree == e){
+			animalFirstFree = NULL;
+		}
+	}
+	animalReset(e);
+
+	e->x          = x;
+	e->y          = y;
+	e->z          = z;
+	e->yaw        = 0.f;
+	e->pitch      = 0.f;
+	e->roll       = 0.f;
+	e->flags      = 0;
+	e->type       = type;
+
+	e->nextFree   = NULL;
+	e->curChungus = NULL;	
+
+	return e;
+}
+
+void animalFree(animal *e){
+	if(e == NULL){return;}
+	e->nextFree = animalFirstFree;
+	animalFirstFree = e;
+	if(e->nextFree == NULL){
+		e->nextFree = e;
+	}
+}
+
+void animalDraw(animal *e){
+	float matMVP[16];
+	if(e        == NULL){return;}
+
+	matMov      (matMVP,matView);
+	matMulTrans (matMVP,e->x,e->y+e->yoff,e->z);
+	matMulScale (matMVP,0.25f,0.25f,0.25f);
+	matMulRotYX (matMVP,e->yaw,e->pitch);
+	matMul      (matMVP,matMVP,matProjection);
+
+	shaderMatrix(sMesh,matMVP);
+	meshDraw(meshPear);
+}
+
+void animalDrawAll(){
+	shaderBind(sMesh);
+	for(int i=0;i<animalCount;i++){
+		if(animalList[i].nextFree != NULL){ continue; }
+		if(animalDistance(&animalList[i],player) > (ANIMAL_FADEOUT * ANIMAL_FADEOUT)){ continue; }
+		animalDraw(&animalList[i]);
+	}
+}
+
+void animalUpdateAll(){
+	for(int i=0;i<animalCount;i++){
+		if(animalList[i].nextFree != NULL){ continue; }
+		if(!(animalList[i].flags & ANIMAL_UPDATED)){
+			animalUpdate(&animalList[i]);
+		}
+		animalList[i].flags &= ~ANIMAL_UPDATED;
+	}
+}

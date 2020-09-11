@@ -3,6 +3,7 @@
 #include "main.h"
 
 #include "misc/options.h"
+#include "game/animal.h"
 #include "game/blockMining.h"
 #include "game/itemDrop.h"
 #include "game/grenade.h"
@@ -88,6 +89,7 @@ void updateWorldStep(){
 	blockMiningUpdate();
 	itemDropUpdate();
 	grenadeUpdate();
+	animalUpdateAll();
 }
 
 void updateWorld(){
