@@ -120,7 +120,7 @@ void characterSetPlayerPos(const packet *p){
 			playerList[i]->hook = grapplingHookNew(playerList[i]);
 		}
 		playerList[i]->hook->hooked      = true;
-		playerList[i]->hook->ent->noClip = 1;
+		playerList[i]->hook->ent->flags  = ENTITY_NOCLIP;
 		playerList[i]->hook->ent->x      = p->val.f[11];
 		playerList[i]->hook->ent->y      = p->val.f[12];
 		playerList[i]->hook->ent->z      = p->val.f[13];

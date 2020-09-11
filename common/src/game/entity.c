@@ -36,22 +36,24 @@ int entityUpdate(entity *e){
 	e->x += e->vx;
 	e->y += e->vy;
 	e->z += e->vz;
-	if(e->noClip){
-		e->collide = entityCollision(e->x,e->y,e->z);
+	if(e->flags & ENTITY_NOCLIP){
+		e->flags &= ~ENTITY_COLLIDE;
+		if(entityCollision(e->x,e->y,e->z)){ e->flags |= ENTITY_COLLIDE; }
 		entityUpdateCurChungus(e);
 		return 0;
 	}
 
 	e->vy -= 0.0005f;
+	// ToDo: implement terminal veolocity in a better way
 	if(e->vy < -1.0f){e->vy+=0.005f;}
 	if(e->vy >  1.0f){e->vy-=0.005f;}
 
-	e->falling = true;
-	e->collide = false;
+	e->flags |=  ENTITY_FALLING;
+	e->flags &= ~ENTITY_COLLIDE;
 	col = entityCollision(e->x,e->y,e->z);
-	if(col){ e->collide = true; }
-	e->updated = true;
-	if(e->noRepulsion){
+	if(col){ e->flags |= ENTITY_COLLIDE; }
+	e->flags |= ENTITY_UPDATED;
+	if(e->flags & ENTITY_NOREPULSION){
 		entityUpdateCurChungus(e);
 		return 0;
 	}
@@ -86,7 +88,7 @@ int entityUpdate(entity *e){
 		e->vy = e->vy*-0.3f;
 	}
 	if((col&0x00F) && (e->vy < 0.f)){
-		e->falling=false;
+		e->flags &= ~ENTITY_FALLING;
 		if(e->vy < -0.15f){
 			e->yoff = -0.8f;
 			ret += (int)(fabsf(e->vy)*128.f);
@@ -96,14 +98,8 @@ int entityUpdate(entity *e){
 			e->yoff += -0.2f;
 		}
 		e->vx *= 0.97f;
-		e->vy = 0.f;
+		e->vy  = 0.f;
 		e->vz *= 0.97f;
-	}
-
-	if(e->shake > 0.f){
-		e->shake -= 0.2f;
-	}else if(e->shake < 0.f){
-		e->shake = 0.f;
 	}
 
 	entityUpdateCurChungus(e);

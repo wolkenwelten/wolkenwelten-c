@@ -38,18 +38,19 @@ typedef struct {
 	float  x, y, z;
 	float vx,vy,vz;
 	float yaw,pitch,roll;
-	float yoff,shake;
-
-	bool falling;
-	bool noClip;
-	bool updated;
-	bool collide;
-	bool noRepulsion;
+	float yoff;
+	uint32_t flags;
 
 	mesh    *eMesh;
 	chungus *curChungus;
 	void    *nextFree;
 } entity;
+
+#define ENTITY_FALLING     (1   )
+#define ENTITY_NOCLIP      (1<<1)
+#define ENTITY_UPDATED     (1<<2)
+#define ENTITY_COLLIDE     (1<<3)
+#define ENTITY_NOREPULSION (1<<4)
 
 typedef struct {
 	float  x, y, z;

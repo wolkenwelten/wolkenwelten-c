@@ -69,7 +69,6 @@ void grenadeNewP(packet *p){
 	grenadeList[g].ent->vx = ((cos((yaw-90.f)*PI/180) * cos(-pitch*PI/180))*speed);
 	grenadeList[g].ent->vy = (sin(-pitch*PI/180)*speed);
 	grenadeList[g].ent->vz = ((sin((yaw-90.f)*PI/180) * cos(-pitch*PI/180))*speed);
-	grenadeList[g].ent->noRepulsion = 0;
 
 	grenadeList[g].ticksLeft = 300;
 	grenadeList[g].pwr       = pwr;

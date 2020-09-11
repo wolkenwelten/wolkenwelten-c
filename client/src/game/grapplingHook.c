@@ -40,7 +40,7 @@ grapplingHook *grapplingHookNew(character *p){
 	ghk->ent->vy          = p->vy + 1.2f *  sin(-p->pitch*PI/180);
 	ghk->ent->vz          = p->vz + 1.2f * (sin((p->yaw-90.f)*PI/180) * cos(-p->pitch*PI/180));
 	ghk->ent->eMesh       = meshHook;
-	ghk->ent->noRepulsion = 1;
+	ghk->ent->flags       = ENTITY_NOREPULSION;
 	ghk->rope             = meshNew();
 	ghk->rope->tex        = tRope;
 
@@ -151,7 +151,7 @@ bool grapplingHookReturnToParent(grapplingHook *ghk,float speed){
 	ghk->ent->vy = (dy * -speed);
 	ghk->ent->vz = (dz * -speed);
 
-	if(ghk->ent->collide){
+	if(ghk->ent->flags & ENTITY_COLLIDE){
 		ghk->ent->x += dx;
 		ghk->ent->y += dy;
 		ghk->ent->z += dz;
@@ -161,10 +161,10 @@ bool grapplingHookReturnToParent(grapplingHook *ghk,float speed){
 
 void grapplingHookReturnHook(grapplingHook *ghk){
 	ghk->returning = true;
-	ghk->hooked = false;
-	ghk->ent->vx = 0.f;
-	ghk->ent->vy = 0.f;
-	ghk->ent->vz = 0.f;
+	ghk->hooked    = false;
+	ghk->ent->vx   = 0.f;
+	ghk->ent->vy   = 0.f;
+	ghk->ent->vz   = 0.f;
 	grapplingHookReturnToParent(ghk,0.1f);
 }
 
@@ -212,15 +212,15 @@ bool grapplingHookUpdate(grapplingHook *ghk){
 		ghk->ent->vx = 0.f;
 		ghk->ent->vy = 0.f;
 		ghk->ent->vz = 0.f;
-		if(!ghk->ent->collide){
+		if(!(ghk->ent->flags & ENTITY_COLLIDE)){
 			grapplingHookReturnHook(ghk);
 		}
 	}else{
-		if(!ghk->hooked && !ghk->returning && ghk->ent->collide){
+		if(!ghk->hooked && !ghk->returning && (ghk->ent->flags & ENTITY_COLLIDE)){
 			ghk->ent->vx = 0.f;
 			ghk->ent->vy = 0.f;
 			ghk->ent->vz = 0.f;
-			ghk->ent->noClip = 1;
+			ghk->ent->flags |= ENTITY_NOCLIP;
 			ghk->hooked = true;
 			ghk->goalLength = grapplingHookGetLength(ghk);
 			sfxPlay(sfxHookHit,1.f);

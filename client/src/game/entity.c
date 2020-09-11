@@ -40,6 +40,7 @@ entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll
 	e->yaw        = yaw;
 	e->pitch      = pitch;
 	e->roll       = roll;
+	e->flags      = 0;
 
 	e->nextFree   = NULL;
 	e->curChungus = NULL;
@@ -62,11 +63,11 @@ void entityDraw(entity *e){
 	if(e        == NULL){return;}
 	if(e->eMesh == NULL){return;}
 
-	matMov(matMVP,matView);
-	matMulTrans(matMVP,e->x,e->y+e->yoff,e->z);
-	matMulScale(matMVP,0.25f,0.25f,0.25f);
-	matMulRotYX(matMVP,e->yaw,e->pitch);
-	matMul(matMVP,matMVP,matProjection);
+	matMov      (matMVP,matView);
+	matMulTrans (matMVP,e->x,e->y+e->yoff,e->z);
+	matMulScale (matMVP,0.25f,0.25f,0.25f);
+	matMulRotYX (matMVP,e->yaw,e->pitch);
+	matMul      (matMVP,matMVP,matProjection);
 
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(e->eMesh);
@@ -84,9 +85,9 @@ void entityDrawAll(){
 void entityUpdateAll(){
 	for(int i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL){ continue; }
-		if(!entityList[i].updated){
+		if(!(entityList[i].flags & ENTITY_UPDATED)){
 			entityUpdate(&entityList[i]);
 		}
-		entityList[i].updated = false;
+		entityList[i].flags &= ~ENTITY_UPDATED;
 	}
 }

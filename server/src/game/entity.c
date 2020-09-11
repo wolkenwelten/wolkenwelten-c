@@ -30,6 +30,7 @@ entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll
 	e->roll       = roll;
 	e->nextFree   = NULL;
 	e->curChungus = NULL;
+	e->flags      = 0;
 	return e;
 }
 
@@ -45,9 +46,9 @@ void entityFree(entity *e){
 void entityUpdateAll(){
 	for(int i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL){ continue; }
-		if(!entityList[i].updated){
+		if(!(entityList[i].flags & ENTITY_UPDATED)){
 			entityUpdate(&entityList[i]);
 		}
-		entityList[i].updated = false;
+		entityList[i].flags &= ~ENTITY_UPDATED;
 	}
 }
