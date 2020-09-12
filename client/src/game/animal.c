@@ -44,7 +44,7 @@ animal *animalNew(float x, float y, float z , int type){
 	e->type       = type;
 
 	e->nextFree   = NULL;
-	e->curChungus = NULL;	
+	e->curChungus = NULL;
 
 	return e;
 }
@@ -83,10 +83,7 @@ void animalDrawAll(){
 void animalUpdateAll(){
 	for(int i=0;i<animalCount;i++){
 		if(animalList[i].nextFree != NULL){ continue; }
-		if(!(animalList[i].flags & ANIMAL_UPDATED)){
-			animalUpdate(&animalList[i]);
-		}
-		animalList[i].flags &= ~ANIMAL_UPDATED;
+		animalUpdate(&animalList[i]);
 	}
 }
 
@@ -95,7 +92,7 @@ void animalSyncFromServer(packet *p){
 	int i       = p->val.u[12];
 	animal *e   = &animalList[i];
 	if(i >= animalCount){return;}
-	
+
 	e->x     = p->val.f[ 0];
 	e->y     = p->val.f[ 1];
 	e->z     = p->val.f[ 2];
