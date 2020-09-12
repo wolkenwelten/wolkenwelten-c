@@ -101,14 +101,11 @@ void blockMiningMinePos(item *itm, int x, int y, int z){
 }
 
 void blockMiningUpdate(){
-	item itm;
-	itm.amount = 1;
-
 	for(int i=0;i<clientCount;++i){
 		if(clients[i].c == NULL)          {continue;}
 		if(clients[i].c->blockMiningX < 0){continue;}
-		itm.ID = clients[i].c->activeItem;
-		blockMiningMinePos(&itm,clients[i].c->blockMiningX,clients[i].c->blockMiningY,clients[i].c->blockMiningZ);
+		item *itm = characterGetItemBarSlot(clients[i].c,clients[i].c->activeItem);
+		blockMiningMinePos(itm,clients[i].c->blockMiningX,clients[i].c->blockMiningY,clients[i].c->blockMiningZ);
 	}
 
 	for(int i=0;i<blockMiningCount;++i){
