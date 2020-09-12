@@ -36,12 +36,11 @@ int animalUpdate(animal *e){
 	e->x += e->vx;
 	e->y += e->vy;
 	e->z += e->vz;
-	if(e->flags & ANIMAL_NOCLIP){
-		e->flags &= ~ANIMAL_COLLIDE;
-		if(animalCollision(e->x,e->y,e->z)){ e->flags |= ANIMAL_COLLIDE; }
-		animalUpdateCurChungus(e);
-		return 0;
-	}
+	
+	e->yaw += 0.1f;
+	if(e->yaw > 360.f){e->yaw -= 360.f;}
+	e->pitch += 0.04f;
+	if(e->pitch > 180.f){e->pitch -= 360.f;}
 
 	e->vy -= 0.0005f;
 	// ToDo: implement terminal veolocity in a better way
@@ -52,11 +51,7 @@ int animalUpdate(animal *e){
 	e->flags &= ~ANIMAL_COLLIDE;
 	col = animalCollision(e->x,e->y,e->z);
 	if(col){ e->flags |= ANIMAL_COLLIDE; }
-	e->flags |= ANIMAL_UPDATED;
-	if(e->flags & ANIMAL_NOREPULSION){
-		animalUpdateCurChungus(e);
-		return 0;
-	}
+
 	if((col&0x110) && (e->vx < 0.f)){
 		if(e->vx < -0.1f){ ret += (int)(fabsf(e->vx)*128.f); }
 		const float nx = floor(e->x)+0.3f;

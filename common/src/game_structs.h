@@ -102,10 +102,7 @@ typedef struct {
 	void    *nextFree;
 } animal;
 #define ANIMAL_FALLING     (1   )
-#define ANIMAL_NOCLIP      (1<<1)
-#define ANIMAL_UPDATED     (1<<2)
 #define ANIMAL_COLLIDE     (1<<3)
-#define ANIMAL_NOREPULSION (1<<4)
 
 struct grapplingHook {
 	entity       *ent;

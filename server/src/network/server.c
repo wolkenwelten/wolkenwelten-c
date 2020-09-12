@@ -2,6 +2,7 @@
 #include "server.h"
 
 #include "../main.h"
+#include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
 #include "../game/entity.h"
@@ -164,6 +165,7 @@ void msgUpdatePlayer(int c){
 	grenadeUpdatePlayer(c);
 	blockMiningUpdatePlayer(c);
 	bigchungusUpdateClient(&world,c);
+	animalSyncPlayer(c);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 }

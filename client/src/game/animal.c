@@ -64,7 +64,6 @@ void animalDraw(animal *e){
 
 	matMov      (matMVP,matView);
 	matMulTrans (matMVP,e->x,e->y+e->yoff,e->z);
-	matMulScale (matMVP,0.25f,0.25f,0.25f);
 	matMulRotYX (matMVP,e->yaw,e->pitch);
 	matMul      (matMVP,matMVP,matProjection);
 
@@ -89,4 +88,24 @@ void animalUpdateAll(){
 		}
 		animalList[i].flags &= ~ANIMAL_UPDATED;
 	}
+}
+
+void animalSyncFromServer(packet *p){
+	animalCount = p->val.u[13];
+	int i       = p->val.u[12];
+	animal *e   = &animalList[i];
+	if(i >= animalCount){return;}
+	
+	e->x     = p->val.f[ 0];
+	e->y     = p->val.f[ 1];
+	e->z     = p->val.f[ 2];
+	e->yaw   = p->val.f[ 3];
+	e->pitch = p->val.f[ 4];
+	e->roll  = p->val.f[ 5];
+	e->vx    = p->val.f[ 6];
+	e->vy    = p->val.f[ 7];
+	e->vz    = p->val.f[ 8];
+	e->yoff  = p->val.f[ 9];
+	e->flags = p->val.u[10];
+	e->type  = p->val.i[11];
 }

@@ -8,7 +8,6 @@
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
-#include "../gfx/vec.h"
 #include "../tmp/objs.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"

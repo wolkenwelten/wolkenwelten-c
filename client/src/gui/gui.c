@@ -5,6 +5,7 @@
 
 #include "../main.h"
 #include "../misc/options.h"
+#include "../game/animal.h"
 #include "../game/blockType.h"
 #include "../game/character.h"
 #include "../game/entity.h"
@@ -188,6 +189,7 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"Active Tris.: %s\n", getHumanReadableSize(tris));
 	textMeshPrintf(guim,"Active Part.: %s\n", getHumanReadableSize(particleCount));
 	textMeshPrintf(guim,"Player Layer: %2i\n",((int)player->y/CHUNGUS_SIZE));
+	textMeshPrintf(guim,"Animals     : %2i\n",animalCount);
 	textMeshPrintf(guim,"Entities    : %2i\n",entityCount);
 	textMeshPrintf(guim,"Itemdrops   : %i\n",itemDropCount);
 	textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());

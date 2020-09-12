@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../game/animal.h"
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../network/server.h"
@@ -175,10 +176,22 @@ static void cmdTpr(int c, const char *cmd){
 	msgPlayerSetPos(c,clients[c].c->x + coords[0],clients[c].c->y + coords[1],clients[c].c->z + coords[2],0.f,0.f,0.f);
 }
 
+void cmdAni(int c, const char *cmd){
+	(void)cmd;
+
+	character *ch = clients[c].c;
+	animalNew(ch->x,ch->y,ch->z,1);
+}
+
 int parseCommand(int c, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
 
+	if(strncmp(tcmp,"ani",3) == 0){
+		cmdAni(c,tcmp);
+		return 1;
+	}
+	
 	if(strncmp(tcmp,"dmg",3) == 0){
 		cmdDmg(c,tcmp);
 		return 1;

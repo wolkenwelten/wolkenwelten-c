@@ -1,5 +1,5 @@
 #include "vec.h"
-#include "../../../common/src/common.h"
+#include "../common.h"
 
 #include <math.h>
 #include <string.h>

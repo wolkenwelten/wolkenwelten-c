@@ -92,11 +92,21 @@ void updateWorldStep(){
 	animalUpdateAll();
 }
 
+void thinkStep(){
+	animalThinkAll();
+}
+
 void updateWorld(){
 	static uint64_t lastUpdate = 0;
+	static uint64_t lastThought = 0;
 	if(lastUpdate == 0){lastUpdate = getMillis();}
 	for(;lastUpdate+5 < getMillis();lastUpdate+=5){
 		updateWorldStep();
+	}
+	
+	if(lastThought == 0){lastThought = getMillis() - 5;}
+	for(;lastThought+5 < getMillis();lastThought+=5){
+		thinkStep();
 	}
 }
 

@@ -1,20 +1,5 @@
 #pragma once
-
-typedef struct {
-	union {
-		struct {
-			float x,y,z;
-		};
-		struct {
-			float u,v,w;
-		};
-		struct {
-			float yaw,pitch,roll;
-		};
-	};
-} vec;
-
-
+#include "../gfx_structs.h"
 
 vec   vecNew     (float x, float y, float z);
 vec   vecZero    ();

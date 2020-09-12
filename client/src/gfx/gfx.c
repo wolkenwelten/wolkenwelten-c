@@ -1,20 +1,23 @@
 #include "../gfx/gfx.h"
+
 #include "../tmp/assets.h"
 #include "../main.h"
-#include "../voxel/chunk.h"
-#include "../voxel/chungus.h"
-#include "../voxel/bigchungus.h"
-#include "../game/grapplingHook.h"
-#include "../gfx/shader.h"
-#include "../gfx/sky.h"
+#include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/entity.h"
+#include "../game/grapplingHook.h"
+#include "../gfx/mat.h"
+#include "../gfx/shader.h"
+#include "../gfx/sky.h"
 #include "../gfx/particle.h"
 #include "../gfx/texture.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../sdl/sdl.h"
-#include "../gfx/mat.h"
+#include "../voxel/chunk.h"
+#include "../voxel/chungus.h"
+#include "../voxel/bigchungus.h"
+
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -106,6 +109,7 @@ void renderWorld(character *cam){
 	bigchungusDraw(&world,cam);
 	blockMiningDraw();
 	grapplingHookDrawRopes();
+	animalDrawAll();
 	entityDrawAll();
 	characterDrawAll();
 	particleDraw();

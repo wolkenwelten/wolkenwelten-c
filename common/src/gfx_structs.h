@@ -48,3 +48,17 @@ typedef struct {
 	unsigned int attrMask;
 	int lMVP,lAlpha,lTransform,lTex;
 } shader;
+
+typedef struct {
+	union {
+		struct {
+			float x,y,z;
+		};
+		struct {
+			float u,v,w;
+		};
+		struct {
+			float yaw,pitch,roll;
+		};
+	};
+} vec;

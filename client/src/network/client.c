@@ -4,6 +4,7 @@
 #include "../main.h"
 #include "../gui/menu.h"
 #include "../gfx/effects.h"
+#include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/entity.h"
 #include "../game/grenade.h"
@@ -208,6 +209,9 @@ void clientParsePacket(packet *p){
 			break;
 		case 29:
 			characterSetInventoryP(player,p);
+			break;
+		case 30:
+			animalSyncFromServer(p);
 			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);

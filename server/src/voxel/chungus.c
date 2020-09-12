@@ -1,5 +1,6 @@
 #include "chungus.h"
 
+#include "../game/animal.h"
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../misc/options.h"
@@ -110,6 +111,9 @@ void chungusLoad(chungus *c){
 			case 2:
 				b = itemDropLoad(b);
 				break;
+			case 3:
+				b = animalLoad(b);
+				break;
 			default:
 				fprintf(stderr,"Unknown id found in %i:%i:%i savestate\n",c->x>>8,c->y>>8,c->z>>8);
 				goto chungusLoadEnd;
@@ -137,6 +141,7 @@ void chungusSave(chungus *c){
 		}
 	}
 	cbuf = itemDropSaveChungus(c,cbuf);
+	cbuf = animalSaveChungus  (c,cbuf);
 
 	size_t len = LZ4_compress_default((const char *)saveLoadBuffer, (char *)compressedBuffer, cbuf - saveLoadBuffer, 4100*4096);
 	if(len == 0){
@@ -196,6 +201,7 @@ chungus *chungusNew(int x, int y, int z){
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
 	chungusSave(c);
+	animalDelChungus(c);
 	itemDropDelChungus(c);
 	for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){
