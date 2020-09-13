@@ -195,12 +195,8 @@ void animalSFlee(animal *e){
 }
 
 void animalSExist(animal *e){
-	if(e->age < 125){
-		if(rngValM(1<<8) == 0){e->age++;}
-	}
-	if(e->age > 64){
-		if(rngValM(1<<14) <= (uint)(e->age-64)){e->health = 0;}
-	}
+
+	if(rngValM(1<<6) == 0){e->age++;}
 	if(e->flags && ANIMAL_EXHAUSTED){
 		if(rngValM(1<<10) == 0){ e->flags &= ~ANIMAL_EXHAUSTED; }
 	}
@@ -221,6 +217,11 @@ inline static void animalThink(animal *e){
 			break;
 	}
 
+}
+
+int main(int argc, char *argv[]){
+  printf("Hello, World!");
+  return 0;
 }
 
 void animalThinkAll(){

@@ -22,7 +22,6 @@ itemDrop itemDrops[1<<12];
 int      itemDropCount = 0;
 
 #define ITEM_DROPS_PER_UPDATE 16
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 inline void itemDropUpdateMsg(int c,unsigned int i){
 	if(i >= 4096)                {return;}

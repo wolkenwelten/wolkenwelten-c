@@ -103,6 +103,8 @@ void serverInitClient(int c){
 	clients[c].chnkReqQueueLen          = 0;
 	clients[c].state                    = STATE_CONNECTING;
 	clients[c].flags                    = 0;
+	clients[c].animalUpdateOffset       = 0;
+	clients[c].itemDropUpdateOffset     = 0;
 	clients[c].itemDropPriorityQueueLen = 0;
 
 	bigchungusUnsubscribeClient(&world,c);
@@ -165,7 +167,7 @@ void msgUpdatePlayer(int c){
 	grenadeUpdatePlayer(c);
 	blockMiningUpdatePlayer(c);
 	bigchungusUpdateClient(&world,c);
-	animalSyncPlayer(c);
+	animalSyncPlayer(c,clients[c].animalUpdateOffset);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 }

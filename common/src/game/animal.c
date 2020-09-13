@@ -120,8 +120,8 @@ int animalUpdate(animal *e){
 	}
 	if((col&0x00F) && (e->vy < 0.f)){
 		e->flags &= ~ANIMAL_FALLING;
-		if(e->vy < -0.015f){
-			ret += (int)(fabsf(e->vy)*128.f);
+		if(e->vy < -0.05f){
+			ret += (int)(fabsf(e->vy)*24.f);
 		}
 		e->vx *= 0.97f;
 		e->vy  = 0.00f;

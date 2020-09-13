@@ -7,6 +7,7 @@ typedef struct {
 	int state;
 	int flags;
 
+	unsigned int animalUpdateOffset;
 	unsigned int itemDropUpdateOffset;
 	unsigned int itemDropPriorityQueueLen;
 	uint16_t itemDropPriorityQueue[128];

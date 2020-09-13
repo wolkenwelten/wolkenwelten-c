@@ -17,22 +17,15 @@
 #include "../gfx/gl.h"
 
 animal  animalList[1<<10];
-int     animalCount = 0;
+uint    animalCount = 0;
 animal *animalFirstFree = NULL;
 
 #define ANIMAL_FADEOUT (128.f)
 
 animal *animalNew(float x, float y, float z , int type){
 	animal *e = NULL;
-	if(animalFirstFree == NULL){
-		e = &animalList[animalCount++];
-	}else{
-		e = animalFirstFree;
-		animalFirstFree = e->nextFree;
-		if(animalFirstFree == e){
-			animalFirstFree = NULL;
-		}
-	}
+	if(animalCount >= ((sizeof(animalList) / sizeof(animal))-1)){return NULL;}
+	e = &animalList[animalCount++];
 	animalReset(e);
 
 	e->x          = x;
@@ -45,19 +38,9 @@ animal *animalNew(float x, float y, float z , int type){
 	e->flags      = 0;
 	e->type       = type;
 
-	e->nextFree   = NULL;
 	e->curChungus = NULL;
 
 	return e;
-}
-
-void animalFree(animal *e){
-	if(e == NULL){return;}
-	e->nextFree = animalFirstFree;
-	animalFirstFree = e;
-	if(e->nextFree == NULL){
-		e->nextFree = e;
-	}
 }
 
 void aniomalShadesDraw(animal *c){
@@ -67,9 +50,13 @@ void aniomalShadesDraw(animal *c){
 	}else{
 		breath = sinf((float)(c->breathing-128)/256.f)*2.f;
 	}
-	if(c->flags & ANIMAL_YOUNG){
-		scale = 0.25f;
+	
+	if(c->age < 20){
+		scale = 0.5f + ((float)c->age/40.f);
+	}else{
+		scale = 1.f;
 	}
+	scale *= 0.5f;
 	
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+c->yoff+breath/128.f,c->z);
@@ -89,8 +76,10 @@ void animalDraw(animal *e){
 	}else{
 		breath = cosf((float)e->breathing/256.f)*6.f;
 	}
-	if(e->flags & ANIMAL_YOUNG){
-		scale = 0.5f;
+	if(e->age < 20){
+		scale = 0.5f + ((float)e->age/40.f);
+	}else{
+		scale = 1.f;
 	}
 
 	matMov      (matMVP,matView);
@@ -106,38 +95,42 @@ void animalDraw(animal *e){
 
 void animalDrawAll(){
 	shaderBind(sMesh);
-	for(int i=0;i<animalCount;i++){
-		if(animalList[i].nextFree != NULL){ continue; }
+	for(uint i=0;i<animalCount;i++){
 		if(animalDistance(&animalList[i],player) > (ANIMAL_FADEOUT * ANIMAL_FADEOUT)){ continue; }
 		animalDraw(&animalList[i]);
 	}
 }
 
 void animalUpdateAll(){
-	for(int i=0;i<animalCount;i++){
-		if(animalList[i].nextFree != NULL){ continue; }
+	for(uint i=0;i<animalCount;i++){
 		animalUpdate(&animalList[i]);
 	}
 }
 
 void animalSyncFromServer(packet *p){
-	animalCount = p->val.u[ 2];
-	int i       = p->val.u[ 1];
+	animalCount = p->val.u[ 3];
+	uint i      = p->val.u[ 2];
+	if (i >= animalCount){ return; }
 	animal *e   = &animalList[i];
-	if(i >= animalCount){return;}
 
-	e->x     = p->val.f[ 3];
-	e->y     = p->val.f[ 4];
-	e->z     = p->val.f[ 5];
-	e->yaw   = p->val.f[ 6];
-	e->pitch = p->val.f[ 7];
-	e->roll  = p->val.f[ 8];
-	e->vx    = p->val.f[ 9];
-	e->vy    = p->val.f[10];
-	e->vz    = p->val.f[11];
-	e->yoff  = p->val.f[12];
+	e->x        = p->val.f[ 4];
+	e->y        = p->val.f[ 5];
+	e->z        = p->val.f[ 6];
+	e->yaw      = p->val.f[ 7];
+	e->pitch    = p->val.f[ 8];
+	e->roll     = p->val.f[ 9];
+	e->vx       = p->val.f[10];
+	e->vy       = p->val.f[11];
+	e->vz       = p->val.f[12];
+	e->yoff     = p->val.f[13];
 	
-	e->type  = p->val.c[ 0];
-	e->flags = p->val.c[ 1];
-	e->state = p->val.c[ 2];
+	e->type     = p->val.c[ 0];
+	e->flags    = p->val.c[ 1];
+	e->state    = p->val.c[ 2];
+	
+	e->age      = p->val.c[ 3];
+	e->health   = p->val.c[ 4];
+	e->hunger   = p->val.c[ 5];
+	e->thirst   = p->val.c[ 6];
+	e->sleepy   = p->val.c[ 7];
 }
