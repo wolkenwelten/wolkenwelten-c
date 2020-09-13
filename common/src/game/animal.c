@@ -19,7 +19,7 @@ uint32_t animalCollision(float cx, float cy, float cz){
 	if(checkCollision(cx     ,cy     ,cz-0.3f)){col |= 0x400;}
 	if(checkCollision(cx     ,cy     ,cz+0.3f)){col |= 0x800;}
 	if(checkCollision(cx     ,cy+0.5f,cz     )){col |= 0x0F0;}
-	if(checkCollision(cx     ,cy-0.5f,cz     )){col |= 0x00F;}
+	if(checkCollision(cx     ,cy-1.0f,cz     )){col |= 0x00F;}
 
 	return col;
 }
@@ -71,6 +71,12 @@ int animalUpdate(animal *e){
 	
 	if(e->yaw > 360.f){e->yaw -= 360.f;}
 	if(e->pitch > 180.f){e->pitch -= 360.f;}
+	
+	if(e->yoff < 0.f){
+		e->yoff += 0.003f;
+	}else{
+		e->yoff -= 0.003f;
+	}
 
 	e->vy -= 0.0005f;
 	// ToDo: implement terminal veolocity in a better way
@@ -83,31 +89,31 @@ int animalUpdate(animal *e){
 	if(col){ e->flags |= ANIMAL_COLLIDE; }
 
 	if((col&0x110) && (e->vx < 0.f)){
-		if(e->vx < -0.01f){ ret += (int)(fabsf(e->vx)*128.f); }
+		if(e->vx < -0.05f){ ret += (int)(fabsf(e->vx)*24.f); }
 		const float nx = floor(e->x)+0.3f;
 		if(nx > e->x){e->x = nx;}
 		e->vx = e->vx*-0.3f;
 	}
 	if((col&0x220) && (e->vx > 0.f)){
-		if(e->vx >  0.01f){ ret += (int)(fabsf(e->vx)*128.f); }
+		if(e->vx >  0.05f){ ret += (int)(fabsf(e->vx)*24.f); }
 		const float nx = floorf(e->x)+0.7f;
 		if(nx < e->x){e->x = nx;}
 		e->vx = e->vx*-0.3f;
 	}
 	if((col&0x880) && (e->vz > 0.f)){
-		if(e->vz >  0.01f){ ret += (int)(fabsf(e->vz)*128.f); }
+		if(e->vz >  0.05f){ ret += (int)(fabsf(e->vz)*24.f); }
 		const float nz = floorf(e->z)+0.7f;
 		if(nz < e->z){e->z = nz;}
 		e->vz = e->vz*-0.3f;
 	}
 	if((col&0x440) && (e->vz < 0.f)){
-		if(e->vz < -0.01f){ ret += (int)(fabsf(e->vz)*128.f); }
+		if(e->vz < -0.05f){ ret += (int)(fabsf(e->vz)*24.f); }
 		const float nz = floorf(e->z)+0.3f;
 		if(nz > e->z){e->z = nz;}
 		e->vz = e->vz*-0.3f;
 	}
 	if((col&0x0F0) && (e->vy > 0.f)){
-		if(e->vy >  0.01f){ ret += (int)(fabsf(e->vy)*128.f); }
+		if(e->vy >  0.05f){ ret += (int)(fabsf(e->vy)*24.f); }
 		const float ny = floorf(e->y)+0.5f;
 		if(ny < e->y){e->y = ny;}
 		e->vy = e->vy*-0.3f;
@@ -115,12 +121,7 @@ int animalUpdate(animal *e){
 	if((col&0x00F) && (e->vy < 0.f)){
 		e->flags &= ~ANIMAL_FALLING;
 		if(e->vy < -0.015f){
-			e->yoff = -0.8f;
 			ret += (int)(fabsf(e->vy)*128.f);
-		}else if(e->vy < -0.07f){
-			e->yoff += -0.4f;
-		}else if(e->vy < -0.04f){
-			e->yoff += -0.2f;
 		}
 		e->vx *= 0.97f;
 		e->vy  = 0.00f;

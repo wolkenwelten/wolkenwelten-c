@@ -38,6 +38,7 @@ animal *animalNew(float x, float y, float z , int type){
 	e->x          = x;
 	e->y          = y;
 	e->z          = z;
+	e->yoff       = 0.f;
 	e->yaw        = 0.f;
 	e->pitch      = 0.f;
 	e->roll       = 0.f;
