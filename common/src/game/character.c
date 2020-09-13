@@ -202,10 +202,11 @@ bool characterLOSBlock(character *c, int *retX, int *retY, int *retZ, int return
 	return false;
 }
 
-uint32_t characterCollision(character *c, float cx, float cy, float cz,float wd){
+uint32_t characterCollision(character *c, float cx, float cy, float cz){
 	(void)c;
 
 	uint32_t col = 0;
+	const float wd = 0.2f;
 	const float WD = wd*2.f;
 
 	if(checkCollision(cx-wd,cy+0.5f,cz   )){col |=  0x10;}

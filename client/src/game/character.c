@@ -469,7 +469,7 @@ int characterPhysics(character *c){
 		c->shake = 0.f;
 	}
 	if(c->flags & CHAR_NOCLIP){
-		col = characterCollision(c,c->x,c->y,c->z,0.3f);
+		col = characterCollision(c,c->x,c->y,c->z);
 		if(col){ c->flags |= CHAR_COLLIDE; }
 		return 0;
 	}
@@ -484,7 +484,7 @@ int characterPhysics(character *c){
 
 	c->flags |=  CHAR_FALLING;
 	c->flags &= ~CHAR_COLLIDE;
-	col = characterCollision(c,c->x,c->y,c->z,0.3f);
+	col = characterCollision(c,c->x,c->y,c->z);
 	if(col){ c->flags |= CHAR_COLLIDE; }
 	if((col&0x110) && (c->vx < 0.f)){
 		if(c->vx < -0.1f){ ret += (int)(fabsf(c->vx)*512.f); }
@@ -541,8 +541,6 @@ int characterPhysics(character *c){
 void characterUpdate(character *c){
 	float walkFactor = 1.f;
 	float nvx,nvy,nvz;
-	uint32_t col,wcl;
-
 
 	if((c->flags & CHAR_FALLINGSOUND) && (c->y > -32)){ c->flags &= ~CHAR_FALLINGSOUND; }
 	if(c->y < -500){
@@ -613,15 +611,6 @@ void characterUpdate(character *c){
 		if((c->gvx >  0.001) && (nvx < c->vx)){ nvx = c->vx; }
 		if((c->gvz < -0.001) && (nvz > c->vz)){ nvz = c->vz; }
 		if((c->gvz >  0.001) && (nvz < c->vz)){ nvz = c->vz; }
-	}
-
-	if(c->flags & CHAR_SNEAK){
-		wcl = characterCollision(c,c->x,c->y,c->z,0.6f);
-		col = characterCollision(c,c->x,c->y,c->z,-0.2f);
-		if(!(col&0x1) && (wcl&0x2) && (nvx < 0.f)){ nvx =  0.001f;}
-		if(!(col&0x2) && (wcl&0x1) && (nvx > 0.f)){ nvx = -0.001f;}
-		if(!(col&0x4) && (wcl&0x8) && (nvz < 0.f)){ nvz =  0.001f;}
-		if(!(col&0x8) && (wcl&0x4) && (nvz > 0.f)){ nvz = -0.001f;}
 	}
 
 	if(characterUpdateJumping(c)){ nvy = 0.044f;}
@@ -838,10 +827,10 @@ bool itemPlaceBlock(item *i, character *chr, int to){
 	int cx,cy,cz;
 	if(to < 0){return false;}
 	if(characterLOSBlock(chr,&cx,&cy,&cz,true)){
-		if((characterCollision(chr,chr->x,chr->y,chr->z,0.3f)&0xFF0)){ return false; }
+		if((characterCollision(chr,chr->x,chr->y,chr->z)&0xFF0)){ return false; }
 		if(!itemDecStack(i,1)){ return false; }
 		worldSetB(cx,cy,cz,i->ID);
-		if((characterCollision(chr,chr->x,chr->y,chr->z,0.3f)&0xFF0) != 0){
+		if((characterCollision(chr,chr->x,chr->y,chr->z)&0xFF0) != 0){
 			worldSetB(cx,cy,cz,0);
 			itemIncStack(i,1);
 			return false;
