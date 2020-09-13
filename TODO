@@ -1,4 +1,5 @@
 (A) MacOS Code signing
+(A) Add versioning to savegame format so we know if we read invalid data
 
 (B) Rework worldgen to not use the global RNG anymore, instead relying on a local one
 (B) Do part of the beamblast calculatiosn clientside so the latency is not as noticeable
