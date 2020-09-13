@@ -26,7 +26,7 @@ animal *animalNew(float x, float y, float z , int type){
 		}
 	}
 	animalReset(e);
-	
+
 	e->x          = x;
 	e->y          = y;
 	e->z          = z;
@@ -34,7 +34,7 @@ animal *animalNew(float x, float y, float z , int type){
 	e->pitch      = 0.f;
 	e->roll       = 0.f;
 	e->breathing  = 0;
-	
+
 	e->health     = 20;
 	e->hunger     = 64;
 	e->thirst     = 64;
@@ -43,10 +43,10 @@ animal *animalNew(float x, float y, float z , int type){
 	e->flags      = 0;
 	e->type       = type;
 	e->state      = 0;
-	
+
 	e->nextFree   = NULL;
 	e->curChungus = NULL;
-	
+
 	return e;
 }
 
@@ -126,7 +126,7 @@ void animalSLoiter(animal *e){
 		e->state = 1;
 		return;
 	}
-	
+
 	if(e->flags & ANIMAL_STUFFED){
 		if(rngValM(1<<10)){
 			e->flags &= ~ANIMAL_STUFFED;
@@ -138,7 +138,7 @@ void animalSLoiter(animal *e){
 			e->flags |= ANIMAL_STUFFED;
 		}
 	}
-	
+
 	if(e->flags & ANIMAL_YOUNG){
 		if(rngValM(1<<13) == 0){ e->flags &= ~ANIMAL_YOUNG; }
 	}else if(e->flags & ANIMAL_STUFFED){
@@ -153,7 +153,7 @@ void animalSLoiter(animal *e){
 			}
 		}
 	}
-	
+
 	if(rngValM( 128) == 0){
 		e->gyaw = e->yaw + ((rngValf()*2.f)-1.f)*4.f;
 	}
@@ -185,14 +185,14 @@ void animalSHorny(animal *e){
 		cAnim->flags |= ANIMAL_YOUNG;
 		e->flags |= ANIMAL_EXHAUSTED;
 	}
-	
+
 	vec caNorm = vecNorm(vecNew(e->x - cAnim->x,e->y - cAnim->y, e->z - cAnim->z));
 	vec caVel  = vecMulS(caNorm,-0.03f);
 	vec caRot  = vecVecToDeg(caNorm);
-	
+
 	e->gvx = caVel.x;
 	e->gvz = caVel.z;
-	
+
 	e->yaw = -caRot.yaw + 180.f;
 }
 
@@ -207,10 +207,10 @@ void animalSFlee(animal *e){
 		vec caNorm = vecNorm(vecNew(e->x - cChar->x,e->y - cChar->y, e->z - cChar->z));
 		vec caVel  = vecMulS(caNorm,0.03f);
 		vec caRot  = vecVecToDeg(caNorm);
-		
+
 		e->gvx = caVel.x;
 		e->gvz = caVel.z;
-		
+
 		e->yaw = -caRot.yaw;
 	}
 	if(e->flags & ANIMAL_YOUNG){
@@ -232,11 +232,11 @@ inline static void animalThink(animal *e){
 			animalSHorny(e);
 			break;
 	}
-	
+
 }
 
 void animalThinkAll(){
-	for(int i=animalCount;i>=0;--i){
+	for(int i=animalCount-1;i>=0;--i){
 		if(animalList[i].nextFree != NULL){ continue; }
 		animalThink(&animalList[i]);
 	}
@@ -248,22 +248,22 @@ void animalEmptySync(int c){
 	rp->val.u[ 0] = 0;
 	rp->val.u[ 1] = 0;
 	rp->val.u[ 2] = 0;
-	
+
 	packetQueue(rp,30,13*4,c);
 }
 
 void animalSync(int c, int i){
 	packet *rp = &packetBuffer;
 	animal *e = &animalList[i];
-	
+
 	rp->val.c[ 0] = e->type;
 	rp->val.c[ 1] = e->flags;
 	rp->val.c[ 2] = e->state;
 	rp->val.c[ 3] = 0;
-	
+
 	rp->val.u[ 1] = i;
 	rp->val.u[ 2] = animalCount;
-	
+
 	rp->val.f[ 3] = e->x;
 	rp->val.f[ 4] = e->y;
 	rp->val.f[ 5] = e->z;
@@ -274,7 +274,7 @@ void animalSync(int c, int i){
 	rp->val.f[10] = e->vy;
 	rp->val.f[11] = e->vz;
 	rp->val.f[12] = e->yoff;
-	
+
 	packetQueue(rp,30,13*4,c);
 }
 
@@ -290,12 +290,12 @@ void animalSyncPlayer(int c){
 uint8_t *animalSave(animal *e, uint8_t *b){
 	float *f = (float *)b;
 	if(e == NULL){return b;}
-	
+
 	b[ 0] = 0x03;
 	b[ 1] = e->flags;
 	b[ 2] = e->type;
 	b[ 3] = e->state;
-	
+
 	f[ 1] = e->x;
 	f[ 2] = e->y;
 	f[ 3] = e->z;
@@ -306,7 +306,7 @@ uint8_t *animalSave(animal *e, uint8_t *b){
 	f[ 8] = e->vy;
 	f[ 9] = e->vz;
 	f[10] = e->yoff;
-	
+
 	return b+11*4;
 }
 
@@ -322,7 +322,7 @@ uint8_t *animalLoad(uint8_t *b){
 	e->vy    = f[ 8];
 	e->vz    = f[ 9];
 	e->yoff  = f[10];
-	
+
 	e->flags = b[ 1];
 	e->state = b[ 3];
 
@@ -330,7 +330,7 @@ uint8_t *animalLoad(uint8_t *b){
 }
 
 uint8_t *animalSaveChungus(chungus *c,uint8_t *b){
-	if(c == NULL){return b;}	
+	if(c == NULL){return b;}
 	for(int i=0;i<animalCount;i++){
 		if(animalList[i].curChungus != c){continue;}
 		b = animalSave(&animalList[i],b);

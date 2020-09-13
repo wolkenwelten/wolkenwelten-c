@@ -55,7 +55,7 @@ void itemDropUpdate(){
 void itemDropUpdateFromServer(packet *p){
 	uint16_t d   = p->val.s[0];
 	uint16_t len = p->val.s[1];
-	
+
 	if(len < itemDropCount){
 		for(int i=len;i<itemDropCount;i++){
 			if(itemDrops[i].ent != NULL){
@@ -65,7 +65,7 @@ void itemDropUpdateFromServer(packet *p){
 		}
 	}
 	itemDropCount = len;
-	
+
 	if(itemDrops[d].ent == NULL) {
 		itemDrops[d].ent = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
 	}
@@ -74,7 +74,7 @@ void itemDropUpdateFromServer(packet *p){
 	}
 	itemDrops[d].itm.ID     = p->val.s[2];
 	itemDrops[d].itm.amount = p->val.s[3];
-	
+
 	itemDrops[d].ent->eMesh = getMeshDispatch(&itemDrops[d].itm);
 	itemDrops[d].ent->x     = p->val.f[2];
 	itemDrops[d].ent->y     = p->val.f[3];
