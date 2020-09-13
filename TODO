@@ -1,5 +1,6 @@
 (A) MacOS Code signing
 
+(B) Rework worldgen to not use the global RNG anymore, instead relying on a local one
 (B) Do part of the beamblast calculatiosn clientside so the latency is not as noticeable
 (B) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
 (B) Enable tls/wss support
