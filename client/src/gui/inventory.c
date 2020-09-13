@@ -164,7 +164,7 @@ void inventoryClickOutside(int btn){
 }
 
 void doInventoryClick(int btn, int sel){
-	item *cItem;
+	item *cItem = NULL;
 
 	if((sel >= 50) && (sel < (50+MIN(10,recipeGetCraftableCount(player))))){
 		int r = recipeGetCraftableIndex(player,sel-50);
@@ -184,6 +184,7 @@ void doInventoryClick(int btn, int sel){
 			itemDiscard(cItem);
 		}else{
 			cItem = characterGetItemBarSlot(player,sel);
+			if(cItem == NULL){return;}
 			if(itemCanStack(cItem,inventoryCurrentPickup.ID) || (cItem->ID == inventoryCurrentPickup.ID)){
 				inventoryCurrentPickup.amount -= itemIncStack(cItem,inventoryCurrentPickup.amount);
 			}else{
@@ -209,6 +210,7 @@ void doInventoryClick(int btn, int sel){
 			inventoryCurrentPickup.amount -= cItem->amount;
 		}else{
 			cItem = characterGetItemBarSlot(player,sel);
+			if(cItem == NULL){return;}	
 			if(!itemCanStack(cItem,inventoryCurrentPickup.ID) && !itemIsEmpty(cItem)){return;}
 			cItem->ID = inventoryCurrentPickup.ID;
 			itemIncStack(cItem,1);
