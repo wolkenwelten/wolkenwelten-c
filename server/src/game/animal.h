@@ -8,7 +8,6 @@ extern int animalCount;
 animal  *animalNew        (float x, float y, float z , int type);
 void     animalFree       (animal *e);
 void     animalUpdateAll  ();
-void     animalThink      (animal *e);
 void     animalThinkAll   ();
 void     animalSyncPlayer (int c);
 uint8_t *animalLoad       (uint8_t *b);

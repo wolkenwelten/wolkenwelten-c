@@ -2,6 +2,7 @@
 
 #include "../mods/api_v1.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -17,8 +18,8 @@ uint32_t animalCollision(float cx, float cy, float cz){
 	if(checkCollision(cx+0.3f,cy     ,cz     )){col |= 0x200;}
 	if(checkCollision(cx     ,cy     ,cz-0.3f)){col |= 0x400;}
 	if(checkCollision(cx     ,cy     ,cz+0.3f)){col |= 0x800;}
-	if(checkCollision(cx     ,cy+0.5f,cz     )){col |=  0xF0;}
-	if(checkCollision(cx     ,cy-0.5f,cz     )){col |=   0xF;}
+	if(checkCollision(cx     ,cy+0.5f,cz     )){col |= 0x0F0;}
+	if(checkCollision(cx     ,cy-0.5f,cz     )){col |= 0x00F;}
 
 	return col;
 }
@@ -36,10 +37,39 @@ int animalUpdate(animal *e){
 	e->x += e->vx;
 	e->y += e->vy;
 	e->z += e->vz;
+	e->breathing += 5;
 	
-	e->yaw += 0.1f;
+	if(fabsf(e->yaw - e->gyaw) > 0.3f){
+		if(e->yaw > e->gyaw){
+			e->yaw -= 0.1f;
+		}else{
+			e->yaw += 0.1f;
+		}
+	}
+	if(fabsf(e->pitch - e->gpitch) > 0.3f){
+		if(e->pitch > e->gpitch){
+			e->pitch -= 0.1f;
+		}else{
+			e->pitch += 0.1f;
+		}
+	}
+	
+	if(fabsf(e->vx - e->gvx) > 0.001f){
+		if(e->vx > e->gvx){
+			e->vx -= 0.005f;
+		}else{
+			e->vx += 0.005f;
+		}
+	}
+	if(fabsf(e->vz - e->gvz) > 0.001f){
+		if(e->vz > e->gvz){
+			e->vz -= 0.005f;
+		}else{
+			e->vz += 0.005f;
+		}
+	}
+	
 	if(e->yaw > 360.f){e->yaw -= 360.f;}
-	e->pitch += 0.04f;
 	if(e->pitch > 180.f){e->pitch -= 360.f;}
 
 	e->vy -= 0.0005f;
@@ -53,38 +83,38 @@ int animalUpdate(animal *e){
 	if(col){ e->flags |= ANIMAL_COLLIDE; }
 
 	if((col&0x110) && (e->vx < 0.f)){
-		if(e->vx < -0.1f){ ret += (int)(fabsf(e->vx)*128.f); }
+		if(e->vx < -0.01f){ ret += (int)(fabsf(e->vx)*128.f); }
 		const float nx = floor(e->x)+0.3f;
 		if(nx > e->x){e->x = nx;}
 		e->vx = e->vx*-0.3f;
 	}
 	if((col&0x220) && (e->vx > 0.f)){
-		if(e->vx >  0.1f){ ret += (int)(fabsf(e->vx)*128.f); }
+		if(e->vx >  0.01f){ ret += (int)(fabsf(e->vx)*128.f); }
 		const float nx = floorf(e->x)+0.7f;
 		if(nx < e->x){e->x = nx;}
 		e->vx = e->vx*-0.3f;
 	}
 	if((col&0x880) && (e->vz > 0.f)){
-		if(e->vz >  0.1f){ ret += (int)(fabsf(e->vz)*128.f); }
+		if(e->vz >  0.01f){ ret += (int)(fabsf(e->vz)*128.f); }
 		const float nz = floorf(e->z)+0.7f;
 		if(nz < e->z){e->z = nz;}
 		e->vz = e->vz*-0.3f;
 	}
 	if((col&0x440) && (e->vz < 0.f)){
-		if(e->vz < -0.1f){ ret += (int)(fabsf(e->vz)*128.f); }
+		if(e->vz < -0.01f){ ret += (int)(fabsf(e->vz)*128.f); }
 		const float nz = floorf(e->z)+0.3f;
 		if(nz > e->z){e->z = nz;}
 		e->vz = e->vz*-0.3f;
 	}
 	if((col&0x0F0) && (e->vy > 0.f)){
-		if(e->vy >  0.1f){ ret += (int)(fabsf(e->vy)*128.f); }
+		if(e->vy >  0.01f){ ret += (int)(fabsf(e->vy)*128.f); }
 		const float ny = floorf(e->y)+0.5f;
 		if(ny < e->y){e->y = ny;}
 		e->vy = e->vy*-0.3f;
 	}
 	if((col&0x00F) && (e->vy < 0.f)){
 		e->flags &= ~ANIMAL_FALLING;
-		if(e->vy < -0.15f){
+		if(e->vy < -0.015f){
 			e->yoff = -0.8f;
 			ret += (int)(fabsf(e->vy)*128.f);
 		}else if(e->vy < -0.07f){
@@ -93,7 +123,7 @@ int animalUpdate(animal *e){
 			e->yoff += -0.2f;
 		}
 		e->vx *= 0.97f;
-		e->vy  = 0.f;
+		e->vy  = 0.00f;
 		e->vz *= 0.97f;
 	}
 
