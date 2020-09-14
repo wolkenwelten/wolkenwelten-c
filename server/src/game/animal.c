@@ -41,7 +41,7 @@ animal *animalNew(float x, float y, float z , int type){
 	e->flags      = 0;
 	e->type       = type;
 	e->state      = 0;
-	
+
 	if(rngValM(2) == 0){
 		e->flags |= ANIMAL_BELLYSLEEP;
 	}
@@ -159,7 +159,7 @@ void animalSSleep(animal *e){
 	character *cChar;
 	e->gvx = 0;
 	e->gvz = 0;
-	
+
 	if(e->sleepy > 120){
 		e->state  = 0;
 		e->gpitch = 0.f;
@@ -179,7 +179,7 @@ void animalSSleep(animal *e){
 			return;
 		}
 	}
-		
+
 	if(e->flags & ANIMAL_BELLYSLEEP){
 		e->gpitch = -90.f;
 	}else{
@@ -194,7 +194,7 @@ void animalSHorny(animal *e){
 	animal *cAnim;
 	float dist = animalClosestAnimal(e,&cAnim,e->type);
 	if((dist > 256.f) || (cAnim == NULL)){ e->state = 0; }
-	
+
 	if((e->hunger < 32) || (e->sleepy < 64)){
 		e->state = 0;
 		return;
@@ -203,18 +203,18 @@ void animalSHorny(animal *e){
 		e->state = 0;
 		return;
 	}
-	
+
 	if(dist < 2.f){
 		e->state   =  0;
 		e->hunger -= 24;
 		//e->thirst -= 24;
 		e->sleepy -= 48;
-		
+
 		cAnim->state   =  0;
 		cAnim->hunger -= 24;
 		//cAnim->thirst -= 24;
 		cAnim->sleepy -= 48;
-		
+
 		cAnim = animalNew(e->x+((rngValf()*2.f)-1.f),e->y+4.f,e->z+((rngValf()*2.f)-1.f),e->type);
 		cAnim->age = 1;
 		return;
@@ -258,7 +258,7 @@ void animalSExist(animal *e){
 	if(e->age > 64){
 		if(rngValM(1<<14) <= (uint)(e->age-64)){e->health = 0;}
 	}
-	
+
 	if((e->state != 1) && (e->sleepy < 24)){
 		e->state = 3;
 	}
@@ -312,7 +312,7 @@ void animalSync(int c, int i){
 	rp->val.c[ 1] = e->flags;
 	rp->val.c[ 2] = e->state;
 	rp->val.c[ 3] = e->age;
-	
+
 	rp->val.c[ 4] = e->health;
 	rp->val.c[ 5] = e->hunger;
 	rp->val.c[ 6] = e->thirst;
@@ -341,7 +341,7 @@ uint animalSyncPlayer(int c, uint offset){
 		animalEmptySync(c);
 		return offset;
 	}
-	
+
 	for(uint i=offset;i<max;i++){
 		animalSync(c,i);
 	}
@@ -357,12 +357,12 @@ uint8_t *animalSave(animal *e, uint8_t *b){
 	b[ 1] = e->flags;
 	b[ 2] = e->type;
 	b[ 3] = e->state;
-	
+
 	b[ 4] = e->health;
 	b[ 5] = e->hunger;
 	b[ 6] = e->thirst;
 	b[ 7] = e->sleepy;
-	
+
 	b[ 8] = e->age;
 	b[ 9] = 0;
 	b[10] = 0;
@@ -397,12 +397,12 @@ uint8_t *animalLoad(uint8_t *b){
 
 	e->flags  = b[ 1];
 	e->state  = b[ 3];
-	
+
 	e->health = b[ 4];
 	e->hunger = b[ 5];
 	e->thirst = b[ 6];
 	e->sleepy = b[ 7];
-	
+
 	e->age    = b[ 8];
 
 	return b+13*4;
