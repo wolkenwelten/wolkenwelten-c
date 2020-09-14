@@ -41,6 +41,10 @@ animal *animalNew(float x, float y, float z , int type){
 	e->flags      = 0;
 	e->type       = type;
 	e->state      = 0;
+	
+	if(rngValM(2) == 0){
+		e->flags |= ANIMAL_BELLYSLEEP;
+	}
 
 	e->curChungus = NULL;
 
@@ -61,6 +65,7 @@ void animalUpdateAll(){
 		   (animalList[i].hunger < 0) ||
 		   (animalList[i].thirst < 0) ||
 		   (animalList[i].sleepy < 0)) {
+			fprintf(stderr,"Dead Animal [HP: %i | HUN: %i | THI: %i | SLP: %i]\n",animalList[i].health,animalList[i].hunger,animalList[i].thirst,animalList[i].sleepy);
 			animalDel(i);
 			continue;
 		}
@@ -71,6 +76,7 @@ float animalClosestPlayer(animal *e, character **cChar){
 	*cChar = NULL;
 	float ret = 4096.f;
 	for(int i=0;i<clientCount;++i){
+		if(clients[i].c == NULL){continue;}
 		float dx = clients[i].c->x - e->x;
 		float dy = clients[i].c->y - e->y;
 		float dz = clients[i].c->z - e->z;
@@ -111,15 +117,11 @@ void animalSLoiter(animal *e){
 		return;
 	}
 
-	if(e->flags & ANIMAL_STUFFED){
-		if(rngValM(1<<10)){
-			e->flags &= ~ANIMAL_STUFFED;
-		}
-	}else{
+	if(e->hunger < 64){
 		const uint8_t cb = worldGetB(e->x,e->y-.6f,e->z);
 		if((cb == 2) && (rngValM(128) == 0)){
 			worldSetB(e->x,e->y-.6f,e->z,1);
-			e->flags |= ANIMAL_STUFFED;
+			e->hunger += 32;
 		}
 	}
 
@@ -153,15 +155,69 @@ void animalSLoiter(animal *e){
 	}
 }
 
+void animalSSleep(animal *e){
+	character *cChar;
+	e->gvx = 0;
+	e->gvz = 0;
+	
+	if(e->sleepy > 120){
+		e->state  = 0;
+		e->gpitch = 0.f;
+		return;
+	}else if(e->sleepy > 64){
+		if(rngValM(1<<14) <= (uint)(e->sleepy-64)){
+			e->state  = 0;
+			e->gpitch = 0.f;
+			return;
+		}
+	}else if(e->sleepy > 8){
+		float dist = animalClosestPlayer(e,&cChar);
+		if((dist < 9.f) && (cChar != NULL)){
+			e->vy     = 0.03f;
+			e->gpitch = 0.f;
+			e->state  = 1;
+			return;
+		}
+	}
+		
+	if(e->flags & ANIMAL_BELLYSLEEP){
+		e->gpitch = -90.f;
+	}else{
+		e->gpitch =  90.f;
+	}
+	if(rngValM(16) == 0){
+		e->sleepy++;
+	}
+}
+
 void animalSHorny(animal *e){
 	animal *cAnim;
 	float dist = animalClosestAnimal(e,&cAnim,e->type);
 	if((dist > 256.f) || (cAnim == NULL)){ e->state = 0; }
-	if(dist < 2.f){
+	
+	if((e->hunger < 32) || (e->sleepy < 64)){
 		e->state = 0;
-		cAnim = animalNew(e->x+((rngValf()*2.f)-1.f),e->y,e->z+((rngValf()*2.f)-1.f),e->type);
-		e->age = 1;
-		e->flags |= ANIMAL_EXHAUSTED;
+		return;
+	}
+	if((cAnim->hunger < 32) || (cAnim->sleepy < 64)){
+		e->state = 0;
+		return;
+	}
+	
+	if(dist < 2.f){
+		e->state   =  0;
+		e->hunger -= 24;
+		//e->thirst -= 24;
+		e->sleepy -= 48;
+		
+		cAnim->state   =  0;
+		cAnim->hunger -= 24;
+		//cAnim->thirst -= 24;
+		cAnim->sleepy -= 48;
+		
+		cAnim = animalNew(e->x+((rngValf()*2.f)-1.f),e->y+4.f,e->z+((rngValf()*2.f)-1.f),e->type);
+		cAnim->age = 1;
+		return;
 	}
 
 	vec caNorm = vecNorm(vecNew(e->x - cAnim->x,e->y - cAnim->y, e->z - cAnim->z));
@@ -177,7 +233,7 @@ void animalSHorny(animal *e){
 void animalSFlee(animal *e){
 	character *cChar;
 	const float dist = animalClosestPlayer(e,&cChar);
-	e->flags |= ANIMAL_EXHAUSTED;
+	if(rngValM(1<<10) == 0){e->hunger--;}
 	if((dist > 96.f) && (cChar != NULL)){
 		e->state = 0;
 		return;
@@ -195,14 +251,19 @@ void animalSFlee(animal *e){
 }
 
 void animalSExist(animal *e){
+	if(rngValM(1<<10) == 0){e->hunger--;}
 	if(e->age < 125){
 		if(rngValM(1<<8) == 0){e->age++;}
 	}
 	if(e->age > 64){
 		if(rngValM(1<<14) <= (uint)(e->age-64)){e->health = 0;}
 	}
-	if(e->flags && ANIMAL_EXHAUSTED){
-		if(rngValM(1<<10) == 0){ e->flags &= ~ANIMAL_EXHAUSTED; }
+	
+	if((e->state != 1) && (e->sleepy < 24)){
+		e->state = 3;
+	}
+	if((e->state == 1) && (e->sleepy <  4)){
+		e->state = 3;
 	}
 }
 
@@ -218,6 +279,9 @@ inline static void animalThink(animal *e){
 			break;
 		case 2:
 			animalSHorny(e);
+			break;
+		case 3:
+			animalSSleep(e);
 			break;
 	}
 

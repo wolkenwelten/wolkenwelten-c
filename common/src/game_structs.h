@@ -114,10 +114,8 @@ typedef struct {
 	chungus *curChungus;
 } animal;
 #define ANIMAL_FALLING    (1   )
-#define ANIMAL_EXHAUSTED  (1<<1)
-
+#define ANIMAL_BELLYSLEEP (1<<1)
 #define ANIMAL_COLLIDE    (1<<3)
-#define ANIMAL_STUFFED    (1<<4)
 
 struct grapplingHook {
 	entity       *ent;
