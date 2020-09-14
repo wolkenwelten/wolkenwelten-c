@@ -631,7 +631,7 @@ void serverCloseClient(int c){
 
 int getClientByName(const char *name){
 	for(int i=0;i<clientCount;i++){
-		if(strncmp(clients[i].playerName,name,32) == 0){
+		if(strncasecmp(clients[i].playerName,name,32) == 0){
 			return i;
 		}
 	}

@@ -84,7 +84,7 @@ static void cmdHeal(int c, const char *cmd){
 		if(tmp >= 0){
 			target = tmp;
 		}else{
-			snprintf(replyBuf,sizeof(replyBuf),".heal : Can't find '%s'",cmd+4);
+			snprintf(replyBuf,sizeof(replyBuf),".heal : Can't find '%s'",argv[1]);
 			replyBuf[sizeof(replyBuf)-1]=0;
 			serverSendChatMsg(replyBuf);
 		}
