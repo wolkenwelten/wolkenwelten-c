@@ -251,6 +251,11 @@ void animalSFlee(animal *e){
 }
 
 void animalSExist(animal *e){
+	const uint8_t cb = worldGetB(e->x,e->y,e->z);
+	if(cb != 0){
+		if(rngValM(256) == 0){e->health--;}
+	}
+
 	if(rngValM(1<<10) == 0){e->hunger--;}
 	if(e->age < 125){
 		if(rngValM(1<<8) == 0){e->age++;}
