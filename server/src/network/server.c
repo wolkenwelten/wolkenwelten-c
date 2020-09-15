@@ -167,7 +167,7 @@ void msgUpdatePlayer(int c){
 	grenadeUpdatePlayer(c);
 	blockMiningUpdatePlayer(c);
 	bigchungusUpdateClient(&world,c);
-	animalSyncPlayer(c,clients[c].animalUpdateOffset);
+	clients[c].animalUpdateOffset = animalSyncPlayer(c,clients[c].animalUpdateOffset);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 }

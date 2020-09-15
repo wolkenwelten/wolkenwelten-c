@@ -4,6 +4,7 @@
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/common.h"
+#include "../../../common/src/game/blockType.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
@@ -23,24 +24,23 @@ animal *animalNew(float x, float y, float z , int type){
 	e = &animalList[animalCount++];
 	animalReset(e);
 
-	e->x          = x;
-	e->y          = y;
-	e->z          = z;
-	e->yoff       = 0.f;
-	e->yaw        = 0.f;
-	e->pitch      = 0.f;
-	e->roll       = 0.f;
-	e->breathing  = 0;
+	e->x         = x;
+	e->y         = y;
+	e->z         = z;
+	e->yaw       = 0.f;
+	e->pitch     = 0.f;
+	e->roll      = 0.f;
+	e->breathing = 0;
 
-	e->age        = 21;
-	e->health     = 20;
-	e->hunger     = 64;
-	e->thirst     = 64;
-	e->sleepy     = 64;
+	e->age       = 21;
+	e->health    = 20;
+	e->hunger    = 64;
+	e->thirst    = 64;
+	e->sleepy    = 64;
 
-	e->flags      = 0;
-	e->type       = type;
-	e->state      = 0;
+	e->flags     = 0;
+	e->type      = type;
+	e->state     = 0;
 
 	if(rngValM(2) == 0){
 		e->flags |= ANIMAL_BELLYSLEEP;
@@ -112,7 +112,11 @@ void animalSLoiter(animal *e){
 	animal *cAnim;
 	float dist = animalClosestPlayer(e,&cChar);
 	if((dist < 24.f) && (cChar != NULL)){
-		e->vy += 0.03;
+		if(!(e->flags & ANIMAL_FALLING)){
+			e->vy = 0.03f;
+			e->sleepy -= 2;
+		}
+		e->sleepy -= 2;
 		e->state = 1;
 		return;
 	}
@@ -121,7 +125,7 @@ void animalSLoiter(animal *e){
 		const uint8_t cb = worldGetB(e->x,e->y-.6f,e->z);
 		if((cb == 2) && (rngValM(128) == 0)){
 			worldSetB(e->x,e->y-.6f,e->z,1);
-			e->hunger += 32;
+			e->hunger += 48;
 		}
 	}
 
@@ -153,6 +157,11 @@ void animalSLoiter(animal *e){
 		e->gvx = dir.x;
 		e->gvz = dir.z;
 	}
+	
+	if(rngValM(2048) > (uint)(127-e->age)){
+		e->state = 4;
+		return;
+	}
 }
 
 void animalSSleep(animal *e){
@@ -170,10 +179,25 @@ void animalSSleep(animal *e){
 			e->gpitch = 0.f;
 			return;
 		}
+		float dist = animalClosestPlayer(e,&cChar);
+		if((dist < 24.f) && (cChar != NULL)){
+			if(!(e->flags & ANIMAL_FALLING)){
+				e->vy     = 0.04f;
+				e->sleepy -= 2;
+			}
+			e->sleepy -= 2;
+			e->gpitch = 0.f;
+			e->state  = 1;
+			return;
+		}
 	}else if(e->sleepy > 8){
 		float dist = animalClosestPlayer(e,&cChar);
 		if((dist < 9.f) && (cChar != NULL)){
-			e->vy     = 0.03f;
+			if(!(e->flags & ANIMAL_FALLING)){
+				e->vy     = 0.05f;
+				e->sleepy -= 4;
+			}
+			e->sleepy -= 2;
 			e->gpitch = 0.f;
 			e->state  = 1;
 			return;
@@ -195,27 +219,25 @@ void animalSHorny(animal *e){
 	float dist = animalClosestAnimal(e,&cAnim,e->type);
 	if((dist > 256.f) || (cAnim == NULL)){ e->state = 0; }
 
-	if((e->hunger < 32) || (e->sleepy < 64)){
+	if((e->hunger < 24) || (e->sleepy < 48)){
 		e->state = 0;
 		return;
 	}
-	if((cAnim->hunger < 32) || (cAnim->sleepy < 64)){
+	if((cAnim->hunger < 24) || (cAnim->sleepy < 48)){
 		e->state = 0;
 		return;
 	}
 
 	if(dist < 2.f){
 		e->state   =  0;
-		e->hunger -= 24;
-		//e->thirst -= 24;
-		e->sleepy -= 48;
+		e->hunger -= 16;
+		e->sleepy -= 24;
 
 		cAnim->state   =  0;
-		cAnim->hunger -= 24;
-		//cAnim->thirst -= 24;
-		cAnim->sleepy -= 48;
+		cAnim->hunger -= 16;
+		cAnim->sleepy -= 24;
 
-		cAnim = animalNew(e->x+((rngValf()*2.f)-1.f),e->y+4.f,e->z+((rngValf()*2.f)-1.f),e->type);
+		cAnim = animalNew(e->x+((rngValf()*2.f)-1.f),e->y+.4f,e->z+((rngValf()*2.f)-1.f),e->type);
 		cAnim->age = 1;
 		return;
 	}
@@ -235,40 +257,137 @@ void animalSFlee(animal *e){
 	const float dist = animalClosestPlayer(e,&cChar);
 	if(rngValM(1<<10) == 0){e->hunger--;}
 	if((dist > 96.f) && (cChar != NULL)){
-		e->state = 0;
+		e->state   = 0;
+		e->sleepy -= 2;
 		return;
 	}
 	if(cChar != NULL){
-		vec caNorm = vecNorm(vecNew(e->x - cChar->x,e->y - cChar->y, e->z - cChar->z));
+		vec caNorm = vecNorm(vecNew(e->x - cChar->x,0.f, e->z - cChar->z));
 		vec caVel  = vecMulS(caNorm,0.03f);
 		vec caRot  = vecVecToDeg(caNorm);
 
 		e->gvx = caVel.x;
 		e->gvz = caVel.z;
-
 		e->yaw = -caRot.yaw;
 	}
 }
 
-void animalSExist(animal *e){
+void animalCheckSuffocation(animal *e){
 	const uint8_t cb = worldGetB(e->x,e->y,e->z);
 	if(cb != 0){
-		if(rngValM(256) == 0){e->health--;}
+		if(rngValM(128) == 0){e->health--;}
+		const blockCategory cc = blockTypeGetCat(cb);
+		if(cc == LEAVES){
+			if(rngValM( 512) == 0){worldBoxMine(e->x,e->y,e->z,1,1,1);}
+		}else if(cc == DIRT){
+			if(rngValM(4096) == 0){worldBoxMine(e->x,e->y,e->z,1,1,1);}
+		}
 	}
+}
 
-	if(rngValM(1<<10) == 0){e->hunger--;}
+void animalCheckForHillOrCliff(animal *e){
+	vec caDir = vecNew(e->gvx,0.f,e->gvz);
+	caDir = vecAdd(vecNew(e->x,e->y,e->z),vecMulS(vecNorm(caDir),0.5f));
+	const uint8_t cb = worldGetB(caDir.x,caDir.y,caDir.z);
+	const uint8_t ub = worldGetB(caDir.x,caDir.y+1,caDir.z);
+	if((cb != 0) && (ub == 0) && (fabsf(e->vy)<0.01f)){
+		if(!(e->flags & ANIMAL_FALLING)){
+			e->vy = 0.03f;
+		}
+		return;
+	}
+	if(cb == 0){
+		if((worldGetB(caDir.x,caDir.y-1,caDir.z) == 0) &&
+		   (worldGetB(caDir.x,caDir.y-2,caDir.z) == 0)){
+				e->vx = -e->gvx;
+				e->vz = -e->gvz;
+				return;
+			}
+	}
+}
+
+void animalAgeing(animal *e){
 	if(e->age < 125){
-		if(rngValM(1<<8) == 0){e->age++;}
+		if(rngValM(1<<14) == 0){e->age++;}
 	}
 	if(e->age > 64){
-		if(rngValM(1<<14) <= (uint)(e->age-64)){e->health = 0;}
+		if(rngValM(1<<16) <= (uint)(e->age-64)){e->health = 0;}
 	}
+}
 
-	if((e->state != 1) && (e->sleepy < 24)){
+void animalSleepyness(animal *e){
+	if (rngValM( 512) == 0){e->sleepy--;}
+	if((e->state != 1) && (e->sleepy < 16)){
 		e->state = 3;
+		return;
 	}
-	if((e->state == 1) && (e->sleepy <  4)){
+	if((e->state == 1) && (e->sleepy <  2)){
 		e->state = 3;
+		return;
+	}
+}
+
+void animalHunger(animal *e){
+	if(rngValM(1024) == 0){
+		e->hunger--;
+	}
+	if((e->state != 0) && (e->state == 1) && (e->hunger <  32)){
+		e->state = 0;
+		return;
+	}
+}
+
+void animalSExist(animal *e){
+	animalCheckSuffocation(e);
+	animalCheckForHillOrCliff(e);
+	animalAgeing(e);
+	animalSleepyness(e);
+	animalHunger(e);
+}
+
+void animalSPlayful(animal *e){
+	character *cChar;
+	animal *cAnim;
+	float dist = animalClosestPlayer(e,&cChar);
+	if (rngValM( 192) == 0){e->sleepy--;}
+	if((dist < 35.f) && (cChar != NULL)){
+		e->state = 1;
+		return;
+	}
+	
+	
+	if((e->age > 20) && (rngValM( 128) == 0)){
+		if(animalClosestAnimal(e,&cAnim,e->type) < 192.f){
+			if(cAnim->age > 20){
+				e->state = 2;
+				return;
+			}
+		}
+	}
+	
+	if((rngValM( 128) == 0) && (fabsf(e->vy) < 0.001f)){
+		e->vy = 0.03f;
+	}
+	if (rngValM( 256) == 0){
+		e->gvx = 0;
+		e->gvy = 0;
+		e->gvz = 0;
+	}
+	if (rngValM( 512) == 0){
+		e->gpitch = ((rngValf()*2.f)-1.f)*16.f;
+	}
+	if (rngValM( 512) == 0){
+		e->gyaw = ((rngValf()*2.f)-1.f)*360.f;
+	}
+	if (rngValM( 256) == 0){
+		vec dir = vecMulS(vecDegToVec(vecNew(e->yaw,0.f,0.f)),0.01f);
+		e->gvx = dir.x;
+		e->gvz = dir.z;
+	}
+	
+	if (rngValM(1024) > (uint)( e->age)){
+		e->state = 4;
+		return;
 	}
 }
 
@@ -288,6 +407,9 @@ inline static void animalThink(animal *e){
 		case 3:
 			animalSSleep(e);
 			break;
+		case 4:
+			animalSPlayful(e);
+			break;
 	}
 
 }
@@ -306,7 +428,7 @@ void animalEmptySync(int c){
 	rp->val.u[ 2] = 0;
 	rp->val.u[ 3] = 0;
 
-	packetQueue(rp,30,14*4,c);
+	packetQueue(rp,30,13*4,c);
 }
 
 void animalSync(int c, int i){
@@ -335,9 +457,8 @@ void animalSync(int c, int i){
 	rp->val.f[10] = e->vx;
 	rp->val.f[11] = e->vy;
 	rp->val.f[12] = e->vz;
-	rp->val.f[13] = e->yoff;
 
-	packetQueue(rp,30,14*4,c);
+	packetQueue(rp,30,13*4,c);
 }
 
 uint animalSyncPlayer(int c, uint offset){
@@ -382,15 +503,14 @@ uint8_t *animalSave(animal *e, uint8_t *b){
 	f[ 9] = e->vx;
 	f[10] = e->vy;
 	f[11] = e->vz;
-	f[12] = e->yoff;
 
-	return b+13*4;
+	return b+12*4;
 }
 
 uint8_t *animalLoad(uint8_t *b){
 	float *f  = (float *)b;
 	animal *e = animalNew(f[3],f[4],f[5],b[2]);
-	if(e == NULL){return b+13*4;}
+	if(e == NULL){return b+12*4;}
 
 	e->yaw    = f[ 6];
 	e->pitch  = f[ 7];
@@ -398,7 +518,6 @@ uint8_t *animalLoad(uint8_t *b){
 	e->vx     = f[ 9];
 	e->vy     = f[10];
 	e->vz     = f[11];
-	e->yoff   = f[12];
 
 	e->flags  = b[ 1];
 	e->state  = b[ 3];
@@ -410,7 +529,7 @@ uint8_t *animalLoad(uint8_t *b){
 
 	e->age    = b[ 8];
 
-	return b+13*4;
+	return b+12*4;
 }
 
 uint8_t *animalSaveChungus(chungus *c,uint8_t *b){

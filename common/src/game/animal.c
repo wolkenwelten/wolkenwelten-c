@@ -41,16 +41,16 @@ int animalUpdate(animal *e){
 	
 	if(fabsf(e->yaw - e->gyaw) > 0.3f){
 		if(e->yaw > e->gyaw){
-			e->yaw -= 0.1f;
+			e->yaw -= 0.2f;
 		}else{
-			e->yaw += 0.1f;
+			e->yaw += 0.2f;
 		}
 	}
 	if(fabsf(e->pitch - e->gpitch) > 0.3f){
 		if(e->pitch > e->gpitch){
-			e->pitch -= 0.1f;
+			e->pitch -= 0.2f;
 		}else{
-			e->pitch += 0.1f;
+			e->pitch += 0.2f;
 		}
 	}
 	
@@ -71,12 +71,6 @@ int animalUpdate(animal *e){
 	
 	if(e->yaw > 360.f){e->yaw -= 360.f;}
 	if(e->pitch > 180.f){e->pitch -= 360.f;}
-	
-	if(e->yoff < 0.f){
-		e->yoff += 0.003f;
-	}else{
-		e->yoff -= 0.003f;
-	}
 
 	e->vy -= 0.0005f;
 	// ToDo: implement terminal veolocity in a better way

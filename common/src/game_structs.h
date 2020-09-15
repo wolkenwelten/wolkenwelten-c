@@ -94,7 +94,6 @@ typedef struct {
 	float  x, y, z;
 	float vx,vy,vz;
 	float yaw,pitch,roll;
-	float yoff;
 	
 	float gyaw,gpitch;
 	float gvx,gvy,gvz;

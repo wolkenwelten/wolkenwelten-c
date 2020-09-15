@@ -31,7 +31,6 @@ animal *animalNew(float x, float y, float z , int type){
 	e->x          = x;
 	e->y          = y;
 	e->z          = z;
-	e->yoff       = 0.f;
 	e->yaw        = 0.f;
 	e->pitch      = 0.f;
 	e->roll       = 0.f;
@@ -59,7 +58,7 @@ void aniomalShadesDraw(animal *c){
 	scale *= 0.5f;
 	
 	matMov(matMVP,matView);
-	matMulTrans(matMVP,c->x,c->y+c->yoff+breath/128.f,c->z);
+	matMulTrans(matMVP,c->x,c->y+breath/128.f,c->z);
 	matMulRotYX(matMVP,c->yaw,c->pitch + breath);
 	matMulTrans(matMVP,0.f,0.1f,-0.2f);
 	matMulScale(matMVP,scale,scale,scale);
@@ -83,7 +82,7 @@ void animalDraw(animal *e){
 	}
 
 	matMov      (matMVP,matView);
-	matMulTrans (matMVP,e->x,e->y+e->yoff,e->z);
+	matMulTrans (matMVP,e->x,e->y,e->z);
 	matMulRotYX (matMVP,e->yaw,e->pitch-breath);
 	matMulScale (matMVP,scale,scale,scale);
 	matMul      (matMVP,matMVP,matProjection);
@@ -122,7 +121,6 @@ void animalSyncFromServer(packet *p){
 	e->vx       = p->val.f[10];
 	e->vy       = p->val.f[11];
 	e->vz       = p->val.f[12];
-	e->yoff     = p->val.f[13];
 	
 	e->type     = p->val.c[ 0];
 	e->flags    = p->val.c[ 1];

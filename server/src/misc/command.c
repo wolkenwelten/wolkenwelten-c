@@ -180,6 +180,7 @@ void cmdAni(int c, const char *cmd){
 	(void)cmd;
 
 	character *ch = clients[c].c;
+	if(ch == NULL){return;}
 	animalNew(ch->x,ch->y,ch->z,1);
 }
 
