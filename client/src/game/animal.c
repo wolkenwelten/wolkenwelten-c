@@ -31,11 +31,23 @@ animal *animalNew(float x, float y, float z , int type){
 	e->x          = x;
 	e->y          = y;
 	e->z          = z;
+	e->vx         = 0.f;
+	e->vy         = 0.f;
+	e->vz         = 0.f;
+	e->gvx        = 0.f;
+	e->gvy        = 0.f;
+	e->gvz        = 0.f;
+
 	e->yaw        = 0.f;
 	e->pitch      = 0.f;
 	e->roll       = 0.f;
+	e->gyaw       = 0.f;
+	e->gpitch     = 0.f;
+
 	e->flags      = 0;
 	e->type       = type;
+	e->state      = 0;
+	e->breathing  = 0;
 
 	e->curChungus = NULL;
 
@@ -49,14 +61,14 @@ void aniomalShadesDraw(animal *c){
 	}else{
 		breath = sinf((float)(c->breathing-128)/256.f)*2.f;
 	}
-	
+
 	if(c->age < 20){
 		scale = 0.5f + ((float)c->age/40.f);
 	}else{
 		scale = 1.f;
 	}
 	scale *= 0.5f;
-	
+
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->x,c->y+breath/128.f,c->z);
 	matMulRotYX(matMVP,c->yaw,c->pitch + breath);
@@ -118,14 +130,19 @@ void animalSyncFromServer(packet *p){
 	e->yaw      = p->val.f[ 7];
 	e->pitch    = p->val.f[ 8];
 	e->roll     = p->val.f[ 9];
-	e->vx       = p->val.f[10];
-	e->vy       = p->val.f[11];
-	e->vz       = p->val.f[12];
-	
+	e->gyaw     = p->val.f[10];
+	e->gpitch   = p->val.f[11];
+	e->vx       = p->val.f[12];
+	e->vy       = p->val.f[13];
+	e->vz       = p->val.f[14];
+	e->gvx      = p->val.f[15];
+	e->gvy      = p->val.f[16];
+	e->gvz      = p->val.f[17];
+
 	e->type     = p->val.c[ 0];
 	e->flags    = p->val.c[ 1];
 	e->state    = p->val.c[ 2];
-	
+
 	e->age      = p->val.c[ 3];
 	e->health   = p->val.c[ 4];
 	e->hunger   = p->val.c[ 5];

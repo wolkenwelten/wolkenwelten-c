@@ -423,7 +423,7 @@ void animalEmptySync(int c){
 	rp->val.u[ 2] = 0;
 	rp->val.u[ 3] = 0;
 
-	packetQueue(rp,30,13*4,c);
+	packetQueue(rp,30,18*4,c);
 }
 
 void animalSync(int c, int i){
@@ -449,11 +449,16 @@ void animalSync(int c, int i){
 	rp->val.f[ 7] = e->yaw;
 	rp->val.f[ 8] = e->pitch;
 	rp->val.f[ 9] = e->roll;
-	rp->val.f[10] = e->vx;
-	rp->val.f[11] = e->vy;
-	rp->val.f[12] = e->vz;
+	rp->val.f[10] = e->gyaw;
+	rp->val.f[11] = e->gpitch;
+	rp->val.f[12] = e->vx;
+	rp->val.f[13] = e->vy;
+	rp->val.f[14] = e->vz;
+	rp->val.f[15] = e->gvx;
+	rp->val.f[16] = e->gvy;
+	rp->val.f[17] = e->gvz;
 
-	packetQueue(rp,30,13*4,c);
+	packetQueue(rp,30,18*4,c);
 }
 
 uint animalSyncPlayer(int c, uint offset){
