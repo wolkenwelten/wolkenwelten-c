@@ -112,6 +112,7 @@ void renderWorld(character *cam){
 	animalDrawAll();
 	entityDrawAll();
 	characterDrawAll();
+	//cloudsDraw(cam);
 	particleDraw();
 	glDepthFunc( GL_LEQUAL );
 }

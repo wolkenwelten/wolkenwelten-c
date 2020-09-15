@@ -4,10 +4,12 @@
 #include "../gfx/mat.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
+#include "../gfx/particle.h"
 #include "../gfx/texture.h"
 #include "../gfx/mesh.h"
 #include "../game/entity.h"
 #include "../tmp/assets.h"
+#include "../../../common/src/misc/noise.h"
 
 float sunAngle = 40.f;
 
@@ -16,7 +18,37 @@ mesh *sunMesh;
 texture *tSky;
 texture *tSun;
 
+uint8_t cloudTex[256][256];
+
+void cloudsDraw(const character *c){
+	static int x=0;
+	float sx=c->x-512.f;
+	float sy=768.f;
+	float sz=c->z-512.f;
+
+	int ox = (int)c->x-512;
+	int oz = (int)c->z-512;
+
+	for(int z=0;z<256;z++){
+		uint8_t v = cloudTex[(ox+x*4)&0xFF][(oz+z*4)&0xFF];
+		if(v > 228){
+			newParticle(sx+x*4,sy+8.f,sz+z*4,0,0,0,0,0,0,4096.f,0.5f,0xD0D0D0D0,1024);
+		}
+		if(v > 192){
+			newParticle(sx+x*4,sy+4.f,sz+z*4,0,0,0,0,0,0,4096.f,0.5f,0xD0D0D0D0,1024);
+		}
+		if(v > 178){
+			newParticle(sx+x*4,sy    ,sz+z*4,0,0,0,0,0,0,4096.f,0.5f,0xD0D0D0D0,1024);
+		}
+	}
+	x = (x+1)&0xFF;
+
+	//newParticle(c->x+2,c->y+2,c->z,0,0,0,0,0,0,256.f,1.f,0xD0D0D0D0,64);
+}
+
+
 void initSky(){
+	generateNoise(0x84407db3, cloudTex);
 	tSky = textureNew(gfx_sky_png_data, gfx_sky_png_len, "client/gfx/sky.png");
 	tSun = textureNew(gfx_sun_png_data, gfx_sun_png_len, "client/gfx/sun.png");
 

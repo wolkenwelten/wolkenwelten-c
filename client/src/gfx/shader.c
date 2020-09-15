@@ -16,7 +16,7 @@ shader *sTextMesh;
 void shaderInit(){
 	sMesh      = shaderNew((const char *)src_shader_meshShaderVS_glsl_data,     (const char *)src_shader_meshShaderFS_glsl_data,     0x3);
 	sBlockMesh = shaderNew((const char *)src_shader_blockShaderVS_glsl_data,    (const char *)src_shader_blockShaderFS_glsl_data,    0x3);
-	sParticle  = shaderNew((const char *)src_shader_particleShaderVS_glsl_data, (const char *)src_shader_particleShaderFS_glsl_data, 0x5);
+	sParticle  = shaderNew((const char *)src_shader_particleShaderVS_glsl_data, (const char *)src_shader_particleShaderFS_glsl_data, 0x5|0x8);
 	sTextMesh  = shaderNew((const char *)src_shader_textShaderVS_glsl_data,     (const char *)src_shader_textShaderFS_glsl_data,     0x7);
 }
 
@@ -84,6 +84,9 @@ void shaderCompile(shader *s){
 	}
 	if(s->attrMask & 0x4){
 		glBindAttribLocation(s->pID,2,"color");
+	}
+	if(s->attrMask & 0x8){
+		glBindAttribLocation(s->pID,3,"size");
 	}
 	glLinkProgram(s->pID);
 	shaderPrintLog(s->pID,"Program",buf);

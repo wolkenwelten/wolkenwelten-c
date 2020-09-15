@@ -17,25 +17,25 @@ void fxExplosionBomb(float x,float y,float z,float pw){
 		float vx = (rngValf()-0.5f)/6.f*pw*2;
 		float vy = (rngValf()-0.5f)/6.f*pw*2;
 		float vz = (rngValf()-0.5f)/6.f*pw*2;
-		newParticle(x,y,z,vx,vy,vz,vx/-64.f,vy/-64.f,vz/-64.f,0xFF44AAFF,64);
+		newParticle(x,y,z,vx,vy,vz,vx/-64.f,vy/-64.f,vz/-64.f,64.f,1.f,0xFF44AAFF,64);
 	}
 	for(int i=0;i<4096*pw;i++){
 		float vx = (rngValf()-0.5f)/10.f*pw*2;
 		float vy = (rngValf()-0.5f)/10.f*pw*2;
 		float vz = (rngValf()-0.5f)/10.f*pw*2;
-		newParticle(x,y,z,vx,vy,vz,vx/-78.f,vy/-78.f,vz/-78.f,0xFF0099FF,78);
+		newParticle(x,y,z,vx,vy,vz,vx/-78.f,vy/-78.f,vz/-78.f,64.f,1.f,0xFF0099FF,78);
 	}
 	for(int i=0;i<2048*pw;i++){
 		float vx = (rngValf()-0.5f)/16.f*pw*2;
 		float vy = (rngValf()-0.5f)/16.f*pw*2;
 		float vz = (rngValf()-0.5f)/16.f*pw*2;
-		newParticle(x,y,z,vx,vy,vz,vx/-96.f,vy/-96.f,vz/-96.f,0xFF0066CC,96);
+		newParticle(x,y,z,vx,vy,vz,vx/-96.f,vy/-96.f,vz/-96.f,64.f,1.f,0xFF0066CC,96);
 	}
 	for(int i=0;i<2048*pw;i++){
 		float vx = (rngValf()-0.5f)/32.f*pw*2;
 		float vy = (rngValf()-0.5f)/32.f*pw*2;
 		float vz = (rngValf()-0.5f)/32.f*pw*2;
-		newParticle(x,y,z,vx,vy,vz,0.f,0.f,0.f,0xFF082299,128);
+		newParticle(x,y,z,vx,vy,vz,0.f,0.f,0.f,64.f,1.f,0xFF082299,128);
 	}
 
 	const float pdx = x - player->x;
@@ -61,7 +61,7 @@ void fxGrenadeTrail(float x,float y,float z,float pw){
 	vx = (rngValf()-0.5f)/32.f;
 	vy = (rngValf()-0.5f)/32.f;
 	vz = (rngValf()-0.5f)/32.f;
-	newParticle(x,y,z,vx,vy,vz,vx/64.f,vy/64.f,vz/64.f,0xFF44AAFF,64);
+	newParticle(x,y,z,vx,vy,vz,vx/64.f,vy/64.f,vz/64.f,64.f,1.f,0xFF44AAFF,64);
 }
 
 void fxExplosionBlaster(float x,float y,float z,float pw){
@@ -69,13 +69,13 @@ void fxExplosionBlaster(float x,float y,float z,float pw){
 		float vx = (rngValf()-0.5f)/8.f*pw;
 		float vy = (rngValf()-0.5f)/8.f*pw;
 		float vz = (rngValf()-0.5f)/8.f*pw;
-		newParticle(x,y,z,vx,vy,vz,vx/-64.f,vy/-64.f,vz/-64.f,0xFF964AC0,96);
+		newParticle(x,y,z,vx,vy,vz,vx/-64.f,vy/-64.f,vz/-64.f,64.f,1.f,0xFF964AC0,96);
 	}
 	for(int i=0;i<512;i++){
 		float vx = (rngValf()-0.5f)/12.f*pw;
 		float vy = (rngValf()-0.5f)/12.f*pw;
 		float vz = (rngValf()-0.5f)/12.f*pw;
-		newParticle(x,y,z,vx,vy,vz,vx/-96.f,vy/-96.f,vz/-96.f,0xFF7730A0,78);
+		newParticle(x,y,z,vx,vy,vz,vx/-96.f,vy/-96.f,vz/-96.f,64.f,1.f,0xFF7730A0,78);
 	}
 }
 void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int originatingCharacter){
@@ -119,8 +119,8 @@ void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float 
 		float pvx = (rngValf()-0.5f)/24.f*beamSize;
 		float pvy = (rngValf()-0.5f)/24.f*beamSize;
 		float pvz = (rngValf()-0.5f)/24.f*beamSize;
-		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/4.f,pvy/4.f,pvz/4.f,-pvx/192.f,-pvy/192.f,-pvz/192.f,pac,plifetime*3);
-		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/6.f,pvy/6.f,pvz/6.f,-pvx/256.f,-pvy/256.f,-pvz/256.f,pbc,plifetime*4);
+		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/4.f,pvy/4.f,pvz/4.f,-pvx/192.f,-pvy/192.f,-pvz/192.f,16.f,1.f,pac,plifetime*3);
+		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/6.f,pvy/6.f,pvz/6.f,-pvx/256.f,-pvy/256.f,-pvz/256.f,16.f,1.f,pbc,plifetime*4);
 		cx += vx;
 		cy += vy;
 		cz += vz;

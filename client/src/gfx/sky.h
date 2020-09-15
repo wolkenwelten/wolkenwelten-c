@@ -5,3 +5,4 @@ extern float sunAngle;
 
 void initSky();
 void renderSky(const character *cam);
+void cloudsDraw(const character *cam);
