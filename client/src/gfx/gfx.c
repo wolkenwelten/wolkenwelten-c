@@ -112,9 +112,11 @@ void renderWorld(character *cam){
 	animalDrawAll();
 	entityDrawAll();
 	characterDrawAll();
-	//cloudsDraw(cam);
 	particleDraw();
 	glDepthFunc( GL_LEQUAL );
+
+	cloudOffset += 0.06f;
+	if(cloudOffset > 256.f){cloudOffset-=256.f;}
 }
 
 void renderFrame(){

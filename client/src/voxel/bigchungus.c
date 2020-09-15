@@ -7,6 +7,7 @@
 #include "../gfx/gl.h"
 #include "../gfx/mat.h"
 #include "../gfx/shader.h"
+#include "../gfx/sky.h"
 #include "../gfx/texture.h"
 #include "../misc/options.h"
 #include "../voxel/chungus.h"
@@ -152,6 +153,7 @@ void bigchungusDraw(bigchungus *c, character *cam){
 						loadQueue[loadQueueLen++].chng   = c->chungi[x][y][z];
 					}
 					chungusQueueDraws(c->chungi[x][y][z],cam,drawQueue,&drawQueueLen);
+					cloudsDraw(x,y,z);
 				}
 			}
 		}

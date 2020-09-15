@@ -24,8 +24,8 @@ typedef struct particle {
 
 unsigned int particleVBO = 0;
 
-glParticle glParticles[1<<19];
-particle particles[1<<19];
+glParticle glParticles[1<<20];
+particle particles[1<<20];
 int particleCount = 0;
 
 void particleInit(){
@@ -33,8 +33,8 @@ void particleInit(){
 }
 
 void newParticleS(float x,float y,float z, unsigned int nrgba,float power,int nttl){
-	if((particleCount >= (1<<19))){
-		int i = rngValM(1<<19);
+	if((particleCount >= (1<<20))){
+		int i = rngValM(1<<20);
 		particles[i]   = particles[--particleCount];
 		glParticles[i] = glParticles[particleCount];
 	}
@@ -56,8 +56,8 @@ void newParticleS(float x,float y,float z, unsigned int nrgba,float power,int nt
 }
 
 void newParticle(float x,float y,float z,float vx,float vy,float vz,float vvx,float vvy,float vvz,float size,float vsize,unsigned int nrgba,int nttl){
-	if(particleCount >= (1<<19)){
-		int i = rngValM(1<<19);
+	if(particleCount >= (1<<20)){
+		int i = rngValM(1<<20);
 		particles[i]   = particles[--particleCount];
 		glParticles[i] = glParticles[particleCount];
 	}

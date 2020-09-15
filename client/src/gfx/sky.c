@@ -8,8 +8,12 @@
 #include "../gfx/texture.h"
 #include "../gfx/mesh.h"
 #include "../game/entity.h"
+#include "../voxel/chungus.h"
 #include "../tmp/assets.h"
 #include "../../../common/src/misc/noise.h"
+
+#include <math.h>
+#include <stdio.h>
 
 float sunAngle = 40.f;
 
@@ -19,31 +23,46 @@ texture *tSky;
 texture *tSun;
 
 uint8_t cloudTex[256][256];
+float cloudOffset=0.f;
 
-void cloudsDraw(const character *c){
-	static int x=0;
-	float sx=c->x-512.f;
-	float sy=768.f;
-	float sz=c->z-512.f;
+void cloudsDraw(int cx, int cy, int cz){
+	int toff = (int)cloudOffset;
+	float sx=cx * 256.f + (cloudOffset - (float)toff);
+	float sy=cy * 256.f;
+	float sz=cz * 256.f;
 
-	int ox = (int)c->x-512;
-	int oz = (int)c->z-512;
+	if(cy&1){return;}
 
-	for(int z=0;z<256;z++){
-		uint8_t v = cloudTex[(ox+x*4)&0xFF][(oz+z*4)&0xFF];
-		if(v > 228){
-			newParticle(sx+x*4,sy+8.f,sz+z*4,0,0,0,0,0,0,4096.f,0.5f,0xD0D0D0D0,1024);
-		}
-		if(v > 192){
-			newParticle(sx+x*4,sy+4.f,sz+z*4,0,0,0,0,0,0,4096.f,0.5f,0xD0D0D0D0,1024);
-		}
-		if(v > 178){
-			newParticle(sx+x*4,sy    ,sz+z*4,0,0,0,0,0,0,4096.f,0.5f,0xD0D0D0D0,1024);
+
+	const int ttl=1;
+	const int MUL=1;
+
+	for(int x=0;x<256;x++){
+		const float px = sx+((float)(x*MUL));
+		const int tx = x - toff;
+		for(int z=0;z<256;z++){
+			const float pz = sz+((float)(z*MUL));
+			const int tz = z;
+			uint8_t v = cloudTex[tx&0xFF][tz];
+			if(v > 248){
+				newParticle(px,sy+8.f,pz,0,0,0,0,0,0,2048.f,0.5f,0xE0F0F0F0,ttl);
+				newParticle(px,sy-4.f,pz,0,0,0,0,0,0,2048.f,0.5f,0xE0F0F0F0,ttl);
+			}else if(v > 240){
+				newParticle(px,sy+6.f,pz,0,0,0,0,0,0,2048.f,0.5f,0xE0E0E0E0,ttl);
+				newParticle(px,sy-3.f,pz,0,0,0,0,0,0,2048.f,0.5f,0xE0E0E0E0,ttl);
+			}else if(v > 224){
+				newParticle(px,sy+4.f,pz,0,0,0,0,0,0,2048.f,0.5f,0xD0E0E0E0,ttl);
+				newParticle(px,sy-2.f,pz,0,0,0,0,0,0,2048.f,0.5f,0xD0E0E0E0,ttl);
+			}else if(v > 192){
+				newParticle(px,sy+2.f,pz,0,0,0,0,0,0,1536.f,0.5f,0xC0E0E0E0,ttl);
+				newParticle(px,sy-1.f,pz,0,0,0,0,0,0,1536.f,0.5f,0xC0E0E0E0,ttl);
+			}else if(v > 178){
+				newParticle(px,sy    ,pz,0,0,0,0,0,0,1024.f,0.5f,0xA0D0D0D0,ttl);
+			}else if(v > 164){
+				newParticle(px,sy    ,pz,0,0,0,0,0,0, 768.f,0.5f,0x70B0B0B0,ttl);
+			}
 		}
 	}
-	x = (x+1)&0xFF;
-
-	//newParticle(c->x+2,c->y+2,c->z,0,0,0,0,0,0,256.f,1.f,0xD0D0D0D0,64);
 }
 
 
