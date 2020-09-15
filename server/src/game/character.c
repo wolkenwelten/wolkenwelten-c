@@ -178,7 +178,7 @@ int characterLoadData(int c){
 
 void characterLoadSendData(int c){
 	int sx,sy,sz;
-	item emptyInventory[40] = {0};
+	item emptyInventory[40] = {{0}};
 	if(characterLoadData(c)){return;}
 
 	bigchungusGetSpawnPos(&world,&sx,&sy,&sz);

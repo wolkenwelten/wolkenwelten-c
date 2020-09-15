@@ -476,8 +476,9 @@ uint animalSyncPlayer(int c, uint offset){
 	return offset;
 }
 
-uint8_t *animalSave(animal *e, uint8_t *b){
-	float *f = (float *)b;
+void *animalSave(animal *e, void *buf){
+	uint8_t *b = (uint8_t *)buf;
+	float *f = (float *)buf;
 
 	b[ 0] = 0x03;
 	b[ 1] = e->flags;
@@ -507,8 +508,9 @@ uint8_t *animalSave(animal *e, uint8_t *b){
 	return b+12*4;
 }
 
-uint8_t *animalLoad(uint8_t *b){
-	float *f  = (float *)b;
+void *animalLoad(void *buf){
+	uint8_t *b = (uint8_t *)buf;
+	float *f  = (float *)buf;
 	animal *e = animalNew(f[3],f[4],f[5],b[2]);
 	if(e == NULL){return b+12*4;}
 
@@ -532,7 +534,8 @@ uint8_t *animalLoad(uint8_t *b){
 	return b+12*4;
 }
 
-uint8_t *animalSaveChungus(chungus *c,uint8_t *b){
+void *animalSaveChungus(chungus *c,void *b){
+
 	if(c == NULL){return b;}
 	for(uint i=0;i<animalCount;i++){
 		if(animalList[i].curChungus != c){continue;}

@@ -117,11 +117,11 @@ void itemDropUpdate(){
 		int oldp,newp;
 		entity *e = itemDrops[i].ent;
 		chungus *oldc = e->curChungus;
-		
+
 		oldp = ((int)e->x&0xFF)|(((int)e->y&0xFF)<<8)|(((int)e->z&0xFF)<<16);
 		entityUpdate(e);
 		newp = ((int)e->x&0xFF)|(((int)e->y&0xFF)<<8)|(((int)e->z&0xFF)<<16);
-		
+
 		if(oldc != e->curChungus){
 			if(oldc != NULL){oldc->clientsUpdated &= mask;}
 			oldp = 1<<30;
@@ -154,9 +154,10 @@ void itemDropIntro(int c){
 	}
 }
 
-uint8_t *itemDropSave(itemDrop *i, uint8_t *b){
-	uint16_t *s = (uint16_t *)b;
-	float    *f = (float *)   b;
+void *itemDropSave(itemDrop *i, void *buf){
+	uint8_t  *b = (uint8_t *) buf;
+	uint16_t *s = (uint16_t *)buf;
+	float    *f = (float *)   buf;
 
 	if(i      == NULL){return b;}
 	if(i->ent == NULL){return b;}
@@ -167,7 +168,7 @@ uint8_t *itemDropSave(itemDrop *i, uint8_t *b){
 	s[1] = i->itm.ID;
 	s[2] = i->itm.amount;
 	s[3] = 0;
-	
+
 	f[2] = i->ent->x;
 	f[3] = i->ent->y;
 	f[4] = i->ent->z;
@@ -178,9 +179,10 @@ uint8_t *itemDropSave(itemDrop *i, uint8_t *b){
 	return b+32;
 }
 
-uint8_t *itemDropLoad(uint8_t *b){
-	uint16_t *s = (uint16_t *)b;
-	float    *f = (float *)   b;
+void *itemDropLoad(void *buf){
+	uint8_t  *b = (uint8_t *) buf;
+	uint16_t *s = (uint16_t *)buf;
+	float    *f = (float *)   buf;
 
 	itemDrop *id = itemDropNew();
 	if(id == NULL){return b+32;}
@@ -196,13 +198,13 @@ uint8_t *itemDropLoad(uint8_t *b){
 	return b+32;
 }
 
-uint8_t *itemDropSaveChungus(chungus *c,uint8_t *b){
-	if(c == NULL){return b;}	
+void *itemDropSaveChungus(chungus *c,void *buf){
+	if(c == NULL){return buf;}
 	for(int i=0;i<itemDropCount;i++){
 		if(itemDrops[i].ent->curChungus != c){continue;}
-		b = itemDropSave(&itemDrops[i],b);
+		buf = itemDropSave(&itemDrops[i],buf);
 	}
-	return b;
+	return buf;
 }
 
 void itemDropDelChungus(chungus *c){
