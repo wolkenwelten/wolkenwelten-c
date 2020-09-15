@@ -2,6 +2,7 @@
 
 #include "geoworld.h"
 #include "vegetation.h"
+#include "../game/animal.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
 
@@ -23,21 +24,21 @@ void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
 				case 3:
 					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,13);
 				break;
-				
+
 				case 4:
 				case 5:
 				case 6:
 				case 7:
 					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,4);
 				break;
-				
+
 				case 8:
 				case 9:
 				case 10:
 				case 11:
 					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,1);
 				break;
-				
+
 				case 63:
 					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,18);
 				break;
@@ -117,6 +118,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 	int stoneChance    = 0;
 	int dirtChance     = 0;
 	int monolithChance = 0;
+	int animalChance   = 0;
 	int treeType = rngValM(2);
 	bool hasSpecial = false;
 	if(wgen->minX < 0){wgen->minX = 0;}
@@ -131,34 +133,40 @@ void worldgenRemoveDirt(worldgen *wgen){
 			bigTreeChance  =   148;
 			treeChance     =    28;
 			shrubChance    =    20;
+			animalChance   =   512;
 		break;
 		case 6:
 			bigTreeChance  =   192;
 			treeChance     =    32;
 			shrubChance    =    24;
+			animalChance   =   768;
 		break;
 		default:
 		case 5:
 			bigTreeChance  =   256;
 			treeChance     =    48;
 			shrubChance    =    48;
+			animalChance   =  1024;
 		break;
 		case 4:
 			bigTreeChance  =   512;
 			treeChance     =    96;
 			shrubChance    =    64;
+			animalChance   =  2048;
 		break;
 		case 3:
 			treeChance     =   768;
 			shrubChance    =    96;
 			dirtChance     =    32;
 			stoneChance    =   256;
+			animalChance   =  4096;
 		break;
 		case 2:
 			treeChance     =  1024;
 			shrubChance    =    64;
 			dirtChance     =    12;
 			stoneChance    =   128;
+			animalChance   =  8192;
 		break;
 		case 1:
 			shrubChance    =   256;
@@ -166,6 +174,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 			stoneChance    =    64;
 			treeChance     =  4096;
 			deadTreeChance =  4096;
+			animalChance   =  8192;
 		break;
 		case 0:
 			shrubChance    =  1024;
@@ -174,6 +183,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 			monolithChance = 32000;
 			treeChance     =  8192*2;
 			deadTreeChance =  8192;
+			animalChance   =  8192*2;
 		break;
 	}
 
@@ -207,7 +217,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 
 					case 1:
 						if(!hasSpecial){
-							if(monolithChance && (rngValM(monolithChance)==12)){
+							if(monolithChance && (rngValM(monolithChance)==0)){
 								worldgenMonolith(wgen,cx,cy,cz);
 								lastBlock = 9;
 								airBlocks = 0;
@@ -216,7 +226,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 							}
 						}
 
-						if(bigTreeChance && (airBlocks > 32) && (rngValM(bigTreeChance)==12)){
+						if(bigTreeChance && (airBlocks > 32) && (rngValM(bigTreeChance)==0)){
 							if(treeType==0){
 								worldgenBigSpruce(wgen,cx,cy,cz);
 							}else if(treeType == 1){
@@ -228,7 +238,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 							airBlocks = 0;
 							continue;
 						}
-						if(treeChance && (airBlocks > 16) && (rngValM(treeChance)==12)){
+						if(treeChance && (airBlocks > 16) && (rngValM(treeChance)==0)){
 							if(treeType==0){
 								worldgenSpruce(wgen,cx,cy,cz);
 							}else if(treeType == 1){
@@ -238,7 +248,10 @@ void worldgenRemoveDirt(worldgen *wgen){
 							airBlocks = 0;
 							continue;
 						}
-						if(deadTreeChance && (airBlocks > 16) && (rngValM(deadTreeChance)==12)){
+						if(animalChance && (airBlocks > 4) && (rngValM(animalChance)==0)){
+							animalNew(wgen->gx+cx,wgen->gy+cy,wgen->gz+cz,1);
+						}
+						if(deadTreeChance && (airBlocks > 16) && (rngValM(deadTreeChance)==0)){
 							worldgenDeadTree(wgen,cx,cy,cz);
 							lastBlock = 5;
 							airBlocks = 0;
