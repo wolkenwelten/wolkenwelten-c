@@ -107,171 +107,6 @@ float animalClosestAnimal(animal *e, animal **cAnim, int typeFilter){
 	return ret;
 }
 
-void animalSLoiter(animal *e){
-	character *cChar;
-	animal *cAnim;
-	float dist = animalClosestPlayer(e,&cChar);
-	if((dist < 24.f) && (cChar != NULL)){
-		if(!(e->flags & ANIMAL_FALLING)){
-			e->vy = 0.03f;
-			e->sleepy -= 2;
-		}
-		e->sleepy -= 2;
-		e->state = 1;
-		return;
-	}
-
-	if(e->hunger < 64){
-		const uint8_t cb = worldGetB(e->x,e->y-.6f,e->z);
-		if((cb == 2) && (rngValM(128) == 0)){
-			worldSetB(e->x,e->y-.6f,e->z,1);
-			e->hunger += 48;
-		}
-	}
-
-	if((e->age > 20) && (rngValM( 128) == 0)){
-		if(animalClosestAnimal(e,&cAnim,e->type) < 192.f){
-			if(cAnim->age > 20){
-				e->state = 2;
-				return;
-			}
-		}
-	}
-
-	if(rngValM( 128) == 0){
-		e->gyaw = e->yaw + ((rngValf()*2.f)-1.f)*4.f;
-	}
-	if(rngValM(  64) == 0){
-		e->gvx = 0;
-		e->gvy = 0;
-		e->gvz = 0;
-	}
-	if(rngValM(1024) == 0){
-		e->gpitch = ((rngValf()*2.f)-1.f)*10.f;
-	}
-	if(rngValM(2048) == 0){
-		e->gyaw = ((rngValf()*2.f)-1.f)*360.f;
-	}
-	if(rngValM( 512) == 0){
-		vec dir = vecMulS(vecDegToVec(vecNew(e->yaw,0.f,0.f)),0.01f);
-		e->gvx = dir.x;
-		e->gvz = dir.z;
-	}
-	
-	if(rngValM(2048) > (uint)(127-e->age)){
-		e->state = 4;
-		return;
-	}
-}
-
-void animalSSleep(animal *e){
-	character *cChar;
-	e->gvx = 0;
-	e->gvz = 0;
-
-	if(e->sleepy > 120){
-		e->state  = 0;
-		e->gpitch = 0.f;
-		return;
-	}else if(e->sleepy > 64){
-		if(rngValM(1<<14) <= (uint)(e->sleepy-64)){
-			e->state  = 0;
-			e->gpitch = 0.f;
-			return;
-		}
-		float dist = animalClosestPlayer(e,&cChar);
-		if((dist < 24.f) && (cChar != NULL)){
-			if(!(e->flags & ANIMAL_FALLING)){
-				e->vy     = 0.04f;
-				e->sleepy -= 2;
-			}
-			e->sleepy -= 2;
-			e->gpitch = 0.f;
-			e->state  = 1;
-			return;
-		}
-	}else if(e->sleepy > 8){
-		float dist = animalClosestPlayer(e,&cChar);
-		if((dist < 9.f) && (cChar != NULL)){
-			if(!(e->flags & ANIMAL_FALLING)){
-				e->vy     = 0.05f;
-				e->sleepy -= 4;
-			}
-			e->sleepy -= 2;
-			e->gpitch = 0.f;
-			e->state  = 1;
-			return;
-		}
-	}
-
-	if(e->flags & ANIMAL_BELLYSLEEP){
-		e->gpitch = -90.f;
-	}else{
-		e->gpitch =  90.f;
-	}
-	if(rngValM(16) == 0){
-		e->sleepy++;
-	}
-}
-
-void animalSHorny(animal *e){
-	animal *cAnim;
-	float dist = animalClosestAnimal(e,&cAnim,e->type);
-	if((dist > 256.f) || (cAnim == NULL)){ e->state = 0; }
-
-	if((e->hunger < 24) || (e->sleepy < 48)){
-		e->state = 0;
-		return;
-	}
-	if((cAnim->hunger < 24) || (cAnim->sleepy < 48)){
-		e->state = 0;
-		return;
-	}
-
-	if(dist < 2.f){
-		e->state   =  0;
-		e->hunger -= 16;
-		e->sleepy -= 24;
-
-		cAnim->state   =  0;
-		cAnim->hunger -= 16;
-		cAnim->sleepy -= 24;
-
-		cAnim = animalNew(e->x+((rngValf()*2.f)-1.f),e->y+.4f,e->z+((rngValf()*2.f)-1.f),e->type);
-		cAnim->age = 1;
-		return;
-	}
-
-	vec caNorm = vecNorm(vecNew(e->x - cAnim->x,e->y - cAnim->y, e->z - cAnim->z));
-	vec caVel  = vecMulS(caNorm,-0.03f);
-	vec caRot  = vecVecToDeg(caNorm);
-
-	e->gvx = caVel.x;
-	e->gvz = caVel.z;
-
-	e->yaw = -caRot.yaw + 180.f;
-}
-
-void animalSFlee(animal *e){
-	character *cChar;
-	const float dist = animalClosestPlayer(e,&cChar);
-	if(rngValM(1<<10) == 0){e->hunger--;}
-	if((dist > 96.f) && (cChar != NULL)){
-		e->state   = 0;
-		e->sleepy -= 2;
-		return;
-	}
-	if(cChar != NULL){
-		vec caNorm = vecNorm(vecNew(e->x - cChar->x,0.f, e->z - cChar->z));
-		vec caVel  = vecMulS(caNorm,0.03f);
-		vec caRot  = vecVecToDeg(caNorm);
-
-		e->gvx = caVel.x;
-		e->gvz = caVel.z;
-		e->yaw = -caRot.yaw;
-	}
-}
-
 void animalCheckSuffocation(animal *e){
 	const uint8_t cb = worldGetB(e->x,e->y,e->z);
 	if(cb != 0){
@@ -306,6 +141,19 @@ void animalCheckForHillOrCliff(animal *e){
 	}
 }
 
+int animalCheckHeat(animal *e){
+	if((e->age > 20) && (rngValM( 128) == 0)){
+		animal *cAnim;
+		if(animalClosestAnimal(e,&cAnim,e->type) < 192.f){
+			if(cAnim->age > 20){
+				e->state = ANIMAL_S_HEAT;
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
 void animalAgeing(animal *e){
 	if(e->age < 125){
 		if(rngValM(1<<14) == 0){e->age++;}
@@ -318,11 +166,11 @@ void animalAgeing(animal *e){
 void animalSleepyness(animal *e){
 	if (rngValM( 512) == 0){e->sleepy--;}
 	if((e->state != 1) && (e->sleepy < 16)){
-		e->state = 3;
+		e->state = ANIMAL_S_SLEEP;
 		return;
 	}
 	if((e->state == 1) && (e->sleepy <  2)){
-		e->state = 3;
+		e->state = ANIMAL_S_SLEEP;
 		return;
 	}
 }
@@ -332,39 +180,178 @@ void animalHunger(animal *e){
 		e->hunger--;
 	}
 	if((e->state != 0) && (e->state == 1) && (e->hunger <  32)){
-		e->state = 0;
+		e->state = ANIMAL_S_LOITER;
 		return;
 	}
 }
 
-void animalSExist(animal *e){
-	animalCheckSuffocation(e);
-	animalCheckForHillOrCliff(e);
-	animalAgeing(e);
-	animalSleepyness(e);
-	animalHunger(e);
+void animalSLoiter(animal *e){
+	character *cChar;
+	float dist = animalClosestPlayer(e,&cChar);
+	if((dist < 24.f) && (cChar != NULL)){
+		if(!(e->flags & ANIMAL_FALLING)){
+			e->vy = 0.03f;
+			e->sleepy -= 2;
+		}
+		e->sleepy -= 2;
+		e->state = ANIMAL_S_FLEE;
+		return;
+	}
+
+	if(e->hunger < 64){
+		const uint8_t cb = worldGetB(e->x,e->y-.6f,e->z);
+		if((cb == 2) && (rngValM(128) == 0)){
+			worldSetB(e->x,e->y-.6f,e->z,1);
+			e->hunger += 48;
+		}
+	}
+	if(animalCheckHeat(e)){return;}
+
+
+	if(rngValM( 128) == 0){
+		e->gyaw = e->yaw + ((rngValf()*2.f)-1.f)*4.f;
+	}
+	if(rngValM(  64) == 0){
+		e->gvx = 0;
+		e->gvy = 0;
+		e->gvz = 0;
+	}
+	if(rngValM(1024) == 0){
+		e->gpitch = ((rngValf()*2.f)-1.f)*10.f;
+	}
+	if(rngValM(2048) == 0){
+		e->gyaw = ((rngValf()*2.f)-1.f)*360.f;
+	}
+	if(rngValM( 512) == 0){
+		vec dir = vecMulS(vecDegToVec(vecNew(e->yaw,0.f,0.f)),0.01f);
+		e->gvx = dir.x;
+		e->gvz = dir.z;
+	}
+
+	if(rngValM(2048) > (uint)(127-e->age)){
+		e->state = ANIMAL_S_PLAYING;
+		return;
+	}
+}
+
+void animalSSleep(animal *e){
+	character *cChar;
+	e->gvx = 0;
+	e->gvz = 0;
+
+	if(e->sleepy > 120){
+		e->state  = ANIMAL_S_LOITER;
+		e->gpitch = 0.f;
+		return;
+	}else if(e->sleepy > 64){
+		if(rngValM(1<<14) <= (uint)(e->sleepy-64)){
+			e->state  = ANIMAL_S_LOITER;
+			e->gpitch = 0.f;
+			return;
+		}
+		float dist = animalClosestPlayer(e,&cChar);
+		if((dist < 24.f) && (cChar != NULL)){
+			if(!(e->flags & ANIMAL_FALLING)){
+				e->vy     = 0.04f;
+				e->sleepy -= 2;
+			}
+			e->sleepy -= 2;
+			e->gpitch = 0.f;
+			e->state  = ANIMAL_S_FLEE;
+			return;
+		}
+	}else if(e->sleepy > 8){
+		float dist = animalClosestPlayer(e,&cChar);
+		if((dist < 9.f) && (cChar != NULL)){
+			if(!(e->flags & ANIMAL_FALLING)){
+				e->vy     = 0.05f;
+				e->sleepy -= 4;
+			}
+			e->sleepy -= 2;
+			e->gpitch = 0.f;
+			e->state  = ANIMAL_S_FLEE;
+			return;
+		}
+	}
+
+	if(e->flags & ANIMAL_BELLYSLEEP){
+		e->gpitch = -90.f;
+	}else{
+		e->gpitch =  90.f;
+	}
+	if(rngValM(16) == 0){
+		e->sleepy++;
+	}
+}
+
+void animalSHeat(animal *e){
+	animal *cAnim;
+	float dist = animalClosestAnimal(e,&cAnim,e->type);
+	if((dist > 256.f) || (cAnim == NULL)){ e->state = 0; }
+
+	if((e->hunger < 24) || (e->sleepy < 48)){
+		e->state = ANIMAL_S_LOITER;
+		return;
+	}
+	if((cAnim->hunger < 24) || (cAnim->sleepy < 48)){
+		e->state = ANIMAL_S_LOITER;
+		return;
+	}
+
+	if(dist < 2.f){
+		e->state   =  ANIMAL_S_LOITER;
+		e->hunger -= 16;
+		e->sleepy -= 24;
+
+		cAnim->state   = ANIMAL_S_LOITER;
+		cAnim->hunger -= 16;
+		cAnim->sleepy -= 24;
+
+		cAnim = animalNew(e->x+((rngValf()*2.f)-1.f),e->y+.4f,e->z+((rngValf()*2.f)-1.f),e->type);
+		cAnim->age = 1;
+		return;
+	}
+
+	vec caNorm = vecNorm(vecNew(e->x - cAnim->x,e->y - cAnim->y, e->z - cAnim->z));
+	vec caVel  = vecMulS(caNorm,-0.03f);
+	vec caRot  = vecVecToDeg(caNorm);
+
+	e->gvx = caVel.x;
+	e->gvz = caVel.z;
+
+	e->yaw = -caRot.yaw + 180.f;
+}
+
+void animalSFlee(animal *e){
+	character *cChar;
+	const float dist = animalClosestPlayer(e,&cChar);
+	if(rngValM(1<<10) == 0){e->hunger--;}
+	if((dist > 96.f) && (cChar != NULL)){
+		e->state   = ANIMAL_S_LOITER;
+		e->sleepy -= 2;
+		return;
+	}
+	if(cChar != NULL){
+		vec caNorm = vecNorm(vecNew(e->x - cChar->x,0.f, e->z - cChar->z));
+		vec caVel  = vecMulS(caNorm,0.03f);
+		vec caRot  = vecVecToDeg(caNorm);
+
+		e->gvx = caVel.x;
+		e->gvz = caVel.z;
+		e->yaw = -caRot.yaw;
+	}
 }
 
 void animalSPlayful(animal *e){
 	character *cChar;
-	animal *cAnim;
 	float dist = animalClosestPlayer(e,&cChar);
 	if (rngValM( 192) == 0){e->sleepy--;}
 	if((dist < 35.f) && (cChar != NULL)){
-		e->state = 1;
+		e->state = ANIMAL_S_FLEE;
 		return;
 	}
-	
-	
-	if((e->age > 20) && (rngValM( 128) == 0)){
-		if(animalClosestAnimal(e,&cAnim,e->type) < 192.f){
-			if(cAnim->age > 20){
-				e->state = 2;
-				return;
-			}
-		}
-	}
-	
+	if(animalCheckHeat(e)){return;}
+
 	if((rngValM( 128) == 0) && (fabsf(e->vy) < 0.001f)){
 		e->vy = 0.03f;
 	}
@@ -384,30 +371,38 @@ void animalSPlayful(animal *e){
 		e->gvx = dir.x;
 		e->gvz = dir.z;
 	}
-	
+
 	if (rngValM(1024) > (uint)( e->age)){
 		e->state = 4;
 		return;
 	}
 }
 
+void animalSExist(animal *e){
+	animalCheckSuffocation(e);
+	animalCheckForHillOrCliff(e);
+	animalAgeing(e);
+	animalSleepyness(e);
+	animalHunger(e);
+}
+
 inline static void animalThink(animal *e){
 	animalSExist(e);
 	switch(e->state){
 		default:
-		case 0:
+		case ANIMAL_S_LOITER:
 			animalSLoiter(e);
 			break;
-		case 1:
+		case ANIMAL_S_FLEE:
 			animalSFlee(e);
 			break;
-		case 2:
-			animalSHorny(e);
+		case ANIMAL_S_HEAT:
+			animalSHeat(e);
 			break;
-		case 3:
+		case ANIMAL_S_SLEEP:
 			animalSSleep(e);
 			break;
-		case 4:
+		case ANIMAL_S_PLAYING:
 			animalSPlayful(e);
 			break;
 	}

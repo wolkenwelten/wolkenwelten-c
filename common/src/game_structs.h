@@ -94,27 +94,33 @@ typedef struct {
 	float  x, y, z;
 	float vx,vy,vz;
 	float yaw,pitch,roll;
-	
+
 	float gyaw,gpitch;
 	float gvx,gvy,gvz;
-	
+
 	int8_t age;
 	int8_t health;
 	int8_t hunger;
 	int8_t thirst;
 	int8_t sleepy;
-	
+
 	unsigned int breathing;
-	
+
 	uint8_t flags;
 	uint8_t type;
 	uint8_t state;
-	
+
 	chungus *curChungus;
 } animal;
 #define ANIMAL_FALLING    (1   )
 #define ANIMAL_BELLYSLEEP (1<<1)
 #define ANIMAL_COLLIDE    (1<<3)
+
+#define ANIMAL_S_LOITER    0
+#define ANIMAL_S_FLEE      1
+#define ANIMAL_S_HEAT      2
+#define ANIMAL_S_SLEEP     3
+#define ANIMAL_S_PLAYING   4
 
 struct grapplingHook {
 	entity       *ent;
