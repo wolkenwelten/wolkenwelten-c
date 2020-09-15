@@ -68,8 +68,6 @@ void itemDropUpdateFromServer(packet *p){
 
 	if(itemDrops[d].ent == NULL) {
 		itemDrops[d].ent = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
-	}
-	if(itemDrops[d].aniStep == 0){
 		itemDrops[d].aniStep = rngValM(1024);
 	}
 	itemDrops[d].itm.ID     = p->val.s[2];
