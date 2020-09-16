@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+shift
+while (("$#")); do
+	zopflipng -y -m "$1" "$1"
+	shift
+done
