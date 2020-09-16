@@ -136,8 +136,8 @@ void parseFile(const char *filename){
 	size_t len = 0;
 	item *itm;
 	int lineNumber=0;
-	unsigned char *file = loadFile(filename,&len);
-	unsigned char *line = file;
+	char *file = loadFile(filename,&len);
+	char *line = file;
 	if(file == NULL){
 		fprintf(stderr,"ERROR LOADING `%s`\n",filename);
 		return;
