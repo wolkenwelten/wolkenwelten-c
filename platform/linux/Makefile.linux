@@ -17,10 +17,10 @@ ifndef NOLINUXRELEASE
 	release: release.linux
 endif
 
-release.linux: releases/linux/wolkenwelten-linux.tar.xz
-releases/linux/wolkenwelten-linux.tar.xz: releases/linux/wolkenwelten/wolkenwelten
-releases/linux/wolkenwelten-linux.tar.xz: releases/linux/wolkenwelten/wolkenwelten-server
-	cd releases/linux/ && tar -cJf wolkenwelten-linux.tar.xz wolkenwelten/
+release.linux: releases/linux/wolkenwelten-linux.tar.zstd
+releases/linux/wolkenwelten-linux.tar.zstd: releases/linux/wolkenwelten/wolkenwelten
+releases/linux/wolkenwelten-linux.tar.zstd: releases/linux/wolkenwelten/wolkenwelten-server
+	cd releases/linux/ && tar -c wolkenwelten/ | zstd -z -19 - -o $@
 
 
 releases/linux/wolkenwelten/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
