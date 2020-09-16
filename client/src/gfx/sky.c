@@ -25,33 +25,46 @@ texture *tSun;
 uint8_t cloudTex[256][256];
 float cloudOffset=0.f;
 
+#define CLOUD_FADED 8192
+#define CLOUD_MIND  (65536*2)
 
 void cloudsDraw(int cx, int cy, int cz){
 	const int density = 168;
-	const int toff = (int)cloudOffset;
+	const int toff    = cloudOffset;
 	float sx=cx * 256.f + (cloudOffset - (float)toff);
 	float sy=cy * 256.f;
 	float sz=cz * 256.f;
 	if(cy&1){return;}
+	const float dy = (sy - player->y) * (sy - player->y);
 
 	for(uint x=0;x<256;x++){
-		const float px = sx+x;
-		const int tx = (x - toff)&0xFF;
+		const float px  = sx+x;
+		const float dxy = dy + ((px - player->x) * (px - player->x));
+		const int tx    = (x - toff)&0xFF;
 		for(uint z=0;z<256;z++){
-			const float    pz = sz+z;
 			const uint8_t  v  = cloudTex[tx][z];
+			if(v < density){ continue; }
+			const float    pz = sz+z;
+			const float    dz = (pz - player->z) * (pz - player->z);
+			const float    dd = dxy+dz;
 			const float    vf = v-170;
 			const uint8_t  ta = (208+((256 - v)/2));
 			const uint8_t  tb = (178+((256 - v)/4));
 			const uint8_t  ba = (164+((256 - v)  ));
 			const uint8_t  bb = (142+((256 - v)/2));
-			const uint32_t ct = (v<<24) | (tb<<16) | (ta<<8) | ta;
-			const uint32_t cb = (v<<24) | (bb<<16) | (ba<<8) | ba;
+			uint32_t a;
+			if(dd > (CLOUD_MIND+CLOUD_FADED)){continue;}
+			if(dd > CLOUD_MIND){
+				a = (uint8_t)(v*(1.f-((dd - CLOUD_MIND)/CLOUD_FADED))) << 24;
+			}else{
+				a = v << 24;
+			}
+			const uint32_t ct = a | (tb<<16) | (ta<<8) | ta;
+			const uint32_t cb = a | (bb<<16) | (ba<<8) | ba;
 
-			if(v < density){ continue; }
-			newParticle(px,sy+vf/18.f,pz,0,0,0,0,0,0,1024.f,0.f,cb,1);
-			newParticle(px,sy-vf/12.f,pz,0,0,0,0,0,0,1024.f,0.f,cb,1);
-			newParticle(px,sy+vf/ 6.f,pz,0,0,0,0,0,0,1024.f,0.f,ct,1);
+			newParticle(px,sy+vf/18.f,pz,0,0,0,0,0,0,1024,0,cb,1);
+			newParticle(px,sy-vf/12.f,pz,0,0,0,0,0,0,1024,0,cb,1);
+			newParticle(px,sy+vf/ 6.f,pz,0,0,0,0,0,0,1024,0,ct,1);
 		}
 	}
 }
