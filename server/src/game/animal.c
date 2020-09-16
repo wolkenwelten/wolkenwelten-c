@@ -308,7 +308,9 @@ void animalSHeat(animal *e){
 		cAnim->sleepy -= 24;
 
 		cAnim = animalNew(e->x+((rngValf()*2.f)-1.f),e->y+.4f,e->z+((rngValf()*2.f)-1.f),e->type);
-		cAnim->age = 1;
+		if(cAnim != NULL){
+			cAnim->age = 1;
+		}
 		return;
 	}
 
