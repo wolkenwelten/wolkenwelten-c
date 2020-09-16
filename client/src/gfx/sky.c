@@ -49,9 +49,9 @@ void cloudsDraw(int cx, int cy, int cz){
 			const float    dd = dxy+dz;
 			const float    vf = v-170;
 			const uint8_t  ta = (208+((256 - v)/2));
-			const uint8_t  tb = (178+((256 - v)/4));
+			const uint8_t  tb = (188+((256 - v)/4));
 			const uint8_t  ba = (164+((256 - v)  ));
-			const uint8_t  bb = (128+((256 - v)/2));
+			const uint8_t  bb = (148+((256 - v)/2));
 			uint32_t a;
 			if(dd > (CLOUD_MIND+CLOUD_FADED)){continue;}
 			if(dd > CLOUD_MIND){
