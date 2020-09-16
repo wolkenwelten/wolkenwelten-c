@@ -20,7 +20,7 @@ endif
 release.linux: releases/linux/wolkenwelten-linux.tar.zstd
 releases/linux/wolkenwelten-linux.tar.zstd: releases/linux/wolkenwelten/wolkenwelten
 releases/linux/wolkenwelten-linux.tar.zstd: releases/linux/wolkenwelten/wolkenwelten-server
-	cd releases/linux/ && tar -c wolkenwelten/ | zstd -z -19 - -o wolkenwelten-linux.tar.zstd
+	cd releases/linux/ && tar -c wolkenwelten/ | zstd -z -f -q -19 - -o wolkenwelten-linux.tar.zstd
 
 
 releases/linux/wolkenwelten/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
@@ -34,7 +34,7 @@ releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/sfx.c client/src/tmp/sf
 releases/linux/wolkenwelten/wolkenwelten: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p releases/linux/wolkenwelten/
 	$(CC) $(CLIENT_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
-	strip -gxX $@
+	strip -sgxX $@
 
 releases/linux/wolkenwelten/wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
 releases/linux/wolkenwelten/wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
@@ -45,4 +45,4 @@ releases/linux/wolkenwelten/wolkenwelten-server: server/src/tmp/mods_tmp.c serve
 releases/linux/wolkenwelten/wolkenwelten-server: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p releases/linux/wolkenwelten/
 	musl-gcc -static $(SERVER_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES)
-	strip -gxX $@
+	strip -sgxX $@
