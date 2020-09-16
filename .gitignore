@@ -33,9 +33,9 @@ platform/win/msys2_pkgs/mingw-w64-SDL2/*
 
 # mingw64 makepkg files
 platform/win_cross/pkgs/mingw-w64-sdl2_mixer/*
-!platform/win/pkgs/mingw-w64-SDL2_mixer/PKGBUILD
+!platform/win_cross/pkgs/mingw-w64-sdl2_mixer/PKGBUILD
 platform/win_cross/pkgs/mingw-w64-sdl2/*
-!platform/win/pkgs/mingw-w64-SDL2/PKGBUILD
+!platform/win_cross/pkgs/mingw-w64-sdl2/PKGBUILD
 
 
 # Executables/Object files
