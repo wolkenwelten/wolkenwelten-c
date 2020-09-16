@@ -80,55 +80,31 @@ void fxExplosionBlaster(float x,float y,float z,float pw){
 }
 void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int originatingCharacter){
 	(void)recoilMultiplier;
-	int steps = 0;
+	uint max  = 1<<16;
+	float lastDist = 999999.f;
 	float minPlayerDist = 100.f;
-	float cx = x1;
-	float cy = y1;
-	float cz = z1;
-
-	float dx = x2-x1;
-	float dy = y2-y1;
-	float dz = z2-z1;
-	float dm = fabsf(dx);
-	if(fabsf(dy) > dm){dm = fabsf(dy);}
-	if(fabsf(dz) > dm){dm = fabsf(dz);}
-
-	float vx = (dx / dm)/(24.f*beamSize);
-	float vy = (dy / dm)/(24.f*beamSize);
-	float vz = (dz / dm)/(24.f*beamSize);
-
-	if(fabsf(vx) > fabsf(vy)){
-		if(fabsf(vx) > fabsf(vz)){
-			steps = (x2 - x1) / vx;
-		}else{
-			steps = (z2 - z1) / vz;
-		}
-	}else{
-		if(fabsf(vy) > fabsf(vz)){
-			steps = (y2 - y1) / vy;
-		}else{
-			steps = (z2 - z1) / vz;
-		}
-	}
-	uint32_t pac = 0xFF0000FF | ((0x50 + rngValM(0x30)) << 16) | ((0x30 + rngValM(0x30)) << 8);
+	vec v,c = vecNew(x2,y2,z2);
+	
+	uint32_t pac = 0xD0000000 | ((0x50 + rngValM(0x40)) << 16) | ((0x30 + rngValM(0x40)) << 8) | (0xE0 + rngValM(0x1F));
 	uint32_t pbc = pac + 0x00202000;
-	int plifetime = MIN(96,MAX(16,48 * damageMultiplier));
+	int plifetime = MIN(128,MAX(48,48 * damageMultiplier));
 
 	sfxPlay(sfxPhaser,MAX(0.5f,damageMultiplier));
-	for(;steps > 0;steps--){
+	for(max=1<<16;max;--max){
+		vec dist = vecNew(x1-c.x,y1-c.y,z1-c.z);
+		const float curDist = vecMag(dist);
+		if(curDist > lastDist){break;}
+		lastDist = curDist;
+		v = vecMulS(vecNorm(dist),0.1f/beamSize);
+			
 		float pvx = (rngValf()-0.5f)/24.f*beamSize;
 		float pvy = (rngValf()-0.5f)/24.f*beamSize;
 		float pvz = (rngValf()-0.5f)/24.f*beamSize;
-		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/4.f,pvy/4.f,pvz/4.f,-pvx/192.f,-pvy/192.f,-pvz/192.f,16.f,1.f,pac,plifetime*3);
-		newParticle(cx+pvx,cy+pvy,cz+pvz,pvx/6.f,pvy/6.f,pvz/6.f,-pvx/256.f,-pvy/256.f,-pvz/256.f,16.f,1.f,pbc,plifetime*4);
-		cx += vx;
-		cy += vy;
-		cz += vz;
+		newParticle(c.x+pvx,c.y+pvy,c.z+pvz,pvx/4.f,pvy/4.f,pvz/4.f,-pvx/192.f,-pvy/192.f,-pvz/192.f, 8.f,beamSize*4,pac,plifetime);
+		newParticle(c.x+pvx,c.y+pvy,c.z+pvz,pvx/6.f,pvy/6.f,pvz/6.f,-pvx/256.f,-pvy/256.f,-pvz/256.f, 8.f,beamSize*2,pbc,plifetime*2);
+		c = vecAdd(c,v);
 
-		const float pdx = cx - player->x;
-		const float pdy = cy - player->y;
-		const float pdz = cz - player->z;
-		const float pd  = (pdx*pdx)+(pdy*pdy)+(pdz*pdz);
+		const float pd = vecMag(vecSub(c,vecNew(player->x,player->y,player->z)));
 		if(pd < minPlayerDist){minPlayerDist = pd;}
 	}
 	if((originatingCharacter != 65535) && (minPlayerDist < 0.5f)){
