@@ -25,58 +25,32 @@ texture *tSun;
 uint8_t cloudTex[256][256];
 float cloudOffset=0.f;
 
+
 void cloudsDraw(int cx, int cy, int cz){
 	//static int densityTicks = 0;
-	const int density = 178;
+	const int density = 170;
 	const int toff = (int)cloudOffset;
 	float sx=cx * 256.f + (cloudOffset - (float)toff);
 	float sy=cy * 256.f;
 	float sz=cz * 256.f;
-
-	//density = density + (sin(++densityTicks/(4096.0*32))*16);
-
 	if(cy&1){return;}
 
-
-	const int ttl=1;
-	const int MUL=1;
-
 	for(int x=0;x<256;x++){
-		const float px = sx+((float)(x*MUL));
+		const float px = sx+x;
 		const int tx = (x - toff)&0xFF;
 		for(int z=0;z<256;z++){
-			const float pz = sz+((float)(z*MUL));
+			const float pz = sz+z;
 			const uint8_t v  = cloudTex[tx][z];
-			const uint8_t vt = 256-((256 - v)/4);
-			const uint8_t vb = 256-((256 - v)/2);
+			const uint8_t vt = (192+((256 - v)/2));
+			//const uint8_t vb = 256-((256 - v)/2);
 			const uint32_t topColor = v << 24 | (vt << 16) | (vt << 8) | vt;
-			const uint32_t botColor = v << 24 | (vb << 16) | (vb << 8) | vb;
+			//const uint32_t botColor = v << 24 | (vb << 16) | (vb << 8) | vb;
 
 			if(v > density){
-				newParticle(px,sy                      ,pz,0,0,0,0,0,0,2048.f,0.5f,topColor,ttl);
-				newParticle(px,sy+((float)(v-170)/ 6.f),pz,0,0,0,0,0,0,2048.f,0.5f,topColor,ttl);
-				newParticle(px,sy-((float)(v-170)/12.f),pz,0,0,0,0,0,0,1024.f,0.5f,botColor,ttl);
+				newParticle(px,sy+((float)(v-170)/18.f),pz,0,0,0,0,0,0,1024.f,0.f,topColor,1);
+				newParticle(px,sy+((float)(v-170)/ 6.f),pz,0,0,0,0,0,0,1024.f,0.f,topColor,1);
+				newParticle(px,sy-((float)(v-170)/12.f),pz,0,0,0,0,0,0,1024.f,0.f,topColor,1);
 			}
-
-			/*
-			if(v > 248){
-				newParticle(px,sy+((float)(v-170)/ 6.f),pz,0,0,0,0,0,0,1024.f,0.5f,0xE8F8F8F8,ttl);
-				newParticle(px,sy-((float)(v-170)/18.f),pz,0,0,0,0,0,0,1024.f,0.5f,0xE0F8F8F8,ttl);
-			}else if(v > 240){
-				newParticle(px,sy+((float)(v-170)/ 6.f),pz,0,0,0,0,0,0,1024.f,0.5f,0xE4E8E8E8,ttl);
-				newParticle(px,sy-((float)(v-170)/18.f),pz,0,0,0,0,0,0,1024.f,0.5f,0xE0E0E0E0,ttl);
-			}else if(v > 224){
-				newParticle(px,sy+((float)(v-170)/ 6.f),pz,0,0,0,0,0,0,1024.f,0.5f,0xD4E8E8E8,ttl);
-				newParticle(px,sy-((float)(v-170)/18.f),pz,0,0,0,0,0,0,1024.f,0.5f,0xD0E0E0E0,ttl);
-			}else if(v > 192){
-				newParticle(px,sy+((float)(v-170)/ 6.f),pz,0,0,0,0,0,0,1024.f,0.5f,0xB2E8E8E8,ttl);
-				newParticle(px,sy-((float)(v-170)/18.f),pz,0,0,0,0,0,0,1024.f,0.5f,0xB0E0E0E0,ttl);
-			}else if(v > 170){
-				newParticle(px,sy+((float)(v-170)/ 6.f),pz,0,0,0,0,0,0,1024.f,0.5f,0xA2D8D8D8,ttl);
-				newParticle(px,sy-((float)(v-170)/18.f),pz,0,0,0,0,0,0,1024.f,0.5f,0xA0D0D0D0,ttl);
-			}else if(v > 164){
-				newParticle(px,sy                      ,pz,0,0,0,0,0,0, 768.f,0.5f,0x90C8C8C8,ttl);
-			}*/
 		}
 	}
 }
