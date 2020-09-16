@@ -28,7 +28,7 @@ float cloudOffset=0.f;
 
 void cloudsDraw(int cx, int cy, int cz){
 	//static int densityTicks = 0;
-	const int density = 170;
+	const int density = 176;
 	const int toff = (int)cloudOffset;
 	float sx=cx * 256.f + (cloudOffset - (float)toff);
 	float sy=cy * 256.f;
@@ -41,10 +41,9 @@ void cloudsDraw(int cx, int cy, int cz){
 		for(int z=0;z<256;z++){
 			const float pz = sz+z;
 			const uint8_t v  = cloudTex[tx][z];
-			const uint8_t vt = (192+((256 - v)/2));
-			//const uint8_t vb = 256-((256 - v)/2);
-			const uint32_t topColor = v << 24 | (vt << 16) | (vt << 8) | vt;
-			//const uint32_t botColor = v << 24 | (vb << 16) | (vb << 8) | vb;
+			const uint8_t vt = (222+((256 - v)/4));
+			const uint8_t vb = (162+((256 - v)/4));
+			const uint32_t topColor = v << 24 | (vb << 16) | (vt << 8) | vt;
 
 			if(v > density){
 				newParticle(px,sy+((float)(v-170)/18.f),pz,0,0,0,0,0,0,1024.f,0.f,topColor,1);
