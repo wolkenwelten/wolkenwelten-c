@@ -55,7 +55,7 @@ void cloudsDraw(int cx, int cy, int cz){
 			if(v > density){
 				newParticle(px,sy                      ,pz,0,0,0,0,0,0,2048.f,0.5f,topColor,ttl);
 				newParticle(px,sy+((float)(v-170)/ 6.f),pz,0,0,0,0,0,0,2048.f,0.5f,topColor,ttl);
-				newParticle(px,sy-((float)(v-170)/18.f),pz,0,0,0,0,0,0,1024.f,0.5f,botColor,ttl);
+				newParticle(px,sy-((float)(v-170)/12.f),pz,0,0,0,0,0,0,1024.f,0.5f,botColor,ttl);
 			}
 
 			/*
