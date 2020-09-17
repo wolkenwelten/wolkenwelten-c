@@ -35,17 +35,17 @@ void cloudsDraw(int cx, int cy, int cz){
 	float sy=cy * 256.f;
 	float sz=cz * 256.f;
 	if(cy&1){return;}
-	const float dy = (sy - player->y) * (sy - player->y);
+	const float dy = (sy - player->pos.y) * (sy - player->pos.y);
 
 	for(uint x=0;x<256;x++){
 		const float px  = sx+x;
-		const float dxy = dy + ((px - player->x) * (px - player->x));
+		const float dxy = dy + ((px - player->pos.x) * (px - player->pos.x));
 		const int tx    = (x - toff)&0xFF;
 		for(uint z=0;z<256;z++){
 			const uint8_t  v  = cloudTex[tx][z];
 			if(v < density){ continue; }
 			const float    pz = sz+z;
-			const float    dz = (pz - player->z) * (pz - player->z);
+			const float    dz = (pz - player->pos.z) * (pz - player->pos.z);
 			const float    dd = dxy+dz;
 			const float    vf = v-170;
 			const uint8_t  ta = (208+((256 - v)/2));
@@ -179,18 +179,17 @@ void initSky(){
 }
 
 void renderSky(const character *cam){
-	float matMVP[16];
 	shaderBind(sMesh);
 
 	matIdentity(matMVP);
-	matMulRotXY(matMVP,cam->yaw,cam->pitch);
+	matMulRotXY(matMVP,cam->rot.yaw,cam->rot.pitch);
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);
 	meshDrawLin(skyMesh);
 
 
 	matIdentity(matMVP);
-	matMulRotXY(matMVP,cam->yaw,cam->pitch);
+	matMulRotXY(matMVP,cam->rot.yaw,cam->rot.pitch);
 	matMulRotX(matMVP,sunAngle);
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);

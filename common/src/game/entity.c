@@ -24,9 +24,9 @@ uint32_t entityCollision(const vec c){
 }
 
 void entityUpdateCurChungus(entity *e){
-	const int cx = (int)e->x >> 8;
-	const int cy = (int)e->y >> 8;
-	const int cz = (int)e->z >> 8;
+	const int cx = (int)e->pos.x >> 8;
+	const int cy = (int)e->pos.y >> 8;
+	const int cz = (int)e->pos.z >> 8;
 	e->curChungus = worldTryChungus(cx,cy,cz);
 }
 
@@ -36,7 +36,7 @@ int entityUpdate(entity *e){
 	e->pos = vecAdd(e->pos,e->vel);
 	if(e->flags & ENTITY_NOCLIP){
 		e->flags &= ~ENTITY_COLLIDE;
-		if(entityCollision(e->x,e->y,e->z)){ e->flags |= ENTITY_COLLIDE; }
+		if(entityCollision(e->pos)){ e->flags |= ENTITY_COLLIDE; }
 		entityUpdateCurChungus(e);
 		return 0;
 	}
@@ -61,23 +61,23 @@ int entityUpdate(entity *e){
 		e->vel.x = e->vel.x*-0.3f;
 	}
 	if((col&0x220) && (e->vel.x > 0.f)){
-		if(e->vx >  0.1f){ ret += (int)(fabsf(e->vx)*128.f); }
-		e->pos.x = MIN(e->pos.x,floorf(e->x)+0.7f);
+		if(e->vel.x >  0.1f){ ret += (int)(fabsf(e->vel.x)*128.f); }
+		e->pos.x = MIN(e->pos.x,floorf(e->pos.x)+0.7f);
 		e->vel.x = e->vel.x*-0.3f;
 	}
 	if((col&0x880) && (e->vel.z > 0.f)){
 		if(e->vel.z >  0.1f){ ret += (int)(fabsf(e->vel.z)*128.f); }
-		e->pos.z = MIN(e->pos.z,floorf(e->z)+0.7f);
+		e->pos.z = MIN(e->pos.z,floorf(e->pos.z)+0.7f);
 		e->vel.z = e->vel.z*-0.3f;
 	}
 	if((col&0x440) && (e->vel.z < 0.f)){
 		if(e->vel.z < -0.1f){ ret += (int)(fabsf(e->vel.z)*128.f); }
-		e->pos.z = MAX(e->pos.z,floorf(e->z)+0.3f);
+		e->pos.z = MAX(e->pos.z,floorf(e->pos.z)+0.3f);
 		e->vel.z = e->vel.z*-0.3f;
 	}
 	if((col&0x0F0) && (e->vel.y > 0.f)){
 		if(e->vel.y >  0.1f){ ret += (int)(fabsf(e->vel.y)*128.f); }
-		e->pos.y = MIN(e->pos.y,floorf(e->y)+0.5f);
+		e->pos.y = MIN(e->pos.y,floorf(e->pos.y)+0.5f);
 		e->vel.y = e->vel.y*-0.3f;
 	}
 	if((col&0x00F) && (e->vel.y < 0.f)){
@@ -90,7 +90,7 @@ int entityUpdate(entity *e){
 		}else if(e->vel.y < -0.04f){
 			e->yoff += -0.2f;
 		}
-		e->vel = vecMul(e->vel,vecNew(0.97f,0,0.97f);
+		e->vel = vecMul(e->vel,vecNew(0.97f,0,0.97f));
 	}
 
 	entityUpdateCurChungus(e);

@@ -3,7 +3,7 @@
 
 extern int   itemDropCount;
 
-void         itemDropNewP         (float x, float y, float z,const item *itm);
+void         itemDropNewP         (const vec pos, const item *itm);
 void         itemDropNewC         (const packet *p);
 void         itemDropUpdate       ();
 void         itemDropDel          (int d);

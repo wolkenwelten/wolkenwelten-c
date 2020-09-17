@@ -139,7 +139,6 @@ static void cmdGive(int c, const char *cmd){
 }
 
 static void cmdTp(int c, const char *cmd){
-	float coords[3];
 	(void)c;
 	int argc;
 	char **argv;
@@ -151,14 +150,11 @@ static void cmdTp(int c, const char *cmd){
 		serverSendChatMsg(replyBuf);
 		return;
 	}
-	coords[0] = atof(argv[1]);
-	coords[1] = atof(argv[2]);
-	coords[2] = atof(argv[3]);
-	msgPlayerSetPos(c,coords[0],coords[1],coords[2],0.f,0.f,0.f);
+	const vec pos = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
+	msgPlayerSetPos(c,pos,vecZero());
 }
 
 static void cmdTpr(int c, const char *cmd){
-	float coords[3];
 	(void)c;
 	int argc;
 	char **argv;
@@ -170,10 +166,8 @@ static void cmdTpr(int c, const char *cmd){
 		serverSendChatMsg(replyBuf);
 		return;
 	}
-	coords[0] = atof(argv[1]);
-	coords[1] = atof(argv[2]);
-	coords[2] = atof(argv[3]);
-	msgPlayerSetPos(c,clients[c].c->x + coords[0],clients[c].c->y + coords[1],clients[c].c->z + coords[2],0.f,0.f,0.f);
+	const vec pos = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
+	msgPlayerSetPos(c,vecAdd(pos,clients[c].c->pos),vecZero());
 }
 
 void cmdAni(int c, const char *cmd){
@@ -181,7 +175,7 @@ void cmdAni(int c, const char *cmd){
 
 	character *ch = clients[c].c;
 	if(ch == NULL){return;}
-	animalNew(ch->x,ch->y,ch->z,1);
+	animalNew(vecAdd(ch->pos,vecDegToVec(ch->rot)),1);
 }
 
 int parseCommand(int c, const char *cmd){
@@ -192,7 +186,7 @@ int parseCommand(int c, const char *cmd){
 		cmdAni(c,tcmp);
 		return 1;
 	}
-	
+
 	if(strncmp(tcmp,"dmg",3) == 0){
 		cmdDmg(c,tcmp);
 		return 1;

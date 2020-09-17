@@ -86,23 +86,23 @@ void calcFOV(const character *cam){
 	matPerspective(matProjection, gfxCurFOV, (float)screenWidth / (float)screenHeight, 0.2f, 2560.0f);
 }
 
-void calcShake(character *cam, float *pitch, float *yaw){
+vec calcShake(const character *cam){
 	static uint64_t ticks=0;
-	if(cam->shake < 0.001f){return;}
+	if(cam->shake < 0.001f){return vecZero();}
 	float deg = ((float)++ticks)*0.4f;
-	*pitch = cos(deg*2.1f)*(cam->shake/2.f);
-	*yaw   = sin(deg*1.3f)*(cam->shake/2.f);
+	const float   yaw = sin(deg*1.3f)*(cam->shake/2.f);
+	const float pitch = cos(deg*2.1f)*(cam->shake/2.f);
+	return vecNew(yaw,pitch,0.f);
 }
 
-void calcView(character *cam){
-	float shakeP=0.f,shakeY=0.f;
+void calcView(const character *cam){
 	matIdentity(matView);
-	calcShake(cam,&shakeP,&shakeY);
-	matMulRotXY(matView,cam->rot.yaw+shakeP,cam->rot.pitch+shakeY);
+	vec shake = vecAdd(cam->rot,calcShake(cam));
+	matMulRotXY(matView,shake.yaw,shake.pitch);
 	matMulTrans(matView,-cam->pos.x,-(cam->pos.y+0.5+cam->yoff),-cam->pos.z);
 }
 
-void renderWorld(character *cam){
+void renderWorld(const character *cam){
 	glDepthFunc( GL_LESS );
 	bigchungusDraw(&world,cam);
 	blockMiningDraw();

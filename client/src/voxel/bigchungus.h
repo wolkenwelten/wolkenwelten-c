@@ -19,7 +19,7 @@ chungus    *bigchungusGetChungus    (bigchungus *c, int x, int y, int z);
 chunk      *bigchungusGetChunk      (bigchungus *c, int x, int y, int z);
 uint8_t     bigchungusGetB          (bigchungus *c, int x, int y, int z);
 bool        bigchungusSetB          (bigchungus *c, int x, int y, int z, uint8_t b);
-void        bigchungusDraw          (bigchungus *c, character *cam);
+void        bigchungusDraw          (bigchungus *c, const character *cam);
 void        bigchungusGenSpawn      (bigchungus *c);
 void        bigchungusGetSpawnPos   (bigchungus *c, int *x, int *y, int *z);
 
@@ -34,4 +34,3 @@ chunk*   worldGetChunk         (int x, int y, int z);
 bool     worldSetB             (int x, int y, int z, uint8_t block);
 void     worldSetChungusLoaded (int x, int y, int z);
 int      checkCollision        (int x, int y, int z);
-

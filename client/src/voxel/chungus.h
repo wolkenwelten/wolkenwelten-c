@@ -30,7 +30,7 @@ void     chungusSetB           (chungus *c, int x, int y, int z, uint8_t block);
 uint8_t  chungusGetB           (chungus *c, int x, int y, int z);
 chunk   *chungusGetChunk       (chungus *c, int x, int y, int z);
 chunk   *chungusGetChunkOrNew  (chungus *c, int x, int y, int z);
-void     chungusQueueDraws     (chungus *c, character *cam, queueEntry *drawQueue,int *drawQueueLen);
+void     chungusQueueDraws     (chungus *c,const character *cam, queueEntry *drawQueue,int *drawQueueLen);
 chungus *chungusGetActive      (int i);
 void     chungusSetActiveCount (int i);
 int      chungusGetActiveCount ();

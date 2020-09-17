@@ -18,17 +18,10 @@
 
 bigchungus world;
 
-float chungusRoughDistance(character *cam, float x, float y,float z) {
+float chungusRoughDistance(const character *cam, const vec pos) {
 	if(cam == NULL){return 8192.f;}
-	x = x * CHUNGUS_SIZE + CHUNGUS_SIZE/2;
-	y = y * CHUNGUS_SIZE + CHUNGUS_SIZE/2;
-	z = z * CHUNGUS_SIZE + CHUNGUS_SIZE/2;
-
-	float xdiff = fabsf(x-cam->x);
-	float ydiff = fabsf(y-cam->y);
-	float zdiff = fabsf(z-cam->z);
-
-	return sqrtf((xdiff*xdiff)+(ydiff*ydiff)+(zdiff*zdiff));
+	const vec np = vecAddS(vecMulS(pos,CHUNGUS_SIZE),CHUNGUS_SIZE/2);
+	return sqrtf(vecMag(vecSub(np,cam->pos)));
 }
 
 void bigchungusInit(bigchungus *c){
@@ -240,7 +233,7 @@ void bigchungusFreeFarChungi(bigchungus *c){
 		if((x >= 127) && (x <= 129) && (y >= 1) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
 
 		for(int ii=0;ii<clientCount;++ii){
-			if(chungusRoughDistance(clients[ii].c,x,y,z) < 768.f){ goto chungiDontFree; }
+			if(chungusRoughDistance(clients[ii].c,vecNew(x,y,z)) < 768.f){ goto chungiDontFree; }
 		}
 		chungusFree(c->chungi[x][y][z]);
 		c->chungi[x][y][z] = NULL;
@@ -251,9 +244,9 @@ void bigchungusFreeFarChungi(bigchungus *c){
 void bigchungusUpdateClient(bigchungus *c, int p){
 	character *chara = clients[p].c;
 	if(chara == NULL){return;}
-	int cx = ((int)chara->x)>>8;
-	int cy = ((int)chara->y)>>8;
-	int cz = ((int)chara->z)>>8;
+	int cx = ((int)chara->pos.x)>>8;
+	int cy = ((int)chara->pos.y)>>8;
+	int cz = ((int)chara->pos.z)>>8;
 
 	if((cx >= 0) && (cx < 256) && (cy >= 0) && (cy < 128) && (cz >= 0) && (cz < 256)){
 		chungusUpdateClient(c->chungi[cx][cy][cz],p);
@@ -301,9 +294,10 @@ void bigchungusUnsubscribeClient(bigchungus *c, int p){
 
 void bigchungusSafeSaveClient(bigchungus *c, int p){
 	character *chara = clients[p].c;
-	int cx = ((int)chara->x)>>8;
-	int cy = ((int)chara->y)>>8;
-	int cz = ((int)chara->z)>>8;
+	if(chara == NULL){return;}
+	int cx = ((int)chara->pos.x)>>8;
+	int cy = ((int)chara->pos.y)>>8;
+	int cz = ((int)chara->pos.z)>>8;
 
 	if((cx >= 0) && (cx < 256) && (cy >= 0) && (cy < 128) && (cz >= 0) && (cz < 256)){
 		chungusSave(c->chungi[cx][cy][cz]);

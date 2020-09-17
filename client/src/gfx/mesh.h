@@ -2,7 +2,7 @@
 #include "../../../common/src/common.h"
 
 mesh *meshNew      ();
-mesh *meshNewRO    (vertex *nroData,size_t roSize);
+mesh *meshNewRO    (const vertex *nroData,size_t roSize);
 void  meshFreeAll  ();
 void  meshFree     (mesh *m);
 void  meshAddVert  (mesh *m, float x,float y,float z,float u,float v);

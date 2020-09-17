@@ -44,10 +44,8 @@ bool playerChunkActive = false;
 bool singleplayer      = false;
 
 void playerUpdate(){
-	float vx=0.f;
-	float vz=0.f;
-	float vy=0.f;
-	chungus *chng = worldGetChungus((int)player->x >> 8,(int)player->y >> 8,(int)player->z >> 8);
+	vec nv = vecZero();
+	chungus *chng = worldGetChungus((int)player->pos.x >> 8,(int)player->pos.y >> 8,(int)player->pos.z >> 8);
 	if(chng != NULL){ playerChunkActive = chng->loaded; }
 	if(!playerChunkActive){return;}
 	if(inputSneak()){
@@ -56,10 +54,10 @@ void playerUpdate(){
 		player->flags &= ~CHAR_SNEAK;
 	}
 
-	doKeyboardupdate(&vx,&vy,&vz);
-	doTouchupdate   (&vx,&vy,&vz);
-	doGamepadupdate (&vx,&vy,&vz);
-	characterMove   (player,vx,vy,vz);
+	nv = doKeyboardupdate(nv);
+	nv = doTouchupdate   (nv);
+	nv = doGamepadupdate (nv);
+	characterMove (player,nv);
 }
 
 void worldUpdate(){

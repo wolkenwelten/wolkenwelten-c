@@ -63,7 +63,7 @@ void mouseEventHandler(const SDL_Event *e){
 
 		case SDL_MOUSEMOTION:
 			if(!isInventoryOpen() && gameRunning){
-				characterRotate(player,((float)e->motion.xrel)/4.f,((float)e->motion.yrel)/4.f,0.f);
+				characterRotate(player,vecNew(e->motion.xrel/4.f,e->motion.yrel/4.f,0));
 			}
 		break;
 

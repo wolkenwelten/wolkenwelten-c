@@ -26,16 +26,17 @@ bool keyboardTertiary(){
 	return keysPressed[7];
 }
 
-void doKeyboardupdate(float *vx,float *vy,float *vz){
-	if(keysPressed[0]){ *vz = -1.f; }
-	if(keysPressed[1]){ *vz =  1.f; }
-	if(keysPressed[2]){ *vx = -1.f; }
-	if(keysPressed[3]){ *vx =  1.f; }
-	if(keysPressed[4]){ *vy =  1.f; }
+vec doKeyboardupdate(vec vel){
+	if(keysPressed[0]){ vel.z = -1.f; }
+	if(keysPressed[1]){ vel.z =  1.f; }
+	if(keysPressed[2]){ vel.x = -1.f; }
+	if(keysPressed[3]){ vel.x =  1.f; }
+	if(keysPressed[4]){ vel.y =  1.f; }
 
 	if(keysPressed[6]){
 		characterDropItem(player,player->activeItem);
 	}
+	return vel;
 }
 
 void keyboardEventHandler(const SDL_Event *e){

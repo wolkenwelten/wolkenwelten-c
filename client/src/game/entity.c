@@ -34,8 +34,8 @@ entity *entityNew(vec pos, vec rot){
 	}
 	entityReset(e);
 
-	e->pos        = pos
-	e->rot        = rot;
+	e->pos = pos;
+	e->rot = rot;
 
 	return e;
 }
@@ -50,14 +50,13 @@ void entityFree(entity *e){
 }
 
 void entityDraw(const entity *e){
-	float matMVP[16];
 	if(e        == NULL){return;}
 	if(e->eMesh == NULL){return;}
 
 	matMov      (matMVP,matView);
-	matMulTrans (matMVP,e->x,e->y+e->yoff,e->z);
+	matMulTrans (matMVP,e->pos.x,e->pos.y+e->yoff,e->pos.z);
 	matMulScale (matMVP,0.25f,0.25f,0.25f);
-	matMulRotYX (matMVP,e->yaw,e->pitch);
+	matMulRotYX (matMVP,e->rot.yaw,e->rot.pitch);
 	matMul      (matMVP,matMVP,matProjection);
 
 	shaderMatrix(sMesh,matMVP);

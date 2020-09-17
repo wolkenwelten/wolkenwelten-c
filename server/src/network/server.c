@@ -91,7 +91,7 @@ void serverParseDyingMsg(int c,const packet *m){
 void msgPlayerSpawnPos(int c){
 	int sx,sy,sz;
 	worldGetSpawnPos(&sx,&sy,&sz);
-	msgPlayerSetPos(c,((float)sx)+0.5f,((float)sy)+2.f,((float)sz)+0.5f,0.f,0.f,0.f);
+	msgPlayerSetPos(c,vecAdd(vecNew(sx,sy,sz),vecNew(0.5,2.0,0.5)),vecZero());
 }
 
 void serverInitClient(int c){
@@ -270,7 +270,7 @@ void serverParseSinglePacket(int c, packet *p){
 			serverKill(c);
 			break;
 		case 14:
-			msgCharacterHit(c,p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.i[6]);
+			msgCharacterHit(c,vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]),p->val.i[6]);
 			if(verbose){printf("[%02i] characterHit\n",c);}
 			break;
 		case 15:
@@ -558,7 +558,7 @@ void serverHandleEvents(){
 	serverSend();
 }
 
-void sendToClient(int c,void *data,int len){
+void sendToClient(int c,const void *data,int len){
 	int ret;
 	int tlen = len;
 	if(clients[c].state){ return; }
@@ -598,7 +598,7 @@ void sendToAllExcept(int e,const void *data, int len){
 }
 
 void serverCloseClient(int c){
-	char *msg = getPlayerLeaveMessage(c);
+	const char *msg = getPlayerLeaveMessage(c);
 	characterSaveData(c);
 	if(clients[c].c != NULL){
 		characterFree(clients[c].c);

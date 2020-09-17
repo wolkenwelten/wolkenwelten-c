@@ -133,10 +133,7 @@ bool grapplingHookReturnToParent(grapplingHook *ghk,float speed){
 	float d  = sqrtf(vecMag(dist));
 	speed = d / 8.f;
 	if(speed < 1.f){speed = 1.f;}
-	float dm = fabsf(dx);
-	if(fabsf(dy) > dm){dm = fabsf(dy);}
-	if(fabsf(dz) > dm){dm = fabsf(dz);}
-	if(d <= 2f){return true;}
+	if(d <= 2){return true;}
 	ghk->ent->vel = vecMulS(vecNorm(dist),-speed);
 
 	if(ghk->ent->flags & ENTITY_COLLIDE){
@@ -154,7 +151,7 @@ void grapplingHookReturnHook(grapplingHook *ghk){
 
 void grapplingHookPullTowards(grapplingHook *ghk,character *pull){
 	vec      d = vecSub(ghk->ent->pos,ghk->parent->pos);
-	d = vecMulS(vecNorm(d),ghk->goalLength - sqrtf(vecMag(dist)));
+	d = vecMulS(vecNorm(d),ghk->goalLength - sqrtf(vecMag(d)));
 
 	uint32_t col = entityCollision(pull->pos);
 	if(((d.x > 0) && !((col & 0x110))) || ((d.x < 0) && !((col & 0x220)))){
@@ -166,7 +163,7 @@ void grapplingHookPullTowards(grapplingHook *ghk,character *pull){
 		pull->vel.z -= d.z*0.2f;
 	}
 	if(((d.y > 0) && !((col & 0x00F))) || ((d.y < 0) && !((col & 0x0F0)))){
-		pull->pos.y -= dy;
+		pull->pos.y -= d.y;
 		pull->vel.y -= d.y*0.2f;
 	}
 	pull->shake = vecMag(pull->vel);
@@ -190,9 +187,9 @@ bool grapplingHookUpdate(grapplingHook *ghk){
 			ghk->goalLength = grapplingHookGetLength(ghk);
 			sfxPlay(sfxHookHit,1.f);
 			sfxLoop(sfxHookRope,0.f);
-			unsigned char b = worldGetB(ghk->ent->x,ghk->ent->y,ghk->ent->z);
+			unsigned char b = worldGetB(ghk->ent->pos.x,ghk->ent->pos.y,ghk->ent->pos.z);
 			if(b){
-				fxBlockBreak(ghk->ent->x,ghk->ent->y,ghk->ent->z,b);
+				fxBlockBreak(ghk->ent->pos,b);
 			}
 		}else if(!ghk->hooked && !ghk->returning){
 			sfxLoop(sfxHookRope,1.f);

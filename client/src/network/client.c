@@ -111,7 +111,7 @@ void decompressPacket(const packet *p){
 	}
 }
 
-void clientParsePacket(packet *p){
+void clientParsePacket(const packet *p){
 	const int pLen  = packetLen(p);
 	const int pType = packetType(p);
 	if(pType != 0xFF){
@@ -122,9 +122,9 @@ void clientParsePacket(packet *p){
 		case 0: // Keepalive
 			break;
 		case 1: // playerPos
-			characterSetPos(player,p->val.f[0],p->val.f[1],p->val.f[2]);
-			characterSetRot(player,p->val.f[3],p->val.f[4],p->val.f[5]);
-			characterSetVelocity(player,0.f,0.f,0.f);
+			characterSetPos(player,vecNewP(&p->val.f[0]));
+			characterSetRot(player,vecNewP(&p->val.f[3]));
+			characterSetVelocity(player,vecZero());
 			characterFreeHook(player);
 			break;
 		case 2: // requestChungus
@@ -135,7 +135,7 @@ void clientParsePacket(packet *p){
 			break;
 		case 4: // mineBlock
 			if(worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],0)){
-				fxBlockBreak(p->val.i[0],p->val.i[1],p->val.i[2],p->val.i[3]);
+				fxBlockBreak(vecNew(p->val.i[0],p->val.i[1],p->val.i[2]),p->val.i[3]);
 			}
 			break;
 		case 5: // Goodbye
@@ -190,13 +190,13 @@ void clientParsePacket(packet *p){
 			fprintf(stderr,"Received an itemDropDel msg from the server, this should never happen.\n");
 			break;
 		case 22: // grenadeExplode
-			grenadeExplode(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.i[4]);
+			grenadeExplode(vecNewP(&p->val.f[0]),p->val.f[3],p->val.i[4]);
 			break;
 		case 23: // grenadeUpdate
 			grenadeUpdateFromServer(p);
 			break;
 		case 24: // fxBeamBlaster
-			fxBeamBlaster(p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.f[6],p->val.f[7],p->val.f[8],p->val.i[9],p->val.i[10]);
+			fxBeamBlaster(vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]),p->val.f[6],p->val.f[7],p->val.f[8],p->val.i[9],p->val.i[10]);
 			break;
 		case 25: // msgItemDropUpdate
 			itemDropUpdateFromServer(p);

@@ -124,7 +124,6 @@ void particleUpdate(){
 }
 
 void particleDraw(){
-	float matMVP[16];
 	if(!particleCount){return;}
 	shaderBind(sParticle);
 	matMul(matMVP,matView,matProjection);

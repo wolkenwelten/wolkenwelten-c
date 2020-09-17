@@ -10,15 +10,15 @@ extern size_t sentBytesCurrentSession;
 extern size_t recvBytesCurrentSession;
 extern size_t recvUncompressedBytesCurrentSession;
 
-void clientInit();
-void clientFree();
-void clientGetName();
-void clientGoodbye();
-void clientGreetServer();
-void clientSendAllToServer();
-void closeSingleplayerServer();
-void decompressPacket(packet *p);
-void clientParsePacket(packet *p);
+void clientInit              ();
+void clientFree              ();
+void clientGetName           ();
+void clientGoodbye           ();
+void clientGreetServer       ();
+void clientSendAllToServer   ();
+void closeSingleplayerServer ();
+void decompressPacket        (const packet *p);
+void clientParsePacket       (const packet *p);
 
-void clientHandleEvents();
-void queueToServer(void *data, unsigned int len);
+void clientHandleEvents      ();
+void queueToServer           (const void *data, unsigned int len);

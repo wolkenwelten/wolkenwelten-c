@@ -5,4 +5,4 @@
 void     entityReset     (entity *e);
 float    entityDistance  (entity *e, character *c);
 int      entityUpdate    (entity *e);
-uint32_t entityCollision (float cx, float cy, float cz);
+uint32_t entityCollision (const vec c);

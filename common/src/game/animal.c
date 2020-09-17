@@ -11,7 +11,7 @@ void animalReset(animal *e){
 	memset(e,0,sizeof(animal));
 }
 
-uint32_t animalCollision(const vec x){
+uint32_t animalCollision(const vec c){
 	uint32_t col = 0;
 
 	if(checkCollision(c.x-0.3f,c.y     ,c.z     )){col |= 0x100;}
@@ -25,9 +25,9 @@ uint32_t animalCollision(const vec x){
 }
 
 void animalUpdateCurChungus(animal *e){
-	const int cx = (int)e->x >> 8;
-	const int cy = (int)e->y >> 8;
-	const int cz = (int)e->z >> 8;
+	const int cx = (int)e->pos.x >> 8;
+	const int cy = (int)e->pos.y >> 8;
+	const int cz = (int)e->pos.z >> 8;
 	e->curChungus = worldTryChungus(cx,cy,cz);
 }
 
@@ -86,22 +86,22 @@ int animalUpdate(animal *e){
 		e->vel.x = e->vel.x*-0.3f;
 	}
 	if((col&0x220) && (e->vel.x > 0.f)){
-		if(e->vx >  0.05f){ ret += (int)(fabsf(e->vel.x)*24.f); }
+		if(e->vel.x >  0.05f){ ret += (int)(fabsf(e->vel.x)*24.f); }
 		e->pos.x = MIN(e->vel.x,floorf(e->pos.x)+0.7f);
 		e->vel.x = e->vel.x*-0.3f;
 	}
 	if((col&0x880) && (e->vel.z > 0.f)){
-		if(e->vz >  0.05f){ ret += (int)(fabsf(e->vel.z)*24.f); }
+		if(e->vel.z >  0.05f){ ret += (int)(fabsf(e->vel.z)*24.f); }
 		e->pos.z = MIN(e->pos.z,floorf(e->pos.z)+0.7f);
 		e->vel.z = e->vel.z*-0.3f;
 	}
 	if((col&0x440) && (e->vel.z < 0.f)){
-		if(e->vz < -0.05f){ ret += (int)(fabsf(e->vz)*24.f); }
+		if(e->vel.z < -0.05f){ ret += (int)(fabsf(e->vel.z)*24.f); }
 		e->pos.z = MAX(e->pos.z,floorf(e->pos.z)+0.3f);
 		e->vel.z = e->vel.z*-0.3f;
 	}
 	if((col&0x0F0) && (e->vel.y > 0.f)){
-		if(e->vy >  0.05f){ ret += (int)(fabsf(e->vy)*24.f); }
+		if(e->vel.y >  0.05f){ ret += (int)(fabsf(e->vel.y)*24.f); }
 		e->pos.y = MIN(e->pos.y,floorf(e->pos.y)+0.5f);
 		e->vel.y = e->vel.y*-0.3f;
 	}
@@ -110,7 +110,7 @@ int animalUpdate(animal *e){
 		if(e->vel.y < -0.05f){
 			ret += (int)(fabsf(e->vel.y)*24.f);
 		}
-		e->vel = vecMul(e->vel,vecNew(0.97f,0,0.97f);
+		e->vel = vecMul(e->vel,vecNew(0.97f,0,0.97f));
 	}
 
 	animalUpdateCurChungus(e);

@@ -1,4 +1,5 @@
 #pragma once
+#include "../../../common/src/common.h"
 
 void fxExplosionBomb    (const vec pos,float pw);
 void fxGrenadeTrail     (const vec pos,float pw);

@@ -34,11 +34,8 @@ chungus *chungusGetActive(unsigned int i){
 	return &chungusList[i];
 }
 
-float chunkDistance(const entity *cam, float x, float y,float z){
-	float xdiff = (float)x-cam->x;
-	float ydiff = (float)y-cam->y;
-	float zdiff = (float)z-cam->z;
-	return sqrtf((xdiff*xdiff)+(ydiff*ydiff)+(zdiff*zdiff));
+float chunkDistance(const entity *cam, const vec pos){
+	return sqrtf(vecMag(vecSub(pos,cam->pos)));
 }
 
 const char *chungusGetFilename(chungus *c){

@@ -89,7 +89,7 @@ void characterParseDataLine(int c,const char *line){
 
 	if(strcmp(argv[0],"Position") == 0){
 		if(argc < 7){return;}
-		msgPlayerSetPos(c,atof(argv[1]),atof(argv[2]),atof(argv[3]),atof(argv[4]),atof(argv[5]),atof(argv[6]));
+		msgPlayerSetPos(c,vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3])),vecNew(atof(argv[4]),atof(argv[5]),atof(argv[6])));
 		return;
 	}
 
@@ -134,7 +134,7 @@ void characterSaveData(int c){
 	if(p == NULL){return;}
 
 	b = buf;
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"Position %f %f %f %f %f %f\n",p->x,p->y,p->z,p->yaw,p->pitch,p->roll);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"Position %f %f %f %f %f %f\n",p->pos.x,p->pos.y,p->pos.z,p->rot.yaw,p->rot.pitch,p->rot.roll);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"ActiveItem %i\n",p->activeItem);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"Health %i\n",p->hp);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"Flags %u\n",p->flags);
@@ -178,7 +178,7 @@ void characterLoadSendData(int c){
 	if(characterLoadData(c)){return;}
 
 	bigchungusGetSpawnPos(&world,&sx,&sy,&sz);
-	msgPlayerSetPos(c,((float)sx)+0.5f,((float)sy)+2.f,((float)sz)+0.5f,135.f,15.f,0.f);
+	msgPlayerSetPos(c,vecNew(sx+0.5f,sy+2.f,sz+0.5f),vecNew(135.f,15.f,0.f));
 	msgPlayerSetInventory(c,emptyInventory,40);
 	msgPlayerSetData(c,20,0,0);
 }

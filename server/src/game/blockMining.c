@@ -63,7 +63,7 @@ void blockMiningDropItemsPos(int x, int y, int z, uint8_t b){
 	float xoff = ((float)rngValM(1024) / 2048.f)+0.25f;
 	float yoff = ((float)rngValM(1024) / 4096.f)+0.25f;
 	float zoff = ((float)rngValM(1024) / 2048.f)+0.25f;
-	itemDropNewP((float)x + xoff,(float)y + yoff,(float)z + zoff, &i);
+	itemDropNewP(vecNew(x + xoff,y + yoff,z + zoff), &i);
 }
 
 void blockMiningDropItems(blockMining *bm){

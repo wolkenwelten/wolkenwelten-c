@@ -249,7 +249,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 							continue;
 						}
 						if(animalChance && (airBlocks > 4) && (rngValM(animalChance)==0)){
-							animalNew(wgen->gx+cx,wgen->gy+cy,wgen->gz+cz,1);
+							animalNew(vecNew(wgen->gx+cx,wgen->gy+cy,wgen->gz+cz),1);
 						}
 						if(deadTreeChance && (airBlocks > 16) && (rngValM(deadTreeChance)==0)){
 							worldgenDeadTree(wgen,cx,cy,cz);

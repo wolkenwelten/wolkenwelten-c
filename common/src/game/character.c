@@ -156,27 +156,27 @@ bool characterLOSBlock(character *c, int *retX, int *retY, int *retZ, int return
 	int   lastBlock=-1;
 
 	const vec cv = vecDegToVec(c->rot);
-	vec       c  = vecAdd(c->pos,vecNew(0,0.5,0));
-	vec       l  = c;
+	vec       cp = vecAdd(c->pos,vecNew(0,0.5,0));
+	vec       l  = cp;
 
 	for(int i=0;i<50;i++){
-		if((lastBlock == -1) || (fabsf(lx - floorf(cx)) > 0.1f) || (fabsf(ly - floorf(cy)) > 0.1f) || (fabsf(lz - floorf(cz)) > 0.1f)){
-			lastBlock = worldGetB(c.x,c.y,c.z);
+		if((lastBlock == -1) || (fabsf(l.x - floorf(cp.x)) > 0.1f) || (fabsf(l.y - floorf(cp.y)) > 0.1f) || (fabsf(l.z - floorf(cp.z)) > 0.1f)){
+			lastBlock = worldGetB(cp.x,cp.y,cp.z);
 			if(lastBlock > 0){
 				if(returnBeforeBlock){
 					*retX = l.x;
 					*retY = l.y;
 					*retZ = l.z;
 				}else{
-					*retX = c.x;
-					*retY = c.y;
-					*retZ = c.z;
+					*retX = cp.x;
+					*retY = cp.y;
+					*retZ = cp.z;
 				}
 				return true;
 			}
-			l = vecFloor(c);
+			l = vecFloor(cp);
 		}
-		c = vecAdd(c,cv);
+		cp = vecAdd(cp,cv);
 	}
 	return false;
 }
@@ -209,9 +209,8 @@ void characterMove(character *c, const vec mov){
 	const float pitch = c->rot.pitch;
 
 	if(c->flags & CHAR_NOCLIP){
-		c->gvel = vecMulS(vecDegToVec(c->rot),mov.z)
-		c->gvz = (sin((yaw+90.f)*PI/180) * cos(pitch*PI/180))*mov.z;
-
+		c->gvel    = vecMulS(vecDegToVec(c->rot),mov.z);
+		c->gvel.z  = (sin((yaw+90.f)*PI/180) * cos(pitch*PI/180))*mov.z;
 		c->gvel.x += cos((yaw)*PI/180)*mov.x;
 		c->gvel.z += sin((yaw)*PI/180)*mov.x;
 	}else{

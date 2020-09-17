@@ -13,7 +13,7 @@ void recipeAdd1I             (unsigned short nResultID, unsigned char nResultAmo
 void recipeAdd2I             (unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID1, unsigned char nIngredAmount1, unsigned short nIngredID2, unsigned char nIngredAmount2);
 void ingredientSubstituteAdd (unsigned short ingredient, unsigned short substitute);
 
-void grenadeNew(character *ent, float pwr);
+void grenadeNew(const character *ent, float pwr);
 void beamblast (character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult);
 
 bool characterHP             (character *c, int addhp);

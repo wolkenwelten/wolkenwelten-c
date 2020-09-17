@@ -28,7 +28,7 @@ void meshAddVertC(mesh *m, float x,float y,float z,float u,float v,float c){
 	}
 }
 
-void meshDrawVBO(mesh *m){
+void meshDrawVBO(const mesh *m){
 	if(!m->vbo){return;}
 	glBindBuffer(GL_ARRAY_BUFFER, m->vbo);
 	glEnableVertexAttribArray(0);
@@ -65,25 +65,19 @@ mesh *meshNew(){
 		}
 		m = &meshList[meshCount++];
 	}
-	m->dataCount = 0;
-	m->roData    = NULL;
-	m->tex       = NULL;
-	m->nextFree  = NULL;
-	m->vbo       = 0;
+	memset(m,0,sizeof(mesh));
 	return m;
 }
 
-mesh *meshNewRO(vertex *roData,size_t roSize){
+mesh *meshNewRO(const vertex *roData,size_t roSize){
 	mesh *m = &meshList[meshCount++];
+	memset(m,0,sizeof(mesh));
 	m->dataCount = roSize;
 	m->roData    = roData;
-	m->tex       = NULL;
-	m->nextFree  = NULL;
-	m->vbo       = 0;
 	return m;
 }
 
-void meshFree(const mesh *m){
+void meshFree(mesh *m){
 	if(m == NULL){return;}
 	glDeleteBuffers(1,&m->vbo);
 	m->nextFree = meshFirstFree;

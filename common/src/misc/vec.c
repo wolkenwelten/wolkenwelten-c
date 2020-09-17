@@ -8,7 +8,7 @@
 vec vecNew (float x, float y, float z){
 	return (vec){{{ x,y,z }}};
 }
-vec vecNewP(float *p){
+vec vecNewP(const float *p){
 	return (vec){{{p[0],p[1],p[2]}}};
 }
 vec vecZero(){

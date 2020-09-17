@@ -21,26 +21,25 @@ int     grenadeCount = 0;
 
 void explode(const vec pos, float pw, int style){
 	entity *exEnt;
-	float dm;
-	worldBoxMineSphere(x,y,z,pw*4.f);
+	worldBoxMineSphere(pos.x,pos.y,pos.z,pw*4.f);
 
 	for(int i=0;i<entityCount;i++){
 		exEnt = &entityList[i];
-		const vec d = vecSub(pos,exEnt->pos);
-		const vec dist = vecMag(d);
+		const vec d      = vecSub(pos,exEnt->pos);
+		const float dist = vecMag(d);
 		if(dist > (16*pw*pw)){continue;}
 		const vec dn = vecNorm(d);
-		exEnt->vel = vecAdd(exEnt->vel,vecMulS(dn,sqrtf((16*pw*pw)/dn)*-0.02f));
+		exEnt->vel = vecAdd(exEnt->vel,vecMulS(dn,sqrtf((16*pw*pw)/dist)*-0.02f));
 	}
 	msgGrenadeExplode(pos, pw, style);
 }
 
 void grenadeExplode(int g){
 	entity *ent = grenadeList[g].ent;
-	explode(ent->x,ent->y,ent->z,grenadeList[g].pwr,0);
+	explode(ent->pos,grenadeList[g].pwr,0);
 }
 
-void grenadeNewP(packet *p){
+void grenadeNewP(const packet *p){
 	int g       = grenadeCount++;
 	float speed = 0.12f;
 	const vec pos = vecNewP(&p->val.f[0]);
@@ -59,7 +58,7 @@ void grenadeNewP(packet *p){
 void grenadeUpdate(){
 	for(int i=0;i<grenadeCount;i++){
 		entityUpdate(grenadeList[i].ent);
-		if((--grenadeList[i].ticksLeft == 0) || (grenadeList[i].ent->y < -256)){
+		if((--grenadeList[i].ticksLeft == 0) || (grenadeList[i].ent->pos.y < -256)){
 			grenadeExplode(i);
 			entityFree(grenadeList[i].ent);
 			grenadeList[i--] = grenadeList[--grenadeCount];
@@ -69,7 +68,7 @@ void grenadeUpdate(){
 
 void grenadeUpdatePlayer(int c){
 	if(grenadeCount == 0){
-		msgGrenadeUpdate(c,0.f,0.f,0.f,0.f,0.f,0.f,0,0);
+		msgGrenadeUpdate(c,vecZero(),vecZero(),0,0);
 	}else{
 		for(int i=0;i<grenadeCount;i++){
 			msgGrenadeUpdate(
@@ -84,8 +83,6 @@ void grenadeUpdatePlayer(int c){
 }
 
 void beamblastNewP(int c, const packet *p){
-	float sx,sy,sz;
-	float x,y,z,vx,vy,vz;
 	float yaw = p->val.f[3];
 	float pitch = p->val.f[4];
 	float speed = 0.1f;
@@ -96,7 +93,8 @@ void beamblastNewP(int c, const packet *p){
 
 	const vec start = vecNewP(&p->val.f[0]);
 	vec pos = start;
-	vec vel = vecMulS(vecDegToZero(rot),speed);
+	const vec rot   = vecNew(yaw,pitch,0);
+	vec vel = vecMulS(vecDegToVec(rot),speed);
 
 	for(int ticksLeft = 0x1FFF; ticksLeft > 0; ticksLeft--){
 		pos = vecAdd(pos,vel);
@@ -105,11 +103,11 @@ void beamblastNewP(int c, const packet *p){
 			explode(pos,0.5f*beamSize,1);
 			if(--hitsLeft <= 0){break;}
 		}
-		if(y < -256.f){
+		if(pos.y < -256.f){
 			break;
 		}
 	}
 	msgFxBeamBlaster(c,start,pos,beamSize,damageMultiplier,recoilMultiplier,p->val.i[8]);
-	const vec rev = vecMulS(vel,-0.75f * 	const vec rer =
-				msgPlayerMove(c, rev, vecNew((rngValf()-0.5f) * 64.f * recoilMultiplier, (rngValf()-.8f) * 64.f * recoilMultiplier), 0.f);
+	const vec rev = vecMulS(vel,-0.75f);
+	msgPlayerMove(c, rev, vecNew((rngValf()-0.5f) * 64.f * recoilMultiplier, (rngValf()-.8f) * 64.f * recoilMultiplier, 0.f));
 }

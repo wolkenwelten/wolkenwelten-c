@@ -1,28 +1,29 @@
 #include "input_gamepad.h"
-#include "sdl.h"
+#include "../sdl/sdl.h"
 #include "../game/character.h"
 #include "../gui/menu.h"
 #include "../gui/inventory.h"
 #include "../main.h"
+#include "../../../common/src/common.h"
 
 #include <math.h>
 
-bool sdlGamepadInit = false;
-bool sdlHapticInit  = false;
+bool sdlGamepadInit         = false;
+bool sdlHapticInit          = false;
 
 SDL_GameController *gamepad = NULL;
-SDL_Haptic *haptic = NULL;
+SDL_Haptic *haptic          = NULL;
 
-int gamepadI = -1;
-unsigned int hapticStart = 0;
+int gamepadI                = -1;
+unsigned int hapticStart    =  0;
 
-bool  gamepadActive       = false;
-float gamepadLeftAxisX    = 0.f;
-float gamepadLeftAxisY    = 0.f;
-float gamepadRightAxisX   = 0.f;
-float gamepadRightAxisY   = 0.f;
-float gamepadLeftTrigger  = 0.f;
-float gamepadRightTrigger = 0.f;
+bool  gamepadActive         = false;
+float gamepadLeftAxisX      = 0.f;
+float gamepadLeftAxisY      = 0.f;
+float gamepadRightAxisX     = 0.f;
+float gamepadRightAxisY     = 0.f;
+float gamepadLeftTrigger    = 0.f;
+float gamepadRightTrigger   = 0.f;
 bool  gamepadButtons[16];
 
 bool gamepadSneak(){
@@ -125,11 +126,11 @@ void doGamepadMenuUpdate(){
 	}
 }
 
-void doGamepadupdate(float *vx,float *vy,float *vz){
+vec doGamepadupdate(vec vel){
 	static unsigned int lastDown[16] = {0};
-	if(!gamepadActive){return;}
-	if( fabsf(gamepadLeftAxisX) > 0.2f){ *vx = gamepadLeftAxisX; }
-	if( fabsf(gamepadLeftAxisY) > 0.2f){ *vz = gamepadLeftAxisY; }
+	if(!gamepadActive){return vel;}
+	if( fabsf(gamepadLeftAxisX) > 0.2f){ vel.x = gamepadLeftAxisX; }
+	if( fabsf(gamepadLeftAxisY) > 0.2f){ vel.z = gamepadLeftAxisY; }
 
 	if( (fabsf(gamepadRightAxisX) > 0.2f) || (fabsf(gamepadRightAxisY) > 0.2f)){
 		int mx,my;
@@ -138,7 +139,7 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 		if(fabsf(gamepadRightAxisX) < 0.2f){ mx = 0;}
 		if(fabsf(gamepadRightAxisY) < 0.2f){ my = 0;}
 		if(!isInventoryOpen()){
-			characterRotate(player,(float)mx,(float)my,0.f);
+			characterRotate(player,vecNew(mx,my,0));
 		}
 	}
 	unsigned int curticks = getTicks();
@@ -146,7 +147,7 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 	if(!gamepadButtons[0]){
 		lastDown[0] = 0;
 	}else if(gamepadButtons[0] && (curticks > (lastDown[0] + 600))){
-		
+
 		if(isInventoryOpen()){
 			if(lastDown[0] == 0){
 				lastDown[0] = curticks;
@@ -155,7 +156,7 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 			}
 			updateInventoryGamepad(1);
 		}else{
-			*vy = 1.f;
+			vel.y = 1.f;
 		}
 	}
 
@@ -224,6 +225,7 @@ void doGamepadupdate(float *vx,float *vy,float *vz){
 			characterSetActiveItem(player,nai);
 		}
 	}
+	return vel;
 }
 
 void gamepadEventHandler(const SDL_Event *e){

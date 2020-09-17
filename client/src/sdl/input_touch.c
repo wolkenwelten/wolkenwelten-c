@@ -30,7 +30,7 @@ bool touchTertiary(){
 	return false;
 }
 
-void doTouchupdate(float *vx,float *vy,float *vz){
+vec doTouchupdate(vec vel){
 	if(leftFingerID != -1){
 		float xoff = leftFingerX*2;
 		float yoff = (leftFingerY-0.5f)*2;
@@ -40,8 +40,8 @@ void doTouchupdate(float *vx,float *vy,float *vz){
 		if(yoff > 1.f){yoff = 1.f;}
 		xoff = (xoff - 0.5f)*2.f;
 		yoff = (yoff - 0.5f)*2.f;
-		*vx = xoff;
-		*vz = yoff;
+		vel.x = xoff;
+		vel.z = yoff;
 	}
 	if(rightFingerID != -1){
 		float xoff = (rightFingerX-0.5f)*2;
@@ -54,17 +54,18 @@ void doTouchupdate(float *vx,float *vy,float *vz){
 		yoff = (yoff - 0.5f)*2.f;
 
 		if(!isInventoryOpen()){
-			characterRotate(player,(float)(xoff*5),(float)(yoff*5),0.f);
+			characterRotate(player,vecNew(xoff*5,yoff*5,0));
 		}
 
 	}
 	if(touchzonesPressed[0]){
-		*vy = 1.f;
+		vel.y = 1.f;
 	}
 	if(touchzonesPressed[1]){
 		touchzonesPressed[1] = false;
 		characterFireHook(player);
 	}
+	return vel;
 }
 
 void touchEventHandler(const SDL_Event *e){
@@ -116,4 +117,3 @@ void touchEventHandler(const SDL_Event *e){
 		break;
 	}
 }
-

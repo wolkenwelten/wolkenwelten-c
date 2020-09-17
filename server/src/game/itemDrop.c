@@ -28,12 +28,8 @@ inline void itemDropUpdateMsg(int c,unsigned int i){
 	if(itemDrops[i].ent == NULL) {return;}
 	msgItemDropUpdate(
 		c,
-		itemDrops[i].ent->x,
-		itemDrops[i].ent->y,
-		itemDrops[i].ent->z,
-		itemDrops[i].ent->vx,
-		itemDrops[i].ent->vy,
-		itemDrops[i].ent->vz,
+		itemDrops[i].ent->pos,
+		itemDrops[i].ent->vel,
 		i,
 		itemDropCount,
 		itemDrops[i].itm.ID,
@@ -43,7 +39,7 @@ inline void itemDropUpdateMsg(int c,unsigned int i){
 
 unsigned int itemDropUpdatePlayer(int c, unsigned int offset){
 	const int max = MIN((int)(offset+ITEM_DROPS_PER_UPDATE),itemDropCount);
-	if(itemDropCount == 0){msgItemDropUpdate(c,0,0,0,0,0,0,0,0,0,0);}
+	if(itemDropCount == 0){msgItemDropUpdate(c,vecZero(),vecZero(),0,0,0,0);}
 	for(unsigned int i=0;i<clients[c].itemDropPriorityQueueLen;i++){
 		itemDropUpdateMsg(c,clients[c].itemDropPriorityQueue[i]);
 	}
@@ -62,26 +58,20 @@ static itemDrop *itemDropNew(){
 	return &itemDrops[itemDropCount++];
 }
 
-void itemDropNewP(float x, float y, float z,const item *itm){
+void itemDropNewP(const vec pos,const item *itm){
 	if(itm == NULL){return;}
 	itemDrop *id = itemDropNew();
 	if(id == NULL){return;}
 
-	id->itm     = *itm;
-	id->ent     = entityNew(x,y,z,0.f,0.f,0.f);
+	id->itm = *itm;
+	id->ent = entityNew(pos,vecZero());
 }
 
 void itemDropNewC(const packet *p){
 	itemDrop *id = itemDropNew();
 	if(id == NULL){return;}
 
-	id->ent        = entityNew(0.f,0.f,0.f,0.f,0.f,0.f);
-	id->ent->x     = p->val.f[0];
-	id->ent->y     = p->val.f[1];
-	id->ent->z     = p->val.f[2];
-	id->ent->vx    = p->val.f[3];
-	id->ent->vy    = p->val.f[4];
-	id->ent->vz    = p->val.f[5];
+	id->ent        = entityNew(vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]));
 	id->itm.ID     = p->val.i[6];
 	id->itm.amount = p->val.i[7];
 }
@@ -98,10 +88,8 @@ void itemDropDel(int d){
 bool itemDropCheckPickup(int d){
 	for(int i=0;i<clientCount;++i){
 		if(clients[i].c == NULL){continue;}
-		float dx = clients[i].c->x - itemDrops[d].ent->x;
-		float dy = clients[i].c->y - itemDrops[d].ent->y;
-		float dz = clients[i].c->z - itemDrops[d].ent->z;
-		if(((dx*dx)+(dy*dy)+(dz*dz)) < (1.5f*1.5f)){
+		const vec dist = vecSub(clients[i].c->pos,itemDrops[d].ent->pos);
+		if(vecMag(dist) < (1.5f*1.5f)){
 			msgPickupItem(i,itemDrops[d].itm.ID,itemDrops[d].itm.amount);
 			addPriorityItemDrop(d);
 			return true;
@@ -118,9 +106,9 @@ void itemDropUpdate(){
 		entity *e = itemDrops[i].ent;
 		chungus *oldc = e->curChungus;
 
-		oldp = ((int)e->x&0xFF)|(((int)e->y&0xFF)<<8)|(((int)e->z&0xFF)<<16);
+		oldp = ((int)e->pos.x&0xFF)|(((int)e->pos.y&0xFF)<<8)|(((int)e->pos.z&0xFF)<<16);
 		entityUpdate(e);
-		newp = ((int)e->x&0xFF)|(((int)e->y&0xFF)<<8)|(((int)e->z&0xFF)<<16);
+		newp = ((int)e->pos.x&0xFF)|(((int)e->pos.y&0xFF)<<8)|(((int)e->pos.z&0xFF)<<16);
 
 		if(oldc != e->curChungus){
 			if(oldc != NULL){oldc->clientsUpdated &= mask;}
@@ -129,7 +117,7 @@ void itemDropUpdate(){
 		if((oldp != newp) && (e->curChungus != NULL)){
 			e->curChungus->clientsUpdated &= mask;
 		}
-		if(itemDropCheckPickup(i) || (e->y < -256)){
+		if(itemDropCheckPickup(i) || (e->pos.y < -256)){
 			itemDropDel(i--);
 			continue;
 		}
@@ -140,12 +128,8 @@ void itemDropIntro(int c){
 	for(int i=0;i<itemDropCount;i++){
 		msgItemDropUpdate(
 			c,
-			itemDrops[i].ent->x,
-			itemDrops[i].ent->y,
-			itemDrops[i].ent->z,
-			itemDrops[i].ent->vx,
-			itemDrops[i].ent->vy,
-			itemDrops[i].ent->vz,
+			itemDrops[i].ent->pos,
+			itemDrops[i].ent->vel,
 			i,
 			itemDropCount,
 			itemDrops[i].itm.ID,
@@ -169,12 +153,12 @@ void *itemDropSave(itemDrop *i, void *buf){
 	s[2] = i->itm.amount;
 	s[3] = 0;
 
-	f[2] = i->ent->x;
-	f[3] = i->ent->y;
-	f[4] = i->ent->z;
-	f[5] = i->ent->vx;
-	f[6] = i->ent->vy;
-	f[7] = i->ent->vz;
+	f[2] = i->ent->pos.x;
+	f[3] = i->ent->pos.y;
+	f[4] = i->ent->pos.z;
+	f[5] = i->ent->vel.x;
+	f[6] = i->ent->vel.y;
+	f[7] = i->ent->vel.z;
 
 	return b+32;
 }
@@ -189,11 +173,9 @@ void *itemDropLoad(void *buf){
 	id->itm.ID     = s[1];
 	id->itm.amount = s[2];
 
-	id->ent = entityNew(f[2],f[3],f[4],0.f,0.f,0.f);
+	id->ent = entityNew(vecNewP(&f[2]),vecZero());
 	if(id->ent == NULL){return b+32;}
-	id->ent->vx = f[5];
-	id->ent->vy = f[6];
-	id->ent->vz = f[7];
+	id->ent->vel = vecNewP(&f[5]);
 
 	return b+32;
 }

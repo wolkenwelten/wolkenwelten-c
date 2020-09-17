@@ -35,7 +35,7 @@ typedef struct {
 
 typedef struct {
 	texture *tex;
-	vertex *roData;
+	const vertex *roData;
 	unsigned int dataCount;
 	unsigned int vbo;
 	void *nextFree;

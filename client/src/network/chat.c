@@ -15,7 +15,7 @@ void chatStartInput(){
 	textInput(4, screenHeight-20, 256, 16, 1);
 }
 
-void msgSendChatMessage(char *msg){
+void msgSendChatMessage(const char *msg){
 	packet *p = &packetBuffer;
 	p->val.s[0]=0;
 	strncpy((char *)(p->val.c+2),msg,254);
@@ -36,7 +36,7 @@ void chatCheckInput(){
 	msgSendChatMessage(textInputGetBuffer());
 }
 
-void chatParsePacket(packet *p){
+void chatParsePacket(const packet *p){
 	for(int i=0;i<11;i++){
 		memcpy(chatLog[i],chatLog[i+1],256);
 	}
@@ -52,7 +52,7 @@ void chatPrintDebug(const char *msg){
 	chatLog[11][255]=0;
 }
 
-void msgSendDyingMessage(char *msg, int c){
+void msgSendDyingMessage(const char *msg, int c){
 	packet *p = &packetBuffer;
 	strncpy((char *)(p->val.c+2),msg,254);
 	p->val.s[0] = c;

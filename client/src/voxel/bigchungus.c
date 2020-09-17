@@ -22,23 +22,12 @@
 
 bigchungus world;
 
-bool chungusInFrustum(float x,float y,float z) {
-	x = x * CHUNGUS_SIZE;
-	y = y * CHUNGUS_SIZE;
-	z = z * CHUNGUS_SIZE;
-	return CubeInFrustum(x,y,z,CHUNGUS_SIZE);
+bool chungusInFrustum(const vec pos) {
+	return CubeInFrustum(vecMulS(pos,CHUNGUS_SIZE),CHUNGUS_SIZE);
 }
 
-float chungusRoughDistance(const character *cam, float x, float y,float z) {
-	x = x * CHUNGUS_SIZE + CHUNGUS_SIZE/2;
-	y = y * CHUNGUS_SIZE + CHUNGUS_SIZE/2;
-	z = z * CHUNGUS_SIZE + CHUNGUS_SIZE/2;
-
-	float xdiff = fabsf(x-cam->x);
-	float ydiff = fabsf(y-cam->y);
-	float zdiff = fabsf(z-cam->z);
-
-	return sqrtf((xdiff*xdiff)+(ydiff*ydiff)+(zdiff*zdiff));
+float chungusRoughDistance(const character *cam, const vec pos) {
+	return sqrtf(vecMag(vecSub(cam->pos,vecAddS(vecMulS(pos,CHUNGUS_SIZE),CHUNGUS_SIZE/2))));
 }
 
 void bigchungusInit(bigchungus *c){
@@ -113,8 +102,7 @@ void quicksortQueue(queueEntry *a, int lo, int hi){
 	quicksortQueue        (a, p+1, hi);
 }
 
-void bigchungusDraw(bigchungus *c, character *cam){
-	float matMVP[16];
+void bigchungusDraw(bigchungus *c,const character *cam){
 	static queueEntry drawQueue[8192*4];
 	static queueEntry loadQueue[1<<9];
 	int drawQueueLen=0,loadQueueLen=0;
@@ -128,9 +116,9 @@ void bigchungusDraw(bigchungus *c, character *cam){
 	matMul(matMVP,matView,matProjection);
 	shaderMatrix(sBlockMesh,matMVP);
 
-	const int camCX = (int)cam->x >> 8;
-	const int camCY = (int)cam->y >> 8;
-	const int camCZ = (int)cam->z >> 8;
+	const int camCX = (int)cam->pos.x >> 8;
+	const int camCY = (int)cam->pos.y >> 8;
+	const int camCZ = (int)cam->pos.z >> 8;
 	const int dist  = (int)ceilf(CHUNK_RENDER_DISTANCE / CHUNGUS_SIZE)+1;
 	const int minCX = MAX(0,camCX - dist);
 	const int minCY = MAX(0,camCY - dist);
@@ -145,8 +133,8 @@ void bigchungusDraw(bigchungus *c, character *cam){
 			if((y <= 0) || (y >= 127)){continue;}
 			for(int z=minCZ;z<maxCZ;z++){
 				if((z <= 0) || (z >= 255)){continue;}
-				float d = chungusRoughDistance(cam,x,y,z);
-				if((d < (CHUNK_RENDER_DISTANCE+CHUNGUS_SIZE)) && (chungusInFrustum(x,y,z))){
+				float d = chungusRoughDistance(cam,vecNew(x,y,z));
+				if((d < (CHUNK_RENDER_DISTANCE+CHUNGUS_SIZE)) && (chungusInFrustum(vecNew(x,y,z)))){
 					if(c->chungi[x][y][z] == NULL){
 						c->chungi[x][y][z] = chungusNew(x*CHUNGUS_SIZE,y*CHUNGUS_SIZE,z*CHUNGUS_SIZE);
 						loadQueue[loadQueueLen].distance = d;
@@ -191,7 +179,7 @@ void bigchungusFreeFarChungi(bigchungus *c, character *cam){
 		int x = (int)chng->x>>8;
 		int y = (int)chng->y>>8;
 		int z = (int)chng->z>>8;
-		float d = chungusRoughDistance(cam,x,y,z);
+		float d = chungusRoughDistance(cam,vecNew(x,y,z));
 		if(d > (CHUNK_RENDER_DISTANCE + 256.f)){
 			chungusFree(c->chungi[x][y][z]);
 			c->chungi[x][y][z] = NULL;

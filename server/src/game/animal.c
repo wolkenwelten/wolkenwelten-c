@@ -50,7 +50,7 @@ void animalUpdateAll(){
 	for(int i=animalCount-1;i>=0;i--){
 		int dmg = animalUpdate(&animalList[i]);
 		animalList[i].health -= dmg;
-		if((animalList[i].y < -256.f) ||
+		if((animalList[i].pos.y < -256.f) ||
 		   (animalList[i].health < 0) ||
 		   (animalList[i].hunger < 0) ||
 		   (animalList[i].thirst < 0) ||
@@ -97,15 +97,14 @@ void animalCheckSuffocation(animal *e){
 		if(rngValM(128) == 0){e->health--;}
 		const blockCategory cc = blockTypeGetCat(cb);
 		if(cc == LEAVES){
-			if(rngValM( 512) == 0){worldBoxMine(e->x,e->y,e->z,1,1,1);}
+			if(rngValM( 512) == 0){worldBoxMine(e->pos.x,e->pos.y,e->pos.z,1,1,1);}
 		}else if(cc == DIRT){
-			if(rngValM(4096) == 0){worldBoxMine(e->x,e->y,e->z,1,1,1);}
+			if(rngValM(4096) == 0){worldBoxMine(e->pos.x,e->pos.y,e->pos.z,1,1,1);}
 		}
 	}
 }
 
 void animalCheckForHillOrCliff(animal *e){
-	vec caDir = vecNew(e->gvx,0.f,e->gvz);
 	vec caDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->gvel,vecNew(1,0,1))),0.5f));
 	const uint8_t cb = worldGetB(caDir.x,caDir.y,caDir.z);
 	const uint8_t ub = worldGetB(caDir.x,caDir.y+1,caDir.z);
@@ -182,7 +181,7 @@ void animalSLoiter(animal *e){
 	}
 
 	if(e->hunger < 64){
-		const uint8_t cb = worldGetB(e->x,e->y-.6f,e->z);
+		const uint8_t cb = worldGetB(e->pos.x,e->pos.y-.6f,e->pos.z);
 		if((cb == 2) && (rngValM(128) == 0)){
 			worldSetB(e->pos.x,e->pos.y-.6f,e->pos.z,1);
 			e->hunger += 48;
@@ -287,7 +286,7 @@ void animalSHeat(animal *e){
 		cAnim->hunger -= 16;
 		cAnim->sleepy -= 24;
 
-		cAnim = animalNew(e->x+((rngValf()*2.f)-1.f),e->y+.4f,e->z+((rngValf()*2.f)-1.f),e->type);
+		cAnim = animalNew(vecNew(e->pos.x+((rngValf()*2.f)-1.f),e->pos.y+.4f,e->pos.z+((rngValf()*2.f)-1.f)),e->type);
 		if(cAnim != NULL){
 			cAnim->age = 1;
 		}
@@ -314,7 +313,7 @@ void animalSFlee(animal *e){
 		return;
 	}
 	if(cChar != NULL){
-		vec caNorm = vecNorm(vecNew(e->x - cChar->x,0.f, e->z - cChar->z));
+		vec caNorm = vecNorm(vecNew(e->pos.x - cChar->pos.x,0.f, e->pos.z - cChar->pos.z));
 		vec caVel  = vecMulS(caNorm,0.03f);
 		vec caRot  = vecVecToDeg(caNorm);
 
@@ -334,7 +333,7 @@ void animalSPlayful(animal *e){
 	}
 	if(animalCheckHeat(e)){return;}
 
-	if((rngValM( 128) == 0) && (fabsf(e->vy) < 0.001f)){
+	if((rngValM( 128) == 0) && (fabsf(e->vel.y) < 0.001f)){
 		e->vel.y = 0.03f;
 	}
 	if (rngValM( 256) == 0){

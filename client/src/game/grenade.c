@@ -76,26 +76,26 @@ void grenadeUpdateFromServer(const packet *p){
 	if(index >= grenadeCount){return;}
 
 	if(grenadeList[index].ent == NULL){
-		grenadeList[index].ent = entityNew(vecNewP(&p->val.f[0],&p->val.f[3]));
+		grenadeList[index].ent = entityNew(vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]));
 	}
 	grenadeList[index].ent->eMesh = meshBomb;
 }
 
 void beamblast(character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult){
-	float x = ent->x;
-	float y = ent->y;
-	float z = ent->z;
+	float x = ent->pos.x;
+	float y = ent->pos.y;
+	float z = ent->pos.z;
 
 	const float mx =  0.75f;
 	const float mz = -1.f;
-	x += ((cos((ent->rot->yaw+90.f)*PI/180) * cos(ent->rot->pitch*PI/180))*mz) + cos((ent->rot->yaw)*PI/180)*mx;
-	y += (sin(ent->rot->pitch*PI/180)*mz);
-	z += ((sin((ent->rot->yaw+90.f)*PI/180) * cos(ent->rot->pitch*PI/180))*mz) + sin((ent->rot->yaw)*PI/180)*mx;
+	x += ((cos((ent->rot.yaw+90.f)*PI/180) * cos(ent->rot.pitch*PI/180))*mz) + cos((ent->rot.yaw)*PI/180)*mx;
+	y += (sin(ent->rot.pitch*PI/180)*mz);
+	z += ((sin((ent->rot.yaw+90.f)*PI/180) * cos(ent->rot.pitch*PI/180))*mz) + sin((ent->rot.yaw)*PI/180)*mx;
 
 	for(int i=shots;i>0;i--){
-		const float yaw   = ent->rot->yaw   + (rngValf()-0.5f)*ent->inaccuracy*inaccuracyMult;
-		const float pitch = ent->rot->pitch + (rngValf()-0.5f)*ent->inaccuracy*inaccuracyMult;
-		msgBeamBlast(x, y, z, yaw, pitch, beamSize, damageMultiplier, recoilMultiplier, hitsLeft);
+		const float yaw   = ent->rot.yaw   + (rngValf()-0.5f)*ent->inaccuracy*inaccuracyMult;
+		const float pitch = ent->rot.pitch + (rngValf()-0.5f)*ent->inaccuracy*inaccuracyMult;
+		msgBeamBlast(vecNew(x, y, z), vecNew(yaw, pitch, 0.f), beamSize, damageMultiplier, recoilMultiplier, hitsLeft);
 	}
 	characterAddInaccuracy(ent,inaccuracyInc);
 }

@@ -22,7 +22,7 @@ int      itemDropCount = 0;
 
 void itemDropNewC(const character *chr,const item *itm){
 	const vec pos = vecAdd(chr->pos,vecNew(0,0.4,0));
-	const vec vel = vecMulS(vecDegToVec(vecNew(chr->rot)),0.03f);
+	const vec vel = vecMulS(vecDegToVec(chr->rot),0.03f);
 	msgItemDropNew(-1,vecAdd(pos,vecMulS(vel,60)),vel,itm);
 }
 
@@ -35,12 +35,12 @@ void itemDropUpdate(){
 	for(int i=0;i<itemDropCount;i++){
 		float aniStep = ++itemDrops[i].aniStep;
 		if(itemDrops[i].ent == NULL){continue;}
-		itemDrops[i].ent->rot = vecNew(aniStep/4.f,cosf(aniStep/96.f)*24.f,0);
+		itemDrops[i].ent->rot   = vecNew(aniStep/4.f,cosf(aniStep/96.f)*24.f,0);
 		itemDrops[i].ent->yoff  = (cosf(aniStep/192.f)/16.f)+0.1f;
 	}
 }
 
-void itemDropUpdateFromServer(packet *p){
+void itemDropUpdateFromServer(const packet *p){
 	uint16_t d   = p->val.s[0];
 	uint16_t len = p->val.s[1];
 

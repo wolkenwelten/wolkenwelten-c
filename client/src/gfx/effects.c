@@ -83,7 +83,7 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 		newParticleV(vecAdd(c,pv),vecMulS(pv,1/6.f),vecMulS(pv,-1.f/512.f), 8.f,beamSize*2,pbc,ttl*2);
 		c = vecAdd(c,v);
 
-		const float pd = vecMag(vecSub(c,vecNew(player->x,player->y,player->z)));
+		const float pd = vecMag(vecSub(c,player->pos));
 		if(pd < minPlayerDist){minPlayerDist = pd;}
 	}
 	if((originatingCharacter != 65535) && (minPlayerDist < 0.5f)){
@@ -98,18 +98,20 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 	}
 }
 
-void fxBlockBreak(float x,float y,float z, unsigned char b){
+void fxBlockBreak(const vec pos, unsigned char b){
 	sfxPlay(sfxTock,1.f);
 	for(int i=0;i<128;i++){
-		newParticleS(x+rngValf(),y+rngValf(),z+rngValf(),blockTypeGetParticleColor(b),0.f,64);
+		const vec p = vecAdd(pos,vecRngAbs());
+		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),0.f,64);
 	}
 }
-void fxBlockMine(float x,float y,float z, int dmg, unsigned char b){
+void fxBlockMine(const vec pos, int dmg, unsigned char b){
 	int parts=2;
 	if(dmg > 1024){
 		parts=3;
 	}
 	for(int i=0;i<parts;i++){
-		newParticleS(x+rngValf(),y+rngValf(),z+rngValf(),blockTypeGetParticleColor(b),1.f,64);
+		const vec p = vecAdd(pos,vecRngAbs());
+		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),1.f,64);
 	}
 }

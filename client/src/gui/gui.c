@@ -179,16 +179,16 @@ void drawDebuginfo(){
 
 	guim->sx   =  4;
 	guim->sy   = 56;
-	textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f GVX: %02.4f\n",player->x,player->vx,player->gvx);
-	textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f GVY: %02.4f\n",player->y,player->vy,player->gvy);
-	textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f GVZ: %02.4f\n",player->z,player->vz,player->gvz);
-	textMeshPrintf(guim,"Player   Yaw: %04.2f\n",player->yaw);
-	textMeshPrintf(guim,"Player Pitch: %04.2f\n",player->pitch);
-	textMeshPrintf(guim,"Player  Roll: %04.2f\n",player->roll);
+	textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f GVX: %02.4f\n",player->pos.x,player->vel.x,player->gvel.x);
+	textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f GVY: %02.4f\n",player->pos.y,player->vel.y,player->gvel.y);
+	textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f GVZ: %02.4f\n",player->pos.z,player->vel.z,player->gvel.z);
+	textMeshPrintf(guim,"Player   Yaw: %04.2f\n",player->rot.yaw);
+	textMeshPrintf(guim,"Player Pitch: %04.2f\n",player->rot.pitch);
+	textMeshPrintf(guim,"Player  Roll: %04.2f\n",player->rot.roll);
 	textMeshPrintf(guim,"Player Flags: %08X\n",player->flags);
 	textMeshPrintf(guim,"Active Tris.: %s\n", getHumanReadableSize(tris));
 	textMeshPrintf(guim,"Active Part.: %s\n", getHumanReadableSize(particleCount));
-	textMeshPrintf(guim,"Player Layer: %2i\n",((int)player->y/CHUNGUS_SIZE));
+	textMeshPrintf(guim,"Player Layer: %2i\n",((int)player->pos.y/CHUNGUS_SIZE));
 	textMeshPrintf(guim,"Animals     : %2i\n",animalCount);
 	textMeshPrintf(guim,"Entities    : %2i\n",entityCount);
 	textMeshPrintf(guim,"Itemdrops   : %i\n",itemDropCount);
@@ -357,7 +357,7 @@ void drawActiveGlider(){
 
 	shaderBind(sMesh);
 	matTranslation(matViewAI,0.f,player->yoff+0.9f,-0.65f);
-	matMulRotYX(matViewAI,0.f+xoff,player->pitch*-0.08f + yoff + breath);
+	matMulRotYX(matViewAI,0.f+xoff,player->rot.pitch*-0.08f + yoff + breath);
 	matMulScale(matViewAI,player->gliderFade, player->gliderFade, player->gliderFade);
 	matMul(matViewAI, matViewAI, matProjection);
 	shaderMatrix(sMesh, matViewAI);

@@ -164,7 +164,7 @@ void msgPickupItem(int c, uint16_t ID, uint16_t amount){
 	packetQueue(p,20,2*2,c);
 }
 
-void msgGrenadeExplode(const vec pos,,float pwr, int style){
+void msgGrenadeExplode(const vec pos,float pwr, int style){
 	packet *p = &packetBuffer;
 	p->val.f[0] = pos.x;
 	p->val.f[1] = pos.y;
@@ -206,14 +206,14 @@ void msgFxBeamBlaster(int c, const vec pa, const vec pb, float beamSize, float d
 	packetQueue(p,24,11*4,c);
 }
 
-void msgItemDropUpdate(int c, const vec pos, const vec vel, uint16_t i, uint16_t len, const item *itm){
+void msgItemDropUpdate(int c, const vec pos, const vec vel, uint16_t i, uint16_t len, uint16_t itemID, uint16_t amount){
 	packet *p = &packetBuffer;
 
 	p->val.s[0] = i;
 	p->val.s[1] = len;
 
-	p->val.s[2] = itm->ID;
-	p->val.s[3] = itm->amount;
+	p->val.s[2] = itemID;
+	p->val.s[3] = amount;
 
 	p->val.f[2] = pos.x;
 	p->val.f[3] = pos.y;

@@ -171,7 +171,7 @@ void characterUpdateHook(character *c){
 
 	if(grapplingHookGetHooked(c->hook)){
 		float gl = grapplingHookGetGoalLength(c->hook);
-		if((c->gvy > 0) && (gl > 1.f)){
+		if((c->gvel.y > 0) && (gl > 1.f)){
 			grapplingHookSetGoalLength(c->hook,gl-0.1f);
 		}
 		if((c->flags & CHAR_SNEAK) && (gl < 96.f)){
@@ -205,9 +205,9 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 	const float vx = cos((yaw-90.f)*PI/180) * cos((-pitch)*PI/180);
 	const float vy = sin((-pitch)*PI/180);
 	const float vz = sin((yaw-90.f)*PI/180) * cos((-pitch)*PI/180);
-	float dx = (x+vx) - c->x;
-	float dy = (y+vy) - c->y;
-	float dz = (z+vz) - c->z;
+	float dx = (x+vx) - c->pos.x;
+	float dy = (y+vy) - c->pos.y;
+	float dz = (z+vz) - c->pos.z;
 	float d  = (dx*dx)+(dy*dy)+(dz*dz);
 
 	if(d < 1.f){
@@ -240,7 +240,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 void characterGotHitBroadcast(int i,int pwr){
 	if(playerList[i] == NULL){return;}
 	character *c   = playerList[i];
-	const float d  = sqrtf(vecMag(vecSub(player->pox,c->pos)));
+	const float d  = sqrtf(vecMag(vecSub(player->pos,c->pos)));
 	if(d > 128.f){return;}
 	const float vol = (128.f-d)/128.f;
 
@@ -297,7 +297,7 @@ void characterUpdateDamage(character *c, int damage){
 }
 
 void characterUpdateYOff(character *c){
-	if(!(c->flags & CHAR_FALLING) && ((fabsf(c->gvx) > 0.001f) || (fabsf(c->gvz) > 0.001f))){
+	if(!(c->flags & CHAR_FALLING) && ((fabsf(c->gvel.x) > 0.001f) || (fabsf(c->gvel.z) > 0.001f))){
 		if(getTicks() > (c->stepTimeout + 200)){
 			c->stepTimeout = getTicks();
 			if(c->gyoff > -0.1f){
@@ -381,18 +381,18 @@ void characterDie(character *c){
 		item *cItem = characterGetItemBarSlot(c,i);
 		if(cItem == NULL)     { continue; }
 		if(itemIsEmpty(cItem)){ continue; }
-		itemDropNewD(c->x,c->y+3.f,c->z, cItem);
+		itemDropNewD(vecAdd(c->pos,vecNew(0,3,0)), cItem);
 	}
 	characterInit(c);
 	setOverlayColor(0xFF000000,0);
 }
 
 void updateGlide(character *c){
-	vec  dir    = vecDegToVec(vecNew(c->yaw,c->pitch,c->roll));
-	vec  vel    = vecNew(c->vx,c->vy,c->vz);
+	vec  dir    = vecDegToVec(c->rot);
+	vec  vel    = c->vel;
 	vec vdeg    = vecVecToDeg(vecNorm(vel));
 
-	float aoa   = fabsf(vdeg.y - c->pitch);
+	float aoa   = fabsf(vdeg.y - c->rot.pitch);
 	float drag  = fabsf(sinf(aoa*PI180)) * 0.98f + 0.02f;
 
 	float speed = vecMag(vel);
@@ -400,7 +400,7 @@ void updateGlide(character *c){
 		float pd = 0.1f - speed;
 		pd = pd * 6.f;
 		pd = pd * pd;
-		c->pitch += pd;
+		c->rot.pitch += pd;
 	}
 
 	vec vdrg    = vecMulS(vecInvert(vel),drag * 0.1f);
@@ -418,12 +418,12 @@ int characterPhysics(character *c){
 	c->pos = vecAdd(c->pos,c->vel);
 	c->shake = MAX(0.f,c->shake-0.1f);
 	if(c->flags & CHAR_NOCLIP){
-		col = characterCollision(c,c->pos);
+		col = characterCollision(c->pos);
 		if(col){ c->flags |= CHAR_COLLIDE; }
 		return 0;
 	}
 
-	c->vy -= 0.0005f;
+	c->vel.y -= 0.0005f;
 	if(c->vel.y < -1.0f){c->vel.y+=0.005f;}
 	if(c->vel.y >  1.0f){c->vel.y-=0.005f;}
 	if(c->vel.x < -1.0f){c->vel.x+=0.005f;}
@@ -433,7 +433,7 @@ int characterPhysics(character *c){
 
 	c->flags |=  CHAR_FALLING;
 	c->flags &= ~CHAR_COLLIDE;
-	col = characterCollision(c,c->pos);
+	col = characterCollision(c->pos);
 	if(col){ c->flags |= CHAR_COLLIDE; }
 	if((col&0x110) && (c->vel.x < 0.f)){
 		if(c->vel.x < -0.1f){ ret += (int)(fabsf(c->vel.x)*512.f); }
@@ -447,18 +447,18 @@ int characterPhysics(character *c){
 	}
 	if((col&0x880) && (c->vel.z > 0.f)){
 		if(c->vel.z >  0.1f){ ret += (int)(fabsf(c->vel.z)*512.f); }
-		c->pos.x = MIN(c->pox.,floorf(c->z)+0.7f);
-		c->vz    = c->vz*-0.3f;
+		c->pos.z = MIN(c->pos.z,floorf(c->pos.z)+0.7f);
+		c->vel.z = c->vel.z*-0.3f;
 	}
 	if((col&0x440) && (c->vel.z < 0.f)){
 		if(c->vel.z < -0.1f){ ret += (int)(fabsf(c->vel.z)*512.f); }
-		c->pos.z = MAX(c->pos.z,floorf(c->z)+0.3f);
-		c->vz    = c->vz*-0.3f;
+		c->pos.z = MAX(c->pos.z,floorf(c->pos.z)+0.3f);
+		c->vel.z = c->vel.z*-0.3f;
 	}
 	if((col&0x0F0) && (c->vel.y > 0.f)){
 		if(c->vel.y >  0.1f){ ret += (int)(fabsf(c->vel.y)*512.f); }
-		c->pos.y = MIN(c->pos.y,floorf(c->y)+0.5f);
-		c->vy = c->vy*-0.3f;
+		c->pos.y = MIN(c->pos.y,floorf(c->pos.y)+0.5f);
+		c->vel.y = c->vel.y*-0.3f;
 	}
 	if((col&0x00F) && (c->vel.y < 0.f)){
 		c->flags &= ~CHAR_FALLING;
@@ -520,7 +520,7 @@ void characterUpdate(character *c){
 		characterUpdateAnimation(c);
 		characterUpdateInaccuracy(c);
 		characterUpdateDamage(c,characterPhysics(c));
-		characterUpdateWindVolume(c,c->vx,c->vy,c->vz);
+		characterUpdateWindVolume(c,c->vel);
 		return;
 	}
 	nvel = c->vel;
@@ -549,18 +549,18 @@ void characterUpdate(character *c){
 		if((c->gvel.z >  0.001)&&(nvel.z < c->vel.z)){nvel.z=c->vel.z;}
 	}
 
-	if(characterUpdateJumping(c)){ nvy = 0.044f;}
+	if(characterUpdateJumping(c)){ nvel.y = 0.044f;}
 	c->vel = nvel;
 
 	const int damage = characterPhysics(c);
 	if(c == player){
 		characterUpdateDamage(c,damage);
-		if((nvy < -0.2f) && c->vy > -0.01f){
+		if((nvel.y < -0.2f) && c->vel.y > -0.01f){
 			sfxPlay(sfxImpact,1.f);
-		} else if((nvy < -0.05f) && c->vy > -0.01f){
+		} else if((nvel.y < -0.05f) && c->vel.y > -0.01f){
 			sfxPlay(sfxStomp,1.f);
 		}
-		characterUpdateWindVolume(c,c->vx,c->vy,c->vz);
+		characterUpdateWindVolume(c,c->vel);
 		characterUpdateHook(c);
 	}
 
@@ -752,10 +752,10 @@ bool itemPlaceBlock(item *i, character *chr, int to){
 	int cx,cy,cz;
 	if(to < 0){return false;}
 	if(characterLOSBlock(chr,&cx,&cy,&cz,true)){
-		if((characterCollision(chr,chr->pos)&0xFF0)){ return false; }
+		if((characterCollision(chr->pos)&0xFF0)){ return false; }
 		if(!itemDecStack(i,1)){ return false; }
 		worldSetB(cx,cy,cz,i->ID);
-		if((characterCollision(chr,chr->pos)&0xFF0) != 0){
+		if((characterCollision(chr->pos)&0xFF0) != 0){
 			worldSetB(cx,cy,cz,0);
 			itemIncStack(i,1);
 			return false;

@@ -106,7 +106,7 @@ void blockMiningDraw(){
 			continue;
 		}
 		if(blockMiningList[i].lastDamage < blockMiningList[i].damage){
-			fxBlockMine(blockMiningList[i].x,blockMiningList[i].y,blockMiningList[i].z,blockMiningList[i].damage,blockMiningList[i].b);
+			fxBlockMine(vecNew(blockMiningList[i].x,blockMiningList[i].y,blockMiningList[i].z),blockMiningList[i].damage,blockMiningList[i].b);
 		}
 		blockMiningList[i].lastDamage = blockMiningList[i].damage;
 	}
