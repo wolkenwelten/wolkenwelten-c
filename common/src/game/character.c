@@ -206,20 +206,20 @@ uint32_t characterCollision(const vec c){
 
 void characterMove(character *c, const vec mov){
 	const float yaw   = c->rot.yaw;
-	const float pitch = c->rot.pitch;
 
 	if(c->flags & CHAR_NOCLIP){
-		c->gvel    = vecMulS(vecDegToVec(c->rot),mov.z);
-		c->gvel.z  = (sin((yaw+90.f)*PI/180) * cos(pitch*PI/180))*mov.z;
-		c->gvel.x += cos((yaw)*PI/180)*mov.x;
-		c->gvel.z += sin((yaw)*PI/180)*mov.x;
+		const float s = 0.2f;
+		c->gvel    = vecMulS(vecDegToVec(c->rot),mov.z*(-s));
+		c->gvel.x += cos((yaw)*PI/180)*mov.x*s;
+		c->gvel.z += sin((yaw)*PI/180)*mov.x*s;
 	}else{
+		const float s = 0.05f;
 		c->gvel.y = mov.y;
-		c->gvel.x = (cos((yaw+90)*PI/180)*mov.z);
-		c->gvel.z = (sin((yaw+90)*PI/180)*mov.z);
+		c->gvel.x = (cos((yaw+90)*PI/180)*mov.z*s);
+		c->gvel.z = (sin((yaw+90)*PI/180)*mov.z*s);
 
-		c->gvel.x += cos((yaw)*PI/180)*mov.x;
-		c->gvel.z += sin((yaw)*PI/180)*mov.x;
+		c->gvel.x += cos((yaw)*PI/180)*mov.x*s;
+		c->gvel.z += sin((yaw)*PI/180)*mov.x*s;
 	}
 }
 

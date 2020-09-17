@@ -548,9 +548,7 @@ void characterUpdate(character *c){
 		if((c->gvel.z < -0.001)&&(nvel.z > c->vel.z)){nvel.z=c->vel.z;}
 		if((c->gvel.z >  0.001)&&(nvel.z < c->vel.z)){nvel.z=c->vel.z;}
 	}
-
 	if(characterUpdateJumping(c)){ nvel.y = 0.044f;}
-	c->vel = nvel;
 
 	const int damage = characterPhysics(c);
 	if(c == player){
@@ -560,9 +558,10 @@ void characterUpdate(character *c){
 		} else if((nvel.y < -0.05f) && c->vel.y > -0.01f){
 			sfxPlay(sfxStomp,1.f);
 		}
-		characterUpdateWindVolume(c,c->vel);
+		characterUpdateWindVolume(c,nvel);
 		characterUpdateHook(c);
 	}
+	c->vel = nvel;
 
 	characterUpdateInaccuracy(c);
 	characterUpdateYOff(c);
