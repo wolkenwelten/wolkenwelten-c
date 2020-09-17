@@ -96,10 +96,10 @@ void characterSetPlayerPos(const packet *p){
 	if(playerList[i] == NULL){
 		playerList[i] = characterNew();
 	}
-	playerList[i]->pos       = vecNewP(&p->val.f[0]);
-	playerList[i]->rot       = vecNewP(&p->val.f[3]);
-	playerList[i]->vel       = vecNewP(&p->val.f[6]);
-	playerList[i]->yoff      = p->val.f[9];
+	playerList[i]->pos  = vecNewP(&p->val.f[0]);
+	playerList[i]->rot  = vecNewP(&p->val.f[3]);
+	playerList[i]->vel  = vecNewP(&p->val.f[6]);
+	playerList[i]->yoff = p->val.f[9];
 
 	if(p->val.i[10]){
 		if(playerList[i]->hook == NULL){
@@ -398,8 +398,8 @@ void updateGlide(character *c){
 	float speed = vecMag(vel);
 	if((speed < 0.1f) && (c->flags & CHAR_FALLING)){
 		float pd = 0.1f - speed;
-		pd = pd * 6.f;
-		pd = pd * pd;
+		pd  = pd * 6.f;
+		pd  = pd * pd;
 		c->rot.pitch += pd;
 	}
 
@@ -424,12 +424,12 @@ int characterPhysics(character *c){
 	}
 
 	c->vel.y -= 0.0005f;
-	if(c->vel.y < -1.0f){c->vel.y+=0.005f;}
-	if(c->vel.y >  1.0f){c->vel.y-=0.005f;}
-	if(c->vel.x < -1.0f){c->vel.x+=0.005f;}
-	if(c->vel.x >  1.0f){c->vel.x-=0.005f;}
-	if(c->vel.z < -1.0f){c->vel.z+=0.005f;}
-	if(c->vel.z >  1.0f){c->vel.z-=0.005f;}
+	if(c->vel.y < -4.0f){c->vel.y+=0.005f;}
+	if(c->vel.y >  4.0f){c->vel.y-=0.005f;}
+	if(c->vel.x < -4.0f){c->vel.x+=0.005f;}
+	if(c->vel.x >  4.0f){c->vel.x-=0.005f;}
+	if(c->vel.z < -4.0f){c->vel.z+=0.005f;}
+	if(c->vel.z >  4.0f){c->vel.z-=0.005f;}
 
 	c->flags |=  CHAR_FALLING;
 	c->flags &= ~CHAR_COLLIDE;
