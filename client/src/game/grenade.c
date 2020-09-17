@@ -23,42 +23,26 @@ grenade grenadeList[512];
 int     grenadeCount = 0;
 
 void grenadeExplode(float x, float y, float z, float pw, int style){
-	float dx = x - player->x;
-	float dy = y - player->y;
-	float dz = z - player->z;
-	float dm = fabsf(dx);
-	if(fabsf(dy) > dm){dm = fabsf(dy);}
-	if(fabsf(dz) > dm){dm = fabsf(dz);}
+	const vec   pd  = vecNew(x-player->x,y-player->y,z-player->z);
+	const float pdm = sqrtf(vecMag(pd));
 
-	if(dm < (16*pw*pw)){
-		dx /= dm;
-		dy /= dm;
-		dz /= dm;
-		dm = sqrtf((16*pw*pw)/dm);
-		player->vx = dx * dm * -0.02f;
-		player->vy = dy * dm * -0.02f;
-		player->vz = dz * dm * -0.02f;
+	if(pdm < (2*pw*pw)){
+		const float dm = sqrtf((2*pw*pw)/pdm) * -0.02f;
+		player->vx = pd.x * dm;
+		player->vy = pd.y * dm;
+		player->vz = pd.z * dm;
 		player->shake = dm*4.f;
 	}
-	
+
 	for(int i=0;i<entityCount;i++){
 		entity *exEnt = &entityList[i];
-		dx = x - exEnt->x;
-		dy = y - exEnt->y;
-		dz = z - exEnt->z;
-		
-		dm = fabsf(dx);
-		if(fabsf(dy) > dm){dm = fabsf(dy);}
-		if(fabsf(dz) > dm){dm = fabsf(dz);}
-		
-		if(dm > (16*pw*pw)){continue;}
-		dx /= dm;
-		dy /= dm;
-		dz /= dm;
-		dm = sqrtf((16*pw*pw)/dm);
-		exEnt->vx += dx * dm * -0.02f;
-		exEnt->vy += dy * dm * -0.02f;
-		exEnt->vz += dz * dm * -0.02f;
+		const vec exd = vecNew(x-exEnt->x,y-exEnt->y,z-exEnt->z);
+		const float expd = sqrtf(vecMag(exd));
+		if(expd > (2*pw*pw)){continue;}
+		const float dm = sqrtf((2*pw*pw)/expd) * -0.02f;
+		exEnt->vx += exd.x * dm;
+		exEnt->vy += exd.y * dm;
+		exEnt->vz += exd.z * dm;
 	}
 
 	if(style == 0){

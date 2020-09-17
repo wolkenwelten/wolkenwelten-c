@@ -1,4 +1,5 @@
 #include "vec.h"
+#include "misc.h"
 #include "../common.h"
 
 #include <math.h>
@@ -9,6 +10,12 @@ vec vecNew (float x, float y, float z){
 }
 vec vecZero(){
 	return (vec){{{0.f,0.f,0.f}}};
+}
+vec vecRngAbs(){
+	return (vec){{{rngValf(),rngValf(),rngValf()}}};
+}
+vec vecRng(){
+	return vecMulS(vecSubS(vecRngAbs(),0.5f),2.f);
 }
 vec vecInvert(const vec a){
 	return (vec){{{-a.x,-a.y,-a.z}}};

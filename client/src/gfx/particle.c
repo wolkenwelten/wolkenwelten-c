@@ -24,8 +24,10 @@ typedef struct particle {
 
 unsigned int particleVBO = 0;
 
-glParticle glParticles[1<<20];
-particle particles[1<<20];
+#define PART_MAX (1<<19)
+
+glParticle glParticles[PART_MAX];
+particle particles[PART_MAX];
 int particleCount = 0;
 
 void particleInit(){
@@ -33,8 +35,8 @@ void particleInit(){
 }
 
 void newParticleS(float x,float y,float z, unsigned int nrgba,float power,int nttl){
-	if((particleCount >= (1<<20))){
-		int i = rngValM(1<<20);
+	if((particleCount >= PART_MAX)){
+		int i = rngValM(PART_MAX);
 		particles[i]   = particles[--particleCount];
 		glParticles[i] = glParticles[particleCount];
 	}
@@ -55,9 +57,32 @@ void newParticleS(float x,float y,float z, unsigned int nrgba,float power,int nt
 	particleCount++;
 }
 
+void newParticleV(vec pos, vec v, vec vv,float size, float vsize,uint rgba,uint ttl){
+	if(particleCount >= PART_MAX){
+		int i = rngValM(PART_MAX);
+		particles[i]   = particles[--particleCount];
+		glParticles[i] = glParticles[particleCount];
+	}
+	glParticles[particleCount].x    = pos.x;
+	glParticles[particleCount].y    = pos.y;
+	glParticles[particleCount].z    = pos.z;
+	glParticles[particleCount].size = size;
+	glParticles[particleCount].rgba = rgba;
+	particles[particleCount].vx     = v.x;
+	particles[particleCount].vy     = v.y;
+	particles[particleCount].vz     = v.z;
+	particles[particleCount].vvx    = vv.x;
+	particles[particleCount].vvy    = vv.y;
+	particles[particleCount].vvz    = vv.z;
+	particles[particleCount].vsize  = vsize;
+	particles[particleCount].rgba   = rgba;
+	particles[particleCount].ttl    = ttl;
+	particleCount++;
+}
+
 void newParticle(float x,float y,float z,float vx,float vy,float vz,float vvx,float vvy,float vvz,float size,float vsize,unsigned int nrgba,int nttl){
-	if(particleCount >= (1<<20)){
-		int i = rngValM(1<<20);
+	if(particleCount >= PART_MAX){
+		int i = rngValM(PART_MAX);
 		particles[i]   = particles[--particleCount];
 		glParticles[i] = glParticles[particleCount];
 	}

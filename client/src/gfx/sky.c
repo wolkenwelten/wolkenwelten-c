@@ -25,7 +25,7 @@ texture *tSun;
 uint8_t cloudTex[256][256];
 float cloudOffset=0.f;
 
-#define CLOUD_FADED 65536
+#define CLOUD_FADED (65536)
 #define CLOUD_MIND  (65536*3)
 
 void cloudsDraw(int cx, int cy, int cz){

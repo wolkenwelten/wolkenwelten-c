@@ -3,6 +3,8 @@
 
 vec   vecNew     (float x, float y, float z);
 vec   vecZero    ();
+vec   vecRng     ();
+vec   vecRngAbs  ();
 vec   vecInvert  (const vec a);
 
 vec   vecAdd     (const vec a, const vec   b);
