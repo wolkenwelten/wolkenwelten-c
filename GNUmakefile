@@ -4,7 +4,7 @@ RELEASE_OPTIMIZATION := -O3 -flto
 CINCLUDES            :=
 LIBS                 := -lm
 WARNINGS             := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align
-CFLAGS               :=
+CFLAGS               := -g
 CSTD                 := -std=c99
 
 include common/Makefile.common
