@@ -281,7 +281,7 @@ int characterUpdateJumping(character *c){
 }
 
 void characterUpdateDamage(character *c, int damage){
-	if(damage < 0){ return; }
+	if(damage <= 0){ return; }
 	if(damage > 8){
 		sfxPlay(sfxImpact,1.f);
 		sfxPlay(sfxUngh,1.f);
@@ -470,9 +470,7 @@ int characterPhysics(character *c){
 		}else if(c->vel.y < -0.04f){
 			c->yoff += -0.2f;
 		}
-		c->vel.x *= 0.97f;
-		c->vel.y  = 0.00f;
-		c->vel.z *= 0.97f;
+		c->vel = vecMul(c->vel,vecNew(0.97f,0,0.97f));
 	}
 
 	if(c->flags & CHAR_GLIDE){ updateGlide(c); }
@@ -484,7 +482,7 @@ void characterUpdate(character *c){
 	vec nvel;
 
 	if((c->flags & CHAR_FALLINGSOUND) && (c->pos.y > -32)){ c->flags &= ~CHAR_FALLINGSOUND; }
-	if(c->pos.y < -500){
+	if(c->pos.y < -512){
 		characterDie(c);
 		msgSendDyingMessage("fell into the abyss", 65535);
 	}
@@ -549,6 +547,7 @@ void characterUpdate(character *c){
 		if((c->gvel.z >  0.001)&&(nvel.z < c->vel.z)){nvel.z=c->vel.z;}
 	}
 	if(characterUpdateJumping(c)){ nvel.y = 0.044f;}
+	c->vel = nvel;
 
 	const int damage = characterPhysics(c);
 	if(c == player){
@@ -561,8 +560,6 @@ void characterUpdate(character *c){
 		characterUpdateWindVolume(c,nvel);
 		characterUpdateHook(c);
 	}
-	c->vel = nvel;
-
 	characterUpdateInaccuracy(c);
 	characterUpdateYOff(c);
 	characterUpdateAnimation(c);
