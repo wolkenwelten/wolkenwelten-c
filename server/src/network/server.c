@@ -31,7 +31,7 @@
 clientConnection clients[32];
 int clientCount = 0;
 
-char *getPlayerLeaveMessage(int c){
+const char *getPlayerLeaveMessage(int c){
 	static char msg[256];
 	snprintf(msg,sizeof(msg),"%s left",clients[c].playerName);
 	return msg;
@@ -71,14 +71,14 @@ void sendPlayerJoinMessage(int c){
 	serverSendChatMsg(msg);
 }
 
-void serverParseChatMsg(int c, packet *m){
+void serverParseChatMsg(int c,const packet *m){
 	char msg[256];
 	if(parseCommand(c,(const char *)(m->val.c+2))){return;}
 	snprintf(msg,sizeof(msg),"%s: %s",clients[c].playerName,(char *)(m->val.c+2));
 	serverSendChatMsg(msg);
 }
 
-void serverParseDyingMsg(int c, packet *m){
+void serverParseDyingMsg(int c,const packet *m){
 	char msg[256];
 	if((m->val.s[0] != 65535) && (m->val.s[0] < clientCount)){
 		snprintf(msg,sizeof(msg),"%s %s %s",clients[m->val.s[0]].playerName,(char *)(m->val.c+2),clients[c].playerName);
@@ -132,20 +132,20 @@ void msgUpdatePlayer(int c){
 		if(clients[i].c == NULL){continue;}
 		item *itm = characterGetItemBarSlot(clients[i].c,clients[i].c->activeItem);
 
-		rp->val.f[ 0] = clients[i].c->x;
-		rp->val.f[ 1] = clients[i].c->y;
-		rp->val.f[ 2] = clients[i].c->z;
-		rp->val.f[ 3] = clients[i].c->yaw;
-		rp->val.f[ 4] = clients[i].c->pitch;
-		rp->val.f[ 5] = clients[i].c->roll;
-		rp->val.f[ 6] = clients[i].c->vx;
-		rp->val.f[ 7] = clients[i].c->vy;
-		rp->val.f[ 8] = clients[i].c->vz;
+		rp->val.f[ 0] = clients[i].c->pos.x;
+		rp->val.f[ 1] = clients[i].c->pos.y;
+		rp->val.f[ 2] = clients[i].c->pos.z;
+		rp->val.f[ 3] = clients[i].c->rot.yaw;
+		rp->val.f[ 4] = clients[i].c->rot.pitch;
+		rp->val.f[ 5] = clients[i].c->rot.roll;
+		rp->val.f[ 6] = clients[i].c->vel.x;
+		rp->val.f[ 7] = clients[i].c->vel.y;
+		rp->val.f[ 8] = clients[i].c->vel.z;
 		rp->val.f[ 9] = clients[i].c->yoff;
 		rp->val.i[10] = clients[i].c->hook != NULL;
-		rp->val.f[11] = clients[i].c->hookx;
-		rp->val.f[12] = clients[i].c->hooky;
-		rp->val.f[13] = clients[i].c->hookz;
+		rp->val.f[11] = clients[i].c->hookPos.x;
+		rp->val.f[12] = clients[i].c->hookPos.y;
+		rp->val.f[13] = clients[i].c->hookPos.z;
 		rp->val.i[14] = clients[i].c->blockMiningX;
 		rp->val.i[15] = clients[i].c->blockMiningY;
 		rp->val.i[16] = clients[i].c->blockMiningZ;
@@ -172,16 +172,10 @@ void msgUpdatePlayer(int c){
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 }
 
-void serverParsePlayerPos(int c, packet *p){
-	clients[c].c->x                  = p->val.f[ 0];
-	clients[c].c->y                  = p->val.f[ 1];
-	clients[c].c->z                  = p->val.f[ 2];
-	clients[c].c->yaw                = p->val.f[ 3];
-	clients[c].c->pitch              = p->val.f[ 4];
-	clients[c].c->roll               = p->val.f[ 5];
-	clients[c].c->vx                 = p->val.f[ 6];
-	clients[c].c->vy                 = p->val.f[ 7];
-	clients[c].c->vz                 = p->val.f[ 8];
+void serverParsePlayerPos(int c,const packet *p){
+	clients[c].c->pos                = vecNewP(&p->val.f[ 0]);
+	clients[c].c->rot                = vecNewP(&p->val.f[ 3]);
+	clients[c].c->vel                = vecNewP(&p->val.f[ 6]);
 	clients[c].c->yoff               = p->val.f[ 9];
 	if(p->val.i[10]){
 		clients[c].c->hook           = (grapplingHook *)0x8;
@@ -189,9 +183,7 @@ void serverParsePlayerPos(int c, packet *p){
 		clients[c].c->hook           = NULL;
 	}
 
-	clients[c].c->hookx              = p->val.f[11];
-	clients[c].c->hooky              = p->val.f[12];
-	clients[c].c->hookz              = p->val.f[13];
+	clients[c].c->hookPos            = vecNewP(&p->val.f[11]);
 	clients[c].c->blockMiningX       = p->val.i[14];
 	clients[c].c->blockMiningY       = p->val.i[15];
 	clients[c].c->blockMiningZ       = p->val.i[16];
@@ -592,13 +584,13 @@ void sendToClient(int c,void *data,int len){
 	clients[c].sendBufLen += len;
 }
 
-void sendToAll(void *data, int len){
+void sendToAll(const void *data, int len){
 	for(int i=0;i<clientCount;i++){
 		sendToClient(i,data,len);
 	}
 }
 
-void sendToAllExcept(int e,void *data, int len){
+void sendToAllExcept(int e,const void *data, int len){
 	for(int i=0;i<clientCount;i++){
 		if(i==e){continue;}
 		sendToClient(i,data,len);
@@ -615,7 +607,7 @@ void serverCloseClient(int c){
 	clients[c].state = STATE_CLOSED;
 	msgSetPlayerCount(c,clientCount);
 	serverSendChatMsg(msg);
-	
+
 	int lowestClient=0;
 	for(int i=0;i<clientCount;i++){
 		if(clients[i].state != STATE_CLOSED){
@@ -623,7 +615,7 @@ void serverCloseClient(int c){
 		}
 	}
 	clientCount = lowestClient+1;
-	
+
 	if((clientCount == 1) && (clients[0].state == STATE_CLOSED) && (optionSingleplayer)){
 		quit = true;
 	}

@@ -4,4 +4,4 @@
 void blockMiningMinePos(item *itm, int x, int y, int z);
 void blockMiningInit();
 void blockMiningDraw();
-void blockMiningUpdateFromServer(packet *p);
+void blockMiningUpdateFromServer(const packet *p);

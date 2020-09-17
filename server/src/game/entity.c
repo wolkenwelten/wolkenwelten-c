@@ -10,7 +10,7 @@ entity entityList[1<<14];
 int entityCount = 0;
 entity *entityFirstFree = NULL;
 
-entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll){
+entity *entityNew(const vec pos, const vec rot){
 	entity *e = NULL;
 	if(entityFirstFree == NULL){
 		e = &entityList[entityCount++];
@@ -22,15 +22,8 @@ entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll
 		}
 	}
 	entityReset(e);
-	e->x          = x;
-	e->y          = y;
-	e->z          = z;
-	e->yaw        = yaw;
-	e->pitch      = pitch;
-	e->roll       = roll;
-	e->nextFree   = NULL;
-	e->curChungus = NULL;
-	e->flags      = 0;
+	e->pos        = pos;
+	e->rot        = rot;
 	return e;
 }
 

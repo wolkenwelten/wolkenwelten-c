@@ -8,6 +8,9 @@
 vec vecNew (float x, float y, float z){
 	return (vec){{{ x,y,z }}};
 }
+vec vecNewP(float *p){
+	return (vec){{{p[0],p[1],p[2]}}};
+}
 vec vecZero(){
 	return (vec){{{0.f,0.f,0.f}}};
 }
@@ -59,6 +62,10 @@ float vecMag (const vec a){
 		return sqrtf(dot);
 	}
 	return 0;
+}
+
+vec vecFloor(const vec a){
+	return (vec){{{floorf(a.x),floorf(a.y),floorf(a.z)}}};
 }
 
 vec vecNorm(const vec a){

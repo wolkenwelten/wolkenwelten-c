@@ -17,22 +17,16 @@ void characterAddCooldown(character *c, int cooldown){
 	c->actionTimeout = -cooldown;
 }
 
-void characterSetPos(character *c, float x, float y, float z){
-	c->x = x;
-	c->y = y;
-	c->z = z;
+void characterSetPos(character *c, const vec pos){
+	c->pos = pos;
 }
 
-void characterSetRot(character *c, float yaw, float pitch, float roll){
-	c->yaw   = yaw;
-	c->pitch = pitch;
-	c->roll  = roll;
+void characterSetRot(character *c, const vec rot){
+	c->rot = rot;
 }
 
-void characterSetVelocity(character *c, float vx, float vy, float vz){
-	c->vx = vx;
-	c->vy = vy;
-	c->vz = vz;
+void characterSetVelocity(character *c, const vec vel){
+	c->vel = vel;
 }
 
 void characterAddInaccuracy(character *c, float inc){
@@ -159,113 +153,79 @@ void characterSwapItemSlots(character *c, int a,int b){
 }
 
 bool characterLOSBlock(character *c, int *retX, int *retY, int *retZ, int returnBeforeBlock) {
-	float cvx,cvy,cvz;
-	float cx,cy,cz;
-	float lx,ly,lz;
 	int   lastBlock=-1;
-	const float yaw   = c->yaw;
-	const float pitch = c->pitch;
 
-	cvx = (cos((yaw-90.f)*PI/180) * cos((-pitch)*PI/180))*0.1f;
-	cvy = (sin((-pitch)*PI/180))*0.1f;
-	cvz = (sin((yaw-90.f)*PI/180) * cos((-pitch)*PI/180))*0.1f;
-
-	cx = lx = c->x;
-	cy = ly = c->y+0.5f;
-	cz = lz = c->z;
+	const vec cv = vecDegToVec(c->rot);
+	vec       c  = vecAdd(c->pos,vecNew(0,0.5,0));
+	vec       l  = c;
 
 	for(int i=0;i<50;i++){
 		if((lastBlock == -1) || (fabsf(lx - floorf(cx)) > 0.1f) || (fabsf(ly - floorf(cy)) > 0.1f) || (fabsf(lz - floorf(cz)) > 0.1f)){
-			lastBlock = worldGetB(cx,cy,cz);
+			lastBlock = worldGetB(c.x,c.y,c.z);
 			if(lastBlock > 0){
 				if(returnBeforeBlock){
-					*retX = lx;
-					*retY = ly;
-					*retZ = lz;
+					*retX = l.x;
+					*retY = l.y;
+					*retZ = l.z;
 				}else{
-					*retX = cx;
-					*retY = cy;
-					*retZ = cz;
+					*retX = c.x;
+					*retY = c.y;
+					*retZ = c.z;
 				}
 				return true;
 			}
-			lx = floorf(cx);
-			ly = floorf(cy);
-			lz = floorf(cz);
+			l = vecFloor(c);
 		}
-
-		cx += cvx;
-		cy += cvy;
-		cz += cvz;
+		c = vecAdd(c,cv);
 	}
 	return false;
 }
 
-uint32_t characterCollision(character *c, float cx, float cy, float cz){
-	(void)c;
-
+uint32_t characterCollision(const vec c){
 	uint32_t col = 0;
 	const float wd = 0.2f;
 	const float WD = wd*2.f;
 
-	if(checkCollision(cx-wd,cy+0.5f,cz   )){col |=  0x10;}
-	if(checkCollision(cx+wd,cy+0.5f,cz   )){col |=  0x20;}
-	if(checkCollision(cx   ,cy+0.5f,cz-wd)){col |=  0x40;}
-	if(checkCollision(cx   ,cy+0.5f,cz+wd)){col |=  0x80;}
+	if(checkCollision(c.x-wd,c.y+0.5f,c.z   )){col |=  0x10;}
+	if(checkCollision(c.x+wd,c.y+0.5f,c.z   )){col |=  0x20;}
+	if(checkCollision(c.x   ,c.y+0.5f,c.z-wd)){col |=  0x40;}
+	if(checkCollision(c.x   ,c.y+0.5f,c.z+wd)){col |=  0x80;}
 
-	if(checkCollision(cx-wd,cy-1.f ,cz   )){col |=   0x1;}
-	if(checkCollision(cx+wd,cy-1.f ,cz   )){col |=   0x2;}
-	if(checkCollision(cx   ,cy-1.f ,cz-wd)){col |=   0x4;}
-	if(checkCollision(cx   ,cy-1.f ,cz+wd)){col |=   0x8;}
+	if(checkCollision(c.x-wd,c.y-1.f ,c.z   )){col |=   0x1;}
+	if(checkCollision(c.x+wd,c.y-1.f ,c.z   )){col |=   0x2;}
+	if(checkCollision(c.x   ,c.y-1.f ,c.z-wd)){col |=   0x4;}
+	if(checkCollision(c.x   ,c.y-1.f ,c.z+wd)){col |=   0x8;}
 
-	if(checkCollision(cx-WD,cy-0.7f,cz   )){col |= 0x100;}
-	if(checkCollision(cx+WD,cy-0.7f,cz   )){col |= 0x200;}
-	if(checkCollision(cx   ,cy-0.7f,cz-WD)){col |= 0x400;}
-	if(checkCollision(cx   ,cy-0.7f,cz+WD)){col |= 0x800;}
+	if(checkCollision(c.x-WD,c.y-0.7f,c.z   )){col |= 0x100;}
+	if(checkCollision(c.x+WD,c.y-0.7f,c.z   )){col |= 0x200;}
+	if(checkCollision(c.x   ,c.y-0.7f,c.z-WD)){col |= 0x400;}
+	if(checkCollision(c.x   ,c.y-0.7f,c.z+WD)){col |= 0x800;}
 
 	return col;
 }
 
-void characterMove(character *c, float mx,float my,float mz){
-	float speed;
-	const float yaw   = c->yaw;
-	const float pitch = c->pitch;
+void characterMove(character *c, const vec mov){
+	const float yaw   = c->rot.yaw;
+	const float pitch = c->rot.pitch;
 
 	if(c->flags & CHAR_NOCLIP){
-		if(c->flags & CHAR_SNEAK){
-			speed = 1.f;
-		}else{
-			speed = 0.15f;
-		}
-		c->gvx = (cos((yaw+90.f)*PI/180) * cos(pitch*PI/180))*mz*speed;
-		c->gvy = sin(pitch*PI/180)*mz*speed;
-		c->gvz = (sin((yaw+90.f)*PI/180) * cos(pitch*PI/180))*mz*speed;
+		c->gvel = vecMulS(vecDegToVec(c->rot),mov.z)
+		c->gvz = (sin((yaw+90.f)*PI/180) * cos(pitch*PI/180))*mov.z;
 
-		c->gvx += cos((yaw)*PI/180)*mx*speed;
-		c->gvz += sin((yaw)*PI/180)*mx*speed;
+		c->gvel.x += cos((yaw)*PI/180)*mov.x;
+		c->gvel.z += sin((yaw)*PI/180)*mov.x;
 	}else{
-		if(c->flags & CHAR_SNEAK){
-			speed = 0.01f;
-		}else{
-			speed = 0.05f;
-		}
-		c->gvy = my;
-		c->gvx = (cos((yaw+90)*PI/180)*mz)*speed;
-		c->gvz = (sin((yaw+90)*PI/180)*mz)*speed;
+		c->gvel.y = mov.y;
+		c->gvel.x = (cos((yaw+90)*PI/180)*mov.z);
+		c->gvel.z = (sin((yaw+90)*PI/180)*mov.z);
 
-		c->gvx += cos((yaw)*PI/180)*mx*speed;
-		c->gvz += sin((yaw)*PI/180)*mx*speed;
+		c->gvel.x += cos((yaw)*PI/180)*mov.x;
+		c->gvel.z += sin((yaw)*PI/180)*mov.x;
 	}
 }
 
-void characterRotate(character *c, float vYaw,float vPitch,float vRoll){
-	float yaw   = c->yaw   +   vYaw;
-	float pitch = c->pitch + vPitch;
-	float roll  = c->roll  +  vRoll;
-
-	c->yaw   = yaw;
-	c->pitch = pitch;
-	c->roll  = roll;
+void characterRotate(character *c, const vec rot){
+	c->rot = vecAdd(c->rot,rot);
 }
 
 void characterStartAnimation(character *c, int index, int duration){

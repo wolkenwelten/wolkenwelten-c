@@ -95,7 +95,6 @@ int blockMiningUpdateMesh(int d){
 }
 
 void blockMiningDraw(){
-	float matMVP[16];
 	if(blockMiningCount == 0){return;}
 	shaderBind(sMesh);
 	matMul(matMVP,matView,matProjection);
@@ -120,7 +119,7 @@ void blockMiningInit(){
 	blockMiningProgressMesh->tex = tBlockMining;
 }
 
-void blockMiningUpdateFromServer(packet *p){
+void blockMiningUpdateFromServer(const packet *p){
 	if(p->val.i[2] < blockMiningCount){
 		blockMiningCount = p->val.i[2];
 	}
@@ -134,4 +133,3 @@ void blockMiningUpdateFromServer(packet *p){
 	bm->damage = (p->val.i[1] >> 16) & 0xFFFF;
 	bm->b      = worldGetB(bm->x,bm->y,bm->z);
 }
-

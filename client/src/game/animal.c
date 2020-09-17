@@ -22,40 +22,8 @@ animal *animalFirstFree = NULL;
 
 #define ANIMAL_FADEOUT (128.f)
 
-animal *animalNew(float x, float y, float z , int type){
-	animal *e = NULL;
-	if(animalCount >= ((sizeof(animalList) / sizeof(animal))-1)){return NULL;}
-	e = &animalList[animalCount++];
-	animalReset(e);
-
-	e->x          = x;
-	e->y          = y;
-	e->z          = z;
-	e->vx         = 0.f;
-	e->vy         = 0.f;
-	e->vz         = 0.f;
-	e->gvx        = 0.f;
-	e->gvy        = 0.f;
-	e->gvz        = 0.f;
-
-	e->yaw        = 0.f;
-	e->pitch      = 0.f;
-	e->roll       = 0.f;
-	e->gyaw       = 0.f;
-	e->gpitch     = 0.f;
-
-	e->flags      = 0;
-	e->type       = type;
-	e->state      = 0;
-	e->breathing  = 0;
-
-	e->curChungus = NULL;
-
-	return e;
-}
-
 void aniomalShadesDraw(animal *c){
-	float matMVP[16],breath,scale=0.5f;
+	float breath,scalef;
 	if(c->state == 0){
 		breath = sinf((float)(c->breathing-256)/512.f)*2.f;
 	}else{
@@ -79,8 +47,8 @@ void aniomalShadesDraw(animal *c){
 	meshDraw(meshSunglasses);
 }
 
-void animalDraw(animal *e){
-	float matMVP[16],breath,scale = 1.f;
+void animalDraw(const animal *e){
+	float breath,scale;
 	if(e        == NULL){return;}
 	if(e->state == 0){
 		breath = cosf((float)e->breathing/512.f)*4.f;
@@ -118,34 +86,34 @@ void animalUpdateAll(){
 	}
 }
 
-void animalSyncFromServer(packet *p){
-	animalCount = p->val.u[ 3];
-	uint i      = p->val.u[ 2];
+void animalSyncFromServer(const packet *p){
+	animalCount   = p->val.u[ 3];
+	uint i        = p->val.u[ 2];
 	if (i >= animalCount){ return; }
-	animal *e   = &animalList[i];
+	animal *e     = &animalList[i];
 
-	e->x        = p->val.f[ 4];
-	e->y        = p->val.f[ 5];
-	e->z        = p->val.f[ 6];
-	e->yaw      = p->val.f[ 7];
-	e->pitch    = p->val.f[ 8];
-	e->roll     = p->val.f[ 9];
-	e->gyaw     = p->val.f[10];
-	e->gpitch   = p->val.f[11];
-	e->vx       = p->val.f[12];
-	e->vy       = p->val.f[13];
-	e->vz       = p->val.f[14];
-	e->gvx      = p->val.f[15];
-	e->gvy      = p->val.f[16];
-	e->gvz      = p->val.f[17];
+	e->pos.x      = p->val.f[ 4];
+	e->pos.y      = p->val.f[ 5];
+	e->pos.z      = p->val.f[ 6];
+	e->rot.yaw    = p->val.f[ 7];
+	e->rot.pitch  = p->val.f[ 8];
+	e->rot.roll   = p->val.f[ 9];
+	e->grot.yaw   = p->val.f[10];
+	e->grot.pitch = p->val.f[11];
+	e->vel.x      = p->val.f[12];
+	e->vel.y      = p->val.f[13];
+	e->vel.z      = p->val.f[14];
+	e->gvel.x     = p->val.f[15];
+	e->gvel.y     = p->val.f[16];
+	e->gvel.z     = p->val.f[17];
 
-	e->type     = p->val.c[ 0];
-	e->flags    = p->val.c[ 1];
-	e->state    = p->val.c[ 2];
+	e->type       = p->val.c[ 0];
+	e->flags      = p->val.c[ 1];
+	e->state      = p->val.c[ 2];
 
-	e->age      = p->val.c[ 3];
-	e->health   = p->val.c[ 4];
-	e->hunger   = p->val.c[ 5];
-	e->thirst   = p->val.c[ 6];
-	e->sleepy   = p->val.c[ 7];
+	e->age        = p->val.c[ 3];
+	e->health     = p->val.c[ 4];
+	e->hunger     = p->val.c[ 5];
+	e->thirst     = p->val.c[ 6];
+	e->sleepy     = p->val.c[ 7];
 }

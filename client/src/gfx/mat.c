@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <math.h>
 
+float matMVP[16];
+
 void matFrustum(float out[16], float left, float right, float bottom, float top, float znear, float zfar){
 	float temp  = 2.f * znear;
 	float temp2 = right - left;
@@ -213,7 +215,7 @@ void matMulScale(float mat[16], float x, float y, float z){
 	matMul(mat,tmp,mat);
 }
 
-void matPrint(float *mat,const char *title){
+void matPrint(const float *mat,const char *title){
 	printf("\n [%s]\n",title);
 	for(int x=0;x<4;x++){
 		for(int i=x;i<16;i+=4){

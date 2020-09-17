@@ -15,13 +15,13 @@
 #include <math.h>
 #include "../gfx/gl.h"
 
-entity entityList[1<<14];
-int entityCount = 0;
+entity  entityList[1<<14];
+int     entityCount = 0;
 entity *entityFirstFree = NULL;
 
 #define ENTITY_FADEOUT (128.f)
 
-entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll){
+entity *entityNew(vec pos, vec rot){
 	entity *e = NULL;
 	if(entityFirstFree == NULL){
 		e = &entityList[entityCount++];
@@ -34,17 +34,8 @@ entity *entityNew(float x, float y, float z , float yaw, float pitch, float roll
 	}
 	entityReset(e);
 
-	e->x          = x;
-	e->y          = y;
-	e->z          = z;
-	e->yaw        = yaw;
-	e->pitch      = pitch;
-	e->roll       = roll;
-	e->flags      = 0;
-
-	e->nextFree   = NULL;
-	e->curChungus = NULL;
-	e->eMesh      = NULL;
+	e->pos        = pos
+	e->rot        = rot;
 
 	return e;
 }
@@ -58,7 +49,7 @@ void entityFree(entity *e){
 	}
 }
 
-void entityDraw(entity *e){
+void entityDraw(const entity *e){
 	float matMVP[16];
 	if(e        == NULL){return;}
 	if(e->eMesh == NULL){return;}

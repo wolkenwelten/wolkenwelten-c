@@ -2,6 +2,7 @@
 #include "../gfx_structs.h"
 
 vec   vecNew     (float x, float y, float z);
+vec   vecNewP    (float *p);
 vec   vecZero    ();
 vec   vecRng     ();
 vec   vecRngAbs  ();
@@ -21,6 +22,7 @@ vec   vecDivS    (const vec a, const float b);
 
 float vecDot     (const vec a, const vec   b);
 float vecMag     (const vec a);
+vec   vecFloor   (const vec a);
 vec   vecNorm    (const vec a);
 vec   vecSqrt    (const vec a);
 vec   vecCross   (const vec a, const vec   b);

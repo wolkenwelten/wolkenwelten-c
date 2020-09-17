@@ -35,9 +35,7 @@ struct chunk;
 typedef struct chunk chunk;
 
 typedef struct {
-	float  x, y, z;
-	float vx,vy,vz;
-	float yaw,pitch,roll;
+	vec pos,vel,rot;
 	float yoff;
 	uint32_t flags;
 
@@ -52,10 +50,7 @@ typedef struct {
 #define ENTITY_NOREPULSION (1<<4)
 
 typedef struct {
-	float  x, y, z;
-	float vx,vy,vz;
-	float gvx,gvy,gvz;
-	float yaw,pitch,roll;
+	vec pos,vel,gvel,rot;
 	float yoff,shake,inaccuracy;
 	float gyoff;
 
@@ -72,7 +67,7 @@ typedef struct {
 
 	short hp,maxhp;
 
-	float hookx,hooky,hookz;
+	vec hookPos;
 	int blockMiningX,blockMiningY,blockMiningZ;
 
 	int actionTimeout;
@@ -91,12 +86,7 @@ typedef struct {
 #define CHAR_GLIDE        (1<<5)
 
 typedef struct {
-	float  x, y, z;
-	float vx,vy,vz;
-	float yaw,pitch,roll;
-
-	float gyaw,gpitch;
-	float gvx,gvy,gvz;
+	vec pos,vel,gvel,grot,rot;
 
 	int8_t age;
 	int8_t health;

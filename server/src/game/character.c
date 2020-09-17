@@ -25,7 +25,7 @@ void characterInit(character *c){
 	int sx,sy,sz;
 
 	c->gyoff  = 0.f;
-	c->gvx = c->gvy = c->gvz = 0.f;
+	c->gvel = c->vel =  vecZero();
 
 	c->flags = 0;
 	c->gliderFade = 0.f;
@@ -39,16 +39,12 @@ void characterInit(character *c){
 	c->hp = c->maxhp = 20;
 
 	bigchungusGetSpawnPos(&world,&sx,&sy,&sz);
-	c->yaw   = 135.f;
-	c->pitch = 0.f;
-	c->roll  = 0.f;
+	c->rot   = vecNew(135.f,0.f,0.f);
 	c->yoff  = 0.f;
-	c->x     = sx+0.5f;
-	c->y     = sy+1.0f;
-	c->z     = sz+0.5f;
-	c->vx    = c->vy = c->vz = 0.f;
+	c->pos   = vecNew(sx+0.5f,sy+1.0f,sz+0.5f);
+
 	c->hook  = false;
-	c->hookx = c->hooky = c->hookz = 0.f;
+	c->hookPos = vecZero();
 
 	characterEmptyInventory(c);
 }

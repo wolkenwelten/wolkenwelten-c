@@ -83,7 +83,7 @@ mesh *meshNewRO(vertex *roData,size_t roSize){
 	return m;
 }
 
-void meshFree(mesh *m){
+void meshFree(const mesh *m){
 	if(m == NULL){return;}
 	glDeleteBuffers(1,&m->vbo);
 	m->nextFree = meshFirstFree;
@@ -96,17 +96,13 @@ void meshFreeAll(){
 	}
 }
 
-void meshDraw(mesh *m){
-	if(m->tex != NULL){
-		textureBind(m->tex);
-	}
+void meshDraw(const mesh *m){
+	textureBind(m->tex);
 	meshDrawVBO(m);
 }
 
-void meshDrawLin(mesh *m){
-	if(m->tex != NULL){
-		textureBind(m->tex);
-	}
+void meshDrawLin(const mesh *m){
+	textureBind(m->tex);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	meshDrawVBO(m);

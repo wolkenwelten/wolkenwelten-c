@@ -7,6 +7,6 @@ extern int screenHeight;
 extern size_t vboTrisCount;
 
 void initGL();
-void renderWorld(character *cam);
+void renderWorld(const character *cam);
 void renderFrame();
 void renderMenuFrame();

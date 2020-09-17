@@ -5,8 +5,8 @@
 extern entity entityList[1<<14];
 extern int entityCount;
 
-entity  *entityNew       (float x, float y, float z , float yaw, float pitch, float roll);
+entity  *entityNew       (const vec pos, const vec rot);
 void     entityFree      (entity *e);
-void     entityDraw      (entity *e);
+void     entityDraw      (const entity *e);
 void     entityDrawAll   ();
 void     entityUpdateAll ();

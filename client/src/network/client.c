@@ -46,7 +46,7 @@ int connectionTries   = 0;
 #include "client_bsd.h"
 #endif
 
-void msgParseGetChunk(packet *p){
+void msgParseGetChunk(const packet *p){
 	int x = p->val.i[1024];
 	int y = p->val.i[1025];
 	int z = p->val.i[1026];
@@ -66,22 +66,22 @@ void msgSendPlayerPos(){
 	}
 	packet *p = &packetBuffer;
 
-	p->val.f[ 0] = player->x;
-	p->val.f[ 1] = player->y;
-	p->val.f[ 2] = player->z;
-	p->val.f[ 3] = player->yaw;
-	p->val.f[ 4] = player->pitch;
-	p->val.f[ 5] = player->roll;
-	p->val.f[ 6] = player->vx;
-	p->val.f[ 7] = player->vy;
-	p->val.f[ 8] = player->vz;
+	p->val.f[ 0] = player->pos.x;
+	p->val.f[ 1] = player->pos.y;
+	p->val.f[ 2] = player->pos.z;
+	p->val.f[ 3] = player->rot.yaw;
+	p->val.f[ 4] = player->rot.pitch;
+	p->val.f[ 5] = player->rot.roll;
+	p->val.f[ 6] = player->vel.x;
+	p->val.f[ 7] = player->vel.y;
+	p->val.f[ 8] = player->vel.z;
 	p->val.f[ 9] = player->yoff;
 
 	if(player->hook != NULL){
 		p->val.i[10] = 1;
-		p->val.f[11] = player->hook->ent->x;
-		p->val.f[12] = player->hook->ent->y;
-		p->val.f[13] = player->hook->ent->z;
+		p->val.f[11] = player->hook->ent->pos.x;
+		p->val.f[12] = player->hook->ent->pos.y;
+		p->val.f[13] = player->hook->ent->pos.z;
 	} else {
 		p->val.i[10] = 0;
 	}
@@ -98,7 +98,7 @@ void msgSendPlayerPos(){
 	packetQueueToServer(p,15,24*4);
 }
 
-void decompressPacket(packet *p){
+void decompressPacket(const packet *p){
 	uint8_t *t;
 	uint8_t buf[1<<20];
 	int len = LZ4_decompress_safe((const char *)&p->val.c, (char *)buf, packetLen(p), sizeof(buf));
@@ -268,7 +268,7 @@ void clientGoodbye(){
 	clientSendAllToServer();
 }
 
-void queueToServer(void *data, unsigned int len){
+void queueToServer(const void *data, unsigned int len){
 	if((sendBufLen + len) > sizeof(sendBuf)){
 		clientSendAllToServer();
 	}

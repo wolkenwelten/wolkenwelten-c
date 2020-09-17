@@ -41,14 +41,14 @@ typedef struct {
 extern clientConnection clients[32];
 extern int clientCount;
 
-char *getPlayerLeaveMessage(int c);
+const char *getPlayerLeaveMessage(int c);
 void serverInit            ();
 void serverFree            ();
 void serverHandleEvents    ();
 void serverInitClient      (int c);
-void sendToAll             (void *data, int len);
-void sendToAllExcept       (int e, void *data, int len);
-void sendToClient          (int c, void *data, int len);
+void sendToAll             (const void *data, int len);
+void sendToAllExcept       (int e, const void *data, int len);
+void sendToClient          (int c, const void *data, int len);
 void addChungusToQueue     (int c, uint16_t x, uint16_t y, uint16_t z);
 void addQueuedChunks       (int c);
 void addPriorityItemDrop   (uint16_t i);

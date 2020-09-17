@@ -18,19 +18,13 @@ animal      *animalFirstFree = NULL;
 
 #define ANIMALS_PER_UPDATE 16u
 
-animal *animalNew(float x, float y, float z , int type){
+animal *animalNew(const vec pos , int type){
 	animal *e = NULL;
 	if(animalCount >= ((sizeof(animalList) / sizeof(animal)-1))){return NULL;}
 	e = &animalList[animalCount++];
 	animalReset(e);
 
-	e->x         = x;
-	e->y         = y;
-	e->z         = z;
-	e->yaw       = 0.f;
-	e->pitch     = 0.f;
-	e->roll      = 0.f;
-	e->breathing = 0;
+	e->pos       = pos;
 
 	e->age       = 21;
 	e->health    = 20;
@@ -38,15 +32,11 @@ animal *animalNew(float x, float y, float z , int type){
 	e->thirst    = 64;
 	e->sleepy    = 64;
 
-	e->flags     = 0;
 	e->type      = type;
-	e->state     = 0;
 
 	if(rngValM(2) == 0){
 		e->flags |= ANIMAL_BELLYSLEEP;
 	}
-
-	e->curChungus = NULL;
 
 	return e;
 }
@@ -77,10 +67,7 @@ float animalClosestPlayer(animal *e, character **cChar){
 	float ret = 4096.f;
 	for(int i=0;i<clientCount;++i){
 		if(clients[i].c == NULL){continue;}
-		float dx = clients[i].c->x - e->x;
-		float dy = clients[i].c->y - e->y;
-		float dz = clients[i].c->z - e->z;
-		float d  = (dx*dx)+(dy*dy)+(dz*dz);
+		const float d = vecMag(vecSub(clients[i].c->pos,e->pos));
 		if(d < ret){
 			ret = d;
 			*cChar = clients[i].c;
@@ -95,10 +82,7 @@ float animalClosestAnimal(animal *e, animal **cAnim, int typeFilter){
 	for(uint i=0;i<animalCount;i++){
 		if(e == &animalList[i])                                    {continue;}
 		if((typeFilter >= 0) && (animalList[i].type != typeFilter)){continue;}
-		float dx = animalList[i].x - e->x;
-		float dy = animalList[i].y - e->y;
-		float dz = animalList[i].z - e->z;
-		float d  = (dx*dx)+(dy*dy)+(dz*dz);
+		const float d = vecMag(vecSub(animalList[i].pos,e->pos));
 		if(d < ret){
 			ret = d;
 			*cAnim = &animalList[i];
@@ -108,7 +92,7 @@ float animalClosestAnimal(animal *e, animal **cAnim, int typeFilter){
 }
 
 void animalCheckSuffocation(animal *e){
-	const uint8_t cb = worldGetB(e->x,e->y,e->z);
+	const uint8_t cb = worldGetB(e->pos.x,e->pos.y,e->pos.z);
 	if(cb != 0){
 		if(rngValM(128) == 0){e->health--;}
 		const blockCategory cc = blockTypeGetCat(cb);
@@ -122,20 +106,19 @@ void animalCheckSuffocation(animal *e){
 
 void animalCheckForHillOrCliff(animal *e){
 	vec caDir = vecNew(e->gvx,0.f,e->gvz);
-	caDir = vecAdd(vecNew(e->x,e->y,e->z),vecMulS(vecNorm(caDir),0.5f));
+	vec caDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->gvel,vecNew(1,0,1))),0.5f));
 	const uint8_t cb = worldGetB(caDir.x,caDir.y,caDir.z);
 	const uint8_t ub = worldGetB(caDir.x,caDir.y+1,caDir.z);
-	if((cb != 0) && (ub == 0) && (fabsf(e->vy)<0.01f)){
+	if((cb != 0) && (ub == 0) && (fabsf(e->vel.y)<0.01f)){
 		if(!(e->flags & ANIMAL_FALLING)){
-			e->vy = 0.03f;
+			e->vel.y = 0.03f;
 		}
 		return;
 	}
 	if(cb == 0){
 		if((worldGetB(caDir.x,caDir.y-1,caDir.z) == 0) &&
 		   (worldGetB(caDir.x,caDir.y-2,caDir.z) == 0)){
-				e->vx = -e->gvx;
-				e->vz = -e->gvz;
+			e->vel = vecMul(e->gvel,vecNew(-1,1,-1));;
 				return;
 			}
 	}
@@ -190,7 +173,7 @@ void animalSLoiter(animal *e){
 	float dist = animalClosestPlayer(e,&cChar);
 	if((dist < 24.f) && (cChar != NULL)){
 		if(!(e->flags & ANIMAL_FALLING)){
-			e->vy = 0.03f;
+			e->vel.y = 0.03f;
 			e->sleepy -= 2;
 		}
 		e->sleepy -= 2;
@@ -201,7 +184,7 @@ void animalSLoiter(animal *e){
 	if(e->hunger < 64){
 		const uint8_t cb = worldGetB(e->x,e->y-.6f,e->z);
 		if((cb == 2) && (rngValM(128) == 0)){
-			worldSetB(e->x,e->y-.6f,e->z,1);
+			worldSetB(e->pos.x,e->pos.y-.6f,e->pos.z,1);
 			e->hunger += 48;
 		}
 	}
@@ -209,23 +192,21 @@ void animalSLoiter(animal *e){
 
 
 	if(rngValM( 128) == 0){
-		e->gyaw = e->yaw + ((rngValf()*2.f)-1.f)*4.f;
+		e->grot.yaw = e->rot.yaw + ((rngValf()*2.f)-1.f)*4.f;
 	}
 	if(rngValM(  64) == 0){
-		e->gvx = 0;
-		e->gvy = 0;
-		e->gvz = 0;
+		e->gvel = vecZero();
 	}
 	if(rngValM(1024) == 0){
-		e->gpitch = ((rngValf()*2.f)-1.f)*10.f;
+		e->grot.pitch = ((rngValf()*2.f)-1.f)*10.f;
 	}
 	if(rngValM(2048) == 0){
-		e->gyaw = ((rngValf()*2.f)-1.f)*360.f;
+		e->grot.yaw = ((rngValf()*2.f)-1.f)*360.f;
 	}
 	if(rngValM( 512) == 0){
-		vec dir = vecMulS(vecDegToVec(vecNew(e->yaw,0.f,0.f)),0.01f);
-		e->gvx = dir.x;
-		e->gvz = dir.z;
+		vec dir = vecMulS(vecDegToVec(vecNew(e->rot.yaw,0.f,0.f)),0.01f);
+		e->gvel.x = dir.x;
+		e->gvel.z = dir.z;
 	}
 
 	if(rngValM(2048) > (uint)(127-e->age)){
@@ -236,48 +217,47 @@ void animalSLoiter(animal *e){
 
 void animalSSleep(animal *e){
 	character *cChar;
-	e->gvx = 0;
-	e->gvz = 0;
+	e->gvel = vecZero();
 
 	if(e->sleepy > 120){
-		e->state  = ANIMAL_S_LOITER;
-		e->gpitch = 0.f;
+		e->state      = ANIMAL_S_LOITER;
+		e->grot.pitch = 0.f;
 		return;
 	}else if(e->sleepy > 64){
 		if(rngValM(1<<14) <= (uint)(e->sleepy-64)){
-			e->state  = ANIMAL_S_LOITER;
-			e->gpitch = 0.f;
+			e->state      = ANIMAL_S_LOITER;
+			e->grot.pitch = 0.f;
 			return;
 		}
 		float dist = animalClosestPlayer(e,&cChar);
 		if((dist < 24.f) && (cChar != NULL)){
 			if(!(e->flags & ANIMAL_FALLING)){
-				e->vy     = 0.04f;
+				e->vel.y   = 0.04f;
 				e->sleepy -= 2;
 			}
-			e->sleepy -= 2;
-			e->gpitch = 0.f;
-			e->state  = ANIMAL_S_FLEE;
+			e->sleepy    -= 2;
+			e->grot.pitch = 0.f;
+			e->state      = ANIMAL_S_FLEE;
 			return;
 		}
 	}else if(e->sleepy > 8){
 		float dist = animalClosestPlayer(e,&cChar);
 		if((dist < 9.f) && (cChar != NULL)){
 			if(!(e->flags & ANIMAL_FALLING)){
-				e->vy     = 0.05f;
+				e->vel.y   = 0.05f;
 				e->sleepy -= 4;
 			}
-			e->sleepy -= 2;
-			e->gpitch = 0.f;
-			e->state  = ANIMAL_S_FLEE;
+			e->sleepy    -= 2;
+			e->grot.pitch = 0.f;
+			e->state      = ANIMAL_S_FLEE;
 			return;
 		}
 	}
 
 	if(e->flags & ANIMAL_BELLYSLEEP){
-		e->gpitch = -90.f;
+		e->grot.pitch = -90.f;
 	}else{
-		e->gpitch =  90.f;
+		e->grot.pitch =  90.f;
 	}
 	if(rngValM(16) == 0){
 		e->sleepy++;
@@ -314,14 +294,14 @@ void animalSHeat(animal *e){
 		return;
 	}
 
-	vec caNorm = vecNorm(vecNew(e->x - cAnim->x,e->y - cAnim->y, e->z - cAnim->z));
+	vec caNorm = vecNorm(vecSub(e->pos,cAnim->pos));
 	vec caVel  = vecMulS(caNorm,-0.03f);
 	vec caRot  = vecVecToDeg(caNorm);
 
-	e->gvx = caVel.x;
-	e->gvz = caVel.z;
+	e->gvel.x  = caVel.x;
+	e->gvel.z  = caVel.z;
 
-	e->yaw = -caRot.yaw + 180.f;
+	e->rot.yaw = -caRot.yaw + 180.f;
 }
 
 void animalSFlee(animal *e){
@@ -338,9 +318,9 @@ void animalSFlee(animal *e){
 		vec caVel  = vecMulS(caNorm,0.03f);
 		vec caRot  = vecVecToDeg(caNorm);
 
-		e->gvx = caVel.x;
-		e->gvz = caVel.z;
-		e->yaw = -caRot.yaw;
+		e->gvel.x  = caVel.x;
+		e->gvel.z  = caVel.z;
+		e->rot.yaw = -caRot.yaw;
 	}
 }
 
@@ -355,23 +335,21 @@ void animalSPlayful(animal *e){
 	if(animalCheckHeat(e)){return;}
 
 	if((rngValM( 128) == 0) && (fabsf(e->vy) < 0.001f)){
-		e->vy = 0.03f;
+		e->vel.y = 0.03f;
 	}
 	if (rngValM( 256) == 0){
-		e->gvx = 0;
-		e->gvy = 0;
-		e->gvz = 0;
+		e->gvel = vecZero();
 	}
 	if (rngValM( 512) == 0){
-		e->gpitch = ((rngValf()*2.f)-1.f)*16.f;
+		e->grot.pitch = ((rngValf()*2.f)-1.f)*16.f;
 	}
 	if (rngValM( 512) == 0){
-		e->gyaw = ((rngValf()*2.f)-1.f)*360.f;
+		e->grot.yaw = ((rngValf()*2.f)-1.f)*360.f;
 	}
 	if (rngValM( 256) == 0){
-		vec dir = vecMulS(vecDegToVec(vecNew(e->yaw,0.f,0.f)),0.01f);
-		e->gvx = dir.x;
-		e->gvz = dir.z;
+		vec dir = vecMulS(vecDegToVec(vecNew(e->rot.yaw,0.f,0.f)),0.01f);
+		e->gvel.x = dir.x;
+		e->gvel.z = dir.z;
 	}
 
 	if (rngValM(1024) > (uint)( e->age)){
@@ -445,20 +423,20 @@ void animalSync(int c, int i){
 	rp->val.u[ 2] = i;
 	rp->val.u[ 3] = animalCount;
 
-	rp->val.f[ 4] = e->x;
-	rp->val.f[ 5] = e->y;
-	rp->val.f[ 6] = e->z;
-	rp->val.f[ 7] = e->yaw;
-	rp->val.f[ 8] = e->pitch;
-	rp->val.f[ 9] = e->roll;
-	rp->val.f[10] = e->gyaw;
-	rp->val.f[11] = e->gpitch;
-	rp->val.f[12] = e->vx;
-	rp->val.f[13] = e->vy;
-	rp->val.f[14] = e->vz;
-	rp->val.f[15] = e->gvx;
-	rp->val.f[16] = e->gvy;
-	rp->val.f[17] = e->gvz;
+	rp->val.f[ 4] = e->pos.x;
+	rp->val.f[ 5] = e->pos.y;
+	rp->val.f[ 6] = e->pos.z;
+	rp->val.f[ 7] = e->rot.yaw;
+	rp->val.f[ 8] = e->rot.pitch;
+	rp->val.f[ 9] = e->rot.roll;
+	rp->val.f[10] = e->grot.yaw;
+	rp->val.f[11] = e->grot.pitch;
+	rp->val.f[12] = e->vel.x;
+	rp->val.f[13] = e->vel.y;
+	rp->val.f[14] = e->vel.z;
+	rp->val.f[15] = e->gvel.x;
+	rp->val.f[16] = e->gvel.y;
+	rp->val.f[17] = e->gvel.z;
 
 	packetQueue(rp,30,18*4,c);
 }
@@ -480,7 +458,7 @@ uint animalSyncPlayer(int c, uint offset){
 
 void *animalSave(animal *e, void *buf){
 	uint8_t *b = (uint8_t *)buf;
-	float *f = (float *)buf;
+	float   *f = (float   *)buf;
 
 	b[ 0] = 0x03;
 	b[ 1] = e->flags;
@@ -497,31 +475,27 @@ void *animalSave(animal *e, void *buf){
 	b[10] = 0;
 	b[11] = 0;
 
-	f[ 3] = e->x;
-	f[ 4] = e->y;
-	f[ 5] = e->z;
-	f[ 6] = e->yaw;
-	f[ 7] = e->pitch;
-	f[ 8] = e->roll;
-	f[ 9] = e->vx;
-	f[10] = e->vy;
-	f[11] = e->vz;
+	f[ 3] = e->pos.x;
+	f[ 4] = e->pos.y;
+	f[ 5] = e->pos.z;
+	f[ 6] = e->rot.yaw;
+	f[ 7] = e->rot.pitch;
+	f[ 8] = e->rot.roll;
+	f[ 9] = e->vel.x;
+	f[10] = e->vel.y;
+	f[11] = e->vel.z;
 
 	return b+12*4;
 }
 
 void *animalLoad(void *buf){
 	uint8_t *b = (uint8_t *)buf;
-	float *f  = (float *)buf;
-	animal *e = animalNew(f[3],f[4],f[5],b[2]);
+	float   *f = (float   *)buf;
+	animal *e = animalNew(vecNewP(&f[3]),b[2]);
 	if(e == NULL){return b+12*4;}
 
-	e->yaw    = f[ 6];
-	e->pitch  = f[ 7];
-	e->roll   = f[ 8];
-	e->vx     = f[ 9];
-	e->vy     = f[10];
-	e->vz     = f[11];
+	e->rot    = vecNewP(&f[6]);
+	e->vel    = vecNewP(&f[9]);
 
 	e->flags  = b[ 1];
 	e->state  = b[ 3];
@@ -537,7 +511,6 @@ void *animalLoad(void *buf){
 }
 
 void *animalSaveChungus(chungus *c,void *b){
-
 	if(c == NULL){return b;}
 	for(uint i=0;i<animalCount;i++){
 		if(animalList[i].curChungus != c){continue;}

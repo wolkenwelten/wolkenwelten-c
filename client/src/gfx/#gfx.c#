@@ -94,7 +94,7 @@ void calcShake(character *cam, float *pitch, float *yaw){
 	*yaw   = sin(deg*1.3f)*(cam->shake/2.f);
 }
 
-void calcView(character *cam){
+void calcView(const character *cam){
 	float shakeP=0.f,shakeY=0.f;
 	matIdentity(matView);
 	calcShake(cam,&shakeP,&shakeY);
@@ -102,7 +102,7 @@ void calcView(character *cam){
 	matMulTrans(matView,-cam->pos.x,-(cam->pos.y+0.5+cam->yoff),-cam->pos.z);
 }
 
-void renderWorld(character *cam){
+void renderWorld(const character *cam){
 	glDepthFunc( GL_LESS );
 	bigchungusDraw(&world,cam);
 	blockMiningDraw();

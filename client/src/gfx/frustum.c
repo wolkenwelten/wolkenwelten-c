@@ -50,21 +50,21 @@ void extractFrustum(){
 	frustum[5][3] = clip[15] + clip[14];
 }
 
-bool pointInFrustum( float x, float y, float z ){
-	int p;
-
-	for( p = 0; p < 6; p++ ){
-		if( frustum[p][0] * x + frustum[p][1] * y + frustum[p][2] * z + frustum[p][3] <= 0 ){
+bool pointInFrustum(const vec pos){
+	for(int p = 0; p < 6; p++ ){
+		if( frustum[p][0] * pos.x + frustum[p][1] * pos.y + frustum[p][2] * pos.z + frustum[p][3] <= 0 ){
 			return false;
 		}
 	}
 	return true;
 }
 
-bool CubeInFrustum( float x, float y, float z, float size ){
-	int p;
+bool CubeInFrustum(const vec pos, float size ){
+	const float x = pos.x;
+	const float y = pos.y;
+	const float z = pos.z;
 
-	for( p = 0; p < 6; p++ ){
+	for(int p = 0; p < 6; p++ ){
 		if( frustum[p][0] * (x       ) + frustum[p][1] * (y       ) + frustum[p][2] * (z       ) + frustum[p][3] > 0 )
 			continue;
 		if( frustum[p][0] * (x + size) + frustum[p][1] * (y       ) + frustum[p][2] * (z       ) + frustum[p][3] > 0 )

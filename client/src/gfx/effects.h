@@ -1,10 +1,8 @@
 #pragma once
 
-void fxExplosionBomb(float x,float y,float z,float pw);
-void fxGrenadeTrail (float x,float y,float z,float pw);
-
-void fxExplosionBlaster(float x,float y,float z,float pw);
-void fxBeamBlaster(float x1,float y1,float z1,float x2,float y2,float z2, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int originatingCharacter);
-
-void fxBlockBreak(float x,float y,float z, unsigned char b);
-void fxBlockMine (float x,float y,float z,int dmg, unsigned char b);
+void fxExplosionBomb    (const vec pos,float pw);
+void fxGrenadeTrail     (const vec pos,float pw);
+void fxExplosionBlaster (const vec pos,float pw);
+void fxBeamBlaster      (const vec pa,const vec pb, float beamSize, float damageMultiplier, float recoilMultiplier, uint hitsLeft, uint originatingCharacter);
+void fxBlockBreak       (const vec pos, uchar b);
+void fxBlockMine        (const vec pos, int dmg, uchar b);

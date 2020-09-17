@@ -3,4 +3,4 @@
 
 void     animalReset          (animal *e);
 int      animalUpdate         (animal *e);
-float    animalDistance       (animal *e, character *c);
+float    animalDistance       (const animal *e,const character *c);

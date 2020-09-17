@@ -19,10 +19,10 @@ void  characterDropItem        (character *c, int i);
 void  characterMoveDelta       (character *c, const packet *p);
 void  characterDamagePacket    (character *c, const packet *p);
 void  characterSetData         (character *c, const packet *p);
-void  characterSetPlayerPos    (const packet *p);
+void  characterSetPlayerPos    (              const packet *p);
 void  characterRemovePlayer    (int c, int len);
 
-void  charactersUpdate        ();
-void  characterDrawAll        ();
+void  charactersUpdate         ();
+void  characterDrawAll         ();
 
-bool  itemPlaceBlock          (item *i, character *chr, int to);
+bool  itemPlaceBlock           (item *i, character *chr, int to);

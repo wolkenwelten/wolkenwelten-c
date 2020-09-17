@@ -19,31 +19,20 @@ typedef struct {
 grenade grenadeList[512];
 int     grenadeCount = 0;
 
-void explode(float x, float y, float z, float pw, int style){
+void explode(const vec pos, float pw, int style){
 	entity *exEnt;
 	float dm;
 	worldBoxMineSphere(x,y,z,pw*4.f);
 
 	for(int i=0;i<entityCount;i++){
 		exEnt = &entityList[i];
-		float dx = x - exEnt->x;
-		float dy = y - exEnt->y;
-		float dz = z - exEnt->z;
-
-		dm = fabsf(dx);
-		if(fabsf(dy) > dm){dm = fabsf(dy);}
-		if(fabsf(dz) > dm){dm = fabsf(dz);}
-
-		if(dm > (16*pw*pw)){continue;}
-		dx /= dm;
-		dy /= dm;
-		dz /= dm;
-		dm = sqrtf((16*pw*pw)/dm);
-		exEnt->vx += dx * dm * -0.02f;
-		exEnt->vy += dy * dm * -0.02f;
-		exEnt->vz += dz * dm * -0.02f;
+		const vec d = vecSub(pos,exEnt->pos);
+		const vec dist = vecMag(d);
+		if(dist > (16*pw*pw)){continue;}
+		const vec dn = vecNorm(d);
+		exEnt->vel = vecAdd(exEnt->vel,vecMulS(dn,sqrtf((16*pw*pw)/dn)*-0.02f));
 	}
-	msgGrenadeExplode(x, y, z, pw, style);
+	msgGrenadeExplode(pos, pw, style);
 }
 
 void grenadeExplode(int g){
@@ -54,22 +43,15 @@ void grenadeExplode(int g){
 void grenadeNewP(packet *p){
 	int g       = grenadeCount++;
 	float speed = 0.12f;
-	float x     = p->val.f[0];
-	float y     = p->val.f[1];
-	float z     = p->val.f[2];
-	float yaw   = p->val.f[3];
-	float pitch = p->val.f[4];
-	float roll  = p->val.f[5];
+	const vec pos = vecNewP(&p->val.f[0]);
+	const vec rot = vecNewP(&p->val.f[3]);
 	float pwr   = p->val.f[6];
 
-	grenadeList[g].ent = entityNew(x,y,z,yaw,pitch,roll);
+	grenadeList[g].ent = entityNew(pos,rot);
 	if(pwr < 1.5f){
 		speed = 0.15f;
 	}
-	grenadeList[g].ent->vx = ((cos((yaw-90.f)*PI/180) * cos(-pitch*PI/180))*speed);
-	grenadeList[g].ent->vy = (sin(-pitch*PI/180)*speed);
-	grenadeList[g].ent->vz = ((sin((yaw-90.f)*PI/180) * cos(-pitch*PI/180))*speed);
-
+	grenadeList[g].ent->vel = vecMulS(vecDegToVec(rot),speed);
 	grenadeList[g].ticksLeft = 300;
 	grenadeList[g].pwr       = pwr;
 }
@@ -92,12 +74,8 @@ void grenadeUpdatePlayer(int c){
 		for(int i=0;i<grenadeCount;i++){
 			msgGrenadeUpdate(
 				c,
-				grenadeList[i].ent->x,
-				grenadeList[i].ent->y,
-				grenadeList[i].ent->z,
-				grenadeList[i].ent->vx,
-				grenadeList[i].ent->vy,
-				grenadeList[i].ent->vz,
+				grenadeList[i].ent->pos,
+				grenadeList[i].ent->vel,
 				grenadeCount,
 				i
 			);
@@ -116,27 +94,22 @@ void beamblastNewP(int c, const packet *p){
 	float damageMultiplier = p->val.f[6];
 	float recoilMultiplier = p->val.f[7];
 
-	sx = x = p->val.f[0];
-	sy = y = p->val.f[1];
-	sz = z = p->val.f[2];
-	vx = vy = vz = 0.f;
+	const vec start = vecNewP(&p->val.f[0]);
+	vec pos = start;
+	vec vel = vecMulS(vecDegToZero(rot),speed);
 
-	vx = (cos((yaw-90.f)*PI/180) * cos(-pitch*PI/180))*speed;
-	vy = sin(-pitch*PI/180)*speed;
-	vz = (sin((yaw-90.f)*PI/180) * cos(-pitch*PI/180))*speed;
 	for(int ticksLeft = 0x1FFF; ticksLeft > 0; ticksLeft--){
-		x += vx;
-		y += vy;
-		z += vz;
+		pos = vecAdd(pos,vel);
 
-		if(worldGetB(x,y,z) != 0){
-			explode(x,y,z,0.5f*beamSize,1);
+		if(worldGetB(pos.x,pos.y,pos.z) != 0){
+			explode(pos,0.5f*beamSize,1);
 			if(--hitsLeft <= 0){break;}
 		}
 		if(y < -256.f){
 			break;
 		}
 	}
-	msgFxBeamBlaster(c,sx,sy,sz,x,y,z,beamSize,damageMultiplier,recoilMultiplier,p->val.i[8]);
-	msgPlayerMove(c, (vx * -0.75f * recoilMultiplier), (vy * -0.75f * recoilMultiplier), (vz * -0.75f * recoilMultiplier), (rngValf()-0.5f) * 64.f * recoilMultiplier, (rngValf()-.8f) * 64.f * recoilMultiplier, 0.f);
+	msgFxBeamBlaster(c,start,pos,beamSize,damageMultiplier,recoilMultiplier,p->val.i[8]);
+	const vec rev = vecMulS(vel,-0.75f * 	const vec rer =
+				msgPlayerMove(c, rev, vecNew((rngValf()-0.5f) * 64.f * recoilMultiplier, (rngValf()-.8f) * 64.f * recoilMultiplier), 0.f);
 }

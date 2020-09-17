@@ -1,5 +1,7 @@
 #pragma once
 
+extern float matMVP[16];
+
 void matFrustum     (float out[16], float left, float right, float bottom, float top, float znear, float zfar);
 void matPerspective (float out[16], float fovInDegrees, float aspectRatio, float znear, float zfar);
 void matOrtho       (float out[16], float left, float right, float bottom, float top, float znear, float zfar);
@@ -21,4 +23,4 @@ void matMulRotYX    (float mat[16], float yaw, float pitch);
 void matMulRotYXZ   (float mat[16], float yaw, float pitch, float roll);
 void matMulTrans    (float mat[16], float x, float y, float z);
 void matMulScale    (float mat[16], float x, float y, float z);
-void matPrint       (float *mat,const char *title);
+void matPrint       (const float *mat,const char *title);

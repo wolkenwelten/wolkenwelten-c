@@ -35,10 +35,10 @@ grapplingHook *grapplingHookNew(character *p){
 	}
 
 	ghk->parent           = p;
-	ghk->ent              = entityNew(p->x,p->y+1.f,p->z,-p->yaw,-p->pitch-90.f,p->roll);
-	ghk->ent->vx          = p->vx + 1.2f * (cos((p->yaw-90.f)*PI/180) * cos(-p->pitch*PI/180));
-	ghk->ent->vy          = p->vy + 1.2f *  sin(-p->pitch*PI/180);
-	ghk->ent->vz          = p->vz + 1.2f * (sin((p->yaw-90.f)*PI/180) * cos(-p->pitch*PI/180));
+	ghk->ent              = entityNew(vecAdd(vecNew(0,1,0),p->pos),vecNew(-p->rot.yaw,-p->rot.pitch-90.f,p->rot.roll));
+	ghk->ent->vel.x       = p->vel.x + 1.2f * (cos((p->rot.yaw-90.f)*PI/180) * cos(-p->rot.pitch*PI/180));
+	ghk->ent->vel.y       = p->vel.y + 1.2f *  sin(-p->rot.pitch*PI/180);
+	ghk->ent->vel.z       = p->vel.z + 1.2f * (sin((p->rot.yaw-90.f)*PI/180) * cos(-p->rot.pitch*PI/180));
 	ghk->ent->eMesh       = meshHook;
 	ghk->ent->flags       = ENTITY_NOREPULSION;
 	ghk->rope             = meshNew();
@@ -62,12 +62,12 @@ void grapplingHookFree(grapplingHook *ghk){
 void grapplingHookUpdateRope(grapplingHook *ghk){
 	float hx,hy,hz,px,py,pz;
 	mesh *m = ghk->rope;
-	hx = ghk->ent->x;
-	hy = ghk->ent->y;
-	hz = ghk->ent->z;
-	px = ghk->parent->x;
-	py = ghk->parent->y+ghk->ent->yoff+.1f;
-	pz = ghk->parent->z;
+	hx = ghk->ent->pos.x;
+	hy = ghk->ent->pos.y;
+	hz = ghk->ent->pos.z;
+	px = ghk->parent->pos.x;
+	py = ghk->parent->pos.y+ghk->ent->yoff+.1f;
+	pz = ghk->parent->pos.z;
 	const float rlen = grapplingHookGetLength(ghk)*8;
 	m->dataCount = 0;
 
@@ -125,36 +125,22 @@ void grapplingHookUpdateRope(grapplingHook *ghk){
 }
 
 float grapplingHookGetLength(grapplingHook *ghk){
-	float dx = ghk->ent->x - ghk->parent->x;
-	float dy = ghk->ent->y - ghk->parent->y;
-	float dz = ghk->ent->z - ghk->parent->z;
-	return sqrtf((dx*dx)+(dy*dy)+(dz*dz));
+	return sqrtf(vecMag(vecSub(ghk->ent->pos,ghk->parent->pos)));
 }
 
 bool grapplingHookReturnToParent(grapplingHook *ghk,float speed){
-	float dx = ghk->ent->x - ghk->parent->x;
-	float dy = ghk->ent->y - ghk->parent->y;
-	float dz = ghk->ent->z - ghk->parent->z;
-	float d = sqrtf((dx*dx)+(dy*dy)+(dz*dz));
+	vec dist = vecSub(ghk->ent->pos,ghk->parent->pos);
+	float d  = sqrtf(vecMag(dist));
 	speed = d / 8.f;
 	if(speed < 1.f){speed = 1.f;}
 	float dm = fabsf(dx);
 	if(fabsf(dy) > dm){dm = fabsf(dy);}
 	if(fabsf(dz) > dm){dm = fabsf(dz);}
-	if(dm <= 3.1f){
-		return true;
-	}
-	dx /= dm;
-	dy /= dm;
-	dz /= dm;
-	ghk->ent->vx = (dx * -speed);
-	ghk->ent->vy = (dy * -speed);
-	ghk->ent->vz = (dz * -speed);
+	if(d <= 2f){return true;}
+	ghk->ent->vel = vecMulS(vecNorm(dist),-speed);
 
 	if(ghk->ent->flags & ENTITY_COLLIDE){
-		ghk->ent->x += dx;
-		ghk->ent->y += dy;
-		ghk->ent->z += dz;
+		ghk->ent->pos = vecAdd(ghk->ent->pos,ghk->ent->vel);
 	}
 	return false;
 }
@@ -162,45 +148,28 @@ bool grapplingHookReturnToParent(grapplingHook *ghk,float speed){
 void grapplingHookReturnHook(grapplingHook *ghk){
 	ghk->returning = true;
 	ghk->hooked    = false;
-	ghk->ent->vx   = 0.f;
-	ghk->ent->vy   = 0.f;
-	ghk->ent->vz   = 0.f;
+	ghk->ent->vel  = vecZero();
 	grapplingHookReturnToParent(ghk,0.1f);
 }
 
 void grapplingHookPullTowards(grapplingHook *ghk,character *pull){
-	float dx = ghk->ent->x - ghk->parent->x;
-	float dy = ghk->ent->y - ghk->parent->y;
-	float dz = ghk->ent->z - ghk->parent->z;
-	float dist = ghk->goalLength - sqrtf((dx*dx)+(dy*dy)+(dz*dz));
-	float vx = pull->vx;
-	float vy = pull->vy;
-	float vz = pull->vz;
+	vec      d = vecSub(ghk->ent->pos,ghk->parent->pos);
+	d = vecMulS(vecNorm(d),ghk->goalLength - sqrtf(vecMag(dist)));
 
-	float dm = fabsf(dx);
-	if(fabsf(dy) > dm){dm = fabsf(dy);}
-	if(fabsf(dz) > dm){dm = fabsf(dz);}
-	dx = (dx / dm) * dist;
-	dy = (dy / dm) * dist;
-	dz = (dz / dm) * dist;
-
-	uint32_t col = entityCollision(pull->x,pull->y,pull->z);
-	if(((dx > 0) && !((col & 0x110))) || ((dx < 0) && !((col & 0x220)))){
-		pull->x -= dx;
-		vx -= dx*0.2f;
+	uint32_t col = entityCollision(pull->pos);
+	if(((d.x > 0) && !((col & 0x110))) || ((d.x < 0) && !((col & 0x220)))){
+		pull->pos.x -= d.x;
+		pull->vel.x -= d.x*0.2f;
 	}
-	if(((dz > 0) && !((col & 0x440))) || ((dz < 0) && !((col & 0x880)))){
-		pull->z -= dz;
-		vz -= dz*0.2f;
+	if(((d.z > 0) && !((col & 0x440))) || ((d.z < 0) && !((col & 0x880)))){
+		pull->pos.z -= d.z;
+		pull->vel.z -= d.z*0.2f;
 	}
-	if(((dy > 0) && !((col & 0x00F))) || ((dy < 0) && !((col & 0x0F0)))){
-		pull->y -= dy;
-		vy -= dy*0.2f;
+	if(((d.y > 0) && !((col & 0x00F))) || ((d.y < 0) && !((col & 0x0F0)))){
+		pull->pos.y -= dy;
+		pull->vel.y -= d.y*0.2f;
 	}
-	pull->vx = vx;
-	pull->vy = vy;
-	pull->vz = vz;
-	pull->shake = vx + vy + vz;
+	pull->shake = vecMag(pull->vel);
 }
 
 bool grapplingHookUpdate(grapplingHook *ghk){
@@ -209,17 +178,13 @@ bool grapplingHookUpdate(grapplingHook *ghk){
 	if(ghk->returning && grapplingHookReturnToParent(ghk,0.01f)){
 		return true;
 	}else if(ghk->hooked && !ghk->returning){
-		ghk->ent->vx = 0.f;
-		ghk->ent->vy = 0.f;
-		ghk->ent->vz = 0.f;
+		ghk->ent->vel = vecZero();
 		if(!(ghk->ent->flags & ENTITY_COLLIDE)){
 			grapplingHookReturnHook(ghk);
 		}
 	}else{
 		if(!ghk->hooked && !ghk->returning && (ghk->ent->flags & ENTITY_COLLIDE)){
-			ghk->ent->vx = 0.f;
-			ghk->ent->vy = 0.f;
-			ghk->ent->vz = 0.f;
+			ghk->ent->vel = vecZero();
 			ghk->ent->flags |= ENTITY_NOCLIP;
 			ghk->hooked = true;
 			ghk->goalLength = grapplingHookGetLength(ghk);
@@ -236,14 +201,13 @@ bool grapplingHookUpdate(grapplingHook *ghk){
 			}
 		}
 	}
-	if(ghk->ent->y < -256.f){
+	if(ghk->ent->pos.y < -256.f){
 		return true;
 	}
 	return false;
 }
 
 void grapplingHookDrawRopes(){
-	float matMVP[16];
 	if(grapplingHookCount == 0){return;}
 	shaderBind(sMesh);
 	matMul(matMVP,matView,matProjection);
