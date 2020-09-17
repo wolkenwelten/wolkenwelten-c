@@ -272,7 +272,7 @@ void animalSHeat(animal *e){
 		e->state = ANIMAL_S_LOITER;
 		return;
 	}
-	if((cAnim->hunger < 24) || (cAnim->sleepy < 48)){
+	if((cAnim != NULL) && ((cAnim->hunger < 24) || (cAnim->sleepy < 48))){
 		e->state = ANIMAL_S_LOITER;
 		return;
 	}
@@ -292,10 +292,10 @@ void animalSHeat(animal *e){
 		}
 		return;
 	}
-
-	vec caNorm = vecNorm(vecSub(e->pos,cAnim->pos));
-	vec caVel  = vecMulS(caNorm,-0.03f);
-	vec caRot  = vecVecToDeg(caNorm);
+	if(cAnim == NULL){return;}
+	const vec caNorm = vecNorm(vecSub(e->pos,cAnim->pos));
+	const vec caVel  = vecMulS(caNorm,-0.03f);
+	const vec caRot  = vecVecToDeg(caNorm);
 
 	e->gvel.x  = caVel.x;
 	e->gvel.z  = caVel.z;
