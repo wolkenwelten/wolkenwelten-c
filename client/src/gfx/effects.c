@@ -14,7 +14,7 @@ void fxExplosionBomb(const vec pos,float pw){
 	sfxPlay(sfxBomb,1.f);
 
 	for(int i=0;i<4096*pw;i++){
-		const vec v  = vecMulS(vecRng(),0.18f*pw);
+		const vec v  = vecMulS(vecRng(),0.15f*pw);
 		newParticleV(pos,v,vecMulS(v,1/-64.f),64.f,1.f,0xFF44AAFF,64);
 	}
 	for(int i=0;i<4096*pw;i++){
@@ -44,9 +44,10 @@ void fxExplosionBomb(const vec pos,float pw){
 	}
 }
 void fxGrenadeTrail(const vec pos,float pw){
+	(void)pw;
 	if((rngValR()&3)!=0){return;}
-	const vec v = vecMulS(vecRng(),0.008f*pw);
-	newParticleV(pos,v,vecZero(),8.f,1.f,0xFF44AAFF,64);
+	const vec v = vecMulS(vecRng(),0.008f);
+	newParticleV(pos,v,vecZero(),16.f,2.f,0xFF44AAFF,64);
 }
 
 void fxExplosionBlaster(const vec pos,float pw){
