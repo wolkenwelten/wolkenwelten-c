@@ -30,8 +30,8 @@ int chunkInFrustum(const vec pos, const vec off){
 	return CubeInFrustum(vecAdd(off,vecMulS(pos,CHUNK_SIZE)),CHUNK_SIZE);
 }
 
-float chunkDistance(const character *cam, const vec pos){
-	return sqrtf(vecMag(vecSub(cam->pos,pos)));
+float chunkDistance(const vec cam, const vec pos){
+	return vecMag(vecSub(pos,cam));
 }
 
 chungus *chungusNew(int x, int y, int z){
@@ -72,15 +72,16 @@ void chungusFree(chungus *c){
 }
 
 void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,int *drawQueueLen){
+	const vec coff = vecNew(c->x,c->y,c->z);
 	for(int x=0;x<16;x++){
-		const int cx = ((x*CHUNK_SIZE)+(CHUNK_SIZE/2))+c->x;
+		const int cx = x*CHUNK_SIZE+CHUNK_SIZE/2+c->x;
 		for(int y=0;y<16;y++){
-			const int cy = ((y*CHUNK_SIZE)+(CHUNK_SIZE/2))+c->y;
+			const int cy = y*CHUNK_SIZE+CHUNK_SIZE/2+c->y;
 			for(int z=0;z<16;z++){
 				if(c->chunks[x][y][z] == NULL){continue;}
-				if(!chunkInFrustum(vecNew(x,y,z),vecNew(c->x,c->y,c->z))){continue;}
-				const int cz = ((z*CHUNK_SIZE)+(CHUNK_SIZE/2))+c->z;
-				const float d = chunkDistance(cam,vecNew(cx,cy,cz));
+				if(!chunkInFrustum(vecNew(x,y,z),coff)){continue;}
+				const int cz = z*CHUNK_SIZE+CHUNK_SIZE/2+c->z;
+				const float d = chunkDistance(cam->pos,vecNew(cx,cy,cz));
 				if(d > CHUNK_RENDER_DISTANCE){continue;}
 				drawQueue[*drawQueueLen].distance = d;
 				drawQueue[*drawQueueLen].chnk = c->chunks[x][y][z];

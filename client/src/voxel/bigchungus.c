@@ -22,12 +22,14 @@
 
 bigchungus world;
 
+
 bool chungusInFrustum(const vec pos) {
 	return CubeInFrustum(vecMulS(pos,CHUNGUS_SIZE),CHUNGUS_SIZE);
 }
 
-float chungusRoughDistance(const character *cam, const vec pos) {
-	return sqrtf(vecMag(vecSub(cam->pos,vecAddS(vecMulS(pos,CHUNGUS_SIZE),CHUNGUS_SIZE/2))));
+float chungusDistance(const vec cam, const vec pos) {
+	const vec np = vecAddS(vecMulS(pos,CHUNGUS_SIZE),CHUNGUS_SIZE/2);
+	return vecMag(vecSub(cam,np));
 }
 
 void bigchungusInit(bigchungus *c){
@@ -133,7 +135,7 @@ void bigchungusDraw(bigchungus *c,const character *cam){
 			if((y <= 0) || (y >= 127)){continue;}
 			for(int z=minCZ;z<maxCZ;z++){
 				if((z <= 0) || (z >= 255)){continue;}
-				float d = chungusRoughDistance(cam,vecNew(x,y,z));
+				float d = chungusDistance(cam->pos,vecNew(x,y,z));
 				if((d < (CHUNK_RENDER_DISTANCE+CHUNGUS_SIZE)) && (chungusInFrustum(vecNew(x,y,z)))){
 					if(c->chungi[x][y][z] == NULL){
 						c->chungi[x][y][z] = chungusNew(x*CHUNGUS_SIZE,y*CHUNGUS_SIZE,z*CHUNGUS_SIZE);
@@ -179,7 +181,7 @@ void bigchungusFreeFarChungi(bigchungus *c, character *cam){
 		int x = (int)chng->x>>8;
 		int y = (int)chng->y>>8;
 		int z = (int)chng->z>>8;
-		float d = chungusRoughDistance(cam,vecNew(x,y,z));
+		float d = chungusDistance(cam->pos,vecNew(x,y,z));
 		if(d > (CHUNK_RENDER_DISTANCE + 256.f)){
 			chungusFree(c->chungi[x][y][z]);
 			c->chungi[x][y][z] = NULL;
