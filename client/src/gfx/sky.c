@@ -48,8 +48,8 @@ void cloudsDraw(int cx, int cy, int cz){
 			const float   dz = (pz - player->pos.z) * (pz - player->pos.z);
 			const float   dd = dxy+dz;
 			const float   vf = v-170;
-			const uint8_t ta = (208+((256 - v)/2));
-			const uint8_t tb = (188+((256 - v)/4));
+			const uint8_t ta = (218+((256 - v)/3));
+			const uint8_t tb = (198+((256 - v)/6));
 			const uint8_t ba = (164+((256 - v)  ));
 			const uint8_t bb = (148+((256 - v)/2));
 			uint32_t a;
@@ -61,11 +61,11 @@ void cloudsDraw(int cx, int cy, int cz){
 			}
 			const uint32_t ct = a | (tb<<16) | (ta<<8) | ta;
 			const uint32_t cb = a | (bb<<16) | (ba<<8) | ba;
-			const float    oy = dd * (1.f/4096.f);
+			const float    oy = (1.f - dd / (CLOUD_MIND+CLOUD_FADED))*32.f + 32.f;
 
-			newParticle(px,sy+vf/18.f-oy,pz,0,0,0,0,0,0,1024,0,cb,1);
-			newParticle(px,sy-vf/12.f-oy,pz,0,0,0,0,0,0,1024,0,cb,1);
-			newParticle(px,sy+vf/ 6.f-oy,pz,0,0,0,0,0,0,1024,0,ct,1);
+			newParticle(px,sy+vf/18.f+oy,pz,0,0,0,0,0,0,1024,0,cb,1);
+			newParticle(px,sy-vf/12.f+oy,pz,0,0,0,0,0,0,1024,0,cb,1);
+			newParticle(px,sy+vf/ 6.f+oy,pz,0,0,0,0,0,0,1024,0,ct,1);
 		}
 	}
 }
