@@ -125,12 +125,12 @@ void grapplingHookUpdateRope(grapplingHook *ghk){
 }
 
 float grapplingHookGetLength(const grapplingHook *ghk){
-	return sqrtf(vecMag(vecSub(ghk->ent->pos,ghk->parent->pos)));
+	return vecMag(vecSub(ghk->ent->pos,ghk->parent->pos));
 }
 
 bool grapplingHookReturnToParent(grapplingHook *ghk,float speed){
 	vec dist = vecSub(ghk->ent->pos,ghk->parent->pos);
-	float d  = sqrtf(vecMag(dist));
+	float d  = vecMag(dist);
 	speed = d / 8.f;
 	if(speed < 1.f){speed = 1.f;}
 	if(d <= 2){return true;}

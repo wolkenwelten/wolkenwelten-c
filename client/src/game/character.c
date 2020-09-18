@@ -172,10 +172,10 @@ void characterUpdateHook(character *c){
 	if(grapplingHookGetHooked(c->hook)){
 		float gl = grapplingHookGetGoalLength(c->hook);
 		if((c->gvel.y > 0) && (gl > 1.f)){
-			grapplingHookSetGoalLength(c->hook,gl-0.015f);
+			grapplingHookSetGoalLength(c->hook,gl-0.1f);
 		}
 		if((c->flags & CHAR_SNEAK) && (gl < 96.f)){
-			grapplingHookSetGoalLength(c->hook,gl+0.02f);
+			grapplingHookSetGoalLength(c->hook,gl+0.1f);
 		}
 		if(grapplingHookGetLength(c->hook) > gl){
 			grapplingHookPullTowards(c->hook,c);
@@ -240,7 +240,7 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 void characterGotHitBroadcast(int i,int pwr){
 	if(playerList[i] == NULL){return;}
 	character *c   = playerList[i];
-	const float d  = sqrtf(vecMag(vecSub(player->pos,c->pos)));
+	const float d  = vecMag(vecSub(player->pos,c->pos));
 	if(d > 128.f){return;}
 	const float vol = (128.f-d)/128.f;
 
@@ -252,7 +252,7 @@ void characterGotHitBroadcast(int i,int pwr){
 void characterUpdateWindVolume(character *c, const vec wvel){
 	(void)c;
 
-	float windVol = sqrtf(vecMag(wvel));
+	float windVol = vecMag(wvel);
 	if(windVol < 0.1f){
 		sfxLoop(sfxWind,0.f);
 	}else{
