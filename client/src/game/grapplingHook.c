@@ -124,7 +124,7 @@ void grapplingHookUpdateRope(grapplingHook *ghk){
 	meshFinish(ghk->rope, GL_STREAM_DRAW);
 }
 
-float grapplingHookGetLength(grapplingHook *ghk){
+float grapplingHookGetLength(const grapplingHook *ghk){
 	return sqrtf(vecMag(vecSub(ghk->ent->pos,ghk->parent->pos)));
 }
 
@@ -150,8 +150,8 @@ void grapplingHookReturnHook(grapplingHook *ghk){
 }
 
 void grapplingHookPullTowards(grapplingHook *ghk,character *pull){
-	vec      d = vecSub(ghk->ent->pos,ghk->parent->pos);
-	d = vecMulS(vecNorm(d),ghk->goalLength - sqrtf(vecMag(d)));
+	float  len  = grapplingHookGetLength(ghk);
+	const vec d = vecMulS(vecNorm(vecSub(ghk->ent->pos,ghk->parent->pos)),ghk->goalLength - len);
 
 	uint32_t col = entityCollision(pull->pos);
 	if(((d.x > 0) && !((col & 0x110))) || ((d.x < 0) && !((col & 0x220)))){
@@ -216,10 +216,10 @@ void grapplingHookDrawRopes(){
 	}
 }
 
-bool grapplingHookGetHooked(grapplingHook *ghk){
+bool grapplingHookGetHooked(const grapplingHook *ghk){
 	return ghk->hooked;
 }
-float grapplingHookGetGoalLength(grapplingHook *ghk){
+float grapplingHookGetGoalLength(const grapplingHook *ghk){
 	return ghk->goalLength;
 }
 void grapplingHookSetGoalLength(grapplingHook *ghk, float len){
