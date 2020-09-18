@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include "misc/options.h"
+#include "gfx/clouds.h"
 #include "gfx/sky.h"
 #include "gfx/gfx.h"
 #include "gfx/mesh.h"
@@ -126,6 +127,7 @@ int main( int argc, char* argv[] ){
 	initUI();
 	initMenu();
 	initSky();
+	cloudsInit();
 	blockTypeInit();
 	blockMiningInit();
 	initMeshobjs();
