@@ -253,11 +253,10 @@ void characterUpdateWindVolume(character *c, const vec wvel){
 	(void)c;
 
 	float windVol = vecMag(wvel);
-	if(windVol < 0.1f){
+	if(windVol < 0.01f){
 		sfxLoop(sfxWind,0.f);
 	}else{
-		windVol = (windVol - 0.1f)/4.f;
-		if(windVol > 1.f){windVol = 1.f;}
+		windVol = MIN((windVol - 0.01f),1.0);
 		vibrate(windVol);
 		sfxLoop(sfxWind,windVol);
 	}
