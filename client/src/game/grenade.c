@@ -25,9 +25,10 @@ int     grenadeCount = 0;
 void grenadeExplode(vec pos, float pw, int style){
 	const vec   pd  = vecSub(pos,player->pos);
 	const float pdm = vecMag(pd);
+	const float max = 16*pw*pw;
 
-	if(pdm < (16*pw*pw)){
-		const float dm = sqrtf((16*pw*pw)/pdm) * -0.01f;
+	if(pdm < max){
+		const float dm = sqrtf(max-pdm)/max * -0.1f;
 		player->vel = vecAdd(player->vel,vecMulS(pd,dm));
 		player->shake = dm*4.f;
 	}
