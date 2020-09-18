@@ -14,11 +14,9 @@
 (C) More worldgen variety
 (C) Some kind of jumping at the end of some grappling hook action
 (C) Make Blocks Modable
-(C) Fix atlas bleeding (3D Textures?)
 (C) Fix wasm fullscreen problems
 (C) Good sfx for the beamblast
-(C) Rework grappling hooks, the code is bad
-(C) Fluids / Clouds
+(C) Fluids
 
 (D) Order Chunks sent to player by distance to player
 (D) Add VoiceChat (G.711 ulaw FTW)
