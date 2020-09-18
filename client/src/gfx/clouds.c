@@ -64,9 +64,15 @@ void cloudPart(float px,float py,float pz,float dd,uint8_t v){
 	const uint32_t ct = a | (tb<<16) | (ta<<8) | ta;
 	const uint32_t cb = a | (bb<<16) | (ba<<8) | ba;
 
-	newParticle(px,py+vf/18.f,pz,0,0,0,0,0,0,1024,0,cb,1);
-	newParticle(px,py-vf/12.f,pz,0,0,0,0,0,0,1024,0,cb,1);
-	newParticle(px,py+vf/ 6.f,pz,0,0,0,0,0,0,1024,0,ct,1);
+	if(py > player->pos.y){
+		newParticle(px,py+vf/18.f,pz,0,0,0,0,0,0,1024,0,cb,1);
+		newParticle(px,py-vf/12.f,pz,0,0,0,0,0,0,1024,0,cb,1);
+		newParticle(px,py+vf/ 6.f,pz,0,0,0,0,0,0,1024,0,ct,1);
+	}else{
+		newParticle(px,py-vf/12.f,pz,0,0,0,0,0,0,1024,0,cb,1);
+		newParticle(px,py+vf/18.f,pz,0,0,0,0,0,0,1024,0,cb,1);
+		newParticle(px,py+vf/ 6.f,pz,0,0,0,0,0,0,1024,0,ct,1);
+	}
 }
 
 void cloudsRender(){
