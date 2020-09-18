@@ -26,8 +26,8 @@ void grenadeExplode(vec pos, float pw, int style){
 	const vec   pd  = vecSub(pos,player->pos);
 	const float pdm = vecMag(pd);
 
-	if(pdm < (2*pw*pw)){
-		const float dm = sqrtf((2*pw*pw)/pdm) * -0.02f;
+	if(pdm < (16*pw*pw)){
+		const float dm = sqrtf((16*pw*pw)/pdm) * -0.01f;
 		player->vel = vecAdd(player->vel,vecMulS(pd,dm));
 		player->shake = dm*4.f;
 	}
@@ -49,7 +49,7 @@ void grenadeExplode(vec pos, float pw, int style){
 }
 
 void grenadeNew(const character *ent, float pwr){
-	msgNewGrenade(vecAdd(ent->pos,vecNew(0,0.5,0)),ent->rot, pwr);
+	msgNewGrenade(vecAdd(ent->pos,vecNew(0,.5,0)),ent->rot, pwr);
 }
 
 void grenadeUpdate(){
@@ -77,8 +77,11 @@ void grenadeUpdateFromServer(const packet *p){
 
 	if(grenadeList[index].ent == NULL){
 		grenadeList[index].ent = entityNew(vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]));
+		grenadeList[index].ent->eMesh = meshBomb;
+	}else{
+		grenadeList[index].ent->pos = vecNewP(&p->val.f[0]);
+		grenadeList[index].ent->rot = vecNewP(&p->val.f[3]);
 	}
-	grenadeList[index].ent->eMesh = meshBomb;
 }
 
 void beamblast(character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult){

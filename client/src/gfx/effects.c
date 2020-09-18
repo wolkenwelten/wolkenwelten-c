@@ -31,8 +31,9 @@ void fxExplosionBomb(const vec pos,float pw){
 	}
 
 	const float pd  = vecMag(vecSub(pos,player->pos));
-	if(pd < pw){
-		if(characterHP(player,(pw-pd) * -3.f * pw)){
+	const float max = 16*pw*pw;
+	if(pd < max){
+		if(characterDamage(player,((max-pd)/max)*pw*4.f)){
 			msgSendDyingMessage("got bombed", 65535);
 			setOverlayColor(0x00000000,0);
 			commitOverlayColor();

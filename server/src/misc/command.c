@@ -68,8 +68,10 @@ static void cmdDbgitem(int c, const char *cmd){
 	msgPickupItem(target,262,1);
 	msgPickupItem(target,263,1);
 	msgPickupItem(target,264,1);
-	msgPickupItem(target,265,808);
 	msgPickupItem(target,258,42);
+	msgPickupItem(target,256,99);
+
+	msgPickupItem(target,265,999*4);
 }
 
 static void cmdHeal(int c, const char *cmd){
