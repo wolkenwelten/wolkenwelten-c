@@ -35,7 +35,7 @@ chungus *chungusGetActive(unsigned int i){
 }
 
 float chunkDistance(const entity *cam, const vec pos){
-	return sqrtf(vecMag(vecSub(pos,cam->pos)));
+	return vecMag(vecSub(pos,cam->pos));
 }
 
 const char *chungusGetFilename(chungus *c){

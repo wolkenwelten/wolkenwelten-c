@@ -69,7 +69,7 @@ void initGL(){
 
 double gfxCurFOV = 80.0;
 void calcFOV(const character *cam){
-	float off = sqrtf(vecMag(cam->vel));
+	float off = vecMag(cam->vel);
 
 	if(off < 0.025f){
 		off = 0.f;

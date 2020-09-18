@@ -30,7 +30,7 @@ void fxExplosionBomb(const vec pos,float pw){
 		newParticleV(pos,v,vecZero(),64.f,1.f,0xFF082299,128);
 	}
 
-	const float pd  = sqrtf(vecMag(vecSub(pos,player->pos)));
+	const float pd  = vecMag(vecSub(pos,player->pos));
 	if(pd < pw){
 		if(characterHP(player,(pw-pd) * -3.f * pw)){
 			msgSendDyingMessage("got bombed", 65535);

@@ -21,7 +21,7 @@ bigchungus world;
 float chungusRoughDistance(const character *cam, const vec pos) {
 	if(cam == NULL){return 8192.f;}
 	const vec np = vecAddS(vecMulS(pos,CHUNGUS_SIZE),CHUNGUS_SIZE/2);
-	return sqrtf(vecMag(vecSub(np,cam->pos)));
+	return vecMag(vecSub(np,cam->pos));
 }
 
 void bigchungusInit(bigchungus *c){

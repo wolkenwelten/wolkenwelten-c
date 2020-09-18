@@ -24,7 +24,7 @@ int     grenadeCount = 0;
 
 void grenadeExplode(vec pos, float pw, int style){
 	const vec   pd  = vecSub(pos,player->pos);
-	const float pdm = sqrtf(vecMag(pd));
+	const float pdm = vecMag(pd);
 
 	if(pdm < (2*pw*pw)){
 		const float dm = sqrtf((2*pw*pw)/pdm) * -0.02f;
@@ -35,7 +35,7 @@ void grenadeExplode(vec pos, float pw, int style){
 	for(int i=0;i<entityCount;i++){
 		entity *exEnt = &entityList[i];
 		const vec exd = vecSub(pos,exEnt->pos);
-		const float expd = sqrtf(vecMag(exd));
+		const float expd = vecMag(exd);
 		if(expd > (2*pw*pw)){continue;}
 		const float dm = sqrtf((2*pw*pw)/expd) * -0.02f;
 		exEnt->vel = vecAdd(exEnt->vel,vecMulS(exd,dm));
