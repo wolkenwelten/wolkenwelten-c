@@ -10,6 +10,7 @@
 #include "../gfx/mesh.h"
 #include "../tmp/objs.h"
 #include "../gfx/shader.h"
+#include "../gfx/particle.h"
 #include "../gfx/texture.h"
 #include "../network/chat.h"
 #include "../misc/options.h"
@@ -31,37 +32,24 @@ character *characterFirstFree = NULL;
 character *playerList[32];
 
 void characterInit(character *c){
-	int sx=-1024,sy=1024,sz=-1024;
-	c->gvel  = c->vel = c->rot = vecZero();
-
-	c->flags      = 0;
-	c->gliderFade = 0.f;
-	c->animationIndex = c->animationTicksMax = c->animationTicksLeft = 0;
-
-	c->actionTimeout = 0;
-	c->stepTimeout   = 0;
-	c->breathing     = rngValM(1024);
-
-	c->maxhp = c->hp = 20;
-	c->activeItem    = 0;
-	c->blockMiningX  = c->blockMiningY = c->blockMiningZ = -1;
-
-	c->pos   = vecNew(sx+0.5f,sy+1.0f,sz+0.5f);
-	c->rot   = vecNew(135.f,0.f,0.f);
-	c->shake = c->inaccuracy = c->gyoff = c->yoff  = 0.f;
-	c->eMesh = meshPear;
-
 	if(c->hook != NULL){
 		grapplingHookFree(c->hook);
 		c->hook = NULL;
 	}
+	memset(c,0,sizeof(character));
+
+	c->breathing     = rngValM(1024);
+	c->maxhp = c->hp = 20;
+	c->blockMiningX  = c->blockMiningY = c->blockMiningZ = -1;
+	c->pos           = vecNew(-1024,1024,-1024);
+	c->rot           = vecNew(135.f,15.f,0.f);
+	c->eMesh         = meshPear;
+
 	if(c == player){
 		sfxLoop(sfxWind,0.f);
 		sfxLoop(sfxHookRope,0.f);
 		msgRequestPlayerSpawnPos();
 	}
-
-	characterEmptyInventory(c);
 }
 
 character *characterNew(){
@@ -476,6 +464,16 @@ int characterPhysics(character *c){
 	return ret;
 }
 
+void characterUpdateBooster(character *c){
+	if(!(c->flags & CHAR_SNEAK)){return;}
+	float speed   = 0.001f / vecMag(c->vel);
+	const vec dir = vecDegToVec(c->rot);
+	const vec nv  = vecMulS(dir,speed);
+	c->vel = vecAdd(c->vel,nv);
+	newParticleV(c->pos, vecMulS(dir,-0.01f), vecZero(), 128.f, 4.f, 0xC02090E0, 1024);
+}
+
+
 void characterUpdate(character *c){
 	float walkFactor = 1.f;
 	vec nvel;
@@ -512,6 +510,7 @@ void characterUpdate(character *c){
 		characterPhysics(c);
 		return;
 	}
+	characterUpdateBooster(c);
 	if((c->flags & (CHAR_GLIDE | CHAR_FALLING)) == (CHAR_GLIDE | CHAR_FALLING)){
 		characterUpdateHook(c);
 		characterUpdateAnimation(c);

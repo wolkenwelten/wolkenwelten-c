@@ -1,12 +1,24 @@
 #include "clouds.h"
 
+#include "../gfx/gl.h"
+#include "../gfx/gfx.h"
+#include "../gfx/mat.h"
+#include "../gfx/shader.h"
 #include "../gfx/particle.h"
 #include "../game/character.h"
-#include "../../../common/src/misc/noise.h"
 #include "../../../common/src/common.h"
+#include "../../../common/src/misc/noise.h"
 
 #include <stdio.h>
 #include <math.h>
+
+
+#pragma pack(push, 1)
+typedef struct glParticle {
+	float x,y,z;
+	unsigned int color;
+} glCloud;
+#pragma pack(pop)
 
 typedef struct {
 	float x,z,d;
@@ -14,31 +26,34 @@ typedef struct {
 	uint16_t v;
 }cloudEntry;
 
-cloudEntry clouds[1<<14];
-uint cloudCount=0;
-
-uint8_t cloudTex[256][256];
-float cloudOffset=0.f;
-
 #define CLOUD_FADED (65536)
 #define CLOUD_MIND  (65536*3)
-
 #define CLOUD_DENSITY_MIN 168
+#define CLOUDS_MAX (1<<19)
+
+cloudEntry clouds[1<<14];
+uint       cloudCount  = 0;
+uint8_t    cloudTex[256][256];
+float      cloudOffset = 0.f;
+
+glCloud    glData[CLOUDS_MAX];
+uint       glCount  = 0;
+uint       cloudVBO = 0;
 
 int quicksortCloudsPart(int lo, int hi){
 	float p = clouds[hi].d;
-	int i = lo;
+	int i   = lo;
 	for(int j = lo;j<=hi;j++){
 		if(clouds[j].d < p){
 			cloudEntry t = clouds[i];
-			clouds[i] = clouds[j];
-			clouds[j] = t;
+			clouds[i]    = clouds[j];
+			clouds[j]    = t;
 			i++;
 		}
 	}
 	cloudEntry t = clouds[i];
-	clouds[i] = clouds[hi];
-	clouds[hi] = t;
+	clouds[i]    = clouds[hi];
+	clouds[hi]   = t;
 	return i;
 }
 
@@ -65,14 +80,31 @@ void cloudPart(float px,float py,float pz,float dd,uint8_t v){
 	const uint32_t cb = a | (bb<<16) | (ba<<8) | ba;
 
 	if(py > player->pos.y){
-		newParticle(px,py+vf/18.f,pz,0,0,0,0,0,0,1024,0,cb,1);
-		newParticle(px,py-vf/12.f,pz,0,0,0,0,0,0,1024,0,cb,1);
-		newParticle(px,py+vf/ 6.f,pz,0,0,0,0,0,0,1024,0,ct,1);
+		glData[glCount++] = (glCloud){px,py+vf/ 6.f,pz,ct};
+		glData[glCount++] = (glCloud){px,py+vf/18.f,pz,cb};
+		glData[glCount++] = (glCloud){px,py-vf/12.f,pz,cb};
 	}else{
-		newParticle(px,py-vf/12.f,pz,0,0,0,0,0,0,1024,0,cb,1);
-		newParticle(px,py+vf/18.f,pz,0,0,0,0,0,0,1024,0,cb,1);
-		newParticle(px,py+vf/ 6.f,pz,0,0,0,0,0,0,1024,0,ct,1);
+		glData[glCount++] = (glCloud){px,py-vf/12.f,pz,cb};
+		glData[glCount++] = (glCloud){px,py+vf/18.f,pz,cb};
+		glData[glCount++] = (glCloud){px,py+vf/ 6.f,pz,ct};
 	}
+}
+
+void cloudsRenderGl(){
+	shaderBind(sCloud);
+	matMul(matMVP,matView,matProjection);
+	shaderMatrix(sCloud,matMVP);
+
+	glBindBuffer(GL_ARRAY_BUFFER, cloudVBO);
+	glBufferData(GL_ARRAY_BUFFER, glCount*sizeof(glCloud), glData, GL_STREAM_DRAW);
+
+	glEnableVertexAttribArray (0);
+	glDisableVertexAttribArray(1);
+	glEnableVertexAttribArray (2);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&glData[0].x) -     ((char *)glData)));
+	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&glData[0].color) - ((char *)glData)));
+	glDrawArrays(GL_POINTS,0,glCount);
 }
 
 void cloudsRender(){
@@ -87,7 +119,9 @@ void cloudsRender(){
 		const float   oy = (1.f - dd / (CLOUD_MIND+CLOUD_FADED))*32.f + 32.f;
 		cloudPart(px,sy+oy,pz,dd,v);
 	}
+	cloudsRenderGl();
 
+	glCount = 0;
 	cloudCount = 0;
 }
 
@@ -215,4 +249,5 @@ void cloudsDraw(int cx, int cy, int cz){
 
 void cloudsInit(){
 	generateNoise(0x84407db3, cloudTex);
+	glGenBuffers(1,&cloudVBO);
 }

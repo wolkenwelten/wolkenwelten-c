@@ -14,3 +14,4 @@ extern shader *sMesh;
 extern shader *sBlockMesh;
 extern shader *sParticle;
 extern shader *sTextMesh;
+extern shader *sCloud;
