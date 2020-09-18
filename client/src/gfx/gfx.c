@@ -105,6 +105,7 @@ void calcView(const character *cam){
 void renderWorld(const character *cam){
 	glDepthFunc( GL_LESS );
 	bigchungusDraw(&world,cam);
+	cloudsRender();
 	blockMiningDraw();
 	grapplingHookDrawRopes();
 	animalDrawAll();
