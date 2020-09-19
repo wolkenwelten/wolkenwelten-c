@@ -22,15 +22,12 @@ int        characterCount = 0;
 character *characterFirstFree = NULL;
 
 void characterInit(character *c){
-	int sx,sy,sz;
+	c->hookPos = c->gvel = c->vel =  vecZero();
 
-	c->gyoff  = 0.f;
-	c->gvel = c->vel =  vecZero();
-
-	c->flags = 0;
 	c->gliderFade = 0.f;
 	c->animationIndex = c->animationTicksMax = c->animationTicksLeft = 0;
 
+	c->flags         = 0;
 	c->actionTimeout = 0;
 	c->stepTimeout   = 0;
 	c->activeItem    = 0;
@@ -38,13 +35,11 @@ void characterInit(character *c){
 	c->blockMiningX  = c->blockMiningY = c->blockMiningZ = -1;
 	c->hp = c->maxhp = 20;
 
-	bigchungusGetSpawnPos(&world,&sx,&sy,&sz);
 	c->rot   = vecNew(135.f,0.f,0.f);
-	c->yoff  = 0.f;
-	c->pos   = vecNew(sx+0.5f,sy+1.0f,sz+0.5f);
+	c->gyoff = c->yoff = 0.f;
+	c->pos   = vecAdd(vecNewI(worldGetSpawnPos()),vecNew(.5f,1.f,.5f));
 
 	c->hook  = false;
-	c->hookPos = vecZero();
 
 	characterEmptyInventory(c);
 }
@@ -174,12 +169,11 @@ int characterLoadData(uint c){
 }
 
 void characterLoadSendData(uint c){
-	int sx,sy,sz;
 	item emptyInventory[40] = {{0}};
 	if(characterLoadData(c)){return;}
 
-	bigchungusGetSpawnPos(&world,&sx,&sy,&sz);
-	msgPlayerSetPos(c,vecNew(sx+0.5f,sy+2.f,sz+0.5f),vecNew(135.f,15.f,0.f));
+	const vec spawn = vecNewI(worldGetSpawnPos());
+	msgPlayerSetPos(c,vecAdd(spawn,vecNew(.5f,2.f,.5f)),vecNew(135.f,15.f,0.f));
 	msgPlayerSetInventory(c,emptyInventory,40);
 	msgPlayerSetData(c,20,0,0);
 }

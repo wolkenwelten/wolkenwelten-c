@@ -89,12 +89,9 @@ void serverParseDyingMsg(uint c,const packet *m){
 }
 
 void msgPlayerSpawnPos(uint c){
-	int sx,sy,sz;
-	worldGetSpawnPos(&sx,&sy,&sz);
-	fprintf(stderr,"spawn: %i %i %i\n",sx,sy,sz);
-	const vec npos = vecAdd(vecNew(sx,sy,sz),vecNew(0.5f,2.0f,0.5f));
-	const vec nrot = vecNew(135.f,15.f,0.f);
-	msgPlayerSetPos(c,npos,nrot);
+	const vec spawn = vecNewI(worldGetSpawnPos());
+	const vec nrot  = vecNew(135.f,15.f,0.f);
+	msgPlayerSetPos(c,vecAdd(spawn,vecNew(.5f,2.f,.5f)),nrot);
 }
 
 void serverInitClient(uint c){

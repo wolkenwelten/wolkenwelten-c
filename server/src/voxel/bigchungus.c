@@ -167,24 +167,21 @@ void bigchungusBoxMineSphere(bigchungus *c, int x,int y,int z, int r){
 	}
 }
 
-int bigchungusTrySpawn(bigchungus *c, int sx, int sy, int sz){
-	return( (bigchungusGetB(c,sx,sy  ,sz)!=0) &&
-	        (bigchungusGetB(c,sx,sy+1,sz)==0) &&
-	        (bigchungusGetB(c,sx,sy+2,sz)==0));
+int bigchungusTrySpawn(bigchungus *c, const ivec s){
+	return( (bigchungusGetB(c,s.x,s.y  ,s.z)!=0) &&
+	        (bigchungusGetB(c,s.x,s.y+1,s.z)==0) &&
+	        (bigchungusGetB(c,s.x,s.y+2,s.z)==0));
 }
 
-void bigchungusDetermineSpawn(bigchungus *c, int sx, int sy, int sz){
-	sx &= ~0xFF;
-	sy &= ~0xFF;
-	sz &= ~0xFF;
+void bigchungusDetermineSpawn(bigchungus *c, const ivec s){
+	const ivec sp = ivecAndS(s,~0xFF);
 	for(int step = CHUNGUS_SIZE; step >= 1;step/=2){
 		for(int x = step/2;x<CHUNGUS_SIZE;x+=step){
 			for(int y = step/2;y<CHUNGUS_SIZE;y+=step){
 				for(int z = step/2;z<CHUNGUS_SIZE;z+=step){
-					if(bigchungusTrySpawn(c,sx|x,sy|y,sz|z)){
-						c->spawnx = sx|x;
-						c->spawny = sy|y;
-						c->spawnz = sz|z;
+					const ivec cp = ivecOr(sp,ivecNew(x,y,z));
+					if(bigchungusTrySpawn(c,cp)){
+						c->spawn = cp;
 						return;
 					}
 				}
@@ -200,26 +197,22 @@ void bigchungusGenSpawn(bigchungus *c){
 				if(c->chungi[x][y][z] == NULL){
 					c->chungi[x][y][z] = chungusNew(x*CHUNGUS_SIZE,y*CHUNGUS_SIZE,z*CHUNGUS_SIZE);
 				}
-				if(c->chungi[x][y][z]->spawnx >= 0){
-					c->spawnx = c->chungi[x][y][z]->spawnx + (CHUNGUS_SIZE * x);
-					c->spawny = c->chungi[x][y][z]->spawny + (CHUNGUS_SIZE * y);
-					c->spawnz = c->chungi[x][y][z]->spawnz + (CHUNGUS_SIZE * z);
+				if(c->chungi[x][y][z]->spawn.x >= 0){
+					c->spawn = ivecAdd(c->chungi[x][y][z]->spawn,ivecMulS(ivecNew(x,y,z),CHUNGUS_SIZE));
 				}
 			}
 		}
 	}
-	if(!bigchungusTrySpawn(c,c->spawnx,c->spawny,c->spawnz)){
-		bigchungusDetermineSpawn(c,c->spawnx,c->spawny,c->spawnz);
+	if(!bigchungusTrySpawn(c,c->spawn)){
+		bigchungusDetermineSpawn(c,c->spawn);
 	}
 }
 
-void bigchungusGetSpawnPos(bigchungus *c, int *x, int *y, int *z){
-	if(!bigchungusTrySpawn(c,c->spawnx,c->spawny,c->spawnz)){
-		bigchungusDetermineSpawn(c,c->spawnx,c->spawny,c->spawnz);
+ivec bigchungusGetSpawnPos(bigchungus *c){
+	if(!bigchungusTrySpawn(c,c->spawn)){
+		bigchungusDetermineSpawn(c,c->spawn);
 	}
-	*x = c->spawnx;
-	*y = c->spawny;
-	*z = c->spawnz;
+	return c->spawn;
 }
 
 void bigchungusFreeFarChungi(bigchungus *c){

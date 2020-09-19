@@ -90,14 +90,12 @@ void worldgenMonolith(worldgen *wgen, int x,int y,int z){
 
 void worldgenFindSpawn(worldgen *wgen, int x,int z,int tries){
 	if(tries > 8){
-		wgen->clay->spawnx = wgen->clay->spawny = wgen->clay->spawnz = -1;
+		wgen->clay->spawn = ivecNOne();
 		return;
 	}
 	int y = 0;
 	if(chungusGetHighestP(wgen->clay,x,&y,z)){
-		wgen->clay->spawnx = x;
-		wgen->clay->spawny = y;
-		wgen->clay->spawnz = z;
+		wgen->clay->spawn = ivecNew(x,y,z);
 	}else{
 		worldgenFindSpawn(wgen,rngValMM(0,CHUNGUS_SIZE),rngValMM(0,CHUNGUS_SIZE),tries+1);
 	}

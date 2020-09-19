@@ -56,3 +56,17 @@ typedef struct {
 		struct { float yaw,pitch,roll; };
 	};
 } vec;
+
+typedef struct {
+	union {
+		struct { int x,y,z; };
+		struct { int w,h,d; };
+	};
+} ivec;
+
+typedef struct {
+	union {
+		struct { uint x,y,z; };
+		struct { uint w,h,d; };
+	};
+} uvec;

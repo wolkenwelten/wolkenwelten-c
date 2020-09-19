@@ -7,7 +7,7 @@
 
 struct chungus {
 	int    x,y,z;
-	int    spawnx,spawny,spawnz;
+	ivec   spawn;
 	u64    clientsSubscribed;
 	u64    clientsUpdated;
 	void  *nextFree;
@@ -27,7 +27,7 @@ void         chungusFill             (chungus *c, int x, int y, int z, u8 block)
 void         chungusSetB             (chungus *c, int x, int y, int z, u8 block);
 u8           chungusGetB             (chungus *c, int x, int y, int z);
 chunk       *chungusGetChunk         (chungus *c, int x, int y, int z);
-void         chungusSetSpawn         (chungus *c, int x, int y, int z);
+void         chungusSetSpawn         (chungus *c, const ivec spawn);
 void         chungusSubscribePlayer  (chungus *c, uint p);
 int          chungusUnsubscribePlayer(chungus *c, uint p);
 uint         chungusIsSubscribed     (chungus *c, uint p);

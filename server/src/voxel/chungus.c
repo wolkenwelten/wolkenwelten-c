@@ -181,7 +181,7 @@ chungus *chungusNew(int x, int y, int z){
 	c->y = y;
 	c->z = z;
 	c->nextFree = NULL;
-	c->spawnx = c->spawny = c->spawnz = -1;
+	c->spawn = ivecNOne();
 	c->clientsSubscribed  = 0;
 	c->clientsUpdated     = (u64)1 << 31;
 

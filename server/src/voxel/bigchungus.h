@@ -6,7 +6,7 @@
 #define WORLD_SIZE (16*16*256)
 
 struct bigchungus {
-	int spawnx, spawny, spawnz;
+	ivec spawn;
 	chungus *chungi[256][128][256];
 	u8 heightModifier          [256][256];
 	u8 vegetationConcentration [256][256];
@@ -29,7 +29,7 @@ bool        bigchungusGetHighestP       (bigchungus *c, int x, int *rety, int z)
 u8          bigchungusGetB              (bigchungus *c, int x, int y, int z);
 bool        bigchungusSetB              (bigchungus *c, int x, int y, int z, u8 b);
 void        bigchungusGenSpawn          (bigchungus *c);
-void        bigchungusGetSpawnPos       (bigchungus *c, int *x, int *y, int *z);
+ivec        bigchungusGetSpawnPos       (bigchungus *c);
 void        bigchungusFreeFarChungi     (bigchungus *c);
 void        bigchungusUpdateClient      (bigchungus *c, int p);
 void        bigchungusUnsubscribeClient (bigchungus *c, int p);
@@ -43,8 +43,8 @@ inline void        worldBoxMine       (int x, int y, int z, int w,int h,int d){
 inline void        worldBoxMineSphere (int x, int y, int z, int r){
 	bigchungusBoxMineSphere(&world,x,y,z,r);
 }
-inline void        worldGetSpawnPos   (int *x, int *y, int *z){
-	bigchungusGetSpawnPos(&world,x,y,z);
+inline ivec        worldGetSpawnPos   (){
+	return bigchungusGetSpawnPos(&world);
 }
 
 
