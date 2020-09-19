@@ -81,19 +81,21 @@ void blockMiningMine(uint i, item *itm){
 	}
 }
 
-void blockMiningMinePos(item *itm, int x, int y, int z){
+int blockMiningMinePos(item *itm, int x, int y, int z){
 	for(uint i=0;i<blockMiningCount;i++){
 		blockMining *bm = &blockMiningList[i];
 		if(bm->x != x){continue;}
 		if(bm->y != y){continue;}
 		if(bm->z != z){continue;}
 		blockMiningMine(i,itm);
-		return;
+		return 0;
 	}
+	if(worldGetB(x,y,z) == 0){return 1;}
 	int i = blockMiningNew(x,y,z);
 	if(i >= 0){
 		blockMiningMine(i,itm);
 	}
+	return 0;
 }
 
 void blockMiningUpdate(){
@@ -101,7 +103,9 @@ void blockMiningUpdate(){
 		if(clients[i].c == NULL)          {continue;}
 		if(clients[i].c->blockMiningX < 0){continue;}
 		item *itm = characterGetItemBarSlot(clients[i].c,clients[i].c->activeItem);
-		blockMiningMinePos(itm,clients[i].c->blockMiningX,clients[i].c->blockMiningY,clients[i].c->blockMiningZ);
+		if(blockMiningMinePos(itm,clients[i].c->blockMiningX,clients[i].c->blockMiningY,clients[i].c->blockMiningZ)){
+			clients[i].c->blockMiningX = clients[i].c->blockMiningY = clients[i].c->blockMiningZ = -1;
+		}
 	}
 
 	for(uint i=0;i<blockMiningCount;++i){

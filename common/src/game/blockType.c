@@ -41,6 +41,7 @@ mesh *blockTypeGetMesh(u8 b){
 }
 
 u32 blockTypeGetParticleColor(u8 b) {
+	if(b==0){return 0xFFFF00FF;}
 	return blocks[b].color[rngValR()&1];
 }
 

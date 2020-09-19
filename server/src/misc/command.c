@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "../game/animal.h"
+#include "../game/blockMining.h"
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../network/server.h"
@@ -224,14 +225,21 @@ int parseCommand(int c, const char *cmd){
 		return 1;
 	}
 
-	if(strncmp(tcmp,"itemdropcount",2) == 0){
+	if(strncmp(tcmp,"bmcount",2) == 0){
+		snprintf(replyBuf,sizeof(replyBuf),".blockMiningCount : %i",blockMiningCount);
+		replyBuf[sizeof(replyBuf)-1]=0;
+		serverSendChatMsg(replyBuf);
+		return 1;
+	}
+
+	if(strncmp(tcmp,"idcount",2) == 0){
 		snprintf(replyBuf,sizeof(replyBuf),".itemdropcount : %i",itemDropCount);
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"entitycount",2) == 0){
+	if(strncmp(tcmp,"ecount",2) == 0){
 		snprintf(replyBuf,sizeof(replyBuf),".entitycount : %i",entityCount);
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
