@@ -80,13 +80,13 @@ void serverAccept(){
 	serverInitClient(clientCount++);
 }
 
-void serverKill(int c){
+void serverKill(uint c){
 	close(clients[c].socket);
 	serverCloseClient(c);
 }
 
 void serverRead(){
-	for(int i=0;i<clientCount;i++){
+	for(uint i=0;i<clientCount;i++){
 		if(clients[i].state == STATE_CLOSED){ continue; }
 		int len = 1;
 		while(len > 0){
@@ -113,7 +113,7 @@ void serverRead(){
 	}
 }
 
-int serverSendClient(int c){
+int serverSendClient(uint c){
 	while(clients[c].sendBufSent < clients[c].sendBufLen){
 		const int ret = send(clients[c].socket,(void *)(clients[c].sendBuf+clients[c].sendBufSent),clients[c].sendBufLen-clients[c].sendBufSent,0);
 		if(ret == SOCKET_ERROR){
