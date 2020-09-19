@@ -6,13 +6,13 @@ void stoneaxeInit(){
 	recipeAdd2I(ITEMID,1, 17,4, 3,2);
 }
 
-int stoneaxeDamage(item *cItem){
+int stoneaxeDamage(const item *cItem){
 	(void)cItem;
-	
+
 	return 4;
 }
 
-int stoneaxeBlockDamage(item *cItem, blockCategory blockCat){
+int stoneaxeBlockDamage(const item *cItem, blockCategory blockCat){
 	(void)cItem;
 
 	if(blockCat == WOOD){
@@ -21,13 +21,13 @@ int stoneaxeBlockDamage(item *cItem, blockCategory blockCat){
 	return 1;
 }
 
-mesh *stoneaxeGetMesh(item *cItem){
+mesh *stoneaxeGetMesh(const item *cItem){
 	(void)cItem;
 
 	return meshStoneaxe;
 }
 
-int stoneaxeGetStackSize(item *cItem){
+int stoneaxeGetStackSize(const item *cItem){
 	(void)cItem;
 
 	return 1;

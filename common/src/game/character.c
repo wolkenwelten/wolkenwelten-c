@@ -5,11 +5,11 @@
 
 #include <math.h>
 
-int characterGetHP(character *c){
+int characterGetHP(const character *c){
 	return c->hp;
 }
 
-int characterGetMaxHP(character *c){
+int characterGetMaxHP(const character *c){
 	return c->maxhp;
 }
 
@@ -33,7 +33,7 @@ void characterAddInaccuracy(character *c, float inc){
 	c->inaccuracy += inc;
 }
 
-int characterGetItemAmount(character *c, uint16_t itemID){
+int characterGetItemAmount(const character *c, u16 itemID){
 	int amount = 0;
 	for(unsigned int i=0;i<40;i++){
 		if(c->inventory[i].ID == itemID){
@@ -43,11 +43,11 @@ int characterGetItemAmount(character *c, uint16_t itemID){
 	return amount;
 }
 
-int characterDecItemAmount(character *c, uint16_t itemID,int amount){
+int characterDecItemAmount(character *c, u16 itemID,int amount){
 	int ret=0;
 
 	if(amount == 0){return 0;}
-	for(unsigned int i=0;i<40;i++){
+	for(uint i=0;i<40;i++){
 		if(c->inventory[i].ID == itemID){
 			if(c->inventory[i].amount > amount){
 				itemDecStack(&c->inventory[i],amount);
@@ -62,12 +62,12 @@ int characterDecItemAmount(character *c, uint16_t itemID,int amount){
 	return ret;
 }
 
-bool characterPickupItem(character *c, uint16_t itemID,int amount){
+bool characterPickupItem(character *c, u16 itemID,int amount){
 	int a = 0;
 	item ci = itemNew(itemID,amount);
 	if(getStackSizeDispatch(&ci) == 1){
 		ci.amount = amount;
-		for(unsigned int i=0;i<40;i++){
+		for(uint i=0;i<40;i++){
 			if(itemIsEmpty(&c->inventory[i])){
 				c->inventory[i] = ci;
 				return true;
@@ -76,13 +76,13 @@ bool characterPickupItem(character *c, uint16_t itemID,int amount){
 		return false;
 	}
 
-	for(unsigned int i=0;i<40;i++){
+	for(uint i=0;i<40;i++){
 		if(a >= amount){break;}
 		if(itemCanStack(&c->inventory[i],itemID)){
 			a += itemIncStack(&c->inventory[i],amount - a);
 		}
 	}
-	for(unsigned int i=0;i<40;i++){
+	for(uint i=0;i<40;i++){
 		if(a >= amount){break;}
 		if(itemIsEmpty(&c->inventory[i])){
 			c->inventory[i] = itemNew(itemID,amount - a);
@@ -115,44 +115,40 @@ bool characterDamage(character *c, int hp){
 }
 
 void characterEmptyInventory(character *c){
-	for(unsigned int i=0;i<40;i++){
+	for(uint i=0;i<40;i++){
 		c->inventory[i] = itemEmpty();
 	}
 }
 
-item *characterGetItemBarSlot(character *c, int i){
-	if(i <  0){return NULL;}
-	if(i > 40){return NULL;}
+item *characterGetItemBarSlot(character *c, uint i){
+	if(i >= 40){return NULL;}
 	return &c->inventory[i];
 }
 
-void characterSetItemBarSlot(character *c, int i, item *itm){
-	if(i <  0){return;}
-	if(i > 40){return;}
+void characterSetItemBarSlot(character *c, uint i, item *itm){
+	if(i >= 40){return;}
 	c->inventory[i] = *itm;
 }
 
-void characterSetActiveItem(character *c, int i){
+void characterSetActiveItem(character *c,  int i){
 	if(i > 9){i = 0;}
 	if(i < 0){i = 9;}
-	if((unsigned int)i != c->activeItem){
+	if((uint)i != c->activeItem){
 		characterStartAnimation(c,5,200);
 	}
 	c->activeItem = i;
 }
 
-void characterSwapItemSlots(character *c, int a,int b){
-	if(a <  0){return;}
-	if(b <  0){return;}
-	if(a > 39){return;}
-	if(b > 39){return;}
+void characterSwapItemSlots(character *c, uint a,uint b){
+	if(a >= 40){return;}
+	if(b >= 40){return;}
 
 	item tmp = c->inventory[a];
 	c->inventory[a] = c->inventory[b];
 	c->inventory[b] = tmp;
 }
 
-bool characterLOSBlock(character *c, int *retX, int *retY, int *retZ, int returnBeforeBlock) {
+bool characterLOSBlock(const character *c, int *retX, int *retY, int *retZ, int returnBeforeBlock) {
 	int   lastBlock=-1;
 
 	const vec cv = vecDegToVec(c->rot);
@@ -181,8 +177,8 @@ bool characterLOSBlock(character *c, int *retX, int *retY, int *retZ, int return
 	return false;
 }
 
-uint32_t characterCollision(const vec c){
-	uint32_t col = 0;
+u32 characterCollision(const vec c){
+	u32 col = 0;
 	const float wd = 0.2f;
 	const float WD = wd*2.f;
 
@@ -267,8 +263,8 @@ bool characterTryToShoot(character *c, item *i, int cooldown, int bulletcount){
 
 void characterSetInventoryP(character *c, const packet *p){
 	if(c == NULL){return;}
-	int max = MIN(40,packetLen(p)/4);
-	for(int i=0;i<max;i++){
+	uint max = MIN(40,packetLen(p)/4);
+	for(uint i=0;i<max;i++){
 		c->inventory[i].ID     = p->val.s[(i<<1)  ];
 		c->inventory[i].amount = p->val.s[(i<<1)+1];
 	}

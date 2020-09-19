@@ -6,13 +6,13 @@ void ironaxeInit(){
 	recipeAdd2I(ITEMID,1, 17,4, 266,2);
 }
 
-int ironaxeDamage(item *cItem){
+int ironaxeDamage(const item *cItem){
 	(void)cItem;
-	
+
 	return 6;
 }
 
-int ironaxeBlockDamage(item *cItem, blockCategory blockCat){
+int ironaxeBlockDamage(const item *cItem, blockCategory blockCat){
 	(void)cItem;
 
 	if(blockCat == WOOD){
@@ -21,13 +21,13 @@ int ironaxeBlockDamage(item *cItem, blockCategory blockCat){
 	return 1;
 }
 
-mesh *ironaxeGetMesh(item *cItem){
+mesh *ironaxeGetMesh(const item *cItem){
 	(void)cItem;
 
 	return meshIronaxe;
 }
 
-int ironaxeGetStackSize(item *cItem){
+int ironaxeGetStackSize(const item *cItem){
 	(void)cItem;
 
 	return 1;

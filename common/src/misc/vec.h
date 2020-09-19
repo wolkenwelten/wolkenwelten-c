@@ -4,6 +4,7 @@
 vec   vecNew     (float x, float y, float z);
 vec   vecNewP    (const float *p);
 vec   vecZero    ();
+vec   vecOne     ();
 vec   vecRng     ();
 vec   vecRngAbs  ();
 vec   vecInvert  (const vec a);

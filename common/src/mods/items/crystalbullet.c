@@ -6,14 +6,14 @@ void crystalbulletInit(){
 	recipeAdd1I(ITEMID,8, 18,1); // Hematite Ore(1) -> Crystalbullet(8)
 }
 
-mesh *crystalbulletGetMesh(item *cItem){
+mesh *crystalbulletGetMesh(const item *cItem){
 	(void)cItem;
 
 	return meshCrystalbullet;
 }
 
-int crystalbulletGetStackSize(item *cItem){
+int crystalbulletGetStackSize(const item *cItem){
 	(void)cItem;
-	
+
 	return 999;
 }

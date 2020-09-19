@@ -1,7 +1,7 @@
 #include "item.h"
 #include "../mods/mods.h"
 
-item itemNew(uint16_t ID, int16_t amount){
+item itemNew(u16 ID, i16 amount){
 	item i;
 	i.ID     = ID;
 	i.amount = MIN(getStackSizeDispatch(&i),amount);
@@ -19,11 +19,11 @@ void itemDiscard(item *i){
 	i->amount = i->ID = 0;
 }
 
-bool itemIsEmpty(item *i){
+bool itemIsEmpty(const item *i){
 	return ((i == NULL) || (i->amount==0) || (i->ID==0));
 }
 
-int itemCanStack(item *i, uint16_t ID){
+int itemCanStack(const item *i, u16 ID){
 	if(i == NULL)      {return 0;}
 	const int ma = getStackSizeDispatch(i);
 	if(ma == 1)        {return 0;}
@@ -32,31 +32,31 @@ int itemCanStack(item *i, uint16_t ID){
 	if(i->amount ==  0){return 0;}
 	return ma-i->amount;
 }
-int itemIncStack(item *i, int16_t amount){
+int itemIncStack(item *i, i16 amount){
 	if(i == NULL)      {return 0;}
 	const int ma = getStackSizeDispatch(i);
 	if((i->amount+amount)>ma){amount = ma - i->amount;}
 	i->amount += amount;
 	return amount;
 }
-int itemDecStack(item *i, int16_t amount){
+int itemDecStack(item *i, i16 amount){
 	if(i == NULL)      {return 0;}
 	if(i->amount < amount){amount = i->amount;}
 	i->amount -= amount;
 	return amount;
 }
-int itemGetAmmo(item *i){
+int itemGetAmmo(const item *i){
 	if(i == NULL)      {return 0;}
 	return i->amount-1;
 }
-int itemIncAmmo(item *i, int16_t amount){
+int itemIncAmmo(item *i, i16 amount){
 	if(i == NULL)      {return 0;}
 	const int ma = getMagSizeDispatch(i)+1;
 	if((i->amount+amount)>ma){amount = ma - i->amount;}
 	i->amount += amount;
 	return amount;
 }
-int itemDecAmmo(item *i, int16_t amount){
+int itemDecAmmo(item *i, i16 amount){
 	if(i == NULL)      {return 0;}
 	if((i->amount-1) < amount){amount = i->amount-1;}
 	i->amount -= amount;

@@ -1,10 +1,9 @@
 #include "../game/blockType.h"
 
-#include "../../../common/src/misc/misc.h"
+#include "../gfx/gl.h"
 #include "../gfx/mesh.h"
 #include "../gfx/texture.h"
-#include "../gfx/gl.h"
-
+#include "../../../common/src/misc/misc.h"
 
 void blockTypeGenMeshes(){
 	for(int i=0;i<256;i++){
@@ -13,7 +12,7 @@ void blockTypeGenMeshes(){
 		mesh *singleBlock = blocks[i].singleBlock;
 		singleBlock->dataCount = 0;
 		singleBlock->tex = tBlocks;
-		blockTypeAddToMesh(i,singleBlock,-0.5f,-0.5f,-0.5f,1.f,1.f,1.f);
+		blockTypeAddToMesh(i,singleBlock,vecNew(-0.5f,-0.5f,-0.5f),vecOne());
 		meshFinish(singleBlock, GL_STATIC_DRAW);
 	}
 }
@@ -23,12 +22,18 @@ void blockTypeSetTex(uint8_t b, int side, uint32_t tex){
 	blocks[b].texY[side] = tex >> 4;
 }
 
-void blockTypeAddToMesh(uint8_t b, mesh *m, float x, float y, float z, float w, float h, float d) {
+void blockTypeAddToMesh(u8 b, mesh *m, const vec pos, const vec size) {
 	float tileLoX[6];
 	float tileHiX[6];
 	float tileLoY[6];
 	float tileHiY[6];
 	const float TILE = (1.0f/16.f);
+	const float x    = pos.x;
+	const float y    = pos.y;
+	const float z    = pos.z;
+	const float w    = size.x;
+	const float h    = size.y;
+	const float d    = size.z;
 
 	for(int side=0;side<6;side++){
 		tileLoX[side] = ((float)blocks[b].texX[side]*TILE);

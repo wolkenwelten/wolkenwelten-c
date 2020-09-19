@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-extern int mousex,mousey,mouseClicked[3];
+extern uint mousex,mousey,mouseClicked[3];
 extern bool mouseHidden;
 extern float matOrthoProj[16];
 
@@ -13,7 +13,3 @@ void updateMouse();
 void drawCursor();
 void renderLoadingUI(const char *step);
 void renderUI();
-
-void resetOverlayColor();
-void commitOverlayColor();
-void setOverlayColor(unsigned int color, unsigned int animationDuration);

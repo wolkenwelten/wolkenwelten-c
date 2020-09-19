@@ -2,12 +2,6 @@ static const int ITEMID=272;
 
 #include "../api_v1.h"
 
-int cherryDamage(item *cItem){
-	(void)cItem;
-	
-	return 12;
-}
-
 bool cherrySecondaryAction(item *cItem,character *cChar, int to){
 	(void)cItem;
 
@@ -23,14 +17,14 @@ bool cherrySecondaryAction(item *cItem,character *cChar, int to){
 	return false;
 }
 
-mesh *cherryGetMesh(item *cItem){
+mesh *cherryGetMesh(const item *cItem){
 	(void)cItem;
 
 	return meshCherry;
 }
 
-int cherryGetAmmunition(item *cItem){
+int cherryGetAmmunition(const item *cItem){
 	(void)cItem;
-	
+
 	return ITEMID;
 }

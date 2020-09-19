@@ -4,9 +4,9 @@
 #include "../../../common/src/misc/misc.h"
 
 void blockTypeGenMeshes();
-void blockTypeSetTex(uint8_t b, int side, uint32_t tex);
+void blockTypeSetTex(u8 b, int side, u32 tex);
 
-void blockTypeInitBlock(uint8_t b, uint32_t tex, blockCategory ncat,const char *bname,int nhp,unsigned int ncolor1,unsigned int ncolor2){
+void blockTypeInitBlock(u8 b, u32 tex, blockCategory ncat,const char *bname,int nhp,u32 ncolor1,u32 ncolor2){
 	for(int i=0;i<6;i++){
 		blockTypeSetTex(b,i,tex);
 	}
@@ -17,34 +17,34 @@ void blockTypeInitBlock(uint8_t b, uint32_t tex, blockCategory ncat,const char *
 	blocks[b].color[1] = ncolor2;
 }
 
-const char *blockTypeGetName(uint8_t b){
+const char *blockTypeGetName(u8 b){
 	return blocks[b].name;
 }
 
-int blockTypeGetHP(uint8_t b){
+int blockTypeGetHP(u8 b){
 	return blocks[b].hp;
 }
-blockCategory blockTypeGetCat(uint8_t b){
+blockCategory blockTypeGetCat(u8 b){
 	return blocks[b].cat;
 }
 
-uint16_t blockTypeGetTexX(uint8_t b, int side){
+uint16_t blockTypeGetTexX(u8 b, int side){
 	return blocks[b].texX[side];
 }
 
-uint16_t blockTypeGetTexY(uint8_t b, int side){
+uint16_t blockTypeGetTexY(u8 b, int side){
 	return blocks[b].texY[side];
 }
 
-mesh *blockTypeGetMesh(uint8_t b){
+mesh *blockTypeGetMesh(u8 b){
 	return blocks[b].singleBlock;
 }
 
-uint32_t blockTypeGetParticleColor(unsigned char b) {
+uint32_t blockTypeGetParticleColor(u8 b) {
 	return blocks[b].color[rngValR()&1];
 }
 
-bool blockTypeValid(uint8_t b){
+bool blockTypeValid(u8 b){
 	return blocks[b].name != NULL;
 }
 

@@ -13,7 +13,7 @@ int bgmCount=0;
 
 #include "../tmp/sfx.h"
 
-bgm *bgmNew(unsigned char *data,size_t dataLen){
+bgm *bgmNew(const void *data,size_t dataLen){
 	bgm *b = &bgmList[bgmCount++];
 	b->chan = -1;
 	b->mixMusic = NULL;
@@ -34,7 +34,7 @@ void bgmPlay(bgm *b, float volume){
 	Mix_FadeInMusic(b->mixMusic,-1,5000);
 }
 
-sfx *sfxNew(unsigned char *data,size_t dataLen){
+sfx *sfxNew(const void *data,size_t dataLen){
 	sfx *b = &sfxList[sfxCount++];
 
 	b->chan = -1;

@@ -1,15 +1,15 @@
 #pragma once
 #include "../common.h"
 
-item  itemNew        (uint16_t ID, int16_t amount);
+item  itemNew        (u16 ID, i16 amount);
 item  itemEmpty      ();
-void  itemDiscard    (item *i);
-bool  itemIsEmpty    (item *i);
+void  itemDiscard    (      item *i);
+bool  itemIsEmpty    (const item *i);
 
-int   itemCanStack   (item *i, uint16_t ID);
-int   itemIncStack   (item *i, int16_t amount);
-int   itemDecStack   (item *i, int16_t amount);
+int   itemCanStack   (const item *i, u16 ID);
+int   itemIncStack   (      item *i, i16 amount);
+int   itemDecStack   (      item *i, i16 amount);
 
-int   itemGetAmmo    (item *i);
-int   itemIncAmmo    (item *i, int16_t amount);
-int   itemDecAmmo    (item *i, int16_t amount);
+int   itemGetAmmo    (const item *i);
+int   itemIncAmmo    (      item *i, i16 amount);
+int   itemDecAmmo    (      item *i, i16 amount);

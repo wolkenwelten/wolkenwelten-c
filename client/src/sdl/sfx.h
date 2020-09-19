@@ -23,11 +23,11 @@ struct sfx {
 
 #include "../tmp/sfx.h"
 
-sfx *sfxNew(unsigned char *data,size_t dataLen);
+sfx *sfxNew (const void *data,size_t dataLen);
 void sfxFree(sfx *b);
 void sfxPlay(sfx *b, float volume);
 void sfxLoop(sfx *b, float volume);
 
-bgm *bgmNew(unsigned char *data,size_t dataLen);
+bgm *bgmNew (const void *data,size_t dataLen);
 void bgmFree(bgm *b);
 void bgmPlay(bgm *b,float volume);

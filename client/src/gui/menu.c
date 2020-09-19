@@ -232,7 +232,6 @@ void updateMenuGamepad(int btn){
 }
 
 void changeMenuSelection(int off){
-
 	gamepadSelection += off;
 	if(gamepadSelection < 0){
 		gamepadSelection = 4;
@@ -240,5 +239,4 @@ void changeMenuSelection(int off){
 	if(gamepadSelection > 4){
 		gamepadSelection = 0;
 	}
-	//fprintf(stderr,"Gamepadselection: %i\n",gamepadSelection);
 }

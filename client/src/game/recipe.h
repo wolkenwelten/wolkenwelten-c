@@ -1,24 +1,23 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-void recipeAdd1I(unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID, unsigned char nIngredAmount);
-void recipeAdd2I(unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID1, unsigned char nIngredAmount1, unsigned short nIngredID2, unsigned char nIngredAmount2);
-void recipeSetResult(int r,unsigned short nResultID,    unsigned char nResultAmount    );
-void recipeAddIngred(int r,unsigned short nIngredientID,unsigned char nIngredientAmount);
+void recipeAdd1I(u16 nResultID, u16 nResultAmount, u16 nIngredID,  u16 nIngredAmount);
+void recipeAdd2I(u16 nResultID, u16 nResultAmount, u16 nIngredID1, u16 nIngredAmount1, u16 nIngredID2, u16 nIngredAmount2);
+void recipeSetResult(uint r,u16 nResultID,     u16 nResultAmount);
+void recipeAddIngred(uint r,u16 nIngredientID, u16 nIngredientAmount);
 
-unsigned short recipeGetResultID        (int r);
-unsigned char  recipeGetResultAmount    (int r);
-unsigned short recipeGetIngredientID    (int r, int i);
-unsigned char  recipeGetIngredientAmount(int r, int i);
+ u16 recipeGetResultID        (uint r);
+ u16 recipeGetResultAmount    (uint r);
+ u16 recipeGetIngredientID    (uint r, uint i);
+ u16 recipeGetIngredientAmount(uint r, uint i);
 
-void           ingredientSubstituteAdd      (unsigned short ingredient, unsigned short substitute);
-int            ingredientSubstituteGetAmount(unsigned short ingredient);
-unsigned short ingredientSubstituteGetSub   (unsigned short ingredient, int i);
+void ingredientSubstituteAdd       (u16 ingredient, u16 substitute);
+uint ingredientSubstituteGetAmount (u16 ingredient);
+ u16 ingredientSubstituteGetSub    (u16 ingredient, uint i);
 
-int  recipeGetCount();
-int  recipeGetCraftableCount(character *c);
-int  recipeGetCraftableIndex(character *c,int i);
-int  recipeCanCraft(int r,character *c);
-void recipeDoCraft (int r,character *c,int amount);
-
-void recipeInit();
+uint recipeGetCount          ();
+uint recipeGetCraftableCount (const character *c);
+ int recipeGetCraftableIndex (const character *c, uint i);
+ int recipeCanCraft          (const character *c, uint r);
+void recipeDoCraft           (      character *c, uint r, int amount);
+void recipeInit              ();

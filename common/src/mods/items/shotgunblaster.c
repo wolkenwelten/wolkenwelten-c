@@ -8,13 +8,13 @@ void shotgunblasterInit(){
 	recipeAdd2I(ITEMID,1, 18,36, 13,18); // Crystal(36) + Hematite Ore(18) -> Shotgunblaster(1)
 }
 
-mesh *shotgunblasterGetMesh(item *cItem){
+mesh *shotgunblasterGetMesh(const item *cItem){
 	(void)cItem;
 
 	return meshShotgunblaster;
 }
 
-int shotgunblasterGetStackSize(item *cItem){
+int shotgunblasterGetStackSize(const item *cItem){
 	(void)cItem;
 
 	return 1;
@@ -41,19 +41,19 @@ bool shotgunblasterTertiaryAction(item *cItem, character *cChar, int to){
 	return characterItemReload(cChar, cItem, 256);
 }
 
-float shotgunblasterGetInaccuracy(item *cItem){
+float shotgunblasterGetInaccuracy(const item *cItem){
 	(void)cItem;
 
 	return 24.f;
 }
 
-int shotgunblasterGetAmmunition(item *cItem){
+int shotgunblasterGetAmmunition(const item *cItem){
 	(void)cItem;
 
 	return 265;
 }
 
-int shotgunblasterGetMagSize(item *cItem){
+int shotgunblasterGetMagSize(const item *cItem){
 	(void)cItem;
 
 	return MAGSIZE;

@@ -14,7 +14,7 @@
 
 const float ITEMTILE    = (1.f/32.f);
 bool inventoryOpen      = false;
-int  gamepadSelection   = -1;
+uint  gamepadSelection  = 4096;
 item inventoryCurrentPickup;
 
 
@@ -59,8 +59,8 @@ void inventoryGamepadSelToXY(int sel,int *rx, int *ry){
 }
 
 void drawInventory(textMesh *guim){
-	static int ticks = 0;
-	int tilesize;
+	static uint ticks = 0;
+	uint tilesize;
 	if(!isInventoryOpen()){return;}
 	if(screenWidth < 1024){
 		tilesize = 48;
@@ -74,16 +74,16 @@ void drawInventory(textMesh *guim){
 	++ticks;
 	guim->size = 2;
 
-	int xraw = (mousex - (screenWidth/2-5*tilesize));
-	int xsel = xraw/tilesize;
-	int ysel = 4-(((mousey+tilesize) - (screenHeight/2))/tilesize);
+	uint xraw = (mousex - (screenWidth/2-5*tilesize));
+	uint xsel = xraw/tilesize;
+	uint ysel = 4-(((mousey+tilesize) - (screenHeight/2))/tilesize);
 	if(ysel == 0){ysel = -1;}
 	if(mousey > ((screenHeight/2)+tilesize*4-tilesize/2)){
 		ysel = 4-(((mousey+tilesize/2) - (screenHeight/2))/tilesize);
 		if(ysel == 1){ ysel = -1;}
 	}
-	int sel = xsel + ysel*10;
-	if((xsel < 0) || (xsel > 9) || (xraw < 0) || (ysel < 0) || (ysel > 59) || (mouseHidden)){
+	uint sel = xsel + ysel*10;
+	if((xsel > 9) || (ysel > 59) || (mouseHidden)){
 		sel = -1;
 	}
 
@@ -97,7 +97,7 @@ void drawInventory(textMesh *guim){
 	guim->sy = screenHeight/2-1*tilesize+tilesize/2+tilesize/8;
 	textMeshPrintf(guim,"Inventory");
 
-	for(int i = 0;i<40;i++){
+	for(uint i = 0;i<40;i++){
 		int x = (screenWidth/2-5*tilesize)+(i%10*tilesize);
 		int y = screenHeight/2 + (4*tilesize) - (i/10*tilesize) - tilesize;
 		if(i < 10){ y += tilesize/2; }
@@ -108,13 +108,13 @@ void drawInventory(textMesh *guim){
 		textMeshItem(guim,x,y,tilesize, style, &player->inventory[i]);
 	}
 
-	for(int i=0;i<MIN(10,recipeGetCraftableCount(player));i++){
+	for(uint i=0;i<MIN(10,recipeGetCraftableCount(player));i++){
 		if(i >= recipeGetCount()){break;}
-		const int y = screenHeight/2 - tilesize*3;
-		const int x = (screenWidth/2)+((i-5)*tilesize);
+		const uint y = screenHeight/2 - tilesize*3;
+		const uint x = (screenWidth/2)+((i-5)*tilesize);
 		int r = recipeGetCraftableIndex(player,i);
 		unsigned short b = recipeGetResultID(r);
-		unsigned short a = recipeCanCraft(r,player);
+		unsigned short a = recipeCanCraft(player,r);
 		int style = 0;
 		if((i == (sel-50)) || (i == (gamepadSelection-50))){
 			style = 1;
@@ -163,15 +163,15 @@ void inventoryClickOutside(int btn){
 	}
 }
 
-void doInventoryClick(int btn, int sel){
+void doInventoryClick(int btn, uint sel){
 	item *cItem = NULL;
 
 	if((sel >= 50) && (sel < (50+MIN(10,recipeGetCraftableCount(player))))){
 		int r = recipeGetCraftableIndex(player,sel-50);
 		if(btn == 1){
-			recipeDoCraft(r,player,1);
+			recipeDoCraft(player,r,1);
 		}else if(btn == 3){
-			recipeDoCraft(r,player,recipeCanCraft(r,player));
+			recipeDoCraft(player,r,recipeCanCraft(player,r));
 		}
 		return;
 	}
@@ -210,7 +210,7 @@ void doInventoryClick(int btn, int sel){
 			inventoryCurrentPickup.amount -= cItem->amount;
 		}else{
 			cItem = characterGetItemBarSlot(player,sel);
-			if(cItem == NULL){return;}	
+			if(cItem == NULL){return;}
 			if(!itemCanStack(cItem,inventoryCurrentPickup.ID) && !itemIsEmpty(cItem)){return;}
 			cItem->ID = inventoryCurrentPickup.ID;
 			itemIncStack(cItem,1);
@@ -250,7 +250,7 @@ void updateInventoryClick(int x,int y, int btn){
 
 void changeInventorySelection(int x,int y){
 	mouseHidden = true;
-	if(gamepadSelection == -1){
+	if(gamepadSelection > 2048){
 		gamepadSelection = 0;
 		return;
 	}
@@ -277,7 +277,7 @@ void changeInventorySelection(int x,int y){
 
 void updateInventoryGamepad(int btn){
 	mouseHidden = true;
-	if(gamepadSelection == -1){
+	if(gamepadSelection > 2048){
 		gamepadSelection = 0;
 		return;
 	}

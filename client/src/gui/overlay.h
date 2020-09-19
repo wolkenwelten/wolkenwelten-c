@@ -2,8 +2,8 @@
 #include "../../../common/src/common.h"
 #include "../gfx/textMesh.h"
 
-void     commitOverlayColor();
-uint32_t getOverlayColor();
-void     setOverlayColor(uint32_t color, uint32_t animationDuration);
-void     resetOverlayColor();
-void     drawOverlay(textMesh *m);
+void commitOverlayColor ();
+u32  getOverlayColor    ();
+void setOverlayColor    (u32 color, u32 animationDuration);
+void resetOverlayColor  ();
+void drawOverlay        (textMesh *m);

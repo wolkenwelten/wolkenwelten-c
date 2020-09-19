@@ -18,14 +18,14 @@ bool grenadeSecondaryAction(item *cItem,character *cChar, int to){
 	return false;
 }
 
-mesh *grenadeGetMesh(item *cItem){
+mesh *grenadeGetMesh(const item *cItem){
 	(void)cItem;
 
 	return meshGrenade;
 }
 
-int grenadeGetAmmunition(item *cItem){
+int grenadeGetAmmunition(const item *cItem){
 	(void)cItem;
-	
+
 	return ITEMID;
 }

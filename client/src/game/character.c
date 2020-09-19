@@ -190,14 +190,9 @@ void characterUpdateAnimation(character *c){
 }
 
 // TODO: knochback direction gets calculated from the center of the hit sphere and NOT the attackign character, leading to unintuitive knocback directions
-void characterHitCheck(character *c, int origin, float x, float y, float z, float yaw, float pitch, float roll, int pwr){
-	const float vx = cos((yaw-90.f)*PI/180) * cos((-pitch)*PI/180);
-	const float vy = sin((-pitch)*PI/180);
-	const float vz = sin((yaw-90.f)*PI/180) * cos((-pitch)*PI/180);
-	float dx = (x+vx) - c->pos.x;
-	float dy = (y+vy) - c->pos.y;
-	float dz = (z+vz) - c->pos.z;
-	float d  = (dx*dx)+(dy*dy)+(dz*dz);
+void characterHitCheck(character *c, int origin, const vec pos, const vec rot, int pwr){
+	const vec dist = vecSub(vecAdd(pos,vecDegToVec(rot)),c->pos);
+	const float d  = vecMag(dist);
 
 	if(d < 1.f){
 		sfxPlay(sfxImpact,1.f);
@@ -210,20 +205,8 @@ void characterHitCheck(character *c, int origin, float x, float y, float z, floa
 		commitOverlayColor();
 		msgCharacterGotHit(-1,pwr);
 
-		float              dm = fabsf(dx);
-		if(fabsf(dy) > dm){dm = fabsf(dy);}
-		if(fabsf(dz) > dm){dm = fabsf(dz);}
-
-		dx /= dm;
-		dy /= dm;
-		dz /= dm;
-		dm = sqrtf((4.f*pwr)/dm);
-		c->vel.x += dx * dm * -0.01f;
-		c->vel.y += dy * dm * -0.01f;
-		c->vel.z += dz * dm * -0.01f;
+		c->vel = vecAdd(c->vel,vecMulS(dist,sqrtf((4.f*pwr)/d) * -0.01f));
 	}
-
-	(void)roll;
 }
 
 void characterGotHitBroadcast(int i,int pwr){
@@ -238,20 +221,20 @@ void characterGotHitBroadcast(int i,int pwr){
 	(void)pwr;
 }
 
-void characterUpdateWindVolume(character *c, const vec wvel){
-	(void)c;
-
-	float windVol = vecMag(wvel);
+void characterUpdateWindVolume(const character *c){
+	float windVol = vecMag(c->vel);
 	if(windVol < 0.01f){
 		sfxLoop(sfxWind,0.f);
 	}else{
 		windVol = MIN((windVol - 0.01f),1.0);
-		vibrate(windVol);
+		if(windVol > 0.2){
+			vibrate(windVol);
+		}
 		sfxLoop(sfxWind,windVol);
 	}
 }
 
-int characterUpdateJumping(character *c){
+int characterUpdateJumping(const character *c){
 	if((c->gvel.y > 0) && !(c->flags & CHAR_FALLING) && ((c->hook == NULL) || (!grapplingHookGetHooked(c->hook)))){
 		if((rngValR()&15)==0){
 			sfxPlay(sfxYahoo,1.f);
@@ -475,17 +458,17 @@ void characterUpdateBooster(character *c){
 
 	const vec adir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(),10.f))),-0.07f * (rngValf()+.5f));
 	const vec apos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
-	newParticleV(apos, adir, vecZero(),96.f, 0.1f, 0xE643B0F8,  128);
+	newParticleV(apos, adir, vecZero(),96.f, 0.1f, 0xE643B0F8,  192);
 	const vec bdir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(),10.f))),-0.03f * (rngValf()+.5f));
 	const vec bpos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
-	newParticleV(bpos, bdir, vecZero(),48.f, 0.2f, 0xC42370FA,  256);
+	newParticleV(bpos, bdir, vecZero(),48.f, 0.2f, 0xC42370FA,  386);
 	const vec cdir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(), 4.f))),-0.01f * (rngValf()+.5f));
 	const vec cpos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
 	newParticleV(cpos, cdir, vecZero(),24.f, 0.4f, 0xC4233A4A, 1536);
 	if(rngValM(6)==0){
 		const vec ddir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(), 4.f))),-0.001f * (rngValf()+.5f));
 		const vec dpos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
-		newParticleV(dpos, ddir, vecZero(),16.f, 0.3f, 0xA4132831, 8192);
+		newParticleV(dpos, ddir, vecZero(),16.f, 0.2f, 0xC4131A24, 4096);
 	}
 }
 
@@ -533,7 +516,7 @@ void characterUpdate(character *c){
 		characterUpdateAnimation(c);
 		characterUpdateInaccuracy(c);
 		characterUpdateDamage(c,characterPhysics(c));
-		characterUpdateWindVolume(c,c->vel);
+		characterUpdateWindVolume(c);
 		return;
 	}
 	nvel = c->vel;
@@ -572,7 +555,7 @@ void characterUpdate(character *c){
 		} else if((nvel.y < -0.05f) && c->vel.y > -0.01f){
 			sfxPlay(sfxStomp,1.f);
 		}
-		characterUpdateWindVolume(c,nvel);
+		characterUpdateWindVolume(c);
 		characterUpdateHook(c);
 	}
 	characterUpdateInaccuracy(c);
@@ -612,7 +595,7 @@ void characterMoveDelta(character *c, const packet *p){
 	c->shake = vecMag(c->vel)*8.f;
 }
 
-void characterShadesDraw(character *c){
+void characterShadesDraw(const character *c){
 	float sneakOff = 0.f;
 	if(c->flags & CHAR_SNEAK){sneakOff = 1.f;}
 	const float breath = sinf((float)(c->breathing-256)/512.f)*6.f;
@@ -627,7 +610,7 @@ void characterShadesDraw(character *c){
 	meshDraw(meshSunglasses);
 }
 
-void characterGliderDraw(character *c){
+void characterGliderDraw(const character *c){
 	static uint64_t ticks = 0;
 	if(c->gliderFade < 0.01f){return;}
 	const float breath = sinf((float)(c->breathing-384)/512.f)*4.f;
@@ -645,8 +628,8 @@ void characterGliderDraw(character *c){
 	meshDraw(meshGlider);
 }
 
-void characterActiveItemDraw(character *c){
-	item *activeItem;
+void characterActiveItemDraw(const character *c){
+	const item *activeItem;
 	mesh *aiMesh;
 	float sneakOff = 0.f;
 	if(c->flags & CHAR_SNEAK){sneakOff = 1.f;}
@@ -726,7 +709,7 @@ void characterActiveItemDraw(character *c){
 	meshDraw(aiMesh);
 }
 
-void characterDraw(character *c){
+void characterDraw(const character *c){
 	if(c == NULL)       {return;}
 	if(c == player)     {return;}
 	if(c->eMesh == NULL){return;}
@@ -759,7 +742,7 @@ void characterDamagePacket(character *c, const packet *p){
 	}
 }
 
-bool itemPlaceBlock(item *i, character *chr, int to){
+bool itemPlaceBlock(item *i,character *chr, int to){
 	int cx,cy,cz;
 	if(to < 0){return false;}
 	if(characterLOSBlock(chr,&cx,&cy,&cz,true)){

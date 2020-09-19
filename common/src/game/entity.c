@@ -97,6 +97,6 @@ int entityUpdate(entity *e){
 	return ret;
 }
 
-float entityDistance(entity *e, character *c){
+float entityDistance(const entity *e, const character *c){
 	return vecMag(vecSub(e->pos,c->pos));
 }

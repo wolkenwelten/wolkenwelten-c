@@ -8,13 +8,13 @@ void masterblasterInit(){
 	recipeAdd2I(ITEMID,1, 18,24, 13,12); // Crystal(24) + Hematite Ore(12) -> Masterblaster(1)
 }
 
-mesh *masterblasterGetMesh(item *cItem){
+mesh *masterblasterGetMesh(const item *cItem){
 	(void)cItem;
 
 	return meshMasterblaster;
 }
 
-int masterblasterGetStackSize(item *cItem){
+int masterblasterGetStackSize(const item *cItem){
 	(void)cItem;
 
 	return 1;
@@ -41,13 +41,13 @@ bool masterblasterTertiaryAction(item *cItem, character *cChar, int to){
 	return characterItemReload(cChar, cItem, 200);
 }
 
-int masterblasterGetAmmunition(item *cItem){
+int masterblasterGetAmmunition(const item *cItem){
 	(void)cItem;
 
 	return 265;
 }
 
-int masterblasterGetMagSize(item *cItem){
+int masterblasterGetMagSize(const item *cItem){
 	(void)cItem;
 
 	return MAGSIZE;

@@ -14,6 +14,9 @@ vec vecNewP(const float *p){
 vec vecZero(){
 	return (vec){{{0.f,0.f,0.f}}};
 }
+vec vecOne(){
+	return (vec){{{1.f,1.f,1.f}}};
+}
 vec vecRngAbs(){
 	return (vec){{{rngValf(),rngValf(),rngValf()}}};
 }

@@ -6,13 +6,13 @@ void ironpickaxeInit(){
 	recipeAdd2I(ITEMID,1, 17,4, 266,2);
 }
 
-int ironpickaxeDamage(item *cItem){
+int ironpickaxeDamage(const item *cItem){
 	(void)cItem;
-	
+
 	return 6;
 }
 
-int ironpickaxeBlockDamage(item *cItem, blockCategory blockCat){
+int ironpickaxeBlockDamage(const item *cItem, blockCategory blockCat){
 	(void)cItem;
 
 	if(blockCat == STONE){
@@ -23,13 +23,13 @@ int ironpickaxeBlockDamage(item *cItem, blockCategory blockCat){
 	return 1;
 }
 
-mesh *ironpickaxeGetMesh(item *cItem){
+mesh *ironpickaxeGetMesh(const item *cItem){
 	(void)cItem;
 
 	return meshIronpickaxe;
 }
 
-int ironpickaxeGetStackSize(item *cItem){
+int ironpickaxeGetStackSize(const item *cItem){
 	(void)cItem;
 
 	return 1;

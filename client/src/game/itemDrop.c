@@ -12,9 +12,9 @@
 #include <stdlib.h>
 
 typedef struct {
-	entity    *ent;
-	item       itm;
-	uint32_t aniStep;
+	entity  *ent;
+	item     itm;
+	u32  aniStep;
 } itemDrop;
 
 itemDrop itemDrops[1<<12];
@@ -41,8 +41,8 @@ void itemDropUpdate(){
 }
 
 void itemDropUpdateFromServer(const packet *p){
-	uint16_t d   = p->val.s[0];
-	uint16_t len = p->val.s[1];
+	u16 d   = p->val.s[0];
+	u16 len = p->val.s[1];
 
 	if(len < itemDropCount){
 		for(int i=len;i<itemDropCount;i++){

@@ -6,9 +6,9 @@ void pearInit(){
 	(void)ITEMID;
 }
 
-int pearDamage(item *cItem){
+int pearDamage(const item *cItem){
 	(void)cItem;
-	
+
 	return 12;
 }
 
@@ -27,14 +27,14 @@ bool pearSecondaryAction(item *cItem,character *cChar, int to){
 	return false;
 }
 
-mesh *pearGetMesh(item *cItem){
+mesh *pearGetMesh(const item *cItem){
 	(void)cItem;
 
 	return meshPear;
 }
 
-int pearGetAmmunition(item *cItem){
+int pearGetAmmunition(const item *cItem){
 	(void)cItem;
-	
+
 	return ITEMID;
 }

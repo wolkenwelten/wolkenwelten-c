@@ -6,13 +6,13 @@ void crystalpickaxeInit(){
 	recipeAdd2I(ITEMID,1, 17,4, 269,2);
 }
 
-int crystalpickaxeDamage(item *cItem){
+int crystalpickaxeDamage(const item *cItem){
 	(void)cItem;
-	
+
 	return 8;
 }
 
-int crystalpickaxeBlockDamage(item *cItem, blockCategory blockCat){
+int crystalpickaxeBlockDamage(const item *cItem, blockCategory blockCat){
 	(void)cItem;
 
 	if(blockCat == STONE){
@@ -23,13 +23,13 @@ int crystalpickaxeBlockDamage(item *cItem, blockCategory blockCat){
 	return 1;
 }
 
-mesh *crystalpickaxeGetMesh(item *cItem){
+mesh *crystalpickaxeGetMesh(const item *cItem){
 	(void)cItem;
 
 	return meshCrystalpickaxe;
 }
 
-int crystalpickaxeGetStackSize(item *cItem){
+int crystalpickaxeGetStackSize(const item *cItem){
 	(void)cItem;
 
 	return 1;

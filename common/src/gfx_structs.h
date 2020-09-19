@@ -51,14 +51,8 @@ typedef struct {
 
 typedef struct {
 	union {
-		struct {
-			float x,y,z;
-		};
-		struct {
-			float u,v,w;
-		};
-		struct {
-			float yaw,pitch,roll;
-		};
+		struct { float x,y,z; };
+		struct { float u,v,w; };
+		struct { float yaw,pitch,roll; };
 	};
 } vec;

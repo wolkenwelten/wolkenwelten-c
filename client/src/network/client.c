@@ -168,7 +168,7 @@ void clientParsePacket(const packet *p){
 			characterMoveDelta(player,p);
 			break;
 		case 14: // characterHit
-			characterHitCheck(player,p->val.i[7],p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5],p->val.i[6]);
+			characterHitCheck(player,p->val.i[7],vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]),p->val.i[6]);
 			break;
 		case 15: // playerPos
 			characterSetPlayerPos(p);

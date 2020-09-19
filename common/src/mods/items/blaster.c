@@ -8,13 +8,13 @@ void blasterInit(){
 	recipeAdd2I(ITEMID,1, 18,12, 13,6); // Crystal(12) + Hematite Ore(6) -> Blaster(1)
 }
 
-mesh *blasterGetMesh(item *cItem){
+mesh *blasterGetMesh(const item *cItem){
 	(void)cItem;
 
 	return meshBlaster;
 }
 
-int blasterGetStackSize(item *cItem){
+int blasterGetStackSize(const item *cItem){
 	(void)cItem;
 
 	return 1;
@@ -42,19 +42,19 @@ bool blasterTertiaryAction(item *cItem, character *cChar, int to){
 	return characterItemReload(cChar, cItem, 50);
 }
 
-int blasterGetAmmunition(item *cItem){
+int blasterGetAmmunition(const item *cItem){
 	(void)cItem;
 
 	return 265;
 }
 
-int blasterGetMagSize(item *cItem){
+int blasterGetMagSize(const item *cItem){
 	(void)cItem;
 
 	return MAGSIZE;
 }
 
-float blasterGetInaccuracy(item *cItem){
+float blasterGetInaccuracy(const item *cItem){
 	(void)cItem;
 
 	return 8.f;
