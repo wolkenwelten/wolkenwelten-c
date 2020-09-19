@@ -465,11 +465,11 @@ void characterUpdateBooster(character *c){
 	newParticleV(bpos, bdir, vecZero(),48.f, 0.2f, 0xC42370FA,  386);
 	const vec cdir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(), 4.f))),-0.01f * (rngValf()+.5f));
 	const vec cpos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
-	newParticleV(cpos, cdir, vecZero(),24.f, 0.4f, 0xC4233A4A, 1536);
+	newParticleV(cpos, cdir, vecNew(0,0.00001,0),24.f+rngValf()*24.f, 0.4f+rngValf()*0.4f, 0xC4233A4A, 1536+rngValM(512));
 	if(rngValM(6)==0){
 		const vec ddir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(), 4.f))),-0.001f * (rngValf()+.5f));
 		const vec dpos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
-		newParticleV(dpos, ddir, vecZero(),16.f, 0.2f, 0xC4131A24, 4096);
+		newParticleV(dpos, ddir, vecNew(0,0.00001,0),16.f+rngValf()*32.f, 0.2f+rngValf()*0.1f, 0xC4131A24, 3072+rngValM(1024));
 	}
 }
 
