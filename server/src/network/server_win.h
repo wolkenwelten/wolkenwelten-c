@@ -50,7 +50,7 @@ void serverInit(){
 }
 
 void serverFree(){
-	for(int i=0;i<clientCount;i++){
+	for(uint i=0;i<clientCount;i++){
 		close(clients[i].socket);
 	}
 	clientCount = 0;
