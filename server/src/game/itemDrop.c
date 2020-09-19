@@ -138,6 +138,27 @@ int itemDropCheckSubmersion(uint i){
 	return 1;
 }
 
+int itemDropCheckCollation(uint ai){
+	if(itemDrops[ai].ent == NULL){return 0;}
+	const vec a = itemDrops[ai].ent->pos;
+
+	for(int i=0;i<4;i++){
+		const uint bi = rngValM(itemDropCount);
+		if(bi == ai){continue;}
+		if(itemDrops[ai].itm.ID != itemDrops[bi].itm.ID){continue;}
+		if(itemDrops[bi].ent == NULL){continue;}
+		const vec b = itemDrops[bi].ent->pos;
+		const vec d = vecSub(b,a);
+		const float di = vecDot(d,d);
+		if(di < 0.5f){
+			itemDrops[bi].itm.amount += itemDrops[ai].itm.amount;
+			itemDrops[bi].ent->vel = vecAdd(itemDrops[bi].ent->vel,itemDrops[ai].ent->vel);
+			return 1;
+		}
+	}
+	return 0;
+}
+
 void itemDropUpdate(){
 	const u64 mask = ~((u64)1 << 31);
 
@@ -157,7 +178,7 @@ void itemDropUpdate(){
 		if((oldp != newp) && (e->curChungus != NULL)){
 			e->curChungus->clientsUpdated &= mask;
 		}
-		if(itemDropCheckSubmersion(i) || itemDropCheckPickup(i) || (e->pos.y < -256)){
+		if(itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || itemDropCheckPickup(i) || (e->pos.y < -256)){
 			itemDropDel(i);
 			continue;
 		}
