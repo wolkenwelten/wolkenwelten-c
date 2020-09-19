@@ -1,9 +1,9 @@
 #pragma once
-#include <stdint.h>
+#include "stdint.h"
 #include <time.h>
 
 typedef struct {
-	unsigned int ID,w,h;
+	uint ID,w,h;
 	char *filename;
 	time_t modTime;
 } texture;
@@ -16,37 +16,37 @@ typedef struct vertex {
 } vertex;
 
 typedef struct vertex2D {
-	 int16_t x,y;
-	 int16_t u,v;
-	uint32_t rgba;
+	i16 x,y;
+	i16 u,v;
+	u32 rgba;
 } vertex2D;
 #pragma pack(pop)
 
 typedef struct {
 	vertex2D dataBuffer[1<<14];
-	int sx,sy,size;
-	int dataCount;
-	int vboSize;
-	unsigned int vbo,usage;
+	 int sx,sy,size;
+	 int dataCount;
+	 int vboSize;
+	uint vbo,usage;
 	texture *tex;
-	int finished;
+	 int finished;
 	void *nextFree;
 } textMesh;
 
 typedef struct {
 	texture *tex;
 	const vertex *roData;
-	unsigned int dataCount;
-	unsigned int vbo;
+	uint dataCount;
+	uint vbo;
 	void *nextFree;
 } mesh;
 
 typedef struct {
-	unsigned int pID;
-	unsigned int vsID,fsID;
+	uint pID;
+	uint vsID,fsID;
 	char *vss,*fss;
-	unsigned int attrMask;
-	int lMVP,lAlpha,lTransform,lTex;
+	uint attrMask;
+	 int lMVP,lAlpha,lTransform,lTex;
 } shader;
 
 typedef struct {

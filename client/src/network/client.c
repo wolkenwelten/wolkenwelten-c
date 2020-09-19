@@ -127,6 +127,7 @@ void clientParsePacket(const packet *p){
 			characterSetRot(player,vecNewP(&p->val.f[3]));
 			characterSetVelocity(player,vecZero());
 			characterFreeHook(player);
+			player->flags &= ~CHAR_SPAWNING;
 			break;
 		case 2: // requestChungus
 			fprintf(stderr,"Received a requestChungus packet from the server which should never happen.\n");

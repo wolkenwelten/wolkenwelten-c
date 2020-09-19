@@ -55,7 +55,7 @@ void msgGoodbye(){
 }
 
 void msgBlockMiningUpdate(int c, uint16_t x, uint16_t y, uint16_t z, uint16_t damage, int count, int i){
-	packet *p = &packetBuffer;
+	packet *p   = &packetBuffer;
 	p->val.i[0] = (x & 0xFFFF) | ((y      & 0xFFFF)<<16) ;
 	p->val.i[1] = (z & 0xFFFF) | ((damage & 0xFFFF)<<16) ;
 	p->val.i[2] = count;

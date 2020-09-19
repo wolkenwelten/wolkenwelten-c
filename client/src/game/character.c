@@ -41,7 +41,7 @@ void characterInit(character *c){
 	c->breathing     = rngValM(1024);
 	c->maxhp = c->hp = 20;
 	c->blockMiningX  = c->blockMiningY = c->blockMiningZ = -1;
-	c->pos           = vecNew(-1024,1024,-1024);
+	c->pos           = vecNew(1024,1024,1024);
 	c->rot           = vecNew(135.f,15.f,0.f);
 	c->eMesh         = meshPear;
 
@@ -49,6 +49,7 @@ void characterInit(character *c){
 		sfxLoop(sfxWind,0.f);
 		sfxLoop(sfxHookRope,0.f);
 		msgRequestPlayerSpawnPos();
+		c->flags = CHAR_SPAWNING;
 	}
 }
 
@@ -250,7 +251,6 @@ void characterUpdateWindVolume(character *c, const vec wvel){
 	}
 }
 
-
 int characterUpdateJumping(character *c){
 	if((c->gvel.y > 0) && !(c->flags & CHAR_FALLING) && ((c->hook == NULL) || (!grapplingHookGetHooked(c->hook)))){
 		if((rngValR()&15)==0){
@@ -301,9 +301,9 @@ void characterUpdateYOff(character *c){
 	if(fabsf(c->gyoff - c->yoff) < 0.001f){
 		c->yoff = c->gyoff;
 	}else if(c->gyoff < c->yoff){
-		c->yoff = c->yoff - (0.03f * (c->yoff - c->gyoff));
+		c->yoff = c->yoff - (0.03f * ( c->yoff - c->gyoff));
 	}else{
-		c->yoff = c->yoff + (0.03f*(c->gyoff - c->yoff));
+		c->yoff = c->yoff + (0.03f * (c->gyoff -  c->yoff));
 	}
 }
 
@@ -363,7 +363,8 @@ void characterDropItem(character *c, int i){
 }
 
 void characterDie(character *c){
-	if(c != player){return;}
+	if(c != player)               { return; }
+	if(c->flags & CHAR_SPAWNING)  { return; }
 	for(int i=0;i<40;i++){
 		item *cItem = characterGetItemBarSlot(c,i);
 		if(cItem == NULL)     { continue; }
@@ -375,9 +376,9 @@ void characterDie(character *c){
 }
 
 void updateGlide(character *c){
-	vec  dir    = vecDegToVec(c->rot);
-	vec  vel    = c->vel;
-	vec vdeg    = vecVecToDeg(vecNorm(vel));
+	vec   dir   = vecDegToVec(c->rot);
+	vec   vel   = c->vel;
+	vec  vdeg   = vecVecToDeg(vecNorm(vel));
 
 	float aoa   = fabsf(vdeg.y - c->rot.pitch);
 	float drag  = fabsf(sinf(aoa*PI180)) * 0.98f + 0.02f;
@@ -390,7 +391,7 @@ void updateGlide(character *c){
 		c->rot.pitch += pd;
 	}
 
-	vec vdrg    = vecMulS(vecInvert(vel),drag * 0.1f);
+	vec  vdrg   = vecMulS(vecInvert(vel),drag * 0.1f);
 	float mag   = vecMag(vdrg);
 	c->shake    = mag*16.f + speed;
 	vel         = vecAdd(vel,vdrg);
@@ -466,17 +467,23 @@ int characterPhysics(character *c){
 
 void characterUpdateBooster(character *c){
 	if(!(c->flags & CHAR_SNEAK)){return;}
-	float speed   = 0.001f / vecMag(c->vel);
-	const vec dir = vecDegToVec(c->rot);
-	const vec nv  = vecMulS(dir,speed);
+	float speed    = 0.001f / MAX(0.1,vecMag(c->vel));
+	const vec nv   = vecMulS(vecDegToVec(c->rot),speed);
 	c->vel = vecAdd(c->vel,nv);
-	newParticleV(c->pos, vecMulS(dir,-0.01f), vecZero(), 128.f, 4.f, 0xC02090E0, 1024);
-}
 
+	const vec adir = vecMulS(vecDegToVec(vecAdd(c->rot,vecRng())),-0.06f);
+	const vec apos = vecAdd(c->pos,vecAdd(adir,vecRng()));
+	newParticleV(apos, adir, vecZero(),12.f, 0.5f, 0xE643B0F8, 1024);
+	const vec bdir = vecMulS(vecDegToVec(vecAdd(c->rot,vecRng())),-0.04f);
+	const vec bpos = vecAdd(c->pos,vecAdd(adir,vecRng()));
+	newParticleV(bpos, bdir, vecZero(), 6.f, 1.0f, 0xD443A0E0, 2048);
+}
 
 void characterUpdate(character *c){
 	float walkFactor = 1.f;
 	vec nvel;
+
+	if(c->flags & CHAR_SPAWNING){return;}
 
 	if((c->flags & CHAR_FALLINGSOUND) && (c->pos.y > -32)){ c->flags &= ~CHAR_FALLINGSOUND; }
 	if(c->pos.y < -512){

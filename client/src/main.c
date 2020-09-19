@@ -48,6 +48,7 @@ void playerUpdate(){
 	vec nv = vecZero();
 	chungus *chng = worldGetChungus((int)player->pos.x >> 8,(int)player->pos.y >> 8,(int)player->pos.z >> 8);
 	if(chng != NULL){ playerChunkActive = chng->loaded; }
+	if(player->flags & CHAR_SPAWNING){return;}
 	if(!playerChunkActive){return;}
 	if(inputSneak()){
 		player->flags |= CHAR_SNEAK;

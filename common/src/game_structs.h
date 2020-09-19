@@ -10,18 +10,18 @@ typedef enum blockCategory {
 } blockCategory;
 
 typedef struct {
-	unsigned char texX[6];
-	unsigned char texY[6];
-	unsigned int color[2];
-	mesh *singleBlock;
-	int hp;
+	u8            texX[6];
+	u8            texY[6];
+	u32           color[2];
+	mesh         *singleBlock;
+	int           hp;
 	blockCategory cat;
-	char *name;
+	char         *name;
 } blockType;
 
 typedef struct {
-	uint16_t ID;
-	 int16_t amount;
+	u16 ID;
+	i16 amount;
 } item;
 
 struct grapplingHook;
@@ -37,7 +37,7 @@ typedef struct chunk chunk;
 typedef struct {
 	vec pos,vel,rot;
 	float yoff;
-	uint32_t flags;
+	u32 flags;
 
 	mesh    *eMesh;
 	chungus *curChungus;
@@ -50,30 +50,30 @@ typedef struct {
 #define ENTITY_NOREPULSION (1<<4)
 
 typedef struct {
-	vec pos,vel,gvel,rot;
+	 vec  pos,vel,gvel,rot;
 	float yoff,shake,inaccuracy;
 	float gyoff;
 
-	int animationIndex;
-	int animationTicksMax;
-	int animationTicksLeft;
-	unsigned int breathing;
+	 int  animationIndex;
+	 int  animationTicksMax;
+	 int  animationTicksLeft;
+	uint  breathing;
 
-	uint32_t flags;
+	 u32  flags;
 	float gliderFade;
 
 	mesh *eMesh;
 	grapplingHook *hook;
 
-	short hp,maxhp;
+	 i16 hp,maxhp;
 
-	vec hookPos;
-	int blockMiningX,blockMiningY,blockMiningZ;
+	 vec hookPos;
+	 int blockMiningX,blockMiningY,blockMiningZ;
 
-	int actionTimeout;
-	unsigned int stepTimeout;
+	 int actionTimeout;
+	uint stepTimeout;
 
-	unsigned int activeItem;
+	uint activeItem;
 	item inventory[40];
 
 	void *nextFree;
@@ -84,21 +84,22 @@ typedef struct {
 #define CHAR_FALLINGSOUND (1<<3)
 #define CHAR_SNEAK        (1<<4)
 #define CHAR_GLIDE        (1<<5)
+#define CHAR_SPAWNING     (1<<6)
 
 typedef struct {
 	vec pos,vel,gvel,grot,rot;
 
-	int8_t age;
-	int8_t health;
-	int8_t hunger;
-	int8_t thirst;
-	int8_t sleepy;
+	i8 age;
+	i8 health;
+	i8 hunger;
+	i8 thirst;
+	i8 sleepy;
 
-	unsigned int breathing;
+	uint breathing;
 
-	uint8_t flags;
-	uint8_t type;
-	uint8_t state;
+	u8 flags;
+	u8 type;
+	u8 state;
 
 	chungus *curChungus;
 } animal;

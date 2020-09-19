@@ -159,6 +159,11 @@ void drawDebuginfo(){
 		guim->sy   = screenHeight/2+32;
 		guim->size = 2;
 		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Loading World...");
+	}else if(player->flags & CHAR_SPAWNING){
+		guim->sx   = screenWidth/2-(8*16);
+		guim->sy   = screenHeight/2+32;
+		guim->size = 2;
+		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Respawning...");
 	}
 	guim->size = 1;
 
