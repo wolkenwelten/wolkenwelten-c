@@ -88,7 +88,7 @@ bool itemDropCheckPickup(uint d){
 	for(uint i=0;i<clientCount;++i){
 		if(clients[i].c == NULL){continue;}
 		const vec dist = vecSub(clients[i].c->pos,itemDrops[d].ent->pos);
-		if(vecMag(dist) < (1.5f*1.5f)){
+		if(vecDot(dist,dist) < (1.5f*1.5f)){
 			msgPickupItem(i,itemDrops[d].itm.ID,itemDrops[d].itm.amount);
 			addPriorityItemDrop(d);
 			return true;
