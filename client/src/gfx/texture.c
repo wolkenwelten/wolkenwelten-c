@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 
 unsigned int boundTexture = 0;
-int textureCount          = 0;
+uint textureCount         = 0;
 texture textureList[32];
 
 texture *tBlocks;
@@ -22,7 +22,7 @@ texture *tCrosshair;
 texture *tRope;
 texture *tBlockMining;
 
-void textureLoadSurface(texture *t, int w, int h, const void *data){
+void textureLoadSurface(texture *t, uint w, uint h, const void *data){
 	t->w = w;
 	t->h = h;
 	if(t->ID == 0){
@@ -34,7 +34,7 @@ void textureLoadSurface(texture *t, int w, int h, const void *data){
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
 
-void textureLoad(texture *t, const unsigned char *data, const size_t dataLen){
+void textureLoad(texture *t, const u8 *data, const size_t dataLen){
 	unsigned char *pixels = NULL;
 	int error = lodepng_decode32(&pixels, &t->w, &t->h, data, dataLen);
 	if(error){
@@ -51,7 +51,7 @@ void textureLoad(texture *t, const unsigned char *data, const size_t dataLen){
 	free(pixels);
 }
 
-texture *textureNew(const unsigned char *data, size_t dataLen, char *filename){
+texture *textureNew(const u8 *data, size_t dataLen,const char *filename){
 	texture *tex = &textureList[textureCount++];
 	tex->ID = 0;
 	tex->filename = filename;
@@ -60,7 +60,7 @@ texture *textureNew(const unsigned char *data, size_t dataLen, char *filename){
 	return tex;
 }
 
-texture *textureNewSurface(int w, int h, const void *data){
+texture *textureNewSurface(uint w, uint h, const void *data){
 	texture *tex = &textureList[textureCount++];
 	tex->ID = 0;
 	textureLoadSurface(tex,w,h,data);
@@ -68,7 +68,7 @@ texture *textureNewSurface(int w, int h, const void *data){
 }
 
 void textureFree(){
-	for(int i=0;i<textureCount;i++){
+	for(uint i=0;i<textureCount;i++){
 		if(textureList[i].ID == 0){continue;}
 		glDeleteTextures(1, &textureList[i].ID);
 	}
@@ -81,10 +81,10 @@ void textureBind(const texture *tex){
 	boundTexture = tex->ID;
 }
 
-uint32_t darken(uint32_t in){
-	uint32_t b = (in >> 16) & 0xFF;
-	uint32_t g = (in >>  8) & 0xFF;
-	uint32_t r = (in      ) & 0xFF;
+u32 darken(u32 in){
+	u32 b = (in >> 16) & 0xFF;
+	u32 g = (in >>  8) & 0xFF;
+	u32 r = (in      ) & 0xFF;
 
 	r = (((r << 8) / 3) >> 7) & 0xFF;
 	g = (((g << 8) / 3) >> 7) & 0xFF;
@@ -93,22 +93,22 @@ uint32_t darken(uint32_t in){
 	return (b<<16) | (g<<8) | (r) | 0xFF000000;
 }
 
-uint32_t interpol(uint32_t c1,uint32_t c2,uint32_t c3,uint32_t c4){
-	uint32_t b = (((c1>>16)&0xFF) + ((c2>>16)&0xFF) + ((c3>>16)&0xFF) + ((c4>>16)&0xFF)) >> 2;
-	uint32_t g = (((c1>> 8)&0xFF) + ((c2>> 8)&0xFF) + ((c3>> 8)&0xFF) + ((c4>> 8)&0xFF)) >> 2;
-	uint32_t r = (((c1    )&0xFF) + ((c2    )&0xFF) + ((c3    )&0xFF) + ((c4    )&0xFF)) >> 2;
+u32 interpol(u32 c1,u32 c2,u32 c3,u32 c4){
+	u32 b = (((c1>>16)&0xFF) + ((c2>>16)&0xFF) + ((c3>>16)&0xFF) + ((c4>>16)&0xFF)) >> 2;
+	u32 g = (((c1>> 8)&0xFF) + ((c2>> 8)&0xFF) + ((c3>> 8)&0xFF) + ((c4>> 8)&0xFF)) >> 2;
+	u32 r = (((c1    )&0xFF) + ((c2    )&0xFF) + ((c3    )&0xFF) + ((c4    )&0xFF)) >> 2;
 
 	return (b<<16) | (g<<8) | (r) | 0xFF000000;
 }
 
 
 void textureBuildBlockIcons(int loadFromFile){
-	uint32_t *tblocks, *tgui;
-	unsigned int bw,bh,iw,ih;
-	
+	u32 *tblocks, *tgui;
+	uint bw,bh,iw,ih;
+
 	size_t blocks_len,gui_len;
 	void *blocks_data,*gui_data;
-	
+
 	if(loadFromFile){
 		blocks_data = loadFile(tBlocks->filename,&blocks_len);
 		gui_data    = loadFile(tGui->filename,&gui_len);
@@ -118,16 +118,16 @@ void textureBuildBlockIcons(int loadFromFile){
 		gui_data    = gfx_gui_png_data;
 		gui_len     = gfx_gui_png_len;
 	}
-	
+
 	lodepng_decode32((unsigned char **)&tblocks, &bw, &bh, blocks_data, blocks_len);
 	lodepng_decode32((unsigned char **)&tgui, &iw, &ih, gui_data, gui_len);
-	
+
 	if(loadFromFile){
 		free(blocks_data);
 		free(gui_data);
 	}
 
-	for(int i=0;i<256;i++){
+	for(uint i=0;i<256;i++){
 		if(!blockTypeValid(i)){continue;}
 		const int dx = (i & 0x1F) << 5;
 		const int dy = (i >> 5)   << 5;
@@ -141,7 +141,7 @@ void textureBuildBlockIcons(int loadFromFile){
 		sy = blockTypeGetTexY(i,0) << 5;
 		for(int y=0;y<16;y++){
 			for(int x=0;x<16;x++){
-				const uint32_t c = interpol(
+				const u32 c = interpol(
 					tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)  )],
 					tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)+1)],
 					tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)  )],
@@ -154,7 +154,7 @@ void textureBuildBlockIcons(int loadFromFile){
 		sy = blockTypeGetTexY(i,4) << 5;
 		for(int y=0;y<16;y++){
 			for(int x=0;x<16;x++){
-				const uint32_t c = interpol(
+				const u32 c = interpol(
 					tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)  )],
 					tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)+1)],
 					tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)  )],
@@ -211,7 +211,7 @@ void checkIfTextureNeedsReloading(texture *tex){
 }
 
 void checkTexturesForReloading(){
-	static int i=0;
+	static uint i=0;
 	if(!optionRuntimeReloading){return;}
 	if(++i >= textureCount){i=0;}
 	checkIfTextureNeedsReloading(&textureList[i]);
@@ -219,7 +219,7 @@ void checkTexturesForReloading(){
 
 void textureReload(){
 	fprintf(stderr,"Reloading all textures\n");
-	for(int i=0;i<textureCount;i++){
+	for(uint i=0;i<textureCount;i++){
 		reloadTexture(&textureList[i]);
 	}
 }

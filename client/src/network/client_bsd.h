@@ -19,7 +19,7 @@ void clientGetName(){
 	playerName[sizeof(playerName)-1]=0;
 }
 
-bool fileExists(char *fn){
+bool fileExists(const char *fn){
 	struct stat buffer;
 	return (stat(fn, &buffer) == 0);
 }
@@ -27,10 +27,10 @@ bool fileExists(char *fn){
 #ifdef __APPLE__
 	#include <mach-o/dyld.h>
 	#include <libgen.h>
-	char *getServerExecutablePath(){
+	const char *getServerExecutablePath(){
 		static char path[512];
 		static char ret[512];
-		uint32_t size = sizeof(path);
+		u32 size = sizeof(path);
 		if (_NSGetExecutablePath(path, &size) == 0){
 			snprintf(ret,sizeof(ret)-1,"%s/wolkenwelten-server",dirname(path));
 			return ret;
@@ -40,7 +40,7 @@ bool fileExists(char *fn){
 		return NULL;
 	}
 #else
-	char *getServerExecutablePath(){
+	const char *getServerExecutablePath(){
 		static char *serverPath = NULL;
 		char *serverPaths[4] = {
 			"wolkenwelten-server",
@@ -62,7 +62,7 @@ bool fileExists(char *fn){
 
 void startSingleplayerServer(){
 	char seed[64];
-	char *wolkenweltenServer = getServerExecutablePath();
+	const char *wolkenweltenServer = getServerExecutablePath();
 	if(optionWorldSeed == 0){
 		optionWorldSeed = (int)(time(NULL)&0xFFFF);
 	}

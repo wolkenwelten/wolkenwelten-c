@@ -12,7 +12,7 @@ void msgRequestPlayerSpawnPos(){
 	packetQueueToServer(p,1,0);
 }
 
-void msgPlayerSetPos(int c, const vec pos, const vec rot){
+void msgPlayerSetPos(uint c, const vec pos, const vec rot){
 	packet *p = &packetBuffer;
 	p->val.f[0] = pos.x;
 	p->val.f[1] = pos.y;
@@ -23,7 +23,7 @@ void msgPlayerSetPos(int c, const vec pos, const vec rot){
 	packetQueue(p,1,6*4,c);
 }
 
-void msgRequestChungus(int x, int y, int z){
+void msgRequestChungus(uint x, uint y, uint z){
 	packet *p = &packetBuffer;
 	p->val.i[0] = x;
 	p->val.i[1] = y;
@@ -31,7 +31,7 @@ void msgRequestChungus(int x, int y, int z){
 	packetQueueToServer(p,2,3*4);
 }
 
-void msgPlaceBlock(int x, int y, int z, uint8_t b){
+void msgPlaceBlock(uint x, uint y, uint z, u8 b){
 	packet *p = &packetBuffer;
 	p->val.i[0] = x;
 	p->val.i[1] = y;
@@ -40,7 +40,7 @@ void msgPlaceBlock(int x, int y, int z, uint8_t b){
 	packetQueueToServer(p,3,4*4);
 }
 
-void msgMineBlock(int x, int y, int z, uint8_t b){
+void msgMineBlock(uint x, uint y, uint z, u8 b){
 	packet *p = &packetBuffer;
 	p->val.i[0] = x;
 	p->val.i[1] = y;
@@ -54,7 +54,7 @@ void msgGoodbye(){
 	packetQueueToServer(p,5,0);
 }
 
-void msgBlockMiningUpdate(int c, uint16_t x, uint16_t y, uint16_t z, uint16_t damage, int count, int i){
+void msgBlockMiningUpdate(uint c, u16 x, u16 y, u16 z, u16 damage, int count, int i){
 	packet *p   = &packetBuffer;
 	p->val.i[0] = (x & 0xFFFF) | ((y      & 0xFFFF)<<16) ;
 	p->val.i[1] = (z & 0xFFFF) | ((damage & 0xFFFF)<<16) ;
@@ -63,7 +63,7 @@ void msgBlockMiningUpdate(int c, uint16_t x, uint16_t y, uint16_t z, uint16_t da
 	packetQueue(p,6,4*4,c);
 }
 
-void msgSendChungusComplete(int c, int x, int y, int z){
+void msgSendChungusComplete(uint c, int x, int y, int z){
 	packet *p = &packetBuffer;
 	p->val.i[0] = x;
 	p->val.i[1] = y;
@@ -71,14 +71,14 @@ void msgSendChungusComplete(int c, int x, int y, int z){
 	packetQueue(p,7,3*4,c);
 }
 
-void msgCharacterGotHit(int c,int pwr){
+void msgCharacterGotHit(uint c,int pwr){
 	packet *p = &packetBuffer;
 	p->val.i[0] = pwr;
 	p->val.i[1] = c;
 	packetQueueExcept(p,8,2*4,c);
 }
 
-void msgItemDropNew(int c, const vec pos, const vec vel, const item *itm){
+void msgItemDropNew(uint c, const vec pos, const vec vel, const item *itm){
 	packet *p = &packetBuffer;
 	p->val.f[0] = pos.x;
 	p->val.f[1] = pos.y;
@@ -117,7 +117,7 @@ void msgBeamBlast(const vec pos, const vec rot, float beamSize, float damageMult
 	packetQueueToServer(p,12,9*4);
 }
 
-void msgPlayerMove(int c, const vec dpos, const vec drot){
+void msgPlayerMove(uint c, const vec dpos, const vec drot){
 	packet *p = &packetBuffer;
 	p->val.f[0] = dpos.x;
 	p->val.f[1] = dpos.y;
@@ -129,7 +129,7 @@ void msgPlayerMove(int c, const vec dpos, const vec drot){
 	packetQueue(p,13,7*4,c);
 }
 
-void msgCharacterHit(int c, const vec pos, const vec rot, int pwr){
+void msgCharacterHit(uint c, const vec pos, const vec rot, int pwr){
 	packet *p = &packetBuffer;
 	p->val.f[0] = pos.x;
 	p->val.f[1] = pos.y;
@@ -150,14 +150,14 @@ void msgCharacterHit(int c, const vec pos, const vec rot, int pwr){
 
 // 18 = chunkData ???
 
-void msgSetPlayerCount(int playerLeaving, int playerMax){
+void msgSetPlayerCount(uint playerLeaving, uint playerMax){
 	packet *p = &packetBuffer;
 	p->val.u[0] = playerMax;
 	p->val.u[1] = playerLeaving;
 	packetQueue(p,19,2*4,-1);
 }
 
-void msgPickupItem(int c, uint16_t ID, uint16_t amount){
+void msgPickupItem(uint c, u16 ID, u16 amount){
 	packet *p = &packetBuffer;
 	p->val.s[0] = ID;
 	p->val.s[1] = amount;
@@ -174,7 +174,7 @@ void msgGrenadeExplode(const vec pos,float pwr, int style){
 	packetQueue(p,22,5*4,-1);
 }
 
-void msgGrenadeUpdate(int c, const vec pos, const vec vel, int count, int i){
+void msgGrenadeUpdate(uint c, const vec pos, const vec vel, int count, int i){
 	packet *p = &packetBuffer;
 	p->val.f[0] = pos.x;
 	p->val.f[1] = pos.y;
@@ -187,7 +187,7 @@ void msgGrenadeUpdate(int c, const vec pos, const vec vel, int count, int i){
 	packetQueue(p,23,8*4,c);
 }
 
-void msgFxBeamBlaster(int c, const vec pa, const vec pb, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){
+void msgFxBeamBlaster(uint c, const vec pa, const vec pb, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){
 	packet *p = &packetBuffer;
 	p->val.f[0] = pa.x;
 	p->val.f[1] = pa.y;
@@ -206,7 +206,7 @@ void msgFxBeamBlaster(int c, const vec pa, const vec pb, float beamSize, float d
 	packetQueue(p,24,11*4,c);
 }
 
-void msgItemDropUpdate(int c, const vec pos, const vec vel, uint16_t i, uint16_t len, uint16_t itemID, uint16_t amount){
+void msgItemDropUpdate(uint c, const vec pos, const vec vel, u16 i, u16 len, u16 itemID, u16 amount){
 	packet *p = &packetBuffer;
 
 	p->val.s[0] = i;
@@ -225,13 +225,13 @@ void msgItemDropUpdate(int c, const vec pos, const vec vel, uint16_t i, uint16_t
 	packetQueue(p,25,8*4,c);
 }
 
-void msgPlayerDamage(int c, int hp){
+void msgPlayerDamage(uint c, int hp){
 	packet *p = &packetBuffer;
 	p->val.i[0]=hp;
 	packetQueue(p,26,4,c);
 }
 
-void msgUnsubChungus(int x, int y, int z){
+void msgUnsubChungus(uint x, uint y, uint z){
 	packet *p = &packetBuffer;
 	p->val.i[0] = x;
 	p->val.i[1] = y;
@@ -239,7 +239,7 @@ void msgUnsubChungus(int x, int y, int z){
 	packetQueueToServer(p,27,3*4);
 }
 
-void msgPlayerSetData(int c, int hp, int activeItem, uint32_t flags){
+void msgPlayerSetData(uint c, int hp, int activeItem, u32 flags){
 	packet *p = &packetBuffer;
 	p->val.i[0] = hp;
 	p->val.i[1] = activeItem;
@@ -247,9 +247,9 @@ void msgPlayerSetData(int c, int hp, int activeItem, uint32_t flags){
 	packetQueue(p,28,3*4,c);
 }
 
-void msgPlayerSetInventory(int c,const item *itm, size_t itemCount){
+void msgPlayerSetInventory(uint c,const item *itm, size_t itemCount){
 	packet *p = &packetBuffer;
-	for(unsigned int i=0;i<itemCount;i++){
+	for(uint i=0;i<itemCount;i++){
 		p->val.s[(i<<1)  ] = itm[i].ID;
 		p->val.s[(i<<1)+1] = itm[i].amount;
 	}

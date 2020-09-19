@@ -68,7 +68,7 @@ chunk *bigchungusGetChunk(bigchungus *c, int x, int y, int z){
 	return chnk;
 }
 
-uint8_t bigchungusGetB(bigchungus *c, int x,int y,int z) {
+u8 bigchungusGetB(bigchungus *c, int x,int y,int z) {
 	chungus *chng;
 	chng = bigchungusGetChungus(c,x/CHUNGUS_SIZE,y/CHUNGUS_SIZE,z/CHUNGUS_SIZE);
 	if(chng == NULL){ return 0; }
@@ -101,7 +101,7 @@ bool bigchungusGetHighestP(bigchungus *c, int x,int *retY, int z) {
 	return false;
 }
 
-bool bigchungusSetB(bigchungus *c, int x,int y,int z,uint8_t block){
+bool bigchungusSetB(bigchungus *c, int x,int y,int z,u8 block){
 	chungus *chng;
 	int cx = (x / CHUNGUS_SIZE) & 0xFF;
 	int cy = (y / CHUNGUS_SIZE) & 0x7F;
@@ -115,7 +115,7 @@ bool bigchungusSetB(bigchungus *c, int x,int y,int z,uint8_t block){
 	return false;
 }
 
-void bigchungusBox(bigchungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
+void bigchungusBox(bigchungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 	for(int cx=0;cx<w;cx++){
 		for(int cy=0;cy<h;cy++){
 			for(int cz=0;cz<d;cz++){
@@ -125,7 +125,7 @@ void bigchungusBox(bigchungus *c, int x,int y,int z, int w,int h,int d,uint8_t b
 	}
 }
 
-void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, uint8_t block){
+void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, u8 block){
 	const int md = r*r;
 	for(int cx=-r;cx<=r;cx++){
 		for(int cy=-r;cy<=r;cy++){
@@ -142,7 +142,7 @@ void bigchungusBoxMine(bigchungus *c, int x,int y,int z, int w,int h,int d){
 	for(int cx=0;cx<w;cx++){
 		for(int cy=0;cy<h;cy++){
 			for(int cz=0;cz<d;cz++){
-				uint8_t b = bigchungusGetB(c,cx+x,cy+y,cz+z);
+				u8 b = bigchungusGetB(c,cx+x,cy+y,cz+z);
 				if(b==0){continue;}
 				blockMiningDropItemsPos(cx+x,cy+y,cz+z,b);
 				bigchungusSetB(c,cx+x,cy+y,cz+z,0);
@@ -156,7 +156,7 @@ void bigchungusBoxMineSphere(bigchungus *c, int x,int y,int z, int r){
 	for(int cx=-r;cx<=r;cx++){
 		for(int cy=-r;cy<=r;cy++){
 			for(int cz=-r;cz<=r;cz++){
-				uint8_t b = bigchungusGetB(c,cx+x,cy+y,cz+z);
+				u8 b = bigchungusGetB(c,cx+x,cy+y,cz+z);
 				if(b==0){continue;}
 				const int d = (cx*cx)+(cy*cy)+(cz*cz);
 				if(d >= md){continue;}
@@ -333,7 +333,7 @@ void bigchungusSafeSaveClient(bigchungus *c, int p){
 }
 
 void bigchungusSafeSave(bigchungus *c){
-	static uint64_t lastSave = 0;
+	static u64 lastSave = 0;
 	if(getMillis() < lastSave+1000){return;}
 	lastSave = getMillis();
 
@@ -353,13 +353,13 @@ void bigchungusSafeSave(bigchungus *c){
 	}
 }
 
-void worldBox(int x, int y,int z, int w,int h,int d,uint8_t block){
+void worldBox(int x, int y,int z, int w,int h,int d,u8 block){
 	bigchungusBox(&world,x,y,z,w,h,d,block);
 }
-void worldBoxSphere(int x, int y,int z, int r,uint8_t block){
+void worldBoxSphere(int x, int y,int z, int r,u8 block){
 	bigchungusBoxSphere(&world,x,y,z,r,block);
 }
-uint8_t worldGetB(int x, int y, int z){
+u8 worldGetB(int x, int y, int z){
 	return bigchungusGetB(&world,x,y,z);
 }
 chungus* worldGetChungus(int x, int y, int z){
@@ -368,7 +368,7 @@ chungus* worldGetChungus(int x, int y, int z){
 chunk* worldGetChunk(int x, int y, int z){
 	return bigchungusGetChunk(&world,x,y,z);
 }
-bool worldSetB(int x, int y, int z, uint8_t block){
+bool worldSetB(int x, int y, int z, u8 block){
 	return bigchungusSetB(&world,x,y,z,block);
 }
 int checkCollision(int x, int y, int z){

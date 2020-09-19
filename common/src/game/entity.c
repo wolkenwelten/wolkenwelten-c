@@ -11,7 +11,7 @@ void entityReset(entity *e){
 }
 
 u32 entityCollision(const vec c){
-	uint32_t col = 0;
+	u32 col = 0;
 
 	if(checkCollision(c.x-0.3f,c.y     ,c.z     )){col |= 0x100;}
 	if(checkCollision(c.x+0.3f,c.y     ,c.z     )){col |= 0x200;}
@@ -32,7 +32,7 @@ void entityUpdateCurChungus(entity *e){
 
 int entityUpdate(entity *e){
 	int ret=0;
-	uint32_t col;
+	u32 col;
 	e->pos = vecAdd(e->pos,e->vel);
 	if(e->flags & ENTITY_NOCLIP){
 		e->flags &= ~ENTITY_COLLIDE;

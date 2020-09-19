@@ -149,7 +149,7 @@ void updateMouse(){
 }
 
 void drawDebuginfo(){
-	static unsigned int ticks=0;
+	static uint ticks=0;
 	int tris = vboTrisCount;
 
 	if(recvBytesCurrentSession <= 0){
@@ -236,7 +236,7 @@ void drawItemBar(){
 }
 
 void drawHealthbar(){
-	static unsigned int ticks = 0;
+	static uint ticks = 0;
 	int tilesize,tilesizeoff,x,y,lastsize,lastoff;
 	if(screenWidth < 1024){
 		tilesize = 16;
@@ -350,7 +350,7 @@ void drawActiveItem(){
 }
 
 void drawActiveGlider(){
-	static uint64_t ticks = 0;
+	static u64 ticks = 0;
 	float matViewAI[16];
 	if(player->gliderFade < 0.01f){return;}
 

@@ -17,7 +17,7 @@ static inline u8 interpolate(float v1,float v2,float d){
 	return (u8)((v1*(1.0-d))+(v2*d));
 }
 
-static void dumpHeightmap(u8 heightmap[256][256]){
+void dumpHeightmap(u8 heightmap[256][256]){
 	printf("------------------------------------------------------------\n");
 	for(int y=0;y<256;y++){
 		for(int x=0;x<256;x++){
@@ -43,8 +43,8 @@ static void dumpHeightmap(u8 heightmap[256][256]){
 void perlin_step(uint size,uint amp,float steep, u8 heightmap[256][256]){
 	if(amp==0){return;}
 
-	for(int x=0;x<256/size;x++){
-		for(int y=0;y<256/size;y++){
+	for(uint x=0;x<256/size;x++){
+		for(uint y=0;y<256/size;y++){
 			if((x==0)||(y==0)){
 				tmp[x][y] = 0;
 			}else{
@@ -52,10 +52,10 @@ void perlin_step(uint size,uint amp,float steep, u8 heightmap[256][256]){
 			}
 		}
 	}
-	for(int xs=0;xs<256/size;xs++){
-		for(int ys=0;ys<256/size;ys++){
-			for(int y=0;y<size;y++){
-				for(int x=0;x<size;x++){
+	for(uint xs=0;xs<256/size;xs++){
+		for(uint ys=0;ys<256/size;ys++){
+			for(uint y=0;y<size;y++){
+				for(uint x=0;x<size;x++){
 					const float d = ((float)x)/((float)size);
 					const u8 h1 = interpolate(gett(xs,ys  ),gett(xs+1,ys  ),d);
 					const u8 h2 = interpolate(gett(xs,ys+1),gett(xs+1,ys+1),d);
@@ -66,7 +66,7 @@ void perlin_step(uint size,uint amp,float steep, u8 heightmap[256][256]){
 		}
 	}
 	if(size>1){
-		perlin_step(size/2,(int)(((float)amp)*steep),steep,heightmap);
+		perlin_step(size/2,((float)amp)*steep,steep,heightmap);
 	}
 }
 
@@ -89,7 +89,7 @@ void prefill_noise(u8 heightmap[256][256], uint x, uint y, u8 parent[256][256]){
 
 	for(int cx=0;cx<256;cx++){
 		for(int cy=0;cy<256;cy++){
-			const float d = (float)cx / 256.f;
+			const float d = cx / 256.f;
 			const unsigned char ha = interpolate(h1,h2,d);
 			const unsigned char hb = interpolate(h3,h4,d);
 			const unsigned char  h = interpolate(ha,hb,((float)cy)/256.f);

@@ -193,7 +193,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 		for(int cx=wgen->minX;cx<=wgen->maxX;cx++){
 			int x = cx&0xF;
 			int airBlocks = 8;
-			uint8_t lastBlock = 0;
+			u8 lastBlock = 0;
 			chunk *chnk = NULL;
 			for(int cy=wgen->maxY;cy>=wgen->minY;cy--){
 				if((chnk == NULL) || ((cy&0xF)==0xF)){
@@ -205,7 +205,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 					cy = cy & (~0xF);
 					continue;
 				}
-				uint8_t b = chnk->data[x][cy&0xF][z];
+				u8 b = chnk->data[x][cy&0xF][z];
 				switch(b){
 					default:
 						airBlocks = 0;

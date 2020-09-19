@@ -6,20 +6,20 @@ extern const float CHUNK_RENDER_DISTANCE;
 extern const float CHUNK_FADEOUT_DISTANCE;
 
 struct chunk {
-	uint16_t x,y,z,ready;
-	uint16_t dataCount,vboSize;
-	unsigned int vbo;
+	u16 x,y,z,ready;
+	u16 dataCount,vboSize;
+	uint vbo;
 	void *nextFree;
-	uint8_t data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+	u8 data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 };
 
-chunk  *chunkNew       (uint16_t x,uint16_t y,uint16_t z);
+chunk  *chunkNew       (u16 x,u16 y,u16 z);
 void    chunkFree      (chunk *c);
-void    chunkBox       (chunk *c, int x, int y, int z,int gx,int gy,int gz,uint8_t b);
+void    chunkBox       (chunk *c, int x, int y, int z,int gx,int gy,int gz,u8 b);
 void    chunkGetB      (chunk *c, int x, int y, int z);
-void    chunkSetB      (chunk *c, int x, int y, int z, uint8_t b);
+void    chunkSetB      (chunk *c, int x, int y, int z, u8 b);
 void    chunkDraw      (chunk *c, float d);
-int     chunkGetFree   ();
-int     chunkGetActive ();
-int     chunkGetGeneratedThisFrame();
+uint    chunkGetFree   ();
+uint    chunkGetActive ();
+uint    chunkGetGeneratedThisFrame();
 void    chunkResetCounter();

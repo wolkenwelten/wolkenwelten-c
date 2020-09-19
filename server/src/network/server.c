@@ -39,8 +39,8 @@ const char *getPlayerLeaveMessage(uint c){
 
 void serverKeepalive(){
 	static char buffer[16];
-	static uint64_t lastKA=0;
-	uint64_t ct = getMillis();
+	static u64 lastKA=0;
+	u64 ct = getMillis();
 	if(ct > lastKA+1000){
 		lastKA = ct;
 		for(uint i=0;i<clientCount;i++){
@@ -476,7 +476,7 @@ void addChunksToQueue(uint c){
 			}
 		}
 	}
-	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = entry | (uint64_t)1<<62;
+	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = entry | (u64)1<<62;
 	chungusSetUpdated(chng,c);
 }
 
@@ -525,7 +525,7 @@ void *serverFindCompressibleStart(uint c, int *len){
 void serverCheckCompression(int c){
 	int len,compressLen;
 	u8 *start;
-	static uint8_t compressBuf[LZ4_COMPRESSBOUND(sizeof(clients[c].sendBuf))];
+	static u8 compressBuf[LZ4_COMPRESSBOUND(sizeof(clients[c].sendBuf))];
 	if(clients[c].flags & CONNECTION_WEBSOCKET){return;}
 	if(clients[c].sendBufLen < (int)(sizeof(clients[c].sendBuf)/32)){return;}
 	start = serverFindCompressibleStart(c,&len);

@@ -104,7 +104,7 @@ void worldgenFindSpawn(worldgen *wgen, int x,int z,int tries){
 }
 
 void worldgenTestpattern(worldgen *wgen){
-	uint8_t b=1;
+	u8 b=1;
 	for(int x=0;x<CHUNK_SIZE;x+=2){
 		for(int y=0;y<CHUNK_SIZE;y+=2){
 			for(int z=0;z<CHUNK_SIZE;z+=2){
@@ -117,11 +117,11 @@ void worldgenTestpattern(worldgen *wgen){
 
 void worldgenGenerate(worldgen *wgen){
 	//static unsigned int averageTicks=0;
-	static unsigned int averageRuns=0;
-	
+	static uint averageRuns=0;
+
 	int oldSeed = getRNGSeed();
 	//unsigned int startTicks = getTicks();
-	unsigned int seed = (optionWorldSeed | (optionWorldSeed << 16));
+	uint seed = (optionWorldSeed | (optionWorldSeed << 16));
 	seed ^= (wgen->gx&0xFF00) | (wgen->gx >> 8) | ((wgen->gx&0xFF00)<<8) | ((wgen->gx&0xFF00)<<16);
 	seed ^= (wgen->gy&0xFF00) | (wgen->gy >> 8) | ((wgen->gy&0xFF00)<<8) | ((wgen->gy&0xFF00)<<16);
 	seed ^= (wgen->gz&0xFF00) | (wgen->gz >> 8) | ((wgen->gz&0xFF00)<<8) | ((wgen->gz&0xFF00)<<16);
@@ -141,7 +141,7 @@ void worldgenGenerate(worldgen *wgen){
 		default:
 			worldgenTestpattern(wgen);
 		break;
-		
+
 		case 15:
 		case 14:
 			worldgenCluster(wgen,CHUNGUS_SIZE/52,CHUNGUS_SIZE/52,3,9);

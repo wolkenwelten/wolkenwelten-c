@@ -153,7 +153,7 @@ void grapplingHookPullTowards(grapplingHook *ghk,character *pull){
 	float  len  = grapplingHookGetLength(ghk);
 	const vec d = vecMulS(vecNorm(vecSub(ghk->ent->pos,ghk->parent->pos)),ghk->goalLength - len);
 
-	uint32_t col = entityCollision(pull->pos);
+	u32 col = entityCollision(pull->pos);
 	if(((d.x > 0) && !((col & 0x110))) || ((d.x < 0) && !((col & 0x220)))){
 		pull->pos.x -= d.x;
 		pull->vel.x -= d.x*0.2f;

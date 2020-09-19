@@ -22,8 +22,8 @@ typedef struct glParticle {
 
 typedef struct {
 	float x,z,d;
-	uint16_t y;
-	uint16_t v;
+	u16 y;
+	u16 v;
 }cloudEntry;
 
 #define CLOUD_FADED (65536)
@@ -33,7 +33,7 @@ typedef struct {
 
 cloudEntry clouds[1<<14];
 uint       cloudCount  = 0;
-uint8_t    cloudTex[256][256];
+u8         cloudTex[256][256];
 float      cloudOffset = 0.f;
 
 glCloud    glData[CLOUDS_MAX];
@@ -64,20 +64,20 @@ void quicksortClouds(int lo, int hi){
 	quicksortClouds(p+1, hi);
 }
 
-void cloudPart(float px,float py,float pz,float dd,uint8_t v){
+void cloudPart(float px,float py,float pz,float dd,u8 v){
 	const float   vf = v-170;
-	const uint8_t ta = (218+((256 - v)/3));
-	const uint8_t tb = (198+((256 - v)/6));
-	const uint8_t ba = (164+((256 - v)  ));
-	const uint8_t bb = (148+((256 - v)/2));
-	uint32_t a;
+	const u8 ta = (218+((256 - v)/3));
+	const u8 tb = (198+((256 - v)/6));
+	const u8 ba = (164+((256 - v)  ));
+	const u8 bb = (148+((256 - v)/2));
+	u32 a;
 	if(dd > CLOUD_MIND){
-		a = (uint8_t)(v*(1.f-((dd - CLOUD_MIND)/CLOUD_FADED))) << 24;
+		a = (u8)(v*(1.f-((dd - CLOUD_MIND)/CLOUD_FADED))) << 24;
 	}else{
 		a = v << 24;
 	}
-	const uint32_t ct = a | (tb<<16) | (ta<<8) | ta;
-	const uint32_t cb = a | (bb<<16) | (ba<<8) | ba;
+	const u32 ct = a | (tb<<16) | (ta<<8) | ta;
+	const u32 cb = a | (bb<<16) | (ba<<8) | ba;
 
 	if(py > player->pos.y){
 		glData[glCount++] = (glCloud){px,py+vf/ 6.f,pz,ct};
@@ -110,8 +110,8 @@ void cloudsRenderGl(){
 void cloudsRender(){
 	quicksortClouds(0,cloudCount);
 
-	for(int i=cloudCount-1;i>=0;i--){
-		const uint8_t  v = clouds[i].v;
+	for(uint i=cloudCount-1;i<cloudCount;i--){
+		const u8       v = clouds[i].v;
 		const float   dd = clouds[i].d;
 		const float   px = clouds[i].x;
 		const float   pz = clouds[i].z;
@@ -138,7 +138,7 @@ void cloudsDrawDeferred(int cx, int cy, int cz){
 		const float dxy = dy + ((px - player->pos.x) * (px - player->pos.x));
 		const int tx    = (x - toff)&0xFF;
 		for(uint z=0;z<256;z++){
-			const uint8_t  v = cloudTex[tx][z];
+			const u8       v = cloudTex[tx][z];
 			if(v < CLOUD_DENSITY_MIN){ continue; }
 			const float   pz = sz+z;
 			const float   dz = (pz - player->pos.z) * (pz - player->pos.z);
@@ -156,7 +156,7 @@ void cloudsDrawDirect(int cx, int cy, int cz){
 	float sz = cz * 256.f;
 	if(cy&1){return;}
 	const float dy = (sy - player->pos.y) * (sy - player->pos.y);
-	uint8_t dir = 0;
+	u8 dir = 0;
 	if(sx > player->pos.x){dir |= 1;}
 	if(sz > player->pos.z){dir |= 2;}
 
@@ -168,7 +168,7 @@ void cloudsDrawDirect(int cx, int cy, int cz){
 			const float dxy = dy + ((px - player->pos.x) * (px - player->pos.x));
 			const int tx    = (x - toff)&0xFF;
 			for(int z=0;z<256;z++){
-				const uint8_t  v = cloudTex[tx][z];
+				const u8       v = cloudTex[tx][z];
 				if(v < CLOUD_DENSITY_MIN){ continue; }
 				const float   pz = sz+z;
 				const float   dz = (pz - player->pos.z) * (pz - player->pos.z);
@@ -185,11 +185,11 @@ void cloudsDrawDirect(int cx, int cy, int cz){
 			const float dxy = dy + ((px - player->pos.x) * (px - player->pos.x));
 			const int tx    = (x - toff)&0xFF;
 			for(int z=0;z<256;z++){
-				const uint8_t  v = cloudTex[tx][z];
+				const u8      v = cloudTex[tx][z];
 				if(v < CLOUD_DENSITY_MIN){ continue; }
-				const float   pz = sz+z;
-				const float   dz = (pz - player->pos.z) * (pz - player->pos.z);
-				const float   dd = dxy+dz;
+				const float  pz = sz+z;
+				const float  dz = (pz - player->pos.z) * (pz - player->pos.z);
+				const float  dd = dxy+dz;
 				if(dd > (CLOUD_MIND+CLOUD_FADED)){continue;}
 				const float   oy = (1.f - dd / (CLOUD_MIND+CLOUD_FADED))*32.f + 32.f;
 				cloudPart(px,sy+oy,pz,dd,v);
@@ -202,7 +202,7 @@ void cloudsDrawDirect(int cx, int cy, int cz){
 			const float dxy = dy + ((px - player->pos.x) * (px - player->pos.x));
 			const int tx    = (x - toff)&0xFF;
 			for(int z=255;z>=0;z--){
-				const uint8_t  v = cloudTex[tx][z];
+				const u8       v = cloudTex[tx][z];
 				if(v < CLOUD_DENSITY_MIN){ continue; }
 				const float   pz = sz+z;
 				const float   dz = (pz - player->pos.z) * (pz - player->pos.z);
@@ -220,7 +220,7 @@ void cloudsDrawDirect(int cx, int cy, int cz){
 			const float dxy = dy + ((px - player->pos.x) * (px - player->pos.x));
 			const int tx    = (x - toff)&0xFF;
 			for(int z=255;z>=0;z--){
-				const uint8_t  v = cloudTex[tx][z];
+				const u8       v = cloudTex[tx][z];
 				if(v < CLOUD_DENSITY_MIN){ continue; }
 				const float   pz = sz+z;
 				const float   dz = (pz - player->pos.z) * (pz - player->pos.z);

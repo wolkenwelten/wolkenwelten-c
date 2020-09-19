@@ -22,7 +22,7 @@ void worldgenRoots(worldgen *wgen, int x,int y,int z){
 	chungus *clay = wgen->clay;
 	int size = rngValMM(4,12);
 	for(int cy = 0;cy > -size;--cy){
-		uint8_t b = chungusGetB(clay,x,y+cy,z);
+		u8 b = chungusGetB(clay,x,y+cy,z);
 		switch(b){
 			case 7:
 			case 6:
@@ -215,7 +215,7 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 							worldgenSurroundWithLeafes(wgen,x+2,cy+y,z,leafes);
 						}
 					break;
-					
+
 					case 2:
 						chungusSetB(clay,x-1,cy+y,z,logblock);
 						worldgenSurroundWithLeafes(wgen,x-1,cy+y,z,leafes);
@@ -224,7 +224,7 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 							worldgenSurroundWithLeafes(wgen,x-2,cy+y,z,leafes);
 						}
 					break;
-					
+
 					case 3:
 						chungusSetB(clay,x,cy+y,z+1,logblock);
 						worldgenSurroundWithLeafes(wgen,x,cy+y,z+1,leafes);
@@ -233,7 +233,7 @@ void worldgenOak(worldgen *wgen, int x,int y,int z){
 							worldgenSurroundWithLeafes(wgen,x,cy+y,z+2,leafes);
 						}
 					break;
-					
+
 					case 4:
 						chungusSetB(clay,x,cy+y,z-1,logblock);
 						worldgenSurroundWithLeafes(wgen,x,cy+y,z-1,leafes);

@@ -93,7 +93,7 @@ void serverParseWebSocketPacket(uint i){
 		mask[2] = clients[i].recvWSBuf[ii++];
 		mask[3] = clients[i].recvWSBuf[ii++];
 
-		for(uint64_t iii=0;iii<mlen;iii++){
+		for(u64 iii=0;iii<mlen;iii++){
 			clients[i].recvBuf[clients[i].recvBufLen++] = clients[i].recvWSBuf[ii+iii] ^ mask[iii&3];
 		}
 

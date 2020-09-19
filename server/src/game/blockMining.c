@@ -39,7 +39,7 @@ float blockMiningGetProgress(blockMining *bm){
 	return ((float)bm->damage) / ((float)blockTypeGetHP(bm->b));
 }
 
-void blockMiningDropItemsPos(int x, int y, int z, uint8_t b){
+void blockMiningDropItemsPos(int x, int y, int z, u8 b){
 	u16 ID = b;
 	if(b == 0){return;}
 	if(b == 7){return;}  // Roots

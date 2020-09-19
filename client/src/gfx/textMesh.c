@@ -11,9 +11,9 @@
 #include <stdlib.h>
 #include "../gfx/gl.h"
 
-char stringBuffer[8192];
-textMesh textMeshList[8];
-int  textMeshCount = 0;
+char      stringBuffer[8192];
+textMesh  textMeshList[8];
+uint      textMeshCount = 0;
 textMesh *textMeshFirstFree = NULL;
 
 textMesh *textMeshNew(){
@@ -56,7 +56,7 @@ void textMeshEmpty(textMesh *m){
 	m->finished  = 0;
 }
 
-void textMeshAddVert(textMesh *m, int16_t x, int16_t y, int16_t u, int16_t v, uint32_t rgba){
+void textMeshAddVert(textMesh *m, i16 x, i16 y, i16 u, i16 v, u32 rgba){
 	if(m->dataCount >= (int)(sizeof(m->dataBuffer) / sizeof(vertex2D))){
 		fprintf(stderr,"textMeh dataBuffer OVERFLOW\n");
 		return;
@@ -90,7 +90,7 @@ void textMeshDraw(textMesh *m){
 	vboTrisCount += m->dataCount/3;
 }
 
-void textMeshAddGlyph(textMesh *m, int x, int y, int size, unsigned char c){
+void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c){
 	float gx;
 	float gy;
 	int   glyphWidth = 8*size;
@@ -214,7 +214,7 @@ void textMeshNumber(textMesh *m, int x, int y, int size, int number){
 	}
 }
 
-void textMeshBox(textMesh *m, int x, int y, int w, int h, float u, float v, float uw, float vh, uint32_t rgba){
+void textMeshBox(textMesh *m, int x, int y, int w, int h, float u, float v, float uw, float vh, u32 rgba){
 	textMeshAddVert( m, x  ,y+h,(u   )*128.f,(v+vh)*128.f,rgba);
 	textMeshAddVert( m, x+w,y  ,(u+uw)*128.f,(v   )*128.f,rgba);
 	textMeshAddVert( m, x  ,y  ,(u   )*128.f,(v   )*128.f,rgba);
@@ -223,7 +223,7 @@ void textMeshBox(textMesh *m, int x, int y, int w, int h, float u, float v, floa
 	textMeshAddVert( m, x+w,y+h,(u+uw)*128.f,(v+vh)*128.f,rgba);
 }
 
-void textMeshSolidBox(textMesh *m, int x, int y, int w, int h, uint32_t rgba){
+void textMeshSolidBox(textMesh *m, int x, int y, int w, int h, u32 rgba){
 	textMeshBox(m,x, y,w, h,19.f/32.f, 31.f/32.f,1.f/32.f,1.f/32.f,rgba);
 }
 

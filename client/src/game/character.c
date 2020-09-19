@@ -386,7 +386,7 @@ void updateGlide(character *c){
 
 int characterPhysics(character *c){
 	int ret=0;
-	uint32_t col;
+	u32 col;
 	c->pos = vecAdd(c->pos,c->vel);
 	c->shake = MAX(0.f,c->shake-0.1f);
 	if(c->flags & CHAR_NOCLIP){
@@ -612,7 +612,7 @@ void characterShadesDraw(const character *c){
 }
 
 void characterGliderDraw(const character *c){
-	static uint64_t ticks = 0;
+	static u64 ticks = 0;
 	if(c->gliderFade < 0.01f){return;}
 	const float breath = sinf((float)(c->breathing-384)/512.f)*4.f;
 	float deg  = ((float)++ticks*0.4f);

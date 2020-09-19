@@ -21,7 +21,7 @@ typedef struct {
 	int x,y,z;
 	int damage;
 	int lastDamage;
-	uint8_t b;
+	u8  b;
 	int wasMined;
 } blockMining;
 

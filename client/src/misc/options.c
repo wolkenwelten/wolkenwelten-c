@@ -67,7 +67,7 @@ void parseOptions(int argc,char *argv[]){
 		if((l = checkString(argv[i]+1,"windowOrientation="))){
 			int newOrientation = 0;
 			if(argv[i][l] != 0){
-				uint8_t chr = toupper(argv[i][l]);
+				u8 chr = toupper(argv[i][l]);
 				if(chr == 'T'){newOrientation |= 0x10;}
 				if(chr == 'B'){newOrientation |= 0x20;}
 				if(chr == 'L'){newOrientation |= 0x01;}

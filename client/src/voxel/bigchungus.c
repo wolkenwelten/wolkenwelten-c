@@ -60,14 +60,14 @@ chungus *bigchungusGetChungus(bigchungus *c, int x,int y,int z) {
 	return chng;
 }
 
-uint8_t bigchungusGetB(bigchungus *c, int x,int y,int z) {
+u8 bigchungusGetB(bigchungus *c, int x,int y,int z) {
 	chungus *chng;
 	chng = bigchungusGetChungus(c,x/CHUNGUS_SIZE,y/CHUNGUS_SIZE,z/CHUNGUS_SIZE);
 	if(chng == NULL){ return 0; }
 	return chungusGetB(chng,x%CHUNGUS_SIZE,y%CHUNGUS_SIZE,z%CHUNGUS_SIZE);
 }
 
-bool bigchungusSetB(bigchungus *c, int x,int y,int z,uint8_t block){
+bool bigchungusSetB(bigchungus *c, int x,int y,int z,u8 block){
 	chungus *chng;
 	int cx = (x / CHUNGUS_SIZE) & 0xFF;
 	int cy = (y / CHUNGUS_SIZE) & 0x7F;
@@ -163,7 +163,7 @@ void bigchungusDraw(bigchungus *c,const character *cam){
 }
 
 
-void bigchungusBox(bigchungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
+void bigchungusBox(bigchungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 	for(int cx=0;cx<w;cx++){
 		for(int cy=0;cy<h;cy++){
 			for(int cz=0;cz<d;cz++){
@@ -190,7 +190,7 @@ void bigchungusFreeFarChungi(bigchungus *c, character *cam){
 	}
 }
 
-void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, uint8_t block){
+void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, u8 block){
 	const int md = r*r;
 	for(int cx=-r;cx<=r;cx++){
 		for(int cy=-r;cy<=r;cy++){
@@ -210,13 +210,13 @@ chungus *worldTryChungus(int x, int y, int z){
 	return bigchungusTryChungus(&world,x,y,z);
 }
 
-void worldBox(int x, int y,int z, int w,int h,int d,uint8_t block){
+void worldBox(int x, int y,int z, int w,int h,int d,u8 block){
 	bigchungusBox(&world,x,y,z,w,h,d,block);
 }
-void worldBoxSphere(int x, int y,int z, int r,uint8_t block){
+void worldBoxSphere(int x, int y,int z, int r,u8 block){
 	bigchungusBoxSphere(&world,x,y,z,r,block);
 }
-uint8_t worldGetB(int x, int y, int z){
+u8 worldGetB(int x, int y, int z){
 	return bigchungusGetB(&world,x,y,z);
 }
 chungus* worldGetChungus(int x, int y, int z){
@@ -225,7 +225,7 @@ chungus* worldGetChungus(int x, int y, int z){
 chunk* worldGetChunk(int x, int y, int z){
 	return bigchungusGetChunk(&world,x,y,z);
 }
-bool worldSetB(int x, int y, int z, uint8_t block){
+bool worldSetB(int x, int y, int z, u8 block){
 	return bigchungusSetB(&world,x,y,z,block);
 }
 void worldSetChungusLoaded(int x, int y, int z){

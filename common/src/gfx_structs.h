@@ -4,7 +4,7 @@
 
 typedef struct {
 	uint ID,w,h;
-	char *filename;
+	const char *filename;
 	time_t modTime;
 } texture;
 

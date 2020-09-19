@@ -26,11 +26,11 @@
 #include <time.h>
 
 int recvBufLen = 0;
-uint8_t recvBuf[1<<20];
+u8 recvBuf[1<<20];
 
 int sendBufSent = 0;
 int sendBufLen  = 0;
-uint8_t sendBuf[1<<16];
+u8 sendBuf[1<<16];
 
 size_t sentBytesCurrentSession             = 0;
 size_t recvBytesCurrentSession             = 0;
@@ -99,8 +99,8 @@ void msgSendPlayerPos(){
 }
 
 void decompressPacket(const packet *p){
-	uint8_t *t;
-	uint8_t buf[1<<20];
+	u8 *t;
+	u8 buf[1<<20];
 	int len = LZ4_decompress_safe((const char *)&p->val.c, (char *)buf, packetLen(p), sizeof(buf));
 	if(len <= 0){
 		fprintf(stderr,"Decompression return %i\n",len);
@@ -269,7 +269,7 @@ void clientGoodbye(){
 	clientSendAllToServer();
 }
 
-void queueToServer(const void *data, unsigned int len){
+void queueToServer(const void *data, uint len){
 	if((sendBufLen + len) > sizeof(sendBuf)){
 		clientSendAllToServer();
 	}

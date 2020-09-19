@@ -17,7 +17,7 @@ void blockTypeGenMeshes(){
 	}
 }
 
-void blockTypeSetTex(uint8_t b, int side, uint32_t tex){
+void blockTypeSetTex(u8 b, int side, u32 tex){
 	blocks[b].texX[side] = tex & 0xF;
 	blocks[b].texY[side] = tex >> 4;
 }

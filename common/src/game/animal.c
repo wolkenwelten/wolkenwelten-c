@@ -33,7 +33,7 @@ void animalUpdateCurChungus(animal *e){
 
 int animalUpdate(animal *e){
 	int ret=0;
-	uint32_t col;
+	u32 col;
 	e->pos = vecAdd(e->pos,e->vel);
 	e->breathing += 5;
 

@@ -13,15 +13,15 @@
 
 #pragma pack(push, 1)
 typedef struct vertexTiny {
-	uint8_t x,y,z,f;
-	uint16_t u,v;
+	u8 x,y,z,f;
+	u16 u,v;
 } vertexTiny;
 #pragma pack(pop)
 
 vertexTiny blockMeshBuffer[1<<16];
-int chunkFreeCount = 0;
-int chunkCount     = 0;
-int chunksGeneratedThisFrame = 0;
+uint chunkFreeCount = 0;
+uint chunkCount     = 0;
+uint chunksGeneratedThisFrame = 0;
 chunk *chunkFirstFree = NULL;
 
 #define MAX_CHUNKS_GEN_PER_FRAME 128
@@ -40,12 +40,12 @@ chunk *chunkFirstFree = NULL;
 	const float CHUNK_FADEOUT_DISTANCE = 78.f;
 #endif
 
-int     chunkGetFree()               { return chunkFreeCount;           }
-int     chunkGetActive()             { return chunkCount;               }
-int     chunkGetGeneratedThisFrame() { return chunksGeneratedThisFrame; }
+uint    chunkGetFree()               { return chunkFreeCount;           }
+uint    chunkGetActive()             { return chunkCount;               }
+uint    chunkGetGeneratedThisFrame() { return chunksGeneratedThisFrame; }
 void    chunkResetCounter()          { chunksGeneratedThisFrame = 0;    }
 
-void chunkOptimizePlane(uint32_t plane[CHUNK_SIZE][CHUNK_SIZE]){
+void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
 	for(int y=15;y>=0;y--){
 		for(int x=14;x>=0;x--){
 			if(plane[x][y] && ((plane[x][y] & 0xFF) == (plane[x+1][y] & 0xFF)) && (((plane[x][y]>>16) & 0xFF) == ((plane[x+1][y]>>16)&0xFF))){
@@ -64,10 +64,10 @@ void chunkOptimizePlane(uint32_t plane[CHUNK_SIZE][CHUNK_SIZE]){
 	}
 }
 
-uint8_t chunkGetSides(int x,int y,int z,uint8_t *d,int size) {
+u8 chunkGetSides(int x,int y,int z,u8 *d,int size) {
 	const int tize = size*size;
-	uint8_t sides = 0;
-	uint8_t *base = d + z + (y*size) + (x*tize);
+	u8 sides = 0;
+	u8 *base = d + z + (y*size) + (x*tize);
 
 	if((z == size-1) || (base[    1] == 0)){ sides |=  1;}
 	if((z == 0     ) || (base[   -1] == 0)){ sides |=  2;}
@@ -79,10 +79,10 @@ uint8_t chunkGetSides(int x,int y,int z,uint8_t *d,int size) {
 	return sides;
 }
 
-chunk *chunkNew(uint16_t x,uint16_t y,uint16_t z){
+chunk *chunkNew(u16 x,u16 y,u16 z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){
-		if(chunkCount >= (int)(sizeof(chunkList) / sizeof(chunk))-1){
+		if(chunkCount >= (sizeof(chunkList) / sizeof(chunk))-1){
 			fprintf(stderr,"client chunkList Overflow!\n");
 			return NULL;
 		}
@@ -125,14 +125,14 @@ inline void chunkFinish(chunk *c){
 	}
 }
 
-inline void chunkAddVert(chunk *c, uint8_t x,uint8_t y,uint8_t z,uint16_t u,uint16_t v,uint8_t f){
+inline void chunkAddVert(chunk *c, u8 x,u8 y,u8 z,u16 u,u16 v,u8 f){
 	blockMeshBuffer[c->dataCount++] = (vertexTiny){x,y,z,f,u,v};
 }
-void chunkAddFront(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, uint8_t h, uint8_t d) {
-	const uint16_t texXa = blockTypeGetTexX(b,0)<<8;
-	const uint16_t texYa = blockTypeGetTexY(b,0)<<8;
-	const uint16_t texXb = texXa|w;
-	const uint16_t texYb = texYa|h;
+void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+	const u16 texXa = blockTypeGetTexX(b,0)<<8;
+	const u16 texYa = blockTypeGetTexY(b,0)<<8;
+	const u16 texXb = texXa|w;
+	const u16 texYb = texYa|h;
 	chunkAddVert(c, x  ,y  ,z+d,texXa,texYb,2);
 	chunkAddVert(c, x+w,y  ,z+d,texXb,texYb,2);
 	chunkAddVert(c, x+w,y+h,z+d,texXb,texYa,2);
@@ -140,12 +140,12 @@ void chunkAddFront(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w,
 	chunkAddVert(c, x  ,y+h,z+d,texXa,texYa,2);
 	chunkAddVert(c, x  ,y  ,z+d,texXa,texYb,2);
 }
-void chunkAddBack(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, uint8_t h, uint8_t d) {
+void chunkAddBack(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)d;
-	const uint16_t texXa = blockTypeGetTexX(b,1)<<8;
-	const uint16_t texYa = blockTypeGetTexY(b,1)<<8;
-	const uint16_t texXb = texXa|w;
-	const uint16_t texYb = texYa|h;
+	const u16 texXa = blockTypeGetTexX(b,1)<<8;
+	const u16 texYa = blockTypeGetTexY(b,1)<<8;
+	const u16 texXb = texXa|w;
+	const u16 texYb = texYa|h;
 	chunkAddVert(c, x  ,y  ,z  ,texXb,texYb,2);
 	chunkAddVert(c, x  ,y+h,z  ,texXb,texYa,2);
 	chunkAddVert(c, x+w,y+h,z  ,texXa,texYa,2);
@@ -153,11 +153,11 @@ void chunkAddBack(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, 
 	chunkAddVert(c, x+w,y  ,z  ,texXa,texYb,2);
 	chunkAddVert(c, x  ,y  ,z  ,texXb,texYb,2);
 }
-void chunkAddTop(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, uint8_t h, uint8_t d) {
-	const uint16_t texXa = blockTypeGetTexX(b,2)<<8;
-	const uint16_t texYa = blockTypeGetTexY(b,2)<<8;
-	const uint16_t texXb = texXa|w;
-	const uint16_t texYb = texYa|d;
+void chunkAddTop(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+	const u16 texXa = blockTypeGetTexX(b,2)<<8;
+	const u16 texYa = blockTypeGetTexY(b,2)<<8;
+	const u16 texXb = texXa|w;
+	const u16 texYb = texYa|d;
 	chunkAddVert(c, x  ,y+h,z  ,texXa,texYa,3);
 	chunkAddVert(c, x  ,y+h,z+d,texXa,texYb,3);
 	chunkAddVert(c, x+w,y+h,z+d,texXb,texYb,3);
@@ -165,12 +165,12 @@ void chunkAddTop(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, u
 	chunkAddVert(c, x+w,y+h,z  ,texXb,texYa,3);
 	chunkAddVert(c, x  ,y+h,z  ,texXa,texYa,3);
 }
-void chunkAddBottom(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, uint8_t h, uint8_t d) {
+void chunkAddBottom(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)h;
-	const uint16_t texXa = blockTypeGetTexX(b,3)<<8;
-	const uint16_t texYa = blockTypeGetTexY(b,3)<<8;
-	const uint16_t texXb = texXa|w;
-	const uint16_t texYb = texYa|d;
+	const u16 texXa = blockTypeGetTexX(b,3)<<8;
+	const u16 texYa = blockTypeGetTexY(b,3)<<8;
+	const u16 texXb = texXa|w;
+	const u16 texYb = texYa|d;
 	chunkAddVert(c, x  ,y  ,z  ,texXb,texYa,0);
 	chunkAddVert(c, x+w,y  ,z  ,texXa,texYa,0);
 	chunkAddVert(c, x+w,y  ,z+d,texXa,texYb,0);
@@ -178,11 +178,11 @@ void chunkAddBottom(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w
 	chunkAddVert(c, x  ,y  ,z+d,texXb,texYb,0);
 	chunkAddVert(c, x  ,y  ,z  ,texXb,texYa,0);
 }
-void chunkAddRight(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, uint8_t h, uint8_t d) {
-	const uint16_t texXa = blockTypeGetTexX(b,4)<<8;
-	const uint16_t texYa = blockTypeGetTexY(b,4)<<8;
-	const uint16_t texXb = texXa|d;
-	const uint16_t texYb = texYa|h;
+void chunkAddRight(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+	const u16 texXa = blockTypeGetTexX(b,4)<<8;
+	const u16 texYa = blockTypeGetTexY(b,4)<<8;
+	const u16 texXb = texXa|d;
+	const u16 texYb = texYa|h;
 	chunkAddVert(c, x+w,y  ,z  ,texXb,texYb,2);
 	chunkAddVert(c, x+w,y+h,z  ,texXb,texYa,2);
 	chunkAddVert(c, x+w,y+h,z+d,texXa,texYa,2);
@@ -190,12 +190,12 @@ void chunkAddRight(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w,
 	chunkAddVert(c, x+w,y  ,z+d,texXa,texYb,2);
 	chunkAddVert(c, x+w,y  ,z  ,texXb,texYb,2);
 }
-void chunkAddLeft(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, uint8_t h, uint8_t d) {
+void chunkAddLeft(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)w;
-	const uint16_t texXa = blockTypeGetTexX(b,5)<<8;
-	const uint16_t texYa = blockTypeGetTexY(b,5)<<8;
-	const uint16_t texXb = texXa|d;
-	const uint16_t texYb = texYa|h;
+	const u16 texXa = blockTypeGetTexX(b,5)<<8;
+	const u16 texYa = blockTypeGetTexY(b,5)<<8;
+	const u16 texXb = texXa|d;
+	const u16 texYb = texYa|h;
 	chunkAddVert(c, x  ,y  ,z  ,texXa,texYb,2);
 	chunkAddVert(c, x  ,y  ,z+d,texXb,texYb,2);
 	chunkAddVert(c, x  ,y+h,z+d,texXb,texYa,2);
@@ -206,13 +206,13 @@ void chunkAddLeft(chunk *c, uint8_t b,uint8_t x,uint8_t y,uint8_t z, uint8_t w, 
 
 void chunkGenMesh(chunk *c) {
 	int ac,bc;
-	uint8_t sides;
-	const int CS   = CHUNK_SIZE;
-	const int CSCS = CS*CS;
-	uint8_t *d = (uint8_t *)c->data;
-	static uint8_t sideCache[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-	static uint32_t   aplane[CHUNK_SIZE][CHUNK_SIZE];
-	static uint32_t   bplane[CHUNK_SIZE][CHUNK_SIZE];
+	u8 sides;
+	const uint CS   = CHUNK_SIZE;
+	const uint CSCS = CS*CS;
+	u8 *d = (u8 *)c->data;
+	static u8 sideCache[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+	static u32   aplane[CHUNK_SIZE][CHUNK_SIZE];
+	static u32   bplane[CHUNK_SIZE][CHUNK_SIZE];
 	if(++chunksGeneratedThisFrame > MAX_CHUNKS_GEN_PER_FRAME){return;}
 	c->dataCount = 0;
 
@@ -222,7 +222,7 @@ void chunkGenMesh(chunk *c) {
 				if(d[(x*CSCS)+(y*CS)+z] == 0){
 					sideCache[x][y][z] = 0;
 				}else{
-					sideCache[x][y][z] = chunkGetSides(x,y,z,(uint8_t *)d,CS);
+					sideCache[x][y][z] = chunkGetSides(x,y,z,(u8 *)d,CS);
 				}
 			}
 		}
@@ -256,13 +256,13 @@ void chunkGenMesh(chunk *c) {
 					if(aplane[y][x]){
 						const int cw = ((aplane[y][x] >> 16) & 0xFF);
 						const int ch = ((aplane[y][x] >>  8) & 0xFF);
-						const uint8_t b = aplane[y][x] & 0xFF;
+						const u8 b = aplane[y][x] & 0xFF;
 						chunkAddFront(c,b,x,y,z,cw,ch,cd);
 					}
 					if(bplane[y][x]){
 						const int cw = ((bplane[y][x] >> 16) & 0xFF);
 						const int ch = ((bplane[y][x] >>  8) & 0xFF);
-						const uint8_t b = bplane[y][x] & 0xFF;
+						const u8 b = bplane[y][x] & 0xFF;
 						chunkAddBack(c,b,x,y,z,cw,ch,cd);
 					}
 				}
@@ -298,13 +298,13 @@ void chunkGenMesh(chunk *c) {
 					if(aplane[z][x]){
 						const int cw = ((aplane[z][x] >> 16) & 0xFF);
 						const int cd = ((aplane[z][x] >>  8) & 0xFF);
-						const uint8_t b = aplane[z][x] & 0xFF;
+						const u8 b = aplane[z][x] & 0xFF;
 						chunkAddTop(c,b,x,y,z,cw,ch,cd);
 					}
 					if(bplane[z][x]){
 						int cw = ((bplane[z][x] >> 16) & 0xFF);
 						int cd = ((bplane[z][x] >>  8) & 0xFF);
-						const uint8_t b = bplane[z][x] & 0xFF;
+						const u8 b = bplane[z][x] & 0xFF;
 						chunkAddBottom(c,b,x,y,z,cw,ch,cd);
 					}
 				}
@@ -340,13 +340,13 @@ void chunkGenMesh(chunk *c) {
 					if(aplane[y][z]){
 						const int ch = ((aplane[y][z] >>  8) & 0xFF);
 						const int cd = ((aplane[y][z] >> 16) & 0xFF);
-						const uint8_t b = aplane[y][z] & 0xFF;
+						const u8 b = aplane[y][z] & 0xFF;
 						chunkAddRight(c,b,x,y,z,cw,ch,cd);
 					}
 					if(bplane[y][z]){
 						const int ch = ((bplane[y][z] >>  8) & 0xFF);
 						const int cd = ((bplane[y][z] >> 16) & 0xFF);
-						const uint8_t b = bplane[y][z] & 0xFF;
+						const u8 b = bplane[y][z] & 0xFF;
 						chunkAddLeft(c,b,x,y,z,cw,ch,cd);
 					}
 				}
@@ -357,7 +357,7 @@ void chunkGenMesh(chunk *c) {
 	c->ready |= 1;
 }
 
-void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,uint8_t block){
+void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
 	for(int cx=x;cx<gx;cx++){
 		for(int cy=y;cy<gy;cy++){
 			for(int cz=z;cz<gz;cz++){
@@ -368,7 +368,7 @@ void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,uint8_t block){
 	c->ready &= ~15;
 }
 
-void chunkSetB(chunk *c,int x,int y,int z,uint8_t block){
+void chunkSetB(chunk *c,int x,int y,int z,u8 block){
 	c->data[x&0xF][y&0xF][z&0xF] = block;
 	c->ready &= ~15;
 }

@@ -43,7 +43,7 @@ void chunkFree(chunk *c){
 }
 
 u8 *chunkSave(chunk *c, u8 *buf){
-	if((c->clientsUpdated & ((uint64_t)1 << 31)) != 0){return buf;}
+	if((c->clientsUpdated & ((u64)1 << 31)) != 0){return buf;}
 	buf[0] = 0x01;
 	buf[1] = (c->x >> 4)&0xF;
 	buf[2] = (c->y >> 4)&0xF;

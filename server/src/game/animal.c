@@ -92,7 +92,7 @@ float animalClosestAnimal(animal *e, animal **cAnim, int typeFilter){
 }
 
 void animalCheckSuffocation(animal *e){
-	const uint8_t cb = worldGetB(e->pos.x,e->pos.y,e->pos.z);
+	const u8 cb = worldGetB(e->pos.x,e->pos.y,e->pos.z);
 	if(cb != 0){
 		if(rngValM(128) == 0){e->health--;}
 		const blockCategory cc = blockTypeGetCat(cb);
@@ -106,8 +106,8 @@ void animalCheckSuffocation(animal *e){
 
 void animalCheckForHillOrCliff(animal *e){
 	vec caDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->gvel,vecNew(1,0,1))),0.5f));
-	const uint8_t cb = worldGetB(caDir.x,caDir.y,caDir.z);
-	const uint8_t ub = worldGetB(caDir.x,caDir.y+1,caDir.z);
+	const u8 cb = worldGetB(caDir.x,caDir.y,caDir.z);
+	const u8 ub = worldGetB(caDir.x,caDir.y+1,caDir.z);
 	if((cb != 0) && (ub == 0) && (fabsf(e->vel.y)<0.01f)){
 		if(!(e->flags & ANIMAL_FALLING)){
 			e->vel.y = 0.03f;
@@ -181,7 +181,7 @@ void animalSLoiter(animal *e){
 	}
 
 	if(e->hunger < 64){
-		const uint8_t cb = worldGetB(e->pos.x,e->pos.y-.6f,e->pos.z);
+		const u8 cb = worldGetB(e->pos.x,e->pos.y-.6f,e->pos.z);
 		if((cb == 2) && (rngValM(128) == 0)){
 			worldSetB(e->pos.x,e->pos.y-.6f,e->pos.z,1);
 			e->hunger += 48;
@@ -456,8 +456,8 @@ uint animalSyncPlayer(int c, uint offset){
 }
 
 void *animalSave(const animal *e, void *buf){
-	uint8_t *b = (uint8_t *)buf;
-	float   *f = (float   *)buf;
+	u8    *b = (u8    *)buf;
+	float *f = (float *)buf;
 
 	b[ 0] = 0x03;
 	b[ 1] = e->flags;

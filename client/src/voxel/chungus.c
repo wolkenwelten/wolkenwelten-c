@@ -13,16 +13,16 @@
 #include <string.h>
 
 chungus chungusList[1<<9];
-int chungusCount=0;
+uint chungusCount=0;
 chungus *chungusFirstFree = NULL;
 
-int chungusGetActiveCount(){
+uint chungusGetActiveCount(){
 	return chungusCount;
 }
-void chungusSetActiveCount(int i){
+void chungusSetActiveCount(uint i){
 	chungusCount = i;
 }
-chungus *chungusGetActive(int i){
+chungus *chungusGetActive(uint i){
 	return &chungusList[i];
 }
 
@@ -109,7 +109,7 @@ chunk *chungusGetChunkOrNew(chungus *c, int x, int y, int z){
 	return chnk;
 }
 
-uint8_t chungusGetB(chungus *c, int x,int y,int z){
+u8 chungusGetB(chungus *c, int x,int y,int z){
 	chunk *chnk;
 	if(((x|y|z)>>4)&(~0xF)){return 0;}
 	chnk = c->chunks[x>>4][y>>4][z>>4];
@@ -117,7 +117,7 @@ uint8_t chungusGetB(chungus *c, int x,int y,int z){
 	return chnk->data[x&0xF][y&0xF][z&0xF];
 }
 
-void chungusSetB(chungus *c, int x,int y,int z,uint8_t block){
+void chungusSetB(chungus *c, int x,int y,int z,u8 block){
 	chunk *chnk;
 	if((x|y|z)&(~0xFF)){return;}
 	int cx = (x >> 4) & 0xF;
@@ -130,7 +130,7 @@ void chungusSetB(chungus *c, int x,int y,int z,uint8_t block){
 	chunkSetB(chnk,x,y,z,block);
 }
 
-void chungusBoxF(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
+void chungusBoxF(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 	const int gx = (x+w)>>4;
 	const int gy = (y+h)>>4;
 	const int gz = (z+d)>>4;
@@ -167,7 +167,7 @@ void chungusBoxF(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block)
 	}
 }
 
-void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
+void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 	for(int cx=0;cx<w;cx++){
 		for(int cy=0;cy<h;cy++){
 			for(int cz=0;cz<d;cz++){

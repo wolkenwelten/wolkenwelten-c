@@ -87,7 +87,7 @@ void calcFOV(const character *cam){
 }
 
 vec calcShake(const character *cam){
-	static uint64_t ticks=0;
+	static u64 ticks=0;
 	if(cam->shake < 0.001f){return vecZero();}
 	float deg = ((float)++ticks)*0.4f;
 	const float   yaw = sin(deg*1.3f)*(cam->shake/2.f);

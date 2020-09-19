@@ -1,9 +1,9 @@
 #pragma once
-#include <stdint.h>
+#include "../stdint.h"
 
 #pragma pack(push, 1)
 typedef struct {
-	uint32_t typesize;
+	u32 typesize;
 
 	/*
 	 *  type     = typesize & 0xFF
@@ -11,32 +11,32 @@ typedef struct {
 	 */
 
 	union {
-		float    f[1030];
-		int32_t  i[1030];
-		uint32_t u[1030];
-		uint16_t s[2060];
-		uint8_t  c[4120];
+		float f[1030];
+		i32   i[1030];
+		u32   u[1030];
+		u16   s[2060];
+		u8    c[4120];
 	} val;
 } packet;
 
 #pragma pack(pop)
-inline unsigned int alignedLen(unsigned int size){
+inline uint alignedLen(uint size){
 	if(size & 0x3){
 		return (size & (~0x3))+4;
 	}else{
 		return (size & (~0x3));
 	}
 }
-inline unsigned int packetLen(const packet *p){
+inline uint packetLen(const packet *p){
 	return p->typesize >> 10;
 }
-inline unsigned int packetType(const packet *p){
+inline uint packetType(const packet *p){
 	return p->typesize & 0xFF;
 }
-inline void packetSet(packet *p, uint8_t ptype, uint32_t len){
-	p->typesize = (uint32_t)ptype | (len << 10);
+inline void packetSet(packet *p, u8 ptype, u32 len){
+	p->typesize = (u32)ptype | (len << 10);
 }
 
-void packetQueue         (packet *p, uint8_t ptype, uint32_t len, int c);
-void packetQueueExcept   (packet *p, uint8_t ptype, uint32_t len, int c);
-void packetQueueToServer (packet *p, uint8_t ptype, uint32_t len);
+void packetQueue         (packet *p, u8 ptype, u32 len, int c);
+void packetQueueExcept   (packet *p, u8 ptype, u32 len, int c);
+void packetQueueToServer (packet *p, u8 ptype, u32 len);

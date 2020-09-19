@@ -69,8 +69,8 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 	float minPlayerDist =    100.f;
 	vec v,c = pb;
 
-	uint32_t pac  = 0xD0000000 | ((0x50 + rngValM(0x40)) << 16) | ((0x30 + rngValM(0x40)) << 8) | (0xE0 + rngValM(0x1F));
-	uint32_t pbc  = pac + 0x00202000;
+	u32 pac  = 0xD0000000 | ((0x50 + rngValM(0x40)) << 16) | ((0x30 + rngValM(0x40)) << 8) | (0xE0 + rngValM(0x1F));
+	u32 pbc  = pac + 0x00202000;
 	int      ttl  = MIN(128,MAX(48,48 * damageMultiplier));
 
 	sfxPlay(sfxPhaser,MAX(0.5f,damageMultiplier));

@@ -124,7 +124,7 @@ void chungusLoad(chungus *c){
 
 void chungusSave(chungus *c){
 	if(c == NULL)                                      { return; }
-	if((c->clientsUpdated & ((uint64_t)1 << 31)) != 0) { return; }
+	if((c->clientsUpdated & ((u64)1 << 31)) != 0) { return; }
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
 
@@ -155,7 +155,7 @@ void chungusSave(chungus *c){
 		written += fwrite(compressedBuffer+written,1,len-written,fp);
 		if(written >= len){
 			fclose(fp);
-			c->clientsUpdated |= ((uint64_t)1 << 31);
+			c->clientsUpdated |= ((u64)1 << 31);
 			return;
 		}
 	}
@@ -183,13 +183,13 @@ chungus *chungusNew(int x, int y, int z){
 	c->nextFree = NULL;
 	c->spawnx = c->spawny = c->spawnz = -1;
 	c->clientsSubscribed  = 0;
-	c->clientsUpdated     = (uint64_t)1 << 31;
+	c->clientsUpdated     = (u64)1 << 31;
 
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 	worldgen *wgen = worldgenNew(c);
 	worldgenGenerate(wgen);
 	worldgenFree(wgen);
-	chungusSetClientUpdated(c,(uint64_t)1 << 31);
+	chungusSetClientUpdated(c,(u64)1 << 31);
 	chungusLoad(c);
 
 	return c;
@@ -236,7 +236,7 @@ int chungusGetHighestP(chungus *c, int x, int *retY, int z){
 		chunk *chnk = c->chunks[cx][cy][cz];
 		if(chnk == NULL){continue;}
 		for(int y=CHUNK_SIZE-1;y>=0;y--){
-			uint8_t b = chnk->data[x&0xF][y&0xF][z&0xF];
+			u8 b = chnk->data[x&0xF][y&0xF][z&0xF];
 			if(b != 0){
 				*retY = (cy*CHUNK_SIZE)+y;
 				return 1;
@@ -366,7 +366,7 @@ void chungusSubscribePlayer(chungus *c, uint p){
 
 int chungusUnsubscribePlayer(chungus *c, uint p){
 	if(c == NULL){return 0;}
-	uint32_t mask = ~(1 << p);
+	u32 mask = ~(1 << p);
 
 	c->clientsSubscribed &= mask;
 	c->clientsUpdated    &= mask;
