@@ -3,6 +3,7 @@
 #include "../main.h"
 #include "../game/entity.h"
 #include "../network/server.h"
+#include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/common.h"
@@ -71,7 +72,8 @@ void itemDropNewC(const packet *p){
 	itemDrop *id = itemDropNew();
 	if(id == NULL){return;}
 
-	id->ent        = entityNew(vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]));
+	id->ent        = entityNew(vecNewP(&p->val.f[0]),vecZero());
+	id->ent->vel   = vecNewP(&p->val.f[3]);
 	id->itm.ID     = p->val.i[6];
 	id->itm.amount = p->val.i[7];
 }
@@ -97,10 +99,49 @@ bool itemDropCheckPickup(uint d){
 	return false;
 }
 
+int itemDropCheckSubmersion(uint i){
+	entity *e = itemDrops[i].ent;
+	if(e == NULL){return 0;}
+	if(worldGetB(e->pos.x,e->pos.y,e->pos.z) == 0){return 0;}
+
+	for(int a=0;a<6;a++){
+		int xo=0,yo=0,zo=0;
+		switch(a){
+			case 0: yo= 1; break;
+			case 1: xo= 1; break;
+			case 2: xo=-1; break;
+			case 3: zo= 1; break;
+			case 4: zo=-1; break;
+			case 5: yo=-1; break;
+		}
+		if(worldGetB(e->pos.x+xo,e->pos.y+yo,e->pos.z+zo) == 0){
+			e->pos = vecAdd(e->pos,vecNew(xo,yo,zo));
+			addPriorityItemDrop(i);
+			return 0;
+		}
+	}
+
+	for(int x=-1;x<2;x++){
+		if(x == 0){continue;}
+		for(int y=1;y>-2;y--){
+			if(y == 0){continue;}
+			for(int z=-1;z<2;z++){
+				if(z == 0){continue;}
+				if(worldGetB(e->pos.x+x,e->pos.y+y,e->pos.z+z) == 0){
+					e->pos = vecAdd(e->pos,vecNew(x,y,z));
+					addPriorityItemDrop(i);
+					return 0;
+				}
+			}
+		}
+	}
+	return 1;
+}
+
 void itemDropUpdate(){
 	const u64 mask = ~((u64)1 << 31);
 
-	for(uint i=0;i<itemDropCount;i++){
+	for(uint i=itemDropCount-1;i<itemDropCount;i--){
 		int oldp,newp;
 		entity *e     = itemDrops[i].ent;
 		chungus *oldc = e->curChungus;
@@ -116,8 +157,8 @@ void itemDropUpdate(){
 		if((oldp != newp) && (e->curChungus != NULL)){
 			e->curChungus->clientsUpdated &= mask;
 		}
-		if(itemDropCheckPickup(i) || (e->pos.y < -256)){
-			itemDropDel(i--);
+		if(itemDropCheckSubmersion(i) || itemDropCheckPickup(i) || (e->pos.y < -256)){
+			itemDropDel(i);
 			continue;
 		}
 	}
