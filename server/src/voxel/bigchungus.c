@@ -225,8 +225,16 @@ void bigchungusFreeFarChungi(bigchungus *c){
 		int z = (int)chng->z>>8;
 		if((x >= 127) && (x <= 129) && (y >= 1) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
 
+		const vec cpos = vecNew(x,y,z);
 		for(uint ii=0;ii<clientCount;++ii){
-			if(chungusRoughDistance(clients[ii].c,vecNew(x,y,z)) < 768.f){ goto chungiDontFree; }
+			const float cdist = chungusRoughDistance(clients[ii].c,cpos);
+			if(cdist < 384.f){
+				chungusSubscribePlayer(chng,ii);
+				goto chungiDontFree;
+			}else if(cdist < 768.f){
+				chungusUnsubscribePlayer(chng,ii);
+				goto chungiDontFree;
+			}
 		}
 		chungusFree(c->chungi[x][y][z]);
 		c->chungi[x][y][z] = NULL;
