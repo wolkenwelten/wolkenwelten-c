@@ -4,7 +4,7 @@
 #include "../game/blockType.h"
 #include "../game/character.h"
 
-mesh *getMeshDefault(item *cItem){
+mesh *getMeshDefault(const item *cItem){
 	int ID = cItem->ID;
 	if(ID < 256){
 		if(!blockTypeValid(ID)){ return NULL; }
@@ -12,12 +12,12 @@ mesh *getMeshDefault(item *cItem){
 	}
 	return NULL;
 }
-int damageDefault(item *cItem){
+int damageDefault(const item *cItem){
 	(void)cItem;
 
 	return 1;
 }
-int blockDamageDefault(item *cItem, blockCategory blockCat){
+int blockDamageDefault(const item *cItem, blockCategory blockCat){
 	(void)cItem;
 	(void)blockCat;
 
@@ -43,29 +43,29 @@ bool tertiaryActionDefault(item *cItem, character *cChar, int to){
 
 	return false;
 }
-bool hasPrimaryActionDefault(item *cItem){
+bool hasPrimaryActionDefault(const item *cItem){
 	(void)cItem;
 
 	return false;
 }
-float getInaccuracyDefault(item *cItem){
+float getInaccuracyDefault(const item *cItem){
 	(void)cItem;
 
 	return 4.f;
 }
-int getAmmunitionDefault(item *cItem){
+int getAmmunitionDefault(const item *cItem){
 	int ID = cItem->ID;
 	if(ID < 256){
 		return ID;
 	}
 	return 0;
 }
-int getStackSizeDefault (item *cItem){
+int getStackSizeDefault (const item *cItem){
 	(void)cItem;
 
 	return 99;
 }
-int getMagSizeDefault(item *cItem){
+int getMagSizeDefault(const item *cItem){
 	(void)cItem;
 	return 0;
 }

@@ -10,6 +10,7 @@
 #include "gui/gui.h"
 #include "gui/menu.h"
 #include "gui/inventory.h"
+#include "gui/overlay.h"
 #include "game/animal.h"
 #include "game/blockType.h"
 #include "game/blockMining.h"

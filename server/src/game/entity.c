@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-entity entityList[1<<14];
-int entityCount = 0;
+entity  entityList[1<<14];
+uint    entityCount = 0;
 entity *entityFirstFree = NULL;
 
 entity *entityNew(const vec pos, const vec rot){
@@ -37,7 +37,7 @@ void entityFree(entity *e){
 }
 
 void entityUpdateAll(){
-	for(int i=0;i<entityCount;i++){
+	for(uint i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL){ continue; }
 		if(!(entityList[i].flags & ENTITY_UPDATED)){
 			entityUpdate(&entityList[i]);

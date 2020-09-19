@@ -10,7 +10,7 @@ void entityReset(entity *e){
 	memset(e,0,sizeof(entity));
 }
 
-uint32_t entityCollision(const vec c){
+u32 entityCollision(const vec c){
 	uint32_t col = 0;
 
 	if(checkCollision(c.x-0.3f,c.y     ,c.z     )){col |= 0x100;}

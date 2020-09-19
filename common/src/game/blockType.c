@@ -28,11 +28,11 @@ blockCategory blockTypeGetCat(u8 b){
 	return blocks[b].cat;
 }
 
-uint16_t blockTypeGetTexX(u8 b, int side){
+u16 blockTypeGetTexX(u8 b, int side){
 	return blocks[b].texX[side];
 }
 
-uint16_t blockTypeGetTexY(u8 b, int side){
+u16 blockTypeGetTexY(u8 b, int side){
 	return blocks[b].texY[side];
 }
 
@@ -40,7 +40,7 @@ mesh *blockTypeGetMesh(u8 b){
 	return blocks[b].singleBlock;
 }
 
-uint32_t blockTypeGetParticleColor(u8 b) {
+u32 blockTypeGetParticleColor(u8 b) {
 	return blocks[b].color[rngValR()&1];
 }
 

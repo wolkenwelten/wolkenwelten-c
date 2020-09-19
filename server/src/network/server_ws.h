@@ -1,8 +1,8 @@
 #pragma once
-#include <stdint.h>
+#include "../../../common/src/common.h"
 
-const char *base64_encode            (const unsigned char *data,unsigned int input_length,const char *prefix);
-void serverParseWebSocketPacket      (int c);
-void serverParseWebSocketHeaderField (int c,const char *key, const char *val);
-void serverParseWebSocketHeader      (int c,int end);
-int  addWSMessagePrefix              (uint8_t *d, int len, int maxlen);
+const char *base64_encode            (const u8 *data,uint input_length,const char *prefix);
+void serverParseWebSocketPacket      (uint c);
+void serverParseWebSocketHeaderField (uint c,const char *key, const char *val);
+void serverParseWebSocketHeader      (uint c,uint end);
+int  addWSMessagePrefix              (u8 *d, uint len, uint maxlen);

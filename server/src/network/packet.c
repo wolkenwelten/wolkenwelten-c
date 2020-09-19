@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-void packetQueue(packet *p, uint8_t ptype, unsigned int len, int c){
+void packetQueue(packet *p, u8 ptype, uint len, int c){
 	p->typesize = (len << 10) | (ptype);
 	if(c >= 0){
 		sendToClient(c,p,len+4);
@@ -13,12 +13,12 @@ void packetQueue(packet *p, uint8_t ptype, unsigned int len, int c){
 	}
 }
 
-void packetQueueExcept(packet *p, uint8_t ptype, unsigned int len, int c){
+void packetQueueExcept(packet *p, u8 ptype, uint len, int c){
 	p->typesize = (len << 10) | (ptype);
 	sendToAllExcept(c,p,len+4);
 }
 
-void packetQueueToServer(packet *p, uint8_t ptype, unsigned int len){
+void packetQueueToServer(packet *p, u8 ptype, uint len){
 	(void)p;
 	(void)ptype;
 	(void)len;

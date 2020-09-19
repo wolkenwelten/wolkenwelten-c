@@ -11,19 +11,19 @@
 #include <stdlib.h>
 
 typedef struct {
-		entity *ent;
-		int ticksLeft;
-		float pwr;
+	entity *ent;
+	int     ticksLeft;
+	float   pwr;
 } grenade;
 
 grenade grenadeList[512];
-int     grenadeCount = 0;
+uint    grenadeCount = 0;
 
 void explode(const vec pos, float pw, int style){
 	entity *exEnt;
 	worldBoxMineSphere(pos.x,pos.y,pos.z,pw*4.f);
 
-	for(int i=0;i<entityCount;i++){
+	for(uint i=0;i<entityCount;i++){
 		exEnt = &entityList[i];
 		const vec d      = vecSub(pos,exEnt->pos);
 		const float dist = vecMag(d);
@@ -34,17 +34,17 @@ void explode(const vec pos, float pw, int style){
 	msgGrenadeExplode(pos, pw, style);
 }
 
-void grenadeExplode(int g){
+void grenadeExplode(uint g){
 	entity *ent = grenadeList[g].ent;
 	explode(ent->pos,grenadeList[g].pwr,0);
 }
 
 void grenadeNewP(const packet *p){
-	int g       = grenadeCount++;
-	float speed = 0.12f;
+	int g         = grenadeCount++;
+	float speed   = 0.12f;
 	const vec pos = vecNewP(&p->val.f[0]);
 	const vec rot = vecNewP(&p->val.f[3]);
-	float pwr   = p->val.f[6];
+	float pwr     = p->val.f[6];
 
 	grenadeList[g].ent = entityNew(pos,rot);
 	if(pwr < 1.5f){
@@ -56,7 +56,7 @@ void grenadeNewP(const packet *p){
 }
 
 void grenadeUpdate(){
-	for(int i=0;i<grenadeCount;i++){
+	for(uint i=0;i<grenadeCount;i++){
 		entityUpdate(grenadeList[i].ent);
 		if((--grenadeList[i].ticksLeft == 0) || (grenadeList[i].ent->pos.y < -256)){
 			grenadeExplode(i);
@@ -66,11 +66,11 @@ void grenadeUpdate(){
 	}
 }
 
-void grenadeUpdatePlayer(int c){
+void grenadeUpdatePlayer(uint c){
 	if(grenadeCount == 0){
 		msgGrenadeUpdate(c,vecZero(),vecZero(),0,0);
 	}else{
-		for(int i=0;i<grenadeCount;i++){
+		for(uint i=0;i<grenadeCount;i++){
 			msgGrenadeUpdate(
 				c,
 				grenadeList[i].ent->pos,
@@ -82,12 +82,12 @@ void grenadeUpdatePlayer(int c){
 	}
 }
 
-void beamblastNewP(int c, const packet *p){
-	float yaw = p->val.f[3];
-	float pitch = p->val.f[4];
-	float speed = 0.1f;
-	int hitsLeft = p->val.i[8];
-	float beamSize = p->val.f[5];
+void beamblastNewP(uint c, const packet *p){
+	float yaw              = p->val.f[3];
+	float pitch            = p->val.f[4];
+	float speed            = 0.1f;
+	int hitsLeft           = p->val.i[8];
+	float beamSize         = p->val.f[5];
 	float damageMultiplier = p->val.f[6];
 	float recoilMultiplier = p->val.f[7];
 

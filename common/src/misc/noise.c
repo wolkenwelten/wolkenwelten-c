@@ -3,25 +3,25 @@
 #include <stdio.h>
 #include <string.h>
 
-unsigned char tmp[256][256];
+u8 tmp[256][256];
 
-inline void addh(int x, int y,unsigned char h, unsigned char heightmap[256][256]){
+static inline void addh(uint x, uint y,u8 h, u8 heightmap[256][256]){
 	heightmap[x&0xFF][y&0xFF] += h;
 }
 
-inline unsigned char gett(int x,int y){
+static inline u8 gett(uint x,uint y){
 	return tmp[x&0xFF][y&0xFF];
 }
 
-inline unsigned char interpolate(float v1,float v2,float d){
-	return (unsigned char)((v1*(1.0-d))+(v2*d));
+static inline u8 interpolate(float v1,float v2,float d){
+	return (u8)((v1*(1.0-d))+(v2*d));
 }
 
-void dumpHeightmap(unsigned char heightmap[256][256]){
+static void dumpHeightmap(u8 heightmap[256][256]){
 	printf("------------------------------------------------------------\n");
 	for(int y=0;y<256;y++){
 		for(int x=0;x<256;x++){
-			const unsigned char h = heightmap[x][y];
+			const u8 h = heightmap[x][y];
 			if(h > 192){
 				putchar('M');
 			}else if(h > 128){
@@ -40,7 +40,7 @@ void dumpHeightmap(unsigned char heightmap[256][256]){
 	putchar('\n');
 }
 
-void perlin_step(int size,int amp,float steep, unsigned char heightmap[256][256]){
+void perlin_step(uint size,uint amp,float steep, u8 heightmap[256][256]){
 	if(amp==0){return;}
 
 	for(int x=0;x<256/size;x++){
@@ -57,9 +57,9 @@ void perlin_step(int size,int amp,float steep, unsigned char heightmap[256][256]
 			for(int y=0;y<size;y++){
 				for(int x=0;x<size;x++){
 					const float d = ((float)x)/((float)size);
-					const unsigned char h1 = interpolate(gett(xs,ys  ),gett(xs+1,ys  ),d);
-					const unsigned char h2 = interpolate(gett(xs,ys+1),gett(xs+1,ys+1),d);
-					const unsigned char  h = interpolate(h1,h2,((float)y)/((float)size));
+					const u8 h1 = interpolate(gett(xs,ys  ),gett(xs+1,ys  ),d);
+					const u8 h2 = interpolate(gett(xs,ys+1),gett(xs+1,ys+1),d);
+					const u8  h = interpolate(h1,h2,((float)y)/((float)size));
 					addh(x+(xs*size),y+(ys*size),h,heightmap);
 				}
 			}
@@ -70,8 +70,8 @@ void perlin_step(int size,int amp,float steep, unsigned char heightmap[256][256]
 	}
 }
 
-void generateNoise(unsigned int seed, unsigned char heightmap[256][256]){
-	unsigned int oldSeed = getRNGSeed();
+void generateNoise(u64 seed, u8 heightmap[256][256]){
+	u64 oldSeed = getRNGSeed();
 	memset(heightmap,0,256*256);
 	memset(tmp,0,sizeof(tmp));
 
@@ -81,12 +81,12 @@ void generateNoise(unsigned int seed, unsigned char heightmap[256][256]){
 	//dumpHeightmap(heightmap);
 }
 
-void prefill_noise(unsigned char heightmap[256][256], int x, int y, unsigned char parent[256][256]){
-	unsigned char h1 = parent[ x   &0xFF][ y   &0xFF];
-	unsigned char h2 = parent[(x+1)&0xFF][ y   &0xFF];
-	unsigned char h3 = parent[ x   &0xFF][(y+1)&0xFF];
-	unsigned char h4 = parent[(x+1)&0xFF][(y+1)&0xFF];
-	
+void prefill_noise(u8 heightmap[256][256], uint x, uint y, u8 parent[256][256]){
+	u8 h1 = parent[ x   &0xFF][ y   &0xFF];
+	u8 h2 = parent[(x+1)&0xFF][ y   &0xFF];
+	u8 h3 = parent[ x   &0xFF][(y+1)&0xFF];
+	u8 h4 = parent[(x+1)&0xFF][(y+1)&0xFF];
+
 	for(int cx=0;cx<256;cx++){
 		for(int cy=0;cy<256;cy++){
 			const float d = (float)cx / 256.f;
@@ -98,8 +98,8 @@ void prefill_noise(unsigned char heightmap[256][256], int x, int y, unsigned cha
 	}
 }
 
-void generateNoiseZoomed(unsigned int seed, unsigned char heightmap[256][256], int x, int y, unsigned char parent[256][256]){
-	unsigned int oldSeed = getRNGSeed();
+void generateNoiseZoomed(u64 seed, u8 heightmap[256][256], uint x, uint y, u8 parent[256][256]){
+	u64 oldSeed = getRNGSeed();
 	//fprintf(stderr,"parent[%i][%i] = %i\n",x,y,parent[x][y]);
 	prefill_noise(heightmap,x,y,parent);
 	memset(heightmap,parent[x][y],256*256);

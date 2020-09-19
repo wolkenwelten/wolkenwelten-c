@@ -1,14 +1,14 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-extern int   itemDropCount;
+extern uint  itemDropCount;
 
-void         itemDropNewP         (const vec pos, const item *itm);
-void         itemDropNewC         (const packet *p);
-void         itemDropUpdate       ();
-void         itemDropDel          (int d);
-void         itemDropIntro        (int c);
-void        *itemDropSaveChungus  (chungus *c, void *buf);
-void         itemDropDelChungus   (chungus *c);
-void        *itemDropLoad         (void *buf);
-unsigned int itemDropUpdatePlayer (int c, unsigned int offset);
+      void   itemDropNewP         (const vec pos, const item *itm);
+      void   itemDropNewC         (const packet *p);
+      void   itemDropUpdate       ();
+      void   itemDropDel          (uint d);
+      void   itemDropIntro        (uint c);
+      void  *itemDropSaveChungus  (const chungus *c, void *buf);
+      void   itemDropDelChungus   (const chungus *c);
+const void  *itemDropLoad         (const void *buf);
+uint         itemDropUpdatePlayer (uint c, uint offset);

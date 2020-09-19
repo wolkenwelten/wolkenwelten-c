@@ -12,9 +12,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-animal       animalList[1<<10];
-unsigned int animalCount = 0;
-animal      *animalFirstFree = NULL;
+animal  animalList[1<<10];
+uint    animalCount = 0;
+animal *animalFirstFree = NULL;
 
 #define ANIMALS_PER_UPDATE 16u
 
@@ -65,7 +65,7 @@ void animalUpdateAll(){
 float animalClosestPlayer(animal *e, character **cChar){
 	*cChar = NULL;
 	float ret = 4096.f;
-	for(int i=0;i<clientCount;++i){
+	for(uint i=0;i<clientCount;++i){
 		if(clients[i].c == NULL){continue;}
 		const float d = vecMag(vecSub(clients[i].c->pos,e->pos));
 		if(d < ret){
@@ -455,7 +455,7 @@ uint animalSyncPlayer(int c, uint offset){
 	return offset;
 }
 
-void *animalSave(animal *e, void *buf){
+void *animalSave(const animal *e, void *buf){
 	uint8_t *b = (uint8_t *)buf;
 	float   *f = (float   *)buf;
 
@@ -487,9 +487,9 @@ void *animalSave(animal *e, void *buf){
 	return b+12*4;
 }
 
-void *animalLoad(void *buf){
-	uint8_t *b = (uint8_t *)buf;
-	float   *f = (float   *)buf;
+const void *animalLoad(const void *buf){
+	u8 *b     = (u8 *)buf;
+	float *f  = (float   *)buf;
 	animal *e = animalNew(vecNewP(&f[3]),b[2]);
 	if(e == NULL){return b+12*4;}
 
@@ -509,7 +509,7 @@ void *animalLoad(void *buf){
 	return b+12*4;
 }
 
-void *animalSaveChungus(chungus *c,void *b){
+void *animalSaveChungus(const chungus *c,void *b){
 	if(c == NULL){return b;}
 	for(uint i=0;i<animalCount;i++){
 		if(animalList[i].curChungus != c){continue;}
@@ -518,7 +518,7 @@ void *animalSaveChungus(chungus *c,void *b){
 	return b;
 }
 
-void animalDelChungus(chungus *c){
+void animalDelChungus(const chungus *c){
 	if(c == NULL){return;}
 	for(int i=animalCount-1;i>=0;i--){
 		if(animalList[i].curChungus != c){continue;}

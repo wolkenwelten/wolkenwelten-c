@@ -7,12 +7,12 @@
 #include <stdio.h>
 #include <string.h>
 
-chunk chunkList[1 << 18];
-unsigned int chunkFreeCount = 0;
-unsigned int chunkCount     = 0;
+chunk  chunkList[1 << 18];
+uint   chunkFreeCount = 0;
+uint   chunkCount     = 0;
 chunk *chunkFirstFree       = NULL;
 
-chunk *chunkNew(uint16_t x,uint16_t y,uint16_t z){
+chunk *chunkNew(u16 x,u16 y,u16 z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){
 		if(chunkCount >= (int)(sizeof(chunkList) / sizeof(chunk))-1){
@@ -29,8 +29,8 @@ chunk *chunkNew(uint16_t x,uint16_t y,uint16_t z){
 	c->y = y & (~0xF);
 	c->z = z & (~0xF);
 	c->nextFree = NULL;
-	c->clientsUpdated = (uint64_t)1 << 31;
-	
+	c->clientsUpdated = (u64)1 << 31;
+
 	memset(c->data,0,sizeof(c->data));
 	return c;
 }
@@ -42,7 +42,7 @@ void chunkFree(chunk *c){
 	chunkFirstFree = c;
 }
 
-uint8_t *chunkSave(chunk *c, uint8_t *buf){
+u8 *chunkSave(chunk *c, u8 *buf){
 	if((c->clientsUpdated & ((uint64_t)1 << 31)) != 0){return buf;}
 	buf[0] = 0x01;
 	buf[1] = (c->x >> 4)&0xF;
@@ -52,7 +52,7 @@ uint8_t *chunkSave(chunk *c, uint8_t *buf){
 	return buf+4100;
 }
 
-void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,uint8_t block){
+void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
 	for(int cx=x;cx<gx;cx++){
 		for(int cy=y;cy<gy;cy++){
 			for(int cz=z;cz<gz;cz++){
@@ -63,27 +63,27 @@ void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,uint8_t block){
 	c->clientsUpdated = 0;
 }
 
-void chunkSetB(chunk *c,int x,int y,int z,uint8_t block){
+void chunkSetB(chunk *c,int x,int y,int z,u8 block){
 	c->data[x&0xF][y&0xF][z&0xF] = block;
 	c->clientsUpdated = 0;
 }
 
-void chunkFill(chunk *c, uint8_t b){
+void chunkFill(chunk *c, u8 b){
 	memset(c->data,b,CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE);
 	c->clientsUpdated = 0;
 }
 
-unsigned int chunkGetFree(){
+uint chunkGetFree(){
 	return chunkFreeCount;
 }
-unsigned int chunkGetActive(){
+uint chunkGetActive(){
 	return chunkCount;
 }
-int chunkIsUpdated(chunk *c, int p){
+int chunkIsUpdated(chunk *c, uint p){
 	if(c == NULL){return 1;}
 	return c->clientsUpdated & (1 << p);
 }
-void chunkSetUpdated(chunk *c, int p){
+void chunkSetUpdated(chunk *c, uint p){
 	if(c == NULL){return;}
 	c->clientsUpdated |= 1 << p;
 }

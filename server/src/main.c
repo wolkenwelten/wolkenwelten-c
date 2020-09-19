@@ -43,7 +43,7 @@ char *ansiColors[16] = {
 	"\033[1;37m"
 };
 
-uint64_t getMillis(){
+u64 getMillis(){
 	struct timeval tv;
 	gettimeofday(&tv,NULL);
 	return (tv.tv_usec / 1000) + (tv.tv_sec * 1000);
@@ -97,8 +97,8 @@ void thinkStep(){
 }
 
 void updateWorld(){
-	static uint64_t lastUpdate = 0;
-	static uint64_t lastThought = 0;
+	static u64 lastUpdate = 0;
+	static u64 lastThought = 0;
 	if(lastUpdate == 0){lastUpdate = getMillis();}
 	for(;lastUpdate+5 < getMillis();lastUpdate+=5){
 		updateWorldStep();

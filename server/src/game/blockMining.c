@@ -15,17 +15,15 @@
 typedef struct {
 	int x,y,z;
 	int damage;
-	uint8_t b;
+	u8  b;
 	int wasMined;
 } blockMining;
 
 blockMining blockMiningList[128];
-int         blockMiningCount = 0;
+uint        blockMiningCount = 0;
 
 int blockMiningNew(int x,int y,int z){
-	uint8_t b = worldGetB(x,y,z);
 	blockMining *bm;
-	if(b == 0){return -1;}
 	bm = &blockMiningList[blockMiningCount++];
 	bm->x = x;
 	bm->y = y;
@@ -42,7 +40,7 @@ float blockMiningGetProgress(blockMining *bm){
 }
 
 void blockMiningDropItemsPos(int x, int y, int z, uint8_t b){
-	uint16_t ID = b;
+	u16 ID = b;
 	if(b == 0){return;}
 	if(b == 7){return;}  // Roots
 	if(b == 2){ID = 1;}  // Grass
@@ -70,7 +68,7 @@ void blockMiningDropItems(blockMining *bm){
 	blockMiningDropItemsPos(bm->x,bm->y,bm->z,bm->b);
 }
 
-void blockMiningMine(int i, item *itm){
+void blockMiningMine(uint i, item *itm){
 	blockMining *bm = &blockMiningList[i];
 
 	bm->damage += blockDamageDispatch(itm,blockTypeGetCat(bm->b));
@@ -84,7 +82,7 @@ void blockMiningMine(int i, item *itm){
 }
 
 void blockMiningMinePos(item *itm, int x, int y, int z){
-	for(int i=0;i<blockMiningCount;i++){
+	for(uint i=0;i<blockMiningCount;i++){
 		blockMining *bm = &blockMiningList[i];
 		if(bm->x != x){continue;}
 		if(bm->y != y){continue;}
@@ -99,14 +97,14 @@ void blockMiningMinePos(item *itm, int x, int y, int z){
 }
 
 void blockMiningUpdate(){
-	for(int i=0;i<clientCount;++i){
+	for(uint i=0;i<clientCount;++i){
 		if(clients[i].c == NULL)          {continue;}
 		if(clients[i].c->blockMiningX < 0){continue;}
 		item *itm = characterGetItemBarSlot(clients[i].c,clients[i].c->activeItem);
 		blockMiningMinePos(itm,clients[i].c->blockMiningX,clients[i].c->blockMiningY,clients[i].c->blockMiningZ);
 	}
 
-	for(int i=0;i<blockMiningCount;++i){
+	for(uint i=0;i<blockMiningCount;++i){
 		blockMining *bm = &blockMiningList[i];
 		if(!bm->wasMined){
 			bm->damage -= blockTypeGetHP(bm->b) >> 5;
@@ -120,12 +118,12 @@ void blockMiningUpdate(){
 	}
 }
 
-void blockMiningUpdatePlayer(int c){
+void blockMiningUpdatePlayer(uint c){
 	if(blockMiningCount == 0){
 		msgBlockMiningUpdate(c,0,0,0,0,0,10);
 		return;
 	}
-	for(int i=0;i<blockMiningCount;++i){
+	for(uint i=0;i<blockMiningCount;++i){
 		const blockMining *bm = &blockMiningList[i];
 		msgBlockMiningUpdate(c,bm->x,bm->y,bm->z,bm->damage,blockMiningCount,i);
 	}

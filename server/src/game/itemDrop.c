@@ -19,11 +19,11 @@ typedef struct {
 } itemDrop;
 
 itemDrop itemDrops[1<<12];
-int      itemDropCount = 0;
+uint     itemDropCount = 0;
 
 #define ITEM_DROPS_PER_UPDATE 16
 
-inline void itemDropUpdateMsg(int c,unsigned int i){
+inline void itemDropUpdateMsg(uint c,uint i){
 	if(i >= 4096)                {return;}
 	if(itemDrops[i].ent == NULL) {return;}
 	msgItemDropUpdate(
@@ -37,18 +37,18 @@ inline void itemDropUpdateMsg(int c,unsigned int i){
 	);
 }
 
-unsigned int itemDropUpdatePlayer(int c, unsigned int offset){
-	const int max = MIN((int)(offset+ITEM_DROPS_PER_UPDATE),itemDropCount);
+uint itemDropUpdatePlayer(uint c, uint offset){
+	const uint max = MIN(offset+ITEM_DROPS_PER_UPDATE,itemDropCount);
 	if(itemDropCount == 0){msgItemDropUpdate(c,vecZero(),vecZero(),0,0,0,0);}
-	for(unsigned int i=0;i<clients[c].itemDropPriorityQueueLen;i++){
+	for(uint i=0;i<clients[c].itemDropPriorityQueueLen;i++){
 		itemDropUpdateMsg(c,clients[c].itemDropPriorityQueue[i]);
 	}
 	clients[c].itemDropPriorityQueueLen = 0;
-	for(int i=offset;i<max;i++){
+	for(uint i=offset;i<max;i++){
 		itemDropUpdateMsg(c,i);
 	}
 	offset += ITEM_DROPS_PER_UPDATE;
-	if((int)offset >= itemDropCount){offset=0;}
+	if(offset >= itemDropCount){offset=0;}
 	return offset;
 }
 
@@ -76,8 +76,7 @@ void itemDropNewC(const packet *p){
 	id->itm.amount = p->val.i[7];
 }
 
-void itemDropDel(int d){
-	if(d < 0)              {return;}
+void itemDropDel(uint d){
 	if(d >= itemDropCount) {return;}
 
 	entityFree(itemDrops[d].ent);
@@ -85,8 +84,8 @@ void itemDropDel(int d){
 	itemDrops[d]     = itemDrops[--itemDropCount];
 }
 
-bool itemDropCheckPickup(int d){
-	for(int i=0;i<clientCount;++i){
+bool itemDropCheckPickup(uint d){
+	for(uint i=0;i<clientCount;++i){
 		if(clients[i].c == NULL){continue;}
 		const vec dist = vecSub(clients[i].c->pos,itemDrops[d].ent->pos);
 		if(vecMag(dist) < (1.5f*1.5f)){
@@ -99,11 +98,11 @@ bool itemDropCheckPickup(int d){
 }
 
 void itemDropUpdate(){
-	const uint64_t mask = ~((uint64_t)1 << 31);
+	const u64 mask = ~((u64)1 << 31);
 
-	for(int i=0;i<itemDropCount;i++){
+	for(uint i=0;i<itemDropCount;i++){
 		int oldp,newp;
-		entity *e = itemDrops[i].ent;
+		entity *e     = itemDrops[i].ent;
 		chungus *oldc = e->curChungus;
 
 		oldp = ((int)e->pos.x&0xFF)|(((int)e->pos.y&0xFF)<<8)|(((int)e->pos.z&0xFF)<<16);
@@ -124,8 +123,8 @@ void itemDropUpdate(){
 	}
 }
 
-void itemDropIntro(int c){
-	for(int i=0;i<itemDropCount;i++){
+void itemDropIntro(uint c){
+	for(uint i=0;i<itemDropCount;i++){
 		msgItemDropUpdate(
 			c,
 			itemDrops[i].ent->pos,
@@ -138,10 +137,10 @@ void itemDropIntro(int c){
 	}
 }
 
-void *itemDropSave(itemDrop *i, void *buf){
-	uint8_t  *b = (uint8_t *) buf;
-	uint16_t *s = (uint16_t *)buf;
-	float    *f = (float *)   buf;
+void *itemDropSave(const itemDrop *i, void *buf){
+	u8    *b = (u8 *)    buf;
+	u16   *s = (u16 *)   buf;
+	float *f = (float *) buf;
 
 	if(i      == NULL){return b;}
 	if(i->ent == NULL){return b;}
@@ -163,10 +162,10 @@ void *itemDropSave(itemDrop *i, void *buf){
 	return b+32;
 }
 
-void *itemDropLoad(void *buf){
-	uint8_t  *b = (uint8_t *) buf;
-	uint16_t *s = (uint16_t *)buf;
-	float    *f = (float *)   buf;
+const void *itemDropLoad(const void *buf){
+	u8    *b = (u8 *)    buf;
+	u16   *s = (u16 *)   buf;
+	float *f = (float *) buf;
 
 	itemDrop *id = itemDropNew();
 	if(id == NULL){return b+32;}
@@ -180,18 +179,18 @@ void *itemDropLoad(void *buf){
 	return b+32;
 }
 
-void *itemDropSaveChungus(chungus *c,void *buf){
+void *itemDropSaveChungus(const chungus *c,void *buf){
 	if(c == NULL){return buf;}
-	for(int i=0;i<itemDropCount;i++){
+	for(uint i=0;i<itemDropCount;i++){
 		if(itemDrops[i].ent->curChungus != c){continue;}
 		buf = itemDropSave(&itemDrops[i],buf);
 	}
 	return buf;
 }
 
-void itemDropDelChungus(chungus *c){
+void itemDropDelChungus(const chungus *c){
 	if(c == NULL){return;}
-	for(int i=itemDropCount-1;i>=0;i--){
+	for(uint i=itemDropCount-1;i<itemDropCount;i--){
 		if(itemDrops[i].ent->curChungus != c){continue;}
 		itemDropDel(i);
 	}

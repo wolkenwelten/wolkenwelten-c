@@ -5,10 +5,10 @@
 extern animal animalList[1<<10];
 extern uint animalCount;
 
-animal  *animalNew        (const vec pos , int type);
-void     animalUpdateAll  ();
-void     animalThinkAll   ();
-uint     animalSyncPlayer (int c, uint offset);
-void    *animalLoad       (void *buf);
-void    *animalSaveChungus(chungus *c,void *buf);
-void     animalDelChungus (chungus *c);
+animal     *animalNew         (const vec pos ,int type);
+void        animalUpdateAll   ();
+void        animalThinkAll    ();
+uint        animalSyncPlayer  (int c, uint offset);
+const void *animalLoad        (const void *buf);
+void       *animalSaveChungus (const chungus *c,void *buf);
+void        animalDelChungus  (const chungus *c);

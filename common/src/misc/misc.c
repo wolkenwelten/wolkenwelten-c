@@ -9,17 +9,17 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-uint64_t RNGValue = 1;
+u64 RNGValue = 1;
 
-void seedRNG(uint64_t seed){
+void seedRNG(u64 seed){
 	RNGValue = seed;
 }
 
-uint64_t getRNGSeed(){
+u64 getRNGSeed(){
 	return RNGValue;
 }
 
-uint64_t rngValR(){
+u64 rngValR(){
 	RNGValue = ((RNGValue * 1103515245)) + 12345;
 	return ((RNGValue&0xFFFF)<<16) | ((RNGValue>>16)&0xFFFF);
 }
@@ -28,12 +28,12 @@ float rngValf(){
 	return (float)rngValR() / ((float)0xffffffff);
 }
 
-uint64_t rngValM(uint64_t max){
+u64 rngValM(u64 max){
 	if(max == 0){return 0;}
 	return rngValR() % max;
 }
 
-int64_t rngValMM(int64_t min,int64_t max){
+i64 rngValMM(i64 min,i64 max){
 	return rngValM(max - min) + min;
 }
 
@@ -61,10 +61,10 @@ float animationInterpolationSustain(int left, int max , float startPoint, float 
 	}
 }
 
-void *loadFile(char *filename,size_t *len){
+void *loadFile(const char *filename,size_t *len){
 	FILE *fp;
 	size_t filelen,readlen,read;
-	uint8_t *buf = NULL;
+	u8 *buf = NULL;
 
 	fp = fopen(filename,"rb");
 	if(fp == NULL){return NULL;}
@@ -91,13 +91,13 @@ void *loadFile(char *filename,size_t *len){
 	return buf;
 }
 
-void saveFile(char *filename,void *buf, size_t len){
+void saveFile(const char *filename,const void *buf, size_t len){
 	FILE *fp;
 	size_t written,wlen = 0;
-	
+
 	fp = fopen(filename,"wb");
 	if(fp == NULL){return;}
-	
+
 	while(wlen < len){
 		written = fwrite(buf+wlen,1,len-wlen,fp);
 		if(written == 0){return;}

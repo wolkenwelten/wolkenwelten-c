@@ -122,7 +122,6 @@ void clientParsePacket(const packet *p){
 		case 0: // Keepalive
 			break;
 		case 1: // playerPos
-			fprintf(stderr,"%f %f %f %f %f %f\n",p->val.f[0],p->val.f[1],p->val.f[2],p->val.f[3],p->val.f[4],p->val.f[5]);
 			characterSetPos(player,vecNewP(&p->val.f[0]));
 			characterSetRot(player,vecNewP(&p->val.f[3]));
 			characterSetVelocity(player,vecZero());

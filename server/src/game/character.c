@@ -17,8 +17,8 @@
 #include <string.h>
 #include <stdio.h>
 
-character characterList[128];
-int characterCount = 0;
+character  characterList[128];
+int        characterCount = 0;
 character *characterFirstFree = NULL;
 
 void characterInit(character *c){
@@ -77,7 +77,7 @@ void characterDie(character *c){
 	characterInit(c);
 }
 
-void characterParseDataLine(int c,const char *line){
+void characterParseDataLine(uint c,const char *line){
 	int argc;
 	char **argv;
 	character *p = clients[c].c;
@@ -120,14 +120,14 @@ void characterParseDataLine(int c,const char *line){
 	}
 }
 
-char *characterFileName(const char *name){
+const char *characterFileName(const char *name){
 	static char filename[128];
 	snprintf(filename,sizeof(filename)-1,"save/%s/%s.player",optionSavegame,name);
 	filename[sizeof(filename)-1] = 0;
 	return filename;
 }
 
-void characterSaveData(int c){
+void characterSaveData(uint c){
 	static char buf[8192];
 	char *b;
 	character *p = clients[c].c;
@@ -149,9 +149,10 @@ void characterSaveData(int c){
 	saveFile(characterFileName(clients[c].playerName),buf,strlen(buf));
 }
 
-int characterLoadData(int c){
+int characterLoadData(uint c){
 	size_t len = 0;
-	char *filename,*b,*line;
+	const char *filename;
+	char *b,*line;
 	filename = characterFileName(clients[c].playerName);
 	b = loadFile(filename,&len);
 	if((b == NULL) || (len == 0)){return 0;}
@@ -172,7 +173,7 @@ int characterLoadData(int c){
 	return 1;
 }
 
-void characterLoadSendData(int c){
+void characterLoadSendData(uint c){
 	int sx,sy,sz;
 	item emptyInventory[40] = {{0}};
 	if(characterLoadData(c)){return;}

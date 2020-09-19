@@ -29,9 +29,9 @@
 #endif
 
 clientConnection clients[32];
-int clientCount = 0;
+uint clientCount = 0;
 
-const char *getPlayerLeaveMessage(int c){
+const char *getPlayerLeaveMessage(uint c){
 	static char msg[256];
 	snprintf(msg,sizeof(msg),"%s left",clients[c].playerName);
 	return msg;
@@ -43,7 +43,7 @@ void serverKeepalive(){
 	uint64_t ct = getMillis();
 	if(ct > lastKA+1000){
 		lastKA = ct;
-		for(int i=0;i<clientCount;i++){
+		for(uint i=0;i<clientCount;i++){
 			if(clients[i].state){ continue; }
 			sendToAll(buffer,16);
 		}
@@ -60,7 +60,7 @@ void serverSendChatMsg(const char *msg){
 	printf("%s[MSG]%s %s\n",termColors[6],termReset,msg);
 }
 
-void sendPlayerJoinMessage(int c){
+void sendPlayerJoinMessage(uint c){
 	char msg[256];
 	if((clientCount == 1) && optionSingleplayer){
 		snprintf(msg,sizeof(msg),"Started Singleplayer Server [Seed=%i]",optionWorldSeed);
@@ -71,14 +71,14 @@ void sendPlayerJoinMessage(int c){
 	serverSendChatMsg(msg);
 }
 
-void serverParseChatMsg(int c,const packet *m){
+void serverParseChatMsg(uint c,const packet *m){
 	char msg[256];
 	if(parseCommand(c,(const char *)(m->val.c+2))){return;}
 	snprintf(msg,sizeof(msg),"%s: %s",clients[c].playerName,(char *)(m->val.c+2));
 	serverSendChatMsg(msg);
 }
 
-void serverParseDyingMsg(int c,const packet *m){
+void serverParseDyingMsg(uint c,const packet *m){
 	char msg[256];
 	if((m->val.s[0] != 65535) && (m->val.s[0] < clientCount)){
 		snprintf(msg,sizeof(msg),"%s %s %s",clients[m->val.s[0]].playerName,(char *)(m->val.c+2),clients[c].playerName);
@@ -88,7 +88,7 @@ void serverParseDyingMsg(int c,const packet *m){
 	serverSendChatMsg(msg);
 }
 
-void msgPlayerSpawnPos(int c){
+void msgPlayerSpawnPos(uint c){
 	int sx,sy,sz;
 	worldGetSpawnPos(&sx,&sy,&sz);
 	fprintf(stderr,"spawn: %i %i %i\n",sx,sy,sz);
@@ -97,7 +97,7 @@ void msgPlayerSpawnPos(int c){
 	msgPlayerSetPos(c,npos,nrot);
 }
 
-void serverInitClient(int c){
+void serverInitClient(uint c){
 	clients[c].c                        = characterNew();
 	clients[c].recvBufLen               = 0;
 	clients[c].sendBufSent              = 0;
@@ -113,8 +113,8 @@ void serverInitClient(int c){
 	bigchungusUnsubscribeClient(&world,c);
 }
 
-void addPriorityItemDrop(uint16_t d){
-	for(int c=0;c<clientCount;c++){
+void addPriorityItemDrop(u16 d){
+	for(uint c=0;c<clientCount;c++){
 		if(clients[c].state)                          {continue;}
 		if(clients[c].itemDropPriorityQueueLen > 127) {continue;}
 
@@ -127,10 +127,10 @@ void addPriorityItemDrop(uint16_t d){
 	}
 }
 
-void msgUpdatePlayer(int c){
+void msgUpdatePlayer(uint c){
 	packet *rp = &packetBuffer;
 
-	for(int i=0;i<clientCount;++i){
+	for(uint i=0;i<clientCount;++i){
 		if(i==c)                {continue;}
 		if(clients[i].c == NULL){continue;}
 		item *itm = characterGetItemBarSlot(clients[i].c,clients[i].c->activeItem);
@@ -175,7 +175,7 @@ void msgUpdatePlayer(int c){
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 }
 
-void serverParsePlayerPos(int c,const packet *p){
+void serverParsePlayerPos(uint c,const packet *p){
 	clients[c].c->pos                = vecNewP(&p->val.f[ 0]);
 	clients[c].c->rot                = vecNewP(&p->val.f[ 3]);
 	clients[c].c->vel                = vecNewP(&p->val.f[ 6]);
@@ -200,7 +200,7 @@ void serverParsePlayerPos(int c,const packet *p){
 	clients[c].flags |= CONNECTION_DO_UPDATE;
 }
 
-void msgSendChunk(int c, const chunk *chnk){
+void msgSendChunk(uint c, const chunk *chnk){
 	packet *p = &packetBuffer;
 	memcpy(p->val.c,chnk->data,sizeof(chnk->data));
 	p->val.i[1024] = chnk->x;
@@ -209,7 +209,7 @@ void msgSendChunk(int c, const chunk *chnk){
 	packetQueue(p,18,1027*4,c);
 }
 
-void serverParseSinglePacket(int c, packet *p){
+void serverParseSinglePacket(uint c, packet *p){
 	const int pLen  = p->typesize >> 10;
 	const int pType = p->typesize & 0xFF;
 
@@ -341,14 +341,14 @@ void serverParseSinglePacket(int c, packet *p){
 	}
 }
 
-void serverParsePacket(int i){
-	unsigned int off = 0;
+void serverParsePacket(uint i){
+	uint off = 0;
 	if(clients[i].flags & CONNECTION_WEBSOCKET){
 		serverParseWebSocketPacket(i);
 	}
 
 	for(int max=32;max > 0;--max){
-		if((i < 0) || (i >= clientCount)){break;}
+		if(i >= clientCount){break;}
 		if((clients[i].recvBufLen-off) < 4){ break; }
 		unsigned int pLen = packetLen((packet *)(clients[i].recvBuf+off));
 		if((pLen+4) > clients[i].recvBufLen-off){ break; }
@@ -370,8 +370,8 @@ void serverParsePacket(int i){
 }
 
 /* TODO: what happens on a HEAD request */
-void serverParseConnection(int c){
-	for(unsigned int ii=3;ii<clients[c].recvBufLen;ii++){
+void serverParseConnection(uint c){
+	for(uint ii=3;ii<clients[c].recvBufLen;ii++){
 		if(clients[c].recvBuf[ii  ] != '\n'){ continue; }
 		if(clients[c].recvBuf[ii-1] != '\r'){ continue; }
 		if(clients[c].recvBuf[ii-2] != '\n'){ continue; }
@@ -385,7 +385,7 @@ void serverParseConnection(int c){
 		){
 			serverParseWebSocketHeader(c,ii-1);
 		}
-		for(unsigned int i=0;i<clients[c].recvBufLen-(ii);i++){
+		for(uint i=0;i<clients[c].recvBufLen-(ii);i++){
 			clients[c].recvBuf[i] = clients[c].recvBuf[i+(ii+1)];
 		}
 		clients[c].recvBufLen -= ii+1;
@@ -394,12 +394,12 @@ void serverParseConnection(int c){
 	}
 }
 
-void serverParseIntro(int c){
-	for(unsigned int ii=0;ii<clients[c].recvBufLen;ii++){
+void serverParseIntro(uint c){
+	for(uint ii=0;ii<clients[c].recvBufLen;ii++){
 		if(clients[c].recvBuf[ii] != '\n'){ continue; }
 		memcpy(clients[c].playerName,clients[c].recvBuf,MIN(sizeof(clients[c].playerName)-1,ii));
 		clients[c].playerName[sizeof(clients[c].playerName)-1] = 0;
-		for(unsigned int i=0;i<clients[c].recvBufLen-(ii);i++){
+		for(uint i=0;i<clients[c].recvBufLen-(ii);i++){
 			clients[c].recvBuf[i] = clients[c].recvBuf[i+(ii+1)];
 		}
 		clients[c].recvBufLen -= ii+1;
@@ -411,7 +411,7 @@ void serverParseIntro(int c){
 }
 
 void serverParse(){
-	for(int i=0;i<clientCount;i++){
+	for(uint i=0;i<clientCount;i++){
 		switch(clients[i].state){
 			case STATE_READY:
 				serverParsePacket(i);
@@ -429,38 +429,38 @@ void serverParse(){
 	}
 }
 
-void addChungusToQueue(int c, uint16_t x, uint16_t y, uint16_t z){
-	uint64_t entry = 0;
-	if((c < 0) || (c >= clientCount)){return;}
+void addChungusToQueue(uint c, u16 x, u16 y, u16 z){
+	u64 entry = 0;
+	if(c >= clientCount){return;}
 	if(clients[c].chngReqQueueLen >= sizeof(clients[c].chngReqQueue)){
 		printf("Chungus Request Queue full!\n");
 		return;
 	}
-	entry |=  (uint64_t)x & 0xFFFF;
-	entry |= ((uint64_t)y & 0xFFFF) << 16;
-	entry |= ((uint64_t)z & 0xFFFF) << 32;
+	entry |=  (u64)x & 0xFFFF;
+	entry |= ((u64)y & 0xFFFF) << 16;
+	entry |= ((u64)z & 0xFFFF) << 32;
 	clients[c].chngReqQueue[clients[c].chngReqQueueLen++] = entry;
 }
 
-void addChunkToQueue(int c, uint16_t x, uint16_t y, uint16_t z){
-	uint64_t entry = 0;
-	if((c < 0) || (c >= clientCount)){return;}
+void addChunkToQueue(uint c, u16 x, u16 y, u16 z){
+	u64 entry = 0;
+	if(c >= clientCount){return;}
 	if(clients[c].chnkReqQueueLen >= sizeof(clients[c].chnkReqQueue)){
 		return;
 	}
-	entry |=  (uint64_t)x & 0xFFFF;
-	entry |= ((uint64_t)y & 0xFFFF) << 16;
-	entry |= ((uint64_t)z & 0xFFFF) << 32;
+	entry |=  (u64)x & 0xFFFF;
+	entry |= ((u64)y & 0xFFFF) << 16;
+	entry |= ((u64)z & 0xFFFF) << 32;
 	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = entry;
 }
 
-void addChunksToQueue(int c){
-	if((c < 0) || (c >= clientCount)){return;}
+void addChunksToQueue(uint c){
+	if(c >= clientCount){return;}
 	if(clients[c].chngReqQueueLen == 0){return;}
-	uint64_t entry = clients[c].chngReqQueue[--clients[c].chngReqQueueLen];
-	uint16_t cx =  entry        & 0xFFFF;
-	uint16_t cy = (entry >> 16) & 0xFFFF;
-	uint16_t cz = (entry >> 32) & 0xFFFF;
+	u64 entry = clients[c].chngReqQueue[--clients[c].chngReqQueueLen];
+	u16 cx =  entry        & 0xFFFF;
+	u16 cy = (entry >> 16) & 0xFFFF;
+	u16 cz = (entry >> 32) & 0xFFFF;
 
 	chungus *chng = worldGetChungus(cx>>8,cy>>8,cz>>8);
 	if(chng == NULL){
@@ -480,7 +480,7 @@ void addChunksToQueue(int c){
 	chungusSetUpdated(chng,c);
 }
 
-void addQueuedChunks(int c){
+void addQueuedChunks(uint c){
 	while(clients[c].sendBufLen < (sizeof(clients[c].sendBuf)-(1<<16))){
 		if(clients[c].chnkReqQueueLen == 0){
 			if(clients[c].chngReqQueueLen == 0){
@@ -489,11 +489,11 @@ void addQueuedChunks(int c){
 			addChunksToQueue(c);
 			continue;
 		}
-		uint64_t entry = clients[c].chnkReqQueue[--clients[c].chnkReqQueueLen];
-		uint16_t cx =  entry        & 0xFFFF;
-		uint16_t cy = (entry >> 16) & 0xFFFF;
-		uint16_t cz = (entry >> 32) & 0xFFFF;
-		if(entry & ((uint64_t)1<<62)){
+		u64 entry = clients[c].chnkReqQueue[--clients[c].chnkReqQueueLen];
+		u16 cx =  entry        & 0xFFFF;
+		u16 cy = (entry >> 16) & 0xFFFF;
+		u16 cz = (entry >> 32) & 0xFFFF;
+		if(entry & ((u64)1<<62)){
 			msgSendChungusComplete(c,cx,cy,cz);
 		}else{
 			chunk *chnk = worldGetChunk(cx,cy,cz);
@@ -507,9 +507,9 @@ void addQueuedChunks(int c){
 	}
 }
 
-void *serverFindCompressibleStart(int c, int *len){
-	uint8_t *t = NULL;
-	uint8_t *ret = NULL;
+void *serverFindCompressibleStart(uint c, int *len){
+	u8 *t = NULL;
+	u8 *ret = NULL;
 	*len = 0;
 	for(t=clients[c].sendBuf;(t-clients[c].sendBuf) < (int)clients[c].sendBufLen;t+=4+alignedLen(packetLen((packet *)t))){
 		if(packetType((packet *)t) != 0xFF){
@@ -524,7 +524,7 @@ void *serverFindCompressibleStart(int c, int *len){
 
 void serverCheckCompression(int c){
 	int len,compressLen;
-	uint8_t *start;
+	u8 *start;
 	static uint8_t compressBuf[LZ4_COMPRESSBOUND(sizeof(clients[c].sendBuf))];
 	if(clients[c].flags & CONNECTION_WEBSOCKET){return;}
 	if(clients[c].sendBufLen < (int)(sizeof(clients[c].sendBuf)/32)){return;}
@@ -543,7 +543,7 @@ void serverCheckCompression(int c){
 }
 
 void serverSend(){
-	for(int i=0;i<clientCount;i++){
+	for(uint i=0;i<clientCount;i++){
 		if(clients[i].state){ continue; }
 		if(clients[i].flags & CONNECTION_DO_UPDATE){msgUpdatePlayer(i);}
 		if(clients[i].sendBufLen == 0){ continue; }
@@ -561,12 +561,11 @@ void serverHandleEvents(){
 	serverSend();
 }
 
-void sendToClient(int c,const void *data,int len){
+void sendToClient(uint c,const void *data,uint len){
 	int ret;
 	int tlen = len;
 	if(clients[c].state){ return; }
-	if(c < 0){return;}
-	if(c >= clientCount){return;}
+	if(c >= clientCount){ return; }
 	if(clients[c].flags & CONNECTION_WEBSOCKET){
 		tlen += 10;
 	}
@@ -587,20 +586,20 @@ void sendToClient(int c,const void *data,int len){
 	clients[c].sendBufLen += len;
 }
 
-void sendToAll(const void *data, int len){
-	for(int i=0;i<clientCount;i++){
+void sendToAll(const void *data, uint len){
+	for(uint i=0;i<clientCount;i++){
 		sendToClient(i,data,len);
 	}
 }
 
-void sendToAllExcept(int e,const void *data, int len){
-	for(int i=0;i<clientCount;i++){
+void sendToAllExcept(uint e,const void *data, uint len){
+	for(uint i=0;i<clientCount;i++){
 		if(i==e){continue;}
 		sendToClient(i,data,len);
 	}
 }
 
-void serverCloseClient(int c){
+void serverCloseClient(uint c){
 	const char *msg = getPlayerLeaveMessage(c);
 	characterSaveData(c);
 	if(clients[c].c != NULL){
@@ -612,7 +611,7 @@ void serverCloseClient(int c){
 	serverSendChatMsg(msg);
 
 	int lowestClient=0;
-	for(int i=0;i<clientCount;i++){
+	for(uint i=0;i<clientCount;i++){
 		if(clients[i].state != STATE_CLOSED){
 			lowestClient=i;
 		}
@@ -625,7 +624,7 @@ void serverCloseClient(int c){
 }
 
 int getClientByName(const char *name){
-	for(int i=0;i<clientCount;i++){
+	for(uint i=0;i<clientCount;i++){
 		if(strncasecmp(clients[i].playerName,name,32) == 0){
 			return i;
 		}

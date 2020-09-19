@@ -18,19 +18,19 @@
 
 
 chungus chungusList[1 << 12];
-unsigned int chungusCount = 0;
+uint chungusCount = 0;
 chungus *chungusFirstFree = NULL;
 
-uint8_t *saveLoadBuffer   = NULL;
-uint8_t *compressedBuffer = NULL;
+u8 *saveLoadBuffer   = NULL;
+u8 *compressedBuffer = NULL;
 
-unsigned int chungusGetActiveCount(){
+uint chungusGetActiveCount(){
 	return chungusCount;
 }
-void chungusSetActiveCount(unsigned int i){
+void chungusSetActiveCount(uint i){
 	chungusCount = i;
 }
-chungus *chungusGetActive(unsigned int i){
+chungus *chungusGetActive(uint i){
 	return &chungusList[i];
 }
 
@@ -45,7 +45,7 @@ const char *chungusGetFilename(chungus *c){
 	return buf;
 }
 
-void chungusSetClientUpdated(chungus *c,uint64_t updated){
+void chungusSetClientUpdated(chungus *c,u64 updated){
 	c->clientsUpdated = updated;
 	for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){
@@ -57,7 +57,7 @@ void chungusSetClientUpdated(chungus *c,uint64_t updated){
 	}
 }
 
-uint8_t *chunkLoad(chungus *c, uint8_t *buf){
+const u8 *chunkLoad(chungus *c, const u8 *buf){
 	if(buf[0] != 0x01){return buf;}
 
 	int cx = buf[1] & 0xF;
@@ -79,7 +79,7 @@ void chungusLoad(chungus *c){
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
 	size_t read=0,len=0;
-	uint8_t *end,*b;
+	const u8 *b,*end;
 	int i;
 
 	FILE *fp = fopen(chungusGetFilename(c),"rb");
@@ -100,7 +100,7 @@ void chungusLoad(chungus *c){
 	end = &saveLoadBuffer[len];
 
 	for(b=saveLoadBuffer;b<end;){
-		uint8_t id = *b;
+		u8 id = *b;
 		switch(id){
 			case 1:
 				b = chunkLoad(c,b);
@@ -128,7 +128,7 @@ void chungusSave(chungus *c){
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
 
-	uint8_t *cbuf = saveLoadBuffer;
+	u8 *cbuf = saveLoadBuffer;
 	for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){
 			for(int z=0;z<16;z++){
@@ -217,7 +217,7 @@ chunk *chungusGetChunk(chungus *c, int x,int y,int z){
 	return c->chunks[x>>4][y>>4][z>>4];
 }
 
-uint8_t chungusGetB(chungus *c, int x,int y,int z){
+u8 chungusGetB(chungus *c, int x,int y,int z){
 	if(((x|y|z)>>4)&(~0xF)) { return 0; }
 	chunk *chnk = c->chunks[x>>4][y>>4][z>>4];
 	if(chnk == NULL)        { return 0; }
@@ -247,7 +247,7 @@ int chungusGetHighestP(chungus *c, int x, int *retY, int z){
 	return 0;
 }
 
-void chungusSetB(chungus *c, int x,int y,int z,uint8_t block){
+void chungusSetB(chungus *c, int x,int y,int z,u8 block){
 	if((x|y|z)&(~0xFF)){return;}
 	int cx = (x >> 4) & 0xF;
 	int cy = (y >> 4) & 0xF;
@@ -261,7 +261,7 @@ void chungusSetB(chungus *c, int x,int y,int z,uint8_t block){
 	c->clientsUpdated = 0;
 }
 
-void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,uint8_t block){
+void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
 	int gx = (x+w)>>4;
 	int gy = (y+h)>>4;
 	int gz = (z+d)>>4;
@@ -301,7 +301,7 @@ void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,uint8_t block){
 	}
 }
 
-void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
+void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 	for(int cx=0;cx<w;cx++){
 		for(int cy=0;cy<h;cy++){
 			for(int cz=0;cz<d;cz++){
@@ -312,7 +312,7 @@ void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block){
 	c->clientsUpdated = 0;
 }
 
-void chungusRoughBox(chungus *c,int x,int y,int z,int w,int h,int d,uint8_t block){
+void chungusRoughBox(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
 	int dx = x+w-1;
 	int dy = y+h-1;
 	int dz = z+d-1;
@@ -330,7 +330,7 @@ void chungusRoughBox(chungus *c,int x,int y,int z,int w,int h,int d,uint8_t bloc
 	c->clientsUpdated = 0;
 }
 
-void chungusRandomBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t block,int chance){
+void chungusRandomBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block,int chance){
 	int dx = x+w;
 	int dy = y+h;
 	int dz = z+d;
@@ -346,7 +346,7 @@ void chungusRandomBox(chungus *c, int x,int y,int z, int w,int h,int d,uint8_t b
 	c->clientsUpdated = 0;
 }
 
-void chungusFill(chungus *c, int x,int y,int z,uint8_t b){
+void chungusFill(chungus *c, int x,int y,int z,u8 b){
 	int cx = (x / CHUNK_SIZE) & 0xF;
 	int cy = (y / CHUNK_SIZE) & 0xF;
 	int cz = (z / CHUNK_SIZE) & 0xF;
@@ -358,13 +358,13 @@ void chungusFill(chungus *c, int x,int y,int z,uint8_t b){
 	c->clientsUpdated = 0;
 }
 
-void chungusSubscribePlayer(chungus *c, int p){
+void chungusSubscribePlayer(chungus *c, uint p){
 	if(c == NULL){return;}
 
 	c->clientsSubscribed |= 1 << p;
 }
 
-int chungusUnsubscribePlayer(chungus *c, int p){
+int chungusUnsubscribePlayer(chungus *c, uint p){
 	if(c == NULL){return 0;}
 	uint32_t mask = ~(1 << p);
 
@@ -383,25 +383,25 @@ int chungusUnsubscribePlayer(chungus *c, int p){
 	return 0;
 }
 
-int chungusIsSubscribed(chungus *c, int p){
+uint chungusIsSubscribed(chungus *c, uint p){
 	if(c == NULL){return 0;}
 
 	return c->clientsSubscribed & (1 << p);
 }
 
-int chungusIsUpdated(chungus *c, int p){
+uint chungusIsUpdated(chungus *c, uint p){
 	if(c == NULL){return 1;}
 
 	return c->clientsUpdated & (1 << p);
 }
 
-void chungusSetUpdated(chungus *c, int p){
+void chungusSetUpdated(chungus *c, uint p){
 	if( c == NULL){return;}
 
 	c->clientsUpdated |= 1 << p;
 }
 
-int chungusUpdateClient(chungus *c, int p){
+int chungusUpdateClient(chungus *c, uint p){
 	if(c == NULL)                          { return 0; }
 	if(!(c->clientsSubscribed & (1 << p))) { return 1; }
 	if( chungusIsUpdated(c,p))             { return 0; }

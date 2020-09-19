@@ -1,20 +1,11 @@
 /* This file exists so we do not get undefined references when we link in code
  * meant for the client side.
  */
+#include "../../../common/src/common.h"
 
 #include <stdio.h>
-#include <stdint.h>
 
-struct item;
-typedef struct item item;
-struct mesh;
-typedef struct mesh mesh;
-struct character;
-typedef struct character character;
-struct sfx;
-typedef struct sfx sfx;
-
-void recipeAdd1I(unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID, unsigned char nIngredAmount){
+void recipeAdd1I(u16 nResultID, u16 nResultAmount, u16 nIngredID, u16 nIngredAmount){
 	(void)nResultID;
 	(void)nResultAmount;
 	(void)nIngredID;
@@ -22,7 +13,7 @@ void recipeAdd1I(unsigned short nResultID, unsigned char nResultAmount, unsigned
 
 	fprintf(stderr,"recipeAdd1I got called on the serverside\n");
 }
-void recipeAdd2I(unsigned short nResultID, unsigned char nResultAmount, unsigned short nIngredID1, unsigned char nIngredAmount1, unsigned short nIngredID2, unsigned char nIngredAmount2){
+void recipeAdd2I(u16 nResultID, u16 nResultAmount, u16 nIngredID1, u16 nIngredAmount1, u16 nIngredID2, u16 nIngredAmount2){
 	(void)nResultID;
 	(void)nResultAmount;
 	(void)nIngredID1;
@@ -33,7 +24,7 @@ void recipeAdd2I(unsigned short nResultID, unsigned char nResultAmount, unsigned
 	fprintf(stderr,"recipeAdd2I got called on the serverside\n");
 }
 
-void ingredientSubstituteAdd(unsigned short ingredient, unsigned short substitute){
+void ingredientSubstituteAdd(u16 ingredient, u16 substitute){
 	(void)ingredient;
 	(void)substitute;
 
@@ -70,7 +61,7 @@ void sfxLoop(sfx *b, float volume){
 }
 
 void blockTypeGenMeshes(){}
-void blockTypeSetTex(uint8_t b, int side, uint32_t tex){
+void blockTypeSetTex(u8 b, int side, u32 tex){
 	(void)b;
 	(void)side;
 	(void)tex;

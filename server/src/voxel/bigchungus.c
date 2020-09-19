@@ -223,8 +223,8 @@ void bigchungusGetSpawnPos(bigchungus *c, int *x, int *y, int *z){
 }
 
 void bigchungusFreeFarChungi(bigchungus *c){
-	int len = chungusGetActiveCount();
-	for(int i=0;i<len;i++){
+	uint len = chungusGetActiveCount();
+	for(uint i=0;i<len;i++){
 		chungus *chng = chungusGetActive(i);
 		if(chng->nextFree != NULL){continue;}
 		int x = (int)chng->x>>8;
@@ -232,7 +232,7 @@ void bigchungusFreeFarChungi(bigchungus *c){
 		int z = (int)chng->z>>8;
 		if((x >= 127) && (x <= 129) && (y >= 1) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
 
-		for(int ii=0;ii<clientCount;++ii){
+		for(uint ii=0;ii<clientCount;++ii){
 			if(chungusRoughDistance(clients[ii].c,vecNew(x,y,z)) < 768.f){ goto chungiDontFree; }
 		}
 		chungusFree(c->chungi[x][y][z]);
@@ -346,7 +346,7 @@ void bigchungusSafeSave(bigchungus *c){
 		}
 	}
 
-	for(int i=0;i<clientCount;i++){
+	for(uint i=0;i<clientCount;i++){
 		if(clients[i].state == 2){ continue; }
 		if(clients[i].c == NULL ){ continue; }
 		bigchungusSafeSaveClient(c,i);

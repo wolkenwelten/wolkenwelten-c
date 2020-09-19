@@ -8,11 +8,11 @@
 #include <string.h>
 #include <stdlib.h>
 
-const char *base64_encode(const unsigned char *data,unsigned int input_length,const char *prefix){
+const char *base64_encode(const u8 *data,uint input_length,const char *prefix){
 	static char encoded_data[128];
-	unsigned int i=0,j=0,a,b,c,triple;
-	unsigned int output_length = 4 * ((input_length + 2) / 3);
-	const unsigned int mod_table[] = {0, 2, 1};
+	uint i=0,j=0,a,b,c,triple;
+	uint output_length = 4 * ((input_length + 2) / 3);
+	const uint mod_table[] = {0, 2, 1};
 	const char encoding_table[] =
 		{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
 		 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -56,15 +56,15 @@ const char *base64_encode(const unsigned char *data,unsigned int input_length,co
 	return encoded_data;
 }
 
-void serverParseWebSocketPacket(int i){
+void serverParseWebSocketPacket(uint i){
 	for(int max=16;max > 0;--max){
-		if((i < 0) || (i >= clientCount)){return;}
+		if(i >= clientCount)            { return; }
 		if(clients[i].recvWSBufLen < 16){ return; }
-		uint8_t  opcode  = clients[i].recvWSBuf[0];
-		uint8_t  masklen = clients[i].recvWSBuf[1];
-		uint64_t mlen    = 0;
-		uint8_t  mask[4];
-		unsigned int ii=0;
+		u8  opcode  = clients[i].recvWSBuf[0];
+		u8  masklen = clients[i].recvWSBuf[1];
+		u64 mlen    = 0;
+		u8  mask[4];
+		uint ii=0;
 		if(opcode != 0x82){
 			fprintf(stderr,"oh noes: %X\n",opcode);
 			serverKill(i);
@@ -107,10 +107,10 @@ void serverParseWebSocketPacket(int i){
 	}
 }
 
-void serverParseWebSocketHeaderField(int c,const char *key, const char *val){
+void serverParseWebSocketHeaderField(uint c,const char *key, const char *val){
 	static SHA1_CTX ctx;
 	static char buf[256];
-	static uint8_t webSocketKeyHash[20];
+	static u8 webSocketKeyHash[20];
 	const char *b64hash;
 	int len=0;
 	if(strncmp(key,"Sec-WebSocket-Key",18) != 0){return;}
@@ -137,11 +137,11 @@ void serverParseWebSocketHeaderField(int c,const char *key, const char *val){
 
 }
 
-void serverParseWebSocketHeader(int c,int end){
+void serverParseWebSocketHeader(uint c,uint end){
 	int lb=0;
 	char *key=NULL;
 	char *val=NULL;
-	for(int i=0;i<end;i++){
+	for(uint i=0;i<end;i++){
 		if(clients[c].recvBuf[i] == '\n'){
 			clients[c].recvBuf[i]=0;
 			if(lb==5){
@@ -173,7 +173,7 @@ void serverParseWebSocketHeader(int c,int end){
 	}
 }
 
-int addWSMessagePrefix(uint8_t *d, int len, int maxlen){
+int addWSMessagePrefix(u8 *d, uint len, uint maxlen){
 	if(len < 126){
 		if(maxlen <= 2){return 0;}
 		*d++ = 0x82; // Opcode - Binary Data / Fin Bit

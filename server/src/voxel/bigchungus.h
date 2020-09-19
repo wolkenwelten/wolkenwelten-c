@@ -8,11 +8,11 @@
 struct bigchungus {
 	int spawnx, spawny, spawnz;
 	chungus *chungi[256][128][256];
-	unsigned char heightModifier          [256][256];
-	unsigned char vegetationConcentration [256][256];
-	unsigned char islandSizeModifier      [256][256];
-	unsigned char islandCountModifier     [256][256];
-	unsigned char geoworldMap             [256][256];
+	u8 heightModifier          [256][256];
+	u8 vegetationConcentration [256][256];
+	u8 islandSizeModifier      [256][256];
+	u8 islandCountModifier     [256][256];
+	u8 geoworldMap             [256][256];
 
 };
 

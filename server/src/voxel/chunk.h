@@ -6,20 +6,20 @@ extern const float CHUNK_RENDER_DISTANCE;
 extern const float CHUNK_FADEOUT_DISTANCE;
 
 struct chunk{
-	uint16_t x,y,z;
-	uint64_t clientsUpdated;
+	u16   x,y,z;
+	u64   clientsUpdated;
 	void *nextFree;
-	uint8_t data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+	u8    data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 };
 
-chunk       *chunkNew        (uint16_t x,uint16_t y,uint16_t z);
-void         chunkFree       (chunk *c);
-uint8_t     *chunkSave       (chunk *c, uint8_t *buf);
-void         chunkFill       (chunk *c, uint8_t b);
-void         chunkBox        (chunk *c, int x, int y, int z,int gx,int gy,int gz,uint8_t b);
-void         chunkGetB       (chunk *c, int x, int y, int z);
-void         chunkSetB       (chunk *c, int x, int y, int z, uint8_t b);
-int          chunkIsUpdated  (chunk *c, int p);
-void         chunkSetUpdated (chunk *c, int p);
-unsigned int chunkGetFree    ();
-unsigned int chunkGetActive  ();
+chunk *chunkNew        (u16 x,u16 y,u16 z);
+void   chunkFree       (chunk *c);
+u8    *chunkSave       (chunk *c, u8 *buf);
+void   chunkFill       (chunk *c, u8 b);
+void   chunkBox        (chunk *c, int x, int y, int z,int gx,int gy,int gz,u8 b);
+void   chunkGetB       (chunk *c, int x, int y, int z);
+void   chunkSetB       (chunk *c, int x, int y, int z, u8 b);
+int    chunkIsUpdated  (chunk *c, uint p);
+void   chunkSetUpdated (chunk *c, uint p);
+uint   chunkGetFree    ();
+uint   chunkGetActive  ();

@@ -11,8 +11,8 @@ void animalReset(animal *e){
 	memset(e,0,sizeof(animal));
 }
 
-uint32_t animalCollision(const vec c){
-	uint32_t col = 0;
+u32 animalCollision(const vec c){
+	u32 col = 0;
 
 	if(checkCollision(c.x-0.3f,c.y     ,c.z     )){col |= 0x100;}
 	if(checkCollision(c.x+0.3f,c.y     ,c.z     )){col |= 0x200;}
