@@ -467,16 +467,26 @@ int characterPhysics(character *c){
 
 void characterUpdateBooster(character *c){
 	if(!(c->flags & CHAR_SNEAK)){return;}
-	float speed    = 0.001f / MAX(0.1,vecMag(c->vel));
-	const vec nv   = vecMulS(vecDegToVec(c->rot),speed);
+	const vec rot = c->rot;
+	//if(!(c->flags & CHAR_SNEAK) && (c->gvel.y > 0.9) && !(c->flags & CHAR_GLIDE)){rot.pitch = -90.f;}
+	float speed    = 0.0001f / MAX(0.1,vecMag(c->vel));
+	const vec nv   = vecMulS(vecDegToVec(rot),speed);
 	c->vel = vecAdd(c->vel,nv);
 
-	const vec adir = vecMulS(vecDegToVec(vecAdd(c->rot,vecRng())),-0.06f);
-	const vec apos = vecAdd(c->pos,vecAdd(adir,vecRng()));
-	newParticleV(apos, adir, vecZero(),12.f, 0.5f, 0xE643B0F8, 1024);
-	const vec bdir = vecMulS(vecDegToVec(vecAdd(c->rot,vecRng())),-0.04f);
-	const vec bpos = vecAdd(c->pos,vecAdd(adir,vecRng()));
-	newParticleV(bpos, bdir, vecZero(), 6.f, 1.0f, 0xD443A0E0, 2048);
+	const vec adir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(),10.f))),-0.07f * (rngValf()+.5f));
+	const vec apos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
+	newParticleV(apos, adir, vecZero(),96.f, 0.1f, 0xE643B0F8,  128);
+	const vec bdir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(),10.f))),-0.03f * (rngValf()+.5f));
+	const vec bpos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
+	newParticleV(bpos, bdir, vecZero(),48.f, 0.2f, 0xC42370FA,  256);
+	const vec cdir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(), 4.f))),-0.01f * (rngValf()+.5f));
+	const vec cpos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
+	newParticleV(cpos, cdir, vecZero(),24.f, 0.4f, 0xC4233A4A, 1536);
+	if(rngValM(6)==0){
+		const vec ddir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(), 4.f))),-0.001f * (rngValf()+.5f));
+		const vec dpos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
+		newParticleV(dpos, ddir, vecZero(),16.f, 0.3f, 0xA4132831, 8192);
+	}
 }
 
 void characterUpdate(character *c){
