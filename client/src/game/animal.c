@@ -95,17 +95,16 @@ void animalSyncFromServer(const packet *p){
 	e->pos.x      = p->val.f[ 4];
 	e->pos.y      = p->val.f[ 5];
 	e->pos.z      = p->val.f[ 6];
-	e->rot.yaw    = p->val.f[ 7];
-	e->rot.pitch  = p->val.f[ 8];
-	e->rot.roll   = p->val.f[ 9];
-	e->grot.yaw   = p->val.f[10];
-	e->grot.pitch = p->val.f[11];
-	e->vel.x      = p->val.f[12];
-	e->vel.y      = p->val.f[13];
-	e->vel.z      = p->val.f[14];
-	e->gvel.x     = p->val.f[15];
-	e->gvel.y     = p->val.f[16];
-	e->gvel.z     = p->val.f[17];
+	e->vel.x      = p->val.f[ 7];
+	e->vel.y      = p->val.f[ 8];
+	e->vel.z      = p->val.f[ 9];
+	e->gvel.x     = p->val.f[10];
+	e->gvel.y     = p->val.f[11];
+	e->gvel.z     = p->val.f[12];
+	e->rot.yaw    = p->val.f[13];
+	e->rot.pitch  = p->val.f[14];
+	e->grot.yaw   = p->val.f[15];
+	e->grot.pitch = p->val.f[16];
 
 	e->type       = p->val.c[ 0];
 	e->flags      = p->val.c[ 1];

@@ -425,19 +425,18 @@ void animalSync(int c, int i){
 	rp->val.f[ 4] = e->pos.x;
 	rp->val.f[ 5] = e->pos.y;
 	rp->val.f[ 6] = e->pos.z;
-	rp->val.f[ 7] = e->rot.yaw;
-	rp->val.f[ 8] = e->rot.pitch;
-	rp->val.f[ 9] = e->rot.roll;
-	rp->val.f[10] = e->grot.yaw;
-	rp->val.f[11] = e->grot.pitch;
-	rp->val.f[12] = e->vel.x;
-	rp->val.f[13] = e->vel.y;
-	rp->val.f[14] = e->vel.z;
-	rp->val.f[15] = e->gvel.x;
-	rp->val.f[16] = e->gvel.y;
-	rp->val.f[17] = e->gvel.z;
+	rp->val.f[ 7] = e->vel.x;
+	rp->val.f[ 8] = e->vel.y;
+	rp->val.f[ 9] = e->vel.z;
+	rp->val.f[10] = e->gvel.x;
+	rp->val.f[11] = e->gvel.y;
+	rp->val.f[12] = e->gvel.z;
+	rp->val.f[13] = e->rot.yaw;
+	rp->val.f[14] = e->rot.pitch;
+	rp->val.f[15] = e->grot.yaw;
+	rp->val.f[16] = e->grot.pitch;
 
-	packetQueue(rp,30,18*4,c);
+	packetQueue(rp,30,17*4,c);
 }
 
 uint animalSyncPlayer(int c, uint offset){
@@ -479,12 +478,11 @@ void *animalSave(const animal *e, void *buf){
 	f[ 5] = e->pos.z;
 	f[ 6] = e->rot.yaw;
 	f[ 7] = e->rot.pitch;
-	f[ 8] = e->rot.roll;
-	f[ 9] = e->vel.x;
-	f[10] = e->vel.y;
-	f[11] = e->vel.z;
+	f[ 8] = e->vel.x;
+	f[ 9] = e->vel.y;
+	f[10] = e->vel.z;
 
-	return b+12*4;
+	return b+11*4;
 }
 
 const void *animalLoad(const void *buf){
@@ -494,7 +492,8 @@ const void *animalLoad(const void *buf){
 	if(e == NULL){return b+12*4;}
 
 	e->rot    = vecNewP(&f[6]);
-	e->vel    = vecNewP(&f[9]);
+	e->rot.roll = 0.f;
+	e->vel    = vecNewP(&f[8]);
 
 	e->flags  = b[ 1];
 	e->state  = b[ 3];
