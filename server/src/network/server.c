@@ -115,12 +115,24 @@ void addPriorityItemDrop(u16 d){
 		if(clients[c].state)                          {continue;}
 		if(clients[c].itemDropPriorityQueueLen > 127) {continue;}
 
-		for(unsigned int i=0;i<clients[c].itemDropPriorityQueueLen;i++){
+		for(uint i=0;i<clients[c].itemDropPriorityQueueLen;i++){
 			if(clients[c].itemDropPriorityQueue[i] == d){goto continueClientLoop;}
 		}
 		clients[c].itemDropPriorityQueue[clients[c].itemDropPriorityQueueLen++] = d;
 		continueClientLoop:
 		(void)d;
+	}
+}
+
+void delPriorityItemDrop(u16 d){
+	for(uint c=0;c<clientCount;c++){
+		if(clients[c].state){continue;}
+
+		u16 *iq = clients[c].itemDropPriorityQueue;
+		for(uint i=0;i<clients[c].itemDropPriorityQueueLen;i++){
+			if(iq[i] != d){continue;}
+			iq[i] = iq[--clients[c].itemDropPriorityQueueLen];
+		}
 	}
 }
 

@@ -19,13 +19,15 @@ typedef struct {
 	item       itm;
 } itemDrop;
 
-itemDrop itemDrops[1<<12];
+#define ITEM_DROPS_MAX (1<<12)
+
+itemDrop itemDrops[ITEM_DROPS_MAX];
 uint     itemDropCount = 0;
 
 #define ITEM_DROPS_PER_UPDATE 16
 
 inline void itemDropUpdateMsg(uint c,uint i){
-	if(i >= 4096)                {return;}
+	if(i >= itemDropCount)       {return;}
 	if(itemDrops[i].ent == NULL) {return;}
 	msgItemDropUpdate(
 		c,
@@ -142,17 +144,18 @@ int itemDropCheckCollation(uint ai){
 	if(itemDrops[ai].ent == NULL){return 0;}
 	const vec a = itemDrops[ai].ent->pos;
 
-	for(int i=0;i<2;i++){
-		const uint bi = rngValM(itemDropCount);
-		if(bi == ai){continue;}
-		if(itemDrops[ai].itm.ID != itemDrops[bi].itm.ID){continue;}
-		if(itemDrops[bi].ent == NULL){continue;}
-		const vec b = itemDrops[bi].ent->pos;
-		const vec d = vecSub(b,a);
+	for(int i=0;i<4;i++){
+		const uint  bi = rngValM(itemDropCount);
+		if(bi == ai)                                     {continue;}
+		if(itemDrops[ai].itm.ID != itemDrops[bi].itm.ID) {continue;}
+		if(itemDrops[bi].ent == NULL)                    {continue;}
+		const vec    b = itemDrops[bi].ent->pos;
+		const vec    d = vecSub(b,a);
 		const float di = vecDot(d,d);
-		if(di < 0.5f){
+		if(di < 0.75f){
 			itemDrops[bi].itm.amount += itemDrops[ai].itm.amount;
 			itemDrops[bi].ent->vel = vecAdd(itemDrops[bi].ent->vel,itemDrops[ai].ent->vel);
+			addPriorityItemDrop(bi);
 			return 1;
 		}
 	}
@@ -180,6 +183,7 @@ void itemDropUpdate(){
 		}
 		if(itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || itemDropCheckPickup(i) || (e->pos.y < -256)){
 			itemDropDel(i);
+			addPriorityItemDrop(i);
 			continue;
 		}
 	}

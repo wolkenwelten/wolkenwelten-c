@@ -52,6 +52,7 @@ void sendToClient          (uint c, const void *data, uint len);
 void addChungusToQueue     (uint c, u16 x, u16 y, u16 z);
 void addQueuedChunks       (uint c);
 void addPriorityItemDrop   (u16  i);
+void delPriorityItemDrop   (u16  i);
 void serverSendChatMsg     (const char *msg);
 
 int  getClientByName       (const char *name);

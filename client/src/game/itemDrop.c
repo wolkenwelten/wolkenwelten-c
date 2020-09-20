@@ -35,8 +35,8 @@ void itemDropUpdate(){
 	for(int i=0;i<itemDropCount;i++){
 		float aniStep = ++itemDrops[i].aniStep;
 		if(itemDrops[i].ent == NULL){continue;}
-		itemDrops[i].ent->rot   = vecNew(aniStep/4.f,cosf(aniStep/96.f)*24.f,0);
-		itemDrops[i].ent->yoff  = (cosf(aniStep/192.f)/16.f)+0.1f;
+		itemDrops[i].ent->rot  = vecNew(aniStep/4.f,cosf(aniStep/96.f)*24.f,0);
+		itemDrops[i].ent->yoff = (cosf(aniStep/192.f)/16.f)+0.1f;
 	}
 }
 
@@ -45,7 +45,7 @@ void itemDropUpdateFromServer(const packet *p){
 	u16 len = p->val.s[1];
 
 	if(len < itemDropCount){
-		for(int i=len;i<itemDropCount;i++){
+		for(int i=len-1;i<itemDropCount;i++){
 			if(itemDrops[i].ent != NULL){
 				entityFree(itemDrops[i].ent);
 				itemDrops[i].ent = NULL;
@@ -53,9 +53,10 @@ void itemDropUpdateFromServer(const packet *p){
 		}
 	}
 	itemDropCount = len;
+	if(d >= len){return;}
 
 	if(itemDrops[d].ent == NULL) {
-		itemDrops[d].ent = entityNew(vecZero(),vecZero());
+		itemDrops[d].ent     = entityNew(vecZero(),vecZero());
 		itemDrops[d].aniStep = rngValM(1024);
 	}
 	itemDrops[d].itm.ID     = p->val.s[2];
