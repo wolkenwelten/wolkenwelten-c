@@ -201,7 +201,7 @@ void characterHitCheck(character *c, int origin, const vec pos, const vec rot, i
 		setOverlayColor(0xA03020F0,0);
 		if(characterHP(c,-pwr)){
 			msgSendDyingMessage("clubbed",origin);
-			setOverlayColor(0x00000000,0);
+			setOverlayColor(0xFF000000,0);
 		}
 		commitOverlayColor();
 		msgCharacterGotHit(-1,pwr);
@@ -259,7 +259,7 @@ void characterUpdateDamage(character *c, int damage){
 		setOverlayColor(0xA03020F0,0);
 		if(characterHP(c,damage / -8)){
 			msgSendDyingMessage("did not bounce", 65535);
-			setOverlayColor(0x00000000,0);
+			setOverlayColor(0xFF000000,0);
 			commitOverlayColor();
 		}
 	}else{

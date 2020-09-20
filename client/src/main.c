@@ -85,12 +85,13 @@ void worldUpdate(){
 		resetOverlayColor();
 		if(isInventoryOpen()){setOverlayColor(0x80000000,300);}
 		charactersUpdate();
-		commitOverlayColor();
 		grenadeUpdate();
 		animalUpdateAll();
 		entityUpdateAll();
 		itemDropUpdate();
 		particleUpdate();
+
+		commitOverlayColor();
 	}
 }
 

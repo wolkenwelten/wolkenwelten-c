@@ -92,7 +92,7 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 	if((originatingCharacter != 65535) && (minPlayerDist < 0.5f)){
 		if(characterHP(player,(0.6f-minPlayerDist) * -24.f * damageMultiplier)){
 			msgSendDyingMessage("Beamblasted", originatingCharacter);
-			setOverlayColor(0x00000000,0);
+			setOverlayColor(0xFF000000,0);
 			commitOverlayColor();
 		}else{
 			setOverlayColor(0xA03020F0,0);
