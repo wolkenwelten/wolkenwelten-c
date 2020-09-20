@@ -1,9 +1,0 @@
-Sometimes no block data gets received and we are just stuck with clouds/itemdrops but no islands/blockdata whatsoever, seems to have something to do with savestates
-Reducing Hook rope length still can lead to weird collision issues
-When a Server is already running, choosing singleplayer joins this server instead (Not Sure if truly bug)
-Jumping SFX do not get reduced volume the further away the source is
-? Firefox mouse capture does not work
-wasm version does not seem to work anymore, connection issues
-Have a better way of waiting for the singleplayer server to start up instead of periodicaly retrying after a short sleep
-Blaster SFX seem to have broken
-Blasters shoot off center
