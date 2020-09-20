@@ -38,6 +38,9 @@ static inline vec vecAdd (const vec a, const vec b){
 static inline vec vecAddS(const vec a, const float b){
 	return (vec){{{a.x+b,a.y+b,a.z+b}}};
 }
+static inline vec vecAddT(const vec a, const vec b, const vec c){
+	return (vec){{{a.x+b.x+c.x,a.y+b.y+c.y,a.z+b.z+c.z}}};
+}
 static inline vec vecSub (const vec a, const vec b){
 	return (vec){{{a.x-b.x,a.y-b.y,a.z-b.z}}};
 }
@@ -49,6 +52,9 @@ static inline vec vecMul (const vec a, const vec b){
 }
 static inline vec vecMulS(const vec a, const float b){
 	return (vec){{{a.x*b,a.y*b,a.z*b}}};
+}
+static inline vec vecMulT(const vec a, const vec b, const vec c){
+	return (vec){{{a.x*b.x*c.x,a.y*b.y*c.y,a.z*b.z*c.z}}};
 }
 static inline vec vecDiv (const vec a, const vec b){
 	return (vec){{{a.x/b.x,a.y/b.y,a.z/b.z}}};

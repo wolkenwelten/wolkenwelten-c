@@ -64,30 +64,35 @@ void fxExplosionBlaster(const vec pos,float pw){
 void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultiplier, float recoilMultiplier, uint hitsLeft, uint originatingCharacter){
 	(void)recoilMultiplier;
 	(void)hitsLeft;
-	uint max            =    1<<16;
 	float lastDist      = 999999.f;
-	float minPlayerDist =    100.f;
+	float minPlayerDist =    16.f;
 	vec v,c = pb;
 
 	u32 pac  = 0xD0000000 | ((0x50 + rngValM(0x40)) << 16) | ((0x30 + rngValM(0x40)) << 8) | (0xE0 + rngValM(0x1F));
 	u32 pbc  = pac + 0x00202000;
-	int      ttl  = MIN(128,MAX(48,48 * damageMultiplier));
+	int ttl  = MIN(1922,MAX(64,64 * damageMultiplier));
+	//int ttl = 128;
+	sfxPlay(sfxPhaser,MIN(0.5f,MAX(0.2f,damageMultiplier)));
 
-	sfxPlay(sfxPhaser,MAX(0.5f,damageMultiplier));
-	for(max=1<<16;max;--max){
+	for(uint max=1<<12;max;--max){
 		vec dist = vecSub(pa,c);
 		const float curDist = vecMag(dist);
 		if(curDist > lastDist){break;}
 		lastDist = curDist;
-		v = vecMulS(vecNorm(dist),0.1f/beamSize);
+		v = vecMulS(vecNorm(dist),beamSize*8);
 
-		const vec pv = vecMulS(vecRng(),(1.f/64.f)*beamSize);
-		newParticleV(vecAdd(c,pv),vecMulS(pv,1/4.f),vecMulS(pv,-1.f/384.f), 8.f,beamSize*4,pac,ttl);
-		newParticleV(vecAdd(c,pv),vecMulS(pv,1/6.f),vecMulS(pv,-1.f/512.f), 8.f,beamSize*2,pbc,ttl*2);
+		for(int i=0;i<32;i++){
+			const vec pv = vecMulS(vecRng(),1/(beamSize*32));
+			const vec po = vecMulS(v,i/32.f);
+			newParticleV(vecAddT(c,pv,po),vecMulS(pv,1/ 8.f),vecMulS(pv,-1.f/384.f), 8.f,beamSize*4,pac,ttl  );
+			newParticleV(vecAddT(c,pv,po),vecMulS(pv,1/12.f),vecMulS(pv,-1.f/512.f), 8.f,beamSize*2,pbc,ttl*2);
+		}
 		c = vecAdd(c,v);
 
-		const float pd = vecMag(vecSub(c,player->pos));
-		if(pd < minPlayerDist){minPlayerDist = pd;}
+		if(originatingCharacter != 65535){
+			const float pd = vecMag(vecSub(c,player->pos));
+			if(pd < minPlayerDist){minPlayerDist = pd;}
+		}
 	}
 	if((originatingCharacter != 65535) && (minPlayerDist < 0.5f)){
 		if(characterHP(player,(0.6f-minPlayerDist) * -24.f * damageMultiplier)){

@@ -195,8 +195,7 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"Player  Roll: %04.2f\n",player->rot.roll);
 	textMeshPrintf(guim,"Player Flags: %08X\n",player->flags);
 	textMeshPrintf(guim,"Active Tris.: %s\n", getHumanReadableSize(tris));
-	textMeshPrintf(guim,"Active Part.: %s\n", getHumanReadableSize(particleCount));
-	textMeshPrintf(guim,"Player Layer: %2i\n",((int)player->pos.y/CHUNGUS_SIZE));
+	textMeshPrintf(guim,"Particles   : %s\n", getHumanReadableSize(particleCount));
 	textMeshPrintf(guim,"Animals     : %2i\n",animalCount);
 	textMeshPrintf(guim,"Entities    : %2i\n",entityCount);
 	textMeshPrintf(guim,"Itemdrops   : %i\n",itemDropCount);
