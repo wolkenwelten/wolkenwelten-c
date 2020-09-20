@@ -1,90 +1,231 @@
 #pragma once
+#include "misc.h"
 #include "../gfx_structs.h"
 
-vec   vecNew     (float x, float y, float z);
-vec   vecNewP    (const float *p);
-vec   vecNewU    (const uvec a);
-vec   vecNewI    (const ivec a);
-vec   vecZero    ();
-vec   vecOne     ();
-vec   vecRng     ();
-vec   vecRngAbs  ();
-vec   vecInvert  (const vec a);
-
-vec   vecAdd     (const vec a, const vec   b);
-vec   vecAddS    (const vec a, const float b);
-vec   vecSub     (const vec a, const vec   b);
-vec   vecSubS    (const vec a, const float b);
-vec   vecMul     (const vec a, const vec   b);
-vec   vecMulS    (const vec a, const float b);
-vec   vecDiv     (const vec a, const vec   b);
-vec   vecDivS    (const vec a, const float b);
-
-float vecDot     (const vec a, const vec   b);
-float vecSum     (const vec a);
 float vecMag     (const vec a);
 vec   vecFloor   (const vec a);
-vec   vecNorm    (const vec a);
 vec   vecSqrt    (const vec a);
 vec   vecCross   (const vec a, const vec   b);
 vec   vecRotate  (const vec a, const vec   b, const float rad);
+vec   vecNorm    (const vec a);
 vec   vecVecToDeg(const vec a);
 vec   vecDegToVec(const vec a);
 
+static inline vec vecNew (float x, float y, float z){
+	return (vec){{{ x,y,z }}};
+}
+static inline vec vecNewP(const float *p){
+	return (vec){{{p[0],p[1],p[2]}}};
+}
+static inline vec vecNewU(const uvec a){
+	return (vec){{{a.x,a.y,a.z}}};
+}
+static inline vec vecNewI(const ivec a){
+	return (vec){{{a.x,a.y,a.z}}};
+}
+static inline vec vecZero(){
+	return (vec){{{0.f,0.f,0.f}}};
+}
+static inline vec vecOne(){
+	return (vec){{{1.f,1.f,1.f}}};
+}
+static inline vec vecInvert(const vec a){
+	return (vec){{{-a.x,-a.y,-a.z}}};
+}
+static inline vec vecAdd (const vec a, const vec b){
+	return (vec){{{a.x+b.x,a.y+b.y,a.z+b.z}}};
+}
+static inline vec vecAddS(const vec a, const float b){
+	return (vec){{{a.x+b,a.y+b,a.z+b}}};
+}
+static inline vec vecSub (const vec a, const vec b){
+	return (vec){{{a.x-b.x,a.y-b.y,a.z-b.z}}};
+}
+static inline vec vecSubS(const vec a, const float b){
+	return (vec){{{a.x-b,a.y-b,a.z-b}}};
+}
+static inline vec vecMul (const vec a, const vec b){
+	return (vec){{{a.x*b.x,a.y*b.y,a.z*b.z}}};
+}
+static inline vec vecMulS(const vec a, const float b){
+	return (vec){{{a.x*b,a.y*b,a.z*b}}};
+}
+static inline vec vecDiv (const vec a, const vec b){
+	return (vec){{{a.x/b.x,a.y/b.y,a.z/b.z}}};
+}
+static inline vec vecDivS(const vec a, const float b){
+	return (vec){{{a.x/b,a.y/b,a.z/b}}};
+}
+static inline float vecDot (const vec a, const vec b){
+	return (a.x*b.x)+(a.y*b.y)+(a.z*b.z);
+}
+static inline float vecSum(const vec a){
+	return a.x+a.y+a.z;
+}
+static inline vec vecRngAbs(){
+	return (vec){{{rngValf(),rngValf(),rngValf()}}};
+}
+static inline vec vecRng(){
+	return vecMulS(vecSubS(vecRngAbs(),0.5f),2.f);
+}
 
-ivec  ivecNew   (int x, int y, int z);
-ivec  ivecNewV  (const vec a);
-ivec  ivecNewP  (const int *p);
-ivec  ivecZero  ();
-ivec  ivecOne   ();
-ivec  ivecNOne  ();
-ivec  ivecRng   ();
-ivec  ivecInvert(const ivec a);
-ivec  ivecUvec  (const uvec a);
 
-ivec  ivecAdd   (const ivec a, const ivec b);
-ivec  ivecAddS  (const ivec a, const int  b);
-ivec  ivecSub   (const ivec a, const ivec b);
-ivec  ivecSubS  (const ivec a, const int  b);
-ivec  ivecMul   (const ivec a, const ivec b);
-ivec  ivecMulS  (const ivec a, const int  b);
-ivec  ivecDiv   (const ivec a, const ivec b);
-ivec  ivecDivS  (const ivec a, const int  b);
-ivec  ivecShlS  (const ivec a, const int  b);
-ivec  ivecShrS  (const ivec a, const int  b);
-ivec  ivecAnd   (const ivec a, const ivec b);
-ivec  ivecAndS  (const ivec a, const int  b);
-ivec  ivecOr    (const ivec a, const ivec b);
-ivec  ivecOrS   (const ivec a, const int  b);
-ivec  ivecXor   (const ivec a, const ivec b);
-ivec  ivecXorS  (const ivec a, const int  b);
-int   ivecOrSum (const ivec a);
-int   ivecSum   (const ivec a);
+static inline ivec ivecNew(int x, int y, int z){
+	return (ivec){{{x,y,z}}};
+}
+static inline ivec ivecNewV(const vec a){
+	return (ivec){{{(int)a.x,(int)a.y,(int)a.z}}};
+}
+static inline ivec ivecNewP(const int *p){
+	return (ivec){{{p[0],p[1],p[2]}}};
+}
+static inline ivec ivecZero(){
+	return (ivec){{{0,0,0}}};
+}
+static inline ivec ivecOne(){
+	return (ivec){{{1,1,1}}};
+}
+static inline ivec ivecNOne(){
+	return (ivec){{{-1,-1,-1}}};
+}
+static inline ivec ivecRng(){
+	return (ivec){{{(int)rngValR(),(int)rngValR(),(int)rngValR()}}};
+}
+static inline ivec ivecInvert(const ivec a){
+	return (ivec){{{-a.x,-a.y,-a.z}}};
+}
+static inline ivec ivecUvec(const uvec a){
+	return (ivec){{{(int)a.x,(int)a.y,(int)a.z}}};
+}
+static inline ivec ivecAdd(const ivec a, const ivec b){
+	return (ivec){{{a.x+b.x,a.y+b.y,a.z+b.z}}};
+}
+static inline ivec ivecAddS(const ivec a, const int  b){
+	return (ivec){{{a.x+b  ,a.y+b  ,a.z+b  }}};
+}
+static inline ivec ivecSub(const ivec a, const ivec b){
+	return (ivec){{{a.x-b.x,a.y-b.y,a.z-b.z}}};
+}
+static inline ivec ivecSubS(const ivec a, const int  b){
+	return (ivec){{{a.x-b  ,a.y-b  ,a.z-b  }}};
+}
+static inline ivec ivecMul(const ivec a, const ivec b){
+	return (ivec){{{a.x*b.x,a.y*b.y,a.z*b.z}}};
+}
+static inline ivec ivecMulS(const ivec a, const int  b){
+	return (ivec){{{a.x*b  ,a.y*b  ,a.z*b  }}};
+}
+static inline ivec ivecDiv(const ivec a, const ivec b){
+	return (ivec){{{a.x/b.x,a.y/b.y,a.z/b.z}}};
+}
+static inline ivec ivecDivS(const ivec a, const int  b){
+	return (ivec){{{a.x/b  ,a.y/b  ,a.z/b  }}};
+}
+static inline ivec ivecShlS(const ivec a, const int  b){
+	return (ivec){{{a.x<<b ,a.y<<b ,a.z<<b }}};
+}
+static inline ivec ivecShrS(const ivec a, const int  b){
+	return (ivec){{{a.x>>b ,a.y>>b ,a.z>>b }}};
+}
+static inline ivec ivecAnd(const ivec a, const ivec b){
+	return (ivec){{{a.x&b.x,a.y&b.y,a.z&b.z}}};
+}
+static inline ivec ivecAndS(const ivec a, const int b){
+	return (ivec){{{a.x&b  ,a.y&b  ,a.z&b  }}};
+}
+static inline ivec ivecOr(const ivec a, const ivec b){
+	return (ivec){{{a.x|b.x,a.y|b.y,a.z|b.z}}};
+}
+static inline ivec ivecOrS(const ivec a, const int b){
+	return (ivec){{{a.x|b  ,a.y|b  ,a.z|b  }}};
+}
+static inline ivec ivecXor(const ivec a, const ivec b){
+	return (ivec){{{a.x^b.x,a.y^b.y,a.z^b.z}}};
+}
+static inline ivec ivecXorS(const ivec a, const int b){
+	return (ivec){{{a.x^b  ,a.y^b  ,a.z^b  }}};
+}
+static inline int ivecOrSum(const ivec a){
+	return a.x|a.y|a.z;
+}
+static inline int ivecSum  (const ivec a){
+	return a.x+a.y+a.z;
+}
 
 
-uvec  uvecNew   (uint x, uint y, uint z);
-uvec  uvecNewV  (const vec a);
-uvec  uvecNewP  (const uint *p);
-uvec  uvecZero  ();
-uvec  uvecOne   ();
-uvec  uvecRng   ();
-uvec  uvecNot   (const uvec a);
-uvec  uvecIvec  (const ivec a);
 
-uvec  uvecAdd   (const uvec a, const uvec b);
-uvec  uvecAddS  (const uvec a, const uint b);
-uvec  uvecSub   (const uvec a, const uvec b);
-uvec  uvecSubS  (const uvec a, const uint b);
-uvec  uvecMul   (const uvec a, const uvec b);
-uvec  uvecMulS  (const uvec a, const uint b);
-uvec  uvecDiv   (const uvec a, const uvec b);
-uvec  uvecDivS  (const uvec a, const uint b);
-uvec  uvecShlS  (const uvec a, const uint b);
-uvec  uvecShrS  (const uvec a, const uint b);
-uvec  uvecAnd   (const uvec a, const uvec b);
-uvec  uvecAndS  (const uvec a, const uint b);
-uvec  uvecOr    (const uvec a, const uvec b);
-uvec  uvecOrS   (const uvec a, const uint b);
-uint  uvecOrSum (const uvec a);
-uvec  uvecXor   (const uvec a, const uvec b);
-uvec  uvecXorS  (const uvec a, const uint b);
+static inline uvec uvecNew(uint x, uint y, uint z){
+	return (uvec){{{x,y,z}}};
+}
+static inline uvec uvecNewV(const vec a){
+	return (uvec){{{(uint)a.x,(uint)a.y,(uint)a.z}}};
+}
+static inline uvec uvecNewP(const uint *p){
+	return (uvec){{{p[0],p[1],p[2]}}};
+}
+static inline uvec uvecZero(){
+	return (uvec){{{0,0,0}}};
+}
+static inline uvec uvecOne(){
+	return (uvec){{{1,1,1}}};
+}
+static inline uvec uvecRng(){
+	return (uvec){{{rngValR(),rngValR(),rngValR()}}};
+}
+static inline uvec uvecNot(const uvec a){
+	return (uvec){{{~a.x,~a.y,~a.z}}};
+}
+static inline uvec uvecIvec(const ivec a){
+	return (uvec){{{(uint)a.x,(uint)a.y,(uint)a.z}}};
+}
+static inline uvec uvecAdd(const uvec a, const uvec b){
+	return (uvec){{{a.x+b.x,a.y+b.y,a.z+b.z}}};
+}
+static inline uvec uvecAddS(const uvec a, const uint  b){
+	return (uvec){{{a.x+b  ,a.y+b  ,a.z+b  }}};
+}
+static inline uvec uvecSub(const uvec a, const uvec b){
+	return (uvec){{{a.x-b.x,a.y-b.y,a.z-b.z}}};
+}
+static inline uvec uvecSubS(const uvec a, const uint  b){
+	return (uvec){{{a.x-b  ,a.y-b  ,a.z-b  }}};
+}
+static inline uvec uvecMul(const uvec a, const uvec b){
+	return (uvec){{{a.x*b.x,a.y*b.y,a.z*b.z}}};
+}
+static inline uvec uvecMulS(const uvec a, const uint  b){
+	return (uvec){{{a.x*b  ,a.y*b  ,a.z*b  }}};
+}
+static inline uvec uvecDiv(const uvec a, const uvec b){
+	return (uvec){{{a.x/b.x,a.y/b.y,a.z/b.z}}};
+}
+static inline uvec uvecDivS(const uvec a, const uint  b){
+	return (uvec){{{a.x/b  ,a.y/b  ,a.z/b  }}};
+}
+static inline uvec uvecShlS(const uvec a, const uint  b){
+	return (uvec){{{a.x<<b ,a.y<<b ,a.z<<b }}};
+}
+static inline uvec uvecShrS(const uvec a, const uint  b){
+	return (uvec){{{a.x>>b ,a.y>>b ,a.z>>b }}};
+}
+static inline uvec uvecAnd(const uvec a, const uvec b){
+	return (uvec){{{a.x&b.x,a.y&b.y,a.z&b.z}}};
+}
+static inline uvec uvecAndS(const uvec a, const uint b){
+	return (uvec){{{a.x&b  ,a.y&b  ,a.z&b  }}};
+}
+static inline uvec uvecOr(const uvec a, const uvec b){
+	return (uvec){{{a.x|b.x,a.y|b.y,a.z|b.z}}};
+}
+static inline uvec uvecOrS(const uvec a, const uint b){
+	return (uvec){{{a.x|b  ,a.y|b  ,a.z|b  }}};
+}
+static inline uint uvecOrSum(const uvec a){
+	return a.x|a.y|a.z;
+}
+static inline uvec uvecXor(const uvec a, const uvec b){
+	return (uvec){{{a.x^b.x,a.y^b.y,a.z^b.z}}};
+}
+static inline uvec uvecXorS(const uvec a, const uint b){
+	return (uvec){{{a.x^b  ,a.y^b  ,a.z^b  }}};
+}
