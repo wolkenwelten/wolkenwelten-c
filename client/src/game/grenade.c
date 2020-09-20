@@ -3,6 +3,7 @@
 #include "../game/entity.h"
 #include "../game/character.h"
 #include "../gfx/mesh.h"
+#include "../gui/overlay.h"
 #include "../gfx/effects.h"
 #include "../tmp/objs.h"
 #include "../voxel/bigchungus.h"
@@ -102,4 +103,7 @@ void beamblast(character *ent, float beamSize, float damageMultiplier, float rec
 		msgBeamBlast(vecNew(x, y, z), vecNew(yaw, pitch, 0.f), beamSize, damageMultiplier, recoilMultiplier, hitsLeft);
 	}
 	characterAddInaccuracy(ent,inaccuracyInc);
+	u32 pac  = 0x90000000 | ((0x50 + rngValM(0x40)) << 16) | ((0x30 + rngValM(0x40)) << 8) | (0xE0 + rngValM(0x1F));
+	setOverlayColor(pac,0);
+	commitOverlayColor();
 }
