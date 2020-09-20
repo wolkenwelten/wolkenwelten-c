@@ -142,7 +142,7 @@ int itemDropCheckCollation(uint ai){
 	if(itemDrops[ai].ent == NULL){return 0;}
 	const vec a = itemDrops[ai].ent->pos;
 
-	for(int i=0;i<4;i++){
+	for(int i=0;i<2;i++){
 		const uint bi = rngValM(itemDropCount);
 		if(bi == ai){continue;}
 		if(itemDrops[ai].itm.ID != itemDrops[bi].itm.ID){continue;}

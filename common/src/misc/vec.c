@@ -64,8 +64,10 @@ vec vecDivS(const vec a, const float b){
 float vecDot (const vec a, const vec b){
 	return (a.x*b.x)+(a.y*b.y)+(a.z*b.z);
 }
-
-float vecMag (const vec a){
+float vecSum(const vec a){
+	return a.x+a.y+a.z;
+}
+float vecMag(const vec a){
 	float dot = vecDot(a,a);
 	if(dot > 0){
 		return sqrtf(dot);
@@ -131,6 +133,9 @@ vec vecDegToVec(const vec a){
 ivec ivecNew(int x, int y, int z){
 	return (ivec){{{x,y,z}}};
 }
+ivec ivecNewV(const vec a){
+	return (ivec){{{(int)a.x,(int)a.y,(int)a.z}}};
+}
 ivec ivecNewP(const int *p){
 	return (ivec){{{p[0],p[1],p[2]}}};
 }
@@ -195,20 +200,25 @@ ivec ivecOr(const ivec a, const ivec b){
 ivec ivecOrS(const ivec a, const int b){
 	return (ivec){{{a.x|b  ,a.y|b  ,a.z|b  }}};
 }
-int  ivecOrSum(const ivec a){
-	return a.x|a.y|a.z;
-}
 ivec ivecXor(const ivec a, const ivec b){
 	return (ivec){{{a.x^b.x,a.y^b.y,a.z^b.z}}};
 }
 ivec ivecXorS(const ivec a, const int b){
 	return (ivec){{{a.x^b  ,a.y^b  ,a.z^b  }}};
 }
-
+int  ivecOrSum(const ivec a){
+	return a.x|a.y|a.z;
+}
+int  ivecSum(const ivec a){
+	return a.x+a.y+a.z;
+}
 
 
 uvec uvecNew(uint x, uint y, uint z){
 	return (uvec){{{x,y,z}}};
+}
+uvec uvecNewV(const vec a){
+	return (uvec){{{(uint)a.x,(uint)a.y,(uint)a.z}}};
 }
 uvec uvecNewP(const uint *p){
 	return (uvec){{{p[0],p[1],p[2]}}};

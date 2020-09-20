@@ -20,8 +20,6 @@ chunk      *bigchungusGetChunk      (bigchungus *c, int x, int y, int z);
 u8          bigchungusGetB          (bigchungus *c, int x, int y, int z);
 bool        bigchungusSetB          (bigchungus *c, int x, int y, int z, u8 b);
 void        bigchungusDraw          (bigchungus *c, const character *cam);
-void        bigchungusGenSpawn      (bigchungus *c);
-void        bigchungusGetSpawnPos   (bigchungus *c, int *x, int *y, int *z);
 
 extern bigchungus world;
 

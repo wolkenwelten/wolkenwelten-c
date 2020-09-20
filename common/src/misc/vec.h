@@ -21,6 +21,7 @@ vec   vecDiv     (const vec a, const vec   b);
 vec   vecDivS    (const vec a, const float b);
 
 float vecDot     (const vec a, const vec   b);
+float vecSum     (const vec a);
 float vecMag     (const vec a);
 vec   vecFloor   (const vec a);
 vec   vecNorm    (const vec a);
@@ -32,6 +33,7 @@ vec   vecDegToVec(const vec a);
 
 
 ivec  ivecNew   (int x, int y, int z);
+ivec  ivecNewV  (const vec a);
 ivec  ivecNewP  (const int *p);
 ivec  ivecZero  ();
 ivec  ivecOne   ();
@@ -54,12 +56,14 @@ ivec  ivecAnd   (const ivec a, const ivec b);
 ivec  ivecAndS  (const ivec a, const int  b);
 ivec  ivecOr    (const ivec a, const ivec b);
 ivec  ivecOrS   (const ivec a, const int  b);
-int   ivecOrSum (const ivec a);
 ivec  ivecXor   (const ivec a, const ivec b);
 ivec  ivecXorS  (const ivec a, const int  b);
+int   ivecOrSum (const ivec a);
+int   ivecSum   (const ivec a);
 
 
 uvec  uvecNew   (uint x, uint y, uint z);
+uvec  uvecNewV  (const vec a);
 uvec  uvecNewP  (const uint *p);
 uvec  uvecZero  ();
 uvec  uvecOne   ();

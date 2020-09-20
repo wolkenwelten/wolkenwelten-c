@@ -33,7 +33,10 @@ uint       glCount  = CLOUDS_MAX;
 uint       cloudVBO = 0;
 
 
-void cloudPart(float px,float py,float pz,float dd,u8 v){
+static inline void cloudPart(float px,float py,float pz,float dd,u8 v){
+	if(dd > (CLOUD_MIND+CLOUD_FADED)){return;}
+	if(glCount < 4){return;}
+
 	const float   vf = v-170;
 	const u8 ta = (218+((256 - v)/3));
 	const u8 tb = (198+((256 - v)/6));
@@ -47,6 +50,8 @@ void cloudPart(float px,float py,float pz,float dd,u8 v){
 	}
 	const u32 ct = a | (tb<<16) | (ta<<8) | ta;
 	const u32 cb = a | (bb<<16) | (ba<<8) | ba;
+	const float oy = (1.f - dd / (CLOUD_MIND+CLOUD_FADED)) * 23.f + 19.f;
+	py += oy;
 
 	if(py < player->pos.y){
 		glData[--glCount] = (glCloud){px,py+vf/ 6.f,pz,ct};
@@ -61,7 +66,9 @@ void cloudPart(float px,float py,float pz,float dd,u8 v){
 
 void cloudsRender(){
 	shaderBind(sCloud);
-	matMul(matMVP,matView,matProjection);
+	matMov(matMVP,matView);
+	matMulTrans(matMVP,cloudOffset-floorf(cloudOffset),0,0);
+	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sCloud,matMVP);
 
 	glBindBuffer(GL_ARRAY_BUFFER, cloudVBO);
@@ -78,77 +85,64 @@ void cloudsRender(){
 }
 
 void cloudsDraw(int cx, int cy, int cz){
-	const int toff    = cloudOffset;
-	float sx = cx * 256.f + cloudOffset - toff;
-	float sy = cy * 256.f;
-	float sz = cz * 256.f;
 	if(cy&1){return;}
-	const float dy = (sy - player->pos.y) * (sy - player->pos.y);
-
+	const int toff = (int)cloudOffset;
 	const int divx = (int)player->pos.x - (cx<<8);
 	const int divz = (int)player->pos.z - (cz<<8);
+	const ivec cp  = ivecNew(cx<<8,cy<<8,cz<<8);
+	const ivec pp  = ivecNewV(player->pos);
+	ivec dp        = ivecZero();
+	dp.y = (cp.y - pp.y)*(cp.y - pp.y);
 
 	for(int x=MAX(divx,0);x<256;x++){
-		const float px  = sx+x;
-		const float dxy = dy + ((px - player->pos.x) * (px - player->pos.x));
-		const int tx    = (x - toff)&0xFF;
+		const int tx = (x-toff)&0xFF;
+		const int cxx = cp.x+x;
+		dp.x = (cxx - pp.x)*(cxx - pp.x);
 		for(int z=MAX(divz,0);z<256;z++){
-			const u8       v = cloudTex[tx][z];
+			const u8 v = cloudTex[tx][z];
+			const int czz = cp.z+z;
 			if(v < CLOUD_DENSITY_MIN){ continue; }
-			const float   pz = sz+z;
-			const float   dz = (pz - player->pos.z) * (pz - player->pos.z);
-			const float   dd = dxy+dz;
-			if(dd > (CLOUD_MIND+CLOUD_FADED)){continue;}
-			const float   oy = (1.f - dd / (CLOUD_MIND+CLOUD_FADED))*32.f + 32.f;
-			cloudPart(px,sy+oy,pz,dd,v);
+			dp.z = (czz - pp.z)*(czz - pp.z);
+			cloudPart(cxx,cp.y,czz,ivecSum(dp),v);
 		}
 	}
 
 	for(int x=MIN(256,divx)-1;x>=0;x--){
-		const float px  = sx+x;
-		const float dxy = dy + ((px - player->pos.x) * (px - player->pos.x));
-		const int tx    = (x - toff)&0xFF;
+		const int tx = (x-toff)&0xFF;
+		const int cxx = cp.x+x;
+		dp.x = (cxx - pp.x)*(cxx - pp.x);
 		for(int z=MAX(divz,0);z<256;z++){
-			const u8      v = cloudTex[tx][z];
+			const int czz = cp.z+z;
+			const u8 v = cloudTex[tx][z];
 			if(v < CLOUD_DENSITY_MIN){ continue; }
-			const float  pz = sz+z;
-			const float  dz = (pz - player->pos.z) * (pz - player->pos.z);
-			const float  dd = dxy+dz;
-			if(dd > (CLOUD_MIND+CLOUD_FADED)){continue;}
-			const float   oy = (1.f - dd / (CLOUD_MIND+CLOUD_FADED))*32.f + 32.f;
-			cloudPart(px,sy+oy,pz,dd,v);
+			dp.z = (czz - pp.z)*(czz - pp.z);
+			cloudPart(cxx,cp.y,czz,ivecSum(dp),v);
 		}
 	}
 
 	for(int x=MAX(divx,0);x<256;x++){
-		const float px  = sx+x;
-		const float dxy = dy + ((px - player->pos.x) * (px - player->pos.x));
-		const int tx    = (x - toff)&0xFF;
+		const int tx = (x-toff)&0xFF;
+		const int cxx = cp.x+x;
+		dp.x = (cxx - pp.x)*(cxx - pp.x);
 		for(int z=MIN(256,divz)-1;z>=0;z--){
-			const u8       v = cloudTex[tx][z];
+			const u8 v = cloudTex[tx][z];
+			const int czz = cp.z+z;
 			if(v < CLOUD_DENSITY_MIN){ continue; }
-			const float   pz = sz+z;
-			const float   dz = (pz - player->pos.z) * (pz - player->pos.z);
-			const float   dd = dxy+dz;
-			if(dd > (CLOUD_MIND+CLOUD_FADED)){continue;}
-			const float   oy = (1.f - dd / (CLOUD_MIND+CLOUD_FADED))*32.f + 32.f;
-			cloudPart(px,sy+oy,pz,dd,v);
+			dp.z = (czz - pp.z)*(czz - pp.z);
+			cloudPart(cxx,cp.y,czz,ivecSum(dp),v);
 		}
 	}
 
 	for(int x=MIN(256,divx)-1;x>=0;x--){
-		const float px  = sx+x;
-		const float dxy = dy + ((px - player->pos.x) * (px - player->pos.x));
-		const int tx    = (x - toff)&0xFF;
+		const int tx = (x-toff)&0xFF;
+		const int cxx = cp.x+x;
+		dp.x = (cxx - pp.x)*(cxx - pp.x);
 		for(int z=MIN(256,divz)-1;z>=0;z--){
-			const u8       v = cloudTex[tx][z];
+			const u8 v = cloudTex[tx][z];
+			const int czz = cp.z+z;
 			if(v < CLOUD_DENSITY_MIN){ continue; }
-			const float   pz = sz+z;
-			const float   dz = (pz - player->pos.z) * (pz - player->pos.z);
-			const float   dd = dxy+dz;
-			if(dd > (CLOUD_MIND+CLOUD_FADED)){continue;}
-			const float   oy = (1.f - dd / (CLOUD_MIND+CLOUD_FADED))*32.f + 32.f;
-			cloudPart(px,sy+oy,pz,dd,v);
+			dp.z = (czz - pp.z)*(czz - pp.z);
+			cloudPart(cxx,cp.y,czz,ivecSum(dp),v);
 		}
 	}
 }
