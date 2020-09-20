@@ -377,7 +377,7 @@ void updateGlide(character *c){
 
 	vec  vdrg   = vecMulS(vecInvert(vel),drag * 0.1f);
 	float mag   = vecMag(vdrg);
-	c->shake    = mag*16.f + speed;
+	c->shake    = MAX(c->shake,mag*16.f + speed);
 	vel         = vecAdd(vel,vdrg);
 	vel         = vecAdd(vel,vecMulS(dir,mag*0.98f));
 
@@ -450,12 +450,17 @@ int characterPhysics(character *c){
 }
 
 void characterUpdateBooster(character *c){
-	if(!(c->flags & CHAR_SNEAK)){return;}
+	if(!(c->flags & CHAR_SNEAK)){
+		sfxLoop(sfxJet,0.f);
+		return;
+	}
 	const vec rot = c->rot;
 	//if(!(c->flags & CHAR_SNEAK) && (c->gvel.y > 0.9) && !(c->flags & CHAR_GLIDE)){rot.pitch = -90.f;}
 	float speed    = 0.0001f / MAX(0.1,vecMag(c->vel));
 	const vec nv   = vecMulS(vecDegToVec(rot),speed);
 	c->vel = vecAdd(c->vel,nv);
+	c->shake = MAX(c->shake,1.25f + speed);
+	sfxLoop(sfxJet,1.f);
 
 	const vec adir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(),10.f))),-0.07f * (rngValf()+.5f));
 	const vec apos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
