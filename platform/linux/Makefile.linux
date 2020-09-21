@@ -1,4 +1,4 @@
-CC               := gcc
+CC               := clang
 
 CLIENT_CINCLUDES := $(shell sdl2-config --cflags)
 CLIENT_LIBS      := -lGL -lpthread -ldl -lSDL2 -lSDL2_mixer
@@ -33,7 +33,7 @@ releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/objs.c client/src/tmp/o
 releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/sfx.c client/src/tmp/sfx.h
 releases/linux/wolkenwelten/wolkenwelten: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p releases/linux/wolkenwelten/
-	$(CC) $(CLIENT_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
+	$(CC) $(CLIENT_SRCS) -o $@ $(RELEASE_OPTIMIZATION)  $(CFLAGS) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
 	strip -sgxX $@
 
 releases/linux/wolkenwelten/wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
@@ -44,5 +44,5 @@ releases/linux/wolkenwelten/wolkenwelten-server: server/src/tmp/objs.c server/sr
 releases/linux/wolkenwelten/wolkenwelten-server: server/src/tmp/mods_tmp.c server/src/tmp/mods_tmp.h
 releases/linux/wolkenwelten/wolkenwelten-server: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p releases/linux/wolkenwelten/
-	musl-gcc -static $(SERVER_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES)
+	musl-clang -static $(SERVER_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES)
 	strip -sgxX $@
