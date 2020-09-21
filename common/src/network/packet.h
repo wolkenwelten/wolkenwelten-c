@@ -20,20 +20,20 @@ typedef struct {
 } packet;
 
 #pragma pack(pop)
-inline uint alignedLen(uint size){
+static inline uint alignedLen(uint size){
 	if(size & 0x3){
 		return (size & (~0x3))+4;
 	}else{
 		return (size & (~0x3));
 	}
 }
-inline uint packetLen(const packet *p){
+static inline uint packetLen(const packet *p){
 	return p->typesize >> 10;
 }
-inline uint packetType(const packet *p){
+static inline uint packetType(const packet *p){
 	return p->typesize & 0xFF;
 }
-inline void packetSet(packet *p, u8 ptype, u32 len){
+static inline void packetSet(packet *p, u8 ptype, u32 len){
 	p->typesize = (u32)ptype | (len << 10);
 }
 

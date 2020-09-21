@@ -38,14 +38,13 @@ u32 cloudCB[128];
 static inline void cloudPart(float px,float py,float pz,float dd,u8 v){
 	if(dd > (CLOUD_MIND+CLOUD_FADED)){return;}
 	//if(glCount < 4){return;}
-
-	const float   vf = v-CLOUD_DENSITY_MIN;
+	const float vf = v-CLOUD_DENSITY_MIN;
 	u32 a = v << 24;
 	if(dd > CLOUD_MIND){
 		a = (u8)(v*(1.f-((dd - CLOUD_MIND)/CLOUD_FADED))) << 24;
 	}
-	const u32 ct = a | cloudCT[v-128];
-	const u32 cb = a | cloudCB[v-128];
+	const   u32 ct = a | cloudCT[v-128];
+	const   u32 cb = a | cloudCB[v-128];
 	const float oy = (1.f - dd / (CLOUD_MIND+CLOUD_FADED)) * 23.f + 19.f;
 	py += oy;
 

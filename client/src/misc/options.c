@@ -14,6 +14,7 @@ char serverName[64];
 
 float optionMusicVolume       = 0.75f;
 float optionSoundVolume       = 1.f;
+int   optionAutomatedTest     = 0;
 int   optionWorldSeed         = 0;
 bool  optionDebugInfo         = false;
 bool  optionFullscreen        = false;
@@ -63,6 +64,9 @@ void parseOptions(int argc,char *argv[]){
 		if((l = checkString(argv[i]+1,"serverName="))){
 			strncpy(serverName,argv[i]+l,sizeof(serverName)-1);
 			gameRunning = true;
+		}
+		if((l = checkString(argv[i]+1,"automatedTest="))){
+			optionAutomatedTest = atoi(argv[i]+l) != 0;
 		}
 		if((l = checkString(argv[i]+1,"windowOrientation="))){
 			int newOrientation = 0;
@@ -127,6 +131,9 @@ void sanityCheckOptions(){
 	}
 	if(optionWindowHeight <= 0){
 		optionWindowHeight = 480;
+	}
+	if(optionAutomatedTest < 0){
+		optionAutomatedTest = 0;
 	}
 	if(serverName[0] == 0){
 		strncpy(serverName,"localhost",sizeof(serverName)-1);

@@ -43,6 +43,20 @@ bool gameRunning       = false;
 bool playerChunkActive = false;
 bool singleplayer      = false;
 
+static vec doAutomatedupdate(const vec nv){
+	static int iter=0;
+	if(optionAutomatedTest <= 0){return nv;}
+	vec rv = vecZero();
+	iter++;
+	if(SDL_GetTicks() > 10000){quit=true;}
+
+	player->flags |= CHAR_NOCLIP;
+	characterRotate(player,vecNew(1.f,cosf(iter/16.f)/4.f,0));
+	rv.y = 0.02f;
+
+	return rv;
+}
+
 void playerUpdate(){
 	vec nv = vecZero();
 	chungus *chng = worldGetChungus((int)player->pos.x >> 8,(int)player->pos.y >> 8,(int)player->pos.z >> 8);
@@ -55,10 +69,11 @@ void playerUpdate(){
 		player->flags &= ~CHAR_SNEAK;
 	}
 
-	nv = doKeyboardupdate(nv);
-	nv = doTouchupdate   (nv);
-	nv = doGamepadupdate (nv);
-	characterMove (player,nv);
+	nv = doKeyboardupdate (nv);
+	nv = doTouchupdate    (nv);
+	nv = doGamepadupdate  (nv);
+	nv = doAutomatedupdate(nv);
+	characterMove  (player,nv);
 }
 
 void worldUpdate(){

@@ -8,6 +8,7 @@ extern float optionSoundVolume;
 extern int   optionWorldSeed;
 extern bool  optionDebugInfo;
 extern bool  optionRuntimeReloading;
+extern int   optionAutomatedTest;
 
 extern int   optionWindowOrientation;
 extern int   optionWindowWidth;
