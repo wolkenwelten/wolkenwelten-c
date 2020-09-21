@@ -302,7 +302,7 @@ void drawActiveItem(){
 
 		case 1:
 			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
-			matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff*0.3f);
+			matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff);
 			matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
 		break;
 
