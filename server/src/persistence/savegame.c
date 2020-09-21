@@ -254,6 +254,13 @@ static const char *characterFileName(const char *name){
 	return filename;
 }
 
+static const char *savegameFileName(const char *name){
+	static char filename[128];
+	snprintf(filename,sizeof(filename)-1,"save/%s/world.global",name);
+	filename[sizeof(filename)-1] = 0;
+	return filename;
+}
+
 static void checkValidSavegame(const char *name){
 	char buf[16];
 	if(!isDir("save")){makeDir("save");}
@@ -431,10 +438,49 @@ void chungusSave(chungus *c){
 	fprintf(stderr,"Write error on chungus %i:%i:%i\n",c->x,c->y,c->z);
 }
 
+static void savegameParseLine(const char *line){
+	int argc;
+	char **argv;
+
+	argv = splitArgs(line,&argc);
+	if(argc == 0)          {return;}
+	if(argv[0][0] == 0)    {return;}
+	if(isspace(argv[0][0])){return;}
+
+	if(strcmp(argv[0],"WorldSeed") == 0){
+		if(argc < 2){return;}
+		optionWorldSeed = atoi(argv[1]);
+		return;
+	}
+}
+
 void savegameLoad(){
+	size_t len = 0;
+	char *b,*line;
 	checkValidSavegame(optionSavegame);
+	b = loadFile(savegameFileName(optionSavegame),&len);
+	if((b == NULL) || (len == 0)){return;}
+
+	line = b;
+	for(uint i=0;i<len;i++){
+		if(b[i] == '\r'){b[i] = 0;}
+		if(b[i] == '\n'){
+			b[i] = 0;
+			savegameParseLine(line);
+			line = &b[i+1];
+		}
+	}
+	savegameParseLine(line);
 }
 
 void savegameSave(){
+	static char buf[512];
+	char *b;
 
+	b  = buf;
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"SaveFormat 1\n");
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"WorldSeed %i\n",optionWorldSeed);
+
+	buf[sizeof(buf)-1] = 0;
+	saveFile(savegameFileName(optionSavegame),buf,strlen(buf));
 }

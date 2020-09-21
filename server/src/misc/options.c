@@ -12,7 +12,7 @@ int   optionWorldSeed    = 0;
 int   optionPort         = 0;
 bool  optionSingleplayer = false;
 bool  verbose            = false;
-char  optionSavegame[9];
+char  optionSavegame[32];
 
 char *attribution_info =
 "LZ4\n"
