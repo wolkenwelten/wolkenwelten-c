@@ -12,7 +12,6 @@
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
-#include <ctype.h>
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
@@ -70,110 +69,4 @@ void characterFree(character *c){
 
 void characterDie(character *c){
 	characterInit(c);
-}
-
-void characterParseDataLine(uint c,const char *line){
-	int argc;
-	char **argv;
-	character *p = clients[c].c;
-
-	argv = splitArgs(line,&argc);
-	if(argc == 0)          {return;}
-	if(argv[0][0] == 0)    {return;}
-	if(isspace(argv[0][0])){return;}
-
-	if(strcmp(argv[0],"Position") == 0){
-		if(argc < 7){return;}
-		msgPlayerSetPos(c,vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3])),vecNew(atof(argv[4]),atof(argv[5]),atof(argv[6])));
-		return;
-	}
-
-	if(strcmp(argv[0],"Health") == 0){
-		if(argc < 2){return;}
-		p->hp = atoi(argv[1]);
-		return;
-	}
-
-	if(strcmp(argv[0],"Flags") == 0){
-		if(argc < 2){return;}
-		p->flags = atoi(argv[1]);
-		return;
-	}
-
-	if(strcmp(argv[0],"ActiveItem") == 0){
-		if(argc < 2){return;}
-		p->activeItem = atoi(argv[1]);
-		return;
-	}
-
-	if(strcmp(argv[0],"Item") == 0){
-		if(argc < 4){return;}
-		int i = atoi(argv[1]);
-		p->inventory[i].ID     = atoi(argv[2]);
-		p->inventory[i].amount = atoi(argv[3]);
-		return;
-	}
-}
-
-const char *characterFileName(const char *name){
-	static char filename[128];
-	snprintf(filename,sizeof(filename)-1,"save/%s/%s.player",optionSavegame,name);
-	filename[sizeof(filename)-1] = 0;
-	return filename;
-}
-
-void characterSaveData(uint c){
-	static char buf[8192];
-	char *b;
-	character *p = clients[c].c;
-	if(p == NULL){return;}
-
-	b = buf;
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"Position %f %f %f %f %f %f\n",p->pos.x,p->pos.y,p->pos.z,p->rot.yaw,p->rot.pitch,p->rot.roll);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"ActiveItem %i\n",p->activeItem);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"Health %i\n",p->hp);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"Flags %u\n",p->flags);
-
-	for(int i=0;i<40;i++){
-		if(itemIsEmpty(&p->inventory[i])){continue;}
-		b += snprintf(b,sizeof(buf)-(b-buf+1),"Item %i %i %i\n",i,p->inventory[i].ID,p->inventory[i].amount);
-	}
-
-	*b = 0;
-	buf[sizeof(buf)-1]=0;
-	saveFile(characterFileName(clients[c].playerName),buf,strlen(buf));
-}
-
-int characterLoadData(uint c){
-	size_t len = 0;
-	const char *filename;
-	char *b,*line;
-	filename = characterFileName(clients[c].playerName);
-	b = loadFile(filename,&len);
-	if((b == NULL) || (len == 0)){return 0;}
-
-	line = b;
-	for(unsigned int i=0;i<len;i++){
-		if(b[i] == '\r'){b[i] = 0;}
-		if(b[i] == '\n'){
-			b[i] = 0;
-			characterParseDataLine(c,line);
-			line = &b[i+1];
-		}
-	}
-	characterParseDataLine(c,line);
-	msgPlayerSetInventory(c,clients[c].c->inventory,40);
-	msgPlayerSetData(c,clients[c].c->hp,clients[c].c->activeItem,clients[c].c->flags);
-
-	return 1;
-}
-
-void characterLoadSendData(uint c){
-	item emptyInventory[40] = {{0}};
-	if(characterLoadData(c)){return;}
-
-	const vec spawn = vecNewI(worldGetSpawnPos());
-	msgPlayerSetPos(c,vecAdd(spawn,vecNew(.5f,2.f,.5f)),vecNew(135.f,15.f,0.f));
-	msgPlayerSetInventory(c,emptyInventory,40);
-	msgPlayerSetData(c,20,0,0);
 }

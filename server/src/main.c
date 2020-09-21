@@ -98,7 +98,7 @@ void thinkStep(){
 }
 
 void updateWorld(){
-	static u64 lastUpdate = 0;
+	static u64 lastUpdate  = 0;
 	static u64 lastThought = 0;
 	if(lastUpdate == 0){lastUpdate = getMillis();}
 	for(;lastUpdate+5 < getMillis();lastUpdate+=5){
@@ -111,20 +111,14 @@ void updateWorld(){
 	}
 }
 
-void checkValidSavegame(const char *name){
-	char buf[16];
-	if(!isDir("save")){makeDir("save");}
-	snprintf(buf,sizeof(buf)-1,"save/%s",name);
-	buf[sizeof(buf)-1] = 0;
-	if(!isDir(buf)){makeDir(buf);}
-}
-
 int main( int argc, const char* argv[] ){
 	initSignals();
 	initTermColors();
 	initOptions(argc,argv);
-	checkValidSavegame(optionSavegame);
+	savegameLoad();
 	seedRNG(time(NULL));
+	serverInit();
+	savegameSave();
 
 	printf("%sWolkenwelten",termColors[2]                );
 	printf(" %s%s"         ,termColors[6],VERSION        );
@@ -133,7 +127,6 @@ int main( int argc, const char* argv[] ){
 	printf(" %s{%s}"       ,termColors[5],optionSavegame );
 	printf(" %sbuilt %s\n" ,termReset    ,BUILDDATE      );
 
-	serverInit();
 	bigchungusInit(&world);
 	blockTypeInit();
 	bigchungusGenSpawn(&world);
@@ -149,6 +142,7 @@ int main( int argc, const char* argv[] ){
 		}
 	}
 	printf("Exiting cleanly\n");
+	savegameSave();
 	serverFree();
 	return 0;
 }

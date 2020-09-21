@@ -11,6 +11,7 @@
 #include "../misc/command.h"
 #include "../misc/options.h"
 #include "../network/server_ws.h"
+#include "../persistence/savegame.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/misc/lz4.h"
 #include "../../../common/src/misc/misc.h"
@@ -413,7 +414,9 @@ void serverParseIntro(uint c){
 		}
 		clients[c].recvBufLen -= ii+1;
 		clients[c].state = STATE_READY;
-		characterLoadSendData(c);
+
+		characterLoadSendData(clients[c].c,clients[c].playerName,c);
+
 		sendPlayerJoinMessage(c);
 		itemDropIntro(c);
 	}
@@ -610,7 +613,7 @@ void sendToAllExcept(uint e,const void *data, uint len){
 
 void serverCloseClient(uint c){
 	const char *msg = getPlayerLeaveMessage(c);
-	characterSaveData(c);
+	characterSaveData(clients[c].c,clients[c].playerName);
 	if(clients[c].c != NULL){
 		characterFree(clients[c].c);
 		clients[c].c = NULL;
