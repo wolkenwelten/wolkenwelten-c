@@ -155,6 +155,7 @@ static int itemDropCheckCollation(uint ai){
 		if(di < 0.75f){
 			itemDrops[bi].itm.amount += itemDrops[ai].itm.amount;
 			itemDrops[bi].ent->vel = vecAdd(itemDrops[bi].ent->vel,itemDrops[ai].ent->vel);
+			itemDrops[bi].ent->pos = vecMulS(vecAdd(itemDrops[bi].ent->pos,itemDrops[ai].ent->pos),0.5f);
 			addPriorityItemDrop(bi);
 			return 1;
 		}
