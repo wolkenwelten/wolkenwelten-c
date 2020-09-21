@@ -7,6 +7,7 @@
 #include "game/blockMining.h"
 #include "game/itemDrop.h"
 #include "game/grenade.h"
+#include "persistence/savegame.h"
 #include "voxel/bigchungus.h"
 #include "network/server.h"
 #include "../../common/src/tmp/cto.h"
