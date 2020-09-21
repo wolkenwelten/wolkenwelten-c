@@ -208,7 +208,7 @@ void characterMove(character *c, const vec mov){
 		c->gvel    = vecMulS(vecDegToVec(c->rot),mov.z*(-s));
 		c->gvel.x += cos((yaw)*PI/180)*mov.x*s;
 		c->gvel.z += sin((yaw)*PI/180)*mov.x*s;
-		c->gvel.y  = mov.y;
+		c->gvel.y += mov.y;
 	}else{
 		const float s = 0.05f;
 		c->gvel.y = mov.y;

@@ -50,11 +50,9 @@ static inline void cloudPart(float px,float py,float pz,float dd,u8 v){
 
 	if(py < player->pos.y){
 		glData[--glCount] = (glCloud){px,py+vf/ 6.f,pz,ct};
-		glData[--glCount] = (glCloud){px,py+vf/18.f,pz,cb};
 		glData[--glCount] = (glCloud){px,py-vf/12.f,pz,cb};
 	}else{
 		glData[--glCount] = (glCloud){px,py-vf/12.f,pz,cb};
-		glData[--glCount] = (glCloud){px,py+vf/18.f,pz,cb};
 		glData[--glCount] = (glCloud){px,py+vf/ 6.f,pz,ct};
 	}
 }
