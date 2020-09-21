@@ -5,6 +5,7 @@
 #include "../game/itemDrop.h"
 #include "../misc/options.h"
 #include "../network/server.h"
+#include "../persistence/savegame.h"
 #include "../worldgen/worldgen.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/misc/lz4.h"
@@ -21,9 +22,6 @@ chungus chungusList[1 << 12];
 uint chungusCount = 0;
 chungus *chungusFirstFree = NULL;
 
-u8 *saveLoadBuffer   = NULL;
-u8 *compressedBuffer = NULL;
-
 uint chungusGetActiveCount(){
 	return chungusCount;
 }
@@ -38,13 +36,6 @@ float chunkDistance(const entity *cam, const vec pos){
 	return vecMag(vecSub(pos,cam->pos));
 }
 
-const char *chungusGetFilename(chungus *c){
-	static char buf[64];
-	snprintf(buf,sizeof(buf)-1,"save/%s/%02X%02X%02X.chunk",optionSavegame,(c->x >> 8)&0xFF,(c->y >> 8)&0xFF,(c->z >> 8)&0xFF);
-	buf[sizeof(buf)-1] = 0;
-	return buf;
-}
-
 void chungusSetClientUpdated(chungus *c,u64 updated){
 	c->clientsUpdated = updated;
 	for(int x=0;x<16;x++){
@@ -55,112 +46,6 @@ void chungusSetClientUpdated(chungus *c,u64 updated){
 			}
 		}
 	}
-}
-
-const u8 *chunkLoad(chungus *c, const u8 *buf){
-	if(buf[0] != 0x01){return buf;}
-
-	int cx = buf[1] & 0xF;
-	int cy = buf[2] & 0xF;
-	int cz = buf[3] & 0xF;
-
-	chunk *chnk = c->chunks[cx][cy][cz];
-	if(chnk == NULL){
-		c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+(cx<<4),c->y+(cy<<4),c->z+(cz<<4));
-	}
-	chnk->clientsUpdated = 0;
-	memcpy(chnk->data,&buf[4],4096);
-
-	return buf+4100;
-}
-
-void chungusLoad(chungus *c){
-	if(c == NULL)               {return;}
-	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
-	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
-	size_t read=0,len=0;
-	const u8 *b,*end;
-	int i;
-
-	FILE *fp = fopen(chungusGetFilename(c),"rb");
-	if(fp == NULL){return;}
-	fseek(fp,0,SEEK_END);
-	len = ftell(fp);
-	fseek(fp,0,SEEK_SET);
-	for(i=0;i<64;i++){
-		read += fread(compressedBuffer+read,1,len-read,fp);
-		if(read >= len){break;}
-	}
-	if(i==64){
-		fprintf(stderr,"Error reading chungus %i:%i:%i\n",c->x>>8,c->y>>8,c->z>>8);
-		return;
-	}
-
-	len = LZ4_decompress_safe((const char *)compressedBuffer, (char *)saveLoadBuffer, len, 4100*4096);
-	end = &saveLoadBuffer[len];
-
-	for(b=saveLoadBuffer;b<end;){
-		u8 id = *b;
-		switch(id){
-			case 1:
-				b = chunkLoad(c,b);
-				break;
-			case 2:
-				b = itemDropLoad(b);
-				break;
-			case 3:
-				b = animalLoad(b);
-				break;
-			default:
-				fprintf(stderr,"Unknown id found in %i:%i:%i savestate\n",c->x>>8,c->y>>8,c->z>>8);
-				goto chungusLoadEnd;
-		}
-		if(b >= end){break;}
-	}
-
-	chungusLoadEnd:
-	fclose(fp);
-}
-
-void chungusSave(chungus *c){
-	if(c == NULL)                                      { return; }
-	if((c->clientsUpdated & ((u64)1 << 31)) != 0) { return; }
-	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
-	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
-
-	u8 *cbuf = saveLoadBuffer;
-	for(int x=0;x<16;x++){
-		for(int y=0;y<16;y++){
-			for(int z=0;z<16;z++){
-				if(c->chunks[x][y][z] == NULL){continue;}
-				cbuf = chunkSave(c->chunks[x][y][z],cbuf);
-			}
-		}
-	}
-	cbuf = itemDropSaveChungus(c,cbuf);
-	cbuf = animalSaveChungus  (c,cbuf);
-
-	size_t len = LZ4_compress_default((const char *)saveLoadBuffer, (char *)compressedBuffer, cbuf - saveLoadBuffer, 4100*4096);
-	if(len == 0){
-		fprintf(stderr,"No Data for chungus %i:%i:%i\n",c->x,c->y,c->z);
-		return;
-	}
-	size_t written = 0;
-	FILE *fp = fopen(chungusGetFilename(c),"wb");
-	if(fp == NULL){
-		fprintf(stderr,"Error opening %s for writing\n",chungusGetFilename(c));
-		return;
-	}
-	for(int i=0;i<64;i++){
-		written += fwrite(compressedBuffer+written,1,len-written,fp);
-		if(written >= len){
-			fclose(fp);
-			c->clientsUpdated |= ((u64)1 << 31);
-			return;
-		}
-	}
-	fclose(fp);
-	fprintf(stderr,"Write error on chungus %i:%i:%i\n",c->x,c->y,c->z);
 }
 
 chungus *chungusNew(int x, int y, int z){

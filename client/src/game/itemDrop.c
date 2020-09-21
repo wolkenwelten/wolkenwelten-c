@@ -11,12 +11,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct {
-	entity  *ent;
-	item     itm;
-	u32  aniStep;
-} itemDrop;
-
 itemDrop itemDrops[1<<12];
 int      itemDropCount = 0;
 

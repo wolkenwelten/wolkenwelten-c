@@ -16,9 +16,6 @@ struct chungus {
 
 chungus     *chungusNew              (int x,int y, int z);
 void         chungusFree             (chungus *c);
-void         chungusLoad             (chungus *c);
-void         chungusSave             (chungus *c);
-const u8    *chunkLoad               (chungus *c, const u8 *b);
 void         chungusRoughBox         (chungus *c, int x, int y, int z, int w, int h, int d, u8 block);
 void         chungusRandomBox        (chungus *c, int x, int y, int z, int w, int h, int d, u8 block, int chance);
 void         chungusBox              (chungus *c, int x, int y, int z, int w, int h, int d, u8 block);

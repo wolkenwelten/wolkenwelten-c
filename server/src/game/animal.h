@@ -9,6 +9,4 @@ animal     *animalNew         (const vec pos ,int type);
 void        animalUpdateAll   ();
 void        animalThinkAll    ();
 uint        animalSyncPlayer  (int c, uint offset);
-const void *animalLoad        (const void *buf);
-void       *animalSaveChungus (const chungus *c,void *buf);
 void        animalDelChungus  (const chungus *c);

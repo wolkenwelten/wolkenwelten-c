@@ -226,14 +226,14 @@ int parseCommand(int c, const char *cmd){
 	}
 
 	if(strncmp(tcmp,"bmcount",2) == 0){
-		snprintf(replyBuf,sizeof(replyBuf),".blockMiningCount : %i",blockMiningCount);
+		snprintf(replyBuf,sizeof(replyBuf),".blockMiningCount : %i",blockMiningGetActive());
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;
 	}
 
 	if(strncmp(tcmp,"idcount",2) == 0){
-		snprintf(replyBuf,sizeof(replyBuf),".itemdropcount : %i",itemDropCount);
+		snprintf(replyBuf,sizeof(replyBuf),".itemdropcount : %i",itemDropGetActive());
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;

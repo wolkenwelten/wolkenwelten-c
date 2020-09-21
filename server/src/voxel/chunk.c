@@ -42,16 +42,6 @@ void chunkFree(chunk *c){
 	chunkFirstFree = c;
 }
 
-u8 *chunkSave(chunk *c, u8 *buf){
-	if((c->clientsUpdated & ((u64)1 << 31)) != 0){return buf;}
-	buf[0] = 0x01;
-	buf[1] = (c->x >> 4)&0xF;
-	buf[2] = (c->y >> 4)&0xF;
-	buf[3] = (c->z >> 4)&0xF;
-	memcpy(buf+4,c->data,16*16*16);
-	return buf+4100;
-}
-
 void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
 	for(int cx=x;cx<gx;cx++){
 		for(int cy=y;cy<gy;cy++){

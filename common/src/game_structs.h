@@ -121,3 +121,9 @@ struct grapplingHook {
 	bool       hooked;
 	bool    returning;
 };
+
+typedef struct {
+	entity    *ent;
+	item       itm;
+	u32    aniStep;
+} itemDrop;

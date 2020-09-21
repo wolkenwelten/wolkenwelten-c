@@ -132,3 +132,7 @@ void blockMiningUpdatePlayer(uint c){
 		msgBlockMiningUpdate(c,bm->x,bm->y,bm->z,bm->damage,blockMiningCount,i);
 	}
 }
+
+uint blockMiningGetActive(){
+	return blockMiningCount;
+}

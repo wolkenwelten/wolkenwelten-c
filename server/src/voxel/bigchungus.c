@@ -5,6 +5,7 @@
 #include "../game/entity.h"
 #include "../game/blockMining.h"
 #include "../misc/options.h"
+#include "../persistence/savegame.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/game/blockType.h"
@@ -290,67 +291,6 @@ void bigchungusUnsubscribeClient(bigchungus *c, int p){
 				chungusUnsubscribePlayer(chng,p);
 			}
 		}
-	}
-}
-
-void bigchungusSafeSaveClient(bigchungus *c, int p){
-	character *chara = clients[p].c;
-	if(chara == NULL){return;}
-	int cx = ((int)chara->pos.x)>>8;
-	int cy = ((int)chara->pos.y)>>8;
-	int cz = ((int)chara->pos.z)>>8;
-
-	if((cx >= 0) && (cx < 256) && (cy >= 0) && (cy < 128) && (cz >= 0) && (cz < 256)){
-		chungusSave(c->chungi[cx][cy][cz]);
-	}
-	for(int ix=0;ix < 12; ix++){
-		for(int iy=0;iy < 12; iy++){
-			for(int iz=0;iz < 12; iz++){
-
-				int ox = ix >> 1;
-				if(ix & 1){ox = -ox;}
-				ox = cx+ox;
-				if(ox <   0){goto xcontinue;}
-				if(ox > 255){goto xcontinue;}
-
-				int oy = iy >> 1;
-				if(iy & 1){oy = -oy;}
-				oy = cy+oy;
-				if(oy <   0){goto ycontinue;}
-				if(oy > 127){goto ycontinue;}
-
-				int oz = iz >> 1;
-				if(iz & 1){oz = -oz;}
-				oz = cz+oz;
-				if(oz <   0){continue;}
-				if(oz > 255){continue;}
-
-				chungusSave(c->chungi[ox][oy][oz]);
-			}
-			ycontinue: (void)c;
-		}
-		xcontinue: (void)c;
-	}
-}
-
-void bigchungusSafeSave(bigchungus *c){
-	static u64 lastSave = 0;
-	if(getMillis() < lastSave+1000){return;}
-	lastSave = getMillis();
-
-	for(int x=127;x <= 129;x++){
-		for(int y=1;y <= 3;y++){
-			for(int z=127;z <= 129;z++){
-				if(c->chungi[x][y][z] == NULL){continue;}
-				chungusSave(c->chungi[x][y][z]);
-			}
-		}
-	}
-
-	for(uint i=0;i<clientCount;i++){
-		if(clients[i].state == 2){ continue; }
-		if(clients[i].c == NULL ){ continue; }
-		bigchungusSafeSaveClient(c,i);
 	}
 }
 

@@ -14,7 +14,6 @@ struct chunk{
 
 chunk *chunkNew        (u16 x,u16 y,u16 z);
 void   chunkFree       (chunk *c);
-u8    *chunkSave       (chunk *c, u8 *buf);
 void   chunkFill       (chunk *c, u8 b);
 void   chunkBox        (chunk *c, int x, int y, int z,int gx,int gy,int gz,u8 b);
 void   chunkGetB       (chunk *c, int x, int y, int z);

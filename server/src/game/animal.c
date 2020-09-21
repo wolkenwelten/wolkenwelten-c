@@ -454,69 +454,6 @@ uint animalSyncPlayer(int c, uint offset){
 	return offset;
 }
 
-void *animalSave(const animal *e, void *buf){
-	u8    *b = (u8    *)buf;
-	float *f = (float *)buf;
-
-	b[ 0] = 0x03;
-	b[ 1] = e->flags;
-	b[ 2] = e->type;
-	b[ 3] = e->state;
-
-	b[ 4] = e->health;
-	b[ 5] = e->hunger;
-	b[ 6] = e->thirst;
-	b[ 7] = e->sleepy;
-
-	b[ 8] = e->age;
-	b[ 9] = 0;
-	b[10] = 0;
-	b[11] = 0;
-
-	f[ 3] = e->pos.x;
-	f[ 4] = e->pos.y;
-	f[ 5] = e->pos.z;
-	f[ 6] = e->rot.yaw;
-	f[ 7] = e->rot.pitch;
-	f[ 8] = e->vel.x;
-	f[ 9] = e->vel.y;
-	f[10] = e->vel.z;
-
-	return b+11*4;
-}
-
-const void *animalLoad(const void *buf){
-	u8 *b     = (u8 *)buf;
-	float *f  = (float   *)buf;
-	animal *e = animalNew(vecNewP(&f[3]),b[2]);
-	if(e == NULL){return b+12*4;}
-
-	e->rot    = vecNewP(&f[6]);
-	e->rot.roll = 0.f;
-	e->vel    = vecNewP(&f[8]);
-
-	e->flags  = b[ 1];
-	e->state  = b[ 3];
-
-	e->health = b[ 4];
-	e->hunger = b[ 5];
-	e->thirst = b[ 6];
-	e->sleepy = b[ 7];
-
-	e->age    = b[ 8];
-
-	return b+12*4;
-}
-
-void *animalSaveChungus(const chungus *c,void *b){
-	if(c == NULL){return b;}
-	for(uint i=0;i<animalCount;i++){
-		if(animalList[i].curChungus != c){continue;}
-		b = animalSave(&animalList[i],b);
-	}
-	return b;
-}
-
 void animalDelChungus(const chungus *c){
 	if(c == NULL){return;}
 	for(int i=animalCount-1;i>=0;i--){

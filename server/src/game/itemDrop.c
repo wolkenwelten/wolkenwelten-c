@@ -14,19 +14,12 @@
 #include <stdlib.h>
 #include <math.h>
 
-typedef struct {
-	entity    *ent;
-	item       itm;
-} itemDrop;
-
-#define ITEM_DROPS_MAX (1<<12)
-
 itemDrop itemDrops[ITEM_DROPS_MAX];
-uint     itemDropCount = 0;
+uint     itemDropCount;
 
 #define ITEM_DROPS_PER_UPDATE 16
 
-inline void itemDropUpdateMsg(uint c,uint i){
+static inline void itemDropUpdateMsg(uint c,uint i){
 	if(i >= itemDropCount)       {return;}
 	if(itemDrops[i].ent == NULL) {return;}
 	msgItemDropUpdate(
@@ -55,7 +48,7 @@ uint itemDropUpdatePlayer(uint c, uint offset){
 	return offset;
 }
 
-static itemDrop *itemDropNew(){
+itemDrop *itemDropNew(){
 	if((itemDropCount) >= (int)(sizeof(itemDrops) / sizeof(itemDrop) - 1)){return NULL;}
 	addPriorityItemDrop(itemDropCount);
 	return &itemDrops[itemDropCount++];
@@ -87,8 +80,15 @@ void itemDropDel(uint d){
 	itemDrops[d].ent = NULL;
 	itemDrops[d]     = itemDrops[--itemDropCount];
 }
+void itemDropDelChungus(const chungus *c){
+	if(c == NULL){return;}
+	for(uint i=itemDropCount-1;i<itemDropCount;i--){
+		if(itemDrops[i].ent->curChungus != c){continue;}
+		itemDropDel(i);
+	}
+}
 
-bool itemDropCheckPickup(uint d){
+static bool itemDropCheckPickup(uint d){
 	for(uint i=0;i<clientCount;++i){
 		if(clients[i].c == NULL){continue;}
 		const vec dist = vecSub(clients[i].c->pos,itemDrops[d].ent->pos);
@@ -101,7 +101,7 @@ bool itemDropCheckPickup(uint d){
 	return false;
 }
 
-int itemDropCheckSubmersion(uint i){
+static int itemDropCheckSubmersion(uint i){
 	entity *e = itemDrops[i].ent;
 	if(e == NULL){return 0;}
 	if(worldGetB(e->pos.x,e->pos.y,e->pos.z) == 0){return 0;}
@@ -140,7 +140,7 @@ int itemDropCheckSubmersion(uint i){
 	return 1;
 }
 
-int itemDropCheckCollation(uint ai){
+static int itemDropCheckCollation(uint ai){
 	if(itemDrops[ai].ent == NULL){return 0;}
 	const vec a = itemDrops[ai].ent->pos;
 
@@ -203,61 +203,6 @@ void itemDropIntro(uint c){
 	}
 }
 
-void *itemDropSave(const itemDrop *i, void *buf){
-	u8    *b = (u8 *)    buf;
-	u16   *s = (u16 *)   buf;
-	float *f = (float *) buf;
-
-	if(i      == NULL){return b;}
-	if(i->ent == NULL){return b;}
-
-	b[0] = 0x02;
-	b[1] = 0;
-
-	s[1] = i->itm.ID;
-	s[2] = i->itm.amount;
-	s[3] = 0;
-
-	f[2] = i->ent->pos.x;
-	f[3] = i->ent->pos.y;
-	f[4] = i->ent->pos.z;
-	f[5] = i->ent->vel.x;
-	f[6] = i->ent->vel.y;
-	f[7] = i->ent->vel.z;
-
-	return b+32;
-}
-
-const void *itemDropLoad(const void *buf){
-	u8    *b = (u8 *)    buf;
-	u16   *s = (u16 *)   buf;
-	float *f = (float *) buf;
-
-	itemDrop *id = itemDropNew();
-	if(id == NULL){return b+32;}
-	id->itm.ID     = s[1];
-	id->itm.amount = s[2];
-
-	id->ent = entityNew(vecNewP(&f[2]),vecZero());
-	if(id->ent == NULL){return b+32;}
-	id->ent->vel = vecNewP(&f[5]);
-
-	return b+32;
-}
-
-void *itemDropSaveChungus(const chungus *c,void *buf){
-	if(c == NULL){return buf;}
-	for(uint i=0;i<itemDropCount;i++){
-		if(itemDrops[i].ent->curChungus != c){continue;}
-		buf = itemDropSave(&itemDrops[i],buf);
-	}
-	return buf;
-}
-
-void itemDropDelChungus(const chungus *c){
-	if(c == NULL){return;}
-	for(uint i=itemDropCount-1;i<itemDropCount;i--){
-		if(itemDrops[i].ent->curChungus != c){continue;}
-		itemDropDel(i);
-	}
+uint itemDropGetActive(){
+	return itemDropCount;
 }
