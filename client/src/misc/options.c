@@ -11,6 +11,7 @@
 
 char playerName[28];
 char serverName[64];
+char optionSavegame[32];
 
 float optionMusicVolume       = 0.75f;
 float optionSoundVolume       = 1.f;
@@ -64,6 +65,12 @@ void parseOptions(int argc,char *argv[]){
 		if((l = checkString(argv[i]+1,"serverName="))){
 			strncpy(serverName,argv[i]+l,sizeof(serverName)-1);
 			gameRunning = true;
+		}
+		if((l = checkString(argv[i]+1,"savegame="))){
+			strncpy(optionSavegame,argv[i]+l,sizeof(optionSavegame)-1);
+			optionSavegame[sizeof(optionSavegame)-1]=0;
+			gameRunning = true;
+			singleplayer = true;
 		}
 		if((l = checkString(argv[i]+1,"automatedTest="))){
 			optionAutomatedTest = atoi(argv[i]+l) != 0;
@@ -137,10 +144,6 @@ void sanityCheckOptions(){
 	}
 	if(serverName[0] == 0){
 		strncpy(serverName,"localhost",sizeof(serverName)-1);
-	}
-	if(optionWorldSeed != 0){
-		singleplayer = true;
-		gameRunning  = true;
 	}
 }
 

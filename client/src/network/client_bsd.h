@@ -62,14 +62,16 @@ bool fileExists(const char *fn){
 
 void startSingleplayerServer(){
 	char seed[64];
+	char save[64];
 	const char *wolkenweltenServer = getServerExecutablePath();
 	if(optionWorldSeed == 0){
 		optionWorldSeed = (int)(time(NULL)&0xFFFF);
 	}
 	snprintf(seed,sizeof(seed)-1,"-worldSeed=%i",optionWorldSeed);
+	snprintf(seed,sizeof(seed)-1,"-savegame=%s",optionSavegame);
 	singlePlayerPID = fork();
 	if (singlePlayerPID == 0){
-		execl(wolkenweltenServer,"wolkenwelten-server",seed,"-singleplayer", (char *)NULL);
+		execl(wolkenweltenServer,"wolkenwelten-server",seed,"-singleplayer",save, (char *)NULL);
 		return;
 	}
 	strncpy(serverName,"localhost",sizeof(serverName)-1);

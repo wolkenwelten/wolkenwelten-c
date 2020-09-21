@@ -78,22 +78,22 @@ optimizegfx: all
 
 .PHONY: run
 run: all
-	./wolkenwelten -soundVolume=10 -worldSeed=18 -debugInfo=1 -fullscreen -runtimeReloading
+	./wolkenwelten -soundVolume=10 -worldSeed=18 -savegame=Test -debugInfo=1 -fullscreen -runtimeReloading
 .PHONY: runt
 runt: all
 	rm -rf save/
-	./wolkenwelten -soundVolume=10 -worldSeed=18 -debugInfo=1 -windowOrientation=cc -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) -automatedTest=1
+	./wolkenwelten -soundVolume=10 -worldSeed=18 -savegame=Test -debugInfo=1 -windowOrientation=cc -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) -automatedTest=1
 .PHONY: runl
 runl: all
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost
 .PHONY: rund
 rund: all
-	./wolkenwelten-server -worldSeed=18 -singleplayer &
+	./wolkenwelten-server -worldSeed=18 -savegame=Test -singleplayer &
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=Captain     -windowOrientation=tl -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberTwo   -windowOrientation=bl -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
 .PHONY: runq
 runq: all
-	./wolkenwelten-server -worldSeed=18 -singleplayer &
+	./wolkenwelten-server -worldSeed=18 -savegame=Test -singleplayer &
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=Captain     -windowOrientation=tl -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberTwo   -windowOrientation=tr -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberThree -windowOrientation=bl -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &

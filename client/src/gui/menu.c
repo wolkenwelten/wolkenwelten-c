@@ -12,6 +12,7 @@
 #include "../../../common/src/tmp/cto.h"
 #include "../main.h"
 
+#include <dirent.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -19,8 +20,30 @@ textMesh *menuM;
 char *menuError = "";
 
 bool showAttribution  = false;
+bool showSavegames    = false;
+
 int  attributionLines = 0;
 static int gamepadSelection = -1;
+
+int   savegameCount = 0;
+char  savegameName[8][32];
+
+void checkSavegames(){
+	showSavegames = true;
+	if(gamepadSelection != -1){
+		gamepadSelection = 0;
+	}
+	savegameCount = 0;
+	DIR *dp = opendir("save/");
+	if(dp == NULL){return;}
+	struct dirent *de = NULL;
+	while((de = readdir(dp)) != NULL){
+		if(de->d_name[0] == '.'){continue;}
+		snprintf(savegameName[savegameCount++],sizeof(savegameName[0]),"%.31s",de->d_name);
+		savegameName[savegameCount-1][sizeof(savegameName[0])-1] = 0;
+	}
+}
+
 
 void initMenu(){
 	menuM = textMeshNew();
@@ -33,22 +56,6 @@ void initMenu(){
 	}
 }
 
-void updateMenu(){
-	if(!textInputActive && (textInputLock == 2)){
-		char *buf = textInputGetBuffer();
-		strncpy(serverName,buf,sizeof(serverName)-1);
-		textInputLock   = 0;
-		connectionTries = 0;
-		gameRunning = true;
-		hideMouseCursor();
-	}
-
-	if(!textInputActive && (textInputLock == 3)){
-		snprintf(playerName,sizeof(playerName),"%s",textInputGetBuffer());
-		textInputLock = 0;
-	}
-}
-
 void startSingleplayer(){
 	singleplayer    = true;
 	gameRunning     = true;
@@ -56,6 +63,28 @@ void startSingleplayer(){
 	textInputActive = false;
 	connectionTries = 0;
 	hideMouseCursor();
+}
+
+void updateMenu(){
+	if(!textInputActive && (textInputLock == 2)){
+		char *buf = textInputGetBuffer();
+		strncpy(serverName,buf,sizeof(serverName)-1);
+		textInputLock   = 0;
+		connectionTries = 0;
+		gameRunning     = true;
+		hideMouseCursor();
+	}
+
+	if(!textInputActive && (textInputLock == 3)){
+		snprintf(playerName,sizeof(playerName),"%s",textInputGetBuffer());
+		textInputLock = 0;
+	}
+
+	if(!textInputActive && (textInputLock == 4)){
+		snprintf(optionSavegame,sizeof(optionSavegame),"%s",textInputGetBuffer());
+		textInputLock = 0;
+		startSingleplayer();
+	}
 }
 
 void updateMenuClick(int x, int y, int btn){
@@ -66,10 +95,41 @@ void updateMenuClick(int x, int y, int btn){
 		return;
 	}
 
+	if(showSavegames){
+		int buttonY = 32;
+		if(btn != 1)                  {return;}
+		if(x < screenWidth - 256 - 32){return;}
+		if(x > screenWidth       - 32){return;}
+		for(int i=0;i<savegameCount;i++){
+			if((y > buttonY) && (y < buttonY+32)){
+				strncpy(optionSavegame,savegameName[i],32);
+				optionSavegame[31] = 0;
+				startSingleplayer(i);
+				return;
+			}
+			buttonY += 32 + 16;
+		}
+		buttonY += 32 + 16;
+
+		// New Game
+		if(!textInputActive){
+			textInput(8,screenHeight-24,256,16,4);
+		}
+		buttonY += 32 + 16;
+
+		if((y > buttonY) && (y < buttonY+32)){
+			showSavegames = false;
+			return;
+		}
+		buttonY += 32 + 16;
+		return;
+	}
+
+
 	if((btn == 1) && (x > (screenWidth-256-32)) && (x < screenWidth-32)){
 		if((y > 32) && (y < 64)){
 			#ifndef __EMSCRIPTEN__
-			startSingleplayer();
+			checkSavegames();
 			#endif
 		} else if((y > 80) && (y < 112)){
 			if(!textInputActive){
@@ -122,10 +182,8 @@ void drawMenuAttributions(){
 	textMeshPrintfPS(menuM,16,16-scroll,2,"Attribution:\n%s",txt_attribution_txt_data);
 }
 
-void drawMenuButtons(){
-	int buttonY = 32;
+void drawMenuLogo(){
 	char playerNameBuf[48];
-	int ci = gamepadSelection;
 
 	textMeshAddStrPS(menuM,32,32,4,"Wolkenwelten");
 	textMeshPrintfPS(menuM,32,72,2,"Pre-Alpha %s [%.8s]",VERSION,COMMIT);
@@ -138,6 +196,12 @@ void drawMenuButtons(){
 
 	snprintf(playerNameBuf,sizeof(playerNameBuf),"Your Name: %s",playerName);
 	textMeshAddStrPS(menuM,32,176,2,playerNameBuf);
+}
+
+void drawMenuButtons(){
+	int buttonY = 32;
+	int ci = gamepadSelection;
+	drawMenuLogo();
 
 	#ifndef __EMSCRIPTEN__
 	drawButton(menuM,"Singleplayer",ci-- == 0,screenWidth-256-32,buttonY,256,32);
@@ -171,6 +235,28 @@ void drawMenuButtons(){
 	}
 }
 
+void drawMenuSavegames(){
+	int buttonY = 32;
+	int ci = gamepadSelection;
+	drawMenuLogo();
+
+	for(int i=0;i<savegameCount;i++){
+		drawButton(menuM,savegameName[i],ci-- == 0,screenWidth-256-32,buttonY,256,32);
+		buttonY += 32 + 16;
+	}
+	buttonY += 32 + 16;
+
+	drawButton(menuM,"New Game",ci-- == 0,screenWidth-256-32,buttonY,256,32);
+	buttonY += 32 + 16;
+
+	drawButton(menuM,"Back to Menu",ci-- == 0,screenWidth-256-32,buttonY,256,32);
+	buttonY += 32 + 16;
+
+	if(textInputActive && (textInputLock == 4)){
+		textMeshAddStrPS(menuM,8,screenHeight-42,2,"Name:");
+	}
+}
+
 void renderMenu(){
 	shaderBind(sTextMesh);
 	shaderMatrix(sTextMesh,matOrthoProj);
@@ -184,6 +270,8 @@ void renderMenu(){
 
 	if(showAttribution){
 		drawMenuAttributions();
+	}else if(showSavegames){
+		drawMenuSavegames();
 	}else{
 		drawMenuButtons();
 	}
@@ -205,7 +293,7 @@ void updateMenuGamepad(int btn){
 	switch(gamepadSelection){
 		case 0:
 			#ifndef __EMSCRIPTEN__
-			startSingleplayer();
+			checkSavegames();
 			#endif
 		break;
 
