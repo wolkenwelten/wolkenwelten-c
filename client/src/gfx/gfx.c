@@ -29,6 +29,7 @@ float matProjection[16], matView[16];
 int screenWidth     = 800;
 int screenHeight    = 600;
 size_t vboTrisCount = 0;
+vec camShake;
 
 GLenum glCheckError_(const char *file, int line){
 	GLenum errorCode;
@@ -97,7 +98,8 @@ vec calcShake(const character *cam){
 
 void calcView(const character *cam){
 	matIdentity(matView);
-	vec shake = vecAdd(cam->rot,calcShake(cam));
+	camShake = calcShake(cam);
+	const vec shake = vecAdd(cam->rot,camShake);
 	matMulRotXY(matView,shake.yaw,shake.pitch);
 	matMulTrans(matView,-cam->pos.x,-(cam->pos.y+0.5+cam->yoff),-cam->pos.z);
 }

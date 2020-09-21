@@ -131,14 +131,14 @@ void renderSky(const character *cam){
 	shaderBind(sMesh);
 
 	matIdentity(matMVP);
-	matMulRotXY(matMVP,cam->rot.yaw,cam->rot.pitch);
+	const vec shake = vecAdd(cam->rot,camShake);
+	matMulRotXY(matMVP,shake.yaw,shake.pitch);
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);
 	meshDrawLin(skyMesh);
 
-
 	matIdentity(matMVP);
-	matMulRotXY(matMVP,cam->rot.yaw,cam->rot.pitch);
+	matMulRotXY(matMVP,shake.yaw,shake.pitch);
 	matMulRotX(matMVP,sunAngle);
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);
