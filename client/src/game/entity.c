@@ -60,9 +60,10 @@ void entityFree(entity *e){
 void entityShadowDraw(){
 	glDepthFunc(GL_LEQUAL);
 	meshFinish  (meshShadow, GL_STREAM_DRAW);
+	shaderBind  (sShadow);
 	matMov      (matMVP,matView);
 	matMul      (matMVP,matMVP,matProjection);
-	shaderMatrix(sMesh,matMVP);
+	shaderMatrix(sShadow,matMVP);
 	meshDraw    (meshShadow);
 }
 
@@ -97,7 +98,7 @@ void entityDraw(const entity *e){
 	matMulRotYX (matMVP,e->rot.yaw,e->rot.pitch);
 	matMul      (matMVP,matMVP,matProjection);
 
-	shaderBind(sShadow);
+
 	shaderMatrix(sShadow,matMVP);
 	meshDraw(e->eMesh);
 	entityShadow(e);
