@@ -123,7 +123,7 @@ void updateMenuClick(int x, int y, int btn){
 				if(col == 1){
 					strncpy(optionSavegame,savegameName[i],32);
 					optionSavegame[31] = 0;
-					startSingleplayer(i);
+					startSingleplayer();
 					return;
 				}else if(col == 2){
 					deleteSavegame(i);
