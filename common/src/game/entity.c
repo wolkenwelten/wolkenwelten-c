@@ -46,6 +46,12 @@ int entityUpdate(entity *e){
 	if(e->vel.y < -1.0f){e->vel.y+=0.005f;}
 	if(e->vel.y >  1.0f){e->vel.y-=0.005f;}
 
+	if(e->yoff > 0.01f){
+		e->yoff -= 0.01f;
+	}else if(e->yoff < -0.01f){
+		e->yoff += 0.01f;
+	}
+
 	e->flags |=  ENTITY_FALLING;
 	e->flags &= ~ENTITY_COLLIDE;
 	col = entityCollision(e->pos);
@@ -91,6 +97,7 @@ int entityUpdate(entity *e){
 			e->yoff += -0.2f;
 		}
 		e->vel = vecMul(e->vel,vecNew(0.97f,0,0.97f));
+		e->vel.y = 0.001f;
 	}
 
 	entityUpdateCurChungus(e);
