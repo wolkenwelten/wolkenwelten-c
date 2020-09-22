@@ -39,7 +39,7 @@ void itemDropUpdateFromServer(const packet *p){
 	u16 len = p->val.s[1];
 
 	if(len < itemDropCount){
-		for(int i=len-1;i<itemDropCount;i++){
+		for(int i=MAX(0,len-1);i<itemDropCount;i++){
 			if(itemDrops[i].ent != NULL){
 				entityFree(itemDrops[i].ent);
 				itemDrops[i].ent = NULL;

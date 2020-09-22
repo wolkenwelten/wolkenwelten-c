@@ -60,6 +60,7 @@ void msgParseGetChunk(const packet *p){
 
 void msgSendPlayerPos(){
 	static int inventoryCountDown=0;
+	if(player == NULL){return;}
 	if(--inventoryCountDown < 0){
 		msgPlayerSetInventory(-1,player->inventory,40);
 		inventoryCountDown = 16;
