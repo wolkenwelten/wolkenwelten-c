@@ -11,6 +11,7 @@ void    shaderTransform (shader *s, float x,float y,float z);
 void    shaderTex       (shader *s, int t);
 
 extern shader *sMesh;
+extern shader *sShadow;
 extern shader *sBlockMesh;
 extern shader *sParticle;
 extern shader *sTextMesh;

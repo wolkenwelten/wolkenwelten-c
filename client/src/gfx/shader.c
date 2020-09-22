@@ -9,6 +9,7 @@ shader shaderList[8];
 int    shaderCount = 0;
 unsigned int activeProgram = 0;
 shader *sMesh;
+shader *sShadow;
 shader *sBlockMesh;
 shader *sParticle;
 shader *sTextMesh;
@@ -16,6 +17,7 @@ shader *sCloud;
 
 void shaderInit(){
 	sMesh      = shaderNew((const char *)src_shader_meshShaderVS_glsl_data,     (const char *)src_shader_meshShaderFS_glsl_data,     0x3);
+	sShadow    = shaderNew((const char *)src_shader_shadowShaderVS_glsl_data,   (const char *)src_shader_shadowShaderFS_glsl_data,   0x3);
 	sBlockMesh = shaderNew((const char *)src_shader_blockShaderVS_glsl_data,    (const char *)src_shader_blockShaderFS_glsl_data,    0x3);
 	sParticle  = shaderNew((const char *)src_shader_particleShaderVS_glsl_data, (const char *)src_shader_particleShaderFS_glsl_data, 0xD);
 	sTextMesh  = shaderNew((const char *)src_shader_textShaderVS_glsl_data,     (const char *)src_shader_textShaderFS_glsl_data,     0x7);

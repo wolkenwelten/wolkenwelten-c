@@ -69,22 +69,23 @@ void entityShadowDraw(){
 void entityShadow(const entity *e){
 	vec p = e->pos;
 	p.y = floorf(p.y)+0.05f;
-	for(int i=0;i<8;i++){
+	for(int i=0;i<12;i++){
 		if(worldGetB(p.x,p.y-1.f,p.z) != 0){break;}
 		p.y -= 1.f;
 		if(i == 7){return;}
 	}
-	const float s = 0.5f;
+	const float s = 0.4f + ((e->pos.y - p.y)/8.f);
+	const float a = MAX(0.f,1.f-((e->pos.y - p.y)/11.f));
 	p.x -= s/2.f;
 	p.z -= s/2.f;
 
-	meshAddVert(meshShadow, p.x  ,p.y,p.z  ,0.f,0.f);
-	meshAddVert(meshShadow, p.x+s,p.y,p.z+s,1.f,1.f);
-	meshAddVert(meshShadow, p.x+s,p.y,p.z  ,1.f,0.f);
+	meshAddVertC(meshShadow, p.x  ,p.y,p.z  ,0.f,0.f,a);
+	meshAddVertC(meshShadow, p.x+s,p.y,p.z+s,1.f,1.f,a);
+	meshAddVertC(meshShadow, p.x+s,p.y,p.z  ,1.f,0.f,a);
 
-	meshAddVert(meshShadow, p.x+s,p.y,p.z+s,1.f,1.f);
-	meshAddVert(meshShadow, p.x  ,p.y,p.z  ,0.f,0.f);
-	meshAddVert(meshShadow, p.x  ,p.y,p.z+s,0.f,1.f);
+	meshAddVertC(meshShadow, p.x+s,p.y,p.z+s,1.f,1.f,a);
+	meshAddVertC(meshShadow, p.x  ,p.y,p.z  ,0.f,0.f,a);
+	meshAddVertC(meshShadow, p.x  ,p.y,p.z+s,0.f,1.f,a);
 }
 
 void entityDraw(const entity *e){
@@ -96,7 +97,8 @@ void entityDraw(const entity *e){
 	matMulRotYX (matMVP,e->rot.yaw,e->rot.pitch);
 	matMul      (matMVP,matMVP,matProjection);
 
-	shaderMatrix(sMesh,matMVP);
+	shaderBind(sShadow);
+	shaderMatrix(sShadow,matMVP);
 	meshDraw(e->eMesh);
 	entityShadow(e);
 }
