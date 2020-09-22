@@ -69,7 +69,7 @@ void parseOptions(int argc,char *argv[]){
 		if((l = checkString(argv[i]+1,"savegame="))){
 			strncpy(optionSavegame,argv[i]+l,sizeof(optionSavegame)-1);
 			optionSavegame[sizeof(optionSavegame)-1]=0;
-			gameRunning = true;
+			gameRunning  = true;
 			singleplayer = true;
 		}
 		if((l = checkString(argv[i]+1,"automatedTest="))){

@@ -17,3 +17,4 @@ char      **splitArgs(const char *cmd,int *rargc);
 int         isDir    (const char *name);
 int         isFile   (const char *name);
 void        makeDir  (const char *name);
+void        rmDirR   (const char *name);

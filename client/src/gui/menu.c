@@ -42,8 +42,17 @@ void checkSavegames(){
 		snprintf(savegameName[savegameCount++],sizeof(savegameName[0]),"%.31s",de->d_name);
 		savegameName[savegameCount-1][sizeof(savegameName[0])-1] = 0;
 	}
+	closedir(dp);
 }
 
+void deleteSavegame(int i){
+	static char buf[64];
+	if(i < 0)             {return;}
+	if(i > savegameCount) {return;}
+	snprintf(buf,64,"save/%s",savegameName[i]);
+	buf[63]=0;
+	rmDirR(buf);
+}
 
 void initMenu(){
 	menuM = textMeshNew();
@@ -97,18 +106,34 @@ void updateMenuClick(int x, int y, int btn){
 
 	if(showSavegames){
 		int buttonY = 32;
+		int col = 0;
+
 		if(btn != 1)                  {return;}
-		if(x < screenWidth - 256 - 32){return;}
 		if(x > screenWidth       - 32){return;}
+
+		if(x > screenWidth - 256 - 32){
+			col = 1;
+		}else{
+			if(x < screenWidth - 256 - 72){return;}
+			if(x > screenWidth - 256 - 40){return;}
+			col = 2;
+		}
 		for(int i=0;i<savegameCount;i++){
 			if((y > buttonY) && (y < buttonY+32)){
-				strncpy(optionSavegame,savegameName[i],32);
-				optionSavegame[31] = 0;
-				startSingleplayer(i);
-				return;
+				if(col == 1){
+					strncpy(optionSavegame,savegameName[i],32);
+					optionSavegame[31] = 0;
+					startSingleplayer(i);
+					return;
+				}else if(col == 2){
+					deleteSavegame(i);
+					checkSavegames();
+					return;
+				}
 			}
 			buttonY += 32 + 16;
 		}
+		if(col != 1){return;}
 		buttonY += 32 + 16;
 
 		// New Game
@@ -119,6 +144,8 @@ void updateMenuClick(int x, int y, int btn){
 
 		if((y > buttonY) && (y < buttonY+32)){
 			showSavegames = false;
+			textInputClose();
+			textInputLock = 0;
 			return;
 		}
 		buttonY += 32 + 16;
@@ -135,13 +162,13 @@ void updateMenuClick(int x, int y, int btn){
 			if(!textInputActive){
 				textInput(8,screenHeight-24,256,16,2);
 			}
-		} else if((y > 130) && (y < 162)){
+		} else if((y > 130+48) && (y < 162+48)){
 			if(!textInputActive){
 				textInput(8,screenHeight-24,256,16,3);
 			}
-		} else if((y > 178) && (y < 200)){
+		} else if((y > 178+48) && (y < 200+48)){
 			showAttribution=true;
-		} else if((y > 216) && (y < 248)){
+		} else if((y > 216+96) && (y < 248+96)){
 			quit=true;
 		}
 	}
@@ -212,11 +239,13 @@ void drawMenuButtons(){
 
 	drawButton(menuM,"Multiplayer",ci-- == 0,screenWidth-256-32,buttonY,256,32);
 	buttonY += 32 + 16;
+	buttonY += 32 + 16;
 
 	drawButton(menuM,"Change Name",ci-- == 0,screenWidth-256-32,buttonY,256,32);
 	buttonY += 32 + 16;
 
 	drawButton(menuM,"Attribution",ci-- == 0,screenWidth-256-32,buttonY,256,32);
+	buttonY += 32 + 16;
 	buttonY += 32 + 16;
 
 	#ifndef __EMSCRIPTEN__
@@ -242,6 +271,7 @@ void drawMenuSavegames(){
 
 	for(int i=0;i<savegameCount;i++){
 		drawButton(menuM,savegameName[i],ci-- == 0,screenWidth-256-32,buttonY,256,32);
+		drawButton(menuM,"X",0,screenWidth-256-72,buttonY,32,32);
 		buttonY += 32 + 16;
 	}
 	buttonY += 32 + 16;

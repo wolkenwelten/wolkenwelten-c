@@ -181,3 +181,24 @@ void makeDir(const char *name){
 	mkdir(name,0755);
 	#endif
 }
+
+void rmDirR(const char *name){
+	DIR *dp = opendir(name);
+	if(dp == NULL){return;}
+	struct dirent *de = NULL;
+	while((de = readdir(dp)) != NULL){
+		if(de->d_name[0] == '.'){continue;}
+		char *buf = malloc(256);
+		snprintf(buf,256,"%s/%s",name,de->d_name);
+		buf[255]=0;
+		if(isDir(buf)){
+			rmDirR(buf);
+			rmdir(buf);
+		}else{
+			unlink(buf);
+		}
+		free(buf);
+	}
+	closedir(dp);
+	rmdir(name);
+}
