@@ -75,7 +75,7 @@ void entityShadow(const entity *e){
 		p.y -= 1.f;
 		if(i == 7){return;}
 	}
-	const float s = 0.4f + ((e->pos.y - p.y)/8.f);
+	const float s = 0.6f + ((e->pos.y - p.y)/8.f);
 	const float a = MAX(0.f,1.f-((e->pos.y - p.y)/11.f));
 	p.x -= s/2.f;
 	p.z -= s/2.f;
@@ -94,10 +94,9 @@ void entityDraw(const entity *e){
 
 	matMov      (matMVP,matView);
 	matMulTrans (matMVP,e->pos.x,e->pos.y+e->yoff,e->pos.z);
-	matMulScale (matMVP,0.25f,0.25f,0.25f);
+	matMulScale (matMVP,0.4f,0.4f,0.4f);
 	matMulRotYX (matMVP,e->rot.yaw,e->rot.pitch);
 	matMul      (matMVP,matMVP,matProjection);
-
 
 	shaderMatrix(sShadow,matMVP);
 	meshDraw(e->eMesh);
