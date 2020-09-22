@@ -9,7 +9,7 @@
 #include <string.h>
 #include "../gfx/gl.h"
 
-vertex meshBuffer[16384];
+vertex meshBuffer[1<<16];
 mesh meshList[1024];
 int  meshCount = 0;
 mesh *meshFirstFree = NULL;
