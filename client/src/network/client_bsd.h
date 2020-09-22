@@ -67,7 +67,7 @@ void startSingleplayerServer(){
 	if(optionWorldSeed == 0){
 		optionWorldSeed = (int)(time(NULL)&0xFFFF);
 	}
-	snprintf(seed,sizeof(seed)-1,"-worldSeed=%i",optionWorldSeed);
+	snprintf(save,sizeof(seed)-1,"-worldSeed=%i",optionWorldSeed);
 	snprintf(seed,sizeof(seed)-1,"-savegame=%s",optionSavegame);
 	singlePlayerPID = fork();
 	if (singlePlayerPID == 0){
