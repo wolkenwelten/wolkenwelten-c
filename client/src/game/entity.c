@@ -3,6 +3,7 @@
 #include "../main.h"
 #include "../sdl/sfx.h"
 #include "../game/character.h"
+#include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
@@ -53,6 +54,7 @@ void entityDraw(const entity *e){
 	if(e        == NULL){return;}
 	if(e->eMesh == NULL){return;}
 
+
 	matMov      (matMVP,matView);
 	matMulTrans (matMVP,e->pos.x,e->pos.y+e->yoff,e->pos.z);
 	matMulScale (matMVP,0.25f,0.25f,0.25f);
@@ -68,6 +70,7 @@ void entityDrawAll(){
 	for(int i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL){ continue; }
 		if(entityDistance(&entityList[i],player) > (ENTITY_FADEOUT * ENTITY_FADEOUT)){ continue; }
+		if(!CubeInFrustum(vecSubS(entityList[i].pos,.5f),1.f)){continue;}
 		entityDraw(&entityList[i]);
 	}
 }
