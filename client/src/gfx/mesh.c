@@ -28,6 +28,10 @@ void meshAddVertC(mesh *m, float x,float y,float z,float u,float v,float c){
 	}
 }
 
+void meshEmpty(mesh *m){
+	m->dataCount = 0;
+}
+
 void meshDrawVBO(const mesh *m){
 	if(!m->vbo){return;}
 	glBindBuffer(GL_ARRAY_BUFFER, m->vbo);
