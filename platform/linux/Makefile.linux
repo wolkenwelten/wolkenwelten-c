@@ -20,7 +20,7 @@ endif
 release.linux: releases/linux/wolkenwelten-linux.tar.zstd
 releases/linux/wolkenwelten-linux.tar.zstd: releases/linux/wolkenwelten/wolkenwelten
 releases/linux/wolkenwelten-linux.tar.zstd: releases/linux/wolkenwelten/wolkenwelten-server
-	cd releases/linux/ && tar -c wolkenwelten/ | zstd -z -f -q -19 - -o wolkenwelten-linux.tar.zstd
+	cd releases/linux/ && tar -c wolkenwelten/ | zstd -z -f -q -19 - -o wolkenwelten-linux-$(VERSION_NAME).tar.zstd
 
 
 releases/linux/wolkenwelten/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)

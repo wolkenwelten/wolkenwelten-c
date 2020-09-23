@@ -7,6 +7,8 @@ WARNINGS             := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-alig
 CFLAGS               := -g
 CSTD                 := -std=c99
 
+VERSION_NAME         := $(shell tools/versionname)
+
 include common/Makefile.common
 include client/Makefile.client
 include server/Makefile.server

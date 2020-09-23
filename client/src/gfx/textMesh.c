@@ -1,3 +1,4 @@
+#define _DEFAULT_SOURCE
 #include "textMesh.h"
 #include "../gfx/gfx.h"
 #include "../gfx/texture.h"
@@ -9,6 +10,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../gfx/gl.h"
 
 char      stringBuffer[8192];
@@ -186,6 +188,19 @@ void textMeshPrintf(textMesh *m, const char *format, ...){
 
 	textMeshAddString(m,stringBuffer);
 }
+
+void textMeshPrintfRA(textMesh *m, const char *format, ...){
+	va_list ap;
+	va_start(ap,format);
+	vsnprintf(stringBuffer,sizeof(stringBuffer),format,ap);
+	va_end(ap);
+	stringBuffer[sizeof(stringBuffer)-1]=0;
+	if(stringBuffer[0]==0){return;}
+	m->sx -= strnlen(stringBuffer,sizeof(stringBuffer))*(m->size*8);
+
+	textMeshAddString(m,stringBuffer);
+}
+
 
 void textMeshDigit(textMesh *m, int x, int y, int size, int digit){
 	const int   glyphWidth = 16*size;

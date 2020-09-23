@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+branchname=`git rev-parse --abbrev-ref HEAD`
+curcommit=`git rev-parse --short HEAD | tr '[:lower:]' '[:upper:]'`
+commitcount=`git log "$branchname" --oneline --not master | wc -l`
+if [[ "$branchname" =~ ^ver/.* ]]; then
+	branchname="${branchname:4}"
+	echo "$branchname.$commitcount"
+else
+	echo "$branchname-$curcommit"
+fi

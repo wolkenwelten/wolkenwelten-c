@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-VERSION=`git describe --abbrev=0 --tags`
+VERSION=`tools/versionname`
 COMMIT=`git rev-parse HEAD | tr '[:lower:]' '[:upper:]'`
 BUILDDATE=`date "+%F %k:%M"`
 
 HPP_FILE="$1.h"
 CPP_FILE="$1.c"
+
+if [ "$#" -gt 0 ]; then
 
 echo "#pragma once"                   > $HPP_FILE
 echo ""                              >> $HPP_FILE
@@ -18,6 +20,10 @@ echo ""                                      >> $CPP_FILE
 echo "const char *VERSION=\"$VERSION\";"     >> $CPP_FILE
 echo "const char *BUILDDATE=\"$BUILDDATE\";" >> $CPP_FILE
 echo "const char *COMMIT=\"$COMMIT\";"       >> $CPP_FILE
+
+else
+echo "Missing .c/.h prefix, not generating any files"
+fi
 
 echo "Version:   $VERSION"
 echo "Builddate: $BUILDDATE"

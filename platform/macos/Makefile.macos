@@ -18,7 +18,7 @@ releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/
 releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/Frameworks/SDL2.framework
 releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/Frameworks/SDL2_mixer.framework
 releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns
-	cd releases/macos/ && tar -czf wolkenwelten-macos.tgz wolkenwelten.app
+	cd releases/macos/ && tar -czf wolkenwelten-macos-$(VERSION_NAME).tgz wolkenwelten.app
 
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
