@@ -37,8 +37,8 @@ function checkReleases($platform){
 	asort($arrS,SORT_NUMERIC);
 	asort($arrE,SORT_NUMERIC);
 
-	$stable[$platform]       = $arrS;
-	$experimental[$platform] = $arrE;
+	$stable[$platform]       = array_reverse($arrS,true);
+	$experimental[$platform] = array_reverse($arrE,true);
 }
 
 function niceName($platform){
