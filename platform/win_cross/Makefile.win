@@ -13,9 +13,9 @@ WEBEXCLUDE       += --exclude=releases/win/wolkenwelten/ --exclude=releases/win/
 .PHONY: release.win
 release: release.win
 
-release.win: releases/win/wolkenwelten-win.zip
-releases/win/wolkenwelten-win.zip: releases/win/wolkenwelten/wolkenwelten.exe
-releases/win/wolkenwelten-win.zip: releases/win/wolkenwelten/wolkenwelten-server.exe
+release.win: releases/win/wolkenwelten-win-$(VERSION_NAME).zip
+releases/win/wolkenwelten-win-$(VERSION_NAME).zip: releases/win/wolkenwelten/wolkenwelten.exe
+releases/win/wolkenwelten-win-$(VERSION_NAME).zip: releases/win/wolkenwelten/wolkenwelten-server.exe
 	cd releases/win/ && zip -r9X wolkenwelten-win-$(VERSION_NAME).zip wolkenwelten/
 
 releases/win/wolkenwelten/wolkenwelten.exe: CFLAGS    += $(WIN_CLIENT_CFLAGS)

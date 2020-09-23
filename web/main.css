@@ -394,7 +394,7 @@ span.key {
 	cursor:pointer;
 	font-size:1.25em;
 
-	margin-bottom:0.25em;
+	margin:0px 0.25em 0.25em 0.25em;
 }
 
 .buttonlabel {
@@ -405,8 +405,9 @@ span.key {
 	display:inline-block;
 	vertical-align:middle;
 	margin:0px 0px 0px 8px;
-	width:auto !important;
-	height:auto !important;
+	width:16px;
+	height:16px;
+	display:inline-block;
 }
 .wasmdl .buttonicon {
 	vertical-align:top;
@@ -429,6 +430,19 @@ span.key {
 	height:auto;
 	display:inline-block;
 	margin:0px 0.5em
+}
+
+.icon-win {
+	background:url("data:image/gif;base64,R0lGODlhEAAQAMIEAP8AAABt/4P/AP/9AP///////////////yH5BAEKAAQALAAAAAAQABAAAAM2CLpAJDAKtpyMVNk7875Z83DhJ5Xj5axs675tIM+BM9z4QM92fu+yng9YI/h+QGGOqMQxjccEADs=");
+}
+.icon-macos {
+	background:url("data:image/gif;base64,R0lGODlhEAAQAMIHAAAAABFUoRhpxhx121B5qGSWz2+m5f///ywAAAAAEAAQAAADTTi6I2AwGrbCk3CJBQgskmIFCgASXVQCQHOx1zSM84V6mbI5uAGqDMsPI+P0iJTOEFPaWGKFWIlUiqCAIwercAMKnhaUEkixEIsMxzkBADs=");
+}
+.icon-linux {
+	background:url("data:image/gif;base64,R0lGODlhEAAQAMIEAAAAAC8uLriIC+OtIc/Jyf///8/Jyc/JySH5BAEKAAcALAAAAAAQABAAAANMeLoAsTC2GWUp4ILKcsOcAgzk0IRHQzYP1xAwQVXfhZ00EMtzdxG2nugD1OAUpVdwtCgNBDqboKSYkgSFYsEqWHAnjWkXIiiDAWVIAgA7");
+}
+.icon-wasm {
+	background:url("data:image/gif;base64,R0lGODlhEAAQAMIAAGVO8Kqqqt3d3f///2VO8GVO8GVO8GVO8CH5BAEKAAQALAAAAAAQABAAAAMwCKrUvhA6EiujNuvNu//RsIjKIFQkcALkurhrHMGKYAczq+ovJOC2XW+BUwAhRVACADs=");
 }
 
 @media only screen and (max-device-width: 480px) {

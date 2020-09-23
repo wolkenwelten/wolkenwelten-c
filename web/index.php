@@ -1,4 +1,70 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<?php
+
+$stable       = [];
+$experimental = [];
+$platforms    = [
+	'win'   => 'Windows',
+	'macos' => 'MacOS',
+	'linux' => 'GNU/Linux'
+];
+
+function getReleaseDir(){
+	if(is_dir('releases')){return 'releases/';}
+	if(is_dir('../releases')){return '../releases/';}
+	return false;
+}
+
+function checkReleases($platform){
+	global $stable,$experimental;
+
+	$arrS = [];
+	$arrE = [];
+	$dir = getReleaseDir().$platform.'/';
+	if(!is_dir($dir)){return;}
+	$handle = opendir($dir);
+	if ($handle === false){return;}
+	while (false !== ($entry = readdir($handle))) {
+		if($entry[0] == '.'){continue;}
+		if(strpos($entry,"wolkenwelten-$platform") === false){continue;}
+		if(strpos($entry,"master") === false){
+			$arrS[$entry] = filemtime($dir.$entry);
+		}else{
+			$arrE[$entry] = filemtime($dir.$entry);
+		}
+	}
+	closedir($handle);
+	asort($arrS,SORT_NUMERIC);
+	asort($arrE,SORT_NUMERIC);
+
+	$stable[$platform]       = $arrS;
+	$experimental[$platform] = $arrE;
+}
+
+function niceName($platform){
+	global $platforms;
+
+	if(isset($platforms[$platform])){
+		return $platforms[$platform];
+	}
+	return $platform;
+}
+
+function echoBuilds($arr){
+	foreach($arr as $platform => $releases){
+		$rel = array_key_first($releases);
+		if(trim($rel) == ''){continue;}
+		$href = 'release/'.$platform.'/'.$rel;
+		$label = '<span class=buttonlabel>'.niceName($platform).'</span><span class="buttonicon icon-'.$platform.'"></span>';
+		echo '<a href="'.$href.'" download class=button>'.$label."</a>";
+	}
+	echo "<br/>\n";
+}
+
+foreach(array_keys($platforms) as $plat){
+	checkReleases($plat);
+}
+?>
 <html>
 <head>
 	<meta charset="utf-8"/>
@@ -14,14 +80,20 @@
 	<hr/>
 	<p>Greetings Cybersurfer, you have reached my little corner of the WWW offering a sneak peek of a videogame I have been developing in my spare time.</p>
 	<p>You can watch me work on this Game on my <a href="https://www.twitch.tv/melchizedek6809">Twitch channel</a>, I try to do more visually exciting features on stream but it is still just me coding away, so be prepared for that.</p>
-	<p>Apart from that you can also join our <a href="https://discord.gg/vPZffVS">Discord</a>. </p>
+	<p>Apart from that you can also join our <a href="https://discord.gg/vPZffVS">Discord</a>.</p>
 	<p>For now only Win/Mac/Lin are supported with a native version, although there is the wasm version which should work on every OS having a modern Browser. Apart from that the codebase is already running and getting regular testing on OpenBSD and Haiku.</p><br/>
-	<h2>Download a native Version:</h2>
+	<h2>Download a stable release:</h2>
 	<hr/>
 	<div class=nativedl align=center>
-		<a href="releases/win/wolkenwelten-win.zip" download class=button><span class=buttonlabel>Windows</span><img class=buttonicon width=16 height=16 src="data:image/gif;base64,R0lGODlhEAAQAMIEAP8AAABt/4P/AP/9AP///////////////yH5BAEKAAQALAAAAAAQABAAAAM2CLpAJDAKtpyMVNk7875Z83DhJ5Xj5axs675tIM+BM9z4QM92fu+yng9YI/h+QGGOqMQxjccEADs="/></a>
-		<a href="releases/macos/wolkenwelten-macos.tgz" download class=button><span class=buttonlabel>MacOS</span><img class=buttonicon width=16 height=16 src="data:image/gif;base64,R0lGODlhEAAQAMIHAAAAABFUoRhpxhx121B5qGSWz2+m5f///ywAAAAAEAAQAAADTTi6I2AwGrbCk3CJBQgskmIFCgASXVQCQHOx1zSM84V6mbI5uAGqDMsPI+P0iJTOEFPaWGKFWIlUiqCAIwercAMKnhaUEkixEIsMxzkBADs="/></a>
-		<a href="releases/linux/wolkenwelten-linux.tar.zstd" download class=button><span class=buttonlabel>Linux</span><img class=buttonicon width=16 height=16 src="data:image/gif;base64,R0lGODlhEAAQAMIEAAAAAC8uLriIC+OtIc/Jyf///8/Jyc/JySH5BAEKAAcALAAAAAAQABAAAANMeLoAsTC2GWUp4ILKcsOcAgzk0IRHQzYP1xAwQVXfhZ00EMtzdxG2nugD1OAUpVdwtCgNBDqboKSYkgSFYsEqWHAnjWkXIiiDAWVIAgA7"/></a>
+		<?php echoBuilds($stable); ?>
+	</div>
+	<br/>
+	<br/>
+	<h2>Or, try the newest experimental build:</h2>
+	<hr/>
+	<div class=nativedl align=center>
+		<?php echoBuilds($experimental); ?>
+		<i>Win32 only, users of other platforms should use wine</i>
 	</div>
 	<!--
 	<hr/>
@@ -29,7 +101,7 @@
 	<h2>Or play directly in your Browser using WebAssembly</h2>
 	<hr/>
 	<div class=wasmdl align=center>
-		<a href="releases/wasm/index.html" class=button><span class=buttonlabel>Start WASM version</span><img class=buttonicon width=16 height=16 src="data:image/gif;base64,R0lGODlhEAAQAMIAAGVO8Kqqqt3d3f///2VO8GVO8GVO8GVO8CH5BAEKAAQALAAAAAAQABAAAAMwCKrUvhA6EiujNuvNu//RsIjKIFQkcALkurhrHMGKYAczq+ovJOC2XW+BUwAhRVACADs="/></a><br/>
+		<a href="releases/wasm/index.html" class=button><span class=buttonlabel>Start WASM version</span><span class="buttonicon icon-wasm"></span><br/>
 		<b>Only as a client, needs a separate native Server for now</b><br/>
 		<i>Tested in latest Chrome/Firefox/Safari</i>
 	</div>

@@ -22,16 +22,11 @@ clean:
 	rm -rf client/src/tmp server/src/tmp common/src/tmp
 	rm -rf web/releases releases
 
-.PHONY: webrelease
-webrelease: release
-	rsync -avhe ssh $(WEBEXCLUDE) releases wolkenwelten.net:/var/www/wolkenwelten.net/
-
-.PHONY: website
-website:
-	rsync -avhe ssh web/ wolkenwelten.net:/var/www/wolkenwelten.net/
-
 .PHONY: web
-web: webrelease website
+web: release
+	rsync -avhe ssh web/ wolkenwelten.net:/var/www/wolkenwelten.net/
+	rsync -avhe ssh $(WEBEXCLUDE) releases wolkenwelten.net:/var/www/wolkenwelten.net/
+	ssh wolkenwelten.net "cd /var/www/wolkenwelten.net/ && php index.php > index.html"
 
 .PHONY: debug
 debug: CFLAGS += -O0
