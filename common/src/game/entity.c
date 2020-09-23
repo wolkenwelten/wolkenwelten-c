@@ -96,7 +96,7 @@ int entityUpdate(entity *e){
 		}else if(e->vel.y < -0.04f){
 			e->yoff += -0.2f;
 		}
-		e->vel = vecMul(e->vel,vecNew(0.97f,0,0.97f));
+		e->vel = vecMul(e->vel,vecNew(0.93f,0,0.93f));
 		e->vel.y = 0.001f;
 	}
 
