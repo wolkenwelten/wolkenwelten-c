@@ -69,7 +69,7 @@ void entityShadowDraw(){
 
 void entityShadow(const entity *e){
 	vec p = e->pos;
-	p.y = floorf(p.y)+0.05f;
+	p.y = floorf(p.y)+0.1f;
 	for(int i=0;i<12;i++){
 		if(worldGetB(p.x,p.y-1.f,p.z) != 0){break;}
 		p.y -= 1.f;
