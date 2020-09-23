@@ -26,91 +26,93 @@ void initSky(){
 
 	skyMesh = meshNew();
 	skyMesh->tex = tSky;
+	const float bv = 640;
+	const float sv = 512;
 
-	meshAddVert(skyMesh, -1536,  1536, -1536, 0.250f, 0.00f);
-	meshAddVert(skyMesh,  1536,  1536, -1536, 0.500f, 0.00f);
-	meshAddVert(skyMesh,  1536,  1536,  1536, 0.500f, 0.33f);
+	meshAddVert(skyMesh, -bv,  bv, -bv, 0.250f, 0.00f);
+	meshAddVert(skyMesh,  bv,  bv, -bv, 0.500f, 0.00f);
+	meshAddVert(skyMesh,  bv,  bv,  bv, 0.500f, 0.33f);
 
-	meshAddVert(skyMesh,  1536,  1536,  1536, 0.500f, 0.33f);
-	meshAddVert(skyMesh, -1536,  1536,  1536, 0.250f, 0.33f);
-	meshAddVert(skyMesh, -1536,  1536, -1536, 0.250f, 0.00f);
+	meshAddVert(skyMesh,  bv,  bv,  bv, 0.500f, 0.33f);
+	meshAddVert(skyMesh, -bv,  bv,  bv, 0.250f, 0.33f);
+	meshAddVert(skyMesh, -bv,  bv, -bv, 0.250f, 0.00f);
 
-	meshAddVert(skyMesh, -1536, -1536, -1536, 0.500f, 0.66f);
-	meshAddVert(skyMesh, -1536, -1536,  1536, 0.500f, 1.00f);
-	meshAddVert(skyMesh,  1536, -1536,  1536, 0.250f, 1.00f);
+	meshAddVert(skyMesh, -bv, -bv, -bv, 0.500f, 0.66f);
+	meshAddVert(skyMesh, -bv, -bv,  bv, 0.500f, 1.00f);
+	meshAddVert(skyMesh,  bv, -bv,  bv, 0.250f, 1.00f);
 
-	meshAddVert(skyMesh,  1536, -1536,  1536, 0.250f, 1.00f);
-	meshAddVert(skyMesh,  1536, -1536, -1536, 0.250f, 0.66f);
-	meshAddVert(skyMesh, -1536, -1536, -1536, 0.500f, 0.66f);
-
-
-
-	meshAddVert(skyMesh,     0, -1536,  1536, 0.250f, 0.66f);
-	meshAddVert(skyMesh,     0,  1536,  1536, 0.250f, 0.33f);
-	meshAddVert(skyMesh,  1024,  1536,  1024, 0.375f, 0.33f);
-
-	meshAddVert(skyMesh,  1024,  1536,  1024, 0.375f, 0.33f);
-	meshAddVert(skyMesh,  1024, -1536,  1024, 0.375f, 0.66f);
-	meshAddVert(skyMesh,     0, -1536,  1536, 0.250f, 0.66f);
-
-	meshAddVert(skyMesh, -1024, -1536,  1024, 0.375f, 0.66f);
-	meshAddVert(skyMesh, -1024,  1536,  1024, 0.375f, 0.33f);
-	meshAddVert(skyMesh,     0,  1536,  1536, 0.500f, 0.33f);
-
-	meshAddVert(skyMesh,     0,  1536,  1536, 0.500f, 0.33f);
-	meshAddVert(skyMesh,     0, -1536,  1536, 0.500f, 0.66f);
-	meshAddVert(skyMesh, -1024, -1536,  1024, 0.375f, 0.66f);
+	meshAddVert(skyMesh,  bv, -bv,  bv, 0.250f, 1.00f);
+	meshAddVert(skyMesh,  bv, -bv, -bv, 0.250f, 0.66f);
+	meshAddVert(skyMesh, -bv, -bv, -bv, 0.500f, 0.66f);
 
 
-	meshAddVert(skyMesh,     0, -1536, -1536, 0.750f, 0.66f);
-	meshAddVert(skyMesh,  1024,  1536, -1024, 0.875f, 0.33f);
-	meshAddVert(skyMesh,     0,  1536, -1536, 0.750f, 0.33f);
 
-	meshAddVert(skyMesh,  1024,  1536, -1024, 0.875f, 0.33f);
-	meshAddVert(skyMesh,     0, -1536, -1536, 0.750f, 0.66f);
-	meshAddVert(skyMesh,  1024, -1536, -1024, 0.875f, 0.66f);
+	meshAddVert(skyMesh,   0, -bv,  bv, 0.250f, 0.66f);
+	meshAddVert(skyMesh,   0,  bv,  bv, 0.250f, 0.33f);
+	meshAddVert(skyMesh,  sv,  bv,  sv, 0.375f, 0.33f);
 
-	meshAddVert(skyMesh, -1024, -1536, -1024, 1.000f, 0.66f);
-	meshAddVert(skyMesh,     0,  1536, -1536, 0.750f, 0.33f);
-	meshAddVert(skyMesh, -1024,  1536, -1024, 0.875f, 0.33f);
+	meshAddVert(skyMesh,  sv,  bv,  sv, 0.375f, 0.33f);
+	meshAddVert(skyMesh,  sv, -bv,  sv, 0.375f, 0.66f);
+	meshAddVert(skyMesh,   0, -bv,  bv, 0.250f, 0.66f);
 
-	meshAddVert(skyMesh,     0,  1536, -1536, 1.000f, 0.33f);
-	meshAddVert(skyMesh, -1024, -1536, -1024, 0.875f, 0.66f);
-	meshAddVert(skyMesh,     0, -1536, -1536, 1.000f, 0.66f);
+	meshAddVert(skyMesh, -sv, -bv,  sv, 0.375f, 0.66f);
+	meshAddVert(skyMesh, -sv,  bv,  sv, 0.375f, 0.33f);
+	meshAddVert(skyMesh,   0,  bv,  bv, 0.500f, 0.33f);
 
-
-	meshAddVert(skyMesh,  1536, -1536,     0, 0.500f, 0.66f);
-	meshAddVert(skyMesh,  1024,  1536,  1024, 0.625f, 0.33f);
-	meshAddVert(skyMesh,  1536,  1536,     0, 0.500f, 0.33f);
-
-	meshAddVert(skyMesh,  1024,  1536,  1024, 0.625f, 0.33f);
-	meshAddVert(skyMesh,  1536, -1536,     0, 0.500f, 0.66f);
-	meshAddVert(skyMesh,  1024, -1536,  1024, 0.625f, 0.66f);
-
-	meshAddVert(skyMesh,  1024, -1536, -1024, 0.625f, 0.66f);
-	meshAddVert(skyMesh,  1536,  1536,     0, 0.750f, 0.33f);
-	meshAddVert(skyMesh,  1024,  1536, -1024, 0.655f, 0.33f);
-
-	meshAddVert(skyMesh,  1536,  1536,     0, 0.750f, 0.33f);
-	meshAddVert(skyMesh,  1024, -1536, -1024, 0.625f, 0.66f);
-	meshAddVert(skyMesh,  1536, -1536,     0, 0.750f, 0.66f);
+	meshAddVert(skyMesh,   0,  bv,  bv, 0.500f, 0.33f);
+	meshAddVert(skyMesh,   0, -bv,  bv, 0.500f, 0.66f);
+	meshAddVert(skyMesh, -sv, -bv,  sv, 0.375f, 0.66f);
 
 
-	meshAddVert(skyMesh, -1536, -1536,     0, 0.500f, 0.66f);
-	meshAddVert(skyMesh, -1536,  1536,     0, 0.500f, 0.33f);
-	meshAddVert(skyMesh, -1024,  1536,  1024, 0.625f, 0.33f);
+	meshAddVert(skyMesh,   0, -bv, -bv, 0.750f, 0.66f);
+	meshAddVert(skyMesh,  sv,  bv, -sv, 0.875f, 0.33f);
+	meshAddVert(skyMesh,   0,  bv, -bv, 0.750f, 0.33f);
 
-	meshAddVert(skyMesh, -1024,  1536,  1024, 0.625f, 0.33f);
-	meshAddVert(skyMesh, -1024, -1536,  1024, 0.625f, 0.66f);
-	meshAddVert(skyMesh, -1536, -1536,     0, 0.500f, 0.66f);
+	meshAddVert(skyMesh,  sv,  bv, -sv, 0.875f, 0.33f);
+	meshAddVert(skyMesh,   0, -bv, -bv, 0.750f, 0.66f);
+	meshAddVert(skyMesh,  sv, -bv, -sv, 0.875f, 0.66f);
 
-	meshAddVert(skyMesh, -1024, -1536, -1024, 0.625f, 0.66f);
-	meshAddVert(skyMesh, -1024,  1536, -1024, 0.655f, 0.33f);
-	meshAddVert(skyMesh, -1536,  1536,     0, 0.750f, 0.33f);
+	meshAddVert(skyMesh, -sv, -bv, -sv, 1.000f, 0.66f);
+	meshAddVert(skyMesh,   0,  bv, -bv, 0.750f, 0.33f);
+	meshAddVert(skyMesh, -sv,  bv, -sv, 0.875f, 0.33f);
 
-	meshAddVert(skyMesh, -1536,  1536,     0, 0.750f, 0.33f);
-	meshAddVert(skyMesh, -1536, -1536,     0, 0.750f, 0.66f);
-	meshAddVert(skyMesh, -1024, -1536, -1024, 0.625f, 0.66f);
+	meshAddVert(skyMesh,   0,  bv, -bv, 1.000f, 0.33f);
+	meshAddVert(skyMesh, -sv, -bv, -sv, 0.875f, 0.66f);
+	meshAddVert(skyMesh,   0, -bv, -bv, 1.000f, 0.66f);
+
+
+	meshAddVert(skyMesh,  bv, -bv,   0, 0.500f, 0.66f);
+	meshAddVert(skyMesh,  sv,  bv,  sv, 0.625f, 0.33f);
+	meshAddVert(skyMesh,  bv,  bv,   0, 0.500f, 0.33f);
+
+	meshAddVert(skyMesh,  sv,  bv,  sv, 0.625f, 0.33f);
+	meshAddVert(skyMesh,  bv, -bv,   0, 0.500f, 0.66f);
+	meshAddVert(skyMesh,  sv, -bv,  sv, 0.625f, 0.66f);
+
+	meshAddVert(skyMesh,  sv, -bv, -sv, 0.625f, 0.66f);
+	meshAddVert(skyMesh,  bv,  bv,   0, 0.750f, 0.33f);
+	meshAddVert(skyMesh,  sv,  bv, -sv, 0.655f, 0.33f);
+
+	meshAddVert(skyMesh,  bv,  bv,   0, 0.750f, 0.33f);
+	meshAddVert(skyMesh,  sv, -bv, -sv, 0.625f, 0.66f);
+	meshAddVert(skyMesh,  bv, -bv,   0, 0.750f, 0.66f);
+
+
+	meshAddVert(skyMesh, -bv, -bv,   0, 0.500f, 0.66f);
+	meshAddVert(skyMesh, -bv,  bv,   0, 0.500f, 0.33f);
+	meshAddVert(skyMesh, -sv,  bv,  sv, 0.625f, 0.33f);
+
+	meshAddVert(skyMesh, -sv,  bv,  sv, 0.625f, 0.33f);
+	meshAddVert(skyMesh, -sv, -bv,  sv, 0.625f, 0.66f);
+	meshAddVert(skyMesh, -bv, -bv,   0, 0.500f, 0.66f);
+
+	meshAddVert(skyMesh, -sv, -bv, -sv, 0.625f, 0.66f);
+	meshAddVert(skyMesh, -sv,  bv, -sv, 0.655f, 0.33f);
+	meshAddVert(skyMesh, -bv,  bv,   0, 0.750f, 0.33f);
+
+	meshAddVert(skyMesh, -bv,  bv,   0, 0.750f, 0.33f);
+	meshAddVert(skyMesh, -bv, -bv,   0, 0.750f, 0.66f);
+	meshAddVert(skyMesh, -sv, -bv, -sv, 0.625f, 0.66f);
 	meshFinish(skyMesh, GL_STATIC_DRAW);
 
 

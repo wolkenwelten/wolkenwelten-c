@@ -84,7 +84,7 @@ void calcFOV(const character *cam){
 		gfxCurFOV -= (gfxCurFOV-off)/8;
 	}
 	if(gfxCurFOV < 80.1){gfxCurFOV = 80.0;}
-	matPerspective(matProjection, gfxCurFOV, (float)screenWidth / (float)screenHeight, 0.2f, 2560.0f);
+	matPerspective(matProjection, gfxCurFOV, (float)screenWidth / (float)screenHeight, 0.2f, 1024.f);
 }
 
 vec calcShake(const character *cam){
