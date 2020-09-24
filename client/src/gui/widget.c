@@ -1,7 +1,9 @@
 #define _DEFAULT_SOURCE
 #include "widget.h"
 
-#include "gui.h"
+#include "../gui/gui.h"
+#include "../gfx/textMesh.h"
+
 #include <string.h>
 
 void drawButton(textMesh *m, const char *label, int state, int x, int y, int w, int h){

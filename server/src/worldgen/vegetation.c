@@ -3,10 +3,6 @@
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
 
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-
 void worldgenShrub(worldgen *wgen,int x,int y,int z){
 	chungus *clay = wgen->clay;
 	int leaveBlock = 21;

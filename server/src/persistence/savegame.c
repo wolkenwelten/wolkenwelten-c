@@ -2,6 +2,7 @@
 
 #include "../main.h"
 #include "../game/animal.h"
+#include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../misc/options.h"
 #include "../network/server.h"
@@ -11,6 +12,7 @@
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/misc/lz4.h"
+#include "../../../common/src/misc/misc.h"
 
 #include <ctype.h>
 #include <stdio.h>

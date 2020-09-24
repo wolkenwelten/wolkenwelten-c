@@ -2,13 +2,11 @@
 
 #include "geoworld.h"
 #include "vegetation.h"
-#include "../game/animal.h"
+#include "../voxel/chunk.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
 
-#include <math.h>
 #include <stdlib.h>
-#include <string.h>
 
 void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
 	int iterations = 12;

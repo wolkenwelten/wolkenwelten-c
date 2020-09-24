@@ -1,15 +1,15 @@
 #include "inventory.h"
-#include "../main.h"
-#include "../gfx/mesh.h"
+
 #include "../game/character.h"
-#include "../../../common/src/game/item.h"
 #include "../game/itemDrop.h"
+#include "../game/recipe.h"
+#include "../../../common/src/game/item.h"
 #include "../gfx/gfx.h"
-#include "../sdl/sdl.h"
+#include "../gfx/textMesh.h"
 #include "../gui/gui.h"
 #include "../sdl/sfx.h"
-#include "../game/recipe.h"
 
+#include <stddef.h>
 #include <math.h>
 
 const float ITEMTILE    = (1.f/32.f);

@@ -4,6 +4,7 @@
 #include "../sdl/sdl.h"
 #include "../gfx/textMesh.h"
 
+#include <stdio.h>
 #include <string.h>
 #include <SDL.h>
 

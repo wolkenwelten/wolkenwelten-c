@@ -1,4 +1,6 @@
 #include "menu.h"
+
+#include "../main.h"
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
@@ -10,7 +12,7 @@
 #include "../misc/options.h"
 #include "../tmp/assets.h"
 #include "../../../common/src/tmp/cto.h"
-#include "../main.h"
+#include "../../../common/src/misc/misc.h"
 
 #include <dirent.h>
 #include <stdio.h>

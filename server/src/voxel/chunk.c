@@ -1,9 +1,5 @@
 #include "chunk.h"
 
-#include "../../../common/src/game/blockType.h"
-#include "../../../common/src/misc/misc.h"
-
-#include <math.h>
 #include <stdio.h>
 #include <string.h>
 

@@ -2,17 +2,15 @@
 
 #include "client.h"
 #include "../main.h"
-#include "../gui/menu.h"
 #include "../gfx/effects.h"
+#include "../gui/menu.h"
 #include "../game/animal.h"
 #include "../game/blockMining.h"
-#include "../game/entity.h"
+#include "../game/character.h"
 #include "../game/grenade.h"
-#include "../game/grapplingHook.h"
 #include "../game/itemDrop.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
-#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/lz4.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
@@ -21,9 +19,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <errno.h>
-#include <time.h>
 
 int recvBufLen = 0;
 u8 recvBuf[1<<20];

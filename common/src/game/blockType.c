@@ -3,6 +3,8 @@
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
 
+#include <stddef.h>
+
 void blockTypeGenMeshes();
 void blockTypeSetTex(u8 b, int side, u32 tex);
 

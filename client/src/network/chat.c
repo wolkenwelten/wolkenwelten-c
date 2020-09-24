@@ -1,5 +1,6 @@
 #define _DEFAULT_SOURCE
 #include "chat.h"
+#include "../../../common/src/common.h"
 
 #include "../gfx/gfx.h"
 #include "../gui/textInput.h"
@@ -7,7 +8,6 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 char chatLog[12][256];
 

@@ -14,6 +14,7 @@
 #include "game/animal.h"
 #include "game/blockType.h"
 #include "game/blockMining.h"
+#include "game/character.h"
 #include "game/entity.h"
 #include "game/itemDrop.h"
 #include "game/grenade.h"
@@ -23,7 +24,6 @@
 #include "network/chat.h"
 #include "sdl/sdl.h"
 #include "sdl/sfx.h"
-#include "sdl/input_mouse.h"
 #include "sdl/input_keyboard.h"
 #include "sdl/input_gamepad.h"
 #include "sdl/input_touch.h"
@@ -33,6 +33,8 @@
 #include "../../common/src/misc/misc.h"
 #include "../../common/src/mods/mods.h"
 
+#include <math.h>
+#include <stdio.h>
 #include <time.h>
 #ifdef __EMSCRIPTEN__
 	#include <emscripten.h>

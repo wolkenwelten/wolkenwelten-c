@@ -3,11 +3,9 @@
 #include "../game/blockType.h"
 #include "../game/character.h"
 #include "../gfx/particle.h"
-#include "../gui/gui.h"
 #include "../gui/overlay.h"
 #include "../network/chat.h"
 #include "../sdl/sfx.h"
-#include "../sdl/input_gamepad.h"
 #include "../../../common/src/misc/misc.h"
 
 

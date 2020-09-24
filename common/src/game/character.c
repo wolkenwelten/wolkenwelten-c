@@ -3,6 +3,7 @@
 #include "../mods/api_v1.h"
 #include "../mods/mods.h"
 
+#include <stddef.h>
 #include <math.h>
 
 int characterGetHP(const character *c){

@@ -1,5 +1,5 @@
 #pragma once
-#include "../game/character.h"
+#include "../../../common/src/common.h"
 
 typedef struct {
 	char playerName[32];

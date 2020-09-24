@@ -2,7 +2,6 @@
 
 #include "../mods/api_v1.h"
 
-#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 

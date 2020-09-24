@@ -1,18 +1,14 @@
 #include "../game/grenade.h"
-#include "../main.h"
-#include "../game/entity.h"
+
 #include "../game/character.h"
-#include "../gfx/mesh.h"
-#include "../gui/overlay.h"
+#include "../game/entity.h"
 #include "../gfx/effects.h"
 #include "../tmp/objs.h"
-#include "../voxel/bigchungus.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 typedef struct {
 	entity *ent;

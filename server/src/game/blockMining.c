@@ -1,15 +1,14 @@
 #include "blockMining.h"
 
-#include "../../../common/src/game/blockType.h"
+#include "../game/character.h"
 #include "../game/itemDrop.h"
 #include "../network/server.h"
-#include "../voxel/bigchungus.h"
+#include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
-#include <math.h>
 #include <stdlib.h>
 
 typedef struct {

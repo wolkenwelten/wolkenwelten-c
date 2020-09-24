@@ -1,16 +1,11 @@
 #include "../game/animal.h"
 
-#include "../main.h"
-#include "../sdl/sfx.h"
 #include "../game/character.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
-#include "../gfx/particle.h"
 #include "../gfx/shader.h"
-#include "../gfx/texture.h"
 #include "../tmp/objs.h"
-#include "../voxel/bigchungus.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -22,7 +17,7 @@ animal *animalFirstFree = NULL;
 
 #define ANIMAL_FADEOUT (128.f)
 
-void aniomalShadesDraw(const animal *c){
+static void animalShadesDraw(const animal *c){
 	float breath,scale;
 	if(c->state == 0){
 		breath = sinf((float)(c->breathing-256)/512.f)*2.f;
@@ -47,7 +42,7 @@ void aniomalShadesDraw(const animal *c){
 	meshDraw(meshSunglasses);
 }
 
-void animalDraw(const animal *e){
+static void animalDraw(const animal *e){
 	float breath,scale;
 	if(e        == NULL){return;}
 	if(e->state == 0){
@@ -69,7 +64,7 @@ void animalDraw(const animal *e){
 
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(meshPear);
-	aniomalShadesDraw(e);
+	animalShadesDraw(e);
 }
 
 void animalDrawAll(){

@@ -1,7 +1,5 @@
 #include "worldgen.h"
 
-
-#include "../main.h"
 #include "../misc/options.h"
 #include "../voxel/chunk.h"
 #include "../voxel/chungus.h"
@@ -9,15 +7,11 @@
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
 
-#include "geoworld.h"
 #include "island.h"
 #include "labyrinth.h"
 #include "landmass.h"
-#include "vegetation.h"
 
-#include <math.h>
 #include <stdlib.h>
-#include <string.h>
 
 worldgen worldgenList[4];
 int worldgenCount = 0;

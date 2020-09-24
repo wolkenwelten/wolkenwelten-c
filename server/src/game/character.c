@@ -1,19 +1,7 @@
 #include "character.h"
 
-#include "../main.h"
-#include "../misc/options.h"
-#include "../game/itemDrop.h"
-#include "../game/blockMining.h"
-#include "../network/server.h"
 #include "../voxel/bigchungus.h"
-#include "../../../common/src/game/blockType.h"
-#include "../../../common/src/game/item.h"
-#include "../../../common/src/mods/mods.h"
-#include "../../../common/src/misc/misc.h"
-#include "../../../common/src/network/messages.h"
 
-#include <math.h>
-#include <string.h>
 #include <stdio.h>
 
 character  characterList[128];

@@ -1,18 +1,14 @@
 #include "itemDrop.h"
 
-#include "../main.h"
 #include "../game/entity.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
-#include "../../../common/src/game/blockType.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 
 itemDrop itemDrops[ITEM_DROPS_MAX];
 uint     itemDropCount;

@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 char *fileSlug(char *path){
 	static char ret[1024];

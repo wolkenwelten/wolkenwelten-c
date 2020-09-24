@@ -9,7 +9,6 @@
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/noise.h"
 
-#include <stdio.h>
 #include <math.h>
 
 

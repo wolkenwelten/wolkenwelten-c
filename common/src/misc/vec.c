@@ -2,7 +2,6 @@
 #include "../common.h"
 
 #include <math.h>
-#include <string.h>
 
 float vecMag(const vec a){
 	float dot = vecDot(a,a);

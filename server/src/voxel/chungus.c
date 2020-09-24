@@ -1,20 +1,14 @@
 #include "chungus.h"
 
 #include "../game/animal.h"
-#include "../game/entity.h"
 #include "../game/itemDrop.h"
-#include "../misc/options.h"
 #include "../network/server.h"
 #include "../persistence/savegame.h"
 #include "../worldgen/worldgen.h"
 #include "../voxel/chunk.h"
-#include "../../../common/src/misc/lz4.h"
 #include "../../../common/src/misc/misc.h"
-#include "../../../common/src/game/blockType.h"
 
-#include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 

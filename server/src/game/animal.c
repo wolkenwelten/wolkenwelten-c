@@ -1,6 +1,5 @@
 #include "animal.h"
 
-#include "../main.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/common.h"
@@ -9,7 +8,6 @@
 #include "../../../common/src/network/messages.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 
 animal  animalList[1<<10];

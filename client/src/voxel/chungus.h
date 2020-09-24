@@ -1,9 +1,6 @@
 #pragma once
 #include "../../../common/src/common.h"
-#include "../game/character.h"
 #include "../voxel/chunk.h"
-
-#include <stddef.h>
 
 #define CHUNGUS_SIZE (16*16)
 

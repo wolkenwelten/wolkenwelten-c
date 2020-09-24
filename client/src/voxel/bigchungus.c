@@ -1,7 +1,6 @@
 #include "bigchungus.h"
 
 #include "../game/blockType.h"
-#include "../game/entity.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gl.h"
@@ -9,15 +8,12 @@
 #include "../gfx/shader.h"
 #include "../gfx/sky.h"
 #include "../gfx/texture.h"
-#include "../misc/options.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
-#include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 bigchungus world;

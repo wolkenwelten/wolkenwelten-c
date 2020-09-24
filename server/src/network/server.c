@@ -5,7 +5,6 @@
 #include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
-#include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../game/grenade.h"
 #include "../misc/command.h"
@@ -13,8 +12,9 @@
 #include "../network/server_ws.h"
 #include "../persistence/savegame.h"
 #include "../voxel/bigchungus.h"
+#include "../voxel/chungus.h"
+#include "../voxel/chunk.h"
 #include "../../../common/src/misc/lz4.h"
-#include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
 #include <errno.h>

@@ -6,7 +6,6 @@
 #include "../main.h"
 #include "../misc/options.h"
 #include "../game/animal.h"
-#include "../game/blockType.h"
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
@@ -18,19 +17,18 @@
 #include "../gfx/shader.h"
 #include "../gfx/mat.h"
 #include "../gfx/texture.h"
+#include "../gfx/textMesh.h"
 #include "../gui/menu.h"
 #include "../gui/inventory.h"
 #include "../gui/overlay.h"
 #include "../gui/textInput.h"
 #include "../network/chat.h"
 #include "../network/client.h"
-#include "../tmp/objs.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/tmp/cto.h"
 #include "../../../common/src/mods/mods.h"
 
-#include <string.h>
 #include <stdio.h>
 #include <math.h>
 

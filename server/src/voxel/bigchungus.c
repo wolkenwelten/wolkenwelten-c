@@ -1,20 +1,12 @@
 #include "bigchungus.h"
 
-#include "../main.h"
 #include "../network/server.h"
-#include "../game/entity.h"
 #include "../game/blockMining.h"
 #include "../misc/options.h"
-#include "../persistence/savegame.h"
 #include "../voxel/chungus.h"
-#include "../voxel/chunk.h"
-#include "../../../common/src/game/blockType.h"
 #include "../../../common/src/misc/noise.h"
-#include "../../../common/src/misc/misc.h"
 
-#include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 bigchungus world;

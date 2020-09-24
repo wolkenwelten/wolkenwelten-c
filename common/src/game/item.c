@@ -1,5 +1,8 @@
 #include "item.h"
+
 #include "../mods/mods.h"
+
+#include <stddef.h>
 
 item itemNew(u16 ID, i16 amount){
 	item i;

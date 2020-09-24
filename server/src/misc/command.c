@@ -1,11 +1,6 @@
 #define _DEFAULT_SOURCE
 #include "command.h"
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/entity.h"
@@ -13,6 +8,10 @@
 #include "../network/server.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/misc/misc.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 char replyBuf[256];
 

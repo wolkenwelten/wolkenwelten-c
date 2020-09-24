@@ -1,14 +1,11 @@
 #include "grenade.h"
 
-#include "../main.h"
 #include "../game/entity.h"
+#include "../voxel/bigchungus.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
-#include "../voxel/bigchungus.h"
 
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 typedef struct {
 	entity *ent;

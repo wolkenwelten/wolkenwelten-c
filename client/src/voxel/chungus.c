@@ -1,15 +1,12 @@
 #include "chungus.h"
 
-#include "../game/entity.h"
 #include "../game/blockType.h"
 #include "../gfx/frustum.h"
-#include "../gfx/texture.h"
-#include "../../../common/src/misc/misc.h"
 #include "../voxel/chunk.h"
+#include "../../../common/src/misc/misc.h"
 
-#include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <stddef.h>
 #include <string.h>
 
 chungus chungusList[1<<9];

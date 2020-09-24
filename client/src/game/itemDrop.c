@@ -1,15 +1,12 @@
 #include "itemDrop.h"
-#include "../main.h"
-#include "../game/blockType.h"
+
 #include "../game/entity.h"
-#include "../gfx/texture.h"
 #include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 itemDrop itemDrops[1<<12];
 int      itemDropCount = 0;

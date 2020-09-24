@@ -6,7 +6,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 
 const char *base64_encode(const u8 *data,uint input_length,const char *prefix){
 	static char encoded_data[128];

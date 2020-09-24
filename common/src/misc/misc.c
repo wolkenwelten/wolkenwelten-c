@@ -1,14 +1,12 @@
 #include "misc.h"
 
 #include <ctype.h>
+#include <dirent.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
 
 u64 RNGValue = 1;
 

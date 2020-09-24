@@ -1,9 +1,7 @@
 #pragma once
 #include "../../../common/src/network/packet.h"
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <stdint.h>
+#include <stddef.h>
 
 extern int    connectionTries;
 extern size_t sentBytesCurrentSession;

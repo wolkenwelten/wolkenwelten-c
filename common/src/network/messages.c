@@ -1,9 +1,8 @@
 #include "messages.h"
-#include "packet.h"
+
 #include "../common.h"
 
 #include <string.h>
-#include <time.h>
 
 packet packetBuffer;
 

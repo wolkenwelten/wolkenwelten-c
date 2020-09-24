@@ -1,9 +1,10 @@
 #include "../gfx/gfx.h"
 
-#include "../tmp/assets.h"
 #include "../main.h"
+#include "../tmp/assets.h"
 #include "../game/animal.h"
 #include "../game/blockMining.h"
+#include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/grapplingHook.h"
 #include "../gfx/mat.h"

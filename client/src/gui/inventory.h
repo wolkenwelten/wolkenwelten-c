@@ -1,6 +1,5 @@
 #pragma once
 #include "../../../common/src/common.h"
-#include "../gfx/textMesh.h"
 
 void showInventory  ();
 void hideInventory  ();

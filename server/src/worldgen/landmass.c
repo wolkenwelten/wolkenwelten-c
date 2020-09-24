@@ -3,13 +3,7 @@
 #include "island.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/common.h"
-#include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/noise.h"
-
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 void worldgenLandmass(worldgen *wgen, int layer){
 	(void)layer;

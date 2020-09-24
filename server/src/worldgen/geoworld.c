@@ -1,10 +1,10 @@
 #include "geoworld.h"
 
 #include "worldgen.h"
+#include "../voxel/chungus.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
 
-#include <math.h>
 #include <stdlib.h>
 
 void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b, int fb){
@@ -131,7 +131,7 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 			}
 		break;
 	}
-	
+
 	switch(rngValM(4)){
 		case 0:
 			fb=18;
