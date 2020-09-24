@@ -14,7 +14,7 @@ all: wolkenwelten
 	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -c $< -o $@
 
 %.h.gch: %.h
-	$(CC) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -c $< -o $@
+	$(CC) -w $(CSTD) $(CFLAGS) $(CINCLUDES) -c $< -o $@
 
 .PHONY: clean
 clean:
