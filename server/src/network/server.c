@@ -24,9 +24,9 @@
 #include <unistd.h>
 
 #ifdef __MINGW32__
-#include "server_win.h"
+#include "server_win.inc"
 #else
-#include "server_bsd.h"
+#include "server_bsd.inc"
 #endif
 
 clientConnection clients[32];

@@ -12,6 +12,7 @@ MESHASSETS       := $(shell find client/mesh -type f -name '*')
 CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
 CLIENT_SRCS      := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
 CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
+CLIENT_GCHS      := ${CLIENT_HDRS:.h=.h.gch}
 
 WINDOW_WIDTH     := 960
 WINDOW_HEIGHT    := 524
@@ -19,7 +20,7 @@ WINDOW_HEIGHT    := 524
 wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
 wolkenwelten: LIBS      += $(CLIENT_LIBS)
-wolkenwelten: client/make.deps $(CLIENT_OBJS)
+wolkenwelten: client/make.deps $(CLIENT_GCHS) $(CLIENT_OBJS)
 	$(CC) $(CLIENT_OBJS) -o wolkenwelten $(OPTIMIZATION) $(CFLAGS) $(LIBS)
 
 .deps: client/make.deps
@@ -70,8 +71,6 @@ ifneq ($(MAKECMDGOALS),clean)
 -include client/make.deps
 endif
 
-client/src/network/client.o: client/src/network/client_bsd.h client/src/network/client_win.h
-
 .PHONY: optimizegfx
 optimizegfx: all
 	client/tools/optimizegfx $(GFX_ASSETS)
@@ -98,3 +97,6 @@ runq: all
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberTwo   -windowOrientation=tr -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberThree -windowOrientation=bl -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberFour  -windowOrientation=br -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
+
+client/src/network/client.o: client/src/network/client_win.inc
+client/src/network/client.o: client/src/network/client_bsd.inc

@@ -2,6 +2,7 @@ MODS_SRCS        := $(shell find common/src/mods -type f -name '*.c')
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
 COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
+COMMON_GCHS      := ${COMMON_HDRS:.h=.h.gch}
 
 .PHONY: all
 all: wolkenwelten
@@ -12,10 +13,18 @@ all: wolkenwelten
 %.o: %.c
 	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -c $< -o $@
 
+%.h.gch: %.h
+	$(CC) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -c $< -o $@
+
 .PHONY: clean
 clean:
 	rm -f gmon.out client/make.deps client/tools/assets client/tools/objparser callgrind.out.* vgcore.* platform/win/wolkenwelten.res
+	rm -f $(shell find client/src -type f -name '*.o')
 	rm -f $(shell find common/src -type f -name '*.o')
+	rm -f $(shell find server/src -type f -name '*.o')
+	rm -f $(shell find client/src -type f -name '*.gch')
+	rm -f $(shell find common/src -type f -name '*.gch')
+	rm -f $(shell find server/src -type f -name '*.gch')
 	rm -f wolkenwelten wolkenwelten.exe $(shell find client/src -type f -name '*.o')
 	rm -f wolkenwelten-server wolkenwelten-server.exe $(shell find server/src -type f -name '*.o')
 	rm -f tools/modscg.exe tools/modscg

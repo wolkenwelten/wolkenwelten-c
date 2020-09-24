@@ -36,9 +36,9 @@ pid_t singlePlayerPID = 0;
 int connectionTries   = 0;
 
 #ifdef __MINGW32__
-#include "client_win.h"
+#include "client_win.inc"
 #else
-#include "client_bsd.h"
+#include "client_bsd.inc"
 #endif
 
 void msgParseGetChunk(const packet *p){

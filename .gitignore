@@ -61,6 +61,7 @@ platform/win_cross/pkgs/mingw-w64-sdl2/*
 *.lib
 *.so
 *.o
+*.gch
 /src/*.obj
 *.dylib
 *.exe

@@ -5,6 +5,7 @@ SERVER_LIBS      :=
 SERVER_HDRS      := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
 SERVER_SRCS      := $(shell find server/src -type f -name '*.c') $(COMMON_SRCS)
 SERVER_OBJS      := ${SERVER_SRCS:.c=.o}
+SERVER_GCHS      := ${SERVER_HDRS:.h=.h.gch}
 
 SFX_ASSETS       := $(shell find client/sfx -type f -name '*')
 MESH_ASSETS      := $(shell find client/mesh -type f -name '*')
@@ -15,7 +16,7 @@ $(SERVER_OBJS): CINCLUDES += $(SERVER_CINCLUDES)
 wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
 wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
 wolkenwelten-server: LIBS      += $(SERVER_LIBS)
-wolkenwelten-server: server/make.deps $(SERVER_OBJS)
+wolkenwelten-server: server/make.deps $(SERVER_GCHS) $(SERVER_OBJS)
 	$(CC) $(SERVER_OBJS) -o wolkenwelten-server $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 
 .deps: server/make.deps
@@ -48,4 +49,5 @@ server/src/tmp/mods_tmp.c: tools/modscg
 server/src/tmp/mods_tmp.h: server/src/tmp/mods_tmp.c
 	@true
 
-server/src/network/server.o: server/src/network/server_bsd.h server/src/network/server_win.h
+server/src/network/server.o: server/src/network/server_bsd.inc
+server/src/network/server.o: server/src/network/server_win.inc

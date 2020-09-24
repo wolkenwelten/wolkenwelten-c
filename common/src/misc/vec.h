@@ -5,7 +5,7 @@ float rngValf();
 u64   rngValR();
 
 
-float vecmag     (const vec a);
+float vecMag     (const vec a);
 vec   vecFloor   (const vec a);
 vec   vecSqrt    (const vec a);
 vec   vecCross   (const vec a, const vec   b);
