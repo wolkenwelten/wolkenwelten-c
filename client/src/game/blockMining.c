@@ -8,10 +8,10 @@
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
-#include "../../../common/src/misc/misc.h"
-#include "../../../common/src/network/messages.h"
 #include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/misc/misc.h"
+#include "../../../common/src/network/messages.h"
 
 #include <math.h>
 #include <stdlib.h>

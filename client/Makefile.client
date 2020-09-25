@@ -12,7 +12,6 @@ MESHASSETS       := $(shell find client/mesh -type f -name '*')
 CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
 CLIENT_SRCS      := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
 CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
-CLIENT_GCHS      := ${CLIENT_HDRS:.h=.h.gch}
 
 WINDOW_WIDTH     := 960
 WINDOW_HEIGHT    := 524
@@ -20,7 +19,7 @@ WINDOW_HEIGHT    := 524
 wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
 wolkenwelten: LIBS      += $(CLIENT_LIBS)
-wolkenwelten: client/make.deps $(CLIENT_GCHS) $(CLIENT_OBJS)
+wolkenwelten: client/make.deps $(CLIENT_OBJS)
 	$(CC) $(CLIENT_OBJS) -o wolkenwelten $(OPTIMIZATION) $(CFLAGS) $(LIBS)
 
 .deps: client/make.deps
