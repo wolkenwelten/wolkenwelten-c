@@ -30,8 +30,33 @@ static int gamepadSelection = -1;
 int   savegameCount = 0;
 char  savegameName[8][32];
 
-void checkSavegames(){
+widget *rootMenu = NULL;
+widget *mainMenu = NULL;
+widget *saveMenu = NULL;
+widget *saveList = NULL;
+
+void startSingleplayer();
+void handlerLoadGame(widget *wid);
+void handlerDeleteGame(widget *wid);
+static void refreshSaveList(){
+	widgetEmpty(saveList);
+	for(int i=0;i<savegameCount;i++){
+		widget *button = widgetNewPLH(WIDGET_BUTTON,48,i*48,256,32,savegameName[i],"click",handlerLoadGame);
+		button->vali = i;
+		widgetChild(saveList,button);
+
+		button = widgetNewPLH(WIDGET_BUTTON,0,i*48,32,32,"X","click",handlerDeleteGame);
+		button->vali = i;
+		widgetChild(saveList,button);
+	}
+
+	saveList->h = savegameCount*48 + 48;
+	widgetLayVert(saveMenu,16);
+}
+
+static void checkSavegames(){
 	showSavegames = true;
+	saveMenu->flags &= ~WIDGET_HIDDEN;
 	if(gamepadSelection != -1){
 		gamepadSelection = 0;
 	}
@@ -45,15 +70,120 @@ void checkSavegames(){
 		savegameName[savegameCount-1][sizeof(savegameName[0])-1] = 0;
 	}
 	closedir(dp);
+	refreshSaveList();
 }
 
-void deleteSavegame(int i){
+static void loadSavegame(int i){
+	if(i < 0){return;}
+	if(i >= savegameCount){return;}
+	strncpy(optionSavegame,savegameName[i],32);
+	optionSavegame[31] = 0;
+	startSingleplayer();
+}
+
+static void deleteSavegame(int i){
 	static char buf[64];
 	if(i < 0)             {return;}
 	if(i > savegameCount) {return;}
 	snprintf(buf,64,"save/%s",savegameName[i]);
 	buf[63]=0;
 	rmDirR(buf);
+}
+
+void handlerSingleplayer(widget *wid){
+	(void)wid;
+	checkSavegames();
+	mainMenu->flags |= WIDGET_HIDDEN;
+}
+void handlerMultiplayer(widget *wid){
+	(void)wid;
+	textInput(8,screenHeight-24,256,16,2);
+}
+void handlerChangeName(widget *wid){
+	(void)wid;
+	textInput(8,screenHeight-24,256,16,3);
+}
+void handlerLoadGame(widget *wid){
+	loadSavegame(wid->vali);
+}
+void handlerDeleteGame(widget *wid){
+	deleteSavegame(wid->vali);
+	checkSavegames();
+}
+void handlerNewGame(widget *wid){
+	(void)wid;
+	textInput(8,screenHeight-24,256,16,4);
+}
+void handlerAttribution(widget *wid){
+	(void)wid;
+	showAttribution = true;
+	mainMenu->flags |= WIDGET_HIDDEN;
+}
+void handlerQuit(widget *wid){
+	(void)wid;
+	quit = true;
+}
+void handlerBackToMenu(widget *wid){
+	(void)wid;
+	showAttribution = false;
+	mainMenu->flags &= ~WIDGET_HIDDEN;
+	saveMenu->flags |=  WIDGET_HIDDEN;
+}
+void handlerRoot(widget *wid){
+	(void)wid;
+	if(showAttribution){
+		showAttribution = false;
+		mainMenu->flags &= ~WIDGET_HIDDEN;
+	}
+}
+
+void initMainMenu(){
+	widget *button;
+
+	mainMenu = widgetNewP(WIDGET_PANEL,0,0,-1,-1);
+	widgetChild(rootMenu,mainMenu);
+
+	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"Singleplayer","click",handlerSingleplayer);
+	widgetChild(mainMenu,button);
+	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"Multiplayer","click",handlerMultiplayer);
+	widgetChild(mainMenu,button);
+
+	button = widgetNewP(WIDGET_SPACE,-17,192,256,32);
+	widgetChild(mainMenu,button);
+
+	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"Change Name","click",handlerChangeName);
+	widgetChild(mainMenu,button);
+	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"Attribution","click",handlerAttribution);
+	widgetChild(mainMenu,button);
+
+	button = widgetNewP(WIDGET_SPACE,-17,192,256,32);
+	widgetChild(mainMenu,button);
+
+	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"Quit","click",handlerQuit);
+	widgetChild(mainMenu,button);
+
+	widgetLayVert(mainMenu,16);
+}
+
+void initSaveMenu(){
+	widget *button;
+
+	saveMenu = widgetNewP(WIDGET_PANEL,0,0,-1,-1);
+	saveMenu->flags |= WIDGET_HIDDEN;
+	widgetChild(rootMenu,saveMenu);
+
+	saveList = widgetNewP(WIDGET_PANEL,-17,0,304,32);
+	widgetChild(saveMenu,saveList);
+
+	button = widgetNewP(WIDGET_SPACE,-17,0,256,32);
+	widgetChild(saveMenu,saveList);
+
+	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"New Game","click",handlerNewGame);
+	widgetChild(saveMenu,button);
+	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"Back to Menu","click",handlerBackToMenu);
+	widgetChild(saveMenu,button);
+
+	widgetLayVert(saveMenu,16);
 }
 
 void initMenu(){
@@ -65,6 +195,11 @@ void initMenu(){
 	while(*s++ != 0){
 		if(*s == '\n'){attributionLines++;}
 	}
+
+	rootMenu = widgetNewP(WIDGET_PANEL,0,0,-1,-1);
+	widgetBind(rootMenu,"click",handlerRoot);
+	initMainMenu();
+	initSaveMenu();
 }
 
 void startSingleplayer(){
@@ -99,6 +234,10 @@ void updateMenu(){
 }
 
 void updateMenuClick(int x, int y, int btn){
+	(void)x;
+	(void)y;
+	(void)btn;
+	return;
 	if(gameRunning){return;}
 
 	if(showAttribution){
@@ -162,7 +301,7 @@ void updateMenuClick(int x, int y, int btn){
 			#endif
 		} else if((y > 80) && (y < 112)){
 			if(!textInputActive){
-				textInput(8,screenHeight-24,256,16,2);
+
 			}
 		} else if((y > 130+48) && (y < 162+48)){
 			if(!textInputActive){
@@ -228,32 +367,7 @@ void drawMenuLogo(){
 }
 
 void drawMenuButtons(){
-	int buttonY = 32;
-	int ci = gamepadSelection;
 	drawMenuLogo();
-
-	#ifndef __EMSCRIPTEN__
-	drawButton(menuM,"Singleplayer",ci-- == 0,screenWidth-256-32,buttonY,256,32);
-	#else
-	ci--;
-	#endif
-	buttonY += 32 + 16;
-
-	drawButton(menuM,"Multiplayer",ci-- == 0,screenWidth-256-32,buttonY,256,32);
-	buttonY += 32 + 16;
-	buttonY += 32 + 16;
-
-	drawButton(menuM,"Change Name",ci-- == 0,screenWidth-256-32,buttonY,256,32);
-	buttonY += 32 + 16;
-
-	drawButton(menuM,"Attribution",ci-- == 0,screenWidth-256-32,buttonY,256,32);
-	buttonY += 32 + 16;
-	buttonY += 32 + 16;
-
-	#ifndef __EMSCRIPTEN__
-	drawButton(menuM,"Quit",ci-- == 0,screenWidth-256-32,buttonY,256,32);
-	#endif
-	buttonY += 32 + 16;
 
 	if(textInputActive && (textInputLock == 2)){
 		textMeshAddStrPS(menuM,8,screenHeight-42,2,"Servername:");
@@ -270,6 +384,7 @@ void drawMenuSavegames(){
 	int buttonY = 32;
 	int ci = gamepadSelection;
 	drawMenuLogo();
+	return;
 
 	for(int i=0;i<savegameCount;i++){
 		drawButton(menuM,savegameName[i],ci-- == 0,screenWidth-256-32,buttonY,256,32);
@@ -307,6 +422,7 @@ void renderMenu(){
 	}else{
 		drawMenuButtons();
 	}
+	widgetDraw(rootMenu,menuM,0,0,screenWidth,screenHeight);
 
 	textMeshDraw(menuM);
 	textInputDraw();
