@@ -110,8 +110,8 @@ void particleUpdate(){
 			glParticles[i] = glParticles[particleCount];
 			continue;
 		}
-		if(particles[i].ttl < 32){
-			glParticles[i].rgba = (particles[i].rgba & 0x00FFFFFF) | (particles[i].ttl << 27);
+		if(particles[i].ttl < 128){
+			glParticles[i].rgba = (particles[i].rgba & 0x00FFFFFF) | (particles[i].ttl << 25);
 		}
 		glParticles[i].x    += particles[i].vx;
 		glParticles[i].y    += particles[i].vy;
