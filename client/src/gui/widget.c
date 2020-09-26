@@ -154,13 +154,25 @@ static void widgetDrawButton(widget *wid, textMesh *m, int x, int y, int w, int 
 	textMeshAddStrPS(m,x+textXOff,y+textYOff,2,wid->label);
 }
 
+
+static void widgetDrawBackground(widget *wid, textMesh *m, int x, int y, int w, int h){
+	(void)wid;
+	float u = 19.f/32.f*128.f;
+	float v = 31.f/32.f*128.f;
+	float s = 1.f/32.f*128.f;
+
+	textMeshAddVert(m,x,y,u  ,v  ,0xFFFFAF63);
+	textMeshAddVert(m,x,h,u  ,v+s,0xFFFF6825);
+	textMeshAddVert(m,w,h,u+s,v+s,0xFFFF6825);
+
+	textMeshAddVert(m,w,h,u+s,v+s,0xFFFF6825);
+	textMeshAddVert(m,w,y,u+s,v  ,0xFFFFAF63);
+	textMeshAddVert(m,x,y,u  ,v  ,0xFFFFAF63);
+}
+
 static void widgetDrawPanel(widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)wid;
-	(void)m;
-	(void)x;
-	(void)y;
-	(void)w;
-	(void)h;
+	textMeshSolidBox(m,x,y,w,h,0xB02A2A2A);
 }
 
 static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
@@ -177,6 +189,12 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 	}else{
 		wid->flags &= ~(WIDGET_HOVER | WIDGET_CLICKED);
 	}
+}
+
+void widgetDrawLabel(widget *wid, textMesh *m, int x, int y, int w, int h){
+	(void)w;
+	(void)h;
+	textMeshAddStrPS(m,x,y,wid->vali,wid->label);
 }
 
 void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
@@ -203,7 +221,14 @@ void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
 		case WIDGET_BUTTON:
 			widgetDrawButton(wid,m,x,y,w,h);
 			break;
+		case WIDGET_BACKGROUND:
+			widgetDrawBackground(wid,m,x,y,w,h);
+			break;
+		case WIDGET_LABEL:
+			widgetDrawLabel(wid,m,x,y,w,h);
+			break;
 	}
+
 	for(widget *c=wid->child;c!=NULL;c=c->sibling){
 		widgetDraw(c,m,x,y,w,h);
 	}

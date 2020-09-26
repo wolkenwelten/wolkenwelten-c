@@ -131,9 +131,6 @@ void updateMouse(){
 
 	for(int cbtn = 0;cbtn < 3;cbtn++){
 		if(!(btn & (1<<cbtn))){
-			if(mouseClicked[cbtn]){
-				updateMenuClick(mousex,mousey,cbtn+1);
-			}
 			mouseClicked[cbtn] = 0;
 		}else if((btn & (1<<cbtn)) && (getTicks() > (mouseClicked[cbtn]+500))){
 			if(mouseClicked[cbtn] == 0){

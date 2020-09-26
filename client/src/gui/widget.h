@@ -26,9 +26,11 @@ struct widget {
 		uint  valu;
 	};
 };
-#define WIDGET_PANEL   1
-#define WIDGET_BUTTON  2
-#define WIDGET_SPACE   3
+#define WIDGET_PANEL      1
+#define WIDGET_BUTTON     2
+#define WIDGET_SPACE      3
+#define WIDGET_BACKGROUND 4
+#define WIDGET_LABEL      5
 
 #define WIDGET_HIDDEN  (1   )
 #define WIDGET_HOVER   (1<<1)

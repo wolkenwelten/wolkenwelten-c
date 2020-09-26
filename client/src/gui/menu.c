@@ -31,6 +31,7 @@ int   savegameCount = 0;
 char  savegameName[8][32];
 
 widget *rootMenu = NULL;
+widget *menuText = NULL;
 widget *mainMenu = NULL;
 widget *saveMenu = NULL;
 widget *saveList = NULL;
@@ -43,9 +44,9 @@ static void refreshSaveList(){
 	for(int i=0;i<savegameCount;i++){
 		widget *button;
 
-		button = widgetNewCPLH(WIDGET_BUTTON,saveList,48,i*48,256,32,savegameName[i],"click",handlerLoadGame);
+		button = widgetNewCPLH(WIDGET_BUTTON,saveList,64,i*48,208,32,savegameName[i],"click",handlerLoadGame);
 		button->vali = i;
-		button = widgetNewCPLH(WIDGET_BUTTON,saveList,0,i*48,32,32,"X","click",handlerDeleteGame);
+		button = widgetNewCPLH(WIDGET_BUTTON,saveList,16,i*48,32,32,"X","click",handlerDeleteGame);
 		button->vali = i;
 	}
 
@@ -117,6 +118,9 @@ void handlerAttribution(widget *wid){
 	(void)wid;
 	showAttribution = true;
 	mainMenu->flags |= WIDGET_HIDDEN;
+	saveMenu->flags |= WIDGET_HIDDEN;
+	menuText->flags |= WIDGET_HIDDEN;
+
 }
 void handlerQuit(widget *wid){
 	(void)wid;
@@ -126,6 +130,7 @@ void handlerBackToMenu(widget *wid){
 	(void)wid;
 	showAttribution = false;
 	mainMenu->flags &= ~WIDGET_HIDDEN;
+	menuText->flags &= ~WIDGET_HIDDEN;
 	saveMenu->flags |=  WIDGET_HIDDEN;
 }
 void handlerRoot(widget *wid){
@@ -133,35 +138,38 @@ void handlerRoot(widget *wid){
 	if(showAttribution){
 		showAttribution = false;
 		mainMenu->flags &= ~WIDGET_HIDDEN;
+		menuText->flags &= ~WIDGET_HIDDEN;
+		saveMenu->flags |=  WIDGET_HIDDEN;
 	}
 }
 
 void initMainMenu(){
-	mainMenu = widgetNewCP(WIDGET_PANEL,rootMenu,0,0,-1,-1);
-	widgetNewCPLH(WIDGET_BUTTON,mainMenu,-17,0,256,32,"Singleplayer","click",handlerSingleplayer);
-	widgetNewCPLH(WIDGET_BUTTON,mainMenu,-17,0,256,32,"Multiplayer","click",handlerMultiplayer);
-	widgetNewCP  (WIDGET_SPACE ,mainMenu,-17,0,256,32);
-	widgetNewCPLH(WIDGET_BUTTON,mainMenu,-17,0,256,32,"Change Name","click",handlerChangeName);
-	widgetNewCPLH(WIDGET_BUTTON,mainMenu,-17,0,256,32,"Attribution","click",handlerAttribution);
-	widgetNewCP  (WIDGET_SPACE ,mainMenu,-17,0,256,32);
-	widgetNewCPLH(WIDGET_BUTTON,mainMenu,-17,0,256,32,"Quit","click",handlerQuit);
+	mainMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,288,-1);
+	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
+	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Multiplayer","click",handlerMultiplayer);
+	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,32);
+	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Change Name","click",handlerChangeName);
+	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Attribution","click",handlerAttribution);
+	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,32);
+	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Quit","click",handlerQuit);
 
 	widgetLayVert(mainMenu,16);
 }
 
 void initSaveMenu(){
-	saveMenu = widgetNewCP(WIDGET_PANEL,rootMenu,0,0,-1,-1);
+	saveMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,288,-1);
 	saveMenu->flags |= WIDGET_HIDDEN;
 
-	saveList = widgetNewCP(WIDGET_PANEL,saveMenu,-17,0,304,32);
-	widgetNewCP  (WIDGET_SPACE, saveMenu,-17,0,256,32);
-	widgetNewCPLH(WIDGET_BUTTON,saveMenu,-17,0,256,32,"New Game","click",handlerNewGame);
-	widgetNewCPLH(WIDGET_BUTTON,saveMenu,-17,0,256,32,"Back to Menu","click",handlerBackToMenu);
+	saveList = widgetNewCP(WIDGET_SPACE,saveMenu,-1,0,288,32);
+	widgetNewCP  (WIDGET_SPACE, saveMenu,16,0,256,32);
+	widgetNewCPLH(WIDGET_BUTTON,saveMenu,16,0,256,32,"New Game","click",handlerNewGame);
+	widgetNewCPLH(WIDGET_BUTTON,saveMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
 
 	widgetLayVert(saveMenu,16);
 }
 
 void initMenu(){
+	widget *wid;
 	menuM = textMeshNew();
 	menuM->tex = tGui;
 
@@ -171,8 +179,20 @@ void initMenu(){
 		if(*s == '\n'){attributionLines++;}
 	}
 
-	rootMenu = widgetNewCP(WIDGET_PANEL,NULL,0,0,-1,-1);
+	rootMenu = widgetNewCP(WIDGET_BACKGROUND,NULL,0,0,-1,-1);
 	widgetBind(rootMenu,"click",handlerRoot);
+
+	menuText = widgetNewCP(WIDGET_SPACE,rootMenu,32,32,256,256);
+
+	wid = widgetNewCPL(WIDGET_LABEL,menuText,0,0,256,32,"Wolkenwelten");
+	wid->vali = 4;
+	wid = widgetNewCPL(WIDGET_LABEL,menuText,0,32,256,32,(char *)VERSION);
+	wid->vali = 2;
+	wid = widgetNewCPL(WIDGET_LABEL,menuText,0,64,256,32,"Your Name:");
+	wid->vali = 2;
+	wid = widgetNewCPL(WIDGET_LABEL,menuText,176,64,256,32,playerName);
+	wid->vali = 2;
+
 	initMainMenu();
 	initSaveMenu();
 }
@@ -208,111 +228,12 @@ void updateMenu(){
 	}
 }
 
-void updateMenuClick(int x, int y, int btn){
-	(void)x;
-	(void)y;
-	(void)btn;
-	return;
-	if(gameRunning){return;}
-
-	if(showAttribution){
-		showAttribution = false;
-		return;
-	}
-
-	if(showSavegames){
-		int buttonY = 32;
-		int col = 0;
-
-		if(btn != 1)                  {return;}
-		if(x > screenWidth       - 32){return;}
-
-		if(x > screenWidth - 256 - 32){
-			col = 1;
-		}else{
-			if(x < screenWidth - 256 - 72){return;}
-			if(x > screenWidth - 256 - 40){return;}
-			col = 2;
-		}
-		for(int i=0;i<savegameCount;i++){
-			if((y > buttonY) && (y < buttonY+32)){
-				if(col == 1){
-					strncpy(optionSavegame,savegameName[i],32);
-					optionSavegame[31] = 0;
-					startSingleplayer();
-					return;
-				}else if(col == 2){
-					deleteSavegame(i);
-					checkSavegames();
-					return;
-				}
-			}
-			buttonY += 32 + 16;
-		}
-		if(col != 1){return;}
-		buttonY += 32 + 16;
-
-		// New Game
-		if(!textInputActive){
-			textInput(8,screenHeight-24,256,16,4);
-		}
-		buttonY += 32 + 16;
-
-		if((y > buttonY) && (y < buttonY+32)){
-			showSavegames = false;
-			textInputClose();
-			textInputLock = 0;
-			return;
-		}
-		buttonY += 32 + 16;
-		return;
-	}
-
-
-	if((btn == 1) && (x > (screenWidth-256-32)) && (x < screenWidth-32)){
-		if((y > 32) && (y < 64)){
-			#ifndef __EMSCRIPTEN__
-			checkSavegames();
-			#endif
-		} else if((y > 80) && (y < 112)){
-			if(!textInputActive){
-
-			}
-		} else if((y > 130+48) && (y < 162+48)){
-			if(!textInputActive){
-				textInput(8,screenHeight-24,256,16,3);
-			}
-		} else if((y > 178+48) && (y < 200+48)){
-			showAttribution=true;
-		} else if((y > 216+96) && (y < 248+96)){
-			quit=true;
-		}
-	}
-}
-
-void menuBackground(){
-	float u = 19.f/32.f*128.f;
-	float v = 31.f/32.f*128.f;
-	float s = 1.f/32.f*128.f;
-	int   x = 0;
-	int   y = 0;
-	int   w = screenWidth;
-	int   h = screenHeight;
-
-	textMeshAddVert(menuM,x,y,u  ,v  ,0xFFFFAF63);
-	textMeshAddVert(menuM,x,h,u  ,v+s,0xFFFF6825);
-	textMeshAddVert(menuM,w,h,u+s,v+s,0xFFFF6825);
-
-	textMeshAddVert(menuM,w,h,u+s,v+s,0xFFFF6825);
-	textMeshAddVert(menuM,w,y,u+s,v  ,0xFFFFAF63);
-	textMeshAddVert(menuM,x,y,u  ,v  ,0xFFFFAF63);
-}
-
 void drawMenuAttributions(){
-	static int scroll = 0;
+	static int scroll    = 0;
 	static int scrollDir = 1;
-
 	const int textHeight = attributionLines * 16;
+
+	if(!showAttribution){return;}
 
 	if(scroll > textHeight-screenHeight){
 		scrollDir=-1;
@@ -325,25 +246,7 @@ void drawMenuAttributions(){
 	textMeshPrintfPS(menuM,16,16-scroll,2,"Attribution:\n%s",txt_attribution_txt_data);
 }
 
-void drawMenuLogo(){
-	char playerNameBuf[48];
-
-	textMeshAddStrPS(menuM,32,32,4,"Wolkenwelten");
-	textMeshPrintfPS(menuM,32,72,2,"Pre-Alpha %s [%.8s]",VERSION,COMMIT);
-	textMeshBox(menuM,
-		128, 96,
-		64, 64,
-		26.f/32.f, 31.f/32.f,
-		1.f/32.f,  1.f/32.f,
-		0xFFFFFFFF);
-
-	snprintf(playerNameBuf,sizeof(playerNameBuf),"Your Name: %s",playerName);
-	textMeshAddStrPS(menuM,32,176,2,playerNameBuf);
-}
-
-void drawMenuButtons(){
-	drawMenuLogo();
-
+void drawMenuTextInputs(){
 	if(textInputActive && (textInputLock == 2)){
 		textMeshAddStrPS(menuM,8,screenHeight-42,2,"Servername:");
 	}
@@ -352,30 +255,6 @@ void drawMenuButtons(){
 	}
 	if((menuError != NULL) && (*menuError != 0)){
 		textMeshAddStrPS(menuM,8,screenHeight-58,2,menuError);
-	}
-}
-
-void drawMenuSavegames(){
-	int buttonY = 32;
-	int ci = gamepadSelection;
-	drawMenuLogo();
-	return;
-
-	for(int i=0;i<savegameCount;i++){
-		drawButton(menuM,savegameName[i],ci-- == 0,screenWidth-256-32,buttonY,256,32);
-		drawButton(menuM,"X",0,screenWidth-256-72,buttonY,32,32);
-		buttonY += 32 + 16;
-	}
-	buttonY += 32 + 16;
-
-	drawButton(menuM,"New Game",ci-- == 0,screenWidth-256-32,buttonY,256,32);
-	buttonY += 32 + 16;
-
-	drawButton(menuM,"Back to Menu",ci-- == 0,screenWidth-256-32,buttonY,256,32);
-	buttonY += 32 + 16;
-
-	if(textInputActive && (textInputLock == 4)){
-		textMeshAddStrPS(menuM,8,screenHeight-42,2,"Name:");
 	}
 }
 
@@ -388,16 +267,9 @@ void renderMenu(){
 	updateMouse();
 	updateMenu();
 	textMeshEmpty(menuM);
-	menuBackground();
-
-	if(showAttribution){
-		drawMenuAttributions();
-	}else if(showSavegames){
-		drawMenuSavegames();
-	}else{
-		drawMenuButtons();
-	}
+	drawMenuTextInputs();
 	widgetDraw(rootMenu,menuM,0,0,screenWidth,screenHeight);
+	drawMenuAttributions();
 
 	textMeshDraw(menuM);
 	textInputDraw();
