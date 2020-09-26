@@ -41,13 +41,12 @@ void handlerDeleteGame(widget *wid);
 static void refreshSaveList(){
 	widgetEmpty(saveList);
 	for(int i=0;i<savegameCount;i++){
-		widget *button = widgetNewPLH(WIDGET_BUTTON,48,i*48,256,32,savegameName[i],"click",handlerLoadGame);
-		button->vali = i;
-		widgetChild(saveList,button);
+		widget *button;
 
-		button = widgetNewPLH(WIDGET_BUTTON,0,i*48,32,32,"X","click",handlerDeleteGame);
+		button = widgetNewCPLH(WIDGET_BUTTON,saveList,48,i*48,256,32,savegameName[i],"click",handlerLoadGame);
 		button->vali = i;
-		widgetChild(saveList,button);
+		button = widgetNewCPLH(WIDGET_BUTTON,saveList,0,i*48,32,32,"X","click",handlerDeleteGame);
+		button->vali = i;
 	}
 
 	saveList->h = savegameCount*48 + 48;
@@ -138,50 +137,26 @@ void handlerRoot(widget *wid){
 }
 
 void initMainMenu(){
-	widget *button;
-
-	mainMenu = widgetNewP(WIDGET_PANEL,0,0,-1,-1);
-	widgetChild(rootMenu,mainMenu);
-
-	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"Singleplayer","click",handlerSingleplayer);
-	widgetChild(mainMenu,button);
-	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"Multiplayer","click",handlerMultiplayer);
-	widgetChild(mainMenu,button);
-
-	button = widgetNewP(WIDGET_SPACE,-17,192,256,32);
-	widgetChild(mainMenu,button);
-
-	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"Change Name","click",handlerChangeName);
-	widgetChild(mainMenu,button);
-	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"Attribution","click",handlerAttribution);
-	widgetChild(mainMenu,button);
-
-	button = widgetNewP(WIDGET_SPACE,-17,192,256,32);
-	widgetChild(mainMenu,button);
-
-	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"Quit","click",handlerQuit);
-	widgetChild(mainMenu,button);
+	mainMenu = widgetNewCP(WIDGET_PANEL,rootMenu,0,0,-1,-1);
+	widgetNewCPLH(WIDGET_BUTTON,mainMenu,-17,0,256,32,"Singleplayer","click",handlerSingleplayer);
+	widgetNewCPLH(WIDGET_BUTTON,mainMenu,-17,0,256,32,"Multiplayer","click",handlerMultiplayer);
+	widgetNewCP  (WIDGET_SPACE ,mainMenu,-17,0,256,32);
+	widgetNewCPLH(WIDGET_BUTTON,mainMenu,-17,0,256,32,"Change Name","click",handlerChangeName);
+	widgetNewCPLH(WIDGET_BUTTON,mainMenu,-17,0,256,32,"Attribution","click",handlerAttribution);
+	widgetNewCP  (WIDGET_SPACE ,mainMenu,-17,0,256,32);
+	widgetNewCPLH(WIDGET_BUTTON,mainMenu,-17,0,256,32,"Quit","click",handlerQuit);
 
 	widgetLayVert(mainMenu,16);
 }
 
 void initSaveMenu(){
-	widget *button;
-
-	saveMenu = widgetNewP(WIDGET_PANEL,0,0,-1,-1);
+	saveMenu = widgetNewCP(WIDGET_PANEL,rootMenu,0,0,-1,-1);
 	saveMenu->flags |= WIDGET_HIDDEN;
-	widgetChild(rootMenu,saveMenu);
 
-	saveList = widgetNewP(WIDGET_PANEL,-17,0,304,32);
-	widgetChild(saveMenu,saveList);
-
-	button = widgetNewP(WIDGET_SPACE,-17,0,256,32);
-	widgetChild(saveMenu,saveList);
-
-	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"New Game","click",handlerNewGame);
-	widgetChild(saveMenu,button);
-	button = widgetNewPLH(WIDGET_BUTTON,-17,192,256,32,"Back to Menu","click",handlerBackToMenu);
-	widgetChild(saveMenu,button);
+	saveList = widgetNewCP(WIDGET_PANEL,saveMenu,-17,0,304,32);
+	widgetNewCP  (WIDGET_SPACE, saveMenu,-17,0,256,32);
+	widgetNewCPLH(WIDGET_BUTTON,saveMenu,-17,0,256,32,"New Game","click",handlerNewGame);
+	widgetNewCPLH(WIDGET_BUTTON,saveMenu,-17,0,256,32,"Back to Menu","click",handlerBackToMenu);
 
 	widgetLayVert(saveMenu,16);
 }
@@ -196,7 +171,7 @@ void initMenu(){
 		if(*s == '\n'){attributionLines++;}
 	}
 
-	rootMenu = widgetNewP(WIDGET_PANEL,0,0,-1,-1);
+	rootMenu = widgetNewCP(WIDGET_PANEL,NULL,0,0,-1,-1);
 	widgetBind(rootMenu,"click",handlerRoot);
 	initMainMenu();
 	initSaveMenu();

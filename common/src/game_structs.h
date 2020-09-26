@@ -1,6 +1,14 @@
 #pragma once
 #include "gfx_structs.h"
 
+
+typedef struct sfx sfx;
+typedef struct bgm bgm;
+typedef struct grapplingHook grapplingHook;
+typedef struct bigchungus bigchungus;
+typedef struct chungus chungus;
+typedef struct chunk chunk;
+
 typedef enum blockCategory {
 	NONE,
 	DIRT,
@@ -23,16 +31,6 @@ typedef struct {
 	u16 ID;
 	i16 amount;
 } item;
-
-struct grapplingHook;
-typedef struct grapplingHook grapplingHook;
-
-struct bigchungus;
-typedef struct bigchungus bigchungus;
-struct chungus;
-typedef struct chungus chungus;
-struct chunk;
-typedef struct chunk chunk;
 
 typedef struct {
 	vec pos,vel,rot;

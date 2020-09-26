@@ -15,8 +15,14 @@ widget *widgetNew(int type){
 	wid->type = type;
 	return wid;
 }
-widget *widgetNewP  (int type, int x, int y, int w, int h){
+widget *widgetNewC(int type,widget *p){
 	widget *wid = widgetNew(type);
+	if(wid == NULL){return NULL;}
+	widgetChild(p,wid);
+	return wid;
+}
+widget *widgetNewCP(int type,widget *p, int x, int y, int w, int h){
+	widget *wid = widgetNewC(type,p);
 	if(wid == NULL){return NULL;}
 	wid->x = x;
 	wid->y = y;
@@ -24,14 +30,14 @@ widget *widgetNewP  (int type, int x, int y, int w, int h){
 	wid->h = h;
 	return wid;
 }
-widget *widgetNewPL (int type, int x, int y, int w, int h, char *label){
-	widget *wid = widgetNewP(type,x,y,w,h);
+widget *widgetNewCPL(int type,widget *p, int x, int y, int w, int h, char *label){
+	widget *wid = widgetNewCP(type,p,x,y,w,h);
 	if(wid == NULL){return NULL;}
 	wid->label = label;
 	return wid;
 }
-widget *widgetNewPLH(int type, int x, int y, int w, int h, char *label,const char *eventName, void (*handler)(widget *)){
-	widget *wid = widgetNewPL(type,x,y,w,h,label);
+widget *widgetNewCPLH(int type,widget *p, int x, int y, int w, int h, char *label,const char *eventName, void (*handler)(widget *)){
+	widget *wid = widgetNewCPL(type,p,x,y,w,h,label);
 	if(wid == NULL){return NULL;}
 	widgetBind(wid,eventName,handler);
 	return wid;
@@ -67,6 +73,7 @@ void widgetChild(widget *parent, widget *child){
 		child->parent->child = child->sibling;
 		child->sibling = NULL;
 	}
+	if(parent == NULL){ return; }
 	if(parent->child != NULL){
 		if(child->sibling != NULL){
 			fprintf(stderr,"Widget already has a sibling!\n");

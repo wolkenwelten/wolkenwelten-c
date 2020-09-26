@@ -35,9 +35,10 @@ struct widget {
 #define WIDGET_CLICKED (1<<2)
 
 widget *widgetNew     (int type);
-widget *widgetNewP    (int type, int x, int y, int w, int h);
-widget *widgetNewPL   (int type, int x, int y, int w, int h, char *label);
-widget *widgetNewPLH  (int type, int x, int y, int w, int h, char *label,const char *eventName, void (*handler)(widget *));
+widget *widgetNewC    (int type, widget *p);
+widget *widgetNewCP   (int type, widget *p, int x, int y, int w, int h);
+widget *widgetNewCPL  (int type, widget *p, int x, int y, int w, int h, char *label);
+widget *widgetNewCPLH (int type, widget *p, int x, int y, int w, int h, char *label,const char *eventName, void (*handler)(widget *));
 void    widgetFree    (widget *w);
 void    widgetEmpty   (widget *w);
 void    widgetChild   (widget *parent, widget *child);
