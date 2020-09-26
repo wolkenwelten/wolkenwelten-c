@@ -7,6 +7,7 @@ void      textMeshEmpty     (textMesh *m);
 void      textMeshAddVert   (textMesh *m, i16 x, i16 y, i16 u, i16 v, u32 rgba);
 void      textMeshDraw      (textMesh *m);
 void      textMeshAddGlyph  (textMesh *m, int x, int y, int size, u8 c);
+void      textMeshAddLinePS (textMesh *m, int x, int y, int size, const char *str);
 void      textMeshAddStrPS  (textMesh *m, int x, int y, int size, const char *str);
 void      textMeshAddString (textMesh *m, const char *str);
 void      textMeshPrintfPS  (textMesh *m, int x, int y, int size, const char *format, ...);

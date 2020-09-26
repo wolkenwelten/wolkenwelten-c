@@ -123,6 +123,35 @@ void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c){
 	textMeshAddVert( m, x           , y+glyphWidth, ((gx          )*128.f), ((gy+glyphSize)*128.f),0xFFFFFFFF);
 }
 
+void textMeshAddLinePS(textMesh *m, int x, int y, int size, const char *str){
+	const int glyphWidth = 8*size;
+	const int lineHeight = 10*size;
+
+	while(*str != 0){
+		if((y > screenHeight) || (x > screenWidth)){
+			return;
+		}
+		if(*str == '\n'){
+			x = m->sx;
+			m->sy += lineHeight;
+			y += lineHeight;
+			str++;
+			continue;
+		}else if(*str == '\r'){
+			str++;
+			continue;
+		}else if(*str == '\t'){
+			str++;
+			x = (((x - m->sx) / (glyphWidth*4) ) + 1 ) * (glyphWidth*4);
+			continue;
+		}
+
+		textMeshAddGlyph(m,x,y,size,*str);
+		x+= glyphWidth;
+		str++;
+	}
+}
+
 void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 	const int glyphWidth = 8*size;
 	const int lineHeight = 10*size;

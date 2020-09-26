@@ -2,6 +2,7 @@
 #include "widget.h"
 
 #include "../gui/gui.h"
+#include "../gfx/gfx.h"
 #include "../gfx/textMesh.h"
 
 #include <stdlib.h>
@@ -87,7 +88,6 @@ void widgetChild(widget *parent, widget *child){
 	}
 }
 
-
 void widgetChildPre(widget *parent, widget *child){
 	if(child->parent != NULL){
 		child->parent->child = child->sibling;
@@ -121,9 +121,8 @@ void widgetBind(widget *w, const char *eventName, void (*handler)(widget *)){
 
 void widgetEmit(widget *w, const char *eventName){
 	for(eventHandler *h=w->firstHandler;h!=NULL;h=h->next){
-		if(strcmp(eventName,h->eventName) == 0){
-			h->handler(w);
-		}
+		if(strcmp(eventName,h->eventName) != 0){continue;}
+		h->handler(w);
 	}
 }
 
@@ -146,14 +145,13 @@ static void widgetDrawButton(widget *wid, textMesh *m, int x, int y, int w, int 
 	}
 
 	textMeshSolidBox(m,x+1, y+1,w-1,h-1, color);
-	textMeshSolidBox(m,x  , y  ,w  ,  1,tcolor);
-	textMeshSolidBox(m,x  , y  ,1  ,  h,tcolor);
-	textMeshSolidBox(m,x  , y+h,w  ,  1,bcolor);
-	textMeshSolidBox(m,x+w, y  ,1  ,  h,bcolor);
+	textMeshSolidBox(m,x+1, y  ,w-2,  1,tcolor);
+	textMeshSolidBox(m,x  , y+1,  1,h-2,tcolor);
+	textMeshSolidBox(m,x+1, y+h,w-2,  1,bcolor);
+	textMeshSolidBox(m,x+w, y+1,  1,h-2,bcolor);
 
-	textMeshAddStrPS(m,x+textXOff,y+textYOff,2,wid->label);
+	textMeshAddLinePS(m,x+textXOff,y+textYOff,2,wid->label);
 }
-
 
 static void widgetDrawBackground(widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)wid;
@@ -172,7 +170,7 @@ static void widgetDrawBackground(widget *wid, textMesh *m, int x, int y, int w, 
 
 static void widgetDrawPanel(widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)wid;
-	textMeshSolidBox(m,x,y,w,h,0xB02A2A2A);
+	textMeshSolidBox(m,x,y,w,h,0xB0303030);
 }
 
 static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
@@ -191,7 +189,64 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 	}
 }
 
-void widgetDrawLabel(widget *wid, textMesh *m, int x, int y, int w, int h){
+static void widgetAnimate(widget *wid, int x, int y, int w, int h){
+	(void)w;
+	(void)h;
+	if(!(wid->flags & WIDGET_ANIMATE)){return;}
+
+	if(wid->flags & WIDGET_ANIMATEX){
+		if(wid->x < wid->gx){
+			wid->x++;
+		}else if(wid->x > wid->gx){
+			wid->x--;
+		}else{
+			wid->flags &= ~WIDGET_ANIMATEX;
+		}
+	}
+	if(wid->flags & WIDGET_ANIMATEY){
+		if(wid->y < wid->gy){
+			wid->y++;
+		}else if(wid->y > wid->gy){
+			wid->y--;
+		}else{
+			wid->flags &= ~WIDGET_ANIMATEY;
+		}
+	}
+	if(wid->flags & WIDGET_ANIMATEW){
+		const int d = MAX(1,(abs(wid->w - wid->gw))>>3);
+		if(wid->w < wid->gw){
+			wid->w+=d;
+		}else if(wid->w > wid->gw){
+			wid->w-=d;
+		}else{
+			wid->flags &= ~WIDGET_ANIMATEW;
+		}
+	}
+	if(wid->flags & WIDGET_ANIMATEH){
+		if(wid->h < wid->gh){
+			wid->h++;
+		}else if(wid->h > wid->gh){
+			wid->h--;
+		}else{
+			wid->flags &= ~WIDGET_ANIMATEH;
+		}
+	}
+
+	if(wid->flags & WIDGET_ANIMATE){return;}
+
+	if(wid->x != wid->gx){return;}
+	if(wid->y != wid->gy){return;}
+	if(wid->w != wid->gw){return;}
+	if(wid->h != wid->gh){return;}
+	wid->flags &= ~WIDGET_ANIMATE;
+	if((wid->x + x) < screenWidth) {return;}
+	if((wid->y + y) < screenHeight){return;}
+	if((wid->x + x + wid->w) > 0)  {return;}
+	if((wid->y + y + wid->h) > 0)  {return;}
+	wid->flags |= WIDGET_HIDDEN;
+}
+
+static void widgetDrawLabel(widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)w;
 	(void)h;
 	textMeshAddStrPS(m,x,y,wid->vali,wid->label);
@@ -213,6 +268,7 @@ void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
 	if(w < 0){ w = pw+(wid->w+1); }
 	if(h < 0){ h = ph+(wid->w+1); }
 	widgetCheckEvents(wid,x,y,w,h);
+	widgetAnimate(wid,x,y,w,h);
 
 	switch(wid->type){
 		case WIDGET_PANEL:
@@ -233,44 +289,6 @@ void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
 		widgetDraw(c,m,x,y,w,h);
 	}
 }
-
-void drawButton(textMesh *m, const char *label, int state, int x, int y, int w, int h){
-	u32 color    = 0xFF555555;
-	u32 tcolor   = 0xFF777777;
-	u32 bcolor   = 0xFF333333;
-	int textYOff = (h - (2*8))/2;
-	int textXOff = (w-(strnlen(label,w/16)*16))/2;
-
-	if(state == 0){
-		if(mouseInBox(x,y,w,h)){
-			if(mouseClicked[0]){
-				state = 2;
-			}else{
-				state = 1;
-			}
-		}
-	}
-
-	if(state == 1){
-		color = 0xFF444444;
-	}else if(state == 2){
-		color = 0xFF2A2A2A;
-		textXOff+=1;
-		textYOff+=1;
-		int tmp = tcolor;
-		tcolor = bcolor;
-		bcolor = tmp;
-	}
-
-	textMeshSolidBox(m,x+1, y+1,w-1,h-1,color);
-	textMeshSolidBox(m,x  , y  ,w, 1,tcolor);
-	textMeshSolidBox(m,x  , y  ,1, h,tcolor);
-	textMeshSolidBox(m,x  , y+h,w, 1,bcolor);
-	textMeshSolidBox(m,x+w, y  ,1, h,bcolor);
-
-	textMeshAddStrPS(m,x+textXOff,y+textYOff,2,label);
-}
-
 
 bool mouseInBox(uint x, uint y, uint w, uint h){
 	if(mousex < x  ){return false;}

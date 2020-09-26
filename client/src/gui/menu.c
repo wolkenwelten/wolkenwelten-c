@@ -4,6 +4,7 @@
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
+#include "../gfx/gl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
@@ -56,7 +57,6 @@ static void refreshSaveList(){
 
 static void checkSavegames(){
 	showSavegames = true;
-	saveMenu->flags &= ~WIDGET_HIDDEN;
 	if(gamepadSelection != -1){
 		gamepadSelection = 0;
 	}
@@ -93,7 +93,12 @@ static void deleteSavegame(int i){
 void handlerSingleplayer(widget *wid){
 	(void)wid;
 	checkSavegames();
-	mainMenu->flags |= WIDGET_HIDDEN;
+	mainMenu->flags &= ~WIDGET_HIDDEN;
+	mainMenu->flags |= WIDGET_ANIMATEW;
+	mainMenu->gw     =   0;
+	saveMenu->flags &= ~WIDGET_HIDDEN;
+	saveMenu->flags |= WIDGET_ANIMATEW;
+	saveMenu->gw     = 288;
 }
 void handlerMultiplayer(widget *wid){
 	(void)wid;
@@ -117,9 +122,14 @@ void handlerNewGame(widget *wid){
 void handlerAttribution(widget *wid){
 	(void)wid;
 	showAttribution = true;
-	mainMenu->flags |= WIDGET_HIDDEN;
-	saveMenu->flags |= WIDGET_HIDDEN;
 	menuText->flags |= WIDGET_HIDDEN;
+
+	mainMenu->flags &= ~WIDGET_HIDDEN;
+	mainMenu->flags |= WIDGET_ANIMATEW;
+	mainMenu->gw     =   0;
+	saveMenu->flags &= ~WIDGET_HIDDEN;
+	saveMenu->flags |= WIDGET_ANIMATEW;
+	saveMenu->gw     =   0;
 
 }
 void handlerQuit(widget *wid){
@@ -129,17 +139,24 @@ void handlerQuit(widget *wid){
 void handlerBackToMenu(widget *wid){
 	(void)wid;
 	showAttribution = false;
-	mainMenu->flags &= ~WIDGET_HIDDEN;
 	menuText->flags &= ~WIDGET_HIDDEN;
-	saveMenu->flags |=  WIDGET_HIDDEN;
+
+	mainMenu->flags &= ~WIDGET_HIDDEN;
+	mainMenu->flags |= WIDGET_ANIMATEW;
+	mainMenu->gw     = 288;
+	saveMenu->flags &= ~WIDGET_HIDDEN;
+	saveMenu->flags |= WIDGET_ANIMATEW;
+	saveMenu->gw     =   0;
 }
 void handlerRoot(widget *wid){
 	(void)wid;
 	if(showAttribution){
 		showAttribution = false;
-		mainMenu->flags &= ~WIDGET_HIDDEN;
 		menuText->flags &= ~WIDGET_HIDDEN;
 		saveMenu->flags |=  WIDGET_HIDDEN;
+		mainMenu->flags &= ~WIDGET_HIDDEN;
+		mainMenu->flags |= WIDGET_ANIMATEW;
+		mainMenu->gw     = 288;
 	}
 }
 
@@ -157,7 +174,7 @@ void initMainMenu(){
 }
 
 void initSaveMenu(){
-	saveMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,288,-1);
+	saveMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,0,-1);
 	saveMenu->flags |= WIDGET_HIDDEN;
 
 	saveList = widgetNewCP(WIDGET_SPACE,saveMenu,-1,0,288,32);
@@ -266,60 +283,13 @@ void renderMenu(){
 	}
 	updateMouse();
 	updateMenu();
+
 	textMeshEmpty(menuM);
 	drawMenuTextInputs();
 	widgetDraw(rootMenu,menuM,0,0,screenWidth,screenHeight);
 	drawMenuAttributions();
-
 	textMeshDraw(menuM);
+
 	textInputDraw();
 	drawCursor();
-}
-
-void updateMenuGamepad(int btn){
-	mouseHidden = true;
-
-	if(showAttribution){
-		showAttribution = false;
-		return;
-	}
-
-	if(btn != 1){return;}
-	switch(gamepadSelection){
-		case 0:
-			#ifndef __EMSCRIPTEN__
-			checkSavegames();
-			#endif
-		break;
-
-		case 1:
-			if(!textInputActive){
-				textInput(8,screenHeight-24,256,16,2);
-			}
-		break;
-
-		case 2:
-			if(!textInputActive){
-				textInput(8,screenHeight-24,256,16,3);
-			}
-		break;
-
-		case 3:
-			showAttribution=true;
-		break;
-
-		case 4:
-			quit=true;
-		break;
-	}
-}
-
-void changeMenuSelection(int off){
-	gamepadSelection += off;
-	if(gamepadSelection < 0){
-		gamepadSelection = 4;
-	}
-	if(gamepadSelection > 4){
-		gamepadSelection = 0;
-	}
 }

@@ -165,8 +165,6 @@ void drawDebuginfo(){
 	}
 	guim->size = 1;
 
-
-
 	//textMeshPrintf(guim,"Speed %.0f\n",sqrtf(player->vx*player->vx + player->vy*player->vy + player->vz*player->vz)*200.f);
 
 	guim->sx   = screenWidth;

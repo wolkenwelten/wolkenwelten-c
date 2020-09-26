@@ -114,15 +114,12 @@ void controllerDeviceEvent(const SDL_Event *e){
 void doGamepadMenuUpdate(){
 	if(gamepadButtons[0]){
 		gamepadButtons[0] = false;
-		updateMenuGamepad(1);
 	}
 	if(gamepadButtons[11]){
 		gamepadButtons[11] = false;
-		changeMenuSelection(-1);
 	}
 	if(gamepadButtons[12]){
 		gamepadButtons[12] = false;
-		changeMenuSelection(1);
 	}
 }
 
@@ -193,14 +190,12 @@ vec doGamepadupdate(vec vel){
 
 	if(gamepadButtons[11]){
 		gamepadButtons[11] = false;
-		changeMenuSelection(1);
 		if(isInventoryOpen()){
 			changeInventorySelection(0,1);
 		}
 	}
 	if(gamepadButtons[12]){
 		gamepadButtons[12] = false;
-		changeMenuSelection(-1);
 		if(isInventoryOpen()){
 			changeInventorySelection(0,-1);
 		}
