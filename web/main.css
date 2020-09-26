@@ -395,6 +395,7 @@ span.key {
 	font-size:1.25em;
 
 	margin:0px 0.25em 0.25em 0.25em;
+	position:relative;
 }
 
 .buttonlabel {

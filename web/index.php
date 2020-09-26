@@ -50,13 +50,19 @@ function niceName($platform){
 	return $platform;
 }
 
+function niceDate($name){
+	$path = getReleaseDir().$name;
+	$mtime = filemtime($path);
+	return "Released: ".date("Y-m-d H:i:s",$mtime);
+}
+
 function echoBuilds($arr){
 	foreach($arr as $platform => $releases){
 		$rel = array_key_first($releases);
 		if(trim($rel) == ''){continue;}
 		$href = 'release/'.$platform.'/'.$rel;
 		$label = '<span class=buttonlabel>'.niceName($platform).'</span><span class="buttonicon icon-'.$platform.'"></span>';
-		echo '<a href="'.$href.'" download class=button>'.$label."</a>";
+		echo '<a href="'.$href.'" download class=button title="'.niceDate($platform.'/'.$rel).'">'.$label."</a>";
 	}
 	echo "<br/>\n";
 }
