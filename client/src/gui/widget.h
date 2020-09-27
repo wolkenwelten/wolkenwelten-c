@@ -15,9 +15,8 @@ struct widget {
 	uint type,flags;
 	int gx,gy,gw,gh;
 
-	widget *parent;
-	widget *sibling;
-	widget *child;
+	widget *parent,*child;
+	widget *prev,*next;
 	eventHandler  *firstHandler;
 
 	char *label;
@@ -32,17 +31,19 @@ struct widget {
 #define WIDGET_SPACE      3
 #define WIDGET_BACKGROUND 4
 #define WIDGET_LABEL      5
+#define WIDGET_BUTTONDEL  6
 
 #define WIDGET_HIDDEN   (1   )
 #define WIDGET_HOVER    (1<<1)
 #define WIDGET_CLICKED  (1<<2)
-#define WIDGET_ANIMATEX (1<<3)
-#define WIDGET_ANIMATEY (1<<4)
-#define WIDGET_ANIMATEW (1<<5)
-#define WIDGET_ANIMATEH (1<<6)
+#define WIDGET_NOSELECT (1<<3)
+#define WIDGET_ANIMATEX (1<<4)
+#define WIDGET_ANIMATEY (1<<5)
+#define WIDGET_ANIMATEW (1<<6)
+#define WIDGET_ANIMATEH (1<<7)
 
-#define WIDGET_ANIMATE (15<<3)
-
+#define WIDGET_ANIMATE (15<<4)
+#define WIDGET_HNS      (WIDGET_HIDDEN | WIDGET_NOSELECT)
 
 widget *widgetNew     (int type);
 widget *widgetNewC    (int type, widget *p);
@@ -53,6 +54,8 @@ void    widgetFree    (widget *w);
 void    widgetEmpty   (widget *w);
 void    widgetChild   (widget *parent, widget *child);
 void    widgetChildPre(widget *parent, widget *child);
+widget *widgetNextSel (widget *cur);
+widget *widgetPrevSel (widget *cur);
 void    widgetBind    (widget *w, const char *eventName, void (*handler)(widget *));
 void    widgetEmit    (widget *w, const char *eventName);
 void    widgetDraw    (widget *w, textMesh *mesh, int x, int y, int pw, int ph);

@@ -53,6 +53,8 @@ void initGL(){
 	INITGLEXT();
 	glClearColor( 0.00f, 0.05f, 0.2f, 1.f );
 	glViewport(0,0,screenWidth,screenHeight);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
@@ -106,7 +108,6 @@ void calcView(const character *cam){
 }
 
 void renderWorld(const character *cam){
-	glDepthFunc( GL_LESS );
 	bigchungusDraw(&world,cam);
 	blockMiningDraw();
 	grapplingHookDrawRopes();
@@ -115,7 +116,6 @@ void renderWorld(const character *cam){
 	characterDrawAll();
 	cloudsRender();
 	particleDraw();
-	glDepthFunc( GL_LEQUAL );
 
 	cloudOffset += 0.06f;
 	if(cloudOffset > 256.f){cloudOffset-=256.f;}

@@ -1,6 +1,7 @@
 #define _DEFAULT_SOURCE
 #include "widget.h"
 
+#include "../gui/menu.h"
 #include "../gui/gui.h"
 #include "../gfx/gfx.h"
 #include "../gfx/textMesh.h"
@@ -51,7 +52,7 @@ void widgetFree(widget *w){
 	}
 	if(w->parent != NULL){
 		if(w->parent->child == w){
-			w->parent->child = w->sibling;
+			w->parent->child = w->next;
 		}else{
 			// ToDo
 		}
@@ -63,7 +64,7 @@ void widgetEmpty(widget *w){
 	widget *n=NULL;
 	if(w == NULL){return;}
 	for(widget *c=w->child;c!=NULL;c=n){
-		n = c->sibling;
+		n = c->next;
 		widgetFree(c);
 	}
 	w->child = NULL;
@@ -71,41 +72,124 @@ void widgetEmpty(widget *w){
 
 void widgetChild(widget *parent, widget *child){
 	if(child->parent != NULL){
-		child->parent->child = child->sibling;
-		child->sibling = NULL;
+		child->parent->child = child->next;
+		child->next = NULL;
+		child->prev = NULL;
 	}
 	if(parent == NULL){ return; }
+	child->parent = parent;
 	if(parent->child != NULL){
-		if(child->sibling != NULL){
+		if(child->next != NULL){
 			fprintf(stderr,"Widget already has a sibling!\n");
 		}
 		widget *c;
-		for(c = parent->child;c->sibling != NULL;c = c->sibling){}
-		c->sibling = child;
+		for(c = parent->child;c->next != NULL;c = c->next){}
+		c->next = child;
+		child->prev = c;
 	}else{
 		parent->child = child;
-		child->parent = parent;
 	}
 }
 
 void widgetChildPre(widget *parent, widget *child){
 	if(child->parent != NULL){
-		child->parent->child = child->sibling;
-		child->sibling = NULL;
+		child->parent->child = child->next;
+		child->next = NULL;
+		child->prev = NULL;
 	}
 	if(parent->child != NULL){
-		if(child->sibling != NULL){
+		if(child->next != NULL){
 			fprintf(stderr,"Widget already has a sibling!\n");
 		}
-		child->sibling = parent->child;
+		child->next = parent->child;
+		child->next->prev = child;
+		child->prev = NULL;
 	}
 	parent->child = child;
 	child->parent = parent;
 }
 
+static int widgetIsSelectable(widget *cur){
+	if(cur == NULL){return 0;}
+	if(cur->flags & WIDGET_HNS      ){return 0;}
+	if(cur->type == WIDGET_BUTTON   ){return 1;}
+	if(cur->type == WIDGET_BUTTONDEL){return 1;}
+	return 0;
+}
+
+widget *widgetNextSel(widget *cur){
+	if(cur == NULL){return NULL;}
+
+	if(!(cur->flags & WIDGET_HNS) && (cur->child != NULL)){
+		if(widgetIsSelectable(cur->child)){
+			return cur->child;
+		}
+		widget *ret = widgetNextSel(cur->child);
+		if(ret != NULL){
+			return ret;
+		}
+	}
+	if(cur->next != NULL){
+		if(widgetIsSelectable(cur->next)){
+			return cur->next;
+		}
+		widget *ret = widgetNextSel(cur->next);
+		if(ret != NULL){
+			return ret;
+		}
+	}
+	for(widget *c=cur->parent;c!=NULL;c=c->parent){
+		if(widgetIsSelectable(c->next)){
+			return c->next;
+		}
+		widget *ret = widgetNextSel(c->next);
+		if(ret != NULL){
+			return ret;
+		}
+	}
+	return NULL;
+}
+
+widget *widgetPrevSel(widget *cur){
+	if(cur == NULL){return NULL;}
+
+	if(!(cur->flags & WIDGET_HNS) && (cur->child != NULL)){
+		widget *last=NULL;
+		for(last=cur->child;last->next != NULL;last=last->next){}
+		if(widgetIsSelectable(last)){
+			return last;
+		}
+		widget *ret = widgetPrevSel(last);
+		if(ret != NULL){
+			return ret;
+		}
+	}
+	if(cur->prev != NULL){
+		if(widgetIsSelectable(cur->prev)){
+			return cur->prev;
+		}
+		widget *ret = widgetPrevSel(cur->prev);
+		if(ret != NULL){
+			return ret;
+		}
+	}
+	for(widget *c=cur->parent;c!=NULL;c=c->parent){
+		widget *last=NULL;
+		for(last=c;last->next != NULL;last=last->next){}
+		if(widgetIsSelectable(last)){
+			return last;
+		}
+		widget *ret = widgetPrevSel(last);
+		if(ret != NULL){
+			return ret;
+		}
+	}
+	return NULL;
+}
+
 void widgetLayVert(widget *w, int padding){
 	int y = padding;
-	for(widget *c=w->child;c!=NULL;c=c->sibling){
+	for(widget *c=w->child;c!=NULL;c=c->next){
 		c->y = y;
 		y += c->h + padding;
 	}
@@ -133,7 +217,11 @@ static void widgetDrawButton(widget *wid, textMesh *m, int x, int y, int w, int 
 	int textYOff    = (h - (2*8))/2;
 	int textXOff    = (w-(strnlen(wid->label,w/16)*16))/2;
 
-	if(wid->flags & WIDGET_CLICKED){
+	if(wid == menuCurSelection){
+		 color = 0xFFAA6666;
+		tcolor = 0xFFCC8888;
+		bcolor = 0xFF884444;
+	}else if(wid->flags & WIDGET_CLICKED){
 		color = 0xFF2A2A2A;
 		textXOff+=1;
 		textYOff+=1;
@@ -153,11 +241,65 @@ static void widgetDrawButton(widget *wid, textMesh *m, int x, int y, int w, int 
 	textMeshAddLinePS(m,x+textXOff,y+textYOff,2,wid->label);
 }
 
+static void widgetDrawButtondel(widget *wid, textMesh *m, int x, int y, int w, int h){
+	u32 color       = 0xFF555555;
+	u32 tcolor      = 0xFF777777;
+	u32 bcolor      = 0xFF333333;
+
+	u32 dcolor      = 0xFF555599;
+	u32 dtcolor     = 0xFF7777AA;
+	u32 dbcolor     = 0xFF333377;
+
+	int textYOff    = (h - (2*8))/2;
+	int textXOff    = (w-(strnlen(wid->label,w/16)*16))/2;
+
+	if(wid == menuCurSelection){
+		 color = 0xFFAA6666;
+		tcolor = 0xFFCC8888;
+		bcolor = 0xFF884444;
+	}else{
+		if((int)mousex > (x+w-40)){
+			if(wid->flags & WIDGET_CLICKED){
+				dcolor  = 0xFF2A2A6A;
+				int tmp = dtcolor;
+				dtcolor = dbcolor;
+				dbcolor = tmp;
+			}else if(wid->flags & WIDGET_HOVER){
+				dcolor  = 0xFF444488;
+			}
+		}else{
+			if(wid->flags & WIDGET_CLICKED){
+				color = 0xFF2A2A2A;
+				textXOff+=1;
+				textYOff+=1;
+				int tmp = tcolor;
+				tcolor = bcolor;
+				bcolor = tmp;
+			}else if(wid->flags & WIDGET_HOVER){
+				color = 0xFF444444;
+			}
+		}
+	}
+
+	textMeshSolidBox(m,x+1, y+1,w-41,h-1,  color);
+	textMeshSolidBox(m,x+1, y  ,w-42,  1, tcolor);
+	textMeshSolidBox(m,x  , y+1,   1,h-2, tcolor);
+	textMeshSolidBox(m,x+1, y+h,w-42,  1, bcolor);
+
+	textMeshSolidBox(m,x+w-41, y+1  ,40,h-1,  dcolor);
+	textMeshSolidBox(m,x+w   , y+1  , 1,h-2, dbcolor);
+	textMeshSolidBox(m,x+w-41, y+h-1,40,  1, dbcolor);
+	textMeshSolidBox(m,x+w-41, y+1  ,40,  1, dtcolor);
+
+	textMeshAddLinePS(m,x+textXOff,y+textYOff,2,wid->label);
+	textMeshAddLinePS(m,x+w-24,y+textYOff,2,"X");
+}
+
 static void widgetDrawBackground(widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)wid;
 	float u = 19.f/32.f*128.f;
 	float v = 31.f/32.f*128.f;
-	float s = 1.f/32.f*128.f;
+	float s =  1.f/32.f*128.f;
 
 	textMeshAddVert(m,x,y,u  ,v  ,0xFFFFAF63);
 	textMeshAddVert(m,x,h,u  ,v+s,0xFFFF6825);
@@ -170,7 +312,7 @@ static void widgetDrawBackground(widget *wid, textMesh *m, int x, int y, int w, 
 
 static void widgetDrawPanel(widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)wid;
-	textMeshSolidBox(m,x,y,w,h,0xB0303030);
+	textMeshSolidBox(m,x,y,w,h,0xD0303030);
 }
 
 static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
@@ -180,7 +322,11 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 			wid->flags |= WIDGET_CLICKED;
 		}else{
 			if(wid->flags & WIDGET_CLICKED){
-				widgetEmit(wid,"click");
+				if((wid->type == WIDGET_BUTTONDEL) && ((int)mousex > x+w-40)){
+					widgetEmit(wid,"altclick");
+				}else{
+					widgetEmit(wid,"click");
+				}
 			}
 			wid->flags &= ~WIDGET_CLICKED;
 		}
@@ -195,19 +341,21 @@ static void widgetAnimate(widget *wid, int x, int y, int w, int h){
 	if(!(wid->flags & WIDGET_ANIMATE)){return;}
 
 	if(wid->flags & WIDGET_ANIMATEX){
+		const int d = MAX(1,(abs(wid->x - wid->gx))>>3);
 		if(wid->x < wid->gx){
-			wid->x++;
+			wid->x+=d;
 		}else if(wid->x > wid->gx){
-			wid->x--;
+			wid->x-=d;
 		}else{
 			wid->flags &= ~WIDGET_ANIMATEX;
 		}
 	}
 	if(wid->flags & WIDGET_ANIMATEY){
+		const int d = MAX(1,(abs(wid->y - wid->gy))>>3);
 		if(wid->y < wid->gy){
-			wid->y++;
+			wid->y+=d;
 		}else if(wid->y > wid->gy){
-			wid->y--;
+			wid->y-=d;
 		}else{
 			wid->flags &= ~WIDGET_ANIMATEY;
 		}
@@ -223,26 +371,31 @@ static void widgetAnimate(widget *wid, int x, int y, int w, int h){
 		}
 	}
 	if(wid->flags & WIDGET_ANIMATEH){
+		const int d = MAX(1,(abs(wid->h - wid->gh))>>3);
 		if(wid->h < wid->gh){
-			wid->h++;
+			wid->h+=d;
 		}else if(wid->h > wid->gh){
-			wid->h--;
+			wid->h-=d;
 		}else{
 			wid->flags &= ~WIDGET_ANIMATEH;
 		}
 	}
 
 	if(wid->flags & WIDGET_ANIMATE){return;}
+	const int wx = wid->x+x;
+	const int wy = wid->y+y;
 
-	if(wid->x != wid->gx){return;}
-	if(wid->y != wid->gy){return;}
-	if(wid->w != wid->gw){return;}
-	if(wid->h != wid->gh){return;}
-	wid->flags &= ~WIDGET_ANIMATE;
-	if((wid->x + x) < screenWidth) {return;}
-	if((wid->y + y) < screenHeight){return;}
-	if((wid->x + x + wid->w) > 0)  {return;}
-	if((wid->y + y + wid->h) > 0)  {return;}
+	if((wid->w == 0) || (wid->h == 0)){
+		wid->flags |= WIDGET_HIDDEN;
+		return;
+	}
+
+	if( (wx >= screenWidth)  ||
+	    (wy >= screenHeight) ||
+	    (wx+wid->w <= 0)     ||
+	    (wy+wid->h <= 0)){
+		return;
+	}
 	wid->flags |= WIDGET_HIDDEN;
 }
 
@@ -266,7 +419,7 @@ void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
 		y = (py + ph) - wid->h + (wid->y+1);
 	}
 	if(w < 0){ w = pw+(wid->w+1); }
-	if(h < 0){ h = ph+(wid->w+1); }
+	if(h < 0){ h = ph+(wid->h+1); }
 	widgetCheckEvents(wid,x,y,w,h);
 	widgetAnimate(wid,x,y,w,h);
 
@@ -283,9 +436,12 @@ void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
 		case WIDGET_LABEL:
 			widgetDrawLabel(wid,m,x,y,w,h);
 			break;
+		case WIDGET_BUTTONDEL:
+			widgetDrawButtondel(wid,m,x,y,w,h);
+			break;
 	}
 
-	for(widget *c=wid->child;c!=NULL;c=c->sibling){
+	for(widget *c=wid->child;c!=NULL;c=c->next){
 		widgetDraw(c,m,x,y,w,h);
 	}
 }

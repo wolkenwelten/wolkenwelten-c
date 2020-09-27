@@ -31,11 +31,16 @@ static int gamepadSelection = -1;
 int   savegameCount = 0;
 char  savegameName[8][32];
 
+char menuTextInputLabel[32];
+
 widget *rootMenu = NULL;
 widget *menuText = NULL;
 widget *mainMenu = NULL;
 widget *saveMenu = NULL;
 widget *saveList = NULL;
+widget *menuErrorLabel = NULL;
+
+widget *menuCurSelection = NULL;
 
 void startSingleplayer();
 void handlerLoadGame(widget *wid);
@@ -43,11 +48,9 @@ void handlerDeleteGame(widget *wid);
 static void refreshSaveList(){
 	widgetEmpty(saveList);
 	for(int i=0;i<savegameCount;i++){
-		widget *button;
-
-		button = widgetNewCPLH(WIDGET_BUTTON,saveList,64,i*48,208,32,savegameName[i],"click",handlerLoadGame);
-		button->vali = i;
-		button = widgetNewCPLH(WIDGET_BUTTON,saveList,16,i*48,32,32,"X","click",handlerDeleteGame);
+		widget *button = widgetNewCPL(WIDGET_BUTTONDEL,saveList,16,i*48,256,32,savegameName[i]);
+		widgetBind(button,"click",handlerLoadGame);
+		widgetBind(button,"altclick",handlerDeleteGame);
 		button->vali = i;
 	}
 
@@ -94,19 +97,24 @@ void handlerSingleplayer(widget *wid){
 	(void)wid;
 	checkSavegames();
 	mainMenu->flags &= ~WIDGET_HIDDEN;
-	mainMenu->flags |= WIDGET_ANIMATEW;
+	mainMenu->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
 	mainMenu->gw     =   0;
-	saveMenu->flags &= ~WIDGET_HIDDEN;
+	saveMenu->flags &= ~(WIDGET_HIDDEN | WIDGET_NOSELECT);
 	saveMenu->flags |= WIDGET_ANIMATEW;
 	saveMenu->gw     = 288;
+	menuCurSelection = NULL;
 }
 void handlerMultiplayer(widget *wid){
 	(void)wid;
-	textInput(8,screenHeight-24,256,16,2);
+	textInput(32,screenHeight-56,256,16,2);
+	snprintf(menuTextInputLabel,sizeof(menuTextInputLabel)-1,"Servername:");
+	menuTextInputLabel[sizeof(menuTextInputLabel)-1] = 0;
 }
 void handlerChangeName(widget *wid){
 	(void)wid;
-	textInput(8,screenHeight-24,256,16,3);
+	textInput(32,screenHeight-56,256,16,3);
+	snprintf(menuTextInputLabel,sizeof(menuTextInputLabel)-1,"New player name:");
+	menuTextInputLabel[sizeof(menuTextInputLabel)-1] = 0;
 }
 void handlerLoadGame(widget *wid){
 	loadSavegame(wid->vali);
@@ -125,12 +133,12 @@ void handlerAttribution(widget *wid){
 	menuText->flags |= WIDGET_HIDDEN;
 
 	mainMenu->flags &= ~WIDGET_HIDDEN;
-	mainMenu->flags |= WIDGET_ANIMATEW;
+	mainMenu->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
 	mainMenu->gw     =   0;
 	saveMenu->flags &= ~WIDGET_HIDDEN;
-	saveMenu->flags |= WIDGET_ANIMATEW;
+	saveMenu->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
 	saveMenu->gw     =   0;
-
+	menuCurSelection = NULL;
 }
 void handlerQuit(widget *wid){
 	(void)wid;
@@ -141,22 +149,23 @@ void handlerBackToMenu(widget *wid){
 	showAttribution = false;
 	menuText->flags &= ~WIDGET_HIDDEN;
 
-	mainMenu->flags &= ~WIDGET_HIDDEN;
+	mainMenu->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
 	mainMenu->flags |= WIDGET_ANIMATEW;
 	mainMenu->gw     = 288;
-	saveMenu->flags &= ~WIDGET_HIDDEN;
+	saveMenu->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
 	saveMenu->flags |= WIDGET_ANIMATEW;
 	saveMenu->gw     =   0;
+	menuCurSelection = NULL;
 }
 void handlerRoot(widget *wid){
 	(void)wid;
 	if(showAttribution){
 		showAttribution = false;
-		menuText->flags &= ~WIDGET_HIDDEN;
 		saveMenu->flags |=  WIDGET_HIDDEN;
 		mainMenu->flags &= ~WIDGET_HIDDEN;
-		mainMenu->flags |= WIDGET_ANIMATEW;
+		mainMenu->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
 		mainMenu->gw     = 288;
+		menuCurSelection = NULL;
 	}
 }
 
@@ -178,7 +187,6 @@ void initSaveMenu(){
 	saveMenu->flags |= WIDGET_HIDDEN;
 
 	saveList = widgetNewCP(WIDGET_SPACE,saveMenu,-1,0,288,32);
-	widgetNewCP  (WIDGET_SPACE, saveMenu,16,0,256,32);
 	widgetNewCPLH(WIDGET_BUTTON,saveMenu,16,0,256,32,"New Game","click",handlerNewGame);
 	widgetNewCPLH(WIDGET_BUTTON,saveMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
 
@@ -199,7 +207,7 @@ void initMenu(){
 	rootMenu = widgetNewCP(WIDGET_BACKGROUND,NULL,0,0,-1,-1);
 	widgetBind(rootMenu,"click",handlerRoot);
 
-	menuText = widgetNewCP(WIDGET_SPACE,rootMenu,32,32,256,256);
+	menuText = widgetNewCP(WIDGET_SPACE,rootMenu,32,32,256,-65);
 
 	wid = widgetNewCPL(WIDGET_LABEL,menuText,0,0,256,32,"Wolkenwelten");
 	wid->vali = 4;
@@ -208,6 +216,11 @@ void initMenu(){
 	wid = widgetNewCPL(WIDGET_LABEL,menuText,0,64,256,32,"Your Name:");
 	wid->vali = 2;
 	wid = widgetNewCPL(WIDGET_LABEL,menuText,176,64,256,32,playerName);
+	wid->vali = 2;
+
+	menuErrorLabel = widgetNewCPL(WIDGET_LABEL,menuText,1,-97,256,16,"");
+	menuErrorLabel->vali = 2;
+	wid = widgetNewCPL(WIDGET_LABEL,menuText,1,-33,256,16,menuTextInputLabel);
 	wid->vali = 2;
 
 	initMainMenu();
@@ -263,18 +276,6 @@ void drawMenuAttributions(){
 	textMeshPrintfPS(menuM,16,16-scroll,2,"Attribution:\n%s",txt_attribution_txt_data);
 }
 
-void drawMenuTextInputs(){
-	if(textInputActive && (textInputLock == 2)){
-		textMeshAddStrPS(menuM,8,screenHeight-42,2,"Servername:");
-	}
-	if(textInputActive && (textInputLock == 3)){
-		textMeshAddStrPS(menuM,8,screenHeight-42,2,"Your Name:");
-	}
-	if((menuError != NULL) && (*menuError != 0)){
-		textMeshAddStrPS(menuM,8,screenHeight-58,2,menuError);
-	}
-}
-
 void renderMenu(){
 	shaderBind(sTextMesh);
 	shaderMatrix(sTextMesh,matOrthoProj);
@@ -283,13 +284,46 @@ void renderMenu(){
 	}
 	updateMouse();
 	updateMenu();
+	if(!textInputActive){
+		menuTextInputLabel[0]=0;
+	}
+	if((menuError != NULL) && (*menuError != 0) && (menuErrorLabel != NULL)){
+		menuErrorLabel->label = menuError;
+	}
 
 	textMeshEmpty(menuM);
-	drawMenuTextInputs();
 	widgetDraw(rootMenu,menuM,0,0,screenWidth,screenHeight);
 	drawMenuAttributions();
 	textMeshDraw(menuM);
 
 	textInputDraw();
 	drawCursor();
+}
+
+void menuChangeFocus(int xoff,int yoff){
+	(void)xoff;
+	(void)yoff;
+
+	if(menuCurSelection != NULL){
+		if(yoff < 0){
+			menuCurSelection = widgetNextSel(menuCurSelection);
+		}else if(yoff > 0){
+			menuCurSelection = widgetPrevSel(menuCurSelection);
+		}
+	}
+	if(menuCurSelection == NULL){
+		menuCurSelection = widgetNextSel(rootMenu);
+	}
+}
+
+void menuKeyClick(int btn){
+	(void)btn;
+
+	if(showAttribution){widgetEmit(rootMenu,"click");return;}
+	if(menuCurSelection == NULL){return;}
+	if(btn == 1){
+		widgetEmit(menuCurSelection,"altclick");
+	}else{
+		widgetEmit(menuCurSelection,"click");
+	}
 }

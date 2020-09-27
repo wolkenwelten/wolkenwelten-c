@@ -114,12 +114,27 @@ void controllerDeviceEvent(const SDL_Event *e){
 void doGamepadMenuUpdate(){
 	if(gamepadButtons[0]){
 		gamepadButtons[0] = false;
+		menuKeyClick(0);
+	}
+	if(gamepadButtons[1]){
+		gamepadButtons[1] = false;
+		menuKeyClick(1);
 	}
 	if(gamepadButtons[11]){
 		gamepadButtons[11] = false;
+		menuChangeFocus(0, 1);
 	}
 	if(gamepadButtons[12]){
 		gamepadButtons[12] = false;
+		menuChangeFocus(0,-1);
+	}
+	if(gamepadButtons[13]){
+		gamepadButtons[13] = false;
+		menuChangeFocus( 1,0);
+	}
+	if(gamepadButtons[14]){
+		gamepadButtons[14] = false;
+		menuChangeFocus(-1,0);
 	}
 }
 

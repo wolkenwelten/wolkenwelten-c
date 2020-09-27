@@ -1,9 +1,12 @@
 #pragma once
 
+typedef struct widget widget;
+
 extern char *menuError;
+extern widget *menuCurSelection;
 
 void initMenu            ();
 void renderMenu          ();
-void updateMenuClick     (int x, int y, int btn);
-void updateMenuGamepad   (int btn);
+void menuChangeFocus     (int xoff,int yoff);
+void menuKeyClick        (int btn);
 void changeMenuSelection (int off);
