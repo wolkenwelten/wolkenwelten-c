@@ -1,6 +1,5 @@
 #pragma once
-
-typedef struct widget widget;
+#include "widget.h"
 
 extern char *menuError;
 extern widget *menuCurSelection;

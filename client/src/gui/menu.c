@@ -161,6 +161,7 @@ void handlerRoot(widget *wid){
 	(void)wid;
 	if(showAttribution){
 		showAttribution = false;
+		menuText->flags &= ~WIDGET_HIDDEN;
 		saveMenu->flags |=  WIDGET_HIDDEN;
 		mainMenu->flags &= ~WIDGET_HIDDEN;
 		mainMenu->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
