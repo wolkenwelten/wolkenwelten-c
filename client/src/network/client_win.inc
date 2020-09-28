@@ -72,9 +72,11 @@ void startSingleplayerServer(){
 }
 
 void closeSingleplayerServer(){
+	if(!singleplayer){return;}
 	TerminateProcess(pi.hProcess,0);
 	spSpawned = false;
 	singlePlayerPID = 0;
+	serverSocket = 0;
 }
 
 void clientInit(){
@@ -131,15 +133,12 @@ void clientInit(){
 	clientGreetServer();
 }
 
-void clientFree(){
+void clientFreeSpecific(){
 	if(serverSocket > 0){
 		closesocket(serverSocket);
 		serverSocket = 0;
-		menuSetError("Connection closed");
-		if(singleplayer){
-			*serverName = 0;
-		}
 	}
+	closeSingleplayerServer();
 }
 
 void clientRead(){

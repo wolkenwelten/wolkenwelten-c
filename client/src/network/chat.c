@@ -11,32 +11,12 @@
 
 char chatLog[12][256];
 
-void chatStartInput(){
-	//textInput(4, screenHeight-20, 256, 16, 1);
-}
-
 void msgSendChatMessage(const char *msg){
 	packet *p = &packetBuffer;
 	p->val.s[0]=0;
 	strncpy((char *)(p->val.c+2),msg,254);
 	p->val.c[255] = 0;
 	packetQueueToServer(p,16,256);
-}
-
-void chatCheckInput(){
-	return;
-	/*
-	if(textInputActive)       {return;}
-	if(textInputLock != 1)    {return;}
-
-	textInputLock = 0;
-	const char *msg = textInputGetBuffer();
-
-	if(msg == NULL)           {return;}
-	if(strnlen(msg,256) <= 0) {return;}
-
-	msgSendChatMessage(textInputGetBuffer());
-	*/
 }
 
 void chatParsePacket(const packet *p){

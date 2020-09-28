@@ -76,58 +76,53 @@ void textInputPaste(){
 }
 
 bool textInputEvent(const SDL_Event *e){
-	SDL_Keymod mod;
 	if(!textInputActive()){return false;}
 
 	switch(e->type){
 	case SDL_TEXTINPUT:
 		textInputAppend(e->text.text);
-	break;
-
+		break;
 	case SDL_TEXTEDITING:
 		fprintf(stderr,"composition: %s %i %i\n",e->edit.text, e->edit.start, e->edit.length);
-	break;
-
+		break;
+	case SDL_KEYUP:
+		switch(e->key.keysym.sym){
+		case SDLK_RETURN:
+		case SDLK_KP_ENTER:
+			textInputEnter();
+			return true;
+		}
+		break;
 	case SDL_KEYDOWN:
 		switch(e->key.keysym.sym){
 		case SDLK_BACKSPACE:
 			textInputBackspace();
-		break;
-
+			break;
 		case SDLK_DELETE:
 			if(textInputCursorPos < textInputBufferLen){
 				++textInputCursorPos;
 				textInputBackspace();
 			}
-		break;
-
+			break;
 		case SDLK_LEFT:
 			if(textInputCursorPos > 0){
 				--textInputCursorPos;
 			}
-		break;
-
+			break;
 		case SDLK_RIGHT:
 			if(textInputCursorPos < textInputBufferLen){
 				++textInputCursorPos;
 			}
-		break;
-
+			break;
 		case SDLK_INSERT:
 			textInputPaste();
 			return true;
-		break;
-
 		case SDLK_v:
-			mod = SDL_GetModState();
-			#ifdef __APPLE__
-			if(mod & KMOD_GUI){textInputPaste(); return true;}
-			#elif __HAIKU__
-			if(mod & KMOD_ALT){textInputPaste(); return true;}
-			#else
-			if(mod & KMOD_CTRL){textInputPaste(); return true;}
-			#endif
-		break;
+			if(keyboardCmdKey(e)){
+				textInputPaste();
+				return true;
+			}
+			break;
 		}
 	}
 	return false;

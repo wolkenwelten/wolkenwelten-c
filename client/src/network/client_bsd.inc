@@ -100,15 +100,12 @@ void zombieKiller(int sig){
 	}
 }
 
-void clientFree(){
+void clientFreeSpecific(){
 	if(serverSocket > 0){
 		close(serverSocket);
 		serverSocket = 0;
-		menuSetError("Connection closed");
-		if(!singleplayer){
-			*serverName = 0;
-		}
 	}
+	closeSingleplayerServer();
 }
 
 void clientFreeRetry(){

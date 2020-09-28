@@ -38,6 +38,10 @@ textMesh *guim;
 textMesh *crosshairMesh;
 textMesh *cursorMesh;
 
+widget *rootHud   = NULL;
+widget *chatPanel = NULL;
+widget *chatText  = NULL;
+
 bool mouseHidden = false;
 uint mousex,mousey;
 uint mouseClicked[3] = {0,0,0};
@@ -84,6 +88,25 @@ void resizeUI(){
 	matOrtho(matOrthoProj,0.f,(float)screenWidth,(float)screenHeight,0.f,-1.f,10.f);
 }
 
+void openChat(){
+	if(widgetFocused != NULL){return;}
+	widgetSlideH(chatPanel, 64);
+	widgetFocus(chatText);
+}
+
+void handlerRootHud(widget *wid){
+	(void)wid;
+	chatText->vals[0] = 0;
+	widgetFocus(NULL);
+	widgetSlideH(chatPanel, 0);
+}
+
+
+void handlerChatSubmit(widget *wid){
+	msgSendChatMessage(chatText->vals);
+	handlerRootHud(wid);
+}
+
 void initUI(){
 	cursorMesh           = textMeshNew();
 	cursorMesh->tex      = tCursor;
@@ -94,6 +117,14 @@ void initUI(){
 
 	guim                 = textMeshNew();
 	guim->tex            = tGui;
+
+	rootHud = widgetNewCP(WIDGET_SPACE,NULL,0,0,-1,-1);
+	widgetBind(rootHud,"click",handlerRootHud);
+
+	chatPanel = widgetNewCP(WIDGET_PANEL,rootHud,16,-1,512,0);
+	chatPanel->flags |= WIDGET_HIDDEN;
+	chatText  = widgetNewCPLH(WIDGET_TEXTINPUT,chatPanel,16,16,384,32,"Message","submit",handlerChatSubmit);
+	widgetNewCPLH(WIDGET_BUTTON,chatPanel,-16,16,80,32,"Send","click",handlerChatSubmit);
 
 	resizeUI();
 }
@@ -398,8 +429,8 @@ void drawAmmunition(){
 }
 
 void drawChat(){
-	guim->sy   = screenHeight - (9*16) - 8;
-	guim->sx   = 4;
+	guim->sy   = screenHeight - (9*16) - (chatPanel->h+8);
+	guim->sx   = 40;
 	guim->size = 1;
 	for(int i=0;i<8;i++){
 		textMeshAddString(guim,chatLog[i]);
@@ -425,6 +456,7 @@ void drawHud(){
 		drawItemBar();
 	}
 	drawChat();
+	widgetDraw(rootHud,guim,0,0,screenWidth,screenHeight);
 	textMeshDraw(guim);
 }
 
@@ -447,4 +479,17 @@ void renderUI(){
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
+}
+
+void guiCancel(){
+	if(!gameRunning){return;}
+	if(isInventoryOpen()){
+		hideInventory();
+		return;
+	}
+	if(widgetFocused == chatText){
+		handlerRootHud(NULL);
+		return;
+	}
+	menuCloseGame();
 }

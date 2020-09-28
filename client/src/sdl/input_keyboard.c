@@ -1,14 +1,16 @@
 #include "input_keyboard.h"
 
 #include "sdl.h"
+#include "../main.h"
+#include "../game/character.h"
 #include "../gfx/texture.h"
+#include "../gui/gui.h"
 #include "../gui/textInput.h"
-#include "../network/chat.h"
 #include "../gui/menu.h"
 #include "../gui/inventory.h"
-#include "../game/character.h"
-#include "../main.h"
+#include "../gui/widget.h"
 #include "../misc/options.h"
+#include "../network/chat.h"
 
 void textInputEvent(const SDL_Event *e);
 
@@ -28,11 +30,20 @@ bool keyboardTertiary(){
 }
 
 vec doKeyboardupdate(vec vel){
+	if(widgetFocused != NULL){return vel;}
+
 	if(keysPressed[0]){ vel.z = -1.f; }
 	if(keysPressed[1]){ vel.z =  1.f; }
 	if(keysPressed[2]){ vel.x = -1.f; }
 	if(keysPressed[3]){ vel.x =  1.f; }
 	if(keysPressed[4]){ vel.y =  1.f; }
+
+	vec rot = vecZero();
+	if(keysPressed[12]){rot.x = -1;}
+	if(keysPressed[13]){rot.y = -1;}
+	if(keysPressed[14]){rot.y =  1;}
+	if(keysPressed[15]){rot.x =  1;}
+	characterRotate(player,vecMulS(rot,4));
 
 	if(keysPressed[6]){
 		characterDropItem(player,player->activeItem);
@@ -40,20 +51,17 @@ vec doKeyboardupdate(vec vel){
 	return vel;
 }
 
+int keyboardCmdKey(const SDL_Event *e){
+	#ifdef __APPLE__
+	return e->key.keysym.mod & KMOD_GUI;
+	#elif __HAIKU__
+	return e->key.keysym.mod & KMOD_ALT;
+	#else
+	return e->key.keysym.mod & KMOD_CTRL;
+	#endif
+}
+
 void keyboardEventHandler(const SDL_Event *e){
-	if((e->type == SDL_KEYDOWN) && (e->key.keysym.sym == SDLK_ESCAPE)){
-		if(isInventoryOpen()){
-			hideInventory();
-		}else{
-			quit = true;
-		}
-	}
-
-	if((e->type == SDL_KEYUP) && ((e->key.keysym.sym == SDLK_RETURN) || (e->key.keysym.sym == SDLK_KP_ENTER))){
-		textInputEnter();
-	}
-	if(textInputActive()){return;}
-
 	if(e->type == SDL_KEYUP){
 		switch(e->key.keysym.sym){
 		case SDLK_UP:
@@ -73,7 +81,7 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDLK_RIGHT:
 		case SDLK_d:
-			keysPressed[3] = 0;
+			keysPressed[3] = 0; /*  */
 			menuChangeFocus(1,0);
 			break;
 		case SDLK_SPACE:
@@ -83,6 +91,7 @@ void keyboardEventHandler(const SDL_Event *e){
 		case SDLK_RETURN:
 		case SDLK_KP_ENTER:
 			menuKeyClick(0);
+			openChat();
 			break;
 		case SDLK_DELETE:
 		case SDLK_BACKSPACE:
@@ -96,6 +105,18 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDLK_r:
 			keysPressed[7] = 0;
+			break;
+		case SDLK_h:
+			keysPressed[12] = 0;
+			break;
+		case SDLK_j:
+			keysPressed[13] = 0;
+			break;
+		case SDLK_k:
+			keysPressed[14] = 0;
+			break;
+		case SDLK_l:
+			keysPressed[15] = 0;
 			break;
 
 		#ifndef __EMSCRIPTEN__
@@ -113,7 +134,7 @@ void keyboardEventHandler(const SDL_Event *e){
 		}
 	}
 
-	if((e->type == SDL_KEYDOWN) && gameRunning){
+	if(e->type == SDL_KEYDOWN){
 		switch(e->key.keysym.sym){
 		case SDLK_UP:
 		case SDLK_w:
@@ -139,10 +160,33 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDLK_q:
 			keysPressed[6] = 1;
+			if(keyboardCmdKey(e)){quit=true;}
 			break;
 		case SDLK_r:
 			keysPressed[7] = 1;
 			break;
+		case SDLK_h:
+			keysPressed[12] = 1;
+			break;
+		case SDLK_j:
+			keysPressed[13] = 1;
+			break;
+		case SDLK_k:
+			keysPressed[14] = 1;
+			break;
+		case SDLK_l:
+			keysPressed[15] = 1;
+			break;
+		case SDLK_ESCAPE:
+			guiCancel();
+			menuCancel();
+			break;
+		}
+	}
+
+	if((widgetFocused != NULL) || (!gameRunning)){return;}
+	if(e->type == SDL_KEYDOWN){
+		switch(e->key.keysym.sym){
 		case SDLK_e:
 			characterFireHook(player);
 			break;

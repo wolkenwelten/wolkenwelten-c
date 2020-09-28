@@ -454,9 +454,7 @@ static void widgetDrawTextInput(widget *wid, textMesh *m, int x, int y, int w, i
 		size = 1;
 	}
 
-	if(wid->flags & WIDGET_CLICKED){
-		// draw cursor
-	}else if(wid->flags & WIDGET_HOVER){
+	if(widgetFocused == wid){
 		color = 0xFF292929;
 	}
 
@@ -506,10 +504,10 @@ void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
 	int y = py + wid->y;
 	int w = wid->w;
 	int h = wid->h;
-	if(x < 0){
+	if(wid->x < 0){
 		x = (px + pw) - wid->w + (wid->x+1);
 	}
-	if(y < 0){
+	if(wid->y < 0){
 		y = (py + ph) - wid->h + (wid->y+1);
 	}
 	if(w < 0){ w = pw+(wid->w+1); }

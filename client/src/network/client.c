@@ -273,3 +273,13 @@ void queueToServer(const void *data, uint len){
 	memcpy(sendBuf + sendBufLen, data, len);
 	sendBufLen += len;
 }
+
+void clientFree(){
+	clientFreeSpecific();
+	menuSetError("Connection closed");
+	singlePlayerPID=0;
+	recvBufLen = 0;
+	sendBufLen = 0;
+	sendBufSent = 0;
+	bigchungusFree(&world);
+}

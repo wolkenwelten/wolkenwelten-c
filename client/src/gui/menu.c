@@ -12,6 +12,7 @@
 #include "../network/client.h"
 #include "../misc/options.h"
 #include "../tmp/assets.h"
+#include "../voxel/bigchungus.h"
 #include "../../../common/src/tmp/cto.h"
 #include "../../../common/src/misc/misc.h"
 
@@ -56,6 +57,7 @@ void startMultiplayer(){
 	connectionTries = 0;
 	hideMouseCursor();
 	rootMenu->flags |= WIDGET_HIDDEN;
+	widgetFocus(NULL);
 }
 void startSingleplayer(){
 	singleplayer    = true;
@@ -287,7 +289,7 @@ void initSaveMenu(){
 	saveMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,0,-1);
 	saveMenu->flags |= WIDGET_HIDDEN;
 
-	saveList = widgetNewCP(WIDGET_SPACE,saveMenu,-1,0,288,32);
+	saveList = widgetNewCP(WIDGET_SPACE,saveMenu,0,0,288,32);
 	widgetNewCPLH(WIDGET_BUTTON,saveMenu,16,0,256,32,"New Game","click",handlerNewGame);
 	widgetNewCPLH(WIDGET_BUTTON,saveMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
 
@@ -305,7 +307,7 @@ void initServerMenu(){
 	serverMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,0,-1);
 	serverMenu->flags |= WIDGET_HIDDEN;
 
-	serverList = widgetNewCP(WIDGET_SPACE,serverMenu,-1,0,288,32);
+	serverList = widgetNewCP(WIDGET_SPACE,serverMenu,0,0,288,32);
 	widgetNewCPLH(WIDGET_BUTTON,serverMenu,16,0,256,32,"New Server","click",handlerNewServer);
 	widgetNewCPLH(WIDGET_BUTTON,serverMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
 	widgetLayVert(serverMenu,16);
@@ -386,7 +388,6 @@ void renderMenu(){
 
 void menuChangeFocus(int xoff,int yoff){
 	(void)xoff;
-	(void)yoff;
 	if(gameRunning){return;}
 
 	if(widgetFocused != NULL){
@@ -408,7 +409,6 @@ void menuChangeFocus(int xoff,int yoff){
 void menuKeyClick(int btn){
 	(void)btn;
 	if(gameRunning){return;}
-
 	if(showAttribution){widgetEmit(rootMenu,"click");return;}
 	if(widgetFocused == NULL){return;}
 	if(btn == 1){
@@ -420,4 +420,32 @@ void menuKeyClick(int btn){
 
 void menuSetError(char *error){
 	menuErrorLabel->vals = error;
+}
+
+void menuCancel(){
+	if(gameRunning){return;}
+
+	if(showAttribution){
+		widgetEmit(rootMenu,"click");
+		return;
+	}
+	if((saveMenu->gw > 0) || (serverMenu->gw > 0)){
+		if(newGame->gh > 0){
+			handlerNewGameCancel(NULL);
+		}else if(newServer->gh > 0){
+			handlerNewServerCancel(NULL);
+		}else{
+			handlerBackToMenu(NULL);
+		}
+		return;
+	}
+	quit = true;
+}
+
+void menuCloseGame(){
+	gameRunning=false;
+	rootMenu->flags &= ~WIDGET_HIDDEN;
+	clientGoodbye();
+	clientFree();
+	bigchungusFree(&world);
 }

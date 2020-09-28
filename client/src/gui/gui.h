@@ -11,5 +11,7 @@ void showMouseCursor();
 void hideMouseCursor();
 void updateMouse();
 void drawCursor();
+void openChat();
 void renderLoadingUI(const char *step);
 void renderUI();
+void guiCancel();
