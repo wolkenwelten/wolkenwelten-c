@@ -432,7 +432,7 @@ static void widgetAnimate(widget *wid, int x, int y, int w, int h){
 
 	if((wx >= screenWidth)  ||
 	   (wy >= screenHeight) ||
-	   (wx+ww <= 0)     ||
+	   (wx+ww <= 0)         ||
 	   (wy+wh <= 0)){
 		wid->flags |= WIDGET_HIDDEN;
 	}

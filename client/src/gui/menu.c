@@ -31,7 +31,7 @@ char menuTextInputLabel[32];
 
 int   serverlistCount = 0;
 char  serverlistName[8][32];
-char  serverlistIP[8][128];
+char  serverlistIP[8][64];
 
 widget *rootMenu   = NULL;
 widget *menuText   = NULL;
@@ -55,6 +55,7 @@ void startMultiplayer(){
 	gameRunning     = true;
 	connectionTries = 0;
 	hideMouseCursor();
+	rootMenu->flags |= WIDGET_HIDDEN;
 }
 void startSingleplayer(){
 	singleplayer    = true;
@@ -112,14 +113,14 @@ static void checkServers(){
 static void addServer(const char *name, const char *ip){
 	if(serverlistCount >= 7){return;}
 	snprintf(serverlistName[serverlistCount],sizeof(serverlistName[0]),"%.31s",name);
-	snprintf(serverlistIP[serverlistCount++],sizeof(serverlistIP[0]),"%.127s",ip);
+	snprintf(serverlistIP[serverlistCount++],sizeof(serverlistIP[0]),"%.63s",ip);
 }
 static void delServer(int d){
 	if(d < 0){return;}
 	if(d >= serverlistCount){return;}
 	for(int i=d;i<MIN(6,serverlistCount);i++){
 		memcpy(serverlistName[i],serverlistName[i+1],32);
-		memcpy(serverlistIP[i],serverlistIP[i+1],128);
+		memcpy(serverlistIP[i],serverlistIP[i+1],64);
 	}
 	serverlistCount--;
 }
@@ -386,6 +387,7 @@ void renderMenu(){
 void menuChangeFocus(int xoff,int yoff){
 	(void)xoff;
 	(void)yoff;
+	if(gameRunning){return;}
 
 	if(widgetFocused != NULL){
 		if(yoff < 0){
@@ -405,6 +407,7 @@ void menuChangeFocus(int xoff,int yoff){
 
 void menuKeyClick(int btn){
 	(void)btn;
+	if(gameRunning){return;}
 
 	if(showAttribution){widgetEmit(rootMenu,"click");return;}
 	if(widgetFocused == NULL){return;}
