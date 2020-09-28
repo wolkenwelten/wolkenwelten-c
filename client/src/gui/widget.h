@@ -51,13 +51,14 @@ struct widget {
 
 extern widget *widgetFocused;
 
+
 widget *widgetNew     (int type);
 widget *widgetNewC    (int type, widget *p);
-
 widget *widgetNewCP   (int type, widget *p, int x, int y, int w, int h);
 widget *widgetNewCPL  (int type, widget *p, int x, int y, int w, int h, const char *label);
 widget *widgetNewCPLH (int type, widget *p, int x, int y, int w, int h, const char *label,const char *eventName, void (*handler)(widget *));
 void    widgetFree    (widget *w);
+
 void    widgetFocus   (widget *w);
 void    widgetEmpty   (widget *w);
 void    widgetChild   (widget *parent, widget *child);
@@ -70,6 +71,3 @@ void    widgetDraw    (widget *w, textMesh *mesh, int x, int y, int pw, int ph);
 void    widgetLayVert (widget *w, int padding);
 void    widgetSlideW  (widget *w, int nw);
 void    widgetSlideH  (widget *w, int nh);
-
-void drawButton(textMesh *m, const char *label, int state, int x, int y, int w, int h);
-bool mouseInBox(uint x, uint y, uint w, uint h);

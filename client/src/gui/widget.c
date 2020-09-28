@@ -15,6 +15,14 @@
 
 widget *widgetFocused = NULL;
 
+static bool mouseInBox(uint x, uint y, uint w, uint h){
+	if(mousex < x  ){return false;}
+	if(mousex > x+w){return false;}
+	if(mousey < y  ){return false;}
+	if(mousey > y+h){return false;}
+	return true;
+}
+
 widget *widgetNew(int type){
 	widget *wid = calloc(1,sizeof(widget));
 	if(wid == NULL){return NULL;}
@@ -239,7 +247,7 @@ static void widgetDrawButton(widget *wid, textMesh *m, int x, int y, int w, int 
 	int textYOff    = (h - (2*8))/2;
 	int textXOff    = (w-(strnlen(wid->label,w/16)*16))/2;
 
-	if(wid == menuCurSelection){
+	if(wid == widgetFocused){
 		 color = 0xFFAA6666;
 		tcolor = 0xFFCC8888;
 		bcolor = 0xFF884444;
@@ -275,7 +283,7 @@ static void widgetDrawButtondel(widget *wid, textMesh *m, int x, int y, int w, i
 	int textYOff    = (h - (2*8))/2;
 	int textXOff    = (w-(strnlen(wid->label,w/16)*16))/2;
 
-	if(wid == menuCurSelection){
+	if(wid == widgetFocused){
 		 color = 0xFFAA6666;
 		tcolor = 0xFFCC8888;
 		bcolor = 0xFF884444;
@@ -535,18 +543,10 @@ void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
 	}
 }
 
-bool mouseInBox(uint x, uint y, uint w, uint h){
-	if(mousex < x  ){return false;}
-	if(mousex > x+w){return false;}
-	if(mousey < y  ){return false;}
-	if(mousey > y+h){return false;}
-	return true;
-}
-
 void widgetSlideW(widget *w, int nw){
 	if(nw == 0){
 		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
-		w->flags |= WIDGET_ANIMATEW;
+		w->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
 		w->gw     =   0;
 	}else{
 		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
@@ -558,7 +558,7 @@ void widgetSlideW(widget *w, int nw){
 void widgetSlideH(widget *w, int nh){
 	if(nh == 0){
 		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
-		w->flags |= WIDGET_ANIMATEH;
+		w->flags |= WIDGET_ANIMATEH | WIDGET_NOSELECT;
 		w->gh     =   0;
 	}else{
 		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);

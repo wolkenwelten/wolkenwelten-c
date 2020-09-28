@@ -91,7 +91,7 @@ void clientInit(){
 
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(serverSocket <= 0){
-		menuError = "Error opening socket";
+		menuSetError("Error opening socket");
 		gameRunning = false;
 		serverSocket = 0;
 		return;
@@ -101,7 +101,7 @@ void clientInit(){
 	if (serveraddr == NULL) {
 		fprintf(stderr,"ERROR, no such host '%s'\n",serverName);
 		clientFree();
-		menuError = "Error, no such host";
+		menuSetError("Error, no such host");
 		gameRunning = false;
 		return;
 	}
@@ -117,7 +117,7 @@ void clientInit(){
 		if(err == WSAEINPROGRESS){break;}
 		if(!singleplayer){
 			clientFree();
-			menuError = "Error connecting to host";
+			menuSetError("Error connecting to host");
 			gameRunning = false;
 			return;
 		}
@@ -135,7 +135,7 @@ void clientFree(){
 	if(serverSocket > 0){
 		closesocket(serverSocket);
 		serverSocket = 0;
-		menuError = "Connection closed";
+		menuSetError("Connection closed");
 		if(singleplayer){
 			*serverName = 0;
 		}

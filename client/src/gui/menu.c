@@ -20,13 +20,9 @@
 #include <string.h>
 
 textMesh *menuM;
-char *menuError = "";
 
 bool showAttribution  = false;
-bool showSavegames    = false;
-
 int  attributionLines = 0;
-static int gamepadSelection = -1;
 
 int   savegameCount = 0;
 char  savegameName[8][32];
@@ -54,7 +50,6 @@ widget *newServerName = NULL;
 widget *newServerIP   = NULL;
 
 widget *menuErrorLabel = NULL;
-widget *menuCurSelection = NULL;
 
 void startMultiplayer(){
 	gameRunning     = true;
@@ -68,8 +63,6 @@ void startSingleplayer(){
 
 void handlerLoadGame(widget *wid);
 void handlerDeleteGame(widget *wid);
-void handlerJoinServer(widget *wid);
-void handlerDeleteServer(widget *wid);
 static void refreshSaveList(){
 	widgetEmpty(saveList);
 	for(int i=0;i<savegameCount;i++){
@@ -79,15 +72,11 @@ static void refreshSaveList(){
 		button->vali = i;
 	}
 
-	saveList->h = savegameCount * 48 + 48;
+	saveList->h = savegameCount * 48;
 	widgetLayVert(saveMenu,16);
 }
 
 static void checkSavegames(){
-	showSavegames = true;
-	if(gamepadSelection != -1){
-		gamepadSelection = 0;
-	}
 	savegameCount = 0;
 	DIR *dp = opendir("save/");
 	if(dp == NULL){return;}
@@ -101,6 +90,8 @@ static void checkSavegames(){
 	refreshSaveList();
 }
 
+void handlerJoinServer(widget *wid);
+void handlerDeleteServer(widget *wid);
 static void refreshServerList(){
 	widgetEmpty(serverList);
 	for(int i=0;i<serverlistCount;i++){
@@ -161,7 +152,7 @@ void handlerSingleplayer(widget *wid){
 	checkSavegames();
 	widgetSlideW(mainMenu,0);
 	widgetSlideW(saveMenu,288);
-	menuCurSelection = NULL;
+	widgetFocus(NULL);
 }
 void handlerLoadGame(widget *wid){
 	loadSavegame(wid->vali);
@@ -185,7 +176,7 @@ void handlerAttribution(widget *wid){
 	widgetSlideW(mainMenu,0);
 	widgetSlideW(saveMenu,0);
 	widgetSlideW(serverMenu,0);
-	menuCurSelection = NULL;
+	widgetFocus(NULL);
 }
 void handlerQuit(widget *wid){
 	(void)wid;
@@ -201,8 +192,7 @@ void handlerBackToMenu(widget *wid){
 	widgetSlideW(serverMenu,0);
 	widgetSlideH(newGame,0);
 	widgetSlideH(newServer,0);
-
-	menuCurSelection = NULL;
+	widgetFocus(NULL);
 }
 void handlerRoot(widget *wid){
 	(void)wid;
@@ -210,7 +200,7 @@ void handlerRoot(widget *wid){
 		showAttribution = false;
 		menuText->flags &= ~WIDGET_HIDDEN;
 		widgetSlideW(mainMenu,288);
-		menuCurSelection = NULL;
+		widgetFocus(NULL);
 	}
 }
 
@@ -252,7 +242,7 @@ void handlerMultiplayer(widget *wid){
 	checkServers();
 	widgetSlideW(mainMenu,0);
 	widgetSlideW(serverMenu,288);
-	menuCurSelection = NULL;
+	widgetFocus(NULL);
 }
 void handlerNewServer(widget *wid){
 	(void)wid;
@@ -282,6 +272,7 @@ void handlerNewServerNext(widget *wid){
 
 void initMainMenu(){
 	mainMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,288,-1);
+	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,0);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Multiplayer","click",handlerMultiplayer);
 	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,32);
@@ -383,10 +374,6 @@ void renderMenu(){
 		showMouseCursor();
 	}
 	updateMouse();
-	//updateMenu();
-	if((menuError != NULL) && (*menuError != 0) && (menuErrorLabel != NULL)){
-		menuErrorLabel->label = menuError;
-	}
 
 	textMeshEmpty(menuM);
 	widgetDraw(rootMenu,menuM,0,0,screenWidth,screenHeight);
@@ -400,15 +387,19 @@ void menuChangeFocus(int xoff,int yoff){
 	(void)xoff;
 	(void)yoff;
 
-	if(menuCurSelection != NULL){
+	if(widgetFocused != NULL){
 		if(yoff < 0){
-			menuCurSelection = widgetNextSel(menuCurSelection);
+			widgetFocus(widgetNextSel(widgetFocused));
 		}else if(yoff > 0){
-			menuCurSelection = widgetPrevSel(menuCurSelection);
+			widgetFocus(widgetPrevSel(widgetFocused));
 		}
 	}
-	if(menuCurSelection == NULL){
-		menuCurSelection = widgetNextSel(rootMenu);
+	if(widgetFocused == NULL){
+		if(yoff < 0){
+			widgetFocus(widgetNextSel(rootMenu));
+		}else if(yoff > 0){
+			widgetFocus(widgetPrevSel(rootMenu));
+		}
 	}
 }
 
@@ -416,10 +407,14 @@ void menuKeyClick(int btn){
 	(void)btn;
 
 	if(showAttribution){widgetEmit(rootMenu,"click");return;}
-	if(menuCurSelection == NULL){return;}
+	if(widgetFocused == NULL){return;}
 	if(btn == 1){
-		widgetEmit(menuCurSelection,"altclick");
+		widgetEmit(widgetFocused,"altclick");
 	}else{
-		widgetEmit(menuCurSelection,"click");
+		widgetEmit(widgetFocused,"click");
 	}
+}
+
+void menuSetError(char *error){
+	menuErrorLabel->vals = error;
 }
