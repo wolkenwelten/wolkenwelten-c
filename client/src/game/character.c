@@ -48,7 +48,6 @@ void characterInit(character *c){
 	if(c == player){
 		sfxLoop(sfxWind,0.f);
 		sfxLoop(sfxHookRope,0.f);
-		msgRequestPlayerSpawnPos();
 		c->flags = CHAR_SPAWNING;
 	}
 }

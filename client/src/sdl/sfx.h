@@ -31,3 +31,5 @@ void sfxLoop(sfx *b, float volume);
 bgm *bgmNew (const void *data,size_t dataLen);
 void bgmFree(bgm *b);
 void bgmPlay(bgm *b,float volume);
+
+void sfxStopAll();

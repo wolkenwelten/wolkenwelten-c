@@ -68,3 +68,10 @@ void sfxLoop(sfx *b, float volume){
 	}
 	Mix_Volume(b->chan,(int)(MIX_MAX_VOLUME*(optionSoundVolume*volume)));
 }
+
+void sfxStopALl(){
+	if(!sfxEnable){return;}
+	for(int i=0;i<sfxCount;i++){
+		sfxLoop(&sfxList[i],0);
+	}
+}

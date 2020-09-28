@@ -105,7 +105,6 @@ void clientFreeSpecific(){
 		close(serverSocket);
 		serverSocket = 0;
 	}
-	closeSingleplayerServer();
 }
 
 void clientFreeRetry(){

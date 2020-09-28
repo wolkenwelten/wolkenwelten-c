@@ -138,7 +138,8 @@ void clientFreeSpecific(){
 		closesocket(serverSocket);
 		serverSocket = 0;
 	}
-	closeSingleplayerServer();
+	spSpawned = false;
+	singlePlayerPID = 0;
 }
 
 void clientRead(){

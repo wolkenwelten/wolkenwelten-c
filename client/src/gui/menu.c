@@ -389,6 +389,7 @@ void renderMenu(){
 void menuChangeFocus(int xoff,int yoff){
 	(void)xoff;
 	if(gameRunning){return;}
+	if(textInputActive()){return;}
 
 	if(widgetFocused != NULL){
 		if(yoff < 0){
