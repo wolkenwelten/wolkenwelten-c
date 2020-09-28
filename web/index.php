@@ -95,11 +95,10 @@ foreach(array_keys($platforms) as $plat){
 	</div>
 	<br/>
 	<br/>
-	<h2>Or, try the newest experimental build:</h2>
+	<h2>Or, try the latest and greatest experimental build:</h2>
 	<hr/>
 	<div class=nativedl align=center>
 		<?php echoBuilds($experimental); ?>
-		<i>Win32 only, users of other platforms should use wine</i>
 	</div>
 	<!--
 	<hr/>
@@ -120,7 +119,7 @@ foreach(array_keys($platforms) as $plat){
 		<a href="img/3.jpg"><img src="img/3.jpg" width=1920 height=1080/></a>
 	</div>
 	<hr/>
-	<h3>My Priorities for this Game</h3>
+	<h3>My priorities for this game</h3>
 	<h4>Cooperation over Competition</h4>
 	<p>Playing together as a group in a survival sandbox and fighting a common enemy have been some of the most enjoyable experiences I had in gaming, that is why I want to put most of my time into optimizing for this style instead of players competing with each other (apart from that there are already a lot of competitive shooters out there).</p>
 	<h4>Exploration over Grinding</h4>
@@ -138,7 +137,7 @@ foreach(array_keys($platforms) as $plat){
 	<h4>Mouse / Keyboard</h4>
 	<p><span class=key>W</span>,<span class=key>S</span>,<span class=key>A</span>,<span class=key>D</span> to move around the world.</p>
 	<p><span class=key>Spacebar</span> to jump.</p>
-	<p><span class=key>Shift</span> to sneak.</p>
+	<p><span class=key>Shift</span> to Boost.</p>
 	<p><span class=key>E</span> to shoot/retrieve your grappling hook.</p>
 	<p><span class=key>Tab</span> open/close inventory/crafting popup.</p>
 	<p><span class=key>LMB</span> to destroy a block.</p>
