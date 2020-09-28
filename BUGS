@@ -1,7 +1,6 @@
-Weird slowdonw happening after a while of flying around, restart seems to fix it
+Weird slowdown happening after a while of flying around, restart seems to fix it
 Reducing Hook rope length still can lead to weird collision issues
 Jumping SFX do not get reduced volume the further away the source is
-wasm version does not seem to work anymore, connection issues
 Have a better way of waiting for the singleplayer server to start up instead of periodicaly retrying after a short sleep
 Blaster SFX seem to have broken
 Blasters shoot off center
