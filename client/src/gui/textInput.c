@@ -3,79 +3,54 @@
 #include "../sdl/input_keyboard.h"
 #include "../sdl/sdl.h"
 #include "../gfx/textMesh.h"
+#include "../gui/widget.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <SDL.h>
 
-int  textInputLock = 0;
-bool textInputActive = false;
-
-int  textInputX = 0;
-int  textInputY = 0;
-int  textInputW = 0;
-int  textInputH = 0;
-char textInputBuffer[256];
 int  textInputBufferLen = 0;
 int  textInputCursorPos = 0;
-textMesh *textInputMesh = NULL;
 
-bool textInput(int x, int y, int w, int h, int lock){
-	if(textInputLock != 0) {return false;}
-	if(textInputActive)    {return false;}
-
-	textInputActive    = true;
-	textInputLock      = lock;
-	textInputX         = x;
-	textInputY         = y;
-	textInputW         = w;
-	textInputH         = h;
-	textInputBufferLen = 0;
-	textInputCursorPos = 0;
-	memset(textInputBuffer,0,sizeof(textInputBuffer));
-	if(textInputMesh == NULL){
-		textInputMesh = textMeshNew();
-	}
-
+void textInputFocus(widget *wid){
 	SDL_StartTextInput();
-	return true;
+	textInputBufferLen = strnlen(wid->vals,255);
+	textInputCursorPos = textInputBufferLen;
 }
 
-char *textInputGetBuffer(){
-	return textInputBuffer;
-}
-
-void textInputClose(){
+void textInputBlur(widget *wid){
+	(void)wid;
 	SDL_StopTextInput();
-	textInputActive = false;
 }
 
-void textInputDraw(){
-	if(!textInputActive){return;}
-	textMeshEmpty(textInputMesh);
-	textInputMesh->sx   = textInputX;
-	textInputMesh->sy   = textInputY;
-	textInputMesh->size = 2;
-	textMeshAddString(textInputMesh,textInputBuffer);
-	if(getTicks() & 512){
-		textMeshAddGlyph(textInputMesh, textInputX+(textInputCursorPos*16), textInputY, 2, 127);
-	}
-	textMeshDraw(textInputMesh);
+int textInputActive(){
+	if(widgetFocused == NULL){return 0;}
+	if(widgetFocused->type != WIDGET_TEXTINPUT){return 0;}
+	return 1;
+}
+
+void textInputEnter(){
+	if(!textInputActive()){return;}
+	widgetEmit(widgetFocused,"submit");
 }
 
 void textInputBackspace(){
-	if(!textInputActive){return;}
+	if(!textInputActive()){return;}
 	if(textInputCursorPos == 0){return;}
+	char *textInputBuffer = widgetFocused->vals;
 	for(int i=textInputCursorPos-1;i<textInputBufferLen-1;i++){
 		textInputBuffer[i] = textInputBuffer[i+1];
 	}
 	--textInputCursorPos;
 	--textInputBufferLen;
 	textInputBuffer[textInputBufferLen] = 0;
+	widgetEmit(widgetFocused,"change");
 }
 
 void textInputAppend(const char *s){
 	int slen = strnlen(s,256);
+	if(!textInputActive()){return;}
+	char *textInputBuffer = widgetFocused->vals;
 	if((slen + textInputBufferLen) > 255){slen = 255-textInputBufferLen;}
 	if(textInputCursorPos != textInputBufferLen){
 		for(int i=textInputBufferLen-1;i>=textInputCursorPos;i--){
@@ -88,9 +63,11 @@ void textInputAppend(const char *s){
 	if(textInputCursorPos >= 255){ textInputCursorPos = 255; }
 	if(textInputBufferLen >= 255){ textInputBufferLen = 255; }
 	textInputBuffer[textInputBufferLen] = 0;
+	widgetEmit(widgetFocused,"change");
 }
 
 void textInputPaste(){
+	if(!textInputActive()){return;}
 	if(!SDL_HasClipboardText()){return;}
 	char *text = SDL_GetClipboardText();
 	if(text == NULL){return;}
@@ -100,7 +77,7 @@ void textInputPaste(){
 
 bool textInputEvent(const SDL_Event *e){
 	SDL_Keymod mod;
-	if(!textInputActive){return false;}
+	if(!textInputActive()){return false;}
 
 	switch(e->type){
 	case SDL_TEXTINPUT:

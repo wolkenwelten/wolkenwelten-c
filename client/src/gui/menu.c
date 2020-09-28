@@ -33,18 +33,43 @@ char  savegameName[8][32];
 
 char menuTextInputLabel[32];
 
-widget *rootMenu = NULL;
-widget *menuText = NULL;
-widget *mainMenu = NULL;
-widget *saveMenu = NULL;
-widget *saveList = NULL;
-widget *menuErrorLabel = NULL;
+int   serverlistCount = 0;
+char  serverlistName[8][32];
+char  serverlistIP[8][128];
 
+widget *rootMenu   = NULL;
+widget *menuText   = NULL;
+widget *mainMenu   = NULL;
+widget *saveMenu   = NULL;
+widget *saveList   = NULL;
+widget *serverMenu = NULL;
+widget *serverList = NULL;
+
+widget *newGame     = NULL;
+widget *newGameName = NULL;
+widget *newGameSeed = NULL;
+
+widget *newServer     = NULL;
+widget *newServerName = NULL;
+widget *newServerIP   = NULL;
+
+widget *menuErrorLabel = NULL;
 widget *menuCurSelection = NULL;
 
-void startSingleplayer();
+void startMultiplayer(){
+	gameRunning     = true;
+	connectionTries = 0;
+	hideMouseCursor();
+}
+void startSingleplayer(){
+	singleplayer    = true;
+	startMultiplayer();
+}
+
 void handlerLoadGame(widget *wid);
 void handlerDeleteGame(widget *wid);
+void handlerJoinServer(widget *wid);
+void handlerDeleteServer(widget *wid);
 static void refreshSaveList(){
 	widgetEmpty(saveList);
 	for(int i=0;i<savegameCount;i++){
@@ -54,7 +79,7 @@ static void refreshSaveList(){
 		button->vali = i;
 	}
 
-	saveList->h = savegameCount*48 + 48;
+	saveList->h = savegameCount * 48 + 48;
 	widgetLayVert(saveMenu,16);
 }
 
@@ -74,6 +99,44 @@ static void checkSavegames(){
 	}
 	closedir(dp);
 	refreshSaveList();
+}
+
+static void refreshServerList(){
+	widgetEmpty(serverList);
+	for(int i=0;i<serverlistCount;i++){
+		widget *button = widgetNewCPL(WIDGET_BUTTONDEL,serverList,16,i*48,256,32,serverlistName[i]);
+		widgetBind(button,"click",handlerJoinServer);
+		widgetBind(button,"altclick",handlerDeleteServer);
+		button->vali = i;
+	}
+
+	serverList->h = serverlistCount * 48;
+	widgetLayVert(serverMenu,16);
+}
+
+static void checkServers(){
+	refreshServerList();
+}
+
+static void addServer(const char *name, const char *ip){
+	if(serverlistCount >= 7){return;}
+	snprintf(serverlistName[serverlistCount],sizeof(serverlistName[0]),"%.31s",name);
+	snprintf(serverlistIP[serverlistCount++],sizeof(serverlistIP[0]),"%.127s",ip);
+}
+static void delServer(int d){
+	if(d < 0){return;}
+	if(d >= serverlistCount){return;}
+	for(int i=d;i<MIN(6,serverlistCount);i++){
+		memcpy(serverlistName[i],serverlistName[i+1],32);
+		memcpy(serverlistIP[i],serverlistIP[i+1],128);
+	}
+	serverlistCount--;
+}
+static void joinServer(int i){
+	if(i < 0){return;}
+	if(i >= serverlistCount){return;}
+	snprintf(serverName,sizeof(serverName)-1,"%.63s",serverlistIP[i]);
+	startMultiplayer();
 }
 
 static void loadSavegame(int i){
@@ -96,25 +159,9 @@ static void deleteSavegame(int i){
 void handlerSingleplayer(widget *wid){
 	(void)wid;
 	checkSavegames();
-	mainMenu->flags &= ~WIDGET_HIDDEN;
-	mainMenu->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
-	mainMenu->gw     =   0;
-	saveMenu->flags &= ~(WIDGET_HIDDEN | WIDGET_NOSELECT);
-	saveMenu->flags |= WIDGET_ANIMATEW;
-	saveMenu->gw     = 288;
+	widgetSlideW(mainMenu,0);
+	widgetSlideW(saveMenu,288);
 	menuCurSelection = NULL;
-}
-void handlerMultiplayer(widget *wid){
-	(void)wid;
-	textInput(32,screenHeight-56,256,16,2);
-	snprintf(menuTextInputLabel,sizeof(menuTextInputLabel)-1,"Servername:");
-	menuTextInputLabel[sizeof(menuTextInputLabel)-1] = 0;
-}
-void handlerChangeName(widget *wid){
-	(void)wid;
-	textInput(32,screenHeight-56,256,16,3);
-	snprintf(menuTextInputLabel,sizeof(menuTextInputLabel)-1,"New player name:");
-	menuTextInputLabel[sizeof(menuTextInputLabel)-1] = 0;
 }
 void handlerLoadGame(widget *wid){
 	loadSavegame(wid->vali);
@@ -123,21 +170,21 @@ void handlerDeleteGame(widget *wid){
 	deleteSavegame(wid->vali);
 	checkSavegames();
 }
-void handlerNewGame(widget *wid){
-	(void)wid;
-	textInput(8,screenHeight-24,256,16,4);
+void handlerJoinServer(widget *wid){
+	joinServer(wid->vali);
+}
+void handlerDeleteServer(widget *wid){
+	delServer(wid->vali);
+	refreshServerList();
 }
 void handlerAttribution(widget *wid){
 	(void)wid;
 	showAttribution = true;
 	menuText->flags |= WIDGET_HIDDEN;
 
-	mainMenu->flags &= ~WIDGET_HIDDEN;
-	mainMenu->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
-	mainMenu->gw     =   0;
-	saveMenu->flags &= ~WIDGET_HIDDEN;
-	saveMenu->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
-	saveMenu->gw     =   0;
+	widgetSlideW(mainMenu,0);
+	widgetSlideW(saveMenu,0);
+	widgetSlideW(serverMenu,0);
 	menuCurSelection = NULL;
 }
 void handlerQuit(widget *wid){
@@ -149,12 +196,12 @@ void handlerBackToMenu(widget *wid){
 	showAttribution = false;
 	menuText->flags &= ~WIDGET_HIDDEN;
 
-	mainMenu->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
-	mainMenu->flags |= WIDGET_ANIMATEW;
-	mainMenu->gw     = 288;
-	saveMenu->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
-	saveMenu->flags |= WIDGET_ANIMATEW;
-	saveMenu->gw     =   0;
+	widgetSlideW(mainMenu,288);
+	widgetSlideW(saveMenu,0);
+	widgetSlideW(serverMenu,0);
+	widgetSlideH(newGame,0);
+	widgetSlideH(newServer,0);
+
 	menuCurSelection = NULL;
 }
 void handlerRoot(widget *wid){
@@ -162,12 +209,75 @@ void handlerRoot(widget *wid){
 	if(showAttribution){
 		showAttribution = false;
 		menuText->flags &= ~WIDGET_HIDDEN;
-		saveMenu->flags |=  WIDGET_HIDDEN;
-		mainMenu->flags &= ~WIDGET_HIDDEN;
-		mainMenu->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
-		mainMenu->gw     = 288;
+		widgetSlideW(mainMenu,288);
 		menuCurSelection = NULL;
 	}
+}
+
+void handlerPlayerNameBlur(widget *wid){
+	snprintf(playerName,sizeof(playerName),"%s",wid->vals);
+}
+
+void handlerNewGame(widget *wid){
+	(void)wid;
+	widgetSlideH(newGame,156);
+	widgetFocus(newGameName);
+}
+void handlerNewGameCancel(widget *wid){
+	(void)wid;
+	widgetSlideH(newGame,0);
+	newGameName->vals[0] = 0;
+	newGameSeed->vals[0] = 0;
+	widgetFocus(NULL);
+}
+
+void handlerNewGameSubmit(widget *wid){
+	(void)wid;
+	if(newGameName->vals[0] == 0){return;}
+	snprintf(optionSavegame,sizeof(optionSavegame),"%s",newGameName->vals);
+	if(newGameSeed->vals[0] != 0){
+		optionWorldSeed = atoi(newGameSeed->vals);
+	}
+	handlerNewGameCancel(wid);
+	startSingleplayer();
+}
+
+void handlerNewGameNext(widget *wid){
+	(void)wid;
+	widgetFocus(newGameSeed);
+}
+
+void handlerMultiplayer(widget *wid){
+	(void)wid;
+	checkServers();
+	widgetSlideW(mainMenu,0);
+	widgetSlideW(serverMenu,288);
+	menuCurSelection = NULL;
+}
+void handlerNewServer(widget *wid){
+	(void)wid;
+	widgetSlideH(newServer,156);
+	widgetFocus(newServerName);
+}
+void handlerNewServerCancel(widget *wid){
+	(void)wid;
+	widgetSlideH(newServer,0);
+	newServerName->vals[0] = 0;
+	newServerIP->vals[0] = 0;
+	widgetFocus(NULL);
+}
+
+void handlerNewServerSubmit(widget *wid){
+	(void)wid;
+	if((newServerName->vals[0] == 0) || (newServerIP->vals[0] == 0)){return;}
+	addServer(newServerName->vals,newServerIP->vals);
+	refreshServerList();
+	handlerNewServerCancel(wid);
+}
+
+void handlerNewServerNext(widget *wid){
+	(void)wid;
+	widgetFocus(newServerIP);
 }
 
 void initMainMenu(){
@@ -175,9 +285,7 @@ void initMainMenu(){
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Multiplayer","click",handlerMultiplayer);
 	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,32);
-	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Change Name","click",handlerChangeName);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Attribution","click",handlerAttribution);
-	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,32);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Quit","click",handlerQuit);
 
 	widgetLayVert(mainMenu,16);
@@ -192,6 +300,30 @@ void initSaveMenu(){
 	widgetNewCPLH(WIDGET_BUTTON,saveMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
 
 	widgetLayVert(saveMenu,16);
+
+	newGame = widgetNewCP(WIDGET_PANEL,rootMenu,32,-1,288,0);
+	newGame->flags |= WIDGET_HIDDEN;
+	newGameName = widgetNewCPLH(WIDGET_TEXTINPUT,newGame,16,16,256,32,"World Name","submit",handlerNewGameNext);
+	newGameSeed = widgetNewCPLH(WIDGET_TEXTINPUT,newGame,16,64,256,32,"World Seed","submit",handlerNewGameSubmit);
+	widgetNewCPLH(WIDGET_BUTTON,newGame,16,112,120,32,"Cancel","click",handlerNewGameCancel);
+	widgetNewCPLH(WIDGET_BUTTON,newGame,148,112,120,32,"Create","click",handlerNewGameSubmit);
+}
+
+void initServerMenu(){
+	serverMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,0,-1);
+	serverMenu->flags |= WIDGET_HIDDEN;
+
+	serverList = widgetNewCP(WIDGET_SPACE,serverMenu,-1,0,288,32);
+	widgetNewCPLH(WIDGET_BUTTON,serverMenu,16,0,256,32,"New Server","click",handlerNewServer);
+	widgetNewCPLH(WIDGET_BUTTON,serverMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
+	widgetLayVert(serverMenu,16);
+
+	newServer = widgetNewCP(WIDGET_PANEL,rootMenu,32,-1,288,0);
+	newServer->flags |= WIDGET_HIDDEN;
+	newServerName = widgetNewCPLH(WIDGET_TEXTINPUT,newServer,16,16,256,32,"Server Name","submit",handlerNewServerNext);
+	newServerIP = widgetNewCPLH(WIDGET_TEXTINPUT,newServer,16,64,256,32,"IP / Domain","submit",handlerNewServerSubmit);
+	widgetNewCPLH(WIDGET_BUTTON,newServer,16,112,120,32,"Cancel","click",handlerNewServerCancel);
+	widgetNewCPLH(WIDGET_BUTTON,newServer,148,112,120,32,"Create","click",handlerNewServerSubmit);
 }
 
 void initMenu(){
@@ -211,52 +343,19 @@ void initMenu(){
 	menuText = widgetNewCP(WIDGET_SPACE,rootMenu,32,32,256,-65);
 
 	wid = widgetNewCPL(WIDGET_LABEL,menuText,0,0,256,32,"Wolkenwelten");
-	wid->vali = 4;
-	wid = widgetNewCPL(WIDGET_LABEL,menuText,0,32,256,32,(char *)VERSION);
-	wid->vali = 2;
-	wid = widgetNewCPL(WIDGET_LABEL,menuText,0,64,256,32,"Your Name:");
-	wid->vali = 2;
-	wid = widgetNewCPL(WIDGET_LABEL,menuText,176,64,256,32,playerName);
-	wid->vali = 2;
+	wid->flags |= WIDGET_BIG;
+	widgetNewCPL(WIDGET_LABEL,menuText,0,32,256,32,(char *)VERSION);
+	wid = widgetNewCPL(WIDGET_LABEL,menuText,0,64,256,32,"Your Name: ");
+	wid = widgetNewCPL(WIDGET_TEXTINPUT,menuText,0,88,256,32,"Playername");
+	strncpy(wid->vals,playerName,256);
+	widgetBind(wid,"blur",handlerPlayerNameBlur);
 
 	menuErrorLabel = widgetNewCPL(WIDGET_LABEL,menuText,1,-97,256,16,"");
-	menuErrorLabel->vali = 2;
-	wid = widgetNewCPL(WIDGET_LABEL,menuText,1,-33,256,16,menuTextInputLabel);
-	wid->vali = 2;
+	widgetNewCPL(WIDGET_LABEL,menuText,1,-33,256,16,menuTextInputLabel);
 
 	initMainMenu();
 	initSaveMenu();
-}
-
-void startSingleplayer(){
-	singleplayer    = true;
-	gameRunning     = true;
-	textInputLock   = 0;
-	textInputActive = false;
-	connectionTries = 0;
-	hideMouseCursor();
-}
-
-void updateMenu(){
-	if(!textInputActive && (textInputLock == 2)){
-		char *buf = textInputGetBuffer();
-		strncpy(serverName,buf,sizeof(serverName)-1);
-		textInputLock   = 0;
-		connectionTries = 0;
-		gameRunning     = true;
-		hideMouseCursor();
-	}
-
-	if(!textInputActive && (textInputLock == 3)){
-		snprintf(playerName,sizeof(playerName),"%s",textInputGetBuffer());
-		textInputLock = 0;
-	}
-
-	if(!textInputActive && (textInputLock == 4)){
-		snprintf(optionSavegame,sizeof(optionSavegame),"%s",textInputGetBuffer());
-		textInputLock = 0;
-		startSingleplayer();
-	}
+	initServerMenu();
 }
 
 void drawMenuAttributions(){
@@ -284,10 +383,7 @@ void renderMenu(){
 		showMouseCursor();
 	}
 	updateMouse();
-	updateMenu();
-	if(!textInputActive){
-		menuTextInputLabel[0]=0;
-	}
+	//updateMenu();
 	if((menuError != NULL) && (*menuError != 0) && (menuErrorLabel != NULL)){
 		menuErrorLabel->label = menuError;
 	}
@@ -297,7 +393,6 @@ void renderMenu(){
 	drawMenuAttributions();
 	textMeshDraw(menuM);
 
-	textInputDraw();
 	drawCursor();
 }
 

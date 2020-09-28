@@ -49,13 +49,9 @@ void keyboardEventHandler(const SDL_Event *e){
 	}
 
 	if((e->type == SDL_KEYUP) && ((e->key.keysym.sym == SDLK_RETURN) || (e->key.keysym.sym == SDLK_KP_ENTER))){
-		if(textInputActive || (textInputLock != 0)){
-			textInputClose();
-		}else if(gameRunning){
-			chatStartInput();
-		}
+		textInputEnter();
 	}
-	if(textInputActive){return;}
+	if(textInputActive()){return;}
 
 	switch(e->type){
 		case SDL_KEYUP:

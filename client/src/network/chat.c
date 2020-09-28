@@ -12,7 +12,7 @@
 char chatLog[12][256];
 
 void chatStartInput(){
-	textInput(4, screenHeight-20, 256, 16, 1);
+	//textInput(4, screenHeight-20, 256, 16, 1);
 }
 
 void msgSendChatMessage(const char *msg){
@@ -24,6 +24,8 @@ void msgSendChatMessage(const char *msg){
 }
 
 void chatCheckInput(){
+	return;
+	/*
 	if(textInputActive)       {return;}
 	if(textInputLock != 1)    {return;}
 
@@ -34,6 +36,7 @@ void chatCheckInput(){
 	if(strnlen(msg,256) <= 0) {return;}
 
 	msgSendChatMessage(textInputGetBuffer());
+	*/
 }
 
 void chatParsePacket(const packet *p){

@@ -150,6 +150,7 @@ void textMeshAddLinePS(textMesh *m, int x, int y, int size, const char *str){
 		x+= glyphWidth;
 		str++;
 	}
+	m->sx = x;
 }
 
 void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){

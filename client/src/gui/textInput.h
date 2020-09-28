@@ -1,10 +1,10 @@
 #pragma once
 #include "../../../common/src/common.h"
+#include "widget.h"
 
-extern int  textInputLock;
-extern bool textInputActive;
+extern int textInputCursorPos;
 
-bool  textInput          (int x, int y, int w, int h, int lock);
-char *textInputGetBuffer ();
-void  textInputDraw      ();
-void  textInputClose     ();
+void  textInputFocus     (widget *wid);
+void  textInputBlur      (widget *wid);
+int   textInputActive    ();
+void  textInputEnter     ();

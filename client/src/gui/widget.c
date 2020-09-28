@@ -3,18 +3,27 @@
 
 #include "../gui/menu.h"
 #include "../gui/gui.h"
+#include "../gui/textInput.h"
+#include "../sdl/sdl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/textMesh.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <SDL.h>
 
+widget *widgetFocused = NULL;
 
 widget *widgetNew(int type){
 	widget *wid = calloc(1,sizeof(widget));
 	if(wid == NULL){return NULL;}
 	wid->type = type;
+	if(wid->type == WIDGET_TEXTINPUT){
+		wid->vals = calloc(1,256);
+		widgetBind(wid,"focus",textInputFocus);
+		widgetBind(wid,"blur",textInputBlur);
+	}
 	return wid;
 }
 widget *widgetNewC(int type,widget *p){
@@ -32,13 +41,13 @@ widget *widgetNewCP(int type,widget *p, int x, int y, int w, int h){
 	wid->h = h;
 	return wid;
 }
-widget *widgetNewCPL(int type,widget *p, int x, int y, int w, int h, char *label){
+widget *widgetNewCPL(int type,widget *p, int x, int y, int w, int h, const char *label){
 	widget *wid = widgetNewCP(type,p,x,y,w,h);
 	if(wid == NULL){return NULL;}
 	wid->label = label;
 	return wid;
 }
-widget *widgetNewCPLH(int type,widget *p, int x, int y, int w, int h, char *label,const char *eventName, void (*handler)(widget *)){
+widget *widgetNewCPLH(int type,widget *p, int x, int y, int w, int h, const char *label,const char *eventName, void (*handler)(widget *)){
 	widget *wid = widgetNewCPL(type,p,x,y,w,h,label);
 	if(wid == NULL){return NULL;}
 	widgetBind(wid,eventName,handler);
@@ -56,6 +65,9 @@ void widgetFree(widget *w){
 		}else{
 			// ToDo
 		}
+	}
+	if(w->type == WIDGET_TEXTINPUT){
+		free(w->vals);
 	}
 	free(w);
 }
@@ -107,6 +119,16 @@ void widgetChildPre(widget *parent, widget *child){
 	}
 	parent->child = child;
 	child->parent = parent;
+}
+
+void widgetFocus(widget *w){
+	if(w == widgetFocused){return;}
+	if(widgetFocused != NULL){
+		widgetEmit(widgetFocused,"blur");
+	}
+	widgetFocused = w;
+	if(w == NULL){return;}
+	widgetEmit(w,"focus");
 }
 
 static int widgetIsSelectable(widget *cur){
@@ -325,6 +347,7 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 				if((wid->type == WIDGET_BUTTONDEL) && ((int)mousex > x+w-40)){
 					widgetEmit(wid,"altclick");
 				}else{
+					widgetFocus(wid);
 					widgetEmit(wid,"click");
 				}
 			}
@@ -336,8 +359,6 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 }
 
 static void widgetAnimate(widget *wid, int x, int y, int w, int h){
-	(void)w;
-	(void)h;
 	if(!(wid->flags & WIDGET_ANIMATE)){return;}
 
 	if(wid->flags & WIDGET_ANIMATEX){
@@ -382,27 +403,92 @@ static void widgetAnimate(widget *wid, int x, int y, int w, int h){
 	}
 
 	if(wid->flags & WIDGET_ANIMATE){return;}
-	const int wx = wid->x+x;
-	const int wy = wid->y+y;
+	int wx = wid->x + x;
+	int wy = wid->y + y;
+	int ww = wid->w;
+	int wh = wid->h;
 
-	if((wid->w == 0) || (wid->h == 0)){
+	if(wid->x < 0){
+		wx = (x + w) - wid->w + (wid->x+1);
+	}
+	if(wid->y < 0){
+		wy = (y + h) - wid->h + (wid->y+1);
+	}
+	if(ww < 0){ ww = w+(wid->w+1); }
+	if(wh < 0){ wh = h+(wid->h+1); }
+
+	if((ww == 0) || (wh == 0)){
 		wid->flags |= WIDGET_HIDDEN;
 		return;
 	}
 
-	if( (wx >= screenWidth)  ||
-	    (wy >= screenHeight) ||
-	    (wx+wid->w <= 0)     ||
-	    (wy+wid->h <= 0)){
-		return;
+	if((wx >= screenWidth)  ||
+	   (wy >= screenHeight) ||
+	   (wx+ww <= 0)     ||
+	   (wy+wh <= 0)){
+		wid->flags |= WIDGET_HIDDEN;
 	}
-	wid->flags |= WIDGET_HIDDEN;
+}
+
+static void widgetDrawTextInput(widget *wid, textMesh *m, int x, int y, int w, int h){
+	u32 color    = 0xFF333333;
+	u32 bcolor   = 0xFF555555;
+	u32 tcolor   = 0xFF222222;
+	int textYOff = (h - (2*8))/2;
+	int textXOff = 8;
+	int size     = 2;
+
+	if((wid->flags & WIDGET_BIGGER) == WIDGET_BIGGER){
+		size = 8;
+	}else if(wid->flags & WIDGET_BIG){
+		size = 4;
+	}else if(wid->flags & WIDGET_SMALL){
+		size = 1;
+	}
+
+	if(wid->flags & WIDGET_CLICKED){
+		// draw cursor
+	}else if(wid->flags & WIDGET_HOVER){
+		color = 0xFF292929;
+	}
+
+	textMeshSolidBox(m,x+1, y+1,w-1,h-1, color);
+	textMeshSolidBox(m,x+1, y  ,w-2,  1,tcolor);
+	textMeshSolidBox(m,x  , y+1,  1,h-2,tcolor);
+	textMeshSolidBox(m,x+1, y+h,w-2,  1,bcolor);
+	textMeshSolidBox(m,x+w, y+1,  1,h-2,bcolor);
+
+	if(wid->vals == NULL){return;}
+	if(wid->vals[0] == 0){
+		textMeshAddLinePS(m,x+textXOff,y+textYOff,size,wid->label);
+	}else{
+		textMeshAddLinePS(m,x+textXOff,y+textYOff,size,wid->vals);
+	}
+	if((widgetFocused == wid) && (getTicks() & 512)){
+		textMeshAddGlyph(m, x+textXOff+(textInputCursorPos*size*8), y+textYOff, size, 127);
+	}
 }
 
 static void widgetDrawLabel(widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)w;
 	(void)h;
-	textMeshAddStrPS(m,x,y,wid->vali,wid->label);
+	int size = 2;
+
+	if((wid->flags & WIDGET_BIGGER) == WIDGET_BIGGER){
+		size = 8;
+	}else if(wid->flags & WIDGET_BIG){
+		size = 4;
+	}else if(wid->flags & WIDGET_SMALL){
+		size = 1;
+	}
+
+	m->sx = x;
+	if(wid->label != NULL){
+		textMeshAddLinePS(m,x,y,size,wid->label);
+	}
+	if(wid->vals != NULL){
+		textMeshAddLinePS(m,m->sx,y,size,wid->vals);
+	}
 }
 
 void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
@@ -439,6 +525,9 @@ void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
 		case WIDGET_BUTTONDEL:
 			widgetDrawButtondel(wid,m,x,y,w,h);
 			break;
+		case WIDGET_TEXTINPUT:
+			widgetDrawTextInput(wid,m,x,y,w,h);
+			break;
 	}
 
 	for(widget *c=wid->child;c!=NULL;c=c->next){
@@ -452,4 +541,28 @@ bool mouseInBox(uint x, uint y, uint w, uint h){
 	if(mousey < y  ){return false;}
 	if(mousey > y+h){return false;}
 	return true;
+}
+
+void widgetSlideW(widget *w, int nw){
+	if(nw == 0){
+		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
+		w->flags |= WIDGET_ANIMATEW;
+		w->gw     =   0;
+	}else{
+		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
+		w->flags |= WIDGET_ANIMATEW;
+		w->gw = nw;
+	}
+}
+
+void widgetSlideH(widget *w, int nh){
+	if(nh == 0){
+		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
+		w->flags |= WIDGET_ANIMATEH;
+		w->gh     =   0;
+	}else{
+		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
+		w->flags |= WIDGET_ANIMATEH;
+		w->gh = nh;
+	}
 }

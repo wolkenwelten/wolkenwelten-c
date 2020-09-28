@@ -444,7 +444,6 @@ void renderUI(){
 	}else{
 		drawCrosshair();
 	}
-	textInputDraw();
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
