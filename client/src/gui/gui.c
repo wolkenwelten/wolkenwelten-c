@@ -57,6 +57,7 @@ void showMouseCursor(){
 void hideMouseCursor(){
 	setRelativeMouseMode(true);
 	mouseHidden = true;
+	widgetFocus(NULL);
 }
 
 void drawCrosshair(){
@@ -92,6 +93,7 @@ void openChat(){
 	if(widgetFocused != NULL){return;}
 	widgetSlideH(chatPanel, 64);
 	widgetFocus(chatText);
+	showMouseCursor();
 }
 
 void handlerRootHud(widget *wid){
@@ -99,6 +101,7 @@ void handlerRootHud(widget *wid){
 	chatText->vals[0] = 0;
 	widgetFocus(NULL);
 	widgetSlideH(chatPanel, 0);
+	hideMouseCursor();
 }
 
 
@@ -119,9 +122,9 @@ void initUI(){
 	guim->tex            = tGui;
 
 	rootHud = widgetNewCP(WIDGET_SPACE,NULL,0,0,-1,-1);
-	widgetBind(rootHud,"click",handlerRootHud);
+	//	widgetBind(rootHud,"click",handlerRootHud);
 
-	chatPanel = widgetNewCP(WIDGET_PANEL,rootHud,16,-1,512,0);
+	chatPanel = widgetNewCP(WIDGET_PANEL,rootHud,0,-1,512,0);
 	chatPanel->flags |= WIDGET_HIDDEN;
 	chatText  = widgetNewCPLH(WIDGET_TEXTINPUT,chatPanel,16,16,384,32,"Message","submit",handlerChatSubmit);
 	widgetNewCPLH(WIDGET_BUTTON,chatPanel,-16,16,80,32,"Send","click",handlerChatSubmit);
@@ -429,8 +432,8 @@ void drawAmmunition(){
 }
 
 void drawChat(){
-	guim->sy   = screenHeight - (9*16) - (chatPanel->h+8);
-	guim->sx   = 40;
+	guim->sy   = screenHeight - (9*16) - (chatPanel->h-8);
+	guim->sx   = 24;
 	guim->size = 1;
 	for(int i=0;i<8;i++){
 		textMeshAddString(guim,chatLog[i]);
@@ -470,12 +473,9 @@ void renderUI(){
 
 	shaderBind(sTextMesh);
 	shaderMatrix(sTextMesh,matOrthoProj);
+	drawCrosshair();
 	drawHud();
-	if(isInventoryOpen()){
-		updateMouse();
-	}else{
-		drawCrosshair();
-	}
+	if(!mouseHidden){updateMouse();}
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);

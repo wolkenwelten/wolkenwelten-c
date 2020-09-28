@@ -17,15 +17,19 @@ void textInputEvent(const SDL_Event *e);
 bool keysPressed[16];
 
 bool keyboardSneak(){
+	if(widgetFocused != NULL){return false;}
 	return keysPressed[5];
 }
 bool keyboardPrimary(){
-	return false;
+	if(widgetFocused != NULL){return false;}
+	return keysPressed[10];
 }
 bool keyboardSecondary(){
-	return false;
+	if(widgetFocused != NULL){return false;}
+	return keysPressed[11];
 }
 bool keyboardTertiary(){
+	if(widgetFocused != NULL){return false;}
 	return keysPressed[7];
 }
 
@@ -106,6 +110,12 @@ void keyboardEventHandler(const SDL_Event *e){
 		case SDLK_r:
 			keysPressed[7] = 0;
 			break;
+		case SDLK_y:
+			keysPressed[10] = 0;
+			break;
+		case SDLK_u:
+			keysPressed[11] = 0;
+			break;
 		case SDLK_h:
 			keysPressed[12] = 0;
 			break;
@@ -164,6 +174,12 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDLK_r:
 			keysPressed[7] = 1;
+			break;
+		case SDLK_y:
+			keysPressed[10] = 1;
+			break;
+		case SDLK_u:
+			keysPressed[11] = 1;
 			break;
 		case SDLK_h:
 			keysPressed[12] = 1;

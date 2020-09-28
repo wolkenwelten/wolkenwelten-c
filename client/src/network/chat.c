@@ -11,6 +11,12 @@
 
 char chatLog[12][256];
 
+void chatEmpty(){
+	for(int i=0;i < 12;i++){
+		*chatLog[i]=0;
+	}
+}
+
 void msgSendChatMessage(const char *msg){
 	packet *p = &packetBuffer;
 	p->val.s[0]=0;

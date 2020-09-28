@@ -1,5 +1,6 @@
 #include "input_mouse.h"
 
+#include "../gui/gui.h"
 #include "../gui/inventory.h"
 #include "../game/character.h"
 #include "../main.h"
@@ -10,9 +11,11 @@ bool mouseSneak(){
 	return false;
 }
 bool mousePrimary(){
+	if(!mouseHidden){return 0;}
 	return mouseButtonsPressed[0];
 }
 bool mouseSecondary(){
+	if(!mouseHidden){return 0;}
 	return mouseButtonsPressed[2];
 }
 bool mouseTertiary(){
@@ -62,14 +65,14 @@ void mouseEventHandler(const SDL_Event *e){
 		break;
 
 		case SDL_MOUSEMOTION:
-			if(!isInventoryOpen() && gameRunning){
+			if(mouseHidden && gameRunning){
 				characterRotate(player,vecNew(e->motion.xrel/4.f,e->motion.yrel/4.f,0));
 			}
 		break;
 
 		case SDL_MOUSEWHEEL:
-			if(!isInventoryOpen() && gameRunning){
-				unsigned int nai = player->activeItem;
+			if(mouseHidden && gameRunning){
+				uint nai = player->activeItem;
 				if(e->wheel.y > 0){
 					if(--nai > 9){nai = 9;}
 				}else if(e->wheel.y < 0){

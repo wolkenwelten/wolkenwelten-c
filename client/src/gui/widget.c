@@ -346,6 +346,8 @@ static void widgetDrawPanel(widget *wid, textMesh *m, int x, int y, int w, int h
 }
 
 static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
+	if(wid == NULL){return;}
+	if((wid->type == WIDGET_SPACE) || (wid->type == WIDGET_PANEL)){return;}
 	if(mouseInBox(x,y,w,h)){
 		wid->flags |= WIDGET_HOVER;
 		if(mouseClicked[0]){

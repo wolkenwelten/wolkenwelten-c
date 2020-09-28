@@ -252,7 +252,6 @@ void clientSendIntroduction(){
 
 void clientGreetServer(){
 	clientSendIntroduction();
-	//msgRequestPlayerSpawnPos();
 }
 
 void clientHandleEvents(){
@@ -284,4 +283,5 @@ void clientFree(){
 	sendBufSent = 0;
 	bigchungusFree(&world);
 	characterInit(player);
+	chatEmpty();
 }
