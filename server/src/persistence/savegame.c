@@ -264,9 +264,9 @@ static const char *savegameFileName(const char *name){
 }
 
 static void checkValidSavegame(const char *name){
-	char buf[16];
+	static char buf[128];
 	if(!isDir("save")){makeDir("save");}
-	snprintf(buf,sizeof(buf)-1,"save/%s",name);
+	snprintf(buf,sizeof(buf)-1,"save/%.63s",name);
 	buf[sizeof(buf)-1] = 0;
 	if(!isDir(buf)){makeDir(buf);}
 }

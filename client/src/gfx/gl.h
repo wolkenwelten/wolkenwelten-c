@@ -6,6 +6,9 @@
 #elif __EMSCRIPTEN__
 	#include "GL/glew.h"
 	#define INITGLEXT() glewExperimental=GL_TRUE; if(glewInit() != GLEW_OK){exit(3);}
+#elif __HAIKU__
+	#include "GL/glew.h"
+	#define INITGLEXT() glewExperimental=GL_TRUE; if(glewInit() != GLEW_OK){exit(3);}
 #else
 	#include "gl3w.h"
 	#define INITGLEXT() if(gl3wInit()){exit(3);}
