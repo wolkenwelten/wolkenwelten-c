@@ -47,7 +47,7 @@ vec doKeyboardupdate(vec vel){
 	if(keysPressed[13]){rot.y = -1;}
 	if(keysPressed[14]){rot.y =  1;}
 	if(keysPressed[15]){rot.x =  1;}
-	characterRotate(player,vecMulS(rot,4));
+	characterRotate(player,vecMulS(rot,3));
 
 	if(keysPressed[6]){
 		characterDropItem(player,player->activeItem);
