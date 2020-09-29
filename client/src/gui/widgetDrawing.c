@@ -11,11 +11,11 @@
 #include <string.h>
 
 static void widgetDrawButton(const widget *wid, textMesh *m, int x, int y, int w, int h){
-	u32 color       = 0xFF555555;
-	u32 tcolor      = 0xFF777777;
-	u32 bcolor      = 0xFF333333;
-	int textYOff    = (h - (2*8))/2;
-	int textXOff    = (w-(strnlen(wid->label,w/16)*16))/2;
+	u32 color    = 0xFF555555;
+	u32 tcolor   = 0xFF777777;
+	u32 bcolor   = 0xFF333333;
+	int textYOff = (h - (2*8))/2;
+	int textXOff = (w-(strnlen(wid->label,w/16)*16))/2;
 
 	if(wid == widgetFocused){
 		 color = 0xFFAA6666;
@@ -42,16 +42,16 @@ static void widgetDrawButton(const widget *wid, textMesh *m, int x, int y, int w
 }
 
 static void widgetDrawButtondel(const widget *wid, textMesh *m, int x, int y, int w, int h){
-	u32 color       = 0xFF555555;
-	u32 tcolor      = 0xFF777777;
-	u32 bcolor      = 0xFF333333;
+	u32 color    = 0xFF555555;
+	u32 tcolor   = 0xFF777777;
+	u32 bcolor   = 0xFF333333;
 
-	u32 dcolor      = 0xFF555599;
-	u32 dtcolor     = 0xFF7777AA;
-	u32 dbcolor     = 0xFF333377;
+	u32 dcolor   = 0xFF555599;
+	u32 dtcolor  = 0xFF7777AA;
+	u32 dbcolor  = 0xFF333377;
 
-	int textYOff    = (h - (2*8))/2;
-	int textXOff    = (w-(strnlen(wid->label,w/16)*16))/2;
+	int textYOff = (h - (2*8))/2;
+	int textXOff = (w-(strnlen(wid->label,w/16)*16))/2;
 
 	if(wid == widgetFocused){
 		 color = 0xFFAA6666;
@@ -168,9 +168,8 @@ static void widgetDrawLabel(const widget *wid, textMesh *m, int x, int y, int w,
 }
 
 static void widgetDrawSlider(const widget *wid, textMesh *m, int x, int y, int w, int h){
-	u32 color  = 0xFF333333;
-	u32 bcolor = 0xFF555555;
-	u32 tcolor = 0xFF222222;
+	u32  bcolor = 0xFF555555;
+	u32  tcolor = 0xFF222222;
 	u32 abcolor = 0xFFC08840;
 	u32 atcolor = 0xFFA04123;
 	const int textYOff = (h - (2*8))/2;
@@ -178,10 +177,6 @@ static void widgetDrawSlider(const widget *wid, textMesh *m, int x, int y, int w
 	const int size     = 2;
 	const float v  = MAX(0,MIN(1,wid->vali / 4096.f));
 	int o = v*(w-2);
-
-	if(widgetFocused == wid){
-		color = 0xFF292929;
-	}
 
 	textMeshVGradient(m,x+1, y+1,o-2,h-1, atcolor,abcolor);
 	textMeshSolidBox(m,x+o+2, y+1,w-o,h-1,tcolor);
