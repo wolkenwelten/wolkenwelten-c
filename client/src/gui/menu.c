@@ -26,13 +26,13 @@ bool showAttribution  = false;
 int  attributionLines = 0;
 
 int   savegameCount = 0;
-char  savegameName[8][32];
+char  savegameName[16][32];
 
 char menuTextInputLabel[32];
 
 int   serverlistCount = 0;
-char  serverlistName[8][32];
-char  serverlistIP[8][64];
+char  serverlistName[16][32];
+char  serverlistIP[16][64];
 
 widget *rootMenu   = NULL;
 widget *menuText   = NULL;
@@ -86,11 +86,29 @@ static void checkSavegames(){
 	struct dirent *de = NULL;
 	while((de = readdir(dp)) != NULL){
 		if(de->d_name[0] == '.'){continue;}
-		snprintf(savegameName[savegameCount++],sizeof(savegameName[0]),"%.31s",de->d_name);
-		savegameName[savegameCount-1][sizeof(savegameName[0])-1] = 0;
+		snprintf(savegameName[savegameCount],sizeof(savegameName[0]),"%.31s",de->d_name);
+		savegameName[savegameCount][sizeof(savegameName[0])-1] = 0;
+		if(++savegameCount >= 16){break;}
 	}
 	closedir(dp);
 	refreshSaveList();
+}
+
+static void loadSavegame(int i){
+	if(i < 0){return;}
+	if(i >= savegameCount){return;}
+	strncpy(optionSavegame,savegameName[i],32);
+	optionSavegame[31] = 0;
+	startSingleplayer();
+}
+
+static void deleteSavegame(int i){
+	static char buf[64];
+	if(i < 0)             {return;}
+	if(i > savegameCount) {return;}
+	snprintf(buf,64,"save/%s",savegameName[i]);
+	buf[63]=0;
+	rmDirR(buf);
 }
 
 void handlerJoinServer(widget *wid);
@@ -113,7 +131,7 @@ static void checkServers(){
 }
 
 static void addServer(const char *name, const char *ip){
-	if(serverlistCount >= 7){return;}
+	if(serverlistCount >= 15){return;}
 	snprintf(serverlistName[serverlistCount],sizeof(serverlistName[0]),"%.31s",name);
 	snprintf(serverlistIP[serverlistCount++],sizeof(serverlistIP[0]),"%.63s",ip);
 }
@@ -131,23 +149,6 @@ static void joinServer(int i){
 	if(i >= serverlistCount){return;}
 	snprintf(serverName,sizeof(serverName),"%.63s",serverlistIP[i]);
 	startMultiplayer();
-}
-
-static void loadSavegame(int i){
-	if(i < 0){return;}
-	if(i >= savegameCount){return;}
-	strncpy(optionSavegame,savegameName[i],32);
-	optionSavegame[31] = 0;
-	startSingleplayer();
-}
-
-static void deleteSavegame(int i){
-	static char buf[64];
-	if(i < 0)             {return;}
-	if(i > savegameCount) {return;}
-	snprintf(buf,64,"save/%s",savegameName[i]);
-	buf[63]=0;
-	rmDirR(buf);
 }
 
 void handlerSingleplayer(widget *wid){
