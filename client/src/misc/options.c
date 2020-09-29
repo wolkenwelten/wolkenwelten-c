@@ -3,6 +3,7 @@
 #include "../main.h"
 #include "../gui/menu.h"
 #include "../tmp/assets.h"
+#include "../../../common/src/misc/misc.h"
 #include "../../../common/src/tmp/cto.h"
 
 #include <ctype.h>
@@ -143,7 +144,62 @@ void sanityCheckOptions(){
 	}
 }
 
+static void optionsParseLine(const char *line){
+	int argc;
+	char **argv;
+
+	argv = splitArgs(line,&argc);
+	if(argc == 0)          {return;}
+	if(argv[0][0] == 0)    {return;}
+	if(isspace(argv[0][0])){return;}
+
+	if(strcmp(argv[0],"PlayerName") == 0){
+		if(argc < 2){return;}
+		snprintf(playerName,sizeof(playerName),"%s",line+11);
+		playerName[sizeof(playerName)-1]=0;
+		return;
+	}
+
+	if(strcmp(argv[0],"SoundVolume") == 0){
+		if(argc < 2){return;}
+		optionSoundVolume = MAX(0.f,MIN(1.f,atoi(argv[1])/100.f));
+		return;
+	}
+}
+
+void loadOptions(){
+	size_t len = 0;
+	char *b,*line;
+	b = loadFile("client.settings",&len);
+	if((b == NULL) || (len == 0)){return;}
+
+	line = b;
+	for(uint i=0;i<len;i++){
+		if(b[i] == '\r'){b[i] = 0;}
+		if(b[i] == '\n'){
+			b[i] = 0;
+			optionsParseLine(line);
+			line = &b[i+1];
+		}
+	}
+	optionsParseLine(line);
+}
+
+void saveOptions(){
+	static char buf[512];
+	char *b;
+
+	b  = buf;
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"SaveFormat 1\n");
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"PlayerName %s\n",playerName);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"SoundVolume %i\n",(int)(optionSoundVolume*100.f));
+
+	buf[sizeof(buf)-1] = 0;
+	saveFile("client.settings",buf,strlen(buf));
+}
+
 void initOptions(int argc,char *argv[]){
+	loadOptions();
 	parseOptions(argc,argv);
 	sanityCheckOptions();
 }

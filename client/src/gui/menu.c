@@ -52,6 +52,8 @@ widget *newServerName;
 widget *newServerIP;
 
 widget *optionsMenu;
+widget *optionsName;
+widget *optionsVolume;
 widget *menuErrorLabel;
 
 void startMultiplayer(){
@@ -80,8 +82,8 @@ void startSingleplayer(){
 
 }
 
-void handlerLoadGame(widget *wid);
-void handlerDeleteGame(widget *wid);
+static void handlerLoadGame(widget *wid);
+static void handlerDeleteGame(widget *wid);
 static void refreshSaveList(){
 	widgetEmpty(saveList);
 	for(int i=0;i<savegameCount;i++){
@@ -127,8 +129,8 @@ static void deleteSavegame(int i){
 	rmDirR(buf);
 }
 
-void handlerJoinServer(widget *wid);
-void handlerDeleteServer(widget *wid);
+static void handlerJoinServer(widget *wid);
+static void handlerDeleteServer(widget *wid);
 static void refreshServerList(){
 	widgetEmpty(serverList);
 	for(int i=0;i<serverlistCount;i++){
@@ -167,28 +169,28 @@ static void joinServer(int i){
 	startMultiplayer();
 }
 
-void handlerSingleplayer(widget *wid){
+static void handlerSingleplayer(widget *wid){
 	(void)wid;
 	checkSavegames();
 	widgetSlideW(mainMenu,0);
 	widgetSlideW(saveMenu,288);
 	widgetFocus(NULL);
 }
-void handlerLoadGame(widget *wid){
+static void handlerLoadGame(widget *wid){
 	loadSavegame(wid->vali);
 }
-void handlerDeleteGame(widget *wid){
+static void handlerDeleteGame(widget *wid){
 	deleteSavegame(wid->vali);
 	checkSavegames();
 }
-void handlerJoinServer(widget *wid){
+static void handlerJoinServer(widget *wid){
 	joinServer(wid->vali);
 }
-void handlerDeleteServer(widget *wid){
+static void handlerDeleteServer(widget *wid){
 	delServer(wid->vali);
 	refreshServerList();
 }
-void handlerAttribution(widget *wid){
+static void handlerAttribution(widget *wid){
 	(void)wid;
 	showAttribution = true;
 	menuText->flags |= WIDGET_HIDDEN;
@@ -198,11 +200,11 @@ void handlerAttribution(widget *wid){
 	widgetSlideW(serverMenu,0);
 	widgetFocus(NULL);
 }
-void handlerQuit(widget *wid){
+static void handlerQuit(widget *wid){
 	(void)wid;
 	quit = true;
 }
-void handlerBackToMenu(widget *wid){
+static void handlerBackToMenu(widget *wid){
 	(void)wid;
 	showAttribution = false;
 	menuText->flags &= ~WIDGET_HIDDEN;
@@ -215,7 +217,7 @@ void handlerBackToMenu(widget *wid){
 	widgetSlideH(newServer,0);
 	widgetFocus(NULL);
 }
-void handlerRoot(widget *wid){
+static void handlerRoot(widget *wid){
 	(void)wid;
 	if(showAttribution){
 		showAttribution = false;
@@ -225,16 +227,12 @@ void handlerRoot(widget *wid){
 	}
 }
 
-void handlerPlayerNameBlur(widget *wid){
-	snprintf(playerName,sizeof(playerName),"%s",wid->vals);
-}
-
-void handlerNewGame(widget *wid){
+static void handlerNewGame(widget *wid){
 	(void)wid;
 	widgetSlideH(newGame,156);
 	widgetFocus(newGameName);
 }
-void handlerNewGameCancel(widget *wid){
+static void handlerNewGameCancel(widget *wid){
 	(void)wid;
 	widgetSlideH(newGame,0);
 	newGameName->vals[0] = 0;
@@ -242,7 +240,7 @@ void handlerNewGameCancel(widget *wid){
 	widgetFocus(NULL);
 }
 
-void handlerNewGameSubmit(widget *wid){
+static void handlerNewGameSubmit(widget *wid){
 	(void)wid;
 	if(newGameName->vals[0] == 0){return;}
 	snprintf(optionSavegame,sizeof(optionSavegame),"%s",newGameName->vals);
@@ -253,42 +251,42 @@ void handlerNewGameSubmit(widget *wid){
 	startSingleplayer();
 }
 
-void handlerNewGameNext(widget *wid){
+static void handlerNewGameNext(widget *wid){
 	(void)wid;
 	widgetFocus(newGameSeed);
 }
 
-void handlerMultiplayer(widget *wid){
+static void handlerMultiplayer(widget *wid){
 	(void)wid;
 	checkServers();
 	widgetSlideW(mainMenu,0);
 	widgetSlideW(serverMenu,288);
 	widgetFocus(NULL);
 }
-void handlerNewServer(widget *wid){
+static void handlerNewServer(widget *wid){
 	(void)wid;
 	widgetSlideH(newServer,156);
 	widgetFocus(newServerName);
 }
-void handlerNewServerCancel(widget *wid){
+static void handlerNewServerCancel(widget *wid){
 	(void)wid;
 	widgetSlideH(newServer,0);
 	newServerName->vals[0] = 0;
 	newServerIP->vals[0] = 0;
 	widgetFocus(NULL);
 }
-void handlerNewServerSubmit(widget *wid){
+static void handlerNewServerSubmit(widget *wid){
 	(void)wid;
 	if((newServerName->vals[0] == 0) || (newServerIP->vals[0] == 0)){return;}
 	addServer(newServerName->vals,newServerIP->vals);
 	refreshServerList();
 	handlerNewServerCancel(wid);
 }
-void handlerNewServerNext(widget *wid){
+static void handlerNewServerNext(widget *wid){
 	(void)wid;
 	widgetFocus(newServerIP);
 }
-void handlerOptions(widget *wid){
+static void handlerOptions(widget *wid){
 	(void)wid;
 	checkServers();
 	widgetSlideW(mainMenu,0);
@@ -296,7 +294,7 @@ void handlerOptions(widget *wid){
 	widgetFocus(NULL);
 }
 
-void initMainMenu(){
+static void initMainMenu(){
 	mainMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,288,-1);
 	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,0);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
@@ -310,7 +308,7 @@ void initMainMenu(){
 	widgetLayVert(mainMenu,16);
 }
 
-void initSaveMenu(){
+static void initSaveMenu(){
 	saveMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,0,-1);
 	saveMenu->flags |= WIDGET_HIDDEN;
 
@@ -329,7 +327,7 @@ void initSaveMenu(){
 	checkSavegames();
 }
 
-void initServerMenu(){
+static void initServerMenu(){
 	serverMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,0,-1);
 	serverMenu->flags |= WIDGET_HIDDEN;
 
@@ -347,20 +345,31 @@ void initServerMenu(){
 	checkServers();
 }
 
-static void handlerVolume(widget *wid){
-	optionSoundVolume = wid->vali / 4096.f;
+static void handlerOptionsSave(widget *wid){
+	optionSoundVolume = optionsVolume->vali / 4096.f;
+	snprintf(playerName,sizeof(playerName),"%s",optionsName->vals);
+	saveOptions();
+	handlerBackToMenu(wid);
 }
-void initOptionsMenu(){
-	widget *wid;
+static void handlerOptionsCancel(widget *wid){
+	optionsVolume->vali = optionSoundVolume * 4096.f;
+	snprintf(optionsName->vals,256,"%s",playerName);
+	handlerBackToMenu(wid);
+}
+
+static void initOptionsMenu(){
 	optionsMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,0,-1);
 	optionsMenu->flags |= WIDGET_HIDDEN;
 
 	widgetNewCP  (WIDGET_SPACE ,optionsMenu,16,0,256,0);
-	wid = widgetNewCPLH(WIDGET_SLIDER,optionsMenu,16,0,256,32,"Volume","change",handlerVolume);
-	wid->vali = optionSoundVolume * 4096.f;
+
+	optionsName = widgetNewCPL(WIDGET_TEXTINPUT,optionsMenu,16,0,256,32,"Playername");
+	strncpy(optionsName->vals,playerName,256);
+	optionsVolume = widgetNewCPL(WIDGET_SLIDER,optionsMenu,16,0,256,32,"Volume");
+	optionsVolume->vali = optionSoundVolume * 4096.f;
 	widgetNewCP  (WIDGET_SPACE ,optionsMenu,16,0,256,32);
-	widgetNewCPLH(WIDGET_BUTTON,optionsMenu,16,0,256,32,"Save","click",handlerBackToMenu);
-	widgetNewCPLH(WIDGET_BUTTON,optionsMenu,16,0,256,32,"Cancel","click",handlerBackToMenu);
+	widgetNewCPLH(WIDGET_BUTTON,optionsMenu,16,0,256,32,"Save","click",handlerOptionsSave);
+	widgetNewCPLH(WIDGET_BUTTON,optionsMenu,16,0,256,32,"Cancel","click",handlerOptionsCancel);
 	widgetLayVert(optionsMenu,16);
 }
 
@@ -383,10 +392,6 @@ void initMenu(){
 	wid = widgetNewCPL(WIDGET_LABEL,menuText,0,0,256,32,"Wolkenwelten");
 	wid->flags |= WIDGET_BIG;
 	widgetNewCPL(WIDGET_LABEL,menuText,0,32,256,32,(char *)VERSION);
-	wid = widgetNewCPL(WIDGET_LABEL,menuText,0,64,256,32,"Your Name: ");
-	wid = widgetNewCPL(WIDGET_TEXTINPUT,menuText,0,88,256,32,"Playername");
-	strncpy(wid->vals,playerName,256);
-	widgetBind(wid,"blur",handlerPlayerNameBlur);
 
 	menuErrorLabel = widgetNewCPL(WIDGET_LABEL,menuText,1,-97,256,16,"");
 	widgetNewCPL(WIDGET_LABEL,menuText,1,-33,256,16,menuTextInputLabel);
@@ -397,7 +402,7 @@ void initMenu(){
 	initOptionsMenu();
 }
 
-void drawMenuAttributions(){
+static void drawMenuAttributions(){
 	static int scroll    = 0;
 	static int scrollDir = 1;
 	const int textHeight = attributionLines * 16;

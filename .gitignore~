@@ -9,7 +9,6 @@ xcuserdata/
 /*.tar.gz
 /client/tools/*.dSYM/
 /tools/*.dSYM/
-client.settings
 
 # debugging/profiling data
 /callgrind.out.*
