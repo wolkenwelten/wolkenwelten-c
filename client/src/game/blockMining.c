@@ -3,6 +3,7 @@
 #include "../game/blockType.h"
 #include "../game/itemDrop.h"
 #include "../gfx/effects.h"
+#include "../gfx/gl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
@@ -15,7 +16,6 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include "../gfx/gl.h"
 
 typedef struct {
 	int x,y,z;

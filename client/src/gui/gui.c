@@ -60,6 +60,18 @@ void hideMouseCursor(){
 	widgetFocus(NULL);
 }
 
+int getTilesize(){
+	if(screenWidth < 1024){
+		return 48;
+	}else if(screenWidth < 1536){
+		return 64;
+	}else if(screenWidth < 2048){
+		return 80;
+	}else{
+		return 96;
+	}
+}
+
 void drawCrosshair(){
 	textMeshEmpty(crosshairMesh);
 	int  off = (int)player->inaccuracy;
@@ -87,6 +99,10 @@ void drawCrosshair(){
 
 void resizeUI(){
 	matOrtho(matOrthoProj,0.f,(float)screenWidth,(float)screenHeight,0.f,-1.f,10.f);
+
+	const int sx = 10*getTilesize();
+	chatPanel->w = screenWidth - sx;
+	chatText->w = screenWidth - sx - 64;
 }
 
 void openChat(){
@@ -104,9 +120,10 @@ void handlerRootHud(widget *wid){
 	hideMouseCursor();
 }
 
-
 void handlerChatSubmit(widget *wid){
-	msgSendChatMessage(chatText->vals);
+	if(chatText->vals[0] != 0){
+		msgSendChatMessage(chatText->vals);
+	}
 	handlerRootHud(wid);
 }
 
@@ -122,19 +139,17 @@ void initUI(){
 	guim->tex            = tGui;
 
 	rootHud = widgetNewCP(WIDGET_SPACE,NULL,0,0,-1,-1);
-	//	widgetBind(rootHud,"click",handlerRootHud);
 
 	chatPanel = widgetNewCP(WIDGET_PANEL,rootHud,0,-1,512,0);
 	chatPanel->flags |= WIDGET_HIDDEN;
-	chatText  = widgetNewCPLH(WIDGET_TEXTINPUT,chatPanel,16,16,384,32,"Message","submit",handlerChatSubmit);
-	widgetNewCPLH(WIDGET_BUTTON,chatPanel,-16,16,80,32,"Send","click",handlerChatSubmit);
+	chatText  = widgetNewCPLH(WIDGET_TEXTINPUT,chatPanel,16,16,440,32,"Message","submit",handlerChatSubmit);
+	widgetNewCPLH(WIDGET_BUTTON,chatPanel,-16,16,24,32,">","click",handlerChatSubmit);
 
 	resizeUI();
 }
 
 void drawCursor(){
-	const int x = mousex;
-	const int y = mousey;
+	const int x = mousex, y = mousey;
 	if(mouseHidden){return;}
 
 	textMeshEmpty(cursorMesh);
@@ -149,10 +164,8 @@ void drawCursor(){
 }
 
 void updateMouse(){
-	const uint oldmx = mousex;
-	const uint oldmy = mousey;
-	int nmx,nmy;
-	int btn = getMouseState(&nmx,&nmy);
+	const uint oldmx = mousex, oldmy = mousey;
+	int nmx,nmy, btn = getMouseState(&nmx,&nmy);;
 	mousex = nmx;
 	mousey = nmy;
 
@@ -199,8 +212,6 @@ void drawDebuginfo(){
 	}
 	guim->size = 1;
 
-	//textMeshPrintf(guim,"Speed %.0f\n",sqrtf(player->vx*player->vx + player->vy*player->vy + player->vz*player->vz)*200.f);
-
 	guim->sx   = screenWidth;
 	guim->sy   = 4;
 	textMeshPrintfRA(guim,"%s",VERSION,COMMIT);
@@ -240,14 +251,7 @@ void drawDebuginfo(){
 
 void drawItemBar(){
 	int playerSelection = player->activeItem;
-	int tilesize;
-	if(screenWidth < 1024){
-		tilesize = 48;
-	}else if(screenWidth < 1536){
-		tilesize = 64;
-	}else {
-		tilesize = 80;
-	}
+	const int tilesize = getTilesize();
 
 	guim->size = 2;
 	for(int i = 0;i<10;i++){
@@ -263,14 +267,8 @@ void drawItemBar(){
 
 void drawHealthbar(){
 	static uint ticks = 0;
-	int tilesize,tilesizeoff,x,y,lastsize,lastoff;
-	if(screenWidth < 1024){
-		tilesize = 16;
-	}else if(screenWidth < 1536){
-		tilesize = 24;
-	}else{
-		tilesize = 32;
-	}
+	int tilesizeoff,x,y,lastsize,lastoff;
+	const int tilesize = getTilesize()/2;
 
 	tilesizeoff = tilesize+tilesize/4;
 	lastsize    = tilesize+(tilesize/2);
@@ -407,14 +405,7 @@ void drawAmmunition(){
 	if(ammo <= 0){return;}
 	int amount = characterGetItemAmount(player,ammo);
 
-	int tilesize;
-	if(screenWidth < 1024){
-		tilesize = 48;
-	}else if(screenWidth < 1536){
-		tilesize = 64;
-	}else {
-		tilesize = 80;
-	}
+	const int tilesize = getTilesize();
 
 	guim->sx = screenWidth-(tilesize*1.5f);
 	guim->sy = screenHeight-tilesize*1.75f;

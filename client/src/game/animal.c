@@ -1,6 +1,7 @@
 #include "../game/animal.h"
 
 #include "../game/character.h"
+#include "../gfx/gl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
@@ -9,7 +10,6 @@
 
 #include <stdlib.h>
 #include <math.h>
-#include "../gfx/gl.h"
 
 animal  animalList[1<<10];
 uint    animalCount = 0;

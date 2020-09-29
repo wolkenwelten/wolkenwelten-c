@@ -5,6 +5,7 @@ extern uint mousex,mousey,mouseClicked[3];
 extern bool mouseHidden;
 extern float matOrthoProj[16];
 
+int  getTilesize     ();
 void initUI          ();
 void resizeUI        ();
 void showMouseCursor ();
