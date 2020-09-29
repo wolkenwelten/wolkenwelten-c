@@ -141,9 +141,6 @@ void sanityCheckOptions(){
 	if(optionAutomatedTest < 0){
 		optionAutomatedTest = 0;
 	}
-	if(serverName[0] == 0){
-		strncpy(serverName,"localhost",sizeof(serverName)-1);
-	}
 }
 
 void initOptions(int argc,char *argv[]){

@@ -17,6 +17,7 @@ void      textMeshDigit     (textMesh *m, int x, int y, int size, int digit);
 void      textMeshNumber    (textMesh *m, int x, int y, int size, int number);
 void      textMeshBox       (textMesh *m, int x, int y, int w, int h, float u, float v, float uw, float vh, u32 rgba);
 void      textMeshSolidBox  (textMesh *m, int x, int y, int w, int h, u32 rgba);
+void      textMeshVGradient (textMesh *m, int x, int y, int w, int h, u32 c1, u32 c2);
 void      textMeshItemSprite(textMesh *m, int x, int y, int size, int itemID);
 void      textMeshSlot      (textMesh *m, int x, int y, int size, int style);
 void      textMeshItemSlot  (textMesh *m, int x, int y, int size, int style, int itemID, int amount);

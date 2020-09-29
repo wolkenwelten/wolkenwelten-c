@@ -313,3 +313,17 @@ void textMeshItem(textMesh *m, int x, int y, int size, int style, item *itm){
 		textMeshNumber(m,x+size-size/4,y+(size-size/4-size/32),1,itm->amount);
 	}
 }
+
+void textMeshVGradient(textMesh *m, int x, int y, int w, int h, u32 c1, u32 c2){
+	float u = 19.f/32.f*128.f;
+	float v = 31.f/32.f*128.f;
+	float s =  1.f/32.f*128.f;
+
+	textMeshAddVert(m,x  ,y  ,u  ,v  ,c1);
+	textMeshAddVert(m,x  ,y+h,u  ,v+s,c2);
+	textMeshAddVert(m,x+w,y+h,u+s,v+s,c2);
+
+	textMeshAddVert(m,x+w,y+h,u+s,v+s,c2);
+	textMeshAddVert(m,x+w,y  ,u+s,v  ,c1);
+	textMeshAddVert(m,x  ,y  ,u  ,v  ,c1);
+}
