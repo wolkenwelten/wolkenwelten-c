@@ -55,13 +55,27 @@ widget *menuErrorLabel = NULL;
 void startMultiplayer(){
 	gameRunning     = true;
 	connectionTries = 0;
-	hideMouseCursor();
+
+	mainMenu->flags |= WIDGET_HIDDEN;
+	mainMenu->w = mainMenu->gw = 0;
+	saveMenu->flags |= WIDGET_HIDDEN;
+	saveMenu->w = saveMenu->gw = 0;
+	serverMenu->flags &= ~WIDGET_HIDDEN;
+	serverMenu->w = serverMenu->gw = 288;
+
 	rootMenu->flags |= WIDGET_HIDDEN;
 	widgetFocus(NULL);
+	hideMouseCursor();
 }
 void startSingleplayer(){
 	singleplayer    = true;
 	startMultiplayer();
+
+	serverMenu->flags |= WIDGET_HIDDEN;
+	serverMenu->w = serverMenu->gw = 0;
+	saveMenu->flags &= ~WIDGET_HIDDEN;
+	saveMenu->w = saveMenu->gw = 288;
+
 }
 
 void handlerLoadGame(widget *wid);
@@ -302,6 +316,7 @@ void initSaveMenu(){
 	newGameSeed = widgetNewCPLH(WIDGET_TEXTINPUT,newGame,16,64,256,32,"World Seed","submit",handlerNewGameSubmit);
 	widgetNewCPLH(WIDGET_BUTTON,newGame,16,112,120,32,"Cancel","click",handlerNewGameCancel);
 	widgetNewCPLH(WIDGET_BUTTON,newGame,148,112,120,32,"Create","click",handlerNewGameSubmit);
+	checkSavegames();
 }
 
 void initServerMenu(){
@@ -319,6 +334,7 @@ void initServerMenu(){
 	newServerIP = widgetNewCPLH(WIDGET_TEXTINPUT,newServer,16,64,256,32,"IP / Domain","submit",handlerNewServerSubmit);
 	widgetNewCPLH(WIDGET_BUTTON,newServer,16,112,120,32,"Cancel","click",handlerNewServerCancel);
 	widgetNewCPLH(WIDGET_BUTTON,newServer,148,112,120,32,"Create","click",handlerNewServerSubmit);
+	checkServers();
 }
 
 void initMenu(){

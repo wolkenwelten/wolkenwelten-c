@@ -194,8 +194,8 @@ void keyboardEventHandler(const SDL_Event *e){
 			keysPressed[15] = 1;
 			break;
 		case SDLK_ESCAPE:
-			guiCancel();
 			menuCancel();
+			guiCancel();
 			break;
 		}
 	}

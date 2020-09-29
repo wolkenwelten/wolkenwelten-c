@@ -1,4 +1,3 @@
-- Fix the chat
 - Volume settings
 - Save options/server list to client config file
 - Client side hit checking

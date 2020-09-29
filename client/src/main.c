@@ -127,6 +127,14 @@ void mainloop(){
 	}
 }
 
+void checkAutostart(){
+	if(optionSavegame[0] != 0){
+		startSingleplayer();
+	}else if(serverName[0] != 0){
+		startMultiplayer();
+	}
+}
+
 int main( int argc, char* argv[] ){
 	clientGetName();
 	initOptions(argc,argv);
@@ -162,6 +170,7 @@ int main( int argc, char* argv[] ){
 
 
 	player = characterNew();
+	checkAutostart();
 	#ifdef __EMSCRIPTEN__
 		emscripten_set_main_loop(mainloop, 0, true);
 	#else
