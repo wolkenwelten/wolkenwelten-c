@@ -167,6 +167,37 @@ static void widgetDrawLabel(const widget *wid, textMesh *m, int x, int y, int w,
 	}
 }
 
+static void widgetDrawSlider(const widget *wid, textMesh *m, int x, int y, int w, int h){
+	u32 color  = 0xFF333333;
+	u32 bcolor = 0xFF555555;
+	u32 tcolor = 0xFF222222;
+	u32 abcolor = 0xFFC08840;
+	u32 atcolor = 0xFFA04123;
+	const int textYOff = (h - (2*8))/2;
+	const int textXOff = (w-(strnlen(wid->label,w/16)*16))/2;
+	const int size     = 2;
+	const float v  = MAX(0,MIN(1,wid->vali / 4096.f));
+	int o = v*(w-2);
+
+	if(widgetFocused == wid){
+		color = 0xFF292929;
+	}
+
+	textMeshVGradient(m,x+1, y+1,o-2,h-1, atcolor,abcolor);
+	textMeshSolidBox(m,x+o+2, y+1,w-o,h-1,tcolor);
+
+	textMeshVGradient(m,x+o-2, y+1,4,h-1, bcolor,tcolor);
+	textMeshSolidBox(m,x+1, y  ,w-2,  1,tcolor);
+	textMeshSolidBox(m,x  , y+1,  1,h-2,tcolor);
+	textMeshSolidBox(m,x+1, y+h,w-2,  1,bcolor);
+	textMeshSolidBox(m,x+w, y+1,  1,h-2,bcolor);
+
+	m->sx = x;
+	if(wid->label != NULL){
+		textMeshAddLinePS(m,x+textXOff,y+textYOff,size,wid->label);
+	}
+}
+
 void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h){
 	if(wid == NULL){return;}
 
@@ -188,6 +219,9 @@ void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h)
 			break;
 		case WIDGET_TEXTINPUT:
 			widgetDrawTextInput(wid,m,x,y,w,h);
+			break;
+		case WIDGET_SLIDER:
+			widgetDrawSlider(wid,m,x,y,w,h);
 			break;
 	}
 }

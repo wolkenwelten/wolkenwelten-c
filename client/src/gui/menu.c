@@ -34,23 +34,25 @@ int   serverlistCount = 0;
 char  serverlistName[16][32];
 char  serverlistIP[16][64];
 
-widget *rootMenu   = NULL;
-widget *menuText   = NULL;
-widget *mainMenu   = NULL;
-widget *saveMenu   = NULL;
-widget *saveList   = NULL;
-widget *serverMenu = NULL;
-widget *serverList = NULL;
+widget *rootMenu;
 
-widget *newGame     = NULL;
-widget *newGameName = NULL;
-widget *newGameSeed = NULL;
+widget *menuText;
+widget *mainMenu;
 
-widget *newServer     = NULL;
-widget *newServerName = NULL;
-widget *newServerIP   = NULL;
+widget *saveMenu;
+widget *saveList;
+widget *newGame;
+widget *newGameName;
+widget *newGameSeed;
 
-widget *menuErrorLabel = NULL;
+widget *serverMenu;
+widget *serverList;
+widget *newServer;
+widget *newServerName;
+widget *newServerIP;
+
+widget *optionsMenu;
+widget *menuErrorLabel;
 
 void startMultiplayer(){
 	gameRunning     = true;
@@ -208,6 +210,7 @@ void handlerBackToMenu(widget *wid){
 	widgetSlideW(mainMenu,288);
 	widgetSlideW(saveMenu,0);
 	widgetSlideW(serverMenu,0);
+	widgetSlideW(optionsMenu,0);
 	widgetSlideH(newGame,0);
 	widgetSlideH(newServer,0);
 	widgetFocus(NULL);
@@ -274,7 +277,6 @@ void handlerNewServerCancel(widget *wid){
 	newServerIP->vals[0] = 0;
 	widgetFocus(NULL);
 }
-
 void handlerNewServerSubmit(widget *wid){
 	(void)wid;
 	if((newServerName->vals[0] == 0) || (newServerIP->vals[0] == 0)){return;}
@@ -282,10 +284,16 @@ void handlerNewServerSubmit(widget *wid){
 	refreshServerList();
 	handlerNewServerCancel(wid);
 }
-
 void handlerNewServerNext(widget *wid){
 	(void)wid;
 	widgetFocus(newServerIP);
+}
+void handlerOptions(widget *wid){
+	(void)wid;
+	checkServers();
+	widgetSlideW(mainMenu,0);
+	widgetSlideW(optionsMenu,288);
+	widgetFocus(NULL);
 }
 
 void initMainMenu(){
@@ -293,6 +301,8 @@ void initMainMenu(){
 	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,0);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Multiplayer","click",handlerMultiplayer);
+	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,32);
+	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Options","click",handlerOptions);
 	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,32);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Attribution","click",handlerAttribution);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Quit","click",handlerQuit);
@@ -337,6 +347,23 @@ void initServerMenu(){
 	checkServers();
 }
 
+static void handlerVolume(widget *wid){
+	optionSoundVolume = wid->vali / 4096.f;
+}
+void initOptionsMenu(){
+	widget *wid;
+	optionsMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,0,-1);
+	optionsMenu->flags |= WIDGET_HIDDEN;
+
+	widgetNewCP  (WIDGET_SPACE ,optionsMenu,16,0,256,0);
+	wid = widgetNewCPLH(WIDGET_SLIDER,optionsMenu,16,0,256,32,"Volume","change",handlerVolume);
+	wid->vali = optionSoundVolume * 4096.f;
+	widgetNewCP  (WIDGET_SPACE ,optionsMenu,16,0,256,32);
+	widgetNewCPLH(WIDGET_BUTTON,optionsMenu,16,0,256,32,"Save","click",handlerBackToMenu);
+	widgetNewCPLH(WIDGET_BUTTON,optionsMenu,16,0,256,32,"Cancel","click",handlerBackToMenu);
+	widgetLayVert(optionsMenu,16);
+}
+
 void initMenu(){
 	widget *wid;
 	menuM = textMeshNew();
@@ -367,6 +394,7 @@ void initMenu(){
 	initMainMenu();
 	initSaveMenu();
 	initServerMenu();
+	initOptionsMenu();
 }
 
 void drawMenuAttributions(){
@@ -447,7 +475,7 @@ void menuCancel(){
 		widgetEmit(rootMenu,"click");
 		return;
 	}
-	if((saveMenu->gw > 0) || (serverMenu->gw > 0)){
+	if((saveMenu->gw > 0) || (serverMenu->gw > 0) || (optionsMenu->gw > 0)){
 		if(newGame->gh > 0){
 			handlerNewGameCancel(NULL);
 		}else if(newServer->gh > 0){

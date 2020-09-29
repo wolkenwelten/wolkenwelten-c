@@ -33,6 +33,7 @@ struct widget {
 #define WIDGET_LABEL      5
 #define WIDGET_BUTTONDEL  6
 #define WIDGET_TEXTINPUT  7
+#define WIDGET_SLIDER     8
 
 #define WIDGET_HIDDEN   (1   )
 #define WIDGET_HOVER    (1<<1)

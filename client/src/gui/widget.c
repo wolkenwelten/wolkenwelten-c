@@ -249,6 +249,11 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 		wid->flags |= WIDGET_HOVER;
 		if(mouseClicked[0]){
 			wid->flags |= WIDGET_CLICKED;
+			if(wid->type == WIDGET_SLIDER){
+				float v = (float)(mousex - x) / (float)w;
+				wid->vali = v*4096;
+				widgetEmit(wid,"change");
+			}
 		}else{
 			if(wid->flags & WIDGET_CLICKED){
 				if((wid->type == WIDGET_BUTTONDEL) && ((int)mousex > x+w-40)){
