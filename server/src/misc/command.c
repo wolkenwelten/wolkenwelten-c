@@ -1,4 +1,5 @@
-#define _DEFAULT_SOURCE
+#define _GNU_SOURCE
+
 #include "command.h"
 
 #include "../game/animal.h"

@@ -1,4 +1,5 @@
-#define _DEFAULT_SOURCE
+#define _GNU_SOURCE
+
 #include "server_ws.h"
 
 #include "../misc/sha1.h"

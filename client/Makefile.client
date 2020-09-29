@@ -20,7 +20,7 @@ wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
 wolkenwelten: LIBS      += $(CLIENT_LIBS)
 wolkenwelten: client/make.deps $(CLIENT_OBJS)
-	$(CC) $(CLIENT_OBJS) -o wolkenwelten $(OPTIMIZATION) $(CFLAGS) $(LIBS)
+	$(CC) $(CLIENT_OBJS) -o wolkenwelten $(OPTIMIZATION) $(CFLAGS) $(LIBS) $(CSTD)
 
 .deps: client/make.deps
 client/make.deps: | client/src/tmp/assets.h client/src/tmp/meshassets.h common/src/tmp/cto.h client/src/tmp/objs.h client/src/tmp/mods_tmp.c client/src/tmp/sfx.h
@@ -33,7 +33,7 @@ client/src/tmp/assets.h: client/src/tmp/assets.c
 	@true
 
 client/tools/assets: client/tools/assets.c
-	$(CC) $(OPTIMIZATION) $(CFLAGS) $< -o $@
+	$(CC) $(OPTIMIZATION) $(CSTD) $(CFLAGS) $< -o $@
 
 client/src/tmp/meshassets.c: client/tools/objparser $(MESHASSETS)
 	mkdir -p client/src/tmp/
@@ -42,7 +42,7 @@ client/src/tmp/meshassets.h: client/src/tmp/meshassets.c
 	@true
 
 client/tools/objparser: client/tools/objparser.c
-	$(CC) $(OPTIMIZATION) $(CFLAGS) $< -o $@
+	$(CC) $(OPTIMIZATION) $(CFLAGS) $(CSTD) $< -o $@
 
 client/src/tmp/mods_tmp.o: client/src/tmp/mods_tmp.c
 client/src/tmp/mods_tmp.c: $(MODS_SRCS)

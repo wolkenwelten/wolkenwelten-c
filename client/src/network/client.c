@@ -1,4 +1,4 @@
-#define _DEFAULT_SOURCE
+#define _GNU_SOURCE
 
 #include "client.h"
 #include "../main.h"

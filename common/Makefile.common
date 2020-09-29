@@ -43,7 +43,7 @@ archive:
 
 
 tools/modscg: tools/modscg.c
-	$(CC) -Os $(CFLAGS) $< -o $@
+	$(CC) -Os $(CFLAGS) $(CSTD) $< -o $@
 
 common/src/tmp/cto.c: tools/infogen
 	mkdir -p common/src/tmp/

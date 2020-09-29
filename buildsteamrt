@@ -2,5 +2,5 @@
 sudo rsync -avh --delete ../wolkenwelten /var/chroots/steamrt_scout_amd64/root/
 sudo schroot -c steamrt_scout_amd64 -- bash -c "cd ~/wolkenwelten/ && make clean && make release.linux -j4"
 mkdir -p releases/linux/
-sudo cp -f /var/chroots/steamrt_scout_amd64/root/wolkenwelten/releases/linux/* releases/linux/
+sudo cp -rf /var/chroots/steamrt_scout_amd64/root/wolkenwelten/releases/linux/* releases/linux/
 sudo chown -R benny:benny releases/linux/*

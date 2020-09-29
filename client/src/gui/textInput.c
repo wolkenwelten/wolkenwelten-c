@@ -1,4 +1,5 @@
-#define _DEFAULT_SOURCE
+#define _GNU_SOURCE
+
 #include "textInput.h"
 #include "../sdl/input_keyboard.h"
 #include "../sdl/sdl.h"
