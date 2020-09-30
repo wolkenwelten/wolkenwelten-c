@@ -1,6 +1,10 @@
 #pragma once
 #include "widget.h"
 
+extern int  serverlistCount;
+extern char serverlistName[16][32];
+extern char serverlistIP[16][64];
+
 void initMenu          ();
 void renderMenu        ();
 void menuSetError      (char *error);

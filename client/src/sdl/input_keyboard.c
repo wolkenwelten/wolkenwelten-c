@@ -85,7 +85,7 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDLK_RIGHT:
 		case SDLK_d:
-			keysPressed[3] = 0; /*  */
+			keysPressed[3] = 0;
 			menuChangeFocus(1,0);
 			break;
 		case SDLK_SPACE:

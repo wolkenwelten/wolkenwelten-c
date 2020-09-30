@@ -146,6 +146,8 @@ static int widgetIsSelectable(widget *cur){
 	if(cur->flags & WIDGET_HNS      ){return 0;}
 	if(cur->type == WIDGET_BUTTON   ){return 1;}
 	if(cur->type == WIDGET_BUTTONDEL){return 1;}
+	if(cur->type == WIDGET_TEXTINPUT){return 1;}
+	if(cur->type == WIDGET_SLIDER   ){return 1;}
 	return 0;
 }
 
@@ -253,6 +255,7 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 				float v = (float)(mousex - x) / (float)w;
 				wid->vali = v*4096;
 				widgetEmit(wid,"change");
+				widgetFocus(wid);
 			}
 		}else{
 			if(wid->flags & WIDGET_CLICKED){
@@ -367,9 +370,9 @@ void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
 
 void widgetSlideW(widget *w, int nw){
 	if(nw == 0){
-		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
+		w->flags &= ~WIDGET_HIDDEN;
 		w->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
-		w->gw     =   0;
+		w->gw = 0;
 	}else{
 		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
 		w->flags |= WIDGET_ANIMATEW;
@@ -379,9 +382,9 @@ void widgetSlideW(widget *w, int nw){
 
 void widgetSlideH(widget *w, int nh){
 	if(nh == 0){
-		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
+		w->flags &= ~WIDGET_HIDDEN;
 		w->flags |= WIDGET_ANIMATEH | WIDGET_NOSELECT;
-		w->gh     =   0;
+		w->gh = 0;
 	}else{
 		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
 		w->flags |= WIDGET_ANIMATEH;

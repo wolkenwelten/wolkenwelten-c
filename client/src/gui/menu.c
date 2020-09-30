@@ -25,14 +25,14 @@ textMesh *menuM;
 bool showAttribution  = false;
 int  attributionLines = 0;
 
-int   savegameCount = 0;
-char  savegameName[16][32];
+int  savegameCount = 0;
+char savegameName[16][32];
 
 char menuTextInputLabel[32];
 
-int   serverlistCount = 0;
-char  serverlistName[16][32];
-char  serverlistIP[16][64];
+int  serverlistCount = 0;
+char serverlistName[16][32];
+char serverlistIP[16][64];
 
 widget *rootMenu;
 
@@ -189,6 +189,7 @@ static void handlerJoinServer(widget *wid){
 static void handlerDeleteServer(widget *wid){
 	delServer(wid->vali);
 	refreshServerList();
+	saveOptions();
 }
 static void handlerAttribution(widget *wid){
 	(void)wid;
@@ -280,6 +281,7 @@ static void handlerNewServerSubmit(widget *wid){
 	if((newServerName->vals[0] == 0) || (newServerIP->vals[0] == 0)){return;}
 	addServer(newServerName->vals,newServerIP->vals);
 	refreshServerList();
+	saveOptions();
 	handlerNewServerCancel(wid);
 }
 static void handlerNewServerNext(widget *wid){
@@ -299,10 +301,10 @@ static void initMainMenu(){
 	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,0);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Multiplayer","click",handlerMultiplayer);
-	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,32);
+	widgetNewCP  (WIDGET_HR ,mainMenu,16,0,256,32);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Options","click",handlerOptions);
-	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,32);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Attribution","click",handlerAttribution);
+	widgetNewCP  (WIDGET_HR ,mainMenu,16,0,256,32);
 	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Quit","click",handlerQuit);
 
 	widgetLayVert(mainMenu,16);
@@ -313,6 +315,7 @@ static void initSaveMenu(){
 	saveMenu->flags |= WIDGET_HIDDEN;
 
 	saveList = widgetNewCP(WIDGET_SPACE,saveMenu,0,0,288,32);
+	widgetNewCP(WIDGET_HR,saveMenu,16,0,256,32);
 	widgetNewCPLH(WIDGET_BUTTON,saveMenu,16,0,256,32,"New Game","click",handlerNewGame);
 	widgetNewCPLH(WIDGET_BUTTON,saveMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
 
@@ -332,6 +335,7 @@ static void initServerMenu(){
 	serverMenu->flags |= WIDGET_HIDDEN;
 
 	serverList = widgetNewCP(WIDGET_SPACE,serverMenu,0,0,288,32);
+	widgetNewCP(WIDGET_HR,serverMenu,16,0,256,32);
 	widgetNewCPLH(WIDGET_BUTTON,serverMenu,16,0,256,32,"New Server","click",handlerNewServer);
 	widgetNewCPLH(WIDGET_BUTTON,serverMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
 	widgetLayVert(serverMenu,16);
@@ -367,7 +371,7 @@ static void initOptionsMenu(){
 	strncpy(optionsName->vals,playerName,256);
 	optionsVolume = widgetNewCPL(WIDGET_SLIDER,optionsMenu,16,0,256,32,"Volume");
 	optionsVolume->vali = optionSoundVolume * 4096.f;
-	widgetNewCP  (WIDGET_SPACE ,optionsMenu,16,0,256,32);
+	widgetNewCP  (WIDGET_HR ,optionsMenu,16,0,256,32);
 	widgetNewCPLH(WIDGET_BUTTON,optionsMenu,16,0,256,32,"Save","click",handlerOptionsSave);
 	widgetNewCPLH(WIDGET_BUTTON,optionsMenu,16,0,256,32,"Cancel","click",handlerOptionsCancel);
 	widgetLayVert(optionsMenu,16);
@@ -439,13 +443,15 @@ void renderMenu(){
 void menuChangeFocus(int xoff,int yoff){
 	(void)xoff;
 	if(gameRunning){return;}
-	if(textInputActive()){return;}
 
 	if(widgetFocused != NULL){
 		if(yoff < 0){
 			widgetFocus(widgetNextSel(widgetFocused));
 		}else if(yoff > 0){
 			widgetFocus(widgetPrevSel(widgetFocused));
+		}
+		if((widgetFocused->type == WIDGET_SLIDER) && (xoff != 0)){
+			widgetFocused->vali = MAX(0,MIN(4096,(widgetFocused->vali + xoff*128)));
 		}
 	}
 	if(widgetFocused == NULL){

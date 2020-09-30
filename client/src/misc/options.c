@@ -155,7 +155,7 @@ static void optionsParseLine(const char *line){
 
 	if(strcmp(argv[0],"PlayerName") == 0){
 		if(argc < 2){return;}
-		snprintf(playerName,sizeof(playerName),"%s",line+11);
+		snprintf(playerName,sizeof(playerName),"%s",argv[1]);
 		playerName[sizeof(playerName)-1]=0;
 		return;
 	}
@@ -163,6 +163,17 @@ static void optionsParseLine(const char *line){
 	if(strcmp(argv[0],"SoundVolume") == 0){
 		if(argc < 2){return;}
 		optionSoundVolume = MAX(0.f,MIN(1.f,atoi(argv[1])/100.f));
+		return;
+	}
+
+	if(strcmp(argv[0],"Server") == 0){
+		if(argc < 3){return;}
+		if(serverlistCount >= 15){return;}
+		snprintf(serverlistIP[serverlistCount],sizeof(serverlistIP[0]),"%s",argv[1]);
+		snprintf(serverlistName[serverlistCount],sizeof(serverlistName[0]),"%s",argv[2]);
+		serverlistIP[serverlistCount][sizeof(serverlistIP[0])-1]=0;
+		serverlistName[serverlistCount][sizeof(serverlistName[0])-1]=0;
+		serverlistCount++;
 		return;
 	}
 }
@@ -186,13 +197,16 @@ void loadOptions(){
 }
 
 void saveOptions(){
-	static char buf[512];
+	static char buf[4096];
 	char *b;
 
 	b  = buf;
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"SaveFormat 1\n");
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"PlayerName %s\n",playerName);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"PlayerName \"%s\"\n",playerName);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"SoundVolume %i\n",(int)(optionSoundVolume*100.f));
+	for(int i=0;i<serverlistCount;i++){
+		b += snprintf(b,sizeof(buf)-(b-buf+1),"Server %s \"%s\"\n",serverlistIP[i],serverlistName[i]);
+	}
 
 	buf[sizeof(buf)-1] = 0;
 	saveFile("client.settings",buf,strlen(buf));

@@ -178,10 +178,14 @@ static void widgetDrawSlider(const widget *wid, textMesh *m, int x, int y, int w
 	const float v  = MAX(0,MIN(1,wid->vali / 4096.f));
 	int o = v*(w-2);
 
-	textMeshVGradient(m,x+1, y+1,o-2,h-1, atcolor,abcolor);
+	textMeshVGradient(m,x+1, y+1,o-2,h-1, abcolor,atcolor);
 	textMeshSolidBox(m,x+o+2, y+1,w-o,h-1,tcolor);
 
 	textMeshVGradient(m,x+o-2, y+1,4,h-1, bcolor,tcolor);
+	if(wid == widgetFocused){
+		tcolor = abcolor;
+		bcolor = atcolor;
+	}
 	textMeshSolidBox(m,x+1, y  ,w-2,  1,tcolor);
 	textMeshSolidBox(m,x  , y+1,  1,h-2,tcolor);
 	textMeshSolidBox(m,x+1, y+h,w-2,  1,bcolor);
@@ -193,12 +197,21 @@ static void widgetDrawSlider(const widget *wid, textMesh *m, int x, int y, int w
 	}
 }
 
+static void widgetDrawHR(const widget *wid, textMesh *m, int x, int y, int w, int h){
+	(void)wid;
+	const u32 bcolor = 0xCC444444;
+	const u32 tcolor = 0xCC111111;
+	const uint o = MAX(0,(h/2)-2);
+	textMeshVGradient(m,x,y+o,w,4,tcolor,bcolor);
+}
+
+
 void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h){
 	if(wid == NULL){return;}
 
 	switch(wid->type){
 		case WIDGET_PANEL:
-			widgetDrawPanel (wid,m,x,y,w,h);
+			widgetDrawPanel(wid,m,x,y,w,h);
 			break;
 		case WIDGET_BUTTON:
 			widgetDrawButton(wid,m,x,y,w,h);
@@ -217,6 +230,9 @@ void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h)
 			break;
 		case WIDGET_SLIDER:
 			widgetDrawSlider(wid,m,x,y,w,h);
+			break;
+		case WIDGET_HR:
+			widgetDrawHR(wid,m,x,y,w,h);
 			break;
 	}
 }
