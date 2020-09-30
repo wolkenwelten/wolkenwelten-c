@@ -16,8 +16,8 @@ char playerName[28];
 char serverName[64];
 char optionSavegame[32];
 
-float optionMusicVolume       = 0.75f;
-float optionSoundVolume       = 1.f;
+float optionMusicVolume       = 0.25f;
+float optionSoundVolume       = 0.5f;
 int   optionAutomatedTest     = 0;
 int   optionWorldSeed         = 0;
 bool  optionDebugInfo         = false;
