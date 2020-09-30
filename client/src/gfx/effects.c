@@ -52,11 +52,11 @@ void fxGrenadeTrail(const vec pos,float pw){
 void fxExplosionBlaster(const vec pos,float pw){
 	for(int i=0;i<512;i++){
 		const vec v = vecMulS(vecRng(),(1.f/8.f)*pw);
-		newParticleV(pos,v,vecMulS(v,1/-64.f),64.f,1.f,0xFF964AC0,96);
+		newParticleV(pos,v,vecMulS(v,1/-64.f),32.f,2.f,0xFF964AC0,156);
 	}
 	for(int i=0;i<512;i++){
 		const vec v = vecMulS(vecRng(),(1.f/12.f)*pw);
-		newParticleV(pos,v,vecMulS(v,1/-96.f),64.f,1.f,0xFF7730A0,78);
+		newParticleV(pos,v,vecMulS(v,1/-96.f),16.f,4.f,0xFF7730A0,128);
 	}
 }
 void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultiplier, float recoilMultiplier, uint hitsLeft, uint originatingCharacter){
