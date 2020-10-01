@@ -190,6 +190,8 @@ void updateMouse(){
 	}
 }
 
+
+
 void drawDebuginfo(){
 	static uint ticks=0;
 	int tris = vboTrisCount;

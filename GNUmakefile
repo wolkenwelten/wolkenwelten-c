@@ -25,6 +25,9 @@ else
 		ifdef MINGWCROSS
 			include platform/win_cross/Makefile.win
 		endif
+		ifdef OSXCROSS
+			include platform/macos_cross/Makefile.macos
+		endif
 	endif
 	ifeq ($(UNAME_S),Haiku)
 		include platform/haiku/Makefile.haiku
