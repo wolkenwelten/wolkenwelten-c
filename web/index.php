@@ -1,6 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <?php
 
+require "func.php";
+
 $stable       = [];
 $experimental = [];
 $platforms    = [
@@ -8,64 +10,6 @@ $platforms    = [
 	'macos' => 'MacOS',
 	'linux' => 'GNU/Linux'
 ];
-
-function getReleaseDir(){
-	if(is_dir('releases')){return 'releases/';}
-	if(is_dir('../releases')){return '../releases/';}
-	return false;
-}
-
-function checkReleases($platform){
-	global $stable,$experimental;
-
-	$arrS = [];
-	$arrE = [];
-	$dir = getReleaseDir().$platform.'/';
-	if(!is_dir($dir)){return;}
-	$handle = opendir($dir);
-	if ($handle === false){return;}
-	while (false !== ($entry = readdir($handle))) {
-		if($entry[0] == '.'){continue;}
-		if(strpos($entry,"wolkenwelten-$platform") === false){continue;}
-		if(strpos($entry,"master") === false){
-			$arrS[$entry] = filemtime($dir.$entry);
-		}else{
-			$arrE[$entry] = filemtime($dir.$entry);
-		}
-	}
-	closedir($handle);
-	asort($arrS,SORT_NUMERIC);
-	asort($arrE,SORT_NUMERIC);
-
-	$stable[$platform]       = array_reverse($arrS,true);
-	$experimental[$platform] = array_reverse($arrE,true);
-}
-
-function niceName($platform){
-	global $platforms;
-
-	if(isset($platforms[$platform])){
-		return $platforms[$platform];
-	}
-	return $platform;
-}
-
-function niceDate($name){
-	$path = getReleaseDir().$name;
-	$mtime = filemtime($path);
-	return "Released: ".date("Y-m-d H:i:s",$mtime);
-}
-
-function echoBuilds($arr){
-	foreach($arr as $platform => $releases){
-		$rel = array_key_first($releases);
-		if(trim($rel) == ''){continue;}
-		$href = 'release/'.$platform.'/'.$rel;
-		$label = '<span class=buttonlabel>'.niceName($platform).'</span><span class="buttonicon icon-'.$platform.'"></span>';
-		echo '<a href="'.$href.'" download class=button title="'.niceDate($platform.'/'.$rel).'">'.$label."</a>";
-	}
-	echo "<br/>\n";
-}
 
 foreach(array_keys($platforms) as $plat){
 	checkReleases($plat);
@@ -77,9 +21,11 @@ foreach(array_keys($platforms) as $plat){
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Wolkenwelten</title>
-	<link rel="icon" type="image/png" href="favicon16.png" sizes="16x16">
-	<link rel="icon" type="image/png" href="favicon32.png" sizes="32x32">
-	<link rel="stylesheet" href="main.css"/>
+	<link rel="icon" type="image/png" href="<?php echo baseSF('favicon16.png'); ?>" sizes="16x16">
+	<link rel="icon" type="image/png" href="<?php echo baseSF('favicon32.png'); ?>" sizes="32x32">
+	<style>
+	<?php echo file_get_contents("main.css"); ?>
+	</style>
 </head>
 <body bgcolor="#333333" text="#cccccc"  link="#cc3366" vlink="#cc3366" alink="#cc3366">
 	<h1>Wolkenwelten Alpha</h1>
@@ -114,9 +60,9 @@ foreach(array_keys($platforms) as $plat){
 	<hr/>
 	<h2>Have some Screenshots</h2>
 	<div align=center class=pics>
-		<a href="img/1.jpg"><img src="img/1.jpg" width=1920 height=1080/></a>
-		<a href="img/2.jpg"><img src="img/2.jpg" width=1920 height=1080/></a>
-		<a href="img/3.jpg"><img src="img/3.jpg" width=1920 height=1080/></a>
+		<a href="img/1.jpg"><img src="<?php echo baseSFS('img/1.jpg'); ?>" width=1920 height=1080/></a>
+		<a href="img/2.jpg"><img src="<?php echo baseSFS('img/2.jpg'); ?>" width=1920 height=1080/></a>
+		<a href="img/3.jpg"><img src="<?php echo baseSFS('img/3.jpg'); ?>" width=1920 height=1080/></a>
 	</div>
 	<hr/>
 	<h3>My priorities for this game</h3>
@@ -148,7 +94,7 @@ foreach(array_keys($platforms) as $plat){
 	<p><span class=key>N</span> to start flying around in no-clip mode.</p>
 	<br/>
 	<h4>Gamepad</h4>
-	<img src="img/padcontrols.png" width=900 height=504 class="imgfw" />
+	<img src="<?php echo baseSF('img/padcontrols.png'); ?>" width=900 height=504 class="imgfw" />
 	<p><i>The layout is based on an Xbox360 controller, if you have a different controller it might differ but should be in a similar physical location.</i></p>
 	<p>Use the left analog stick to walk around and the right analog stick to look around. Use the D-Pad to select the active item. A for jumping and Y for dropping items. Use the left shoulder trigger for activating the current item and the right one for destroying blocks, the right shoulder button shoots the grappling hook. To open the Inventory press the left Menu button, most probably labeled "Back".</p>
 	<br/>

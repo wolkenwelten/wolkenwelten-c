@@ -1,17 +1,16 @@
 OSX_CLIENT_LIBS      := -F ~/ReleaseFrameworks/ -framework SDL2 -framework SDL2_mixer -framework OpenGL
 OSX_CLIENT_CINCLUDES := -I ~/ReleaseFrameworks/include/SDL2
-WEBEXCLUDE           += --exclude=releases/macos/wolkenwelten.app --exclude=releases/macos/wolkenwelten.iconset/
 
 .PHONY: release.macos
 release: release.macos
-release.macos: releases/macos/wolkenwelten-macos.tgz
 
-releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/Info.plist
-releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten
-releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten-server
-releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/Frameworks/SDL2.framework
-releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/Frameworks/SDL2_mixer.framework
-releases/macos/wolkenwelten-macos.tgz: releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns
+release.macos: releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz
+releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz: releases/macos/wolkenwelten.app/Contents/Info.plist
+releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz: releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten
+releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz: releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten-server
+releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz: releases/macos/wolkenwelten.app/Contents/Frameworks/SDL2.framework
+releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz: releases/macos/wolkenwelten.app/Contents/Frameworks/SDL2_mixer.framework
+releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz: releases/macos/wolkenwelten.app/Contents/Resources/wolkenwelten.icns
 	cd releases/macos/ && tar -czf wolkenwelten-macos-$(VERSION_NAME).tgz wolkenwelten.app
 
 releases/macos/wolkenwelten.app/Contents/MacOS/wolkenwelten: LIBS      += $(OSX_CLIENT_LIBS)

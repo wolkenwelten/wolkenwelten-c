@@ -8,8 +8,6 @@ WINLIBS              := -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -li
 WIN_STATICLIBS       := -static-libgcc -static -lmingw32 -lm -lstdc++ -lpthread -lopengl32 -lSDL2main -lssp -lSDL2 -lSDL2_mixer $(WINLIBS)
 WIN_CLIENT_LIBS      := $(WINLIBS) -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer
 
-WEBEXCLUDE       += --exclude=releases/win/wolkenwelten/ --exclude=releases/win/*.res
-
 .PHONY: release.win
 release: release.win
 

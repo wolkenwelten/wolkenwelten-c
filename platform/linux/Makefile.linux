@@ -6,8 +6,6 @@ CLIENT_LIBS      := -lGL -lpthread -ldl -lSDL2 -lSDL2_mixer
 DYNLIBS          := -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer
 STATICLIBS       :=
 
-WEBEXCLUDE       += --exclude=releases/linux/wolkenwelten
-
 .PHONY: all
 all: wolkenwelten wolkenwelten-server
 

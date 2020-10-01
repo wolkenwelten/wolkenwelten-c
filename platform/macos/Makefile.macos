@@ -2,7 +2,6 @@ CC               := clang
 CLIENT_LIBS      :=-F /Library/Frameworks -framework SDL2 -framework SDL2_mixer -framework OpenGL
 CFLAGS           += -mmacosx-version-min=10.10 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.10.sdk
 CLIENT_CINCLUDES := -I/usr/local/include/ -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_mixer.framework/Headers
-WEBEXCLUDE       += --exclude=releases/macos/wolkenwelten.app --exclude=releases/macos/wolkenwelten.iconset/
 
 .PHONY: all
 all: wolkenwelten wolkenwelten-server
