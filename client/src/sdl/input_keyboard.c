@@ -44,8 +44,8 @@ vec doKeyboardupdate(vec vel){
 
 	vec rot = vecZero();
 	if(keysPressed[12]){rot.x = -1;}
-	if(keysPressed[13]){rot.y = -1;}
-	if(keysPressed[14]){rot.y =  1;}
+	if(keysPressed[13]){rot.y =  1;}
+	if(keysPressed[14]){rot.y = -1;}
 	if(keysPressed[15]){rot.x =  1;}
 	characterRotate(player,vecMulS(rot,3));
 
