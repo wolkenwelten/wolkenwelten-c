@@ -94,8 +94,8 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDLK_RETURN:
 		case SDLK_KP_ENTER:
-			menuKeyClick(0);
 			openChat();
+			menuKeyClick(0);
 			break;
 		case SDLK_DELETE:
 		case SDLK_BACKSPACE:
