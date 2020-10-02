@@ -213,6 +213,7 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Respawning...");
 	}
 	guim->size = 1;
+	guim->font = 1;
 
 	guim->sx   = screenWidth;
 	guim->sy   = 4;
@@ -223,10 +224,13 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"FPS %02.0f\n",curFPS);
 
 	vboTrisCount = 0;
-	if(!optionDebugInfo){return;}
+	if(!optionDebugInfo){
+		guim->font = 0;
+		return;
+	}
 
 	guim->sx   =  4;
-	guim->sy   = 56;
+	guim->sy   = getTilesize();
 	textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f GVX: %02.4f\n",player->pos.x,player->vel.x,player->gvel.x);
 	textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f GVY: %02.4f\n",player->pos.y,player->vel.y,player->gvel.y);
 	textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f GVZ: %02.4f\n",player->pos.z,player->vel.z,player->gvel.z);
@@ -248,6 +252,8 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"Uncompressed: %sB\n",getHumanReadableSize(recvUncompressedBytesCurrentSession));
 	textMeshPrintf(guim,"Comp. Ratio : %2.2fX\n",(float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession);
 	textMeshPrintf(guim,"Canvas Size : %ix%i\n",screenWidth,screenHeight);
+
+	guim->font = 0;
 
 }
 
@@ -428,6 +434,7 @@ void drawChat(){
 	guim->sy   = screenHeight - (9*16) - (chatPanel->h-8);
 	guim->sx   = 24;
 	guim->size = 1;
+	guim->font = 1;
 	for(int i=0;i<8;i++){
 		textMeshAddString(guim,chatLog[i]);
 		guim->sy += 8;
@@ -437,6 +444,7 @@ void drawChat(){
 		textMeshAddString(guim,chatLog[i]);
 		guim->sy += 16;
 	}
+	guim->font = 0;
 }
 
 void drawHud(){

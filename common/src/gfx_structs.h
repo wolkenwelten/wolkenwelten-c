@@ -24,7 +24,7 @@ typedef struct vertex2D {
 
 typedef struct {
 	vertex2D dataBuffer[1<<14];
-	 int sx,sy,size;
+	 int sx,sy,size,font;
 	 int dataCount;
 	 int vboSize;
 	uint vbo,usage;

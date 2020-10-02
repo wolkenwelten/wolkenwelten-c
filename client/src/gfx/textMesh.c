@@ -109,7 +109,7 @@ void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c){
 		glyphSize = 1.f / 128.f;
 	}
 
-	gx = ((float)(c&0x0f))*glyphSize;
+	gx = ((float)(c&0x0f))*glyphSize + (m->font * 1.f/4.f);
 	gy = ((float)(63-((c>>4)&0x0f)))*glyphSize;
 	if(size == 1){
 		gy = ((float)(15-((c>>4)&0x0f)))*glyphSize + 24.f/32.f;
