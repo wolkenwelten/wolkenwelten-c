@@ -445,13 +445,13 @@ void menuChangeFocus(int xoff,int yoff){
 	if(gameRunning){return;}
 
 	if(widgetFocused != NULL){
+		if((widgetFocused->type == WIDGET_SLIDER) && (xoff != 0)){
+			widgetFocused->vali = MAX(0,MIN(4096,(widgetFocused->vali + xoff*128)));
+		}
 		if(yoff < 0){
 			widgetFocus(widgetNextSel(widgetFocused));
 		}else if(yoff > 0){
 			widgetFocus(widgetPrevSel(widgetFocused));
-		}
-		if((widgetFocused->type == WIDGET_SLIDER) && (xoff != 0)){
-			widgetFocused->vali = MAX(0,MIN(4096,(widgetFocused->vali + xoff*128)));
 		}
 	}
 	if(widgetFocused == NULL){
