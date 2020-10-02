@@ -193,9 +193,10 @@ void updateMouse(){
 
 
 void drawDebuginfo(){
-	static uint ticks=0;
+	static uint ticks = 0;
 	int tris = vboTrisCount;
 
+	guim->font = 1;
 	if(recvBytesCurrentSession <= 0){
 		guim->sx   = screenWidth/2-(10*16);
 		guim->sy   = screenHeight/2+32;
@@ -213,8 +214,6 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Respawning...");
 	}
 	guim->size = 1;
-	guim->font = 1;
-
 	guim->sx   = screenWidth;
 	guim->sy   = 4;
 	textMeshPrintfRA(guim,"%s",VERSION,COMMIT);
