@@ -566,6 +566,7 @@ void characterUpdate(character *c){
 	characterUpdateInaccuracy(c);
 	characterUpdateYOff(c);
 	characterUpdateAnimation(c);
+	characterHP(c,0);
 }
 
 void charactersUpdate(){
@@ -775,15 +776,17 @@ void characterSetData(character *c, const packet *p){
 	c->flags      = p->val.u[2];
 }
 
-int characterBlastHitCheck(const vec pos, float beamSize, float damageMultiplier){
+int characterBlastHitCheck(const vec pos, float beamSize, float damageMultiplier, uint iteration){
 	int hits = 0;
 	float md = (beamSize+0.5f) * (beamSize+0.5f);
 	for(int i=0;i<32;i++){
-		if(playerList[i] == player){continue;}
-		if(playerList[i] == NULL  ){continue;}
+		if(playerList[i] == player)         {continue;}
+		if(playerList[i] == NULL  )         {continue;}
+		if(playerList[i]->temp == iteration){continue;}
 		const vec d = vecSub(pos,playerList[i]->pos);
 		if(vecDot(d,d) < md){
 			msgPlayerBlastHit(i,damageMultiplier);
+			playerList[i]->temp = iteration;
 			hits++;
 		}
 	}
