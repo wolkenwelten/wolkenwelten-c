@@ -8,6 +8,7 @@
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
+#include "../gfx/shadow.h"
 #include "../gfx/texture.h"
 #include "../tmp/assets.h"
 #include "../tmp/objs.h"
@@ -20,14 +21,8 @@
 entity  entityList[1<<14];
 int     entityCount = 0;
 entity *entityFirstFree = NULL;
-mesh   *meshShadow = NULL;
 
 #define ENTITY_FADEOUT (128.f)
-
-void entityInit(){
-	meshShadow = meshNew();
-	meshShadow->tex = textureNew(gfx_shadow_png_data,gfx_shadow_png_len,"client/gfx/shadow.png");
-}
 
 entity *entityNew(vec pos, vec rot){
 	entity *e = NULL;
@@ -57,38 +52,6 @@ void entityFree(entity *e){
 	}
 }
 
-void entityShadowDraw(){
-	glDepthFunc(GL_LEQUAL);
-	meshFinish  (meshShadow, GL_STREAM_DRAW);
-	shaderBind  (sShadow);
-	matMov      (matMVP,matView);
-	matMul      (matMVP,matMVP,matProjection);
-	shaderMatrix(sShadow,matMVP);
-	meshDraw    (meshShadow);
-}
-
-void entityShadow(const entity *e){
-	vec p = e->pos;
-	p.y = floorf(p.y)+0.1f;
-	for(int i=0;i<12;i++){
-		if(worldGetB(p.x,p.y-1.f,p.z) != 0){break;}
-		p.y -= 1.f;
-		if(i == 7){return;}
-	}
-	const float s = 0.6f + ((e->pos.y - p.y)/8.f);
-	const float a = MAX(0.f,1.f-((e->pos.y - p.y)/11.f));
-	p.x -= s/2.f;
-	p.z -= s/2.f;
-
-	meshAddVertC(meshShadow, p.x  ,p.y,p.z  ,0.f,0.f,a);
-	meshAddVertC(meshShadow, p.x+s,p.y,p.z+s,1.f,1.f,a);
-	meshAddVertC(meshShadow, p.x+s,p.y,p.z  ,1.f,0.f,a);
-
-	meshAddVertC(meshShadow, p.x+s,p.y,p.z+s,1.f,1.f,a);
-	meshAddVertC(meshShadow, p.x  ,p.y,p.z  ,0.f,0.f,a);
-	meshAddVertC(meshShadow, p.x  ,p.y,p.z+s,0.f,1.f,a);
-}
-
 void entityDraw(const entity *e){
 	if(e->eMesh == NULL){return;}
 
@@ -100,20 +63,17 @@ void entityDraw(const entity *e){
 
 	shaderMatrix(sShadow,matMVP);
 	meshDraw(e->eMesh);
-	entityShadow(e);
+	shadowAdd(e->pos,0.5f);
 }
 
 void entityDrawAll(){
 	shaderBind(sMesh);
-	if(meshShadow == NULL){entityInit();}
-	meshEmpty(meshShadow);
 	for(int i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL){ continue; }
 		if(entityDistance(&entityList[i],player) > (ENTITY_FADEOUT * ENTITY_FADEOUT)){ continue; }
 		if(!CubeInFrustum(vecSubS(entityList[i].pos,.5f),1.f)){continue;}
 		entityDraw(&entityList[i]);
 	}
-	entityShadowDraw();
 }
 
 void entityUpdateAll(){

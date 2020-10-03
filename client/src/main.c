@@ -6,6 +6,7 @@
 #include "gfx/mesh.h"
 #include "gfx/shader.h"
 #include "gfx/particle.h"
+#include "gfx/shadow.h"
 #include "gfx/texture.h"
 #include "gui/gui.h"
 #include "gui/menu.h"
@@ -152,6 +153,7 @@ int main( int argc, char* argv[] ){
 	initUI();
 	initMenu();
 	initSky();
+	shadowInit();
 	cloudsInit();
 	blockTypeInit();
 	blockMiningInit();

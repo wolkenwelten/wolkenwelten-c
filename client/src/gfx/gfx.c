@@ -10,6 +10,7 @@
 #include "../gfx/mat.h"
 #include "../gfx/shader.h"
 #include "../gfx/sky.h"
+#include "../gfx/shadow.h"
 #include "../gfx/particle.h"
 #include "../gfx/texture.h"
 #include "../gui/gui.h"
@@ -108,12 +109,14 @@ void calcView(const character *cam){
 }
 
 void renderWorld(const character *cam){
+	shadowEmpty();
 	bigchungusDraw(&world,cam);
 	blockMiningDraw();
 	grapplingHookDrawRopes();
 	animalDrawAll();
 	entityDrawAll();
 	characterDrawAll();
+	shadowDraw();
 	cloudsRender();
 	particleDraw();
 

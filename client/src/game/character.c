@@ -8,6 +8,7 @@
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
+#include "../gfx/shadow.h"
 #include "../gfx/particle.h"
 #include "../gui/gui.h"
 #include "../gui/overlay.h"
@@ -713,6 +714,7 @@ void characterDraw(const character *c){
 	if(c == NULL)       {return;}
 	if(c == player)     {return;}
 	if(c->eMesh == NULL){return;}
+	shadowAdd(c->pos,0.75f);
 
 	const float breath = sinf((float)c->breathing/512.f)*6.f;
 
