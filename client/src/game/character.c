@@ -455,7 +455,9 @@ void characterUpdateBooster(character *c){
 	const vec nv   = vecMulS(vecDegToVec(rot),speed);
 	c->vel = vecAdd(c->vel,nv);
 	c->shake = MAX(c->shake,1.25f + speed);
-	sfxLoop(sfxJet,1.f);
+	if(c == player){
+		sfxLoop(sfxJet,1.f);
+	}
 
 	const vec adir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(),10.f))),-0.07f * (rngValf()+.5f));
 	const vec apos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
