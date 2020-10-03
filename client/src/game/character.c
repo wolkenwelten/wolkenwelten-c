@@ -188,26 +188,6 @@ void characterUpdateAnimation(character *c){
 	}
 }
 
-// TODO: knochback direction gets calculated from the center of the hit sphere and NOT the attackign character, leading to unintuitive knocback directions
-void characterHitCheck(character *c, int origin, const vec pos, const vec rot, int pwr){
-	const vec dist = vecSub(vecAdd(pos,vecDegToVec(rot)),c->pos);
-	const float d  = vecMag(dist);
-
-	if(d < 1.f){
-		sfxPlay(sfxImpact,1.f);
-		sfxPlay(sfxUngh,  1.f);
-		setOverlayColor(0xA03020F0,0);
-		if(characterHP(c,-pwr)){
-			msgSendDyingMessage("clubbed",origin);
-			setOverlayColor(0xFF000000,0);
-		}
-		commitOverlayColor();
-		msgCharacterGotHit(-1,pwr);
-
-		c->vel = vecAdd(c->vel,vecMulS(dist,sqrtf((4.f*pwr)/d) * -0.01f));
-	}
-}
-
 void characterGotHitBroadcast(int i,int pwr){
 	if(playerList[i] == NULL){return;}
 	character *c   = playerList[i];
@@ -289,6 +269,24 @@ void characterUpdateYOff(character *c){
 	}
 }
 
+void characterHit(character *c){
+	item *itm = &c->inventory[c->activeItem];
+	const int dmg = damageDispatch(itm);
+
+	vec pos = vecAdd(c->pos,vecMulS(vecDegToVec(c->rot),0.5f));
+	for(int i=0;i<32;i++){
+		if(playerList[i] == NULL){continue;}
+		vec dis = vecSub(pos,playerList[i]->pos);
+		float d = vecDot(dis,dis);
+		if(d < 1.f){
+			msgPlayerDamage(0,dmg,i,2,0);
+		}
+	}
+
+	characterStartAnimation(c,0,240);
+	characterAddCooldown(c,80);
+}
+
 void characterPrimary(character *c){
 	int cx,cy,cz;
 	item *itm = &c->inventory[c->activeItem];
@@ -302,14 +300,10 @@ void characterPrimary(character *c){
 			if(c->actionTimeout >= 0){
 				sfxPlay(sfxTock,1.f);
 				vibrate(0.3f);
-				characterStartAnimation(c,0,300);
-				characterAddCooldown(c,80);
-				msgCharacterHit(-1,c->pos,c->rot,damageDispatch(itm));
+				characterHit(c);
 			}
 		}else if(c->actionTimeout >= 0){
-			msgCharacterHit(-1,c->pos,c->rot,damageDispatch(itm));
-			characterStartAnimation(c,0,240);
-			characterAddCooldown(c,80);
+			characterHit(c);
 		}
 	}
 }
@@ -743,17 +737,31 @@ void characterDrawAll(){
 }
 
 static void characterDyingMessage(u16 cause, u16 culprit){
-	const char *messages[2] = {
+	const char *messages[3] = {
 		"died by command",
-		"beamblasted"
+		"beamblasted",
+		"clubbed"
 	};
-	if(cause > 2){ cause = 0; }
+	if(cause > 3){ cause = 0; }
 	msgSendDyingMessage(messages[cause], culprit);
 }
 
 void characterDamagePacket(character *c, const packet *p){
+	const u16 cause = p->val.s[2];
+	character *culprit = playerList[p->val.s[3]];
+	if(cause == 2){
+		sfxPlay(sfxImpact,1.f);
+		sfxPlay(sfxUngh,  1.f);
+		setOverlayColor(0xA03020F0,0);
+		commitOverlayColor();
+		msgCharacterGotHit(-1,1);
+		if(culprit != NULL){
+			vec dis = vecNorm(vecSub(c->pos,vecAdd(culprit->pos,vecNew(0,-0.5f,0))));
+			c->vel = vecAdd(c->vel,vecMulS(dis,0.04f));
+		}
+	}
 	if(characterDamage(c,p->val.i[0])){
-		characterDyingMessage(p->val.s[2],p->val.s[3]);
+		characterDyingMessage(cause,p->val.s[3]);
 	}
 }
 

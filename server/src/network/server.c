@@ -284,7 +284,7 @@ void serverParseSinglePacket(uint c, packet *p){
 			serverKill(c);
 			break;
 		case 14:
-			msgCharacterHit(c,vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]),p->val.i[6]);
+			//msgCharacterHit(c,vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]),p->val.i[6]);
 			if(verbose){printf("[%02i] characterHit\n",c);}
 			break;
 		case 15:
@@ -332,7 +332,7 @@ void serverParseSinglePacket(uint c, packet *p){
 			serverKill(c);
 			break;
 		case 26:
-			fprintf(stderr,"playerDmg: HP=%i Target=%i Cause=%i Culprit=%i",p->val.s[1],p->val.s[0],p->val.s[2],c);
+			fprintf(stderr,"playerDmg: HP=%i Target=%i Cause=%i Culprit=%i\n",p->val.s[1],p->val.s[0],p->val.s[2],c);
 			msgPlayerDamage(p->val.s[1],p->val.s[0],p->val.s[1],p->val.s[2],c);
 			break;
 		case 27:

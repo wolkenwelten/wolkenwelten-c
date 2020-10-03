@@ -19,7 +19,6 @@ void msgItemDropNew              (uint c, const vec pos, const vec vel, const it
 void msgNewGrenade               (const vec pos, const vec rot, float pwr);
 void msgBeamBlast                (const vec pos, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft);
 void msgPlayerMove               (uint c, const vec dpos, const vec drot);
-void msgCharacterHit             (uint c, const vec pos, const vec rot, int pwr);
 // 15 = playerPos ???
 // 16 = parseChatMsg ???
 // 17 = parseDyingMsg ???
@@ -35,4 +34,3 @@ void msgPlayerDamage             (uint c, i16 hp, u16 target, u16 cause, u16 cul
 void msgUnsubChungus             (uint x, uint y, uint z);
 void msgPlayerSetData            (uint c, int hp, int activeItem, u32 flags);
 void msgPlayerSetInventory       (uint c, const item *itm, size_t itemCount);
-void msgPlayerBlastHit           (uint c, float damage);
