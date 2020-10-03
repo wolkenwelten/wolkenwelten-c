@@ -236,7 +236,7 @@ void textMeshPrintfRA(textMesh *m, const char *format, ...){
 void textMeshDigit(textMesh *m, int x, int y, int size, int digit){
 	const int   glyphWidth = 16*size;
 	const float glyphSize  = 1.f / 64.f;
-	const float gx = 4.f/32.f + (((float)(digit&0x07))*glyphSize);
+	const float gx = 4.f/32.f + (((float)(digit&0x07))*glyphSize) + (m->font * 1.f/4.f);
 	const float gy = (28.f/32.f-glyphSize) - ((digit>>3)*glyphSize);
 
 	textMeshAddVert( m, x           , y           , (gx          )*128.f, (gy          )*128.f,0xFFFFFFFF);

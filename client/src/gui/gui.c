@@ -434,6 +434,7 @@ void drawAmmunition(){
 
 	guim->sx = screenWidth-(tilesize*1.5f);
 	guim->sy = screenHeight-tilesize*1.75f;
+	guim->font = 1;
 	textMeshNumber(guim,guim->sx,guim->sy,2,amount);
 	textMeshItemSprite(guim,guim->sx+32,guim->sy-18,64,ammo);
 
@@ -445,6 +446,7 @@ void drawAmmunition(){
 			textMeshDigit(guim,guim->sx-12,guim->sy-tilesize+tilesize/3, 2, 10);
 		}
 	}
+	guim->font = 0;
 }
 
 void drawChat(){
