@@ -23,6 +23,7 @@ int   optionWorldSeed         = 0;
 bool  optionDebugInfo         = false;
 bool  optionFullscreen        = false;
 bool  optionRuntimeReloading  = false;
+bool  optionNoSave            = false;
 int   optionWindowOrientation = 0;
 int   optionWindowWidth       = 0;
 int   optionWindowHeight      = 0;
@@ -109,6 +110,9 @@ void parseOptions(int argc,char *argv[]){
 		if(checkString(argv[i]+1,"runtimeReloading")){
 			optionRuntimeReloading = true;
 		}
+		if(checkString(argv[i]+1,"noSave")){
+			optionNoSave = true;
+		}
 		if(checkString(argv[i]+1,"version")){
 			printVersion();
 			exit(0);
@@ -181,6 +185,7 @@ static void optionsParseLine(const char *line){
 void loadOptions(){
 	size_t len = 0;
 	char *b,*line;
+	if(optionNoSave){return;}
 	b = loadFile("client.settings",&len);
 	if((b == NULL) || (len == 0)){return;}
 
@@ -199,6 +204,7 @@ void loadOptions(){
 void saveOptions(){
 	static char buf[4096];
 	char *b;
+	if(optionNoSave){return;}
 
 	b  = buf;
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"SaveFormat 1\n");

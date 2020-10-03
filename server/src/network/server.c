@@ -332,8 +332,8 @@ void serverParseSinglePacket(uint c, packet *p){
 			serverKill(c);
 			break;
 		case 26:
-			fprintf(stderr,"msgPlayerDamage received from client, which should never happen\n");
-			serverKill(c);
+			fprintf(stderr,"playerDmg: HP=%i Target=%i Cause=%i Culprit=%i",p->val.s[1],p->val.s[0],p->val.s[2],c);
+			msgPlayerDamage(p->val.s[1],p->val.s[0],p->val.s[1],p->val.s[2],c);
 			break;
 		case 27:
 			chungusUnsubscribePlayer(world.chungi[p->val.i[0]][p->val.i[1]][p->val.i[2]],c);
@@ -351,9 +351,6 @@ void serverParseSinglePacket(uint c, packet *p){
 			break;
 		case 31:
 			worldDirtyChunk(c,p->val.i[0],p->val.i[1],p->val.i[2]);
-			break;
-		case 32:
-			msgPlayerBlastHit(p->val.i[0],p->val.f[1]);
 			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);

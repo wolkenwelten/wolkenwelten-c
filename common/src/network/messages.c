@@ -228,10 +228,13 @@ void msgItemDropUpdate(uint c, const vec pos, const vec vel, u16 i, u16 len, u16
 	packetQueue(p,25,8*4,c);
 }
 
-void msgPlayerDamage(uint c, int hp){
+void msgPlayerDamage(uint c, i16 hp, u16 target, u16 cause, u16 culprit){
 	packet *p = &packetBuffer;
-	p->val.i[0]=hp;
-	packetQueue(p,26,4,c);
+	p->val.s[0] = hp;
+	p->val.s[1] = target;
+	p->val.s[2] = cause;
+	p->val.s[3] = culprit;
+	packetQueue(p,26,4*2,c);
 }
 
 void msgUnsubChungus(uint x, uint y, uint z){
@@ -257,11 +260,4 @@ void msgPlayerSetInventory(uint c,const item *itm, size_t itemCount){
 		p->val.s[(i<<1)+1] = itm[i].amount;
 	}
 	packetQueue(p,29,itemCount*4,c);
-}
-
-void msgPlayerBlastHit(uint c, float damage){
-	packet *p = &packetBuffer;
-	p->val.i[0] = c;
-	p->val.f[1] = damage;
-	packetQueue(p,32,2*4,c);
 }

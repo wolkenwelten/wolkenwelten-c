@@ -742,9 +742,18 @@ void characterDrawAll(){
 	}
 }
 
+static void characterDyingMessage(u16 cause, u16 culprit){
+	const char *messages[2] = {
+		"died by command",
+		"beamblasted"
+	};
+	if(cause > 2){ cause = 0; }
+	msgSendDyingMessage(messages[cause], culprit);
+}
+
 void characterDamagePacket(character *c, const packet *p){
 	if(characterDamage(c,p->val.i[0])){
-		msgSendDyingMessage("died by command", 65535);
+		characterDyingMessage(p->val.s[2],p->val.s[3]);
 	}
 }
 
@@ -780,12 +789,12 @@ int characterBlastHitCheck(const vec pos, float beamSize, float damageMultiplier
 	int hits = 0;
 	float md = (beamSize+0.5f) * (beamSize+0.5f);
 	for(int i=0;i<32;i++){
-		if(playerList[i] == player)         {continue;}
-		if(playerList[i] == NULL  )         {continue;}
-		if(playerList[i]->temp == iteration){continue;}
+		if(playerList[i] == player)          {continue;}
+		if(playerList[i] == NULL  )          {continue;}
+		if(playerList[i]->temp == iteration) {continue;}
 		const vec d = vecSub(pos,playerList[i]->pos);
 		if(vecDot(d,d) < md){
-			msgPlayerBlastHit(i,damageMultiplier);
+			msgPlayerDamage(0,((int)damageMultiplier)+1,i,1,0);
 			playerList[i]->temp = iteration;
 			hits++;
 		}

@@ -31,7 +31,7 @@ void msgGrenadeExplode           (const vec pos,float pwr, int style);
 void msgGrenadeUpdate            (uint c, const vec pos, const vec vel, int count, int i);
 void msgFxBeamBlaster            (uint c, const vec pa, const vec pb, float beamSize, float damageMultiplier, float recoilMultiplier);
 void msgItemDropUpdate           (uint c, const vec pos, const vec vel, u16 i, u16 len, u16 itemID, u16 amount);
-void msgPlayerDamage             (uint c, int hp);
+void msgPlayerDamage             (uint c, i16 hp, u16 target, u16 cause, u16 culprit);
 void msgUnsubChungus             (uint x, uint y, uint z);
 void msgPlayerSetData            (uint c, int hp, int activeItem, u32 flags);
 void msgPlayerSetInventory       (uint c, const item *itm, size_t itemCount);

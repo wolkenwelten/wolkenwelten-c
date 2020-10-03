@@ -214,10 +214,6 @@ void clientParsePacket(const packet *p){
 		case 31:
 			fprintf(stderr,"Received an dirtyChunk msg from the server, this should never happen.\n");
 			break;
-		case 32:
-			fprintf(stderr,"Damage: %f -> %i\n",p->val.f[1],((int)(p->val.f[1]/4.f))+1);
-			characterDamage(player,((int)(p->val.f[1]/4.f))+1);
-			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);
 			break;
