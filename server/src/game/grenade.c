@@ -80,31 +80,24 @@ void grenadeUpdatePlayer(uint c){
 }
 
 void beamblastNewP(uint c, const packet *p){
-	float yaw              = p->val.f[3];
-	float pitch            = p->val.f[4];
 	float speed            = 0.1f;
-	int hitsLeft           = p->val.i[8];
-	float beamSize         = p->val.f[5];
-	float damageMultiplier = p->val.f[6];
-	float recoilMultiplier = p->val.f[7];
+	float beamSize         = p->val.f[6];
+	float damageMultiplier = p->val.f[7];
+	float recoilMultiplier = p->val.f[8];
 
 	const vec start = vecNewP(&p->val.f[0]);
+	const vec end   = vecNewP(&p->val.f[3]);
+	const vec vel   = vecMulS(vecNorm(vecSub(end,start)),speed);
 	vec pos = start;
-	const vec rot   = vecNew(yaw,pitch,0);
-	vec vel = vecMulS(vecDegToVec(rot),speed);
 
 	for(int ticksLeft = 0x1FFF; ticksLeft > 0; ticksLeft--){
 		pos = vecAdd(pos,vel);
 
 		if(worldGetB(pos.x,pos.y,pos.z) != 0){
 			explode(pos,0.5f*beamSize,1);
-			if(--hitsLeft <= 0){break;}
-		}
-		if(pos.y < -256.f){
-			break;
 		}
 	}
-	msgFxBeamBlaster(c,start,pos,beamSize,damageMultiplier,recoilMultiplier,p->val.i[8]);
+	msgFxBeamBlaster(c,start,pos,beamSize,damageMultiplier,recoilMultiplier);
 	const vec rev = vecMulS(vel,-0.75f*recoilMultiplier);
 	msgPlayerMove(c, rev, vecNew((rngValf()-0.5f) * 64.f * recoilMultiplier, (rngValf()-.8f) * 64.f * recoilMultiplier, 0.f));
 }

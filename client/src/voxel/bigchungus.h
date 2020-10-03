@@ -12,6 +12,7 @@ void        bigchungusInit          (bigchungus *c);
 void        bigchungusFree          (bigchungus *c);
 void        bigchungusBox           (bigchungus *c, int x,int y,int z, int w,int h,int d,u8 block);
 void        bigchungusBoxSphere     (bigchungus *c, int x,int y,int z, int r, u8 block);
+void        bigchungusBoxSphereDirty(bigchungus *c, int x,int y,int z, int r);
 void        bigchungusFreeFarChungi (bigchungus *c, character *cam);
 chungus    *bigchungusTryChungus    (bigchungus *c, int x, int y, int z);
 chungus    *bigchungusGetChungus    (bigchungus *c, int x, int y, int z);
@@ -24,6 +25,7 @@ extern bigchungus world;
 
 void     worldBox              (int x, int y, int z, int w, int h, int d, u8 block);
 void     worldBoxSphere        (int x, int y, int z, int r, u8 block);
+void     worldBoxSphereDirty   (int x, int y, int z, int r);
 u8       worldGetB             (int x, int y, int z);
 chungus* worldTryChungus       (int x, int y, int z);
 chungus* worldGetChungus       (int x, int y, int z);

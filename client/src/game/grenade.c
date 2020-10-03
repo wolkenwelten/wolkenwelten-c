@@ -4,6 +4,7 @@
 #include "../game/entity.h"
 #include "../gfx/effects.h"
 #include "../tmp/objs.h"
+#include "../voxel/bigchungus.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
@@ -83,6 +84,32 @@ void grenadeUpdateFromServer(const packet *p){
 	}
 }
 
+void singleBeamblast(character *ent, const vec start, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){
+	float speed = 0.1f;
+	vec pos     = start;
+	vec vel     = vecMulS(vecDegToVec(rot),speed);
+
+	(void)damageMultiplier;
+
+	for(int ticksLeft = 0x1FFF; ticksLeft > 0; ticksLeft--){
+		pos = vecAdd(pos,vel);
+		if(worldGetB(pos.x,pos.y,pos.z) != 0){
+			worldBoxSphere(pos.x,pos.y,pos.z,beamSize*2.f,0);
+			worldBoxSphereDirty(pos.x,pos.y,pos.z,beamSize*2.f);
+			fxExplosionBlaster(pos,beamSize/2.f);
+			if(--hitsLeft <= 0){break;}
+		}
+		hitsLeft -= characterBlastHitCheck(pos, beamSize, damageMultiplier);
+		if(hitsLeft <= 0){break;}
+
+	}
+	fxBeamBlaster(start,pos,beamSize,damageMultiplier,recoilMultiplier,1,0);
+	msgFxBeamBlaster(0,start,pos,beamSize,damageMultiplier,recoilMultiplier);
+
+	ent->vel = vecAdd(ent->vel, vecMulS(vel,-0.75f*recoilMultiplier));
+	ent->rot = vecAdd(ent->rot, vecNew((rngValf()-0.5f) * 64.f * recoilMultiplier, (rngValf()-.8f) * 64.f * recoilMultiplier, 0.f));
+}
+
 void beamblast(character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult){
 	float x = ent->pos.x;
 	float y = ent->pos.y;
@@ -97,7 +124,7 @@ void beamblast(character *ent, float beamSize, float damageMultiplier, float rec
 	for(int i=shots;i>0;i--){
 		const float yaw   = ent->rot.yaw   + (rngValf()-0.5f)*ent->inaccuracy*inaccuracyMult;
 		const float pitch = ent->rot.pitch + (rngValf()-0.5f)*ent->inaccuracy*inaccuracyMult;
-		msgBeamBlast(vecNew(x, y, z), vecNew(yaw, pitch, 0.f), beamSize, damageMultiplier, recoilMultiplier, hitsLeft);
+		singleBeamblast(ent, vecNew(x, y, z), vecNew(yaw, pitch, 0.f), beamSize, damageMultiplier, recoilMultiplier, hitsLeft);
 	}
 	characterAddInaccuracy(ent,inaccuracyInc);
 }

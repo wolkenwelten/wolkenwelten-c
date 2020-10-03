@@ -198,6 +198,28 @@ void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, u8 block){
 		}
 	}
 }
+
+void bigchungusBoxSphereDirty(bigchungus *c, int x,int y,int z, int r){
+	(void)c;
+
+	int xs = (x-r)>>4;
+	int xe = (x+r)>>4;
+	if(xe==xs){xe++;}
+	int ys = (y-r)>>4;
+	int ye = (y+r)>>4;
+	if(ye==ys){ye++;}
+	int zs = (z-r)>>4;
+	int ze = (z+r)>>4;
+	if(ze==zs){ze++;}
+
+	for(int cx=xs;cx<=xe;cx++){
+		for(int cy=ys;cy<=ye;cy++){
+			for(int cz=zs;cz<=ze;cz++){
+				msgDirtyChunk(cx<<4,cy<<4,cz<<4);
+			}
+		}
+	}
+}
 chungus *bigchungusTryChungus(bigchungus *c, int x,int y,int z) {
 	if((x|y|z)&(~0xFF)){return NULL;}
 	return c->chungi[x&0xFF][y&0x7F][z&0xFF];
@@ -211,6 +233,9 @@ void worldBox(int x, int y,int z, int w,int h,int d,u8 block){
 }
 void worldBoxSphere(int x, int y,int z, int r,u8 block){
 	bigchungusBoxSphere(&world,x,y,z,r,block);
+}
+void worldBoxSphereDirty(int x, int y,int z, int r){
+	bigchungusBoxSphereDirty(&world,x,y,z,r);
 }
 u8 worldGetB(int x, int y, int z){
 	return bigchungusGetB(&world,x,y,z);

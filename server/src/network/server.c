@@ -324,8 +324,8 @@ void serverParseSinglePacket(uint c, packet *p){
 			serverKill(c);
 			break;
 		case 24:
-			fprintf(stderr,"fxBeamBlaster received from client, which should never happen\n");
-			serverKill(c);
+			beamblastNewP(c,p);
+			if(verbose){printf("[%02i] beamBlaster\n",c);}
 			break;
 		case 25:
 			fprintf(stderr,"msgItemDropUpdate received from client, which should never happen\n");
@@ -344,6 +344,16 @@ void serverParseSinglePacket(uint c, packet *p){
 			break;
 		case 29:
 			characterSetInventoryP(clients[c].c,p);
+			break;
+		case 30:
+			fprintf(stderr,"animalSync received from client, which should never happen\n");
+			serverKill(c);
+			break;
+		case 31:
+			worldDirtyChunk(c,p->val.i[0],p->val.i[1],p->val.i[2]);
+			break;
+		case 32:
+			msgPlayerBlastHit(p->val.i[0],p->val.f[1]);
 			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);

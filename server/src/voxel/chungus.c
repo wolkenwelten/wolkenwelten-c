@@ -280,6 +280,11 @@ void chungusSetUpdated(chungus *c, uint p){
 	c->clientsUpdated |= 1 << p;
 }
 
+void chungusUnsetUpdated(chungus *c, uint p){
+	if(c == NULL){return;}
+	c->clientsUpdated &= ~(1 << p);
+}
+
 int chungusUpdateClient(chungus *c, uint p){
 	if(c == NULL)                          { return 0; }
 	if(!(c->clientsSubscribed & (1 << p))) { return 1; }

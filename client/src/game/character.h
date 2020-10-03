@@ -21,6 +21,7 @@ void  characterSetData         (      character *c, const packet *p);
 void  characterSetPlayerPos    (                    const packet *p);
 void  characterGotHitBroadcast (int c, int pwr);
 void  characterRemovePlayer    (int c, int len);
+int   characterBlastHitCheck   (const vec pos, float beamSize, float damageMultiplier);
 
 void  charactersUpdate         ();
 void  characterDrawAll         ();

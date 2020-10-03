@@ -774,3 +774,18 @@ void characterSetData(character *c, const packet *p){
 	c->activeItem = p->val.i[1];
 	c->flags      = p->val.u[2];
 }
+
+int characterBlastHitCheck(const vec pos, float beamSize, float damageMultiplier){
+	int hits = 0;
+	float md = (beamSize+0.5f) * (beamSize+0.5f);
+	for(int i=0;i<32;i++){
+		if(playerList[i] == player){continue;}
+		if(playerList[i] == NULL  ){continue;}
+		const vec d = vecSub(pos,playerList[i]->pos);
+		if(vecDot(d,d) < md){
+			msgPlayerBlastHit(i,damageMultiplier);
+			hits++;
+		}
+	}
+	return hits;
+}

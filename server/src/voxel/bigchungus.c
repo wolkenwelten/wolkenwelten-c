@@ -4,6 +4,7 @@
 #include "../game/blockMining.h"
 #include "../misc/options.h"
 #include "../voxel/chungus.h"
+#include "../voxel/chunk.h"
 #include "../../../common/src/misc/noise.h"
 
 #include <stdio.h>
@@ -59,6 +60,12 @@ chunk *bigchungusGetChunk(bigchungus *c, int x, int y, int z){
 	if(chng == NULL){return NULL;}
 	chunk *chnk = chungusGetChunk(chng,x&0xFF,y&0xFF,z&0xFF);
 	return chnk;
+}
+
+chunk *bigchungusTryChunk(bigchungus *c, int x, int y, int z){
+	chungus *chng = bigchungusTryChungus(c,(x>>8)&0xFF,(y>>8)&0xFF,(z>>8)&0xFF);
+	if(chng == NULL){return NULL;}
+	return chungusGetChunk(chng,x&0xFF,y&0xFF,z&0xFF);
 }
 
 u8 bigchungusGetB(bigchungus *c, int x,int y,int z) {
@@ -286,6 +293,16 @@ void bigchungusUnsubscribeClient(bigchungus *c, int p){
 	}
 }
 
+void bigchungusDirtyChunk(bigchungus *c, int x, int y, int z, int client){
+	chungus *chng = bigchungusTryChungus(c,(x>>8)&0xFF,(y>>8)&0xFF,(z>>8)&0xFF);
+	if(chng == NULL){return;}
+	chunk *chnk = chungusGetChunk(chng,x&0xFF,y&0xFF,z&0xFF);
+	if(chnk == NULL){return;}
+	chunkUnsetUpdated(chnk,client);
+	chungusUnsetUpdated(chng,client);
+	chungusUpdateClient(chng,client);
+}
+
 void worldBox(int x, int y,int z, int w,int h,int d,u8 block){
 	bigchungusBox(&world,x,y,z,w,h,d,block);
 }
@@ -303,6 +320,9 @@ chunk* worldGetChunk(int x, int y, int z){
 }
 bool worldSetB(int x, int y, int z, u8 block){
 	return bigchungusSetB(&world,x,y,z,block);
+}
+void worldDirtyChunk(int x, int y, int z, int c){
+	bigchungusDirtyChunk(&world, x, y, z, c);
 }
 int checkCollision(int x, int y, int z){
 	return bigchungusGetB(&world,x,y,z) != 0;

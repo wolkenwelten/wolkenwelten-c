@@ -30,6 +30,14 @@ void msgRequestChungus(uint x, uint y, uint z){
 	packetQueueToServer(p,2,3*4);
 }
 
+void msgDirtyChunk(uint x, uint y, uint z){
+	packet *p = &packetBuffer;
+	p->val.i[0] = x;
+	p->val.i[1] = y;
+	p->val.i[2] = z;
+	packetQueueToServer(p,31,3*4);
+}
+
 void msgPlaceBlock(uint x, uint y, uint z, u8 b){
 	packet *p = &packetBuffer;
 	p->val.i[0] = x;
@@ -186,7 +194,7 @@ void msgGrenadeUpdate(uint c, const vec pos, const vec vel, int count, int i){
 	packetQueue(p,23,8*4,c);
 }
 
-void msgFxBeamBlaster(uint c, const vec pa, const vec pb, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){
+void msgFxBeamBlaster(uint c, const vec pa, const vec pb, float beamSize, float damageMultiplier, float recoilMultiplier){
 	packet *p = &packetBuffer;
 	p->val.f[0] = pa.x;
 	p->val.f[1] = pa.y;
@@ -197,12 +205,8 @@ void msgFxBeamBlaster(uint c, const vec pa, const vec pb, float beamSize, float 
 	p->val.f[6] = beamSize;
 	p->val.f[7] = damageMultiplier;
 	p->val.f[8] = recoilMultiplier;
-	p->val.i[9] = hitsLeft;
 
-	p->val.i[10] = c;
-	packetQueueExcept(p,24,11*4,c);
-	p->val.i[10] = 65535;
-	packetQueue(p,24,11*4,c);
+	packetQueueExcept(p,24,9*4,c);
 }
 
 void msgItemDropUpdate(uint c, const vec pos, const vec vel, u16 i, u16 len, u16 itemID, u16 amount){
@@ -253,4 +257,11 @@ void msgPlayerSetInventory(uint c,const item *itm, size_t itemCount){
 		p->val.s[(i<<1)+1] = itm[i].amount;
 	}
 	packetQueue(p,29,itemCount*4,c);
+}
+
+void msgPlayerBlastHit(uint c, float damage){
+	packet *p = &packetBuffer;
+	p->val.i[0] = c;
+	p->val.f[1] = damage;
+	packetQueue(p,32,2*4,c);
 }

@@ -30,6 +30,7 @@ uint         chungusIsSubscribed     (chungus *c, uint p);
 int          chungusUpdateClient     (chungus *c, uint p);
 uint         chungusIsUpdated        (chungus *c, uint p);
 void         chungusSetUpdated       (chungus *c, uint p);
+void         chungusUnsetUpdated     (chungus *c, uint p);
 int          chungusGetHighestP      (chungus *c, int x, int *retY, int z);
 chungus     *chungusGetActive        (uint i);
 void         chungusSetActiveCount   (uint i);

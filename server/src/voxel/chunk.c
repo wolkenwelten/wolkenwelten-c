@@ -73,3 +73,7 @@ void chunkSetUpdated(chunk *c, uint p){
 	if(c == NULL){return;}
 	c->clientsUpdated |= 1 << p;
 }
+void chunkUnsetUpdated(chunk *c, uint p){
+	if(c == NULL){return;}
+	c->clientsUpdated &= ~(1 << p);
+}

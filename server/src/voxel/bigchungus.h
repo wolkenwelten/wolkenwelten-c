@@ -20,9 +20,10 @@ void        bigchungusBox               (bigchungus *c, int x, int y, int z, int
 void        bigchungusBoxSphere         (bigchungus *c, int x, int y, int z, int r, u8 block);
 void        bigchungusBoxMine           (bigchungus *c, int x, int y, int z, int w,int h,int d);
 void        bigchungusBoxMineSphere     (bigchungus *c, int x, int y, int z, int r);
-chunk      *bigchungusGetChunk          (bigchungus *c, int x, int y, int z);
 chungus    *bigchungusTryChungus        (bigchungus *c, int x, int y, int z);
 chungus    *bigchungusGetChungus        (bigchungus *c, int x, int y, int z);
+chunk      *bigchungusTryChunk          (bigchungus *c, int x, int y, int z);
+chunk      *bigchungusGetChunk          (bigchungus *c, int x, int y, int z);
 bool        bigchungusGetHighestP       (bigchungus *c, int x, int *rety, int z);
 u8          bigchungusGetB              (bigchungus *c, int x, int y, int z);
 bool        bigchungusSetB              (bigchungus *c, int x, int y, int z, u8 b);
@@ -31,6 +32,7 @@ ivec        bigchungusGetSpawnPos       (bigchungus *c);
 void        bigchungusFreeFarChungi     (bigchungus *c);
 void        bigchungusUpdateClient      (bigchungus *c, int p);
 void        bigchungusUnsubscribeClient (bigchungus *c, int p);
+void        bigchungusDirtyChunk        (bigchungus *c, int x, int y, int z, int client);
 
 extern bigchungus world;
 
@@ -45,11 +47,12 @@ inline ivec        worldGetSpawnPos   (){
 }
 
 
-void     worldBox              (int x, int y, int z, int w, int h, int d, u8 block);
-void     worldBoxSphere        (int x, int y, int z, int r, u8 block);
-u8       worldGetB             (int x, int y, int z);
-chungus* worldTryChungus       (int x, int y, int z);
-chungus* worldGetChungus       (int x, int y, int z);
-chunk*   worldGetChunk         (int x, int y, int z);
-bool     worldSetB             (int x, int y, int z, u8 block);
-int      checkCollision        (int x, int y, int z);
+void     worldBox          (int x, int y, int z, int w, int h, int d, u8 block);
+void     worldBoxSphere    (int x, int y, int z, int r, u8 block);
+u8       worldGetB         (int x, int y, int z);
+chungus* worldTryChungus   (int x, int y, int z);
+chungus* worldGetChungus   (int x, int y, int z);
+chunk*   worldGetChunk     (int x, int y, int z);
+bool     worldSetB         (int x, int y, int z, u8 block);
+int      checkCollision    (int x, int y, int z);
+void     worldDirtyChunk   (int x, int y, int z, int client);
