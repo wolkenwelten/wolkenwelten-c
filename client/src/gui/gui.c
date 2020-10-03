@@ -24,6 +24,7 @@
 #include "../gui/textInput.h"
 #include "../network/chat.h"
 #include "../network/client.h"
+#include "../sdl/sdl.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/tmp/cto.h"
@@ -190,7 +191,44 @@ void updateMouse(){
 	}
 }
 
+static void drawSingleHealthbar(int hp, uint x, uint y, int tilesize,bool drawHeartbeat){
+	const int ticks = -(getTicks() >> 4);
+	int tilesizeoff,lastsize,lastoff;
 
+	tilesizeoff = tilesize+tilesize/4;
+	lastsize    = tilesize+(tilesize/2);
+	lastoff     = tilesize/4;
+
+	int heartBeat = ticks & 0x7F;
+	int hbRGBA = 0xFFFFFF | (heartBeat << 25);
+	int hbOff  = 16-(heartBeat>>3);
+	for(int i=0;i<5;i++){
+		if(hp == ((i+1)*4)){
+			if(drawHeartbeat){
+				textMeshBox(guim,x-hbOff,y-lastoff-hbOff,lastsize+hbOff*2,lastsize+hbOff*2,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,hbRGBA);
+			}
+			textMeshBox(guim,x,y-lastoff,lastsize,lastsize,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+			x += tilesizeoff + lastoff;
+		}else if(hp >= ((i+1)*4)){
+			textMeshBox(guim,x,y,tilesize,tilesize,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+			x += tilesizeoff;
+		}else if(((hp-1)/4) == i){
+			if(drawHeartbeat){
+				textMeshBox(guim,x-hbOff,y-lastoff-hbOff,lastsize+hbOff*2,lastsize+hbOff*2,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,hbRGBA);
+			}
+			textMeshBox(guim,x,y-lastoff,lastsize,lastsize,(28+((hp-1)%4))/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+			x += tilesizeoff + lastoff;
+		}else{
+			textMeshBox(guim,x,y,tilesize,tilesize,27.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+			x += tilesizeoff;
+		}
+	}
+}
+
+void drawHealthbar(){
+	const int tilesize = getTilesize()/2;
+	drawSingleHealthbar(player->hp, tilesize/2, tilesize/2, tilesize,true);
+}
 
 void drawDebuginfo(){
 	static uint ticks = 0;
@@ -222,6 +260,18 @@ void drawDebuginfo(){
 	guim->sy   = 14;
 	textMeshPrintf(guim,"FPS %02.0f\n",curFPS);
 
+	guim->sy  += 16;
+	guim->sx   = screenWidth;
+	guim->size = 2;
+	for(uint i=0;i<32;i++){
+		const char *cname = characterGetPlayerName(i);
+		if(cname == NULL){continue;}
+		textMeshPrintfRA(guim,"%s",cname);
+		drawSingleHealthbar(characterGetPlayerHP(i),screenWidth-96,guim->sy+22,14,false);
+		guim->sy += 42;
+		guim->sx = screenWidth;
+	}
+
 	vboTrisCount = 0;
 	if(!optionDebugInfo){
 		guim->font = 0;
@@ -230,6 +280,7 @@ void drawDebuginfo(){
 
 	guim->sx   =  4;
 	guim->sy   = getTilesize();
+	guim->size =  1;
 	textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f GVX: %02.4f\n",player->pos.x,player->vel.x,player->gvel.x);
 	textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f GVY: %02.4f\n",player->pos.y,player->vel.y,player->gvel.y);
 	textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f GVZ: %02.4f\n",player->pos.z,player->vel.z,player->gvel.z);
@@ -269,39 +320,6 @@ void drawItemBar(){
 			style = 1;
 		}
 		textMeshItem(guim,x,y,tilesize,style,&player->inventory[i]);
-	}
-}
-
-void drawHealthbar(){
-	static uint ticks = 0;
-	int tilesizeoff,x,y,lastsize,lastoff;
-	const int tilesize = getTilesize()/2;
-
-	tilesizeoff = tilesize+tilesize/4;
-	lastsize    = tilesize+(tilesize/2);
-	lastoff     = tilesize/4;
-	x = y = tilesize/2;
-
-	int heartBeat = --ticks & 0x7F;
-	int hbRGBA = 0xFFFFFF | (heartBeat << 25);
-	int hbOff  = 16-(heartBeat>>3);
-	ticks = ticks & 0xFF;
-	for(int i=0;i<5;i++){
-		if(player->hp == ((i+1)*4)){
-			textMeshBox(guim,x-hbOff,y-lastoff-hbOff,lastsize+hbOff*2,lastsize+hbOff*2,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,hbRGBA);
-			textMeshBox(guim,x,y-lastoff,lastsize,lastsize,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
-			x += tilesizeoff + lastoff;
-		}else if(player->hp >= ((i+1)*4)){
-			textMeshBox(guim,x,y,tilesize,tilesize,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
-			x += tilesizeoff;
-		}else if(((player->hp-1)/4) == i){
-			textMeshBox(guim,x-hbOff,y-lastoff-hbOff,lastsize+hbOff*2,lastsize+hbOff*2,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,hbRGBA);
-			textMeshBox(guim,x,y-lastoff,lastsize,lastsize,(28+((player->hp-1)%4))/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
-			x += tilesizeoff + lastoff;
-		}else{
-			textMeshBox(guim,x,y,tilesize,tilesize,27.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
-			x += tilesizeoff;
-		}
 	}
 }
 

@@ -31,6 +31,7 @@ character  characterList[64];
 int        characterCount = 0;
 character *characterFirstFree = NULL;
 character *playerList[32];
+char       playerNames[32][32];
 
 void characterInit(character *c){
 	if(c->hook != NULL){
@@ -472,13 +473,8 @@ void characterUpdateBooster(character *c){
 	}
 }
 
-void characterUpdate(character *c){
-	float walkFactor = 1.f;
-	vec nvel;
-
-	if(c->flags & CHAR_SPAWNING){return;}
-
-	if((c->flags & CHAR_FALLINGSOUND) && (c->pos.y > -32)){ c->flags &= ~CHAR_FALLINGSOUND; }
+void characterUpdateFalling(character *c){
+	if(c != player){return;}
 	if(c->pos.y < -512){
 		characterDie(c);
 		msgSendDyingMessage("fell into the abyss", 65535);
@@ -490,6 +486,16 @@ void characterUpdate(character *c){
 			sfxPlay(sfxFalling,1.f);
 		}
 	}
+}
+
+void characterUpdate(character *c){
+	float walkFactor = 1.f;
+	vec nvel;
+
+	if(c->flags & CHAR_SPAWNING){return;}
+
+	if((c->flags & CHAR_FALLINGSOUND) && (c->pos.y > -32)){ c->flags &= ~CHAR_FALLINGSOUND; }
+	characterUpdateFalling(c);
 	if(c->rot.pitch < -90.f){
 		 c->rot.pitch = -90.f;
 	}else if(c->rot.pitch >  90.f){
@@ -793,6 +799,23 @@ void characterSetData(character *c, const packet *p){
 	c->hp         = p->val.i[0];
 	c->activeItem = p->val.i[1];
 	c->flags      = p->val.u[2];
+}
+
+void characterSetName(const packet *p){
+	if(p->val.s[0] >= 32){return;}
+	memcpy(playerNames[p->val.s[0]],&p->val.c[2],32);
+}
+
+char *characterGetPlayerName(uint i){
+	if(i >= 32){return NULL;}
+	if(playerList[i] == NULL){return NULL;}
+	return playerNames[i];
+}
+
+int characterGetPlayerHP(uint i){
+	if(i >= 32){return 0;}
+	if(playerList[i] == NULL){return 0;}
+	return playerList[i]->hp;
 }
 
 int characterBlastHitCheck(const vec pos, float beamSize, float damageMultiplier, uint iteration){

@@ -19,6 +19,7 @@ void msgItemDropNew              (uint c, const vec pos, const vec vel, const it
 void msgNewGrenade               (const vec pos, const vec rot, float pwr);
 void msgBeamBlast                (const vec pos, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft);
 void msgPlayerMove               (uint c, const vec dpos, const vec drot);
+void msgPlayerName               (uint c, uint i, const char *name);
 // 15 = playerPos ???
 // 16 = parseChatMsg ???
 // 17 = parseDyingMsg ???

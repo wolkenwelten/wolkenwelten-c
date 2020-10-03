@@ -62,8 +62,16 @@ void serverSendChatMsg(const char *msg){
 	printf("%s[MSG]%s %s\n",termColors[6],termReset,msg);
 }
 
+void sendPlayerNames(){
+	for(uint i=0;i<clientCount;i++){
+		if(clients[i].state == STATE_CLOSED){continue;}
+		msgPlayerName(-1,i,clients[i].playerName);
+	}
+}
+
 void sendPlayerJoinMessage(uint c){
 	char msg[256];
+	sendPlayerNames();
 	if((clientCount == 1) && optionSingleplayer){
 		snprintf(msg,sizeof(msg),"Started Singleplayer Server [Seed=%i]",optionWorldSeed);
 		serverSendChatMsg(msg);
@@ -284,8 +292,7 @@ void serverParseSinglePacket(uint c, packet *p){
 			serverKill(c);
 			break;
 		case 14:
-			//msgCharacterHit(c,vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]),p->val.i[6]);
-			if(verbose){printf("[%02i] characterHit\n",c);}
+			if(verbose){printf("[%02i] characterName\n",c);}
 			break;
 		case 15:
 			serverParsePlayerPos(c,p);
@@ -629,6 +636,7 @@ void serverCloseClient(uint c){
 	clients[c].state = STATE_CLOSED;
 	msgSetPlayerCount(c,clientCount);
 	serverSendChatMsg(msg);
+	sendPlayerNames();
 
 	int lowestClient=0;
 	for(uint i=0;i<clientCount;i++){

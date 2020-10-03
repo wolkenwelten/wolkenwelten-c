@@ -136,17 +136,12 @@ void msgPlayerMove(uint c, const vec dpos, const vec drot){
 	packetQueue(p,13,7*4,c);
 }
 
-void msgCharacterHit(uint c, const vec pos, const vec rot, int pwr){
+void msgPlayerName(uint c, uint i, const char *name){
 	packet *p = &packetBuffer;
-	p->val.f[0] = pos.x;
-	p->val.f[1] = pos.y;
-	p->val.f[2] = pos.z;
-	p->val.f[3] = rot.yaw;
-	p->val.f[4] = rot.pitch;
-	p->val.f[5] = rot.roll;
-	p->val.i[6] = pwr;
-	p->val.i[7] = c;
-	packetQueueExcept(p,14,8*4,c);
+	p->val.s[0] = i;
+	strncpy((char *)&p->val.c[2],name,31);
+	p->val.c[33] = 0;
+	packetQueue(p,14,36,c);
 }
 
 // 15 = parsePlayerPos ???
