@@ -105,7 +105,7 @@ static void widgetDrawBackground(const widget *wid, textMesh *m, int x, int y, i
 
 static void widgetDrawPanel(const widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)wid;
-	textMeshSolidBox(m,x,y,w,h,0xD0303030);
+	textMeshSolidBox(m,x,y,w,h,0xE0303030);
 }
 
 static void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, int w, int h){
