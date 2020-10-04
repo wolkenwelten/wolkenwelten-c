@@ -276,7 +276,7 @@ void serverParseSinglePacket(uint c, packet *p){
 			serverKill(c);
 			break;
 		case 10: // itemDropNew
-			itemDropNewC(p);
+			itemDropNewC(c,p);
 			if(verbose){printf("[%02i][%i] itemDropNewC\n",c,pLen);}
 			break;
 		case 11:

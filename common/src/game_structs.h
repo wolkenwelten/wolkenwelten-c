@@ -124,5 +124,8 @@ struct grapplingHook {
 typedef struct {
 	entity    *ent;
 	item       itm;
-	u32    aniStep;
+	union {
+		u32 aniStep;
+		i32 player;
+	};
 } itemDrop;

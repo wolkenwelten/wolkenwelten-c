@@ -7,7 +7,7 @@ extern uint itemDropCount;
 
 itemDrop *itemDropNew          ();
 void      itemDropNewP         (const vec pos, const item *itm);
-void      itemDropNewC         (const packet *p);
+void      itemDropNewC         (uint c, const packet *p);
 void      itemDropDel          (uint d);
 void      itemDropDelChungus   (const chungus *c);
 void      itemDropIntro        (uint c);
