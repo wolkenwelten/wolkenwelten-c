@@ -149,33 +149,27 @@ void characterSwapItemSlots(character *c, uint a,uint b){
 	c->inventory[b] = tmp;
 }
 
-bool characterLOSBlock(const character *c, int *retX, int *retY, int *retZ, int returnBeforeBlock) {
-	int   lastBlock=-1;
-
-	const vec cv = vecDegToVec(c->rot);
+ivec characterLOSBlock(const character *c, int returnBeforeBlock) {
+	int   lastBlock = -1;
+	const vec cv = vecMulS(vecDegToVec(c->rot),0.0625f);
 	vec       cp = vecAdd(c->pos,vecNew(0,0.5,0));
 	vec       l  = cp;
 
-	for(int i=0;i<50;i++){
+	for(int i=0;i<48;i++){
 		if((lastBlock == -1) || (fabsf(l.x - floorf(cp.x)) > 0.1f) || (fabsf(l.y - floorf(cp.y)) > 0.1f) || (fabsf(l.z - floorf(cp.z)) > 0.1f)){
 			lastBlock = worldGetB(cp.x,cp.y,cp.z);
 			if(lastBlock > 0){
 				if(returnBeforeBlock){
-					*retX = l.x;
-					*retY = l.y;
-					*retZ = l.z;
+					return ivecNewV(l);
 				}else{
-					*retX = cp.x;
-					*retY = cp.y;
-					*retZ = cp.z;
+					return ivecNewV(cp);
 				}
-				return true;
 			}
 			l = vecFloor(cp);
 		}
 		cp = vecAdd(cp,cv);
 	}
-	return false;
+	return ivecNOne();
 }
 
 u32 characterCollision(const vec c){

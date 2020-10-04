@@ -15,6 +15,7 @@ void  characterFreeHook        (      character *c);
 void  characterDraw            (const character *c);
 void  characterHitCheck        (      character *c, int origin, const vec pos, const vec rot, int pwr);
 void  characterDropItem        (      character *c, int i);
+bool  characterPlaceBlock      (      character *c, item *i);
 void  characterMoveDelta       (      character *c, const packet *p);
 void  characterDamagePacket    (      character *c, const packet *p);
 void  characterSetData         (      character *c, const packet *p);
@@ -28,5 +29,3 @@ int   characterBlastHitCheck   (const vec pos, float beamSize, float damageMulti
 
 void  charactersUpdate         ();
 void  characterDrawAll         ();
-
-bool  itemPlaceBlock           (item *i,character *chr, int to);

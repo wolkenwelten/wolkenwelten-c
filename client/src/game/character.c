@@ -290,23 +290,23 @@ void characterHit(character *c){
 }
 
 void characterPrimary(character *c){
-	int cx,cy,cz;
 	item *itm = &c->inventory[c->activeItem];
 	if(hasPrimaryAction(itm)){
 		primaryActionDispatch(itm,c,c->actionTimeout);
-	}else{
-		if(characterLOSBlock(c,&cx,&cy,&cz,0)){
-			c->blockMiningX = cx;
-			c->blockMiningY = cy;
-			c->blockMiningZ = cz;
-			if(c->actionTimeout >= 0){
-				sfxPlay(sfxTock,1.f);
-				vibrate(0.3f);
-				characterHit(c);
-			}
-		}else if(c->actionTimeout >= 0){
-			characterHit(c);
-		}
+		return;
+	}
+	ivec los = characterLOSBlock(c,0);
+	if(los.x < 0){
+		if(c->actionTimeout >= 0){characterHit(c);}
+		return;
+	}
+	c->blockMiningX = los.x;
+	c->blockMiningY = los.y;
+	c->blockMiningZ = los.z;
+	if(c->actionTimeout >= 0){
+		sfxPlay(sfxTock,1.f);
+		vibrate(0.3f);
+		characterHit(c);
 	}
 }
 
@@ -775,26 +775,25 @@ void characterDamagePacket(character *c, const packet *p){
 	}
 }
 
-bool itemPlaceBlock(item *i,character *chr, int to){
-	int cx,cy,cz;
-	if(to < 0){return false;}
-	if(characterLOSBlock(chr,&cx,&cy,&cz,true)){
-		if((characterCollision(chr->pos)&0xFF0)){ return false; }
-		if(!itemDecStack(i,1)){ return false; }
-		worldSetB(cx,cy,cz,i->ID);
-		if((characterCollision(chr->pos)&0xFF0) != 0){
-			worldSetB(cx,cy,cz,0);
-			itemIncStack(i,1);
-			return false;
-		} else {
-			msgPlaceBlock(cx,cy,cz,i->ID);
-			sfxPlay(sfxPock,1.f);
-			characterStartAnimation(chr,0,240);
-			characterAddCooldown(chr,50);
-			return true;
-		}
+bool characterPlaceBlock(character *c,item *item){
+	if(c->actionTimeout < 0)              { return false; }
+	ivec los = characterLOSBlock(c,true);
+	if(los.x < 0)                         { return false; }
+	if((characterCollision(c->pos)&0xFF0)){ return false; }
+	if(!itemDecStack(item,1))             { return false; }
+
+	worldSetB(los.x,los.y,los.z,item->ID);
+	if((characterCollision(c->pos)&0xFF0) != 0){
+		worldSetB(los.x,los.y,los.z,0);
+		itemIncStack(item,1);
+		return false;
+	} else {
+		msgPlaceBlock(los.x,los.y,los.z,item->ID);
+		sfxPlay(sfxPock,1.f);
+		characterStartAnimation(c,0,240);
+		characterAddCooldown(c,50);
+		return true;
 	}
-	return false;
 }
 
 void characterSetData(character *c, const packet *p){

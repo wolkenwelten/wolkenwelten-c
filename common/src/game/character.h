@@ -27,6 +27,6 @@ void       characterEmptyInventory (      character *c);
 void       characterDie            (      character *c);
 void       characterMove           (      character *c, const vec mov);
 void       characterRotate         (      character *c, const vec rot);
-bool       characterLOSBlock       (const character *c, int *retX, int *retY, int *retZ, int returnBeforeBlock);
+ivec       characterLOSBlock       (const character *c, int returnBeforeBlock);
 bool       characterItemReload     (      character *c, item *i, int cooldown);
 void       characterSetInventoryP  (      character *c, const packet *p);

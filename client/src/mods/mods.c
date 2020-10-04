@@ -31,8 +31,9 @@ bool primaryActionDefault(item *cItem, character *cChar, int to){
 	return false;
 }
 bool secondaryActionDefault(item *cItem, character *cChar, int to){
+	(void)to;
 	if(cItem->ID < 256){
-		return itemPlaceBlock(cItem,cChar, to);
+		return characterPlaceBlock(cChar, cItem);
 	}
 	return false;
 }
