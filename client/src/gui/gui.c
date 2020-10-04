@@ -144,7 +144,7 @@ void initUI(){
 	chatPanel = widgetNewCP(WIDGET_PANEL,rootHud,0,-1,512,0);
 	chatPanel->flags |= WIDGET_HIDDEN;
 	chatText  = widgetNewCPLH(WIDGET_TEXTINPUT,chatPanel,16,16,440,32,"Message","submit",handlerChatSubmit);
-	widgetNewCPLH(WIDGET_BUTTON,chatPanel,-16,16,24,32,">","click",handlerChatSubmit);
+	widgetNewCPLH(WIDGET_BUTTON,chatPanel,-16,16,24,32,"\xA8","click",handlerChatSubmit);
 
 	resizeUI();
 }
