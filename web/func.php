@@ -51,7 +51,7 @@ function echoBuilds($arr){
 	foreach($arr as $platform => $releases){
 		$rel = array_key_first($releases);
 		if(trim($rel) == ''){continue;}
-		$href = 'release/'.$platform.'/'.$rel;
+		$href = 'releases/'.$platform.'/'.$rel;
 		$label = '<span class=buttonlabel>'.niceName($platform).'</span><span class="buttonicon icon-'.$platform.'"></span>';
 		echo '<a href="'.$href.'" download class=button title="'.niceDate($platform.'/'.$rel).'">'.$label."</a>";
 	}
