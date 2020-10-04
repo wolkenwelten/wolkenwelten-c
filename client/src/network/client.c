@@ -164,7 +164,6 @@ void clientParsePacket(const packet *p){
 			characterMoveDelta(player,p);
 			break;
 		case 14: // characterName
-			fprintf(stderr,"characterName[%i]: %s\n",pLen,&p->val.c[2]);
 			characterSetName(p);
 			break;
 		case 15: // playerPos
