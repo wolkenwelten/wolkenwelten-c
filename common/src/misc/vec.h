@@ -78,7 +78,6 @@ static inline vec vecRng(){
 	return vecMulS(vecSubS(vecRngAbs(),0.5f),2.f);
 }
 
-
 static inline ivec ivecNew(int x, int y, int z){
 	return (ivec){{{x,y,z}}};
 }
@@ -160,6 +159,9 @@ static inline int ivecOrSum(const ivec a){
 static inline int ivecSum  (const ivec a){
 	return a.x+a.y+a.z;
 }
+static inline bool ivecEq  (const ivec a, const ivec b){
+	return ((a.x == b.x) && (a.y == b.y) && (a.z == b.z));
+}
 
 
 
@@ -237,4 +239,7 @@ static inline uvec uvecXor(const uvec a, const uvec b){
 }
 static inline uvec uvecXorS(const uvec a, const uint b){
 	return (uvec){{{a.x^b  ,a.y^b  ,a.z^b  }}};
+}
+static inline bool uvecEq  (const uvec a, const uvec b){
+	return ((a.x == b.x) && (a.y == b.y) && (a.z == b.z));
 }

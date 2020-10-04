@@ -150,24 +150,22 @@ void characterSwapItemSlots(character *c, uint a,uint b){
 }
 
 ivec characterLOSBlock(const character *c, int returnBeforeBlock) {
-	int   lastBlock = -1;
 	const vec cv = vecMulS(vecDegToVec(c->rot),0.0625f);
 	vec       cp = vecAdd(c->pos,vecNew(0,0.5,0));
-	vec       l  = cp;
+	ivec      l  = ivecNewV(cp);
 
 	for(int i=0;i<48;i++){
-		if((lastBlock == -1) || (fabsf(l.x - floorf(cp.x)) > 0.1f) || (fabsf(l.y - floorf(cp.y)) > 0.1f) || (fabsf(l.z - floorf(cp.z)) > 0.1f)){
-			lastBlock = worldGetB(cp.x,cp.y,cp.z);
-			if(lastBlock > 0){
-				if(returnBeforeBlock){
-					return ivecNewV(l);
-				}else{
-					return ivecNewV(cp);
-				}
-			}
-			l = vecFloor(cp);
-		}
 		cp = vecAdd(cp,cv);
+		const ivec ip = ivecNewV(cp);
+		if(!ivecEq(ip,l)){
+			if(worldGetB(ip.x,ip.y,ip.z) > 0){
+				if(returnBeforeBlock){
+					return l;
+				}
+				return ip;
+			}
+			l = ip;
+		}
 	}
 	return ivecNOne();
 }
