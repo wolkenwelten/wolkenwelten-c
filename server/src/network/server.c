@@ -339,7 +339,6 @@ void serverParseSinglePacket(uint c, packet *p){
 			serverKill(c);
 			break;
 		case 26:
-			fprintf(stderr,"playerDmg: HP=%i Target=%i Cause=%i Culprit=%i\n",p->val.s[1],p->val.s[0],p->val.s[2],c);
 			msgPlayerDamage(p->val.s[1],p->val.s[0],p->val.s[1],p->val.s[2],c);
 			break;
 		case 27:
