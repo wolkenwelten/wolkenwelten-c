@@ -819,6 +819,12 @@ int characterGetPlayerHP(uint i){
 	return playerList[i]->hp;
 }
 
+vec characterGetPlayerDist(uint i){
+	if(i >= 32){return vecZero();}
+	if(playerList[i] == NULL){return vecZero();}
+	return vecSub(player->pos,playerList[i]->pos);
+}
+
 int characterBlastHitCheck(const vec pos, float beamSize, float damageMultiplier, uint iteration){
 	int hits = 0;
 	float md = (beamSize+0.5f) * (beamSize+0.5f);

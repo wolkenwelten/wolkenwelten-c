@@ -68,13 +68,17 @@ void widgetFree(widget *w){
 	if(w == NULL){return;}
 	if(w->child != NULL){
 		widgetEmpty(w);
+		w->child = NULL;
 	}
 	if(w->parent != NULL){
 		if(w->parent->child == w){
-			w->parent->child = w->next;
+			if(w->next != NULL){ w->next->prev    = w->prev; }
+			if(w->prev != NULL){ w->parent->child = w->next; }
 		}else{
-			// ToDo
+			if(w->prev != NULL){ w->prev->next = w->next; }
+			if(w->next != NULL){ w->next->prev = w->prev; }
 		}
+		w->parent = w->next = w->prev = NULL;
 	}
 	if(w->type == WIDGET_TEXTINPUT){
 		free(w->vals);
@@ -267,6 +271,24 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 				}
 			}
 			wid->flags &= ~WIDGET_CLICKED;
+		}
+		if(mouseClicked[2]){
+			wid->flags |= WIDGET_ALT_CLICKED;
+		}else{
+			if(wid->flags & WIDGET_ALT_CLICKED){
+				widgetFocus(wid);
+				widgetEmit(wid,"altclick");
+			}
+			wid->flags &= ~WIDGET_ALT_CLICKED;
+		}
+		if(mouseClicked[1]){
+			wid->flags |= WIDGET_MID_CLICKED;
+		}else{
+			if(wid->flags & WIDGET_MID_CLICKED){
+				widgetFocus(wid);
+				widgetEmit(wid,"midclick");
+			}
+			wid->flags &= ~WIDGET_MID_CLICKED;
 		}
 	}else{
 		wid->flags &= ~(WIDGET_HOVER | WIDGET_CLICKED);

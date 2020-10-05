@@ -24,6 +24,7 @@ struct widget {
 		char *vals;
 		int   vali;
 		uint  valu;
+		item *valItem;
 	};
 };
 #define WIDGET_PANEL      1
@@ -35,18 +36,21 @@ struct widget {
 #define WIDGET_TEXTINPUT  7
 #define WIDGET_SLIDER     8
 #define WIDGET_HR         9
+#define WIDGET_ITEMSLOT  10
 
-#define WIDGET_HIDDEN   (1   )
-#define WIDGET_HOVER    (1<<1)
-#define WIDGET_CLICKED  (1<<2)
-#define WIDGET_NOSELECT (1<<3)
-#define WIDGET_ANIMATEX (1<<4)
-#define WIDGET_ANIMATEY (1<<5)
-#define WIDGET_ANIMATEW (1<<6)
-#define WIDGET_ANIMATEH (1<<7)
-#define WIDGET_SMALL    (1<<8)
-#define WIDGET_BIG      (1<<9)
-#define WIDGET_BIGGER   (WIDGET_SMALL | WIDGET_BIG)
+#define WIDGET_HIDDEN      (1    )
+#define WIDGET_HOVER       (1<< 1)
+#define WIDGET_CLICKED     (1<< 2)
+#define WIDGET_NOSELECT    (1<< 3)
+#define WIDGET_ANIMATEX    (1<< 4)
+#define WIDGET_ANIMATEY    (1<< 5)
+#define WIDGET_ANIMATEW    (1<< 6)
+#define WIDGET_ANIMATEH    (1<< 7)
+#define WIDGET_SMALL       (1<< 8)
+#define WIDGET_BIG         (1<< 9)
+#define WIDGET_BIGGER      (WIDGET_SMALL | WIDGET_BIG)
+#define WIDGET_ALT_CLICKED (1<<10)
+#define WIDGET_MID_CLICKED (1<<11)
 
 #define WIDGET_ANIMATE (15<<4)
 #define WIDGET_HNS      (WIDGET_HIDDEN | WIDGET_NOSELECT)

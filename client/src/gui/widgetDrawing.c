@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 #include "widgetDrawing.h"
 
+#include "../game/character.h"
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
@@ -213,6 +214,16 @@ static void widgetDrawHR(const widget *wid, textMesh *m, int x, int y, int w, in
 	textMeshVGradient(m,x,y+o,w,4,tcolor,bcolor);
 }
 
+static void widgetDrawItemSlot(const widget *wid, textMesh *m, int x, int y, int w, int h){
+	(void)h;
+	int style = 0;
+	item *itm = wid->valItem;
+	if((wid == widgetFocused) || (wid->flags & WIDGET_HOVER) || (itm == characterGetActiveItem(player))){
+		style = 1;
+	}
+	textMeshItem(m, x, y, w, style, itm);
+}
+
 
 void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h){
 	if(wid == NULL){return;}
@@ -241,6 +252,9 @@ void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h)
 			break;
 		case WIDGET_HR:
 			widgetDrawHR(wid,m,x,y,w,h);
+			break;
+		case WIDGET_ITEMSLOT:
+			widgetDrawItemSlot(wid,m,x,y,w,h);
 			break;
 	}
 }

@@ -230,6 +230,24 @@ void drawHealthbar(){
 	drawSingleHealthbar(player->hp, tilesize/2, tilesize/2, tilesize,true);
 }
 
+void drawPlayerOverlay(uint i){
+	const vec dist = characterGetPlayerDist(i);
+	//const float  d = vecMag(dist);
+	const float hfov = gfxCurFOV;
+	const float vfov = gfxCurFOV * ((float)screenHeight / (float)screenWidth);
+	vec  deg = vecSub(vecMul(vecVecToDeg(dist),vecNew(1,-1,1)),player->rot);
+	if(deg.x <     0){deg.x += 360.f;}
+	if(deg.x > 360.f){deg.x -= 360.f;}
+	deg.y += 180.f;
+	if(deg.y <     0){deg.y += 360.f;}
+	if(deg.y > 360.f){deg.y -= 360.f;}
+
+	const float x = ((deg.x - (180.f-hfov))/(hfov*2)) * screenWidth;
+	const float y = ((deg.y - (180.f-vfov))/(vfov*2)) * screenHeight;
+
+	textMeshPrintfPS(guim,MAX(16,MIN(screenWidth-16,x)),MAX(16,MIN(screenHeight-16,y)),1,"X %f = %f",y,deg.y);
+}
+
 void drawDebuginfo(){
 	static uint ticks = 0;
 	int tris = vboTrisCount;
@@ -270,6 +288,7 @@ void drawDebuginfo(){
 		drawSingleHealthbar(characterGetPlayerHP(i),screenWidth-96,guim->sy+22,14,false);
 		guim->sy += 42;
 		guim->sx = screenWidth;
+		//drawPlayerOverlay(i);
 	}
 
 	vboTrisCount = 0;
@@ -305,22 +324,6 @@ void drawDebuginfo(){
 
 	guim->font = 0;
 
-}
-
-void drawItemBar(){
-	int playerSelection = player->activeItem;
-	const int tilesize = getTilesize();
-
-	guim->size = 2;
-	for(int i = 0;i<10;i++){
-		int x = (screenWidth-10*tilesize)+(i*tilesize);
-		int y = screenHeight-tilesize;
-		int style = 0;
-		if(i == playerSelection){
-			style = 1;
-		}
-		textMeshItem(guim,x,y,tilesize,style,&player->inventory[i]);
-	}
 }
 
 void drawActiveItem(){
@@ -473,13 +476,11 @@ void drawHud(){
 	drawHealthbar();
 	drawDebuginfo();
 	drawAmmunition();
-	if(isInventoryOpen()){
-		drawInventory(guim);
-	}else{
-		drawItemBar();
-	}
 	drawChat();
 	widgetDraw(rootHud,guim,0,0,screenWidth,screenHeight);
+	if(isInventoryOpen()){
+		drawInventory(guim);
+	}
 	textMeshDraw(guim);
 }
 

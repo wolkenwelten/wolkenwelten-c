@@ -197,6 +197,14 @@ void keyboardEventHandler(const SDL_Event *e){
 			menuCancel();
 			guiCancel();
 			break;
+		case SDLK_i:
+		case SDLK_TAB:
+			if(isInventoryOpen()){
+				hideInventory();
+			}else{
+				showInventory();
+			}
+			break;
 		}
 	}
 
@@ -205,14 +213,6 @@ void keyboardEventHandler(const SDL_Event *e){
 		switch(e->key.keysym.sym){
 		case SDLK_e:
 			characterFireHook(player);
-			break;
-		case SDLK_i:
-		case SDLK_TAB:
-			if(isInventoryOpen()){
-				hideInventory();
-			}else{
-				showInventory();
-			}
 			break;
 		case SDLK_1:
 			characterSetActiveItem(player,0);

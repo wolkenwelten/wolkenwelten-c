@@ -31,6 +31,7 @@ float matProjection[16], matView[16];
 int screenWidth     = 800;
 int screenHeight    = 600;
 size_t vboTrisCount = 0;
+float gfxCurFOV     = 80.0f;
 vec camShake;
 
 GLenum glCheckError_(const char *file, int line){
@@ -72,7 +73,6 @@ void initGL(){
 #endif
 }
 
-double gfxCurFOV = 80.0;
 void calcFOV(const character *cam){
 	float off = vecMag(cam->vel);
 
@@ -87,7 +87,7 @@ void calcFOV(const character *cam){
 	}else if(off < gfxCurFOV){
 		gfxCurFOV -= (gfxCurFOV-off)/8;
 	}
-	if(gfxCurFOV < 80.1){gfxCurFOV = 80.0;}
+	if(gfxCurFOV < 80.1){gfxCurFOV = 80.0f;}
 	matPerspective(matProjection, gfxCurFOV, (float)screenWidth / (float)screenHeight, 0.2f, 1024.f);
 }
 

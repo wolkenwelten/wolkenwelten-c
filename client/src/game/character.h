@@ -23,6 +23,7 @@ void  characterSetPlayerPos    (                    const packet *p);
 void  characterSetName         (                    const packet *p);
 char *characterGetPlayerName   (uint i);
 int   characterGetPlayerHP     (uint i);
+vec   characterGetPlayerDist   (uint i);
 void  characterGotHitBroadcast (int c, int pwr);
 void  characterRemovePlayer    (int c, int len);
 int   characterBlastHitCheck   (const vec pos, float beamSize, float damageMultiplier, uint iteration);

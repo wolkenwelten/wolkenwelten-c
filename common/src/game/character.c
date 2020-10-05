@@ -126,6 +126,10 @@ item *characterGetItemBarSlot(character *c, uint i){
 	return &c->inventory[i];
 }
 
+item *characterGetActiveItem(character *c){
+	return characterGetItemBarSlot(c,c->activeItem);
+}
+
 void characterSetItemBarSlot(character *c, uint i, item *itm){
 	if(i >= 40){return;}
 	c->inventory[i] = *itm;

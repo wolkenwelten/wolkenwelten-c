@@ -20,6 +20,7 @@ int        characterGetItemAmount  (const character *c, u16 itemID);
 int        characterDecItemAmount  (      character *c, u16 itemID, int amount);
 bool       characterPickupItem     (      character *c, u16 itemID, int amount);
 item      *characterGetItemBarSlot (      character *c, uint i);
+item      *characterGetActiveItem  (      character *c);
 void       characterSetItemBarSlot (      character *c, uint i, item *itm);
 void       characterSwapItemSlots  (      character *c, uint a, uint b);
 void       characterSetActiveItem  (      character *c, int i);

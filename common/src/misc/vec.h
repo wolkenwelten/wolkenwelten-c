@@ -12,6 +12,7 @@ vec   vecCross   (const vec a, const vec   b);
 vec   vecRotate  (const vec a, const vec   b, const float rad);
 vec   vecNorm    (const vec a);
 vec   vecVecToDeg(const vec a);
+vec   vecVecToDegExperimental(const vec a);
 vec   vecDegToVec(const vec a);
 
 static inline vec vecNew (float x, float y, float z){

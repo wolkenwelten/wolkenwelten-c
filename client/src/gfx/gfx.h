@@ -6,6 +6,7 @@ extern int    screenWidth;
 extern int    screenHeight;
 extern size_t vboTrisCount;
 extern vec    camShake;
+extern float  gfxCurFOV;
 
 void initGL          ();
 void renderWorld     (const character *cam);

@@ -172,6 +172,7 @@ int main( int argc, char* argv[] ){
 
 
 	player = characterNew();
+	initInventory();
 	checkAutostart();
 	#ifdef __EMSCRIPTEN__
 		emscripten_set_main_loop(mainloop, 0, true);
