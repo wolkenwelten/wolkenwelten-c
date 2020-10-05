@@ -101,7 +101,7 @@ void worldUpdate(){
 			}
 		}
 		resetOverlayColor();
-		if(isInventoryOpen()){setOverlayColor(0x80000000,300);}
+		if(isInventoryOpen()){setOverlayColor(0x90182028,300);}
 		charactersUpdate();
 		grenadeUpdate();
 		animalUpdateAll();

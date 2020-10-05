@@ -194,16 +194,25 @@ void keyboardEventHandler(const SDL_Event *e){
 			keysPressed[15] = 1;
 			break;
 		case SDLK_ESCAPE:
+			if(gameRunning && !mouseHidden){hideMouseCursor(); break; }
 			menuCancel();
 			guiCancel();
 			break;
 		case SDLK_i:
 		case SDLK_TAB:
-			if(isInventoryOpen()){
-				hideInventory();
-			}else{
-				showInventory();
+			if(!textInputActive()){
+				if(isInventoryOpen()){
+					hideInventory();
+				}else{
+					showInventory();
+				}
 			}
+			break;
+		case SDLK_F2:
+			showInventory();
+			break;
+		case SDLK_F3:
+			showCrafting();
 			break;
 		}
 	}

@@ -12,16 +12,18 @@ struct eventHandler {
 
 typedef enum {
 	wNone,
-	wPanel,
-	wLabel,
-	wButton,
 	wSpace,
+	wPanel,
 	wBackground,
-	wButtonDel,
-	wTextInput,
-	wSlider,
 	wHR,
-	wItemSlot
+	wLabel,
+	wTextInput,
+	wButton,
+	wRadioButton,
+	wButtonDel,
+	wSlider,
+	wItemSlot,
+	wRecipeSlot
 } widgetType;
 
 struct widget {
@@ -56,6 +58,7 @@ struct widget {
 #define WIDGET_BIGGER      (WIDGET_SMALL | WIDGET_BIG)
 #define WIDGET_ALT_CLICKED (1<<10)
 #define WIDGET_MID_CLICKED (1<<11)
+#define WIDGET_ACTIVE      (1<<12)
 
 #define WIDGET_ANIMATE (15<<4)
 #define WIDGET_HNS      (WIDGET_HIDDEN | WIDGET_NOSELECT)

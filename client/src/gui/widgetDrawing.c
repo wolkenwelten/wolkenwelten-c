@@ -2,6 +2,7 @@
 #include "widgetDrawing.h"
 
 #include "../game/character.h"
+#include "../game/recipe.h"
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
@@ -22,8 +23,11 @@ static void widgetDrawButton(const widget *wid, textMesh *m, int x, int y, int w
 		 color = 0xFFAA6666;
 		tcolor = 0xFFCC8888;
 		bcolor = 0xFF884444;
-	}else if(wid->flags & WIDGET_CLICKED){
-		color = 0xFF2A2A2A;
+	}
+	if(wid->flags & WIDGET_CLICKED){
+		if(wid != widgetFocused){
+			color = 0xFF2A2A2A;
+		}
 		textXOff+=1;
 		textYOff+=1;
 		int tmp = tcolor;
@@ -95,6 +99,41 @@ static void widgetDrawButtondel(const widget *wid, textMesh *m, int x, int y, in
 	textMeshAddLinePS(m,x+textXOff,y+textYOff,2,wid->label);
 	textMeshAddLinePS(m,x+w-24,y+textYOff,2,"X");
 }
+
+static void widgetDrawRadioButton(const widget *wid, textMesh *m, int x, int y, int w, int h){
+	u32 color    = 0xFF555555;
+	u32 tcolor   = 0xFF777777;
+	u32 bcolor   = 0xFF333333;
+	int textYOff = (h - (2*8))/2;
+	int textXOff = (w-(strnlen(wid->label,w/16)*16))/2;
+
+	if(wid == widgetFocused){
+		 color = 0xFFAA6666;
+		tcolor = 0xFFCC8888;
+		bcolor = 0xFF884444;
+	}
+	if((wid->flags & WIDGET_CLICKED) || (wid->flags & WIDGET_ACTIVE)){
+		if(wid != widgetFocused){
+			color = 0xFF2A2A2A;
+		}
+		textXOff+=1;
+		textYOff+=1;
+		int tmp = tcolor;
+		tcolor = bcolor;
+		bcolor = tmp;
+	}else if(wid->flags & WIDGET_HOVER){
+		color = 0xFF444444;
+	}
+
+	textMeshVGradient(m,x+1,y+1,w-2,h-2, color,bcolor);
+	textMeshSolidBox (m,x+1,y  ,w-2,  1,tcolor);
+	textMeshSolidBox (m,x  ,y+1,  1,h-2,tcolor);
+	textMeshSolidBox (m,x+1,y+h-1,w-2,  1,bcolor);
+	textMeshSolidBox (m,x+w-1,y+1,  1,h-2,bcolor);
+
+	textMeshAddLinePS(m,x+textXOff,y+textYOff,2,wid->label);
+}
+
 
 static void widgetDrawBackground(const widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)wid;
@@ -224,6 +263,23 @@ static void widgetDrawItemSlot(const widget *wid, textMesh *m, int x, int y, int
 	textMeshItem(m, x, y, w, style, itm);
 }
 
+static void widgetDrawRecipeSlot(const widget *wid, textMesh *m, int x, int y, int w, int h){
+	(void)h;
+	int style = 0;
+	uint r  = wid->valu;
+	u16 res = recipeGetResultID(r);
+	u16 a   = recipeCanCraft(player,r);
+	if(a == 0){
+		style = 2;
+	}
+	if((wid == widgetFocused) || (wid->flags & WIDGET_HOVER)){
+		style = 1;
+	}
+	//textMeshBox(m,x,y,w,h,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+	textMeshItemSlot(m,x,y,w,style,res,a);
+}
+
+
 void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h){
 	if(wid == NULL){return;}
 
@@ -234,29 +290,35 @@ void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h)
 		case wPanel:
 			widgetDrawPanel(wid,m,x,y,w,h);
 			break;
-		case wButton:
-			widgetDrawButton(wid,m,x,y,w,h);
-			break;
 		case wBackground:
 			widgetDrawBackground(wid,m,x,y,w,h);
-			break;
-		case wLabel:
-			widgetDrawLabel(wid,m,x,y,w,h);
-			break;
-		case wButtonDel:
-			widgetDrawButtondel(wid,m,x,y,w,h);
-			break;
-		case wTextInput:
-			widgetDrawTextInput(wid,m,x,y,w,h);
-			break;
-		case wSlider:
-			widgetDrawSlider(wid,m,x,y,w,h);
 			break;
 		case wHR:
 			widgetDrawHR(wid,m,x,y,w,h);
 			break;
+		case wLabel:
+			widgetDrawLabel(wid,m,x,y,w,h);
+			break;
+		case wTextInput:
+			widgetDrawTextInput(wid,m,x,y,w,h);
+			break;
+		case wButton:
+			widgetDrawButton(wid,m,x,y,w,h);
+			break;
+		case wButtonDel:
+			widgetDrawButtondel(wid,m,x,y,w,h);
+			break;
+		case wRadioButton:
+			widgetDrawRadioButton(wid,m,x,y,w,h);
+			break;
+		case wSlider:
+			widgetDrawSlider(wid,m,x,y,w,h);
+			break;
 		case wItemSlot:
 			widgetDrawItemSlot(wid,m,x,y,w,h);
+			break;
+		case wRecipeSlot:
+			widgetDrawRecipeSlot(wid,m,x,y,w,h);
 			break;
 	}
 }

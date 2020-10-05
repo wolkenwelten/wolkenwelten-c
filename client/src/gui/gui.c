@@ -49,6 +49,14 @@ uint mouseClicked[3] = {0,0,0};
 
 float matOrthoProj[16];
 
+void handlerRootHud(widget *wid){
+	(void)wid;
+	chatText->vals[0] = 0;
+	widgetFocus(NULL);
+	widgetSlideH(chatPanel, 0);
+	hideMouseCursor();
+}
+
 void showMouseCursor(){
 	setRelativeMouseMode(false);
 	warpMouse(mousex,mousey);
@@ -58,6 +66,8 @@ void showMouseCursor(){
 void hideMouseCursor(){
 	setRelativeMouseMode(true);
 	mouseHidden = true;
+	chatText->vals[0] = 0;
+	widgetSlideH(chatPanel, 0);
 	widgetFocus(NULL);
 }
 
@@ -111,14 +121,6 @@ void openChat(){
 	widgetSlideH(chatPanel, 64);
 	widgetFocus(chatText);
 	showMouseCursor();
-}
-
-void handlerRootHud(widget *wid){
-	(void)wid;
-	chatText->vals[0] = 0;
-	widgetFocus(NULL);
-	widgetSlideH(chatPanel, 0);
-	hideMouseCursor();
 }
 
 void handlerChatSubmit(widget *wid){
@@ -434,8 +436,8 @@ void drawAmmunition(){
 
 	const int tilesize = getTilesize();
 
-	guim->sx = screenWidth-(tilesize*1.5f);
-	guim->sy = screenHeight-tilesize*1.75f;
+	guim->sx = screenWidth-(tilesize*2.f);
+	guim->sy = screenHeight-tilesize-inventoryPanel->h;
 	guim->font = 1;
 	textMeshNumber(guim,guim->sx,guim->sy,2,amount);
 	textMeshItemSprite(guim,guim->sx+32,guim->sy-18,64,ammo);
