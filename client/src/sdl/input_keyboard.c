@@ -128,6 +128,11 @@ void keyboardEventHandler(const SDL_Event *e){
 		case SDLK_l:
 			keysPressed[15] = 0;
 			break;
+		case SDLK_LALT:
+		case SDLK_RALT:
+		case SDLK_MENU:
+			showMouseCursor();
+			break;
 
 		#ifndef __EMSCRIPTEN__
 		case SDLK_F5:
