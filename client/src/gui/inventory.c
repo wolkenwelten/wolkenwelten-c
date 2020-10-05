@@ -169,6 +169,8 @@ void hideInventory(){
 		itemDiscard(&inventoryCurrentPickup);
 	}
 	widgetSlideH(inventoryPanel,getTilesize()+32);
+	widgetSlideW(inventorySpace,getTilesize()*10);
+	widgetSlideW(craftingSpace,                0);
 }
 
 bool isInventoryOpen(){

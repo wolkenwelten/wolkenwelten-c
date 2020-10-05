@@ -1,1 +1,7 @@
-- Client side hit checking
+- Add Stone/Coal/Ore/Crystals to the overworld
+- Check new GUI with a Gamepad
+- Show Ingedients in new crafting screen
+- Rebalance blaster recipes
+- Add .help command
+- Fix wasm SP!
+- Add version name to extracted folder path of releases
