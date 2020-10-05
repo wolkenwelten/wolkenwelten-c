@@ -137,8 +137,8 @@ static void widgetDrawRadioButton(const widget *wid, textMesh *m, int x, int y, 
 
 static void widgetDrawBackground(const widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)wid;
-	static int i = 0;
-	int o = h/2 + sin(++i/256.f)*((float)(h/3));
+	const uint i = getTicks() >> 12;
+	int o = h/2 + sin(i)*((float)(h/3));
 	textMeshVGradient(m,x,y    ,w,o,0xFFFFBF83, 0xFFFF6825);
 	textMeshVGradient(m,x,y+o,w,h-o,0xFFFF6825, 0xFFE82410);
 }
@@ -264,21 +264,48 @@ static void widgetDrawItemSlot(const widget *wid, textMesh *m, int x, int y, int
 }
 
 static void widgetDrawRecipeSlot(const widget *wid, textMesh *m, int x, int y, int w, int h){
-	(void)h;
 	int style = 0;
-	uint r  = wid->valu;
-	u16 res = recipeGetResultID(r);
-	u16 a   = recipeCanCraft(player,r);
+	uint r    = wid->valu;
+	u16 res   = recipeGetResultID(r);
+	u16 a     = recipeCanCraft(player,r);
 	if(a == 0){
 		style = 2;
 	}
 	if((wid == widgetFocused) || (wid->flags & WIDGET_HOVER)){
 		style = 1;
 	}
-	//textMeshBox(m,x,y,w,h,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
-	textMeshItemSlot(m,x,y,w,style,res,a);
+	textMeshItemSlot(m,x,y,MIN(w,h),style,res,a);
 }
 
+static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, int w, int h){
+	const uint ticks = getTicks()>>4;
+	const uint ts    = MIN(w,h);
+	uint ii,xx,r = wid->vali;
+	u16 a,b;
+	if(r >= recipeGetCount()){return;}
+	const int animX = sin((float)ticks/24.f)*ts/8;
+	const int animY = cos((float)ticks/24.f)*ts/8;
+
+
+	for(ii=0;ii<4;ii++){
+		xx = ii*2*ts + x;
+		b = recipeGetIngredientID(r,ii);
+		a = recipeGetIngredientAmount(r,ii);
+		if((b == 0) || (a <= 0)){ break;}
+		b = ingredientSubstituteGetSub(b,(ticks/96) % (ingredientSubstituteGetAmount(b)+1));
+
+		if(ii > 0){
+			textMeshBox(m,xx-ts+ts/4+animX,y+ts/4+animY,ts/2,ts/2,24.f/32,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+		}
+		textMeshItemSlot(m,xx,y,ts,3,b,a);
+	}
+	b = recipeGetResultID(r);
+
+	xx = ii*2*ts + x;
+	textMeshBox(m,xx-ts+ts/4+animX*2,y+ts/4,ts/2,ts/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
+	textMeshItemSlot(m,xx,y,ts,3,b,recipeGetResultAmount(r));
+
+}
 
 void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h){
 	if(wid == NULL){return;}
@@ -319,6 +346,9 @@ void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h)
 			break;
 		case wRecipeSlot:
 			widgetDrawRecipeSlot(wid,m,x,y,w,h);
+			break;
+		case wRecipeInfo:
+			widgetDrawRecipeInfo(wid,m,x,y,w,h);
 			break;
 	}
 }

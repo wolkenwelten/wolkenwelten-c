@@ -347,7 +347,7 @@ void characterDie(character *c){
 		item *cItem = characterGetItemBarSlot(c,i);
 		if(cItem == NULL)     { continue; }
 		if(itemIsEmpty(cItem)){ continue; }
-		itemDropNewD(vecAdd(c->pos,vecNew(0,3,0)), cItem);
+		itemDropNewD(c->pos, cItem);
 	}
 	characterInit(c);
 	setOverlayColor(0xFF000000,0);

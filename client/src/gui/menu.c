@@ -442,7 +442,7 @@ void renderMenu(){
 
 void menuChangeFocus(int xoff,int yoff){
 	(void)xoff;
-	if(gameRunning){return;}
+	//if(gameRunning){return;}
 
 	if(widgetFocused != NULL){
 		if((widgetFocused->type == wSlider) && (xoff != 0)){
@@ -465,7 +465,7 @@ void menuChangeFocus(int xoff,int yoff){
 
 void menuKeyClick(int btn){
 	(void)btn;
-	if(gameRunning){return;}
+	//if(gameRunning){return;}
 	if(showAttribution){widgetEmit(rootMenu,"click");return;}
 	if(widgetFocused == NULL){return;}
 	if(btn == 1){

@@ -23,6 +23,7 @@ widget *inventorySpace;
 widget *craftingSpace;
 widget *inventoryRadio;
 widget *craftingRadio;
+widget *craftingInfo;
 
 static void handlerInventoryItemClick(widget *wid){
 	item *cItem = wid->valItem;
@@ -99,6 +100,14 @@ static void handlerInventoryRadioCrafting(widget *wid){
 	showCrafting();
 }
 
+static void handlerCraftingSlotHover(widget *wid){
+	craftingInfo->vali = wid->vali;
+}
+
+static void handlerCraftingSlotBlur(widget *wid){
+	if(craftingInfo->vali == wid->vali){ craftingInfo->vali = -1;}
+}
+
 void initInventory(){
 	const int ts = getTilesize();
 	const int sx = 10*ts;
@@ -119,13 +128,17 @@ void initInventory(){
 		}
 	}
 
+	craftingInfo = widgetNewCP(wRecipeInfo,craftingSpace,ts/2,32+ts/2,10*ts,ts);
+	craftingInfo->vali = 5;
 	for(uint r=0;r<MIN(40,recipeGetCount());r++){
 		const int x = r%10;
-		const int y = r/10;
+		const int y = (r/10)+2;
 		widget *slot = widgetNewCP(wRecipeSlot,craftingSpace,x*ts,y*ts+32,ts,ts);
 		slot->vali = r;
 		widgetBind(slot,"click",handlerCraftingSlotClick);
 		widgetBind(slot,"altclick",handlerCraftingSlotAltClick);
+		widgetBind(slot,"hover",handlerCraftingSlotHover);
+		widgetBind(slot,"blur",handlerCraftingSlotBlur);
 	}
 }
 
@@ -145,7 +158,7 @@ void showInventory(){
 	craftingRadio->flags &= ~WIDGET_ACTIVE;
 }
 void showCrafting(){
-	const int gh = getTilesize()* 4 + 32;
+	const int gh = getTilesize() * ((recipeGetCount()/10)+3) + 32;
 	if(!gameRunning){return;}
 	if((inventoryPanel->h == gh) && (craftingRadio->flags & WIDGET_ACTIVE)){
 		hideInventory();

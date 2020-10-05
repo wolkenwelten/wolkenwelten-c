@@ -23,7 +23,8 @@ typedef enum {
 	wButtonDel,
 	wSlider,
 	wItemSlot,
-	wRecipeSlot
+	wRecipeSlot,
+	wRecipeInfo,
 } widgetType;
 
 struct widget {

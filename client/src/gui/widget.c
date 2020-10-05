@@ -148,11 +148,16 @@ void widgetFocus(widget *w){
 static int widgetIsSelectable(widget *cur){
 	if(cur == NULL){return 0;}
 	if(cur->flags & WIDGET_HNS){return 0;}
-	if(cur->type == wButton    ){return 1;}
-	if(cur->type == wButtonDel ){return 1;}
-	if(cur->type == wTextInput ){return 1;}
-	if(cur->type == wSlider    ){return 1;}
-	return 0;
+	switch(cur->type){
+		case wButton:
+		case wButtonDel:
+		case wRadioButton:
+		case wTextInput:
+		case wSlider:
+			return 1;
+		default:
+			return 0;
+	}
 }
 
 widget *widgetNextSel(widget *cur){
@@ -252,6 +257,7 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 	if(wid == NULL){return;}
 	if((wid->type == wSpace) || (wid->type == wPanel)){return;}
 	if(mouseInBox(x,y,w,h)){
+		if(!(wid->flags & WIDGET_HOVER)){widgetEmit(wid,"hover");}
 		wid->flags |= WIDGET_HOVER;
 		if(mouseClicked[0]){
 			wid->flags |= WIDGET_CLICKED;
@@ -291,6 +297,7 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 			wid->flags &= ~WIDGET_MID_CLICKED;
 		}
 	}else{
+		if(wid->flags & WIDGET_HOVER){widgetEmit(wid,"blur");}
 		wid->flags &= ~(WIDGET_HOVER | WIDGET_CLICKED);
 	}
 }
