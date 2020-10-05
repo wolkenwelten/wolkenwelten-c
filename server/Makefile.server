@@ -48,5 +48,5 @@ server/src/tmp/mods_tmp.c: tools/modscg
 server/src/tmp/mods_tmp.h: server/src/tmp/mods_tmp.c
 	@true
 
-server/src/network/server.o: server/src/network/server_bsd.inc
-server/src/network/server.o: server/src/network/server_win.inc
+server/src/network/server.o: server/src/network/server_bsd.h
+server/src/network/server.o: server/src/network/server_win.h

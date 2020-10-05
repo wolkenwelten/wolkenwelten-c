@@ -36,10 +36,12 @@ int serverPort        = 6309;
 pid_t singlePlayerPID = 0;
 int connectionTries   = 0;
 
-#ifdef __MINGW32__
-#include "client_win.inc"
+#ifdef __EMSCRIPTEN__
+#include "client_wasm.h"
+#elif defined __MINGW32__
+#include "client_win.h"
 #else
-#include "client_bsd.inc"
+#include "client_bsd.h"
 #endif
 
 void msgParseGetChunk(const packet *p){
@@ -246,11 +248,14 @@ void clientParse(){
 }
 
 void clientSendIntroduction(){
+	char introStr[64];
 	#ifndef __EMSCRIPTEN__
 	queueToServer("NATIVE\r\n\r\n",10);
 	#endif
-	queueToServer(playerName,strnlen(playerName,sizeof(playerName)-1));
-	queueToServer("\n",1);
+	uint len = snprintf(introStr,sizeof(introStr),"%.32s\n",playerName);
+	queueToServer(introStr,len);
+	msgNOP(2048);
+	clientSendAllToServer();
 }
 
 void clientGreetServer(){

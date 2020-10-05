@@ -6,6 +6,12 @@
 
 packet packetBuffer;
 
+void msgNOP(uint len){
+	packet *p = &packetBuffer;
+	memset(p->val.c,0,len);
+	packetQueueToServer(p,0,len);
+}
+
 void msgRequestPlayerSpawnPos(){
 	packet *p = &packetBuffer;
 	packetQueueToServer(p,1,0);

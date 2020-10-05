@@ -1,6 +1,6 @@
 EMCC   := emcc
 EMLIBS := -s USE_SDL=2 -s USE_SDL_MIXER=2 -s GL_UNSAFE_OPTS=1
-EMMEM  := -s TOTAL_MEMORY=384MB
+EMMEM  := -s TOTAL_MEMORY=512MB
 
 all: wolkenwelten
 

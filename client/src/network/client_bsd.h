@@ -227,7 +227,7 @@ void clientSendAllToServer(){
 	if(serverSocket <= 0){return;}
 
 	while(sendBufSent < sendBufLen){
-		const int ret = send(serverSocket,sendBuf+sendBufSent,sendBufLen-sendBufSent, 0);
+		const int ret = write(serverSocket,sendBuf+sendBufSent,sendBufLen-sendBufSent);
 		if(ret < 0){
 			if(errno == EAGAIN){
 				return;

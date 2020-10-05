@@ -25,9 +25,9 @@
 #include <unistd.h>
 
 #ifdef __MINGW32__
-#include "server_win.inc"
+#include "server_win.h"
 #else
-#include "server_bsd.inc"
+#include "server_bsd.h"
 #endif
 
 clientConnection clients[32];
@@ -419,6 +419,13 @@ void serverParseConnection(uint c){
 }
 
 void serverParseIntro(uint c){
+	if(clients[c].flags & CONNECTION_WEBSOCKET){
+		serverParseWebSocketPacket(c);
+	}
+	clients[c].recvBuf[clients[c].recvBufLen]=0;
+	fprintf(stderr,"WIntro[%i] '%s'\n",clients[c].recvBufLen,clients[c].recvBuf);
+	fprintf(stderr,"WSIntro[%i] '%s'\n",clients[c].recvWSBufLen,clients[c].recvWSBuf);
+
 	for(uint ii=0;ii<clients[c].recvBufLen;ii++){
 		if(clients[c].recvBuf[ii] != '\n'){ continue; }
 		memcpy(clients[c].playerName,clients[c].recvBuf,MIN(sizeof(clients[c].playerName)-1,ii));

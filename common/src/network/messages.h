@@ -4,6 +4,7 @@
 #include "packet.h"
 extern packet packetBuffer;
 
+void msgNOP                      (uint len);
 void msgRequestPlayerSpawnPos    ();
 void msgPlayerSetPos             (uint c, const vec pos, const vec rot);
 void msgRequestChungus           (uint x, uint y, uint z);

@@ -59,7 +59,8 @@ const char *base64_encode(const u8 *data,uint input_length,const char *prefix){
 void serverParseWebSocketPacket(uint i){
 	for(int max=16;max > 0;--max){
 		if(i >= clientCount)            { return; }
-		if(clients[i].recvWSBufLen < 16){ return; }
+		if((clients[i].state != STATE_INTRO) && (clients[i].recvWSBufLen < 16)){return;}
+		if((clients[i].state == STATE_INTRO) && (clients[i].recvWSBufLen <  4)){return;}
 		u8  opcode  = clients[i].recvWSBuf[0];
 		u8  masklen = clients[i].recvWSBuf[1];
 		u64 mlen    = 0;
@@ -67,6 +68,10 @@ void serverParseWebSocketPacket(uint i){
 		uint ii=0;
 		if(opcode != 0x82){
 			fprintf(stderr,"oh noes: %X\n",opcode);
+			fprintf(stderr,"Buf[%i]: ",clients[i].recvWSBufLen);
+			for(uint iii = 0;iii<clients[i].recvWSBufLen;iii++){
+				fprintf(stderr,"%X ",clients[i].recvWSBuf[iii]);
+			}
 			serverKill(i);
 		}
 		if((masklen&0x80) == 0){
@@ -130,7 +135,7 @@ void serverParseWebSocketHeaderField(uint c,const char *key, const char *val){
 	printf("B64 = %s\n",b64hash);
 
 	len = snprintf(buf,sizeof(buf),"HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Protocol: binary\r\nSec-WebSocket-Accept: %s\r\n\r\n",b64hash);
-	clients[c].flags &= !CONNECTION_WEBSOCKET;
+	clients[c].flags &= ~CONNECTION_WEBSOCKET;
 	sendToClient(c,buf,len);
 	serverSendClient(c);
 	clients[c].flags |= CONNECTION_WEBSOCKET;
