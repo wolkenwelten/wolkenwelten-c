@@ -166,7 +166,6 @@ vec doGamepadupdate(vec vel){
 			}else{
 				lastDown[0] += 50;
 			}
-			updateInventoryGamepad(1);
 		}else{
 			vel.y = 1.f;
 		}
@@ -174,15 +173,10 @@ vec doGamepadupdate(vec vel){
 
 	if(gamepadButtons[2]){
 		gamepadButtons[2] = false;
-		if(isInventoryOpen()){
-			updateInventoryGamepad(2);
-		}
 	}
 	if(gamepadButtons[3]){
 		gamepadButtons[3] = false;
-		if(isInventoryOpen()){
-			updateInventoryGamepad(3);
-		}else{
+		if(!isInventoryOpen()){
 			characterDropItem(player,player->activeItem);
 		}
 	}
@@ -205,21 +199,14 @@ vec doGamepadupdate(vec vel){
 
 	if(gamepadButtons[11]){
 		gamepadButtons[11] = false;
-		if(isInventoryOpen()){
-			changeInventorySelection(0,1);
-		}
 	}
 	if(gamepadButtons[12]){
 		gamepadButtons[12] = false;
-		if(isInventoryOpen()){
-			changeInventorySelection(0,-1);
-		}
 	}
 	if(gamepadButtons[13]){
 		gamepadButtons[13] = false;
-		if(isInventoryOpen()){
-			changeInventorySelection(-1,0);
-		}else{
+
+		if(!isInventoryOpen()){
 			unsigned int nai = player->activeItem-1;
 			if(nai > 9){nai=9;}
 			characterSetActiveItem(player,nai);
@@ -227,9 +214,8 @@ vec doGamepadupdate(vec vel){
 	}
 	if(gamepadButtons[14]){
 		gamepadButtons[14] = false;
-		if(isInventoryOpen()){
-			changeInventorySelection(1,0);
-		}else{
+
+		if(!isInventoryOpen()){
 			unsigned int nai = player->activeItem+1;
 			if(nai > 9){nai=0;}
 			characterSetActiveItem(player,nai);

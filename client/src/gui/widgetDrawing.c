@@ -224,36 +224,38 @@ static void widgetDrawItemSlot(const widget *wid, textMesh *m, int x, int y, int
 	textMeshItem(m, x, y, w, style, itm);
 }
 
-
 void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h){
 	if(wid == NULL){return;}
 
 	switch(wid->type){
-		case WIDGET_PANEL:
+		case wNone:
+		case wSpace:
+			break;
+		case wPanel:
 			widgetDrawPanel(wid,m,x,y,w,h);
 			break;
-		case WIDGET_BUTTON:
+		case wButton:
 			widgetDrawButton(wid,m,x,y,w,h);
 			break;
-		case WIDGET_BACKGROUND:
+		case wBackground:
 			widgetDrawBackground(wid,m,x,y,w,h);
 			break;
-		case WIDGET_LABEL:
+		case wLabel:
 			widgetDrawLabel(wid,m,x,y,w,h);
 			break;
-		case WIDGET_BUTTONDEL:
+		case wButtonDel:
 			widgetDrawButtondel(wid,m,x,y,w,h);
 			break;
-		case WIDGET_TEXTINPUT:
+		case wTextInput:
 			widgetDrawTextInput(wid,m,x,y,w,h);
 			break;
-		case WIDGET_SLIDER:
+		case wSlider:
 			widgetDrawSlider(wid,m,x,y,w,h);
 			break;
-		case WIDGET_HR:
+		case wHR:
 			widgetDrawHR(wid,m,x,y,w,h);
 			break;
-		case WIDGET_ITEMSLOT:
+		case wItemSlot:
 			widgetDrawItemSlot(wid,m,x,y,w,h);
 			break;
 	}

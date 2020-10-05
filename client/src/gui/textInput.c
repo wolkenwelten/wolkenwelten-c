@@ -26,7 +26,7 @@ void textInputBlur(widget *wid){
 
 int textInputActive(){
 	if(widgetFocused == NULL){return 0;}
-	if(widgetFocused->type != WIDGET_TEXTINPUT){return 0;}
+	if(widgetFocused->type != wTextInput){return 0;}
 	return 1;
 }
 

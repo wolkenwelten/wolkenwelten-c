@@ -87,7 +87,7 @@ static void handlerDeleteGame(widget *wid);
 static void refreshSaveList(){
 	widgetEmpty(saveList);
 	for(int i=0;i<savegameCount;i++){
-		widget *button = widgetNewCPL(WIDGET_BUTTONDEL,saveList,16,i*48,256,32,savegameName[i]);
+		widget *button = widgetNewCPL(wButtonDel,saveList,16,i*48,256,32,savegameName[i]);
 		widgetBind(button,"click",handlerLoadGame);
 		widgetBind(button,"altclick",handlerDeleteGame);
 		button->vali = i;
@@ -134,7 +134,7 @@ static void handlerDeleteServer(widget *wid);
 static void refreshServerList(){
 	widgetEmpty(serverList);
 	for(int i=0;i<serverlistCount;i++){
-		widget *button = widgetNewCPL(WIDGET_BUTTONDEL,serverList,16,i*48,256,32,serverlistName[i]);
+		widget *button = widgetNewCPL(wButtonDel,serverList,16,i*48,256,32,serverlistName[i]);
 		widgetBind(button,"click",handlerJoinServer);
 		widgetBind(button,"altclick",handlerDeleteServer);
 		button->vali = i;
@@ -297,55 +297,55 @@ static void handlerOptions(widget *wid){
 }
 
 static void initMainMenu(){
-	mainMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,288,-1);
-	widgetNewCP  (WIDGET_SPACE ,mainMenu,16,0,256,0);
-	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
-	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Multiplayer","click",handlerMultiplayer);
-	widgetNewCP  (WIDGET_HR ,mainMenu,16,0,256,32);
-	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Options","click",handlerOptions);
-	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Attribution","click",handlerAttribution);
-	widgetNewCP  (WIDGET_HR ,mainMenu,16,0,256,32);
-	widgetNewCPLH(WIDGET_BUTTON,mainMenu,16,0,256,32,"Quit","click",handlerQuit);
+	mainMenu = widgetNewCP(wPanel,rootMenu,-1,0,288,-1);
+	widgetNewCP  (wSpace ,mainMenu,16,0,256,0);
+	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
+	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Multiplayer","click",handlerMultiplayer);
+	widgetNewCP  (wHR ,mainMenu,16,0,256,32);
+	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Options","click",handlerOptions);
+	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Attribution","click",handlerAttribution);
+	widgetNewCP  (wHR ,mainMenu,16,0,256,32);
+	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Quit","click",handlerQuit);
 
 	widgetLayVert(mainMenu,16);
 }
 
 static void initSaveMenu(){
-	saveMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,0,-1);
+	saveMenu = widgetNewCP(wPanel,rootMenu,-1,0,0,-1);
 	saveMenu->flags |= WIDGET_HIDDEN;
 
-	saveList = widgetNewCP(WIDGET_SPACE,saveMenu,0,0,288,32);
-	widgetNewCP(WIDGET_HR,saveMenu,16,0,256,32);
-	widgetNewCPLH(WIDGET_BUTTON,saveMenu,16,0,256,32,"New Game","click",handlerNewGame);
-	widgetNewCPLH(WIDGET_BUTTON,saveMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
+	saveList = widgetNewCP(wSpace,saveMenu,0,0,288,32);
+	widgetNewCP(wHR,saveMenu,16,0,256,32);
+	widgetNewCPLH(wButton,saveMenu,16,0,256,32,"New Game","click",handlerNewGame);
+	widgetNewCPLH(wButton,saveMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
 
 	widgetLayVert(saveMenu,16);
 
-	newGame = widgetNewCP(WIDGET_PANEL,rootMenu,32,-1,288,0);
+	newGame = widgetNewCP(wPanel,rootMenu,32,-1,288,0);
 	newGame->flags |= WIDGET_HIDDEN;
-	newGameName = widgetNewCPLH(WIDGET_TEXTINPUT,newGame,16,16,256,32,"World Name","submit",handlerNewGameNext);
-	newGameSeed = widgetNewCPLH(WIDGET_TEXTINPUT,newGame,16,64,256,32,"World Seed","submit",handlerNewGameSubmit);
-	widgetNewCPLH(WIDGET_BUTTON,newGame,16,112,120,32,"Cancel","click",handlerNewGameCancel);
-	widgetNewCPLH(WIDGET_BUTTON,newGame,148,112,120,32,"Create","click",handlerNewGameSubmit);
+	newGameName = widgetNewCPLH(wTextInput,newGame,16,16,256,32,"World Name","submit",handlerNewGameNext);
+	newGameSeed = widgetNewCPLH(wTextInput,newGame,16,64,256,32,"World Seed","submit",handlerNewGameSubmit);
+	widgetNewCPLH(wButton,newGame,16,112,120,32,"Cancel","click",handlerNewGameCancel);
+	widgetNewCPLH(wButton,newGame,148,112,120,32,"Create","click",handlerNewGameSubmit);
 	checkSavegames();
 }
 
 static void initServerMenu(){
-	serverMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,0,-1);
+	serverMenu = widgetNewCP(wPanel,rootMenu,-1,0,0,-1);
 	serverMenu->flags |= WIDGET_HIDDEN;
 
-	serverList = widgetNewCP(WIDGET_SPACE,serverMenu,0,0,288,32);
-	widgetNewCP(WIDGET_HR,serverMenu,16,0,256,32);
-	widgetNewCPLH(WIDGET_BUTTON,serverMenu,16,0,256,32,"New Server","click",handlerNewServer);
-	widgetNewCPLH(WIDGET_BUTTON,serverMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
+	serverList = widgetNewCP(wSpace,serverMenu,0,0,288,32);
+	widgetNewCP(wHR,serverMenu,16,0,256,32);
+	widgetNewCPLH(wButton,serverMenu,16,0,256,32,"New Server","click",handlerNewServer);
+	widgetNewCPLH(wButton,serverMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
 	widgetLayVert(serverMenu,16);
 
-	newServer = widgetNewCP(WIDGET_PANEL,rootMenu,32,-1,288,0);
+	newServer = widgetNewCP(wPanel,rootMenu,32,-1,288,0);
 	newServer->flags |= WIDGET_HIDDEN;
-	newServerName = widgetNewCPLH(WIDGET_TEXTINPUT,newServer,16,16,256,32,"Server Name","submit",handlerNewServerNext);
-	newServerIP = widgetNewCPLH(WIDGET_TEXTINPUT,newServer,16,64,256,32,"IP / Domain","submit",handlerNewServerSubmit);
-	widgetNewCPLH(WIDGET_BUTTON,newServer,16,112,120,32,"Cancel","click",handlerNewServerCancel);
-	widgetNewCPLH(WIDGET_BUTTON,newServer,148,112,120,32,"Create","click",handlerNewServerSubmit);
+	newServerName = widgetNewCPLH(wTextInput,newServer,16,16,256,32,"Server Name","submit",handlerNewServerNext);
+	newServerIP = widgetNewCPLH(wTextInput,newServer,16,64,256,32,"IP / Domain","submit",handlerNewServerSubmit);
+	widgetNewCPLH(wButton,newServer,16,112,120,32,"Cancel","click",handlerNewServerCancel);
+	widgetNewCPLH(wButton,newServer,148,112,120,32,"Create","click",handlerNewServerSubmit);
 	checkServers();
 }
 
@@ -362,18 +362,18 @@ static void handlerOptionsCancel(widget *wid){
 }
 
 static void initOptionsMenu(){
-	optionsMenu = widgetNewCP(WIDGET_PANEL,rootMenu,-1,0,0,-1);
+	optionsMenu = widgetNewCP(wPanel,rootMenu,-1,0,0,-1);
 	optionsMenu->flags |= WIDGET_HIDDEN;
 
-	widgetNewCP  (WIDGET_SPACE ,optionsMenu,16,0,256,0);
+	widgetNewCP  (wSpace ,optionsMenu,16,0,256,0);
 
-	optionsName = widgetNewCPL(WIDGET_TEXTINPUT,optionsMenu,16,0,256,32,"Playername");
+	optionsName = widgetNewCPL(wTextInput,optionsMenu,16,0,256,32,"Playername");
 	strncpy(optionsName->vals,playerName,256);
-	optionsVolume = widgetNewCPL(WIDGET_SLIDER,optionsMenu,16,0,256,32,"Volume");
+	optionsVolume = widgetNewCPL(wSlider,optionsMenu,16,0,256,32,"Volume");
 	optionsVolume->vali = optionSoundVolume * 4096.f;
-	widgetNewCP  (WIDGET_HR ,optionsMenu,16,0,256,32);
-	widgetNewCPLH(WIDGET_BUTTON,optionsMenu,16,0,256,32,"Save","click",handlerOptionsSave);
-	widgetNewCPLH(WIDGET_BUTTON,optionsMenu,16,0,256,32,"Cancel","click",handlerOptionsCancel);
+	widgetNewCP  (wHR ,optionsMenu,16,0,256,32);
+	widgetNewCPLH(wButton,optionsMenu,16,0,256,32,"Save","click",handlerOptionsSave);
+	widgetNewCPLH(wButton,optionsMenu,16,0,256,32,"Cancel","click",handlerOptionsCancel);
 	widgetLayVert(optionsMenu,16);
 }
 
@@ -388,17 +388,17 @@ void initMenu(){
 		if(*s == '\n'){attributionLines++;}
 	}
 
-	rootMenu = widgetNewCP(WIDGET_BACKGROUND,NULL,0,0,-1,-1);
+	rootMenu = widgetNewCP(wBackground,NULL,0,0,-1,-1);
 	widgetBind(rootMenu,"click",handlerRoot);
 
-	menuText = widgetNewCP(WIDGET_SPACE,rootMenu,32,32,256,-65);
+	menuText = widgetNewCP(wSpace,rootMenu,32,32,256,-65);
 
-	wid = widgetNewCPL(WIDGET_LABEL,menuText,0,0,256,32,"Wolkenwelten");
+	wid = widgetNewCPL(wLabel,menuText,0,0,256,32,"Wolkenwelten");
 	wid->flags |= WIDGET_BIG;
-	widgetNewCPL(WIDGET_LABEL,menuText,0,32,256,32,(char *)VERSION);
+	widgetNewCPL(wLabel,menuText,0,32,256,32,(char *)VERSION);
 
-	menuErrorLabel = widgetNewCPL(WIDGET_LABEL,menuText,1,-97,256,16,"");
-	widgetNewCPL(WIDGET_LABEL,menuText,1,-33,256,16,menuTextInputLabel);
+	menuErrorLabel = widgetNewCPL(wLabel,menuText,1,-97,256,16,"");
+	widgetNewCPL(wLabel,menuText,1,-33,256,16,menuTextInputLabel);
 
 	initMainMenu();
 	initSaveMenu();
@@ -445,7 +445,7 @@ void menuChangeFocus(int xoff,int yoff){
 	if(gameRunning){return;}
 
 	if(widgetFocused != NULL){
-		if((widgetFocused->type == WIDGET_SLIDER) && (xoff != 0)){
+		if((widgetFocused->type == wSlider) && (xoff != 0)){
 			widgetFocused->vali = MAX(0,MIN(4096,(widgetFocused->vali + xoff*128)));
 		}
 		if(yoff < 0){

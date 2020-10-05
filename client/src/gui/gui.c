@@ -139,12 +139,12 @@ void initUI(){
 	guim                 = textMeshNew();
 	guim->tex            = tGui;
 
-	rootHud = widgetNewCP(WIDGET_SPACE,NULL,0,0,-1,-1);
+	rootHud = widgetNewCP(wSpace,NULL,0,0,-1,-1);
 
-	chatPanel = widgetNewCP(WIDGET_PANEL,rootHud,0,-1,512,0);
+	chatPanel = widgetNewCP(wPanel,rootHud,0,-1,512,0);
 	chatPanel->flags |= WIDGET_HIDDEN;
-	chatText  = widgetNewCPLH(WIDGET_TEXTINPUT,chatPanel,16,16,440,32,"Message","submit",handlerChatSubmit);
-	widgetNewCPLH(WIDGET_BUTTON,chatPanel,-16,16,24,32,"\xA8","click",handlerChatSubmit);
+	chatText  = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Message","submit",handlerChatSubmit);
+	widgetNewCPLH(wButton,chatPanel,-16,16,24,32,"\xA8","click",handlerChatSubmit);
 
 	resizeUI();
 }
@@ -186,7 +186,6 @@ void updateMouse(){
 			}else{
 				mouseClicked[cbtn]+=50;
 			}
-			updateInventoryClick(mousex,mousey,cbtn+1);
 		}
 	}
 }

@@ -25,24 +25,24 @@ static bool mouseInBox(uint x, uint y, uint w, uint h){
 	return true;
 }
 
-widget *widgetNew(int type){
+widget *widgetNew(widgetType type){
 	widget *wid = calloc(1,sizeof(widget));
 	if(wid == NULL){return NULL;}
 	wid->type = type;
-	if(wid->type == WIDGET_TEXTINPUT){
+	if(wid->type == wTextInput){
 		wid->vals = calloc(1,256);
 		widgetBind(wid,"focus",textInputFocus);
 		widgetBind(wid,"blur",textInputBlur);
 	}
 	return wid;
 }
-widget *widgetNewC(int type,widget *p){
+widget *widgetNewC(widgetType type,widget *p){
 	widget *wid = widgetNew(type);
 	if(wid == NULL){return NULL;}
 	widgetChild(p,wid);
 	return wid;
 }
-widget *widgetNewCP(int type,widget *p, int x, int y, int w, int h){
+widget *widgetNewCP(widgetType type,widget *p, int x, int y, int w, int h){
 	widget *wid = widgetNewC(type,p);
 	if(wid == NULL){return NULL;}
 	wid->x = x;
@@ -51,13 +51,13 @@ widget *widgetNewCP(int type,widget *p, int x, int y, int w, int h){
 	wid->h = h;
 	return wid;
 }
-widget *widgetNewCPL(int type,widget *p, int x, int y, int w, int h, const char *label){
+widget *widgetNewCPL(widgetType type,widget *p, int x, int y, int w, int h, const char *label){
 	widget *wid = widgetNewCP(type,p,x,y,w,h);
 	if(wid == NULL){return NULL;}
 	wid->label = label;
 	return wid;
 }
-widget *widgetNewCPLH(int type,widget *p, int x, int y, int w, int h, const char *label,const char *eventName, void (*handler)(widget *)){
+widget *widgetNewCPLH(widgetType type,widget *p, int x, int y, int w, int h, const char *label,const char *eventName, void (*handler)(widget *)){
 	widget *wid = widgetNewCPL(type,p,x,y,w,h,label);
 	if(wid == NULL){return NULL;}
 	widgetBind(wid,eventName,handler);
@@ -80,7 +80,7 @@ void widgetFree(widget *w){
 		}
 		w->parent = w->next = w->prev = NULL;
 	}
-	if(w->type == WIDGET_TEXTINPUT){
+	if(w->type == wTextInput){
 		free(w->vals);
 	}
 	free(w);
@@ -147,11 +147,11 @@ void widgetFocus(widget *w){
 
 static int widgetIsSelectable(widget *cur){
 	if(cur == NULL){return 0;}
-	if(cur->flags & WIDGET_HNS      ){return 0;}
-	if(cur->type == WIDGET_BUTTON   ){return 1;}
-	if(cur->type == WIDGET_BUTTONDEL){return 1;}
-	if(cur->type == WIDGET_TEXTINPUT){return 1;}
-	if(cur->type == WIDGET_SLIDER   ){return 1;}
+	if(cur->flags & WIDGET_HNS){return 0;}
+	if(cur->type == wButton    ){return 1;}
+	if(cur->type == wButtonDel ){return 1;}
+	if(cur->type == wTextInput ){return 1;}
+	if(cur->type == wSlider    ){return 1;}
 	return 0;
 }
 
@@ -250,12 +250,12 @@ void widgetEmit(widget *w, const char *eventName){
 
 static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 	if(wid == NULL){return;}
-	if((wid->type == WIDGET_SPACE) || (wid->type == WIDGET_PANEL)){return;}
+	if((wid->type == wSpace) || (wid->type == wPanel)){return;}
 	if(mouseInBox(x,y,w,h)){
 		wid->flags |= WIDGET_HOVER;
 		if(mouseClicked[0]){
 			wid->flags |= WIDGET_CLICKED;
-			if(wid->type == WIDGET_SLIDER){
+			if(wid->type == wSlider){
 				float v = (float)(mousex - x) / (float)w;
 				wid->vali = v*4096;
 				widgetEmit(wid,"change");
@@ -263,7 +263,7 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 			}
 		}else{
 			if(wid->flags & WIDGET_CLICKED){
-				if((wid->type == WIDGET_BUTTONDEL) && ((int)mousex > x+w-40)){
+				if((wid->type == wButtonDel) && ((int)mousex > x+w-40)){
 					widgetEmit(wid,"altclick");
 				}else{
 					widgetFocus(wid);

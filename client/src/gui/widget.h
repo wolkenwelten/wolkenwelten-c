@@ -10,9 +10,24 @@ struct eventHandler {
 	eventHandler *next;
 };
 
+typedef enum {
+	wNone,
+	wPanel,
+	wLabel,
+	wButton,
+	wSpace,
+	wBackground,
+	wButtonDel,
+	wTextInput,
+	wSlider,
+	wHR,
+	wItemSlot
+} widgetType;
+
 struct widget {
 	int x,y,w,h;
-	uint type,flags;
+	widgetType type;
+	uint flags;
 	int gx,gy,gw,gh;
 
 	widget *parent,*child;
@@ -27,16 +42,6 @@ struct widget {
 		item *valItem;
 	};
 };
-#define WIDGET_PANEL      1
-#define WIDGET_BUTTON     2
-#define WIDGET_SPACE      3
-#define WIDGET_BACKGROUND 4
-#define WIDGET_LABEL      5
-#define WIDGET_BUTTONDEL  6
-#define WIDGET_TEXTINPUT  7
-#define WIDGET_SLIDER     8
-#define WIDGET_HR         9
-#define WIDGET_ITEMSLOT  10
 
 #define WIDGET_HIDDEN      (1    )
 #define WIDGET_HOVER       (1<< 1)
@@ -58,11 +63,11 @@ struct widget {
 extern widget *widgetFocused;
 
 
-widget *widgetNew     (int type);
-widget *widgetNewC    (int type, widget *p);
-widget *widgetNewCP   (int type, widget *p, int x, int y, int w, int h);
-widget *widgetNewCPL  (int type, widget *p, int x, int y, int w, int h, const char *label);
-widget *widgetNewCPLH (int type, widget *p, int x, int y, int w, int h, const char *label,const char *eventName, void (*handler)(widget *));
+widget *widgetNew     (widgetType type);
+widget *widgetNewC    (widgetType type, widget *p);
+widget *widgetNewCP   (widgetType type, widget *p, int x, int y, int w, int h);
+widget *widgetNewCPL  (widgetType type, widget *p, int x, int y, int w, int h, const char *label);
+widget *widgetNewCPLH (widgetType type, widget *p, int x, int y, int w, int h, const char *label,const char *eventName, void (*handler)(widget *));
 void    widgetFree    (widget *w);
 
 void    widgetFocus   (widget *w);
