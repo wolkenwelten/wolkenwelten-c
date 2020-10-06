@@ -423,8 +423,10 @@ void serverParseIntro(uint c){
 		serverParseWebSocketPacket(c);
 	}
 	clients[c].recvBuf[clients[c].recvBufLen]=0;
-	fprintf(stderr,"WIntro[%i] '%s'\n",clients[c].recvBufLen,clients[c].recvBuf);
-	fprintf(stderr,"WSIntro[%i] '%s'\n",clients[c].recvWSBufLen,clients[c].recvWSBuf);
+	if((clients[c].recvBufLen > 0) || (clients[c].recvWSBufLen)){
+		fprintf(stderr,"WIntro[%i] '%s'\n",clients[c].recvBufLen,clients[c].recvBuf);
+		fprintf(stderr,"WSIntro[%i] '%s'\n",clients[c].recvWSBufLen,clients[c].recvWSBuf);
+	}
 
 	for(uint ii=0;ii<clients[c].recvBufLen;ii++){
 		if(clients[c].recvBuf[ii] != '\n'){ continue; }

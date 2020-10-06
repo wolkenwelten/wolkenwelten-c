@@ -4,22 +4,16 @@
 int serverSocket = 0;
 
 EM_JS(int, wsSendData, (unsigned char* data, int len), {
-	let str = ' ';
-	for(let i=0;i<len;i++){
-		str += (HEAP8[data+i]+' ');
-	}
-	console.log('Send['+len+']:' + str);
-	return len;
+	return wsSendData(data,len);
 });
-
 EM_JS(int, wsRecvData, (unsigned char* buf, int size), {
-	return 0;
+	return wsRecvData(buf,size);
 });
-
 EM_JS(void, wsInitClient, (const char* server,const char* clientName), {
-	let srv = UTF8ToString(server);
-	let client = UTF8ToString(clientName);
-	console.log("Connecting to "+srv+' as '+client);
+	return wsInitClient(UTF8ToString(server),UTF8ToString(clientName));
+});
+EM_JS(void, wsFreeClient, (), {
+	return wsFreeClient();
 });
 
 void clientGetName(){
@@ -36,15 +30,15 @@ void closeSingleplayerServer(){
 }
 
 void clientFreeSpecific(){
-
+	wsFreeClient();
 }
 
 void clientFreeRetry(){
-
+	wsFreeClient();
 }
 
 void clientInit(){
-	wsInitClient(serverName,playerName);
+	//wsInitClient(serverName,playerName);
 	serverSocket            = 1;
 	sendBufLen              = 0;
 	sendBufSent             = 0;
@@ -70,7 +64,8 @@ void clientSendAllToServer(){
 	while(sendBufSent < sendBufLen){
 		sendBuf[sendBufLen]=0;
 		//fprintf(stderr,"%s\n",sendBuf);
-		const int ret = wsSendData(sendBuf,sendBufLen);
+		const int ret = sendBufLen;
+		//const int ret = wsSendData(sendBuf,sendBufLen);
 		//const int ret = write(serverSocket,sendBuf+sendBufSent,sendBufLen-sendBufSent);
 		sendBufSent += ret;
 		sentBytesCurrentSession += ret;
