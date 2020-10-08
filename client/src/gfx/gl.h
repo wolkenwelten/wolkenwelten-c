@@ -10,6 +10,6 @@
 	#include "GL/glew.h"
 	#define INITGLEXT() glewExperimental=GL_TRUE; if(glewInit() != GLEW_OK){exit(3);}
 #else
-	#include <SDL_opengles2.h>
-	#define INITGLEXT() 0
+	#include "gl3w.h"
+	#define INITGLEXT() if(gl3wInit()){exit(3);}
 #endif

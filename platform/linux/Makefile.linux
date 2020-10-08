@@ -1,9 +1,9 @@
 CC               := clang
 
 CLIENT_CINCLUDES := $(shell sdl2-config --cflags)
-CLIENT_LIBS      := -lGLESv2 -lpthread -ldl -lSDL2 -lSDL2_mixer
+CLIENT_LIBS      := -lGL -lpthread -ldl -lSDL2 -lSDL2_mixer
 
-DYNLIBS          := -lGLESv2 -lm -lpthread -ldl -lSDL2 -lSDL2_mixer
+DYNLIBS          := -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer
 STATICLIBS       :=
 
 .PHONY: all

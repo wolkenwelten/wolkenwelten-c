@@ -57,9 +57,14 @@ void initSDL(){
 		exit(1);
 	}
 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+	#ifdef __EMSCRIPTEN__
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
+	#else
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
+	#endif
 
 	if( SDL_GetDesktopDisplayMode(0, &dm) == 0){
 		desktopWidth  = screenWidth  = dm.w;
@@ -77,7 +82,7 @@ void initSDL(){
 			screenHeight = optionWindowHeight;
 		}
 	#endif
-
+	
 	int windowx = SDL_WINDOWPOS_CENTERED;
 	int windowy = SDL_WINDOWPOS_CENTERED;
 	if((optionWindowOrientation & 0x0F) == 0x01){
@@ -90,7 +95,7 @@ void initSDL(){
 	}else if((optionWindowOrientation & 0xF0) == 0x20){
 		windowy = desktopHeight - screenHeight;
 	}
-
+	
 	gWindow = SDL_CreateWindow( windowTitle, windowx, windowy, screenWidth, screenHeight, cwflags);
 	if( gWindow == NULL ) {
 		fprintf(stderr, "Window could not be created! SDL Error: %s\n", SDL_GetError() );
