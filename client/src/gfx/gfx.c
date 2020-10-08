@@ -66,7 +66,7 @@ void initGL(){
 	glDepthFunc( GL_LEQUAL );
 
 	glActiveTexture(GL_TEXTURE0);
-#ifndef __EMSCRIPTEN__
+#ifdef __APPLE__
 	glDisable(GL_POLYGON_SMOOTH);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_PROGRAM_POINT_SIZE);
