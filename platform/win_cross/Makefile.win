@@ -8,44 +8,49 @@ WINLIBS              := -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -li
 WIN_STATICLIBS       := -static-libgcc -static -lmingw32 -lm -lstdc++ -lpthread -lopengl32 -lSDL2main -lssp -lSDL2 -lSDL2_mixer $(WINLIBS)
 WIN_CLIENT_LIBS      := $(WINLIBS) -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer
 
+WIN_RELDIR           := releases/win/wolkenwelten-$(VERSION_NAME)
+
 .PHONY: release.win
 release: release.win
 
 release.win: releases/win/wolkenwelten-win-$(VERSION_NAME).7z
-releases/win/wolkenwelten-win-$(VERSION_NAME).7z: releases/win/wolkenwelten/wolkenwelten.exe
-releases/win/wolkenwelten-win-$(VERSION_NAME).7z: releases/win/wolkenwelten/wolkenwelten-server.exe
-	cd releases/win/ && 7z a wolkenwelten-win-$(VERSION_NAME).7z wolkenwelten/
+releases/win/wolkenwelten-win-$(VERSION_NAME).7z: $(WIN_RELDIR)/wolkenwelten.exe
+releases/win/wolkenwelten-win-$(VERSION_NAME).7z: $(WIN_RELDIR)/wolkenwelten-server.exe
+	cd releases/win/ && 7z a wolkenwelten-win-$(VERSION_NAME).7z wolkenwelten-$(VERSION_NAME)/
 
-releases/win/wolkenwelten/wolkenwelten.exe: CFLAGS    += $(WIN_CLIENT_CFLAGS)
-releases/win/wolkenwelten/wolkenwelten.exe: CINCLUDES += $(WIN_CLIENT_CINCLUDES)
-releases/win/wolkenwelten/wolkenwelten.exe: $(CLIENT_SRCS) $(CLIENT_HDRS)
-releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/assets.c client/src/tmp/assets.h
-releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
-releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/mods_tmp.c client/src/tmp/mods_tmp.h
-releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/objs.c client/src/tmp/objs.h
-releases/win/wolkenwelten/wolkenwelten.exe: client/src/tmp/sfx.c client/src/tmp/sfx.h
-releases/win/wolkenwelten/wolkenwelten.exe: common/src/tmp/cto.c common/src/tmp/cto.h
-releases/win/wolkenwelten/wolkenwelten.exe: releases/win/wolkenwelten.res
-	mkdir -p releases/win/wolkenwelten/
+$(WIN_RELDIR):
+	mkdir -p $(WIN_RELDIR)
+
+$(WIN_RELDIR)/wolkenwelten.exe: CFLAGS    += $(WIN_CLIENT_CFLAGS)
+$(WIN_RELDIR)/wolkenwelten.exe: CINCLUDES += $(WIN_CLIENT_CINCLUDES)
+$(WIN_RELDIR)/wolkenwelten.exe: $(CLIENT_SRCS) $(CLIENT_HDRS)
+$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/assets.c client/src/tmp/assets.h
+$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
+$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/mods_tmp.c
+$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/objs.c client/src/tmp/objs.h
+$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/sfx.c client/src/tmp/sfx.h
+$(WIN_RELDIR)/wolkenwelten.exe: common/src/tmp/cto.c common/src/tmp/cto.h
+$(WIN_RELDIR)/wolkenwelten.exe: releases/win/wolkenwelten.res
+$(WIN_RELDIR)/wolkenwelten.exe: | $(WIN_RELDIR)
 	x86_64-w64-mingw32-gcc $(CLIENT_SRCS) $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WIN_STATICLIBS) releases/win/wolkenwelten.res -o $@
 	x86_64-w64-mingw32-strip -gxX $@
 
-releases/win/wolkenwelten/wolkenwelten-server.exe: CFLAGS    += $(WIN_SERVER_CFLAGS)
-releases/win/wolkenwelten/wolkenwelten-server.exe: CINCLUDES += $(WIN_SERVER_CINCLUDES)
-releases/win/wolkenwelten/wolkenwelten-server.exe: $(SERVER_SRCS) $(SERVER_HDRS)
-releases/win/wolkenwelten/wolkenwelten-server.exe: server/src/tmp/sfx.c server/src/tmp/sfx.h
-releases/win/wolkenwelten/wolkenwelten-server.exe: server/src/tmp/objs.c server/src/tmp/objs.h
-releases/win/wolkenwelten/wolkenwelten-server.exe: server/src/tmp/mods_tmp.c server/src/tmp/mods_tmp.h
-releases/win/wolkenwelten/wolkenwelten-server.exe: common/src/tmp/cto.c common/src/tmp/cto.h
-releases/win/wolkenwelten/wolkenwelten-server.exe: releases/win/wolkenwelten-server.res
-	mkdir -p releases/win/wolkenwelten/
+$(WIN_RELDIR)/wolkenwelten-server.exe: CFLAGS    += $(WIN_SERVER_CFLAGS)
+$(WIN_RELDIR)/wolkenwelten-server.exe: CINCLUDES += $(WIN_SERVER_CINCLUDES)
+$(WIN_RELDIR)/wolkenwelten-server.exe: $(SERVER_SRCS) $(SERVER_HDRS)
+$(WIN_RELDIR)/wolkenwelten-server.exe: server/src/tmp/sfx.c server/src/tmp/sfx.h
+$(WIN_RELDIR)/wolkenwelten-server.exe: server/src/tmp/objs.c server/src/tmp/objs.h
+$(WIN_RELDIR)/wolkenwelten-server.exe: server/src/tmp/mods_tmp.c
+$(WIN_RELDIR)/wolkenwelten-server.exe: common/src/tmp/cto.c common/src/tmp/cto.h
+$(WIN_RELDIR)/wolkenwelten-server.exe: releases/win/wolkenwelten-server.res
+$(WIN_RELDIR)/wolkenwelten-server.exe: | $(WIN_RELDIR)
 	x86_64-w64-mingw32-gcc $(SERVER_SRCS) releases/win/wolkenwelten-server.res -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WIN_SERVER_LIBS)
 	x86_64-w64-mingw32-strip -gxX $@
 
+releases/win/wolkenwelten-server.res: | $(WIN_RELDIR)
 releases/win/wolkenwelten-server.res: platform/win/wolkenwelten-server.rc platform/win/icon.ico
-	mkdir -p releases/win/wolkenwelten/
 	x86_64-w64-mingw32-windres $< -O coff -o $@
 
+releases/win/wolkenwelten.res: | $(WIN_RELDIR)
 releases/win/wolkenwelten.res: platform/win/wolkenwelten.rc platform/win/icon.ico
-	mkdir -p releases/win/wolkenwelten/
 	x86_64-w64-mingw32-windres $< -O coff -o $@

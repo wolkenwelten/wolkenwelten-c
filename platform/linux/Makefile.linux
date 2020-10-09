@@ -6,6 +6,8 @@ CLIENT_LIBS      := -lGL -lpthread -ldl -lSDL2 -lSDL2_mixer
 DYNLIBS          := -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer
 STATICLIBS       :=
 
+LIN_REL          := releases/linux/wolkenwelten-$(VERSION_NAME)
+
 .PHONY: all
 all: wolkenwelten wolkenwelten-server
 
@@ -15,32 +17,34 @@ ifndef NOLINUXRELEASE
 	release: release.linux
 endif
 
-release.linux: releases/linux/wolkenwelten-linux.tar.xz
-releases/linux/wolkenwelten-linux.tar.xz: releases/linux/wolkenwelten/wolkenwelten
-releases/linux/wolkenwelten-linux.tar.xz: releases/linux/wolkenwelten/wolkenwelten-server
-	cd releases/linux/ && tar -c wolkenwelten/ | xz -9 - > wolkenwelten-linux-$(VERSION_NAME).tar.xz
+$(LIN_REL):
+	mkdir -p $(LIN_REL)
 
+release.linux: releases/linux/wolkenwelten-linux-$(VERSION_NAME).tar.xz
+releases/linux/wolkenwelten-linux-$(VERSION_NAME).tar.xz: $(LIN_REL)/wolkenwelten
+releases/linux/wolkenwelten-linux-$(VERSION_NAME).tar.xz: $(LIN_REL)/wolkenwelten-server
+	cd releases/linux/ && tar -c wolkenwelten-$(VERSION_NAME)/ | xz -9 - > wolkenwelten-linux-$(VERSION_NAME).tar.xz
 
-releases/linux/wolkenwelten/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
-releases/linux/wolkenwelten/wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
-releases/linux/wolkenwelten/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
-releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
-releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
-releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/mods_tmp.c client/src/tmp/mods_tmp.h
-releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/objs.c client/src/tmp/objs.h
-releases/linux/wolkenwelten/wolkenwelten: client/src/tmp/sfx.c client/src/tmp/sfx.h
-releases/linux/wolkenwelten/wolkenwelten: common/src/tmp/cto.c common/src/tmp/cto.h
-	mkdir -p releases/linux/wolkenwelten/
+$(LIN_REL)/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
+$(LIN_REL)/wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
+$(LIN_REL)/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
+$(LIN_REL)/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
+$(LIN_REL)/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
+$(LIN_REL)/wolkenwelten: client/src/tmp/mods_tmp.c
+$(LIN_REL)/wolkenwelten: client/src/tmp/objs.c client/src/tmp/objs.h
+$(LIN_REL)/wolkenwelten: client/src/tmp/sfx.c client/src/tmp/sfx.h
+$(LIN_REL)/wolkenwelten: common/src/tmp/cto.c common/src/tmp/cto.h
+$(LIN_REL)/wolkenwelten: | $(LIN_REL)
 	gcc $(CLIENT_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CSTD) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
 	strip -sgxX $@
 
-releases/linux/wolkenwelten/wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
-releases/linux/wolkenwelten/wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
-releases/linux/wolkenwelten/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
-releases/linux/wolkenwelten/wolkenwelten-server: server/src/tmp/sfx.c server/src/tmp/sfx.h
-releases/linux/wolkenwelten/wolkenwelten-server: server/src/tmp/objs.c server/src/tmp/objs.h
-releases/linux/wolkenwelten/wolkenwelten-server: server/src/tmp/mods_tmp.c server/src/tmp/mods_tmp.h
-releases/linux/wolkenwelten/wolkenwelten-server: common/src/tmp/cto.c common/src/tmp/cto.h
-	mkdir -p releases/linux/wolkenwelten/
+$(LIN_REL)/wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
+$(LIN_REL)/wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
+$(LIN_REL)/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
+$(LIN_REL)/wolkenwelten-server: server/src/tmp/sfx.c server/src/tmp/sfx.h
+$(LIN_REL)/wolkenwelten-server: server/src/tmp/objs.c server/src/tmp/objs.h
+$(LIN_REL)/wolkenwelten-server: server/src/tmp/mods_tmp.c
+$(LIN_REL)/wolkenwelten-server: common/src/tmp/cto.c common/src/tmp/cto.h
+$(LIN_REL)/wolkenwelten-server: | $(LIN_REL)
 	musl-gcc -static $(SERVER_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CSTD) $(CINCLUDES)
 	strip -sgxX $@
