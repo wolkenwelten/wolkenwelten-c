@@ -450,8 +450,7 @@ void characterUpdateBooster(character *c){
 		return;
 	}
 	const vec rot = c->rot;
-	//if(!(c->flags & CHAR_SNEAK) && (c->gvel.y > 0.9) && !(c->flags & CHAR_GLIDE)){rot.pitch = -90.f;}
-	float speed    = 0.0001f / MAX(0.1,vecMag(c->vel));
+	float speed    = 0.0008f / MAX(0.1,vecMag(c->vel));
 	const vec nv   = vecMulS(vecDegToVec(rot),speed);
 	c->vel = vecAdd(c->vel,nv);
 	c->shake = MAX(c->shake,1.25f + speed);

@@ -2,4 +2,3 @@
 - Check new GUI with a Gamepad
 - Rebalance blaster recipes
 - Add .help command
-- Add version name to extracted folder path of releases
