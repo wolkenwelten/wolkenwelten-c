@@ -76,7 +76,7 @@ static void cmdDbgitem(int c, const char *cmd){
 }
 
 static void cmdHeal(int c, const char *cmd){
-	int dmg = 4;
+	int dmg = 128;
 	int target = c;
 	int argc;
 	char **argv;
