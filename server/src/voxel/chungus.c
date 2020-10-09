@@ -181,6 +181,9 @@ void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
 }
 
 void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
+	if(w < 0){ chungusBox(c,x+w,y,z,-w,h,d,block); }
+	if(h < 0){ chungusBox(c,x,y+h,z,w,-h,d,block); }
+	if(d < 0){ chungusBox(c,x,y,z+d,w,h,-d,block); }
 	for(int cx=0;cx<w;cx++){
 		for(int cy=0;cy<h;cy++){
 			for(int cz=0;cz<d;cz++){
@@ -190,6 +193,19 @@ void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 	}
 	c->clientsUpdated = 0;
 }
+
+void chungusBoxIfEmpty(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
+	for(int cx=0;cx<w;cx++){
+		for(int cy=0;cy<h;cy++){
+			for(int cz=0;cz<d;cz++){
+				if(chungusGetB(c,cx+x,cy+y,cz+z)){continue;}
+				chungusSetB(c,cx+x,cy+y,cz+z,block);
+			}
+		}
+	}
+	c->clientsUpdated = 0;
+}
+
 
 void chungusRoughBox(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
 	int dx = x+w-1;
@@ -209,20 +225,17 @@ void chungusRoughBox(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
 	c->clientsUpdated = 0;
 }
 
-void chungusRandomBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block,int chance){
-	int dx = x+w;
-	int dy = y+h;
-	int dz = z+d;
-
-	for(int cx=x;cx<dx;cx++){
-		for(int cy=y;cy<dy;cy++){
-			for(int cz=z;cz<dz;cz++){
-				if((rngValR()&chance) != 0){continue;}
-				chungusSetB(c,cx,cy,cz,block);
+void chungusBoxSphere(chungus *c, int x, int y, int z, int r, u8 block){
+	const int md = r*r;
+	for(int cx=-r;cx<=r;cx++){
+		for(int cy=-r;cy<=r;cy++){
+			for(int cz=-r;cz<=r;cz++){
+				const int d = (cx*cx)+(cy*cy)+(cz*cz);
+				if(d >= md){continue;}
+				chungusSetB(c,cx+x,cy+y,cz+z,block);
 			}
 		}
 	}
-	c->clientsUpdated = 0;
 }
 
 void chungusFill(chungus *c, int x,int y,int z,u8 b){
