@@ -1,4 +1,2 @@
-- Add Stone/Coal/Ore/Crystals to the overworld
 - Check new GUI with a Gamepad
 - Rebalance blaster recipes
-- Add .help command

@@ -145,32 +145,46 @@ static void cmdTp(int c, const char *cmd){
 	(void)c;
 	int argc;
 	char **argv;
+	int target = c;
 
 	argv = splitArgs(cmd,&argc);
 	if(argc != 4){
-		snprintf(replyBuf,sizeof(replyBuf),".tp : You need to pass 3 integer values");
+		snprintf(replyBuf,sizeof(replyBuf),".tp X Y Z [PLAYER] : You need to pass 3 integer values");
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return;
 	}
+	if(argc > 4){
+		int tmp = getClientByName(argv[4]);
+		if(tmp >= 0){
+			target = tmp;
+		}
+	}
 	const vec pos = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
-	msgPlayerSetPos(c,pos,vecZero());
+	msgPlayerSetPos(target,pos,vecZero());
 }
 
 static void cmdTpr(int c, const char *cmd){
 	(void)c;
 	int argc;
 	char **argv;
+	int target = c;
 
 	argv = splitArgs(cmd,&argc);
-	if(argc != 4){
-		snprintf(replyBuf,sizeof(replyBuf),".tpr : You need to pass 3 integer values");
+	if(argc < 4){
+		snprintf(replyBuf,sizeof(replyBuf),".tpr X Y Z [PLAYER] : You need to pass 3 integer values");
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return;
 	}
+	if(argc > 4){
+		int tmp = getClientByName(argv[4]);
+		if(tmp >= 0){
+			target = tmp;
+		}
+	}
 	const vec pos = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
-	msgPlayerSetPos(c,vecAdd(pos,clients[c].c->pos),vecZero());
+	msgPlayerSetPos(target,vecAdd(pos,clients[target].c->pos),vecZero());
 }
 
 void cmdAni(int c, const char *cmd){
@@ -181,10 +195,29 @@ void cmdAni(int c, const char *cmd){
 	animalNew(vecAdd(ch->pos,vecDegToVec(ch->rot)),1);
 }
 
+void cmdHelp(int c, const char *cmd){
+	(void)c;
+	(void)cmd;
+	serverSendChatMsg(" --=-- HELP --=--");
+	serverSendChatMsg(".help = This help message");
+	serverSendChatMsg(".ani  = Spawns an animal");
+	serverSendChatMsg(".dmg [PLAYER] [DMG] = Damages a player");
+	serverSendChatMsg(".dbgitem [PLAYER] = Gives a player some things");
+	serverSendChatMsg(".die [PLAYER] = Kills a player");
+	serverSendChatMsg(".heal [PLAYER] [HEAL] = Heals a player");
+	serverSendChatMsg(".give ID [PLAYER] [QTY] = Heals a player");
+	serverSendChatMsg(".tpr X Y Z [PLAYER} = Teleports a player to a relative position");
+	serverSendChatMsg(".tp X Y Z [PLAYER} = Teleports a player to an absolute position");
+}
+
 int parseCommand(int c, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
 
+	if(strncmp(tcmp,"help",4) == 0){
+		cmdHelp(c,tcmp);
+		return 1;
+	}
 	if(strncmp(tcmp,"ani",3) == 0){
 		cmdAni(c,tcmp);
 		return 1;
