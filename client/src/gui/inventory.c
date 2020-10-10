@@ -158,7 +158,8 @@ void showInventory(){
 	craftingRadio->flags &= ~WIDGET_ACTIVE;
 }
 void showCrafting(){
-	const int gh = getTilesize() * ((recipeGetCount()/10)+3) + 32;
+	int gh = getTilesize() * ((recipeGetCount()/10)+2) + 32;
+	if(recipeGetCount() % 10){gh+=getTilesize();}
 	if(!gameRunning){return;}
 	if((inventoryPanel->h == gh) && (craftingRadio->flags & WIDGET_ACTIVE)){
 		hideInventory();
