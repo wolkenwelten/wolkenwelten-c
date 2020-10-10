@@ -22,11 +22,11 @@ $(WIN_RELDIR):
 	mkdir -p $(WIN_RELDIR)
 
 release.win: releases/win/wolkenwelten-win-$(VERSION_NAME).7z
-releases/win/wolkenwelten-win-$(VERSION_NAME).7z: releases/win/wolkenwelten/wolkenwelten.exe
-releases/win/wolkenwelten-win-$(VERSION_NAME).7z: releases/win/wolkenwelten/wolkenwelten-server.exe
-	cd releases/win/ && 7z a wolkenwelten-win-$(VERSION_NAME).7z wolkenwelten/
+releases/win/wolkenwelten-win-$(VERSION_NAME).7z: $(WIN_RELDIR)/wolkenwelten.exe
+releases/win/wolkenwelten-win-$(VERSION_NAME).7z: $(WIN_RELDIR)/wolkenwelten-server.exe
+	cd releases/win/ && 7z a wolkenwelten-win-$(VERSION_NAME).7z wolkenwelten-$(VERSION_NAME)
 
-$(WIN_RELDIR)/wolkenwelten.exe: CFLAGS    += $(CLIENT_CFLAGS)/
+$(WIN_RELDIR)/wolkenwelten.exe: CFLAGS    += $(CLIENT_CFLAGS)
 $(WIN_RELDIR)/wolkenwelten.exe: CINCLUDES += $(CLIENT_CINCLUDES)
 $(WIN_RELDIR)/wolkenwelten.exe: $(CLIENT_SRCS) $(CLIENT_HDRS)
 $(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/assets.c client/src/tmp/assets.h
