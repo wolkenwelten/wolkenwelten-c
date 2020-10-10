@@ -8,6 +8,7 @@
 #include "../gui/widget.h"
 #include "../gfx/textMesh.h"
 #include "../sdl/sdl.h"
+#include "../../../common/src/game/item.h"
 
 #include <math.h>
 #include <string.h>
@@ -266,22 +267,21 @@ static void widgetDrawItemSlot(const widget *wid, textMesh *m, int x, int y, int
 static void widgetDrawRecipeSlot(const widget *wid, textMesh *m, int x, int y, int w, int h){
 	int style = 0;
 	uint r    = wid->valu;
-	u16 res   = recipeGetResultID(r);
-	u16 a     = recipeCanCraft(player,r);
+	item recipe = recipeGetResult(r);
+	i16 a = recipeCanCraft(player,r);
 	if(a == 0){
 		style = 2;
 	}
 	if((wid == widgetFocused) || (wid->flags & WIDGET_HOVER)){
 		style = 1;
 	}
-	textMeshItemSlot(m,x,y,MIN(w,h),style,res,a);
+	textMeshItemSlot(m,x,y,MIN(w,h),style,recipe.ID,a);
 }
 
 static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, int w, int h){
 	const uint ticks = getTicks()>>4;
 	const uint ts    = MIN(w,h);
 	uint ii,xx,r = wid->vali;
-	u16 a,b;
 	if(r >= recipeGetCount()){return;}
 	const int animX = sin((float)ticks/24.f)*ts/8;
 	const int animY = cos((float)ticks/24.f)*ts/8;
@@ -289,21 +289,20 @@ static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, i
 
 	for(ii=0;ii<4;ii++){
 		xx = ii*2*ts + x;
-		b = recipeGetIngredientID(r,ii);
-		a = recipeGetIngredientAmount(r,ii);
-		if((b == 0) || (a <= 0)){ break;}
-		b = ingredientSubstituteGetSub(b,(ticks/96) % (ingredientSubstituteGetAmount(b)+1));
+		item ingred = recipeGetIngredient(r,ii);
+		if(itemIsEmpty(&ingred)){break;}
+		ingred.ID = ingredientSubstituteGetSub(ingred.ID,(ticks/96) % (ingredientSubstituteGetAmount(ingred.ID)+1));
 
 		if(ii > 0){
 			textMeshBox(m,xx-ts+ts/4+animX,y+ts/4+animY,ts/2,ts/2,24.f/32,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 		}
-		textMeshItemSlot(m,xx,y,ts,3,b,a);
+		textMeshItem(m,xx,y,ts,3,&ingred);
 	}
-	b = recipeGetResultID(r);
+	item result = recipeGetResult(r);
 
 	xx = ii*2*ts + x;
 	textMeshBox(m,xx-ts+ts/4+animX*2,y+ts/4,ts/2,ts/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
-	textMeshItemSlot(m,xx,y,ts,3,b,recipeGetResultAmount(r));
+	textMeshItemSlot(m,xx,y,ts,3,result.ID,result.amount);
 
 }
 

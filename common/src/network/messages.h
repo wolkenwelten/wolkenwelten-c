@@ -17,7 +17,7 @@ void msgSendChungusComplete      (uint c, int x, int y, int z);
 void msgCharacterGotHit          (uint c, int pwr);
 // 9 = playerSendName
 void msgItemDropNew              (uint c, const vec pos, const vec vel, const item *itm);
-void msgNewGrenade               (const vec pos, const vec rot, float pwr);
+void msgNewGrenade               (const vec pos, const vec rot, float pwr, int cluster, float clusterPwr);
 void msgBeamBlast                (const vec pos, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft);
 void msgPlayerMove               (uint c, const vec dpos, const vec drot);
 void msgPlayerName               (uint c, uint i, const char *name);

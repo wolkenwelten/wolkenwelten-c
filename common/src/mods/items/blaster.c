@@ -5,7 +5,7 @@ static const int MAGSIZE=30;
 
 void blasterInit(){
 	(void)ITEMID;
-	recipeAdd2I(ITEMID,1, 18,12, 13,6); // Crystal(12) + Hematite Ore(6) -> Blaster(1)
+	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,4), itemNew(I_Iron_Bar,4), itemNew(I_Bullet,4));
 }
 
 mesh *blasterGetMesh(const item *cItem){

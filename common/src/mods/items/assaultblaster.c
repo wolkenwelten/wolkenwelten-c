@@ -5,7 +5,7 @@ static const int MAGSIZE=60;
 
 void assaultblasterInit(){
 	(void)ITEMID;
-	recipeAdd2I(ITEMID,1, 18,24, 13,12); // Crystal(24) + Hematite Ore(12) -> Assaultblaster(1)
+	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,8), itemNew(I_Iron_Bar,8), itemNew(I_Bullet,8));
 }
 
 mesh *assaultblasterGetMesh(const item *cItem){

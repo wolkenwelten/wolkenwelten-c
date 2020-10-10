@@ -47,8 +47,8 @@ void grenadeExplode(vec pos, float pw, int style){
 	}
 }
 
-void grenadeNew(const character *ent, float pwr){
-	msgNewGrenade(vecAdd(ent->pos,vecNew(0,.5,0)),ent->rot, pwr);
+void grenadeNew(const character *ent, float pwr, int cluster, float clusterPwr){
+	msgNewGrenade(vecAdd(ent->pos,vecNew(0,.5,0)),ent->rot, pwr, cluster, clusterPwr);
 }
 
 void grenadeUpdate(){

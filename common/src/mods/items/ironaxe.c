@@ -3,7 +3,7 @@ static const int ITEMID=267;
 #include "../api_v1.h"
 
 void ironaxeInit(){
-	recipeAdd2I(ITEMID,1, 17,4, 266,2);
+	recipeNew2(itemNew(ITEMID,1),itemNew(I_Stone_Axe,1),itemNew(I_Iron_Bar,4));
 }
 
 int ironaxeDamage(const item *cItem){

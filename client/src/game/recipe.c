@@ -1,12 +1,10 @@
 #include "recipe.h"
 #include "../game/character.h"
+#include "../../../common/src/game/item.h"
 
 typedef struct {
-	u16 resultID;
-	u16 resultAmount;
-
-	u16 ingredientID[4];
-	u16 ingredientAmount[4];
+	item result;
+	item ingredient[4];
 } recipe;
 
 struct ingredientSubstitute;
@@ -61,62 +59,49 @@ uint recipeGetCount(){
 	return recipeCount;
 }
 
-u16 recipeGetResultID(uint r){
-	if(r >= recipeCount){return 0;}
-	return recipes[r].resultID;
+item recipeGetResult(uint r){
+	if(r >= recipeCount){return itemEmpty();}
+	return recipes[r].result;
 }
-u16 recipeGetResultAmount(uint r){
-	if(r >= recipeCount){return 0;}
-	return recipes[r].resultAmount;
-}
-u16 recipeGetIngredientID(uint r,uint i){
-	if(r >= recipeCount) { return 0; }
-	if(i >= 4)           { return 0; }
-	return recipes[r].ingredientID[i];
-}
-u16 recipeGetIngredientAmount(uint r,uint i){
-	if(r >= recipeCount) { return 0; }
-	if(i >= 4)           { return 0; }
-	return recipes[r].ingredientAmount[i];
+item recipeGetIngredient(uint r,uint i){
+	if(r >= recipeCount) { return itemEmpty(); }
+	if(i >= 4)           { return itemEmpty(); }
+	return recipes[r].ingredient[i];
 }
 
-void recipeSetResult(uint r,u16 nResultID,u16 nResultAmount){
-	if(r >= recipeCount) { return; }
-	recipes[r].resultID = nResultID;
-	recipes[r].resultAmount = nResultAmount;
-	recipeCount++;
-}
-
-void recipeAddIngred(uint r,u16 nIngredientID,u16 nIngredientAmount){
-	if(r >= recipeCount) { return; }
-	for(int i=0;i<4;i++){
-		if((recipes[r].ingredientID[i] == 0) || (recipes[r].ingredientAmount[i] == 0)){
-			recipes[r].ingredientID[i]     = nIngredientID;
-			recipes[r].ingredientAmount[i] = nIngredientAmount;
-			return;
-		}
-	}
-}
-
-void recipeAdd1I(u16 nResultID, u16 nResultAmount, u16 nIngredID, u16 nIngredAmount){
+void recipeNew1(const item result, const item ingred1){
 	int r = recipeCount++;
-	recipes[r].resultID            = nResultID;
-	recipes[r].resultAmount        = nResultAmount;
-	recipes[r].ingredientID[0]     = nIngredID;
-	recipes[r].ingredientAmount[0] = nIngredAmount;
-	recipes[r].ingredientID[1]     = recipes[r].ingredientAmount[1] = 0;
+	recipes[r].result = result;
+	recipes[r].ingredient[0] = ingred1;
+	recipes[r].ingredient[1] = itemEmpty();
 }
 
-void recipeAdd2I(u16 nResultID, u16 nResultAmount, u16 nIngredID1, u16 nIngredAmount1, u16 nIngredID2, u16 nIngredAmount2){
+void recipeNew2(const item result, const item ingred1, const item ingred2){
 	int r = recipeCount++;
-	recipes[r].resultID            = nResultID;
-	recipes[r].resultAmount        = nResultAmount;
-	recipes[r].ingredientID[0]     = nIngredID1;
-	recipes[r].ingredientAmount[0] = nIngredAmount1;
-	recipes[r].ingredientID[1]     = nIngredID2;
-	recipes[r].ingredientAmount[1] = nIngredAmount2;
-	recipes[r].ingredientID[2]     = recipes[r].ingredientAmount[2] = 0;
+	recipes[r].result = result;
+	recipes[r].ingredient[0] = ingred1;
+	recipes[r].ingredient[1] = ingred2;
+	recipes[r].ingredient[2] = itemEmpty();
 }
+
+void recipeNew3(const item result, const item ingred1, const item ingred2, const item ingred3){
+	int r = recipeCount++;
+	recipes[r].result = result;
+	recipes[r].ingredient[0] = ingred1;
+	recipes[r].ingredient[1] = ingred2;
+	recipes[r].ingredient[2] = ingred3;
+	recipes[r].ingredient[3] = itemEmpty();
+}
+
+void recipeNew4(const item result, const item ingred1, const item ingred2, const item ingred3, const item ingred4){
+	int r = recipeCount++;
+	recipes[r].result = result;
+	recipes[r].ingredient[0] = ingred1;
+	recipes[r].ingredient[1] = ingred2;
+	recipes[r].ingredient[2] = ingred3;
+	recipes[r].ingredient[3] = ingred4;
+}
+
 
 int characterGetItemOrSubstituteAmount(const character *c, u16 i){
 	ingredientSubstitute *s;
@@ -148,10 +133,8 @@ int recipeCanCraft(const character *c, uint r){
 	if(r >= recipeCount){return 0;}
 	int amount = 99999;
 	for(int i=0;i<4;i++){
-		if(recipes[r].ingredientID[i]     == 0){continue;}
-		if(recipes[r].ingredientAmount[i] == 0){continue;}
-
-		const int camount = characterGetItemOrSubstituteAmount(c,recipes[r].ingredientID[i]) / recipes[r].ingredientAmount[i];
+		if(itemIsEmpty(&recipes[r].ingredient[i])){continue;}
+		const int camount = characterGetItemOrSubstituteAmount(c,recipes[r].ingredient[i].ID) / recipes[r].ingredient[i].amount;
 		if(camount < amount){amount = camount;}
 	}
 	if(amount >= 9999){return 0;}
@@ -165,12 +148,11 @@ void recipeDoCraft(character *c, uint r, int amount){
 	if(canCraftAmount < amount){amount = canCraftAmount;}
 
 	for(int i=0;i<4;i++){
-		if(recipes[r].ingredientID[i]     == 0){continue;}
-		if(recipes[r].ingredientAmount[i] == 0){continue;}
+		if(itemIsEmpty(&recipes[r].ingredient[i])){continue;}
 
-		characterDecItemOrSubstituteAmount(c,recipes[r].ingredientID[i],recipes[r].ingredientAmount[i]*amount);
+		characterDecItemOrSubstituteAmount(c,recipes[r].ingredient[i].ID,recipes[r].ingredient[i].amount*amount);
 	}
-	characterPickupItem(c,recipes[r].resultID,amount*recipes[r].resultAmount);
+	characterPickupItem(c,recipes[r].result.ID,amount*recipes[r].result.amount);
 }
 
 uint recipeGetCraftableCount(const character *c){
@@ -195,7 +177,7 @@ void recipeInit(){
 	ingredientSubstituteAdd(10,5);
 	ingredientSubstituteAdd(10,20);
 	//recipeAdd1I(16,1, 10,1);
-	recipeAdd1I(17,2, 10,1);
-	recipeAdd1I(14,1, 12,1);
-	recipeAdd1I(15,1, 12,1);
+	recipeNew1(itemNew(17,2), itemNew(10,1));
+	recipeNew1(itemNew(14,1), itemNew(12,1));
+	recipeNew1(itemNew(15,1), itemNew(12,1));
 }

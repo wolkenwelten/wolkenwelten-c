@@ -9,8 +9,8 @@
 
 typedef struct {
 	entity *ent;
-	int     ticksLeft;
-	float   pwr;
+	int     ticksLeft,cluster;
+	float   pwr,clusterPwr;
 } grenade;
 
 grenade grenadeList[512];
@@ -31,29 +31,45 @@ void explode(const vec pos, float pw, int style){
 	msgGrenadeExplode(pos, pw, style);
 }
 
-void grenadeExplode(uint g){
-	entity *ent = grenadeList[g].ent;
-	explode(ent->pos,grenadeList[g].pwr,0);
-}
-
-void grenadeNewP(const packet *p){
+static void grenadeNew(const vec pos, const vec rot, float pwr, int cluster, float clusterPwr){
 	int g         = grenadeCount++;
 	float speed   = 0.12f;
-	const vec pos = vecNewP(&p->val.f[0]);
-	const vec rot = vecNewP(&p->val.f[3]);
-	float pwr     = p->val.f[6];
 
 	grenadeList[g].ent = entityNew(pos,rot);
 	if(pwr < 1.5f){
 		speed = 0.15f;
 	}
-	grenadeList[g].ent->vel = vecMulS(vecDegToVec(rot),speed);
-	grenadeList[g].ticksLeft = 300;
-	grenadeList[g].pwr       = pwr;
+	grenadeList[g].ent->vel   = vecMulS(vecDegToVec(rot),speed);
+	grenadeList[g].ticksLeft  = 300;
+	grenadeList[g].pwr        = pwr;
+	grenadeList[g].cluster    = cluster;
+	grenadeList[g].clusterPwr = clusterPwr;
+}
+
+#include <stdio.h>
+static void grenadeCluster(const grenade *g){
+	fprintf(stderr,"Cluster: %i\n",g->cluster);
+	if(g->cluster <= 0){return;}
+	for(int i=0;i<MIN(256,g->cluster);i++){
+		vec rot = vecZero();
+		rot.x = rngValf()*360.f;
+		rot.y = -(rngValf()*45.f);
+		grenadeNew(g->ent->pos,rot,g->clusterPwr,0,0);
+	}
+}
+
+void grenadeExplode(uint g){
+	entity *ent = grenadeList[g].ent;
+	explode(ent->pos,grenadeList[g].pwr,0);
+	grenadeCluster(&grenadeList[g]);
+}
+
+void grenadeNewP(const packet *p){
+	grenadeNew(vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]),p->val.f[6],p->val.i[7],p->val.f[8]);
 }
 
 void grenadeUpdate(){
-	for(uint i=0;i<grenadeCount;i++){
+	for(int i=grenadeCount-1;i>=0;i--){
 		entityUpdate(grenadeList[i].ent);
 		if((--grenadeList[i].ticksLeft == 0) || (grenadeList[i].ent->pos.y < -256)){
 			grenadeExplode(i);

@@ -5,7 +5,7 @@ static const int MAGSIZE=60;
 
 void shotgunblasterInit(){
 	(void)ITEMID;
-	recipeAdd2I(ITEMID,1, 18,36, 13,18); // Crystal(36) + Hematite Ore(18) -> Shotgunblaster(1)
+	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,12), itemNew(I_Iron_Bar,24), itemNew(I_Bullet,24));
 }
 
 mesh *shotgunblasterGetMesh(const item *cItem){

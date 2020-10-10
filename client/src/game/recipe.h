@@ -1,15 +1,13 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-void recipeAdd1I(u16 nResultID, u16 nResultAmount, u16 nIngredID,  u16 nIngredAmount);
-void recipeAdd2I(u16 nResultID, u16 nResultAmount, u16 nIngredID1, u16 nIngredAmount1, u16 nIngredID2, u16 nIngredAmount2);
-void recipeSetResult(uint r,u16 nResultID,     u16 nResultAmount);
-void recipeAddIngred(uint r,u16 nIngredientID, u16 nIngredientAmount);
+void recipeNew1 (const item result, const item ingred1);
+void recipeNew2 (const item result, const item ingred1, const item ingred2);
+void recipeNew3 (const item result, const item ingred1, const item ingred2, const item ingred3);
+void recipeNew4 (const item result, const item ingred1, const item ingred2, const item ingred3, const item ingred4);
 
- u16 recipeGetResultID        (uint r);
- u16 recipeGetResultAmount    (uint r);
- u16 recipeGetIngredientID    (uint r, uint i);
- u16 recipeGetIngredientAmount(uint r, uint i);
+item recipeGetResult     (uint r);
+item recipeGetIngredient (uint r, uint i);
 
 void ingredientSubstituteAdd       (u16 ingredient, u16 substitute);
 uint ingredientSubstituteGetAmount (u16 ingredient);

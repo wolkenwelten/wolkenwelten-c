@@ -104,7 +104,7 @@ void msgItemDropNew(uint c, const vec pos, const vec vel, const item *itm){
 	packetQueue(p,10,8*4,c);
 }
 
-void msgNewGrenade(const vec pos, const vec rot, float pwr){
+void msgNewGrenade(const vec pos, const vec rot, float pwr, int cluster, float clusterPwr){
 	packet *p = &packetBuffer;
 	p->val.f[0] = pos.x;
 	p->val.f[1] = pos.y;
@@ -113,7 +113,9 @@ void msgNewGrenade(const vec pos, const vec rot, float pwr){
 	p->val.f[4] = rot.pitch;
 	p->val.f[5] = rot.roll;
 	p->val.f[6] = pwr;
-	packetQueueToServer(p,11,7*4);
+	p->val.i[7] = cluster;
+	p->val.f[8] = clusterPwr;
+	packetQueueToServer(p,11,9*4);
 }
 
 void msgBeamBlast(const vec pos, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){

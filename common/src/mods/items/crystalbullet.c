@@ -3,7 +3,7 @@ static const int ITEMID=265;
 #include "../api_v1.h"
 
 void crystalbulletInit(){
-	recipeAdd1I(ITEMID,8, 18,1); // Hematite Ore(1) -> Crystalbullet(8)
+	recipeNew2(itemNew(ITEMID,10), itemNew(I_Crystal,1), itemNew(I_Coal,1));
 }
 
 mesh *crystalbulletGetMesh(const item *cItem){
