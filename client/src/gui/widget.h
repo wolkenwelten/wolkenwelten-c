@@ -81,7 +81,7 @@ void    widgetChildPre(widget *parent, widget *child);
 widget *widgetNextSel (widget *cur);
 widget *widgetPrevSel (widget *cur);
 void    widgetBind    (widget *w, const char *eventName, void (*handler)(widget *));
-void    widgetEmit    (widget *w, const char *eventName);
+int     widgetEmit    (widget *w, const char *eventName);
 void    widgetDraw    (widget *w, textMesh *mesh, int x, int y, int pw, int ph);
 void    widgetLayVert (widget *w, int padding);
 void    widgetSlideW  (widget *w, int nw);

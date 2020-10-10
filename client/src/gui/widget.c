@@ -246,11 +246,14 @@ void widgetBind(widget *w, const char *eventName, void (*handler)(widget *)){
 	w->firstHandler = h;
 }
 
-void widgetEmit(widget *w, const char *eventName){
+int widgetEmit(widget *w, const char *eventName){
+	int ret = 0;
 	for(eventHandler *h=w->firstHandler;h!=NULL;h=h->next){
 		if(strcmp(eventName,h->eventName) != 0){continue;}
 		h->handler(w);
+		ret++;
 	}
+	return ret;
 }
 
 static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){

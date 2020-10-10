@@ -12,6 +12,10 @@
 
 char chatLog[12][256];
 
+char chatHistory[8][256];
+int  chatHistoryCount =  0;
+int  chatHistorySel   = -1;
+
 void chatEmpty(){
 	for(int i=0;i < 12;i++){
 		*chatLog[i]=0;
@@ -24,6 +28,13 @@ void msgSendChatMessage(const char *msg){
 	strncpy((char *)(p->val.c+2),msg,254);
 	p->val.c[255] = 0;
 	packetQueueToServer(p,16,256);
+
+	for(int i=7;i>0;i--){
+		memcpy(chatHistory[i],chatHistory[i-1],256);
+	}
+	strncpy(chatHistory[0],msg,256);
+	chatHistory[0][255]=0;
+	if(++chatHistoryCount > 8){chatHistoryCount = 8;}
 }
 
 void chatParsePacket(const packet *p){
@@ -48,4 +59,18 @@ void msgSendDyingMessage(const char *msg, int c){
 	p->val.s[0] = c;
 	p->val.c[255] = 0;
 	packetQueueToServer(p,17,256);
+}
+
+const char *chatGetPrevHistory(){
+	if(++chatHistorySel > MIN(7,chatHistoryCount-1)){chatHistorySel = 0;}
+	return chatHistory[chatHistorySel];
+}
+
+const char *chatGetNextHistory(){
+	if(--chatHistorySel < 0){chatHistorySel = MIN(7,chatHistoryCount-1);}
+	return chatHistory[chatHistorySel];
+}
+
+void chatResetHistorySel(){
+	chatHistorySel = -1;
 }

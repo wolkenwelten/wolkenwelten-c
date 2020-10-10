@@ -8,7 +8,7 @@ extern char serverlistIP[16][64];
 void initMenu          ();
 void renderMenu        ();
 void menuSetError      (char *error);
-void menuChangeFocus   (int xoff,int yoff);
+void menuChangeFocus   (int xoff,int yoff, bool ignoreOnTextInput);
 void menuKeyClick      (int btn);
 void menuCancel        ();
 void menuCloseGame     ();

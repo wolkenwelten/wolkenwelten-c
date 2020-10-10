@@ -440,20 +440,22 @@ void renderMenu(){
 	drawCursor();
 }
 
-void menuChangeFocus(int xoff,int yoff){
-	(void)xoff;
-	//if(gameRunning){return;}
-
+void menuChangeFocus(int xoff,int yoff,bool ignoreOnTextInput){
 	if(widgetFocused != NULL){
+		if(ignoreOnTextInput && widgetFocused->type == wTextInput){return;}
 		if((widgetFocused->type == wSlider) && (xoff != 0)){
 			widgetFocused->vali = MAX(0,MIN(4096,(widgetFocused->vali + xoff*128)));
 		}
 		if(yoff < 0){
-			widgetFocus(widgetNextSel(widgetFocused));
+			if(!widgetEmit(widgetFocused,"selectNext")){
+				widgetFocus(widgetNextSel(widgetFocused));
+			}
 		}else if(yoff > 0){
-			widgetFocus(widgetPrevSel(widgetFocused));
+			if(!widgetEmit(widgetFocused,"selectPrev")){
+				widgetFocus(widgetPrevSel(widgetFocused));
+			}
 		}
-	}
+	} // No else if because then we immediatly focus on the widget on the other side
 	if(widgetFocused == NULL){
 		if(yoff < 0){
 			widgetFocus(widgetNextSel(rootMenu));

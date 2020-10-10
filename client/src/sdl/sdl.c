@@ -82,7 +82,7 @@ void initSDL(){
 			screenHeight = optionWindowHeight;
 		}
 	#endif
-	
+
 	int windowx = SDL_WINDOWPOS_CENTERED;
 	int windowy = SDL_WINDOWPOS_CENTERED;
 	if((optionWindowOrientation & 0x0F) == 0x01){
@@ -95,7 +95,7 @@ void initSDL(){
 	}else if((optionWindowOrientation & 0xF0) == 0x20){
 		windowy = desktopHeight - screenHeight;
 	}
-	
+
 	gWindow = SDL_CreateWindow( windowTitle, windowx, windowy, screenWidth, screenHeight, cwflags);
 	if( gWindow == NULL ) {
 		fprintf(stderr, "Window could not be created! SDL Error: %s\n", SDL_GetError() );

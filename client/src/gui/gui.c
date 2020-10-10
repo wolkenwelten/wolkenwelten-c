@@ -126,9 +126,30 @@ void openChat(){
 void handlerChatSubmit(widget *wid){
 	if(chatText->vals[0] != 0){
 		msgSendChatMessage(chatText->vals);
+		chatResetHistorySel();
 	}
 	handlerRootHud(wid);
 }
+
+void handlerChatSelectPrev(widget *wid){
+	const char *msg = chatGetPrevHistory();
+	if(*msg == 0){return;}
+	memcpy(wid->vals,msg,256);
+	textInputFocus(wid);
+}
+
+void handlerChatSelectNext(widget *wid){
+	const char *msg = chatGetNextHistory();
+	if(*msg == 0){return;}
+	memcpy(wid->vals,msg,256);
+	textInputFocus(wid);
+}
+
+void handlerChatBlur(widget *wid){
+	(void)wid;
+	chatResetHistorySel();
+}
+
 
 void initUI(){
 	cursorMesh           = textMeshNew();
@@ -146,6 +167,9 @@ void initUI(){
 	chatPanel = widgetNewCP(wPanel,rootHud,0,-1,512,0);
 	chatPanel->flags |= WIDGET_HIDDEN;
 	chatText  = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Message","submit",handlerChatSubmit);
+	widgetBind(chatText,"blur",handlerChatBlur);
+	widgetBind(chatText,"selectPrev",handlerChatSelectPrev);
+	widgetBind(chatText,"selectNext",handlerChatSelectNext);
 	widgetNewCPLH(wButton,chatPanel,-16,16,24,32,"\xA8","click",handlerChatSubmit);
 
 	resizeUI();

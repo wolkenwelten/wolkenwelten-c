@@ -71,22 +71,22 @@ void keyboardEventHandler(const SDL_Event *e){
 		case SDLK_UP:
 		case SDLK_w:
 			keysPressed[0] = 0;
-			menuChangeFocus(0,1);
+			menuChangeFocus(0,1, e->key.keysym.sym == SDLK_w);
 			break;
 		case SDLK_DOWN:
 		case SDLK_s:
 			keysPressed[1] = 0;
-			menuChangeFocus(0,-1);
+			menuChangeFocus(0,-1, e->key.keysym.sym == SDLK_s);
 			break;
 		case SDLK_LEFT:
 		case SDLK_a:
 			keysPressed[2] = 0;
-			menuChangeFocus(-1,0);
+			menuChangeFocus(-1,0, e->key.keysym.sym == SDLK_a);
 			break;
 		case SDLK_RIGHT:
 		case SDLK_d:
 			keysPressed[3] = 0;
-			menuChangeFocus(1,0);
+			menuChangeFocus(1,0, e->key.keysym.sym == SDLK_d);
 			break;
 		case SDLK_SPACE:
 			keysPressed[4] = 0;
