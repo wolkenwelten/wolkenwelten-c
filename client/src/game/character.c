@@ -1,6 +1,7 @@
 #include "../game/character.h"
 
 #include "../main.h"
+#include "../game/animal.h"
 #include "../game/itemDrop.h"
 #include "../game/grapplingHook.h"
 
@@ -272,18 +273,13 @@ void characterUpdateYOff(character *c){
 }
 
 void characterHit(character *c){
+	static uint iteration=0;
 	item *itm = &c->inventory[c->activeItem];
-	const int dmg = damageDispatch(itm);
+	iteration--;
 
-	vec pos = vecAdd(c->pos,vecMulS(vecDegToVec(c->rot),0.5f));
-	for(int i=0;i<32;i++){
-		if(playerList[i] == NULL){continue;}
-		vec dis = vecSub(pos,playerList[i]->pos);
-		float d = vecDot(dis,dis);
-		if(d < 1.f){
-			msgPlayerDamage(0,dmg,i,2,0);
-		}
-	}
+	const vec pos = vecAdd(c->pos,vecMulS(vecDegToVec(c->rot),0.5f));
+	characterHitCheck(pos,1.f,damageDispatch(itm),2,iteration);
+	animalHitCheck(pos,1.f,damageDispatch(itm),2,iteration);
 
 	characterStartAnimation(c,0,240);
 	characterAddCooldown(c,80);
@@ -824,16 +820,15 @@ vec characterGetPlayerDist(uint i){
 	return vecSub(player->pos,playerList[i]->pos);
 }
 
-int characterBlastHitCheck(const vec pos, float beamSize, float damageMultiplier, uint iteration){
+int characterHitCheck(const vec pos, float mdd, int damage, int cause, uint iteration){
 	int hits = 0;
-	float md = (beamSize+0.5f) * (beamSize+0.5f);
 	for(int i=0;i<32;i++){
 		if(playerList[i] == player)          {continue;}
 		if(playerList[i] == NULL  )          {continue;}
 		if(playerList[i]->temp == iteration) {continue;}
-		const vec d = vecSub(pos,playerList[i]->pos);
-		if(vecDot(d,d) < md){
-			msgPlayerDamage(0,((int)damageMultiplier)+1,i,1,0);
+		vec dis = vecSub(pos,playerList[i]->pos);
+		if(vecDot(dis,dis) < mdd){
+			msgPlayerDamage(0,damage,i,cause,0);
 			playerList[i]->temp = iteration;
 			hits++;
 		}

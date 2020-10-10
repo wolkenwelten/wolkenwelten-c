@@ -13,7 +13,6 @@ void  characterUpdate          (      character *c);
 void  characterFireHook        (      character *c);
 void  characterFreeHook        (      character *c);
 void  characterDraw            (const character *c);
-void  characterHitCheck        (      character *c, int origin, const vec pos, const vec rot, int pwr);
 void  characterDropItem        (      character *c, int i);
 bool  characterPlaceBlock      (      character *c, item *i);
 void  characterMoveDelta       (      character *c, const packet *p);
@@ -21,12 +20,13 @@ void  characterDamagePacket    (      character *c, const packet *p);
 void  characterSetData         (      character *c, const packet *p);
 void  characterSetPlayerPos    (                    const packet *p);
 void  characterSetName         (                    const packet *p);
+
 char *characterGetPlayerName   (uint i);
 int   characterGetPlayerHP     (uint i);
 vec   characterGetPlayerDist   (uint i);
 void  characterGotHitBroadcast (int c, int pwr);
 void  characterRemovePlayer    (int c, int len);
-int   characterBlastHitCheck   (const vec pos, float beamSize, float damageMultiplier, uint iteration);
+int   characterHitCheck        (const vec pos, float mdd, int damage, int cause, uint iteration);
 
 void  charactersUpdate         ();
 void  characterDrawAll         ();

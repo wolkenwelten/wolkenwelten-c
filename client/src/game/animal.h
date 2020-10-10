@@ -7,5 +7,5 @@ extern uint animalCount;
 
 void     animalDrawAll        ();
 void     animalUpdateAll      ();
-int      animalBlastHitCheck  (const vec pos, float beamSize, float damageMultiplier, uint iteration);
+int      animalHitCheck       (const vec pos, float mdd, int dmg, int cause, uint iteration);
 void     animalSyncFromServer (const packet *p);

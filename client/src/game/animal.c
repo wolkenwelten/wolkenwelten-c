@@ -113,13 +113,13 @@ void animalSyncFromServer(const packet *p){
 	e->sleepy     = p->val.c[ 7];
 }
 
-int animalBlastHitCheck(const vec pos, float beamSize, float damageMultiplier, uint iteration){
+int animalHitCheck(const vec pos, float mdd, int dmg, int cause, uint iteration){
 	int hits = 0;
-	float md = (beamSize+0.5f) * (beamSize+0.5f);
 	for(uint i=0;i<animalCount;i++){
+		if(animalList[i].temp == iteration){continue;}
 		const vec d = vecSub(pos,animalList[i].pos);
-		if(vecDot(d,d) < md){
-			msgAnimalDamage(0,((int)damageMultiplier)+1,i,1,0);
+		if(vecDot(d,d) < mdd){
+			msgAnimalDamage(0,dmg,i,cause,0);
 			animalList[i].temp = iteration;
 			hits++;
 		}

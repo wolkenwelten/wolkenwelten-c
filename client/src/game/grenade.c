@@ -87,9 +87,11 @@ void grenadeUpdateFromServer(const packet *p){
 
 void singleBeamblast(character *ent, const vec start, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){
 	static uint iteration = 0;
-	float speed = 0.1f;
-	vec pos     = start;
-	vec vel     = vecMulS(vecDegToVec(rot),speed);
+	float speed     = 0.1f;
+	vec pos         = start;
+	vec vel         = vecMulS(vecDegToVec(rot),speed);
+	const float mdd = (beamSize+0.5f) * (beamSize+0.5f);
+	const int dmg   = ((int)damageMultiplier)+1;
 	--iteration;
 
 	(void)damageMultiplier;
@@ -102,8 +104,9 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 			fxExplosionBlaster(pos,beamSize/2.f);
 			if(--hitsLeft <= 0){break;}
 		}
-		characterBlastHitCheck(pos, beamSize, damageMultiplier,iteration);
-		animalBlastHitCheck(pos, beamSize, damageMultiplier,iteration);
+
+		characterHitCheck(pos, mdd, dmg, 1, iteration);
+		animalHitCheck   (pos, mdd, dmg, 2, iteration);
 
 	}
 	fxBeamBlaster(start,pos,beamSize,damageMultiplier,recoilMultiplier,1,0);
