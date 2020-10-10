@@ -90,7 +90,7 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 	float speed     = 0.1f;
 	vec pos         = start;
 	vec vel         = vecMulS(vecDegToVec(rot),speed);
-	const float mdd = (beamSize+0.5f) * (beamSize+0.5f);
+	const float mdd = beamSize * beamSize;
 	const int dmg   = ((int)damageMultiplier)+1;
 	--iteration;
 
@@ -106,7 +106,7 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 		}
 
 		characterHitCheck(pos, mdd, dmg, 1, iteration);
-		animalHitCheck   (pos, mdd, dmg, 2, iteration);
+		animalHitCheck   (pos, mdd, dmg, 1, iteration);
 
 	}
 	fxBeamBlaster(start,pos,beamSize,damageMultiplier,recoilMultiplier,1,0);

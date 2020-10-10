@@ -85,7 +85,7 @@ int animalUpdate(animal *e){
 	}
 	if((col&0x220) && (e->vel.x > 0.f)){
 		if(e->vel.x >  0.05f){ ret += (int)(fabsf(e->vel.x)*24.f); }
-		e->pos.x = MIN(e->vel.x,floorf(e->pos.x)+0.7f);
+		e->pos.x = MIN(e->pos.x,floorf(e->pos.x)+0.7f);
 		e->vel.x = e->vel.x*-0.3f;
 	}
 	if((col&0x880) && (e->vel.z > 0.f)){

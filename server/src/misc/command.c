@@ -258,22 +258,29 @@ int parseCommand(int c, const char *cmd){
 		return 1;
 	}
 
+	if(strncmp(tcmp,"acount",2) == 0){
+		snprintf(replyBuf,sizeof(replyBuf),".acount : %i",animalCount);
+		replyBuf[sizeof(replyBuf)-1]=0;
+		serverSendChatMsg(replyBuf);
+		return 1;
+	}
+
 	if(strncmp(tcmp,"bmcount",2) == 0){
-		snprintf(replyBuf,sizeof(replyBuf),".blockMiningCount : %i",blockMiningGetActive());
+		snprintf(replyBuf,sizeof(replyBuf),".bmcount : %i",blockMiningGetActive());
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;
 	}
 
 	if(strncmp(tcmp,"idcount",2) == 0){
-		snprintf(replyBuf,sizeof(replyBuf),".itemdropcount : %i",itemDropGetActive());
+		snprintf(replyBuf,sizeof(replyBuf),".idcount : %i",itemDropGetActive());
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;
 	}
 
 	if(strncmp(tcmp,"ecount",2) == 0){
-		snprintf(replyBuf,sizeof(replyBuf),".entitycount : %i",entityCount);
+		snprintf(replyBuf,sizeof(replyBuf),".ecount : %i",entityCount);
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;

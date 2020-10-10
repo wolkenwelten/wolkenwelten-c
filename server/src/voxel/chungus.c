@@ -1,5 +1,6 @@
 #include "chungus.h"
 
+#include "../main.h"
 #include "../game/animal.h"
 #include "../game/itemDrop.h"
 #include "../network/server.h"
@@ -76,8 +77,8 @@ chungus *chungusNew(int x, int y, int z){
 
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
+	fprintf(stderr,"CHungusFree[] %p %i:%i:%i\n",c,c->x,c->y,c->z);
 	chungusSave(c);
-	animalDelChungus(c);
 	itemDropDelChungus(c);
 	for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){

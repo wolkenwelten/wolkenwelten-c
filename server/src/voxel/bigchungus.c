@@ -231,7 +231,7 @@ void bigchungusFreeFarChungi(bigchungus *c){
 			if(cdist < 384.f){
 				chungusSubscribePlayer(chng,ii);
 				goto chungiDontFree;
-			}else if(cdist < 768.f){
+			}else if(cdist < 786.f){
 				chungusUnsubscribePlayer(chng,ii);
 				goto chungiDontFree;
 			}
