@@ -7,6 +7,7 @@
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
 #include "../tmp/objs.h"
+#include "../../../common/src/network/messages.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -110,4 +111,18 @@ void animalSyncFromServer(const packet *p){
 	e->hunger     = p->val.c[ 5];
 	e->thirst     = p->val.c[ 6];
 	e->sleepy     = p->val.c[ 7];
+}
+
+int animalBlastHitCheck(const vec pos, float beamSize, float damageMultiplier, uint iteration){
+	int hits = 0;
+	float md = (beamSize+0.5f) * (beamSize+0.5f);
+	for(uint i=0;i<animalCount;i++){
+		const vec d = vecSub(pos,animalList[i].pos);
+		if(vecDot(d,d) < md){
+			msgAnimalDamage(0,((int)damageMultiplier)+1,i,1,0);
+			animalList[i].temp = iteration;
+			hits++;
+		}
+	}
+	return hits;
 }

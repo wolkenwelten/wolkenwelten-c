@@ -95,6 +95,7 @@ typedef struct {
 	i8 sleepy;
 
 	uint breathing;
+	uint temp;
 
 	u8 flags;
 	u8 type;

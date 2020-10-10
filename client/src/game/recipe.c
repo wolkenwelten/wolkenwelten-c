@@ -176,7 +176,7 @@ uint recipeGetCraftableCount(const character *c){
 void recipeInit(){
 	ingredientSubstituteAdd(I_Oak,I_Spruce);
 	ingredientSubstituteAdd(I_Oak,I_Birch);
-	//recipeAdd1I(16,1, 10,1);
+
 	recipeNew1(itemNew(I_Board,2), itemNew(I_Oak,1));
 	recipeNew1(itemNew(I_Marble_Pillar,1), itemNew(I_Marble_Block,1));
 	recipeNew1(itemNew(I_Marble_Blocks,1), itemNew(I_Marble_Block,1));

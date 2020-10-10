@@ -358,6 +358,9 @@ void serverParseSinglePacket(uint c, packet *p){
 		case 31:
 			worldDirtyChunk(c,p->val.i[0],p->val.i[1],p->val.i[2]);
 			break;
+		case 32:
+			animalDmgPacket(c,p);
+			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
 			serverKill(c);

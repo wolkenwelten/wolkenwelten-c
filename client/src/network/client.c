@@ -216,6 +216,9 @@ void clientParsePacket(const packet *p){
 		case 31:
 			fprintf(stderr,"Received an dirtyChunk msg from the server, this should never happen.\n");
 			break;
+		case 32:
+			fprintf(stderr,"Received an animalDmg msg from the server, this should never happen.\n");
+			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);
 			break;

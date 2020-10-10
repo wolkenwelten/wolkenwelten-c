@@ -36,3 +36,4 @@ void msgPlayerDamage             (uint c, i16 hp, u16 target, u16 cause, u16 cul
 void msgUnsubChungus             (uint x, uint y, uint z);
 void msgPlayerSetData            (uint c, int hp, int activeItem, u32 flags);
 void msgPlayerSetInventory       (uint c, const item *itm, size_t itemCount);
+void msgAnimalDamage             (uint c, i16 hp, u16 target, u16 cause, u16 culprit);

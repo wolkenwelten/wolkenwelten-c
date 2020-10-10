@@ -1,5 +1,6 @@
 #include "../game/grenade.h"
 
+#include "../game/animal.h"
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../gfx/effects.h"
@@ -102,6 +103,7 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 			if(--hitsLeft <= 0){break;}
 		}
 		characterBlastHitCheck(pos, beamSize, damageMultiplier,iteration);
+		animalBlastHitCheck(pos, beamSize, damageMultiplier,iteration);
 
 	}
 	fxBeamBlaster(start,pos,beamSize,damageMultiplier,recoilMultiplier,1,0);

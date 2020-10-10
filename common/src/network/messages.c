@@ -264,3 +264,12 @@ void msgPlayerSetInventory(uint c,const item *itm, size_t itemCount){
 	}
 	packetQueue(p,29,itemCount*4,c);
 }
+
+void msgAnimalDamage(uint c, i16 hp, u16 target, u16 cause, u16 culprit){
+	packet *p = &packetBuffer;
+	p->val.s[0] = hp;
+	p->val.s[1] = target;
+	p->val.s[2] = cause;
+	p->val.s[3] = culprit;
+	packetQueue(p,32,4*2,c);
+}

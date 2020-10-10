@@ -1,9 +1,11 @@
 #include "animal.h"
 
+#include "../game/itemDrop.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/game/blockType.h"
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
@@ -44,16 +46,23 @@ static void animalDel(uint i){
 	animalList[i] = animalList[--animalCount];
 }
 
+
+static void animalRDie(animal *e){
+	item drop = itemNew(I_Pear,rngValMM(3,6));
+	itemDropNewP(e->pos,&drop);
+}
+
 void animalUpdateAll(){
 	for(int i=animalCount-1;i>=0;i--){
 		int dmg = animalUpdate(&animalList[i]);
 		animalList[i].health -= dmg;
-		if((animalList[i].pos.y < -256.f) ||
+		if((animalList[i].pos.y  < -256.f) ||
 		   (animalList[i].health < 0) ||
 		   (animalList[i].hunger < 0) ||
 		   (animalList[i].thirst < 0) ||
 		   (animalList[i].sleepy < 0)) {
 			fprintf(stderr,"Dead Animal [HP: %i | HUN: %i | THI: %i | SLP: %i]\n",animalList[i].health,animalList[i].hunger,animalList[i].thirst,animalList[i].sleepy);
+			animalRDie(&animalList[i]);
 			animalDel(i);
 			continue;
 		}
@@ -168,7 +177,7 @@ void animalHunger(animal *e){
 void animalSLoiter(animal *e){
 	character *cChar;
 	float dist = animalClosestPlayer(e,&cChar);
-	if((dist < 24.f) && (cChar != NULL)){
+	if((cChar != NULL) && (dist < 4.f)){
 		if(!(e->flags & ANIMAL_FALLING)){
 			e->vel.y = 0.03f;
 			e->sleepy -= 2;
@@ -227,7 +236,7 @@ void animalSSleep(animal *e){
 			return;
 		}
 		float dist = animalClosestPlayer(e,&cChar);
-		if((dist < 24.f) && (cChar != NULL)){
+		if((cChar != NULL) && (dist < 4.f)){
 			if(!(e->flags & ANIMAL_FALLING)){
 				e->vel.y   = 0.04f;
 				e->sleepy -= 2;
@@ -305,7 +314,7 @@ void animalSFlee(animal *e){
 	character *cChar;
 	const float dist = animalClosestPlayer(e,&cChar);
 	if(rngValM(1<<10) == 0){e->hunger--;}
-	if((dist > 96.f) && (cChar != NULL)){
+	if((dist > 6.f) && (cChar != NULL)){
 		e->state   = ANIMAL_S_LOITER;
 		e->sleepy -= 2;
 		return;
@@ -361,6 +370,13 @@ void animalSExist(animal *e){
 	animalAgeing(e);
 	animalSleepyness(e);
 	animalHunger(e);
+}
+
+static void animalRHit(animal *e){
+	if(fabsf(e->vel.y) < 0.001f){
+		e->vel.y = 0.03f;
+	}
+	e->state = ANIMAL_S_FLEE;
 }
 
 inline static void animalThink(animal *e){
@@ -457,5 +473,19 @@ void animalDelChungus(const chungus *c){
 	for(int i=animalCount-1;i>=0;i--){
 		if(animalList[i].curChungus != c){continue;}
 		animalDel(i);
+	}
+}
+
+void animalDmgPacket(int c, const packet *p){
+	(void)c;
+	i16 dmg = p->val.s[0];
+	u16 i   = p->val.s[1];
+	if(i >= animalCount){return;}
+	animalList[i].health -= dmg;
+	if(animalList[i].health <= 0){
+		animalRDie(&animalList[i]);
+		animalDel(i);
+	}else{
+		animalRHit(&animalList[i]);
 	}
 }
