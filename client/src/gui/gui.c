@@ -272,14 +272,13 @@ void drawPlayerOverlay(uint i){
 	p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
 
 	u32 ofgc = guim->fgc;
-	guim->fgc = 0xA000B0D0;
-
-	if(fabsf(p.z) > 16){
-		textMeshPrintfPS(guim,p.x,p.y - 16,2,"|");
-		textMeshPrintfPS(guim,p.x,p.y + 16,2,"|");
-		textMeshPrintfPS(guim,p.x-16,p.y,2,"-");
-		textMeshPrintfPS(guim,p.x+16,p.y,2,"-");
-	}
+	float a = MIN(255.f,MAX(0.f,(p.z-32.f)));
+	guim->fgc = 0x00B0D0 | ((u32)a<<24);
+	textMeshPrintfPS(guim,p.x,p.y - 16,2,"|");
+	textMeshPrintfPS(guim,p.x,p.y + 16,2,"|");
+	textMeshPrintfPS(guim,p.x-16,p.y,2,"-");
+	textMeshPrintfPS(guim,p.x+16,p.y,2,"-");
+	guim->fgc = 0xC000B0D0;
 	textMeshPrintfPS(guim,p.x+16,p.y-16,1,"%s",characterGetPlayerName(i));
 	drawSingleHealthbar(characterGetPlayerHP(i), p.x+16,p.y-4,8,false);
 
