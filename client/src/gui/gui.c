@@ -30,6 +30,7 @@
 #include "../../../common/src/tmp/cto.h"
 #include "../../../common/src/mods/mods.h"
 
+#include <string.h>
 #include <stdio.h>
 #include <math.h>
 
