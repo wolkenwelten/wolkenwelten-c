@@ -261,12 +261,7 @@ void drawHealthbar(){
 void drawPlayerOverlay(uint i){
 	const character *c = characterGetPlayer(i);
 	if(c == NULL){return;}
-
-	matMov(matMVP,matView);
-	matMulTrans(matMVP,c->pos.x,c->pos.y+c->yoff,c->pos.z);
-	matMulRotYX(matMVP,-c->rot.yaw,-c->rot.pitch/6.f);
-	matMul(matMVP,matMVP,matProjection);
-	vec p = matMulVec(matMVP,vecNew(0.f,0.25f,0.f));
+	vec p = c->screenPos;
 	if(p.z < 0){return;}
 	p.x = ((p.x / p.z)+1.f)/2.f * screenWidth;
 	p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
@@ -278,7 +273,7 @@ void drawPlayerOverlay(uint i){
 	textMeshPrintfPS(guim,p.x,p.y + 16,2,"|");
 	textMeshPrintfPS(guim,p.x-16,p.y,2,"-");
 	textMeshPrintfPS(guim,p.x+16,p.y,2,"-");
-	guim->fgc = 0xC000B0D0;
+	guim->fgc = 0xFF00C0E0;
 	textMeshPrintfPS(guim,p.x+16,p.y-16,1,"%s",characterGetPlayerName(i));
 	drawSingleHealthbar(characterGetPlayerHP(i), p.x+16,p.y-4,8,false);
 

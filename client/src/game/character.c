@@ -727,6 +727,7 @@ void characterDraw(character *c){
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(c->eMesh);
+	c->screenPos = matMulVec(matMVP,vecNew(0,0.5f,0));
 
 	characterActiveItemDraw(c);
 	characterShadesDraw(c);

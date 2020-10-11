@@ -48,7 +48,7 @@ typedef struct {
 #define ENTITY_NOREPULSION (1<<4)
 
 typedef struct {
-	 vec  pos,vel,gvel,rot;
+	 vec  pos,vel,gvel,rot,screenPos;
 	float yoff,shake,inaccuracy;
 	float gyoff;
 
