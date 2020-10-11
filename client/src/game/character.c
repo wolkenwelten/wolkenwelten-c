@@ -713,7 +713,7 @@ void characterActiveItemDraw(const character *c){
 	meshDraw(aiMesh);
 }
 
-void characterDraw(const character *c){
+void characterDraw(character *c){
 	if(c == NULL)       {return;}
 	if(c == player)     {return;}
 	if(c->eMesh == NULL){return;}
@@ -800,6 +800,12 @@ void characterSetData(character *c, const packet *p){
 void characterSetName(const packet *p){
 	if(p->val.s[0] >= 32){return;}
 	memcpy(playerNames[p->val.s[0]],&p->val.c[2],32);
+}
+
+character *characterGetPlayer(uint i){
+	if(i >= 32){return NULL;}
+	if(playerList[i] == NULL){return NULL;}
+	return playerList[i];
 }
 
 char *characterGetPlayerName(uint i){

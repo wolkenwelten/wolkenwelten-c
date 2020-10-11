@@ -12,7 +12,7 @@ float characterMineProgress    (      character *c);
 void  characterUpdate          (      character *c);
 void  characterFireHook        (      character *c);
 void  characterFreeHook        (      character *c);
-void  characterDraw            (const character *c);
+void  characterDraw            (      character *c);
 void  characterDropItem        (      character *c, int i);
 bool  characterPlaceBlock      (      character *c, item *i);
 void  characterMoveDelta       (      character *c, const packet *p);
@@ -21,6 +21,7 @@ void  characterSetData         (      character *c, const packet *p);
 void  characterSetPlayerPos    (                    const packet *p);
 void  characterSetName         (                    const packet *p);
 
+character *characterGetPlayer  (uint i);
 char *characterGetPlayerName   (uint i);
 int   characterGetPlayerHP     (uint i);
 vec   characterGetPlayerDist   (uint i);

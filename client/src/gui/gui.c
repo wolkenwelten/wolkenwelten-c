@@ -259,21 +259,30 @@ void drawHealthbar(){
 }
 
 void drawPlayerOverlay(uint i){
-	const vec dist = characterGetPlayerDist(i);
-	//const float  d = vecMag(dist);
-	const float hfov = gfxCurFOV;
-	const float vfov = gfxCurFOV * ((float)screenHeight / (float)screenWidth);
-	vec  deg = vecSub(vecMul(vecVecToDeg(dist),vecNew(1,-1,1)),player->rot);
-	if(deg.x <     0){deg.x += 360.f;}
-	if(deg.x > 360.f){deg.x -= 360.f;}
-	deg.y += 180.f;
-	if(deg.y <     0){deg.y += 360.f;}
-	if(deg.y > 360.f){deg.y -= 360.f;}
+	const character *c = characterGetPlayer(i);
+	if(c == NULL){return;}
 
-	const float x = ((deg.x - (180.f-hfov))/(hfov*2)) * screenWidth;
-	const float y = ((deg.y - (180.f-vfov))/(vfov*2)) * screenHeight;
+	matMov(matMVP,matView);
+	matMulTrans(matMVP,c->pos.x,c->pos.y+c->yoff,c->pos.z);
+	matMulRotYX(matMVP,-c->rot.yaw,-c->rot.pitch/6.f);
+	matMul(matMVP,matMVP,matProjection);
+	vec p = matMulVec(matMVP,vecNew(0.f,0.25f,0.f));
+	p.x = ((p.x / p.z)+1.f)/2.f * screenWidth;
+	p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
 
-	textMeshPrintfPS(guim,MAX(16,MIN(screenWidth-16,x)),MAX(16,MIN(screenHeight-16,y)),1,"X %f = %f",y,deg.y);
+
+	u32 ofgc = guim->fgc;
+	guim->fgc = 0xA000B0D0;
+
+	if(fabsf(p.z) > 16){
+		textMeshPrintfPS(guim,p.x,p.y - 16,2,"|");
+		textMeshPrintfPS(guim,p.x,p.y + 16,2,"|");
+		textMeshPrintfPS(guim,p.x-16,p.y,2,"-");
+		textMeshPrintfPS(guim,p.x+16,p.y,2,"-");
+	}
+	textMeshPrintfPS(guim,p.x+16,p.y-16,1,"%s",characterGetPlayerName(i));
+
+	guim->fgc = ofgc;
 }
 
 void drawDebuginfo(){
@@ -316,7 +325,7 @@ void drawDebuginfo(){
 		drawSingleHealthbar(characterGetPlayerHP(i),screenWidth-96,guim->sy+22,14,false);
 		guim->sy += 42;
 		guim->sx = screenWidth;
-		//drawPlayerOverlay(i);
+		drawPlayerOverlay(i);
 	}
 
 	vboTrisCount = 0;

@@ -1,4 +1,5 @@
 #pragma once
+#include "../../../common/src/common.h"
 
 extern float matMVP[16];
 
@@ -24,3 +25,4 @@ void matMulRotYXZ   (float mat[16], float yaw, float pitch, float roll);
 void matMulTrans    (float mat[16], float x, float y, float z);
 void matMulScale    (float mat[16], float x, float y, float z);
 void matPrint       (const float *mat,const char *title);
+vec  matMulVec      (const float mat[16], const vec pos);
