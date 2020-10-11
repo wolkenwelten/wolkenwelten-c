@@ -122,11 +122,12 @@ void animalCheckForHillOrCliff(animal *e){
 		return;
 	}
 	if(cb == 0){
-		if((worldGetB(caDir.x,caDir.y-1,caDir.z) == 0) &&
-		   (worldGetB(caDir.x,caDir.y-2,caDir.z) == 0)){
-			e->vel = vecMul(e->gvel,vecNew(-1,1,-1));;
-				return;
-			}
+		if(worldGetB(caDir.x,caDir.y-1,caDir.z) != 0){return;}
+		if(worldGetB(caDir.x,caDir.y-2,caDir.z) != 0){return;}
+
+		vec tmp = e->gvel;
+		tmp.y = e->vel.y;
+		e->vel = vecMul(tmp,vecNew(-1,1,-1));
 	}
 }
 
@@ -334,13 +335,13 @@ void animalSPlayful(animal *e){
 	character *cChar;
 	float dist = animalClosestPlayer(e,&cChar);
 	if (rngValM( 192) == 0){e->sleepy--;}
-	if((dist < 35.f) && (cChar != NULL)){
+	if((cChar != NULL) && (dist < 4.f)){
 		e->state = ANIMAL_S_FLEE;
 		return;
 	}
 	if(animalCheckHeat(e)){return;}
 
-	if((rngValM( 128) == 0) && (fabsf(e->vel.y) < 0.001f)){
+	if((rngValM( 128) == 0) && !(e->flags & ANIMAL_FALLING)){
 		e->vel.y = 0.03f;
 	}
 	if (rngValM( 256) == 0){
@@ -358,8 +359,8 @@ void animalSPlayful(animal *e){
 		e->gvel.z = dir.z;
 	}
 
-	if (rngValM(1024) > (uint)( e->age)){
-		e->state = 4;
+	if (rngValM(1024) < (uint)(e->age*6)){
+		e->state = ANIMAL_S_LOITER;
 		return;
 	}
 }
