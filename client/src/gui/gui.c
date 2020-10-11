@@ -267,9 +267,9 @@ void drawPlayerOverlay(uint i){
 	matMulRotYX(matMVP,-c->rot.yaw,-c->rot.pitch/6.f);
 	matMul(matMVP,matMVP,matProjection);
 	vec p = matMulVec(matMVP,vecNew(0.f,0.25f,0.f));
+	if(p.z < 0){return;}
 	p.x = ((p.x / p.z)+1.f)/2.f * screenWidth;
 	p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
-
 
 	u32 ofgc = guim->fgc;
 	guim->fgc = 0xA000B0D0;
