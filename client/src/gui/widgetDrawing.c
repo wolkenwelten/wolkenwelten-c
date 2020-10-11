@@ -182,7 +182,7 @@ static void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, in
 		textMeshAddLinePS(m,x+textXOff,y+textYOff,size,wid->vals);
 	}
 	if((widgetFocused == wid) && (getTicks() & 512)){
-		textMeshAddGlyph(m, x+textXOff+(textInputCursorPos*size*8), y+textYOff, size, 127);
+		textMeshAddGlyph(m, x+textXOff+(textInputCursorPos*size*8), y+textYOff, size, 127,0xFFFFFFFF,0x00000000);
 	}
 }
 

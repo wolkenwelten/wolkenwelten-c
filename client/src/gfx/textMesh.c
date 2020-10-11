@@ -39,6 +39,8 @@ textMesh *textMeshNew(){
 	m->tex      = tGui;
 	m->finished = 0;
 	m->usage    = GL_STREAM_DRAW;
+	m->fgc      = 0xFFFFFFFF;
+	m->bgc      = 0x00000000;
 
 	return m;
 }
@@ -93,7 +95,7 @@ void textMeshDraw(textMesh *m){
 	vboTrisCount += m->dataCount/3;
 }
 
-void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c){
+void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c, u32 fgc, u32 bgc){
 	float gx;
 	float gy;
 	int   glyphWidth = 8*size;
@@ -114,13 +116,17 @@ void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c){
 		gy = ((float)(15-((c>>4)&0x0f)))*glyphSize + 24.f/32.f;
 	}
 
-	textMeshAddVert( m, x           , y           , ((gx          )*128.f), ((gy          )*128.f),0xFFFFFFFF);
-	textMeshAddVert( m, x+glyphWidth, y+glyphWidth, ((gx+glyphSize)*128.f), ((gy+glyphSize)*128.f),0xFFFFFFFF);
-	textMeshAddVert( m, x+glyphWidth, y           , ((gx+glyphSize)*128.f), ((gy          )*128.f),0xFFFFFFFF);
+	textMeshAddVert( m, x           , y           , ((gx          )*128.f), ((gy          )*128.f),fgc);
+	textMeshAddVert( m, x+glyphWidth, y+glyphWidth, ((gx+glyphSize)*128.f), ((gy+glyphSize)*128.f),fgc);
+	textMeshAddVert( m, x+glyphWidth, y           , ((gx+glyphSize)*128.f), ((gy          )*128.f),fgc);
 
-	textMeshAddVert( m, x+glyphWidth, y+glyphWidth, ((gx+glyphSize)*128.f), ((gy+glyphSize)*128.f),0xFFFFFFFF);
-	textMeshAddVert( m, x           , y           , ((gx          )*128.f), ((gy          )*128.f),0xFFFFFFFF);
-	textMeshAddVert( m, x           , y+glyphWidth, ((gx          )*128.f), ((gy+glyphSize)*128.f),0xFFFFFFFF);
+	textMeshAddVert( m, x+glyphWidth, y+glyphWidth, ((gx+glyphSize)*128.f), ((gy+glyphSize)*128.f),fgc);
+	textMeshAddVert( m, x           , y           , ((gx          )*128.f), ((gy          )*128.f),fgc);
+	textMeshAddVert( m, x           , y+glyphWidth, ((gx          )*128.f), ((gy+glyphSize)*128.f),fgc);
+
+	if(bgc & 0xFF000000){
+		textMeshBox(m,x,y,glyphWidth,glyphWidth,19.f/32.f, 31.f/32.f,1.f/32.f,1.f/32.f,bgc);
+	}
 }
 
 void textMeshAddLinePS(textMesh *m, int x, int y, int size, const char *str){
@@ -146,7 +152,7 @@ void textMeshAddLinePS(textMesh *m, int x, int y, int size, const char *str){
 			continue;
 		}
 
-		textMeshAddGlyph(m,x,y,size,*str);
+		textMeshAddGlyph(m,x,y,size,*str,m->fgc,m->bgc);
 		x+= glyphWidth;
 		str++;
 	}
@@ -185,7 +191,7 @@ void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 			continue;
 		}
 
-		textMeshAddGlyph(m,x,y,size,*str);
+		textMeshAddGlyph(m,x,y,size,*str,m->fgc,m->bgc);
 		x += glyphWidth;
 		str++;
 	}

@@ -25,6 +25,7 @@ typedef struct vertex2D {
 typedef struct {
 	vertex2D dataBuffer[1<<14];
 	 int sx,sy,size,font;
+	 u32 fgc, bgc;
 	 int dataCount;
 	 int vboSize;
 	uint vbo,usage;
