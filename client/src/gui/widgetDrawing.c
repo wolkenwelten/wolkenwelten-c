@@ -176,14 +176,20 @@ static void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, in
 	textMeshSolidBox(m,x+w-1, y+1,  1,h-2,bcolor);
 
 	if(wid->vals == NULL){return;}
+	int oldmx = m->mx;
+	m->mx     = x+w - size*8;
 	if(wid->vals[0] == 0){
 		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->label);
 	}else{
 		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->vals);
 	}
 	if((widgetFocused == wid) && (getTicks() & 512)){
-		textMeshAddGlyph(m, x+textXOff+(textInputCursorPos*size*8), y+textYOff, size, 127,0xFFFFFFFF,0x00000000);
+		const int cx = x+textXOff+(textInputCursorPos*size*8);
+		if(cx < m->mx){
+			textMeshAddGlyph(m, x+textXOff+(textInputCursorPos*size*8), y+textYOff, size, 127,0xFFFFFFFF,0x00000000);
+		}
 	}
+	m->mx = oldmx;
 }
 
 static void widgetDrawLabel(const widget *wid, textMesh *m, int x, int y, int w, int h){
