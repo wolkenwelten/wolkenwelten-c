@@ -223,7 +223,7 @@ void bigchungusFreeFarChungi(bigchungus *c){
 		int x = (int)chng->x>>8;
 		int y = (int)chng->y>>8;
 		int z = (int)chng->z>>8;
-		if((x >= 127) && (x <= 129) && (y >= 1) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
+		if((x >= 127) && (x <= 129) && (y >= 0) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
 
 		const vec cpos = vecNew(x,y,z);
 		for(uint ii=0;ii<clientCount;++ii){

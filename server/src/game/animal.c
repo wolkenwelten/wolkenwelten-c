@@ -27,7 +27,7 @@ animal *animalNew(const vec pos , int type){
 	e->pos       = pos;
 
 	e->age       = 21;
-	e->health    = 10;
+	e->health    =  8;
 	e->hunger    = 64;
 	e->thirst    = 64;
 	e->sleepy    = 64;

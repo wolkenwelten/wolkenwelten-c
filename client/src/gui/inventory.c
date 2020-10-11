@@ -111,6 +111,7 @@ static void handlerCraftingSlotBlur(widget *wid){
 void initInventory(){
 	const int ts = getTilesize();
 	const int sx = 10*ts;
+	if(inventoryPanel != NULL){ widgetFree(inventoryPanel); }
 	inventoryPanel = widgetNewCP(wPanel,rootHud,-1,-1,sx,ts+32);
 	inventorySpace = widgetNewCP(wSpace,inventoryPanel,-1,0,10*ts,-1);
 	craftingSpace  = widgetNewCP(wSpace,inventoryPanel,-1,0,0,-1);

@@ -115,6 +115,8 @@ void resizeUI(){
 	const int sx = 10*getTilesize();
 	chatPanel->w = screenWidth - sx;
 	chatText->w = screenWidth - sx - 64;
+
+	initInventory();
 }
 
 void openChat(){
