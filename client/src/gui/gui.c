@@ -281,6 +281,7 @@ void drawPlayerOverlay(uint i){
 		textMeshPrintfPS(guim,p.x+16,p.y,2,"-");
 	}
 	textMeshPrintfPS(guim,p.x+16,p.y-16,1,"%s",characterGetPlayerName(i));
+	drawSingleHealthbar(characterGetPlayerHP(i), p.x+16,p.y,8,false);
 
 	guim->fgc = ofgc;
 }
