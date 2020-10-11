@@ -86,7 +86,7 @@ typedef struct {
 #define CHAR_SPAWNING     (1<<6)
 
 typedef struct {
-	vec pos,vel,gvel,grot,rot;
+	vec pos,vel,gvel,grot,rot,screenPos;
 
 	i8 age;
 	i8 health;

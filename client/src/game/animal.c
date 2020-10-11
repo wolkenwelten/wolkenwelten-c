@@ -43,7 +43,7 @@ static void animalShadesDraw(const animal *c){
 	meshDraw(meshSunglasses);
 }
 
-static void animalDraw(const animal *e){
+static void animalDraw(animal *e){
 	float breath,scale;
 	if(e        == NULL){return;}
 	if(e->state == 0){
@@ -62,6 +62,7 @@ static void animalDraw(const animal *e){
 	matMulRotYX (matMVP,e->rot.yaw,e->rot.pitch-breath);
 	matMulScale (matMVP,scale,scale,scale);
 	matMul      (matMVP,matMVP,matProjection);
+	e->screenPos = matMulVec(matMVP,vecNew(0,0.25f,0));
 
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(meshPear);

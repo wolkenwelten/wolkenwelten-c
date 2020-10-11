@@ -280,6 +280,52 @@ void drawPlayerOverlay(uint i){
 	guim->fgc = ofgc;
 }
 
+const char *colorSignalHigh(int err, int warn, int good, int v){
+	if(v <= err) {return ansiFG[ 9];}
+	if(v <= warn){return ansiFG[11];}
+	if(v >= good){return ansiFG[10];}
+	return ansiFG[15];
+}
+const char *colorSignalLow(int err, int warn, int good, int v){
+	if(v >= err) {return ansiFG[ 9];}
+	if(v >= warn){return ansiFG[11];}
+	if(v <= good){return ansiFG[10];}
+	return ansiFG[15];
+}
+
+void drawAnimalDebugOverlay(const animal *e){
+	if(e == NULL){return;}
+	vec p = e->screenPos;
+	if(p.z < 0){return;}
+	p.x = ((p.x / p.z)+1.f)/2.f * screenWidth;
+	p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
+
+	u32 ofgc = guim->fgc;
+	float a = MIN(255.f,MAX(0.f,(p.z-32.f)));
+	guim->fgc = 0x00B0D0 | ((u32)a<<24);
+	textMeshPrintfPS(guim,p.x,p.y - 16,2,"|");
+	textMeshPrintfPS(guim,p.x,p.y + 16,2,"|");
+	textMeshPrintfPS(guim,p.x-16,p.y,2,"-");
+	textMeshPrintfPS(guim,p.x+16,p.y,2,"-");
+
+	guim->fgc = 0xFFFFFFFF;
+	textMeshPrintfPS(guim,p.x+16,p.y-40,2,"%s",animalGetStateName(e));
+	drawSingleHealthbar(e->health, p.x+16,p.y-16,8,false);
+	guim->fgc = colorPalette[7];
+
+	const char *hungerC = colorSignalHigh(16,32,48,e->hunger);
+	const char *thirstC = colorSignalHigh(16,32,48,e->thirst);
+	const char *sleepyC = colorSignalHigh(16,32,48,e->sleepy);
+	const char *ageC    = colorSignalLow (78,64,48,e->age);
+	textMeshPrintfPS(guim,p.x+16,p.y  ,1,"Hunger: %s%i%s",hungerC,e->hunger,ansiFG[7]);
+	textMeshPrintfPS(guim,p.x+16,p.y+ 8,1,"Thirst: %s%i%s",thirstC,e->thirst,ansiFG[7]);
+	textMeshPrintfPS(guim,p.x+16,p.y+16,1,"Sleepy: %s%i%s",sleepyC,e->sleepy,ansiFG[7]);
+	textMeshPrintfPS(guim,p.x+16,p.y+24,1,"Age:    %s%i%s",ageC,   e->age   ,ansiFG[7]);
+
+	guim->fgc = 0xFF00C0E0;
+	guim->fgc = ofgc;
+}
+
 void drawDebuginfo(){
 	static uint ticks = 0;
 	int tris = vboTrisCount;
@@ -304,11 +350,18 @@ void drawDebuginfo(){
 	guim->size = 1;
 	guim->sx   = screenWidth;
 	guim->sy   = 4;
-	textMeshPrintfRA(guim,"%s",VERSION,COMMIT);
+	textMeshPrintfRA(guim,"%s",VERSION);
 
 	guim->sx   = screenWidth-48;
 	guim->sy   = 14;
-	textMeshPrintf(guim,"FPS %02.0f\n",curFPS);
+	char *fpsColor = ansiFG[10];
+	if(curFPS < 30){
+		fpsColor = ansiFG[9];
+	}else if(curFPS < 59){
+		fpsColor = ansiFG[11];
+	}
+	textMeshPrintf(guim,"FPS %s%02.0f\n",fpsColor,curFPS);
+	guim->fgc  = colorPalette[15];
 
 	guim->sy  += 16;
 	guim->sx   = screenWidth;
@@ -327,6 +380,10 @@ void drawDebuginfo(){
 	if(!optionDebugInfo){
 		guim->font = 0;
 		return;
+	}
+
+	for(uint i=0;i<animalCount;i++){
+		drawAnimalDebugOverlay(&animalList[i]);
 	}
 
 	guim->sx   =  4;

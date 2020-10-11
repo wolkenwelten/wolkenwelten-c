@@ -19,6 +19,45 @@ textMesh  textMeshList[8];
 uint      textMeshCount = 0;
 textMesh *textMeshFirstFree = NULL;
 
+char *ansiFG[16] = {
+	"\033[0;30m",
+	"\033[0;31m",
+	"\033[0;32m",
+	"\033[0;33m",
+	"\033[0;34m",
+	"\033[0;35m",
+	"\033[0;36m",
+	"\033[0;37m",
+	"\033[1;30m",
+	"\033[1;31m",
+	"\033[1;32m",
+	"\033[1;33m",
+	"\033[1;34m",
+	"\033[1;35m",
+	"\033[1;36m",
+	"\033[1;37m"
+};
+
+u32 colorPalette[16] = {
+	0x00000000,
+	0xFF000080,
+	0xFF008000,
+	0xFF008080,
+	0xFF800000,
+	0xFF800080,
+	0xFF808000,
+	0xFFA0A0A0,
+
+	0xFF808080,
+	0xFF0000FF,
+	0xFF00FF00,
+	0xFF00FFFF,
+	0xFFFF0000,
+	0xFFFF00FF,
+	0xFFFFFF00,
+	0xFFFFFFFF
+};
+
 textMesh *textMeshNew(){
 	textMesh *m = NULL;
 	if(textMeshFirstFree != NULL){
@@ -40,8 +79,8 @@ textMesh *textMeshNew(){
 	m->tex      = tGui;
 	m->finished = 0;
 	m->usage    = GL_STREAM_DRAW;
-	m->fgc      = 0xFFFFFFFF;
-	m->bgc      = 0x00000000;
+	m->fgc      = colorPalette[15];
+	m->bgc      = colorPalette[ 0];
 
 	return m;
 }
@@ -96,6 +135,25 @@ void textMeshDraw(textMesh *m){
 	glDrawArrays(GL_TRIANGLES,0,m->dataCount);
 
 	vboTrisCount += m->dataCount/3;
+}
+
+static int textMeshParseEscapeCode(textMesh *m, const char *str){
+	int off = 0;
+	for(int i=0;i<7;i++){
+		if(str[i] == 0){return i;}
+	}
+	if(str[1] != '['){return 1;}
+	if(str[3] != ';'){return 1;}
+	if(str[6] != 'm'){return 1;}
+	if(str[2] == '1'){
+		off = 8;
+	}else if(str[2] != '0'){
+		return 1;
+	}
+	if(str[4] != '3'){return 1;}
+	if((str[5] < '0') || (str[5] > '8')){return 1;}
+	m->fgc = colorPalette[off + str[5] - '0'];
+	return 7;
 }
 
 void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c, u32 fgc, u32 bgc){
@@ -166,6 +224,9 @@ void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 		}else if(*str == '\t'){
 			str++;
 			x = (((x - m->sx) / (glyphWidth*4) ) + 1 ) * (glyphWidth*4);
+			continue;
+		}else if(*str == '\033'){
+			str += textMeshParseEscapeCode(m,str);
 			continue;
 		}
 

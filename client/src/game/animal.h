@@ -5,7 +5,7 @@
 extern animal animalList[1<<10];
 extern uint animalCount;
 
-void     animalDrawAll        ();
-void     animalUpdateAll      ();
-int      animalHitCheck       (const vec pos, float mdd, int dmg, int cause, uint iteration);
-void     animalSyncFromServer (const packet *p);
+void        animalDrawAll        ();
+void        animalUpdateAll      ();
+int         animalHitCheck       (const vec pos, float mdd, int dmg, int cause, uint iteration);
+void        animalSyncFromServer (const packet *p);

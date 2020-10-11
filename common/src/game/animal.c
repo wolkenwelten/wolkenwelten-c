@@ -118,3 +118,19 @@ int animalUpdate(animal *e){
 float animalDistance(const animal *e,const character *c){
 	return vecMag(vecSub(e->pos,c->pos));
 }
+
+const char *animalGetStateName(const animal *e){
+	switch(e->state){
+	default:
+	case ANIMAL_S_LOITER:
+		return "Chill";
+	case ANIMAL_S_FLEE:
+		return "Flee";
+	case ANIMAL_S_HEAT:
+		return "Heat";
+	case ANIMAL_S_SLEEP:
+		return "Sleep";
+	case ANIMAL_S_PLAYING:
+		return "Play";
+	}
+}
