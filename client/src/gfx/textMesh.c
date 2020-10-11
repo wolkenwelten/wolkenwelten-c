@@ -33,8 +33,9 @@ textMesh *textMeshNew(){
 		m = &textMeshList[textMeshCount++];
 	}
 	m->vboSize  = 0;
-	m->vbo      = m->dataCount = 0;
-	m->sx       = m->sy        = 0;
+	m->vbo      = m->dataCount =  0;
+	m->sx       = m->sy        =  0;
+	m->mx       = m->my        = -1;
 	m->size     = 1;
 	m->tex      = tGui;
 	m->finished = 0;
@@ -54,11 +55,13 @@ void textMeshFree(textMesh *m){
 }
 
 void textMeshEmpty(textMesh *m){
-	m->dataCount = 0;
-	m->sx        = 0;
-	m->sy        = 0;
-	m->size      = 1;
-	m->finished  = 0;
+	m->dataCount =  0;
+	m->sx        =  0;
+	m->sy        =  0;
+	m->mx        = -1;
+	m->my        = -1;
+	m->size      =  1;
+	m->finished  =  0;
 }
 
 void textMeshAddVert(textMesh *m, i16 x, i16 y, i16 u, i16 v, u32 rgba){
@@ -129,45 +132,20 @@ void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c, u32 fgc, u32 bg
 	}
 }
 
-void textMeshAddLinePS(textMesh *m, int x, int y, int size, const char *str){
-	const int glyphWidth = 8*size;
-	const int lineHeight = 10*size;
-
-	while(*str != 0){
-		if((y > screenHeight) || (x > screenWidth)){
-			return;
-		}
-		if(*str == '\n'){
-			x = m->sx;
-			m->sy += lineHeight;
-			y += lineHeight;
-			str++;
-			continue;
-		}else if(*str == '\r'){
-			str++;
-			continue;
-		}else if(*str == '\t'){
-			str++;
-			x = (((x - m->sx) / (glyphWidth*4) ) + 1 ) * (glyphWidth*4);
-			continue;
-		}
-
-		textMeshAddGlyph(m,x,y,size,*str,m->fgc,m->bgc);
-		x+= glyphWidth;
-		str++;
-	}
-	m->sx = x;
-}
-
 void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 	const int glyphWidth = 8*size;
 	const int lineHeight = 10*size;
+	int maxX = m->mx;
+	if(maxX == -1){maxX = screenWidth;}
+	int maxY = m->my;
+	if(maxY == -1){maxY = screenHeight;}
 
 	while(*str != 0){
-		if(y > screenHeight){
+		if(y > maxY){
 			return;
 		}
-		if(x+glyphWidth > screenWidth){
+		if(x > maxX){
+			if(m->wrap == 0){return;}
 			x = m->sx;
 			y += lineHeight;
 			if(x+glyphWidth > screenWidth){

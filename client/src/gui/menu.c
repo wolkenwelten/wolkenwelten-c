@@ -421,7 +421,9 @@ static void drawMenuAttributions(){
 	}
 	scroll+=scrollDir;
 
+	menuM->wrap = 1;
 	textMeshPrintfPS(menuM,16,16-scroll,2,"Attribution:\n%s",txt_attribution_txt_data);
+	menuM->wrap = 0;
 }
 
 void renderMenu(){

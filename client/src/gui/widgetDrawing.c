@@ -44,7 +44,7 @@ static void widgetDrawButton(const widget *wid, textMesh *m, int x, int y, int w
 	textMeshSolidBox (m,x+1,y+h-1,w-2,  1,bcolor);
 	textMeshSolidBox (m,x+w-1,y+1,  1,h-2,bcolor);
 
-	textMeshAddLinePS(m,x+textXOff,y+textYOff,2,wid->label);
+	textMeshAddStrPS(m,x+textXOff,y+textYOff,2,wid->label);
 }
 
 static void widgetDrawButtondel(const widget *wid, textMesh *m, int x, int y, int w, int h){
@@ -97,8 +97,8 @@ static void widgetDrawButtondel(const widget *wid, textMesh *m, int x, int y, in
 	textMeshSolidBox (m,x+w-41, y+h-1,40,  1, dbcolor);
 	textMeshSolidBox (m,x+w-41, y  ,40,  1, dtcolor);
 
-	textMeshAddLinePS(m,x+textXOff,y+textYOff,2,wid->label);
-	textMeshAddLinePS(m,x+w-24,y+textYOff,2,"X");
+	textMeshAddStrPS(m,x+textXOff,y+textYOff,2,wid->label);
+	textMeshAddStrPS(m,x+w-24,y+textYOff,2,"X");
 }
 
 static void widgetDrawRadioButton(const widget *wid, textMesh *m, int x, int y, int w, int h){
@@ -132,7 +132,7 @@ static void widgetDrawRadioButton(const widget *wid, textMesh *m, int x, int y, 
 	textMeshSolidBox (m,x+1,y+h-1,w-2,  1,bcolor);
 	textMeshSolidBox (m,x+w-1,y+1,  1,h-2,bcolor);
 
-	textMeshAddLinePS(m,x+textXOff,y+textYOff,2,wid->label);
+	textMeshAddStrPS(m,x+textXOff,y+textYOff,2,wid->label);
 }
 
 
@@ -177,9 +177,9 @@ static void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, in
 
 	if(wid->vals == NULL){return;}
 	if(wid->vals[0] == 0){
-		textMeshAddLinePS(m,x+textXOff,y+textYOff,size,wid->label);
+		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->label);
 	}else{
-		textMeshAddLinePS(m,x+textXOff,y+textYOff,size,wid->vals);
+		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->vals);
 	}
 	if((widgetFocused == wid) && (getTicks() & 512)){
 		textMeshAddGlyph(m, x+textXOff+(textInputCursorPos*size*8), y+textYOff, size, 127,0xFFFFFFFF,0x00000000);
@@ -201,10 +201,10 @@ static void widgetDrawLabel(const widget *wid, textMesh *m, int x, int y, int w,
 
 	m->sx = x;
 	if(wid->label != NULL){
-		textMeshAddLinePS(m,x,y,size,wid->label);
+		textMeshAddStrPS(m,x,y,size,wid->label);
 	}
 	if(wid->vals != NULL){
-		textMeshAddLinePS(m,m->sx,y,size,wid->vals);
+		textMeshAddStrPS(m,m->sx,y,size,wid->vals);
 	}
 }
 
@@ -242,7 +242,7 @@ static void widgetDrawSlider(const widget *wid, textMesh *m, int x, int y, int w
 
 	m->sx = x;
 	if(wid->label != NULL){
-		textMeshAddLinePS(m,x+textXOff,y+textYOff,size,wid->label);
+		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->label);
 	}
 }
 
