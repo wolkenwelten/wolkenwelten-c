@@ -219,7 +219,7 @@ void updateMouse(){
 	}
 }
 
-static void drawSingleHealthbar(int hp, uint x, uint y, int tilesize,bool drawHeartbeat){
+static void drawSingleHealthbar(int hp, int maxhp, uint x, uint y, int tilesize,bool drawHeartbeat){
 	const int ticks = -(getTicks() >> 4);
 	int tilesizeoff,lastsize,lastoff;
 
@@ -230,7 +230,7 @@ static void drawSingleHealthbar(int hp, uint x, uint y, int tilesize,bool drawHe
 	int heartBeat = ticks & 0x7F;
 	int hbRGBA = 0xFFFFFF | (heartBeat << 25);
 	int hbOff  = 16-(heartBeat>>3);
-	for(int i=0;i<5;i++){
+	for(int i=0;i<(maxhp>>2);i++){
 		if(hp == ((i+1)*4)){
 			if(drawHeartbeat){
 				textMeshBox(guim,x-hbOff,y-lastoff-hbOff,lastsize+hbOff*2,lastsize+hbOff*2,31.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,hbRGBA);
@@ -255,7 +255,7 @@ static void drawSingleHealthbar(int hp, uint x, uint y, int tilesize,bool drawHe
 
 void drawHealthbar(){
 	const int tilesize = getTilesize()/2;
-	drawSingleHealthbar(player->hp, tilesize/2, tilesize/2, tilesize,true);
+	drawSingleHealthbar(player->hp, 20, tilesize/2, tilesize/2, tilesize,true);
 }
 
 void drawPlayerOverlay(uint i){
@@ -275,18 +275,18 @@ void drawPlayerOverlay(uint i){
 	textMeshPrintfPS(guim,p.x+16,p.y,2,"-");
 	guim->fgc = 0xFF00C0E0;
 	textMeshPrintfPS(guim,p.x+16,p.y-16,1,"%s",characterGetPlayerName(i));
-	drawSingleHealthbar(characterGetPlayerHP(i), p.x+16,p.y-4,8,false);
+	drawSingleHealthbar(characterGetPlayerHP(i),20,p.x+16,p.y-4,8,false);
 
 	guim->fgc = ofgc;
 }
 
-const char *colorSignalHigh(int err, int warn, int good, int v){
+static const char *colorSignalHigh(int err, int warn, int good, int v){
 	if(v <= err) {return ansiFG[ 9];}
 	if(v <= warn){return ansiFG[11];}
 	if(v >= good){return ansiFG[10];}
 	return ansiFG[15];
 }
-const char *colorSignalLow(int err, int warn, int good, int v){
+static const char *colorSignalLow(int err, int warn, int good, int v){
 	if(v >= err) {return ansiFG[ 9];}
 	if(v >= warn){return ansiFG[11];}
 	if(v <= good){return ansiFG[10];}
@@ -310,7 +310,7 @@ void drawAnimalDebugOverlay(const animal *e){
 
 	guim->fgc = 0xFFFFFFFF;
 	textMeshPrintfPS(guim,p.x+16,p.y-40,2,"%s",animalGetStateName(e));
-	drawSingleHealthbar(e->health, p.x+16,p.y-16,8,false);
+	drawSingleHealthbar(e->health, 8, p.x+16,p.y-16,8,false);
 	guim->fgc = colorPalette[7];
 
 	const char *hungerC = colorSignalHigh(16,32,48,e->hunger);
@@ -370,7 +370,7 @@ void drawDebuginfo(){
 		const char *cname = characterGetPlayerName(i);
 		if(cname == NULL){continue;}
 		textMeshPrintfRA(guim,"%s",cname);
-		drawSingleHealthbar(characterGetPlayerHP(i),screenWidth-96,guim->sy+22,14,false);
+		drawSingleHealthbar(characterGetPlayerHP(i),20,screenWidth-96,guim->sy+22,14,false);
 		guim->sy += 42;
 		guim->sx = screenWidth;
 		drawPlayerOverlay(i);
