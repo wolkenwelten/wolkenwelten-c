@@ -354,13 +354,7 @@ void drawDebuginfo(){
 
 	guim->sx   = screenWidth-48;
 	guim->sy   = 14;
-	char *fpsColor = ansiFG[10];
-	if(curFPS < 30){
-		fpsColor = ansiFG[9];
-	}else if(curFPS < 59){
-		fpsColor = ansiFG[11];
-	}
-	textMeshPrintf(guim,"FPS %s%02.0f\n",fpsColor,curFPS);
+	textMeshPrintf(guim,"FPS %s%02.0f\n",colorSignalHigh(20,40,59,curFPS),curFPS);
 	guim->fgc  = colorPalette[15];
 
 	guim->sy  += 16;
@@ -389,26 +383,30 @@ void drawDebuginfo(){
 	guim->sx   =  4;
 	guim->sy   = getTilesize();
 	guim->size =  1;
-	textMeshPrintf(guim,"%sPlayer     X: %05.2f VX: %02.4f GVX: %02.4f\n",ansiFG[15],player->pos.x,player->vel.x,player->gvel.x);
-	textMeshPrintf(guim,"%sPlayer     Y: %05.2f VY: %02.4f GVY: %02.4f\n",ansiFG[1],player->pos.y,player->vel.y,player->gvel.y);
-	textMeshPrintf(guim,"%sPlayer     Z: %05.2f VZ: %02.4f GVZ: %02.4f\n",ansiFG[2],player->pos.z,player->vel.z,player->gvel.z);
-	textMeshPrintf(guim,"%sPlayer   Yaw: %04.2f\n",ansiFG[3],player->rot.yaw);
-	textMeshPrintf(guim,"%sPlayer Pitch: %04.2f\n",ansiFG[4],player->rot.pitch);
-	textMeshPrintf(guim,"%sPlayer  Roll: %04.2f\n",ansiFG[5],player->rot.roll);
-	textMeshPrintf(guim,"%sPlayer Flags: %08X\n",ansiFG[6],player->flags);
-	textMeshPrintf(guim,"%sActive Tris.: %s\n",ansiFG[7],getHumanReadableSize(tris));
-	textMeshPrintf(guim,"%sParticles   : %s\n",ansiFG[8],getHumanReadableSize(particleCount));
-	textMeshPrintf(guim,"%sAnimals     : %2i\n",ansiFG[9],animalCount);
-	textMeshPrintf(guim,"%sEntities    : %2i\n",ansiFG[10],entityCount);
-	textMeshPrintf(guim,"%sItemdrops   : %i\n",ansiFG[11],itemDropCount);
-	textMeshPrintf(guim,"%sChunks gener: %2i\n",ansiFG[12],chunkGetGeneratedThisFrame());
-	textMeshPrintf(guim,"%sActiveChunks: %s\n",ansiFG[13],getHumanReadableSize(chunkGetActive()));
-	textMeshPrintf(guim,"%sFreeChunks  : %2i\n",ansiFG[14],chunkGetFree());
-	textMeshPrintf(guim,"%sActiveChungi: %2i\n",ansiFG[15],chungusGetActiveCount());
+	const float compRatio = (float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession;
+	textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f GVX: %02.4f\n",player->pos.x,player->vel.x,player->gvel.x);
+	textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f GVY: %02.4f\n",player->pos.y,player->vel.y,player->gvel.y);
+	textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f GVZ: %02.4f\n",player->pos.z,player->vel.z,player->gvel.z);
+	textMeshPrintf(guim,"Player   Yaw: %04.2f\n",player->rot.yaw);
+	textMeshPrintf(guim,"Player Pitch: %04.2f\n",player->rot.pitch);
+	textMeshPrintf(guim,"Player  Roll: %04.2f\n",player->rot.roll);
+	textMeshPrintf(guim,"Player Flags: %08X\n",player->flags);
+	textMeshPrintf(guim,"Active Tris.: %s%s\n",colorSignalLow(1<<20,1<<18,1<<17,tris),getHumanReadableSize(tris));
+	guim->fgc  = colorPalette[15];
+	textMeshPrintf(guim,"Particles   : %s%s\n",colorSignalLow(1<<19,1<<17,1<<16,particleCount),getHumanReadableSize(particleCount));
+	guim->fgc  = colorPalette[15];
+	textMeshPrintf(guim,"Animals     : %2i\n",animalCount);
+	textMeshPrintf(guim,"Entities    : %2i\n",entityCount);
+	textMeshPrintf(guim,"Itemdrops   : %i\n",itemDropCount);
+	textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
+	textMeshPrintf(guim,"ActiveChunks: %s\n",getHumanReadableSize(chunkGetActive()));
+	textMeshPrintf(guim,"FreeChunks  : %2i\n",chunkGetFree());
+	textMeshPrintf(guim,"ActiveChungi: %2i\n",chungusGetActiveCount());
 	textMeshPrintf(guim,"Bytes Sent  : %sB\n",getHumanReadableSize(sentBytesCurrentSession));
 	textMeshPrintf(guim,"Bytes Recvd : %sB\n",getHumanReadableSize(recvBytesCurrentSession));
 	textMeshPrintf(guim,"Uncompressed: %sB\n",getHumanReadableSize(recvUncompressedBytesCurrentSession));
-	textMeshPrintf(guim,"Comp. Ratio : %2.2fX\n",(float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession);
+	textMeshPrintf(guim,"Comp. Ratio : %s%2.2fX\n",colorSignalHigh(4,8,15,compRatio),compRatio);
+	guim->fgc  = colorPalette[15];
 	textMeshPrintf(guim,"Canvas Size : %ix%i\n",screenWidth,screenHeight);
 
 	guim->font = 0;
