@@ -56,6 +56,7 @@ void delPriorityItemDrop   (u16  i);
 void serverSendChatMsg     (const char *msg);
 
 int  getClientByName       (const char *name);
+int  getClientByCharacter  (const character *c);
 int  serverSendClient      (uint c);
 void serverAccept          ();
 void serverRead            ();

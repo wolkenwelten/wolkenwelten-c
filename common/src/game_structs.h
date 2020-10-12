@@ -105,13 +105,17 @@ typedef struct {
 } animal;
 #define ANIMAL_FALLING    (1   )
 #define ANIMAL_BELLYSLEEP (1<<1)
+#define ANIMAL_AGGRESIVE  (1<<2)
 #define ANIMAL_COLLIDE    (1<<3)
 
-#define ANIMAL_S_LOITER    0
-#define ANIMAL_S_FLEE      1
-#define ANIMAL_S_HEAT      2
-#define ANIMAL_S_SLEEP     3
-#define ANIMAL_S_PLAYING   4
+#define ANIMAL_S_LOITER      0
+#define ANIMAL_S_FLEE        1
+#define ANIMAL_S_HEAT        2
+#define ANIMAL_S_SLEEP       3
+#define ANIMAL_S_PLAYING     4
+#define ANIMAL_S_FOOD_SEARCH 5
+#define ANIMAL_S_EAT         6
+#define ANIMAL_S_FIGHT       7
 
 struct grapplingHook {
 	entity       *ent;

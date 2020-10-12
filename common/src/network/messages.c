@@ -231,13 +231,16 @@ void msgItemDropUpdate(uint c, const vec pos, const vec vel, u16 i, u16 len, u16
 	packetQueue(p,25,8*4,c);
 }
 
-void msgPlayerDamage(uint c, i16 hp, u16 target, u16 cause, u16 culprit){
+void msgPlayerDamage(uint c, i16 hp, u16 target, u16 cause, u16 culprit, const vec pos){
 	packet *p = &packetBuffer;
 	p->val.s[0] = hp;
 	p->val.s[1] = target;
 	p->val.s[2] = cause;
 	p->val.s[3] = culprit;
-	packetQueue(p,26,4*2,c);
+	p->val.f[2] = pos.x;
+	p->val.f[3] = pos.y;
+	p->val.f[4] = pos.z;
+	packetQueue(p,26,5*4,c);
 }
 
 void msgUnsubChungus(uint x, uint y, uint z){

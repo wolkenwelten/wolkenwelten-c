@@ -339,7 +339,7 @@ void serverParseSinglePacket(uint c, packet *p){
 			serverKill(c);
 			break;
 		case 26:
-			msgPlayerDamage(p->val.s[1],p->val.s[0],p->val.s[1],p->val.s[2],c);
+			msgPlayerDamage(p->val.s[1],p->val.s[0],p->val.s[1],p->val.s[2],c,vecNewP(&p->val.f[2]));
 			break;
 		case 27:
 			chungusUnsubscribePlayer(world.chungi[p->val.i[0]][p->val.i[1]][p->val.i[2]],c);
@@ -667,6 +667,14 @@ int getClientByName(const char *name){
 		if(strncasecmp(clients[i].playerName,name,32) == 0){
 			return i;
 		}
+	}
+	return -1;
+}
+
+int getClientByCharacter(const character *c){
+	if(c == NULL){return -1;}
+	for(uint i=0;i<clientCount;i++){
+		if(clients[i].c == c){return i;}
 	}
 	return -1;
 }

@@ -37,7 +37,7 @@ static void cmdDmg(int c, const char *cmd){
 		dmg = atoi(argv[2]);
 	}
 
-	msgPlayerDamage(target,dmg,target,0,-1);
+	msgPlayerDamage(target,dmg,target,0,-1,vecZero());
 }
 
 static void cmdDie(int c, const char *cmd){
@@ -51,7 +51,7 @@ static void cmdDie(int c, const char *cmd){
 			serverSendChatMsg(replyBuf);
 		}
 	}
-	msgPlayerDamage(target,1000,target,0,-1);
+	msgPlayerDamage(target,1000,target,0,-1,vecZero());
 }
 
 static void cmdDbgitem(int c, const char *cmd){
@@ -96,7 +96,7 @@ static void cmdHeal(int c, const char *cmd){
 		dmg = atoi(argv[2]);
 	}
 
-	msgPlayerDamage(target,-dmg,target,0,-1);
+	msgPlayerDamage(target,-dmg,target,0,-1,vecZero());
 }
 
 static void cmdGive(int c, const char *cmd){

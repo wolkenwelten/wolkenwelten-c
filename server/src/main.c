@@ -105,8 +105,8 @@ void updateWorld(){
 		updateWorldStep();
 	}
 
-	if(lastThought == 0){lastThought = getMillis() - 500;}
-	for(;lastThought+500 < getMillis();lastThought+=500){
+	if(lastThought == 0){lastThought = getMillis() - 100;}
+	for(;lastThought+100 < getMillis();lastThought+=100){
 		thinkStep();
 	}
 }

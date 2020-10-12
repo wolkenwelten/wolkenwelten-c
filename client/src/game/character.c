@@ -279,7 +279,7 @@ void characterHit(character *c){
 
 	const vec pos = vecAdd(c->pos,vecMulS(vecDegToVec(c->rot),0.5f));
 	characterHitCheck(pos,1.f,damageDispatch(itm),2,iteration);
-	animalHitCheck(pos,1.f,damageDispatch(itm),2,iteration);
+	animalHitCheck   (pos,1.f,damageDispatch(itm),2,iteration);
 
 	characterStartAnimation(c,0,240);
 	characterAddCooldown(c,80);
@@ -753,21 +753,20 @@ static void characterDyingMessage(u16 cause, u16 culprit){
 }
 
 void characterDamagePacket(character *c, const packet *p){
-	const u16 cause = p->val.s[2];
-	character *culprit = playerList[p->val.s[3]];
+	const u16 cause   = p->val.s[2];
+	const u16 culprit = p->val.s[3];
 	if(cause == 2){
 		sfxPlay(sfxImpact,1.f);
 		sfxPlay(sfxUngh,  1.f);
 		setOverlayColor(0xA03020F0,0);
 		commitOverlayColor();
 		msgCharacterGotHit(-1,1);
-		if(culprit != NULL){
-			vec dis = vecNorm(vecSub(c->pos,vecAdd(culprit->pos,vecNew(0,-0.5f,0))));
-			c->vel = vecAdd(c->vel,vecMulS(dis,0.04f));
-		}
+		vec pos = vecNewP(&p->val.f[2]);
+		vec dis = vecNorm(vecSub(c->pos,pos));
+		c->vel = vecAdd(c->vel,vecMulS(dis,0.04f));
 	}
 	if(characterDamage(c,p->val.i[0])){
-		characterDyingMessage(cause,p->val.s[3]);
+		characterDyingMessage(cause,culprit);
 	}
 }
 
@@ -835,7 +834,7 @@ int characterHitCheck(const vec pos, float mdd, int damage, int cause, uint iter
 		if(playerList[i]->temp == iteration) {continue;}
 		vec dis = vecSub(pos,playerList[i]->pos);
 		if(vecDot(dis,dis) < mdd){
-			msgPlayerDamage(0,damage,i,cause,0);
+			msgPlayerDamage(0,damage,i,cause,0,pos);
 			playerList[i]->temp = iteration;
 			hits++;
 		}

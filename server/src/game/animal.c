@@ -37,6 +37,9 @@ animal *animalNew(const vec pos , int type){
 	if(rngValM(2) == 0){
 		e->flags |= ANIMAL_BELLYSLEEP;
 	}
+	if(rngValM(2) == 0){
+		e->flags |= ANIMAL_AGGRESIVE;
+	}
 
 	return e;
 }
@@ -146,15 +149,15 @@ int animalCheckHeat(animal *e){
 
 void animalAgeing(animal *e){
 	if(e->age < 125){
-		if(rngValM(1<<14) == 0){e->age++;}
+		if(rngValM(1<<8) == 0){e->age++;}
 	}
 	if(e->age > 64){
-		if(rngValM(1<<16) <= (uint)(e->age-64)){e->health = 0;}
+		if(rngValM(1<<12) <= (uint)(e->age-64)){e->health = 0;}
 	}
 }
 
 void animalSleepyness(animal *e){
-	if (rngValM( 512) == 0){e->sleepy--;}
+	if (rngValM( 32) == 0){e->sleepy--;}
 	if((e->state != 1) && (e->sleepy < 16)){
 		e->state = ANIMAL_S_SLEEP;
 		return;
@@ -166,28 +169,18 @@ void animalSleepyness(animal *e){
 }
 
 void animalHunger(animal *e){
-	if(rngValM(1024) == 0){
+	if(rngValM(32) == 0){
 		e->hunger--;
 	}
-	if((e->state != 0) && (e->state == 1) && (e->hunger <  32)){
-		e->state = ANIMAL_S_LOITER;
+	if(e->state == ANIMAL_S_FOOD_SEARCH){return;}
+	if(e->state == ANIMAL_S_EAT){return;}
+	if(e->hunger < (int)rngValM(40)){
+		e->state = ANIMAL_S_FOOD_SEARCH;
 		return;
 	}
 }
 
 void animalSLoiter(animal *e){
-	character *cChar;
-	float dist = animalClosestPlayer(e,&cChar);
-	if((cChar != NULL) && (dist < 4.f)){
-		if(!(e->flags & ANIMAL_FALLING)){
-			e->vel.y = 0.03f;
-			e->sleepy -= 2;
-		}
-		e->sleepy -= 2;
-		e->state = ANIMAL_S_FLEE;
-		return;
-	}
-
 	if(e->hunger < 64){
 		const u8 cb = worldGetB(e->pos.x,e->pos.y-.6f,e->pos.z);
 		if((cb == 2) && (rngValM(128) == 0)){
@@ -197,33 +190,31 @@ void animalSLoiter(animal *e){
 	}
 	if(animalCheckHeat(e)){return;}
 
-
-	if(rngValM( 128) == 0){
+	if(rngValM( 8) == 0){
 		e->grot.yaw = e->rot.yaw + ((rngValf()*2.f)-1.f)*4.f;
 	}
-	if(rngValM(  64) == 0){
+	if(rngValM(16) == 0){
 		e->gvel = vecZero();
 	}
-	if(rngValM(1024) == 0){
+	if(rngValM(48) == 0){
 		e->grot.pitch = ((rngValf()*2.f)-1.f)*10.f;
 	}
-	if(rngValM(2048) == 0){
+	if(rngValM(64) == 0){
 		e->grot.yaw = ((rngValf()*2.f)-1.f)*360.f;
 	}
-	if(rngValM( 512) == 0){
+	if(rngValM(32) == 0){
 		vec dir = vecMulS(vecDegToVec(vecNew(e->rot.yaw,0.f,0.f)),0.01f);
 		e->gvel.x = dir.x;
 		e->gvel.z = dir.z;
 	}
 
-	if(rngValM(2048) > (uint)(127-e->age)){
+	if(rngValM(256) < (uint)(127-e->age)){
 		e->state = ANIMAL_S_PLAYING;
 		return;
 	}
 }
 
 void animalSSleep(animal *e){
-	character *cChar;
 	e->gvel = vecZero();
 
 	if(e->sleepy > 120){
@@ -231,32 +222,9 @@ void animalSSleep(animal *e){
 		e->grot.pitch = 0.f;
 		return;
 	}else if(e->sleepy > 64){
-		if(rngValM(1<<14) <= (uint)(e->sleepy-64)){
+		if(rngValM(1<<9) <= (uint)(e->sleepy-64)*2){
 			e->state      = ANIMAL_S_LOITER;
 			e->grot.pitch = 0.f;
-			return;
-		}
-		float dist = animalClosestPlayer(e,&cChar);
-		if((cChar != NULL) && (dist < 4.f)){
-			if(!(e->flags & ANIMAL_FALLING)){
-				e->vel.y   = 0.04f;
-				e->sleepy -= 2;
-			}
-			e->sleepy    -= 2;
-			e->grot.pitch = 0.f;
-			e->state      = ANIMAL_S_FLEE;
-			return;
-		}
-	}else if(e->sleepy > 8){
-		float dist = animalClosestPlayer(e,&cChar);
-		if((dist < 9.f) && (cChar != NULL)){
-			if(!(e->flags & ANIMAL_FALLING)){
-				e->vel.y   = 0.05f;
-				e->sleepy -= 4;
-			}
-			e->sleepy    -= 2;
-			e->grot.pitch = 0.f;
-			e->state      = ANIMAL_S_FLEE;
 			return;
 		}
 	}
@@ -266,7 +234,7 @@ void animalSSleep(animal *e){
 	}else{
 		e->grot.pitch =  90.f;
 	}
-	if(rngValM(16) == 0){
+	if(rngValM(4) == 0){
 		e->sleepy++;
 	}
 }
@@ -311,49 +279,93 @@ void animalSHeat(animal *e){
 	e->rot.yaw = -caRot.yaw + 180.f;
 }
 
-void animalSFlee(animal *e){
-	character *cChar;
-	const float dist = animalClosestPlayer(e,&cChar);
-	if(rngValM(1<<10) == 0){e->hunger--;}
-	if((dist > 6.f) && (cChar != NULL)){
-		e->state   = ANIMAL_S_LOITER;
-		e->sleepy -= 2;
-		return;
-	}
-	if(cChar != NULL){
-		vec caNorm = vecNorm(vecNew(e->pos.x - cChar->pos.x,0.f, e->pos.z - cChar->pos.z));
-		vec caVel  = vecMulS(caNorm,0.03f);
-		vec caRot  = vecVecToDeg(caNorm);
+void animalSFight(animal *e){
+	if(rngValM(32) == 0){e->hunger--;}
+	if(rngValM(24) == 0){e->sleepy--;}
+}
 
-		e->gvel.x  = caVel.x;
-		e->gvel.z  = caVel.z;
-		e->rot.yaw = -caRot.yaw;
+
+void animalSFlee(animal *e){
+	if(rngValM(32) == 0){e->hunger--;}
+	if(rngValM(24) == 0){e->sleepy--;}
+}
+
+void animalCheckForCharacter(animal *e){
+	character *cChar;
+	float dist = animalClosestPlayer(e,&cChar);
+
+	if(e->state == ANIMAL_S_FIGHT){
+		if((cChar == NULL) || (dist > 16.f)){
+			e->state   =  ANIMAL_S_LOITER;
+			e->flags  &= ~ANIMAL_AGGRESIVE;
+			return;
+		}else{
+			vec caNorm = vecNorm(vecNew(cChar->pos.x - e->pos.x,0.f, cChar->pos.z - e->pos.z));
+			vec caVel  = vecMulS(caNorm,0.03f);
+			vec caRot  = vecVecToDeg(caNorm);
+
+			e->gvel.x  = caVel.x;
+			e->gvel.z  = caVel.z;
+			e->rot.yaw = caRot.yaw;
+
+			if((dist < 2.f) && rngValM(12)){
+				int target = getClientByCharacter(cChar);
+				int dmg = 1;
+				if(target < 0){return;}
+				if(rngValM(8)==0){dmg = 4;}
+				msgPlayerDamage(target,dmg,target,2,-1,e->pos);
+			}
+		}
+	}else if(e->state == ANIMAL_S_FLEE){
+		if((cChar == NULL) || (dist > 32.f)){
+			e->state = ANIMAL_S_LOITER;
+			return;
+		}else{
+			vec caNorm = vecNorm(vecNew(e->pos.x - cChar->pos.x,0.f, e->pos.z - cChar->pos.z));
+			vec caVel  = vecMulS(caNorm,0.03f);
+			vec caRot  = vecVecToDeg(caNorm);
+
+			e->gvel.x  = caVel.x;
+			e->gvel.z  = caVel.z;
+			e->rot.yaw = -caRot.yaw;
+		}
+	}else{
+		float fd = 9.f;
+		if(e->state == ANIMAL_S_SLEEP){fd = 3.f;}
+		if(e->state == ANIMAL_S_PLAYING){fd = 15.f;}
+		if((cChar != NULL) && (dist < fd)){
+			if((e->state == ANIMAL_S_SLEEP) && !(e->flags & ANIMAL_FALLING)){
+				e->vel.y   = 0.04f;
+			}
+			e->grot.pitch = 0.f;
+			if(e->state == ANIMAL_S_SLEEP){
+				e->state = ANIMAL_S_FIGHT;
+				e->flags |= ANIMAL_AGGRESIVE;
+			}else{
+				e->state = ANIMAL_S_FLEE;
+			}
+			return;
+		}
 	}
 }
 
 void animalSPlayful(animal *e){
-	character *cChar;
-	float dist = animalClosestPlayer(e,&cChar);
-	if (rngValM( 192) == 0){e->sleepy--;}
-	if((cChar != NULL) && (dist < 4.f)){
-		e->state = ANIMAL_S_FLEE;
-		return;
-	}
+	if (rngValM( 8) == 0){e->sleepy--;}
 	if(animalCheckHeat(e)){return;}
 
-	if((rngValM( 128) == 0) && !(e->flags & ANIMAL_FALLING)){
+	if((rngValM( 8) == 0) && !(e->flags & ANIMAL_FALLING)){
 		e->vel.y = 0.03f;
 	}
-	if (rngValM( 256) == 0){
+	if (rngValM(12) == 0){
 		e->gvel = vecZero();
 	}
-	if (rngValM( 512) == 0){
+	if (rngValM(16) == 0){
 		e->grot.pitch = ((rngValf()*2.f)-1.f)*16.f;
 	}
-	if (rngValM( 512) == 0){
+	if (rngValM(16) == 0){
 		e->grot.yaw = ((rngValf()*2.f)-1.f)*360.f;
 	}
-	if (rngValM( 256) == 0){
+	if (rngValM(24) == 0){
 		vec dir = vecMulS(vecDegToVec(vecNew(e->rot.yaw,0.f,0.f)),0.01f);
 		e->gvel.x = dir.x;
 		e->gvel.z = dir.z;
@@ -365,9 +377,52 @@ void animalSPlayful(animal *e){
 	}
 }
 
+void animalSFoodSearch(animal *e){
+	const u8 cb = worldGetB(e->pos.x,e->pos.y,e->pos.z);
+	if(cb == 2){
+		e->gvel = vecZero();
+		e->state = ANIMAL_S_EAT;
+	}
+	if((int)rngValM(178) > (e->hunger-24)){
+		e->state = ANIMAL_S_LOITER;
+	}
+
+	if(rngValM(4) == 0){
+		e->grot.pitch = ((rngValf()*2.f)-1.f)*16.f;
+	}
+	if(rngValM(4) == 0){
+		e->grot.yaw = ((rngValf()*2.f)-1.f)*360.f;
+	}
+	if(rngValM(6) == 0){
+		vec dir = vecMulS(vecDegToVec(vecNew(e->rot.yaw,0.f,0.f)),0.01f);
+		e->gvel.x = dir.x;
+		e->gvel.z = dir.z;
+	}
+	if(rngValM(16) == 0){
+		e->gvel = vecZero();
+	}
+}
+
+void animalSEat(animal *e){
+	const u8 cb = worldGetB(e->pos.x,e->pos.y,e->pos.z);
+	if(cb != 2){
+		e->state = ANIMAL_S_FOOD_SEARCH;
+	}
+	if(rngValM(8) == 0){
+		e->hunger++;
+	}
+	if(rngValM(32) == 0){
+		if(e->health < 8){e->health++;}
+	}
+	if(rngValM(64) == 0){
+		worldSetB(e->pos.x,e->pos.y,e->pos.z,1);
+	}
+}
+
 void animalSExist(animal *e){
 	animalCheckSuffocation(e);
 	animalCheckForHillOrCliff(e);
+	animalCheckForCharacter(e);
 	animalAgeing(e);
 	animalSleepyness(e);
 	animalHunger(e);
@@ -377,28 +432,42 @@ static void animalRHit(animal *e){
 	if(fabsf(e->vel.y) < 0.001f){
 		e->vel.y = 0.03f;
 	}
-	e->state = ANIMAL_S_FLEE;
+	if(e->state == ANIMAL_S_FLEE || (e->flags & ANIMAL_AGGRESIVE)){
+		e->state = ANIMAL_S_FIGHT;
+		e->flags |= ANIMAL_AGGRESIVE;
+	}else{
+		e->state = ANIMAL_S_FLEE;
+	}
 }
 
 inline static void animalThink(animal *e){
 	animalSExist(e);
 	switch(e->state){
-		default:
-		case ANIMAL_S_LOITER:
-			animalSLoiter(e);
-			break;
-		case ANIMAL_S_FLEE:
-			animalSFlee(e);
-			break;
-		case ANIMAL_S_HEAT:
-			animalSHeat(e);
-			break;
-		case ANIMAL_S_SLEEP:
-			animalSSleep(e);
-			break;
-		case ANIMAL_S_PLAYING:
-			animalSPlayful(e);
-			break;
+	default:
+	case ANIMAL_S_LOITER:
+		animalSLoiter(e);
+		break;
+	case ANIMAL_S_FLEE:
+		animalSFlee(e);
+		break;
+	case ANIMAL_S_HEAT:
+		animalSHeat(e);
+		break;
+	case ANIMAL_S_SLEEP:
+		animalSSleep(e);
+		break;
+	case ANIMAL_S_PLAYING:
+		animalSPlayful(e);
+		break;
+	case ANIMAL_S_FOOD_SEARCH:
+		animalSFoodSearch(e);
+		break;
+	case ANIMAL_S_EAT:
+		animalSEat(e);
+		break;
+	case ANIMAL_S_FIGHT:
+		animalSFight(e);
+		break;
 	}
 
 }

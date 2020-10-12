@@ -132,5 +132,11 @@ const char *animalGetStateName(const animal *e){
 		return "Sleep";
 	case ANIMAL_S_PLAYING:
 		return "Play";
+	case ANIMAL_S_FOOD_SEARCH:
+		return "Food Search";
+	case ANIMAL_S_EAT:
+		return "Eat";
+	case ANIMAL_S_FIGHT:
+		return "Fight";
 	}
 }
