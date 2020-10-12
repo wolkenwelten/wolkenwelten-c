@@ -154,7 +154,7 @@ void animalHunger(animal *e){
 	}
 	if(e->state == ANIMAL_S_FOOD_SEARCH){return;}
 	if(e->state == ANIMAL_S_EAT){return;}
-	if(e->hunger < (int)rngValM(40)){
+	if(e->hunger < (int)rngValM(32)){
 		e->state = ANIMAL_S_FOOD_SEARCH;
 		return;
 	}
@@ -217,6 +217,9 @@ void animalSSleep(animal *e){
 	if(rngValM(4) == 0){
 		e->sleepy++;
 	}
+	if(rngValM(48) == 0){
+		if(e->health < 8){e->health++;}
+	}
 }
 
 void animalSHeat(animal *e){
@@ -260,14 +263,33 @@ void animalSHeat(animal *e){
 }
 
 void animalSFight(animal *e){
-	if(rngValM(32) == 0){e->hunger--;}
-	if(rngValM(24) == 0){e->sleepy--;}
+	if( rngValM(32) == 0){e->hunger--;}
+	if( rngValM(24) == 0){e->sleepy--;}
+	if((rngValM(20) == 0) && !(e->flags & ANIMAL_FALLING)){
+		e->vel.y = 0.03f;
+	}
+	if(rngValM(24) == 0){
+		animal *cAnim;
+		float dist = animalClosestAnimal(e,&cAnim,e->type);
+		if((dist < 32.f) && (cAnim != NULL)){
+			e->state   =  ANIMAL_S_LOITER;
+			e->flags  &= ~ANIMAL_AGGRESIVE;
+		}
+	}
 }
 
 
 void animalSFlee(animal *e){
 	if(rngValM(32) == 0){e->hunger--;}
 	if(rngValM(24) == 0){e->sleepy--;}
+	if(rngValM(16) == 0){
+		animal *cAnim;
+		float dist = animalClosestAnimal(e,&cAnim,e->type);
+		if((dist < 32.f) && (cAnim != NULL) && (cAnim->state == ANIMAL_S_FIGHT)){
+			e->state   =  ANIMAL_S_LOITER;
+			e->flags  &= ~ANIMAL_AGGRESIVE;
+		}
+	}
 }
 
 void animalCheckForCharacter(animal *e){
@@ -308,7 +330,7 @@ void animalCheckForCharacter(animal *e){
 			e->gvel.x  = caVel.x;
 			e->gvel.z  = caVel.z;
 			e->rot.yaw = -caRot.yaw;
-			if(dist < 2.f){
+			if((dist < 3.f) && (rngValM(8)==0)){
 				e->state = ANIMAL_S_FIGHT;
 				e->flags |= ANIMAL_AGGRESIVE;
 			}
@@ -362,13 +384,16 @@ void animalSPlayful(animal *e){
 }
 
 void animalSFoodSearch(animal *e){
-	const u8 cb = worldGetB(e->pos.x,e->pos.y,e->pos.z);
+	const u8 cb = worldGetB(e->pos.x,e->pos.y-1,e->pos.z);
 	if(cb == 2){
 		e->gvel = vecZero();
 		e->state = ANIMAL_S_EAT;
+		return;
 	}
-	if((int)rngValM(178) > (e->hunger-24)){
-		e->state = ANIMAL_S_LOITER;
+	if(e->hunger > 48){
+		if((int)rngValM(48) < e->hunger-48){
+			e->state = ANIMAL_S_LOITER;
+		}
 	}
 
 	if(rngValM(4) == 0){
@@ -388,9 +413,15 @@ void animalSFoodSearch(animal *e){
 }
 
 void animalSEat(animal *e){
-	const u8 cb = worldGetB(e->pos.x,e->pos.y,e->pos.z);
+	const u8 cb = worldGetB(e->pos.x,(int)e->pos.y-1,e->pos.z);
 	if(cb != 2){
 		e->state = ANIMAL_S_FOOD_SEARCH;
+		return;
+	}
+	if(e->hunger > 48){
+		if((int)rngValM(48) < e->hunger-48){
+			e->state = ANIMAL_S_LOITER;
+		}
 	}
 	if(rngValM(8) == 0){
 		e->hunger++;
@@ -399,7 +430,7 @@ void animalSEat(animal *e){
 		if(e->health < 8){e->health++;}
 	}
 	if(rngValM(64) == 0){
-		worldSetB(e->pos.x,e->pos.y,e->pos.z,1);
+		worldSetB(e->pos.x,(int)e->pos.y-1,e->pos.z,1);
 	}
 }
 
