@@ -45,7 +45,7 @@ static void genStalagtit(const worldgen *wgen, int x, int y, int z){
 	}
 }
 
-static void genHole(const worldgen *wgen, int x, int z, int r, const u8 heightmap[256][256]){
+static void genHole(const worldgen *wgen, int x, int z, int r, u8 heightmap[256][256]){
 	(void)heightmap[0][0];
 	int rr = r*r;
 	int rh = (r/2)*(r/2);

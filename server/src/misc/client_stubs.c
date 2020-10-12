@@ -42,9 +42,11 @@ void ingredientSubstituteAdd(u16 ingredient, u16 substitute){
 	fprintf(stderr,"ingredientSubstituteAdd got called on the serverside\n");
 }
 
-void grenadeNew(character *ent, float pwr){
+void grenadeNew(const character *ent, float pwr, int cluster, float clusterPwr){
 	(void)ent;
 	(void)pwr;
+	(void)cluster;
+	(void)clusterPwr;
 
 	fprintf(stderr,"grenadeNew got called on the serverside\n");
 }
