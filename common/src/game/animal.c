@@ -29,11 +29,30 @@ void animalUpdateCurChungus(animal *e){
 	e->curChungus = worldTryChungus(cx,cy,cz);
 }
 
+void animalCheckForHillOrCliff(animal *e){
+	vec caDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->gvel,vecNew(1,0,1))),0.5f));
+	const u8 cb = worldGetB(caDir.x,caDir.y,caDir.z);
+	const u8 ub = worldGetB(caDir.x,caDir.y+1,caDir.z);
+	if((cb != 0) && (ub == 0) && (fabsf(e->vel.y)<0.01f)){
+		if(!(e->flags & ANIMAL_FALLING)){
+			e->vel.y = 0.03f;
+		}
+	}else if(cb == 0){
+		if(worldGetB(caDir.x,caDir.y-1,caDir.z) != 0){return;}
+		if(worldGetB(caDir.x,caDir.y-2,caDir.z) != 0){return;}
+
+		vec tmp = e->gvel;
+		tmp.y = e->vel.y;
+		e->vel = vecMul(tmp,vecNew(-1,1,-1));
+	}
+}
+
 int animalUpdate(animal *e){
 	int ret=0;
 	u32 col;
 	e->pos = vecAdd(e->pos,e->vel);
 	e->breathing += 5;
+	animalCheckForHillOrCliff(e);
 
 	if(fabsf(e->rot.yaw - e->grot.yaw) > 0.3f){
 		if(e->rot.yaw > e->grot.yaw){

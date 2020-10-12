@@ -100,12 +100,12 @@ void thinkStep(){
 void updateWorld(){
 	static u64 lastUpdate  = 0;
 	static u64 lastThought = 0;
-	if(lastUpdate == 0){lastUpdate = getMillis();}
-	for(;lastUpdate+5 < getMillis();lastUpdate+=5){
+	if(lastUpdate  == 0){lastUpdate  = getMillis() -   5;}
+	if(lastThought == 0){lastThought = getMillis() - 100;}
+
+	for(;lastUpdate +  5 < getMillis();lastUpdate +=  5){
 		updateWorldStep();
 	}
-
-	if(lastThought == 0){lastThought = getMillis() - 100;}
 	for(;lastThought+100 < getMillis();lastThought+=100){
 		thinkStep();
 	}

@@ -114,26 +114,6 @@ void animalCheckSuffocation(animal *e){
 	}
 }
 
-void animalCheckForHillOrCliff(animal *e){
-	vec caDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->gvel,vecNew(1,0,1))),0.5f));
-	const u8 cb = worldGetB(caDir.x,caDir.y,caDir.z);
-	const u8 ub = worldGetB(caDir.x,caDir.y+1,caDir.z);
-	if((cb != 0) && (ub == 0) && (fabsf(e->vel.y)<0.01f)){
-		if(!(e->flags & ANIMAL_FALLING)){
-			e->vel.y = 0.03f;
-		}
-		return;
-	}
-	if(cb == 0){
-		if(worldGetB(caDir.x,caDir.y-1,caDir.z) != 0){return;}
-		if(worldGetB(caDir.x,caDir.y-2,caDir.z) != 0){return;}
-
-		vec tmp = e->gvel;
-		tmp.y = e->vel.y;
-		e->vel = vecMul(tmp,vecNew(-1,1,-1));
-	}
-}
-
 int animalCheckHeat(animal *e){
 	if((e->age > 20) && (rngValM( 128) == 0)){
 		animal *cAnim;
@@ -158,11 +138,11 @@ void animalAgeing(animal *e){
 
 void animalSleepyness(animal *e){
 	if (rngValM( 32) == 0){e->sleepy--;}
-	if((e->state != 1) && (e->sleepy < 16)){
+	if((e->state != ANIMAL_S_FLEE) && (e->state != ANIMAL_S_FIGHT) && (e->sleepy < 16)){
 		e->state = ANIMAL_S_SLEEP;
 		return;
 	}
-	if((e->state == 1) && (e->sleepy <  2)){
+	if(e->sleepy <  8){
 		e->state = ANIMAL_S_SLEEP;
 		return;
 	}
@@ -308,7 +288,7 @@ void animalCheckForCharacter(animal *e){
 			e->gvel.z  = caVel.z;
 			e->rot.yaw = caRot.yaw;
 
-			if((dist < 2.f) && rngValM(12)){
+			if((dist < 2.f) && (rngValM(4)==0)){
 				int target = getClientByCharacter(cChar);
 				int dmg = 1;
 				if(target < 0){return;}
@@ -328,6 +308,10 @@ void animalCheckForCharacter(animal *e){
 			e->gvel.x  = caVel.x;
 			e->gvel.z  = caVel.z;
 			e->rot.yaw = -caRot.yaw;
+			if(dist < 2.f){
+				e->state = ANIMAL_S_FIGHT;
+				e->flags |= ANIMAL_AGGRESIVE;
+			}
 		}
 	}else{
 		float fd = 9.f;
@@ -421,7 +405,6 @@ void animalSEat(animal *e){
 
 void animalSExist(animal *e){
 	animalCheckSuffocation(e);
-	animalCheckForHillOrCliff(e);
 	animalCheckForCharacter(e);
 	animalAgeing(e);
 	animalSleepyness(e);
