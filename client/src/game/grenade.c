@@ -80,8 +80,8 @@ void grenadeUpdateFromServer(const packet *p){
 		grenadeList[index].ent = entityNew(vecZero(),vecZero());
 		grenadeList[index].ent->eMesh = meshBomb;
 	}
-	grenadeList[index].ent->pos = vecNewP(&p->v.f[0]);
-	grenadeList[index].ent->vel = vecNewP(&p->v.f[3]);
+	grenadeList[index].ent->pos = vecNewP(&p->v.f[1]);
+	grenadeList[index].ent->vel = vecNewP(&p->v.f[4]);
 }
 
 void singleBeamblast(character *ent, const vec start, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){

@@ -46,9 +46,7 @@ static void grenadeNew(const vec pos, const vec rot, float pwr, int cluster, flo
 	grenadeList[g].clusterPwr = clusterPwr;
 }
 
-#include <stdio.h>
 static void grenadeCluster(const grenade *g){
-	fprintf(stderr,"Cluster: %i\n",g->cluster);
 	if(g->cluster <= 0){return;}
 	for(int i=0;i<MIN(256,g->cluster);i++){
 		vec rot = vecZero();
@@ -69,12 +67,12 @@ void grenadeNewP(const packet *p){
 }
 
 void grenadeUpdate(){
-	for(int i=grenadeCount-1;i>=0;i--){
+	for(uint i=grenadeCount-1;i<grenadeCount;i--){
 		entityUpdate(grenadeList[i].ent);
 		if((--grenadeList[i].ticksLeft == 0) || (grenadeList[i].ent->pos.y < -256)){
 			grenadeExplode(i);
 			entityFree(grenadeList[i].ent);
-			grenadeList[i--] = grenadeList[--grenadeCount];
+			grenadeList[i] = grenadeList[--grenadeCount];
 		}
 	}
 }
