@@ -135,11 +135,9 @@ static void widgetDrawRadioButton(const widget *wid, textMesh *m, int x, int y, 
 	textMeshAddStrPS(m,x+textXOff,y+textYOff,2,wid->label);
 }
 
-
 static void widgetDrawBackground(const widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)wid;
-	const uint i = getTicks() >> 12;
-	int o = h/2 + sin(i)*((float)(h/3));
+	int o = h/2 + sin(getTicks()*0.001f)*((float)(h/6));
 	textMeshVGradient(m,x,y    ,w,o,0xFFFFBF83, 0xFFFF6825);
 	textMeshVGradient(m,x,y+o,w,h-o,0xFFFF6825, 0xFFE82410);
 }
@@ -272,9 +270,8 @@ static void widgetDrawItemSlot(const widget *wid, textMesh *m, int x, int y, int
 
 static void widgetDrawRecipeSlot(const widget *wid, textMesh *m, int x, int y, int w, int h){
 	int style = 0;
-	uint r    = wid->valu;
-	item recipe = recipeGetResult(r);
-	i16 a = recipeCanCraft(player,r);
+	const item recipe = recipeGetResult(wid->valu);
+	i16 a = recipeCanCraft(player,wid->valu);
 	if(a == 0){
 		style = 2;
 	}
@@ -291,6 +288,7 @@ static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, i
 	if(r >= recipeGetCount()){return;}
 	const int animX = sin((float)ticks/24.f)*ts/8;
 	const int animY = cos((float)ticks/24.f)*ts/8;
+	const item result = recipeGetResult(r);
 
 
 	for(ii=0;ii<4;ii++){
@@ -304,7 +302,6 @@ static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, i
 		}
 		textMeshItem(m,xx,y,ts,3,&ingred);
 	}
-	item result = recipeGetResult(r);
 
 	xx = ii*2*ts + x;
 	textMeshBox(m,xx-ts+ts/4+animX*2,y+ts/4,ts/2,ts/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
@@ -316,44 +313,44 @@ void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h)
 	if(wid == NULL){return;}
 
 	switch(wid->type){
-		case wNone:
-		case wSpace:
-			break;
-		case wPanel:
-			widgetDrawPanel(wid,m,x,y,w,h);
-			break;
-		case wBackground:
-			widgetDrawBackground(wid,m,x,y,w,h);
-			break;
-		case wHR:
-			widgetDrawHR(wid,m,x,y,w,h);
-			break;
-		case wLabel:
-			widgetDrawLabel(wid,m,x,y,w,h);
-			break;
-		case wTextInput:
-			widgetDrawTextInput(wid,m,x,y,w,h);
-			break;
-		case wButton:
-			widgetDrawButton(wid,m,x,y,w,h);
-			break;
-		case wButtonDel:
-			widgetDrawButtondel(wid,m,x,y,w,h);
-			break;
-		case wRadioButton:
-			widgetDrawRadioButton(wid,m,x,y,w,h);
-			break;
-		case wSlider:
-			widgetDrawSlider(wid,m,x,y,w,h);
-			break;
-		case wItemSlot:
-			widgetDrawItemSlot(wid,m,x,y,w,h);
-			break;
-		case wRecipeSlot:
-			widgetDrawRecipeSlot(wid,m,x,y,w,h);
-			break;
-		case wRecipeInfo:
-			widgetDrawRecipeInfo(wid,m,x,y,w,h);
-			break;
+	case wNone:
+	case wSpace:
+		break;
+	case wPanel:
+		widgetDrawPanel(wid,m,x,y,w,h);
+		break;
+	case wBackground:
+		widgetDrawBackground(wid,m,x,y,w,h);
+		break;
+	case wHR:
+		widgetDrawHR(wid,m,x,y,w,h);
+		break;
+	case wLabel:
+		widgetDrawLabel(wid,m,x,y,w,h);
+		break;
+	case wTextInput:
+		widgetDrawTextInput(wid,m,x,y,w,h);
+		break;
+	case wButton:
+		widgetDrawButton(wid,m,x,y,w,h);
+		break;
+	case wButtonDel:
+		widgetDrawButtondel(wid,m,x,y,w,h);
+		break;
+	case wRadioButton:
+		widgetDrawRadioButton(wid,m,x,y,w,h);
+		break;
+	case wSlider:
+		widgetDrawSlider(wid,m,x,y,w,h);
+		break;
+	case wItemSlot:
+		widgetDrawItemSlot(wid,m,x,y,w,h);
+		break;
+	case wRecipeSlot:
+		widgetDrawRecipeSlot(wid,m,x,y,w,h);
+		break;
+	case wRecipeInfo:
+		widgetDrawRecipeInfo(wid,m,x,y,w,h);
+		break;
 	}
 }
