@@ -1,6 +1,7 @@
 #include "character.h"
 
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/network/messages.h"
 
 #include <stdio.h>
 
@@ -57,4 +58,14 @@ void characterFree(character *c){
 
 void characterDie(character *c){
 	characterInit(c);
+}
+
+void characterDmgPacket(uint c, const packet *p){
+	const i16 hp    = p->v.i16[0];
+	const i16 cause = p->v.u16[1];
+
+	const being target  = p->v.u32[1];
+	const being culprit = beingCharacter(c);
+
+	msgBeingGotHit(hp,cause,target,culprit);
 }

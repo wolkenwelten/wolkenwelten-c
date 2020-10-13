@@ -58,10 +58,11 @@ void msgParseGetChunk(const packet *p){
 
 void msgSendPlayerPos(){
 	static int inventoryCountDown=0;
+	int pLen = 15*4;
 	if(player == NULL){return;}
 	if(--inventoryCountDown < 0){
 		msgPlayerSetInventory(-1,player->inventory,40);
-		inventoryCountDown = 16;
+		inventoryCountDown = 24;
 	}
 	packet *p = &packetBuffer;
 
@@ -71,34 +72,31 @@ void msgSendPlayerPos(){
 
 	p->v.f[ 3] = player->rot.yaw;
 	p->v.f[ 4] = player->rot.pitch;
-	p->v.f[ 5] = player->rot.roll;
+	p->v.f[ 5] = player->yoff;
 
 	p->v.f[ 6] = player->vel.x;
 	p->v.f[ 7] = player->vel.y;
 	p->v.f[ 8] = player->vel.z;
 
-	p->v.f[ 9] = player->yoff;
+	p->v.u32[ 9] = player->flags;
+
+	p->v.u16[20] = player->blockMiningX;
+	p->v.u16[21] = player->blockMiningY;
+	p->v.u16[22] = player->blockMiningZ;
+	p->v.u16[23] = player->hp;
+
+	p->v.u16[24] = player->activeItem;
+	p->v.u16[25] = player->animationIndex;
+	p->v.u16[26] = player->animationTicksMax;
+	p->v.u16[27] = player->animationTicksLeft;
 
 	if(player->hook != NULL){
-		p->v.i32[10] = 1;
-		p->v.f[11] = player->hook->ent->pos.x;
-		p->v.f[12] = player->hook->ent->pos.y;
-		p->v.f[13] = player->hook->ent->pos.z;
-	} else {
-		p->v.i32[10] = 0;
+		p->v.f[15] = player->hook->ent->pos.x;
+		p->v.f[16] = player->hook->ent->pos.y;
+		p->v.f[17] = player->hook->ent->pos.z;
+		pLen = 18*4;
 	}
-	p->v.i32[14] = player->blockMiningX;
-	p->v.i32[15] = player->blockMiningY;
-	p->v.i32[16] = player->blockMiningZ;
-
-	p->v.i32[17] = player->activeItem;
-	p->v.i32[18] = player->animationIndex;
-	p->v.i32[20] = player->animationTicksMax;
-	p->v.i32[21] = player->animationTicksLeft;
-	p->v.i32[22] = player->flags;
-	p->v.i32[23] = player->hp;
-
-	packetQueueToServer(p,15,24*4);
+	packetQueueToServer(p,15,pLen);
 }
 
 void decompressPacket(const packet *p){
@@ -191,7 +189,7 @@ void clientParsePacket(const packet *p){
 		case 20: // playerPickupItem
 			characterPickupItem(player,p->v.u16[0],p->v.i16[1]);
 			break;
-		case 21: // itemDropUpdate
+		case 21: // itemDropDel
 			fprintf(stderr,"Received an itemDropDel msg from the server, this should never happen.\n");
 			break;
 		case 22: // grenadeExplode
@@ -293,10 +291,10 @@ void queueToServer(const void *data, uint len){
 void clientFree(){
 	clientFreeSpecific();
 	menuSetError("Connection closed");
-	singlePlayerPID=0;
-	recvBufLen = 0;
-	sendBufLen = 0;
-	sendBufSent = 0;
+	singlePlayerPID = 0;
+	recvBufLen      = 0;
+	sendBufLen      = 0;
+	sendBufSent     = 0;
 	bigchungusFree(&world);
 	characterInit(player);
 	chatEmpty();

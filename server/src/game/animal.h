@@ -10,4 +10,4 @@ void        animalUpdateAll   ();
 void        animalThinkAll    ();
 uint        animalSyncPlayer  (int c, uint offset);
 void        animalDelChungus  (const chungus *c);
-void        animalDmgPacket   (int c, const packet *p);
+void        animalDmgPacket   (uint c, const packet *p);

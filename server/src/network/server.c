@@ -154,36 +154,46 @@ void msgUpdatePlayer(uint c){
 		if(clients[i].c == NULL){continue;}
 		item *itm = characterGetItemBarSlot(clients[i].c,clients[i].c->activeItem);
 		const character *chr = clients[i].c;
+		int pLen = 16*4;
 
 		rp->v.f[ 0]   = chr->pos.x;
 		rp->v.f[ 1]   = chr->pos.y;
 		rp->v.f[ 2]   = chr->pos.z;
+
 		rp->v.f[ 3]   = chr->rot.yaw;
 		rp->v.f[ 4]   = chr->rot.pitch;
-		rp->v.f[ 5]   = chr->rot.roll;
+		rp->v.f[ 5]   = chr->yoff;
+
 		rp->v.f[ 6]   = chr->vel.x;
 		rp->v.f[ 7]   = chr->vel.y;
 		rp->v.f[ 8]   = chr->vel.z;
-		rp->v.f[ 9]   = chr->yoff;
-		rp->v.i32[10] = chr->hook != NULL;
-		rp->v.f[11]   = chr->hookPos.x;
-		rp->v.f[12]   = chr->hookPos.y;
-		rp->v.f[13]   = chr->hookPos.z;
-		rp->v.i32[14] = chr->blockMiningX;
-		rp->v.i32[15] = chr->blockMiningY;
-		rp->v.i32[16] = chr->blockMiningZ;
+
+		rp->v.u32[ 9] = chr->flags;
+
+		rp->v.u16[20] = chr->blockMiningX;
+		rp->v.u16[21] = chr->blockMiningY;
+		rp->v.u16[22] = chr->blockMiningZ;
+		rp->v.u16[23] = chr->hp;
+
 		if(itm == NULL){
-			rp->v.i32[17] = 0;
+			rp->v.u16[24] = 0;
 		}else{
-			rp->v.i32[17] = itm->ID;
+			rp->v.u16[24] = itm->ID;
 		}
-		rp->v.i32[18] = chr->animationIndex;
-		rp->v.i32[19] = i;
-		rp->v.i32[20] = chr->animationTicksMax;
-		rp->v.i32[21] = chr->animationTicksLeft;
-		rp->v.i32[22] = chr->flags;
-		rp->v.i32[23] = chr->hp;
-		packetQueue(rp,15,24*4,c);
+		rp->v.u16[25] = chr->animationIndex;
+		rp->v.u16[26] = chr->animationTicksMax;
+		rp->v.u16[27] = chr->animationTicksLeft;
+
+		rp->v.u32[15] = i;
+
+		if(chr->hook != NULL){
+			rp->v.f[16]   = chr->hookPos.x;
+			rp->v.f[17]   = chr->hookPos.y;
+			rp->v.f[18]   = chr->hookPos.z;
+			pLen = 19*4;
+		}
+
+		packetQueue(rp,15,pLen,c);
 	}
 
 	clients[c].itemDropUpdateOffset = itemDropUpdatePlayer(c,clients[c].itemDropUpdateOffset);
@@ -198,24 +208,28 @@ void msgUpdatePlayer(uint c){
 void serverParsePlayerPos(uint c,const packet *p){
 	clients[c].c->pos                = vecNewP(&p->v.f[ 0]);
 	clients[c].c->rot                = vecNewP(&p->v.f[ 3]);
+	clients[c].c->rot.roll           = 0;
+	clients[c].c->yoff               = p->v.f[ 5];
 	clients[c].c->vel                = vecNewP(&p->v.f[ 6]);
-	clients[c].c->yoff               = p->v.f[ 9];
-	if(p->v.i32[10]){
+
+	clients[c].c->flags              = p->v.u32[ 9];
+
+	clients[c].c->blockMiningX       = p->v.u16[20];
+	clients[c].c->blockMiningY       = p->v.u16[21];
+	clients[c].c->blockMiningZ       = p->v.u16[22];
+	clients[c].c->hp                 = p->v.u16[23];
+
+	clients[c].c->activeItem         = p->v.u16[24];
+	clients[c].c->animationIndex     = p->v.u16[25];
+	clients[c].c->animationTicksMax  = p->v.u16[26];
+	clients[c].c->animationTicksLeft = p->v.u16[27];
+
+	if(packetLen(p) >= 18*4 ){
 		clients[c].c->hook           = (grapplingHook *)0x8;
+		clients[c].c->hookPos        = vecNewP(&p->v.f[15]);
 	}else{
 		clients[c].c->hook           = NULL;
 	}
-
-	clients[c].c->hookPos            = vecNewP(&p->v.f[11]);
-	clients[c].c->blockMiningX       = p->v.i32[14];
-	clients[c].c->blockMiningY       = p->v.i32[15];
-	clients[c].c->blockMiningZ       = p->v.i32[16];
-	clients[c].c->activeItem         = p->v.i32[17];
-	clients[c].c->animationIndex     = p->v.i32[18];
-	clients[c].c->animationTicksMax  = p->v.i32[20];
-	clients[c].c->animationTicksLeft = p->v.i32[21];
-	clients[c].c->flags              = p->v.i32[22];
-	clients[c].c->hp                 = p->v.i32[23];
 
 	clients[c].flags |= CONNECTION_DO_UPDATE;
 }
@@ -227,6 +241,19 @@ void msgSendChunk(uint c, const chunk *chnk){
 	p->v.u16[2049] = chnk->y;
 	p->v.u16[2050] = chnk->z;
 	packetQueue(p,18,1026*4,c);
+}
+
+void dispatchBeingDmg(uint c, const packet *p){
+	const being target  = p->v.u32[1];
+
+	switch(beingType(target)){
+	default:
+		fprintf(stderr,"dispatchBeingDmg[%i]: Unknown being %x",c,target);
+	case BEING_CHARACTER:
+		characterDmgPacket(c,p);
+	case BEING_ANIMAL:
+		animalDmgPacket(c,p);
+	}
 }
 
 void serverParseSinglePacket(uint c, packet *p){
@@ -268,8 +295,8 @@ void serverParseSinglePacket(uint c, packet *p){
 			serverKill(c);
 			break;
 		case 8: // BeingGotHit
-			//msgCharacterGotHit(c,p->val.i[0]);
-			if(verbose){printf("[%02i] msgCharacterGotHit\n",c);}
+			fprintf(stderr,"beingGotHit received from client, which should never happen\n");
+			serverKill(c);
 			break;
 		case 9: // PlayerJoin !!!!1 Still needed???
 			fprintf(stderr,"PlayerJoin received from client, which should never happen\n");
@@ -296,7 +323,7 @@ void serverParseSinglePacket(uint c, packet *p){
 			break;
 		case 15:
 			serverParsePlayerPos(c,p);
-			if(verbose){printf("[%02i] sendPlayerPos\n",c);}
+			//if(verbose){printf("[%02i] sendPlayerPos\n",c);}
 			break;
 		case 16:
 			serverParseChatMsg(c,p);
@@ -338,17 +365,9 @@ void serverParseSinglePacket(uint c, packet *p){
 			fprintf(stderr,"msgItemDropUpdate received from client, which should never happen\n");
 			serverKill(c);
 			break;
-		case 26: {
-			const i16 hp    = p->v.i16[0];
-			const i16 cause = p->v.u16[1];
-
-			const being target  = p->v.u32[1];
-			const being culprit = beingCharacter(c);;
-
-			const vec pos = vecNewP(&p->v.f[2]);
-			msgBeingDamage(beingID(target),hp,cause,target,culprit,pos);
-			msgBeingGotHit(hp,cause,target,culprit);
-			break; }
+		case 26:
+			dispatchBeingDmg(c,p);
+			break;
 		case 27:
 			chungusUnsubscribePlayer(world.chungi[p->v.u8[0]][p->v.u8[1]&0x7F][p->v.u8[2]],c);
 			break;

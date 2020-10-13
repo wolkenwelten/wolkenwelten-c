@@ -22,16 +22,16 @@ static inline void itemDropUpdateMsg(uint c,uint i){
 		c,
 		itemDrops[i].ent->pos,
 		itemDrops[i].ent->vel,
+		&itemDrops[i].itm,
 		i,
-		itemDropCount,
-		itemDrops[i].itm.ID,
-		itemDrops[i].itm.amount
+		itemDropCount
 	);
 }
 
 uint itemDropUpdatePlayer(uint c, uint offset){
+	const item iZero = {0,0};
 	const uint max = MIN(offset+ITEM_DROPS_PER_UPDATE,itemDropCount);
-	if(itemDropCount == 0){msgItemDropUpdate(c,vecZero(),vecZero(),0,0,0,0);}
+	if(itemDropCount == 0){msgItemDropUpdate(c,vecZero(),vecZero(),&iZero,0,0);}
 	for(uint i=0;i<clients[c].itemDropPriorityQueueLen;i++){
 		itemDropUpdateMsg(c,clients[c].itemDropPriorityQueue[i]);
 	}
@@ -58,6 +58,7 @@ void itemDropNewP(const vec pos,const item *itm){
 	id->itm = *itm;
 	id->ent = entityNew(pos,vecZero());
 	id->player = -1;
+	entityUpdateCurChungus(id->ent);
 }
 
 void itemDropNewC(uint c, const packet *p){
@@ -66,9 +67,10 @@ void itemDropNewC(uint c, const packet *p){
 
 	id->ent        = entityNew(vecNewP(&p->v.f[0]),vecZero());
 	id->ent->vel   = vecNewP(&p->v.f[3]);
-	id->itm.ID     = p->v.u16[6];
-	id->itm.amount = p->v.i16[7];
+	id->itm.ID     = p->v.u16[12];
+	id->itm.amount = p->v.i16[13];
 	id->player     = c;
+	entityUpdateCurChungus(id->ent);
 }
 
 void itemDropDel(uint d){
@@ -78,6 +80,7 @@ void itemDropDel(uint d){
 	itemDrops[d].ent = NULL;
 	itemDrops[d]     = itemDrops[--itemDropCount];
 }
+
 void itemDropDelChungus(const chungus *c){
 	if(c == NULL){return;}
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){
@@ -93,7 +96,7 @@ static bool itemDropCheckPickup(uint d){
 		if((uint)itemDrops[d].player == i){
 			if(vecDot(dist,dist) > (2.f*2.f)){ itemDrops[d].player = -1; }
 		}else if(vecDot(dist,dist) < (1.5f*1.5f)){
-			msgPickupItem(i,itemDrops[d].itm.ID,itemDrops[d].itm.amount);
+			msgPickupItem(i,itemDrops[d].itm);
 			addPriorityItemDrop(d);
 			return true;
 		}
@@ -156,6 +159,7 @@ static int itemDropCheckCollation(uint ai){
 			itemDrops[bi].itm.amount += itemDrops[ai].itm.amount;
 			itemDrops[bi].ent->vel = vecAdd(itemDrops[bi].ent->vel,itemDrops[ai].ent->vel);
 			itemDrops[bi].ent->pos = vecMulS(vecAdd(itemDrops[bi].ent->pos,itemDrops[ai].ent->pos),0.5f);
+			entityUpdateCurChungus(itemDrops[bi].ent);
 			addPriorityItemDrop(bi);
 			return 1;
 		}
@@ -192,15 +196,7 @@ void itemDropUpdate(){
 
 void itemDropIntro(uint c){
 	for(uint i=0;i<itemDropCount;i++){
-		msgItemDropUpdate(
-			c,
-			itemDrops[i].ent->pos,
-			itemDrops[i].ent->vel,
-			i,
-			itemDropCount,
-			itemDrops[i].itm.ID,
-			itemDrops[i].itm.amount
-		);
+		msgItemDropUpdate(c,itemDrops[i].ent->pos,itemDrops[i].ent->vel,&itemDrops[i].itm,i,itemDropCount);
 	}
 }
 

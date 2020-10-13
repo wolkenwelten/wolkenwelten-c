@@ -560,12 +560,12 @@ void animalDelChungus(const chungus *c){
 	}
 }
 
-void animalDmgPacket(int source, const packet *p){
-	(void)source;
-	const being target  = p->v.u32[1];
-	//const being culprit = p->v.u32[2];
-	const u16 cause     = p->v.u16[1];
+void animalDmgPacket(uint source, const packet *p){
 	const i16 hp        = p->v.u16[0];
+	const u16 cause     = p->v.u16[1];
+
+	const being target  = p->v.u32[1];
+	const being culprit = beingCharacter(source);
 	if(beingType(target) != BEING_ANIMAL){return;}
 	const u16 i   = beingID(target);
 	if(i >= animalCount){return;}
@@ -581,6 +581,7 @@ void animalDmgPacket(int source, const packet *p){
 	if(cause == 2){
 		vec pos = vecNewP(&p->v.f[3]);
 		vec dis = vecNorm(vecSub(c->pos,pos));
-		c->vel = vecAdd(c->vel,vecMulS(dis,0.08f));
+		c->vel = vecAdd(c->vel,vecMulS(dis,0.03f));
 	}
+	msgBeingGotHit(hp,cause,target,culprit);
 }

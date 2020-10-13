@@ -4,3 +4,5 @@
 
 extern character characterList[128];
 extern int characterCount;
+
+void characterDmgPacket(uint c, const packet *p);

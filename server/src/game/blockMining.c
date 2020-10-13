@@ -69,8 +69,12 @@ void blockMiningDropItems(blockMining *bm){
 
 void blockMiningMine(uint i, item *itm){
 	blockMining *bm = &blockMiningList[i];
+	int dmg = 1;
+	if(itm != NULL){
+		dmg = blockDamageDispatch(itm,blockTypeGetCat(bm->b));
+	}
 
-	bm->damage += blockDamageDispatch(itm,blockTypeGetCat(bm->b));
+	bm->damage += dmg;
 	bm->wasMined = true;
 	if(bm->damage > blockTypeGetHP(bm->b)){
 		msgMineBlock(bm->x,bm->y,bm->z,bm->b);

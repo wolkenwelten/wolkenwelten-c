@@ -29,10 +29,10 @@ void msgPlayerName               (uint c, u16 i, const char *name);
 // 18 = chunkData ???
 // 19 = setPlayerCount ???
 void msgSetPlayerCount           (u16 playerLeaving, u16 playerMax);
-void msgPickupItem               (uint c, u16 ID, i16 amount);
+void msgPickupItem               (uint c, const item itm);
 void msgGrenadeExplode           (const vec pos,float pwr, u16 style);
 void msgGrenadeUpdate            (uint c, const vec pos, const vec vel, u16 i, u16 count);
 void msgFxBeamBlaster            (uint c, const vec pa, const vec pb, float beamSize, float damageMultiplier);
-void msgItemDropUpdate           (uint c, const vec pos, const vec vel, u16 i, u16 len, u16 itemID, u16 amount);
+void msgItemDropUpdate           (uint c, const vec pos, const vec vel, const item *itm, u16 i, u16 len);
 void msgPlayerSetData            (uint c, i16 hp, u16 activeItem, u32 flags);
 void msgPlayerSetInventory       (uint c, const item *itm, size_t itemCount);

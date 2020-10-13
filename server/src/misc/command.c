@@ -7,8 +7,9 @@
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../network/server.h"
-#include "../../../common/src/network/messages.h"
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/network/messages.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -65,14 +66,13 @@ static void cmdDbgitem(int c, const char *cmd){
 			serverSendChatMsg(replyBuf);
 		}
 	}
-	msgPickupItem(target,261,1);
-	msgPickupItem(target,262,1);
-	msgPickupItem(target,263,1);
-	msgPickupItem(target,264,1);
-	msgPickupItem(target,258,42);
-	msgPickupItem(target,256,99);
-
-	msgPickupItem(target,265,999*4);
+	msgPickupItem(target,itemNew(261, 1));
+	msgPickupItem(target,itemNew(262, 1));
+	msgPickupItem(target,itemNew(263, 1));
+	msgPickupItem(target,itemNew(264, 1));
+	msgPickupItem(target,itemNew(258,42));
+	msgPickupItem(target,itemNew(256,99));
+	msgPickupItem(target,itemNew(265,999*4));
 }
 
 static void cmdHeal(int c, const char *cmd){
@@ -138,7 +138,7 @@ static void cmdGive(int c, const char *cmd){
 		}
 	}
 
-	msgPickupItem(target,id,amount);
+	msgPickupItem(target,itemNew(id,amount));
 }
 
 static void cmdTp(int c, const char *cmd){

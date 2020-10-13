@@ -24,7 +24,7 @@ u8 *compressedBuffer = NULL;
 
 static void bigchungusSafeSaveClient(const bigchungus *c, const character *chara){
 	if(chara == NULL){return;}
-	ivec cp = ivecShrS(ivecNewV(chara->pos),8);
+	ivec cp = ivecNewV(chara->pos);
 	if((cp.x >= 0) && (cp.x < 256) && (cp.y >= 0) && (cp.y < 128) && (cp.z >= 0) && (cp.z < 256)){
 		chungusSave(c->chungi[cp.x][cp.y][cp.z]);
 	}
@@ -60,7 +60,7 @@ static void bigchungusSafeSaveClient(const bigchungus *c, const character *chara
 
 static const char *chungusGetFilename(chungus *c){
 	static char buf[64];
-	snprintf(buf,sizeof(buf)-1,"save/%s/%02X%02X%02X.chunk",optionSavegame,(c->x >> 8)&0xFF,(c->y >> 8)&0xFF,(c->z >> 8)&0xFF);
+	snprintf(buf,sizeof(buf)-1,"save/%s/%02X%02X%02X.chunk",optionSavegame,c->x,c->y,c->z);
 	buf[sizeof(buf)-1] = 0;
 	return buf;
 }

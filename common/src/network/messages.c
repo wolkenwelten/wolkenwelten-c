@@ -120,8 +120,8 @@ void msgItemDropNew(uint c, const vec pos, const vec vel, const item *itm){
 	p->v.f[4] = vel.y;
 	p->v.f[5] = vel.z;
 
-	p->v.i32[6] = itm->ID;
-	p->v.i32[7] = itm->amount;
+	p->v.u16[12] = itm->ID;
+	p->v.i16[13] = itm->amount;
 
 	packetQueue(p,10,8*4,c);
 }
@@ -199,11 +199,11 @@ void msgSetPlayerCount(u16 playerLeaving, u16 playerMax){
 	packetQueue(p,19,2*2,-1);
 }
 
-void msgPickupItem(uint c, u16 ID, i16 amount){
+void msgPickupItem(uint c, const item itm){
 	packet *p = &packetBuffer;
 
-	p->v.u16[0] = ID;
-	p->v.i16[1] = amount;
+	p->v.u16[0] = itm.ID;
+	p->v.i16[1] = itm.amount;
 
 	packetQueue(p,20,2*2,c);
 }
@@ -255,14 +255,14 @@ void msgFxBeamBlaster(uint c, const vec pa, const vec pb, float beamSize, float 
 	packetQueueExcept(p,24,8*4,c);
 }
 
-void msgItemDropUpdate(uint c, const vec pos, const vec vel, u16 i, u16 len, u16 itemID, u16 amount){
+void msgItemDropUpdate(uint c, const vec pos, const vec vel, const item *itm, u16 i, u16 len){
 	packet *p = &packetBuffer;
 
 	p->v.u16[0] = i;
 	p->v.u16[1] = len;
 
-	p->v.u16[2] = itemID;
-	p->v.i16[3] = amount;
+	p->v.u16[2] = itm->ID;
+	p->v.i16[3] = itm->amount;
 
 	p->v.f[2]   = pos.x;
 	p->v.f[3]   = pos.y;

@@ -83,22 +83,25 @@ void characterFree(character *c){
 }
 
 void characterUpdatePacket(const packet *p){
-	const int i = p->v.i32[19];
+	const int i = p->v.u32[15];
+	if(i > 32){return;}
 	if(playerList[i] == NULL){
 		playerList[i] = characterNew();
 	}
-	playerList[i]->pos  = vecNewP(&p->v.f[0]);
-	playerList[i]->rot  = vecNewP(&p->v.f[3]);
-	playerList[i]->vel  = vecNewP(&p->v.f[6]);
-	playerList[i]->yoff = p->v.f[9];
+	playerList[i]->pos      = vecNewP(&p->v.f[0]);
+	playerList[i]->rot      = vecNewP(&p->v.f[3]);
+	playerList[i]->rot.roll = 0;
+	playerList[i]->yoff     = p->v.f[5];
+	playerList[i]->vel      = vecNewP(&p->v.f[6]);
+	playerList[i]->flags    = p->v.u32[9];
 
-	if(p->v.i32[10]){
+	if(packetLen(p) >= 19*4){
 		if(playerList[i]->hook == NULL){
 			playerList[i]->hook = grapplingHookNew(playerList[i]);
 		}
 		playerList[i]->hook->hooked     = true;
 		playerList[i]->hook->ent->flags = ENTITY_NOCLIP;
-		playerList[i]->hook->ent->pos   = vecNewP(&p->v.f[11]);
+		playerList[i]->hook->ent->pos   = vecNewP(&p->v.f[16]);
 		playerList[i]->hook->ent->vel   = vecZero();
 	}else{
 		if(playerList[i]->hook != NULL){
@@ -106,14 +109,13 @@ void characterUpdatePacket(const packet *p){
 			playerList[i]->hook = NULL;
 		}
 	}
-	playerList[i]->inventory[0] = itemNew(p->v.u32[17],1);
+	playerList[i]->hp                 = p->v.u16[23];
+	playerList[i]->inventory[0] = itemNew(p->v.u16[24],1);
 	playerList[i]->activeItem   = 0;
 
-	playerList[i]->animationIndex     = p->v.i32[18];
-	playerList[i]->animationTicksMax  = p->v.i32[20];
-	playerList[i]->animationTicksLeft = p->v.i32[21];
-	playerList[i]->flags              = p->v.i32[22];
-	playerList[i]->hp                 = p->v.i32[23];
+	playerList[i]->animationIndex     = p->v.u16[25];
+	playerList[i]->animationTicksMax  = p->v.u16[26];
+	playerList[i]->animationTicksLeft = p->v.u16[27];
 }
 
 void characterRemovePlayer(int c, int len){
