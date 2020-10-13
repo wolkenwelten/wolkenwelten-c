@@ -36,7 +36,6 @@ u32 cloudCB[128];
 
 static inline void cloudPart(float px,float py,float pz,float dd,u8 v){
 	if(dd > (CLOUD_MIND+CLOUD_FADED)){return;}
-	//if(glCount < 4){return;}
 	const float vf = v-CLOUD_DENSITY_MIN;
 	u32 a = v << 24;
 	if(dd > CLOUD_MIND){
@@ -151,8 +150,8 @@ void cloudsInit(){
 
 	for(int i=0;i<128;i++){
 		const u32 v  = i+128;
-		const u32 ta = (218+((256 - v)/3));
-		const u32 tb = (198+((256 - v)/6));
+		const u32 ta = MIN(255,(218+((256 - v)/2)));
+		const u32 tb = MIN(255,(178+((256 - v)/4)));
 		const u32 ba = (164+((256 - v)  ));
 		const u32 bb = (148+((256 - v)/2));
 
