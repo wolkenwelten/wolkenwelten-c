@@ -1,4 +1,5 @@
 (A) MacOS Code signing
+(A) Do itemDrop pickup calculations clientside
 
 (B) Rework worldgen to not use the global RNG anymore, instead relying on a local one
 (B) Some kind of jumping at the end of some grappling hook action
