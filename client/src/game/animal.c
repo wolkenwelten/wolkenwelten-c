@@ -1,6 +1,7 @@
 #include "../game/animal.h"
 
 #include "../game/character.h"
+#include "../gfx/effects.h"
 #include "../gfx/gl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
@@ -121,4 +122,12 @@ int animalHitCheck(const vec pos, float mdd, int dmg, int cause, uint iteration)
 		}
 	}
 	return hits;
+}
+
+void animalGotHitPacket(const packet *p){
+	const being target  = p->v.u32[1];
+	if(beingType(target) != BEING_ANIMAL){return;}
+	if(beingID(target) > animalCount)    {return;}
+	const animal *c = &animalList[beingID(target)];
+	fxBleeding(c->pos,target,p->v.i16[0],p->v.u16[1]);
 }

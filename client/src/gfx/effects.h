@@ -7,3 +7,4 @@ void fxExplosionBlaster (const vec pos,float pw);
 void fxBeamBlaster      (const vec pa,const vec pb, float beamSize, float damageMultiplier);
 void fxBlockBreak       (const vec pos, uchar b);
 void fxBlockMine        (const vec pos, int dmg, uchar b);
+void fxBleeding         (const vec pos, being victim, i16 dmg, u16 cause);

@@ -311,12 +311,16 @@ void animalCheckForCharacter(animal *e){
 			e->gvel.z  = caVel.z;
 			e->rot.yaw = caRot.yaw;
 
-			if((dist < 2.f) && (rngValM(4)==0)){
-				int target = getClientByCharacter(cChar);
-				int dmg = 1;
-				if(target < 0){return;}
-				if(rngValM(8)==0){dmg = 4;}
-				msgBeingDamage(target,dmg,2,beingCharacter(target),-1,e->pos);
+			if((dist < 1.5f)){
+				e->gvel.x = 0;
+				e->gvel.z = 0;
+				if(rngValM(6)==0){
+					int target = getClientByCharacter(cChar);
+					int dmg = 1;
+					if(target < 0){return;}
+					if(rngValM(8)==0){dmg = 4;}
+					msgBeingDamage(target,dmg,2,beingCharacter(target),-1,e->pos);
+				}
 			}
 		}
 	}else if(e->state == ANIMAL_S_FLEE){

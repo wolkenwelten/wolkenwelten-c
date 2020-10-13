@@ -112,6 +112,20 @@ void decompressPacket(const packet *p){
 	}
 }
 
+void dispatchBeingGotHit(const packet *p){
+	const being target  = p->v.u32[1];
+
+	switch(beingType(target)){
+	default:
+		fprintf(stderr,"dispatchBeingGotHit: Unknown being %x",target);
+	case BEING_CHARACTER:
+		characterGotHitPacket(p);
+	case BEING_ANIMAL:
+		animalGotHitPacket(p);
+	}
+}
+
+
 void clientParsePacket(const packet *p){
 	const int pLen  = packetLen(p);
 	const int pType = packetType(p);
@@ -151,7 +165,7 @@ void clientParsePacket(const packet *p){
 			break;
 		case 8:
 			// ToDo: beingGotHit
-			//characterGotHitBroadcast(p->val.i[1],p->val.i[0]);
+			dispatchBeingGotHit(p);
 			break;
 		case 9:
 			fprintf(stderr,"Received a PlayerJoin packet from the server which should never happen.\n");

@@ -84,17 +84,6 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 		}
 		c = vecAdd(c,v);
 	}
-	/*
-	if((originatingCharacter != 65535) && (minPlayerDist < 0.5f)){
-		if(characterHP(player,(0.6f-minPlayerDist) * -24.f * damageMultiplier)){
-			msgSendDyingMessage("Beamblasted", originatingCharacter);
-			setOverlayColor(0xFF000000,0);
-			commitOverlayColor();
-		}else{
-			setOverlayColor(0xA03020F0,0);
-			commitOverlayColor();
-		}
-	}*/
 }
 
 void fxBlockBreak(const vec pos, unsigned char b){
@@ -112,5 +101,21 @@ void fxBlockMine(const vec pos, int dmg, unsigned char b){
 	for(int i=0;i<parts;i++){
 		const vec p = vecAdd(pos,vecRngAbs());
 		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),1.f,64);
+	}
+}
+
+void fxBleeding(const vec pos, being victim, i16 dmg, u16 cause){
+	(void)victim;
+	(void)dmg;
+	(void)cause;
+	const float d = vecMag(vecSub(player->pos,pos));
+	if(d < 128.f){
+		const float vol = (128.f-d)/128.f;
+		sfxPlay(sfxImpact,vol);
+		sfxPlay(sfxUngh,vol);
+	}
+	for(int i=dmg*64;i>0;i--){
+		const vec v  = vecMulS(vecRng(),0.06f);
+		newParticleV(pos,v,vecMulS(v,1/-64.f),64.f,1.f,0xFF44AAFF,64);
 	}
 }

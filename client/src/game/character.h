@@ -25,7 +25,7 @@ character *characterGetPlayer  (uint i);
 char *characterGetPlayerName   (uint i);
 int   characterGetPlayerHP     (uint i);
 vec   characterGetPlayerDist   (uint i);
-void  characterGotHitBroadcast (int c, int pwr);
+void  characterGotHitPacket    (const packet *p);
 void  characterRemovePlayer    (int c, int len);
 int   characterHitCheck        (const vec pos, float mdd, int damage, int cause, uint iteration);
 

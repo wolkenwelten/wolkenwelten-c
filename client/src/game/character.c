@@ -5,6 +5,7 @@
 #include "../game/itemDrop.h"
 #include "../game/grapplingHook.h"
 
+#include "../gfx/effects.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
@@ -193,16 +194,12 @@ void characterUpdateAnimation(character *c){
 	}
 }
 
-void characterGotHitBroadcast(int i,int pwr){
-	if(playerList[i] == NULL){return;}
-	character *c   = playerList[i];
-	const float d  = vecMag(vecSub(player->pos,c->pos));
-	if(d > 128.f){return;}
-	const float vol = (128.f-d)/128.f;
-
-	sfxPlay(sfxImpact,vol);
-	sfxPlay(sfxUngh,vol);
-	(void)pwr;
+void characterGotHitPacket(const packet *p){
+	const being target  = p->v.u32[1];
+	if(beingType(target) != BEING_CHARACTER){return;}
+	if(playerList[beingID(target)] == NULL) {return;}
+	character *c   = playerList[beingID(target)];
+	fxBleeding(c->pos,target,p->v.i16[0],p->v.u16[1]);
 }
 
 void characterUpdateWindVolume(const character *c){
