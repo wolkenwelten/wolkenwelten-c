@@ -60,9 +60,9 @@ void msgSendPlayerPos(){
 	static int inventoryCountDown=0;
 	int pLen = 15*4;
 	if(player == NULL){return;}
-	if(--inventoryCountDown < 0){
+	if(--inventoryCountDown <= 0){
 		msgPlayerSetInventory(-1,player->inventory,40);
-		inventoryCountDown = 24;
+		inventoryCountDown = 60;
 	}
 	packet *p = &packetBuffer;
 
@@ -290,6 +290,7 @@ void clientHandleEvents(){
 
 void clientGoodbye(){
 	if(serverSocket <= 0){return;}
+	msgPlayerSetInventory(-1,player->inventory,40);
 	msgGoodbye();
 	clientSendAllToServer();
 }

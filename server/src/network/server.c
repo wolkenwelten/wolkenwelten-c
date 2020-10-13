@@ -285,6 +285,7 @@ void serverParseSinglePacket(uint c, packet *p){
 		case 5: // Goodbye
 			errno=0;
 			serverKill(c);
+			if(verbose){printf("[%02i] Goodbye\n",c);}
 			break;
 		case 6: // blockMiningUpdate
 			fprintf(stderr,"blockMiningUpdate received from client, which should never happen\n");
