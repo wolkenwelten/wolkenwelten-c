@@ -7,33 +7,32 @@ extern packet packetBuffer;
 void msgNOP                      (uint len);
 void msgRequestPlayerSpawnPos    ();
 void msgPlayerSetPos             (uint c, const vec pos, const vec rot);
-void msgRequestChungus           (uint x, uint y, uint z);
-void msgDirtyChunk               (uint x, uint y, uint z);
-void msgPlaceBlock               (uint x, uint y, uint z, u8 b);
-void msgMineBlock                (uint x, uint y, uint z, u8 b);
+void msgRequestChungus           (u8 x, u8 y, u8 z);
+void msgUnsubChungus             (u8 x, u8 y, u8 z);
+void msgDirtyChunk               (u16 x, u16 y, u16 z);
+void msgPlaceBlock               (u16 x, u16 y, u16 z, u8 b);
+void msgMineBlock                (u16 x, u16 y, u16 z, u8 b);
 void msgGoodbye                  ();
-void msgBlockMiningUpdate        (uint c, u16 x, u16 y, u16 z, u16 damage, int count, int i);
-void msgSendChungusComplete      (uint c, int x, int y, int z);
-void msgCharacterGotHit          (uint c, int pwr);
+void msgBlockMiningUpdate        (uint c, u16 x, u16 y, u16 z, i16 damage, u16 count, u16 i);
+void msgSendChungusComplete      (uint c, u8 x, u8 y, u8 z);
+void msgBeingGotHit              (        i16 hp, u16 cause, being target, being culprit);
+void msgBeingDamage              (uint c, i16 hp, u16 cause, being target, being culprit, const vec pos);
 // 9 = playerSendName
 void msgItemDropNew              (uint c, const vec pos, const vec vel, const item *itm);
 void msgNewGrenade               (const vec pos, const vec rot, float pwr, int cluster, float clusterPwr);
 void msgBeamBlast                (const vec pos, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft);
 void msgPlayerMove               (uint c, const vec dpos, const vec drot);
-void msgPlayerName               (uint c, uint i, const char *name);
+void msgPlayerName               (uint c, u16 i, const char *name);
 // 15 = playerPos ???
 // 16 = parseChatMsg ???
 // 17 = parseDyingMsg ???
 // 18 = chunkData ???
 // 19 = setPlayerCount ???
-void msgSetPlayerCount           (uint playerLeaving, uint playerMax);
-void msgPickupItem               (uint c, u16 ID, u16 amount);
-void msgGrenadeExplode           (const vec pos,float pwr, int style);
-void msgGrenadeUpdate            (uint c, const vec pos, const vec vel, int count, int i);
-void msgFxBeamBlaster            (uint c, const vec pa, const vec pb, float beamSize, float damageMultiplier, float recoilMultiplier);
+void msgSetPlayerCount           (u16 playerLeaving, u16 playerMax);
+void msgPickupItem               (uint c, u16 ID, i16 amount);
+void msgGrenadeExplode           (const vec pos,float pwr, u16 style);
+void msgGrenadeUpdate            (uint c, const vec pos, const vec vel, u16 i, u16 count);
+void msgFxBeamBlaster            (uint c, const vec pa, const vec pb, float beamSize, float damageMultiplier);
 void msgItemDropUpdate           (uint c, const vec pos, const vec vel, u16 i, u16 len, u16 itemID, u16 amount);
-void msgPlayerDamage             (uint c, i16 hp, u16 target, u16 cause, u16 culprit, const vec pos);
-void msgUnsubChungus             (uint x, uint y, uint z);
-void msgPlayerSetData            (uint c, int hp, int activeItem, u32 flags);
+void msgPlayerSetData            (uint c, i16 hp, u16 activeItem, u32 flags);
 void msgPlayerSetInventory       (uint c, const item *itm, size_t itemCount);
-void msgAnimalDamage             (uint c, i16 hp, u16 target, u16 cause, u16 culprit);

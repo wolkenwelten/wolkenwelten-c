@@ -5,7 +5,7 @@
 #define CHUNGUS_SIZE (16*16)
 
 struct chungus {
-	int    x,y,z;
+	u8    x,y,z;
 	ivec   spawn;
 	u64    clientsSubscribed;
 	u64    clientsUpdated;
@@ -13,7 +13,7 @@ struct chungus {
 	chunk *chunks[16][16][16];
 };
 
-chungus     *chungusNew              (int x,int y, int z);
+chungus     *chungusNew              (u8 x,u8 y, u8 z);
 void         chungusFree             (chungus *c);
 void         chungusRoughBox         (chungus *c, int x, int y, int z, int w, int h, int d, u8 block);
 void         chungusBox              (chungus *c, int x, int y, int z, int w, int h, int d, u8 block);

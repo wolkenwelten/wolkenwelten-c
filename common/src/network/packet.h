@@ -12,11 +12,13 @@ typedef struct {
 
 	union {
 		float f[1030];
-		i32   i[1030];
-		u32   u[1030];
-		u16   s[2060];
-		u8    c[4120];
-	} val;
+		i32   i32[1030];
+		u32   u32[1030];
+		u16   u16[2060];
+		i16   i16[2060];
+		u8    u8[4120];
+		i8    i8[4120];
+	} v;
 } packet;
 
 #pragma pack(pop)

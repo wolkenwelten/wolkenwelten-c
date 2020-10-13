@@ -28,9 +28,9 @@ worldgen *worldgenNew(chungus *nclay){
 	}
 	wgen->clay = nclay;
 	wgen->iterChance = 64;
-	wgen->gx = nclay->x;
-	wgen->gy = nclay->y;
-	wgen->gz = nclay->z;
+	wgen->gx = nclay->x<<8;
+	wgen->gy = nclay->y<<8;
+	wgen->gz = nclay->z<<8;
 	wgen->layer = (wgen->gy / CHUNGUS_SIZE);
 	wgen->minX = wgen->minY = wgen->minZ = CHUNGUS_SIZE;
 	int gx = wgen->gx >> 8;

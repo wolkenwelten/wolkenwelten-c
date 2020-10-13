@@ -64,29 +64,29 @@ void grenadeUpdate(){
 }
 
 void grenadeUpdateFromServer(const packet *p){
-	const int index = p->val.i[7];
+	const int index = p->v.u16[0];
+	const int newC  = p->v.u16[1];
 
-	for(int i=p->val.i[6];i<grenadeCount;i++){
+	for(int i=newC;i<grenadeCount;i++){
 		if(grenadeList[i].ent != NULL){
 			entityFree(grenadeList[i].ent);
 		}
 		grenadeList[i].ent = NULL;
 	}
-	grenadeCount = p->val.i[6];
+	grenadeCount = newC;
 	if(index >= grenadeCount){return;}
 
 	if(grenadeList[index].ent == NULL){
-		grenadeList[index].ent = entityNew(vecNewP(&p->val.f[0]),vecZero());
-		grenadeList[index].ent->vel   = vecNewP(&p->val.f[3]);
+		grenadeList[index].ent = entityNew(vecZero(),vecZero());
 		grenadeList[index].ent->eMesh = meshBomb;
-	}else{
-		grenadeList[index].ent->pos = vecNewP(&p->val.f[0]);
-		grenadeList[index].ent->vel = vecNewP(&p->val.f[3]);
 	}
+	grenadeList[index].ent->pos = vecNewP(&p->v.f[0]);
+	grenadeList[index].ent->vel = vecNewP(&p->v.f[3]);
 }
 
 void singleBeamblast(character *ent, const vec start, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){
 	static uint iteration = 0;
+
 	float speed     = 0.1f;
 	vec pos         = start;
 	vec vel         = vecMulS(vecDegToVec(rot),speed);
@@ -109,28 +109,25 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 		animalHitCheck   (pos, mdd, dmg, 1, iteration);
 
 	}
-	fxBeamBlaster(start,pos,beamSize,damageMultiplier,recoilMultiplier,1,0);
-	msgFxBeamBlaster(0,start,pos,beamSize,damageMultiplier,recoilMultiplier);
+	fxBeamBlaster(start,pos,beamSize,damageMultiplier);
+	msgFxBeamBlaster(0,start,pos,beamSize,damageMultiplier);
 
 	ent->vel = vecAdd(ent->vel, vecMulS(vel,-0.75f*recoilMultiplier));
 	ent->rot = vecAdd(ent->rot, vecNew((rngValf()-0.5f) * 64.f * recoilMultiplier, (rngValf()-.8f) * 64.f * recoilMultiplier, 0.f));
 }
 
 void beamblast(character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult){
-	float x = ent->pos.x;
-	float y = ent->pos.y;
-	float z = ent->pos.z;
-
 	const float mx =  0.75f;
 	const float mz = -1.f;
-	x += ((cos((ent->rot.yaw+90.f)*PI/180) * cos(ent->rot.pitch*PI/180))*mz) + cos((ent->rot.yaw)*PI/180)*mx;
-	y += (sin(ent->rot.pitch*PI/180)*mz);
-	z += ((sin((ent->rot.yaw+90.f)*PI/180) * cos(ent->rot.pitch*PI/180))*mz) + sin((ent->rot.yaw)*PI/180)*mx;
+	vec pos = ent->pos;
+	pos.x += ((cos((ent->rot.yaw+90.f)*PI/180) * cos(ent->rot.pitch*PI/180))*mz) + cos((ent->rot.yaw)*PI/180)*mx;
+	pos.y += (sin(ent->rot.pitch*PI/180)*mz);
+	pos.z += ((sin((ent->rot.yaw+90.f)*PI/180) * cos(ent->rot.pitch*PI/180))*mz) + sin((ent->rot.yaw)*PI/180)*mx;
 
 	for(int i=shots;i>0;i--){
 		const float yaw   = ent->rot.yaw   + (rngValf()-0.5f)*ent->inaccuracy*inaccuracyMult;
 		const float pitch = ent->rot.pitch + (rngValf()-0.5f)*ent->inaccuracy*inaccuracyMult;
-		singleBeamblast(ent, vecNew(x, y, z), vecNew(yaw, pitch, 0.f), beamSize, damageMultiplier, recoilMultiplier, hitsLeft);
+		singleBeamblast(ent, pos, vecNew(yaw, pitch, 0.f), beamSize, damageMultiplier, recoilMultiplier, hitsLeft);
 	}
 	characterAddInaccuracy(ent,inaccuracyInc);
 }

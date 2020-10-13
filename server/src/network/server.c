@@ -56,8 +56,8 @@ void serverKeepalive(){
 
 void serverSendChatMsg(const char *msg){
 	packet *p = &packetBuffer;
-	strncpy((char *)(p->val.c+2),msg,254);
-	p->val.c[255] = 0;
+	strncpy((char *)(&p->v.u8[2]),msg,254);
+	p->v.u8[255] = 0;
 	packetQueue(p,16,256,-1);
 	printf("%s[MSG]%s %s\n",termColors[6],termReset,msg);
 }
@@ -83,17 +83,17 @@ void sendPlayerJoinMessage(uint c){
 
 void serverParseChatMsg(uint c,const packet *m){
 	char msg[256];
-	if(parseCommand(c,(const char *)(m->val.c+2))){return;}
-	snprintf(msg,sizeof(msg),"%s: %s",clients[c].playerName,(char *)(m->val.c+2));
+	if(parseCommand(c,(const char *)(&m->v.u8[2]))){return;}
+	snprintf(msg,sizeof(msg),"%s: %s",clients[c].playerName,(char *)(&m->v.u8[2]));
 	serverSendChatMsg(msg);
 }
 
 void serverParseDyingMsg(uint c,const packet *m){
 	char msg[256];
-	if((m->val.s[0] != 65535) && (m->val.s[0] < clientCount)){
-		snprintf(msg,sizeof(msg),"%s %s %s",clients[m->val.s[0]].playerName,(char *)(m->val.c+2),clients[c].playerName);
+	if((m->v.u16[0] != 65535) && (m->v.u16[0] < clientCount)){
+		snprintf(msg,sizeof(msg),"%s %s %s",clients[m->v.u16[0]].playerName,(char *)(&m->v.u8[2]),clients[c].playerName);
 	}else{
-		snprintf(msg,sizeof(msg),"%s %s",clients[c].playerName,(char *)(m->val.c+2));
+		snprintf(msg,sizeof(msg),"%s %s",clients[c].playerName,(char *)(&m->v.u8[2]));
 	}
 	serverSendChatMsg(msg);
 }
@@ -153,35 +153,36 @@ void msgUpdatePlayer(uint c){
 		if(i==c)                {continue;}
 		if(clients[i].c == NULL){continue;}
 		item *itm = characterGetItemBarSlot(clients[i].c,clients[i].c->activeItem);
+		const character *chr = clients[i].c;
 
-		rp->val.f[ 0] = clients[i].c->pos.x;
-		rp->val.f[ 1] = clients[i].c->pos.y;
-		rp->val.f[ 2] = clients[i].c->pos.z;
-		rp->val.f[ 3] = clients[i].c->rot.yaw;
-		rp->val.f[ 4] = clients[i].c->rot.pitch;
-		rp->val.f[ 5] = clients[i].c->rot.roll;
-		rp->val.f[ 6] = clients[i].c->vel.x;
-		rp->val.f[ 7] = clients[i].c->vel.y;
-		rp->val.f[ 8] = clients[i].c->vel.z;
-		rp->val.f[ 9] = clients[i].c->yoff;
-		rp->val.i[10] = clients[i].c->hook != NULL;
-		rp->val.f[11] = clients[i].c->hookPos.x;
-		rp->val.f[12] = clients[i].c->hookPos.y;
-		rp->val.f[13] = clients[i].c->hookPos.z;
-		rp->val.i[14] = clients[i].c->blockMiningX;
-		rp->val.i[15] = clients[i].c->blockMiningY;
-		rp->val.i[16] = clients[i].c->blockMiningZ;
+		rp->v.f[ 0]   = chr->pos.x;
+		rp->v.f[ 1]   = chr->pos.y;
+		rp->v.f[ 2]   = chr->pos.z;
+		rp->v.f[ 3]   = chr->rot.yaw;
+		rp->v.f[ 4]   = chr->rot.pitch;
+		rp->v.f[ 5]   = chr->rot.roll;
+		rp->v.f[ 6]   = chr->vel.x;
+		rp->v.f[ 7]   = chr->vel.y;
+		rp->v.f[ 8]   = chr->vel.z;
+		rp->v.f[ 9]   = chr->yoff;
+		rp->v.i32[10] = chr->hook != NULL;
+		rp->v.f[11]   = chr->hookPos.x;
+		rp->v.f[12]   = chr->hookPos.y;
+		rp->v.f[13]   = chr->hookPos.z;
+		rp->v.i32[14] = chr->blockMiningX;
+		rp->v.i32[15] = chr->blockMiningY;
+		rp->v.i32[16] = chr->blockMiningZ;
 		if(itm == NULL){
-			rp->val.i[17] = 0;
+			rp->v.i32[17] = 0;
 		}else{
-			rp->val.i[17] = itm->ID;
+			rp->v.i32[17] = itm->ID;
 		}
-		rp->val.i[18] = clients[i].c->animationIndex;
-		rp->val.i[19] = i;
-		rp->val.i[20] = clients[i].c->animationTicksMax;
-		rp->val.i[21] = clients[i].c->animationTicksLeft;
-		rp->val.i[22] = clients[i].c->flags;
-		rp->val.i[23] = clients[i].c->hp;
+		rp->v.i32[18] = chr->animationIndex;
+		rp->v.i32[19] = i;
+		rp->v.i32[20] = chr->animationTicksMax;
+		rp->v.i32[21] = chr->animationTicksLeft;
+		rp->v.i32[22] = chr->flags;
+		rp->v.i32[23] = chr->hp;
 		packetQueue(rp,15,24*4,c);
 	}
 
@@ -195,37 +196,37 @@ void msgUpdatePlayer(uint c){
 }
 
 void serverParsePlayerPos(uint c,const packet *p){
-	clients[c].c->pos                = vecNewP(&p->val.f[ 0]);
-	clients[c].c->rot                = vecNewP(&p->val.f[ 3]);
-	clients[c].c->vel                = vecNewP(&p->val.f[ 6]);
-	clients[c].c->yoff               = p->val.f[ 9];
-	if(p->val.i[10]){
+	clients[c].c->pos                = vecNewP(&p->v.f[ 0]);
+	clients[c].c->rot                = vecNewP(&p->v.f[ 3]);
+	clients[c].c->vel                = vecNewP(&p->v.f[ 6]);
+	clients[c].c->yoff               = p->v.f[ 9];
+	if(p->v.i32[10]){
 		clients[c].c->hook           = (grapplingHook *)0x8;
 	}else{
 		clients[c].c->hook           = NULL;
 	}
 
-	clients[c].c->hookPos            = vecNewP(&p->val.f[11]);
-	clients[c].c->blockMiningX       = p->val.i[14];
-	clients[c].c->blockMiningY       = p->val.i[15];
-	clients[c].c->blockMiningZ       = p->val.i[16];
-	clients[c].c->activeItem         = p->val.i[17];
-	clients[c].c->animationIndex     = p->val.i[18];
-	clients[c].c->animationTicksMax  = p->val.i[20];
-	clients[c].c->animationTicksLeft = p->val.i[21];
-	clients[c].c->flags              = p->val.i[22];
-	clients[c].c->hp                 = p->val.i[23];
+	clients[c].c->hookPos            = vecNewP(&p->v.f[11]);
+	clients[c].c->blockMiningX       = p->v.i32[14];
+	clients[c].c->blockMiningY       = p->v.i32[15];
+	clients[c].c->blockMiningZ       = p->v.i32[16];
+	clients[c].c->activeItem         = p->v.i32[17];
+	clients[c].c->animationIndex     = p->v.i32[18];
+	clients[c].c->animationTicksMax  = p->v.i32[20];
+	clients[c].c->animationTicksLeft = p->v.i32[21];
+	clients[c].c->flags              = p->v.i32[22];
+	clients[c].c->hp                 = p->v.i32[23];
 
 	clients[c].flags |= CONNECTION_DO_UPDATE;
 }
 
 void msgSendChunk(uint c, const chunk *chnk){
 	packet *p = &packetBuffer;
-	memcpy(p->val.c,chnk->data,sizeof(chnk->data));
-	p->val.i[1024] = chnk->x;
-	p->val.i[1025] = chnk->y;
-	p->val.i[1026] = chnk->z;
-	packetQueue(p,18,1027*4,c);
+	memcpy(p->v.u8,chnk->data,sizeof(chnk->data));
+	p->v.u16[2048] = chnk->x;
+	p->v.u16[2049] = chnk->y;
+	p->v.u16[2050] = chnk->z;
+	packetQueue(p,18,1026*4,c);
 }
 
 void serverParseSinglePacket(uint c, packet *p){
@@ -241,17 +242,16 @@ void serverParseSinglePacket(uint c, packet *p){
 			if(verbose){printf("[%02i] requestPlayerSpawnPos\n",c);}
 			break;
 		case 2: // requestChungus
-			addChungusToQueue(c,p->val.i[0],p->val.i[1],p->val.i[2]);
+			addChungusToQueue(c,p->v.u8[0],p->v.u8[1],p->v.u8[2]);
 			if(verbose){printf("[%02i] requestChungus\n",c);}
 			break;
 		case 3: // placeBlock
-			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],p->val.i[3]);
-			//sendToAllExcept(c,p,pLen+4);
+			worldSetB(p->v.u16[0],p->v.u16[1],p->v.u16[2],p->v.u16[3]);
 			if(verbose){printf("[%02i] placeBlock\n",c);}
 			break;
 		case 4: // mineBlock
-			blockMiningDropItemsPos(p->val.i[0],p->val.i[1],p->val.i[2],worldGetB(p->val.i[0],p->val.i[1],p->val.i[2]));
-			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],0);
+			blockMiningDropItemsPos(p->v.u16[0],p->v.u16[1],p->v.u16[2],worldGetB(p->v.u16[0],p->v.u16[1],p->v.u16[2]));
+			worldSetB(p->v.u16[0],p->v.u16[1],p->v.u16[2],0);
 			//sendToAllExcept(c,p,pLen+4);
 			if(verbose){printf("[%02i] mineBlock\n",c);}
 			break;
@@ -267,11 +267,11 @@ void serverParseSinglePacket(uint c, packet *p){
 			fprintf(stderr,"worldSetChungusLoaded received from client, which should never happen\n");
 			serverKill(c);
 			break;
-		case 8: // CharacterGotHit
-			msgCharacterGotHit(c,p->val.i[0]);
+		case 8: // BeingGotHit
+			//msgCharacterGotHit(c,p->val.i[0]);
 			if(verbose){printf("[%02i] msgCharacterGotHit\n",c);}
 			break;
-		case 9: // PlayerJoin
+		case 9: // PlayerJoin !!!!1 Still needed???
 			fprintf(stderr,"PlayerJoin received from client, which should never happen\n");
 			serverKill(c);
 			break;
@@ -338,17 +338,27 @@ void serverParseSinglePacket(uint c, packet *p){
 			fprintf(stderr,"msgItemDropUpdate received from client, which should never happen\n");
 			serverKill(c);
 			break;
-		case 26:
-			msgPlayerDamage(p->val.s[1],p->val.s[0],p->val.s[1],p->val.s[2],c,vecNewP(&p->val.f[2]));
-			break;
+		case 26: {
+			const i16 hp    = p->v.i16[0];
+			const i16 cause = p->v.u16[1];
+
+			const being target  = p->v.u32[1];
+			const being culprit = beingCharacter(c);;
+
+			const vec pos = vecNewP(&p->v.f[2]);
+			msgBeingDamage(beingID(target),hp,cause,target,culprit,pos);
+			msgBeingGotHit(hp,cause,target,culprit);
+			break; }
 		case 27:
-			chungusUnsubscribePlayer(world.chungi[p->val.i[0]][p->val.i[1]][p->val.i[2]],c);
+			chungusUnsubscribePlayer(world.chungi[p->v.u8[0]][p->v.u8[1]&0x7F][p->v.u8[2]],c);
 			break;
 		case 28:
 			fprintf(stderr,"characterSetData received from client, which should never happen\n");
 			serverKill(c);
 			break;
 		case 29:
+			//fprintf(stderr,"characterSetInventory received from client, which should never happen\n");
+			//serverKill(c);
 			characterSetInventoryP(clients[c].c,p);
 			break;
 		case 30:
@@ -356,7 +366,7 @@ void serverParseSinglePacket(uint c, packet *p){
 			serverKill(c);
 			break;
 		case 31:
-			worldDirtyChunk(c,p->val.i[0],p->val.i[1],p->val.i[2]);
+			worldDirtyChunk(c,p->v.u16[0],p->v.u16[1],p->v.u16[2]);
 			break;
 		case 32:
 			animalDmgPacket(c,p);
@@ -467,16 +477,16 @@ void serverParse(){
 	}
 }
 
-void addChungusToQueue(uint c, u16 x, u16 y, u16 z){
-	u64 entry = 0;
+void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
+	u32 entry = 0;
 	if(c >= clientCount){return;}
 	if(clients[c].chngReqQueueLen >= sizeof(clients[c].chngReqQueue)){
 		printf("Chungus Request Queue full!\n");
 		return;
 	}
-	entry |=  (u64)x & 0xFFFF;
-	entry |= ((u64)y & 0xFFFF) << 16;
-	entry |= ((u64)z & 0xFFFF) << 32;
+	entry |=  (u32)x & 0xFFF;
+	entry |= ((u32)y & 0xFF) <<  8;
+	entry |= ((u32)z & 0xFF) << 16;
 	clients[c].chngReqQueue[clients[c].chngReqQueueLen++] = entry;
 }
 
@@ -495,12 +505,12 @@ void addChunkToQueue(uint c, u16 x, u16 y, u16 z){
 void addChunksToQueue(uint c){
 	if(c >= clientCount){return;}
 	if(clients[c].chngReqQueueLen == 0){return;}
-	u64 entry = clients[c].chngReqQueue[--clients[c].chngReqQueueLen];
-	u16 cx =  entry        & 0xFFFF;
-	u16 cy = (entry >> 16) & 0xFFFF;
-	u16 cz = (entry >> 32) & 0xFFFF;
+	u32 entry = clients[c].chngReqQueue[--clients[c].chngReqQueueLen];
+	u8 cx =  entry        & 0xFF;
+	u8 cy = (entry >>  8) & 0xFF;
+	u8 cz = (entry >> 16) & 0xFF;
 
-	chungus *chng = worldGetChungus(cx>>8,cy>>8,cz>>8);
+	chungus *chng = worldGetChungus(cx,cy,cz);
 	if(chng == NULL){
 		return;
 	}
@@ -509,12 +519,13 @@ void addChunksToQueue(uint c){
 		for(int y=15;y>= 0;--y){
 			for(int z=15;z>= 0;--z){
 				if(chng->chunks[x][y][z] != NULL){
-					addChunkToQueue(c,cx|(x<<4),cy|(y<<4),cz|(z<<4));
+					addChunkToQueue(c,(cx<<8)|(x<<4),(cy<<8)|(y<<4),(cz<<8)|(z<<4));
 				}
 			}
 		}
 	}
-	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = entry | (u64)1<<62;
+	u64 centry = ((u64)cx<<8) | ((u64)cy<<24) | ((u64)cz<<40);
+	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = centry | (u64)1<<62;
 	chungusSetUpdated(chng,c);
 }
 
@@ -532,7 +543,7 @@ void addQueuedChunks(uint c){
 		u16 cy = (entry >> 16) & 0xFFFF;
 		u16 cz = (entry >> 32) & 0xFFFF;
 		if(entry & ((u64)1<<62)){
-			msgSendChungusComplete(c,cx,cy,cz);
+			msgSendChungusComplete(c,cx>>8,cy>>8,cz>>8);
 		}else{
 			chunk *chnk = worldGetChunk(cx,cy,cz);
 			if(chnk != NULL){

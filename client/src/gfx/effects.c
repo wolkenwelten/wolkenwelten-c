@@ -59,10 +59,7 @@ void fxExplosionBlaster(const vec pos,float pw){
 		newParticleV(pos,v,vecMulS(v,1/-96.f),16.f,4.f,0xFF7730A0,128);
 	}
 }
-void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultiplier, float recoilMultiplier, uint hitsLeft, uint originatingCharacter){
-	(void)recoilMultiplier;
-	(void)hitsLeft;
-	(void)originatingCharacter;
+void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultiplier){
 	float lastDist = 999999.f;
 	vec v,c = pb;
 

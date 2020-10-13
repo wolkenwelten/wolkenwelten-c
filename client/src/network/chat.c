@@ -24,9 +24,9 @@ void chatEmpty(){
 
 void msgSendChatMessage(const char *msg){
 	packet *p = &packetBuffer;
-	p->val.s[0]=0;
-	strncpy((char *)(p->val.c+2),msg,254);
-	p->val.c[255] = 0;
+	p->v.u16[0]=0;
+	strncpy((char *)(&p->v.u8[2]),msg,254);
+	p->v.u8[255] = 0;
 	packetQueueToServer(p,16,256);
 
 	for(int i=7;i>0;i--){
@@ -41,7 +41,7 @@ void chatParsePacket(const packet *p){
 	for(int i=0;i<11;i++){
 		memcpy(chatLog[i],chatLog[i+1],256);
 	}
-	strncpy(chatLog[11],(char *)(p->val.c+2),254);
+	memcpy(chatLog[11],(char *)(&p->v.u8[2]),254);
 	chatLog[11][255]=0;
 }
 
@@ -55,9 +55,9 @@ void chatPrintDebug(const char *msg){
 
 void msgSendDyingMessage(const char *msg, int c){
 	packet *p = &packetBuffer;
-	strncpy((char *)(p->val.c+2),msg,254);
-	p->val.s[0] = c;
-	p->val.c[255] = 0;
+	strncpy((char *)(&p->v.u8[2]),msg,254);
+	p->v.u16[0]  = c;
+	p->v.u8[255] = 0;
 	packetQueueToServer(p,17,256);
 }
 

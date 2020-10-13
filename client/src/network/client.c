@@ -45,14 +45,14 @@ int connectionTries   = 0;
 #endif
 
 void msgParseGetChunk(const packet *p){
-	int x = p->val.i[1024];
-	int y = p->val.i[1025];
-	int z = p->val.i[1026];
+	u16 x = p->v.u16[2048];
+	u16 y = p->v.u16[2049];
+	u16 z = p->v.u16[2050];
 	chungus *chng =  worldGetChungus(x>>8,y>>8,z>>8);
 	if(chng == NULL){return;}
 	chunk *chnk = chungusGetChunkOrNew(chng,x,y,z);
 	if(chnk == NULL){return;}
-	memcpy(chnk->data,p->val.c,sizeof(chnk->data));
+	memcpy(chnk->data,p->v.u8,sizeof(chnk->data));
 	chnk->ready &= ~15;
 }
 
@@ -65,42 +65,46 @@ void msgSendPlayerPos(){
 	}
 	packet *p = &packetBuffer;
 
-	p->val.f[ 0] = player->pos.x;
-	p->val.f[ 1] = player->pos.y;
-	p->val.f[ 2] = player->pos.z;
-	p->val.f[ 3] = player->rot.yaw;
-	p->val.f[ 4] = player->rot.pitch;
-	p->val.f[ 5] = player->rot.roll;
-	p->val.f[ 6] = player->vel.x;
-	p->val.f[ 7] = player->vel.y;
-	p->val.f[ 8] = player->vel.z;
-	p->val.f[ 9] = player->yoff;
+	p->v.f[ 0] = player->pos.x;
+	p->v.f[ 1] = player->pos.y;
+	p->v.f[ 2] = player->pos.z;
+
+	p->v.f[ 3] = player->rot.yaw;
+	p->v.f[ 4] = player->rot.pitch;
+	p->v.f[ 5] = player->rot.roll;
+
+	p->v.f[ 6] = player->vel.x;
+	p->v.f[ 7] = player->vel.y;
+	p->v.f[ 8] = player->vel.z;
+
+	p->v.f[ 9] = player->yoff;
 
 	if(player->hook != NULL){
-		p->val.i[10] = 1;
-		p->val.f[11] = player->hook->ent->pos.x;
-		p->val.f[12] = player->hook->ent->pos.y;
-		p->val.f[13] = player->hook->ent->pos.z;
+		p->v.i32[10] = 1;
+		p->v.f[11] = player->hook->ent->pos.x;
+		p->v.f[12] = player->hook->ent->pos.y;
+		p->v.f[13] = player->hook->ent->pos.z;
 	} else {
-		p->val.i[10] = 0;
+		p->v.i32[10] = 0;
 	}
-	p->val.i[14] = player->blockMiningX;
-	p->val.i[15] = player->blockMiningY;
-	p->val.i[16] = player->blockMiningZ;
-	p->val.i[17] = player->activeItem;
-	p->val.i[18] = player->animationIndex;
-	p->val.i[20] = player->animationTicksMax;
-	p->val.i[21] = player->animationTicksLeft;
-	p->val.i[22] = player->flags;
-	p->val.i[23] = player->hp;
+	p->v.i32[14] = player->blockMiningX;
+	p->v.i32[15] = player->blockMiningY;
+	p->v.i32[16] = player->blockMiningZ;
+
+	p->v.i32[17] = player->activeItem;
+	p->v.i32[18] = player->animationIndex;
+	p->v.i32[20] = player->animationTicksMax;
+	p->v.i32[21] = player->animationTicksLeft;
+	p->v.i32[22] = player->flags;
+	p->v.i32[23] = player->hp;
 
 	packetQueueToServer(p,15,24*4);
 }
 
 void decompressPacket(const packet *p){
+	static u8 buf[1<<20];
 	u8 *t;
-	u8 buf[1<<20];
-	int len = LZ4_decompress_safe((const char *)&p->val.c, (char *)buf, packetLen(p), sizeof(buf));
+	int len = LZ4_decompress_safe((const char *)&p->v.u8, (char *)buf, packetLen(p), sizeof(buf));
 	if(len <= 0){
 		fprintf(stderr,"Decompression return %i\n",len);
 		exit(1);
@@ -121,8 +125,8 @@ void clientParsePacket(const packet *p){
 		case 0: // Keepalive
 			break;
 		case 1: // playerPos
-			characterSetPos(player,vecNewP(&p->val.f[0]));
-			characterSetRot(player,vecNewP(&p->val.f[3]));
+			characterSetPos(player,vecNewP(&p->v.f[0]));
+			characterSetRot(player,vecNewP(&p->v.f[3]));
 			characterSetVelocity(player,vecZero());
 			characterFreeHook(player);
 			player->flags &= ~CHAR_SPAWNING;
@@ -131,11 +135,11 @@ void clientParsePacket(const packet *p){
 			fprintf(stderr,"Received a requestChungus packet from the server which should never happen.\n");
 			break;
 		case 3: // placeBlock
-			worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],p->val.i[3]);
+			worldSetB(p->v.u16[0],p->v.u16[1],p->v.u16[2],p->v.u16[3]);
 			break;
 		case 4: // mineBlock
-			if(worldSetB(p->val.i[0],p->val.i[1],p->val.i[2],0)){
-				fxBlockBreak(vecNew(p->val.i[0],p->val.i[1],p->val.i[2]),p->val.i[3]);
+			if(worldSetB(p->v.u16[0],p->v.u16[1],p->v.u16[2],0)){
+				fxBlockBreak(vecNew(p->v.u16[0],p->v.u16[1],p->v.u16[2]),p->v.u16[3]);
 			}
 			break;
 		case 5: // Goodbye
@@ -145,10 +149,11 @@ void clientParsePacket(const packet *p){
 			blockMiningUpdateFromServer(p);
 			break;
 		case 7:
-			worldSetChungusLoaded(p->val.i[0],p->val.i[1],p->val.i[2]);
+			worldSetChungusLoaded(p->v.u8[0],p->v.u8[1],p->v.u8[2]);
 			break;
 		case 8:
-			characterGotHitBroadcast(p->val.i[1],p->val.i[0]);
+			// ToDo: beingGotHit
+			//characterGotHitBroadcast(p->val.i[1],p->val.i[0]);
 			break;
 		case 9:
 			fprintf(stderr,"Received a PlayerJoin packet from the server which should never happen.\n");
@@ -169,7 +174,7 @@ void clientParsePacket(const packet *p){
 			characterSetName(p);
 			break;
 		case 15: // playerPos
-			characterSetPlayerPos(p);
+			characterUpdatePacket(p);
 			break;
 		case 16: // chatMsg
 			chatParsePacket(p);
@@ -181,22 +186,22 @@ void clientParsePacket(const packet *p){
 			msgParseGetChunk(p);
 			break;
 		case 19: // setPlayerCount
-			characterRemovePlayer(p->val.u[1],p->val.u[0]);
+			characterRemovePlayer(p->v.u16[1],p->v.u16[0]);
 			break;
 		case 20: // playerPickupItem
-			characterPickupItem(player,p->val.s[0],p->val.s[1]);
+			characterPickupItem(player,p->v.u16[0],p->v.i16[1]);
 			break;
 		case 21: // itemDropUpdate
 			fprintf(stderr,"Received an itemDropDel msg from the server, this should never happen.\n");
 			break;
 		case 22: // grenadeExplode
-			grenadeExplode(vecNewP(&p->val.f[0]),p->val.f[3],p->val.i[4]);
+			grenadeExplode(vecNewP(&p->v.f[0]),((float)p->v.u16[6])/256.f,p->v.u16[7]);
 			break;
 		case 23: // grenadeUpdate
 			grenadeUpdateFromServer(p);
 			break;
 		case 24: // fxBeamBlaster
-			fxBeamBlaster(vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]),p->val.f[6],p->val.f[7],p->val.f[8],p->val.i[9],p->val.i[10]);
+			fxBeamBlaster(vecNewP(&p->v.f[0]),vecNewP(&p->v.f[3]),p->v.f[6],p->v.f[7]);
 			break;
 		case 25: // msgItemDropUpdate
 			itemDropUpdateFromServer(p);

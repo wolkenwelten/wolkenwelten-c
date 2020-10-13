@@ -84,34 +84,29 @@ void animalUpdateAll(){
 }
 
 void animalSyncFromServer(const packet *p){
-	animalCount   = p->val.u[ 3];
-	uint i        = p->val.u[ 2];
+	animalCount   = p->v.u16[5];
+	const uint i  = p->v.u16[4];
 	if (i >= animalCount){ return; }
 	animal *e     = &animalList[i];
 
-	e->pos.x      = p->val.f[ 4];
-	e->pos.y      = p->val.f[ 5];
-	e->pos.z      = p->val.f[ 6];
-	e->vel.x      = p->val.f[ 7];
-	e->vel.y      = p->val.f[ 8];
-	e->vel.z      = p->val.f[ 9];
-	e->gvel.x     = p->val.f[10];
-	e->gvel.y     = p->val.f[11];
-	e->gvel.z     = p->val.f[12];
-	e->rot.yaw    = p->val.f[13];
-	e->rot.pitch  = p->val.f[14];
-	e->grot.yaw   = p->val.f[15];
-	e->grot.pitch = p->val.f[16];
+	e->pos        = vecNewP(&p->v.f[3]);
+	e->vel        = vecNewP(&p->v.f[6]);
+	e->gvel       = vecNewP(&p->v.f[9]);
+	e->rot.yaw    = p->v.f[12];
+	e->rot.pitch  = p->v.f[13];
 
-	e->type       = p->val.c[ 0];
-	e->flags      = p->val.c[ 1];
-	e->state      = p->val.c[ 2];
+	e->grot.yaw   = p->v.f[14];
+	e->grot.pitch = p->v.f[15];
 
-	e->age        = p->val.c[ 3];
-	e->health     = p->val.c[ 4];
-	e->hunger     = p->val.c[ 5];
-	e->thirst     = p->val.c[ 6];
-	e->sleepy     = p->val.c[ 7];
+	e->type       = p->v.u8[ 0];
+	e->flags      = p->v.u8[ 1];
+	e->state      = p->v.u8[ 2];
+
+	e->age        = p->v.i8[ 3];
+	e->health     = p->v.i8[ 4];
+	e->hunger     = p->v.i8[ 5];
+	e->thirst     = p->v.i8[ 6];
+	e->sleepy     = p->v.i8[ 7];
 }
 
 int animalHitCheck(const vec pos, float mdd, int dmg, int cause, uint iteration){
@@ -120,7 +115,7 @@ int animalHitCheck(const vec pos, float mdd, int dmg, int cause, uint iteration)
 		if(animalList[i].temp == iteration){continue;}
 		const vec d = vecSub(pos,animalList[i].pos);
 		if(vecDot(d,d) < mdd){
-			msgAnimalDamage(0,dmg,i,cause,0);
+			msgBeingDamage(0,dmg,cause,beingAnimal(i),0,pos);
 			animalList[i].temp = iteration;
 			hits++;
 		}

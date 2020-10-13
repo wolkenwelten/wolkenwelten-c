@@ -120,16 +120,13 @@ void blockMiningInit(){
 }
 
 void blockMiningUpdateFromServer(const packet *p){
-	if(p->val.i[2] < blockMiningCount){
-		blockMiningCount = p->val.i[2];
-	}
-	if((p->val.i[3] >= blockMiningCount) && (p->val.i[3] < p->val.i[2])){
-		blockMiningCount = p->val.i[3]+1;
-	}
-	blockMining *bm = &blockMiningList[p->val.i[3]];
-	bm->x      =  p->val.i[0]        & 0xFFFF;
-	bm->y      = (p->val.i[0] >> 16) & 0xFFFF;
-	bm->z      =  p->val.i[1]        & 0xFFFF;
-	bm->damage = (p->val.i[1] >> 16) & 0xFFFF;
+	blockMiningCount = p->v.u16[5];
+	const int i = p->v.u16[4];
+	if(i >= blockMiningCount){return;}
+	blockMining *bm = &blockMiningList[i];
+	bm->x      = p->v.u16[0];
+	bm->y      = p->v.u16[1];
+	bm->z      = p->v.u16[2];
+	bm->damage = p->v.i16[3];
 	bm->b      = worldGetB(bm->x,bm->y,bm->z);
 }

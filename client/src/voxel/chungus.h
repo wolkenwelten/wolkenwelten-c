@@ -5,7 +5,7 @@
 #define CHUNGUS_SIZE (16*16)
 
 struct chungus {
-	int x,y,z,loaded;
+	u8 x,y,z,loaded;
 	void *nextFree;
 	chunk *chunks[16][16][16];
 };
@@ -18,14 +18,14 @@ typedef struct {
 	};
 } queueEntry;
 
-chungus *chungusNew            (int x,int y, int z);
+chungus *chungusNew            (u8 x,u8 y, u8 z);
 void     chungusFree           (chungus *c);
-void     chungusBox            (chungus *c, int x, int y, int z, int w, int h, int d, u8 block);
-void     chungusBoxF           (chungus *c, int x, int y, int z, int w, int h, int d, u8 block);
-void     chungusSetB           (chungus *c, int x, int y, int z, u8 block);
-u8       chungusGetB           (chungus *c, int x, int y, int z);
-chunk   *chungusGetChunk       (chungus *c, int x, int y, int z);
-chunk   *chungusGetChunkOrNew  (chungus *c, int x, int y, int z);
+void     chungusBox            (chungus *c, u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, u8 block);
+void     chungusBoxF           (chungus *c, u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, u8 block);
+void     chungusSetB           (chungus *c, u16 x, u16 y, u16 z, u8 block);
+u8       chungusGetB           (chungus *c, u16 x, u16 y, u16 z);
+chunk   *chungusGetChunk       (chungus *c, u16 x, u16 y, u16 z);
+chunk   *chungusGetChunkOrNew  (chungus *c, u16 x, u16 y, u16 z);
 void     chungusQueueDraws     (chungus *c,const character *cam, queueEntry *drawQueue,int *drawQueueLen);
 chungus *chungusGetActive      (uint i);
 void     chungusSetActiveCount (uint i);

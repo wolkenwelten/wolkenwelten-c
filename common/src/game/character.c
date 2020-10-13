@@ -262,8 +262,9 @@ bool characterTryToShoot(character *c, item *i, int cooldown, int bulletcount){
 void characterSetInventoryP(character *c, const packet *p){
 	if(c == NULL){return;}
 	uint max = MIN(40,packetLen(p)/4);
+	uint ii = 0;
 	for(uint i=0;i<max;i++){
-		c->inventory[i].ID     = p->val.s[(i<<1)  ];
-		c->inventory[i].amount = p->val.s[(i<<1)+1];
+		c->inventory[i].ID     = p->v.u16[ii++];
+		c->inventory[i].amount = p->v.i16[ii++];
 	}
 }

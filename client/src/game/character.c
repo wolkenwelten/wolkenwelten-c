@@ -82,23 +82,23 @@ void characterFree(character *c){
 	characterFirstFree = c;
 }
 
-void characterSetPlayerPos(const packet *p){
-	const int i = p->val.i[19];
+void characterUpdatePacket(const packet *p){
+	const int i = p->v.i32[19];
 	if(playerList[i] == NULL){
 		playerList[i] = characterNew();
 	}
-	playerList[i]->pos  = vecNewP(&p->val.f[0]);
-	playerList[i]->rot  = vecNewP(&p->val.f[3]);
-	playerList[i]->vel  = vecNewP(&p->val.f[6]);
-	playerList[i]->yoff = p->val.f[9];
+	playerList[i]->pos  = vecNewP(&p->v.f[0]);
+	playerList[i]->rot  = vecNewP(&p->v.f[3]);
+	playerList[i]->vel  = vecNewP(&p->v.f[6]);
+	playerList[i]->yoff = p->v.f[9];
 
-	if(p->val.i[10]){
+	if(p->v.i32[10]){
 		if(playerList[i]->hook == NULL){
 			playerList[i]->hook = grapplingHookNew(playerList[i]);
 		}
 		playerList[i]->hook->hooked     = true;
 		playerList[i]->hook->ent->flags = ENTITY_NOCLIP;
-		playerList[i]->hook->ent->pos   = vecNewP(&p->val.f[11]);
+		playerList[i]->hook->ent->pos   = vecNewP(&p->v.f[11]);
 		playerList[i]->hook->ent->vel   = vecZero();
 	}else{
 		if(playerList[i]->hook != NULL){
@@ -106,14 +106,14 @@ void characterSetPlayerPos(const packet *p){
 			playerList[i]->hook = NULL;
 		}
 	}
-	playerList[i]->inventory[0] = itemNew(p->val.u[17],1);
+	playerList[i]->inventory[0] = itemNew(p->v.u32[17],1);
 	playerList[i]->activeItem   = 0;
 
-	playerList[i]->animationIndex     = p->val.i[18];
-	playerList[i]->animationTicksMax  = p->val.i[20];
-	playerList[i]->animationTicksLeft = p->val.i[21];
-	playerList[i]->flags              = p->val.i[22];
-	playerList[i]->hp                 = p->val.i[23];
+	playerList[i]->animationIndex     = p->v.i32[18];
+	playerList[i]->animationTicksMax  = p->v.i32[20];
+	playerList[i]->animationTicksLeft = p->v.i32[21];
+	playerList[i]->flags              = p->v.i32[22];
+	playerList[i]->hp                 = p->v.i32[23];
 }
 
 void characterRemovePlayer(int c, int len){
@@ -594,8 +594,8 @@ void characterFreeHook(character *c){
 }
 
 void characterMoveDelta(character *c, const packet *p){
-	c->vel   = vecAdd(c->vel,vecNewP(&p->val.f[0]));
-	c->rot   = vecAdd(c->rot,vecNewP(&p->val.f[3]));
+	c->vel   = vecAdd(c->vel,vecNewP(&p->v.f[0]));
+	c->rot   = vecAdd(c->rot,vecNewP(&p->v.f[3]));
 	c->shake = vecMag(c->vel)*8.f;
 }
 
@@ -753,19 +753,23 @@ static void characterDyingMessage(u16 cause, u16 culprit){
 }
 
 void characterDamagePacket(character *c, const packet *p){
-	const u16 cause   = p->val.s[2];
-	const u16 culprit = p->val.s[3];
+	const being target  = p->v.u32[1];
+	const being culprit = p->v.u32[2];
+	const u16 cause     = p->v.u16[1];
+	const i16 hp        = p->v.u16[0];
+	if(beingType(target) != BEING_CHARACTER){return;}
+	// ToDo: check if beingID == clientID
+
 	if(cause == 2){
 		sfxPlay(sfxImpact,1.f);
 		sfxPlay(sfxUngh,  1.f);
 		setOverlayColor(0xA03020F0,0);
 		commitOverlayColor();
-		msgCharacterGotHit(-1,1);
-		vec pos = vecNewP(&p->val.f[2]);
+		vec pos = vecNewP(&p->v.f[3]);
 		vec dis = vecNorm(vecSub(c->pos,pos));
 		c->vel = vecAdd(c->vel,vecMulS(dis,0.04f));
 	}
-	if(characterDamage(c,p->val.i[0])){
+	if(characterDamage(c,hp)){
 		characterDyingMessage(cause,culprit);
 	}
 }
@@ -792,14 +796,14 @@ bool characterPlaceBlock(character *c,item *i){
 }
 
 void characterSetData(character *c, const packet *p){
-	c->hp         = p->val.i[0];
-	c->activeItem = p->val.i[1];
-	c->flags      = p->val.u[2];
+	c->hp         = p->v.i16[0];
+	c->activeItem = p->v.u16[1];
+	c->flags      = p->v.u32[2];
 }
 
 void characterSetName(const packet *p){
-	if(p->val.s[0] >= 32){return;}
-	memcpy(playerNames[p->val.s[0]],&p->val.c[2],32);
+	if(p->v.u16[0] >= 32){return;}
+	memcpy(playerNames[p->v.u16[0]],&p->v.u8[2],32);
 }
 
 character *characterGetPlayer(uint i){
@@ -834,7 +838,7 @@ int characterHitCheck(const vec pos, float mdd, int damage, int cause, uint iter
 		if(playerList[i]->temp == iteration) {continue;}
 		vec dis = vecSub(pos,playerList[i]->pos);
 		if(vecDot(dis,dis) < mdd){
-			msgPlayerDamage(0,damage,i,cause,0,pos);
+			msgBeingDamage(0,damage,cause,beingCharacter(i),0,pos);
 			playerList[i]->temp = iteration;
 			hits++;
 		}

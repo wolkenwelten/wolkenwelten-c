@@ -32,8 +32,8 @@ void itemDropUpdate(){
 }
 
 void itemDropUpdateFromServer(const packet *p){
-	u16 d   = p->val.s[0];
-	u16 len = p->val.s[1];
+	const u16 d   = p->v.u16[0];
+	const u16 len = p->v.u16[1];
 
 	if(len < itemDropCount){
 		for(int i=MAX(0,len-1);i<itemDropCount;i++){
@@ -50,10 +50,10 @@ void itemDropUpdateFromServer(const packet *p){
 		itemDrops[d].ent     = entityNew(vecZero(),vecZero());
 		itemDrops[d].aniStep = rngValM(1024);
 	}
-	itemDrops[d].itm.ID     = p->val.s[2];
-	itemDrops[d].itm.amount = p->val.s[3];
+	itemDrops[d].itm.ID     = p->v.u16[2];
+	itemDrops[d].itm.amount = p->v.i16[3];
 
 	itemDrops[d].ent->eMesh = getMeshDispatch(&itemDrops[d].itm);
-	itemDrops[d].ent->pos   = vecNewP(&p->val.f[2]);
-	itemDrops[d].ent->vel   = vecNewP(&p->val.f[5]);
+	itemDrops[d].ent->pos   = vecNewP(&p->v.f[2]);
+	itemDrops[d].ent->vel   = vecNewP(&p->v.f[5]);
 }

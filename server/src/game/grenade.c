@@ -65,7 +65,7 @@ void grenadeExplode(uint g){
 }
 
 void grenadeNewP(const packet *p){
-	grenadeNew(vecNewP(&p->val.f[0]),vecNewP(&p->val.f[3]),p->val.f[6],p->val.i[7],p->val.f[8]);
+	grenadeNew(vecNewP(&p->v.f[0]),vecNewP(&p->v.f[3]),p->v.f[6],p->v.i32[7],p->v.f[8]);
 }
 
 void grenadeUpdate(){
@@ -88,8 +88,8 @@ void grenadeUpdatePlayer(uint c){
 				c,
 				grenadeList[i].ent->pos,
 				grenadeList[i].ent->vel,
-				grenadeCount,
-				i
+				i,
+				grenadeCount
 			);
 		}
 	}
@@ -97,12 +97,12 @@ void grenadeUpdatePlayer(uint c){
 
 void beamblastNewP(uint c, const packet *p){
 	float speed            = 0.1f;
-	float beamSize         = p->val.f[6];
-	float damageMultiplier = p->val.f[7];
-	float recoilMultiplier = p->val.f[8];
+	float beamSize         = p->v.f[6];
+	float damageMultiplier = p->v.f[7];
+	float recoilMultiplier = p->v.f[8];
 
-	const vec start = vecNewP(&p->val.f[0]);
-	const vec end   = vecNewP(&p->val.f[3]);
+	const vec start = vecNewP(&p->v.f[0]);
+	const vec end   = vecNewP(&p->v.f[3]);
 	const vec vel   = vecMulS(vecNorm(vecSub(end,start)),speed);
 	vec pos = start;
 
@@ -113,7 +113,7 @@ void beamblastNewP(uint c, const packet *p){
 			explode(pos,0.5f*beamSize,1);
 		}
 	}
-	msgFxBeamBlaster(c,start,pos,beamSize,damageMultiplier,recoilMultiplier);
+	msgFxBeamBlaster(c,start,pos,beamSize,damageMultiplier);
 	const vec rev = vecMulS(vel,-0.75f*recoilMultiplier);
 	msgPlayerMove(c, rev, vecNew((rngValf()-0.5f) * 64.f * recoilMultiplier, (rngValf()-.8f) * 64.f * recoilMultiplier, 0.f));
 }

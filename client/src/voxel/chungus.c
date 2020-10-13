@@ -31,7 +31,7 @@ float chunkDistance(const vec cam, const vec pos){
 	return vecMag(vecSub(pos,cam));
 }
 
-chungus *chungusNew(int x, int y, int z){
+chungus *chungusNew(u8 x, u8 y, u8 z){
 	chungus *c = NULL;
 	if(chungusFirstFree == NULL){
 		if(chungusCount >= (int)(sizeof(chungusList) / sizeof(chungus))-1){
@@ -69,15 +69,15 @@ void chungusFree(chungus *c){
 }
 
 void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,int *drawQueueLen){
-	const vec coff = vecNew(c->x,c->y,c->z);
+	const vec coff = vecNew(c->x<<8,c->y<<8,c->z<<8);
 	for(int x=0;x<16;x++){
-		const int cx = x*CHUNK_SIZE+CHUNK_SIZE/2+c->x;
+		const int cx = x*CHUNK_SIZE+CHUNK_SIZE/2+(c->x<<8);
 		for(int y=0;y<16;y++){
-			const int cy = y*CHUNK_SIZE+CHUNK_SIZE/2+c->y;
+			const int cy = y*CHUNK_SIZE+CHUNK_SIZE/2+(c->y<<8);
 			for(int z=0;z<16;z++){
 				if(c->chunks[x][y][z] == NULL){continue;}
 				if(!chunkInFrustum(vecNew(x,y,z),coff)){continue;}
-				const int cz = z*CHUNK_SIZE+CHUNK_SIZE/2+c->z;
+				const int cz = z*CHUNK_SIZE+CHUNK_SIZE/2+(c->z<<8);
 				const float d = chunkDistance(cam->pos,vecNew(cx,cy,cz));
 				if(d > CHUNK_RENDER_DISTANCE){continue;}
 				drawQueue[*drawQueueLen].distance = d;
@@ -89,24 +89,24 @@ void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,in
 	}
 }
 
-chunk *chungusGetChunk(chungus *c, int x,int y,int z){
+chunk *chungusGetChunk(chungus *c, u16 x,u16 y,u16 z){
 	if(((x|y|z)>>4)&(~0xF)){return NULL;}
 	return c->chunks[x>>4][y>>4][z>>4];
 }
 
-chunk *chungusGetChunkOrNew(chungus *c, int x, int y, int z){
+chunk *chungusGetChunkOrNew(chungus *c, u16 x, u16 y, u16 z){
 	chunk *chnk;
-	int cx = (x >> 4) & 0xF;
-	int cy = (y >> 4) & 0xF;
-	int cz = (z >> 4) & 0xF;
+	u16 cx = (x >> 4) & 0xF;
+	u16 cy = (y >> 4) & 0xF;
+	u16 cz = (z >> 4) & 0xF;
 	chnk = c->chunks[cx][cy][cz];
 	if(chnk == NULL){
-		c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+(cx << 4),c->y+(cy << 4),c->z+(cz << 4));
+		c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx << 4),(c->y<<8)+(cy << 4),(c->z<<8)+(cz << 4));
 	}
 	return chnk;
 }
 
-u8 chungusGetB(chungus *c, int x,int y,int z){
+u8 chungusGetB(chungus *c, u16 x,u16 y,u16 z){
 	chunk *chnk;
 	if(((x|y|z)>>4)&(~0xF)){return 0;}
 	chnk = c->chunks[x>>4][y>>4][z>>4];
@@ -114,43 +114,43 @@ u8 chungusGetB(chungus *c, int x,int y,int z){
 	return chnk->data[x&0xF][y&0xF][z&0xF];
 }
 
-void chungusSetB(chungus *c, int x,int y,int z,u8 block){
+void chungusSetB(chungus *c, u16 x,u16 y,u16 z,u8 block){
 	chunk *chnk;
 	if((x|y|z)&(~0xFF)){return;}
-	int cx = (x >> 4) & 0xF;
-	int cy = (y >> 4) & 0xF;
-	int cz = (z >> 4) & 0xF;
+	u16 cx = (x >> 4) & 0xF;
+	u16 cy = (y >> 4) & 0xF;
+	u16 cz = (z >> 4) & 0xF;
 	chnk = c->chunks[cx][cy][cz];
 	if(chnk == NULL){
-		c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+(cx << 4),c->y+(cy << 4),c->z+(cz << 4));
+		c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx << 4),(c->y<<8)+(cy << 4),(c->z<<8)+(cz << 4));
 	}
 	chunkSetB(chnk,x,y,z,block);
 }
 
-void chungusBoxF(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
-	const int gx = (x+w)>>4;
-	const int gy = (y+h)>>4;
-	const int gz = (z+d)>>4;
+void chungusBoxF(chungus *c, u16 x,u16 y,u16 z, u16 w,u16 h,u16 d,u8 block){
+	const u16 gx = (x+w)>>4;
+	const u16 gy = (y+h)>>4;
+	const u16 gz = (z+d)>>4;
 	if((x|y|z)&(~0xFF)){return;}
 	if(((x+w)|(y+h)|(z+d))&(~0xFF)){return;}
-	int sx = x&0xF;
-	int sw = CHUNK_SIZE;
-	for(int cx=x>>4;cx<=gx;cx++){
-		int sy = y&0xF;
-		int sh = CHUNK_SIZE;
+	u16 sx = x&0xF;
+	u16 sw = CHUNK_SIZE;
+	for(u16 cx=x>>4;cx<=gx;cx++){
+		u16 sy = y&0xF;
+		u16 sh = CHUNK_SIZE;
 		if(cx == gx){
 			sw = (x+w)&0xF;
 		}
-		for(int cy=y>>4;cy<=gy;cy++){
-			int sz = z&0xF;
-			int sd = CHUNK_SIZE;
+		for(u16 cy=y>>4;cy<=gy;cy++){
+			u16 sz = z&0xF;
+			u16 sd = CHUNK_SIZE;
 			if(cy == gy){
 				sh = (y+h)&0xF;
 			}
-			for(int cz=z>>4;cz<=gz;cz++){
+			for(u16 cz=z>>4;cz<=gz;cz++){
 				chunk *chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF];
 				if(chnk == NULL){
-					c->chunks[cx&0xF][cy&0xF][cz&0xF] = chnk = chunkNew(c->x+(cx<<4),c->y+(cy<<4),c->z+(cz<<4));
+					c->chunks[cx&0xF][cy&0xF][cz&0xF] = chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
 				}
 				if(cz == gz){
 					sd = (z+d)&0xF;
@@ -164,10 +164,10 @@ void chungusBoxF(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 	}
 }
 
-void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
-	for(int cx=0;cx<w;cx++){
-		for(int cy=0;cy<h;cy++){
-			for(int cz=0;cz<d;cz++){
+void chungusBox(chungus *c, u16 x,u16 y,u16 z, u16 w,u16 h,u16 d,u8 block){
+	for(u16 cx=0;cx<w;cx++){
+		for(u16 cy=0;cy<h;cy++){
+			for(u16 cz=0;cz<d;cz++){
 				chungusSetB(c,cx+x,cy+y,cz+z,block);
 			}
 		}

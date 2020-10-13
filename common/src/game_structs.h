@@ -32,6 +32,16 @@ typedef struct {
 	i16 amount;
 } item;
 
+typedef uint32_t being;
+inline  u8   beingType (being b){ return b>>24; }
+inline u32   beingID   (being b){ return b&0xFFFFFF; }
+inline being beingNew  (u8 type, u32 id){ return (id&0xFFFFFF) | ((u32)type << 24); }
+#define BEING_MULL      0
+#define BEING_CHARACTER 1
+#define BEING_ANIMAL    2
+inline being beingCharacter(u32 id){ return beingNew(BEING_CHARACTER,id); }
+inline being beingAnimal(u32 id){ return beingNew(BEING_ANIMAL,id); }
+
 typedef struct {
 	vec pos,vel,rot;
 	float yoff;

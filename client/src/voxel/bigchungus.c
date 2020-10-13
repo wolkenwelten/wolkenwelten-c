@@ -70,7 +70,7 @@ bool bigchungusSetB(bigchungus *c, int x,int y,int z,u8 block){
 	int cz = (z / CHUNGUS_SIZE) & 0xFF;
 	chng = c->chungi[cx][cy][cz];
 	if(chng != NULL){
-		chungusSetB(chng,x%CHUNGUS_SIZE,y%CHUNGUS_SIZE,z%CHUNGUS_SIZE,block);
+		chungusSetB(chng,x&0xFF,y&0xFF,z&0xFF,block);
 		return true;
 	}
 	return false;
@@ -134,7 +134,7 @@ void bigchungusDraw(bigchungus *c,const character *cam){
 				float d = chungusDistance(cam->pos,vecNew(x,y,z));
 				if((d < (CHUNK_RENDER_DISTANCE+CHUNGUS_SIZE)) && (chungusInFrustum(vecNew(x,y,z)))){
 					if(c->chungi[x][y][z] == NULL){
-						c->chungi[x][y][z] = chungusNew(x*CHUNGUS_SIZE,y*CHUNGUS_SIZE,z*CHUNGUS_SIZE);
+						c->chungi[x][y][z] = chungusNew(x,y,z);
 						loadQueue[loadQueueLen].distance = d;
 						loadQueue[loadQueueLen++].chng   = c->chungi[x][y][z];
 					}
@@ -250,7 +250,7 @@ bool worldSetB(int x, int y, int z, u8 block){
 	return bigchungusSetB(&world,x,y,z,block);
 }
 void worldSetChungusLoaded(int x, int y, int z){
-	chungus *chng = bigchungusGetChungus(&world,x>>8,y>>8,z>>8);
+	chungus *chng = bigchungusGetChungus(&world,x,y,z);
 	if(chng != NULL){chng->loaded = 1;}
 }
 int checkCollision(int x, int y, int z){

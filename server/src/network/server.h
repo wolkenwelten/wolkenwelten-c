@@ -13,7 +13,7 @@ typedef struct {
 	u16  itemDropPriorityQueue[128];
 
 	uint chngReqQueueLen;
-	u64  chngReqQueue[128];
+	u32  chngReqQueue[128];
 	uint chnkReqQueueLen;
 	u64  chnkReqQueue[4096];
 
@@ -49,7 +49,7 @@ void serverInitClient      (uint c);
 void sendToAll             (const void *data, uint len);
 void sendToAllExcept       (uint e, const void *data, uint len);
 void sendToClient          (uint c, const void *data, uint len);
-void addChungusToQueue     (uint c, u16 x, u16 y, u16 z);
+void addChungusToQueue     (uint c, u8 x, u8 y, u8 z);
 void addQueuedChunks       (uint c);
 void addPriorityItemDrop   (u16  i);
 void delPriorityItemDrop   (u16  i);

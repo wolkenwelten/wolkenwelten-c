@@ -354,7 +354,7 @@ void chunkGenMesh(chunk *c) {
 		}
 	}
 	chunkFinish(c);
-	c->ready |= 1;
+	c->ready = 1;
 }
 
 void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
@@ -365,16 +365,16 @@ void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
 			}
 		}
 	}
-	c->ready &= ~15;
+	c->ready = 0;
 }
 
 void chunkSetB(chunk *c,int x,int y,int z,u8 block){
 	c->data[x&0xF][y&0xF][z&0xF] = block;
-	c->ready &= ~15;
+	c->ready = 0;
 }
 
 void chunkDraw(chunk *c, float d){
-	if(!(c->ready & 1)){ chunkGenMesh(c); }
+	if(!c->ready){ chunkGenMesh(c); }
 	if(!c->vbo){ return; }
 	if(d > (CHUNK_RENDER_DISTANCE - CHUNK_FADEOUT_DISTANCE)){
 		shaderAlpha(sBlockMesh,(1.f-((d-(CHUNK_RENDER_DISTANCE - CHUNK_FADEOUT_DISTANCE))/CHUNK_FADEOUT_DISTANCE)));

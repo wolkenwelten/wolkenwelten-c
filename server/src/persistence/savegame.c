@@ -352,7 +352,7 @@ void characterLoadSendData(character *p, const char *pName, uint c){
 }
 
 void chungusLoad(chungus *c){
-	if(c == NULL)               {return;}
+	if(c == NULL)               { return; }
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
 	size_t read=0,len=0;

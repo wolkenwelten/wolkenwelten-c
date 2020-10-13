@@ -9,8 +9,9 @@
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
+#include <string.h>
 
 animal  animalList[1<<10];
 uint    animalCount = 0;
@@ -315,7 +316,7 @@ void animalCheckForCharacter(animal *e){
 				int dmg = 1;
 				if(target < 0){return;}
 				if(rngValM(8)==0){dmg = 4;}
-				msgPlayerDamage(target,dmg,target,2,-1,e->pos);
+				msgBeingDamage(target,dmg,2,beingCharacter(target),-1,e->pos);
 			}
 		}
 	}else if(e->state == ANIMAL_S_FLEE){
@@ -494,47 +495,46 @@ void animalThinkAll(){
 
 void animalEmptySync(int c){
 	packet *rp = &packetBuffer;
-
-	rp->val.u[ 0] = 0;
-	rp->val.u[ 1] = 0;
-	rp->val.u[ 2] = 0;
-	rp->val.u[ 3] = 0;
-
-	packetQueue(rp,30,18*4,c);
+	memset(rp->v.u8,0,16*4);
+	packetQueue(rp,30,16*4,c);
 }
 
 void animalSync(int c, int i){
 	packet *rp = &packetBuffer;
-	animal *e  = &animalList[i];
+	const animal *e = &animalList[i];
 
-	rp->val.c[ 0] = e->type;
-	rp->val.c[ 1] = e->flags;
-	rp->val.c[ 2] = e->state;
-	rp->val.c[ 3] = e->age;
+	rp->v.u8[ 0] = e->type;
+	rp->v.u8[ 1] = e->flags;
+	rp->v.u8[ 2] = e->state;
+	rp->v.i8[ 3] = e->age;
 
-	rp->val.c[ 4] = e->health;
-	rp->val.c[ 5] = e->hunger;
-	rp->val.c[ 6] = e->thirst;
-	rp->val.c[ 7] = e->sleepy;
+	rp->v.i8[ 4] = e->health;
+	rp->v.i8[ 5] = e->hunger;
+	rp->v.i8[ 6] = e->thirst;
+	rp->v.i8[ 7] = e->sleepy;
 
-	rp->val.u[ 2] = i;
-	rp->val.u[ 3] = animalCount;
+	rp->v.u16[4] = i;
+	rp->v.u16[5] = animalCount;
 
-	rp->val.f[ 4] = e->pos.x;
-	rp->val.f[ 5] = e->pos.y;
-	rp->val.f[ 6] = e->pos.z;
-	rp->val.f[ 7] = e->vel.x;
-	rp->val.f[ 8] = e->vel.y;
-	rp->val.f[ 9] = e->vel.z;
-	rp->val.f[10] = e->gvel.x;
-	rp->val.f[11] = e->gvel.y;
-	rp->val.f[12] = e->gvel.z;
-	rp->val.f[13] = e->rot.yaw;
-	rp->val.f[14] = e->rot.pitch;
-	rp->val.f[15] = e->grot.yaw;
-	rp->val.f[16] = e->grot.pitch;
+	rp->v.f[ 3]  = e->pos.x;
+	rp->v.f[ 4]  = e->pos.y;
+	rp->v.f[ 5]  = e->pos.z;
 
-	packetQueue(rp,30,17*4,c);
+	rp->v.f[ 6]  = e->vel.x;
+	rp->v.f[ 7]  = e->vel.y;
+	rp->v.f[ 8]  = e->vel.z;
+
+	rp->v.f[ 9]  = e->gvel.x;
+	rp->v.f[10]  = e->gvel.y;
+	rp->v.f[11]  = e->gvel.z;
+
+	rp->v.f[12]  = e->rot.yaw;
+	rp->v.f[13]  = e->rot.pitch;
+
+	rp->v.f[14]  = e->grot.yaw;
+	rp->v.f[15]  = e->grot.pitch;
+
+	packetQueue(rp,30,16*4,c);
 }
 
 uint animalSyncPlayer(int c, uint offset){
@@ -560,16 +560,27 @@ void animalDelChungus(const chungus *c){
 	}
 }
 
-void animalDmgPacket(int c, const packet *p){
-	(void)c;
-	i16 dmg = p->val.s[0];
-	u16 i   = p->val.s[1];
+void animalDmgPacket(int source, const packet *p){
+	(void)source;
+	const being target  = p->v.u32[1];
+	//const being culprit = p->v.u32[2];
+	const u16 cause     = p->v.u16[1];
+	const i16 hp        = p->v.u16[0];
+	if(beingType(target) != BEING_ANIMAL){return;}
+	const u16 i   = beingID(target);
 	if(i >= animalCount){return;}
-	animalList[i].health -= dmg;
-	if(animalList[i].health <= 0){
-		animalRDie(&animalList[i]);
+	animal *c = &animalList[i];
+
+	c->health -= hp;
+	if(c->health <= 0){
+		animalRDie(c);
 		animalDel(i);
-	}else{
-		animalRHit(&animalList[i]);
+		return;
+	}
+	animalRHit(c);
+	if(cause == 2){
+		vec pos = vecNewP(&p->v.f[3]);
+		vec dis = vecNorm(vecSub(c->pos,pos));
+		c->vel = vecAdd(c->vel,vecMulS(dis,0.08f));
 	}
 }

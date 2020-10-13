@@ -43,7 +43,7 @@ void chungusSetClientUpdated(chungus *c,u64 updated){
 	}
 }
 
-chungus *chungusNew(int x, int y, int z){
+chungus *chungusNew(u8 x, u8 y, u8 z){
 	chungus *c = NULL;
 
 	if(chungusFirstFree == NULL){
@@ -77,7 +77,7 @@ chungus *chungusNew(int x, int y, int z){
 
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
-	fprintf(stderr,"CHungusFree[] %p %i:%i:%i\n",c,c->x,c->y,c->z);
+	fprintf(stderr,"ChungusFree[] %p %i:%i:%i\n",c,c->x,c->y,c->z);
 	chungusSave(c);
 	animalDelChungus(c);
 	itemDropDelChungus(c);
@@ -135,7 +135,7 @@ void chungusSetB(chungus *c, int x,int y,int z,u8 block){
 	int cz = (z >> 4) & 0xF;
 	chunk *chnk = c->chunks[cx][cy][cz];
 	if(chnk == NULL){
-		chnk = chunkNew(c->x+(cx << 4),c->y+(cy << 4),c->z+(cz << 4));
+		chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
 		c->chunks[cx][cy][cz] = chnk;
 	}
 	chunkSetB(chnk,x,y,z,block);
@@ -167,7 +167,7 @@ void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
 			for(int cz=z>>4;cz<=gz;cz++){
 				chunk *chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF];
 				if(chnk == NULL){
-					chnk = chunkNew(c->x+(cx<<4),c->y+(cy<<4),c->z+(cz<<4));
+					chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
 					c->chunks[cx&0xF][cy&0xF][cz&0xF] = chnk;
 				}
 				if(cz == gz){
@@ -246,7 +246,7 @@ void chungusFill(chungus *c, int x,int y,int z,u8 b){
 	int cz = (z / CHUNK_SIZE) & 0xF;
 	chunk *chnk = c->chunks[cx][cy][cz];
 	if(chnk == NULL){
-		c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+cx*CHUNK_SIZE,c->y+cy*CHUNK_SIZE,c->z+cz*CHUNK_SIZE);
+		c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
 	}
 	chunkFill(chnk,b);
 	c->clientsUpdated = 0;

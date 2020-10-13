@@ -64,10 +64,10 @@ void itemDropNewC(uint c, const packet *p){
 	itemDrop *id = itemDropNew();
 	if(id == NULL){return;}
 
-	id->ent        = entityNew(vecNewP(&p->val.f[0]),vecZero());
-	id->ent->vel   = vecNewP(&p->val.f[3]);
-	id->itm.ID     = p->val.i[6];
-	id->itm.amount = p->val.i[7];
+	id->ent        = entityNew(vecNewP(&p->v.f[0]),vecZero());
+	id->ent->vel   = vecNewP(&p->v.f[3]);
+	id->itm.ID     = p->v.u16[6];
+	id->itm.amount = p->v.i16[7];
 	id->player     = c;
 }
 
