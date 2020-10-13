@@ -40,12 +40,12 @@ int blockMiningUpdateMesh(int d){
 	const float TILE = 1.f/8.f;
 	const float LoX  = TILE* frame;
 	const float HiX  = TILE*(frame+1);
-	const float mw = 1.08f;
-	const float mh = 1.08f;
-	const float md = 1.08f;
-	const float mx = bm->x-0.04f;
-	const float my = bm->y-0.04f;
-	const float mz = bm->z-0.04f;
+	const float mw = 1.f;
+	const float mh = 1.f;
+	const float md = 1.f;
+	const float mx = bm->x;
+	const float my = bm->y;
+	const float mz = bm->z;
 	mesh *m = blockMiningProgressMesh;
 
 	// Front Face
@@ -101,17 +101,18 @@ void blockMiningDraw(){
 	shaderMatrix(sMesh,matMVP);
 	blockMiningProgressMesh->dataCount = 0;
 	for(int i=0;i<blockMiningCount;i++){
-		if(blockMiningUpdateMesh(i)){
-			i--;
-			continue;
-		}
+		blockMiningUpdateMesh(i);
 		if(blockMiningList[i].lastDamage < blockMiningList[i].damage){
 			fxBlockMine(vecNew(blockMiningList[i].x,blockMiningList[i].y,blockMiningList[i].z),blockMiningList[i].damage,blockMiningList[i].b);
 		}
 		blockMiningList[i].lastDamage = blockMiningList[i].damage;
 	}
 	meshFinish(blockMiningProgressMesh, GL_STREAM_DRAW);
+	glPolygonOffset(-2,-2);
+	glEnable(GL_POLYGON_OFFSET_FILL);
 	meshDraw(blockMiningProgressMesh);
+	glPolygonOffset(0,0);
+	glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 void blockMiningInit(){

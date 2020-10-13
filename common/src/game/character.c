@@ -98,7 +98,6 @@ bool characterPickupItem(character *c, u16 itemID,int amount){
 	return false;
 }
 
-
 bool characterHP(character *c, int addhp){
 	c->hp += addhp;
 	if(c->hp <= 0){
@@ -176,8 +175,8 @@ ivec characterLOSBlock(const character *c, int returnBeforeBlock) {
 
 u32 characterCollision(const vec c){
 	u32 col = 0;
-	const float wd = 0.2f;
-	const float WD = wd*2.f;
+	const float wd = 0.28f;
+	const float WD = wd*1.75f;
 
 	if(checkCollision(c.x-wd,c.y+0.5f,c.z   )){col |=  0x10;}
 	if(checkCollision(c.x+wd,c.y+0.5f,c.z   )){col |=  0x20;}

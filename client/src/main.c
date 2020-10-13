@@ -170,7 +170,6 @@ int main( int argc, char* argv[] ){
 		showMouseCursor();
 	}
 
-
 	player = characterNew();
 	initInventory();
 	checkAutostart();
