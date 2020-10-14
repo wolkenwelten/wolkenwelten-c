@@ -88,19 +88,16 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 
 void fxBlockBreak(const vec pos, unsigned char b){
 	sfxPlay(sfxTock,1.f);
-	for(int i=0;i<128;i++){
+	for(int i=0;i<2048;i++){
 		const vec p = vecAdd(pos,vecRngAbs());
-		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),0.f,64);
+		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.7f,128);
 	}
 }
 void fxBlockMine(const vec pos, int dmg, unsigned char b){
-	int parts=2;
-	if(dmg > 1024){
-		parts=3;
-	}
-	for(int i=0;i<parts;i++){
+	(void)dmg;
+	for(int i=0;i<4;i++){
 		const vec p = vecAdd(pos,vecRngAbs());
-		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),1.f,64);
+		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.9f,96);
 	}
 }
 
