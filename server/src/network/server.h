@@ -57,6 +57,7 @@ void serverSendChatMsg     (const char *msg);
 
 int  getClientByName       (const char *name);
 int  getClientByCharacter  (const character *c);
+uint serverSendRaw         (uint c, void *p, uint len);
 int  serverSendClient      (uint c);
 void serverAccept          ();
 void serverRead            ();

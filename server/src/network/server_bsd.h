@@ -96,21 +96,22 @@ void serverRead(){
 	}
 }
 
-int serverSendClient(uint c){
-	while(clients[c].sendBufSent < clients[c].sendBufLen){
-		const int ret = send(clients[c].socket,clients[c].sendBuf+clients[c].sendBufSent,clients[c].sendBufLen-clients[c].sendBufSent,0);
+uint serverSendRaw(uint c, void *p, uint len){
+	uint tries = 3;
+	uint sent  = 0;
+	while(sent < len){
+		const int ret = send(clients[c].socket,p+sent,len-sent,0);
 		if(ret < 0){
 			if(errno == EAGAIN){
-				continue;
+				if(sent > 0){return sent;}
+				if(--tries == 0){return 0;}
+				usleep(1);
 			}else{
-				serverKill(c);
-				return 2;
+				return 0;
 			}
 		}else{
-			clients[c].sendBufSent += ret;
+			sent += ret;
 		}
 	}
-	clients[c].sendBufSent = 0;
-	clients[c].sendBufLen  = 0;
-	return 1;
+	return sent;
 }

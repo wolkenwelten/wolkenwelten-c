@@ -274,8 +274,7 @@ void clientSendIntroduction(){
 	#endif
 	uint len = snprintf(introStr,sizeof(introStr),"%.32s\n",playerName);
 	queueToServer(introStr,len);
-	msgNOP(2048);
-	clientSendAllToServer();
+	clientWrite();
 }
 
 void clientGreetServer(){
@@ -292,12 +291,12 @@ void clientGoodbye(){
 	if(serverSocket <= 0){return;}
 	msgPlayerSetInventory(-1,player->inventory,40);
 	msgGoodbye();
-	clientSendAllToServer();
+	clientWrite();
 }
 
 void queueToServer(const void *data, uint len){
 	if((sendBufLen + len) > sizeof(sendBuf)){
-		clientSendAllToServer();
+		clientWrite();
 	}
 	memcpy(sendBuf + sendBufLen, data, len);
 	sendBufLen += len;

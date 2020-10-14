@@ -121,7 +121,7 @@ void mainloop(){
 		worldUpdate();
 		renderFrame();
 		bigchungusFreeFarChungi(&world,player);
-		clientSendAllToServer();
+		clientWrite();
 	}else{
 		doGamepadMenuUpdate();
 		renderMenuFrame();

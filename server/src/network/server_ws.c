@@ -114,10 +114,10 @@ void serverParseWebSocketPacket(uint i){
 
 void serverParseWebSocketHeaderField(uint c,const char *key, const char *val){
 	static SHA1_CTX ctx;
-	static char buf[256];
+	static char buf[512];
 	static u8 webSocketKeyHash[20];
 	const char *b64hash;
-	int len=0;
+	uint len=0;
 	if(strncmp(key,"Sec-WebSocket-Key",18) != 0){return;}
 	len = snprintf(buf,sizeof(buf),"%s%s",val,"258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
 	printf("Sec-WebSocket-Key = '%s'\nConcat: '%s'\n",val,buf);
@@ -135,11 +135,9 @@ void serverParseWebSocketHeaderField(uint c,const char *key, const char *val){
 	printf("B64 = %s\n",b64hash);
 
 	len = snprintf(buf,sizeof(buf),"HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Protocol: binary\r\nSec-WebSocket-Accept: %s\r\n\r\n",b64hash);
-	clients[c].flags &= ~CONNECTION_WEBSOCKET;
-	sendToClient(c,buf,len);
-	serverSendClient(c);
+	const uint ret = serverSendRaw(c, buf, len);
+	if(ret < len){serverKill(c);return;}
 	clients[c].flags |= CONNECTION_WEBSOCKET;
-
 }
 
 void serverParseWebSocketHeader(uint c,uint end){

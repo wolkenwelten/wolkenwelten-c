@@ -222,7 +222,7 @@ void clientRead(){
 	}
 }
 
-void clientSendAllToServer(){
+void clientWrite(){
 	if(serverSocket <= 0){clientInit();}
 	if(serverSocket <= 0){return;}
 

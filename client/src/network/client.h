@@ -13,7 +13,7 @@ void clientFree              ();
 void clientGetName           ();
 void clientGoodbye           ();
 void clientGreetServer       ();
-void clientSendAllToServer   ();
+void clientWrite             ();
 void closeSingleplayerServer ();
 void decompressPacket        (const packet *p);
 void clientParsePacket       (const packet *p);
