@@ -17,7 +17,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../gfx/gl.h"
 
 grapplingHook grapplingHookList[128];
 int grapplingHookCount = 0;
@@ -121,7 +120,7 @@ void grapplingHookUpdateRope(grapplingHook *ghk){
 	meshAddVert(m,px,py,pz-.05f,0.f, 0.f);
 	meshAddVert(m,hx,hy,hz-.05f,0.f,rlen);
 
-	meshFinish(ghk->rope, GL_STREAM_DRAW);
+	meshFinishStream(ghk->rope);
 }
 
 float grapplingHookGetLength(const grapplingHook *ghk){

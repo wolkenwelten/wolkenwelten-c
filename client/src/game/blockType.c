@@ -1,6 +1,5 @@
 #include "../game/blockType.h"
 
-#include "../gfx/gl.h"
 #include "../gfx/mesh.h"
 #include "../gfx/texture.h"
 #include "../../../common/src/misc/misc.h"
@@ -13,7 +12,7 @@ void blockTypeGenMeshes(){
 		singleBlock->dataCount = 0;
 		singleBlock->tex = tBlocks;
 		blockTypeAddToMesh(i,singleBlock,vecNew(-0.5f,-0.5f,-0.5f),vecOne());
-		meshFinish(singleBlock, GL_STATIC_DRAW);
+		meshFinishStatic(singleBlock);
 	}
 }
 
@@ -47,6 +46,7 @@ void blockTypeAddToMesh(u8 b, mesh *m, const vec pos, const vec size) {
 	meshAddVertC(m, x+w,y  ,z+d,tileHiX[0],tileHiY[0],0.75f);
 	meshAddVertC(m, x+w,y+h,z+d,tileHiX[0],tileLoY[0],0.75f);
 	meshAddVertC(m, x+w,y+h,z+d,tileHiX[0],tileLoY[0],0.75f);
+
 	meshAddVertC(m, x  ,y+h,z+d,tileLoX[0],tileLoY[0],0.75f);
 	meshAddVertC(m, x  ,y  ,z+d,tileLoX[0],tileHiY[0],0.75f);
 
@@ -67,12 +67,12 @@ void blockTypeAddToMesh(u8 b, mesh *m, const vec pos, const vec size) {
 	meshAddVertC(m, x  ,y+h,z  ,tileLoX[2],tileLoY[2],1.f);
 
 	// Bottom Face
-	meshAddVertC(m, x  ,y  ,z  ,tileHiX[3],tileLoY[3],.5f);
-	meshAddVertC(m, x+w,y  ,z  ,tileLoX[3],tileLoY[3],.5f);
-	meshAddVertC(m, x+w,y  ,z+d,tileLoX[3],tileHiY[3],.5f);
-	meshAddVertC(m, x+w,y  ,z+d,tileLoX[3],tileHiY[3],.5f);
-	meshAddVertC(m, x  ,y  ,z+d,tileHiX[3],tileHiY[3],.5f);
-	meshAddVertC(m, x  ,y  ,z  ,tileHiX[3],tileLoY[3],.5f);
+	meshAddVertC(m, x  ,y  ,z  ,tileHiX[3],tileLoY[3],0.5f);
+	meshAddVertC(m, x+w,y  ,z  ,tileLoX[3],tileLoY[3],0.5f);
+	meshAddVertC(m, x+w,y  ,z+d,tileLoX[3],tileHiY[3],0.5f);
+	meshAddVertC(m, x+w,y  ,z+d,tileLoX[3],tileHiY[3],0.5f);
+	meshAddVertC(m, x  ,y  ,z+d,tileHiX[3],tileHiY[3],0.5f);
+	meshAddVertC(m, x  ,y  ,z  ,tileHiX[3],tileLoY[3],0.5f);
 
 	// Right face
 	meshAddVertC(m, x+w,y  ,z  ,tileHiX[4],tileHiY[4],0.75f);

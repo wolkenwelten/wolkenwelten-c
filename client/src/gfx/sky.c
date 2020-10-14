@@ -1,6 +1,5 @@
 #include "sky.h"
 
-#include "../gfx/gl.h"
 #include "../gfx/mat.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
@@ -113,7 +112,7 @@ void initSky(){
 	meshAddVert(skyMesh, -bv,  bv,   0, 0.750f, 0.33f);
 	meshAddVert(skyMesh, -bv, -bv,   0, 0.750f, 0.66f);
 	meshAddVert(skyMesh, -sv, -bv, -sv, 0.625f, 0.66f);
-	meshFinish(skyMesh, GL_STATIC_DRAW);
+	meshFinishStatic(skyMesh);
 
 
 	sunMesh = meshNew();
@@ -126,7 +125,7 @@ void initSky(){
 	meshAddVert(sunMesh,  48,  512,  48, 1.0f, 1.0f);
 	meshAddVert(sunMesh, -48,  512,  48, 0.0f, 1.0f);
 	meshAddVert(sunMesh, -48,  512, -48, 0.0f, 0.0f);
-	meshFinish(sunMesh, GL_STATIC_DRAW);
+	meshFinishStatic(sunMesh);
 }
 
 void renderSky(const character *cam){

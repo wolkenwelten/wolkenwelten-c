@@ -198,7 +198,7 @@ void characterGotHitPacket(const packet *p){
 	const being target  = p->v.u32[1];
 	if(beingType(target) != BEING_CHARACTER){return;}
 	if(playerList[beingID(target)] == NULL) {return;}
-	character *c   = playerList[beingID(target)];
+	character *c = playerList[beingID(target)];
 	fxBleeding(c->pos,target,p->v.i16[0],p->v.u16[1]);
 }
 
@@ -276,7 +276,7 @@ void characterHit(character *c){
 	item *itm = &c->inventory[c->activeItem];
 	iteration--;
 
-	const vec pos = vecAdd(c->pos,vecMulS(vecDegToVec(c->rot),0.5f));
+	const vec pos = vecAdd(c->pos,vecDegToVec(c->rot));
 	characterHitCheck(pos,1.f,damageDispatch(itm),2,iteration);
 	animalHitCheck   (pos,1.f,damageDispatch(itm),2,iteration);
 

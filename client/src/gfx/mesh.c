@@ -32,7 +32,7 @@ void meshEmpty(mesh *m){
 	m->dataCount = 0;
 }
 
-void meshDrawVBO(const mesh *m){
+static void meshDrawVBO(const mesh *m){
 	if(!m->vbo){return;}
 	glBindBuffer(GL_ARRAY_BUFFER, m->vbo);
 	glEnableVertexAttribArray(0);
@@ -46,7 +46,7 @@ void meshDrawVBO(const mesh *m){
 	vboTrisCount += m->dataCount/3;
 }
 
-void meshFinish(mesh *m, unsigned int usage){
+static void meshFinish(mesh *m, unsigned int usage){
 	if(!m->vbo){ glGenBuffers(1,&m->vbo); }
 	glBindBuffer(GL_ARRAY_BUFFER,m->vbo);
 	if(m->roData){
@@ -54,6 +54,13 @@ void meshFinish(mesh *m, unsigned int usage){
 	}else{
 		glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex), meshBuffer, usage);
 	}
+}
+
+void meshFinishStatic(mesh *m){
+	meshFinish(m,GL_STATIC_DRAW);
+}
+void meshFinishStream(mesh *m){
+	meshFinish(m,GL_STREAM_DRAW);
 }
 
 mesh *meshNew(){

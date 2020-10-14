@@ -12,17 +12,15 @@
 #include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/misc/misc.h"
-#include "../../../common/src/network/messages.h"
 
 #include <math.h>
 #include <stdlib.h>
 
 typedef struct {
-	int x,y,z;
+	u16 x,y,z;
 	int damage;
 	int lastDamage;
 	u8  b;
-	int wasMined;
 } blockMining;
 
 blockMining blockMiningList[128];
@@ -40,56 +38,56 @@ int blockMiningUpdateMesh(int d){
 	const float TILE = 1.f/8.f;
 	const float LoX  = TILE* frame;
 	const float HiX  = TILE*(frame+1);
-	const float mw = 1.f;
-	const float mh = 1.f;
-	const float md = 1.f;
-	const float mx = bm->x;
-	const float my = bm->y;
-	const float mz = bm->z;
+	const float xa = bm->x;
+	const float xb = xa+1;
+	const float ya = bm->y;
+	const float yb = ya+1;
+	const float za = bm->z;
+	const float zb = za+1;
 	mesh *m = blockMiningProgressMesh;
 
 	// Front Face
-	meshAddVert(m, mx   ,my   ,mz+md,LoX,1.0f);
-	meshAddVert(m, mx+mw,my   ,mz+md,HiX,1.0f);
-	meshAddVert(m, mx+mw,my+mh,mz+md,HiX,0.0f);
-	meshAddVert(m, mx+mw,my+mh,mz+md,HiX,0.0f);
-	meshAddVert(m, mx   ,my+mh,mz+md,LoX,0.0f);
-	meshAddVert(m, mx   ,my   ,mz+md,LoX,1.0f);
+	meshAddVert(m, xa, ya, zb, LoX,1.0f);
+	meshAddVert(m, xb, ya, zb, HiX,1.0f);
+	meshAddVert(m, xb, yb, zb, HiX,0.0f);
+	meshAddVert(m, xb, yb, zb, HiX,0.0f);
+	meshAddVert(m, xa, yb, zb, LoX,0.0f);
+	meshAddVert(m, xa, ya, zb, LoX,1.0f);
 	// Back Face
-	meshAddVert(m, mx   ,my   ,mz   ,HiX,1.0f);
-	meshAddVert(m, mx   ,my+mh,mz   ,HiX,0.0f);
-	meshAddVert(m, mx+mw,my+mh,mz   ,LoX,0.0f);
-	meshAddVert(m, mx+mw,my+mh,mz   ,LoX,0.0f);
-	meshAddVert(m, mx+mw,my   ,mz   ,LoX,1.0f);
-	meshAddVert(m, mx   ,my   ,mz   ,HiX,1.0f);
+	meshAddVert(m, xa, ya, za, HiX,1.0f);
+	meshAddVert(m, xa, yb, za, HiX,0.0f);
+	meshAddVert(m, xb, yb, za, LoX,0.0f);
+	meshAddVert(m, xb, yb, za, LoX,0.0f);
+	meshAddVert(m, xb, ya, za, LoX,1.0f);
+	meshAddVert(m, xa, ya, za, HiX,1.0f);
 	// Top Face
-	meshAddVert(m, mx   ,my+mh,mz   ,LoX,0.0f);
-	meshAddVert(m, mx   ,my+mh,mz+md,LoX,1.0f);
-	meshAddVert(m, mx+mw,my+mh,mz+md,HiX,1.0f);
-	meshAddVert(m, mx+mw,my+mh,mz+md,HiX,1.0f);
-	meshAddVert(m, mx+mw,my+mh,mz   ,HiX,0.0f);
-	meshAddVert(m, mx   ,my+mh,mz   ,LoX,0.0f);
+	meshAddVert(m, xa, yb, za, LoX,0.0f);
+	meshAddVert(m, xa, yb, zb, LoX,1.0f);
+	meshAddVert(m, xb, yb, zb, HiX,1.0f);
+	meshAddVert(m, xb, yb, zb, HiX,1.0f);
+	meshAddVert(m, xb, yb, za, HiX,0.0f);
+	meshAddVert(m, xa, yb, za, LoX,0.0f);
 	// Bottom Face
-	meshAddVert(m, mx   ,my   ,mz   ,HiX,0.0f);
-	meshAddVert(m, mx+mw,my   ,mz   ,LoX,0.0f);
-	meshAddVert(m, mx+mw,my   ,mz+md,LoX,1.0f);
-	meshAddVert(m, mx+mw,my   ,mz+md,LoX,1.0f);
-	meshAddVert(m, mx   ,my   ,mz+md,HiX,1.0f);
-	meshAddVert(m, mx   ,my   ,mz   ,HiX,0.0f);
+	meshAddVert(m, xa, ya, za, HiX,0.0f);
+	meshAddVert(m, xb, ya, za, LoX,0.0f);
+	meshAddVert(m, xb, ya, zb, LoX,1.0f);
+	meshAddVert(m, xb, ya, zb, LoX,1.0f);
+	meshAddVert(m, xa, ya, zb, HiX,1.0f);
+	meshAddVert(m, xa, ya, za, HiX,0.0f);
 	// Right face
-	meshAddVert(m, mx+mw,my   ,mz   ,HiX,1.0f);
-	meshAddVert(m, mx+mw,my+mh,mz   ,HiX,0.0f);
-	meshAddVert(m, mx+mw,my+mh,mz+md,LoX,0.0f);
-	meshAddVert(m, mx+mw,my+mh,mz+md,LoX,0.0f);
-	meshAddVert(m, mx+mw,my   ,mz+md,LoX,1.0f);
-	meshAddVert(m, mx+mw,my   ,mz   ,HiX,1.0f);
+	meshAddVert(m, xb, ya, za, HiX,1.0f);
+	meshAddVert(m, xb, yb, za, HiX,0.0f);
+	meshAddVert(m, xb, yb, zb, LoX,0.0f);
+	meshAddVert(m, xb, yb, zb, LoX,0.0f);
+	meshAddVert(m, xb, ya, zb, LoX,1.0f);
+	meshAddVert(m, xb, ya, za, HiX,1.0f);
 	// Left Face
-	meshAddVert(m, mx   ,my   ,mz   ,LoX,1.0f);
-	meshAddVert(m, mx   ,my   ,mz+md,HiX,1.0f);
-	meshAddVert(m, mx   ,my+mh,mz+md,HiX,0.0f);
-	meshAddVert(m, mx   ,my+mh,mz+md,HiX,0.0f);
-	meshAddVert(m, mx   ,my+mh,mz   ,LoX,0.0f);
-	meshAddVert(m, mx   ,my   ,mz   ,LoX,1.0f);
+	meshAddVert(m, xa, ya, za, LoX,1.0f);
+	meshAddVert(m, xa, ya, zb, HiX,1.0f);
+	meshAddVert(m, xa, yb, zb, HiX,0.0f);
+	meshAddVert(m, xa, yb, zb, HiX,0.0f);
+	meshAddVert(m, xa, yb, za, LoX,0.0f);
+	meshAddVert(m, xa, ya, za, LoX,1.0f);
 
 	return false;
 }
@@ -107,10 +105,13 @@ void blockMiningDraw(){
 		}
 		blockMiningList[i].lastDamage = blockMiningList[i].damage;
 	}
-	meshFinish(blockMiningProgressMesh, GL_STREAM_DRAW);
-	glPolygonOffset(-2,-2);
+	meshFinishStream(blockMiningProgressMesh);
+
+	glPolygonOffset(-8,-8);
 	glEnable(GL_POLYGON_OFFSET_FILL);
+
 	meshDraw(blockMiningProgressMesh);
+
 	glPolygonOffset(0,0);
 	glDisable(GL_POLYGON_OFFSET_FILL);
 }

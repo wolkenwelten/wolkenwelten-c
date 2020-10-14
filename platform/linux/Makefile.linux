@@ -1,4 +1,5 @@
 CC               := clang
+LD               := clang
 
 CLIENT_CINCLUDES := $(shell sdl2-config --cflags)
 CLIENT_LIBS      := -lGL -lpthread -ldl -lSDL2 -lSDL2_mixer

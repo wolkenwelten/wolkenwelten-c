@@ -15,7 +15,6 @@ echo "#include \"../tmp/assets.h\""              >> $C_FILE
 echo "#include \"../tmp/meshassets.h\""          >> $C_FILE
 echo "#include \"../gfx/texture.h\""             >> $C_FILE
 echo "#include \"../gfx/mesh.h\""                >> $C_FILE
-echo "#include \"../gfx/gl.h\""                  >> $C_FILE
 echo ""                                          >> $C_FILE
 
 meshs=""
@@ -40,7 +39,7 @@ while (("$#")); do
 		meshs="$meshs
 	mesh$uname->tex = tex$uname;"
 		meshs="$meshs
-	meshFinish( mesh$uname, GL_STATIC_DRAW );"
+	meshFinishStatic( mesh$uname );"
 		meshs="$meshs
 	"
 	done

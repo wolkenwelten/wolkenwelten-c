@@ -23,18 +23,25 @@ void shadowEmpty(){
 }
 
 void shadowDraw(){
-	glDepthFunc  (GL_LEQUAL);
-	meshFinish   (meshShadow, GL_STREAM_DRAW);
-	shaderBind   (sShadow);
-	matMov       (matMVP,matView);
-	matMul       (matMVP,matMVP,matProjection);
-	shaderMatrix (sShadow,matMVP);
-	meshDraw     (meshShadow);
+	glDepthFunc      (GL_LEQUAL);
+	meshFinishStream (meshShadow);
+	shaderBind       (sShadow);
+	matMov           (matMVP,matView);
+	matMul           (matMVP,matMVP,matProjection);
+	shaderMatrix     (sShadow,matMVP);
+
+	glPolygonOffset(-8,-8);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+
+	meshDraw         (meshShadow);
+
+	glPolygonOffset(0,0);
+	glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 void shadowAdd(const vec pos, float size){
 	vec p = pos;
-	p.y = floorf(p.y)+0.1f;
+	p.y = floorf(p.y);
 	for(int i=0;i<12;i++){
 		if(worldGetB(p.x,p.y-1.f,p.z) != 0){break;}
 		p.y -= 1.f;

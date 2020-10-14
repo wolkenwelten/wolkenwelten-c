@@ -1,4 +1,5 @@
 CC               := /mingw64/bin/gcc
+LD               := /mingw64/bin/gcc
 
 CLIENT_CFLAGS    := -DSDL_SOUND -mwindows -Wl,-subsystem,windows
 CLIENT_CINCLUDES := $(shell pkg-config --cflags sdl2 sdl2_mixer)

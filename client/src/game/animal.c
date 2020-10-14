@@ -2,7 +2,6 @@
 
 #include "../game/character.h"
 #include "../gfx/effects.h"
-#include "../gfx/gl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
