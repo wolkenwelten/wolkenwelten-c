@@ -25,9 +25,8 @@ typedef struct {
 static inline uint alignedLen(uint size){
 	if(size & 0x3){
 		return (size & (~0x3))+4;
-	}else{
-		return (size & (~0x3));
 	}
+	return size;
 }
 static inline uint packetLen(const packet *p){
 	return p->typesize >> 10;

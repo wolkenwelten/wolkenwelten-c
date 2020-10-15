@@ -21,11 +21,11 @@
 #include <string.h>
 #include <sys/types.h>
 
-int recvBufLen = 0;
+uint recvBufLen = 0;
 u8 recvBuf[1<<20];
 
-int sendBufSent = 0;
-int sendBufLen  = 0;
+uint sendBufSent = 0;
+uint sendBufLen  = 0;
 u8 sendBuf[1<<16];
 
 size_t sentBytesCurrentSession             = 0;
@@ -107,7 +107,7 @@ void decompressPacket(const packet *p){
 		fprintf(stderr,"Decompression return %i\n",len);
 		exit(1);
 	}
-	for(t=buf;(t-buf)<len;t+=alignedLen(packetLen((packet *)t)) + 4){
+	for(t=buf;(t-buf)<len;t+=alignedLen(4+packetLen((packet *)t))){
 		clientParsePacket((packet *)t);
 	}
 }
@@ -246,21 +246,20 @@ void clientParsePacket(const packet *p){
 }
 
 void clientParse(){
-	int off=0;
+	uint off=0;
 	if(recvBufLen == 0){return;}
 
 	for(int max=128;max > 0;--max){
 		if(off >= recvBufLen){break;}
 		int pLen = packetLen((packet *)(recvBuf+off));
-		if((pLen+4+off) > recvBufLen){
+		if((off+alignedLen(pLen+4)) > recvBufLen){
 			break;
 		}
 		clientParsePacket((packet *)(recvBuf+off));
-		fflush(stderr);
-		off += alignedLen(pLen) + 4;
+		off += alignedLen(pLen+4);
 	}
 	if(off < recvBufLen){
-		for(int i=0;i<recvBufLen-off;i++){
+		for(uint i=0;i<recvBufLen-off;i++){
 			recvBuf[i] = recvBuf[i+off];
 		}
 	}

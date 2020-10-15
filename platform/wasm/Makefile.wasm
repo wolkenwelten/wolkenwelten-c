@@ -7,7 +7,6 @@ all: wolkenwelten
 .PHONY: release.wasm
 release: release.wasm
 
-
 release: release.wasm
 release.wasm: releases/wasm/wolkenwelten.html
 releases/wasm/wolkenwelten.html: $(CLIENT_SRCS) $(CLIENT_HDRS)
@@ -17,9 +16,15 @@ releases/wasm/wolkenwelten.html: client/src/tmp/mods_tmp.c
 releases/wasm/wolkenwelten.html: client/src/tmp/objs.c client/src/tmp/objs.h
 releases/wasm/wolkenwelten.html: client/src/tmp/sfx.c client/src/tmp/sfx.h
 releases/wasm/wolkenwelten.html: common/src/tmp/cto.c common/src/tmp/cto.h
+releases/wasm/wolkenwelten.html: releases/wasm/wasm_glue.js
 releases/wasm/wolkenwelten.html: releases/wasm/manifest.json
-	$(EMCC) $(CLIENT_SRCS) -std=c99 -O3 -fno-rtti --closure 0 --extern-pre-js client/src/misc/wasm.js  -s WASM=1 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 $(EMMEM) $(EMLIBS) --shell-file platform/wasm/shell.html -o releases/wasm/index.html
+	mkdir -p releases/wasm/
+	$(EMCC) $(CLIENT_SRCS) -std=c99 -O3 -fno-rtti --closure 0 -s MINIFY_HTML=0 -s WASM=1 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 $(EMMEM) $(EMLIBS) --shell-file platform/wasm/shell.html -o releases/wasm/index.html
 
 releases/wasm/manifest.json: platform/wasm/manifest.json
 	mkdir -p releases/wasm/
-	cp -f platform/wasm/manifest.json releases/wasm/manifest.json
+	cp -f $< $@
+
+releases/wasm/wasm_glue.js: platform/wasm/wasm_glue.js
+	mkdir -p releases/wasm/
+	cp -f $< $@

@@ -3,6 +3,8 @@
 	<head>
 		<meta charset="utf-8"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAG1BMVEUAAAB5YChoUyJcqhNJiA9DNRR/0zKW2lbA/YaI9AD0AAAAAXRSTlMAQObYZgAAAFhJREFUeAFjAANGIQEQxWwSyhAAYpilOIAZzOllyUAKxEhLATPY2tNMIIwyIAMik2wAFkiDMJjTgAwHEKMMymAvsyiHMJLNy1LAUslpUPNMzKDmMbi4gGQAMDkUUt8TBFsAAAAASUVORK5CYII=" sizes="16x16">
+		<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAHlBMVEUAAAB5YChoUyJDNRQuIghcqhNJiA9/0zLA/YaW2lYFDAG9AAAAAXRSTlMAQObYZgAAAJVJREFUeAFioAwICgmg8JmVnRUBtc6xDcMwDARAplDmSTxCJnBD0enSWBsIb42QAQKC20ZIEb/cm90fiMdT1DzdZKKMXETuOyzxsVke/5y2QJ3lQuCoL6q0DjrA+wgBZILUHJXBAh3oAT6CAQMk/KDs4AdYAgie8fS6hTNAm/MugzVgmGEYQHQFKkNaVamz37WUIifeF86POf2nf9U8AAAAAElFTkSuQmCC" sizes="32x32">
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		<title>Wolkenwelten Pre-Alpha</title>
 		<style>
@@ -17,6 +19,7 @@
 	</head>
 	<body>
 		<canvas class="emscripten" id="canvas"></canvas>
+		<script type="text/javascript" src="wasm_glue.js"></script>
 		<script type='text/javascript'>
 			var args = window.location.search+'';
 			if(args.charAt(0) == '?'){

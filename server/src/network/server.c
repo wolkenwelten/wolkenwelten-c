@@ -575,7 +575,7 @@ void *serverFindCompressibleStart(uint c, int *len){
 	u8 *t = NULL;
 	u8 *ret = NULL;
 	*len = 0;
-	for(t=clients[c].sendBuf;(t-clients[c].sendBuf) < (int)clients[c].sendBufLen;t+=4+alignedLen(packetLen((packet *)t))){
+	for(t=clients[c].sendBuf;(t-clients[c].sendBuf) < (int)clients[c].sendBufLen;t+=alignedLen(4+packetLen((packet *)t))){
 		if(packetType((packet *)t) != 0xFF){
 			ret = t;
 			break;
@@ -603,7 +603,7 @@ void serverCheckCompression(int c){
 	clients[c].sendBufLen -= len;
 	memcpy(start + 4,compressBuf,compressLen);
 	packetSet((packet *)start,0xFF,compressLen);
-	clients[c].sendBufLen += alignedLen(compressLen)+4;
+	clients[c].sendBufLen += alignedLen(compressLen + 4);
 }
 
 void serverSend(){

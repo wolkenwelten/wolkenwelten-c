@@ -14,8 +14,7 @@ function wsRecvData(buf,size){
 		size = window.wolkenweltenRecvBufLen;
 	}
 	let src = new Uint8Array(window.wolkenweltenRecvBuf,0,size);
-	let dst = new Uint8Array(wasmMemory.buffer,buf,size);
-	dst.set(src);
+	Module.HEAPU8.set(src,buf);
 	window.wolkenweltenRecvBufLen -= size;
 
 	return size;
@@ -27,9 +26,8 @@ function wsRecvAB(data){
 		console.log("RecvBuf overflow!!!");
 		return;
 	}
-	let src = new Uint8Array(data,0,data.byteLength);
-	let dst = new Uint8Array(window.wolkenweltenRecvBuf,window.wolkenweltenRecvBufLen,src.byteLength);
-	dst.set(src);
+	let src = new Uint8Array(data);
+	window.wolkenweltenRecvBufU8.set(src,window.wolkenweltenRecvBufLen);
 	window.wolkenweltenRecvBufLen += src.byteLength;
 }
 
@@ -49,8 +47,9 @@ function wsRecvHandler(e){
 function wsInitClient(server,clientName){
 	window.wolkenweltenSocketOpen = false;
 
-	window.wolkenweltenRecvBufSize = 1024*1024*4;
+	window.wolkenweltenRecvBufSize = 1024*1024*2;
 	window.wolkenweltenRecvBuf     = new ArrayBuffer(window.wolkenweltenRecvBufSize);
+	window.wolkenweltenRecvBufU8   = new Uint8Array(window.wolkenweltenRecvBuf);
 	window.wolkenweltenRecvBufLen  = 0;
 
 	window.wolkenweltenSocket = new WebSocket('ws://'+server+':6309',["binary"]);
