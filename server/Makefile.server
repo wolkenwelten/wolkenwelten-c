@@ -5,6 +5,7 @@ SERVER_LIBS      :=
 SERVER_HDRS      := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
 SERVER_SRCS      := $(shell find server/src -type f -name '*.c') $(COMMON_SRCS)
 SERVER_OBJS      := ${SERVER_SRCS:.c=.o}
+SERVER_DEPS      := ${SERVER_SRCS:.c=.deps}
 
 SFX_ASSETS       := $(shell find client/sfx -type f -name '*')
 MESH_ASSETS      := $(shell find client/mesh -type f -name '*')
@@ -18,9 +19,10 @@ wolkenwelten-server: LIBS      += $(SERVER_LIBS)
 wolkenwelten-server: server/make.deps $(SERVER_OBJS)
 	$(LD) $(SERVER_OBJS) -o wolkenwelten-server $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 
+$(SERVER_DEPS): | common/src/tmp/cto.h server/src/tmp/objs.h server/src/tmp/sfx.h server/src/tmp/mods_tmp.c
 .deps: server/make.deps
-server/make.deps: common/src/tmp/cto.h server/src/tmp/objs.h server/src/tmp/sfx.h server/src/tmp/mods_tmp.c server/src/tmp/sfx.h
-	$(CC) -MM $(SERVER_SRCS) $(CINCLUDES) $(SERVER_CINCLUDES) > server/make.deps
+server/make.deps: $(SERVER_DEPS)
+	cat $(SERVER_DEPS) > server/make.deps
 
 ifneq ($(MAKECMDGOALS),clean)
 -include server/make.deps

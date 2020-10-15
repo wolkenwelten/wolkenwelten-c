@@ -41,6 +41,7 @@ platform/win_cross/pkgs/mingw-w64-sdl2/*
 
 # Executables/Object files
 /client/make.deps
+/common/make.deps
 /server/make.deps
 /releases/
 /web/releases/
@@ -62,6 +63,7 @@ platform/win_cross/pkgs/mingw-w64-sdl2/*
 *.lib
 *.so
 *.o
+*.deps
 *.gch
 /src/*.obj
 *.dylib

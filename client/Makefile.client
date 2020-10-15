@@ -12,6 +12,7 @@ MESHASSETS       := $(shell find client/mesh -type f -name '*')
 CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
 CLIENT_SRCS      := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
 CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
+CLIENT_DEPS      := ${CLIENT_SRCS:.c=.deps}
 
 WINDOW_WIDTH     := 960
 WINDOW_HEIGHT    := 524
@@ -22,9 +23,14 @@ wolkenwelten: LIBS      += $(CLIENT_LIBS)
 wolkenwelten: client/make.deps $(CLIENT_OBJS)
 	$(LD) $(CLIENT_OBJS) -o wolkenwelten $(OPTIMIZATION) $(CFLAGS) $(LIBS) $(CSTD)
 
+$(CLIENT_DEPS): | client/src/tmp/assets.h client/src/tmp/meshassets.h common/src/tmp/cto.h client/src/tmp/objs.h client/src/tmp/mods_tmp.c client/src/tmp/sfx.h
 .deps: client/make.deps
-client/make.deps: | client/src/tmp/assets.h client/src/tmp/meshassets.h common/src/tmp/cto.h client/src/tmp/objs.h client/src/tmp/mods_tmp.c client/src/tmp/sfx.h
-	$(CC) -MM $(CLIENT_SRCS) $(CINCLUDES) $(CLIENT_CINCLUDES) > client/make.deps
+client/make.deps: $(CLIENT_DEPS)
+	cat $(CLIENT_DEPS) > client/make.deps
+
+ifneq ($(MAKECMDGOALS),clean)
+-include client/make.deps
+endif
 
 client/src/tmp/assets.c: client/tools/assets $(ASSETS)
 	mkdir -p client/src/tmp/
@@ -65,10 +71,6 @@ client/src/tmp/sfx.c: client/tools/sfxgen
 	client/tools/sfxgen client/src/tmp/sfx client/sfx/
 client/src/tmp/sfx.h: client/src/tmp/sfx.c
 	@true
-
-ifneq ($(MAKECMDGOALS),clean)
--include client/make.deps
-endif
 
 .PHONY: optimizegfx
 optimizegfx: all
