@@ -49,10 +49,10 @@ void clientInit(){
 }
 
 void clientRead(){
-	int len = 1;
 	if(serverSocket == 0){clientInit();}
-	while(len > 0){
-		const int len = wsRecv(recvBuf + recvBufLen,sizeof(recvBuf) - recvBufLen);
+	for(int i=4;i>0;i--){
+		const uint len = wsRecv(recvBuf + recvBufLen,sizeof(recvBuf) - recvBufLen);
+		if(len == 0){break;}
 		recvBufLen += len;
 		recvBytesCurrentSession += len;
 	}
