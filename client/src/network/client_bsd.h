@@ -206,41 +206,35 @@ void clientInit(){
 }
 
 void clientRead(){
-	int len = 1;
 	if(serverSocket <= 0){clientInit();}
 	if(serverSocket <= 0){return;}
-	while(len > 0){
-		len = recv(serverSocket,recvBuf + recvBufLen,sizeof(recvBuf) - recvBufLen, 0);
-		if(len > 0){
-			recvBufLen += len;
-			recvBytesCurrentSession += len;
-		}
-	}
-	if(len < 0){
-		if(errno == EAGAIN){return;}
-		clientFree();
+	for(int i=4;i>0;i--){
+		const int len = recv(serverSocket,recvBuf + recvBufLen,sizeof(recvBuf) - recvBufLen, 0);
+		if(len < 0){
+			if(errno == EAGAIN){break;}
+			clientFree();
+			return;
+		}else if(len == 0){break;}
+		recvBufLen += len;
+		recvBytesCurrentSession += len;
 	}
 }
 
 void clientWrite(){
 	if(serverSocket <= 0){clientInit();}
 	if(serverSocket <= 0){return;}
-
-	while(sendBufSent < sendBufLen){
+	for(int i=4;i>0;i--){
 		const int ret = write(serverSocket,sendBuf+sendBufSent,sendBufLen-sendBufSent);
 		if(ret < 0){
-			if(errno == EAGAIN){
-				return;
-			}else{
-				perror("ERROR sending");
-				clientFree();
-				return;
-			}
-		}else{
-			sendBufSent += ret;
-			sentBytesCurrentSession += ret;
-		}
+			if(errno == EAGAIN){break;}
+			clientFree();
+			return;
+		}else if(ret == 0){break;}
+		sendBufSent += ret;
+		sentBytesCurrentSession += ret;
 	}
-	sendBufSent = 0;
-	sendBufLen  = 0;
+	if(sendBufSent >= sendBufLen){
+		sendBufSent = 0;
+		sendBufLen  = 0;
+	}
 }

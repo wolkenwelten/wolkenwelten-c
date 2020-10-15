@@ -143,42 +143,40 @@ void clientFreeSpecific(){
 }
 
 void clientRead(){
-	int len = 1;
 	if(serverSocket <= 0){clientInit();}
 	if(serverSocket <= 0){return;}
-	while(len > 0){
-		len = recv(serverSocket,(void *)(recvBuf + recvBufLen),sizeof(recvBuf) - recvBufLen, 0);
+	for(int i=4;i>0;i--){
+		const int len = recv(serverSocket,(void *)(recvBuf + recvBufLen),sizeof(recvBuf) - recvBufLen, 0);
 		if(len == SOCKET_ERROR){
 			const int err = WSAGetLastError();
-			if(err == WSAEWOULDBLOCK){return;}
-			if(err == WSAEINPROGRESS){return;}
-			fprintf(stderr,"ERROR receiving: %i\n",err);
+			if(err == WSAEWOULDBLOCK){break;}
+			if(err == WSAEINPROGRESS){break;}
 			clientFree();
-		}else{
-			recvBufLen += len;
-			recvBytesCurrentSession += len;
+			return;
 		}
+		if(len == 0){break;}
+		recvBufLen += len;
+		recvBytesCurrentSession += len;
 	}
 }
 
 void clientWrite(){
 	if(serverSocket <= 0){clientInit();}
 	if(serverSocket <= 0){return;}
-
-	while(sendBufSent < sendBufLen){
+	for(int i=4;i>0;i--){
 		const int ret = send(serverSocket,(void *)(sendBuf+sendBufSent),sendBufLen-sendBufSent, 0);
 		if(ret == SOCKET_ERROR){
 			const int err = WSAGetLastError();
 			if(err == WSAEWOULDBLOCK){break;}
 			if(err == WSAEINPROGRESS){break;}
-			fprintf(stderr,"ERROR sending: %i\n",err);
 			clientFree();
 			return;
-		}else{
-			sendBufSent += ret;
-			sentBytesCurrentSession += ret;
-		}
+		}else if(ret == 0){break;}
+		sendBufSent += ret;
+		sentBytesCurrentSession += ret;
 	}
-	sendBufSent = 0;
-	sendBufLen  = 0;
+	if(sendBufSent >= sendBufLen){
+		sendBufSent = 0;
+		sendBufLen  = 0;
+	}
 }
