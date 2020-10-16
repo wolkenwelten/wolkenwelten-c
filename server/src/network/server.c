@@ -249,10 +249,13 @@ void dispatchBeingDmg(uint c, const packet *p){
 	switch(beingType(target)){
 	default:
 		fprintf(stderr,"dispatchBeingDmg[%i]: Unknown being %x",c,target);
+		break;
 	case BEING_CHARACTER:
 		characterDmgPacket(c,p);
+		break;
 	case BEING_ANIMAL:
 		animalDmgPacket(c,p);
+		break;
 	}
 }
 

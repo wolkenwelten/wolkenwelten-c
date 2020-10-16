@@ -118,10 +118,13 @@ void dispatchBeingGotHit(const packet *p){
 	switch(beingType(target)){
 	default:
 		fprintf(stderr,"dispatchBeingGotHit: Unknown being %x",target);
+		break;
 	case BEING_CHARACTER:
 		characterGotHitPacket(p);
+		break;
 	case BEING_ANIMAL:
 		animalGotHitPacket(p);
+		break;
 	}
 }
 
