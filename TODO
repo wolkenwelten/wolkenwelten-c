@@ -7,6 +7,7 @@
 
 (C) Enemies
 (C) More worldgen variety
+(C) Use 2 sockets for networking to enable a high/low priority separation
 
 (D) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
 (D) Make Blocks Modable
