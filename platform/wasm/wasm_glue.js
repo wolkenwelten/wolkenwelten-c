@@ -53,6 +53,7 @@ function wsInitClient(server,clientName){
 	window.wolkenweltenRecvBufLen  = 0;
 
 	window.wolkenweltenSocket = new WebSocket('ws://'+server+':6309',["binary"]);
+	window.wolkenweltenSocket.binaryType = "arraybuffer";
 	window.wolkenweltenSocket.onopen = function(e){
 		window.wolkenweltenSocketOpen = true;
 	}

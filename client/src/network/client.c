@@ -252,7 +252,7 @@ void clientParse(){
 	uint off=0;
 	if(recvBufLen == 0){return;}
 
-	for(int max=128;max > 0;--max){
+	for(int max=512;max > 0;--max){
 		if(off >= recvBufLen){break;}
 		int pLen = packetLen((packet *)(recvBuf+off));
 		if((off+alignedLen(pLen+4)) > recvBufLen){
