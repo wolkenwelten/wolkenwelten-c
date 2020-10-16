@@ -424,15 +424,18 @@ int characterPhysics(character *c){
 	}
 	if((col&0x00F) && (c->vel.y < 0.f)){
 		c->flags &= ~CHAR_FALLING;
-		if(c->vel.y < -0.15f){
-			c->yoff = -0.8f;
+		if(c->vel.y < -0.1f){
 			ret += (int)(fabsf(c->vel.y)*512.f);
-		}else if(c->vel.y < -0.07f){
-			c->yoff += -0.4f;
-		}else if(c->vel.y < -0.04f){
-			c->yoff += -0.2f;
 		}
-		c->vel = vecMul(c->vel,vecNew(0.97f,0,0.97f));
+		if(c->vel.y < -0.02f){
+			c->yoff += MAX(-.9f,c->vel.y * 10.f);
+		}
+		if(c->vel.y < -0.1f){
+			c->vel.y = c->vel.y*-0.3f;
+		}else{
+			c->vel = vecMul(c->vel,vecNew(0.98f,0,0.98f));
+		}
+		c->pos.y = MAX(c->pos.y,floorf(c->pos.y)+.99f);
 	}
 
 	if(c->flags & CHAR_GLIDE){ updateGlide(c); }
@@ -489,7 +492,6 @@ void characterUpdate(character *c){
 	vec nvel;
 
 	if(c->flags & CHAR_SPAWNING){return;}
-
 	if((c->flags & CHAR_FALLINGSOUND) && (c->pos.y > -32)){ c->flags &= ~CHAR_FALLINGSOUND; }
 	characterUpdateFalling(c);
 	if(c->rot.pitch < -90.f){
