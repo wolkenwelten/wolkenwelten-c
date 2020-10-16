@@ -1,1 +1,7 @@
 - Check new GUI with a Gamepad
+- Connecting to a non existant / wrong server should trigger an error message instead of an endless loop
+- In-Game menu, so hitting ESC does not immediatly leave the server
+- JetPack stamina/fuel
+- Equipment and slots for Hook/JetPack/Glider
+- At least one enemy (probably Beam Pylon)
+- Replace Jumping SFX, they are annoying AF

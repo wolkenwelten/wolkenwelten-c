@@ -4,7 +4,6 @@
 (B) Rework worldgen to not use the global RNG anymore, instead relying on a local one
 (B) Some kind of jumping at the end of some grappling hook action
 (B) Proper Character Models
-(B) Add inventory class
 
 (C) Enemies
 (C) More worldgen variety
