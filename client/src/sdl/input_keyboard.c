@@ -67,73 +67,73 @@ int keyboardCmdKey(const SDL_Event *e){
 
 void keyboardEventHandler(const SDL_Event *e){
 	if(e->type == SDL_KEYUP){
-		switch(e->key.keysym.sym){
-		case SDLK_UP:
-		case SDLK_w:
+		switch(e->key.keysym.scancode){
+		case SDL_SCANCODE_UP:
+		case SDL_SCANCODE_W:
 			keysPressed[0] = 0;
 			menuChangeFocus(0,1, e->key.keysym.sym == SDLK_w);
 			break;
-		case SDLK_DOWN:
-		case SDLK_s:
+		case SDL_SCANCODE_DOWN:
+		case SDL_SCANCODE_S:
 			keysPressed[1] = 0;
 			menuChangeFocus(0,-1, e->key.keysym.sym == SDLK_s);
 			break;
-		case SDLK_LEFT:
-		case SDLK_a:
+		case SDL_SCANCODE_LEFT:
+		case SDL_SCANCODE_A:
 			keysPressed[2] = 0;
 			menuChangeFocus(-1,0, e->key.keysym.sym == SDLK_a);
 			break;
-		case SDLK_RIGHT:
-		case SDLK_d:
+		case SDL_SCANCODE_RIGHT:
+		case SDL_SCANCODE_D:
 			keysPressed[3] = 0;
 			menuChangeFocus(1,0, e->key.keysym.sym == SDLK_d);
 			break;
-		case SDLK_SPACE:
+		case SDL_SCANCODE_SPACE:
 			keysPressed[4] = 0;
 			menuKeyClick(0);
 			break;
-		case SDLK_RETURN:
-		case SDLK_KP_ENTER:
+		case SDL_SCANCODE_RETURN:
+		case SDL_SCANCODE_KP_ENTER:
 			openChat();
 			menuKeyClick(0);
 			break;
-		case SDLK_DELETE:
-		case SDLK_BACKSPACE:
+		case SDL_SCANCODE_DELETE:
+		case SDL_SCANCODE_BACKSPACE:
 			menuKeyClick(1);
 			break;
-		case SDLK_LSHIFT:
+		case SDL_SCANCODE_LSHIFT:
 			keysPressed[5] = 0;
 			break;
-		case SDLK_q:
+		case SDL_SCANCODE_Q:
 			keysPressed[6] = 0;
 			break;
-		case SDLK_r:
+		case SDL_SCANCODE_R:
 			keysPressed[7] = 0;
 			break;
-		case SDLK_y:
+		case SDL_SCANCODE_Y:
 			keysPressed[10] = 0;
 			break;
-		case SDLK_u:
+		case SDL_SCANCODE_U:
 			keysPressed[11] = 0;
 			break;
-		case SDLK_h:
+		case SDL_SCANCODE_H:
 			keysPressed[12] = 0;
 			break;
-		case SDLK_j:
+		case SDL_SCANCODE_J:
 			keysPressed[13] = 0;
 			break;
-		case SDLK_k:
+		case SDL_SCANCODE_K:
 			keysPressed[14] = 0;
 			break;
-		case SDLK_l:
+		case SDL_SCANCODE_L:
 			keysPressed[15] = 0;
 			break;
 		#ifndef __EMSCRIPTEN__
-		case SDLK_F5:
+		case SDL_SCANCODE_F5:
 			textureReload();
 			break;
 
-		case SDLK_F11:
+		case SDL_SCANCODE_F11:
 			setFullscreen(!optionFullscreen);
 			break;
 		#endif
@@ -144,61 +144,61 @@ void keyboardEventHandler(const SDL_Event *e){
 	}
 
 	if(e->type == SDL_KEYDOWN){
-		switch(e->key.keysym.sym){
-		case SDLK_UP:
-		case SDLK_w:
+		switch(e->key.keysym.scancode){
+		case SDL_SCANCODE_UP:
+		case SDL_SCANCODE_W:
 			keysPressed[0] = 1;
 			break;
-		case SDLK_DOWN:
-		case SDLK_s:
+		case SDL_SCANCODE_DOWN:
+		case SDL_SCANCODE_S:
 			keysPressed[1] = 1;
 			break;
-		case SDLK_LEFT:
-		case SDLK_a:
+		case SDL_SCANCODE_LEFT:
+		case SDL_SCANCODE_A:
 			keysPressed[2] = 1;
 			break;
-		case SDLK_RIGHT:
-		case SDLK_d:
+		case SDL_SCANCODE_RIGHT:
+		case SDL_SCANCODE_D:
 			keysPressed[3] = 1;
 			break;
-		case SDLK_SPACE:
+		case SDL_SCANCODE_SPACE:
 			keysPressed[4] = 1;
 			break;
-		case SDLK_LSHIFT:
+		case SDL_SCANCODE_LSHIFT:
 			keysPressed[5] = 1;
 			break;
-		case SDLK_q:
+		case SDL_SCANCODE_Q:
 			keysPressed[6] = 1;
 			if(keyboardCmdKey(e)){quit=true;}
 			break;
-		case SDLK_r:
+		case SDL_SCANCODE_R:
 			keysPressed[7] = 1;
 			break;
-		case SDLK_y:
+		case SDL_SCANCODE_Y:
 			keysPressed[10] = 1;
 			break;
-		case SDLK_u:
+		case SDL_SCANCODE_U:
 			keysPressed[11] = 1;
 			break;
-		case SDLK_h:
+		case SDL_SCANCODE_H:
 			keysPressed[12] = 1;
 			break;
-		case SDLK_j:
+		case SDL_SCANCODE_J:
 			keysPressed[13] = 1;
 			break;
-		case SDLK_k:
+		case SDL_SCANCODE_K:
 			keysPressed[14] = 1;
 			break;
-		case SDLK_l:
+		case SDL_SCANCODE_L:
 			keysPressed[15] = 1;
 			break;
-		case SDLK_ESCAPE:
+		case SDL_SCANCODE_ESCAPE:
 			if(gameRunning && !mouseHidden){hideMouseCursor(); break; }
 			menuCancel();
 			guiCancel();
 			break;
-		case SDLK_i:
-		case SDLK_TAB:
+		case SDL_SCANCODE_I:
+		case SDL_SCANCODE_TAB:
 			if(!textInputActive()){
 				if(isInventoryOpen()){
 					hideInventory();
@@ -207,59 +207,63 @@ void keyboardEventHandler(const SDL_Event *e){
 				}
 			}
 			break;
-		case SDLK_F2:
+		case SDL_SCANCODE_F2:
 			showInventory();
 			break;
-		case SDLK_F3:
+		case SDL_SCANCODE_F3:
 			showCrafting();
+			break;
+		default:
 			break;
 		}
 	}
 
 	if((widgetFocused != NULL) || (!gameRunning)){return;}
 	if(e->type == SDL_KEYDOWN){
-		switch(e->key.keysym.sym){
-		case SDLK_e:
+		switch(e->key.keysym.scancode){
+		case SDL_SCANCODE_E:
 			characterFireHook(player);
 			break;
-		case SDLK_1:
+		case SDL_SCANCODE_1:
 			characterSetActiveItem(player,0);
 			break;
-		case SDLK_2:
+		case SDL_SCANCODE_2:
 			characterSetActiveItem(player,1);
 			break;
-		case SDLK_3:
+		case SDL_SCANCODE_3:
 			characterSetActiveItem(player,2);
 			break;
-		case SDLK_4:
+		case SDL_SCANCODE_4:
 			characterSetActiveItem(player,3);
 			break;
-		case SDLK_5:
+		case SDL_SCANCODE_5:
 			characterSetActiveItem(player,4);
 			break;
-		case SDLK_6:
+		case SDL_SCANCODE_6:
 			characterSetActiveItem(player,5);
 			break;
-		case SDLK_7:
+		case SDL_SCANCODE_7:
 			characterSetActiveItem(player,6);
 			break;
-		case SDLK_8:
+		case SDL_SCANCODE_8:
 			characterSetActiveItem(player,7);
 			break;
-		case SDLK_9:
+		case SDL_SCANCODE_9:
 			characterSetActiveItem(player,8);
 			break;
-		case SDLK_0:
+		case SDL_SCANCODE_0:
 			characterSetActiveItem(player,9);
 			break;
-		case SDLK_m:
+		case SDL_SCANCODE_M:
 			optionDebugInfo = 1 - optionDebugInfo;
 			break;
-		case SDLK_n:
+		case SDL_SCANCODE_N:
 			player->flags ^= CHAR_NOCLIP;
 			break;
-		case SDLK_v:
+		case SDL_SCANCODE_V:
 			player->flags ^= CHAR_GLIDE;
+			break;
+		default:
 			break;
 		}
 	}
