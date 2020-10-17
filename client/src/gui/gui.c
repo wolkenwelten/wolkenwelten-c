@@ -305,7 +305,7 @@ void drawAnimalDebugOverlay(const animal *e, int i){
 	guim->fgc = 0x00B0D0 | ((u32)a<<24);
 	textMeshPrintfPS(guim,p.x,p.y,2,"X");
 
-	if(p.z > 96){return;}
+	if(p.z > 96){guim->fgc = ofgc; return;}
 	guim->fgc = 0xFFFFFFFF;
 	textMeshPrintfPS(guim,p.x+16,p.y-40,2,"%s",animalGetStateName(e));
 	drawSingleHealthbar(e->health, 8, p.x+16,p.y-16,8,false);
@@ -321,8 +321,6 @@ void drawAnimalDebugOverlay(const animal *e, int i){
 	textMeshPrintfPS(guim,p.x+16,p.y+ 8,1,"Thirst: %s%i%s",thirstC,e->thirst,ansiFG[7]);
 	textMeshPrintfPS(guim,p.x+16,p.y+16,1,"Sleepy: %s%i%s",sleepyC,e->sleepy,ansiFG[7]);
 	textMeshPrintfPS(guim,p.x+16,p.y+24,1,"Age:    %s%i%s",ageC,   e->age   ,ansiFG[7]);
-
-	guim->fgc = 0xFF00C0E0;
 	guim->fgc = ofgc;
 }
 
