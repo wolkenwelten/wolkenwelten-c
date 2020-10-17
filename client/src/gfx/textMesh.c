@@ -105,7 +105,7 @@ void textMeshEmpty(textMesh *m){
 
 void textMeshAddVert(textMesh *m, i16 x, i16 y, i16 u, i16 v, u32 rgba){
 	if(m->dataCount >= (int)(sizeof(m->dataBuffer) / sizeof(vertex2D))){
-		fprintf(stderr,"textMeh dataBuffer OVERFLOW\n");
+		fprintf(stderr,"textMesh dataBuffer OVERFLOW\n");
 		return;
 	}
 	m->dataBuffer[m->dataCount++] = (vertex2D){x,y,u,v,rgba};

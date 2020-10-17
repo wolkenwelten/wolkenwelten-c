@@ -1,5 +1,6 @@
 #include "animal.h"
 
+#include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
@@ -17,7 +18,7 @@ animal  animalList[1<<10];
 uint    animalCount = 0;
 animal *animalFirstFree = NULL;
 
-#define ANIMALS_PER_UPDATE 16u
+#define ANIMALS_PER_UPDATE 8u
 
 animal *animalNew(const vec pos , int type){
 	animal *e = NULL;
@@ -266,8 +267,10 @@ void animalSHeat(animal *e){
 void animalSFight(animal *e){
 	if( rngValM(32) == 0){e->hunger--;}
 	if( rngValM(24) == 0){e->sleepy--;}
-	if((rngValM(20) == 0) && !(e->flags & ANIMAL_FALLING)){
-		e->vel.y = 0.03f;
+	if(e->type != 2){
+		if((rngValM(20) == 0) && !(e->flags & ANIMAL_FALLING)){
+			e->vel.y = 0.03f;
+		}
 	}
 	if(rngValM(24) == 0){
 		animal *cAnim;
@@ -293,7 +296,67 @@ void animalSFlee(animal *e){
 	}
 }
 
-void animalCheckForCharacter(animal *e){
+void animalAggresive(animal *e){
+	character *cChar;
+	float dist = animalClosestPlayer(e,&cChar);
+	uint los = 0;
+	if(cChar != NULL){
+		los = lineOfSightBlockCount(vecAdd(e->pos,vecNew(0.f,.5f,0.f)),cChar->pos,2);
+	}
+
+	if(e->state == ANIMAL_S_FIGHT){
+		if((cChar == NULL) || (dist > 64.f) || los){
+			e->state   =  ANIMAL_S_LOITER;
+		}else{
+			vec caNorm = vecNorm(vecNew(cChar->pos.x - e->pos.x,0.f, cChar->pos.z - e->pos.z));
+			vec caRot  = vecVecToDeg(caNorm);
+
+			e->rot.yaw = caRot.yaw;
+			e->gvel.x = 0;
+			e->gvel.z = 0;
+
+			if(--e->temp == 0){
+				int target = getClientByCharacter(cChar);
+				int dmg = 4;
+				if(target < 0){return;}
+				msgBeingDamage(target,dmg,2,beingCharacter(target),-1,e->pos);
+				e->state = ANIMAL_S_FLEE;
+				e->vel = vecAdd(e->vel,vecMulS(caNorm,-0.001f));
+				e->temp = 50;
+				msgFxBeamBlaster(-1,e->pos,cChar->pos,4.f,2);
+			}
+			addPriorityAnimal(e-animalList);
+		}
+	}else if(e->state == ANIMAL_S_FLEE){
+		if((cChar == NULL) || (dist > 78.f) || (--e->temp == 0)){
+			e->state = ANIMAL_S_LOITER;
+		}else{
+			vec caNorm = vecNorm(vecNew(e->pos.x - cChar->pos.x,0.f, e->pos.z - cChar->pos.z));
+			vec caVel  = vecMulS(caNorm,0.03f);
+			vec caRot  = vecVecToDeg(caNorm);
+
+			e->gvel.x  = caVel.x;
+			e->gvel.z  = caVel.z;
+			e->rot.yaw = -caRot.yaw;
+			if((dist < 3.f) && (rngValM(8)==0)){
+				e->state = ANIMAL_S_FIGHT;
+				e->flags |= ANIMAL_AGGRESIVE;
+			}
+			addPriorityAnimal(e-animalList);
+		}
+	}else{
+		float fd = 48.f;
+		if(e->state == ANIMAL_S_SLEEP){fd = 24.f;}
+		if((cChar != NULL) && (dist < fd) && !los){
+			e->state = ANIMAL_S_FIGHT;
+			e->temp  = 50;
+			addPriorityAnimal(e-animalList);
+		}
+	}
+	e->temp = MIN(e->temp,64);
+}
+
+void animalFightOrFlight(animal *e){
 	character *cChar;
 	float dist = animalClosestPlayer(e,&cChar);
 
@@ -441,7 +504,11 @@ void animalSEat(animal *e){
 
 void animalSExist(animal *e){
 	animalCheckSuffocation(e);
-	animalCheckForCharacter(e);
+	if(e->type == 2){
+		animalAggresive(e);
+	}else{
+		animalFightOrFlight(e);
+	}
 	animalAgeing(e);
 	animalSleepyness(e);
 	animalHunger(e);
@@ -547,6 +614,10 @@ uint animalSyncPlayer(int c, uint offset){
 		animalEmptySync(c);
 		return offset;
 	}
+	for(uint i=0;i<clients[c].animalPriorityQueueLen;i++){
+		animalSync(c,clients[c].animalPriorityQueue[i]);
+	}
+	clients[c].animalPriorityQueueLen = 0;
 
 	for(uint i=offset;i<max;i++){
 		animalSync(c,i);

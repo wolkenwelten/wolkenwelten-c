@@ -8,6 +8,9 @@ typedef struct {
 	int flags;
 
 	uint animalUpdateOffset;
+	uint animalPriorityQueueLen;
+	u16  animalPriorityQueue[128];
+
 	uint itemDropUpdateOffset;
 	uint itemDropPriorityQueueLen;
 	u16  itemDropPriorityQueue[128];
@@ -53,6 +56,7 @@ void addChungusToQueue     (uint c, u8 x, u8 y, u8 z);
 void addQueuedChunks       (uint c);
 void addPriorityItemDrop   (u16  i);
 void delPriorityItemDrop   (u16  i);
+void addPriorityAnimal     (u16  i);
 void serverSendChatMsg     (const char *msg);
 
 int  getClientByName       (const char *name);

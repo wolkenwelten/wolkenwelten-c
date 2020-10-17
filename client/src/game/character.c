@@ -277,8 +277,8 @@ void characterHit(character *c){
 	iteration--;
 
 	const vec pos = vecAdd(c->pos,vecDegToVec(c->rot));
-	characterHitCheck(pos,1.f,damageDispatch(itm),2,iteration);
-	animalHitCheck   (pos,1.f,damageDispatch(itm),2,iteration);
+	characterHitCheck(pos,2.f,damageDispatch(itm),2,iteration);
+	animalHitCheck   (pos,2.f,damageDispatch(itm),2,iteration);
 
 	characterStartAnimation(c,0,240);
 	characterAddCooldown(c,80);
@@ -424,7 +424,7 @@ int characterPhysics(character *c){
 	}
 	if((col&0x00F) && (c->vel.y < 0.f)){
 		c->flags &= ~CHAR_FALLING;
-		if(c->vel.y < -0.1f){
+		if(c->vel.y < -0.15f){
 			ret += (int)(fabsf(c->vel.y)*512.f);
 		}
 		if(c->vel.y < -0.02f){

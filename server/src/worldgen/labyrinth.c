@@ -1,5 +1,6 @@
 #include "labyrinth.h"
 
+#include "../game/animal.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
 
@@ -73,6 +74,10 @@ void worldgenLabyrinth(worldgen *wgen, int labLayer){
 				chungusBox(clay,bx  ,by+1,bz  , 1,1,10,b);
 				chungusBox(clay,bx+9,by+1,bz  , 1,1,10,b);
 
+				if(rngValM(64) == 0){
+					animalNew(vecNew(wgen->gx+bx+3.f,wgen->gy+by+3.f,wgen->gz+bz+3.f),2);
+				}
+
 				// Change the base platform up a bit
 				switch(rngValM(32)){
 					default:
@@ -126,6 +131,7 @@ void worldgenLabyrinth(worldgen *wgen, int labLayer){
 						chungusBox(clay,bx+1,by+8,bz+1, 8,1, 8,18);
 					break;
 				}
+
 
 				if((cx < 15) && labMap[cx+1][cy][cz]){
 					if(rngValM(4)==0){

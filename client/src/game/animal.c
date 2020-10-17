@@ -3,6 +3,7 @@
 #include "../game/character.h"
 #include "../gfx/effects.h"
 #include "../gfx/gfx.h"
+#include "../gfx/particle.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
@@ -17,6 +18,15 @@ uint    animalCount = 0;
 animal *animalFirstFree = NULL;
 
 #define ANIMAL_FADEOUT (128.f)
+
+static const mesh *animalGetMesh(const animal *e){
+	switch(e->type){
+	default:
+		return meshPear;
+	case 2:
+		return meshBomb;
+	}
+}
 
 static void animalShadesDraw(const animal *c){
 	float breath,scale;
@@ -65,7 +75,7 @@ static void animalDraw(animal *e){
 	e->screenPos = matMulVec(matMVP,vecNew(0,0.25f,0));
 
 	shaderMatrix(sMesh,matMVP);
-	meshDraw(meshPear);
+	meshDraw(animalGetMesh(e));
 	animalShadesDraw(e);
 }
 
@@ -77,9 +87,23 @@ void animalDrawAll(){
 	}
 }
 
+static void animalUpdateClientside(animal *e){
+	if((e->type == 2) && (e->state == ANIMAL_S_FIGHT)){
+		for(int i=0;i<4;i++){
+			const vec v = vecMulS(vecRng(),(1.f/128.f));
+			newParticleV(e->pos,v,vecMulS(v,1/64.f),32.f,2.f,0xFF964AC0,192);
+		}
+		for(int i=0;i<4;i++){
+			const vec v = vecMulS(vecRng(),(1.f/156.f));
+			newParticleV(e->pos,v,vecMulS(v,1/-96.f),16.f,4.f,0xFF7730A0,154);
+		}
+	}
+}
+
 void animalUpdateAll(){
 	for(uint i=0;i<animalCount;i++){
 		animalUpdate(&animalList[i]);
+		animalUpdateClientside(&animalList[i]);
 	}
 }
 

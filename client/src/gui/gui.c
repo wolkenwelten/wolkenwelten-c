@@ -293,7 +293,7 @@ static const char *colorSignalLow(int err, int warn, int good, int v){
 	return ansiFG[15];
 }
 
-void drawAnimalDebugOverlay(const animal *e){
+void drawAnimalDebugOverlay(const animal *e, int i){
 	if(e == NULL){return;}
 	vec p = e->screenPos;
 	if(p.z < 0){return;}
@@ -301,16 +301,16 @@ void drawAnimalDebugOverlay(const animal *e){
 	p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
 
 	u32 ofgc = guim->fgc;
-	float a = MIN(255.f,MAX(0.f,(p.z-32.f)));
+	float a = MIN(128.f,MAX(0.f,(p.z-32.f)));
 	guim->fgc = 0x00B0D0 | ((u32)a<<24);
-	textMeshPrintfPS(guim,p.x,p.y - 16,2,"|");
-	textMeshPrintfPS(guim,p.x,p.y + 16,2,"|");
-	textMeshPrintfPS(guim,p.x-16,p.y,2,"-");
-	textMeshPrintfPS(guim,p.x+16,p.y,2,"-");
+	textMeshPrintfPS(guim,p.x,p.y,2,"X");
 
+	if(p.z > 96){return;}
 	guim->fgc = 0xFFFFFFFF;
 	textMeshPrintfPS(guim,p.x+16,p.y-40,2,"%s",animalGetStateName(e));
 	drawSingleHealthbar(e->health, 8, p.x+16,p.y-16,8,false);
+	textMeshPrintfPS(guim,p.x-48,p.y-40,2,"%i",i);
+	textMeshPrintfPS(guim,p.x-48,p.y-24,2,"%.1f",p.z);
 	guim->fgc = colorPalette[7];
 
 	const char *hungerC = colorSignalHigh(16,32,48,e->hunger);
@@ -377,7 +377,7 @@ void drawDebuginfo(){
 	}
 
 	for(uint i=0;i<animalCount;i++){
-		drawAnimalDebugOverlay(&animalList[i]);
+		drawAnimalDebugOverlay(&animalList[i],i);
 	}
 
 	guim->sx   =  4;

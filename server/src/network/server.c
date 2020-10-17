@@ -114,6 +114,7 @@ void serverInitClient(uint c){
 	clients[c].state                    = STATE_CONNECTING;
 	clients[c].flags                    = 0;
 	clients[c].animalUpdateOffset       = 0;
+	clients[c].animalPriorityQueueLen   = 0;
 	clients[c].itemDropUpdateOffset     = 0;
 	clients[c].itemDropPriorityQueueLen = 0;
 
@@ -143,6 +144,21 @@ void delPriorityItemDrop(u16 d){
 			if(iq[i] != d){continue;}
 			iq[i] = iq[--clients[c].itemDropPriorityQueueLen];
 		}
+	}
+}
+
+void addPriorityAnimal(u16 d){
+	fprintf(stderr,"%i\n",d);
+	for(uint c=0;c<clientCount;c++){
+		if(clients[c].state)                        {continue;}
+		if(clients[c].animalPriorityQueueLen > 127) {continue;}
+
+		for(uint i=0;i<clients[c].animalPriorityQueueLen;i++){
+			if(clients[c].animalPriorityQueue[i] == d){goto continueClientLoop;}
+		}
+		clients[c].animalPriorityQueue[clients[c].animalPriorityQueueLen++] = d;
+		continueClientLoop:
+		(void)d;
 	}
 }
 

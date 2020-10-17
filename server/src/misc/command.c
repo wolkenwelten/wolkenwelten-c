@@ -188,11 +188,43 @@ static void cmdTpr(int c, const char *cmd){
 }
 
 void cmdAni(int c, const char *cmd){
-	(void)cmd;
+	int amount = 1;
+	int id     = 1;
+	int target = c;
+	int argc;
+	char **argv;
 
-	character *ch = clients[c].c;
+	argv = splitArgs(cmd,&argc);
+	if(argc > 1){
+		id = atoi(argv[1]);
+		if(id <= 0){
+			snprintf(replyBuf,sizeof(replyBuf),".ani: error with ID %i",id);
+			replyBuf[sizeof(replyBuf)-1]=0;
+			serverSendChatMsg(replyBuf);
+			return;
+		}
+	}
+	if(argc > 2){
+		amount = atoi(argv[2]);
+		if(amount <= 0){
+			snprintf(replyBuf,sizeof(replyBuf),".ani: error with amount %i",amount);
+			replyBuf[sizeof(replyBuf)-1]=0;
+			serverSendChatMsg(replyBuf);
+			return;
+		}
+	}
+	if(argc > 3){
+		int tmp = getClientByName(argv[3]);
+		if(tmp >= 0){
+			target = tmp;
+		}
+	}
+
+	character *ch = clients[target].c;
 	if(ch == NULL){return;}
-	animalNew(vecAdd(ch->pos,vecDegToVec(ch->rot)),1);
+	for(;amount > 0;amount--){
+		animalNew(vecAdd(ch->pos,vecDegToVec(ch->rot)),id);
+	}
 }
 
 void cmdHelp(int c, const char *cmd){

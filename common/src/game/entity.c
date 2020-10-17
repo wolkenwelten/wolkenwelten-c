@@ -106,3 +106,26 @@ int entityUpdate(entity *e){
 float entityDistance(const entity *e, const character *c){
 	return vecMag(vecSub(e->pos,c->pos));
 }
+
+#include <stdio.h>
+uint lineOfSightBlockCount(const vec a, const vec b, uint maxB){
+	float lastDist = 999999.f;
+	uint ret = 0;
+	vec p = a;
+	ivec lastB = ivecNOne();
+
+	for(uint max=1<<12;max;--max){
+		vec dist = vecSub(b,p);
+		const float curDist = vecMag(dist);
+		if(curDist > lastDist){break;}
+		lastDist = curDist;
+		const vec v = vecMulS(vecNorm(dist),0.25f);
+		p = vecAdd(p,v);
+		const ivec newB = ivecNewV(p);
+		if(!ivecEq(lastB,newB) && worldGetB(newB.x,newB.y,newB.z)){
+			lastB = newB;
+			if(++ret > maxB){return ret;}
+		}
+	}
+	return ret;
+}
