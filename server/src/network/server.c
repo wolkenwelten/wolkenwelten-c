@@ -418,14 +418,15 @@ void serverParseSinglePacket(uint c, packet *p){
 }
 
 void serverParsePacket(uint i){
-	uint off = 0;
+	uint off = clients[i].recvBufOff;
+	if(i >= clientCount){return;}
+
 	if(clients[i].flags & CONNECTION_WEBSOCKET){
 		serverParseWebSocketPacket(i);
 	}
 
 	for(int max=32;max > 0;--max){
-		if(i >= clientCount){break;}
-		if((clients[i].recvBufLen-off) < 4){ break; }
+		if((clients[i].recvBufLen-off) < 4)     { break; }
 		unsigned int pLen = packetLen((packet *)(clients[i].recvBuf+off));
 		if((pLen+4) > clients[i].recvBufLen-off){ break; }
 		serverParseSinglePacket(i,(packet *)(clients[i].recvBuf+off));
@@ -437,12 +438,16 @@ void serverParsePacket(uint i){
 		serverKill(i);
 	} else if(off == clients[i].recvBufLen){
 		clients[i].recvBufLen = 0;
-	} else {
+		off = 0;
+	} else if(off > sizeof(clients[i].recvBuf)/2){
+		fprintf(stderr,"Couldn't parse all packets, off=%i len=%i\n",off,clients[i].recvBufLen);
 		for(unsigned int ii=0;ii < (clients[i].recvBufLen - off);++ii){
 			clients[i].recvBuf[ii] = clients[i].recvBuf[ii+off];
 		}
 		clients[i].recvBufLen -= off;
+		off = 0;
 	}
+	clients[i].recvBufOff = off;
 }
 
 /* TODO: what happens on a HEAD request */

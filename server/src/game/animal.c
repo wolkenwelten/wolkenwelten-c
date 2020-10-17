@@ -2,6 +2,7 @@
 
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
+#include "../misc/options.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/common.h"
@@ -66,7 +67,9 @@ void animalUpdateAll(){
 		   (animalList[i].hunger < 0) ||
 		   (animalList[i].thirst < 0) ||
 		   (animalList[i].sleepy < 0)) {
-			fprintf(stderr,"Dead Animal [HP: %i | HUN: %i | THI: %i | SLP: %i]\n",animalList[i].health,animalList[i].hunger,animalList[i].thirst,animalList[i].sleepy);
+			if(verbose){
+				fprintf(stderr,"Dead Animal [HP: %i | HUN: %i | THI: %i | SLP: %i]\n",animalList[i].health,animalList[i].hunger,animalList[i].thirst,animalList[i].sleepy);
+			}
 			animalRDie(&animalList[i]);
 			animalDel(i);
 			continue;

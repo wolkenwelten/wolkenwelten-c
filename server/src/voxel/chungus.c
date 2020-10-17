@@ -17,16 +17,6 @@ chungus chungusList[1 << 12];
 uint chungusCount = 0;
 chungus *chungusFirstFree = NULL;
 
-uint chungusGetActiveCount(){
-	return chungusCount;
-}
-void chungusSetActiveCount(uint i){
-	chungusCount = i;
-}
-chungus *chungusGetActive(uint i){
-	return &chungusList[i];
-}
-
 float chunkDistance(const entity *cam, const vec pos){
 	return vecMag(vecSub(pos,cam->pos));
 }

@@ -6,6 +6,7 @@
 #include "../gfx/shader.h"
 #include "../gfx/particle.h"
 #include "../game/character.h"
+#include "../sdl/sdl.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/noise.h"
 
@@ -26,10 +27,13 @@ typedef struct glParticle {
 
 u8         cloudTex[256][256];
 float      cloudOffset = 0.f;
+float      cloudOffBase = 0.f;
+uint       cloudFrame = 0;
 
 glCloud    glData[CLOUDS_MAX];
 uint       glCount  = CLOUDS_MAX;
 uint       cloudVBO = 0;
+
 
 u32 cloudCT[128];
 u32 cloudCB[128];
@@ -56,14 +60,18 @@ static inline void cloudPart(float px,float py,float pz,float dd,u8 v){
 }
 
 void cloudsRender(){
+	static uint lastRender = 0;
+	if(lastRender == 0){lastRender = getTicks();}
 	shaderBind(sCloud);
 	matMov(matMVP,matView);
-	matMulTrans(matMVP,cloudOffset-floorf(cloudOffset),0,0);
+	matMulTrans(matMVP,cloudOffset-cloudOffBase,0,0);
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sCloud,matMVP);
 
 	glBindBuffer(GL_ARRAY_BUFFER, cloudVBO);
-	glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX-glCount)*sizeof(glCloud), &glData[glCount], GL_STREAM_DRAW);
+	if(glCount != CLOUDS_MAX){
+		glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX-glCount)*sizeof(glCloud), &glData[glCount], GL_STREAM_DRAW);
+	}
 
 	glEnableVertexAttribArray (0);
 	glDisableVertexAttribArray(1);
@@ -72,11 +80,20 @@ void cloudsRender(){
 	glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&glData[0].x) -     ((char *)glData)));
 	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&glData[0].color) - ((char *)glData)));
 	glDrawArrays(GL_POINTS,0,CLOUDS_MAX-glCount);
-	glCount = CLOUDS_MAX;
+
+	if((++cloudFrame & 7) == 0){
+		glCount = CLOUDS_MAX;
+	}
+	uint cticks = getTicks();
+	cloudOffset += (cticks - lastRender)/2048.f;
+	lastRender = cticks;
+	if(cloudOffset > 256.f){cloudOffset-=256.f;}
 }
 
 void cloudsDraw(int cx, int cy, int cz){
 	if(cy&1){return;}
+	if(cloudFrame&7){return;}
+	cloudOffBase = floorf(cloudOffset);
 	const int toff = (int)cloudOffset;
 	const int divx = (int)player->pos.x - (cx<<8);
 	const int divz = (int)player->pos.z - (cz<<8);

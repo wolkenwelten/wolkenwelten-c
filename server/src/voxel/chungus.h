@@ -13,6 +13,9 @@ struct chungus {
 	chunk *chunks[16][16][16];
 };
 
+extern chungus chungusList[1 << 12];
+extern uint chungusCount;
+
 chungus     *chungusNew              (u8 x,u8 y, u8 z);
 void         chungusFree             (chungus *c);
 void         chungusRoughBox         (chungus *c, int x, int y, int z, int w, int h, int d, u8 block);
@@ -33,6 +36,13 @@ uint         chungusIsUpdated        (chungus *c, uint p);
 void         chungusSetUpdated       (chungus *c, uint p);
 void         chungusUnsetUpdated     (chungus *c, uint p);
 int          chungusGetHighestP      (chungus *c, int x, int *retY, int z);
-chungus     *chungusGetActive        (uint i);
-void         chungusSetActiveCount   (uint i);
-uint         chungusGetActiveCount   ();
+
+inline uint chungusGetActiveCount(){
+	return chungusCount;
+}
+inline void chungusSetActiveCount(uint i){
+	chungusCount = i;
+}
+inline chungus *chungusGetActive(uint i){
+	return &chungusList[i];
+}

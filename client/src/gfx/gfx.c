@@ -119,9 +119,6 @@ void renderWorld(const character *cam){
 	shadowDraw();
 	cloudsRender();
 	particleDraw();
-
-	cloudOffset += 0.06f;
-	if(cloudOffset > 256.f){cloudOffset-=256.f;}
 }
 
 void renderFrame(){

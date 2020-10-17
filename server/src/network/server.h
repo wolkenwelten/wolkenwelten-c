@@ -22,6 +22,7 @@ typedef struct {
 
 	long long unsigned int socket;
 
+	uint recvBufOff;
 	uint recvBufLen;
 	u8   recvBuf[1<<16];
 

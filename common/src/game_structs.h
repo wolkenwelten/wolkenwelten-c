@@ -96,20 +96,21 @@ typedef struct {
 #define CHAR_SPAWNING     (1<<6)
 
 typedef struct {
-	vec pos,vel,gvel,grot,rot,screenPos;
+	vec pos,vel,rot;
+	vec gvel,grot;
+	vec screenPos;
 
 	i8 age;
 	i8 health;
 	i8 hunger;
 	i8 thirst;
 	i8 sleepy;
-
-	uint breathing;
-	uint temp;
-
 	u8 flags;
 	u8 type;
 	u8 state;
+
+	u16 breathing;
+	u16 temp;
 
 	chungus *curChungus;
 } animal;
