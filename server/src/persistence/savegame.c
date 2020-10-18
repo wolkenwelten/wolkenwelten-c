@@ -274,6 +274,7 @@ static void checkValidSavegame(const char *name){
 static void characterSendData(const character *p, uint c){
 	msgPlayerSetPos(c,p->pos,p->rot);
 	msgPlayerSetInventory(c,p->inventory,40);
+
 	msgPlayerSetData(c,p->hp,p->activeItem,p->flags);
 }
 
@@ -301,8 +302,8 @@ static int characterLoadData(character *p, const char *pName){
 
 void bigchungusSafeSave(const bigchungus *c){
 	static u64 lastSave = 0;
-	if(getMillis() < lastSave+1000){return;}
-	lastSave = getMillis();
+	if(getTicks() < lastSave+1000){return;}
+	lastSave = getTicks();
 
 	for(int x=127;x <= 129;x++){
 		for(int y=1;y <= 3;y++){

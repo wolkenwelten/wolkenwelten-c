@@ -294,7 +294,8 @@ static const char *colorSignalLow(int err, int warn, int good, int v){
 }
 
 void drawAnimalDebugOverlay(const animal *e, int i){
-	if(e == NULL){return;}
+	if(e == NULL)   {return;}
+	if(e->type == 0){return;}
 	vec p = e->screenPos;
 	if(p.z < 0){return;}
 	p.x = ((p.x / p.z)+1.f)/2.f * screenWidth;
@@ -406,6 +407,9 @@ void drawDebuginfo(){
 	textMeshPrintf(guim,"Comp. Ratio : %s%2.2fX\n",colorSignalHigh(4,8,15,compRatio),compRatio);
 	guim->fgc  = colorPalette[15];
 	textMeshPrintf(guim,"Canvas Size : %ix%i\n",screenWidth,screenHeight);
+	guim->size =  2;
+	textMeshPrintf(guim,"Ping  : %s%u\n",colorSignalLow(400,200,50,lastLatency),lastLatency);
+	guim->fgc  = colorPalette[15];
 
 	guim->font = 0;
 

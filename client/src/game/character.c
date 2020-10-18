@@ -15,6 +15,7 @@
 #include "../gui/gui.h"
 #include "../gui/overlay.h"
 #include "../network/chat.h"
+#include "../network/client.h"
 #include "../sdl/input_gamepad.h"
 #include "../sdl/sdl.h"
 #include "../sdl/sfx.h"
@@ -800,6 +801,7 @@ void characterSetData(character *c, const packet *p){
 	c->hp         = p->v.i16[0];
 	c->activeItem = p->v.u16[1];
 	c->flags      = p->v.u32[2];
+	connectionState = 2;
 }
 
 void characterSetName(const packet *p){

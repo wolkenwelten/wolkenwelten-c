@@ -10,6 +10,7 @@
 #include "../game/grenade.h"
 #include "../game/itemDrop.h"
 #include "../misc/options.h"
+#include "../sdl/sdl.h"
 #include "../network/chat.h"
 #include "../../../common/src/misc/lz4.h"
 #include "../../../common/src/misc/misc.h"
@@ -21,6 +22,9 @@
 #include <string.h>
 #include <sys/types.h>
 
+uint connectionState = 0;
+uint lastPing = 0;
+uint lastLatency = 0;
 uint recvBufLen = 0;
 u8 recvBuf[1<<20];
 
@@ -128,6 +132,11 @@ void dispatchBeingGotHit(const packet *p){
 	}
 }
 
+void handlePingPong(){
+	uint curPing = getTicks();
+	lastLatency = curPing - lastPing;
+	lastPing = curPing;
+}
 
 void clientParsePacket(const packet *p){
 	const int pLen  = packetLen(p);
@@ -239,6 +248,10 @@ void clientParsePacket(const packet *p){
 		case 32:
 			fprintf(stderr,"Received an animalDmg msg from the server, this should never happen.\n");
 			break;
+		case 33:
+			handlePingPong();
+			msgPingPong(-1);
+			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);
 			break;
@@ -270,13 +283,15 @@ void clientParse(){
 }
 
 void clientSendIntroduction(){
-	char introStr[64];
+	char introStr[34];
+	connectionState = 1;
 	#ifndef __EMSCRIPTEN__
-	queueToServer("NATIVE\r\n\r\n",10);
+		queueToServer("NATIVE\r\n\r\n",10);
 	#endif
 	uint len = snprintf(introStr,sizeof(introStr),"%.32s\n",playerName);
 	queueToServer(introStr,len);
 	clientWrite();
+	lastPing = getTicks();
 }
 
 void clientGreetServer(){
@@ -314,4 +329,5 @@ void clientFree(){
 	bigchungusFree(&world);
 	characterInit(player);
 	chatEmpty();
+	connectionState = 0;
 }

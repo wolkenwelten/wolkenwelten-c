@@ -52,3 +52,11 @@ server/src/tmp/mods_tmp.h: server/src/tmp/mods_tmp.c
 
 server/src/network/server.o: server/src/network/server_bsd.h
 server/src/network/server.o: server/src/network/server_win.h
+
+.PHONY: run
+runs: all
+	./wolkenwelten-server -worldSeed=18 -savegame=Test
+
+.PHONY: run
+runsv: all
+	./wolkenwelten-server -worldSeed=18 -savegame=Test -verbose

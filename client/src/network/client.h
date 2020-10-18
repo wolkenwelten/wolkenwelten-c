@@ -3,7 +3,10 @@
 
 #include <stddef.h>
 
+extern uint   lastPing;
+extern uint   lastLatency;
 extern int    connectionTries;
+extern uint   connectionState;
 extern size_t sentBytesCurrentSession;
 extern size_t recvBytesCurrentSession;
 extern size_t recvUncompressedBytesCurrentSession;

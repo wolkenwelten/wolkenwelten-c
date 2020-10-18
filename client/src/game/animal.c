@@ -56,6 +56,7 @@ static void animalShadesDraw(const animal *c){
 static void animalDraw(animal *e){
 	float breath,scale;
 	if(e        == NULL){return;}
+	if(e->type  == 0)   {return;}
 	if(e->state == 0){
 		breath = cosf((float)e->breathing/512.f)*4.f;
 	}else{
@@ -72,7 +73,7 @@ static void animalDraw(animal *e){
 	matMulRotYX (matMVP,e->rot.yaw,e->rot.pitch-breath);
 	matMulScale (matMVP,scale,scale,scale);
 	matMul      (matMVP,matMVP,matProjection);
-	e->screenPos = matMulVec(matMVP,vecNew(0,0.25f,0));
+	e->screenPos = matMulVec(matMVP,vecNew(0,scale/2.f,0));
 
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(animalGetMesh(e));
@@ -136,6 +137,7 @@ void animalSyncFromServer(const packet *p){
 int animalHitCheck(const vec pos, float mdd, int dmg, int cause, uint iteration){
 	int hits = 0;
 	for(uint i=0;i<animalCount;i++){
+		if(animalList[i].type == 0)        {continue;}
 		if(animalList[i].temp == iteration){continue;}
 		const vec d = vecSub(pos,animalList[i].pos);
 		if(vecDot(d,d) < mdd){

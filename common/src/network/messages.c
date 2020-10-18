@@ -319,3 +319,8 @@ void msgPlayerSetInventory(uint c,const item *itm, size_t itemCount){
 	}
 	packetQueue(p,29,itemCount*4,c);
 }
+
+void msgPingPong(uint c){
+	packet *p = &packetBuffer;
+	packetQueue(p,33,0,c);
+}

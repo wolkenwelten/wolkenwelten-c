@@ -5,4 +5,4 @@ extern bool quit;
 extern char *termColors[16];
 extern char *termReset;
 
-u64 getMillis();
+u64 getTicks();

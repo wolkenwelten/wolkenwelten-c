@@ -5,6 +5,7 @@
 #include "../misc/options.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
+#include "../voxel/chungus.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/item.h"
@@ -310,6 +311,7 @@ void animalAggresive(animal *e){
 	if(e->state == ANIMAL_S_FIGHT){
 		if((cChar == NULL) || (dist > 64.f) || los){
 			e->state   =  ANIMAL_S_LOITER;
+			addPriorityAnimal(e-animalList);
 		}else{
 			vec caNorm = vecNorm(vecNew(cChar->pos.x - e->pos.x,0.f, cChar->pos.z - e->pos.z));
 			vec caRot  = vecVecToDeg(caNorm);
@@ -333,6 +335,7 @@ void animalAggresive(animal *e){
 	}else if(e->state == ANIMAL_S_FLEE){
 		if((cChar == NULL) || (dist > 78.f) || (--e->temp == 0)){
 			e->state = ANIMAL_S_LOITER;
+			addPriorityAnimal(e-animalList);
 		}else{
 			vec caNorm = vecNorm(vecNew(e->pos.x - cChar->pos.x,0.f, e->pos.z - cChar->pos.z));
 			vec caVel  = vecMulS(caNorm,0.03f);
@@ -367,6 +370,7 @@ void animalFightOrFlight(animal *e){
 		if((cChar == NULL) || (dist > 16.f)){
 			e->state   =  ANIMAL_S_LOITER;
 			e->flags  &= ~ANIMAL_AGGRESIVE;
+			addPriorityAnimal(e-animalList);
 			return;
 		}else{
 			vec caNorm = vecNorm(vecNew(cChar->pos.x - e->pos.x,0.f, cChar->pos.z - e->pos.z));
@@ -388,10 +392,12 @@ void animalFightOrFlight(animal *e){
 					msgBeingDamage(target,dmg,2,beingCharacter(target),-1,e->pos);
 				}
 			}
+			addPriorityAnimal(e-animalList);
 		}
 	}else if(e->state == ANIMAL_S_FLEE){
 		if((cChar == NULL) || (dist > 32.f)){
 			e->state = ANIMAL_S_LOITER;
+			addPriorityAnimal(e-animalList);
 			return;
 		}else{
 			vec caNorm = vecNorm(vecNew(e->pos.x - cChar->pos.x,0.f, e->pos.z - cChar->pos.z));
@@ -405,6 +411,7 @@ void animalFightOrFlight(animal *e){
 				e->state = ANIMAL_S_FIGHT;
 				e->flags |= ANIMAL_AGGRESIVE;
 			}
+			addPriorityAnimal(e-animalList);
 		}
 	}else{
 		float fd = 9.f;
@@ -421,6 +428,7 @@ void animalFightOrFlight(animal *e){
 			}else{
 				e->state = ANIMAL_S_FLEE;
 			}
+			addPriorityAnimal(e-animalList);
 			return;
 		}
 	}
@@ -567,15 +575,29 @@ void animalThinkAll(){
 	}
 }
 
-void animalEmptySync(int c){
+static void animalEmptySync(u16 c){
 	packet *rp = &packetBuffer;
 	memset(rp->v.u8,0,16*4);
 	packetQueue(rp,30,16*4,c);
 }
 
-void animalSync(int c, int i){
+static void animalSyncInactive(u8 c, u16 i){
+	packet *rp = &packetBuffer;
+
+	rp->v.u8[ 0] = 0;
+
+	rp->v.u16[4] = i;
+	rp->v.u16[5] = animalCount;
+
+	packetQueue(rp,30,16*4,c);
+}
+
+static void animalSync(u8 c, u16 i){
 	packet *rp = &packetBuffer;
 	const animal *e = &animalList[i];
+	if(!chungusIsSubscribed(e->curChungus,c)){
+		return animalSyncInactive(c,i);
+	}
 
 	rp->v.u8[ 0] = e->type;
 	rp->v.u8[ 1] = e->flags;
@@ -611,7 +633,7 @@ void animalSync(int c, int i){
 	packetQueue(rp,30,16*4,c);
 }
 
-uint animalSyncPlayer(int c, uint offset){
+uint animalSyncPlayer(u8 c, uint offset){
 	const uint max = MIN((offset+ANIMALS_PER_UPDATE),animalCount);
 	if(animalCount == 0){
 		animalEmptySync(c);
@@ -638,7 +660,7 @@ void animalDelChungus(const chungus *c){
 	}
 }
 
-void animalDmgPacket(uint source, const packet *p){
+void animalDmgPacket(u8 source, const packet *p){
 	const i16 hp        = p->v.u16[0];
 	const u16 cause     = p->v.u16[1];
 
@@ -662,4 +684,10 @@ void animalDmgPacket(uint source, const packet *p){
 		c->vel = vecAdd(c->vel,vecMulS(dis,0.03f));
 	}
 	msgBeingGotHit(hp,cause,target,culprit);
+}
+
+void animalIntro(u8 c){
+	for(uint i=0;i<animalCount;i++){
+		animalSync(c,i);
+	}
 }

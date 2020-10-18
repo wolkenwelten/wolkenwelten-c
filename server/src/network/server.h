@@ -4,8 +4,8 @@
 typedef struct {
 	char playerName[32];
 	character *c;
-	int state;
-	int flags;
+	int state,flags;
+	u64 socket,lastPing;
 
 	uint animalUpdateOffset;
 	uint animalPriorityQueueLen;
@@ -19,8 +19,6 @@ typedef struct {
 	u32  chngReqQueue[128];
 	uint chnkReqQueueLen;
 	u64  chnkReqQueue[4096];
-
-	long long unsigned int socket;
 
 	uint recvBufOff;
 	uint recvBufLen;

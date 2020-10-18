@@ -8,6 +8,7 @@
 #include "../gfx/shader.h"
 #include "../gfx/sky.h"
 #include "../gfx/texture.h"
+#include "../network/client.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/network/messages.h"
@@ -104,6 +105,7 @@ void bigchungusDraw(bigchungus *c,const character *cam){
 	static queueEntry drawQueue[8192*4];
 	static queueEntry loadQueue[1<<9];
 	int drawQueueLen=0,loadQueueLen=0;
+	if(connectionState < 2){return;}
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);

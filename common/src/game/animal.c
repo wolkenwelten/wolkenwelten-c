@@ -50,6 +50,7 @@ void animalCheckForHillOrCliff(animal *e){
 int animalUpdate(animal *e){
 	int ret=0;
 	u32 col;
+	if(e->type == 0){return 0;}
 	e->pos = vecAdd(e->pos,e->vel);
 	e->breathing += 5;
 	animalCheckForHillOrCliff(e);

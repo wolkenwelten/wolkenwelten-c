@@ -36,3 +36,4 @@ void msgFxBeamBlaster            (uint c, const vec pa, const vec pb, float beam
 void msgItemDropUpdate           (uint c, const vec pos, const vec vel, const item *itm, u16 i, u16 len);
 void msgPlayerSetData            (uint c, i16 hp, u16 activeItem, u32 flags);
 void msgPlayerSetInventory       (uint c, const item *itm, size_t itemCount);
+void msgPingPong                 (uint c);

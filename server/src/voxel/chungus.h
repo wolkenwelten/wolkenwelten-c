@@ -44,5 +44,6 @@ inline void chungusSetActiveCount(uint i){
 	chungusCount = i;
 }
 inline chungus *chungusGetActive(uint i){
+	if(i >= chungusCount){return NULL;}
 	return &chungusList[i];
 }

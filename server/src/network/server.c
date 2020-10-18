@@ -42,7 +42,7 @@ const char *getPlayerLeaveMessage(uint c){
 void serverKeepalive(){
 	static char buffer[16];
 	static u64 lastKA=0;
-	u64 ct = getMillis();
+	u64 ct = getTicks();
 	if(ct > lastKA+1000){
 		lastKA = ct;
 		for(uint i=0;i<clientCount;i++){
@@ -148,7 +148,6 @@ void delPriorityItemDrop(u16 d){
 }
 
 void addPriorityAnimal(u16 d){
-	fprintf(stderr,"%i\n",d);
 	for(uint c=0;c<clientCount;c++){
 		if(clients[c].state)                        {continue;}
 		if(clients[c].animalPriorityQueueLen > 127) {continue;}
@@ -273,6 +272,11 @@ void dispatchBeingDmg(uint c, const packet *p){
 		animalDmgPacket(c,p);
 		break;
 	}
+}
+
+void handlePingPong(uint c){
+	u64 curPing = getTicks();
+	clients[c].lastPing = curPing;
 }
 
 void serverParseSinglePacket(uint c, packet *p){
@@ -410,6 +414,10 @@ void serverParseSinglePacket(uint c, packet *p){
 		case 32:
 			animalDmgPacket(c,p);
 			break;
+		case 33:
+			handlePingPong(c);
+			msgPingPong(c);
+			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
 			serverKill(c);
@@ -494,24 +502,27 @@ void serverParseIntro(uint c){
 
 		sendPlayerJoinMessage(c);
 		itemDropIntro(c);
+		animalIntro(c);
+		clients[c].lastPing = getTicks();
+		msgPingPong(c);
 	}
 }
 
 void serverParse(){
 	for(uint i=0;i<clientCount;i++){
 		switch(clients[i].state){
-			case STATE_READY:
-				serverParsePacket(i);
-				break;
-			case STATE_CONNECTING:
-				serverParseConnection(i);
-				break;
-			case STATE_INTRO:
-				serverParseIntro(i);
-				break;
-			default:
-			case STATE_CLOSED:
-				break;
+		case STATE_READY:
+			serverParsePacket(i);
+			break;
+		case STATE_CONNECTING:
+			serverParseConnection(i);
+			break;
+		case STATE_INTRO:
+			serverParseIntro(i);
+			break;
+		default:
+		case STATE_CLOSED:
+			break;
 		}
 	}
 }

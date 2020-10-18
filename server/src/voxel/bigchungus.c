@@ -219,11 +219,13 @@ void bigchungusFreeFarChungi(bigchungus *c){
 	uint len = chungusGetActiveCount();
 	for(uint i=0;i<len;i++){
 		chungus *chng = chungusGetActive(i);
+		if(chng == NULL)          {continue;}
 		if(chng->nextFree != NULL){continue;}
-		int x = (int)chng->x>>8;
-		int y = (int)chng->y>>8;
-		int z = (int)chng->z>>8;
-		if((x >= 127) && (x <= 129) && (y >= 0) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
+		u8 x = chng->x;
+		u8 y = chng->y;
+		u8 z = chng->z;
+		if(y >= 128){continue;}
+		if((x >= 127) && (x <= 129) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
 
 		const vec cpos = vecNew(x,y,z);
 		for(uint ii=0;ii<clientCount;++ii){
