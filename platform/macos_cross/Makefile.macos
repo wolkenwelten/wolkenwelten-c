@@ -6,9 +6,6 @@ OSX_APP              := releases/macos/wolkenwelten-$(VERSION_NAME).app
 .PHONY: release.macos
 release: release.macos
 
-$(OSX_APP):
-	mkdir -p $(OSX_APP)
-
 release.macos: releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz
 releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz: $(OSX_APP)/Contents/Info.plist
 releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz: $(OSX_APP)/Contents/MacOS/wolkenwelten
@@ -40,7 +37,7 @@ $(OSX_APP)/Contents/MacOS/wolkenwelten-server: LIBS      += $(SERVER_LIBS)
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: server/src/tmp/sfx.c server/src/tmp/sfx.h
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: server/src/tmp/objs.c server/src/tmp/objs.h
-$(OSX_APP)/Contents/MacOS/wolkenwelten-server: server/src/tmp/mods_tmp.c server/src/tmp/mods_tmp.h
+$(OSX_APP)/Contents/MacOS/wolkenwelten-server: server/src/tmp/mods_tmp.c
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p $(OSX_APP)/Contents/MacOS
 	o64-clang $(SERVER_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WARNINGS) $(LIBS)

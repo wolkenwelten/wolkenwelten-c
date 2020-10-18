@@ -4,10 +4,7 @@ COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
 COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
 COMMON_DEPS      := ${COMMON_SRCS:.c=.deps}
 
-WEBEXCLUDE       := --exclude=releases/macos/wolkenwelten.app
 WEBEXCLUDE       += --exclude=releases/macos/wolkenwelten.iconset/
-WEBEXCLUDE       += --exclude=releases/linux/wolkenwelten
-WEBEXCLUDE       += --exclude=releases/win/wolkenwelten/
 WEBEXCLUDE       += --exclude=releases/win/*.res
 
 .PHONY: all
@@ -42,7 +39,10 @@ clean:
 .PHONY: web
 web: release
 	rsync -avhe ssh web/ wolkenwelten.net:/var/www/html/
-	rsync -avhe ssh $(WEBEXCLUDE) releases wolkenwelten.net:/var/www/html/
+	ssh wolkenwelten.net "mkdir -p /var/www/html/releases && cd /var/www/html/releases && mkdir -p win && mkdir -p macos && mkdir -p linux"
+	rsync -avhe ssh releases/win/*.7z wolkenwelten.net:/var/www/html/releases/win/
+	rsync -avhe ssh releases/macos/*.tgz wolkenwelten.net:/var/www/html/releases/macos/
+	rsync -avhe ssh releases/linux/*.xz wolkenwelten.net:/var/www/html/releases/linux/
 	ssh wolkenwelten.net "cd /var/www/html/ && php index.php > index.html"
 
 .PHONY: debug
