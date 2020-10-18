@@ -24,7 +24,7 @@ uint chunkCount     = 0;
 uint chunksGeneratedThisFrame = 0;
 chunk *chunkFirstFree = NULL;
 
-#define MAX_CHUNKS_GEN_PER_FRAME 488
+#define MAX_CHUNKS_GEN_PER_FRAME 32
 
 #ifdef __EMSCRIPTEN__
 	chunk chunkList[1<<16];
