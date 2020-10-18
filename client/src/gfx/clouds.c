@@ -60,7 +60,6 @@ static inline void cloudPart(cloudChunk *part, float px,float py,float pz,float 
 	}
 }
 
-#include <stdio.h>
 void cloudsRender(){
 	const u8 cpart = cloudFrame++ & 7;
 	glBindBuffer(GL_ARRAY_BUFFER, parts[cpart].vbo);
@@ -80,7 +79,6 @@ void cloudsRender(){
 		glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&cloudData[0].x) -     ((char *)cloudData)));
 		glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&cloudData[0].color) - ((char *)cloudData)));
 		glDrawArrays(GL_POINTS,0,CLOUDS_MAX - parts[i].count);
-		fprintf(stderr,"%i = %i [%i]\n",i,CLOUDS_MAX - parts[i].count,cpart);
 	}
 	parts[cloudFrame & 7].count = CLOUDS_MAX;
 

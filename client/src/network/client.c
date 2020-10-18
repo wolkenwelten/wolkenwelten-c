@@ -134,7 +134,7 @@ void dispatchBeingGotHit(const packet *p){
 
 void handlePingPong(){
 	uint curPing = getTicks();
-	lastLatency = curPing - lastPing;
+	lastLatency = ((curPing - lastPing) + lastLatency)/2;
 	lastPing = curPing;
 }
 

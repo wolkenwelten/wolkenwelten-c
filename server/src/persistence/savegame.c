@@ -194,7 +194,7 @@ static const void *animalLoad(const void *buf){
 
 	e->age    = b[ 8];
 
-	return b+12*4;
+	return b+11*4;
 }
 
 static void *animalSaveChungus(const chungus *c,void *b){
@@ -390,7 +390,7 @@ void chungusLoad(chungus *c){
 				b = animalLoad(b);
 				break;
 			default:
-				fprintf(stderr,"Unknown id found in %i:%i:%i savestate\n",c->x>>8,c->y>>8,c->z>>8);
+				fprintf(stderr,"Unknown id[%u] found in %i:%i:%i savestate\n",id,c->x,c->y,c->z);
 				goto chungusLoadEnd;
 		}
 		if(b >= end){break;}
