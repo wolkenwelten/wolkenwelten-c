@@ -14,7 +14,7 @@
 
 
 #pragma pack(push, 1)
-typedef struct glParticle {
+typedef struct {
 	float x,y,z;
 	unsigned int color;
 } glCloud;
@@ -25,20 +25,21 @@ typedef struct glParticle {
 #define CLOUD_DENSITY_MIN 170
 #define CLOUDS_MAX (1<<19)
 
+typedef struct {
+	uint count,vbo;
+	float base;
+} cloudChunk;
+
+cloudChunk parts[8];
 u8         cloudTex[256][256];
 float      cloudOffset = 0.f;
-float      cloudOffBase = 0.f;
 uint       cloudFrame = 0;
-
-glCloud    glData[CLOUDS_MAX];
-uint       glCount  = CLOUDS_MAX;
-uint       cloudVBO = 0;
-
+glCloud    cloudData[CLOUDS_MAX];
 
 u32 cloudCT[128];
 u32 cloudCB[128];
 
-static inline void cloudPart(float px,float py,float pz,float dd,u8 v){
+static inline void cloudPart(cloudChunk *part, float px,float py,float pz,float dd,u8 v){
 	if(dd > (CLOUD_MIND+CLOUD_FADED)){return;}
 	const float vf = v-CLOUD_DENSITY_MIN;
 	u32 a = v << 24;
@@ -51,49 +52,52 @@ static inline void cloudPart(float px,float py,float pz,float dd,u8 v){
 	py += oy;
 
 	if(py < player->pos.y){
-		glData[--glCount] = (glCloud){px,py+vf/ 6.f,pz,ct};
-		glData[--glCount] = (glCloud){px,py-vf/12.f,pz,cb};
+		cloudData[--part->count] = (glCloud){px,py+vf/ 6.f,pz,ct};
+		cloudData[--part->count] = (glCloud){px,py-vf/12.f,pz,cb};
 	}else{
-		glData[--glCount] = (glCloud){px,py-vf/12.f,pz,cb};
-		glData[--glCount] = (glCloud){px,py+vf/ 6.f,pz,ct};
+		cloudData[--part->count] = (glCloud){px,py-vf/12.f,pz,cb};
+		cloudData[--part->count] = (glCloud){px,py+vf/ 6.f,pz,ct};
 	}
 }
 
+#include <stdio.h>
 void cloudsRender(){
-	static uint lastRender = 0;
-	if(lastRender == 0){lastRender = getTicks();}
+	const u8 cpart = cloudFrame++ & 7;
+	glBindBuffer(GL_ARRAY_BUFFER, parts[cpart].vbo);
+	glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count], GL_STREAM_DRAW);
+
 	shaderBind(sCloud);
-	matMov(matMVP,matView);
-	matMulTrans(matMVP,cloudOffset-cloudOffBase,0,0);
-	matMul(matMVP,matMVP,matProjection);
-	shaderMatrix(sCloud,matMVP);
-
-	glBindBuffer(GL_ARRAY_BUFFER, cloudVBO);
-	if(glCount != CLOUDS_MAX){
-		glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX-glCount)*sizeof(glCloud), &glData[glCount], GL_STREAM_DRAW);
-	}
-
 	glEnableVertexAttribArray (0);
 	glDisableVertexAttribArray(1);
 	glEnableVertexAttribArray (2);
+	for(int i=0;i<8;i++){
+		matMov(matMVP,matView);
+		matMulTrans(matMVP,cloudOffset - parts[i].base,0,0);
+		matMul(matMVP,matMVP,matProjection);
+		shaderMatrix(sCloud,matMVP);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&glData[0].x) -     ((char *)glData)));
-	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&glData[0].color) - ((char *)glData)));
-	glDrawArrays(GL_POINTS,0,CLOUDS_MAX-glCount);
-
-	if((++cloudFrame & 7) == 0){
-		glCount = CLOUDS_MAX;
+		glBindBuffer(GL_ARRAY_BUFFER, parts[i].vbo);
+		glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&cloudData[0].x) -     ((char *)cloudData)));
+		glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&cloudData[0].color) - ((char *)cloudData)));
+		glDrawArrays(GL_POINTS,0,CLOUDS_MAX - parts[i].count);
+		fprintf(stderr,"%i = %i [%i]\n",i,CLOUDS_MAX - parts[i].count,cpart);
 	}
+	parts[cloudFrame & 7].count = CLOUDS_MAX;
+
+	static uint lastRender = 0;
+	if(lastRender == 0){lastRender = getTicks();}
 	uint cticks = getTicks();
 	cloudOffset += (cticks - lastRender)/2048.f;
 	lastRender = cticks;
 	if(cloudOffset > 256.f){cloudOffset-=256.f;}
 }
 
-void cloudsDraw(int cx, int cy, int cz){
+void cloudsDraw(u8 cx, u8 cy, u8 cz){
 	if(cy&1){return;}
-	if(cloudFrame&7){return;}
-	cloudOffBase = floorf(cloudOffset);
+	const u8 cpart = (cx&1) | ((cy&4)) | ((cz&1)<<1);
+	if((cloudFrame&7) != cpart){return;}
+	cloudChunk *part = &parts[cpart];
+	part->base     = floorf(cloudOffset);
 	const int toff = (int)cloudOffset;
 	const int divx = (int)player->pos.x - (cx<<8);
 	const int divz = (int)player->pos.z - (cz<<8);
@@ -116,7 +120,7 @@ void cloudsDraw(int cx, int cy, int cz){
 				const int czz = cp.z+z;
 				if(v < CLOUD_DENSITY_MIN){ continue; }
 				dp.z = (czz - pp.z)*(czz - pp.z);
-				cloudPart(cxx,cp.y,czz,ivecSum(dp),v);
+				cloudPart(part,cxx,cp.y,czz,ivecSum(dp),v);
 			}
 		}
 		for(int x=minx;x>=0;x--){
@@ -128,7 +132,7 @@ void cloudsDraw(int cx, int cy, int cz){
 				const u8 v = cloudTex[tx][z];
 				if(v < CLOUD_DENSITY_MIN){ continue; }
 				dp.z = (czz - pp.z)*(czz - pp.z);
-				cloudPart(cxx,cp.y,czz,ivecSum(dp),v);
+				cloudPart(part,cxx,cp.y,czz,ivecSum(dp),v);
 			}
 		}
 	}
@@ -143,7 +147,7 @@ void cloudsDraw(int cx, int cy, int cz){
 				const int czz = cp.z+z;
 				if(v < CLOUD_DENSITY_MIN){ continue; }
 				dp.z = (czz - pp.z)*(czz - pp.z);
-				cloudPart(cxx,cp.y,czz,ivecSum(dp),v);
+				cloudPart(part,cxx,cp.y,czz,ivecSum(dp),v);
 			}
 		}
 		for(int x=minx;x>=0;x--){
@@ -155,7 +159,7 @@ void cloudsDraw(int cx, int cy, int cz){
 				const int czz = cp.z+z;
 				if(v < CLOUD_DENSITY_MIN){ continue; }
 				dp.z = (czz - pp.z)*(czz - pp.z);
-				cloudPart(cxx,cp.y,czz,ivecSum(dp),v);
+				cloudPart(part,cxx,cp.y,czz,ivecSum(dp),v);
 			}
 		}
 	}
@@ -163,7 +167,11 @@ void cloudsDraw(int cx, int cy, int cz){
 
 void cloudsInit(){
 	generateNoise(0x84407db3, cloudTex);
-	glGenBuffers(1,&cloudVBO);
+	for(int i=0;i<8;i++){
+		glGenBuffers(1,&parts[i].vbo);
+		parts[i].count = CLOUDS_MAX;
+		parts[i].base  = 0.f;
+	}
 
 	for(int i=0;i<128;i++){
 		const u32 v  = i+128;

@@ -1,6 +1,7 @@
 #include "bigchungus.h"
 
 #include "../game/blockType.h"
+#include "../gfx/clouds.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gl.h"

@@ -6,5 +6,3 @@ extern float cloudOffset;
 
 void initSky();
 void renderSky(const character *cam);
-void cloudsRender();
-void cloudsDraw(int x, int y, int z);

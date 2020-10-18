@@ -7,6 +7,7 @@
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/grapplingHook.h"
+#include "../gfx/clouds.h"
 #include "../gfx/mat.h"
 #include "../gfx/shader.h"
 #include "../gfx/sky.h"
