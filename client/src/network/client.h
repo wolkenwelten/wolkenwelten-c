@@ -16,10 +16,9 @@ void clientFree              ();
 void clientGetName           ();
 void clientGoodbye           ();
 void clientGreetServer       ();
-void clientWrite             ();
+void clientTranceive         ();
 void closeSingleplayerServer ();
+void msgSendPlayerPos        ();
 void decompressPacket        (const packet *p);
 void clientParsePacket       (const packet *p);
-
-void clientHandleEvents      ();
 void queueToServer           (const void *data, unsigned int len);

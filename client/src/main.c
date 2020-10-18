@@ -77,6 +77,7 @@ void playerUpdate(){
 	nv = doGamepadupdate  (nv);
 	nv = doAutomatedupdate(nv);
 	characterMove  (player,nv);
+	msgSendPlayerPos();
 }
 
 void worldUpdate(){
@@ -116,12 +117,12 @@ void worldUpdate(){
 void mainloop(){
 	handleEvents();
 	if(gameRunning){
-		clientHandleEvents();
+		clientTranceive();
 		playerUpdate();
 		worldUpdate();
 		renderFrame();
 		bigchungusFreeFarChungi(&world,player);
-		clientWrite();
+		clientTranceive();
 	}else{
 		doGamepadMenuUpdate();
 		renderMenuFrame();

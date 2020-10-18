@@ -298,10 +298,10 @@ void clientGreetServer(){
 	clientSendIntroduction();
 }
 
-void clientHandleEvents(){
+void clientTranceive(){
 	clientRead();
 	clientParse();
-	msgSendPlayerPos();
+	clientWrite();
 }
 
 void clientGoodbye(){
