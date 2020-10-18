@@ -410,6 +410,8 @@ void drawDebuginfo(){
 	guim->size =  2;
 	textMeshPrintf(guim,"Ping  : %s%u\n",colorSignalLow(400,200,50,lastLatency),lastLatency);
 	guim->fgc  = colorPalette[15];
+	textMeshPrintf(guim,"WorstF: %s%u\n",colorSignalLow(60,20,18,worstFrame),worstFrame);
+	guim->fgc  = colorPalette[15];
 
 	guim->font = 0;
 
@@ -512,7 +514,6 @@ void drawActiveGlider(){
 	shaderMatrix(sMesh, matViewAI);
 	meshDraw(meshGlider);
 }
-
 
 void drawAmmunition(){
 	item *activeItem = &player->inventory[player->activeItem];

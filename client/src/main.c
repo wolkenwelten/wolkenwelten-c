@@ -51,11 +51,11 @@ static vec doAutomatedupdate(const vec nv){
 	if(optionAutomatedTest <= 0){return nv;}
 	vec rv = vecZero();
 	iter++;
-	if(SDL_GetTicks() > 10000){quit=true;}
+	if(SDL_GetTicks() > 30000){quit=true;}
 
 	player->flags |= CHAR_NOCLIP;
 	characterRotate(player,vecNew(1.f,cosf(iter/16.f)/4.f,0));
-	rv.y = 0.02f;
+	rv.y = 0.5f;
 
 	return rv;
 }

@@ -27,14 +27,21 @@ bool textInputEvent(const SDL_Event *e);
 SDL_Window* gWindow = NULL;
 SDL_GLContext gContext;
 
-int frameTimeLast = 0;
-int frameCountSinceLast = 0;
-float curFPS;
+uint  frameTimeLast       = 0;
+uint  frameCountSinceLast = 0;
+float curFPS              = 0;
+uint  worstFrame          = 0;
+
 
 void fpsTick() {
-	int curTicks = SDL_GetTicks();
-	frameCountSinceLast++;
+	uint curTicks = SDL_GetTicks();
+	static uint lastFrame = 0;
 
+	if(lastFrame == 0){lastFrame = curTicks;}
+	worstFrame = MAX(worstFrame,curTicks - lastFrame);
+	lastFrame = curTicks;
+
+	frameCountSinceLast++;
 	if(curTicks > frameTimeLast+1000){
 		curFPS = ((float)curTicks - (float)frameTimeLast) / (float)frameCountSinceLast;
 		curFPS = 1000.f / curFPS;

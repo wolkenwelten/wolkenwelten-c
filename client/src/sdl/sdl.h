@@ -1,11 +1,12 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-extern int frameTimeLast;
-extern int frameCountSinceLast;
+extern uint  frameTimeLast;
+extern uint  frameCountSinceLast;
 extern float curFPS;
-extern bool sdlGamepadInit;
-extern bool sdlHapticInit;
+extern uint  worstFrame;
+extern bool  sdlGamepadInit;
+extern bool  sdlHapticInit;
 
 void fpsTick();
 void initSDL();
