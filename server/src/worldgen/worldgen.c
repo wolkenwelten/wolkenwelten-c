@@ -134,19 +134,23 @@ void worldgenGenerate(worldgen *wgen){
 			worldgenTestpattern(wgen);
 		break;
 
-		case 15:
-		case 14:
+		case 19:
+		case 18:
 			worldgenCluster(wgen,CHUNGUS_SIZE/52,CHUNGUS_SIZE/52,3,9);
 		break;
-		case 13:
+		case 17:
 			worldgenLandmass(wgen,wgen->layer - 13);
 		break;
 
+		case 16:
+		case 15:
+		case 14:
+		case 13:
 		case 12:
 		case 11:
 		case 10:
 		case 9:
-			worldgenLabyrinth(wgen,wgen->layer - 8);
+			worldgenLabyrinth(wgen);
 		break;
 
 		case 8:
