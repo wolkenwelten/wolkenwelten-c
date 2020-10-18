@@ -370,51 +370,47 @@ void drawDebuginfo(){
 	}
 
 	vboTrisCount = 0;
-	if(!optionDebugInfo){
+	if(optionDebugInfo){
 		guim->font = 0;
-		return;
+		guim->sx   =  4;
+		guim->sy   = getTilesize();
+		guim->size =  1;
+		const float compRatio = (float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession;
+		textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f GVX: %02.4f\n",player->pos.x,player->vel.x,player->gvel.x);
+		textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f GVY: %02.4f\n",player->pos.y,player->vel.y,player->gvel.y);
+		textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f GVZ: %02.4f\n",player->pos.z,player->vel.z,player->gvel.z);
+		textMeshPrintf(guim,"Player   Yaw: %04.2f\n",player->rot.yaw);
+		textMeshPrintf(guim,"Player Pitch: %04.2f\n",player->rot.pitch);
+		textMeshPrintf(guim,"Player  Roll: %04.2f\n",player->rot.roll);
+		textMeshPrintf(guim,"Player Flags: %08X\n",player->flags);
+		textMeshPrintf(guim,"Active Tris.: %s%s\n",colorSignalLow(1<<20,1<<18,1<<17,tris),getHumanReadableSize(tris));
+		guim->fgc  = colorPalette[15];
+		textMeshPrintf(guim,"Particles   : %s%s\n",colorSignalLow(1<<19,1<<17,1<<16,particleCount),getHumanReadableSize(particleCount));
+		guim->fgc  = colorPalette[15];
+		textMeshPrintf(guim,"Animals     : %2i\n",animalCount);
+		textMeshPrintf(guim,"Entities    : %2i\n",entityCount);
+		textMeshPrintf(guim,"Itemdrops   : %i\n",itemDropCount);
+		textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
+		textMeshPrintf(guim,"ActiveChunks: %s\n",getHumanReadableSize(chunkGetActive()));
+		textMeshPrintf(guim,"FreeChunks  : %2i\n",chunkGetFree());
+		textMeshPrintf(guim,"ActiveChungi: %2i\n",chungusGetActiveCount());
+		textMeshPrintf(guim,"Bytes Sent  : %sB\n",getHumanReadableSize(sentBytesCurrentSession));
+		textMeshPrintf(guim,"Bytes Recvd : %sB\n",getHumanReadableSize(recvBytesCurrentSession));
+		textMeshPrintf(guim,"Uncompressed: %sB\n",getHumanReadableSize(recvUncompressedBytesCurrentSession));
+		textMeshPrintf(guim,"Comp. Ratio : %s%2.2fX\n",colorSignalHigh(4,8,15,compRatio),compRatio);
+		guim->fgc  = colorPalette[15];
+		textMeshPrintf(guim,"Canvas Size : %ix%i\n",screenWidth,screenHeight);
+		guim->size =  2;
+		textMeshPrintf(guim,"Ping  : %s%u\n",colorSignalLow(400,200,50,lastLatency),lastLatency);
+		guim->fgc  = colorPalette[15];
+		textMeshPrintf(guim,"WorstF: %s%u\n",colorSignalLow(60,20,18,worstFrame),worstFrame);
+		guim->fgc  = colorPalette[15];
+
+		for(uint i=0;i<animalCount;i++){
+			drawAnimalDebugOverlay(&animalList[i],i);
+		}
 	}
-
-	for(uint i=0;i<animalCount;i++){
-		drawAnimalDebugOverlay(&animalList[i],i);
-	}
-
-	guim->sx   =  4;
-	guim->sy   = getTilesize();
-	guim->size =  1;
-	const float compRatio = (float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession;
-	textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f GVX: %02.4f\n",player->pos.x,player->vel.x,player->gvel.x);
-	textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f GVY: %02.4f\n",player->pos.y,player->vel.y,player->gvel.y);
-	textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f GVZ: %02.4f\n",player->pos.z,player->vel.z,player->gvel.z);
-	textMeshPrintf(guim,"Player   Yaw: %04.2f\n",player->rot.yaw);
-	textMeshPrintf(guim,"Player Pitch: %04.2f\n",player->rot.pitch);
-	textMeshPrintf(guim,"Player  Roll: %04.2f\n",player->rot.roll);
-	textMeshPrintf(guim,"Player Flags: %08X\n",player->flags);
-	textMeshPrintf(guim,"Active Tris.: %s%s\n",colorSignalLow(1<<20,1<<18,1<<17,tris),getHumanReadableSize(tris));
-	guim->fgc  = colorPalette[15];
-	textMeshPrintf(guim,"Particles   : %s%s\n",colorSignalLow(1<<19,1<<17,1<<16,particleCount),getHumanReadableSize(particleCount));
-	guim->fgc  = colorPalette[15];
-	textMeshPrintf(guim,"Animals     : %2i\n",animalCount);
-	textMeshPrintf(guim,"Entities    : %2i\n",entityCount);
-	textMeshPrintf(guim,"Itemdrops   : %i\n",itemDropCount);
-	textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
-	textMeshPrintf(guim,"ActiveChunks: %s\n",getHumanReadableSize(chunkGetActive()));
-	textMeshPrintf(guim,"FreeChunks  : %2i\n",chunkGetFree());
-	textMeshPrintf(guim,"ActiveChungi: %2i\n",chungusGetActiveCount());
-	textMeshPrintf(guim,"Bytes Sent  : %sB\n",getHumanReadableSize(sentBytesCurrentSession));
-	textMeshPrintf(guim,"Bytes Recvd : %sB\n",getHumanReadableSize(recvBytesCurrentSession));
-	textMeshPrintf(guim,"Uncompressed: %sB\n",getHumanReadableSize(recvUncompressedBytesCurrentSession));
-	textMeshPrintf(guim,"Comp. Ratio : %s%2.2fX\n",colorSignalHigh(4,8,15,compRatio),compRatio);
-	guim->fgc  = colorPalette[15];
-	textMeshPrintf(guim,"Canvas Size : %ix%i\n",screenWidth,screenHeight);
-	guim->size =  2;
-	textMeshPrintf(guim,"Ping  : %s%u\n",colorSignalLow(400,200,50,lastLatency),lastLatency);
-	guim->fgc  = colorPalette[15];
-	textMeshPrintf(guim,"WorstF: %s%u\n",colorSignalLow(60,20,18,worstFrame),worstFrame);
-	guim->fgc  = colorPalette[15];
-
 	guim->font = 0;
-
 }
 
 void drawActiveItem(){
