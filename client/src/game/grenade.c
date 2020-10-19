@@ -85,7 +85,7 @@ void grenadeUpdateFromServer(const packet *p){
 }
 
 void singleBeamblast(character *ent, const vec start, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){
-	static uint iteration = 0;
+	static u16 iteration = 0;
 
 	float speed     = 0.1f;
 	vec pos         = start;

@@ -134,7 +134,7 @@ void animalSyncFromServer(const packet *p){
 	e->sleepy     = p->v.i8[ 7];
 }
 
-int animalHitCheck(const vec pos, float mdd, int dmg, int cause, uint iteration){
+int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration){
 	int hits = 0;
 	for(uint i=0;i<animalCount;i++){
 		if(animalList[i].type == 0)        {continue;}

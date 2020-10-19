@@ -833,7 +833,7 @@ vec characterGetPlayerDist(uint i){
 	return vecSub(player->pos,playerList[i]->pos);
 }
 
-int characterHitCheck(const vec pos, float mdd, int damage, int cause, uint iteration){
+int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 iteration){
 	int hits = 0;
 	for(int i=0;i<32;i++){
 		if(playerList[i] == player)          {continue;}
