@@ -187,9 +187,9 @@ void rmDirR(const char *name){
 	struct dirent *de = NULL;
 	while((de = readdir(dp)) != NULL){
 		if(de->d_name[0] == '.'){continue;}
-		char *buf = malloc(256);
-		snprintf(buf,256,"%s/%s",name,de->d_name);
-		buf[255]=0;
+		char *buf = malloc(512);
+		snprintf(buf,512,"%s/%s",name,de->d_name);
+		buf[511]=0;
 		if(isDir(buf)){
 			rmDirR(buf);
 			rmdir(buf);

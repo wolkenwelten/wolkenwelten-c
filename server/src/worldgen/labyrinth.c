@@ -67,6 +67,19 @@ static void labPavillon(const worldgen *wgen,const ivec pos, u8 roofBlock, u8 to
 	chungusBox(clay,bx+9,by+2,bz+9,1,5,1,I_Marble_Pillar);
 }
 
+static void labWell(const worldgen *wgen, const ivec pos){
+	chungus *clay = wgen->clay;
+	const int bx = (pos.x<<4)+3;
+	const int by = (pos.y<<4)+6;
+	const int bz = (pos.z<<4)+3;
+
+	chungusBox(clay,bx+3,by-1,bz+3, 4,2, 4,0);
+	chungusBox(clay,bx+3,by  ,bz+3, 4,2, 1,I_Marble_Block);
+	chungusBox(clay,bx+3,by  ,bz+6, 4,2, 1,I_Marble_Block);
+	chungusBox(clay,bx+3,by  ,bz+3, 1,2, 4,I_Marble_Block);
+	chungusBox(clay,bx+6,by  ,bz+3, 1,2, 4,I_Marble_Block);
+}
+
 static void labPlatform(const worldgen *wgen,const ivec pos, uint pType){
 	chungus *clay = wgen->clay;
 	const int bx = (pos.x<<4)+3;
@@ -87,7 +100,7 @@ static void labPlatform(const worldgen *wgen,const ivec pos, uint pType){
 	case 0:
 		break;
 	case 1:
-		labPavillon(wgen,pos,I_Marble_Block,I_Marble_Block);
+		labPavillon(wgen,pos,I_Marble_Block,0);
 		break;
 	case 2:
 		labPavillon(wgen,pos,I_Obsidian,I_Obsidian);
@@ -96,7 +109,11 @@ static void labPlatform(const worldgen *wgen,const ivec pos, uint pType){
 		labPavillon(wgen,pos,I_Crystal,I_Crystal);
 		break;
 	case 4:
-		labPavillon(wgen,pos,I_Marble_Block,0);
+		labPavillon(wgen,pos,I_Crystal,I_Crystal);
+		labWell(wgen,pos);
+		break;
+	case 5:
+		labWell(wgen,pos);
 		break;
 	}
 }
@@ -107,6 +124,7 @@ void labBridgeX(const worldgen *wgen,const ivec pos, int style, int size){
 	const int by = (pos.y<<4)+6;
 	      int bz = (pos.z<<4)+3;
 
+	if(style > 4){return;}
 	if(style == 0){
 		chungusBox(clay,bx+ 9,by+1,bz+1,size  ,2,8,0);
 		chungusBox(clay,bx+10,by  ,bz+1,size-2,1,8,I_Marble_Blocks);
@@ -128,6 +146,7 @@ void labBridgeZ(const worldgen *wgen,const ivec pos, int style, int size){
 	const int by = (pos.y<<4)+6;
 	const int bz = (pos.z<<4)+3;
 
+	if(style > 4){return;}
 	if(style == 0){
 		chungusBox(clay,bx+1,by+1,bz+ 9,8,2,size  ,0);
 		chungusBox(clay,bx+1,by  ,bz+10,8,1,size-2,I_Marble_Blocks);
@@ -228,11 +247,17 @@ void worldgenLabyrinth(worldgen *wgen){
 				if((cx < 14) && labMap[cx+2][cy][cz] && !labMap[cx+1][cy][cz]){
 					labBridgeX(wgen,pos,rngValM(4),8+16);
 				}
+				if((cx < 13) && labMap[cx+3][cy][cz] && !labMap[cx+2][cy][cz] && !labMap[cx+1][cy][cz]){
+					labBridgeX(wgen,pos,rngValM(4)+1,8+32);
+				}
 				if((cz < 15) && labMap[cx][cy][cz+1]){
 					labBridgeZ(wgen,pos,rngValM(4),8);
 				}
 				if((cz < 14) && labMap[cx][cy][cz+2] && !labMap[cx][cy][cz+1]){
 					labBridgeZ(wgen,pos,rngValM(4),8+16);
+				}
+				if((cz < 13) && labMap[cx][cy][cz+3] && !labMap[cx][cy][cz+2] && !labMap[cx][cy][cz+1]){
+					labBridgeZ(wgen,pos,rngValM(4)+1,8+32);
 				}
 
 				if((cx < 15) && (cy < 15) && labMap[cx+1][cy+1][cz]){

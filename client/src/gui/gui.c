@@ -371,10 +371,10 @@ void drawDebuginfo(){
 
 	vboTrisCount = 0;
 	if(optionDebugInfo){
-		guim->font = 0;
-		guim->sx   =  4;
+		guim->font = 1;
+		guim->sx   = 4;
 		guim->sy   = getTilesize();
-		guim->size =  1;
+		guim->size = 1;
 		const float compRatio = (float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession;
 		textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f GVX: %02.4f\n",player->pos.x,player->vel.x,player->gvel.x);
 		textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f GVY: %02.4f\n",player->pos.y,player->vel.y,player->gvel.y);

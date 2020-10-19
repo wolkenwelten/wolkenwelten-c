@@ -90,15 +90,15 @@ void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,in
 }
 
 chunk *chungusGetChunk(chungus *c, u16 x,u16 y,u16 z){
-	if(((x|y|z)>>4)&(~0xF)){return NULL;}
+	if((x|y|z)&(~0xFF)){return NULL;}
 	return c->chunks[x>>4][y>>4][z>>4];
 }
 
 chunk *chungusGetChunkOrNew(chungus *c, u16 x, u16 y, u16 z){
 	chunk *chnk;
-	u16 cx = (x >> 4) & 0xF;
-	u16 cy = (y >> 4) & 0xF;
-	u16 cz = (z >> 4) & 0xF;
+	const u16 cx = (x >> 4) & 0xF;
+	const u16 cy = (y >> 4) & 0xF;
+	const u16 cz = (z >> 4) & 0xF;
 	chnk = c->chunks[cx][cy][cz];
 	if(chnk == NULL){
 		c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx << 4),(c->y<<8)+(cy << 4),(c->z<<8)+(cz << 4));
@@ -108,7 +108,7 @@ chunk *chungusGetChunkOrNew(chungus *c, u16 x, u16 y, u16 z){
 
 u8 chungusGetB(chungus *c, u16 x,u16 y,u16 z){
 	chunk *chnk;
-	if(((x|y|z)>>4)&(~0xF)){return 0;}
+	if((x|y|z)&(~0xFF)){return 0;}
 	chnk = c->chunks[x>>4][y>>4][z>>4];
 	if(chnk == NULL){return 0;}
 	return chnk->data[x&0xF][y&0xF][z&0xF];

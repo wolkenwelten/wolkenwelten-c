@@ -168,9 +168,9 @@ void bigchungusBoxMineSphere(bigchungus *c, int x,int y,int z, int r){
 }
 
 int bigchungusTrySpawn(bigchungus *c, const ivec s){
-	return( (bigchungusGetB(c,s.x,s.y  ,s.z)!=0) &&
-	        (bigchungusGetB(c,s.x,s.y+1,s.z)==0) &&
-	        (bigchungusGetB(c,s.x,s.y+2,s.z)==0));
+	return((bigchungusGetB(c,s.x,s.y  ,s.z)!=0) &&
+	       (bigchungusGetB(c,s.x,s.y+1,s.z)==0) &&
+	       (bigchungusGetB(c,s.x,s.y+2,s.z)==0));
 }
 
 void bigchungusDetermineSpawn(bigchungus *c, const ivec s){
