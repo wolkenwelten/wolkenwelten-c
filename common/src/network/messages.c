@@ -324,3 +324,15 @@ void msgPingPong(uint c){
 	packet *p = &packetBuffer;
 	packetQueue(p,33,0,c);
 }
+
+void msgAnimalDied(uint c, const vec pos, u8 type, u8 age){
+	packet *p = &packetBuffer;
+
+	p->v.u8[0] = type;
+	p->v.u8[1] = age;
+	p->v.f[1]  = pos.x;
+	p->v.f[2]  = pos.y;
+	p->v.f[3]  = pos.z;
+
+	packetQueue(p,34,4*4,c);
+}

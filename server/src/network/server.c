@@ -418,6 +418,10 @@ void serverParseSinglePacket(uint c, packet *p){
 			handlePingPong(c);
 			msgPingPong(c);
 			break;
+		case 34:
+			fprintf(stderr,"animalDied received from client, which should never happen\n");
+			serverKill(c);
+			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
 			serverKill(c);

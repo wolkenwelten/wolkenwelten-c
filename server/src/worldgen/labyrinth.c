@@ -234,11 +234,13 @@ void worldgenLabyrinth(worldgen *wgen){
 				if((cz < 14) && labMap[cx][cy][cz+2] && !labMap[cx][cy][cz+1]){
 					labBridgeZ(wgen,pos,rngValM(4),8+16);
 				}
+
 				if((cx < 15) && (cy < 15) && labMap[cx+1][cy+1][cz]){
 					labStairsXGT(wgen,pos,1);
 				}else if((cx < 14) && (cy < 15) && labMap[cx+2][cy+1][cz] && !labMap[cx+1][cy+1][cz] && !labMap[cx+1][cy][cz]){
 					labStairsXGT(wgen,pos,2);
 				}
+
 				if((cz < 15) && (cy < 15) && labMap[cx][cy+1][cz+1]){
 					labStairsZGT(wgen,pos,1);
 				}else if((cz < 14) && (cy < 15) && labMap[cx][cy+1][cz+2] && !labMap[cx][cy+1][cz+1] && !labMap[cx][cy][cz+1]){

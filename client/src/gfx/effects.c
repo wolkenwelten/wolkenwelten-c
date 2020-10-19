@@ -115,3 +115,19 @@ void fxBleeding(const vec pos, being victim, i16 dmg, u16 cause){
 		newParticleV(pos,v,vecMulS(v,1/-64.f),64.f,1.f,0xFF44AAFF,64);
 	}
 }
+
+void fxAnimalDiedPacket (const packet *p){
+	//const u8 type = p->v.u8[0];
+	//const u8 age  = p->v.u8[1];
+	const vec pos = vecNewP(&p->v.f[1]);
+	const float d = vecMag(vecSub(player->pos,pos));
+	if(d < 128.f){
+		const float vol = (128.f-d)/128.f;
+		sfxPlay(sfxBomb,vol);
+		sfxPlay(sfxUngh,vol);
+	}else if(d > 256.f){return;}
+	for(int i=512;i>0;i--){
+		const vec v  = vecMulS(vecRng(),0.06f);
+		newParticleV(pos,v,vecMulS(v,1/-64.f),64.f,1.f,0xFF44AAFF,64);
+	}
+}

@@ -53,10 +53,11 @@ static void animalDel(uint i){
 	animalList[i] = animalList[--animalCount];
 }
 
-
 static void animalRDie(animal *e){
 	item drop = itemNew(I_Pear,rngValMM(3,6));
 	itemDropNewP(e->pos,&drop);
+	msgAnimalDied(-1,e->pos, e->type, e->age);
+	addPriorityAnimal(e-animalList);
 }
 
 void animalUpdateAll(){

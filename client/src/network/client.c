@@ -252,6 +252,9 @@ void clientParsePacket(const packet *p){
 			handlePingPong();
 			msgPingPong(-1);
 			break;
+		case 34:
+			fxAnimalDiedPacket(p);
+			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);
 			break;

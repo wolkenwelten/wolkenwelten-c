@@ -8,3 +8,4 @@ void fxBeamBlaster      (const vec pa,const vec pb, float beamSize, float damage
 void fxBlockBreak       (const vec pos, uchar b);
 void fxBlockMine        (const vec pos, int dmg, uchar b);
 void fxBleeding         (const vec pos, being victim, i16 dmg, u16 cause);
+void fxAnimalDiedPacket (const packet *p);
