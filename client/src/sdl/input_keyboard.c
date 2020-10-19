@@ -169,7 +169,10 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_Q:
 			keysPressed[6] = 1;
-			if(keyboardCmdKey(e)){quit=true;}
+			if(keyboardCmdKey(e)){
+				quit=true;
+				keysPressed[6] = 0;
+			}
 			break;
 		case SDL_SCANCODE_R:
 			keysPressed[7] = 1;
