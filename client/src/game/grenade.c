@@ -94,8 +94,6 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 	const int dmg   = ((int)damageMultiplier)+1;
 	--iteration;
 
-	(void)damageMultiplier;
-
 	for(int ticksLeft = 0x1FFF; ticksLeft > 0; ticksLeft--){
 		pos = vecAdd(pos,vel);
 		if(worldGetB(pos.x,pos.y,pos.z) != 0){
@@ -104,7 +102,6 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 			fxExplosionBlaster(pos,beamSize/2.f);
 			if(--hitsLeft <= 0){break;}
 		}
-
 		characterHitCheck(pos, mdd, dmg, 1, iteration);
 		animalHitCheck   (pos, mdd, dmg, 1, iteration);
 

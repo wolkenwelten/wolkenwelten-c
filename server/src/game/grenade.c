@@ -97,7 +97,6 @@ void beamblastNewP(uint c, const packet *p){
 	float speed            = 0.1f;
 	float beamSize         = p->v.f[6];
 	float damageMultiplier = p->v.f[7];
-	float recoilMultiplier = p->v.f[8];
 
 	const vec start = vecNewP(&p->v.f[0]);
 	const vec end   = vecNewP(&p->v.f[3]);
@@ -112,6 +111,4 @@ void beamblastNewP(uint c, const packet *p){
 		}
 	}
 	msgFxBeamBlaster(c,start,pos,beamSize,damageMultiplier);
-	const vec rev = vecMulS(vel,-0.75f*recoilMultiplier);
-	msgPlayerMove(c, rev, vecNew((rngValf()-0.5f) * 64.f * recoilMultiplier, (rngValf()-.8f) * 64.f * recoilMultiplier, 0.f));
 }
