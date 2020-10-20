@@ -23,15 +23,12 @@ typedef struct vertex2D {
 #pragma pack(pop)
 
 typedef struct {
-	vertex2D dataBuffer[1<<14];
+	vertex2D *dataBuffer;
 	 int sx,sy,mx,my,wrap,size,font;
 	 u32 fgc, bgc;
-	 int dataCount;
-	 int vboSize;
-	uint vbo,usage;
+	uint vbo,usage,dataCount,bufferSize;
 	texture *tex;
 	 int finished;
-	void *nextFree;
 } textMesh;
 
 typedef struct {

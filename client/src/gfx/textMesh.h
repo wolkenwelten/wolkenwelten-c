@@ -4,7 +4,7 @@
 extern char *ansiFG[16];
 extern u32 colorPalette[16];
 
-textMesh *textMeshNew       ();
+textMesh *textMeshNew       (uint bufferSize);
 void      textMeshFree      (textMesh *m);
 void      textMeshEmpty     (textMesh *m);
 void      textMeshAddVert   (textMesh *m, i16 x, i16 y, i16 u, i16 v, u32 rgba);

@@ -157,14 +157,14 @@ static void handlerGameFocus(widget *wid){
 }
 
 void initUI(){
-	cursorMesh           = textMeshNew();
+	cursorMesh           = textMeshNew(8);
 	cursorMesh->tex      = tCursor;
 
-	crosshairMesh        = textMeshNew();
+	crosshairMesh        = textMeshNew(16);
 	crosshairMesh->tex   = tCrosshair;
 	crosshairMesh->usage = GL_STREAM_DRAW;
 
-	guim                 = textMeshNew();
+	guim                 = textMeshNew(1<<16);
 	guim->tex            = tGui;
 
 	widgetGameScreen = widgetNewCP(wGameScreen,rootMenu,0,0,-1,-1);

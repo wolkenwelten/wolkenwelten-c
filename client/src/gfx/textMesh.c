@@ -14,10 +14,7 @@
 #include <string.h>
 #include "../gfx/gl.h"
 
-char      stringBuffer[8192];
-textMesh  textMeshList[8];
-uint      textMeshCount = 0;
-textMesh *textMeshFirstFree = NULL;
+char stringBuffer[8192];
 
 char *ansiFG[16] = {
 	"\033[0;30m",
@@ -58,39 +55,36 @@ u32 colorPalette[16] = {
 	0xFFF8FFF0
 };
 
-textMesh *textMeshNew(){
-	textMesh *m = NULL;
-	if(textMeshFirstFree != NULL){
-		m = textMeshFirstFree;
-		textMeshFirstFree = m->nextFree;
-	}
+textMesh *textMeshNew(uint bufferSize){
+	textMesh *m = malloc(sizeof(textMesh));
 	if(m == NULL){
-		if(textMeshCount >= (int)(sizeof(textMeshList) / sizeof(textMesh))-1){
-			fprintf(stderr,"textMeshList Overflow!\n");
-			return NULL;
-		}
-		m = &textMeshList[textMeshCount++];
+		fprintf(stderr,"Error allocation textMesh\n");
+		return NULL;
 	}
-	m->vboSize  = 0;
-	m->vbo      = m->dataCount =  0;
-	m->sx       = m->sy        =  0;
-	m->mx       = m->my        = -1;
-	m->size     = 1;
-	m->tex      = tGui;
-	m->finished = 0;
-	m->usage    = GL_STREAM_DRAW;
-	m->fgc      = colorPalette[15];
-	m->bgc      = colorPalette[ 0];
+	m->vbo        = m->dataCount =  0;
+	m->sx         = m->sy        =  0;
+	m->mx         = m->my        = -1;
+	m->size       = 1;
+	m->tex        = tGui;
+	m->finished   = 0;
+	m->usage      = GL_STREAM_DRAW;
+	m->fgc        = colorPalette[15];
+	m->bgc        = colorPalette[ 0];
+	m->dataBuffer = malloc(sizeof(vertex2D) * bufferSize);
+	m->bufferSize = bufferSize;
 
 	return m;
 }
 
 void textMeshFree(textMesh *m){
+	if(m == NULL){return;}
 	if(m->vbo){
 		glDeleteBuffers(1,&m->vbo);
 	}
-	m->nextFree = textMeshFirstFree;
-	textMeshFirstFree = m;
+	if(m->dataBuffer != NULL){
+		free(m->dataBuffer);
+		m->dataBuffer = NULL;
+	}
 }
 
 void textMeshEmpty(textMesh *m){
@@ -104,7 +98,7 @@ void textMeshEmpty(textMesh *m){
 }
 
 void textMeshAddVert(textMesh *m, i16 x, i16 y, i16 u, i16 v, u32 rgba){
-	if(m->dataCount >= (int)(sizeof(m->dataBuffer) / sizeof(vertex2D))){
+	if(m->dataCount >= m->bufferSize){
 		fprintf(stderr,"textMesh dataBuffer OVERFLOW\n");
 		return;
 	}
