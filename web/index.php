@@ -32,8 +32,8 @@ foreach(array_keys($platforms) as $plat){
 	<hr/>
 	<p>Greetings Cybersurfer, you have reached my little corner of the WWW offering a sneak peek of a videogame I have been developing in my spare time.</p>
 	<p>You can watch me work on this Game on my <a href="https://www.twitch.tv/melchizedek6809">Twitch channel</a>, I try to do more visually exciting features on stream but it is still just me coding away, so be prepared for that.</p>
-	<p>Apart from that you can also join our <a href="https://discord.gg/vPZffVS">Discord</a>.</p>
-	<p>For now only Win/Mac/Lin are supported with a native version, although there is the wasm version which should work on every OS having a modern Browser. Apart from that the codebase is already running and getting regular testing on OpenBSD and Haiku.</p><br/>
+	<p>To find other People to play with be sure to Join our <a href="https://discord.gg/vPZffVS">Discord</a>.</p>
+	<p>For now only Win/Mac/Lin are supported with a native Release. WASM is working, but for now still has too many Bugs. Haiku/OpenBSD are working but I still haven't gotten around to building a release pipeline for them.</p><br/>
 	<h2>Download a stable release:</h2>
 	<hr/>
 	<div class=nativedl align=center>

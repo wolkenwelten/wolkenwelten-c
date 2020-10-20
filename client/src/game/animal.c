@@ -28,31 +28,6 @@ static const mesh *animalGetMesh(const animal *e){
 	}
 }
 
-static void animalShadesDraw(const animal *c){
-	float breath,scale;
-	if(c->state == 0){
-		breath = sinf((float)(c->breathing-256)/512.f)*2.f;
-	}else{
-		breath = sinf((float)(c->breathing-128)/256.f)*2.f;
-	}
-
-	if(c->age < 20){
-		scale = 0.5f + ((float)c->age/40.f);
-	}else{
-		scale = 1.f;
-	}
-	scale *= 0.5f;
-
-	matMov(matMVP,matView);
-	matMulTrans(matMVP,c->pos.x,c->pos.y+breath/128.f,c->pos.z);
-	matMulRotYX(matMVP,c->pos.yaw,c->pos.pitch + breath);
-	matMulTrans(matMVP,0.f,0.1f,-0.2f);
-	matMulScale(matMVP,scale,scale,scale);
-	matMul(matMVP,matMVP,matProjection);
-	shaderMatrix(sMesh,matMVP);
-	meshDraw(meshSunglasses);
-}
-
 static void animalDraw(animal *e){
 	float breath,scale;
 	if(e        == NULL){return;}
@@ -77,7 +52,6 @@ static void animalDraw(animal *e){
 
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(animalGetMesh(e));
-	animalShadesDraw(e);
 }
 
 void animalDrawAll(){
