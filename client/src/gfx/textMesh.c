@@ -117,12 +117,7 @@ void textMeshDraw(textMesh *m){
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, m->vbo);
 	if(!m->finished){
-		if(m->dataCount <= m->vboSize){
-			glBufferSubData(GL_ARRAY_BUFFER, 0, m->dataCount*sizeof(vertex2D), m->dataBuffer);
-		}else{
-			glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex2D), m->dataBuffer, m->usage);
-			m->vboSize = m->dataCount;
-		}
+		glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex2D), m->dataBuffer, m->usage);
 		m->finished = 1;
 	}
 	textureBind(m->tex);
