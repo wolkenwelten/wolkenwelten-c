@@ -22,7 +22,7 @@ animal *animalFirstFree = NULL;
 static const mesh *animalGetMesh(const animal *e){
 	switch(e->type){
 	default:
-		return meshPear;
+		return meshKarnickel;
 	case 2:
 		return meshBomb;
 	}
