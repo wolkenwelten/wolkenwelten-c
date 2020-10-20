@@ -400,26 +400,34 @@ void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
 	}
 }
 
+void widgetFinish(widget *w){
+	if(w->flags & WIDGET_ANIMATEW){w->w = w->gw;}
+	if(w->flags & WIDGET_ANIMATEH){w->h = w->gh;}
+	if(w->flags & WIDGET_ANIMATEX){w->x = w->gx;}
+	if(w->flags & WIDGET_ANIMATEY){w->y = w->gy;}
+	w->flags &= ~WIDGET_ANIMATE;
+}
+
 void widgetSlideW(widget *w, int nw){
+	if(w->w == nw){return;}
 	if(nw == 0){
 		w->flags &= ~WIDGET_HIDDEN;
 		w->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
-		w->gw = 0;
 	}else{
 		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
 		w->flags |= WIDGET_ANIMATEW;
-		w->gw = nw;
 	}
+	w->gw = nw;
 }
 
 void widgetSlideH(widget *w, int nh){
+	if(w->h == nh){return;}
 	if(nh == 0){
 		w->flags &= ~WIDGET_HIDDEN;
 		w->flags |= WIDGET_ANIMATEH | WIDGET_NOSELECT;
-		w->gh = 0;
 	}else{
 		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
 		w->flags |= WIDGET_ANIMATEH;
-		w->gh = nh;
 	}
+	w->gh = nh;
 }

@@ -7,34 +7,33 @@
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
 #include "../gui/menu.h"
-#include "../gui/inventory.h"
+#include "../menu/inventory.h"
 #include "../gui/widget.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
 
 void textInputEvent(const SDL_Event *e);
-
 bool keysPressed[16];
 
 bool keyboardSneak(){
-	if(widgetFocused != NULL){return false;}
+	if(gameControlsInactive()){return false;}
 	return keysPressed[5];
 }
 bool keyboardPrimary(){
-	if(widgetFocused != NULL){return false;}
+	if(gameControlsInactive()){return false;}
 	return keysPressed[10];
 }
 bool keyboardSecondary(){
-	if(widgetFocused != NULL){return false;}
+	if(gameControlsInactive()){return false;}
 	return keysPressed[11];
 }
 bool keyboardTertiary(){
-	if(widgetFocused != NULL){return false;}
+	if(gameControlsInactive()){return false;}
 	return keysPressed[7];
 }
 
 vec doKeyboardupdate(vec vel){
-	if(widgetFocused != NULL){return vel;}
+	if(gameControlsInactive()){return vel;}
 
 	if(keysPressed[0]){ vel.z = -1.f; }
 	if(keysPressed[1]){ vel.z =  1.f; }
@@ -196,7 +195,6 @@ void keyboardEventHandler(const SDL_Event *e){
 			keysPressed[15] = 1;
 			break;
 		case SDL_SCANCODE_ESCAPE:
-			if(gameRunning && !mouseHidden){hideMouseCursor(); break; }
 			menuCancel();
 			guiCancel();
 			break;
@@ -221,7 +219,7 @@ void keyboardEventHandler(const SDL_Event *e){
 		}
 	}
 
-	if((widgetFocused != NULL) || (!gameRunning)){return;}
+	if(gameControlsInactive()){return;}
 	if(e->type == SDL_KEYDOWN){
 		switch(e->key.keysym.scancode){
 		case SDL_SCANCODE_E:

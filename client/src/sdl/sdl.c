@@ -4,7 +4,7 @@
 #include "../gfx/gfx.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
-#include "../gui/inventory.h"
+#include "../menu/inventory.h"
 #include "../misc/options.h"
 #include "../sdl/sfx.h"
 
@@ -218,4 +218,10 @@ bool inputSecondary(){
 }
 bool inputTertiary(){
 	return gamepadTertiary()  || keyboardTertiary()  || mouseTertiary()  || touchTertiary();
+}
+
+bool gameControlsInactive(){
+	if(widgetFocused == NULL)             {return true;}
+	if(widgetFocused->type == wGameScreen){return false;}
+	return true;
 }

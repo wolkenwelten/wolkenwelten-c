@@ -2,7 +2,7 @@
 #include "../sdl/sdl.h"
 #include "../game/character.h"
 #include "../gui/menu.h"
-#include "../gui/inventory.h"
+#include "../menu/inventory.h"
 #include "../main.h"
 #include "../../../common/src/common.h"
 

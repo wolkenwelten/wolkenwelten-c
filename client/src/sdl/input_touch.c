@@ -1,7 +1,7 @@
 #include "input_touch.h"
 
 #include "../game/character.h"
-#include "../gui/inventory.h"
+#include "../menu/inventory.h"
 #include "../main.h"
 
 #include <SDL.h>

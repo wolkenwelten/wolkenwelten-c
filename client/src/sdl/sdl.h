@@ -25,3 +25,4 @@ bool inputSneak();
 bool inputPrimary();
 bool inputSecondary();
 bool inputTertiary();
+bool gameControlsInactive();

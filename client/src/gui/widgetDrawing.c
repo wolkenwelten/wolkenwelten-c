@@ -306,7 +306,15 @@ static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, i
 	xx = ii*2*ts + x;
 	textMeshBox(m,xx-ts+ts/4+animX*2,y+ts/4,ts/2,ts/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 	textMeshItemSlot(m,xx,y,ts,3,result.ID,result.amount);
+}
 
+static void widgetDrawTextScroller(const widget *wid, textMesh *m, int x, int y, int w, int h){
+	(void)w;
+	(void)h;
+
+	m->wrap = 1;
+	textMeshPrintfPS(m,x+16,y+16,2,"%s",wid->label);
+	m->wrap = 0;
 }
 
 void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h){
@@ -315,6 +323,7 @@ void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h)
 	switch(wid->type){
 	case wNone:
 	case wSpace:
+	case wGameScreen:
 		break;
 	case wPanel:
 		widgetDrawPanel(wid,m,x,y,w,h);
@@ -351,6 +360,9 @@ void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h)
 		break;
 	case wRecipeInfo:
 		widgetDrawRecipeInfo(wid,m,x,y,w,h);
+		break;
+	case wTextScroller:
+		widgetDrawTextScroller(wid,m,x,y,w,h);
 		break;
 	}
 }

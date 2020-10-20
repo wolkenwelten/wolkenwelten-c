@@ -2,10 +2,11 @@
 #include "../../../common/src/common.h"
 #include "widget.h"
 
+extern widget *widgetGameScreen;
+
 extern uint mousex,mousey,mouseClicked[3];
 extern bool mouseHidden;
 extern float matOrthoProj[16];
-extern widget *rootHud;
 
 int  getTilesize     ();
 void initUI          ();

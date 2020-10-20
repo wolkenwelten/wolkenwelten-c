@@ -1,5 +1,6 @@
 #include "inventory.h"
 
+#include "../gui/menu.h"
 #include "../game/character.h"
 #include "../game/itemDrop.h"
 #include "../game/recipe.h"
@@ -112,8 +113,9 @@ void initInventory(){
 	const int ts = getTilesize();
 	const int sx = 10*ts;
 	if(inventoryPanel != NULL){ widgetFree(inventoryPanel); }
-	inventoryPanel = widgetNewCP(wPanel,rootHud,-1,-1,sx,ts+32);
-	inventorySpace = widgetNewCP(wSpace,inventoryPanel,-1,0,10*ts,-1);
+	inventoryPanel = widgetNewCP(wPanel,rootMenu,-1,-1,sx,0);
+	inventoryPanel->flags |= WIDGET_HIDDEN;
+	inventorySpace = widgetNewCP(wSpace,inventoryPanel,-1,0,0,-1);
 	craftingSpace  = widgetNewCP(wSpace,inventoryPanel,-1,0,0,-1);
 
 	inventoryRadio = widgetNewCPLH(wRadioButton,inventoryPanel,0,0,5*ts,32,"Inventory","click",handlerInventoryRadioInventory);
@@ -146,6 +148,7 @@ void initInventory(){
 void showInventory(){
 	const int gh = getTilesize()* 4 + 32;
 	if(!gameRunning){return;}
+
 	if((inventoryPanel->h == gh) && (inventoryRadio->flags & WIDGET_ACTIVE)){
 		hideInventory();
 		return;
@@ -157,6 +160,7 @@ void showInventory(){
 	widgetSlideW(craftingSpace,                0);
 	inventoryRadio->flags |= WIDGET_ACTIVE;
 	craftingRadio->flags &= ~WIDGET_ACTIVE;
+	widgetFocus(NULL);
 }
 void showCrafting(){
 	int gh = getTilesize() * ((recipeGetCount()/10)+2) + 32;
@@ -173,6 +177,7 @@ void showCrafting(){
 	widgetSlideW(craftingSpace, getTilesize()*10);
 	craftingRadio->flags |= WIDGET_ACTIVE;
 	inventoryRadio->flags &= ~WIDGET_ACTIVE;
+	widgetFocus(NULL);
 }
 
 void hideInventory(){
@@ -183,9 +188,8 @@ void hideInventory(){
 		itemDropNewC(player, &inventoryCurrentPickup);
 		itemDiscard(&inventoryCurrentPickup);
 	}
-	widgetSlideH(inventoryPanel,getTilesize()+32);
-	widgetSlideW(inventorySpace,getTilesize()*10);
-	widgetSlideW(craftingSpace,                0);
+	openInventoryPanel();
+	widgetFocus(widgetGameScreen);
 }
 
 bool isInventoryOpen(){
@@ -204,4 +208,16 @@ void drawInventory(textMesh *guim){
 	if(!mouseHidden){
 		textMeshItem(guim,mousex+animX-tilesize/8,mousey+animY-tilesize/8,tilesize,3,&inventoryCurrentPickup);
 	}
+}
+
+void openInventoryPanel(){
+	widgetSlideH(inventoryPanel,getTilesize()+32);
+	widgetSlideW(inventorySpace,getTilesize()*10);
+	widgetSlideW(craftingSpace,                0);
+}
+
+void closeInventoryPanel(){
+	widgetSlideH(inventoryPanel,               0);
+	widgetSlideW(inventorySpace,getTilesize()*10);
+	widgetSlideW(craftingSpace,                0);
 }

@@ -19,7 +19,8 @@
 #include "../gfx/texture.h"
 #include "../gfx/textMesh.h"
 #include "../gui/menu.h"
-#include "../gui/inventory.h"
+#include "../menu/inventory.h"
+#include "../menu/mainmenu.h"
 #include "../gui/overlay.h"
 #include "../gui/textInput.h"
 #include "../network/chat.h"
@@ -40,9 +41,9 @@ textMesh *guim;
 textMesh *crosshairMesh;
 textMesh *cursorMesh;
 
-widget *rootHud   = NULL;
-widget *chatPanel = NULL;
-widget *chatText  = NULL;
+widget *widgetGameScreen;
+widget *chatPanel;
+widget *chatText;
 
 bool mouseHidden = false;
 uint mousex,mousey;
@@ -53,23 +54,20 @@ float matOrthoProj[16];
 void handlerRootHud(widget *wid){
 	(void)wid;
 	chatText->vals[0] = 0;
-	widgetFocus(NULL);
+	widgetFocus(widgetGameScreen);
 	widgetSlideH(chatPanel, 0);
-	hideMouseCursor();
 }
 
 void showMouseCursor(){
-	setRelativeMouseMode(false);
+	if(!mouseHidden){return;}
+	setRelativeMouseMode(mouseHidden = false);
 	warpMouse(mousex,mousey);
-	mouseHidden = false;
 }
 
 void hideMouseCursor(){
-	setRelativeMouseMode(true);
-	mouseHidden = true;
-	chatText->vals[0] = 0;
-	widgetSlideH(chatPanel, 0);
-	widgetFocus(NULL);
+	if(mouseHidden){return;}
+	setRelativeMouseMode(mouseHidden = true);
+	warpMouse(screenWidth/2,screenHeight/2);
 }
 
 int getTilesize(){
@@ -85,6 +83,7 @@ int getTilesize(){
 }
 
 void drawCrosshair(){
+	if(!mouseHidden){return;}
 	textMeshEmpty(crosshairMesh);
 	int  off = (int)player->inaccuracy;
 	int size = 16;
@@ -114,16 +113,15 @@ void resizeUI(){
 
 	const int sx = 10*getTilesize();
 	chatPanel->w = screenWidth - sx;
-	chatText->w = screenWidth - sx - 64;
+	chatText->w  = screenWidth - sx - 64;
 
 	initInventory();
 }
 
 void openChat(){
-	if(widgetFocused != NULL){return;}
+	if(gameControlsInactive()){return;}
 	widgetSlideH(chatPanel, 64);
 	widgetFocus(chatText);
-	showMouseCursor();
 }
 
 void handlerChatSubmit(widget *wid){
@@ -165,9 +163,8 @@ void initUI(){
 	guim                 = textMeshNew();
 	guim->tex            = tGui;
 
-	rootHud = widgetNewCP(wSpace,NULL,0,0,-1,-1);
-
-	chatPanel = widgetNewCP(wPanel,rootHud,0,-1,512,0);
+	widgetGameScreen = widgetNewCP(wGameScreen,rootMenu,0,0,-1,-1);
+	chatPanel = widgetNewCP(wPanel,rootMenu,0,-1,512,0);
 	chatPanel->flags |= WIDGET_HIDDEN;
 	chatText  = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Message","submit",handlerChatSubmit);
 	widgetBind(chatText,"blur",handlerChatBlur);
@@ -199,9 +196,11 @@ void updateMouse(){
 	mousex = nmx;
 	mousey = nmy;
 
-	if(mouseHidden){
+	if(mouseHidden && (widgetFocused == NULL || ((widgetFocused != NULL) && (widgetFocused->type != wGameScreen)))){
 		if((mousex != oldmx) || (mousey != oldmy) || (btn != 0)){
 			mouseHidden = false;
+		}else{
+			return;
 		}
 	}
 	drawCursor();
@@ -563,7 +562,7 @@ void drawHud(){
 	drawDebuginfo();
 	drawAmmunition();
 	drawChat();
-	widgetDraw(rootHud,guim,0,0,screenWidth,screenHeight);
+	widgetDraw(rootMenu,guim,0,0,screenWidth,screenHeight);
 	if(isInventoryOpen()){
 		drawInventory(guim);
 	}
@@ -580,9 +579,14 @@ void renderUI(){
 
 	shaderBind(sTextMesh);
 	shaderMatrix(sTextMesh,matOrthoProj);
-	drawCrosshair();
+	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){
+		hideMouseCursor();
+	}else{
+		showMouseCursor();
+	}
 	drawHud();
-	if(!mouseHidden){updateMouse();}
+	drawCrosshair();
+	updateMouse();
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -598,5 +602,12 @@ void guiCancel(){
 		handlerRootHud(NULL);
 		return;
 	}
-	menuCloseGame();
+	if(widgetFocused == widgetGameScreen){
+		openMainMenu();
+		widgetFocus(NULL);
+		return;
+	}
+	closeAllMenus();
+	widgetFocus(widgetGameScreen);
+	openInventoryPanel();
 }

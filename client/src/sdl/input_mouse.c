@@ -1,7 +1,8 @@
 #include "input_mouse.h"
 
+#include "../sdl/sdl.h"
 #include "../gui/gui.h"
-#include "../gui/inventory.h"
+#include "../menu/inventory.h"
 #include "../game/character.h"
 #include "../main.h"
 
@@ -65,13 +66,13 @@ void mouseEventHandler(const SDL_Event *e){
 		break;
 
 		case SDL_MOUSEMOTION:
-			if(mouseHidden && gameRunning){
+			if(mouseHidden && !gameControlsInactive()){
 				characterRotate(player,vecNew(e->motion.xrel/4.f,e->motion.yrel/4.f,0));
 			}
 		break;
 
 		case SDL_MOUSEWHEEL:
-			if(mouseHidden && gameRunning){
+			if(mouseHidden && !gameControlsInactive()){
 				uint nai = player->activeItem;
 				if(e->wheel.y > 0){
 					if(--nai > 9){nai = 9;}

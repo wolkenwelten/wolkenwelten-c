@@ -10,7 +10,7 @@
 #include "gfx/texture.h"
 #include "gui/gui.h"
 #include "gui/menu.h"
-#include "gui/inventory.h"
+#include "menu/inventory.h"
 #include "gui/overlay.h"
 #include "game/animal.h"
 #include "game/blockType.h"
@@ -102,7 +102,7 @@ void worldUpdate(){
 			}
 		}
 		resetOverlayColor();
-		if(isInventoryOpen()){setOverlayColor(0x90182028,300);}
+		if(gameRunning && gameControlsInactive()){setOverlayColor(0x90182028,300);}
 		charactersUpdate();
 		grenadeUpdate();
 		animalUpdateAll();
@@ -127,6 +127,7 @@ void mainloop(){
 		doGamepadMenuUpdate();
 		renderMenuFrame();
 	}
+	checkTexturesForReloading();
 }
 
 void checkAutostart(){
@@ -151,8 +152,8 @@ int main( int argc, char* argv[] ){
 	textureInit();
 	sfxInit();
 
-	initUI();
 	initMenu();
+	initUI();
 	initSky();
 	shadowInit();
 	cloudsInit();

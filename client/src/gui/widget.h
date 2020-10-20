@@ -25,6 +25,8 @@ typedef enum {
 	wItemSlot,
 	wRecipeSlot,
 	wRecipeInfo,
+	wGameScreen,
+	wTextScroller
 } widgetType;
 
 struct widget {
@@ -84,5 +86,6 @@ void    widgetBind    (widget *w, const char *eventName, void (*handler)(widget 
 int     widgetEmit    (widget *w, const char *eventName);
 void    widgetDraw    (widget *w, textMesh *mesh, int x, int y, int pw, int ph);
 void    widgetLayVert (widget *w, int padding);
+void    widgetFinish  (widget *w);
 void    widgetSlideW  (widget *w, int nw);
 void    widgetSlideH  (widget *w, int nh);
