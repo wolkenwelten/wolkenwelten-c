@@ -323,12 +323,12 @@ void animalAggresive(animal *e){
 
 			if(--e->temp == 0){
 				int target = getClientByCharacter(cChar);
-				int dmg = 4;
+				int dmg = 2;
 				if(target < 0){return;}
 				msgBeingDamage(target,dmg,2,beingCharacter(target),-1,e->pos);
 				e->state = ANIMAL_S_FLEE;
 				e->vel = vecAdd(e->vel,vecMulS(caNorm,-0.001f));
-				e->temp = 50;
+				e->temp = 10;
 				msgFxBeamBlaster(-1,e->pos,cChar->pos,4.f,2);
 			}
 			addPriorityAnimal(e-animalList);
@@ -356,7 +356,7 @@ void animalAggresive(animal *e){
 		if(e->state == ANIMAL_S_SLEEP){fd = 24.f;}
 		if((cChar != NULL) && (dist < fd) && !los){
 			e->state = ANIMAL_S_FIGHT;
-			e->temp  = 50;
+			e->temp  = 10;
 			addPriorityAnimal(e-animalList);
 		}
 	}
