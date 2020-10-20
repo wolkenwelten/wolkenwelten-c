@@ -146,19 +146,14 @@ void menuSetError(char *error){
 
 void menuCancel(){
 	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return;}
-	if(gameRunning){
-		closeAllMenus();
-		openInventoryPanel();
-	}else{
-		openMainMenu();
-		widgetFocus(NULL);
-	}
+	if(gameRunning){return;}
+	openMainMenu();
 }
 
 void menuCloseGame(){
 	gameRunning=false;
-	rootMenu->flags &= ~WIDGET_HIDDEN;
 	clientGoodbye();
 	clientFree();
 	bigchungusFree(&world);
+	openMainMenu();
 }

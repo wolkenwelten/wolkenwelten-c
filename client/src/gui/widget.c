@@ -145,7 +145,7 @@ void widgetFocus(widget *w){
 	widgetEmit(w,"focus");
 }
 
-static int widgetIsSelectable(widget *cur){
+static int widgetIsSelectable(const widget *cur){
 	if(cur == NULL){return 0;}
 	if(cur->flags & WIDGET_HNS){return 0;}
 	switch(cur->type){
@@ -160,7 +160,7 @@ static int widgetIsSelectable(widget *cur){
 	}
 }
 
-widget *widgetNextSel(widget *cur){
+widget *widgetNextSel(const widget *cur){
 	if(cur == NULL){return NULL;}
 
 	if(!(cur->flags & WIDGET_HNS) && (cur->child != NULL)){
@@ -193,7 +193,7 @@ widget *widgetNextSel(widget *cur){
 	return NULL;
 }
 
-widget *widgetPrevSel(widget *cur){
+widget *widgetPrevSel(const widget *cur){
 	if(cur == NULL){return NULL;}
 
 	if(!(cur->flags & WIDGET_HNS) && (cur->child != NULL)){
@@ -274,9 +274,10 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 			if(wid->flags & WIDGET_CLICKED){
 				if((wid->type == wButtonDel) && ((int)mousex > x+w-40)){
 					widgetEmit(wid,"altclick");
-				}else{
+				}else if(widgetIsSelectable(wid)){
 					widgetFocus(wid);
 					widgetEmit(wid,"click");
+
 				}
 			}
 			wid->flags &= ~WIDGET_CLICKED;
@@ -284,7 +285,7 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 		if(mouseClicked[2]){
 			wid->flags |= WIDGET_ALT_CLICKED;
 		}else{
-			if(wid->flags & WIDGET_ALT_CLICKED){
+			if((wid->flags & WIDGET_ALT_CLICKED) && widgetIsSelectable(wid)){
 				widgetFocus(wid);
 				widgetEmit(wid,"altclick");
 			}
@@ -293,7 +294,7 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 		if(mouseClicked[1]){
 			wid->flags |= WIDGET_MID_CLICKED;
 		}else{
-			if(wid->flags & WIDGET_MID_CLICKED){
+			if((wid->flags & WIDGET_MID_CLICKED) && widgetIsSelectable(wid)){
 				widgetFocus(wid);
 				widgetEmit(wid,"midclick");
 			}
@@ -409,6 +410,7 @@ void widgetFinish(widget *w){
 }
 
 void widgetSlideW(widget *w, int nw){
+	w->gw = nw;
 	if(w->w == nw){return;}
 	if(nw == 0){
 		w->flags &= ~WIDGET_HIDDEN;
@@ -417,10 +419,10 @@ void widgetSlideW(widget *w, int nw){
 		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
 		w->flags |= WIDGET_ANIMATEW;
 	}
-	w->gw = nw;
 }
 
 void widgetSlideH(widget *w, int nh){
+	w->gh = nh;
 	if(w->h == nh){return;}
 	if(nh == 0){
 		w->flags &= ~WIDGET_HIDDEN;
@@ -429,5 +431,4 @@ void widgetSlideH(widget *w, int nh){
 		w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
 		w->flags |= WIDGET_ANIMATEH;
 	}
-	w->gh = nh;
 }

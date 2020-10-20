@@ -151,6 +151,10 @@ void handlerChatBlur(widget *wid){
 	chatResetHistorySel();
 }
 
+static void handlerGameFocus(widget *wid){
+	(void)wid;
+	openInventoryPanel();
+}
 
 void initUI(){
 	cursorMesh           = textMeshNew();
@@ -164,6 +168,7 @@ void initUI(){
 	guim->tex            = tGui;
 
 	widgetGameScreen = widgetNewCP(wGameScreen,rootMenu,0,0,-1,-1);
+	widgetBind(widgetGameScreen,"focus",handlerGameFocus);
 	chatPanel = widgetNewCP(wPanel,rootMenu,0,-1,512,0);
 	chatPanel->flags |= WIDGET_HIDDEN;
 	chatText  = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Message","submit",handlerChatSubmit);
@@ -609,5 +614,4 @@ void guiCancel(){
 	}
 	closeAllMenus();
 	widgetFocus(widgetGameScreen);
-	openInventoryPanel();
 }

@@ -18,6 +18,10 @@
 
 widget *mainMenu;
 
+widget *buttonQuit;
+widget *buttonReturnToGame;
+widget *buttonExitToMenu;
+
 static void handlerSingleplayer(widget *wid){
 	(void)wid;
 	openSingleplayerMenu();
@@ -44,6 +48,20 @@ static void handlerQuit(widget *wid){
 	quit = true;
 }
 
+static void handlerReturnToGame(widget *wid){
+	(void)wid;
+	if(!gameRunning){return;}
+	closeAllMenus();
+	widgetFocus(widgetGameScreen);
+}
+
+static void handlerExitToMenu(widget *wid){
+	(void)wid;
+	if(!gameRunning){return;}
+	menuCloseGame();
+	openMainMenu();
+}
+
 void initMainMenu(){
 	mainMenu = widgetNewCP(wPanel,rootMenu,-1,0,288,-1);
 	widgetNewCP  (wSpace ,mainMenu,16,0,256,0);
@@ -53,14 +71,26 @@ void initMainMenu(){
 	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Options","click",handlerOptions);
 	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Attribution","click",handlerAttribution);
 	widgetNewCP  (wHR ,mainMenu,16,0,256,32);
-	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Quit","click",handlerQuit);
+	buttonQuit         = widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Quit","click",handlerQuit);
+	buttonExitToMenu   = widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Exit to Menu","click",handlerExitToMenu);
+	buttonReturnToGame = widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Return to Game","click",handlerReturnToGame);
 
 	widgetLayVert(mainMenu,16);
 }
 
 void openMainMenu(){
 	closeAllMenus();
+	if(gameRunning){
+		buttonQuit->flags         |=  WIDGET_HIDDEN;
+		buttonExitToMenu->flags   &= ~WIDGET_HIDDEN;
+		buttonReturnToGame->flags &= ~WIDGET_HIDDEN;
+	}else{
+		buttonQuit->flags         &= ~WIDGET_HIDDEN;
+		buttonExitToMenu->flags   |=  WIDGET_HIDDEN;
+		buttonReturnToGame->flags |=  WIDGET_HIDDEN;
+	}
 	widgetSlideW(mainMenu, 288);
+	mainMenu->gw = 288;
 }
 
 void closeMainMenu(){
