@@ -13,7 +13,7 @@
 itemDrop itemDrops[ITEM_DROPS_MAX];
 uint     itemDropCount;
 
-#define ITEM_DROPS_PER_UPDATE 16
+#define ITEM_DROPS_PER_UPDATE 16u
 
 static inline void itemDropUpdateMsg(uint c,uint i){
 	if(i >= itemDropCount)       {return;}

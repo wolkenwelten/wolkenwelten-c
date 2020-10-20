@@ -63,7 +63,7 @@ static void handlerExitToMenu(widget *wid){
 }
 
 void initMainMenu(){
-	mainMenu = widgetNewCP(wPanel,rootMenu,-1,0,288,-1);
+	mainMenu = widgetNewCP(wPanel,rootMenu,-1,0,0,-1);
 	widgetNewCP  (wSpace ,mainMenu,16,0,256,0);
 	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
 	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Multiplayer","click",handlerMultiplayer);

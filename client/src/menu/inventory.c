@@ -115,8 +115,8 @@ void initInventory(){
 	if(inventoryPanel != NULL){ widgetFree(inventoryPanel); }
 	inventoryPanel = widgetNewCP(wPanel,rootMenu,-1,-1,sx,0);
 	inventoryPanel->flags |= WIDGET_HIDDEN;
-	inventorySpace = widgetNewCP(wSpace,inventoryPanel,-1,0,0,-1);
-	craftingSpace  = widgetNewCP(wSpace,inventoryPanel,-1,0,0,-1);
+	inventorySpace = widgetNewCP(wSpace,inventoryPanel,-1,0,sx,-1);
+	craftingSpace  = widgetNewCP(wSpace,inventoryPanel,-1,0, 0,-1);
 
 	inventoryRadio = widgetNewCPLH(wRadioButton,inventoryPanel,0,0,5*ts,32,"Inventory","click",handlerInventoryRadioInventory);
 	craftingRadio  = widgetNewCPLH(wRadioButton,inventoryPanel,5*ts,0,5*ts,32,"Crafting","click",handlerInventoryRadioCrafting);
@@ -125,7 +125,7 @@ void initInventory(){
 		for(int x=0;x<10;x++){
 			widget *slot = widgetNewCP(wItemSlot,inventorySpace,x*ts,y*ts+32,ts,ts);
 			slot->valItem = &player->inventory[x+y*10];
-			widgetBind(slot,"click",handlerInventoryItemClick);
+			widgetBind(slot,"click",   handlerInventoryItemClick);
 			widgetBind(slot,"altclick",handlerInventoryItemAltClick);
 			widgetBind(slot,"midclick",handlerInventoryItemMidClick);
 		}
@@ -138,10 +138,10 @@ void initInventory(){
 		const int y = (r/10)+2;
 		widget *slot = widgetNewCP(wRecipeSlot,craftingSpace,x*ts,y*ts+32,ts,ts);
 		slot->vali = r;
-		widgetBind(slot,"click",handlerCraftingSlotClick);
+		widgetBind(slot,"click",   handlerCraftingSlotClick);
 		widgetBind(slot,"altclick",handlerCraftingSlotAltClick);
-		widgetBind(slot,"hover",handlerCraftingSlotHover);
-		widgetBind(slot,"blur",handlerCraftingSlotBlur);
+		widgetBind(slot,"hover",   handlerCraftingSlotHover);
+		widgetBind(slot,"blur",    handlerCraftingSlotBlur);
 	}
 }
 

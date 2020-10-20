@@ -11,6 +11,7 @@
 #include "gui/gui.h"
 #include "gui/menu.h"
 #include "menu/inventory.h"
+#include "menu/mainmenu.h"
 #include "gui/overlay.h"
 #include "game/animal.h"
 #include "game/blockType.h"
@@ -166,10 +167,8 @@ int main( int argc, char* argv[] ){
 	modsInit();
 	textureBuildBlockIcons(0);
 
-	if(gameRunning){
-		hideMouseCursor();
-	}else{
-		showMouseCursor();
+	if(!gameRunning){
+		openMainMenu();
 	}
 
 	player = characterNew();

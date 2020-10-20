@@ -630,7 +630,7 @@ void serverCheckCompression(int c){
 	u8 *start;
 	static u8 compressBuf[LZ4_COMPRESSBOUND(sizeof(clients[c].sendBuf))];
 	if(clients[c].flags & CONNECTION_WEBSOCKET){return;}
-	if(clients[c].sendBufLen < (int)(sizeof(clients[c].sendBuf)/32)){return;}
+	//if(clients[c].sendBufLen < (int)(sizeof(clients[c].sendBuf)/128)){return;}
 	start = serverFindCompressibleStart(c,&len);
 	if(len <= (1<<16)){return;}
 

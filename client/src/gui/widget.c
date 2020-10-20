@@ -154,6 +154,8 @@ static int widgetIsSelectable(const widget *cur){
 		case wRadioButton:
 		case wTextInput:
 		case wSlider:
+		case wItemSlot:
+		case wRecipeSlot:
 			return 1;
 		default:
 			return 0;

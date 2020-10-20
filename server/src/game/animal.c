@@ -20,7 +20,7 @@ animal  animalList[1<<10];
 uint    animalCount = 0;
 animal *animalFirstFree = NULL;
 
-#define ANIMALS_PER_UPDATE 8u
+#define ANIMALS_PER_UPDATE 16u
 
 animal *animalNew(const vec pos , int type){
 	animal *e = NULL;
