@@ -24,7 +24,7 @@ bool blasterPrimaryAction(item *cItem, character *cChar, int to){
 	(void)to;
 
 	if(!characterTryToShoot(cChar,cItem,80,3)){return false;}
-	beamblast(cChar,1.2f,1.0f,0.15f,6,1,16.f,1.f);
+	beamblast(cChar,1.f,2.0f,0.15f,3,1,16.f,1.f);
 	return true;
 }
 
@@ -32,7 +32,7 @@ bool blasterSecondaryAction(item *cItem, character *cChar, int to){
 	(void)to;
 
 	if(!characterTryToShoot(cChar,cItem,200,3)){return false;}
-	beamblast(cChar,1.2f,1.0f,0.05f,6,(itemGetAmmo(cItem)+3)*2,6.f,3.f);
+	beamblast(cChar,1.f,2.0f,0.05f,3,(itemGetAmmo(cItem)+3)*2,6.f,3.f);
 	itemDecAmmo(cItem,itemGetAmmo(cItem));
 	return true;
 }

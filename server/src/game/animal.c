@@ -317,7 +317,7 @@ void animalAggresive(animal *e){
 			vec caNorm = vecNorm(vecNew(cChar->pos.x - e->pos.x,0.f, cChar->pos.z - e->pos.z));
 			vec caRot  = vecVecToDeg(caNorm);
 
-			e->rot.yaw = caRot.yaw;
+			e->rot.yaw = -caRot.yaw;
 			e->gvel.x = 0;
 			e->gvel.z = 0;
 
@@ -380,7 +380,7 @@ void animalFightOrFlight(animal *e){
 
 			e->gvel.x  = caVel.x;
 			e->gvel.z  = caVel.z;
-			e->rot.yaw = caRot.yaw;
+			e->rot.yaw = -caRot.yaw;
 
 			if((dist < 1.5f)){
 				e->gvel.x = 0;
