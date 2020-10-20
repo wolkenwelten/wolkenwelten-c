@@ -56,6 +56,7 @@ static void delServer(int d){
 static void joinServer(int i){
 	if(i < 0){return;}
 	if(i >= serverlistCount){return;}
+	menuCloseGame();
 	snprintf(serverName,sizeof(serverName),"%.63s",serverlistIP[i]);
 	startMultiplayer();
 }

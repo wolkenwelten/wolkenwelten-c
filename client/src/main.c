@@ -126,7 +126,7 @@ void mainloop(){
 		clientTranceive();
 	}else{
 		doGamepadMenuUpdate();
-		renderMenuFrame();
+		renderFrame();
 	}
 	checkTexturesForReloading();
 }

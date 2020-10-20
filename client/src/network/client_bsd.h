@@ -120,6 +120,7 @@ void clientInit(){
 	struct sockaddr_in serv_addr;
 	struct hostent *serveraddr;
 	int err,yes=1;
+	fprintf(stderr,"clientInit\n");
 	if(!signalHandlerBound){
 		signal(SIGCHLD,zombieKiller);
 		signalHandlerBound = true;
@@ -134,16 +135,12 @@ void clientInit(){
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(serverSocket <= 0){
 		menuSetError("Error opening socket");
-		gameRunning = false;
 		return;
 	}
 
 	serveraddr = gethostbyname(serverName);
 	if (serveraddr == NULL) {
-		fprintf(stderr,"ERROR, no such host '%s'\n",serverName);
-		clientFree();
 		menuSetError("Error, no such host");
-		gameRunning = false;
 		return;
 	}
 
@@ -157,43 +154,33 @@ void clientInit(){
 	setsockopt(serverSocket, SOL_SOCKET, SO_RCVBUF, &rcvbuf, sizeof(rcvbuf));
 	err = setsockopt(serverSocket,IPPROTO_TCP,TCP_NODELAY,&yes,sizeof(yes));
 	if (err < 0){
-		clientFree();
-		fprintf(stderr,"ERROR, setsockopt\n");
-		gameRunning = false;
+		menuSetError("ERROR, setsockopt");
 		return;
 	}
 #endif
 
 	while(connect(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0){
 		if(errno == EINVAL){
-			clientFreeRetry();
+			menuSetError("Error connecting to host");
 			return;
 		}else if(errno == EINPROGRESS){
-			if(connectionTries > 10){
-				clientFree();
+			if(++connectionTries > 5){
 				menuSetError("Error connecting to host");
-				gameRunning = false;
 				return;
 			}
 			break;
 		}else if(errno == ECONNREFUSED){
-			if(connectionTries > 10){
-				clientFree();
+			if(++connectionTries > 5){
 				menuSetError("Error connecting to host");
-				gameRunning = false;
 				return;
 			}
 			clientFreeRetry();
 			return;
 		}
-		if(!singleplayer){
-			fprintf(stderr,"Error connecting\n");
-			clientFree();
-			menuSetError("Error connecting to host");
-			gameRunning = false;
-			return;
-		}
+		menuSetError("Error connecting to host");
+		return;
 	}
+	fprintf(stderr,"connected\n");
 	connectionTries = 0;
 	fcntl(serverSocket, F_SETFL, O_NONBLOCK);
 	err = setsockopt(serverSocket,IPPROTO_TCP,TCP_NODELAY,&yes,sizeof(yes));

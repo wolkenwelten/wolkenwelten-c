@@ -23,9 +23,9 @@
 #include <sys/types.h>
 
 uint connectionState = 0;
-uint lastPing = 0;
-uint lastLatency = 0;
-uint recvBufLen = 0;
+uint lastPing        = 0;
+uint lastLatency     = 0;
+uint recvBufLen      = 0;
 u8 recvBuf[1<<20];
 
 uint sendBufSent = 0;
@@ -132,7 +132,7 @@ void dispatchBeingGotHit(const packet *p){
 	}
 }
 
-void handlePingPong(){
+static void handlePingPong(){
 	uint curPing = getTicks();
 	lastLatency = ((curPing - lastPing) + lastLatency)/2;
 	lastPing = curPing;
@@ -285,7 +285,7 @@ void clientParse(){
 	recvBufLen -= off;
 }
 
-void clientSendIntroduction(){
+void clientGreetServer(){
 	char introStr[34];
 	connectionState = 1;
 	#ifndef __EMSCRIPTEN__
@@ -295,10 +295,6 @@ void clientSendIntroduction(){
 	queueToServer(introStr,len);
 	clientWrite();
 	lastPing = getTicks();
-}
-
-void clientGreetServer(){
-	clientSendIntroduction();
 }
 
 void clientTranceive(){
@@ -324,7 +320,6 @@ void queueToServer(const void *data, uint len){
 
 void clientFree(){
 	clientFreeSpecific();
-	menuSetError("Connection closed");
 	singlePlayerPID = 0;
 	recvBufLen      = 0;
 	sendBufLen      = 0;

@@ -57,6 +57,7 @@ static void checkSavegames(){
 static void loadSavegame(int i){
 	if(i < 0){return;}
 	if(i >= savegameCount){return;}
+	menuCloseGame();
 	strncpy(optionSavegame,savegameName[i],32);
 	optionSavegame[31] = 0;
 	startSingleplayer();

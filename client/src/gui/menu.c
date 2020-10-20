@@ -142,6 +142,8 @@ void menuKeyClick(int btn){
 
 void menuSetError(char *error){
 	menuErrorLabel->vals = error;
+	clientFree();
+	menuCloseGame();
 }
 
 void menuCancel(){

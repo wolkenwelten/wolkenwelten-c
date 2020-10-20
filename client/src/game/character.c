@@ -46,7 +46,7 @@ void characterInit(character *c){
 	c->breathing     = rngValM(1024);
 	c->maxhp = c->hp = 20;
 	c->blockMiningX  = c->blockMiningY = c->blockMiningZ = -1;
-	c->pos           = vecNew(1024,1024,1024);
+	c->pos           = vecNew(0,0,0);
 	c->rot           = vecNew(135.f,15.f,0.f);
 	c->eMesh         = meshPear;
 

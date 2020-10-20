@@ -84,7 +84,6 @@ void clientInit(){
 	struct hostent *serveraddr;
 	int err,yes=1;
 	tryWinsockInit();
-
 	if(serverSocket != 0){return;}
 	if(singleplayer && (singlePlayerPID == 0)){
 		startSingleplayerServer();
@@ -93,18 +92,14 @@ void clientInit(){
 
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(serverSocket <= 0){
-		menuSetError("Error opening socket");
-		gameRunning = false;
 		serverSocket = 0;
+		menuSetError("Error opening socket");
 		return;
 	}
 
 	serveraddr = gethostbyname(serverName);
 	if (serveraddr == NULL) {
-		fprintf(stderr,"ERROR, no such host '%s'\n",serverName);
-		clientFree();
 		menuSetError("Error, no such host");
-		gameRunning = false;
 		return;
 	}
 
@@ -117,12 +112,8 @@ void clientInit(){
 	while(connect(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) != 0){
 		err = WSAGetLastError();
 		if(err == WSAEINPROGRESS){break;}
-		if(!singleplayer){
-			clientFree();
-			menuSetError("Error connecting to host");
-			gameRunning = false;
-			return;
-		}
+		menuSetError("Error connecting to host");
+		return;
 	}
 	err = ioctlsocket(serverSocket, FIONBIO, (unsigned long *) &yes);
 	sendBufLen              = 0;
