@@ -561,6 +561,7 @@ void drawChat(){
 
 void drawHud(){
 	textMeshEmpty(guim);
+	guim->wrap = 0;
 
 	drawOverlay(guim);
 	drawHealthbar();

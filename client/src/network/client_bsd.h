@@ -120,7 +120,6 @@ void clientInit(){
 	struct sockaddr_in serv_addr;
 	struct hostent *serveraddr;
 	int err,yes=1;
-	fprintf(stderr,"clientInit\n");
 	if(!signalHandlerBound){
 		signal(SIGCHLD,zombieKiller);
 		signalHandlerBound = true;
@@ -161,26 +160,26 @@ void clientInit(){
 
 	while(connect(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0){
 		if(errno == EINVAL){
-			menuSetError("Error connecting to host");
+			menuSetError("Error connecting to host EINVAL");
 			return;
 		}else if(errno == EINPROGRESS){
-			if(++connectionTries > 5){
-				menuSetError("Error connecting to host");
+			if(++connectionTries > 10){
+				menuSetError("Error connecting to host EINPROGRESS");
 				return;
 			}
 			break;
 		}else if(errno == ECONNREFUSED){
-			if(++connectionTries > 5){
-				menuSetError("Error connecting to host");
+			if(++connectionTries > 10){
+				menuSetError("Error connecting to host ECONNREFUSED");
 				return;
 			}
+			usleep(500);
 			clientFreeRetry();
 			return;
 		}
-		menuSetError("Error connecting to host");
+		menuSetError("Error connecting to host ELSE");
 		return;
 	}
-	fprintf(stderr,"connected\n");
 	connectionTries = 0;
 	fcntl(serverSocket, F_SETFL, O_NONBLOCK);
 	err = setsockopt(serverSocket,IPPROTO_TCP,TCP_NODELAY,&yes,sizeof(yes));

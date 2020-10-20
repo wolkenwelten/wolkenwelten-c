@@ -32,7 +32,6 @@ uint  frameCountSinceLast = 0;
 float curFPS              = 0;
 uint  worstFrame          = 0;
 
-
 void fpsTick() {
 	uint curTicks = SDL_GetTicks();
 	static uint lastFrame = 0;
