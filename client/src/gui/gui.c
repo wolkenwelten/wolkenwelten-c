@@ -306,9 +306,11 @@ void drawAnimalDebugOverlay(const animal *e, int i){
 	p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
 
 	u32 ofgc = guim->fgc;
-	float a = MIN(128.f,MAX(0.f,(p.z-32.f)));
-	guim->fgc = 0x00B0D0 | ((u32)a<<24);
-	textMeshPrintfPS(guim,p.x,p.y,2,"X");
+	u32 a = (u32)(MIN(128.f,MAX(0.f,(p.z-32.f)))) << 24;
+	//textMeshPrintfPS(guim,p.x,p.y,2,"X");
+	const float u = 1/32.f * (float)(32-e->type);
+	const float v = 1/32.f * 30;
+	textMeshBox(guim,p.x-32,p.y-32,64,64,u,v,1/32.f,1/32.f,a|0xFFFFFF);
 
 	if(p.z > 96){guim->fgc = ofgc; return;}
 	guim->fgc = 0xFFFFFFFF;
