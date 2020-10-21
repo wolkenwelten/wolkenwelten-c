@@ -320,13 +320,13 @@ void drawAnimalDebugOverlay(const animal *e, int i){
 	guim->fgc = colorPalette[7];
 
 	const char *hungerC = colorSignalHigh(16,32,48,e->hunger);
-	const char *thirstC = colorSignalHigh(16,32,48,e->thirst);
+	//const char *thirstC = colorSignalHigh(16,32,48,e->thirst);
 	const char *sleepyC = colorSignalHigh(16,32,48,e->sleepy);
 	const char *ageC    = colorSignalLow (78,64,48,e->age);
 	textMeshPrintfPS(guim,p.x+16,p.y   ,1,"Hunger: %s%i%s",hungerC,e->hunger,ansiFG[7]);
-	textMeshPrintfPS(guim,p.x+16,p.y+ 8,1,"Thirst: %s%i%s",thirstC,e->thirst,ansiFG[7]);
-	textMeshPrintfPS(guim,p.x+16,p.y+16,1,"Sleepy: %s%i%s",sleepyC,e->sleepy,ansiFG[7]);
-	textMeshPrintfPS(guim,p.x+16,p.y+24,1,"Age:    %s%i%s",ageC,   e->age   ,ansiFG[7]);
+	//textMeshPrintfPS(guim,p.x+16,p.y+ 8,1,"Thirst: %s%i%s",thirstC,e->thirst,ansiFG[7]);
+	textMeshPrintfPS(guim,p.x+16,p.y+ 8,1,"Sleepy: %s%i%s",sleepyC,e->sleepy,ansiFG[7]);
+	textMeshPrintfPS(guim,p.x+16,p.y+16,1,"Age:    %s%i%s",ageC,   e->age   ,ansiFG[7]);
 	guim->fgc = ofgc;
 }
 
