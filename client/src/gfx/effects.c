@@ -10,7 +10,7 @@
 
 
 void fxExplosionBomb(const vec pos,float pw){
-	sfxPlay(sfxBomb,1.f);
+	sfxPlayPos(sfxBomb,1.f,pos);
 
 	for(int i=0;i<4096*pw;i++){
 		const vec v  = vecMulS(vecRng(),0.15f*pw);
@@ -66,7 +66,7 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 	u32 pac  = 0xD0000000 | ((0x50 + rngValM(0x40)) << 16) | ((0x30 + rngValM(0x40)) << 8) | (0xE0 + rngValM(0x1F));
 	u32 pbc  = pac + 0x00202000;
 	int ttl  = MIN(1922,MAX(64,64 * damageMultiplier));
-	sfxPlay(sfxPhaser,MIN(0.5f,MAX(0.2f,damageMultiplier)));
+	sfxPlayPos(sfxPhaser,MIN(0.5f,MAX(0.2f,damageMultiplier)),pa);
 
 	for(uint max=1<<12;max;--max){
 		vec dist = vecSub(pa,c);
@@ -86,7 +86,7 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 }
 
 void fxBlockBreak(const vec pos, unsigned char b){
-	sfxPlay(sfxTock,1.f);
+	sfxPlayPos(sfxTock,1.f,pos);
 	for(int i=0;i<2048;i++){
 		const vec p = vecAdd(pos,vecRngAbs());
 		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.7f,128);
@@ -104,12 +104,8 @@ void fxBleeding(const vec pos, being victim, i16 dmg, u16 cause){
 	(void)victim;
 	(void)dmg;
 	(void)cause;
-	const float d = vecMag(vecSub(player->pos,pos));
-	if(d < 128.f){
-		const float vol = (128.f-d)/128.f;
-		sfxPlay(sfxImpact,vol);
-		sfxPlay(sfxUngh,vol);
-	}
+	sfxPlayPos(sfxImpact,1,pos);
+	sfxPlayPos(sfxUngh,1,pos);
 	for(int i=dmg*64;i>0;i--){
 		const vec v  = vecMulS(vecRng(),0.06f);
 		newParticleV(pos,v,vecMulS(v,1/-64.f),64.f,1.f,0xFF44AAFF,64);
@@ -120,12 +116,8 @@ void fxAnimalDiedPacket (const packet *p){
 	//const u8 type = p->v.u8[0];
 	//const u8 age  = p->v.u8[1];
 	const vec pos = vecNewP(&p->v.f[1]);
-	const float d = vecMag(vecSub(player->pos,pos));
-	if(d < 128.f){
-		const float vol = (128.f-d)/128.f;
-		sfxPlay(sfxBomb,vol);
-		sfxPlay(sfxUngh,vol);
-	}else if(d > 256.f){return;}
+	sfxPlayPos(sfxBomb,1,pos);
+	sfxPlayPos(sfxUngh,1,pos);
 	for(int i=512;i>0;i--){
 		const vec v  = vecMulS(vecRng(),0.06f);
 		newParticleV(pos,v,vecMulS(v,1/-64.f),64.f,1.f,0xFF44AAFF,64);

@@ -11,7 +11,7 @@ bool cherrySecondaryAction(item *cItem,character *cChar, int to){
 		characterHP(cChar,8);
 		characterAddCooldown(cChar,200);
 		characterStartAnimation(cChar,4,600);
-		sfxPlay(sfxImpact,1.f);
+		sfxPlay(sfxNibble,1.f);
 		return true;
 	}
 	return false;

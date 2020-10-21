@@ -1,4 +1,5 @@
 #include "sfx.h"
+#include "../game/character.h"
 #include "../misc/options.h"
 
 #include <stdio.h>
@@ -52,10 +53,22 @@ void sfxFree(sfx *b){
 }
 
 void sfxPlay(sfx *b,float volume){
-	if(b == NULL){return;}
+	if(b == NULL)       {return;}
+	if(volume < 0.001f) {return;}
 	b->chan = Mix_PlayChannel(-1,b->mixChunk,0);
 	Mix_Volume(b->chan,(int)(MIX_MAX_VOLUME*(optionSoundVolume*volume)));
 }
+
+void sfxPlayPos(sfx *b,float volume, const vec pos){
+	if(b == NULL)       {return;}
+	if(volume < 0.001f) {return;}
+	const float d = vecMag(vecSub(pos,player->pos));
+	volume = volume * (MAX(0.0001f,128.f-d)/128.f);
+	if(volume <= 0.001f){return;}
+	b->chan = Mix_PlayChannel(-1,b->mixChunk,0);
+	Mix_Volume(b->chan,(int)(MIX_MAX_VOLUME*(optionSoundVolume*volume)));
+}
+
 
 void sfxLoop(sfx *b, float volume){
 	if(b == NULL){return;}
