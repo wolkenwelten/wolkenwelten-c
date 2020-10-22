@@ -1,5 +1,3 @@
-#define _GNU_SOURCE
-
 #include "server.h"
 
 #include "../main.h"

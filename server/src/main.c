@@ -1,5 +1,3 @@
-#define _GNU_SOURCE
-
 #include "main.h"
 
 #include "misc/options.h"

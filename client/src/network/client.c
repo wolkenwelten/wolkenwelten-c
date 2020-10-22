@@ -1,5 +1,3 @@
-#define _GNU_SOURCE
-
 #include "client.h"
 #include "../main.h"
 #include "../gfx/effects.h"

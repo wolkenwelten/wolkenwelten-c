@@ -67,7 +67,7 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
-	fprintf(stderr,"ChungusFree[] %p %i:%i:%i\n",c,c->x,c->y,c->z);
+	//fprintf(stderr,"ChungusFree[] %p %i:%i:%i\n",c,c->x,c->y,c->z);
 	chungusSave(c);
 	animalDelChungus(c);
 	itemDropDelChungus(c);

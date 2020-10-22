@@ -1,4 +1,3 @@
-#define _GNU_SOURCE
 #include "widgetDrawing.h"
 
 #include "../game/character.h"

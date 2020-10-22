@@ -1,4 +1,3 @@
-#define _GNU_SOURCE
 #include "singleplayer.h"
 
 #include "../main.h"

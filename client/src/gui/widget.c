@@ -1,5 +1,3 @@
-#define _GNU_SOURCE
-
 #include "widget.h"
 
 #include "../gui/menu.h"

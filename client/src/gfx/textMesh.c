@@ -1,5 +1,3 @@
-#define _GNU_SOURCE
-
 #include "textMesh.h"
 #include "../gfx/gfx.h"
 #include "../gfx/texture.h"

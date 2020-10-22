@@ -825,7 +825,6 @@ void characterPickupPacket(character *c, const packet *p){
 	const u16 ID     = p->v.u16[0];
 	const i16 amount = p->v.i16[1];
 	int a = characterPickupItem(c,ID,amount);
-	printf("Pickup %u %i == %i\n",ID,amount,a);
 	if(a ==  0){return;}
 	if(a == -1){a=0;}
 	item drop = itemNew(ID,amount-a);
