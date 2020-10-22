@@ -58,6 +58,10 @@ static void cmdDie(int c, const char *cmd){
 static void cmdDbgitem(int c, const char *cmd){
 	int cmdLen = strnlen(cmd,252);
 	int target = c;
+	item newInventory[40];
+	item newEquipment[3];
+	memset(newInventory,0,sizeof(newInventory));
+	memset(newEquipment,0,sizeof(newEquipment));
 	if((cmdLen > 3) && (cmd[3] == ' ')){
 		target = getClientByName(cmd+4);
 		if(target < 0){
@@ -66,13 +70,24 @@ static void cmdDbgitem(int c, const char *cmd){
 			serverSendChatMsg(replyBuf);
 		}
 	}
-	msgPickupItem(target,itemNew(261, 1));
-	msgPickupItem(target,itemNew(262, 1));
-	msgPickupItem(target,itemNew(263, 1));
-	msgPickupItem(target,itemNew(264, 1));
-	msgPickupItem(target,itemNew(258,42));
-	msgPickupItem(target,itemNew(256,99));
-	msgPickupItem(target,itemNew(265,999*4));
+	int i=0;
+	newInventory[i++] = itemNew(261, 1);
+	newInventory[i++] = itemNew(262, 1);
+	newInventory[i++] = itemNew(263, 1);
+	newInventory[i++] = itemNew(264, 1);
+	newInventory[i++] = itemNew(270, 1);
+	newInventory[i++] = itemNew(271, 1);
+	newInventory[i++] = itemNew(258,42);
+	newInventory[i++] = itemNew(256,99);
+	newInventory[i++] = itemNew(265,999);
+
+	i=0;
+	newEquipment[i++] = itemNew(274,1);
+	newEquipment[i++] = itemNew(275,1);
+	newEquipment[i++] = itemNew(276,1);
+
+	msgPlayerSetInventory(target,newInventory,40);
+	msgPlayerSetEquipment(target,newEquipment, 3);
 }
 
 static void cmdHeal(int c, const char *cmd){
