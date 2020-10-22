@@ -153,7 +153,7 @@ static void cmdGive(int c, const char *cmd){
 		}
 	}
 
-	msgPickupItem(target,itemNew(id,amount));
+	msgPickupItem(target,(item){id,amount});
 }
 
 static void cmdTp(int c, const char *cmd){

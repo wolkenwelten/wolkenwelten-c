@@ -821,6 +821,17 @@ void characterSetName(const packet *p){
 	memcpy(playerNames[p->v.u16[0]],&p->v.u8[2],32);
 }
 
+void characterPickupPacket(character *c, const packet *p){
+	const u16 ID     = p->v.u16[0];
+	const i16 amount = p->v.i16[1];
+	int a = characterPickupItem(c,ID,amount);
+	printf("Pickup %u %i == %i\n",ID,amount,a);
+	if(a ==  0){return;}
+	if(a == -1){a=0;}
+	item drop = itemNew(ID,amount-a);
+	itemDropNewC(c, &drop);
+}
+
 character *characterGetPlayer(uint i){
 	if(i >= 32){return NULL;}
 	if(playerList[i] == NULL){return NULL;}

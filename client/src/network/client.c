@@ -214,7 +214,7 @@ void clientParsePacket(const packet *p){
 			characterRemovePlayer(p->v.u16[1],p->v.u16[0]);
 			break;
 		case 20: // playerPickupItem
-			characterPickupItem(player,p->v.u16[0],p->v.i16[1]);
+			characterPickupPacket(player,p);
 			break;
 		case 21: // itemDropDel
 			fprintf(stderr,"Received an itemDropDel msg from the server, this should never happen.\n");

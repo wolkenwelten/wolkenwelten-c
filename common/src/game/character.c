@@ -69,7 +69,7 @@ int characterDecItemAmount(character *c, u16 itemID,int amount){
 	return ret;
 }
 
-bool characterPickupItem(character *c, u16 itemID,int amount){
+int characterPickupItem(character *c, u16 itemID,int amount){
 	int a = 0;
 	item ci = itemNew(itemID,amount);
 	if(getStackSizeDispatch(&ci) == 1){
@@ -77,10 +77,11 @@ bool characterPickupItem(character *c, u16 itemID,int amount){
 		for(uint i=0;i<40;i++){
 			if(itemIsEmpty(&c->inventory[i])){
 				c->inventory[i] = ci;
-				return true;
+				sfxPlay(sfxPock,.8f);
+				return 0;
 			}
 		}
-		return false;
+		return -1;
 	}
 
 	for(uint i=0;i<40;i++){
@@ -99,9 +100,13 @@ bool characterPickupItem(character *c, u16 itemID,int amount){
 
 	if(a == amount){
 		sfxPlay(sfxPock,.8f);
-		return true;
+		return 0;
+	}else if(a != 0){
+		sfxPlay(sfxPock,.8f);
+	}else if(a == 0){
+		return -1;
 	}
-	return false;
+	return a;
 }
 
 bool characterHP(character *c, int addhp){
