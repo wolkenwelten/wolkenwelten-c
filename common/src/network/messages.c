@@ -336,3 +336,12 @@ void msgAnimalDied(uint c, const vec pos, u8 type, u8 age){
 
 	packetQueue(p,34,4*4,c);
 }
+
+void msgPlayerSetEquipment(uint c,const item *itm, size_t itemCount){
+	packet *p = &packetBuffer;
+	for(uint i=0;i<itemCount;i++){
+		p->v.u16[(i<<1)  ] = itm[i].ID;
+		p->v.i16[(i<<1)+1] = itm[i].amount;
+	}
+	packetQueue(p,35,itemCount*4,c);
+}

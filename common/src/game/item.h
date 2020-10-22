@@ -54,3 +54,6 @@ int   itemDecAmmo    (      item *i, i16 amount);
 #define I_Crystal_Pick 271
 #define I_Cherry       272
 #define I_ClusterBomb  273
+#define I_Glider       274
+#define I_Hook         275
+#define I_Jetpack      276

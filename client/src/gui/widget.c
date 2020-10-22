@@ -434,3 +434,17 @@ void widgetSlideH(widget *w, int nh){
 		w->flags |= WIDGET_ANIMATEH;
 	}
 }
+
+void widgetSlideX(widget *w, int nx){
+	w->gx = nx;
+	if(w->x == nx){return;}
+	w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
+	w->flags |= WIDGET_ANIMATEX;
+}
+
+void widgetSlideY(widget *w, int ny){
+	w->gy = ny;
+	if(w->y == ny){return;}
+	w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
+	w->flags |= WIDGET_ANIMATEY;
+}

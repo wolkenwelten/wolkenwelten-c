@@ -20,6 +20,7 @@ uint  gamepadSelection  = 4096;
 item inventoryCurrentPickup;
 
 widget *inventoryPanel;
+widget *equipmentSpace;
 widget *inventorySpace;
 widget *craftingSpace;
 widget *inventoryRadio;
@@ -109,29 +110,12 @@ static void handlerCraftingSlotBlur(widget *wid){
 	if(craftingInfo->vali == wid->vali){ craftingInfo->vali = -1;}
 }
 
-void initInventory(){
+static void initCraftingSpace(){
 	const int ts = getTilesize();
-	const int sx = 10*ts;
-	if(inventoryPanel != NULL){ widgetFree(inventoryPanel); }
-	inventoryPanel = widgetNewCP(wPanel,rootMenu,-1,-1,sx,0);
-	inventoryPanel->flags |= WIDGET_HIDDEN;
-	inventorySpace = widgetNewCP(wSpace,inventoryPanel,-1,0,sx,-1);
-	craftingSpace  = widgetNewCP(wSpace,inventoryPanel,-1,0, 0,-1);
 
-	inventoryRadio = widgetNewCPLH(wRadioButton,inventoryPanel,0,0,5*ts,32,"Inventory","click",handlerInventoryRadioInventory);
-	craftingRadio  = widgetNewCPLH(wRadioButton,inventoryPanel,5*ts,0,5*ts,32,"Crafting","click",handlerInventoryRadioCrafting);
-	inventoryRadio->flags |= WIDGET_ACTIVE;
-	for(int y=0;y<4;y++){
-		for(int x=0;x<10;x++){
-			widget *slot = widgetNewCP(wItemSlot,inventorySpace,x*ts,y*ts+32,ts,ts);
-			slot->valItem = &player->inventory[x+y*10];
-			widgetBind(slot,"click",   handlerInventoryItemClick);
-			widgetBind(slot,"altclick",handlerInventoryItemAltClick);
-			widgetBind(slot,"midclick",handlerInventoryItemMidClick);
-		}
-	}
-
-	craftingInfo = widgetNewCP(wRecipeInfo,craftingSpace,ts/2,32+ts/2,10*ts,ts);
+	craftingSpace = widgetNewCP(wSpace,inventoryPanel,-1,0, 0,-1);
+	craftingRadio = widgetNewCPLH(wRadioButton,inventoryPanel,5*ts,0,5*ts,32,"Crafting","click",handlerInventoryRadioCrafting);
+	craftingInfo  = widgetNewCP(wRecipeInfo,craftingSpace,ts/2,32+ts/2,10*ts,ts);
 	craftingInfo->vali = 5;
 	for(uint r=0;r<MIN(40,recipeGetCount());r++){
 		const int x = r%10;
@@ -145,8 +129,56 @@ void initInventory(){
 	}
 }
 
+static widget *widgetNewItemSlot(widget *parent, int x, int y, item *islot){
+	const int ts = getTilesize();
+
+	widget *slot = widgetNewCP(wItemSlot,parent,x,y,ts,ts);
+	slot->valItem = islot;
+	widgetBind(slot,"click",   handlerInventoryItemClick);
+	widgetBind(slot,"altclick",handlerInventoryItemAltClick);
+	widgetBind(slot,"midclick",handlerInventoryItemMidClick);
+	return slot;
+}
+
+static void initInventorySpace(){
+	const int ts = getTilesize();
+
+	inventorySpace = widgetNewCP(wSpace,inventoryPanel,-1,0,ts*10,-1);
+	inventoryRadio = widgetNewCPLH(wRadioButton,inventoryPanel,0,0,5*ts,32,"Inventory","click",handlerInventoryRadioInventory);
+	for(int y=0;y<4;y++){
+		for(int x=0;x<10;x++){
+			widgetNewItemSlot(inventorySpace,x*ts,y*ts+32,&player->inventory[x+y*10]);
+		}
+	}
+}
+
+static void initEquipmentSpace(){
+	const int ts = getTilesize();
+
+	equipmentSpace = widgetNewCP(wSpace,inventoryPanel,-1,0,ts*10,ts*3);
+	widgetNewItemSlot(equipmentSpace,5*ts,ts+32,&player->equipment[0]);
+	widgetNewItemSlot(equipmentSpace,6*ts+ts/2,ts+32,&player->equipment[1]);
+	widgetNewItemSlot(equipmentSpace,8*ts,ts+32,&player->equipment[2]);
+	widgetNewCPL(wLabel,equipmentSpace,5*ts-ts/4,32+ts/2,ts,ts/2,"Glider");
+	widgetNewCPL(wLabel,equipmentSpace,6*ts+ts/2,32+ts/2,ts,ts/2,"Hook");
+	widgetNewCPL(wLabel,equipmentSpace,8*ts,32+ts/2,ts,ts/2,"Pack");
+}
+
+void initInventory(){
+	const int ts = getTilesize();
+
+	if(inventoryPanel != NULL){ widgetFree(inventoryPanel); }
+	inventoryPanel = widgetNewCP(wPanel,rootMenu,-1,-1,ts*10,0);
+	inventoryPanel->flags |= WIDGET_HIDDEN;
+
+	initInventorySpace();
+	initEquipmentSpace();
+	initCraftingSpace();
+	inventoryRadio->flags |= WIDGET_ACTIVE;
+}
+
 void showInventory(){
-	const int gh = getTilesize()* 4 + 32;
+	const int gh = getTilesize()* 7 + 32;
 	if(!gameRunning){return;}
 
 	if((inventoryPanel->h == gh) && (inventoryRadio->flags & WIDGET_ACTIVE)){
@@ -157,6 +189,8 @@ void showInventory(){
 	showMouseCursor();
 	widgetSlideH(inventoryPanel,              gh);
 	widgetSlideW(inventorySpace,getTilesize()*10);
+	widgetSlideY(inventorySpace,getTilesize()* 3);
+	widgetSlideW(equipmentSpace,getTilesize()*10);
 	widgetSlideW(craftingSpace,                0);
 	inventoryRadio->flags |= WIDGET_ACTIVE;
 	craftingRadio->flags &= ~WIDGET_ACTIVE;
@@ -174,6 +208,7 @@ void showCrafting(){
 	showMouseCursor();
 	widgetSlideH(inventoryPanel,              gh);
 	widgetSlideW(inventorySpace,               0);
+	widgetSlideW(equipmentSpace,               0);
 	widgetSlideW(craftingSpace, getTilesize()*10);
 	craftingRadio->flags |= WIDGET_ACTIVE;
 	inventoryRadio->flags &= ~WIDGET_ACTIVE;
@@ -183,7 +218,6 @@ void showCrafting(){
 void hideInventory(){
 	if(!gameRunning){return;}
 	inventoryOpen = false;
-	hideMouseCursor();
 	if(!itemIsEmpty(&inventoryCurrentPickup)){
 		itemDropNewC(player, &inventoryCurrentPickup);
 		itemDiscard(&inventoryCurrentPickup);
@@ -213,6 +247,8 @@ void drawInventory(textMesh *guim){
 void openInventoryPanel(){
 	widgetSlideH(inventoryPanel,getTilesize()+32);
 	widgetSlideW(inventorySpace,getTilesize()*10);
+	widgetSlideY(inventorySpace,               0);
+	widgetSlideW(equipmentSpace,               0);
 	widgetSlideW(craftingSpace,                0);
 }
 
@@ -220,4 +256,5 @@ void closeInventoryPanel(){
 	widgetSlideH(inventoryPanel,               0);
 	widgetSlideW(inventorySpace,getTilesize()*10);
 	widgetSlideW(craftingSpace,                0);
+	widgetSlideW(equipmentSpace,               0);
 }

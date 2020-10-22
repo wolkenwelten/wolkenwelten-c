@@ -400,8 +400,6 @@ void serverParseSinglePacket(uint c, packet *p){
 			serverKill(c);
 			break;
 		case 29:
-			//fprintf(stderr,"characterSetInventory received from client, which should never happen\n");
-			//serverKill(c);
 			characterSetInventoryP(clients[c].c,p);
 			break;
 		case 30:
@@ -421,6 +419,9 @@ void serverParseSinglePacket(uint c, packet *p){
 		case 34:
 			fprintf(stderr,"animalDied received from client, which should never happen\n");
 			serverKill(c);
+			break;
+		case 35:
+			characterSetEquipmentP(clients[c].c,p);
 			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);

@@ -262,7 +262,7 @@ void keyboardEventHandler(const SDL_Event *e){
 			player->flags ^= CHAR_NOCLIP;
 			break;
 		case SDL_SCANCODE_V:
-			player->flags ^= CHAR_GLIDE;
+			characterToggleGlider(player);
 			break;
 		default:
 			break;

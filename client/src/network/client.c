@@ -66,6 +66,7 @@ void msgSendPlayerPos(){
 	if(player == NULL){return;}
 	if(--inventoryCountDown <= 0){
 		msgPlayerSetInventory(-1,player->inventory,40);
+		msgPlayerSetEquipment(-1,player->equipment, 3);
 		inventoryCountDown = 60;
 	}
 	packet *p = &packetBuffer;
@@ -254,6 +255,9 @@ void clientParsePacket(const packet *p){
 			break;
 		case 34:
 			fxAnimalDiedPacket(p);
+			break;
+		case 35:
+			characterSetEquipmentP(player,p);
 			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);

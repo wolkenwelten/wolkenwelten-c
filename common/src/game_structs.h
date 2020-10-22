@@ -84,6 +84,7 @@ typedef struct {
 
 	uint activeItem;
 	item inventory[40];
+	item equipment[3];
 
 	void *nextFree;
 } character;
@@ -94,6 +95,10 @@ typedef struct {
 #define CHAR_SNEAK        (1<<4)
 #define CHAR_GLIDE        (1<<5)
 #define CHAR_SPAWNING     (1<<6)
+
+#define CHAR_EQ_GLIDER     0
+#define CHAR_EQ_HOOK       1
+#define CHAR_EQ_PACK       2
 
 typedef struct {
 	vec pos,vel,rot;

@@ -242,9 +242,19 @@ static void characterParseDataLine(character *p, const char *line){
 
 	if(strcmp(argv[0],"Item") == 0){
 		if(argc < 4){return;}
-		int i = atoi(argv[1]);
+		uint i = atoi(argv[1]);
+		if(i >= 40){return;}
 		p->inventory[i].ID     = atoi(argv[2]);
 		p->inventory[i].amount = atoi(argv[3]);
+		return;
+	}
+
+	if(strcmp(argv[0],"Equipment") == 0){
+		if(argc < 4){return;}
+		uint i = atoi(argv[1]);
+		if(i >= 3){return;}
+		p->equipment[i].ID     = atoi(argv[2]);
+		p->equipment[i].amount = atoi(argv[3]);
 		return;
 	}
 }
@@ -274,6 +284,7 @@ static void checkValidSavegame(const char *name){
 static void characterSendData(const character *p, uint c){
 	msgPlayerSetPos(c,p->pos,p->rot);
 	msgPlayerSetInventory(c,p->inventory,40);
+	msgPlayerSetEquipment(c,p->equipment, 3);
 
 	msgPlayerSetData(c,p->hp,p->activeItem,p->flags);
 }
@@ -332,9 +343,13 @@ void characterSaveData(const character *p, const char *pName){
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"Health %i\n",p->hp);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"Flags %u\n",p->flags);
 
-	for(int i=0;i<40;i++){
+	for(uint i=0;i<40;i++){
 		if(itemIsEmpty(&p->inventory[i])){continue;}
-		b += snprintf(b,sizeof(buf)-(b-buf+1),"Item %i %i %i\n",i,p->inventory[i].ID,p->inventory[i].amount);
+		b += snprintf(b,sizeof(buf)-(b-buf+1),"Item %u %u %i\n",i,p->inventory[i].ID,p->inventory[i].amount);
+	}
+	for(uint i=0;i<3;i++){
+		if(itemIsEmpty(&p->equipment[i])){continue;}
+		b += snprintf(b,sizeof(buf)-(b-buf+1),"Equipment %u %u %i\n",i,p->equipment[i].ID,p->equipment[i].amount);
 	}
 
 	*b = 0;

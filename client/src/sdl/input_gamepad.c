@@ -190,7 +190,7 @@ vec doGamepadupdate(vec vel){
 	}
 	if(gamepadButtons[9]){
 		gamepadButtons[9] = false;
-		player->flags ^= CHAR_GLIDE;
+		characterToggleGlider(player);
 	}
 	if(gamepadButtons[10]){
 		gamepadButtons[10] = false;

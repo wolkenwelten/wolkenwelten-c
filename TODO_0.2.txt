@@ -1,3 +1,0 @@
-- Check new GUI with a Gamepad
-- JetPack stamina/fuel
-- Equipment and slots for Hook/JetPack/Glider

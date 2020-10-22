@@ -147,6 +147,12 @@ void characterUpdateInaccuracy(character *c){
 
 void characterUpdateHook(character *c){
 	if(c->hook == NULL){ return; }
+	if((itemIsEmpty(&c->equipment[CHAR_EQ_HOOK])) || (c->equipment[CHAR_EQ_HOOK].ID != I_Hook)){
+		sfxLoop(sfxHookRope,0.f);
+		grapplingHookFree(c->hook);
+		c->hook = NULL;
+		return;
+	}
 	if(grapplingHookUpdate(c->hook)){
 		grapplingHookFree(c->hook);
 		c->hook = NULL;
@@ -340,10 +346,10 @@ void characterDie(character *c){
 	if(c != player)               { return; }
 	if(c->flags & CHAR_SPAWNING)  { return; }
 	for(int i=0;i<40;i++){
-		item *cItem = characterGetItemBarSlot(c,i);
-		if(cItem == NULL)     { continue; }
-		if(itemIsEmpty(cItem)){ continue; }
-		itemDropNewD(c->pos, cItem);
+		itemDropNewD(c->pos, characterGetItemBarSlot(c,i));
+	}
+	for(int i=0;i<3;i++){
+		itemDropNewD(c->pos, &c->equipment[i]);
 	}
 	characterInit(c);
 	setOverlayColor(0xFF000000,0);
@@ -351,9 +357,13 @@ void characterDie(character *c){
 }
 
 void updateGlide(character *c){
-	vec   dir   = vecDegToVec(c->rot);
-	vec   vel   = c->vel;
-	vec  vdeg   = vecVecToDeg(vecNorm(vel));
+	if((itemIsEmpty(&c->equipment[CHAR_EQ_GLIDER])) || (c->equipment[CHAR_EQ_GLIDER].ID != I_Glider)){
+		c->flags &= ~CHAR_GLIDE;
+	}
+	if(!(c->flags & CHAR_GLIDE)){return;}
+	const vec   dir = vecDegToVec(c->rot);
+	      vec   vel = c->vel;
+	const vec  vdeg = vecVecToDeg(vecNorm(vel));
 
 	float aoa   = fabsf(vdeg.y - c->rot.pitch);
 	float drag  = fabsf(sinf(aoa*PI180)) * 0.98f + 0.02f;
@@ -439,7 +449,7 @@ int characterPhysics(character *c){
 		c->pos.y = MAX(c->pos.y,floorf(c->pos.y)+.99f);
 	}
 
-	if(c->flags & CHAR_GLIDE){ updateGlide(c); }
+	updateGlide(c);
 	return ret;
 }
 
@@ -448,8 +458,9 @@ void characterUpdateBooster(character *c){
 		sfxLoop(sfxJet,0.f);
 		return;
 	}
+	if((itemIsEmpty(&c->equipment[CHAR_EQ_PACK])) || (c->equipment[CHAR_EQ_PACK].ID != I_Jetpack)){return;}
 	const vec rot = c->rot;
-	float speed    = 0.0008f / MAX(0.1,vecMag(c->vel));
+	float speed    = 0.0002f / MAX(0.1,vecMag(c->vel));
 	const vec nv   = vecMulS(vecDegToVec(rot),speed);
 	c->vel = vecAdd(c->vel,nv);
 	c->shake = MAX(c->shake,1.25f + speed);
@@ -577,6 +588,7 @@ void charactersUpdate(){
 
 void characterFireHook(character *c){
 	if(c->actionTimeout < 0){return;}
+	if((itemIsEmpty(&c->equipment[CHAR_EQ_HOOK])) || (c->equipment[CHAR_EQ_HOOK].ID != I_Hook)){return;}
 	characterAddCooldown(c,60);
 	if(c->hook == NULL){
 		c->hook = grapplingHookNew(c);

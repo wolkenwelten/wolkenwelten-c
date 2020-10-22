@@ -14,6 +14,12 @@ int characterGetMaxHP(const character *c){
 	return c->maxhp;
 }
 
+void characterToggleGlider(character *c){
+	if(c == NULL){return;}
+	if((itemIsEmpty(&c->equipment[CHAR_EQ_GLIDER])) || (c->equipment[CHAR_EQ_GLIDER].ID != I_Glider)){return;}
+	c->flags ^= CHAR_GLIDE;
+}
+
 void characterAddCooldown(character *c, int cooldown){
 	c->actionTimeout = -cooldown;
 }
@@ -265,5 +271,15 @@ void characterSetInventoryP(character *c, const packet *p){
 	for(uint i=0;i<max;i++){
 		c->inventory[i].ID     = p->v.u16[ii++];
 		c->inventory[i].amount = p->v.i16[ii++];
+	}
+}
+
+void characterSetEquipmentP(character *c, const packet *p){
+	if(c == NULL){return;}
+	uint max = MIN(3,packetLen(p)/4);
+	uint ii = 0;
+	for(uint i=0;i<max;i++){
+		c->equipment[i].ID     = p->v.u16[ii++];
+		c->equipment[i].amount = p->v.i16[ii++];
 	}
 }

@@ -89,3 +89,5 @@ void    widgetLayVert (widget *w, int padding);
 void    widgetFinish  (widget *w);
 void    widgetSlideW  (widget *w, int nw);
 void    widgetSlideH  (widget *w, int nh);
+void    widgetSlideX  (widget *w, int nw);
+void    widgetSlideY  (widget *w, int nh);
