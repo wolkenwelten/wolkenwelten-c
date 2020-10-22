@@ -324,7 +324,7 @@ void clientFree(){
 	recvBufLen      = 0;
 	sendBufLen      = 0;
 	sendBufSent     = 0;
-	bigchungusFree(&world);
+	worldFree();
 	characterInit(player);
 	chatEmpty();
 	connectionState = 0;

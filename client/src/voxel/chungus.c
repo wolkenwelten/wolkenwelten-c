@@ -107,16 +107,13 @@ chunk *chungusGetChunkOrNew(chungus *c, u16 x, u16 y, u16 z){
 }
 
 u8 chungusGetB(chungus *c, u16 x,u16 y,u16 z){
-	chunk *chnk;
-	if((x|y|z)&(~0xFF)){return 0;}
-	chnk = c->chunks[x>>4][y>>4][z>>4];
+	chunk *chnk = c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 	if(chnk == NULL){return 0;}
 	return chnk->data[x&0xF][y&0xF][z&0xF];
 }
 
 void chungusSetB(chungus *c, u16 x,u16 y,u16 z,u8 block){
 	chunk *chnk;
-	if((x|y|z)&(~0xFF)){return;}
 	u16 cx = (x >> 4) & 0xF;
 	u16 cy = (y >> 4) & 0xF;
 	u16 cz = (z >> 4) & 0xF;

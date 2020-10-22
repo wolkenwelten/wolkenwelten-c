@@ -16,7 +16,7 @@ extern int   optionWindowWidth;
 extern int   optionWindowHeight;
 extern bool  optionFullscreen;
 
-void parseOptions(int argc,char *argv[]);
-void initOptions (int argc,char *argv[]);
-void sanityCheckOptions();
-void saveOptions();
+void parseOptions       (int argc,char *argv[]);
+void initOptions        (int argc,char *argv[]);
+void sanityCheckOptions ();
+void saveOptions        ();

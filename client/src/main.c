@@ -122,7 +122,7 @@ void mainloop(){
 		playerUpdate();
 		worldUpdate();
 		renderFrame();
-		bigchungusFreeFarChungi(&world,player);
+		worldFreeFarChungi(player);
 		clientTranceive();
 	}else{
 		doGamepadMenuUpdate();
@@ -148,7 +148,6 @@ int main( int argc, char* argv[] ){
 	setvbuf(stdout, NULL, _IONBF, 0);
 	setvbuf(stderr, NULL, _IONBF, 0);
 
-	bigchungusInit(&world);
 	shaderInit();
 	textureInit();
 	sfxInit();

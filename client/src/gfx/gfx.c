@@ -111,7 +111,7 @@ void calcView(const character *cam){
 
 void renderWorld(const character *cam){
 	shadowEmpty();
-	bigchungusDraw(&world,cam);
+	worldDraw(cam);
 	blockMiningDraw();
 	grapplingHookDrawRopes();
 	animalDrawAll();

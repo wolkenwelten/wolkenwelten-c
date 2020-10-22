@@ -156,6 +156,5 @@ void menuCloseGame(){
 	gameRunning=false;
 	clientGoodbye();
 	clientFree();
-	bigchungusFree(&world);
 	openMainMenu();
 }
