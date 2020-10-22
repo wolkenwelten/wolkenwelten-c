@@ -5,6 +5,7 @@
 #include "../game/animal.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/common.h"
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 
 #include <stdlib.h>
@@ -21,26 +22,23 @@ void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
 				case 1:
 				case 2:
 				case 3:
-					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,13);
+					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,I_Hematite_Ore);
 				break;
 
 				case 4:
 				case 5:
 				case 6:
 				case 7:
-					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,4);
+					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,I_Coal);
 				break;
 
 				case 8:
 				case 9:
 				case 10:
 				case 11:
-					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,1);
+					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,I_Dirt);
 				break;
 
-				case 63:
-					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,18);
-				break;
 				default:
 					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,3);
 				break;
