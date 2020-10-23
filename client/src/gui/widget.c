@@ -16,6 +16,7 @@
 widget *widgetFocused = NULL;
 
 static bool mouseInBox(uint x, uint y, uint w, uint h){
+	if(mouseHidden) {return false;}
 	if(mousex < x  ){return false;}
 	if(mousex > x+w){return false;}
 	if(mousey < y  ){return false;}
