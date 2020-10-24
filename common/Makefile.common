@@ -34,6 +34,7 @@ clean:
 	rm -f $(shell find client/src common/src server/src -type f -name '*.o')
 	rm -f $(shell find client/src common/src server/src -type f -name '*.deps')
 	rm -f wolkenwelten wolkenwelten.exe wolkenwelten-server wolkenwelten-server.exe tools/modscg.exe tools/modscg
+	rm -f server/make.deps client/make.deps common/make.deps
 	rm -rf client/src/tmp server/src/tmp common/src/tmp web/releases releases
 
 .PHONY: web
