@@ -179,7 +179,7 @@ static void *animalSave(const animal *e, void *buf){
 static const void *animalLoad(const void *buf){
 	u8 *b        = (u8 *)buf;
 	float *f     = (float   *)buf;
-	animal *e    = animalNew(vecNewP(&f[3]),b[2]);
+	animal *e    = animalNew(vecNewP(&f[3]),b[2],0);
 	if(e == NULL){return b+11*4;}
 
 	e->flags     = b[ 1];

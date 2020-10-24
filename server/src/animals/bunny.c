@@ -352,7 +352,7 @@ static void animalPregnancy(animal *e){
 
 	if(rngValM(8) == 0){--e->pregnancy;}
 	if(e->pregnancy == 0){
-		animal *cAnim = animalNew(vecNew(e->pos.x+((rngValf()*2.f)-1.f),e->pos.y+.4f,e->pos.z+((rngValf()*2.f)-1.f)),e->type);
+		animal *cAnim = animalNew(vecNew(e->pos.x+((rngValf()*2.f)-1.f),e->pos.y+.4f,e->pos.z+((rngValf()*2.f)-1.f)),e->type,-1);
 		if(cAnim != NULL){
 			cAnim->age = 1;
 		}

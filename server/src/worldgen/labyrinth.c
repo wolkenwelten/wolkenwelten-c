@@ -273,7 +273,7 @@ void worldgenLabyrinth(worldgen *wgen){
 				}
 
 				if(rngValM(8) == 0){
-					animalNew(vecNew(wgen->gx+(cx<<4)+6,wgen->gy+(cy<<4)+9,wgen->gz+(cz<<4)+6),2);
+					animalNew(vecNew(wgen->gx+(cx<<4)+6,wgen->gy+(cy<<4)+9,wgen->gz+(cz<<4)+6),2,-1);
 				}
 			}
 		}

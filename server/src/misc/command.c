@@ -236,7 +236,7 @@ void cmdAni(int c, const char *cmd){
 	character *ch = clients[target].c;
 	if(ch == NULL){return;}
 	for(;amount > 0;amount--){
-		animalNew(vecAdd(ch->pos,vecDegToVec(ch->rot)),id);
+		animalNew(vecAdd(ch->pos,vecDegToVec(ch->rot)),id,-1);
 	}
 }
 

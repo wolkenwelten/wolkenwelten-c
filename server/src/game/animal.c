@@ -24,7 +24,7 @@ animal *animalFirstFree = NULL;
 
 #define ANIMALS_PER_UPDATE 16u
 
-animal *animalNew(const vec pos , int type){
+animal *animalNew(const vec pos , int type, int gender){
 	animal *e = NULL;
 	if(animalCount >= ((sizeof(animalList) / sizeof(animal)-1))){return NULL;}
 	e = &animalList[animalCount++];
@@ -37,10 +37,11 @@ animal *animalNew(const vec pos , int type){
 
 	e->age       = 21;
 	e->hunger    = 64;
-	e->pregnancy = 64;
 	e->sleepy    = 64;
+	e->pregnancy = -1;
 
 	e->type      = type;
+	e->health    = animalGetMaxHealth(e);
 
 	if(rngValM(2) == 0){
 		e->flags |= ANIMAL_BELLYSLEEP;
@@ -48,11 +49,13 @@ animal *animalNew(const vec pos , int type){
 	if(rngValM(2) == 0){
 		e->flags |= ANIMAL_AGGRESIVE;
 	}
-	if(rngValM(2) == 0){
+	if(gender < 0){
+		if(rngValM(2) == 0){
+			e->flags |= ANIMAL_MALE;
+		}
+	}else if(gender == 1){
 		e->flags |= ANIMAL_MALE;
 	}
-
-	e->health    =  animalGetMaxHealth(e);
 
 	return e;
 }

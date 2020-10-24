@@ -168,6 +168,6 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 	}
 
 	if(rngValM(32) == 0){
-		animalNew(vecNew(wgen->gx+x,wgen->gy+y+size+1.f,wgen->gz+z),2);
+		animalNew(vecNew(wgen->gx+x,wgen->gy+y+size+1.f,wgen->gz+z),2,-1);
 	}
 }

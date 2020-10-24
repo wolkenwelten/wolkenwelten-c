@@ -5,7 +5,7 @@
 extern animal animalList[1<<10];
 extern uint animalCount;
 
-animal     *animalNew              (const vec pos ,int type);
+animal     *animalNew              (const vec pos, int type, int gender);
 void        animalUpdateAll        ();
 void        animalThinkAll         ();
 uint        animalSyncPlayer       (u8 c, uint offset);
