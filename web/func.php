@@ -47,13 +47,29 @@ function niceDate($name){
 	return "Released: ".date("Y-m-d H:i:s",$mtime);
 }
 
+function humanFileSize($size) {
+	if($size >= 1<<20){
+		return number_format($size/(1<<20),1)." MB";
+	}
+	if($size >= 1<<10){
+		return number_format($size/(1<<10),1)." KB";
+	}
+	return number_format($size)." B";
+}
+
+function niceSize($name){
+	$path  = getReleaseDir().$name;
+	$fsize = filesize($path);
+	return "Size: ".humanFileSize($fsize);
+}
+
 function echoBuilds($arr){
 	foreach($arr as $platform => $releases){
 		$rel = array_key_first($releases);
 		if(trim($rel) == ''){continue;}
 		$href = 'releases/'.$platform.'/'.$rel;
 		$label = '<span class=buttonlabel>'.niceName($platform).'</span><span class="buttonicon icon-'.$platform.'"></span>';
-		echo '<a href="'.$href.'" download class=button title="'.niceDate($platform.'/'.$rel).'">'.$label."</a>";
+		echo '<a href="'.$href.'" download class=button title="'.niceDate($platform.'/'.$rel).' - '.niceSize($platform.'/'.$rel).'">'.$label."</a>";
 	}
 	echo "<br/>\n";
 }
