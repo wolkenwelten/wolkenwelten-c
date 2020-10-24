@@ -83,7 +83,13 @@ void animalUpdateAll(){
 }
 
 void animalSyncFromServer(const packet *p){
-	animalCount   = p->v.u16[5];
+	const uint newC = p->v.u16[5];
+	if(newC > animalCount){
+		for(uint ii=animalCount;ii<newC;ii++){
+			animalList[ii].type = 0;
+		}
+	}
+	animalCount   = newC;
 	const uint i  = p->v.u16[4];
 	if (i >= animalCount){ return; }
 	animal *e     = &animalList[i];

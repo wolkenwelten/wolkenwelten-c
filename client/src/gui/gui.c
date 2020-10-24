@@ -48,6 +48,7 @@ widget *chatText;
 bool mouseHidden = false;
 uint mousex,mousey;
 uint mouseClicked[3] = {0,0,0};
+uint animalOverlaysDrawn = 0;
 
 float matOrthoProj[16];
 
@@ -312,6 +313,7 @@ void drawAnimalDebugOverlay(const animal *e, int i){
 	textMeshBox(guim,p.x-16,p.y-16,32,32,u,v,1/32.f,1/32.f,a|0xFFFFFF);
 
 	if(p.z > 96){guim->fgc = ofgc; return;}
+	if(++animalOverlaysDrawn > 64){return;}
 	guim->fgc = 0xFFFFFFFF;
 	textMeshPrintfPS(guim,p.x+16,p.y-40,2,"%s",animalGetStateName(e));
 	drawSingleHealthbar(e->health, animalGetMaxHealth(e), p.x+16,p.y-16,8,false);
@@ -418,6 +420,7 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"WorstF: %s%u\n",colorSignalLow(60,20,18,worstFrame),worstFrame);
 		guim->fgc  = colorPalette[15];
 
+		animalOverlaysDrawn = 0;
 		for(uint i=0;i<animalCount;i++){
 			drawAnimalDebugOverlay(&animalList[i],i);
 		}

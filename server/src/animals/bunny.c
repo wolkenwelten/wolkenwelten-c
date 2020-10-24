@@ -10,17 +10,15 @@
 #include "../../../common/src/network/messages.h"
 
 static int animalCheckHeat(animal *e){
-	if(e->pregnancy > 0){return 0;}
-	if((e->age > 20) && (rngValM( 128) == 0)){
-		animal *cAnim;
-		if(animalClosestAnimal(e,&cAnim,e->type,0,0) < 192.f){
-			if(cAnim->age > 20){
-				e->state = ANIMAL_S_HEAT;
-				return 1;
-			}
-		}
-	}
-	return 0;
+	animal *cAnim;
+
+	if((e->pregnancy > 0) || (e->age < 20))               {return 0;}
+	if(rngValM( 128) != 0)                                {return 0;}
+	if(animalClosestAnimal(e,&cAnim,e->type,0,0) > 192.f) {return 0;}
+	if((cAnim->pregnancy > 0) || (cAnim->age < 20))       {return 0;}
+
+	e->state = ANIMAL_S_HEAT;
+	return 1;
 }
 
 static void animalAgeing(animal *e){
@@ -129,21 +127,29 @@ static void animalSHeat(animal *e){
 	}else{
 		dist = animalClosestAnimal(e,&cAnim,e->type,ANIMAL_MALE,ANIMAL_MALE);
 	}
-	if((dist > 256.f) || (cAnim == NULL)){ e->state = 0; }
+	if((dist > 256.f) || (cAnim == NULL) || (cAnim->pregnancy > 0)){
+		e->state = ANIMAL_S_LOITER;
+		return;
+	}
 
-	if((e->hunger < 12) || (e->sleepy < 12)){
+	if((e->hunger < 8) || (e->sleepy < 8)){
 		e->state = ANIMAL_S_LOITER;
 		return;
 	}
 
 	if(dist < 2.f){
-		e->state     =  ANIMAL_S_LOITER;
+		e->state     = ANIMAL_S_LOITER;
 		cAnim->state = ANIMAL_S_LOITER;
 		if(e->flags & ANIMAL_MALE){
-			e->pregnancy = 64;
-		}else if(e->flags & ANIMAL_MALE){
+			cAnim->pregnancy = 64;
+		}else{
 			e->pregnancy = 64;
 		}
+		cAnim->sleepy  = MAX(8,cAnim->sleepy - 24);
+		cAnim->hunger -= 8;
+		e->sleepy      = MAX(8,cAnim->sleepy - 24);
+		e->hunger     -= 8;
+
 		return;
 	}
 	if(cAnim == NULL){return;}
@@ -265,19 +271,19 @@ static void animalSPlayful(animal *e){
 	if (rngValM( 8) == 0){e->sleepy--;}
 	if(animalCheckHeat(e)){return;}
 
-	if((rngValM( 8) == 0) && !(e->flags & ANIMAL_FALLING)){
+	if((rngValM(24) == 0) && !(e->flags & ANIMAL_FALLING)){
 		e->vel.y = 0.03f;
 	}
 	if (rngValM(12) == 0){
 		e->gvel = vecZero();
 	}
-	if (rngValM(16) == 0){
+	if (rngValM(12) == 0){
 		e->grot.pitch = ((rngValf()*2.f)-1.f)*16.f;
 	}
-	if (rngValM(16) == 0){
+	if (rngValM(12) == 0){
 		e->grot.yaw = ((rngValf()*2.f)-1.f)*360.f;
 	}
-	if (rngValM(24) == 0){
+	if (rngValM( 8) == 0){
 		vec dir = vecMulS(vecDegToVec(vecNew(-e->rot.yaw,0.f,0.f)),0.02f);
 		e->gvel.x = dir.x;
 		e->gvel.z = dir.z;
@@ -356,6 +362,8 @@ static void animalPregnancy(animal *e){
 		if(cAnim != NULL){
 			cAnim->age = 1;
 		}
+		e->hunger   -= 8;
+		e->sleepy    = MAX(8,e->sleepy-24);
 		e->pregnancy = -1;
 		animalDoPoop(e);
 	}
@@ -363,7 +371,6 @@ static void animalPregnancy(animal *e){
 
 static void animalPoop(animal *e){
 	if(e->hunger < 24){return;}
-
 	if(e->hunger < 48){
 		if(rngValM(128) == 0){animalDoPoop(e);}
 	}else{
@@ -371,11 +378,10 @@ static void animalPoop(animal *e){
 	}
 }
 
-#include <stdio.h>
 static void animalSocialDistancing(animal *e){
 	animal *cAnim;
 	float dist = animalClosestAnimal(e,&cAnim,e->type,0,0);
-	if(dist < 1.75f){
+	if(dist < 1.f){
 		e->grot.yaw = ((rngValf()*2.f)-1.f)*360.f;
 		vec dir = vecMulS(vecDegToVec(vecNew(-e->rot.yaw,0.f,0.f)),0.01f);
 		e->gvel.x = dir.x;

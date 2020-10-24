@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-chunk  chunkList[1 << 18];
+chunk  chunkList[1 << 17];
 uint   chunkFreeCount = 0;
 uint   chunkCount     = 0;
 chunk *chunkFirstFree       = NULL;

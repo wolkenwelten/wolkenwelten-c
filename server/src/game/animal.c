@@ -70,9 +70,9 @@ void animalUpdateAll(){
 		int dmg = animalUpdate(&animalList[i]);
 		animalList[i].health -= dmg;
 		if((animalList[i].pos.y  < -256.f) ||
-		   (animalList[i].health < 0) ||
-		   (animalList[i].hunger < 0) ||
-		   (animalList[i].sleepy < 0)) {
+		   (animalList[i].health <= 0) ||
+		   (animalList[i].hunger <= 0) ||
+		   (animalList[i].sleepy <= 0)) {
 			animalRDie(&animalList[i]);
 			animalDel(i);
 			continue;

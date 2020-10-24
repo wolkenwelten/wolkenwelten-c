@@ -30,20 +30,25 @@ void animalUpdateCurChungus(animal *e){
 }
 
 void animalCheckForHillOrCliff(animal *e){
-	vec caDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->gvel,vecNew(1,0,1))),0.5f));
-	const u8 cb = worldGetB(caDir.x,caDir.y,caDir.z);
-	const u8 ub = worldGetB(caDir.x,caDir.y+1,caDir.z);
-	if((cb != 0) && (ub == 0) && (fabsf(e->vel.y)<0.01f)){
+	const vec cFDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->gvel,vecNew(1,0,1))),0.5f));
+	const u8 cb     = worldGetB(cFDir.x, cFDir.y, cFDir.z);
+	if((cb != 0)){
 		if(!(e->flags & ANIMAL_FALLING)){
-			e->vel.y = 0.03f;
+			e->vel.y = 0.04f;
 		}
 	}else if(cb == 0){
-		if(worldGetB(caDir.x,caDir.y-1,caDir.z) != 0){return;}
-		if(worldGetB(caDir.x,caDir.y-2,caDir.z) != 0){return;}
+		const vec cBDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->gvel,vecNew(1,0,1))),-0.5f));
+		for(int cy = 1; cy < 8; cy++){
+			if(worldGetB(cFDir.x,cFDir.y-cy,cFDir.z)   != 0){return;}
+		}
+		for(int cy = 1; cy < 5; cy++){
+			if(cy == 4){return;}
+			if(worldGetB(cBDir.x,cBDir.y-cy,cBDir.z)   != 0){break;}
+		}
 
 		vec tmp = e->gvel;
-		tmp.y = e->vel.y;
-		e->vel = vecMul(tmp,vecNew(-1,1,-1));
+		tmp.y   = 0.03f;
+		e->vel  = vecMul(tmp,vecNew(-4,1,-4));
 	}
 }
 

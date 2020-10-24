@@ -233,7 +233,8 @@ void characterMove(character *c, const vec mov){
 	const float yaw   = c->rot.yaw;
 
 	if(c->flags & CHAR_NOCLIP){
-		const float s = 0.2f;
+		float s = 0.2f;
+		if(c->flags & CHAR_SNEAK){ s = 1.f;}
 		c->gvel    = vecMulS(vecDegToVec(c->rot),mov.z*(-s));
 		c->gvel.x += cos((yaw)*PI/180)*mov.x*s;
 		c->gvel.z += sin((yaw)*PI/180)*mov.x*s;
