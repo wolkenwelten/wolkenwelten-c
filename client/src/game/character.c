@@ -345,6 +345,7 @@ void characterDropItem(character *c, int i){
 void characterDie(character *c){
 	if(c != player)               { return; }
 	if(c->flags & CHAR_SPAWNING)  { return; }
+	if(c->flags & CHAR_NOCLIP)    { return; }
 	for(int i=0;i<40;i++){
 		itemDropNewD(c->pos, characterGetItemBarSlot(c,i));
 	}

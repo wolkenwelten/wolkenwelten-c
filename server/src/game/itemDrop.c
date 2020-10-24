@@ -6,6 +6,7 @@
 #include "../voxel/chungus.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/mods/mods.h"
 #include "../../../common/src/network/messages.h"
 
 #include <stdio.h>
@@ -186,7 +187,7 @@ void itemDropUpdate(){
 		if((oldp != newp) && (e->curChungus != NULL)){
 			e->curChungus->clientsUpdated &= mask;
 		}
-		if(itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || itemDropCheckPickup(i) || (e->pos.y < -256)){
+		if(itemDropCallbackDispatch(&itemDrops[i].itm, e->pos.x, e->pos.y,e->pos.z) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || itemDropCheckPickup(i) || (e->pos.y < -256)){
 			itemDropDel(i);
 			addPriorityItemDrop(i);
 			continue;

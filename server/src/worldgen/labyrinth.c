@@ -272,8 +272,8 @@ void worldgenLabyrinth(worldgen *wgen){
 					labStairsZGT(wgen,pos,2);
 				}
 
-				if(rngValM(32) == 0){
-					animalNew(vecNew(wgen->gx+(cx<<4)+6,wgen->gy+(cx<<4)+9,wgen->gz+(cx<<4)+6),2);
+				if(rngValM(8) == 0){
+					animalNew(vecNew(wgen->gx+(cx<<4)+6,wgen->gy+(cy<<4)+9,wgen->gz+(cz<<4)+6),2);
 				}
 			}
 		}

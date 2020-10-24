@@ -57,3 +57,4 @@ int   itemDecAmmo    (      item *i, i16 amount);
 #define I_Glider       274
 #define I_Hook         275
 #define I_Jetpack      276
+#define I_Poop         277

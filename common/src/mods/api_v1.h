@@ -89,3 +89,8 @@ int      checkCollision  (int x, int y, int z);
 
 void sfxPlay(sfx *b, float volume);
 void sfxLoop(sfx *b, float volume);
+
+float       rngValf();
+u64         rngValR();
+u64         rngValM(u64 max);
+i64         rngValMM(i64 min,i64 max);

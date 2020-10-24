@@ -18,6 +18,8 @@ int         getAmmunitionDispatch   (const item *cItem);
 int         getStackSizeDispatch    (const item *cItem);
 int         getMagSizeDispatch      (const item *cItem);
 bool        hasGetMagSize           (const item *cItem);
+bool        itemDropCallbackDispatch(const item *cItem, float x, float y, float z);
+bool        hasItemDropCallback     (const item *cItem);
 
 int         damageDefault           (const item *cItem);
 int         blockDamageDefault      (const item *cItem, blockCategory blockCat);
@@ -29,3 +31,4 @@ float       getInaccuracyDefault    (const item *cItem);
 int         getAmmunitionDefault    (const item *cItem);
 int         getStackSizeDefault     (const item *cItem);
 int         getMagSizeDefault       (const item *cItem);
+bool        itemDropCallbackDefault (const item *cItem, float x, float y, float z);

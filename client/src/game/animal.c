@@ -104,7 +104,7 @@ void animalSyncFromServer(const packet *p){
 	e->age        = p->v.i8[ 3];
 	e->health     = p->v.i8[ 4];
 	e->hunger     = p->v.i8[ 5];
-	e->thirst     = p->v.i8[ 6];
+	e->pregnancy  = p->v.i8[ 6];
 	e->sleepy     = p->v.i8[ 7];
 }
 

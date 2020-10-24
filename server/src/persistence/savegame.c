@@ -154,7 +154,7 @@ static void *animalSave(const animal *e, void *buf){
 
 	b[ 4] = e->health;
 	b[ 5] = e->hunger;
-	b[ 6] = e->thirst;
+	b[ 6] = e->pregnancy;
 	b[ 7] = e->sleepy;
 
 	b[ 8] = e->age;
@@ -175,24 +175,24 @@ static void *animalSave(const animal *e, void *buf){
 }
 
 static const void *animalLoad(const void *buf){
-	u8 *b     = (u8 *)buf;
-	float *f  = (float   *)buf;
-	animal *e = animalNew(vecNewP(&f[3]),b[2]);
+	u8 *b        = (u8 *)buf;
+	float *f     = (float   *)buf;
+	animal *e    = animalNew(vecNewP(&f[3]),b[2]);
 	if(e == NULL){return b+12*4;}
 
-	e->rot    = vecNewP(&f[6]);
-	e->rot.roll = 0.f;
-	e->vel    = vecNewP(&f[8]);
+	e->rot       = vecNewP(&f[6]);
+	e->rot.roll  = 0.f;
+	e->vel       = vecNewP(&f[8]);
 
-	e->flags  = b[ 1];
-	e->state  = b[ 3];
+	e->flags     = b[ 1];
+	e->state     = b[ 3];
 
-	e->health = b[ 4];
-	e->hunger = b[ 5];
-	e->thirst = b[ 6];
-	e->sleepy = b[ 7];
+	e->health    = b[ 4];
+	e->hunger    = b[ 5];
+	e->pregnancy = b[ 6];
+	e->sleepy    = b[ 7];
 
-	e->age    = b[ 8];
+	e->age       = b[ 8];
 
 	return b+11*4;
 }

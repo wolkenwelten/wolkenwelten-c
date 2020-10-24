@@ -160,3 +160,13 @@ const char *animalGetStateName(const animal *e){
 		return "Fight";
 	}
 }
+
+int animalGetMaxHealth (const animal *e){
+	switch(e->type){
+	default:
+	case 1:
+		return  4;
+	case 2:
+		return 12;
+	}
+}

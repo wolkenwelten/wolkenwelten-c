@@ -314,7 +314,12 @@ void drawAnimalDebugOverlay(const animal *e, int i){
 	if(p.z > 96){guim->fgc = ofgc; return;}
 	guim->fgc = 0xFFFFFFFF;
 	textMeshPrintfPS(guim,p.x+16,p.y-40,2,"%s",animalGetStateName(e));
-	drawSingleHealthbar(e->health, 8, p.x+16,p.y-16,8,false);
+	drawSingleHealthbar(e->health, animalGetMaxHealth(e), p.x+16,p.y-16,8,false);
+	if(e->flags & ANIMAL_MALE){
+		textMeshPrintfPS(guim,p.x+56,p.y-22,2,"\x0B");
+	}else{
+		textMeshPrintfPS(guim,p.x+56,p.y-22,2,"\x0C");
+	}
 	textMeshPrintfPS(guim,p.x-48,p.y-40,2,"%i",i);
 	textMeshPrintfPS(guim,p.x-48,p.y-24,2,"%.1f",p.z);
 	guim->fgc = colorPalette[7];
@@ -324,9 +329,11 @@ void drawAnimalDebugOverlay(const animal *e, int i){
 	const char *sleepyC = colorSignalHigh(16,32,48,e->sleepy);
 	const char *ageC    = colorSignalLow (78,64,48,e->age);
 	textMeshPrintfPS(guim,p.x+16,p.y   ,1,"Hunger: %s%i%s",hungerC,e->hunger,ansiFG[7]);
-	//textMeshPrintfPS(guim,p.x+16,p.y+ 8,1,"Thirst: %s%i%s",thirstC,e->thirst,ansiFG[7]);
 	textMeshPrintfPS(guim,p.x+16,p.y+ 8,1,"Sleepy: %s%i%s",sleepyC,e->sleepy,ansiFG[7]);
 	textMeshPrintfPS(guim,p.x+16,p.y+16,1,"Age:    %s%i%s",ageC,   e->age   ,ansiFG[7]);
+	if(!(e->flags & ANIMAL_MALE)){
+		textMeshPrintfPS(guim,p.x+16,p.y+24,1,"Pregn.: %i"    ,        e->pregnancy       );
+	}
 	guim->fgc = ofgc;
 }
 

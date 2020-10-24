@@ -108,7 +108,7 @@ typedef struct {
 	i8 age;
 	i8 health;
 	i8 hunger;
-	i8 thirst;
+	i8 pregnancy;
 	i8 sleepy;
 	u8 flags;
 	u8 type;
@@ -123,6 +123,7 @@ typedef struct {
 #define ANIMAL_BELLYSLEEP (1<<1)
 #define ANIMAL_AGGRESIVE  (1<<2)
 #define ANIMAL_COLLIDE    (1<<3)
+#define ANIMAL_MALE       (1<<4)
 
 #define ANIMAL_S_LOITER      0
 #define ANIMAL_S_FLEE        1
