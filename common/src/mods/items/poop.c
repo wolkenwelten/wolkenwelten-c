@@ -24,19 +24,19 @@ mesh *poopGetMesh(const item *cItem){
 	return meshPoop;
 }
 
-bool poopItemDropCallback(const item *cItem, float x, float y, float z){
+int poopItemDropCallback(const item *cItem, float x, float y, float z){
 	(void)cItem;
 	u8 b = worldGetB(x,y-0.5f,z);
 	if(b != I_Dirt){
-		if(b == 0){return false;}
+		if(b == 0){return 0;}
 		if(rngValM(1024) == 0){
-			return true;
+			return -1;
 		}
-		return false;
+		return 0;
 	}
 	if(rngValM(128) == 0){
 		worldSetB(x,y-0.5f,z,I_Grass);
-		return true;
+		return -1;
 	}
-	return false;
+	return 0;
 }

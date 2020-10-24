@@ -68,10 +68,10 @@ int getMagSizeDefault (const item *cItem){
 	return 0;
 }
 
-bool itemDropCallbackDefault(const item *cItem, float x, float y, float z){
+int itemDropCallbackDefault(const item *cItem, float x, float y, float z){
 	(void)cItem;
 	(void)x;
 	(void)y;
 	(void)z;
-	return false;
+	return 0;
 }

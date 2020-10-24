@@ -262,8 +262,7 @@ int main(int argc, char *argv[]){
 	printItemTypeDispatch("GetStackSize","const item *cItem","cItem","int ");
 	printItemTypeDispatch("GetMagSize","const item *cItem","cItem","int ");
 	printHasTypeSwitch   ("GetMagSize");
-	printItemTypeDispatch("ItemDropCallback","const item *cItem, float x, float y, float z","cItem, x, y, z","bool ");
-	printHasTypeSwitch   ("ItemDropCallback");
+	printItemTypeDispatch("ItemDropCallback","const item *cItem, float x, float y, float z","cItem, x, y, z","int ");
 
 	return 0;
 }

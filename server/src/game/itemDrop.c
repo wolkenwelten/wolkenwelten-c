@@ -187,7 +187,8 @@ void itemDropUpdate(){
 		if((oldp != newp) && (e->curChungus != NULL)){
 			e->curChungus->clientsUpdated &= mask;
 		}
-		if(itemDropCallbackDispatch(&itemDrops[i].itm, e->pos.x, e->pos.y,e->pos.z) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || itemDropCheckPickup(i) || (e->pos.y < -256)){
+		itemDrops[i].itm.amount += itemDropCallbackDispatch(&itemDrops[i].itm, e->pos.x, e->pos.y,e->pos.z);
+		if((itemDrops[i].itm.amount < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || itemDropCheckPickup(i) || (e->pos.y < -256)){
 			itemDropDel(i);
 			addPriorityItemDrop(i);
 			continue;
