@@ -4,6 +4,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <lmcons.h>
+#include <unistd.h>
 
 bool signalHandlerBound = false;
 int  serverSocket       = 0;
@@ -82,7 +83,7 @@ void closeSingleplayerServer(){
 void clientInit(){
 	struct sockaddr_in serv_addr;
 	struct hostent *serveraddr;
-	int err,yes=1;
+	int err,yes=1,connectionTries=10;
 	tryWinsockInit();
 	if(serverSocket != 0){return;}
 	if(singleplayer && (singlePlayerPID == 0)){
@@ -112,6 +113,10 @@ void clientInit(){
 	while(connect(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) != 0){
 		err = WSAGetLastError();
 		if(err == WSAEINPROGRESS){break;}
+		if(--connectionTries > 0){
+			usleep(1000);
+			break;
+		}
 		menuSetError("Error connecting to host");
 		return;
 	}
