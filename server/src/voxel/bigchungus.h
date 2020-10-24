@@ -13,6 +13,7 @@ struct bigchungus {
 	u8 geoworldMap             [256][256];
 
 };
+extern bigchungus world;
 
 void        bigchungusInit              (bigchungus *c);
 void        bigchungusFree              (bigchungus *c);
@@ -34,19 +35,6 @@ void        bigchungusUpdateClient      (bigchungus *c, int p);
 void        bigchungusUnsubscribeClient (bigchungus *c, int p);
 void        bigchungusDirtyChunk        (bigchungus *c, int x, int y, int z, int client);
 
-extern bigchungus world;
-
-inline void        worldBoxMine       (int x, int y, int z, int w,int h,int d){
-	bigchungusBoxMine(&world,x,y,z,w,h,d);
-}
-inline void        worldBoxMineSphere (int x, int y, int z, int r){
-	bigchungusBoxMineSphere(&world,x,y,z,r);
-}
-inline ivec        worldGetSpawnPos   (){
-	return bigchungusGetSpawnPos(&world);
-}
-
-
 void     worldBox          (int x, int y, int z, int w, int h, int d, u8 block);
 void     worldBoxSphere    (int x, int y, int z, int r, u8 block);
 u8       worldGetB         (int x, int y, int z);
@@ -56,3 +44,6 @@ chunk*   worldGetChunk     (int x, int y, int z);
 bool     worldSetB         (int x, int y, int z, u8 block);
 int      checkCollision    (int x, int y, int z);
 void     worldDirtyChunk   (int x, int y, int z, int client);
+void     worldBoxMine       (int x, int y, int z, int w,int h,int d);
+void     worldBoxMineSphere (int x, int y, int z, int r);
+ivec     worldGetSpawnPos   ();

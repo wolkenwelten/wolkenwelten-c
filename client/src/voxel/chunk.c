@@ -114,7 +114,7 @@ void chunkFree(chunk *c){
 	chunkFirstFree = c;
 }
 
-inline void chunkFinish(chunk *c){
+static inline void chunkFinish(chunk *c){
 	if(!c->vbo) { glGenBuffers(1,&c->vbo); }
 	glBindBuffer(GL_ARRAY_BUFFER, c->vbo);
 	if(c->dataCount <= c->vboSize){
@@ -125,7 +125,7 @@ inline void chunkFinish(chunk *c){
 	}
 }
 
-inline void chunkAddVert(chunk *c, u8 x,u8 y,u8 z,u16 u,u16 v,u8 f){
+static inline void chunkAddVert(chunk *c, u8 x,u8 y,u8 z,u16 u,u16 v,u8 f){
 	blockMeshBuffer[c->dataCount++] = (vertexTiny){x,y,z,f,u,v};
 }
 void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {

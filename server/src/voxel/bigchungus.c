@@ -329,3 +329,12 @@ void worldDirtyChunk(int x, int y, int z, int c){
 int checkCollision(int x, int y, int z){
 	return bigchungusGetB(&world,x,y,z) != 0;
 }
+void worldBoxMine(int x, int y, int z, int w,int h,int d){
+	bigchungusBoxMine(&world,x,y,z,w,h,d);
+}
+void worldBoxMineSphere(int x, int y, int z, int r){
+	bigchungusBoxMineSphere(&world,x,y,z,r);
+}
+ivec worldGetSpawnPos(){
+	return bigchungusGetSpawnPos(&world);
+}

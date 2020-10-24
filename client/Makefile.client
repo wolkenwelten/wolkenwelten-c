@@ -21,7 +21,7 @@ wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
 wolkenwelten: LIBS      += $(CLIENT_LIBS)
 wolkenwelten: client/make.deps $(CLIENT_OBJS)
-	$(LD) $(CLIENT_OBJS) -o wolkenwelten $(OPTIMIZATION) $(CFLAGS) $(LIBS) $(CSTD)
+	$(LD) $(CLIENT_OBJS) -g -o wolkenwelten $(OPTIMIZATION) $(CFLAGS) $(LIBS) $(CSTD)
 
 $(CLIENT_DEPS): | client/src/tmp/assets.h client/src/tmp/meshassets.h common/src/tmp/cto.h client/src/tmp/objs.h client/src/tmp/mods_tmp.c client/src/tmp/sfx.h
 .deps: client/make.deps

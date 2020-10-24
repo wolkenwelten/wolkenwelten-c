@@ -14,7 +14,7 @@ all: wolkenwelten
 .PHONY: .deps
 
 %.o: %.c
-	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -c $< -o $@
+	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -g -c $< -o $@
 
 %.deps: %.c
 	$(CC) -MM $< -MT "$(<:.c=.o)" $(CINCLUDES) $(CLIENT_CINCLUDES) > $@

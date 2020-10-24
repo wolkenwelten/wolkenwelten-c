@@ -165,11 +165,13 @@ static void *animalSave(const animal *e, void *buf){
 	f[ 3] = e->pos.x;
 	f[ 4] = e->pos.y;
 	f[ 5] = e->pos.z;
-	f[ 6] = e->rot.yaw;
-	f[ 7] = e->rot.pitch;
-	f[ 8] = e->vel.x;
-	f[ 9] = e->vel.y;
-	f[10] = e->vel.z;
+
+	f[ 6] = e->vel.x;
+	f[ 7] = e->vel.y;
+	f[ 8] = e->vel.z;
+
+	f[ 9] = e->rot.yaw;
+	f[10] = e->rot.pitch;
 
 	return b+11*4;
 }
@@ -178,13 +180,10 @@ static const void *animalLoad(const void *buf){
 	u8 *b        = (u8 *)buf;
 	float *f     = (float   *)buf;
 	animal *e    = animalNew(vecNewP(&f[3]),b[2]);
-	if(e == NULL){return b+12*4;}
-
-	e->rot       = vecNewP(&f[6]);
-	e->rot.roll  = 0.f;
-	e->vel       = vecNewP(&f[8]);
+	if(e == NULL){return b+11*4;}
 
 	e->flags     = b[ 1];
+	e->type      = b[ 2];
 	e->state     = b[ 3];
 
 	e->health    = b[ 4];
@@ -193,6 +192,17 @@ static const void *animalLoad(const void *buf){
 	e->sleepy    = b[ 7];
 
 	e->age       = b[ 8];
+	//
+	//
+	//
+
+	e->pos       = vecNewP(&f[3]);
+
+	e->vel       = vecNewP(&f[6]);
+
+	e->rot.yaw   = f[ 9];
+	e->rot.pitch = f[10];
+	e->rot.roll  = 0.f;
 
 	return b+11*4;
 }
