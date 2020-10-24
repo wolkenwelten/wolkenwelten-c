@@ -667,10 +667,6 @@ int serverSendClient(uint c){
 	const uint len = clients[c].sendBufLen-clients[c].sendBufSent;
 	if(len > 0){
 		uint ret = serverSendRaw(c,clients[c].sendBuf+clients[c].sendBufSent,len);
-		if(ret == 0){
-			serverKill(c);
-			return 2;
-		}
 		clients[c].sendBufSent += ret;
 	}
 	if(clients[c].sendBufSent >= clients[c].sendBufLen){
