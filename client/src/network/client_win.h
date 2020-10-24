@@ -83,7 +83,8 @@ void closeSingleplayerServer(){
 void clientInit(){
 	struct sockaddr_in serv_addr;
 	struct hostent *serveraddr;
-	int err,yes=1,connectionTries=10;
+	int err,yes=1;
+	int cTries=10;
 	tryWinsockInit();
 	if(serverSocket != 0){return;}
 	if(singleplayer && (singlePlayerPID == 0)){
@@ -105,15 +106,15 @@ void clientInit(){
 	}
 
 	memset((char *) &serv_addr,0,sizeof(serv_addr));
-	serv_addr.sin_family      = AF_INET;
+	serv_addr.sin_family = AF_INET;
 	memcpy((char *)&serv_addr.sin_addr.s_addr, (char *)serveraddr->h_addr_list[0], serveraddr->h_length);
-	serv_addr.sin_port        = htons(serverPort);
+	serv_addr.sin_port   = htons(serverPort);
 
 
 	while(connect(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) != 0){
 		err = WSAGetLastError();
 		if(err == WSAEINPROGRESS){break;}
-		if(--connectionTries > 0){
+		if(--cTries > 0){
 			usleep(1000);
 			break;
 		}
