@@ -8,5 +8,5 @@ if [[ "$branchname" =~ ^ver/.* ]]; then
 	branchname="${branchname:4}"
 	echo "$branchname.$commitcount"
 else
-	echo "$branchname-$curcommit-$commitdate"
+	echo "$branchname-$commitdate-$curcommit"
 fi
