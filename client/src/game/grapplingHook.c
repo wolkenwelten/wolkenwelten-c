@@ -190,7 +190,7 @@ bool grapplingHookUpdate(grapplingHook *ghk){
 			}
 		}else if(!ghk->hooked && !ghk->returning){
 			sfxLoop(sfxHookRope,1.f);
-			if(grapplingHookGetLength(ghk) > 256.f){
+			if(grapplingHookGetLength(ghk) > 64.f){
 				grapplingHookReturnHook(ghk);
 			}
 		}
