@@ -63,8 +63,9 @@ void characterAddCooldown    (      character *c, int cooldown);
 int  characterGetItemAmount  (const character *c, u16 itemID);
 int  characterDecItemAmount  (      character *c, u16 itemID, int amount);
 bool characterItemReload     (      character *c, item *i, int cooldown);
-void characterStartAnimation (      character *c, int index, int duration);
 bool characterTryToShoot     (      character *c, item *i, int cooldown, int bulletcount);
+bool characterPlaceBlock     (      character *c, item *i);
+void characterStartAnimation (      character *c, int index, int duration);
 
 item  itemNew      (u16 ID, i16 amount);
 item  itemEmpty    ();
@@ -87,10 +88,17 @@ chungus *worldGetChungus (int x, int y, int z);
 bool     worldSetB       (int x, int y, int z, u8 block);
 int      checkCollision  (int x, int y, int z);
 
-void sfxPlay(sfx *b, float volume);
-void sfxLoop(sfx *b, float volume);
+void     sfxPlay(sfx *b, float volume);
+void     sfxLoop(sfx *b, float volume);
 
 float       rngValf();
 u64         rngValR();
 u64         rngValM(u64 max);
 i64         rngValMM(i64 min,i64 max);
+
+const char   *blockTypeGetName         (u8 b);
+int           blockTypeGetHP           (u8 b);
+blockCategory blockTypeGetCat          (u8 b);
+bool          blockTypeValid           (u8 b);
+u32           blockTypeGetParticleColor(u8 b);
+mesh         *blockTypeGetMesh         (u8 b);

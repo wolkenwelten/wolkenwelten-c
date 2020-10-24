@@ -789,27 +789,6 @@ void characterDamagePacket(character *c, const packet *p){
 	}
 }
 
-bool characterPlaceBlock(character *c,item *i){
-	if(c->actionTimeout < 0)              { return false; }
-	ivec los = characterLOSBlock(c,true);
-	if(los.x < 0)                         { return false; }
-	if((characterCollision(c->pos)&0xFF0)){ return false; }
-	if(!itemDecStack(i,1))                { return false; }
-
-	worldSetB(los.x,los.y,los.z,i->ID);
-	if((characterCollision(c->pos)&0xFF0) != 0){
-		worldSetB(los.x,los.y,los.z,0);
-		itemIncStack(i,1);
-		return false;
-	} else {
-		msgPlaceBlock(los.x,los.y,los.z,i->ID);
-		sfxPlay(sfxPock,1.f);
-		characterStartAnimation(c,0,240);
-		characterAddCooldown(c,50);
-		return true;
-	}
-}
-
 void characterSetData(character *c, const packet *p){
 	c->hp         = p->v.i16[0];
 	c->activeItem = p->v.u16[1];

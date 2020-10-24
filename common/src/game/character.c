@@ -2,6 +2,7 @@
 #include "item.h"
 #include "../mods/api_v1.h"
 #include "../mods/mods.h"
+#include "../network/messages.h"
 
 #include <stddef.h>
 #include <math.h>
@@ -107,6 +108,27 @@ int characterPickupItem(character *c, u16 itemID,int amount){
 		return -1;
 	}
 	return a;
+}
+
+bool characterPlaceBlock(character *c,item *i){
+	if(c->actionTimeout < 0)              { return false; }
+	ivec los = characterLOSBlock(c,true);
+	if(los.x < 0)                         { return false; }
+	if((characterCollision(c->pos)&0xFF0)){ return false; }
+	if(!itemDecStack(i,1))                { return false; }
+
+	worldSetB(los.x,los.y,los.z,i->ID);
+	if((characterCollision(c->pos)&0xFF0) != 0){
+		worldSetB(los.x,los.y,los.z,0);
+		itemIncStack(i,1);
+		return false;
+	} else {
+		msgPlaceBlock(los.x,los.y,los.z,i->ID);
+		sfxPlay(sfxPock,1.f);
+		characterStartAnimation(c,0,240);
+		characterAddCooldown(c,50);
+		return true;
+	}
 }
 
 bool characterHP(character *c, int addhp){

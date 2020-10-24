@@ -1,11 +1,11 @@
-#include "../../../common/src/common.h"
-#include "../../../common/src/mods/mods.h"
-
-#include <stdlib.h>
+#include "mods.h"
 
 mesh *getMeshDefault(const item *cItem){
-	(void)cItem;
-
+	int ID = cItem->ID;
+	if(ID < 256){
+		if(!blockTypeValid(ID)){ return NULL; }
+		return blockTypeGetMesh(ID);
+	}
 	return NULL;
 }
 int damageDefault(const item *cItem){
@@ -27,10 +27,10 @@ bool primaryActionDefault(item *cItem, character *cChar, int to){
 	return false;
 }
 bool secondaryActionDefault(item *cItem, character *cChar, int to){
-	(void)cItem;
-	(void)cChar;
 	(void)to;
-
+	if((cItem->ID < 256) && blockTypeValid(cItem->ID)){
+		return characterPlaceBlock(cChar, cItem);
+	}
 	return false;
 }
 bool tertiaryActionDefault(item *cItem, character *cChar, int to){
