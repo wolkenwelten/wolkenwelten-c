@@ -2,12 +2,9 @@ static const int ITEMID=258;
 
 #include "../api_v1.h"
 
-bool pearSecondaryAction(item *cItem,character *cChar, int to){
-	(void)cItem;
-
-	if(to < 0){return false;}
+bool pearSecondaryAction(item *cItem,character *cChar){
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
-	if(itemDecStack(cItem,1)){
+	if(characterTryToUse(cChar,cItem,200,1)){
 		characterHP(cChar,8);
 		characterAddCooldown(cChar,200);
 		characterStartAnimation(cChar,4,600);

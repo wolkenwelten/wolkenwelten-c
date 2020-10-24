@@ -20,24 +20,19 @@ int assaultblasterGetStackSize(const item *cItem){
 	return 1;
 }
 
-bool assaultblasterPrimaryAction(item *cItem, character *cChar, int to){
-	(void)to;
-
+bool assaultblasterPrimaryAction(item *cItem, character *cChar){
 	if(!characterTryToShoot(cChar,cItem,15,1)){return false;}
 	beamblast(cChar,.8f,0.2f,0.05f,2,1,8.f,1.f);
 	return true;
 }
 
-bool assaultblasterSecondaryAction(item *cItem, character *cChar, int to){
-	(void)to;
-
+bool assaultblasterSecondaryAction(item *cItem, character *cChar){
 	if(!characterTryToShoot(cChar,cItem,64,3)){return false;}
 	beamblast(cChar,.8f,0.2f,0.05f,2,3,8.f,1.f);
 	return true;
 }
 
-bool assaultblasterTertiaryAction(item *cItem, character *cChar, int to){
-	(void)to;
+bool assaultblasterTertiaryAction(item *cItem, character *cChar){
 	return characterItemReload(cChar, cItem, 50);
 }
 

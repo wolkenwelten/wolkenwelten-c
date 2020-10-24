@@ -15,6 +15,7 @@ void       characterSetVelocity    (      character *c, const vec vel);
 void       characterAddInaccuracy  (      character *c, float inc);
 void       characterStartAnimation (      character *c, int index, int duration);
 bool       characterTryToShoot     (      character *c, item *i, int cooldown, int bulletcount);
+bool       characterTryToUse       (      character *c, item *i, int cooldown, int itemcount);
 bool       characterHP             (      character *c, int addhp);
 bool       characterDamage         (      character *c, int hp);
 int        characterGetItemAmount  (const character *c, u16 itemID);

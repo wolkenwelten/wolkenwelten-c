@@ -251,11 +251,11 @@ int main(int argc, char *argv[]){
 	printItemTypeDispatch("Damage","const item *cItem","cItem","int ");
 	printItemTypeDispatch("BlockDamage","const item *cItem, blockCategory blockCat","cItem, blockCat","int ");
 	printItemTypeDispatch("GetMesh","const item *cItem","cItem","mesh *");
-	printItemTypeDispatch("PrimaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
+	printItemTypeDispatch("PrimaryAction","item *cItem, character *cChar","cItem, cChar","bool ");
 	printHasTypeSwitch   ("PrimaryAction");
-	printItemTypeDispatch("SecondaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
+	printItemTypeDispatch("SecondaryAction","item *cItem, character *cChar","cItem, cChar","bool ");
 	printHasTypeSwitch   ("SecondaryAction");
-	printItemTypeDispatch("TertiaryAction","item *cItem, character *cChar, int to","cItem, cChar, to","bool ");
+	printItemTypeDispatch("TertiaryAction","item *cItem, character *cChar","cItem, cChar","bool ");
 	printHasTypeSwitch   ("TertiaryAction");
 	printItemTypeDispatch("GetInaccuracy","const item *cItem","cItem","float ");
 	printItemTypeDispatch("GetAmmunition","const item *cItem","cItem","int ");

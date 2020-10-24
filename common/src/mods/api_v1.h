@@ -64,6 +64,7 @@ int  characterGetItemAmount  (const character *c, u16 itemID);
 int  characterDecItemAmount  (      character *c, u16 itemID, int amount);
 bool characterItemReload     (      character *c, item *i, int cooldown);
 bool characterTryToShoot     (      character *c, item *i, int cooldown, int bulletcount);
+bool characterTryToUse       (      character *c, item *i, int cooldown, int itemcount);
 bool characterPlaceBlock     (      character *c, item *i);
 void characterStartAnimation (      character *c, int index, int duration);
 

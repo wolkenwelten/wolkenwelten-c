@@ -2,26 +2,23 @@ static const int ITEMID=277;
 
 #include "../api_v1.h"
 
-bool poopSecondaryAction(item *cItem,character *cChar, int to){
+mesh *poopGetMesh(const item *cItem){
 	(void)cItem;
 	(void)ITEMID;
 
-	if(to < 0){return false;}
+	return meshPoop;
+}
+
+bool poopSecondaryAction(item *cItem,character *cChar){
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
-	if(itemDecStack(cItem,1)){
-		characterHP(cChar,-2);
+	if(characterTryToUse(cChar,cItem,200,1)){
+		characterHP(cChar,1);
 		characterAddCooldown(cChar,200);
 		characterStartAnimation(cChar,4,600);
 		sfxPlay(sfxChomp,1.f);
 		return true;
 	}
 	return false;
-}
-
-mesh *poopGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshPoop;
 }
 
 int poopItemDropCallback(const item *cItem, float x, float y, float z){

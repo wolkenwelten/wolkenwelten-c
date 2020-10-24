@@ -291,6 +291,18 @@ bool characterTryToShoot(character *c, item *i, int cooldown, int bulletcount){
 	return true;
 }
 
+bool characterTryToUse(character *c, item *i, int cooldown, int itemcount){
+	if(c->actionTimeout < 0){return false;}
+	if(i->amount < itemcount){
+		sfxPlay(sfxHookFire,0.3f);
+		characterAddCooldown(c,64);
+		return false;
+	}
+	itemDecStack(i,itemcount);
+	characterAddCooldown(c,cooldown);
+	return true;
+}
+
 void characterSetInventoryP(character *c, const packet *p){
 	if(c == NULL){return;}
 	uint max = MIN(40,packetLen(p)/4);

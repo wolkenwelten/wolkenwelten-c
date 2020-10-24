@@ -19,24 +19,21 @@ int blockDamageDefault(const item *cItem, blockCategory blockCat){
 
 	return 1;
 }
-bool primaryActionDefault(item *cItem, character *cChar, int to){
+bool primaryActionDefault(item *cItem, character *cChar){
 	(void)cItem;
 	(void)cChar;
-	(void)to;
 
 	return false;
 }
-bool secondaryActionDefault(item *cItem, character *cChar, int to){
-	(void)to;
+bool secondaryActionDefault(item *cItem, character *cChar){
 	if((cItem->ID < 256) && blockTypeValid(cItem->ID)){
 		return characterPlaceBlock(cChar, cItem);
 	}
 	return false;
 }
-bool tertiaryActionDefault(item *cItem, character *cChar, int to){
+bool tertiaryActionDefault(item *cItem, character *cChar){
 	(void)cItem;
 	(void)cChar;
-	(void)to;
 
 	return false;
 }
