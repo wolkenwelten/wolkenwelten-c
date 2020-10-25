@@ -354,8 +354,9 @@ void characterDie(character *c){
 }
 
 void updateGlide(character *c){
-	if((itemIsEmpty(&c->equipment[CHAR_EQ_GLIDER])) || (c->equipment[CHAR_EQ_GLIDER].ID != I_Glider)){
+	if((c == player) && ((itemIsEmpty(&c->equipment[CHAR_EQ_GLIDER])) || (c->equipment[CHAR_EQ_GLIDER].ID != I_Glider))){
 		c->flags &= ~CHAR_GLIDE;
+		return;
 	}
 	if(!(c->flags & CHAR_GLIDE)){return;}
 	const vec   dir = vecDegToVec(c->rot);
