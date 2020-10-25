@@ -280,6 +280,7 @@ void msgBeingGotHit(i16 hp, u16 cause, being target, being culprit){
 
 	p->v.i16[0] = hp;
 	p->v.u16[1] = cause;
+
 	p->v.u32[1] = target;
 	p->v.u32[2] = culprit;
 
@@ -294,6 +295,7 @@ void msgBeingDamage(uint c, i16 hp, u16 cause, being target, being culprit, cons
 
 	p->v.u32[1] = target;
 	p->v.u32[2] = culprit;
+
 	p->v.f[3]   = pos.x;
 	p->v.f[4]   = pos.y;
 	p->v.f[5]   = pos.z;
@@ -301,14 +303,15 @@ void msgBeingDamage(uint c, i16 hp, u16 cause, being target, being culprit, cons
 	packetQueue(p,26,6*4,c);
 }
 
-void msgPlayerSetData(uint c, i16 hp, u16 activeItem, u32 flags){
+void msgPlayerSetData(uint c, i16 hp, u16 activeItem, u32 flags, u16 id){
 	packet *p = &packetBuffer;
 
 	p->v.i16[0] = hp;
 	p->v.u16[1] = activeItem;
 	p->v.u32[2] = flags;
+	p->v.u16[4] = id;
 
-	packetQueue(p,28,3*4,c);
+	packetQueue(p,28,4*4,c);
 }
 
 void msgPlayerSetInventory(uint c,const item *itm, size_t itemCount){

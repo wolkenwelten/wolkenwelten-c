@@ -296,7 +296,7 @@ static void characterSendData(const character *p, uint c){
 	msgPlayerSetInventory(c,p->inventory,40);
 	msgPlayerSetEquipment(c,p->equipment, 3);
 
-	msgPlayerSetData(c,p->hp,p->activeItem,p->flags);
+	msgPlayerSetData(c,p->hp,p->activeItem,p->flags, c);
 }
 
 static int characterLoadData(character *p, const char *pName){

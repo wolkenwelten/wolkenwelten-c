@@ -408,7 +408,8 @@ void serverParseSinglePacket(uint c, packet *p){
 			worldDirtyChunk(c,p->v.u16[0],p->v.u16[1],p->v.u16[2]);
 			break;
 		case 32:
-			animalDmgPacket(c,p);
+			fprintf(stderr,"animalDmg received from client, which should never happen\n");
+			//animalDmgPacket(c,p);
 			break;
 		case 33:
 			handlePingPong(c);

@@ -30,6 +30,7 @@
 #include <string.h>
 
 character *player;
+int        playerID = -1;
 character  characterList[64];
 int        characterCount = 0;
 character *characterFirstFree = NULL;
@@ -195,14 +196,6 @@ void characterUpdateAnimation(character *c){
 		c->gliderFade -= 0.03f;
 		if(c->gliderFade < 0.f){c->gliderFade = 0.f;}
 	}
-}
-
-void characterGotHitPacket(const packet *p){
-	const being target  = p->v.u32[1];
-	if(beingType(target) != BEING_CHARACTER){return;}
-	if(playerList[beingID(target)] == NULL) {return;}
-	character *c = playerList[beingID(target)];
-	fxBleeding(c->pos,target,p->v.i16[0],p->v.u16[1]);
 }
 
 void characterUpdateWindVolume(const character *c){
@@ -772,7 +765,7 @@ void characterDamagePacket(character *c, const packet *p){
 	const u16 cause     = p->v.u16[1];
 	const i16 hp        = p->v.u16[0];
 	if(beingType(target) != BEING_CHARACTER){return;}
-	// ToDo: check if beingID == clientID
+	if(beingID(target) != (uint)playerID)         {return;}
 
 	if(cause == 2){
 		sfxPlay(sfxImpact,1.f);
@@ -788,10 +781,26 @@ void characterDamagePacket(character *c, const packet *p){
 	}
 }
 
+void characterGotHitPacket(const packet *p){
+	const being target  = p->v.u32[1];
+	character *c = NULL;
+	if(beingType(target) != BEING_CHARACTER){return;}
+	if(beingID(target) == (uint)playerID){
+		c = player;
+	}else{
+		if(beingID(target) > 32){return;}
+		c = playerList[beingID(target)];
+	}
+	if(c == NULL){return;}
+	fxBleeding(c->pos,target,p->v.i16[0],p->v.u16[1]);
+}
+
+
 void characterSetData(character *c, const packet *p){
 	c->hp         = p->v.i16[0];
 	c->activeItem = p->v.u16[1];
 	c->flags      = p->v.u32[2];
+	playerID      = p->v.u16[4];
 	connectionState = 2;
 }
 

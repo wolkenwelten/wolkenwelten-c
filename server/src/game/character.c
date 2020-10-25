@@ -1,5 +1,6 @@
 #include "character.h"
 
+#include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/network/messages.h"
 
@@ -68,4 +69,5 @@ void characterDmgPacket(uint c, const packet *p){
 	const being culprit = beingCharacter(c);
 
 	msgBeingGotHit(hp,cause,target,culprit);
+	msgBeingDamage(beingID(target), hp, cause, target, culprit, clients[c].c->pos);
 }
