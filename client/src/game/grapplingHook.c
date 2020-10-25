@@ -221,9 +221,11 @@ void grapplingHookDrawRopes(){
 }
 
 bool grapplingHookGetHooked(const grapplingHook *ghk){
+	if(ghk == NULL){return false;}
 	return ghk->hooked;
 }
 float grapplingHookGetGoalLength(const grapplingHook *ghk){
+	if(ghk == NULL){return false;}
 	return ghk->goalLength;
 }
 void grapplingHookSetGoalLength(grapplingHook *ghk, float len){
