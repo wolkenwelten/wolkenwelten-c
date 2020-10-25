@@ -75,21 +75,21 @@ void grapplingHookUpdateRope(grapplingHook *ghk){
 	const float rlen = grapplingHookGetLength(ghk)*8;
 	m->dataCount = 0;
 
-	meshAddVert(m,px-.05f,py,pz,0.f, 0.f);
-	meshAddVert(m,px+.05f,py,pz,1.f, 0.f);
-	meshAddVert(m,hx+.05f,hy,hz,1.f,rlen);
+	meshAddVert(m,px-.05f,py,pz,0.f, .5f);
+	meshAddVert(m,px+.05f,py,pz,1.f, .5f);
+	meshAddVert(m,hx+.05f,hy,hz,1.f,rlen+.5f);
 
-	meshAddVert(m,hx+.05f,hy,hz,1.f,rlen);
-	meshAddVert(m,hx-.05f,hy,hz,0.f,rlen);
-	meshAddVert(m,px-.05f,py,pz,0.f, 0.f);
+	meshAddVert(m,hx+.05f,hy,hz,1.f,rlen+.5f);
+	meshAddVert(m,hx-.05f,hy,hz,0.f,rlen+.5f);
+	meshAddVert(m,px-.05f,py,pz,0.f, .5f);
 
-	meshAddVert(m,px-.05f,py,pz,0.f, 0.f);
-	meshAddVert(m,hx+.05f,hy,hz,1.f,rlen);
-	meshAddVert(m,px+.05f,py,pz,1.f, 0.f);
+	meshAddVert(m,px-.05f,py,pz,0.f, .5f);
+	meshAddVert(m,hx+.05f,hy,hz,1.f,rlen+.5f);
+	meshAddVert(m,px+.05f,py,pz,1.f, .5f);
 
-	meshAddVert(m,hx+.05f,hy,hz,1.f,rlen);
-	meshAddVert(m,px-.05f,py,pz,0.f, 0.f);
-	meshAddVert(m,hx-.05f,hy,hz,0.f,rlen);
+	meshAddVert(m,hx+.05f,hy,hz,1.f,rlen+.5f);
+	meshAddVert(m,px-.05f,py,pz,0.f, .5f);
+	meshAddVert(m,hx-.05f,hy,hz,0.f,rlen+.5f);
 
 
 	meshAddVert(m,px,py-.05f,pz,0.f, 0.f);
