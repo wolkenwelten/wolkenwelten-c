@@ -113,13 +113,13 @@ void renderWorld(const character *cam){
 	shadowEmpty();
 	worldDraw(cam);
 	blockMiningDraw();
-	grapplingHookDrawRopes();
 	animalDrawAll();
 	entityDrawAll();
 	characterDrawAll();
 	shadowDraw();
 	cloudsRender();
 	particleDraw();
+	grapplingHookDrawRopes();
 }
 
 void renderFrame(){
