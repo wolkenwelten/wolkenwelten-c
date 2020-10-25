@@ -14,4 +14,5 @@ extern texture *tGui;
 extern texture *tCursor;
 extern texture *tCrosshair;
 extern texture *tRope;
+extern texture *tSteelrope;
 extern texture *tBlockMining;

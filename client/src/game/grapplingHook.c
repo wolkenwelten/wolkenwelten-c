@@ -66,6 +66,12 @@ void grapplingHookUpdateRope(grapplingHook *ghk){
 	px = ghk->parent->pos.x;
 	py = ghk->parent->pos.y+ghk->ent->yoff+.1f;
 	pz = ghk->parent->pos.z;
+	const float mlen = characterGetMaxHookLen(ghk->parent);
+	if(mlen > 128.f){
+		m->tex = tSteelrope;
+	}else{
+		m->tex = tRope;
+	}
 	const float rlen = grapplingHookGetLength(ghk)*8;
 	m->dataCount = 0;
 
@@ -179,13 +185,13 @@ bool grapplingHookUpdate(grapplingHook *ghk){
 		}
 	}else{
 		if(!ghk->hooked && !ghk->returning && (ghk->ent->flags & ENTITY_COLLIDE)){
-			ghk->ent->vel = vecZero();
+			ghk->ent->vel    = vecZero();
 			ghk->ent->flags |= ENTITY_NOCLIP;
-			ghk->hooked = true;
-			ghk->goalLength = grapplingHookGetLength(ghk);
+			ghk->hooked      = true;
+			ghk->goalLength  = grapplingHookGetLength(ghk);
 			sfxPlay(sfxHookHit,1.f);
 			sfxLoop(sfxHookRope,0.f);
-			unsigned char b = worldGetB(ghk->ent->pos.x,ghk->ent->pos.y,ghk->ent->pos.z);
+			unsigned char b  = worldGetB(ghk->ent->pos.x,ghk->ent->pos.y,ghk->ent->pos.z);
 			if(b){
 				fxBlockBreak(ghk->ent->pos,b);
 			}

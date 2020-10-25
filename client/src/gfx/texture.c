@@ -12,7 +12,7 @@
 
 unsigned int boundTexture = 0;
 uint textureCount         = 0;
-texture textureList[32];
+texture textureList[256];
 
 texture *tBlocks;
 texture *tGui;
@@ -20,6 +20,7 @@ texture *tCursor;
 texture *tItems;
 texture *tCrosshair;
 texture *tRope;
+texture *tSteelrope;
 texture *tBlockMining;
 
 void textureLoadSurface(texture *t, uint w, uint h, const void *data){
@@ -184,6 +185,7 @@ void textureInit(){
 	tGui         = textureNew(gfx_gui_png_data,       gfx_gui_png_len      ,"client/gfx/gui.png");
 	tCrosshair   = textureNew(gfx_crosshair_png_data, gfx_crosshair_png_len,"client/gfx/crosshair.png");
 	tRope        = textureNew(gfx_rope_png_data,      gfx_rope_png_len     ,"client/gfx/rope.png");
+	tSteelrope   = textureNew(gfx_steelrope_png_data, gfx_steelrope_png_len,"client/gfx/steelrope.png");
 	tBlockMining = textureNew(gfx_mining_png_data,    gfx_mining_png_len   ,"client/gfx/mining.png");
 }
 
