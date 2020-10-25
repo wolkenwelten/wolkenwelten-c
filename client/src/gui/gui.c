@@ -339,6 +339,13 @@ void drawAnimalDebugOverlay(const animal *e, int i){
 	guim->fgc = ofgc;
 }
 
+static void drawHookIndicator(){
+	const float hookdist = characterCanHookHit(player);
+	if(hookdist < 0.f){return;}
+	textMeshItemSprite(guim,screenWidth/2+8,screenHeight/2+8,32,I_Hook);
+	textMeshPrintfPS(guim,screenWidth/2 + 40, screenHeight/2 + 16,2,"%.1f",hookdist);
+}
+
 void drawDebuginfo(){
 	static uint ticks = 0;
 	int tris = vboTrisCount;
@@ -364,6 +371,7 @@ void drawDebuginfo(){
 	guim->sx   = screenWidth;
 	guim->sy   = 4;
 	textMeshPrintfRA(guim,"%s",VERSION);
+	drawHookIndicator();
 
 	guim->sx   = screenWidth-48;
 	guim->sy   = 14;

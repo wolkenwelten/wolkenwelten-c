@@ -593,6 +593,35 @@ void characterFireHook(character *c){
 	}
 }
 
+float characterCanHookHit(const character *c){
+	const float maxLen = characterGetMaxHookLen(c);
+	vec pos = vecAdd(vecNew(0,1,0),c->pos);
+	vec vel = vecAdd(vecMulS(vecDegToVec(c->rot),1.3f),c->vel);
+	for(int i=0;i<1024;i++){
+		pos = vecAdd(pos,vel);
+		const vec dis = vecSub(pos,c->pos);
+		const float d = vecMag(dis);
+		if(d > maxLen){return -1.f;}
+		if(checkCollision(pos.x,pos.y,pos.z)){return d;}
+		vel.y -= 0.0005f;
+	}
+	return -1.f;
+}
+
+float characterFirstBlockDist (const character *c){
+	const float maxLen = characterGetMaxHookLen(c);
+	vec pos = vecAdd(vecNew(0,1,0),c->pos);
+	vec vel = vecAdd(vecMulS(vecDegToVec(c->rot),1.3f),c->vel);
+	for(int i=0;i<1024;i++){
+		pos = vecAdd(pos,vel);
+		const vec dis = vecSub(pos,c->pos);
+		const float d = vecMag(dis);
+		if(d > maxLen){return -1.f;}
+		if(worldGetB(pos.x,pos.y,pos.z) != 0){return d;}
+	}
+	return -1.f;
+}
+
 void characterFreeHook(character *c){
 	if(c->hook != NULL){
 		grapplingHookFree(c->hook);

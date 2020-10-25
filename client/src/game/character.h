@@ -11,6 +11,8 @@ void  characterStopMining     (character *c);
 float characterMineProgress   (character *c);
 void  characterUpdate         (character *c);
 void  characterFireHook       (character *c);
+float characterCanHookHit     (const character *c);
+float characterFirstBlockDist (const character *c);
 void  characterFreeHook       (character *c);
 void  characterDraw           (character *c);
 void  characterDropItem       (character *c, int i);
