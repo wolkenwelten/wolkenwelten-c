@@ -35,3 +35,6 @@ ivec       characterLOSBlock       (const character *c, int returnBeforeBlock);
 bool       characterItemReload     (      character *c, item *i, int cooldown);
 void       characterSetInventoryP  (      character *c, const packet *p);
 void       characterSetEquipmentP  (      character *c, const packet *p);
+
+float      characterGetMaxHookLen  (const character *c);
+float      characterGetHookWinchS  (const character *c);

@@ -323,3 +323,17 @@ void characterSetEquipmentP(character *c, const packet *p){
 		c->equipment[i].amount = p->v.i16[ii++];
 	}
 }
+
+float characterGetMaxHookLen(const character *c){
+	if(!itemIsEmpty(&c->equipment[CHAR_EQ_HOOK])){
+		if(c->equipment[CHAR_EQ_HOOK].ID == I_Hook){return 256.f;}
+	}
+	return 64;
+}
+
+float characterGetHookWinchS(const character *c){
+	if(!itemIsEmpty(&c->equipment[CHAR_EQ_HOOK])){
+		if(c->equipment[CHAR_EQ_HOOK].ID == I_Hook){return 0.1f;}
+	}
+	return 0.04f;
+}

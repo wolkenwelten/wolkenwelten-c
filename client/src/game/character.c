@@ -147,12 +147,6 @@ void characterUpdateInaccuracy(character *c){
 
 void characterUpdateHook(character *c){
 	if(c->hook == NULL){ return; }
-	if((itemIsEmpty(&c->equipment[CHAR_EQ_HOOK])) || (c->equipment[CHAR_EQ_HOOK].ID != I_Hook)){
-		sfxLoop(sfxHookRope,0.f);
-		grapplingHookFree(c->hook);
-		c->hook = NULL;
-		return;
-	}
 	if(grapplingHookUpdate(c->hook)){
 		grapplingHookFree(c->hook);
 		c->hook = NULL;
@@ -171,12 +165,14 @@ void characterUpdateHook(character *c){
 	}
 
 	if(grapplingHookGetHooked(c->hook)){
-		float gl = grapplingHookGetGoalLength(c->hook);
+		const float gl     = grapplingHookGetGoalLength(c->hook);
+		const float wspeed = characterGetHookWinchS(c);
+		const float maxl   = characterGetMaxHookLen(c);
 		if((c->gvel.y > 0) && (gl > 1.f)){
-			grapplingHookSetGoalLength(c->hook,gl-0.1f);
+			grapplingHookSetGoalLength(c->hook,gl-wspeed);
 		}
-		if((c->flags & CHAR_SNEAK) && (gl < 96.f)){
-			grapplingHookSetGoalLength(c->hook,gl+0.1f);
+		if((c->flags & CHAR_SNEAK) && (gl < maxl)){
+			grapplingHookSetGoalLength(c->hook,gl+wspeed);
 		}
 		if(grapplingHookGetLength(c->hook) > gl){
 			grapplingHookPullTowards(c->hook,c);
@@ -572,6 +568,9 @@ void characterUpdate(character *c){
 		} else if((nvel.y < -0.05f) && c->vel.y > -0.01f){
 			sfxPlay(sfxStomp,1.f);
 		}
+		if((damage > 0) && (grapplingHookGetHooked(c->hook))){
+			grapplingHookReturnHook(c->hook);
+		}
 		characterUpdateWindVolume(c);
 		characterUpdateHook(c);
 	}
@@ -589,7 +588,6 @@ void charactersUpdate(){
 
 void characterFireHook(character *c){
 	if(c->actionTimeout < 0){return;}
-	if((itemIsEmpty(&c->equipment[CHAR_EQ_HOOK])) || (c->equipment[CHAR_EQ_HOOK].ID != I_Hook)){return;}
 	characterAddCooldown(c,60);
 	if(c->hook == NULL){
 		c->hook = grapplingHookNew(c);

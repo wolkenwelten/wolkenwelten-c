@@ -1,6 +1,7 @@
 #include "../game/grapplingHook.h"
 #include "../main.h"
 #include "../game/blockType.h"
+#include "../game/character.h"
 #include "../game/entity.h"
 #include "../gfx/mat.h"
 #include "../gfx/gfx.h"
@@ -152,16 +153,16 @@ void grapplingHookPullTowards(grapplingHook *ghk,character *pull){
 
 	u32 col = entityCollision(pull->pos);
 	if(((d.x > 0) && !((col & 0x110))) || ((d.x < 0) && !((col & 0x220)))){
-		pull->pos.x -= d.x;
-		pull->vel.x -= d.x*0.2f;
+		pull->pos.x -= d.x*0.5f;
+		pull->vel.x -= d.x*0.1f;
 	}
 	if(((d.z > 0) && !((col & 0x440))) || ((d.z < 0) && !((col & 0x880)))){
-		pull->pos.z -= d.z;
-		pull->vel.z -= d.z*0.2f;
+		pull->pos.z -= d.z*0.5f;
+		pull->vel.z -= d.z*0.1f;
 	}
 	if(((d.y > 0) && !((col & 0x00F))) || ((d.y < 0) && !((col & 0x0F0)))){
-		pull->pos.y -= d.y;
-		pull->vel.y -= d.y*0.2f;
+		pull->pos.y -= d.y*0.5f;
+		pull->vel.y -= d.y*0.1f;
 	}
 	pull->shake = vecMag(pull->vel);
 }
@@ -190,7 +191,7 @@ bool grapplingHookUpdate(grapplingHook *ghk){
 			}
 		}else if(!ghk->hooked && !ghk->returning){
 			sfxLoop(sfxHookRope,1.f);
-			if(grapplingHookGetLength(ghk) > 64.f){
+			if(grapplingHookGetLength(ghk) > characterGetMaxHookLen(ghk->parent)){
 				grapplingHookReturnHook(ghk);
 			}
 		}
