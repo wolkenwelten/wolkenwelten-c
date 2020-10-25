@@ -15,7 +15,7 @@
 #include <math.h>
 
 const float ITEMTILE    = (1.f/32.f);
-bool inventoryOpen      = false;
+int inventoryOpen       = 0;
 uint  gamepadSelection  = 4096;
 item inventoryCurrentPickup;
 
@@ -175,6 +175,19 @@ void initInventory(){
 	initEquipmentSpace();
 	initCraftingSpace();
 	inventoryRadio->flags |= WIDGET_ACTIVE;
+
+	switch(inventoryOpen){
+	default:
+	case 0:
+		showInventoryPanel();
+		break;
+	case 1:
+		showInventory();
+		break;
+	case 2:
+		showCrafting();
+		break;
+	}
 }
 
 void showInventory(){
@@ -185,7 +198,7 @@ void showInventory(){
 		hideInventory();
 		return;
 	}
-	inventoryOpen = true;
+	inventoryOpen = 1;
 	showMouseCursor();
 	widgetSlideH(inventoryPanel,              gh);
 	widgetSlideW(inventorySpace,getTilesize()*10);
@@ -204,7 +217,7 @@ void showCrafting(){
 		hideInventory();
 		return;
 	}
-	inventoryOpen = true;
+	inventoryOpen = 2;
 	showMouseCursor();
 	widgetSlideH(inventoryPanel,              gh);
 	widgetSlideW(inventorySpace,               0);
@@ -222,7 +235,7 @@ void hideInventory(){
 		itemDropNewC(player, &inventoryCurrentPickup);
 		itemDiscard(&inventoryCurrentPickup);
 	}
-	openInventoryPanel();
+	showInventoryPanel();
 	widgetFocus(widgetGameScreen);
 }
 
@@ -244,7 +257,7 @@ void drawInventory(textMesh *guim){
 	}
 }
 
-void openInventoryPanel(){
+void showInventoryPanel(){
 	widgetSlideH(inventoryPanel,getTilesize()+32);
 	widgetSlideW(inventorySpace,getTilesize()*10);
 	widgetSlideY(inventorySpace,               0);
@@ -252,7 +265,7 @@ void openInventoryPanel(){
 	widgetSlideW(craftingSpace,                0);
 }
 
-void closeInventoryPanel(){
+void hideInventoryPanel(){
 	widgetSlideH(inventoryPanel,               0);
 	widgetSlideW(inventorySpace,getTilesize()*10);
 	widgetSlideW(craftingSpace,                0);

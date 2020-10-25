@@ -4,11 +4,11 @@
 
 extern widget *inventoryPanel;
 
-void showCrafting        ();
-void showInventory       ();
-void hideInventory       ();
-bool isInventoryOpen     ();
-void initInventory       ();
-void drawInventory       (textMesh *guim);
-void openInventoryPanel  ();
-void closeInventoryPanel ();
+void showCrafting       ();
+void showInventory      ();
+void hideInventory      ();
+bool isInventoryOpen    ();
+void initInventory      ();
+void drawInventory      (textMesh *guim);
+void showInventoryPanel ();
+void hideInventoryPanel ();

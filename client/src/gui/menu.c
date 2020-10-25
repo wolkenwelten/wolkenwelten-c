@@ -46,7 +46,7 @@ void startMultiplayer(){
 
 	closeAllMenus();
 	hideMouseCursor();
-	openInventoryPanel();
+	showInventoryPanel();
 	widgetFocus(widgetGameScreen);
 }
 
@@ -67,7 +67,7 @@ void closeAllMenus(){
 	closeSingleplayerMenu();
 	closeMultiplayerMenu();
 	closeOptionsMenu();
-	closeInventoryPanel();
+	hideInventoryPanel();
 	widgetFocus(NULL);
 }
 

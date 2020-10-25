@@ -154,7 +154,7 @@ void handlerChatBlur(widget *wid){
 
 static void handlerGameFocus(widget *wid){
 	(void)wid;
-	openInventoryPanel();
+	showInventoryPanel();
 }
 
 void initUI(){
