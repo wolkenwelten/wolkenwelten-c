@@ -193,7 +193,7 @@ bool grapplingHookUpdate(grapplingHook *ghk){
 			sfxLoop(sfxHookRope,0.f);
 			unsigned char b  = worldGetB(ghk->ent->pos.x,ghk->ent->pos.y,ghk->ent->pos.z);
 			if(b){
-				fxBlockBreak(ghk->ent->pos,b);
+				fxBlockBreak(vecFloor(ghk->ent->pos),b);
 			}
 		}else if(!ghk->hooked && !ghk->returning){
 			sfxLoop(sfxHookRope,1.f);
