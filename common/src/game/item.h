@@ -32,7 +32,7 @@ int   itemDecAmmo    (      item *i, i16 amount);
 #define I_Hewn_Log      16
 #define I_Board         17
 #define I_Crystal       18
-#define I_Sakura        19
+#define I_Sakura_Leaf   19
 #define I_Birch         20
 #define I_Flower        21
 
