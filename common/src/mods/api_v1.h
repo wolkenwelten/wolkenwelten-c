@@ -44,6 +44,13 @@
 #define I_Crystal_Pick 271
 #define I_Cherry       272
 #define I_ClusterBomb  273
+#define I_Glider       274
+#define I_Hook         275
+#define I_Jetpack      276
+#define I_Poop         277
+#define I_Meat         278
+#define I_Cookedmeat   279
+#define I_Fur          280
 
 void recipeNew1 (const item result, const item ingred1);
 void recipeNew2 (const item result, const item ingred1, const item ingred2);

@@ -2,8 +2,10 @@
 
 #include "../game/animal.h"
 #include "../game/entity.h"
+#include "../game/itemDrop.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/misc/misc.h"
 
@@ -123,4 +125,9 @@ void animalThinkGuardian(animal *e){
 		animalSLoiter(e);
 		break;
 	}
+}
+
+void animalRDieGuardian(animal *e){
+	item drop = itemNew(I_Bullet,rngValMM(20,40));
+	itemDropNewP(e->pos,&drop);
 }

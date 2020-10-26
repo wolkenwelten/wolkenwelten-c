@@ -58,3 +58,6 @@ int   itemDecAmmo    (      item *i, i16 amount);
 #define I_Hook         275
 #define I_Jetpack      276
 #define I_Poop         277
+#define I_Meat         278
+#define I_Cookedmeat   279
+#define I_Fur          280

@@ -124,8 +124,16 @@ void animalCheckSuffocation(animal *e){
 }
 
 void animalRDie(animal *e){
-	item drop = itemNew(I_Pear,rngValMM(3,6));
-	itemDropNewP(e->pos,&drop);
+	switch(e->type){
+	default:
+		break;
+	case 1:
+		animalRDieBunny(e);
+		break;
+	case 2:
+		animalRDieGuardian(e);
+		break;
+	}
 	msgAnimalDied(-1,e->pos, e->type, e->age);
 	addPriorityAnimal(e-animalList);
 }

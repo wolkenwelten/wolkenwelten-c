@@ -430,3 +430,10 @@ void animalThinkBunny(animal *e){
 		break;
 	}
 }
+
+void animalRDieBunny(animal *e){
+	item mdrop = itemNew(I_Meat,rngValMM(2,4));
+	item fdrop = itemNew(I_Fur, rngValMM(1,2));
+	itemDropNewP(e->pos,&mdrop);
+	itemDropNewP(e->pos,&fdrop);
+}
