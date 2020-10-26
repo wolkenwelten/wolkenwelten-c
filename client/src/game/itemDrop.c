@@ -38,10 +38,9 @@ void itemDropUpdateFromServer(const packet *p){
 
 	if(len < itemDropCount){
 		for(int i=MAX(0,len-1);i<itemDropCount;i++){
-			if(itemDrops[i].ent != NULL){
-				entityFree(itemDrops[i].ent);
-				itemDrops[i].ent = NULL;
-			}
+			if(itemDrops[i].ent == NULL){continue;}
+			entityFree(itemDrops[i].ent);
+			itemDrops[i].ent = NULL;
 		}
 	}
 	itemDropCount = len;
