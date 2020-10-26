@@ -49,7 +49,7 @@ vec doKeyboardupdate(vec vel){
 	characterRotate(player,vecMulS(rot,3));
 
 	if(keysPressed[6]){
-		characterDropItem(player,player->activeItem);
+		characterDropSingleItem(player,player->activeItem);
 	}
 	return vel;
 }

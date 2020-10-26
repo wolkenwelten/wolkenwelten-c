@@ -177,7 +177,7 @@ vec doGamepadupdate(vec vel){
 	if(gamepadButtons[3]){
 		gamepadButtons[3] = false;
 		if(!isInventoryOpen()){
-			characterDropItem(player,player->activeItem);
+			characterDropSingleItem(player,player->activeItem);
 		}
 	}
 	if(gamepadButtons[6]){

@@ -16,6 +16,7 @@ float characterFirstBlockDist (const character *c);
 void  characterFreeHook       (character *c);
 void  characterDraw           (character *c);
 void  characterDropItem       (character *c, int i);
+void  characterDropSingleItem (character *c, int i);
 void  characterMoveDelta      (character *c, const packet *p);
 void  characterDamagePacket   (character *c, const packet *p);
 void  characterSetData        (character *c, const packet *p);

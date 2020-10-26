@@ -320,15 +320,24 @@ void characterTertiary(character *c){
 }
 
 void characterDropItem(character *c, int i){
-	item *cItem;
-	if(c->actionTimeout < 0){ return; }
-	cItem = characterGetItemBarSlot(c,i);
+	item *cItem = characterGetItemBarSlot(c,i);
 	if(cItem == NULL)       { return; }
 	if(itemIsEmpty(cItem))  { return; }
-	characterAddCooldown(c,50);
 
 	itemDropNewC(c, cItem);
 	itemDiscard(cItem);
+}
+
+void characterDropSingleItem(character *c, int i){
+	if(c->actionTimeout < 0){ return; }
+	item *cItem = characterGetItemBarSlot(c,i);
+	if(cItem == NULL)       { return; }
+	if(itemIsEmpty(cItem))  { return; }
+	item dItem = itemNew(cItem->ID,1);
+	dItem.amount = itemDecStack(cItem,1);
+	if(itemIsEmpty(&dItem)) { return; }
+	characterAddCooldown(c,50);
+	itemDropNewC(c, &dItem);
 }
 
 void characterDie(character *c){
