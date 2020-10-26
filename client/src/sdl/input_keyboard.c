@@ -132,6 +132,10 @@ void keyboardEventHandler(const SDL_Event *e){
 			textureReload();
 			break;
 
+		case SDL_SCANCODE_F6:
+			worstFrame = 0;
+			break;
+
 		case SDL_SCANCODE_F11:
 			setFullscreen(!optionFullscreen);
 			break;
