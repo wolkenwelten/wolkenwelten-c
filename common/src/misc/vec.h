@@ -27,6 +27,9 @@ static inline vec vecNewU(const uvec a){
 static inline vec vecNewI(const ivec a){
 	return (vec){{{a.x,a.y,a.z}}};
 }
+static inline vec vecNOne(){
+	return (vec){{{-1.f,-1.f,-1.f}}};
+}
 static inline vec vecZero(){
 	return (vec){{{0.f,0.f,0.f}}};
 }

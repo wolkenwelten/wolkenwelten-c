@@ -17,7 +17,7 @@ animal  animalList[1<<10];
 uint    animalCount = 0;
 animal *animalFirstFree = NULL;
 
-#define ANIMAL_FADEOUT (128.f)
+#define ANIMAL_FADEOUT (256.f)
 
 static const mesh *animalGetMesh(const animal *e){
 	switch(e->type){
@@ -57,7 +57,10 @@ static void animalDraw(animal *e){
 void animalDrawAll(){
 	shaderBind(sMesh);
 	for(uint i=0;i<animalCount;i++){
-		if(animalDistance(&animalList[i],player) > ANIMAL_FADEOUT){ continue; }
+		if(animalDistance(&animalList[i],player) > ANIMAL_FADEOUT){
+			animalList[i].screenPos = vecNOne();
+			continue;
+		}
 		animalDraw(&animalList[i]);
 	}
 }
