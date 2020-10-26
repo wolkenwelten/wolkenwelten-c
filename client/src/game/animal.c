@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-animal  animalList[1<<10];
+animal  animalList[1<<12];
 uint    animalCount = 0;
 animal *animalFirstFree = NULL;
 
