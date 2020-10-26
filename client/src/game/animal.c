@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-animal  animalList[1<<12];
+animal  animalList[1<<10];
 uint    animalCount = 0;
 animal *animalFirstFree = NULL;
 
@@ -57,7 +57,7 @@ static void animalDraw(animal *e){
 void animalDrawAll(){
 	shaderBind(sMesh);
 	for(uint i=0;i<animalCount;i++){
-		if(animalDistance(&animalList[i],player) > (ANIMAL_FADEOUT * ANIMAL_FADEOUT)){ continue; }
+		if(animalDistance(&animalList[i],player) > ANIMAL_FADEOUT){ continue; }
 		animalDraw(&animalList[i]);
 	}
 }
