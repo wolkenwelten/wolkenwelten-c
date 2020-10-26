@@ -8,15 +8,16 @@
 #include "../gfx/gfx.h"
 #include "../gfx/textMesh.h"
 #include "../gui/gui.h"
+#include "../sdl/sdl.h"
 #include "../sdl/sfx.h"
 #include "../main.h"
 
 #include <stddef.h>
 #include <math.h>
 
-const float ITEMTILE    = (1.f/32.f);
-int inventoryOpen       = 0;
-uint  gamepadSelection  = 4096;
+const float ITEMTILE   = (1.f/32.f);
+int  inventoryOpen     = 0;
+uint gamepadSelection  = 4096;
 item inventoryCurrentPickup;
 
 widget *inventoryPanel;
@@ -245,6 +246,7 @@ bool isInventoryOpen(){
 
 void drawInventory(textMesh *guim){
 	static uint ticks = 0;
+	static uint lastDrop = 0;
 	const uint tilesize = getTilesize();
 	if(!isInventoryOpen()){return;}
 
@@ -252,8 +254,24 @@ void drawInventory(textMesh *guim){
 	const int animY = cos((float)ticks/24.f)*tilesize/8;
 	++ticks;
 
-	if(!mouseHidden){
+	if(!mouseHidden && !itemIsEmpty(&inventoryCurrentPickup)){
 		textMeshItem(guim,mousex+animX-tilesize/8,mousey+animY-tilesize/8,tilesize,3,&inventoryCurrentPickup);
+		if(((int)mousex > (screenWidth  - inventoryPanel->w)) &&
+		   ((int)mousey > (screenHeight - inventoryPanel->h))) {return;}
+
+		if(mouseClicked[0]){
+			itemDropNewC(player, &inventoryCurrentPickup);
+			itemDiscard(&inventoryCurrentPickup);
+		}else if(mouseClicked[2]){
+			uint curTicks = getTicks();
+			if(curTicks < lastDrop + 50){
+				return;
+			}
+			lastDrop     = curTicks;
+			item dItem   = itemNew(inventoryCurrentPickup.ID,1);
+			dItem.amount = itemDecStack(&inventoryCurrentPickup,1);
+			itemDropNewC(player,&dItem);
+		}
 	}
 }
 

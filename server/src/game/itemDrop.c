@@ -161,7 +161,6 @@ static int itemDropCheckCollation(uint ai){
 			itemDrops[bi].ent->vel = vecAdd(itemDrops[bi].ent->vel,itemDrops[ai].ent->vel);
 			itemDrops[bi].ent->pos = vecMulS(vecAdd(itemDrops[bi].ent->pos,itemDrops[ai].ent->pos),0.5f);
 			entityUpdateCurChungus(itemDrops[bi].ent);
-			addPriorityItemDrop(bi);
 			return 1;
 		}
 	}
