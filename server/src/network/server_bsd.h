@@ -103,15 +103,13 @@ uint serverSendRaw(uint c, void *p, uint len){
 		const int ret = send(clients[c].socket,p+sent,len-sent,0);
 		if(ret < 0){
 			if(errno == EAGAIN){
-				if(sent > 0){return sent;}
-				if(--tries == 0){return 0;}
+				if(sent > 0)     {return sent;}
+				if(--tries == 0) {return 0;}
 				usleep(1);
-			}else{
-				return 0;
 			}
-		}else{
-			sent += ret;
+			return 0;
 		}
+		sent += ret;
 	}
 	return sent;
 }

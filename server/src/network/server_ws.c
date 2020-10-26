@@ -132,9 +132,16 @@ void serverParseWebSocketHeaderField(uint c,const char *key, const char *val){
 	printf("\n");
 	printf("B64 = %s\n",b64hash);
 
-	len = snprintf(buf,sizeof(buf),"HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Protocol: binary\r\nSec-WebSocket-Accept: %s\r\n\r\n",b64hash);
-	const uint ret = serverSendRaw(c, buf, len);
-	if(ret < len){serverKill(c);return;}
+	len = snprintf(buf,sizeof(buf),
+		"HTTP/1.1 101 Switching Protocols\r\n"
+		"Upgrade: websocket\r\n"
+		"Connection: Upgrade\r\n"
+		"Sec-WebSocket-Protocol: binary\r\n"
+		"Sec-WebSocket-Accept: %s\r\n"
+		"\r\n",b64hash);
+
+	uint ret = serverSendRaw(c,buf,len);
+	if(ret != len){serverKill(c);}
 	clients[c].flags |= CONNECTION_WEBSOCKET;
 }
 

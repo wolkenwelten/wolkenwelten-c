@@ -121,15 +121,14 @@ uint serverSendRaw(uint c, void *p, uint len){
 		if(ret == SOCKET_ERROR){
 			const int err = WSAGetLastError();
 			if((err == WSAEWOULDBLOCK) || (err == WSAEINPROGRESS)){
-				if(sent > 0){return sent;}
-				if(--tries == 0){return 0;}
+				if(sent > 0)     {return sent;}
+				if(--tries == 0) {return 0;}
 				usleep(1);
-			}else{
-				return 0;
+				continue;
 			}
-		}else{
-			sent += ret;
+			return 0;
 		}
+		sent += ret;
 	}
 	return sent;
 }

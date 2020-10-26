@@ -470,7 +470,6 @@ void serverParseConnection(uint c){
 		if(clients[c].recvBuf[ii-2] != '\n'){ continue; }
 		if(clients[c].recvBuf[ii-3] != '\r'){ continue; }
 
-		clients[c].recvBuf[ii-1] = 0;
 		if( (clients[c].recvBuf[0] == 'G') &&
 			(clients[c].recvBuf[1] == 'E') &&
 			(clients[c].recvBuf[2] == 'T') &&
