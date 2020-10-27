@@ -123,9 +123,11 @@ typedef struct {
 	int  hematiteChance;
 	int  coalChance;
 	int  dirtVeinChance;
+	int  crystalChance;
 
 	int  lastBlock;
 	int  airBlocks;
+	int  leafBlocks;
 
 	int  treeType;
 	bool hasSpecial;
@@ -137,7 +139,14 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 
 	w->hematiteChance = 512;
 	w->coalChance     = 512;
-	w->dirtVeinChance = 128;
+	w->dirtVeinChance = 256;
+
+	if(wgen->layer > 16){
+		w->crystalChance  = 1024;
+		w->hematiteChance =  256;
+		w->coalChance     =  256;
+		w->dirtVeinChance =  192;
+	}
 
 	switch(wgen->vegetationChance){
 		case 7:
@@ -303,6 +312,57 @@ static inline bool worldgenRDDirt(worldgen *wgen, wgChances *w, int cx, int cy, 
 	return true;
 }
 
+static void worldgenRDFirstPass(worldgen *wgen, wgChances *w){
+	chungus *clay = wgen->clay;
+	for(int cz=wgen->minZ;cz<=wgen->maxZ;cz++){
+		int z = cz&0xF;
+		for(int cx=wgen->minX;cx<=wgen->maxX;cx++){
+			int x = cx&0xF;
+			w->airBlocks = 8;
+			w->lastBlock = 0;
+			chunk *chnk = NULL;
+			for(int cy=wgen->maxY;cy>=wgen->minY;cy--){
+				if((chnk == NULL) || ((cy&0xF)==0xF)){
+					chnk = clay->chunks[cx>>4][cy>>4][cz>>4];
+				}
+				if(chnk == NULL){
+					w->lastBlock = 0;
+					w->airBlocks += cy - (cy&(~0xF));
+					cy = cy & (~0xF);
+					continue;
+				}
+				u8 b = chnk->data[x][cy&0xF][z];
+				switch(b){
+					default:
+						w->airBlocks = 0;
+					break;
+
+					case I_Oak_Leaf:
+					case I_Spruce_Leaf:
+					case I_Sakura_Leaf:
+					case 0:
+						w->airBlocks++;
+						break;
+					case I_Stone:
+						w->airBlocks = 0;
+						if(worldgenRDHematite(wgen,w,cx,cy,cz)) {continue;}
+						if(worldgenRDCoal(wgen,w,cx,cy,cz))     {continue;}
+						if(worldgenRDDirt(wgen,w,cx,cy,cz))     {continue;}
+						break;
+					case I_Dirt:
+						if(worldgenRDMonolith(wgen,w,cx,cy,cz)) {continue;}
+						if(worldgenRDBigTree(wgen,w,cx,cy,cz))  {continue;}
+						if(worldgenRDTree(wgen,w,cx,cy,cz))     {continue;}
+						if(worldgenRDAnimal(wgen,w,cx,cy,cz))   {continue;}
+						if(worldgenRDDeadTree(wgen,w,cx,cy,cz)) {continue;}
+					break;
+				}
+				w->lastBlock = b;
+			}
+		}
+	}
+}
+
 void worldgenRemoveDirt(worldgen *wgen){
 	chungus *clay = wgen->clay;
 	wgChances w;
@@ -315,13 +375,16 @@ void worldgenRemoveDirt(worldgen *wgen){
 	if(wgen->maxY >= CHUNGUS_SIZE){wgen->maxY = CHUNGUS_SIZE-1;}
 	if(wgen->maxZ >= CHUNGUS_SIZE){wgen->maxZ = CHUNGUS_SIZE-1;}
 
+	worldgenRDFirstPass(wgen,&w);
+
 	for(int cz=wgen->minZ;cz<=wgen->maxZ;cz++){
 		int z = cz&0xF;
 		for(int cx=wgen->minX;cx<=wgen->maxX;cx++){
 			int x = cx&0xF;
-			w.airBlocks = 8;
-			w.lastBlock = 0;
-			chunk *chnk = NULL;
+			w.airBlocks  = 8;
+			w.lastBlock  = 0;
+			w.leafBlocks = 0;
+			chunk *chnk  = NULL;
 			for(int cy=wgen->maxY;cy>=wgen->minY;cy--){
 				if((chnk == NULL) || ((cy&0xF)==0xF)){
 					chnk = clay->chunks[cx>>4][cy>>4][cz>>4];
@@ -335,41 +398,31 @@ void worldgenRemoveDirt(worldgen *wgen){
 				u8 b = chnk->data[x][cy&0xF][z];
 				switch(b){
 					default:
-						w.airBlocks = 0;
-					break;
-					case 0:
+						w.leafBlocks = w.airBlocks = 0;
+						break;
+
 					case I_Oak_Leaf:
 					case I_Spruce_Leaf:
 					case I_Sakura_Leaf:
+						w.leafBlocks++; /* Fall through */
+					case 0:
 						w.airBlocks++;
 						break;
-					case I_Stone:
-						w.airBlocks = 0;
-						if(worldgenRDHematite(wgen,&w,cx,cy,cz)) {continue;}
-						if(worldgenRDCoal(wgen,&w,cx,cy,cz)) {continue;}
-						if(worldgenRDDirt(wgen,&w,cx,cy,cz)) {continue;}
-						break;
 					case I_Dirt:
-						if(worldgenRDMonolith(wgen,&w,cx,cy,cz)) {continue;}
-						if(worldgenRDBigTree(wgen,&w,cx,cy,cz))  {continue;}
-						if(worldgenRDTree(wgen,&w,cx,cy,cz))     {continue;}
-						if(worldgenRDAnimal(wgen,&w,cx,cy,cz))   {continue;}
-						if(worldgenRDDeadTree(wgen,&w,cx,cy,cz)) {continue;}
-						if(worldgenRDShrub(wgen,&w,cx,cy,cz))    {continue;}
-
-						if(w.airBlocks > 8){
-							w.lastBlock = I_Dirt;
+					case I_Stone:
+					case I_Hematite_Ore:
+					case I_Coal:
+					case I_Crystal:
+						if(!w.airBlocks)                      {continue;}
+						if(worldgenRDShrub(wgen,&w,cx,cy,cz)) {continue;}
+						if((w.airBlocks > 8) && (w.leafBlocks < 3)){
 							chnk->data[x][cy&0xF][z] = I_Grass;
-						}else if((w.lastBlock == I_Dirt) || (w.lastBlock == I_Grass)){
+						}else if(w.airBlocks > 3){
 							chnk->data[x][cy&0xF][z] = I_Dirt;
-						}else{
-							w.lastBlock = chnk->data[x][cy&0xF][z] = I_Stone;
-							continue;
 						}
 						w.airBlocks = 0;
 					break;
 				}
-				w.lastBlock = b;
 			}
 		}
 	}
