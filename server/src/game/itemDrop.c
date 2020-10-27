@@ -14,8 +14,6 @@
 itemDrop itemDrops[ITEM_DROPS_MAX];
 uint     itemDropCount;
 
-#define ITEM_DROPS_PER_UPDATE 16u
-
 static inline void itemDropUpdateMsg(uint c,uint i){
 	if(i >= itemDropCount)       {return;}
 	if(itemDrops[i].ent == NULL) {return;}
@@ -31,7 +29,7 @@ static inline void itemDropUpdateMsg(uint c,uint i){
 
 uint itemDropUpdatePlayer(uint c, uint offset){
 	const item iZero = {0,0};
-	const uint max = MIN(offset+ITEM_DROPS_PER_UPDATE,itemDropCount);
+	const uint max = MIN(offset+clients[c].itemDropUpdateWindowSize,itemDropCount);
 	if(itemDropCount == 0){msgItemDropUpdate(c,vecZero(),vecZero(),&iZero,0,0);}
 	for(uint i=0;i<clients[c].itemDropPriorityQueueLen;i++){
 		itemDropUpdateMsg(c,clients[c].itemDropPriorityQueue[i]);
@@ -40,8 +38,14 @@ uint itemDropUpdatePlayer(uint c, uint offset){
 	for(uint i=offset;i<max;i++){
 		itemDropUpdateMsg(c,i);
 	}
-	offset += ITEM_DROPS_PER_UPDATE;
+	offset += clients[c].itemDropUpdateWindowSize;
 	if(offset >= itemDropCount){offset=0;}
+	if(getClientLatency(c) < 100){
+		clients[c].itemDropUpdateWindowSize += 2;
+	}else{
+		clients[c].itemDropUpdateWindowSize /= 2;
+	}
+	clients[c].itemDropUpdateWindowSize = MAX(2,MIN(16,clients[c].itemDropUpdateWindowSize));
 	return offset;
 }
 

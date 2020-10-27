@@ -22,8 +22,6 @@ animal  animalList[1<<10];
 uint    animalCount = 0;
 animal *animalFirstFree = NULL;
 
-#define ANIMALS_PER_UPDATE 8u
-
 animal *animalNew(const vec pos , int type, int gender){
 	animal *e = NULL;
 	if(animalCount >= ((sizeof(animalList) / sizeof(animal)-1))){return NULL;}
@@ -228,7 +226,7 @@ static void animalSync(u8 c, u16 i){
 }
 
 uint animalSyncPlayer(u8 c, uint offset){
-	const uint max = MIN((offset+ANIMALS_PER_UPDATE),animalCount);
+	const uint max = MIN((offset+clients[c].animalUpdateWindowSize),animalCount);
 	if(animalCount == 0){
 		animalEmptySync(c);
 		return offset;
@@ -241,8 +239,14 @@ uint animalSyncPlayer(u8 c, uint offset){
 	for(uint i=offset;i<max;i++){
 		animalSync(c,i);
 	}
-	offset += ANIMALS_PER_UPDATE;
+	offset += clients[c].animalUpdateWindowSize;
 	if(offset >= animalCount){offset=0;}
+	if(getClientLatency(c) < 100){
+		clients[c].animalUpdateWindowSize += 1;
+	}else{
+		clients[c].animalUpdateWindowSize /= 2;
+	}
+	clients[c].animalUpdateWindowSize = MAX(1,MIN(8,clients[c].animalUpdateWindowSize));
 	return offset;
 }
 

@@ -23,7 +23,7 @@ bool quit = false;
 char *termColors[16];
 char *termReset;
 char *nop = "";
-char *ansiColors[16] = {
+char *ansiFG[16] = {
 	"\033[0;30m",
 	"\033[0;31m",
 	"\033[0;32m",
@@ -79,7 +79,7 @@ void initTermColors(){
 	}else{
 		termReset = "\033[0m";
 		for(int i=0;i<16;i++){
-			termColors[i] = ansiColors[i];
+			termColors[i] = ansiFG[i];
 		}
 	}
 }

@@ -10,10 +10,12 @@ typedef struct {
 	uint animalUpdateOffset;
 	uint animalPriorityQueueLen;
 	u16  animalPriorityQueue[128];
+	uint animalUpdateWindowSize;
 
 	uint itemDropUpdateOffset;
 	uint itemDropPriorityQueueLen;
 	u16  itemDropPriorityQueue[128];
+	uint itemDropUpdateWindowSize;
 
 	uint chngReqQueueLen;
 	u32  chngReqQueue[128];
@@ -60,6 +62,7 @@ void serverSendChatMsg     (const char *msg);
 
 int  getClientByName       (const char *name);
 int  getClientByCharacter  (const character *c);
+uint getClientLatency      (uint c);
 uint serverSendRaw         (uint c, void *p, uint len);
 int  serverSendClient      (uint c);
 void serverAccept          ();

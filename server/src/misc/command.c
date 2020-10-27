@@ -1,5 +1,6 @@
 #include "command.h"
 
+#include "../main.h"
 #include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/entity.h"
@@ -255,6 +256,20 @@ void cmdHelp(int c, const char *cmd){
 	serverSendChatMsg(".tp X Y Z [PLAYER} = Teleports a player to an absolute position");
 }
 
+static const char *colorSignalHigh(int err, int warn, int good, int v){
+	if(v <= err) {return ansiFG[ 9];}
+	if(v <= warn){return ansiFG[11];}
+	if(v >= good){return ansiFG[10];}
+	return ansiFG[15];
+}
+/*
+static const char *colorSignalLow(int err, int warn, int good, int v){
+	if(v >= err) {return ansiFG[ 9];}
+	if(v >= warn){return ansiFG[11];}
+	if(v <= good){return ansiFG[10];}
+	return ansiFG[15];
+}*/
+
 int parseCommand(int c, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
@@ -303,29 +318,41 @@ int parseCommand(int c, const char *cmd){
 		return 1;
 	}
 
-	if(strncmp(tcmp,"acount",2) == 0){
+	if(strncmp(tcmp,"acount",6) == 0){
 		snprintf(replyBuf,sizeof(replyBuf),".acount : %i",animalCount);
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"bmcount",2) == 0){
+	if(strncmp(tcmp,"bmcount",7) == 0){
 		snprintf(replyBuf,sizeof(replyBuf),".bmcount : %i",blockMiningGetActive());
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"idcount",2) == 0){
+	if(strncmp(tcmp,"idcount",7) == 0){
 		snprintf(replyBuf,sizeof(replyBuf),".idcount : %i",itemDropGetActive());
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"ecount",2) == 0){
+	if(strncmp(tcmp,"ecount",6) == 0){
 		snprintf(replyBuf,sizeof(replyBuf),".ecount : %i",entityCount);
+		replyBuf[sizeof(replyBuf)-1]=0;
+		serverSendChatMsg(replyBuf);
+		return 1;
+	}
+
+	if(strncmp(tcmp,"wsize",5) == 0){
+		const uint aws  = clients[c].animalUpdateWindowSize;
+		const uint idws = clients[c].itemDropUpdateWindowSize;
+		snprintf(replyBuf,sizeof(replyBuf),"[A:%s%i%s][ID:%s%i%s]",
+			colorSignalHigh(2,4, 8, aws),aws, ansiFG[15],
+			colorSignalHigh(4,8,16,idws),idws,ansiFG[15]
+			);
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;

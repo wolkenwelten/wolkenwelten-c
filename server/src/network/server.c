@@ -111,8 +111,10 @@ void serverInitClient(uint c){
 	clients[c].chnkReqQueueLen          = 0;
 	clients[c].state                    = STATE_CONNECTING;
 	clients[c].flags                    = 0;
+	clients[c].animalUpdateWindowSize   = 1;
 	clients[c].animalUpdateOffset       = 0;
 	clients[c].animalPriorityQueueLen   = 0;
+	clients[c].itemDropUpdateWindowSize = 1;
 	clients[c].itemDropUpdateOffset     = 0;
 	clients[c].itemDropPriorityQueueLen = 0;
 
@@ -275,6 +277,11 @@ void dispatchBeingDmg(uint c, const packet *p){
 void handlePingPong(uint c){
 	u64 curPing = getTicks();
 	clients[c].lastPing = curPing;
+}
+
+uint getClientLatency(uint c){
+	if(clients[c].lastPing == 0){return 1;}
+	return getTicks() - clients[c].lastPing;
 }
 
 void serverParseSinglePacket(uint c, packet *p){
