@@ -38,7 +38,15 @@ rope *ropeNew(being a, being b){
 
 float ropeLength(const rope *r){
 	if(r == NULL){return 1.f;}
-	return vecMag(vecSub(beingGetPos(r->a),beingGetPos(r->b)));
+	float len = 0;
+	const vec ap = beingGetPos(r->a);
+	const vec bp = beingGetPos(r->b);
+	len += vecMag(vecSub(ap,r->nodes[0]->pos));
+	for(int i=0;i<15;i++){
+		len += vecMag(vecSub(r->nodes[i]->pos,r->nodes[i+1]->pos));
+	}
+	len += vecMag(vecSub(bp,r->nodes[15]->pos));
+	return len;
 }
 
 void ropeFree(rope *r){
@@ -54,6 +62,7 @@ void ropeFree(rope *r){
 void ropePullTowards(being a, being b, float goalLen){
 	const vec ap = beingGetPos(a);
 	const vec bp = beingGetPos(b);
+	//fprintf(stderr,"AP[%f:%f:%f]{%x} BP[%f:%f:%f]{%x} GL:%f \n",ap.x,ap.y,ap.z,a,bp.x,bp.y,bp.z,b,goalLen);
 	if(ap.x < 0){return;}
 	if(bp.x < 0){return;}
 	const float len = vecMag(vecSub(ap,bp));
@@ -76,20 +85,29 @@ void ropePullTowards(being a, being b, float goalLen){
 	}
 	(void)velAdd;
 	(void)posAdd;
+	//fprintf(stderr,"AP[%f:%f:%f] BP[%f:%f:%f] L:%f GL:%f PA:[%f:%f:%f] VA:[%f:%f:%f]\n",ap.x,ap.y,ap.z,bp.x,bp.y,bp.z,len,goalLen,posAdd.x,posAdd.y,posAdd.z,velAdd.x,velAdd.y,velAdd.z);
 	beingAddPos(b,posAdd);
 	beingAddVel(b,velAdd);
 	//pull->shake = vecMag(pull->vel);
 }
 
 static void ropeUpdate(rope *r){
-	const float segmentLen = r->length / 16.f;
-	being a = r->a;
+	float segmentLen;
+	if(r == NULL){return;}
+	if(r->a == 0){return;}
+	if(r->b == 0){return;}
+	if(r->length > 0.f){
+		segmentLen = r->length / 16.f;
+	}else{
+		segmentLen = ropeLength(r) / 16.f;
+	}
+	being a = r->b;
 	for(int i=0;i<16;i++){
 		being t = entityGetBeing(r->nodes[i]);
 		ropePullTowards(a,t,segmentLen);
 		a = t;
 	}
-	ropePullTowards(a,r->b,segmentLen);
+	//ropePullTowards(a,r->b,segmentLen);
 }
 
 void  ropeUpdateAll(){

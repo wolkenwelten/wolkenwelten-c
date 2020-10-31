@@ -176,7 +176,7 @@ void entityUpdateAll(){
 
 entity *entityGetByBeing(being b){
 	const uint i = beingID(b);
-	if(beingType(b) != BEING_ANIMAL){ return NULL; }
+	if(beingType(b) != BEING_ENTITY){ return NULL; }
 	if(i >= entityCount)            { return NULL; }
 	return &entityList[i];
 }

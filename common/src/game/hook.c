@@ -74,7 +74,8 @@ void hookReturnHook(hook *ghk){
 
 bool hookUpdate(hook *ghk){
 	entityUpdate(ghk->ent);
-	ghk->rope->length = ghk->goalLength;
+	//ghk->rope->length = ghk->goalLength;
+	ghk->rope->length = -1.f;
 
 	if(ghk->returning && hookReturnToParent(ghk,0.01f)){
 		return true;

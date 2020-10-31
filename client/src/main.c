@@ -111,6 +111,7 @@ void worldUpdate(){
 		entityUpdateAll();
 		itemDropUpdate();
 		particleUpdate();
+		ropeUpdateAll();
 
 		commitOverlayColor();
 	}

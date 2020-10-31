@@ -566,8 +566,10 @@ void characterFireHook(character *c){
 		sfxPlay(sfxHookFire,1.f);
 		characterStartAnimation(c,1,350);
 	}else{
-		hookReturnHook(c->hook);
-		characterStartAnimation(c,1,350);
+		hookFree(c->hook);
+		c->hook = NULL;
+		/* hookReturnHook(c->hook); */
+		/* characterStartAnimation(c,1,350); */
 	}
 }
 
