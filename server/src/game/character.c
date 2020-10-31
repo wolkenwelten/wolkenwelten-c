@@ -6,10 +6,6 @@
 
 #include <stdio.h>
 
-character  characterList[128];
-int        characterCount = 0;
-character *characterFirstFree = NULL;
-
 void characterInit(character *c){
 	c->hookPos = c->gvel = c->vel =  vecZero();
 
@@ -31,30 +27,6 @@ void characterInit(character *c){
 	c->hook  = false;
 
 	characterEmptyInventory(c);
-}
-
-character *characterNew(){
-	character *c = NULL;
-	if(characterFirstFree != NULL){
-		c = characterFirstFree;
-		characterFirstFree = c->nextFree;
-	}
-	if(c == NULL){
-		if(characterCount >= (int)(sizeof(characterList) / sizeof(character))-1){
-			fprintf(stderr,"characterList Overflow!\n");
-			return NULL;
-		}
-		c = &characterList[characterCount++];
-	}
-	c->hook = NULL;
-	characterInit(c);
-
-	return c;
-}
-
-void characterFree(character *c){
-	c->nextFree = characterFirstFree;
-	characterFirstFree = c;
 }
 
 void characterDie(character *c){

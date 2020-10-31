@@ -18,39 +18,7 @@
 #include <math.h>
 #include "../gfx/gl.h"
 
-entity  entityList[1<<14];
-int     entityCount = 0;
-entity *entityFirstFree = NULL;
-
 #define ENTITY_FADEOUT (256.f)
-
-entity *entityNew(vec pos, vec rot){
-	entity *e = NULL;
-	if(entityFirstFree == NULL){
-		e = &entityList[entityCount++];
-	}else{
-		e = entityFirstFree;
-		entityFirstFree = e->nextFree;
-		if(entityFirstFree == e){
-			entityFirstFree = NULL;
-		}
-	}
-	entityReset(e);
-
-	e->pos = pos;
-	e->rot = rot;
-
-	return e;
-}
-
-void entityFree(entity *e){
-	if(e == NULL){return;}
-	e->nextFree = entityFirstFree;
-	entityFirstFree = e;
-	if(e->nextFree == NULL){
-		e->nextFree = e;
-	}
-}
 
 void entityDraw(const entity *e){
 	if(e->eMesh == NULL){return;}
@@ -68,20 +36,10 @@ void entityDraw(const entity *e){
 
 void entityDrawAll(){
 	shaderBind(sMesh);
-	for(int i=0;i<entityCount;i++){
+	for(uint i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL)                         { continue; }
 		if(entityDistance(&entityList[i],player) > ENTITY_FADEOUT) { continue; }
 		if(!CubeInFrustum(vecSubS(entityList[i].pos,.5f),1.f))     { continue; }
 		entityDraw(&entityList[i]);
-	}
-}
-
-void entityUpdateAll(){
-	for(int i=0;i<entityCount;i++){
-		if(entityList[i].nextFree != NULL){ continue; }
-		if(!(entityList[i].flags & ENTITY_UPDATED)){
-			entityUpdate(&entityList[i]);
-		}
-		entityList[i].flags &= ~ENTITY_UPDATED;
 	}
 }

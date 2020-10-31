@@ -21,6 +21,7 @@
 #include "game/itemDrop.h"
 #include "game/grenade.h"
 #include "game/recipe.h"
+#include "game/rope.h"
 #include "misc/options.h"
 #include "network/client.h"
 #include "network/chat.h"
@@ -165,6 +166,7 @@ int main( int argc, char* argv[] ){
 
 	modsInit();
 	textureBuildBlockIcons(0);
+	ropeInit();
 
 	if(!gameRunning){
 		openMainMenu();

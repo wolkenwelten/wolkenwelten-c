@@ -19,7 +19,7 @@ typedef struct {
 } grenade;
 
 grenade grenadeList[512];
-int     grenadeCount = 0;
+uint    grenadeCount = 0;
 
 void grenadeExplode(vec pos, float pw, int style){
 	const vec   pd  = vecSub(pos,player->pos);
@@ -32,7 +32,7 @@ void grenadeExplode(vec pos, float pw, int style){
 		player->shake = dm*4.f;
 	}
 
-	for(int i=0;i<entityCount;i++){
+	for(uint i=0;i<entityCount;i++){
 		entity *exEnt = &entityList[i];
 		const vec exd = vecSub(pos,exEnt->pos);
 		const float expd = vecMag(exd);
@@ -53,7 +53,7 @@ void grenadeNew(const character *ent, float pwr, int cluster, float clusterPwr){
 }
 
 void grenadeUpdate(){
-	for(int i=0;i<grenadeCount;i++){
+	for(uint i=0;i<grenadeCount;i++){
 		entityUpdate(grenadeList[i].ent);
 		grenadeList[i].ent->rot = vecAdd(grenadeList[i].ent->rot,vecNew(1.6f,1.2f,2.0f));
 		fxGrenadeTrail(
@@ -64,10 +64,10 @@ void grenadeUpdate(){
 }
 
 void grenadeUpdateFromServer(const packet *p){
-	const int index = p->v.u16[0];
-	const int newC  = p->v.u16[1];
+	const uint index = p->v.u16[0];
+	const uint newC  = p->v.u16[1];
 
-	for(int i=newC;i<grenadeCount;i++){
+	for(uint i=newC;i<grenadeCount;i++){
 		if(grenadeList[i].ent != NULL){
 			entityFree(grenadeList[i].ent);
 		}

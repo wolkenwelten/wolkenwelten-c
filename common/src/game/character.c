@@ -1,11 +1,45 @@
 #include "character.h"
-#include "item.h"
+#include "../game/item.h"
+#include "../game/hook.h"
 #include "../mods/api_v1.h"
 #include "../mods/mods.h"
 #include "../network/messages.h"
 
+#include <stdio.h>
 #include <stddef.h>
 #include <math.h>
+
+character  characterList[64];
+uint       characterCount = 0;
+
+character *characterNew(){
+	character *c = NULL;
+
+	for(uint i=0;i<characterCount;i++){
+		if(characterList[i].eMesh == NULL){
+			c = &characterList[i];
+			break;
+		}
+	}
+	if(c == NULL){
+		if(characterCount >= (int)(sizeof(characterList) / sizeof(character))-1){
+			fprintf(stderr,"characterList Overflow!\n");
+			return NULL;
+		}
+		c = &characterList[characterCount++];
+	}
+	characterInit(c);
+
+	return c;
+}
+
+void characterFree(character *c){
+	c->eMesh = NULL;
+	if(c->hook != NULL){
+		hookFree(c->hook);
+		c->hook = NULL;
+	}
+}
 
 int characterGetHP(const character *c){
 	return c->hp;
@@ -336,4 +370,16 @@ float characterGetHookWinchS(const character *c){
 		if(c->equipment[CHAR_EQ_HOOK].ID == I_Hook){return 0.1f;}
 	}
 	return 0.04f;
+}
+
+character *characterGetByBeing(being b){
+	const uint i = beingID(b);
+	if(beingType(b) != BEING_CHARACTER){ return NULL; }
+	if(i >= characterCount)            { return NULL; }
+	return &characterList[i];
+}
+
+uint characterGetBeing(const character *c){
+	if(c == NULL){return 0;}
+	return beingCharacter(c - &characterList[0]);
 }

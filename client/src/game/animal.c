@@ -13,10 +13,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-animal  animalList[1<<10];
-uint    animalCount = 0;
-animal *animalFirstFree = NULL;
-
 #define ANIMAL_FADEOUT (256.f)
 
 static const mesh *animalGetMesh(const animal *e){

@@ -5,8 +5,40 @@
 #include <string.h>
 #include <math.h>
 
+entity  entityList[1<<14];
+uint    entityCount = 0;
+entity *entityFirstFree = NULL;
+
 void entityReset(entity *e){
 	memset(e,0,sizeof(entity));
+}
+
+entity *entityNew(vec pos, vec rot){
+	entity *e = NULL;
+	if(entityFirstFree == NULL){
+		e = &entityList[entityCount++];
+	}else{
+		e = entityFirstFree;
+		entityFirstFree = e->nextFree;
+		if(entityFirstFree == e){
+			entityFirstFree = NULL;
+		}
+	}
+	entityReset(e);
+
+	e->pos = pos;
+	e->rot = rot;
+
+	return e;
+}
+
+void entityFree(entity *e){
+	if(e == NULL){return;}
+	e->nextFree = entityFirstFree;
+	entityFirstFree = e;
+	if(e->nextFree == NULL){
+		e->nextFree = e;
+	}
 }
 
 u32 entityCollision(const vec c){
@@ -130,4 +162,26 @@ uint lineOfSightBlockCount(const vec a, const vec b, uint maxB){
 
 	}
 	return ret;
+}
+
+void entityUpdateAll(){
+	for(uint i=0;i<entityCount;i++){
+		if(entityList[i].nextFree != NULL){ continue; }
+		if(!(entityList[i].flags & ENTITY_UPDATED)){
+			entityUpdate(&entityList[i]);
+		}
+		entityList[i].flags &= ~ENTITY_UPDATED;
+	}
+}
+
+entity *entityGetByBeing(being b){
+	const uint i = beingID(b);
+	if(beingType(b) != BEING_ANIMAL){ return NULL; }
+	if(i >= entityCount)            { return NULL; }
+	return &entityList[i];
+}
+
+being entityGetBeing(const entity *c){
+	if(c == NULL){return 0;}
+	return beingEntity(c - &entityList[0]);
 }

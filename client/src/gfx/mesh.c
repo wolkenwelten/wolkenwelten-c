@@ -29,6 +29,7 @@ void meshAddVertC(mesh *m, float x,float y,float z,float u,float v,float c){
 }
 
 void meshEmpty(mesh *m){
+	if(m == NULL){return;}
 	m->dataCount = 0;
 }
 

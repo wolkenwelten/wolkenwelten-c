@@ -3,15 +3,13 @@
 #include "../main.h"
 #include "../game/animal.h"
 #include "../game/itemDrop.h"
-#include "../game/grapplingHook.h"
-
 #include "../gfx/effects.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
+#include "../gfx/particle.h"
 #include "../gfx/shader.h"
 #include "../gfx/shadow.h"
-#include "../gfx/particle.h"
 #include "../gui/gui.h"
 #include "../gui/overlay.h"
 #include "../network/chat.h"
@@ -20,9 +18,10 @@
 #include "../sdl/sdl.h"
 #include "../sdl/sfx.h"
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/game/hook.h"
 #include "../../../common/src/game/item.h"
-#include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/mods/mods.h"
 #include "../../../common/src/network/messages.h"
 
 #include <stdio.h>
@@ -31,15 +30,12 @@
 
 character *player;
 int        playerID = -1;
-character  characterList[64];
-int        characterCount = 0;
-character *characterFirstFree = NULL;
 character *playerList[32];
 char       playerNames[32][32];
 
 void characterInit(character *c){
 	if(c->hook != NULL){
-		grapplingHookFree(c->hook);
+		hookFree(c->hook);
 		c->hook = NULL;
 	}
 	memset(c,0,sizeof(character));
@@ -58,33 +54,6 @@ void characterInit(character *c){
 	}
 }
 
-character *characterNew(){
-	character *c = NULL;
-	if(characterFirstFree != NULL){
-		c = characterFirstFree;
-		characterFirstFree = c->nextFree;
-	}
-	if(c == NULL){
-		if(characterCount >= (int)(sizeof(characterList) / sizeof(character))-1){
-			fprintf(stderr,"characterList Overflow!\n");
-			return NULL;
-		}
-		c = &characterList[characterCount++];
-	}
-	characterInit(c);
-	return c;
-}
-
-void characterFree(character *c){
-	c->eMesh = NULL;
-	if(c->hook != NULL){
-		grapplingHookFree(c->hook);
-		c->hook = NULL;
-	}
-	c->nextFree = characterFirstFree;
-	characterFirstFree = c;
-}
-
 void characterUpdatePacket(const packet *p){
 	const int i = p->v.u32[15];
 	if(i > 32){return;}
@@ -100,7 +69,7 @@ void characterUpdatePacket(const packet *p){
 
 	if(packetLen(p) >= 19*4){
 		if(playerList[i]->hook == NULL){
-			playerList[i]->hook = grapplingHookNew(playerList[i]);
+			playerList[i]->hook = hookNew(playerList[i]);
 		}
 		playerList[i]->hook->hooked     = true;
 		playerList[i]->hook->ent->flags = ENTITY_NOCLIP;
@@ -108,7 +77,7 @@ void characterUpdatePacket(const packet *p){
 		playerList[i]->hook->ent->vel   = vecZero();
 	}else{
 		if(playerList[i]->hook != NULL){
-			grapplingHookFree(playerList[i]->hook);
+			hookFree(playerList[i]->hook);
 			playerList[i]->hook = NULL;
 		}
 	}
@@ -148,8 +117,8 @@ void characterUpdateInaccuracy(character *c){
 
 void characterUpdateHook(character *c){
 	if(c->hook == NULL){ return; }
-	if(grapplingHookUpdate(c->hook)){
-		grapplingHookFree(c->hook);
+	if(hookUpdate(c->hook)){
+		hookFree(c->hook);
 		c->hook = NULL;
 		if(c == player){
 			sfxLoop(sfxHookRope,0.f);
@@ -165,18 +134,18 @@ void characterUpdateHook(character *c){
 		}
 	}
 
-	if(grapplingHookGetHooked(c->hook)){
-		const float gl     = grapplingHookGetGoalLength(c->hook);
+	if(hookGetHooked(c->hook)){
+		const float gl     = hookGetGoalLength(c->hook);
 		const float wspeed = characterGetHookWinchS(c);
 		const float maxl   = characterGetMaxHookLen(c);
 		if((c->gvel.y > 0) && (gl > 1.f)){
-			grapplingHookSetGoalLength(c->hook,gl-wspeed);
+			hookSetGoalLength(c->hook,gl-wspeed);
 		}
 		if((c->flags & CHAR_SNEAK) && (gl < maxl)){
-			grapplingHookSetGoalLength(c->hook,gl+wspeed);
+			hookSetGoalLength(c->hook,gl+wspeed);
 		}
-		if(grapplingHookGetLength(c->hook) > gl){
-			grapplingHookPullTowards(c->hook,c);
+		if(hookGetLength(c->hook) > gl){
+			//hookPullTowards(c->hook,c);
 		}
 	}
 }
@@ -212,7 +181,7 @@ void characterUpdateWindVolume(const character *c){
 }
 
 int characterUpdateJumping(const character *c){
-	if((c->gvel.y > 0) && !(c->flags & CHAR_FALLING) && ((c->hook == NULL) || (!grapplingHookGetHooked(c->hook)))){
+	if((c->gvel.y > 0) && !(c->flags & CHAR_FALLING) && ((c->hook == NULL) || (!hookGetHooked(c->hook)))){
 		if((rngValR()&15)==0){
 			sfxPlay(sfxYahoo,1.f);
 		}else{
@@ -552,7 +521,7 @@ void characterUpdate(character *c){
 		nvel.z += 0.05f * (c->gvel.z - nvel.z) * walkFactor;
 		if(nvel.z > c->gvel.z){ nvel.z = c->gvel.z; }
 	}
-	if((c->hook != NULL) && (grapplingHookGetHooked(c->hook))){
+	if((c->hook != NULL) && (hookGetHooked(c->hook))){
 		if(fabsf(c->gvel.x) < 0.001)                 {nvel.x=c->vel.x;}
 		if(fabsf(c->gvel.z) < 0.001)                 {nvel.z=c->vel.z;}
 		if((c->gvel.x < -0.001)&&(nvel.x > c->vel.x)){nvel.x=c->vel.x;}
@@ -571,8 +540,8 @@ void characterUpdate(character *c){
 		} else if((nvel.y < -0.05f) && c->vel.y > -0.01f){
 			sfxPlay(sfxStomp,1.f);
 		}
-		if((damage > 0) && (grapplingHookGetHooked(c->hook))){
-			grapplingHookReturnHook(c->hook);
+		if((damage > 0) && (hookGetHooked(c->hook))){
+			hookReturnHook(c->hook);
 		}
 		characterUpdateWindVolume(c);
 		characterUpdateHook(c);
@@ -584,7 +553,7 @@ void characterUpdate(character *c){
 }
 
 void charactersUpdate(){
-	for(int i=0;i<characterCount;i++){
+	for(uint i=0;i<characterCount;i++){
 		characterUpdate(&characterList[i]);
 	}
 }
@@ -593,11 +562,11 @@ void characterFireHook(character *c){
 	if(c->actionTimeout < 0){return;}
 	characterAddCooldown(c,60);
 	if(c->hook == NULL){
-		c->hook = grapplingHookNew(c);
+		c->hook = hookNew(c);
 		sfxPlay(sfxHookFire,1.f);
 		characterStartAnimation(c,1,350);
 	}else{
-		grapplingHookReturnHook(c->hook);
+		hookReturnHook(c->hook);
 		characterStartAnimation(c,1,350);
 	}
 }
@@ -633,7 +602,7 @@ float characterFirstBlockDist (const character *c){
 
 void characterFreeHook(character *c){
 	if(c->hook != NULL){
-		grapplingHookFree(c->hook);
+		hookFree(c->hook);
 		c->hook = NULL;
 	}
 }
@@ -781,7 +750,7 @@ void characterDraw(character *c){
 
 void characterDrawAll(){
 	shaderBind(sMesh);
-	for(int i=0;i<characterCount;i++){
+	for(uint i=0;i<characterCount;i++){
 		if(characterList[i].nextFree != NULL){ continue; }
 		characterDraw(&characterList[i]);
 	}

@@ -240,7 +240,7 @@ void serverParsePlayerPos(uint c,const packet *p){
 	clients[c].c->animationTicksLeft = p->v.u16[27];
 
 	if(packetLen(p) >= 18*4 ){
-		clients[c].c->hook           = (grapplingHook *)0x8;
+		clients[c].c->hook           = (hook *)0x8;
 		clients[c].c->hookPos        = vecNewP(&p->v.f[15]);
 	}else{
 		clients[c].c->hook           = NULL;

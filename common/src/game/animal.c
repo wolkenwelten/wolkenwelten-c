@@ -5,8 +5,53 @@
 #include <string.h>
 #include <math.h>
 
+animal  animalList[1<<10];
+uint    animalCount = 0;
+animal *animalFirstFree = NULL;
+
 void animalReset(animal *e){
 	memset(e,0,sizeof(animal));
+}
+
+animal *animalNew(const vec pos , int type, int gender){
+	animal *e = NULL;
+	if(animalCount >= ((sizeof(animalList) / sizeof(animal)-1))){return NULL;}
+	e = &animalList[animalCount++];
+	animalReset(e);
+
+	e->pos       = pos;
+	e->rot       = vecZero();
+	e->grot      = vecZero();
+	e->gvel      = vecZero();
+
+	e->age       = 21;
+	e->hunger    = 64;
+	e->sleepy    = 64;
+	e->pregnancy = -1;
+
+	e->type      = type;
+	e->health    = animalGetMaxHealth(e);
+
+	if(rngValM(2) == 0){
+		e->flags |= ANIMAL_BELLYSLEEP;
+	}
+	if(rngValM(2) == 0){
+		e->flags |= ANIMAL_AGGRESIVE;
+	}
+	if(gender < 0){
+		if(rngValM(2) == 0){
+			e->flags |= ANIMAL_MALE;
+		}
+	}else if(gender == 1){
+		e->flags |= ANIMAL_MALE;
+	}
+
+	return e;
+}
+
+void animalDel(uint i){
+	if(i >= animalCount) {return;}
+	animalList[i] = animalList[--animalCount];
 }
 
 u32 animalCollision(const vec c){
@@ -174,4 +219,16 @@ int animalGetMaxHealth (const animal *e){
 	case 2:
 		return 12;
 	}
+}
+
+animal *animalGetByBeing(being b){
+	const uint i = beingID(b);
+	if(beingType(b) != BEING_ANIMAL){ return NULL; }
+	if(i >= animalCount)            { return NULL; }
+	return &animalList[i];
+}
+
+being animalGetBeing(const animal *c){
+	if(c == NULL){return 0;}
+	return beingAnimal(c - &animalList[0]);
 }

@@ -18,51 +18,6 @@
 #include <stdio.h>
 #include <string.h>
 
-animal  animalList[1<<10];
-uint    animalCount = 0;
-animal *animalFirstFree = NULL;
-
-animal *animalNew(const vec pos , int type, int gender){
-	animal *e = NULL;
-	if(animalCount >= ((sizeof(animalList) / sizeof(animal)-1))){return NULL;}
-	e = &animalList[animalCount++];
-	animalReset(e);
-
-	e->pos       = pos;
-	e->rot       = vecZero();
-	e->grot      = vecZero();
-	e->gvel      = vecZero();
-
-	e->age       = 21;
-	e->hunger    = 64;
-	e->sleepy    = 64;
-	e->pregnancy = -1;
-
-	e->type      = type;
-	e->health    = animalGetMaxHealth(e);
-
-	if(rngValM(2) == 0){
-		e->flags |= ANIMAL_BELLYSLEEP;
-	}
-	if(rngValM(2) == 0){
-		e->flags |= ANIMAL_AGGRESIVE;
-	}
-	if(gender < 0){
-		if(rngValM(2) == 0){
-			e->flags |= ANIMAL_MALE;
-		}
-	}else if(gender == 1){
-		e->flags |= ANIMAL_MALE;
-	}
-
-	return e;
-}
-
-static void animalDel(uint i){
-	if(i >= animalCount) {return;}
-	animalList[i] = animalList[--animalCount];
-}
-
 void animalUpdateAll(){
 	for(int i=animalCount-1;i>=0;i--){
 		int dmg = animalUpdate(&animalList[i]);

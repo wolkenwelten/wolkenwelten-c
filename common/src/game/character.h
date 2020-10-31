@@ -1,6 +1,9 @@
 #pragma once
 #include "../common.h"
 
+extern character  characterList[64];
+extern uint       characterCount;
+
 character *characterNew            ();
 void       characterFree           (      character *c);
 void       characterInit           (      character *c);
@@ -35,6 +38,9 @@ ivec       characterLOSBlock       (const character *c, int returnBeforeBlock);
 bool       characterItemReload     (      character *c, item *i, int cooldown);
 void       characterSetInventoryP  (      character *c, const packet *p);
 void       characterSetEquipmentP  (      character *c, const packet *p);
+
+character *characterGetByBeing     (being b);
+being      characterGetBeing       (const character *c);
 
 float      characterGetMaxHookLen  (const character *c);
 float      characterGetHookWinchS  (const character *c);

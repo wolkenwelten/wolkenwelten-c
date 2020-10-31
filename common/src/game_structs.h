@@ -4,7 +4,7 @@
 
 typedef struct sfx sfx;
 typedef struct bgm bgm;
-typedef struct grapplingHook grapplingHook;
+typedef struct hook hook;
 typedef struct bigchungus bigchungus;
 typedef struct chungus chungus;
 typedef struct chunk chunk;
@@ -39,8 +39,12 @@ inline being beingNew  (u8 type, u32 id){ return (id&0xFFFFFF) | ((u32)type << 2
 #define BEING_MULL      0
 #define BEING_CHARACTER 1
 #define BEING_ANIMAL    2
-inline being beingCharacter(u32 id){ return beingNew(BEING_CHARACTER,id); }
-inline being beingAnimal(u32 id){ return beingNew(BEING_ANIMAL,id); }
+#define BEING_HOOK      3
+#define BEING_ENTITY    4
+inline being beingCharacter(u32 id){ return beingNew(BEING_CHARACTER,id);}
+inline being beingAnimal   (u32 id){ return beingNew(BEING_ANIMAL,   id);}
+inline being beingHook     (u32 id){ return beingNew(BEING_HOOK,     id);}
+inline being beingEntity   (u32 id){ return beingNew(BEING_ENTITY,   id);}
 
 typedef struct {
 	vec pos,vel,rot;
@@ -58,6 +62,12 @@ typedef struct {
 #define ENTITY_NOREPULSION (1<<4)
 
 typedef struct {
+	being a,b;
+	float length;
+	entity *nodes[16];
+} rope;
+
+typedef struct {
 	 vec  pos,vel,gvel,rot,screenPos;
 	float yoff,shake,inaccuracy;
 	float gyoff;
@@ -72,7 +82,7 @@ typedef struct {
 	float gliderFade;
 
 	mesh *eMesh;
-	grapplingHook *hook;
+	hook *hook;
 
 	 i16 hp,maxhp;
 
@@ -134,10 +144,10 @@ typedef struct {
 #define ANIMAL_S_EAT         6
 #define ANIMAL_S_FIGHT       7
 
-struct grapplingHook {
+struct hook {
 	entity       *ent;
-	mesh        *rope;
 	character *parent;
+	rope        *rope;
 	float  goalLength;
 	bool       hooked;
 	bool    returning;

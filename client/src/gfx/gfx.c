@@ -1,39 +1,40 @@
 #include "../gfx/gfx.h"
 
 #include "../main.h"
-#include "../tmp/assets.h"
 #include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../game/grapplingHook.h"
+#include "../game/rope.h"
 #include "../gfx/clouds.h"
+#include "../gfx/gl.h"
 #include "../gfx/mat.h"
-#include "../gfx/shader.h"
-#include "../gfx/sky.h"
-#include "../gfx/shadow.h"
 #include "../gfx/particle.h"
+#include "../gfx/shader.h"
+#include "../gfx/shadow.h"
+#include "../gfx/sky.h"
 #include "../gfx/texture.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../sdl/sdl.h"
-#include "../voxel/chunk.h"
-#include "../voxel/chungus.h"
+#include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
-
+#include "../voxel/chungus.h"
+#include "../voxel/chunk.h"
+#include "../../../common/src/game/hook.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "../gfx/gl.h"
+
 
 float matProjection[16], matView[16];
 
-int screenWidth     = 800;
-int screenHeight    = 600;
+int    screenWidth  = 800;
+int    screenHeight = 600;
 size_t vboTrisCount = 0;
-float gfxCurFOV     = 80.0f;
-vec camShake;
+float  gfxCurFOV    = 80.0f;
+vec    camShake;
 
 GLenum glCheckError_(const char *file, int line){
 	GLenum errorCode;
@@ -119,7 +120,7 @@ void renderWorld(const character *cam){
 	shadowDraw();
 	cloudsRender();
 	particleDraw();
-	grapplingHookDrawRopes();
+	ropeDrawAll();
 }
 
 void renderFrame(){
