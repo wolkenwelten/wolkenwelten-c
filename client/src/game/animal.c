@@ -10,6 +10,7 @@
 #include "../tmp/objs.h"
 #include "../../../common/src/network/messages.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 

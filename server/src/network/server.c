@@ -423,8 +423,8 @@ void serverParseSinglePacket(uint c, packet *p){
 			msgPingPong(c);
 			break;
 		case 34:
-			fprintf(stderr,"animalDied received from client, which should never happen\n");
-			serverKill(c);
+			//fprintf(stderr,"animalDied received from client\n");
+			//serverKill(c);
 			break;
 		case 35:
 			characterSetEquipmentP(clients[c].c,p);

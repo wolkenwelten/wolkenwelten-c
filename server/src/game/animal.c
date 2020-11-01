@@ -30,6 +30,7 @@ void animalDmgPacket(u8 source, const packet *p){
 	c->health -= hp;
 	if(c->health <= 0){
 		animalRDie(c);
+
 		animalDel(i);
 		return;
 	}
@@ -38,7 +39,7 @@ void animalDmgPacket(u8 source, const packet *p){
 		vec pos = vecNewP(&p->v.f[3]);
 		vec dis = vecNorm(vecSub(c->pos,pos));
 		c->vel = vecAdd(c->vel,vecMulS(dis,0.03f));
-	} /*  */
+	}
 	msgBeingGotHit(hp,cause,target,culprit);
 }
 

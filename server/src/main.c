@@ -19,6 +19,7 @@
 #include <signal.h>
 #include <unistd.h>
 
+bool isClient = false;
 bool quit = false;
 char *termColors[16];
 char *termReset;

@@ -43,6 +43,7 @@
 	#include <emscripten.h>
 #endif
 
+bool isClient          = true;
 bool quit              = false;
 bool gameRunning       = false;
 bool playerChunkActive = false;

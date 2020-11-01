@@ -37,5 +37,5 @@ void msgItemDropUpdate           (uint c, const vec pos, const vec vel, const it
 void msgPlayerSetData            (uint c, i16 hp, u16 activeItem, u32 flags, u16 id);
 void msgPlayerSetInventory       (uint c, const item *itm, size_t itemCount);
 void msgPingPong                 (uint c);
-void msgAnimalDied               (uint c, const vec pos, u8 type, u8 age);
+void msgAnimalDied               (uint c, const animal *a);
 void msgPlayerSetEquipment       (uint c, const item *itm, size_t itemCount);

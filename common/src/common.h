@@ -7,3 +7,4 @@
 #include "misc/vec.h"
 
 extern blockType blocks[256];
+extern bool isClient;

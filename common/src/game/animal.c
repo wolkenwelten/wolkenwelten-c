@@ -251,6 +251,7 @@ void animalUpdateAll(){
 	for(int i=animalCount-1;i>=0;i--){
 		int dmg = animalUpdate(&animalList[i]);
 		animalList[i].health -= dmg;
+		if(isClient){continue;}
 		if((animalList[i].pos.y  < -256.f) ||
 		   (animalList[i].health <= 0) ||
 		   (animalList[i].hunger <= 0) ||
@@ -316,7 +317,9 @@ void animalRDie(animal *e){
 		animalRDieGuardian(e);
 		break;
 	}
-	//msgAnimalDied(-1,e->pos, e->type, e->age);
+	if(!isClient){
+		msgAnimalDied(-1,e);
+	}
 }
 
 

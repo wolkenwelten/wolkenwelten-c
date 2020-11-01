@@ -328,14 +328,17 @@ void msgPingPong(uint c){
 	packetQueue(p,33,0,c);
 }
 
-void msgAnimalDied(uint c, const vec pos, u8 type, u8 age){
+void msgAnimalDied(uint c, const animal *a){
 	packet *p = &packetBuffer;
 
-	p->v.u8[0] = type;
-	p->v.u8[1] = age;
-	p->v.f[1]  = pos.x;
-	p->v.f[2]  = pos.y;
-	p->v.f[3]  = pos.z;
+	p->v.u8[0] = a->type;
+	p->v.u8[1] = a->age;
+	p->v.u8[2] = 0;
+	p->v.u8[3] = 0;
+
+	p->v.f[1]  = a->pos.x;
+	p->v.f[2]  = a->pos.y;
+	p->v.f[3]  = a->pos.z;
 
 	packetQueue(p,34,4*4,c);
 }
