@@ -114,3 +114,11 @@ blockCategory blockTypeGetCat          (u8 b);
 bool          blockTypeValid           (u8 b);
 u32           blockTypeGetParticleColor(u8 b);
 mesh         *blockTypeGetMesh         (u8 b);
+
+void vegShrub              (int x,int y,int z);
+void vegDeadTree           (int x,int y,int z);
+void vegBigDeadTree        (int x,int y,int z);
+void vegSpruce             (int x,int y,int z);
+void vegBigSpruce          (int x,int y,int z);
+void vegOak                (int x,int y,int z);
+void vegBigOak             (int x,int y,int z);

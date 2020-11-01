@@ -1,5 +1,4 @@
 - Do itemDrop pickup calculations clientside
-- Need a way to replenish wood/trees
 - Rework worldgen to not use the global RNG anymore, instead relying on a local one
 - Optimize worldgen, the recent refactoring has made it SLOW
 - Fix guardian beams shooting in the wrong direction
@@ -16,8 +15,7 @@
 - Fix slowdowns after a while of flying around
 - Make Physics more stable, especially in regards to short Hook Ropes
 - Have a nicer way to wait on the singleplayer server to be ready instead of just trying over and over again to establish a connection
-- Fix SFX master Volume
-- Fix Rope Texture stretching
+- Migrate to OpenAL
 
 -------------------------------------------------------------------------------
 

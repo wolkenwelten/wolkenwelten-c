@@ -17,6 +17,7 @@ extern chungus chungusList[1 << 12];
 extern uint chungusCount;
 
 chungus     *chungusNew              (u8 x,u8 y, u8 z);
+void         chungusWorldGenLoad     (chungus *c);
 void         chungusFree             (chungus *c);
 void         chungusRoughBox         (chungus *c, int x, int y, int z, int w, int h, int d, u8 block);
 void         chungusBox              (chungus *c, int x, int y, int z, int w, int h, int d, u8 block);

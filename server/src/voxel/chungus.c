@@ -56,13 +56,16 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	c->clientsUpdated     = (u64)1 << 31;
 
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
+
+	return c;
+}
+
+void chungusWorldGenLoad(chungus *c){
 	worldgen *wgen = worldgenNew(c);
 	worldgenGenerate(wgen);
 	worldgenFree(wgen);
 	chungusSetClientUpdated(c,(u64)1 << 31);
 	chungusLoad(c);
-
-	return c;
 }
 
 void chungusFree(chungus *c){

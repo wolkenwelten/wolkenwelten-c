@@ -51,6 +51,7 @@ chungus *bigchungusGetChungus(bigchungus *c, int x,int y,int z) {
 	chungus *chng = c->chungi[x&0xFF][y&0x7F][z&0xFF];
 	if(chng == NULL){
 		chng = c->chungi[x&0xFF][y&0x7F][z&0xFF] = chungusNew(x,y,z);
+		chungusWorldGenLoad(chng);
 	}
 	return chng;
 }
@@ -91,6 +92,7 @@ bool bigchungusGetHighestP(bigchungus *c, int x,int *retY, int z) {
 		chng = c->chungi[cx][cy][cz];
 		if(chng == NULL){
 			chng = c->chungi[cx][cy][cz] = chungusNew(cx,cy,cz);
+			chungusWorldGenLoad(chng);
 		}
 		int y;
 		if(chungusGetHighestP(chng,x,&y,z)){
@@ -108,7 +110,8 @@ bool bigchungusSetB(bigchungus *c, int x,int y,int z,u8 block){
 	int cz = (z / CHUNGUS_SIZE) & 0xFF;
 	chng = c->chungi[cx][cy][cz];
 	if(chng == NULL){
-		c->chungi[cx][cy][cz] = chng = chungusNew(cx,cy,cz);
+		chng = c->chungi[cx][cy][cz] = chungusNew(cx,cy,cz);
+		chungusWorldGenLoad(chng);
 		return true;
 	}
 	chungusSetB(chng,x&0xFF,y&0xFF,z&0xFF,block);
@@ -196,6 +199,7 @@ void bigchungusGenSpawn(bigchungus *c){
 			for(int z=127;z<=129;z++){
 				if(c->chungi[x][y][z] == NULL){
 					c->chungi[x][y][z] = chungusNew(x,y,z);
+					chungusWorldGenLoad(c->chungi[x][y][z]);
 				}
 				if(c->chungi[x][y][z]->spawn.x >= 0){
 					c->spawn = ivecAdd(c->chungi[x][y][z]->spawn,ivecMulS(ivecNew(x,y,z),CHUNGUS_SIZE));
