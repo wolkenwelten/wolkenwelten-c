@@ -44,3 +44,4 @@ being      characterGetBeing       (const character *c);
 
 float      characterGetMaxHookLen  (const character *c);
 float      characterGetHookWinchS  (const character *c);
+character *characterClosest        (const vec pos, float maxDistance);

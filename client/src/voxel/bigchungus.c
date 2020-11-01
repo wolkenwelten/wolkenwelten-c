@@ -229,3 +229,7 @@ void worldSetChungusLoaded(int x, int y, int z){
 int checkCollision(int x, int y, int z){
 	return worldGetB(x,y,z) != 0;
 }
+
+void worldBoxMine(int x, int y, int z, int w, int h, int d){
+	worldBox(x,y,z,w,h,d,0);
+}

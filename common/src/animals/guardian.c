@@ -1,13 +1,12 @@
 #include "guardian.h"
 
 #include "../game/animal.h"
+#include "../game/character.h"
 #include "../game/entity.h"
-#include "../game/itemDrop.h"
-#include "../network/server.h"
-#include "../voxel/bigchungus.h"
-#include "../../../common/src/game/item.h"
-#include "../../../common/src/network/messages.h"
-#include "../../../common/src/misc/misc.h"
+#include "../game/item.h"
+#include "../network/messages.h"
+#include "../misc/misc.h"
+#include "../mods/api_v1.h"
 
 #include <math.h>
 
@@ -28,24 +27,22 @@ static void animalAggresive(animal *e){
 		vrot.pitch = -vrot.pitch;
 		vec bPos   = vecAdd(e->pos, vecMulS(vecDegToVec(vrot),256.f));
 
-		int target = getClientByCharacter(cChar);
 		int dmg    = 2;
 		float yd   = (-e->rot.yaw   - caRot.yaw  );
 		float pd   = (-e->rot.pitch - caRot.pitch);
 		float d    = sqrtf(yd*yd + pd*pd);
-		if(((d < 4) && (target >= 0)) || los){
-			msgBeingDamage(target,dmg,2,beingCharacter(target),-1,e->pos);
+		being bc   = characterGetBeing(cChar);
+		if(((d < 4) && (bc != 0)) || los){
+			msgBeingDamage(beingID(bc),dmg,2,bc,-1,e->pos);
 		}
 		e->state = ANIMAL_S_FLEE;
 		e->vel   = vecAdd(e->vel,vecMulS(caNorm,-0.001f));
 		e->grot  = vecZero();
 		e->temp  = 10;
 		msgFxBeamBlaster(-1,bPos,e->pos,4.f,4);
-		addPriorityAnimal(e-animalList);
 	}else if(e->state == ANIMAL_S_FIGHT){
 		if((cChar == NULL) || (dist > 64.f) || los){
 			e->state   =  ANIMAL_S_LOITER;
-			addPriorityAnimal(e-animalList);
 		}else{
 			vec caNorm   = vecNorm(vecNew(cChar->pos.x - e->pos.x,cChar->pos.y - e->pos.y, cChar->pos.z - e->pos.z));
 			vec caRot    = vecVecToDeg(caNorm);
@@ -61,12 +58,10 @@ static void animalAggresive(animal *e){
 				e->temp = 3;
 				msgFxBeamBlaster(-1,e->pos,cChar->pos,2.f,2);
 			}
-			addPriorityAnimal(e-animalList);
 		}
 	}else if(e->state == ANIMAL_S_FLEE){
 		if((cChar == NULL) || (dist > 78.f) || (--e->temp == 0)){
 			e->state = ANIMAL_S_LOITER;
-			addPriorityAnimal(e-animalList);
 		}else{
 			vec caNorm  = vecNorm(vecNew(e->pos.x - cChar->pos.x,0.f, e->pos.z - cChar->pos.z));
 			vec caVel   = vecMulS(caNorm,0.03f);
@@ -80,7 +75,6 @@ static void animalAggresive(animal *e){
 				e->state = ANIMAL_S_FIGHT;
 				e->flags |= ANIMAL_AGGRESIVE;
 			}
-			addPriorityAnimal(e-animalList);
 		}
 	}else{
 		float fd = 48.f;
@@ -88,7 +82,6 @@ static void animalAggresive(animal *e){
 		if((cChar != NULL) && (dist < fd) && !los){
 			e->state = ANIMAL_S_FIGHT;
 			e->temp  = 10;
-			addPriorityAnimal(e-animalList);
 		}
 	}
 	e->temp = MIN(e->temp,64);

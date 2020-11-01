@@ -17,7 +17,7 @@ void itemDropNewC(const character *chr,const item *itm){
 	msgItemDropNew(-1,vecAdd(pos,vecMulS(vel,60)),vel,itm);
 }
 
-void itemDropNewD(const vec pos,const item *itm){
+void itemDropNewP(const vec pos,const item *itm){
 	if(itemIsEmpty(itm)){return;}
 	const vec vel = vecMulS(vecRngAbs(),0.03);
 	msgItemDropNew(-1,pos,vel,itm);

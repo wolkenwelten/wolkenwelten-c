@@ -48,6 +48,9 @@ vec doKeyboardupdate(vec vel){
 	if(keysPressed[15]){rot.x =  1;}
 	characterRotate(player,vecMulS(rot,3));
 
+	if(keysPressed[8]){ characterAddHookLength(player, 1.f); }
+	if(keysPressed[9]){ characterAddHookLength(player,-1.f); }
+
 	if(keysPressed[6]){
 		characterDropSingleItem(player,player->activeItem);
 	}
@@ -108,6 +111,12 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_R:
 			keysPressed[7] = 0;
+			break;
+		case SDL_SCANCODE_F:
+			keysPressed[8] = 0;
+			break;
+		case SDL_SCANCODE_G:
+			keysPressed[9] = 0;
 			break;
 		case SDL_SCANCODE_Y:
 			keysPressed[10] = 0;
@@ -179,6 +188,12 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_R:
 			keysPressed[7] = 1;
+			break;
+		case SDL_SCANCODE_F:
+			keysPressed[8] = 1;
+			break;
+		case SDL_SCANCODE_G:
+			keysPressed[9] = 1;
 			break;
 		case SDL_SCANCODE_Y:
 			keysPressed[10] = 1;

@@ -35,6 +35,7 @@ character *characterNew(){
 
 void characterFree(character *c){
 	c->eMesh = NULL;
+	c->hp = -1;
 	if(c->hook != NULL){
 		hookFree(c->hook);
 		c->hook = NULL;
@@ -382,4 +383,14 @@ character *characterGetByBeing(being b){
 uint characterGetBeing(const character *c){
 	if(c == NULL){return 0;}
 	return beingCharacter(c - &characterList[0]);
+}
+
+character *characterClosest(const vec pos, float maxDistance){
+	for(uint i=0;i<characterCount;i++){
+		if(characterList[i].hp <= 0){continue;}
+		const float d = vecMag(vecSub(pos,characterList[i].pos));
+		if(d > maxDistance){continue;}
+		return &characterList[i];
+	}
+	return NULL;
 }

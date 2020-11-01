@@ -150,6 +150,25 @@ void characterUpdateHook(character *c){
 	}
 }
 
+void characterAddHookLength(character *c, float d){
+	if((c == NULL) || (c->hook == NULL)){return;}
+	const float gl     = hookGetGoalLength(c->hook);
+	const float wspeed = characterGetHookWinchS(c);
+	const float maxl   = characterGetMaxHookLen(c);
+	const float ngl    = MAX(1.f,MIN(maxl,gl+wspeed*d));
+	hookSetGoalLength(c->hook,ngl);
+}
+
+float characterGetHookLength(const character *c){
+	if((c == NULL) || (c->hook == NULL)){return 0.f;}
+	return hookGetGoalLength(c->hook);
+}
+
+float characterGetRopeLength(const character *c){
+	if((c == NULL) || (c->hook == NULL)){return 0.f;}
+	return hookGetRopeLength(c->hook);
+}
+
 void characterUpdateAnimation(character *c){
 	c->animationTicksLeft -= MS_PER_TICK;
 	c->breathing          += MS_PER_TICK;
@@ -314,10 +333,10 @@ void characterDie(character *c){
 	if(c->flags & CHAR_SPAWNING)  { return; }
 	if(c->flags & CHAR_NOCLIP)    { return; }
 	for(int i=0;i<40;i++){
-		itemDropNewD(c->pos, characterGetItemBarSlot(c,i));
+		itemDropNewP(c->pos, characterGetItemBarSlot(c,i));
 	}
 	for(int i=0;i<3;i++){
-		itemDropNewD(c->pos, &c->equipment[i]);
+		itemDropNewP(c->pos, &c->equipment[i]);
 	}
 	characterInit(c);
 	setOverlayColor(0xFF000000,0);
@@ -566,10 +585,8 @@ void characterFireHook(character *c){
 		sfxPlay(sfxHookFire,1.f);
 		characterStartAnimation(c,1,350);
 	}else{
-		hookFree(c->hook);
-		c->hook = NULL;
-		/* hookReturnHook(c->hook); */
-		/* characterStartAnimation(c,1,350); */
+		hookReturnHook(c->hook);
+		characterStartAnimation(c,1,350);
 	}
 }
 

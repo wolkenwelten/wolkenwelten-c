@@ -158,3 +158,26 @@ void beingAddVel(being b, const vec vel){
 			return;
 	}
 }
+
+being beingClosest(const vec pos, float maxDistance){
+	character *c = characterClosest(pos,maxDistance);
+	if(c != NULL){return characterGetBeing(c);}
+	animal *a = animalClosest(pos,maxDistance);
+	if(a != NULL){return animalGetBeing(a);}
+	return 0;
+}
+
+float beingGetWeight(being b){
+	switch(beingType(b)){
+		case BEING_CHARACTER:
+			return 80.f;
+		case BEING_ANIMAL:
+			return 1.f;
+		case BEING_HOOK:
+			return 1.f;
+		case BEING_ENTITY:
+			return 1.f;
+		default:
+			return 1.f;
+	}
+}

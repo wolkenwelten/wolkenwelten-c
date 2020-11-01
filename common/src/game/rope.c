@@ -5,11 +5,12 @@
 #include "../mods/api_v1.h"
 
 #include <stdio.h>
+#include <string.h>
 
 rope ropeList[128];
 uint ropeCount = 0;
 
-rope *ropeNew(being a, being b){
+rope *ropeNew(being a, being b, u32 flags){
 	rope *r = NULL;
 	for(uint i=0;i<ropeCount;i++){
 		if(ropeList[i].a == 0){
@@ -25,41 +26,26 @@ rope *ropeNew(being a, being b){
 		r = &ropeList[ropeCount++];
 	}
 
-	r->a = a;
-	r->b = b;
+	r->a      = a;
+	r->b      = b;
 	r->length = 1.f;
-	const vec pos = beingGetPos(a);
-	for(int i=0;i<16;i++){
-		r->nodes[i] = entityNew(pos,vecZero());
-		r->nodes[i]->eMesh = meshPear;
-	}
+	r->flags  = flags;
 	return r;
 }
 
-float ropeLength(const rope *r){
+float ropeGetLength(const rope *r){
 	if(r == NULL){return 1.f;}
-	float len = 0;
 	const vec ap = beingGetPos(r->a);
 	const vec bp = beingGetPos(r->b);
-	len += vecMag(vecSub(ap,r->nodes[0]->pos));
-	for(int i=0;i<15;i++){
-		len += vecMag(vecSub(r->nodes[i]->pos,r->nodes[i+1]->pos));
-	}
-	len += vecMag(vecSub(bp,r->nodes[15]->pos));
-	return len;
+	return vecMag(vecSub(ap,bp));
 }
 
 void ropeFree(rope *r){
 	if(r == NULL){return;}
-	r->a = r->b = 0;
-	for(int i=0;i<16;i++){
-		if(r->nodes[i] == NULL){continue;}
-		entityFree(r->nodes[i]);
-		r->nodes[i] = NULL;
-	}
+	memset(r,0,sizeof(rope));
 }
 
-void ropePullTowards(being a, being b, float goalLen){
+static void ropePullTowards(being a, being b, float goalLen, float mul){
 	const vec ap = beingGetPos(a);
 	const vec bp = beingGetPos(b);
 	//fprintf(stderr,"AP[%f:%f:%f]{%x} BP[%f:%f:%f]{%x} GL:%f \n",ap.x,ap.y,ap.z,a,bp.x,bp.y,bp.z,b,goalLen);
@@ -72,16 +58,16 @@ void ropePullTowards(being a, being b, float goalLen){
 	vec posAdd = vecZero();
 	vec velAdd = vecZero();
 	if(((d.x > 0) && !((col & 0x110))) || ((d.x < 0) && !((col & 0x220)))){
-		posAdd.x = d.x * -0.5f;
-		velAdd.x = d.x * -0.1f;
+		posAdd.x = d.x * -0.5f * mul;
+		velAdd.x = d.x * -0.1f * mul;
 	}
 	if(((d.z > 0) && !((col & 0x440))) || ((d.z < 0) && !((col & 0x880)))){
-		posAdd.z = d.z * -0.5f;
-		velAdd.z = d.z * -0.1f;
+		posAdd.z = d.z * -0.5f * mul;
+		velAdd.z = d.z * -0.1f * mul;
 	}
 	if(((d.y > 0) && !((col & 0x00F))) || ((d.y < 0) && !((col & 0x0F0)))){
-		posAdd.y = d.y * -0.5f;
-		velAdd.y = d.y * -0.1f;
+		posAdd.y = d.y * -0.5f * mul;
+		velAdd.y = d.y * -0.1f * mul;
 	}
 	(void)velAdd;
 	(void)posAdd;
@@ -92,22 +78,27 @@ void ropePullTowards(being a, being b, float goalLen){
 }
 
 static void ropeUpdate(rope *r){
-	float segmentLen;
-	if(r == NULL){return;}
-	if(r->a == 0){return;}
-	if(r->b == 0){return;}
-	if(r->length > 0.f){
-		segmentLen = r->length / 16.f;
-	}else{
-		segmentLen = ropeLength(r) / 16.f;
+	if(r == NULL)      { return; }
+	if(r->a == 0)      { return; }
+	if(r->b == 0)      { return; }
+	if(r->length < 0.f){ return; }
+
+	float aw = beingGetWeight(r->a);
+	float bw = beingGetWeight(r->b);
+	float w  = aw+bw;
+
+	float bm = MIN(1.f,aw / w);
+	float am = MIN(1.f,bw / w);
+	if(beingType(r->a) == BEING_HOOK){
+		am = 0.f;
+		bm = 1.f;
+	}else if(beingType(r->b) == BEING_HOOK){
+		am = 1.f;
+		bm = 0.f;
 	}
-	being a = r->b;
-	for(int i=0;i<16;i++){
-		being t = entityGetBeing(r->nodes[i]);
-		ropePullTowards(a,t,segmentLen);
-		a = t;
-	}
-	//ropePullTowards(a,r->b,segmentLen);
+
+	ropePullTowards(r->a,r->b,r->length,bm);
+	ropePullTowards(r->b,r->a,r->length,am);
 }
 
 void  ropeUpdateAll(){

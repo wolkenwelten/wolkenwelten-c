@@ -130,6 +130,10 @@ int entityUpdate(entity *e){
 		e->vel = vecMul(e->vel,vecNew(0.93f,0,0.93f));
 		e->vel.y = 0.001f;
 	}
+	col = entityCollision(e->pos);
+	if((col & 0xFFF) == 0xFFF){
+		e->pos.y += 1.f;
+	}
 
 	entityUpdateCurChungus(e);
 	return ret;

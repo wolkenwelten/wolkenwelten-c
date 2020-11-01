@@ -1,13 +1,13 @@
 #include "bunny.h"
 
 #include "../game/animal.h"
+#include "../game/being.h"
+#include "../game/character.h"
 #include "../game/entity.h"
-#include "../game/itemDrop.h"
-#include "../network/server.h"
-#include "../voxel/bigchungus.h"
-#include "../../../common/src/game/item.h"
-#include "../../../common/src/misc/misc.h"
-#include "../../../common/src/network/messages.h"
+#include "../game/item.h"
+#include "../misc/misc.h"
+#include "../network/messages.h"
+#include "../mods/api_v1.h"
 
 static int animalCheckHeat(animal *e){
 	animal *cAnim;
@@ -203,7 +203,6 @@ static void animalFightOrFlight(animal *e){
 		if((cChar == NULL) || (dist > 16.f)){
 			e->state   =  ANIMAL_S_LOITER;
 			e->flags  &= ~ANIMAL_AGGRESIVE;
-			addPriorityAnimal(e-animalList);
 			return;
 		}else{
 			vec caNorm = vecNorm(vecNew(cChar->pos.x - e->pos.x,0.f, cChar->pos.z - e->pos.z));
@@ -218,19 +217,17 @@ static void animalFightOrFlight(animal *e){
 				e->gvel.x = 0;
 				e->gvel.z = 0;
 				if(rngValM(6)==0){
-					int target = getClientByCharacter(cChar);
 					int dmg = 1;
-					if(target < 0){return;}
+					being bc = characterGetBeing(cChar);
+					if(bc == 0){return;}
 					if(rngValM(8)==0){dmg = 4;}
-					msgBeingDamage(target,dmg,2,beingCharacter(target),-1,e->pos);
+					msgBeingDamage(beingID(bc),dmg,2,bc,-1,e->pos);
 				}
 			}
-			addPriorityAnimal(e-animalList);
 		}
 	}else if(e->state == ANIMAL_S_FLEE){
 		if((cChar == NULL) || (dist > 32.f)){
 			e->state = ANIMAL_S_LOITER;
-			addPriorityAnimal(e-animalList);
 			return;
 		}else{
 			vec caNorm = vecNorm(vecNew(e->pos.x - cChar->pos.x,0.f, e->pos.z - cChar->pos.z));
@@ -244,7 +241,6 @@ static void animalFightOrFlight(animal *e){
 				e->state = ANIMAL_S_FIGHT;
 				e->flags |= ANIMAL_AGGRESIVE;
 			}
-			addPriorityAnimal(e-animalList);
 		}
 	}else{
 		float fd = 9.f;
@@ -261,7 +257,6 @@ static void animalFightOrFlight(animal *e){
 			}else{
 				e->state = ANIMAL_S_FLEE;
 			}
-			addPriorityAnimal(e-animalList);
 			return;
 		}
 	}

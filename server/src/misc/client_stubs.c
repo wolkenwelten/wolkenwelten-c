@@ -5,6 +5,12 @@
 
 #include <stdio.h>
 
+void fxBlockBreak(const vec pos, uchar b){
+	(void)pos;
+	(void)b;
+
+}
+
 void recipeNew1(const item result, const item ingred1){
 	(void)result;
 	(void)ingred1;

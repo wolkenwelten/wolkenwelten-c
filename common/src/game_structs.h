@@ -64,8 +64,11 @@ typedef struct {
 typedef struct {
 	being a,b;
 	float length;
-	entity *nodes[16];
+	u32   flags;
 } rope;
+#define ROPE_TEX       0xFF
+#define ROPE_TEX_ROPE  0x00
+#define ROPE_TEX_CHAIN 0x01
 
 typedef struct {
 	 vec  pos,vel,gvel,rot,screenPos;
@@ -126,6 +129,7 @@ typedef struct {
 
 	u16 breathing;
 	u16 temp;
+	u8  clientOwner;
 
 	chungus *curChungus;
 } animal;
@@ -148,6 +152,7 @@ struct hook {
 	entity       *ent;
 	character *parent;
 	rope        *rope;
+	being    attached;
 	float  goalLength;
 	bool       hooked;
 	bool    returning;

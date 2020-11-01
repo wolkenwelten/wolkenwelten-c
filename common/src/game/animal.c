@@ -1,6 +1,10 @@
 #include "animal.h"
 
+#include "../animals/bunny.h"
+#include "../animals/guardian.h"
+#include "../game/character.h"
 #include "../mods/api_v1.h"
+#include "../network/messages.h"
 
 #include <string.h>
 #include <math.h>
@@ -231,4 +235,155 @@ animal *animalGetByBeing(being b){
 being animalGetBeing(const animal *c){
 	if(c == NULL){return 0;}
 	return beingAnimal(c - &animalList[0]);
+}
+
+animal *animalClosest(const vec pos, float maxDistance){
+	for(uint i=0;i<animalCount;i++){
+		if(animalList[i].type == 0){continue;}
+		const float d = vecMag(vecSub(pos,animalList[i].pos));
+		if(d > maxDistance){continue;}
+		return &animalList[i];
+	}
+	return NULL;
+}
+
+void animalUpdateAll(){
+	for(int i=animalCount-1;i>=0;i--){
+		int dmg = animalUpdate(&animalList[i]);
+		animalList[i].health -= dmg;
+		if((animalList[i].pos.y  < -256.f) ||
+		   (animalList[i].health <= 0) ||
+		   (animalList[i].hunger <= 0) ||
+		   (animalList[i].sleepy <= 0)) {
+			animalRDie(&animalList[i]);
+			animalDel(i);
+			continue;
+		}
+	}
+}
+
+float animalClosestPlayer(const animal *e, character **cChar){
+	*cChar = NULL;
+	float ret = 4096.f;
+	for(uint i=0;i<characterCount;++i){
+		if(characterList[i].hp <= 0){continue;}
+		const float d = vecMag(vecSub(characterList[i].pos,e->pos));
+		if(d < ret){
+			ret = d;
+			*cChar = &characterList[i];
+		}
+	}
+	return ret;
+}
+
+float animalClosestAnimal(const animal *e, animal **cAnim, int typeFilter, uint flagsMask, uint flagsCompare){
+	*cAnim = NULL;
+	float ret = 4096.f;
+	for(uint i=0;i<animalCount;i++){
+		if(e == &animalList[i])                                    {continue;}
+		if((typeFilter >= 0) && (animalList[i].type != typeFilter)){continue;}
+		if((animalList[i].flags & flagsMask) != flagsCompare)      {continue;}
+		const float d = vecMag(vecSub(animalList[i].pos,e->pos));
+		if(d < ret){
+			ret = d;
+			*cAnim = &animalList[i];
+		}
+	}
+	return ret;
+}
+
+void animalCheckSuffocation(animal *e){
+	const u8 cb = worldGetB(e->pos.x,e->pos.y,e->pos.z);
+	if(cb != 0){
+		if(rngValM(128) == 0){e->health--;}
+		const blockCategory cc = blockTypeGetCat(cb);
+		if(cc == LEAVES){
+			if(rngValM( 512) == 0){worldBoxMine(e->pos.x,e->pos.y,e->pos.z,1,1,1);}
+		}else if(cc == DIRT){
+			if(rngValM(4096) == 0){worldBoxMine(e->pos.x,e->pos.y,e->pos.z,1,1,1);}
+		}
+	}
+}
+
+void animalRDie(animal *e){
+	switch(e->type){
+	default:
+		break;
+	case 1:
+		animalRDieBunny(e);
+		break;
+	case 2:
+		animalRDieGuardian(e);
+		break;
+	}
+	//msgAnimalDied(-1,e->pos, e->type, e->age);
+}
+
+
+void animalRHit(animal *e){
+	if(fabsf(e->vel.y) < 0.001f){
+		e->vel.y = 0.03f;
+	}
+	if(e->state == ANIMAL_S_FLEE || (e->flags & ANIMAL_AGGRESIVE)){
+		e->state = ANIMAL_S_FIGHT;
+		e->flags |= ANIMAL_AGGRESIVE;
+	}else{
+		e->state = ANIMAL_S_FLEE;
+	}
+}
+
+void animalThink(animal *e){
+	switch(e->type){
+	default:
+	case 1:
+		animalThinkBunny(e);
+		break;
+	case 2:
+		animalThinkGuardian(e);
+		break;
+	}
+}
+
+void animalThinkAll(){
+	for(int i=animalCount-1;i>=0;--i){
+		animalThink(&animalList[i]);
+	}
+}
+
+void animalSync(u8 c, u16 i){
+	packet *rp = &packetBuffer;
+	const animal *e = &animalList[i];
+
+	rp->v.u8[ 0] = e->type;
+	rp->v.u8[ 1] = e->flags;
+	rp->v.u8[ 2] = e->state;
+	rp->v.i8[ 3] = e->age;
+
+	rp->v.i8[ 4] = e->health;
+	rp->v.i8[ 5] = e->hunger;
+	rp->v.i8[ 6] = e->pregnancy;
+	rp->v.i8[ 7] = e->sleepy;
+
+	rp->v.u16[4] = i;
+	rp->v.u16[5] = animalCount;
+
+	rp->v.f[ 3]  = e->pos.x;
+	rp->v.f[ 4]  = e->pos.y;
+	rp->v.f[ 5]  = e->pos.z;
+
+	rp->v.f[ 6]  = e->vel.x;
+	rp->v.f[ 7]  = e->vel.y;
+	rp->v.f[ 8]  = e->vel.z;
+
+	rp->v.f[ 9]  = e->gvel.x;
+	rp->v.f[10]  = e->gvel.y;
+	rp->v.f[11]  = e->gvel.z;
+
+	rp->v.f[12]  = e->rot.yaw;
+	rp->v.f[13]  = e->rot.pitch;
+
+	rp->v.f[14]  = e->grot.yaw;
+	rp->v.f[15]  = e->grot.pitch;
+
+	packetQueue(rp,30,16*4,c);
 }

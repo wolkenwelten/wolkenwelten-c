@@ -426,6 +426,8 @@ void drawDebuginfo(){
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"WorstF: %s%u\n",colorSignalLow(60,20,18,worstFrame),worstFrame);
 		guim->fgc  = colorPalette[15];
+		textMeshPrintf(guim,"RopeGLn:%f\n",characterGetHookLength(player));
+		textMeshPrintf(guim,"RopeLen:%f\n",characterGetRopeLength(player));
 
 		animalOverlaysDrawn = 0;
 		for(uint i=0;i<animalCount;i++){
