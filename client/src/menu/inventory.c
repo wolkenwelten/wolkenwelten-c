@@ -177,6 +177,7 @@ void initInventory(){
 	initCraftingSpace();
 	inventoryRadio->flags |= WIDGET_ACTIVE;
 
+	if(!gameRunning){return;}
 	switch(inventoryOpen){
 	default:
 	case 0:

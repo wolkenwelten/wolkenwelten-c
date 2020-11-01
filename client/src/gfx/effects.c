@@ -115,7 +115,6 @@ void fxBleeding(const vec pos, being victim, i16 dmg, u16 cause){
 void fxAnimalDiedPacket (const packet *p){
 	//const u8 type = p->v.u8[0];
 	//const u8 age  = p->v.u8[1];
-	fprintf(stderr,"fxAnimalDiedPacket\n");
 	const vec pos = vecNewP(&p->v.f[1]);
 	sfxPlayPos(sfxBomb,1,pos);
 	sfxPlayPos(sfxUngh,1,pos);
