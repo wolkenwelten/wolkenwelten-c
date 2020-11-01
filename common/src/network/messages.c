@@ -308,8 +308,8 @@ void msgPlayerSetData(uint c, i16 hp, u16 activeItem, u32 flags, u16 id){
 
 	p->v.i16[0] = hp;
 	p->v.u16[1] = activeItem;
+	p->v.u16[2] = id;
 	p->v.u32[2] = flags;
-	p->v.u16[4] = id;
 
 	packetQueue(p,28,4*4,c);
 }

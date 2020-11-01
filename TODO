@@ -10,14 +10,12 @@
 - Fix itemdrop disappearing after dropping them (clientside borrowing?)
 - Make Bunnies/Guardians less likely to fall of the edge
 - Make Bunny populations more stable
-- Less Poop
 - Have voxel/* be part of the common codebase
 - Remove bigChungus from serverSide
 - Fix Guns shooting off center
 - Fix slowdowns after a while of flying around
 - Make Physics more stable, especially in regards to short Hook Ropes
 - Have a nicer way to wait on the singleplayer server to be ready instead of just trying over and over again to establish a connection
-- NoClip on join seems off
 - Fix SFX master Volume
 - Fix Rope Texture stretching
 
