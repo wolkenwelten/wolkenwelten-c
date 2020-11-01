@@ -11,7 +11,7 @@
 mesh *ropeMesh = NULL;
 
 static void ropeDrawSegment(const rope *r, const vec h, const vec p){
-	const float rlen = vecMag(vecSub(h,p));
+	const float rlen = vecMag(vecSub(h,p))*8;
 	const float xs = 1.f/2.f;
 	float xo = 0.f;
 	switch(r->flags & ROPE_TEX){
@@ -24,20 +24,20 @@ static void ropeDrawSegment(const rope *r, const vec h, const vec p){
 		break;
 	}
 
-	meshAddVert(ropeMesh,p.x-.05f,p.y,p.z,xo   , .5f);
-	meshAddVert(ropeMesh,p.x+.05f,p.y,p.z,xo+xs, .5f);
+	meshAddVert(ropeMesh,p.x-.05f,p.y,p.z,xo   ,     .5f);
+	meshAddVert(ropeMesh,p.x+.05f,p.y,p.z,xo+xs,     .5f);
 	meshAddVert(ropeMesh,h.x+.05f,h.y,h.z,xo+xs,rlen+.5f);
 
 	meshAddVert(ropeMesh,h.x+.05f,h.y,h.z,xo+xs,rlen+.5f);
 	meshAddVert(ropeMesh,h.x-.05f,h.y,h.z,xo   ,rlen+.5f);
-	meshAddVert(ropeMesh,p.x-.05f,p.y,p.z,xo   , .5f);
+	meshAddVert(ropeMesh,p.x-.05f,p.y,p.z,xo   ,     .5f);
 
-	meshAddVert(ropeMesh,p.x-.05f,p.y,p.z,xo   , .5f);
+	meshAddVert(ropeMesh,p.x-.05f,p.y,p.z,xo   ,     .5f);
 	meshAddVert(ropeMesh,h.x+.05f,h.y,h.z,xo+xs,rlen+.5f);
-	meshAddVert(ropeMesh,p.x+.05f,p.y,p.z,xo+xs, .5f);
+	meshAddVert(ropeMesh,p.x+.05f,p.y,p.z,xo+xs,     .5f);
 
 	meshAddVert(ropeMesh,h.x+.05f,h.y,h.z,xo+xs,rlen+.5f);
-	meshAddVert(ropeMesh,p.x-.05f,p.y,p.z,xo   , .5f);
+	meshAddVert(ropeMesh,p.x-.05f,p.y,p.z,xo   ,     .5f);
 	meshAddVert(ropeMesh,h.x-.05f,h.y,h.z,xo   ,rlen+.5f);
 
 
