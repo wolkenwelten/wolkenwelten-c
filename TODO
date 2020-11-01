@@ -1,23 +1,44 @@
-(A) MacOS Code signing
-(A) Do itemDrop pickup calculations clientside
-(A) Need a way to replenish wood/trees
-(A) Add internal ore
-(A) Only drop one item
+- Do itemDrop pickup calculations clientside
+- Need a way to replenish wood/trees
+- Rework worldgen to not use the global RNG anymore, instead relying on a local one
+- Optimize worldgen, the recent refactoring has made it SLOW
+- Fix guardian beams shooting in the wrong direction
+- Enable clientside borrowing of Animals, enabling complete simulation by a client
+- Add beingList to chunks/chungi
+- Fix wasm netcode
+- Enable Compression for wasm/ws connections
+- Fix itemdrop disappearing after dropping them (clientside borrowing?)
+- Make Bunnies/Guardians less likely to fall of the edge
+- Make Bunny populations more stable
+- Less Poop
+- Have voxel/* be part of the common codebase
+- Remove bigChungus from serverSide
+- Fix Guns shooting off center
+- Fix slowdowns after a while of flying around
+- Make Physics more stable, especially in regards to short Hook Ropes
+- Have a nicer way to wait on the singleplayer server to be ready instead of just trying over and over again to establish a connection
+- NoClip on join seems off
+- Fix SFX master Volume
+- Fix Rope Texture stretching
 
-(B) Rework worldgen to not use the global RNG anymore, instead relying on a local one
-(B) Some kind of jumping at the end of some grappling hook action
-(B) Proper Character Models
+-------------------------------------------------------------------------------
 
-(C) More worldgen variety
-(C) Use 2 sockets for networking to enable a high/low priority separation
+(A) Armor
+(A) Proper Character Models
+(A) Some kind of jumping at the end of some grappling hook action
 
-(D) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
-(D) Make Blocks Modable
-(D) Enable tls/wss support
-(D) Windows Code signing (seems expensive :/)
-(D) Fix wasm fullscreen problems
+(B) MacOS Code signing
+(B) More worldgen variety
+(B) Enable Singleplayer Support in the wasm version by enabling the server to run as a webworker
+
+(B) Use 2 sockets for networking to enable a high/low priority separation
+(C) Make Blocks Modable
+(C) Enable tls/wss support
+(C) Windows Code signing (seems expensive :/)
+(C) Fix wasm fullscreen problems
+
+(D) SFX work
+(D) Portable/Distributable BSD versions
 
 (E) Add VoiceChat (G.711 ulaw FTW)
-(E) SFX work
-(E) Portable/Distributable BSD versions
 (E) Fluids
