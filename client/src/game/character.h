@@ -3,6 +3,7 @@
 #include "../../../common/src/game/character.h"
 
 extern character *player;
+extern int        playerID;
 
 void  characterPrimary        (character *c);
 void  characterSecondary      (character *c);

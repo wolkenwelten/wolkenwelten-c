@@ -351,3 +351,11 @@ void msgPlayerSetEquipment(uint c,const item *itm, size_t itemCount){
 	}
 	packetQueue(p,35,itemCount*4,c);
 }
+
+void msgItemDropPickup(uint c, uint i){
+	packet *p = &packetBuffer;
+
+	p->v.u16[0] = i;
+
+	packetQueue(p,36,2,c);
+}

@@ -321,11 +321,16 @@ void characterDropSingleItem(character *c, int i){
 	item *cItem = characterGetItemBarSlot(c,i);
 	if(cItem == NULL)       { return; }
 	if(itemIsEmpty(cItem))  { return; }
-	item dItem = itemNew(cItem->ID,1);
-	dItem.amount = itemDecStack(cItem,1);
-	if(itemIsEmpty(&dItem)) { return; }
+	if(getStackSizeDispatch(cItem) <= 1){
+		itemDropNewC(c, cItem);
+		*cItem = itemEmpty();
+	}else{
+		item dItem = itemNew(cItem->ID,1);
+		dItem.amount = itemDecStack(cItem,1);
+		if(itemIsEmpty(&dItem)) { return; }
+		itemDropNewC(c, &dItem);
+	}
 	characterAddCooldown(c,50);
-	itemDropNewC(c, &dItem);
 }
 
 void characterDie(character *c){

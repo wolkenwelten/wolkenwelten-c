@@ -1,5 +1,4 @@
 - Do itemDrop pickup calculations clientside
-- Rework worldgen to not use the global RNG anymore, instead relying on a local one
 - Optimize worldgen, the recent refactoring has made it SLOW
 - Fix guardian beams shooting in the wrong direction
 - Enable clientside borrowing of Animals, enabling complete simulation by a client

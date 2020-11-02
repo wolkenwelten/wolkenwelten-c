@@ -423,11 +423,14 @@ void serverParseSinglePacket(uint c, packet *p){
 			msgPingPong(c);
 			break;
 		case 34:
-			//fprintf(stderr,"animalDied received from client\n");
-			//serverKill(c);
+			fprintf(stderr,"animalDied received from client\n");
+			serverKill(c);
 			break;
 		case 35:
 			characterSetEquipmentP(clients[c].c,p);
+			break;
+		case 36:
+			itemDropPickupP(c,p);
 			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);

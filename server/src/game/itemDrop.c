@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 
-itemDrop itemDrops[ITEM_DROPS_MAX];
+itemDrop itemDrops[1<<12];
 uint     itemDropCount;
 
 static inline void itemDropUpdateMsg(uint c,uint i){
@@ -94,19 +94,17 @@ void itemDropDelChungus(const chungus *c){
 	}
 }
 
-static bool itemDropCheckPickup(uint d){
-	for(uint i=0;i<clientCount;++i){
-		if(clients[i].c == NULL){continue;}
-		const vec dist = vecSub(clients[i].c->pos,itemDrops[d].ent->pos);
-		if((uint)itemDrops[d].player == i){
-			if(vecDot(dist,dist) > (2.f*2.f)){ itemDrops[d].player = -1; }
-		}else if(vecDot(dist,dist) < (1.5f*1.5f)){
-			msgPickupItem(i,itemDrops[d].itm);
-			addPriorityItemDrop(d);
-			return true;
-		}
-	}
-	return false;
+void itemDropPickupP(uint c, const packet *p){
+	uint i = p->v.u16[0];
+	if(i >= itemDropCount)   {return;}
+	if(c >= clientCount)     {return;}
+	if(clients[c].c == NULL) {return;}
+	const vec dist = vecSub(clients[c].c->pos,itemDrops[i].ent->pos);
+	const float dd = vecDot(dist,dist);
+	if(dd > 32.f * 32.f)     {return;}
+	msgPickupItem(c,itemDrops[i].itm);
+	itemDropDel(i);
+	addPriorityItemDrop(i);
 }
 
 static int itemDropCheckSubmersion(uint i){
@@ -191,7 +189,7 @@ void itemDropUpdate(){
 			e->curChungus->clientsUpdated &= mask;
 		}
 		itemDrops[i].itm.amount += itemDropCallbackDispatch(&itemDrops[i].itm, e->pos.x, e->pos.y,e->pos.z);
-		if((itemDrops[i].itm.amount < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || itemDropCheckPickup(i) || (e->pos.y < -256)){
+		if((itemDrops[i].itm.amount < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || (e->pos.y < -256)){
 			itemDropDel(i);
 			addPriorityItemDrop(i);
 			continue;

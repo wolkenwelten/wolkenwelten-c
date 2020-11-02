@@ -161,8 +161,6 @@ struct hook {
 typedef struct {
 	entity    *ent;
 	item       itm;
-	union {
-		u32 aniStep;
-		i32 player;
-	};
+	u16    aniStep;
+	i16     player;
 } itemDrop;

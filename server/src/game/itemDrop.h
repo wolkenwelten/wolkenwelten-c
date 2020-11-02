@@ -1,13 +1,13 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-#define ITEM_DROPS_MAX (1<<12)
-extern itemDrop itemDrops[ITEM_DROPS_MAX];
+extern itemDrop itemDrops[1<<12];
 extern uint itemDropCount;
 
 itemDrop *itemDropNew          ();
 void      itemDropNewP         (const vec pos, const item *itm);
 void      itemDropNewC         (uint c, const packet *p);
+void      itemDropPickupP      (uint c, const packet *p);
 void      itemDropDel          (uint d);
 void      itemDropDelChungus   (const chungus *c);
 void      itemDropIntro        (uint c);

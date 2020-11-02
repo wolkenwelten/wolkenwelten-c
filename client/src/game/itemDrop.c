@@ -1,5 +1,6 @@
 #include "itemDrop.h"
 
+#include "../game/character.h"
 #include "../game/entity.h"
 #include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
@@ -29,6 +30,14 @@ void itemDropUpdate(){
 		if(itemDrops[i].ent == NULL){continue;}
 		itemDrops[i].ent->rot  = vecNew(aniStep/4.f,cosf(aniStep/96.f)*24.f,0);
 		itemDrops[i].ent->yoff = (cosf(aniStep/192.f)/16.f)+0.1f;
+		const vec dist = vecSub(player->pos,itemDrops[i].ent->pos);
+		const float dd = vecDot(dist,dist);
+		if(itemDrops[i].player == playerID){
+			if(dd > 2.f * 2.f){itemDrops[i].player = -1;}
+		}else if(dd < 1.5f*1.5f){
+			msgItemDropPickup(-1, i);
+			itemDrops[i].player = playerID;
+		}
 	}
 }
 
