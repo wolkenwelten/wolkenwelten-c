@@ -9,6 +9,8 @@
 #include "../network/messages.h"
 #include "../mods/api_v1.h"
 
+#include <math.h>
+
 static int animalCheckHeat(animal *e){
 	animal *cAnim;
 
@@ -374,9 +376,13 @@ static void animalPoop(animal *e){
 }
 
 static void animalSocialDistancing(animal *e){
-	animal *cAnim;
-	float dist = animalClosestAnimal(e,&cAnim,e->type,0,0);
-	if(dist < 1.f){
+	if(rngValM(32) != 0){return;}
+	for(uint i=0;i<animalCount;i++){
+		if(animalList[i].type == 0)                    {continue;}
+		if(e == &animalList[i])                        {continue;}
+		if(fabsf(e->pos.x - animalList[i].pos.x) > 1.f){continue;}
+		if(fabsf(e->pos.y - animalList[i].pos.y) > 1.f){continue;}
+		if(fabsf(e->pos.z - animalList[i].pos.z) > 1.f){continue;}
 		e->grot.yaw = ((rngValf()*2.f)-1.f)*360.f;
 		vec dir = vecMulS(vecDegToVec(vecNew(-e->rot.yaw,0.f,0.f)),0.01f);
 		e->gvel.x = dir.x;
@@ -384,6 +390,7 @@ static void animalSocialDistancing(animal *e){
 		if(!(e->flags & ANIMAL_FALLING)){
 			e->vel.y  = 0.03f;
 		}
+		return;
 	}
 }
 

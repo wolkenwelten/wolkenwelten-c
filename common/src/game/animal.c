@@ -279,18 +279,20 @@ float animalClosestPlayer(const animal *e, character **cChar){
 
 float animalClosestAnimal(const animal *e, animal **cAnim, int typeFilter, uint flagsMask, uint flagsCompare){
 	*cAnim = NULL;
-	float ret = 4096.f;
+	float ret = 256.f*256.f;
 	for(uint i=0;i<animalCount;i++){
+		if(animalList[i].type == 0)                                {continue;}
 		if(e == &animalList[i])                                    {continue;}
 		if((typeFilter >= 0) && (animalList[i].type != typeFilter)){continue;}
 		if((animalList[i].flags & flagsMask) != flagsCompare)      {continue;}
-		const float d = vecMag(vecSub(animalList[i].pos,e->pos));
+		const vec dist = vecSub(animalList[i].pos,e->pos);
+		const float d = vecDot(dist,dist);
 		if(d < ret){
 			ret = d;
 			*cAnim = &animalList[i];
 		}
 	}
-	return ret;
+	return sqrtf(ret);
 }
 
 void animalCheckSuffocation(animal *e){
