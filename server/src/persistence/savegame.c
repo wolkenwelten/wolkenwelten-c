@@ -137,7 +137,9 @@ static const void *itemDropLoad(const void *buf){
 static void *itemDropSaveChungus(const chungus *c,void *buf){
 	if(c == NULL){return buf;}
 	for(uint i=0;i<itemDropCount;i++){
-		if(itemDrops[i].ent->curChungus != c){continue;}
+		if(itemIsEmpty(&itemDrops[i].itm))    {continue;}
+		if(itemDrops[i].ent == NULL)          {continue;}
+		if(itemDrops[i].ent->curChungus != c) {continue;}
 		buf = itemDropSave(&itemDrops[i],buf);
 	}
 	return buf;

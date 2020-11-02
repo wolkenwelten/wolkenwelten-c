@@ -55,12 +55,18 @@ void itemDropUpdateFromServer(const packet *p){
 	itemDropCount = len;
 	if(d >= len){return;}
 
+	itemDrops[d].itm.ID     = p->v.u16[2];
+	itemDrops[d].itm.amount = p->v.i16[3];
+	if(itemIsEmpty(&itemDrops[d].itm)){
+		if(itemDrops[d].ent == NULL) { return; }
+		entityFree(itemDrops[d].ent);
+		itemDrops[d].ent = NULL;
+		return;
+	}
 	if(itemDrops[d].ent == NULL) {
 		itemDrops[d].ent     = entityNew(vecZero(),vecZero());
 		itemDrops[d].aniStep = rngValM(1024);
 	}
-	itemDrops[d].itm.ID     = p->v.u16[2];
-	itemDrops[d].itm.amount = p->v.i16[3];
 
 	itemDrops[d].ent->eMesh = getMeshDispatch(&itemDrops[d].itm);
 	itemDrops[d].ent->pos   = vecNewP(&p->v.f[2]);

@@ -12,7 +12,8 @@
 #include <stdio.h>
 
 itemDrop itemDrops[1<<12];
-uint     itemDropCount;
+uint     itemDropCount = 0;
+int      itemDropFirstFree = -1;
 
 static inline void itemDropUpdateMsg(uint c,uint i){
 	if(i >= itemDropCount)       {return;}
@@ -50,8 +51,15 @@ uint itemDropUpdatePlayer(uint c, uint offset){
 }
 
 itemDrop *itemDropNew(){
+	if(itemDropFirstFree >= 0){
+		const uint i = itemDropFirstFree;
+		itemDropFirstFree = itemDrops[itemDropFirstFree].nextFree;
+		addPriorityItemDrop(i);
+		return &itemDrops[i];
+	}
 	if((itemDropCount) >= (int)(sizeof(itemDrops) / sizeof(itemDrop) - 1)){return NULL;}
 	addPriorityItemDrop(itemDropCount);
+	itemDrops[itemDropCount].nextFree = -1;
 	return &itemDrops[itemDropCount++];
 }
 
@@ -83,12 +91,17 @@ void itemDropDel(uint d){
 
 	entityFree(itemDrops[d].ent);
 	itemDrops[d].ent = NULL;
-	itemDrops[d]     = itemDrops[--itemDropCount];
+	itemDrops[d].itm = itemEmpty();
+	itemDrops[d].nextFree = itemDropFirstFree;
+	itemDropFirstFree = d;
+	addPriorityItemDrop(d);
 }
 
 void itemDropDelChungus(const chungus *c){
 	if(c == NULL){return;}
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){
+		if(itemIsEmpty(&itemDrops[i].itm))   {continue;}
+		if(itemDrops[i].ent == NULL)         {continue;}
 		if(itemDrops[i].ent->curChungus != c){continue;}
 		itemDropDel(i);
 	}
@@ -175,6 +188,7 @@ void itemDropUpdate(){
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){
 		int oldp,newp;
 		entity *e     = itemDrops[i].ent;
+		if(e == NULL){continue;}
 		chungus *oldc = e->curChungus;
 
 		oldp = ((int)e->pos.x&0xFF)|(((int)e->pos.y&0xFF)<<8)|(((int)e->pos.z&0xFF)<<16);
@@ -199,6 +213,7 @@ void itemDropUpdate(){
 
 void itemDropIntro(uint c){
 	for(uint i=0;i<itemDropCount;i++){
+		if(itemDrops[i].ent == NULL){continue;}
 		msgItemDropUpdate(c,itemDrops[i].ent->pos,itemDrops[i].ent->vel,&itemDrops[i].itm,i,itemDropCount);
 	}
 }
