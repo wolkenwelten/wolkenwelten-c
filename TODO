@@ -1,8 +1,8 @@
-- Do itemDrop pickup calculations clientside
+- Add profiling harness to serverside so we get a warning as soon as something takes longer than it should
 - Optimize worldgen, the recent refactoring has made it SLOW
 - Fix guardian beams shooting in the wrong direction
 - Enable clientside borrowing of Animals, enabling complete simulation by a client
-- Add beingList to chunks/chungi
+- Add beingList to chunks/chungiy
 - Fix wasm netcode
 - Enable Compression for wasm/ws connections
 - Fix itemdrop disappearing after dropping them (clientside borrowing?)

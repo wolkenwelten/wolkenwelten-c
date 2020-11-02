@@ -211,8 +211,11 @@ static const void *animalLoad(const void *buf){
 
 static void *animalSaveChungus(const chungus *c,void *b){
 	if(c == NULL){return b;}
+	const u32 cc = c->x | (c->y << 8) | (c->z << 16);
 	for(uint i=0;i<animalCount;i++){
-		if(animalList[i].curChungus != c){continue;}
+		const vec *p = &animalList[i].pos;
+		const u32 ac = ((uint)p->x >> 8) | ((uint)p->y & 0xFF00) | (((uint)p->z << 16) & 0xFF0000);
+		if(ac != cc){continue;}
 		b = animalSave(&animalList[i],b);
 	}
 	return b;

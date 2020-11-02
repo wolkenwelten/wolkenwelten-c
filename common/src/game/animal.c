@@ -348,6 +348,7 @@ void animalThink(animal *e){
 }
 
 void animalThinkAll(){
+	return;
 	for(int i=animalCount-1;i>=0;--i){
 		animalThink(&animalList[i]);
 	}
