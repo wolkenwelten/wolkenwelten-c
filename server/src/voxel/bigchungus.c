@@ -39,7 +39,6 @@ void bigchungusFree(bigchungus *c){
 }
 
 chungus *bigchungusTryChungus(bigchungus *c, int x,int y,int z) {
-	if((x|y|z)&(~0xFF)){return NULL;}
 	return c->chungi[x&0xFF][y&0x7F][z&0xFF];
 }
 chungus *worldTryChungus(int x, int y, int z){
@@ -47,7 +46,6 @@ chungus *worldTryChungus(int x, int y, int z){
 }
 
 chungus *bigchungusGetChungus(bigchungus *c, int x,int y,int z) {
-	if((x|y|z)&(~0xFF)){return NULL;}
 	chungus *chng = c->chungi[x&0xFF][y&0x7F][z&0xFF];
 	if(chng == NULL){
 		chng = c->chungi[x&0xFF][y&0x7F][z&0xFF] = chungusNew(x,y,z);

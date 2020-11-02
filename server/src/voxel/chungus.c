@@ -87,22 +87,18 @@ void chungusFree(chungus *c){
 }
 
 chunk *chungusGetChunk(chungus *c, int x,int y,int z){
-	if(((x|y|z)>>4)&(~0xF)){return NULL;}
-	return c->chunks[x>>4][y>>4][z>>4];
+	return c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 }
 
 u8 chungusGetB(chungus *c, int x,int y,int z){
-	if(((x|y|z)>>4)&(~0xF)) { return 0; }
-	chunk *chnk = c->chunks[x>>4][y>>4][z>>4];
+	chunk *chnk = c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 	if(chnk == NULL)        { return 0; }
-
 	return chnk->data[x&0xF][y&0xF][z&0xF];
 }
 
 int chungusGetHighestP(chungus *c, int x, int *retY, int z){
-	if((x|z)&(~0xFF)){return 0;}
-	int cx = x >> 4;
-	int cz = z >> 4;
+	int cx = (x >> 4) & 0xF;
+	int cz = (z >> 4) & 0xF;
 	x &= 0xF;
 	z &= 0xF;
 
@@ -122,7 +118,6 @@ int chungusGetHighestP(chungus *c, int x, int *retY, int z){
 }
 
 void chungusSetB(chungus *c, int x,int y,int z,u8 block){
-	if((x|y|z)&(~0xFF)){return;}
 	int cx = (x >> 4) & 0xF;
 	int cy = (y >> 4) & 0xF;
 	int cz = (z >> 4) & 0xF;
