@@ -24,12 +24,12 @@ void entityDraw(const entity *e){
 	if(e->eMesh == NULL){return;}
 
 	matMov      (matMVP,matView);
-	matMulTrans (matMVP,e->pos.x,e->pos.y+e->yoff,e->pos.z);
-	matMulScale (matMVP,0.4f,0.4f,0.4f);
+	matMulTrans (matMVP,e->pos.x,e->pos.y,e->pos.z);
 	matMulRotYX (matMVP,e->rot.yaw,e->rot.pitch);
+	matMulScale (matMVP,0.4f,0.4f,0.4f);
 	matMul      (matMVP,matMVP,matProjection);
 
-	shaderMatrix(sShadow,matMVP);
+	shaderMatrix(sMesh,matMVP);
 	meshDraw(e->eMesh);
 	shadowAdd(e->pos,0.5f);
 }

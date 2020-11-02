@@ -109,9 +109,10 @@ void itemDropDelChungus(const chungus *c){
 
 void itemDropPickupP(uint c, const packet *p){
 	uint i = p->v.u16[0];
-	if(i >= itemDropCount)   {return;}
-	if(c >= clientCount)     {return;}
-	if(clients[c].c == NULL) {return;}
+	if(i >= itemDropCount)      {return;}
+	if(c >= clientCount)        {return;}
+	if(clients[c].c == NULL)    {return;}
+	if(itemDrops[i].ent == NULL){return;}
 	const vec dist = vecSub(clients[c].c->pos,itemDrops[i].ent->pos);
 	const float dd = vecDot(dist,dist);
 	if(dd > 32.f * 32.f)     {return;}
