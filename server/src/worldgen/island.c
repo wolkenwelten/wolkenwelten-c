@@ -16,37 +16,7 @@ void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
 	chungus *clay = wgen->clay;
 
 	if((w < 8) || (h < 8) || (d < 8)){
-		if((w <= 4) && (h <= 4) && (d <= 4)){
-			int r = rngValM(64);
-			switch(r){
-				/* case 0: */
-				/* case 1: */
-				/* case 2: */
-				/* case 3: */
-				/* 	chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,I_Hematite_Ore); */
-				/* break; */
-
-				/* case 4: */
-				/* case 5: */
-				/* case 6: */
-				/* case 7: */
-				/* 	chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,I_Coal); */
-				/* break; */
-
-				/* case 8: */
-				/* case 9: */
-				/* case 10: */
-				/* case 11: */
-				/* 	chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,I_Dirt); */
-				/* break; */
-
-				default:
-					chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,3);
-				break;
-			}
-		}else{
-			chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,3);
-		}
+		chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,3);
 		chungusBoxF(clay,x-w,y+h-2,z-d,w*2,2,d*2,1);
 		if(x-w < wgen->minX){ wgen->minX = x-w; }
 		if(y-h < wgen->minY){ wgen->minY = y-h; }
