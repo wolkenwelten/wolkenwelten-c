@@ -96,9 +96,9 @@ uint animalSyncPlayer(u8 c, uint offset){
 void animalDelChungus(const chungus *c){
 	if(c == NULL){return;}
 	const u32 cc = c->x | (c->y << 8) | (c->z << 16);
-	for(int i=animalCount-1;i>=0;i--){
+	for(uint i=0;i<animalCount;i++){
 		const vec *p = &animalList[i].pos;
-		const u32 ac = ((uint)p->x >> 8) | ((uint)p->y & 0xFF00) | (((uint)p->z << 16) & 0xFF0000);
+		const u32 ac = ((uint)p->x >> 8) | ((uint)p->y & 0xFF00) | (((uint)p->z << 8) & 0xFF0000);
 		if(ac != cc){continue;}
 		animalDel(i);
 	}

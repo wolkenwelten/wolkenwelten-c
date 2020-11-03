@@ -99,14 +99,20 @@ void thinkStep(){
 void updateWorld(){
 	static u64 lastUpdate  = 0;
 	static u64 lastThought = 0;
+	int i = 0;
 	if(lastUpdate  == 0){lastUpdate  = getTicks() -   5;}
 	if(lastThought == 0){lastThought = getTicks() - 100;}
 
+	i = 5;
 	for(;lastUpdate +  5 < getTicks();lastUpdate +=  5){
 		updateWorldStep();
+		if(--i == 0){break;}
 	}
+
+	i = 1;
 	for(;lastThought+100 < getTicks();lastThought+=100){
 		thinkStep();
+		if(--i == 0){break;}
 	}
 }
 

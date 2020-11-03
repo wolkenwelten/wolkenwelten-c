@@ -315,16 +315,16 @@ static void worldgenRDFirstPass(worldgen *wgen, wgChances *w){
 						break;
 					case I_Stone:
 						w->airBlocks = 0;
-						if(worldgenRDHematite(wgen,w,cx,cy,cz)) {continue;}
-						if(worldgenRDCoal(wgen,w,cx,cy,cz))     {continue;}
-						if(worldgenRDDirt(wgen,w,cx,cy,cz))     {continue;}
+						if(worldgenRDHematite(wgen,w,cx,cy,cz)){continue;}
+						if(worldgenRDCoal    (wgen,w,cx,cy,cz)){continue;}
+						if(worldgenRDDirt    (wgen,w,cx,cy,cz)){continue;}
 						break;
 					case I_Dirt:
-						if(worldgenRDMonolith(wgen,w,cx,cy,cz)) {continue;}
-						if(worldgenRDBigTree(wgen,w,cx,cy,cz))  {continue;}
-						if(worldgenRDTree(wgen,w,cx,cy,cz))     {continue;}
-						if(worldgenRDAnimal(wgen,w,cx,cy,cz))   {continue;}
-						if(worldgenRDDeadTree(wgen,w,cx,cy,cz)) {continue;}
+						if(worldgenRDMonolith(wgen,w,cx,cy,cz)){continue;}
+						if(worldgenRDBigTree (wgen,w,cx,cy,cz)){continue;}
+						if(worldgenRDTree    (wgen,w,cx,cy,cz)){continue;}
+						if(worldgenRDAnimal  (wgen,w,cx,cy,cz)){continue;}
+						if(worldgenRDDeadTree(wgen,w,cx,cy,cz)){continue;}
 					break;
 				}
 				w->lastBlock = b;

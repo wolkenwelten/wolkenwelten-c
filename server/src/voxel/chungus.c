@@ -296,5 +296,4 @@ int chungusUpdateClient(chungus *c, uint p){
 	addChungusToQueue(p,c->x,c->y,c->z);
 	chungusSetUpdated(c,p);
 	return 0;
-
 }

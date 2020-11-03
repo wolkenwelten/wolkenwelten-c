@@ -1,5 +1,6 @@
 #include "worldgen.h"
 
+#include "../main.h"
 #include "../misc/options.h"
 #include "../voxel/chunk.h"
 #include "../voxel/chungus.h"
@@ -11,6 +12,7 @@
 #include "labyrinth.h"
 #include "landmass.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 worldgen worldgenList[4];
@@ -109,7 +111,7 @@ void worldgenTestpattern(worldgen *wgen){
 
 void worldgenGenerate(worldgen *wgen){
 	//static unsigned int averageTicks=0;
-	static uint averageRuns=0;
+	//static uint averageRuns=0;
 
 	int oldSeed = getRNGSeed();
 	//unsigned int startTicks = getTicks();
@@ -191,7 +193,7 @@ void worldgenGenerate(worldgen *wgen){
 	}
 	seedRNG(oldSeed);
 	//averageTicks += getTicks()-startTicks;
-	averageRuns++;
-	//printf("Worldgen took %3ums (Avg.: %3ums   Total: %4ums) VC:%i ISM:%i ICM:%i\n",getTicks()-startTicks,averageTicks/averageRuns,averageTicks,vegetationConcentration,islandSizeModifier,islandCountModifier);
+	//averageRuns++;
+	//printf("Worldgen took %3u ms (Avg.: %3ums   Total: %4ums)\n",(uint)getTicks()-startTicks,averageTicks/averageRuns,averageTicks);
 	//clay->debugInfo();
 }
