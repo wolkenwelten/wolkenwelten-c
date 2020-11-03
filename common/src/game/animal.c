@@ -9,9 +9,10 @@
 #include <string.h>
 #include <math.h>
 
-animal  animalList[1<<10];
+animal  animalList[1<<12];
 uint    animalCount = 0;
-animal *animalFirstFree = NULL;
+uint    animalUsedCount = 0;
+int     animalFirstFree = -1;
 
 void animalReset(animal *e){
 	memset(e,0,sizeof(animal));
@@ -19,8 +20,13 @@ void animalReset(animal *e){
 
 animal *animalNew(const vec pos , int type, int gender){
 	animal *e = NULL;
-	if(animalCount >= ((sizeof(animalList) / sizeof(animal)-1))){return NULL;}
-	e = &animalList[animalCount++];
+	if(animalFirstFree >= 0){
+		e = &animalList[animalFirstFree];
+		animalFirstFree = e->nextFree;
+	}else{
+		if(animalCount >= ((sizeof(animalList) / sizeof(animal)-1))){return NULL;}
+		e = &animalList[animalCount++];
+	}
 	animalReset(e);
 
 	e->pos       = pos;
@@ -55,7 +61,14 @@ animal *animalNew(const vec pos , int type, int gender){
 
 void animalDel(uint i){
 	if(i >= animalCount) {return;}
-	animalList[i] = animalList[--animalCount];
+	animalList[i].type     = 0;
+	animalList[i].nextFree = animalFirstFree;
+	animalFirstFree        = i;
+
+	for(int ii = animalCount-1;ii>=0;ii--){
+		if(animalList[ii].type != 0){return;}
+		animalCount--;
+	}
 }
 
 u32 animalCollision(const vec c){
@@ -249,6 +262,7 @@ animal *animalClosest(const vec pos, float maxDistance){
 
 void animalUpdateAll(){
 	for(int i=animalCount-1;i>=0;i--){
+		if(animalList[i].type == 0){continue;}
 		int dmg = animalUpdate(&animalList[i]);
 		animalList[i].health -= dmg;
 		if(isClient){continue;}
@@ -340,6 +354,7 @@ void animalRHit(animal *e){
 void animalThink(animal *e){
 	switch(e->type){
 	default:
+		return;
 	case 1:
 		animalThinkBunny(e);
 		break;

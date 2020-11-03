@@ -408,7 +408,7 @@ void drawDebuginfo(){
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Particles   : %s%s\n",colorSignalLow(1<<19,1<<17,1<<16,particleCount),getHumanReadableSize(particleCount));
 		guim->fgc  = colorPalette[15];
-		textMeshPrintf(guim,"Animals     : %2i\n",animalCount);
+		textMeshPrintf(guim,"Animals     : %2i\n",animalUsedCount);
 		textMeshPrintf(guim,"Entities    : %2i\n",entityCount);
 		textMeshPrintf(guim,"Itemdrops   : %i\n",itemDropCount);
 		textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());

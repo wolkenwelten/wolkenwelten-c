@@ -1,8 +1,9 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-extern animal  animalList[1<<10];
+extern animal  animalList[1<<12];
 extern uint    animalCount;
+extern uint    animalUsedCount;
 
 animal     *animalNew              (const vec pos , int type, int gender);
 void        animalDel              (uint i);
