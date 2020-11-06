@@ -33,7 +33,10 @@ uint clientCount = 0;
 
 const char *getPlayerLeaveMessage(uint c){
 	static char msg[256];
+	if(c >= 32){return "Someone left";}
+	if(*clients[c].playerName < 0x20){return "Someone left";}
 	snprintf(msg,sizeof(msg),"%s left",clients[c].playerName);
+
 	return msg;
 }
 

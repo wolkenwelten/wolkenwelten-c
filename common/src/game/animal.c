@@ -12,7 +12,7 @@
 animal  animalList[1<<12];
 uint    animalCount = 0;
 uint    animalUsedCount = 0;
-int     animalFirstFree = -1;
+uint    animalFirstFree = 0xFFFF;
 
 void animalReset(animal *e){
 	memset(e,0,sizeof(animal));
@@ -20,7 +20,7 @@ void animalReset(animal *e){
 
 animal *animalNew(const vec pos , int type, int gender){
 	animal *e = NULL;
-	if(animalFirstFree >= 0){
+	if(animalFirstFree < (1<<12)){
 		e = &animalList[animalFirstFree];
 		animalFirstFree = e->nextFree;
 	}else{
@@ -38,6 +38,7 @@ animal *animalNew(const vec pos , int type, int gender){
 	e->hunger    = 64;
 	e->sleepy    = 64;
 	e->pregnancy = -1;
+	e->nextFree  = 0xFFFF;
 
 	e->type      = type;
 	e->health    = animalGetMaxHealth(e);
@@ -64,11 +65,6 @@ void animalDel(uint i){
 	animalList[i].type     = 0;
 	animalList[i].nextFree = animalFirstFree;
 	animalFirstFree        = i;
-
-	for(int ii = animalCount-1;ii>=0;ii--){
-		if(animalList[ii].type != 0){return;}
-		animalCount--;
-	}
 }
 
 u32 animalCollision(const vec c){
@@ -365,7 +361,6 @@ void animalThink(animal *e){
 }
 
 void animalThinkAll(){
-	return;
 	for(int i=animalCount-1;i>=0;--i){
 		animalThink(&animalList[i]);
 	}

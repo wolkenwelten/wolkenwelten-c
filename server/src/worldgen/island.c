@@ -215,8 +215,9 @@ static inline bool worldgenRDTree(worldgen *wgen, wgChances *w, int cx, int cy, 
 
 static inline bool worldgenRDAnimal(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
 	if(!w->animalChance || (w->airBlocks <= 4) || rngValM(w->animalChance)){return false;}
-	animalNew(vecNew(wgen->gx+cx,wgen->gy+cy+1.f,wgen->gz+cz),1,0);
-	animalNew(vecNew(wgen->gx+cx,wgen->gy+cy+1.f,wgen->gz+cz),1,1);
+	const vec pos = vecNew(wgen->gx+cx,wgen->gy+cy+2.f,wgen->gz+cz);
+	animalNew(pos,1,0);
+	animalNew(pos,1,1);
 	return true;
 }
 

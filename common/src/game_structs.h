@@ -127,10 +127,8 @@ typedef struct {
 	u8 type;
 	u8 state;
 
-	union {
-		i16 nextFree;
-		u16 breathing;
-	};
+	u16 nextFree;
+	u16 breathing;
 	u16 temp;
 	u8  clientOwner;
 
