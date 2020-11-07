@@ -544,54 +544,41 @@ void serverParse(){
 }
 
 void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
-	u32 entry = 0;
 	if(c >= clientCount){return;}
+	if(clients[c].state){ return; }
 	if(clients[c].chngReqQueueLen >= sizeof(clients[c].chngReqQueue)){
 		printf("Chungus Request Queue full!\n");
 		return;
 	}
-	entry |=  (u32)x & 0xFFF;
-	entry |= ((u32)y & 0xFF) <<  8;
-	entry |= ((u32)z & 0xFF) << 16;
-	clients[c].chngReqQueue[clients[c].chngReqQueueLen++] = entry;
+	clients[c].chngReqQueue[clients[c].chngReqQueueLen++] = (chungusReqEntry){x,y,z,0};
 }
 
 void addChunkToQueue(uint c, u16 x, u16 y, u16 z){
-	u64 entry = 0;
 	if(c >= clientCount){return;}
+	if(clients[c].state){ return; }
 	if(clients[c].chnkReqQueueLen >= sizeof(clients[c].chnkReqQueue)){
 		return;
 	}
-	entry |=  (u64)x & 0xFFFF;
-	entry |= ((u64)y & 0xFFFF) << 16;
-	entry |= ((u64)z & 0xFFFF) << 32;
-	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = entry;
+	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = (chunkReqEntry){x,y,z,0};
 }
 
 void addChunksToQueue(uint c){
 	if(c >= clientCount){return;}
 	if(clients[c].chngReqQueueLen == 0){return;}
-	u32 entry = clients[c].chngReqQueue[--clients[c].chngReqQueueLen];
-	u8 cx =  entry        & 0xFF;
-	u8 cy = (entry >>  8) & 0xFF;
-	u8 cz = (entry >> 16) & 0xFF;
-
-	chungus *chng = worldGetChungus(cx,cy,cz);
-	if(chng == NULL){
-		return;
-	}
+	const chungusReqEntry entry = clients[c].chngReqQueue[--clients[c].chngReqQueueLen];
+	chungus *chng = worldGetChungus(entry.x,entry.y,entry.z);
+	if(chng == NULL){ return; }
 	chungusSubscribePlayer(chng,c);
 	for(int x=15;x>= 0;--x){
 		for(int y=15;y>= 0;--y){
 			for(int z=15;z>= 0;--z){
 				if(chng->chunks[x][y][z] != NULL){
-					addChunkToQueue(c,(cx<<8)|(x<<4),(cy<<8)|(y<<4),(cz<<8)|(z<<4));
+					addChunkToQueue(c,(entry.x<<8)|(x<<4),(entry.y<<8)|(y<<4),(entry.z<<8)|(z<<4));
 				}
 			}
 		}
 	}
-	u64 centry = ((u64)cx<<8) | ((u64)cy<<24) | ((u64)cz<<40);
-	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = centry | (u64)1<<62;
+	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = (chunkReqEntry){entry.x,entry.y,entry.z,0xFF};
 	chungusSetUpdated(chng,c);
 }
 
@@ -602,16 +589,13 @@ void addQueuedChunks(uint c){
 				return;
 			}
 			addChunksToQueue(c);
-			continue;
+			return;
 		}
-		u64 entry = clients[c].chnkReqQueue[--clients[c].chnkReqQueueLen];
-		u16 cx =  entry        & 0xFFFF;
-		u16 cy = (entry >> 16) & 0xFFFF;
-		u16 cz = (entry >> 32) & 0xFFFF;
-		if(entry & ((u64)1<<62)){
-			msgSendChungusComplete(c,cx>>8,cy>>8,cz>>8);
+		const chunkReqEntry entry = clients[c].chnkReqQueue[--clients[c].chnkReqQueueLen];
+		if(entry.w == 0xFF){
+			msgSendChungusComplete(c,entry.x,entry.y,entry.z);
 		}else{
-			chunk *chnk = worldGetChunk(cx,cy,cz);
+			chunk *chnk = worldGetChunk(entry.x,entry.y,entry.z);
 			if(chnk != NULL){
 				if(!chunkIsUpdated(chnk,c)){
 					msgSendChunk(c,chnk);

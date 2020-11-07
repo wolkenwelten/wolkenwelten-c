@@ -5,18 +5,13 @@
 #include "../misc/options.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
+#include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/noise.h"
 
 #include <stdio.h>
 #include <string.h>
 
 bigchungus world;
-
-float chungusRoughDistance(const character *cam, const vec pos) {
-	if(cam == NULL){return 8192.f;}
-	const vec np = vecAddS(vecMulS(pos,CHUNGUS_SIZE),CHUNGUS_SIZE/2);
-	return vecMag(vecSub(np,cam->pos));
-}
 
 void bigchungusInit(bigchungus *c){
 	memset(c->chungi,0,256*128*256*sizeof(chunk *));
@@ -39,6 +34,7 @@ void bigchungusFree(bigchungus *c){
 }
 
 chungus *bigchungusTryChungus(bigchungus *c, int x,int y,int z) {
+	if(!inWorld(x,y,z)){return NULL;}
 	return c->chungi[x&0xFF][y&0x7F][z&0xFF];
 }
 chungus *worldTryChungus(int x, int y, int z){
@@ -46,6 +42,7 @@ chungus *worldTryChungus(int x, int y, int z){
 }
 
 chungus *bigchungusGetChungus(bigchungus *c, int x,int y,int z) {
+	if(!inWorld(x,y,z)){return NULL;}
 	chungus *chng = c->chungi[x&0xFF][y&0x7F][z&0xFF];
 	if(chng == NULL){
 		chng = c->chungi[x&0xFF][y&0x7F][z&0xFF] = chungusNew(x,y,z);
@@ -54,7 +51,16 @@ chungus *bigchungusGetChungus(bigchungus *c, int x,int y,int z) {
 	return chng;
 }
 
+void bigchungusFreeChungus(bigchungus *c, int x, int y, int z){
+	chungus *chng = c->chungi[x&0xFF][y&0x7F][z&0xFF];
+	if(chng != NULL){
+		chungusFree(chng);
+	}
+	c->chungi[x&0xFF][y&0x7F][z&0xFF] = NULL;
+}
+
 chunk *bigchungusGetChunk(bigchungus *c, int x, int y, int z){
+	if(!inWorld(x,y,z)){return NULL;}
 	chungus *chng = bigchungusGetChungus(c,(x>>8)&0xFF,(y>>8)&0xFF,(z>>8)&0xFF);
 	if(chng == NULL){return NULL;}
 	chunk *chnk = chungusGetChunk(chng,x&0xFF,y&0xFF,z&0xFF);
@@ -62,6 +68,7 @@ chunk *bigchungusGetChunk(bigchungus *c, int x, int y, int z){
 }
 
 chunk *bigchungusTryChunk(bigchungus *c, int x, int y, int z){
+	if(!inWorld(x,y,z)){return NULL;}
 	chungus *chng = bigchungusTryChungus(c,(x>>8)&0xFF,(y>>8)&0xFF,(z>>8)&0xFF);
 	if(chng == NULL){return NULL;}
 	return chungusGetChunk(chng,x&0xFF,y&0xFF,z&0xFF);
@@ -69,6 +76,7 @@ chunk *bigchungusTryChunk(bigchungus *c, int x, int y, int z){
 
 u8 bigchungusGetB(bigchungus *c, int x,int y,int z) {
 	chungus *chng;
+	if(!inWorld(x,y,z)){return 0;}
 	chng = bigchungusGetChungus(c,x>>8,y>>8,z>>8);
 	if(chng == NULL){ return 0; }
 	return chungusGetB(chng,x&0xFF,y&0xFF,z&0xFF);
@@ -215,35 +223,6 @@ ivec bigchungusGetSpawnPos(bigchungus *c){
 		bigchungusDetermineSpawn(c,c->spawn);
 	}
 	return c->spawn;
-}
-
-void bigchungusFreeFarChungi(bigchungus *c){
-	uint len = chungusGetActiveCount();
-	for(uint i=0;i<len;i++){
-		chungus *chng = chungusGetActive(i);
-		if(chng == NULL)          {continue;}
-		if(chng->nextFree != NULL){continue;}
-		u8 x = chng->x;
-		u8 y = chng->y;
-		u8 z = chng->z;
-		if(y >= 128){continue;}
-		if((x >= 127) && (x <= 129) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
-
-		const vec cpos = vecNew(x,y,z);
-		for(uint ii=0;ii<clientCount;++ii){
-			const float cdist = chungusRoughDistance(clients[ii].c,cpos);
-			if(cdist < 384.f){
-				chungusSubscribePlayer(chng,ii);
-				goto chungiDontFree;
-			}else if(cdist < 768.f){
-				chungusUnsubscribePlayer(chng,ii);
-				goto chungiDontFree;
-			}
-		}
-		chungusFree(c->chungi[x][y][z]);
-		c->chungi[x][y][z] = NULL;
-		chungiDontFree:;
-	}
 }
 
 void bigchungusUpdateClient(bigchungus *c, int p){

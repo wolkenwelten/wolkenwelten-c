@@ -113,8 +113,9 @@ void animalCheckForHillOrCliff(animal *e){
 int animalUpdate(animal *e){
 	int ret=0;
 	u32 col;
-	if(e->type == 0){return 0;}
+	if(e->type == 0)   {return 0;}
 	e->pos = vecAdd(e->pos,e->vel);
+	if(!vecInWorld(e->pos)){return 1;}
 	e->breathing += 5;
 	animalCheckForHillOrCliff(e);
 
@@ -262,7 +263,7 @@ void animalUpdateAll(){
 		int dmg = animalUpdate(&animalList[i]);
 		animalList[i].health -= dmg;
 		if(isClient){continue;}
-		if((animalList[i].pos.y  < -256.f) ||
+		if((animalList[i].pos.y  < 0.f) ||
 		   (animalList[i].health <= 0) ||
 		   (animalList[i].hunger <= 0) ||
 		   (animalList[i].sleepy <= 0)) {
@@ -319,15 +320,17 @@ void animalCheckSuffocation(animal *e){
 }
 
 void animalRDie(animal *e){
-	switch(e->type){
-	default:
-		break;
-	case 1:
-		animalRDieBunny(e);
-		break;
-	case 2:
-		animalRDieGuardian(e);
-		break;
+	if(e->pos.y > 0.f){
+		switch(e->type){
+		default:
+			break;
+		case 1:
+			animalRDieBunny(e);
+			break;
+		case 2:
+			animalRDieGuardian(e);
+			break;
+		}
 	}
 	if(!isClient){
 		msgAnimalDied(-1,e);

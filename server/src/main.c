@@ -7,6 +7,8 @@
 #include "game/grenade.h"
 #include "persistence/savegame.h"
 #include "voxel/bigchungus.h"
+#include "voxel/chungus.h"
+#include "voxel/chunk.h"
 #include "network/server.h"
 #include "../../common/src/tmp/cto.h"
 #include "../../common/src/misc/misc.h"
@@ -123,6 +125,7 @@ int main( int argc, const char* argv[] ){
 	savegameLoad();
 	seedRNG(time(NULL));
 	serverInit();
+	chunkInit();
 	savegameSave();
 
 	printf("%sWolkenwelten",termColors[2]                );
@@ -136,7 +139,9 @@ int main( int argc, const char* argv[] ){
 	blockTypeInit();
 	bigchungusGenSpawn(&world);
 	while(!quit){
-		bigchungusFreeFarChungi(&world);
+		freeTime = getTicks();
+		chungusUnsubFarChungi();
+		chungusFreeOldChungi(30000);
 		bigchungusSafeSave(&world);
 		updateWorld();
 		serverHandleEvents();

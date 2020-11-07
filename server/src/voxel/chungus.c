@@ -6,6 +6,7 @@
 #include "../network/server.h"
 #include "../persistence/savegame.h"
 #include "../worldgen/worldgen.h"
+#include "../voxel/bigchungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/misc/misc.h"
 
@@ -13,9 +14,10 @@
 #include <string.h>
 
 
-chungus chungusList[1 << 12];
+chungus chungusList[1 << 14];
 uint chungusCount = 0;
 chungus *chungusFirstFree = NULL;
+u64 freeTime = 0;
 
 float chunkDistance(const entity *cam, const vec pos){
 	return vecMag(vecSub(pos,cam->pos));
@@ -35,13 +37,28 @@ void chungusSetClientUpdated(chungus *c,u64 updated){
 
 chungus *chungusNew(u8 x, u8 y, u8 z){
 	chungus *c = NULL;
+	if(y > 128){
+		fprintf(stderr,"Y seems a bit high!\n");
+	}
+	if((x < 64) || (z < 64)){
+		fprintf(stderr,"warn\n");
+	}
 
 	if(chungusFirstFree == NULL){
 		if(chungusCount >= (int)(sizeof(chungusList) / sizeof(chungus))-1){
-			fprintf(stderr,"server chungusList Overflow!\n");
-			return NULL;
+			fprintf(stderr,"chungus load shedding [%u chungi]!\n",chungusCount);
+			chungusFreeOldChungi(1000);
+			if(chungusFirstFree == NULL){
+				fprintf(stderr,"server chungusList Overflow!\n");
+				return NULL;
+			}else{
+				fprintf(stderr,"chungusList overflow averted, freed some memory!\n");
+				c = chungusFirstFree;
+				chungusFirstFree = c->nextFree;
+			}
+		}else{
+			c = &chungusList[chungusCount++];
 		}
-		c = &chungusList[chungusCount++];
 	}else{
 		c = chungusFirstFree;
 		chungusFirstFree = c->nextFree;
@@ -50,10 +67,12 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	c->x = x;
 	c->y = y;
 	c->z = z;
+	c->freeTimer = freeTime;
 	c->nextFree = NULL;
 	c->spawn = ivecNOne();
-	c->clientsSubscribed  = 0;
+	c->clientsSubscribed  = (u64)1 << 63;
 	c->clientsUpdated     = (u64)1 << 31;
+	fprintf(stderr,"chungusNew %u %u %u [%u | %u]\n",x,y,z,chungusCount,chunkCount);
 
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 
@@ -70,7 +89,7 @@ void chungusWorldGenLoad(chungus *c){
 
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
-	fprintf(stderr,"ChungusFree[] %p %i:%i:%i\n",c,c->x,c->y,c->z);
+	fprintf(stderr,"ChungusFree[%llu] %p %i:%i:%i\n",getTicks(),c,c->x,c->y,c->z);
 	chungusSave(c);
 	animalDelChungus(c);
 	itemDropDelChungus(c);
@@ -78,10 +97,10 @@ void chungusFree(chungus *c){
 		for(int y=0;y<16;y++){
 			for(int z=0;z<16;z++){
 				chunkFree(c->chunks[x][y][z]);
-				c->chunks[x][y][z] = NULL;
 			}
 		}
 	}
+	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 	c->nextFree = chungusFirstFree;
 	chungusFirstFree = c;
 }
@@ -91,6 +110,7 @@ chunk *chungusGetChunk(chungus *c, int x,int y,int z){
 }
 
 u8 chungusGetB(chungus *c, int x,int y,int z){
+	c->freeTimer = freeTime;
 	chunk *chnk = c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 	if(chnk == NULL)        { return 0; }
 	return chnk->data[x&0xF][y&0xF][z&0xF];
@@ -118,6 +138,7 @@ int chungusGetHighestP(chungus *c, int x, int *retY, int z){
 }
 
 void chungusSetB(chungus *c, int x,int y,int z,u8 block){
+	c->freeTimer = freeTime;
 	int cx = (x >> 4) & 0xF;
 	int cy = (y >> 4) & 0xF;
 	int cz = (z >> 4) & 0xF;
@@ -131,6 +152,7 @@ void chungusSetB(chungus *c, int x,int y,int z,u8 block){
 }
 
 void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
+	c->freeTimer = freeTime;
 	int gx = (x+w)>>4;
 	int gy = (y+h)>>4;
 	int gz = (z+d)>>4;
@@ -171,6 +193,7 @@ void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
 }
 
 void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
+	c->freeTimer = freeTime;
 	if(w < 0){ chungusBox(c,x+w,y,z,-w,h,d,block); }
 	if(h < 0){ chungusBox(c,x,y+h,z,w,-h,d,block); }
 	if(d < 0){ chungusBox(c,x,y,z+d,w,h,-d,block); }
@@ -296,4 +319,64 @@ int chungusUpdateClient(chungus *c, uint p){
 	addChungusToQueue(p,c->x,c->y,c->z);
 	chungusSetUpdated(c,p);
 	return 0;
+}
+
+uint chungusFreeOldChungi(u64 threshold){
+	const u64 curTicks = getTicks();
+	uint ret = 0;
+
+	for(uint i=0;i<chungusCount;i++){
+		chungus *chng = &chungusList[i];
+		if(chng->nextFree != NULL)      {continue;}
+		if(chng->clientsSubscribed != 0){continue;}
+		if(curTicks < chng->freeTimer + threshold){continue;}
+		const u8 x = chng->x;
+		const u8 y = chng->y;
+		const u8 z = chng->z;
+		if(y >= 128){
+			fprintf(stderr,"Y >= 128, something went wrong!!! [%u,%u,%u]\n",x,y,z);
+			continue;
+		}
+		if((x >= 127) && (x <= 129) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
+		bigchungusFreeChungus(&world,chng->x,chng->y,chng->z);
+		ret++;
+	}
+	return ret;
+}
+
+static float chungusRoughDistance(const character *cam, const vec pos) {
+	if(cam == NULL){return 8192.f;}
+	const vec np = vecAddS(vecMulS(pos,CHUNGUS_SIZE),CHUNGUS_SIZE/2);
+	return vecMag(vecSub(np,cam->pos));
+}
+
+void chungusUnsubFarChungi(){
+	static u64 lastCall = 0;
+	const u64 curTicks = getTicks();
+	if(curTicks < lastCall + 1000){return;}
+	lastCall = curTicks;
+
+	for(uint i=0;i<chungusCount;i++){
+		chungus *chng = &chungusList[i];
+		if(chng->nextFree != NULL){continue;}
+		const u8 x = chng->x;
+		const u8 y = chng->y;
+		const u8 z = chng->z;
+		if(y >= 128){
+			fprintf(stderr,"Y >= 128, something went wrong!!! [%u,%u,%u]\n",x,y,z);
+			continue;
+		}
+		if((x >= 127) && (x <= 129) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
+		chng->clientsSubscribed &= 0xFFFFFFFF;
+
+		const vec cpos = vecNew(x,y,z);
+		for(uint ii=0;ii<clientCount;++ii){
+			const float cdist = chungusRoughDistance(clients[ii].c,cpos);
+			if(cdist < 256.f){
+				chungusSubscribePlayer(chng,ii);
+			}else if(cdist > 768.f){
+				chungusUnsubscribePlayer(chng,ii);
+			}
+		}
+	}
 }

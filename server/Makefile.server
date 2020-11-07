@@ -55,8 +55,8 @@ server/src/network/server.o: server/src/network/server_win.h
 
 .PHONY: run
 runs: all
-	./wolkenwelten-server -worldSeed=18 -savegame=Test
+	./wolkenwelten-server $(TEST_WORLD)
 
 .PHONY: run
 runsv: all
-	./wolkenwelten-server -worldSeed=18 -savegame=Test -verbose
+	./wolkenwelten-server $(TEST_WORLD) -verbose

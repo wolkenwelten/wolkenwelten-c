@@ -81,6 +81,11 @@ static inline vec vecRngAbs(){
 static inline vec vecRng(){
 	return vecMulS(vecSubS(vecRngAbs(),0.5f),2.f);
 }
+static inline int vecInWorld(const vec a){
+	if((a.x < 0.f) || (a.y < 0.f) || (a.z < 0.f))            {return 0;}
+	if((a.x > 65536.f) || (a.y > 32768.f) || (a.z > 65536.f)){return 0;}
+	return 1;
+}
 
 static inline ivec ivecNew(int x, int y, int z){
 	return (ivec){{{x,y,z}}};

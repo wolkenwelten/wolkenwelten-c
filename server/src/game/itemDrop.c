@@ -102,7 +102,10 @@ void itemDropDelChungus(const chungus *c){
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){
 		if(itemIsEmpty(&itemDrops[i].itm))   {continue;}
 		if(itemDrops[i].ent == NULL)         {continue;}
-		if(itemDrops[i].ent->curChungus != c){continue;}
+		const vec *p = &itemDrops[i].ent->pos;
+		if(((uint)p->x >> 8) != c->x){continue;}
+		if(((uint)p->y >> 8) != c->y){continue;}
+		if(((uint)p->z >> 8) != c->z){continue;}
 		itemDropDel(i);
 	}
 }

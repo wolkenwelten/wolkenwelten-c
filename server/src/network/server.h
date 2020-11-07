@@ -2,6 +2,14 @@
 #include "../../../common/src/common.h"
 
 typedef struct {
+	u8 x,y,z,w;
+} chungusReqEntry;
+
+typedef struct {
+	u16 x,y,z,w;
+} chunkReqEntry;
+
+typedef struct {
 	char playerName[32];
 	character *c;
 	int state,flags;
@@ -18,9 +26,9 @@ typedef struct {
 	uint itemDropUpdateWindowSize;
 
 	uint chngReqQueueLen;
-	u32  chngReqQueue[128];
+	chungusReqEntry chngReqQueue[128];
 	uint chnkReqQueueLen;
-	u64  chnkReqQueue[4096];
+	chunkReqEntry chnkReqQueue[4096];
 
 	uint recvBufOff;
 	uint recvBufLen;

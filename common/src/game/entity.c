@@ -71,6 +71,7 @@ int entityUpdate(entity *e){
 		entityUpdateCurChungus(e);
 		return 0;
 	}
+	if(!vecInWorld(e->pos)){return 1;}
 
 	e->vel.y -= 0.0005f;
 	// ToDo: implement terminal veolocity in a better way

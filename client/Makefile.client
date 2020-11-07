@@ -16,7 +16,6 @@ CLIENT_DEPS      := ${CLIENT_SRCS:.c=.deps}
 
 WINDOW_WIDTH     := 960
 WINDOW_HEIGHT    := 524
-TEST_WORLD       := -worldSeed=69 -savegame=Test
 
 wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)

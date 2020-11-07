@@ -18,3 +18,4 @@ int         isDir    (const char *name);
 int         isFile   (const char *name);
 void        makeDir  (const char *name);
 void        rmDirR   (const char *name);
+int         inWorld(int x, int y, int z);

@@ -12,6 +12,9 @@ struct chunk{
 	u8    data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 };
 
+extern uint chunkCount;
+
+void   chunkInit        ();
 chunk *chunkNew         (u16 x,u16 y,u16 z);
 void   chunkFree        (chunk *c);
 void   chunkFill        (chunk *c, u8 b);

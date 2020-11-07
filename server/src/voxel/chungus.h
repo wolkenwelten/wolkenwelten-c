@@ -9,12 +9,15 @@ struct chungus {
 	ivec   spawn;
 	u64    clientsSubscribed;
 	u64    clientsUpdated;
+	u64    freeTimer;
 	void  *nextFree;
 	chunk *chunks[16][16][16];
 };
 
-extern chungus chungusList[1 << 12];
+extern chungus chungusList[1 << 14];
 extern uint chungusCount;
+extern u64  freeTime;
+extern int loadShed;
 
 chungus     *chungusNew              (u8 x,u8 y, u8 z);
 void         chungusWorldGenLoad     (chungus *c);
@@ -37,6 +40,8 @@ uint         chungusIsUpdated        (chungus *c, uint p);
 void         chungusSetUpdated       (chungus *c, uint p);
 void         chungusUnsetUpdated     (chungus *c, uint p);
 int          chungusGetHighestP      (chungus *c, int x, int *retY, int z);
+uint         chungusFreeOldChungi    (u64 threshold);
+void         chungusUnsubFarChungi   ();
 
 inline uint chungusGetActiveCount(){
 	return chungusCount;

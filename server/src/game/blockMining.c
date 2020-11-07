@@ -23,6 +23,7 @@ uint        blockMiningCount = 0;
 
 int blockMiningNew(int x,int y,int z){
 	blockMining *bm;
+	if(!inWorld(x,y,z)){return -1;}
 	bm = &blockMiningList[blockMiningCount++];
 	bm->x = x;
 	bm->y = y;
@@ -85,6 +86,7 @@ void blockMiningMine(uint i, item *itm){
 }
 
 int blockMiningMinePos(item *itm, int x, int y, int z){
+	if(!inWorld(x,y,z)){return 1;}
 	for(uint i=0;i<blockMiningCount;i++){
 		blockMining *bm = &blockMiningList[i];
 		if(bm->x != x){continue;}

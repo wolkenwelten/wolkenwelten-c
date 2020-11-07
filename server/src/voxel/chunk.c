@@ -1,21 +1,43 @@
 #include "chunk.h"
 
+#include "../voxel/chungus.h"
+
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-chunk  chunkList[1 << 17];
+chunk *chunkList;
 uint   chunkFreeCount = 0;
 uint   chunkCount     = 0;
-chunk *chunkFirstFree       = NULL;
+chunk *chunkFirstFree = NULL;
+
+void chunkInit(){
+	chunkList = malloc(sizeof(chunk) * (1<<20));
+	if(chunkList == NULL){
+		fprintf(stderr,"Error allocating chunkList, exit\n");
+		exit(1);
+	}
+}
 
 chunk *chunkNew(u16 x,u16 y,u16 z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){
-		if(chunkCount >= (int)(sizeof(chunkList) / sizeof(chunk))-1){
-			fprintf(stderr,"server chunkList Overflow!\n");
-			return NULL;
+		if(chunkCount >= (1<<20)){
+			fprintf(stderr,"chunk load shedding [%u / %u chunks]!\n",chunkFreeCount,chunkCount);
+			uint chngFree = chungusFreeOldChungi(1000);
+			if(chunkFirstFree == NULL){
+				fprintf(stderr,"server chunkList Overflow!\n");
+				return NULL;
+			}else{
+				fprintf(stderr,"chunkList overflow averted, freed some memory [%u chungi | %u chunks]!\n",chngFree,chunkFreeCount);
+				c = chunkFirstFree;
+				chunkFirstFree = c->nextFree;
+				chunkFreeCount--;
+			}
+		}else{
+			c = &chunkList[chunkCount++];
 		}
-		c = &chunkList[chunkCount++];
 	}else{
 		c = chunkFirstFree;
 		chunkFirstFree = c->nextFree;
