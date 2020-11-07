@@ -106,6 +106,7 @@ void msgPlayerSpawnPos(uint c){
 }
 
 void serverInitClient(uint c){
+	const vec spawn = vecAdd(vecNewI(worldGetSpawnPos()),vecNew(.5f,2.f,.5f));
 	clients[c].c                        = characterNew();
 	clients[c].recvBufLen               = 0;
 	clients[c].sendBufSent              = 0;
@@ -120,6 +121,7 @@ void serverInitClient(uint c){
 	clients[c].itemDropUpdateWindowSize = 1;
 	clients[c].itemDropUpdateOffset     = 0;
 	clients[c].itemDropPriorityQueueLen = 0;
+	clients[c].c->pos = spawn;
 
 	bigchungusUnsubscribeClient(&world,c);
 }
@@ -544,10 +546,18 @@ void serverParse(){
 }
 
 void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
-	if(c >= clientCount){return;}
+	if(c >= clientCount){ return; }
 	if(clients[c].state){ return; }
-	if(clients[c].chngReqQueueLen >= sizeof(clients[c].chngReqQueue)){
-		printf("Chungus Request Queue full!\n");
+	if(clients[c].chngReqQueueLen >= (sizeof(clients[c].chngReqQueue) / sizeof(chungusReqEntry))){
+		fprintf(stderr,"Chungus Request Queue full!\n");
+		return;
+	}
+	for(uint i=0;i<(sizeof(clients[c].chngReqQueue) / sizeof(chungusReqEntry));i++){
+		chungusReqEntry *e = &clients[c].chngReqQueue[i];
+		if(e->x != x){continue;}
+		if(e->y != y){continue;}
+		if(e->z != z){continue;}
+		fprintf(stderr,"Chungus already on queue\n");
 		return;
 	}
 	clients[c].chngReqQueue[clients[c].chngReqQueueLen++] = (chungusReqEntry){x,y,z,0};
@@ -556,7 +566,8 @@ void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 void addChunkToQueue(uint c, u16 x, u16 y, u16 z){
 	if(c >= clientCount){return;}
 	if(clients[c].state){ return; }
-	if(clients[c].chnkReqQueueLen >= sizeof(clients[c].chnkReqQueue)){
+	if(clients[c].chnkReqQueueLen >= (sizeof(clients[c].chnkReqQueue) / sizeof(chunkReqEntry))){
+		fprintf(stderr,"Chunk Request Queue full!\n");
 		return;
 	}
 	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = (chunkReqEntry){x,y,z,0};
@@ -568,6 +579,11 @@ void addChunksToQueue(uint c){
 	const chungusReqEntry entry = clients[c].chngReqQueue[--clients[c].chngReqQueueLen];
 	chungus *chng = worldGetChungus(entry.x,entry.y,entry.z);
 	if(chng == NULL){ return; }
+	float dist = chungusDistance(clients[c].c, chng);
+	if(dist > 768.f){
+		fprintf(stderr,"Requested Chungus too far away Chungus(%u, %u, %u) Player(%f, %f, %f))\n",chng->x<<8,chng->y<<8,chng->z<<8,clients[c].c->pos.x,clients[c].c->pos.y,clients[c].c->pos.z);
+		return;
+	}
 	chungusSubscribePlayer(chng,c);
 	for(int x=15;x>= 0;--x){
 		for(int y=15;y>= 0;--y){

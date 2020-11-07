@@ -1,5 +1,6 @@
 #include "chungus.h"
 
+#include "../sdl/sdl.h"
 #include "../game/blockType.h"
 #include "../gfx/frustum.h"
 #include "../voxel/chunk.h"
@@ -48,7 +49,7 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	c->y = y;
 	c->z = z;
 	c->nextFree = NULL;
-	c->loaded = 0;
+	c->requested = 0;
 
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 	return c;

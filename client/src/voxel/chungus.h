@@ -5,7 +5,8 @@
 #define CHUNGUS_SIZE (16*16)
 
 struct chungus {
-	u8 x,y,z,loaded;
+	u8 x,y,z;
+	u64 requested;
 	void *nextFree;
 	chunk *chunks[16][16][16];
 };

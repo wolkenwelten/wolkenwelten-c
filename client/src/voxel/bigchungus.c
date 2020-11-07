@@ -1,5 +1,6 @@
 #include "bigchungus.h"
 
+#include "../sdl/sdl.h"
 #include "../game/blockType.h"
 #include "../gfx/clouds.h"
 #include "../gfx/frustum.h"
@@ -126,6 +127,7 @@ void worldDraw(const character *cam){
 	const int maxCX = MIN(255,camCX + dist);
 	const int maxCY = MIN(127,camCY + dist);
 	const int maxCZ = MIN(255,camCZ + dist);
+	const u64 cTicks = getTicks();
 
 	for(int x=minCX;x<maxCX;x++){
 		if((x <= 0) || (x >= 255)){continue;}
@@ -137,10 +139,16 @@ void worldDraw(const character *cam){
 				if((d < (CHUNK_RENDER_DISTANCE+CHUNGUS_SIZE)) && (chungusInFrustum(vecNew(x,y,z)))){
 					if(world[x][y][z] == NULL){
 						world[x][y][z] = chungusNew(x,y,z);
+						world[x][y][z]->requested = cTicks;
+						loadQueue[loadQueueLen].distance = d;
+						loadQueue[loadQueueLen++].chng   = world[x][y][z];
+					}else if(world[x][y][z]->requested == 0){
+						chungusQueueDraws(world[x][y][z],cam,drawQueue,&drawQueueLen);
+					}else if((world[x][y][z]->requested + 3000) < cTicks){
+						world[x][y][z]->requested = cTicks;
 						loadQueue[loadQueueLen].distance = d;
 						loadQueue[loadQueueLen++].chng   = world[x][y][z];
 					}
-					chungusQueueDraws(world[x][y][z],cam,drawQueue,&drawQueueLen);
 					cloudsDraw(x,y,z);
 				}
 			}
@@ -223,7 +231,7 @@ void worldBoxSphereDirty(int x,int y,int z, int r){
 
 void worldSetChungusLoaded(int x, int y, int z){
 	chungus *chng = world[x&0xFF][y&0x7F][z&0xFF];
-	if(chng != NULL){chng->loaded = 1;}
+	if(chng != NULL){chng->requested = 0;}
 }
 
 int checkCollision(int x, int y, int z){

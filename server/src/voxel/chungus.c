@@ -344,10 +344,13 @@ uint chungusFreeOldChungi(u64 threshold){
 	return ret;
 }
 
-static float chungusRoughDistance(const character *cam, const vec pos) {
-	if(cam == NULL){return 8192.f;}
-	const vec np = vecAddS(vecMulS(pos,CHUNGUS_SIZE),CHUNGUS_SIZE/2);
-	return vecMag(vecSub(np,cam->pos));
+float chungusDistance(const character *cam, const chungus *chng){
+	if(cam == NULL) {return 8192.f;}
+	if(chng == NULL){return 8192.f;}
+	const uint x = (chng->x << 8) + 128;
+	const uint y = (chng->y << 8) + 128;
+	const uint z = (chng->z << 8) + 128;
+	return vecMag(vecSub(vecNew(x,y,z),cam->pos));
 }
 
 void chungusUnsubFarChungi(){
@@ -369,9 +372,8 @@ void chungusUnsubFarChungi(){
 		if((x >= 127) && (x <= 129) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
 		chng->clientsSubscribed &= 0xFFFFFFFF;
 
-		const vec cpos = vecNew(x,y,z);
 		for(uint ii=0;ii<clientCount;++ii){
-			const float cdist = chungusRoughDistance(clients[ii].c,cpos);
+			const float cdist = chungusDistance(clients[ii].c,chng);
 			if(cdist < 256.f){
 				chungusSubscribePlayer(chng,ii);
 			}else if(cdist > 768.f){

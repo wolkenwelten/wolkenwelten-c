@@ -1,5 +1,3 @@
-- Overworeld worldgen seems completely broken
-- Animals only seem to be spawned around the spawn
 - Add profiling harness to serverside so we get a warning as soon as something takes longer than it should
 - Fix guardian beams shooting in the wrong direction
 - Enable clientside borrowing of Animals, enabling complete simulation by a client
