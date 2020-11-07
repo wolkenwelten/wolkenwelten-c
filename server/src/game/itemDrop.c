@@ -15,6 +15,18 @@ itemDrop itemDrops[1<<12];
 uint     itemDropCount = 0;
 int      itemDropFirstFree = -1;
 
+static inline void itemDropEmptyMsg(uint c, uint i){
+	item itm = itemEmpty();
+	msgItemDropUpdate(
+		c,
+		vecNOne(),
+		vecZero(),
+		&itm,
+		i,
+		itemDropCount
+	);
+}
+
 static inline void itemDropUpdateMsg(uint c,uint i){
 	if(i >= itemDropCount)       {return;}
 	if(itemDrops[i].ent == NULL) {return;}
@@ -94,7 +106,7 @@ void itemDropDel(uint d){
 	itemDrops[d].itm = itemEmpty();
 	itemDrops[d].nextFree = itemDropFirstFree;
 	itemDropFirstFree = d;
-	addPriorityItemDrop(d);
+	itemDropEmptyMsg(-1,d);
 }
 
 void itemDropDelChungus(const chungus *c){
