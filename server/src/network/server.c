@@ -557,7 +557,6 @@ void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 		if(e->x != x){continue;}
 		if(e->y != y){continue;}
 		if(e->z != z){continue;}
-		fprintf(stderr,"Chungus already on queue\n");
 		return;
 	}
 	clients[c].chngReqQueue[clients[c].chngReqQueueLen++] = (chungusReqEntry){x,y,z,0};

@@ -7,7 +7,7 @@ LDFLAGS          += -D_GNU_SOURCE
 CLIENT_CINCLUDES := $(shell sdl2-config --cflags)
 CLIENT_LIBS      := -lGL -lpthread -ldl -lSDL2 -lSDL2_mixer
 
-DYNLIBS          := -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer
+DYNLIBS          := -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lvorbis
 STATICLIBS       :=
 
 LIN_REL          := releases/linux/wolkenwelten-$(VERSION_NAME)

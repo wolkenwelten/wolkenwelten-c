@@ -72,7 +72,6 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	c->spawn = ivecNOne();
 	c->clientsSubscribed  = (u64)1 << 63;
 	c->clientsUpdated     = (u64)1 << 31;
-	fprintf(stderr,"chungusNew %u %u %u [%u | %u]\n",x,y,z,chungusCount,chunkCount);
 
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 
