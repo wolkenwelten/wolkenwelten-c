@@ -9,7 +9,7 @@
 #include <math.h>
 #include <stdio.h>
 
-itemDrop itemDrops[1<<12];
+itemDrop itemDrops[1<<14];
 int      itemDropCount = 0;
 
 void itemDropNewC(const character *chr,const item *itm){

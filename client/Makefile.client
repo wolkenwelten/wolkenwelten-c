@@ -1,9 +1,11 @@
+FFMPEG           := ffmpeg
 CLIENT_CFLAGS    :=
 CLIENT_CINCLUDES :=
 CLIENT_LIBS      :=
 
 GFX_ASSETS       := $(shell find client/gfx -type f -name '*')
-SFX_ASSETS       := $(shell find client/sfx -type f -name '*')
+RAW_SFX          := $(shell find client/sfx -type f -name '*.aif')
+SFX_ASSETS       := ${RAW_SFX:.aif=.ogg}
 SHD_ASSETS       := $(shell find client/src/shader -type f -name '*.glsl')
 TXT_ASSETS       := $(shell find client/txt -type f -name '*')
 ASSETS           := $(GFX_ASSETS) $(SFX_ASSETS) $(SHD_ASSETS) $(TXT_ASSETS)
@@ -31,6 +33,9 @@ client/make.deps: $(CLIENT_DEPS)
 ifneq ($(MAKECMDGOALS),clean)
 -include client/make.deps
 endif
+
+%.ogg: %.aif
+	$(FFMPEG) -i $< -ac 1 -ar 22050 -acodec libvorbis $@
 
 client/src/tmp/assets.c: client/tools/assets $(ASSETS)
 	mkdir -p client/src/tmp/

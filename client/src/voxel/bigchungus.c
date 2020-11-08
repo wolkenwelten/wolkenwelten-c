@@ -156,7 +156,7 @@ void worldDraw(const character *cam){
 	}
 	if(loadQueueLen > 0){
 		quicksortQueue(loadQueue,0,loadQueueLen-1);
-		for(int i=0;i<loadQueueLen;i++){
+		for(int i=loadQueueLen-1;i>=0;i--){
 			chungus *chng = loadQueue[i].chng;
 			msgRequestChungus(chng->x,chng->y,chng->z);
 		}

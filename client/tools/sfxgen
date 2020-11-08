@@ -30,7 +30,7 @@ while (("$#")); do
 		echo "sfx *sfx$uname;"          >> $C_FILE
 		echo "extern sfx *sfx$uname;"   >> $H_FILE
 		new="$new
-	sfx$uname = sfxNew(sfx_""$name""_aif_data,sfx_""$name""_aif_len);"
+	sfx$uname = sfxNew(sfx_""$name""_ogg_data,sfx_""$name""_ogg_len);"
 		free="$free
 	sfxFree(sfx$uname);"
 	done

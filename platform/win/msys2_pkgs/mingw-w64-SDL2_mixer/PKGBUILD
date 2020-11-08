@@ -12,8 +12,9 @@ license=("MIT")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
-         "${MINGW_PACKAGE_PREFIX}-SDL2")
-		 
+         "${MINGW_PACKAGE_PREFIX}-SDL2"
+	 "${MINGW_PACKAGE_PREFIX}-libvorbis")
+
 options=('staticlibs' 'strip')
 source=("$url/release/${_realname}-${pkgver}.zip"
         SDL2_mixer-2.0.1-find_lib.mingw.patch
@@ -42,7 +43,7 @@ build() {
     --enable-shared \
     --enable-static \
     --disable-music-ogg-shared \
-    --disable-music-ogg \
+    --enable-music-ogg \
     --disable-music-flac-shared \
     --disable-music-flac \
 	--disable-music-midi-fluidsynth \

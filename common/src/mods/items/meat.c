@@ -25,3 +25,12 @@ int meatGetAmmunition(const item *cItem){
 
 	return ITEMID;
 }
+
+int meatItemDropCallback(const item *cItem, float x, float y, float z){
+	(void)cItem;
+	(void)x;
+	(void)y;
+	(void)z;
+	if(rngValM(1<<15) == 0){ return -1;}
+	return 0;
+}

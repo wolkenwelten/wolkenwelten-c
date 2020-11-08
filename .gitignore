@@ -9,6 +9,7 @@ xcuserdata/
 /*.tar.gz
 /client/tools/*.dSYM/
 /tools/*.dSYM/
+/client/sfx/*.ogg
 client.settings
 
 # debugging/profiling data

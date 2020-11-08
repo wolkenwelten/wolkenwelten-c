@@ -69,7 +69,10 @@ itemDrop *itemDropNew(){
 		addPriorityItemDrop(i);
 		return &itemDrops[i];
 	}
-	if((itemDropCount) >= (int)(sizeof(itemDrops) / sizeof(itemDrop) - 1)){return NULL;}
+	if((itemDropCount) >= (int)(sizeof(itemDrops) / sizeof(itemDrop) - 1)){
+		itemDropDel(rngValM(1<<14));
+		return itemDropNew();
+	}
 	addPriorityItemDrop(itemDropCount);
 	itemDrops[itemDropCount].nextFree = -1;
 	return &itemDrops[itemDropCount++];

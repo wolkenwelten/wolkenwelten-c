@@ -13,3 +13,12 @@ int furGetAmmunition(const item *cItem){
 
 	return ITEMID;
 }
+
+int furItemDropCallback(const item *cItem, float x, float y, float z){
+	(void)cItem;
+	(void)x;
+	(void)y;
+	(void)z;
+	if(rngValM(1<<16) == 0){ return -1;}
+	return 0;
+}
