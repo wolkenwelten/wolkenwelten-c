@@ -52,15 +52,15 @@ $(OSX_APP)/Contents/MacOS/wolkenwelten-server: common/src/tmp/cto.c common/src/t
 
 $(OSX_APP)/Contents/Info.plist:  platform/macos/Info.plist
 	mkdir -p $(OSX_APP)/Contents
-	cp -f platform/macos/Info.plist releases/macos/wolkenwelten.app/Contents/Info.plist
+	cp -f platform/macos/Info.plist $(OSX_APP)/Contents/Info.plist
 
 $(OSX_APP)/Contents/Frameworks/SDL2.framework: ~/ReleaseFrameworks/SDL2.framework
 	mkdir -p $(OSX_APP)/Contents/Frameworks/
-	rsync -a $< releases/macos/wolkenwelten.app/Contents/Frameworks/
+	rsync -a $< $(OSX_APP)/Contents/Frameworks/
 
 $(OSX_APP)/Contents/Frameworks/SDL2_mixer.framework: ~/ReleaseFrameworks/SDL2_mixer.framework
 	mkdir -p $(OSX_APP)/Contents/Frameworks/
-	rsync -a $< releases/macos/wolkenwelten.app/Contents/Frameworks/
+	rsync -a $< $(OSX_APP)/Contents/Frameworks/
 
 $(OSX_APP)/Contents/Resources/wolkenwelten.icns: releases/macos/wolkenwelten.iconset/icon_16x16.png
 $(OSX_APP)/Contents/Resources/wolkenwelten.icns: releases/macos/wolkenwelten.iconset/icon_16x16@2x.png
