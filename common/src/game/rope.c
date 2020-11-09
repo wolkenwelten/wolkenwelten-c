@@ -7,29 +7,17 @@
 #include <stdio.h>
 #include <string.h>
 
-rope ropeList[128];
-uint ropeCount = 0;
+rope ropeList[512];
 
 rope *ropeNew(being a, being b, u32 flags){
-	rope *r = NULL;
-	for(uint i=0;i<ropeCount;i++){
-		if(ropeList[i].a == 0){
-			r = &ropeList[i];
-			break;
-		}
-	}
-	if(r == NULL){
-		if(ropeCount >= sizeof(ropeList)/sizeof(rope)){
-			fprintf(stderr,"ropeList is full\n");
-			return NULL;
-		}
-		r = &ropeList[ropeCount++];
-	}
-
+	const int newID = ropeNewID();
+	if(newID < 0){return NULL;}
+	rope *r = &ropeList[newID];
 	r->a      = a;
 	r->b      = b;
 	r->length = 1.f;
 	r->flags  = flags;
+	fprintf(stderr,"ropeNew %i\n",newID);
 	return r;
 }
 
@@ -42,6 +30,8 @@ float ropeGetLength(const rope *r){
 
 void ropeFree(rope *r){
 	if(r == NULL){return;}
+	const uint ID = r - &ropeList[0];
+	fprintf(stderr,"ropeFree %i\n",ID);
 	memset(r,0,sizeof(rope));
 }
 
@@ -102,7 +92,14 @@ static void ropeUpdate(rope *r){
 }
 
 void  ropeUpdateAll(){
-	for(uint i=0;i<ropeCount;i++){
+	for(uint i=0;i<512;i++){
+		if(beingType(ropeList[i].a) == 0){continue;}
 		ropeUpdate(&ropeList[i]);
 	}
+}
+
+int ropeGetClient(uint i){
+	if(i > 512){return -1;}
+	if(i > 256){return 64;}
+	return i >> 2;
 }

@@ -7,10 +7,25 @@
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
 #include "../../../common/src/game/being.h"
+#include "../../../common/src/network/messages.h"
+
+#include <string.h>
 
 mesh *ropeMesh = NULL;
 
+int ropeNewID(){
+	if(playerID < 0){return -1;}
+	const uint start = playerID << 2;
+	for(uint i=start;i<start+4;i++){
+		if(ropeList[i].a == 0){return i;}
+		if(ropeList[i].b == 0){return i;}
+	}
+	return -1;
+}
+
 static void ropeDrawSegment(const rope *r, const vec h, const vec p){
+	if(h.y < 0.f){return;}
+	if(p.y < 0.f){return;}
 	const float rlen = vecMag(vecSub(h,p))*8;
 	const float xs = 1.f/2.f;
 	float xo = 0.f;
@@ -76,6 +91,7 @@ static void ropeDrawSegment(const rope *r, const vec h, const vec p){
 }
 
 static void ropeDraw(rope *r){
+	if(r == NULL){return;}
 	const vec h = beingGetPos(r->a);
 	const vec p = beingGetPos(r->b);
 	ropeDrawSegment(r,h,p);
@@ -84,18 +100,45 @@ static void ropeDraw(rope *r){
 void ropeInit(){
 	ropeMesh = meshNew();
 	ropeMesh->tex = tRope;
+	memset(ropeList,0,sizeof(ropeList));
 }
 
 void ropeDrawAll(){
-	if(ropeCount == 0){return;}
 	shaderBind(sMesh);
 	matMul(matMVP,matView,matProjection);
 	shaderMatrix(sMesh,matMVP);
 	meshEmpty(ropeMesh);
-	for(uint i=0;i<ropeCount;i++){
-		if(beingType(ropeList[i].a) == 0){continue;}
-		ropeDraw(&ropeList[i]);
+	for(uint i=0;i<512;i++){
+		rope *r = &ropeList[i];
+		if(r->a == 0){continue;}
+		if(r->b == 0){continue;}
+		ropeDraw(r);
 	}
 	meshFinishStream(ropeMesh);
 	meshDraw(ropeMesh);
+}
+
+void ropeUpdateP(const packet *p){
+	const uint i = p->v.u32[0];
+	int rclient = ropeGetClient(i);
+	if(rclient < 0)         {return;}
+	if(rclient == playerID) {return;}
+	rope *r = &ropeList[i];
+	r->a      = p->v.u32[1];
+	r->b      = p->v.u32[2];
+	r->flags  = p->v.u32[3];
+	r->length = p->v.f  [4];
+
+	r->flags |= ROPE_UPDATED;
+}
+
+void ropeSyncAll(){
+	const uint start = playerID << 2;
+	for(uint i=start;i<start+4;i++){
+		if(ropeList[i].a == 0)              {continue;}
+		if(ropeList[i].b == 0)              {continue;}
+		if(ropeList[i].flags & ROPE_UPDATED){continue;}
+		msgRopeUpdate(-1, i, &ropeList[i]);
+		ropeList[i].flags |= ROPE_UPDATED;
+	}
 }

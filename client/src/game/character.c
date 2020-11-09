@@ -144,9 +144,6 @@ void characterUpdateHook(character *c){
 		if((c->flags & CHAR_SNEAK) && (gl < maxl)){
 			hookSetGoalLength(c->hook,gl+wspeed);
 		}
-		if(hookGetLength(c->hook) > gl){
-			//hookPullTowards(c->hook,c);
-		}
 	}
 }
 

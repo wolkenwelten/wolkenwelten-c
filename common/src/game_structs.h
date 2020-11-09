@@ -66,9 +66,10 @@ typedef struct {
 	float length;
 	u32   flags;
 } rope;
-#define ROPE_TEX       0xFF
-#define ROPE_TEX_ROPE  0x00
-#define ROPE_TEX_CHAIN 0x01
+#define ROPE_TEX       0x0FF
+#define ROPE_TEX_ROPE  0x000
+#define ROPE_TEX_CHAIN 0x001
+#define ROPE_UPDATED   0x100
 
 typedef struct {
 	 vec  pos,vel,gvel,rot,screenPos;

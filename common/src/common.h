@@ -8,3 +8,4 @@
 
 extern blockType blocks[256];
 extern bool isClient;
+extern int playerID;

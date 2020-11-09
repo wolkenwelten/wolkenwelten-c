@@ -21,6 +21,7 @@
 #include <signal.h>
 #include <unistd.h>
 
+int playerID  = 64;
 bool isClient = false;
 bool quit = false;
 char *termColors[16];

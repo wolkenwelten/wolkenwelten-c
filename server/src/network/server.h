@@ -66,6 +66,7 @@ void addQueuedChunks       (uint c);
 void addPriorityItemDrop   (u16  i);
 void delPriorityItemDrop   (u16  i);
 void addPriorityAnimal     (u16  i);
+void addPriorityBeing      (being b);
 void serverSendChatMsg     (const char *msg);
 
 int  getClientByName       (const char *name);

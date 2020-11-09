@@ -29,17 +29,18 @@ hook *hookNew(character *p){
 	u32 flags = 0;
 	if(characterGetMaxHookLen(p) > 128.f){flags = ROPE_TEX_CHAIN;}
 
-	ghk->parent     = p;
-	ghk->ent        = entityNew(vecAdd(vecNew(0,1,0),p->pos),vecNew(-p->rot.yaw,-p->rot.pitch-90.f,p->rot.roll));
-	ghk->ent->vel   = vecAdd(vecMulS(vecDegToVec(p->rot),1.3f),p->vel);
-	ghk->ent->eMesh = meshHook;
-	ghk->ent->flags = ENTITY_NOREPULSION;
-	ghk->rope       = ropeNew(hookGetBeing(ghk),characterGetBeing(p),flags);
-	ghk->attached   = 0;
+	ghk->parent       = p;
+	ghk->ent          = entityNew(vecAdd(vecNew(0,1,0),p->pos),vecNew(-p->rot.yaw,-p->rot.pitch-90.f,p->rot.roll));
+	ghk->ent->vel     = vecAdd(vecMulS(vecDegToVec(p->rot),1.3f),p->vel);
+	ghk->ent->eMesh   = meshHook;
+	ghk->ent->flags   = ENTITY_NOREPULSION;
+	ghk->rope         = ropeNew(hookGetBeing(ghk),characterGetBeing(p),flags);
+	ghk->rope->length = -1.f;
+	ghk->attached     = 0;
 
-	ghk->hooked     = false;
-	ghk->returning  = false;
-	ghk->goalLength = 0;
+	ghk->hooked       = false;
+	ghk->returning    = false;
+	ghk->goalLength   = 0;
 
 	return ghk;
 }
@@ -78,12 +79,13 @@ void hookReturnHook(hook *ghk){
 	ghk->hooked    = false;
 	ghk->ent->vel  = vecZero();
 	ghk->rope->a   = hookGetBeing(ghk);
+	ghk->rope->length = -1.f;
+	ghk->rope->flags &= ~ROPE_UPDATED;
 	hookReturnToParent(ghk,0.1f);
 }
 
 bool hookUpdate(hook *ghk){
 	entityUpdate(ghk->ent);
-	ghk->rope->length = -1.f;
 
 	if(ghk->returning && hookReturnToParent(ghk,0.01f)){
 		return true;
@@ -92,7 +94,6 @@ bool hookUpdate(hook *ghk){
 		if(!(ghk->ent->flags & ENTITY_COLLIDE) && (ghk->attached == 0)){
 			hookReturnHook(ghk);
 		}
-		ghk->rope->length = ghk->goalLength;
 	}else{
 		if(!ghk->hooked && !ghk->returning && (ghk->ent->flags & ENTITY_COLLIDE)){
 			ghk->ent->vel     = vecZero();
@@ -101,6 +102,7 @@ bool hookUpdate(hook *ghk){
 			ghk->attached     = 0;
 			ghk->goalLength   = hookGetLength(ghk);
 			ghk->rope->length = ghk->goalLength;
+			ghk->rope->flags &= ~ROPE_UPDATED;
 			sfxPlay(sfxHookHit,1.f);
 			sfxLoop(sfxHookRope,0.f);
 			unsigned char b  = worldGetB(ghk->ent->pos.x,ghk->ent->pos.y,ghk->ent->pos.z);
@@ -116,6 +118,7 @@ bool hookUpdate(hook *ghk){
 				ghk->attached     = closest;
 				ghk->rope->a      = closest;
 				ghk->ent->pos     = beingGetPos(closest);
+				ghk->rope->flags &= ~ROPE_UPDATED;
 				sfxPlay(sfxHookHit,1.f);
 				sfxPlay(sfxUngh,1.f);
 				fxBlockBreak(ghk->ent->pos,2);
@@ -144,6 +147,10 @@ float hookGetGoalLength(const hook *ghk){
 }
 void hookSetGoalLength(hook *ghk, float len){
 	ghk->goalLength = len;
+	if(ghk->hooked && !ghk->returning){
+		ghk->rope->length = ghk->goalLength;
+		ghk->rope->flags &= ~ROPE_UPDATED;
+	}
 }
 
 hook *hookGetByBeing(being b){

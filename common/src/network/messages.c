@@ -359,3 +359,15 @@ void msgItemDropPickup(uint c, uint i){
 
 	packetQueue(p,36,2,c);
 }
+
+void msgRopeUpdate(uint c, uint i, rope *r){
+	packet *p = &packetBuffer;
+
+	p->v.u32[0] = i;
+	p->v.u32[1] = r->a;
+	p->v.u32[2] = r->b;
+	p->v.u32[3] = r->flags;
+	p->v.f  [4] = r->length;
+
+	packetQueue(p,37,5*4,c);
+}

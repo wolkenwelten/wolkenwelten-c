@@ -7,6 +7,7 @@
 #include "../game/character.h"
 #include "../game/grenade.h"
 #include "../game/itemDrop.h"
+#include "../game/rope.h"
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
 #include "../network/chat.h"
@@ -257,6 +258,12 @@ void clientParsePacket(const packet *p){
 		case 35:
 			characterSetEquipmentP(player,p);
 			break;
+		case 36:
+			fprintf(stderr,"Received an itemDropPickup msg from the server, this should never happen.\n");
+			break;
+		case 37:
+			ropeUpdateP(p);;
+			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);
 			break;
@@ -302,6 +309,7 @@ void clientGreetServer(){
 void clientTranceive(){
 	clientRead();
 	clientParse();
+	ropeSyncAll();
 	clientWrite();
 }
 

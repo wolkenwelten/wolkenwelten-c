@@ -17,7 +17,8 @@ vec beingGetPos(being b){
 			return c->pos; }
 		case BEING_HOOK: {
 			hook *c = hookGetByBeing(b);
-			if(c == NULL){return vecNOne();}
+			if(c == NULL)     {return vecNOne();}
+			if(c->ent == NULL){return vecNOne();}
 			return c->ent->pos; }
 		case BEING_ENTITY: {
 			entity *c = entityGetByBeing(b);
@@ -42,7 +43,8 @@ void beingSetPos(being b, const vec pos){
 			return; }
 		case BEING_HOOK: {
 			hook *c = hookGetByBeing(b);
-			if(c == NULL){return;}
+			if(c == NULL)     {return;}
+			if(c->ent == NULL){return;}
 			c->ent->pos = pos;
 			return; }
 		case BEING_ENTITY: {

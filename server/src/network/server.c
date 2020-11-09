@@ -6,6 +6,7 @@
 #include "../game/character.h"
 #include "../game/itemDrop.h"
 #include "../game/grenade.h"
+#include "../game/rope.h"
 #include "../misc/command.h"
 #include "../misc/options.h"
 #include "../network/server_ws.h"
@@ -216,6 +217,7 @@ void msgUpdatePlayer(uint c){
 		packetQueue(rp,15,pLen,c);
 	}
 
+	ropePrioritizeHooked(c);
 	clients[c].itemDropUpdateOffset = itemDropUpdatePlayer(c,clients[c].itemDropUpdateOffset);
 	grenadeUpdatePlayer(c);
 	blockMiningUpdatePlayer(c);
@@ -436,6 +438,9 @@ void serverParseSinglePacket(uint c, packet *p){
 			break;
 		case 36:
 			itemDropPickupP(c,p);
+			break;
+		case 37:
+			ropeUpdateP(c,p);
 			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
@@ -672,6 +677,7 @@ void serverHandleEvents(){
 	serverRead();
 	serverParse();
 	serverKeepalive();
+	ropeSyncAll();
 	serverSend();
 }
 
@@ -767,4 +773,18 @@ int getClientByCharacter(const character *c){
 		if(clients[i].c == c){return i;}
 	}
 	return -1;
+}
+
+void addPriorityBeing(being b){
+	switch(beingType(b)){
+	default:
+	case BEING_MULL:
+	case BEING_CHARACTER:
+	case BEING_HOOK:
+	case BEING_ENTITY:
+		return;
+	case BEING_ANIMAL:
+		addPriorityAnimal(b);
+		return;
+	}
 }
