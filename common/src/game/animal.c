@@ -88,14 +88,14 @@ void animalUpdateCurChungus(animal *e){
 }
 
 void animalCheckForHillOrCliff(animal *e){
-	const vec cFDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->gvel,vecNew(1,0,1))),0.5f));
+	const vec cFDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->vel,vecNew(1,0,1))),0.5f));
 	const u8 cb     = worldGetB(cFDir.x, cFDir.y, cFDir.z);
 	if((cb != 0)){
 		if(!(e->flags & ANIMAL_FALLING)){
 			e->vel.y = 0.04f;
 		}
 	}else if(cb == 0){
-		const vec cBDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->gvel,vecNew(1,0,1))),-0.5f));
+		const vec cBDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->vel,vecNew(1,0,1))),-0.5f));
 		for(int cy = 1; cy < 8; cy++){
 			if(worldGetB(cFDir.x,cFDir.y-cy,cFDir.z)   != 0){return;}
 		}
@@ -104,9 +104,9 @@ void animalCheckForHillOrCliff(animal *e){
 			if(worldGetB(cBDir.x,cBDir.y-cy,cBDir.z)   != 0){break;}
 		}
 
-		vec tmp = e->gvel;
+		vec tmp = e->vel;
 		tmp.y   = 0.03f;
-		e->vel  = vecMul(tmp,vecNew(-4,1,-4));
+		e->gvel = e->vel = vecMul(tmp,vecNew(-4,1,-4));
 	}
 }
 

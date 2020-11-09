@@ -4,4 +4,3 @@
 
 void ropeUpdateP(uint c, const packet *p);
 void ropeSyncAll();
-void ropePrioritizeHooked(uint c);

@@ -16,13 +16,12 @@ typedef struct {
 	u64 socket,lastPing;
 
 	uint animalUpdateOffset;
-	uint animalPriorityQueueLen;
-	u16  animalPriorityQueue[128];
+	uint animalPriorityUpdateOffset;
 	uint animalUpdateWindowSize;
 
-	uint itemDropUpdateOffset;
 	uint itemDropPriorityQueueLen;
 	u16  itemDropPriorityQueue[128];
+	uint itemDropUpdateOffset;
 	uint itemDropUpdateWindowSize;
 
 	uint chngReqQueueLen;
@@ -65,8 +64,6 @@ void addChungusToQueue     (uint c, u8 x, u8 y, u8 z);
 void addQueuedChunks       (uint c);
 void addPriorityItemDrop   (u16  i);
 void delPriorityItemDrop   (u16  i);
-void addPriorityAnimal     (u16  i);
-void addPriorityBeing      (being b);
 void serverSendChatMsg     (const char *msg);
 
 int  getClientByName       (const char *name);

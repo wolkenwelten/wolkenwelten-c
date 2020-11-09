@@ -32,13 +32,3 @@ void ropeSyncAll(){
 		ropeList[i].flags |= ROPE_UPDATED;
 	}
 }
-
-void ropePrioritizeHooked(uint c){
-	uint start = ropeGetClient(c);
-	for(uint i=start;i<start+4;i++){
-		if(ropeList[i].a == 0){continue;}
-		if(ropeList[i].b == 0){continue;}
-		addPriorityBeing(ropeList[i].a);
-		addPriorityBeing(ropeList[i].b);
-	}
-}

@@ -4,7 +4,6 @@
 #include "../game/entity.h"
 #include "../mods/api_v1.h"
 
-#include <stdio.h>
 #include <string.h>
 
 rope ropeList[512];
@@ -17,7 +16,6 @@ rope *ropeNew(being a, being b, u32 flags){
 	r->b      = b;
 	r->length = 1.f;
 	r->flags  = flags;
-	fprintf(stderr,"ropeNew %i\n",newID);
 	return r;
 }
 
@@ -30,8 +28,6 @@ float ropeGetLength(const rope *r){
 
 void ropeFree(rope *r){
 	if(r == NULL){return;}
-	const uint ID = r - &ropeList[0];
-	fprintf(stderr,"ropeFree %i\n",ID);
 	memset(r,0,sizeof(rope));
 }
 

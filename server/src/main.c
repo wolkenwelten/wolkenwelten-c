@@ -119,6 +119,18 @@ void updateWorld(){
 	}
 }
 
+void handleAnimalPriorities(){
+	static u64 lastCall   = 0;
+	static uint c = 0;
+	const u64 cTicks = getTicks();
+	if(cTicks < lastCall + 200) {return;}
+	c = (c+1) & 0x1F;
+	if(clients[c].state)        {return;}
+	if(clients[c].c == NULL)    {return;}
+	lastCall = cTicks;
+	animalUpdatePriorities(c);
+}
+
 int main( int argc, const char* argv[] ){
 	initSignals();
 	initTermColors();
@@ -143,6 +155,7 @@ int main( int argc, const char* argv[] ){
 		freeTime = getTicks();
 		chungusUnsubFarChungi();
 		chungusFreeOldChungi(30000);
+		handleAnimalPriorities();
 		bigchungusSafeSave(&world);
 		updateWorld();
 		serverHandleEvents();

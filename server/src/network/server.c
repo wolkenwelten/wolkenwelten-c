@@ -108,20 +108,20 @@ void msgPlayerSpawnPos(uint c){
 
 void serverInitClient(uint c){
 	const vec spawn = vecAdd(vecNewI(worldGetSpawnPos()),vecNew(.5f,2.f,.5f));
-	clients[c].c                        = characterNew();
-	clients[c].recvBufLen               = 0;
-	clients[c].sendBufSent              = 0;
-	clients[c].sendBufLen               = 0;
-	clients[c].chngReqQueueLen          = 0;
-	clients[c].chnkReqQueueLen          = 0;
-	clients[c].state                    = STATE_CONNECTING;
-	clients[c].flags                    = 0;
-	clients[c].animalUpdateWindowSize   = 1;
-	clients[c].animalUpdateOffset       = 0;
-	clients[c].animalPriorityQueueLen   = 0;
-	clients[c].itemDropUpdateWindowSize = 1;
-	clients[c].itemDropUpdateOffset     = 0;
-	clients[c].itemDropPriorityQueueLen = 0;
+	clients[c].c                          = characterNew();
+	clients[c].recvBufLen                 = 0;
+	clients[c].sendBufSent                = 0;
+	clients[c].sendBufLen                 = 0;
+	clients[c].chngReqQueueLen            = 0;
+	clients[c].chnkReqQueueLen            = 0;
+	clients[c].state                      = STATE_CONNECTING;
+	clients[c].flags                      = 0;
+	clients[c].animalUpdateWindowSize     = 1;
+	clients[c].animalPriorityUpdateOffset = 0;
+	clients[c].animalUpdateOffset         = 0;
+	clients[c].itemDropUpdateWindowSize   = 1;
+	clients[c].itemDropUpdateOffset       = 0;
+	clients[c].itemDropPriorityQueueLen   = 0;
 	clients[c].c->pos = spawn;
 
 	bigchungusUnsubscribeClient(&world,c);
@@ -150,20 +150,6 @@ void delPriorityItemDrop(u16 d){
 			if(iq[i] != d){continue;}
 			iq[i] = iq[--clients[c].itemDropPriorityQueueLen];
 		}
-	}
-}
-
-void addPriorityAnimal(u16 d){
-	for(uint c=0;c<clientCount;c++){
-		if(clients[c].state)                        {continue;}
-		if(clients[c].animalPriorityQueueLen > 127) {continue;}
-
-		for(uint i=0;i<clients[c].animalPriorityQueueLen;i++){
-			if(clients[c].animalPriorityQueue[i] == d){goto continueClientLoop;}
-		}
-		clients[c].animalPriorityQueue[clients[c].animalPriorityQueueLen++] = d;
-		continueClientLoop:
-		(void)d;
 	}
 }
 
@@ -219,12 +205,11 @@ void msgUpdatePlayer(uint c){
 		packetQueue(rp,15,pLen,c);
 	}
 
-	ropePrioritizeHooked(c);
 	clients[c].itemDropUpdateOffset = itemDropUpdatePlayer(c,clients[c].itemDropUpdateOffset);
 	grenadeUpdatePlayer(c);
 	blockMiningUpdatePlayer(c);
 	bigchungusUpdateClient(&world,c);
-	clients[c].animalUpdateOffset = animalSyncPlayer(c,clients[c].animalUpdateOffset);
+	animalSyncPlayer(c);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 }
@@ -530,6 +515,7 @@ void serverParseIntro(uint c){
 		sendPlayerJoinMessage(c);
 		itemDropIntro(c);
 		animalIntro(c);
+		animalUpdatePriorities(c);
 		clients[c].lastPing = getTicks();
 		msgPingPong(c);
 	}
@@ -777,19 +763,4 @@ int getClientByCharacter(const character *c){
 		if(clients[i].c == c){return i;}
 	}
 	return -1;
-}
-
-void addPriorityBeing(being b){
-	return;
-	switch(beingType(b)){
-	default:
-	case BEING_MULL:
-	case BEING_CHARACTER:
-	case BEING_HOOK:
-	case BEING_ENTITY:
-		return;
-	case BEING_ANIMAL:
-		addPriorityAnimal(b);
-		return;
-	}
 }

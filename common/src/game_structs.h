@@ -133,6 +133,8 @@ typedef struct {
 	u16 temp;
 	u8  clientOwner;
 
+	u64 clientPriorization;
+
 	chungus *curChungus;
 } animal;
 #define ANIMAL_FALLING    (1   )

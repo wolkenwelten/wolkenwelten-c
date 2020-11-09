@@ -68,29 +68,37 @@ static void animalServerSync(u8 c, u16 i){
 	return animalSync(c,i);
 }
 
-uint animalSyncPlayer(u8 c, uint offset){
-	const uint max = MIN((offset+clients[c].animalUpdateWindowSize),animalCount);
+void animalSyncPlayer(u8 c){
 	if(animalCount == 0){
 		animalEmptySync(c);
-		return offset;
+		return;
 	}
-	for(uint i=0;i<clients[c].animalPriorityQueueLen;i++){
-		animalServerSync(c,clients[c].animalPriorityQueue[i]);
-	}
-	clients[c].animalPriorityQueueLen = 0;
 
-	for(uint i=offset;i<max;i++){
+	const u64 mask = 1 << c;
+	int count = clients[c].animalUpdateWindowSize;
+	for(;count >= 0;clients[c].animalUpdateOffset++){
+		const uint i = clients[c].animalUpdateOffset;
+		if(i >= animalCount){clients[c].animalUpdateOffset = 0;}
+		if(animalList[i].clientPriorization & mask){continue;}
 		animalServerSync(c,i);
+		count--;
 	}
-	offset += clients[c].animalUpdateWindowSize;
-	if(offset >= animalCount){offset=0;}
+
+	count = clients[c].animalUpdateWindowSize;
+	for(;count >= 0;clients[c].animalPriorityUpdateOffset++){
+		const uint i = clients[c].animalPriorityUpdateOffset;
+		if(i >= animalCount){clients[c].animalPriorityUpdateOffset = 0;}
+		if(!(animalList[i].clientPriorization & mask)){continue;}
+		animalServerSync(c,i);
+		count--;
+	}
+
 	if(getClientLatency(c) < 100){
 		clients[c].animalUpdateWindowSize += 1;
 	}else{
 		clients[c].animalUpdateWindowSize /= 2;
 	}
 	clients[c].animalUpdateWindowSize = MAX(1,MIN(8,clients[c].animalUpdateWindowSize));
-	return offset;
 }
 
 void animalDelChungus(const chungus *c){
@@ -108,4 +116,23 @@ void animalIntro(u8 c){
 	for(uint i=0;i<animalCount;i++){
 		animalSync(c,i);
 	}
+}
+
+void animalUpdatePriorities(u8 c){
+	const u64 prio = 1 << c;
+	const u64 mask = ~(prio);
+	uint countPrio = 0;
+	if(clients[c].state)     {return;}
+	if(clients[c].c == NULL) {return;}
+	const vec cpos = clients[c].c->pos;
+	for(uint i=0;i<animalCount;i++){
+		const float d = vecMag(vecSub(animalList[i].pos,cpos));
+		if(d < 78.f){
+			animalList[i].clientPriorization |= prio;
+			countPrio++;
+		}else{
+			animalList[i].clientPriorization &= mask;
+		}
+	}
+	//fprintf(stderr,"RePrioritized %u = %u/%u %f %%\n",c,countPrio,animalCount-countPrio,(((float)countPrio) /  (float)(animalCount-countPrio))*100.f);
 }
