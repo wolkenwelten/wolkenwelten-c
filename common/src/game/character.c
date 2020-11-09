@@ -28,7 +28,6 @@ character *characterNew(){
 		}
 		c = &characterList[characterCount++];
 	}
-	fprintf(stderr,"characterNew %i\n",(int)(c - &characterList[0]));
 	characterInit(c);
 
 	return c;
@@ -41,7 +40,6 @@ void characterFree(character *c){
 		hookFree(c->hook);
 		c->hook = NULL;
 	}
-	fprintf(stderr,"characterFree %i\n",(int)(c - &characterList[0]));
 }
 
 int characterGetHP(const character *c){

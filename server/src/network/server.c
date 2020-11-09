@@ -170,12 +170,14 @@ void addPriorityAnimal(u16 d){
 void msgUpdatePlayer(uint c){
 	packet *rp = &packetBuffer;
 
-	for(uint i=0;i<clientCount;++i){
+	for(uint i=0;i<clientCount;i++){
 		if(i==c)                {continue;}
+		if(clients[i].state)    {continue;}
 		if(clients[i].c == NULL){continue;}
 		item *itm = characterGetItemBarSlot(clients[i].c,clients[i].c->activeItem);
 		const character *chr = clients[i].c;
 		int pLen = 16*4;
+
 
 		rp->v.f[ 0]   = chr->pos.x;
 		rp->v.f[ 1]   = chr->pos.y;
@@ -228,6 +230,8 @@ void msgUpdatePlayer(uint c){
 }
 
 void serverParsePlayerPos(uint c,const packet *p){
+	if(clients[c].c == NULL){return;}
+
 	clients[c].c->pos                = vecNewP(&p->v.f[ 0]);
 	clients[c].c->rot                = vecNewP(&p->v.f[ 3]);
 	clients[c].c->rot.roll           = 0;

@@ -828,6 +828,9 @@ void characterSetData(character *c, const packet *p){
 	c->activeItem = p->v.u16[1];
 	playerID      = p->v.u16[2];
 	c->flags      = p->v.u32[2];
+	if(playerList[playerID] == NULL){
+		playerList[playerID] = player;
+	}
 	/*
 	character *np = &playerList[playerID];
 	if(np != player){

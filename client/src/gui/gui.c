@@ -383,10 +383,10 @@ void drawDebuginfo(){
 	for(uint i=0;i<32;i++){
 		const char *cname = characterGetPlayerName(i);
 		if(cname == NULL){continue;}
+		guim->sx = screenWidth;
+		guim->sy = 32+(i*42);
 		textMeshPrintfRA(guim,"%s",cname);
 		drawSingleHealthbar(characterGetPlayerHP(i),20,screenWidth-96,guim->sy+22,14,false);
-		guim->sy += 42;
-		guim->sx = screenWidth;
 		drawPlayerOverlay(i);
 	}
 
@@ -426,8 +426,7 @@ void drawDebuginfo(){
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"WorstF: %s%u\n",colorSignalLow(60,20,18,worstFrame),worstFrame);
 		guim->fgc  = colorPalette[15];
-		textMeshPrintf(guim,"RopeGLn:%f\n",characterGetHookLength(player));
-		textMeshPrintf(guim,"RopeLen:%f\n",characterGetRopeLength(player));
+		textMeshPrintf(guim,"Player: %u\n",playerID);
 
 		animalOverlaysDrawn = 0;
 		for(uint i=0;i<animalCount;i++){
