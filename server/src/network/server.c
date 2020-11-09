@@ -36,7 +36,7 @@ const char *getPlayerLeaveMessage(uint c){
 	static char msg[256];
 	if(c >= 32){return "Someone left";}
 	if(*clients[c].playerName < 0x20){return "Someone left";}
-	snprintf(msg,sizeof(msg),"%s left",clients[c].playerName);
+	snprintf(msg,sizeof(msg),"%s[%u] left",clients[c].playerName,c);
 
 	return msg;
 }
@@ -79,7 +79,7 @@ void sendPlayerJoinMessage(uint c){
 		serverSendChatMsg(msg);
 		return;
 	}
-	snprintf(msg,sizeof(msg),"%s joined",clients[c].playerName);
+	snprintf(msg,sizeof(msg),"%s[%u] joined",clients[c].playerName,c);
 	serverSendChatMsg(msg);
 }
 
@@ -776,6 +776,7 @@ int getClientByCharacter(const character *c){
 }
 
 void addPriorityBeing(being b){
+	return;
 	switch(beingType(b)){
 	default:
 	case BEING_MULL:

@@ -81,7 +81,7 @@ void characterUpdatePacket(const packet *p){
 			playerList[i]->hook = NULL;
 		}
 	}
-	playerList[i]->hp                 = p->v.u16[23];
+	playerList[i]->hp           = p->v.u16[23];
 	playerList[i]->inventory[0] = itemNew(p->v.u16[24],1);
 	playerList[i]->activeItem   = 0;
 
@@ -691,55 +691,55 @@ void characterActiveItemDraw(const character *c){
 	float hitOff,y;
 
 	switch(c->animationIndex){
-		default:
-			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.3f);
-			y = iy+c->yoff-(hitOff/8);
-			matMulTrans(matMVP,ix-hitOff*0.2f,y+(hitOff/3),iz - hitOff*0.5f);
-			matMulRotYX(matMVP,hitOff*5.f,hitOff*-20.f);
-		break;
+	default:
+		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.3f);
+		y = iy+c->yoff-(hitOff/8);
+		matMulTrans(matMVP,ix-hitOff*0.2f,y+(hitOff/3),iz - hitOff*0.5f);
+		matMulRotYX(matMVP,hitOff*5.f,hitOff*-20.f);
+	break;
 
-		case 1:
-			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
-			matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.3f);
-			matMulRotYX(matMVP,hitOff*10.f,hitOff*45.f);
-		break;
+	case 1:
+		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
+		matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.3f);
+		matMulRotYX(matMVP,hitOff*10.f,hitOff*45.f);
+	break;
 
-		case 2:
-			hitOff = animationInterpolationSustain(c->animationTicksLeft,c->animationTicksMax,0.3f,0.5f);
-			y = iy+c->yoff-(hitOff/8);
-			matMulTrans(matMVP,ix-hitOff*0.5f,y-(hitOff*0.5f),iz - hitOff*0.2f);
-			matMulRotYX(matMVP,hitOff*15.f,hitOff*-55.f);
-		break;
+	case 2:
+		hitOff = animationInterpolationSustain(c->animationTicksLeft,c->animationTicksMax,0.3f,0.5f);
+		y = iy+c->yoff-(hitOff/8);
+		matMulTrans(matMVP,ix-hitOff*0.5f,y-(hitOff*0.5f),iz - hitOff*0.2f);
+		matMulRotYX(matMVP,hitOff*15.f,hitOff*-55.f);
+	break;
 
-		case 3:
-			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
-			matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.1f);
-			matMulRotYX(matMVP,hitOff*3.f,hitOff*9.f);
-		break;
+	case 3:
+		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
+		matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.1f);
+		matMulRotYX(matMVP,hitOff*3.f,hitOff*9.f);
+	break;
 
-		case 4:
-			hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,1.f)*3.f;
-			if(hitOff < 1.f){
-				matMulTrans(matMVP,ix-hitOff*0.4,c->yoff+iy,iz - hitOff*0.2f);
-				matMulRotYX(matMVP,hitOff*20.f,hitOff*40.f);
-			}else if(hitOff < 2.f){
-				hitOff = hitOff-1.f;
-				matMulTrans(matMVP,ix-0.4f,c->yoff+iy-hitOff*0.2f,iz - 0.2f);
-				matMulRotYX(matMVP,hitOff*60.f+20.f,hitOff*120.f+40.f);
-				matMulScale(matMVP, 1.f-hitOff, 1.f-hitOff, 1.f-hitOff);
-			}else if(hitOff < 3.f){
-				hitOff = 1.f-(hitOff-2.f);
-				matMulTrans(matMVP,ix-hitOff*0.4,c->yoff+iy,iz + hitOff*0.4f);
-				matMulRotYX(matMVP,hitOff*20.f,hitOff*40.f);
-			}
-		break;
+	case 4:
+		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,1.f)*3.f;
+		if(hitOff < 1.f){
+			matMulTrans(matMVP,ix-hitOff*0.4,c->yoff+iy,iz - hitOff*0.2f);
+			matMulRotYX(matMVP,hitOff*20.f,hitOff*40.f);
+		}else if(hitOff < 2.f){
+			hitOff = hitOff-1.f;
+			matMulTrans(matMVP,ix-0.4f,c->yoff+iy-hitOff*0.2f,iz - 0.2f);
+			matMulRotYX(matMVP,hitOff*60.f+20.f,hitOff*120.f+40.f);
+			matMulScale(matMVP, 1.f-hitOff, 1.f-hitOff, 1.f-hitOff);
+		}else if(hitOff < 3.f){
+			hitOff = 1.f-(hitOff-2.f);
+			matMulTrans(matMVP,ix-hitOff*0.4,c->yoff+iy,iz + hitOff*0.4f);
+			matMulRotYX(matMVP,hitOff*20.f,hitOff*40.f);
+		}
+	break;
 
-		case 5:
-			hitOff = (float)c->animationTicksLeft / (float)c->animationTicksMax;
-			y = iy+c->yoff-(hitOff/8);
-			matMulTrans(matMVP,ix-hitOff*0.5f,y-(hitOff*0.5f),iz - hitOff*0.2f);
-			matMulRotYX(matMVP,hitOff*30.f,hitOff*-70.f);
-		break;
+	case 5:
+		hitOff = (float)c->animationTicksLeft / (float)c->animationTicksMax;
+		y = iy+c->yoff-(hitOff/8);
+		matMulTrans(matMVP,ix-hitOff*0.5f,y-(hitOff*0.5f),iz - hitOff*0.2f);
+		matMulRotYX(matMVP,hitOff*30.f,hitOff*-70.f);
+	break;
 	};
 
 	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
@@ -823,12 +823,18 @@ void characterGotHitPacket(const packet *p){
 	fxBleeding(c->pos,target,p->v.i16[0],p->v.u16[1]);
 }
 
-
 void characterSetData(character *c, const packet *p){
 	c->hp         = p->v.i16[0];
 	c->activeItem = p->v.u16[1];
 	playerID      = p->v.u16[2];
 	c->flags      = p->v.u32[2];
+	/*
+	character *np = &playerList[playerID];
+	if(np != player){
+		memcpy(np,player,sizeof(character));
+		memset(player,0,sizeof(character);
+		player = np;
+	}*/
 
 	connectionState = 2;
 }
