@@ -123,26 +123,26 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->bigTreeChance  =   148;
 			w->treeChance     =    28;
 			w->shrubChance    =    20;
-			w->animalChance   =   384;
+			w->animalChance   =   768;
 			break;
 		case 6:
 			w->bigTreeChance  =   192;
 			w->treeChance     =    32;
 			w->shrubChance    =    24;
-			w->animalChance   =   512;
+			w->animalChance   =  1536;
 			break;
 		default:
 		case 5:
 			w->bigTreeChance  =   256;
 			w->treeChance     =    48;
 			w->shrubChance    =    48;
-			w->animalChance   =   768;
+			w->animalChance   =  2048;
 			break;
 		case 4:
 			w->bigTreeChance  =   512;
 			w->treeChance     =    96;
 			w->shrubChance    =    64;
-			w->animalChance   =  1024;
+			w->animalChance   =  2048;
 			break;
 		case 3:
 			w->treeChance     =   768;

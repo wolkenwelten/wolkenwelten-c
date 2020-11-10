@@ -53,7 +53,7 @@ uint itemDropUpdatePlayer(uint c, uint offset){
 	}
 	offset += clients[c].itemDropUpdateWindowSize;
 	if(offset >= itemDropCount){offset=0;}
-	if(getClientLatency(c) < 100){
+	if(getClientLatency(c) < 20){
 		clients[c].itemDropUpdateWindowSize += 2;
 	}else{
 		clients[c].itemDropUpdateWindowSize /= 2;

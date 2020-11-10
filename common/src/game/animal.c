@@ -9,7 +9,7 @@
 #include <string.h>
 #include <math.h>
 
-animal  animalList[1<<12];
+animal  animalList[1<<10];
 uint    animalCount = 0;
 uint    animalUsedCount = 0;
 uint    animalFirstFree = 0xFFFF;
@@ -20,7 +20,7 @@ void animalReset(animal *e){
 
 animal *animalNew(const vec pos , int type, int gender){
 	animal *e = NULL;
-	if(animalFirstFree < (1<<12)){
+	if(animalFirstFree < (1<<10)){
 		e = &animalList[animalFirstFree];
 		animalFirstFree = e->nextFree;
 	}else{
@@ -105,7 +105,7 @@ void animalCheckForHillOrCliff(animal *e){
 		}
 
 		vec tmp = e->vel;
-		tmp.y   = 0.03f;
+		if(!(e->flags & ANIMAL_FALLING)){tmp.y   = 0.03f;}
 		e->gvel = e->vel = vecMul(tmp,vecNew(-4,1,-4));
 	}
 }

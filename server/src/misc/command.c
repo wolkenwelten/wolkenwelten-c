@@ -346,6 +346,16 @@ int parseCommand(int c, const char *cmd){
 		return 1;
 	}
 
+	if(strncmp(tcmp,"deadanimals",11) == 0){
+		for(uint i = animalCount/2;i<animalCount;i++){
+			animalDel(i);
+		}
+		snprintf(replyBuf,sizeof(replyBuf),".deadanimals");
+		replyBuf[sizeof(replyBuf)-1]=0;
+		serverSendChatMsg(replyBuf);
+		return 1;
+	}
+
 	if(strncmp(tcmp,"wsize",5) == 0){
 		const uint aws  = clients[c].animalUpdateWindowSize;
 		const uint idws = clients[c].itemDropUpdateWindowSize;

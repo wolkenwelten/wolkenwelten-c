@@ -76,7 +76,8 @@ void animalSyncPlayer(u8 c){
 
 	const u64 mask = 1 << c;
 	int count = clients[c].animalUpdateWindowSize;
-	for(;count >= 0;clients[c].animalUpdateOffset++){
+	for(uint tries = 256;count >= 0;clients[c].animalUpdateOffset++){
+		if(--tries == 0){break;}
 		const uint i = clients[c].animalUpdateOffset;
 		if(i >= animalCount){clients[c].animalUpdateOffset = 0;}
 		if(animalList[i].clientPriorization & mask){continue;}
@@ -85,7 +86,8 @@ void animalSyncPlayer(u8 c){
 	}
 
 	count = clients[c].animalUpdateWindowSize;
-	for(;count >= 0;clients[c].animalPriorityUpdateOffset++){
+	for(uint tries=2048;count >= 0;clients[c].animalPriorityUpdateOffset++){
+		if(--tries == 0){break;}
 		const uint i = clients[c].animalPriorityUpdateOffset;
 		if(i >= animalCount){clients[c].animalPriorityUpdateOffset = 0;}
 		if(!(animalList[i].clientPriorization & mask)){continue;}
@@ -93,7 +95,7 @@ void animalSyncPlayer(u8 c){
 		count--;
 	}
 
-	if(getClientLatency(c) < 100){
+	if(getClientLatency(c) < 20){
 		clients[c].animalUpdateWindowSize += 1;
 	}else{
 		clients[c].animalUpdateWindowSize /= 2;
