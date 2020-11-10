@@ -49,12 +49,17 @@ animal *animalNew(const vec pos , int type, int gender){
 	if(rngValM(2) == 0){
 		e->flags |= ANIMAL_AGGRESIVE;
 	}
+
 	if(gender < 0){
 		if(rngValM(2) == 0){
 			e->flags |= ANIMAL_MALE;
 		}
 	}else if(gender == 1){
 		e->flags |= ANIMAL_MALE;
+	}
+
+	if(type == 2){
+		e->flags |= ANIMAL_NO_NEEDS;
 	}
 
 	return e;
@@ -367,6 +372,18 @@ void animalThinkAll(){
 	for(int i=animalCount-1;i>=0;--i){
 		animalThink(&animalList[i]);
 	}
+}
+
+void animalNeedsAll(){
+	static uint calls = 0;
+	for(int i=animalCount-1;i>=0;--i){
+		animal *e = &animalList[i];
+		if(e->flags & ANIMAL_NO_NEEDS){continue;}
+		e->hunger--;
+		e->sleepy--;
+		if((calls & 0x3F) == 0){e->age++;}
+	}
+	calls++;
 }
 
 void animalSync(u8 c, u16 i){

@@ -23,6 +23,7 @@ void        animalDmgPacket        (u8 c, const packet *p);
 
 void        animalUpdateAll        ();
 void        animalThinkAll         ();
+void        animalNeedsAll         ();
 
 
 animal *animalGetByBeing(being b);

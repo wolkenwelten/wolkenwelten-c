@@ -24,16 +24,12 @@ static int animalCheckHeat(animal *e){
 }
 
 static void animalAgeing(animal *e){
-	if(e->age < 125){
-		if(rngValM(1<<8) == 0){e->age++;}
-	}
 	if(e->age > 64){
 		if(rngValM(1<<12) <= (uint)(e->age-64)){e->health = 0;}
 	}
 }
 
 static void animalSleepyness(animal *e){
-	if (rngValM( 32) == 0){e->sleepy--;}
 	if((e->state != ANIMAL_S_FLEE) && (e->state != ANIMAL_S_FIGHT) && (e->sleepy < 16)){
 		e->state = ANIMAL_S_SLEEP;
 		return;
@@ -45,11 +41,8 @@ static void animalSleepyness(animal *e){
 }
 
 static void animalHunger(animal *e){
-	if(rngValM(32) == 0){
-		e->hunger--;
-	}
-	if(e->state == ANIMAL_S_FOOD_SEARCH){return;}
-	if(e->state == ANIMAL_S_EAT){return;}
+	if(e->state == ANIMAL_S_FOOD_SEARCH) {return;}
+	if(e->state == ANIMAL_S_EAT)         {return;}
 	if(e->hunger < (int)rngValM(32)){
 		e->state = ANIMAL_S_FOOD_SEARCH;
 		return;
@@ -57,13 +50,6 @@ static void animalHunger(animal *e){
 }
 
 static void animalSLoiter(animal *e){
-	if(e->hunger < 64){
-		const u8 cb = worldGetB(e->pos.x,e->pos.y-.6f,e->pos.z);
-		if((cb == 2) && (rngValM(128) == 0)){
-			worldSetB(e->pos.x,e->pos.y-.6f,e->pos.z,1);
-			e->hunger += 48;
-		}
-	}
 	if(animalCheckHeat(e)){return;}
 
 	if(rngValM( 8) == 0){
@@ -166,8 +152,6 @@ static void animalSHeat(animal *e){
 }
 
 static void animalSFight(animal *e){
-	if( rngValM(32) == 0){e->hunger--;}
-	if( rngValM(24) == 0){e->sleepy--;}
 	if(e->type != 2){
 		if((rngValM(20) == 0) && !(e->flags & ANIMAL_FALLING)){
 			e->vel.y = 0.03f;
@@ -185,8 +169,6 @@ static void animalSFight(animal *e){
 
 
 static void animalSFlee(animal *e){
-	if(rngValM(32) == 0){e->hunger--;}
-	if(rngValM(24) == 0){e->sleepy--;}
 	if(rngValM(16) == 0){
 		animal *cAnim;
 		float dist = animalClosestAnimal(e,&cAnim,e->type,0,0);
@@ -265,7 +247,6 @@ static void animalFightOrFlight(animal *e){
 }
 
 static void animalSPlayful(animal *e){
-	if (rngValM( 8) == 0){e->sleepy--;}
 	if(animalCheckHeat(e)){return;}
 
 	if((rngValM(24) == 0) && !(e->flags & ANIMAL_FALLING)){
@@ -332,9 +313,7 @@ static void animalSEat(animal *e){
 			e->state = ANIMAL_S_LOITER;
 		}
 	}
-	if(rngValM( 8) == 0){
-		e->hunger++;
-	}
+	if(rngValM( 8) == 0){e->hunger++;}
 	if(rngValM(32) == 0){
 		if(e->health < animalGetMaxHealth(e)){e->health++;}
 	}
@@ -378,11 +357,11 @@ static void animalPoop(animal *e){
 static void animalSocialDistancing(animal *e){
 	if(rngValM(32) != 0){return;}
 	for(uint i=0;i<animalCount;i++){
-		if(animalList[i].type == 0)                    {continue;}
-		if(e == &animalList[i])                        {continue;}
-		if(fabsf(e->pos.x - animalList[i].pos.x) > 1.f){continue;}
-		if(fabsf(e->pos.y - animalList[i].pos.y) > 1.f){continue;}
-		if(fabsf(e->pos.z - animalList[i].pos.z) > 1.f){continue;}
+		if(animalList[i].type == 0)                     {continue;}
+		if(e == &animalList[i])                         {continue;}
+		if(fabsf(e->pos.x - animalList[i].pos.x) > 1.f) {continue;}
+		if(fabsf(e->pos.y - animalList[i].pos.y) > 1.f) {continue;}
+		if(fabsf(e->pos.z - animalList[i].pos.z) > 1.f) {continue;}
 		e->grot.yaw = ((rngValf()*2.f)-1.f)*360.f;
 		vec dir = vecMulS(vecDegToVec(vecNew(-e->rot.yaw,0.f,0.f)),0.01f);
 		e->gvel.x = dir.x;

@@ -142,6 +142,7 @@ typedef struct {
 #define ANIMAL_AGGRESIVE  (1<<2)
 #define ANIMAL_COLLIDE    (1<<3)
 #define ANIMAL_MALE       (1<<4)
+#define ANIMAL_NO_NEEDS   (1<<5)
 
 #define ANIMAL_S_LOITER      0
 #define ANIMAL_S_FLEE        1

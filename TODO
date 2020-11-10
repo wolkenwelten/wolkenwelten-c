@@ -1,16 +1,15 @@
+- Fix chungus not getting loaded although the player is right in it, everything else seems to load just fine
+- Why do bunnies fly???
 - Add profiling harness to serverside so we get a warning as soon as something takes longer than it should
 - Fix guardian beams shooting in the wrong direction
-- Enable clientside borrowing of Animals, enabling complete simulation by a client
 - Add beingList to chunks/chungiy
 - Fix wasm netcode
 - Enable Compression for wasm/ws connections
 - Fix itemdrop disappearing after dropping them (clientside borrowing?)
-- Make Bunnies/Guardians less likely to fall of the edge
 - Make Bunny populations more stable
 - Have voxel/* be part of the common codebase
 - Remove bigChungus from serverSide
 - Fix Guns shooting off center
-- Fix slowdowns after a while of flying around
 - Make Physics more stable, especially in regards to short Hook Ropes
 - Have a nicer way to wait on the singleplayer server to be ready instead of just trying over and over again to establish a connection
 - Migrate to OpenAL
