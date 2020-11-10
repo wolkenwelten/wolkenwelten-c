@@ -117,16 +117,16 @@ void worldDraw(const character *cam){
 	matMul(matMVP,matView,matProjection);
 	shaderMatrix(sBlockMesh,matMVP);
 
-	const int camCX = (int)cam->pos.x >> 8;
-	const int camCY = (int)cam->pos.y >> 8;
-	const int camCZ = (int)cam->pos.z >> 8;
-	const int dist  = (int)ceilf(CHUNK_RENDER_DISTANCE / CHUNGUS_SIZE)+1;
-	const int minCX = MAX(0,camCX - dist);
-	const int minCY = MAX(0,camCY - dist);
-	const int minCZ = MAX(0,camCZ - dist);
-	const int maxCX = MIN(255,camCX + dist);
-	const int maxCY = MIN(127,camCY + dist);
-	const int maxCZ = MIN(255,camCZ + dist);
+	const int camCX  = (int)cam->pos.x >> 8;
+	const int camCY  = (int)cam->pos.y >> 8;
+	const int camCZ  = (int)cam->pos.z >> 8;
+	const int dist   = (int)ceilf(CHUNK_RENDER_DISTANCE / CHUNGUS_SIZE)+1;
+	const int minCX  = MAX(  0,camCX - dist);
+	const int minCY  = MAX(  0,camCY - dist);
+	const int minCZ  = MAX(  0,camCZ - dist);
+	const int maxCX  = MIN(255,camCX + dist);
+	const int maxCY  = MIN(127,camCY + dist);
+	const int maxCZ  = MIN(255,camCZ + dist);
 	const u64 cTicks = getTicks();
 
 	for(int x=minCX;x<maxCX;x++){
