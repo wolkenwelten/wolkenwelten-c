@@ -3,13 +3,7 @@
 
 #include <math.h>
 
-float vecMag(const vec a){
-	float dot = vecDot(a,a);
-	return (dot > 0) ? sqrtf(dot) : 0;
-}
-vec vecFloor(const vec a){
-	return (vec){{{floorf(a.x),floorf(a.y),floorf(a.z)}}};
-}
+
 vec vecSqrt(const vec a){
 	return (vec){{{sqrtf(a.x),sqrtf(a.y),sqrtf(a.z)}}};
 }
@@ -47,14 +41,6 @@ vec vecVecToDeg(const vec a){
 	vec ret;
 	ret.x = atan2f( a.z,a.x)*180/PI + 90.f;
 	ret.y = atan2f(-a.y,a.z)*180/PI;
-	ret.z = 0.f;
-	return ret;
-}
-
-vec vecVecToDegExperimental(const vec a){
-	vec ret;
-	ret.x = atan2f( a.z,a.x)*180/PI + 90.f;
-	ret.y = atan2f(fabsf(a.y),0.f)*180/PI;
 	ret.z = 0.f;
 	return ret;
 }

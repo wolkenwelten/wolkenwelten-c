@@ -1,6 +1,6 @@
 CC                   := cc
-OPTIMIZATION         := -O2 -fno-lto
-RELEASE_OPTIMIZATION := -O3 -flto
+OPTIMIZATION         := -O2 -fno-lto -ffast-math
+RELEASE_OPTIMIZATION := -O3 -flto -ffast-math
 CINCLUDES            :=
 LIBS                 := -lm
 WARNINGS             := -Wall -Werror -Wextra -Wfloat-equal -Wshadow -Wcast-align

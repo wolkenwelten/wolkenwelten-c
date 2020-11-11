@@ -348,6 +348,7 @@ int parseCommand(int c, const char *cmd){
 
 	if(strncmp(tcmp,"deadanimals",11) == 0){
 		for(uint i = animalCount/2;i<animalCount;i++){
+			animalRDie(&animalList[i]);
 			animalDel(i);
 		}
 		snprintf(replyBuf,sizeof(replyBuf),".deadanimals");

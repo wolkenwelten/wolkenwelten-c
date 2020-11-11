@@ -132,7 +132,6 @@ int chungusGetHighestP(chungus *c, int x, int *retY, int z){
 			}
 		}
 	}
-
 	return 0;
 }
 

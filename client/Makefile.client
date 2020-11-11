@@ -35,7 +35,7 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 
 %.ogg: %.aif
-	$(FFMPEG) -i $< -ac 1 -ar 22050 -acodec libvorbis $@
+	$(FFMPEG) -hide_banner -v panic -i $< -ac 1 -ar 22050 -acodec libvorbis $@
 
 client/src/tmp/assets.c: client/tools/assets $(ASSETS)
 	mkdir -p client/src/tmp/

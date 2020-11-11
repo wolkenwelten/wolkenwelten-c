@@ -1,6 +1,7 @@
 #include "messages.h"
 
 #include "../common.h"
+#include "../game/animal.h"
 
 #include <string.h>
 
@@ -331,16 +332,17 @@ void msgPingPong(uint c){
 void msgAnimalDied(uint c, const animal *a){
 	packet *p = &packetBuffer;
 
-	p->v.u8[0] = a->type;
-	p->v.u8[1] = a->age;
-	p->v.u8[2] = 0;
-	p->v.u8[3] = 0;
+	p->v.u8[0]  = a->type;
+	p->v.u8[1]  = a->age;
+	p->v.u8[2]  = 0;
+	p->v.u8[3]  = 0;
 
-	p->v.f[1]  = a->pos.x;
-	p->v.f[2]  = a->pos.y;
-	p->v.f[3]  = a->pos.z;
+	p->v.f[1]   = a->pos.x;
+	p->v.f[2]   = a->pos.y;
+	p->v.f[3]   = a->pos.z;
+	p->v.u32[4] = animalGetBeing(a);
 
-	packetQueue(p,34,4*4,c);
+	packetQueue(p,34,5*4,c);
 }
 
 void msgPlayerSetEquipment(uint c,const item *itm, size_t itemCount){

@@ -2,6 +2,7 @@
 
 #include "../game/blockType.h"
 #include "../game/character.h"
+#include "../game/rope.h"
 #include "../gfx/particle.h"
 #include "../gui/overlay.h"
 #include "../network/chat.h"
@@ -116,10 +117,12 @@ void fxAnimalDiedPacket (const packet *p){
 	//const u8 type = p->v.u8[0];
 	//const u8 age  = p->v.u8[1];
 	const vec pos = vecNewP(&p->v.f[1]);
+	being t = p->v.u32[4];
 	sfxPlayPos(sfxBomb,0.3,pos);
 	sfxPlayPos(sfxUngh,0.6,pos);
 	for(int i=512;i>0;i--){
 		const vec v  = vecMulS(vecRng(),0.06f);
 		newParticleV(pos,v,vecMulS(v,1/-64.f),64.f,1.f,0xFF44AAFF,64);
 	}
+	ropeDelBeing(t);
 }
