@@ -3,6 +3,7 @@
 #include "../animals/bunny.h"
 #include "../animals/guardian.h"
 #include "../game/character.h"
+#include "../game/rope.h"
 #include "../mods/api_v1.h"
 #include "../network/messages.h"
 
@@ -339,6 +340,7 @@ void animalRDie(animal *e){
 	}
 	if(!isClient){
 		msgAnimalDied(-1,e);
+		ropeDelBeing(animalGetBeing(e));
 	}
 }
 

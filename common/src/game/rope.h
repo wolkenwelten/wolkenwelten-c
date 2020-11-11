@@ -9,3 +9,4 @@ void  ropeFree      (rope *r);
 float ropeGetLength (const rope *r);
 void  ropeUpdateAll ();
 int   ropeGetClient (uint i);
+void  ropeDelBeing  (const being t);

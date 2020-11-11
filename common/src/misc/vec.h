@@ -4,16 +4,12 @@
 float rngValf();
 u64   rngValR();
 
-
-float vecMag     (const vec a);
-vec   vecFloor   (const vec a);
-vec   vecSqrt    (const vec a);
-vec   vecCross   (const vec a, const vec   b);
-vec   vecRotate  (const vec a, const vec   b, const float rad);
-vec   vecNorm    (const vec a);
-vec   vecVecToDeg(const vec a);
-vec   vecVecToDegExperimental(const vec a);
-vec   vecDegToVec(const vec a);
+vec vecSqrt     (const vec a);
+vec vecCross    (const vec a, const vec b);
+vec vecRotate   (const vec a, const vec b, const float rad);
+vec vecNorm     (const vec a);
+vec vecVecToDeg (const vec a);
+vec vecDegToVec (const vec a);
 
 static inline vec vecNew (float x, float y, float z){
 	return (vec){{{ x,y,z }}};
@@ -71,6 +67,13 @@ static inline vec vecDivS(const vec a, const float b){
 }
 static inline float vecDot (const vec a, const vec b){
 	return (a.x*b.x)+(a.y*b.y)+(a.z*b.z);
+}
+static inline float vecMag(const vec a){
+	float dot = vecDot(a,a);
+	return (dot > 0) ? __builtin_sqrtf(dot) : 0;
+}
+static inline vec vecFloor(const vec a){
+	return (vec){{{__builtin_floorf(a.x),__builtin_floorf(a.y),__builtin_floorf(a.z)}}};
 }
 static inline float vecSum(const vec a){
 	return a.x+a.y+a.z;

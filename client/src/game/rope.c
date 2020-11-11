@@ -135,10 +135,20 @@ void ropeUpdateP(const packet *p){
 void ropeSyncAll(){
 	const uint start = playerID << 2;
 	for(uint i=start;i<start+4;i++){
-		if(ropeList[i].a == 0)              {continue;}
-		if(ropeList[i].b == 0)              {continue;}
 		if(ropeList[i].flags & ROPE_UPDATED){continue;}
 		msgRopeUpdate(-1, i, &ropeList[i]);
 		ropeList[i].flags |= ROPE_UPDATED;
+	}
+}
+
+void ropeDelBeing(const being t){
+	if(playerID < 0){return;}
+	const uint start = playerID << 2;
+	for(uint i = start;i<start+4;i++){
+		if((ropeList[i].a == t) || (ropeList[i].b == t)){
+			ropeList[i].flags = 0;
+			ropeList[i].a     = 0;
+			ropeList[i].b     = 0;
+		}
 	}
 }

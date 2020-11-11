@@ -94,6 +94,9 @@ bool hookUpdate(hook *ghk){
 		if(!(ghk->ent->flags & ENTITY_COLLIDE) && (ghk->attached == 0)){
 			hookReturnHook(ghk);
 		}
+		if((ghk->attached != 0) && (ghk->rope->a == 0)){
+			hookReturnHook(ghk);
+		}
 	}else{
 		if(!ghk->hooked && !ghk->returning && (ghk->ent->flags & ENTITY_COLLIDE)){
 			ghk->ent->vel     = vecZero();
@@ -119,8 +122,8 @@ bool hookUpdate(hook *ghk){
 				ghk->rope->a      = closest;
 				ghk->ent->pos     = beingGetPos(closest);
 				ghk->rope->flags &= ~ROPE_UPDATED;
-				sfxPlay(sfxHookHit,1.f);
-				sfxPlay(sfxUngh,1.f);
+				//sfxPlay(sfxHookHit,1.f);
+				//sfxPlay(sfxUngh,1.f);
 				fxBlockBreak(ghk->ent->pos,2);
 				sfxLoop(sfxHookRope,0.f);
 			}else if(!ghk->hooked && !ghk->returning){

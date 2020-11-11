@@ -25,10 +25,18 @@ void ropeUpdateP(uint c, const packet *p){
 
 void ropeSyncAll(){
 	for(uint i=0;i<512;i++){
-		if(ropeList[i].a == 0)              {continue;}
-		if(ropeList[i].b == 0)              {continue;}
 		if(ropeList[i].flags & ROPE_UPDATED){continue;}
 		msgRopeUpdate(-1, i, &ropeList[i]);
 		ropeList[i].flags |= ROPE_UPDATED;
+	}
+}
+
+void ropeDelBeing(const being t){
+	for(uint i = 256;i<512;i++){
+		if((ropeList[i].a == t) || (ropeList[i].b == t)){
+			ropeList[i].flags = 0;
+			ropeList[i].a     = 0;
+			ropeList[i].b     = 0;
+		}
 	}
 }

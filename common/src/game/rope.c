@@ -73,8 +73,8 @@ static void ropeUpdate(rope *r){
 	float bw = beingGetWeight(r->b);
 	float w  = aw+bw;
 
-	float bm = MIN(1.f,aw / w);
-	float am = MIN(1.f,bw / w);
+	float bm = MAX(0.01f,MIN(1.f,aw / w));
+	float am = MAX(0.01f,MIN(1.f,bw / w));
 	if(beingType(r->a) == BEING_HOOK){
 		am = 0.f;
 		bm = 1.f;

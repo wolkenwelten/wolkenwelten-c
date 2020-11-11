@@ -174,7 +174,7 @@ float beingGetWeight(being b){
 		case BEING_CHARACTER:
 			return 80.f;
 		case BEING_ANIMAL:
-			return 1.f;
+			return 10.f;
 		case BEING_HOOK:
 			return 1.f;
 		case BEING_ENTITY:
