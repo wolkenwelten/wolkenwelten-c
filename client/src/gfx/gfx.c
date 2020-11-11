@@ -55,7 +55,7 @@ GLenum glCheckError_(const char *file, int line){
 
 void initGL(){
 	INITGLEXT();
-	glClearColor( 0.00f, 0.05f, 0.2f, 1.f );
+	glClearColor( 0.38f, 0.68f, 0.88f, 1.f );
 	glViewport(0,0,screenWidth,screenHeight);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
@@ -128,7 +128,7 @@ void renderFrame(){
 	calcFOV(player);
 	calcView(player);
 
-	glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	renderSky(player);
 	renderWorld(player);
 	glClear(GL_DEPTH_BUFFER_BIT);

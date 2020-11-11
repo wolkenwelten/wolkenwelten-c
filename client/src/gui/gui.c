@@ -110,7 +110,7 @@ void drawCrosshair(){
 }
 
 void resizeUI(){
-	matOrtho(matOrthoProj,0.f,(float)screenWidth,(float)screenHeight,0.f,-1.f,10.f);
+	matOrtho(matOrthoProj,0.f,screenWidth,screenHeight,0.f,-1.f,16.f);
 
 	const int sx = 10*getTilesize();
 	chatPanel->w = screenWidth - sx;
