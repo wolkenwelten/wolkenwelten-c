@@ -55,7 +55,7 @@ GLenum glCheckError_(const char *file, int line){
 
 void initGL(){
 	INITGLEXT();
-	glClearColor( 0.38f, 0.68f, 0.88f, 1.f );
+	glClearColor( 0.32f, 0.63f, 0.96f, 1.f );
 	glViewport(0,0,screenWidth,screenHeight);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
