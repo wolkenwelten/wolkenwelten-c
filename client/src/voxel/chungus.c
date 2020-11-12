@@ -113,7 +113,7 @@ u8 chungusGetB(chungus *c, u16 x,u16 y,u16 z){
 	return chnk->data[x&0xF][y&0xF][z&0xF];
 }
 
-nvoid chungusSetB(chungus *c, u16 x,u16 y,u16 z,u8 block){
+void chungusSetB(chungus *c, u16 x,u16 y,u16 z,u8 block){
 	chunk *chnk;
 	u16 cx = (x >> 4) & 0xF;
 	u16 cy = (y >> 4) & 0xF;
