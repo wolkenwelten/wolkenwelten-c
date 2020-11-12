@@ -382,6 +382,7 @@ void drawDebuginfo(){
 	guim->size = 2;
 	for(uint i=0;i<32;i++){
 		const char *cname = characterGetPlayerName(i);
+		if(i == (uint)playerID){continue;}
 		if(cname == NULL){continue;}
 		guim->sx = screenWidth;
 		guim->sy = 32+(i*42);
