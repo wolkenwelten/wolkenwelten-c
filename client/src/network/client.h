@@ -17,6 +17,7 @@ void clientGetName           ();
 void clientGoodbye           ();
 void clientGreetServer       ();
 void clientTranceive         ();
+void clientParse             ();
 void closeSingleplayerServer ();
 void msgSendPlayerPos        ();
 void decompressPacket        (const packet *p);

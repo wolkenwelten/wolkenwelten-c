@@ -6,81 +6,54 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <sys/socket.h>
+#include <emscripten.h>
 
 int serverSocket;
 
 void serverInit(){
+	return;
 }
 
 void serverFree(){
+	return;
 }
 
 void serverAccept(){
+	return;
 }
 
 void serverKill(uint c){
+	(void)c;
+	return;
 }
 
 void serverRead(){
-	for(uint i=0;i<clientCount;i++){
-		if(clients[i].state == STATE_CLOSED){ continue; }
-		int len = 1;
-		while(len > 0){
-			if(clients[i].flags&1){
-				len = recv(clients[i].socket,clients[i].recvWSBuf + clients[i].recvWSBufLen,sizeof(clients[i].recvWSBuf) - clients[i].recvWSBufLen,0);
-			}else{
-				len = recv(clients[i].socket,clients[i].recvBuf + clients[i].recvBufLen,sizeof(clients[i].recvBuf) - clients[i].recvBufLen,0);
-			}
-			if(len > 0){
-				if(clients[i].flags&1){
-					clients[i].recvWSBufLen += len;
-				}else{
-					clients[i].recvBufLen += len;
-				}
-			}
-		}
-		if(len < 0){
-			if(errno == EAGAIN){continue;}
-			serverKill(i);
-			continue;
-		}
-	}
+	return;
 }
 
 uint serverSendRaw(uint c, void *p, uint len){
-	uint tries = 3;
-	uint sent  = 0;
-	while(sent < len){
-		const int ret = send(clients[c].socket,p+sent,len-sent,0);
-		if(ret < 0){
-			if(errno == EAGAIN){
-				if(sent > 0)     {return sent;}
-				if(--tries == 0) {return 0;}
-				usleep(1);
-			}
-			return 0;
-		}
-		sent += ret;
-	}
-	return sent;
-}
+	(void)c;
+	(void)p;
+	(void)len;
 
-void wasmSetOption(){
-
+	return 0;
 }
 
 void wasmInit(){
+	optionWorldSeed    = 69;
+	optionSingleplayer = true;
 	mainInit();
+	clients[clientCount].socket = 1;
+	serverInitClient(clientCount++);
+	emscripten_worker_respond(NULL, 0);
 }
 
-void wasmUpdate(){
+void wasmTranceive(char *data, int size, void *arg){
+	memcpy(&clients[0].recvBuf[clients[0].recvBufOff], data, size);
+	clients[0].recvBufLen += size;
+
 	mainTick();
-}
 
-void wasmRead(){
-
-}
-
-void wasmWrite(){
-
+	emscripten_worker_respond((char *)clients[0].sendBuf, clients[0].sendBufLen);
+	clients[0].sendBufLen = 0;
 }

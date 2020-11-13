@@ -297,7 +297,9 @@ void clientParse(){
 void clientGreetServer(){
 	char introStr[34];
 	connectionState = 1;
-	#ifndef __EMSCRIPTEN__
+	#ifdef __EMSCRIPTEN__
+		if(singlePlayerPID != 0){queueToServer("NATIVE\r\n\r\n",10);}
+	#else
 		queueToServer("NATIVE\r\n\r\n",10);
 	#endif
 	uint len = snprintf(introStr,sizeof(introStr),"%.32s\n",playerName);

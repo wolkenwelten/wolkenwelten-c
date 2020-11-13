@@ -60,13 +60,15 @@ void serverAccept(){
 	if (err < 0){
 		close(clientSock);
 		return;
-	}
-	clients[clientCount].socket = clientSock;
+x	}
+	clients[clientCount].socket = clientSock;x
 	serverInitClient(clientCount++);
 }
 
 void serverKill(uint c){
-	close(clients[c].socket);
+	#ifndef __EMSCRIPTEN__
+		close(clients[c].socket);
+	#endif
 	serverCloseClient(c);
 }
 

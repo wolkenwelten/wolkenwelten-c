@@ -16,9 +16,10 @@
 
 int serverSocket = 0;
 worker_handle spServer;
+bool wasmInFlight = false;
 
 void clientGetName(){
-	snprintf(playerName,sizeof(playerName),"WebPlayer");
+	snprintf(playerName,sizeof(playerName),"WASM_Player");
 	playerName[sizeof(playerName)-1]=0;
 }
 
@@ -30,42 +31,41 @@ bool fileExists(const char *fn){
 
 void startSingleplayerServer(){
 	spServer = emscripten_create_worker("server.js");
-	serverSocket = -1;
+	serverSocket = 1;
+	singlePlayerPID = 123;
 	return;
 }
 
 void closeSingleplayerServer(){
-	if(spServer != 0){
+	if(singlePlayerPID != 0){
 		emscripten_destroy_worker(spServer);
 	}
 	serverSocket = 0;
+	singlePlayerPID = 0;
 	return;
 }
 
 void clientFreeSpecific(){
-	if(serverSocket > 0){
+	if(singlePlayerPID != 0){
+		closeSingleplayerServer();
+		serverSocket = 0;
+		spServer = 0;
+	}else if(serverSocket > 0){
 		close(serverSocket);
 		serverSocket = 0;
 	}
 }
 
 void clientFreeRetry(){
-	if(serverSocket > 0){
-		close(serverSocket);
-		serverSocket = 0;
-	}
+	clientFreeSpecific();
 	usleep(1000);
 }
 
-void clientInit(){
+void clientWSInit(){
 	struct sockaddr_in serv_addr;
 	struct hostent *serveraddr;
 	int err,yes=1;
-	if(serverSocket > 0){return;}
-	if(singleplayer && (singlePlayerPID == 0)){
-		startSingleplayerServer();
-		return;
-	}
+	if(singleplayer){return;}
 	++connectionTries;
 
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -107,6 +107,7 @@ void clientInit(){
 		menuSetError("Error connecting to host ELSE");
 		return;
 	}
+	connectionState = 0;
 	connectionTries = 0;
 	fcntl(serverSocket, F_SETFL, O_NONBLOCK);
 	err = setsockopt(serverSocket,IPPROTO_TCP,TCP_NODELAY,&yes,sizeof(yes));
@@ -118,9 +119,39 @@ void clientInit(){
 	clientGreetServer();
 }
 
-void clientRead(){
-	if(serverSocket <= 0){clientInit();}
-	if(serverSocket <= 0){return;}
+void clientSPInitCB(char *data,int size,void *arg){
+	(void)data;
+	(void)size;
+	(void)arg;
+	wasmInFlight=false;
+}
+
+void clientSPInit(){
+	emscripten_call_worker(spServer,"wasmInit",NULL,0,(em_worker_callback_func)clientSPInitCB,NULL);
+	wasmInFlight=true;
+	connectionState = 1;
+	sendBufLen              = 0;
+	sendBufSent             = 0;
+	sentBytesCurrentSession = 0;
+	recvBytesCurrentSession = 0;
+	recvUncompressedBytesCurrentSession = 0;
+	clientGreetServer();
+}
+
+void clientInit(){
+	if(serverSocket > 0){return;}
+	if(singleplayer && (singlePlayerPID == 0)){
+		startSingleplayerServer();
+	}
+	if(singlePlayerPID == 0){
+		clientWSInit();
+	}else{
+		clientSPInit();
+	}
+}
+
+void clientWSRead(){
+	if(singleplayer){return;}
 	for(int i=64;i>0;i--){
 		const int len = recv(serverSocket,recvBuf + recvBufLen,sizeof(recvBuf) - recvBufLen, 0);
 		if(len < 0){
@@ -133,9 +164,16 @@ void clientRead(){
 	}
 }
 
-void clientWrite(){
+void clientRead(){
 	if(serverSocket <= 0){clientInit();}
 	if(serverSocket <= 0){return;}
+	if(singlePlayerPID == 0){
+		clientWSRead();
+	}
+}
+
+void clientWSWrite(){
+	if(singleplayer){return;}
 	for(int i=64;i>0;i--){
 		const int ret = write(serverSocket,sendBuf+sendBufSent,sendBufLen-sendBufSent);
 		if(ret < 0){
@@ -149,5 +187,36 @@ void clientWrite(){
 	if(sendBufSent >= sendBufLen){
 		sendBufSent = 0;
 		sendBufLen  = 0;
+	}
+}
+
+void clientSPTranceive(char *data,int size,void *arg){
+	(void)arg;
+	if((recvBufLen + size) > sizeof(recvBuf)){
+		fprintf(stderr,"clientSPTranceive buffer full!!!\n");
+		clientParse();
+	}
+	memcpy(&recvBuf[recvBufLen],data,size);
+	recvBufLen += size;
+	recvBytesCurrentSession += size;
+	wasmInFlight = false;
+}
+
+void clientSPWrite(){
+	if(wasmInFlight){return;}
+	wasmInFlight = true;
+
+	sentBytesCurrentSession += sendBufLen;
+	emscripten_call_worker(spServer,"wasmTranceive",(char *)sendBuf,sendBufLen,(em_worker_callback_func)clientSPTranceive,NULL);
+	sendBufLen = 0;
+}
+
+void clientWrite(){
+	if(serverSocket <= 0){clientInit();}
+	if(serverSocket <= 0){return;}
+	if(singlePlayerPID == 0){
+		clientWSWrite();
+	}else {
+		clientSPWrite();
 	}
 }

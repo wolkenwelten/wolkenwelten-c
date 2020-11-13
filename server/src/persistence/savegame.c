@@ -383,6 +383,9 @@ void characterLoadSendData(character *p, const char *pName, uint c){
 }
 
 void chungusLoad(chungus *c){
+	#ifdef __EMSCRIPTEN__
+	return;
+	#endif
 	if(c == NULL)               { return; }
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
@@ -431,6 +434,9 @@ void chungusLoad(chungus *c){
 }
 
 void chungusSave(chungus *c){
+	#ifdef __EMSCRIPTEN__
+	return;
+	#endif
 	if(c == NULL)                                 { return; }
 	if((c->clientsUpdated & ((u64)1 << 31)) != 0) { return; }
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }

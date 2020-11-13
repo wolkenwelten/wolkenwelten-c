@@ -498,9 +498,11 @@ void serverParseConnection(uint c){
 }
 
 void serverParseIntro(uint c){
+	#ifndef __EMSCRIPTEN__
 	if(clients[c].flags & CONNECTION_WEBSOCKET){
 		serverParseWebSocketPacket(c);
 	}
+	#endif
 
 	for(uint ii=0;ii<clients[c].recvBufLen;ii++){
 		if(clients[c].recvBuf[ii] != '\n'){ continue; }
@@ -638,7 +640,6 @@ void serverCheckCompression(int c){
 	u8 *start;
 	static u8 compressBuf[LZ4_COMPRESSBOUND(sizeof(clients[c].sendBuf))];
 	if(clients[c].flags & CONNECTION_WEBSOCKET){return;}
-	//if(clients[c].sendBufLen < (int)(sizeof(clients[c].sendBuf)/128)){return;}
 	start = serverFindCompressibleStart(c,&len);
 	if(len <= (1<<16)){return;}
 
@@ -658,7 +659,9 @@ void serverSend(){
 		if(clients[i].state){ continue; }
 		if(clients[i].flags & CONNECTION_DO_UPDATE){msgUpdatePlayer(i);}
 		if(clients[i].sendBufLen == 0){ continue; }
+		#ifndef __EMSCRIPTEN__
 		serverCheckCompression(i);
+		#endif
 		serverSendClient(i);
 		addQueuedChunks(i);
 	}
