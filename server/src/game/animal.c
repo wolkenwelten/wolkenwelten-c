@@ -136,5 +136,4 @@ void animalUpdatePriorities(u8 c){
 			animalList[i].clientPriorization &= mask;
 		}
 	}
-	//fprintf(stderr,"RePrioritized %u = %u/%u %f %%\n",c,countPrio,animalCount-countPrio,(((float)countPrio) /  (float)(animalCount-countPrio))*100.f);
 }

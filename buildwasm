@@ -1,6 +1,6 @@
 #!/bin/bash
-#EMSDK_TESTED_VERSION="2.0.6"
-EMSDK_TESTED_VERSION="1.40.1"
+EMSDK_TESTED_VERSION="2.0.6"
+#EMSDK_TESTED_VERSION="1.40.1"
 #EMSDK_TESTED_VERSION="1.38.48"
 EMSDK_REPO_URL="https://github.com/emscripten-core/emsdk.git"
 
@@ -17,4 +17,4 @@ cd "$DIR"
 
 
 source "$DIR/platform/wasm/emsdk/emsdk_env.sh"
-make release.wasm
+make -j4 release.wasm

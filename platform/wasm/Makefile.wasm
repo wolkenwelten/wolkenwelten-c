@@ -1,5 +1,5 @@
 EMCC   := emcc
-EMLIBS := -s USE_SDL=2 -s USE_SDL_MIXER=2 -s GL_UNSAFE_OPTS=1 -s USE_WEBGL2=1 -s MAX_WEBGL_VERSION=2 -D_GNU_SOURCE
+EMLIBS := -s USE_SDL=2 -s USE_SDL_MIXER=2 -s GL_UNSAFE_OPTS=1 -s USE_WEBGL2=1 -s MAX_WEBGL_VERSION=2
 EMMEM  := -s TOTAL_MEMORY=512MB
 
 all: wolkenwelten
@@ -16,15 +16,19 @@ releases/wasm/wolkenwelten.html: client/src/tmp/mods_tmp.c
 releases/wasm/wolkenwelten.html: client/src/tmp/objs.c client/src/tmp/objs.h
 releases/wasm/wolkenwelten.html: client/src/tmp/sfx.c client/src/tmp/sfx.h
 releases/wasm/wolkenwelten.html: common/src/tmp/cto.c common/src/tmp/cto.h
-releases/wasm/wolkenwelten.html: releases/wasm/wasm_glue.js
+releases/wasm/wolkenwelten.html: releases/wasm/server.js
 releases/wasm/wolkenwelten.html: releases/wasm/manifest.json
 	mkdir -p releases/wasm/
-	$(EMCC) $(CLIENT_SRCS) -std=c99 -O3 -fno-rtti --closure 0 -s MINIFY_HTML=0 -s WASM=1 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 $(EMMEM) $(EMLIBS) --shell-file platform/wasm/shell.html -o releases/wasm/index.html
+	$(EMCC) $(CLIENT_SRCS) -D_GNU_SOURCE -std=c99 -O3 -fno-rtti --closure 0 -s MINIFY_HTML=0 -s WASM=1 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 $(EMMEM) $(EMLIBS) --shell-file platform/wasm/shell.html -o releases/wasm/index.html
+
+releases/wasm/server.js: $(SERVER_SRCS) $(SERVER_HDRS)
+releases/wasm/server.js: server/src/tmp/sfx.c server/src/tmp/sfx.h
+releases/wasm/server.js: server/src/tmp/objs.c server/src/tmp/objs.h
+releases/wasm/server.js: server/src/tmp/mods_tmp.c
+releases/wasm/server.js: common/src/tmp/cto.c common/src/tmp/cto.h
+	mkdir -p releases/wasm/
+	$(EMCC) $(SERVER_SRCS) -D_GNU_SOURCE -std=c99 -O3 -s BUILD_AS_WORKER=1 -s EXPORTED_FUNCTIONS="['_wasmSetOption','_wasmInit','_wasmUpdate','_wasmRead','_wasmWrite']" -fno-rtti --closure 0 $(EMMEM) -o releases/wasm/server.js
 
 releases/wasm/manifest.json: platform/wasm/manifest.json
-	mkdir -p releases/wasm/
-	cp -f $< $@
-
-releases/wasm/wasm_glue.js: platform/wasm/wasm_glue.js
 	mkdir -p releases/wasm/
 	cp -f $< $@

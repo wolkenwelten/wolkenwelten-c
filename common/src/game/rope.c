@@ -34,36 +34,31 @@ void ropeFree(rope *r){
 static void ropePullTowards(being a, being b, float goalLen, float mul){
 	const vec ap = beingGetPos(a);
 	const vec bp = beingGetPos(b);
-	//fprintf(stderr,"AP[%f:%f:%f]{%x} BP[%f:%f:%f]{%x} GL:%f \n",ap.x,ap.y,ap.z,a,bp.x,bp.y,bp.z,b,goalLen);
-	if(ap.x < 0){return;}
-	if(bp.x < 0){return;}
+	if((ap.x < 0) || (bp.x < 0)){return;}
 	const float len = vecMag(vecSub(ap,bp));
 	if(goalLen > len){return;}
 	const vec d = vecMulS(vecNorm(vecSub(ap,bp)),goalLen - len);
 
-	u32 col = entityCollision(bp);
+	u32 col    = entityCollision(bp);
 	vec posAdd = vecZero();
 	vec velAdd = vecZero();
 	if(((d.x > 0) && !((col & 0x110))) || ((d.x < 0) && !((col & 0x220)))){
-		posAdd.x = d.x * -0.5f * mul;
-		velAdd.x = d.x * -0.1f * mul;
+		posAdd.x = d.x * -0.6f * mul;
+		velAdd.x = d.x * -0.2f * mul;
 	}
 	if(((d.z > 0) && !((col & 0x440))) || ((d.z < 0) && !((col & 0x880)))){
-		posAdd.z = d.z * -0.5f * mul;
-		velAdd.z = d.z * -0.1f * mul;
+		posAdd.z = d.z * -0.6f * mul;
+		velAdd.z = d.z * -0.2f * mul;
 	}
 	if(((d.y > 0) && !((col & 0x00F))) || ((d.y < 0) && !((col & 0x0F0)))){
-		posAdd.y = d.y * -0.5f * mul;
-		velAdd.y = d.y * -0.1f * mul;
+		posAdd.y = d.y * -0.6f * mul;
+		velAdd.y = d.y * -0.2f * mul;
 	}
-	(void)velAdd;
-	(void)posAdd;
-	//fprintf(stderr,"AP[%f:%f:%f] BP[%f:%f:%f] L:%f GL:%f PA:[%f:%f:%f] VA:[%f:%f:%f]\n",ap.x,ap.y,ap.z,bp.x,bp.y,bp.z,len,goalLen,posAdd.x,posAdd.y,posAdd.z,velAdd.x,velAdd.y,velAdd.z);
 	beingAddPos(b,posAdd);
 	beingAddVel(b,velAdd);
-	//pull->shake = vecMag(pull->vel);
 }
 
+#include <stdio.h>
 static void ropeUpdate(rope *r){
 	if(r == NULL)      { return; }
 	if(r->a == 0)      { return; }

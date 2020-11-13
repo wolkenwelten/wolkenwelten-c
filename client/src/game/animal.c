@@ -26,7 +26,7 @@ static const mesh *animalGetMesh(const animal *e){
 }
 
 static void animalDraw(animal *e){
-	float breath,scale;
+	float breath;
 	if(e        == NULL){return;}
 	if(e->type  == 0)   {return;}
 	if(e->state == 0){
@@ -34,11 +34,7 @@ static void animalDraw(animal *e){
 	}else{
 		breath = cosf((float)e->breathing/256.f)*6.f;
 	}
-	if(e->age < 20){
-		scale = 0.5f + ((float)e->age/40.f);
-	}else{
-		scale = 1.f;
-	}
+	const float scale = MIN(1.f,0.5f + ((float)e->age/40.f));
 
 	matMov      (matMVP,matView);
 	matMulTrans (matMVP,e->pos.x,e->pos.y,e->pos.z);

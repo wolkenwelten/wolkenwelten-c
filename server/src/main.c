@@ -134,15 +134,34 @@ void handleAnimalPriorities(){
 	animalUpdatePriorities(c);
 }
 
-int main( int argc, const char* argv[] ){
-	initSignals();
-	initTermColors();
-	initOptions(argc,argv);
+void mainTick(){
+	freeTime = getTicks();
+	chungusUnsubFarChungi();
+	chungusFreeOldChungi(30000);
+	handleAnimalPriorities();
+	bigchungusSafeSave(&world);
+	updateWorld();
+	serverHandleEvents();
+}
+
+void mainInit(){
 	savegameLoad();
 	seedRNG(time(NULL));
 	serverInit();
 	chunkInit();
 	savegameSave();
+
+	bigchungusInit(&world);
+	blockTypeInit();
+	bigchungusGenSpawn(&world);
+}
+
+#ifndef __EMSCRIPTEN__
+int main( int argc, const char* argv[] ){
+	initSignals();
+	initTermColors();
+	initOptions(argc,argv);
+	mainInit();
 
 	printf("%sWolkenwelten",termColors[2]                );
 	printf(" %s%s"         ,termColors[6],VERSION        );
@@ -151,25 +170,18 @@ int main( int argc, const char* argv[] ){
 	printf(" %s{%s}"       ,termColors[5],optionSavegame );
 	printf(" %sbuilt %s\n" ,termReset    ,BUILDDATE      );
 
-	bigchungusInit(&world);
-	blockTypeInit();
-	bigchungusGenSpawn(&world);
 	while(!quit){
-		freeTime = getTicks();
-		chungusUnsubFarChungi();
-		chungusFreeOldChungi(30000);
-		handleAnimalPriorities();
-		bigchungusSafeSave(&world);
-		updateWorld();
-		serverHandleEvents();
+		mainTick();
 		if(clientCount == 0){
 			usleep(100000);
 		}else{
 			usleep(1000);
 		}
 	}
+
 	printf("Exiting cleanly\n");
 	savegameSave();
 	serverFree();
 	return 0;
 }
+#endif

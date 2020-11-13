@@ -7,3 +7,5 @@ extern char *termColors[16];
 extern char *termReset;
 
 u64 getTicks();
+void mainTick();
+void mainInit();

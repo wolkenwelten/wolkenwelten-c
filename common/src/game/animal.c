@@ -140,19 +140,8 @@ int animalUpdate(animal *e){
 		}
 	}
 
-	if(fabsf(e->vel.x - e->gvel.x) > 0.001f){
-		if(e->vel.x > e->gvel.x){
-			e->vel.x -= 0.005f;
-		}else{
-			e->vel.x += 0.005f;
-		}
-	}
-	if(fabsf(e->vel.z - e->gvel.z) > 0.001f){
-		if(e->vel.z > e->gvel.z){
-			e->vel.z -= 0.005f;
-		}else{
-			e->vel.z += 0.005f;
-		}
+	if(!(e->flags & ANIMAL_FALLING)){
+		e->vel = vecDivS(vecAdd(e->gvel,vecMulS(e->vel,7.f)),8.f);
 	}
 
 	if(e->rot.yaw   > 360.f){e->rot.yaw   -= 360.f;}

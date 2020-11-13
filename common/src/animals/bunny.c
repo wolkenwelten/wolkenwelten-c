@@ -194,6 +194,7 @@ static void animalFightOrFlight(animal *e){
 			vec caRot  = vecVecToDeg(caNorm);
 
 			e->gvel.x  = caVel.x;
+			e->gvel.y  = 0.f;
 			e->gvel.z  = caVel.z;
 			e->rot.yaw = -caRot.yaw;
 
@@ -264,6 +265,7 @@ static void animalSPlayful(animal *e){
 	if (rngValM( 8) == 0){
 		vec dir = vecMulS(vecDegToVec(vecNew(-e->rot.yaw,0.f,0.f)),0.02f);
 		e->gvel.x = dir.x;
+		e->gvel.y = 0.f;
 		e->gvel.z = dir.z;
 	}
 

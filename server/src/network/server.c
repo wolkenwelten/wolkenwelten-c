@@ -23,7 +23,9 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifdef __MINGW32__
+#ifdef __EMSCRIPTEN__
+#include "server_wasm.h"
+#elif defined __MINGW32__
 #include "server_win.h"
 #else
 #include "server_bsd.h"
