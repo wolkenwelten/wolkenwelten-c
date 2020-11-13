@@ -38,6 +38,7 @@ static void ropePullTowards(being a, being b, float goalLen, float mul){
 	if(ap.x < 0){return;}
 	if(bp.x < 0){return;}
 	const float len = vecMag(vecSub(ap,bp));
+	if(goalLen > len){return;}
 	const vec d = vecMulS(vecNorm(vecSub(ap,bp)),goalLen - len);
 
 	u32 col = entityCollision(bp);
