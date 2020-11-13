@@ -112,7 +112,7 @@ bool hookUpdate(hook *ghk){
 			if(b){ fxBlockBreak(vecFloor(ghk->ent->pos),b);}
 		}else{
 			being closest = beingClosest(ghk->ent->pos,1.f);
-			if(closest != 0){
+			if((closest != 0) && (closest != characterGetBeing(ghk->parent))){
 				ghk->ent->vel     = vecZero();
 				ghk->ent->flags  |= ENTITY_NOCLIP;
 				ghk->hooked       = true;
