@@ -5,7 +5,7 @@
 #define CHUNGUS_SIZE (16*16)
 
 struct chungus {
-	u8    x,y,z;
+	u8     x,y,z;
 	ivec   spawn;
 	u64    clientsSubscribed;
 	u64    clientsUpdated;
@@ -39,6 +39,7 @@ int          chungusUpdateClient     (chungus *c, uint p);
 uint         chungusIsUpdated        (chungus *c, uint p);
 void         chungusSetUpdated       (chungus *c, uint p);
 void         chungusUnsetUpdated     (chungus *c, uint p);
+void         chungusSetAllUpdated    (chungus *c, u64 nUpdated);
 int          chungusGetHighestP      (chungus *c, int x, int *retY, int z);
 float        chungusDistance         (const character *cam, const chungus *chng);
 uint         chungusFreeOldChungi    (u64 threshold);

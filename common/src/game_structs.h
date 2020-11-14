@@ -172,3 +172,10 @@ typedef struct {
 	};
 	i16     player;
 } itemDrop;
+
+typedef struct {
+	vec pos,vel;
+	being target,source;
+	u16 style;
+	i16 ttl;
+} projectile;

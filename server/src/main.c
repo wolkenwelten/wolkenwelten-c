@@ -13,6 +13,7 @@
 #include "../../common/src/tmp/cto.h"
 #include "../../common/src/misc/misc.h"
 #include "../../common/src/game/blockType.h"
+#include "../../common/src/game/projectile.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -93,6 +94,7 @@ void updateWorldStep(){
 	itemDropUpdate();
 	grenadeUpdate();
 	animalUpdateAll();
+	projectileUpdateAll();
 }
 
 void updateWorld(){

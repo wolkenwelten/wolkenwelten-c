@@ -373,3 +373,15 @@ void msgRopeUpdate(uint c, uint i, rope *r){
 
 	packetQueue(p,37,5*4,c);
 }
+
+void msgFxBeamBlastHit(uint c, const vec pos, u16 size, u16 style){
+	packet *p = &packetBuffer;
+
+	p->v.u16[0] = style;
+	p->v.u16[1] = size;
+	p->v.f  [1] = pos.x;
+	p->v.f  [2] = pos.y;
+	p->v.f  [3] = pos.z;
+
+	packetQueue(p,39,4*4,c);
+}

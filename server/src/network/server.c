@@ -14,6 +14,7 @@
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
+#include "../../../common/src/game/projectile.h"
 #include "../../../common/src/misc/lz4.h"
 #include "../../../common/src/network/messages.h"
 
@@ -433,6 +434,13 @@ void serverParseSinglePacket(uint c, packet *p){
 		case 37:
 			ropeUpdateP(c,p);
 			break;
+		case 38:
+			projectileRecvUpdate(c,p);
+			break;
+		case 39:
+			fprintf(stderr,"FxBeamBlastHit received from client\n");
+			serverKill(c);
+			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
 			serverKill(c);
@@ -551,7 +559,7 @@ void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 		fprintf(stderr,"Chungus Request Queue full!\n");
 		return;
 	}
-	for(uint i=0;i<(sizeof(clients[c].chngReqQueue) / sizeof(chungusReqEntry));i++){
+	for(uint i=0;i<clients[c].chngReqQueueLen;i++){
 		chungusReqEntry *e = &clients[c].chngReqQueue[i];
 		if(e->x != x){continue;}
 		if(e->y != y){continue;}
@@ -578,11 +586,10 @@ void addChunksToQueue(uint c){
 	chungus *chng = worldGetChungus(entry.x,entry.y,entry.z);
 	if(chng == NULL){ return; }
 	float dist = chungusDistance(clients[c].c, chng);
-	if(dist > 768.f){
+	if(dist > 1024.f){
 		fprintf(stderr,"Requested Chungus too far away Chungus(%u, %u, %u) Player(%f, %f, %f))\n",chng->x<<8,chng->y<<8,chng->z<<8,clients[c].c->pos.x,clients[c].c->pos.y,clients[c].c->pos.z);
 		return;
 	}
-	chungusSubscribePlayer(chng,c);
 	for(int x=15;x>= 0;--x){
 		for(int y=15;y>= 0;--y){
 			for(int z=15;z>= 0;--z){
@@ -747,6 +754,9 @@ void serverCloseClient(uint c){
 		}
 	}
 	clientCount = lowestClient+1;
+	if((clientCount == 1) && (clients[0].state == STATE_CLOSED)){
+		clientCount = 0;
+	}
 
 	if((clientCount == 1) && (clients[0].state == STATE_CLOSED) && (optionSingleplayer)){
 		quit = true;

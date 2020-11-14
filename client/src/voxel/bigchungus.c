@@ -230,6 +230,7 @@ void worldBoxSphereDirty(int x,int y,int z, int r){
 }
 
 void worldSetChungusLoaded(int x, int y, int z){
+	fprintf(stderr,"chungusLoaded %u %u %u\n",x,y,z);
 	chungus *chng = world[x&0xFF][y&0x7F][z&0xFF];
 	if(chng != NULL){chng->requested = 0;}
 }

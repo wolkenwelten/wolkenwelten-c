@@ -263,8 +263,31 @@ void chungusFill(chungus *c, int x,int y,int z,u8 b){
 
 void chungusSubscribePlayer(chungus *c, uint p){
 	if(c == NULL){return;}
+	u64 mask = ~(1 << p);
+	if(c->clientsSubscribed & mask){return;}
 
 	c->clientsSubscribed |= 1 << p;
+	for(int x=0;x<16;x++){
+		for(int y=0;y<16;y++){
+			for(int z=0;z<16;z++){
+				if(c->chunks[x][y][z] != NULL){
+					c->chunks[x][y][z]->clientsUpdated &= mask;
+				}
+			}
+		}
+	}
+}
+
+void chungusSetAllUpdated(chungus *c, u64 nUpdated){
+	for(int x=0;x<16;x++){
+		for(int y=0;y<16;y++){
+			for(int z=0;z<16;z++){
+				if(c->chunks[x][y][z] != NULL){
+					c->chunks[x][y][z]->clientsUpdated = nUpdated;
+				}
+			}
+		}
+	}
 }
 
 int chungusUnsubscribePlayer(chungus *c, uint p){
@@ -315,7 +338,6 @@ int chungusUpdateClient(chungus *c, uint p){
 	if( chungusIsUpdated(c,p))             { return 0; }
 
 	addChungusToQueue(p,c->x,c->y,c->z);
-	chungusSetUpdated(c,p);
 	return 0;
 }
 
@@ -367,12 +389,11 @@ void chungusUnsubFarChungi(){
 			fprintf(stderr,"Y >= 128, something went wrong!!! [%u,%u,%u]\n",x,y,z);
 			continue;
 		}
-		if((x >= 127) && (x <= 129) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
 		chng->clientsSubscribed &= 0xFFFFFFFF;
 
 		for(uint ii=0;ii<clientCount;++ii){
 			const float cdist = chungusDistance(clients[ii].c,chng);
-			if(cdist < 256.f){
+			if(cdist < 384.f){
 				chungusSubscribePlayer(chng,ii);
 			}else if(cdist > 768.f){
 				chungusUnsubscribePlayer(chng,ii);

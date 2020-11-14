@@ -228,9 +228,9 @@ ivec bigchungusGetSpawnPos(bigchungus *c){
 void bigchungusUpdateClient(bigchungus *c, int p){
 	character *chara = clients[p].c;
 	if(chara == NULL){return;}
-	int cx = ((int)chara->pos.x)>>8;
-	int cy = ((int)chara->pos.y)>>8;
-	int cz = ((int)chara->pos.z)>>8;
+	int cx = ((int)chara->pos.x) >> 8;
+	int cy = ((int)chara->pos.y) >> 8;
+	int cz = ((int)chara->pos.z) >> 8;
 
 	if((cx >= 0) && (cx < 256) && (cy >= 0) && (cy < 128) && (cz >= 0) && (cz < 256)){
 		chungusUpdateClient(c->chungi[cx][cy][cz],p);
@@ -270,6 +270,7 @@ void bigchungusUnsubscribeClient(bigchungus *c, int p){
 		for(int oy=0;oy < 128; oy++){
 			for(int oz=0;oz < 256; oz++){
 				chungus *chng = c->chungi[ox][oy][oz];
+				if(chng == NULL){continue;}
 				chungusUnsubscribePlayer(chng,p);
 			}
 		}
@@ -318,4 +319,16 @@ void worldBoxMineSphere(int x, int y, int z, int r){
 }
 ivec worldGetSpawnPos(){
 	return bigchungusGetSpawnPos(&world);
+}
+void worldSetAllUpdated(){
+	for(int ox=0;ox < 256; ox++){
+		for(int oy=0;oy < 128; oy++){
+			for(int oz=0;oz < 256; oz++){
+				chungus *chng = world.chungi[ox][oy][oz];
+				if(chng == NULL){continue;}
+				chng->clientsUpdated = 0;
+				chungusSetAllUpdated(chng, 0);
+			}
+		}
+	}
 }

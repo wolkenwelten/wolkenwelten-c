@@ -6,6 +6,8 @@
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../network/server.h"
+#include "../voxel/bigchungus.h"
+#include "../voxel/chungus.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
@@ -318,6 +320,10 @@ int parseCommand(int c, const char *cmd){
 		return 1;
 	}
 
+	if(strncmp(tcmp,"refreshAll",11) == 0){
+		worldSetAllUpdated();
+	}
+
 	if(strncmp(tcmp,"acount",6) == 0){
 		snprintf(replyBuf,sizeof(replyBuf),".acount : %i",animalCount);
 		replyBuf[sizeof(replyBuf)-1]=0;
@@ -368,6 +374,7 @@ int parseCommand(int c, const char *cmd){
 		serverSendChatMsg(replyBuf);
 		return 1;
 	}
+
 
 	fprintf(stderr,"CMD [%s]\n",cmd);
 	return 1;

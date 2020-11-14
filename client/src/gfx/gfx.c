@@ -1,10 +1,10 @@
 #include "../gfx/gfx.h"
 
-#include "../main.h"
 #include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
 #include "../game/entity.h"
+#include "../game/projectile.h"
 #include "../game/rope.h"
 #include "../gfx/clouds.h"
 #include "../gfx/gl.h"
@@ -16,6 +16,7 @@
 #include "../gfx/texture.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
+#include "../main.h"
 #include "../sdl/sdl.h"
 #include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
@@ -119,6 +120,7 @@ void renderWorld(const character *cam){
 	characterDrawAll();
 	shadowDraw();
 	cloudsRender();
+	projectileDrawAll();
 	particleDraw();
 	ropeDrawAll();
 }

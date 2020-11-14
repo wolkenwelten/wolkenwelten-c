@@ -45,6 +45,7 @@ void wasmInit(){
 	mainInit();
 	clients[clientCount].socket = 1;
 	serverInitClient(clientCount++);
+
 	emscripten_worker_respond(NULL, 0);
 }
 
@@ -54,6 +55,8 @@ void wasmTranceive(char *data, int size, void *arg){
 
 	mainTick();
 
-	emscripten_worker_respond((char *)clients[0].sendBuf, clients[0].sendBufLen);
+	const uint len = clients[0].sendBufLen;
 	clients[0].sendBufLen = 0;
+
+	emscripten_worker_respond((char *)clients[0].sendBuf, len);
 }

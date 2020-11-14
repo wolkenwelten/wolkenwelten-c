@@ -114,7 +114,7 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 }
 
 void beamblast(character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult){
-	const float mx =  0.75f;
+	const float mx =  1.f;
 	const float mz = -1.f;
 	vec pos = ent->pos;
 	pos.x += ((cos((ent->rot.yaw+90.f)*PI/180) * cos(ent->rot.pitch*PI/180))*mz) + cos((ent->rot.yaw)*PI/180)*mx;

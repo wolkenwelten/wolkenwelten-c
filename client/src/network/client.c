@@ -8,6 +8,7 @@
 #include "../game/grenade.h"
 #include "../game/itemDrop.h"
 #include "../game/rope.h"
+#include "../game/projectile.h"
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
 #include "../network/chat.h"
@@ -159,12 +160,10 @@ void clientParsePacket(const packet *p){
 			fprintf(stderr,"Received a requestChungus packet from the server which should never happen.\n");
 			break;
 		case 3: // placeBlock
-			worldSetB(p->v.u16[0],p->v.u16[1],p->v.u16[2],p->v.u16[3]);
+			fprintf(stderr,"Received a placeBlock packet from the server which should never happen.\n");
 			break;
 		case 4: // mineBlock
-			if(worldSetB(p->v.u16[0],p->v.u16[1],p->v.u16[2],0)){
-				fxBlockBreak(vecNew(p->v.u16[0],p->v.u16[1],p->v.u16[2]),p->v.u16[3]);
-			}
+			fxBlockBreak(vecNew(p->v.u16[0],p->v.u16[1],p->v.u16[2]),p->v.u16[3]);
 			break;
 		case 5: // Goodbye
 			fprintf(stderr,"Received a Goodbye packet from the server which should never happen.\n");
@@ -262,7 +261,13 @@ void clientParsePacket(const packet *p){
 			fprintf(stderr,"Received an itemDropPickup msg from the server, this should never happen.\n");
 			break;
 		case 37:
-			ropeUpdateP(p);;
+			ropeUpdateP(p);
+			break;
+		case 38:
+			projectileRecvUpdate(-1,p);
+			break;
+		case 39:
+			fxProjectileHit(p);
 			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);

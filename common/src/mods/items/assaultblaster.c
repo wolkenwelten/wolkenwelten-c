@@ -22,7 +22,9 @@ int assaultblasterGetStackSize(const item *cItem){
 
 bool assaultblasterPrimaryAction(item *cItem, character *cChar){
 	if(!characterTryToShoot(cChar,cItem,15,1)){return false;}
-	beamblast(cChar,.8f,0.2f,0.05f,2,1,8.f,1.f);
+	sfxPlay(sfxPhaser,0.5f);
+	projectileNewC(cChar, 0, 1);
+	characterAddInaccuracy(cChar,1);
 	return true;
 }
 

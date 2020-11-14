@@ -47,3 +47,4 @@ void     worldDirtyChunk    (int x, int y, int z, int client);
 void     worldBoxMine       (int x, int y, int z, int w,int h,int d);
 void     worldBoxMineSphere (int x, int y, int z, int r);
 ivec     worldGetSpawnPos   ();
+void     worldSetAllUpdated ();

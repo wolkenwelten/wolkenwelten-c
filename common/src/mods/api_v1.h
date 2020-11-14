@@ -59,8 +59,10 @@ void recipeNew4 (const item result, const item ingred1, const item ingred2, cons
 
 void ingredientSubstituteAdd (u16 ingredient, u16 substitute);
 
-void grenadeNew(const character *ent, float pwr, int cluster, float clusterPwr);
-void beamblast (character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult);
+void grenadeNew    (const character *ent, float pwr, int cluster, float clusterPwr);
+void beamblast     (character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult);
+void projectileNew (const vec pos, const vec rot, being target, being source, uint style);
+void projectileNewC(const character *c, being target, uint style);
 
 bool characterHP             (      character *c, int addhp);
 int  characterGetHP          (const character *c);
@@ -69,11 +71,14 @@ bool characterDamage         (      character *c, int hp);
 void characterAddCooldown    (      character *c, int cooldown);
 int  characterGetItemAmount  (const character *c, u16 itemID);
 int  characterDecItemAmount  (      character *c, u16 itemID, int amount);
+void characterAddInaccuracy  (      character *c, float inc);
 bool characterItemReload     (      character *c, item *i, int cooldown);
 bool characterTryToShoot     (      character *c, item *i, int cooldown, int bulletcount);
 bool characterTryToUse       (      character *c, item *i, int cooldown, int itemcount);
 bool characterPlaceBlock     (      character *c, item *i);
 void characterStartAnimation (      character *c, int index, int duration);
+character *characterGetByBeing(being b);
+being      characterGetBeing (const character *c);
 
 item  itemNew      (u16 ID, i16 amount);
 item  itemEmpty    ();
@@ -100,8 +105,9 @@ int      checkCollision     (int x, int y, int z);
 void     worldBoxMine       (int x, int y, int z, int w,int h,int d);
 void     worldBoxMineSphere (int x, int y, int z, int r);
 
-void     sfxPlay(sfx *b, float volume);
-void     sfxLoop(sfx *b, float volume);
+void     sfxPlay   (sfx *b, float volume);
+void     sfxPlayPos(sfx *b, float volume, vec pos);
+void     sfxLoop   (sfx *b, float volume);
 
 float       rngValf();
 u64         rngValR();

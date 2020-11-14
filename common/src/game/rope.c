@@ -58,7 +58,6 @@ static void ropePullTowards(being a, being b, float goalLen, float mul){
 	beingAddVel(b,velAdd);
 }
 
-#include <stdio.h>
 static void ropeUpdate(rope *r){
 	if(r == NULL)      { return; }
 	if(r->a == 0)      { return; }

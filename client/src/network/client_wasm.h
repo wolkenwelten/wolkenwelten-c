@@ -123,6 +123,7 @@ void clientSPInitCB(char *data,int size,void *arg){
 	(void)data;
 	(void)size;
 	(void)arg;
+
 	wasmInFlight=false;
 }
 
