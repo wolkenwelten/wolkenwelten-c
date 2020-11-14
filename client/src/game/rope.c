@@ -9,6 +9,7 @@
 #include "../../../common/src/game/being.h"
 #include "../../../common/src/network/messages.h"
 
+#include <stdio.h>
 #include <string.h>
 
 mesh *ropeMesh = NULL;
@@ -95,6 +96,7 @@ static void ropeDraw(rope *r){
 	const vec h = beingGetPos(r->a);
 	const vec p = beingGetPos(r->b);
 	ropeDrawSegment(r,h,p);
+	fprintf(stderr,"ropeDraw[%u] a:%x b:%x\n",(int)(r-ropeList),r->a,r->b);
 }
 
 void ropeInit(){
@@ -129,15 +131,15 @@ void ropeUpdateP(const packet *p){
 	r->flags  = p->v.u32[3];
 	r->length = p->v.f  [4];
 
-	r->flags |= ROPE_UPDATED;
+	r->flags |= ROPE_DIRTY;
 }
 
 void ropeSyncAll(){
 	const uint start = playerID << 2;
 	for(uint i=start;i<start+4;i++){
-		if(ropeList[i].flags & ROPE_UPDATED){continue;}
+		if(!(ropeList[i].flags & ROPE_DIRTY)){continue;}
 		msgRopeUpdate(-1, i, &ropeList[i]);
-		ropeList[i].flags |= ROPE_UPDATED;
+		ropeList[i].flags &= ~ROPE_DIRTY;
 	}
 }
 

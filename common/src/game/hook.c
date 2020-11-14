@@ -26,8 +26,8 @@ hook *hookNew(character *p){
 	if(ghk == NULL){
 		ghk = &hookList[hookCount++];
 	}
-	u32 flags = 0;
-	if(characterGetMaxHookLen(p) > 128.f){flags = ROPE_TEX_CHAIN;}
+	u32 flags = ROPE_DIRTY;
+	if(characterGetMaxHookLen(p) > 128.f){flags |= ROPE_TEX_CHAIN;}
 
 	ghk->parent       = p;
 	ghk->ent          = entityNew(vecAdd(vecNew(0,1,0),p->pos),vecNew(-p->rot.yaw,-p->rot.pitch-90.f,p->rot.roll));
@@ -75,12 +75,12 @@ bool hookReturnToParent(hook *ghk,float speed){
 }
 
 void hookReturnHook(hook *ghk){
-	ghk->returning = true;
-	ghk->hooked    = false;
-	ghk->ent->vel  = vecZero();
-	ghk->rope->a   = hookGetBeing(ghk);
+	ghk->returning    = true;
+	ghk->hooked       = false;
+	ghk->ent->vel     = vecZero();
+	ghk->rope->a      = hookGetBeing(ghk);
 	ghk->rope->length = -1.f;
-	ghk->rope->flags &= ~ROPE_UPDATED;
+	ghk->rope->flags |= ROPE_DIRTY;
 	hookReturnToParent(ghk,0.1f);
 }
 
@@ -105,7 +105,7 @@ bool hookUpdate(hook *ghk){
 			ghk->attached     = 0;
 			ghk->goalLength   = hookGetLength(ghk);
 			ghk->rope->length = ghk->goalLength;
-			ghk->rope->flags &= ~ROPE_UPDATED;
+			ghk->rope->flags |= ROPE_DIRTY;
 			sfxPlay(sfxHookHit,1.f);
 			sfxLoop(sfxHookRope,0.f);
 			unsigned char b  = worldGetB(ghk->ent->pos.x,ghk->ent->pos.y,ghk->ent->pos.z);
@@ -121,7 +121,7 @@ bool hookUpdate(hook *ghk){
 				ghk->attached     = closest;
 				ghk->rope->a      = closest;
 				ghk->ent->pos     = beingGetPos(closest);
-				ghk->rope->flags &= ~ROPE_UPDATED;
+				ghk->rope->flags |= ROPE_DIRTY;
 				//sfxPlay(sfxHookHit,1.f);
 				//sfxPlay(sfxUngh,1.f);
 				fxBlockBreak(ghk->ent->pos,2);
@@ -152,7 +152,7 @@ void hookSetGoalLength(hook *ghk, float len){
 	ghk->goalLength = len;
 	if(ghk->hooked && !ghk->returning){
 		ghk->rope->length = ghk->goalLength;
-		ghk->rope->flags &= ~ROPE_UPDATED;
+		ghk->rope->flags |= ROPE_DIRTY;
 	}
 }
 

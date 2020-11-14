@@ -64,12 +64,12 @@ typedef struct {
 typedef struct {
 	being a,b;
 	float length;
-	u32   flags;
+	u16   flags;
 } rope;
 #define ROPE_TEX       0x0FF
 #define ROPE_TEX_ROPE  0x000
 #define ROPE_TEX_CHAIN 0x001
-#define ROPE_UPDATED   0x100
+#define ROPE_DIRTY     0x100
 
 typedef struct {
 	 vec  pos,vel,gvel,rot,screenPos;

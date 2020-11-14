@@ -365,13 +365,13 @@ void msgItemDropPickup(uint c, uint i){
 void msgRopeUpdate(uint c, uint i, rope *r){
 	packet *p = &packetBuffer;
 
-	p->v.u32[0] = i;
+	p->v.u16[0] = i;
+	p->v.u16[1] = r->flags;
 	p->v.u32[1] = r->a;
 	p->v.u32[2] = r->b;
-	p->v.u32[3] = r->flags;
-	p->v.f  [4] = r->length;
+	p->v.f  [3] = r->length;
 
-	packetQueue(p,37,5*4,c);
+	packetQueue(p,37,4*4,c);
 }
 
 void msgFxBeamBlastHit(uint c, const vec pos, u16 size, u16 style){

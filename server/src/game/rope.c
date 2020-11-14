@@ -11,23 +11,24 @@ int ropeNewID(){
 	return -1;
 }
 
+#include <stdio.h>
 void ropeUpdateP(uint c, const packet *p){
 	(void)c;
-
-	const uint i    = p->v.u32[0];
+	const uint i = p->v.u16[0];
+	fprintf(stderr,"ropeUpdateP[%u] i:%u\n",c,i);
 	if(i > 512){return;}
 	rope *r = &ropeList[i];
+	r->flags  = p->v.u16[1];
 	r->a      = p->v.u32[1];
 	r->b      = p->v.u32[2];
-	r->flags  = p->v.u32[3];
-	r->length = p->v.f  [4];
+	r->length = p->v.f  [3];
 }
 
 void ropeSyncAll(){
 	for(uint i=0;i<512;i++){
-		if(ropeList[i].flags & ROPE_UPDATED){continue;}
+		if(!(ropeList[i].flags & ROPE_DIRTY)){continue;}
 		msgRopeUpdate(-1, i, &ropeList[i]);
-		ropeList[i].flags |= ROPE_UPDATED;
+		ropeList[i].flags &= ~ROPE_DIRTY;
 	}
 }
 
