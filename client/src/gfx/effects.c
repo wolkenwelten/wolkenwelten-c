@@ -132,7 +132,7 @@ void fxProjectileHit(const packet *p){
 	//const u16 size  = p->v.u16[1];
 	const vec pos = vecNewP(&p->v.f[1]);
 	for(int i=512;i>0;i--){
-		const vec v  = vecMulS(vecRng(),0.04f);
-		newParticleV(pos,v,vecZero(),96.f,6.f,0xFF44AAFF,64);
+		const vec v  = vecMulS(vecRng(),0.03f);
+		newParticleV(pos,v,vecZero(),48.f,4.f,0xFF44AAFF,64);
 	}
 }

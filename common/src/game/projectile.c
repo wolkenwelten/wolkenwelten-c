@@ -1,5 +1,7 @@
 #include "projectile.h"
 
+#include "../game/animal.h"
+#include "../game/character.h"
 #include "../mods/api_v1.h"
 #include "../network/packet.h"
 #include "../network/messages.h"
@@ -42,7 +44,10 @@ void projectileNewC(const character *c, being target, uint style){
 	pos.y += (sin(c->rot.pitch*PI/180)*mz);
 	pos.z += ((sin((c->rot.yaw+90.f)*PI/180) * cos(c->rot.pitch*PI/180))*mz) + sin((c->rot.yaw)*PI/180)*mx;
 
-	projectileNew(pos,c->rot,target,characterGetBeing(c),style);
+	const float yaw   = c->rot.yaw   + (rngValf()-0.5f)*c->inaccuracy*0.2f;
+	const float pitch = c->rot.pitch + (rngValf()-0.5f)*c->inaccuracy*0.2f;
+
+	projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style);
 }
 
 int projectileGetClient(uint i){
@@ -50,26 +55,30 @@ int projectileGetClient(uint i){
 	return i >> 8;
 }
 
-static inline void projectileUpdate(projectile *p){
-	if(--p->ttl < 0){
-		p->style = 0;
-		return;
-	}
+static inline int projectileUpdate(projectile *p){
+	static uint iteration = 0;
+	if(--p->ttl < 0){return 1;}
 	p->pos = vecAdd(p->pos,p->vel);
-	if(!vecInWorld(p->pos)){return;}
+	--iteration;
+	if(characterHitCheck(p->pos, 2.f, 1, 4, iteration)){return 1;}
+	if(animalHitCheck   (p->pos, 2.f, 1, 4, iteration)){return 1;}
+	if(!vecInWorld(p->pos)){return 1;}
 	if(checkCollision(p->pos.x,p->pos.y,p->pos.z)){
-		p->style = 0;
 		if(!isClient){
 			worldBoxMine(p->pos.x,p->pos.y,p->pos.z,1,1,1);
 			msgFxBeamBlastHit(-1, p->pos, 256, 1);
 		}
+		return 1;
 	}
+	return 0;
 }
 
 void projectileUpdateAll(){
 	for(uint i=0;i<4096;i++){
 		if(projectileList[i].style == 0){continue;}
-		projectileUpdate(&projectileList[i]);
+		if(projectileUpdate(&projectileList[i])){
+			projectileList[i].style = 0;
+		}
 	}
 }
 

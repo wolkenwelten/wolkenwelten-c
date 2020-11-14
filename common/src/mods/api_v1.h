@@ -79,6 +79,7 @@ bool characterPlaceBlock     (      character *c, item *i);
 void characterStartAnimation (      character *c, int index, int duration);
 character *characterGetByBeing(being b);
 being      characterGetBeing (const character *c);
+int  characterHitCheck       (const vec pos, float mdd, int damage, int cause, u16 iteration);
 
 item  itemNew      (u16 ID, i16 amount);
 item  itemEmpty    ();
