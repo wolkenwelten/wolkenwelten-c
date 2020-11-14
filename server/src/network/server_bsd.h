@@ -60,8 +60,8 @@ void serverAccept(){
 	if (err < 0){
 		close(clientSock);
 		return;
-x	}
-	clients[clientCount].socket = clientSock;x
+	}
+	clients[clientCount].socket = clientSock;
 	serverInitClient(clientCount++);
 }
 
