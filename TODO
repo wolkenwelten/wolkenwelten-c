@@ -1,21 +1,21 @@
-- After some exploration FPS Drop, why?
+- Fix guardian beams shooting in the wrong direction
 - Fix chungus not getting loaded although the player is right in it, everything else seems to load just fine
 - Why do bunnies fly???
-- Fix guardian beams shooting in the wrong direction
-- Add beingList to chunks/chungi
-- Fix wasm netcode
-- Fix wasm Singleplayer
-- Enable Compression for wasm/ws connections
+
+-------------------------------------------------------------------------------
+
+- After some exploration FPS Drop, why?
 - Make Bunny populations more stable
 - Remove bigChungus from serverSide
 - Fix Guns shooting off center
 - Make Physics more stable, especially in regards to short Hook Ropes
 - Have a nicer way to wait on the singleplayer server to be ready instead of just trying over and over again to establish a connection
-
--------------------------------------------------------------------------------
-
+- Fix wasm Singleplayer
+- Enable Compression for wasm/ws connections
 - Migrate to OpenAL
 - Simple Checksums for Savegames
+
+-------------------------------------------------------------------------------
 
 (A) Armor
 (A) Proper Character Models
