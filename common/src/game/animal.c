@@ -113,22 +113,33 @@ void animalCheckForHillOrCliff(animal *e){
 
 		vec tmp = e->vel;
 		if(!(e->flags & ANIMAL_FALLING)){tmp.y   = 0.03f;}
-		e->gvel = e->vel = vecMul(tmp,vecNew(-4,1,-4));
+		e->gvel = e->vel = vecMul(tmp,vecNew(-0.97f,1,-0.97f));
 	}
 }
 
 int animalUpdate(animal *e){
 	int ret=0;
 	u32 col;
-	if(e->type == 0)   {return 0;}
+	if(e->type == 0)       {return 0;}
 	e->pos = vecAdd(e->pos,e->vel);
 	if(!vecInWorld(e->pos)){return 1;}
 	e->breathing += 5;
 	animalCheckForHillOrCliff(e);
-	if(vecSum(vecAbs(e->gvel)) > .1f){
-		e->gvel = vecMulS(vecNorm(e->gvel),0.05f);
+
+	if(vecSum(vecAbs(e->gvel)) > 2.f){
+		if(isClient){
+			fprintf(stderr,"Client: ");
+		}else{
+			fprintf(stderr,"Server: ");
+		}
+		fprintf(stderr,"Animal[%u] wants to go too fast\n Vel X:%f Y:%f Z:%f\n GVL X:%f Y:%f Z:%f\n\n",(int)(e-animalList),e->vel.x,e->vel.y,e->vel.z,e->gvel.x,e->gvel.y,e->gvel.z);
 	}
-	if(vecSum(vecAbs(e->vel)) > 1.f){
+	if(vecSum(vecAbs(e->vel)) > 2.f){
+		if(isClient){
+			fprintf(stderr,"Client: ");
+		}else{
+			fprintf(stderr,"Server: ");
+		}
 		fprintf(stderr,"Animal[%u] going too fast\n Vel X:%f Y:%f Z:%f\n GVL X:%f Y:%f Z:%f\n\n",(int)(e-animalList),e->vel.x,e->vel.y,e->vel.z,e->gvel.x,e->gvel.y,e->gvel.z);
 	}
 
@@ -163,7 +174,6 @@ int animalUpdate(animal *e){
 	e->flags &= ~ANIMAL_COLLIDE;
 	col = animalCollision(e->pos);
 	if(col){ e->flags |= ANIMAL_COLLIDE; }
-
 
 	if((col&0x110) && (e->vel.x < 0.f)){
 		if(e->vel.x < -0.05f){ ret += (int)(fabsf(e->vel.x)*24.f); }

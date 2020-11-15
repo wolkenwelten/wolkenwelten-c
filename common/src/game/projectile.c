@@ -69,8 +69,12 @@ static inline int projectileUpdate(projectile *p){
 	if(--p->ttl < 0){return 1;}
 	p->pos = vecAdd(p->pos,p->vel);
 	--iteration;
-	if(characterHitCheck(p->pos, 2.f, 1, 3, iteration, p->source)){return 1;}
-	if(animalHitCheck   (p->pos, 2.f, 1, 3, iteration, p->source)){return 1;}
+	float mdd = 1.f;
+	if(p->target != 0){
+		mdd = 0.08f;
+	}
+	if(characterHitCheck(p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
+	if(animalHitCheck   (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
 	if(!vecInWorld(p->pos)){return 1;}
 	if(checkCollision(p->pos.x,p->pos.y,p->pos.z)){
 		if(!isClient){worldBoxMine(p->pos.x,p->pos.y,p->pos.z,1,1,1);}

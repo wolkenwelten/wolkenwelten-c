@@ -23,6 +23,13 @@ static inline float projectileDrawGuardianProjectile(const projectile *p){
 	return vecMag(vecSub(p->pos,player->pos));
 }
 
+static inline float projectileDrawGuardianBigProjectile(const projectile *p){
+	newParticleV(p->pos, vecZero(), vecMulS(vecRng(),0.000002f),192, -.1f,0xFF3070E0,2048);
+	newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),256, -4.f,0xFF50A0F0,256);
+	//newParticleV(p->pos, vecMulS(vecRng(),0.02f), vecZero(),256, -6.f,0xFF70B8FF,128);
+	return vecMag(vecSub(p->pos,player->pos));
+}
+
 void projectileDrawAll(){
 	float maxD = 4096.f;
 	for(uint i=0;i<(sizeof(projectileList) / sizeof(projectile));i++){
@@ -36,6 +43,10 @@ void projectileDrawAll(){
 			break;
 		case 2: {
 			const float d = projectileDrawGuardianProjectile(p);
+			maxD = MIN(d,maxD);
+			break; }
+		case 3: {
+			const float d = projectileDrawGuardianBigProjectile(p);
 			maxD = MIN(d,maxD);
 			break; }
 		}

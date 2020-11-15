@@ -365,8 +365,8 @@ static void animalSocialDistancing(animal *e){
 		if(fabsf(e->pos.x - animalList[i].pos.x) > 1.f) {continue;}
 		if(fabsf(e->pos.y - animalList[i].pos.y) > 1.f) {continue;}
 		if(fabsf(e->pos.z - animalList[i].pos.z) > 1.f) {continue;}
-		e->grot.yaw = ((rngValf()*2.f)-1.f)*360.f;
-		vec dir = vecMulS(vecDegToVec(vecNew(-e->rot.yaw,0.f,0.f)),0.01f);
+		e->rot.yaw = ((rngValf()*2.f)-1.f)*360.f;
+		vec dir = vecMulS(vecDegToVec(vecNew(e->rot.yaw,0.f,0.f)),0.01f);
 		e->gvel.x = dir.x;
 		e->gvel.z = dir.z;
 		if(!(e->flags & ANIMAL_FALLING)){

@@ -1,4 +1,4 @@
-- Why do bunnies fly???
+- Make client detect when the connection to the server is separated and show an error instead of just becoming unresponsive
 
 -------------------------------------------------------------------------------
 
