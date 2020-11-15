@@ -15,7 +15,6 @@ int ropeNewID(){
 void ropeUpdateP(uint c, const packet *p){
 	(void)c;
 	const uint i = p->v.u16[0];
-	fprintf(stderr,"ropeUpdateP[%u] i:%u\n",c,i);
 	if(i > 512){return;}
 	rope *r = &ropeList[i];
 	r->flags  = p->v.u16[1];

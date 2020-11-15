@@ -7,6 +7,7 @@
 #include "../mods/api_v1.h"
 #include "../network/messages.h"
 
+#include <stdio.h>
 #include <string.h>
 #include <math.h>
 
@@ -124,6 +125,12 @@ int animalUpdate(animal *e){
 	if(!vecInWorld(e->pos)){return 1;}
 	e->breathing += 5;
 	animalCheckForHillOrCliff(e);
+	if(vecSum(vecAbs(e->gvel)) > .1f){
+		e->gvel = vecMulS(vecNorm(e->gvel),0.05f);
+	}
+	if(vecSum(vecAbs(e->vel)) > 1.f){
+		fprintf(stderr,"Animal[%u] going too fast\n Vel X:%f Y:%f Z:%f\n GVL X:%f Y:%f Z:%f\n\n",(int)(e-animalList),e->vel.x,e->vel.y,e->vel.z,e->gvel.x,e->gvel.y,e->gvel.z);
+	}
 
 	if(fabsf(e->rot.yaw - e->grot.yaw) > 0.3f){
 		if(e->rot.yaw > e->grot.yaw){
@@ -141,7 +148,7 @@ int animalUpdate(animal *e){
 	}
 
 	if(!(e->flags & ANIMAL_FALLING)){
-		e->vel = vecDivS(vecAdd(e->gvel,vecMulS(e->vel,7.f)),8.f);
+		e->vel = vecMulS(vecAdd(e->gvel,vecMulS(e->vel,31.f)),1.f/32.f);
 	}
 
 	if(e->rot.yaw   > 360.f){e->rot.yaw   -= 360.f;}
@@ -156,6 +163,7 @@ int animalUpdate(animal *e){
 	e->flags &= ~ANIMAL_COLLIDE;
 	col = animalCollision(e->pos);
 	if(col){ e->flags |= ANIMAL_COLLIDE; }
+
 
 	if((col&0x110) && (e->vel.x < 0.f)){
 		if(e->vel.x < -0.05f){ ret += (int)(fabsf(e->vel.x)*24.f); }
@@ -415,11 +423,12 @@ void animalSync(u8 c, u16 i){
 	packetQueue(rp,30,16*4,c);
 }
 
-int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration){
+int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, being source){
 	int hits = 0;
 	for(uint i=0;i<animalCount;i++){
 		if(animalList[i].type == 0)        {continue;}
 		if(animalList[i].temp == iteration){continue;}
+		if(beingAnimal(i) == source)       {continue;}
 		const vec d = vecSub(pos,animalList[i].pos);
 		if(vecDot(d,d) < mdd){
 			if(isClient){msgBeingDamage(0,dmg,cause,beingAnimal(i),0,pos);}

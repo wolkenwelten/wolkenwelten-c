@@ -96,7 +96,6 @@ static void ropeDraw(rope *r){
 	const vec h = beingGetPos(r->a);
 	const vec p = beingGetPos(r->b);
 	ropeDrawSegment(r,h,p);
-	fprintf(stderr,"ropeDraw[%u] a:%x b:%x\n",(int)(r-ropeList),r->a,r->b);
 }
 
 void ropeInit(){

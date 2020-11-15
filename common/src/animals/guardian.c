@@ -4,6 +4,7 @@
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/item.h"
+#include "../game/projectile.h"
 #include "../network/messages.h"
 #include "../misc/misc.h"
 #include "../mods/api_v1.h"
@@ -18,49 +19,32 @@ static void animalAggresive(animal *e){
 		los = lineOfSightBlockCount(vecAdd(e->pos,vecNew(0.f,.5f,0.f)),cChar->pos,2);
 	}
 
-	if(e->state == ANIMAL_S_HEAT){
-		if(--e->temp > 0){return;}
-		vec caNorm = vecNorm(vecNew(cChar->pos.x - e->pos.x,cChar->pos.y - e->pos.y, cChar->pos.z - e->pos.z));
-		vec caRot  = vecVecToDeg(caNorm);
-		vec vrot   = e->rot;
-		vrot.yaw   = -vrot.yaw;
-		vrot.pitch = -vrot.pitch;
-		vec bPos   = vecAdd(e->pos, vecMulS(vecDegToVec(vrot),256.f));
-
-		int dmg    = 2;
-		float yd   = (-e->rot.yaw   - caRot.yaw  );
-		float pd   = (-e->rot.pitch - caRot.pitch);
-		float d    = sqrtf(yd*yd + pd*pd);
-		being bc   = characterGetBeing(cChar);
-		if(((d < 4) && (bc != 0)) || los){
-			msgBeingDamage(beingID(bc),dmg,2,bc,-1,e->pos);
-		}
-		e->state = ANIMAL_S_FLEE;
-		e->vel   = vecAdd(e->vel,vecMulS(caNorm,-0.001f));
-		e->grot  = vecZero();
-		e->temp  = 10;
-		msgFxBeamBlaster(-1,bPos,e->pos,4.f,4);
-	}else if(e->state == ANIMAL_S_FIGHT){
-		if((cChar == NULL) || (dist > 64.f) || los){
+	if(e->state == ANIMAL_S_FIGHT){
+		if((cChar == NULL) || (dist > 128.f) || los){
 			e->state   =  ANIMAL_S_LOITER;
 		}else{
-			vec caNorm   = vecNorm(vecNew(cChar->pos.x - e->pos.x,cChar->pos.y - e->pos.y, cChar->pos.z - e->pos.z));
+			vec caNorm   = vecNorm(vecSub(cChar->pos, e->pos));
 			vec caRot    = vecVecToDeg(caNorm);
 
 			e->rot.yaw   = -caRot.yaw;
 			e->rot.pitch = -caRot.pitch;
+			if(e->rot.pitch >  90.f){e->rot.pitch -= 180.f;}
+			if(e->rot.pitch < -90.f){e->rot.pitch += 180.f;}
+			if(caRot.pitch >  90.f){caRot.pitch -= 180.f;}
+			if(caRot.pitch < -90.f){caRot.pitch += 180.f;}
 			e->grot      = e->rot;
 			e->gvel.x    = 0;
 			e->gvel.z    = 0;
 
 			if(--e->temp == 0){
-				e->state = ANIMAL_S_HEAT;
-				e->temp = 3;
-				msgFxBeamBlaster(-1,e->pos,cChar->pos,2.f,2);
+				projectileNew(vecSub(e->pos,caNorm), vecNew(0.f,-90.f,0.f), characterGetBeing(cChar), animalGetBeing(e), 2);
+				e->state = ANIMAL_S_FLEE;
+				e->temp  = 30;
+				e->grot  = vecZero();
 			}
 		}
 	}else if(e->state == ANIMAL_S_FLEE){
-		if((cChar == NULL) || (dist > 78.f) || (--e->temp == 0)){
+		if((cChar == NULL) || (dist > 128.f) || (--e->temp == 0)){
 			e->state = ANIMAL_S_LOITER;
 		}else{
 			vec caNorm  = vecNorm(vecNew(e->pos.x - cChar->pos.x,0.f, e->pos.z - cChar->pos.z));
@@ -77,11 +61,11 @@ static void animalAggresive(animal *e){
 			}
 		}
 	}else{
-		float fd = 48.f;
+		float fd = 96.f;
 		if(e->state == ANIMAL_S_SLEEP){fd = 24.f;}
 		if((cChar != NULL) && (dist < fd) && !los){
 			e->state = ANIMAL_S_FIGHT;
-			e->temp  = 10;
+			e->temp  = 30;
 		}
 	}
 	e->temp = MIN(e->temp,64);

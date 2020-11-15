@@ -34,7 +34,7 @@ int   characterGetPlayerHP    (uint i);
 vec   characterGetPlayerDist  (uint i);
 void  characterGotHitPacket   (const packet *p);
 void  characterRemovePlayer   (int c, int len);
-int   characterHitCheck       (const vec pos, float mdd, int damage, int cause, u16 iteration);
+int   characterHitCheck       (const vec pos, float mdd, int damage, int cause, u16 iteration, being source);
 
 void  charactersUpdate        ();
 void  characterDrawAll        ();

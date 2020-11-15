@@ -9,6 +9,7 @@
 #include "../network/messages.h"
 #include "../mods/api_v1.h"
 
+#include <stdio.h>
 #include <math.h>
 
 static int animalCheckHeat(animal *e){

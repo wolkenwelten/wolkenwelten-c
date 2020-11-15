@@ -29,4 +29,4 @@ void        animalNeedsAll         ();
 animal *animalGetByBeing(being b);
 being   animalGetBeing  (const animal *h);
 animal *animalClosest   (const vec pos, float maxDistance);
-int     animalHitCheck  (const vec pos, float mdd, int dmg, int cause, u16 iteration);
+int     animalHitCheck  (const vec pos, float mdd, int dmg, int cause, u16 iteration, being source);

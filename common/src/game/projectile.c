@@ -1,6 +1,7 @@
 #include "projectile.h"
 
 #include "../game/animal.h"
+#include "../game/being.h"
 #include "../game/character.h"
 #include "../mods/api_v1.h"
 #include "../network/packet.h"
@@ -25,12 +26,14 @@ void projectileNew(const vec pos, const vec rot, being target, being source, uin
 	const int ID = projectileNewID();
 	if(ID < 0){return;}
 
+	uint ttl = 512;
+	if(style == 2){ttl = 4096;}
 	projectile *p = &projectileList[ID];
 	p->pos    = pos;
 	p->target = target;
 	p->source = source;
 	p->style  = style;
-	p->ttl    = 512;
+	p->ttl    = ttl;
 	p->vel    = vecMulS(vecDegToVec(rot),1.f);
 
 	projectileSendUpdate(-1,ID);
@@ -55,29 +58,37 @@ int projectileGetClient(uint i){
 	return i >> 8;
 }
 
+static inline void projectileHomeIn(projectile *p){
+	const vec tpos = beingGetPos(p->target);
+	const vec dist = vecNorm(vecSub(tpos,p->pos));
+	p->vel = vecMulS(vecAdd(vecMulS(p->vel,127.f),dist),1.f/156.f);
+}
+
 static inline int projectileUpdate(projectile *p){
 	static uint iteration = 0;
 	if(--p->ttl < 0){return 1;}
 	p->pos = vecAdd(p->pos,p->vel);
 	--iteration;
-	if(characterHitCheck(p->pos, 2.f, 1, 4, iteration)){return 1;}
-	if(animalHitCheck   (p->pos, 2.f, 1, 4, iteration)){return 1;}
+	if(characterHitCheck(p->pos, 2.f, 1, 3, iteration, p->source)){return 1;}
+	if(animalHitCheck   (p->pos, 2.f, 1, 3, iteration, p->source)){return 1;}
 	if(!vecInWorld(p->pos)){return 1;}
 	if(checkCollision(p->pos.x,p->pos.y,p->pos.z)){
-		if(!isClient){
-			worldBoxMine(p->pos.x,p->pos.y,p->pos.z,1,1,1);
-			msgFxBeamBlastHit(-1, p->pos, 256, 1);
-		}
+		if(!isClient){worldBoxMine(p->pos.x,p->pos.y,p->pos.z,1,1,1);}
 		return 1;
 	}
+	if(p->target != 0){projectileHomeIn(p);}
 	return 0;
 }
 
 void projectileUpdateAll(){
-	for(uint i=0;i<4096;i++){
+	for(uint i=0;i<(sizeof(projectileList) / sizeof(projectile));i++){
 		if(projectileList[i].style == 0){continue;}
 		if(projectileUpdate(&projectileList[i])){
 			projectileList[i].style = 0;
+			if(!isClient){
+				msgFxBeamBlastHit(-1, projectileList[i].pos, 256, 1);
+				projectileSendUpdate(-1,i);
+			}
 		}
 	}
 }

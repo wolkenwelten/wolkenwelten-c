@@ -45,15 +45,17 @@ void characterDmgPacket(uint c, const packet *p){
 	msgBeingDamage(beingID(target), hp, cause, target, culprit, clients[c].c->pos);
 }
 
-int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 iteration){
+int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 iteration, being source){
 	int hits = 0;
 	for(int i=0;i<32;i++){
 		if(clients[i].state)               {continue;}
 		if(clients[i].c == NULL)           {continue;}
 		if(clients[i].c->temp == iteration){continue;}
+		if(beingCharacter(i) == source)    {continue;}
 		vec dis = vecSub(pos,clients[i].c->pos);
 		if(vecDot(dis,dis) < mdd){
-			msgBeingDamage(0,damage,cause,beingCharacter(i),0,pos);
+			msgBeingDamage(i,damage,cause,beingCharacter(i),0,pos);
+			msgBeingGotHit(damage, cause, beingCharacter(i),0);
 			clients[i].c->temp = iteration;
 			hits++;
 		}

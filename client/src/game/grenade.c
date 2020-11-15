@@ -102,8 +102,8 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 			fxExplosionBlaster(pos,beamSize/2.f);
 			if(--hitsLeft <= 0){break;}
 		}
-		characterHitCheck(pos, mdd, dmg, 1, iteration);
-		animalHitCheck   (pos, mdd, dmg, 1, iteration);
+		characterHitCheck(pos, mdd, dmg, 1, iteration, 0);
+		animalHitCheck   (pos, mdd, dmg, 1, iteration, 0);
 
 	}
 	fxBeamBlaster(start,pos,beamSize,damageMultiplier);
