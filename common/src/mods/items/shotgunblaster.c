@@ -21,14 +21,23 @@ int shotgunblasterGetStackSize(const item *cItem){
 }
 
 bool shotgunblasterPrimaryAction(item *cItem, character *cChar){
-	if(!characterTryToShoot(cChar,cItem,64,6)){return false;}
-	beamblast(cChar,0.6f,2.f,0.04f,6,12,32.f,1.f);
+	if(!characterTryToShoot(cChar,cItem,128,6)){return false;}
+	sfxPlay(sfxPhaser,0.5f);
+	for(int i=0;i<64;i++){
+		projectileNewC(cChar, 0, 1);
+	}
+	characterAddInaccuracy(cChar,32.f);
 	return true;
 }
 
 bool shotgunblasterSecondaryAction(item *cItem,character *cChar){
-	if(!characterTryToShoot(cChar,cItem,64,6)){return false;}
-	beamblast(cChar,0.4f,2.f,0.02f,6,20,32.f,4.f);
+	if(!characterTryToShoot(cChar,cItem,256,6)){return false;}
+	sfxPlay(sfxPhaser,0.7f);
+	//characterAddInaccuracy(cChar,48.f);
+	for(int i=0;i<96;i++){
+		projectileNewC(cChar, 0, 1);
+		characterAddInaccuracy(cChar,4.f);
+	}
 	return true;
 }
 
@@ -39,7 +48,7 @@ bool shotgunblasterTertiaryAction(item *cItem, character *cChar){
 float shotgunblasterGetInaccuracy(const item *cItem){
 	(void)cItem;
 
-	return 24.f;
+	return 48.f;
 }
 
 int shotgunblasterGetAmmunition(const item *cItem){

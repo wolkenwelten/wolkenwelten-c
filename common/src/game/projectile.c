@@ -47,8 +47,8 @@ void projectileNewC(const character *c, being target, uint style){
 	pos.y += (sin(c->rot.pitch*PI/180)*mz);
 	pos.z += ((sin((c->rot.yaw+90.f)*PI/180) * cos(c->rot.pitch*PI/180))*mz) + sin((c->rot.yaw)*PI/180)*mx;
 
-	const float yaw   = c->rot.yaw   + (rngValf()-0.5f)*c->inaccuracy*0.2f;
-	const float pitch = c->rot.pitch + (rngValf()-0.5f)*c->inaccuracy*0.2f;
+	const float yaw   = c->rot.yaw   + (rngValf()-0.5f)*MIN(96.f,c->inaccuracy*0.2f);
+	const float pitch = c->rot.pitch + (rngValf()-0.5f)*MIN(96.f,c->inaccuracy*0.2f);
 
 	projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style);
 }

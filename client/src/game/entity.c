@@ -37,9 +37,9 @@ void entityDraw(const entity *e){
 void entityDrawAll(){
 	shaderBind(sMesh);
 	for(uint i=0;i<entityCount;i++){
-		if(entityList[i].nextFree != NULL)                         { continue; }
-		if(entityDistance(&entityList[i],player) > ENTITY_FADEOUT) { continue; }
-		if(!CubeInFrustum(vecSubS(entityList[i].pos,.5f),1.f))     { continue; }
+		if(entityList[i].nextFree != NULL)                        { continue; }
+		if(entityDistance(&entityList[i],player) > ENTITY_FADEOUT){ continue; }
+		if(!CubeInFrustum(vecSubS(entityList[i].pos,.5f),1.f))    { continue; }
 		entityDraw(&entityList[i]);
 	}
 }

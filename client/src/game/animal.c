@@ -7,6 +7,7 @@
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
+#include "../gfx/shadow.h"
 #include "../tmp/objs.h"
 #include "../../../common/src/network/messages.h"
 
@@ -45,6 +46,7 @@ static void animalDraw(animal *e){
 
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(animalGetMesh(e));
+	shadowAdd(e->pos,1.f);
 }
 
 void animalDrawAll(){

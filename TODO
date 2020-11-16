@@ -1,5 +1,4 @@
 - Homing shot that splits/explodes into many (3?) smaller homing projectiles once they close in on their target enough
-- Have the shotgun shoot projectiles
 - Implement projectile flag to have the projectile be affected by gravity
 - Implement projectile flag to have the projectile bounce off surfaces
 - Make client detect when the connection to the server is separated and show an error instead of just becoming unresponsive
