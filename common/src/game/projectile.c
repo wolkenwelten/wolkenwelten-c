@@ -64,6 +64,21 @@ static inline void projectileHomeIn(projectile *p){
 	p->vel = vecMulS(vecAdd(vecMulS(p->vel,127.f),dist),1.f/156.f);
 }
 
+int projectileHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, being source){
+	(void)dmg;
+	(void)cause;
+	(void)source;
+	(void)iteration;
+	for(uint i=0;i<(sizeof(projectileList) / sizeof(projectile));i++){
+		if(projectileList[i].style == 0){continue;}
+		if(beingProjectile(i) == source){continue;}
+		const vec d = vecSub(pos,projectileList[i].pos);
+		if(vecDot(d,d) < mdd){return 1;}
+	}
+	return 0;
+}
+
+#include <stdio.h>
 static inline int projectileUpdate(projectile *p){
 	static uint iteration = 0;
 	if(--p->ttl < 0){return 1;}
@@ -72,9 +87,10 @@ static inline int projectileUpdate(projectile *p){
 	float mdd = 1.f;
 	if(p->target != 0){
 		mdd = 0.08f;
+		if(projectileHitCheck(p->pos, 2.f, 1, 3, iteration, projectileGetBeing(p))){return 1;}
 	}
-	if(characterHitCheck(p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
-	if(animalHitCheck   (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
+	if(characterHitCheck (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
+	if(animalHitCheck    (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
 	if(!vecInWorld(p->pos)){return 1;}
 	if(checkCollision(p->pos.x,p->pos.y,p->pos.z)){
 		if(!isClient){worldBoxMine(p->pos.x,p->pos.y,p->pos.z,1,1,1);}
@@ -140,4 +156,8 @@ void projectileRecvUpdate(uint c, const packet *p){
 	a->vel = vecNewP(&p->v.f[7]);
 
 	if(!isClient){projectileSendUpdate(-1,i);}
+}
+
+being projectileGetBeing (const projectile *p){
+	return beingProjectile(p-projectileList);
 }

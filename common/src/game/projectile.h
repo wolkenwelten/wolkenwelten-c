@@ -10,3 +10,5 @@ void projectileNewC      (const character *c, being target, uint style);
 void projectileUpdateAll ();
 void projectileSendUpdate(uint c, uint i);
 void projectileRecvUpdate(uint c, const packet *p);
+int  projectileHitCheck  (const vec pos, float mdd, int dmg, int cause, u16 iteration, being source);
+being projectileGetBeing (const projectile *p);

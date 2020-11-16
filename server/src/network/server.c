@@ -6,6 +6,7 @@
 #include "../game/character.h"
 #include "../game/itemDrop.h"
 #include "../game/grenade.h"
+#include "../game/projectile.h"
 #include "../game/rope.h"
 #include "../misc/command.h"
 #include "../misc/options.h"
@@ -213,6 +214,7 @@ void msgUpdatePlayer(uint c){
 	blockMiningUpdatePlayer(c);
 	bigchungusUpdateClient(&world,c);
 	animalSyncPlayer(c);
+	projectileSyncPlayer(c);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 }
