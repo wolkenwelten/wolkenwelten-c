@@ -30,7 +30,11 @@ bool assaultblasterPrimaryAction(item *cItem, character *cChar){
 
 bool assaultblasterSecondaryAction(item *cItem, character *cChar){
 	if(!characterTryToShoot(cChar,cItem,64,3)){return false;}
-	beamblast(cChar,.8f,0.2f,0.05f,2,3,8.f,1.f);
+	sfxPlay(sfxPhaser,0.3f);
+	for(int i=0;i<3;i++){
+		projectileNewC(cChar, 0, 1);
+	}
+	characterAddInaccuracy(cChar,32.f);
 	return true;
 }
 
