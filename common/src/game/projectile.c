@@ -82,7 +82,7 @@ static inline int projectileUpdate(projectile *p){
 	float mdd = 1.f;
 	if(p->target != 0){
 		mdd = 0.08f;
-		if(projectileHitCheck(p->pos, 2.f, 1, 3, iteration, projectileGetBeing(p))){return 1;}
+		if(projectileHitCheck(p->pos, 2.f, projectileGetBeing(p))){return 1;}
 	}
 	if(characterHitCheck (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
 	if(animalHitCheck    (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
