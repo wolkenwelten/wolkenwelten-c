@@ -123,40 +123,40 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->bigTreeChance  =   148;
 			w->treeChance     =    28;
 			w->shrubChance    =    20;
-			w->animalChance   =   768;
+			w->animalChance   =  4096;
 			break;
 		case 6:
 			w->bigTreeChance  =   192;
 			w->treeChance     =    32;
 			w->shrubChance    =    24;
-			w->animalChance   =  1536;
+			w->animalChance   =  8192;
 			break;
 		default:
 		case 5:
 			w->bigTreeChance  =   256;
 			w->treeChance     =    48;
 			w->shrubChance    =    48;
-			w->animalChance   =  2048;
+			w->animalChance   =  8192;
 			break;
 		case 4:
 			w->bigTreeChance  =   512;
 			w->treeChance     =    96;
 			w->shrubChance    =    64;
-			w->animalChance   =  2048;
+			w->animalChance   =  8192;
 			break;
 		case 3:
 			w->treeChance     =   768;
 			w->shrubChance    =    96;
 			w->dirtChance     =    32;
 			w->stoneChance    =   256;
-			w->animalChance   =  2048;
+			w->animalChance   = 12288;
 			break;
 		case 2:
 			w->treeChance     =  1024;
 			w->shrubChance    =    64;
 			w->dirtChance     =    12;
 			w->stoneChance    =   128;
-			w->animalChance   =  4096;
+			w->animalChance   = 16384;
 			break;
 		case 1:
 			w->shrubChance    =   256;
@@ -164,7 +164,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->stoneChance    =    64;
 			w->treeChance     =  4096;
 			w->deadTreeChance =  4096;
-			w->animalChance   =  8192;
+			w->animalChance   = 16384;
 			break;
 		case 0:
 			w->shrubChance    =  1024;
@@ -173,7 +173,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->monolithChance = 32000;
 			w->treeChance     =  8192*2;
 			w->deadTreeChance =  8192;
-			w->animalChance   =  8192*2;
+			w->animalChance   = 32768;
 			break;
 	}
 }

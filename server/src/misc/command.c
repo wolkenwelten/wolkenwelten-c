@@ -325,7 +325,7 @@ int parseCommand(int c, const char *cmd){
 	}
 
 	if(strncmp(tcmp,"acount",6) == 0){
-		snprintf(replyBuf,sizeof(replyBuf),".acount : %i",animalCount);
+		snprintf(replyBuf,sizeof(replyBuf),".acount : %i",animalUsedCount);
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;

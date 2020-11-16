@@ -11,7 +11,7 @@
 #include <string.h>
 #include <math.h>
 
-animal  animalList[1<<10];
+animal  animalList[1<<11];
 uint    animalCount = 0;
 uint    animalUsedCount = 0;
 uint    animalFirstFree = 0xFFFF;
@@ -22,7 +22,7 @@ void animalReset(animal *e){
 
 animal *animalNew(const vec pos , int type, int gender){
 	animal *e = NULL;
-	if(animalFirstFree < (1<<10)){
+	if(animalFirstFree < (1<<11)){
 		e = &animalList[animalFirstFree];
 		animalFirstFree = e->nextFree;
 	}else{
@@ -63,6 +63,7 @@ animal *animalNew(const vec pos , int type, int gender){
 	if(type == 2){
 		e->flags |= ANIMAL_NO_NEEDS;
 	}
+	animalUsedCount++;
 
 	return e;
 }
@@ -72,6 +73,7 @@ void animalDel(uint i){
 	animalList[i].type     = 0;
 	animalList[i].nextFree = animalFirstFree;
 	animalFirstFree        = i;
+	animalUsedCount--;
 }
 
 u32 animalCollision(const vec c){
@@ -390,7 +392,8 @@ void animalNeedsAll(){
 		if(e->flags & ANIMAL_NO_NEEDS){continue;}
 		e->hunger--;
 		e->sleepy--;
-		if((calls & 0x3F) == 0){e->age++;}
+		if(e->pregnancy > 0){e->pregnancy--;}
+		if( (calls & 0x3F) == 0){e->age++;}
 	}
 	calls++;
 }

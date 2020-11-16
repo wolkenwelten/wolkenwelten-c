@@ -37,9 +37,14 @@ static void animalAggresive(animal *e){
 			e->gvel.z    = 0;
 
 			if(--e->temp == 0){
-				projectileNew(vecSub(e->pos,caNorm), vecNew(0.f,-90.f,0.f), characterGetBeing(cChar), animalGetBeing(e), 2);
+				if(rngValM(16) == 0){
+					projectileNew(vecSub(e->pos,caNorm), vecNew(0.f,-90.f,0.f), characterGetBeing(cChar), animalGetBeing(e), 3, 0.4f);
+					e->temp  = 120;
+				}else{
+					projectileNew(vecSub(e->pos,caNorm), vecNew(0.f,-90.f,0.f), characterGetBeing(cChar), animalGetBeing(e), 2, 0.2f);
+					e->temp  =  30;
+				}
 				e->state = ANIMAL_S_FLEE;
-				e->temp  = 30;
 				e->grot  = vecZero();
 			}
 		}

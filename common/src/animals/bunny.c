@@ -130,14 +130,14 @@ static void animalSHeat(animal *e){
 		e->state     = ANIMAL_S_LOITER;
 		cAnim->state = ANIMAL_S_LOITER;
 		if(e->flags & ANIMAL_MALE){
-			cAnim->pregnancy = 64;
+			cAnim->pregnancy = 48;
 		}else{
-			e->pregnancy = 64;
+			e->pregnancy = 48;
 		}
-		cAnim->sleepy  = MAX(8,cAnim->sleepy - 24);
-		cAnim->hunger -= 8;
-		e->sleepy      = MAX(8,cAnim->sleepy - 24);
-		e->hunger     -= 8;
+		cAnim->sleepy  = MAX(8,cAnim->sleepy - 32);
+		cAnim->hunger -= 16;
+		e->sleepy      = MAX(8,cAnim->sleepy - 32);
+		e->hunger     -= 16;
 
 		return;
 	}
@@ -335,7 +335,6 @@ static void animalPregnancy(animal *e){
 	if(e->pregnancy  <  0)    {return;}
 	if(e->age        < 21)    {e->pregnancy = -1;}
 
-	if(rngValM(8) == 0){--e->pregnancy;}
 	if(e->pregnancy == 0){
 		animal *cAnim = animalNew(vecNew(e->pos.x+((rngValf()*2.f)-1.f),e->pos.y+.4f,e->pos.z+((rngValf()*2.f)-1.f)),e->type,-1);
 		if(cAnim != NULL){

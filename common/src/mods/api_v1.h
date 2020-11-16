@@ -61,7 +61,7 @@ void ingredientSubstituteAdd (u16 ingredient, u16 substitute);
 
 void grenadeNew    (const character *ent, float pwr, int cluster, float clusterPwr);
 void beamblast     (character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult);
-void projectileNew (const vec pos, const vec rot, being target, being source, uint style);
+void projectileNew (const vec pos, const vec rot, being target, being source, uint style, float speed);
 void projectileNewC(const character *c, being target, uint style);
 
 bool characterHP             (      character *c, int addhp);

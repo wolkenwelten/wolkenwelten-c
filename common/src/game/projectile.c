@@ -22,19 +22,20 @@ int projectileNewID(){
 	return -1;
 }
 
-void projectileNew(const vec pos, const vec rot, being target, being source, uint style){
+void projectileNew(const vec pos, const vec rot, being target, being source, uint style, float speed){
 	const int ID = projectileNewID();
 	if(ID < 0){return;}
 
 	uint ttl = 512;
-	if(style == 2){ttl = 4096;}
+	if(target != 0){ttl = 4096;}
 	projectile *p = &projectileList[ID];
 	p->pos    = pos;
 	p->target = target;
 	p->source = source;
 	p->style  = style;
 	p->ttl    = ttl;
-	p->vel    = vecMulS(vecDegToVec(rot),1.f);
+	p->vel    = vecMulS(vecDegToVec(rot),speed);
+
 
 	projectileSendUpdate(-1,ID);
 }
@@ -50,7 +51,7 @@ void projectileNewC(const character *c, being target, uint style){
 	const float yaw   = c->rot.yaw   + (rngValf()-0.5f)*MIN(96.f,c->inaccuracy*0.2f);
 	const float pitch = c->rot.pitch + (rngValf()-0.5f)*MIN(96.f,c->inaccuracy*0.2f);
 
-	projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style);
+	projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style,1.f);
 }
 
 int projectileGetClient(uint i){
@@ -58,18 +59,35 @@ int projectileGetClient(uint i){
 	return i >> 8;
 }
 
-static inline void projectileHomeIn(projectile *p){
+static inline int projectileHomeIn(projectile *p){
 	const vec tpos = beingGetPos(p->target);
-	const vec dist = vecNorm(vecSub(tpos,p->pos));
-	p->vel = vecMulS(vecAdd(vecMulS(p->vel,127.f),dist),1.f/156.f);
+	const vec dist = vecSub(tpos,p->pos);
+	const vec norm = vecNorm(dist);
+	if(!isClient && (p->style == 3) && vecDot(dist,dist) < (16*16)){
+		for(int i=0;i<8;i++){
+			const vec rot = vecNew(rngValf()*360.f,(rngValf()*180)-90.f,0.f);
+			projectileNew(p->pos, rot, p->target, p->source, 2, 0.05f);
+		}
+		msgFxBeamBlastHit(-1, p->pos, 256, 1);
+		return 1;
+	}
+	float mul = 0.13f;
+	if(p->style == 3){
+		mul = 0.1f;
+	}
+	p->vel = vecMulS(vecAdd(vecMulS(p->vel,155.f),vecMulS(norm,mul)),1.f/156.f);
+	return 0;
 }
 
-int projectileHitCheck(const vec pos, float mdd, being source){
+int projectileSelfHitCheck(projectile *p, float mdd, being source){
 	for(uint i=0;i<(sizeof(projectileList) / sizeof(projectile));i++){
 		if(projectileList[i].style == 0){continue;}
+		if(projectileList[i].style == 2){continue;}
 		if(beingProjectile(i) == source){continue;}
-		const vec d = vecSub(pos,projectileList[i].pos);
-		if(vecDot(d,d) < mdd){return 1;}
+		const vec d = vecSub(p->pos,projectileList[i].pos);
+		if(vecDot(d,d) < mdd){
+			return 1;
+		}
 	}
 	return 0;
 }
@@ -81,9 +99,10 @@ static inline int projectileUpdate(projectile *p){
 	p->vel.y -= 0.0005f;
 	--iteration;
 	float mdd = 1.f;
+
 	if(p->target != 0){
-		mdd = 0.08f;
-		if(projectileHitCheck(p->pos, 2.f, projectileGetBeing(p))){return 1;}
+		mdd = 1.f;
+		if(projectileSelfHitCheck(p, 2.f, projectileGetBeing(p))){return 1;}
 	}
 	if(characterHitCheck (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
 	if(animalHitCheck    (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
@@ -92,7 +111,7 @@ static inline int projectileUpdate(projectile *p){
 		if(!isClient){worldBoxMine(p->pos.x,p->pos.y,p->pos.z,1,1,1);}
 		return 1;
 	}
-	if(p->target != 0){projectileHomeIn(p);}
+	if(p->target != 0){return projectileHomeIn(p);}
 	return 0;
 }
 

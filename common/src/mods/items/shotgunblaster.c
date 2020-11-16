@@ -24,7 +24,7 @@ bool shotgunblasterPrimaryAction(item *cItem, character *cChar){
 	if(!characterTryToShoot(cChar,cItem,128,6)){return false;}
 	sfxPlay(sfxPhaser,0.5f);
 	for(int i=0;i<64;i++){
-		projectileNewC(cChar, 0, 1);
+		projectileNewC(cChar, 0, 4);
 	}
 	characterAddInaccuracy(cChar,32.f);
 	return true;
@@ -33,7 +33,6 @@ bool shotgunblasterPrimaryAction(item *cItem, character *cChar){
 bool shotgunblasterSecondaryAction(item *cItem,character *cChar){
 	if(!characterTryToShoot(cChar,cItem,256,6)){return false;}
 	sfxPlay(sfxPhaser,0.7f);
-	//characterAddInaccuracy(cChar,48.f);
 	for(int i=0;i<96;i++){
 		projectileNewC(cChar, 0, 1);
 		characterAddInaccuracy(cChar,4.f);

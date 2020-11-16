@@ -119,7 +119,7 @@ void updateWorld(){
 		if(--i == 0){break;}
 	}
 
-	for(;lastNeeds+5000 < cTicks;lastNeeds += 5000){
+	for(;lastNeeds+1000 < cTicks;lastNeeds += 1000){
 		animalNeedsAll();
 	}
 }

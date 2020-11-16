@@ -16,17 +16,25 @@ static inline void projectileDrawAssaultBullet(const projectile *p){
 	}
 }
 
+static inline void projectileDrawShotgunBullet(const projectile *p){
+	for(float o = 0.f;o<4.f;o+=0.2f){
+		newParticleV(vecAdd(p->pos,vecMulS(p->vel,o)), vecZero(), vecZero(),64, -.05f,0xFF134094,96);
+	}
+	for(int ii=0;ii<2;ii++){
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),256, -6.f,0xFF50D0F0,78);
+	}
+	newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),384, -8.f,0xFF90E8FF,48);
+}
+
 static inline float projectileDrawGuardianProjectile(const projectile *p){
-	newParticleV(p->pos, vecZero(), vecMulS(vecRng(),0.000002f),192, -.1f,0xFF3070E0,2048);
+	newParticleV(p->pos, vecZero(), vecMulS(vecRng(),0.000002f),192, -.1f,0xFF3070E0,1024);
 	newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),256, -4.f,0xFF50A0F0,256);
-	//newParticleV(p->pos, vecMulS(vecRng(),0.02f), vecZero(),256, -6.f,0xFF70B8FF,128);
 	return vecMag(vecSub(p->pos,player->pos));
 }
 
 static inline float projectileDrawGuardianBigProjectile(const projectile *p){
-	newParticleV(p->pos, vecZero(), vecMulS(vecRng(),0.000002f),192, -.1f,0xFF3070E0,2048);
-	newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),256, -4.f,0xFF50A0F0,256);
-	//newParticleV(p->pos, vecMulS(vecRng(),0.02f), vecZero(),256, -6.f,0xFF70B8FF,128);
+	newParticleV(p->pos, vecZero(), vecMulS(vecRng(),0.000003f),384, -.1f,0xFF205FE9,2048);
+	newParticleV(p->pos, vecMulS(vecRng(),0.015f), vecZero(),512, -4.f,0xFF4670FF,256);
 	return vecMag(vecSub(p->pos,player->pos));
 }
 
@@ -49,6 +57,9 @@ void projectileDrawAll(){
 			const float d = projectileDrawGuardianBigProjectile(p);
 			maxD = MIN(d,maxD);
 			break; }
+		case 4:
+			projectileDrawShotgunBullet(p);
+			break;
 		}
 	}
 	if(maxD < 128.f){
