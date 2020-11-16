@@ -64,11 +64,7 @@ static inline void projectileHomeIn(projectile *p){
 	p->vel = vecMulS(vecAdd(vecMulS(p->vel,127.f),dist),1.f/156.f);
 }
 
-int projectileHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, being source){
-	(void)dmg;
-	(void)cause;
-	(void)source;
-	(void)iteration;
+int projectileHitCheck(const vec pos, float mdd, being source){
 	for(uint i=0;i<(sizeof(projectileList) / sizeof(projectile));i++){
 		if(projectileList[i].style == 0){continue;}
 		if(beingProjectile(i) == source){continue;}
@@ -78,7 +74,6 @@ int projectileHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iterati
 	return 0;
 }
 
-#include <stdio.h>
 static inline int projectileUpdate(projectile *p){
 	static uint iteration = 0;
 	if(--p->ttl < 0){return 1;}
