@@ -77,7 +77,8 @@ int projectileHitCheck(const vec pos, float mdd, being source){
 static inline int projectileUpdate(projectile *p){
 	static uint iteration = 0;
 	if(--p->ttl < 0){return 1;}
-	p->pos = vecAdd(p->pos,p->vel);
+	p->pos    = vecAdd(p->pos,p->vel);
+	p->vel.y -= 0.0005f;
 	--iteration;
 	float mdd = 1.f;
 	if(p->target != 0){

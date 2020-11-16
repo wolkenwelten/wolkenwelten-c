@@ -1,5 +1,4 @@
 - Homing shot that splits/explodes into many (3?) smaller homing projectiles once they close in on their target enough
-- Implement projectile flag to have the projectile be affected by gravity
 - Implement projectile flag to have the projectile bounce off surfaces
 - Make client detect when the connection to the server is separated and show an error instead of just becoming unresponsive
 - Animals don't spawn after the limit has been reached, especially problematic if the limit is already reached with animals inside the spawn area which never gets freed
