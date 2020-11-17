@@ -159,9 +159,9 @@ void projectileRecvUpdate(uint c, const packet *p){
 	uint i = p->v.u16[0];
 	if(i > (sizeof(projectileList) / sizeof(projectile))) {return;}
 	if(isClient){
-		if((i >> 8) == (uint)playerID)                {return;}
+		if((i >> 8) == (uint)playerID){return;}
 	}else{
-		if((i >> 8) != c)                             {return;}
+		if((i >> 8) != c){return;}
 	}
 
 	projectile *a = &projectileList[i];

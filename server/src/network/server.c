@@ -458,7 +458,7 @@ void serverParsePacket(uint i){
 		serverParseWebSocketPacket(i);
 	}
 
-	for(int max=32;max > 0;--max){
+	for(int max=64;max > 0;--max){
 		if((clients[i].recvBufLen-off) < 4)     { break; }
 		unsigned int pLen = packetLen((packet *)(clients[i].recvBuf+off));
 		if((pLen+4) > clients[i].recvBufLen-off){ break; }
@@ -474,9 +474,7 @@ void serverParsePacket(uint i){
 		off = 0;
 	} else if(off > sizeof(clients[i].recvBuf)/2){
 		fprintf(stderr,"Couldn't parse all packets, off=%i len=%i\n",off,clients[i].recvBufLen);
-		for(unsigned int ii=0;ii < (clients[i].recvBufLen - off);++ii){
-			clients[i].recvBuf[ii] = clients[i].recvBuf[ii+off];
-		}
+		memmove(clients[i].recvBuf,&clients[i].recvBuf[off],(clients[i].recvBufLen - off));
 		clients[i].recvBufLen -= off;
 		off = 0;
 	}

@@ -16,6 +16,7 @@ void       characterSetPos         (      character *c, const vec pos);
 void       characterSetRot         (      character *c, const vec rot);
 void       characterSetVelocity    (      character *c, const vec vel);
 void       characterAddInaccuracy  (      character *c, float inc);
+void       characterAddRecoil      (      character *c, float recoil);
 void       characterStartAnimation (      character *c, int index, int duration);
 bool       characterTryToShoot     (      character *c, item *i, int cooldown, int bulletcount);
 bool       characterTryToUse       (      character *c, item *i, int cooldown, int itemcount);

@@ -25,6 +25,7 @@ bool assaultblasterPrimaryAction(item *cItem, character *cChar){
 	sfxPlay(sfxPhaser,0.2f);
 	projectileNewC(cChar, 0, 1);
 	characterAddInaccuracy(cChar,7.f);
+	characterAddRecoil(cChar,1.f);
 	return true;
 }
 
@@ -35,6 +36,7 @@ bool assaultblasterSecondaryAction(item *cItem, character *cChar){
 		projectileNewC(cChar, 0, 1);
 	}
 	characterAddInaccuracy(cChar,32.f);
+	characterAddRecoil(cChar,3.f);
 	return true;
 }
 

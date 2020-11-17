@@ -72,6 +72,7 @@ void characterAddCooldown    (      character *c, int cooldown);
 int  characterGetItemAmount  (const character *c, u16 itemID);
 int  characterDecItemAmount  (      character *c, u16 itemID, int amount);
 void characterAddInaccuracy  (      character *c, float inc);
+void characterAddRecoil      (      character *c, float recoil);
 bool characterItemReload     (      character *c, item *i, int cooldown);
 bool characterTryToShoot     (      character *c, item *i, int cooldown, int bulletcount);
 bool characterTryToUse       (      character *c, item *i, int cooldown, int itemcount);

@@ -138,9 +138,9 @@ int chungusGetHighestP(chungus *c, int x, int *retY, int z){
 void chungusSetB(chungus *c, int x,int y,int z,u8 block){
 	if((x&(~0xFF)) || (y&(~0xFF)) || (z&(~0xFF))){return;}
 	c->freeTimer = freeTime;
-	int cx = (x >> 4) & 0xF;
-	int cy = (y >> 4) & 0xF;
-	int cz = (z >> 4) & 0xF;
+	int cx = x >> 4;
+	int cy = y >> 4;
+	int cz = z >> 4;
 	chunk *chnk = c->chunks[cx][cy][cz];
 	if(chnk == NULL){
 		chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
