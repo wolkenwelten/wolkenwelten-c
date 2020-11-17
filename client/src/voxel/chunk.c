@@ -82,7 +82,7 @@ u8 chunkGetSides(int x,int y,int z,u8 *d,int size) {
 chunk *chunkNew(u16 x,u16 y,u16 z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){
-		if(chunkCount >= (sizeof(chunkList) / sizeof(chunk))-1){
+		if(chunkCount >= countof(chunkList)){
 			fprintf(stderr,"client chunkList Overflow!\n");
 			return NULL;
 		}

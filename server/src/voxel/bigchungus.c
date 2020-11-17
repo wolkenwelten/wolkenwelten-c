@@ -220,6 +220,25 @@ void bigchungusGenSpawn(bigchungus *c){
 	}
 }
 
+void bigchungusGenHugeSpawn(bigchungus *c){
+	for(int x=127;x<=129;x++){
+		for(int y=1;y<=32;y++){
+			for(int z=127;z<=129;z++){
+				if(c->chungi[x][y][z] == NULL){
+					c->chungi[x][y][z] = chungusNew(x,y,z);
+					chungusWorldGenLoad(c->chungi[x][y][z]);
+				}
+				if(c->chungi[x][y][z]->spawn.x >= 0){
+					c->spawn = ivecAdd(c->chungi[x][y][z]->spawn,ivecMulS(ivecNew(x,y,z),CHUNGUS_SIZE));
+				}
+			}
+		}
+	}
+	if(!bigchungusTrySpawn(c,c->spawn)){
+		bigchungusDetermineSpawn(c,c->spawn);
+	}
+}
+
 ivec bigchungusGetSpawnPos(bigchungus *c){
 	if(!bigchungusTrySpawn(c,c->spawn)){
 		bigchungusDetermineSpawn(c,c->spawn);

@@ -106,7 +106,7 @@ void recipeNew4(const item result, const item ingred1, const item ingred2, const
 int characterGetItemOrSubstituteAmount(const character *c, u16 i){
 	ingredientSubstitute *s;
 	int ret = characterGetItemAmount(c,i);
-	if(i >= (sizeof(substitutes)/sizeof(ingredientSubstitute *))){return 0;}
+	if(i >= countof(substitutes)){return 0;}
 
 	for(s = substitutes[i];s != NULL;s = s->next){
 		ret += characterGetItemAmount(c,s->substitute);

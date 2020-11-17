@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 
-itemDrop itemDrops[1<<12];
+itemDrop itemDropList[1<<12];
 uint     itemDropCount = 0;
 int      itemDropFirstFree = -1;
 
@@ -29,12 +29,12 @@ static inline void itemDropEmptyMsg(uint c, uint i){
 
 static inline void itemDropUpdateMsg(uint c,uint i){
 	if(i >= itemDropCount)       {return;}
-	if(itemDrops[i].ent == NULL) {return;}
+	if(itemDropList[i].ent == NULL) {return;}
 	msgItemDropUpdate(
 		c,
-		itemDrops[i].ent->pos,
-		itemDrops[i].ent->vel,
-		&itemDrops[i].itm,
+		itemDropList[i].ent->pos,
+		itemDropList[i].ent->vel,
+		&itemDropList[i].itm,
 		i,
 		itemDropCount
 	);
@@ -65,17 +65,17 @@ uint itemDropUpdatePlayer(uint c, uint offset){
 itemDrop *itemDropNew(){
 	if(itemDropFirstFree >= 0){
 		const uint i = itemDropFirstFree;
-		itemDropFirstFree = itemDrops[itemDropFirstFree].nextFree;
+		itemDropFirstFree = itemDropList[itemDropFirstFree].nextFree;
 		addPriorityItemDrop(i);
-		return &itemDrops[i];
+		return &itemDropList[i];
 	}
-	if((itemDropCount) >= (int)(sizeof(itemDrops) / sizeof(itemDrop) - 1)){
+	if((itemDropCount) >= countof(itemDropList)){
 		itemDropDel(rngValM(1<<14));
 		return itemDropNew();
 	}
 	addPriorityItemDrop(itemDropCount);
-	itemDrops[itemDropCount].nextFree = -1;
-	return &itemDrops[itemDropCount++];
+	itemDropList[itemDropCount].nextFree = -1;
+	return &itemDropList[itemDropCount++];
 }
 
 void itemDropNewP(const vec pos,const item *itm){
@@ -104,10 +104,10 @@ void itemDropNewC(uint c, const packet *p){
 void itemDropDel(uint d){
 	if(d >= itemDropCount) {return;}
 
-	entityFree(itemDrops[d].ent);
-	itemDrops[d].ent = NULL;
-	itemDrops[d].itm = itemEmpty();
-	itemDrops[d].nextFree = itemDropFirstFree;
+	entityFree(itemDropList[d].ent);
+	itemDropList[d].ent = NULL;
+	itemDropList[d].itm = itemEmpty();
+	itemDropList[d].nextFree = itemDropFirstFree;
 	itemDropFirstFree = d;
 	itemDropEmptyMsg(-1,d);
 }
@@ -115,9 +115,9 @@ void itemDropDel(uint d){
 void itemDropDelChungus(const chungus *c){
 	if(c == NULL){return;}
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){
-		if(itemIsEmpty(&itemDrops[i].itm))   {continue;}
-		if(itemDrops[i].ent == NULL)         {continue;}
-		const vec *p = &itemDrops[i].ent->pos;
+		if(itemIsEmpty(&itemDropList[i].itm))   {continue;}
+		if(itemDropList[i].ent == NULL)         {continue;}
+		const vec *p = &itemDropList[i].ent->pos;
 		if(((uint)p->x >> 8) != c->x){continue;}
 		if(((uint)p->y >> 8) != c->y){continue;}
 		if(((uint)p->z >> 8) != c->z){continue;}
@@ -130,17 +130,17 @@ void itemDropPickupP(uint c, const packet *p){
 	if(i >= itemDropCount)      {return;}
 	if(c >= clientCount)        {return;}
 	if(clients[c].c == NULL)    {return;}
-	if(itemDrops[i].ent == NULL){return;}
-	const vec dist = vecSub(clients[c].c->pos,itemDrops[i].ent->pos);
+	if(itemDropList[i].ent == NULL){return;}
+	const vec dist = vecSub(clients[c].c->pos,itemDropList[i].ent->pos);
 	const float dd = vecDot(dist,dist);
 	if(dd > 32.f * 32.f)     {return;}
-	msgPickupItem(c,itemDrops[i].itm);
+	msgPickupItem(c,itemDropList[i].itm);
 	itemDropDel(i);
 	addPriorityItemDrop(i);
 }
 
 static int itemDropCheckSubmersion(uint i){
-	entity *e = itemDrops[i].ent;
+	entity *e = itemDropList[i].ent;
 	if(e == NULL){return 0;}
 	if(worldGetB(e->pos.x,e->pos.y,e->pos.z) == 0){return 0;}
 
@@ -179,22 +179,22 @@ static int itemDropCheckSubmersion(uint i){
 }
 
 static int itemDropCheckCollation(uint ai){
-	if(itemDrops[ai].ent == NULL){return 0;}
-	const vec a = itemDrops[ai].ent->pos;
+	if(itemDropList[ai].ent == NULL){return 0;}
+	const vec a = itemDropList[ai].ent->pos;
 
 	for(int i=0;i<4;i++){
 		const uint  bi = rngValM(itemDropCount);
 		if(bi == ai)                                     {continue;}
-		if(itemDrops[ai].itm.ID != itemDrops[bi].itm.ID) {continue;}
-		if(itemDrops[bi].ent == NULL)                    {continue;}
-		const vec    b = itemDrops[bi].ent->pos;
+		if(itemDropList[ai].itm.ID != itemDropList[bi].itm.ID) {continue;}
+		if(itemDropList[bi].ent == NULL)                    {continue;}
+		const vec    b = itemDropList[bi].ent->pos;
 		const vec    d = vecSub(b,a);
 		const float di = vecDot(d,d);
 		if(di < 0.75f){
-			itemDrops[bi].itm.amount += itemDrops[ai].itm.amount;
-			itemDrops[bi].ent->vel = vecAdd(itemDrops[bi].ent->vel,itemDrops[ai].ent->vel);
-			itemDrops[bi].ent->pos = vecMulS(vecAdd(itemDrops[bi].ent->pos,itemDrops[ai].ent->pos),0.5f);
-			entityUpdateCurChungus(itemDrops[bi].ent);
+			itemDropList[bi].itm.amount += itemDropList[ai].itm.amount;
+			itemDropList[bi].ent->vel = vecAdd(itemDropList[bi].ent->vel,itemDropList[ai].ent->vel);
+			itemDropList[bi].ent->pos = vecMulS(vecAdd(itemDropList[bi].ent->pos,itemDropList[ai].ent->pos),0.5f);
+			entityUpdateCurChungus(itemDropList[bi].ent);
 			return 1;
 		}
 	}
@@ -206,7 +206,7 @@ void itemDropUpdate(){
 
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){
 		int oldp,newp;
-		entity *e     = itemDrops[i].ent;
+		entity *e     = itemDropList[i].ent;
 		if(e == NULL){continue;}
 		chungus *oldc = e->curChungus;
 
@@ -221,8 +221,8 @@ void itemDropUpdate(){
 		if((oldp != newp) && (e->curChungus != NULL)){
 			e->curChungus->clientsUpdated &= mask;
 		}
-		itemDrops[i].itm.amount += itemDropCallbackDispatch(&itemDrops[i].itm, e->pos.x, e->pos.y,e->pos.z);
-		if((itemDrops[i].itm.amount < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || (e->pos.y < -256)){
+		itemDropList[i].itm.amount += itemDropCallbackDispatch(&itemDropList[i].itm, e->pos.x, e->pos.y,e->pos.z);
+		if((itemDropList[i].itm.amount < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || (e->pos.y < -256)){
 			itemDropDel(i);
 			addPriorityItemDrop(i);
 			continue;
@@ -232,8 +232,8 @@ void itemDropUpdate(){
 
 void itemDropIntro(uint c){
 	for(uint i=0;i<itemDropCount;i++){
-		if(itemDrops[i].ent == NULL){continue;}
-		msgItemDropUpdate(c,itemDrops[i].ent->pos,itemDrops[i].ent->vel,&itemDrops[i].itm,i,itemDropCount);
+		if(itemDropList[i].ent == NULL){continue;}
+		msgItemDropUpdate(c,itemDropList[i].ent->pos,itemDropList[i].ent->vel,&itemDropList[i].itm,i,itemDropCount);
 	}
 }
 

@@ -555,7 +555,7 @@ void serverParse(){
 void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 	if(c >= clientCount){ return; }
 	if(clients[c].state){ return; }
-	if(clients[c].chngReqQueueLen >= (sizeof(clients[c].chngReqQueue) / sizeof(chungusReqEntry))){
+	if(clients[c].chngReqQueueLen >= countof(clients[c].chngReqQueue)){
 		fprintf(stderr,"Chungus Request Queue full!\n");
 		return;
 	}
@@ -575,7 +575,7 @@ void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 void addChunkToQueue(uint c, u16 x, u16 y, u16 z){
 	if(c >= clientCount){return;}
 	if(clients[c].state){ return; }
-	if(clients[c].chnkReqQueueLen >= (sizeof(clients[c].chnkReqQueue) / sizeof(chunkReqEntry))){
+	if(clients[c].chnkReqQueueLen >= countof(clients[c].chnkReqQueue)){
 		fprintf(stderr,"Chunk Request Queue full!\n");
 		return;
 	}

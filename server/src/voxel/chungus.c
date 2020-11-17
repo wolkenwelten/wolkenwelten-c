@@ -45,7 +45,7 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	}
 
 	if(chungusFirstFree == NULL){
-		if(chungusCount >= (int)(sizeof(chungusList) / sizeof(chungus))-1){
+		if(chungusCount >= countof(chungusList)){
 			fprintf(stderr,"chungus load shedding [%u chungi]!\n",chungusCount);
 			chungusFreeOldChungi(1000);
 			if(chungusFirstFree == NULL){
@@ -207,15 +207,19 @@ void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 }
 
 void chungusBoxIfEmpty(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
-	for(int cx=0;cx<w;cx++){
-		for(int cy=0;cy<h;cy++){
-			for(int cz=0;cz<d;cz++){
-				if(chungusGetB(c,cx+x,cy+y,cz+z)){continue;}
-				chungusSetB(c,cx+x,cy+y,cz+z,block);
+	//chunk *chnk = NULL;
+	const int cw = x+w;
+	const int ch = y+h;
+	const int cd = z+d;
+	for(int cx=x;cx<cw;cx++){
+		for(int cy=y;cy<ch;cy++){
+			for(int cz=z;cz<cd;cz++){
+				if(chungusGetB(c,cx,cy,cz)){continue;}
+				chungusSetB(c,cx,cy,cz,block);
+				c->clientsUpdated = 0;
 			}
 		}
 	}
-	c->clientsUpdated = 0;
 }
 
 

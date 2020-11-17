@@ -22,7 +22,7 @@ character *characterNew(){
 		}
 	}
 	if(c == NULL){
-		if(characterCount >= (int)(sizeof(characterList) / sizeof(character))-1){
+		if(characterCount >= countof(characterList)){
 			fprintf(stderr,"characterList Overflow!\n");
 			return NULL;
 		}

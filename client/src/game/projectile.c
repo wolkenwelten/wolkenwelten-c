@@ -51,7 +51,7 @@ static inline float projectileDrawGuardianBigProjectile(const projectile *p){
 
 void projectileDrawAll(){
 	float maxD = 4096.f;
-	for(uint i=0;i<(sizeof(projectileList) / sizeof(projectile));i++){
+	for(uint i=0;i<countof(projectileList);i++){
 		projectile *p = &projectileList[i];
 		switch(p->style){
 		default:

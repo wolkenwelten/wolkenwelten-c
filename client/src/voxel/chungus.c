@@ -35,7 +35,7 @@ float chunkDistance(const vec cam, const vec pos){
 chungus *chungusNew(u8 x, u8 y, u8 z){
 	chungus *c = NULL;
 	if(chungusFirstFree == NULL){
-		if(chungusCount >= (int)(sizeof(chungusList) / sizeof(chungus))-1){
+		if(chungusCount >= countof(chungusList)){
 			fprintf(stderr,"client chungusList Overflow!\n");
 			return NULL;
 		}

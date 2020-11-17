@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-extern itemDrop itemDrops[1<<12];
+extern itemDrop itemDropList[1<<12];
 extern uint itemDropCount;
 
 itemDrop *itemDropNew          ();
