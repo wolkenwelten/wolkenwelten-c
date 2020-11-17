@@ -190,11 +190,11 @@ static inline bool worldgenRDMonolith(worldgen *wgen, wgChances *w, int cx, int 
 static inline bool worldgenRDBigTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
 	if(!w->bigTreeChance || (w->airBlocks <= 32) || (rngValM(w->bigTreeChance))){return false;}
 	if(w->treeType==0){
-		wgBigSpruce(wgen->clay,wgen->gx+cx,wgen->gy+cy,wgen->gz+cz);
+		wgBigSpruce(wgen->clay,cx,cy,cz);
 	}else if(w->treeType == 1){
-		wgBigOak(wgen->clay,wgen->gx+cx,wgen->gy+cy,wgen->gz+cz);
+		wgBigOak(wgen->clay,cx,cy,cz);
 	}else{
-		wgBigDeadTree(wgen->clay,wgen->gx+cx,wgen->gy+cy,wgen->gz+cz);
+		wgBigDeadTree(wgen->clay,cx,cy,cz);
 	}
 	w->lastBlock = I_Oak;
 	w->airBlocks = 0;
@@ -204,9 +204,9 @@ static inline bool worldgenRDBigTree(worldgen *wgen, wgChances *w, int cx, int c
 static inline bool worldgenRDTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
 	if(!w->treeChance || (w->airBlocks <= 16) || rngValM(w->treeChance)){return false;}
 	if(w->treeType==0){
-		wgSpruce(wgen->clay,wgen->gx+cx,wgen->gy+cy,wgen->gz+cz);
+		wgSpruce(wgen->clay,cx,cy,cz);
 	}else if(w->treeType == 1){
-		wgOak(wgen->clay,wgen->gx+cx,wgen->gy+cy,wgen->gz+cz);
+		wgOak(wgen->clay,cx,cy,cz);
 	}
 	w->lastBlock = I_Oak;
 	w->airBlocks = 0;
@@ -223,7 +223,7 @@ static inline bool worldgenRDAnimal(worldgen *wgen, wgChances *w, int cx, int cy
 
 static inline bool worldgenRDDeadTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
 	if(!w->deadTreeChance || (w->airBlocks <= 16) || rngValM(w->deadTreeChance)){return false;}
-	wgDeadTree(wgen->clay,wgen->gx+cx,wgen->gy+cy,wgen->gz+cz);
+	wgDeadTree(wgen->clay,cx,cy,cz);
 	w->lastBlock = I_Oak;
 	w->airBlocks = 0;
 	return true;
@@ -232,7 +232,7 @@ static inline bool worldgenRDDeadTree(worldgen *wgen, wgChances *w, int cx, int 
 static inline bool worldgenRDShrub(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
 	if(w->airBlocks <= 8){return false;}
 	if(w->shrubChance && (rngValM(w->shrubChance)==12)){
-		wgShrub(wgen->clay,wgen->gx+cx,wgen->gy+cy,wgen->gz+cz);
+		wgShrub(wgen->clay,cx,cy,cz);
 		w->lastBlock = I_Dirt;
 		w->airBlocks = 0;
 		return true;
