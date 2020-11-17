@@ -1,4 +1,4 @@
-xxCC               := /mingw64/bin/gcc
+CC               := /mingw64/bin/gcc
 LD               := /mingw64/bin/gcc
 
 CLIENT_CFLAGS    := -DSDL_SOUND -mwindows -Wl,-subsystem,windows
