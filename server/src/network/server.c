@@ -568,6 +568,9 @@ void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 		if(e->z != z){continue;}
 		return;
 	}
+	if((x == 0) || (x == 255) || (z == 0) || (z == 255)){
+		printf("addChungusToQueue[%u] %u %u %u\n",c,x,y,z);
+	}
 	clients[c].chngReqQueue[clients[c].chngReqQueueLen++] = (chungusReqEntry){x,y,z,0};
 }
 

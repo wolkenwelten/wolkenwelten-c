@@ -366,14 +366,14 @@ void drawDebuginfo(){
 		guim->size = 2;
 		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Respawning...");
 	}
-	guim->size = 1;
+	guim->size = 2;
 	guim->sx   = screenWidth;
 	guim->sy   = 4;
 	textMeshPrintfRA(guim,"%s",VERSION);
 	drawHookIndicator();
 
-	guim->sx   = screenWidth-48;
-	guim->sy   = 14;
+	guim->sx   = screenWidth-96;
+	guim->sy   = 24;
 	textMeshPrintf(guim,"FPS %s%02.0f\n",colorSignalHigh(20,40,59,curFPS),curFPS);
 	guim->fgc  = colorPalette[15];
 

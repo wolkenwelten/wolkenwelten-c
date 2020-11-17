@@ -37,7 +37,9 @@ chungus *bigchungusTryChungus(bigchungus *c, int x,int y,int z) {
 	if(!inWorld(x,y,z)){return NULL;}
 	return c->chungi[x&0xFF][y&0x7F][z&0xFF];
 }
+
 chungus *worldTryChungus(int x, int y, int z){
+	if(!inWorld(x,y,z)){return NULL;}
 	return bigchungusTryChungus(&world,x,y,z);
 }
 
@@ -242,19 +244,19 @@ void bigchungusUpdateClient(bigchungus *c, int p){
 				int ox = ix >> 1;
 				if(ix & 1){ox = -ox;}
 				ox = cx+ox;
-				if(ox <   0){goto xcontinue;}
+				if(ox <=  0){goto xcontinue;}
 				if(ox > 255){goto xcontinue;}
 
 				int oy = iy >> 1;
 				if(iy & 1){oy = -oy;}
 				oy = cy+oy;
-				if(oy <   0){goto ycontinue;}
+				if(oy <=  0){goto ycontinue;}
 				if(oy > 127){goto ycontinue;}
 
 				int oz = iz >> 1;
 				if(iz & 1){oz = -oz;}
 				oz = cz+oz;
-				if(oz <   0){continue;}
+				if(oz <=  0){continue;}
 				if(oz > 255){continue;}
 
 				chungusUpdateClient(c->chungi[ox][oy][oz],p);

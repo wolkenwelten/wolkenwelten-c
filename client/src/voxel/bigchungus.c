@@ -77,6 +77,7 @@ chungus *worldGetChungus(int x,int y,int z){
 }
 
 chunk *worldGetChunk(int x, int y, int z){
+	if((x|y|z)&(~0xFFFF)){return NULL;}
 	chungus *chng = world[(x>>8)&0xFF][(y>>8)&0x7F][(z>>8)&0xFF];
 	if(chng == NULL){return NULL;}
 	chunk *chnk = chungusGetChunk(chng,x&0xFF,y&0xFF,z&0xFF);
@@ -84,18 +85,21 @@ chunk *worldGetChunk(int x, int y, int z){
 }
 
 u8 worldTryB(int x,int y,int z) {
+	if((x|y|z)&(~0xFFFF)){return 0;}
 	chungus *chng = world[(x>>8)&0xFF][(y>>8)&0x7F][(z>>8)&0xFF];
 	if(chng == NULL){ return 0; }
 	return chungusGetB(chng,x,y,z);
 }
 
 u8 worldGetB(int x,int y,int z) {
+	if((x|y|z)&(~0xFFFF)){return 0;}
 	chungus *chng = world[(x>>8)&0xFF][(y>>8)&0x7F][(z>>8)&0xFF];
 	if(chng == NULL){ return 0; }
 	return chungusGetB(chng,x,y,z);
 }
 
 bool worldSetB(int x,int y,int z,u8 block){
+	if((x|y|z)&(~0xFFFF)){return NULL;}
 	chungus *chng = world[(x>>8)&0xFF][(y>>8)&0x7F][(z>>8)&0xFF];
 	if(chng == NULL){return false;}
 	chungusSetB(chng,x,y,z,block);
@@ -124,17 +128,14 @@ void worldDraw(const character *cam){
 	const int minCX  = MAX(  0,camCX - dist);
 	const int minCY  = MAX(  0,camCY - dist);
 	const int minCZ  = MAX(  0,camCZ - dist);
-	const int maxCX  = MIN(255,camCX + dist);
-	const int maxCY  = MIN(127,camCY + dist);
-	const int maxCZ  = MIN(255,camCZ + dist);
+	const int maxCX  = MIN(256,camCX + dist);
+	const int maxCY  = MIN(128,camCY + dist);
+	const int maxCZ  = MIN(256,camCZ + dist);
 	const u64 cTicks = getTicks();
 
 	for(int x=minCX;x<maxCX;x++){
-		if((x <= 0) || (x >= 255)){continue;}
 		for(int y=minCY;y<maxCY;y++){
-			if((y <= 0) || (y >= 127)){continue;}
 			for(int z=minCZ;z<maxCZ;z++){
-				if((z <= 0) || (z >= 255)){continue;}
 				float d = chungusDistance(cam->pos,vecNew(x,y,z));
 				if((d < (CHUNK_RENDER_DISTANCE+CHUNGUS_SIZE)) && (chungusInFrustum(vecNew(x,y,z)))){
 					if(world[x][y][z] == NULL){
