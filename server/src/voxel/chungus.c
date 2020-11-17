@@ -136,6 +136,7 @@ int chungusGetHighestP(chungus *c, int x, int *retY, int z){
 }
 
 void chungusSetB(chungus *c, int x,int y,int z,u8 block){
+	if((x&(~0xFF)) || (y&(~0x7F)) || (z&(~0xFF))){return;}
 	c->freeTimer = freeTime;
 	int cx = (x >> 4) & 0xF;
 	int cy = (y >> 4) & 0xF;
