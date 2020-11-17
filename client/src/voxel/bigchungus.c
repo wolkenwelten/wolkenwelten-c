@@ -78,7 +78,7 @@ chungus *worldGetChungus(int x,int y,int z){
 
 chunk *worldGetChunk(int x, int y, int z){
 	if((x|y|z)&(~0xFFFF)){return NULL;}
-	chungus *chng = world[(x>>8)&0xFF][(y>>8)&0x7F][(z>>8)&0xFF];
+	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){return NULL;}
 	chunk *chnk = chungusGetChunk(chng,x&0xFF,y&0xFF,z&0xFF);
 	return chnk;
@@ -86,21 +86,23 @@ chunk *worldGetChunk(int x, int y, int z){
 
 u8 worldTryB(int x,int y,int z) {
 	if((x|y|z)&(~0xFFFF)){return 0;}
-	chungus *chng = world[(x>>8)&0xFF][(y>>8)&0x7F][(z>>8)&0xFF];
+	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){ return 0; }
 	return chungusGetB(chng,x,y,z);
 }
 
 u8 worldGetB(int x,int y,int z) {
 	if((x|y|z)&(~0xFFFF)){return 0;}
-	chungus *chng = world[(x>>8)&0xFF][(y>>8)&0x7F][(z>>8)&0xFF];
+	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){ return 0; }
-	return chungusGetB(chng,x,y,z);
+	chunk *chnk = chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if(chnk == NULL){ return 0; }
+	return chnk->data[x&0xF][y&0xF][z&0xF];
 }
 
 bool worldSetB(int x,int y,int z,u8 block){
 	if((x|y|z)&(~0xFFFF)){return NULL;}
-	chungus *chng = world[(x>>8)&0xFF][(y>>8)&0x7F][(z>>8)&0xFF];
+	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){return false;}
 	chungusSetB(chng,x,y,z,block);
 	return true;
@@ -236,7 +238,7 @@ void worldSetChungusLoaded(int x, int y, int z){
 }
 
 int checkCollision(int x, int y, int z){
-	return worldGetB(x,y,z) != 0;
+	return worldGetB(x,y,z);
 }
 
 void worldBoxMine(int x, int y, int z, int w, int h, int d){

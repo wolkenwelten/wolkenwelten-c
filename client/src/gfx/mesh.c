@@ -11,19 +11,19 @@
 
 vertex meshBuffer[1<<16];
 mesh meshList[1024];
-int  meshCount = 0;
+uint meshCount = 0;
 mesh *meshFirstFree = NULL;
 
 void meshAddVert(mesh *m, float x,float y,float z,float u,float v){
 	meshBuffer[m->dataCount] = (vertex){x,y,z,u,v,1.f};
-	if(++m->dataCount > (int)(sizeof(meshBuffer) / sizeof(vertex))){
+	if(++m->dataCount > countof(meshBuffer)){
 		fprintf(stderr,"meshBuffer Overflow!\n");
 	}
 }
 
 void meshAddVertC(mesh *m, float x,float y,float z,float u,float v,float c){
 	meshBuffer[m->dataCount] = (vertex){x,y,z,u,v,c};
-	if(++m->dataCount > (int)(sizeof(meshBuffer) / sizeof(vertex))){
+	if(++m->dataCount > countof(meshBuffer)){
 		fprintf(stderr,"meshBuffer Overflow!\n");
 	}
 }
@@ -71,7 +71,7 @@ mesh *meshNew(){
 		meshFirstFree = m->nextFree;
 	}
 	if(m == NULL){
-		if(meshCount >= (int)(sizeof(meshList) / sizeof(mesh))-1){
+		if(meshCount >= countof(meshList)){
 			fprintf(stderr,"meshList Overflow!\n");
 			return NULL;
 		}
@@ -97,7 +97,7 @@ void meshFree(mesh *m){
 }
 
 void meshFreeAll(){
-	for(int i=0;i<meshCount;i++){
+	for(uint i=0;i<meshCount;i++){
 		meshFree(&meshList[i]);
 	}
 }

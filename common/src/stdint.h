@@ -8,6 +8,7 @@
 #define PI180 (3.1415926535897932384626433832795f / 180.f)
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#define countof(x) (sizeof(x)/sizeof(*x))
 
 typedef unsigned int     uint;
 typedef unsigned short ushort;

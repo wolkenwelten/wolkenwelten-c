@@ -26,7 +26,7 @@ animal *animalNew(const vec pos , int type, int gender){
 		e = &animalList[animalFirstFree];
 		animalFirstFree = e->nextFree;
 	}else{
-		if(animalCount >= ((sizeof(animalList) / sizeof(animal)-1))){return NULL;}
+		if(animalCount >= countof(animalList)){return NULL;}
 		e = &animalList[animalCount++];
 	}
 	animalReset(e);

@@ -458,7 +458,7 @@ void serverParsePacket(uint i){
 		serverParseWebSocketPacket(i);
 	}
 
-	for(int max=32;max > 0;--max){
+	for(int max=64;max > 0;--max){
 		if((clients[i].recvBufLen-off) < 4)     { break; }
 		unsigned int pLen = packetLen((packet *)(clients[i].recvBuf+off));
 		if((pLen+4) > clients[i].recvBufLen-off){ break; }
@@ -474,9 +474,7 @@ void serverParsePacket(uint i){
 		off = 0;
 	} else if(off > sizeof(clients[i].recvBuf)/2){
 		fprintf(stderr,"Couldn't parse all packets, off=%i len=%i\n",off,clients[i].recvBufLen);
-		for(unsigned int ii=0;ii < (clients[i].recvBufLen - off);++ii){
-			clients[i].recvBuf[ii] = clients[i].recvBuf[ii+off];
-		}
+		memmove(clients[i].recvBuf,&clients[i].recvBuf[off],(clients[i].recvBufLen - off));
 		clients[i].recvBufLen -= off;
 		off = 0;
 	}
@@ -557,7 +555,7 @@ void serverParse(){
 void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 	if(c >= clientCount){ return; }
 	if(clients[c].state){ return; }
-	if(clients[c].chngReqQueueLen >= (sizeof(clients[c].chngReqQueue) / sizeof(chungusReqEntry))){
+	if(clients[c].chngReqQueueLen >= countof(clients[c].chngReqQueue)){
 		fprintf(stderr,"Chungus Request Queue full!\n");
 		return;
 	}
@@ -577,7 +575,7 @@ void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 void addChunkToQueue(uint c, u16 x, u16 y, u16 z){
 	if(c >= clientCount){return;}
 	if(clients[c].state){ return; }
-	if(clients[c].chnkReqQueueLen >= (sizeof(clients[c].chnkReqQueue) / sizeof(chunkReqEntry))){
+	if(clients[c].chnkReqQueueLen >= countof(clients[c].chnkReqQueue)){
 		fprintf(stderr,"Chunk Request Queue full!\n");
 		return;
 	}

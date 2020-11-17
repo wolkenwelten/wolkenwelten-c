@@ -155,7 +155,11 @@ void mainInit(){
 
 	bigchungusInit(&world);
 	blockTypeInit();
-	bigchungusGenSpawn(&world);
+	if(optionProfileWG){
+		bigchungusGenHugeSpawn(&world);
+	}else{
+		bigchungusGenSpawn(&world);
+	}
 }
 
 #ifndef __EMSCRIPTEN__
@@ -173,6 +177,9 @@ int main( int argc, const char* argv[] ){
 	printf(" %sbuilt %s\n" ,termReset    ,BUILDDATE      );
 
 	while(!quit){
+		if(optionProfileWG){
+			quit = true;
+		}
 		mainTick();
 		if(clientCount == 0){
 			usleep(100000);

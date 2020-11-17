@@ -350,9 +350,9 @@ static void animalPregnancy(animal *e){
 static void animalPoop(animal *e){
 	if(e->hunger < 24){return;}
 	if(e->hunger < 48){
-		if(rngValM(768) == 0){animalDoPoop(e);}
+		if(rngValM(2048) == 0){animalDoPoop(e);}
 	}else{
-		if(rngValM(512) == 0){animalDoPoop(e);}
+		if(rngValM(1536) == 0){animalDoPoop(e);}
 	}
 }
 

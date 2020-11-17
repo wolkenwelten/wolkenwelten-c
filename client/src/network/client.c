@@ -282,7 +282,7 @@ void clientParse(){
 	uint off=0;
 	if(recvBufLen == 0){return;}
 
-	for(int max=512;max > 0;--max){
+	for(int max=4096;max > 0;--max){
 		if(off >= recvBufLen){break;}
 		int pLen = packetLen((packet *)(recvBuf+off));
 		if((off+alignedLen(pLen+4)) > recvBufLen){
@@ -292,9 +292,7 @@ void clientParse(){
 		off += alignedLen(pLen+4);
 	}
 	if(off < recvBufLen){
-		for(uint i=0;i<recvBufLen-off;i++){
-			recvBuf[i] = recvBuf[i+off];
-		}
+		memmove(recvBuf,&recvBuf[off],recvBufLen-off);
 	}
 	recvBufLen -= off;
 }

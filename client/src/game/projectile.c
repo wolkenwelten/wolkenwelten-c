@@ -5,14 +5,25 @@
 #include "../gfx/particle.h"
 
 static inline void projectileDrawAssaultBullet(const projectile *p){
-	for(float o = 0.f;o<4.f;o+=0.2f){
-		newParticleV(vecAdd(p->pos,vecMulS(p->vel,o)), vecZero(), vecZero(),64, -.05f,0xFF2060B0,128);
+	vec cp,cv;
+	cp = p->pos;
+	cv = vecMulS(p->vel,-0.2f);
+	for(int ii=0;ii<10;ii++){
+		cp = vecAdd(cp,cv);
+		newParticleV(cp, vecMulS(vecRng(),0.001f), vecZero(),156, -6.f,0xFF50A0F0,96);
 	}
+	cp = p->pos;
+	cv = vecMulS(p->vel,-0.1f);
+	for(int i=0;i<40;i++){
+		cp = vecAdd(cp,cv);
+		newParticleV(cp, vecZero(), vecZero(),64, -.4f,0xFF2060B0,128);
+	}
+
 	for(int ii=0;ii<4;ii++){
-		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),256, -6.f,0xFF50A0F0,96);
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),192, -6.f,0xFF50A0F0,96);
 	}
 	for(int ii=0;ii<2;ii++){
-		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),384, -8.f,0xFF70B8FF,64);
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),256, -8.f,0xFF70B8FF,64);
 	}
 }
 
@@ -40,7 +51,7 @@ static inline float projectileDrawGuardianBigProjectile(const projectile *p){
 
 void projectileDrawAll(){
 	float maxD = 4096.f;
-	for(uint i=0;i<(sizeof(projectileList) / sizeof(projectile));i++){
+	for(uint i=0;i<countof(projectileList);i++){
 		projectile *p = &projectileList[i];
 		switch(p->style){
 		default:

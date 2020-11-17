@@ -80,7 +80,7 @@ static inline int projectileHomeIn(projectile *p){
 }
 
 int projectileSelfHitCheck(projectile *p, float mdd, being source){
-	for(uint i=0;i<(sizeof(projectileList) / sizeof(projectile));i++){
+	for(uint i=0;i<countof(projectileList);i++){
 		if(projectileList[i].style == 0){continue;}
 		if(projectileList[i].style == 2){continue;}
 		if(beingProjectile(i) == source){continue;}
@@ -120,7 +120,7 @@ static inline int projectileUpdate(projectile *p){
 }
 
 void projectileUpdateAll(){
-	for(uint i=0;i<(sizeof(projectileList) / sizeof(projectile));i++){
+	for(uint i=0;i<countof(projectileList);i++){
 		if(projectileList[i].style == 0){continue;}
 		if(projectileUpdate(&projectileList[i])){
 			projectileList[i].style = 0;
@@ -157,11 +157,11 @@ void projectileSendUpdate(uint c, uint i){
 
 void projectileRecvUpdate(uint c, const packet *p){
 	uint i = p->v.u16[0];
-	if(i > (sizeof(projectileList) / sizeof(projectile))) {return;}
+	if(i > countof(projectileList)){return;}
 	if(isClient){
-		if((i >> 8) == (uint)playerID)                {return;}
+		if((i >> 8) == (uint)playerID){return;}
 	}else{
-		if((i >> 8) != c)                             {return;}
+		if((i >> 8) != c){return;}
 	}
 
 	projectile *a = &projectileList[i];

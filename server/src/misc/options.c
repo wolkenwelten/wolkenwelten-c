@@ -11,6 +11,7 @@
 int   optionWorldSeed    = 0;
 int   optionPort         = 0;
 bool  optionSingleplayer = false;
+bool  optionProfileWG    = false;
 bool  verbose            = false;
 char  optionSavegame[32];
 
@@ -91,6 +92,10 @@ void parseOptions(int argc,const char *argv[]){
 		}
 		if((l = checkString(argv[i]+1,"verbose"))){
 			verbose = true;
+			continue;
+		}
+		if((l = checkString(argv[i]+1,"profileWG"))){
+			optionProfileWG = true;
 			continue;
 		}
 		if((l = checkString(argv[i]+1,"singleplayer"))){

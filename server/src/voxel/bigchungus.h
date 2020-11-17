@@ -30,6 +30,7 @@ bool        bigchungusGetHighestP       (bigchungus *c, int x, int *rety, int z)
 u8          bigchungusGetB              (bigchungus *c, int x, int y, int z);
 bool        bigchungusSetB              (bigchungus *c, int x, int y, int z, u8 b);
 void        bigchungusGenSpawn          (bigchungus *c);
+void        bigchungusGenHugeSpawn      (bigchungus *c);
 ivec        bigchungusGetSpawnPos       (bigchungus *c);
 void        bigchungusUpdateClient      (bigchungus *c, int p);
 void        bigchungusUnsubscribeClient (bigchungus *c, int p);

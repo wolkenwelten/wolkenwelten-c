@@ -22,7 +22,7 @@ character *characterNew(){
 		}
 	}
 	if(c == NULL){
-		if(characterCount >= (int)(sizeof(characterList) / sizeof(character))-1){
+		if(characterCount >= countof(characterList)){
 			fprintf(stderr,"characterList Overflow!\n");
 			return NULL;
 		}
@@ -393,4 +393,10 @@ character *characterClosest(const vec pos, float maxDistance){
 		return &characterList[i];
 	}
 	return NULL;
+}
+
+void characterAddRecoil(character *c, float recoil){
+	const vec vel = vecMulS(vecDegToVec(c->rot),.01f);
+	c->vel = vecAdd(c->vel, vecMulS(vel,-0.75f*recoil));
+	c->rot = vecAdd(c->rot, vecNew((rngValf()-0.5f) * recoil, (rngValf()-.8f) * recoil, 0.f));
 }

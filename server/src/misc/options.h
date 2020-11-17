@@ -4,6 +4,7 @@
 extern int  optionWorldSeed;
 extern int  optionPort;
 extern bool optionSingleplayer;
+extern bool optionProfileWG;
 extern char optionSavegame[32];
 extern bool verbose;
 
