@@ -28,7 +28,7 @@ releases/wasm/server.js: server/src/tmp/objs.c server/src/tmp/objs.h
 releases/wasm/server.js: server/src/tmp/mods_tmp.c
 releases/wasm/server.js: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p releases/wasm/
-	$(EMCC) $(SERVER_SRCS) -D_GNU_SOURCE -std=c99 -O3 -s BUILD_AS_WORKER=1 -s EXPORTED_FUNCTIONS="['_wasmInit','_wasmTranceive']" -fno-rtti --closure 0 $(EMMEM) -o releases/wasm/server.js
+	$(EMCC) $(SERVER_SRCS) -fsanitize=address -s ASSERTIONS=1 --profiling-funcs -g -g3 -D_GNU_SOURCE -std=c99 -O3 -s BUILD_AS_WORKER=1 -s EXPORTED_FUNCTIONS="['_wasmInit','_wasmTranceive']" -fno-rtti --closure 0 $(EMMEM) -o releases/wasm/server.js
 
 releases/wasm/manifest.json: platform/wasm/manifest.json
 	mkdir -p releases/wasm/

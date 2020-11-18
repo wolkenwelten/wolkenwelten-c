@@ -185,6 +185,9 @@ static void optionsParseLine(const char *line){
 void loadOptions(){
 	size_t len = 0;
 	char *b,*line;
+	#ifdef __EMSCRIPTEN__
+	return;
+	#endif
 	if(optionNoSave){return;}
 	b = loadFile("client.settings",&len);
 	if((b == NULL) || (len == 0)){return;}
@@ -204,6 +207,9 @@ void loadOptions(){
 void saveOptions(){
 	static char buf[4096];
 	char *b;
+	#ifdef __EMSCRIPTEN__
+	return;
+	#endif
 	if(optionNoSave){return;}
 
 	b  = buf;

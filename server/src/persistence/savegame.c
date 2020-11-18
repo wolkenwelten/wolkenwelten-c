@@ -308,6 +308,9 @@ static int characterLoadData(character *p, const char *pName){
 	size_t len = 0;
 	const char *filename;
 	char *b,*line;
+	#ifdef __EMSCRIPTEN__
+	return 0;
+	#endif
 	filename = characterFileName(pName);
 	b = loadFile(filename,&len);
 	if((b == NULL) || (len == 0)){return 0;}
@@ -350,6 +353,9 @@ void bigchungusSafeSave(const bigchungus *c){
 void characterSaveData(const character *p, const char *pName){
 	static char buf[8192];
 	char *b;
+	#ifdef __EMSCRIPTEN__
+	return;
+	#endif
 	if(p == NULL){return;}
 
 	b = buf;
@@ -496,6 +502,9 @@ static void savegameParseLine(const char *line){
 void savegameLoad(){
 	size_t len = 0;
 	char *b,*line;
+	#ifdef __EMSCRIPTEN__
+	return;
+	#endif
 	checkValidSavegame(optionSavegame);
 	b = loadFile(savegameFileName(optionSavegame),&len);
 	if((b == NULL) || (len == 0)){return;}
