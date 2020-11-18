@@ -13,7 +13,7 @@ uint   chunkCount     = 0;
 chunk *chunkFirstFree = NULL;
 
 #ifdef __EMSCRIPTEN__
-const uint chunkListSize = (1<<19);
+const uint chunkListSize = (1<<20);
 #else
 const uint chunkListSize = (1<<20);
 #endif
