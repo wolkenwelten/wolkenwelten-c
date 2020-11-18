@@ -12,8 +12,14 @@ uint   chunkFreeCount = 0;
 uint   chunkCount     = 0;
 chunk *chunkFirstFree = NULL;
 
+#ifdef __EMSCRIPTEN__
+const uint chunkListSize = (1<<19);
+#else
+const uint chunkListSize = (1<<20);
+#endif
+
 void chunkInit(){
-	chunkList = malloc(sizeof(chunk) * (1<<20));
+	chunkList = malloc(sizeof(chunk) * chunkListSize);
 	if(chunkList == NULL){
 		fprintf(stderr,"Error allocating chunkList, exit\n");
 		exit(1);
@@ -23,7 +29,7 @@ void chunkInit(){
 chunk *chunkNew(u16 x,u16 y,u16 z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){
-		if(chunkCount >= (1<<20)){
+		if(chunkCount >= chunkListSize){
 			fprintf(stderr,"chunk load shedding [%u / %u chunks]!\n",chunkFreeCount,chunkCount);
 			uint chngFree = chungusFreeOldChungi(1000);
 			if(chunkFirstFree == NULL){
