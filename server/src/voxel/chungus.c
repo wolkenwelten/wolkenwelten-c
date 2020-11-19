@@ -395,7 +395,7 @@ void chungusUnsubFarChungi(){
 
 		for(uint ii=0;ii<clientCount;++ii){
 			const float cdist = chungusDistance(clients[ii].c,chng);
-			if(cdist < 320.f){
+			if(cdist < 256.f){
 				chungusSubscribePlayer(chng,ii);
 			}else if(cdist > 768.f){
 				chungusUnsubscribePlayer(chng,ii);

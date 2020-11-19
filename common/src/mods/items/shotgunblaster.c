@@ -27,6 +27,7 @@ bool shotgunblasterPrimaryAction(item *cItem, character *cChar){
 		projectileNewC(cChar, 0, 4);
 	}
 	characterAddInaccuracy(cChar,32.f);
+	characterAddRecoil(cChar,3.f);
 	return true;
 }
 
@@ -37,6 +38,7 @@ bool shotgunblasterSecondaryAction(item *cItem,character *cChar){
 		projectileNewC(cChar, 0, 1);
 		characterAddInaccuracy(cChar,4.f);
 	}
+	characterAddRecoil(cChar,4.f);
 	return true;
 }
 
