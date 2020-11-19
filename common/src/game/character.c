@@ -308,7 +308,7 @@ bool characterItemReload(character *c, item *i, int cooldown){
 
 	characterAddCooldown(c,cooldown);
 	sfxPlay(sfxHookReturned,1.f);
-	characterStartAnimation(c,2,MAX(cooldown,400));
+	characterStartAnimation(c,2,MAX(cooldown*2,500));
 
 	return true;
 }
@@ -316,6 +316,7 @@ bool characterItemReload(character *c, item *i, int cooldown){
 bool characterTryToShoot(character *c, item *i, int cooldown, int bulletcount){
 	if(c->actionTimeout < 0){return false;}
 	if(itemGetAmmo(i) < bulletcount){
+		if(characterItemReload(c,i,256)){return false;}
 		sfxPlay(sfxHookFire,0.3f);
 		characterAddCooldown(c,64);
 		characterStartAnimation(c,3,250);
