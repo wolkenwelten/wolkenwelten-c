@@ -566,9 +566,6 @@ void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 		if(e->z != z){continue;}
 		return;
 	}
-	if((x == 0) || (x == 255) || (z == 0) || (z == 255)){
-		printf("addChungusToQueue[%u] %u %u %u\n",c,x,y,z);
-	}
 	clients[c].chngReqQueue[clients[c].chngReqQueueLen++] = (chungusReqEntry){x,y,z,0};
 }
 
@@ -593,20 +590,21 @@ void addChunksToQueue(uint c){
 		fprintf(stderr,"Requested Chungus too far away Chungus(%u, %u, %u) Player(%f, %f, %f))\n",chng->x<<8,chng->y<<8,chng->z<<8,clients[c].c->pos.x,clients[c].c->pos.y,clients[c].c->pos.z);
 		return;
 	}
+	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = (chunkReqEntry){entry.x,entry.y,entry.z,0xFF};
 	for(int x=15;x>= 0;--x){
 		for(int y=15;y>= 0;--y){
 			for(int z=15;z>= 0;--z){
-				if(chng->chunks[x][y][z] != NULL){
-					addChunkToQueue(c,(entry.x<<8)|(x<<4),(entry.y<<8)|(y<<4),(entry.z<<8)|(z<<4));
-				}
+				if(chng->chunks[x][y][z] == NULL){continue;}
+				addChunkToQueue(c,(entry.x<<8)|(x<<4),(entry.y<<8)|(y<<4),(entry.z<<8)|(z<<4));
 			}
 		}
 	}
-	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = (chunkReqEntry){entry.x,entry.y,entry.z,0xFF};
 	chungusSetUpdated(chng,c);
 }
 
 void addQueuedChunks(uint c){
+	static int updated = 0;
+	static int old = 0;
 	while(clients[c].sendBufLen < (sizeof(clients[c].sendBuf)-(1<<16))){
 		if(clients[c].chnkReqQueueLen == 0){
 			if(clients[c].chngReqQueueLen == 0){
@@ -618,12 +616,16 @@ void addQueuedChunks(uint c){
 		const chunkReqEntry entry = clients[c].chnkReqQueue[--clients[c].chnkReqQueueLen];
 		if(entry.w == 0xFF){
 			msgSendChungusComplete(c,entry.x,entry.y,entry.z);
+			updated = old = 0;
 		}else{
 			chunk *chnk = worldGetChunk(entry.x,entry.y,entry.z);
 			if(chnk != NULL){
 				if(!chunkIsUpdated(chnk,c)){
 					msgSendChunk(c,chnk);
 					chunkSetUpdated(chnk,c);
+					updated++;
+				}else{
+					old++;
 				}
 			}
 		}
@@ -760,8 +762,7 @@ void serverCloseClient(uint c){
 	if((clientCount == 1) && (clients[0].state == STATE_CLOSED)){
 		clientCount = 0;
 	}
-
-	if((clientCount == 1) && (clients[0].state == STATE_CLOSED) && (optionSingleplayer)){
+	if((clientCount == 0) && (clients[0].state == STATE_CLOSED) && (optionSingleplayer)){
 		quit = true;
 	}
 }

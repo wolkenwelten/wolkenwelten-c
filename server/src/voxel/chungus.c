@@ -275,9 +275,8 @@ void chungusSubscribePlayer(chungus *c, uint p){
 	for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){
 			for(int z=0;z<16;z++){
-				if(c->chunks[x][y][z] != NULL){
-					c->chunks[x][y][z]->clientsUpdated &= mask;
-				}
+				if(c->chunks[x][y][z] == NULL){ continue; }
+				c->chunks[x][y][z]->clientsUpdated &= mask;
 			}
 		}
 	}
@@ -287,9 +286,8 @@ void chungusSetAllUpdated(chungus *c, u64 nUpdated){
 	for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){
 			for(int z=0;z<16;z++){
-				if(c->chunks[x][y][z] != NULL){
-					c->chunks[x][y][z]->clientsUpdated = nUpdated;
-				}
+				if(c->chunks[x][y][z] == NULL){ continue; }
+				c->chunks[x][y][z]->clientsUpdated = nUpdated;
 			}
 		}
 	}
@@ -304,9 +302,8 @@ int chungusUnsubscribePlayer(chungus *c, uint p){
 	for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){
 			for(int z=0;z<16;z++){
-				if(c->chunks[x][y][z] != NULL){
-					c->chunks[x][y][z]->clientsUpdated &= mask;
-				}
+				if(c->chunks[x][y][z] == NULL){ continue; }
+				c->chunks[x][y][z]->clientsUpdated &= mask;
 			}
 		}
 	}
@@ -398,7 +395,7 @@ void chungusUnsubFarChungi(){
 
 		for(uint ii=0;ii<clientCount;++ii){
 			const float cdist = chungusDistance(clients[ii].c,chng);
-			if(cdist < 384.f){
+			if(cdist < 320.f){
 				chungusSubscribePlayer(chng,ii);
 			}else if(cdist > 768.f){
 				chungusUnsubscribePlayer(chng,ii);
