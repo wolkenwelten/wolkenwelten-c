@@ -313,7 +313,6 @@ int chungusUnsubscribePlayer(chungus *c, uint p){
 
 uint chungusIsSubscribed(chungus *c, uint p){
 	if(c == NULL){return 0;}
-
 	return c->clientsSubscribed & (1 << p);
 }
 

@@ -7,29 +7,19 @@
 #include <string.h>
 #include <stdlib.h>
 
-chunk *chunkList;
+chunk  chunkList[1<<18];
 uint   chunkFreeCount = 0;
 uint   chunkCount     = 0;
 chunk *chunkFirstFree = NULL;
 
-#ifdef __EMSCRIPTEN__
-const uint chunkListSize = (1<<20);
-#else
-const uint chunkListSize = (1<<20);
-#endif
-
 void chunkInit(){
-	chunkList = malloc(sizeof(chunk) * chunkListSize);
-	if(chunkList == NULL){
-		fprintf(stderr,"Error allocating chunkList, exit\n");
-		exit(1);
-	}
 }
 
 chunk *chunkNew(u16 x,u16 y,u16 z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){
-		if(chunkCount >= chunkListSize){
+		//fprintf(stderr,"chunkCount:%u\n",chunkCount);
+		if(chunkCount >= countof(chunkList)){
 			fprintf(stderr,"chunk load shedding [%u / %u chunks]!\n",chunkFreeCount,chunkCount);
 			uint chngFree = chungusFreeOldChungi(1000);
 			if(chunkFirstFree == NULL){
@@ -45,6 +35,7 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 			c = &chunkList[chunkCount++];
 		}
 	}else{
+		//fprintf(stderr,"Recycling %u\n",chunkCount);
 		c = chunkFirstFree;
 		chunkFirstFree = c->nextFree;
 		chunkFreeCount--;

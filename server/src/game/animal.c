@@ -19,7 +19,6 @@
 void animalDmgPacket(u8 source, const packet *p){
 	const i16 hp        = p->v.u16[0];
 	const u16 cause     = p->v.u16[1];
-
 	const being target  = p->v.u32[1];
 	const being culprit = beingCharacter(source);
 	if(beingType(target) != BEING_ANIMAL){return;}
