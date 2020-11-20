@@ -14,10 +14,14 @@
 #include <string.h>
 
 
-chungus chungusList[1 << 14];
+chungus chungusList[1 << 12];
 uint chungusCount = 0;
 chungus *chungusFirstFree = NULL;
 u64 freeTime = 0;
+
+void chungusInit(){
+	memset(chungusList,1,sizeof(chungusList));
+}
 
 float chunkDistance(const entity *cam, const vec pos){
 	return vecMag(vecSub(pos,cam->pos));

@@ -60,6 +60,7 @@ static void animalSyncInactive(u8 c, u16 i){
 }
 
 static void animalServerSync(u8 c, u16 i){
+	if(i > countof(animalList)){return;}
 	const animal *e = &animalList[i];
 	if(!chungusIsSubscribed(e->curChungus,c)){
 		return animalSyncInactive(c,i);

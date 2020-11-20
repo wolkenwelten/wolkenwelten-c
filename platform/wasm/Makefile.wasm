@@ -1,6 +1,7 @@
-EMCC   := emcc
-EMLIBS := -s USE_SDL=2 -s USE_SDL_MIXER=2 -s GL_UNSAFE_OPTS=1 -s USE_WEBGL2=1 -s MAX_WEBGL_VERSION=2
-EMMEM  := -s TOTAL_MEMORY=512MB
+EMCC         := emcc
+EMLIBS       := -s USE_SDL=2 -s USE_SDL_MIXER=2 -s GL_UNSAFE_OPTS=1 -s USE_WEBGL2=1 -s MAX_WEBGL_VERSION=2
+CLIENT_EMMEM := -s TOTAL_MEMORY=768MB
+SERVER_EMMEM := -s TOTAL_MEMORY=1536MB
 
 all: wolkenwelten
 
@@ -20,7 +21,7 @@ releases/wasm/wolkenwelten.html: client/src/tmp/objs.c client/src/tmp/objs.h
 releases/wasm/wolkenwelten.html: client/src/tmp/sfx.c client/src/tmp/sfx.h
 releases/wasm/wolkenwelten.html: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p releases/wasm/
-	$(EMCC) $(CLIENT_SRCS) -D_GNU_SOURCE -std=c99 -O3 -fno-rtti --closure 0 -s MINIFY_HTML=0 -s WASM=1 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 $(EMMEM) $(EMLIBS) --shell-file platform/wasm/shell.html -o releases/wasm/index.html
+	$(EMCC) $(CLIENT_SRCS) -D_GNU_SOURCE -std=c99 -O3 -fno-rtti --closure 0 -s MINIFY_HTML=0 -s WASM=1 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 $(CLIENT_EMMEM) $(EMLIBS) --shell-file platform/wasm/shell.html -o releases/wasm/index.html
 
 releases/wasm/server.js: $(SERVER_SRCS) $(SERVER_HDRS) server/src/network/server_wasm.h
 releases/wasm/server.js: server/src/tmp/sfx.c server/src/tmp/sfx.h
@@ -28,7 +29,7 @@ releases/wasm/server.js: server/src/tmp/objs.c server/src/tmp/objs.h
 releases/wasm/server.js: server/src/tmp/mods_tmp.c
 releases/wasm/server.js: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p releases/wasm/
-	$(EMCC) $(SERVER_SRCS) -fsanitize=address -s ASSERTIONS=1 --profiling-funcs -g -g3 -D_GNU_SOURCE -std=c99 -O3 -s BUILD_AS_WORKER=1 -s EXPORTED_FUNCTIONS="['_wasmInit','_wasmTranceive']" -fno-rtti --closure 0 $(EMMEM) -o releases/wasm/server.js
+	$(EMCC) $(SERVER_SRCS) -fsanitize=address -s ASSERTIONS=1 --profiling-funcs -g -g3 -D_GNU_SOURCE -std=c99 -O3 -s BUILD_AS_WORKER=1 -s EXPORTED_FUNCTIONS="['_wasmInit','_wasmTranceive']" -fno-rtti --closure 0 $(SERVER_EMMEM) -o releases/wasm/server.js
 
 releases/wasm/manifest.json: platform/wasm/manifest.json
 	mkdir -p releases/wasm/

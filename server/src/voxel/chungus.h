@@ -14,11 +14,12 @@ struct chungus {
 	chunk *chunks[16][16][16];
 };
 
-extern chungus chungusList[1 << 14];
+extern chungus chungusList[1 << 12];
 extern uint chungusCount;
 extern u64  freeTime;
 extern int loadShed;
 
+void         chungusInit             ();
 chungus     *chungusNew              (u8 x,u8 y, u8 z);
 void         chungusWorldGenLoad     (chungus *c);
 void         chungusFree             (chungus *c);

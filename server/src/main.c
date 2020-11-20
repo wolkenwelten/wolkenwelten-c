@@ -150,6 +150,7 @@ void mainInit(){
 	savegameLoad();
 	seedRNG(time(NULL));
 	serverInit();
+	chungusInit();
 	chunkInit();
 	savegameSave();
 
