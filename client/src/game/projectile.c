@@ -6,6 +6,7 @@
 
 static inline void projectileDrawAssaultBullet(const projectile *p){
 	vec cp,cv;
+	u32 tc = 0xFF2060C0 | (rngValR() & 0x070F3F);
 	cp = p->pos;
 	cv = vecMulS(p->vel,-0.2f);
 	for(int ii=0;ii<10;ii++){
@@ -16,7 +17,7 @@ static inline void projectileDrawAssaultBullet(const projectile *p){
 	cv = vecMulS(p->vel,-0.1f);
 	for(int i=0;i<40;i++){
 		cp = vecAdd(cp,cv);
-		newParticleV(cp, vecZero(), vecZero(),64, -.4f,0xFF2060B0,128);
+		newParticleV(cp, vecZero(), vecZero(),64, -.4f,tc,128);
 	}
 
 	for(int ii=0;ii<4;ii++){
@@ -28,8 +29,13 @@ static inline void projectileDrawAssaultBullet(const projectile *p){
 }
 
 static inline void projectileDrawShotgunBullet(const projectile *p){
-	for(float o = 0.f;o<4.f;o+=0.2f){
-		newParticleV(vecAdd(p->pos,vecMulS(p->vel,o)), vecZero(), vecZero(),64, -.05f,0xFF134094,96);
+	vec cp,cv;
+	u32 tc = 0xFF2060C0 | (rngValR() & 0x070F3F);
+	cp = p->pos;
+	cv = vecMulS(p->vel,-0.1f);
+	for(int i=0;i<40;i++){
+		cp = vecAdd(cp,cv);
+		newParticleV(cp, vecZero(), vecZero(),64, -.4f,tc,128);
 	}
 	for(int ii=0;ii<2;ii++){
 		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),256, -6.f,0xFF50D0F0,78);
