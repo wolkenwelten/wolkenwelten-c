@@ -4,6 +4,7 @@
 #include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
+#include "../game/fire.h"
 #include "../game/itemDrop.h"
 #include "../game/grenade.h"
 #include "../game/projectile.h"
@@ -443,6 +444,9 @@ void serverParseSinglePacket(uint c, packet *p){
 			fprintf(stderr,"FxBeamBlastHit received from client\n");
 			serverKill(c);
 			break;
+		case 40:
+			fireRecvUpdate(c,p);
+			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
 			serverKill(c);
@@ -527,6 +531,7 @@ void serverParseIntro(uint c){
 		sendPlayerJoinMessage(c);
 		itemDropIntro(c);
 		animalIntro(c);
+		fireIntro(c);
 		animalUpdatePriorities(c);
 		clients[c].lastPing = getTicks();
 		msgPingPong(c);

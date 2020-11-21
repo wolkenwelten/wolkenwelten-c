@@ -1,5 +1,6 @@
 #include "vegetation.h"
 
+#include "../../../common/src/game/item.h"
 #include "../voxel/chungus.h"
 #include "../../../common/src/misc/misc.h"
 
@@ -17,36 +18,31 @@ void wgRoots(chungus *c, int x,int y,int z){
 	for(int cy = 0;cy > -size;--cy){
 		u8 b = chungusGetB(c,x,y+cy,z);
 		switch(b){
-			case 7:
-			case 6:
 			case 0:
-				chungusSetB(c,x,y+cy,z,7);
-			break;
-
-			case 1:
-			case 2:
-			case 8:
-				chungusSetB(c,x,y+cy,z,8);
+			case I_Roots:
+			case I_Dirt:
+			case I_Grass:
+				chungusSetB(c,x,y+cy,z,I_Roots);
 			break;
 
 			default:
 				return;
 		}
 		b = chungusGetB(c,x-1,y+cy,z);
-		if(((b == 1) || (b == 2)) && (rngValM(2)==0)){
-			chungusSetB(c,x-1,y+cy,z,8);
+		if(((b == I_Dirt) || (b == I_Grass)) && (rngValM(2)==0)){
+			chungusSetB(c,x-1,y+cy,z,I_Roots);
 		}
 		b = chungusGetB(c,x+1,y+cy,z);
-		if(((b == 1) || (b == 2)) && (rngValM(2)==0)){
-			chungusSetB(c,x+1,y+cy,z,8);
+		if(((b == I_Dirt) || (b == I_Grass)) && (rngValM(2)==0)){
+			chungusSetB(c,x+1,y+cy,z,I_Roots);
 		}
 		b = chungusGetB(c,x,y+cy,z-1);
-		if(((b == 1) || (b == 2)) && (rngValM(2)==0)){
-			chungusSetB(c,x,y+cy,z-1,8);
+		if(((b == I_Dirt) || (b == I_Grass)) && (rngValM(2)==0)){
+			chungusSetB(c,x,y+cy,z-1,I_Roots);
 		}
 		b = chungusGetB(c,x,y+cy,z+1);
-		if(((b == 1) || (b == 2)) && (rngValM(2)==0)){
-			chungusSetB(c,x,y+cy,z+1,8);
+		if(((b == I_Dirt) || (b == I_Grass)) && (rngValM(2)==0)){
+			chungusSetB(c,x,y+cy,z+1,I_Roots);
 		}
 	}
 }

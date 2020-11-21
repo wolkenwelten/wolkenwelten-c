@@ -385,3 +385,17 @@ void msgFxBeamBlastHit(uint c, const vec pos, u16 size, u16 style){
 
 	packetQueue(p,39,4*4,c);
 }
+
+void msgFireUpdate(uint c, u16 i, u16 count, u16 x, u16 y, u16 z, i16 strength){
+	packet *p = &packetBuffer;
+
+	p->v.u16[0] = i;
+	p->v.u16[1] = count;
+
+	p->v.u16[2] = x;
+	p->v.u16[3] = y;
+	p->v.u16[4] = z;
+	p->v.i16[5] = strength;
+
+	packetQueue(p,40,6*2,c);
+}

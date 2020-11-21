@@ -23,7 +23,7 @@ typedef struct {
 	u8  b;
 } blockMining;
 
-blockMining blockMiningList[128];
+blockMining blockMiningList[4096];
 int         blockMiningCount = 0;
 mesh       *blockMiningProgressMesh;
 
@@ -125,6 +125,7 @@ void blockMiningUpdateFromServer(const packet *p){
 	blockMiningCount = p->v.u16[5];
 	const int i = p->v.u16[4];
 	if(i >= blockMiningCount){return;}
+	if(i >= (int)countof(blockMiningList)){return;}
 	blockMining *bm = &blockMiningList[i];
 	bm->x      = p->v.u16[0];
 	bm->y      = p->v.u16[1];

@@ -12,18 +12,19 @@
 #include <stdlib.h>
 
 typedef struct {
-	int x,y,z;
-	int damage;
+	u16 x,y,z;
+	i16 damage;
 	u8  b;
-	int wasMined;
+	u8 wasMined;
 } blockMining;
 
-blockMining blockMiningList[128];
+blockMining blockMiningList[4096];
 uint        blockMiningCount = 0;
 
 int blockMiningNew(int x,int y,int z){
 	blockMining *bm;
 	if(!inWorld(x,y,z)){return -1;}
+	if(blockMiningCount >= countof(blockMiningList)){return -1;}
 	bm = &blockMiningList[blockMiningCount++];
 	bm->x = x;
 	bm->y = y;
@@ -68,39 +69,39 @@ void blockMiningDropItems(blockMining *bm){
 	blockMiningDropItemsPos(bm->x,bm->y,bm->z,bm->b);
 }
 
-void blockMiningMine(uint i, item *itm){
+void blockMiningMine(uint i, int dmg){
 	blockMining *bm = &blockMiningList[i];
-	int dmg = 1;
-	if(itm != NULL){
-		dmg = blockDamageDispatch(itm,blockTypeGetCat(bm->b));
-	}
 
-	bm->damage += dmg;
+	bm->damage  += dmg;
 	bm->wasMined = true;
-	if(bm->damage > blockTypeGetHP(bm->b)){
-		msgMineBlock(bm->x,bm->y,bm->z,bm->b);
-		worldSetB(bm->x,bm->y,bm->z,0);
-		blockMiningDropItems(bm);
-		blockMiningList[i] = blockMiningList[--blockMiningCount];
-	}
 }
 
-int blockMiningMinePos(item *itm, int x, int y, int z){
+int blockMiningMinePos(int dmg, int x, int y, int z){
 	if(!inWorld(x,y,z)){return 1;}
 	for(uint i=0;i<blockMiningCount;i++){
 		blockMining *bm = &blockMiningList[i];
 		if(bm->x != x){continue;}
 		if(bm->y != y){continue;}
 		if(bm->z != z){continue;}
-		blockMiningMine(i,itm);
+		blockMiningMine(i,dmg);
 		return 0;
 	}
 	if(worldGetB(x,y,z) == 0){return 1;}
 	int i = blockMiningNew(x,y,z);
 	if(i >= 0){
-		blockMiningMine(i,itm);
+		blockMiningMine(i,dmg);
 	}
 	return 0;
+}
+
+int blockMiningMinePosItem(item *itm, int x, int y, int z){
+	const u8 b = worldGetB(x,y,z);
+	if(b == 0){return 1;}
+	int dmg = 1;
+	if(itm != NULL){
+		dmg = blockDamageDispatch(itm,blockTypeGetCat(b));
+	}
+	return blockMiningMinePos(dmg,x,y,z);
 }
 
 void blockMiningUpdate(){
@@ -108,22 +109,32 @@ void blockMiningUpdate(){
 		if(clients[i].c == NULL)          {continue;}
 		if(clients[i].c->blockMiningX < 0){continue;}
 		item *itm = characterGetItemBarSlot(clients[i].c,clients[i].c->activeItem);
-		if(blockMiningMinePos(itm,clients[i].c->blockMiningX,clients[i].c->blockMiningY,clients[i].c->blockMiningZ)){
+		if(blockMiningMinePosItem(itm,clients[i].c->blockMiningX,clients[i].c->blockMiningY,clients[i].c->blockMiningZ)){
 			clients[i].c->blockMiningX = clients[i].c->blockMiningY = clients[i].c->blockMiningZ = -1;
 		}
 	}
 
-	for(uint i=0;i<blockMiningCount;++i){
+	for(uint i=blockMiningCount-1;i<blockMiningCount;i--){
 		blockMining *bm = &blockMiningList[i];
 		if(!bm->wasMined){
-			bm->damage -= blockTypeGetHP(bm->b) >> 5;
+			const int maxhp = blockTypeGetHP(bm->b);
+			bm->damage -= maxhp >> 5;
 			if(bm->damage <= 0){
 				blockMiningList[i] = blockMiningList[--blockMiningCount];
-				--i;
-				continue;
 			}
+		}else{
+			if(bm->damage > blockTypeGetHP(bm->b)){
+				msgMineBlock(bm->x,bm->y,bm->z,bm->b);
+				if((bm->b == I_Grass) || (bm->b == I_Roots)){
+					worldSetB(bm->x,bm->y,bm->z,I_Dirt);
+				}else{
+					worldSetB(bm->x,bm->y,bm->z,0);
+					blockMiningDropItems(bm);
+				}
+				blockMiningList[i] = blockMiningList[--blockMiningCount];
+			}
+			bm->wasMined = false;
 		}
-		bm->wasMined = false;
 	}
 }
 

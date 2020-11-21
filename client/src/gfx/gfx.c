@@ -4,6 +4,7 @@
 #include "../game/blockMining.h"
 #include "../game/character.h"
 #include "../game/entity.h"
+#include "../game/fire.h"
 #include "../game/projectile.h"
 #include "../game/rope.h"
 #include "../gfx/clouds.h"
@@ -120,8 +121,11 @@ void renderWorld(const character *cam){
 	characterDrawAll();
 	shadowDraw();
 	cloudsRender();
+
 	projectileDrawAll();
+	fireDrawAll();
 	particleDraw();
+
 	ropeDrawAll();
 }
 

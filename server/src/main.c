@@ -3,6 +3,7 @@
 #include "misc/options.h"
 #include "game/animal.h"
 #include "game/blockMining.h"
+#include "game/fire.h"
 #include "game/itemDrop.h"
 #include "game/grenade.h"
 #include "persistence/savegame.h"
@@ -94,6 +95,7 @@ void updateWorldStep(){
 	itemDropUpdate();
 	grenadeUpdate();
 	animalUpdateAll();
+	fireUpdateAll();
 	projectileUpdateAll();
 }
 

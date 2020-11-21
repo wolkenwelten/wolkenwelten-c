@@ -5,6 +5,7 @@
 #include "game/blockType.h"
 #include "game/character.h"
 #include "game/entity.h"
+#include "game/fire.h"
 #include "game/grenade.h"
 #include "game/itemDrop.h"
 #include "game/projectile.h"

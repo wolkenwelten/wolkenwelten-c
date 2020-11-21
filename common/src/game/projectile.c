@@ -3,6 +3,7 @@
 #include "../game/animal.h"
 #include "../game/being.h"
 #include "../game/character.h"
+#include "../game/fire.h"
 #include "../mods/api_v1.h"
 #include "../network/packet.h"
 #include "../network/messages.h"
@@ -110,6 +111,7 @@ static inline int projectileUpdate(projectile *p){
 	if(checkCollision(p->pos.x,p->pos.y,p->pos.z)){
 		if(!isClient){
 			worldBoxMine(p->pos.x,p->pos.y,p->pos.z,2,2,2);
+			fireBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,4,4,4);
 		}
 		return 1;
 	}

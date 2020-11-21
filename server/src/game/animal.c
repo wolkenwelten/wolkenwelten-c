@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void animalDmgPacket(u8 source, const packet *p){
+void animalDmgPacket(u8 source, const packet *p ){
 	const i16 hp        = p->v.u16[0];
 	const u16 cause     = p->v.u16[1];
 	const being target  = p->v.u32[1];
@@ -60,7 +60,7 @@ static void animalSyncInactive(u8 c, u16 i){
 }
 
 static void animalServerSync(u8 c, u16 i){
-	if(i > countof(animalList)){return;}
+	if(i >= countof(animalList)){return;}
 	const animal *e = &animalList[i];
 	if(!chungusIsSubscribed(e->curChungus,c)){
 		return animalSyncInactive(c,i);

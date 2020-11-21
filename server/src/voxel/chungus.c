@@ -20,7 +20,7 @@ chungus *chungusFirstFree = NULL;
 u64 freeTime = 0;
 
 void chungusInit(){
-	memset(chungusList,1,sizeof(chungusList));
+	memset(chungusList,0,sizeof(chungusList));
 }
 
 float chunkDistance(const entity *cam, const vec pos){

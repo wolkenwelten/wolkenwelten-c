@@ -5,6 +5,7 @@
 #include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
+#include "../game/fire.h"
 #include "../game/grenade.h"
 #include "../game/itemDrop.h"
 #include "../game/rope.h"
@@ -268,6 +269,9 @@ void clientParsePacket(const packet *p){
 			break;
 		case 39:
 			fxProjectileHit(p);
+			break;
+		case 40:
+			fireRecvUpdate(-1,p);
 			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);

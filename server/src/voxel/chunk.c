@@ -13,7 +13,7 @@ uint   chunkCount     = 0;
 chunk *chunkFirstFree = NULL;
 
 void chunkInit(){
-	memset(chunkList,1,sizeof(chunkList));
+	memset(chunkList,0,sizeof(chunkList));
 }
 
 chunk *chunkNew(u16 x,u16 y,u16 z){
