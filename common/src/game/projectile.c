@@ -110,8 +110,8 @@ static inline int projectileUpdate(projectile *p){
 	if(!vecInWorld(p->pos)){return 1;}
 	if(checkCollision(p->pos.x,p->pos.y,p->pos.z)){
 		if(!isClient){
-			worldBoxMine(p->pos.x,p->pos.y,p->pos.z,2,2,2);
-			fireBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,4,4,4);
+			//worldBoxMine(p->pos.x,p->pos.y,p->pos.z,2,2,2);
+			fireBox(p->pos.x,p->pos.y,p->pos.z,1,1,1);
 		}
 		return 1;
 	}
