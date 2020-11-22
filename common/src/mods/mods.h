@@ -31,3 +31,10 @@ int         getAmmunitionDefault    (const item *cItem);
 int         getStackSizeDefault     (const item *cItem);
 int         getMagSizeDefault       (const item *cItem);
 int         itemDropCallbackDefault (const item *cItem, float x, float y, float z);
+
+int         itemDropBurnUpDispatch  (      itemDrop *id);
+int         getFireDmgDispatch      (const itemDrop *id);
+int         getFireHealthDispatch   (const itemDrop *id);
+int         itemDropBurnUpDefault   (      itemDrop *id);
+int         getFireDmgDefault       (const itemDrop *id);
+int         getFireHealthDefault    (const itemDrop *id);

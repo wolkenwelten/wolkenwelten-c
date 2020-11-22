@@ -95,7 +95,6 @@ void updateWorldStep(){
 	itemDropUpdate();
 	grenadeUpdate();
 	animalUpdateAll();
-	fireUpdateAll();
 	projectileUpdateAll();
 }
 
@@ -118,6 +117,8 @@ void updateWorld(){
 	i = 1;
 	for(;lastThought+100 < cTicks;lastThought += 100){
 		animalThinkAll();
+		fireUpdateAll();
+		itemDropUpdateFire();
 		if(--i == 0){break;}
 	}
 

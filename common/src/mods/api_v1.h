@@ -26,31 +26,33 @@
 #define I_Birch         20
 #define I_Flower        21
 
-#define I_Grenade      256
-#define I_Bomb         257
-#define I_Pear         258
-#define I_Stone_Axe    259
-#define I_Stone_Pick   260
-#define I_Blaster      261
-#define I_MasterB      262
-#define I_AssaultB     263
-#define I_ShotgunB     264
-#define I_Bullet       265
-#define I_Iron_Bar     266
-#define I_Iron_Axe     267
-#define I_Iron_Pick    268
-#define I_Crystal_Bar  269
-#define I_Crystal_Axe  270
-#define I_Crystal_Pick 271
-#define I_Cherry       272
-#define I_ClusterBomb  273
-#define I_Glider       274
-#define I_Hook         275
-#define I_Jetpack      276
-#define I_Poop         277
-#define I_Meat         278
-#define I_Cookedmeat   279
-#define I_Fur          280
+#define I_Grenade       256
+#define I_Bomb          257
+#define I_Pear          258
+#define I_Stone_Axe     259
+#define I_Stone_Pick    260
+#define I_Blaster       261
+#define I_MasterB       262
+#define I_AssaultB      263
+#define I_ShotgunB      264
+#define I_Bullet        265
+#define I_Iron_Bar      266
+#define I_Iron_Axe      267
+#define I_Iron_Pick     268
+#define I_Crystal_Bar   269
+#define I_Crystal_Axe   270
+#define I_Crystal_Pick  271
+#define I_Cherry        272
+#define I_ClusterBomb   273
+#define I_Glider        274
+#define I_Hook          275
+#define I_Jetpack       276
+#define I_Poop          277
+#define I_Meat          278
+#define I_Cookedmeat    279
+#define I_Fur           280
+#define I_Burntmeat     281
+#define I_FlintAndSteel 282
 
 void recipeNew1 (const item result, const item ingred1);
 void recipeNew2 (const item result, const item ingred1, const item ingred2);
@@ -78,9 +80,13 @@ bool characterTryToShoot     (      character *c, item *i, int cooldown, int bul
 bool characterTryToUse       (      character *c, item *i, int cooldown, int itemcount);
 bool characterPlaceBlock     (      character *c, item *i);
 void characterStartAnimation (      character *c, int index, int duration);
+ivec characterLOSBlock       (const character *c, int returnBeforeBlock);
 character *characterGetByBeing(being b);
 being      characterGetBeing (const character *c);
 int  characterHitCheck       (const vec pos, float mdd, int damage, int cause, u16 iteration, being source);
+
+void fireNew       (u16 x, u16 y, u16 z, i16 strength);
+void fireBox       (int x, int y, int z, int w, int h, int d);
 
 item  itemNew      (u16 ID, i16 amount);
 item  itemEmpty    ();
@@ -118,6 +124,7 @@ i64         rngValMM(i64 min,i64 max);
 
 const char   *blockTypeGetName         (u8 b);
 int           blockTypeGetHP           (u8 b);
+int           blockTypeGetFireDmg      (u8 b);
 blockCategory blockTypeGetCat          (u8 b);
 bool          blockTypeValid           (u8 b);
 u32           blockTypeGetParticleColor(u8 b);

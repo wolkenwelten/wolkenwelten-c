@@ -1,10 +1,12 @@
 #include "itemDrop.h"
 
 #include "../game/entity.h"
+#include "../game/fire.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../../../common/src/common.h"
+#include "../../../common/src/game/blockType.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/mods/mods.h"
 #include "../../../common/src/network/messages.h"
@@ -226,6 +228,38 @@ void itemDropUpdate(){
 			itemDropDel(i);
 			addPriorityItemDrop(i);
 			continue;
+		}
+	}
+}
+
+void itemDropUpdateFire(){
+	for(uint i=itemDropCount-1;i<itemDropCount;i--){
+		itemDrop *id = &itemDropList[i];
+		entity *e    = id->ent;
+		if(e == NULL){continue;}
+		const u16 cx = e->pos.x;
+		const u16 cy = e->pos.y;
+		const u16 cz = e->pos.z;
+		fire *f = &fireList[id->lastFire];
+		if((id->lastFire >= fireCount) || (f->x != cx) || (f->y != cy) || (f->z != cz)){
+			f = fireGetAtPos(cx,cy,cz);
+			id->lastFire = (u16)(f - fireList);
+		}
+		if((f != NULL) && (f->x == cx) && (f->y == cy) && (f->z == cz)){
+			int dmg = getFireDmgDispatch(id);
+			id->fireDmg += dmg * id->itm.amount;
+			f->strength += dmg * id->itm.amount;
+		}else{
+			id->fireDmg = MAX(0,id->fireDmg - 2);
+		}
+
+		int maxhp = getFireHealthDispatch(id);
+		if(id->fireDmg >= maxhp){
+			if(!itemDropBurnUpDispatch(id)){
+				itemDropDel(i);
+			}
+			addPriorityItemDrop(i);
+			id->fireDmg = 0;
 		}
 	}
 }

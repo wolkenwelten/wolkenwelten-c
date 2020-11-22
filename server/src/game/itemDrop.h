@@ -12,5 +12,6 @@ void      itemDropDel          (uint d);
 void      itemDropDelChungus   (const chungus *c);
 void      itemDropIntro        (uint c);
 void      itemDropUpdate       ();
+void      itemDropUpdateFire   ();
 uint      itemDropUpdatePlayer (uint c, uint offset);
 uint      itemDropGetActive    ();

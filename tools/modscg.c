@@ -207,6 +207,31 @@ void printItemTypeDispatch(const char *typeName, const char *argsAndTypes, const
 	puts("");
 }
 
+void printItemDropDispatch(const char *typeName, const char *argsAndTypes, const char *args, const char *retType){
+	size_t tnLen = strlen(typeName);
+	char *lcType = strdup(typeName);
+	*lcType = tolower(*lcType);
+
+	printf("%s%sDispatch(%s){\n",retType,lcType,argsAndTypes);
+	puts("\tswitch(id->itm.ID){");
+
+	for(int i=0;i<1024;i++){
+		item *itm = items[i];
+		itemProcedure *p;
+		if(itm == NULL){continue;}
+		for(p = itm->proc;p != NULL;p = p->next){
+			if(strncmp(p->type,typeName,tnLen) == 0){
+				printf("\t\tcase %i: return %s(%s);\n",itm->id,p->name,args);
+			}
+		}
+	}
+
+	puts("\t}");
+	printf("\treturn %sDefault(%s);\n",lcType,args);
+	puts("}");
+	puts("");
+}
+
 void printHasTypeSwitch(const char *typeName){
 	size_t tnLen = strlen(typeName);
 
@@ -263,6 +288,9 @@ int main(int argc, char *argv[]){
 	printItemTypeDispatch("GetMagSize","const item *cItem","cItem","int ");
 	printHasTypeSwitch   ("GetMagSize");
 	printItemTypeDispatch("ItemDropCallback","const item *cItem, float x, float y, float z","cItem, x, y, z","int ");
+	printItemDropDispatch("GetFireDmg","const itemDrop *id","id","int ");
+	printItemDropDispatch("GetFireHealth","const itemDrop *id","id","int ");
+	printItemDropDispatch("ItemDropBurnUp","itemDrop *id","id","int ");
 
 	return 0;
 }

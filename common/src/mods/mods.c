@@ -72,3 +72,22 @@ int itemDropCallbackDefault(const item *cItem, float x, float y, float z){
 	(void)z;
 	return 0;
 }
+
+int itemDropBurnUpDefault(itemDrop *id){
+	(void)id;
+	return 0;
+}
+
+int getFireDmgDefault(const itemDrop *id){
+	if(id->itm.ID < 256){
+		return blockTypeGetFireDmg(id->itm.ID);
+	}
+	return 1;
+}
+
+int getFireHealthDefault(const itemDrop *id){
+	if(id->itm.ID < 256){
+		return blockTypeGetHP(id->itm.ID);
+	}
+	return 300;
+}

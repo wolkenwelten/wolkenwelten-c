@@ -15,6 +15,7 @@ typedef struct {
 	int state,flags;
 	u64 socket,lastPing;
 
+	uint fireUpdateOffset;
 	uint projectileUpdateOffset;
 
 	uint animalUpdateOffset;

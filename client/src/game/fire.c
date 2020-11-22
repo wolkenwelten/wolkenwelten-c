@@ -5,18 +5,23 @@
 
 #include <string.h>
 
-void fireNew(const vec pos, u16 strength){
-	msgFireUpdate(-1,0,0,pos.x,pos.y,pos.z,strength);
+void fireNew(u16 x, u16 y, u16 z, i16 strength){
+	msgFireUpdate(-1,0,0,x,y,z,strength);
 }
 
 static void fireDraw(const fire *f){
-	u32 c = 0;
-	const vec pos = vecAdd(vecNew(f->x,f->y,f->z),vecNew(0.5f,0.5f,0.5f));
-	newParticleV(pos, vecMulS(vecRng(),0.01f), vecNew(0.f,0.0001f,0.f),128, 2.f,0xFF60C8FF, 256);
+	//u32 c = 0;
+	const vec pos = vecAdd(vecNew(f->x,f->y,f->z),vecRngAbs());
+	const float size = (float)(f->strength * 0.01f);
+	newParticleV(pos, vecMulS(vecRng(),0.0001f ), vecNew(0.f,0.0001f,0.f),size, size*0.5f,0xFF60C8FF, 192);
+	return;
+	/*
+	newParticleV(pos, vecMulS(vecRng(),0.01f ), vecNew(0.f,0.0001f,0.f),128, 2.f,0xFF60C8FF, 256);
 	newParticleV(pos, vecMulS(vecRng(),0.009f), vecNew(0.f,0.0001f,0.f), 96, 1.5f,0xFF5098FF, 512);
 	newParticleV(pos, vecMulS(vecRng(),0.007f), vecNew(0.f,0.0001f,0.f), 16, 1.0f,0xFF1F38EF, 768);
 	c = 0xFF101820 | (rngValR()&0x0003070F);
 	newParticleV(pos, vecMulS(vecRng(),0.005f), vecNew(0.f,0.00005f,0.f),  1, .5f,c,4096);
+	*/
 }
 
 void fireDrawAll(){

@@ -18,7 +18,7 @@ typedef struct {
 	u8 wasMined;
 } blockMining;
 
-blockMining blockMiningList[4096];
+blockMining blockMiningList[64];
 uint        blockMiningCount = 0;
 
 int blockMiningNew(int x,int y,int z){
@@ -65,10 +65,6 @@ void blockMiningDropItemsPos(int x, int y, int z, u8 b){
 	itemDropNewP(vecNew(x + xoff,y + yoff,z + zoff), &i);
 }
 
-void blockMiningDropItems(blockMining *bm){
-	blockMiningDropItemsPos(bm->x,bm->y,bm->z,bm->b);
-}
-
 void blockMiningMine(uint i, int dmg){
 	blockMining *bm = &blockMiningList[i];
 
@@ -104,6 +100,16 @@ int blockMiningMinePosItem(item *itm, int x, int y, int z){
 	return blockMiningMinePos(dmg,x,y,z);
 }
 
+void blockMiningMineBlock(int x, int y, int z, u8 b){
+	msgMineBlock(x,y,z,b);
+	if((b == I_Grass) || (b == I_Roots)){
+		worldSetB(x,y,z,I_Dirt);
+	}else{
+		worldSetB(x,y,z,0);
+		blockMiningDropItemsPos(x,y,z,b);
+	}
+}
+
 void blockMiningUpdate(){
 	for(uint i=0;i<clientCount;++i){
 		if(clients[i].c == NULL)          {continue;}
@@ -124,13 +130,7 @@ void blockMiningUpdate(){
 			}
 		}else{
 			if(bm->damage > blockTypeGetHP(bm->b)){
-				msgMineBlock(bm->x,bm->y,bm->z,bm->b);
-				if((bm->b == I_Grass) || (bm->b == I_Roots)){
-					worldSetB(bm->x,bm->y,bm->z,I_Dirt);
-				}else{
-					worldSetB(bm->x,bm->y,bm->z,0);
-					blockMiningDropItems(bm);
-				}
+				blockMiningMineBlock(bm->x,bm->y,bm->z,bm->b);
 				blockMiningList[i] = blockMiningList[--blockMiningCount];
 			}
 			bm->wasMined = false;

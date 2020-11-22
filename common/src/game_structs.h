@@ -173,6 +173,9 @@ typedef struct {
 		i16 nextFree;
 	};
 	i16     player;
+
+	u16 lastFire;
+	i16 fireDmg;
 } itemDrop;
 
 typedef struct {

@@ -216,6 +216,7 @@ void msgUpdatePlayer(uint c){
 	bigchungusUpdateClient(&world,c);
 	animalSyncPlayer(c);
 	projectileSyncPlayer(c);
+	fireSyncPlayer(c);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 }
