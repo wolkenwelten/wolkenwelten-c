@@ -72,7 +72,7 @@ void initSignals(){
 	signal(SIGINT,  signalQuit);
 }
 
-void initTermColors(){
+static void initTermColors(){
 	char *clicolor = getenv("CLICOLOR");
 	setvbuf(stdout, NULL, _IONBF, 0);
 	setvbuf(stderr, NULL, _IONBF, 0);
@@ -90,7 +90,7 @@ void initTermColors(){
 	}
 }
 
-void updateWorldStep(){
+static void updateWorldStep(){
 	blockMiningUpdate();
 	itemDropUpdate();
 	grenadeUpdate();
@@ -98,32 +98,36 @@ void updateWorldStep(){
 	projectileUpdateAll();
 }
 
+static void thinkWorldStep(){
+	static uint calls = 0;
+
+	animalThinkAll    (calls & 0x1F);
+	fireUpdateAll     (calls & 0x1F);
+	itemDropUpdateFire(calls & 0x1F);
+
+	calls++;
+}
+
+static void needsWorldStep(){
+	static uint calls = 0;
+
+	animalNeedsAll(calls & 0xFF);
+
+	calls++;
+}
+
 void updateWorld(){
 	static u64 lastUpdate  = 0;
-	static u64 lastThought = 0;
-	static u64 lastNeeds   = 0;
 	int i = 0;
 	const u64 cTicks = getTicks();
-	if(lastUpdate  == 0){lastUpdate  = getTicks() -    5;}
-	if(lastThought == 0){lastThought = getTicks() -  100;}
-	if(lastNeeds   == 0){lastNeeds   = getTicks() - 1000;}
+	if(lastUpdate  == 0){lastUpdate  = getTicks() -    4;}
 
-	i = 5;
-	for(;lastUpdate +  5 < cTicks;lastUpdate +=  5){
+	i = 4;
+	for(;lastUpdate +  4 < cTicks;lastUpdate +=  4){
 		updateWorldStep();
+		thinkWorldStep();
+		needsWorldStep();
 		if(--i == 0){break;}
-	}
-
-	i = 1;
-	for(;lastThought+100 < cTicks;lastThought += 100){
-		animalThinkAll();
-		fireUpdateAll();
-		itemDropUpdateFire();
-		if(--i == 0){break;}
-	}
-
-	for(;lastNeeds+1000 < cTicks;lastNeeds += 1000){
-		animalNeedsAll();
 	}
 }
 

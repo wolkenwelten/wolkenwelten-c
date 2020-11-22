@@ -4,5 +4,5 @@
 void  fireIntro      (uint c);
 void  fireRecvUpdate (uint c, const packet *p);
 fire *fireGetAtPos   (u16 x,u16 y, u16 z);
-void  fireUpdateAll  ();
+void  fireUpdateAll  (uint off);
 void  fireSyncPlayer (uint c);

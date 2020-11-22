@@ -134,8 +134,8 @@ static int fireUpdate(fire *f){
 	return 0;
 }
 
-void fireUpdateAll(){
-	for(uint i=0;i<fireCount;i++){
+void fireUpdateAll(uint off){
+	for(uint i=off;i<fireCount;i+=32){
 		if (fireUpdate(&fireList[i])){
 			if(!isClient){
 				fireList[i] = fireList[--fireCount];

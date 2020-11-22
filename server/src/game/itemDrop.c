@@ -232,8 +232,8 @@ void itemDropUpdate(){
 	}
 }
 
-void itemDropUpdateFire(){
-	for(uint i=itemDropCount-1;i<itemDropCount;i--){
+void itemDropUpdateFire(uint off){
+	for(uint i=itemDropCount-(1+off);i<itemDropCount;i-=32){
 		itemDrop *id = &itemDropList[i];
 		entity *e    = id->ent;
 		if(e == NULL){continue;}

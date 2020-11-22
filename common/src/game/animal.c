@@ -379,15 +379,15 @@ void animalThink(animal *e){
 	}
 }
 
-void animalThinkAll(){
-	for(int i=animalCount-1;i>=0;--i){
+void animalThinkAll(uint off){
+	for(uint i=off;i<animalCount;i+=32){
 		animalThink(&animalList[i]);
 	}
 }
 
-void animalNeedsAll(){
+void animalNeedsAll(uint off){
 	static uint calls = 0;
-	for(int i=animalCount-1;i>=0;--i){
+	for(uint i=off;i<animalCount;i+=256){
 		animal *e = &animalList[i];
 		if(e->flags & ANIMAL_NO_NEEDS){continue;}
 		e->hunger--;

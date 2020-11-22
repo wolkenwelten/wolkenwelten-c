@@ -22,8 +22,8 @@ void        animalSync             (u8 c, u16 i);
 void        animalDmgPacket        (u8 c, const packet *p);
 
 void        animalUpdateAll        ();
-void        animalThinkAll         ();
-void        animalNeedsAll         ();
+void        animalThinkAll         (uint off);
+void        animalNeedsAll         (uint off);
 
 
 animal *animalGetByBeing(being b);
