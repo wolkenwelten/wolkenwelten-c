@@ -41,6 +41,7 @@ typedef struct {
 
 	uint sendBufSent;
 	uint sendBufLen;
+	uint sendBufLastCompressed;
 	u8   sendBuf[1<<20];
 } clientConnection;
 

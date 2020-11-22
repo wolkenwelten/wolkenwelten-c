@@ -115,6 +115,7 @@ void serverInitClient(uint c){
 	const vec spawn = vecAdd(vecNewI(worldGetSpawnPos()),vecNew(.5f,2.f,.5f));
 	clients[c].c                          = characterNew();
 	clients[c].recvBufLen                 = 0;
+	clients[c].sendBufLastCompressed      = 0;
 	clients[c].sendBufSent                = 0;
 	clients[c].sendBufLen                 = 0;
 	clients[c].chngReqQueueLen            = 0;
@@ -638,27 +639,13 @@ void addQueuedChunks(uint c){
 	}
 }
 
-void *serverFindCompressibleStart(uint c, int *len){
-	u8 *t = NULL;
-	u8 *ret = NULL;
-	*len = 0;
-	for(t=clients[c].sendBuf;(t-clients[c].sendBuf) < (int)clients[c].sendBufLen;t+=alignedLen(4+packetLen((packet *)t))){
-		if(packetType((packet *)t) != 0xFF){
-			ret = t;
-			break;
-		}
-	}
-	if(ret == NULL){return NULL;}
-	*len = clients[c].sendBufLen - (t-clients[c].sendBuf);
-	return ret;
-}
-
 void serverCheckCompression(int c){
 	int len,compressLen;
 	u8 *start;
 	static u8 compressBuf[LZ4_COMPRESSBOUND(sizeof(clients[c].sendBuf))];
 	if(clients[c].flags & CONNECTION_WEBSOCKET){return;}
-	start = serverFindCompressibleStart(c,&len);
+	start = &clients[c].sendBuf[clients[c].sendBufLastCompressed];
+	len = &clients[c].sendBuf[clients[c].sendBufLen] - start;
 	if(len <= (1<<10)){return;}
 
 	compressLen = LZ4_compress_default((const char *)start, (char *)compressBuf, len, sizeof(compressBuf));
@@ -670,6 +657,7 @@ void serverCheckCompression(int c){
 	memcpy(start + 4,compressBuf,compressLen);
 	packetSet((packet *)start,0xFF,compressLen);
 	clients[c].sendBufLen += alignedLen(compressLen + 4);
+	clients[c].sendBufLastCompressed += alignedLen(compressLen + 4);
 }
 
 void serverSend(){
@@ -701,6 +689,7 @@ int serverSendClient(uint c){
 		clients[c].sendBufSent += ret;
 	}
 	if(clients[c].sendBufSent >= clients[c].sendBufLen){
+		clients[c].sendBufLastCompressed = 0;
 		clients[c].sendBufSent = 0;
 		clients[c].sendBufLen  = 0;
 		return 0;
@@ -717,8 +706,8 @@ void sendToClient(uint c,const void *data,uint len){
 		tlen += 10;
 	}
 
-	serverCheckCompression(c);
 	while(clients[c].sendBufLen+tlen > (int)sizeof(clients[c].sendBuf)){
+		serverCheckCompression(c);
 		ret = serverSendClient(c);
 		if(ret == 1){
 			usleep(10);
