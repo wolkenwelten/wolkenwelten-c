@@ -2,6 +2,7 @@
 
 #include "../game/entity.h"
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/game/projectile.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
@@ -28,6 +29,10 @@ void explode(const vec pos, float pw, int style){
 		const vec dn = vecNorm(d);
 		exEnt->vel = vecAdd(exEnt->vel,vecMulS(dn,sqrtf((16*pw*pw)/dist)*-0.02f));
 	}
+	for(uint i=0;i<pw*64;i++){
+		const vec rot = vecMul(vecRng(),vecNew(180.f,90.f,0.f));
+		projectileNew(pos, rot, 0, 0, 1, 0.07f);
+	}
 	msgGrenadeExplode(pos, pw, style);
 }
 
@@ -40,7 +45,7 @@ static void grenadeNew(const vec pos, const vec rot, float pwr, int cluster, flo
 		speed = 0.15f;
 	}
 	grenadeList[g].ent->vel   = vecMulS(vecDegToVec(rot),speed);
-	grenadeList[g].ticksLeft  = 300;
+	grenadeList[g].ticksLeft  = 300+(rngValR()&0x1FF);
 	grenadeList[g].pwr        = pwr;
 	grenadeList[g].cluster    = cluster;
 	grenadeList[g].clusterPwr = clusterPwr;
