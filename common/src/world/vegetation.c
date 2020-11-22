@@ -4,7 +4,7 @@
 
 void vegShrub(int x,int y,int z){
 	int leaveBlock = 21;
-	worldSetB(x,y,z,8);
+	worldSetB(x,y,z,I_Roots);
 	worldSetB(x,y+1,z,leaveBlock);
 	if(rngValM(2) == 0){
 		worldSetB(x,y+2,z,leaveBlock);
@@ -15,37 +15,33 @@ void vegRoots(int x,int y,int z){
 	int size = rngValMM(4,12);
 	for(int cy = 0;cy > -size;--cy){
 		u8 b = worldGetB(x,y+cy,z);
+
 		switch(b){
-			case 7:
-			case 6:
-			case 0:
-				worldSetB(x,y+cy,z,7);
+		case 0:
+		case 1:
+		case 2:
+		case 6:
+			worldSetB(x,y+cy,z,I_Roots);
 			break;
 
-			case 1:
-			case 2:
-			case 8:
-				worldSetB(x,y+cy,z,8);
-			break;
-
-			default:
-				return;
+		default:
+			return;
 		}
 		b = worldGetB(x-1,y+cy,z);
 		if(((b == 1) || (b == 2)) && (rngValM(2)==0)){
-			worldSetB(x-1,y+cy,z,8);
+			worldSetB(x-1,y+cy,z,I_Roots);
 		}
 		b = worldGetB(x+1,y+cy,z);
 		if(((b == 1) || (b == 2)) && (rngValM(2)==0)){
-			worldSetB(x+1,y+cy,z,8);
+			worldSetB(x+1,y+cy,z,I_Roots);
 		}
 		b = worldGetB(x,y+cy,z-1);
 		if(((b == 1) || (b == 2)) && (rngValM(2)==0)){
-			worldSetB(x,y+cy,z-1,8);
+			worldSetB(x,y+cy,z-1,I_Roots);
 		}
 		b = worldGetB(x,y+cy,z+1);
 		if(((b == 1) || (b == 2)) && (rngValM(2)==0)){
-			worldSetB(x,y+cy,z+1,8);
+			worldSetB(x,y+cy,z+1,I_Roots);
 		}
 	}
 }

@@ -6,7 +6,7 @@
 
 void wgShrub(chungus *c, int x,int y,int z){
 	int leaveBlock = 21;
-	chungusSetB(c,x,y,z,8);
+	chungusSetB(c,x,y,z,I_Roots);
 	chungusSetB(c,x,y+1,z,leaveBlock);
 	if(rngValM(2) == 0){
 		chungusSetB(c,x,y+2,z,leaveBlock);
