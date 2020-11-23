@@ -27,3 +27,20 @@ int clusterbombGetAmmunition(const item *cItem){
 
 	return ITEMID;
 }
+
+int clusterbombItemDropBurnUp(itemDrop *id){
+	(void)id;
+	if(id->ent == NULL){return 0;}
+	explode(id->ent->pos, 4, 0);
+	return 0;
+}
+
+int clusterbombGetFireDmg(const itemDrop *id){
+	(void)id;
+	return 8;
+}
+
+int clusterbombGetFireHealth(const itemDrop *id){
+	(void)id;
+	return 48;
+}

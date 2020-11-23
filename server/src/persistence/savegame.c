@@ -3,6 +3,7 @@
 #include "../main.h"
 #include "../game/animal.h"
 #include "../game/entity.h"
+#include "../game/fire.h"
 #include "../game/itemDrop.h"
 #include "../misc/options.h"
 #include "../network/server.h"
@@ -145,6 +146,50 @@ static void *itemDropSaveChungus(const chungus *c,void *buf){
 	return buf;
 }
 
+static void *fireSave(const fire *f, void *buf){
+	u8    *b = (u8  *)buf;
+	u16   *u = (u16 *)buf;
+	i16   *s = (i16 *)buf;
+
+	if(f == NULL){return b;}
+
+	b[0] = 0x04;
+	b[1] = 0;
+
+	u[1] = f->x;
+	u[2] = f->y;
+	u[3] = f->z;
+
+	s[4] = f->strength;
+	s[5] = f->blockDmg;
+
+	return b+12;
+}
+
+static const void *fireLoad(const void *buf){
+	u8    *b = (u8  *)buf;
+	u16   *u = (u16 *)buf;
+	i16   *s = (i16 *)buf;
+
+	fireNewF(u[1],u[2],u[3],s[4],s[5]);
+	return b+12;
+}
+
+static void *fireSaveChungus(const chungus *c,void *buf){
+	if(c == NULL){return buf;}
+	for(uint i=0;i<fireCount;i++){
+		if(c->x != (fireList[i].x >> 8)){continue;}
+		if(c->y != (fireList[i].y >> 8)){continue;}
+		if(c->z != (fireList[i].z >> 8)){continue;}
+		buf = fireSave(&fireList[i],buf);
+	}
+	return buf;
+}
+
+
+
+
+
 static void *animalSave(const animal *e, void *buf){
 	u8    *b = (u8    *)buf;
 	float *f = (float *)buf;
@@ -194,9 +239,6 @@ static const void *animalLoad(const void *buf){
 	e->sleepy    = b[ 7];
 
 	e->age       = b[ 8];
-	//
-	//
-	//
 
 	e->pos       = vecNewP(&f[3]);
 
@@ -428,6 +470,9 @@ void chungusLoad(chungus *c){
 			case 3:
 				b = animalLoad(b);
 				break;
+			case 4:
+				b = fireLoad(b);
+				break;
 			default:
 				fprintf(stderr,"Unknown id[%u] found in %i:%i:%i savestate\n",id,c->x,c->y,c->z);
 				goto chungusLoadEnd;
@@ -459,6 +504,7 @@ void chungusSave(chungus *c){
 	}
 	cbuf = itemDropSaveChungus(c,cbuf);
 	cbuf = animalSaveChungus  (c,cbuf);
+	cbuf = fireSaveChungus    (c,cbuf);
 
 	size_t len = LZ4_compress_default((const char *)saveLoadBuffer, (char *)compressedBuffer, cbuf - saveLoadBuffer, 4100*4096);
 	if(len == 0){

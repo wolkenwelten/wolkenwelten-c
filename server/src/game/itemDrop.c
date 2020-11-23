@@ -85,10 +85,13 @@ void itemDropNewP(const vec pos,const item *itm){
 	itemDrop *id = itemDropNew();
 	if(id == NULL){return;}
 
-	id->itm = *itm;
-	id->ent = entityNew(pos,vecZero());
-	id->player = -1;
+	id->itm      = *itm;
+	id->ent      = entityNew(pos,vecZero());
+	id->player   = -1;
+	id->lastFire =  0;
+	id->fireDmg  =  0;
 	entityUpdateCurChungus(id->ent);
+	itemDropUpdateFire(id - itemDropList);
 }
 
 void itemDropNewC(uint c, const packet *p){
@@ -100,6 +103,8 @@ void itemDropNewC(uint c, const packet *p){
 	id->itm.ID     = p->v.u16[12];
 	id->itm.amount = p->v.i16[13];
 	id->player     = c;
+	id->lastFire   = 0;
+	id->fireDmg    = 0;
 	entityUpdateCurChungus(id->ent);
 }
 
@@ -186,16 +191,17 @@ static int itemDropCheckCollation(uint ai){
 
 	for(int i=0;i<4;i++){
 		const uint  bi = rngValM(itemDropCount);
-		if(bi == ai)                                     {continue;}
-		if(itemDropList[ai].itm.ID != itemDropList[bi].itm.ID) {continue;}
-		if(itemDropList[bi].ent == NULL)                    {continue;}
+		if(bi == ai)                                          {continue;}
+		if(itemDropList[ai].itm.ID != itemDropList[bi].itm.ID){continue;}
+		if(itemDropList[bi].ent == NULL)                      {continue;}
 		const vec    b = itemDropList[bi].ent->pos;
 		const vec    d = vecSub(b,a);
 		const float di = vecDot(d,d);
 		if(di < 0.75f){
 			itemDropList[bi].itm.amount += itemDropList[ai].itm.amount;
-			itemDropList[bi].ent->vel = vecAdd(itemDropList[bi].ent->vel,itemDropList[ai].ent->vel);
-			itemDropList[bi].ent->pos = vecMulS(vecAdd(itemDropList[bi].ent->pos,itemDropList[ai].ent->pos),0.5f);
+			itemDropList[bi].fireDmg    += itemDropList[ai].fireDmg;
+			itemDropList[bi].ent->vel    = vecAdd(itemDropList[bi].ent->vel,itemDropList[ai].ent->vel);
+			itemDropList[bi].ent->pos    = vecMulS(vecAdd(itemDropList[bi].ent->pos,itemDropList[ai].ent->pos),0.5f);
 			entityUpdateCurChungus(itemDropList[bi].ent);
 			return 1;
 		}
@@ -232,36 +238,43 @@ void itemDropUpdate(){
 	}
 }
 
-void itemDropUpdateFire(uint off){
-	for(uint i=itemDropCount-(1+off);i<itemDropCount;i-=32){
-		itemDrop *id = &itemDropList[i];
-		entity *e    = id->ent;
-		if(e == NULL){continue;}
-		const u16 cx = e->pos.x;
-		const u16 cy = e->pos.y;
-		const u16 cz = e->pos.z;
-		fire *f = &fireList[id->lastFire];
-		if((id->lastFire >= fireCount) || (f->x != cx) || (f->y != cy) || (f->z != cz)){
-			f = fireGetAtPos(cx,cy,cz);
-			id->lastFire = (u16)(f - fireList);
-		}
-		if((f != NULL) && (f->x == cx) && (f->y == cy) && (f->z == cz)){
-			int dmg = getFireDmgDispatch(id);
-			id->fireDmg += dmg * id->itm.amount;
-			f->strength += dmg * id->itm.amount;
-		}else{
-			id->fireDmg = MAX(0,id->fireDmg - 2);
-		}
-
-		int maxhp = getFireHealthDispatch(id);
-		if(id->fireDmg >= maxhp){
-			if(!itemDropBurnUpDispatch(id)){
-				itemDropDel(i);
-			}
-			addPriorityItemDrop(i);
-			id->fireDmg = 0;
-		}
+void itemDropUpdateFire(uint i){
+	itemDrop *id = &itemDropList[i];
+	entity *e    = id->ent;
+	if(e == NULL){return;}
+	const u16 cx = e->pos.x;
+	const u16 cy = e->pos.y;
+	const u16 cz = e->pos.z;
+	fire *f = &fireList[id->lastFire];
+	if((id->lastFire >= fireCount) || (f->x != cx) || (f->y != cy) || (f->z != cz)){
+		f = fireGetAtPos(cx,cy,cz);
+		id->lastFire = (u16)(f - fireList);
 	}
+	if((f != NULL) && (f->x == cx) && (f->y == cy) && (f->z == cz)){
+		const int dmg = getFireDmgDispatch(id) * id->itm.amount;
+		id->fireDmg += dmg;
+		f->strength += dmg;
+	}else if(id->fireDmg > 0){
+		const int dmg = MIN(id->fireDmg,getFireDmgDispatch(id) * id->itm.amount);
+		fireNew(cx,cy,cz,dmg);
+	}
+
+	int maxhp = getFireHealthDispatch(id) * id->itm.amount;
+	if(id->fireDmg >= maxhp){
+		if(!itemDropBurnUpDispatch(id)){
+			itemDropDel(i);
+		}
+		addPriorityItemDrop(i);
+		id->fireDmg = 0;
+	}
+}
+
+void itemDropUpdateFireAll(){
+	static uint calls = 0;
+	for(uint i=itemDropCount-(1+(calls&0x1F));i<itemDropCount;i-=0x20){
+		itemDropUpdateFire(i);
+	}
+	calls++;
 }
 
 void itemDropIntro(uint c){

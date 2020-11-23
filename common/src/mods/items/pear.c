@@ -16,12 +16,20 @@ bool pearSecondaryAction(item *cItem,character *cChar){
 
 mesh *pearGetMesh(const item *cItem){
 	(void)cItem;
-
 	return meshPear;
 }
 
 int pearGetAmmunition(const item *cItem){
 	(void)cItem;
-
 	return ITEMID;
+}
+
+int pearGetFireDmg(const itemDrop *id){
+	(void)id;
+	return 8;
+}
+
+int pearGetFireHealth(const itemDrop *id){
+	(void)id;
+	return 100;
 }

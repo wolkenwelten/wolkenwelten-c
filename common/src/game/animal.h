@@ -15,15 +15,17 @@ int         animalUpdate           (      animal *e);
 void        animalThink            (      animal *e);
 float       animalClosestAnimal    (const animal *e, animal **cAnim, int typeFilter, uint flagsMask, uint flagsCompare);
 float       animalClosestPlayer    (const animal *e, character **cChar);
-void        animalCheckSuffocation (animal *e);
-void        animalRDie             (animal *e);
-void        animalRHit             (animal *e);
+void        animalCheckSuffocation (      animal *e);
+void        animalRDie             (      animal *e);
+void        animalRHit             (      animal *e);
+void        animalRBurn            (      animal *e);
 void        animalSync             (u8 c, u16 i);
 void        animalDmgPacket        (u8 c, const packet *p);
 
 void        animalUpdateAll        ();
-void        animalThinkAll         (uint off);
-void        animalNeedsAll         (uint off);
+void        animalThinkAll         ();
+void        animalNeedsAll         ();
+void        animalCheckBurnAll     ();
 
 
 animal *animalGetByBeing(being b);

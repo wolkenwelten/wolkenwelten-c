@@ -833,13 +833,6 @@ void characterSetData(character *c, const packet *p){
 	if(playerList[playerID] == NULL){
 		playerList[playerID] = player;
 	}
-	/*
-	character *np = &playerList[playerID];
-	if(np != player){
-		memcpy(np,player,sizeof(character));
-		memset(player,0,sizeof(character);
-		player = np;
-	}*/
 
 	connectionState = 2;
 }

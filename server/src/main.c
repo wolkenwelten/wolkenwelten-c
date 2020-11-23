@@ -96,24 +96,11 @@ static void updateWorldStep(){
 	grenadeUpdate();
 	animalUpdateAll();
 	projectileUpdateAll();
-}
-
-static void thinkWorldStep(){
-	static uint calls = 0;
-
-	animalThinkAll    (calls & 0x1F);
-	fireUpdateAll     (calls & 0x1F);
-	itemDropUpdateFire(calls & 0x1F);
-
-	calls++;
-}
-
-static void needsWorldStep(){
-	static uint calls = 0;
-
-	animalNeedsAll(calls & 0xFF);
-
-	calls++;
+	animalThinkAll();
+	fireUpdateAll();
+	itemDropUpdateFireAll();
+	animalNeedsAll();
+	animalCheckBurnAll();
 }
 
 void updateWorld(){
@@ -122,11 +109,9 @@ void updateWorld(){
 	const u64 cTicks = getTicks();
 	if(lastUpdate  == 0){lastUpdate  = getTicks() -    4;}
 
-	i = 4;
+	i = 2;
 	for(;lastUpdate +  4 < cTicks;lastUpdate +=  4){
 		updateWorldStep();
-		thinkWorldStep();
-		needsWorldStep();
 		if(--i == 0){break;}
 	}
 }

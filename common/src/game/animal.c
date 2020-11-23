@@ -3,6 +3,7 @@
 #include "../animals/bunny.h"
 #include "../animals/guardian.h"
 #include "../game/character.h"
+#include "../game/fire.h"
 #include "../game/rope.h"
 #include "../mods/api_v1.h"
 #include "../network/messages.h"
@@ -379,21 +380,35 @@ void animalThink(animal *e){
 	}
 }
 
-void animalThinkAll(uint off){
-	for(uint i=off;i<animalCount;i+=32){
+void animalThinkAll(){
+	static uint calls = 0;
+	for(uint i=(calls&0x1F);i<animalCount;i+=0x20){
 		animalThink(&animalList[i]);
 	}
+	calls++;
 }
 
-void animalNeedsAll(uint off){
+void animalNeedsAll(){
 	static uint calls = 0;
-	for(uint i=off;i<animalCount;i+=256){
+	for(uint i=(calls&0xFF);i<animalCount;i+=0x100){
 		animal *e = &animalList[i];
 		if(e->flags & ANIMAL_NO_NEEDS){continue;}
 		e->hunger--;
 		e->sleepy--;
 		if(e->pregnancy > 0){e->pregnancy--;}
-		if( (calls & 0x3F) == 0){e->age++;}
+		if((calls & 0x3F) == 0){e->age++;}
+	}
+	calls++;
+}
+
+void animalCheckBurnAll(){
+	static uint calls = 0;
+	for(uint i=(calls&0xFF);i<animalCount;i+=0x100){
+		animal *a = &animalList[i];
+		fire *f = fireGetAtPos(a->pos.x,a->pos.y,a->pos.z);
+		if(f == NULL)       {continue;}
+		if(f->strength < 64){continue;}
+		a->health--;
 	}
 	calls++;
 }

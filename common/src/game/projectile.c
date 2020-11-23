@@ -51,8 +51,12 @@ void projectileNewC(const character *c, being target, uint style){
 
 	const float yaw   = c->rot.yaw   + (rngValf()-0.5f)*MIN(96.f,c->inaccuracy*0.2f);
 	const float pitch = c->rot.pitch + (rngValf()-0.5f)*MIN(96.f,c->inaccuracy*0.2f);
+	float speed = 1.f;
+	if((style == 5) || (style == 6)){
+		speed = 0.1f;
+	}
 
-	projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style,1.f);
+	projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style,speed);
 }
 
 int projectileGetClient(uint i){
@@ -111,7 +115,11 @@ static inline int projectileUpdate(projectile *p){
 	if(checkCollision(p->pos.x,p->pos.y,p->pos.z)){
 		if(!isClient){
 			//worldBoxMine(p->pos.x,p->pos.y,p->pos.z,2,2,2);
-			fireBox(p->pos.x,p->pos.y,p->pos.z,1,1,1);
+			if(p->style == 6){
+				fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3);
+			}else{
+				fireBox(p->pos.x,p->pos.y,p->pos.z,1,1,1);
+			}
 		}
 		return 1;
 	}

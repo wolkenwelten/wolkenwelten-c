@@ -27,3 +27,20 @@ int bombGetAmmunition(const item *cItem){
 
 	return ITEMID;
 }
+
+int bombItemDropBurnUp(itemDrop *id){
+	(void)id;
+	if(id->ent == NULL){return 0;}
+	explode(id->ent->pos, 3*id->itm.amount, 0);
+	return 0;
+}
+
+int bombGetFireDmg(const itemDrop *id){
+	(void)id;
+	return 8;
+}
+
+int bombGetFireHealth(const itemDrop *id){
+	(void)id;
+	return 64;
+}

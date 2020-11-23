@@ -1,6 +1,7 @@
 #include "fire.h"
 
 #include "../game/blockMining.h"
+#include "../game/grenade.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/game/blockType.h"
@@ -8,6 +9,22 @@
 #include "../../../common/src/misc/misc.h"
 
 #include <stdio.h>
+
+void fireNewF(u16 x, u16 y, u16 z, i16 strength, i16 blockDmg){
+	fire *f = NULL;
+	if(fireCount < countof(fireList)){
+		f = &fireList[fireCount++];
+	}else{
+		f = &fireList[rngValM(countof(fireList))];
+	}
+
+	f->x = x;
+	f->y = y;
+	f->z = z;
+	f->strength = strength;
+	f->blockDmg = blockDmg;
+	fireSendUpdate(-1,(int)(f - fireList));
+}
 
 void fireNew(u16 x, u16 y, u16 z, i16 strength){
 	fire *f = NULL;
@@ -49,17 +66,6 @@ void fireRecvUpdate(uint c, const packet *p){
 	const u16 z        = p->v.u16[4];
 	const i16 strength = p->v.i16[5];
 	fireNew(x,y,z,strength);
-}
-
-fire *fireGetAtPos(u16 x,u16 y, u16 z){
-	for(uint i=0;i<fireCount;i++){
-		fire *f = &fireList[i];
-		if(f->x != x){continue;}
-		if(f->y != y){continue;}
-		if(f->z != z){continue;}
-		return f;
-	}
-	return NULL;
 }
 
 static inline void fireSpreadToBlock(fire *f, int r){
@@ -118,7 +124,7 @@ static int fireUpdate(fire *f){
 	const u8 b = worldGetB(f->x,f->y,f->z);
 	const int dmg = blockTypeGetFireDmg(b);
 
-	f->strength += dmg-1;
+	f->strength = MIN(30000,f->strength+dmg-1);
 	if(b == 0){
 		f->blockDmg = 0;
 	}else{
@@ -129,13 +135,21 @@ static int fireUpdate(fire *f){
 			f->blockDmg = 0;
 		}
 	}
+	if(f->strength > 8192){
+		f->strength -= 1024;
+		explode(vecAdd(vecNew(f->x,f->y,f->z),vecMulS(vecRng(),4.f)), 0.5f, 0);
+	}else if(f->strength > 2048){
+		f->strength -= 512;
+		explode(vecAdd(vecNew(f->x,f->y,f->z),vecMulS(vecRng(),3.f)), 0.3f, 0);
+	}
 
 	fireSpread(f);
 	return 0;
 }
 
-void fireUpdateAll(uint off){
-	for(uint i=off;i<fireCount;i+=32){
+void fireUpdateAll(){
+	static uint calls = 0;
+	for(uint i=(calls&0x1F);i<fireCount;i+=0x20){
 		if (fireUpdate(&fireList[i])){
 			if(!isClient){
 				fireList[i] = fireList[--fireCount];
@@ -143,6 +157,7 @@ void fireUpdateAll(uint off){
 			}
 		}
 	}
+	calls++;
 }
 
 void fireSyncPlayer(uint c){

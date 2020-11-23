@@ -18,12 +18,26 @@ bool grenadeSecondaryAction(item *cItem,character *cChar){
 
 mesh *grenadeGetMesh(const item *cItem){
 	(void)cItem;
-
 	return meshGrenade;
 }
 
 int grenadeGetAmmunition(const item *cItem){
 	(void)cItem;
-
 	return ITEMID;
+}
+
+int grenadeItemDropBurnUp(itemDrop *id){
+	if(id->ent == NULL){return 0;}
+	explode(id->ent->pos, 1*id->itm.amount, 0);
+	return 0;
+}
+
+int grenadeGetFireDmg(const itemDrop *id){
+	(void)id;
+	return 8;
+}
+
+int grenadeGetFireHealth(const itemDrop *id){
+	(void)id;
+	return 32;
 }

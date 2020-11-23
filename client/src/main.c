@@ -87,7 +87,8 @@ void playerUpdate(){
 }
 
 void worldUpdate(){
-	static int lastTick=0;
+	static uint calls = 0;
+	static  int lastTick = 0;
 	int curTick;
 
 	if(lastTick == 0){lastTick = SDL_GetTicks();}
@@ -117,8 +118,10 @@ void worldUpdate(){
 		particleUpdate();
 		ropeUpdateAll();
 		projectileUpdateAll();
+		fireCheckPlayerBurn(calls);
 
 		commitOverlayColor();
+		calls++;
 	}
 }
 

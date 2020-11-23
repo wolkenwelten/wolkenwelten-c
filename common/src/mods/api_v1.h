@@ -61,6 +61,7 @@ void recipeNew4 (const item result, const item ingred1, const item ingred2, cons
 
 void ingredientSubstituteAdd (u16 ingredient, u16 substitute);
 
+void explode       (const vec pos, float pwr, int style);
 void grenadeNew    (const character *ent, float pwr, int cluster, float clusterPwr);
 void beamblast     (character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult);
 void projectileNew (const vec pos, const vec rot, being target, being source, uint style, float speed);

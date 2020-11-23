@@ -54,3 +54,19 @@ float blasterGetInaccuracy(const item *cItem){
 
 	return 8.f;
 }
+
+int blasterItemDropBurnUp(itemDrop *id){
+	if(id->ent == NULL){return 0;}
+	explode(id->ent->pos, 0.2f*id->itm.amount, 0);
+	return 0;
+}
+
+int blasterGetFireDmg(const itemDrop *id){
+	(void)id;
+	return 6;
+}
+
+int blasterGetFireHealth(const itemDrop *id){
+	(void)id;
+	return 64;
+}

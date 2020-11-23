@@ -4,6 +4,24 @@
 #include "../sdl/sfx.h"
 #include "../gfx/particle.h"
 
+static inline void projectileDrawFlameBullet(const projectile *p){
+	for(int ii=0;ii<4;ii++){
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),192, -6.f,0xFF50A0F0,96);
+	}
+	for(int ii=0;ii<2;ii++){
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),256, -8.f,0xFF70B8FF,64);
+	}
+}
+
+static inline void projectileDrawWaterBullet(const projectile *p){
+	for(int ii=0;ii<4;ii++){
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),192, -6.f,0xFFF0A050,96);
+	}
+	for(int ii=0;ii<2;ii++){
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),256, -8.f,0xFFFFB870,64);
+	}
+}
+
 static inline void projectileDrawAssaultBullet(const projectile *p){
 	vec cp,cv;
 	u32 tc = 0xFF2060C0 | (rngValR() & 0x070F3F);
@@ -76,6 +94,12 @@ void projectileDrawAll(){
 			break; }
 		case 4:
 			projectileDrawShotgunBullet(p);
+			break;
+		case 5:
+			projectileDrawFlameBullet(p);
+			break;
+		case 6:
+			projectileDrawWaterBullet(p);
 			break;
 		}
 	}

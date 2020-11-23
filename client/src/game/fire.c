@@ -1,6 +1,10 @@
 #include "fire.h"
 
+#include "../game/character.h"
 #include "../gfx/particle.h"
+#include "../gui/overlay.h"
+#include "../network/chat.h"
+#include "../sdl/sfx.h"
 #include "../../../common/src/network/messages.h"
 
 #include <string.h>
@@ -44,4 +48,23 @@ void fireRecvUpdate(uint c, const packet *p){
 	f->y = p->v.u16[3];
 	f->z = p->v.u16[4];
 	f->strength = p->v.i16[5];
+}
+
+void fireCheckPlayerBurn(uint off){
+	for(uint i=off&0x7F;i<fireCount;i+=0x80){
+		const fire *f   = &fireList[i];
+		const vec fpos  = vecNew(f->x,f->y,f->z);
+		const vec  dist = vecSub(player->pos,fpos);
+		const float  dd = vecDot(dist,dist);
+		const float fdd = MIN(9.f,(fireList[i].strength * 0.01f) * (fireList[i].strength * 0.01f));
+		if(dd < fdd){
+			sfxPlay(sfxUngh,1.f);
+			setOverlayColor(0xA03020F0,0);
+			if(characterHP(player,-1)){
+				msgSendDyingMessage("burned", 65535);
+				setOverlayColor(0xFF000000,0);
+				commitOverlayColor();
+			}
+		}
+	}
 }
