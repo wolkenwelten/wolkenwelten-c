@@ -31,10 +31,10 @@ void fireBoxExtinguish(int x, int y, int z, int w, int h, int d){
 		for(int cy = y;cy<y+h;cy++){
 			for(int cz = z;cz<z+d;cz++){
 				fire *f = fireGetAtPos(cx,cy,cz);
-				if(f == NULL){return;}
+				if(f == NULL){continue;}
 				f->strength = MAX(-128,f->strength - 128);
 				fireSendUpdate(-1, f - fireList);
-				printf("Extinguish I:%u S:%i\n",(int)(f-fireList),f->strength);
+				if(!isClient){msgFxBeamBlastHit(-1, vecNew(f->x,f->y,f->z), 256, 2);}
 			}
 		}
 	}

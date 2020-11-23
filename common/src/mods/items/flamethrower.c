@@ -1,5 +1,5 @@
 static const int ITEMID=283;
-static const int MAGSIZE=120;
+static const int MAGSIZE=90;
 
 #include "../api_v1.h"
 

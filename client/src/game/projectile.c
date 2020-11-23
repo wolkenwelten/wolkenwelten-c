@@ -6,7 +6,7 @@
 
 static inline void projectileDrawFlameBullet(const projectile *p){
 	for(int ii=0;ii<4;ii++){
-		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),192, -6.f,0xFF50A0F0,96);
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),192, -6.f,0xFF3060B0,96);
 	}
 	for(int ii=0;ii<2;ii++){
 		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),256, -8.f,0xFF70B8FF,64);
@@ -15,10 +15,10 @@ static inline void projectileDrawFlameBullet(const projectile *p){
 
 static inline void projectileDrawWaterBullet(const projectile *p){
 	for(int ii=0;ii<4;ii++){
-		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),192, -6.f,0xFFF0A050,96);
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),192, -6.f,0xFFB05020,192);
 	}
 	for(int ii=0;ii<2;ii++){
-		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),256, -8.f,0xFFFFB870,64);
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), vecZero(),256, -8.f,0xFF9F7830,128);
 	}
 }
 

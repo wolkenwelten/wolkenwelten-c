@@ -116,10 +116,14 @@ static inline void fireSpread(fire *f){
 	}
 }
 
-static int fireUpdate(fire *f){
+void fireUpdate(fire *f){
+	if(f == NULL){return;}
 	f->strength -= 2;
 	if(f->strength <= 0){
-		return 1;
+		if(isClient){return;}
+		fireList[f-fireList] = fireList[--fireCount];
+		fireSendUpdate(-1,f-fireList);
+		return;
 	}
 	const u8 b = worldGetB(f->x,f->y,f->z);
 	const int dmg = blockTypeGetFireDmg(b);
@@ -144,18 +148,12 @@ static int fireUpdate(fire *f){
 	}
 
 	fireSpread(f);
-	return 0;
 }
 
 void fireUpdateAll(){
 	static uint calls = 0;
 	for(uint i=(calls&0x1F);i<fireCount;i+=0x20){
-		if (fireUpdate(&fireList[i])){
-			if(!isClient){
-				fireList[i] = fireList[--fireCount];
-				fireSendUpdate(-1,i);
-			}
-		}
+		fireUpdate(&fireList[i]);
 	}
 	calls++;
 }

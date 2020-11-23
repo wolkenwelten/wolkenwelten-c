@@ -52,8 +52,10 @@ void projectileNewC(const character *c, being target, uint style){
 	const float yaw   = c->rot.yaw   + (rngValf()-0.5f)*MIN(96.f,c->inaccuracy*0.2f);
 	const float pitch = c->rot.pitch + (rngValf()-0.5f)*MIN(96.f,c->inaccuracy*0.2f);
 	float speed = 1.f;
-	if((style == 5) || (style == 6)){
+	if(style == 5){
 		speed = 0.1f;
+	}else if(style == 6){
+		speed = 0.2f;
 	}
 
 	projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style,speed);
@@ -117,8 +119,10 @@ static inline int projectileUpdate(projectile *p){
 			//worldBoxMine(p->pos.x,p->pos.y,p->pos.z,2,2,2);
 			if(p->style == 6){
 				fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3);
+				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 2);}
 			}else{
 				fireBox(p->pos.x,p->pos.y,p->pos.z,1,1,1);
+				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 1);}
 			}
 		}
 		return 1;
@@ -133,7 +137,6 @@ void projectileUpdateAll(){
 		if(projectileUpdate(&projectileList[i])){
 			projectileList[i].style = 0;
 			if(!isClient){
-				msgFxBeamBlastHit(-1, projectileList[i].pos, 256, 1);
 				projectileSendUpdate(-1,i);
 			}
 		}
