@@ -26,7 +26,7 @@ static void fireDraw(const fire *f){
 	if(f->strength < 512){return;}
 	if((rngValR()&0xF) != 0){return;}
 	u32 c = 0xFF101820 | (rngValR()&0x0003070F);
-	const vec vv = vecNew(rngValf()*0.00002f,0.00005f,rngValf()*0.00002f);
+	const vec vv = vecNew(rngValf()*0.00002f,0.00005f+rngValf()*0.00002f,rngValf()*0.00002f);
 	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vv,size*0.01f, size*0.2f,c,2048);
 }
 

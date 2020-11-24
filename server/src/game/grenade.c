@@ -31,7 +31,7 @@ void explode(const vec pos, float pw, int style){
 	}
 	for(uint i=0;i<pw*64;i++){
 		const vec rot = vecMul(vecRng(),vecNew(180.f,90.f,0.f));
-		projectileNew(pos, rot, 0, 0, 1, 0.07f);
+		projectileNew(pos, rot, 0, 0, 5, 0.07f);
 	}
 	msgGrenadeExplode(pos, pw, style);
 }
