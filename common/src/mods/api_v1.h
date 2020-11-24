@@ -35,7 +35,7 @@
 #define I_MasterB       262
 #define I_AssaultB      263
 #define I_ShotgunB      264
-#define I_Bullet        265
+#define I_Crystalbullet 265
 #define I_Iron_Bar      266
 #define I_Iron_Axe      267
 #define I_Iron_Pick     268
@@ -53,6 +53,10 @@
 #define I_Fur           280
 #define I_Burntmeat     281
 #define I_FlintAndSteel 282
+#define I_Flamethrower  283
+#define I_Flamebullet   284
+#define I_Iron_Dust     285
+#define I_Crystal_Dust  286
 
 void recipeNew1 (const item result, const item ingred1);
 void recipeNew2 (const item result, const item ingred1, const item ingred2);
@@ -86,8 +90,9 @@ character *characterGetByBeing(being b);
 being      characterGetBeing (const character *c);
 int  characterHitCheck       (const vec pos, float mdd, int damage, int cause, u16 iteration, being source);
 
-void fireNew       (u16 x, u16 y, u16 z, i16 strength);
-void fireBox       (int x, int y, int z, int w, int h, int d);
+void fireNew          (u16 x, u16 y, u16 z, i16 strength);
+void fireBox          (int x, int y, int z, int w, int h, int d, int strength);
+void fireBoxExtinguish(int x, int y, int z, int w, int h, int d, int strength);
 
 item  itemNew      (u16 ID, i16 amount);
 item  itemEmpty    ();
@@ -125,6 +130,7 @@ i64         rngValMM(i64 min,i64 max);
 
 const char   *blockTypeGetName         (u8 b);
 int           blockTypeGetHP           (u8 b);
+int           blockTypeGetFireHP       (u8 b);
 int           blockTypeGetFireDmg      (u8 b);
 blockCategory blockTypeGetCat          (u8 b);
 bool          blockTypeValid           (u8 b);

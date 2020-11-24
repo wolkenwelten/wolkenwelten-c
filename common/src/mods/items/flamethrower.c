@@ -5,12 +5,12 @@ static const int MAGSIZE=90;
 
 void flamethrowerInit(){
 	(void)ITEMID;
-	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,8), itemNew(I_Iron_Bar,8), itemNew(I_Bullet,8));
+	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,8), itemNew(I_Iron_Bar,8), itemNew(I_Crystalbullet,8));
 }
 
 mesh *flamethrowerGetMesh(const item *cItem){
 	(void)cItem;
-	return meshAssaultblaster;
+	return meshFlamethrower;
 }
 
 int flamethrowerGetStackSize(const item *cItem){
@@ -46,7 +46,7 @@ bool flamethrowerTertiaryAction(item *cItem, character *cChar){
 
 int flamethrowerGetAmmunition(const item *cItem){
 	(void)cItem;
-	return 265;
+	return I_Flamebullet;
 }
 
 int flamethrowerGetMagSize(const item *cItem){

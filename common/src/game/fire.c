@@ -13,26 +13,26 @@ void fireSendUpdate(uint c, uint i){
 	msgFireUpdate(c,i,fireCount,f->x,f->y,f->z,f->strength);
 }
 
-void fireBox(int x, int y, int z, int w, int h, int d){
+void fireBox(int x, int y, int z, int w, int h, int d, int strength){
 	for(int cx = x;cx < x+w;cx++){
 		for(int cy = y;cy<y+h;cy++){
 			for(int cz = z;cz<z+d;cz++){
 				const u8 b = worldGetB(cx,cy,cz);
 				if(b == 0){continue;}
-				fireNew(cx,cy,cz,128);
+				fireNew(cx,cy,cz,strength);
 			}
 		}
 	}
 }
 
-void fireBoxExtinguish(int x, int y, int z, int w, int h, int d){
+void fireBoxExtinguish(int x, int y, int z, int w, int h, int d, int strength){
 	if(isClient){return;}
 	for(int cx = x;cx < x+w;cx++){
 		for(int cy = y;cy<y+h;cy++){
 			for(int cz = z;cz<z+d;cz++){
 				fire *f = fireGetAtPos(cx,cy,cz);
 				if(f == NULL){continue;}
-				f->strength = MAX(-128,f->strength - 128);
+				f->strength = MAX(-strength,f->strength - strength);
 				fireSendUpdate(-1, f - fireList);
 				if(!isClient){msgFxBeamBlastHit(-1, vecNew(f->x,f->y,f->z), 256, 2);}
 			}

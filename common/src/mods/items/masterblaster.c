@@ -5,7 +5,7 @@ static const int MAGSIZE=90;
 
 void masterblasterInit(){
 	(void)ITEMID;
-	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,16), itemNew(I_Iron_Bar,12), itemNew(I_Bullet,16));
+	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,16), itemNew(I_Iron_Bar,12), itemNew(I_Crystalbullet,16));
 }
 
 mesh *masterblasterGetMesh(const item *cItem){
@@ -39,7 +39,7 @@ bool masterblasterTertiaryAction(item *cItem, character *cChar){
 int masterblasterGetAmmunition(const item *cItem){
 	(void)cItem;
 
-	return 265;
+	return I_Crystalbullet;
 }
 
 int masterblasterGetMagSize(const item *cItem){

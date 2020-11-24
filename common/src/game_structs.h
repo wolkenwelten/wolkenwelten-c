@@ -22,7 +22,7 @@ typedef struct {
 	u8            texY[6];
 	u32           color[2];
 	mesh         *singleBlock;
-	int           hp;
+	int           hp,firehp;
 	blockCategory cat;
 	char         *name;
 } blockType;

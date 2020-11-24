@@ -37,5 +37,5 @@ bool flintandsteelSecondaryAction(item *cItem,character *cChar){
 mesh *flintandsteelGetMesh(const item *cItem){
 	(void)cItem;
 
-	return meshIronbar;
+	return meshFlintandsteel;
 }

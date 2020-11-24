@@ -45,7 +45,7 @@ int   itemDecAmmo    (      item *i, i16 amount);
 #define I_MasterB       262
 #define I_AssaultB      263
 #define I_ShotgunB      264
-#define I_Bullet        265
+#define I_Crystalbullet 265
 #define I_Iron_Bar      266
 #define I_Iron_Axe      267
 #define I_Iron_Pick     268
@@ -63,3 +63,7 @@ int   itemDecAmmo    (      item *i, i16 amount);
 #define I_Fur           280
 #define I_Burntmeat     281
 #define I_FlintAndSteel 282
+#define I_Flamethrower  283
+#define I_Flamebullet   284
+#define I_Iron_Dust     285
+#define I_Crystal_Dust  286

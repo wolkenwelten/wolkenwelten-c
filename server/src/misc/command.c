@@ -76,13 +76,20 @@ static void cmdDbgitem(int c, const char *cmd){
 	newInventory[i++] = itemNew(262, 1);
 	newInventory[i++] = itemNew(263, 1);
 	newInventory[i++] = itemNew(264, 1);
+	newInventory[i++] = itemNew(282, 1);
+	newInventory[i++] = itemNew(283, 1);
 	newInventory[i++] = itemNew(270, 1);
 	newInventory[i++] = itemNew(271, 1);
 	newInventory[i++] = itemNew(258,42);
 	newInventory[i++] = itemNew(256,99);
+
 	newInventory[i++] = itemNew(265,999);
 	newInventory[i++] = itemNew(265,999);
 	newInventory[i++] = itemNew(265,999);
+
+	newInventory[i++] = itemNew(284,999);
+	newInventory[i++] = itemNew(284,999);
+	newInventory[i++] = itemNew(284,999);
 
 	i=0;
 	newEquipment[i++] = itemNew(274,1);

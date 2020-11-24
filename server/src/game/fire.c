@@ -108,10 +108,12 @@ static inline void fireSpread(fire *f){
 		fireSpreadToBlock(f,r);
 	}
 	count = f->strength >> 6;
-	for(int i=0;i<count;i++){
+	for(int i=0;i<count+1;i++){
 		if((rngValR() & 0x1F)!= 0){continue;}
-		int r = 2;
-		if((f->strength > 0xFF) && ((rngValR() & 0x07) == 0)){r = 3;}
+		int r = 1;
+		const uint rv = (rngValR() & 0x07);
+		if(     (f->strength > 0x1F) && (rv != 0)){r = 2;}
+		else if((f->strength > 0xFF) && (rv == 0)){r = 3;}
 		fireSpreadToLeaf(f,r);
 	}
 }
@@ -125,15 +127,26 @@ void fireUpdate(fire *f){
 		fireSendUpdate(-1,f-fireList);
 		return;
 	}
+
+	int maxdmg = 0;
+	for(int x = -1;x < 2;x++){
+	for(int y = -1;y < 2;y++){
+	for(int z = -1;z < 2;z++){
+		if(worldGetB(f->x+x,f->y+y,f->z+z) == 0){maxdmg++;}
+	}
+	}
+	}
+
 	const u8 b = worldGetB(f->x,f->y,f->z);
-	const int dmg = blockTypeGetFireDmg(b);
+	const int dmg = MIN(maxdmg,blockTypeGetFireDmg(b));
 
 	f->strength = MIN(30000,f->strength+dmg-1);
 	if(b == 0){
 		f->blockDmg = 0;
+		fireSpread(f);
 	}else{
-		const int maxhp = blockTypeGetHP(b);
-		f->blockDmg = MIN(maxhp,f->blockDmg + 1);
+		const int maxhp = blockTypeGetFireHP(b);
+		f->blockDmg = MIN(maxhp,f->blockDmg + dmg);
 		if(f->blockDmg >= maxhp){
 			blockMiningMineBlock(f->x,f->y,f->z,b);
 			f->blockDmg = 0;

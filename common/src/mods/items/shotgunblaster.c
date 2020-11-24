@@ -5,7 +5,7 @@ static const int MAGSIZE=60;
 
 void shotgunblasterInit(){
 	(void)ITEMID;
-	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,12), itemNew(I_Iron_Bar,24), itemNew(I_Bullet,24));
+	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,12), itemNew(I_Iron_Bar,24), itemNew(I_Flamebullet,24));
 }
 
 mesh *shotgunblasterGetMesh(const item *cItem){
@@ -55,7 +55,7 @@ float shotgunblasterGetInaccuracy(const item *cItem){
 int shotgunblasterGetAmmunition(const item *cItem){
 	(void)cItem;
 
-	return 265;
+	return I_Flamebullet;
 }
 
 int shotgunblasterGetMagSize(const item *cItem){

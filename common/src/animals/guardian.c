@@ -110,6 +110,6 @@ void animalThinkGuardian(animal *e){
 }
 
 void animalRDieGuardian(animal *e){
-	item drop = itemNew(I_Bullet,rngValMM(20,40));
+	item drop = itemNew(I_Crystalbullet,rngValMM(20,40));
 	itemDropNewP(e->pos,&drop);
 }
