@@ -24,7 +24,7 @@ static void genStalagtit(const worldgen *wgen, int x, int y, int z){
 			d = d * d;
 			switch(rngValM(256)){
 			case 0:
-				h = rngValMM(d,d*2);
+				h = rngValMM(d,d*2+1);
 				break;
 			case 1:
 			case 2:
@@ -34,10 +34,10 @@ static void genStalagtit(const worldgen *wgen, int x, int y, int z){
 			case 6:
 			case 7:
 			case 8:
-				h = rngValMM(d/2,d);
+				h = rngValMM(d/2,d+1);
 				break;
 			default:
-				h = rngValMM(d/4,d/2);
+				h = rngValMM(d/4,d/2+1);
 				break;
 			}
 			chungusBox(wgen->clay, x+sx, y - h, z+sz,1, h*2,1, b);

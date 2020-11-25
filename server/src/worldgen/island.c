@@ -16,14 +16,13 @@ void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
 	chungus *clay = wgen->clay;
 
 	if((w < 8) || (h < 8) || (d < 8)){
-		chungusBoxF(clay,x-w,y-h,z-d,w*2,h*2,d*2,3);
-		chungusBoxF(clay,x-w,y+h-2,z-d,w*2,2,d*2,1);
-		if(x-w < wgen->minX){ wgen->minX = x-w; }
-		if(y-h < wgen->minY){ wgen->minY = y-h; }
-		if(z-d < wgen->minZ){ wgen->minZ = z-d; }
-		if(x+w > wgen->maxX){ wgen->maxX = x+w; }
-		if(y+h > wgen->maxY){ wgen->maxY = y+h; }
-		if(z+d > wgen->maxZ){ wgen->maxZ = z+d; }
+		chungusBoxFWG(clay,x-w,y-h,z-d,w*2,h*2,d*2);
+		wgen->minX = MIN(wgen->minX,x-w);
+		wgen->minY = MIN(wgen->minY,y-h);
+		wgen->minZ = MIN(wgen->minZ,z-d);
+		wgen->maxX = MAX(wgen->maxX,x+w);
+		wgen->maxY = MAX(wgen->maxY,y+h);
+		wgen->maxZ = MAX(wgen->maxZ,z+d);
 	}
 
 	if((w < 2) || (h < 2) || (d < 2)){return;}
@@ -33,12 +32,26 @@ void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
 		int nh = h/2;
 		int nd = d/2;
 		if(wgen->iterChance > 0){
-			if(rngValM(wgen->iterChance)==0){nw*=2;}
-			if(rngValM(wgen->iterChance)==0){nh*=2;}
-			if(rngValM(wgen->iterChance)==0){nd*=2;}
-			if(rngValM(wgen->iterChance)==0){nw/=2;}
-			if(rngValM(wgen->iterChance)==0){nh/=2;}
-			if(rngValM(wgen->iterChance)==0){nd/=2;}
+			switch(rngValM(wgen->iterChance * 8)){
+			case 0:
+				nw = nw << 1;
+				break;
+			case 1:
+				nh = nh >> 1;
+				break;
+			case 2:
+				nd = nd << 1;
+				break;
+			case 3:
+				nw = nw >> 1;
+				break;
+			case 4:
+				nh = nh >> 1;
+				break;
+			case 5:
+				nd = nd >> 1;
+				break;
+			}
 		}
 		switch(rngValM(6)){
 		case 0:
@@ -107,79 +120,79 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 	memset(w,0,sizeof(wgChances));
 	w->treeType = rngValM(2);
 
-	w->hematiteChance = 512;
-	w->coalChance     = 512;
-	w->dirtVeinChance = 256;
+	w->hematiteChance = 511;
+	w->coalChance     = 511;
+	w->dirtVeinChance = 254;
 
 	if(wgen->layer > 16){
-		w->crystalChance  = 1024;
-		w->hematiteChance =  256;
-		w->coalChance     =  256;
-		w->dirtVeinChance =  192;
+		w->crystalChance  = 1023;
+		w->hematiteChance =  255;
+		w->coalChance     =  255;
+		w->dirtVeinChance =  255;
 	}
 
 	switch(wgen->vegetationChance){
 		case 7:
-			w->bigTreeChance  =   148;
-			w->treeChance     =    28;
-			w->shrubChance    =    20;
-			w->animalChance   =  4096;
+			w->bigTreeChance  =  (1<<7)-1;
+			w->treeChance     =  (1<<5)-1;
+			w->shrubChance    =  (1<<4)-1;
+			w->animalChance   = (1<<12)-1;
 			break;
 		case 6:
-			w->bigTreeChance  =   192;
-			w->treeChance     =    32;
-			w->shrubChance    =    24;
-			w->animalChance   =  8192;
+			w->bigTreeChance  = (1<< 8)-1;
+			w->treeChance     = (1<< 5)-1;
+			w->shrubChance    = (1<< 5)-1;
+			w->animalChance   = (1<<13)-1;
 			break;
 		default:
 		case 5:
-			w->bigTreeChance  =   256;
-			w->treeChance     =    48;
-			w->shrubChance    =    48;
-			w->animalChance   =  8192;
+			w->bigTreeChance  = (1<< 8)-1;
+			w->treeChance     = (1<< 6)-1;
+			w->shrubChance    = (1<< 6)-1;
+			w->animalChance   = (1<<13)-1;
 			break;
 		case 4:
-			w->bigTreeChance  =   512;
-			w->treeChance     =    96;
-			w->shrubChance    =    64;
-			w->animalChance   =  8192;
+			w->bigTreeChance  = (1<< 9)-1;;
+			w->treeChance     = (1<< 7)-1;;
+			w->shrubChance    = (1<< 6)-1;;
+			w->animalChance   = (1<<14)-1;;
 			break;
 		case 3:
-			w->treeChance     =   768;
-			w->shrubChance    =    96;
-			w->dirtChance     =    32;
-			w->stoneChance    =   256;
-			w->animalChance   = 12288;
+			w->treeChance     = (1<<10)-1;;
+			w->shrubChance    = (1<< 7)-1;;
+			w->dirtChance     = (1<< 5)-1;;
+			w->stoneChance    = (1<< 8)-1;;
+			w->animalChance   = (1<<15)-1;;
 			break;
 		case 2:
-			w->treeChance     =  1024;
-			w->shrubChance    =    64;
-			w->dirtChance     =    12;
-			w->stoneChance    =   128;
-			w->animalChance   = 16384;
+			w->treeChance     = (1<<10)-1;;
+			w->shrubChance    = (1<< 6)-1;;
+			w->dirtChance     = (1<< 4)-1;;
+			w->stoneChance    = (1<< 7)-1;;
+			w->animalChance   = (1<<16)-1;;
 			break;
 		case 1:
-			w->shrubChance    =   256;
-			w->dirtChance     =     4;
-			w->stoneChance    =    64;
-			w->treeChance     =  4096;
-			w->deadTreeChance =  4096;
-			w->animalChance   = 16384;
+			w->shrubChance    = (1<< 8)-1;;
+			w->dirtChance     = (1<< 2)-1;;
+			w->stoneChance    = (1<< 5)-1;;
+			w->treeChance     = (1<<12)-1;;
+			w->deadTreeChance = (1<<12)-1;;
+			w->animalChance   = (1<<17)-1;;
 			break;
 		case 0:
-			w->shrubChance    =  1024;
-			w->dirtChance     =     2;
-			w->stoneChance    =    32;
-			w->monolithChance = 32000;
-			w->treeChance     =  8192*2;
-			w->deadTreeChance =  8192;
-			w->animalChance   = 32768;
+			w->shrubChance    = (1<<10)-1;;
+			w->dirtChance     = (1<< 1)-1;;
+			w->stoneChance    = (1<< 5)-1;;
+			w->monolithChance = (1<<18)-1;;
+			w->treeChance     = (1<<15)-1;;
+			w->deadTreeChance = (1<<13)-1;;
+			w->animalChance   = (1<<17)-1;;
 			break;
 	}
 }
 
 static inline bool worldgenRDMonolith(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(w->hasSpecial || (!w->monolithChance) || rngValM(w->monolithChance)){return false;}
+	if(w->hasSpecial || (!w->monolithChance) || rngValA(w->monolithChance)){return false;}
 	worldgenMonolith(wgen,cx,cy,cz);
 	w->lastBlock  = I_Obsidian;
 	w->airBlocks  = 0;
@@ -188,7 +201,7 @@ static inline bool worldgenRDMonolith(worldgen *wgen, wgChances *w, int cx, int 
 }
 
 static inline bool worldgenRDBigTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(!w->bigTreeChance || (w->airBlocks <= 32) || (rngValM(w->bigTreeChance))){return false;}
+	if(!w->bigTreeChance || (w->airBlocks <= 32) || rngValA(w->bigTreeChance)){return false;}
 	if(w->treeType==0){
 		wgBigSpruce(wgen->clay,cx,cy,cz);
 	}else if(w->treeType == 1){
@@ -202,7 +215,7 @@ static inline bool worldgenRDBigTree(worldgen *wgen, wgChances *w, int cx, int c
 }
 
 static inline bool worldgenRDTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(!w->treeChance || (w->airBlocks <= 16) || rngValM(w->treeChance)){return false;}
+	if(!w->treeChance || (w->airBlocks <= 16) || rngValA(w->treeChance)){return false;}
 	if(w->treeType==0){
 		wgSpruce(wgen->clay,cx,cy,cz);
 	}else if(w->treeType == 1){
@@ -214,7 +227,7 @@ static inline bool worldgenRDTree(worldgen *wgen, wgChances *w, int cx, int cy, 
 }
 
 static inline bool worldgenRDAnimal(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(!w->animalChance || (w->airBlocks <= 4) || rngValM(w->animalChance)){return false;}
+	if(!w->animalChance || (w->airBlocks <= 4) || rngValA(w->animalChance)){return false;}
 	const vec pos = vecNew(wgen->gx+cx,wgen->gy+cy+2.f,wgen->gz+cz);
 	animalNew(pos,1,0);
 	animalNew(pos,1,1);
@@ -222,7 +235,7 @@ static inline bool worldgenRDAnimal(worldgen *wgen, wgChances *w, int cx, int cy
 }
 
 static inline bool worldgenRDDeadTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(!w->deadTreeChance || (w->airBlocks <= 16) || rngValM(w->deadTreeChance)){return false;}
+	if(!w->deadTreeChance || (w->airBlocks <= 16) || rngValA(w->deadTreeChance)){return false;}
 	wgDeadTree(wgen->clay,cx,cy,cz);
 	w->lastBlock = I_Oak;
 	w->airBlocks = 0;
@@ -231,18 +244,18 @@ static inline bool worldgenRDDeadTree(worldgen *wgen, wgChances *w, int cx, int 
 
 static inline bool worldgenRDShrub(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
 	if(w->airBlocks <= 8){return false;}
-	if(w->shrubChance && (rngValM(w->shrubChance)==12)){
+	if(w->shrubChance && (rngValA(w->shrubChance)==0)){
 		wgShrub(wgen->clay,cx,cy,cz);
 		w->lastBlock = I_Dirt;
 		w->airBlocks = 0;
 		return true;
 	}
-	if((w->dirtChance) && (rngValM(w->dirtChance)==1)){
+	if((w->dirtChance) && (rngValA(w->dirtChance)==0)){
 		w->lastBlock = I_Dirt;
 		w->airBlocks = 0;
 		return true;
 	}
-	if(w->stoneChance && (rngValM(w->stoneChance)==1)){
+	if(w->stoneChance && (rngValA(w->stoneChance)==0)){
 		chungusSetB(wgen->clay,cx,cy  ,cz,I_Stone);
 		chungusSetB(wgen->clay,cx,cy+1,cz,I_Stone);
 		return true;
@@ -251,10 +264,10 @@ static inline bool worldgenRDShrub(worldgen *wgen, wgChances *w, int cx, int cy,
 }
 
 static inline bool worldgenRDHematite(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(!w->hematiteChance || (w->airBlocks > 0) || rngValM(w->hematiteChance)){return false;}
-	const int cw = rngValMM(1,4);
-	const int ch = rngValMM(1,4);
-	const int cd = rngValMM(1,4);
+	if(!w->hematiteChance || (w->airBlocks > 0) || rngValA(w->hematiteChance)){return false;}
+	const int cw = (rngValR()&3)+1;
+	const int ch = (rngValR()&3)+1;
+	const int cd = (rngValR()&3)+1;
 	chungusBoxF(wgen->clay,cx-cw,cy,cz-cd,cw,ch,cd,I_Hematite_Ore);
 	w->lastBlock = I_Hematite_Ore;
 	w->airBlocks = 0;
@@ -262,10 +275,10 @@ static inline bool worldgenRDHematite(worldgen *wgen, wgChances *w, int cx, int 
 }
 
 static inline bool worldgenRDCoal(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(!w->coalChance || (w->airBlocks > 0) || rngValM(w->coalChance)){return false;}
-	const int cw = rngValMM(2,5);
-	const int ch = rngValMM(2,5);
-	const int cd = rngValMM(2,5);
+	if(!w->coalChance || (w->airBlocks > 0) || rngValA(w->coalChance)){return false;}
+	const int cw = (rngValR()&3)+2;
+	const int ch = (rngValR()&3)+2;
+	const int cd = (rngValR()&3)+2;
 	chungusBoxF(wgen->clay,cx-cw,cy,cz-cd,cw,ch,cd,I_Coal);
 	w->lastBlock = I_Coal;
 	w->airBlocks = 0;
@@ -273,10 +286,10 @@ static inline bool worldgenRDCoal(worldgen *wgen, wgChances *w, int cx, int cy, 
 }
 
 static inline bool worldgenRDDirt(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(!w->dirtVeinChance || (w->airBlocks > 0) || rngValM(w->dirtVeinChance)){return false;}
-	const int cw = rngValMM(2,6);
-	const int ch = rngValMM(2,6);
-	const int cd = rngValMM(2,6);
+	if(!w->dirtVeinChance || (w->airBlocks > 0) || rngValA(w->dirtVeinChance)){return false;}
+	const int cw = (rngValR()&3)+3;
+	const int ch = (rngValR()&3)+3;
+	const int cd = (rngValR()&3)+3;
 	chungusBoxF(wgen->clay,cx-cw,cy,cz-cd,cw,ch,cd,I_Dirt);
 	w->lastBlock = I_Dirt;
 	w->airBlocks = 0;
@@ -475,6 +488,7 @@ void worldgenCluster(worldgen *wgen, int size, int iSize, int iMin,int iMax){
 		iMax *= 12;
 		iSize /= 2;
 	}
+	iMax = MAX(iMax,iMin+1);
 	for(int i=rngValMM(iMin,iMax);i>0;i--){
 		int nx = rngValM(CHUNGUS_SIZE-CHUNGUS_SIZE/8)+CHUNGUS_SIZE/16;
 		int ny = rngValM(CHUNGUS_SIZE-CHUNGUS_SIZE/8)+CHUNGUS_SIZE/16;

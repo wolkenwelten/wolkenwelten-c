@@ -123,11 +123,6 @@ void     sfxPlay   (sfx *b, float volume);
 void     sfxPlayPos(sfx *b, float volume, vec pos);
 void     sfxLoop   (sfx *b, float volume);
 
-float       rngValf();
-u64         rngValR();
-u64         rngValM(u64 max);
-i64         rngValMM(i64 min,i64 max);
-
 const char   *blockTypeGetName         (u8 b);
 int           blockTypeGetHP           (u8 b);
 int           blockTypeGetFireHP       (u8 b);

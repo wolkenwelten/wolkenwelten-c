@@ -14,7 +14,7 @@
 bigchungus world;
 
 void bigchungusInit(bigchungus *c){
-	memset(c->chungi,0,256*128*256*sizeof(chunk *));
+	//memset(c->chungi,0,256*128*256*sizeof(chunk *));
 	generateNoise(optionWorldSeed ^ 0x84407db3, c->vegetationConcentration);
 	generateNoise(optionWorldSeed ^ 0xc2fb18f4, c->islandSizeModifier);
 	generateNoise(optionWorldSeed ^ 0x1ab033cF, c->islandCountModifier);
@@ -222,7 +222,7 @@ void bigchungusGenSpawn(bigchungus *c){
 
 void bigchungusGenHugeSpawn(bigchungus *c){
 	for(int x=127;x<=129;x++){
-		for(int y=1;y<=32;y++){
+		for(int y=1;y<=8;y++){
 			for(int z=127;z<=129;z++){
 				if(c->chungi[x][y][z] == NULL){
 					c->chungi[x][y][z] = chungusNew(x,y,z);

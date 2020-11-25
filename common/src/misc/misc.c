@@ -8,34 +8,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-u64 RNGValue = 1;
-
-void seedRNG(u64 seed){
-	RNGValue = seed;
-}
-
-u64 getRNGSeed(){
-	return RNGValue;
-}
-
-u64 rngValR(){
-	RNGValue = ((RNGValue * 1103515245)) + 12345;
-	return ((RNGValue&0xFFFF)<<16) | ((RNGValue>>16)&0xFFFF);
-}
-
-float rngValf(){
-	return (float)rngValR() / ((float)0xffffffff);
-}
-
-u64 rngValM(u64 max){
-	if(max == 0){return 0;}
-	return rngValR() % max;
-}
-
-i64 rngValMM(i64 min,i64 max){
-	return rngValM(max - min) + min;
-}
-
 float animationInterpolation(int left, int max , float midPoint){
 	if(max  == 0){return 0.f;}
 	if(left <= 0){return 0.f;}

@@ -1,8 +1,6 @@
 #pragma once
+#include "rng.h"
 #include "../gfx_structs.h"
-
-float rngValf();
-u64   rngValR();
 
 vec vecSqrt     (const vec a);
 vec vecCross    (const vec a, const vec b);

@@ -13,7 +13,7 @@ uint   chunkCount     = 0;
 chunk *chunkFirstFree = NULL;
 
 void chunkInit(){
-	memset(chunkList,0,sizeof(chunkList));
+	//memset(chunkList,0,sizeof(chunkList));
 }
 
 chunk *chunkNew(u16 x,u16 y,u16 z){
@@ -59,12 +59,12 @@ void chunkFree(chunk *c){
 }
 
 void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
-	for(int cx=x;cx<gx;cx++){
-		for(int cy=y;cy<gy;cy++){
-			for(int cz=z;cz<gz;cz++){
-				c->data[cx][cy][cz] = block;
-			}
-		}
+	for(int cx = x; cx < gx; cx++){
+	for(int cy = y; cy < gy; cy++){
+	for(int cz = z; cz < gz; cz++){
+		c->data[cx][cy][cz] = block;
+	}
+	}
 	}
 	c->clientsUpdated = 0;
 }

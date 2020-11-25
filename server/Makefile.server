@@ -60,3 +60,8 @@ runs: all
 .PHONY: run
 runsv: all
 	./wolkenwelten-server $(TEST_WORLD) -verbose
+
+.PHONY: run
+runsp: all
+	rm -rf save/
+	time valgrind --tool=callgrind --dump-instr=yes ./wolkenwelten-server $(TEST_WORLD) -profileWG

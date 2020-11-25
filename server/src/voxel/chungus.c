@@ -20,7 +20,7 @@ chungus *chungusFirstFree = NULL;
 u64 freeTime = 0;
 
 void chungusInit(){
-	memset(chungusList,0,sizeof(chungusList));
+	//memset(chungusList,0,sizeof(chungusList));
 }
 
 float chunkDistance(const entity *cam, const vec pos){
@@ -160,7 +160,7 @@ void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
 	int gy = (y+h)>>4;
 	int gz = (z+d)>>4;
 
-	if( (x  |  y  |  z  ) &(~0xFF)) { return; }
+	if( (x   | y   | z  ) &(~0xFF)) { return; }
 	if(((x+w)|(y+h)|(z+d))&(~0xFF)) { return; }
 
 	int sx = x & 0xF;
@@ -176,6 +176,50 @@ void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
 			int sd = CHUNK_SIZE;
 			if(cy == gy){
 				sh = (y+h)&0xF;
+			}
+			for(int cz=z>>4;cz<=gz;cz++){
+				chunk *chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF];
+				if(chnk == NULL){
+					chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
+					c->chunks[cx&0xF][cy&0xF][cz&0xF] = chnk;
+				}
+				if(cz == gz){
+					sd = (z+d)&0xF;
+				}
+				chunkBox(chnk,sx,sy,sz,sw,sh,sd,block);
+				sz = 0;
+			}
+			sy = 0;
+		}
+		sx = 0;
+	}
+}
+
+void chungusBoxFWG(chungus *c,int x,int y,int z,int w,int h,int d){
+	c->freeTimer = freeTime;
+	int gx = (x+w)>>4;
+	int gy = (y+h)>>4;
+	int gz = (z+d)>>4;
+	u8 block = 3;
+
+	if( (x   | y   | z  ) &(~0xFF)) { return; }
+	if(((x+w)|(y+h)|(z+d))&(~0xFF)) { return; }
+
+	int sx = x & 0xF;
+	int sw = CHUNK_SIZE;
+	for(int cx=x>>4;cx<=gx;cx++){
+		int sy = y&0xF;
+		int sh = CHUNK_SIZE;
+		if(cx == gx){
+			sw = (x+w)&0xF;
+		}
+		for(int cy=y>>4;cy<=gy;cy++){
+			int sz = z&0xF;
+			int sd = CHUNK_SIZE;
+			if(cy == gy){
+				sh = (y+h)&0xF;
+			}else if(cy >= gy-1){
+				block = 1;
 			}
 			for(int cz=z>>4;cz<=gz;cz++){
 				chunk *chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF];
@@ -226,35 +270,16 @@ void chungusBoxIfEmpty(chungus *c, int x,int y,int z, int w,int h,int d,u8 block
 	}
 }
 
-
-void chungusRoughBox(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
-	int dx = x+w-1;
-	int dy = y+h-1;
-	int dz = z+d-1;
-
-	for(int cx=x;cx<=dx;cx++){
-		for(int cy=y;cy<=dy;cy++){
-			for(int cz=z;cz<=dz;cz++){
-				if((cx == x) || (cx == dx) || (cy == y) || (cy == dy) || (cz == z) || (cz == dz)){
-					if((rngValR()&0x100) == 0){continue;}
-				}
-				chungusSetB(c,cx,cy,cz,block);
-			}
-		}
-	}
-	c->clientsUpdated = 0;
-}
-
 void chungusBoxSphere(chungus *c, int x, int y, int z, int r, u8 block){
 	const int md = r*r;
-	for(int cx=-r;cx<=r;cx++){
-		for(int cy=-r;cy<=r;cy++){
-			for(int cz=-r;cz<=r;cz++){
-				const int d = (cx*cx)+(cy*cy)+(cz*cz);
-				if(d >= md){continue;}
-				chungusSetB(c,cx+x,cy+y,cz+z,block);
-			}
-		}
+	for(int cx = -r; cx <= r; cx++){
+	for(int cy = -r; cy <= r; cy++){
+	for(int cz = -r; cz <= r; cz++){
+		const int d = (cx*cx)+(cy*cy)+(cz*cz);
+		if(d >= md){continue;}
+		chungusSetB(c,cx+x,cy+y,cz+z,block);
+	}
+	}
 	}
 }
 
@@ -276,24 +301,24 @@ void chungusSubscribePlayer(chungus *c, uint p){
 	if(c->clientsSubscribed & mask){return;}
 
 	c->clientsSubscribed |= 1 << p;
-	for(int x=0;x<16;x++){
-		for(int y=0;y<16;y++){
-			for(int z=0;z<16;z++){
-				if(c->chunks[x][y][z] == NULL){ continue; }
-				c->chunks[x][y][z]->clientsUpdated &= mask;
-			}
-		}
+	for(int x = 0; x < 16; x++){
+	for(int y = 0; y < 16; y++){
+	for(int z = 0; z < 16; z++){
+		if(c->chunks[x][y][z] == NULL){ continue; }
+		c->chunks[x][y][z]->clientsUpdated &= mask;
+	}
+	}
 	}
 }
 
 void chungusSetAllUpdated(chungus *c, u64 nUpdated){
-	for(int x=0;x<16;x++){
-		for(int y=0;y<16;y++){
-			for(int z=0;z<16;z++){
-				if(c->chunks[x][y][z] == NULL){ continue; }
-				c->chunks[x][y][z]->clientsUpdated = nUpdated;
-			}
-		}
+	for(int x = 0; x < 16; x++){
+	for(int y = 0; y < 16; y++){
+	for(int z = 0; z < 16; z++){
+		if(c->chunks[x][y][z] == NULL){ continue; }
+		c->chunks[x][y][z]->clientsUpdated = nUpdated;
+	}
+	}
 	}
 }
 
@@ -303,13 +328,13 @@ int chungusUnsubscribePlayer(chungus *c, uint p){
 
 	c->clientsSubscribed &= mask;
 	c->clientsUpdated    &= mask;
-	for(int x=0;x<16;x++){
-		for(int y=0;y<16;y++){
-			for(int z=0;z<16;z++){
-				if(c->chunks[x][y][z] == NULL){ continue; }
-				c->chunks[x][y][z]->clientsUpdated &= mask;
-			}
-		}
+	for(int x = 0; x < 16; x++){
+	for(int y = 0; y < 16; y++){
+	for(int z = 0; z < 16; z++){
+		if(c->chunks[x][y][z] == NULL){ continue; }
+		c->chunks[x][y][z]->clientsUpdated &= mask;
+	}
+	}
 	}
 
 	return 0;
