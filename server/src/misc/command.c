@@ -4,6 +4,7 @@
 #include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/entity.h"
+#include "../game/fire.h"
 #include "../game/itemDrop.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
@@ -335,6 +336,13 @@ int parseCommand(int c, const char *cmd){
 
 	if(strncmp(tcmp,"acount",6) == 0){
 		snprintf(replyBuf,sizeof(replyBuf),".acount : %i",animalUsedCount);
+		replyBuf[sizeof(replyBuf)-1]=0;
+		serverSendChatMsg(replyBuf);
+		return 1;
+	}
+
+	if(strncmp(tcmp,"fcount",6) == 0){
+		snprintf(replyBuf,sizeof(replyBuf),".fcount : %i",fireCount);
 		replyBuf[sizeof(replyBuf)-1]=0;
 		serverSendChatMsg(replyBuf);
 		return 1;

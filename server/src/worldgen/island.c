@@ -142,7 +142,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->bigTreeChance  = (1<< 8)-1;
 			w->treeChance     = (1<< 5)-1;
 			w->shrubChance    = (1<< 5)-1;
-			w->animalChance   = (1<<13)-1;
+			w->animalChance   = (1<<12)-1;
 			break;
 		default:
 		case 5:
@@ -169,7 +169,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->shrubChance    = (1<< 6)-1;;
 			w->dirtChance     = (1<< 4)-1;;
 			w->stoneChance    = (1<< 7)-1;;
-			w->animalChance   = (1<<16)-1;;
+			w->animalChance   = (1<<15)-1;;
 			break;
 		case 1:
 			w->shrubChance    = (1<< 8)-1;;
@@ -177,7 +177,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->stoneChance    = (1<< 5)-1;;
 			w->treeChance     = (1<<12)-1;;
 			w->deadTreeChance = (1<<12)-1;;
-			w->animalChance   = (1<<17)-1;;
+			w->animalChance   = (1<<16)-1;;
 			break;
 		case 0:
 			w->shrubChance    = (1<<10)-1;;
@@ -186,7 +186,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->monolithChance = (1<<18)-1;;
 			w->treeChance     = (1<<15)-1;;
 			w->deadTreeChance = (1<<13)-1;;
-			w->animalChance   = (1<<17)-1;;
+			w->animalChance   = (1<<16)-1;;
 			break;
 	}
 }
@@ -268,7 +268,10 @@ static inline bool worldgenRDHematite(worldgen *wgen, wgChances *w, int cx, int 
 	const int cw = (rngValR()&3)+1;
 	const int ch = (rngValR()&3)+1;
 	const int cd = (rngValR()&3)+1;
-	chungusBoxF(wgen->clay,cx-cw,cy,cz-cd,cw,ch,cd,I_Hematite_Ore);
+	chungusBoxF(wgen->clay,cx-cw,cy-ch,cz-cd,cw,ch,cd,I_Hematite_Ore);
+	wgen->minX = MIN(wgen->minX,cx-cw);
+	wgen->minY = MIN(wgen->minY,cy-ch);
+	wgen->minZ = MIN(wgen->minZ,cz-cd);
 	w->lastBlock = I_Hematite_Ore;
 	w->airBlocks = 0;
 	return true;
@@ -279,7 +282,10 @@ static inline bool worldgenRDCoal(worldgen *wgen, wgChances *w, int cx, int cy, 
 	const int cw = (rngValR()&3)+2;
 	const int ch = (rngValR()&3)+2;
 	const int cd = (rngValR()&3)+2;
-	chungusBoxF(wgen->clay,cx-cw,cy,cz-cd,cw,ch,cd,I_Coal);
+	chungusBoxF(wgen->clay,cx-cw,cy-ch,cz-cd,cw,ch,cd,I_Coal);
+	wgen->minX = MIN(wgen->minX,cx-cw);
+	wgen->minY = MIN(wgen->minY,cy-ch);
+	wgen->minZ = MIN(wgen->minZ,cz-cd);
 	w->lastBlock = I_Coal;
 	w->airBlocks = 0;
 	return true;
@@ -290,7 +296,10 @@ static inline bool worldgenRDDirt(worldgen *wgen, wgChances *w, int cx, int cy, 
 	const int cw = (rngValR()&3)+3;
 	const int ch = (rngValR()&3)+3;
 	const int cd = (rngValR()&3)+3;
-	chungusBoxF(wgen->clay,cx-cw,cy,cz-cd,cw,ch,cd,I_Dirt);
+	chungusBoxF(wgen->clay,cx-cw,cy-ch,cz-cd,cw,ch,cd,I_Dirt);
+	wgen->minX = MIN(wgen->minX,cx-cw);
+	wgen->minY = MIN(wgen->minY,cy-ch);
+	wgen->minZ = MIN(wgen->minZ,cz-cd);
 	w->lastBlock = I_Dirt;
 	w->airBlocks = 0;
 	return true;
