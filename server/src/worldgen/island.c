@@ -134,21 +134,21 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 	switch(wgen->vegetationChance){
 		case 7:
 			w->bigTreeChance  =  (1<<7)-1;
-			w->treeChance     =  (1<<5)-1;
-			w->shrubChance    =  (1<<4)-1;
+			w->treeChance     =  (1<<4)-1;
+			w->shrubChance    =  (1<<3)-1;
 			w->animalChance   = (1<<12)-1;
 			break;
 		case 6:
 			w->bigTreeChance  = (1<< 8)-1;
 			w->treeChance     = (1<< 5)-1;
-			w->shrubChance    = (1<< 5)-1;
+			w->shrubChance    = (1<< 4)-1;
 			w->animalChance   = (1<<12)-1;
 			break;
 		default:
 		case 5:
 			w->bigTreeChance  = (1<< 8)-1;
 			w->treeChance     = (1<< 6)-1;
-			w->shrubChance    = (1<< 6)-1;
+			w->shrubChance    = (1<< 5)-1;
 			w->animalChance   = (1<<13)-1;
 			break;
 		case 4:
@@ -268,10 +268,10 @@ static inline bool worldgenRDHematite(worldgen *wgen, wgChances *w, int cx, int 
 	const int cw = (rngValR()&3)+1;
 	const int ch = (rngValR()&3)+1;
 	const int cd = (rngValR()&3)+1;
+	if((cx-cw) < wgen->minX){return false;}
+	if((cy-ch) < wgen->minY){return false;}
+	if((cz-cd) < wgen->minZ){return false;}
 	chungusBoxF(wgen->clay,cx-cw,cy-ch,cz-cd,cw,ch,cd,I_Hematite_Ore);
-	wgen->minX = MIN(wgen->minX,cx-cw);
-	wgen->minY = MIN(wgen->minY,cy-ch);
-	wgen->minZ = MIN(wgen->minZ,cz-cd);
 	w->lastBlock = I_Hematite_Ore;
 	w->airBlocks = 0;
 	return true;
@@ -282,10 +282,10 @@ static inline bool worldgenRDCoal(worldgen *wgen, wgChances *w, int cx, int cy, 
 	const int cw = (rngValR()&3)+2;
 	const int ch = (rngValR()&3)+2;
 	const int cd = (rngValR()&3)+2;
+	if((cx-cw) < wgen->minX){return false;}
+	if((cy-ch) < wgen->minY){return false;}
+	if((cz-cd) < wgen->minZ){return false;}
 	chungusBoxF(wgen->clay,cx-cw,cy-ch,cz-cd,cw,ch,cd,I_Coal);
-	wgen->minX = MIN(wgen->minX,cx-cw);
-	wgen->minY = MIN(wgen->minY,cy-ch);
-	wgen->minZ = MIN(wgen->minZ,cz-cd);
 	w->lastBlock = I_Coal;
 	w->airBlocks = 0;
 	return true;
@@ -296,10 +296,10 @@ static inline bool worldgenRDDirt(worldgen *wgen, wgChances *w, int cx, int cy, 
 	const int cw = (rngValR()&3)+3;
 	const int ch = (rngValR()&3)+3;
 	const int cd = (rngValR()&3)+3;
+	if((cx-cw) < wgen->minX){return false;}
+	if((cy-ch) < wgen->minY){return false;}
+	if((cz-cd) < wgen->minZ){return false;}
 	chungusBoxF(wgen->clay,cx-cw,cy-ch,cz-cd,cw,ch,cd,I_Dirt);
-	wgen->minX = MIN(wgen->minX,cx-cw);
-	wgen->minY = MIN(wgen->minY,cy-ch);
-	wgen->minZ = MIN(wgen->minZ,cz-cd);
 	w->lastBlock = I_Dirt;
 	w->airBlocks = 0;
 	return true;

@@ -25,3 +25,13 @@ int cherryGetAmmunition(const item *cItem){
 
 	return ITEMID;
 }
+
+int cherryGetFireDmg(const itemDrop *id){
+	(void)id;
+	return 8;
+}
+
+int cherryGetFireHealth(const itemDrop *id){
+	(void)id;
+	return 100;
+}

@@ -196,10 +196,9 @@ void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
 }
 
 void chungusBoxFWG(chungus *c,int x,int y,int z,int w,int h,int d){
-	c->freeTimer = freeTime;
-	int gx = (x+w)>>4;
-	int gy = (y+h)>>4;
-	int gz = (z+d)>>4;
+	const int gx = (x+w)>>4;
+	const int gy = (y+h)>>4;
+	const int gz = (z+d)>>4;
 	u8 block = 3;
 
 	if( (x   | y   | z  ) &(~0xFF)) { return; }
@@ -208,27 +207,19 @@ void chungusBoxFWG(chungus *c,int x,int y,int z,int w,int h,int d){
 	int sx = x & 0xF;
 	int sw = CHUNK_SIZE;
 	for(int cx=x>>4;cx<=gx;cx++){
+		if(cx == gx){sw = (x+w)&0xF;}
 		int sy = y&0xF;
 		int sh = CHUNK_SIZE;
-		if(cx == gx){
-			sw = (x+w)&0xF;
-		}
 		for(int cy=y>>4;cy<=gy;cy++){
+			if(cy == gy){sh = (y+h)&0xF;}
 			int sz = z&0xF;
 			int sd = CHUNK_SIZE;
-			if(cy == gy){
-				sh = (y+h)&0xF;
-			}else if(cy >= gy-1){
-				block = 1;
-			}
+			if(cy == gy-1){block = 1;}
 			for(int cz=z>>4;cz<=gz;cz++){
+				if(cz == gz){sd = (z+d)&0xF;}
 				chunk *chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF];
 				if(chnk == NULL){
-					chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
-					c->chunks[cx&0xF][cy&0xF][cz&0xF] = chnk;
-				}
-				if(cz == gz){
-					sd = (z+d)&0xF;
+					chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF] = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
 				}
 				chunkBox(chnk,sx,sy,sz,sw,sh,sd,block);
 				sz = 0;
