@@ -133,27 +133,27 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 
 	switch(wgen->vegetationChance){
 		case 7:
-			w->bigTreeChance  =  (1<<7)-1;
-			w->treeChance     =  (1<<4)-1;
-			w->shrubChance    =  (1<<3)-1;
+			w->bigTreeChance  = (1<<12)-1;
+			w->treeChance     = (1<< 6)-1;
+			w->shrubChance    = (1<< 4)-1;
 			w->animalChance   = (1<<12)-1;
 			break;
 		case 6:
-			w->bigTreeChance  = (1<< 8)-1;
-			w->treeChance     = (1<< 5)-1;
+			w->bigTreeChance  = (1<<13)-1;
+			w->treeChance     = (1<< 7)-1;
 			w->shrubChance    = (1<< 4)-1;
 			w->animalChance   = (1<<12)-1;
 			break;
 		default:
 		case 5:
-			w->bigTreeChance  = (1<< 8)-1;
-			w->treeChance     = (1<< 6)-1;
+			w->bigTreeChance  = (1<<14)-1;
+			w->treeChance     = (1<< 8)-1;
 			w->shrubChance    = (1<< 5)-1;
 			w->animalChance   = (1<<13)-1;
 			break;
 		case 4:
-			w->bigTreeChance  = (1<< 9)-1;;
-			w->treeChance     = (1<< 7)-1;;
+			w->bigTreeChance  = (1<<15)-1;;
+			w->treeChance     = (1<< 9)-1;;
 			w->shrubChance    = (1<< 6)-1;;
 			w->animalChance   = (1<<14)-1;;
 			break;
@@ -165,8 +165,8 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->animalChance   = (1<<15)-1;;
 			break;
 		case 2:
-			w->treeChance     = (1<<10)-1;;
-			w->shrubChance    = (1<< 6)-1;;
+			w->treeChance     = (1<<12)-1;;
+			w->shrubChance    = (1<< 8)-1;;
 			w->dirtChance     = (1<< 4)-1;;
 			w->stoneChance    = (1<< 7)-1;;
 			w->animalChance   = (1<<15)-1;;

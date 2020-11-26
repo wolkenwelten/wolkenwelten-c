@@ -7,7 +7,7 @@ typedef struct {
 	i16 blockDmg;
 } fire;
 
-extern fire fireList[1<<16];
+extern fire fireList[1<<14];
 extern uint fireCount;
 
 void fireNew          (u16 x, u16 y, u16 z, i16 strength);

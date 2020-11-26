@@ -3,7 +3,7 @@
 #include "../mods/api_v1.h"
 #include "../../../common/src/network/messages.h"
 
-fire fireList[1<<16];
+fire fireList[1<<14];
 uint fireCount = 0;
 
 #include <stdio.h>
