@@ -107,7 +107,7 @@ void worldgenLandmass(worldgen *wgen, int layer){
 				chungusBoxSphere(wgen->clay, x, CHUNGUS_SIZE/2 + (rngValM(h)-h/2), z, rngValMM(1,3), 18);
 				break;
 			case 12:
-				chungusBoxSphere(wgen->clay, x, CHUNGUS_SIZE/2 + (rngValM(h-12)-(h/2)), z, rngValMM(6,8), 4);
+				chungusBoxSphere(wgen->clay, x, CHUNGUS_SIZE/2 + (rngValM(MAX(1,h-12))-(h/2)), z, rngValMM(6,8), 4);
 				break;
 			case 13:
 			case 14:
