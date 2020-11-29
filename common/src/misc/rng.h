@@ -18,7 +18,7 @@ static inline u64 rngValR(){
 }
 
 static inline float rngValf(){
-	return (float)rngValR() / ((float)0xffffffffffffffff);
+	return (float)rngValR() / ((float)0xffffffff);
 }
 
 static inline u64 rngValA(u64 mask){
