@@ -28,16 +28,16 @@ chunk *chunkFirstFree = NULL;
 
 #ifdef __EMSCRIPTEN__
 	chunk chunkList[1<<16];
-	const float CHUNK_RENDER_DISTANCE = 320.f;
-	const float CHUNK_FADEOUT_DISTANCE = 48.f;
+	const float CHUNK_RENDER_DISTANCE  = 320.f;
+	const float CHUNK_FADEOUT_DISTANCE =  48.f;
 #elif __HAIKU__
 	chunk chunkList[1<<16];
-	const float CHUNK_RENDER_DISTANCE = 256.f;
-	const float CHUNK_FADEOUT_DISTANCE = 32.f;
+	const float CHUNK_RENDER_DISTANCE  = 256.f;
+	const float CHUNK_FADEOUT_DISTANCE =  32.f;
 #else
 	chunk chunkList[1<<18];
-	const float CHUNK_RENDER_DISTANCE = 512.f;
-	const float CHUNK_FADEOUT_DISTANCE = 64.f;
+	const float CHUNK_RENDER_DISTANCE  = 512.f;
+	const float CHUNK_FADEOUT_DISTANCE =  64.f;
 #endif
 
 uint    chunkGetFree()               { return chunkFreeCount;           }

@@ -69,6 +69,9 @@ void initGL(){
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc( GL_LEQUAL );
 
+	glScissor(0,0,screenWidth,screenHeight);
+	glEnable(GL_SCISSOR_TEST);
+
 	glActiveTexture(GL_TEXTURE0);
 #ifndef __EMSCRIPTEN__
 	glDisable(GL_POLYGON_SMOOTH);

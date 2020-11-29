@@ -644,7 +644,7 @@ void serverCheckCompression(int c){
 		fprintf(stderr,"%i > %i = Compression does not decrease size\n",compressLen,len);
 		return;
 	}
-	printf("Z %u -> %u\n",len,compressLen);
+	//printf("Z %u -> %u\n",len,compressLen);
 	clients[c].sendBufLen -= len;
 	memcpy(start + 4,compressBuf,compressLen);
 	packetSet((packet *)start,0xFF,compressLen);
@@ -680,7 +680,7 @@ int serverSendClient(uint c){
 	if(len > 0){
 		uint ret = serverSendRaw(c,clients[c].sendBuf+clients[c].sendBufSent,len);
 		clients[c].sendBufSent += ret;
-		printf("Sent %u bytes\n",ret);
+		//printf("Sent %u bytes\n",ret);
 	}
 	if(clients[c].sendBufSent >= clients[c].sendBufLen){
 		clients[c].sendBufLastCompressed = 0;
