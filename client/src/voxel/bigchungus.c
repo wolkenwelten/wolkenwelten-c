@@ -173,8 +173,8 @@ void worldDraw(const character *cam){
 	for(int i=0;i<drawQueueLen;i++){
 		chunkDraw(drawQueue[i].chnk,drawQueue[i].distance);
 	}
+	glScissor(0,0,screenWidth,screenHeight);
 }
-
 
 void worldBox(int x,int y,int z, int w,int h,int d,u8 block){
 	for(int cx=0;cx<w;cx++){

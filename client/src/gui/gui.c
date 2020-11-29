@@ -52,6 +52,8 @@ uint animalOverlaysDrawn = 0;
 
 float matOrthoProj[16];
 
+uint debugBoxX,debugBoxY,debugBoxW,debugBoxH;
+
 void handlerRootHud(widget *wid){
 	(void)wid;
 	chatText->vals[0] = 0;
@@ -423,6 +425,7 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"WorstF: %s%u\n",colorSignalLow(60,20,18,worstFrame),worstFrame);
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Player: %u\n",playerID);
+		textMeshPrintf(guim,"DebugB: X[%u-%u] Y[%u-%u]\n",debugBoxX,debugBoxY,debugBoxW,debugBoxH);
 
 		animalOverlaysDrawn = 0;
 		for(uint i=0;i<animalCount;i++){
@@ -574,6 +577,11 @@ void drawChat(){
 	guim->font = 0;
 }
 
+static void drawDebugBox(){
+	printf("%u-%u %u-%u\n",debugBoxX,debugBoxY,debugBoxW,debugBoxH);
+	textMeshSolidBox(guim,debugBoxX,debugBoxY,debugBoxW,debugBoxH,0x80D02080);
+}
+
 void drawHud(){
 	textMeshEmpty(guim);
 	guim->wrap = 0;
@@ -587,6 +595,7 @@ void drawHud(){
 	if(isInventoryOpen()){
 		drawInventory(guim);
 	}
+	drawDebugBox();
 	textMeshDraw(guim);
 }
 

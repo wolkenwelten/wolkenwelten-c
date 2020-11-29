@@ -3,6 +3,8 @@
 #include "../game/blockType.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gl.h"
+#include "../gui/gui.h"
+#include "../gfx/mat.h"
 #include "../gfx/shader.h"
 #include "../../../common/src/misc/misc.h"
 
@@ -372,6 +374,67 @@ void chunkSetB(chunk *c,int x,int y,int z,u8 block){
 	c->ready = 0;
 }
 
+#include <string.h>
+static void chunkSetScissor(chunk *c){
+	int minX = screenWidth;
+	int maxX = 0;
+	int minY = screenHeight;
+	int maxY = 0;
+
+	//glScissor(0,0,screenWidth,screenHeight);
+	/*
+	const int cx = 33100 & ~0xF;
+	const int cy =   340 & ~0xF;
+	const int cz = 32946 & ~0xF;
+	if(cx != c->x){return;}
+	if(cy != c->y){return;}
+	if(cz != c->z){return;}*/
+
+	/*
+	matMov      (matMVP,matView);
+	matMulTrans (matMVP,cx,cy,cz);
+	matMulRotYX (matMVP,0.f,0.f);
+	matMulScale (matMVP,1.f,1.f,1.f);
+	matMul      (matMVP,matMVP,matProjection);
+	*/
+
+	//memset(c->data,4,16*16*16);
+	//c->ready = 0;
+
+	//matPrint(matView,"chunk matView");
+	//matPrint(matProjection,"chunk matProjection");
+
+	const vec startPos = vecNew(c->x,c->y,c->z);
+	//const vec startPos = vecZero();
+	for(int i=0;i<8;i++){
+		vec newPos = startPos;
+		if(i&1){newPos.x += CHUNK_SIZE;}
+		if(i&2){newPos.y += CHUNK_SIZE;}
+		if(i&4){newPos.z += CHUNK_SIZE;}
+		vec p = matMulVec(matMVP,newPos);
+		//printf("{%i} %f %f %f\n",i,newPos.x,newPos.y,newPos.z);
+		//printf("{%i} %f %f %f\n",i,p.x,p.y,p.z);
+		p.x =      ((p.x / p.z)+1.f)/2.f  * screenWidth;
+		p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
+		int sx = MAX(p.x,0);
+		int sy = MAX(p.y,0);
+		minX = MIN(sx  ,minX);
+		maxX = MAX(sx+1,maxX);
+		minY = MIN(sy  ,minY);
+		maxY = MAX(sy+1,maxY);
+	}
+	if(minX > maxX){printf("minX[%u] > maxX[%u]\n",minX,maxX);}
+	if(minY > maxY){printf("minY[%u] > maxY[%u]\n",minY,maxY);}
+	//printf("[%u/%u] [%u/%u]\n",minX,maxX,minY,maxY);
+	/*
+	debugBoxX = minX;
+	debugBoxY = minY;
+	debugBoxW = maxX - minX;
+	debugBoxH = maxY - minY;
+	*/
+	glScissor(minX,0,maxX-minX,maxY-minY);
+}
+
 void chunkDraw(chunk *c, float d){
 	if(!c->ready){ chunkGenMesh(c); }
 	if(!c->vbo){ return; }
@@ -381,6 +444,7 @@ void chunkDraw(chunk *c, float d){
 		shaderAlpha(sBlockMesh,1.f);
 	}
 	shaderTransform(sBlockMesh,c->x,c->y,c->z);
+	chunkSetScissor(c);
 
 	glBindBuffer(GL_ARRAY_BUFFER, c->vbo);
 	glVertexAttribPointer(0, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].x) - ((char *)blockMeshBuffer)));

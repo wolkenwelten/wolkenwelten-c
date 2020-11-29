@@ -58,6 +58,9 @@ void animalDrawAll(){
 		}
 		animalDraw(&animalList[i]);
 	}
+
+	//matPrint(matView,"Animal matView");
+	//matPrint(matProjection,"Animal matProjection");
 }
 
 void animalSyncFromServer(const packet *p){
