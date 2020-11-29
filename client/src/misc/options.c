@@ -74,7 +74,7 @@ void parseOptions(int argc,char *argv[]){
 			optionSavegame[sizeof(optionSavegame)-1]=0;
 		}
 		if((l = checkString(argv[i]+1,"automatedTest="))){
-			optionAutomatedTest = atoi(argv[i]+l) != 0;
+			optionAutomatedTest = atoi(argv[i]+l);
 		}
 		if((l = checkString(argv[i]+1,"windowOrientation="))){
 			int newOrientation = 0;

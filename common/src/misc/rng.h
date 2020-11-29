@@ -13,11 +13,12 @@ static inline u64 getRNGSeed(){
 
 static inline u64 rngValR(){
 	RNGValue = ((RNGValue * 1103515245)) + 12345;
+	//return ((RNGValue&0xFFFF)<<16) | ((RNGValue>>16)&0xFFFF);
 	return RNGValue;
 }
 
 static inline float rngValf(){
-	return (float)rngValR() / ((float)0xffffffff);
+	return (float)rngValR() / ((float)0xffffffffffffffff);
 }
 
 static inline u64 rngValA(u64 mask){

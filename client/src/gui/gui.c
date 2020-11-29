@@ -285,13 +285,13 @@ void drawPlayerOverlay(uint i){
 	guim->fgc = ofgc;
 }
 
-static const char *colorSignalHigh(int err, int warn, int good, int v){
+const char *colorSignalHigh(int err, int warn, int good, int v){
 	if(v <= err) {return ansiFG[ 9];}
 	if(v <= warn){return ansiFG[11];}
 	if(v >= good){return ansiFG[10];}
 	return ansiFG[15];
 }
-static const char *colorSignalLow(int err, int warn, int good, int v){
+const char *colorSignalLow(int err, int warn, int good, int v){
 	if(v >= err) {return ansiFG[ 9];}
 	if(v >= warn){return ansiFG[11];}
 	if(v <= good){return ansiFG[10];}

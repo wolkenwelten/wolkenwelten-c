@@ -18,8 +18,8 @@ void setFullscreen(bool fs);
 void swapWindow();
 void setRelativeMouseMode(bool ra);
 void warpMouse(int nMouseX,int nMouseY);
-unsigned int getMouseState(int *mx, int *my);
-unsigned int getTicks();
+uint getMouseState(int *mx, int *my);
+uint getTicks();
 
 bool inputSneak();
 bool inputPrimary();

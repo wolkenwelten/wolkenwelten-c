@@ -25,6 +25,7 @@
 #include "menu/inventory.h"
 #include "menu/mainmenu.h"
 #include "misc/options.h"
+#include "misc/tests.h"
 #include "network/chat.h"
 #include "network/client.h"
 #include "sdl/input_gamepad.h"
@@ -50,20 +51,6 @@ bool quit              = false;
 bool gameRunning       = false;
 bool playerChunkActive = false;
 bool singleplayer      = false;
-
-static vec doAutomatedupdate(const vec nv){
-	static int iter=0;
-	if(optionAutomatedTest <= 0){return nv;}
-	vec rv = vecZero();
-	iter++;
-	if(SDL_GetTicks() > 30000){quit=true;}
-
-	player->flags |= CHAR_NOCLIP;
-	characterRotate(player,vecNew(1.f,cosf(iter/16.f)/4.f,0));
-	rv.y = 0.5f;
-
-	return rv;
-}
 
 void playerUpdate(){
 	vec nv = vecZero();

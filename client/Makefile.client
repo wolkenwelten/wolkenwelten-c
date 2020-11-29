@@ -18,6 +18,7 @@ CLIENT_DEPS      := ${CLIENT_SRCS:.c=.deps}
 
 WINDOW_WIDTH     := 960
 WINDOW_HEIGHT    := 524
+TESTNR           := 1
 
 wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
@@ -87,12 +88,12 @@ run: all
 .PHONY: runt
 runt: all
 	rm -rf save/
-	./wolkenwelten -soundVolume=10 $(TEST_WORLD) -debugInfo=1 -windowOrientation=cc -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) -automatedTest=1
+	./wolkenwelten -soundVolume=10 $(TEST_WORLD) -debugInfo=1 -windowOrientation=cc -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) -automatedTest=$(TESTNR)
 runtv: all
 	rm -rf save/
 	rm -f ./callgrind.out.*
 	valgrind --tool=callgrind ./wolkenwelten-server $(TEST_WORLD) -singleplayer &
-	./wolkenwelten -soundVolume=10  -serverName=localhost -debugInfo=1 -windowOrientation=cc -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) -automatedTest=1
+	./wolkenwelten -soundVolume=10  -serverName=localhost -debugInfo=1 -windowOrientation=cc -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) -automatedTest=$(TESTNR)
 .PHONY: runl
 runl: all
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost
