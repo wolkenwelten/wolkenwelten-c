@@ -120,9 +120,9 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 	memset(w,0,sizeof(wgChances));
 	w->treeType = rngValM(2);
 
-	w->hematiteChance = 511;
-	w->coalChance     = 511;
-	w->dirtVeinChance = 254;
+	w->hematiteChance = 2047;
+	w->coalChance     = 2047;
+	w->dirtVeinChance = 1023;
 
 	if(wgen->layer > 16){
 		w->crystalChance  = 1023;
