@@ -123,6 +123,10 @@ void worldDraw(const character *cam){
 	matMul(matMVP,matView,matProjection);
 	shaderMatrix(sBlockMesh,matMVP);
 
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
 	const int camCX  = (int)cam->pos.x >> 8;
 	const int camCY  = (int)cam->pos.y >> 8;
 	const int camCZ  = (int)cam->pos.z >> 8;

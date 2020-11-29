@@ -63,18 +63,6 @@ void chunkFree(chunk *c){
 	chunkFirstFree = c;
 }
 
-/*
-void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
-	for(int cx = x; cx < gx; cx++){
-	for(int cy = y; cy < gy; cy++){
-	for(int cz = z; cz < gz; cz++){
-		c->data[cx][cy][cz] = block;
-	}
-	}
-	}
-	c->clientsUpdated = 0;
-}*/
-
 void chunkSetB(chunk *c,int x,int y,int z,u8 block){
 	c->data[x&0xF][y&0xF][z&0xF] = block;
 	c->clientsUpdated = 0;

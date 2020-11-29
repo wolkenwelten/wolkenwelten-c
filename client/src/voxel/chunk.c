@@ -10,7 +10,6 @@
 #include <string.h>
 #include <stdio.h>
 
-
 #pragma pack(push, 1)
 typedef struct vertexTiny {
 	u8 x,y,z,f;
@@ -384,12 +383,9 @@ void chunkDraw(chunk *c, float d){
 	shaderTransform(sBlockMesh,c->x,c->y,c->z);
 
 	glBindBuffer(GL_ARRAY_BUFFER, c->vbo);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(0, 3, GL_BYTE,  GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].x) - ((char *)blockMeshBuffer)));
-	glVertexAttribPointer(1, 2, GL_SHORT,  GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].u) - ((char *)blockMeshBuffer)));
-	glVertexAttribPointer(2, 1, GL_UNSIGNED_BYTE,  GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].f) - ((char *)blockMeshBuffer)));
+	glVertexAttribPointer(0, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].x) - ((char *)blockMeshBuffer)));
+	glVertexAttribPointer(1, 2, GL_SHORT,         GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].u) - ((char *)blockMeshBuffer)));
+	glVertexAttribPointer(2, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].f) - ((char *)blockMeshBuffer)));
 	glDrawArrays(GL_TRIANGLES,0,c->dataCount);
 	vboTrisCount += c->dataCount/3;
 }
