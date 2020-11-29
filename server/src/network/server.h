@@ -29,8 +29,9 @@ typedef struct {
 
 	uint chngReqQueueLen;
 	chungusReqEntry chngReqQueue[128];
-	uint chnkReqQueueLen;
+	uint chnkReqQueueLen,chnkUpdateIter;
 	chunkReqEntry chnkReqQueue[4096];
+
 
 	uint recvBufOff;
 	uint recvBufLen;
@@ -42,7 +43,7 @@ typedef struct {
 	uint sendBufSent;
 	uint sendBufLen;
 	uint sendBufLastCompressed;
-	u8   sendBuf[1<<20];
+	u8   sendBuf[1<<22];
 } clientConnection;
 
 #define STATE_READY      0
@@ -69,6 +70,7 @@ void addQueuedChunks       (uint c);
 void addPriorityItemDrop   (u16  i);
 void delPriorityItemDrop   (u16  i);
 void serverSendChatMsg     (const char *msg);
+void msgSendChunk          (uint c, const chunk *chnk);
 
 int  getClientByName       (const char *name);
 int  getClientByCharacter  (const character *c);

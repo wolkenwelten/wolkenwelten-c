@@ -23,10 +23,6 @@ void chungusInit(){
 	//memset(chungusList,0,sizeof(chungusList));
 }
 
-float chunkDistance(const entity *cam, const vec pos){
-	return vecMag(vecSub(pos,cam->pos));
-}
-
 void chungusSetClientUpdated(chungus *c,u64 updated){
 	c->clientsUpdated = updated;
 	for(int x=0;x<16;x++){
@@ -357,8 +353,27 @@ int chungusUpdateClient(chungus *c, uint p){
 	if(c == NULL)                          { return 0; }
 	if(!(c->clientsSubscribed & (1 << p))) { return 1; }
 	if( chungusIsUpdated(c,p))             { return 0; }
+	bool chungusUpdated = true;
+	bool fullUpdate = (clients[p].chnkUpdateIter & 0x3FF) == 0;
 
-	addChungusToQueue(p,c->x,c->y,c->z);
+	for(uint x=0;x<16;x++){
+	for(uint y=0;y<16;y++){
+	for(uint z=0;z<16;z++){
+		chunk *chnk = c->chunks[x][y][z];
+		if(chnk == NULL){continue;}
+		if(!fullUpdate){
+			const float d = chunkDistance(clients[p].c->pos,chnk);
+			if(d > 32.f){
+				chungusUpdated = false;
+				continue;
+			}
+		}
+		msgSendChunk(p,chnk);
+		chunkSetUpdated(chnk,p);
+	}
+	}
+	}
+	if(chungusUpdated){chungusSetUpdated(c,p);}
 	return 0;
 }
 

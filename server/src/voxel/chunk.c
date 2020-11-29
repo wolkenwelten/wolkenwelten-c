@@ -16,6 +16,11 @@ void chunkInit(){
 	//memset(chunkList,0,sizeof(chunkList));
 }
 
+float chunkDistance(const vec pos, const chunk *chnk){
+	const vec chunkpos = vecNew(chnk->x,chnk->y,chnk->z);
+	return vecMag(vecSub(chunkpos,pos));
+}
+
 chunk *chunkNew(u16 x,u16 y,u16 z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){

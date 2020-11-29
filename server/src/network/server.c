@@ -120,6 +120,7 @@ void serverInitClient(uint c){
 	clients[c].sendBufLen                 = 0;
 	clients[c].chngReqQueueLen            = 0;
 	clients[c].chnkReqQueueLen            = 0;
+	clients[c].chnkUpdateIter             = 0;
 	clients[c].state                      = STATE_CONNECTING;
 	clients[c].flags                      = 0;
 	clients[c].animalUpdateWindowSize     = 1;
@@ -214,7 +215,6 @@ void msgUpdatePlayer(uint c){
 	clients[c].itemDropUpdateOffset = itemDropUpdatePlayer(c,clients[c].itemDropUpdateOffset);
 	grenadeUpdatePlayer(c);
 	blockMiningUpdatePlayer(c);
-	bigchungusUpdateClient(&world,c);
 	animalSyncPlayer(c);
 	projectileSyncPlayer(c);
 	fireSyncPlayer(c);
@@ -610,8 +610,6 @@ void addChunksToQueue(uint c){
 }
 
 void addQueuedChunks(uint c){
-	static int updated = 0;
-	static int old = 0;
 	while(clients[c].sendBufLen < (sizeof(clients[c].sendBuf)-(1<<16))){
 		if(clients[c].chnkReqQueueLen == 0){
 			if(clients[c].chngReqQueueLen == 0){
@@ -623,18 +621,11 @@ void addQueuedChunks(uint c){
 		const chunkReqEntry entry = clients[c].chnkReqQueue[--clients[c].chnkReqQueueLen];
 		if(entry.w == 0xFF){
 			msgSendChungusComplete(c,entry.x,entry.y,entry.z);
-			updated = old = 0;
 		}else{
 			chunk *chnk = worldGetChunk(entry.x,entry.y,entry.z);
-			if(chnk != NULL){
-				if(!chunkIsUpdated(chnk,c)){
-					msgSendChunk(c,chnk);
-					chunkSetUpdated(chnk,c);
-					updated++;
-				}else{
-					old++;
-				}
-			}
+			if(chnk == NULL)          {continue;}
+			msgSendChunk(c,chnk);
+			chunkSetUpdated(chnk,c);
 		}
 	}
 }
@@ -646,13 +637,14 @@ void serverCheckCompression(int c){
 	if(clients[c].flags & CONNECTION_WEBSOCKET){return;}
 	start = &clients[c].sendBuf[clients[c].sendBufLastCompressed];
 	len = &clients[c].sendBuf[clients[c].sendBufLen] - start;
-	if(len <= (1<<10)){return;}
+	if(len <= (1<<8)){return;}
 
 	compressLen = LZ4_compress_default((const char *)start, (char *)compressBuf, len, sizeof(compressBuf));
 	if(compressLen > len){
 		fprintf(stderr,"%i > %i = Compression does not decrease size\n",compressLen,len);
 		return;
 	}
+	printf("Z %u -> %u\n",len,compressLen);
 	clients[c].sendBufLen -= len;
 	memcpy(start + 4,compressBuf,compressLen);
 	packetSet((packet *)start,0xFF,compressLen);
@@ -665,11 +657,12 @@ void serverSend(){
 		if(clients[i].state){ continue; }
 		if(clients[i].flags & CONNECTION_DO_UPDATE){msgUpdatePlayer(i);}
 		if(clients[i].sendBufLen == 0){ continue; }
+		addQueuedChunks(i);
+		bigchungusUpdateClient(&world,i);
 		#ifndef __EMSCRIPTEN__
 		serverCheckCompression(i);
 		#endif
 		serverSendClient(i);
-		addQueuedChunks(i);
 	}
 }
 
@@ -687,6 +680,7 @@ int serverSendClient(uint c){
 	if(len > 0){
 		uint ret = serverSendRaw(c,clients[c].sendBuf+clients[c].sendBufSent,len);
 		clients[c].sendBufSent += ret;
+		printf("Sent %u bytes\n",ret);
 	}
 	if(clients[c].sendBufSent >= clients[c].sendBufLen){
 		clients[c].sendBufLastCompressed = 0;

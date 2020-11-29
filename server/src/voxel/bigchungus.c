@@ -249,6 +249,8 @@ ivec bigchungusGetSpawnPos(bigchungus *c){
 void bigchungusUpdateClient(bigchungus *c, int p){
 	character *chara = clients[p].c;
 	if(chara == NULL){return;}
+	clients[p].chnkUpdateIter++;
+	printf("bigchungusUpdateClient %u\n",clients[p].chnkUpdateIter);
 	int cx = ((int)chara->pos.x) >> 8;
 	int cy = ((int)chara->pos.y) >> 8;
 	int cz = ((int)chara->pos.z) >> 8;

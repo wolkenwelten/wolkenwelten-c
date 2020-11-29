@@ -27,7 +27,7 @@ uint connectionState = 0;
 uint lastPing        = 0;
 uint lastLatency     = 0;
 uint recvBufLen      = 0;
-u8 recvBuf[1<<20];
+u8 recvBuf[1<<22];
 
 uint sendBufSent = 0;
 uint sendBufLen  = 0;
@@ -106,7 +106,7 @@ void msgSendPlayerPos(){
 }
 
 void decompressPacket(const packet *p){
-	static u8 buf[1<<20];
+	static u8 buf[1<<22];
 	u8 *t;
 	int len = LZ4_decompress_safe((const char *)&p->v.u8, (char *)buf, packetLen(p), sizeof(buf));
 	if(len <= 0){
