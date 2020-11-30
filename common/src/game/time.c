@@ -67,3 +67,7 @@ const char *gtimeGetTimeOfDayHRS(uint timeCur){
 	buf[sizeof(buf)-1]=0;
 	return buf;
 }
+
+uint gtimeGetTimeCat(){
+	return (gameTime >> 18) & 0x3;
+}

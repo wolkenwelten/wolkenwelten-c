@@ -136,6 +136,7 @@ typedef struct {
 	u8  clientOwner;
 
 	u64 clientPriorization;
+	u32 stateTicks;
 
 	chungus *curChungus;
 } animal;

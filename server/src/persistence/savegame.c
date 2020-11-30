@@ -187,12 +187,9 @@ static void *fireSaveChungus(const chungus *c,void *buf){
 	return buf;
 }
 
-
-
-
-
 static void *animalSave(const animal *e, void *buf){
 	u8    *b = (u8    *)buf;
+	u32   *u = (u32   *)buf;
 	float *f = (float *)buf;
 
 	b[ 0] = 0x03;
@@ -220,36 +217,39 @@ static void *animalSave(const animal *e, void *buf){
 
 	f[ 9] = e->rot.yaw;
 	f[10] = e->rot.pitch;
+	u[11] = e->stateTicks;
 
-	return b+11*4;
+	return b+12*4;
 }
 
 static const void *animalLoad(const void *buf){
-	u8 *b        = (u8 *)buf;
-	float *f     = (float   *)buf;
-	animal *e    = animalNew(vecNewP(&f[3]),b[2],0);
-	if(e == NULL){return b+11*4;}
+	u8 *b         = (u8 *)buf;
+	u32 *u        = (u32 *)buf;
+	float *f      = (float *)buf;
+	animal *e     = animalNew(vecNewP(&f[3]),b[2],0);
+	if(e == NULL){return b+12*4;}
 
-	e->flags     = b[ 1];
-	e->type      = b[ 2];
-	e->state     = b[ 3];
+	e->flags      = b[ 1];
+	e->type       = b[ 2];
+	e->state      = b[ 3];
 
-	e->health    = b[ 4];
-	e->hunger    = b[ 5];
-	e->pregnancy = b[ 6];
-	e->sleepy    = b[ 7];
+	e->health     = b[ 4];
+	e->hunger     = b[ 5];
+	e->pregnancy  = b[ 6];
+	e->sleepy     = b[ 7];
 
-	e->age       = b[ 8];
+	e->age        = b[ 8];
 
-	e->pos       = vecNewP(&f[3]);
+	e->pos        = vecNewP(&f[3]);
 
-	e->vel       = vecNewP(&f[6]);
+	e->vel        = vecNewP(&f[6]);
 
-	e->rot.yaw   = f[ 9];
-	e->rot.pitch = f[10];
-	e->rot.roll  = 0.f;
+	e->rot.yaw    = f[ 9];
+	e->rot.pitch  = f[10];
+	e->rot.roll   = 0.f;
+	e->stateTicks = u[11];
 
-	return b+11*4;
+	return b+12*4;
 }
 
 static void *animalSaveChungus(const chungus *c,void *b){
