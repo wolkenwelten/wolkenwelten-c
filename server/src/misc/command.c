@@ -296,56 +296,56 @@ int parseCommand(int c, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
 
-	if(strncmp(tcmp,"help ",5) == 0){
+	if(strncmp(tcmp,"help",4) == 0){
 		cmdHelp(c,tcmp);
 		return 1;
 	}
-	if(strncmp(tcmp,"ani ",4) == 0){
+	if(strncmp(tcmp,"ani ",3) == 0){
 		cmdAni(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"dmg ",4) == 0){
+	if(strncmp(tcmp,"dmg",3) == 0){
 		cmdDmg(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"dbgitem ",8) == 0){
+	if(strncmp(tcmp,"dbgitem",7) == 0){
 		cmdDbgitem(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"die ",4) == 0){
+	if(strncmp(tcmp,"die",3) == 0){
 		cmdDie(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"heal ",5) == 0){
+	if(strncmp(tcmp,"heal",4) == 0){
 		cmdHeal(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"give ",5) == 0){
+	if(strncmp(tcmp,"give",4) == 0){
 		cmdGive(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"tpr ",4) == 0){
+	if(strncmp(tcmp,"tpr",3) == 0){
 		cmdTpr(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"tp ",3) == 0){
+	if(strncmp(tcmp,"tp",2) == 0){
 		cmdTp(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"time ",5) == 0){
+	if(strncmp(tcmp,"time",4) == 0){
 		cmdTime(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"refreshAll",10) == 0){
+	if(strncmp(tcmp,"refreshAll",9) == 0){
 		worldSetAllUpdated();
 	}
 

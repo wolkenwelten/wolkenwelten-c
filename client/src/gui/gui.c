@@ -53,8 +53,6 @@ uint animalOverlaysDrawn = 0;
 
 float matOrthoProj[16];
 
-uint debugBoxX,debugBoxY,debugBoxW,debugBoxH;
-
 void handlerRootHud(widget *wid){
 	(void)wid;
 	chatText->vals[0] = 0;
@@ -578,11 +576,6 @@ void drawChat(){
 	guim->font = 0;
 }
 
-static void drawDebugBox(){
-	printf("%u-%u %u-%u\n",debugBoxX,debugBoxY,debugBoxW,debugBoxH);
-	textMeshSolidBox(guim,debugBoxX,debugBoxY,debugBoxW,debugBoxH,0x80D02080);
-}
-
 void drawHud(){
 	textMeshEmpty(guim);
 	guim->wrap = 0;
@@ -596,7 +589,6 @@ void drawHud(){
 	if(isInventoryOpen()){
 		drawInventory(guim);
 	}
-	drawDebugBox();
 	textMeshDraw(guim);
 }
 
