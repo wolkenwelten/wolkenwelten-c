@@ -6,6 +6,11 @@ void flintandsteelInit(){
 	recipeNew2(itemNew(ITEMID,1), itemNew(I_Iron_Bar,1), itemNew(I_Stone,1));
 }
 
+int flintandsteelGetStackSize(const item *cItem){
+	(void)cItem;
+	return 1;
+}
+
 bool flintandsteelPrimaryAction(item *cItem,character *cChar){
 	ivec p = characterLOSBlock(cChar, 0);
 	if(p.x < 0){return false;}
