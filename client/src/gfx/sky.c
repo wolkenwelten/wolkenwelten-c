@@ -40,7 +40,7 @@ void initSky(){
 
 static void drawSkyColor(){
 	float t = .5f + (gtimeGetTimeOfDay() / (float)(1<<20));
-	skyBrightness = MAX(0.4f,cosf(t*(PI*2)));
+	skyBrightness = MAX(0.32f,cosf(t*(PI*2)));
 	const float v = skyBrightness;
 	glClearColor( 0.33f*v, 0.64f*v, 0.99f*v, 1.f );
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
