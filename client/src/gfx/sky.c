@@ -50,6 +50,7 @@ void renderSky(const character *cam){
 	drawSkyColor();
 
 	shaderBind(sMesh);
+	shaderBrightness(sMesh,1.f);
 	const vec shake = vecAdd(cam->rot,camShake);
 	sunAngle = (((float)gtimeGetTimeOfDay() / (float)(1<<20)) * 360.f)+180.f;
 	matIdentity(matMVP);
