@@ -19,6 +19,7 @@
 #include "../gfx/mat.h"
 #include "../gfx/texture.h"
 #include "../gfx/textMesh.h"
+#include "../gfx/sky.h"
 #include "../gui/menu.h"
 #include "../menu/inventory.h"
 #include "../menu/mainmenu.h"
@@ -425,6 +426,7 @@ void drawDebuginfo(){
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Player: %u\n",playerID);
 		textMeshPrintf(guim,"Time  : %s\n",gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
+		textMeshPrintf(guim,"Bright: %f\n",skyBrightness);
 
 		animalOverlaysDrawn = 0;
 		for(uint i=0;i<animalCount;i++){
