@@ -1,4 +1,5 @@
 uniform mat4 matMVP;
+uniform float colorBrightness;
 
 attribute vec4 pos;
 attribute vec2 tex;
@@ -10,5 +11,5 @@ varying float lightness;
 void main(){
 	gl_Position   = matMVP * pos;
 	multiTexCoord = tex;
-	lightness     = lval;
+	lightness     = lval * colorBrightness;
 }

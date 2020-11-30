@@ -5,6 +5,7 @@
 #include "../game/entity.h"
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
+#include "../game/time.h"
 #include "../misc/options.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
@@ -543,6 +544,12 @@ static void savegameParseLine(const char *line){
 		optionWorldSeed = atoi(argv[1]);
 		return;
 	}
+
+	if(strcmp(argv[0],"Time") == 0){
+		if(argc < 2){return;}
+		gtimeSetTime(atoi(argv[1]));
+		return;
+	}
 }
 
 void savegameLoad(){
@@ -574,6 +581,7 @@ void savegameSave(){
 	b  = buf;
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"SaveFormat 1\n");
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"WorldSeed %i\n",optionWorldSeed);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"Time %u\n",gtimeGetTime());
 
 	buf[sizeof(buf)-1] = 0;
 	saveFile(savegameFileName(optionSavegame),buf,strlen(buf));

@@ -8,6 +8,7 @@
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
 #include "../gfx/shadow.h"
+#include "../gfx/sky.h"
 #include "../tmp/objs.h"
 #include "../../../common/src/network/messages.h"
 
@@ -51,6 +52,7 @@ static void animalDraw(animal *e){
 
 void animalDrawAll(){
 	shaderBind(sMesh);
+	shaderBrightness(sMesh,skyBrightness);
 	for(uint i=0;i<animalCount;i++){
 		if(animalDistance(&animalList[i],player) > ANIMAL_FADEOUT){
 			animalList[i].screenPos = vecNOne();
@@ -58,9 +60,6 @@ void animalDrawAll(){
 		}
 		animalDraw(&animalList[i]);
 	}
-
-	//matPrint(matView,"Animal matView");
-	//matPrint(matProjection,"Animal matProjection");
 }
 
 void animalSyncFromServer(const packet *p){

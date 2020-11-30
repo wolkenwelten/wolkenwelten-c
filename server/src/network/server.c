@@ -9,6 +9,7 @@
 #include "../game/grenade.h"
 #include "../game/projectile.h"
 #include "../game/rope.h"
+#include "../game/time.h"
 #include "../misc/command.h"
 #include "../misc/options.h"
 #include "../network/server_ws.h"
@@ -331,8 +332,8 @@ void serverParseSinglePacket(uint c, packet *p){
 			fprintf(stderr,"beingGotHit received from client, which should never happen\n");
 			serverKill(c);
 			break;
-		case 9: // PlayerJoin !!!!1 Still needed???
-			fprintf(stderr,"PlayerJoin received from client, which should never happen\n");
+		case 9: // setTime
+			fprintf(stderr,"Received a setTime from client, should not happen\n");
 			serverKill(c);
 			break;
 		case 10: // itemDropNew
@@ -531,6 +532,7 @@ void serverParseIntro(uint c){
 		characterLoadSendData(clients[c].c,clients[c].playerName,c);
 
 		sendPlayerJoinMessage(c);
+		msgSetTime(c, gtimeGetTime());
 		itemDropIntro(c);
 		animalIntro(c);
 		fireIntro(c);

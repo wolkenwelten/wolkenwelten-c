@@ -5,15 +5,15 @@
 extern character *player;
 extern int        playerID;
 
-void  characterPrimary        (character *c);
-void  characterSecondary      (character *c);
-void  characterTertiary       (character *c);
-void  characterStopMining     (character *c);
-float characterMineProgress   (character *c);
-void  characterUpdate         (character *c);
-void  characterFireHook       (character *c);
+void  characterPrimary        (      character *c);
+void  characterSecondary      (      character *c);
+void  characterTertiary       (      character *c);
+void  characterStopMining     (      character *c);
+float characterMineProgress   (      character *c);
+void  characterUpdate         (      character *c);
+void  characterFireHook       (      character *c);
 float characterCanHookHit     (const character *c);
-void  characterAddHookLength  (character *c,float d);
+void  characterAddHookLength  (      character *c,float d);
 float characterGetHookLength  (const character *c);
 float characterGetRopeLength  (const character *c);
 float characterFirstBlockDist (const character *c);

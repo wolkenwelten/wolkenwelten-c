@@ -95,10 +95,11 @@ void shaderCompile(shader *s){
 	glLinkProgram(s->pID);
 	shaderPrintLog(s->pID,"Program",buf);
 
-	s->lMVP       = glGetUniformLocation(s->pID,"matMVP");
-	s->lAlpha     = glGetUniformLocation(s->pID,"colorAlpha");
-	s->lTransform = glGetUniformLocation(s->pID,"transPos");
-	s->lTex       = glGetUniformLocation(s->pID,"curTex");
+	s->lMVP        = glGetUniformLocation(s->pID,"matMVP");
+	s->lAlpha      = glGetUniformLocation(s->pID,"colorAlpha");
+	s->lBrightness = glGetUniformLocation(s->pID,"colorBrightness");
+	s->lTransform  = glGetUniformLocation(s->pID,"transPos");
+	s->lTex        = glGetUniformLocation(s->pID,"curTex");
 }
 
 shader *shaderNew(const char *vss,const char *fss,unsigned int attrMask){
@@ -146,6 +147,11 @@ void shaderMatrix(shader *s, float mvp[16]){
 void shaderAlpha(shader *s, float alpha){
 	if(s->lAlpha == -1){return;}
 	glUniform1f(s->lAlpha,alpha);
+}
+
+void shaderBrightness(shader *s, float v){
+	if(s->lBrightness == -1){return;}
+	glUniform1f(s->lBrightness,v);
 }
 
 void shaderTransform(shader *s,float x,float y,float z){

@@ -10,6 +10,7 @@
 #include "../game/itemDrop.h"
 #include "../game/rope.h"
 #include "../game/projectile.h"
+#include "../game/time.h"
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
 #include "../network/chat.h"
@@ -179,8 +180,8 @@ void clientParsePacket(const packet *p){
 			// ToDo: beingGotHit
 			dispatchBeingGotHit(p);
 			break;
-		case 9:
-			fprintf(stderr,"Received a PlayerJoin packet from the server which should never happen.\n");
+		case 9: // setTime
+			gtimeSetTime(p->v.u32[0]);
 			break;
 		case 10:
 			fprintf(stderr,"Received an itemDropNew msg from the server, this should never happen.\n");

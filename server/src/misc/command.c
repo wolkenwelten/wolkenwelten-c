@@ -6,6 +6,7 @@
 #include "../game/entity.h"
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
+#include "../game/time.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
@@ -213,6 +214,15 @@ static void cmdTpr(int c, const char *cmd){
 	msgPlayerSetPos(target,vecAdd(pos,clients[target].c->pos),vecZero());
 }
 
+static void cmdTime(int c, const char *cmd){
+	(void)c;
+	gtimeSetTimeOfDayHRS(cmd + 5);
+	msgSetTime(-1, gtimeGetTime());
+	snprintf(replyBuf,sizeof(replyBuf),"It is now %s",gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
+	replyBuf[sizeof(replyBuf)-1]=0;
+	serverSendChatMsg(replyBuf);
+}
+
 void cmdAni(int c, const char *cmd){
 	int amount = 1;
 	int id     = 1;
@@ -286,51 +296,56 @@ int parseCommand(int c, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
 
-	if(strncmp(tcmp,"help",4) == 0){
+	if(strncmp(tcmp,"help ",5) == 0){
 		cmdHelp(c,tcmp);
 		return 1;
 	}
-	if(strncmp(tcmp,"ani",3) == 0){
+	if(strncmp(tcmp,"ani ",4) == 0){
 		cmdAni(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"dmg",3) == 0){
+	if(strncmp(tcmp,"dmg ",4) == 0){
 		cmdDmg(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"dbgitem",3) == 0){
+	if(strncmp(tcmp,"dbgitem ",8) == 0){
 		cmdDbgitem(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"die",3) == 0){
+	if(strncmp(tcmp,"die ",4) == 0){
 		cmdDie(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"heal",4) == 0){
+	if(strncmp(tcmp,"heal ",5) == 0){
 		cmdHeal(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"give",4) == 0){
+	if(strncmp(tcmp,"give ",5) == 0){
 		cmdGive(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"tpr",3) == 0){
+	if(strncmp(tcmp,"tpr ",4) == 0){
 		cmdTpr(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"tp",2) == 0){
+	if(strncmp(tcmp,"tp ",3) == 0){
 		cmdTp(c,tcmp);
 		return 1;
 	}
 
-	if(strncmp(tcmp,"refreshAll",11) == 0){
+	if(strncmp(tcmp,"time ",5) == 0){
+		cmdTime(c,tcmp);
+		return 1;
+	}
+
+	if(strncmp(tcmp,"refreshAll",10) == 0){
 		worldSetAllUpdated();
 	}
 

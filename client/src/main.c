@@ -11,6 +11,7 @@
 #include "game/projectile.h"
 #include "game/recipe.h"
 #include "game/rope.h"
+#include "game/time.h"
 #include "gfx/clouds.h"
 #include "gfx/gfx.h"
 #include "gfx/mesh.h"
@@ -105,6 +106,7 @@ void worldUpdate(){
 		particleUpdate();
 		ropeUpdateAll();
 		projectileUpdateAll();
+		gtimeUpdate();
 		fireCheckPlayerBurn(calls);
 
 		commitOverlayColor();
@@ -170,6 +172,7 @@ int main( int argc, char* argv[] ){
 
 	player = characterNew();
 	initInventory();
+	gtimeSetTime(1<<19);
 	checkAutostart();
 	#ifdef __EMSCRIPTEN__
 		emscripten_set_main_loop(mainloop, 0, true);

@@ -6,6 +6,7 @@
 #include "game/fire.h"
 #include "game/itemDrop.h"
 #include "game/grenade.h"
+#include "game/time.h"
 #include "persistence/savegame.h"
 #include "voxel/bigchungus.h"
 #include "voxel/chungus.h"
@@ -101,6 +102,7 @@ static void updateWorldStep(){
 	itemDropUpdateFireAll();
 	animalNeedsAll();
 	animalCheckBurnAll();
+	gtimeUpdate();
 }
 
 void updateWorld(){
@@ -139,6 +141,7 @@ void mainTick(){
 }
 
 void mainInit(){
+	gtimeSetTime(1<<19);
 	savegameLoad();
 	seedRNG(time(NULL));
 	serverInit();

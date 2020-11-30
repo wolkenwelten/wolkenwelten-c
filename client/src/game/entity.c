@@ -9,6 +9,7 @@
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
 #include "../gfx/shadow.h"
+#include "../gfx/sky.h"
 #include "../gfx/texture.h"
 #include "../tmp/assets.h"
 #include "../tmp/objs.h"
@@ -36,6 +37,7 @@ void entityDraw(const entity *e){
 
 void entityDrawAll(){
 	shaderBind(sMesh);
+	shaderBrightness(sMesh,skyBrightness);
 	for(uint i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL)                        { continue; }
 		if(entityDistance(&entityList[i],player) > ENTITY_FADEOUT){ continue; }

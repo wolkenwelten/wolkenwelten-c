@@ -4,6 +4,7 @@
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
 #include "../gfx/shader.h"
+#include "../gfx/sky.h"
 #include "../gfx/particle.h"
 #include "../game/character.h"
 #include "../sdl/sdl.h"
@@ -11,7 +12,6 @@
 #include "../../../common/src/misc/noise.h"
 
 #include <math.h>
-
 
 #pragma pack(push, 1)
 typedef struct {
@@ -163,6 +163,22 @@ void cloudsDraw(u8 cx, u8 cy, u8 cz){
 	}
 }
 
+void cloudsCalcColors(){
+	static float lastBrightness = 100.f;
+	if(fabsf(lastBrightness - skyBrightness) < 0.01f){return;}
+	lastBrightness = skyBrightness;
+	for(int i=0;i<128;i++){
+		const u32 v  = i+128;
+		const u32 ta = MIN(255,(218+((256 - v)/2))) * skyBrightness;
+		const u32 tb = MIN(255,(178+((256 - v)/4))) * skyBrightness;
+		const u32 ba = (164+((256 - v)  ))          * skyBrightness;
+		const u32 bb = (148+((256 - v)/2))          * skyBrightness;
+
+		cloudCT[i] = ((tb<<16) | (ta<<8) | ta) & 0x00FFFFFF;
+		cloudCB[i] = ((bb<<16) | (ba<<8) | ba) & 0x00FFFFFF;
+	}
+}
+
 void cloudsInit(){
 	generateNoise(0x84407db3, cloudTex);
 	for(int i=0;i<8;i++){
@@ -170,15 +186,5 @@ void cloudsInit(){
 		parts[i].count = CLOUDS_MAX;
 		parts[i].base  = 0.f;
 	}
-
-	for(int i=0;i<128;i++){
-		const u32 v  = i+128;
-		const u32 ta = MIN(255,(218+((256 - v)/2)));
-		const u32 tb = MIN(255,(178+((256 - v)/4)));
-		const u32 ba = (164+((256 - v)  ));
-		const u32 bb = (148+((256 - v)/2));
-
-		cloudCT[i] = ((tb<<16) | (ta<<8) | ta) & 0x00FFFFFF;
-		cloudCB[i] = ((bb<<16) | (ba<<8) | ba) & 0x00FFFFFF;
-	}
+	cloudsCalcColors();
 }

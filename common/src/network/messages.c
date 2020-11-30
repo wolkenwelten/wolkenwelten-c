@@ -110,6 +110,14 @@ void msgSendChungusComplete(uint c, u8 x, u8 y, u8 z){
 	packetQueue(p,7,4,c);
 }
 
+void msgSetTime( int c, u32 time){
+	packet *p = &packetBuffer;
+
+	p->v.u32[0] = time;
+
+	packetQueue(p,9,4,c);
+}
+
 void msgItemDropNew(uint c, const vec pos, const vec vel, const item *itm){
 	packet *p = &packetBuffer;
 

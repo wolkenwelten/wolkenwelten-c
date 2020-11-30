@@ -9,6 +9,7 @@
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
+#include "../game/time.h"
 #include "../sdl/sdl.h"
 #include "../gfx/gl.h"
 #include "../gfx/mesh.h"
@@ -425,7 +426,7 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"WorstF: %s%u\n",colorSignalLow(60,20,18,worstFrame),worstFrame);
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Player: %u\n",playerID);
-		textMeshPrintf(guim,"DebugB: X[%u-%u] Y[%u-%u]\n",debugBoxX,debugBoxY,debugBoxW,debugBoxH);
+		textMeshPrintf(guim,"Time  : %s\n",gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
 
 		animalOverlaysDrawn = 0;
 		for(uint i=0;i<animalCount;i++){

@@ -136,8 +136,8 @@ void renderFrame(){
 	chunkResetCounter();
 	calcFOV(player);
 	calcView(player);
+	cloudsCalcColors();
 
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	renderSky(player);
 	renderWorld(player);
 	glClear(GL_DEPTH_BUFFER_BIT);

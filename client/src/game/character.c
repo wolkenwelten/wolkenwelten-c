@@ -10,6 +10,7 @@
 #include "../gfx/particle.h"
 #include "../gfx/shader.h"
 #include "../gfx/shadow.h"
+#include "../gfx/sky.h"
 #include "../gui/gui.h"
 #include "../gui/overlay.h"
 #include "../network/chat.h"
@@ -673,6 +674,7 @@ void characterActiveItemDraw(const character *c){
 	mesh *aiMesh;
 	float sneakOff = 0.f;
 	if(c->flags & CHAR_SNEAK){sneakOff = 1.f;}
+	shaderBrightness(sMesh,skyBrightness);
 
 	activeItem = &c->inventory[c->activeItem];
 	if(activeItem == NULL)     {return;}
@@ -772,6 +774,7 @@ void characterDraw(character *c){
 
 void characterDrawAll(){
 	shaderBind(sMesh);
+	shaderBrightness(sMesh,skyBrightness);
 	for(uint i=0;i<characterCount;i++){
 		if(characterList[i].nextFree != NULL){ continue; }
 		characterDraw(&characterList[i]);
