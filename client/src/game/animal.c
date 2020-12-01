@@ -21,7 +21,7 @@
 static const mesh *animalGetMesh(const animal *e){
 	switch(e->type){
 	default:
-		return meshKarnickel;
+		return meshBunny;
 	case 2:
 		return meshBeamguardian;
 	}
