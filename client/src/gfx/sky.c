@@ -18,15 +18,20 @@
 float sunAngle = 45.f;
 float skyBrightness;
 
-mesh *sunMesh;
-texture *tSun;
+mesh *sunMesh = NULL;
+texture *tSun = NULL;
+
 
 void initSky(){
-	tSun = textureNew(gfx_sun_png_data, gfx_sun_png_len, "client/gfx/sun.png");
-
-	sunMesh = meshNew();
+	if(tSun == NULL){
+		tSun = textureNew(gfx_sun_png_data, gfx_sun_png_len, "client/gfx/sun.png");
+	}
+	if(sunMesh == NULL){
+		sunMesh = meshNew();
+	}
+	meshEmpty(sunMesh);
 	sunMesh->tex = tSun;
-	const float d = 512.f;
+	const float d = renderDistance;
 
 	meshAddVert(sunMesh, -48,  d, -48, 0.0f, 0.0f);
 	meshAddVert(sunMesh,  48,  d, -48, 1.0f, 0.0f);
@@ -48,6 +53,8 @@ static void drawSkyColor(){
 }
 
 void renderSky(const character *cam){
+	static float lastRD = 0;
+	if(fabsf(lastRD - renderDistance) > 1.f){initSky();}
 	drawSkyColor();
 
 	shaderBind(sMesh);
