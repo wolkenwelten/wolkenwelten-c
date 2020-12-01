@@ -20,7 +20,7 @@ foreach(array_keys($platforms) as $plat){
 	<meta charset="utf-8"/>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title>Wolkenwelten</title>
+	<title>WolkenWelten</title>
 	<link rel="icon" type="image/png" href="<?php echo baseSF('favicon16.png'); ?>" sizes="16x16">
 	<link rel="icon" type="image/png" href="<?php echo baseSF('favicon32.png'); ?>" sizes="32x32">
 	<style>
@@ -28,7 +28,7 @@ foreach(array_keys($platforms) as $plat){
 	</style>
 </head>
 <body bgcolor="#333333" text="#cccccc"  link="#cc3366" vlink="#cc3366" alink="#cc3366">
-	<h1>Wolkenwelten Alpha</h1>
+	<h1>WolkenWelten - Alpha</h1>
 	<hr/>
 	<p>Greetings Cybersurfer, you have reached my little corner of the WWW offering a sneak peek of a videogame I have been developing in my spare time.</p>
 	<p>You can watch me work on this Game on my <a href="https://www.twitch.tv/melchizedek6809">Twitch channel</a>, I try to do more visually exciting features on stream but it is still just me coding away, so be prepared for that.</p>

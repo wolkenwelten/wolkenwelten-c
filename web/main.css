@@ -65,13 +65,13 @@ html {
 
 body {
 	background:#333;
-	background:rgba(48,48,48,0.85);
-	padding:0px 1em 1em;
+	background:rgba(48,48,48,0.8x);
+	padding:0.5em 1em 1em;
 	width:100%;
 	max-width:968px;
-	margin:0px auto;
+	margin:8px auto;
 	box-sizing:border-box;
-	border-radius:0px 0px 1em 1em;
+	border-radius:1em;
 	border:solid 2px #444;
 	border-top:none;
 	font: inherit;
