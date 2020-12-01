@@ -136,57 +136,57 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->bigTreeChance  = (1<<12)-1;
 			w->treeChance     = (1<< 6)-1;
 			w->shrubChance    = (1<< 4)-1;
-			w->animalChance   = (1<<12)-1;
+			w->animalChance   = (1<< 9)-1;
 			break;
 		case 6:
 			w->bigTreeChance  = (1<<13)-1;
 			w->treeChance     = (1<< 7)-1;
 			w->shrubChance    = (1<< 4)-1;
-			w->animalChance   = (1<<12)-1;
+			w->animalChance   = (1<< 9)-1;
 			break;
 		default:
 		case 5:
 			w->bigTreeChance  = (1<<14)-1;
 			w->treeChance     = (1<< 8)-1;
 			w->shrubChance    = (1<< 5)-1;
-			w->animalChance   = (1<<13)-1;
+			w->animalChance   = (1<<10)-1;
 			break;
 		case 4:
-			w->bigTreeChance  = (1<<15)-1;;
-			w->treeChance     = (1<< 9)-1;;
-			w->shrubChance    = (1<< 6)-1;;
-			w->animalChance   = (1<<14)-1;;
+			w->bigTreeChance  = (1<<15)-1;
+			w->treeChance     = (1<< 9)-1;
+			w->shrubChance    = (1<< 6)-1;
+			w->animalChance   = (1<<11)-1;
 			break;
 		case 3:
-			w->treeChance     = (1<<10)-1;;
-			w->shrubChance    = (1<< 7)-1;;
-			w->dirtChance     = (1<< 5)-1;;
-			w->stoneChance    = (1<< 8)-1;;
-			w->animalChance   = (1<<15)-1;;
+			w->treeChance     = (1<<10)-1;
+			w->shrubChance    = (1<< 7)-1;
+			w->dirtChance     = (1<< 5)-1;
+			w->stoneChance    = (1<< 8)-1;
+			w->animalChance   = (1<<12)-1;
 			break;
 		case 2:
-			w->treeChance     = (1<<12)-1;;
-			w->shrubChance    = (1<< 8)-1;;
-			w->dirtChance     = (1<< 4)-1;;
-			w->stoneChance    = (1<< 7)-1;;
-			w->animalChance   = (1<<15)-1;;
+			w->treeChance     = (1<<12)-1;
+			w->shrubChance    = (1<< 8)-1;
+			w->dirtChance     = (1<< 4)-1;
+			w->stoneChance    = (1<< 7)-1;
+			w->animalChance   = (1<<13)-1;
 			break;
 		case 1:
-			w->shrubChance    = (1<< 8)-1;;
-			w->dirtChance     = (1<< 2)-1;;
-			w->stoneChance    = (1<< 5)-1;;
-			w->treeChance     = (1<<12)-1;;
-			w->deadTreeChance = (1<<12)-1;;
-			w->animalChance   = (1<<16)-1;;
+			w->shrubChance    = (1<< 8)-1;
+			w->dirtChance     = (1<< 2)-1;
+			w->stoneChance    = (1<< 5)-1;
+			w->treeChance     = (1<<12)-1;
+			w->deadTreeChance = (1<<12)-1;
+			w->animalChance   = (1<<14)-1;
 			break;
 		case 0:
-			w->shrubChance    = (1<<10)-1;;
-			w->dirtChance     = (1<< 1)-1;;
-			w->stoneChance    = (1<< 5)-1;;
-			w->monolithChance = (1<<18)-1;;
-			w->treeChance     = (1<<15)-1;;
-			w->deadTreeChance = (1<<13)-1;;
-			w->animalChance   = (1<<16)-1;;
+			w->shrubChance    = (1<<10)-1;
+			w->dirtChance     = (1<< 1)-1;
+			w->stoneChance    = (1<< 5)-1;
+			w->monolithChance = (1<<18)-1;
+			w->treeChance     = (1<<15)-1;
+			w->deadTreeChance = (1<<13)-1;
+			w->animalChance   = (1<<15)-1;
 			break;
 	}
 }
@@ -307,10 +307,10 @@ static inline bool worldgenRDDirt(worldgen *wgen, wgChances *w, int cx, int cy, 
 
 static void worldgenRDFirstPass(worldgen *wgen, wgChances *w){
 	chungus *clay = wgen->clay;
-	for(int cz=wgen->minZ;cz<=wgen->maxZ;cz++){
-		int z = cz&0xF;
-		for(int cx=wgen->minX;cx<=wgen->maxX;cx++){
-			int x = cx&0xF;
+	for(int cx=wgen->minX;cx<=wgen->maxX;cx++){
+		int x = cx&0xF;
+		for(int cz=wgen->minZ;cz<=wgen->maxZ;cz++){
+			int z = cz&0xF;
 			w->airBlocks = 8;
 			w->lastBlock = 0;
 			chunk *chnk = NULL;
@@ -346,7 +346,6 @@ static void worldgenRDFirstPass(worldgen *wgen, wgChances *w){
 					if(worldgenRDMonolith(wgen,w,cx,cy,cz)){continue;}
 					if(worldgenRDBigTree (wgen,w,cx,cy,cz)){continue;}
 					if(worldgenRDTree    (wgen,w,cx,cy,cz)){continue;}
-					if(worldgenRDAnimal  (wgen,w,cx,cy,cz)){continue;}
 					if(worldgenRDDeadTree(wgen,w,cx,cy,cz)){continue;}
 				break;
 				}
@@ -370,10 +369,10 @@ void worldgenRemoveDirt(worldgen *wgen){
 
 	worldgenRDFirstPass(wgen,&w);
 
-	for(int cz=wgen->minZ;cz<=wgen->maxZ;cz++){
-		int z = cz&0xF;
-		for(int cx=wgen->minX;cx<=wgen->maxX;cx++){
-			int x = cx&0xF;
+	for(int cx=wgen->minX;cx<=wgen->maxX;cx++){
+		int x = cx&0xF;
+		for(int cz=wgen->minZ;cz<=wgen->maxZ;cz++){
+			int z = cz&0xF;
 			w.airBlocks  = 8;
 			w.lastBlock  = 0;
 			w.leafBlocks = 0;
@@ -413,6 +412,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 					}else if(w.airBlocks > 3){
 						chnk->data[x][cy&0xF][z] = I_Dirt;
 					}
+					if(worldgenRDAnimal  (wgen,&w,cx,cy,cz)){continue;}
 					w.airBlocks = 0;
 				break;
 				}

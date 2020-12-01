@@ -107,14 +107,16 @@ static void updateWorldStep(){
 
 void updateWorld(){
 	static u64 lastUpdate  = 0;
-	int i = 0;
 	const u64 cTicks = getTicks();
-	if(lastUpdate  == 0){lastUpdate  = getTicks() -    4;}
+	if(lastUpdate  == 0){lastUpdate  = getTicks() - 4;}
 
-	i = 2;
-	for(;lastUpdate +  4 < cTicks;lastUpdate +=  4){
+	int i = 48;
+	for(;lastUpdate < cTicks;lastUpdate += 4){
 		updateWorldStep();
 		if(--i == 0){break;}
+	}
+	if(lastUpdate < cTicks){
+		fprintf(stderr,"Cant keep up with world Updates! %u Ticks behind\n",(int)(cTicks - lastUpdate)/4);
 	}
 }
 

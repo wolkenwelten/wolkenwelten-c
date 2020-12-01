@@ -8,6 +8,7 @@
 #include "../worldgen/worldgen.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chunk.h"
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 
 #include <stdio.h>
@@ -210,7 +211,7 @@ void chungusBoxFWG(chungus *c,int x,int y,int z,int w,int h,int d){
 			if(cy == gy){sh = (y+h)&0xF;}
 			int sz = z&0xF;
 			int sd = CHUNK_SIZE;
-			if(cy == gy-1){block = 1;}
+			if(cy == gy-1){block = I_Dirt;}
 			for(int cz=z>>4;cz<=gz;cz++){
 				if(cz == gz){sd = (z+d)&0xF;}
 				chunk *chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF];

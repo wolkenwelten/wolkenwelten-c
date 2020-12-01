@@ -8,6 +8,7 @@
 #include "../gfx/particle.h"
 #include "../game/character.h"
 #include "../sdl/sdl.h"
+#include "../voxel/chunk.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/noise.h"
 
@@ -20,8 +21,8 @@ typedef struct {
 } glCloud;
 #pragma pack(pop)
 
-#define CLOUD_FADED (65536)
-#define CLOUD_MIND  (65536*3)
+#define CLOUD_FADED ((CHUNK_RENDER_DISTANCE/2) * (CHUNK_RENDER_DISTANCE/2))
+#define CLOUD_MIND  (CLOUD_FADED*3)
 #define CLOUD_DENSITY_MIN 170
 #define CLOUDS_MAX (1<<19)
 

@@ -345,6 +345,10 @@ int parseCommand(int c, const char *cmd){
 		return 1;
 	}
 
+	if(strncmp(tcmp,"save",9) == 0){
+
+	}
+
 	if(strncmp(tcmp,"refreshAll",9) == 0){
 		worldSetAllUpdated();
 	}

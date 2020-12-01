@@ -12,6 +12,8 @@
 #include <string.h>
 #include <math.h>
 
+#define ANIMAL_FALL_DMG 12.f
+
 animal  animalList[1<<11];
 uint    animalCount = 0;
 uint    animalUsedCount = 0;
@@ -129,6 +131,7 @@ int animalUpdate(animal *e){
 	e->breathing += 5;
 	animalCheckForHillOrCliff(e);
 
+	/*
 	if(vecSum(vecAbs(e->gvel)) > 2.f){
 		if(isClient){
 			fprintf(stderr,"Client: ");
@@ -144,7 +147,7 @@ int animalUpdate(animal *e){
 			fprintf(stderr,"Server: ");
 		}
 		fprintf(stderr,"Animal[%u] going too fast\n Vel X:%f Y:%f Z:%f\n GVL X:%f Y:%f Z:%f\n\n",(int)(e-animalList),e->vel.x,e->vel.y,e->vel.z,e->gvel.x,e->gvel.y,e->gvel.z);
-	}
+	}*/
 
 	if(fabsf(e->rot.yaw - e->grot.yaw) > 0.3f){
 		if(e->rot.yaw > e->grot.yaw){
@@ -169,7 +172,7 @@ int animalUpdate(animal *e){
 	if(e->rot.pitch > 180.f){e->rot.pitch -= 360.f;}
 
 	e->vel.y -= 0.0005f;
-	// ToDo: implement terminal veolocity in a better way
+	// ToDo: implement terminal velocity in a better way
 	if(e->vel.y < -1.0f){e->vel.y+=0.005f;}
 	if(e->vel.y >  1.0f){e->vel.y-=0.005f;}
 
@@ -179,34 +182,34 @@ int animalUpdate(animal *e){
 	if(col){ e->flags |= ANIMAL_COLLIDE; }
 
 	if((col&0x110) && (e->vel.x < 0.f)){
-		if(e->vel.x < -0.05f){ ret += (int)(fabsf(e->vel.x)*24.f); }
+		if(e->vel.x < -0.05f){ ret += (int)(fabsf(e->vel.x)*ANIMAL_FALL_DMG); }
 		e->pos.x = MAX(e->pos.x,floor(e->pos.x)+0.3f);
 		e->vel.x = e->vel.x*-0.3f;
 	}
 	if((col&0x220) && (e->vel.x > 0.f)){
-		if(e->vel.x >  0.05f){ ret += (int)(fabsf(e->vel.x)*24.f); }
+		if(e->vel.x >  0.05f){ ret += (int)(fabsf(e->vel.x)*ANIMAL_FALL_DMG); }
 		e->pos.x = MIN(e->pos.x,floorf(e->pos.x)+0.7f);
 		e->vel.x = e->vel.x*-0.3f;
 	}
 	if((col&0x880) && (e->vel.z > 0.f)){
-		if(e->vel.z >  0.05f){ ret += (int)(fabsf(e->vel.z)*24.f); }
+		if(e->vel.z >  0.05f){ ret += (int)(fabsf(e->vel.z)*ANIMAL_FALL_DMG); }
 		e->pos.z = MIN(e->pos.z,floorf(e->pos.z)+0.7f);
 		e->vel.z = e->vel.z*-0.3f;
 	}
 	if((col&0x440) && (e->vel.z < 0.f)){
-		if(e->vel.z < -0.05f){ ret += (int)(fabsf(e->vel.z)*24.f); }
+		if(e->vel.z < -0.05f){ ret += (int)(fabsf(e->vel.z)*ANIMAL_FALL_DMG); }
 		e->pos.z = MAX(e->pos.z,floorf(e->pos.z)+0.3f);
 		e->vel.z = e->vel.z*-0.3f;
 	}
 	if((col&0x0F0) && (e->vel.y > 0.f)){
-		if(e->vel.y >  0.05f){ ret += (int)(fabsf(e->vel.y)*24.f); }
+		if(e->vel.y >  0.05f){ ret += (int)(fabsf(e->vel.y)*ANIMAL_FALL_DMG); }
 		e->pos.y = MIN(e->pos.y,floorf(e->pos.y)+0.5f);
 		e->vel.y = e->vel.y*-0.3f;
 	}
 	if((col&0x00F) && (e->vel.y < 0.f)){
 		e->flags &= ~ANIMAL_FALLING;
 		if(e->vel.y < -0.05f){
-			ret += (int)(fabsf(e->vel.y)*24.f);
+			ret += (int)(fabsf(e->vel.y)*ANIMAL_FALL_DMG);
 		}
 		e->vel = vecMul(e->vel,vecNew(0.97f,0,0.97f));
 	}
@@ -245,7 +248,7 @@ int animalGetMaxHealth (const animal *e){
 	switch(e->type){
 	default:
 	case 1:
-		return  4;
+		return  8;
 	case 2:
 		return 12;
 	}
@@ -390,15 +393,28 @@ void animalThinkAll(){
 
 void animalNeedsAll(){
 	static uint calls = 0;
-	for(uint i=(calls&0xFF);i<animalCount;i+=0x100){
+	for(uint i=(calls&0xFFF);i<animalCount;i+=0x1000){
 		animal *e = &animalList[i];
 		if(e->flags & ANIMAL_NO_NEEDS){continue;}
 		e->hunger--;
 		e->sleepy--;
 		if(e->pregnancy > 0){e->pregnancy--;}
-		if((calls & 0x3F) == 0){e->age++;}
+		if((calls & 0xF000) == 0){e->age++;}
 	}
 	calls++;
+}
+
+void animalRBurn(animal *e){
+	switch(e->type){
+	default:
+		return;
+	case 1:
+		animalRBurnBunny(e);
+		break;
+	case 2:
+		animalRBurnGuardian(e);
+		break;
+	}
 }
 
 void animalCheckBurnAll(){
@@ -409,6 +425,7 @@ void animalCheckBurnAll(){
 		if(f == NULL)       {continue;}
 		if(f->strength < 64){continue;}
 		a->health--;
+		animalRBurn(a);
 	}
 	calls++;
 }

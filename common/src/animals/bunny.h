@@ -3,3 +3,4 @@
 
 void animalThinkBunny(animal *e);
 void animalRDieBunny(animal *e);
+void animalRBurnBunny(animal *e);
