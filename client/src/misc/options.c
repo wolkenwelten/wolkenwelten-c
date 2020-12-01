@@ -24,6 +24,7 @@ bool  optionDebugInfo         = false;
 bool  optionFullscreen        = false;
 bool  optionRuntimeReloading  = false;
 bool  optionNoSave            = false;
+bool  optionMute              = false;
 int   optionWindowOrientation = 0;
 int   optionWindowWidth       = 0;
 int   optionWindowHeight      = 0;
@@ -62,6 +63,9 @@ void parseOptions(int argc,char *argv[]){
 		}
 		if((l = checkString(argv[i]+1,"debugInfo="))){
 			optionDebugInfo = atoi(argv[i]+l) != 0;
+		}
+		if((l = checkString(argv[i]+1,"mute="))){
+			optionMute = atoi(argv[i]+l) != 0;
 		}
 		if((l = checkString(argv[i]+1,"playerName="))){
 			strncpy(playerName,argv[i]+l,sizeof(playerName)-1);
