@@ -404,6 +404,19 @@ void animalNeedsAll(){
 	calls++;
 }
 
+void animalRBurn(animal *e){
+	switch(e->type){
+	default:
+		return;
+	case 1:
+		animalRBurnBunny(e);
+		break;
+	case 2:
+		animalRBurnGuardian(e);
+		break;
+	}
+}
+
 void animalCheckBurnAll(){
 	static uint calls = 0;
 	for(uint i=(calls&0xFF);i<animalCount;i+=0x100){
@@ -412,6 +425,7 @@ void animalCheckBurnAll(){
 		if(f == NULL)       {continue;}
 		if(f->strength < 64){continue;}
 		a->health--;
+		animalRBurn(a);
 	}
 	calls++;
 }

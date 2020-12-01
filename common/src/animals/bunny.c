@@ -129,6 +129,12 @@ static void animalSFight(animal *e,int stateChange[16]){
 
 static void animalSFlee(animal *e,int stateChange[16]){
 	if(e->type != 2){
+		if((fabsf(e->gvel.x) + fabsf(e->gvel.z)) < 0.02f){
+			vec dir = vecMulS(vecDegToVec(vecNew(-e->rot.yaw,0.f,0.f)),0.03f);
+			e->gvel.x = dir.x;
+			e->gvel.y = 0.f;
+			e->gvel.z = dir.z;
+		}
 		if((rngValA(3) == 0) && !(e->flags & ANIMAL_FALLING)){
 			e->vel.y = 0.01f;
 		}
@@ -224,8 +230,7 @@ static void animalSFoodSearch(animal *e,int stateChange[16]){
 	const u8 cb = worldGetB(e->pos.x,e->pos.y-1,e->pos.z);
 	if(cb == 2){
 		e->gvel = vecZero();
-		stateChange[ANIMAL_S_EAT] += 4096;
-		return;
+		stateChange[ANIMAL_S_EAT] += 1<<16;
 	}
 	const int v = MAX(0,e->hunger - 16);
 	stateChange[ANIMAL_S_FOOD_SEARCH] -= v*v;
@@ -249,10 +254,10 @@ static void animalSFoodSearch(animal *e,int stateChange[16]){
 static void animalSEat(animal *e,int stateChange[16]){
 	const u8 cb = worldGetB(e->pos.x,(int)e->pos.y-1,e->pos.z);
 	if(cb != 2){
-		stateChange[ANIMAL_S_EAT] -= 8192;
+		stateChange[ANIMAL_S_EAT] -= 1<<16;
 		return;
 	}
-	const int v = MAX(0,e->hunger - 16);
+	const int v = MAX(1,e->hunger - 16);
 	stateChange[ANIMAL_S_EAT] -= v*v;
 
 	if(rngValA(  7) == 0){e->hunger++;}
@@ -317,11 +322,21 @@ static void animalSocialDistancing(animal *e,int stateChange[16]){
 	}
 }
 
+void animalRBurnBunny(animal *e){
+	e->state = ANIMAL_S_FLEE;
+	if(!(e->flags & ANIMAL_FALLING)){
+		e->vel.y = 0.04f;
+	}
+}
+
 static void animalStateChange(animal *e,int stateChange[16]){
 	uint max=0;
 
+	stateChange[e->state] += 512;
 	stateChange[e->state] -= e->stateTicks;
-	stateChange[e->state] *= stateChange[e->state];
+	if(stateChange[e->state] > 0){
+		stateChange[e->state] *= stateChange[e->state];
+	}
 	for(uint i=1;i<16;i++){
 		if(stateChange[i] > stateChange[max]){max = i;}
 	}
@@ -331,7 +346,7 @@ static void animalStateChange(animal *e,int stateChange[16]){
 		e->grot.pitch = 0.f;
 		if(!(e->flags & ANIMAL_FALLING)){
 			if((max == ANIMAL_S_FIGHT) || (max == ANIMAL_S_FLEE)){
-				//e->vel.y   = 0.04f;
+				e->vel.y = 0.04f;
 			}
 		}
 	}
@@ -341,8 +356,11 @@ static void animalStateChange(animal *e,int stateChange[16]){
 void animalThinkBunny(animal *e){
 	static int stateChange[16];
 	for(uint i=0;i<16;i++){
-		stateChange[i] = rngValA(127);
+		stateChange[i] = rngValA(63);
 	}
+	stateChange[ANIMAL_S_FIGHT] = 0;
+	stateChange[ANIMAL_S_FLEE]  = 0;
+
 	e->stateTicks++;
 	animalCheckHeat       (e,stateChange);
 	animalCheckSuffocation(e);

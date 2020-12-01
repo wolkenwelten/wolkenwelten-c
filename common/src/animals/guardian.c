@@ -113,3 +113,7 @@ void animalRDieGuardian(animal *e){
 	item drop = itemNew(I_Crystalbullet,rngValMM(20,40));
 	itemDropNewP(e->pos,&drop);
 }
+
+void animalRBurnGuardian(animal *e){
+	(void)e;
+}

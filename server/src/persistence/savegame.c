@@ -219,6 +219,8 @@ static void *animalSave(const animal *e, void *buf){
 	f[10] = e->rot.pitch;
 	u[11] = e->stateTicks;
 
+	printf("animalSave\n");
+
 	return b+12*4;
 }
 
@@ -241,12 +243,12 @@ static const void *animalLoad(const void *buf){
 	e->age        = b[ 8];
 
 	e->pos        = vecNewP(&f[3]);
-
 	e->vel        = vecNewP(&f[6]);
 
 	e->rot.yaw    = f[ 9];
 	e->rot.pitch  = f[10];
 	e->rot.roll   = 0.f;
+
 	e->stateTicks = u[11];
 
 	return b+12*4;
@@ -257,7 +259,7 @@ static void *animalSaveChungus(const chungus *c,void *b){
 	const u32 cc = c->x | (c->y << 8) | (c->z << 16);
 	for(uint i=0;i<animalCount;i++){
 		const vec *p = &animalList[i].pos;
-		const u32 ac = ((uint)p->x >> 8) | ((uint)p->y & 0xFF00) | (((uint)p->z << 16) & 0xFF0000);
+		const u32 ac = ((uint)p->x >> 8) | ((uint)p->y & 0xFF00) | (((uint)p->z << 8) & 0xFF0000);
 		if(ac != cc){continue;}
 		b = animalSave(&animalList[i],b);
 	}
@@ -458,25 +460,27 @@ void chungusLoad(chungus *c){
 
 	len = LZ4_decompress_safe((const char *)compressedBuffer, (char *)saveLoadBuffer, len, 4100*4096);
 	end = &saveLoadBuffer[len];
+	animalDelChungus(c);
 
 	for(b=saveLoadBuffer;b<end;){
 		u8 id = *b;
 		switch(id){
-			case 1:
-				b = chunkLoad(c,b);
-				break;
-			case 2:
-				b = itemDropLoad(b);
-				break;
-			case 3:
-				b = animalLoad(b);
-				break;
-			case 4:
-				b = fireLoad(b);
-				break;
-			default:
-				fprintf(stderr,"Unknown id[%u] found in %i:%i:%i savestate\n",id,c->x,c->y,c->z);
-				goto chungusLoadEnd;
+		case 1:
+			b = chunkLoad(c,b);
+			break;
+		case 2:
+			b = itemDropLoad(b);
+			break;
+		case 3:
+			printf("animalLoad\n");
+			b = animalLoad(b);
+			break;
+		case 4:
+			b = fireLoad(b);
+			break;
+		default:
+			fprintf(stderr,"Unknown id[%u] found in %i:%i:%i savestate\n",id,c->x,c->y,c->z);
+			goto chungusLoadEnd;
 		}
 		if(b >= end){break;}
 	}
