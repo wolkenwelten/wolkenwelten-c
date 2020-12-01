@@ -21,9 +21,6 @@ typedef struct {
 } glCloud;
 #pragma pack(pop)
 
-#define CLOUD_FADED ((CHUNK_RENDER_DISTANCE/2) * (CHUNK_RENDER_DISTANCE/2))
-#define CLOUD_MIND  (CLOUD_FADED*3)
-#define CLOUD_DENSITY_MIN 170
 #define CLOUDS_MAX (1<<19)
 
 typedef struct {
@@ -40,16 +37,19 @@ glCloud    cloudData[CLOUDS_MAX];
 u32 cloudCT[128];
 u32 cloudCB[128];
 
+#define CLOUD_DENSITY_MIN 170
+#define CLOUDS_MAX (1<<19)
+
 static inline void cloudPart(cloudChunk *part, float px,float py,float pz,float dd,u8 v){
-	if(dd > (CLOUD_MIND+CLOUD_FADED)){return;}
+	if(dd > cloudMaxD){return;}
 	const float vf = v-CLOUD_DENSITY_MIN;
 	u32 a = v << 24;
-	if(dd > CLOUD_MIND){
-		a = (u8)(v*(1.f-((dd - CLOUD_MIND)/CLOUD_FADED))) << 24;
+	if(dd > cloudMinD){
+		a = (u8)(v*(1.f-((dd - cloudMinD)/cloudFadeD))) << 24;
 	}
 	const   u32 ct = a | cloudCT[v-128];
 	const   u32 cb = a | cloudCB[v-128];
-	const float oy = (1.f - dd / (CLOUD_MIND+CLOUD_FADED)) * 23.f + 19.f;
+	const float oy = (1.f - dd / cloudMaxD) * 23.f + 19.f;
 	py += oy;
 
 	if(py < player->pos.y){

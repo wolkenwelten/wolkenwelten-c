@@ -30,15 +30,9 @@ chunk *chunkFirstFree = NULL;
 
 #ifdef __EMSCRIPTEN__
 	chunk chunkList[1<<16];
-	const float CHUNK_RENDER_DISTANCE  = 320.f;
-#elif __HAIKU__
-	chunk chunkList[1<<16];
-	const float CHUNK_RENDER_DISTANCE  = 256.f;
 #else
 	chunk chunkList[1<<18];
-	const float CHUNK_RENDER_DISTANCE  = 768.f;
 #endif
-const float CHUNK_FADEOUT_DISTANCE = CHUNK_RENDER_DISTANCE / 8.f;
 
 uint    chunkGetFree()               { return chunkFreeCount;           }
 uint    chunkGetActive()             { return chunkCount;               }
@@ -376,8 +370,8 @@ void chunkSetB(chunk *c,int x,int y,int z,u8 block){
 void chunkDraw(chunk *c, float d){
 	if(!c->ready){ chunkGenMesh(c); }
 	if(!c->vbo){ return; }
-	if(d > (CHUNK_RENDER_DISTANCE - CHUNK_FADEOUT_DISTANCE)){
-		shaderAlpha(sBlockMesh,(1.f-((d-(CHUNK_RENDER_DISTANCE - CHUNK_FADEOUT_DISTANCE))/CHUNK_FADEOUT_DISTANCE)));
+	if(d > (fadeoutStartDistance)){
+		shaderAlpha(sBlockMesh,(1.f-((d-(fadeoutStartDistance))/fadeoutDistance)));
 	}else{
 		shaderAlpha(sBlockMesh,1.f);
 	}

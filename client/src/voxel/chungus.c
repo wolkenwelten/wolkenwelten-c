@@ -3,6 +3,7 @@
 #include "../sdl/sdl.h"
 #include "../game/blockType.h"
 #include "../gfx/frustum.h"
+#include "../gfx/gfx.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/misc/misc.h"
 
@@ -80,7 +81,7 @@ void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,in
 				if(!chunkInFrustum(vecNew(x,y,z),coff)){continue;}
 				const int cz = z*CHUNK_SIZE+CHUNK_SIZE/2+(c->z<<8);
 				const float d = chunkDistance(cam->pos,vecNew(cx,cy,cz));
-				if(d > CHUNK_RENDER_DISTANCE){continue;}
+				if(d > renderDistance){continue;}
 				drawQueue[*drawQueueLen].distance = d;
 				drawQueue[*drawQueueLen].chnk = c->chunks[x][y][z];
 

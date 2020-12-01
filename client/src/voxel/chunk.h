@@ -2,8 +2,7 @@
 #include "../../../common/src/common.h"
 
 #define CHUNK_SIZE (16)
-extern const float CHUNK_RENDER_DISTANCE;
-extern const float CHUNK_FADEOUT_DISTANCE;
+
 
 
 struct chunk {

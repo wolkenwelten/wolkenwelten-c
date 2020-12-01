@@ -131,7 +131,7 @@ void worldDraw(const character *cam){
 	const int camCX  = (int)cam->pos.x >> 8;
 	const int camCY  = (int)cam->pos.y >> 8;
 	const int camCZ  = (int)cam->pos.z >> 8;
-	const int dist   = (int)ceilf(CHUNK_RENDER_DISTANCE / CHUNGUS_SIZE)+1;
+	const int dist   = (int)ceilf(renderDistance / CHUNGUS_SIZE)+1;
 	const int minCX  = MAX(  0,camCX - dist);
 	const int minCY  = MAX(  0,camCY - dist);
 	const int minCZ  = MAX(  0,camCZ - dist);
@@ -144,7 +144,7 @@ void worldDraw(const character *cam){
 		for(int y=minCY;y<maxCY;y++){
 			for(int z=minCZ;z<maxCZ;z++){
 				float d = chungusDistance(cam->pos,vecNew(x,y,z));
-				if((d < (CHUNK_RENDER_DISTANCE+CHUNGUS_SIZE)) && (chungusInFrustum(vecNew(x,y,z)))){
+				if((d < (renderDistance+CHUNGUS_SIZE)) && (chungusInFrustum(vecNew(x,y,z)))){
 					if(world[x][y][z] == NULL){
 						world[x][y][z] = chungusNew(x,y,z);
 						world[x][y][z]->requested = cTicks;
@@ -196,7 +196,7 @@ void worldFreeFarChungi(const character *cam){
 		int y = (int)chng->y;
 		int z = (int)chng->z;
 		float d = chungusDistance(cam->pos,vecNew(x,y,z));
-		if(d > (CHUNK_RENDER_DISTANCE + 256.f)){
+		if(d > (renderDistance + 256.f)){
 			chungusFree(world[x][y][z]);
 			world[x][y][z] = NULL;
 			msgUnsubChungus(x,y,z);

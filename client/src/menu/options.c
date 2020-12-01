@@ -1,6 +1,7 @@
 #include "options.h"
 
 #include "../main.h"
+#include "../gfx/gfx.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../gui/textInput.h"
@@ -17,10 +18,19 @@ widget *optionsMenu;
 
 widget *optionsName;
 widget *optionsVolume;
+widget *optionsRenderDistance;
+
+float oldRenderDistance = 0.f;
+
+static void handlerRenderDistanceChanged(widget *wid){
+	setRenderDistance((wid->vali / 4096.f) * 1024.f + 64.f);
+}
 
 static void handlerOptionsSave(widget *wid){
 	(void)wid;
 	optionSoundVolume = optionsVolume->vali / 4096.f;
+	setRenderDistance((optionsRenderDistance->vali / 4096.f) * 1024.f + 64.f);
+	oldRenderDistance = renderDistance;
 	snprintf(playerName,sizeof(playerName),"%s",optionsName->vals);
 	saveOptions();
 	openMainMenu();
@@ -30,6 +40,7 @@ static void handlerOptionsCancel(widget *wid){
 	(void)wid;
 	optionsVolume->vali = optionSoundVolume * 4096.f;
 	snprintf(optionsName->vals,256,"%s",playerName);
+	setRenderDistance(oldRenderDistance);
 	openMainMenu();
 }
 
@@ -43,6 +54,11 @@ void initOptionsMenu(){
 	strncpy(optionsName->vals,playerName,256);
 	optionsVolume = widgetNewCPL(wSlider,optionsMenu,16,0,256,32,"Volume");
 	optionsVolume->vali = optionSoundVolume * 4096.f;
+
+	optionsRenderDistance = widgetNewCPL(wSlider,optionsMenu,16,0,256,32,"Render Distance");
+	optionsRenderDistance->vali = ((renderDistance-64.f) / 1024.f) * 4096.f;
+	widgetBind(optionsRenderDistance,"change",handlerRenderDistanceChanged);
+
 	widgetNewCP  (wHR ,optionsMenu,16,0,256,32);
 	widgetNewCPLH(wButton,optionsMenu,16,0,256,32,"Save","click",handlerOptionsSave);
 	widgetNewCPLH(wButton,optionsMenu,16,0,256,32,"Cancel","click",handlerOptionsCancel);
@@ -53,6 +69,7 @@ void openOptionsMenu(){
 	closeAllMenus();
 	widgetSlideW(optionsMenu,288);
 	widgetFocus(NULL);
+	oldRenderDistance = renderDistance;
 }
 
 void closeOptionsMenu(){

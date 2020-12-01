@@ -2,6 +2,7 @@
 
 #include "../main.h"
 #include "../gui/menu.h"
+#include "../gfx/gfx.h"
 #include "../tmp/assets.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/tmp/cto.h"
@@ -174,6 +175,12 @@ static void optionsParseLine(const char *line){
 		return;
 	}
 
+	if(strcmp(argv[0],"RenderDistance") == 0){
+		if(argc < 2){return;}
+		setRenderDistance(atoi(argv[1]));
+		return;
+	}
+
 	if(strcmp(argv[0],"Server") == 0){
 		if(argc < 3){return;}
 		if(serverlistCount >= 15){return;}
@@ -220,6 +227,7 @@ void saveOptions(){
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"SaveFormat 1\n");
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"PlayerName \"%s\"\n",playerName);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"SoundVolume %i\n",(int)(optionSoundVolume*100.f));
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"RenderDistance %i\n",(int)renderDistance);
 	for(int i=0;i<serverlistCount;i++){
 		b += snprintf(b,sizeof(buf)-(b-buf+1),"Server %s \"%s\"\n",serverlistIP[i],serverlistName[i]);
 	}

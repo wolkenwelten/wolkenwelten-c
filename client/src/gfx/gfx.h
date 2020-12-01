@@ -8,7 +8,15 @@ extern size_t vboTrisCount;
 extern vec    camShake;
 extern float  gfxCurFOV;
 
-void initGL          ();
-void renderWorld     (const character *cam);
-void renderFrame     ();
-void renderMenuFrame ();
+extern float renderDistance;
+extern float fadeoutDistance;
+extern float fadeoutStartDistance;
+extern float cloudFadeD;
+extern float cloudMinD;
+extern float cloudMaxD;
+
+void initGL            ();
+void setRenderDistance (float newRD);
+void renderWorld       (const character *cam);
+void renderFrame       ();
+void renderMenuFrame   ();

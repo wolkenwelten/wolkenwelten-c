@@ -38,6 +38,33 @@ size_t vboTrisCount = 0;
 float  gfxCurFOV    = 80.0f;
 vec    camShake;
 
+
+#ifdef __EMSCRIPTEN__
+	float renderDistance = 320.f;
+#elif __HAIKU__
+	float renderDistance = 256.f;
+#else
+	float renderDistance = 768.f;
+#endif
+float fadeoutDistance = 32.f;
+float fadeoutStartDistance = 192;
+float cloudFadeD = 256*256;
+float cloudMinD = 256*256*3;
+float cloudMaxD = 256*256*4;
+
+static void recalcDistances(){
+	fadeoutDistance = renderDistance / 8.f;
+	fadeoutStartDistance = renderDistance - fadeoutDistance;
+	cloudFadeD = ((renderDistance/2) * (renderDistance/2));
+	cloudMinD = cloudFadeD*3;
+	cloudMaxD = cloudFadeD+cloudMinD;
+}
+
+void setRenderDistance(float newRD){
+	renderDistance = newRD;
+	recalcDistances();
+}
+
 GLenum glCheckError_(const char *file, int line){
 	GLenum errorCode;
 	while ((errorCode = glGetError()) != GL_NO_ERROR){
@@ -57,6 +84,7 @@ GLenum glCheckError_(const char *file, int line){
 
 void initGL(){
 	INITGLEXT();
+	recalcDistances();
 	glClearColor( 0.32f, 0.63f, 0.96f, 1.f );
 	glViewport(0,0,screenWidth,screenHeight);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -95,7 +123,7 @@ void calcFOV(const character *cam){
 		gfxCurFOV -= (gfxCurFOV-off)/8;
 	}
 	if(gfxCurFOV < 80.1){gfxCurFOV = 80.0f;}
-	matPerspective(matProjection, gfxCurFOV, (float)screenWidth / (float)screenHeight, 0.165f, CHUNK_RENDER_DISTANCE + 32.f);
+	matPerspective(matProjection, gfxCurFOV, (float)screenWidth / (float)screenHeight, 0.165f, renderDistance + 32.f);
 }
 
 vec calcShake(const character *cam){
