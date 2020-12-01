@@ -53,7 +53,7 @@ kbd.space {
 
 html {
 	background: #222;
-	background: linear-gradient(-22deg, #B16 0%, #111 40%, #1B6 100%);
+	background: linear-gradient(0deg, #0f57f9 0%, #4790ff 100%);
 	background-attachment: fixed;
 	color:#ddd;
 	font-family:sans-serif,sans;
@@ -63,22 +63,9 @@ html {
 	position:relative;
 }
 
-html:before {
-	content:'';
-	position:fixed;
-	left:0px;
-	top:0px;
-	width:100%;
-	height:100%;
-	display:block;
-	background:rgba(16,48,72,0.5);
-	background: linear-gradient(44deg, rgba(230,182,42,0.5) 0%, rgba(16,48,88,0.0) 35%, rgba(16,78,192,0.5) 100%);
-	z-index:1;
-}
-
 body {
 	background:#333;
-	background:rgba(48,48,48,0.65);
+	background:rgba(48,48,48,0.85);
 	padding:0px 1em 1em;
 	width:100%;
 	max-width:968px;
@@ -94,7 +81,7 @@ body {
 
 header {
 	text-align:left;
-	border-bottom:solid 2px #c48;
+	border-bottom:solid 2px #1f4605;
 }
 
 header a {
@@ -109,7 +96,7 @@ header h1 {
 
 footer {
 	padding-top:1em;
-	border-top:solid 2px #e49;
+	border-top:solid 2px #1f4605;
 	display:block;
 	text-align:right;
 }
@@ -122,22 +109,22 @@ h1,h2,h3,h4,h5 {
 
 h1,h2,h3 {
 	font-family:serif;
-	color:#44ee99;
-	text-shadow:0px -1px 0px #e49, 0px 1px 0px #e49, -1px 0px 0px #e49, 1px 0px 0px #e49;
+	color:#1A9609;
+	text-shadow:0px -1px 0px #112c01, 0px 1px 0px #112c01, -1px 0px 0px #112c01, 1px 0px 0px #112c01;
 }
 
 h4,h5,h6 {
-	color:#ee4499;
+	color:#4af;
 }
 
 a {
-	color:#ee4499;
+	color:#4af;
 	text-decoration:underline;
 	line-height:1.35em;
 	font-weight:bold;
 }
 a:focus {
-	text-shadow:0px 0px 4px #f5a;
+	text-shadow:0px 0px 4px #4af;
 }
 
 sup {
@@ -228,16 +215,8 @@ hr {
 	height:0px;
 	margin:0.75em 0px;
 	border:none;
-	color:#c48;
-	border-top:solid 1px #c48;
-}
-
-#logo {
-	text-shadow:0px -2px 1px #4c8, 0px 2px 1px #4c8, -2px 0px 1px #4c8, 2px 0px 1px #4c8;
-	font-weight:normal;
-}
-a#logo:focus {
-	text-shadow:0px -4px 2px #4c8, 0px 4px 2px #4c8, -4px 0px 2px #4c8, 4px 0px 2px #4c8;
+	color:#111;
+	border-top:solid 1px #111;
 }
 
 video {
@@ -270,101 +249,11 @@ center {
 	text-align:center;
 }
 
-header .pubdate {
-	text-align:right;
-	float:right;
-	margin-top:2em;
-}
-
-.pubdate h4 {
-	text-shadow: 1px 1px 1px #00F,-1px -1px 1px #0F0;
-	font-style:italic;
-}
-
 header:after {
 	content:'';
 	display:block;
 	position:relative;
 	clear:both;
-}
-
-.git-container {
-	position:relative;
-	overflow:hidden;
-	display:block;
-	padding:1em;
-	border:solid 1px #44ee99;
-	border-radius:1em 0 1em 0;
-	background:#333;
-	margin:0.5em 0px;
-	box-shadow:inset 0px 0px 4px 0px #44ee99;
-}
-
-.git-container:after {
-	content:"GIT REPO";
-	font-size:4em;
-	position:absolute;
-	right:0.3em;
-	top:0.6em;
-	z-index:0;
-	opacity:0.1;
-	transform:rotateZ(-5deg);
-	font-family:serif,sans-serif,sans;
-}
-
-.git-container > span {
-	display:block;
-}
-
-.git-header {
-	font-size:1.35em;
-	padding-bottom:0.25em;
-}
-
-.git-clone {
-	background:#444;
-	display:inline-block;
-	font-family:monospace,mono;
-	border: 1px solid #888;
-	padding: 2px 4px;
-	-webkit-border-radius: 2px;
-	    -moz-border-radius:2px;
-	        border-radius: 2px;
-	margin-bottom:1em;
-	z-index:1;
-	position:relative;
-
-	cursor:pointer;
-	user-select:all;
-}
-
-.git-total-commits {
-	text-align:right;
-	padding-top:1em;
-}
-
-.source-highlight {
-	white-space:pre;
-	background:#333;
-	background:rgba(48,48,48,0.5);
-	padding:0.5em;
-	box-sizing:border-box;
-	border:solid 1px #44ee99;
-	border-radius:4px;
-	font-family:Dina,monospace,mono,sans-serif,sans;
-	overflow-y:visible;
-	overflow-x:auto;
-	display:block;
-	width:100%;
-}
-
-.source-highlight font[color="#000000"] {
-	color:#fff !important;
-}
-
-.goodbye {
-	display:block;
-	text-align:right;
 }
 
 span.key {
