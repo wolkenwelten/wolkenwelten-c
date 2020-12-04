@@ -1,0 +1,68 @@
+#!/usr/bin/bash
+
+# Ansi color code variables
+red="\e[0;91m"
+blue="\e[0;94m"
+expand_bg="\e[K"
+blue_bg="\e[0;104m${expand_bg}"
+red_bg="\e[0;101m${expand_bg}"
+green_bg="\e[0;102m${expand_bg}"
+green="\e[0;92m"
+white="\e[0;97m"
+bold="\e[1m"
+uline="\e[4m"
+reset="\e[0m"
+
+test_success () {
+	echo -e "$green[YEAH]$reset" "$1"
+}
+
+test_error () {
+	echo -e "$red[NOES]$reset" "$1" "$2"
+}
+
+trim() {
+	local var="$*"
+	var="${var#"${var%%[![:space:]]*}"}"
+	var="${var%"${var##*[![:space:]]}"}"
+	printf '%s' "$var"
+}
+
+test_sexpr () {
+	sexpr="$1"
+	goal="$2"
+	val=`./nujel -e "$sexpr"`
+	val=$(trim "$val")
+	val="${val%%*( )}"
+	if [ "$val" == "$goal" ]; then
+		test_success "$sexpr"
+	else
+		test_error "$sexpr" "'$goal' != '$val'"
+
+	fi
+}
+
+test_sexpr_exitcode () {
+	sexpr="$1"
+	goal=$2
+	./nujel -e "$sexpr"
+	val=$?
+	if [ "$val" -eq "$goal" ]; then
+		test_success "$sexpr"
+	else
+		test_error "$sexpr" "'$goal' != '$val'"
+
+	fi
+}
+
+test_sexpr "42" "42"
+test_sexpr "(+ 1 2)" "3"
+test_sexpr "(- 3 3 3)" "-3"
+test_sexpr "(* 4 4)" "16"
+test_sexpr "(def vier 4) (/ 9 vier)" "2"
+test_sexpr "(% 9 4)" "1"
+test_sexpr "(+ (* 2 (/ 32 8) (- 16 8)) 5)" "69"
+test_sexpr "(def eins 1) (def zwei 2) (+ eins zwei)" "3"
+test_sexpr "(def eins 1) (def zwei 2) (def drei (+ eins zwei)) (set eins (- drei drei drei))" "-3"
+test_sexpr "(def zahl 1_2_8) zahl" "128"
+test_sexpr_exitcode "(quit 23)" 23

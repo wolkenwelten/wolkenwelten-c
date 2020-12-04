@@ -14,11 +14,33 @@
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 
+#include "../../../common/nujel/nujel.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 char replyBuf[256];
+lClosure *clRoot;
+
+void initCommands(){
+	clRoot = closureNew(NULL);
+	//lClosureAddNF(c,"quit",&lnfQuit);
+}
+
+void freeCommands(){
+	closureFree(clRoot);
+}
+
+static void cmdLisp(int c, const char *sexpr){
+	static char reply[512];
+	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
+		v = lEval(c,sexpr);
+	}
+	lSPrintChain(v,reply,&reply[sizeof(reply)]);
+	lClosureGC(c);
+	serverSendChatMsg(reply);
+}
 
 static void cmdDmg(int c, const char *cmd){
 	int dmg = 4;
@@ -296,6 +318,10 @@ int parseCommand(int c, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
 
+	if(*tcmp == '('){
+		cmdLisp(c,tcmp);
+	}
+
 	if(strncmp(tcmp,"help",4) == 0){
 		cmdHelp(c,tcmp);
 		return 1;
@@ -343,10 +369,6 @@ int parseCommand(int c, const char *cmd){
 	if(strncmp(tcmp,"time",4) == 0){
 		cmdTime(c,tcmp);
 		return 1;
-	}
-
-	if(strncmp(tcmp,"save",9) == 0){
-
 	}
 
 	if(strncmp(tcmp,"refreshAll",9) == 0){

@@ -149,6 +149,7 @@ void mainInit(){
 	serverInit();
 	chungusInit();
 	chunkInit();
+	initCommands();
 	savegameSave();
 
 	bigchungusInit(&world);
