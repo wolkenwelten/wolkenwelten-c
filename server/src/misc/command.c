@@ -23,22 +23,58 @@
 char replyBuf[256];
 lClosure *clRoot;
 
+
+lVal *wwlnfUpdateAll(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	worldSetAllUpdated();
+	return lValNil();
+}
+lVal *wwlnfACount(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValInt(animalUsedCount);
+}
+lVal *wwlnfFCount(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValInt(fireCount);
+}
+lVal *wwlnfBMCount(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValInt(blockMiningGetActive());
+}
+lVal *wwlnfIDCount(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValInt(itemDropGetActive());
+}
+lVal *wwlnfECount(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValInt(entityCount);
+}
+
 void initCommands(){
-	clRoot = closureNew(NULL);
-	//lClosureAddNF(c,"quit",&lnfQuit);
+	lInit();
+	clRoot = lClosureNew(NULL);
+	lClosureAddNF(clRoot,"updateAll",&wwlnfUpdateAll);
+	lClosureAddNF(clRoot,"acount",&wwlnfACount);
+	lClosureAddNF(clRoot,"fcount",&wwlnfFCount);
+	lClosureAddNF(clRoot,"bmcount",&wwlnfBMCount);
+	lClosureAddNF(clRoot,"idcount",&wwlnfIDCount);
+	lClosureAddNF(clRoot,"ecount",&wwlnfECount);
 }
 
 void freeCommands(){
-	closureFree(clRoot);
+	lClosureFree(clRoot);
 }
 
-static void cmdLisp(int c, const char *sexpr){
+static void cmdLisp(int c,const char *str){
+	(void)c;
 	static char reply[512];
+	lVal *v;
 	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
-		v = lEval(c,sexpr);
+		v = lEval(clRoot,sexpr);
 	}
 	lSPrintChain(v,reply,&reply[sizeof(reply)]);
-	lClosureGC(c);
+	for(uint i=0;i<sizeof(reply);i++){if(reply[i] == '\n'){reply[i] = ' ';}}
+	lClosureGC(clRoot);
 	serverSendChatMsg(reply);
 }
 
@@ -368,45 +404,6 @@ int parseCommand(int c, const char *cmd){
 
 	if(strncmp(tcmp,"time",4) == 0){
 		cmdTime(c,tcmp);
-		return 1;
-	}
-
-	if(strncmp(tcmp,"refreshAll",9) == 0){
-		worldSetAllUpdated();
-	}
-
-	if(strncmp(tcmp,"acount",6) == 0){
-		snprintf(replyBuf,sizeof(replyBuf),".acount : %i",animalUsedCount);
-		replyBuf[sizeof(replyBuf)-1]=0;
-		serverSendChatMsg(replyBuf);
-		return 1;
-	}
-
-	if(strncmp(tcmp,"fcount",6) == 0){
-		snprintf(replyBuf,sizeof(replyBuf),".fcount : %i",fireCount);
-		replyBuf[sizeof(replyBuf)-1]=0;
-		serverSendChatMsg(replyBuf);
-		return 1;
-	}
-
-	if(strncmp(tcmp,"bmcount",7) == 0){
-		snprintf(replyBuf,sizeof(replyBuf),".bmcount : %i",blockMiningGetActive());
-		replyBuf[sizeof(replyBuf)-1]=0;
-		serverSendChatMsg(replyBuf);
-		return 1;
-	}
-
-	if(strncmp(tcmp,"idcount",7) == 0){
-		snprintf(replyBuf,sizeof(replyBuf),".idcount : %i",itemDropGetActive());
-		replyBuf[sizeof(replyBuf)-1]=0;
-		serverSendChatMsg(replyBuf);
-		return 1;
-	}
-
-	if(strncmp(tcmp,"ecount",6) == 0){
-		snprintf(replyBuf,sizeof(replyBuf),".ecount : %i",entityCount);
-		replyBuf[sizeof(replyBuf)-1]=0;
-		serverSendChatMsg(replyBuf);
 		return 1;
 	}
 

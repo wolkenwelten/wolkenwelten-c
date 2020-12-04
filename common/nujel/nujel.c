@@ -16,12 +16,17 @@ lClosure *lClosureFFree = NULL;
 lString   lStringList[1<<8];
 lString  *lStringFFree = NULL;
 
+lCString   lCStringList[1<<8];
+lCString  *lCStringFFree = NULL;
+
 lClosure *lClosureAlloc();
 void      lClosureFree(lClosure *c);
 lVal     *lValAlloc();
 void      lValFree(lVal *v);
 lString  *lStringAlloc();
 void      lStringFree(lString *s);
+lCString *lCStringAlloc();
+void      lCStringFree(lCString *s);
 
 static lVal *lDefineClosureSym(lClosure *c,const lSymbol s);
 static lVal *lResolveClosureSymbol(lClosure *c, const lSymbol s);
@@ -32,14 +37,21 @@ void lInit(){
 		lValList[i].next = &lValList[i+1];
 	}
 	lValFFree = &lValList[0];
+
 	for(uint i=0;i<countof(lClosureList)-1;i++){
 		lClosureList[i].parent = &lClosureList[i+1];
 	}
 	lClosureFFree = &lClosureList[0];
+
 	for(uint i=0;i<countof(lStringList)-1;i++){
 		lStringList[i].next = &lStringList[i+1];
 	}
 	lStringFFree = &lStringList[0];
+
+	for(uint i=0;i<countof(lCStringList)-1;i++){
+		lCStringList[i].next = &lCStringList[i+1];
+	}
+	lCStringFFree = &lCStringList[0];
 }
 
 lClosure *lClosureAlloc(){
@@ -68,10 +80,26 @@ lString *lStringAlloc(){
 }
 void lStringFree(lString *s){
 	if(s == NULL){return;}
-	if(s->buf == NULL){return;}
-	free(s->buf);
+	if(s->buf != NULL){free(s->buf);}
 	s->buf = s->data = NULL;
 	s->next = lStringFFree;
+	lStringFFree = s;
+}
+
+lCString *lCStringAlloc(){
+	if(lCStringFFree == NULL){
+		fprintf(stderr,"lCString OOM\n");
+		return NULL;
+	}
+	lCString *ret = lCStringFFree;
+	lCStringFFree = ret->next;
+	return ret;
+}
+void lCStringFree(lCString *s){
+	if(s == NULL){return;}
+	s->data = NULL;
+	s->next = lCStringFFree;
+	lCStringFFree = s;
 }
 
 lVal *lValAlloc(){
@@ -126,6 +154,12 @@ lVal *lValInt(int v){
 	ret->vInt = v;
 	return ret;
 }
+lVal *lValBool(int v){
+	lVal *ret  = lValAlloc();
+	ret->type  = ltBool;
+	ret->vBool = v == true;
+	return ret;
+}
 lVal *lValSym(const char *s){
 	lVal *ret = lValAlloc();
 	ret->type = ltSymbol;
@@ -156,11 +190,11 @@ static lVal *lStringNew(const char *str){
 	return s;
 }
 */
-static void lStringAdvanceToNextCharacter(lString *s){
+static void lStringAdvanceToNextCharacter(lCString *s){
 	for(;(*s->data != 0) && (isspace(*s->data));s->data++){}
 }
 
-static lVal *lParseString(lString *s){
+static lVal *lParseString(lCString *s){
 	static char buf[4096];
 	char *b = buf;
 	for(uint i=0;i<sizeof(buf);i++){
@@ -207,7 +241,7 @@ static lVal *lParseString(lString *s){
 	return v;
 }
 
-static lVal *lParseNumber(lString *s){
+static lVal *lParseNumber(lCString *s){
 	lVal *v = lValAlloc();
 	v->type = ltInt;
 	v->vInt = 0;
@@ -230,7 +264,7 @@ static lVal *lParseNumber(lString *s){
 	return v;
 }
 
-static lVal *lParseSymbol(lString *s){
+static lVal *lParseSymbol(lCString *s){
 	lVal *v = lValAlloc();
 	v->type = ltSymbol;
 	v->vSymbol.v = 0;
@@ -249,7 +283,7 @@ static lVal *lParseSymbol(lString *s){
 	return v;
 }
 
-static lVal *lParseSpecial(lString *s){
+static lVal *lParseSpecial(lCString *s){
 	lVal *v = lValAlloc();
 	v->type = ltNil;
 	if(*s->data++ != '#'){return v;}
@@ -277,7 +311,7 @@ static lVal *lParseSpecial(lString *s){
 
 }
 
-static lVal *lParse(lString *s){
+static lVal *lParse(lCString *s){
 	lVal *v = NULL, *ret = NULL;
 	while(1){
 		lStringAdvanceToNextCharacter(s);
@@ -320,20 +354,20 @@ static lVal *lParse(lString *s){
 	}
 }
 
-lVal *lParseSExprCS(char *str){
-	lString *s = lStringAlloc();
+lVal *lParseSExprCS(const char *str){
+	lCString *s = lCStringAlloc();
 	s->data    = str;
-	s->len     = strlen(str);
-	s->bufEnd  = str+s->len+1;
+	int len    = strlen(str);
+	s->bufEnd  = &str[len];
 	lVal *ret  = lParse(s);
-	lStringFree(s);
+	lCStringFree(s);
 	return ret;
 }
 
 void lPrintChain(lVal *v){
 	static char buf[8192];
 	lSPrintChain(v,buf,&buf[sizeof(buf) - 1]);
-	printf("%s",buf);
+	printf("%s\n",buf);
 }
 
 char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
@@ -379,6 +413,7 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 		case ltInt:
 			t = snprintf(buf,len,"%i",v->vInt);
 			break;
+		case ltCString:
 		case ltString:
 			t = snprintf(buf,len,"\"%s\"",v->vString->data);
 			break;
@@ -404,8 +439,6 @@ char *lSPrintChain(lVal *start, char *buf, char *bufEnd){
 		if((bufEnd - cur) < 1){return cur;}
 		*cur++ = ' ';
 	}
-	if((bufEnd - cur) < 1){return cur;}
-	*cur++ = '\n';
 	*bufEnd = 0;
 	return cur;
 }

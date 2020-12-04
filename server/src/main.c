@@ -1,5 +1,6 @@
 #include "main.h"
 
+#include "misc/command.h"
 #include "misc/options.h"
 #include "game/animal.h"
 #include "game/blockMining.h"

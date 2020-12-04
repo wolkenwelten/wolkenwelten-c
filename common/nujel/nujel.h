@@ -1,12 +1,13 @@
 #pragma once
 
 typedef enum lType {
-	ltNoAlloc = 0, ltNil, ltBool, ltList, ltLambda, ltClosure, ltInt, ltString, ltSymbol, ltNativeFunc, ltInf
+	ltNoAlloc = 0, ltNil, ltBool, ltList, ltLambda, ltClosure, ltInt, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf
 } lType;
 
 typedef struct lVal     lVal;
 typedef struct lClosure lClosure;
 typedef struct lString  lString;
+typedef struct lCString lCString;
 
 typedef struct {
 	union {
@@ -28,6 +29,7 @@ struct lVal {
 		unsigned int  vUint;
 		unsigned int  vChar;
 		lString      *vString;
+		lCString     *vCString;
 		lClosure     *vClosure;
 		lSymbol       vSymbol;
 		lVal       *(*vNativeFunc)(lClosure *, lVal *);
@@ -49,6 +51,14 @@ struct lString {
 	int len;
 };
 
+struct lCString {
+	const char *data;
+	union {
+		const char *bufEnd;
+		lCString *next;
+	};
+};
+
 
 void      lInit();
 int       lMemUsage     ();
@@ -57,9 +67,15 @@ void      lClosureFree  (lClosure *c);
 lVal     *lClosureAddNF (lClosure *c, const char *sym, lVal *(*func)(lClosure *,lVal *));
 void      lValFree      (lVal *v);
 void      lClosureGC    (lClosure *c);
-lVal     *lParseSExprCS (char *str);
+lVal     *lParseSExprCS (const char *str);
 void      lPrintChain   (lVal *v);
 char     *lSPrintVal    (lVal *v, char *buf, char *bufEnd);
 char     *lSPrintChain  (lVal *v, char *buf, char *bufEnd);
 lVal     *lResolveSym   (lClosure *c, const lSymbol s);
 lVal     *lEval         (lClosure *c, lVal *v);
+
+lVal *lValNil();
+lVal *lValBool(int v);
+lVal *lValInf();
+lVal *lValInt(int v);
+lVal *lValSym(const char *s);
