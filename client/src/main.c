@@ -25,6 +25,7 @@
 #include "gui/overlay.h"
 #include "menu/inventory.h"
 #include "menu/mainmenu.h"
+#include "misc/lisp.h"
 #include "misc/options.h"
 #include "misc/tests.h"
 #include "network/chat.h"
@@ -152,6 +153,7 @@ int main( int argc, char* argv[] ){
 	sfxInit();
 
 	initMenu();
+	lispInit();
 	initUI();
 	initSky();
 	shadowInit();

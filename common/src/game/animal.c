@@ -5,6 +5,7 @@
 #include "../game/character.h"
 #include "../game/fire.h"
 #include "../game/rope.h"
+#include "../game/time.h"
 #include "../mods/api_v1.h"
 #include "../network/messages.h"
 
@@ -393,11 +394,15 @@ void animalThinkAll(){
 
 void animalNeedsAll(){
 	static uint calls = 0;
+	int sleepyi = 1;
+	int tcat = gtimeGetTimeCat();
+	if((tcat == TIME_NIGHT) || (tcat == TIME_EVENING)){sleepyi = 2;}
+
 	for(uint i=(calls&0xFFF);i<animalCount;i+=0x1000){
 		animal *e = &animalList[i];
 		if(e->flags & ANIMAL_NO_NEEDS){continue;}
 		e->hunger--;
-		e->sleepy--;
+		e->sleepy-=sleepyi;
 		if(e->pregnancy > 0){e->pregnancy--;}
 		if((calls & 0xF000) == 0){e->age++;}
 	}

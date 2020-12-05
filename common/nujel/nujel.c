@@ -20,16 +20,13 @@ lCString   lCStringList[1<<8];
 lCString  *lCStringFFree = NULL;
 
 lClosure *lClosureAlloc();
-void      lClosureFree(lClosure *c);
-lVal     *lValAlloc();
-void      lValFree(lVal *v);
-lString  *lStringAlloc();
-void      lStringFree(lString *s);
+void      lClosureFree (lClosure *c);
+lVal     *lValAlloc    ();
+void      lValFree     (lVal *v);
+lString  *lStringAlloc ();
+void      lStringFree  (lString *s);
 lCString *lCStringAlloc();
-void      lCStringFree(lCString *s);
-
-static lVal *lDefineClosureSym(lClosure *c,const lSymbol s);
-static lVal *lResolveClosureSymbol(lClosure *c, const lSymbol s);
+void      lCStringFree (lCString *s);
 
 void lInit(){
 	for(uint i=0;i<countof(lValList)-1;i++){
@@ -164,7 +161,7 @@ lVal *lValSym(const char *s){
 	lVal *ret = lValAlloc();
 	ret->type = ltSymbol;
 	ret->vSymbol.v = 0;
-	strncpy(ret->vSymbol.c,s,8);
+	strncpy(ret->vSymbol.c,s,7);
 	return ret;
 }
 
@@ -225,12 +222,12 @@ static lVal *lParseString(lCString *s){
 			s->data++;
 			lVal *v = lValAlloc();
 			v->type = ltString;
-			lString *s = v->vString = lStringAlloc();
-			s->data = s->buf = malloc((b-buf)+1);
-			memcpy(s->buf,buf,b-buf);
-			s->len = b-buf;
-			s->data[s->len] = 0;
-			s->bufEnd = s->data + s->len;
+			lString *vs = v->vString = lStringAlloc();
+			vs->data = vs->buf = malloc((b-buf)+1);
+			memcpy(vs->buf,buf,b-buf);
+			vs->len = b-buf;
+			vs->data[vs->len] = 0;
+			vs->bufEnd = vs->data + vs->len;
 			return v;
 		}else{
 			*b++ = *s->data++;
@@ -260,7 +257,6 @@ static lVal *lParseNumber(lCString *s){
 	if(fc == '-'){
 		v->vInt = -v->vInt;
 	}
-	//printf("parseNumber: %u\n",v->vInt);
 	return v;
 }
 
@@ -316,7 +312,6 @@ static lVal *lParse(lCString *s){
 	while(1){
 		lStringAdvanceToNextCharacter(s);
 		char c = *s->data;
-		//printf("Parse {%c} %u\n",c,c);
 		lVal *t = NULL;
 		if((c == 0) || (c == ')') || (s->data >= s->bufEnd)){
 			if(v == NULL){
@@ -366,7 +361,14 @@ lVal *lParseSExprCS(const char *str){
 
 void lPrintChain(lVal *v){
 	static char buf[8192];
-	lSPrintChain(v,buf,&buf[sizeof(buf) - 1]);
+	char *end = lSPrintChain(v,buf,&buf[sizeof(buf) - 1]);
+	*end = 0;
+	printf("%s\n",buf);
+}
+
+void lPrintVal(lVal *v){
+	static char buf[256];
+	lSPrintVal(v,buf,&buf[sizeof(buf)]);
 	printf("%s\n",buf);
 }
 
@@ -392,20 +394,22 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			}
 			break;
 		case ltList: {
-			t = snprintf(buf,bufEnd-cur,"(");
+			t = snprintf(buf,bufEnd-cur,"'(");
 			if(t > 0){cur += t;}
 			for(lVal *n = v->vList;n != NULL;n = n->next){
 				cur = lSPrintVal(n,cur,bufEnd);
+				if(n->next != NULL){*cur++ = ' ';}
 			}
-			t = snprintf(buf,bufEnd-cur,")");
+			t = snprintf(cur,bufEnd-cur,")");
 			break; }
 		case ltLambda: {
 			t = snprintf(buf,bufEnd-cur,"(");
 			if(t > 0){cur += t;}
 			for(lVal *n = v->vList;n != NULL;n = n->next){
 				cur = lSPrintVal(n,cur,bufEnd);
+				if(n->next != NULL){*cur++ = ' ';}
 			}
-			t = snprintf(buf,bufEnd-cur,")");
+			t = snprintf(cur,bufEnd-cur,")");
 			break; }
 		case ltClosure:
 			t = snprintf(buf,len,"#{");
@@ -525,7 +529,7 @@ static lVal *lnfSet(lClosure *c, lVal *v){
 	lVal *sym = v;
 	if(sym->type != ltSymbol)    {sym = lEval(c,sym);}
 	if(sym->type != ltSymbol)    {return lValNil();}
-	lVal *t = lResolveClosureSymbol(c,sym->vSymbol);
+	lVal *t = lResolveClosureSym(c,sym->vSymbol);
 	if(t == NULL)                {return lValNil();}
 	lVal *val = lEval(c,v->next);
 	if(val != NULL){*t = *val;}
@@ -554,6 +558,28 @@ static lVal *lnfMem(lClosure *c, lVal *v){
 	return lValInt(lMemUsage());
 }
 
+static lVal *lnfLet(lClosure *c, lVal *v){
+	if(v == NULL)          {return lValNil();}
+	if((v->type != ltLambda) && (v->type != ltList)){return lValNil();}
+	lClosure *nc = lClosureNew(c);
+	for(lVal *n = v->vList; n != NULL; n = n->next){
+		if(n->type == ltSymbol){
+			lDefineClosureSym(nc,n->vSymbol);
+		}else if((n->type == ltLambda) || ((n->type == ltList))){
+			if(n->vList == NULL)          {continue;}
+			if(n->vList->type != ltSymbol){continue;}
+			lVal *t = lDefineClosureSym(nc,n->vList->vSymbol);
+			lVal *arg = lEval(c,n->vList->next);
+			*t = *arg;
+		}
+	}
+	for(lVal *n = v->next;n != NULL;n = n->next){
+		lVal *t = lEval(nc,n);
+		if(n->next == NULL){return t;}
+	}
+	return lValNil();
+}
+
 static lVal *lValNativeFunc(lVal *(*func)(lClosure *,lVal *)){
 	lVal *v = lValAlloc();
 	v->type = ltNativeFunc;
@@ -580,12 +606,13 @@ static lVal *lResolveNativeSym(const lSymbol s){
 	}
 	if(strcmp(s.c,"def") == 0)  {return lValNativeFunc(lnfDef);}
 	if(strcmp(s.c,"set") == 0)  {return lValNativeFunc(lnfSet);}
+	if(strcmp(s.c,"let") == 0)  {return lValNativeFunc(lnfLet);}
 	if(strcmp(s.c,"cl") == 0)   {return lValNativeFunc(lnfCl);}
 	if(strcmp(s.c,"mem") == 0)  {return lValNativeFunc(lnfMem);}
 	return lValNil();
 }
 
-static lVal *lDefineClosureSym(lClosure *c,const lSymbol s){
+lVal *lDefineClosureSym(lClosure *c,const lSymbol s){
 	if(c == NULL){return NULL;}
 	lVal *v;
 	for(v = c->data;v->next != NULL;v = v->next){
@@ -613,7 +640,7 @@ static lVal *lDefineClosureSym(lClosure *c,const lSymbol s){
 	return v->vList->next;
 }
 
-static lVal *lResolveClosureSymbol(lClosure *c, const lSymbol s){
+lVal *lResolveClosureSym(lClosure *c, const lSymbol s){
 	if(c == NULL){return NULL;}
 	for(lVal *v = c->data;v != NULL;v = v->next){
 		if(v->type != ltList)         {continue;}
@@ -622,11 +649,11 @@ static lVal *lResolveClosureSymbol(lClosure *c, const lSymbol s){
 		if(v->vList->vSymbol.v != s.v){continue;}
 		return v->vList->next;
 	}
-	return lResolveClosureSymbol(c->parent,s);
+	return lResolveClosureSym(c->parent,s);
 }
 
 lVal *lResolveSym(lClosure *c, const lSymbol s){
-	lVal *v = lResolveClosureSymbol(c,s);
+	lVal *v = lResolveClosureSym(c,s);
 	if(v != NULL){
 		return v;
 	}else{

@@ -33,6 +33,11 @@ widget *widgetNew(widgetType type){
 		widgetBind(wid,"focus",textInputFocus);
 		widgetBind(wid,"blur",textInputBlur);
 	}
+	if(wid->type == wLispShell){
+		wid->vals = calloc(1,4096);
+		widgetBind(wid,"focus",textInputFocus);
+		widgetBind(wid,"blur",textInputBlur);
+	}
 	return wid;
 }
 widget *widgetNewC(widgetType type,widget *p){
@@ -80,6 +85,9 @@ void widgetFree(widget *w){
 		w->parent = w->next = w->prev = NULL;
 	}
 	if(w->type == wTextInput){
+		free(w->vals);
+	}
+	if(w->type == wLispShell){
 		free(w->vals);
 	}
 	free(w);
@@ -152,6 +160,7 @@ static int widgetIsSelectable(const widget *cur){
 		case wButtonDel:
 		case wRadioButton:
 		case wTextInput:
+		case wLispShell:
 		case wSlider:
 		case wItemSlot:
 		case wRecipeSlot:

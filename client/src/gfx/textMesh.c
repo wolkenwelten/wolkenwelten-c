@@ -185,6 +185,7 @@ void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 	int maxY = m->my;
 	if(maxY == -1){maxY = screenHeight;}
 
+	if(str == NULL){return;}
 	while(*str != 0){
 		if(y > maxY){
 			return;

@@ -5,6 +5,7 @@
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/item.h"
+#include "../game/time.h"
 #include "../misc/misc.h"
 #include "../network/messages.h"
 #include "../mods/api_v1.h"
@@ -371,6 +372,15 @@ void animalThinkBunny(animal *e){
 	animalPregnancy       (e,stateChange);
 	animalPoop            (e,stateChange);
 	animalSocialDistancing(e,stateChange);
+
+	int tcat = gtimeGetTimeCat();
+	if((tcat == TIME_NIGHT) || (tcat == TIME_EVENING)){
+		stateChange[ANIMAL_S_SLEEP] += rngValA(255);
+		stateChange[ANIMAL_S_SLEEP] *= 16;
+	}else{
+		stateChange[ANIMAL_S_SLEEP] = MAX(1,stateChange[ANIMAL_S_SLEEP]);
+		stateChange[ANIMAL_S_SLEEP] /= 16;
+	}
 
 	switch(e->state){
 	default:

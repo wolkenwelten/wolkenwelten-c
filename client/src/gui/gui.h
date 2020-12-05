@@ -16,6 +16,7 @@ void hideMouseCursor ();
 void updateMouse     ();
 void drawCursor      ();
 void openChat        ();
+void openLispPanel   ();
 void renderUI        ();
 void guiCancel       ();
 void renderLoadingUI (const char *step);

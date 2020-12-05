@@ -316,6 +316,49 @@ static void widgetDrawTextScroller(const widget *wid, textMesh *m, int x, int y,
 	m->wrap = 0;
 }
 
+static void widgetDrawLispShell(const widget *wid, textMesh *m, int x, int y, int w, int h){
+	u32 color    = 0xFF333333;
+	u32 bcolor   = 0xFF555555;
+	u32 tcolor   = 0xFF222222;
+	int textYOff = (h - (2*8))/2;
+	int textXOff = 8;
+	int size     = 2;
+
+	if((wid->flags & WIDGET_BIGGER) == WIDGET_BIGGER){
+		size = 8;
+	}else if(wid->flags & WIDGET_BIG){
+		size = 4;
+	}else if(wid->flags & WIDGET_SMALL){
+		size = 1;
+	}
+
+	if(widgetFocused == wid){
+		color = 0xFF292929;
+	}
+
+	textMeshSolidBox(m,x+1, y+1,w-1,h-2, color);
+	textMeshSolidBox(m,x+1, y  ,w-2,  1,tcolor);
+	textMeshSolidBox(m,x  , y+1,  1,h-2,tcolor);
+	textMeshSolidBox(m,x+1, y+h-1,w-2,  1,bcolor);
+	textMeshSolidBox(m,x+w-1, y+1,  1,h-2,bcolor);
+
+	if(wid->vals == NULL){return;}
+	int oldmx = m->mx;
+	m->mx     = x+w - size*8;
+	if(wid->vals[0] == 0){
+		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->label);
+	}else{
+		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->vals);
+	}
+	if((widgetFocused == wid) && (getTicks() & 512)){
+		const int cx = x+textXOff+(textInputCursorPos*size*8);
+		if(cx < m->mx){
+			textMeshAddGlyph(m, x+textXOff+(textInputCursorPos*size*8), y+textYOff, size, 127,0xFFFFFFFF,0x00000000);
+		}
+	}
+	m->mx = oldmx;
+}
+
 void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h){
 	if(wid == NULL){return;}
 
@@ -362,6 +405,9 @@ void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h)
 		break;
 	case wTextScroller:
 		widgetDrawTextScroller(wid,m,x,y,w,h);
+		break;
+	case wLispShell:
+		widgetDrawLispShell(wid,m,x,y,w,h);
 		break;
 	}
 }

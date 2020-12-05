@@ -40,6 +40,7 @@ struct lVal {
 struct lClosure {
 	lClosure *parent;
 	lVal *data;
+	unsigned int flags;
 };
 
 struct lString {
@@ -59,23 +60,25 @@ struct lCString {
 	};
 };
 
+void      lInit             ();
+int       lMemUsage         ();
+lClosure *lClosureNew       (lClosure *parent);
+void      lClosureFree      (lClosure *c);
+lVal     *lClosureAddNF     (lClosure *c, const char *sym, lVal *(*func)(lClosure *,lVal *));
+void      lValFree          (lVal *v);
+void      lClosureGC        (lClosure *c);
+lVal     *lParseSExprCS     (const char *str);
+void      lPrintVal         (lVal *v);
+void      lPrintChain       (lVal *v);
+char     *lSPrintVal        (lVal *v, char *buf, char *bufEnd);
+char     *lSPrintChain      (lVal *v, char *buf, char *bufEnd);
+lVal     *lResolveClosureSym(lClosure *c, const lSymbol s);
+lVal     *lDefineClosureSym (lClosure *c, const lSymbol s);
+lVal     *lResolveSym       (lClosure *c, const lSymbol s);
+lVal     *lEval             (lClosure *c, lVal *v);
 
-void      lInit();
-int       lMemUsage     ();
-lClosure *lClosureNew   (lClosure *parent);
-void      lClosureFree  (lClosure *c);
-lVal     *lClosureAddNF (lClosure *c, const char *sym, lVal *(*func)(lClosure *,lVal *));
-void      lValFree      (lVal *v);
-void      lClosureGC    (lClosure *c);
-lVal     *lParseSExprCS (const char *str);
-void      lPrintChain   (lVal *v);
-char     *lSPrintVal    (lVal *v, char *buf, char *bufEnd);
-char     *lSPrintChain  (lVal *v, char *buf, char *bufEnd);
-lVal     *lResolveSym   (lClosure *c, const lSymbol s);
-lVal     *lEval         (lClosure *c, lVal *v);
-
-lVal *lValNil();
-lVal *lValBool(int v);
-lVal *lValInf();
-lVal *lValInt(int v);
-lVal *lValSym(const char *s);
+lVal     *lValNil       ();
+lVal     *lValBool      (int v);
+lVal     *lValInf       ();
+lVal     *lValInt       (int v);
+lVal     *lValSym       (const char *s);

@@ -4,6 +4,7 @@
 #include "../../../common/src/misc/misc.h"
 
 #include "../main.h"
+#include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../game/animal.h"
 #include "../game/character.h"
@@ -46,6 +47,7 @@ textMesh *cursorMesh;
 widget *widgetGameScreen;
 widget *chatPanel;
 widget *chatText;
+widget *lispPanel;
 
 bool mouseHidden = false;
 uint mousex,mousey;
@@ -56,9 +58,11 @@ float matOrthoProj[16];
 
 void handlerRootHud(widget *wid){
 	(void)wid;
-	chatText->vals[0] = 0;
+	chatText->vals[0]  = 0;
+	lispPanel->vals[0] = 0;
 	widgetFocus(widgetGameScreen);
 	widgetSlideH(chatPanel, 0);
+	widgetSlideH(lispPanel, 0);
 }
 
 void showMouseCursor(){
@@ -117,6 +121,7 @@ void resizeUI(){
 	const int sx = 10*getTilesize();
 	chatPanel->w = screenWidth - sx;
 	chatText->w  = screenWidth - sx - 64;
+	lispPanel->w = screenWidth - 128;
 
 	initInventory();
 }
@@ -125,6 +130,19 @@ void openChat(){
 	if(gameControlsInactive()){return;}
 	widgetSlideH(chatPanel, 64);
 	widgetFocus(chatText);
+}
+
+void openLispPanel(){
+	if(gameControlsInactive()){return;}
+	widgetSlideH(lispPanel, 128);
+	widgetFocus(lispPanel);
+}
+
+void handlerLispSubmit(widget *wid){
+	if(lispPanel->vals[0] != 0){
+		lispEval(lispPanel->vals);
+	}
+	handlerRootHud(wid);
 }
 
 void handlerChatSubmit(widget *wid){
@@ -174,6 +192,9 @@ void initUI(){
 	widgetBind(widgetGameScreen,"focus",handlerGameFocus);
 	chatPanel = widgetNewCP(wPanel,rootMenu,0,-1,512,0);
 	chatPanel->flags |= WIDGET_HIDDEN;
+	lispPanel = widgetNewCPLH(wLispShell,rootMenu,64,0,screenWidth-128,0,"","submit",handlerLispSubmit);
+	lispPanel->flags |= WIDGET_HIDDEN;
+
 	chatText  = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Message","submit",handlerChatSubmit);
 	widgetBind(chatText,"blur",handlerChatBlur);
 	widgetBind(chatText,"selectPrev",handlerChatSelectPrev);
@@ -624,6 +645,10 @@ void guiCancel(){
 		return;
 	}
 	if(widgetFocused == chatText){
+		handlerRootHud(NULL);
+		return;
+	}
+	if(widgetFocused == lispPanel){
 		handlerRootHud(NULL);
 		return;
 	}

@@ -85,6 +85,9 @@ optimizegfx: all
 .PHONY: run
 run: all
 	./wolkenwelten -soundVolume=10 $(TEST_WORLD) -debugInfo=1 -fullscreen -runtimeReloading
+.PHONY: runcd
+runcd: all
+	gdb ./wolkenwelten -ex "r -soundVolume=10 $(TEST_WORLD) -debugInfo=1"
 .PHONY: runt
 runt: all
 	rm -rf save/

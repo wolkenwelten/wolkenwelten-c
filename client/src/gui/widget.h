@@ -26,7 +26,8 @@ typedef enum {
 	wRecipeSlot,
 	wRecipeInfo,
 	wGameScreen,
-	wTextScroller
+	wTextScroller,
+	wLispShell
 } widgetType;
 
 struct widget {

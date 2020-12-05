@@ -219,8 +219,6 @@ static void *animalSave(const animal *e, void *buf){
 	f[10] = e->rot.pitch;
 	u[11] = e->stateTicks;
 
-	printf("animalSave\n");
-
 	return b+12*4;
 }
 
@@ -472,7 +470,6 @@ void chungusLoad(chungus *c){
 			b = itemDropLoad(b);
 			break;
 		case 3:
-			printf("animalLoad\n");
 			b = animalLoad(b);
 			break;
 		case 4:
