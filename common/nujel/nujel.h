@@ -1,7 +1,9 @@
 #pragma once
+#include <stdbool.h>
+#include <stdint.h>
 
 typedef enum lType {
-	ltNoAlloc = 0, ltNil, ltBool, ltList, ltLambda, ltClosure, ltInt, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf
+	ltNoAlloc = 0, ltNil, ltBool, ltList, ltLambda, ltInt, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf
 } lType;
 
 typedef struct lVal     lVal;
@@ -22,12 +24,10 @@ struct lVal {
 	lVal *next;
 	union {
 		void         *vNil;
-		int           vBool;
+		bool          vBool;
 		lVal         *vList;
 		lVal         *vLambda;
 		int           vInt;
-		unsigned int  vUint;
-		unsigned int  vChar;
 		lString      *vString;
 		lCString     *vCString;
 		lClosure     *vClosure;
@@ -66,7 +66,7 @@ lClosure *lClosureNew       (lClosure *parent);
 void      lClosureFree      (lClosure *c);
 lVal     *lClosureAddNF     (lClosure *c, const char *sym, lVal *(*func)(lClosure *,lVal *));
 void      lValFree          (lVal *v);
-void      lClosureGC        (lClosure *c);
+void      lClosureGC        ();
 lVal     *lParseSExprCS     (const char *str);
 void      lPrintVal         (lVal *v);
 void      lPrintChain       (lVal *v);
@@ -78,7 +78,9 @@ lVal     *lResolveSym       (lClosure *c, const lSymbol s);
 lVal     *lEval             (lClosure *c, lVal *v);
 
 lVal     *lValNil       ();
-lVal     *lValBool      (int v);
+lVal     *lValList      (lVal *v);
+lVal     *lValListS     (const char *s, lVal *v);
+lVal     *lValBool      (bool v);
 lVal     *lValInf       ();
 lVal     *lValInt       (int v);
 lVal     *lValSym       (const char *s);

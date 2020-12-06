@@ -200,7 +200,11 @@ void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 				continue;
 			}
 		}
-		if(*str == '\n'){
+		if(((u8)str[0] == 0xCE) && ((u8)str[1] == 0xBB)){ // UTF-8 Lambda
+			textMeshAddGlyph(m,x,y,size,20,m->fgc,m->bgc);
+			x += glyphWidth;
+			str+=2;
+		}else if(*str == '\n'){
 			x = m->sx;
 			m->sy += lineHeight;
 			y += lineHeight;

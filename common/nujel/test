@@ -1,0 +1,77 @@
+#!/usr/bin/bash
+
+# Ansi color code variables
+red="\e[0;91m"
+blue="\e[0;94m"
+expand_bg="\e[K"
+blue_bg="\e[0;104m${expand_bg}"
+red_bg="\e[0;101m${expand_bg}"
+green_bg="\e[0;102m${expand_bg}"
+green="\e[0;92m"
+white="\e[0;97m"
+bold="\e[1m"
+uline="\e[4m"
+reset="\e[0m"
+
+test_success () {
+	echo -e "$green[YEAH]$reset" "$1"
+}
+
+test_error () {
+	echo -e "$red[NOES]$reset" "$1" "$2"
+}
+
+trim() {
+	local var="$*"
+	var="${var#"${var%%[![:space:]]*}"}"
+	var="${var%"${var##*[![:space:]]}"}"
+	printf '%s' "$var"
+}
+
+test_sexpr () {
+	sexpr="$1"
+	goal="$2"
+	val=`./nujel -e "$sexpr"`
+	val=$(trim "$val")
+	val="${val%%*( )}"
+	if [ "$val" == "$goal" ]; then
+		test_success "$sexpr"
+	else
+		test_error "$sexpr" "'$goal' != '$val'"
+
+	fi
+}
+
+test_sexpr_exitcode () {
+	sexpr="$1"
+	goal=$2
+	./nujel -e "$sexpr"
+	val=$?
+	if [ "$val" -eq "$goal" ]; then
+		test_success "$sexpr"
+	else
+		test_error "$sexpr" "'$goal' != '$val'"
+
+	fi
+}
+
+test_sexpr_exitcode "(quit (+ 20 3))" 23
+test_sexpr "(+ 42 (- 3))" "39"
+test_sexpr "(* 4 (- (+ 1 (+ 1 1)) (- 3 3 3))" "24"
+test_sexpr "(let ((vier -4)) (+ (% 9 4) (/ -9 vier)))" "3"
+test_sexpr "(+ (* 2 (/ 32 8) (- 16 8)) 5)" "69"
+test_sexpr "(define eins 1) (define zwei 2) (+ eins zwei)" "3"
+test_sexpr "(define eins 1) (define zwei 2) (define drei (+ eins zwei)) (set! eins (- drei drei drei))" "-3"
+test_sexpr "(define zahl 1_2_8) zahl" "128"
+test_sexpr "(let ((a 10)) a)" "10"
+test_sexpr "(define b 20) (let ((a b)) a)" "20"
+test_sexpr "(define b 20) (let ((a b)) (set! a 10) a)" "10"
+test_sexpr "(define b 20) (let ((a b)) (set! a 10) b)" "20"
+test_sexpr "(let ((a 12) (b 30)) (+ a b))" "42"
+test_sexpr "(define square (lambda (a) (* a a))) (square 4)" "16"
+test_sexpr "'(1 2 3)" "(1 2 3)"
+test_sexpr "(or #f (and (> 5 1) (not (< 5 1)) (>= 5 5) (<= 5 5)))" "#t"
+test_sexpr "(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a)))) (+ (abs -7) (abs 7))" "14"
+test_sexpr "(define fib (lambda (a) (cond ((= a 0) 0) ((= a 1) 1) (#t (+ (fib (- a 1)) (fib (- a 2))))))) (fib 8)" "21"
+test_sexpr "(let ((fib (lambda (a) (cond ((= a 0) 0) ((= a 1) 1) (#t (+ (fib (- a 1)) (fib (- a 2)))))))) (fib 10))" "55"
+test_sexpr "(define fib-iter (lambda (a b count) (cond ((= count 0) b) (#t (fib-iter (+ a b) a (- count 1)))))) (define fib (lambda (n) (fib-iter 1 0 n))) (fib 40)" "102334155"

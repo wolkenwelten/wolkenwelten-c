@@ -26,8 +26,8 @@ clean:
 
 .PHONY: test
 test: nujel
-	./test/test
+	./test
 
 .PHONY: musl
-musl: CC=musl-gcc
-musl: nujel
+musl: $(SRCS)
+	$(CC) $(COPT) $(CWARN) $(CSTD) $(CFLAGS) $(SRCS) -o nujel

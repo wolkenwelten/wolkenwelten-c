@@ -59,7 +59,7 @@ void *loadFile(const char *filename,size_t *len){
 void doRepl(lClosure *c){
 	static char buf[512];
 	while(1){
-		printf("%sλ%s>%s ",ansiFG[1],ansiFG[4],ansiRS);
+		printf("%sλ%s>%s ",ansiFG[1],ansiFG[12],ansiRS);
 		fflush(stdout);
 		if(fgets(buf,sizeof(buf),stdin) == NULL){
 			printf("Bye!\n");
@@ -72,7 +72,7 @@ void doRepl(lClosure *c){
 			v = lEval(c,sexpr);
 		}
 		lPrintChain(v);
-		lClosureGC(c);
+		lClosureGC();
 	}
 }
 
@@ -90,6 +90,7 @@ int main(int argc, char *argv[]){
 	lInit();
 	lClosure *c = lClosureNew(NULL);
 	lClosureAddNF(c,"quit",&lnfQuit);
+	lClosureAddNF(c,"exit",&lnfQuit);
 
 	for(int i=1;i<argc;i++){
 		size_t len;
@@ -112,7 +113,7 @@ int main(int argc, char *argv[]){
 			v = lEval(c,sexpr);
 		}
 		lPrintChain(v);
-		lClosureGC(c);
+		lClosureGC();
 
 		if(!eval){
 			free(str);
