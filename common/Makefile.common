@@ -44,9 +44,11 @@ clean:
 web: release
 	rsync -avhe ssh web/ wolkenwelten.net:/var/www/html/
 	ssh wolkenwelten.net "mkdir -p /var/www/html/releases && cd /var/www/html/releases && mkdir -p win && mkdir -p macos && mkdir -p linux"
-	rsync -avhe ssh releases/win/*.7z wolkenwelten.net:/var/www/html/releases/win/
-	rsync -avhe ssh releases/macos/*.tgz wolkenwelten.net:/var/www/html/releases/macos/
-	rsync -avhe ssh releases/linux/*.xz wolkenwelten.net:/var/www/html/releases/linux/
+	rsync -avhe ssh releases/wasm/ wolkenwelten.net:/var/www/html/releases/wasm/
+	[ -d "releases/wasm" ] && rsync -avhe ssh releases/wasm/ wolkenwelten.net:/var/www/html/releases/wasm/
+	[ -d "releases/win" ] && rsync -avhe ssh releases/win/*.7z wolkenwelten.net:/var/www/html/releases/win/
+	[ -d "releases/macos" ] && rsync -avhe ssh releases/macos/*.tgz wolkenwelten.net:/var/www/html/releases/macos/
+	[ -d "releases/linux" ] && rsync -avhe ssh releases/linux/*.xz wolkenwelten.net:/var/www/html/releases/linux/
 	ssh wolkenwelten.net "cd /var/www/html/ && php index.php > index.html"
 
 .PHONY: debug

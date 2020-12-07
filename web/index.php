@@ -46,17 +46,17 @@ foreach(array_keys($platforms) as $plat){
 	<div class=nativedl align=center>
 		<?php echoBuilds($experimental); ?>
 	</div>
-	<!--
+
 	<hr/>
 	<br/>
 	<h2>Or play directly in your Browser using WebAssembly</h2>
 	<hr/>
 	<div class=wasmdl align=center>
-		<a href="releases/wasm/index.html" class=button><span class=buttonlabel>Start WASM version</span><span class="buttonicon icon-wasm"></span><br/>
+		<a href="releases/wasm/index.html" class=button><span class=buttonlabel>Start WASM version</span><span class="buttonicon icon-wasm"></span></a><br/>
 		<b>Only as a client, needs a separate native Server for now</b><br/>
 		<i>Tested in latest Chrome/Firefox/Safari</i>
 	</div>
-	-->
+
 	<hr/>
 	<h2>Have some Screenshots</h2>
 	<div align=center class=pics>

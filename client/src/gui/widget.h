@@ -27,7 +27,7 @@ typedef enum {
 	wRecipeInfo,
 	wGameScreen,
 	wTextScroller,
-	wLispShell
+	wTextLog
 } widgetType;
 
 struct widget {
@@ -42,10 +42,11 @@ struct widget {
 
 	const char *label;
 	union {
-		char *vals;
-		int   vali;
-		uint  valu;
-		item *valItem;
+		char  *vals;
+		char **valss;
+		int    vali;
+		uint   valu;
+		item  *valItem;
 	};
 };
 
@@ -63,6 +64,7 @@ struct widget {
 #define WIDGET_ALT_CLICKED (1<<10)
 #define WIDGET_MID_CLICKED (1<<11)
 #define WIDGET_ACTIVE      (1<<12)
+#define WIDGET_LISP_SYNTAX_HIGHLIGHT (1<<13)
 
 #define WIDGET_ANIMATE (15<<4)
 #define WIDGET_HNS      (WIDGET_HIDDEN | WIDGET_NOSELECT)
@@ -92,3 +94,4 @@ void    widgetSlideW  (widget *w, int nw);
 void    widgetSlideH  (widget *w, int nh);
 void    widgetSlideX  (widget *w, int nw);
 void    widgetSlideY  (widget *w, int nh);
+void    widgetAddEntry(widget *w, const char *entry);

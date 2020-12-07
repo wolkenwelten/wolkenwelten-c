@@ -314,7 +314,7 @@ static void cmdLisp(int c,const char *str){
 	}
 	lSPrintChain(v,reply,&reply[sizeof(reply)]);
 	for(uint i=0;i<sizeof(reply);i++){if(reply[i] == '\n'){reply[i] = ' ';}}
-	lClosureGC(clRoot);
+	lClosureGC();
 	serverSendChatMsg(reply);
 }
 

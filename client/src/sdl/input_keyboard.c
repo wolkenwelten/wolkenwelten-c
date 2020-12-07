@@ -136,9 +136,6 @@ void keyboardEventHandler(const SDL_Event *e){
 		case SDL_SCANCODE_L:
 			keysPressed[15] = 0;
 			break;
-		case SDL_SCANCODE_GRAVE:
-			openLispPanel();
-			break;
 		#ifndef __EMSCRIPTEN__
 		case SDL_SCANCODE_F5:
 			textureReload();
@@ -215,6 +212,9 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_L:
 			keysPressed[15] = 1;
+			break;
+		case SDL_SCANCODE_GRAVE:
+			toggleLispPanel();
 			break;
 		case SDL_SCANCODE_ESCAPE:
 			menuCancel();

@@ -15,8 +15,6 @@ void textInputFocus(widget *wid){
 	SDL_StartTextInput();
 	if(wid->type == wTextInput){
 		textInputBufferLen = strnlen(wid->vals,255);
-	}else if(wid->type == wLispShell){
-		textInputBufferLen = strnlen(wid->vals,4095);
 	}
 	textInputCursorPos = textInputBufferLen;
 }
@@ -29,7 +27,6 @@ void textInputBlur(widget *wid){
 int textInputActive(){
 	if(widgetFocused == NULL){return 0;}
 	if(widgetFocused->type == wTextInput){return 1;}
-	if(widgetFocused->type == wLispShell){return 1;}
 	return 0;
 }
 

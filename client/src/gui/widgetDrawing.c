@@ -12,6 +12,47 @@
 #include <math.h>
 #include <string.h>
 
+static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h, const char *line, int lambda){
+	(void)h;
+	int openParens = 0;
+	int cx = x;
+	u8 c;
+	int oldFont = m->font;
+	m->font = 1;
+
+	static u32 colors[8] = {
+		0x00000000,
+		0x60FF8040,
+		0x608040FF,
+		0x6040FF80,
+		0x60FF4080,
+		0x604080FF,
+		0x6080FF40,
+		0x60FF40FF
+	};
+	if(lambda){
+		textMeshAddGlyph(m, cx, y, size, 20, colors[1] | 0xFF000000, 0x00000000);
+		cx += size*8;
+		textMeshAddGlyph(m, cx, y, size, '>', colors[2] | 0xFF000000, 0x00000000);
+		cx += size*8;
+		cx += size*8;
+	}
+	for(;*line != 0;line++){
+		if(((u8)line[0] == 0xCE) && ((u8)line[1] == 0xBB)){ // UTF-8 Lambda
+			line++;
+			c = 20;
+		}else{
+			c = *line;
+		}
+		if(*line == '('){openParens++;}
+		textMeshAddGlyph(m, cx, y, size, c, 0xFFFFFFFF, colors[openParens&7]);
+		if(*line == ')'){openParens--;}
+		cx += size * 8;
+		if(cx > w){break;}
+	}
+	m->font = oldFont;
+}
+
 static void widgetDrawButton(const widget *wid, textMesh *m, int x, int y, int w, int h){
 	u32 color    = 0xFF555555;
 	u32 tcolor   = 0xFF777777;
@@ -153,6 +194,7 @@ static void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, in
 	int textYOff = (h - (2*8))/2;
 	int textXOff = 8;
 	int size     = 2;
+	bool isLisp  = (wid->flags & WIDGET_LISP_SYNTAX_HIGHLIGHT) != 0;
 
 	if((wid->flags & WIDGET_BIGGER) == WIDGET_BIGGER){
 		size = 8;
@@ -175,15 +217,21 @@ static void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, in
 	if(wid->vals == NULL){return;}
 	int oldmx = m->mx;
 	m->mx     = x+w - size*8;
-	if(wid->vals[0] == 0){
-		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->label);
+	if(isLisp){
+		widgetDrawLispLine(m, x+textXOff, y+textYOff, size, w-textXOff, size*8, wid->vals, 1);
 	}else{
-		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->vals);
+		if(wid->vals[0] == 0){
+			textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->label);
+		}else{
+			textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->vals);
+		}
 	}
+
 	if((widgetFocused == wid) && (getTicks() & 512)){
-		const int cx = x+textXOff+(textInputCursorPos*size*8);
+		int cx = x+textXOff+(textInputCursorPos*size*8);
+		if(isLisp){cx += size*8*3;}
 		if(cx < m->mx){
-			textMeshAddGlyph(m, x+textXOff+(textInputCursorPos*size*8), y+textYOff, size, 127,0xFFFFFFFF,0x00000000);
+			textMeshAddGlyph(m, cx, y+textYOff, size, 127,0xFFFFFFFF,0x00000000);
 		}
 	}
 	m->mx = oldmx;
@@ -316,47 +364,25 @@ static void widgetDrawTextScroller(const widget *wid, textMesh *m, int x, int y,
 	m->wrap = 0;
 }
 
-static void widgetDrawLispShell(const widget *wid, textMesh *m, int x, int y, int w, int h){
-	u32 color    = 0xFF333333;
-	u32 bcolor   = 0xFF555555;
-	u32 tcolor   = 0xFF222222;
-	int textYOff = (h - (2*8))/2;
-	int textXOff = 8;
-	int size     = 2;
+static void widgetDrawTextLog(const widget *wid, textMesh *m, int x, int y, int w, int h){
+	(void)w;
+	(void)h;
+	const int FS = 16;
+	int i=0;
 
-	if((wid->flags & WIDGET_BIGGER) == WIDGET_BIGGER){
-		size = 8;
-	}else if(wid->flags & WIDGET_BIG){
-		size = 4;
-	}else if(wid->flags & WIDGET_SMALL){
-		size = 1;
-	}
-
-	if(widgetFocused == wid){
-		color = 0xFF292929;
-	}
-
-	textMeshSolidBox(m,x+1, y+1,w-1,h-2, color);
-	textMeshSolidBox(m,x+1, y  ,w-2,  1,tcolor);
-	textMeshSolidBox(m,x  , y+1,  1,h-2,tcolor);
-	textMeshSolidBox(m,x+1, y+h-1,w-2,  1,bcolor);
-	textMeshSolidBox(m,x+w-1, y+1,  1,h-2,bcolor);
-
-	if(wid->vals == NULL){return;}
-	int oldmx = m->mx;
-	m->mx     = x+w - size*8;
-	if(wid->vals[0] == 0){
-		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->label);
-	}else{
-		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->vals);
-	}
-	if((widgetFocused == wid) && (getTicks() & 512)){
-		const int cx = x+textXOff+(textInputCursorPos*size*8);
-		if(cx < m->mx){
-			textMeshAddGlyph(m, x+textXOff+(textInputCursorPos*size*8), y+textYOff, size, 127,0xFFFFFFFF,0x00000000);
+	uint oldFont = m->font;
+	m->font = 1;
+	for(int cy = y+h-FS;(cy+FS)>y;cy-=FS){
+		const char *line = wid->valss[i];
+		if(line == NULL){continue;}
+		if(*line == '>'){
+			widgetDrawLispLine(m, x, cy, FS/8, w, FS, &line[2], true);
+		}else{
+			widgetDrawLispLine(m, x, cy, FS/8, w, FS, line, false);
 		}
+		i++;
 	}
-	m->mx = oldmx;
+	m->font = oldFont;
 }
 
 void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h){
@@ -406,8 +432,8 @@ void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h)
 	case wTextScroller:
 		widgetDrawTextScroller(wid,m,x,y,w,h);
 		break;
-	case wLispShell:
-		widgetDrawLispShell(wid,m,x,y,w,h);
+	case wTextLog:
+		widgetDrawTextLog(wid,m,x,y,w,h);
 		break;
 	}
 }

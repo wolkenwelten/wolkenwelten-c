@@ -48,18 +48,21 @@ widget *widgetGameScreen;
 widget *chatPanel;
 widget *chatText;
 widget *lispPanel;
+widget *lispLog;
+widget *lispInput;
+int lispHistoryActive = -1;
 
 bool mouseHidden = false;
 uint mousex,mousey;
 uint mouseClicked[3] = {0,0,0};
 uint animalOverlaysDrawn = 0;
+bool lispPanelVisible = false;
 
 float matOrthoProj[16];
 
 void handlerRootHud(widget *wid){
 	(void)wid;
 	chatText->vals[0]  = 0;
-	lispPanel->vals[0] = 0;
 	widgetFocus(widgetGameScreen);
 	widgetSlideH(chatPanel, 0);
 	widgetSlideH(lispPanel, 0);
@@ -122,6 +125,9 @@ void resizeUI(){
 	chatPanel->w = screenWidth - sx;
 	chatText->w  = screenWidth - sx - 64;
 	lispPanel->w = screenWidth - 128;
+	if(lispPanelVisible){
+		widgetSlideH(lispPanel, screenHeight-128);
+	}
 
 	initInventory();
 }
@@ -133,16 +139,84 @@ void openChat(){
 }
 
 void openLispPanel(){
-	if(gameControlsInactive()){return;}
-	widgetSlideH(lispPanel, 128);
-	widgetFocus(lispPanel);
+	widgetSlideH(lispPanel, screenHeight-128);
+	widgetFocus(lispInput);
+	lispPanelVisible = true;
+}
+
+void closeLispPanel(){
+	widgetSlideH(lispPanel, 0);
+	widgetFocus(widgetGameScreen);
+	lispPanelVisible = false;
+}
+
+void toggleLispPanel(){
+	if(lispPanelVisible){
+		closeLispPanel();
+	}else{
+		openLispPanel();
+	}
 }
 
 void handlerLispSubmit(widget *wid){
-	if(lispPanel->vals[0] != 0){
-		lispEval(lispPanel->vals);
+	static char buf[512];
+	if(lispInput->vals[0] == 0){return;}
+	snprintf(buf,sizeof(buf)-1,"> %s",wid->vals);
+	widgetAddEntry(lispLog, buf);
+	const char *result = lispEval(wid->vals);
+	snprintf(buf,sizeof(buf)-1,"   %s",result);
+	widgetAddEntry(lispLog, buf);
+	wid->vals[0] = 0;
+	lispHistoryActive = -1;
+	textInputFocus(wid);
+}
+/*
+void handlerLispBlur(widget *wid){
+	(void)wid;
+	closeLispPanel();
+}*/
+
+void handlerLispSelectPrev(widget *wid){
+	const char *msg = lispLog->valss[lispHistoryActive+1];
+	if(msg == NULL){return;}
+	if(*msg == 0)  {return;}
+	++lispHistoryActive;
+	if(*msg == ' '){
+		handlerLispSelectPrev(wid);
+		return;
 	}
-	handlerRootHud(wid);
+	int firstSpace;
+	for(firstSpace=0;firstSpace<255;firstSpace++){
+		if(msg[firstSpace] == ' '){break;}
+	}
+	firstSpace++;
+	memcpy(wid->vals,&msg[firstSpace],255-firstSpace);
+	wid->vals[255]=0;
+	textInputFocus(wid);
+}
+
+void handlerLispSelectNext(widget *wid){
+	if(lispHistoryActive < 0){return;}
+	const char *msg = lispLog->valss[lispHistoryActive-1];
+	if(lispHistoryActive <= 0){
+		memset(wid->vals,0,256);
+		textInputFocus(wid);
+		return;
+	}
+	if(msg == NULL){return;}
+	if(*msg == 0)  {return;}
+	--lispHistoryActive;
+	if(*msg == ' '){
+		handlerLispSelectNext(wid);
+		return;
+	}
+	int firstSpace;
+	for(firstSpace=0;firstSpace<255;firstSpace++){
+		if(wid->vals[firstSpace] == ' '){break;}
+	}
+	memcpy(wid->vals,&msg[firstSpace],255-firstSpace);
+	wid->vals[255]=0;
+	textInputFocus(wid);
 }
 
 void handlerChatSubmit(widget *wid){
@@ -192,8 +266,16 @@ void initUI(){
 	widgetBind(widgetGameScreen,"focus",handlerGameFocus);
 	chatPanel = widgetNewCP(wPanel,rootMenu,0,-1,512,0);
 	chatPanel->flags |= WIDGET_HIDDEN;
-	lispPanel = widgetNewCPLH(wLispShell,rootMenu,64,0,screenWidth-128,0,"","submit",handlerLispSubmit);
+
+	lispPanel = widgetNewCP(wPanel,rootMenu,64,0,screenWidth-128,0);
 	lispPanel->flags |= WIDGET_HIDDEN;
+	lispInput = widgetNewCP(wTextInput,lispPanel,0,-1,-1,32);
+	lispInput->flags |= WIDGET_LISP_SYNTAX_HIGHLIGHT;
+	lispLog = widgetNewCP(wTextLog,lispPanel,0,0,-1,-32);
+	lispLog->flags |= WIDGET_LISP_SYNTAX_HIGHLIGHT;
+	widgetBind(lispInput,"submit",handlerLispSubmit);
+	widgetBind(lispInput,"selectPrev",handlerLispSelectPrev);
+	widgetBind(lispInput,"selectNext",handlerLispSelectNext);
 
 	chatText  = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Message","submit",handlerChatSubmit);
 	widgetBind(chatText,"blur",handlerChatBlur);

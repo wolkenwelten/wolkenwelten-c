@@ -152,7 +152,6 @@ void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c, u32 fgc, u32 bg
 	if(x < -size){return;}
 	if(y < -size){return;}
 	if(c==0)     {return;}
-	if(c==' ')   {return;}
 
 	if(size == 1){
 		glyphSize = 1.f / 128.f;

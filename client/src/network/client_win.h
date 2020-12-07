@@ -75,9 +75,9 @@ void startSingleplayerServer(){
 void closeSingleplayerServer(){
 	if(!singleplayer){return;}
 	TerminateProcess(pi.hProcess,0);
-	spSpawned = false;
+	spSpawned       = false;
 	singlePlayerPID = 0;
-	serverSocket = 0;
+	serverSocket    = 0;
 }
 
 void clientInit(){

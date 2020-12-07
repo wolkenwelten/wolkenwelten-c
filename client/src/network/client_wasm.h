@@ -191,7 +191,7 @@ void clientWSWrite(){
 	}
 }
 
-void clientSPTranceive(char *data,int size,void *arg){
+void clientSPTranceiveCB(char *data,int size,void *arg){
 	(void)arg;
 	if((recvBufLen + size) > sizeof(recvBuf)){
 		fprintf(stderr,"clientSPTranceive buffer full!!!\n");
@@ -208,7 +208,7 @@ void clientSPWrite(){
 	wasmInFlight = true;
 
 	sentBytesCurrentSession += sendBufLen;
-	emscripten_call_worker(spServer,"wasmTranceive",(char *)sendBuf,sendBufLen,(em_worker_callback_func)clientSPTranceive,NULL);
+	emscripten_call_worker(spServer,"wasmTranceive",(char *)sendBuf,sendBufLen,(em_worker_callback_func)clientSPTranceiveCB,NULL);
 	sendBufLen = 0;
 }
 

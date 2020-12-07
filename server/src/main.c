@@ -106,19 +106,18 @@ static void updateWorldStep(){
 	gtimeUpdate();
 }
 
-void updateWorld(){
+int updateWorld(){
 	static u64 lastUpdate  = 0;
 	const u64 cTicks = getTicks();
 	if(lastUpdate  == 0){lastUpdate  = getTicks() - 4;}
 
-	int i = 48;
+	int i = 4;
 	for(;lastUpdate < cTicks;lastUpdate += 4){
 		updateWorldStep();
 		if(--i == 0){break;}
 	}
-	if(lastUpdate < cTicks){
-		fprintf(stderr,"Cant keep up with world Updates! %u Ticks behind\n",(int)(cTicks - lastUpdate)/4);
-	}
+	if(lastUpdate < cTicks){return 0;}
+	return 1;
 }
 
 void handleAnimalPriorities(){
@@ -139,7 +138,10 @@ void mainTick(){
 	chungusFreeOldChungi(30000);
 	handleAnimalPriorities();
 	bigchungusSafeSave(&world);
-	updateWorld();
+	for(int i=0;i<32;i++){
+		serverHandleEvents();
+		if(updateWorld()){break;}
+	}
 	serverHandleEvents();
 }
 

@@ -33,10 +33,8 @@ widget *widgetNew(widgetType type){
 		widgetBind(wid,"focus",textInputFocus);
 		widgetBind(wid,"blur",textInputBlur);
 	}
-	if(wid->type == wLispShell){
-		wid->vals = calloc(1,4096);
-		widgetBind(wid,"focus",textInputFocus);
-		widgetBind(wid,"blur",textInputBlur);
+	if(wid->type == wTextLog){
+		wid->valss = calloc(1,256 * sizeof(char *));
 	}
 	return wid;
 }
@@ -85,9 +83,6 @@ void widgetFree(widget *w){
 		w->parent = w->next = w->prev = NULL;
 	}
 	if(w->type == wTextInput){
-		free(w->vals);
-	}
-	if(w->type == wLispShell){
 		free(w->vals);
 	}
 	free(w);
@@ -160,7 +155,6 @@ static int widgetIsSelectable(const widget *cur){
 		case wButtonDel:
 		case wRadioButton:
 		case wTextInput:
-		case wLispShell:
 		case wSlider:
 		case wItemSlot:
 		case wRecipeSlot:
@@ -455,4 +449,20 @@ void widgetSlideY(widget *w, int ny){
 	if(w->y == ny){return;}
 	w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
 	w->flags |= WIDGET_ANIMATEY;
+}
+
+void widgetAddEntry(widget *w, const char *entry){
+	if(w == NULL)          {return;}
+	if(w->type != wTextLog){return;}
+	if(w->valss == NULL)   {return;}
+	if(entry == NULL)      {return;}
+	if(*entry == 0)        {return;}
+	if(w->valss[255] != NULL){free(w->valss[255]);}
+	for(int i=255;i>0;i--){
+		w->valss[i] = w->valss[i-1];
+	}
+	int len = strlen(entry);
+	w->valss[0] = malloc(len+1);
+	memcpy(w->valss[0],entry,len);
+	w->valss[0][len] = 0;
 }
