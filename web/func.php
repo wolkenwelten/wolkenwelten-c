@@ -100,3 +100,35 @@ function baseSFS($file){
 	unlink($tmpf);
 	return $ret;
 }
+
+function interpolate(string $c1,string $c2,float $v){
+	$r1 = (hexdec($c1) & 0xFF0000) >> 16;
+	$g1 = (hexdec($c1) & 0x00FF00) >>  8;
+	$b1 = (hexdec($c1) & 0x0000FF)      ;
+
+	$r2 = (hexdec($c2) & 0xFF0000) >> 16;
+	$g2 = (hexdec($c2) & 0x00FF00) >>  8;
+	$b2 = (hexdec($c2) & 0x0000FF)      ;
+
+	$r  = (($r1 * (1.0 - $v)) + ($r2 * $v));
+	$g  = (($g1 * (1.0 - $v)) + ($g2 * $v));
+	$b  = (($b1 * (1.0 - $v)) + ($b2 * $v));
+
+	return sprintf("%02x%02x%02x", $r, $g, $b);
+}
+
+function hyper($str,$from='ff4488',$to='44ff66'){
+	$new = '';
+	$chars = str_split($str);
+	$len = count($chars);
+	$i = 0;
+	$c1 = $from;
+	$c2 = $to;
+	foreach($chars as $char){
+		$v = $i++ / ($len-1);
+		$c = interpolate($c1,$c2,$v);
+
+		$new .= '<span style="color:#'.$c.'">'.htmlspecialchars($char).'</span>';
+	}
+	return $new;
+}
