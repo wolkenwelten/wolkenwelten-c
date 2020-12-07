@@ -6,9 +6,16 @@
 
 lClosure *clRoot;
 
+void lispEvalNR(const char *str){
+	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
+		lEval(clRoot,sexpr);
+	}
+}
+
 void lispInit(){
 	lInit();
 	clRoot = lClosureNew(NULL);
+	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
 }
 void lispFree(){
 	lClosureFree(clRoot);

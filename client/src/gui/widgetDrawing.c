@@ -14,10 +14,8 @@
 
 static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h, const char *line, int lambda){
 	(void)h;
-	int openParens = 0;
-	int cx = x;
+	int openParens = 0, cx = x, oldFont = m->font;;
 	u8 c;
-	int oldFont = m->font;
 	m->font = 1;
 
 	static u32 colors[8] = {
@@ -31,13 +29,18 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 		0x60FF40FF
 	};
 	if(lambda){
+		if(lambda == 2){
+			textMeshVGradient(m, cx-size*4, y-size*4, size*8*3 ,size*8*2,0xA01030FF,0x800410E0);
+			textMeshVGradient(m, cx-size*4-2+size*8*3, y-size*4, 2 ,size*8*2,0x800410E0,0xA01030FF);
+		}
 		textMeshAddGlyph(m, cx, y, size, 20, colors[1] | 0xFF000000, 0x00000000);
 		cx += size*8;
-		textMeshAddGlyph(m, cx, y, size, '>', colors[2] | 0xFF000000, 0x00000000);
+		textMeshAddGlyph(m, cx, y, size, '>', colors[1] | 0xFF000000, 0x00000000);
 		cx += size*8;
 		cx += size*8;
 	}
 	for(;*line != 0;line++){
+		if(cx > w){break;}
 		if(((u8)line[0] == 0xCE) && ((u8)line[1] == 0xBB)){ // UTF-8 Lambda
 			line++;
 			c = 20;
@@ -48,7 +51,11 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 		textMeshAddGlyph(m, cx, y, size, c, 0xFFFFFFFF, colors[openParens&7]);
 		if(*line == ')'){openParens--;}
 		cx += size * 8;
+	}
+	for(;openParens > 0;openParens--){
 		if(cx > w){break;}
+		textMeshAddGlyph(m, cx, y, size, ')', 0x80FFFFFF, colors[openParens&7] >> 1);
+		cx += size * 8;
 	}
 	m->font = oldFont;
 }
@@ -218,7 +225,7 @@ static void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, in
 	int oldmx = m->mx;
 	m->mx     = x+w - size*8;
 	if(isLisp){
-		widgetDrawLispLine(m, x+textXOff, y+textYOff, size, w-textXOff, size*8, wid->vals, 1);
+		widgetDrawLispLine(m, x+textXOff, y+textYOff, size, w-textXOff, size*8, wid->vals, 2);
 	}else{
 		if(wid->vals[0] == 0){
 			textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->label);
@@ -370,15 +377,22 @@ static void widgetDrawTextLog(const widget *wid, textMesh *m, int x, int y, int 
 	const int FS = 16;
 	int i=0;
 
-	uint oldFont = m->font;
+	uint lineCount, oldFont = m->font;
 	m->font = 1;
-	for(int cy = y+h-FS;(cy+FS)>y;cy-=FS){
+	for(lineCount=0;lineCount<256;lineCount++){
+		if(wid->valss[lineCount] == NULL){break;}
+	}
+	textMeshVGradient(m,x,y+h-2,w,2,0xA0301010,0xA0100000);
+	for(int cy = y+h-FS-2;(cy+FS)>y;cy-=FS){
 		const char *line = wid->valss[i];
 		if(line == NULL){continue;}
 		if(*line == '>'){
-			widgetDrawLispLine(m, x, cy, FS/8, w, FS, &line[2], true);
+			widgetDrawLispLine(m, x, cy, FS/8, w, FS, &line[2], 1);
 		}else{
-			widgetDrawLispLine(m, x, cy, FS/8, w, FS, line, false);
+			if((i&2) == (lineCount&2)){
+				textMeshVGradient(m,x,cy-FS,w,FS*2,0x40301010,0x40100000);
+			}
+			widgetDrawLispLine(m, x, cy, FS/8, w, FS, line, 0);
 		}
 		i++;
 	}
