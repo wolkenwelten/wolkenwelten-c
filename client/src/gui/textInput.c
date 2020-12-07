@@ -10,18 +10,26 @@
 
 int  textInputBufferLen = 0;
 int  textInputCursorPos = 0;
+bool textInputStarted = false;
 
 void textInputFocus(widget *wid){
-	SDL_StartTextInput();
 	if(wid->type == wTextInput){
 		textInputBufferLen = strnlen(wid->vals,255);
 	}
 	textInputCursorPos = textInputBufferLen;
+
+	if(textInputStarted){return;}
+	SDL_StartTextInput();
+	textInputStarted = true;
 }
 
 void textInputBlur(widget *wid){
 	(void)wid;
+	textInputBufferLen = 0;
+	textInputCursorPos = 0;
+	if(!textInputStarted){return;}
 	SDL_StopTextInput();
+	textInputStarted = false;
 }
 
 int textInputActive(){
@@ -51,6 +59,9 @@ void textInputBackspace(){
 void textInputAppend(const char *s){
 	int slen = strnlen(s,256);
 	if(!textInputActive()){return;}
+	if((widgetFocused->parent->flags & WIDGET_ANIMATE) && (s[0] == '`' && s[1] == 0)){
+		return;
+	}
 	char *textInputBuffer = widgetFocused->vals;
 	if((slen + textInputBufferLen) > 255){slen = 255-textInputBufferLen;}
 	if(textInputCursorPos != textInputBufferLen){
@@ -78,6 +89,7 @@ void textInputPaste(){
 
 bool textInputEvent(const SDL_Event *e){
 	if(!textInputActive()){return false;}
+	if(!textInputStarted){textInputFocus(widgetFocused);}
 
 	switch(e->type){
 	case SDL_TEXTINPUT:

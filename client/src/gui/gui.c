@@ -730,8 +730,8 @@ void guiCancel(){
 		handlerRootHud(NULL);
 		return;
 	}
-	if(widgetFocused == lispPanel){
-		handlerRootHud(NULL);
+	if(lispPanelVisible){
+		closeLispPanel();
 		return;
 	}
 	if(widgetFocused == widgetGameScreen){

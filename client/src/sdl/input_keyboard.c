@@ -214,7 +214,7 @@ void keyboardEventHandler(const SDL_Event *e){
 			keysPressed[15] = 1;
 			break;
 		case SDL_SCANCODE_GRAVE:
-			toggleLispPanel();
+			openLispPanel();
 			break;
 		case SDL_SCANCODE_ESCAPE:
 			menuCancel();
