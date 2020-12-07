@@ -302,7 +302,7 @@ void freeCommands(){
 	lClosureFree(clRoot);
 }
 
-static void cmdLisp(int c,const char *str){
+static void cmdLisp(int c,const char *str, u8 id){
 	static char reply[512];
 	memset(reply,0,sizeof(reply));
 	lVal *sym = lValSym("pid");
@@ -315,7 +315,12 @@ static void cmdLisp(int c,const char *str){
 	lSPrintChain(v,reply,&reply[sizeof(reply)]);
 	for(uint i=0;i<sizeof(reply);i++){if(reply[i] == '\n'){reply[i] = ' ';}}
 	lClosureGC();
-	serverSendChatMsg(reply);
+
+	if(id == 0){
+		serverSendChatMsg(reply);
+	}else{
+		msgLispSExpr(c, id, reply);
+	}
 }
 
 static void cmdDbgitem(int c, const char *cmd){
@@ -413,6 +418,12 @@ int parseCommand(int c, const char *cmd){
 		return 1;
 	}
 
-	cmdLisp(c,tcmp);
+	cmdLisp(c,tcmp,0);
 	return 1;
+}
+
+void lispRecvSExpr(int c,const packet *p){
+	u8 id = p->v.u8[0];
+	const char *str = (const char *)&p->v.u8[1];
+	cmdLisp(c,str,id);
 }

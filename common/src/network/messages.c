@@ -407,3 +407,12 @@ void msgFireUpdate(uint c, u16 i, u16 count, u16 x, u16 y, u16 z, i16 strength){
 
 	packetQueue(p,40,6*2,c);
 }
+
+void msgLispSExpr(uint c, u8 id, const char *str){
+	packet *p = &packetBuffer;
+	int len   = strnlen(str,256);
+	p->v.u8[0] = id;
+	memcpy(&p->v.u8[1],str,len);
+	p->v.u8[len+1] = 0;
+	packetQueue(p,42,alignedLen(len+1),c);
+}

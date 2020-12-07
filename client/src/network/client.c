@@ -11,6 +11,7 @@
 #include "../game/rope.h"
 #include "../game/projectile.h"
 #include "../game/time.h"
+#include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
 #include "../network/chat.h"
@@ -273,6 +274,12 @@ void clientParsePacket(const packet *p){
 			break;
 		case 40:
 			fireRecvUpdate(-1,p);
+			break;
+		case 41:
+			//waterRecvUpdate(-1,p);
+			break;
+		case 42:
+			lispRecvSExpr(p);
 			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);

@@ -452,6 +452,12 @@ void serverParseSinglePacket(uint c, packet *p){
 		case 40:
 			fireRecvUpdate(c,p);
 			break;
+		case 41:
+			//waterRecvUpdate(c,p);
+			break;
+		case 42:
+			lispRecvSExpr(c,p);
+			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
 			serverKill(c);

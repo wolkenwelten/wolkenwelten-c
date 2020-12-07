@@ -150,6 +150,28 @@ void closeLispPanel(){
 	lispPanelVisible = false;
 }
 
+void lispPanelShowReply(lVal *sym, const char *reply){
+	int len = strnlen(reply,256) + 1;
+	if(lispLog == NULL){return;}
+	for(int i=0;i<256;i++){
+		const char *line = lispLog->valss[i];
+		if(line == NULL)                  {continue;}
+		if(*line != ' ')                  {continue;}
+		for(;*line == ' ';line++){}
+		if(strncmp(sym->vSymbol.c,line,6)){
+			printf("'%s' != '%s'\n",line,sym->vSymbol.c);
+			continue;
+		}
+		free(lispLog->valss[i]);
+		lispLog->valss[i] = malloc(len+3);
+		for(int ii=0;ii<3;ii++){lispLog->valss[i][ii] = ' ';}
+		memcpy(&lispLog->valss[i][3],reply,len);
+		lispLog->valss[i][len+3] = 0;
+		break;
+	}
+	fprintf(stderr,"Couldn't match SExpr Reply %s - %s\n",sym->vSymbol.c,reply);
+}
+
 void toggleLispPanel(){
 	if(lispPanelVisible){
 		closeLispPanel();
