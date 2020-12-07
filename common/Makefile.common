@@ -51,6 +51,11 @@ web: release
 	[ -d "releases/linux" ] && rsync -avhe ssh releases/linux/*.xz wolkenwelten.net:/var/www/html/releases/linux/
 	ssh wolkenwelten.net "cd /var/www/html/ && php index.php > index.html"
 
+.PHONY: website
+website:
+	rsync -avhe ssh web/ wolkenwelten.net:/var/www/html/
+	ssh wolkenwelten.net "cd /var/www/html/ && php index.php > index.html"
+
 .PHONY: debug
 debug: CFLAGS += -O0
 debug: all
