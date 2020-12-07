@@ -4,6 +4,7 @@
 #include "../game/grenade.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
+#include "../voxel/chungus.h"
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
@@ -53,8 +54,11 @@ void fireNew(u16 x, u16 y, u16 z, i16 strength){
 	fireSendUpdate(-1,(int)(f - fireList));
 }
 
-void fireIntro(uint c){
+void fireIntroChungus(uint c, const chungus *chng){
 	for(uint i=0;i<fireCount;i++){
+		if(chng->x != (fireList[i].x >> 8)){continue;}
+		if(chng->y != (fireList[i].y >> 8)){continue;}
+		if(chng->z != (fireList[i].z >> 8)){continue;}
 		fireSendUpdate(c,i);
 	}
 }

@@ -277,9 +277,10 @@ void itemDropUpdateFireAll(){
 	calls++;
 }
 
-void itemDropIntro(uint c){
+void itemDropIntroChungus(uint c,const chungus *chng){
 	for(uint i=0;i<itemDropCount;i++){
-		if(itemDropList[i].ent == NULL){continue;}
+		if(itemDropList[i].ent == NULL)            {continue;}
+		if(itemDropList[i].ent->curChungus != chng){continue;}
 		msgItemDropUpdate(c,itemDropList[i].ent->pos,itemDropList[i].ent->vel,&itemDropList[i].itm,i,itemDropCount);
 	}
 }

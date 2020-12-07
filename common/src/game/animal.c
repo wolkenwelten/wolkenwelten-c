@@ -15,8 +15,8 @@
 
 #define ANIMAL_FALL_DMG 12.f
 
-animal  animalList[1<<11];
-uint    animalCount = 0;
+animal  animalList[1<<14];
+uint    animalCount     = 0;
 uint    animalUsedCount = 0;
 uint    animalFirstFree = 0xFFFF;
 
@@ -26,11 +26,15 @@ void animalReset(animal *e){
 
 animal *animalNew(const vec pos , int type, int gender){
 	animal *e = NULL;
-	if(animalFirstFree < (1<<11)){
+	if(animalFirstFree < (1<<14)){
 		e = &animalList[animalFirstFree];
 		animalFirstFree = e->nextFree;
 	}else{
-		if(animalCount >= countof(animalList)){return NULL;}
+		if(animalCount >= countof(animalList)){
+			e = &animalList[rngValA((1<<14)-1)];
+			animalDel(e-animalList);
+			return animalNew(pos,type,gender);
+		}
 		e = &animalList[animalCount++];
 	}
 	animalReset(e);

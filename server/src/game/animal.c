@@ -114,8 +114,9 @@ void animalDelChungus(const chungus *c){
 	}
 }
 
-void animalIntro(u8 c){
+void animalIntroChungus(u8 c, const chungus *chng){
 	for(uint i=0;i<animalCount;i++){
+		if(animalList[i].curChungus != chng){continue;}
 		animalSync(c,i);
 	}
 }

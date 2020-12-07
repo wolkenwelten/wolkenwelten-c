@@ -535,9 +535,6 @@ void serverParseIntro(uint c){
 
 		sendPlayerJoinMessage(c);
 		msgSetTime(c, gtimeGetTime());
-		itemDropIntro(c);
-		animalIntro(c);
-		fireIntro(c);
 		animalUpdatePriorities(c);
 		clients[c].lastPing = getTicks();
 		msgPingPong(c);
@@ -597,7 +594,7 @@ void addChunksToQueue(uint c){
 	chungus *chng = worldGetChungus(entry.x,entry.y,entry.z);
 	if(chng == NULL){ return; }
 	float dist = chungusDistance(clients[c].c, chng);
-	if(dist > 1024.f){
+	if(dist > 4096.f){
 		fprintf(stderr,"Requested Chungus too far away Chungus(%u, %u, %u) Player(%f, %f, %f))\n",chng->x<<8,chng->y<<8,chng->z<<8,clients[c].c->pos.x,clients[c].c->pos.y,clients[c].c->pos.z);
 		return;
 	}

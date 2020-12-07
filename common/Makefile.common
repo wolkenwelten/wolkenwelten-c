@@ -7,7 +7,7 @@ COMMON_DEPS      := ${COMMON_SRCS:.c=.deps}
 WEBEXCLUDE       += --exclude=releases/macos/wolkenwelten.iconset/
 WEBEXCLUDE       += --exclude=releases/win/*.res
 
-TEST_WORLD       := -worldSeed=69 -savegame=Test
+TEST_WORLD       := -worldSeed=2600 -savegame=Test
 
 .PHONY: all
 all: wolkenwelten

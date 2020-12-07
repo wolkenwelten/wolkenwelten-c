@@ -2,6 +2,7 @@
 
 #include "../main.h"
 #include "../game/animal.h"
+#include "../game/fire.h"
 #include "../game/itemDrop.h"
 #include "../network/server.h"
 #include "../persistence/savegame.h"
@@ -233,11 +234,11 @@ void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 	if(h < 0){ chungusBox(c,x,y+h,z,w,-h,d,block); }
 	if(d < 0){ chungusBox(c,x,y,z+d,w,h,-d,block); }
 	for(int cx=0;cx<w;cx++){
-		for(int cy=0;cy<h;cy++){
-			for(int cz=0;cz<d;cz++){
-				chungusSetB(c,cx+x,cy+y,cz+z,block);
-			}
-		}
+	for(int cy=0;cy<h;cy++){
+	for(int cz=0;cz<d;cz++){
+		chungusSetB(c,cx+x,cy+y,cz+z,block);
+	}
+	}
 	}
 	c->clientsUpdated = 0;
 }
@@ -248,13 +249,13 @@ void chungusBoxIfEmpty(chungus *c, int x,int y,int z, int w,int h,int d,u8 block
 	const int ch = y+h;
 	const int cd = z+d;
 	for(int cx=x;cx<cw;cx++){
-		for(int cy=y;cy<ch;cy++){
-			for(int cz=z;cz<cd;cz++){
-				if(chungusGetB(c,cx,cy,cz)){continue;}
-				chungusSetB(c,cx,cy,cz,block);
-				c->clientsUpdated = 0;
-			}
-		}
+	for(int cy=y;cy<ch;cy++){
+	for(int cz=z;cz<cd;cz++){
+		if(chungusGetB(c,cx,cy,cz)){continue;}
+		chungusSetB(c,cx,cy,cz,block);
+		c->clientsUpdated = 0;
+	}
+	}
 	}
 }
 
@@ -297,6 +298,9 @@ void chungusSubscribePlayer(chungus *c, uint p){
 	}
 	}
 	}
+	animalIntroChungus(p,c);
+	fireIntroChungus(p,c);
+	itemDropIntroChungus(p,c);
 }
 
 void chungusSetAllUpdated(chungus *c, u64 nUpdated){

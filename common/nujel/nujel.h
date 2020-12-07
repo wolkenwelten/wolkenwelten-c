@@ -14,7 +14,7 @@ typedef struct lCString lCString;
 typedef struct {
 	union {
 		char c[8];
-		unsigned long long int v;
+		uint64_t v;
 	};
 } lSymbol;
 

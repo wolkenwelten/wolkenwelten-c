@@ -137,7 +137,7 @@ void lValFree(lVal *v){
 }
 lVal *lValCopy(const lVal *v){
 	lVal *ret = lValAlloc();
-	if(ret == NULL)       {return ret;}
+	if(ret == NULL){return ret;}
 	*ret = *v;
 	ret->next = NULL;
 	return ret;
@@ -145,26 +145,26 @@ lVal *lValCopy(const lVal *v){
 
 lVal *lValNil(){
 	lVal *ret = lValAlloc();
-	if(ret == NULL)       {return ret;}
+	if(ret == NULL){return ret;}
 	ret->type = ltNil;
 	return ret;
 }
 lVal *lValInf(){
 	lVal *ret = lValAlloc();
-	if(ret == NULL)       {return ret;}
+	if(ret == NULL){return ret;}
 	ret->type = ltInf;
 	return ret;
 }
 lVal *lValInt(int v){
 	lVal *ret = lValAlloc();
-	if(ret == NULL)       {return ret;}
+	if(ret == NULL){return ret;}
 	ret->type = ltInt;
 	ret->vInt = v;
 	return ret;
 }
 lVal *lValBool(bool v){
 	lVal *ret = lValAlloc();
-	if(ret == NULL)       {return ret;}
+	if(ret == NULL){return ret;}
 	ret->type = ltBool;
 	ret->vBool = v;
 	return ret;
@@ -172,22 +172,23 @@ lVal *lValBool(bool v){
 
 lVal *lValSym(const char *s){
 	lVal *ret = lValAlloc();
-	if(ret == NULL)       {return ret;}
+	if(ret == NULL){return ret;}
 	ret->type = ltSymbol;
 	ret->vSymbol.v = 0;
-	strncpy(ret->vSymbol.c,s,7);
+	strncpy(ret->vSymbol.c,s,sizeof(ret->vSymbol.c));
+	ret->vSymbol.c[sizeof(ret->vSymbol.c)-1] = 0;
 	return ret;
 }
 lVal *lValList(lVal *v){
 	lVal *ret  = lValAlloc();
-	if(ret == NULL)       {return ret;}
+	if(ret == NULL){return ret;}
 	ret->type  = ltList;
 	ret->vList = v;
 	return ret;
 }
 lVal *lValListS(const char *s, lVal *v){
 	lVal *ret = lValList(lValSym(s));
-	if(ret == NULL)       {return ret;}
+	if(ret == NULL){return ret;}
 	if(ret->vList == NULL){return ret;}
 	ret->vList->next = v;
 	return ret;
@@ -195,9 +196,7 @@ lVal *lValListS(const char *s, lVal *v){
 
 lClosure *lClosureNew(lClosure *parent){
 	lClosure *c = lClosureAlloc();
-	if(c == NULL){
-		return NULL;
-	}
+	if(c == NULL){return NULL;}
 	c->parent = parent;
 	c->data = lValAlloc();
 	c->data->type = ltNil;

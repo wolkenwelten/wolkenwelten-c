@@ -275,27 +275,27 @@ void initCommands(){
 	lVal *pid = lDefineClosureSym(clRoot, sym->vSymbol);
 	pid->type = ltInt;
 	pid->vInt = 123;
-	lClosureAddNF(clRoot,"updateAll",&wwlnfUpdateAll);
-	lClosureAddNF(clRoot,"acount",   &wwlnfACount);
-	lClosureAddNF(clRoot,"fcount",   &wwlnfFCount);
-	lClosureAddNF(clRoot,"bmcount",  &wwlnfBMCount);
-	lClosureAddNF(clRoot,"idcount",  &wwlnfIDCount);
-	lClosureAddNF(clRoot,"ecount",   &wwlnfECount);
-	lClosureAddNF(clRoot,"px",       &wwlnfPX);
-	lClosureAddNF(clRoot,"py",       &wwlnfPY);
-	lClosureAddNF(clRoot,"pz",       &wwlnfPZ);
-	lClosureAddNF(clRoot,"setb",     &wwlnfSetB);
-	lClosureAddNF(clRoot,"getb",     &wwlnfGetB);
-	lClosureAddNF(clRoot,"box",      &wwlnfBox);
-	lClosureAddNF(clRoot,"sphere",   &wwlnfSphere);
-	lClosureAddNF(clRoot,"mbox",     &wwlnfMBox);
-	lClosureAddNF(clRoot,"msphere",  &wwlnfMSphere);
-	lClosureAddNF(clRoot,"give",     &wwlnfGive);
-	lClosureAddNF(clRoot,"dmg",      &wwlnfDmg);
-	lClosureAddNF(clRoot,"die",      &wwlnfDie);
-	lClosureAddNF(clRoot,"newAnim",  &wwlnfNewAnim);
-	lClosureAddNF(clRoot,"setAnim",  &wwlnfSetAnim);
-	lClosureAddNF(clRoot,"tp",       &wwlnfTp);
+	lClosureAddNF(clRoot,"update", &wwlnfUpdateAll);
+	lClosureAddNF(clRoot,"acount", &wwlnfACount);
+	lClosureAddNF(clRoot,"fcount", &wwlnfFCount);
+	lClosureAddNF(clRoot,"bmcount",&wwlnfBMCount);
+	lClosureAddNF(clRoot,"idcount",&wwlnfIDCount);
+	lClosureAddNF(clRoot,"ecount", &wwlnfECount);
+	lClosureAddNF(clRoot,"px",     &wwlnfPX);
+	lClosureAddNF(clRoot,"py",     &wwlnfPY);
+	lClosureAddNF(clRoot,"pz",     &wwlnfPZ);
+	lClosureAddNF(clRoot,"setb",   &wwlnfSetB);
+	lClosureAddNF(clRoot,"getb",   &wwlnfGetB);
+	lClosureAddNF(clRoot,"box",    &wwlnfBox);
+	lClosureAddNF(clRoot,"sphere", &wwlnfSphere);
+	lClosureAddNF(clRoot,"mbox",   &wwlnfMBox);
+	lClosureAddNF(clRoot,"msphere",&wwlnfMSphere);
+	lClosureAddNF(clRoot,"give",   &wwlnfGive);
+	lClosureAddNF(clRoot,"dmg",    &wwlnfDmg);
+	lClosureAddNF(clRoot,"die",    &wwlnfDie);
+	lClosureAddNF(clRoot,"newAnim",&wwlnfNewAnim);
+	lClosureAddNF(clRoot,"setAnim",&wwlnfSetAnim);
+	lClosureAddNF(clRoot,"tp",     &wwlnfTp);
 }
 
 void freeCommands(){

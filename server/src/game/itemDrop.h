@@ -10,7 +10,7 @@ void      itemDropNewC         (uint c, const packet *p);
 void      itemDropPickupP      (uint c, const packet *p);
 void      itemDropDel          (uint d);
 void      itemDropDelChungus   (const chungus *c);
-void      itemDropIntro        (uint c);
+void      itemDropIntroChungus (uint c, const chungus *chng);
 void      itemDropUpdate       ();
 void      itemDropUpdateFire   (uint i);
 void      itemDropUpdateFireAll();
