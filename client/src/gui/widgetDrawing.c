@@ -23,9 +23,9 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 		0x60FF8040,
 		0x608040FF,
 		0x6040FF80,
-		0x60FF4080,
-		0x604080FF,
+		0x6040F0F0,
 		0x6080FF40,
+		0x604080FF,
 		0x60FF40FF
 	};
 	if(lambda){
