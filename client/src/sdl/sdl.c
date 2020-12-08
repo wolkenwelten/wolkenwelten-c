@@ -66,7 +66,7 @@ void initSDL(){
 	int desktopWidth  = optionWindowWidth;
 	int desktopHeight = optionWindowHeight;
 	char windowTitle[64];
-	snprintf(windowTitle,sizeof(windowTitle)-1,"Wolkenwelten - %s",playerName);
+	snprintf(windowTitle,sizeof(windowTitle)-1,"%s - WolkenWelten",playerName);
 
 	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS,"0");
 	unsigned int initFlags = SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS | SDL_INIT_AUDIO;
