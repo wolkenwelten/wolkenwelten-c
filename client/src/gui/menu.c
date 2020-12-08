@@ -73,24 +73,27 @@ void closeAllMenus(){
 
 static void handlerRoot(widget *wid){
 	(void)wid;
-	if(showAttribution){openMainMenu();}
+	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return;}
+	if(gameRunning){return;}
+	openMainMenu();
+	closeLispPanel();
 }
 
 void initMenu(){
 	widget *wid;
 
 	rootMenu = widgetNewCP(wSpace,NULL,0,0,-1,-1);
-	widgetBind(rootMenu,"click",handlerRoot);
 
 	menuBackground = widgetNewCP(wBackground,rootMenu,0,0,-1,-1);
 	menuText = widgetNewCP(wSpace,menuBackground,32,32,256,-65);
-	wid = widgetNewCPL(wLabel,menuText,0,0,256,32,"Wolkenwelten");
+	wid = widgetNewCPL(wLabel,menuText,0,0,256,32,"WolkenWelten");
 	wid->flags |= WIDGET_BIG;
 	widgetNewCPL(wLabel,menuText,0,32,256,32,(const char *)VERSION);
 	menuErrorLabel = widgetNewCPL(wLabel,menuText,1,-97,256,16,"");
 	widgetNewCPL(wLabel,menuText,1,-33,256,16,menuTextInputLabel);
 	menuAttribution = widgetNewCPL(wTextScroller,rootMenu,0,0,-1,-1,(const char *)txt_attribution_txt_data);
 	menuAttribution->flags |= WIDGET_HIDDEN;
+	widgetBind(menuAttribution,"click",handlerRoot);
 
 	initMainMenu();
 	initSingleplayerMenu();
@@ -150,6 +153,7 @@ void menuCancel(){
 	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return;}
 	if(gameRunning){return;}
 	openMainMenu();
+	closeLispPanel();
 }
 
 void menuCloseGame(){

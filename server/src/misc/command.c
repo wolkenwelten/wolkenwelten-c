@@ -334,7 +334,7 @@ static void cmdLisp(int c,const char *str, u8 id){
 	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
 		v = lEval(clRoot,sexpr);
 	}
-	lSPrintChain(v,reply,&reply[sizeof(reply)]);
+	lSPrintChain(v,reply,&reply[sizeof(reply)-1]);
 	for(uint i=0;i<sizeof(reply);i++){if(reply[i] == '\n'){reply[i] = ' ';}}
 	lClosureGC();
 

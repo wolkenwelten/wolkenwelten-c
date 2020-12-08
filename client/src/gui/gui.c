@@ -146,7 +146,9 @@ void openLispPanel(){
 
 void closeLispPanel(){
 	widgetSlideH(lispPanel, 0);
-	widgetFocus(widgetGameScreen);
+	if(gameRunning){
+		widgetFocus(widgetGameScreen);
+	}
 	lispPanelVisible = false;
 }
 
@@ -192,11 +194,6 @@ void handlerLispSubmit(widget *wid){
 	lispHistoryActive = -1;
 	textInputFocus(wid);
 }
-/*
-void handlerLispBlur(widget *wid){
-	(void)wid;
-	closeLispPanel();
-}*/
 
 void handlerLispSelectPrev(widget *wid){
 	const char *msg = lispLog->valss[lispHistoryActive+1];

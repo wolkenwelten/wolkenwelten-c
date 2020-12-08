@@ -363,12 +363,19 @@ static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, i
 }
 
 static void widgetDrawTextScroller(const widget *wid, textMesh *m, int x, int y, int w, int h){
+	static int oy = 0;
+	static int ov = 2;
 	(void)w;
 	(void)h;
 
 	m->wrap = 1;
-	textMeshPrintfPS(m,x+16,y+16,2,"%s",wid->label);
+	textMeshPrintfPS(m,x+16,y+16-oy,2,"%s",wid->label);
 	m->wrap = 0;
+
+	if((oy == 0) && (m->sy < h-16)){return;}
+	if(m->sy < h-128){ov = -ov;}
+	if(oy < -128){ov = -ov;}
+	oy+=ov;
 }
 
 static void widgetDrawTextLog(const widget *wid, textMesh *m, int x, int y, int w, int h){

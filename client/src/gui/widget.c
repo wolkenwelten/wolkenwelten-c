@@ -155,6 +155,7 @@ static int widgetIsSelectable(const widget *cur){
 		case wButtonDel:
 		case wRadioButton:
 		case wTextInput:
+		case wTextScroller:
 		case wSlider:
 		case wItemSlot:
 		case wRecipeSlot:
@@ -168,31 +169,19 @@ widget *widgetNextSel(const widget *cur){
 	if(cur == NULL){return NULL;}
 
 	if(!(cur->flags & WIDGET_HNS) && (cur->child != NULL)){
-		if(widgetIsSelectable(cur->child)){
-			return cur->child;
-		}
+		if(widgetIsSelectable(cur->child)){return cur->child;}
 		widget *ret = widgetNextSel(cur->child);
-		if(ret != NULL){
-			return ret;
-		}
+		if(ret != NULL){return ret;}
 	}
 	if(cur->next != NULL){
-		if(widgetIsSelectable(cur->next)){
-			return cur->next;
-		}
+		if(widgetIsSelectable(cur->next)){return cur->next;}
 		widget *ret = widgetNextSel(cur->next);
-		if(ret != NULL){
-			return ret;
-		}
+		if(ret != NULL){return ret;}
 	}
 	for(widget *c=cur->parent;c!=NULL;c=c->parent){
-		if(widgetIsSelectable(c->next)){
-			return c->next;
-		}
+		if(widgetIsSelectable(c->next)){return c->next;}
 		widget *ret = widgetNextSel(c->next);
-		if(ret != NULL){
-			return ret;
-		}
+		if(ret != NULL){return ret;}
 	}
 	return NULL;
 }
@@ -203,33 +192,25 @@ widget *widgetPrevSel(const widget *cur){
 	if(!(cur->flags & WIDGET_HNS) && (cur->child != NULL)){
 		widget *last=NULL;
 		for(last=cur->child;last->next != NULL;last=last->next){}
-		if(widgetIsSelectable(last)){
-			return last;
-		}
+		if(widgetIsSelectable(last)){return last;}
+		if(last == cur->child)      {return last;}
 		widget *ret = widgetPrevSel(last);
-		if(ret != NULL){
-			return ret;
-		}
+		if(ret != NULL){return ret;}
 	}
 	if(cur->prev != NULL){
 		if(widgetIsSelectable(cur->prev)){
 			return cur->prev;
 		}
 		widget *ret = widgetPrevSel(cur->prev);
-		if(ret != NULL){
-			return ret;
-		}
+		if(ret != NULL){return ret;}
 	}
 	for(widget *c=cur->parent;c!=NULL;c=c->parent){
 		widget *last=NULL;
 		for(last=c;last->next != NULL;last=last->next){}
-		if(widgetIsSelectable(last)){
-			return last;
-		}
+		if(widgetIsSelectable(last)){return last;}
+		if(last == c)               {return last;}
 		widget *ret = widgetPrevSel(last);
-		if(ret != NULL){
-			return ret;
-		}
+		if(ret != NULL){return ret;}
 	}
 	return NULL;
 }
@@ -281,7 +262,6 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 				}else if(widgetIsSelectable(wid)){
 					widgetFocus(wid);
 					widgetEmit(wid,"click");
-
 				}
 			}
 			wid->flags &= ~WIDGET_CLICKED;

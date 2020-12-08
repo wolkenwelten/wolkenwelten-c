@@ -25,7 +25,7 @@ void lispEvalNR(const char *str){
 lVal *wwlnfSEval(lClosure *c, lVal *v){
 	(void)c;
 	static char buf[256];
-	lSPrintChain(v,buf,&buf[sizeof(buf)]);
+	lSPrintChain(v,buf,&buf[sizeof(buf)-1]);
 	if(++SEvalID == 0){++SEvalID;}
 	msgLispSExpr(-1,SEvalID,buf);
 	return lispSEvalSym(SEvalID);
@@ -49,7 +49,7 @@ const char *lispEval(const char *str){
 	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
 		v = lEval(clRoot,sexpr);
 	}
-	lSPrintChain(v,reply,&reply[sizeof(reply)]);
+	lSPrintChain(v,reply,&reply[sizeof(reply)-1]);
 	for(uint i=0;i<sizeof(reply);i++){if(reply[i] == '\n'){reply[i] = ' ';}}
 	lClosureGC();
 	return reply;
