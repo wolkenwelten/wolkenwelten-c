@@ -35,6 +35,7 @@ void lispInit(){
 	lInit();
 	clRoot = lClosureNew(NULL);
 	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
+	lispEvalNR("(define test (lambda (a) (s-eval (water (px) (py) (pz)))))");
 	lClosureAddNF(clRoot,"s-eval", &wwlnfSEval);
 }
 void lispFree(){

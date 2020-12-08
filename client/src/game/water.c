@@ -15,19 +15,13 @@ void waterNew(u16 x, u16 y, u16 z, i16 strength){
 
 static void waterDraw(const water *w){
 	const vec spos = vecNew(w->x,w->y,w->z);
-	const float size = (float)(w->amount * 0.01f);
-	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecNew(0.f,0.00008f,0.f),size, size*0.5f,0xFF60C8FF, 96);
+	const float size = (float)MIN(192.f,(w->amount * 0.1f));
+	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecZero(),size, size*-0.0005f,0xFFFFC860, 256);
 	if(w->amount <  64){return;}
-	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecNew(0.f,0.0001f,0.f),size*0.7f, size*0.65f,0xFF5098FF, 128);
+	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecZero(),size*.9f, size*-0.00065f,0xFFFF9850, 384);
 	if(w->amount < 128){return;}
-	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecNew(0.f,0.0001f,0.f),size*0.5f, size*0.75f,0xFF1F38EF, 156);
+	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecZero(),size*.8f, size*-0.00075f,0xFFEF381F, 512);
 	if(w->amount < 256){return;}
-	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecNew(0.f,0.0001f,0.f),size*0.5f, size*0.75f,0xFF1F38EF, 178);
-	if(w->amount < 512){return;}
-	if((rngValR()&0xF) != 0){return;}
-	u32 c = 0xFF101820 | (rngValR()&0x0003070F);
-	const vec vv = vecNew(rngValf()*0.00002f,0.00005f+rngValf()*0.00002f,rngValf()*0.00002f);
-	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vv,size*0.01f, size*0.2f,c,2048);
 }
 
 void waterDrawAll(){

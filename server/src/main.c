@@ -8,6 +8,7 @@
 #include "game/itemDrop.h"
 #include "game/grenade.h"
 #include "game/time.h"
+#include "game/water.h"
 #include "persistence/savegame.h"
 #include "voxel/bigchungus.h"
 #include "voxel/chungus.h"
@@ -100,6 +101,7 @@ static void updateWorldStep(){
 	projectileUpdateAll();
 	animalThinkAll();
 	fireUpdateAll();
+	waterUpdateAll();
 	itemDropUpdateFireAll();
 	animalNeedsAll();
 	animalCheckBurnAll();

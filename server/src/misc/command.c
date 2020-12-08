@@ -7,9 +7,11 @@
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
 #include "../game/time.h"
+#include "../game/water.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
+#include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
@@ -48,6 +50,10 @@ lVal *wwlnfIDCount(lClosure *c, lVal *v){
 lVal *wwlnfECount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(entityCount);
+}
+lVal *wwlnfWCount(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValInt(waterCount);
 }
 lVal *wwlnfPX(lClosure *c, lVal *v){
 	lVal *sym = lValSym("pid");
@@ -268,6 +274,20 @@ lVal *wwlnfTp(lClosure *c, lVal *v){
 	return lValBool(true);
 }
 
+lVal *wwlnfWater(lClosure *c, lVal *v){
+	int args[4] = {-1,-1,-1,-1};
+	args[3] = 8192;
+	for(int i=0;i<4;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v);
+		v = v->next;
+		if(t->type != ltInt){break;}
+		args[i] = t->vInt;
+	}
+	waterNewF(args[0],args[1],args[2],args[3]);
+	return lValInt(args[3]);
+}
+
 void initCommands(){
 	lInit();
 	clRoot = lClosureNew(NULL);
@@ -296,6 +316,8 @@ void initCommands(){
 	lClosureAddNF(clRoot,"newAnim",&wwlnfNewAnim);
 	lClosureAddNF(clRoot,"setAnim",&wwlnfSetAnim);
 	lClosureAddNF(clRoot,"tp",     &wwlnfTp);
+	lClosureAddNF(clRoot,"water",  &wwlnfWater);
+	lClosureAddNF(clRoot,"wcount", &wwlnfWCount);
 }
 
 void freeCommands(){

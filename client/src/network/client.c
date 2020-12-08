@@ -11,6 +11,7 @@
 #include "../game/rope.h"
 #include "../game/projectile.h"
 #include "../game/time.h"
+#include "../game/water.h"
 #include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
@@ -276,7 +277,7 @@ void clientParsePacket(const packet *p){
 			fireRecvUpdate(-1,p);
 			break;
 		case 41:
-			//waterRecvUpdate(-1,p);
+			waterRecvUpdate(-1,p);
 			break;
 		case 42:
 			lispRecvSExpr(p);

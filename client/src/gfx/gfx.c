@@ -7,6 +7,7 @@
 #include "../game/fire.h"
 #include "../game/projectile.h"
 #include "../game/rope.h"
+#include "../game/water.h"
 #include "../gfx/clouds.h"
 #include "../gfx/gl.h"
 #include "../gfx/mat.h"
@@ -155,6 +156,7 @@ void renderWorld(const character *cam){
 
 	projectileDrawAll();
 	fireDrawAll();
+	waterDrawAll();
 	particleDraw();
 
 	ropeDrawAll();

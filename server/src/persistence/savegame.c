@@ -6,6 +6,7 @@
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
 #include "../game/time.h"
+#include "../game/water.h"
 #include "../misc/options.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
@@ -183,6 +184,45 @@ static void *fireSaveChungus(const chungus *c,void *buf){
 		if(c->y != (fireList[i].y >> 8)){continue;}
 		if(c->z != (fireList[i].z >> 8)){continue;}
 		buf = fireSave(&fireList[i],buf);
+	}
+	return buf;
+}
+
+static void *waterSave(const water *w, void *buf){
+	u8    *b = (u8  *)buf;
+	u16   *u = (u16 *)buf;
+	i16   *s = (i16 *)buf;
+
+	if(w == NULL){return b;}
+
+	b[0] = 0x05;
+	b[1] = 0;
+
+	u[1] = w->x;
+	u[2] = w->y;
+	u[3] = w->z;
+
+	s[4] = w->amount;
+
+	return b+10;
+}
+
+static const void *waterLoad(const void *buf){
+	u8    *b = (u8  *)buf;
+	u16   *u = (u16 *)buf;
+	i16   *s = (i16 *)buf;
+
+	waterNewF(u[1],u[2],u[3],s[4]);
+	return b+10;
+}
+
+static void *waterSaveChungus(const chungus *c,void *buf){
+	if(c == NULL){return buf;}
+	for(uint i=0;i<waterCount;i++){
+		if(c->x != (waterList[i].x >> 8)){continue;}
+		if(c->y != (waterList[i].y >> 8)){continue;}
+		if(c->z != (waterList[i].z >> 8)){continue;}
+		buf = waterSave(&waterList[i],buf);
 	}
 	return buf;
 }
@@ -475,6 +515,9 @@ void chungusLoad(chungus *c){
 		case 4:
 			b = fireLoad(b);
 			break;
+		case 5:
+			b = waterLoad(b);
+			break;
 		default:
 			fprintf(stderr,"Unknown id[%u] found in %i:%i:%i savestate\n",id,c->x,c->y,c->z);
 			goto chungusLoadEnd;
@@ -507,6 +550,7 @@ void chungusSave(chungus *c){
 	cbuf = itemDropSaveChungus(c,cbuf);
 	cbuf = animalSaveChungus  (c,cbuf);
 	cbuf = fireSaveChungus    (c,cbuf);
+	cbuf = waterSaveChungus   (c,cbuf);
 
 	size_t len = LZ4_compress_default((const char *)saveLoadBuffer, (char *)compressedBuffer, cbuf - saveLoadBuffer, 4100*4096);
 	if(len == 0){

@@ -10,6 +10,7 @@
 #include "../game/projectile.h"
 #include "../game/rope.h"
 #include "../game/time.h"
+#include "../game/water.h"
 #include "../misc/command.h"
 #include "../misc/options.h"
 #include "../network/server_ws.h"
@@ -221,6 +222,7 @@ void msgUpdatePlayer(uint c){
 	animalSyncPlayer(c);
 	projectileSyncPlayer(c);
 	fireSyncPlayer(c);
+	waterSyncPlayer(c);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 }
