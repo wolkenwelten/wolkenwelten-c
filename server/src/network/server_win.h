@@ -113,6 +113,7 @@ void serverRead(){
 }
 
 uint serverSendRaw(uint c, void *p, uint len){
+	if(p == NULL){return 0;}
 	uint tries = 3;
 	uint sent  = 0;
 	while(sent < len){
