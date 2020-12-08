@@ -91,20 +91,20 @@ void cloudsRender(){
 	if(cloudOffset > 256.f){cloudOffset-=256.f;}
 }
 
-void cloudsDraw(u8 cx, u8 cy, u8 cz){
+void cloudsDraw(int cx, int cy, int cz){
 	if(cy&1){return;}
 	const u8 cpart = (cx&1) | ((cy&4)) | ((cz&1)<<1);
 	if((cloudFrame&7) != cpart){return;}
 	cloudChunk *part = &parts[cpart];
 	part->base     = floorf(cloudOffset);
 	const int toff = (int)cloudOffset;
-	const int divx = (int)player->pos.x - (cx<<8);
-	const int divz = (int)player->pos.z - (cz<<8);
+	const int divx = (int)player->pos.x - (cx*256);
+	const int divz = (int)player->pos.z - (cz*256);
 	const int minx = MIN(divx,255);
 	const int maxx = MAX(divx,  0);
 	const int minz = MIN(divz,255);
 	const int maxz = MAX(divz,  0);
-	const ivec cp  = ivecNew(cx<<8,cy<<8,cz<<8);
+	const ivec cp  = ivecNew(cx*256,cy*256,cz*256);
 	const ivec pp  = ivecNewV(player->pos);
 	ivec dp        = ivecZero();
 	dp.y = (cp.y - pp.y)*(cp.y - pp.y);

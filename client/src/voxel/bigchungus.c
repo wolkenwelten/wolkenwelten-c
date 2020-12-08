@@ -140,27 +140,35 @@ void worldDraw(const character *cam){
 	const int maxCZ  = MIN(256,camCZ + dist);
 	const u64 cTicks = getTicks();
 
+	for(int x=camCX-dist;x<camCX+dist;x++){
+	for(int y=camCY-dist;y<camCY+dist;y++){
+	for(int z=camCZ-dist;z<camCZ+dist;z++){
+		cloudsDraw(x,y,z);
+	}
+	}
+	}
+
 	for(int x=minCX;x<maxCX;x++){
-		for(int y=minCY;y<maxCY;y++){
-			for(int z=minCZ;z<maxCZ;z++){
-				float d = chungusDistance(cam->pos,vecNew(x,y,z));
-				if((d < (renderDistance+CHUNGUS_SIZE)) && (chungusInFrustum(vecNew(x,y,z)))){
-					if(world[x][y][z] == NULL){
-						world[x][y][z] = chungusNew(x,y,z);
-						world[x][y][z]->requested = cTicks;
-						loadQueue[loadQueueLen].distance = d;
-						loadQueue[loadQueueLen++].chng   = world[x][y][z];
-					}else if(world[x][y][z]->requested == 0){
-						chungusQueueDraws(world[x][y][z],cam,drawQueue,&drawQueueLen);
-					}else if((world[x][y][z]->requested + 3000) < cTicks){
-						world[x][y][z]->requested = cTicks;
-						loadQueue[loadQueueLen].distance = d;
-						loadQueue[loadQueueLen++].chng   = world[x][y][z];
-					}
-					cloudsDraw(x,y,z);
-				}
+	for(int y=minCY;y<maxCY;y++){
+	for(int z=minCZ;z<maxCZ;z++){
+		const vec pos = vecNew(x,y,z);
+		float d = chungusDistance(cam->pos,pos);
+		if((d < (renderDistance+CHUNGUS_SIZE)) && (chungusInFrustum(pos))){
+			if(world[x][y][z] == NULL){
+				world[x][y][z] = chungusNew(x,y,z);
+				world[x][y][z]->requested = cTicks;
+				loadQueue[loadQueueLen].distance = d;
+				loadQueue[loadQueueLen++].chng   = world[x][y][z];
+			}else if(world[x][y][z]->requested == 0){
+				chungusQueueDraws(world[x][y][z],cam,drawQueue,&drawQueueLen);
+			}else if((world[x][y][z]->requested + 3000) < cTicks){
+				world[x][y][z]->requested = cTicks;
+				loadQueue[loadQueueLen].distance = d;
+				loadQueue[loadQueueLen++].chng   = world[x][y][z];
 			}
 		}
+	}
+	}
 	}
 	if(loadQueueLen > 0){
 		quicksortQueue(loadQueue,0,loadQueueLen-1);
