@@ -44,6 +44,9 @@
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
+#include <sys/time.h>
+#include <signal.h>
+#include <unistd.h>
 #ifdef __EMSCRIPTEN__
 	#include <emscripten.h>
 #endif
@@ -53,6 +56,24 @@ bool quit              = false;
 bool gameRunning       = false;
 bool playerChunkActive = false;
 bool singleplayer      = false;
+
+void signalQuit(int signo){
+	(void)signo;
+	quit = true;
+}
+
+void initSignals(){
+	#ifdef __MINGW32__
+	signal(SIGTERM, signalQuit);
+	signal(SIGABRT, signalQuit);
+	#else
+	signal(SIGPIPE, SIG_IGN);
+	signal(SIGKILL, signalQuit);
+	signal(SIGSTOP, signalQuit);
+	signal(SIGHUP,  signalQuit);
+	#endif
+	signal(SIGINT,  signalQuit);
+}
 
 void playerUpdate(){
 	vec nv = vecZero();
@@ -147,6 +168,7 @@ int main( int argc, char* argv[] ){
 
 	setvbuf(stdout, NULL, _IONBF, 0);
 	setvbuf(stderr, NULL, _IONBF, 0);
+	initSignals();
 
 	shaderInit();
 	textureInit();

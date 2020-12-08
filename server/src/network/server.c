@@ -760,9 +760,6 @@ void serverCloseClient(uint c){
 	if((clientCount == 1) && (clients[0].state == STATE_CLOSED)){
 		clientCount = 0;
 	}
-	if((clientCount == 0) && (clients[0].state == STATE_CLOSED) && (optionSingleplayer)){
-		quit = true;
-	}
 }
 
 int getClientByName(const char *name){

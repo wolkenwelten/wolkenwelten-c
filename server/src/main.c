@@ -166,6 +166,14 @@ void mainInit(){
 	}
 }
 
+static void checkSPQuit(){
+	static u64 startTime = 0;
+	if(!optionSingleplayer){return;}
+	if(startTime == 0){startTime = getTicks();}
+	if(clientCount > 0){return;}
+	if(getTicks() > startTime + 1000){quit = true;}
+}
+
 #ifndef __EMSCRIPTEN__
 int main( int argc, const char* argv[] ){
 	initSignals();
@@ -181,15 +189,10 @@ int main( int argc, const char* argv[] ){
 	printf(" %sbuilt %s\n" ,termReset    ,BUILDDATE      );
 
 	while(!quit){
-		if(optionProfileWG){
-			quit = true;
-		}
+		if(optionProfileWG){quit = true;}
+		if(clientCount == 0){checkSPQuit();}
 		mainTick();
-		if(clientCount == 0){
-			usleep(100000);
-		}else{
-			usleep(1000);
-		}
+		usleep(1000);
 	}
 
 	printf("Exiting cleanly\n");

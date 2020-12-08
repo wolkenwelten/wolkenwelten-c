@@ -3,13 +3,9 @@
 
 - 2020-12-08: WASM SP Server crashes after a while
 
-- 2020-12-08: Crashes with segfault on pressing 'Quit'
 - 2020-12-08: Crashes wit segfault after client chungusList Overflow, server Exits cleanly
 	Reproduce: enter world (abc, 123), Press 'n', fly to a direction
 	** Can't reproduce
-- 2020-12-08: Crashed with segfault on ctrl+c in Terminal
-	** Can't reproduce
-
 - 2020-12-08: When closing the client using Ctrl+c in Terminal, sometimes after the SP server quits, it starts another one which becomes a zombie
 - 2020-12-08: in noclip shift+w+space and going Y>=128 seems to freeze/crash the game
 - 2020-12-08: When the game is frozen I can click on the 'Crafting' button and it flashes but the UI doesn't change state
