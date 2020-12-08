@@ -195,7 +195,7 @@ int main( int argc, const char* argv[] ){
 		usleep(1000);
 	}
 
-	printf("Exiting cleanly\n");
+	printf("[SRV] Exiting cleanly\n");
 	savegameSave();
 	serverFree();
 	return 0;

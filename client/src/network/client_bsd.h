@@ -83,22 +83,26 @@ void startSingleplayerServer(){
 
 void closeSingleplayerServer(){
 	int tries = 10;
-	while(singlePlayerPID > 0){
-		if(--tries <= 0){
+	clientGoodbye();
+	usleep(1000);
+	clientFree();
+	usleep(1000);
+	while(singlePlayerPID != 0){
+		if(--tries < 0){
 			kill(singlePlayerPID,SIGKILL);
 			return;
 		}
 		kill(singlePlayerPID,SIGTERM);
-		usleep(100000);
+		printf("[CLI] Kill");
+		usleep(10000);
 	}
 }
 
 void zombieKiller(int sig){
+	(void)sig;
 	int status;
-	if(sig > 0){
-		waitpid(singlePlayerPID, &status, 0);
-		singlePlayerPID = 0;
-	}
+	int pid = waitpid(singlePlayerPID, &status, WNOHANG);
+	if(pid == singlePlayerPID){singlePlayerPID = 0;}
 }
 
 void clientFreeSpecific(){

@@ -333,7 +333,10 @@ void clientTranceive(){
 
 void clientGoodbye(){
 	if(serverSocket <= 0){return;}
+	printf("[CLI] Goodbye \n");
+	msgSendPlayerPos();
 	msgPlayerSetInventory(-1,player->inventory,40);
+	msgPlayerSetEquipment(-1,player->equipment, 3);
 	msgGoodbye();
 	clientWrite();
 }

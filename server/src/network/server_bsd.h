@@ -38,11 +38,10 @@ void serverInit(){
 void serverFree(){
 	for(uint i=0;i<clientCount;i++){
 		close(clients[i].socket);
+		serverCloseClient(i);
 	}
 	clientCount = 0;
-	if(serverSocket > 0){
-		close(serverSocket);
-	}
+	if(serverSocket > 0){close(serverSocket);}
 }
 
 void serverAccept(){

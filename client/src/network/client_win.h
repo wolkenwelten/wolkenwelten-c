@@ -74,6 +74,10 @@ void startSingleplayerServer(){
 
 void closeSingleplayerServer(){
 	if(!singleplayer){return;}
+	clientGoodbye();
+	usleep(1000);
+	clientFree();
+	usleep(1000);
 	TerminateProcess(pi.hProcess,0);
 	spSpawned       = false;
 	singlePlayerPID = 0;

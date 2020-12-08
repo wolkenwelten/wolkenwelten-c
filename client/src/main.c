@@ -212,5 +212,6 @@ int main( int argc, char* argv[] ){
 	clientFree();
 	closeSDL();
 	closeSingleplayerServer();
+	printf("[CLI] Exiting cleanly\n");
 	return 0;
 }
