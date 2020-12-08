@@ -115,7 +115,7 @@ void calcFOV(const character *cam){
 	if(off < 0.025f){
 		off = 0.f;
 	}else{
-		off = (off - 0.025f)*50.f;
+		off = (off - 0.025f)*40.f;
 	}
 	off += 80.0f;
 	if(off > gfxCurFOV){
@@ -123,7 +123,8 @@ void calcFOV(const character *cam){
 	}else if(off < gfxCurFOV){
 		gfxCurFOV -= (gfxCurFOV-off)/8;
 	}
-	if(gfxCurFOV < 80.1){gfxCurFOV = 80.0f;}
+	if(gfxCurFOV <  80.1){gfxCurFOV =  80.0f;}
+	if(gfxCurFOV > 170.1){gfxCurFOV = 170.0f;}
 	matPerspective(matProjection, gfxCurFOV, (float)screenWidth / (float)screenHeight, 0.165f, renderDistance + 32.f);
 }
 

@@ -24,7 +24,7 @@ typedef struct particle {
 
 unsigned int particleVBO = 0;
 
-#define PART_MAX (1<<19)
+#define PART_MAX (1<<18)
 
 glParticle glParticles[PART_MAX];
 particle particles[PART_MAX];
