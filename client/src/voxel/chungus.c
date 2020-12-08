@@ -1,5 +1,6 @@
 #include "chungus.h"
 
+#include "../main.h"
 #include "../sdl/sdl.h"
 #include "../game/blockType.h"
 #include "../gfx/frustum.h"
@@ -11,7 +12,7 @@
 #include <stddef.h>
 #include <string.h>
 
-chungus chungusList[1<<9];
+chungus chungusList[1<<10];
 uint chungusCount=0;
 chungus *chungusFirstFree = NULL;
 
@@ -36,8 +37,11 @@ float chunkDistance(const vec cam, const vec pos){
 chungus *chungusNew(u8 x, u8 y, u8 z){
 	chungus *c = NULL;
 	if(chungusFirstFree == NULL){
-		if(chungusCount >= countof(chungusList)){
-			fprintf(stderr,"client chungusList Overflow!\n");
+		if(chungusCount+1 >= countof(chungusList)){
+			if(!chnkChngOverflow){
+				fprintf(stderr,"client chungusList Overflow!\n");
+				chnkChngOverflow = false;
+			}
 			return NULL;
 		}
 		c = &chungusList[chungusCount++];

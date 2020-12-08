@@ -572,7 +572,6 @@ void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 	if(c >= clientCount){ return; }
 	if(clients[c].state){ return; }
 	if(clients[c].chngReqQueueLen >= countof(clients[c].chngReqQueue)){
-		fprintf(stderr,"Chungus Request Queue full!\n");
 		return;
 	}
 	for(uint i=0;i<clients[c].chngReqQueueLen;i++){

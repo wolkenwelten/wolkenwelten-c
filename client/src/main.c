@@ -56,6 +56,7 @@ bool quit              = false;
 bool gameRunning       = false;
 bool playerChunkActive = false;
 bool singleplayer      = false;
+bool chnkChngOverflow  = false;
 
 void signalQuit(int signo){
 	(void)signo;
@@ -143,6 +144,10 @@ void mainloop(){
 		playerUpdate();
 		worldUpdate();
 		renderFrame();
+		if(chnkChngOverflow){
+			setRenderDistance(renderDistance*0.9f);
+			chnkChngOverflow = false;
+		}
 		worldFreeFarChungi(player);
 		clientTranceive();
 	}else{

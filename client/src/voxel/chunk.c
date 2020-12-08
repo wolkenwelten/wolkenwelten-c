@@ -1,5 +1,6 @@
 #include "../voxel/chunk.h"
 
+#include "../main.h"
 #include "../game/blockType.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gl.h"
@@ -21,9 +22,9 @@ typedef struct vertexTiny {
 #pragma pack(pop)
 
 vertexTiny blockMeshBuffer[1<<16];
-uint chunkFreeCount = 0;
-uint chunkCount     = 0;
-uint chunksGeneratedThisFrame = 0;
+int chunkFreeCount = 0;
+int chunkCount     = 0;
+int chunksGeneratedThisFrame = 0;
 chunk *chunkFirstFree = NULL;
 
 #define MAX_CHUNKS_GEN_PER_FRAME 64
@@ -76,14 +77,22 @@ u8 chunkGetSides(int x,int y,int z,u8 *d,int size) {
 chunk *chunkNew(u16 x,u16 y,u16 z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){
-		if(chunkCount >= countof(chunkList)){
-			fprintf(stderr,"client chunkList Overflow!\n");
+		if(chunkCount+1 >= (int)countof(chunkList)){
+			if(!chnkChngOverflow){
+				fprintf(stderr,"client chunkList Overflow!\n");
+				chnkChngOverflow=true;
+			}
 			return NULL;
 		}
 		c = &chunkList[chunkCount++];
 	}else{
 		c = chunkFirstFree;
+		if((c < &chunkList[0]) || (c > &chunkList[countof(chunkList)])){
+			fprintf(stderr,"%p thats not a valid pointer... cfp=%i\n",c,chunkFreeCount);
+			return NULL;
+		}
 		chunkFirstFree = c->nextFree;
+		//fprintf(stderr,"--cfp=%i\n",chunkFreeCount);
 		chunkFreeCount--;
 	}
 	c->x         = x & (~0xF);
@@ -100,10 +109,13 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 
 void chunkFree(chunk *c){
 	if(c == NULL){return;}
-	chunkFreeCount++;
-	if(!c->vbo){
-		glDeleteBuffers(1,&c->vbo);
+	if((c < &chunkList[0]) || (c > &chunkList[countof(chunkList)])){
+		fprintf(stderr,"WTF am I freing\n");
+		return;
 	}
+	chunkFreeCount++;
+	//fprintf(stderr,"++cfp=%i\n",chunkFreeCount);
+	if(!c->vbo){glDeleteBuffers(1,&c->vbo);}
 	c->nextFree = chunkFirstFree;
 	chunkFirstFree = c;
 }
@@ -368,6 +380,7 @@ void chunkSetB(chunk *c,int x,int y,int z,u8 block){
 }
 
 void chunkDraw(chunk *c, float d){
+	if(c == NULL){return;}
 	if(!c->ready){ chunkGenMesh(c); }
 	if(!c->vbo){ return; }
 	if(d > (fadeoutStartDistance)){
