@@ -87,7 +87,7 @@ void waterUpdate(water *w){
 	case 0: x-=1; break;
 	case 1: x+=1; break;
 	case 2: z-=1; break;
-	case 3: z+=1; breaka ;
+	case 3: z+=1; break;
 	}
 	if(!blockTypeGetWaterImpermeable(worldGetB(x,w->y,z))){
 		waterNew(x,w->y,z,w->amount/4);
