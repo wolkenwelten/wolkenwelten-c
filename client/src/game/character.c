@@ -478,16 +478,17 @@ void characterUpdateBooster(character *c){
 
 void characterUpdateFalling(character *c){
 	if(c != player){return;}
-	if(c->pos.y < -512){
-		characterDie(c);
-		msgSendDyingMessage("fell into the abyss", 65535);
-	}
+	if(c->flags & CHAR_NOCLIP){return;}
 	if(c->pos.y < -64){
 		setOverlayColor(0xFF000000,1000);
 		if(!(c->flags & CHAR_FALLINGSOUND)){
 			c->flags |= CHAR_FALLINGSOUND;
 			sfxPlay(sfxFalling,1.f);
 		}
+	}
+	if(c->pos.y < -512){
+		characterDie(c);
+		msgSendDyingMessage("fell into the abyss", 65535);
 	}
 }
 
