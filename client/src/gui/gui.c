@@ -238,12 +238,23 @@ void handlerLispSelectNext(widget *wid){
 	textInputFocus(wid);
 }
 
+static void handlerChatChange(widget *wid){
+	if(wid == NULL){return;}
+	if(wid->vals == NULL){return;}
+	if(wid->vals[0] == '.'){
+		wid->flags |= WIDGET_LISP_SYNTAX_HIGHLIGHT;
+	}else{
+		wid->flags &= ~WIDGET_LISP_SYNTAX_HIGHLIGHT;
+	}
+}
+
 void handlerChatSubmit(widget *wid){
 	if(chatText->vals[0] != 0){
 		msgSendChatMessage(chatText->vals);
 		chatResetHistorySel();
 	}
 	handlerRootHud(wid);
+	wid->flags &= ~WIDGET_LISP_SYNTAX_HIGHLIGHT;
 }
 
 void handlerChatSelectPrev(widget *wid){
@@ -251,6 +262,7 @@ void handlerChatSelectPrev(widget *wid){
 	if(*msg == 0){return;}
 	memcpy(wid->vals,msg,256);
 	textInputFocus(wid);
+	handlerChatChange(wid);
 }
 
 void handlerChatSelectNext(widget *wid){
@@ -258,11 +270,12 @@ void handlerChatSelectNext(widget *wid){
 	if(*msg == 0){return;}
 	memcpy(wid->vals,msg,256);
 	textInputFocus(wid);
+	handlerChatChange(wid);
 }
 
 void handlerChatBlur(widget *wid){
-	(void)wid;
 	chatResetHistorySel();
+	wid->flags &= ~WIDGET_LISP_SYNTAX_HIGHLIGHT;
 }
 
 static void handlerGameFocus(widget *wid){
@@ -297,6 +310,7 @@ void initUI(){
 	widgetBind(lispInput,"selectNext",handlerLispSelectNext);
 
 	chatText  = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Message","submit",handlerChatSubmit);
+	widgetBind(chatText,"change",handlerChatChange);
 	widgetBind(chatText,"blur",handlerChatBlur);
 	widgetBind(chatText,"selectPrev",handlerChatSelectPrev);
 	widgetBind(chatText,"selectNext",handlerChatSelectNext);

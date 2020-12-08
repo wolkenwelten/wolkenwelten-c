@@ -288,6 +288,12 @@ lVal *wwlnfWater(lClosure *c, lVal *v){
 	return lValInt(args[3]);
 }
 
+void lispEvalNR(const char *str){
+	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
+		lEval(clRoot,sexpr);
+	}
+}
+
 void initCommands(){
 	lInit();
 	clRoot = lClosureNew(NULL);
@@ -318,6 +324,8 @@ void initCommands(){
 	lClosureAddNF(clRoot,"tp",     &wwlnfTp);
 	lClosureAddNF(clRoot,"water",  &wwlnfWater);
 	lClosureAddNF(clRoot,"wcount", &wwlnfWCount);
+	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
+	lispEvalNR("(define heal (lambda (a) (- (dmg (cond (a (- a)) (#t -20))))))");
 }
 
 void freeCommands(){

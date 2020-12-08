@@ -416,7 +416,7 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			}
 			break;
 		case ltLambda: {
-			t = snprintf(buf,bufEnd-cur,"λ(");
+			t = snprintf(buf,bufEnd-cur,"(λ ");
 			if(t > 0){cur += t;}
 			for(lVal *n = v->vList;n != NULL;n = n->next){
 				cur = lSPrintVal(n,cur,bufEnd);
@@ -772,6 +772,7 @@ static lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"cl") == 0)    {return lValNativeFunc(lnfCl);}
 	if(strcmp(s.c,"cond") == 0)  {return lValNativeFunc(lnfCond);}
 	if(strcmp(s.c,"define") == 0){return lValNativeFunc(lnfDef);}
+	if(strcmp(s.c,"λ") == 0)    {return lValNativeFunc(lnfLambda);}
 	if(strcmp(s.c,"lambda") == 0){return lValNativeFunc(lnfLambda);}
 	if(strcmp(s.c,"let") == 0)   {return lValNativeFunc(lnfLet);}
 	if(strcmp(s.c,"mem") == 0)   {return lValNativeFunc(lnfMem);}
