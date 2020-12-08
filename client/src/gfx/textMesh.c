@@ -176,7 +176,7 @@ void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c, u32 fgc, u32 bg
 	}
 }
 
-void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
+bool textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 	const int glyphWidth = 8*size;
 	const int lineHeight = 10*size;
 	int maxX = m->mx;
@@ -184,17 +184,17 @@ void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 	int maxY = m->my;
 	if(maxY == -1){maxY = screenHeight;}
 
-	if(str == NULL){return;}
+	if(str == NULL){return 0;}
 	while(*str != 0){
 		if(y > maxY){
-			return;
+			return 1;
 		}
 		if(x > maxX){
-			if(m->wrap == 0){return;}
+			if(m->wrap == 0){return 1;}
 			x = m->sx;
 			y += lineHeight;
 			if(x+glyphWidth > screenWidth){
-				return;
+				return 1;
 			}else{
 				continue;
 			}
@@ -225,46 +225,47 @@ void textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 		x += glyphWidth;
 		str++;
 	}
+	return 0;
 }
 
-void textMeshAddString(textMesh *m, const char *str){
+bool textMeshAddString(textMesh *m, const char *str){
 	return textMeshAddStrPS(m,m->sx,m->sy,m->size,str);
 }
 
-void textMeshPrintfPS(textMesh *m, int x, int y, int size, const char *format, ...){
+bool textMeshPrintfPS(textMesh *m, int x, int y, int size, const char *format, ...){
 	va_list ap;
 	va_start(ap,format);
 	vsnprintf(stringBuffer,sizeof(stringBuffer),format,ap);
 	va_end(ap);
 	stringBuffer[sizeof(stringBuffer)-1]=0;
-	if(stringBuffer[0]==0){return;}
+	if(stringBuffer[0]==0){return 0;}
 
 	m->sx = x;
 	m->sy = y;
-	textMeshAddStrPS(m,x,y,size,stringBuffer);
+	return textMeshAddStrPS(m,x,y,size,stringBuffer);
 }
 
-void textMeshPrintf(textMesh *m, const char *format, ...){
+bool textMeshPrintf(textMesh *m, const char *format, ...){
 	va_list ap;
 	va_start(ap,format);
 	vsnprintf(stringBuffer,sizeof(stringBuffer),format,ap);
 	va_end(ap);
 	stringBuffer[sizeof(stringBuffer)-1]=0;
-	if(stringBuffer[0]==0){return;}
+	if(stringBuffer[0]==0){return 0;}
 
-	textMeshAddString(m,stringBuffer);
+	return textMeshAddString(m,stringBuffer);
 }
 
-void textMeshPrintfRA(textMesh *m, const char *format, ...){
+bool textMeshPrintfRA(textMesh *m, const char *format, ...){
 	va_list ap;
 	va_start(ap,format);
 	vsnprintf(stringBuffer,sizeof(stringBuffer),format,ap);
 	va_end(ap);
 	stringBuffer[sizeof(stringBuffer)-1]=0;
-	if(stringBuffer[0]==0){return;}
+	if(stringBuffer[0]==0){return 0;}
 	m->sx -= strnlen(stringBuffer,sizeof(stringBuffer))*(m->size*8);
 
-	textMeshAddString(m,stringBuffer);
+	return textMeshAddString(m,stringBuffer);
 }
 
 
