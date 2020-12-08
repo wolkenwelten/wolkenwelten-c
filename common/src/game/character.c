@@ -287,6 +287,17 @@ void characterMove(character *c, const vec mov){
 
 void characterRotate(character *c, const vec rot){
 	c->rot = vecAdd(c->rot,rot);
+
+	if(c->rot.pitch < -90.f){
+		 c->rot.pitch = -90.f;
+	}else if(c->rot.pitch >  90.f){
+		 c->rot.pitch =  90.f;
+	}
+	if(c->rot.yaw < 0.f){
+		 c->rot.yaw += 360.f;
+	}else if(c->rot.yaw >  360.f){
+		 c->rot.yaw -= 360.f;
+	}
 }
 
 void characterStartAnimation(character *c, int index, int duration){
