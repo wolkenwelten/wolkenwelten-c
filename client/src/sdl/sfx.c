@@ -48,6 +48,7 @@ sfx *sfxNew(const void *data,size_t dataLen){
 }
 
 void sfxFree(sfx *b){
+	if(b == NULL)          {return;}
 	if(b->mixChunk == NULL){return;}
 	Mix_FreeChunk(b->mixChunk);
 }
