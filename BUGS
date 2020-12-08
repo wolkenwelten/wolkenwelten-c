@@ -8,7 +8,6 @@
 	** Can't reproduce
 - 2020-12-08: in noclip shift+w+space and going Y>=128 seems to freeze/crash the game
 - 2020-12-08: When the game is frozen I can click on the 'Crafting' button and it flashes but the UI doesn't change state
-- 2020-12-08: no matter where I look the camera controls are inverted, just holding shift+w above the flatlands to the bug to trigger normal camera though
 - 2020-12-08: moving between above and below the flatlands seems to reliably trigger some for of the bug for me
 - 2020-12-08: grappling hook seems to be extended in most of them despite me not using it in any form during the tests, now the fov is tiny but I think i'm always in the cube area
 - 2020-12-08: fly high into the cube grid and drop downto the flatlands, my results are that the screen is constantly flashing, position jumpingbetween two values and lots of death messages before returning to a state closer to the other bug

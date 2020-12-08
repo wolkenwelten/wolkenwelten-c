@@ -389,12 +389,12 @@ int characterPhysics(character *c){
 	}
 
 	c->vel.y -= 0.0005f;
-	if(c->vel.y < -4.0f){c->vel.y+=0.005f;}
-	if(c->vel.y >  4.0f){c->vel.y-=0.005f;}
-	if(c->vel.x < -4.0f){c->vel.x+=0.005f;}
-	if(c->vel.x >  4.0f){c->vel.x-=0.005f;}
-	if(c->vel.z < -4.0f){c->vel.z+=0.005f;}
-	if(c->vel.z >  4.0f){c->vel.z-=0.005f;}
+	if(c->vel.y < -1.0f){c->vel.y+=0.005f;}
+	if(c->vel.y >  1.0f){c->vel.y-=0.005f;}
+	if(c->vel.x < -1.0f){c->vel.x+=0.005f;}
+	if(c->vel.x >  1.0f){c->vel.x-=0.005f;}
+	if(c->vel.z < -1.0f){c->vel.z+=0.005f;}
+	if(c->vel.z >  1.0f){c->vel.z-=0.005f;}
 
 	c->flags |=  CHAR_FALLING;
 	c->flags &= ~CHAR_COLLIDE;
