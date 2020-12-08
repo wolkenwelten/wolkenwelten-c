@@ -44,4 +44,5 @@ void msgPlayerSetEquipment       (uint c, const item *itm, size_t itemCount);
 void msgItemDropPickup           (uint c, uint i);
 void msgRopeUpdate               (uint c, uint i, rope *r);
 void msgFireUpdate               (uint c, u16 i, u16 count, u16 x, u16 y, u16 z, i16 strength);
+void msgWaterUpdate              (uint c, u16 i, u16 count, u16 x, u16 y, u16 z, i16 strength);
 void msgLispSExpr                (uint c, u8 id, const char *str);
