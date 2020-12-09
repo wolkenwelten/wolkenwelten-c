@@ -37,7 +37,7 @@
 #endif
 
 #ifdef __EMSCRIPTEN__
-clientConnection clients[1];
+clientConnection clients[2];
 #else
 clientConnection clients[32];
 #endif

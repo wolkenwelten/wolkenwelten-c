@@ -56,7 +56,7 @@ typedef struct {
 #define CONNECTION_DO_UPDATE (1<<1)
 
 #ifdef __EMSCRIPTEN__
-extern clientConnection clients[1];
+extern clientConnection clients[2];
 #else
 extern clientConnection clients[32];
 #endif

@@ -15,13 +15,15 @@
 #include <stdio.h>
 #include <string.h>
 
+#define CHUNGUS_COUNT (1<<12)
 
-chungus chungusList[1 << 12];
+chungus *chungusList;
 uint chungusCount = 0;
 chungus *chungusFirstFree = NULL;
 u64 freeTime = 0;
 
 void chungusInit(){
+	chungusList = malloc(sizeof(chungus) * CHUNGUS_COUNT);
 	//memset(chungusList,0,sizeof(chungusList));
 }
 
@@ -47,7 +49,7 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	}
 
 	if(chungusFirstFree == NULL){
-		if(chungusCount >= countof(chungusList)){
+		if(chungusCount >= CHUNGUS_COUNT){
 			fprintf(stderr,"chungus load shedding [%u chungi]!\n",chungusCount);
 			chungusFreeOldChungi(1000);
 			if(chungusFirstFree == NULL){
@@ -436,7 +438,7 @@ void chungusUnsubFarChungi(){
 			const float cdist = chungusDistance(clients[ii].c,chng);
 			if(cdist < 256.f){
 				chungusSubscribePlayer(chng,ii);
-			}else if(cdist > 768.f){
+			}else if(cdist > 2048.f){
 				chungusUnsubscribePlayer(chng,ii);
 			}
 		}

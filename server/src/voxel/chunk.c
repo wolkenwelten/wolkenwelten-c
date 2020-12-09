@@ -7,12 +7,15 @@
 #include <string.h>
 #include <stdlib.h>
 
-chunk  chunkList[1<<18];
+#define CHUNK_COUNT (1<<18)
+
+chunk *chunkList;
 uint   chunkFreeCount = 0;
 uint   chunkCount     = 0;
 chunk *chunkFirstFree = NULL;
 
 void chunkInit(){
+	chunkList = malloc(sizeof(chunk) * CHUNK_COUNT);
 	//memset(chunkList,0,sizeof(chunkList));
 }
 
@@ -25,7 +28,7 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){
 		//fprintf(stderr,"chunkCount:%u\n",chunkCount);
-		if(chunkCount >= countof(chunkList)){
+		if(chunkCount >= CHUNK_COUNT){
 			fprintf(stderr,"chunk load shedding [%u / %u chunks]!\n",chunkFreeCount,chunkCount);
 			uint chngFree = chungusFreeOldChungi(1000);
 			if(chunkFirstFree == NULL){
@@ -36,6 +39,9 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 				c = chunkFirstFree;
 				chunkFirstFree = c->nextFree;
 				chunkFreeCount--;
+				if(chunkFreeCount > (1<<18)){
+					printf("SOMETHING HAPPENED!!!");
+				}
 			}
 		}else{
 			c = &chunkList[chunkCount++];

@@ -29,11 +29,12 @@ chunk *chunkFirstFree = NULL;
 
 #define MAX_CHUNKS_GEN_PER_FRAME 64
 
-#ifdef __EMSCRIPTEN__
-	chunk chunkList[1<<16];
-#else
-	chunk chunkList[1<<18];
-#endif
+#define CHUNK_COUNT (1<<18)
+chunk *chunkList;
+
+void chunkInit(){
+	chunkList = malloc(sizeof(chunk) * CHUNK_COUNT);
+}
 
 uint    chunkGetFree()               { return chunkFreeCount;           }
 uint    chunkGetActive()             { return chunkCount;               }
@@ -77,7 +78,7 @@ u8 chunkGetSides(int x,int y,int z,u8 *d,int size) {
 chunk *chunkNew(u16 x,u16 y,u16 z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){
-		if(chunkCount+1 >= (int)countof(chunkList)){
+		if(chunkCount+1 >= CHUNK_COUNT){
 			if(!chnkChngOverflow){
 				fprintf(stderr,"client chunkList Overflow!\n");
 				chnkChngOverflow=true;
@@ -87,7 +88,7 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 		c = &chunkList[chunkCount++];
 	}else{
 		c = chunkFirstFree;
-		if((c < &chunkList[0]) || (c > &chunkList[countof(chunkList)])){
+		if((c < &chunkList[0]) || (c > &chunkList[CHUNK_COUNT])){
 			fprintf(stderr,"%p thats not a valid pointer... cfp=%i\n",c,chunkFreeCount);
 			return NULL;
 		}
@@ -109,7 +110,7 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 
 void chunkFree(chunk *c){
 	if(c == NULL){return;}
-	if((c < &chunkList[0]) || (c > &chunkList[countof(chunkList)])){
+	if((c < &chunkList[0]) || (c > &chunkList[CHUNK_COUNT])){
 		fprintf(stderr,"WTF am I freing\n");
 		return;
 	}

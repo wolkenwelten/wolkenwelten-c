@@ -178,6 +178,8 @@ int main( int argc, char* argv[] ){
 	shaderInit();
 	textureInit();
 	sfxInit();
+	chunkInit();
+	chungusInit();
 
 	initMenu();
 	lispInit();

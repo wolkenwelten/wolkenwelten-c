@@ -19,6 +19,7 @@ typedef struct {
 	};
 } queueEntry;
 
+void     chungusInit           ();
 chungus *chungusNew            (u8 x,u8 y, u8 z);
 void     chungusFree           (chungus *c);
 void     chungusBox            (chungus *c, u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, u8 block);

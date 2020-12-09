@@ -23,13 +23,13 @@ widget *optionsRenderDistance;
 float oldRenderDistance = 0.f;
 
 static void handlerRenderDistanceChanged(widget *wid){
-	setRenderDistance((wid->vali / 4096.f) * 1024.f + 64.f);
+	setRenderDistance((wid->vali / 4096.f) * (512-64) + 64.f);
 }
 
 static void handlerOptionsSave(widget *wid){
 	(void)wid;
 	optionSoundVolume = optionsVolume->vali / 4096.f;
-	setRenderDistance((optionsRenderDistance->vali / 4096.f) * 1024.f + 64.f);
+	setRenderDistance((optionsRenderDistance->vali / 4096.f) * (512-64) + 64.f);
 	oldRenderDistance = renderDistance;
 	snprintf(playerName,sizeof(playerName),"%s",optionsName->vals);
 	saveOptions();
@@ -56,7 +56,7 @@ void initOptionsMenu(){
 	optionsVolume->vali = optionSoundVolume * 4096.f;
 
 	optionsRenderDistance = widgetNewCPL(wSlider,optionsMenu,16,0,256,32,"Render Distance");
-	optionsRenderDistance->vali = ((renderDistance-64.f) / 1024.f) * 4096.f;
+	optionsRenderDistance->vali = ((renderDistance-64.f) / (512-64)) * 4096.f;
 	widgetBind(optionsRenderDistance,"change",handlerRenderDistanceChanged);
 
 	widgetNewCP  (wHR ,optionsMenu,16,0,256,32);
