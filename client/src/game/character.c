@@ -345,6 +345,7 @@ void characterDie(character *c){
 	characterInit(c);
 	setOverlayColor(0xFF000000,0);
 	msgRequestPlayerSpawnPos();
+	c->flags |= CHAR_SPAWNING;
 }
 
 void updateGlide(character *c){

@@ -40,10 +40,10 @@ void chungusSetClientUpdated(chungus *c,u64 updated){
 chungus *chungusNew(u8 x, u8 y, u8 z){
 	chungus *c = NULL;
 	if(y > 128){
-		fprintf(stderr,"Y seems a bit high!\n");
+		fprintf(stderr,"Y seems a bit high! %u %u %u\n",x,y,z);
 	}
 	if((x < 64) || (z < 64)){
-		fprintf(stderr,"warn\n");
+		fprintf(stderr,"X/Z seems low, warn %u %u %u\n",x,y,z);
 	}
 
 	if(chungusFirstFree == NULL){
@@ -90,7 +90,7 @@ void chungusWorldGenLoad(chungus *c){
 
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
-	fprintf(stderr,"ChungusFree[] %p %i:%i:%i\n",c,c->x,c->y,c->z);
+	//fprintf(stderr,"ChungusFree[] %p %i:%i:%i\n",c,c->x,c->y,c->z);
 	chungusSave(c);
 	animalDelChungus(c);
 	itemDropDelChungus(c);
