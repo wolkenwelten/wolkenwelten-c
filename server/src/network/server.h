@@ -55,7 +55,12 @@ typedef struct {
 #define CONNECTION_WEBSOCKET (1   )
 #define CONNECTION_DO_UPDATE (1<<1)
 
+#ifdef __EMSCRIPTEN__
+extern clientConnection clients[1];
+#else
 extern clientConnection clients[32];
+#endif
+
 extern uint clientCount;
 
 const char *getPlayerLeaveMessage(uint c);

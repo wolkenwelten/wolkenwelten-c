@@ -36,7 +36,11 @@
 #include "server_bsd.h"
 #endif
 
+#ifdef __EMSCRIPTEN__
+clientConnection clients[1];
+#else
 clientConnection clients[32];
+#endif
 uint clientCount = 0;
 
 const char *getPlayerLeaveMessage(uint c){
