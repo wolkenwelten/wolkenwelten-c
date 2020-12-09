@@ -297,6 +297,11 @@ void serverParseSinglePacket(uint c, packet *p){
 	const int pLen  = p->typesize >> 10;
 	const int pType = p->typesize & 0xFF;
 
+	if(packetFalseChecksum(p)){
+		fprintf(stderr,"[SRV][%i] CHECKSUM WRONG!!! T:%i L:%i\n",c,pType,pLen);
+		return;
+	}
+
 	switch(pType){
 		case 0: // Keepalive
 			if(verbose){printf("[%02i] keepalive %i:%i\n",c,pType,pLen);}

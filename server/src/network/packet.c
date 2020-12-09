@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 void packetQueue(packet *p, u8 ptype, uint len, int c){
-	p->typesize = (len << 10) | (ptype);
+	packetSet(p,ptype,len);
 	if(c >= 0){
 		sendToClient(c,p,len+4);
 	}else{
@@ -14,7 +14,7 @@ void packetQueue(packet *p, u8 ptype, uint len, int c){
 }
 
 void packetQueueExcept(packet *p, u8 ptype, uint len, int c){
-	p->typesize = (len << 10) | (ptype);
+	packetSet(p,ptype,len);
 	sendToAllExcept(c,p,len+4);
 }
 
