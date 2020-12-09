@@ -26,7 +26,7 @@ void   chunkUnsetUpdated(chunk *c, uint p);
 uint   chunkGetFree     ();
 uint   chunkGetActive   ();
 float  chunkDistance    (const vec pos, const chunk *chnk);
-
+void   chunkCheckShed   ();
 
 static inline void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
 	for(int cx = x; cx < gx; cx++){

@@ -70,6 +70,7 @@ void openOptionsMenu(){
 	widgetSlideW(optionsMenu,288);
 	widgetFocus(NULL);
 	oldRenderDistance = renderDistance;
+	optionsRenderDistance->vali = ((renderDistance-64.f) / (512-64)) * 4096.f;
 }
 
 void closeOptionsMenu(){

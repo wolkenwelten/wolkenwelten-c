@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define CHUNGUS_COUNT (1<<12)
+#define CHUNGUS_COUNT (1<<14)
 
 chungus *chungusList;
 uint chungusCount = 0;
@@ -30,12 +30,12 @@ void chungusInit(){
 void chungusSetClientUpdated(chungus *c,u64 updated){
 	c->clientsUpdated = updated;
 	for(int x=0;x<16;x++){
-		for(int y=0;y<16;y++){
-			for(int z=0;z<16;z++){
-				if(c->chunks[x][y][z] == NULL){continue;}
-				c->chunks[x][y][z]->clientsUpdated = updated;
-			}
-		}
+	for(int y=0;y<16;y++){
+	for(int z=0;z<16;z++){
+		if(c->chunks[x][y][z] == NULL){continue;}
+		c->chunks[x][y][z]->clientsUpdated = updated;
+	}
+	}
 	}
 }
 
@@ -78,11 +78,13 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	c->clientsUpdated     = (u64)1 << 31;
 
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
+	chunkCheckShed();
 
 	return c;
 }
 
 void chungusWorldGenLoad(chungus *c){
+	chunkCheckShed();
 	worldgen *wgen = worldgenNew(c);
 	worldgenGenerate(wgen);
 	worldgenFree(wgen);
@@ -97,11 +99,11 @@ void chungusFree(chungus *c){
 	animalDelChungus(c);
 	itemDropDelChungus(c);
 	for(int x=0;x<16;x++){
-		for(int y=0;y<16;y++){
-			for(int z=0;z<16;z++){
-				chunkFree(c->chunks[x][y][z]);
-			}
-		}
+	for(int y=0;y<16;y++){
+	for(int z=0;z<16;z++){
+		chunkFree(c->chunks[x][y][z]);
+	}
+	}
 	}
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 	c->nextFree = chungusFirstFree;
