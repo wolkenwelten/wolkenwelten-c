@@ -31,7 +31,7 @@ typedef struct {
 	uint chngReqQueueLen;
 	chungusReqEntry chngReqQueue[128];
 	uint chnkReqQueueLen,chnkUpdateIter;
-	chunkReqEntry chnkReqQueue[4096];
+	chunkReqEntry chnkReqQueue[8192];
 
 
 	uint recvBufOff;
