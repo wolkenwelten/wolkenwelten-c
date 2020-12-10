@@ -154,7 +154,6 @@ void mainloop(){
 		doGamepadMenuUpdate();
 		renderFrame();
 	}
-	checkTexturesForReloading();
 }
 
 void checkAutostart(){

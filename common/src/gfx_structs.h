@@ -3,9 +3,8 @@
 #include <time.h>
 
 typedef struct {
-	uint ID,w,h;
+	uint ID,w,h,d;
 	const char *filename;
-	time_t modTime;
 } texture;
 
 #pragma pack(push, 1)

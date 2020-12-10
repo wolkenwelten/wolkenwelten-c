@@ -16,3 +16,5 @@
 - 2020-12-10: Smelting ~70 Iron Dust at once leads to a blazing inferno
 - 2020-12-10: Stretched Block Textures (Gentoo, Nvidia Drivers), rest seems alright
 - 2020-12-10: .help is off
+- 2020-12-10: Booster trail is only shown for the current player
+- 2020-12-10: Booster trail particles always use the same color, spice it up with some RNG

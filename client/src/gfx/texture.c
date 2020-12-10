@@ -6,6 +6,7 @@
 
 #include "../gfx/gl.h"
 #include "../gfx/lodepng.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -23,28 +24,23 @@ texture *tRope;
 texture *tSteelrope;
 texture *tBlockMining;
 
-void textureLoadSurface(texture *t, uint w, uint h, const void *data){
+static void textureLoadSurface(texture *t, uint w, uint h, const void *data){
 	t->w = w;
 	t->h = h;
-	if(t->ID == 0){
-		glGenTextures(1, &t->ID);
-	}
+	if(t->ID == 0){glGenTextures(1, &t->ID);}
 	glBindTexture(GL_TEXTURE_2D, t->ID);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
 
-void textureLoad(texture *t, const u8 *data, const size_t dataLen){
-	unsigned char *pixels = NULL;
-	int error = lodepng_decode32(&pixels, &t->w, &t->h, data, dataLen);
-	if(error){
+static void textureLoad(texture *t, const u8 *data, const size_t dataLen){
+	u8 *pixels = NULL;
+	if(lodepng_decode32(&pixels, &t->w, &t->h, data, dataLen)){
 		fprintf(stderr,"Error decoding PNG\n");
 		exit(4);
 	}
-	if(t->ID == 0){
-		glGenTextures(1, &t->ID);
-	}
+	if(t->ID == 0){glGenTextures(1, &t->ID);}
 	glBindTexture(GL_TEXTURE_2D, t->ID);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
@@ -52,18 +48,67 @@ void textureLoad(texture *t, const u8 *data, const size_t dataLen){
 	free(pixels);
 }
 
+static void textureGetTile(texture *t, u8 *pixels, u8 *pbuf, int iw, int tx, int ty){
+	for(uint y = 0; y < t->h; y++){
+		u8 *p = &pixels[(y+ty) * t->h * iw + (tx * t->w) * 4];
+		memcpy(pbuf,p,t->w*4);
+		pbuf += t->w*4;
+	}
+}
+
+static void textureLoadArray(texture *t, const u8 *data, const size_t dataLen){
+	u8 *pixels = NULL;
+	u8 *pbuf = NULL;
+	uint iw,ih,itw,ith;
+	itw = ith = sqrt(t->d);
+	if(lodepng_decode32(&pixels, &iw, &ih, data, dataLen)){
+		fprintf(stderr,"Error decoding PNG\n");
+		exit(4);
+	}
+	t->w = iw/itw;
+	t->h = ih/ith;
+
+	pbuf = malloc(itw*t->w*ith*t->h*4);
+	u8 *p = pbuf;
+	for(uint ty=0;ty<t->h;ty++){
+	for(uint tx=0;tx<t->w;tx++){
+		textureGetTile(t,pixels,p,iw,tx,ty);
+		p += t->w * t->h * 4;
+	}
+	}
+	if(t->ID == 0){glGenTextures(1, &t->ID);}
+	glBindTexture(GL_TEXTURE_2D_ARRAY, t->ID);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, t->w, t->h, t->d);
+	glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, t->w, t->h, t->d, GL_RGBA8, GL_UNSIGNED_BYTE, pbuf);
+
+	free(pixels);
+	free(pbuf);
+}
+
 texture *textureNew(const u8 *data, size_t dataLen,const char *filename){
 	texture *tex = &textureList[textureCount++];
-	tex->ID = 0;
 	tex->filename = filename;
-	tex->modTime  = time(NULL);
+	tex->ID = 0;
+	tex->d  = 0;
 	textureLoad(tex,data,dataLen);
+	return tex;
+}
+
+texture *textureNewArray(const u8 *data, size_t dataLen,const char *filename, int d){
+	texture *tex = &textureList[textureCount++];
+	tex->filename = filename;
+	tex->ID = 0;
+	tex->d  = d;
+	textureLoadArray(tex,data,dataLen);
 	return tex;
 }
 
 texture *textureNewSurface(uint w, uint h, const void *data){
 	texture *tex = &textureList[textureCount++];
 	tex->ID = 0;
+	tex->d  = 0;
 	textureLoadSurface(tex,w,h,data);
 	return tex;
 }
@@ -180,7 +225,7 @@ void textureBuildBlockIcons(int loadFromFile){
 }
 
 void textureInit(){
-	tBlocks      = textureNew(gfx_blocks_png_data,    gfx_blocks_png_len   ,"client/gfx/blocks.png");
+	tBlocks      = textureNewArray(gfx_blocks_png_data,    gfx_blocks_png_len   ,"client/gfx/blocks.png", 256);
 	tCursor      = textureNew(gfx_cursor_png_data,    gfx_cursor_png_len   ,"client/gfx/cursor.png");
 	tGui         = textureNew(gfx_gui_png_data,       gfx_gui_png_len      ,"client/gfx/gui.png");
 	tCrosshair   = textureNew(gfx_crosshair_png_data, gfx_crosshair_png_len,"client/gfx/crosshair.png");
@@ -202,21 +247,6 @@ void reloadTexture(texture *tex){
 			textureBuildBlockIcons(1);
 		}
 	}
-}
-
-void checkIfTextureNeedsReloading(texture *tex){
-	struct stat statbuf;
-	if(stat(tex->filename,&statbuf)){return;}
-	if(statbuf.st_mtime <= tex->modTime){return;}
-	tex->modTime = statbuf.st_mtime;
-	reloadTexture(tex);
-}
-
-void checkTexturesForReloading(){
-	static uint i=0;
-	if(!optionRuntimeReloading){return;}
-	if(++i >= textureCount){i=0;}
-	checkIfTextureNeedsReloading(&textureList[i]);
 }
 
 void textureReload(){

@@ -2,6 +2,7 @@
 #include "../../../common/src/common.h"
 
 texture *textureNew               (const u8 *data, size_t dataLen,const char *filename);
+texture *textureNewArray          (const u8 *data, size_t dataLen,const char *filename, int d);
 void     textureFree              ();
 void     textureBind              (const texture *tex);
 void     textureInit              ();
