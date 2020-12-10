@@ -64,12 +64,7 @@ void shaderCompile(shader *s){
 	s->fsID = glCreateShader(GL_FRAGMENT_SHADER);
 	memset(buf,0,sizeof(buf));
 
-	#ifdef __APPLE__
-		snprintf(buf,sizeof(buf)-1,"#version 120\n\n%s",s->fss);
-	#else
-		snprintf(buf,sizeof(buf)-1,"#version 100\nprecision mediump float;\n%s",s->fss);
-	#endif
-
+	snprintf(buf,sizeof(buf)-1,"#version 130\n\n%s",s->fss);
 
 	glShaderSource(s->fsID,1,(const GLchar **)&bufp,NULL);
 	glCompileShader(s->fsID);

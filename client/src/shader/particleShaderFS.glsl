@@ -1,5 +1,7 @@
-varying vec4 frontColor;
+in vec4 frontColor;
+
+out vec4 fragColor;
 
 void main() {
-	gl_FragColor = frontColor;
+	fragColor = frontColor;
 }

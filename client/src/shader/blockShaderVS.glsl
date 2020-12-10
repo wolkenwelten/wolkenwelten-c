@@ -2,12 +2,12 @@ uniform mat4 matMVP;
 uniform vec3 transPos;
 uniform float colorBrightness;
 
-attribute vec4 pos;
-attribute vec2 tex;
-attribute float flag;
+in vec4  pos;
+in vec2  tex;
+in float flag;
 
-varying vec2 multiTexCoord;
-varying float lightness;
+out vec2 multiTexCoord;
+out float lightness;
 
 void main(){
 	gl_Position   = matMVP * (pos + vec4(transPos,0.0));

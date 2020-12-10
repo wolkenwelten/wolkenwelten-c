@@ -1,10 +1,10 @@
 uniform mat4 matMVP;
 
-attribute vec4  pos;
-attribute vec4  color;
-attribute float size;
+in vec4  pos;
+in vec4  color;
+in float size;
 
-varying vec4 frontColor;
+out vec4 frontColor;
 
 void main(){
 	gl_Position  = matMVP * pos;

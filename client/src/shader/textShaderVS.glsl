@@ -1,11 +1,11 @@
 uniform mat4 matMVP;
 
-attribute vec4 pos;
-attribute vec2 tex;
-attribute vec4 color;
+in vec4 pos;
+in vec2 tex;
+in vec4 color;
 
-varying vec2 multiTexCoord;
-varying vec4 frontColor;
+out vec2 multiTexCoord;
+out vec4 frontColor;
 
 void main(){
 	gl_Position   = matMVP * pos;
