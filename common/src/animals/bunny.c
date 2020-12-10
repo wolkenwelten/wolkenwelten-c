@@ -145,6 +145,7 @@ static void animalSFlee(animal *e,int stateChange[16]){
 
 static void animalFightOrFlight(animal *e,int stateChange[16]){
 	character *cChar;
+	if(animalNoAggro){return;}
 	float dist = animalClosestPlayer(e,&cChar);
 
 	if(e->state == ANIMAL_S_FIGHT){
@@ -365,7 +366,7 @@ void animalThinkBunny(animal *e){
 	e->stateTicks++;
 	animalCheckHeat       (e,stateChange);
 	animalCheckSuffocation(e);
-	if(0){animalFightOrFlight(e,stateChange);}
+	animalFightOrFlight   (e,stateChange);
 	animalAgeing          (e,stateChange);
 	animalSleepyness      (e,stateChange);
 	animalHunger          (e,stateChange);

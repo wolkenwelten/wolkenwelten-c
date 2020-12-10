@@ -3,15 +3,16 @@
 
 - 2020-12-08: Crashes wit segfault after client chungusList Overflow, server Exits cleanly
 	Reproduce: enter world (abc, 123), Press 'n', fly to a direction
-	** Can't reproduce
+	** Fixed???
 - 2020-12-08: in noclip shift+w+space and going Y>=128 seems to freeze/crash the game
 	** Should be fixed
 - 2020-12-08: When the game is frozen I can click on the 'Crafting' button and it flashes but the UI doesn't change state
 	** Can't reproduce, still possible?
 - 2020-12-08: moving between above and below the flatlands seems to reliably trigger some for of the bug for me
+	** Fixed???
 - 2020-12-08: grappling hook seems to be extended in most of them despite me not using it in any form during the tests, now the fov is tiny but I think i'm always in the cube area
-- 2020-12-08: fly high into the cube grid and drop downto the flatlands, my results are that the screen is constantly flashing, position jumpingbetween two values and lots of death messages before returning to a state closer to the other bug
 - 2020-12-09: After attacking a sleeping chungus it is still looking up/down as if sleeping
 - 2020-12-09: Sometimes a lot of Enemies/Chungi fall from the sky
 - 2020-12-10: Smelting ~70 Iron Dust at once leads to a blazing inferno
 - 2020-12-10: Stretched Block Textures (Gentoo, Nvidia Drivers), rest seems alright
+- 2020-12-10: .help is off

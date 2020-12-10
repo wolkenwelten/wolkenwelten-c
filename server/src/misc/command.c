@@ -288,6 +288,21 @@ lVal *wwlnfWater(lClosure *c, lVal *v){
 	return lValInt(args[3]);
 }
 
+lVal *wwlnfNoAggro(lClosure *c, lVal *v){
+	lVal *t = lEval(c,v);
+	if(t != NULL){
+		bool na = true;
+		switch(t->type){
+		default: break;
+		case ltInt:  na = t->vInt != 0; break;
+		case ltBool: na = t->vBool;     break;
+		case ltNil:  na = false;        break;
+		}
+		animalNoAggro = na;
+	}
+	return lValBool(animalNoAggro);
+}
+
 void lispEvalNR(const char *str){
 	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
 		lEval(clRoot,sexpr);
@@ -301,6 +316,7 @@ void initCommands(){
 	lVal *pid = lDefineClosureSym(clRoot, sym->vSymbol);
 	pid->type = ltInt;
 	pid->vInt = 123;
+	lClosureAddNF(clRoot,"noaggro",&wwlnfNoAggro);
 	lClosureAddNF(clRoot,"update", &wwlnfUpdateAll);
 	lClosureAddNF(clRoot,"acount", &wwlnfACount);
 	lClosureAddNF(clRoot,"fcount", &wwlnfFCount);

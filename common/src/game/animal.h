@@ -4,6 +4,7 @@
 extern animal  animalList[1<<14];
 extern uint    animalCount;
 extern uint    animalUsedCount;
+extern bool    animalNoAggro;
 
 animal     *animalNew              (const vec pos , int type, int gender);
 void        animalDel              (uint i);

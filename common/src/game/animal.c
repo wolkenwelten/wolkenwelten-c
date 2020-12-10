@@ -19,6 +19,7 @@ animal  animalList[1<<14];
 uint    animalCount     = 0;
 uint    animalUsedCount = 0;
 uint    animalFirstFree = 0xFFFF;
+bool    animalNoAggro   = false;
 
 void animalReset(animal *e){
 	memset(e,0,sizeof(animal));
