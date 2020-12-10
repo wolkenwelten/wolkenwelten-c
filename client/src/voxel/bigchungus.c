@@ -116,7 +116,8 @@ void worldDraw(const character *cam){
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-	textureBind(tBlocks);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	textureBind(tBlocksArr);
 	extractFrustum();
 
 	shaderBind(sBlockMesh);
@@ -183,7 +184,7 @@ void worldDraw(const character *cam){
 	for(int i=0;i<drawQueueLen;i++){
 		chunkDraw(drawQueue[i].chnk,drawQueue[i].distance);
 	}
-	glScissor(0,0,screenWidth,screenHeight);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 }
 
 void worldBox(int x,int y,int z, int w,int h,int d,u8 block){

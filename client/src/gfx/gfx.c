@@ -105,7 +105,6 @@ void initGL(){
 	glScissor(0,0,screenWidth,screenHeight);
 	glEnable(GL_SCISSOR_TEST);
 
-	glActiveTexture(GL_TEXTURE0);
 #ifndef __EMSCRIPTEN__
 	glDisable(GL_POLYGON_SMOOTH);
 	glEnable(GL_TEXTURE_2D);

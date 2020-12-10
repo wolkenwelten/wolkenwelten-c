@@ -16,6 +16,7 @@ uint textureCount         = 0;
 texture textureList[256];
 
 texture *tBlocks;
+texture *tBlocksArr;
 texture *tGui;
 texture *tCursor;
 texture *tItems;
@@ -50,7 +51,8 @@ static void textureLoad(texture *t, const u8 *data, const size_t dataLen){
 
 static void textureGetTile(texture *t, u8 *pixels, u8 *pbuf, int iw, int tx, int ty){
 	for(uint y = 0; y < t->h; y++){
-		u8 *p = &pixels[(y+ty) * t->h * iw + (tx * t->w) * 4];
+		//u8 *p = &pixels[(y+ty) * t->h * iw + (tx * t->w) * 4];
+		u8 *p = &pixels[((ty*t->h)*iw*4)+(tx*t->w*4)+(y*iw*4)];
 		memcpy(pbuf,p,t->w*4);
 		pbuf += t->w*4;
 	}
@@ -79,10 +81,9 @@ static void textureLoadArray(texture *t, const u8 *data, const size_t dataLen){
 	}
 	if(t->ID == 0){glGenTextures(1, &t->ID);}
 	glBindTexture(GL_TEXTURE_2D_ARRAY, t->ID);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, t->w, t->h, t->d, 0, GL_RGBA, GL_UNSIGNED_BYTE, pbuf);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-	glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, t->w, t->h, t->d);
-	glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, t->w, t->h, t->d, GL_RGBA8, GL_UNSIGNED_BYTE, pbuf);
 
 	free(pixels);
 	free(pbuf);
@@ -230,13 +231,14 @@ void textureBuildBlockIcons(int loadFromFile){
 }
 
 void textureInit(){
-	tBlocks      = textureNewArray(gfx_blocks_png_data,    gfx_blocks_png_len   ,"client/gfx/blocks.png", 256);
+	tBlocks      = textureNew(gfx_blocks_png_data,    gfx_blocks_png_len   ,"client/gfx/blocks.png");
 	tCursor      = textureNew(gfx_cursor_png_data,    gfx_cursor_png_len   ,"client/gfx/cursor.png");
 	tGui         = textureNew(gfx_gui_png_data,       gfx_gui_png_len      ,"client/gfx/gui.png");
 	tCrosshair   = textureNew(gfx_crosshair_png_data, gfx_crosshair_png_len,"client/gfx/crosshair.png");
 	tRope        = textureNew(gfx_rope_png_data,      gfx_rope_png_len     ,"client/gfx/rope.png");
 	tSteelrope   = textureNew(gfx_steelrope_png_data, gfx_steelrope_png_len,"client/gfx/steelrope.png");
 	tBlockMining = textureNew(gfx_mining_png_data,    gfx_mining_png_len   ,"client/gfx/mining.png");
+	tBlocksArr   = textureNewArray(gfx_blocks_png_data,gfx_blocks_png_len   ,"client/gfx/blocks.png", 256);
 }
 
 void reloadTexture(texture *tex){

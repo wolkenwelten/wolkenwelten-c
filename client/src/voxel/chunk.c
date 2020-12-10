@@ -131,59 +131,65 @@ static inline void chunkFinish(chunk *c){
 	}
 }
 
-static inline void chunkAddVert(chunk *c, u8 x,u8 y,u8 z,u8 f,u8 b, u8 u, u8 v){
-	blockMeshBuffer[c->dataCount++] = (vertexTiny){x,y,z,u,v,b,f};
+static inline void chunkAddVert(chunk *c, u8 x,u8 y,u8 z,u8 f, u8 u, u8 v, u8 w){
+	blockMeshBuffer[c->dataCount++] = (vertexTiny){x,y,z,u,v,w,f};
 }
 void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	chunkAddVert(c, x  ,y  ,z+d,2,b,0,0);
-	chunkAddVert(c, x+w,y  ,z+d,2,b,w,0);
-	chunkAddVert(c, x+w,y+h,z+d,2,b,w,h);
-	chunkAddVert(c, x+w,y+h,z+d,2,b,w,h);
-	chunkAddVert(c, x  ,y+h,z+d,2,b,0,h);
-	chunkAddVert(c, x  ,y  ,z+d,2,b,0,0);
+	const u8 bt = blocks[b].tex[0];
+	chunkAddVert(c, x  ,y  ,z+d,2,0,h,bt);
+	chunkAddVert(c, x+w,y  ,z+d,2,w,h,bt);
+	chunkAddVert(c, x+w,y+h,z+d,2,w,0,bt);
+	chunkAddVert(c, x+w,y+h,z+d,2,w,0,bt);
+	chunkAddVert(c, x  ,y+h,z+d,2,0,0,bt);
+	chunkAddVert(c, x  ,y  ,z+d,2,0,h,bt);
 }
 void chunkAddBack(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)d;
-	chunkAddVert(c, x  ,y  ,z  ,2,b,0,0);
-	chunkAddVert(c, x  ,y+h,z  ,2,b,0,h);
-	chunkAddVert(c, x+w,y+h,z  ,2,b,w,h);
-	chunkAddVert(c, x+w,y+h,z  ,2,b,w,h);
-	chunkAddVert(c, x+w,y  ,z  ,2,b,w,0);
-	chunkAddVert(c, x  ,y  ,z  ,2,b,0,0);
+	const u8 bt = blocks[b].tex[1];
+	chunkAddVert(c, x  ,y  ,z  ,2,0,h,bt);
+	chunkAddVert(c, x  ,y+h,z  ,2,0,0,bt);
+	chunkAddVert(c, x+w,y+h,z  ,2,w,0,bt);
+	chunkAddVert(c, x+w,y+h,z  ,2,w,0,bt);
+	chunkAddVert(c, x+w,y  ,z  ,2,w,h,bt);
+	chunkAddVert(c, x  ,y  ,z  ,2,0,h,bt);
 }
 void chunkAddTop(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	chunkAddVert(c, x  ,y+h,z  ,3,b,0,0);
-	chunkAddVert(c, x  ,y+h,z+d,3,b,0,d);
-	chunkAddVert(c, x+w,y+h,z+d,3,b,w,d);
-	chunkAddVert(c, x+w,y+h,z+d,3,b,w,d);
-	chunkAddVert(c, x+w,y+h,z  ,3,b,w,0);
-	chunkAddVert(c, x  ,y+h,z  ,3,b,0,0);
+	const u8 bt = blocks[b].tex[2];
+	chunkAddVert(c, x  ,y+h,z  ,3,0,0,bt);
+	chunkAddVert(c, x  ,y+h,z+d,3,0,d,bt);
+	chunkAddVert(c, x+w,y+h,z+d,3,w,d,bt);
+	chunkAddVert(c, x+w,y+h,z+d,3,w,d,bt);
+	chunkAddVert(c, x+w,y+h,z  ,3,w,0,bt);
+	chunkAddVert(c, x  ,y+h,z  ,3,0,0,bt);
 }
 void chunkAddBottom(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)h;
-	chunkAddVert(c, x  ,y  ,z  ,0,b,0,0);
-	chunkAddVert(c, x+w,y  ,z  ,0,b,w,0);
-	chunkAddVert(c, x+w,y  ,z+d,0,b,w,d);
-	chunkAddVert(c, x+w,y  ,z+d,0,b,w,d);
-	chunkAddVert(c, x  ,y  ,z+d,0,b,0,d);
-	chunkAddVert(c, x  ,y  ,z  ,0,b,0,0);
+	const u8 bt = blocks[b].tex[3];
+	chunkAddVert(c, x  ,y  ,z  ,0,0,0,bt);
+	chunkAddVert(c, x+w,y  ,z  ,0,w,0,bt);
+	chunkAddVert(c, x+w,y  ,z+d,0,w,d,bt);
+	chunkAddVert(c, x+w,y  ,z+d,0,w,d,bt);
+	chunkAddVert(c, x  ,y  ,z+d,0,0,d,bt);
+	chunkAddVert(c, x  ,y  ,z  ,0,0,0,bt);
 }
 void chunkAddRight(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	chunkAddVert(c, x+w,y  ,z  ,2,b,0,0);
-	chunkAddVert(c, x+w,y+h,z  ,2,b,h,0);
-	chunkAddVert(c, x+w,y+h,z+d,2,b,h,d);
-	chunkAddVert(c, x+w,y+h,z+d,2,b,h,d);
-	chunkAddVert(c, x+w,y  ,z+d,2,b,0,d);
-	chunkAddVert(c, x+w,y  ,z  ,2,b,0,0);
+	const u8 bt = blocks[b].tex[4];
+	chunkAddVert(c, x+w,y  ,z  ,2,0,h,bt);
+	chunkAddVert(c, x+w,y+h,z  ,2,0,0,bt);
+	chunkAddVert(c, x+w,y+h,z+d,2,d,0,bt);
+	chunkAddVert(c, x+w,y+h,z+d,2,d,0,bt);
+	chunkAddVert(c, x+w,y  ,z+d,2,d,h,bt);
+	chunkAddVert(c, x+w,y  ,z  ,2,0,h,bt);
 }
 void chunkAddLeft(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)w;
-	chunkAddVert(c, x  ,y  ,z  ,2,b,0,0);
-	chunkAddVert(c, x  ,y  ,z+d,2,b,0,d);
-	chunkAddVert(c, x  ,y+h,z+d,2,b,h,d);
-	chunkAddVert(c, x  ,y+h,z+d,2,b,h,d);
-	chunkAddVert(c, x  ,y+h,z  ,2,b,h,0);
-	chunkAddVert(c, x  ,y  ,z  ,2,b,0,0);
+	const u8 bt = blocks[b].tex[5];
+	chunkAddVert(c, x  ,y  ,z  ,2,0,h,bt);
+	chunkAddVert(c, x  ,y  ,z+d,2,d,h,bt);
+	chunkAddVert(c, x  ,y+h,z+d,2,d,0,bt);
+	chunkAddVert(c, x  ,y+h,z+d,2,d,0,bt);
+	chunkAddVert(c, x  ,y+h,z  ,2,0,0,bt);
+	chunkAddVert(c, x  ,y  ,z  ,2,0,h,bt);
 }
 
 void chunkGenMesh(chunk *c) {

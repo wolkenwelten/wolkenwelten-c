@@ -18,6 +18,7 @@ typedef enum blockCategory {
 } blockCategory;
 
 typedef struct {
+	u8            tex[6];
 	u8            texX[6];
 	u8            texY[6];
 	u32           color[2];
