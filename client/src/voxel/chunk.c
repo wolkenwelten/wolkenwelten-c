@@ -16,8 +16,7 @@
 
 #pragma pack(push, 1)
 typedef struct vertexTiny {
-	u8 x,y,z,f;
-	u16 u,v;
+	u8 x,y,z,u,v,w,f;
 } vertexTiny;
 #pragma pack(pop)
 
@@ -132,83 +131,59 @@ static inline void chunkFinish(chunk *c){
 	}
 }
 
-static inline void chunkAddVert(chunk *c, u8 x,u8 y,u8 z,u16 u,u16 v,u8 f){
-	blockMeshBuffer[c->dataCount++] = (vertexTiny){x,y,z,f,u,v};
+static inline void chunkAddVert(chunk *c, u8 x,u8 y,u8 z,u8 f,u8 b, u8 u, u8 v){
+	blockMeshBuffer[c->dataCount++] = (vertexTiny){x,y,z,u,v,b,f};
 }
 void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const u16 texXa = blockTypeGetTexX(b,0)<<8;
-	const u16 texYa = blockTypeGetTexY(b,0)<<8;
-	const u16 texXb = texXa|w;
-	const u16 texYb = texYa|h;
-	chunkAddVert(c, x  ,y  ,z+d,texXa,texYb,2);
-	chunkAddVert(c, x+w,y  ,z+d,texXb,texYb,2);
-	chunkAddVert(c, x+w,y+h,z+d,texXb,texYa,2);
-	chunkAddVert(c, x+w,y+h,z+d,texXb,texYa,2);
-	chunkAddVert(c, x  ,y+h,z+d,texXa,texYa,2);
-	chunkAddVert(c, x  ,y  ,z+d,texXa,texYb,2);
+	chunkAddVert(c, x  ,y  ,z+d,2,b,0,0);
+	chunkAddVert(c, x+w,y  ,z+d,2,b,w,0);
+	chunkAddVert(c, x+w,y+h,z+d,2,b,w,h);
+	chunkAddVert(c, x+w,y+h,z+d,2,b,w,h);
+	chunkAddVert(c, x  ,y+h,z+d,2,b,0,h);
+	chunkAddVert(c, x  ,y  ,z+d,2,b,0,0);
 }
 void chunkAddBack(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)d;
-	const u16 texXa = blockTypeGetTexX(b,1)<<8;
-	const u16 texYa = blockTypeGetTexY(b,1)<<8;
-	const u16 texXb = texXa|w;
-	const u16 texYb = texYa|h;
-	chunkAddVert(c, x  ,y  ,z  ,texXb,texYb,2);
-	chunkAddVert(c, x  ,y+h,z  ,texXb,texYa,2);
-	chunkAddVert(c, x+w,y+h,z  ,texXa,texYa,2);
-	chunkAddVert(c, x+w,y+h,z  ,texXa,texYa,2);
-	chunkAddVert(c, x+w,y  ,z  ,texXa,texYb,2);
-	chunkAddVert(c, x  ,y  ,z  ,texXb,texYb,2);
+	chunkAddVert(c, x  ,y  ,z  ,2,b,0,0);
+	chunkAddVert(c, x  ,y+h,z  ,2,b,0,h);
+	chunkAddVert(c, x+w,y+h,z  ,2,b,w,h);
+	chunkAddVert(c, x+w,y+h,z  ,2,b,w,h);
+	chunkAddVert(c, x+w,y  ,z  ,2,b,w,0);
+	chunkAddVert(c, x  ,y  ,z  ,2,b,0,0);
 }
 void chunkAddTop(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const u16 texXa = blockTypeGetTexX(b,2)<<8;
-	const u16 texYa = blockTypeGetTexY(b,2)<<8;
-	const u16 texXb = texXa|w;
-	const u16 texYb = texYa|d;
-	chunkAddVert(c, x  ,y+h,z  ,texXa,texYa,3);
-	chunkAddVert(c, x  ,y+h,z+d,texXa,texYb,3);
-	chunkAddVert(c, x+w,y+h,z+d,texXb,texYb,3);
-	chunkAddVert(c, x+w,y+h,z+d,texXb,texYb,3);
-	chunkAddVert(c, x+w,y+h,z  ,texXb,texYa,3);
-	chunkAddVert(c, x  ,y+h,z  ,texXa,texYa,3);
+	chunkAddVert(c, x  ,y+h,z  ,3,b,0,0);
+	chunkAddVert(c, x  ,y+h,z+d,3,b,0,d);
+	chunkAddVert(c, x+w,y+h,z+d,3,b,w,d);
+	chunkAddVert(c, x+w,y+h,z+d,3,b,w,d);
+	chunkAddVert(c, x+w,y+h,z  ,3,b,w,0);
+	chunkAddVert(c, x  ,y+h,z  ,3,b,0,0);
 }
 void chunkAddBottom(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)h;
-	const u16 texXa = blockTypeGetTexX(b,3)<<8;
-	const u16 texYa = blockTypeGetTexY(b,3)<<8;
-	const u16 texXb = texXa|w;
-	const u16 texYb = texYa|d;
-	chunkAddVert(c, x  ,y  ,z  ,texXb,texYa,0);
-	chunkAddVert(c, x+w,y  ,z  ,texXa,texYa,0);
-	chunkAddVert(c, x+w,y  ,z+d,texXa,texYb,0);
-	chunkAddVert(c, x+w,y  ,z+d,texXa,texYb,0);
-	chunkAddVert(c, x  ,y  ,z+d,texXb,texYb,0);
-	chunkAddVert(c, x  ,y  ,z  ,texXb,texYa,0);
+	chunkAddVert(c, x  ,y  ,z  ,0,b,0,0);
+	chunkAddVert(c, x+w,y  ,z  ,0,b,w,0);
+	chunkAddVert(c, x+w,y  ,z+d,0,b,w,d);
+	chunkAddVert(c, x+w,y  ,z+d,0,b,w,d);
+	chunkAddVert(c, x  ,y  ,z+d,0,b,0,d);
+	chunkAddVert(c, x  ,y  ,z  ,0,b,0,0);
 }
 void chunkAddRight(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const u16 texXa = blockTypeGetTexX(b,4)<<8;
-	const u16 texYa = blockTypeGetTexY(b,4)<<8;
-	const u16 texXb = texXa|d;
-	const u16 texYb = texYa|h;
-	chunkAddVert(c, x+w,y  ,z  ,texXb,texYb,2);
-	chunkAddVert(c, x+w,y+h,z  ,texXb,texYa,2);
-	chunkAddVert(c, x+w,y+h,z+d,texXa,texYa,2);
-	chunkAddVert(c, x+w,y+h,z+d,texXa,texYa,2);
-	chunkAddVert(c, x+w,y  ,z+d,texXa,texYb,2);
-	chunkAddVert(c, x+w,y  ,z  ,texXb,texYb,2);
+	chunkAddVert(c, x+w,y  ,z  ,2,b,0,0);
+	chunkAddVert(c, x+w,y+h,z  ,2,b,h,0);
+	chunkAddVert(c, x+w,y+h,z+d,2,b,h,d);
+	chunkAddVert(c, x+w,y+h,z+d,2,b,h,d);
+	chunkAddVert(c, x+w,y  ,z+d,2,b,0,d);
+	chunkAddVert(c, x+w,y  ,z  ,2,b,0,0);
 }
 void chunkAddLeft(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)w;
-	const u16 texXa = blockTypeGetTexX(b,5)<<8;
-	const u16 texYa = blockTypeGetTexY(b,5)<<8;
-	const u16 texXb = texXa|d;
-	const u16 texYb = texYa|h;
-	chunkAddVert(c, x  ,y  ,z  ,texXa,texYb,2);
-	chunkAddVert(c, x  ,y  ,z+d,texXb,texYb,2);
-	chunkAddVert(c, x  ,y+h,z+d,texXb,texYa,2);
-	chunkAddVert(c, x  ,y+h,z+d,texXb,texYa,2);
-	chunkAddVert(c, x  ,y+h,z  ,texXa,texYa,2);
-	chunkAddVert(c, x  ,y  ,z  ,texXa,texYb,2);
+	chunkAddVert(c, x  ,y  ,z  ,2,b,0,0);
+	chunkAddVert(c, x  ,y  ,z+d,2,b,0,d);
+	chunkAddVert(c, x  ,y+h,z+d,2,b,h,d);
+	chunkAddVert(c, x  ,y+h,z+d,2,b,h,d);
+	chunkAddVert(c, x  ,y+h,z  ,2,b,h,0);
+	chunkAddVert(c, x  ,y  ,z  ,2,b,0,0);
 }
 
 void chunkGenMesh(chunk *c) {
@@ -393,7 +368,7 @@ void chunkDraw(chunk *c, float d){
 
 	glBindBuffer(GL_ARRAY_BUFFER, c->vbo);
 	glVertexAttribPointer(0, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].x) - ((char *)blockMeshBuffer)));
-	glVertexAttribPointer(1, 2, GL_SHORT,         GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].u) - ((char *)blockMeshBuffer)));
+	glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].u) - ((char *)blockMeshBuffer)));
 	glVertexAttribPointer(2, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].f) - ((char *)blockMeshBuffer)));
 	glDrawArrays(GL_TRIANGLES,0,c->dataCount);
 	vboTrisCount += c->dataCount/3;

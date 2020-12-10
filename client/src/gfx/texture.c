@@ -67,11 +67,12 @@ static void textureLoadArray(texture *t, const u8 *data, const size_t dataLen){
 	}
 	t->w = iw/itw;
 	t->h = ih/ith;
+	printf("itw: %i ith: %i tw: %i th: %i \n",itw,ith,t->w,t->h);
 
-	pbuf = malloc(itw*t->w*ith*t->h*4);
-	u8 *p = pbuf;
-	for(uint ty=0;ty<t->h;ty++){
-	for(uint tx=0;tx<t->w;tx++){
+	u8 *p = pbuf = malloc(itw*t->w*ith*t->h*4);
+
+	for(uint ty=0;ty<itw;ty++){
+	for(uint tx=0;tx<ith;tx++){
 		textureGetTile(t,pixels,p,iw,tx,ty);
 		p += t->w * t->h * 4;
 	}
@@ -122,7 +123,11 @@ void textureFree(){
 
 void textureBind(const texture *tex){
 	if(boundTexture == tex->ID){return;}
-	glBindTexture(GL_TEXTURE_2D, tex->ID);
+	if(tex->d > 1){
+		glBindTexture(GL_TEXTURE_2D_ARRAY, tex->ID);
+	}else{
+		glBindTexture(GL_TEXTURE_2D, tex->ID);
+	}
 	glUniform1i(tex->ID ,(GLint) 0);
 	boundTexture = tex->ID;
 }
