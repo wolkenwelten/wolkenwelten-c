@@ -146,6 +146,10 @@ static void handlePingPong(){
 void clientParsePacket(const packet *p){
 	const int pLen  = packetLen(p);
 	const int pType = packetType(p);
+	if(packetFalseChecksum(p)){
+		fprintf(stderr,"[CLI] CHECKSUM WRONG!!! T:%i L:%i\n",pType,pLen);
+		return;
+	}
 	if(pType != 0xFF){
 		recvUncompressedBytesCurrentSession += pLen+4;
 	}

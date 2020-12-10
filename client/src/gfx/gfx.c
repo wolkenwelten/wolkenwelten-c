@@ -45,7 +45,7 @@ vec    camShake;
 #elif __HAIKU__
 	float renderDistance = 256.f;
 #else
-	float renderDistance = 768.f;
+	float renderDistance = 384.f;
 #endif
 float fadeoutDistance = 32.f;
 float fadeoutStartDistance = 192;
@@ -54,6 +54,7 @@ float cloudMinD = 256*256*3;
 float cloudMaxD = 256*256*4;
 
 static void recalcDistances(){
+	renderDistance = MIN(renderDistance,512.f);
 	fadeoutDistance = renderDistance / 8.f;
 	fadeoutStartDistance = renderDistance - fadeoutDistance;
 	cloudFadeD = ((renderDistance/2) * (renderDistance/2));

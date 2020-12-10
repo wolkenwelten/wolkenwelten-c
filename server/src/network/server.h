@@ -31,7 +31,7 @@ typedef struct {
 	uint chngReqQueueLen;
 	chungusReqEntry chngReqQueue[128];
 	uint chnkReqQueueLen,chnkUpdateIter;
-	chunkReqEntry chnkReqQueue[4096];
+	chunkReqEntry chnkReqQueue[8192];
 
 
 	uint recvBufOff;
@@ -55,7 +55,12 @@ typedef struct {
 #define CONNECTION_WEBSOCKET (1   )
 #define CONNECTION_DO_UPDATE (1<<1)
 
+#ifdef __EMSCRIPTEN__
+extern clientConnection clients[2];
+#else
 extern clientConnection clients[32];
+#endif
+
 extern uint clientCount;
 
 const char *getPlayerLeaveMessage(uint c);

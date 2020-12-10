@@ -12,9 +12,15 @@
 #include <stddef.h>
 #include <string.h>
 
-chungus chungusList[1<<10];
+#define CHUNGUS_COUNT (1<<12)
+
+chungus *chungusList;
 uint chungusCount=0;
 chungus *chungusFirstFree = NULL;
+
+void chungusInit(){
+	chungusList = malloc(sizeof(chungus) * CHUNGUS_COUNT);
+}
 
 uint chungusGetActiveCount(){
 	return chungusCount;
@@ -37,7 +43,7 @@ float chunkDistance(const vec cam, const vec pos){
 chungus *chungusNew(u8 x, u8 y, u8 z){
 	chungus *c = NULL;
 	if(chungusFirstFree == NULL){
-		if(chungusCount+1 >= countof(chungusList)){
+		if(chungusCount+1 >= CHUNGUS_COUNT){
 			if(!chnkChngOverflow){
 				fprintf(stderr,"client chungusList Overflow!\n");
 				chnkChngOverflow = false;

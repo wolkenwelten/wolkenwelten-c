@@ -36,7 +36,11 @@
 #include "server_bsd.h"
 #endif
 
+#ifdef __EMSCRIPTEN__
+clientConnection clients[2];
+#else
 clientConnection clients[32];
+#endif
 uint clientCount = 0;
 
 const char *getPlayerLeaveMessage(uint c){
@@ -296,6 +300,11 @@ uint getClientLatency(uint c){
 void serverParseSinglePacket(uint c, packet *p){
 	const int pLen  = p->typesize >> 10;
 	const int pType = p->typesize & 0xFF;
+
+	if(packetFalseChecksum(p)){
+		fprintf(stderr,"[SRV][%i] CHECKSUM WRONG!!! T:%i L:%i\n",c,pType,pLen);
+		return;
+	}
 
 	switch(pType){
 		case 0: // Keepalive

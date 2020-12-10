@@ -34,8 +34,25 @@ static inline uint packetLen(const packet *p){
 static inline uint packetType(const packet *p){
 	return p->typesize & 0xFF;
 }
+static inline uint packetChecksum(const packet *p){
+	return (p->typesize >> 8) & 3;
+}
+static inline uint checksum(const packet *p){
+	uint len  = packetLen(p);
+	uint type = packetLen(p);
+	int lpop  = __builtin_popcount(len);
+	int tpop  = __builtin_popcount(type);
+
+	return (tpop&1) | ((lpop << 1)&1);
+}
 static inline void packetSet(packet *p, u8 ptype, u32 len){
 	p->typesize = (u32)ptype | (len << 10);
+	p->typesize |= checksum(p) << 8;
+}
+static inline bool packetFalseChecksum(const packet *p){
+	uint is     = packetChecksum(p);
+	uint should = checksum(p);
+	return is != should;
 }
 
 void packetQueue         (packet *p, u8 ptype, u32 len, int c);

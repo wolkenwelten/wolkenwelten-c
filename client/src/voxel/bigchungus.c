@@ -147,6 +147,7 @@ void worldDraw(const character *cam){
 	}
 	}
 	}
+	if(cam->flags & CHAR_SPAWNING){return;}
 
 	for(int x=minCX;x<maxCX;x++){
 	for(int y=minCY;y<maxCY;y++){

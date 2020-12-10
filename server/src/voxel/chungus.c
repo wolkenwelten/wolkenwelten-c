@@ -15,39 +15,41 @@
 #include <stdio.h>
 #include <string.h>
 
+#define CHUNGUS_COUNT (1<<14)
 
-chungus chungusList[1 << 12];
+chungus *chungusList;
 uint chungusCount = 0;
 chungus *chungusFirstFree = NULL;
 u64 freeTime = 0;
 
 void chungusInit(){
+	chungusList = malloc(sizeof(chungus) * CHUNGUS_COUNT);
 	//memset(chungusList,0,sizeof(chungusList));
 }
 
 void chungusSetClientUpdated(chungus *c,u64 updated){
 	c->clientsUpdated = updated;
 	for(int x=0;x<16;x++){
-		for(int y=0;y<16;y++){
-			for(int z=0;z<16;z++){
-				if(c->chunks[x][y][z] == NULL){continue;}
-				c->chunks[x][y][z]->clientsUpdated = updated;
-			}
-		}
+	for(int y=0;y<16;y++){
+	for(int z=0;z<16;z++){
+		if(c->chunks[x][y][z] == NULL){continue;}
+		c->chunks[x][y][z]->clientsUpdated = updated;
+	}
+	}
 	}
 }
 
 chungus *chungusNew(u8 x, u8 y, u8 z){
 	chungus *c = NULL;
 	if(y > 128){
-		fprintf(stderr,"Y seems a bit high!\n");
+		fprintf(stderr,"Y seems a bit high! %u %u %u\n",x,y,z);
 	}
 	if((x < 64) || (z < 64)){
-		fprintf(stderr,"warn\n");
+		fprintf(stderr,"X/Z seems low, warn %u %u %u\n",x,y,z);
 	}
 
 	if(chungusFirstFree == NULL){
-		if(chungusCount >= countof(chungusList)){
+		if(chungusCount >= CHUNGUS_COUNT){
 			fprintf(stderr,"chungus load shedding [%u chungi]!\n",chungusCount);
 			chungusFreeOldChungi(1000);
 			if(chungusFirstFree == NULL){
@@ -76,11 +78,13 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	c->clientsUpdated     = (u64)1 << 31;
 
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
+	chunkCheckShed();
 
 	return c;
 }
 
 void chungusWorldGenLoad(chungus *c){
+	chunkCheckShed();
 	worldgen *wgen = worldgenNew(c);
 	worldgenGenerate(wgen);
 	worldgenFree(wgen);
@@ -90,16 +94,16 @@ void chungusWorldGenLoad(chungus *c){
 
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
-	fprintf(stderr,"ChungusFree[] %p %i:%i:%i\n",c,c->x,c->y,c->z);
+	//fprintf(stderr,"ChungusFree[] %p %i:%i:%i\n",c,c->x,c->y,c->z);
 	chungusSave(c);
 	animalDelChungus(c);
 	itemDropDelChungus(c);
 	for(int x=0;x<16;x++){
-		for(int y=0;y<16;y++){
-			for(int z=0;z<16;z++){
-				chunkFree(c->chunks[x][y][z]);
-			}
-		}
+	for(int y=0;y<16;y++){
+	for(int z=0;z<16;z++){
+		chunkFree(c->chunks[x][y][z]);
+	}
+	}
 	}
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 	c->nextFree = chungusFirstFree;
@@ -436,7 +440,7 @@ void chungusUnsubFarChungi(){
 			const float cdist = chungusDistance(clients[ii].c,chng);
 			if(cdist < 256.f){
 				chungusSubscribePlayer(chng,ii);
-			}else if(cdist > 768.f){
+			}else if(cdist > 2048.f){
 				chungusUnsubscribePlayer(chng,ii);
 			}
 		}
