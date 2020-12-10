@@ -66,6 +66,7 @@ void initSDL(){
 	int desktopWidth  = optionWindowWidth;
 	int desktopHeight = optionWindowHeight;
 	char windowTitle[64];
+
 	snprintf(windowTitle,sizeof(windowTitle)-1,"%s - WolkenWelten",playerName);
 
 	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS,"0");
@@ -75,16 +76,13 @@ void initSDL(){
 		exit(1);
 	}
 
-	#ifdef __LINUX__
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
-	#elif defined __EMSCRIPTEN__
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
+	#if defined __EMSCRIPTEN__
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
 	#else
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2 );
 	#endif
 
 	if( SDL_GetDesktopDisplayMode(0, &dm) == 0){
