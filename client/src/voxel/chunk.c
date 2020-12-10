@@ -224,15 +224,15 @@ void chunkGenMesh(chunk *c) {
 	c->dataCount = 0;
 
 	for(int x=CS-1;x>=0;--x){
-		for(int y=CS-1;y>=0;--y){
-			for(int z=CS-1;z>=0;--z){
-				if(d[(x*CSCS)+(y*CS)+z] == 0){
-					sideCache[x][y][z] = 0;
-				}else{
-					sideCache[x][y][z] = chunkGetSides(x,y,z,(u8 *)d,CS);
-				}
-			}
+	for(int y=CS-1;y>=0;--y){
+	for(int z=CS-1;z>=0;--z){
+		if(d[(x*CSCS)+(y*CS)+z] == 0){
+			sideCache[x][y][z] = 0;
+		}else{
+			sideCache[x][y][z] = chunkGetSides(x,y,z,(u8 *)d,CS);
 		}
+	}
+	}
 	}
 
 	// Front / Back

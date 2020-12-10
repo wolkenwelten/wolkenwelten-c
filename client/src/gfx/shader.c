@@ -54,11 +54,7 @@ void shaderCompile(shader *s){
 	s->vsID = glCreateShader(GL_VERTEX_SHADER);
 	memset(buf,0,sizeof(buf));
 
-	#ifdef __APPLE__
-		snprintf(buf,sizeof(buf)-1,"#version 120\n\n%s",s->vss);
-	#else
-		snprintf(buf,sizeof(buf)-1,"#version 100\n\n%s",s->vss);
-	#endif
+	snprintf(buf,sizeof(buf)-1,"#version 130\n\n%s",s->vss);
 
 	glShaderSource(s->vsID,1,(const GLchar **)&bufp,NULL);
 	glCompileShader(s->vsID);
