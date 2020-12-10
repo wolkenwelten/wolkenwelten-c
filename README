@@ -1,0 +1,142 @@
+--+++-- WolkenWelten --+++--
+
+-+- Linux Requirements -+-
+For the Linux version to work you need SDL2 and SDL2_mixer on your system, of
+course a libGL and running Wayland/X11 is also necessary. Apart from that nothing
+should be needed.
+
+This is mostly a list of Commandline Arguments / Commands one can use.
+
+-+- Console commands -+-
+All console commands start with a period '.'
+
+- Native Commands -
+.dbgitem
+  Gives the issuing player a bunch of cool stuff
+.time HOURS:MINUTES
+  Sets the time
+.deadanimals
+  Kills half of all animals
+
++ Clientside LISP Commands +
+To open the clientside lisp console press `. You can send commands to the server
+by using the s-eval macro. So you could for example type in
+(s-eval (tp (px) (+ 1000 (py)) (pz)))
+to teleport a thousand blocks up.
+
++ Serverside LISP Commands +
+Everything in chat starting with a period that is not being detected as a native command
+gets passed along to Nujel, the custom LISP interpreter used in this game.
+
+Nujel works similarly to scheme, so for example to teleport the current player
+1000 blocks above his current position you would issue:
+(tp (px) (+ (py) 1000) (pz))
+
+A more thorough description about Nujel will be written in the future, before that
+just ask on Twitch/Discord :)
+
+(noaggro #t/#f)
+  Sets the animalNoAggro flags which leads to bunnies not attacking/fleeing the player
+(update)
+  Force a save to disk, NOT RECOMMENDED
+(acount)
+  Returns the amount of animals currently active on the server
+(fcount)
+  Returns the amount of fires currently active on the server
+(bmcount)
+  Returns the amount of blockMinings currently being active on the server
+(idcount)
+  Returns the amount of itemDrops currently being active on the server
+(ecount)
+  Returns the amount of entities currently being active on the server
+(wcount)
+  Returns the amount of water currently being active on the server
+(px)
+  Returns the issuing players X Position
+(py)
+  Returns the issuing players Y Position
+(pz)
+  Returns the issuing players Z Position
+(setb X Y Z Block)
+  Sets the block a X|Y|Z to Block
+(getb X Y Z)
+  Gets the block at X|Y|Z
+(box X Y Z W H D Block)
+  Sets the blocks in the box X|Y|Z W|H|D to Block
+(sphere X Y Z R Block)
+  Sets a sphere of radius R at Position X|Y|Z to Block
+(mbox X Y Z W H D)
+  Mines the box X|Y|Z W|H|D
+(mbox X Y Z R)
+  Mines the sphere at X|Y|Z of radius R
+(give ID [AMOUNT] [PlayerID])
+  Gives out items, AMOUNT defaults to 1 and PlayerID defaults to the issuing player.
+(dmg [DMG] [PlayerID])
+  Damages PlayerID by DMG Health, PlayerID defaults to the issuing player, DMG to 4.
+(die [PlayerID])
+  Just what might this one do?
+(newAnim [TYPE] [AMOUNT] [X] [Y] [Z])
+  Spawns a new animal, TYPE defaults to 1, AMOUNT to 1 and the position the the issuing players.
+(setAnim ANIMALID [HUNGER] [SLEEPY] [PREGNANCY] [STATE] [HEALTH])
+  Sets some field for the animal ANIMALID
+(tp X Y Z [PlayerID])
+  Teleports PlayerID to X|Y|Z. PlayerID defauls to the issuing player
+(water X Y Z [AMOUNT])
+  Spawns a new water in a X|Y|Z. AMOUNT defaults to 8192
+
+
+-+- Commandline Arguments -+-
++ Client +
+-musicVolume=[1-100]
+  Sets the background music volume to the specified percentage, not that useful
+  since the game has no music for now.
+-soundVolume=[1-100]
+  Sets the sound voulme to the specified percentage.
+-worldSeed=12345
+  Sets the world seed for a singleplayer game, must be used together with savegame.
+  Defaults to a random value.
+-savegame=Test
+  Immediatly starts in singleplayer mode with the specified savegame name.
+-debugInfo=[0-1]
+  Starts the game with the debugoverlay already visible if set to 1.
+-mute=[0-1]
+  No audio output whatsoever
+-playerName=Player
+  Sets the playername.
+-serverName=localhost
+  Immediatly tries to join hostname
+-automatedTest=[0-1]
+  Starts a simple testroutine and exits after a couple seconds, not that useful
+  if used without a profiler.
+-windowOrientation=[TCB][LCR]
+  Sets the starting position of the window on your screen, if you wanted the window
+  to appear in the bottom right corner then you would pass BR, for the center CC.
+-windowWidth=800
+  Sets the starting width of the window
+-windowHeight=480
+  Sets the starting height of the window
+-windowed
+  Starts in windowed mode (default)
+-fullscreen
+  Starts in fullscreen mode
+-noSave
+  Do not save any player data
+-version
+  Print some version information to stdout and exit
+
++ Server +
+-worldSeed=12345
+  Defines the world seed to use instead of a randomly chosen default one
+-savegame=Test
+  Defines the name under which to save the world
+-version
+  Print some version information to stdout and exit
+-port
+  Uses a non standard port (NOT RECOMMENDED)
+-verbose
+  Prints A LOT of stuff to stdout/stderr
+-profileWG
+  Generates the spawn area and exits immediatly, useless without a profiler.
+-singleplayer
+  Starts the server in singleplayer mode, meaning that after a pause of a couple
+  seconds the player exits if no client is connected.

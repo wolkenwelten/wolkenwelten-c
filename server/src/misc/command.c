@@ -422,29 +422,10 @@ static void cmdTime(int c, const char *cmd){
 	serverSendChatMsg(replyBuf);
 }
 
-void cmdHelp(int c, const char *cmd){
-	(void)c;
-	(void)cmd;
-	serverSendChatMsg(" --=-- HELP --=--");
-	serverSendChatMsg(".help = This help message");
-	serverSendChatMsg(".ani  = Spawns an animal");
-	serverSendChatMsg(".dmg [PLAYER] [DMG] = Damages a player");
-	serverSendChatMsg(".dbgitem [PLAYER] = Gives a player some things");
-	serverSendChatMsg(".die [PLAYER] = Kills a player");
-	serverSendChatMsg(".heal [PLAYER] [HEAL] = Heals a player");
-	serverSendChatMsg(".give ID [PLAYER] [QTY] = Heals a player");
-	serverSendChatMsg(".tpr X Y Z [PLAYER} = Teleports a player to a relative position");
-	serverSendChatMsg(".tp X Y Z [PLAYER} = Teleports a player to an absolute position");
-}
-
 int parseCommand(int c, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
 
-	if(strncmp(tcmp,"help",4) == 0){
-		cmdHelp(c,tcmp);
-		return 1;
-	}
 	if(strncmp(tcmp,"dbgitem",7) == 0){
 		cmdDbgitem(c,tcmp);
 		return 1;

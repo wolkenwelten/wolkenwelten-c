@@ -25,9 +25,14 @@ $(LIN_REL):
 	mkdir -p $(LIN_REL)
 
 release.linux: releases/linux/wolkenwelten-linux-$(VERSION_NAME).tar.xz
+releases/linux/wolkenwelten-linux-$(VERSION_NAME).tar.xz: $(LIN_REL)/README
 releases/linux/wolkenwelten-linux-$(VERSION_NAME).tar.xz: $(LIN_REL)/wolkenwelten
 releases/linux/wolkenwelten-linux-$(VERSION_NAME).tar.xz: $(LIN_REL)/wolkenwelten-server
 	cd releases/linux/ && tar -c wolkenwelten-$(VERSION_NAME)/ | xz -9 - > wolkenwelten-linux-$(VERSION_NAME).tar.xz
+
+
+$(LIN_REL)/README: README
+	cp $< $@
 
 $(LIN_REL)/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 $(LIN_REL)/wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)

@@ -13,12 +13,16 @@ WIN_RELDIR           := releases/win/wolkenwelten-$(VERSION_NAME)
 release: release.win
 
 release.win: releases/win/wolkenwelten-win-$(VERSION_NAME).7z
+releases/win/wolkenwelten-win-$(VERSION_NAME).7z: $(WIN_RELDIR)/README.txt
 releases/win/wolkenwelten-win-$(VERSION_NAME).7z: $(WIN_RELDIR)/wolkenwelten.exe
 releases/win/wolkenwelten-win-$(VERSION_NAME).7z: $(WIN_RELDIR)/wolkenwelten-server.exe
 	cd releases/win/ && 7z a wolkenwelten-win-$(VERSION_NAME).7z wolkenwelten-$(VERSION_NAME)/
 
 $(WIN_RELDIR):
 	mkdir -p $(WIN_RELDIR)
+
+$(WIN_RELDIR)/README.txt: README
+	cp $@ $<
 
 $(WIN_RELDIR)/wolkenwelten.exe: CFLAGS    += $(WIN_CLIENT_CFLAGS)
 $(WIN_RELDIR)/wolkenwelten.exe: CINCLUDES += $(WIN_CLIENT_CINCLUDES)

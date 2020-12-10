@@ -112,9 +112,6 @@ void parseOptions(int argc,char *argv[]){
 		if(checkString(argv[i]+1,"fullscreen")){
 			optionFullscreen = true;
 		}
-		if(checkString(argv[i]+1,"runtimeReloading")){
-			optionRuntimeReloading = true;
-		}
 		if(checkString(argv[i]+1,"noSave")){
 			optionNoSave = true;
 		}
