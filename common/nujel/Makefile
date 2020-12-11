@@ -28,6 +28,9 @@ clean:
 test: nujel
 	./test
 
+.PHONY: runl
+runl: test
+
 .PHONY: musl
 musl: $(SRCS)
 	$(CC) $(COPT) $(CWARN) $(CSTD) $(CFLAGS) $(SRCS) -o nujel

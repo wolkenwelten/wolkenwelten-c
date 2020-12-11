@@ -5,26 +5,6 @@
 #include "common.h"
 #include "nujel.h"
 
-char *ansiRS = "\033[0m";
-char *ansiFG[16] = {
-	"\033[0;30m",
-	"\033[0;31m",
-	"\033[0;32m",
-	"\033[0;33m",
-	"\033[0;34m",
-	"\033[0;35m",
-	"\033[0;36m",
-	"\033[0;37m",
-	"\033[1;30m",
-	"\033[1;31m",
-	"\033[1;32m",
-	"\033[1;33m",
-	"\033[1;34m",
-	"\033[1;35m",
-	"\033[1;36m",
-	"\033[1;37m"
-};
-
 void *loadFile(const char *filename,size_t *len){
 	FILE *fp;
 	size_t filelen,readlen,read;
@@ -67,8 +47,6 @@ void doRepl(lClosure *c){
 		}
 		lVal *v = NULL;
 		for(lVal *sexpr = lParseSExprCS(buf); sexpr != NULL; sexpr = sexpr->next){
-			//printf("Chain:\n");
-			//lPrintChain(sexpr);
 			v = lEval(c,sexpr);
 		}
 		lPrintChain(v);
@@ -84,11 +62,36 @@ lVal *lnfQuit(lClosure *c, lVal *v){
 	return t;
 }
 
+lVal *lnfInput(lClosure *c, lVal *v){
+	static char buf[512];
+	if(v != NULL){
+		lVal *t = lnfCat(c,v);
+		if((t != NULL) && (t->type == ltString)){
+			printf("%s",t->vString->data);
+		}
+	}
+	if(fgets(buf,sizeof(buf),stdin) == NULL){
+		return lValNil();
+	}
+	return lValString(buf);
+}
+
+lVal *lnfPrint(lClosure *c, lVal *v){
+	if(v == NULL){return lValNil();}
+	lVal *t = lnfCat(c,v);
+	if((t != NULL) && (t->type == ltString)){
+		printf("%s",t->vString->data);
+	}
+	return t;
+}
+
 int main(int argc, char *argv[]){
 	int eval = 0;
 	int repl = 1;
 	lInit();
 	lClosure *c = lClosureNew(NULL);
+	lClosureAddNF(c,"print",&lnfPrint);
+	lClosureAddNF(c,"input",&lnfInput);
 	lClosureAddNF(c,"quit",&lnfQuit);
 	lClosureAddNF(c,"exit",&lnfQuit);
 
@@ -108,8 +111,6 @@ int main(int argc, char *argv[]){
 		}
 		lVal *v = NULL;
 		for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
-			//printf("Chain:\n");
-			//lPrintChain(sexpr);
 			v = lEval(c,sexpr);
 		}
 		lPrintChain(v);
