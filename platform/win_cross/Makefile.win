@@ -22,7 +22,7 @@ $(WIN_RELDIR):
 	mkdir -p $(WIN_RELDIR)
 
 $(WIN_RELDIR)/README.txt: README
-	cp $@ $<
+	cp $< $@
 
 $(WIN_RELDIR)/wolkenwelten.exe: CFLAGS    += $(WIN_CLIENT_CFLAGS)
 $(WIN_RELDIR)/wolkenwelten.exe: CINCLUDES += $(WIN_CLIENT_CINCLUDES)
