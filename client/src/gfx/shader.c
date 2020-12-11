@@ -54,7 +54,12 @@ void shaderCompile(shader *s){
 	s->vsID = glCreateShader(GL_VERTEX_SHADER);
 	memset(buf,0,sizeof(buf));
 
+	#ifdef WOLKENWELTEN__GL_ES
+	snprintf(buf,sizeof(buf)-1,"#version 300 es\nprecision mediump float;\nprecision mediump int;\n\n%s",s->vss);
+	#else
 	snprintf(buf,sizeof(buf)-1,"#version 130\n\n%s",s->vss);
+	#endif
+
 
 	glShaderSource(s->vsID,1,(const GLchar **)&bufp,NULL);
 	glCompileShader(s->vsID);
@@ -64,7 +69,11 @@ void shaderCompile(shader *s){
 	s->fsID = glCreateShader(GL_FRAGMENT_SHADER);
 	memset(buf,0,sizeof(buf));
 
+	#ifdef WOLKENWELTEN__GL_ES
+	snprintf(buf,sizeof(buf)-1,"#version 300 es\nprecision mediump float;\nprecision mediump int;\nprecision lowp sampler2DArray;\n\n%s",s->fss);
+	#else
 	snprintf(buf,sizeof(buf)-1,"#version 130\n\n%s",s->fss);
+	#endif
 
 	glShaderSource(s->fsID,1,(const GLchar **)&bufp,NULL);
 	glCompileShader(s->fsID);

@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __ARM_ARCH
+#define WOLKENWELTEN__GL_ES 1
+#endif
+
 #ifdef __APPLE__
 	#include <OpenGL/gl3.h>
 	#define INITGLEXT() 0

@@ -2,6 +2,7 @@
 #include "../main.h"
 #include "../game/character.h"
 #include "../gfx/gfx.h"
+#include "../gfx/gl.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../menu/inventory.h"
@@ -75,10 +76,6 @@ void initSDL(){
 		fprintf(stderr, "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
 		exit(1);
 	}
-
-	#ifdef __ARM_ARCH
-	#define WOLKENWELTEN__GL_ES 1
-	#endif
 
 	#if defined __EMSCRIPTEN__
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
