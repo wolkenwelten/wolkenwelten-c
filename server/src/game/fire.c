@@ -24,6 +24,7 @@ void fireNewF(u16 x, u16 y, u16 z, i16 strength, i16 blockDmg){
 	f->z = z;
 	f->strength = strength;
 	f->blockDmg = blockDmg;
+	f->oxygen   = 4;
 	fireSendUpdate(-1,(int)(f - fireList));
 }
 
@@ -50,7 +51,8 @@ void fireNew(u16 x, u16 y, u16 z, i16 strength){
 	f->x = x;
 	f->y = y;
 	f->z = z;
-	f->strength += strength;
+	f->oxygen = 4;
+	f->strength += MIN(4,strength);
 	fireSendUpdate(-1,(int)(f - fireList));
 }
 
@@ -74,9 +76,9 @@ void fireRecvUpdate(uint c, const packet *p){
 
 static inline void fireSpreadToBlock(fire *f, int r){
 	u16 fx,fy,fz;
-	fx = (f->x - r)+rngValM(r*2+1);
-	fy = (f->y - r)+rngValM(r*2+1);
-	fz = (f->z - r)+rngValM(r*2+1);
+	fx = (f->x - r) + rngValM(r*2+1);
+	fy = (f->y - r) + rngValM(r*2+1);
+	fz = (f->z - r) + rngValM(r*2+1);
 
 	if((fy < f->y) && (rngValR() & 1)){
 		fy = fy + (f->y-fy);
@@ -89,9 +91,9 @@ static inline void fireSpreadToBlock(fire *f, int r){
 
 static inline void fireSpreadToLeaf(fire *f, int r){
 	u16 fx,fy,fz;
-	fx = (f->x - r)+rngValM(r*2+1);
-	fy = (f->y - r)+rngValM(r*2+1);
-	fz = (f->z - r)+rngValM(r*2+1);
+	fx = (f->x - r) + rngValM(r*2+1);
+	fy = (f->y - r) + rngValM(r*2+1);
+	fz = (f->z - r) + rngValM(r*2+1);
 
 	if((fy < f->y) && (rngValR() & 1)){
 		fy = fy + (f->y-fy);
@@ -132,19 +134,22 @@ void fireUpdate(fire *f){
 		return;
 	}
 
-	int maxdmg = 0;
+	int airB = 0;
 	for(int x = -1;x < 2;x++){
 	for(int y = -1;y < 2;y++){
 	for(int z = -1;z < 2;z++){
-		if(worldGetB(f->x+x,f->y+y,f->z+z) == 0){maxdmg++;}
+		if(worldGetB(f->x+x,f->y+y,f->z+z) == 0){airB++;}
 	}
 	}
 	}
+
 
 	const u8 b = worldGetB(f->x,f->y,f->z);
-	const int dmg = MIN(maxdmg,blockTypeGetFireDmg(b));
+	const int dmg = MIN(f->oxygen,blockTypeGetFireDmg(b));
 
 	f->strength = MIN(30000,f->strength+dmg-1);
+	f->oxygen -= dmg;
+	f->oxygen += MIN(airB >> 1,32-f->oxygen);
 	if(b == 0){
 		f->blockDmg = 0;
 		fireSpread(f);

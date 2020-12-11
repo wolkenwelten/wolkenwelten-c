@@ -251,9 +251,10 @@ void itemDropUpdateFire(uint i){
 		id->lastFire = (u16)(f - fireList);
 	}
 	if((f != NULL) && (f->x == cx) && (f->y == cy) && (f->z == cz)){
-		const int dmg = getFireDmgDispatch(id) * id->itm.amount;
+		const int dmg = MIN(f->oxygen,getFireDmgDispatch(id) * id->itm.amount);
 		id->fireDmg += dmg;
-		f->strength += dmg;
+		f->strength += dmg - id->itm.amount;
+		f->oxygen   -= dmg;
 	}else if(id->fireDmg > 0){
 		const int dmg = MIN(id->fireDmg,getFireDmgDispatch(id) * id->itm.amount);
 		fireNew(cx,cy,cz,dmg);

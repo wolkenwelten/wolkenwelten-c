@@ -5,6 +5,7 @@ typedef struct {
 	u16 x,y,z;
 	i16 strength;
 	i16 blockDmg;
+	i16 oxygen;
 } fire;
 
 extern fire fireList[1<<14];

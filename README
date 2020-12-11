@@ -1,14 +1,14 @@
 --+++-- WolkenWelten --+++--
 
 -+- Linux Requirements -+-
-For the Linux version to work you need SDL2 and SDL2_mixer on your system, of
-course a libGL and running Wayland/X11 is also necessary. Apart from that nothing
-should be needed.
+ For the Linux version to work you need SDL2 and SDL2_mixer on your system, of
+ course a libGL and running Wayland/X11 is also necessary. Apart from that nothing
+ should be needed.
 
-This is mostly a list of Commandline Arguments / Commands one can use.
+ This is mostly a list of Commandline Arguments / Commands one can use.
 
 -+- Console commands -+-
-All console commands start with a period '.'
+ All console commands start with a period '.'
 
 - Native Commands -
 .dbgitem
@@ -19,21 +19,21 @@ All console commands start with a period '.'
   Kills half of all animals
 
 + Clientside LISP Commands +
-To open the clientside lisp console press `. You can send commands to the server
-by using the s-eval macro. So you could for example type in
-(s-eval (tp (px) (+ 1000 (py)) (pz)))
-to teleport a thousand blocks up.
+ To open the clientside lisp console press `. You can send commands to the server
+ by using the s-eval macro. So you could for example type in
+ (s-eval (tp (px) (+ 1000 (py)) (pz)))
+ to teleport a thousand blocks up.
 
 + Serverside LISP Commands +
-Everything in chat starting with a period that is not being detected as a native command
-gets passed along to Nujel, the custom LISP interpreter used in this game.
+ Everything in chat starting with a period that is not being detected as a native command
+ gets passed along to Nujel, the custom LISP interpreter used in this game.
 
-Nujel works similarly to scheme, so for example to teleport the current player
-1000 blocks above his current position you would issue:
+ Nujel works similarly to scheme, so for example to teleport the current player
+ 1000 blocks above his current position you would issue:
 (tp (px) (+ (py) 1000) (pz))
 
-A more thorough description about Nujel will be written in the future, before that
-just ask on Twitch/Discord :)
+ A more thorough description about Nujel will be written in the future, before that
+ just ask on Twitch/Discord :)
 
 (noaggro #t/#f)
   Sets the animalNoAggro flags which leads to bunnies not attacking/fleeing the player
