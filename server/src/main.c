@@ -113,7 +113,7 @@ int updateWorld(){
 	const u64 cTicks = getTicks();
 	if(lastUpdate  == 0){lastUpdate  = getTicks() - 4;}
 
-	int i = 4;
+	int i = 64;
 	for(;lastUpdate < cTicks;lastUpdate += 4){
 		updateWorldStep();
 		if(--i == 0){break;}
@@ -140,10 +140,8 @@ void mainTick(){
 	chungusFreeOldChungi(30000);
 	handleAnimalPriorities();
 	bigchungusSafeSave(&world);
-	for(int i=0;i<32;i++){
-		serverHandleEvents();
-		if(updateWorld()){break;}
-	}
+	serverHandleEvents();
+	updateWorld();
 	serverHandleEvents();
 }
 
