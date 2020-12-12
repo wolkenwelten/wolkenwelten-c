@@ -61,7 +61,7 @@ void msgParseGetChunk(const packet *p){
 	chunk *chnk = chungusGetChunkOrNew(chng,x,y,z);
 	if(chnk == NULL){return;}
 	memcpy(chnk->data,p->v.u8,sizeof(chnk->data));
-	chnk->ready &= ~15;
+	chnk->dataCount = 0xFFFF;
 }
 
 void msgSendPlayerPos(){

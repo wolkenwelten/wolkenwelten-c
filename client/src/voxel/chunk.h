@@ -3,11 +3,8 @@
 
 #define CHUNK_SIZE (16)
 
-
-
 struct chunk {
-	u16 x,y,z,ready;
-	u16 dataCount,vboSize;
+	u16 x,y,z,dataCount;
 	uint vbo;
 	void *nextFree;
 	u8 data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];

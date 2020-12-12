@@ -98,11 +98,9 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 	c->x         = x & (~0xF);
 	c->y         = y & (~0xF);
 	c->z         = z & (~0xF);
-	c->ready     = 0;
 	c->nextFree  = NULL;
 	c->vbo       = 0;
-	c->vboSize   = 0;
-	c->dataCount = 0;
+	c->dataCount = 0xFFFF;
 	memset(c->data,0,sizeof(c->data));
 	return c;
 }
@@ -114,7 +112,6 @@ void chunkFree(chunk *c){
 		return;
 	}
 	chunkFreeCount++;
-	//fprintf(stderr,"++cfp=%i\n",chunkFreeCount);
 	if(!c->vbo){glDeleteBuffers(1,&c->vbo);}
 	c->nextFree = chunkFirstFree;
 	chunkFirstFree = c;
@@ -123,73 +120,74 @@ void chunkFree(chunk *c){
 static inline void chunkFinish(chunk *c){
 	if(!c->vbo) { glGenBuffers(1,&c->vbo); }
 	glBindBuffer(GL_ARRAY_BUFFER, c->vbo);
-	if(c->dataCount <= c->vboSize){
-		glBufferSubData(GL_ARRAY_BUFFER, 0, c->dataCount*sizeof(vertexTiny), blockMeshBuffer);
-	}else{
-		glBufferData(GL_ARRAY_BUFFER, c->dataCount*sizeof(vertexTiny), blockMeshBuffer, GL_STATIC_DRAW);
-		c->vboSize = c->dataCount;
-	}
+	glBufferData(GL_ARRAY_BUFFER, c->dataCount*(6*sizeof(vertexTiny)), blockMeshBuffer, GL_STATIC_DRAW);
 }
 
-static inline void chunkAddVert(chunk *c, u8 x,u8 y,u8 z,u8 f, u8 u, u8 v, u8 w){
-	blockMeshBuffer[c->dataCount++] = (vertexTiny){x,y,z,u,v,w,f};
+static inline void chunkAddVert(chunk *c, int i, u8 x,u8 y,u8 z,u8 f, u8 u, u8 v, u8 w){
+	blockMeshBuffer[c->dataCount * 6 + i] = (vertexTiny){x,y,z,u,v,w,f};
 }
 void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	const u8 bt = blocks[b].tex[0];
-	chunkAddVert(c, x  ,y  ,z+d,2,0,h,bt);
-	chunkAddVert(c, x+w,y  ,z+d,2,w,h,bt);
-	chunkAddVert(c, x+w,y+h,z+d,2,w,0,bt);
-	chunkAddVert(c, x+w,y+h,z+d,2,w,0,bt);
-	chunkAddVert(c, x  ,y+h,z+d,2,0,0,bt);
-	chunkAddVert(c, x  ,y  ,z+d,2,0,h,bt);
+	chunkAddVert(c,0, x  ,y  ,z+d,2,0,h,bt);
+	chunkAddVert(c,1, x+w,y  ,z+d,2,w,h,bt);
+	chunkAddVert(c,2, x+w,y+h,z+d,2,w,0,bt);
+	chunkAddVert(c,3, x+w,y+h,z+d,2,w,0,bt);
+	chunkAddVert(c,4, x  ,y+h,z+d,2,0,0,bt);
+	chunkAddVert(c,5, x  ,y  ,z+d,2,0,h,bt);
+	c->dataCount++;
 }
 void chunkAddBack(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)d;
 	const u8 bt = blocks[b].tex[1];
-	chunkAddVert(c, x  ,y  ,z  ,2,0,h,bt);
-	chunkAddVert(c, x  ,y+h,z  ,2,0,0,bt);
-	chunkAddVert(c, x+w,y+h,z  ,2,w,0,bt);
-	chunkAddVert(c, x+w,y+h,z  ,2,w,0,bt);
-	chunkAddVert(c, x+w,y  ,z  ,2,w,h,bt);
-	chunkAddVert(c, x  ,y  ,z  ,2,0,h,bt);
+	chunkAddVert(c,0, x  ,y  ,z  ,2,0,h,bt);
+	chunkAddVert(c,1, x  ,y+h,z  ,2,0,0,bt);
+	chunkAddVert(c,2, x+w,y+h,z  ,2,w,0,bt);
+	chunkAddVert(c,3, x+w,y+h,z  ,2,w,0,bt);
+	chunkAddVert(c,4, x+w,y  ,z  ,2,w,h,bt);
+	chunkAddVert(c,5, x  ,y  ,z  ,2,0,h,bt);
+	c->dataCount++;
 }
 void chunkAddTop(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	const u8 bt = blocks[b].tex[2];
-	chunkAddVert(c, x  ,y+h,z  ,3,0,0,bt);
-	chunkAddVert(c, x  ,y+h,z+d,3,0,d,bt);
-	chunkAddVert(c, x+w,y+h,z+d,3,w,d,bt);
-	chunkAddVert(c, x+w,y+h,z+d,3,w,d,bt);
-	chunkAddVert(c, x+w,y+h,z  ,3,w,0,bt);
-	chunkAddVert(c, x  ,y+h,z  ,3,0,0,bt);
+	chunkAddVert(c,0, x  ,y+h,z  ,3,0,0,bt);
+	chunkAddVert(c,1, x  ,y+h,z+d,3,0,d,bt);
+	chunkAddVert(c,2, x+w,y+h,z+d,3,w,d,bt);
+	chunkAddVert(c,3, x+w,y+h,z+d,3,w,d,bt);
+	chunkAddVert(c,4, x+w,y+h,z  ,3,w,0,bt);
+	chunkAddVert(c,5, x  ,y+h,z  ,3,0,0,bt);
+	c->dataCount++;
 }
 void chunkAddBottom(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)h;
 	const u8 bt = blocks[b].tex[3];
-	chunkAddVert(c, x  ,y  ,z  ,0,0,0,bt);
-	chunkAddVert(c, x+w,y  ,z  ,0,w,0,bt);
-	chunkAddVert(c, x+w,y  ,z+d,0,w,d,bt);
-	chunkAddVert(c, x+w,y  ,z+d,0,w,d,bt);
-	chunkAddVert(c, x  ,y  ,z+d,0,0,d,bt);
-	chunkAddVert(c, x  ,y  ,z  ,0,0,0,bt);
+	chunkAddVert(c,0, x  ,y  ,z  ,0,0,0,bt);
+	chunkAddVert(c,1, x+w,y  ,z  ,0,w,0,bt);
+	chunkAddVert(c,2, x+w,y  ,z+d,0,w,d,bt);
+	chunkAddVert(c,3, x+w,y  ,z+d,0,w,d,bt);
+	chunkAddVert(c,4, x  ,y  ,z+d,0,0,d,bt);
+	chunkAddVert(c,5, x  ,y  ,z  ,0,0,0,bt);
+	c->dataCount++;
 }
 void chunkAddRight(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	const u8 bt = blocks[b].tex[4];
-	chunkAddVert(c, x+w,y  ,z  ,2,0,h,bt);
-	chunkAddVert(c, x+w,y+h,z  ,2,0,0,bt);
-	chunkAddVert(c, x+w,y+h,z+d,2,d,0,bt);
-	chunkAddVert(c, x+w,y+h,z+d,2,d,0,bt);
-	chunkAddVert(c, x+w,y  ,z+d,2,d,h,bt);
-	chunkAddVert(c, x+w,y  ,z  ,2,0,h,bt);
+	chunkAddVert(c,0, x+w,y  ,z  ,2,0,h,bt);
+	chunkAddVert(c,1, x+w,y+h,z  ,2,0,0,bt);
+	chunkAddVert(c,2, x+w,y+h,z+d,2,d,0,bt);
+	chunkAddVert(c,3, x+w,y+h,z+d,2,d,0,bt);
+	chunkAddVert(c,4, x+w,y  ,z+d,2,d,h,bt);
+	chunkAddVert(c,5, x+w,y  ,z  ,2,0,h,bt);
+	c->dataCount++;
 }
 void chunkAddLeft(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)w;
 	const u8 bt = blocks[b].tex[5];
-	chunkAddVert(c, x  ,y  ,z  ,2,0,h,bt);
-	chunkAddVert(c, x  ,y  ,z+d,2,d,h,bt);
-	chunkAddVert(c, x  ,y+h,z+d,2,d,0,bt);
-	chunkAddVert(c, x  ,y+h,z+d,2,d,0,bt);
-	chunkAddVert(c, x  ,y+h,z  ,2,0,0,bt);
-	chunkAddVert(c, x  ,y  ,z  ,2,0,h,bt);
+	chunkAddVert(c,0, x  ,y  ,z  ,2,0,h,bt);
+	chunkAddVert(c,1, x  ,y  ,z+d,2,d,h,bt);
+	chunkAddVert(c,2, x  ,y+h,z+d,2,d,0,bt);
+	chunkAddVert(c,3, x  ,y+h,z+d,2,d,0,bt);
+	chunkAddVert(c,4, x  ,y+h,z  ,2,0,0,bt);
+	chunkAddVert(c,5, x  ,y  ,z  ,2,0,h,bt);
+	c->dataCount++;
 }
 
 void chunkGenMesh(chunk *c) {
@@ -342,7 +340,6 @@ void chunkGenMesh(chunk *c) {
 		}
 	}
 	chunkFinish(c);
-	c->ready = 1;
 }
 
 void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
@@ -353,17 +350,17 @@ void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
 			}
 		}
 	}
-	c->ready = 0;
+	c->dataCount = 0xFFFF;
 }
 
 void chunkSetB(chunk *c,int x,int y,int z,u8 block){
 	c->data[x&0xF][y&0xF][z&0xF] = block;
-	c->ready = 0;
+	c->dataCount = 0xFFFF;
 }
 
 void chunkDraw(chunk *c, float d){
 	if(c == NULL){return;}
-	if(!c->ready){ chunkGenMesh(c); }
+	if(c->dataCount >= 0xFFFF){ chunkGenMesh(c); }
 	if(!c->vbo){ return; }
 	if(d > (fadeoutStartDistance)){
 		shaderAlpha(sBlockMesh,(1.f-((d-(fadeoutStartDistance))/fadeoutDistance)));
@@ -376,6 +373,6 @@ void chunkDraw(chunk *c, float d){
 	glVertexAttribPointer(0, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].x) - ((char *)blockMeshBuffer)));
 	glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].u) - ((char *)blockMeshBuffer)));
 	glVertexAttribPointer(2, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].f) - ((char *)blockMeshBuffer)));
-	glDrawArrays(GL_TRIANGLES,0,c->dataCount);
-	vboTrisCount += c->dataCount/3;
+	glDrawArrays(GL_TRIANGLES,0,c->dataCount*6);
+	vboTrisCount += c->dataCount*2;
 }
