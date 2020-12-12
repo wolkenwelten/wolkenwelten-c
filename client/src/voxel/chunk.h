@@ -5,8 +5,10 @@
 
 struct chunk {
 	u16 x,y,z,dataCount;
-	uint vbo;
-	void *nextFree;
+	union{
+		void *nextFree;
+		uint vbo;
+	};
 	u8 data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 };
 

@@ -98,7 +98,6 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 	c->x         = x & (~0xF);
 	c->y         = y & (~0xF);
 	c->z         = z & (~0xF);
-	c->nextFree  = NULL;
 	c->vbo       = 0;
 	c->dataCount = 0xFFFF;
 	memset(c->data,0,sizeof(c->data));
@@ -361,6 +360,7 @@ void chunkSetB(chunk *c,int x,int y,int z,u8 block){
 void chunkDraw(chunk *c, float d){
 	if(c == NULL){return;}
 	if(c->dataCount >= 0xFFFF){ chunkGenMesh(c); }
+	if(c->dataCount >= 0xFFFF){ return; }
 	if(!c->vbo){ return; }
 	if(d > (fadeoutStartDistance)){
 		shaderAlpha(sBlockMesh,(1.f-((d-(fadeoutStartDistance))/fadeoutDistance)));
