@@ -1,5 +1,6 @@
 #include "fire.h"
 
+#include "../game/being.h"
 #include "../game/blockMining.h"
 #include "../game/grenade.h"
 #include "../network/server.h"
@@ -11,7 +12,7 @@
 
 #include <stdio.h>
 
-void fireNewF(u16 x, u16 y, u16 z, i16 strength, i16 blockDmg){
+void fireNewF(u16 x, u16 y, u16 z, i16 strength, i16 blockDmg, i16 oxygen){
 	fire *f = NULL;
 	if(fireCount < countof(fireList)){
 		f = &fireList[fireCount++];
@@ -24,45 +25,30 @@ void fireNewF(u16 x, u16 y, u16 z, i16 strength, i16 blockDmg){
 	f->z = z;
 	f->strength = strength;
 	f->blockDmg = blockDmg;
-	f->oxygen   = 4;
+	f->oxygen   = oxygen;
 	fireSendUpdate(-1,(int)(f - fireList));
+	f->bl = beingListUpdate(f->bl,fireGetBeing(f));
 }
 
 void fireNew(u16 x, u16 y, u16 z, i16 strength){
-	fire *f = NULL;
-
-	for(uint i=fireCount-1;i<fireCount;i--){
-		if(fireList[i].x != x){continue;}
-		if(fireList[i].y != y){continue;}
-		if(fireList[i].z != z){continue;}
-		f = &fireList[i];
-		break;
-	}
+	if(!inWorld(x,y,z)){return;}
+	fire *f = fireGetAtPos(x,y,z);
 	if(f == NULL){
 		if(fireCount < countof(fireList)){
 			f = &fireList[fireCount++];
 		}else{
 			f = &fireList[rngValM(countof(fireList))];
 		}
+		f->x = x;
+		f->y = y;
+		f->z = z;
 		f->strength = 0;
 		f->blockDmg = 0;
+		f->oxygen   = 8;
+		f->bl = beingListUpdate(f->bl,fireGetBeing(f));
 	}
-
-	f->x = x;
-	f->y = y;
-	f->z = z;
-	f->oxygen = 4;
 	f->strength += MIN(4,strength);
 	fireSendUpdate(-1,(int)(f - fireList));
-}
-
-void fireIntroChungus(uint c, const chungus *chng){
-	for(uint i=0;i<fireCount;i++){
-		if(chng->x != (fireList[i].x >> 8)){continue;}
-		if(chng->y != (fireList[i].y >> 8)){continue;}
-		if(chng->z != (fireList[i].z >> 8)){continue;}
-		fireSendUpdate(c,i);
-	}
 }
 
 void fireRecvUpdate(uint c, const packet *p){
@@ -128,8 +114,8 @@ void fireUpdate(fire *f){
 	if(f == NULL){return;}
 	f->strength -= 2;
 	if(f->strength <= 0){
-		if(isClient){return;}
-		fireList[f-fireList] = fireList[--fireCount];
+		fireDel(f-fireList);
+		fireSendUpdate(-1,fireCount);
 		fireSendUpdate(-1,f-fireList);
 		return;
 	}
@@ -143,13 +129,12 @@ void fireUpdate(fire *f){
 	}
 	}
 
-
 	const u8 b = worldGetB(f->x,f->y,f->z);
 	const int dmg = MIN(f->oxygen,blockTypeGetFireDmg(b));
 
 	f->strength = MIN(30000,f->strength+dmg-1);
-	f->oxygen -= dmg;
-	f->oxygen += MIN(airB >> 1,32-f->oxygen);
+	f->oxygen  -= dmg;
+	f->oxygen  += MIN(airB,64-f->oxygen);
 	if(b == 0){
 		f->blockDmg = 0;
 		fireSpread(f);

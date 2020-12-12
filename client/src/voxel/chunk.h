@@ -9,6 +9,7 @@ struct chunk {
 		void *nextFree;
 		uint vbo;
 	};
+	beingList bl;
 	u8 data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 };
 

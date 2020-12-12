@@ -2,6 +2,7 @@
 
 #include "../main.h"
 #include "../game/animal.h"
+#include "../game/being.h"
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
 #include "../network/server.h"
@@ -71,11 +72,12 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	c->x = x;
 	c->y = y;
 	c->z = z;
-	c->freeTimer = freeTime;
 	c->nextFree = NULL;
+	c->freeTimer = freeTime;
 	c->spawn = ivecNOne();
-	c->clientsSubscribed  = (u64)1 << 63;
-	c->clientsUpdated     = (u64)1 << 31;
+	c->clientsSubscribed = (u64)1 << 63;
+	c->clientsUpdated    = (u64)1 << 31;
+	beingListInit(&c->bl,NULL);
 
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 	chunkCheckShed();
@@ -94,7 +96,6 @@ void chungusWorldGenLoad(chungus *c){
 
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
-	//fprintf(stderr,"ChungusFree[] %p %i:%i:%i\n",c,c->x,c->y,c->z);
 	chungusSave(c);
 	animalDelChungus(c);
 	itemDropDelChungus(c);
@@ -203,8 +204,8 @@ void chungusBoxFWG(chungus *c,int x,int y,int z,int w,int h,int d){
 	const int gz = (z+d)>>4;
 	u8 block = 3;
 
-	if( (x   | y   | z  ) &(~0xFF)) { return; }
-	if(((x+w)|(y+h)|(z+d))&(~0xFF)) { return; }
+	if( (x   | y   | z  ) &(~0xFF)){ return; }
+	if(((x+w)|(y+h)|(z+d))&(~0xFF)){ return; }
 
 	int sx = x & 0xF;
 	int sw = CHUNK_SIZE;
@@ -302,9 +303,6 @@ void chungusSubscribePlayer(chungus *c, uint p){
 	}
 	}
 	}
-	animalIntroChungus(p,c);
-	fireIntroChungus(p,c);
-	itemDropIntroChungus(p,c);
 }
 
 void chungusSetAllUpdated(chungus *c, u64 nUpdated){

@@ -18,3 +18,5 @@
 - 2020-12-10: Booster trail is only shown for the current player
 - 2020-12-10: z-fighting still an issue
 - 2020-12-10: Server not shuttong down correctly still an issue
+
+- 2020-12-12: BlockMining Texture not properly bound, seems it tries to draw the blocks Texture instead.

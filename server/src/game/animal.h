@@ -4,5 +4,4 @@
 
 void        animalSyncPlayer       (u8 c);
 void        animalDelChungus       (const chungus *c);
-void        animalIntroChungus     (u8 c, const chungus *chng);
 void        animalUpdatePriorities (u8 c);

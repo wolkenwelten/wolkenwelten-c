@@ -7,8 +7,9 @@ extern const float CHUNK_FADEOUT_DISTANCE;
 
 struct chunk{
 	u16   x,y,z;
-	u64   clientsUpdated;
-	void *nextFree;
+		u64   clientsUpdated;
+		void *nextFree;
+	beingList bl;
 	u8    data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 };
 

@@ -3,6 +3,7 @@
 #include "misc/command.h"
 #include "misc/options.h"
 #include "game/animal.h"
+#include "game/being.h"
 #include "game/blockMining.h"
 #include "game/fire.h"
 #include "game/itemDrop.h"
@@ -133,6 +134,7 @@ void mainInit(){
 	savegameLoad();
 	seedRNG(time(NULL));
 	serverInit();
+	beingListEntryInit();
 	chungusInit();
 	chunkInit();
 	initCommands();

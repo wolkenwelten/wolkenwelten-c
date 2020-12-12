@@ -62,7 +62,7 @@ static void animalSyncInactive(u8 c, u16 i){
 static void animalServerSync(u8 c, u16 i){
 	if(i >= countof(animalList)){return;}
 	const animal *e = &animalList[i];
-	if(!chungusIsSubscribed(e->curChungus,c)){
+	if(!chungusIsSubscribed(worldTryChungusV(e->pos),c)){
 		return animalSyncInactive(c,i);
 	}
 	return animalSync(c,i);
@@ -111,13 +111,6 @@ void animalDelChungus(const chungus *c){
 		if(((uint)p->y >> 8) != c->y){continue;}
 		if(((uint)p->z >> 8) != c->z){continue;}
 		animalDel(i);
-	}
-}
-
-void animalIntroChungus(u8 c, const chungus *chng){
-	for(uint i=0;i<animalCount;i++){
-		if(animalList[i].curChungus != chng){continue;}
-		animalSync(c,i);
 	}
 }
 

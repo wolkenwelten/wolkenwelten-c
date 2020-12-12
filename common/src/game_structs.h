@@ -57,6 +57,19 @@ inline being beingItemDrop  (u32 id){ return beingNew(BEING_ITEMDROP,  id);}
 inline being beingFire      (u32 id){ return beingNew(BEING_FIRE,      id);}
 inline being beingWater     (u32 id){ return beingNew(BEING_WATER,     id);}
 
+typedef struct beingListEntry beingListEntry;
+struct beingListEntry {
+	beingListEntry *next;
+	being v[14];
+};
+
+typedef struct beingList beingList;
+struct beingList {
+	beingListEntry *first;
+	uint count;
+	beingList *parent;
+};
+
 typedef struct {
 	vec pos,vel,rot;
 	float yoff;
@@ -147,7 +160,7 @@ typedef struct {
 	u64 clientPriorization;
 	u32 stateTicks;
 
-	chungus *curChungus;
+	beingList *bl;
 } animal;
 #define ANIMAL_FALLING    (1   )
 #define ANIMAL_BELLYSLEEP (1<<1)
@@ -200,22 +213,10 @@ typedef struct {
 	i16 strength;
 	i16 blockDmg;
 	i16 oxygen;
+	beingList *bl;
 } fire;
 
 typedef struct {
 	u16 x,y,z;
 	i16 amount;
 } water;
-
-typedef struct distList distList;
-struct distList {
-	distList *next;
-	union {
-		void *child;
-		fire *cFire;
-		animal *cAnimal;
-		water *cWater;
-		itemDrop *cItemDrop;
-		character *cCharacter;
-	};
-};

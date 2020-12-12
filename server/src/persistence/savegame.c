@@ -164,8 +164,9 @@ static void *fireSave(const fire *f, void *buf){
 
 	s[4] = f->strength;
 	s[5] = f->blockDmg;
+	s[6] = f->oxygen;
 
-	return b+12;
+	return b+14;
 }
 
 static const void *fireLoad(const void *buf){
@@ -173,8 +174,8 @@ static const void *fireLoad(const void *buf){
 	u16   *u = (u16 *)buf;
 	i16   *s = (i16 *)buf;
 
-	fireNewF(u[1],u[2],u[3],s[4],s[5]);
-	return b+12;
+	fireNewF(u[1],u[2],u[3],s[4],s[5],s[6]);
+	return b+14;
 }
 
 static void *fireSaveChungus(const chungus *c,void *buf){

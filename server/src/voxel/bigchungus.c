@@ -355,3 +355,10 @@ void worldSetAllUpdated(){
 		}
 	}
 }
+
+chungus* worldTryChungusV(const vec pos){
+	const int cx = ((uint)pos.x) >> 8;
+	const int cy = ((uint)pos.y) >> 8;
+	const int cz = ((uint)pos.z) >> 8;
+	return worldTryChungus(cx,cy,cz);
+}

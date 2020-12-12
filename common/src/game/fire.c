@@ -1,12 +1,14 @@
 #include "fire.h"
 
 #include "../mods/api_v1.h"
+#include "../game/being.h"
 #include "../../../common/src/network/messages.h"
 
 fire fireList[1<<14];
 uint fireCount = 0;
 
 #include <stdio.h>
+#include <stdlib.h>
 
 void fireSendUpdate(uint c, uint i){
 	fire *f = &fireList[i];
@@ -40,13 +42,36 @@ void fireBoxExtinguish(int x, int y, int z, int w, int h, int d, int strength){
 	}
 }
 
-fire *fireGetAtPos(u16 x,u16 y, u16 z){
-	for(uint i=0;i<fireCount;i++){
-		fire *f = &fireList[i];
-		if(f->x != x){continue;}
-		if(f->y != y){continue;}
-		if(f->z != z){continue;}
-		return f;
+void fireDel(uint i){
+	const int  m   = fireCount - 1;
+	beingList *ibl = fireList[i].bl;
+	beingList *mbl = fireList[m].bl;
+	being      ib  = fireGetBeing(&fireList[i]);
+	being      mb  = fireGetBeing(&fireList[m]);
+
+	beingListDel(ibl,ib);
+	beingListDel(mbl,mb);
+	fireList[i] = fireList[m];
+	fireList[i].bl = beingListUpdate(NULL,ib);
+	fireCount--;
+}
+
+fire *fireGetAtPos(u16 x, u16 y, u16 z){
+	beingList *bl = beingListGet(x,y,z);
+	if(bl == NULL){
+		fprintf(stderr,"Couldnt get beingList for %i %i %i\n",x,y,z);
+		return NULL;
+	}
+	for(beingListEntry *ble = bl->first; ble != NULL; ble = ble->next){
+		for(uint i=0;i<countof(ble->v);i++){
+			if(beingType(ble->v[i]) != BEING_FIRE){continue;}
+			fire *t = fireGetByBeing(ble->v[i]);
+			if(t == NULL){continue;}
+			if(t->x != x){continue;}
+			if(t->y != y){continue;}
+			if(t->z != z){continue;}
+			return t;
+		}
 	}
 	return NULL;
 }

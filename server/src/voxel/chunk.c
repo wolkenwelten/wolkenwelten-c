@@ -1,5 +1,7 @@
 #include "chunk.h"
 
+#include "../game/being.h"
+#include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 
 #include <unistd.h>
@@ -16,7 +18,6 @@ chunk *chunkFirstFree = NULL;
 
 void chunkInit(){
 	chunkList = malloc(sizeof(chunk) * CHUNK_COUNT);
-	//memset(chunkList,0,sizeof(chunkList));
 }
 
 float chunkDistance(const vec pos, const chunk *chnk){
@@ -34,7 +35,6 @@ void chunkCheckShed(){
 chunk *chunkNew(u16 x,u16 y,u16 z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){
-		//fprintf(stderr,"chunkCount:%u\n",chunkCount);
 		if(chunkCount >= CHUNK_COUNT){
 			fprintf(stderr,"[SRV] chunk load shedding [%u / %u chunks]!\n",chunkFreeCount,chunkCount);
 			uint chngFree = chungusFreeOldChungi(1000);
@@ -54,7 +54,6 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 			c = &chunkList[chunkCount++];
 		}
 	}else{
-		//fprintf(stderr,"Recycling %u\n",chunkCount);
 		c = chunkFirstFree;
 		chunkFirstFree = c->nextFree;
 		chunkFreeCount--;
@@ -62,8 +61,9 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 	c->x = x & (~0xF);
 	c->y = y & (~0xF);
 	c->z = z & (~0xF);
-	c->nextFree = NULL;
 	c->clientsUpdated = (u64)1 << 31;
+	chungus *chng = worldTryChungus(x>>8,y>>8,z>>8);
+	beingListInit(&c->bl,&chng->bl);
 
 	memset(c->data,0,sizeof(c->data));
 	return c;

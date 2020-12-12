@@ -1,6 +1,7 @@
 #include "being.h"
 
 #include "../game/animal.h"
+#include "../game/being.h"
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/fire.h"
@@ -8,6 +9,14 @@
 #include "../game/hook.h"
 #include "../game/itemDrop.h"
 #include "../game/water.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+
+#define BEING_LIST_ENTRY_MAX (1<<18)
+beingListEntry *beingListEntryList;
+beingListEntry *beingListEntryFirstFree;
+uint            beingListEntryCount = 0;
 
 vec beingGetPos(being b){
 	switch(beingType(b)){
@@ -258,4 +267,142 @@ float beingGetWeight(being b){
 	default:
 		return 1.f;
 	}
+}
+
+void beingListAdd(beingList *bl, being entry){
+	beingListEntry *lastEntry = NULL;
+	if(bl == NULL){return;}
+	if(entry == 0){return;}
+	beingListDel(bl->parent,entry);
+	for(beingListEntry *ble = bl->first; ble != NULL; ble = ble->next){
+		lastEntry = ble;
+		for(uint i=0;i<countof(ble->v);i++){
+			if(entry == ble->v[i]){return;}
+			if(ble->v[i] == 0){
+				ble->v[i] = entry;
+				return;
+			}
+		}
+	}
+	if(lastEntry == NULL){
+		lastEntry = bl->first = beingListEntryNew();
+		if(lastEntry == NULL){return;}
+		lastEntry->v[0] = entry;
+	}else{
+		lastEntry->next = beingListEntryNew();
+		if(lastEntry->next == NULL){return;}
+		lastEntry->next->v[0] = entry;
+	}
+}
+
+void beingListDel(beingList *bl, being entry){
+	beingListEntry *lastLastEntry = NULL;
+	beingListEntry *lastEntry = NULL;
+	being *curEntry = NULL;
+	if(bl == NULL){return;}
+	if(entry == 0){return;}
+	beingListDel(bl->parent,entry);
+	for(beingListEntry *ble = bl->first; ble != NULL; ble = ble->next){
+		lastLastEntry = lastEntry;
+		lastEntry = ble;
+		if(curEntry != NULL){continue;}
+		for(uint i=0;i<countof(ble->v);i++){
+			if(entry == ble->v[i]){
+				curEntry = &ble->v[i];
+				break;
+			}
+			if(ble->v[i] == 0){return;}
+		}
+	}
+	if(lastEntry == NULL){return;}
+	if(lastEntry->v[0] == 0){
+		beingListEntryFree(lastEntry);
+		if(lastLastEntry == NULL){
+			bl->first = NULL;
+		}else{
+			lastLastEntry->next = NULL;
+		}
+		return;
+	}
+	for(uint i=1;i<countof(lastEntry->v);i++){
+		if(lastEntry->v[i] == 0){
+			*curEntry = lastEntry->v[i-1];
+			lastEntry->v[i-1] = 0;
+		}
+	}
+}
+
+void beingListInit(beingList *bl, beingList *parent){
+	bl->first  = NULL;
+	bl->count  = 0;
+	bl->parent = parent;
+}
+
+void beingListEntryInit(){
+	beingListEntryList = malloc(sizeof(beingListEntry) * BEING_LIST_ENTRY_MAX);
+	if(beingListEntryList == NULL){
+		fprintf(stderr,"Couldn't allocate beingListEntryList, exiting!\n");
+		exit(6);
+	}
+	for(int i=0;i<BEING_LIST_ENTRY_MAX-1;i++){
+		beingListEntryList[i].next = &beingListEntryList[i+1];
+	}
+	beingListEntryFirstFree = &beingListEntryList[0];
+}
+
+beingListEntry *beingListEntryNew(){
+	beingListEntry *ret = beingListEntryFirstFree;
+	if(ret == NULL){return NULL;}
+	beingListEntryFirstFree = ret->next;
+	ret->next = NULL;
+	return ret;
+}
+
+void beingListEntryFree(beingListEntry *ble){
+	ble->next = beingListEntryFirstFree;
+	beingListEntryFirstFree = ble;
+}
+
+beingList *beingListUpdate(beingList *bl, being entry){
+	if(entry == 0){return NULL;}
+	vec pos = beingGetPos(entry);
+	beingList *nbl = beingListGet(pos.x,pos.y,pos.z);
+	if(bl == nbl){return bl;}
+	beingListDel( bl,entry);
+	beingListAdd(nbl,entry);
+	return nbl;
+}
+
+void beingListPrint(beingList *bl){
+	if(bl == NULL){return;}
+	printf("[%p]=",bl);
+	for(beingListEntry *ble = bl->first; ble != NULL; ble = ble->next){
+		for(uint i=0;i<countof(ble->v);i++){
+			if(ble->v[i] == 0){break;}
+			printf("%i ",beingID(ble->v[i]));
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
+being beingListGetClosest(const beingList *bl, const vec pos, uint type, float *d){
+	float maxD = 99999.f;
+	being maxB = 0;
+	if(bl == NULL){return 0;}
+	for(beingListEntry *ble = bl->first; ble != NULL; ble = ble->next){
+		for(uint i=0;i<countof(ble->v);i++){
+			if(ble->v[i] == 0){break;}
+			if(beingType(ble->v[i]) != type){continue;}
+			float cd = vecMag(vecSub(pos,beingGetPos(ble->v[i])));
+			if(cd > maxD){continue;}
+			maxD = cd;
+			maxB = ble->v[i];
+		}
+	}
+	if(maxB == 0){
+		return beingListGetClosest(bl,pos,type,d);
+	}
+	if(d != NULL){*d = maxD;}
+	return maxB;
 }

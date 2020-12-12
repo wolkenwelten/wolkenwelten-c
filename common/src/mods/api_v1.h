@@ -113,6 +113,7 @@ void     worldBox           (int x, int y, int z, int w, int h, int d, u8 block)
 void     worldBoxSphere     (int x, int y, int z, int r, u8 block);
 uint8_t  worldGetB          (int x, int y, int z);
 chungus *worldTryChungus    (int x, int y, int z);
+chungus *worldTryChungusV   (const vec pos);
 chungus *worldGetChungus    (int x, int y, int z);
 bool     worldSetB          (int x, int y, int z, u8 block);
 int      checkCollision     (int x, int y, int z);

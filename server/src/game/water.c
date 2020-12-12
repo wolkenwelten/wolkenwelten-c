@@ -52,15 +52,6 @@ void waterNew(u16 x, u16 y, u16 z, i16 amount){
 	waterSendUpdate(-1,(int)(w - waterList));
 }
 
-void waterIntroChungus(uint c, const chungus *chng){
-	for(uint i=0;i<waterCount;i++){
-		if(chng->x != (waterList[i].x >> 8)){continue;}
-		if(chng->y != (waterList[i].y >> 8)){continue;}
-		if(chng->z != (waterList[i].z >> 8)){continue;}
-		waterSendUpdate(c,i);
-	}
-}
-
 void waterRecvUpdate(uint c, const packet *p){
 	(void)c;
 	const u16 x      = p->v.u16[2];

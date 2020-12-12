@@ -306,22 +306,17 @@ static void animalPoop(animal *e,int stateChange[16]){
 
 static void animalSocialDistancing(animal *e,int stateChange[16]){
 	if(rngValA(31) != 0){return;}
-	for(uint i=0;i<animalCount;i++){
-		if(animalList[i].type == 0)                     {continue;}
-		if(e == &animalList[i])                         {continue;}
-		if(fabsf(e->pos.x - animalList[i].pos.x) > 1.f) {continue;}
-		if(fabsf(e->pos.y - animalList[i].pos.y) > 1.f) {continue;}
-		if(fabsf(e->pos.z - animalList[i].pos.z) > 1.f) {continue;}
-		e->rot.yaw = ((rngValf()*2.f)-1.f)*360.f;
-		vec dir = vecMulS(vecDegToVec(vecNew(e->rot.yaw,0.f,0.f)),0.01f);
-		e->gvel.x = dir.x;
-		e->gvel.z = dir.z;
-		if(!(e->flags & ANIMAL_FALLING)){
-			e->vel.y  = 0.03f;
-		}
-		stateChange[ANIMAL_S_FLEE] += 256;
-		return;
+	float d;
+	being ca = beingListGetClosest(e->bl, e->pos, BEING_ANIMAL, &d);
+	if((ca == 0) || (d > 1)){return;}
+	e->rot.yaw = ((rngValf()*2.f)-1.f)*360.f;
+	vec dir = vecMulS(vecDegToVec(vecNew(e->rot.yaw,0.f,0.f)),0.01f);
+	e->gvel.x = dir.x;
+	e->gvel.z = dir.z;
+	if(!(e->flags & ANIMAL_FALLING)){
+		e->vel.y  = 0.03f;
 	}
+	stateChange[ANIMAL_S_FLEE] += 256;
 }
 
 void animalRBurnBunny(animal *e){

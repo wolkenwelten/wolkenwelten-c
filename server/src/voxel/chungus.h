@@ -11,6 +11,7 @@ struct chungus {
 	u64    clientsUpdated;
 	u64    freeTimer;
 	void  *nextFree;
+	beingList bl;
 	chunk *chunks[16][16][16];
 };
 

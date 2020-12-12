@@ -2,6 +2,7 @@
 
 #include "../animals/bunny.h"
 #include "../animals/guardian.h"
+#include "../game/being.h"
 #include "../game/character.h"
 #include "../game/fire.h"
 #include "../game/rope.h"
@@ -96,13 +97,6 @@ u32 animalCollision(const vec c){
 	if(checkCollision(c.x     ,c.y-1.0f,c.z     )){col |= 0x00F;}
 
 	return col;
-}
-
-void animalUpdateCurChungus(animal *e){
-	const int cx = (int)e->pos.x >> 8;
-	const int cy = (int)e->pos.y >> 8;
-	const int cz = (int)e->pos.z >> 8;
-	e->curChungus = worldTryChungus(cx,cy,cz);
 }
 
 void animalCheckForHillOrCliff(animal *e){
@@ -219,8 +213,6 @@ int animalUpdate(animal *e){
 		}
 		e->vel = vecMul(e->vel,vecNew(0.97f,0,0.97f));
 	}
-
-	animalUpdateCurChungus(e);
 	return ret;
 }
 
@@ -282,6 +274,14 @@ animal *animalClosest(const vec pos, float maxDistance){
 	return NULL;
 }
 
+static void animalUpdateBL(){
+	static uint calls = 0;
+	for(uint i=calls&0x1F;i<animalCount;i+=0x20){
+		animal *a = &animalList[i];
+		a->bl = beingListUpdate(a->bl,animalGetBeing(a));
+	}
+}
+
 void animalUpdateAll(){
 	for(int i=animalCount-1;i>=0;i--){
 		if(animalList[i].type == 0){continue;}
@@ -297,6 +297,7 @@ void animalUpdateAll(){
 			continue;
 		}
 	}
+	animalUpdateBL();
 }
 
 float animalClosestPlayer(const animal *e, character **cChar){
