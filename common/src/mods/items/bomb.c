@@ -8,7 +8,7 @@ void bombInit(){
 
 bool bombSecondaryAction(item *cItem,character *cChar){
 	if(characterTryToUse(cChar,cItem,200,1)){
-		grenadeNew(cChar,3,0,0);
+		grenadeNew(vecAdd(cChar->pos,vecNew(0,0.5f,0)),cChar->rot,3,0,0);
 		characterAddCooldown(cChar,200);
 		characterStartAnimation(cChar,0,240);
 		return true;

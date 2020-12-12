@@ -35,3 +35,15 @@ water *waterGetAtPos(u16 x,u16 y, u16 z){
 	}
 	return NULL;
 }
+
+water *waterGetByBeing(being b){
+	if(beingType(b) != BEING_WATER){return NULL;}
+	uint i = beingID(b);
+	if(i >= waterCount){return NULL;}
+	return &waterList[i];
+}
+
+being waterGetBeing(const water *w){
+	if(w == NULL){return 0;}
+	return beingWater(w - waterList);
+}

@@ -2,9 +2,3 @@
  * meant for the client side.
  */
 #include "../../../common/src/common.h"
-
-void explode(const vec pos, float pwr, int style){
-	(void)pos;
-	(void)pwr;
-	(void)style;
-}

@@ -14,7 +14,4 @@ int      entityUpdate           (      entity *e);
 void     entityUpdateCurChungus (      entity *e);
 u32      entityCollision        (const vec c);
 
-entity *entityGetByBeing(being b);
-being   entityGetBeing  (const entity *h);
-
 uint   lineOfSightBlockCount  (const vec a, const vec b, uint maxB);

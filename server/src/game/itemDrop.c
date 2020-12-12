@@ -13,10 +13,6 @@
 
 #include <stdio.h>
 
-itemDrop itemDropList[1<<12];
-uint     itemDropCount = 0;
-int      itemDropFirstFree = -1;
-
 static inline void itemDropEmptyMsg(uint c, uint i){
 	item itm = itemEmpty();
 	msgItemDropUpdate(
@@ -30,8 +26,8 @@ static inline void itemDropEmptyMsg(uint c, uint i){
 }
 
 static inline void itemDropUpdateMsg(uint c,uint i){
-	if(i >= itemDropCount)       {return;}
-	if(itemDropList[i].ent == NULL) {return;}
+	if(i >= itemDropCount)         {return;}
+	if(itemDropList[i].ent == NULL){return;}
 	msgItemDropUpdate(
 		c,
 		itemDropList[i].ent->pos,
@@ -80,21 +76,32 @@ itemDrop *itemDropNew(){
 	return &itemDropList[itemDropCount++];
 }
 
-void itemDropNewP(const vec pos,const item *itm){
-	if(itm == NULL){return;}
-	itemDrop *id = itemDropNew();
-	if(id == NULL){return;}
+void itemDropDel(uint d){
+	if(d >= itemDropCount) {return;}
 
-	id->itm      = *itm;
-	id->ent      = entityNew(pos,vecZero());
-	id->player   = -1;
-	id->lastFire =  0;
-	id->fireDmg  =  0;
-	entityUpdateCurChungus(id->ent);
-	itemDropUpdateFire(id - itemDropList);
+	entityFree(itemDropList[d].ent);
+	itemDropList[d].ent = NULL;
+	itemDropList[d].itm = itemEmpty();
+	itemDropList[d].nextFree = itemDropFirstFree;
+	itemDropFirstFree = d;
+	itemDropEmptyMsg(-1,d);
 }
 
-void itemDropNewC(uint c, const packet *p){
+void itemDropNewP(const vec pos,const item *itm){
+        if(itm == NULL){return;}
+        itemDrop *id = itemDropNew();
+        if(id == NULL){return;}
+
+        id->itm      = *itm;
+        id->ent      = entityNew(pos,vecZero());
+        id->player   = -1;
+        id->lastFire =  0;
+        id->fireDmg  =  0;
+        entityUpdateCurChungus(id->ent);
+        itemDropUpdateFire(id - itemDropList);
+}
+
+void itemDropNewPacket(uint c, const packet *p){
 	itemDrop *id = itemDropNew();
 	if(id == NULL){return;}
 
@@ -106,17 +113,6 @@ void itemDropNewC(uint c, const packet *p){
 	id->lastFire   = 0;
 	id->fireDmg    = 0;
 	entityUpdateCurChungus(id->ent);
-}
-
-void itemDropDel(uint d){
-	if(d >= itemDropCount) {return;}
-
-	entityFree(itemDropList[d].ent);
-	itemDropList[d].ent = NULL;
-	itemDropList[d].itm = itemEmpty();
-	itemDropList[d].nextFree = itemDropFirstFree;
-	itemDropFirstFree = d;
-	itemDropEmptyMsg(-1,d);
 }
 
 void itemDropDelChungus(const chungus *c){
@@ -209,7 +205,7 @@ static int itemDropCheckCollation(uint ai){
 	return 0;
 }
 
-void itemDropUpdate(){
+void itemDropUpdateAll(){
 	const u64 mask = ~((u64)1 << 31);
 
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){

@@ -225,8 +225,8 @@ void clientParsePacket(const packet *p){
 		case 21: // itemDropDel
 			fprintf(stderr,"Received an itemDropDel msg from the server, this should never happen.\n");
 			break;
-		case 22: // grenadeExplode
-			grenadeExplode(vecNewP(&p->v.f[0]),((float)p->v.u16[6])/256.f,p->v.u16[7]);
+		case 22: // explode
+			explode(vecNewP(&p->v.f[0]),((float)p->v.u16[6])/256.f,p->v.u16[7]);
 			break;
 		case 23: // grenadeUpdate
 			grenadeUpdateFromServer(p);

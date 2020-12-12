@@ -2,6 +2,7 @@
 
 #include "../main.h"
 #include "../game/animal.h"
+#include "../game/beamblast.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
 #include "../game/fire.h"
@@ -349,9 +350,9 @@ void serverParseSinglePacket(uint c, packet *p){
 			fprintf(stderr,"Received a setTime from client, should not happen\n");
 			serverKill(c);
 			break;
-		case 10: // itemDropNew
-			itemDropNewC(c,p);
-			if(verbose){printf("[%02i][%i] itemDropNewC\n",c,pLen);}
+		case 10: // itemDropNewPacket
+			itemDropNewPacket(c,p);
+			if(verbose){printf("[%02i][%i] itemDropNewPacket\n",c,pLen);}
 			break;
 		case 11:
 			grenadeNewP(p);

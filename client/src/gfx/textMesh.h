@@ -1,7 +1,6 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-extern char *ansiFG[16];
 extern u32 colorPalette[16];
 
 textMesh *textMeshNew       (uint bufferSize);

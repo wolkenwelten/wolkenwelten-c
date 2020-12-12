@@ -8,7 +8,7 @@ void clusterbombInit(){
 
 bool clusterbombSecondaryAction(item *cItem,character *cChar){
 	if(characterTryToUse(cChar,cItem,200,1)){
-		grenadeNew(cChar,1,48,1.f);
+		grenadeNew(vecAdd(cChar->pos,vecNew(0,0.5f,0)),cChar->rot,1,48,1.f);
 		characterAddCooldown(cChar,200);
 		characterStartAnimation(cChar,0,300);
 		return true;

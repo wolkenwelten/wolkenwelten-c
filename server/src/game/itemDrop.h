@@ -1,17 +1,13 @@
 #pragma once
 #include "../../../common/src/common.h"
-
-extern itemDrop itemDropList[1<<12];
-extern uint itemDropCount;
+#include "../../../common/src/game/itemDrop.h"
 
 itemDrop *itemDropNew          ();
-void      itemDropNewP         (const vec pos, const item *itm);
-void      itemDropNewC         (uint c, const packet *p);
-void      itemDropPickupP      (uint c, const packet *p);
 void      itemDropDel          (uint d);
+void      itemDropNewPacket    (uint c, const packet *p);
+void      itemDropPickupP      (uint c, const packet *p);
 void      itemDropDelChungus   (const chungus *c);
 void      itemDropIntroChungus (uint c, const chungus *chng);
-void      itemDropUpdate       ();
 void      itemDropUpdateFire   (uint i);
 void      itemDropUpdateFireAll();
 uint      itemDropUpdatePlayer (uint c, uint offset);

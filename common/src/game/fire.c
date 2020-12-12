@@ -50,3 +50,15 @@ fire *fireGetAtPos(u16 x,u16 y, u16 z){
 	}
 	return NULL;
 }
+
+fire *fireGetByBeing(being b){
+	if(beingType(b) != BEING_FIRE){return NULL;}
+	uint i = beingID(b);
+	if(i >= fireCount){return NULL;}
+	return &fireList[i];
+}
+
+being fireGetBeing(const fire *f){
+	if(f == NULL){return 0;}
+	return beingFire(f - fireList);
+}

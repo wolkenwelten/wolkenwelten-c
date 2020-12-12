@@ -8,15 +8,6 @@
 
 #include <math.h>
 
-typedef struct {
-	entity *ent;
-	int     ticksLeft,cluster;
-	float   pwr,clusterPwr;
-} grenade;
-
-grenade grenadeList[512];
-uint    grenadeCount = 0;
-
 void explode(const vec pos, float pw, int style){
 	entity *exEnt;
 	worldBoxMineSphere(pos.x,pos.y,pos.z,pw*4.f);
@@ -36,9 +27,9 @@ void explode(const vec pos, float pw, int style){
 	msgGrenadeExplode(pos, pw, style);
 }
 
-static void grenadeNew(const vec pos, const vec rot, float pwr, int cluster, float clusterPwr){
-	int g         = grenadeCount++;
-	float speed   = 0.12f;
+void grenadeNew(const vec pos, const vec rot, float pwr, int cluster, float clusterPwr){
+	int g       = grenadeCount++;
+	float speed = 0.12f;
 
 	grenadeList[g].ent = entityNew(pos,rot);
 	if(pwr < 1.5f){
@@ -71,7 +62,7 @@ void grenadeNewP(const packet *p){
 	grenadeNew(vecNewP(&p->v.f[0]),vecNewP(&p->v.f[3]),p->v.f[6],p->v.i32[7],p->v.f[8]);
 }
 
-void grenadeUpdate(){
+void grenadeUpdateAll(){
 	for(uint i=grenadeCount-1;i<grenadeCount;i--){
 		entityUpdate(grenadeList[i].ent);
 		if((--grenadeList[i].ticksLeft == 0) || (grenadeList[i].ent->pos.y < -256)){
