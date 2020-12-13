@@ -212,7 +212,7 @@ void itemDropUpdateAll(){
 		entityUpdate(e);
 
 		itemDropList[i].itm.amount += itemDropCallbackDispatch(&itemDropList[i].itm, e->pos.x, e->pos.y,e->pos.z);
-		if((itemDropList[i].itm.amount < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || (e->pos.y < -256)){
+		if((itemDropList[i].itm.amount < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || (e->pos.y < 0)){
 			itemDropDel(i);
 			addPriorityItemDrop(i);
 			continue;
@@ -223,7 +223,8 @@ void itemDropUpdateAll(){
 void itemDropUpdateFire(uint i){
 	itemDrop *id = &itemDropList[i];
 	entity *e    = id->ent;
-	if(e == NULL){return;}
+	if(e == NULL)   {return;}
+	if(e->pos.y < 0){return;}
 	const u16 cx = e->pos.x;
 	const u16 cy = e->pos.y;
 	const u16 cz = e->pos.z;
