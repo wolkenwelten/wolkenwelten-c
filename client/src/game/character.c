@@ -358,7 +358,7 @@ void updateGlide(character *c){
 		c->flags &= ~CHAR_GLIDE;
 		return;
 	}
-	if(!(c->flags & CHAR_JUMPING) && (c->gvel.y > 0) && (c->flags & CHAR_FALLING) && ((c->hook == NULL) || (!hookGetHooked(c->hook)))){
+	if(!(c->flags & CHAR_JUMPING) && (c->gvel.y > 0) && (c->flags & CHAR_FALLING) && (c->hook == NULL)){
 		characterToggleGlider(c);
 		c->flags |= CHAR_JUMPING;
 	}
@@ -604,6 +604,7 @@ void charactersUpdate(){
 void characterFireHook(character *c){
 	if(c->actionTimeout < 0){return;}
 	characterCloseGlider(c);
+	c->flags |= CHAR_JUMPING;
 	characterAddCooldown(c,60);
 	if(c->hook == NULL){
 		c->hook = hookNew(c);
