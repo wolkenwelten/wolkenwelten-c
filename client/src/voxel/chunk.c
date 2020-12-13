@@ -349,18 +349,17 @@ void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
 			}
 		}
 	}
-	c->dataCount = 0xFFFF;
+	c->dataCount |= 0x8000;
 }
 
 void chunkSetB(chunk *c,int x,int y,int z,u8 block){
 	c->data[x&0xF][y&0xF][z&0xF] = block;
-	c->dataCount = 0xFFFF;
+	c->dataCount |= 0x8000;
 }
 
 void chunkDraw(chunk *c, float d){
 	if(c == NULL){return;}
-	if(c->dataCount >= 0xFFFF){ chunkGenMesh(c); }
-	if(c->dataCount >= 0xFFFF){ return; }
+	if(c->dataCount & 0x8000){ chunkGenMesh(c); }
 	if(!c->vbo){ return; }
 	if(d > (fadeoutStartDistance)){
 		shaderAlpha(sBlockMesh,(1.f-((d-(fadeoutStartDistance))/fadeoutDistance)));
@@ -373,6 +372,6 @@ void chunkDraw(chunk *c, float d){
 	glVertexAttribPointer(0, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].x) - ((char *)blockMeshBuffer)));
 	glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].u) - ((char *)blockMeshBuffer)));
 	glVertexAttribPointer(2, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].f) - ((char *)blockMeshBuffer)));
-	glDrawArrays(GL_TRIANGLES,0,c->dataCount*6);
-	vboTrisCount += c->dataCount*2;
+	glDrawArrays(GL_TRIANGLES,0,(c->dataCount&0x7FFF)*6);
+	vboTrisCount += (c->dataCount&0x7FFF)*2;
 }
