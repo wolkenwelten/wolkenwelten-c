@@ -141,6 +141,7 @@ void characterUpdateHook(character *c){
 		const float maxl   = characterGetMaxHookLen(c);
 		if((c->gvel.y > 0) && (gl > 1.f)){
 			hookSetGoalLength(c->hook,gl-wspeed);
+			c->flags |= CHAR_JUMPING;
 		}
 		if((c->flags & CHAR_SNEAK) && (gl < maxl)){
 			hookSetGoalLength(c->hook,gl+wspeed);
