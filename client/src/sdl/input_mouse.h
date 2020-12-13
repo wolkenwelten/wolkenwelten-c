@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 bool mouseSneak        ();
+bool mouseBoost        ();
 bool mousePrimary      ();
 bool mouseSecondary    ();
 bool mouseTertiary     ();

@@ -82,16 +82,22 @@ foreach(array_keys($platforms) as $plat){
 	<h2>Controls</h2>
 	<h4>Mouse / Keyboard</h4>
 	<p><span class=key>W</span>,<span class=key>S</span>,<span class=key>A</span>,<span class=key>D</span> to move around the world.</p>
-	<p><span class=key>Spacebar</span> to jump.</p>
+	<p><span class=key>Spacebar</span> to jump, open you glider if mid-air, or pull in your grappling hook.</p>
 	<p><span class=key>Shift</span> to Boost.</p>
 	<p><span class=key>E</span> to shoot/retrieve your grappling hook.</p>
 	<p><span class=key>Tab</span> open/close inventory/crafting popup.</p>
 	<p><span class=key>LMB</span> to destroy a block.</p>
 	<p><span class=key>Mousewheel</span> or <span class=key>1...0</span> to select an item..</p>
 	<p><span class=key>RMB</span> to use the current item.</p>
-	<p><span class=key>V</span> for a glider.</p>
+	<p><span class=key>R</span> to reload.</p>
+	<p><span class=key>V</span> to loosen your grappling hook.</p>
 	<p><span class=key>Q</span> to drop the current item.</p>
+	<br/>
 	<p><span class=key>N</span> to start flying around in no-clip mode.</p>
+	<p><span class=key>M</span> to toggle the debug overlayo.</p>
+	<p><span class=key>F2</span> to open/close your inventorye.</p>
+	<p><span class=key>F3</span> to open/close the crafting panel.</p>
+	<p><span class=key>F11</span> to toggle Fullscreen mode.</p>
 	<br/>
 	<h4>Gamepad</h4>
 	<img src="<?php echo baseSF('img/padcontrols.png'); ?>" width=900 height=504 class="imgfw" />

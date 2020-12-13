@@ -133,6 +133,8 @@ typedef struct {
 #define CHAR_SNEAK        (1<<4)
 #define CHAR_GLIDE        (1<<5)
 #define CHAR_SPAWNING     (1<<6)
+#define CHAR_JUMPING      (1<<7)
+#define CHAR_BOOSTING     (1<<8)
 
 #define CHAR_EQ_GLIDER     0
 #define CHAR_EQ_HOOK       1

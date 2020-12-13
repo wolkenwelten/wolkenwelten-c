@@ -22,6 +22,7 @@ uint getMouseState(int *mx, int *my);
 uint getTicks();
 
 bool inputSneak();
+bool inputBoost();
 bool inputPrimary();
 bool inputSecondary();
 bool inputTertiary();

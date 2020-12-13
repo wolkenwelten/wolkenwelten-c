@@ -11,6 +11,9 @@ bool mouseButtonsPressed[5];
 bool mouseSneak(){
 	return false;
 }
+bool mouseBoost(){
+	return false;
+}
 bool mousePrimary(){
 	if(!mouseHidden){return 0;}
 	return mouseButtonsPressed[0];

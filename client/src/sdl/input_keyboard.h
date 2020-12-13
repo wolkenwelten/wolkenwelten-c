@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 bool keyboardSneak        ();
+bool keyboardBoost        ();
 bool keyboardPrimary      ();
 bool keyboardSecondary    ();
 bool keyboardTertiary     ();

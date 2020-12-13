@@ -225,6 +225,9 @@ unsigned int getTicks(){
 bool inputSneak(){
 	return gamepadSneak()     || keyboardSneak()     || mouseSneak()     || touchSneak();
 }
+bool inputBoost(){
+	return gamepadBoost()     || keyboardBoost()     || mouseBoost()     || touchBoost();
+}
 bool inputPrimary(){
 	return gamepadPrimary()   || keyboardPrimary()   || mousePrimary()   || touchPrimary();
 }

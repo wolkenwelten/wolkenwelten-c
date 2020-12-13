@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 bool gamepadSneak          ();
+bool gamepadBoost          ();
 bool gamepadPrimary        ();
 bool gamepadSecondary      ();
 bool gamepadTertiary       ();

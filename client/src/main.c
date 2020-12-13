@@ -88,6 +88,11 @@ void playerUpdate(){
 	}else{
 		player->flags &= ~CHAR_SNEAK;
 	}
+	if(inputBoost()){
+		player->flags |= CHAR_BOOSTING;
+	}else{
+		player->flags &= ~CHAR_BOOSTING;
+	}
 
 	nv = doKeyboardupdate (nv);
 	nv = doTouchupdate    (nv);

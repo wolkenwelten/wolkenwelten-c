@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 bool touchSneak        ();
+bool touchBoost        ();
 bool touchPrimary      ();
 bool touchSecondary    ();
 bool touchTertiary     ();

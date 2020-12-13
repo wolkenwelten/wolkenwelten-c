@@ -199,10 +199,10 @@ void characterUpdateWindVolume(const character *c){
 
 int characterUpdateJumping(const character *c){
 	if((c->gvel.y > 0) && !(c->flags & CHAR_FALLING) && ((c->hook == NULL) || (!hookGetHooked(c->hook)))){
-		if((rngValR()&15)==0){
+		if((rngValA(15))==0){
 			sfxPlay(sfxYahoo,1.f);
 		}else{
-			if((rngValR()&1)==0){
+			if((rngValA(15))==0){
 				sfxPlay(sfxHoo,1.f);
 			}else{
 				sfxPlay(sfxHoho,1.f);
@@ -353,6 +353,14 @@ void updateGlide(character *c){
 		c->flags &= ~CHAR_GLIDE;
 		return;
 	}
+	if(!(c->flags & CHAR_FALLING)){
+		c->flags &= ~CHAR_GLIDE;
+		return;
+	}
+	if(!(c->flags & CHAR_JUMPING) && (c->gvel.y > 0) && (c->flags & CHAR_FALLING) && ((c->hook == NULL) || (!hookGetHooked(c->hook)))){
+		characterToggleGlider(c);
+		c->flags |= CHAR_JUMPING;
+	}
 	if(!(c->flags & CHAR_GLIDE)){return;}
 	const vec   dir = vecDegToVec(c->rot);
 	      vec   vel = c->vel;
@@ -447,11 +455,14 @@ int characterPhysics(character *c){
 }
 
 void characterUpdateBooster(character *c){
-	if(!(c->flags & CHAR_SNEAK)){
+	if(!(c->flags & CHAR_BOOSTING)){
 		sfxLoop(sfxJet,0.f);
 		return;
 	}
-	if((itemIsEmpty(&c->equipment[CHAR_EQ_PACK])) || (c->equipment[CHAR_EQ_PACK].ID != I_Jetpack)){return;}
+	if((itemIsEmpty(&c->equipment[CHAR_EQ_PACK])) || (c->equipment[CHAR_EQ_PACK].ID != I_Jetpack)){
+		sfxLoop(sfxJet,0.f);
+		return;
+	}
 	const vec rot = c->rot;
 	float speed    = 0.0002f / MAX(0.1,vecMag(c->vel));
 	const vec nv   = vecMulS(vecDegToVec(rot),speed);
@@ -521,6 +532,9 @@ void characterUpdate(character *c){
 		return;
 	}
 	characterUpdateBooster(c);
+	if((c->flags & CHAR_JUMPING) && (c->gvel.y < 0.001f)){
+		c->flags &= ~CHAR_JUMPING;
+	}
 	if((c->flags & (CHAR_GLIDE | CHAR_FALLING)) == (CHAR_GLIDE | CHAR_FALLING)){
 		characterUpdateHook(c);
 		characterUpdateAnimation(c);
@@ -554,7 +568,10 @@ void characterUpdate(character *c){
 		if((c->gvel.z < -0.001)&&(nvel.z > c->vel.z)){nvel.z=c->vel.z;}
 		if((c->gvel.z >  0.001)&&(nvel.z < c->vel.z)){nvel.z=c->vel.z;}
 	}
-	if(characterUpdateJumping(c)){ nvel.y = 0.044f;}
+	if(characterUpdateJumping(c)){
+		nvel.y = 0.05f;
+		c->flags |= CHAR_JUMPING;
+	}
 	c->vel = nvel;
 
 	const int damage = characterPhysics(c);
@@ -585,6 +602,7 @@ void charactersUpdate(){
 
 void characterFireHook(character *c){
 	if(c->actionTimeout < 0){return;}
+	characterCloseGlider(c);
 	characterAddCooldown(c,60);
 	if(c->hook == NULL){
 		c->hook = hookNew(c);

@@ -56,6 +56,17 @@ void characterToggleGlider(character *c){
 	c->flags ^= CHAR_GLIDE;
 }
 
+void characterOpenGlider(character *c){
+	if(c == NULL){return;}
+	if((itemIsEmpty(&c->equipment[CHAR_EQ_GLIDER])) || (c->equipment[CHAR_EQ_GLIDER].ID != I_Glider)){return;}
+	c->flags |= CHAR_GLIDE;
+}
+
+void characterCloseGlider(character *c){
+	if(c == NULL){return;}
+	c->flags &= ~CHAR_GLIDE;
+}
+
 void characterAddCooldown(character *c, int cooldown){
 	c->actionTimeout = -cooldown;
 }

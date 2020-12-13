@@ -29,6 +29,9 @@ bool  gamepadButtons[16];
 bool gamepadSneak(){
 	return gamepadButtons[7];
 }
+bool gamepadBoost(){
+	return gamepadButtons[9];
+}
 bool gamepadPrimary(){
 	return (gamepadRightTrigger > 0.5f);
 }
@@ -188,10 +191,7 @@ vec doGamepadupdate(vec vel){
 			showInventory();
 		}
 	}
-	if(gamepadButtons[9]){
-		gamepadButtons[9] = false;
-		characterToggleGlider(player);
-	}
+
 	if(gamepadButtons[10]){
 		gamepadButtons[10] = false;
 		characterFireHook(player);

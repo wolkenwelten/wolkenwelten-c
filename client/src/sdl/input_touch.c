@@ -20,6 +20,9 @@ float rightFingerY = 0;
 bool touchSneak(){
 	return false;
 }
+bool touchBoost(){
+	return false;
+}
 bool touchPrimary(){
 	return touchzonesPressed[2];
 }
