@@ -386,14 +386,16 @@ void beingListPrint(beingList *bl){
 	printf("\n");
 }
 
-being beingListGetClosest(const beingList *bl, const vec pos, uint type, float *d){
+being beingListGetClosest(const beingList *bl, const being source, uint type, float *d){
 	float maxD = 99999.f;
 	being maxB = 0;
 	if(bl == NULL){return 0;}
+	const vec pos = beingGetPos(source);
 	for(beingListEntry *ble = bl->first; ble != NULL; ble = ble->next){
 		for(uint i=0;i<countof(ble->v);i++){
 			if(ble->v[i] == 0){break;}
 			if(beingType(ble->v[i]) != type){continue;}
+			if(ble->v[i] == source){continue;}
 			float cd = vecMag(vecSub(pos,beingGetPos(ble->v[i])));
 			if(cd > maxD){continue;}
 			maxD = cd;
@@ -401,7 +403,7 @@ being beingListGetClosest(const beingList *bl, const vec pos, uint type, float *
 		}
 	}
 	if(maxB == 0){
-		return beingListGetClosest(bl,pos,type,d);
+		return beingListGetClosest(bl->parent,source,type,d);
 	}
 	if(d != NULL){*d = maxD;}
 	return maxB;

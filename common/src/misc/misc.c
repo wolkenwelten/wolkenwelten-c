@@ -173,9 +173,3 @@ void rmDirR(const char *name){
 	closedir(dp);
 	rmdir(name);
 }
-
-int inWorld(int x, int y, int z){
-	if((x < 0) || (y < 0) || (z < 0))               {return 0;}
-	if((x >= 65536) || (y >= 32768) || (z >= 65536)){return 0;}
-	return 1;
-}

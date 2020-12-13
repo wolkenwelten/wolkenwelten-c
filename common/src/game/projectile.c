@@ -121,10 +121,10 @@ static inline int projectileUpdate(projectile *p){
 				fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,128);
 				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 2);}
 			}else if(p->style == 5){
-				fireBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,8);
+				fireBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,64);
 				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 1);}
 			}else{
-				fireBox(p->pos.x,p->pos.y,p->pos.z,1,1,1,128);
+				fireBox(p->pos.x,p->pos.y,p->pos.z,1,1,1,64);
 				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 1);}
 			}
 		}

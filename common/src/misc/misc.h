@@ -12,4 +12,7 @@ int         isDir    (const char *name);
 int         isFile   (const char *name);
 void        makeDir  (const char *name);
 void        rmDirR   (const char *name);
-int         inWorld(int x, int y, int z);
+
+static inline int inWorld(uint x, uint y, uint z){
+	return ((y&~0x7FFF) | ((x|z)&~0xFFFF))==0;
+}

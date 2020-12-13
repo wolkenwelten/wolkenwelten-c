@@ -62,6 +62,10 @@ runsv: all
 	./wolkenwelten-server $(TEST_WORLD) -verbose
 
 .PHONY: run
+runsd: all
+	gdb ./wolkenwelten-server -ex "r $(TEST_WORLD)"
+
+.PHONY: run
 runsp: all
 	rm -rf save/ callgrind.*
 	/usr/bin/time valgrind --tool=callgrind --dump-instr=yes ./wolkenwelten-server $(TEST_WORLD) -profileWG

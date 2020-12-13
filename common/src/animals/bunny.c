@@ -15,11 +15,14 @@
 
 static void animalCheckHeat(animal *e,int stateChange[16]){
 	animal *cAnim;
+	float d;
 	if((e->pregnancy > 0) || (e->age < 20)){return;}
 	stateChange[ANIMAL_S_HEAT] += rngValA(127);
-	const float dist = animalClosestAnimal(e,&cAnim,e->type,0,0);
-	if((dist > 192.f) || (cAnim->pregnancy > 0) || (cAnim->age < 20)){return;}
-	stateChange[ANIMAL_S_HEAT] += 256.f - dist;
+	being oa = beingListGetClosest(beingListGet(e->pos.x,e->pos.y,e->pos.z), animalGetBeing(e), BEING_ANIMAL, &d);
+	if(oa == 0){return;}
+	cAnim = animalGetByBeing(oa);
+	if((d > 192.f) || (cAnim->pregnancy > 0) || (cAnim->age < 20)){return;}
+	stateChange[ANIMAL_S_HEAT] += (256.f - d)*4.f;
 }
 
 static void animalAgeing(animal *e,int stateChange[16]){
@@ -307,7 +310,7 @@ static void animalPoop(animal *e,int stateChange[16]){
 static void animalSocialDistancing(animal *e,int stateChange[16]){
 	if(rngValA(31) != 0){return;}
 	float d;
-	being ca = beingListGetClosest(e->bl, e->pos, BEING_ANIMAL, &d);
+	being ca = beingListGetClosest(e->bl, animalGetBeing(e), BEING_ANIMAL, &d);
 	if((ca == 0) || (d > 1)){return;}
 	e->rot.yaw = ((rngValf()*2.f)-1.f)*360.f;
 	vec dir = vecMulS(vecDegToVec(vecNew(e->rot.yaw,0.f,0.f)),0.01f);

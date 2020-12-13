@@ -18,7 +18,7 @@ void  beingListAdd        (beingList *bl, being entry);
 void  beingListDel        (beingList *bl, being entry);
 beingList *beingListGet   (u16 x, u16 y, u16 z);
 beingList *beingListUpdate(beingList *bl, being entry);
-being beingListGetClosest (const beingList *bl, const vec pos, uint type, float *d);
+being beingListGetClosest (const beingList *bl, const being source, uint type, float *d);
 
 void            beingListEntryInit();
 beingListEntry *beingListEntryNew ();

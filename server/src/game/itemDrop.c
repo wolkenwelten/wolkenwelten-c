@@ -206,25 +206,11 @@ static int itemDropCheckCollation(uint ai){
 }
 
 void itemDropUpdateAll(){
-	const u64 mask = ~((u64)1 << 31);
-
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){
-		int oldp,newp;
-		entity *e     = itemDropList[i].ent;
+		entity *e = itemDropList[i].ent;
 		if(e == NULL){continue;}
-		chungus *oldc = e->curChungus;
-
-		oldp = ((int)e->pos.x&0xFF)|(((int)e->pos.y&0xFF)<<8)|(((int)e->pos.z&0xFF)<<16);
 		entityUpdate(e);
-		newp = ((int)e->pos.x&0xFF)|(((int)e->pos.y&0xFF)<<8)|(((int)e->pos.z&0xFF)<<16);
 
-		if(oldc != e->curChungus){
-			if(oldc != NULL){oldc->clientsUpdated &= mask;}
-			oldp = 1<<30;
-		}
-		if((oldp != newp) && (e->curChungus != NULL)){
-			e->curChungus->clientsUpdated &= mask;
-		}
 		itemDropList[i].itm.amount += itemDropCallbackDispatch(&itemDropList[i].itm, e->pos.x, e->pos.y,e->pos.z);
 		if((itemDropList[i].itm.amount < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || (e->pos.y < -256)){
 			itemDropDel(i);

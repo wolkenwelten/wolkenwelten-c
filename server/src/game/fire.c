@@ -47,7 +47,7 @@ void fireNew(u16 x, u16 y, u16 z, i16 strength){
 		f->oxygen   = 8;
 		f->bl = beingListUpdate(f->bl,fireGetBeing(f));
 	}
-	f->strength += MIN(4,strength);
+	f->strength += strength;
 	fireSendUpdate(-1,(int)(f - fireList));
 }
 

@@ -80,6 +80,7 @@ animal *animalNew(const vec pos , int type, int gender){
 
 void animalDel(uint i){
 	if(i >= animalCount) {return;}
+	beingListDel(animalList[i].bl,beingAnimal(i));
 	animalList[i].type     = 0;
 	animalList[i].nextFree = animalFirstFree;
 	animalFirstFree        = i;
@@ -430,7 +431,7 @@ void animalRBurn(animal *e){
 
 void animalCheckBurnAll(){
 	static uint calls = 0;
-	for(uint i=(calls&0xFF);i<animalCount;i+=0x100){
+	for(uint i=(calls&0x7F);i<animalCount;i+=0x80){
 		animal *a = &animalList[i];
 		fire *f = fireGetAtPos(a->pos.x,a->pos.y,a->pos.z);
 		if(f == NULL)       {continue;}
@@ -481,15 +482,19 @@ void animalSync(u8 c, u16 i){
 
 int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, being source){
 	int hits = 0;
-	for(uint i=0;i<animalCount;i++){
-		if(animalList[i].type == 0)        {continue;}
-		if(animalList[i].temp == iteration){continue;}
-		if(beingAnimal(i) == source)       {continue;}
-		const vec d = vecSub(pos,animalList[i].pos);
-		if(vecDot(d,d) < mdd){
-			if(isClient){msgBeingDamage(0,dmg,cause,beingAnimal(i),0,pos);}
-			animalList[i].temp = iteration;
-			hits++;
+	beingList *bl = beingListGet(pos.x,pos.y,pos.z);
+	for(beingListEntry *ble = bl->first;ble != NULL;ble = ble->next){
+		for(uint i=0;i<countof(ble->v);i++){
+			if(beingType(ble->v[i]) != BEING_ANIMAL){continue;}
+			if(source == ble->v[i]){continue;}
+			animal *a = &animalList[ble->v[i]];
+			if(a->temp == iteration){continue;}
+			const vec d = vecSub(pos,a->pos);
+			if(vecDot(d,d) < mdd){
+				if(isClient){msgBeingDamage(0,dmg,cause,ble->v[i],0,pos);}
+				a->temp = iteration;
+				hits++;
+			}
 		}
 	}
 	return hits;
