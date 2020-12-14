@@ -9,18 +9,19 @@
 
 #include <string.h>
 
-void waterNew(u16 x, u16 y, u16 z, i16 strength){
-	msgWaterUpdate(-1,0,0,x,y,z,strength);
+int waterNew(u16 x, u16 y, u16 z, i16 amount){
+	msgWaterUpdate(-1,0,0,x,y,z,amount);
+	return amount;
 }
 
 static void waterDraw(const water *w){
 	const vec spos = vecNew(w->x,w->y,w->z);
 	const float size = (float)MIN(192.f,(w->amount * 0.1f));
-	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecZero(),size, size*-0.0005f,0xFFFFC860, 256);
+	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecZero(),size, size*-0.0005f,0xFFFFC860, 128);
 	if(w->amount <  64){return;}
-	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecZero(),size*.9f, size*-0.00065f,0xFFFF9850, 384);
+	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecZero(),size*.9f, size*-0.00065f,0xFFFF9850, 192);
 	if(w->amount < 128){return;}
-	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecZero(),size*.8f, size*-0.00075f,0xFFEF381F, 512);
+	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecZero(),size*.8f, size*-0.00075f,0xFFEF381F, 256);
 	if(w->amount < 256){return;}
 }
 

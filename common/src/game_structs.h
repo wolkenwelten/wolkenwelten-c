@@ -23,7 +23,10 @@ typedef struct {
 	u8            texY[6];
 	u32           color[2];
 	mesh         *singleBlock;
-	int           hp,firehp,waterP;
+	int           hp,firehp;
+	i16           waterIngress;
+	i16           waterEgress;
+	i16           waterCapacity;
 	blockCategory cat;
 	char         *name;
 } blockType;
@@ -221,4 +224,5 @@ typedef struct {
 typedef struct {
 	u16 x,y,z;
 	i16 amount;
+	beingList *bl;
 } water;

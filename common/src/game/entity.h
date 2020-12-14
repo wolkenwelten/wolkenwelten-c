@@ -6,12 +6,12 @@ extern entity entityList[1<<14];
 extern uint   entityCount;
 
 entity  *entityNew              (const vec pos, const vec rot);
-void     entityFree             (entity *e);
-void     entityUpdateAll        ();
+void     entityFree             (      entity *e);
 void     entityReset            (      entity *e);
 float    entityDistance         (const entity *e,const character *c);
 int      entityUpdate           (      entity *e);
 void     entityUpdateCurChungus (      entity *e);
 u32      entityCollision        (const vec c);
+void     entityUpdateAll        ();
 
-uint   lineOfSightBlockCount  (const vec a, const vec b, uint maxB);
+uint   lineOfSightBlockCount    (const vec a, const vec b, uint maxB);

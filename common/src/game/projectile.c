@@ -4,6 +4,7 @@
 #include "../game/being.h"
 #include "../game/character.h"
 #include "../game/fire.h"
+#include "../game/water.h"
 #include "../mods/api_v1.h"
 #include "../network/packet.h"
 #include "../network/messages.h"
@@ -118,7 +119,8 @@ static inline int projectileUpdate(projectile *p){
 		if(!isClient){
 			//worldBoxMine(p->pos.x,p->pos.y,p->pos.z,2,2,2);
 			if(p->style == 6){
-				fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,128);
+				//fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,128);
+				waterBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,128);
 				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 2);}
 			}else if(p->style == 5){
 				fireBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,64);

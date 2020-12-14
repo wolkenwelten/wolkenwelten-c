@@ -3,6 +3,7 @@
 #include "../game/being.h"
 #include "../game/blockMining.h"
 #include "../game/grenade.h"
+#include "../game/water.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
@@ -45,7 +46,7 @@ void fireNew(u16 x, u16 y, u16 z, i16 strength){
 		f->strength = 0;
 		f->blockDmg = 0;
 		f->oxygen   = 8;
-		f->bl = beingListUpdate(f->bl,fireGetBeing(f));
+		f->bl = beingListUpdate(NULL,fireGetBeing(f));
 	}
 	f->strength = MAX(f->strength,MIN(1024,f->strength+strength));
 	fireSendUpdate(-1,(int)(f - fireList));
@@ -129,12 +130,21 @@ void fireUpdate(fire *f){
 	}
 	}
 
-	const u8 b = worldGetB(f->x,f->y,f->z);
+	const u8 b    = worldGetB(f->x,f->y,f->z);
 	const int dmg = MIN(f->oxygen,blockTypeGetFireDmg(b));
 
 	f->strength = MIN(30000,f->strength+dmg-1);
 	f->oxygen  -= dmg;
 	f->oxygen  += MIN(airB,64-f->oxygen);
+
+	water *w = waterGetAtPos(f->x,f->y,f->z);
+	if((w != NULL) && (w->amount > 0)){
+		f->oxygen    = 0;
+		printf("Fire/Water: fs:%i wa:%i (%i|%i|%i)\n",f->strength,w->amount,f->x,f->y,f->z);
+		f->strength -= w->amount;
+		w->amount   -= f->strength;
+	}
+
 	if(b == 0){
 		f->blockDmg = 0;
 		fireSpread(f);

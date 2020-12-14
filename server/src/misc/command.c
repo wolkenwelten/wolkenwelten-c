@@ -288,6 +288,19 @@ lVal *wwlnfWater(lClosure *c, lVal *v){
 	return lValInt(args[3]);
 }
 
+lVal *wwlnfWSrc(lClosure *c, lVal *v){
+	int args[3] = {-1,-1,-1};
+	for(int i=0;i<3;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v);
+		v = v->next;
+		if(t->type != ltInt){break;}
+		args[i] = t->vInt;
+	}
+	waterSource = vecNew(args[0],args[1],args[2]);
+	return lValInt(args[0]);
+}
+
 lVal *wwlnfNoAggro(lClosure *c, lVal *v){
 	lVal *t = lEval(c,v);
 	if(t != NULL){
@@ -340,8 +353,10 @@ void initCommands(){
 	lClosureAddNF(clRoot,"tp",     &wwlnfTp);
 	lClosureAddNF(clRoot,"water",  &wwlnfWater);
 	lClosureAddNF(clRoot,"wcount", &wwlnfWCount);
+	lClosureAddNF(clRoot,"wsrc", &wwlnfWSrc);
 	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
 	lispEvalNR("(define heal (lambda (a) (- (dmg (cond (a (- a)) (#t -20))))))");
+	lispEvalNR("(define wtest (lambda () (water (px) (py) (pz)) (water (+ (px) 1) (py) (pz)) (water (+ (px) 1) (py) (+ (pz) 1)) (water (px) (py) (+ (pz) 1)) ))");
 }
 
 void freeCommands(){
