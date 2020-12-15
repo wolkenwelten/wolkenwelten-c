@@ -47,7 +47,7 @@ static void animalDraw(animal *e){
 
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(animalGetMesh(e));
-	shadowAdd(e->pos,1.f);
+	shadowAdd(e->pos,scale*1.5f);
 }
 
 void animalDrawAll(){

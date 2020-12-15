@@ -235,12 +235,12 @@ void chungusBoxFWG(chungus *c,int x,int y,int z,int w,int h,int d){
 
 void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 	c->freeTimer = freeTime;
-	if(w < 0){ chungusBox(c,x+w,y,z,-w,h,d,block); }
-	if(h < 0){ chungusBox(c,x,y+h,z,w,-h,d,block); }
-	if(d < 0){ chungusBox(c,x,y,z+d,w,h,-d,block); }
-	for(int cx=0;cx<w;cx++){
-	for(int cy=0;cy<h;cy++){
-	for(int cz=0;cz<d;cz++){
+	if(w < 0){ chungusBox(c,x+w,y  ,z  ,-w, h, d,block);}
+	if(h < 0){ chungusBox(c,x  ,y+h,z  , w,-h, d,block);}
+	if(d < 0){ chungusBox(c,x  ,y  ,z+d, w, h,-d,block);}
+	for(int cx=0; cx < w;cx++){
+	for(int cy=0; cy < h;cy++){
+	for(int cz=0; cz < d;cz++){
 		chungusSetB(c,cx+x,cy+y,cz+z,block);
 	}
 	}
@@ -249,13 +249,12 @@ void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 }
 
 void chungusBoxIfEmpty(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
-	//chunk *chnk = NULL;
 	const int cw = x+w;
 	const int ch = y+h;
 	const int cd = z+d;
-	for(int cx=x;cx<cw;cx++){
-	for(int cy=y;cy<ch;cy++){
-	for(int cz=z;cz<cd;cz++){
+	for(int cx=x;cx < cw;cx++){
+	for(int cy=y;cy < ch;cy++){
+	for(int cz=z;cz < cd;cz++){
 		if(chungusGetB(c,cx,cy,cz)){continue;}
 		chungusSetB(c,cx,cy,cz,block);
 		c->clientsUpdated = 0;
