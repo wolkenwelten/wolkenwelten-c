@@ -69,7 +69,6 @@ static void textureLoadArray(texture *t, const u8 *data, const size_t dataLen){
 	}
 	t->w = iw/itw;
 	t->h = ih/ith;
-	printf("itw: %i ith: %i tw: %i th: %i \n",itw,ith,t->w,t->h);
 
 	u8 *p = pbuf = malloc(itw*t->w*ith*t->h*4);
 

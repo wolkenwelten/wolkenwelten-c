@@ -15,8 +15,9 @@
 #include <math.h>
 
 #define ANIMAL_FALL_DMG 12.f
+#define ANIMAL_MAX (1<<14)
 
-animal  animalList[1<<14];
+animal  animalList[ANIMAL_MAX];
 uint    animalCount     = 0;
 uint    animalUsedCount = 0;
 uint    animalFirstFree = 0xFFFF;
@@ -28,12 +29,12 @@ void animalReset(animal *e){
 
 animal *animalNew(const vec pos , int type, int gender){
 	animal *e = NULL;
-	if(animalFirstFree < (1<<14)){
+	if(animalFirstFree < ANIMAL_MAX){
 		e = &animalList[animalFirstFree];
 		animalFirstFree = e->nextFree;
 	}else{
 		if(animalCount >= countof(animalList)){
-			e = &animalList[rngValA((1<<14)-1)];
+			e = &animalList[rngValA(ANIMAL_MAX-1)];
 			animalDel(e-animalList);
 			return animalNew(pos,type,gender);
 		}
@@ -483,11 +484,12 @@ void animalSync(u8 c, u16 i){
 int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, being source){
 	int hits = 0;
 	beingList *bl = beingListGet(pos.x,pos.y,pos.z);
+	if(bl == NULL){return 0;}
 	for(beingListEntry *ble = bl->first;ble != NULL;ble = ble->next){
 		for(uint i=0;i<countof(ble->v);i++){
 			if(beingType(ble->v[i]) != BEING_ANIMAL){continue;}
 			if(source == ble->v[i]){continue;}
-			animal *a = &animalList[ble->v[i]];
+			animal *a = &animalList[ble->v[i] & (ANIMAL_MAX-1)];
 			if(a->temp == iteration){continue;}
 			const vec d = vecSub(pos,a->pos);
 			if(vecDot(d,d) < mdd){
