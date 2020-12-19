@@ -1,5 +1,6 @@
 #include "../game/animal.h"
 
+#include "../game/being.h"
 #include "../game/character.h"
 #include "../gfx/effects.h"
 #include "../gfx/gfx.h"
@@ -92,6 +93,8 @@ void animalSyncFromServer(const packet *p){
 	e->hunger     = p->v.i8[ 5];
 	e->pregnancy  = p->v.i8[ 6];
 	e->sleepy     = p->v.i8[ 7];
+
+	e->bl = beingListUpdate(e->bl,animalGetBeing(e));
 }
 
 void animalGotHitPacket(const packet *p){

@@ -33,7 +33,19 @@ lVal *wwlnfUpdateAll(lClosure *c, lVal *v){
 }
 lVal *wwlnfACount(lClosure *c, lVal *v){
 	(void)c;(void)v;
+	return lValInt(animalCount);
+}
+lVal *wwlnfAUCount(lClosure *c, lVal *v){
+	(void)c;(void)v;
 	return lValInt(animalUsedCount);
+}
+lVal *wwlnfARCount(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	uint rcount = 0;
+	for(uint i=0;i<(1<<14);i++){
+		if(animalList[i].type){rcount++;}
+	}
+	return lValInt(rcount);
 }
 lVal *wwlnfFCount(lClosure *c, lVal *v){
 	(void)c;(void)v;
@@ -332,6 +344,8 @@ void initCommands(){
 	lClosureAddNF(clRoot,"noaggro",&wwlnfNoAggro);
 	lClosureAddNF(clRoot,"update", &wwlnfUpdateAll);
 	lClosureAddNF(clRoot,"acount", &wwlnfACount);
+	lClosureAddNF(clRoot,"aucount",&wwlnfAUCount);
+	lClosureAddNF(clRoot,"arcount",&wwlnfARCount);
 	lClosureAddNF(clRoot,"fcount", &wwlnfFCount);
 	lClosureAddNF(clRoot,"bmcount",&wwlnfBMCount);
 	lClosureAddNF(clRoot,"idcount",&wwlnfIDCount);
@@ -353,7 +367,7 @@ void initCommands(){
 	lClosureAddNF(clRoot,"tp",     &wwlnfTp);
 	lClosureAddNF(clRoot,"water",  &wwlnfWater);
 	lClosureAddNF(clRoot,"wcount", &wwlnfWCount);
-	lClosureAddNF(clRoot,"wsrc", &wwlnfWSrc);
+	lClosureAddNF(clRoot,"wsrc",   &wwlnfWSrc);
 	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
 	lispEvalNR("(define heal (lambda (a) (- (dmg (cond (a (- a)) (#t -20))))))");
 	lispEvalNR("(define wtest (lambda () (water (px) (py) (pz)) (water (+ (px) 1) (py) (pz)) (water (+ (px) 1) (py) (+ (pz) 1)) (water (px) (py) (+ (pz) 1)) ))");
@@ -450,8 +464,10 @@ int parseCommand(int c, const char *cmd){
 		return 1;
 	}
 	if(strncmp(tcmp,"deadanimals",11) == 0){
-		for(uint i = animalCount/2;i<animalCount;i++){
-			animalRDie(&animalList[i]);
+		//for(uint i = animalCount/2;i<animalCount;i++){
+		for(uint i = animalCount-1;i < animalCount;i--){
+			if(animalList[i].type == 0){continue;}
+			//animalRDie(&animalList[i]);
 			animalDel(i);
 		}
 		snprintf(replyBuf,sizeof(replyBuf),".deadanimals");

@@ -20,7 +20,7 @@
 animal  animalList[ANIMAL_MAX];
 uint    animalCount     = 0;
 uint    animalUsedCount = 0;
-uint    animalFirstFree = 0xFFFF;
+uint    animalFirstFree = 0xFFFFFFFF;
 bool    animalNoAggro   = false;
 
 void animalReset(animal *e){
@@ -29,6 +29,10 @@ void animalReset(animal *e){
 
 animal *animalNew(const vec pos , int type, int gender){
 	animal *e = NULL;
+	if(type == 0){
+		printf("animalNew Type==0!!!!!\n");
+		return NULL;
+	}
 	if(animalFirstFree < ANIMAL_MAX){
 		e = &animalList[animalFirstFree];
 		animalFirstFree = e->nextFree;
@@ -56,32 +60,32 @@ animal *animalNew(const vec pos , int type, int gender){
 	e->type      = type;
 	e->health    = animalGetMaxHealth(e);
 
-	if(rngValM(2) == 0){
-		e->flags |= ANIMAL_BELLYSLEEP;
-	}
-	if(rngValM(2) == 0){
-		e->flags |= ANIMAL_AGGRESIVE;
-	}
+	if(rngValM(2) == 0){e->flags |= ANIMAL_BELLYSLEEP;}
+	if(rngValM(2) == 0){e->flags |= ANIMAL_AGGRESIVE;}
 
 	if(gender < 0){
-		if(rngValM(2) == 0){
-			e->flags |= ANIMAL_MALE;
-		}
+		if(rngValM(2) == 0){e->flags |= ANIMAL_MALE;}
 	}else if(gender == 1){
 		e->flags |= ANIMAL_MALE;
 	}
 
-	if(type == 2){
-		e->flags |= ANIMAL_NO_NEEDS;
-	}
+	if(type == 2){e->flags |= ANIMAL_NO_NEEDS;}
 	animalUsedCount++;
 
 	return e;
 }
 
 void animalDel(uint i){
-	if(i >= animalCount) {return;}
+	if(i >= animalCount){
+		printf("AnimalDel: %u > %u\n",i,animalCount);
+		return;
+	}
 	beingListDel(animalList[i].bl,beingAnimal(i));
+	if(animalList[i].type == 0){
+		printf("AnimalDel: type==0!!!\n");
+		return;
+	}
+	animalList[i].bl       = NULL;
 	animalList[i].type     = 0;
 	animalList[i].nextFree = animalFirstFree;
 	animalFirstFree        = i;
@@ -279,9 +283,11 @@ animal *animalClosest(const vec pos, float maxDistance){
 static void animalUpdateBL(){
 	static uint calls = 0;
 	for(uint i=calls&0x1F;i<animalCount;i+=0x20){
+		if(animalList[i].type == 0){continue;}
 		animal *a = &animalList[i];
 		a->bl = beingListUpdate(a->bl,animalGetBeing(a));
 	}
+	calls++;
 }
 
 void animalUpdateAll(){
@@ -290,7 +296,7 @@ void animalUpdateAll(){
 		int dmg = animalUpdate(&animalList[i]);
 		animalList[i].health -= dmg;
 		if(isClient){continue;}
-		if((animalList[i].pos.y  < 0.f) ||
+		if((animalList[i].pos.y  <  0.f) ||
 		   (animalList[i].health <= 0) ||
 		   (animalList[i].hunger <= 0) ||
 		   (animalList[i].sleepy <= 0)) {
@@ -485,8 +491,10 @@ int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, 
 	int hits = 0;
 	beingList *bl = beingListGet(pos.x,pos.y,pos.z);
 	if(bl == NULL){return 0;}
+	printf("animalHitCheck %p %u\n",bl,bl->count);
 	for(beingListEntry *ble = bl->first;ble != NULL;ble = ble->next){
 		for(uint i=0;i<countof(ble->v);i++){
+			printf("ahc:%x ",ble->v[i]);
 			if(beingType(ble->v[i]) != BEING_ANIMAL){continue;}
 			if(source == ble->v[i]){continue;}
 			animal *a = &animalList[ble->v[i] & (ANIMAL_MAX-1)];
@@ -499,5 +507,6 @@ int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, 
 			}
 		}
 	}
+	printf("\n------\n");
 	return hits;
 }

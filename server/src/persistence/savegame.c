@@ -232,6 +232,7 @@ static void *animalSave(const animal *e, void *buf){
 	u8    *b = (u8    *)buf;
 	u32   *u = (u32   *)buf;
 	float *f = (float *)buf;
+	if(e->type == 0){return b;}
 
 	b[ 0] = 0x03;
 	b[ 1] = e->flags;
@@ -267,6 +268,7 @@ static const void *animalLoad(const void *buf){
 	u8 *b         = (u8 *)buf;
 	u32 *u        = (u32 *)buf;
 	float *f      = (float *)buf;
+	if(b[ 2] == 0){return b+12*4;}
 	animal *e     = animalNew(vecNewP(&f[3]),b[2],0);
 	if(e == NULL){return b+12*4;}
 

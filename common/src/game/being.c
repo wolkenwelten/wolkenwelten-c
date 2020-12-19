@@ -367,6 +367,10 @@ beingList *beingListUpdate(beingList *bl, being entry){
 	if(entry == 0){return NULL;}
 	vec pos = beingGetPos(entry);
 	beingList *nbl = beingListGet(pos.x,pos.y,pos.z);
+	/*
+	if(isClient && beingType(entry) == BEING_ANIMAL){
+		printf("%x bl:%p nbl:%p %f:%f:%f\n",entry,bl,nbl,pos.x,pos.y,pos.z);
+	}*/
 	if(bl == nbl){return bl;}
 	beingListDel( bl,entry);
 	beingListAdd(nbl,entry);

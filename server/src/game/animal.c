@@ -106,6 +106,7 @@ void animalSyncPlayer(u8 c){
 void animalDelChungus(const chungus *c){
 	if(c == NULL){return;}
 	for(uint i=0;i<animalCount;i++){
+		if(animalList[i].type == 0)  {continue;}
 		const vec *p = &animalList[i].pos;
 		if(((uint)p->x >> 8) != c->x){continue;}
 		if(((uint)p->y >> 8) != c->y){continue;}
