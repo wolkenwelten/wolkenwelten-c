@@ -652,9 +652,10 @@ void drawActiveGlider(){
 	float matViewAI[16];
 	if(player->gliderFade < 0.01f){return;}
 
+	const float shake = MINMAX(0.f,0.2f,player->shake);
 	float deg  = ((float)++ticks*0.4f);
-	float yoff = cos(deg*2.1f)*player->shake;
-	float xoff = sin(deg*1.3f)*player->shake;
+	float yoff = cos(deg * 2.1f) * shake;
+	float xoff = sin(deg * 1.3f) * shake;
 
 	float breath = sinf((float)(player->breathing-256)/512.f)*3.f;
 	if(player->flags & CHAR_FALLING){

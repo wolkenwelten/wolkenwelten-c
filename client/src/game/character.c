@@ -178,11 +178,10 @@ void characterUpdateAnimation(character *c){
 	}
 	if(c->flags & CHAR_GLIDE){
 		c->gliderFade += 0.03f;
-		if(c->gliderFade > 1.f){c->gliderFade = 1.f;}
 	}else{
 		c->gliderFade -= 0.03f;
-		if(c->gliderFade < 0.f){c->gliderFade = 0.f;}
 	}
+	c->gliderFade = MINMAX(0.f,1.f,c->gliderFade);
 }
 
 void characterUpdateWindVolume(const character *c){

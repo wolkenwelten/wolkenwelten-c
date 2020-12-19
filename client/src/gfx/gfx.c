@@ -47,11 +47,11 @@ vec    camShake;
 #else
 	float renderDistance = 384.f;
 #endif
-float fadeoutDistance = 32.f;
+float fadeoutDistance      =  32.f;
 float fadeoutStartDistance = 192;
-float cloudFadeD = 256*256;
-float cloudMinD = 256*256*3;
-float cloudMaxD = 256*256*4;
+float cloudFadeD           = 256*256;
+float cloudMinD            = 256*256*3;
+float cloudMaxD            = 256*256*4;
 
 static void recalcDistances(){
 	renderDistance = MIN(renderDistance,512.f);
