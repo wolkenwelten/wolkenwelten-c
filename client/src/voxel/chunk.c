@@ -111,7 +111,7 @@ void chunkFree(chunk *c){
 		return;
 	}
 	chunkFreeCount++;
-	if(!c->vbo){glDeleteBuffers(1,&c->vbo);}
+	if(c->vbo){glDeleteBuffers(1,&c->vbo);}
 	c->nextFree = chunkFirstFree;
 	chunkFirstFree = c;
 }
