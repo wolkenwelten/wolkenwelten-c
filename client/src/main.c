@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include "game/animal.h"
+#include "game/being.h"
 #include "game/blockMining.h"
 #include "game/blockType.h"
 #include "game/character.h"
@@ -182,6 +183,7 @@ int main( int argc, char* argv[] ){
 	shaderInit();
 	textureInit();
 	sfxInit();
+	beingListEntryInit();
 	chunkInit();
 	chungusInit();
 

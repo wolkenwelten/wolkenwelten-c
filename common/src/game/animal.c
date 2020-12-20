@@ -372,7 +372,6 @@ void animalRDie(animal *e){
 	}
 }
 
-
 void animalRHit(animal *e){
 	if(fabsf(e->vel.y) < 0.001f){
 		e->vel.y = 0.03f;
@@ -491,10 +490,8 @@ int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, 
 	int hits = 0;
 	beingList *bl = beingListGet(pos.x,pos.y,pos.z);
 	if(bl == NULL){return 0;}
-	printf("animalHitCheck %p %u\n",bl,bl->count);
 	for(beingListEntry *ble = bl->first;ble != NULL;ble = ble->next){
 		for(uint i=0;i<countof(ble->v);i++){
-			printf("ahc:%x ",ble->v[i]);
 			if(beingType(ble->v[i]) != BEING_ANIMAL){continue;}
 			if(source == ble->v[i]){continue;}
 			animal *a = &animalList[ble->v[i] & (ANIMAL_MAX-1)];
@@ -507,6 +504,5 @@ int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, 
 			}
 		}
 	}
-	printf("\n------\n");
 	return hits;
 }

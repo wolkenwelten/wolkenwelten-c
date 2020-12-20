@@ -273,7 +273,6 @@ void beingListAdd(beingList *bl, being entry){
 	beingListEntry *lastEntry = NULL;
 	if(bl == NULL){return;}
 	if(entry == 0){return;}
-	beingListDel(bl->parent,entry);
 	for(beingListEntry *ble = bl->first; ble != NULL; ble = ble->next){
 		lastEntry = ble;
 		for(uint i=0;i<countof(ble->v);i++){
@@ -285,12 +284,18 @@ void beingListAdd(beingList *bl, being entry){
 		}
 	}
 	if(lastEntry == NULL){
-		lastEntry = bl->first = beingListEntryNew();
-		if(lastEntry == NULL){return;}
-		lastEntry->v[0] = entry;
+		bl->first = beingListEntryNew();
+		if(bl->first == NULL){
+			fprintf(stderr,"bl->first == NULL\n");
+			return;
+		}
+		bl->first->v[0] = entry;
 	}else{
 		lastEntry->next = beingListEntryNew();
-		if(lastEntry->next == NULL){return;}
+		if(lastEntry->next == NULL){
+			fprintf(stderr,"lastEntry->next == NULL\n");
+			return;
+		}
 		lastEntry->next->v[0] = entry;
 	}
 }
@@ -367,10 +372,6 @@ beingList *beingListUpdate(beingList *bl, being entry){
 	if(entry == 0){return NULL;}
 	vec pos = beingGetPos(entry);
 	beingList *nbl = beingListGet(pos.x,pos.y,pos.z);
-	/*
-	if(isClient && beingType(entry) == BEING_ANIMAL){
-		printf("%x bl:%p nbl:%p %f:%f:%f\n",entry,bl,nbl,pos.x,pos.y,pos.z);
-	}*/
 	if(bl == nbl){return bl;}
 	beingListDel( bl,entry);
 	beingListAdd(nbl,entry);

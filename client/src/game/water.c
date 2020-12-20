@@ -5,6 +5,7 @@
 #include "../gui/overlay.h"
 #include "../network/chat.h"
 #include "../sdl/sfx.h"
+#include "../voxel/bigchungus.h"
 #include "../../../common/src/network/messages.h"
 
 #include <string.h>
@@ -16,13 +17,24 @@ int waterNew(u16 x, u16 y, u16 z, i16 amount){
 
 static void waterDraw(const water *w){
 	const vec spos = vecNew(w->x,w->y,w->z);
-	const float size = (float)MIN(192.f,(w->amount * 0.1f));
-	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecZero(),size, size*-0.0005f,0xFFFFC860, 128);
-	if(w->amount <  64){return;}
-	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecZero(),size*.9f, size*-0.00065f,0xFFFF9850, 192);
-	if(w->amount < 128){return;}
-	newParticleV(vecAdd(spos,vecRngAbs()), vecMulS(vecRng(),0.0001f ), vecZero(),size*.8f, size*-0.00075f,0xFFEF381F, 256);
-	if(w->amount < 256){return;}
+	const float size = (float)MIN(256.f,(w->amount * 0.1f));
+	const u8 b = worldTryB(w->x,w->y-1,w->z);
+	if(b == 0){
+		float ma = w->amount / 65536.f;
+		for(int i=0;i<8;i++){
+			const vec off = vecRngAbs();
+			if(fabsf(off.x - 0.5f) > ma){continue;}
+			if(fabsf(off.z - 0.5f) > ma){continue;}
+			newParticleV(vecAdd(spos,off), vecMulS(vecRng(),0.0001f ), vecZero(),size*.8f, size*-0.00075f,0xFFD04020|rngValA(0x001F0F0F), 256);
+		}
+	}else{
+		float my = w->amount / 32768.f;
+		for(int i=0;i<4;i++){
+			const vec off = vecRngAbs();
+			if(off.y > my){continue;}
+			newParticleV(vecAdd(spos,off), vecMulS(vecRng(),0.0001f ), vecZero(),size*.8f, size*-0.00075f,0xFFD04020|rngValA(0x001F0F0F), 256);
+		}
+	}
 }
 
 void waterDrawAll(){

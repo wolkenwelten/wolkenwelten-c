@@ -140,10 +140,31 @@ void fireUpdate(fire *f){
 	water *w = waterGetAtPos(f->x,f->y,f->z);
 	if((w != NULL) && (w->amount > 0)){
 		f->oxygen    = 0;
-		printf("Fire/Water: fs:%i wa:%i (%i|%i|%i)\n",f->strength,w->amount,f->x,f->y,f->z);
 		f->strength -= w->amount;
 		w->amount   -= f->strength;
 	}
+	if(f->strength <= 0){
+		fireDel(f-fireList);
+		fireSendUpdate(-1,fireCount);
+		fireSendUpdate(-1,f-fireList);
+		return;
+	}
+	int wx = f->x-1+rngValM(3);
+	int wy = f->y-1+rngValM(3);
+	int wz = f->z-1+rngValM(3);
+	w = waterGetAtPos(wx,wy,wz);
+	if((w != NULL) && (w->amount > 0)){
+		f->oxygen    = 0;
+		f->strength -= w->amount;
+		w->amount   -= f->strength;
+	}
+	if(f->strength <= 0){
+		fireDel(f-fireList);
+		fireSendUpdate(-1,fireCount);
+		fireSendUpdate(-1,f-fireList);
+		return;
+	}
+
 
 	if(b == 0){
 		f->blockDmg = 0;

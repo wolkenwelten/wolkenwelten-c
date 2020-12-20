@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-extern water waterList[1<<12];
+extern water waterList[1<<14];
 extern uint  waterCount;
 
 int    waterNew        (u16 x, u16 y, u16 z, i16 amount);

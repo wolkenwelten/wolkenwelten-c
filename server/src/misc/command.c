@@ -371,6 +371,7 @@ void initCommands(){
 	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
 	lispEvalNR("(define heal (lambda (a) (- (dmg (cond (a (- a)) (#t -20))))))");
 	lispEvalNR("(define wtest (lambda () (water (px) (py) (pz)) (water (+ (px) 1) (py) (pz)) (water (+ (px) 1) (py) (+ (pz) 1)) (water (px) (py) (+ (pz) 1)) ))");
+	lispEvalNR("(define wu (lambda () (wsrc (px) (+ (py) 8) (pz))))");
 }
 
 void freeCommands(){

@@ -4,7 +4,7 @@
 #include "../mods/api_v1.h"
 #include "../../../common/src/network/messages.h"
 
-water waterList[1<<12];
+water waterList[1<<14];
 uint  waterCount = 0;
 
 #include <stdio.h>

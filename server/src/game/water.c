@@ -46,7 +46,7 @@ int waterNew(u16 x, u16 y, u16 z, i16 amount){
 	const u8 wb = worldGetB(x,y,z);
 	const int ret = MIN(blocks[wb].waterCapacity,w->amount+amount) - w->amount;
 	w->amount += ret;
-	waterSendUpdate(-1,(int)(w - waterList));
+	//waterSendUpdate(-1,(int)(w - waterList));
 	w->bl = beingListUpdate(w->bl,waterGetBeing(w));
 	return ret;
 }
@@ -81,8 +81,13 @@ void waterUpdate(water *w){
 	int flowOut = MIN(w->amount,blocks[wb].waterEgress);
 	//printf("[%i | %i | %i] A:%i B:%i FO:%i\n",w->x,w->y,w->z,w->amount,wb,flowOut);
 	flowOut -= waterFlowTo(w,flowOut,w->x,w->y-1,w->z);
+	if((w->amount <= 0) || (w->y >= 0x8000)){
+		waterDel(w-waterList);
+		return waterUpdate(w);
+	}
 	if(flowOut <= 0)  {return;}
-	if(w->amount < 64){
+
+	if(w->amount < 8){
 		if(rngValA(255) == 0){
 			waterDel(w-waterList);
 			return waterUpdate(w);
@@ -101,6 +106,10 @@ void waterUpdate(water *w){
 	}
 	flowOut = MAX(16,flowOut/2);
 	waterFlowTo(w,flowOut,x,w->y,z);
+	if((w->amount <= 0) || (w->y >= 0x8000)){
+		waterDel(w-waterList);
+		return waterUpdate(w);
+	}
 }
 
 void waterUpdateAll(){
