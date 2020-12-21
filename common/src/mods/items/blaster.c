@@ -22,7 +22,7 @@ int blasterGetStackSize(const item *cItem){
 
 bool blasterPrimaryAction(item *cItem, character *cChar){
 	if(!characterTryToShoot(cChar,cItem,80,3)){return false;}
-	beamblast(cChar,1.f,2.0f,0.15f,3,1,16.f,1.f);
+	beamblast(cChar,1.f,2.0f,0.05f,3,1,16.f,1.f);
 	return true;
 }
 

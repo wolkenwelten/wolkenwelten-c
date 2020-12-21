@@ -36,6 +36,7 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 	fxBeamBlaster(start,pos,beamSize,damageMultiplier);
 	msgFxBeamBlaster(0,start,pos,beamSize,damageMultiplier);
 
+	recoilMultiplier /= 1.f + (ent->aimFade * ent->zoomFactor);
 	ent->vel = vecAdd(ent->vel, vecMulS(vel,-0.75f*recoilMultiplier));
 	ent->rot = vecAdd(ent->rot, vecNew((rngValf()-0.5f) * 64.f * recoilMultiplier, (rngValf()-.8f) * 64.f * recoilMultiplier, 0.f));
 }
