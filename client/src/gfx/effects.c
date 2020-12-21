@@ -66,7 +66,7 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 
 	u32 pac  = 0xD0000000 | ((0x50 + rngValM(0x40)) << 16) | ((0x30 + rngValM(0x40)) << 8) | (0xE0 + rngValM(0x1F));
 	u32 pbc  = pac + 0x00202000;
-	int ttl  = MIN(1024,MAX(64,64 * damageMultiplier));
+	int ttl  = MIN(1024,MAX(64,12 * damageMultiplier));
 	sfxPlayPos(sfxPhaser,MIN(0.5f,MAX(0.2f,damageMultiplier)),pa);
 
 	for(uint max=1<<12;max;--max){
@@ -80,8 +80,8 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 
 		for(int i=0;i<512;i++){
 			const vec pv = vecMulS(vecRng(),1/(beamSize*16));
-			newParticleV(vecAddT(c,pv,po),vecMulS(pv,1/ 8.f),vecMulS(pv,-1.f/384.f),beamSize*12,beamSize  ,pac,ttl  );
-			newParticleV(vecAddT(c,pv,po),vecMulS(pv,1/12.f),vecMulS(pv,-1.f/512.f),beamSize*12,beamSize/2,pbc,ttl*2);
+			newParticleV(vecAddT(c,pv,po),vecMulS(pv,1/12.f),vecMulS(pv,-1.f/384.f),beamSize*12,beamSize  ,pac,ttl  );
+			newParticleV(vecAddT(c,pv,po),vecMulS(pv,1/16.f),vecMulS(pv,-1.f/512.f),beamSize*12,beamSize/2,pbc,ttl*2);
 			po = vecAdd(po,postep);
 		}
 		c = vecAdd(c,v);

@@ -22,14 +22,14 @@ int blasterGetStackSize(const item *cItem){
 
 bool blasterPrimaryAction(item *cItem, character *cChar){
 	if(!characterTryToShoot(cChar,cItem,80,3)){return false;}
-	beamblast(cChar,2.5f,2.0f,0.05f,3,1,16.f,1.f);
+	beamblast(cChar,1.f,8.0f,0.05f,3,1,16.f,1.f);
 	return true;
 }
 
 bool blasterSecondaryAction(item *cItem, character *cChar){
 	if(characterTryToUse(cChar,cItem,200,0)){
 		characterAddCooldown(cChar,200);
-		characterToggleAim(cChar,3.f);
+		characterToggleAim(cChar,4.f);
 		characterAddInaccuracy(cChar,32.f);
 		return true;
 	}

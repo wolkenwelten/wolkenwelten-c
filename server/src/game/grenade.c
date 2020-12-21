@@ -88,23 +88,3 @@ void grenadeUpdatePlayer(uint c){
 		}
 	}
 }
-
-void beamblastNewP(uint c, const packet *p){
-	float speed            = 0.1f;
-	float beamSize         = p->v.f[6];
-	float damageMultiplier = p->v.f[7];
-
-	const vec start = vecNewP(&p->v.f[0]);
-	const vec end   = vecNewP(&p->v.f[3]);
-	const vec vel   = vecMulS(vecNorm(vecSub(end,start)),speed);
-	vec pos = start;
-
-	for(int ticksLeft = 0x1FFF; ticksLeft > 0; ticksLeft--){
-		pos = vecAdd(pos,vel);
-
-		if(worldGetB(pos.x,pos.y,pos.z) != 0){
-			explode(pos,0.5f*beamSize,1);
-		}
-	}
-	msgFxBeamBlaster(c,start,pos,beamSize,damageMultiplier);
-}

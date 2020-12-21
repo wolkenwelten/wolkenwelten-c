@@ -14,13 +14,13 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 	vec pos         = start;
 	vec vel         = vecDegToVec(rot);
 	vec tvel        = vecMulS(vel,1.f/8.f);
-	const float mdd = beamSize * beamSize;
+	const float mdd = MAX(1,beamSize * beamSize);
 	const int dmg   = ((int)damageMultiplier)+1;
 	--iteration;
 
 	for(int ticksLeft = 0x1FFF; ticksLeft > 0; ticksLeft--){
 		vec spos = pos;
-		for(int i=0;i<4;i++){
+		for(int i=0;i<8;i++){
 			spos = vecAdd(spos,tvel);
 			if(worldGetB(spos.x,spos.y,spos.z) != 0){
 				worldBoxSphere(spos.x,spos.y,spos.z,beamSize*2.f,0);

@@ -398,13 +398,14 @@ being beingListGetClosest(const beingList *bl, const being source, uint type, fl
 	const vec pos = beingGetPos(source);
 	for(beingListEntry *ble = bl->first; ble != NULL; ble = ble->next){
 		for(uint i=0;i<countof(ble->v);i++){
-			if(ble->v[i] == 0){break;}
-			if(beingType(ble->v[i]) != type){continue;}
-			if(ble->v[i] == source){continue;}
+			const being b = ble->v[i];
+			if(b == 0)     {break;}
+			if(b == source){continue;}
+			if(beingType(b) != type){continue;}
 			float cd = vecMag(vecSub(pos,beingGetPos(ble->v[i])));
 			if(cd > maxD){continue;}
 			maxD = cd;
-			maxB = ble->v[i];
+			maxB = b;
 		}
 	}
 	if(maxB == 0){
