@@ -20,7 +20,7 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 
 	for(int ticksLeft = 0x1FFF; ticksLeft > 0; ticksLeft--){
 		vec spos = pos;
-		for(int i=0;i<8;i++){
+		for(int i=0;i<4;i++){
 			spos = vecAdd(spos,tvel);
 			if(worldGetB(spos.x,spos.y,spos.z) != 0){
 				worldBoxSphere(spos.x,spos.y,spos.z,beamSize*2.f,0);
