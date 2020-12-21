@@ -1,9 +1,10 @@
 #include "particle.h"
-#include "../tmp/assets.h"
-#include "../../../common/src/misc/misc.h"
+#include "../game/character.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
 #include "../gfx/mat.h"
+#include "../tmp/assets.h"
+#include "../../../common/src/misc/misc.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -128,7 +129,7 @@ void particleDraw(){
 	shaderBind(sParticle);
 	matMul(matMVP,matView,matProjection);
 	shaderMatrix(sParticle,matMVP);
-
+	shaderSizeMul(sCloud,1.f + (player->aimFade * player->zoomFactor));
 
 	glBindBuffer(GL_ARRAY_BUFFER,particleVBO);
 	glBufferData(GL_ARRAY_BUFFER, particleCount*sizeof(glParticle), glParticles, GL_STREAM_DRAW);

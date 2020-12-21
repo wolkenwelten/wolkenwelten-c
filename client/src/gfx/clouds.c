@@ -67,6 +67,7 @@ void cloudsRender(){
 	glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count], GL_STREAM_DRAW);
 
 	shaderBind(sCloud);
+	shaderSizeMul(sCloud,1.f + (player->aimFade * player->zoomFactor));
 	glEnableVertexAttribArray (0);
 	glDisableVertexAttribArray(1);
 	glEnableVertexAttribArray (2);

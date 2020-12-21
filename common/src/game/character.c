@@ -52,19 +52,25 @@ int characterGetMaxHP(const character *c){
 
 void characterToggleGlider(character *c){
 	if(c == NULL){return;}
-	if((itemIsEmpty(&c->equipment[CHAR_EQ_GLIDER])) || (c->equipment[CHAR_EQ_GLIDER].ID != I_Glider)){return;}
 	c->flags ^= CHAR_GLIDE;
 }
-
 void characterOpenGlider(character *c){
 	if(c == NULL){return;}
-	if((itemIsEmpty(&c->equipment[CHAR_EQ_GLIDER])) || (c->equipment[CHAR_EQ_GLIDER].ID != I_Glider)){return;}
 	c->flags |= CHAR_GLIDE;
 }
-
 void characterCloseGlider(character *c){
 	if(c == NULL){return;}
 	c->flags &= ~CHAR_GLIDE;
+}
+
+void characterToggleAim(character *c, float zoom){
+	if(c == NULL){return;}
+	c->zoomFactor = zoom;
+	c->flags ^= CHAR_AIMING;
+}
+void characterStopAim(character *c){
+	if(c == NULL){return;}
+	c->flags &= ~CHAR_AIMING;
 }
 
 void characterAddCooldown(character *c, int cooldown){
@@ -219,6 +225,7 @@ void characterSetActiveItem(character *c,  int i){
 	if((uint)i != c->activeItem){
 		characterStartAnimation(c,5,200);
 	}
+	characterStopAim(c);
 	c->activeItem = i;
 }
 

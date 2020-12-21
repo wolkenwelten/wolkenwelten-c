@@ -2,6 +2,7 @@
 #include "common.h"
 
 #include <ctype.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -318,19 +319,40 @@ static lVal *lParseNumber(lCString *s){
 	lVal *v = lValInt(0);
 	int c   = *s->data;
 	int fc  = c;
+	bool isFloat = false;
+	int cval = 0;
+	int digits = 0;
 	if(fc == '-'){c = *++s->data;}
 	while(!isspace(c)){
 		if(c == 0){break;}
 		if(isdigit(c)){
-			v->vInt *= 10;
-			v->vInt += c - '0';
-		}else if((c != ',') && (c != '.') && (c != '_')){
+			cval *= 10;
+			cval += c - '0';
+			digits++;
+		}else if(c == '.'){
+			isFloat = true;
+			v->vInt = cval;
+			cval    = 0;
+			digits  = 0;
+		}else if((c != ',') && (c != '_')){
 			break;
 		}
 		c = *++s->data;
 	}
+	if(isFloat){
+		int t     = v->vInt;
+		v->type   = ltFloat;
+		float tv  = cval / powf(10.f,digits);
+		v->vFloat = t + tv;
+	}else{
+		v->vInt   = cval;
+	}
 	if(fc == '-'){
-		v->vInt = -v->vInt;
+		if(isFloat){
+			v->vFloat = -v->vFloat;
+		}else{
+			v->vInt = -v->vInt;
+		}
 	}
 	return v;
 }
@@ -492,6 +514,9 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 		case ltInt:
 			t = snprintf(buf,len,"%i",v->vInt);
 			break;
+		case ltFloat:
+			t = snprintf(buf,len,"%f",v->vFloat);
+			break;
 		case ltCString:
 		case ltString:
 			t = snprintf(buf,len,"\"%s\"",v->vString->data);
@@ -524,17 +549,51 @@ char *lSPrintChain(lVal *start, char *buf, char *bufEnd){
 	return cur;
 }
 
-lVal *lnfAdd(lClosure *c, lVal *v){
+lVal *lnfAddF(lClosure *c, lVal *v){
 	lVal *t = lEval(c,v);
 	if(t == NULL){return NULL;}
 	t = lValDup(t);
 	for(lVal *r = v->next;r != NULL;r = r->next){
 		lVal *rv = lEval(c,r);
-		if(rv->type == ltInf){return rv;}
-		if(rv->type != ltInt){continue;}
+		if(rv->type == ltInf)  {return rv;}
+		if(rv->type == ltInt){
+			t->vFloat += (float)rv->vInt;
+			continue;
+		}
+		if(rv->type != ltFloat){continue;}
+		t->vFloat += rv->vFloat;
+	}
+	return t;
+}
+
+lVal *lnfAddI(lClosure *c, lVal *v){
+	lVal *t = lEval(c,v);
+	if(t == NULL){return NULL;}
+	t = lValDup(t);
+	for(lVal *r = v->next;r != NULL;r = r->next){
+		lVal *rv = lEval(c,r);
+		if(rv->type == ltInf)  {return rv;}
+		if(rv->type == ltFloat){
+			lVal *fr = lnfAddF(c,r);
+			fr->vFloat += (float)t->vInt;
+			return fr;
+		}
+		if(rv->type != ltInt)  {continue;}
 		t->vInt += rv->vInt;
 	}
 	return t;
+}
+
+lVal *lnfAdd(lClosure *c, lVal *v){
+	lVal *t = lEval(c,v);
+	if(t == NULL){return NULL;}
+	switch(t->type){
+	case ltInt:
+	default:
+		return lnfAddI(c,v);
+	case ltFloat:
+		return lnfAddF(c,v);
+	}
 }
 
 lVal *lnfSub(lClosure *c, lVal *v){

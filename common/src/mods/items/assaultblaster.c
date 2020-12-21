@@ -30,14 +30,13 @@ bool assaultblasterPrimaryAction(item *cItem, character *cChar){
 }
 
 bool assaultblasterSecondaryAction(item *cItem, character *cChar){
-	if(!characterTryToShoot(cChar,cItem,64,3)){return false;}
-	sfxPlay(sfxPhaser,0.3f);
-	for(int i=0;i<3;i++){
-		projectileNewC(cChar, 0, 1);
+	if(characterTryToUse(cChar,cItem,200,0)){
+		characterAddCooldown(cChar,200);
+		characterToggleAim(cChar,2.f);
+		characterAddInaccuracy(cChar,32.f);
+		return true;
 	}
-	characterAddInaccuracy(cChar,32.f);
-	characterAddRecoil(cChar,3.f);
-	return true;
+	return false;
 }
 
 bool assaultblasterTertiaryAction(item *cItem, character *cChar){

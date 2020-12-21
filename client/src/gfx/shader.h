@@ -10,6 +10,7 @@ void    shaderAlpha      (shader *s, float alpha);
 void    shaderBrightness (shader *s, float v);
 void    shaderTransform  (shader *s, float x,float y,float z);
 void    shaderTex        (shader *s, int t);
+void    shaderSizeMul    (shader *s, float sizeMul);
 
 extern shader *sMesh;
 extern shader *sShadow;

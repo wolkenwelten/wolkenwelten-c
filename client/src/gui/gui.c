@@ -581,8 +581,8 @@ void drawActiveItem(){
 	mesh *aiMesh = getMeshDispatch(activeItem);
 	if(aiMesh == NULL){return;}
 
-	const float ix =  1.6f;
-	float iy = -0.9f;
+	const float ix =  (1.5f * (1.f - player->aimFade));
+	float iy = -1.2f + (0.3f * player->aimFade);
 	const float iz = -1.5f;
 	float hitOff,y;
 

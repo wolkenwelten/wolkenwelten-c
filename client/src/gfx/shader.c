@@ -100,6 +100,7 @@ void shaderCompile(shader *s){
 	s->lBrightness = glGetUniformLocation(s->pID,"colorBrightness");
 	s->lTransform  = glGetUniformLocation(s->pID,"transPos");
 	s->lTex        = glGetUniformLocation(s->pID,"curTex");
+	s->lSizeMul    = glGetUniformLocation(s->pID,"sizeMul");
 }
 
 shader *shaderNew(const char *vss,const char *fss,unsigned int attrMask){
@@ -115,6 +116,7 @@ shader *shaderNew(const char *vss,const char *fss,unsigned int attrMask){
 	s->lMVP     = -1;
 	s->lAlpha   = -1;
 	s->lTex     = -1;
+	s->lSizeMul = -1;
 
 	shaderCompile(s);
 	return s;
@@ -162,4 +164,9 @@ void shaderTransform(shader *s,float x,float y,float z){
 void shaderTex(shader *s, int t){
 	if(s->lTex == -1){return;}
 	glUniform1i(s->lTex,t);
+}
+
+void shaderSizeMul(shader *s, float sizeMul){
+	if(s->lSizeMul == -1){return;}
+	glUniform1f(s->lSizeMul,sizeMul);
 }

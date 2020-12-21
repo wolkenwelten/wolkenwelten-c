@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 typedef enum lType {
-	ltNoAlloc = 0, ltNil, ltBool, ltList, ltLambda, ltInt, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf
+	ltNoAlloc = 0, ltNil, ltBool, ltList, ltLambda, ltInt, ltFloat, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf
 } lType;
 
 typedef struct lVal     lVal;
@@ -28,6 +28,7 @@ struct lVal {
 		lVal         *vList;
 		lVal         *vLambda;
 		int           vInt;
+		float         vFloat;
 		lString      *vString;
 		lCString     *vCString;
 		lClosure     *vClosure;

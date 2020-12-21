@@ -47,6 +47,7 @@ void characterInit(character *c){
 	c->pos           = vecNew(0,0,0);
 	c->rot           = vecNew(135.f,15.f,0.f);
 	c->eMesh         = meshPear;
+	c->zoomFactor    = 1.f;
 
 	if(c == player){
 		sfxLoop(sfxWind,0.f);
@@ -310,6 +311,7 @@ void characterDropItem(character *c, int i){
 	item *cItem = characterGetItemBarSlot(c,i);
 	if(cItem == NULL)       { return; }
 	if(itemIsEmpty(cItem))  { return; }
+	characterStopAim(c);
 
 	itemDropNewC(c, cItem);
 	itemDiscard(cItem);
@@ -329,6 +331,7 @@ void characterDropSingleItem(character *c, int i){
 		if(itemIsEmpty(&dItem)) { return; }
 		itemDropNewC(c, &dItem);
 	}
+	characterStopAim(c);
 	characterAddCooldown(c,50);
 }
 
@@ -504,12 +507,22 @@ void characterUpdateFalling(character *c){
 	}
 }
 
+static void characterUpdateAim(character *c){
+	if(c->flags & CHAR_AIMING){
+		c->aimFade += 0.02f;
+	}else{
+		c->aimFade -= 0.02f;
+	}
+	c->aimFade = MINMAX(0,1,c->aimFade);
+}
+
 void characterUpdate(character *c){
 	float walkFactor = 1.f;
 	vec nvel;
 
 	if(c->flags & CHAR_SPAWNING){return;}
 	if((c->flags & CHAR_FALLINGSOUND) && (c->pos.y > -32)){ c->flags &= ~CHAR_FALLINGSOUND; }
+	characterUpdateAim(c);
 	characterUpdateFalling(c);
 	if(c->rot.pitch < -90.f){
 		 c->rot.pitch = -90.f;

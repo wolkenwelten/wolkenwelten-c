@@ -43,15 +43,16 @@ void projectileNew(const vec pos, const vec rot, being target, being source, uin
 }
 
 void projectileNewC(const character *c, being target, uint style){
-	const float mx =  1.f;
+	const float mx =  1.f - c->aimFade;
 	const float mz = -1.f;
 	vec pos = c->pos;
 	pos.x += ((cos((c->rot.yaw+90.f)*PI/180) * cos(c->rot.pitch*PI/180))*mz) + cos((c->rot.yaw)*PI/180)*mx;
 	pos.y += (sin(c->rot.pitch*PI/180)*mz);
 	pos.z += ((sin((c->rot.yaw+90.f)*PI/180) * cos(c->rot.pitch*PI/180))*mz) + sin((c->rot.yaw)*PI/180)*mx;
 
-	const float yaw   = c->rot.yaw   + (rngValf()-0.5f)*MIN(96.f,c->inaccuracy*0.2f);
-	const float pitch = c->rot.pitch + (rngValf()-0.5f)*MIN(96.f,c->inaccuracy*0.2f);
+	const float inacc = MIN(96.f,(c->inaccuracy*0.2f)) / (1.f + (c->aimFade * c->zoomFactor));
+	const float yaw   = c->rot.yaw   + (rngValf()-0.5f)*inacc;
+	const float pitch = c->rot.pitch + (rngValf()-0.5f)*inacc;
 	float speed = 1.f;
 	if(style == 5){
 		speed = 0.1f;

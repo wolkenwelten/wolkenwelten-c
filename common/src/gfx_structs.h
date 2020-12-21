@@ -43,7 +43,7 @@ typedef struct {
 	uint vsID,fsID;
 	char *vss,*fss;
 	uint attrMask;
-	 int lMVP,lAlpha,lTransform,lTex,lBrightness;
+	 int lMVP,lAlpha,lTransform,lTex,lBrightness,lSizeMul;
 } shader;
 
 typedef struct {

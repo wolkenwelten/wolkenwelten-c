@@ -10,9 +10,13 @@ void       characterInit           (      character *c);
 u32        characterCollision      (const vec pos);
 int        characterGetHP          (const character *c);
 int        characterGetMaxHP       (const character *c);
+
 void       characterOpenGlider     (      character *c);
 void       characterCloseGlider    (      character *c);
 void       characterToggleGlider   (      character *c);
+void       characterToggleAim      (      character *c, float zoom);
+void       characterStopAim        (      character *c);
+
 void       characterAddCooldown    (      character *c, int cooldown);
 void       characterSetPos         (      character *c, const vec pos);
 void       characterSetRot         (      character *c, const vec rot);

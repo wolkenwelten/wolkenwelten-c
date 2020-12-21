@@ -110,7 +110,10 @@ typedef struct {
         uint  temp;
 
 	 u32  flags;
+
 	float gliderFade;
+	float aimFade;
+	float zoomFactor;
 
 	mesh *eMesh;
 	hook *hook;
@@ -138,6 +141,7 @@ typedef struct {
 #define CHAR_SPAWNING     (1<<6)
 #define CHAR_JUMPING      (1<<7)
 #define CHAR_BOOSTING     (1<<8)
+#define CHAR_AIMING       (1<<9)
 
 #define CHAR_EQ_GLIDER     0
 #define CHAR_EQ_HOOK       1

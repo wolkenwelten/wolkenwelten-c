@@ -94,7 +94,11 @@ void animalSyncFromServer(const packet *p){
 	e->pregnancy  = p->v.i8[ 6];
 	e->sleepy     = p->v.i8[ 7];
 
-	e->bl = beingListUpdate(e->bl,animalGetBeing(e));
+	if(e->type == 0){
+		beingListDel(e->bl,animalGetBeing(e));
+	}else{
+		e->bl = beingListUpdate(e->bl,animalGetBeing(e));
+	}
 }
 
 void animalGotHitPacket(const packet *p){

@@ -70,7 +70,8 @@ void mouseEventHandler(const SDL_Event *e){
 
 		case SDL_MOUSEMOTION:
 			if(mouseHidden && !gameControlsInactive()){
-				characterRotate(player,vecNew(e->motion.xrel/4.f,e->motion.yrel/4.f,0));
+				float mouseSpeed = 0.25f / (1.f + (player->aimFade * player->zoomFactor));
+				characterRotate(player,vecNew(e->motion.xrel*mouseSpeed,e->motion.yrel*mouseSpeed,0));
 			}
 		break;
 

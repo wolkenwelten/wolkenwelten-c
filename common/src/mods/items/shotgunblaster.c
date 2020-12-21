@@ -32,14 +32,13 @@ bool shotgunblasterPrimaryAction(item *cItem, character *cChar){
 }
 
 bool shotgunblasterSecondaryAction(item *cItem,character *cChar){
-	if(!characterTryToShoot(cChar,cItem,256,6)){return false;}
-	sfxPlay(sfxPhaser,0.7f);
-	for(int i=0;i<96;i++){
-		projectileNewC(cChar, 0, 1);
-		characterAddInaccuracy(cChar,4.f);
+	if(characterTryToUse(cChar,cItem,200,0)){
+		characterAddCooldown(cChar,200);
+		characterToggleAim(cChar,1.5f);
+		characterAddInaccuracy(cChar,32.f);
+		return true;
 	}
-	characterAddRecoil(cChar,4.f);
-	return true;
+	return false;
 }
 
 bool shotgunblasterTertiaryAction(item *cItem, character *cChar){

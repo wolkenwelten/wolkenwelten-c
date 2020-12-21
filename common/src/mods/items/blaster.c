@@ -27,10 +27,13 @@ bool blasterPrimaryAction(item *cItem, character *cChar){
 }
 
 bool blasterSecondaryAction(item *cItem, character *cChar){
-	if(!characterTryToShoot(cChar,cItem,200,3)){return false;}
-	beamblast(cChar,1.f,2.0f,0.05f,3,(itemGetAmmo(cItem)+3)*2,6.f,3.f);
-	itemDecAmmo(cItem,itemGetAmmo(cItem));
-	return true;
+	if(characterTryToUse(cChar,cItem,200,0)){
+		characterAddCooldown(cChar,200);
+		characterToggleAim(cChar,3.f);
+		characterAddInaccuracy(cChar,32.f);
+		return true;
+	}
+	return false;
 }
 
 bool blasterTertiaryAction(item *cItem, character *cChar){
@@ -52,7 +55,7 @@ int blasterGetMagSize(const item *cItem){
 float blasterGetInaccuracy(const item *cItem){
 	(void)cItem;
 
-	return 8.f;
+	return 2.f;
 }
 
 int blasterItemDropBurnUp(itemDrop *id){

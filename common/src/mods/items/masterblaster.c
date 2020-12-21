@@ -27,9 +27,13 @@ bool masterblasterPrimaryAction(item *cItem, character *cChar){
 }
 
 bool masterblasterSecondaryAction(item *cItem, character *cChar){
-	if(!characterTryToShoot(cChar,cItem,50,5)){return false;}
-	beamblast(cChar,3.f,2.f,2.f,8,1,16.f,1.f);
-	return true;
+	if(characterTryToUse(cChar,cItem,200,0)){
+		characterAddCooldown(cChar,200);
+		characterToggleAim(cChar,6.f);
+		characterAddInaccuracy(cChar,32.f);
+		return true;
+	}
+	return false;
 }
 
 bool masterblasterTertiaryAction(item *cItem, character *cChar){
