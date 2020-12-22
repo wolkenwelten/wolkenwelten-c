@@ -287,13 +287,14 @@ void characterMove(character *c, const vec mov){
 
 	if(c->flags & CHAR_NOCLIP){
 		float s = 0.2f;
-		if(c->flags & CHAR_SNEAK){ s = 2.5f;}
+		if(c->flags & CHAR_BOOSTING){ s = 2.5f;}
 		c->gvel    = vecMulS(vecDegToVec(c->rot),mov.z*(-s));
 		c->gvel.x += cos((yaw)*PI/180)*mov.x*s;
 		c->gvel.z += sin((yaw)*PI/180)*mov.x*s;
 		c->gvel.y += mov.y;
 	}else{
-		const float s = 0.05f;
+		float s = 0.05f;
+		if(c->flags & CHAR_AIMING){ s = 0.01f; }
 		c->gvel.y = mov.y;
 		c->gvel.x = (cos((yaw+90)*PI/180)*mov.z*s);
 		c->gvel.z = (sin((yaw+90)*PI/180)*mov.z*s);
@@ -305,6 +306,7 @@ void characterMove(character *c, const vec mov){
 
 void characterRotate(character *c, const vec rot){
 	c->rot = vecAdd(c->rot,rot);
+	c->inaccuracy += vecAbsSum(rot)*(1.f+(c->aimFade*c->zoomFactor));
 
 	if(c->rot.pitch < -90.f){
 		 c->rot.pitch = -90.f;

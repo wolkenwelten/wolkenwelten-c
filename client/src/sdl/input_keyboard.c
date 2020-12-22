@@ -50,7 +50,8 @@ vec doKeyboardupdate(vec vel){
 	if(keysPressed[13]){rot.y =  1;}
 	if(keysPressed[14]){rot.y = -1;}
 	if(keysPressed[15]){rot.x =  1;}
-	characterRotate(player,vecMulS(rot,3));
+	float rotSpeed = 2.f / (1.f + (player->aimFade * player->zoomFactor));
+	characterRotate(player,vecMulS(rot,rotSpeed));
 
 	if(keysPressed[6]){
 		characterDropSingleItem(player,player->activeItem);

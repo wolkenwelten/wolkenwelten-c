@@ -79,6 +79,9 @@ static inline vec vecFloor(const vec a){
 static inline float vecSum(const vec a){
 	return a.x+a.y+a.z;
 }
+static inline float vecAbsSum(const vec a){
+	return __builtin_fabsf(a.x)+__builtin_fabsf(a.y)+__builtin_fabsf(a.z);
+}
 static inline vec vecRngAbs(){
 	return (vec){{{rngValf(),rngValf(),rngValf()}}};
 }
