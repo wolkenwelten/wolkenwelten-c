@@ -97,7 +97,6 @@ void drawCrosshair(){
 	textMeshEmpty(crosshairMesh);
 	int  off = (int)player->inaccuracy;
 	int size = 16;
-	if(off > 64){off=64;}
 
 	textMeshAddVert(crosshairMesh,(screenWidth/2)     ,(screenHeight/2)     +off, 64.f, 64.f,~1);
 	textMeshAddVert(crosshairMesh,(screenWidth/2)+size,(screenHeight/2)+size+off,128.f,128.f,~1);

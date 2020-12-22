@@ -108,13 +108,7 @@ void characterUpdateInaccuracy(character *c){
 	float minInaccuracy = getInaccuracyDispatch(itm);
 
 	if(c->shake > c->inaccuracy){c->inaccuracy = c->shake;}
-	if(c->inaccuracy > 64.f){
-		c->inaccuracy = 64.f;
-	}else if(c->inaccuracy > minInaccuracy){
-		c->inaccuracy -= 0.4f;
-	}else{
-		c->inaccuracy = minInaccuracy;
-	}
+	c->inaccuracy = MINMAX(minInaccuracy,128.f,c->inaccuracy - 0.5f);
 }
 
 void characterUpdateHook(character *c){
