@@ -26,7 +26,10 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 				worldBoxSphere(spos.x,spos.y,spos.z,beamSize*2.f,0);
 				worldBoxSphereDirty(spos.x,spos.y,spos.z,beamSize*2.f);
 				fxExplosionBlaster(spos,beamSize/2.f);
-				if(--hitsLeft <= 0){break;}
+				if(--hitsLeft <= 0){
+					ticksLeft = 0;
+					break;
+				}
 			}
 			characterHitCheck(spos, mdd, dmg, 1, iteration, 0);
 			animalHitCheck   (spos, mdd, dmg, 1, iteration, 0);
