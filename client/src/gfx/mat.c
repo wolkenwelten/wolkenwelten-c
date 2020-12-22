@@ -140,6 +140,7 @@ void matMov(float out[16], const float a[16]){
 }
 
 void matMul(float out[16], const float a[16], const float b[16]){
+	/* tmp is necessary because out and a/b might be a pointer to the same array */
 	float tmp[16];
 	tmp[ 0] = (a[ 0] * b[ 0]) + (a[ 1] * b[ 4]) + (a[ 2] * b[ 8]) + (a[ 3] * b[12]);
 	tmp[ 1] = (a[ 0] * b[ 1]) + (a[ 1] * b[ 5]) + (a[ 2] * b[ 9]) + (a[ 3] * b[13]);

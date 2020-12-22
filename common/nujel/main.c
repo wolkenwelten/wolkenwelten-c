@@ -38,6 +38,8 @@ void *loadFile(const char *filename,size_t *len){
 
 void doRepl(lClosure *c){
 	static char buf[512];
+	lVal *lastlsym = lValSym("lastl");
+	lVal *lastl = lDefineClosureSym(c, lastlsym->vSymbol);
 	while(1){
 		printf("%sλ%s>%s ",ansiFG[1],ansiFG[12],ansiRS);
 		fflush(stdout);
@@ -51,6 +53,8 @@ void doRepl(lClosure *c){
 		}
 		lPrintChain(v);
 		lClosureGC();
+		lVal *tmp = lValString(buf);
+		*lastl = *tmp;
 	}
 }
 

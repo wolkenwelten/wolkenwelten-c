@@ -543,7 +543,9 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"PlayerChungi: %u %u %u\n",((uint)player->pos.x)>>8,((uint)player->pos.y)>>8,((uint)player->pos.z)>>8);
 		textMeshPrintf(guim,"Active Tris.: %s%s\n",colorSignalLow(1<<21,1<<19,1<<18,tris),getHumanReadableSize(tris));
 		guim->fgc  = colorPalette[15];
-		textMeshPrintf(guim,"Particles   : %s%s\n",colorSignalLow(1<<17,1<<16,1<<15,particleCount),getHumanReadableSize(particleCount));
+		textMeshPrintf(guim,"Particles   : %s%s\n",colorSignalLow(1<<16,1<<15,1<<14,particleCount),getHumanReadableSize(particleCount));
+		guim->fgc  = colorPalette[15];
+		textMeshPrintf(guim,"Sparticles  : %s%s\n",colorSignalLow(1<<15,1<<14,1<<13,sparticleCount),getHumanReadableSize(sparticleCount));
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
 		textMeshPrintf(guim,"ActiveChunks: %s\n",getHumanReadableSize(chunkGetActive()));

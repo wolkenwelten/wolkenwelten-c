@@ -87,6 +87,7 @@ void worldgenLandmass(worldgen *wgen, int layer){
 				chungusBoxIfEmpty(wgen->clay,x,(CHUNGUS_SIZE/2)-h/2,z,1,h,1,3);
 			}
 			int r = rngValM(4096);
+			h = MAX(1,h);
 			switch(r){
 			case 0:
 			case 1:

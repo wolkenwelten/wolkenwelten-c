@@ -163,6 +163,7 @@ void renderWorld(const character *cam){
 	entityDrawAll();
 	characterDrawAll();
 	shadowDraw();
+
 	cloudsRender();
 
 	projectileDrawAll();

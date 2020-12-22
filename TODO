@@ -1,3 +1,4 @@
+- Properly check if the server is still there and close the connection otherwise
 - Add beingList Intros!!!
 - Make client detect when the connection to the server is separated and show an error instead of just becoming unresponsive
 - Animals don't spawn after the limit has been reached, especially problematic if the limit is already reached with animals inside the spawn area which never gets freed

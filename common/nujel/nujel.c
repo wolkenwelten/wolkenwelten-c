@@ -1,5 +1,6 @@
 #include "nujel.h"
 #include "common.h"
+#include "lnf_arithmetic.h"
 
 #include <ctype.h>
 #include <math.h>
@@ -51,7 +52,6 @@ char *ansiFG[16] = {
 	"\033[1;36m",
 	"\033[1;37m"
 };
-
 
 void lInit(){
 	strncpy(symQuote.c,"quote",7);
@@ -516,6 +516,8 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			break;
 		case ltFloat:
 			t = snprintf(buf,len,"%f",v->vFloat);
+			for(;buf[t-1] == '0';t--){buf[t]=0;}
+			if(buf[t-1] == '.'){buf[t++] = '0';}
 			break;
 		case ltCString:
 		case ltString:
@@ -547,108 +549,6 @@ char *lSPrintChain(lVal *start, char *buf, char *bufEnd){
 	}
 	*bufEnd = 0;
 	return cur;
-}
-
-lVal *lnfAddF(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	for(lVal *r = v->next;r != NULL;r = r->next){
-		lVal *rv = lEval(c,r);
-		if(rv->type == ltInf)  {return rv;}
-		if(rv->type == ltInt){
-			t->vFloat += (float)rv->vInt;
-			continue;
-		}
-		if(rv->type != ltFloat){continue;}
-		t->vFloat += rv->vFloat;
-	}
-	return t;
-}
-
-lVal *lnfAddI(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	for(lVal *r = v->next;r != NULL;r = r->next){
-		lVal *rv = lEval(c,r);
-		if(rv->type == ltInf)  {return rv;}
-		if(rv->type == ltFloat){
-			lVal *fr = lnfAddF(c,r);
-			fr->vFloat += (float)t->vInt;
-			return fr;
-		}
-		if(rv->type != ltInt)  {continue;}
-		t->vInt += rv->vInt;
-	}
-	return t;
-}
-
-lVal *lnfAdd(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
-	if(t == NULL){return NULL;}
-	switch(t->type){
-	case ltInt:
-	default:
-		return lnfAddI(c,v);
-	case ltFloat:
-		return lnfAddF(c,v);
-	}
-}
-
-lVal *lnfSub(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	for(lVal *r = v->next;r != NULL;r = r->next){
-		lVal *rv = lEval(c,r);
-		if(rv->type == ltInf){return rv;}
-		if(rv->type != ltInt){continue;}
-		t->vInt -= rv->vInt;
-	}
-	if(v->next == NULL){
-		t->vInt = -t->vInt;
-	}
-	return t;
-}
-
-lVal *lnfMul(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	for(lVal *r = v->next;r != NULL;r = r->next){
-		lVal *rv = lEval(c,r);
-		if(rv->type == ltInf){return rv;}
-		if(rv->type != ltInt){continue;}
-		t->vInt *= rv->vInt;
-	}
-	return t;
-}
-
-lVal *lnfDiv(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	for(lVal *r = v->next;r != NULL;r = r->next){
-		lVal *rv = lEval(c,r);
-		if(rv->type != ltInt){continue;}
-		if(rv->vInt == 0){return lValInf();}
-		t->vInt /= rv->vInt;
-	}
-	return t;
-}
-
-lVal *lnfMod(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	for(lVal *r = v->next;r != NULL;r = r->next){
-		lVal *rv = lEval(c,r);
-		if(rv->type != ltInt){continue;}
-		if(rv->vInt == 0){return lValInf();}
-		t->vInt %= rv->vInt;
-	}
-	return t;
 }
 
 static lVal *lnfDef(lClosure *c, lVal *v){

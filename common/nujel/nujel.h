@@ -87,6 +87,7 @@ lVal     *lValInt       (int v);
 lVal     *lValSym       (const char *s);
 lVal     *lValString    (const char *s);
 lVal     *lnfCat        (lClosure *c, lVal *v);
+lVal     *lValDup       (const lVal *v);
 
 extern char *ansiRS;
 extern char *ansiFG[16];

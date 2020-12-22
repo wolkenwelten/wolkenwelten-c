@@ -1,6 +1,6 @@
 CC     :=cc
 CFLAGS :=
-COPT   :=-Os
+COPT   :=-O2 -ffast-math
 CSTD   := -std=c11
 CWARN  := -Wextra -Werror -Wall -Wcast-align -pedantic
 
