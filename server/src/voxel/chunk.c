@@ -73,6 +73,7 @@ void chunkFree(chunk *c){
 	if(c == NULL){return;}
 	chunkFreeCount++;
 	c->nextFree = chunkFirstFree;
+	c->bl.parent = NULL;
 	chunkFirstFree = c;
 }
 

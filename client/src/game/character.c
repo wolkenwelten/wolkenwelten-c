@@ -609,6 +609,7 @@ void charactersUpdate(){
 
 void characterFireHook(character *c){
 	if(c->actionTimeout < 0){return;}
+	if(!playerChunkActive)  {return;}
 	characterCloseGlider(c);
 	c->flags |= CHAR_JUMPING;
 	characterAddCooldown(c,60);
