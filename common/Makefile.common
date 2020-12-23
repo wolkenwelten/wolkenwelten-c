@@ -1,8 +1,10 @@
+ARCH             := $(shell uname -m)
 MODS_SRCS        := $(shell find common/src/mods -type f -name '*.c')
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h') common/nujel/nujel.h common/nujel/lnf_arithmetic.h
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c') common/nujel/nujel.c common/nujel/lnf_arithmetic.c
 COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
 COMMON_DEPS      := ${COMMON_SRCS:.c=.deps}
+ASM_OBJS         :=
 
 WEBEXCLUDE       += --exclude=releases/macos/wolkenwelten.iconset/
 WEBEXCLUDE       += --exclude=releases/win/*.res
@@ -14,6 +16,13 @@ all: wolkenwelten
 
 .PHONY: release
 .PHONY: .deps
+
+ifeq ("$(wildcard common/src/asm/$(ARCH).s)","common/src/asm/$(ARCH).s")
+ASM_OBJS += common/src/asm/$(ARCH).o
+endif
+
+%.o: %.s
+	$(AS) -c $< -o $@
 
 %.o: %.c
 	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -g -c $< -o $@

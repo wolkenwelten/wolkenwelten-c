@@ -13,7 +13,7 @@ MESHASSETS       := $(shell find client/mesh -type f -name '*')
 
 CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
 CLIENT_SRCS      := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
-CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
+CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o} $(ASM_OBJS)
 CLIENT_DEPS      := ${CLIENT_SRCS:.c=.deps}
 
 WINDOW_WIDTH     := 960

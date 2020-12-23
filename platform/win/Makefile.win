@@ -1,3 +1,4 @@
+AS               := /mingw64/bin/as
 CC               := /mingw64/bin/gcc
 LD               := /mingw64/bin/gcc
 

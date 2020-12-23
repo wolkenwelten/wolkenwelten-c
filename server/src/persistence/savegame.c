@@ -641,8 +641,9 @@ void playerSafeSave(){
 	static uint pi=0;
 	static uint lastSave=0;
 	const uint cm = getTicks();
-	if(cm < lastSave+1024){return;}
+	if(cm < lastSave+2048){return;}
 	lastSave = cm;
 	if(++pi >= clientCount){pi=0;}
+	if(clients[pi].state){return;}
 	characterSaveData(clients[pi].c,clients[pi].playerName);
 }

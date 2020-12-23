@@ -1,3 +1,4 @@
+AS               := as
 CC               := clang
 LD               := clang
 

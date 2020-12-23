@@ -124,6 +124,7 @@ void mainTick(){
 	chungusFreeOldChungi(30000);
 	handleAnimalPriorities();
 	bigchungusSafeSave(&world);
+	playerSafeSave();
 	serverHandleEvents();
 	updateWorld();
 	serverHandleEvents();

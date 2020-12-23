@@ -4,6 +4,7 @@
 #include "../gfx/shader.h"
 #include "../gfx/mat.h"
 #include "../tmp/assets.h"
+#include "../../../common/src/asm/asm.h"
 #include "../../../common/src/misc/misc.h"
 
 #include <stdio.h>
@@ -137,6 +138,8 @@ void newParticle(float x,float y,float z,float vx,float vy,float vz,float vvx,fl
 	particleCount++;
 }
 
+
+#ifndef WW_ASM_PARTICLE_UPDATE
 void particleUpdate(){
 	for(int i=particleCount-1;i>=0;i--){
 		if(--particles[i].ttl <= 0){
@@ -174,6 +177,7 @@ void particleUpdate(){
 		sparticles[i].vz     += sparticles[i].vvz;
 	}
 }
+#endif
 
 void particleDraw(){
 	if(!particleCount){return;}

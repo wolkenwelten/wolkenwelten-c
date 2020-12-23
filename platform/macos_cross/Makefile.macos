@@ -1,3 +1,5 @@
+AS                   := as
+
 OSX_CLIENT_LIBS      := -F ~/ReleaseFrameworks/ -framework SDL2 -framework SDL2_mixer -framework OpenGL
 OSX_CLIENT_CINCLUDES := -I ~/ReleaseFrameworks/include/SDL2
 
