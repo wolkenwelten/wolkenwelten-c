@@ -202,7 +202,7 @@ void chungusBoxFWG(chungus *c,int x,int y,int z,int w,int h,int d){
 	const int gx = (x+w)>>4;
 	const int gy = (y+h)>>4;
 	const int gz = (z+d)>>4;
-	u8 block = 3;
+	u8 block = I_Stone;
 
 	if( (x   | y   | z  ) &(~0xFF)){ return; }
 	if(((x+w)|(y+h)|(z+d))&(~0xFF)){ return; }
