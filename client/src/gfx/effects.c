@@ -15,19 +15,19 @@ void fxExplosionBomb(const vec pos,float pw){
 
 	for(int i=0;i<4096*pw;i++){
 		const vec v  = vecMulS(vecRng(),0.15f*pw);
-		newParticleV(pos,v,vecMulS(v,1/-64.f),64.f,1.f,0xFF44AAFF,64);
+		newParticleV(pos,v,64.f,1.f,0xFF44AAFF,64);
 	}
 	for(int i=0;i<4096*pw;i++){
 		const vec v  = vecMulS(vecRng(),0.1f*pw);
-		newParticleV(pos,v,vecMulS(v,1/-78.f),64.f,1.f,0xFF0099FF,78);
+		newParticleV(pos,v,64.f,1.f,0xFF0099FF,78);
 	}
 	for(int i=0;i<2048*pw;i++){
 		const vec v  = vecMulS(vecRng(),0.06f*pw);
-		newParticleV(pos,v,vecMulS(v,1/-96.f),64.f,1.f,0xFF0066CC,96);
+		newParticleV(pos,v,64.f,1.f,0xFF0066CC,96);
 	}
 	for(int i=0;i<2048*pw;i++){
 		const vec v  = vecMulS(vecRng(),0.03f*pw);
-		newParticleV(pos,v,vecZero(),64.f,1.f,0xFF082299,128);
+		newParticleV(pos,v,64.f,1.f,0xFF082299,128);
 	}
 
 	const float pd  = vecMag(vecSub(pos,player->pos));
@@ -47,17 +47,17 @@ void fxGrenadeTrail(const vec pos,float pw){
 	(void)pw;
 	if((rngValR()&3)!=0){return;}
 	const vec v = vecMulS(vecRng(),0.008f);
-	newParticleV(pos,v,vecZero(),16.f,2.f,0xFF44AAFF,64);
+	newParticleV(pos,v,16.f,2.f,0xFF44AAFF,64);
 }
 
 void fxExplosionBlaster(const vec pos,float pw){
 	for(int i=0;i<512;i++){
 		const vec v = vecMulS(vecRng(),(1.f/8.f)*pw);
-		newParticleV(pos,v,vecMulS(v,1/-64.f),32.f,2.f,0xFF964AC0,156);
+		newParticleV(pos,v,32.f,2.f,0xFF964AC0,156);
 	}
 	for(int i=0;i<512;i++){
 		const vec v = vecMulS(vecRng(),(1.f/12.f)*pw);
-		newParticleV(pos,v,vecMulS(v,1/-96.f),16.f,4.f,0xFF7730A0,128);
+		newParticleV(pos,v,16.f,4.f,0xFF7730A0,128);
 	}
 }
 void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultiplier){
@@ -74,14 +74,14 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 		const float curDist = vecMag(dist);
 		if(curDist > lastDist){break;}
 		lastDist = curDist;
-		v = vecMulS(vecNorm(dist),beamSize*128);
+		v = vecMulS(vecNorm(dist),beamSize*64);
 		vec po = vecZero();
 		const vec postep = vecMulS(v,1.f/512.f);
 
 		for(int i=0;i<512;i++){
 			const vec pv = vecMulS(vecRng(),1/(beamSize*16));
-			newParticleV(vecAddT(c,pv,po),vecMulS(pv,1/12.f),vecMulS(pv,-1.f/384.f),beamSize*12,beamSize  ,pac,ttl  );
-			newParticleV(vecAddT(c,pv,po),vecMulS(pv,1/16.f),vecMulS(pv,-1.f/512.f),beamSize*12,beamSize/2,pbc,ttl*2);
+			newParticleV(vecAdd(c,po),vecMulS(pv,1/12.f),beamSize*12,beamSize  ,pac,ttl  );
+			newParticleV(vecAdd(c,po),vecMulS(pv,1/16.f),beamSize*12,beamSize/2,pbc,ttl*2);
 			po = vecAdd(po,postep);
 		}
 		c = vecAdd(c,v);
@@ -92,14 +92,14 @@ void fxBlockBreak(const vec pos, unsigned char b){
 	sfxPlayPos(sfxTock,1.f,pos);
 	for(int i=0;i<2048;i++){
 		const vec p = vecAdd(pos,vecRngAbs());
-		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.7f,128);
+		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.7f,96);
 	}
 }
 void fxBlockMine(const vec pos, int dmg, unsigned char b){
 	(void)dmg;
 	for(int i=0;i<4;i++){
 		const vec p = vecAdd(pos,vecRngAbs());
-		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.9f,96);
+		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.9f,64);
 	}
 }
 
@@ -111,7 +111,7 @@ void fxBleeding(const vec pos, being victim, i16 dmg, u16 cause){
 	sfxPlayPos(sfxUngh,1,pos);
 	for(int i=dmg*64;i>0;i--){
 		const vec v  = vecMulS(vecRng(),0.06f);
-		newParticleV(pos,v,vecMulS(v,1/-64.f),64.f,1.f,0xFF44AAFF,64);
+		newParticleV(pos,v,64.f,1.f,0xFF44AAFF,64);
 	}
 }
 
@@ -124,7 +124,7 @@ void fxAnimalDiedPacket (const packet *p){
 	sfxPlayPos(sfxUngh,0.6,pos);
 	for(int i=512;i>0;i--){
 		const vec v  = vecMulS(vecRng(),0.06f);
-		newParticleV(pos,v,vecMulS(v,1/-64.f),64.f,1.f,0xFF44AAFF,64);
+		newParticleV(pos,v,64.f,1.f,0xFF44AAFF,64);
 	}
 	ropeDelBeing(t);
 }
@@ -140,6 +140,6 @@ void fxProjectileHit(const packet *p){
 			color = 0xFFFFAA44;
 		}
 		const vec v  = vecMulS(vecRng(),0.03f);
-		newParticleV(pos,v,vecZero(),48.f,4.f,color,64);
+		newParticleV(pos,v,48.f,4.f,color,64);
 	}
 }

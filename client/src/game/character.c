@@ -471,17 +471,17 @@ void characterUpdateBooster(character *c){
 
 	const vec adir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(),10.f))),-0.07f * (rngValf()+.5f));
 	const vec apos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
-	newParticleV(apos, adir, vecZero(),96.f, 0.1f, 0xE643B0F8,  192);
+	newParticleV(apos, adir, 96.f, 0.1f, 0xE643B0F8,  192);
 	const vec bdir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(),10.f))),-0.03f * (rngValf()+.5f));
 	const vec bpos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
-	newParticleV(bpos, bdir, vecZero(),48.f, 0.2f, 0xC42370FA,  386);
+	newParticleV(bpos, bdir, 48.f, 0.2f, 0xC42370FA,  386);
 	const vec cdir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(), 4.f))),-0.01f * (rngValf()+.5f));
 	const vec cpos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
-	newParticleV(cpos, cdir, vecNew(0,0.00001,0),24.f+rngValf()*24.f, 0.4f+rngValf()*0.4f, 0xD0203040 | rngValA(0x1F1F0F0F), 1536+rngValA(511));
+	newParticleV(cpos, cdir, 24.f+rngValf()*24.f, 0.4f+rngValf()*0.4f, 0xD0203040 | rngValA(0x1F1F0F0F), 1536+rngValA(511));
 	if(rngValM(6)==0){
 		const vec ddir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(), 4.f))),-0.001f * (rngValf()+.5f));
 		const vec dpos = vecAdd(c->pos,vecAdd(adir,vecMulS(vecRng(),0.1f)));
-		newParticleV(dpos, ddir, vecNew(0,0.00001,0),16.f+rngValf()*32.f, 0.2f+rngValf()*0.1f, 0xD0101820 | rngValA(0x1F0F0707), 3072+rngValA(1023));
+		newSparticleV(dpos, ddir, 16.f+rngValf()*32.f, 0.2f+rngValf()*0.1f, 0xD0101820 | rngValA(0x1F0F0707), 3072+rngValA(1023));
 	}
 }
 

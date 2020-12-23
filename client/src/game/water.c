@@ -25,14 +25,14 @@ static void waterDraw(const water *w){
 			const vec off = vecRngAbs();
 			if(fabsf(off.x - 0.5f) > ma){continue;}
 			if(fabsf(off.z - 0.5f) > ma){continue;}
-			newParticleV(vecAdd(spos,off), vecMulS(vecRng(),0.0001f ), vecZero(),size*.8f, size*-0.00075f,0xFFD04020|rngValA(0x001F0F0F), 256);
+			newParticleV(vecAdd(spos,off), vecMulS(vecRng(),0.0001f ), size*.8f, size*-0.00075f,0xFFD04020|rngValA(0x001F0F0F), 256);
 		}
 	}else{
 		float my = w->amount / 32768.f;
 		for(int i=0;i<4;i++){
 			const vec off = vecRngAbs();
 			if(off.y > my){continue;}
-			newParticleV(vecAdd(spos,off), vecMulS(vecRng(),0.0001f ), vecZero(),size*.8f, size*-0.00075f,0xFFD04020|rngValA(0x001F0F0F), 256);
+			newParticleV(vecAdd(spos,off), vecMulS(vecRng(),0.0001f ), size*.8f, size*-0.00075f,0xFFD04020|rngValA(0x001F0F0F), 256);
 		}
 	}
 }

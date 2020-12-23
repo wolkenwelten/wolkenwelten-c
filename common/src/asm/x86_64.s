@@ -1,5 +1,5 @@
 .text
-.global particleUpdate
+.global __particleUpdate
 
-particleUpdate:
+__particleUpdate:
   ret
