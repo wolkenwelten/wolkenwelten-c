@@ -2,9 +2,9 @@
 
 
 #ifdef __aarch64__ASD
-	#define WW_ASM_PARTICLE_UPDATE
+	#define WW_ASM_PARTICLE_POS_UPDATE
 #endif
 
-#ifdef __x86_64__ASD
-	#define WW_ASM_PARTICLE_UPDATE
+#ifdef __x86_64__
+	#define WW_ASM_PARTICLE_POS_UPDATE
 #endif

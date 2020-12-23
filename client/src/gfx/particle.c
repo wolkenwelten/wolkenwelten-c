@@ -101,8 +101,18 @@ void newParticle(float x,float y,float z,float vx,float vy,float vz,float size,f
 	particleCount++;
 }
 
-#ifndef WW_ASM_PARTICLE_UPDATE
-void particleUpdate(){
+#ifndef WW_ASM_PARTICLE_POS_UPDATE
+void particlePosUpdate(){
+	for(uint i=0;i<particleCount;i++){
+		glParticles[i].x    += particles[i].vx;
+		glParticles[i].y    += particles[i].vy;
+		glParticles[i].z    += particles[i].vz;
+		glParticles[i].size += particles[i].vsize;
+	}
+}
+#endif
+
+void sparticlePosUpdate(){
 	const float spartv[8][4] = {
 		{ 0.000001f,0.00004f, 0.000001f, 0.f},
 		{ 0.000003f,0.00004f, 0.000003f, 0.f},
@@ -114,6 +124,23 @@ void particleUpdate(){
 		{-0.000004f,0.00004f,-0.000004f, 0.f},
 	};
 
+	for(uint i=0;i<sparticleCount;i++){
+		glSparticles[i].x    += sparticles[i].vx;
+		glSparticles[i].y    += sparticles[i].vy;
+		glSparticles[i].z    += sparticles[i].vz;
+		glSparticles[i].size += sparticles[i].vsize;
+
+		sparticles[i].vx     += spartv[i&0x7][0];
+		sparticles[i].vy     += spartv[i&0x7][1];
+		sparticles[i].vz     += spartv[i&0x7][2];
+		sparticles[i].vsize  += spartv[i&0x7][3];
+	}
+}
+
+void particleUpdate(){
+	particlePosUpdate();
+	sparticlePosUpdate();
+
 	for(int i=particleCount-1;i>=0;i--){
 		if(--particleTTL[i] <= 0){
 			particles   [i] = particles[--particleCount];
@@ -124,10 +151,6 @@ void particleUpdate(){
 		}else if(particleTTL[i] < 128){
 			particleRGBA[i] = (particleRGBA[i] & 0x00FFFFFF) | ((particleTTL[i] << 25) & 0xFF000000);
 		}
-		glParticles[i].x    += particles[i].vx;
-		glParticles[i].y    += particles[i].vy;
-		glParticles[i].z    += particles[i].vz;
-		glParticles[i].size += particles[i].vsize;
 	}
 
 	for(int i=sparticleCount-1;i>=0;i--){
@@ -140,18 +163,8 @@ void particleUpdate(){
 		}else if(sparticleTTL[i] < 1024){
 			sparticleRGBA[i] = (sparticleRGBA[i] & 0x00FFFFFF) | ((sparticleTTL[i] << 22 & 0xFF000000) & 0xFF000000);
 		}
-		glSparticles[i].x    += sparticles[i].vx;
-		glSparticles[i].y    += sparticles[i].vy;
-		glSparticles[i].z    += sparticles[i].vz;
-		glSparticles[i].size += sparticles[i].vsize;
-
-		sparticles[i].vx     += spartv[i&0x7][0];
-		sparticles[i].vy     += spartv[i&0x7][1];
-		sparticles[i].vz     += spartv[i&0x7][2];
-		sparticles[i].vsize  += spartv[i&0x7][3];
 	}
 }
-#endif
 
 void particleDraw(){
 	if(!particleCount){return;}
