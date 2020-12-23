@@ -180,7 +180,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->animalChance   = (1<<14)-1;
 			break;
 		case 0:
-			w->shrubChance    = (1<<10)-1;
+ 			w->shrubChance    = (1<<10)-1;
 			w->dirtChance     = (1<< 1)-1;
 			w->stoneChance    = (1<< 5)-1;
 			w->monolithChance = (1<<18)-1;

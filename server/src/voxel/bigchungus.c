@@ -39,7 +39,6 @@ chungus *bigchungusTryChungus(bigchungus *c, int x,int y,int z) {
 }
 
 chungus *worldTryChungus(int x, int y, int z){
-	if(!inWorld(x,y,z)){return NULL;}
 	return bigchungusTryChungus(&world,x,y,z);
 }
 
@@ -74,6 +73,10 @@ chunk *bigchungusTryChunk(bigchungus *c, int x, int y, int z){
 	chungus *chng = bigchungusTryChungus(c,(x>>8)&0xFF,(y>>8)&0xFF,(z>>8)&0xFF);
 	if(chng == NULL){return NULL;}
 	return chungusGetChunk(chng,x&0xFF,y&0xFF,z&0xFF);
+}
+
+chunk *worldTryChunk(int x, int y, int z){
+	return bigchungusTryChunk(&world,x,y,z);
 }
 
 u8 bigchungusGetB(bigchungus *c, int x,int y,int z) {

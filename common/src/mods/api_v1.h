@@ -116,6 +116,7 @@ uint8_t  worldGetB          (int x, int y, int z);
 chungus *worldTryChungus    (int x, int y, int z);
 chungus *worldTryChungusV   (const vec pos);
 chungus *worldGetChungus    (int x, int y, int z);
+chunk   *worldTryChunk      (int x, int y, int z);
 bool     worldSetB          (int x, int y, int z, u8 block);
 int      checkCollision     (int x, int y, int z);
 void     worldBoxMine       (int x, int y, int z, int w,int h,int d);

@@ -102,8 +102,8 @@ void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,in
 }
 
 chunk *chungusGetChunk(chungus *c, u16 x,u16 y,u16 z){
-	if((x|y|z)&(~0xFF)){return NULL;}
-	return c->chunks[x>>4][y>>4][z>>4];
+	if(!inWorld(x,y,z)){return NULL;}
+	return c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 }
 
 chunk *chungusGetChunkOrNew(chungus *c, u16 x, u16 y, u16 z){

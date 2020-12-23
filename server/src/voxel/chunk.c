@@ -63,7 +63,11 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 	c->z = z & (~0xF);
 	c->clientsUpdated = (u64)1 << 31;
 	chungus *chng = worldTryChungus(x>>8,y>>8,z>>8);
-	beingListInit(&c->bl,&chng->bl);
+	if(chng == NULL){
+		beingListInit(&c->bl,NULL);
+	}else{
+		beingListInit(&c->bl,&chng->bl);
+	}
 
 	memset(c->data,0,sizeof(c->data));
 	return c;

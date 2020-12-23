@@ -4,7 +4,7 @@
 #include "../voxel/chunk.h"
 
 beingList *beingListGet(u16 x, u16 y, u16 z){
-	chunk *chnk = worldGetChunk(x,y,z);
+	chunk *chnk = worldTryChunk(x,y,z);
 	if(chnk != NULL){return &chnk->bl;}
 	chungus *chng = worldTryChungus(x>>8,y>>8,z>>8);
 	if(chng != NULL){return &chng->bl;}

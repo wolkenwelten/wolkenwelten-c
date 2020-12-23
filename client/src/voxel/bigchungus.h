@@ -13,6 +13,7 @@ u8       worldGetB             (int x, int y, int z);
 chungus *worldTryChungus       (int x, int y, int z);
 chungus *worldGetChungus       (int x, int y, int z);
 chunk   *worldGetChunk         (int x, int y, int z);
+chunk   *worldTryChunk         (int x, int y, int z);
 bool     worldSetB             (int x, int y, int z, u8 block);
 void     worldSetChungusLoaded (int x, int y, int z);
 void     worldBoxMine          (int x, int y, int z, int w, int h, int d);

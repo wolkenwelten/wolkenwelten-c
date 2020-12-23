@@ -71,6 +71,12 @@ chungus *worldTryChungus(int x,int y,int z){
 	return world[x&0xFF][y&0x7F][z&0xFF];
 }
 
+chunk *worldTryChunk(int x, int y, int z){
+	chungus *chng = worldTryChungus(x,y,z);
+	if(chng == NULL){return NULL;}
+	return chungusGetChunk(chng,x,y,z);
+}
+
 chungus *worldGetChungus(int x,int y,int z){
 	if((x|y|z)&(~0xFF)){return NULL;}
 	return world[x&0xFF][y&0x7F][z&0xFF];

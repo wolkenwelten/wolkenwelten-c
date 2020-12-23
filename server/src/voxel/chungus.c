@@ -108,7 +108,6 @@ void chungusFree(chungus *c){
 	}
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 	c->nextFree = chungusFirstFree;
-	c->bl.parent = NULL;
 	chungusFirstFree = c;
 }
 
