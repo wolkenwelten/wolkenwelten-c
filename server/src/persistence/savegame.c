@@ -443,6 +443,8 @@ void characterSaveData(const character *p, const char *pName){
 	return;
 	#endif
 	if(p == NULL){return;}
+	if(pName == NULL){return;}
+	if(*pName == 0){return;}
 
 	b = buf;
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"Position %f %f %f %f %f %f\n",p->pos.x,p->pos.y,p->pos.z,p->rot.yaw,p->rot.pitch,p->rot.roll);
@@ -633,4 +635,14 @@ void savegameSave(){
 
 	buf[sizeof(buf)-1] = 0;
 	saveFile(savegameFileName(optionSavegame),buf,strlen(buf));
+}
+
+void playerSafeSave(){
+	static uint pi=0;
+	static uint lastSave=0;
+	const uint cm = getTicks();
+	if(cm < lastSave+1024){return;}
+	lastSave = cm;
+	if(++pi >= clientCount){pi=0;}
+	characterSaveData(clients[pi].c,clients[pi].playerName);
 }
