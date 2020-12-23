@@ -13,13 +13,14 @@
 #pragma pack(push, 1)
 typedef struct glParticle {
 	float x,y,z,size;
-	unsigned int rgba;
+	u32 rgba;
 } glParticle;
 #pragma pack(pop)
 
 typedef struct particle {
-	float vx,vy,vz,vvx,vvy,vvz,vsize;
-	unsigned int rgba;
+	float vx,vy,vz,vsize;
+	float vvx,vvy,vvz;
+	u32 rgba;
 	int ttl;
 } particle;
 
@@ -142,14 +143,14 @@ void particleUpdate(){
 			particles[i] = particles[--particleCount];
 			glParticles[i] = glParticles[particleCount];
 			continue;
-		}
-		if(particles[i].ttl < 128){
+		}else if(particles[i].ttl < 128){
 			glParticles[i].rgba = (particles[i].rgba & 0x00FFFFFF) | (particles[i].ttl << 25);
 		}
 		glParticles[i].x    += particles[i].vx;
 		glParticles[i].y    += particles[i].vy;
 		glParticles[i].z    += particles[i].vz;
 		glParticles[i].size += particles[i].vsize;
+
 		particles[i].vx     += particles[i].vvx;
 		particles[i].vy     += particles[i].vvy;
 		particles[i].vz     += particles[i].vvz;
@@ -182,25 +183,21 @@ void particleDraw(){
 	shaderSizeMul(sCloud,1.f + (player->aimFade * player->zoomFactor));
 	glDepthMask(GL_FALSE);
 	glDisableVertexAttribArray(1);
-	glEnableVertexAttribArray(3);
 
 	glBindBuffer(GL_ARRAY_BUFFER,particleVBO);
 	glBufferData(GL_ARRAY_BUFFER, particleCount*sizeof(glParticle), glParticles, GL_STREAM_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glParticle), (void *)(((char *)&glParticles[0].x)    - ((char *)glParticles)));
+	glVertexAttribPointer(0, 4, GL_FLOAT        , GL_FALSE, sizeof(glParticle), (void *)(((char *)&glParticles[0].x)    - ((char *)glParticles)));
 	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glParticle), (void *)(((char *)&glParticles[0].rgba) - ((char *)glParticles)));
-	glVertexAttribPointer(3, 1, GL_FLOAT        , GL_FALSE, sizeof(glParticle), (void *)(((char *)&glParticles[0].size) - ((char *)glParticles)));
 	glDrawArrays(GL_POINTS,0,particleCount);
 
 	glBindBuffer(GL_ARRAY_BUFFER, sparticleVBO);
 	glBufferData(GL_ARRAY_BUFFER, sparticleCount*sizeof(glParticle), glSparticles, GL_STREAM_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glParticle), (void *)(((char *)&glParticles[0].x)    - ((char *)glParticles)));
+	glVertexAttribPointer(0, 4, GL_FLOAT        , GL_FALSE, sizeof(glParticle), (void *)(((char *)&glParticles[0].x)    - ((char *)glParticles)));
 	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glParticle), (void *)(((char *)&glParticles[0].rgba) - ((char *)glParticles)));
-	glVertexAttribPointer(3, 1, GL_FLOAT        , GL_FALSE, sizeof(glParticle), (void *)(((char *)&glParticles[0].size) - ((char *)glParticles)));
 	glDrawArrays(GL_POINTS,0,sparticleCount);
 
 	glDepthMask(GL_TRUE);
 	glEnableVertexAttribArray(1);
-	glDisableVertexAttribArray(3);
 }
