@@ -24,17 +24,17 @@ typedef struct particle {
 #define  PART_MAX (1<<16)
 #define SPART_MAX (1<<14)
 
-glParticle glParticles   [PART_MAX];
-particle     particles   [PART_MAX];
-u32          particleRGBA[PART_MAX];
-uint         particleTTL [PART_MAX];
+__attribute__((aligned(32))) glParticle glParticles   [PART_MAX];
+__attribute__((aligned(32))) particle     particles   [PART_MAX];
+__attribute__((aligned(32))) u32          particleRGBA[PART_MAX];
+__attribute__((aligned(32))) uint         particleTTL [PART_MAX];
 uint         particleCount = 0;
 uint         particleVBO[2];
 
-glParticle glSparticles   [SPART_MAX];
-particle     sparticles   [SPART_MAX];
-u32          sparticleRGBA[SPART_MAX];
-uint         sparticleTTL [SPART_MAX];
+__attribute__((aligned(32))) glParticle glSparticles   [SPART_MAX];
+__attribute__((aligned(32))) particle     sparticles   [SPART_MAX];
+__attribute__((aligned(32))) u32          sparticleRGBA[SPART_MAX];
+__attribute__((aligned(32))) uint         sparticleTTL [SPART_MAX];
 uint         sparticleCount = 0;
 uint         sparticleVBO[2];
 
