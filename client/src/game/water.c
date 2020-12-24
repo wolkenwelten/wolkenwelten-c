@@ -18,6 +18,8 @@ int waterNew(u16 x, u16 y, u16 z, i16 amount){
 static void waterDraw(const water *w){
 	const vec spos = vecNew(w->x,w->y,w->z);
 	const float size = (float)MIN(256.f,(w->amount * 0.1f));
+	const u8 cb = worldTryB(w->x,w->y,w->z);
+	if(cb != 0){return;}
 	const u8 b = worldTryB(w->x,w->y-1,w->z);
 	if(b == 0){
 		float ma = w->amount / 65536.f;
