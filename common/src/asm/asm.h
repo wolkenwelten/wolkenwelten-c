@@ -1,7 +1,7 @@
 #pragma once
 
 
-#ifdef __aarch64__ASD
+#ifdef __aarch64__
 	#define WW_ASM_PARTICLE_POS_UPDATE
 #endif
 
