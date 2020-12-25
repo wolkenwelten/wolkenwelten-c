@@ -11,7 +11,7 @@ CLIENT_LIBS      := -lGL -lpthread -ldl -lSDL2 -lSDL2_mixer
 DYNLIBS          := -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lvorbis
 STATICLIBS       :=
 
-LIN_REL          := releases/linux/wolkenwelten-$(VERSION_NAME)
+LIN_REL          := releases/linux-$(VERSION_ARCH)/wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME)
 
 .PHONY: all
 all: wolkenwelten wolkenwelten-server
@@ -25,12 +25,11 @@ endif
 $(LIN_REL):
 	mkdir -p $(LIN_REL)
 
-release.linux: releases/linux/wolkenwelten-linux-$(VERSION_NAME).tar.xz
-releases/linux/wolkenwelten-linux-$(VERSION_NAME).tar.xz: $(LIN_REL)/README
-releases/linux/wolkenwelten-linux-$(VERSION_NAME).tar.xz: $(LIN_REL)/wolkenwelten
-releases/linux/wolkenwelten-linux-$(VERSION_NAME).tar.xz: $(LIN_REL)/wolkenwelten-server
-	cd releases/linux/ && tar -c wolkenwelten-$(VERSION_NAME)/ | xz -9 - > wolkenwelten-linux-$(VERSION_NAME).tar.xz
-
+release.linux: releases/linux-$(VERSION_ARCH)/wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME).tar.xz
+releases/linux-$(VERSION_ARCH)/wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME).tar.xz: $(LIN_REL)/README
+releases/linux-$(VERSION_ARCH)/wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME).tar.xz: $(LIN_REL)/wolkenwelten
+releases/linux-$(VERSION_ARCH)/wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME).tar.xz: $(LIN_REL)/wolkenwelten-server
+	cd releases/linux-$(VERSION_ARCH)/ && tar -c wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME)/ | xz -9 - > wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME).tar.xz
 
 $(LIN_REL)/README: README
 	cp $< $@
@@ -44,8 +43,9 @@ $(LIN_REL)/wolkenwelten: client/src/tmp/mods_tmp.c
 $(LIN_REL)/wolkenwelten: client/src/tmp/objs.c client/src/tmp/objs.h
 $(LIN_REL)/wolkenwelten: client/src/tmp/sfx.c client/src/tmp/sfx.h
 $(LIN_REL)/wolkenwelten: common/src/tmp/cto.c common/src/tmp/cto.h
+$(LIN_REL)/wolkenwelten: $(ASM_OBJS)
 $(LIN_REL)/wolkenwelten: | $(LIN_REL)
-	gcc $(CLIENT_SRCS) -g -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CSTD) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
+	gcc $(CLIENT_SRCS) $(ASM_OBJS) -g -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CSTD) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
 
 $(LIN_REL)/wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
 $(LIN_REL)/wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)

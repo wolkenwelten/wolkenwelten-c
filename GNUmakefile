@@ -8,6 +8,7 @@ CFLAGS               := -g
 CSTD                 := -std=c99
 
 VERSION_NAME         := $(shell tools/versionname)
+VERSION_ARCH         := $(shell uname -m)
 
 include common/Makefile.common
 include client/Makefile.client

@@ -300,14 +300,6 @@ span.key {
 	height:16px;
 	display:inline-block;
 }
-.wasmdl .buttonicon {
-	vertical-align:top;
-}
-
-.wasmdl img {
-	position:relative;
-	top:7px;
-}
 
 .imgfw {
 	display:block;
@@ -329,11 +321,14 @@ span.key {
 .icon-macos {
 	background:url("data:image/gif;base64,R0lGODlhEAAQAMIHAAAAABFUoRhpxhx121B5qGSWz2+m5f///ywAAAAAEAAQAAADTTi6I2AwGrbCk3CJBQgskmIFCgASXVQCQHOx1zSM84V6mbI5uAGqDMsPI+P0iJTOEFPaWGKFWIlUiqCAIwercAMKnhaUEkixEIsMxzkBADs=");
 }
-.icon-linux {
+.icon-linux-x86_64 {
 	background:url("data:image/gif;base64,R0lGODlhEAAQAMIEAAAAAC8uLriIC+OtIc/Jyf///8/Jyc/JySH5BAEKAAcALAAAAAAQABAAAANMeLoAsTC2GWUp4ILKcsOcAgzk0IRHQzYP1xAwQVXfhZ00EMtzdxG2nugD1OAUpVdwtCgNBDqboKSYkgSFYsEqWHAnjWkXIiiDAWVIAgA7");
 }
 .icon-wasm {
 	background:url("data:image/gif;base64,R0lGODlhEAAQAMIAAGVO8Kqqqt3d3f///2VO8GVO8GVO8GVO8CH5BAEKAAQALAAAAAAQABAAAAMwCKrUvhA6EiujNuvNu//RsIjKIFQkcALkurhrHMGKYAczq+ovJOC2XW+BUwAhRVACADs=");
+}
+.icon-linux-aarch64 {
+	background-image: url(data:image/gif;base64,R0lGODlhEAAQAMIFAAICA5EWOMMcSt1BbDmZFmq/S7Xznmq/SyH5BAEKAAcALAAAAAAQABAAAANNeAfMuu0BU2oBi1YMbPtdQXBEWTbmKH0D0EaPwggNjcXL+9k4QLcDWsAhedEENt9t8QMdl0qkTwgYxmZD5JAoSe6WK6kUfK2ayTgIOgEAOw==);
 }
 
 @media only screen and (max-device-width: 480px) {

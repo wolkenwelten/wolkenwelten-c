@@ -8,12 +8,14 @@ $experimental = [];
 $platforms    = [
 	'win'   => 'Windows',
 	'macos' => 'MacOS',
-	'linux' => 'GNU/Linux'
+	'linux-x86_64' => 'GNU/Linux',
+	'linux-aarch64' => 'Linux ARM 64-Bit'
 ];
 
 foreach(array_keys($platforms) as $plat){
 	checkReleases($plat);
 }
+
 ?>
 <html>
 <head>

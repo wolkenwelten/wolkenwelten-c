@@ -56,7 +56,8 @@ web: release
 	if [ -d "releases/wasm" ]; then rsync -avhe ssh releases/wasm/ wolkenwelten.net:/var/www/html/releases/wasm/ ; fi
 	if [ -d "releases/win" ]; then rsync -avhe ssh releases/win/*.7z wolkenwelten.net:/var/www/html/releases/win/ ; fi
 	if [ -d "releases/macos" ]; then rsync -avhe ssh releases/macos/*.tgz wolkenwelten.net:/var/www/html/releases/macos/ ; fi
-	if [ -d "releases/linux" ]; then rsync -avhe ssh releases/linux/*.xz wolkenwelten.net:/var/www/html/releases/linux/ ; fi
+	if [ -d "releases/linux-aarch64" ]; then rsync -avhe ssh releases/linux-aarch64/*.xz wolkenwelten.net:/var/www/html/releases/linux-aarch64/ ; fi
+	if [ -d "releases/linux-x86_64" ]; then rsync -avhe ssh releases/linux-x86_64/*.xz wolkenwelten.net:/var/www/html/releases/linux-x86_64/ ; fi
 	ssh wolkenwelten.net "cd /var/www/html/ && php index.php > index.html"
 
 .PHONY: website
