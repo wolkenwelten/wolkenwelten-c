@@ -1,12 +1,12 @@
 .text
 .global particlePosUpdate
+.type particlePosUpdatem, @function
 
 particlePosUpdate:
-  ldr x9,=particleCount
-  ldr w8,[x9]
-  cmn w8,#0
-  beq .particlePosUpdateEnd
-  lsr x8,x8,#2
+  ldr x10,=particleCount
+  ldr w9,[x10]
+  lsr x9,x9,#2
+  add w9,w9,#1
   ldr x10,=glParticles
   ldr x11,=particles
 .particlePosUpdateLoop:
@@ -31,7 +31,6 @@ particlePosUpdate:
   fadd v6.4s,v6.4s,v7.4s
   st1 {v6.4s},[x10],#16
 
-  subs w8,w8,#1
+  subs w9,w9,#1
   bne .particlePosUpdateLoop
-.particlePosUpdateEnd:
   ret

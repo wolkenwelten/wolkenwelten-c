@@ -1,6 +1,7 @@
 #include "fire.h"
 
 #include "../game/character.h"
+#include "../gfx/gfx.h"
 #include "../gfx/particle.h"
 #include "../gui/overlay.h"
 #include "../network/chat.h"
@@ -14,6 +15,9 @@ void fireNew(u16 x, u16 y, u16 z, i16 strength){
 }
 
 static void fireDraw(const fire *f){
+	if(abs(f->x-(int)player->pos.x) > renderDistance){return;}
+	if(abs(f->y-(int)player->pos.y) > renderDistance){return;}
+	if(abs(f->z-(int)player->pos.z) > renderDistance){return;}
 	const vec spos = vecNew(f->x,f->y,f->z);
 	const float size = (float)(f->strength * 0.01f);
 	if((rngValR()&0x7) != 0){return;}

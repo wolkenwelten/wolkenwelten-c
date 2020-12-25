@@ -17,10 +17,10 @@ int waterNew(u16 x, u16 y, u16 z, i16 amount){
 }
 
 static void waterDraw(const water *w){
-	const vec spos = vecNew(w->x,w->y,w->z);
 	if(abs(w->x-(int)player->pos.x) > renderDistance){return;}
 	if(abs(w->y-(int)player->pos.y) > renderDistance){return;}
 	if(abs(w->z-(int)player->pos.z) > renderDistance){return;}
+	const vec spos = vecNew(w->x,w->y,w->z);
 	const float size = (float)MIN(256.f,(w->amount * 0.1f));
 
 	if(w->bb == 0){

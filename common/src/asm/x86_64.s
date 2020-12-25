@@ -1,6 +1,7 @@
-.global particlePosUpdate
-
 .text
+.global particlePosUpdate
+.type particlePosUpdatem, @function
+
 particlePosUpdate:
   xor %rcx,%rcx
   movl particleCount(%rip), %ecx
