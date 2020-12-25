@@ -228,5 +228,6 @@ typedef struct {
 typedef struct {
 	u16 x,y,z;
 	i16 amount;
+	u8 b,bb;
 	beingList *bl;
 } water;

@@ -46,8 +46,10 @@ void particleInit(){
 void newParticleS(float x,float y,float z, u32 nrgba, float power, uint nttl){
 	if((particleCount >= PART_MAX)){
 		int i = rngValM(PART_MAX);
-		particles[i]   = particles[--particleCount];
-		glParticles[i] = glParticles[particleCount];
+		particles[i]    = particles[--particleCount];
+		glParticles[i]  = glParticles[particleCount];
+		particleRGBA[i] = particleRGBA[particleCount];
+		particleTTL[i]  = particleTTL[particleCount];
 	}
 	glParticles[particleCount]      = (glParticle){x,y,z,64.f};
 	particles[particleCount].vx     = ((rngValf()-0.5f)/64.f)*power;
@@ -64,8 +66,10 @@ void newParticleS(float x,float y,float z, u32 nrgba, float power, uint nttl){
 void newSparticleV(vec pos, vec v, float size, float vsize, u32 rgba, uint ttl){
 	if(sparticleCount >= SPART_MAX){
 		int i = rngValM(SPART_MAX);
-		sparticles[i]   = sparticles[--sparticleCount];
-		glSparticles[i] = glSparticles[sparticleCount];
+		sparticles[i]    = sparticles[--sparticleCount];
+		glSparticles[i]  = glSparticles[sparticleCount];
+		sparticleRGBA[i] = sparticleRGBA[sparticleCount];
+		sparticleTTL[i]  = sparticleTTL[sparticleCount];
 	}
 
 	glSparticles [sparticleCount] = (glParticle){pos.x,pos.y,pos.z,size};
@@ -80,6 +84,8 @@ void newParticleV(vec pos, vec v, float size, float vsize, u32 rgba,uint ttl){
 		int i = rngValM(PART_MAX);
 		particles[i]   = particles[--particleCount];
 		glParticles[i] = glParticles[particleCount];
+		particleRGBA[i] = particleRGBA[particleCount];
+		particleTTL[i]  = particleTTL[particleCount];
 	}
 	glParticles [particleCount] = (glParticle){pos.x,pos.y,pos.z,size};
 	particles   [particleCount] = (particle){v.x,v.y,v.z,vsize};
@@ -93,6 +99,8 @@ void newParticle(float x,float y,float z,float vx,float vy,float vz,float size,f
 		int i = rngValM(PART_MAX);
 		particles[i]   = particles[--particleCount];
 		glParticles[i] = glParticles[particleCount];
+		particleRGBA[i] = particleRGBA[particleCount];
+		particleTTL[i]  = particleTTL[particleCount];
 	}
 	glParticles  [particleCount] = (glParticle){ x, y, z, size};
 	particles    [particleCount] = (particle){vx,vy,vz,vsize};
@@ -143,8 +151,8 @@ void particleUpdate(){
 
 	for(int i=particleCount-1;i>=0;i--){
 		if(--particleTTL[i] <= 0){
-			particles   [i] = particles[--particleCount];
-			glParticles [i] = glParticles[particleCount];
+			particles   [i] = particles [--particleCount];
+			glParticles [i] = glParticles [particleCount];
 			particleRGBA[i] = particleRGBA[particleCount];
 			particleTTL [i] = particleTTL [particleCount];
 			continue;
@@ -161,7 +169,7 @@ void particleUpdate(){
 			sparticleTTL [i] = sparticleTTL [sparticleCount];
 			continue;
 		}else if(sparticleTTL[i] < 1024){
-			sparticleRGBA[i] = (sparticleRGBA[i] & 0x00FFFFFF) | ((sparticleTTL[i] << 22 & 0xFF000000) & 0xFF000000);
+			sparticleRGBA[i] = (sparticleRGBA[i] & 0x00FFFFFF) | (sparticleTTL[i] << 22 & 0xFF000000);
 		}
 	}
 }
