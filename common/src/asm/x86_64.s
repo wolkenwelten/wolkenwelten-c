@@ -1,6 +1,5 @@
 .text
 .global particlePosUpdate
-.type particlePosUpdatem, @function
 
 particlePosUpdate:
   xor %rcx,%rcx

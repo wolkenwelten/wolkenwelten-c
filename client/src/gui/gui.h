@@ -1,6 +1,6 @@
 #pragma once
 #include "../../../common/src/common.h"
-#include "../../../common/nujel/nujel.h"
+#include "../../../common/src/nujel/nujel.h"
 #include "widget.h"
 
 extern widget *widgetGameScreen;

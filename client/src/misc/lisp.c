@@ -2,7 +2,7 @@
 
 #include "../gui/gui.h"
 #include "../../../common/src/network/messages.h"
-#include "../../../common/nujel/nujel.h"
+#include "../../../common/src/nujel/nujel.h"
 
 #include <stdio.h>
 #include <string.h>

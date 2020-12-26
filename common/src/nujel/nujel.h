@@ -26,13 +26,12 @@ struct lVal {
 		void         *vNil;
 		bool          vBool;
 		lVal         *vList;
-		lVal         *vLambda;
 		int           vInt;
 		float         vFloat;
 		lString      *vString;
 		lCString     *vCString;
-		lClosure     *vClosure;
 		lSymbol       vSymbol;
+		lClosure     *vLambda;
 		lVal       *(*vNativeFunc)(lClosure *, lVal *);
 	};
 };
@@ -41,6 +40,7 @@ struct lVal {
 struct lClosure {
 	lClosure *parent;
 	lVal *data;
+	lVal *text;
 	unsigned int flags;
 };
 

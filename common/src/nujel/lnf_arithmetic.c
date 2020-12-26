@@ -114,11 +114,11 @@ static lVal *lnfMulF(lClosure *c, lVal *v){
 		lVal *rv = lEval(c,r);
 		if(rv->type == ltInf)  {return rv;}
 		if(rv->type == ltInt){
-			t->vFloat += (float)rv->vInt;
+			t->vFloat *= (float)rv->vInt;
 			continue;
 		}
 		if(rv->type != ltFloat){continue;}
-		t->vFloat += rv->vFloat;
+		t->vFloat *= rv->vFloat;
 	}
 	return t;
 }
@@ -194,7 +194,7 @@ static lVal *lnfDivI(lClosure *c, lVal *v){
 			fr->vFloat = (float)t->vInt / fr->vFloat;
 			return fr;
 		}
-		if(rv->type != ltInt)  {continue;}
+		if(rv->type != ltInt){continue;}
 		if(rv->vInt == 0){
 			t->type = ltInf;
 			return t;

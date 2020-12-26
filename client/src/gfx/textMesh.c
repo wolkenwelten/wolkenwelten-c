@@ -4,7 +4,7 @@
 #include "../gfx/shader.h"
 #include "../tmp/assets.h"
 
-#include "../../../common/nujel/nujel.h"
+#include "../../../common/src/nujel/nujel.h"
 #include "../../../common/src/mods/mods.h"
 
 #include <stdarg.h>

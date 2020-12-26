@@ -4,7 +4,7 @@ COPT   :=-O2 -ffast-math
 CSTD   := -std=c11
 CWARN  := -Wextra -Werror -Wall -Wcast-align -pedantic
 
-SRCS   := $(shell find ./ -type f -name '*.c')
+SRCS   := $(shell find ./ -type f -name '*.c') $(shell find ../src/nujel/ -type f -name '*.c')
 OBJS   := ${SRCS:.c=.o}
 
 .PHONY: all

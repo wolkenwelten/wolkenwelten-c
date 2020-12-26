@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "common.h"
-#include "nujel.h"
+#include "../src/nujel/common.h"
+#include "../src/nujel/nujel.h"
 
 void *loadFile(const char *filename,size_t *len){
 	FILE *fp;
@@ -92,6 +92,8 @@ lVal *lnfPrint(lClosure *c, lVal *v){
 int main(int argc, char *argv[]){
 	int eval = 0;
 	int repl = 1;
+	setvbuf(stdout, NULL, _IONBF, 0);
+	setvbuf(stderr, NULL, _IONBF, 0);
 	lInit();
 	lClosure *c = lClosureNew(NULL);
 	lClosureAddNF(c,"print",&lnfPrint);

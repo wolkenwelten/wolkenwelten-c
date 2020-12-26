@@ -487,9 +487,15 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			}
 			break;
 		case ltLambda: {
-			t = snprintf(buf,bufEnd-cur,"(λ ");
+			t = snprintf(cur,bufEnd-cur,"(λ (cl ");
 			if(t > 0){cur += t;}
-			for(lVal *n = v->vList;n != NULL;n = n->next){
+			for(lVal *n = v->vLambda->data;n != NULL;n = n->next){
+				cur = lSPrintVal(n,cur,bufEnd);
+				if(n->next != NULL){*cur++ = ' ';}
+			}
+			t = snprintf(cur,bufEnd-cur," ) ");
+			if(t > 0){cur += t;}
+			for(lVal *n = v->vLambda->text;n != NULL;n = n->next){
 				cur = lSPrintVal(n,cur,bufEnd);
 				if(n->next != NULL){*cur++ = ' ';}
 			}
@@ -515,7 +521,7 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			t = snprintf(buf,len,"%i",v->vInt);
 			break;
 		case ltFloat:
-			t = snprintf(buf,len,"%f",v->vFloat);
+			t = snprintf(buf,len,"%.5f",v->vFloat);
 			for(;buf[t-1] == '0';t--){buf[t]=0;}
 			if(buf[t-1] == '.'){buf[t++] = '0';}
 			break;
@@ -594,10 +600,20 @@ static lVal *lnfCl(lClosure *c, lVal *v){
 }
 
 static lVal *lnfLambda(lClosure *c, lVal *v){
-	(void)c;
-	lVal *ret = lValList(v);
-	if(ret == NULL){return NULL;}
+	lClosure *cl = lClosureNew(c);
+	if(cl == NULL){return NULL;}
+	cl->text  = v->next;
+	if(cl->text == NULL){return NULL;}
+	lVal *ret = lValAlloc();
 	ret->type = ltLambda;
+	ret->vLambda = cl;
+
+	for(lVal *n = v->vList;n != NULL; n = n->next){
+		if(n->type != ltSymbol){continue;}
+		lVal *t = lDefineClosureSym(cl,n->vSymbol);
+		(void)t;
+	}
+
 	return ret;
 }
 
@@ -636,23 +652,25 @@ static lVal *lnfLet(lClosure *c, lVal *v){
 	return ret;
 }
 
-static lVal *lLambda(lClosure *c,lVal *v, lVal *lambda){
-	if(lambda == NULL)          {return lValNil();}
-	if((lambda->type != ltList)){return lValNil();}
-	lClosure *nc = lClosureNew(c);
+static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
+	if(lambda == NULL){return lValNil();}
 	lVal *vn = v;
-	for(lVal *n = lambda->vList; n != NULL; n = n->next){
-		if(n->type != ltSymbol){continue;}
-		lVal *lv = lDefineClosureSym(nc,n->vSymbol);
+	lClosure *tmpc = lClosureNew(lambda);
+	for(lVal *n = lambda->data; n != NULL; n = n->next){
+		if(n->type != ltList){continue;}
+		lVal *nn = n->vList;
+		if(nn->type != ltSymbol){continue;}
+		lVal *lv = lDefineClosureSym(tmpc,nn->vSymbol);
 		lVal *t = lEval(c,vn);
 		if(t != NULL){*lv = *t;}
 		if(vn != NULL){vn = vn->next;}
 	}
+
 	lVal *ret = NULL;
-	for(lVal *n = lambda->next;n != NULL;n = n->next){
-		ret = lEval(nc,n);
+	for(lVal *n = lambda->text;n != NULL;n = n->next){
+		ret = lEval(tmpc,n);
 	}
-	lClosureFree(nc);
+	lClosureFree(tmpc);
 	if(ret == NULL){ret = lValNil();}
 	return ret;
 }
@@ -1024,6 +1042,10 @@ static lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"λ") == 0)      {return lValNativeFunc(lnfLambda);}
 	if(strcmp(s.c,"lambda") == 0) {return lValNativeFunc(lnfLambda);}
 
+	if(strcmp(s.c,"add") == 0)    {return lValNativeFunc(lnfAdd);}
+	if(strcmp(s.c,"div") == 0)    {return lValNativeFunc(lnfDiv);}
+	if(strcmp(s.c,"sub") == 0)    {return lValNativeFunc(lnfSub);}
+	if(strcmp(s.c,"mul") == 0)    {return lValNativeFunc(lnfMul);}
 	if(strcmp(s.c,"mod") == 0)    {return lValNativeFunc(lnfMod);}
 	if(strcmp(s.c,"modulo") == 0) {return lValNativeFunc(lnfMod);}
 
@@ -1104,7 +1126,7 @@ lVal *lEval(lClosure *c, lVal *v){
 		if(ret->type == ltNativeFunc){
 			ret = ret->vNativeFunc(c,v->vList->next);
 		}else if(ret->type == ltLambda){
-			ret = lLambda(c,v->vList->next,ret->vList);
+			ret = lLambda(c,v->vList->next,ret->vLambda);
 		}
 	}
 	return ret;
@@ -1123,13 +1145,17 @@ static void lValGCMark(lVal *sv){
 	for(lVal *v = sv;v != NULL;v = v->next){
 		v->flags |= lfMarked;
 		if(v->type == ltList)   {lValGCMark(v->vList);}
-		if(v->type == ltLambda) {lValGCMark(v->vList);}
+		if(v->type == ltLambda) {
+			lValGCMark(v->vLambda->data);
+			lValGCMark(v->vLambda->text);
+		}
 	}
 }
 void lClosureGC(){
 	for(uint i=0;i<lValMax;i++){lValBuf[i].flags &= ~lfMarked;}
 	//for(;c != NULL;c = c->parent){lValGCMark(c->data);}
 	for(uint i=0;i<lClosureMax;i++){lValGCMark(lClosureList[i].data);}
+	for(uint i=0;i<lClosureMax;i++){lValGCMark(lClosureList[i].text);}
 	for(uint i=0;i<lValMax;i++){
 		if(lValBuf[i].type == ltNoAlloc){continue;}
 		if(lValBuf[i].flags & lfMarked) {continue;}
