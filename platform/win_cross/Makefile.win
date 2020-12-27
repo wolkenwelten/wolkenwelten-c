@@ -7,7 +7,7 @@ WIN_SERVER_CFLAGS    :=
 WINLIBS              := -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -lgdi32 -lopengl32 -lshlwapi -lsetupapi -lws2_32
 WIN_STATICLIBS       := -static-libgcc -static -lmingw32 -lm -lstdc++ -lpthread -lopengl32 -lSDL2main -lssp -lSDL2 -lSDL2_mixer -lvorbis -logg -lvorbisfile $(WINLIBS)
 
-WIN_RELDIR           := releases/win/wolkenwelten-$(VERSION_NAME)
+WIN_RELDIR           := releases/win/wolkenwelten-win-$(VERSION_NAME)
 
 .PHONY: release.win
 release: release.win

@@ -12,7 +12,7 @@ WINLIBS          := -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32
 STATICLIBS       := -static-libgcc -static -lmingw32 -lm -lstdc++ -lpthread -lopengl32 -lSDL2main -lSDL2 -lSDL2_mixer -lvorbis -logg -lvorbisfile $(WINLIBS)
 CLIENT_LIBS      := $(WINLIBS) $(shell pkg-config --cflags sdl2 sdl2_mixer) -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lvorbis
 
-WIN_RELDIR       := releases/win/wolkenwelten-$(VERSION_NAME)
+WIN_RELDIR       := releases/win/wolkenwelten-win-$(VERSION_NAME)
 
 .PHONY: all
 all: wolkenwelten.exe wolkenwelten-server.exe
