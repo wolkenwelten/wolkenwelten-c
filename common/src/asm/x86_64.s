@@ -8,10 +8,10 @@ savedFloats: .zero 512
 
 particlePosUpdate:
   fxsave savedFloats(%rip)
-  xor %rcx,%rcx
+  xor %ecx,%ecx
   movl particleCount(%rip), %ecx
-  shrq $2,%rcx
-  inc %rcx
+  shrl $2,%ecx
+  jz .particleUpdateEnd
   leaq glParticles(%rip), %rdx
   leaq   particles(%rip), %rax
 
@@ -37,7 +37,7 @@ particlePosUpdate:
 
   add $64,%rdx
   add $64,%rax
-  dec %rcx
+  dec %ecx
   jnz .particleUpdateLoop
 .particleUpdateEnd:
   ret
@@ -45,10 +45,10 @@ particlePosUpdate:
 
 
 sparticlePosUpdate:
-  xor %rcx,%rcx
+  xor %ecx,%ecx
   movl sparticleCount(%rip), %ecx
-  shrq $2,%rcx
-  inc %rcx
+  shrl $2,%ecx
+  jz .sparticleUpdateEnd
 
   leaq sparticleVV(%rip), %rdx
   movaps   (%rdx),%xmm4
@@ -90,7 +90,7 @@ sparticlePosUpdate:
 
   add $64,%rdx
   add $64,%rax
-  dec %rcx
+  dec %ecx
   jnz .sparticleUpdateLoop
 .sparticleUpdateEnd:
   fxrstor savedFloats(%rip)
