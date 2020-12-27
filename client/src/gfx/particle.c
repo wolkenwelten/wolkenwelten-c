@@ -21,8 +21,8 @@ typedef struct particle {
 	float vx,vy,vz,vsize;
 } particle;
 
-#define  PART_MAX (1<<16)
-#define SPART_MAX (1<<14)
+#define  PART_MAX (1<<17)
+#define SPART_MAX (1<<15)
 
 __attribute__((aligned(32))) glParticle glParticles   [PART_MAX];
 __attribute__((aligned(32))) particle     particles   [PART_MAX];
@@ -82,8 +82,8 @@ void newSparticleV(vec pos, vec v, float size, float vsize, u32 rgba, uint ttl){
 void newParticleV(vec pos, vec v, float size, float vsize, u32 rgba,uint ttl){
 	if(particleCount >= PART_MAX){
 		int i = rngValM(PART_MAX);
-		particles[i]   = particles[--particleCount];
-		glParticles[i] = glParticles[particleCount];
+		particles[i]    = particles[--particleCount];
+		glParticles[i]  = glParticles[particleCount];
 		particleRGBA[i] = particleRGBA[particleCount];
 		particleTTL[i]  = particleTTL[particleCount];
 	}
@@ -120,30 +120,28 @@ void particlePosUpdate(){
 }
 #endif
 
-void sparticlePosUpdate(){
-	const float spartv[8][4] = {
-		{ 0.000001f,0.00004f, 0.000001f, 0.f},
-		{ 0.000003f,0.00004f, 0.000003f, 0.f},
-		{ 0.000002f,0.00004f,-0.000002f, 0.f},
-		{ 0.000004f,0.00004f,-0.000004f, 0.f},
-		{-0.000001f,0.00004f, 0.000001f, 0.f},
-		{-0.000003f,0.00004f, 0.000003f, 0.f},
-		{-0.000002f,0.00004f,-0.000002f, 0.f},
-		{-0.000004f,0.00004f,-0.000004f, 0.f},
-	};
+__attribute__((aligned(32))) const float sparticleVV[4][4] = {
+	{  0.000001f,0.00004f, 0.000004f, 0.f},
+	{ -0.000004f,0.00004f, 0.000001f, 0.f},
+	{ -0.000001f,0.00004f,-0.000004f, 0.f},
+	{  0.000004f,0.00004f,-0.000001f, 0.f},
+};
 
+#ifndef WW_ASM_SPARTICLE_POS_UPDATE
+void sparticlePosUpdate(){
 	for(uint i=0;i<sparticleCount;i++){
 		glSparticles[i].x    += sparticles[i].vx;
 		glSparticles[i].y    += sparticles[i].vy;
 		glSparticles[i].z    += sparticles[i].vz;
 		glSparticles[i].size += sparticles[i].vsize;
 
-		sparticles[i].vx     += spartv[i&0x7][0];
-		sparticles[i].vy     += spartv[i&0x7][1];
-		sparticles[i].vz     += spartv[i&0x7][2];
-		sparticles[i].vsize  += spartv[i&0x7][3];
+		sparticles[i].vx     += sparticleVV[i&0x3][0];
+		sparticles[i].vy     += sparticleVV[i&0x3][1];
+		sparticles[i].vz     += sparticleVV[i&0x3][2];
+		sparticles[i].vsize  += sparticleVV[i&0x3][3];
 	}
 }
+#endif
 
 void particleUpdate(){
 	particlePosUpdate();

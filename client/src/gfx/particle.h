@@ -3,6 +3,7 @@
 
 extern uint particleCount;
 extern uint sparticleCount;
+extern const float sparticleVV[4][4];
 
 void  particlePosUpdate();
 void sparticlePosUpdate();
