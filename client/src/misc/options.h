@@ -10,6 +10,7 @@ extern int   optionWorldSeed;
 extern bool  optionDebugInfo;
 extern bool  optionRuntimeReloading;
 extern bool  optionMute;
+extern bool  optionThirdPerson;
 extern int   optionAutomatedTest;
 
 extern int   optionWindowOrientation;

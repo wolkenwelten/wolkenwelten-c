@@ -26,6 +26,7 @@ bool  optionFullscreen        = false;
 bool  optionRuntimeReloading  = false;
 bool  optionNoSave            = false;
 bool  optionMute              = false;
+bool  optionThirdPerson       = false;
 int   optionWindowOrientation = 0;
 int   optionWindowWidth       = 0;
 int   optionWindowHeight      = 0;
@@ -118,6 +119,9 @@ void parseOptions(int argc,char *argv[]){
 		if(checkString(argv[i]+1,"version")){
 			printVersion();
 			exit(0);
+		}
+		if(checkString(argv[i]+1,"thirdPerson")){
+			optionThirdPerson = true;
 		}
 	}
 }

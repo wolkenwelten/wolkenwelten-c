@@ -2,6 +2,7 @@
 #include "nujel.h"
 
 #include <math.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 static lVal *lnfAddF(lClosure *c, lVal *v){
@@ -276,5 +277,60 @@ lVal *lnfMod(lClosure *c, lVal *v){
 		return lnfModI(c,v);
 	case ltFloat:
 		return lnfModF(c,v);
+	}
+}
+
+lVal *lnfInt(lClosure *c, lVal *v){
+	if(v == NULL){return lValInt(0);}
+	lVal *t = lEval(c,v);
+	if(t == NULL){return lValInt(0);}
+	switch(t->type){
+	default: return lValInt(0);
+	case ltInt:
+		return t;
+	case ltFloat:
+		return lValInt((int)t->vFloat);
+	case ltCString:
+		if(t->vCString == NULL){return lValInt(0);}
+		return lValInt(atoi(t->vCString->data));
+	case ltString:
+		if(t->vString == NULL){return lValInt(0);}
+		return lValInt(atoi(t->vString->data));
+	}
+}
+
+lVal *lnfFloat(lClosure *c, lVal *v){
+	if(v == NULL){return lValFloat(0);}
+	lVal *t = lEval(c,v);
+	if(t == NULL){return lValFloat(0);}
+	switch(t->type){
+	default: return lValFloat(0);
+	case ltFloat:
+		return t;
+	case ltInt:
+		return lValFloat(t->vInt);
+	case ltCString:
+		if(t->vCString == NULL){return lValFloat(0);}
+		return lValFloat(atof(t->vCString->data));
+	case ltString:
+		if(t->vString == NULL){return lValFloat(0);}
+		return lValFloat(atof(t->vString->data));
+	}
+}
+
+lVal *lnfAbs(lClosure *c, lVal *v){
+	if(v == NULL){return lValInt(0);}
+	lVal *t = lEval(c,v);
+	if(t == NULL){return lValInt(0);}
+	if((t->type != ltInt) && (t->type != ltFloat)){
+		t = lnfFloat(c,t);
+	}
+	switch(t->type){
+	default:
+		return lValInt(0);
+	case ltFloat:
+		return lValFloat(fabsf(t->vFloat));
+	case ltInt:
+		return lValInt(abs(t->vInt));
 	}
 }

@@ -1,6 +1,7 @@
 #include "nujel.h"
 #include "common.h"
 #include "lnf_arithmetic.h"
+#include "lnf_predicates.h"
 
 #include <ctype.h>
 #include <math.h>
@@ -8,11 +9,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-lVal      lValBuf[1<<16];
+lVal      lValBuf[1<<18];
 uint      lValMax = 0;
 lVal     *lValFFree = NULL;
 
-lClosure  lClosureList[1<<8];
+lClosure  lClosureList[1<<10];
 uint      lClosureMax   = 0;
 lClosure *lClosureFFree = NULL;
 
@@ -221,6 +222,13 @@ lVal *lValInt(int v){
 	if(ret == NULL){return ret;}
 	ret->type = ltInt;
 	ret->vInt = v;
+	return ret;
+}
+lVal *lValFloat(float v){
+	lVal *ret   = lValAlloc();
+	if(ret == NULL){return ret;}
+	ret->type   = ltFloat;
+	ret->vFloat = v;
 	return ret;
 }
 lVal *lValBool(bool v){
@@ -647,13 +655,15 @@ static lVal *lnfLet(lClosure *c, lVal *v){
 	for(lVal *n = v->next;n != NULL;n = n->next){
 		ret = lEval(nc,n);
 	}
-	lClosureFree(nc);
 	if(ret == NULL){ret = lValNil();}
 	return ret;
 }
 
 static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
-	if(lambda == NULL){return lValNil();}
+	if(lambda == NULL){
+		fprintf(stderr,"lLambda: NULL\n");
+		return lValNil();
+	}
 	lVal *vn = v;
 	lClosure *tmpc = lClosureNew(lambda);
 	for(lVal *n = lambda->data; n != NULL; n = n->next){
@@ -689,52 +699,6 @@ lVal *lClosureAddNF(lClosure *c, const char *sym, lVal *(*func)(lClosure *,lVal 
 	lVal *t = lDefineClosureSym(c,vsym->vSymbol);
 	*t = *nf;
 	return t;
-}
-
-static lVal *lnfLess(lClosure *c, lVal *v){
-	lVal *a = lEval(c,v);
-	if((a == NULL) || (a->type != ltInt)){return lValBool(false);}
-	lVal *b = lEval(c,v->next);
-	if((b == NULL) || (b->type != ltInt)){return lValBool(false);}
-	return lValBool(a->vInt < b->vInt);
-}
-
-static lVal *lnfLessEqual(lClosure *c, lVal *v){
-	lVal *a = lEval(c,v);
-	if((a == NULL) || (a->type != ltInt)){return lValBool(false);}
-	lVal *b = lEval(c,v->next);
-	if((b == NULL) || (b->type != ltInt)){return lValBool(false);}
-	return lValBool(a->vInt <= b->vInt);
-}
-
-static lVal *lnfEqual(lClosure *c, lVal *v){
-	lVal *a = lEval(c,v);
-	if((a == NULL) || (a->type != ltInt)){return lValBool(false);}
-	lVal *b = lEval(c,v->next);
-	if((b == NULL) || (b->type != ltInt)){return lValBool(false);}
-	return lValBool(a->vInt == b->vInt);
-}
-
-static lVal *lnfGreater(lClosure *c, lVal *v){
-	lVal *a = lEval(c,v);
-	if((a == NULL) || (a->type != ltInt)){return lValBool(false);}
-	lVal *b = lEval(c,v->next);
-	if((b == NULL) || (b->type != ltInt)){return lValBool(false);}
-	return lValBool(a->vInt > b->vInt);
-}
-
-static lVal *lnfGreaterEqual(lClosure *c, lVal *v){
-	lVal *a = lEval(c,v);
-	if((a == NULL) || (a->type != ltInt)){return lValBool(false);}
-	lVal *b = lEval(c,v->next);
-	if((b == NULL) || (b->type != ltInt)){return lValBool(false);}
-	return lValBool(a->vInt >= b->vInt);
-}
-
-static lVal *lnfZero(lClosure *c, lVal *v){
-	lVal *a = lEval(c,v);
-	if((a == NULL) || (a->type != ltInt)){return lValBool(false);}
-	return lValBool(a->vInt == 0);
 }
 
 static lVal *lnfNot(lClosure *c, lVal *v){
@@ -789,6 +753,26 @@ static lVal *lnfIntPred(lClosure *c, lVal *v){
 	lVal *t = lEval(c,v);
 	if(t == NULL){return lValBool(false);}
 	return lValBool(t->type == ltInt);
+}
+
+static lVal *lnfFloatPred(lClosure *c, lVal *v){
+	if(v == NULL){return lValBool(false);}
+	lVal *t = lEval(c,v);
+	if(t == NULL){return lValBool(false);}
+	return lValBool(t->type == ltFloat);
+}
+
+static lVal *lnfNumberPred(lClosure *c, lVal *v){
+	if(v == NULL){return lValBool(false);}
+	lVal *t = lEval(c,v);
+	if(t == NULL){return lValBool(false);}
+	switch(t->type){
+	case ltInt:
+	case ltFloat:
+		return lValBool(true);
+	default:
+		return lValBool(false);
+	}
 }
 
 static lVal *lnfStringPred(lClosure *c, lVal *v){
@@ -867,22 +851,6 @@ static lVal *lnfLen(lClosure *c, lVal *v){
 	case ltString:
 		if(t->vString == NULL){return lValInt(0);}
 		return lValInt(t->vString->len);
-	}
-}
-
-static lVal *lnfInt(lClosure *c, lVal *v){
-	if(v == NULL){return lValInt(0);}
-	lVal *t = lEval(c,v);
-	if(t == NULL){return lValInt(0);}
-	switch(t->type){
-	default: return lValInt(0);
-	case ltCString:
-		if(t->vCString == NULL){return lValInt(0);}
-		return lValInt(atoi(t->vCString->data));
-	case ltString:
-		if(t->vString == NULL){return lValInt(0);}
-		return lValInt(atoi(t->vString->data));
-
 	}
 }
 
@@ -1048,6 +1016,9 @@ static lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"mul") == 0)    {return lValNativeFunc(lnfMul);}
 	if(strcmp(s.c,"mod") == 0)    {return lValNativeFunc(lnfMod);}
 	if(strcmp(s.c,"modulo") == 0) {return lValNativeFunc(lnfMod);}
+	if(strcmp(s.c,"int") == 0)    {return lValNativeFunc(lnfInt);}
+	if(strcmp(s.c,"float") == 0)  {return lValNativeFunc(lnfFloat);}
+	if(strcmp(s.c,"abs") == 0)    {return lValNativeFunc(lnfAbs);}
 
 	if(strcmp(s.c,"ansirs") == 0) {return lValNativeFunc(lnfAnsiRS);}
 	if(strcmp(s.c,"ansifg") == 0) {return lValNativeFunc(lnfAnsiFG);}
@@ -1056,8 +1027,9 @@ static lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"len") == 0)    {return lValNativeFunc(lnfLen);}
 	if(strcmp(s.c,"substr") == 0) {return lValNativeFunc(lnfSubstr);}
 
-	if(strcmp(s.c,"int") == 0)    {return lValNativeFunc(lnfInt);}
 	if(strcmp(s.c,"int?") == 0)   {return lValNativeFunc(lnfIntPred);}
+	if(strcmp(s.c,"float?") == 0)   {return lValNativeFunc(lnfFloatPred);}
+	if(strcmp(s.c,"number?") == 0)   {return lValNativeFunc(lnfNumberPred);}
 	if(strcmp(s.c,"empty?") == 0) {return lValNativeFunc(lnfEmptyPred);}
 	if(strcmp(s.c,"neg?") == 0)   {return lValNativeFunc(lnfNegPred);}
 	if(strcmp(s.c,"pos?") == 0)   {return lValNativeFunc(lnfPosPred);}
@@ -1161,4 +1133,12 @@ void lClosureGC(){
 		if(lValBuf[i].flags & lfMarked) {continue;}
 		lValFree(&lValBuf[i]);
 	}
+}
+
+lType lTypecast(lVal *a, lVal *b){
+	if((a->type == ltFloat) || (b->type == ltFloat)){return ltFloat;}
+	if((a->type == ltInt)   || (b->type == ltInt)  ){return ltInt;}
+	if((a->type == ltBool)  || (b->type == ltBool) ){return ltBool;}
+	if(a->type == b->type){ return a->type;}
+	return ltNil;
 }

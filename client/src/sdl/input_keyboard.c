@@ -138,20 +138,6 @@ void keyboardEventHandler(const SDL_Event *e){
 		case SDL_SCANCODE_L:
 			keysPressed[15] = 0;
 			break;
-		#ifndef __EMSCRIPTEN__
-		case SDL_SCANCODE_F5:
-			textureReload();
-			break;
-
-		case SDL_SCANCODE_F6:
-			worstFrame = 0;
-			break;
-
-		case SDL_SCANCODE_F11:
-			setFullscreen(!optionFullscreen);
-			break;
-		#endif
-
 		default:
 			break;
 		}
@@ -232,12 +218,23 @@ void keyboardEventHandler(const SDL_Event *e){
 				}
 			}
 			break;
-		case SDL_SCANCODE_F2:
-			showInventory();
+		case SDL_SCANCODE_F1:
+			optionThirdPerson = false;
 			break;
 		case SDL_SCANCODE_F3:
-			showCrafting();
+			optionThirdPerson = true;
 			break;
+		case SDL_SCANCODE_F6:
+			worstFrame = 0;
+			break;
+		case SDL_SCANCODE_F7:
+			textureReload();
+			break;
+		#ifndef __EMSCRIPTEN__
+		case SDL_SCANCODE_F11:
+			setFullscreen(!optionFullscreen);
+			break;
+		#endif
 		default:
 			break;
 		}

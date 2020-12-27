@@ -1,5 +1,6 @@
 #include "../gfx/gfx.h"
 
+#include "../main.h"
 #include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
@@ -18,7 +19,7 @@
 #include "../gfx/texture.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
-#include "../main.h"
+#include "../misc/options.h"
 #include "../sdl/sdl.h"
 #include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
@@ -152,7 +153,14 @@ void calcView(const character *cam){
 	camShake = calcShake(cam);
 	const vec shake = vecAdd(cam->rot,camShake);
 	matMulRotXY(matView,shake.yaw,shake.pitch);
-	matMulTrans(matView,-cam->pos.x,-(cam->pos.y+0.5+cam->yoff),-cam->pos.z);
+	if(optionThirdPerson){
+		vec cpos = vecAdd(cam->pos,vecNew(0,0.5f,0));
+		cpos = vecSub(cpos,vecDegToVec(shake));
+		cpos = vecAdd(cpos,vecMulS(vecDegToVec(vecAdd(vecNew(-90.f,0,0),shake)),1.f-player->aimFade));
+		matMulTrans(matView,-cpos.x,-cpos.y,-cpos.z);
+	}else{
+		matMulTrans(matView,-cam->pos.x,-(cam->pos.y+0.5+cam->yoff),-cam->pos.z);
+	}
 }
 
 void renderWorld(const character *cam){

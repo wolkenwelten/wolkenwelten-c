@@ -22,6 +22,7 @@
 #include "../gfx/textMesh.h"
 #include "../gfx/sky.h"
 #include "../gui/menu.h"
+#include "../misc/options.h"
 #include "../menu/inventory.h"
 #include "../menu/mainmenu.h"
 #include "../gui/overlay.h"
@@ -733,8 +734,10 @@ void drawHud(){
 }
 
 void renderUI(){
-	drawActiveItem();
-	drawActiveGlider();
+	if(!optionThirdPerson){
+		drawActiveItem();
+		drawActiveGlider();
+	}
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);

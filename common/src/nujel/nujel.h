@@ -77,6 +77,7 @@ lVal     *lResolveClosureSym(lClosure *c, const lSymbol s);
 lVal     *lDefineClosureSym (lClosure *c, const lSymbol s);
 lVal     *lResolveSym       (lClosure *c, const lSymbol s);
 lVal     *lEval             (lClosure *c, lVal *v);
+lType     lTypecast         (lVal *a, lVal *b);
 
 lVal     *lValNil       ();
 lVal     *lValList      (lVal *v);
@@ -84,6 +85,7 @@ lVal     *lValListS     (const char *s, lVal *v);
 lVal     *lValBool      (bool v);
 lVal     *lValInf       ();
 lVal     *lValInt       (int v);
+lVal     *lValFloat     (float v);
 lVal     *lValSym       (const char *s);
 lVal     *lValString    (const char *s);
 lVal     *lnfCat        (lClosure *c, lVal *v);
