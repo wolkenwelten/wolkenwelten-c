@@ -72,6 +72,7 @@ void parseOptions(int argc,const char *argv[]){
 	for(int i=0;i<argc;i++){
 		if(argv[i][0] != '-'){continue;}
 
+
 		if((l = checkString(argv[i]+1,"version"))){
 			printVersion();
 			exit(0);

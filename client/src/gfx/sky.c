@@ -44,10 +44,7 @@ void initSky(){
 }
 
 static void drawSkyColor(){
-	const float t = .5f + (gtimeGetTimeOfDay() / (float)(1<<20));
-	const float tv = t*(PI*2);
-	skyBrightness = MIN(1.f,MAX(0.3f,cosf(tv) * 1.5f));
-	const float v = skyBrightness;
+	const float v = skyBrightness = gtimeGetBrightness(gtimeGetTimeOfDay());
 	glClearColor( 0.33f*v, 0.64f*v, 0.99f*v, 1.f );
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }

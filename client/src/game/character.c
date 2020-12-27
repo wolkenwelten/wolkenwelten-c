@@ -193,7 +193,7 @@ void characterUpdateWindVolume(const character *c){
 	}
 }
 
-int characterUpdateJumping(const character *c){
+int characterUpdateJumping(character *c){
 	if((c->gvel.y > 0) && !(c->flags & CHAR_FALLING) && ((c->hook == NULL) || (!hookGetHooked(c->hook)))){
 		if((rngValA(15))==0){
 			sfxPlay(sfxYahoo,1.f);
@@ -204,6 +204,7 @@ int characterUpdateJumping(const character *c){
 				sfxPlay(sfxHoho,1.f);
 			}
 		}
+		c->inaccuracy += 24.f;
 		return 1;
 	}
 	return 0;

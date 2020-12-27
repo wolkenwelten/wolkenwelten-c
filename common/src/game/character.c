@@ -301,6 +301,7 @@ void characterMove(character *c, const vec mov){
 
 		c->gvel.x += cos((yaw)*PI/180)*mov.x*s;
 		c->gvel.z += sin((yaw)*PI/180)*mov.x*s;
+		c->inaccuracy += s*78.f*vecMag(mov);
 	}
 }
 

@@ -70,6 +70,7 @@ void initSDL(){
 
 	snprintf(windowTitle,sizeof(windowTitle)-1,"%s - WolkenWelten",playerName);
 
+	SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
 	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS,"0");
 	unsigned int initFlags = SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS | SDL_INIT_AUDIO;
 	if(SDL_Init( initFlags) < 0) {

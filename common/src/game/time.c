@@ -1,6 +1,7 @@
 #include "time.h"
 
 #include <ctype.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -70,4 +71,10 @@ const char *gtimeGetTimeOfDayHRS(uint timeCur){
 
 uint gtimeGetTimeCat(){
 	return (gameTime >> 18) & 0x3;
+}
+
+float gtimeGetBrightness(uint time){
+	const float t = .5f + (time / (float)(1<<20));
+	const float tv = t*(PI*2);
+	return MINMAX(0.3f,1.0f,cosf(tv) * 1.5f);
 }

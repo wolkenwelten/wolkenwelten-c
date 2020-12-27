@@ -14,5 +14,6 @@ uint        gtimeGetTime        ();
 uint        gtimeGetTimeOfDay   ();
 uint        gtimeGetTimeCat     ();
 const char *gtimeGetTimeOfDayHRS(uint timeCur);
+float       gtimeGetBrightness  (uint time);
 
 void gtimeUpdate();
