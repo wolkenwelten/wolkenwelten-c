@@ -34,8 +34,9 @@ $(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/objs.c client/src/tmp/objs.h
 $(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/sfx.c client/src/tmp/sfx.h
 $(WIN_RELDIR)/wolkenwelten.exe: common/src/tmp/cto.c common/src/tmp/cto.h
 $(WIN_RELDIR)/wolkenwelten.exe: releases/win/wolkenwelten.res
+$(WIN_RELDIR)/wolkenwelten.exe: $(ASM_OBJS)
 $(WIN_RELDIR)/wolkenwelten.exe: | $(WIN_RELDIR)
-	x86_64-w64-mingw32-gcc $(CLIENT_SRCS) $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WIN_STATICLIBS) releases/win/wolkenwelten.res -o $@
+	x86_64-w64-mingw32-gcc $(CLIENT_SRCS) $(ASM_OBJS) $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WIN_STATICLIBS) releases/win/wolkenwelten.res -o $@
 	x86_64-w64-mingw32-strip -gxX $@
 
 $(WIN_RELDIR)/wolkenwelten-server.exe: CFLAGS    += $(WIN_SERVER_CFLAGS)
