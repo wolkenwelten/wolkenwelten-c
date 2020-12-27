@@ -20,25 +20,35 @@ static void fireDraw(const fire *f){
 	if(abs(f->z-(int)player->pos.z) > renderDistance){return;}
 	const vec spos = vecNew(f->x,f->y,f->z);
 	const float size = (float)(f->strength * 0.01f);
-	if((rngValR()&0x7) != 0){return;}
 	newParticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.0001f)), size, size*0.5f,0xFF60C8FF, 96);
 	if(f->strength <  64){return;}
 	newParticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.0001f)), size*0.7f, size*0.65f,0xFF5098FF, 128);
 	if(f->strength < 128){return;}
-	if((rngValR()&0x3) != 0){return;}
 	newParticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.0001f)), size*0.6f, size*0.75f,0xFF1F38EF, 156);
 	if(f->strength < 256){return;}
 	newParticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.0001f)), size*0.5f, size*0.75f,0xFF1F38EF, 178);
+}
+
+static void fireDrawSmoke(const fire *f){
 	if(f->strength < 512){return;}
-	if((rngValR()&0x7) != 0){return;}
+	if(abs(f->x-(int)player->pos.x) > renderDistance){return;}
+	if(abs(f->y-(int)player->pos.y) > renderDistance){return;}
+	if(abs(f->z-(int)player->pos.z) > renderDistance){return;}
+	const vec spos = vecNew(f->x,f->y,f->z);
+	const float size = (float)(f->strength * 0.01f);
 	u32 c = 0xFF101820 | (rngValR()&0x0003070F);
 	newSparticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.001f,0),vecMulS(vecRng(),0.0001f)), size*0.01f, size*0.2f,c,2048);
 }
 
 void fireDrawAll(){
-	for(uint i=0;i<fireCount;i++){
+	static uint calls = 0;
+	for(uint i=calls&0x7;i<fireCount;i+=8){
 		fireDraw(&fireList[i]);
 	}
+	for(uint i=calls&0x3F;i<fireCount;i+=0x3F){
+		fireDrawSmoke(&fireList[i]);
+	}
+	calls++;
 }
 
 void fireRecvUpdate(uint c, const packet *p){
