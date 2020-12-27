@@ -2,6 +2,6 @@
 sudo rm -rf /var/chroots/steamrt_scout_amd64/root/wolkenwelten/
 sudo git clone ./ /var/chroots/steamrt_scout_amd64/root/wolkenwelten
 sudo schroot -c steamrt_scout_amd64 -- bash -c "cd ~/wolkenwelten/ && make clean && make release.linux -j4"
-mkdir -p releases/linux/
-sudo cp -rf /var/chroots/steamrt_scout_amd64/root/wolkenwelten/releases/linux/* releases/linux/
-sudo chown -R benny:benny releases/linux/*
+mkdir -p releases/linux-x86_64/
+sudo cp -rf /var/chroots/steamrt_scout_amd64/root/wolkenwelten/releases/linux-x86_64/* releases/linux-x86_64/
+sudo chown -R benny:benny releases/linux-x86_64/*
