@@ -1,39 +1,44 @@
+.data
+.align 16
+savedFloats: .zero 512
+
 .text
 .global particlePosUpdate
 
 particlePosUpdate:
+  fxsave savedFloats(%rip)
   xor %rcx,%rcx
   movl particleCount(%rip), %ecx
   cmp $0,%rcx
-  shrq $3,%rcx
+  shrq $2,%rcx
   jz .particleUpdateEnd
   leaq glParticles(%rip), %rdx
   leaq particles(%rip), %rax
 
 .particleUpdateLoop:
-  vmovaps (%rdx),%ymm0
-  vmovaps (%rax),%ymm1
-  vaddps  %ymm1,%ymm0,%ymm2
-  vmovaps %ymm0,(%rdx)
+  movaps   (%rdx),%xmm0
+  movaps   (%rax),%xmm1
+  movaps 16(%rdx),%xmm2
+  movaps 16(%rax),%xmm3
+  movaps 32(%rdx),%xmm4
+  movaps 32(%rax),%xmm5
+  movaps 48(%rdx),%xmm6
+  movaps 48(%rax),%xmm7
 
-  vmovaps 32(%rdx),%ymm0
-  vmovaps 32(%rax),%ymm1
-  vaddps  %ymm1,%ymm0,%ymm2
-  vmovaps %ymm2,32(%rdx)
+  addps  %xmm1,%xmm0
+  addps  %xmm3,%xmm2
+  addps  %xmm5,%xmm4
+  addps  %xmm7,%xmm6
 
-  vmovaps 64(%rdx),%ymm0
-  vmovaps 64(%rax),%ymm1
-  vaddps  %ymm1,%ymm0,%ymm2
-  vmovaps %ymm2,64(%rdx)
+  movaps %xmm0,  (%rdx)
+  movaps %xmm2,16(%rdx)
+  movaps %xmm4,32(%rdx)
+  movaps %xmm6,48(%rdx)
 
-  vmovaps 96(%rdx),%ymm0
-  vmovaps 96(%rax),%ymm1
-  vaddps  %ymm1,%ymm0,%ymm2
-  vmovaps %ymm2,96(%rdx)
-
-  add $128,%rdx
-  add $128,%rax
+  add $64,%rdx
+  add $64,%rax
   dec %rcx
   jnz .particleUpdateLoop
 .particleUpdateEnd:
+  fxrstor savedFloats(%rip)
   ret
