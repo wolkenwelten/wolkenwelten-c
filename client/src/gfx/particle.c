@@ -21,8 +21,8 @@ typedef struct particle {
 	float vx,vy,vz,vsize;
 } particle;
 
-#define  PART_MAX (1<<17)
-#define SPART_MAX (1<<15)
+#define  PART_MAX (1<<16)
+#define SPART_MAX (1<<14)
 
 __attribute__((aligned(32))) glParticle glParticles   [PART_MAX];
 __attribute__((aligned(32))) particle     particles   [PART_MAX];
