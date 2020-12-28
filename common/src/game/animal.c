@@ -15,7 +15,7 @@
 #include <math.h>
 
 #define ANIMAL_FALL_DMG 12.f
-#define ANIMAL_MAX (1<<14)
+#define ANIMAL_MAX (1<<12)
 
 animal  animalList[ANIMAL_MAX];
 uint    animalCount     = 0;

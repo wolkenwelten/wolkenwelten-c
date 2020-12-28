@@ -5,4 +5,4 @@
 void explode             (const vec pos, float pwr, int style);
 void grenadeNewP         (const packet *p);
 void grenadeUpdate       ();
-void grenadeUpdatePlayer (uint c);
+void grenadeUpdatePlayer (u8 c);

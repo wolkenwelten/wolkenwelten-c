@@ -42,7 +42,7 @@ lVal *wwlnfAUCount(lClosure *c, lVal *v){
 lVal *wwlnfARCount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	uint rcount = 0;
-	for(uint i=0;i<(1<<14);i++){
+	for(uint i=0;i<countof(animalList);i++){
 		if(animalList[i].type){rcount++;}
 	}
 	return lValInt(rcount);

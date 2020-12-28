@@ -11,3 +11,4 @@ void      itemDropUpdateFire   (uint i);
 void      itemDropUpdateFireAll();
 uint      itemDropUpdatePlayer (uint c, uint offset);
 uint      itemDropGetActive    ();
+void      itemDropUpdateMsg    (u8 c,uint i);

@@ -299,9 +299,11 @@ void chungusSubscribePlayer(chungus *c, uint p){
 	for(int z = 0; z < 16; z++){
 		if(c->chunks[x][y][z] == NULL){ continue; }
 		c->chunks[x][y][z]->clientsUpdated &= mask;
+		beingListSync(p, &c->chunks[x][y][z]->bl);
 	}
 	}
 	}
+	beingListSync(p, &c->bl);
 }
 
 void chungusSetAllUpdated(chungus *c, u64 nUpdated){

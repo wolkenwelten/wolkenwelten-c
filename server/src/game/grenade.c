@@ -73,7 +73,7 @@ void grenadeUpdateAll(){
 	}
 }
 
-void grenadeUpdatePlayer(uint c){
+void grenadeUpdatePlayer(u8 c){
 	if(grenadeCount == 0){
 		msgGrenadeUpdate(c,vecZero(),vecZero(),0,0);
 	}else{

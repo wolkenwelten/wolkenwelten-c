@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-extern animal  animalList[1<<14];
+extern animal  animalList[1<<12];
 extern uint    animalCount;
 extern uint    animalUsedCount;
 extern bool    animalNoAggro;

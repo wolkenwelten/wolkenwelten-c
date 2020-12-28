@@ -25,7 +25,7 @@ static inline void itemDropEmptyMsg(uint c, uint i){
 	);
 }
 
-static inline void itemDropUpdateMsg(uint c,uint i){
+void itemDropUpdateMsg(u8 c,uint i){
 	if(i >= itemDropCount)         {return;}
 	if(itemDropList[i].ent == NULL){return;}
 	msgItemDropUpdate(

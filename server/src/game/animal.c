@@ -95,12 +95,12 @@ void animalSyncPlayer(u8 c){
 		count--;
 	}
 
-	if(getClientLatency(c) < 20){
+	if(getClientLatency(c) < 50){
 		clients[c].animalUpdateWindowSize += 1;
 	}else{
 		clients[c].animalUpdateWindowSize /= 2;
 	}
-	clients[c].animalUpdateWindowSize = MAX(1,MIN(8,clients[c].animalUpdateWindowSize));
+	clients[c].animalUpdateWindowSize = MAX(4,MIN(12,clients[c].animalUpdateWindowSize));
 }
 
 void animalDelChungus(const chungus *c){

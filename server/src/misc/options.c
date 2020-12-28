@@ -67,12 +67,19 @@ int checkString(const char *a, const char *b){
 	return 0;
 }
 
+#include "../../../common/src/game/time.h"
+
 void parseOptions(int argc,const char *argv[]){
 	int l;
 	for(int i=0;i<argc;i++){
 		if(argv[i][0] != '-'){continue;}
 
 
+		if((l = checkString(argv[i]+1,"debugTime"))){
+			printDebugtime();
+			exit(0);
+			return;
+		}
 		if((l = checkString(argv[i]+1,"version"))){
 			printVersion();
 			exit(0);

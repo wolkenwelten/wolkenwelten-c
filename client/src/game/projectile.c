@@ -24,25 +24,31 @@ static inline void projectileDrawWaterBullet(const projectile *p){
 
 static inline void projectileDrawAssaultBullet(const projectile *p){
 	vec cp,cv;
-	u32 tc = 0xFF2060C0 | (rngValR() & 0x070F3F);
+	const u32 colors[] = {
+		0x00040723,
+		0x00050F39,
+		0x00070B1B,
+		0x00060C38
+	};
+	u32 cc = colors[(p - projectileList)&3];
 	cp = p->pos;
 	cv = vecMulS(p->vel,-0.2f);
 	for(int ii=0;ii<10;ii++){
 		cp = vecAdd(cp,cv);
-		newParticleV(cp, vecMulS(vecRng(),0.001f), 156, -6.f,0xFF50A0F0,96);
+		newParticleV(cp, vecMulS(vecRng(),0.001f), 156, -6.f,0xFF50A0F0 | cc,96);
 	}
 	cp = p->pos;
 	cv = vecMulS(p->vel,-0.1f);
 	for(int i=0;i<40;i++){
 		cp = vecAdd(cp,cv);
-		newParticleV(cp, vecZero(), 64, -.4f,tc,128);
+		newParticleV(cp, vecZero(), 64, -.4f,0xFF2060C0 | cc,128);
 	}
 
 	for(int ii=0;ii<4;ii++){
-		newParticleV(p->pos, vecMulS(vecRng(),0.01f), 192, -6.f,0xFF50A0F0,96);
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), 192, -6.f,0xFF50A0F0 | cc,96);
 	}
 	for(int ii=0;ii<2;ii++){
-		newParticleV(p->pos, vecMulS(vecRng(),0.01f), 256, -8.f,0xFF70B8FF,64);
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), 256, -8.f,0xFF70B8FF | cc,64);
 	}
 }
 

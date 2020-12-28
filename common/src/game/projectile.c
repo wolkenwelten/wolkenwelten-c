@@ -80,11 +80,13 @@ static inline int projectileHomeIn(projectile *p){
 		msgFxBeamBlastHit(-1, p->pos, 256, 1);
 		return 1;
 	}
-	float mul = 0.13f;
+	float mul;
 	if(p->style == 3){
-		mul = 0.1f;
+		mul = 0.02f;
+	}else {
+		mul = 0.04f;
 	}
-	p->vel = vecMulS(vecAdd(vecMulS(p->vel,155.f),vecMulS(norm,mul)),1.f/156.f);
+	p->vel = vecMulS(vecAdd(vecMulS(p->vel,15.f),vecMulS(norm,mul)),1.f/16.f);
 	return 0;
 }
 
@@ -118,9 +120,7 @@ static inline int projectileUpdate(projectile *p){
 	if(!vecInWorld(p->pos)){return 1;}
 	if(checkCollision(p->pos.x,p->pos.y,p->pos.z)){
 		if(!isClient){
-			//worldBoxMine(p->pos.x,p->pos.y,p->pos.z,2,2,2);
 			if(p->style == 6){
-				//fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,128);
 				waterBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,128);
 				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 2);}
 			}else if(p->style == 5){

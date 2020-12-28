@@ -64,7 +64,7 @@ const char *gtimeGetTimeOfDayHRS(uint timeCur){
 	static char buf[32];
 	const uint timeHours = timeCur / ((1<<20)/24);
 	const uint timeMinutes = (timeCur / ((1<<20)/(24*60)))%60;
-	snprintf(buf,sizeof(buf),"%2.u:%2.u",timeHours,timeMinutes);
+	snprintf(buf,sizeof(buf),"%2u:%02u",timeHours,timeMinutes);
 	buf[sizeof(buf)-1]=0;
 	return buf;
 }
@@ -74,7 +74,24 @@ uint gtimeGetTimeCat(){
 }
 
 float gtimeGetBrightness(uint time){
-	const float t = .5f + (time / (float)(1<<20));
-	const float tv = t*(PI*2);
-	return MINMAX(0.3f,1.0f,cosf(tv) * 1.5f);
+	time &= (1<<20)-1;
+	const float t = .6f + (time / (float)(3<<19));
+	float v = cosf(t*(PI*2)) * 2.f;
+	return MINMAX(0.3f,1.0f,v);
+}
+
+void printDebugtime(){
+	char brightnessBuf[32];
+	for(uint t = 0;t< (1<<20);t+=(1<<15)){
+		uint cb = gtimeGetBrightness(t)*32.f;
+		for(uint i=0;i<31;i++){
+			if(i < cb){
+				brightnessBuf[i] = '*';
+			}else{
+				brightnessBuf[i] = ' ';
+			}
+		}
+		brightnessBuf[31]=0;
+		printf("%s: %s\n",gtimeGetTimeOfDayHRS(t),brightnessBuf);
+	}
 }
