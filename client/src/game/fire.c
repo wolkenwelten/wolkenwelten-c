@@ -36,7 +36,7 @@ static void fireDrawSmoke(const fire *f){
 	if(abs(f->z-(int)player->pos.z) > renderDistance){return;}
 	const vec spos = vecNew(f->x,f->y,f->z);
 	const float size = (float)(f->strength * 0.01f);
-	u32 c = 0xFF101820 | (rngValR()&0x0003070F);
+	u32 c = 0x00101820 | (rngValR()&0x0003070F);
 	newSparticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.001f,0),vecMulS(vecRng(),0.0001f)), size*0.01f, size*0.2f,c,2048);
 }
 

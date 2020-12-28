@@ -26,9 +26,9 @@ static inline void projectileDrawAssaultBullet(const projectile *p){
 	vec cp,cv;
 	const u32 colors[] = {
 		0x00040723,
-		0x00050F39,
-		0x00070B1B,
-		0x00060C38
+		0x00051F39,
+		0x000F0B2B,
+		0x000C1D38
 	};
 	u32 cc = colors[(p - projectileList)&3];
 	cp = p->pos;

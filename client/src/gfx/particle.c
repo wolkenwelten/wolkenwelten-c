@@ -168,6 +168,10 @@ void particleUpdate(){
 			continue;
 		}else if(sparticleTTL[i] < 1024){
 			sparticleRGBA[i] = (sparticleRGBA[i] & 0x00FFFFFF) | (sparticleTTL[i] << 22 & 0xFF000000);
+		}else if((sparticleRGBA[i] & 0xFF000000) != 0xFF000000){
+			if((sparticleTTL[i] & 0x3) == 0){
+				sparticleRGBA[i] += 0x01000000;
+			}
 		}
 	}
 }
