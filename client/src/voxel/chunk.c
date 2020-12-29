@@ -26,7 +26,7 @@ int chunkCount     = 0;
 int chunksGeneratedThisFrame = 0;
 chunk *chunkFirstFree = NULL;
 
-#define MAX_CHUNKS_GEN_PER_FRAME 64
+#define MAX_CHUNKS_GEN_PER_FRAME 32
 
 #define CHUNK_COUNT (1<<18)
 chunk *chunkList;

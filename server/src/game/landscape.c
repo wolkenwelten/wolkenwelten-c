@@ -30,12 +30,12 @@ static void landscapeUpdateChunk(chunk *c){
 		default:
 			break;
 		case I_Grass:
-			if((w == NULL) && (rngValA((1<<14)-1) == 0)){
+			if((w == NULL) && (rngValA((1<<16)-1) == 0)){
 				worldSetB(c->x+x,c->y+y,c->z+z,I_Dry_Grass);
 			}
 			break;
 		case I_Dry_Grass:
-			if((w != NULL) && (rngValA((1<<6)-1) == 0)){
+			if((w != NULL) && (w->amount > 128)){
 				worldSetB(c->x+x,c->y+y,c->z+z,I_Grass);
 				w->amount -= 128;
 			}
@@ -48,7 +48,7 @@ static void landscapeUpdateChunk(chunk *c){
 
 void landscapeUpdateAll(){
 	static uint calls = 0;
-	for(uint i=calls&0x1F;i<chunkCount;i+=0x20){
+	for(uint i=calls&0x3FF;i<chunkCount;i+=0x400){
 		landscapeUpdateChunk(&chunkList[i]);
 	}
 	calls++;
