@@ -11,6 +11,7 @@
 #include "../gfx/shadow.h"
 #include "../gfx/sky.h"
 #include "../tmp/objs.h"
+#include "../../../common/src/game/time.h"
 #include "../../../common/src/network/messages.h"
 
 #include <stdio.h>
@@ -23,8 +24,12 @@ static const mesh *animalGetMesh(const animal *e){
 	switch(e->type){
 	default:
 		return meshBunny;
+	case 1:
+		return meshBunny;
 	case 2:
 		return meshBeamguardian;
+	case 3:
+		return meshWerebunny;
 	}
 }
 
@@ -37,7 +42,11 @@ static void animalDraw(animal *e){
 	}else{
 		breath = cosf((float)e->breathing/256.f)*6.f;
 	}
-	const float scale = MIN(1.f,0.5f + ((float)e->age/40.f));
+	float scale = MIN(1.f,0.5f + ((float)e->age/40.f));
+	if(e->type == 3){
+		const float sunlight = gtimeGetBrightness(gtimeGetTimeOfDay());
+		scale *= (MAX(0.f,(((1.f - sunlight) - 0.5f) * 5.f))+1.f);
+	}
 
 	matMov      (matMVP,matView);
 	matMulTrans (matMVP,e->pos.x,e->pos.y,e->pos.z);

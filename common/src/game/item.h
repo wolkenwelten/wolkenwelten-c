@@ -21,7 +21,7 @@ int   itemDecAmmo    (      item *i, i16 amount);
 #define I_Spruce         5
 #define I_Spruce_Leaf    6
 #define I_Roots          7
-#define I_Dirt_Roots     8
+#define I_Dry_Grass      8
 #define I_Obsidian       9
 #define I_Oak           10
 #define I_Oak_Leaf      11

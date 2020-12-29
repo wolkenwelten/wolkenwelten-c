@@ -39,7 +39,7 @@ void animalDmgPacket(u8 source, const packet *p ){
 		vec dis = vecNorm(vecSub(c->pos,pos));
 		c->vel = vecAdd(c->vel,vecMulS(dis,0.03f));
 	}
-	msgBeingGotHit(hp,cause,target,culprit);
+	msgBeingGotHit(hp,cause,1.f,target,culprit);
 }
 
 static void animalEmptySync(u16 c){

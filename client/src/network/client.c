@@ -237,7 +237,7 @@ void clientParsePacket(const packet *p){
 		case 25: // msgItemDropUpdate
 			itemDropUpdateFromServer(p);
 			break;
-		case 26: // msgPlayerDamage
+		case 26: // msgPlayerDamage ???UNUSED???
 			characterDamagePacket(player,p);
 			break;
 		case 28:

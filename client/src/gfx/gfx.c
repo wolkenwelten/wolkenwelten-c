@@ -170,8 +170,6 @@ void renderWorld(const character *cam){
 	animalDrawAll();
 	entityDrawAll();
 	characterDrawAll();
-	shadowDraw();
-
 	cloudsRender();
 
 	projectileDrawAll();
@@ -179,6 +177,7 @@ void renderWorld(const character *cam){
 	waterDrawAll();
 	particleDraw();
 
+	shadowDraw();
 	ropeDrawAll();
 }
 

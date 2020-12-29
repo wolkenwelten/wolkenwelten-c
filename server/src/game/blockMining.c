@@ -102,7 +102,7 @@ int blockMiningMinePosItem(item *itm, int x, int y, int z){
 
 void blockMiningMineBlock(int x, int y, int z, u8 b){
 	msgMineBlock(x,y,z,b);
-	if((b == I_Grass) || (b == I_Roots)){
+	if((b == I_Grass) || (b == I_Dry_Grass) || (b == I_Roots)){
 		worldSetB(x,y,z,I_Dirt);
 	}else{
 		worldSetB(x,y,z,0);

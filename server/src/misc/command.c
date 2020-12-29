@@ -209,7 +209,7 @@ lVal *wwlnfDmg(lClosure *c, lVal *v){
 		if(t->type != ltInt){break;}
 		args[i] = t->vInt;
 	}
-	msgBeingDamage(args[1],args[0],0,beingCharacter(args[1]),-1,vecZero());
+	msgBeingDamage(args[1],args[0],0,1.f,beingCharacter(args[1]),-1,vecZero());
 	return lValInt(args[0]);
 }
 
@@ -226,7 +226,7 @@ lVal *wwlnfDie(lClosure *c, lVal *v){
 		if(t->type != ltInt){break;}
 		args[i] = t->vInt;
 	}
-	msgBeingDamage(args[0],1000,0,beingCharacter(args[0]),-1,vecZero());
+	msgBeingDamage(args[0],1000,0,1.f,beingCharacter(args[0]),-1,vecZero());
 	return lValInt(args[0]);
 }
 

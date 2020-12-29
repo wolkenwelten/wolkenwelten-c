@@ -35,14 +35,15 @@ void characterDie(character *c){
 }
 
 void characterDmgPacket(uint c, const packet *p){
-	const i16 hp    = p->v.i16[0];
-	const i16 cause = p->v.u16[1];
+	const i16   hp            = p->v.i16[0];
+	const  u8   cause         = p->v.u8[2];
+	const float knockbackMult = ((float)p->v.u8[3])/16.f;
 
 	const being target  = p->v.u32[1];
 	const being culprit = beingCharacter(c);
 
-	msgBeingGotHit(hp,cause,target,culprit);
-	msgBeingDamage(beingID(target), hp, cause, target, culprit, clients[c].c->pos);
+	msgBeingGotHit(hp,cause,knockbackMult,target,culprit);
+	msgBeingDamage(beingID(target), hp, cause, knockbackMult,target, culprit, clients[c].c->pos);
 }
 
 int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 iteration, being source){
@@ -54,8 +55,8 @@ int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 itera
 		if(beingCharacter(i) == source)    {continue;}
 		vec dis = vecSub(pos,clients[i].c->pos);
 		if(vecDot(dis,dis) < mdd){
-			msgBeingDamage(i,damage,cause,beingCharacter(i),0,pos);
-			msgBeingGotHit(damage, cause, beingCharacter(i),0);
+			msgBeingDamage(i,damage,cause,1.f,beingCharacter(i),0,pos);
+			msgBeingGotHit(damage, cause, 1.f,beingCharacter(i),0);
 			clients[i].c->temp = iteration;
 			hits++;
 		}

@@ -103,7 +103,7 @@ void fxBlockMine(const vec pos, int dmg, unsigned char b){
 	}
 }
 
-void fxBleeding(const vec pos, being victim, i16 dmg, u16 cause){
+void fxBleeding(const vec pos, being victim, i16 dmg, u8 cause){
 	(void)victim;
 	(void)dmg;
 	(void)cause;

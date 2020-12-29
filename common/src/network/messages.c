@@ -284,11 +284,13 @@ void msgItemDropUpdate(uint c, const vec pos, const vec vel, const item *itm, u1
 	packetQueue(p,25,8*4,c);
 }
 
-void msgBeingGotHit(i16 hp, u16 cause, being target, being culprit){
+void msgBeingGotHit(i16 hp, u8 cause,float knockbackMult, being target, being culprit){
 	packet *p = &packetBuffer;
 
 	p->v.i16[0] = hp;
-	p->v.u16[1] = cause;
+
+	p->v.u8[2]  = cause;
+	p->v.u8[3]  = knockbackMult * 16.f;
 
 	p->v.u32[1] = target;
 	p->v.u32[2] = culprit;
@@ -296,11 +298,13 @@ void msgBeingGotHit(i16 hp, u16 cause, being target, being culprit){
 	packetQueue(p,8,3*4,-1);
 }
 
-void msgBeingDamage(uint c, i16 hp, u16 cause, being target, being culprit, const vec pos){
+void msgBeingDamage(uint c, i16 hp, u8 cause, float knockbackMult, being target, being culprit, const vec pos){
 	packet *p = &packetBuffer;
 
 	p->v.i16[0] = hp;
-	p->v.u16[1] = cause;
+
+	p->v.u8[2]  = cause;
+	p->v.u8[3]  = knockbackMult * 16.f;
 
 	p->v.u32[1] = target;
 	p->v.u32[2] = culprit;

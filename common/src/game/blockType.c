@@ -83,10 +83,10 @@ void blockTypeInit(){
 	blockTypeInitBlock    ( 1, 1, DIRT,  "Dirt", 200, 2000, 0xFF0A234F,0xFF051B45);
 	blockTypeSetWaterProps( 1, 8192, 32, 8);
 
-	blockTypeInitBlock    ( 2, 7, DIRT,  "Grass", 240,  400, 0xFF004227,0xFF051B45);
+	blockTypeInitBlock    ( 2, 16, DIRT,  "Grass", 240,  400, 0xFF004227,0xFF051B45);
 	blockTypeSetWaterProps( 2, 8192, 24, 8);
-	blockTypeSetTex       ( 2, 2,0);
-	blockTypeSetTex       ( 2, 3,1);
+	blockTypeSetTex       ( 2, 2, 0);
+	blockTypeSetTex       ( 2, 3, 1);
 
 	blockTypeInitBlock    ( 3, 2, STONE, "Stone", 1000, 4000, 0xFF5E5E5E,0xFF484848);
 	blockTypeSetWaterProps( 3, 0, 0, 8);
@@ -100,10 +100,18 @@ void blockTypeInit(){
 	blockTypeInitBlock    ( 6, 5, LEAVES,"Spruce Leafes",  110,  400, 0xFF012C12,0xFF01250F);
 	blockTypeSetWaterProps( 6, 128, 128, 128);
 
-	blockTypeInitBlock    ( 7, 6, WOOD,  "Roots", 480,  480, 0xFF14323E,0xFF0D2029);
+	blockTypeInitBlock    ( 7, 7, WOOD,  "Roots", 480,  480, 0xFF14323E,0xFF0D2029);
 	blockTypeSetWaterProps( 7, 8192, 128, 8);
 
-	// 8 - Unused
+	blockTypeInitBlock    ( 2, 16, DIRT,  "Grass", 240,  400, 0xFF004227,0xFF051B45);
+	blockTypeSetWaterProps( 2, 8192, 24, 8);
+	blockTypeSetTex       ( 2, 2, 0);
+	blockTypeSetTex       ( 2, 3, 1);
+
+	blockTypeInitBlock    ( 8, 22, LEAVES,  "Dry Grass", 240, 1000, 0xFF11644B,0xFF007552);
+	blockTypeSetWaterProps( 8, 8192, 24, 8);
+	blockTypeSetTex       ( 8, 2, 6);
+	blockTypeSetTex       ( 8, 3, 1);
 
 	blockTypeInitBlock    ( 9, 8, STONE, "Obsidian",      2000, 8000, 0xFF222222,0xFF171717);
 	blockTypeSetWaterProps( 9, 0, 0, 8);

@@ -7,6 +7,7 @@
 #include "game/blockMining.h"
 #include "game/fire.h"
 #include "game/itemDrop.h"
+#include "game/landscape.h"
 #include "game/grenade.h"
 #include "game/time.h"
 #include "game/water.h"
@@ -90,6 +91,7 @@ static void updateWorldStep(){
 	animalNeedsAll();
 	animalCheckBurnAll();
 	gtimeUpdate();
+	landscapeUpdateAll();
 }
 
 int updateWorld(){

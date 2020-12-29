@@ -812,7 +812,7 @@ void characterDrawAll(){
 	}
 }
 
-static void characterDyingMessage(u16 cause, u16 culprit){
+static void characterDyingMessage(u8 cause, u16 culprit){
 	const char *messages[4] = {
 		"died by command",
 		"beamblasted",
@@ -826,19 +826,22 @@ static void characterDyingMessage(u16 cause, u16 culprit){
 void characterDamagePacket(character *c, const packet *p){
 	const being target  = p->v.u32[1];
 	const being culprit = p->v.u32[2];
-	const u16 cause     = p->v.u16[1];
 	const i16 hp        = p->v.u16[0];
+	const u8 cause      = p->v.u8[2];
+	const float knockbackMult = ((float)p->v.u8[3])/16.f;
 	if(beingType(target) != BEING_CHARACTER){return;}
-	if(beingID(target) != (uint)playerID)         {return;}
+	if(beingID(target) != (uint)playerID)   {return;}
 
 	if(cause == 2){
 		sfxPlay(sfxImpact,1.f);
 		sfxPlay(sfxUngh,  1.f);
 		setOverlayColor(0xA03020F0,0);
 		commitOverlayColor();
-		vec pos = vecNewP(&p->v.f[3]);
+
+		const vec pos = vecNewP(&p->v.f[3]);
 		vec dis = vecNorm(vecSub(c->pos,pos));
-		c->vel = vecAdd(c->vel,vecMulS(dis,0.04f));
+		dis.y = MAX(0.4f,dis.y);
+		c->vel = vecAdd(c->vel,vecMulS(dis,0.05f * knockbackMult));
 	}
 	if(characterDamage(c,hp)){
 		characterDyingMessage(cause,culprit);
@@ -856,7 +859,9 @@ void characterGotHitPacket(const packet *p){
 		c = playerList[beingID(target)];
 	}
 	if(c == NULL){return;}
-	fxBleeding(c->pos,target,p->v.i16[0],p->v.u16[1]);
+	const i16 hp   = p->v.i16[0];
+	const u8 cause = p->v.u8[2];
+	fxBleeding(c->pos,target,hp,cause);
 }
 
 void characterSetData(character *c, const packet *p){
@@ -919,7 +924,7 @@ int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 itera
 		if(beingCharacter(i) == source)      {continue;}
 		vec dis = vecSub(pos,playerList[i]->pos);
 		if(vecDot(dis,dis) < mdd){
-			msgBeingDamage(0,damage,cause,beingCharacter(i),0,pos);
+			msgBeingDamage(0,damage,cause,1.f,beingCharacter(i),0,pos);
 			playerList[i]->temp = iteration;
 			hits++;
 		}

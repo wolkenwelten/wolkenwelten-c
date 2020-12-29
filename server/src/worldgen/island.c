@@ -113,12 +113,14 @@ typedef struct {
 	int  leafBlocks;
 
 	int  treeType;
+	u8   grassBlock;
 	bool hasSpecial;
 } wgChances;
 
 static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 	memset(w,0,sizeof(wgChances));
 	w->treeType = rngValM(2);
+	w->grassBlock = I_Grass;
 
 	w->hematiteChance = 2047;
 	w->coalChance     = 2047;
@@ -131,23 +133,23 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 		w->dirtVeinChance =  255;
 	}
 
-	switch(wgen->vegetationChance){
+	switch(wgen->vegetationConcentration){
 		case 7:
+			w->bigTreeChance  = (1<< 9)-1;
+			w->treeChance     = (1<< 5)-1;
+			w->shrubChance    = (1<< 4)-1;
+			w->animalChance   = (1<< 9)-1;
+			break;
+		case 6:
 			w->bigTreeChance  = (1<<12)-1;
 			w->treeChance     = (1<< 6)-1;
 			w->shrubChance    = (1<< 4)-1;
 			w->animalChance   = (1<< 9)-1;
 			break;
-		case 6:
-			w->bigTreeChance  = (1<<13)-1;
-			w->treeChance     = (1<< 7)-1;
-			w->shrubChance    = (1<< 4)-1;
-			w->animalChance   = (1<< 9)-1;
-			break;
 		default:
 		case 5:
-			w->bigTreeChance  = (1<<14)-1;
-			w->treeChance     = (1<< 8)-1;
+			w->bigTreeChance  = (1<<13)-1;
+			w->treeChance     = (1<< 7)-1;
 			w->shrubChance    = (1<< 5)-1;
 			w->animalChance   = (1<<10)-1;
 			break;
@@ -163,6 +165,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->dirtChance     = (1<< 5)-1;
 			w->stoneChance    = (1<< 8)-1;
 			w->animalChance   = (1<<12)-1;
+			w->grassBlock = I_Dry_Grass;
 			break;
 		case 2:
 			w->treeChance     = (1<<12)-1;
@@ -170,6 +173,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->dirtChance     = (1<< 4)-1;
 			w->stoneChance    = (1<< 7)-1;
 			w->animalChance   = (1<<13)-1;
+			w->grassBlock = I_Dry_Grass;
 			break;
 		case 1:
 			w->shrubChance    = (1<< 8)-1;
@@ -178,6 +182,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->treeChance     = (1<<12)-1;
 			w->deadTreeChance = (1<<12)-1;
 			w->animalChance   = (1<<14)-1;
+			w->grassBlock = I_Dry_Grass;
 			break;
 		case 0:
  			w->shrubChance    = (1<<10)-1;
@@ -187,6 +192,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->treeChance     = (1<<15)-1;
 			w->deadTreeChance = (1<<13)-1;
 			w->animalChance   = (1<<15)-1;
+			w->grassBlock = I_Dry_Grass;
 			break;
 	}
 }
@@ -229,8 +235,12 @@ static inline bool worldgenRDTree(worldgen *wgen, wgChances *w, int cx, int cy, 
 static inline bool worldgenRDAnimal(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
 	if(!w->animalChance || (w->airBlocks <= 4) || rngValA(w->animalChance)){return false;}
 	const vec pos = vecNew(wgen->gx+cx,wgen->gy+cy+2.f,wgen->gz+cz);
-	animalNew(pos,1,0);
-	animalNew(pos,1,1);
+	if(rngValA(15) == 0){
+		animalNew(pos,3,rngValA(1));
+	}else{
+		animalNew(pos,1,0);
+		animalNew(pos,1,1);
+	}
 	return true;
 }
 
@@ -408,13 +418,13 @@ void worldgenRemoveDirt(worldgen *wgen){
 					if(!w.airBlocks)                      {continue;}
 					if(worldgenRDShrub(wgen,&w,cx,cy,cz)) {continue;}
 					if((w.airBlocks > 8) && (w.leafBlocks < 3)){
-						chnk->data[x][cy&0xF][z] = I_Grass;
+						chnk->data[x][cy&0xF][z] = w.grassBlock;
 					}else if(w.airBlocks > 3){
 						chnk->data[x][cy&0xF][z] = I_Dirt;
 					}
 					if(worldgenRDAnimal  (wgen,&w,cx,cy,cz)){continue;}
 					w.airBlocks = 0;
-				break;
+					break;
 				}
 			}
 		}

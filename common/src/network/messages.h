@@ -15,8 +15,8 @@ void msgMineBlock                (u16 x, u16 y, u16 z, u8 b);
 void msgGoodbye                  ();
 void msgBlockMiningUpdate        (uint c, u16 x, u16 y, u16 z, i16 damage, u16 count, u16 i);
 void msgSendChungusComplete      (uint c, u8 x, u8 y, u8 z);
-void msgBeingGotHit              (        i16 hp, u16 cause, being target, being culprit);
-void msgBeingDamage              (uint c, i16 hp, u16 cause, being target, being culprit, const vec pos);
+void msgBeingGotHit              (        i16 hp, u8 cause, float knockbackMult, being target, being culprit);
+void msgBeingDamage              (uint c, i16 hp, u8 cause, float knockbackMult, being target, being culprit, const vec pos);
 void msgSetTime                  ( int c, u32 time);
 // 9 = playerSendName
 void msgItemDropNew              (uint c, const vec pos, const vec vel, const item *itm);

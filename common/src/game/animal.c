@@ -2,6 +2,7 @@
 
 #include "../animals/bunny.h"
 #include "../animals/guardian.h"
+#include "../animals/werebunny.h"
 #include "../game/being.h"
 #include "../game/character.h"
 #include "../game/fire.h"
@@ -255,6 +256,8 @@ int animalGetMaxHealth (const animal *e){
 		return  8;
 	case 2:
 		return 12;
+	case 3:
+		return 20;
 	}
 }
 
@@ -394,6 +397,9 @@ void animalThink(animal *e){
 	case 2:
 		animalThinkGuardian(e);
 		break;
+	case 3:
+		animalThinkWerebunny(e);
+		break;
 	}
 }
 
@@ -422,6 +428,7 @@ void animalNeedsAll(){
 	calls++;
 }
 
+/* TODO: Add proper reaction to fire (runing away?) */
 void animalRBurn(animal *e){
 	switch(e->type){
 	default:
@@ -431,6 +438,9 @@ void animalRBurn(animal *e){
 		break;
 	case 2:
 		animalRBurnGuardian(e);
+		break;
+	case 3:
+		animalRBurnWerebunny(e);
 		break;
 	}
 }
@@ -498,7 +508,7 @@ int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, 
 			if(a->temp == iteration){continue;}
 			const vec d = vecSub(pos,a->pos);
 			if(vecDot(d,d) < mdd){
-				if(isClient){msgBeingDamage(0,dmg,cause,ble->v[i],0,pos);}
+				if(isClient){msgBeingDamage(0,dmg,cause,1.f,ble->v[i],0,pos);}
 				a->temp = iteration;
 				hits++;
 			}

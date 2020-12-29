@@ -146,16 +146,17 @@ static void animalSFlee(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_FIGHT] += rngValA(127) + e->stateTicks;
 }
 
-static void animalFightOrFlight(animal *e,int stateChange[16]){
+static void animalFightOrFlightDay(animal *e,int stateChange[16]){
 	character *cChar;
 	if(animalNoAggro){return;}
 	float dist = animalClosestPlayer(e,&cChar);
 
 	if(e->state == ANIMAL_S_FIGHT){
-		if((cChar == NULL) || (dist > 16.f)){
-			stateChange[ANIMAL_S_LOITER] += 1024;
+		if(cChar == NULL){
+			stateChange[ANIMAL_S_LOITER] += 1 << 30;
 			return;
 		}else{
+			stateChange[ANIMAL_S_LOITER] += dist * 4096.f;
 			vec caNorm = vecNorm(vecNew(cChar->pos.x - e->pos.x,0.f, cChar->pos.z - e->pos.z));
 			vec caVel  = vecMulS(caNorm,0.03f);
 			vec caRot  = vecVecToDeg(caNorm);
@@ -173,15 +174,17 @@ static void animalFightOrFlight(animal *e,int stateChange[16]){
 					being bc = characterGetBeing(cChar);
 					if(bc == 0){return;}
 					if(rngValM(8)==0){dmg = 4;}
-					msgBeingDamage(beingID(bc),dmg,2,1.f,bc,-1,e->pos);
+					msgBeingDamage(beingID(bc),dmg,2,1.25f,bc,-1,e->pos);
 				}
 			}
 		}
+	/* TODO: Fleeing without a cchar */
 	}else if(e->state == ANIMAL_S_FLEE){
-		if((cChar == NULL) || (dist > 32.f)){
-			stateChange[ANIMAL_S_LOITER] += 1024;
+		if(cChar == NULL){
+			stateChange[ANIMAL_S_LOITER] += 1 << 30;
 			return;
 		}else{
+			stateChange[ANIMAL_S_LOITER] += 2048 * dist;
 			vec caNorm = vecNorm(vecNew(e->pos.x - cChar->pos.x,0.f, e->pos.z - cChar->pos.z));
 			vec caVel  = vecMulS(caNorm,0.03f);
 			vec caRot  = vecVecToDeg(caNorm);
@@ -189,22 +192,70 @@ static void animalFightOrFlight(animal *e,int stateChange[16]){
 			e->gvel.x  = caVel.x;
 			e->gvel.z  = caVel.z;
 			e->rot.yaw = -caRot.yaw;
-			if(dist < 6.f){
-				stateChange[ANIMAL_S_FIGHT] += (1 << 14) * (dist - 6.f);
+			if(dist < 8.f){
+				stateChange[ANIMAL_S_FIGHT] += 8192 * (dist - 8.f) * (dist - 8.f);
 			}
 		}
 	}else{
-		float fd = 9.f;
+		float fd = 16.f;
 		if(e->state == ANIMAL_S_SLEEP){fd = 3.f;}
 		if(e->state == ANIMAL_S_PLAYING){fd = 15.f;}
 		if((cChar != NULL) && (dist < fd)){
-			if(e->state == ANIMAL_S_SLEEP){
-				stateChange[ANIMAL_S_FIGHT] += 4096 * (fd - dist);
-			}else{
-				stateChange[ANIMAL_S_FLEE] += 4096 * (fd - dist);
-			}
+			stateChange[ANIMAL_S_FIGHT] += 8192 * (dist - fd);
 			return;
 		}
+	}
+}
+
+static void animalFightOrFlightNight(animal *e,int stateChange[16]){
+	character *cChar;
+	if(animalNoAggro){return;}
+	float dist = animalClosestPlayer(e,&cChar);
+
+	if(e->state == ANIMAL_S_FIGHT){
+		if(cChar == NULL){
+			stateChange[ANIMAL_S_LOITER] += 1<<30;
+			return;
+		}else{
+			stateChange[ANIMAL_S_LOITER] += dist * 2048.f;
+			vec caNorm = vecNorm(vecNew(cChar->pos.x - e->pos.x,0.f, cChar->pos.z - e->pos.z));
+			vec caVel  = vecMulS(caNorm,0.03f);
+			vec caRot  = vecVecToDeg(caNorm);
+
+			e->gvel.x  = caVel.x;
+			e->gvel.y  = 0.f;
+			e->gvel.z  = caVel.z;
+			e->rot.yaw = -caRot.yaw;
+
+			if((dist < 2.5f)){
+				e->gvel.x = 0;
+				e->gvel.z = 0;
+				if(rngValA(7)==0){
+					int dmg = 1;
+					being bc = characterGetBeing(cChar);
+					if(bc == 0){return;}
+					if(rngValM(8)==0){dmg = 4;}
+					msgBeingDamage(beingID(bc),dmg,2,3.f,bc,-1,e->pos);
+				}
+			}
+		}
+	}else{
+		float fd = 24.f;
+		if(e->state == ANIMAL_S_SLEEP){fd = 3.f;}
+		if(e->state == ANIMAL_S_PLAYING){fd = 15.f;}
+		if((cChar != NULL) && (dist < fd)){
+			stateChange[ANIMAL_S_FIGHT] += 8192 * (dist - fd) * (dist - fd);
+			return;
+		}
+	}
+}
+
+static void animalFightOrFlight(animal *e, int stateChange[16]){
+	float sunlight = gtimeGetBrightness(gtimeGetTimeOfDay());
+	if(sunlight < 0.5f){
+		animalFightOrFlightNight(e,stateChange);
+	}else{
+		animalFightOrFlightDay(e,stateChange);
 	}
 }
 
@@ -322,7 +373,7 @@ static void animalSocialDistancing(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_FLEE] += 256;
 }
 
-void animalRBurnBunny(animal *e){
+void animalRBurnWerebunny(animal *e){
 	e->state = ANIMAL_S_FLEE;
 	if(!(e->flags & ANIMAL_FALLING)){
 		e->vel.y = 0.04f;
@@ -353,7 +404,7 @@ static void animalStateChange(animal *e,int stateChange[16]){
 	e->state = max;
 }
 
-void animalThinkBunny(animal *e){
+void animalThinkWerebunny(animal *e){
 	static int stateChange[16];
 	for(uint i=0;i<16;i++){
 		stateChange[i] = rngValA(63);
@@ -411,9 +462,9 @@ void animalThinkBunny(animal *e){
 	animalStateChange(e,stateChange);
 }
 
-void animalRDieBunny(animal *e){
-	item mdrop = itemNew(I_Meat,rngValMM(2,4));
-	item fdrop = itemNew(I_Fur, rngValMM(1,2));
+void animalRDieWerebunny(animal *e){
+	item mdrop = itemNew(I_Meat,rngValMM(4,6));
+	item fdrop = itemNew(I_Fur, rngValMM(3,4));
 	itemDropNewP(e->pos,&mdrop);
 	itemDropNewP(e->pos,&fdrop);
 }
