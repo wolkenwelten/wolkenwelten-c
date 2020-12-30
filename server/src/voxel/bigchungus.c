@@ -87,6 +87,14 @@ u8 bigchungusGetB(bigchungus *c, int x,int y,int z) {
 	return chungusGetB(chng,x&0xFF,y&0xFF,z&0xFF);
 }
 
+u8 bigchungusTryB(bigchungus *c, int x,int y,int z) {
+	chungus *chng;
+	if(!inWorld(x,y,z)){return 0;}
+	chng = bigchungusTryChungus(c,x>>8,y>>8,z>>8);
+	if(chng == NULL){ return 0; }
+	return chungusGetB(chng,x&0xFF,y&0xFF,z&0xFF);
+}
+
 bool bigchungusGetHighestP(bigchungus *c, int x,int *retY, int z) {
 	chungus *chng;
 
@@ -321,6 +329,9 @@ void worldBoxSphere(int x, int y,int z, int r,u8 block){
 }
 u8 worldGetB(int x, int y, int z){
 	return bigchungusGetB(&world,x,y,z);
+}
+u8 worldTryB(int x, int y, int z){
+	return bigchungusTryB(&world,x,y,z);
 }
 chungus* worldGetChungus(int x, int y, int z){
 	return bigchungusGetChungus(&world,x,y,z);

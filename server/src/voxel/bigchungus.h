@@ -27,6 +27,7 @@ void        bigchungusFreeChungus       (bigchungus *c, int x, int y, int z);
 chunk      *bigchungusTryChunk          (bigchungus *c, int x, int y, int z);
 chunk      *bigchungusGetChunk          (bigchungus *c, int x, int y, int z);
 bool        bigchungusGetHighestP       (bigchungus *c, int x, int *rety, int z);
+u8          bigchungusTryB              (bigchungus *c, int x, int y, int z);
 u8          bigchungusGetB              (bigchungus *c, int x, int y, int z);
 bool        bigchungusSetB              (bigchungus *c, int x, int y, int z, u8 b);
 void        bigchungusGenSpawn          (bigchungus *c);
@@ -38,6 +39,7 @@ void        bigchungusDirtyChunk        (bigchungus *c, int x, int y, int z, int
 
 void     worldBox           (int x, int y, int z, int w, int h, int d, u8 block);
 void     worldBoxSphere     (int x, int y, int z, int r, u8 block);
+u8       worldTryB          (int x, int y, int z);
 u8       worldGetB          (int x, int y, int z);
 chungus *worldTryChungus    (int x, int y, int z);
 chungus *worldTryChungusV   (const vec pos);
