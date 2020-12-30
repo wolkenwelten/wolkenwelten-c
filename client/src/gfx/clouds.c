@@ -1,5 +1,6 @@
 #include "clouds.h"
 
+#include "../main.h"
 #include "../gfx/gl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
@@ -87,7 +88,7 @@ void cloudsRender(){
 	static uint lastRender = 0;
 	if(lastRender == 0){lastRender = getTicks();}
 	uint cticks = getTicks();
-	cloudOffset += (cticks - lastRender)/2048.f;
+	cloudOffset += ((cticks) - lastRender)/256.f/msPerTick;
 	lastRender = cticks;
 	if(cloudOffset > 256.f){cloudOffset-=256.f;}
 }
