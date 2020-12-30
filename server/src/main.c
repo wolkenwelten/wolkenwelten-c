@@ -35,6 +35,7 @@ bool quit = false;
 char *termColors[16];
 char *termReset;
 char *nop = "";
+int msPerTick = 4;
 
 u64 getTicks(){
 	struct timeval tv;
@@ -97,10 +98,10 @@ static void updateWorldStep(){
 int updateWorld(){
 	static u64 lastUpdate  = 0;
 	const u64 cTicks = getTicks();
-	if(lastUpdate  == 0){lastUpdate  = getTicks() - 4;}
+	if(lastUpdate  == 0){lastUpdate  = getTicks() - msPerTick;}
 
 	int i = 64;
-	for(;lastUpdate < cTicks;lastUpdate += 4){
+	for(;lastUpdate < cTicks;lastUpdate += msPerTick){
 		updateWorldStep();
 		if(--i == 0){break;}
 	}
@@ -112,11 +113,11 @@ void handleAnimalPriorities(){
 	static u64 lastCall   = 0;
 	static uint c = 0;
 	const u64 cTicks = getTicks();
-	if(cTicks < lastCall + 200) {return;}
+	if(cTicks < lastCall + msPerTick*128) {return;}
 	c = (c+1) & 0x1F;
 	if(clients[c].state)        {return;}
 	if(clients[c].c == NULL)    {return;}
-	lastCall = cTicks;
+	lastCall += msPerTick*128;
 	animalUpdatePriorities(c);
 }
 

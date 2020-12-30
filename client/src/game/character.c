@@ -165,8 +165,8 @@ float characterGetRopeLength(const character *c){
 }
 
 void characterUpdateAnimation(character *c){
-	c->animationTicksLeft -= MS_PER_TICK;
-	c->breathing          += MS_PER_TICK;
+	c->animationTicksLeft -= msPerTick;
+	c->breathing          += msPerTick;
 	if(c->animationTicksLeft <= 0){
 		c->animationTicksLeft = 0;
 		c->animationTicksMax  = 0;

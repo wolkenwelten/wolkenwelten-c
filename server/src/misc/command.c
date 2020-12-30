@@ -17,6 +17,7 @@
 #include "../../../common/src/network/messages.h"
 
 #include "../../../common/src/nujel/nujel.h"
+#include "../../../common/src/nujel/lnf_arithmetic.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -26,6 +27,15 @@ char replyBuf[256];
 lClosure *clRoot;
 
 
+lVal *wwlnfMsPerTick(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfInt(c,lEval(c,v));
+		if(t->vInt > 0){
+			msPerTick = t->vInt;
+		}
+	}
+	return lValInt(msPerTick);
+}
 lVal *wwlnfUpdateAll(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	worldSetAllUpdated();
@@ -341,6 +351,7 @@ void initCommands(){
 	lVal *pid = lDefineClosureSym(clRoot, sym->vSymbol);
 	pid->type = ltInt;
 	pid->vInt = 123;
+	lClosureAddNF(clRoot,"mst",    &wwlnfMsPerTick);
 	lClosureAddNF(clRoot,"noaggro",&wwlnfNoAggro);
 	lClosureAddNF(clRoot,"update", &wwlnfUpdateAll);
 	lClosureAddNF(clRoot,"acount", &wwlnfACount);

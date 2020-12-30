@@ -156,7 +156,6 @@ void calcView(const character *cam){
 	if(optionThirdPerson){
 		vec cpos = vecAdd(cam->pos,vecNew(0,0.5f,0));
 		cpos = vecSub(cpos,vecDegToVec(shake));
-		//cpos = vecAdd(cpos,vecMulS(vecDegToVec(vecAdd(vecNew(-90.f,0,0),shake)),1.f-player->aimFade));
 		matMulTrans(matView,-cpos.x,-cpos.y,-cpos.z);
 	}else{
 		matMulTrans(matView,-cam->pos.x,-(cam->pos.y+0.5+cam->yoff),-cam->pos.z);

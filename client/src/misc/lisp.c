@@ -1,8 +1,10 @@
 #include "lisp.h"
 
+#include "../main.h"
 #include "../gui/gui.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/nujel/nujel.h"
+#include "../../../common/src/nujel/lnf_arithmetic.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -31,12 +33,27 @@ lVal *wwlnfSEval(lClosure *c, lVal *v){
 	return lispSEvalSym(SEvalID);
 }
 
+lVal *wwlnfMsPerTick(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfInt(c,lEval(c,v));
+		if(t->vInt > 0){
+			msPerTick = t->vInt;
+		}
+	}
+	return lValInt(msPerTick);
+}
+
 void lispInit(){
 	lInit();
 	clRoot = lClosureNew(NULL);
 	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
 	lispEvalNR("(define test (lambda (a) (s-eval (water (px) (py) (pz)))))");
+	lispEvalNR("(define fasts (lambda (a) (mst  1) (s-eval (mst  1))))");
+	lispEvalNR("(define norms (lambda (a) (mst  4) (s-eval (mst  4))))");
+	lispEvalNR("(define slows (lambda (a) (mst 16) (s-eval (mst 16))))");
+	lispEvalNR("(define bulls (lambda (a) (mst 64) (s-eval (mst 64))))");
 	lClosureAddNF(clRoot,"s-eval", &wwlnfSEval);
+	lClosureAddNF(clRoot,"mst", &wwlnfMsPerTick);
 }
 void lispFree(){
 	lClosureFree(clRoot);

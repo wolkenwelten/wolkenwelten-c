@@ -1,10 +1,12 @@
 #include "fire.h"
 
+#include "../main.h"
 #include "../game/character.h"
 #include "../gfx/gfx.h"
 #include "../gfx/particle.h"
 #include "../gui/overlay.h"
 #include "../network/chat.h"
+#include "../sdl/sdl.h"
 #include "../sdl/sfx.h"
 #include "../../../common/src/network/messages.h"
 
@@ -42,13 +44,20 @@ static void fireDrawSmoke(const fire *f){
 
 void fireDrawAll(){
 	static uint calls = 0;
-	for(uint i=calls&0x7;i<fireCount;i+=8){
-		fireDraw(&fireList[i]);
+	static  int lastTick = 0;
+	int curTick;
+
+	if(lastTick == 0){lastTick = getTicks();}
+	curTick = getTicks();
+	for(;lastTick < curTick;lastTick+=msPerTick){
+		for(uint i=calls&0x1F;i<fireCount;i+=0x20){
+			fireDraw(&fireList[i]);
+		}
+		for(uint i=calls&0xFF;i<fireCount;i+=0xFF){
+			fireDrawSmoke(&fireList[i]);
+		}
+		calls++;
 	}
-	for(uint i=calls&0x3F;i<fireCount;i+=0x3F){
-		fireDrawSmoke(&fireList[i]);
-	}
-	calls++;
 }
 
 void fireRecvUpdate(uint c, const packet *p){

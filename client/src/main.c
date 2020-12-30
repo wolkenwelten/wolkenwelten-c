@@ -58,6 +58,7 @@ bool gameRunning       = false;
 bool playerChunkActive = false;
 bool singleplayer      = false;
 bool chnkChngOverflow  = false;
+int msPerTick         = 4;
 
 void signalQuit(int signo){
 	(void)signo;
@@ -111,7 +112,7 @@ void worldUpdate(){
 	if(lastTick == 0){lastTick = SDL_GetTicks();}
 	if(!playerChunkActive){lastTick = SDL_GetTicks();return;}
 	curTick = SDL_GetTicks();
-	for(;lastTick < curTick;lastTick+=MS_PER_TICK){
+	for(;lastTick < curTick;lastTick+=msPerTick){
 		if(!isInventoryOpen()){
 			if(inputPrimary()){
 				characterPrimary(player);
