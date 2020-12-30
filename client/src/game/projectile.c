@@ -14,11 +14,11 @@ static inline void projectileDrawFlameBullet(const projectile *p){
 }
 
 static inline void projectileDrawWaterBullet(const projectile *p){
-	for(int ii=0;ii<4;ii++){
-		newParticleV(p->pos, vecMulS(vecRng(),0.01f), 192, -6.f,0xFFB05020,192);
-	}
 	for(int ii=0;ii<2;ii++){
-		newParticleV(p->pos, vecMulS(vecRng(),0.01f), 256, -8.f,0xFF9F7830,128);
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), 48, -1.f,0xFFB05020,192);
+	}
+	for(int ii=0;ii<1;ii++){
+		newParticleV(p->pos, vecMulS(vecRng(),0.01f), 64, -2.f,0xFF9F7830,128);
 	}
 }
 
