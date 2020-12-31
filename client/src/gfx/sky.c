@@ -23,14 +23,14 @@ texture *tSun = NULL;
 
 
 void initSky(){
-	if(tSun == NULL){
-		tSun = textureNew(gfx_sun_png_data, gfx_sun_png_len, "client/gfx/sun.png");
-	}
 	if(sunMesh == NULL){
 		sunMesh = meshNew();
 	}
 	meshEmpty(sunMesh);
-	sunMesh->tex = tSun;
+	if(tSun == NULL){
+		tSun = textureNew(gfx_sun_png_data, gfx_sun_png_len, "client/gfx/sun.png");
+		sunMesh->tex = tSun;
+	}
 	const float d = renderDistance;
 
 	meshAddVert(sunMesh, -48,  d, -48, 0.0f, 0.0f);
@@ -51,7 +51,7 @@ static void drawSkyColor(){
 
 void renderSky(const character *cam){
 	static float lastRD = 0;
-	if(fabsf(lastRD - renderDistance) > 1.f){initSky();}
+	if(fabsf(lastRD - renderDistance) > .1f){initSky();}
 	drawSkyColor();
 
 	shaderBind(sMesh);

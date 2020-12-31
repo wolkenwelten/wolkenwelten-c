@@ -84,6 +84,7 @@ mesh *meshNew(){
 		m = &meshList[meshCount++];
 	}
 	memset(m,0,sizeof(mesh));
+	m->vao = m->vbo = 0;
 	return m;
 }
 

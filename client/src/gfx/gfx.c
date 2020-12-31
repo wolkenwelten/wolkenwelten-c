@@ -104,8 +104,6 @@ void initGL(){
 	glEnable(GL_SCISSOR_TEST);
 
 #ifndef __EMSCRIPTEN__
-	glDisable(GL_POLYGON_SMOOTH);
-	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
 }

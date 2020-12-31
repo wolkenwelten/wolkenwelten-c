@@ -128,7 +128,6 @@ void textureBind(const texture *tex){
 	}else{
 		glBindTexture(GL_TEXTURE_2D, tex->ID);
 	}
-	glUniform1i(tex->ID ,(GLint) 0);
 	boundTexture = tex->ID;
 }
 
