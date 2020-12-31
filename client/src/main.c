@@ -127,7 +127,6 @@ void worldUpdate(){
 			}
 		}
 		resetOverlayColor();
-		if(gameRunning && gameControlsInactive()){setOverlayColor(0x90182028,300);}
 		charactersUpdate();
 		grenadeUpdateAll();
 		animalUpdateAll();
