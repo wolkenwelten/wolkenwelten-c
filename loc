@@ -1,0 +1,5 @@
+#!/bin/sh
+make clean
+FILES=`find client/src common/src common/nujel server/src tools client/tools -type f -name '*.[ch]' ! -name 'khrplatform.[ch]' ! -name 'gl3w.[ch]' ! -name 'lz4.[ch]' ! -name 'lodepng.[ch]' ! -name 'glcorearb.[ch]'`
+#echo $FILES
+wc -l $FILES
