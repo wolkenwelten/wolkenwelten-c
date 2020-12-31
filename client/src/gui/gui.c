@@ -440,9 +440,14 @@ void drawAnimalDebugOverlay(const animal *e, int i){
 	if(e == NULL)   {return;}
 	if(e->type == 0){return;}
 	vec p = e->screenPos;
-	if(p.z < 0)     {return;}
+	if(p.z <   0)         {return;}
+	if(p.z > 512)         {return;}
 	p.x =      ((p.x / p.z)+1.f)/2.f  * screenWidth;
+	if(p.x < 0)           {return;}
+	if(p.x > screenWidth) {return;}
 	p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
+	if(p.y < 0)           {return;}
+	if(p.y > screenHeight){return;}
 
 	u32 ofgc = guim->fgc;
 	u32 a = (u32)(MIN(128.f,MAX(0.f,(p.z-32.f)))) << 24;
