@@ -6,18 +6,16 @@ Probably:
 	Enemy Boss that independently travels around and spreads its infestation, should also observe the player at times but wait until it is strong enough before an attack
 	Random bossfights like the golden mobs in D2
 	Walljumping / Parkour
-	Birds flying in V formation
+	Birds flying in V formation (boids!!!)
 	Farming
 	Animal Husbandry
 	Defend and hold an island that is soon to be overrun by mob for some time
-	Gliders / Flying bicycles
 	Find ancient machines that can be resurected so they become NPCs in the players village/home
 	Cooking / Baking
 	Body enhancements/prosthetics (maybe ancient orbs being used as replacement eyes)
 	Weekly horde invasions (probably a bit of randomness added to the interval to make it less predictable)
 	Settlements where a player can travel between them and trade to make a profit
 	Feline humanoids instead of humans
-	Guns shooting laserbeams! Fuck bullets
 	Tools/Weapons can have random enchantments ala D2
 	Client persistent players, ala D2
 	Side quests being given by NPCs
@@ -28,18 +26,14 @@ Probably:
 	Factions
 	ducks, geese, swans, gefluegel - BIRDS ARE MEAN
 	no real animals, instead make catmonkeys etc.
-	bongo-floete soundtrack
 	floating lion-heads as an enemy (far up - like those suns)
 	letters - can be written via a quill (mouse/stick input) or via a typewriter, allowing keyboard input
-	our cats somewhere as some npcs - locket ghost, mira selling gliders/ships .. (youd only have 4 npcs overall)
-	cameras, an aria where there is some surveillance and you have to keep away from cameras - stealth undso
 	previous generations have tried to understand the oberlisk with science - techadvanced area - everythings looks sterile - no living thing
 	an area where instead of flying islands - you have soapbubbles - you cant land on them
 	little fireflies are nice for setting the ambience
 	a graveyard with big skulls of long lost decades (dragons? creatures? elephants?)
 	a notebook - something to help the player gather his achievements/future goals
 	one currency is overrated - every level has its own! (nobody wants your dirty pears, we trade for money, minerals, recources, gadgets, tech..)
-	I want a weapon that is called tha MasterBlaster9000 (clichee? no!)
 	slingshot for fast traveling
 	funny names for the characters,monsters - people will want to look at your code
 	if we are allowed to have cats, Then I want sum cute bunnies!!
@@ -105,7 +99,6 @@ probably not:
 	Build fabrication pipelines (buildcraft 2)
 	Chemical weapons (mustard gas)
 	Flying trains
-	Jetpack
 	Levitation by meditation
 	Some foods having hallucinogenic effects
 	Become an omnipotent being for a short while, either rewarding the other players or punishing them
