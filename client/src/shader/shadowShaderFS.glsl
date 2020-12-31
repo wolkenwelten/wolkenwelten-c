@@ -6,5 +6,5 @@ in float lightness;
 out vec4 fragColor;
 
 void main() {
-	fragColor = texture2D(curTex, multiTexCoord) * vec4(1.0,1.0,1.0,lightness);
+	fragColor = texture(curTex, multiTexCoord) * vec4(1.0,1.0,1.0,lightness);
 }

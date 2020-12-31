@@ -9,7 +9,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifndef __EMSCRIPTEN__
 #define CHUNK_COUNT (1<<20)
+#else
+#define CHUNK_COUNT (1<<18)
+#endif
 
 chunk *chunkList;
 uint   chunkFreeCount = 0;

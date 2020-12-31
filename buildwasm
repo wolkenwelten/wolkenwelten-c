@@ -1,5 +1,5 @@
 #!/bin/bash
-EMSDK_TESTED_VERSION="2.0.10"
+EMSDK_TESTED_VERSION="2.0.11"
 #EMSDK_TESTED_VERSION="1.40.1"
 #EMSDK_TESTED_VERSION="1.38.48"
 EMSDK_REPO_URL="https://github.com/emscripten-core/emsdk.git"

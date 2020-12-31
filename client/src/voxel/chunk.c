@@ -28,7 +28,11 @@ chunk *chunkFirstFree = NULL;
 
 #define MAX_CHUNKS_GEN_PER_FRAME 32
 
+#ifndef __EMSCRIPTEN__
 #define CHUNK_COUNT (1<<18)
+#else
+#define CHUNK_COUNT (1<<17)
+#endif
 chunk *chunkList;
 
 void chunkInit(){

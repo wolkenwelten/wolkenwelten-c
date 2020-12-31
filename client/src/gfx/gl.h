@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef __ARM_ARCH
+#if defined(__arm__) || defined(__aarch64__) || defined(__EMSCRIPTEN__)
 #define WOLKENWELTEN__GL_ES 1
 #endif
 

@@ -14,6 +14,7 @@
 #include "../sdl/input_gamepad.h"
 #include "../sdl/input_touch.h"
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <SDL.h>
 #include <SDL_hints.h>
@@ -52,7 +53,7 @@ void fpsTick() {
 
 static void initSDLMixer(){
 	if(optionMute){return;}
-	if(Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024)==-1) {
+	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024)==-1) {
 		fprintf(stderr,"Mix_OpenAudio: %s\n", Mix_GetError());
 	}
 	if(Mix_Init(MIX_INIT_OGG) == 0){
@@ -79,6 +80,7 @@ void initSDL(){
 	}
 
 	#if defined __EMSCRIPTEN__
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
 	#else
