@@ -85,9 +85,6 @@ GLenum glCheckError_(const char *file, int line){
 }
 #define glCheckError() glCheckError_(__FILE__, __LINE__)
 
-int vaoinit=0;
-uint glVAO=0;
-
 void initGL(){
 	INITGLEXT();
 	recalcDistances();
@@ -111,12 +108,6 @@ void initGL(){
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
-
-	if(!vaoinit){
-		vaoinit = 1;
-		glGenVertexArrays(1,&glVAO);
-		glBindVertexArray(glVAO);
-	}
 }
 
 void calcFOV(const character *cam){
@@ -163,7 +154,6 @@ void calcView(const character *cam){
 }
 
 void renderWorld(const character *cam){
-	shadowEmpty();
 	worldDraw(cam);
 	blockMiningDraw();
 	animalDrawAll();

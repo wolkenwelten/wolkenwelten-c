@@ -18,10 +18,6 @@ void shadowInit(){
 	meshShadow->tex = textureNew(gfx_shadow_png_data,gfx_shadow_png_len,"client/gfx/shadow.png");
 }
 
-void shadowEmpty(){
-	meshEmpty(meshShadow);
-}
-
 void shadowDraw(){
 	glDepthFunc      (GL_LEQUAL);
 	meshFinishStream (meshShadow);
@@ -30,13 +26,14 @@ void shadowDraw(){
 	matMul           (matMVP,matMVP,matProjection);
 	shaderMatrix     (sShadow,matMVP);
 
-	glPolygonOffset(-8,-8);
+	glPolygonOffset(-16,-16);
 	glEnable(GL_POLYGON_OFFSET_FILL);
 
 	meshDraw         (meshShadow);
 
 	glPolygonOffset(0,0);
 	glDisable(GL_POLYGON_OFFSET_FILL);
+	meshEmpty(meshShadow);
 }
 
 void shadowAdd(const vec pos, float size){

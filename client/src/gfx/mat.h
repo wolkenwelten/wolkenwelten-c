@@ -12,8 +12,6 @@ void matScaling     (float out[16], float x, float y, float z);
 void matRotX        (float out[16], float rad);
 void matRotY        (float out[16], float rad);
 void matRotZ        (float out[16], float rad);
-void matAdd         (float out[16], const float a[16], const float b[16]);
-void matSub         (float out[16], const float a[16], const float b[16]);
 void matMul         (float out[16], const float a[16], const float b[16]);
 void matMov         (float out[16], const float a[16]);
 void matMulRotX     (float mat[16], float rad);

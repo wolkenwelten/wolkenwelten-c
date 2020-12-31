@@ -25,7 +25,7 @@ typedef struct {
 #define CLOUDS_MAX (1<<19)
 
 typedef struct {
-	uint count,vbo;
+	uint count,vbo,vao;
 	float base;
 } cloudChunk;
 
@@ -64,23 +64,20 @@ static inline void cloudPart(cloudChunk *part, float px,float py,float pz,float 
 
 void cloudsRender(){
 	const u8 cpart = cloudFrame++ & 7;
-	glBindBuffer(GL_ARRAY_BUFFER, parts[cpart].vbo);
-	glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count], GL_STREAM_DRAW);
 
 	shaderBind(sCloud);
 	shaderSizeMul(sCloud,1.f + (player->aimFade * player->zoomFactor));
-	glEnableVertexAttribArray (0);
-	glDisableVertexAttribArray(1);
-	glEnableVertexAttribArray (2);
 	for(int i=0;i<8;i++){
 		matMov(matMVP,matView);
 		matMulTrans(matMVP,cloudOffset - parts[i].base,0,0);
 		matMul(matMVP,matMVP,matProjection);
 		shaderMatrix(sCloud,matMVP);
 
-		glBindBuffer(GL_ARRAY_BUFFER, parts[i].vbo);
-		glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&cloudData[0].x) -     ((char *)cloudData)));
-		glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&cloudData[0].color) - ((char *)cloudData)));
+		glBindVertexArray(parts[i].vao);
+		if(i == cpart){
+			glBindBuffer(GL_ARRAY_BUFFER, parts[cpart].vbo);
+			glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count], GL_STREAM_DRAW);
+		}
 		glDrawArrays(GL_POINTS,0,CLOUDS_MAX - parts[i].count);
 	}
 	parts[cloudFrame & 7].count = CLOUDS_MAX;
@@ -185,9 +182,16 @@ void cloudsCalcColors(){
 void cloudsInit(){
 	generateNoise(0x84407db3, cloudTex);
 	for(int i=0;i<8;i++){
-		glGenBuffers(1,&parts[i].vbo);
 		parts[i].count = CLOUDS_MAX;
 		parts[i].base  = 0.f;
+		glGenVertexArrays(1,&parts[i].vao);
+		glBindVertexArray(parts[i].vao);
+		glGenBuffers(1,&parts[i].vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, parts[i].vbo);
+		glEnableVertexAttribArray (0);
+		glEnableVertexAttribArray (2);
+		glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&cloudData[0].x) -     ((char *)cloudData)));
+		glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&cloudData[0].color) - ((char *)cloudData)));
 	}
 	cloudsCalcColors();
 }

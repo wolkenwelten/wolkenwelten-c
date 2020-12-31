@@ -30,6 +30,7 @@ __attribute__((aligned(32))) u32          particleRGBA[PART_MAX];
 __attribute__((aligned(32))) uint         particleTTL [PART_MAX];
 uint         particleCount = 0;
 uint         particleVBO[2];
+uint         particleVAO;
 
 __attribute__((aligned(32))) glParticle glSparticles   [SPART_MAX];
 __attribute__((aligned(32))) particle     sparticles   [SPART_MAX];
@@ -37,10 +38,21 @@ __attribute__((aligned(32))) u32          sparticleRGBA[SPART_MAX];
 __attribute__((aligned(32))) uint         sparticleTTL [SPART_MAX];
 uint         sparticleCount = 0;
 uint         sparticleVBO[2];
+uint         sparticleVAO;
 
 void particleInit(){
 	glGenBuffers(2,particleVBO);
 	glGenBuffers(2,sparticleVBO);
+
+	glGenVertexArrays(1, &particleVAO);
+	glBindVertexArray(particleVAO);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(2);
+
+	glGenVertexArrays(1,&sparticleVAO);
+	glBindVertexArray(sparticleVAO);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(2);
 }
 
 void newParticleS(float x,float y,float z, u32 nrgba, float power, uint nttl){
@@ -177,30 +189,35 @@ void particleUpdate(){
 }
 
 void particleDraw(){
-	if(!particleCount){return;}
+	if(!particleCount && !sparticleCount){return;}
 	shaderBind(sParticle);
 	matMul(matMVP,matView,matProjection);
 	shaderMatrix(sParticle,matMVP);
 	shaderSizeMul(sCloud,1.f + (player->aimFade * player->zoomFactor));
 	glDepthMask(GL_FALSE);
-	glDisableVertexAttribArray(1);
 
+	glBindVertexArray(particleVAO);
 	glBindBuffer(GL_ARRAY_BUFFER,particleVBO[0]);
 	glBufferData(GL_ARRAY_BUFFER, particleCount*sizeof(glParticle), glParticles, GL_STREAM_DRAW);
 	glVertexAttribPointer(0, 4, GL_FLOAT        , GL_FALSE, 0, (void *)0);
+
 	glBindBuffer(GL_ARRAY_BUFFER,particleVBO[1]);
 	glBufferData(GL_ARRAY_BUFFER, particleCount*sizeof(u32), particleRGBA, GL_STREAM_DRAW);
 	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  0, (void *)0);
+
 	glDrawArrays(GL_POINTS,0,particleCount);
 
+	glBindVertexArray(sparticleVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, sparticleVBO[0]);
 	glBufferData(GL_ARRAY_BUFFER, sparticleCount*sizeof(glParticle), glSparticles, GL_STREAM_DRAW);
 	glVertexAttribPointer(0, 4, GL_FLOAT        , GL_FALSE, 0, (void *)0);
+
 	glBindBuffer(GL_ARRAY_BUFFER, sparticleVBO[1]);
 	glBufferData(GL_ARRAY_BUFFER, sparticleCount*sizeof(u32), sparticleRGBA, GL_STREAM_DRAW);
 	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  0, (void *)0);
+
 	glDrawArrays(GL_POINTS,0,sparticleCount);
 
+
 	glDepthMask(GL_TRUE);
-	glEnableVertexAttribArray(1);
 }

@@ -41,12 +41,12 @@ textMesh *textMeshNew(uint bufferSize){
 		fprintf(stderr,"Error allocation textMesh\n");
 		return NULL;
 	}
-	m->vbo        = m->dataCount =  0;
+	m->vbo        = m->vao       =  0;
 	m->sx         = m->sy        =  0;
 	m->mx         = m->my        = -1;
 	m->size       = 1;
 	m->tex        = tGui;
-	m->finished   = 0;
+	m->dataCount  = m->finished   = 0;
 	m->usage      = GL_STREAM_DRAW;
 	m->fgc        = colorPalette[15];
 	m->bgc        = colorPalette[ 0];
@@ -86,21 +86,27 @@ void textMeshAddVert(textMesh *m, i16 x, i16 y, i16 u, i16 v, u32 rgba){
 }
 
 void textMeshDraw(textMesh *m){
+	if(!m->vao) {
+		glGenVertexArrays(1, &m->vao);
+		glBindVertexArray(m->vao);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+	}else{
+		glBindVertexArray(m->vao);
+	}
 	if(!m->vbo) {
 		glGenBuffers(1,&m->vbo);
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, m->vbo);
 	if(!m->finished){
 		glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex2D), m->dataBuffer, m->usage);
+		glVertexAttribPointer(0, 2, GL_SHORT        , GL_FALSE, sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].x)    - ((char *)m->dataBuffer)));
+		glVertexAttribPointer(1, 2, GL_SHORT        , GL_FALSE, sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].u)    - ((char *)m->dataBuffer)));
+		glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].rgba) - ((char *)m->dataBuffer)));
 		m->finished = 1;
 	}
 	textureBind(m->tex);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(0, 2, GL_SHORT        , GL_FALSE, sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].x)    - ((char *)m->dataBuffer)));
-	glVertexAttribPointer(1, 2, GL_SHORT        , GL_FALSE, sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].u)    - ((char *)m->dataBuffer)));
-	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].rgba) - ((char *)m->dataBuffer)));
 	glDrawArrays(GL_TRIANGLES,0,m->dataCount);
 
 	vboTrisCount += m->dataCount/3;

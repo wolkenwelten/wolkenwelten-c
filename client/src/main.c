@@ -193,7 +193,6 @@ int main( int argc, char* argv[] ){
 	initUI();
 	initSky();
 	shadowInit();
-	cloudsInit();
 	blockTypeInit();
 	blockMiningInit();
 	initMeshobjs();
@@ -207,6 +206,7 @@ int main( int argc, char* argv[] ){
 	if(!gameRunning){
 		openMainMenu();
 	}
+	cloudsInit();
 
 	player = characterNew();
 	initInventory();

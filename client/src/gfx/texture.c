@@ -11,8 +11,8 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
-unsigned int boundTexture = 0;
-uint textureCount         = 0;
+uint boundTexture = 0;
+uint textureCount = 0;
 texture textureList[256];
 
 texture *tBlocks;

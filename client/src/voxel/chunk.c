@@ -103,6 +103,7 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 	c->y         = y & (~0xF);
 	c->z         = z & (~0xF);
 	c->vbo       = 0;
+	c->vao       = 0;
 	c->dataCount = 0xFFFF;
 	memset(c->data,0,sizeof(c->data));
 	return c;
@@ -121,9 +122,21 @@ void chunkFree(chunk *c){
 }
 
 static inline void chunkFinish(chunk *c){
+	if(!c->vao) {
+		glGenVertexArrays(1, &c->vao);
+		glBindVertexArray(c->vao);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+	}else{
+		glBindVertexArray(c->vao);
+	}
 	if(!c->vbo) { glGenBuffers(1,&c->vbo); }
 	glBindBuffer(GL_ARRAY_BUFFER, c->vbo);
 	glBufferData(GL_ARRAY_BUFFER, c->dataCount*(6*sizeof(vertexTiny)), blockMeshBuffer, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].x) - ((char *)blockMeshBuffer)));
+	glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].u) - ((char *)blockMeshBuffer)));
+	glVertexAttribPointer(2, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].f) - ((char *)blockMeshBuffer)));
 }
 
 static inline void chunkAddVert(chunk *c, int i, u8 x,u8 y,u8 z,u8 f, u8 u, u8 v, u8 w){
@@ -364,7 +377,7 @@ void chunkSetB(chunk *c,int x,int y,int z,u8 block){
 void chunkDraw(chunk *c, float d){
 	if(c == NULL){return;}
 	if(c->dataCount & 0x8000){ chunkGenMesh(c); }
-	if(!c->vbo){ return; }
+	if(!c->vao){ return; }
 	if(d > (fadeoutStartDistance)){
 		shaderAlpha(sBlockMesh,(1.f-((d-(fadeoutStartDistance))/fadeoutDistance)));
 	}else{
@@ -372,10 +385,7 @@ void chunkDraw(chunk *c, float d){
 	}
 	shaderTransform(sBlockMesh,c->x,c->y,c->z);
 
-	glBindBuffer(GL_ARRAY_BUFFER, c->vbo);
-	glVertexAttribPointer(0, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].x) - ((char *)blockMeshBuffer)));
-	glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].u) - ((char *)blockMeshBuffer)));
-	glVertexAttribPointer(2, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].f) - ((char *)blockMeshBuffer)));
+	glBindVertexArray(c->vao);
 	glDrawArrays(GL_TRIANGLES,0,(c->dataCount&0x7FFF)*6);
 	vboTrisCount += (c->dataCount&0x7FFF)*2;
 }

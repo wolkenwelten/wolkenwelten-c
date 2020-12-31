@@ -2,6 +2,7 @@
 #include "../../../common/src/common.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 
 float matMVP[16];
@@ -62,25 +63,12 @@ void matOrtho(float out[16], float left, float right, float bottom, float top, f
 }
 
 void matIdentity(float out[16]){
-	out[ 0] = 1.f;
-	out[ 1] = 0.f;
-	out[ 2] = 0.f;
-	out[ 3] = 0.f;
-
-	out[ 4] = 0.f;
-	out[ 5] = 1.f;
-	out[ 6] = 0.f;
-	out[ 7] = 0.f;
-
-	out[ 8] = 0.f;
-	out[ 9] = 0.f;
-	out[10] = 1.f;
-	out[11] = 0.f;
-
-	out[12] = 0.f;
-	out[13] = 0.f;
-	out[14] = 0.f;
-	out[15] = 1.f;
+	const float matID[16] =
+	{ 1.f, 0.f, 0.f, 0.f,
+          0.f, 1.f, 0.f, 0.f,
+          0.f, 0.f, 1.f, 0.f,
+          0.f, 0.f, 0.f, 1.f };
+	matMov(out,matID);
 }
 
 void matTranslation(float out[16],float x, float y, float z){
@@ -121,22 +109,8 @@ void matRotZ(float out[16], float rad){
 	out[ 5] =  cosf(rad);
 }
 
-void matAdd(float out[16], const float a[16], const float b[16]){
-	for(int i=0;i<16;i++){
-		out[i] = a[i] + b[i];
-	}
-}
-
-void matSub(float out[16], const float a[16], const float b[16]){
-	for(int i=0;i<16;i++){
-		out[i] = a[i] - b[i];
-	}
-}
-
 void matMov(float out[16], const float a[16]){
-	for(int i=0;i<16;i++){
-		out[i] = a[i];
-	}
+	memcpy(out,a,sizeof(float)*16);
 }
 
 void matMul(float out[16], const float a[16], const float b[16]){
