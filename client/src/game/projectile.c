@@ -5,12 +5,12 @@
 #include "../gfx/particle.h"
 
 static inline void projectileDrawFlameBullet(const projectile *p){
-	for(int ii=0;ii<4;ii++){
-		newParticleV(p->pos, vecMulS(vecRng(),0.01f), 192, -6.f,0xFF3060B0,96);
-	}
-	for(int ii=0;ii<2;ii++){
-		newParticleV(p->pos, vecMulS(vecRng(),0.01f), 256, -8.f,0xFF70B8FF,64);
-	}
+	newParticleV(p->pos, vecMulS(vecRng(),0.01f), 178, -2.f,0xFF60C8FF,78);
+	newParticleV(p->pos, vecMulS(vecRng(),0.01f), 128, -1.f,0xFF5098FF,64);
+	newParticleV(p->pos, vecMulS(vecRng(),0.01f), 192, -3.f,0xFF1F38EF,96);
+	newParticleV(p->pos, vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.01f)), 1.f, 2.5f,0xFF1F38EF, 156);
+	const u32 c = 0x00101820 | (rngValR()&0x0003070F);
+	newSparticleV(vecAdd(p->pos,vecRngAbs()), vecAdd(vecNew(0,0.001f,0),vecMulS(vecRng(),0.0001f)), 0.1f, 2.f,c,384);
 }
 
 static inline void projectileDrawWaterBullet(const projectile *p){
