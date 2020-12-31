@@ -21,7 +21,7 @@ int flamethrowerGetStackSize(const item *cItem){
 bool flamethrowerPrimaryAction(item *cItem, character *cChar){
 	if(!characterTryToShoot(cChar,cItem,15,1)){return false;}
 	sfxPlay(sfxPhaser,0.2f);
-	for(uint i=0;i<8;i++){
+	for(uint i=0;i<4;i++){
 		projectileNewC(cChar, 0, 5);
 	}
 	characterAddInaccuracy(cChar,7.f);
@@ -73,5 +73,5 @@ int flamethrowerGetFireHealth(const itemDrop *id){
 float flamethrowerGetInaccuracy(const item *cItem){
 	(void)cItem;
 
-	return 64.f;
+	return 32.f;
 }

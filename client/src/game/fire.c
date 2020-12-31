@@ -32,7 +32,7 @@ static void fireDraw(const fire *f){
 }
 
 static void fireDrawSmoke(const fire *f){
-	if(f->strength < 384){return;}
+	if(f->strength < 256){return;}
 	if(abs(f->x-(int)player->pos.x) > renderDistance){return;}
 	if(abs(f->y-(int)player->pos.y) > renderDistance){return;}
 	if(abs(f->z-(int)player->pos.z) > renderDistance){return;}

@@ -135,9 +135,19 @@ void fxProjectileHit(const packet *p){
 	//const u16 size  = p->v.u16[1];
 	const vec pos = vecNewP(&p->v.f[1]);
 	for(int i=256;i>0;i--){
-		u32 color = 0xFF44AAFF;
+		u32 color;
 		if(style == 2){
-			color = 0xFFFFAA44;
+			if(rngValA(1)){
+				color = 0xFFB05020;
+			}else{
+				color = 0xFF9F7830;
+			}
+		}else{
+			if(rngValA(1)){
+				color = 0xFF60C8FF;
+			}else{
+				color = 0xFF1F38EF;
+			}
 		}
 		const vec v  = vecMulS(vecRng(),0.03f);
 		newParticleV(pos,v,48.f,4.f,color,64);

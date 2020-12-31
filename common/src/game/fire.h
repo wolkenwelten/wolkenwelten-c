@@ -13,3 +13,4 @@ void fireSendUpdate    (uint c, uint i);
 
 fire *fireGetByBeing   (being b);
 being fireGetBeing     (const fire *f);
+int fireHitCheck       (const vec pos, float mdd, int dmg, int cause, u16 iteration, being source);

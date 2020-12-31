@@ -55,9 +55,9 @@ void projectileNewC(const character *c, being target, uint style){
 	const float pitch = c->rot.pitch + (rngValf()-0.5f)*inacc;
 	float speed = 1.f;
 	if(style == 5){
-		speed = 0.1f;
-	}else if(style == 6){
 		speed = 0.2f;
+	}else if(style == 6){
+		speed = 0.3f;
 	}
 
 	projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style,speed);
@@ -115,12 +115,22 @@ static inline int projectileUpdate(projectile *p){
 		mdd = 1.f;
 		if(projectileSelfHitCheck(p, 2.f, projectileGetBeing(p))){return 1;}
 	}
+	if(!vecInWorld(p->pos)){return 1;}
 	if(characterHitCheck (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
 	if(animalHitCheck    (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
-	if(!vecInWorld(p->pos)){return 1;}
-	if(checkCollision(p->pos.x,p->pos.y,p->pos.z)){
-		if(!isClient){
+	if((p->style == 6) && fireHitCheck(p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
+	if(checkCollision(p->pos.x,p->pos.y,p->pos.z)){return 1;}
+	if(p->target != 0){return projectileHomeIn(p);}
+	return 0;
+}
+
+void projectileUpdateAll(){
+	for(uint i=0;i<countof(projectileList);i++){
+		projectile *p = &projectileList[i];
+		if(p->style == 0){continue;}
+		if(projectileUpdate(p)){
 			if(p->style == 6){
+				fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3, 128);
 				waterBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,128);
 				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 2);}
 			}else if(p->style == 5){
@@ -130,17 +140,6 @@ static inline int projectileUpdate(projectile *p){
 				fireBox(p->pos.x,p->pos.y,p->pos.z,1,1,1,64);
 				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 1);}
 			}
-		}
-		return 1;
-	}
-	if(p->target != 0){return projectileHomeIn(p);}
-	return 0;
-}
-
-void projectileUpdateAll(){
-	for(uint i=0;i<countof(projectileList);i++){
-		if(projectileList[i].style == 0){continue;}
-		if(projectileUpdate(&projectileList[i])){
 			projectileList[i].style = 0;
 			if(!isClient){
 				projectileSendUpdate(-1,i);

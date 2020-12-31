@@ -85,3 +85,16 @@ being fireGetBeing(const fire *f){
 	if(f == NULL){return 0;}
 	return beingFire(f - fireList);
 }
+
+int fireHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, being source){
+	(void)mdd;
+	(void)cause;
+	(void)iteration;
+	(void)source;
+	fire *f = fireGetAtPos(pos.x,pos.y,pos.z);
+	if(f != NULL){
+		f->strength -= dmg*4;
+		return 1;
+	}
+	return 0;
+}
