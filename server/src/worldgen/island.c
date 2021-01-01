@@ -119,7 +119,6 @@ typedef struct {
 
 static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 	memset(w,0,sizeof(wgChances));
-	w->treeType = rngValM(2);
 	w->grassBlock = I_Grass;
 
 	w->hematiteChance = 2047;
@@ -135,65 +134,87 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 
 	switch(wgen->vegetationConcentration){
 		case 7:
+			w->treeType       = 0;
 			w->bigTreeChance  = (1<< 9)-1;
 			w->treeChance     = (1<< 5)-1;
 			w->shrubChance    = (1<< 4)-1;
 			w->animalChance   = (1<< 9)-1;
 			break;
 		case 6:
+			w->treeType       = 0;
 			w->bigTreeChance  = (1<<12)-1;
-			w->treeChance     = (1<< 6)-1;
+			w->treeChance     = (1<< 5)-1;
 			w->shrubChance    = (1<< 4)-1;
 			w->animalChance   = (1<< 9)-1;
 			break;
 		default:
 		case 5:
+			w->treeType       = 1;
 			w->bigTreeChance  = (1<<13)-1;
-			w->treeChance     = (1<< 7)-1;
+			w->treeChance     = (1<< 6)-1;
 			w->shrubChance    = (1<< 5)-1;
 			w->animalChance   = (1<<10)-1;
 			break;
 		case 4:
+			w->treeType       = 1;
 			w->bigTreeChance  = (1<<15)-1;
 			w->treeChance     = (1<< 9)-1;
 			w->shrubChance    = (1<< 6)-1;
 			w->animalChance   = (1<<11)-1;
 			break;
 		case 3:
+			w->treeType       = 2;
 			w->treeChance     = (1<<10)-1;
-			w->shrubChance    = (1<< 7)-1;
+			w->shrubChance    = (1<< 5)-1;
 			w->dirtChance     = (1<< 5)-1;
 			w->stoneChance    = (1<< 8)-1;
 			w->animalChance   = (1<<12)-1;
-			w->grassBlock = I_Dry_Grass;
+			w->grassBlock     = I_Dry_Grass;
 			break;
 		case 2:
+			w->treeType       = 2;
 			w->treeChance     = (1<<12)-1;
-			w->shrubChance    = (1<< 8)-1;
+			w->shrubChance    = (1<< 6)-1;
 			w->dirtChance     = (1<< 4)-1;
 			w->stoneChance    = (1<< 7)-1;
 			w->animalChance   = (1<<13)-1;
-			w->grassBlock = I_Dry_Grass;
+			w->grassBlock     = I_Dry_Grass;
 			break;
 		case 1:
-			w->shrubChance    = (1<< 8)-1;
+			w->treeType       = 5;
+			w->shrubChance    = (1<< 7)-1;
 			w->dirtChance     = (1<< 2)-1;
 			w->stoneChance    = (1<< 5)-1;
 			w->treeChance     = (1<<12)-1;
-			w->deadTreeChance = (1<<12)-1;
 			w->animalChance   = (1<<14)-1;
-			w->grassBlock = I_Dry_Grass;
+			w->grassBlock     = I_Dry_Grass;
 			break;
 		case 0:
- 			w->shrubChance    = (1<<10)-1;
+			w->treeType       = 5;
+			w->shrubChance    = (1<< 9)-1;
 			w->dirtChance     = (1<< 1)-1;
 			w->stoneChance    = (1<< 5)-1;
 			w->monolithChance = (1<<18)-1;
-			w->treeChance     = (1<<15)-1;
-			w->deadTreeChance = (1<<13)-1;
+			w->bigTreeChance  = (1<<18)-1;
+			w->treeChance     = (1<<14)-1;
 			w->animalChance   = (1<<15)-1;
-			w->grassBlock = I_Dry_Grass;
+			w->grassBlock     = I_Dry_Grass;
 			break;
+	}
+
+	if(w->treeType == 1){
+		switch(rngValA(31)){
+		case 0:
+			w->treeType = 3;
+			w->treeChance = w->treeChance >> 2;
+			break;
+		case 1:
+			w->treeType = 4;
+			w->treeChance = w->treeChance >> 2;
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -208,12 +229,26 @@ static inline bool worldgenRDMonolith(worldgen *wgen, wgChances *w, int cx, int 
 
 static inline bool worldgenRDBigTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
 	if(!w->bigTreeChance || (w->airBlocks <= 32) || rngValA(w->bigTreeChance)){return false;}
-	if(w->treeType==0){
+	switch(w->treeType){
+	default:
+	case 0:
 		wgBigSpruce(wgen->clay,cx,cy,cz);
-	}else if(w->treeType == 1){
+		break;
+	case 1:
 		wgBigOak(wgen->clay,cx,cy,cz);
-	}else{
+		break;
+	case 2:
+		wgBigAcacia(wgen->clay,cx,cy,cz);
+		break;
+	case 3:
+		wgBigBirch(wgen->clay,cx,cy,cz);
+		break;
+	case 4:
+		wgBigSakura(wgen->clay,cx,cy,cz);
+		break;
+	case 5:
 		wgBigDeadTree(wgen->clay,cx,cy,cz);
+		break;
 	}
 	w->lastBlock = I_Oak;
 	w->airBlocks = 0;
@@ -222,10 +257,26 @@ static inline bool worldgenRDBigTree(worldgen *wgen, wgChances *w, int cx, int c
 
 static inline bool worldgenRDTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
 	if(!w->treeChance || (w->airBlocks <= 16) || rngValA(w->treeChance)){return false;}
-	if(w->treeType==0){
+	switch(w->treeType){
+	default:
+	case 0:
 		wgSpruce(wgen->clay,cx,cy,cz);
-	}else if(w->treeType == 1){
+		break;
+	case 1:
 		wgOak(wgen->clay,cx,cy,cz);
+		break;
+	case 2:
+		wgAcacia(wgen->clay,cx,cy,cz);
+		break;
+	case 3:
+		wgBirch(wgen->clay,cx,cy,cz);
+		break;
+	case 4:
+		wgSakura(wgen->clay,cx,cy,cz);
+		break;
+	case 5:
+		wgDeadTree(wgen->clay,cx,cy,cz);
+		break;
 	}
 	w->lastBlock = I_Oak;
 	w->airBlocks = 0;
@@ -255,7 +306,11 @@ static inline bool worldgenRDDeadTree(worldgen *wgen, wgChances *w, int cx, int 
 static inline bool worldgenRDShrub(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
 	if(w->airBlocks <= 8){return false;}
 	if(w->shrubChance && (rngValA(w->shrubChance)==0)){
-		wgShrub(wgen->clay,cx,cy,cz);
+		if(w->treeType == 2){
+			wgDate(wgen->clay,cx,cy,cz);
+		}else{
+			wgShrub(wgen->clay,cx,cy,cz);
+		}
 		w->lastBlock = I_Dirt;
 		w->airBlocks = 0;
 		return true;

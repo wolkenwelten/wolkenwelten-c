@@ -29,12 +29,13 @@ int   itemDecAmmo    (      item *i, i16 amount);
 #define I_Hematite_Ore  13
 #define I_Marble_Pillar 14
 #define I_Marble_Blocks 15
-#define I_Hewn_Log      16
+#define I_Acacia_Leaf   16
 #define I_Board         17
 #define I_Crystal       18
 #define I_Sakura_Leaf   19
 #define I_Birch         20
 #define I_Flower        21
+#define I_Date          22
 
 #define I_Grenade       256
 #define I_Bomb          257

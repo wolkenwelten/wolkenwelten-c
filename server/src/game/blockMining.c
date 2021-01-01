@@ -42,17 +42,17 @@ float blockMiningGetProgress(blockMining *bm){
 
 void blockMiningDropItemsPos(int x, int y, int z, u8 b){
 	u16 ID = b;
-	if(b == 0){return;}
-	if(b == 7){return;}  // Roots
-	if(b == 2){ID = 1;}  // Grass
-	if(b == 8){ID = 1;}  // Roots
-	if((b == 19) || (b == 21)){
+	if(b == 0)          {return;}
+	if(b == I_Roots)    {return;}  // Roots
+	if(b == I_Grass)    {ID = 1;}  // Grass
+	if(b == I_Dry_Grass){ID = 1;}  // Grass
+	if((b == I_Sakura_Leaf) || (b == I_Flower) || (b == I_Date)){
 		ID = 272;
 		if(rngValM(8)!=0){
 			return;
 		}
 	}
-	if((b == 6) || (b == 11)){ // Leaves
+	if((b == I_Oak_Leaf) || (b == I_Spruce_Leaf) || (b == I_Acacia_Leaf)){ // Leaves
 		ID = 258;
 		if(rngValM(8)!=0){
 			return;

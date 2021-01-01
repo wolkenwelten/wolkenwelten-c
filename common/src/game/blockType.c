@@ -136,7 +136,8 @@ void blockTypeInit(){
 	blockTypeInitBlock    (15,14, STONE, "Marble Blocks", 1600, 8000, 0xFFF0F0F0,0xFFEBEBEB);
 	blockTypeSetWaterProps(15, 0, 0, 8);
 
-	// 16 Unused
+	blockTypeInitBlock    (16,24, LEAVES,"Acacia Leafes",  110,  600, 0xFF000230,0xFF1c638f);
+	blockTypeSetWaterProps(16, 128, 128, 128);
 
 	blockTypeInitBlock    (17,17, WOOD,  "Boards",         300,  600, 0xFF09678f,0xFF1380af);
 	blockTypeSetWaterProps(17, 0, 0, 8);
@@ -150,8 +151,11 @@ void blockTypeInit(){
 	blockTypeInitBlock    (20,20, WOOD,  "Birch Log",      500,  800, 0xFF525255,0xFF525555);
 	blockTypeSetWaterProps(20, 2048, 0, 8);
 
-	blockTypeInitBlock    (21,21, LEAVES,"Flower Bush",    160,  440, 0xFF004227,0xFF003318);
+	blockTypeInitBlock    (21,21, LEAVES,"Flower Bush",    160,  640, 0xFF004227,0xFF003318);
 	blockTypeSetWaterProps(21, 128, 128, 128);
+
+	blockTypeInitBlock    (22,23, LEAVES,"Date Bush",      120,  840, 0xFF00334f,0xFF128394);
+	blockTypeSetWaterProps(22, 128, 128, 128);
 
 	blockTypeGenMeshes();
 }
