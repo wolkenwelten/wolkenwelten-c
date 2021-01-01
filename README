@@ -1,11 +1,28 @@
 --+++-- WolkenWelten --+++--
+ This game is still under heavy development, so it will probably crash a lot and
+ eat your savegames while at it, also savegames will not be compatible with later
+ versions, so keep that in mind. As soon as the game gets a stable release version
+ I will see to it that savegames will be compatible between different versions.
 
--+- Linux Requirements -+-
- For the Linux version to work you need SDL2 and SDL2_mixer on your system, of
- course a libGL and running Wayland/X11 is also necessary. Apart from that nothing
- should be needed.
 
- This is mostly a list of Commandline Arguments / Commands one can use.
+-+- Windows Requirements -+-
+ You need to be running at least Windows 7 64-bit, 32-bit versions are unsupported (if demand is high enough I might reconsider).
+
+-+- MacOS Requirements -+-
+ You need to be running at least MacOS 10.10, apart from that everything should be
+ included.
+
+-+- Linux x86_64 Requirements -+-
+ For this to work you need SDL2, SDL2_mixer on your system, of
+ course a libGL and running Wayland/X11 is also necessary. For the client you also
+ need glibc, although the server should run on any Linux machine.
+
+-+- Linux ARM 64-bit Requirements -+-
+ This version needs SDL2, SDL2_mixer and glibc just as the x86 version, it is
+ mostly tested on a Raspberry Pi 4 with 8GB running Raspberry Pi OS 64-bit Beta.
+ I also slightly overclocked my Pi to 2GHz CPU and 800MHz GPU making things
+ slightly smoother, although that should not be necessary.
+
 
 -+- Console commands -+-
  All console commands start with a period '.'
