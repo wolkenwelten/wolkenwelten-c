@@ -324,13 +324,13 @@ void drawCursor(){
 	if(mouseHidden){return;}
 
 	textMeshEmpty(cursorMesh);
-	textMeshAddVert(cursorMesh,   x,   y,  0.f,  0.f,~1);
-	textMeshAddVert(cursorMesh,   x,y+32,  0.f,128.f,~1);
+	textMeshAddVert(cursorMesh,x   ,y   ,  0.f,  0.f,~1);
+	textMeshAddVert(cursorMesh,x   ,y+32,  0.f,128.f,~1);
 	textMeshAddVert(cursorMesh,x+32,y+32,128.f,128.f,~1);
 
 	textMeshAddVert(cursorMesh,x+32,y+32,128.f,128.f,~1);
-	textMeshAddVert(cursorMesh,x+32,   y,128.f,  0.f,~1);
-	textMeshAddVert(cursorMesh,   x,   y,  0.f,  0.f,~1);
+	textMeshAddVert(cursorMesh,x+32,y   ,128.f,  0.f,~1);
+	textMeshAddVert(cursorMesh,x   ,y   ,  0.f,  0.f,~1);
 	textMeshDraw   (cursorMesh);
 }
 
@@ -589,7 +589,7 @@ void drawActiveItem(){
 	if(aiMesh == NULL){return;}
 
 	const float ix =  (1.5f * (1.f - player->aimFade));
-	float iy = -1.2f + (0.3f * player->aimFade);
+	float iy = -1.2f + (0.5f * player->aimFade);
 	const float iz = -1.5f;
 	float hitOff,y;
 

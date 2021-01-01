@@ -53,11 +53,11 @@ void projectileNewC(const character *c, being target, uint style){
 	const float inacc = MIN(96.f,(c->inaccuracy*0.2f)) / (1.f + (c->aimFade * c->zoomFactor));
 	const float yaw   = c->rot.yaw   + (rngValf()-0.5f)*inacc;
 	const float pitch = c->rot.pitch + (rngValf()-0.5f)*inacc;
-	float speed = 1.f;
+	float speed = 2.f;
 	if(style == 5){
-		speed = 0.2f;
+		speed = 0.4f;
 	}else if(style == 6){
-		speed = 0.3f;
+		speed = 0.5f;
 	}
 
 	projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style,speed);

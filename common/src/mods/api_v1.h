@@ -58,6 +58,8 @@
 #define I_Flamebullet   284
 #define I_Iron_Dust     285
 #define I_Crystal_Dust  286
+#define I_Flamestick    287
+#define I_Waterthrower  288
 
 void recipeNew1 (const item result, const item ingred1);
 void recipeNew2 (const item result, const item ingred1, const item ingred2);

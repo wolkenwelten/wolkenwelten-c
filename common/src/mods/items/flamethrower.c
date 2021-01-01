@@ -30,14 +30,13 @@ bool flamethrowerPrimaryAction(item *cItem, character *cChar){
 }
 
 bool flamethrowerSecondaryAction(item *cItem, character *cChar){
-	if(!characterTryToShoot(cChar,cItem,15,1)){return false;}
-	sfxPlay(sfxPhaser,0.2f);
-	for(uint i=0;i<8;i++){
-		projectileNewC(cChar, 0, 6);
+	if(characterTryToUse(cChar,cItem,200,0)){
+		characterAddCooldown(cChar,200);
+		characterToggleAim(cChar,2.f);
+		characterAddInaccuracy(cChar,32.f);
+		return true;
 	}
-	characterAddInaccuracy(cChar,7.f);
-	characterAddRecoil(cChar,1.f);
-	return true;
+	return false;
 }
 
 bool flamethrowerTertiaryAction(item *cItem, character *cChar){
@@ -73,5 +72,5 @@ int flamethrowerGetFireHealth(const itemDrop *id){
 float flamethrowerGetInaccuracy(const item *cItem){
 	(void)cItem;
 
-	return 32.f;
+	return 16.f;
 }

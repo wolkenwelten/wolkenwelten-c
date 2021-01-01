@@ -163,8 +163,8 @@ void wgSurroundWithLeafes(chungus *c, int x, int y, int z, u8 leafB){
 }
 
 void wgAcacia(chungus *c, int x, int y, int z){
-	int size       = rngValMM(10,14);
-	int sparseness = rngValMM(3,4);
+	int size       = rngValA(7)+10;
+	int sparseness = rngValA(3)+3;
 	int lsize      = 0;
 	int logblock   = I_Spruce;
 	int leafes     = I_Acacia_Leaf;
@@ -238,8 +238,8 @@ void wgAcacia(chungus *c, int x, int y, int z){
 }
 
 static void wgTree(chungus *c, int x, int y, int z, int logblock, int leafes){
-	int size       = rngValMM(8,12);
-	int sparseness = rngValMM(2,3);
+	int size       = rngValA(3)+8;
+	int sparseness = rngValA(3)+3;
 	int lsize      = 3;
 	int r;
 
@@ -321,8 +321,8 @@ void wgSakura(chungus *c, int x,int y,int z){
 }
 
 void wgBigTree(chungus *c, int x,int y,int z, int logblock, int leafes){
-	int size       = rngValMM(18,24);
-	int sparseness = rngValMM(2,4);
+	int size       = rngValA(15)+8;
+	int sparseness = rngValA( 3)+4;
 	int lsize      = 8;
 
 	for(int cy = -5;cy < size;cy++){
@@ -370,8 +370,8 @@ void wgBigSakura(chungus *c, int x,int y,int z){
 }
 
 void wgBigAcacia(chungus *c, int x,int y,int z){
-	int size       = rngValMM(18,24);
-	int sparseness = rngValMM(2,4);
+	int size       = rngValA(7) + 18;
+	int sparseness = rngValA(3) + 3;
 	int lsize      = 8;
 	int logblock   = I_Spruce;
 	int leafes     = I_Acacia_Leaf;

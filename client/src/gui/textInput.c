@@ -96,7 +96,7 @@ bool textInputEvent(const SDL_Event *e){
 		textInputAppend(e->text.text);
 		break;
 	case SDL_TEXTEDITING:
-		fprintf(stderr,"composition: %s %i %i\n",e->edit.text, e->edit.start, e->edit.length);
+		//fprintf(stderr,"composition: %s %i %i\n",e->edit.text, e->edit.start, e->edit.length);
 		break;
 	case SDL_KEYUP:
 		switch(e->key.keysym.sym){
