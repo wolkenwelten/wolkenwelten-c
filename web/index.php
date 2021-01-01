@@ -40,6 +40,7 @@ foreach(array_keys($platforms) as $plat){
 	<hr/>
 	<div class=nativedl align=center>
 		<?php echoBuilds($stable); ?>
+		<i>Current versions are not even close to stable, but you may try an experimental build below.</i>
 	</div>
 	<br/>
 	<br/>
