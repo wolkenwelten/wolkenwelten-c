@@ -3,6 +3,7 @@
 #include "../main.h"
 #include "../game/animal.h"
 #include "../game/blockMining.h"
+#include "../game/clouds.h"
 #include "../game/entity.h"
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
@@ -338,6 +339,30 @@ lVal *wwlnfNoAggro(lClosure *c, lVal *v){
 	return lValBool(animalNoAggro);
 }
 
+lVal *wwlnfCDen(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lEval(c,v);
+		if(t != NULL){
+			t = lnfInt(c,t);
+			cloudsSetDensity(t->vInt);
+		}
+	}
+	return lValInt(cloudDensityMin);
+}
+
+lVal *wwlnfWVel(lClosure *c, lVal *v){
+	float args[3] = {windGVel.x,windGVel.y,windGVel.z};
+	for(int i=0;i<3;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v);
+		t = lnfFloat(c,t);
+		args[i] = t->vFloat;
+		v = v->next;
+	}
+	cloudsSetWind(vecNew(args[0],args[1],args[2]));
+	return lValBool(true);
+}
+
 void lispEvalNR(const char *str){
 	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
 		lEval(clRoot,sexpr);
@@ -379,6 +404,8 @@ void initCommands(){
 	lClosureAddNF(clRoot,"water",  &wwlnfWater);
 	lClosureAddNF(clRoot,"wcount", &wwlnfWCount);
 	lClosureAddNF(clRoot,"wsrc",   &wwlnfWSrc);
+	lClosureAddNF(clRoot,"cden",   &wwlnfCDen);
+	lClosureAddNF(clRoot,"wvel",   &wwlnfWVel);
 	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
 	lispEvalNR("(define heal (lambda (a) (- (dmg (cond (a (- a)) (#t -20))))))");
 	lispEvalNR("(define wtest (lambda () (water (px) (py) (pz)) (water (+ (px) 1) (py) (pz)) (water (+ (px) 1) (py) (+ (pz) 1)) (water (px) (py) (+ (pz) 1)) ))");

@@ -5,6 +5,7 @@
 #include "game/animal.h"
 #include "game/being.h"
 #include "game/blockMining.h"
+#include "game/clouds.h"
 #include "game/fire.h"
 #include "game/itemDrop.h"
 #include "game/landscape.h"
@@ -93,6 +94,7 @@ static void updateWorldStep(){
 	animalCheckBurnAll();
 	gtimeUpdate();
 	landscapeUpdateAll();
+	cloudsUpdateAll();
 }
 
 int updateWorld(){
@@ -146,6 +148,7 @@ void mainInit(){
 
 	bigchungusInit(&world);
 	blockTypeInit();
+	cloudsInit();
 	if(optionProfileWG){
 		bigchungusGenHugeSpawn(&world);
 	}else{

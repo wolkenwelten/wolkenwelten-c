@@ -5,6 +5,7 @@
 #include "../game/beamblast.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
+#include "../game/clouds.h"
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
 #include "../game/grenade.h"
@@ -465,10 +466,14 @@ void serverParseSinglePacket(uint c, packet *p){
 			fireRecvUpdate(c,p);
 			break;
 		case 41:
-			//waterRecvUpdate(c,p);
+			waterRecvUpdate(c,p);
 			break;
 		case 42:
 			lispRecvSExpr(c,p);
+			break;
+		case 43:
+			fprintf(stderr,"cloudsUpdate received from client\n");
+			serverKill(c);
 			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
@@ -554,6 +559,7 @@ void serverParseIntro(uint c){
 		sendPlayerJoinMessage(c);
 		msgSetTime(c, gtimeGetTime());
 		animalUpdatePriorities(c);
+		cloudsSendUpdate(c);
 		clients[c].lastPing = getTicks();
 		msgPingPong(c);
 	}

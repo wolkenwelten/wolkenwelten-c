@@ -2,7 +2,7 @@
 
 #include "../sdl/sdl.h"
 #include "../game/blockType.h"
-#include "../gfx/clouds.h"
+#include "../game/clouds.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gl.h"

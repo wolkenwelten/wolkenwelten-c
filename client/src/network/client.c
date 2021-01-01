@@ -5,6 +5,7 @@
 #include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
+#include "../game/clouds.h"
 #include "../game/fire.h"
 #include "../game/grenade.h"
 #include "../game/itemDrop.h"
@@ -285,6 +286,9 @@ void clientParsePacket(const packet *p){
 			break;
 		case 42:
 			lispRecvSExpr(p);
+			break;
+		case 43:
+			cloudsRecvUpdate(p);
 			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);
