@@ -286,6 +286,8 @@ lVal *lnfInt(lClosure *c, lVal *v){
 	if(t == NULL){return lValInt(0);}
 	switch(t->type){
 	default: return lValInt(0);
+	case ltBool:
+		return lValInt(t->vBool ? 1 : 0);
 	case ltInt:
 		return t;
 	case ltFloat:
