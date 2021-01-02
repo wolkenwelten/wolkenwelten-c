@@ -3,6 +3,7 @@
 savedFloats: .zero 512
 
 .text
+.global      rainPosUpdate
 .global  particlePosUpdate
 .global sparticlePosUpdate
 
@@ -93,5 +94,40 @@ sparticlePosUpdate:
   dec %ecx
   jnz .sparticleUpdateLoop
 .sparticleUpdateEnd:
+  fxrstor savedFloats(%rip)
+  ret
+
+rainPosUpdate:
+  fxsave savedFloats(%rip)
+  movl rainCount(%rip), %ecx
+  shrl $1,%ecx
+  inc %ecx
+
+  leaq rainVel(%rip), %rdx
+  movaps (%rdx),%xmm4
+
+  leaq glRainDrops(%rip), %rdx
+  leaq   rainDrops(%rip), %rax
+
+.rainPosUpdateLoop:
+  movaps   (%rdx),%xmm0
+  movaps   (%rax),%xmm1
+  addps  %xmm1,%xmm0
+  addps  %xmm4,%xmm1
+  movaps %xmm0,  (%rdx)
+  movaps %xmm1,  (%rax)
+
+  movaps 16(%rdx),%xmm2
+  movaps 16(%rax),%xmm3
+  addps  %xmm3,%xmm2
+  addps  %xmm4,%xmm3
+  movaps %xmm2,16(%rdx)
+  movaps %xmm3,16(%rax)
+
+  add $32,%rdx
+  add $32,%rax
+  dec %ecx
+  jnz .rainPosUpdateLoop
+.rainPosUpdateEnd:
   fxrstor savedFloats(%rip)
   ret

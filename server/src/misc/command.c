@@ -350,6 +350,17 @@ lVal *wwlnfCDen(lClosure *c, lVal *v){
 	return lValInt(cloudDensityMin);
 }
 
+lVal *wwlnfRain(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lEval(c,v);
+		if(t != NULL){
+			t = lnfInt(c,t);
+			weatherSetRainDuration(t->vInt);
+		}
+	}
+	return lValInt(rainDuration);
+}
+
 lVal *wwlnfWVel(lClosure *c, lVal *v){
 	float args[3] = {windGVel.x,windGVel.y,windGVel.z};
 	for(int i=0;i<3;i++){
@@ -406,6 +417,7 @@ void initCommands(){
 	lClosureAddNF(clRoot,"wsrc",   &wwlnfWSrc);
 	lClosureAddNF(clRoot,"cden",   &wwlnfCDen);
 	lClosureAddNF(clRoot,"wvel",   &wwlnfWVel);
+	lClosureAddNF(clRoot,"rain",   &wwlnfRain);
 	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
 	lispEvalNR("(define heal (lambda (a) (- (dmg (cond (a (- a)) (#t -20))))))");
 	lispEvalNR("(define wtest (lambda () (water (px) (py) (pz)) (water (+ (px) 1) (py) (pz)) (water (+ (px) 1) (py) (+ (pz) 1)) (water (px) (py) (+ (pz) 1)) ))");

@@ -9,7 +9,7 @@ vec cloudOff;
 vec windVel,windGVel;
 u8  cloudGDensityMin;
 u8  cloudDensityMin;
-u8  cloudRainDuration;
+u8  rainDuration;
 
 void weatherInit(){
 	generateNoise(0x84407db3, cloudTex);
@@ -18,7 +18,7 @@ void weatherInit(){
 	windVel    = windGVel;
 	cloudGDensityMin  = 154;//rngValA(31)+154;
 	cloudDensityMin   = cloudGDensityMin;
-	cloudRainDuration = 0;
+	rainDuration = 0;
 }
 
 void weatherUpdateAll(){
@@ -32,19 +32,19 @@ void weatherUpdateAll(){
 		--cloudGDensityMin;
 		weatherSendUpdate(-1);
 	}
-	if(cloudRainDuration){
+	if(rainDuration){
 		if(!isClient){weatherDoRain();}
 		if((calls & 0xFFF) == 0){
-			if((--cloudRainDuration == 0) && !isClient){weatherSendUpdate(-1);}
+			if((--rainDuration == 0) && !isClient){weatherSendUpdate(-1);}
 		}else if(((calls & 0xFFF) == 1) && !isClient){
 			cloudGDensityMin++;
 			weatherSendUpdate(-1);
 		}
 	}
-	if((!isClient) && (cloudRainDuration == 0) && (cloudDensityMin < 170) && (calls & 0xFFF) == 0){
+	if((!isClient) && (rainDuration == 0) && (cloudDensityMin < 170) && (calls & 0xFFF) == 0){
 		const uint chance = MAX(2,16 - (170 - cloudDensityMin));
 		if(rngValA((1<<chance)-1) == 0){
-			cloudRainDuration = rngValA(15)+16;
+			rainDuration = rngValA(15)+16;
 			weatherSendUpdate(-1);
 		}
 	}
@@ -84,7 +84,7 @@ void weatherSendUpdate(uint c){
 
 	p->v.u8 [36] = cloudDensityMin;
 	p->v.u8 [37] = cloudGDensityMin;
-	p->v.u8 [38] = cloudRainDuration;
+	p->v.u8 [38] = rainDuration;
 	p->v.u8 [39] = 0;
 
 	packetQueue(p,43,10*4,c);
@@ -97,7 +97,7 @@ void weatherRecvUpdate(const packet *p){
 
 	cloudDensityMin   = p->v.u8[36];
 	cloudGDensityMin  = p->v.u8[37];
-	cloudRainDuration = p->v.u8[38];
+	rainDuration = p->v.u8[38];
 }
 
 void cloudsSetWind(const vec ngv){
@@ -107,5 +107,10 @@ void cloudsSetWind(const vec ngv){
 
 void cloudsSetDensity(u8 gd){
 	cloudGDensityMin = gd;
+	if(!isClient){weatherSendUpdate(-1);}
+}
+
+void weatherSetRainDuration(u8 dur){
+	rainDuration = dur;
 	if(!isClient){weatherSendUpdate(-1);}
 }

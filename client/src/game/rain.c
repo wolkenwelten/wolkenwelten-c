@@ -21,15 +21,15 @@ void rainInitGfx(){
 }
 
 void rainFakeDrops(){
-	if(cloudRainDuration <= 0){return;}
+	if(rainDuration <= 0){return;}
 	vec pos = player->pos;
 	pos.y = (float)(((int)pos.y) & 0xFF00) + (32.f - 256.f);
 	for(uint i=0;i<3;i++){
-		rainNew(vecAdd(pos,vecMul(vecRng(), vecNew( 16.f,0.f, 16.f))));
-		rainNew(vecAdd(pos,vecMul(vecRng(), vecNew( 32.f,0.f, 32.f))));
-		rainNew(vecAdd(pos,vecMul(vecRng(), vecNew( 64.f,0.f, 64.f))));
-		rainNew(vecAdd(pos,vecMul(vecRng(), vecNew(128.f,0.f,128.f))));
-		rainNew(vecAdd(pos,vecMul(vecRng(), vecNew(256.f,0.f,256.f))));
+		float v = 16.f;
+		for(int ii=0;ii<6;ii++){
+			rainNew(vecAdd(pos,vecMul(vecRng(), vecNew( v,0.f, v))));
+			v *= 2.f;
+		}
 		pos.y += 256.f;
 	}
 }
@@ -52,7 +52,6 @@ void rainDrawAll(){
 
 	glDepthMask(GL_TRUE);
 }
-
 
 void rainRecvUpdate(const packet *p){
 	const vec pos  = vecNew(p->v.f[0],p->v.f[1],p->v.f[2]);

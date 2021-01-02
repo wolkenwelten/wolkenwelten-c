@@ -574,7 +574,8 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"Player: %u\n",playerID);
 		textMeshPrintf(guim,"Time  : %s\n",gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
 		textMeshPrintf(guim,"Bright: %f\n",skyBrightness);
-		textMeshPrintf(guim,"Rain  : %u\n",cloudRainDuration);
+		textMeshPrintf(guim,"Rain  : %u\n",rainDuration);
+		textMeshPrintf(guim,"Clouds: %u\n",cloudDensityMin);
 
 		animalOverlaysDrawn = 0;
 		for(uint i=0;i<animalCount;i++){
