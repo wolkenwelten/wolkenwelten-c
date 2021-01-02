@@ -3,3 +3,4 @@
 
 void rainInitGfx();
 void rainDrawAll();
+void rainRecvUpdate(const packet *p);

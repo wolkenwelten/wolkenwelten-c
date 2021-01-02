@@ -1,11 +1,15 @@
 #include "rain.h"
 
+#include "../asm/asm.h"
 #include "../game/weather.h"
 #include "../network/messages.h"
 
 __attribute__((aligned(32))) glRainDrop glRainDrops[RAIN_MAX];
 __attribute__((aligned(32)))   rainDrop   rainDrops[RAIN_MAX];
+__attribute__((aligned(32)))      float   rainVel[4];
 uint rainCount = 0;
+
+void rainPosUpdate();
 
 void rainNew(vec pos){
 	uint i = ++rainCount;
@@ -22,33 +26,34 @@ static void rainDel(uint i){
 	  rainDrops[i] =   rainDrops[  rainCount];
 }
 
-void rainUpdatePos(){
-	const float wvx = windVel.x / 128.f;
-	const float wvz = windVel.z / 128.f;
-
+#ifndef WW_ASM_RAIN_POS_UPDATE
+void rainPosUpdate(){
 	for(uint i=0;i<rainCount;i++){
-		glRainDrops[i].x    += rainDrops[i].vx;
-		glRainDrops[i].y    += rainDrops[i].vy;
-		glRainDrops[i].z    += rainDrops[i].vz;
-		glRainDrops[i].size += rainDrops[i].vsize;
+		glRainDrops[i].x     += rainDrops[i].vx;
+		glRainDrops[i].y     += rainDrops[i].vy;
+		glRainDrops[i].z     += rainDrops[i].vz;
+		glRainDrops[i].size  += rainDrops[i].vsize;
 
-		  rainDrops[i].vx   += wvx;
-		  rainDrops[i].vy   += -0.0005;
-		  rainDrops[i].vz   += wvz;
+		  rainDrops[i].vx    += rainVel[0]
+		  rainDrops[i].vy    += rainVel[1];
+		  rainDrops[i].vz    += rainVel[2];
+		  rainDrops[i].vsize += rainVel[3];
 	}
 }
+#endif
 
 void rainUpdateAll(){
-	rainUpdatePos();
+	rainVel[0] = windVel.x / 48.f;
+	rainVel[1] = -0.0005;
+	rainVel[2] = windVel.z / 48.f;
+	rainVel[3] = 0.f;
+
+	rainPosUpdate();
 	for(uint i=0;i<rainCount;i++){
 		if((glRainDrops[i].y < 0.f) || (glRainDrops[i].size < 0.f)){
 			rainDel(i);
 		}
 	}
-}
-
-void rainRecvUpdate(const packet *p){
-	rainNew(vecNew(p->v.f[0],p->v.f[1],p->v.f[2]));
 }
 
 void rainSendUpdate(uint c, uint i){

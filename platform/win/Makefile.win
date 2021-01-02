@@ -57,7 +57,7 @@ $(WIN_RELDIR)/wolkenwelten-server.exe: server/src/tmp/mods_tmp.c
 $(WIN_RELDIR)/wolkenwelten-server.exe: common/src/tmp/cto.c common/src/tmp/cto.h
 $(WIN_RELDIR)/wolkenwelten-server.exe: releases/win/wolkenwelten-server.res
 $(WIN_RELDIR)/wolkenwelten-server.exe: | $(WIN_RELDIR)
-	$(CC) $(SERVER_SRCS) releases/win/wolkenwelten-server.res -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
+	$(CC) $(SERVER_SRCS) $(ASM_OBJS) releases/win/wolkenwelten-server.res -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 	strip -gxX $@
 
 wolkenwelten.exe: CFLAGS    += $(CLIENT_CFLAGS)

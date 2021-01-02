@@ -47,3 +47,7 @@ endif
 ifdef EMSDK
 	include platform/wasm/Makefile.wasm
 endif
+
+ifeq ($(VERSION_ARCH),aarch64)
+	LDFLAGS += -mfpu=neon -mfloat-abi=hard
+endif

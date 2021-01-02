@@ -5,6 +5,14 @@
 
 #include <stdio.h>
 
+uint glParticles;
+uint   particles;
+uint   particleCount = 0;
+uint glSparticles;
+uint   sparticles;
+uint   sparticleVV;
+uint   sparticleCount = 0;
+
 void fxBlockBreak(const vec pos, uchar b){
 	(void)pos;
 	(void)b;

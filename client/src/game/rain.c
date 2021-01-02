@@ -1,6 +1,7 @@
 #include "rain.h"
 
 #include "../game/character.h"
+#include "../game/weather.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gl.h"
 #include "../gfx/mat.h"
@@ -10,6 +11,8 @@
 uint rainVAO;
 uint rainVBO;
 
+#include <math.h>
+
 void rainInitGfx(){
 	glGenVertexArrays(1, &rainVAO);
 	glGenBuffers     (1, &rainVBO);
@@ -17,8 +20,22 @@ void rainInitGfx(){
 	glEnableVertexAttribArray(0);
 }
 
+void rainFakeDrops(){
+	if(cloudRainDuration <= 0){return;}
+	vec pos = player->pos;
+	pos.y = (float)(((int)pos.y) & 0xFF00) + (32.f - 256.f);
+	for(uint i=0;i<4;i++){
+		rainNew(vecAdd(pos,vecMulS(vecRng(), 32.f)));
+		rainNew(vecAdd(pos,vecMulS(vecRng(), 64.f)));
+		rainNew(vecAdd(pos,vecMulS(vecRng(),128.f)));
+		rainNew(vecAdd(pos,vecMulS(vecRng(),256.f)));
+		pos.y += 256.f;
+	}
+}
+
 void rainDrawAll(){
 	if(!rainCount){return;}
+	rainFakeDrops();
 
 	shaderBind(sRain);
 	matMul(matMVP,matView,matProjection);
@@ -33,4 +50,13 @@ void rainDrawAll(){
 	glDrawArrays(GL_POINTS,0,rainCount);
 
 	glDepthMask(GL_TRUE);
+}
+
+
+void rainRecvUpdate(const packet *p){
+	const vec pos  = vecNew(p->v.f[0],p->v.f[1],p->v.f[2]);
+	const vec dist = vecSub(pos,player->pos);
+	const float dd = vecDot(dist,dist);
+	if(dd > renderDistanceSquare){return;}
+	rainNew(pos);
 }

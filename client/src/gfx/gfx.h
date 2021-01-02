@@ -8,7 +8,7 @@ extern size_t vboTrisCount;
 extern vec    camShake;
 extern float  gfxCurFOV;
 
-extern float renderDistance;
+extern float renderDistance,renderDistanceSquare;
 extern float fadeoutDistance;
 extern float fadeoutStartDistance;
 extern float cloudFadeD;

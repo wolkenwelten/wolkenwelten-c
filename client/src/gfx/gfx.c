@@ -54,9 +54,11 @@ float fadeoutStartDistance = 192;
 float cloudFadeD           = 256*256;
 float cloudMinD            = 256*256*3;
 float cloudMaxD            = 256*256*4;
+float renderDistanceSquare = 256*256;
 
 static void recalcDistances(){
 	renderDistance = MIN(renderDistance,512.f);
+	renderDistanceSquare = renderDistance * renderDistance;
 	fadeoutDistance = renderDistance / 8.f;
 	fadeoutStartDistance = renderDistance - fadeoutDistance;
 	cloudFadeD = ((renderDistance/2) * (renderDistance/2));
@@ -159,11 +161,11 @@ void renderWorld(const character *cam){
 	entityDrawAll();
 	characterDrawAll();
 	cloudsRender();
+	rainDrawAll();
 
 	projectileDrawAll();
 	fireDrawAll();
 	waterDrawAll();
-	rainDrawAll();
 	particleDraw();
 
 	shadowDraw();

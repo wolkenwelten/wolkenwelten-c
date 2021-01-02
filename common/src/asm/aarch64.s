@@ -3,6 +3,38 @@
 .type    particlePosUpdate, @function
 .global sparticlePosUpdate
 .type   sparticlePosUpdate, @function
+.global      rainPosUpdate
+.type        rainPosUpdate, @function
+
+rainPosUpdate:
+  ldr x10,=rainCount
+  ldr w9,[x10]
+  lsr x9,x9,#1
+  add w9,w9,#1
+
+  ldr x10,=rainVel
+  ld1 {v4.4s},[x10]
+
+  ldr x10,=glRainDrops
+  ldr x11,=rainDrops
+.rainPosUpdateLoop:
+  ld1 {v0.4s},[x10]
+  ld1 {v1.4s},[x11]
+  fadd v0.4s,v0.4s,v1.4s
+  st1 {v0.4s},[x10],#16
+  fadd v1.4s,v1.4s,v4.4s
+  st1 {v1.4s},[x11],#16
+
+  ld1 {v2.4s},[x10]
+  ld1 {v3.4s},[x11]
+  fadd v2.4s,v2.4s,v3.4s
+  st1 {v2.4s},[x10],#16
+  fadd v3.4s,v3.4s,v4.4s
+  st1 {v3.4s},[x11],#16
+
+  subs w9,w9,#1
+  bne .rainPosUpdateLoop
+  ret
 
 particlePosUpdate:
   ldr x10,=particleCount

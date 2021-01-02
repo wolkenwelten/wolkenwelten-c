@@ -9,5 +9,4 @@ extern uint rainCount;
 void rainNew(vec pos);
 void rainUpdateAll();
 
-void rainRecvUpdate(const packet *p);
 void rainSendUpdate(uint c, uint i);

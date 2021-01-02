@@ -9,6 +9,7 @@
 void weatherDoRain(){
 	static uint calls = 0;
 	const ivec toff = ivecNewV(vecFloor(cloudOff));
+	if((++calls & 0x7) != 0){return;}
 	for(uint i=0;i<chungusCount;i++){
 		const chungus *c = &chungusList[i];
 		if(c->y & 1){continue;}
@@ -22,5 +23,4 @@ void weatherDoRain(){
 		const vec rpos = vecAdd(cpos,vecNew(x,32.f,z));
 		rainNew(rpos);
 	}
-	calls++;
 }
