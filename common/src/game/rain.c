@@ -1,29 +1,36 @@
 #include "rain.h"
 
 #include "../asm/asm.h"
+#include "../game/water.h"
 #include "../game/weather.h"
+#include "../mods/api_v1.h"
 #include "../network/messages.h"
 
 __attribute__((aligned(32))) glRainDrop glRainDrops[RAIN_MAX];
 __attribute__((aligned(32)))   rainDrop   rainDrops[RAIN_MAX];
 __attribute__((aligned(32)))      float   rainVel[4];
+                                    u64   rainCoords[RAIN_MAX];
 uint rainCount = 0;
 
+
 void rainPosUpdate();
+void fxRainDrop(const vec pos);
 
 void rainNew(vec pos){
 	uint i = ++rainCount;
 	if(i >= RAIN_MAX){i = rngValA(RAIN_MAX-1); rainCount--;}
 
-	glRainDrops[i] = (glRainDrop){ pos.x, pos.y, pos.z, 256.f };
-	  rainDrops[i] = (  rainDrop){ windVel.x, -0.1f, windVel.z, -0.1f };
+	glRainDrops[i]  = (glRainDrop){ pos.x, pos.y, pos.z, 256.f };
+	  rainDrops[i]  = (  rainDrop){ windVel.x, -0.1f, windVel.z, -0.1f };
+          rainCoords[i] = 0;
 
 	if(!isClient){rainSendUpdate(-1,i);}
 }
 
 static void rainDel(uint i){
-	glRainDrops[i] = glRainDrops[--rainCount];
-	  rainDrops[i] =   rainDrops[  rainCount];
+	glRainDrops[i]  = glRainDrops[--rainCount];
+	  rainDrops[i]  =   rainDrops[  rainCount];
+	  rainCoords[i] =   rainCoords[ rainCount];
 }
 
 #ifndef WW_ASM_RAIN_POS_UPDATE
@@ -50,8 +57,21 @@ void rainUpdateAll(){
 
 	rainPosUpdate();
 	for(uint i=0;i<rainCount;i++){
-		if((glRainDrops[i].y < 0.f) || (glRainDrops[i].size < 0.f)){
+		const glRainDrop *glrd = &glRainDrops[i];
+		if((glrd->y < 0.f) || (glrd->size < 0.f)){
 			rainDel(i);
+		}
+		const u64 newCoords = ((u64)glrd->x & 0xFFFF) | (((u64)glrd->y & 0xFFFF) << 16) | (((u64)glrd->z & 0xFFFF) << 32);
+		if(newCoords != rainCoords[i]){
+			if(checkCollision(glrd->x,glrd->y,glrd->z)){
+				if(isClient){
+					fxRainDrop(vecNew(glrd->x,glrd->y,glrd->z));
+				}else{
+					waterNew(glrd->x,glrd->y,glrd->z,64);
+				}
+				rainDel(i);
+			}
+			rainCoords[i] = newCoords;
 		}
 	}
 }

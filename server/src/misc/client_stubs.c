@@ -13,6 +13,10 @@ uint   sparticles;
 uint   sparticleVV;
 uint   sparticleCount = 0;
 
+void fxRainDrop(const vec pos){
+	(void)pos;
+}
+
 void fxBlockBreak(const vec pos, uchar b){
 	(void)pos;
 	(void)b;
