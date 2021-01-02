@@ -5,15 +5,16 @@
 #include "game/blockMining.h"
 #include "game/blockType.h"
 #include "game/character.h"
-#include "game/clouds.h"
 #include "game/entity.h"
 #include "game/fire.h"
 #include "game/grenade.h"
 #include "game/itemDrop.h"
 #include "game/projectile.h"
+#include "game/rain.h"
 #include "game/recipe.h"
 #include "game/rope.h"
 #include "game/time.h"
+#include "game/weather.h"
 #include "gfx/gfx.h"
 #include "gfx/mesh.h"
 #include "gfx/particle.h"
@@ -137,7 +138,8 @@ void worldUpdate(){
 		projectileUpdateAll();
 		gtimeUpdate();
 		fireCheckPlayerBurn(calls);
-		cloudsUpdateAll();
+		weatherUpdateAll();
+		rainUpdateAll();
 
 		commitOverlayColor();
 		calls++;
@@ -187,7 +189,7 @@ int main( int argc, char* argv[] ){
 	beingListEntryInit();
 	chunkInit();
 	chungusInit();
-	cloudsInit();
+	weatherInit();
 
 	initMenu();
 	lispInit();
@@ -208,6 +210,7 @@ int main( int argc, char* argv[] ){
 		openMainMenu();
 	}
 	cloudsInitGfx();
+	rainInitGfx();
 
 	player = characterNew();
 	initInventory();

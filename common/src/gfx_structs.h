@@ -67,3 +67,13 @@ typedef struct {
 		struct { uint w,h,d; };
 	};
 } uvec;
+
+#pragma pack(push, 1)
+typedef struct {
+	float x,y,z,size;
+} glRainDrop;
+#pragma pack(pop)
+
+typedef struct {
+	float vx,vy,vz,vsize;
+} rainDrop;

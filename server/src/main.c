@@ -5,13 +5,14 @@
 #include "game/animal.h"
 #include "game/being.h"
 #include "game/blockMining.h"
-#include "game/clouds.h"
 #include "game/fire.h"
 #include "game/itemDrop.h"
 #include "game/landscape.h"
 #include "game/grenade.h"
 #include "game/time.h"
+#include "game/rain.h"
 #include "game/water.h"
+#include "game/weather.h"
 #include "persistence/savegame.h"
 #include "voxel/bigchungus.h"
 #include "voxel/chungus.h"
@@ -94,7 +95,8 @@ static void updateWorldStep(){
 	animalCheckBurnAll();
 	gtimeUpdate();
 	landscapeUpdateAll();
-	cloudsUpdateAll();
+	weatherUpdateAll();
+	rainUpdateAll();
 }
 
 int updateWorld(){
@@ -148,7 +150,7 @@ void mainInit(){
 
 	bigchungusInit(&world);
 	blockTypeInit();
-	cloudsInit();
+	weatherInit();
 	if(optionProfileWG){
 		bigchungusGenHugeSpawn(&world);
 	}else{

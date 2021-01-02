@@ -5,14 +5,15 @@
 #include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
-#include "../game/clouds.h"
 #include "../game/fire.h"
 #include "../game/grenade.h"
 #include "../game/itemDrop.h"
+#include "../game/rain.h"
 #include "../game/rope.h"
 #include "../game/projectile.h"
 #include "../game/time.h"
 #include "../game/water.h"
+#include "../game/weather.h"
 #include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
@@ -288,7 +289,10 @@ void clientParsePacket(const packet *p){
 			lispRecvSExpr(p);
 			break;
 		case 43:
-			cloudsRecvUpdate(p);
+			weatherRecvUpdate(p);
+			break;
+		case 44:
+			rainRecvUpdate(p);
 			break;
 		case 0xFF: // compressedMultiPacket
 			decompressPacket(p);

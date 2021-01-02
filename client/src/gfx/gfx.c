@@ -4,12 +4,13 @@
 #include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
-#include "../game/clouds.h"
 #include "../game/entity.h"
 #include "../game/fire.h"
 #include "../game/projectile.h"
+#include "../game/rain.h"
 #include "../game/rope.h"
 #include "../game/water.h"
+#include "../game/weather.h"
 #include "../gfx/gl.h"
 #include "../gfx/mat.h"
 #include "../gfx/particle.h"
@@ -162,6 +163,7 @@ void renderWorld(const character *cam){
 	projectileDrawAll();
 	fireDrawAll();
 	waterDrawAll();
+	rainDrawAll();
 	particleDraw();
 
 	shadowDraw();

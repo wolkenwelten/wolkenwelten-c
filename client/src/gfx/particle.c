@@ -12,12 +12,12 @@
 #include "../gfx/gl.h"
 
 #pragma pack(push, 1)
-typedef struct glParticle {
+typedef struct {
 	float x,y,z,size;
 } glParticle;
 #pragma pack(pop)
 
-typedef struct particle {
+typedef struct {
 	float vx,vy,vz,vsize;
 } particle;
 

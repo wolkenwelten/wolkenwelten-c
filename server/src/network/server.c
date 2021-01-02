@@ -5,7 +5,6 @@
 #include "../game/beamblast.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
-#include "../game/clouds.h"
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
 #include "../game/grenade.h"
@@ -13,6 +12,7 @@
 #include "../game/rope.h"
 #include "../game/time.h"
 #include "../game/water.h"
+#include "../game/weather.h"
 #include "../misc/command.h"
 #include "../misc/options.h"
 #include "../network/server_ws.h"
@@ -475,6 +475,10 @@ void serverParseSinglePacket(uint c, packet *p){
 			fprintf(stderr,"cloudsUpdate received from client\n");
 			serverKill(c);
 			break;
+		case 44:
+			fprintf(stderr,"rainUpdate received from client\n");
+			serverKill(c);
+			break;
 		default:
 			printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
 			serverKill(c);
@@ -559,7 +563,7 @@ void serverParseIntro(uint c){
 		sendPlayerJoinMessage(c);
 		msgSetTime(c, gtimeGetTime());
 		animalUpdatePriorities(c);
-		cloudsSendUpdate(c);
+		weatherSendUpdate(c);
 		clients[c].lastPing = getTicks();
 		msgPingPong(c);
 	}

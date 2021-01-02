@@ -11,6 +11,8 @@
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../game/time.h"
+#include "../game/rain.h"
+#include "../game/weather.h"
 #include "../sdl/sdl.h"
 #include "../gfx/gl.h"
 #include "../gfx/mesh.h"
@@ -552,6 +554,8 @@ void drawDebuginfo(){
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Sparticles  : %s%s\n",colorSignalLow(1<<15,1<<14,1<<13,sparticleCount),getHumanReadableSize(sparticleCount));
 		guim->fgc  = colorPalette[15];
+		textMeshPrintf(guim,"RainDrops   : %s%s\n",colorSignalLow(1<<16,1<<15,1<<14,     rainCount),getHumanReadableSize(rainCount));
+		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
 		textMeshPrintf(guim,"ActiveChunks: %s\n",getHumanReadableSize(chunkGetActive()));
 		textMeshPrintf(guim,"FreeChunks  : %2i\n",chunkGetFree());
@@ -570,6 +574,7 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"Player: %u\n",playerID);
 		textMeshPrintf(guim,"Time  : %s\n",gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
 		textMeshPrintf(guim,"Bright: %f\n",skyBrightness);
+		textMeshPrintf(guim,"Rain  : %u\n",cloudRainDuration);
 
 		animalOverlaysDrawn = 0;
 		for(uint i=0;i<animalCount;i++){

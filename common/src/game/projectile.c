@@ -38,6 +38,20 @@ void projectileNew(const vec pos, const vec rot, being target, being source, uin
 	p->ttl    = ttl;
 	p->vel    = vecMulS(vecDegToVec(rot),speed);
 
+	projectileSendUpdate(-1,ID);
+}
+
+void projectileNewRaindrop(const vec pos, const vec vel){
+	const int ID = projectileNewID();
+	if(ID < 0){return;}
+
+	projectile *p = &projectileList[ID];
+	p->pos    = pos;
+	p->target = 0;
+	p->source = 0;
+	p->style  = 6;
+	p->ttl    = (1<<14);
+	p->vel    = vel;
 
 	projectileSendUpdate(-1,ID);
 }
@@ -130,8 +144,8 @@ void projectileUpdateAll(){
 		if(p->style == 0){continue;}
 		if(projectileUpdate(p)){
 			if(p->style == 6){
-				fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3, 128);
-				waterBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,128);
+				//fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3, 128);
+				//waterBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,128);
 				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 2);}
 			}else if(p->style == 5){
 				fireBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,64);
