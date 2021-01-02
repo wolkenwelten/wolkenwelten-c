@@ -34,7 +34,7 @@ void rainPosUpdate(){
 		glRainDrops[i].z     += rainDrops[i].vz;
 		glRainDrops[i].size  += rainDrops[i].vsize;
 
-		  rainDrops[i].vx    += rainVel[0]
+		  rainDrops[i].vx    += rainVel[0];
 		  rainDrops[i].vy    += rainVel[1];
 		  rainDrops[i].vz    += rainVel[2];
 		  rainDrops[i].vsize += rainVel[3];

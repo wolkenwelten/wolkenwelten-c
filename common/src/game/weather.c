@@ -34,11 +34,14 @@ void weatherUpdateAll(){
 	}
 	if(cloudRainDuration){
 		if(!isClient){weatherDoRain();}
-		if((calls & 0xFF) == 0){
-			if(!isClient && (--cloudRainDuration == 0)){weatherSendUpdate(-1);}
+		if((calls & 0xFFF) == 0){
+			if((--cloudRainDuration == 0) && !isClient){weatherSendUpdate(-1);}
+		}else if(((calls & 0xFFF) == 1) && !isClient){
+			cloudGDensityMin++;
+			weatherSendUpdate(-1);
 		}
 	}
-	if((!isClient) && (cloudRainDuration == 0) && (cloudDensityMin < 170) && (calls & 0xFF) == 0){
+	if((!isClient) && (cloudRainDuration == 0) && (cloudDensityMin < 170) && (calls & 0xFFF) == 0){
 		const uint chance = MAX(2,16 - (170 - cloudDensityMin));
 		if(rngValA((1<<chance)-1) == 0){
 			cloudRainDuration = rngValA(15)+16;
