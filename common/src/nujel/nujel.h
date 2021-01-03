@@ -1,9 +1,8 @@
 #pragma once
-#include <stdbool.h>
-#include <stdint.h>
+#include "../common.h"
 
 typedef enum lType {
-	ltNoAlloc = 0, ltNil, ltBool, ltList, ltLambda, ltInt, ltFloat, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf
+	ltNoAlloc = 0, ltNil, ltBool, ltList, ltLambda, ltInt, ltFloat, ltVec, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf
 } lType;
 
 typedef struct lVal     lVal;
@@ -19,7 +18,7 @@ typedef struct {
 } lSymbol;
 
 struct lVal {
-	unsigned int flags;
+	u32 flags;
 	lType type;
 	lVal *next;
 	union {
@@ -27,6 +26,7 @@ struct lVal {
 		bool          vBool;
 		lVal         *vList;
 		int           vInt;
+		vec           vVec;
 		float         vFloat;
 		lString      *vString;
 		lCString     *vCString;
@@ -86,6 +86,7 @@ lVal     *lValBool      (bool v);
 lVal     *lValInf       ();
 lVal     *lValInt       (int v);
 lVal     *lValFloat     (float v);
+lVal     *lValVec       (const vec v);
 lVal     *lValSym       (const char *s);
 lVal     *lValString    (const char *s);
 lVal     *lnfCat        (lClosure *c, lVal *v);

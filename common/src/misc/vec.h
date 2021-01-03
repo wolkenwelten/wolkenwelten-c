@@ -63,6 +63,9 @@ static inline vec vecDiv (const vec a, const vec b){
 static inline vec vecDivS(const vec a, const float b){
 	return (vec){{{a.x/b,a.y/b,a.z/b}}};
 }
+static inline vec vecMod (const vec a, const vec b){
+	return (vec){{{__builtin_fmodf(a.x,b.x),__builtin_fmodf(a.y,b.y),__builtin_fmodf(a.z,b.z)}}};
+}
 static inline vec vecAbs(const vec a){
 	return (vec){{{__builtin_fabsf(a.x),__builtin_fabsf(a.y),__builtin_fabsf(a.z)}}};
 }

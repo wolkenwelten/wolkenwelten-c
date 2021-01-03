@@ -1,5 +1,4 @@
 #include "nujel.h"
-#include "common.h"
 #include "lnf_arithmetic.h"
 #include "lnf_predicates.h"
 
@@ -222,6 +221,13 @@ lVal *lValInt(int v){
 	if(ret == NULL){return ret;}
 	ret->type = ltInt;
 	ret->vInt = v;
+	return ret;
+}
+lVal *lValVec(const vec v){
+	lVal *ret = lValAlloc();
+	if(ret == NULL){return ret;}
+	ret->type = ltVec;
+	ret->vVec = v;
 	return ret;
 }
 lVal *lValFloat(float v){
@@ -472,6 +478,13 @@ void lPrintVal(lVal *v){
 	printf("%s\n",buf);
 }
 
+int bufPrintFloat(float v, char *buf, int t, int len){
+	t = snprintf(buf,len,"%.5f",v);
+	for(;buf[t-1] == '0';t--){buf[t]=0;}
+	if(buf[t-1] == '.'){buf[t++] = '0';}
+	return t;
+}
+
 char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 	if(v == NULL){return buf;}
 	char *cur = buf;
@@ -529,9 +542,16 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			t = snprintf(buf,len,"%i",v->vInt);
 			break;
 		case ltFloat:
-			t = snprintf(buf,len,"%.5f",v->vFloat);
-			for(;buf[t-1] == '0';t--){buf[t]=0;}
-			if(buf[t-1] == '.'){buf[t++] = '0';}
+			t = bufPrintFloat(v->vFloat,buf,t,len);
+			break;
+		case ltVec:
+			t  = snprintf(buf,len,"(vec ");
+			t += bufPrintFloat(v->vVec.x,&buf[t],t,len);
+			buf[t++] = ' ';
+			t += bufPrintFloat(v->vVec.y,&buf[t],t,len);
+			buf[t++] = ' ';
+			t += bufPrintFloat(v->vVec.z,&buf[t],t,len);
+			t += snprintf(&buf[t],len,")");
 			break;
 		case ltCString:
 		case ltString:
@@ -1018,6 +1038,7 @@ static lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"modulo") == 0) {return lValNativeFunc(lnfMod);}
 	if(strcmp(s.c,"int") == 0)    {return lValNativeFunc(lnfInt);}
 	if(strcmp(s.c,"float") == 0)  {return lValNativeFunc(lnfFloat);}
+	if(strcmp(s.c,"vec") == 0)    {return lValNativeFunc(lnfVec);}
 	if(strcmp(s.c,"abs") == 0)    {return lValNativeFunc(lnfAbs);}
 
 	if(strcmp(s.c,"ansirs") == 0) {return lValNativeFunc(lnfAnsiRS);}

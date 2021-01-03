@@ -10,3 +10,4 @@ lVal *lnfAbs(lClosure *c, lVal *v);
 
 lVal *lnfInt(lClosure *c, lVal *v);
 lVal *lnfFloat(lClosure *c, lVal *v);
+lVal *lnfVec(lClosure *c, lVal *v);

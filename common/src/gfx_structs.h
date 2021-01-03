@@ -49,7 +49,7 @@ typedef struct {
 typedef struct {
 	union {
 		struct { float x,y,z; };
-		struct { float u,v,w; };
+		struct { float v[3]; };
 		struct { float yaw,pitch,roll; };
 	};
 } vec;
