@@ -18,7 +18,8 @@
 #include "../../../common/src/network/messages.h"
 
 #include "../../../common/src/nujel/nujel.h"
-#include "../../../common/src/nujel/lnf_arithmetic.h"
+#include "../../../common/src/nujel/arithmetic.h"
+#include "../../../common/src/nujel/string.h"
 
 #include <stdlib.h>
 #include <stdio.h>

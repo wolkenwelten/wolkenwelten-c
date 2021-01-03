@@ -63,16 +63,27 @@ struct lCString {
 
 void      lInit             ();
 int       lMemUsage         ();
+
+lClosure *lClosureAlloc     ();
 lClosure *lClosureNew       (lClosure *parent);
 void      lClosureFree      (lClosure *c);
 lVal     *lClosureAddNF     (lClosure *c, const char *sym, lVal *(*func)(lClosure *,lVal *));
+
+lVal     *lValAlloc         ();
 void      lValFree          (lVal *v);
+
+lString  *lStringAlloc      ();
+void      lStringFree       (lString *s);
+lString  *lStringNew        (const char *str, uint len);
+
+lCString *lCStringAlloc     ();
+void      lCStringFree      (lCString *s);
+
 void      lClosureGC        ();
 lVal     *lParseSExprCS     (const char *str);
 void      lPrintVal         (lVal *v);
 void      lPrintChain       (lVal *v);
-char     *lSPrintVal        (lVal *v, char *buf, char *bufEnd);
-char     *lSPrintChain      (lVal *v, char *buf, char *bufEnd);
+
 lVal     *lResolveClosureSym(lClosure *c, const lSymbol s);
 lVal     *lDefineClosureSym (lClosure *c, const lSymbol s);
 lVal     *lResolveSym       (lClosure *c, const lSymbol s);
@@ -91,6 +102,3 @@ lVal     *lValSym       (const char *s);
 lVal     *lValString    (const char *s);
 lVal     *lnfCat        (lClosure *c, lVal *v);
 lVal     *lValDup       (const lVal *v);
-
-extern char *ansiRS;
-extern char *ansiFG[16];

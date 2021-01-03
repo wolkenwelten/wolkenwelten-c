@@ -19,6 +19,7 @@
 #include "voxel/chunk.h"
 #include "network/server.h"
 #include "../../common/src/nujel/nujel.h"
+#include "../../common/src/nujel/string.h"
 #include "../../common/src/tmp/cto.h"
 #include "../../common/src/misc/misc.h"
 #include "../../common/src/game/blockType.h"

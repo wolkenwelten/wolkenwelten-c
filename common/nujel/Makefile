@@ -1,8 +1,9 @@
-CC     :=cc
-CFLAGS :=
-COPT   :=-O2 -ffast-math
+CC     := cc
+CFLAGS := -fPIC
+COPT   := -O2 -ffast-math
 CSTD   := -std=c11
 CWARN  := -Wextra -Werror -Wall -Wcast-align -pedantic
+LIBS   := -lm
 
 SRCS   := $(shell find ./ -type f -name '*.c') $(shell find ../src/nujel/ -type f -name '*.c')
 OBJS   := ${SRCS:.c=.o}
@@ -14,7 +15,7 @@ all: nujel
 	$(CC) $(COPT) $(CWARN) $(CSTD) $(CFLAGS) -g -c $< -o $@
 
 nujel: $(OBJS)
-	$(CC) $(COPT) $(CWARN) $(CSTD) $(CFLAGS) -g $(OBJS) -o $@
+	$(CC) $(LIBS) $(COPT) $(CWARN) $(CSTD) $(CFLAGS) -g $(OBJS) -o $@
 
 .PHONY: run
 run: nujel

@@ -1,4 +1,4 @@
-#include "lnf_arithmetic.h"
+#include "arithmetic.h"
 #include "nujel.h"
 
 #include <math.h>

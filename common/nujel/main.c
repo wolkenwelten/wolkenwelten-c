@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "../src/nujel/common.h"
+#include "../src/common.h"
 #include "../src/nujel/nujel.h"
+#include "../src/nujel/string.h"
 
 void *loadFile(const char *filename,size_t *len){
 	FILE *fp;

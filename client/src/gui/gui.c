@@ -34,6 +34,7 @@
 #include "../sdl/sdl.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
+#include "../../../common/src/nujel/string.h"
 #include "../../../common/src/tmp/cto.h"
 #include "../../../common/src/mods/mods.h"
 
