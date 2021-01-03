@@ -47,6 +47,7 @@ $(WIN_RELDIR)/wolkenwelten-server.exe: server/src/tmp/objs.c server/src/tmp/objs
 $(WIN_RELDIR)/wolkenwelten-server.exe: server/src/tmp/mods_tmp.c
 $(WIN_RELDIR)/wolkenwelten-server.exe: common/src/tmp/cto.c common/src/tmp/cto.h
 $(WIN_RELDIR)/wolkenwelten-server.exe: releases/win/wolkenwelten-server.res
+$(WIN_RELDIR)/wolkenwelten-server.exe: $(ASM_OBJS)
 $(WIN_RELDIR)/wolkenwelten-server.exe: | $(WIN_RELDIR)
 	x86_64-w64-mingw32-gcc $(SERVER_SRCS) $(ASM_OBJS) releases/win/wolkenwelten-server.res -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WIN_SERVER_LIBS)
 	x86_64-w64-mingw32-strip -gxX $@

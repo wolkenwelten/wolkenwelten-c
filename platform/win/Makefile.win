@@ -65,14 +65,14 @@ wolkenwelten.exe: CINCLUDES += $(CLIENT_CINCLUDES)
 wolkenwelten.exe: LIBS      += $(CLIENT_LIBS)
 wolkenwelten.exe: client/make.deps releases/win/wolkenwelten.res $(CLIENT_OBJS) $(ASM_OBJS)
 	rm -f wolkenwelten.exe
-	$(CC) $(CLIENT_OBJS) releases/win/wolkenwelten.res -g -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
+	$(CC) $(CLIENT_OBJS) $(ASM_OBJS) releases/win/wolkenwelten.res -g -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 
 wolkenwelten-server.exe: CFLAGS    += $(SERVER_CFLAGS)
 wolkenwelten-server.exe: CINCLUDES += $(SERVER_CINCLUDES)
 wolkenwelten-server.exe: LIBS      += $(SERVER_LIBS)
 wolkenwelten-server.exe: server/make.deps releases/win/wolkenwelten-server.res $(SERVER_OBJS) $(ASM_OBJS)
 	rm -f wolkenwelten-server.exe
-	$(CC) $(SERVER_OBJS) releases/win/wolkenwelten-server.res -g -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
+	$(CC) $(SERVER_OBJS) $(ASM_OBJS) releases/win/wolkenwelten-server.res -g -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 
 releases/win/wolkenwelten-server.res: | $(WIN_RELDIR)
 releases/win/wolkenwelten-server.res: platform/win/wolkenwelten-server.rc platform/win/icon.ico

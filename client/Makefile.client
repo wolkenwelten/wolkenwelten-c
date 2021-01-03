@@ -13,7 +13,7 @@ MESHASSETS       := $(shell find client/mesh -type f -name '*')
 
 CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
 CLIENT_SRCS      := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
-CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o} $(ASM_OBJS)
+CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
 CLIENT_DEPS      := ${CLIENT_SRCS:.c=.deps}
 
 WINDOW_WIDTH     := 960
@@ -23,8 +23,8 @@ TESTNR           := 1
 wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
 wolkenwelten: LIBS      += $(CLIENT_LIBS)
-wolkenwelten: client/make.deps $(CLIENT_OBJS)
-	$(LD) $(CLIENT_OBJS) -g -o wolkenwelten $(OPTIMIZATION) $(LDFLAGS) $(LIBS) $(CSTD)
+wolkenwelten: client/make.deps $(CLIENT_OBJS) $(ASM_OBJS)
+	$(LD) $(CLIENT_OBJS) $(ASM_OBJS) -g -o wolkenwelten $(OPTIMIZATION) $(LDFLAGS) $(LIBS) $(CSTD)
 
 $(CLIENT_DEPS): | client/src/tmp/assets.h client/src/tmp/meshassets.h common/src/tmp/cto.h client/src/tmp/objs.h client/src/tmp/mods_tmp.c client/src/tmp/sfx.h
 .deps: client/make.deps
