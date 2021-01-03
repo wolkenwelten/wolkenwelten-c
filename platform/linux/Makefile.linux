@@ -54,5 +54,6 @@ $(LIN_REL)/wolkenwelten-server: server/src/tmp/sfx.c server/src/tmp/sfx.h
 $(LIN_REL)/wolkenwelten-server: server/src/tmp/objs.c server/src/tmp/objs.h
 $(LIN_REL)/wolkenwelten-server: server/src/tmp/mods_tmp.c
 $(LIN_REL)/wolkenwelten-server: common/src/tmp/cto.c common/src/tmp/cto.h
+$(LIN_REL)/wolkenwelten-server: $(ASM_OBJS)
 $(LIN_REL)/wolkenwelten-server: | $(LIN_REL)
 	musl-gcc -static $(SERVER_SRCS) $(ASM_OBJS) -g -o $@ $(RELEASE_OPTIMIZATION) $(LDFLAGS) $(CSTD) $(CINCLUDES)
