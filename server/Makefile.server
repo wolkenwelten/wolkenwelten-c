@@ -4,7 +4,7 @@ SERVER_LIBS      :=
 
 SERVER_HDRS      := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
 SERVER_SRCS      := $(shell find server/src -type f -name '*.c') $(COMMON_SRCS)
-SERVER_OBJS      := ${SERVER_SRCS:.c=.o} $(ASM_OBJS)
+SERVER_OBJS      := ${SERVER_SRCS:.c=.o}
 SERVER_DEPS      := ${SERVER_SRCS:.c=.deps}
 
 SFX_ASSETS       := $(shell find client/sfx -type f -name '*')
