@@ -158,6 +158,6 @@ void fxRainDrop(const vec pos){
 	for(int i=16;i>0;i--){
 		u32 color = 0xFFB05020;
 		const vec v  = vecMulS(vecRng(),0.01f);
-		newParticleV(pos,v,24.f,6.f,color,48);
+		newParticleV(pos,v,16.f,6.f,color,64);
 	}
 }

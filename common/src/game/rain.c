@@ -70,7 +70,8 @@ void rainUpdateAll(){
 				if(isClient){
 					fxRainDrop(vecNew(glrd->x,glrd->y,glrd->z));
 				}else{
-					waterNew(glrd->x,glrd->y,glrd->z,64);
+					waterNew(glrd->x,glrd->y,glrd->z,512);
+					waterNew(glrd->x,glrd->y-1,glrd->z,512);
 				}
 				rainDel(i);
 			}

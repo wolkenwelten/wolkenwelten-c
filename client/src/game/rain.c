@@ -13,6 +13,13 @@ uint rainVBO;
 
 #include <math.h>
 
+#ifdef __x86_64__
+int rainFakeIters = 8;
+#else
+int rainFakeIters = 2;
+#endif
+
+
 void rainInitGfx(){
 	glGenVertexArrays(1, &rainVAO);
 	glGenBuffers     (1, &rainVBO);
@@ -24,12 +31,12 @@ void rainFakeDrops(){
 	if(rainDuration <= 0){return;}
 	vec pos = player->pos;
 	pos.y = (float)(((int)pos.y) & 0xFF00) + (32.f - 256.f);
-	for(uint i=0;i<3;i++){
+	for(uint i=0;i<4;i++){
 		float v = 48.f;
 		for(int ii=0;ii<4;ii++){
-			rainNew(vecAdd(pos,vecMul(vecRng(), vecNew( v,0.f, v))));
-			rainNew(vecAdd(pos,vecMul(vecRng(), vecNew( v,0.f, v))));
-			rainNew(vecAdd(pos,vecMul(vecRng(), vecNew( v,0.f, v))));
+			for(int iii=0;iii<rainFakeIters;iii++){
+				rainNew(vecAdd(pos,vecMul(vecRng(), vecNew( v,0.f, v))));
+			}
 			v *= 2.f;
 		}
 		pos.y += 256.f;
