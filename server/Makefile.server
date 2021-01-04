@@ -17,7 +17,7 @@ wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
 wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
 wolkenwelten-server: LIBS      += $(SERVER_LIBS)
 wolkenwelten-server: server/make.deps $(SERVER_OBJS) $(ASM_OBJS)
-	$(LD) $(SERVER_OBJS) -g -o wolkenwelten-server $(OPTIMIZATION) $(LDFLAGS) $(CINCLUDES) $(LIBS)
+	$(LD) $(SERVER_OBJS) $(ASM_OBJS) -g -o wolkenwelten-server $(OPTIMIZATION) $(LDFLAGS) $(CINCLUDES) $(LIBS)
 
 $(SERVER_DEPS): | common/src/tmp/cto.h server/src/tmp/objs.h server/src/tmp/sfx.h server/src/tmp/mods_tmp.c
 .deps: server/make.deps

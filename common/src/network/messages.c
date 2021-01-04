@@ -432,5 +432,5 @@ void msgLispSExpr(uint c, u8 id, const char *str){
 	p->v.u8[0] = id;
 	memcpy(&p->v.u8[1],str,len);
 	p->v.u8[len+1] = 0;
-	packetQueue(p,42,alignedLen(len+1),c);
+	packetQueue(p,42,alignedLen(len+2),c);
 }

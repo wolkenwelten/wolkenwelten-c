@@ -477,11 +477,7 @@ static void cmdLisp(int c,const char *str, u8 id){
 		v = lEval(clRoot,sexpr);
 	}
 	lSPrintChain(v,reply,&reply[sizeof(reply)-1]);
-	//for(uint i=0;i<sizeof(reply);i++){if(reply[i] == '\n'){reply[i] = ' ';}}
 	lClosureGC();
-
-	printf("S-Expr: '%s'\n",str);
-	printf("reply: '%s'\n",reply);
 
 	if(id == 0){
 		serverSendChatMsg(reply);

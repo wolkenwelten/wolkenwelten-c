@@ -57,6 +57,7 @@ void lispInit(){
 	lClosureAddNF(clRoot,"s-eval", &wwlnfSEval);
 	lClosureAddNF(clRoot,"mst", &wwlnfMsPerTick);
 }
+
 void lispFree(){
 	lClosureFree(clRoot);
 }
