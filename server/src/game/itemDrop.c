@@ -2,13 +2,13 @@
 
 #include "../game/entity.h"
 #include "../game/fire.h"
-#include "../misc/profiling.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/mods/mods.h"
 #include "../../../common/src/network/messages.h"
 
