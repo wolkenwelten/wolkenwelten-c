@@ -25,8 +25,10 @@ void rainFakeDrops(){
 	vec pos = player->pos;
 	pos.y = (float)(((int)pos.y) & 0xFF00) + (32.f - 256.f);
 	for(uint i=0;i<3;i++){
-		float v = 16.f;
-		for(int ii=0;ii<6;ii++){
+		float v = 48.f;
+		for(int ii=0;ii<4;ii++){
+			rainNew(vecAdd(pos,vecMul(vecRng(), vecNew( v,0.f, v))));
+			rainNew(vecAdd(pos,vecMul(vecRng(), vecNew( v,0.f, v))));
 			rainNew(vecAdd(pos,vecMul(vecRng(), vecNew( v,0.f, v))));
 			v *= 2.f;
 		}
