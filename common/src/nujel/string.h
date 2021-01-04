@@ -1,9 +1,6 @@
 #pragma once
 #include "nujel.h"
 
-extern char *ansiRS;
-extern char *ansiFG[16];
-
 char     *lSPrintVal        (lVal *v, char *buf, char *bufEnd);
 char     *lSPrintChain      (lVal *v, char *buf, char *bufEnd);
 

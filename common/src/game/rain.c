@@ -3,6 +3,7 @@
 #include "../asm/asm.h"
 #include "../game/water.h"
 #include "../game/weather.h"
+#include "../misc/profiling.h"
 #include "../mods/api_v1.h"
 #include "../network/messages.h"
 
@@ -50,6 +51,8 @@ void rainPosUpdate(){
 #endif
 
 void rainUpdateAll(){
+	PROFILE_START();
+
 	rainVel[0] = windVel.x / 48.f;
 	rainVel[1] = -0.0005;
 	rainVel[2] = windVel.z / 48.f;
@@ -74,6 +77,8 @@ void rainUpdateAll(){
 			rainCoords[i] = newCoords;
 		}
 	}
+
+	PROFILE_STOP();
 }
 
 void rainSendUpdate(uint c, uint i){

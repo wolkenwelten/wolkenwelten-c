@@ -2,11 +2,13 @@
 
 #include "../main.h"
 #include "../gui/gui.h"
+#include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/nujel/nujel.h"
 #include "../../../common/src/nujel/arithmetic.h"
 #include "../../../common/src/nujel/string.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -45,6 +47,13 @@ lVal *wwlnfMsPerTick(lClosure *c, lVal *v){
 	return lValInt(msPerTick);
 }
 
+lVal *wwlnfProf(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+
+	return lValString(profGetReport());
+}
+
 void lispInit(){
 	lInit();
 	clRoot = lClosureNew(NULL);
@@ -56,6 +65,7 @@ void lispInit(){
 	lispEvalNR("(define bulls (lambda (a) (mst 64) (s-eval (mst 64))))");
 	lClosureAddNF(clRoot,"s-eval", &wwlnfSEval);
 	lClosureAddNF(clRoot,"mst", &wwlnfMsPerTick);
+	lClosureAddNF(clRoot,"prof", &wwlnfProf);
 }
 
 void lispFree(){
@@ -63,15 +73,20 @@ void lispFree(){
 }
 
 const char *lispEval(const char *str){
-	static char reply[512];
+	static char reply[4096];
 	memset(reply,0,sizeof(reply));
 	lVal *v = NULL;
 	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
 		v = lEval(clRoot,sexpr);
 	}
 	lSPrintChain(v,reply,&reply[sizeof(reply)-1]);
+
+	int soff,slen,len = strnlen(reply,sizeof(reply)-1);
+	for(soff = 0;    isspace(reply[soff]) || (reply[soff] == '"');soff++){}
+	for(slen = len-1;isspace(reply[slen]) || (reply[slen] == '"');slen--){reply[slen] = 0;}
+
 	lClosureGC();
-	return reply;
+	return reply+soff;
 }
 
 void lispRecvSExpr(const packet *p){

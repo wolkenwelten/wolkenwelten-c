@@ -5,6 +5,7 @@
 #include "../game/character.h"
 #include "../game/fire.h"
 #include "../game/water.h"
+#include "../misc/profiling.h"
 #include "../mods/api_v1.h"
 #include "../network/packet.h"
 #include "../network/messages.h"
@@ -124,6 +125,8 @@ static inline int projectileUpdate(projectile *p){
 }
 
 void projectileUpdateAll(){
+	PROFILE_START();
+
 	for(uint i=0;i<countof(projectileList);i++){
 		projectile *p = &projectileList[i];
 		if(p->style == 0){continue;}
@@ -145,6 +148,8 @@ void projectileUpdateAll(){
 			}
 		}
 	}
+
+	PROFILE_STOP();
 }
 
 void projectileSendUpdate(uint c, uint i){

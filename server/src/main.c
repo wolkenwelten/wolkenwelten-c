@@ -22,6 +22,7 @@
 #include "../../common/src/nujel/string.h"
 #include "../../common/src/tmp/cto.h"
 #include "../../common/src/misc/misc.h"
+#include "../../common/src/misc/profiling.h"
 #include "../../common/src/game/blockType.h"
 #include "../../common/src/game/projectile.h"
 
@@ -83,7 +84,7 @@ static void initTermColors(){
 }
 
 static void updateWorldStep(){
-	blockMiningUpdate();
+	blockMiningUpdateAll();
 	itemDropUpdateAll();
 	grenadeUpdateAll();
 	animalUpdateAll();
@@ -91,13 +92,13 @@ static void updateWorldStep(){
 	animalThinkAll();
 	fireUpdateAll();
 	waterUpdateAll();
-	itemDropUpdateFireAll();
 	animalNeedsAll();
 	animalCheckBurnAll();
-	gtimeUpdate();
 	landscapeUpdateAll();
 	weatherUpdateAll();
 	rainUpdateAll();
+
+	gtimeUpdate();
 }
 
 int updateWorld(){
@@ -185,7 +186,7 @@ int main( int argc, const char* argv[] ){
 		if(optionProfileWG){quit = true;}
 		if(clientCount == 0){checkSPQuit();}
 		mainTick();
-		usleep(1000);
+		usleep(100);
 	}
 
 	printf("[SRV] Exiting cleanly\n");

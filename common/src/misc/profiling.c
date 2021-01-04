@@ -27,9 +27,9 @@ uint profGetIndex(const char *funcName){
 }
 
 u64 getUTicks(){
-	struct timeval tv;
-	gettimeofday(&tv,NULL);
-	return tv.tv_usec + (tv.tv_sec * 1000000);
+	struct timespec tv;
+	clock_gettime(CLOCK_MONOTONIC,&tv);
+	return tv.tv_nsec + (tv.tv_sec * 1000000000);
 }
 
 void profStart(uint i){
@@ -64,10 +64,10 @@ const char *profGetName(uint i){
 const char *profGetReport(){
 	static char retBuf[4096];
 	char *buf = retBuf;
-	buf += snprintf(buf,sizeof(retBuf)-(buf-retBuf),"--- Profiling Report ---\n");
+	buf += snprintf(buf,sizeof(retBuf)-(buf-retBuf),"%sProfiling Report%s\n",ansiFG[2],ansiRS);
 	for(uint i=1;i<64;i++){
 		if(profEntryList[i].count == 0){continue;}
-		buf += snprintf(buf,sizeof(retBuf)-(buf-retBuf),"[%02u] %lf %% %s %lf\n",i,profGetShare(i)*100.0,profEntryList[i].funcName, profGetMean(i) * 1000.0);
+		buf += snprintf(buf,sizeof(retBuf)-(buf-retBuf),"[%02u] %5.2f%% %-24s Avg.: %6.4fms\n",i,profGetShare(i)*100.0,profEntryList[i].funcName, profGetMean(i) / 1000000.0 );
 	}
 	*buf = 0;
 	return retBuf;

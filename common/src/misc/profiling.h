@@ -3,7 +3,7 @@
 
 #define PROFILE_START() static uint _profIndex = 0; \
 	if (_profIndex == 0) { \
-		_profIndex = profGetIndex(__PRETTY_FUNCTION__); \
+		_profIndex = profGetIndex(__FUNCTION__); \
 	 } \
 	profStart(_profIndex)
 

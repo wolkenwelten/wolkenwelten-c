@@ -7,6 +7,7 @@
 #include "../gui/widget.h"
 #include "../gfx/textMesh.h"
 #include "../sdl/sdl.h"
+#include "../../../common/src/misc/misc.h"
 #include "../../../common/src/game/item.h"
 
 #include <math.h>
@@ -16,6 +17,7 @@
 static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h, const char *line, int lambda){
 	(void)h;
 	int openParens = 0, cx = x, cy = y, oldFont = m->font;;
+	u32 cfgc = 0xFFFFFFFF;
 	u8 c;
 	m->font = 1;
 
@@ -49,17 +51,23 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 			cy += size * 8;
 			cx = x;
 			continue;
+		}else if(*line == '\033'){
+			int fgc = -1, bgc = -1;;
+			line += parseAnsiCode(line,&fgc,&bgc) - 1;
+			if(fgc >= 0){cfgc = colorPalette[fgc];}
+			//if(bgc >= 0){m->bgc = colorPalette[bgc];}
+			continue;
 		}else{
 			c = *line;
 		}
 		if(*line == '('){openParens++;}
-		textMeshAddGlyph(m, cx, cy, size, c, 0xFFFFFFFF, colors[openParens&7]);
+		textMeshAddGlyph(m, cx, cy, size, c, cfgc, colors[openParens&7]);
 		if(*line == ')'){openParens--;}
 		cx += size * 8;
 	}
 	for(;openParens > 0;openParens--){
 		if(cx > w){break;}
-		textMeshAddGlyph(m, cx, cy, size, ')', 0x80FFFFFF, colors[openParens&7] >> 1);
+		textMeshAddGlyph(m, cx, cy, size, ')', cfgc & 0x7FFFFFFF, colors[openParens&7] >> 1);
 		cx += size * 8;
 	}
 	m->font = oldFont;
@@ -386,8 +394,7 @@ static void widgetDrawTextLog(const widget *wid, textMesh *m, int x, int y, int 
 	(void)w;
 	(void)h;
 	const int FS = 16;
-	int i=0;
-	int bg=0;
+	int i=0,bg=0;
 
 	uint oldFont = m->font;
 	m->font = 1;

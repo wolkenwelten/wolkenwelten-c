@@ -38,6 +38,7 @@
 #include "../../../common/src/tmp/cto.h"
 #include "../../../common/src/mods/mods.h"
 
+#include <ctype.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
@@ -156,7 +157,7 @@ void closeLispPanel(){
 }
 
 void lispPanelShowReply(lVal *sym, const char *reply){
-	int len = strnlen(reply,256) + 1;
+	int len = strnlen(reply,8192) + 1;
 	if(lispLog == NULL){return;}
 	for(int i=0;i<256;i++){
 		const char *line = lispLog->valss[i];
@@ -168,12 +169,16 @@ void lispPanelShowReply(lVal *sym, const char *reply){
 			continue;
 		}
 		free(lispLog->valss[i]);
-		lispLog->valss[i] = malloc(len+3);
-		for(int ii=0;ii<3;ii++){
+
+		int soff,slen;
+		for(soff = 0;isspace(reply[soff]) || (reply[soff] == '"');soff++){}
+		for(slen = len-soff-2;isspace(reply[soff+slen]) || (reply[soff+slen] == '"');slen--){}
+		lispLog->valss[i] = malloc(slen+3);
+		for(int ii=0;ii<2;ii++){
 			lispLog->valss[i][ii] = ' ';
 		}
-		memcpy(&lispLog->valss[i][3],reply,len);
-		lispLog->valss[i][len+3] = 0;
+		memcpy(&lispLog->valss[i][2],&reply[soff],slen);
+		lispLog->valss[i][slen+2] = 0;
 		return;
 	}
 	fprintf(stderr,"Couldn't match SExpr Reply %s - %s\n",sym->vSymbol.c,reply);
@@ -188,12 +193,15 @@ void toggleLispPanel(){
 }
 
 void handlerLispSubmit(widget *wid){
-	static char buf[512];
+	char buf[8192];
+	int l;
 	if(lispInput->vals[0] == 0){return;}
-	snprintf(buf,sizeof(buf)-1,"> %s",wid->vals);
+	l = snprintf(buf,sizeof(buf)-1,"> %s",wid->vals);
+	buf[l] = 0;
 	widgetAddEntry(lispLog, buf);
 	const char *result = lispEval(wid->vals);
-	snprintf(buf,sizeof(buf)-1,"   %s",result);
+	l = snprintf(buf,sizeof(buf)-1,"  %s",result);
+	buf[l] = 0;
 	widgetAddEntry(lispLog, buf);
 	wid->vals[0] = 0;
 	lispHistoryActive = -1;

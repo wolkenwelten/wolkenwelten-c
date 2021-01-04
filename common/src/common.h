@@ -10,3 +10,6 @@
 extern blockType blocks[256];
 extern bool isClient;
 extern int playerID;
+
+extern char *ansiRS;
+extern char *ansiFG[16];

@@ -9,6 +9,7 @@
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 
 #include <stdio.h>
 
@@ -114,13 +115,14 @@ void waterUpdate(water *w){
 
 void waterUpdateAll(){
 	static uint calls = 0;
+	PROFILE_START();
+
 	for(uint i=(calls&0xF);i<waterCount;i+=0x10){
 		waterUpdate(&waterList[i]);
 	}
 	--calls;
-	if(waterSource.x > 0){
-		waterNew(waterSource.x,waterSource.y,waterSource.z,8192);
-	}
+
+	PROFILE_STOP();
 }
 
 void waterSyncPlayer(uint c){

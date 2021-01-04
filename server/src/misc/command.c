@@ -10,12 +10,12 @@
 #include "../game/water.h"
 #include "../game/weather.h"
 #include "../network/server.h"
-#include "../misc/profiling.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 
 #include "../../../common/src/nujel/nujel.h"

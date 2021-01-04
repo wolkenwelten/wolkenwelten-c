@@ -4,6 +4,7 @@
 #include "../gfx/shader.h"
 #include "../tmp/assets.h"
 
+#include "../../../common/src/misc/misc.h"
 #include "../../../common/src/nujel/nujel.h"
 #include "../../../common/src/mods/mods.h"
 
@@ -112,25 +113,6 @@ void textMeshDraw(textMesh *m){
 	vboTrisCount += m->dataCount/3;
 }
 
-static int textMeshParseEscapeCode(textMesh *m, const char *str){
-	int off = 0;
-	for(int i=0;i<7;i++){
-		if(str[i] == 0){return i;}
-	}
-	if(str[1] != '['){return 1;}
-	if(str[3] != ';'){return 1;}
-	if(str[6] != 'm'){return 1;}
-	if(str[2] == '1'){
-		off = 8;
-	}else if(str[2] != '0'){
-		return 1;
-	}
-	if(str[4] != '3'){return 1;}
-	if((str[5] < '0') || (str[5] > '8')){return 1;}
-	m->fgc = colorPalette[off + str[5] - '0'];
-	return 7;
-}
-
 void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c, u32 fgc, u32 bgc){
 	float gx;
 	float gy;
@@ -205,7 +187,10 @@ bool textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 			x = (((x - m->sx) / (glyphWidth*4) ) + 1 ) * (glyphWidth*4);
 			continue;
 		}else if(*str == '\033'){
-			str += textMeshParseEscapeCode(m,str);
+			int fgc = -1, bgc = -1;;
+			str += parseAnsiCode(str,&fgc,&bgc);
+			if(fgc >= 0){m->fgc = colorPalette[fgc];}
+			if(bgc >= 0){m->bgc = colorPalette[bgc];}
 			continue;
 		}
 

@@ -173,3 +173,28 @@ void rmDirR(const char *name){
 	closedir(dp);
 	rmdir(name);
 }
+
+int parseAnsiCode(const char *str, int *fgc, int *bgc){
+	int off = 0;
+	for(int i=0;i<7;i++){
+		if(str[i] == 0){return i;}
+	}
+	if(str[1] != '['){return 1;}
+	if(str[3] != ';'){
+		if(str[2] != '0'){return 1;}
+		if(str[3] != 'm'){return 1;}
+		*fgc = 15;
+		return 4;
+	}
+	if(str[6] != 'm'){return 1;}
+	if(str[2] == '1'){
+		off = 8;
+	}else if(str[2] != '0'){
+		return 1;
+	}
+	if(str[4] != '3'){return 1;}
+	if((str[5] < '0') || (str[5] > '8')){return 1;}
+	*fgc = off + str[5] - '0';
+	*bgc = -1;
+	return 7;
+}

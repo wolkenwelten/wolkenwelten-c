@@ -111,7 +111,7 @@ void blockMiningMineBlock(int x, int y, int z, u8 b){
 	}
 }
 
-void blockMiningUpdate(){
+void blockMiningUpdateAll(){
 	PROFILE_START();
 
 	for(uint i=0;i<clientCount;++i){

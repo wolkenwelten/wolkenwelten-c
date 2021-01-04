@@ -8,6 +8,7 @@
 #include "../game/fire.h"
 #include "../game/rope.h"
 #include "../game/time.h"
+#include "../misc/profiling.h"
 #include "../mods/api_v1.h"
 #include "../network/messages.h"
 
@@ -294,6 +295,8 @@ static void animalUpdateBL(){
 }
 
 void animalUpdateAll(){
+	PROFILE_START();
+
 	for(int i=animalCount-1;i>=0;i--){
 		if(animalList[i].type == 0){continue;}
 		int dmg = animalUpdate(&animalList[i]);
@@ -309,6 +312,8 @@ void animalUpdateAll(){
 		}
 	}
 	animalUpdateBL();
+
+	PROFILE_STOP();
 }
 
 float animalClosestPlayer(const animal *e, character **cChar){
@@ -404,15 +409,21 @@ void animalThink(animal *e){
 }
 
 void animalThinkAll(){
+	PROFILE_START();
+
 	static uint calls = 0;
 	for(uint i=(calls&0x1F);i<animalCount;i+=0x20){
 		animalThink(&animalList[i]);
 	}
 	calls++;
+
+	PROFILE_STOP();
 }
 
 void animalNeedsAll(){
 	static uint calls = 0;
+	PROFILE_START();
+
 	int sleepyi = 1;
 	int tcat = gtimeGetTimeCat();
 	if((tcat == TIME_NIGHT) || (tcat == TIME_EVENING)){sleepyi = 2;}
@@ -426,6 +437,7 @@ void animalNeedsAll(){
 		if((calls & 0xF000) == 0){e->age++;}
 	}
 	calls++;
+	PROFILE_STOP();
 }
 
 /* TODO: Add proper reaction to fire (runing away?) */

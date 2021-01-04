@@ -207,6 +207,7 @@ static int itemDropCheckCollation(uint ai){
 }
 
 void itemDropUpdateAll(){
+	static uint calls = 0;
 	PROFILE_START();
 
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){
@@ -221,6 +222,11 @@ void itemDropUpdateAll(){
 			continue;
 		}
 	}
+
+	for(uint i=itemDropCount-(1+(calls&0x1F));i<itemDropCount;i-=0x20){
+		itemDropUpdateFire(i);
+	}
+	calls++;
 
 	PROFILE_STOP();
 }
@@ -256,14 +262,6 @@ void itemDropUpdateFire(uint i){
 		addPriorityItemDrop(i);
 		id->fireDmg = 0;
 	}
-}
-
-void itemDropUpdateFireAll(){
-	static uint calls = 0;
-	for(uint i=itemDropCount-(1+(calls&0x1F));i<itemDropCount;i-=0x20){
-		itemDropUpdateFire(i);
-	}
-	calls++;
 }
 
 uint itemDropGetActive(){

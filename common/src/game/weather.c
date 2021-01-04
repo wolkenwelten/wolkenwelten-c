@@ -1,6 +1,7 @@
 #include "weather.h"
 
 #include "../misc/noise.h"
+#include "../misc/profiling.h"
 #include "../network/packet.h"
 #include "../network/messages.h"
 
@@ -23,6 +24,8 @@ void weatherInit(){
 
 void weatherUpdateAll(){
 	static uint calls = 0;
+	PROFILE_START();
+
 	if(!isClient && (rngValA((1<<18)-1) == 0)){
 		windGVel   = vecMulS(vecRng(),1.f/256.f);
 		windGVel.y = 0.f;
@@ -65,6 +68,7 @@ void weatherUpdateAll(){
 	if(cloudOff.z <   0.f){cloudOff.z += 256.f;}
 
 	calls++;
+	PROFILE_STOP();
 }
 
 void weatherSendUpdate(uint c){

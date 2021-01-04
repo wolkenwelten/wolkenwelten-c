@@ -10,6 +10,7 @@
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 
 #include <stdio.h>
 
@@ -190,10 +191,14 @@ void fireUpdate(fire *f){
 
 void fireUpdateAll(){
 	static uint calls = 0;
+	PROFILE_START();
+
 	for(uint i=(calls&0x1F);i<fireCount;i+=0x20){
 		fireUpdate(&fireList[i]);
 	}
 	calls++;
+
+	PROFILE_STOP();
 }
 
 void fireSyncPlayer(uint c){

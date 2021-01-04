@@ -4,6 +4,7 @@
 #include "../voxel/bigchungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/game/item.h"
+#include "../../../common/src/misc/profiling.h"
 
 #include <string.h>
 
@@ -75,8 +76,12 @@ static void landscapeUpdateChunk(chunk *c){
 
 void landscapeUpdateAll(){
 	static uint calls = 0;
+	PROFILE_START();
+
 	for(uint i=calls&0x3FF;i<chunkCount;i+=0x400){
 		landscapeUpdateChunk(&chunkList[i]);
 	}
 	calls++;
+
+	PROFILE_STOP();
 }

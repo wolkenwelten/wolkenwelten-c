@@ -1,6 +1,7 @@
 #include "entity.h"
 
 #include "../mods/api_v1.h"
+#include "../misc/profiling.h"
 
 #include <string.h>
 #include <math.h>
@@ -170,6 +171,8 @@ uint lineOfSightBlockCount(const vec a, const vec b, uint maxB){
 }
 
 void entityUpdateAll(){
+	PROFILE_START();
+
 	for(uint i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL){ continue; }
 		if(!(entityList[i].flags & ENTITY_UPDATED)){
@@ -177,6 +180,8 @@ void entityUpdateAll(){
 		}
 		entityList[i].flags &= ~ENTITY_UPDATED;
 	}
+
+	PROFILE_STOP();
 }
 
 entity *entityGetByBeing(being b){

@@ -4,6 +4,7 @@
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/game/projectile.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 
 #include <math.h>
@@ -63,6 +64,8 @@ void grenadeNewP(const packet *p){
 }
 
 void grenadeUpdateAll(){
+	PROFILE_START();
+
 	for(uint i=grenadeCount-1;i<grenadeCount;i--){
 		entityUpdate(grenadeList[i].ent);
 		if((--grenadeList[i].ticksLeft == 0) || (grenadeList[i].ent->pos.y < -256)){
@@ -71,6 +74,8 @@ void grenadeUpdateAll(){
 			grenadeList[i] = grenadeList[--grenadeCount];
 		}
 	}
+
+	PROFILE_STOP();
 }
 
 void grenadeUpdatePlayer(u8 c){

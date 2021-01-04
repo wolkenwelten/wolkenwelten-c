@@ -7,6 +7,7 @@
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 
 #include "island.h"
 #include "labyrinth.h"
@@ -112,6 +113,7 @@ void worldgenTestpattern(worldgen *wgen){
 void worldgenGenerate(worldgen *wgen){
 	//static unsigned int averageTicks=0;
 	//static uint averageRuns=0;
+	PROFILE_START();
 
 	int oldSeed = getRNGSeed();
 	//unsigned int startTicks = getTicks();
@@ -190,11 +192,12 @@ void worldgenGenerate(worldgen *wgen){
 
 		case 0:
 		case 127:
-			return;
+			break;
 	}
 	seedRNG(oldSeed);
 	//averageTicks += getTicks()-startTicks;
 	//averageRuns++;
 	//printf("Worldgen took %3u ms (Avg.: %3ums   Total: %4ums)\n",(uint)getTicks()-startTicks,averageTicks/averageRuns,averageTicks);
 	//clay->debugInfo();
+	PROFILE_STOP();
 }
