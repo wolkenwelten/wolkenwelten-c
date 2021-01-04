@@ -16,7 +16,7 @@ struct chungus {
 };
 
 extern chungus *chungusList;
-extern uint chungusCount;
+extern uint chungusCount,chungusFreeCount;
 extern u64  freeTime;
 extern int loadShed;
 

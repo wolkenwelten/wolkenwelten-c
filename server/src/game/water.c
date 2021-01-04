@@ -132,3 +132,17 @@ void waterSyncPlayer(uint c){
 	}
 	if(clients[c].waterUpdateOffset >= waterCount){clients[c].waterUpdateOffset = 0;}
 }
+
+void waterDelChungus(const chungus *c){
+	if(c == NULL){return;}
+	const u16 cx = c->x << 8;
+	const u16 cy = c->y << 8;
+	const u16 cz = c->z << 8;
+	for(uint i=waterCount-1;i<waterCount;i--){
+		const water *w = &waterList[i];
+		if((w->x & 0xFF00) != cx){continue;}
+		if((w->y & 0xFF00) != cy){continue;}
+		if((w->z & 0xFF00) != cz){continue;}
+		waterDel(i);
+	}
+}

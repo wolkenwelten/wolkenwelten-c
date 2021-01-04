@@ -10,6 +10,7 @@
 #include "../game/water.h"
 #include "../game/weather.h"
 #include "../network/server.h"
+#include "../misc/profiling.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../../../common/src/game/blockType.h"
@@ -362,6 +363,28 @@ lVal *wwlnfRain(lClosure *c, lVal *v){
 	return lValInt(rainDuration);
 }
 
+lVal *wwlnfLShed(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+
+	chungusFreeOldChungi(100);
+
+	return lValBool(true);
+}
+
+lVal *wwlnfProf(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+
+	return lValString(profGetReport());
+}
+
+lVal *wwlnfChungi(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+	return lValInt(chungusCount - chungusFreeCount);
+}
+
 lVal *wwlnfWVel(lClosure *c, lVal *v){
 	float args[3] = {windGVel.x,windGVel.y,windGVel.z};
 	for(int i=0;i<3;i++){
@@ -372,6 +395,16 @@ lVal *wwlnfWVel(lClosure *c, lVal *v){
 		v = v->next;
 	}
 	cloudsSetWind(vecNew(args[0],args[1],args[2]));
+	return lValBool(true);
+}
+
+lVal *wwlnfDelW(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+
+	for(uint i=waterCount-1;i<waterCount;i--){
+		waterDel(i);
+	}
 	return lValBool(true);
 }
 
@@ -398,6 +431,9 @@ void initCommands(){
 	lClosureAddNF(clRoot,"bmcount",&wwlnfBMCount);
 	lClosureAddNF(clRoot,"idcount",&wwlnfIDCount);
 	lClosureAddNF(clRoot,"ecount", &wwlnfECount);
+	lClosureAddNF(clRoot,"chungi", &wwlnfChungi);
+	lClosureAddNF(clRoot,"lshed",  &wwlnfLShed);
+	lClosureAddNF(clRoot,"prof",   &wwlnfProf);
 	lClosureAddNF(clRoot,"px",     &wwlnfPX);
 	lClosureAddNF(clRoot,"py",     &wwlnfPY);
 	lClosureAddNF(clRoot,"pz",     &wwlnfPZ);
@@ -418,6 +454,7 @@ void initCommands(){
 	lClosureAddNF(clRoot,"wsrc",   &wwlnfWSrc);
 	lClosureAddNF(clRoot,"cden",   &wwlnfCDen);
 	lClosureAddNF(clRoot,"wvel",   &wwlnfWVel);
+	lClosureAddNF(clRoot,"delw",   &wwlnfDelW);
 	lClosureAddNF(clRoot,"rain",   &wwlnfRain);
 	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
 	lispEvalNR("(define heal (lambda (a) (- (dmg (cond (a (- a)) (#t -20))))))");
@@ -430,7 +467,7 @@ void freeCommands(){
 }
 
 static void cmdLisp(int c,const char *str, u8 id){
-	static char reply[512];
+	static char reply[8192];
 	memset(reply,0,sizeof(reply));
 	lVal *sym = lValSym("pid");
 	lVal *pid = lResolveClosureSym(clRoot, sym->vSymbol);
@@ -440,8 +477,11 @@ static void cmdLisp(int c,const char *str, u8 id){
 		v = lEval(clRoot,sexpr);
 	}
 	lSPrintChain(v,reply,&reply[sizeof(reply)-1]);
-	for(uint i=0;i<sizeof(reply);i++){if(reply[i] == '\n'){reply[i] = ' ';}}
+	//for(uint i=0;i<sizeof(reply);i++){if(reply[i] == '\n'){reply[i] = ' ';}}
 	lClosureGC();
+
+	printf("S-Expr: '%s'\n",str);
+	printf("reply: '%s'\n",reply);
 
 	if(id == 0){
 		serverSendChatMsg(reply);

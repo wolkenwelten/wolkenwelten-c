@@ -15,7 +15,7 @@
 
 static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h, const char *line, int lambda){
 	(void)h;
-	int openParens = 0, cx = x, oldFont = m->font;;
+	int openParens = 0, cx = x, cy = y, oldFont = m->font;;
 	u8 c;
 	m->font = 1;
 
@@ -45,17 +45,21 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 		if(((u8)line[0] == 0xCE) && ((u8)line[1] == 0xBB)){ // UTF-8 Lambda
 			line++;
 			c = 20;
+		}else if((u8)line[0] == '\n'){
+			cy += size * 8;
+			cx = x;
+			continue;
 		}else{
 			c = *line;
 		}
 		if(*line == '('){openParens++;}
-		textMeshAddGlyph(m, cx, y, size, c, 0xFFFFFFFF, colors[openParens&7]);
+		textMeshAddGlyph(m, cx, cy, size, c, 0xFFFFFFFF, colors[openParens&7]);
 		if(*line == ')'){openParens--;}
 		cx += size * 8;
 	}
 	for(;openParens > 0;openParens--){
 		if(cx > w){break;}
-		textMeshAddGlyph(m, cx, y, size, ')', 0x80FFFFFF, colors[openParens&7] >> 1);
+		textMeshAddGlyph(m, cx, cy, size, ')', 0x80FFFFFF, colors[openParens&7] >> 1);
 		cx += size * 8;
 	}
 	m->font = oldFont;
@@ -383,25 +387,27 @@ static void widgetDrawTextLog(const widget *wid, textMesh *m, int x, int y, int 
 	(void)h;
 	const int FS = 16;
 	int i=0;
+	int bg=0;
 
-	uint lineCount, oldFont = m->font;
+	uint oldFont = m->font;
 	m->font = 1;
-	for(lineCount=0;lineCount<256;lineCount++){
-		if(wid->valss[lineCount] == NULL){break;}
-	}
 	textMeshVGradient(m,x,y+h-2,w,2,0xA0301010,0xA0100000);
-	for(int cy = y+h-FS-2;(cy+FS)>y;cy-=FS){
-		const char *line = wid->valss[i];
-		if(line == NULL){continue;}
+	for(int cy = y+h-2;cy>y;){
+		const char *line = wid->valss[i++];
+		if((line == NULL) || (*line == 0)){break;}
+
+		uint lines = 1;
+		for(const char *cl = line;*cl != 0;cl++){
+			if(*cl == '\n'){lines++;}
+		}
+		cy -= lines * FS;
+		if(bg){textMeshVGradient(m,x,cy,w,FS*lines,0x40301010,0x40100000);}
 		if(*line == '>'){
 			widgetDrawLispLine(m, x, cy, FS/8, w, FS, &line[2], 1);
+			bg = !bg;
 		}else{
-			if((i&2) == (lineCount&2)){
-				textMeshVGradient(m,x,cy-FS,w,FS*2,0x40301010,0x40100000);
-			}
-			widgetDrawLispLine(m, x, cy, FS/8, w, FS, line, 0);
+			widgetDrawLispLine(m, x + FS*3, cy, FS/8, w, FS, &line[2], 0);
 		}
-		i++;
 	}
 	m->font = oldFont;
 }

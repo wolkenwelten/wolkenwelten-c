@@ -2,6 +2,7 @@
 
 #include "../game/character.h"
 #include "../game/itemDrop.h"
+#include "../misc/profiling.h"
 #include "../network/server.h"
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/item.h"
@@ -111,6 +112,8 @@ void blockMiningMineBlock(int x, int y, int z, u8 b){
 }
 
 void blockMiningUpdate(){
+	PROFILE_START();
+
 	for(uint i=0;i<clientCount;++i){
 		if(clients[i].c == NULL)          {continue;}
 		if(clients[i].c->blockMiningX < 0){continue;}
@@ -136,6 +139,8 @@ void blockMiningUpdate(){
 			bm->wasMined = false;
 		}
 	}
+
+	PROFILE_STOP();
 }
 
 void blockMiningUpdatePlayer(uint c){

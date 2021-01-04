@@ -1,4 +1,4 @@
-- 2020-12-27: void Linux glibc with KDE 5.20.4, kills kdes desktop compositing and freezes when starting a singleplayer world
+- 2020-12-03: s-eval does not seem to always do what its told, also the return values seem suspicious (mostly seen when sending (chungi) over and over again, followed by a call to (lshed)
 - 2020-12-21: BeamBlasts are not accurate over long distances, probably because of insufficient accuracy in the floats used
 - After a while of exploration/traveling FPS Drop A LOT
 - 2020-12-08: WASM SP Server crashes after a while

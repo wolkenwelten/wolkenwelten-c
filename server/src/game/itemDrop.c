@@ -2,6 +2,7 @@
 
 #include "../game/entity.h"
 #include "../game/fire.h"
+#include "../misc/profiling.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
@@ -206,6 +207,8 @@ static int itemDropCheckCollation(uint ai){
 }
 
 void itemDropUpdateAll(){
+	PROFILE_START();
+
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){
 		entity *e = itemDropList[i].ent;
 		if(e == NULL){continue;}
@@ -218,6 +221,8 @@ void itemDropUpdateAll(){
 			continue;
 		}
 	}
+
+	PROFILE_STOP();
 }
 
 void itemDropUpdateFire(uint i){

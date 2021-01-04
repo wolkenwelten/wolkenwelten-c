@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include "misc/command.h"
+#include "misc/profiling.h"
 #include "misc/options.h"
 #include "game/animal.h"
 #include "game/being.h"
@@ -82,6 +83,23 @@ static void initTermColors(){
 	}
 }
 
+char *updateWorldFuncs[64] = {
+	"blockMiningUpdate",
+	"itemDropUpdateAll",
+	"grenadeUpdateAll",
+	"animalUpdateAll",
+	"projectileUpdateAll",
+	"animalThinkAll",
+	"fireUpdateAll",
+	"waterUpdateAll",
+	"itemDropUpdateFireAll",
+	"animalNeedsAll",
+	"animalCheckBurnAll",
+	"gtimeUpdate",
+	"landscapeUpdateAll",
+	"weatherUpdateAll",
+	"rainUpdateAll"
+};
 static void updateWorldStep(){
 	blockMiningUpdate();
 	itemDropUpdateAll();
@@ -191,6 +209,8 @@ int main( int argc, const char* argv[] ){
 	printf("[SRV] Exiting cleanly\n");
 	savegameSave();
 	serverFree();
+	fflush(stdout);
+	fflush(stderr);
 	return 0;
 }
 #endif

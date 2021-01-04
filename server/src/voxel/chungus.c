@@ -5,6 +5,7 @@
 #include "../game/being.h"
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
+#include "../game/water.h"
 #include "../network/server.h"
 #include "../persistence/savegame.h"
 #include "../worldgen/worldgen.h"
@@ -20,6 +21,7 @@
 
 chungus *chungusList;
 uint chungusCount = 0;
+uint chungusFreeCount = 0;
 chungus *chungusFirstFree = NULL;
 u64 freeTime = 0;
 
@@ -60,6 +62,7 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 				fprintf(stderr,"chungusList overflow averted, freed some memory!\n");
 				c = chungusFirstFree;
 				chungusFirstFree = c->nextFree;
+				chungusFreeCount--;
 			}
 		}else{
 			c = &chungusList[chungusCount++];
@@ -67,6 +70,7 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	}else{
 		c = chungusFirstFree;
 		chungusFirstFree = c->nextFree;
+		chungusFreeCount--;
 	}
 
 	c->x = x;
@@ -99,6 +103,8 @@ void chungusFree(chungus *c){
 	chungusSave(c);
 	animalDelChungus(c);
 	itemDropDelChungus(c);
+	fireDelChungus(c);
+	waterDelChungus(c);
 	for(int x=0;x<16;x++){
 	for(int y=0;y<16;y++){
 	for(int z=0;z<16;z++){
@@ -109,6 +115,7 @@ void chungusFree(chungus *c){
 	memset(c->chunks,0,16*16*16*sizeof(chunk *));
 	c->nextFree = chungusFirstFree;
 	chungusFirstFree = c;
+	chungusFreeCount++;
 }
 
 chunk *chungusGetChunk(chungus *c, int x,int y,int z){

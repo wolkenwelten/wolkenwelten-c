@@ -1,3 +1,4 @@
+- Add block variations by having each face use a 2x2 texture, and instead of having uv be in the range of 0-1 use 0-0.5 for single blocks, thereby adding some slight variations along the way.
 - Properly check if the server is still there and close the connection otherwise
 - Add beingList Intros!!!
 - Make client detect when the connection to the server is separated and show an error instead of just becoming unresponsive
