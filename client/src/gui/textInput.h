@@ -3,6 +3,7 @@
 #include "widget.h"
 
 extern int textInputCursorPos;
+extern int textInputMark;
 
 void  textInputFocus     (widget *wid);
 void  textInputBlur      (widget *wid);

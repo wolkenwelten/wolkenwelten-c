@@ -121,12 +121,10 @@ lVal *lResolveNativeSym(const lSymbol s){
 void lispInit(){
 	lInit();
 	clRoot = lClosureNew(NULL);
-	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
-	lispEvalNR("(define test (lambda (a) (s (water (px) (py) (pz)))))");
-	lispEvalNR("(define fasts (lambda (a) (mst  1) (s (mst  1))))");
-	lispEvalNR("(define norms (lambda (a) (mst  4) (s (mst  4))))");
-	lispEvalNR("(define slows (lambda (a) (mst 16) (s (mst 16))))");
-	lispEvalNR("(define bulls (lambda (a) (mst 64) (s (mst 64))))");
+	lispEvalNR("(define fasts (λ (a) (mst  1) (s (mst  1))))");
+	lispEvalNR("(define norms (λ (a) (mst  4) (s (mst  4))))");
+	lispEvalNR("(define slows (λ (a) (mst 16) (s (mst 16))))");
+	lispEvalNR("(define bulls (λ (a) (mst 64) (s (mst 64))))");
 
 }
 

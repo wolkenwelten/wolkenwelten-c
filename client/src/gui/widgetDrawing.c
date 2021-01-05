@@ -14,14 +14,17 @@
 #include <string.h>
 #include <stdlib.h>
 
-static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h, const char *line, int lambda){
+static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h, const char *rawLine, int lambda, int mark, int cursor){
 	(void)h;
 	int openParens = 0, cx = x, cy = y, oldFont = m->font;;
 	u32 cfgc = 0xFFFFFFFF;
 	u8 c;
 	m->font = 1;
 
-	static u32 colors[8] = {
+	int selMin = MIN(mark,cursor),selMax = MAX(mark,cursor);
+	if(selMin < 0){selMax = -1;}
+
+	static u32 colors[16] = {
 		0x00000000,
 		0x60FF8040,
 		0x608040FF,
@@ -29,7 +32,16 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 		0x6040F0F0,
 		0x6080FF40,
 		0x604080FF,
-		0x60FF40FF
+		0x60FF40FF,
+
+		0x60FFFFFF,
+		0xA0FF8040,
+		0xA08040FF,
+		0xA040FF80,
+		0xA040F0F0,
+		0xA080FF40,
+		0xA04080FF,
+		0xA0FF40FF
 	};
 	if(lambda){
 		if(lambda == 2){
@@ -42,7 +54,14 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 		cx += size*8;
 		cx += size*8;
 	}
-	for(;*line != 0;line++){
+	int selActive = 0;
+	for(const char *line = rawLine;*line != 0;line++){
+		const int curPos = line - rawLine;
+		if(curPos >= selMax){
+			selActive = 0;
+		}else if((curPos >= selMin) && (curPos < selMax)){
+			selActive = 8;
+		}
 		if(cx > w){break;}
 		if(((u8)line[0] == 0xCE) && ((u8)line[1] == 0xBB)){ // UTF-8 Lambda
 			line++;
@@ -61,7 +80,7 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 			c = *line;
 		}
 		if(*line == '('){openParens++;}
-		textMeshAddGlyph(m, cx, cy, size, c, cfgc, colors[openParens&7]);
+		textMeshAddGlyph(m, cx, cy, size, c, cfgc, colors[(openParens&7) | selActive]);
 		if(*line == ')'){openParens--;}
 		cx += size * 8;
 	}
@@ -238,7 +257,11 @@ static void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, in
 	int oldmx = m->mx;
 	m->mx     = x+w - size*8;
 	if(isLisp){
-		widgetDrawLispLine(m, x+textXOff, y+textYOff, size, w-textXOff, size*8, wid->vals, 2);
+		if(widgetFocused == wid){
+			widgetDrawLispLine(m, x+textXOff, y+textYOff, size, w-textXOff, size*8, wid->vals, 2, textInputMark, textInputCursorPos);
+		}else{
+			widgetDrawLispLine(m, x+textXOff, y+textYOff, size, w-textXOff, size*8, wid->vals, 2, -1, -1);
+		}
 	}else{
 		if(wid->vals[0] == 0){
 			textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->label);
@@ -247,11 +270,20 @@ static void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, in
 		}
 	}
 
-	if((widgetFocused == wid) && (getTicks() & 512)){
+	if(widgetFocused == wid){
+		uint alpha = ((getTicks() >> 1) & 511);
+		if(alpha > 255){alpha = 512 - alpha;}
 		int cx = x+textXOff+(textInputCursorPos*size*8);
 		if(isLisp){cx += size*8*3;}
 		if(cx < m->mx){
-			textMeshAddGlyph(m, cx, y+textYOff, size, 127,0xFFFFFFFF,0x00000000);
+			textMeshAddGlyph(m, cx, y+textYOff, size, 127,0xFFFFFF | (alpha << 24),0x00000000);
+		}
+		if((!isLisp) && (textInputMark >= 0)){
+			const int sMin = MIN(textInputCursorPos,textInputMark);
+			const int sMax = MAX(textInputCursorPos,textInputMark);
+			const int sx = sMin*size*8;
+			const int sw = (sMax*size*8)-sx;
+			textMeshSolidBox (m,x+textXOff+sx,y+textYOff,sw,size*8, 0x40FFFFFF);
 		}
 	}
 	m->mx = oldmx;
@@ -410,10 +442,10 @@ static void widgetDrawTextLog(const widget *wid, textMesh *m, int x, int y, int 
 		cy -= lines * FS;
 		if(bg){textMeshVGradient(m,x,cy,w,FS*lines,0x40301010,0x40100000);}
 		if(*line == '>'){
-			widgetDrawLispLine(m, x, cy, FS/8, w, FS, &line[2], 1);
+			widgetDrawLispLine(m, x, cy, FS/8, w, FS, &line[2], 1, -1, -1);
 			bg = !bg;
 		}else{
-			widgetDrawLispLine(m, x + FS*3, cy, FS/8, w, FS, &line[2], 0);
+			widgetDrawLispLine(m, x + FS*3, cy, FS/8, w, FS, &line[2], 0, -1, -1);
 		}
 	}
 	m->font = oldFont;

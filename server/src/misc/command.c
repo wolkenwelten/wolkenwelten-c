@@ -480,15 +480,14 @@ void initCommands(){
 	pid->type = ltInt;
 	pid->vInt = 123;
 
-	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
-	lispEvalNR("(define heal (lambda (a) (- (dmg (cond (a (- a)) (#t -20))))))");
-	lispEvalNR("(define player-x (lambda () (vx (player-pos))))");
-	lispEvalNR("(define player-y (lambda () (vy (player-pos))))");
-	lispEvalNR("(define player-z (lambda () (vz (player-pos))))");
-	lispEvalNR("(define vx+ (lambda (v o) (+ v (vec o 0 0))))");
-	lispEvalNR("(define vy+ (lambda (v o) (+ v (vec 0 o 0))))");
-	lispEvalNR("(define vz+ (lambda (v o) (+ v (vec 0 0 o))))");
-	lispEvalNR("(define cloud-density (lambda (a) (- 1.0 (/ (cloud-threshold (* (- 1.0 a) 256.0)) 256.0))))");
+	lispEvalNR("(define heal     (λ (a) (- (dmg (cond (a (- a)) (#t -20))))))");
+	lispEvalNR("(define player-x (λ () (vx (player-pos))))");
+	lispEvalNR("(define player-y (λ () (vy (player-pos))))");
+	lispEvalNR("(define player-z (λ () (vz (player-pos))))");
+	lispEvalNR("(define vx+      (λ (v o) (+ v (vec o 0 0))))");
+	lispEvalNR("(define vy+      (λ (v o) (+ v (vec 0 o 0))))");
+	lispEvalNR("(define vz+      (λ (v o) (+ v (vec 0 0 o))))");
+	lispEvalNR("(define cloud-density (λ (a) (- 1.0 (/ (cloud-threshold (* (- 1.0 a) 256.0)) 256.0))))");
 }
 
 void freeCommands(){

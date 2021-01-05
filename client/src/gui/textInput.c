@@ -8,11 +8,13 @@
 #include <string.h>
 #include <SDL.h>
 
+int  textInputMark      = -1;
 int  textInputBufferLen = 0;
 int  textInputCursorPos = 0;
-bool textInputStarted = false;
+bool textInputStarted   = false;
 
 void textInputFocus(widget *wid){
+	textInputMark = -1;
 	if(wid->type == wTextInput){
 		textInputBufferLen = strnlen(wid->vals,255);
 	}
@@ -43,10 +45,29 @@ void textInputEnter(){
 	widgetEmit(widgetFocused,"submit");
 }
 
-void textInputBackspace(){
+void textInputDelSelection(){
 	if(!textInputActive()){return;}
-	if(textInputCursorPos == 0){return;}
+	if(textInputMark < 0){return;}
 	char *textInputBuffer = widgetFocused->vals;
+	int sMin = MIN(textInputMark,textInputCursorPos);
+	int sMax = MAX(textInputMark,textInputCursorPos);
+	int len = sMax - sMin;
+	if(len <= 0){return;}
+
+	memmove(&textInputBuffer[sMin],&textInputBuffer[sMax],textInputBufferLen - sMax);
+	textInputBufferLen -= len;
+	textInputBuffer[textInputBufferLen] = 0;
+	textInputCursorPos = sMin;
+	textInputMark = -1;
+}
+
+void textInputBackspace(int moveForward){
+	if(!textInputActive()){return;}
+	if(textInputMark >= 0){return textInputDelSelection();}
+	if((textInputCursorPos + moveForward) == 0){return;}
+	if((textInputCursorPos + moveForward) > textInputBufferLen){return;}
+	char *textInputBuffer = widgetFocused->vals;
+	textInputCursorPos += moveForward;
 	for(int i=textInputCursorPos-1;i<textInputBufferLen-1;i++){
 		textInputBuffer[i] = textInputBuffer[i+1];
 	}
@@ -62,6 +83,7 @@ void textInputAppend(const char *s){
 	if((widgetFocused->parent->flags & WIDGET_ANIMATE) && (s[0] == '`' && s[1] == 0)){
 		return;
 	}
+	if(textInputMark >= 0){return textInputDelSelection();}
 	char *textInputBuffer = widgetFocused->vals;
 	if((slen + textInputBufferLen) > 255){slen = 255-textInputBufferLen;}
 	if(textInputCursorPos != textInputBufferLen){
@@ -78,6 +100,25 @@ void textInputAppend(const char *s){
 	widgetEmit(widgetFocused,"change");
 }
 
+void textInputCopy(){
+	if(!textInputActive()){return;}
+	char *textInputBuffer = widgetFocused->vals;
+	int sMin = MIN(textInputMark,textInputCursorPos);
+	int sMax = MAX(textInputMark,textInputCursorPos);
+	int len  = sMax - sMin;
+	if(len <= 0){return;}
+	char *buf = malloc(len+1);
+	memcpy(buf,&textInputBuffer[sMin],len);
+	buf[len]=0;
+	SDL_SetClipboardText(buf);
+	free(buf);
+}
+
+void textInputCut(){
+	textInputCopy();
+	textInputBackspace(0);
+}
+
 void textInputPaste(){
 	if(!textInputActive()){return;}
 	if(!SDL_HasClipboardText()){return;}
@@ -85,6 +126,40 @@ void textInputPaste(){
 	if(text == NULL){return;}
 	textInputAppend(text);
 	SDL_free(text);
+}
+
+void textInputHome(){
+	char *textInputBuffer = widgetFocused->vals;
+	char *c = &textInputBuffer[0];
+	for(; isspace(*c); c++){}
+	const int indentPos = c - textInputBuffer;
+	if(textInputCursorPos <= indentPos){
+		textInputCursorPos = 0;
+	}else{
+		textInputCursorPos = indentPos;
+	}
+}
+
+void textInputEnd(){
+	char *textInputBuffer = widgetFocused->vals;
+	char *c = &textInputBuffer[textInputBufferLen-1];
+	for(; isspace(*c); c--){}
+	const int indentPos = c - textInputBuffer + 1;
+	if(textInputCursorPos >= indentPos){
+		textInputCursorPos = textInputBufferLen;;
+	}else{
+		textInputCursorPos = indentPos;
+	}
+}
+
+void textInputCheckMark(const SDL_Event *e){
+	if(e->key.keysym.mod & KMOD_SHIFT){
+		if(textInputMark < 0){
+			textInputMark = textInputCursorPos;
+		}
+	}else{
+		textInputMark = -1;
+	}
 }
 
 bool textInputEvent(const SDL_Event *e){
@@ -109,27 +184,50 @@ bool textInputEvent(const SDL_Event *e){
 	case SDL_KEYDOWN:
 		switch(e->key.keysym.sym){
 		case SDLK_BACKSPACE:
-			textInputBackspace();
-			break;
+			textInputBackspace(0);
+			return true;
 		case SDLK_DELETE:
-			if(textInputCursorPos < textInputBufferLen){
-				++textInputCursorPos;
-				textInputBackspace();
-			}
-			break;
+			textInputBackspace(1);
+			return true;
 		case SDLK_LEFT:
-			if(textInputCursorPos > 0){
+			textInputCheckMark(e);
+			if(keyboardCmdKey(e)){
+				textInputHome();
+			}else if(textInputCursorPos > 0){
 				--textInputCursorPos;
 			}
-			break;
+			return true;
 		case SDLK_RIGHT:
-			if(textInputCursorPos < textInputBufferLen){
+			textInputCheckMark(e);
+			if(keyboardCmdKey(e)){
+				textInputEnd();
+			}else if(textInputCursorPos < textInputBufferLen){
 				++textInputCursorPos;
 			}
-			break;
+			return true;
+		case SDLK_HOME:
+			textInputCheckMark(e);
+			textInputHome();
+			return true;
+		case SDLK_END:
+			textInputCheckMark(e);
+			textInputEnd();
+			return true;
 		case SDLK_INSERT:
 			textInputPaste();
 			return true;
+		case SDLK_c:
+			if(keyboardCmdKey(e)){
+				textInputCopy();
+				return true;
+			}
+			break;
+		case SDLK_x:
+			if(keyboardCmdKey(e)){
+				textInputCut();
+				return true;
+			}
+			break;
 		case SDLK_v:
 			if(keyboardCmdKey(e)){
 				textInputPaste();
