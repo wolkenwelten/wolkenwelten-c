@@ -74,26 +74,24 @@ lVal *lnfZero(lClosure *c, lVal *v){
 }
 
 lVal *lnfIntPred(lClosure *c, lVal *v){
-	if(v == NULL){return lValBool(false);}
 	lVal *t = lEval(c,v);
 	if(t == NULL){return lValBool(false);}
 	return lValBool(t->type == ltInt);
 }
 
 lVal *lnfFloatPred(lClosure *c, lVal *v){
-	if(v == NULL){return lValBool(false);}
 	lVal *t = lEval(c,v);
 	if(t == NULL){return lValBool(false);}
 	return lValBool(t->type == ltFloat);
 }
 
 lVal *lnfNumberPred(lClosure *c, lVal *v){
-	if(v == NULL){return lValBool(false);}
 	lVal *t = lEval(c,v);
 	if(t == NULL){return lValBool(false);}
 	switch(t->type){
 	case ltInt:
 	case ltFloat:
+	case ltVec:
 		return lValBool(true);
 	default:
 		return lValBool(false);
@@ -101,14 +99,12 @@ lVal *lnfNumberPred(lClosure *c, lVal *v){
 }
 
 lVal *lnfStringPred(lClosure *c, lVal *v){
-	if(v == NULL){return lValBool(false);}
 	lVal *t = lEval(c,v);
 	if(t == NULL){return lValBool(false);}
 	return lValBool((t->type == ltString) || (t->type == ltCString));
 }
 
 lVal *lnfEmptyPred(lClosure *c, lVal *v){
-	if(v == NULL){return lValBool(true);}
 	lVal *t = lEval(c,v);
 	if(t == NULL){return lValBool(true);}
 	switch(t->type){
@@ -122,7 +118,6 @@ lVal *lnfEmptyPred(lClosure *c, lVal *v){
 }
 
 lVal *lnfPosPred(lClosure *c, lVal *v){
-	if(v == NULL){return lValBool(false);}
 	lVal *t = lEval(c,v);
 	if(t == NULL){return lValBool(false);}
 	if(t->type != ltInt){return lValNil();}
@@ -130,9 +125,26 @@ lVal *lnfPosPred(lClosure *c, lVal *v){
 }
 
 lVal *lnfNegPred(lClosure *c, lVal *v){
-	if(v == NULL){return lValBool(false);}
 	lVal *t = lEval(c,v);
 	if(t == NULL){return lValBool(false);}
 	if(t->type != ltInt){return lValNil();}
 	return lValBool(t->vInt < 0);
+}
+
+lVal *lnfVecPred(lClosure *c, lVal *v){
+	lVal *t = lEval(c,v);
+	if(t == NULL){return lValBool(false);}
+	return lValBool(t->type == ltVec);
+}
+
+lVal *lnfNilPred(lClosure *c, lVal *v){
+	lVal *t = lEval(c,v);
+	if(t == NULL){return lValBool(false);}
+	return lValBool(t->type == ltNil);
+}
+
+lVal *lnfInfPred(lClosure *c, lVal *v){
+	lVal *t = lEval(c,v);
+	if(t == NULL){return lValBool(false);}
+	return lValBool(t->type == ltInf);
 }

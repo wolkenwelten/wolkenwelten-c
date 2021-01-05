@@ -51,5 +51,6 @@ int      checkCollision     (int x, int y, int z);
 void     worldDirtyChunk    (int x, int y, int z, int client);
 void     worldBoxMine       (int x, int y, int z, int w,int h,int d);
 void     worldBoxMineSphere (int x, int y, int z, int r);
+bool     worldIsLoaded      (int x, int y, int z);
 ivec     worldGetSpawnPos   ();
 void     worldSetAllUpdated ();

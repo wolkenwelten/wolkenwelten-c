@@ -40,6 +40,7 @@
 #include "tmp/objs.h"
 #include "voxel/bigchungus.h"
 #include "voxel/chungus.h"
+
 #include "../../common/src/misc/misc.h"
 #include "../../common/src/mods/mods.h"
 
@@ -175,6 +176,7 @@ void checkAutostart(){
 
 int main( int argc, char* argv[] ){
 	clientGetName();
+	lispInit();
 	initOptions(argc,argv);
 	initSDL();
 	seedRNG(time(NULL));
@@ -192,7 +194,6 @@ int main( int argc, char* argv[] ){
 	weatherInit();
 
 	initMenu();
-	lispInit();
 	initUI();
 	initSky();
 	shadowInit();

@@ -10,6 +10,9 @@ lVal *lnfZero         (lClosure *c, lVal *v);
 
 lVal *lnfIntPred      (lClosure *c, lVal *v);
 lVal *lnfFloatPred    (lClosure *c, lVal *v);
+lVal *lnfVecPred      (lClosure *c, lVal *v);
+lVal *lnfNilPred      (lClosure *c, lVal *v);
+lVal *lnfInfPred      (lClosure *c, lVal *v);
 lVal *lnfNumberPred   (lClosure *c, lVal *v);
 lVal *lnfStringPred   (lClosure *c, lVal *v);
 lVal *lnfEmptyPred    (lClosure *c, lVal *v);

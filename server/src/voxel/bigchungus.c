@@ -376,3 +376,7 @@ chungus* worldTryChungusV(const vec pos){
 	const int cz = ((uint)pos.z) >> 8;
 	return worldTryChungus(cx,cy,cz);
 }
+
+bool worldIsLoaded(int x, int y, int z){
+	return worldTryChungus(x>>8,y>>8,z>>8) != NULL;
+}

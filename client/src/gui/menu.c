@@ -162,3 +162,12 @@ void menuCloseGame(){
 	clientFree();
 	openMainMenu();
 }
+
+void serverListAdd(const char *address, const char *name){
+	if(serverlistCount >= 15){return;}
+	snprintf(serverlistIP[serverlistCount],sizeof(serverlistIP[0]),"%s",address);
+	snprintf(serverlistName[serverlistCount],sizeof(serverlistName[0]),"%s",name);
+	serverlistIP[serverlistCount][sizeof(serverlistIP[0])-1]=0;
+	serverlistName[serverlistCount][sizeof(serverlistName[0])-1]=0;
+	serverlistCount++;
+}

@@ -28,8 +28,8 @@ lCString  *lCStringFFree = NULL;
 lSymbol symQuote;
 
 void lInit(){
-	strncpy(symQuote.c,"quote",7);
-	symQuote.c[7] = 0;
+	strncpy(symQuote.c,"quote",15);
+	symQuote.c[15] = 0;
 	lValMax       = 0;
 	lClosureMax   = 0;
 
@@ -223,7 +223,8 @@ lVal *lValSym(const char *s){
 	lVal *ret = lValAlloc();
 	if(ret == NULL){return ret;}
 	ret->type = ltSymbol;
-	ret->vSymbol.v = 0;
+	ret->vSymbol.v[0] = 0;
+	ret->vSymbol.v[1] = 0;
 	strncpy(ret->vSymbol.c,s,sizeof(ret->vSymbol.c));
 	ret->vSymbol.c[sizeof(ret->vSymbol.c)-1] = 0;
 	return ret;
@@ -348,8 +349,9 @@ static lVal *lParseNumber(lCString *s){
 static lVal *lParseSymbol(lCString *s){
 	lVal *v = lValAlloc();
 	v->type = ltSymbol;
-	v->vSymbol.v = 0;
-	for(int i=0;i<8;i++){
+	v->vSymbol.v[0] = 0;
+	v->vSymbol.v[1] = 0;
+	for(int i=0;i<16;i++){
 		char c = *s->data++;
 		if(isspace(c) || (c == ')') || (c ==0)){
 			s->data--;
@@ -572,7 +574,7 @@ static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
 	return ret;
 }
 
-static lVal *lValNativeFunc(lVal *(*func)(lClosure *,lVal *)){
+lVal *lValNativeFunc(lVal *(*func)(lClosure *,lVal *)){
 	lVal *v = lValAlloc();
 	v->type = ltNativeFunc;
 	v->vNativeFunc = func;
@@ -631,7 +633,7 @@ static lVal *lnfWhen(lClosure *c, lVal *v){
 	return ret;
 }
 
-static lVal *lResolveNativeSym(const lSymbol s){
+lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(s.c[1] == 0){
 		switch(s.c[0]){
 		case '+': return lValNativeFunc(lnfAdd);
@@ -680,6 +682,9 @@ static lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"float") == 0)  {return lValNativeFunc(lnfFloat);}
 	if(strcmp(s.c,"vec") == 0)    {return lValNativeFunc(lnfVec);}
 	if(strcmp(s.c,"abs") == 0)    {return lValNativeFunc(lnfAbs);}
+	if(strcmp(s.c,"vx") == 0)     {return lValNativeFunc(lnfVX);}
+	if(strcmp(s.c,"vy") == 0)     {return lValNativeFunc(lnfVY);}
+	if(strcmp(s.c,"vz") == 0)     {return lValNativeFunc(lnfVZ);}
 
 	if(strcmp(s.c,"ansirs") == 0) {return lValNativeFunc(lnfAnsiRS);}
 	if(strcmp(s.c,"ansifg") == 0) {return lValNativeFunc(lnfAnsiFG);}
@@ -689,13 +694,17 @@ static lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"substr") == 0) {return lValNativeFunc(lnfSubstr);}
 
 	if(strcmp(s.c,"int?") == 0)   {return lValNativeFunc(lnfIntPred);}
-	if(strcmp(s.c,"float?") == 0)   {return lValNativeFunc(lnfFloatPred);}
-	if(strcmp(s.c,"number?") == 0)   {return lValNativeFunc(lnfNumberPred);}
+	if(strcmp(s.c,"float?") == 0) {return lValNativeFunc(lnfFloatPred);}
+	if(strcmp(s.c,"vec?") == 0)   {return lValNativeFunc(lnfVecPred);}
+	if(strcmp(s.c,"nil?") == 0)   {return lValNativeFunc(lnfNilPred);}
+	if(strcmp(s.c,"inf?") == 0)   {return lValNativeFunc(lnfInfPred);}
+	if(strcmp(s.c,"number?") == 0){return lValNativeFunc(lnfNumberPred);}
 	if(strcmp(s.c,"empty?") == 0) {return lValNativeFunc(lnfEmptyPred);}
 	if(strcmp(s.c,"neg?") == 0)   {return lValNativeFunc(lnfNegPred);}
 	if(strcmp(s.c,"pos?") == 0)   {return lValNativeFunc(lnfPosPred);}
 	if(strcmp(s.c,"string?") == 0){return lValNativeFunc(lnfStringPred);}
 	if(strcmp(s.c,"zero?") == 0)  {return lValNativeFunc(lnfZero);}
+
 	return lValNil();
 }
 
@@ -703,10 +712,11 @@ lVal *lDefineClosureSym(lClosure *c,const lSymbol s){
 	if(c == NULL){return NULL;}
 	lVal *v;
 	for(v = c->data;v->next != NULL;v = v->next){
-		if(v->type != ltList)         {continue;}
-		if(v->vList == NULL)          {continue;}
-		if(v->vList->type != ltSymbol){continue;}
-		if(v->vList->vSymbol.v != s.v){continue;}
+		if(v->type != ltList)               {continue;}
+		if(v->vList == NULL)                {continue;}
+		if(v->vList->type != ltSymbol)      {continue;}
+		if(v->vList->vSymbol.v[0] != s.v[0]){continue;}
+		if(v->vList->vSymbol.v[1] != s.v[1]){continue;}
 		return NULL;
 	}
 	if(v == NULL){return NULL;}
@@ -730,10 +740,11 @@ lVal *lDefineClosureSym(lClosure *c,const lSymbol s){
 lVal *lResolveClosureSym(lClosure *c, const lSymbol s){
 	if(c == NULL){return NULL;}
 	for(lVal *v = c->data;v != NULL;v = v->next){
-		if(v->type != ltList)         {continue;}
-		if(v->vList == NULL)          {continue;}
-		if(v->vList->type != ltSymbol){continue;}
-		if(v->vList->vSymbol.v != s.v){continue;}
+		if(v->type != ltList)               {continue;}
+		if(v->vList == NULL)                {continue;}
+		if(v->vList->type != ltSymbol)      {continue;}
+		if(v->vList->vSymbol.v[0] != s.v[0]){continue;}
+		if(v->vList->vSymbol.v[1] != s.v[1]){continue;}
 		return v->vList->next;
 	}
 	return lResolveClosureSym(c->parent,s);

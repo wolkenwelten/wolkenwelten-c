@@ -1,7 +1,10 @@
 #include "lisp.h"
 
 #include "../main.h"
+#include "../gfx/gfx.h"
 #include "../gui/gui.h"
+#include "../gui/menu.h"
+#include "../misc/options.h"
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/nujel/nujel.h"
@@ -54,18 +57,77 @@ lVal *wwlnfProf(lClosure *c, lVal *v){
 	return lValString(profGetReport());
 }
 
+lVal *wwlnfPlayerName(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfCat(c,lEval(c,v));
+		if(t->type == ltString){
+			strncpy(playerName,t->vString->buf,sizeof(playerName)-1);
+			playerName[sizeof(playerName)-1]=0;
+		}
+	}
+
+	return lValString(playerName);
+}
+
+lVal *wwlnfSoundVolume(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfFloat(c,lEval(c,v));
+		optionSoundVolume = t->vFloat;
+	}
+
+	return lValFloat(optionSoundVolume);
+}
+
+lVal *wwlnfRenderDistance(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfFloat(c,lEval(c,v));
+		setRenderDistance(t->vFloat);
+	}
+
+	return lValFloat(renderDistance);
+}
+
+lVal *wwlnfServerAdd(lClosure *c, lVal *v){
+	char *address = "localhost";
+	char *name = "localhost";
+
+	if(v != NULL){
+		lVal *t = lnfCat(c,lEval(c,v));
+		address = t->vString->buf;
+		v = v->next;
+	}
+	if(v != NULL){
+		lVal *t = lnfCat(c,lEval(c,v));
+		name = t->vString->buf;
+	}
+
+	serverListAdd(address,name);
+
+	return lValFloat(renderDistance);
+}
+
+lVal *lResolveNativeSym(const lSymbol s){
+	if(strcmp(s.c,"s") == 0)              {return lValNativeFunc(wwlnfSEval);}
+	if(strcmp(s.c,"mst") == 0)            {return lValNativeFunc(wwlnfMsPerTick);}
+	if(strcmp(s.c,"prof") == 0)           {return lValNativeFunc(wwlnfProf);}
+	if(strcmp(s.c,"player-name") == 0)    {return lValNativeFunc(wwlnfPlayerName);}
+	if(strcmp(s.c,"sound-volume") == 0)   {return lValNativeFunc(wwlnfSoundVolume);}
+	if(strcmp(s.c,"render-distance") == 0){return lValNativeFunc(wwlnfRenderDistance);}
+	if(strcmp(s.c,"server-add") == 0)     {return lValNativeFunc(wwlnfServerAdd);}
+
+	return lResolveNativeSymBuiltin(s);
+}
+
 void lispInit(){
 	lInit();
 	clRoot = lClosureNew(NULL);
 	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
-	lispEvalNR("(define test (lambda (a) (s-eval (water (px) (py) (pz)))))");
-	lispEvalNR("(define fasts (lambda (a) (mst  1) (s-eval (mst  1))))");
-	lispEvalNR("(define norms (lambda (a) (mst  4) (s-eval (mst  4))))");
-	lispEvalNR("(define slows (lambda (a) (mst 16) (s-eval (mst 16))))");
-	lispEvalNR("(define bulls (lambda (a) (mst 64) (s-eval (mst 64))))");
-	lClosureAddNF(clRoot,"s-eval", &wwlnfSEval);
-	lClosureAddNF(clRoot,"mst", &wwlnfMsPerTick);
-	lClosureAddNF(clRoot,"prof", &wwlnfProf);
+	lispEvalNR("(define test (lambda (a) (s (water (px) (py) (pz)))))");
+	lispEvalNR("(define fasts (lambda (a) (mst  1) (s (mst  1))))");
+	lispEvalNR("(define norms (lambda (a) (mst  4) (s (mst  4))))");
+	lispEvalNR("(define slows (lambda (a) (mst 16) (s (mst 16))))");
+	lispEvalNR("(define bulls (lambda (a) (mst 64) (s (mst 64))))");
+
 }
 
 void lispFree(){

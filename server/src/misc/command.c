@@ -80,7 +80,8 @@ lVal *wwlnfWCount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(waterCount);
 }
-lVal *wwlnfPX(lClosure *c, lVal *v){
+
+lVal *wwlnfPlayerPos(lClosure *c, lVal *v){
 	lVal *sym = lValSym("pid");
 	if(v == NULL){v = lResolveSym(c,sym->vSymbol);}
 	v = lEval(c,v);
@@ -90,105 +91,128 @@ lVal *wwlnfPX(lClosure *c, lVal *v){
 	if((cc < 0) || (cc >= 32)){return lValNil();}
 	if(clients[cc].state)     {return lValNil();}
 	if(clients[cc].c == NULL) {return lValNil();}
-	return lValInt((int)clients[cc].c->pos.x);
+	return lValVec(clients[cc].c->pos);
 }
-lVal *wwlnfPY(lClosure *c, lVal *v){
-	lVal *sym = lValSym("pid");
-	if(v == NULL){v = lResolveSym(c,sym->vSymbol);}
-	v = lEval(c,v);
-	if(v == NULL)             {return lValNil();}
-	if(v->type != ltInt)      {return lValNil();}
-	const int cc = v->vInt;
-	if((cc < 0) || (cc >= 32)){return lValNil();}
-	if(clients[cc].state)     {return lValNil();}
-	if(clients[cc].c == NULL) {return lValNil();}
-	return lValInt((int)clients[cc].c->pos.y);
-}
-lVal *wwlnfPZ(lClosure *c, lVal *v){
-	lVal *sym = lValSym("pid");
-	if(v == NULL){v = lResolveSym(c,sym->vSymbol);}
-	v = lEval(c,v);
-	if(v == NULL)             {return lValNil();}
-	if(v->type != ltInt)      {return lValNil();}
-	const int cc = v->vInt;
-	if((cc < 0) || (cc >= 32)){return lValNil();}
-	if(clients[cc].state)     {return lValNil();}
-	if(clients[cc].c == NULL) {return lValNil();}
-	return lValInt((int)clients[cc].c->pos.z);
-}
+
 lVal *wwlnfSetB(lClosure *c, lVal *v){
-	int args[4] = {-1,-1,-1,0};
-	for(int i=0;i<4;i++){
+	vec pos = vecNOne();
+	u8 b = 0;
+
+	for(int i=0;i<2;i++){
 		if(v == NULL){return lValNil();}
 		lVal *t = lEval(c,v);
+		switch(i){
+		case 0:
+			t = lnfVec(c,t);
+			pos = t->vVec;
+			break;
+		case 1:
+			t = lnfInt(c,t);
+			b = t->vInt;
+			break;
+		}
 		v = v->next;
-		if(t->type != ltInt){return lValNil();}
-		args[i] = t->vInt;
 	}
-	worldSetB(args[0],args[1],args[2],(u8)args[3]);
-	return lValInt(args[3]);
+
+	worldSetB(pos.x,pos.y,pos.z,b);
+	return lValInt(b);
 }
 
 lVal *wwlnfGetB(lClosure *c, lVal *v){
-	int args[3] = {-1,-1,-1};
+	lVal *t = lEval(c,v);
+	if(t == NULL){return lValInt(0);}
+	t = lnfVec(c,v);
+	if(t == NULL){return lValInt(0);}
+	return lValInt(worldGetB(t->vVec.x,t->vVec.y,t->vVec.z));
+}
+
+lVal *wwlnfBox(lClosure *c, lVal *v){
+	vec arg[2] = {vecZero(),vecOne()};
+	u8 b = 0;
+
 	for(int i=0;i<3;i++){
 		if(v == NULL){return lValNil();}
 		lVal *t = lEval(c,v);
 		v = v->next;
-		if(t->type != ltInt){return lValNil();}
-		args[i] = t->vInt;
+		switch(i){
+		case 0:
+		case 1:
+			t = lnfVec(c,t);
+			arg[i] = t->vVec;
+			break;
+		case 2:
+			t = lnfInt(c,t);
+			b = t->vInt;
+			break;
+		}
 	}
-	return lValInt(worldGetB(args[0],args[1],args[2]));
-}
-
-lVal *wwlnfBox(lClosure *c, lVal *v){
-	int args[7] = {-1,-1,-1,-1,-1,-1,0};
-	for(int i=0;i<7;i++){
-		if(v == NULL){return lValNil();}
-		lVal *t = lEval(c,v);
-		v = v->next;
-		if(t->type != ltInt){return lValNil();}
-		args[i] = t->vInt;
-	}
-	worldBox(args[0],args[1],args[2],args[3],args[4],args[5],(u8)args[6]);
-	return lValInt(args[6]);
+	worldBox(arg[0].x,arg[0].y,arg[0].z,arg[0].x,arg[0].y,arg[0].z,(u8)b);
+	return lValInt(b);
 }
 
 lVal *wwlnfMBox(lClosure *c, lVal *v){
-	int args[6] = {-1,-1,-1,-1,-1,-1};
-	for(int i=0;i<6;i++){
+	vec arg[2] = {vecNOne(),vecOne()};
+	for(int i=0;i<2;i++){
 		if(v == NULL){return lValNil();}
 		lVal *t = lEval(c,v);
 		v = v->next;
-		if(t->type != ltInt){return lValNil();}
-		args[i] = t->vInt;
+		t = lnfVec(c,v);
+		arg[i] = t->vVec;
+		break;
 	}
-	worldBoxMine(args[0],args[1],args[2],args[3],args[4],args[5]);
+	worldBoxMine(arg[0].x,arg[0].y,arg[0].z,arg[1].x,arg[1].y,arg[1].z);
 	return lValBool(true);
 }
 
 lVal *wwlnfSphere(lClosure *c, lVal *v){
-	int args[5] = {-1,-1,-1,-1,0};
-	for(int i=0;i<5;i++){
+	vec pos = vecNOne();
+	float r = 1.f;
+	u8 b = 0;
+
+	for(int i=0;i<3;i++){
 		if(v == NULL){return lValNil();}
 		lVal *t = lEval(c,v);
 		v = v->next;
-		if(t->type != ltInt){return lValNil();}
-		args[i] = t->vInt;
+		switch(i){
+		case 0:
+			t = lnfVec(c,t);
+			pos = t->vVec;
+			break;
+		case 1:
+			t = lnfFloat(c,t);
+			b = t->vFloat;
+			break;
+		case 2:
+			t = lnfInt(c,t);
+			b = t->vInt;
+			break;
+		}
 	}
-	worldBoxSphere(args[0],args[1],args[2],args[3],(u8)args[4]);
-	return lValInt(args[4]);
+	worldBoxSphere(pos.x,pos.y,pos.z,r,(u8)b);
+	return lValInt(b);
 }
+
 lVal *wwlnfMSphere(lClosure *c, lVal *v){
-	int args[4] = {-1,-1,-1,-1};
-	for(int i=0;i<4;i++){
+	vec pos;
+	float r;
+
+	for(int i=0;i<2;i++){
 		if(v == NULL){return lValNil();}
 		lVal *t = lEval(c,v);
 		v = v->next;
-		if(t->type != ltInt){return lValNil();}
-		args[i] = t->vInt;
+		switch(i){
+		case 0:
+			t = lnfVec(c,t);
+			pos = t->vVec;
+			break;
+		case 1:
+			t = lnfFloat(c,t);
+			r = t->vFloat;
+			break;
+		}
 	}
-	worldBoxMineSphere(args[0],args[1],args[2],args[3]);
+
+	worldBoxMineSphere(pos.x,pos.y,pos.z,r);
 	return lValBool(true);
 }
 
@@ -281,49 +305,58 @@ lVal *wwlnfSetAnim(lClosure *c, lVal *v){
 }
 
 lVal *wwlnfTp(lClosure *c, lVal *v){
-	int args[4] = {-1,-1,-1,-1};
+	vec pos = vecNOne();
 	lVal *sym = lValSym("pid");
 	lVal *pid = lResolveSym(c,sym->vSymbol);
 	pid = lEval(c,pid);
-	args[3] = pid->vInt;
-	for(int i=0;i<4;i++){
+	uint playerid = pid->vInt;
+	for(int i=0;i<2;i++){
 		if(v == NULL){break;}
 		lVal *t = lEval(c,v);
 		v = v->next;
-		if(t->type != ltInt){break;}
-		args[i] = t->vInt;
+		switch(i){
+		case 0:
+			t = lnfVec(c,t);
+			pos = t->vVec;
+			break;
+		case 1:
+			t = lnfInt(c,t);
+			playerid = t->vInt;
+			break;
+		}
 	}
-	vec cpos = vecNew(args[0],args[1],args[2]);
-	if(!vecInWorld(cpos)){return lValBool(false);}
-	msgPlayerSetPos(args[3], cpos, vecZero());
+	if(!vecInWorld(pos)){return lValBool(false);}
+	character *tpc = clients[playerid].c;
+	if(tpc != NULL){
+		msgPlayerSetPos(playerid, pos, tpc->rot);
+	}else{
+		msgPlayerSetPos(playerid, pos, vecZero());
+	}
+
 	return lValBool(true);
 }
 
-lVal *wwlnfWater(lClosure *c, lVal *v){
-	int args[4] = {-1,-1,-1,-1};
-	args[3] = 8192;
-	for(int i=0;i<4;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,v);
-		v = v->next;
-		if(t->type != ltInt){break;}
-		args[i] = t->vInt;
-	}
-	waterNewF(args[0],args[1],args[2],args[3]);
-	return lValInt(args[3]);
-}
+lVal *wwlnfWaterNew(lClosure *c, lVal *v){
+	vec pos = vecNOne();
+	int amount = 8192;
 
-lVal *wwlnfWSrc(lClosure *c, lVal *v){
-	int args[3] = {-1,-1,-1};
-	for(int i=0;i<3;i++){
+	for(int i=0;i<2;i++){
 		if(v == NULL){break;}
 		lVal *t = lEval(c,v);
 		v = v->next;
-		if(t->type != ltInt){break;}
-		args[i] = t->vInt;
+		switch(i){
+		case 0:
+			t = lnfVec(c,t);
+			pos = t->vVec;
+			break;
+		case 1:
+			t = lnfInt(c,t);
+			amount = t->vInt;
+			break;
+		}
 	}
-	waterSource = vecNew(args[0],args[1],args[2]);
-	return lValInt(args[0]);
+	waterNewF(pos.x,pos.y,pos.z,amount);
+	return lValInt(amount);
 }
 
 lVal *wwlnfNoAggro(lClosure *c, lVal *v){
@@ -386,32 +419,57 @@ lVal *wwlnfChungi(lClosure *c, lVal *v){
 }
 
 lVal *wwlnfWVel(lClosure *c, lVal *v){
-	float args[3] = {windGVel.x,windGVel.y,windGVel.z};
-	for(int i=0;i<3;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,v);
-		t = lnfFloat(c,t);
-		args[i] = t->vFloat;
-		v = v->next;
+	vec nvel = vecZero();
+	if(v != NULL){
+		lVal *t = lnfVec(c,lEval(c,v));
+		if(t != NULL){
+			nvel = t->vVec;
+		}
 	}
-	cloudsSetWind(vecNew(args[0],args[1],args[2]));
-	return lValBool(true);
-}
-
-lVal *wwlnfDelW(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
-
-	for(uint i=waterCount-1;i<waterCount;i--){
-		waterDel(i);
-	}
-	return lValBool(true);
+	cloudsSetWind(nvel);
+	return lValVec(windVel);
 }
 
 void lispEvalNR(const char *str){
 	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
 		lEval(clRoot,sexpr);
 	}
+}
+
+lVal *lResolveNativeSym(const lSymbol s){
+	if(strcmp(s.c,"player-pos") == 0)        {return lValNativeFunc(wwlnfPlayerPos);}
+	if(strcmp(s.c,"mst") == 0)               {return lValNativeFunc(wwlnfMsPerTick);}
+	if(strcmp(s.c,"prof") == 0)              {return lValNativeFunc(wwlnfProf);}
+	if(strcmp(s.c,"no-aggro") == 0)          {return lValNativeFunc(wwlnfNoAggro);}
+	if(strcmp(s.c,"update-all") == 0)        {return lValNativeFunc(wwlnfUpdateAll);}
+	if(strcmp(s.c,"animal-count") == 0)      {return lValNativeFunc(wwlnfACount);}
+	if(strcmp(s.c,"animal-used") == 0)       {return lValNativeFunc(wwlnfAUCount);}
+	if(strcmp(s.c,"animal-real") == 0)       {return lValNativeFunc(wwlnfARCount);}
+	if(strcmp(s.c,"fire-count") == 0)        {return lValNativeFunc(wwlnfFCount);}
+	if(strcmp(s.c,"water-count") == 0)       {return lValNativeFunc(wwlnfWCount);}
+	if(strcmp(s.c,"mining-count") == 0)      {return lValNativeFunc(wwlnfBMCount);}
+	if(strcmp(s.c,"item-drop-count") == 0)   {return lValNativeFunc(wwlnfIDCount);}
+	if(strcmp(s.c,"entity-count") == 0)      {return lValNativeFunc(wwlnfECount);}
+	if(strcmp(s.c,"chungus-count") == 0)     {return lValNativeFunc(wwlnfChungi);}
+	if(strcmp(s.c,"load-shed") == 0)         {return lValNativeFunc(wwlnfLShed);}
+	if(strcmp(s.c,"give") == 0)              {return lValNativeFunc(wwlnfGive);}
+	if(strcmp(s.c,"dmg") == 0)               {return lValNativeFunc(wwlnfDmg);}
+	if(strcmp(s.c,"die") == 0)               {return lValNativeFunc(wwlnfDie);}
+	if(strcmp(s.c,"animal-new") == 0)        {return lValNativeFunc(wwlnfNewAnim);}
+	if(strcmp(s.c,"animal-set") == 0)        {return lValNativeFunc(wwlnfSetAnim);}
+	if(strcmp(s.c,"water-new") == 0)         {return lValNativeFunc(wwlnfWaterNew);}
+	if(strcmp(s.c,"cloud-threshold") == 0)   {return lValNativeFunc(wwlnfCDen);}
+	if(strcmp(s.c,"wind-velocity") == 0)     {return lValNativeFunc(wwlnfWVel);}
+	if(strcmp(s.c,"rain-set") == 0)          {return lValNativeFunc(wwlnfRain);}
+	if(strcmp(s.c,"setb") == 0)              {return lValNativeFunc(wwlnfSetB);}
+	if(strcmp(s.c,"getb") == 0)              {return lValNativeFunc(wwlnfGetB);}
+	if(strcmp(s.c,"box") == 0)               {return lValNativeFunc(wwlnfBox);}
+	if(strcmp(s.c,"sphere") == 0)            {return lValNativeFunc(wwlnfSphere);}
+	if(strcmp(s.c,"mbox") == 0)              {return lValNativeFunc(wwlnfMBox);}
+	if(strcmp(s.c,"msphere") == 0)           {return lValNativeFunc(wwlnfMSphere);}
+	if(strcmp(s.c,"tp") == 0)                {return lValNativeFunc(wwlnfTp);}
+
+	return lResolveNativeSymBuiltin(s);
 }
 
 void initCommands(){
@@ -421,45 +479,17 @@ void initCommands(){
 	lVal *pid = lDefineClosureSym(clRoot, sym->vSymbol);
 	pid->type = ltInt;
 	pid->vInt = 123;
-	lClosureAddNF(clRoot,"mst",    &wwlnfMsPerTick);
-	lClosureAddNF(clRoot,"noaggro",&wwlnfNoAggro);
-	lClosureAddNF(clRoot,"update", &wwlnfUpdateAll);
-	lClosureAddNF(clRoot,"acount", &wwlnfACount);
-	lClosureAddNF(clRoot,"aucount",&wwlnfAUCount);
-	lClosureAddNF(clRoot,"arcount",&wwlnfARCount);
-	lClosureAddNF(clRoot,"fcount", &wwlnfFCount);
-	lClosureAddNF(clRoot,"bmcount",&wwlnfBMCount);
-	lClosureAddNF(clRoot,"idcount",&wwlnfIDCount);
-	lClosureAddNF(clRoot,"ecount", &wwlnfECount);
-	lClosureAddNF(clRoot,"chungi", &wwlnfChungi);
-	lClosureAddNF(clRoot,"lshed",  &wwlnfLShed);
-	lClosureAddNF(clRoot,"prof",   &wwlnfProf);
-	lClosureAddNF(clRoot,"px",     &wwlnfPX);
-	lClosureAddNF(clRoot,"py",     &wwlnfPY);
-	lClosureAddNF(clRoot,"pz",     &wwlnfPZ);
-	lClosureAddNF(clRoot,"setb",   &wwlnfSetB);
-	lClosureAddNF(clRoot,"getb",   &wwlnfGetB);
-	lClosureAddNF(clRoot,"box",    &wwlnfBox);
-	lClosureAddNF(clRoot,"sphere", &wwlnfSphere);
-	lClosureAddNF(clRoot,"mbox",   &wwlnfMBox);
-	lClosureAddNF(clRoot,"msphere",&wwlnfMSphere);
-	lClosureAddNF(clRoot,"give",   &wwlnfGive);
-	lClosureAddNF(clRoot,"dmg",    &wwlnfDmg);
-	lClosureAddNF(clRoot,"die",    &wwlnfDie);
-	lClosureAddNF(clRoot,"newAnim",&wwlnfNewAnim);
-	lClosureAddNF(clRoot,"setAnim",&wwlnfSetAnim);
-	lClosureAddNF(clRoot,"tp",     &wwlnfTp);
-	lClosureAddNF(clRoot,"water",  &wwlnfWater);
-	lClosureAddNF(clRoot,"wcount", &wwlnfWCount);
-	lClosureAddNF(clRoot,"wsrc",   &wwlnfWSrc);
-	lClosureAddNF(clRoot,"cden",   &wwlnfCDen);
-	lClosureAddNF(clRoot,"wvel",   &wwlnfWVel);
-	lClosureAddNF(clRoot,"delw",   &wwlnfDelW);
-	lClosureAddNF(clRoot,"rain",   &wwlnfRain);
+
 	lispEvalNR("(define abs (lambda (a) (cond ((< a 0) (- 0 a)) (#t a))))");
 	lispEvalNR("(define heal (lambda (a) (- (dmg (cond (a (- a)) (#t -20))))))");
+	lispEvalNR("(define player-x (lambda () (vx (player-pos))))");
+	lispEvalNR("(define player-y (lambda () (vy (player-pos))))");
+	lispEvalNR("(define player-z (lambda () (vz (player-pos))))");
+	lispEvalNR("(define vx+ (lambda (v o) (+ v (vec o 0 0))))");
+	lispEvalNR("(define vy+ (lambda (v o) (+ v (vec 0 o 0))))");
+	lispEvalNR("(define vz+ (lambda (v o) (+ v (vec 0 0 o))))");
+	lispEvalNR("(define cloud-density (lambda (a) (cloud-threshold (* (- 1 (float a)) 256))))");
 	lispEvalNR("(define wtest (lambda () (water (px) (py) (pz)) (water (+ (px) 1) (py) (pz)) (water (+ (px) 1) (py) (+ (pz) 1)) (water (px) (py) (+ (pz) 1)) ))");
-	lispEvalNR("(define wu (lambda () (wsrc (px) (+ (py) 8) (pz))))");
 }
 
 void freeCommands(){

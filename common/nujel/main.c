@@ -3,6 +3,7 @@
 #include <unistd.h>
 
 #include "../src/common.h"
+#include "../src/nujel/arithmetic.h"
 #include "../src/nujel/nujel.h"
 #include "../src/nujel/string.h"
 
@@ -62,7 +63,8 @@ void doRepl(lClosure *c){
 lVal *lnfQuit(lClosure *c, lVal *v){
 	if(v == NULL){exit(0);}
 	lVal *t = lEval(c,v);
-	if(t->type != ltInt){exit(0);}
+	if(t == NULL){exit(0);}
+	t = lnfInt(c,t);
 	exit(t->vInt);
 	return t;
 }
@@ -90,6 +92,15 @@ lVal *lnfPrint(lClosure *c, lVal *v){
 	return t;
 }
 
+lVal *lResolveNativeSym(const lSymbol s){
+	if(strcmp(s.c,"print") == 0){return lValNativeFunc(lnfPrint);}
+	if(strcmp(s.c,"input") == 0){return lValNativeFunc(lnfInput);}
+	if(strcmp(s.c,"quit") == 0) {return lValNativeFunc(lnfQuit);}
+	if(strcmp(s.c,"exit") == 0) {return lValNativeFunc(lnfQuit);}
+
+	return lResolveNativeSymBuiltin(s);
+}
+
 int main(int argc, char *argv[]){
 	int eval = 0;
 	int repl = 1;
@@ -97,10 +108,6 @@ int main(int argc, char *argv[]){
 	setvbuf(stderr, NULL, _IONBF, 0);
 	lInit();
 	lClosure *c = lClosureNew(NULL);
-	lClosureAddNF(c,"print",&lnfPrint);
-	lClosureAddNF(c,"input",&lnfInput);
-	lClosureAddNF(c,"quit",&lnfQuit);
-	lClosureAddNF(c,"exit",&lnfQuit);
 
 	for(int i=1;i<argc;i++){
 		size_t len;

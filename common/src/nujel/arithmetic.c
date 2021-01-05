@@ -456,6 +456,7 @@ lVal *lnfVec(lClosure *c, lVal *v){
 	for(lVal *cv = v;cv != NULL;cv = cv->next){
 		lVal *t = lEval(c,cv);
 		if(t == NULL){break;}
+		if(t->type == ltVec){return t;}
 		t = lnfFloat(c,t);
 		if(t == NULL){break;}
 		for(int ii=i;ii<3;ii++){
@@ -482,5 +483,53 @@ lVal *lnfAbs(lClosure *c, lVal *v){
 		return lValInt(abs(t->vInt));
 	case ltVec:
 		return lValVec(vecAbs(t->vVec));
+	}
+}
+
+lVal *lnfVX(lClosure *c, lVal *v){
+	if(v == NULL){return lValFloat(0);}
+	lVal *t = lEval(c,v);
+	if(t == NULL){return lValFloat(0);}
+	switch(t->type){
+	default:
+		return lValFloat(0);
+	case ltFloat:
+		return t;
+	case ltInt:
+		return lnfFloat(c,t);
+	case ltVec:
+		return lValFloat(t->vVec.x);
+	}
+}
+
+lVal *lnfVY(lClosure *c, lVal *v){
+	if(v == NULL){return lValFloat(0);}
+	lVal *t = lEval(c,v);
+	if(t == NULL){return lValFloat(0);}
+	switch(t->type){
+	default:
+		return lValFloat(0);
+	case ltFloat:
+		return t;
+	case ltInt:
+		return lnfFloat(c,t);
+	case ltVec:
+		return lValFloat(t->vVec.y);
+	}
+}
+
+lVal *lnfVZ(lClosure *c, lVal *v){
+	if(v == NULL){return lValFloat(0);}
+	lVal *t = lEval(c,v);
+	if(t == NULL){return lValFloat(0);}
+	switch(t->type){
+	default:
+		return lValFloat(0);
+	case ltFloat:
+		return t;
+	case ltInt:
+		return lnfFloat(c,t);
+	case ltVec:
+		return lValFloat(t->vVec.z);
 	}
 }

@@ -59,14 +59,19 @@ void rainUpdateAll(){
 	rainVel[3] = 0.f;
 
 	rainPosUpdate();
-	for(uint i=0;i<rainCount;i++){
+	for(uint i=rainCount-1;i<rainCount;i--){
 		const glRainDrop *glrd = &glRainDrops[i];
 		if((glrd->y < 0.f) || (glrd->size < 0.f)){
 			rainDel(i);
+			continue;
 		}
 		const u64 newCoords = ((u64)glrd->x & 0xFFFF) | (((u64)glrd->y & 0xFFFF) << 16) | (((u64)glrd->z & 0xFFFF) << 32);
 		if(newCoords != rainCoords[i]){
-			if(checkCollision(glrd->x,glrd->y,glrd->z)){
+			if(!worldIsLoaded(glrd->x,glrd->y,glrd->z)){
+				rainDel(i);
+				continue;
+			}
+			if(worldGetB(glrd->x,glrd->y,glrd->z) != 0){
 				if(isClient){
 					fxRainDrop(vecNew(glrd->x,glrd->y,glrd->z));
 				}else{
@@ -74,6 +79,7 @@ void rainUpdateAll(){
 					waterNew(glrd->x,glrd->y-1,glrd->z,512);
 				}
 				rainDel(i);
+				continue;
 			}
 			rainCoords[i] = newCoords;
 		}

@@ -12,6 +12,7 @@ void initMenu          ();
 void menuSetError      (char *error);
 void menuChangeFocus   (int xoff,int yoff, bool ignoreOnTextInput);
 void menuKeyClick      (int btn);
+void serverListAdd     (const char *address, const char *name);
 void menuCancel        ();
 void menuCloseGame     ();
 void startSingleplayer ();

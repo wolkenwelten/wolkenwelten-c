@@ -172,7 +172,7 @@ void lispPanelShowReply(lVal *sym, const char *reply){
 
 		int soff,slen;
 		for(soff = 0;isspace(reply[soff]) || (reply[soff] == '"');soff++){}
-		for(slen = len-soff-2;isspace(reply[soff+slen]) || (reply[soff+slen] == '"');slen--){}
+		for(slen = len-soff-1;isspace(reply[soff+slen-1]) || (reply[soff+slen-1] == '"');slen--){}
 		lispLog->valss[i] = malloc(slen+3);
 		for(int ii=0;ii<2;ii++){
 			lispLog->valss[i][ii] = ' ';

@@ -105,7 +105,7 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			t = snprintf(buf,len,"\"%s\"",v->vString->data);
 			break;
 		case ltSymbol:
-			t = snprintf(buf,len,"%.8s",v->vSymbol.c);
+			t = snprintf(buf,len,"%.16s",v->vSymbol.c);
 			break;
 		case ltNativeFunc:
 			t = snprintf(buf,len,"#cfn");

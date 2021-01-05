@@ -12,8 +12,8 @@ typedef struct lCString lCString;
 
 typedef struct {
 	union {
-		char c[8];
-		uint64_t v;
+		char c[16];
+		u64 v[2];
 	};
 } lSymbol;
 
@@ -84,6 +84,9 @@ lVal     *lParseSExprCS     (const char *str);
 void      lPrintVal         (lVal *v);
 void      lPrintChain       (lVal *v);
 
+lVal     *lValNativeFunc(lVal *(*func)(lClosure *,lVal *));
+lVal     *lResolveNativeSymBuiltin(const lSymbol s);
+lVal     *lResolveNativeSym (const lSymbol s);
 lVal     *lResolveClosureSym(lClosure *c, const lSymbol s);
 lVal     *lDefineClosureSym (lClosure *c, const lSymbol s);
 lVal     *lResolveSym       (lClosure *c, const lSymbol s);

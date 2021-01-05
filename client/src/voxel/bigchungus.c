@@ -265,3 +265,7 @@ int checkCollision(int x, int y, int z){
 void worldBoxMine(int x, int y, int z, int w, int h, int d){
 	worldBox(x,y,z,w,h,d,0);
 }
+
+bool worldIsLoaded(int x, int y, int z){
+	return worldTryChungus(x>>8,y>>8,z>>8) != NULL;
+}

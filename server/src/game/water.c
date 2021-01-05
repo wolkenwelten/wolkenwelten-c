@@ -13,8 +13,6 @@
 
 #include <stdio.h>
 
-vec waterSource;
-
 void waterNewF(u16 x, u16 y, u16 z, i16 amount){
 	water *w = NULL;
 	if(waterCount < countof(waterList)){
@@ -31,6 +29,7 @@ void waterNewF(u16 x, u16 y, u16 z, i16 amount){
 }
 
 int waterNew(u16 x, u16 y, u16 z, i16 amount){
+	if(!worldIsLoaded(x,y,z)){return amount;}
 	water *w = waterGetAtPos(x,y,z);
 	if(w == NULL){
 		if(waterCount < countof(waterList)){
@@ -44,7 +43,7 @@ int waterNew(u16 x, u16 y, u16 z, i16 amount){
 		w->y = y;
 		w->z = z;
 	}
-	const u8 wb = worldGetB(x,y,z);
+	const u8 wb = worldTryB(x,y,z);
 	const int ret = MIN(blocks[wb].waterCapacity,w->amount+amount) - w->amount;
 	w->amount += ret;
 	//waterSendUpdate(-1,(int)(w - waterList));
@@ -63,7 +62,7 @@ void waterRecvUpdate(uint c, const packet *p){
 
 static int waterFlowTo(water *w, int flowOut, int x, int y, int z){
 	if(flowOut <= 0){return 0;}
-	u8 wbb = worldGetB(x,y,z);
+	u8 wbb = worldTryB(x,y,z);
 
 	const int flowIn = MIN(flowOut,blocks[wbb].waterIngress);
 	if(flowIn <= 0){return 0;}
@@ -72,13 +71,14 @@ static int waterFlowTo(water *w, int flowOut, int x, int y, int z){
 }
 
 void waterUpdate(water *w){
+	return;
 	if(w == NULL)                  {return;}
 	if((w-waterList) >= waterCount){return;}
 	if((w->amount <= 0) || (w->y >= 0x8000)){
 		waterDel(w-waterList);
 		return waterUpdate(w);
 	}
-	u8  wb      = worldGetB(w->x,w->y,w->z);
+	u8  wb      = worldTryB(w->x,w->y,w->z);
 	int flowOut = MIN(w->amount,blocks[wb].waterEgress);
 	//printf("[%i | %i | %i] A:%i B:%i FO:%i\n",w->x,w->y,w->z,w->amount,wb,flowOut);
 	flowOut -= waterFlowTo(w,flowOut,w->x,w->y-1,w->z);
@@ -86,7 +86,7 @@ void waterUpdate(water *w){
 		waterDel(w-waterList);
 		return waterUpdate(w);
 	}
-	if(flowOut <= 0)  {return;}
+	if(flowOut <= 0){return;}
 
 	if(w->amount < 8){
 		if(rngValA(255) == 0){
