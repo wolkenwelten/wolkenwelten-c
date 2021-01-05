@@ -382,7 +382,7 @@ lVal *wwlnfCDen(lClosure *c, lVal *v){
 			cloudsSetDensity(t->vInt);
 		}
 	}
-	return lValInt(cloudDensityMin);
+	return lValInt(cloudGDensityMin);
 }
 
 lVal *wwlnfRain(lClosure *c, lVal *v){
@@ -488,8 +488,7 @@ void initCommands(){
 	lispEvalNR("(define vx+ (lambda (v o) (+ v (vec o 0 0))))");
 	lispEvalNR("(define vy+ (lambda (v o) (+ v (vec 0 o 0))))");
 	lispEvalNR("(define vz+ (lambda (v o) (+ v (vec 0 0 o))))");
-	lispEvalNR("(define cloud-density (lambda (a) (cloud-threshold (* (- 1 (float a)) 256))))");
-	lispEvalNR("(define wtest (lambda () (water (px) (py) (pz)) (water (+ (px) 1) (py) (pz)) (water (+ (px) 1) (py) (+ (pz) 1)) (water (px) (py) (+ (pz) 1)) ))");
+	lispEvalNR("(define cloud-density (lambda (a) (- 1.0 (/ (cloud-threshold (* (- 1.0 a) 256.0)) 256.0))))");
 }
 
 void freeCommands(){

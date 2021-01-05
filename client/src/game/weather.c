@@ -50,12 +50,14 @@ static inline void cloudPart(cloudChunk *part, float px,float py,float pz,float 
 	const float oy = 32.f;
 	py += oy;
 
+	const float vft = (vf/9.f);
+	const float vfb = (vf/18.f);
 	if(py < player->pos.y){
-		cloudData[--part->count] = (glCloud){px,py+vf/ 6.f,pz,ct};
-		cloudData[--part->count] = (glCloud){px,py-vf/12.f,pz,cb};
+		cloudData[--part->count] = (glCloud){px,py+vft,pz,ct};
+		cloudData[--part->count] = (glCloud){px,py-vfb,pz,cb};
 	}else{
-		cloudData[--part->count] = (glCloud){px,py-vf/12.f,pz,cb};
-		cloudData[--part->count] = (glCloud){px,py+vf/ 6.f,pz,ct};
+		cloudData[--part->count] = (glCloud){px,py-vfb,pz,cb};
+		cloudData[--part->count] = (glCloud){px,py+vft,pz,ct};
 	}
 }
 
