@@ -14,9 +14,9 @@ uint rainVBO;
 #include <math.h>
 
 #ifdef __x86_64__
-int rainFakeIters = 8;
+int rainFakeIters = 12;
 #else
-int rainFakeIters = 2;
+int rainFakeIters = 4;
 #endif
 
 
@@ -30,8 +30,9 @@ void rainInitGfx(){
 void rainFakeDrops(){
 	if(rainDuration <= 0){return;}
 	vec pos = player->pos;
-	pos.y = (float)(((int)pos.y) & 0xFF00) + (32.f - 256.f);
-	for(uint i=0;i<4;i++){
+	int cy = (((int)pos.y) & 0xFE00)-0x100;
+	pos.y = cy + (32.f - 256.f);
+	for(uint i=0;i<3;i++){
 		float v = 48.f;
 		for(int ii=0;ii<4;ii++){
 			for(int iii=0;iii<rainFakeIters;iii++){
@@ -39,7 +40,7 @@ void rainFakeDrops(){
 			}
 			v *= 2.f;
 		}
-		pos.y += 256.f;
+		pos.y += 512.f;
 	}
 }
 
