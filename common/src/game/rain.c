@@ -53,9 +53,9 @@ void rainPosUpdate(){
 void rainUpdateAll(){
 	PROFILE_START();
 
-	rainVel[0] = windVel.x / 48.f;
+	rainVel[0] = windVel.x / 40.f;
 	rainVel[1] = -0.0005;
-	rainVel[2] = windVel.z / 48.f;
+	rainVel[2] = windVel.z / 40.f;
 	rainVel[3] = 0.f;
 
 	rainPosUpdate();

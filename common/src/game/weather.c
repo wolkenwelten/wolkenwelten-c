@@ -10,7 +10,7 @@ vec cloudOff;
 vec windVel,windGVel;
 u8  cloudGDensityMin;
 u8  cloudDensityMin;
-u8  rainDuration;
+u8  rainIntensity;
 
 void weatherInit(){
 	generateNoise(0x84407db3, cloudTex);
@@ -19,7 +19,7 @@ void weatherInit(){
 	windVel    = windGVel;
 	cloudGDensityMin  = 154;
 	cloudDensityMin   = cloudGDensityMin;
-	rainDuration = 0;
+	rainIntensity = 0;
 }
 
 void weatherUpdateAll(){
@@ -35,19 +35,27 @@ void weatherUpdateAll(){
 		--cloudGDensityMin;
 		weatherSendUpdate(-1);
 	}
-	if(rainDuration){
+	if(rainIntensity){
 		if(!isClient){weatherDoRain();}
-		if((calls & 0xFFF) == 0){
-			if((--rainDuration == 0) && !isClient){weatherSendUpdate(-1);}
-		}else if(((calls & 0xFFF) == 1) && !isClient){
-			cloudGDensityMin++;
-			weatherSendUpdate(-1);
+		if((calls & 0x1FF) == 1){
+			if(cloudDensityMin < 178){
+				rainIntensity++;
+			}else{
+				rainIntensity--;
+			}
+		} else if((calls & 0xFF) == 2){
+			if(rngValA(255) < rainIntensity){
+				cloudGDensityMin++;
+				if(!isClient){weatherSendUpdate(-1);}
+			}
+		}else if(((calls & 0x3F) == 3) && (cloudDensityMin > 200)){
+			rainIntensity--;
 		}
 	}
-	if((!isClient) && (rainDuration == 0) && (cloudDensityMin < 170) && (calls & 0xFFF) == 0){
+	if((!isClient) && (rainIntensity == 0) && (cloudDensityMin < 170) && (calls & 0xFFF) == 0){
 		const uint chance = MAX(2,16 - (170 - cloudDensityMin));
 		if(rngValA((1<<chance)-1) == 0){
-			rainDuration = rngValA(15)+16;
+			rainIntensity = 1;
 			weatherSendUpdate(-1);
 		}
 	}
@@ -88,7 +96,7 @@ void weatherSendUpdate(uint c){
 
 	p->v.u8 [36] = cloudDensityMin;
 	p->v.u8 [37] = cloudGDensityMin;
-	p->v.u8 [38] = rainDuration;
+	p->v.u8 [38] = rainIntensity;
 	p->v.u8 [39] = 0;
 
 	packetQueue(p,43,10*4,c);
@@ -101,7 +109,7 @@ void weatherRecvUpdate(const packet *p){
 
 	cloudDensityMin   = p->v.u8[36];
 	cloudGDensityMin  = p->v.u8[37];
-	rainDuration = p->v.u8[38];
+	rainIntensity = p->v.u8[38];
 }
 
 void cloudsSetWind(const vec ngv){
@@ -115,6 +123,6 @@ void cloudsSetDensity(u8 gd){
 }
 
 void weatherSetRainDuration(u8 dur){
-	rainDuration = dur;
+	rainIntensity = dur;
 	if(!isClient){weatherSendUpdate(-1);}
 }

@@ -2,7 +2,7 @@
 #include "../../../common/src/common.h"
 
 extern u8  cloudTex[256][256];
-extern u8  cloudDensityMin,cloudGDensityMin,rainDuration;
+extern u8  cloudDensityMin,cloudGDensityMin,rainIntensity;
 extern vec cloudOff;
 extern vec windVel,windGVel;
 

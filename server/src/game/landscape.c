@@ -67,7 +67,7 @@ static void landscapeUpdateChunk(chunk *c){
 			if((w != NULL) && (w->amount > 128)){
 				worldSetB(c->x+x,c->y+y,c->z+z,I_Grass);
 				w->amount -= 128;
-			}else if((rainDuration > 0) && (rngValA(255)==0)){
+			}else if((rainIntensity > 0) && (rngValA(255)==0)){
 				worldSetB(c->x+x,c->y+y,c->z+z,I_Grass);
 			}
 			break;

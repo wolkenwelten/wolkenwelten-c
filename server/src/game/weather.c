@@ -8,8 +8,9 @@
 void weatherDoRain(){
 	static uint calls = 0;
 	const ivec toff = ivecNewV(vecFloor(cloudOff));
-	if((++calls & 0x7) != 0){return;}
+	if((++calls & 0x3) != 0){return;}
 	for(uint i=0;i<chungusCount;i++){
+		if(rngValA(255) > rainIntensity){continue;}
 		const chungus *c = &chungusList[i];
 		if(c->y & 1){continue;}
 		const vec cpos = vecNew(c->x << 8, c->y << 8, c->z << 8);

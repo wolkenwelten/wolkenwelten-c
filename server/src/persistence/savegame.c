@@ -604,7 +604,7 @@ static void savegameParseLine(const char *line){
 
 	if(strcmp(argv[0],"Rain") == 0){
 		if(argc < 2){return;}
-		rainDuration = atoi(argv[1]);
+		rainIntensity = atoi(argv[1]);
 		return;
 	}
 
@@ -665,7 +665,7 @@ void savegameSave(){
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"WorldSeed %i\n",optionWorldSeed);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"Time %u\n",gtimeGetTime());
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"CloudDensity %u %u\n",cloudDensityMin,cloudGDensityMin);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"Rain %u\n",rainDuration);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"Rain %u\n",rainIntensity);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"CloudOffset %f %f %f\n",cloudOff.x,cloudOff.y,cloudOff.z);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"WindVel %f %f %f\n",windVel.x,windVel.y,windVel.z);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"WindGVel %f %f %f\n",windGVel.x,windGVel.y,windGVel.z);

@@ -384,7 +384,7 @@ lVal *wwlnfRain(lClosure *c, lVal *v){
 			weatherSetRainDuration(t->vInt);
 		}
 	}
-	return lValInt(rainDuration);
+	return lValInt(rainIntensity);
 }
 
 lVal *wwlnfLShed(lClosure *c, lVal *v){
