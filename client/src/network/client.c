@@ -245,6 +245,7 @@ void clientParsePacket(const packet *p){
 			characterDamagePacket(player,p);
 			break;
 		case 27: // UNUSED
+			fprintf(stderr,"Received a chungusUnsubPlayer msg from the server, this should never happen.\n");
 			break;
 		case 28:
 			characterSetData(player,p);
