@@ -216,6 +216,13 @@ bool textInputEvent(const SDL_Event *e){
 		case SDLK_INSERT:
 			textInputPaste();
 			return true;
+		case SDLK_a:
+			if(keyboardCmdKey(e)){
+				textInputCursorPos = textInputBufferLen;
+				textInputMark = 0;
+				return true;
+			}
+			break;
 		case SDLK_c:
 			if(keyboardCmdKey(e)){
 				textInputCopy();
