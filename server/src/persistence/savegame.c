@@ -13,6 +13,7 @@
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/game/item.h"
+#include "../../../common/src/game/weather.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/misc/lz4.h"
 #include "../../../common/src/misc/misc.h"
@@ -600,6 +601,37 @@ static void savegameParseLine(const char *line){
 		gtimeSetTime(atoi(argv[1]));
 		return;
 	}
+
+	if(strcmp(argv[0],"Rain") == 0){
+		if(argc < 2){return;}
+		rainDuration = atoi(argv[1]);
+		return;
+	}
+
+	if(strcmp(argv[0],"CloudDensity") == 0){
+		if(argc < 3){return;}
+		cloudDensityMin  = atoi(argv[1]);
+		cloudGDensityMin = atoi(argv[2]);
+		return;
+	}
+
+	if(strcmp(argv[0],"CloudOffset") == 0){
+		if(argc < 4){return;}
+		cloudOff = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
+		return;
+	}
+
+	if(strcmp(argv[0],"WindVel") == 0){
+		if(argc < 4){return;}
+		windVel = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
+		return;
+	}
+
+	if(strcmp(argv[0],"WindGVel") == 0){
+		if(argc < 4){return;}
+		windGVel = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
+		return;
+	}
 }
 
 void savegameLoad(){
@@ -632,6 +664,11 @@ void savegameSave(){
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"SaveFormat 1\n");
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"WorldSeed %i\n",optionWorldSeed);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"Time %u\n",gtimeGetTime());
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"CloudDensity %u %u\n",cloudDensityMin,cloudGDensityMin);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"Rain %u\n",rainDuration);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"CloudOffset %f %f %f\n",cloudOff.x,cloudOff.y,cloudOff.z);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"WindVel %f %f %f\n",windVel.x,windVel.y,windVel.z);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"WindGVel %f %f %f\n",windGVel.x,windGVel.y,windGVel.z);
 
 	buf[sizeof(buf)-1] = 0;
 	saveFile(savegameFileName(optionSavegame),buf,strlen(buf));

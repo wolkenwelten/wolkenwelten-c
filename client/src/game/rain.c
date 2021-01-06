@@ -28,11 +28,12 @@ void rainInitGfx(){
 }
 
 void rainFakeDrops(){
+	return;
 	if(rainDuration <= 0){return;}
 	vec pos = player->pos;
 	int cy = (((int)pos.y) & 0xFE00)-0x100;
 	pos.y = cy + (32.f - 256.f);
-	for(uint i=0;i<3;i++){
+	for(uint i=0;i<4;i++){
 		float v = 48.f;
 		for(int ii=0;ii<4;ii++){
 			for(int iii=0;iii<rainFakeIters;iii++){
@@ -40,7 +41,7 @@ void rainFakeDrops(){
 			}
 			v *= 2.f;
 		}
-		pos.y += 512.f;
+		pos.y += 256.f;
 	}
 }
 

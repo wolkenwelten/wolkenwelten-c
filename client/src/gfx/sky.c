@@ -31,7 +31,7 @@ void initSky(){
 		tSun = textureNew(gfx_sun_png_data, gfx_sun_png_len, "client/gfx/sun.png");
 		sunMesh->tex = tSun;
 	}
-	const float d = renderDistance;
+	const float d = renderDistance+24;
 
 	meshAddVert(sunMesh, -48,  d, -48, 0.0f, 0.0f);
 	meshAddVert(sunMesh,  48,  d, -48, 1.0f, 0.0f);

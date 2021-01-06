@@ -141,8 +141,9 @@ void mainTick(){
 
 void mainInit(){
 	gtimeSetTime(1<<19);
-	savegameLoad();
 	seedRNG(time(NULL));
+	weatherInit();
+	savegameLoad();
 	serverInit();
 	beingListEntryInit();
 	chungusInit();
@@ -152,7 +153,6 @@ void mainInit(){
 
 	bigchungusInit(&world);
 	blockTypeInit();
-	weatherInit();
 	if(optionProfileWG){
 		bigchungusGenHugeSpawn(&world);
 	}else{
