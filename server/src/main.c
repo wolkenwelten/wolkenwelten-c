@@ -40,7 +40,6 @@ bool quit = false;
 char *termColors[16];
 char *termReset;
 char *nop = "";
-int msPerTick = 4;
 
 u64 getTicks(){
 	struct timeval tv;

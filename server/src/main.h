@@ -5,7 +5,6 @@ extern bool quit;
 extern char *ansiFG[16];
 extern char *termColors[16];
 extern char *termReset;
-extern int  msPerTick;
 
 extern char *updateWorldFuncs[64];
 

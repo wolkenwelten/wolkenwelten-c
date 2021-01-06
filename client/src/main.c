@@ -60,7 +60,6 @@ bool gameRunning       = false;
 bool playerChunkActive = false;
 bool singleplayer      = false;
 bool chnkChngOverflow  = false;
-int  msPerTick         = 4;
 
 void signalQuit(int signo){
 	(void)signo;

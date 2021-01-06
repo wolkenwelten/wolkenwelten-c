@@ -5,7 +5,7 @@
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../misc/options.h"
-#include "../../../common/src/misc/profiling.h"
+#include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/nujel/nujel.h"
 #include "../../../common/src/nujel/arithmetic.h"
@@ -38,30 +38,6 @@ lVal *wwlnfSEval(lClosure *c, lVal *v){
 	if(++SEvalID == 0){++SEvalID;}
 	msgLispSExpr(-1,SEvalID,buf);
 	return lispSEvalSym(SEvalID);
-}
-
-lVal *wwlnfMsPerTick(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfInt(c,lEval(c,v));
-		if(t->vInt > 0){
-			msPerTick = t->vInt;
-		}
-	}
-	return lValInt(msPerTick);
-}
-
-lVal *wwlnfProf(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
-
-	return lValString(profGetReport());
-}
-
-lVal *wwlnfNProf(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
-
-	return lValString(nprofGetReport());
 }
 
 lVal *wwlnfPlayerName(lClosure *c, lVal *v){
@@ -115,15 +91,13 @@ lVal *wwlnfServerAdd(lClosure *c, lVal *v){
 
 lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"s") == 0)              {return lValNativeFunc(wwlnfSEval);}
-	if(strcmp(s.c,"mst") == 0)            {return lValNativeFunc(wwlnfMsPerTick);}
-	if(strcmp(s.c,"prof") == 0)           {return lValNativeFunc(wwlnfProf);}
-	if(strcmp(s.c,"nprof") == 0)          {return lValNativeFunc(wwlnfNProf);}
+
 	if(strcmp(s.c,"player-name") == 0)    {return lValNativeFunc(wwlnfPlayerName);}
 	if(strcmp(s.c,"sound-volume") == 0)   {return lValNativeFunc(wwlnfSoundVolume);}
 	if(strcmp(s.c,"render-distance") == 0){return lValNativeFunc(wwlnfRenderDistance);}
 	if(strcmp(s.c,"server-add") == 0)     {return lValNativeFunc(wwlnfServerAdd);}
 
-	return lResolveNativeSymBuiltin(s);
+	return lResolveNativeSymCommon(s);
 }
 
 void lispInit(){

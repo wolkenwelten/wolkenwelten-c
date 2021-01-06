@@ -22,6 +22,7 @@
 #include "../voxel/chunk.h"
 #include "../../../common/src/game/projectile.h"
 #include "../../../common/src/misc/lz4.h"
+#include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 
 #include <errno.h>
@@ -307,6 +308,7 @@ void serverParseSinglePacket(uint c, packet *p){
 		fprintf(stderr,"[SRV][%i] CHECKSUM WRONG!!! T:%i L:%i\n",c,pType,pLen);
 		return;
 	}
+	nprofAddPacket(pType,pLen);
 
 	switch(pType){
 		case 0: // Keepalive

@@ -15,7 +15,7 @@
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
-#include "../../../common/src/misc/profiling.h"
+#include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/network/messages.h"
 
 #include "../../../common/src/nujel/nujel.h"
@@ -30,15 +30,6 @@ char replyBuf[256];
 lClosure *clRoot;
 
 
-lVal *wwlnfMsPerTick(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfInt(c,lEval(c,v));
-		if(t->vInt > 0){
-			msPerTick = t->vInt;
-		}
-	}
-	return lValInt(msPerTick);
-}
 lVal *wwlnfUpdateAll(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	worldSetAllUpdated();
@@ -405,13 +396,6 @@ lVal *wwlnfLShed(lClosure *c, lVal *v){
 	return lValBool(true);
 }
 
-lVal *wwlnfProf(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
-
-	return lValString(profGetReport());
-}
-
 lVal *wwlnfChungi(lClosure *c, lVal *v){
 	(void)c;
 	(void)v;
@@ -438,8 +422,6 @@ void lispEvalNR(const char *str){
 
 lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"player-pos") == 0)        {return lValNativeFunc(wwlnfPlayerPos);}
-	if(strcmp(s.c,"mst") == 0)               {return lValNativeFunc(wwlnfMsPerTick);}
-	if(strcmp(s.c,"prof") == 0)              {return lValNativeFunc(wwlnfProf);}
 	if(strcmp(s.c,"no-aggro") == 0)          {return lValNativeFunc(wwlnfNoAggro);}
 	if(strcmp(s.c,"update-all") == 0)        {return lValNativeFunc(wwlnfUpdateAll);}
 	if(strcmp(s.c,"animal-count") == 0)      {return lValNativeFunc(wwlnfACount);}
@@ -469,7 +451,7 @@ lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"msphere") == 0)           {return lValNativeFunc(wwlnfMSphere);}
 	if(strcmp(s.c,"tp") == 0)                {return lValNativeFunc(wwlnfTp);}
 
-	return lResolveNativeSymBuiltin(s);
+	return lResolveNativeSymCommon(s);
 }
 
 void initCommands(){

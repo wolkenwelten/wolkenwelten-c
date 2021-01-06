@@ -6,4 +6,3 @@ extern bool gameRunning;
 extern bool singleplayer;
 extern bool playerChunkActive;
 extern bool chnkChngOverflow;
-extern  int msPerTick;
