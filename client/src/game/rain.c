@@ -14,9 +14,9 @@ uint rainVBO;
 #include <math.h>
 
 #ifdef __x86_64__
-int rainFakeIters = 12;
+int rainFakeIters = 32;
 #else
-int rainFakeIters = 4;
+int rainFakeIters = 16;
 #endif
 
 
@@ -28,7 +28,6 @@ void rainInitGfx(){
 }
 
 void rainFakeDrops(){
-	return;
 	if(rainDuration <= 0){return;}
 	vec pos = player->pos;
 	int cy = (((int)pos.y) & 0xFE00)-0x100;
@@ -37,7 +36,10 @@ void rainFakeDrops(){
 		float v = 48.f;
 		for(int ii=0;ii<4;ii++){
 			for(int iii=0;iii<rainFakeIters;iii++){
-				rainNew(vecAdd(pos,vecMul(vecRng(), vecNew( v,0.f, v))));
+				const vec rpos = vecAdd(pos,vecMul(vecRng(), vecNew( v,0.f, v)));
+				const u8 vv = cloudTex[(uint)(rpos.x - cloudOff.x)&0xFF][(uint)(rpos.z - cloudOff.z)&0xFF];
+				if(vv < cloudDensityMin){continue;}
+				rainNew(rpos);
 			}
 			v *= 2.f;
 		}
