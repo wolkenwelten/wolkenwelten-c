@@ -1,15 +1,14 @@
 #include "weather.h"
 
-#include "../game/projectile.h"
 #include "../game/rain.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 
 void weatherDoRain(){
-	//static uint calls = 0;
+	static uint calls = 0;
 	const ivec toff = ivecNewV(vecFloor(cloudOff));
-	//if((++calls & 0x7) != 0){return;}
+	if((++calls & 0x7) != 0){return;}
 	for(uint i=0;i<chungusCount;i++){
 		const chungus *c = &chungusList[i];
 		if(c->y & 1){continue;}

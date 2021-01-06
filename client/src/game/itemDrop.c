@@ -4,6 +4,7 @@
 #include "../game/entity.h"
 #include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 
 #include <math.h>
@@ -22,6 +23,8 @@ void itemDropNewP(const vec pos,const item *itm){
 }
 
 void itemDropUpdateAll(){
+	PROFILE_START();
+
 	for(uint i=0;i<itemDropCount;i++){
 		float aniStep = ++itemDropList[i].aniStep;
 		if(itemDropList[i].ent == NULL){continue;}
@@ -36,6 +39,8 @@ void itemDropUpdateAll(){
 			itemDropList[i].player = playerID;
 		}
 	}
+
+	PROFILE_STOP();
 }
 
 void itemDropUpdateFromServer(const packet *p){

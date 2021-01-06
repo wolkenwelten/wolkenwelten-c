@@ -1,6 +1,7 @@
 #include "landscape.h"
 
 #include "../game/water.h"
+#include "../game/weather.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/game/item.h"
@@ -66,6 +67,8 @@ static void landscapeUpdateChunk(chunk *c){
 			if((w != NULL) && (w->amount > 128)){
 				worldSetB(c->x+x,c->y+y,c->z+z,I_Grass);
 				w->amount -= 128;
+			}else if((rainDuration > 0) && (rngValA(255)==0)){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Grass);
 			}
 			break;
 		}
@@ -78,7 +81,7 @@ void landscapeUpdateAll(){
 	static uint calls = 0;
 	PROFILE_START();
 
-	for(uint i=calls&0x3FFF;i<chunkCount;i+=0x4000){
+	for(uint i=calls&0x7FF;i<chunkCount;i+=0x800){
 		landscapeUpdateChunk(&chunkList[i]);
 	}
 	calls++;

@@ -23,6 +23,7 @@
 #include "../../../common/src/game/hook.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/mods/mods.h"
 #include "../../../common/src/network/messages.h"
 
@@ -604,9 +605,13 @@ void characterUpdate(character *c){
 }
 
 void charactersUpdate(){
+	PROFILE_START();
+
 	for(uint i=0;i<characterCount;i++){
 		characterUpdate(&characterList[i]);
 	}
+
+	PROFILE_STOP();
 }
 
 void characterFireHook(character *c){

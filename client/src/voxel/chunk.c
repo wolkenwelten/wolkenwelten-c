@@ -9,6 +9,7 @@
 #include "../gfx/shader.h"
 #include "../gfx/sky.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 
 #include <math.h>
 #include <string.h>
@@ -207,6 +208,8 @@ void chunkAddLeft(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 }
 
 void chunkGenMesh(chunk *c) {
+	PROFILE_START();
+
 	int ac,bc;
 	u8 sides;
 	const uint CS   = CHUNK_SIZE;
@@ -356,6 +359,8 @@ void chunkGenMesh(chunk *c) {
 		}
 	}
 	chunkFinish(c);
+
+	PROFILE_STOP();
 }
 
 void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){

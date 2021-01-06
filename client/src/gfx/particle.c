@@ -6,6 +6,7 @@
 #include "../tmp/assets.h"
 #include "../../../common/src/asm/asm.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -156,6 +157,8 @@ void sparticlePosUpdate(){
 #endif
 
 void particleUpdate(){
+	PROFILE_START();
+
 	particlePosUpdate();
 	sparticlePosUpdate();
 
@@ -186,6 +189,8 @@ void particleUpdate(){
 			}
 		}
 	}
+
+	PROFILE_STOP();
 }
 
 void particleDraw(){

@@ -17,7 +17,7 @@ void weatherInit(){
 	windGVel   = vecMulS(vecRng(),1.f/256.f);
 	windGVel.y = 0.f;
 	windVel    = windGVel;
-	cloudGDensityMin  = 154;//rngValA(31)+154;
+	cloudGDensityMin  = 154;
 	cloudDensityMin   = cloudGDensityMin;
 	rainDuration = 0;
 }
