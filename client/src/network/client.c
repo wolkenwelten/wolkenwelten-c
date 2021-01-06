@@ -20,6 +20,7 @@
 #include "../network/chat.h"
 #include "../../../common/src/misc/lz4.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 #include "../voxel/bigchungus.h"
 
@@ -155,6 +156,7 @@ void clientParsePacket(const packet *p){
 	if(pType != 0xFF){
 		recvUncompressedBytesCurrentSession += pLen+4;
 	}
+	nprofAddPacket(pType,pLen);
 
 	switch(pType){
 		case 0: // Keepalive
@@ -241,6 +243,8 @@ void clientParsePacket(const packet *p){
 			break;
 		case 26: // msgPlayerDamage ???UNUSED???
 			characterDamagePacket(player,p);
+			break;
+		case 27: // UNUSED
 			break;
 		case 28:
 			characterSetData(player,p);

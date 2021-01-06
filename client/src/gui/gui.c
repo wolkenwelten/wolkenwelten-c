@@ -322,7 +322,7 @@ void initUI(){
 	widgetBind(lispInput,"selectPrev",handlerLispSelectPrev);
 	widgetBind(lispInput,"selectNext",handlerLispSelectNext);
 
-	chatText  = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Message","submit",handlerChatSubmit);
+	chatText  = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Chat Message","submit",handlerChatSubmit);
 	widgetBind(chatText,"change",handlerChatChange);
 	widgetBind(chatText,"blur",handlerChatBlur);
 	widgetBind(chatText,"selectPrev",handlerChatSelectPrev);

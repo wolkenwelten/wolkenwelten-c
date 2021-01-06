@@ -264,7 +264,10 @@ static void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, in
 		}
 	}else{
 		if(wid->vals[0] == 0){
+			u32 fgc = m->fgc;
+			m->fgc &= 0x7FFFFFFF;
 			textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->label);
+			m->fgc = fgc;
 		}else{
 			textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->vals);
 		}

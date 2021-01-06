@@ -71,7 +71,6 @@ static int waterFlowTo(water *w, int flowOut, int x, int y, int z){
 }
 
 void waterUpdate(water *w){
-	return;
 	if(w == NULL)                  {return;}
 	if((w-waterList) >= waterCount){return;}
 	if((w->amount <= 0) || (w->y >= 0x8000)){
@@ -117,7 +116,7 @@ void waterUpdateAll(){
 	static uint calls = 0;
 	PROFILE_START();
 
-	for(uint i=(calls&0xF);i<waterCount;i+=0x10){
+	for(uint i=(calls&0x3F);i<waterCount;i+=0x40){
 		waterUpdate(&waterList[i]);
 	}
 	--calls;
@@ -128,8 +127,9 @@ void waterUpdateAll(){
 void waterSyncPlayer(uint c){
 	if(waterCount == 0){return;}
 
-	const int count = 64;
-	for(;clients[c].waterUpdateOffset<MIN(waterCount,clients[c].waterUpdateOffset+count);clients[c].waterUpdateOffset++){
+	const int count = 16;
+	const uint max = MIN(waterCount,clients[c].waterUpdateOffset+count);
+	for(;clients[c].waterUpdateOffset<max;clients[c].waterUpdateOffset++){
 		waterSendUpdate(c,clients[c].waterUpdateOffset);
 	}
 	if(clients[c].waterUpdateOffset >= waterCount){clients[c].waterUpdateOffset = 0;}

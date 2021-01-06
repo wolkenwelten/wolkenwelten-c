@@ -57,6 +57,13 @@ lVal *wwlnfProf(lClosure *c, lVal *v){
 	return lValString(profGetReport());
 }
 
+lVal *wwlnfNProf(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+
+	return lValString(nprofGetReport());
+}
+
 lVal *wwlnfPlayerName(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfCat(c,lEval(c,v));
@@ -110,6 +117,7 @@ lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"s") == 0)              {return lValNativeFunc(wwlnfSEval);}
 	if(strcmp(s.c,"mst") == 0)            {return lValNativeFunc(wwlnfMsPerTick);}
 	if(strcmp(s.c,"prof") == 0)           {return lValNativeFunc(wwlnfProf);}
+	if(strcmp(s.c,"nprof") == 0)          {return lValNativeFunc(wwlnfNProf);}
 	if(strcmp(s.c,"player-name") == 0)    {return lValNativeFunc(wwlnfPlayerName);}
 	if(strcmp(s.c,"sound-volume") == 0)   {return lValNativeFunc(wwlnfSoundVolume);}
 	if(strcmp(s.c,"render-distance") == 0){return lValNativeFunc(wwlnfRenderDistance);}

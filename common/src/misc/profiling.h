@@ -17,3 +17,10 @@ double      profGetMean   (uint i);
 double      profGetShare  (uint i);
 const char *profGetName   (uint i);
 const char *profGetReport ();
+void        profReset     ();
+
+
+void        nprofAddPacket (uint type, uint size);
+double      nprofGetShare  (uint type);
+const char *nprofGetReport ();
+void        nprofReset     ();

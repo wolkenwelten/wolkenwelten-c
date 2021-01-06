@@ -204,8 +204,9 @@ void fireUpdateAll(){
 void fireSyncPlayer(uint c){
 	if(fireCount == 0){return;}
 
-	const int count = 8;
-	for(;clients[c].fireUpdateOffset<MIN(fireCount,clients[c].fireUpdateOffset+count);clients[c].fireUpdateOffset++){
+	const int count = 16;
+	const uint max = MIN(fireCount,clients[c].fireUpdateOffset+count);
+	for(;clients[c].fireUpdateOffset<max;clients[c].fireUpdateOffset++){
 		fireSendUpdate(c,clients[c].fireUpdateOffset);
 	}
 	if(clients[c].fireUpdateOffset >= fireCount){clients[c].fireUpdateOffset = 0;}

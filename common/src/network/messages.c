@@ -434,3 +434,63 @@ void msgLispSExpr(uint c, u8 id, const char *str){
 	p->v.u8[len+1] = 0;
 	packetQueue(p,42,alignedLen(len+2),c);
 }
+
+
+char *messageNames[256] = {
+	"keepalive", // 0
+	"playerPos",
+	"requestChungus",
+	"placeBlock",
+	"mineBlock",
+	"goodbye", // 5
+	"blockMiningUpdate",
+	"setChungusLoaded",
+	"beingGotHit",
+	"setTime",
+	"itemDropNew", // 10
+	"grenadeNew",
+	"beamblast",
+	"playerMoveDelta",
+	"charaterName",
+	"playerPos", // 15
+	"chatMsg",
+	"dyingMsg",
+	"chunkData",
+	"setPlayerCount",
+	"playerPickupItem", // 20
+	"itemDropDel",
+	"explode",
+	"grenadeUpdate",
+	"fxBeamBlaster",
+	"msgItemDropUpdate", // 25
+	"msgPlayerDamage",
+	"--- UNUSED ---",
+	"characterSetData",
+	"characterSetInventory",
+	"animalSync",  // 30
+	"dirtyChunk",
+	"animalDmg",
+	"pingPong",
+	"fxAnimalDied",
+	"characterSetEquipment", // 35
+	"itemDropPickup",
+	"ropeUpdate",
+	"projectileUpdate",
+	"fxProjectileHit",
+	"fireRecvUpdate",  // 40
+	"waterRecvUpdate",
+	"lispRecvSExpr",
+	"weatherRecvUpdate",
+	"rainRecvUpdate"
+};
+
+const char *networkGetMessageName(uint i){
+	char *ret = messageNames[i];
+	if(i == 0xFF){
+		return "LZ4 Message";
+	}
+	if(ret == NULL){
+		ret ="Unknown Message";
+	}
+	return ret;
+}
