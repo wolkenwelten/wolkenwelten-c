@@ -387,11 +387,29 @@ lVal *wwlnfRain(lClosure *c, lVal *v){
 	return lValInt(rainIntensity);
 }
 
+lVal *wwlnfTime(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lEval(c,v);
+		if(t->type == ltString){
+			gtimeSetTimeOfDayHRS(t->vString->buf);
+		}else{
+			t = lnfInt(c,t);
+			gtimeSetTime(t->vInt);
+		}
+		msgSetTime(-1, gtimeGetTime());
+	}
+	return lValString(gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
+}
+
 lVal *wwlnfLShed(lClosure *c, lVal *v){
 	(void)c;
 	(void)v;
 
 	chungusFreeOldChungi(100);
+	for(uint i = animalCount/2-1;i < animalCount;i--){
+		if(animalList[i].type == 0){continue;}
+		animalDel(i);
+	}
 
 	return lValBool(true);
 }
@@ -412,6 +430,51 @@ lVal *wwlnfWVel(lClosure *c, lVal *v){
 	}
 	cloudsSetWind(nvel);
 	return lValVec(windVel);
+}
+
+lVal *wwlnfDbgItem(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+
+	lVal *sym = lValSym("pid");
+	lVal *pid = lResolveSym(c,sym->vSymbol);
+	pid = lEval(c,pid);
+	int target = pid->vInt;
+	item newInventory[40];
+	item newEquipment[3];
+	memset(newInventory,0,sizeof(newInventory));
+	memset(newEquipment,0,sizeof(newEquipment));
+
+	int i=0;
+	newInventory[i++] = itemNew(261, 1);
+	newInventory[i++] = itemNew(262, 1);
+	newInventory[i++] = itemNew(263, 1);
+	newInventory[i++] = itemNew(264, 1);
+	newInventory[i++] = itemNew(283, 1);
+	newInventory[i++] = itemNew(288, 1);
+	newInventory[i++] = itemNew(282, 1);
+	newInventory[i++] = itemNew(270, 1);
+	newInventory[i++] = itemNew(271, 1);
+	newInventory[i++] = itemNew(258,42);
+	newInventory[i++] = itemNew(256,99);
+
+	newInventory[i++] = itemNew(265,999);
+	newInventory[i++] = itemNew(265,999);
+	newInventory[i++] = itemNew(265,999);
+
+	newInventory[i++] = itemNew(284,999);
+	newInventory[i++] = itemNew(284,999);
+	newInventory[i++] = itemNew(284,999);
+
+	i=0;
+	newEquipment[i++] = itemNew(274,1);
+	newEquipment[i++] = itemNew(275,1);
+	newEquipment[i++] = itemNew(276,1);
+
+	msgPlayerSetInventory(target,newInventory,40);
+	msgPlayerSetEquipment(target,newEquipment, 3);
+
+	return lValBool(true);
 }
 
 void lispEvalNR(const char *str){
@@ -449,7 +512,9 @@ lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"sphere") == 0)            {return lValNativeFunc(wwlnfSphere);}
 	if(strcmp(s.c,"mbox") == 0)              {return lValNativeFunc(wwlnfMBox);}
 	if(strcmp(s.c,"msphere") == 0)           {return lValNativeFunc(wwlnfMSphere);}
+	if(strcmp(s.c,"time") == 0)              {return lValNativeFunc(wwlnfTime);}
 	if(strcmp(s.c,"tp") == 0)                {return lValNativeFunc(wwlnfTp);}
+	if(strcmp(s.c,"debug-equipment") == 0)   {return lValNativeFunc(wwlnfDbgItem);}
 
 	return lResolveNativeSymCommon(s);
 }
@@ -496,84 +561,9 @@ static void cmdLisp(int c,const char *str, u8 id){
 	}
 }
 
-static void cmdDbgitem(int c, const char *cmd){
-	int cmdLen = strnlen(cmd,252);
-	int target = c;
-	item newInventory[40];
-	item newEquipment[3];
-	memset(newInventory,0,sizeof(newInventory));
-	memset(newEquipment,0,sizeof(newEquipment));
-	if((cmdLen > 3) && (cmd[3] == ' ')){
-		target = getClientByName(cmd+4);
-		if(target < 0){
-			snprintf(replyBuf,sizeof(replyBuf),".dbgitem : Can't find '%s'",cmd+4);
-			replyBuf[sizeof(replyBuf)-1]=0;
-			serverSendChatMsg(replyBuf);
-		}
-	}
-	int i=0;
-	newInventory[i++] = itemNew(261, 1);
-	newInventory[i++] = itemNew(262, 1);
-	newInventory[i++] = itemNew(263, 1);
-	newInventory[i++] = itemNew(264, 1);
-	newInventory[i++] = itemNew(283, 1);
-	newInventory[i++] = itemNew(288, 1);
-	newInventory[i++] = itemNew(282, 1);
-	newInventory[i++] = itemNew(270, 1);
-	newInventory[i++] = itemNew(271, 1);
-	newInventory[i++] = itemNew(258,42);
-	newInventory[i++] = itemNew(256,99);
-
-	newInventory[i++] = itemNew(265,999);
-	newInventory[i++] = itemNew(265,999);
-	newInventory[i++] = itemNew(265,999);
-
-	newInventory[i++] = itemNew(284,999);
-	newInventory[i++] = itemNew(284,999);
-	newInventory[i++] = itemNew(284,999);
-
-	i=0;
-	newEquipment[i++] = itemNew(274,1);
-	newEquipment[i++] = itemNew(275,1);
-	newEquipment[i++] = itemNew(276,1);
-
-	msgPlayerSetInventory(target,newInventory,40);
-	msgPlayerSetEquipment(target,newEquipment, 3);
-}
-
-static void cmdTime(int c, const char *cmd){
-	(void)c;
-	gtimeSetTimeOfDayHRS(cmd + 5);
-	msgSetTime(-1, gtimeGetTime());
-	snprintf(replyBuf,sizeof(replyBuf),"It is now %s",gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
-	replyBuf[sizeof(replyBuf)-1]=0;
-	serverSendChatMsg(replyBuf);
-}
-
 int parseCommand(int c, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
-
-	if(strncmp(tcmp,"dbgitem",7) == 0){
-		cmdDbgitem(c,tcmp);
-		return 1;
-	}
-	if(strncmp(tcmp,"time",4) == 0){
-		cmdTime(c,tcmp);
-		return 1;
-	}
-	if(strncmp(tcmp,"deadanimals",11) == 0){
-		//for(uint i = animalCount/2;i<animalCount;i++){
-		for(uint i = animalCount-1;i < animalCount;i--){
-			if(animalList[i].type == 0){continue;}
-			//animalRDie(&animalList[i]);
-			animalDel(i);
-		}
-		snprintf(replyBuf,sizeof(replyBuf),".deadanimals");
-		replyBuf[sizeof(replyBuf)-1]=0;
-		serverSendChatMsg(replyBuf);
-		return 1;
-	}
 
 	cmdLisp(c,tcmp,0);
 	return 1;
