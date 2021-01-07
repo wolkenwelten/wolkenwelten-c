@@ -189,7 +189,7 @@ static void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
 	}
 }
 
-static u8 chunkGetSides(int x,int y,int z,u8 *d,int size) {
+static inline u8 chunkGetSides(int x,int y,int z,u8 *d,int size) {
 	const int tize = size*size;
 	u8 sides = 0;
 	u8 *base = d + z + (y*size) + (x*tize);
