@@ -5,6 +5,7 @@
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../misc/options.h"
+#include "../sdl/sdl.h"
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/nujel/nujel.h"
@@ -70,6 +71,40 @@ lVal *wwlnfRenderDistance(lClosure *c, lVal *v){
 	return lValFloat(renderDistance);
 }
 
+lVal *wwlnfThirdPerson(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfInt(c,lEval(c,v));
+		optionThirdPerson = t->vInt != 0;
+	}
+
+	return lValBool(optionThirdPerson);
+}
+
+lVal *wwlnfFullscreen(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfInt(c,lEval(c,v));
+		setFullscreen(t->vInt != 0);
+	}
+
+	return lValBool(optionThirdPerson);
+}
+
+lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfInt(c,lEval(c,v));
+		optionDebugInfo = t->vInt != 0;
+	}
+
+	return lValBool(optionDebugInfo);
+}
+
+lVal *wwlnfSaveOptions(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+	saveOptions();
+	return lValBool(true);
+}
+
 lVal *wwlnfServerAdd(lClosure *c, lVal *v){
 	char *address = "localhost";
 	char *name = "localhost";
@@ -96,6 +131,10 @@ lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"sound-volume") == 0)   {return lValNativeFunc(wwlnfSoundVolume);}
 	if(strcmp(s.c,"render-distance") == 0){return lValNativeFunc(wwlnfRenderDistance);}
 	if(strcmp(s.c,"server-add") == 0)     {return lValNativeFunc(wwlnfServerAdd);}
+	if(strcmp(s.c,"third-person") == 0)   {return lValNativeFunc(wwlnfThirdPerson);}
+	if(strcmp(s.c,"fullscreen") == 0)     {return lValNativeFunc(wwlnfFullscreen);}
+	if(strcmp(s.c,"save-options") == 0)   {return lValNativeFunc(wwlnfSaveOptions);}
+	if(strcmp(s.c,"debug-info") == 0)     {return lValNativeFunc(wwlnfDebugInfo);}
 
 	return lResolveNativeSymCommon(s);
 }

@@ -220,9 +220,11 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_F1:
 			optionThirdPerson = false;
+			saveOptions();
 			break;
 		case SDL_SCANCODE_F3:
 			optionThirdPerson = true;
+			saveOptions();
 			break;
 		case SDL_SCANCODE_F6:
 			worstFrame = 0;
@@ -233,6 +235,7 @@ void keyboardEventHandler(const SDL_Event *e){
 		#ifndef __EMSCRIPTEN__
 		case SDL_SCANCODE_F11:
 			setFullscreen(!optionFullscreen);
+			saveOptions();
 			break;
 		#endif
 		default:

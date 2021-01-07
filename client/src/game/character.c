@@ -351,17 +351,15 @@ void characterDie(character *c){
 void updateGlide(character *c){
 	if((c == player) && ((itemIsEmpty(&c->equipment[CHAR_EQ_GLIDER])) || (c->equipment[CHAR_EQ_GLIDER].ID != I_Glider))){
 		c->flags &= ~CHAR_GLIDE;
-		return;
 	}
 	if(!(c->flags & CHAR_FALLING)){
 		c->flags &= ~CHAR_GLIDE;
-		return;
 	}
 	if(!(c->flags & CHAR_JUMPING) && (c->gvel.y > 0) && (c->flags & CHAR_FALLING) && (c->hook == NULL)){
 		characterToggleGlider(c);
 		c->flags |= CHAR_JUMPING;
 	}
-	if(!(c->flags & CHAR_GLIDE)){return;}
+	if(c->gliderFade < 0.01f){return;}
 	const vec   dir = vecDegToVec(c->rot);
 	      vec   vel = c->vel;
 	const vec  vdeg = vecVecToDeg(vecNorm(vel));
@@ -377,13 +375,12 @@ void updateGlide(character *c){
 		c->rot.pitch += pd;
 	}
 
-	vec  vdrg   = vecMulS(vecInvert(vel),drag * 0.1f);
-	float mag   = vecMag(vdrg);
-	c->shake    = MAX(c->shake,mag*16.f + speed);
-	vel         = vecAdd(vel,vdrg);
-	vel         = vecAdd(vel,vecMulS(dir,mag*0.98f));
+	vec  vdrg    = vecMulS(vecInvert(vel),drag * 0.1f);
+	float mag    = vecMag(vdrg);
+	c->shake     = MAX(c->shake,mag*16.f + speed * c->gliderFade);
+	const vec nv = vecAdd(vdrg,vecMulS(dir,mag*0.98f));
 
-	c->vel = vel;
+	c->vel = vecAdd(vel,vecMulS(nv,c->gliderFade));
 }
 
 int characterPhysics(character *c){
