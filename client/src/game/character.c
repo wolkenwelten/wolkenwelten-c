@@ -468,6 +468,9 @@ void characterUpdateBooster(character *c){
 	c->shake = MAX(c->shake,1.25f + speed);
 	if(c == player){
 		sfxLoop(sfxJet,1.f);
+		if(rngValA(31) == 0){
+			projectileNew(c->pos,vecInvert(vecAdd(rot,vecMulS(vecRng(),10.f))),0,characterGetBeing(player),1,0.1f);
+		}
 	}
 
 	const vec adir = vecMulS(vecDegToVec(vecAdd(rot,vecMulS(vecRng(),10.f))),-0.07f * (rngValf()+.5f));
