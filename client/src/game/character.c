@@ -22,6 +22,7 @@
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/game/hook.h"
 #include "../../../common/src/game/item.h"
+#include "../../../common/src/game/weather.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/mods/mods.h"
@@ -378,7 +379,7 @@ void updateGlide(character *c){
 	vec  vdrg    = vecMulS(vecInvert(vel),drag * 0.1f);
 	float mag    = vecMag(vdrg);
 	c->shake     = MAX(c->shake,mag*16.f + speed * c->gliderFade);
-	const vec nv = vecAdd(vdrg,vecMulS(dir,mag*0.98f));
+	const vec nv = vecAdd(vecAdd(vdrg,vecMulS(dir,mag*0.99f)),vecMulS(windVel,0.025f));
 
 	c->vel = vecAdd(vel,vecMulS(nv,c->gliderFade));
 }
