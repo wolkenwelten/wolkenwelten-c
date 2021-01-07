@@ -464,7 +464,7 @@ char *messageNames[256] = {
 	"fxBeamBlaster",
 	"msgItemDropUpdate", // 25
 	"msgPlayerDamage",
-	"--- UNUSED ---",
+	"chungusUnsubPlayer",
 	"characterSetData",
 	"characterSetInventory",
 	"animalSync",  // 30
