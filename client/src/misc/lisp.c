@@ -142,10 +142,11 @@ lVal *lResolveNativeSym(const lSymbol s){
 void lispInit(){
 	lInit();
 	clRoot = lClosureNew(NULL);
-	lispEvalNR("(define fasts (λ (a) (mst  1) (s (mst  1))))");
-	lispEvalNR("(define norms (λ (a) (mst  4) (s (mst  4))))");
-	lispEvalNR("(define slows (λ (a) (mst 16) (s (mst 16))))");
-	lispEvalNR("(define bulls (λ (a) (mst 64) (s (mst 64))))");
+	lispEvalNR("(define fasts   (λ (a) (mst  1) (s (mst  1))))");
+	lispEvalNR("(define norms   (λ (a) (mst  4) (s (mst  4))))");
+	lispEvalNR("(define slows   (λ (a) (mst 16) (s (mst 16))))");
+	lispEvalNR("(define bulls   (λ (a) (mst 64) (s (mst 64))))");
+	lispEvalNR("(define morning (λ ( ) (s (morning))))");
 
 }
 

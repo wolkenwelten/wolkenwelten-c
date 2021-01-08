@@ -528,6 +528,7 @@ void initCommands(){
 	pid->vInt = 123;
 
 	lispEvalNR("(define heal     (λ (a) (- (dmg (cond (a (- a)) (#t -20))))))");
+	lispEvalNR("(define morning  (λ () (time \"8:00\")))");
 	lispEvalNR("(define player-x (λ () (vx (player-pos))))");
 	lispEvalNR("(define player-y (λ () (vy (player-pos))))");
 	lispEvalNR("(define player-z (λ () (vz (player-pos))))");
