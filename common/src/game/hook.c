@@ -16,7 +16,7 @@ hook hookList[128];
 uint hookCount = 0;
 
 hook *hookNew(character *p){
-	hook *ghk = NULL;;
+	hook *ghk = NULL;
 	for(uint i=0;i<hookCount;i++){
 		if(hookList[i].parent == NULL){
 			ghk = &hookList[i];
@@ -109,7 +109,7 @@ bool hookUpdate(hook *ghk){
 			sfxPlay(sfxHookHit,1.f);
 			sfxLoop(sfxHookRope,0.f);
 			unsigned char b  = worldGetB(ghk->ent->pos.x,ghk->ent->pos.y,ghk->ent->pos.z);
-			if(b){ fxBlockBreak(vecFloor(ghk->ent->pos),b);}
+			if(b){ fxBlockBreak(vecFloor(ghk->ent->pos),b,0);}
 		}else{
 			being closest = beingClosest(ghk->ent->pos,1.f);
 			if((closest != 0) && (closest != characterGetBeing(ghk->parent))){
@@ -124,7 +124,7 @@ bool hookUpdate(hook *ghk){
 				ghk->rope->flags |= ROPE_DIRTY;
 				//sfxPlay(sfxHookHit,1.f);
 				//sfxPlay(sfxUngh,1.f);
-				fxBlockBreak(ghk->ent->pos,2);
+				fxBlockBreak(ghk->ent->pos,2,0);
 				sfxLoop(sfxHookRope,0.f);
 			}else if(!ghk->hooked && !ghk->returning){
 				sfxLoop(sfxHookRope,1.f);

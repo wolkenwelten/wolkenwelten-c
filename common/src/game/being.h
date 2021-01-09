@@ -10,6 +10,8 @@ void  beingSetVel    (being b, const vec vel);
 void  beingAddVel    (being b, const vec vel);
 
 float beingGetWeight (being b);
+void  beingDamage    (being b, i16 hp, u8 cause, float knockbackMult, being culprit, const vec pos);
+bool  beingAlive     (being b);
 
 being beingClosest   (const vec pos, float maxDistance);
 

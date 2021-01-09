@@ -88,9 +88,13 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 	}
 }
 
-void fxBlockBreak(const vec pos, unsigned char b){
-	sfxPlayPos(sfxTock,1.f,pos);
-	for(int i=0;i<2048;i++){
+void fxBlockBreak(const vec pos, u8 b, u8 cause){
+	if(cause == 0){
+		sfxPlayPos(sfxTock,1.f,pos);
+	}else{
+		sfxPlayPos(sfxTock,0.2f,pos);
+	}
+	for(int i=0;i<1024;i++){
 		const vec p = vecAdd(pos,vecRngAbs());
 		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.7f,96);
 	}

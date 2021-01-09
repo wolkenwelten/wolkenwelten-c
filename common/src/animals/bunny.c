@@ -147,53 +147,42 @@ static void animalSFlee(animal *e,int stateChange[16]){
 }
 
 static void animalFightOrFlight(animal *e,int stateChange[16]){
-	character *cChar;
 	if(animalNoAggro){return;}
-	float dist = animalClosestPlayer(e,&cChar);
 
 	if(e->state == ANIMAL_S_FIGHT){
-		if((cChar == NULL) || (dist > 16.f)){
-			stateChange[ANIMAL_S_LOITER] += 1024;
-			return;
-		}else{
-			vec caNorm = vecNorm(vecNew(cChar->pos.x - e->pos.x,0.f, cChar->pos.z - e->pos.z));
-			vec caVel  = vecMulS(caNorm,0.03f);
-			vec caRot  = vecVecToDeg(caNorm);
+		if(e->target == 0){e->target = animalFindFOFTarget(e);}
+		if(e->target != 0){
+			const vec tpos = beingGetPos(e->target);
+			const float dist = vecMag(vecSub(tpos,e->pos));
 
-			e->gvel.x  = caVel.x;
-			e->gvel.y  = 0.f;
-			e->gvel.z  = caVel.z;
-			e->rot.yaw = -caRot.yaw;
-
-			if((dist < 1.5f)){
-				e->gvel.x = 0;
-				e->gvel.z = 0;
-				if(rngValA(7)==0){
-					int dmg = 1;
-					being bc = characterGetBeing(cChar);
-					if(bc == 0){return;}
-					if(rngValM(8)==0){dmg = 4;}
-					msgBeingDamage(beingID(bc),dmg,2,1.f,bc,-1,e->pos);
-				}
+			if((dist < 1.5f) && (rngValA(7)==0)){
+				int dmg = 1;
+				if(rngValM(8)==0){dmg = 4;}
+				beingDamage(e->target,dmg,2,1.f,animalGetBeing(e),e->pos);
+			}else if(dist > 16){
+				stateChange[ANIMAL_S_LOITER] += (dist-16)*2048;
 			}
-		}
-	}else if(e->state == ANIMAL_S_FLEE){
-		if((cChar == NULL) || (dist > 32.f)){
-			stateChange[ANIMAL_S_LOITER] += 1024;
-			return;
 		}else{
-			vec caNorm = vecNorm(vecNew(e->pos.x - cChar->pos.x,0.f, e->pos.z - cChar->pos.z));
-			vec caVel  = vecMulS(caNorm,0.03f);
-			vec caRot  = vecVecToDeg(caNorm);
+			stateChange[ANIMAL_S_LOITER] += 8192;
+		}
+	/* TODO: Fleeing without a cchar */
+	}else if(e->state == ANIMAL_S_FLEE){
+		if(e->target == 0){e->target = animalFindFOFTarget(e);}
+		if(e->target != 0){
+			const vec tpos = beingGetPos(e->target);
+			const float dist = vecMag(vecSub(tpos,e->pos));
 
-			e->gvel.x  = caVel.x;
-			e->gvel.z  = caVel.z;
-			e->rot.yaw = -caRot.yaw;
 			if(dist < 6.f){
 				stateChange[ANIMAL_S_FIGHT] += (1 << 14) * (dist - 6.f);
+			}else if(dist > 48.f){
+				stateChange[ANIMAL_S_LOITER] += (dist-48)*4096;
 			}
+		}else{
+			stateChange[ANIMAL_S_LOITER] += 8192;
 		}
 	}else{
+		character *cChar;
+		float dist = animalClosestPlayer(e,&cChar);
 		float fd = 9.f;
 		if(e->state == ANIMAL_S_SLEEP){fd = 3.f;}
 		if(e->state == ANIMAL_S_PLAYING){fd = 15.f;}
@@ -308,10 +297,16 @@ static void animalPoop(animal *e,int stateChange[16]){
 }
 
 static void animalSocialDistancing(animal *e,int stateChange[16]){
-	if(rngValA(31) != 0){return;}
+	if(rngValA(15) != 0){return;}
 	float d;
 	being ca = beingListGetClosest(e->bl, animalGetBeing(e), BEING_ANIMAL, &d);
 	if((ca == 0) || (d > 1)){return;}
+
+	animal *oa = animalGetByBeing(ca);
+	if((e->flags & ANIMAL_MALE) && (oa->flags & ANIMAL_MALE)){
+		e->state = ANIMAL_S_FIGHT;
+		e->target = ca;
+	}
 	e->rot.yaw = ((rngValf()*2.f)-1.f)*360.f;
 	vec dir = vecMulS(vecDegToVec(vecNew(e->rot.yaw,0.f,0.f)),0.01f);
 	e->gvel.x = dir.x;
@@ -377,7 +372,7 @@ void animalThinkBunny(animal *e){
 		stateChange[ANIMAL_S_SLEEP] += rngValA(255);
 		stateChange[ANIMAL_S_SLEEP] *= 16;
 	}else{
-		stateChange[ANIMAL_S_SLEEP] = MAX(1,stateChange[ANIMAL_S_SLEEP]);
+		stateChange[ANIMAL_S_SLEEP]  = MAX(1,stateChange[ANIMAL_S_SLEEP]);
 		stateChange[ANIMAL_S_SLEEP] /= 16;
 	}
 

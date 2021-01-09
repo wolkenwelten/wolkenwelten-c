@@ -292,6 +292,7 @@ static const void *animalLoad(const void *buf){
 	e->rot.roll   = 0.f;
 
 	e->stateTicks = u[11];
+	e->target     = 0;
 
 	return b+12*4;
 }

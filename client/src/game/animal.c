@@ -93,6 +93,8 @@ void animalSyncFromServer(const packet *p){
 	e->grot.yaw   = p->v.f[14];
 	e->grot.pitch = p->v.f[15];
 
+	e->target     = p->v.u32[16];
+
 	e->type       = p->v.u8[ 0];
 	e->flags      = p->v.u8[ 1];
 	e->state      = p->v.u8[ 2];

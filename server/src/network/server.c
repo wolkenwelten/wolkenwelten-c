@@ -3,6 +3,7 @@
 #include "../main.h"
 #include "../game/animal.h"
 #include "../game/beamblast.h"
+#include "../game/being.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
 #include "../game/fire.h"
@@ -275,19 +276,16 @@ void msgSendChunk(uint c, const chunk *chnk){
 }
 
 void dispatchBeingDmg(uint c, const packet *p){
-	const being target  = p->v.u32[1];
+	(void)c;
 
-	switch(beingType(target)){
-	default:
-		fprintf(stderr,"dispatchBeingDmg[%i]: Unknown being %x",c,target);
-		break;
-	case BEING_CHARACTER:
-		characterDmgPacket(c,p);
-		break;
-	case BEING_ANIMAL:
-		animalDmgPacket(c,p);
-		break;
-	}
+	const i16 hp              = p->v.i16[0];
+	const u8 cause            = p->v.u8[2];
+	const float knockbackMult = ((float)p->v.u8[3])/16.f;
+	const being target        = p->v.u32[1];
+	const being culprit       = p->v.u32[2];
+	const vec pos             = vecNewP(&p->v.f[3]);
+
+	beingDamage(target, hp, cause, knockbackMult, culprit, pos);
 }
 
 void handlePingPong(uint c){
