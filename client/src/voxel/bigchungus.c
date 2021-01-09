@@ -103,7 +103,8 @@ u8 worldGetB(int x,int y,int z) {
 	if(chng == NULL){ return 0; }
 	chunk *chnk = chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 	if(chnk == NULL){ return 0; }
-	return chnk->data[x&0xF][y&0xF][z&0xF];
+	chunkD *cd = chunkGetData(chnk);
+	return cd->data[x&0xF][y&0xF][z&0xF];
 }
 
 bool worldSetB(int x,int y,int z,u8 block){
