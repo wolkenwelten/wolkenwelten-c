@@ -63,8 +63,7 @@ void msgParseGetChunk(const packet *p){
 	if(chng == NULL){return;}
 	chunk *chnk = chungusGetChunkOrNew(chng,x,y,z);
 	if(chnk == NULL){return;}
-	chunkD *cd = chunkGetData(chnk);
-	memcpy(cd->data,p->v.u8,4096);
+	memcpy(chnk->data,p->v.u8,sizeof(chnk->data));
 	chnk->dataCount |= 0x8000;
 }
 
