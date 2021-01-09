@@ -11,8 +11,8 @@
 #include <stdio.h>
 
 void itemDropNewC(const character *chr,const item *itm){
-	const vec pos = vecAdd(chr->pos,vecNew(0,0.4,0));
 	const vec vel = vecMulS(vecDegToVec(chr->rot),0.03f);
+	const vec pos = vecAdd(vecAdd(chr->pos,vecNew(0,0.5,0)),vecMulS(vel,6.f));
 	msgItemDropNew(-1,vecAdd(pos,vecMulS(vel,60)),vel,itm);
 }
 
@@ -52,6 +52,7 @@ void itemDropUpdateFromServer(const packet *p){
 			if(itemDropList[i].ent == NULL){continue;}
 			entityFree(itemDropList[i].ent);
 			itemDropList[i].ent = NULL;
+			itemDropList[i].player = -1;
 		}
 	}
 	itemDropCount = len;
@@ -63,14 +64,18 @@ void itemDropUpdateFromServer(const packet *p){
 		if(itemDropList[d].ent == NULL) { return; }
 		entityFree(itemDropList[d].ent);
 		itemDropList[d].ent = NULL;
+		itemDropList[d].player = -1;
 		return;
 	}
-	if(itemDropList[d].ent == NULL) {
-		itemDropList[d].ent     = entityNew(vecZero(),vecZero());
+	const vec idpos = vecNewP(&p->v.f[2]);
+	const vec idvel = vecNewP(&p->v.f[5]);
+	if(itemDropList[d].ent == NULL){
+		itemDropList[d].ent     = entityNew(idpos,vecZero());
 		itemDropList[d].aniStep = rngValM(1024);
+		itemDropList[d].player = -1;
 	}
 
 	itemDropList[d].ent->eMesh = getMeshDispatch(&itemDropList[d].itm);
-	itemDropList[d].ent->pos   = vecNewP(&p->v.f[2]);
-	itemDropList[d].ent->vel   = vecNewP(&p->v.f[5]);
+	itemDropList[d].ent->pos   = idpos;
+	itemDropList[d].ent->vel   = idvel;
 }
