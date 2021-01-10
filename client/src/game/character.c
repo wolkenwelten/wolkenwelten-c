@@ -175,9 +175,9 @@ void characterUpdateAnimation(character *c){
 		c->animationIndex     = 0;
 	}
 	if(c->flags & CHAR_GLIDE){
-		c->gliderFade += 0.03f;
+		c->gliderFade += 0.02f;
 	}else{
-		c->gliderFade -= 0.03f;
+		c->gliderFade -= 0.02f;
 	}
 	c->gliderFade = MINMAX(0.f,1.f,c->gliderFade);
 }
@@ -468,8 +468,8 @@ void characterUpdateBooster(character *c){
 	c->shake = MAX(c->shake,1.25f + speed);
 	if(c == player){
 		sfxLoop(sfxJet,1.f);
-		if(rngValA(31) == 0){
-			projectileNew(c->pos,vecInvert(vecAdd(rot,vecMulS(vecRng(),10.f))),0,characterGetBeing(player),1,0.1f);
+		if(rngValA(15) == 0){
+			projectileNew(c->pos,vecAdd(rot,vecInvert(vecMulS(vecRng(),10.f))),0,characterGetBeing(player),1,0.01f);
 		}
 	}
 
@@ -593,7 +593,7 @@ void characterUpdate(character *c){
 		} else if((nvel.y < -0.05f) && c->vel.y > -0.01f){
 			sfxPlay(sfxStomp,1.f);
 		}
-		if((damage > 0) && (hookGetHooked(c->hook))){
+		                                                                                                                                                                      if((damage > 0) && (hookGetHooked(c->hook))){
 			hookReturnHook(c->hook);
 		}
 		characterUpdateWindVolume(c);
