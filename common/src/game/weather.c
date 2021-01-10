@@ -38,7 +38,7 @@ void weatherUpdateAll(){
 	if(rainIntensity){
 		if(!isClient){weatherDoRain();}
 		if((calls & 0x1FF) == 1){
-			if(cloudDensityMin < 178){
+			if(cloudDensityMin < 160){
 				rainIntensity++;
 			}else{
 				rainIntensity--;
@@ -48,12 +48,12 @@ void weatherUpdateAll(){
 				cloudGDensityMin++;
 				if(!isClient){weatherSendUpdate(-1);}
 			}
-		}else if(((calls & 0x3F) == 3) && (cloudDensityMin > 200)){
+		}else if(((calls & 0x3F) == 3) && (cloudDensityMin > 180)){
 			rainIntensity--;
 		}
 	}
-	if((!isClient) && (rainIntensity == 0) && (cloudDensityMin < 170) && (calls & 0xFFF) == 0){
-		const uint chance = MAX(2,16 - (170 - cloudDensityMin));
+	if((!isClient) && (rainIntensity == 0) && (cloudDensityMin < 150) && (calls & 0xFFF) == 0){
+		const uint chance = MAX(2,16 - (150 - cloudDensityMin));
 		if(rngValA((1<<chance)-1) == 0){
 			rainIntensity = 1;
 			weatherSendUpdate(-1);

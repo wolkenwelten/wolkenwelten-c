@@ -120,7 +120,7 @@ const char *nprofGetReport(){
 		}else if(nprofEntryList[i].total > 1024){
 			cc = 15;
 		}
-		buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"[%02X] %5.2f%% %-24s Count: %8llu Total: %s%s%s\n",i,nprofGetShare(i)*100.0,networkGetMessageName(i), nprofEntryList[i].count, ansiFG[cc],getHumanReadableSize(nprofEntryList[i].total),ansiRS);
+		buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"[%02X] %5.2f%% %-24s Count: %8u Total: %s%s%s\n",i,nprofGetShare(i)*100.0,networkGetMessageName(i), (uint)nprofEntryList[i].count, ansiFG[cc],getHumanReadableSize(nprofEntryList[i].total),ansiRS);
 	}
 	*buf = 0;
 	return reportBuf;
