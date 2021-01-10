@@ -7,11 +7,11 @@
 
 uint glParticles;
 uint   particles;
-uint   particleCount = 0;
+uint   particleCount;
 uint glSparticles;
 uint   sparticles;
 uint   sparticleVV;
-uint   sparticleCount = 0;
+uint   sparticleCount;
 
 void fxRainDrop(const vec pos){
 	(void)pos;

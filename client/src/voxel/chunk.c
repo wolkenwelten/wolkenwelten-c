@@ -8,6 +8,7 @@
 #include "../gfx/mat.h"
 #include "../gfx/shader.h"
 #include "../gfx/sky.h"
+#include "../voxel/bigchungus.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
 
@@ -173,8 +174,8 @@ static inline void chunkAddLeft(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d)
 static void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
 	for(int y=15;y>=0;y--){
 	for(int x=14;x>=0;x--){
-		if(!plane[x][y])                                           {continue;}
-		if((plane[x][y] & 0xFF00FF) != (plane[x+1][y] & 0xFF00FF)) {continue;}
+		if(!plane[x][y])                                       {continue;}
+		if((plane[x][y] & 0xFF00FF) != (plane[x+1][y] & 0xF0FF)) {continue;}
 		plane[x  ][y] += plane[x+1][y] & 0xFF00;
 		plane[x+1][y]  = 0;
 	}
@@ -189,82 +190,98 @@ static void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
 	}
 }
 
-static inline u8 chunkGetSides(int x,int y,int z,u8 *d,int size) {
-	const int tize = size*size;
+static inline u8 chunkGetSides(u16 x,u16 y,u16 z,u8 b[18][18][18]){
 	u8 sides = 0;
-	u8 *base = d + z + (y*size) + (x*tize);
 
-	if((z == size-1) || (base[    1] == 0)){ sides |=  1;}
-	if((z == 0     ) || (base[   -1] == 0)){ sides |=  2;}
-	if((y == size-1) || (base[ size] == 0)){ sides |=  4;}
-	if((y == 0     ) || (base[-size] == 0)){ sides |=  8;}
-	if((x == size-1) || (base[ tize] == 0)){ sides |= 16;}
-	if((x == 0     ) || (base[-tize] == 0)){ sides |= 32;}
+	if(b[x][y][z+1] == 0){ sides |=  1;}
+	if(b[x][y][z-1] == 0){ sides |=  2;}
+	if(b[x][y+1][z] == 0){ sides |=  4;}
+	if(b[x][y-1][z] == 0){ sides |=  8;}
+	if(b[x+1][y][z] == 0){ sides |= 16;}
+	if(b[x-1][y][z] == 0){ sides |= 32;}
 
 	return sides;
+}
+
+static void chunkPopulateBlockData(u8 b[18][18][18], chunk *c, i16 xoff, i16 yoff, i16 zoff){
+	if(c == NULL){return;}
+	for(int x=MAX(0,xoff); x<MIN(18,xoff+16); x++){
+	for(int y=MAX(0,yoff); y<MIN(18,yoff+16); y++){
+	for(int z=MAX(0,zoff); z<MIN(18,zoff+16); z++){
+		b[x][y][z] = c->data[x-xoff][y-yoff][z-zoff];
+	}
+	}
+	}
 }
 
 static void chunkGenMesh(chunk *c) {
 	PROFILE_START();
 
-	int ac,bc;
-	u8 sides;
-	const uint CS   = CHUNK_SIZE;
-	const uint CSCS = CS*CS;
-	u8 *d = (u8 *)c->data;
-	static u8 sideCache[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-	static u32   aplane[CHUNK_SIZE][CHUNK_SIZE];
-	static u32   bplane[CHUNK_SIZE][CHUNK_SIZE];
+	int counts[6];
+	static u8 blockData[18][18][18];
+	static u8 sideCache[16][16][16];
+	static u32     plane[6][16][16];
 	if(++chunksGeneratedThisFrame > MAX_CHUNKS_GEN_PER_FRAME){return;}
 	c->dataCount = 0;
+	memset(plane,    0,sizeof(plane));
+	memset(counts,   0,sizeof(counts));
+	memset(blockData,0,sizeof(blockData));
+	chunkPopulateBlockData(blockData,c,1,1,1);
+	chunkPopulateBlockData(blockData,worldGetChunk(c->x-16,c->y,c->z),1-16,1,1);
+	chunkPopulateBlockData(blockData,worldGetChunk(c->x+16,c->y,c->z),1+16,1,1);
+	chunkPopulateBlockData(blockData,worldGetChunk(c->x,c->y-16,c->z),1,1-16,1);
+	chunkPopulateBlockData(blockData,worldGetChunk(c->x,c->y+16,c->z),1,1+16,1);
+	chunkPopulateBlockData(blockData,worldGetChunk(c->x,c->y,c->z-16),1,1,1-16);
+	chunkPopulateBlockData(blockData,worldGetChunk(c->x,c->y,c->z+16),1,1,1+16);
 
-	for(int x=CS-1;x>=0;--x){
-	for(int y=CS-1;y>=0;--y){
-	for(int z=CS-1;z>=0;--z){
-		if(d[(x*CSCS)+(y*CS)+z] == 0){
+	for(int x=15;x>=0;--x){
+	for(int y=15;y>=0;--y){
+	for(int z=15;z>=0;--z){
+		if(c->data[x][y][z] == 0){
 			sideCache[x][y][z] = 0;
 		}else{
-			sideCache[x][y][z] = chunkGetSides(x,y,z,(u8 *)d,CS);
+			sideCache[x][y][z] = chunkGetSides(x+1,y+1,z+1,blockData);
 		}
 	}
 	}
 	}
 
 	// Front / Back
-	for(int z=CS-1;z>=0;--z){
-		ac = bc = 0;
-		memset(aplane,0,CHUNK_SIZE*CHUNK_SIZE*4);
-		memset(bplane,0,CHUNK_SIZE*CHUNK_SIZE*4);
-		for(int y=CS-1;y>=0;--y){
-		for(int x=CS-1;x>=0;--x){
-			if(!d[(x*CSCS)+(y*CS)+z]){continue;}
-			sides = sideCache[x][y][z];
+	for(int z=15;z>=0;--z){
+		memset(plane[0],0,sizeof(plane[0]));
+		memset(plane[1],0,sizeof(plane[1]));
+		counts[0] = counts[1] = 0;
+		for(int y=15;y>=0;--y){
+		for(int x=15;x>=0;--x){
+			const u8 b = c->data[x][y][z];
+			if(b == 0){continue;}
+			const u8 sides = sideCache[x][y][z];
 			if(sides&1){
-				ac++;
-				aplane[y][x] = d[(x*CSCS)+(y*CS)+z] | 0x010100;
+				counts[0]++;
+				plane[0][y][x] = b | 0x010100;
 			}
 			if(sides&2){
-				bc++;
-				bplane[y][x] = d[(x*CSCS)+(y*CS)+z] | 0x010100;
+				counts[1]++;
+				plane[1][y][x] = b | 0x010100;
 			}
 		}
 		}
-		chunkOptimizePlane(aplane);
-		chunkOptimizePlane(bplane);
-		if(ac || bc){
+		chunkOptimizePlane(plane[0]);
+		chunkOptimizePlane(plane[1]);
+		if(counts[0] || counts[1]){
 			const int cd = 1;
-			for(int y=CS-1;y>=0;--y){
-			for(int x=CS-1;x>=0;--x){
-				if(aplane[y][x]){
-					const int cw = ((aplane[y][x] >> 16) & 0xFF);
-					const int ch = ((aplane[y][x] >>  8) & 0xFF);
-					const u8 b = aplane[y][x] & 0xFF;
+			for(int y=15;y>=0;--y){
+			for(int x=15;x>=0;--x){
+				if(plane[0][y][x]){
+					const int cw = ((plane[0][y][x] >> 16) & 0xFF);
+					const int ch = ((plane[0][y][x] >>  8) & 0xFF);
+					const u8 b = plane[0][y][x] & 0xFF;
 					chunkAddFront(c,b,x,y,z,cw,ch,cd);
 				}
-				if(bplane[y][x]){
-					const int cw = ((bplane[y][x] >> 16) & 0xFF);
-					const int ch = ((bplane[y][x] >>  8) & 0xFF);
-					const u8 b = bplane[y][x] & 0xFF;
+				if(plane[1][y][x]){
+					const int cw = ((plane[1][y][x] >> 16) & 0xFF);
+					const int ch = ((plane[1][y][x] >>  8) & 0xFF);
+					const u8 b = plane[1][y][x] & 0xFF;
 					chunkAddBack(c,b,x,y,z,cw,ch,cd);
 				}
 			}
@@ -273,40 +290,41 @@ static void chunkGenMesh(chunk *c) {
 	}
 
 	// Top / Bottom
-	for(int y=CS-1;y>=0;--y){
-		ac = bc = 0;
-		memset(aplane,0,CHUNK_SIZE*CHUNK_SIZE*4);
-		memset(bplane,0,CHUNK_SIZE*CHUNK_SIZE*4);
-		for(int z=CS-1;z>=0;--z){
-		for(int x=CS-1;x>=0;--x){
-			if(!d[(x*CSCS)+(y*CS)+z]){continue;}
-			sides = sideCache[x][y][z];
+	for(int y=15;y>=0;--y){
+		memset(plane[2],0,sizeof(plane[2]));
+		memset(plane[3],0,sizeof(plane[3]));
+		counts[2] = counts[3] = 0;
+		for(int z=15;z>=0;--z){
+		for(int x=15;x>=0;--x){
+			const u8 b = c->data[x][y][z];
+			if(b == 0){continue;}
+			const u8 sides = sideCache[x][y][z];
 			if(sides&4){
-				ac++;
-				aplane[z][x] = d[(x*CSCS)+(y*CS)+z] | 0x010100;
+				counts[2]++;
+				plane[2][z][x] = b | 0x010100;
 			}
 			if(sides&8){
-				bc++;
-				bplane[z][x] = d[(x*CSCS)+(y*CS)+z] | 0x010100;
+				counts[3]++;
+				plane[3][z][x] = b | 0x010100;
 			}
 		}
 		}
-		chunkOptimizePlane(aplane);
-		chunkOptimizePlane(bplane);
-		if(ac || bc){
+		chunkOptimizePlane(plane[2]);
+		chunkOptimizePlane(plane[3]);
+		if(counts[2] || counts[3]){
 			const int ch = 1;
-			for(int z=CS-1;z>=0;--z){
-			for(int x=CS-1;x>=0;--x){
-				if(aplane[z][x]){
-					const int cw = ((aplane[z][x] >> 16) & 0xFF);
-					const int cd = ((aplane[z][x] >>  8) & 0xFF);
-					const u8 b = aplane[z][x] & 0xFF;
+			for(int z=15;z>=0;--z){
+			for(int x=15;x>=0;--x){
+				if(plane[2][z][x]){
+					const int cw = ((plane[2][z][x] >> 16) & 0xFF);
+					const int cd = ((plane[2][z][x] >>  8) & 0xFF);
+					const u8 b = plane[2][z][x] & 0xFF;
 					chunkAddTop(c,b,x,y,z,cw,ch,cd);
 				}
-				if(bplane[z][x]){
-					int cw = ((bplane[z][x] >> 16) & 0xFF);
-					int cd = ((bplane[z][x] >>  8) & 0xFF);
-					const u8 b = bplane[z][x] & 0xFF;
+				if(plane[3][z][x]){
+					const int cw = ((plane[3][z][x] >> 16) & 0xFF);
+					const int cd = ((plane[3][z][x] >>  8) & 0xFF);
+					const u8 b = plane[3][z][x] & 0xFF;
 					chunkAddBottom(c,b,x,y,z,cw,ch,cd);
 				}
 			}
@@ -315,40 +333,40 @@ static void chunkGenMesh(chunk *c) {
 	}
 
 	// Right / Left
-	for(int x=CS-1;x>=0;--x){
-		ac = bc = 0;
-		memset(aplane,0,CHUNK_SIZE*CHUNK_SIZE*4);
-		memset(bplane,0,CHUNK_SIZE*CHUNK_SIZE*4);
-		for(int y=CS-1;y>=0;--y){
-		for(int z=CS-1;z>=0;--z){
-			if(!d[(x*CSCS)+(y*CS)+z]){continue;}
-			sides = sideCache[x][y][z];
+	for(int x=15;x>=0;--x){
+		memset(plane[4],0,sizeof(plane[4]));
+		memset(plane[5],0,sizeof(plane[5]));
+		counts[4] = counts[5] = 0;
+		for(int y=15;y>=0;--y){
+		for(int z=15;z>=0;--z){
+			const u8 b = c->data[x][y][z];
+			if(b == 0){continue;}
+			const u8 sides = sideCache[x][y][z];
 			if(sides&16){
-				ac++;
-				aplane[y][z] = d[(x*CSCS)+(y*CS)+z] | 0x010100;
+				counts[4]++;
+				plane[4][y][z] = b | 0x010100;
 			}
 			if(sides&32){
-				bc++;
-				bplane[y][z] = d[(x*CSCS)+(y*CS)+z] | 0x010100;
+				counts[5]++;
+				plane[5][y][z] = b | 0x010100;
 			}
 		}
 		}
-		chunkOptimizePlane(aplane);
-		chunkOptimizePlane(bplane);
-		if(ac || bc){
+		chunkOptimizePlane(plane[4]);
+		chunkOptimizePlane(plane[5]);
+		if(counts[4] || counts[5]){
 			const int cw = 1;
-			for(int y=CS-1;y>=0;--y){
-			for(int z=CS-1;z>=0;--z){
-				if(aplane[y][z]){
-					const int ch = ((aplane[y][z] >>  8) & 0xFF);
-					const int cd = ((aplane[y][z] >> 16) & 0xFF);
-					const u8 b = aplane[y][z] & 0xFF;
+			for(int y=15;y>=0;--y){for(int z=15;z>=0;--z){
+				if(plane[4][y][z]){
+					const int ch = ((plane[4][y][z] >>  8) & 0xFF);
+					const int cd = ((plane[4][y][z] >> 16) & 0xFF);
+					const u8 b = plane[4][y][z] & 0xFF;
 					chunkAddRight(c,b,x,y,z,cw,ch,cd);
 				}
-				if(bplane[y][z]){
-					const int ch = ((bplane[y][z] >>  8) & 0xFF);
-					const int cd = ((bplane[y][z] >> 16) & 0xFF);
-					const u8 b = bplane[y][z] & 0xFF;
+				if(plane[5][y][z]){
+					const int ch = ((plane[5][y][z] >>  8) & 0xFF);
+					const int cd = ((plane[5][y][z] >> 16) & 0xFF);
+					const u8 b = plane[5][y][z] & 0xFF;
 					chunkAddLeft(c,b,x,y,z,cw,ch,cd);
 				}
 			}
@@ -362,18 +380,30 @@ static void chunkGenMesh(chunk *c) {
 
 void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
 	for(int cx=x;cx<gx;cx++){
-		for(int cy=y;cy<gy;cy++){
-			for(int cz=z;cz<gz;cz++){
-				c->data[cx][cy][cz] = block;
-			}
-		}
+	for(int cy=y;cy<gy;cy++){
+	for(int cz=z;cz<gz;cz++){
+		c->data[cx][cy][cz] = block;
+	}
+	}
 	}
 	c->dataCount |= 0x8000;
+	if(( x&0xF) == 0x0){worldSetChunkUpdated(x-1,y  ,z  );}
+	if(( y&0xF) == 0x0){worldSetChunkUpdated(x  ,y-1,z  );}
+	if(( z&0xF) == 0x0){worldSetChunkUpdated(x  ,y  ,z-1);}
+	if((gx&0xF) == 0xF){worldSetChunkUpdated(x+1,y  ,z  );}
+	if((gy&0xF) == 0xF){worldSetChunkUpdated(x  ,y+1,z  );}
+	if((gz&0xF) == 0xF){worldSetChunkUpdated(x  ,y  ,z+1);}
 }
 
 void chunkSetB(chunk *c,int x,int y,int z,u8 block){
 	c->data[x&0xF][y&0xF][z&0xF] = block;
 	c->dataCount |= 0x8000;
+	if((x&0xF) == 0x0){worldSetChunkUpdated(x-1,y  ,z  );}
+	if((x&0xF) == 0xF){worldSetChunkUpdated(x+1,y  ,z  );}
+	if((y&0xF) == 0x0){worldSetChunkUpdated(x  ,y-1,z  );}
+	if((y&0xF) == 0xF){worldSetChunkUpdated(x  ,y+1,z  );}
+	if((z&0xF) == 0x0){worldSetChunkUpdated(x  ,y  ,z-1);}
+	if((z&0xF) == 0xF){worldSetChunkUpdated(x  ,y  ,z+1);}
 }
 
 void chunkDraw(chunk *c, float d){
@@ -390,4 +420,16 @@ void chunkDraw(chunk *c, float d){
 	glBindVertexArray(c->vao);
 	glDrawArrays(GL_TRIANGLES,0,(c->dataCount&0x7FFF)*6);
 	vboTrisCount += (c->dataCount&0x7FFF)*2;
+}
+
+void chunkRecvUpdate(const packet *p){
+	u16 x = p->v.u16[2048];
+	u16 y = p->v.u16[2049];
+	u16 z = p->v.u16[2050];
+	chungus *chng =  worldGetChungus(x>>8,y>>8,z>>8);
+	if(chng == NULL){return;}
+	chunk *chnk = chungusGetChunkOrNew(chng,x,y,z);
+	if(chnk == NULL){return;}
+	memcpy(chnk->data,p->v.u8,sizeof(chnk->data));
+	chnk->dataCount |= 0x8000;
 }

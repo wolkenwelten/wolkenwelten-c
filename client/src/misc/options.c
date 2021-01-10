@@ -31,6 +31,7 @@ bool  optionThirdPerson       = false;
 int   optionWindowOrientation = 0;
 int   optionWindowWidth       = 0;
 int   optionWindowHeight      = 0;
+bool  optionWireframe         = false;
 
 void printVersion(){
 	printf("Wolkenwelten Pre-Alpha\n");

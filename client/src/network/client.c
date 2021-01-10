@@ -55,18 +55,6 @@ int connectionTries   = 0;
 #include "client_bsd.h"
 #endif
 
-void msgParseGetChunk(const packet *p){
-	u16 x = p->v.u16[2048];
-	u16 y = p->v.u16[2049];
-	u16 z = p->v.u16[2050];
-	chungus *chng =  worldGetChungus(x>>8,y>>8,z>>8);
-	if(chng == NULL){return;}
-	chunk *chnk = chungusGetChunkOrNew(chng,x,y,z);
-	if(chnk == NULL){return;}
-	memcpy(chnk->data,p->v.u8,sizeof(chnk->data));
-	chnk->dataCount |= 0x8000;
-}
-
 void msgSendPlayerPos(){
 	static int inventoryCountDown=0;
 	int pLen = 15*4;
@@ -218,7 +206,7 @@ void clientParsePacket(const packet *p){
 			fprintf(stderr,"Received a dying message packet from the server which should never happen.\n");
 			break;
 		case 18: // chunkData
-			msgParseGetChunk(p);
+			chunkRecvUpdate(p);
 			break;
 		case 19: // setPlayerCount
 			characterRemovePlayer(p->v.u16[1],p->v.u16[0]);

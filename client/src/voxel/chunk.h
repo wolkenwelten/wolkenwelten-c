@@ -24,3 +24,4 @@ uint    chunkGetFree               ();
 uint    chunkGetActive             ();
 uint    chunkGetGeneratedThisFrame ();
 void    chunkResetCounter          ();
+void    chunkRecvUpdate            (const packet *p);

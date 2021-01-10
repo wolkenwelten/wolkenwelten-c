@@ -269,3 +269,8 @@ void worldBoxMine(int x, int y, int z, int w, int h, int d){
 bool worldIsLoaded(int x, int y, int z){
 	return worldTryChungus(x>>8,y>>8,z>>8) != NULL;
 }
+
+void worldSetChunkUpdated(int x, int y, int z){
+	chunk *chnk = worldGetChunk(x,y,z);
+	chnk->dataCount |= 0x8000;
+}

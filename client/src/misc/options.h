@@ -12,6 +12,7 @@ extern bool  optionRuntimeReloading;
 extern bool  optionMute;
 extern bool  optionThirdPerson;
 extern int   optionAutomatedTest;
+extern bool  optionWireframe;
 
 extern int   optionWindowOrientation;
 extern int   optionWindowWidth;

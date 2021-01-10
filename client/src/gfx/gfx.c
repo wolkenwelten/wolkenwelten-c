@@ -109,6 +109,14 @@ void initGL(){
 #ifndef __EMSCRIPTEN__
 	glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
+
+#ifndef WOLKENWELTEN__GL_ES
+	if(optionWireframe){
+		glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+	}else{
+		glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+	}
+#endif
 }
 
 void calcFOV(const character *cam){

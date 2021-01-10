@@ -4,10 +4,12 @@
 #include "../main.h"
 #include "../game/character.h"
 #include "../gfx/texture.h"
+#include "../gfx/gfx.h"
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
 #include "../gui/menu.h"
 #include "../menu/inventory.h"
+#include "../misc/options.h"
 #include "../gui/widget.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
@@ -231,6 +233,10 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_F7:
 			textureReload();
+			break;
+		case SDL_SCANCODE_F10:
+			optionWireframe = !optionWireframe;
+			initGL();
 			break;
 		#ifndef __EMSCRIPTEN__
 		case SDL_SCANCODE_F11:
