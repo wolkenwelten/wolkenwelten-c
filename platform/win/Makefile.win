@@ -5,7 +5,7 @@ LD               := /mingw64/bin/gcc
 CLIENT_CFLAGS    := -DSDL_SOUND -mwindows -Wl,-subsystem,windows
 CLIENT_CINCLUDES := $(shell pkg-config --cflags sdl2 sdl2_mixer)
 
-SERVER_LIBS      := -lmingw32 -static-libgcc -lws2_32 -luser32
+SERVER_LIBS      := -lmingw32 -static-libgcc -lws2_32 -luser32 -static -lpthread
 SERVER_CFLAGS    :=
 
 WINLIBS          := -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -lgdi32 -lopengl32 -lshlwapi -lsetupapi -lws2_32

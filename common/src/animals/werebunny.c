@@ -13,18 +13,6 @@
 #include <stdio.h>
 #include <math.h>
 
-static void animalCheckHeat(animal *e,int stateChange[16]){
-	animal *cAnim;
-	float d;
-	if((e->pregnancy > 0) || (e->age < 20)){return;}
-	stateChange[ANIMAL_S_HEAT] += rngValA(127);
-	being oa = beingListGetClosest(beingListGet(e->pos.x,e->pos.y,e->pos.z), animalGetBeing(e), BEING_ANIMAL, &d);
-	if(oa == 0){return;}
-	cAnim = animalGetByBeing(oa);
-	if((d > 192.f) || (cAnim->pregnancy > 0) || (cAnim->age < 20)){return;}
-	stateChange[ANIMAL_S_HEAT] += (256.f - d)*4.f;
-}
-
 static void animalAgeing(animal *e,int stateChange[16]){
 	if(e->age > 64){
 		if(rngValA((1<<12)-1) <= (uint)(e->age-64)){e->health = 0;}
@@ -82,44 +70,33 @@ static void animalSSleep(animal *e,int stateChange[16]){
 	}
 }
 
-static void animalSHeat(animal *e,int stateChange[16]){
-	animal *cAnim;
-	float dist;
-	if(e->pregnancy > 0){
-		stateChange[ANIMAL_S_LOITER] += rngValA(255);
-	}
-	if(e->flags & ANIMAL_MALE){
-		dist = animalClosestAnimal(e,&cAnim,e->type,ANIMAL_MALE,0);
-	}else{
-		dist = animalClosestAnimal(e,&cAnim,e->type,ANIMAL_MALE,ANIMAL_MALE);
-	}
-	if((dist > 256.f) || (cAnim == NULL) || (cAnim->pregnancy > 0)){
-		stateChange[ANIMAL_S_LOITER] += rngValA(1023);
+static void animalSHunt(animal *e,int stateChange[16]){
+	if(e->target == 0){
+		e->state = ANIMAL_S_LOITER;
 		return;
-	}
+	}else if(e->target != 0){
+		const vec tpos = beingGetPos(e->target);
+		const float dist = vecMag(vecSub(tpos,e->pos));
 
-	if(dist < 2.f){
-		if((cAnim->pregnancy < 0) && (e->pregnancy < 0)){
-			if(e->flags & ANIMAL_MALE){
-				cAnim->pregnancy = 48;
-			}else{
-				e->pregnancy = 48;
+		if(dist < 2.f){
+			int dmg = 1;
+			if(rngValM(8)==0){dmg = 4;}
+			beingDamage(e->target,dmg,2,1.f,animalGetBeing(e),e->pos);
+			e->hunger  = MIN(e->hunger+48,127);
+			e->sleepy -= 8;
+			e->target  = 0;
+			e->state   = ANIMAL_S_LOITER;
+
+			animal *oa = animalGetByBeing(e->target);
+			if(oa != NULL){
+				e->type = 3;
 			}
-			cAnim->sleepy  = MAX(8,cAnim->sleepy - 32);
-			cAnim->hunger -= 16;
-			e->sleepy      = MAX(8,cAnim->sleepy - 32);
-			e->hunger     -= 16;
+		}else if(dist > 32){
+			stateChange[ANIMAL_S_LOITER] += (dist-32)*4096;
 		}
+	}else{
+		stateChange[ANIMAL_S_LOITER] += 8192;
 	}
-	if(cAnim == NULL){return;}
-	const vec caNorm = vecNorm(vecSub(e->pos,cAnim->pos));
-	const vec caVel  = vecMulS(caNorm,-0.03f);
-	const vec caRot  = vecVecToDeg(caNorm);
-
-	e->gvel.x  = caVel.x;
-	e->gvel.z  = caVel.z;
-
-	e->rot.yaw = -caRot.yaw + 180.f;
 }
 
 static void animalSFight(animal *e,int stateChange[16]){
@@ -147,59 +124,43 @@ static void animalSFlee(animal *e,int stateChange[16]){
 }
 
 static void animalFightOrFlightDay(animal *e,int stateChange[16]){
-	character *cChar;
-	if(animalNoAggro){return;}
-	float dist = animalClosestPlayer(e,&cChar);
-
 	if(e->state == ANIMAL_S_FIGHT){
-		if(cChar == NULL){
-			stateChange[ANIMAL_S_LOITER] += 1 << 30;
-			return;
-		}else{
-			stateChange[ANIMAL_S_LOITER] += dist * 4096.f;
-			vec caNorm = vecNorm(vecNew(cChar->pos.x - e->pos.x,0.f, cChar->pos.z - e->pos.z));
-			vec caVel  = vecMulS(caNorm,0.03f);
-			vec caRot  = vecVecToDeg(caNorm);
+		if(e->target == 0){e->target = animalFindFOFTarget(e);}
+		if(e->target != 0){
+			const vec tpos = beingGetPos(e->target);
+			const float dist = vecMag(vecSub(tpos,e->pos));
 
-			e->gvel.x  = caVel.x;
-			e->gvel.y  = 0.f;
-			e->gvel.z  = caVel.z;
-			e->rot.yaw = -caRot.yaw;
-
-			if((dist < 1.5f)){
-				e->gvel.x = 0;
-				e->gvel.z = 0;
-				if(rngValA(7)==0){
-					int dmg = 1;
-					being bc = characterGetBeing(cChar);
-					if(bc == 0){return;}
-					if(rngValM(8)==0){dmg = 4;}
-					msgBeingDamage(beingID(bc),dmg,2,1.25f,bc,-1,e->pos);
-				}
+			if((dist < 1.5f) && (rngValA(7)==0)){
+				int dmg = 1;
+				if(rngValM(8)==0){dmg = 4;}
+				beingDamage(e->target,dmg,2,1.f,animalGetBeing(e),e->pos);
+			}else if(dist > 32){
+				stateChange[ANIMAL_S_LOITER] += (dist-32)*2048;
 			}
+		}else{
+			stateChange[ANIMAL_S_LOITER] += 8192;
 		}
 	/* TODO: Fleeing without a cchar */
 	}else if(e->state == ANIMAL_S_FLEE){
-		if(cChar == NULL){
-			stateChange[ANIMAL_S_LOITER] += 1 << 30;
-			return;
-		}else{
-			stateChange[ANIMAL_S_LOITER] += 2048 * dist;
-			vec caNorm = vecNorm(vecNew(e->pos.x - cChar->pos.x,0.f, e->pos.z - cChar->pos.z));
-			vec caVel  = vecMulS(caNorm,0.03f);
-			vec caRot  = vecVecToDeg(caNorm);
+		if(e->target == 0){e->target = animalFindFOFTarget(e);}
+		if(e->target != 0){
+			const vec tpos = beingGetPos(e->target);
+			const float dist = vecMag(vecSub(tpos,e->pos));
 
-			e->gvel.x  = caVel.x;
-			e->gvel.z  = caVel.z;
-			e->rot.yaw = -caRot.yaw;
-			if(dist < 8.f){
-				stateChange[ANIMAL_S_FIGHT] += 8192 * (dist - 8.f) * (dist - 8.f);
+			if(dist < 6.f){
+				stateChange[ANIMAL_S_FIGHT] += (1 << 14) * (dist - 6.f);
+			}else if(dist > 48.f){
+				stateChange[ANIMAL_S_LOITER] += (dist-48)*4096;
 			}
+		}else{
+			stateChange[ANIMAL_S_LOITER] += 8192;
 		}
 	}else{
+		character *cChar;
+		float dist = animalClosestPlayer(e,&cChar);
 		float fd = 16.f;
-		if(e->state == ANIMAL_S_SLEEP){fd = 3.f;}
-		if(e->state == ANIMAL_S_PLAYING){fd = 15.f;}
+		if(e->state == ANIMAL_S_SLEEP)  {fd = 3.f;}
+		if(e->state == ANIMAL_S_PLAYING){fd = 9.f;}
 		if((cChar != NULL) && (dist < fd)){
 			stateChange[ANIMAL_S_FIGHT] += 8192 * (dist - fd);
 			return;
@@ -208,38 +169,25 @@ static void animalFightOrFlightDay(animal *e,int stateChange[16]){
 }
 
 static void animalFightOrFlightNight(animal *e,int stateChange[16]){
-	character *cChar;
-	if(animalNoAggro){return;}
-	float dist = animalClosestPlayer(e,&cChar);
-
 	if(e->state == ANIMAL_S_FIGHT){
-		if(cChar == NULL){
-			stateChange[ANIMAL_S_LOITER] += 1<<30;
-			return;
-		}else{
-			stateChange[ANIMAL_S_LOITER] += dist * 2048.f;
-			vec caNorm = vecNorm(vecNew(cChar->pos.x - e->pos.x,0.f, cChar->pos.z - e->pos.z));
-			vec caVel  = vecMulS(caNorm,0.03f);
-			vec caRot  = vecVecToDeg(caNorm);
+		if(e->target == 0){e->target = animalFindFOFTarget(e);}
+		if(e->target != 0){
+			const vec tpos = beingGetPos(e->target);
+			const float dist = vecMag(vecSub(tpos,e->pos));
 
-			e->gvel.x  = caVel.x;
-			e->gvel.y  = 0.f;
-			e->gvel.z  = caVel.z;
-			e->rot.yaw = -caRot.yaw;
-
-			if((dist < 2.5f)){
-				e->gvel.x = 0;
-				e->gvel.z = 0;
-				if(rngValA(7)==0){
-					int dmg = 1;
-					being bc = characterGetBeing(cChar);
-					if(bc == 0){return;}
-					if(rngValM(8)==0){dmg = 4;}
-					msgBeingDamage(beingID(bc),dmg,2,3.f,bc,-1,e->pos);
-				}
+			if((dist < 2.5f) && (rngValA(7)==0)){
+				int dmg = 1;
+				if(rngValM(8)==0){dmg = 4;}
+				beingDamage(e->target,dmg,2,3.f,animalGetBeing(e),e->pos);
+			}else if(dist > 40){
+				stateChange[ANIMAL_S_LOITER] += (dist-40)*2048;
 			}
+		}else{
+			stateChange[ANIMAL_S_LOITER] += 8192;
 		}
 	}else{
+		character *cChar;
+		float dist = animalClosestPlayer(e,&cChar);
 		float fd = 24.f;
 		if(e->state == ANIMAL_S_SLEEP){fd = 3.f;}
 		if(e->state == ANIMAL_S_PLAYING){fd = 15.f;}
@@ -331,24 +279,6 @@ static void animalDoPoop(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_FLEE] += 256;
 }
 
-static void animalPregnancy(animal *e,int stateChange[16]){
-	if(e->flags & ANIMAL_MALE){e->pregnancy = -1; return;}
-	if(e->pregnancy  <  0)    {return;}
-	if(e->age        < 21)    {e->pregnancy = -1;}
-
-	if(e->pregnancy == 0){
-		animal *cAnim = animalNew(vecNew(e->pos.x+((rngValf()*2.f)-1.f),e->pos.y+.4f,e->pos.z+((rngValf()*2.f)-1.f)),e->type,-1);
-		if(cAnim != NULL){
-			cAnim->age = 1;
-		}
-		e->hunger   -= 8;
-		e->sleepy    = MAX(8,e->sleepy-24);
-		e->pregnancy = -1;
-		animalDoPoop(e,stateChange);
-	}
-	(void)stateChange;
-}
-
 static void animalPoop(animal *e,int stateChange[16]){
 	if(e->hunger < 24){return;}
 	if(e->hunger < 48){
@@ -404,6 +334,21 @@ static void animalStateChange(animal *e,int stateChange[16]){
 	e->state = max;
 }
 
+void animalSearchPrey(animal *e,int stateChange[16]){
+	(void)stateChange;
+	if((e->state != ANIMAL_S_LOITER) && (e->state != ANIMAL_S_PLAYING) && (e->state != ANIMAL_S_FOOD_SEARCH)){return;}
+	if(e->hunger > 70) {return;}
+
+	float d;
+	being b  = beingListGetClosest(beingListGet(e->pos.x,e->pos.y,e->pos.z), animalGetBeing(e), BEING_ANIMAL, &d);
+	if(d > 32.f){return;}
+	animal *oa = animalGetByBeing(b);
+	if((oa == NULL) || (oa->type != 1)){return;}
+
+	e->state  = ANIMAL_S_HUNT;
+	e->target = b;
+}
+
 void animalThinkWerebunny(animal *e){
 	static int stateChange[16];
 	for(uint i=0;i<16;i++){
@@ -413,15 +358,14 @@ void animalThinkWerebunny(animal *e){
 	stateChange[ANIMAL_S_FLEE]  = 0;
 
 	e->stateTicks++;
-	animalCheckHeat       (e,stateChange);
 	animalCheckSuffocation(e);
 	animalFightOrFlight   (e,stateChange);
 	animalAgeing          (e,stateChange);
 	animalSleepyness      (e,stateChange);
 	animalHunger          (e,stateChange);
-	animalPregnancy       (e,stateChange);
 	animalPoop            (e,stateChange);
 	animalSocialDistancing(e,stateChange);
+	animalSearchPrey      (e,stateChange);
 
 	int tcat = gtimeGetTimeCat();
 	if((tcat == TIME_NIGHT) || (tcat == TIME_EVENING)){
@@ -441,7 +385,6 @@ void animalThinkWerebunny(animal *e){
 		animalSFlee(e,stateChange);
 		break;
 	case ANIMAL_S_HEAT:
-		animalSHeat(e,stateChange);
 		break;
 	case ANIMAL_S_SLEEP:
 		animalSSleep(e,stateChange);
@@ -457,6 +400,9 @@ void animalThinkWerebunny(animal *e){
 		break;
 	case ANIMAL_S_FIGHT:
 		animalSFight(e,stateChange);
+		break;
+	case ANIMAL_S_HUNT:
+		animalSHunt(e,stateChange);
 		break;
 	}
 	animalStateChange(e,stateChange);

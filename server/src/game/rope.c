@@ -3,6 +3,8 @@
 #include "../network/server.h"
 #include "../../../common/src/network/messages.h"
 
+uint ropesUpdated = 0;
+
 int ropeNewID(){
 	for(uint i=256;i<512;i++){
 		if(ropeList[i].a == 0){return i;}
@@ -11,7 +13,6 @@ int ropeNewID(){
 	return -1;
 }
 
-#include <stdio.h>
 void ropeUpdateP(uint c, const packet *p){
 	(void)c;
 	const uint i = p->v.u16[0];
@@ -21,14 +22,17 @@ void ropeUpdateP(uint c, const packet *p){
 	r->a      = p->v.u32[1];
 	r->b      = p->v.u32[2];
 	r->length = p->v.f  [3];
+	msgRopeUpdate(-1, i, &ropeList[i]);
 }
 
 void ropeSyncAll(){
+	/*
 	for(uint i=0;i<512;i++){
 		if(!(ropeList[i].flags & ROPE_DIRTY)){continue;}
 		msgRopeUpdate(-1, i, &ropeList[i]);
 		ropeList[i].flags &= ~ROPE_DIRTY;
 	}
+	*/
 }
 
 void ropeDelBeing(const being t){
@@ -37,6 +41,7 @@ void ropeDelBeing(const being t){
 			ropeList[i].flags = 0;
 			ropeList[i].a     = 0;
 			ropeList[i].b     = 0;
+			msgRopeUpdate(-1, i, &ropeList[i]);
 		}
 	}
 }

@@ -259,19 +259,40 @@ lVal *wwlnfDie(lClosure *c, lVal *v){
 }
 
 lVal *wwlnfNewAnim(lClosure *c, lVal *v){
-	int args[5] = {1,1,-1,-1,-1};
-	for(int i=0;i<5;i++){
-		if(v == NULL){return lValNil();}
+	vec pos;
+	uint amount = 1;
+	uint type = 1;
+
+	for(int i=0;i<3;i++){
+		if(v == NULL){
+			if(i == 0){
+				return lValNil();
+			}else{
+				break;
+			}
+		}
 		lVal *t = lEval(c,v);
 		v = v->next;
-		if(t->type != ltInt){return lValNil();}
-		args[i] = t->vInt;
+		switch(i){
+		case 0:
+			t = lnfVec(c,t);
+			pos = t->vVec;
+			break;
+		case 1:
+			t = lnfInt(c,t);
+			type = t->vInt;
+			break;
+		case 2:
+			t = lnfInt(c,t);
+			amount = t->vInt;
+			break;
+		}
 	}
-	vec cpos = vecNew(args[2],args[3],args[4]);
-	for(int i=0;i<args[1];i++){
-		animalNew(cpos,args[0],-1);
+	if(type <= 0){return lValNil();}
+	for(uint i=0;i<amount;i++){
+		animalNew(pos,type,-1);
 	}
-	return lValInt(args[1]);
+	return lValInt(amount);
 }
 
 lVal *wwlnfSetAnim(lClosure *c, lVal *v){

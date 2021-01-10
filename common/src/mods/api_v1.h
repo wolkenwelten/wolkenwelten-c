@@ -73,6 +73,7 @@ void grenadeNew    (const vec pos, const vec rot, float pwr, int cluster, float 
 void beamblast     (character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult);
 void projectileNew (const vec pos, const vec rot, being target, being source, uint style, float speed);
 void projectileNewC(const character *c, being target, uint style);
+void fxBlockBreak  (const vec pos, u8 b, u8 cause);
 
 bool characterHP             (      character *c, int addhp);
 int  characterGetHP          (const character *c);

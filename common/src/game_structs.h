@@ -164,7 +164,7 @@ typedef struct {
 	u16 nextFree;
 	u16 breathing;
 	u16 temp;
-	u8  clientOwner;
+	being target;
 
 	u64 clientPriorization;
 	u32 stateTicks;
@@ -186,6 +186,7 @@ typedef struct {
 #define ANIMAL_S_FOOD_SEARCH 5
 #define ANIMAL_S_EAT         6
 #define ANIMAL_S_FIGHT       7
+#define ANIMAL_S_HUNT        8
 
 struct hook {
 	entity       *ent;

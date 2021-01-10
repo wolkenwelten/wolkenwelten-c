@@ -17,49 +17,6 @@
 #include <stdio.h>
 #include <string.h>
 
-void animalDmgPacket(u8 source, const packet *p ){
-	const i16 hp        = p->v.u16[0];
-	const u16 cause     = p->v.u16[1];
-	const being target  = p->v.u32[1];
-	const being culprit = beingCharacter(source);
-	if(beingType(target) != BEING_ANIMAL){return;}
-	const u16 i   = beingID(target);
-	if(i >= animalCount){return;}
-	animal *c = &animalList[i];
-
-	c->health -= hp;
-	if(c->health <= 0){
-		animalRDie(c);
-
-		animalDel(i);
-		return;
-	}
-	animalRHit(c);
-	if(cause == 2){
-		vec pos = vecNewP(&p->v.f[3]);
-		vec dis = vecNorm(vecSub(c->pos,pos));
-		c->vel = vecAdd(c->vel,vecMulS(dis,0.03f));
-	}
-	msgBeingGotHit(hp,cause,1.f,target,culprit);
-}
-
-static void animalEmptySync(u16 c){
-	packet *rp = &packetBuffer;
-	memset(rp->v.u8,0,16*4);
-	packetQueue(rp,30,16*4,c);
-}
-
-static void animalSyncInactive(u8 c, u16 i){
-	packet *rp = &packetBuffer;
-
-	rp->v.u8[ 0] = 0;
-
-	rp->v.u16[4] = i;
-	rp->v.u16[5] = animalCount;
-
-	packetQueue(rp,30,16*4,c);
-}
-
 static void animalServerSync(u8 c, u16 i){
 	if(i >= countof(animalList)){return;}
 	const animal *e = &animalList[i];

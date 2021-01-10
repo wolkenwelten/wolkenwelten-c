@@ -72,12 +72,13 @@ void msgPlaceBlock(u16 x, u16 y, u16 z, u8 b){
 	packetQueueToServer(p,3,2*4);
 }
 
-void msgMineBlock(u16 x, u16 y, u16 z, u8 b){
+void msgMineBlock(u16 x, u16 y, u16 z, u8 b, u8 cause){
 	packet *p = &packetBuffer;
 	p->v.u16[0] = x;
 	p->v.u16[1] = y;
 	p->v.u16[2] = z;
-	p->v.u16[3] = b;
+	p->v.u8[6]  = b;
+	p->v.u8[7]  = cause;
 	packetQueue(p,4,2*4,-1);
 }
 

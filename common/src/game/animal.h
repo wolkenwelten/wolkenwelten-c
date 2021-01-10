@@ -17,11 +17,15 @@ void        animalThink            (      animal *e);
 float       animalClosestAnimal    (const animal *e, animal **cAnim, int typeFilter, uint flagsMask, uint flagsCompare);
 float       animalClosestPlayer    (const animal *e, character **cChar);
 void        animalCheckSuffocation (      animal *e);
+void        animalCheckTarget      (      animal *e);
 void        animalRDie             (      animal *e);
-void        animalRHit             (      animal *e);
+void        animalRHit             (      animal *e, being culprit, u8 cause);
 void        animalRBurn            (      animal *e);
 void        animalSync             (u8 c, u16 i);
-void        animalDmgPacket        (u8 c, const packet *p);
+void        animalEmptySync        (u8 c);
+void        animalSyncInactive     (u8 c, u16 i);
+void        animalDoDamage         (animal *a,i16 hp, u8 cause, float knockbackMult, being culprit, const vec pos);
+being       animalFindFOFTarget    (const animal *e);
 
 void        animalUpdateAll        ();
 void        animalThinkAll         ();

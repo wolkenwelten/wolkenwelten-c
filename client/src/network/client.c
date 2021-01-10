@@ -175,7 +175,7 @@ void clientParsePacket(const packet *p){
 			fprintf(stderr,"Received a placeBlock packet from the server which should never happen.\n");
 			break;
 		case 4: // mineBlock
-			fxBlockBreak(vecNew(p->v.u16[0],p->v.u16[1],p->v.u16[2]),p->v.u16[3]);
+			fxBlockBreak(vecNew(p->v.u16[0],p->v.u16[1],p->v.u16[2]),p->v.u8[6],p->v.u8[7]);
 			break;
 		case 5: // Goodbye
 			fprintf(stderr,"Received a Goodbye packet from the server which should never happen.\n");

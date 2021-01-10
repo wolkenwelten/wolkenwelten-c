@@ -232,9 +232,9 @@ void bigchungusGenSpawn(bigchungus *c){
 }
 
 void bigchungusGenHugeSpawn(bigchungus *c){
-	for(int x=127;x<=129;x++){
-		for(int y=1;y<=8;y++){
-			for(int z=127;z<=129;z++){
+	for(int x=126;x<=130;x++){
+		for(int y=1;y<=32;y++){
+			for(int z=126;z<=130;z++){
 				if(c->chungi[x][y][z] == NULL){
 					c->chungi[x][y][z] = chungusNew(x,y,z);
 					chungusWorldGenLoad(c->chungi[x][y][z]);

@@ -130,6 +130,32 @@ void animalCheckForHillOrCliff(animal *e){
 	}
 }
 
+void animalChaseTarget(animal *e){
+	if(e->target == 0){return;}
+	const vec tpos   = beingGetPos(e->target);
+	const float dist = vecMag(vecSub(tpos,e->pos));
+	if(dist > 256.f){return;}
+
+	vec caNorm = vecNorm(vecNew(tpos.x - e->pos.x,0.f, tpos.z - e->pos.z));
+	vec caVel  = vecMulS(caNorm,0.03f);
+	vec caRot  = vecVecToDeg(caNorm);
+
+	e->gvel.y  = 0.f;
+	if(e->state == ANIMAL_S_FLEE){
+		e->gvel.x  = -caVel.x;
+		e->gvel.z  = -caVel.z;
+		e->rot.yaw =  caRot.yaw;
+	}else{
+		e->gvel.x  =  caVel.x;
+		e->gvel.z  =  caVel.z;
+		e->rot.yaw = -caRot.yaw;
+		if(dist < 1.5f){
+			e->gvel.x  = 0;
+			e->gvel.z  = 0;
+		}
+	}
+}
+
 int animalUpdate(animal *e){
 	int ret=0;
 	u32 col;
@@ -138,6 +164,7 @@ int animalUpdate(animal *e){
 	if(!vecInWorld(e->pos)){return 1;}
 	e->breathing += 5;
 	animalCheckForHillOrCliff(e);
+	animalChaseTarget(e);
 
 	/*
 	if(vecSum(vecAbs(e->gvel)) > 2.f){
@@ -247,6 +274,8 @@ const char *animalGetStateName(const animal *e){
 		return "Eat";
 	case ANIMAL_S_FIGHT:
 		return "Fight";
+	case ANIMAL_S_HUNT:
+		return "Hunt";
 	}
 }
 
@@ -316,6 +345,13 @@ void animalUpdateAll(){
 	PROFILE_STOP();
 }
 
+void animalCheckTarget(animal *e){
+	if(e->target == 0){return;}
+	if(!beingAlive(e->target)){
+		e->target = 0;
+	}
+}
+
 float animalClosestPlayer(const animal *e, character **cChar){
 	*cChar = NULL;
 	float ret = 4096.f;
@@ -361,6 +397,15 @@ void animalCheckSuffocation(animal *e){
 	}
 }
 
+being animalFindFOFTarget(const animal *e){
+	character *cChar;
+	float dist = animalClosestPlayer(e,&cChar);
+	if(dist < 32.f){
+		return characterGetBeing(cChar);
+	}
+	return 0;
+}
+
 void animalRDie(animal *e){
 	if(e->pos.y > 0.f){
 		switch(e->type){
@@ -380,10 +425,13 @@ void animalRDie(animal *e){
 	}
 }
 
-void animalRHit(animal *e){
+void animalRHit(animal *e, being culprit, u8 cause){
+	(void)cause;
+
 	if(fabsf(e->vel.y) < 0.001f){
 		e->vel.y = 0.03f;
 	}
+	e->target = culprit;
 	if(e->state == ANIMAL_S_FLEE || (e->flags & ANIMAL_AGGRESIVE)){
 		e->state = ANIMAL_S_FIGHT;
 		e->flags |= ANIMAL_AGGRESIVE;
@@ -505,7 +553,26 @@ void animalSync(u8 c, u16 i){
 	rp->v.f[14]  = e->grot.yaw;
 	rp->v.f[15]  = e->grot.pitch;
 
-	packetQueue(rp,30,16*4,c);
+	rp->v.u32[16] = e->target;
+
+	packetQueue(rp,30,17*4,c);
+}
+
+void animalEmptySync(u8 c){
+	packet *rp = &packetBuffer;
+	memset(rp->v.u8,0,17*4);
+	packetQueue(rp,30,17*4,c);
+}
+
+void animalSyncInactive(u8 c, u16 i){
+	packet *rp = &packetBuffer;
+
+	rp->v.u8[ 0] = 0;
+
+	rp->v.u16[4] = i;
+	rp->v.u16[5] = animalCount;
+
+	packetQueue(rp,30,17*4,c);
 }
 
 int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, being source){
@@ -527,4 +594,20 @@ int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, 
 		}
 	}
 	return hits;
+}
+
+void animalDoDamage(animal *a,i16 hp, u8 cause, float knockbackMult, being culprit, const vec pos){
+	(void)culprit;
+
+	a->health -= hp;
+	if(a->health <= 0){
+		animalRDie(a);
+		animalDel(animalList - a);
+		return;
+	}
+	animalRHit(a,culprit,cause);
+	vec dis = vecNorm(vecSub(a->pos,pos));
+	float knockback = 0.03f;
+	if(cause != 2){knockback = 0.01f;}
+	a->vel = vecAdd(a->vel,vecMulS(dis,knockback * knockbackMult));
 }

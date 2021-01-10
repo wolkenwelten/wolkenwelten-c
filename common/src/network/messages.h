@@ -11,7 +11,7 @@ void msgRequestChungus           (u8 x, u8 y, u8 z);
 void msgUnsubChungus             (u8 x, u8 y, u8 z);
 void msgDirtyChunk               (u16 x, u16 y, u16 z);
 void msgPlaceBlock               (u16 x, u16 y, u16 z, u8 b);
-void msgMineBlock                (u16 x, u16 y, u16 z, u8 b);
+void msgMineBlock                (u16 x, u16 y, u16 z, u8 b, u8 cause);
 void msgGoodbye                  ();
 void msgBlockMiningUpdate        (uint c, u16 x, u16 y, u16 z, i16 damage, u16 count, u16 i);
 void msgSendChungusComplete      (uint c, u8 x, u8 y, u8 z);

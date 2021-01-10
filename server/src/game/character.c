@@ -34,18 +34,6 @@ void characterDie(character *c){
 	characterInit(c);
 }
 
-void characterDmgPacket(uint c, const packet *p){
-	const i16   hp            = p->v.i16[0];
-	const  u8   cause         = p->v.u8[2];
-	const float knockbackMult = ((float)p->v.u8[3])/16.f;
-
-	const being target  = p->v.u32[1];
-	const being culprit = beingCharacter(c);
-
-	msgBeingGotHit(hp,cause,knockbackMult,target,culprit);
-	msgBeingDamage(beingID(target), hp, cause, knockbackMult,target, culprit, clients[c].c->pos);
-}
-
 int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 iteration, being source){
 	int hits = 0;
 	for(int i=0;i<32;i++){

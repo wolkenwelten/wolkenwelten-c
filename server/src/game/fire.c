@@ -166,7 +166,6 @@ void fireUpdate(fire *f){
 		return;
 	}
 
-
 	if(b == 0){
 		f->blockDmg = 0;
 		fireSpread(f);
@@ -174,7 +173,7 @@ void fireUpdate(fire *f){
 		const int maxhp = blockTypeGetFireHP(b);
 		f->blockDmg = MIN(maxhp,f->blockDmg + dmg);
 		if(f->blockDmg >= maxhp){
-			blockMiningMineBlock(f->x,f->y,f->z,b);
+			blockMiningBurnBlock(f->x,f->y,f->z,b);
 			f->blockDmg = 0;
 		}
 	}

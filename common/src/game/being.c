@@ -9,6 +9,7 @@
 #include "../game/hook.h"
 #include "../game/itemDrop.h"
 #include "../game/water.h"
+#include "../network/messages.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -266,6 +267,36 @@ float beingGetWeight(being b){
 		return 1.f;
 	default:
 		return 1.f;
+	}
+}
+
+void beingDamage(being b, i16 hp, u8 cause, float knockbackMult, being culprit, const vec pos){
+	if(!isClient){
+		msgBeingGotHit(hp,cause,knockbackMult,b,culprit);
+
+		switch(beingType(b)){
+		case BEING_CHARACTER:
+			return msgBeingDamage(beingID(b),hp,cause,knockbackMult,b,culprit,pos);
+		case BEING_ANIMAL:
+			return animalDoDamage(animalGetByBeing(b),hp,cause,knockbackMult,culprit,pos);
+		}
+	}else{
+		msgBeingDamage(beingID(b),hp,cause,knockbackMult,b,culprit,pos);
+	}
+}
+
+bool beingAlive(being b){
+	if(b == 0){return false;}
+	switch(beingType(b)){
+	default:
+		return true;
+	case BEING_ANIMAL: {
+		animal *a = animalGetByBeing(b);
+		if(a == NULL)     {return false;}
+		if(a->type == 0)  {return false;}
+		if(a->health <= 0){return false;}
+		return true;
+		}
 	}
 }
 
