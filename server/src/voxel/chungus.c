@@ -370,7 +370,7 @@ int chungusUpdateClient(chungus *c, uint p){
 	if( chungusIsUpdated(c,p))             { return 0; }
 	bool chungusUpdated = true;
 	bool fullUpdate = (clients[p].chnkUpdateIter & 0xFFF) == 0;
-	if(clients[p].chnkUpdateIter & 0x1){ return 0;}
+	if(clients[p].chnkUpdateIter & 0x3){ return 0;}
 
 	for(uint x=0;x<16;x++){
 	for(uint y=0;y<16;y++){

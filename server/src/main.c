@@ -1,6 +1,6 @@
 #include "main.h"
 
-#include "misc/command.h"
+#include "misc/lisp.h"
 #include "misc/options.h"
 #include "game/animal.h"
 #include "game/being.h"
@@ -148,7 +148,7 @@ void mainInit(){
 	beingListEntryInit();
 	chungusInit();
 	chunkInit();
-	initCommands();
+	lispInit();
 	savegameSave();
 
 	bigchungusInit(&world);

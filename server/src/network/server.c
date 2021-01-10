@@ -14,7 +14,7 @@
 #include "../game/time.h"
 #include "../game/water.h"
 #include "../game/weather.h"
-#include "../misc/command.h"
+#include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../network/server_ws.h"
 #include "../persistence/savegame.h"
