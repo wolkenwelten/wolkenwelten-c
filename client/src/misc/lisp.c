@@ -147,6 +147,7 @@ void lispInit(){
 	lispEvalNR("(define slows   (λ (a) (mst 16) (s (mst 16))))");
 	lispEvalNR("(define bulls   (λ (a) (mst 64) (s (mst 64))))");
 	lispEvalNR("(define morning (λ ( ) (s (morning))))");
+	lispEvalNR("(define night   (λ ( ) (s (night))))");
 
 }
 
