@@ -25,10 +25,8 @@ lVal *lispSEvalSym(u8 id){
 	return lValSym(buf);
 }
 
-void lispEvalNR(const char *str){
-	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
-		lEval(clRoot,sexpr);
-	}
+lVal *lispEvalNR(const char *str){
+	return lEval(clRoot,lParseSExprCS(str));
 }
 
 lVal *wwlnfSEval(lClosure *c, lVal *v){
@@ -109,16 +107,15 @@ lVal *wwlnfServerAdd(lClosure *c, lVal *v){
 	char *address = "localhost";
 	char *name = "localhost";
 
-	if(v != NULL){
-		lVal *t = lnfCat(c,lEval(c,v));
+	if((v != NULL) && (v->type == ltList)){
+		lVal *t = lnfCat(c,lEval(c,v->vList.car));
 		address = t->vString->buf;
-		v = v->next;
+		v = v->vList.cdr;
 	}
-	if(v != NULL){
-		lVal *t = lnfCat(c,lEval(c,v));
+	if((v != NULL) && (v->type == ltList)){
+		lVal *t = lnfCat(c,lEval(c,v->vList.car));
 		name = t->vString->buf;
 	}
-
 	serverListAdd(address,name);
 
 	return lValFloat(renderDistance);
@@ -158,10 +155,7 @@ void lispFree(){
 const char *lispEval(const char *str){
 	static char reply[4096];
 	memset(reply,0,sizeof(reply));
-	lVal *v = NULL;
-	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
-		v = lEval(clRoot,sexpr);
-	}
+	lVal *v = lEval(clRoot,lParseSExprCS(str));
 	lSPrintChain(v,reply,&reply[sizeof(reply)-1]);
 
 	int soff,slen,len = strnlen(reply,sizeof(reply)-1);

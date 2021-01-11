@@ -17,14 +17,17 @@ typedef struct {
 	};
 } lSymbol;
 
+typedef struct {
+	lVal *car,*cdr;
+} lCell;
+
 struct lVal {
-	u32 flags;
+	u8 flags;
 	lType type;
-	lVal *next;
 	union {
-		void         *vNil;
+		lVal         *vNA;
 		bool          vBool;
-		lVal         *vList;
+		lCell         vList;
 		int           vInt;
 		vec           vVec;
 		float         vFloat;
@@ -61,8 +64,11 @@ struct lCString {
 	};
 };
 
+#define foreach(n,v) for(lVal *n = (v);(n != NULL) && (n->type == ltList); n = n->vList.cdr)
+
 void      lInit             ();
 int       lMemUsage         ();
+void      lPrintError       (const char *format, ...);
 
 lClosure *lClosureAlloc     ();
 lClosure *lClosureNew       (lClosure *parent);
@@ -94,14 +100,18 @@ lVal     *lEval             (lClosure *c, lVal *v);
 lType     lTypecast         (lVal *a, lVal *b);
 
 lVal     *lValNil       ();
-lVal     *lValList      (lVal *v);
-lVal     *lValListS     (const char *s, lVal *v);
+lVal     *lCons         (lVal *car, lVal *cdr);
 lVal     *lValBool      (bool v);
 lVal     *lValInf       ();
 lVal     *lValInt       (int v);
 lVal     *lValFloat     (float v);
 lVal     *lValVec       (const vec v);
+lVal     *lValSymS      (const lSymbol s);
 lVal     *lValSym       (const char *s);
 lVal     *lValString    (const char *s);
 lVal     *lnfCat        (lClosure *c, lVal *v);
-lVal     *lValDup       (const lVal *v);
+lVal     *lValCopy      (lVal *dst, const lVal *src);
+
+static inline lVal *lValDup(const lVal *v){
+	return lValCopy(lValAlloc(),v);
+}

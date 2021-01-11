@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,23 +41,20 @@ void *loadFile(const char *filename,size_t *len){
 }
 
 void doRepl(lClosure *c){
-	static char buf[512];
+	static char str[4096];
 	lVal *lastlsym = lValSym("lastl");
 	lVal *lastl = lDefineClosureSym(c, lastlsym->vSymbol);
 	while(1){
 		printf("%sλ%s>%s ",ansiFG[1],ansiFG[12],ansiRS);
 		fflush(stdout);
-		if(fgets(buf,sizeof(buf),stdin) == NULL){
+		if(fgets(str,sizeof(str),stdin) == NULL){
 			printf("Bye!\n");
 			return;
 		}
-		lVal *v = NULL;
-		for(lVal *sexpr = lParseSExprCS(buf); sexpr != NULL; sexpr = sexpr->next){
-			v = lEval(c,sexpr);
-		}
+		lVal *v = lEval(c,lParseSExprCS(str));
 		lPrintChain(v);
 		lClosureGC();
-		lVal *tmp = lValString(buf);
+		lVal *tmp = lValString(str);
 		*lastl = *tmp;
 	}
 }
@@ -93,6 +91,13 @@ lVal *lnfPrint(lClosure *c, lVal *v){
 	return t;
 }
 
+void lPrintError(const char *format, ...){
+	va_list ap;
+	va_start(ap,format);
+	vfprintf(stderr,format,ap);
+	va_end(ap);
+}
+
 lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"print") == 0){return lValNativeFunc(lnfPrint);}
 	if(strcmp(s.c,"input") == 0){return lValNativeFunc(lnfInput);}
@@ -124,10 +129,7 @@ int main(int argc, char *argv[]){
 		if(!eval){
 			str = loadFile(argv[i],&len);
 		}
-		lVal *v = NULL;
-		for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
-			v = lEval(c,sexpr);
-		}
+		lVal *v = lEval(c,lParseSExprCS(str));
 		lPrintChain(v);
 		lClosureGC();
 

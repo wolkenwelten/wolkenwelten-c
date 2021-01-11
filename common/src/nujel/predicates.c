@@ -8,10 +8,12 @@
 #include <stdio.h>
 
 static int lValCompare(lClosure *c, lVal *v){
-	if(v       == NULL){return 2;}
-	if(v->next == NULL){return 2;}
-	lVal *a = lEval(c,v);
-	lVal *b = lEval(c,v->next);
+	if(v->vList.car == NULL){return 2;}
+	if(v->vList.cdr == NULL){return 2;}
+	lVal *a = lEval(c,v->vList.car);
+	v = v->vList.cdr;
+	if(v->vList.car == NULL){return 2;}
+	lVal *b = lEval(c,v->vList.car);
 	if(a       == NULL){return 2;}
 	if(b       == NULL){return 2;}
 	lType ct = lTypecast(a, b);
@@ -66,9 +68,7 @@ lVal *lnfGreaterEqual(lClosure *c, lVal *v){
 }
 
 lVal *lnfZero(lClosure *c, lVal *v){
-	lVal *a = lValDup(v);
-	a->next = lValInt(0);
-	const int cmp = lValCompare(c,a);
+	const int cmp = lValCompare(c,lCons(v,lValInt(0)));
 	if(cmp == 2){return lValBool(false);}
 	return lValBool(cmp == 0);
 }

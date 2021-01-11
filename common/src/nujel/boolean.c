@@ -10,8 +10,8 @@ lVal *lnfNot(lClosure *c, lVal *v){
 }
 
 lVal *lnfAnd(lClosure *c, lVal *v){
-	for(lVal *n = v;n != NULL;n = n->next){
-		lVal *a = lEval(c,n);
+	foreach(n,v){
+		lVal *a = lEval(c,n->vList.car);
 		if(a == NULL)        {return lValBool(false);}
 		if(a->type == ltNil) {return a;}
 		if(a->type != ltBool){continue;}
@@ -21,8 +21,8 @@ lVal *lnfAnd(lClosure *c, lVal *v){
 }
 
 lVal *lnfOr(lClosure *c, lVal *v){
-	for(lVal *n = v;n != NULL;n = n->next){
-		lVal *a = lEval(c,n);
+	foreach(n,v){
+		lVal *a = lEval(c,n->vList.car);
 		if(a == NULL)        {continue;}
 		if(a->type == ltNil) {continue;}
 		if(a->type != ltBool){return a;}

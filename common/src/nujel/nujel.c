@@ -35,7 +35,7 @@ void lInit(){
 
 	for(uint i=0;i<countof(lValBuf)-1;i++){
 		lValBuf[i].type = ltNoAlloc;
-		lValBuf[i].next = &lValBuf[i+1];
+		lValBuf[i].vNA  = &lValBuf[i+1];
 	}
 	lValFFree = &lValBuf[0];
 
@@ -57,7 +57,7 @@ void lInit(){
 
 lClosure *lClosureAlloc(){
 	if(lClosureFFree == NULL){
-		printf("lClosure OOM\n");
+		lPrintError("lClosure OOM\n");
 		return NULL;
 	}
 	lClosure *ret = lClosureFFree;
@@ -66,6 +66,7 @@ lClosure *lClosureAlloc(){
 	return ret;
 }
 void lClosureFree(lClosure *c){
+	if(c == NULL){return;}
 	c->parent = lClosureFFree;
 	c->data   = NULL;
 	lClosureFFree = c;
@@ -74,7 +75,7 @@ void lClosureFree(lClosure *c){
 
 lString *lStringAlloc(){
 	if(lStringFFree == NULL){
-		printf("lString OOM\n");
+		lPrintError("lString OOM\n");
 		return NULL;
 	}
 	lString *ret = lStringFFree;
@@ -91,20 +92,20 @@ void lStringFree(lString *s){
 
 lCString *lCStringAlloc(){
 	if(lCStringFFree == NULL){
-		printf("lCString OOM\n");
+		lPrintError("lCString OOM\n");
 		return NULL;
 	}
 	lCString *ret = lCStringFFree;
 	lCStringFFree = ret->next;
 	return ret;
 }
+
 void lCStringFree(lCString *s){
 	if(s == NULL){return;}
 	s->data = NULL;
 	s->next = lCStringFFree;
 	lCStringFFree = s;
 }
-
 
 lString *lStringNew(const char *str, unsigned int len){
 	lString *s = lStringAlloc();
@@ -126,14 +127,12 @@ lVal *lValString(const char *c){
 
 lVal *lValAlloc(){
 	if(lValFFree == NULL){
-		fprintf(stderr,"lVal OOM\n");
+		lPrintError("lVal OOM\n");
 		return NULL;
 	}
 	lVal *ret  = lValFFree;
-	lValFFree  = ret->next;
-	ret->vList = NULL;
-	ret->next  = NULL;
-	ret->flags = 0;
+	lValFFree  = ret->vNA;
+	ret->vNA   = NULL;
 	lValMax    = MAX(lValMax,(uint)(ret-lValBuf) + 1);
 	return ret;
 }
@@ -147,36 +146,25 @@ void lValFree(lVal *v){
 		break;
 	}
 	v->type   = ltNoAlloc;
-	v->next   = lValFFree;
+	v->vNA    = lValFFree;
 	v->flags  = 0;
 	lValFFree = v;
 }
-lVal *lValDup(const lVal *v){
-	lVal *ret = lValAlloc();
-	if(ret == NULL){return ret;}
-	*ret = *v;
-	if(ret->type == ltString){
-		ret->vString = lStringNew(ret->vString->data,ret->vString->len);
-	}else if(ret->type == ltCString){
-		ret->vString = lStringNew(ret->vString->data,(int) (ret->vString->bufEnd - ret->vString->data));
-	}
 
-	ret->next = NULL;
-	return ret;
-}
-
-void lValCopy(lVal *dst, const lVal *src){
-	if(dst == NULL){return;}
-	if(src == NULL){return;}
+lVal *lValCopy(lVal *dst, const lVal *src){
+	if(dst == NULL){return NULL;}
+	if(src == NULL){return NULL;}
 	*dst = *src;
 	if(dst->type == ltString){
 		dst->vString = lStringNew(src->vString->data,src->vString->len);
 	}else if(dst->type == ltCString){
 		dst->vString = lStringNew(src->vString->data,(int) (src->vString->bufEnd - src->vString->data));
+	}else if(dst->type == ltList){
+		dst->vList.car = lValDup(dst->vList.car);
+		dst->vList.cdr = lValDup(dst->vList.cdr);
 	}
-	dst->next = NULL;
+	return dst;
 }
-
 
 lVal *lValNil(){
 	lVal *ret = lValAlloc();
@@ -219,29 +207,27 @@ lVal *lValBool(bool v){
 	return ret;
 }
 
-lVal *lValSym(const char *s){
+lVal *lValSymS(const lSymbol s){
 	lVal *ret = lValAlloc();
 	if(ret == NULL){return ret;}
 	ret->type = ltSymbol;
-	ret->vSymbol.v[0] = 0;
-	ret->vSymbol.v[1] = 0;
-	strncpy(ret->vSymbol.c,s,sizeof(ret->vSymbol.c));
-	ret->vSymbol.c[sizeof(ret->vSymbol.c)-1] = 0;
+	memcpy(&ret->vSymbol,&s,sizeof(s));
 	return ret;
 }
-lVal *lValList(lVal *v){
-	lVal *ret  = lValAlloc();
-	if(ret == NULL){return ret;}
-	ret->type  = ltList;
-	ret->vList = v;
-	return ret;
+
+lVal *lValSym(const char *s){
+	lSymbol sym;
+	strncpy(sym.c,s,sizeof(sym.c)-1);
+	sym.c[sizeof(sym.c)-1] = 0;
+	return lValSymS(sym);
 }
-lVal *lValListS(const char *s, lVal *v){
-	lVal *ret = lValList(lValSym(s));
-	if(ret == NULL){return ret;}
-	if(ret->vList == NULL){return ret;}
-	ret->vList->next = v;
-	return ret;
+
+lVal *lCons(lVal *car, lVal *cdr){
+	lVal *v = lValAlloc();
+	v->type = ltList;
+	v->vList.car = car;
+	v->vList.cdr = cdr;
+	return v;
 }
 
 lClosure *lClosureNew(lClosure *parent){
@@ -249,6 +235,7 @@ lClosure *lClosureNew(lClosure *parent){
 	if(c == NULL){return NULL;}
 	c->parent = parent;
 	c->data = lValAlloc();
+	if(c->data == NULL){return NULL;}
 	c->data->type = ltNil;
 	return c;
 }
@@ -400,19 +387,14 @@ static lVal *lParse(lCString *s){
 		char c = *s->data;
 		lVal *t = NULL;
 		if((c == 0) || (c == ')') || (s->data >= s->bufEnd)){
-			if(v == NULL){
-				v = lValAlloc();
-				v->type = ltNil;
-			}
-			if(ret == NULL){ret = v;}
 			s->data++;
 			return ret;
 		}else if(c == '('){
 			s->data+=1;
-			t = lValList(lParse(s));
+			t = lParse(s);
 		}else if((c == '\'') && (s->data[1] == '(')){
-			s->data+=2;
-			t = lValListS("quote",lValList(lParse(s)));
+			s->data += 2;
+			t = lCons(lValSym("quote"),lParse(s));
 		}else if(c == '"'){
 			s->data++;
 			t = lParseString(s);
@@ -425,8 +407,8 @@ static lVal *lParse(lCString *s){
 		}else{
 			t = lParseSymbol(s);
 		}
-		if(v != NULL){v->next = t;}
-		if(ret == NULL){ret = t;}
+		t = lCons(t,NULL);
+		if(v != NULL){v->vList.cdr = t;}
 		v = t;
 	}
 }
@@ -454,59 +436,63 @@ void lPrintVal(lVal *v){
 	printf("%s\n",buf);
 }
 
-static lVal *lnfDef(lClosure *c, lVal *v){
+static lVal *lnfDefine(lClosure *c, lClosure *ec, lVal *v){
 	if(v == NULL)                {return lValNil();}
-	lVal *sym = v;
-	if(sym->type != ltSymbol)    {sym = lEval(c,sym);}
-	if(sym->type != ltSymbol)    {return lValNil();}
-	lVal *t = lDefineClosureSym(c,sym->vSymbol);
-	if(t == NULL)                {return lValNil();}
-	lVal *val = lEval(c,v->next);
-	if(val == NULL){return t;}
-	lValCopy(t,val);
-	return t;
+	if(v->type == ltSymbol){
+		return lDefineClosureSym(c,v->vSymbol);
+	}else if(v->type == ltList){
+		lVal *sym = v->vList.car;
+		if(sym->type != ltSymbol)    {sym = lEval(c,sym);}
+		if(sym->type != ltSymbol)    {return lValNil();}
+		lVal *t = lDefineClosureSym(c,sym->vSymbol);
+		if(t == NULL)                {return lValNil();}
+		lVal *val = lEval(ec,v->vList.cdr);
+		if(val != NULL){lValCopy(t,val);}
+		return t;
+	}
+	return lValNil();
+}
+
+static lVal *lnfDef(lClosure *c, lVal *v){
+	return lnfDefine(c,c,v);
 }
 
 static lVal *lnfSet(lClosure *c, lVal *v){
 	if(v == NULL)                {return lValNil();}
-	lVal *sym = v;
+	if(v->type != ltList)        {return lValNil();}
+	lVal *sym = v->vList.car;
 	if(sym->type != ltSymbol)    {sym = lEval(c,sym);}
 	if(sym->type != ltSymbol)    {return lValNil();}
 	lVal *t = lResolveClosureSym(c,sym->vSymbol);
 	if(t == NULL)                {return lValNil();}
-	lVal *val = lEval(c,v->next);
+	lVal *val = lEval(c,v->vList.cdr);
 	if(val == NULL){return t;}
 	lValCopy(t,val);
 	return t;
 }
 
 static lVal *lnfCl(lClosure *c, lVal *v){
-	if(c == NULL)       {return lValNil();}
-	if(v == NULL)       {return c->data;}
-	if(v->next == NULL) {return c->data;}
-	lVal *t = v->next;
-	if(t->type == ltSymbol){t = lResolveSym(c,t->vSymbol);}
-	if(t->type == ltInt){
-		if(t->vInt > 0){
-			t = lValDup(t);
-			t->vInt--;
-			return lnfCl(c->parent,v);
-		}
+	if(c == NULL){return lValNil();}
+	if(v == NULL){return c->data;}
+	lVal *t = lnfInt(c,lEval(c,v->vList.car));
+	if((t != NULL) && (t->type == ltInt) && (t->vInt > 0)){
+		t = lValDup(t);
+		t->vInt--;
+		return lnfCl(c->parent,v);
 	}
 	return c->data;
 }
 
 static lVal *lnfLambda(lClosure *c, lVal *v){
 	lClosure *cl = lClosureNew(c);
-	if(cl == NULL){return NULL;}
-	cl->text  = v->next;
-	if(cl->text == NULL){return NULL;}
+	if((cl == NULL) || (v == NULL) || (v->vList.car == NULL) || (v->vList.cdr == NULL)){return NULL;}
+	cl->text = v->vList.cdr;
 	lVal *ret = lValAlloc();
 	ret->type = ltLambda;
 	ret->vLambda = cl;
 
-	for(lVal *n = v->vList;n != NULL; n = n->next){
-		if(n->type != ltSymbol){continue;}
+	foreach(n,v->vList.car){
+		if(n->vList.car->type != ltSymbol){continue;}
 		lVal *t = lDefineClosureSym(cl,n->vSymbol);
 		(void)t;
 	}
@@ -516,7 +502,7 @@ static lVal *lnfLambda(lClosure *c, lVal *v){
 
 static lVal *lnfQuote(lClosure *c, lVal *v){
 	(void)c;
-	return v;
+	return v->vList.car;
 }
 
 static lVal *lnfMem(lClosure *c, lVal *v){
@@ -529,19 +515,11 @@ static lVal *lnfLet(lClosure *c, lVal *v){
 	if(v == NULL)          {return lValNil();}
 	if((v->type != ltList)){return lValNil();}
 	lClosure *nc = lClosureNew(c);
-	for(lVal *n = v->vList; n != NULL; n = n->next){
-		if(n->type == ltSymbol){
-			lDefineClosureSym(nc,n->vSymbol);
-		}else if(n->type == ltList){
-			if(n->vList == NULL)          {continue;}
-			if(n->vList->type != ltSymbol){continue;}
-			lVal *t = lDefineClosureSym(nc,n->vList->vSymbol);
-			lVal *arg = lEval(c,n->vList->next);
-			lValCopy(t,arg);
-		}
+	foreach(n,v->vList.car){
+		lnfDefine(c,nc,v);
 	}
 	lVal *ret = NULL;
-	for(lVal *n = v->next;n != NULL;n = n->next){
+	foreach(n,v->vList.cdr){
 		ret = lEval(nc,n);
 	}
 	if(ret == NULL){ret = lValNil();}
@@ -550,32 +528,33 @@ static lVal *lnfLet(lClosure *c, lVal *v){
 
 static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
 	if(lambda == NULL){
-		fprintf(stderr,"lLambda: NULL\n");
-		return lValNil();
+		lPrintError("lLambda: NULL\n");
+		return NULL;
 	}
 	lVal *vn = v;
 	lClosure *tmpc = lClosureNew(lambda);
-	for(lVal *n = lambda->data; n != NULL; n = n->next){
-		if(n->type != ltList){continue;}
-		lVal *nn = n->vList;
-		if(nn->type != ltSymbol){continue;}
-		lVal *lv = lDefineClosureSym(tmpc,nn->vSymbol);
-		lVal *t = lEval(c,vn);
-		if(t != NULL){*lv = *t;}
-		if(vn != NULL){vn = vn->next;}
+	foreach(n,lambda->data){
+		lVal *nn = n->vList.car;
+		if(nn->type != ltList)             {continue;}
+		if(nn->vList.car != NULL)          {continue;}
+		if(nn->vList.car->type != ltSymbol){continue;}
+		lVal *lv = lDefineClosureSym(tmpc,nn->vList.car->vSymbol);
+		lVal *t  = lEval(c,vn);
+		if(t  != NULL){*lv = *t;}
+		if(vn != NULL){vn = vn->vList.cdr;}
 	}
 
 	lVal *ret = NULL;
-	for(lVal *n = lambda->text;n != NULL;n = n->next){
+	foreach(n,lambda->text){
 		ret = lEval(tmpc,n);
 	}
-	lClosureFree(tmpc);
 	if(ret == NULL){ret = lValNil();}
 	return ret;
 }
 
 lVal *lValNativeFunc(lVal *(*func)(lClosure *,lVal *)){
 	lVal *v = lValAlloc();
+	if(v == NULL){return NULL;}
 	v->type = ltNativeFunc;
 	v->vNativeFunc = func;
 	return v;
@@ -592,45 +571,43 @@ lVal *lClosureAddNF(lClosure *c, const char *sym, lVal *(*func)(lClosure *,lVal 
 
 static lVal *lnfCond(lClosure *c, lVal *v){
 	if(v == NULL){return lValNil();}
-	for(lVal *n = v;n != NULL;n = n->next){
-		if(n->type != ltList){continue;}
-		lVal *t = lEval(c,n->vList);
-		if((t == NULL) || (n == NULL))        {continue;}
-		if( t->type == ltNil)                 {continue;}
+	foreach(n,v){
+		if(n->type != ltList)                 {continue;}
+		if(n->vList.car == NULL)              {continue;}
+		if(n->vList.car->type != ltList)      {continue;}
+		lVal *t = lEval(c,n->vList.car->vList.car);
+		if(t == NULL)                         {continue;}
+		if(t->type == ltNil)                  {continue;}
 		if((t->type == ltBool) && (!t->vBool)){continue;}
-		for(lVal *block = n->vList;block != NULL;block = block->next){
-			t = lEval(c,block);
-			if(block->next == NULL){return t;}
-		}
+		return lEval(c,n->vList.car->vList.cdr);
 	}
 	return lValNil();
 }
 
 static lVal *lnfIf(lClosure *c, lVal *v){
-	if(v == NULL)      {return lValNil();}
-	lVal *pred = lEval(c,v);
-	if(pred == NULL)   {return lValNil();}
-	if(v->next == NULL){return lValNil();}
+	if(v == NULL)         {return lValNil();}
+	if(v->type != ltList) {return lValNil();}
+	lVal *pred = lEval(c,v->vList.car);
+	if(pred == NULL)      {return lValNil();}
+	v = v->vList.cdr;
+	if(v == NULL)         {return lValNil();}
+
 	if((pred->type == ltNil) || ((pred->type == ltBool) && (pred->vBool == false))){
-		if(v->next->next == NULL){return lValNil();}
-		return lEval(c,v->next->next);
+		v = v->vList.cdr;
 	}
-	return lEval(c,v->next);
+
+	return lEval(c,v->vList.car);
 }
 
 static lVal *lnfWhen(lClosure *c, lVal *v){
-	if(v == NULL)      {return lValNil();}
-	lVal *pred = lEval(c,v);
-	if(pred == NULL)   {return lValNil();}
-	if(v->next == NULL){return lValNil();}
+	if(v == NULL)         {return lValNil();}
+	if(v->type != ltList) {return lValNil();}
+	lVal *pred = lEval(c,v->vList.car);
+	if(pred == NULL)      {return lValNil();}
 	if((pred->type == ltNil) || ((pred->type == ltBool) && (pred->vBool == false))){
 		return lValNil();
 	}
-	lVal *ret = NULL;
-	for(lVal *sexpr = v->next; sexpr != NULL; sexpr = sexpr->next){
-		ret = lEval(c,sexpr);
-	}
-	return ret;
+	return lEval(c,v->vList.cdr);
 }
 
 lVal *lResolveNativeSymBuiltin(const lSymbol s){
@@ -710,42 +687,36 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 
 lVal *lDefineClosureSym(lClosure *c,const lSymbol s){
 	if(c == NULL){return NULL;}
-	lVal *v;
-	for(v = c->data;v->next != NULL;v = v->next){
-		if(v->type != ltList)               {continue;}
-		if(v->vList == NULL)                {continue;}
-		if(v->vList->type != ltSymbol)      {continue;}
-		if(v->vList->vSymbol.v[0] != s.v[0]){continue;}
-		if(v->vList->vSymbol.v[1] != s.v[1]){continue;}
+	lVal *cdr = NULL;
+	foreach(v,c->data){
+		cdr = v;
+		const lVal *n = v->vList.car;
+		if(n == NULL)                  {continue;}
+		if(n->type != ltList)          {continue;}
+		const lVal *sym = n->vList.car;
+		if(sym->type != ltSymbol)      {continue;}
+		if(sym->vSymbol.v[0] != s.v[0]){continue;}
+		if(sym->vSymbol.v[1] != s.v[1]){continue;}
 		return NULL;
 	}
-	if(v == NULL){return NULL;}
-	v->next = lValNil();
-	v->type = ltList;
-	v->vList = lValAlloc();
-	if(v->vList == NULL){
-		v->vList = NULL;
-		return NULL;
-	}
-	v->vList->type    = ltSymbol;
-	v->vList->vSymbol = s;
-	v->vList->next    = lValNil();
-	if(v->vList->next == NULL){
-		v->vList = NULL;
-		return NULL;
-	}
-	return v->vList->next;
+	if(cdr == NULL){return NULL;}
+	lVal *t = lCons(lValSymS(s),lValNil());
+	if(t == NULL){return NULL;}
+	cdr->vList.cdr = lCons(t,NULL);
+	return t->vList.cdr;
 }
 
 lVal *lResolveClosureSym(lClosure *c, const lSymbol s){
 	if(c == NULL){return NULL;}
-	for(lVal *v = c->data;v != NULL;v = v->next){
-		if(v->type != ltList)               {continue;}
-		if(v->vList == NULL)                {continue;}
-		if(v->vList->type != ltSymbol)      {continue;}
-		if(v->vList->vSymbol.v[0] != s.v[0]){continue;}
-		if(v->vList->vSymbol.v[1] != s.v[1]){continue;}
-		return v->vList->next;
+	foreach(v,c->data){
+		const lVal *n = v->vList.car;
+		if(n == NULL)                  {continue;}
+		if(n->type != ltList)          {continue;}
+		const lVal *sym = n->vList.car;
+		if(sym->type != ltSymbol)      {continue;}
+		if(sym->vSymbol.v[0] != s.v[0]){continue;}
+		if(sym->vSymbol.v[1] != s.v[1]){continue;}
+		return n->vList.cdr;
 	}
 	return lResolveClosureSym(c->parent,s);
 }
@@ -761,19 +732,29 @@ lVal *lResolveSym(lClosure *c, const lSymbol s){
 
 lVal *lEval(lClosure *c, lVal *v){
 	lVal *ret = v;
+	if(c == NULL){return NULL;}
 	if(v == NULL){return NULL;}
+
 	if(v->type == ltSymbol){
-		ret = lResolveSym(c,v->vSymbol);
+		return lResolveSym(c,v->vSymbol);
 	} else if(v->type == ltList){
-		ret = lEval(c,v->vList);
-		if(ret == NULL){return NULL;}
-		if(ret->type == ltNativeFunc){
-			ret = ret->vNativeFunc(c,v->vList->next);
-		}else if(ret->type == ltLambda){
-			ret = lLambda(c,v->vList->next,ret->vLambda);
+		ret = lEval(c,v->vList.car);
+
+		if(ret != NULL){
+			if(ret->type == ltNativeFunc){
+				ret = ret->vNativeFunc(c,v->vList.cdr);
+			}else if(ret->type == ltLambda){
+				ret = lLambda(c,v->vList.cdr,ret->vLambda);
+			}
 		}
+
+		if(v->vList.cdr != NULL){
+			return lEval(c,v->vList.cdr);
+		}
+		return ret;
+	}else{
+		return v;
 	}
-	return ret;
 }
 
 int lMemUsage(){
@@ -786,12 +767,14 @@ int lMemUsage(){
 }
 
 static void lValGCMark(lVal *sv){
-	for(lVal *v = sv;v != NULL;v = v->next){
+	foreach(v,sv){
 		v->flags |= lfMarked;
-		if(v->type == ltList)   {lValGCMark(v->vList);}
-		if(v->type == ltLambda) {
-			lValGCMark(v->vLambda->data);
-			lValGCMark(v->vLambda->text);
+		lVal *car = v->vList.car;
+		if(car == NULL){continue;}
+		if(car->type == ltList)   {lValGCMark(car);}
+		if(car->type == ltLambda) {
+			lValGCMark(car->vLambda->data);
+			lValGCMark(car->vLambda->text);
 		}
 	}
 }

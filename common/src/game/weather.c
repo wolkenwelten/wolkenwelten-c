@@ -25,6 +25,8 @@ void weatherInit(){
 void weatherUpdateAll(){
 	static uint calls = 0;
 	PROFILE_START();
+	cloudDensityMin  = MAX(128,cloudDensityMin);
+	cloudGDensityMin = MAX(128,cloudGDensityMin);
 
 	if(!isClient && (rngValA((1<<18)-1) == 0)){
 		windGVel   = vecMulS(vecRng(),1.f/256.f);
