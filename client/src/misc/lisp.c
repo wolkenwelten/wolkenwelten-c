@@ -13,11 +13,19 @@
 #include "../../../common/src/nujel/string.h"
 
 #include <ctype.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
 lClosure *clRoot;
 u8 SEvalID;
+
+void lPrintError(const char *format, ...){
+	va_list ap;
+	va_start(ap,format);
+	vfprintf(stderr,format,ap);
+	va_end(ap);
+}
 
 lVal *lispSEvalSym(u8 id){
 	static char buf[8];
@@ -33,7 +41,7 @@ lVal *wwlnfSEval(lClosure *c, lVal *v){
 	(void)c;
 	static char buf[1024];
 	memset(buf,0,sizeof(buf));
-	lSPrintChain(v,buf,&buf[sizeof(buf)-1]);
+	lSPrintVal(v,buf,&buf[sizeof(buf)-1]);
 	if(++SEvalID == 0){++SEvalID;}
 	msgLispSExpr(-1,SEvalID,buf);
 	return lispSEvalSym(SEvalID);
@@ -156,7 +164,7 @@ const char *lispEval(const char *str){
 	static char reply[4096];
 	memset(reply,0,sizeof(reply));
 	lVal *v = lEval(clRoot,lParseSExprCS(str));
-	lSPrintChain(v,reply,&reply[sizeof(reply)-1]);
+	lSPrintVal(v,reply,&reply[sizeof(reply)-1]);
 
 	int soff,slen,len = strnlen(reply,sizeof(reply)-1);
 	for(soff = 0;    isspace(reply[soff]) || (reply[soff] == '"');soff++){}

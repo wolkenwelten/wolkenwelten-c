@@ -22,6 +22,7 @@
 #include "../../../common/src/nujel/arithmetic.h"
 #include "../../../common/src/nujel/string.h"
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -29,6 +30,13 @@
 char replyBuf[256];
 lClosure *clRoot;
 
+
+void lPrintError(const char *format, ...){
+	va_list ap;
+	va_start(ap,format);
+	vfprintf(stderr,format,ap);
+	va_end(ap);
+}
 
 static lVal *wwlnfUpdateAll(lClosure *c, lVal *v){
 	(void)c;(void)v;
@@ -91,7 +99,9 @@ static lVal *wwlnfSetB(lClosure *c, lVal *v){
 
 	for(int i=0;i<2;i++){
 		if(v == NULL){return lValNil();}
-		lVal *t = lEval(c,v);
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
 		switch(i){
 		case 0:
 			t = lnfVec(c,t);
@@ -102,7 +112,6 @@ static lVal *wwlnfSetB(lClosure *c, lVal *v){
 			b = t->vInt;
 			break;
 		}
-		v = v->next;
 	}
 
 	worldSetB(pos.x,pos.y,pos.z,b);
@@ -110,7 +119,7 @@ static lVal *wwlnfSetB(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfGetB(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
+	lVal *t = lEval(c,v->vList.car);
 	if(t == NULL){return lValInt(0);}
 	t = lnfVec(c,v);
 	if(t == NULL){return lValInt(0);}
@@ -123,8 +132,9 @@ static lVal *wwlnfBox(lClosure *c, lVal *v){
 
 	for(int i=0;i<3;i++){
 		if(v == NULL){return lValNil();}
-		lVal *t = lEval(c,v);
-		v = v->next;
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
 		switch(i){
 		case 0:
 		case 1:
@@ -145,8 +155,9 @@ static lVal *wwlnfMBox(lClosure *c, lVal *v){
 	vec arg[2] = {vecNOne(),vecOne()};
 	for(int i=0;i<2;i++){
 		if(v == NULL){return lValNil();}
-		lVal *t = lEval(c,v);
-		v = v->next;
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
 		t = lnfVec(c,v);
 		arg[i] = t->vVec;
 		break;
@@ -162,8 +173,9 @@ static lVal *wwlnfSphere(lClosure *c, lVal *v){
 
 	for(int i=0;i<3;i++){
 		if(v == NULL){return lValNil();}
-		lVal *t = lEval(c,v);
-		v = v->next;
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
 		switch(i){
 		case 0:
 			t = lnfVec(c,t);
@@ -184,13 +196,14 @@ static lVal *wwlnfSphere(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfMSphere(lClosure *c, lVal *v){
-	vec pos;
-	float r;
+	vec pos = vecNOne();
+	float r = 4.f;
 
 	for(int i=0;i<2;i++){
 		if(v == NULL){return lValNil();}
-		lVal *t = lEval(c,v);
-		v = v->next;
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
 		switch(i){
 		case 0:
 			t = lnfVec(c,t);
@@ -215,8 +228,9 @@ static lVal *wwlnfGive(lClosure *c, lVal *v){
 	args[2] = pid->vInt;
 	for(int i=0;i<3;i++){
 		if(v == NULL){break;}
-		lVal *t = lEval(c,v);
-		v = v->next;
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
 		if(t->type != ltInt){break;}
 		args[i] = t->vInt;
 	}
@@ -232,8 +246,9 @@ static lVal *wwlnfDmg(lClosure *c, lVal *v){
 	args[1] = pid->vInt;
 	for(int i=0;i<2;i++){
 		if(v == NULL){break;}
-		lVal *t = lEval(c,v);
-		v = v->next;
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
 		if(t->type != ltInt){break;}
 		args[i] = t->vInt;
 	}
@@ -249,8 +264,9 @@ static lVal *wwlnfDie(lClosure *c, lVal *v){
 	args[0] = pid->vInt;
 	for(int i=0;i<1;i++){
 		if(v == NULL){break;}
-		lVal *t = lEval(c,v);
-		v = v->next;
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
 		if(t->type != ltInt){break;}
 		args[i] = t->vInt;
 	}
@@ -271,8 +287,9 @@ static lVal *wwlnfNewAnim(lClosure *c, lVal *v){
 				break;
 			}
 		}
-		lVal *t = lEval(c,v);
-		v = v->next;
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
 		switch(i){
 		case 0:
 			t = lnfVec(c,t);
@@ -299,8 +316,9 @@ static lVal *wwlnfSetAnim(lClosure *c, lVal *v){
 	int args[6] = {-1,-1,-1,-1,-2,-1};
 	for(int i=0;i<6;i++){
 		if(v == NULL){break;}
-		lVal *t = lEval(c,v);
-		v = v->next;
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
 		if(t->type != ltInt){continue;}
 		args[i] = t->vInt;
 	}
@@ -324,8 +342,9 @@ static lVal *wwlnfTp(lClosure *c, lVal *v){
 	uint playerid = pid->vInt;
 	for(int i=0;i<2;i++){
 		if(v == NULL){break;}
-		lVal *t = lEval(c,v);
-		v = v->next;
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
 		switch(i){
 		case 0:
 			t = lnfVec(c,t);
@@ -354,8 +373,9 @@ static lVal *wwlnfWaterNew(lClosure *c, lVal *v){
 
 	for(int i=0;i<2;i++){
 		if(v == NULL){break;}
-		lVal *t = lEval(c,v);
-		v = v->next;
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
 		switch(i){
 		case 0:
 			t = lnfVec(c,t);
@@ -372,7 +392,7 @@ static lVal *wwlnfWaterNew(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfNoAggro(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
+	lVal *t = lEval(c,v->vList.car);
 	if(t != NULL){
 		bool na = true;
 		switch(t->type){
@@ -388,7 +408,7 @@ static lVal *wwlnfNoAggro(lClosure *c, lVal *v){
 
 static lVal *wwlnfCDen(lClosure *c, lVal *v){
 	if(v != NULL){
-		lVal *t = lEval(c,v);
+		lVal *t = lEval(c,v->vList.car);
 		if(t != NULL){
 			t = lnfInt(c,t);
 			cloudsSetDensity(t->vInt);
@@ -399,7 +419,7 @@ static lVal *wwlnfCDen(lClosure *c, lVal *v){
 
 static lVal *wwlnfRain(lClosure *c, lVal *v){
 	if(v != NULL){
-		lVal *t = lEval(c,v);
+		lVal *t = lEval(c,v->vList.car);
 		if(t != NULL){
 			t = lnfInt(c,t);
 			weatherSetRainDuration(t->vInt);
@@ -410,14 +430,16 @@ static lVal *wwlnfRain(lClosure *c, lVal *v){
 
 static lVal *wwlnfTime(lClosure *c, lVal *v){
 	if(v != NULL){
-		lVal *t = lEval(c,v);
-		if(t->type == ltString){
-			gtimeSetTimeOfDayHRS(t->vString->buf);
-		}else{
-			t = lnfInt(c,t);
-			gtimeSetTime(t->vInt);
+		lVal *t = lEval(c,v->vList.car);
+		if(t != NULL){
+			if(t->type == ltString){
+				gtimeSetTimeOfDayHRS(t->vString->buf);
+			}else{
+				t = lnfInt(c,t);
+				gtimeSetTime(t->vInt);
+			}
+			msgSetTime(-1, gtimeGetTime());
 		}
-		msgSetTime(-1, gtimeGetTime());
 	}
 	return lValString(gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
 }
@@ -499,9 +521,7 @@ static lVal *wwlnfDbgItem(lClosure *c, lVal *v){
 }
 
 static void lispEvalNR(const char *str){
-	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
-		lEval(clRoot,sexpr);
-	}
+	lEval(clRoot,lParseSExprCS(str));
 }
 
 lVal *lResolveNativeSym(const lSymbol s){
@@ -546,11 +566,8 @@ static void cmdLisp(int c,const char *str, u8 id){
 	lVal *sym = lValSym("pid");
 	lVal *pid = lResolveClosureSym(clRoot, sym->vSymbol);
 	pid->vInt = c;
-	lVal *v = NULL;
-	for(lVal *sexpr = lParseSExprCS(str); sexpr != NULL; sexpr = sexpr->next){
-		v = lEval(clRoot,sexpr);
-	}
-	lSPrintChain(v,reply,&reply[sizeof(reply)-1]);
+	lVal *v = lEval(clRoot,lParseSExprCS(str));
+	lSPrintVal(v,reply,&reply[sizeof(reply)-1]);
 	lClosureGC();
 
 	if(id == 0){

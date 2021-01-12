@@ -51,19 +51,17 @@ void doRepl(lClosure *c){
 			printf("Bye!\n");
 			return;
 		}
-		lVal *v = lEval(c,lParseSExprCS(str));
-		lPrintChain(v);
+		lVal *sexpr = lWrap(lParseSExprCS(str));
+		lVal *v = lEval(c,sexpr);
+		lPrintVal(v);
 		lClosureGC();
 		lVal *tmp = lValString(str);
-		*lastl = *tmp;
+		if((tmp != NULL) && (lastl != NULL)){*lastl = *tmp;}
 	}
 }
 
 lVal *lnfQuit(lClosure *c, lVal *v){
-	if(v == NULL){exit(0);}
-	lVal *t = lEval(c,v);
-	if(t == NULL){exit(0);}
-	t = lnfInt(c,t);
+	lVal *t = lnfInt(c,lEval(c,v->vList.car));
 	exit(t->vInt);
 	return t;
 }
@@ -84,7 +82,7 @@ lVal *lnfInput(lClosure *c, lVal *v){
 
 lVal *lnfPrint(lClosure *c, lVal *v){
 	if(v == NULL){return lValNil();}
-	lVal *t = lnfCat(c,v);
+	lVal *t = lnfCat(c,v->vList.car);
 	if((t != NULL) && (t->type == ltString)){
 		printf("%s",t->vString->data);
 	}
@@ -126,11 +124,12 @@ int main(int argc, char *argv[]){
 				repl = 1;
 			}
 		}
-		if(!eval){
-			str = loadFile(argv[i],&len);
-		}
-		lVal *v = lEval(c,lParseSExprCS(str));
-		lPrintChain(v);
+		//printf("Str: '%s'\n",str);
+		if(!eval){str = loadFile(argv[i],&len);}
+		lVal *sexpr = lWrap(lParseSExprCS(str));
+		//lPrintVal(sexpr);
+		lVal *v = lEval(c,sexpr);
+		lPrintVal(v);
 		lClosureGC();
 
 		if(!eval){

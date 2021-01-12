@@ -56,24 +56,25 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			break;
 		case ltLambda: {
 			t = snprintf(cur,bufEnd-cur,"(λ (cl ");
+
 			if(t > 0){cur += t;}
-			for(lVal *n = v->vLambda->data;n != NULL;n = n->next){
+			foreach(n,v->vLambda->data){
 				cur = lSPrintVal(n,cur,bufEnd);
-				if(n->next != NULL){*cur++ = ' ';}
+				if(n->vList.cdr != NULL){*cur++ = ' ';}
 			}
 			t = snprintf(cur,bufEnd-cur," ) ");
 			if(t > 0){cur += t;}
-			for(lVal *n = v->vLambda->text;n != NULL;n = n->next){
+			foreach(n,v->vLambda->text){
 				cur = lSPrintVal(n,cur,bufEnd);
-				if(n->next != NULL){*cur++ = ' ';}
+				if(n->vList.cdr != NULL){*cur++ = ' ';}
 			}
 			t = snprintf(cur,bufEnd-cur,")");
 			break; }
 		case ltList: {
 			t = snprintf(buf,bufEnd-cur,"(");
 			if(t > 0){cur += t;}
-			for(lVal *n = v->vList;n != NULL;n = n->next){
-				cur = lSPrintVal(n,cur,bufEnd);
+			foreach(n,v){
+				cur = lSPrintVal(n->vList.car,cur,bufEnd);
 				if(n->type == ltNoAlloc){
 					*cur++ = '.';
 					*cur++ = '.';
@@ -81,7 +82,7 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 					*cur++ = ' ';
 					break;
 				}
-				if(n->next != NULL){*cur++ = ' ';}
+				if(n->vList.cdr != NULL){*cur++ = ' ';}
 			}
 			t = snprintf(cur,bufEnd-cur,")");
 			break; }
@@ -119,21 +120,9 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 	return cur;
 }
 
-char *lSPrintChain(lVal *start, char *buf, char *bufEnd){
-	if(start == NULL){return buf;}
-	char *cur = buf;
-	for(lVal *v = start;v!=NULL;v = v->next){
-		cur = lSPrintVal(v,cur,bufEnd);
-		if((bufEnd - cur) < 1){return cur;}
-		*cur++ = ' ';
-		if(v->type == ltNoAlloc){break;}
-	}
-	*bufEnd = 0;
-	return cur;
-}
-
 lVal *lnfLen(lClosure *c, lVal *v){
 	if(v == NULL){return lValNil();}
+	if(v->type == ltList){v = v->vList.car;}
 	lVal *t = lEval(c,v);
 	if(t == NULL){return lValNil();}
 	switch(t->type){
@@ -153,7 +142,7 @@ lVal *lnfSubstr(lClosure *c, lVal *v){
 	int len   = 0;
 	int slen  = 0;
 	if(v == NULL){return lValNil();}
-	lVal *str = lEval(c,v);
+	lVal *str = lEval(c,v->vList.car);
 	if(str == NULL){return lValNil();}
 	switch(str->type){
 	default: return lValNil();
@@ -168,13 +157,15 @@ lVal *lnfSubstr(lClosure *c, lVal *v){
 		slen = len = str->vString->len;
 		break;
 	}
-	if(v->next != NULL){
-		lVal *lStart = lEval(c,v->next);
+	if(v->vList.cdr != NULL){
+		v = v->vList.cdr;
+		lVal *lStart = lEval(c,v->vList.car);
 		if(lStart->type == ltInt){
 			start = lStart->vInt;
 		}
-		if(v->next->next != NULL){
-			lVal *lLen = lEval(c,v->next->next);
+		if(v->vList.cdr != NULL){
+			v = v->vList.cdr;
+			lVal *lLen = lEval(c,v->vList.car);
 			if(lLen->type == ltInt){
 				len = lLen->vInt;
 			}
@@ -213,8 +204,9 @@ lVal *lnfCat(lClosure *c, lVal *v){
 	char tmpStringBuf[512];
 	char *buf = tmpStringBuf;
 	int len = 0;
-	for(lVal *sexpr = v; sexpr != NULL; sexpr = sexpr->next){
-		lVal *t = lEval(c,sexpr);
+	foreach(sexpr,v){
+		lVal *t = lEval(c,sexpr->vList.car);
+		if(t == NULL){continue;}
 		switch(t->type){
 		default: break;
 		case ltInt: {

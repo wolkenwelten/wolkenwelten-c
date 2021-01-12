@@ -64,7 +64,7 @@ struct lCString {
 	};
 };
 
-#define foreach(n,v) for(lVal *n = (v);(n != NULL) && (n->type == ltList); n = n->vList.cdr)
+#define foreach(n,v) for(lVal *n = v;(n != NULL) && (n->type == ltList); n = n->vList.cdr)
 
 void      lInit             ();
 int       lMemUsage         ();
@@ -88,7 +88,6 @@ void      lCStringFree      (lCString *s);
 void      lClosureGC        ();
 lVal     *lParseSExprCS     (const char *str);
 void      lPrintVal         (lVal *v);
-void      lPrintChain       (lVal *v);
 
 lVal     *lValNativeFunc(lVal *(*func)(lClosure *,lVal *));
 lVal     *lResolveNativeSymBuiltin(const lSymbol s);
@@ -100,7 +99,7 @@ lVal     *lEval             (lClosure *c, lVal *v);
 lType     lTypecast         (lVal *a, lVal *b);
 
 lVal     *lValNil       ();
-lVal     *lCons         (lVal *car, lVal *cdr);
+lVal     *lCons         (lVal *car,lVal *cdr);
 lVal     *lValBool      (bool v);
 lVal     *lValInf       ();
 lVal     *lValInt       (int v);
@@ -113,5 +112,8 @@ lVal     *lnfCat        (lClosure *c, lVal *v);
 lVal     *lValCopy      (lVal *dst, const lVal *src);
 
 static inline lVal *lValDup(const lVal *v){
-	return lValCopy(lValAlloc(),v);
+	return v == NULL ? NULL : lValCopy(lValAlloc(),v);
+}
+static inline lVal *lWrap(lVal *v){
+	return lCons(lValSym("repldo"),lCons(lCons(NULL,NULL),v));
 }
