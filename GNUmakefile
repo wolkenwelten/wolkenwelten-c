@@ -49,5 +49,5 @@ ifdef EMSDK
 endif
 
 ifeq ($(VERSION_ARCH),aarch64)
-	LDFLAGS += -mfpu=neon -mfloat-abi=hard
+	LDFLAGS += -march=native
 endif

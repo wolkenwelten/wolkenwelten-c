@@ -17,7 +17,7 @@ void fxRainDrop(const vec pos){
 	(void)pos;
 }
 
-void fxBlockBreak(const vec pos, uchar b){
+void fxBlockBreak(const vec pos, u8 b, u8 cause){
 	(void)pos;
 	(void)b;
 }
