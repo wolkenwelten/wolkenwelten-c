@@ -60,9 +60,10 @@ foreach(array_keys($platforms) as $plat){
 		<b>WARNING: Still really unstable, will most likely crash after a minute or two.</b><br/>
 		<i>Tested in latest Chrome/Firefox/Safari</i>
 	</div>
+	<hr/>
+	<br/>
 	-->
 
-	<hr/>
 	<h2>Have some Screenshots</h2>
 	<div align=center class=pics>
 		<a href="img/1.jpg"><img src="<?php echo baseSFS('img/1.jpg'); ?>" width=1920 height=1080/></a>
