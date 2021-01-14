@@ -16,7 +16,7 @@ static int lValCompare(lClosure *c, lVal *v){
 	lVal *b = lEval(c,v->vList.car);
 	if(a       == NULL){return 2;}
 	if(b       == NULL){return 2;}
-	lType ct = lTypecast(a, b);
+	lType ct = lTypecast(a->type, b->type);
 	switch(ct){
 	default:
 		printf("default typecast: %i\n",ct);
@@ -68,25 +68,25 @@ lVal *lnfGreaterEqual(lClosure *c, lVal *v){
 }
 
 lVal *lnfZero(lClosure *c, lVal *v){
-	const int cmp = lValCompare(c,lCons(v,lValInt(0)));
+	const int cmp = lValCompare(c,lCons(lValInt(0),v));
 	if(cmp == 2){return lValBool(false);}
 	return lValBool(cmp == 0);
 }
 
 lVal *lnfIntPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
+	lVal *t = lEval(c,v->vList.car);
 	if(t == NULL){return lValBool(false);}
 	return lValBool(t->type == ltInt);
 }
 
 lVal *lnfFloatPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
+	lVal *t = lEval(c,v->vList.car);
 	if(t == NULL){return lValBool(false);}
 	return lValBool(t->type == ltFloat);
 }
 
 lVal *lnfNumberPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
+	lVal *t = lEval(c,v->vList.car);
 	if(t == NULL){return lValBool(false);}
 	switch(t->type){
 	case ltInt:
@@ -105,7 +105,7 @@ lVal *lnfStringPred(lClosure *c, lVal *v){
 }
 
 lVal *lnfEmptyPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
+	lVal *t = lEval(c,v->vList.car);
 	if(t == NULL){return lValBool(true);}
 	switch(t->type){
 	default: return lValBool(true);
@@ -118,33 +118,33 @@ lVal *lnfEmptyPred(lClosure *c, lVal *v){
 }
 
 lVal *lnfPosPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
+	lVal *t = lEval(c,v->vList.car);
 	if(t == NULL){return lValBool(false);}
 	if(t->type != ltInt){return lValNil();}
 	return lValBool(t->vInt >= 0);
 }
 
 lVal *lnfNegPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
+	lVal *t = lEval(c,v->vList.car);
 	if(t == NULL){return lValBool(false);}
 	if(t->type != ltInt){return lValNil();}
 	return lValBool(t->vInt < 0);
 }
 
 lVal *lnfVecPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
+	lVal *t = lEval(c,v->vList.car);
 	if(t == NULL){return lValBool(false);}
 	return lValBool(t->type == ltVec);
 }
 
 lVal *lnfNilPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
+	lVal *t = lEval(c,v->vList.car);
 	if(t == NULL){return lValBool(false);}
 	return lValBool(t->type == ltNil);
 }
 
 lVal *lnfInfPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
+	lVal *t = lEval(c,v->vList.car);
 	if(t == NULL){return lValBool(false);}
 	return lValBool(t->type == ltInf);
 }

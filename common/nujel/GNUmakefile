@@ -14,6 +14,12 @@ all: nujel
 %.o: %.c
 	$(CC) $(COPT) $(CWARN) $(CSTD) $(CFLAGS) -g -c $< -o $@
 
+main.o: main.c
+main.o: ../src/common.h
+main.o: ../src/nujel/arithmetic.h
+main.o: ../src/nujel/nujel.h
+main.o: ../src/nujel/string.h
+
 nujel: $(OBJS)
 	$(CC) $(LIBS) $(COPT) $(CWARN) $(CSTD) $(CFLAGS) -g $(OBJS) -o $@
 

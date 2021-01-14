@@ -28,6 +28,7 @@ char *ansiFG[16] = {
 int bufPrintFloat(float v, char *buf, int t, int len){
 	t = snprintf(buf,len,"%.5f",v);
 	for(;buf[t-1] == '0';t--){buf[t]=0;}
+	if(buf[t] == '0'){buf[t] = 0;}
 	if(buf[t-1] == '.'){buf[t++] = '0';}
 	return t;
 }
@@ -58,22 +59,30 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			t = snprintf(cur,bufEnd-cur,"(λ (cl ");
 
 			if(t > 0){cur += t;}
-			foreach(n,v->vLambda->data){
+			forEach(n,v->vLambda->data){
 				cur = lSPrintVal(n,cur,bufEnd);
 				if(n->vList.cdr != NULL){*cur++ = ' ';}
 			}
 			t = snprintf(cur,bufEnd-cur," ) ");
 			if(t > 0){cur += t;}
-			foreach(n,v->vLambda->text){
-				cur = lSPrintVal(n,cur,bufEnd);
+			forEach(n,v->vLambda->text){
+				cur = lSPrintVal(n->vList.car,cur,bufEnd);
 				if(n->vList.cdr != NULL){*cur++ = ' ';}
 			}
 			t = snprintf(cur,bufEnd-cur,")");
 			break; }
 		case ltList: {
-			t = snprintf(buf,bufEnd-cur,"(");
+			if(v->vList.car->type == ltSymbol){
+				if((v->vList.car->vSymbol.v[0] == symQuote.v[0]) &&
+				   (v->vList.car->vSymbol.v[1] == symQuote.v[1]) &&
+				   (v->vList.cdr != NULL)){
+					v = v->vList.cdr->vList.car;
+					*cur++ = '\'';
+				}
+			}
+			t = snprintf(cur,bufEnd-cur,"(");
 			if(t > 0){cur += t;}
-			foreach(n,v){
+			forEach(n,v){
 				cur = lSPrintVal(n->vList.car,cur,bufEnd);
 				if(n->type == ltNoAlloc){
 					*cur++ = '.';
@@ -204,7 +213,7 @@ lVal *lnfCat(lClosure *c, lVal *v){
 	char tmpStringBuf[512];
 	char *buf = tmpStringBuf;
 	int len = 0;
-	foreach(sexpr,v){
+	forEach(sexpr,v){
 		lVal *t = lEval(c,sexpr->vList.car);
 		if(t == NULL){continue;}
 		switch(t->type){
@@ -228,6 +237,47 @@ lVal *lnfCat(lClosure *c, lVal *v){
 			buf += t->vString->len;
 			break;
 		}
+	}
+
+	buf[len] = 0;
+	lVal *ret = lValAlloc();
+	ret->type = ltString;
+	ret->vString = lStringNew(tmpStringBuf, len);
+	return ret;
+}
+
+lVal *lnfString(lClosure *c, lVal *t){
+	char tmpStringBuf[512];
+	char *buf = tmpStringBuf;
+	int len = 0;
+	if(t == NULL){return lValString("");}
+	(void)c;
+
+	switch(t->type){
+	default: break;
+	case ltFloat: {
+		int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%f",t->vFloat);
+		len += clen;
+		buf += clen;
+		break; }
+	case ltInt: {
+		int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%i",t->vInt);
+		len += clen;
+		buf += clen;
+		break; }
+	case ltCString: {
+		if(t->vCString == NULL){return lValString("");}
+		int clen = t->vCString->bufEnd - t->vCString->data;
+		memcpy(buf,t->vCString->data,clen);
+		len += clen;
+		buf += clen;
+		break; }
+	case ltString:
+		if(t->vString == NULL){return lValString("");}
+		memcpy(buf,t->vString->data,t->vString->len);
+		len += t->vString->len;
+		buf += t->vString->len;
+		break;
 	}
 
 	buf[len] = 0;

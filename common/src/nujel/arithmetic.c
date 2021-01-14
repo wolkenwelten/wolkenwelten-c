@@ -5,354 +5,116 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-static lVal *lnfAddV(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltInf){return rv;}
-		if(rv->type != ltVec){
-			rv = lnfVec(c,lValDup(rv));
-		}
-		t->vVec = vecAdd(t->vVec,rv->vVec);
-	}
+static lVal *lnfAddV(lVal *v){
+	lPrintVal(v);
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vVec = vecAdd(t->vVec,vv->vList.car->vVec); }
 	return t;
 }
-
-static lVal *lnfAddF(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltVec){
-			return lnfAddV(c,lCons(lnfVec(c,t),r));
-		} else if(rv->type == ltInt){
-			t->vFloat += (float)rv->vInt;
-			continue;
-		} else if(rv->type == ltInf){
-			return rv;
-		} else if(rv->type != ltFloat){ continue; }
-		t->vFloat += rv->vFloat;
-	}
+static lVal *lnfAddF(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vFloat += vv->vList.car->vFloat; }
 	return t;
 }
-
-static lVal *lnfAddI(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltVec){
-			return lnfAddV(c,lCons(lnfVec(c,t),r));
-		} else if(rv->type == ltFloat){
-			return lnfAddF(c,lCons(lnfFloat(c,t),r));
-		} else if(rv->type == ltInf)  {
-			return rv;
-		} else if(rv->type != ltInt)  {continue;}
-		t->vInt += rv->vInt;
-	}
+static lVal *lnfAddI(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vInt += vv->vList.car->vInt; }
 	return t;
 }
-
 lVal *lnfAdd(lClosure *c, lVal *v){
-	return lnfAddI(c,v);
+	lEvalCastApply(lnfAdd,c,v);
 }
 
-static lVal *lnfSubV(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	if(v->vList.cdr == NULL){
-		t->vVec = vecInvert(t->vVec);
-		return t;
-	}
-	foreach(r,v->vList.cdr){
-		if(r == NULL){continue;}
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv->type == ltInf){return rv;}
-		if(rv->type != ltVec){
-			rv = lnfVec(c,lValDup(rv));
-		}
-		t->vVec = vecSub(t->vVec,rv->vVec);
-	}
+
+static lVal *lnfSubV(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vVec = vecSub(t->vVec,vv->vList.car->vVec); }
 	return t;
 }
-
-static lVal *lnfSubF(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	if(v->vList.cdr == NULL){
-		t->vFloat = -t->vFloat;
-		return t;
-	}
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltVec){
-			return lnfSubV(c,lCons(lnfVec(c,t),r));
-		}else if(rv->type == ltInt){
-			t->vFloat -= (float)rv->vInt;
-			continue;
-		}else if(rv->type == ltInf){
-			return rv;
-		}else if(rv->type != ltFloat){continue;}
-		t->vFloat -= rv->vFloat;
-	}
+static lVal *lnfSubF(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vFloat -= vv->vList.car->vFloat; }
 	return t;
 }
-
-static lVal *lnfSubI(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	if(v->vList.cdr == NULL){
-		t->vInt = -t->vInt;
-		return t;
-	}
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltVec){
-			return lnfSubV(c,lCons(lnfVec(c,t),r));
-		}else if(rv->type == ltFloat){
-			return lnfSubF(c,lCons(lnfFloat(c,t),r));
-		}else if(rv->type == ltInf)  {
-			return rv;
-		}else if(rv->type != ltInt)  {continue;}
-		t->vInt -= rv->vInt;
-	}
+static lVal *lnfSubI(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vInt -= vv->vList.car->vInt; }
 	return t;
 }
-
 lVal *lnfSub(lClosure *c, lVal *v){
-	return lnfSubI(c,v);
+	if((v->type == ltList) && (v->vList.car != NULL) && (v->vList.cdr == NULL)){
+		v = lCons(lValInt(0),v);
+	}
+	lEvalCastApply(lnfSub,c,v);
 }
 
-static lVal *lnfMulV(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltInf){return rv;}
-		if(rv->type != ltVec){
-			rv = lnfVec(c,lValDup(rv));
-		}
-		t->vVec = vecMul(t->vVec,rv->vVec);
-	}
+static lVal *lnfMulV(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vVec = vecMul(t->vVec,vv->vList.car->vVec); }
 	return t;
 }
-
-static lVal *lnfMulF(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltVec){
-			return lnfMulV(c,lCons(lnfVec(c,t),r));
-		}else if(rv->type == ltInt){
-			t->vFloat *= (float)rv->vInt;
-			continue;
-		}else if(rv->type == ltInf){
-			return rv;
-		}else if(rv->type != ltFloat){continue;}
-		t->vFloat *= rv->vFloat;
-	}
+static lVal *lnfMulF(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vFloat *= vv->vList.car->vFloat; }
 	return t;
 }
-
-static lVal *lnfMulI(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltVec){
-			return lnfMulV(c,lCons(lnfVec(c,t),r));
-		}else if(rv->type == ltFloat){
-			return lnfMulF(c,lCons(lnfFloat(c,t),r));
-		}else if(rv->type == ltInf){
-			return rv;
-		}else if(rv->type != ltInt){continue;}
-		t->vInt *= rv->vInt;
-	}
+static lVal *lnfMulI(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vInt *= vv->vList.car->vInt; }
 	return t;
 }
-
 lVal *lnfMul(lClosure *c, lVal *v){
-	return lnfMulI(c,v);
+	lEvalCastApply(lnfMul, c , v);
 }
 
-static lVal *lnfDivV(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltInf){return rv;}
-		if(rv->type != ltVec){
-			rv = lnfVec(c,lValDup(rv));
-		}
-		t->vVec = vecDiv(t->vVec,rv->vVec);
+
+static lVal *lnfDivV(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vVec = vecDiv(t->vVec,vv->vList.car->vVec); }
+	return t;
+}
+static lVal *lnfDivF(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){
+		if(vv->vList.car->vFloat == 0){return lValInf();}
+		t->vFloat /= vv->vList.car->vFloat;
 	}
 	return t;
 }
-
-static lVal *lnfDivF(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltVec){
-			return lnfDivV(c,lCons(lnfVec(c,t),r));
-		if(rv->type == ltInt){
-			if(rv->vInt == 0){
-				t->type = ltInf;
-				return t;
-			}
-			t->vFloat /= (float)rv->vInt;
-			continue;
-		}
-		}else if(rv->type == ltInf){
-			return rv;
-		}else if(rv->type != ltFloat){continue;}
-
-		if(rv->vFloat == 0.f){
-			t->type = ltInf;
-			return t;
-		}
-		t->vFloat /= rv->vFloat;
+static lVal *lnfDivI(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){
+		if(vv->vList.car->vInt == 0){return lValInf();}
+		t->vInt /= vv->vList.car->vInt;
 	}
 	return t;
 }
-
-static lVal *lnfDivI(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lValDup(lEval(c,v->vList.car));
-	if(t == NULL){return NULL;}
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltVec){
-			return lnfDivV(c,lCons(lnfVec(c,t),r));
-		}else if(rv->type == ltFloat){
-			return lnfDivF(c,lCons(lnfFloat(c,t),r));
-		}else if(rv->type == ltInf){
-			return rv;
-		}else if(rv->type != ltInt){continue;}
-
-		if(rv->vInt == 0){
-			t->type = ltInf;
-			return t;
-		}
-		t->vInt /= rv->vInt;
-	}
-	return t;
-}
-
 lVal *lnfDiv(lClosure *c, lVal *v){
-	return lnfDivI(c,v);
+	lEvalCastApply(lnfDiv, c, v);
 }
 
-static lVal *lnfModV(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltInf){return rv;}
-		if(rv->type != ltVec){
-			rv = lnfVec(c,lValDup(rv));
-		}
-		t->vVec = vecMod(t->vVec,rv->vVec);
-	}
+
+
+static lVal *lnfModV(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vVec = vecMod(t->vVec,vv->vList.car->vVec); }
 	return t;
 }
-
-static lVal *lnfModF(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltVec){
-			return lnfModV(c,lCons(lnfVec(c,t),r));
-		}else if(rv->type == ltInt){
-			if(rv->vInt == 0){
-				t->type = ltInf;
-				return t;
-			}
-			t->vFloat = fmodf(t->vFloat,(float)rv->vInt);
-			continue;
-		} else if(rv->type == ltInf){
-			return rv;
-		} else if(rv->type != ltFloat){continue;}
-
-		if(rv->vFloat == 0.f){
-			t->type = ltInf;
-			return t;
-		}
-		t->vFloat = fmodf(t->vFloat,rv->vFloat);
-	}
+static lVal *lnfModF(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vFloat = fmodf(t->vFloat,vv->vList.car->vFloat); }
 	return t;
 }
-
-static lVal *lnfModI(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltList)){return NULL;}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return NULL;}
-	t = lValDup(t);
-	foreach(r,v->vList.cdr){
-		lVal *rv = lEval(c,r->vList.car);
-		if(rv == NULL){continue;}
-		if(rv->type == ltVec){
-			return lnfModV(c,lCons(lnfVec(c,t),r));
-		}else if(rv->type == ltFloat){
-			return lnfModF(c,lCons(lnfFloat(c,t),r));
-		}else if(rv->type == ltInf)  {
-			return rv;
-		}else if(rv->type != ltInt)  {continue;}
-		if(rv->vInt == 0){
-			t->type = ltInf;
-			return t;
-		}
-		t->vInt %= rv->vInt;
-	}
+static lVal *lnfModI(lVal *v){
+	lVal *t = lValDup(v->vList.car);
+	forEach(vv,v->vList.cdr){ t->vInt %= vv->vList.car->vInt; }
 	return t;
 }
-
 lVal *lnfMod(lClosure *c, lVal *v){
-	return lnfModI(c,v);
+	lEvalCastApply(lnfMod, c, v);
 }
+
+
 
 lVal *lnfInt(lClosure *c, lVal *v){
 	if(v == NULL){return lValInt(0);}
@@ -374,6 +136,8 @@ lVal *lnfInt(lClosure *c, lVal *v){
 	case ltString:
 		if(t->vString == NULL){return lValInt(0);}
 		return lValInt(atoi(t->vString->data));
+	case ltList:
+		return lnfInt(c,v->vList.car);
 	}
 }
 
@@ -395,14 +159,23 @@ lVal *lnfFloat(lClosure *c, lVal *v){
 	case ltString:
 		if(t->vString == NULL){return lValFloat(0);}
 		return lValFloat(atof(t->vString->data));
+	case ltList:
+		return lnfFloat(c,v->vList.car);
 	}
 }
 
 
 lVal *lnfVec(lClosure *c, lVal *v){
 	vec nv = vecNew(0,0,0);
+	if(v == NULL){return lValVec(nv);}
+	if(v->type == ltVec){return v;}
+	//if(v->type == ltList){ v = lEval(c,v); }
+	if(v->type != ltList){
+		v = lnfFloat(c,v);
+		return lValVec(vecNew(v->vFloat,v->vFloat,v->vFloat));
+	}
 	int i = 0;
-	foreach(cv,v){
+	forEach(cv,v){
 		lVal *t = lEval(c,cv->vList.car);
 		if(t == NULL){break;}
 		if(t->type == ltVec){return t;}
@@ -414,6 +187,12 @@ lVal *lnfVec(lClosure *c, lVal *v){
 		if(++i >= 3){break;}
 	}
 	return lValVec(nv);
+}
+
+lVal *lnfInf(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+	return lValInf();
 }
 
 lVal *lnfAbs(lClosure *c, lVal *v){

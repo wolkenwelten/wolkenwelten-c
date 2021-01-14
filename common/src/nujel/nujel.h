@@ -64,7 +64,7 @@ struct lCString {
 	};
 };
 
-#define foreach(n,v) for(lVal *n = v;(n != NULL) && (n->type == ltList); n = n->vList.cdr)
+extern lSymbol symQuote;
 
 void      lInit             ();
 int       lMemUsage         ();
@@ -89,14 +89,18 @@ void      lClosureGC        ();
 lVal     *lParseSExprCS     (const char *str);
 void      lPrintVal         (lVal *v);
 
-lVal     *lValNativeFunc(lVal *(*func)(lClosure *,lVal *));
+lVal     *lValNativeFunc    (lVal *(*func)(lClosure *,lVal *));
 lVal     *lResolveNativeSymBuiltin(const lSymbol s);
 lVal     *lResolveNativeSym (const lSymbol s);
+lVal     *lGetClosureSym    (lClosure *c, const lSymbol s);
 lVal     *lResolveClosureSym(lClosure *c, const lSymbol s);
 lVal     *lDefineClosureSym (lClosure *c, const lSymbol s);
 lVal     *lResolveSym       (lClosure *c, const lSymbol s);
+lVal     *lApply            (lClosure *c, lVal *v, lVal *(*func)(lClosure *,lVal *));
+lVal     *lCast             (lClosure *c, lVal *v, lType t);
 lVal     *lEval             (lClosure *c, lVal *v);
-lType     lTypecast         (lVal *a, lVal *b);
+lType     lTypecast         (const lType a,const lType b);
+lType     lTypecastList     (lVal *a);
 
 lVal     *lValNil       ();
 lVal     *lCons         (lVal *car,lVal *cdr);
@@ -117,3 +121,20 @@ static inline lVal *lValDup(const lVal *v){
 static inline lVal *lWrap(lVal *v){
 	return lCons(lValSym("repldo"),lCons(lCons(NULL,NULL),v));
 }
+static inline lVal *lEvalCast(lClosure *c, lVal *v){
+	lVal *t = lApply(c,v,lEval);
+	return lCast(c,t,lTypecastList(t));
+}
+
+#define forEach(n,v) for(lVal *n = v;(n != NULL) && (n->type == ltList) && (n->vList.car != NULL); n = n->vList.cdr)
+
+#define lEvalCastApply(FUNC, c , v) do { \
+	lVal *t = lEvalCast(c,v); \
+	if((t == NULL) || (t->type != ltList)){return NULL;} \
+	switch(t->vList.car->type){ \
+	default: return lValNil(); \
+	case ltInf: return lValInf(); \
+	case ltInt: return FUNC##I(t); \
+	case ltFloat: return FUNC##F(t); \
+	case ltVec: return FUNC##V(t); \
+	}} while (0)

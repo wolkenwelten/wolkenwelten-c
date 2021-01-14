@@ -20,6 +20,7 @@ void fxRainDrop(const vec pos){
 void fxBlockBreak(const vec pos, u8 b, u8 cause){
 	(void)pos;
 	(void)b;
+	(void)cause;
 }
 
 void recipeNew1(const item result, const item ingred1){
