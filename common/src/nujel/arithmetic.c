@@ -6,7 +6,6 @@
 #include <stdio.h>
 
 static lVal *lnfAddV(lVal *v){
-	lPrintVal(v);
 	lVal *t = lValDup(v->vList.car);
 	forEach(vv,v->vList.cdr){ t->vVec = vecAdd(t->vVec,vv->vList.car->vVec); }
 	return t;
@@ -169,7 +168,6 @@ lVal *lnfVec(lClosure *c, lVal *v){
 	vec nv = vecNew(0,0,0);
 	if(v == NULL){return lValVec(nv);}
 	if(v->type == ltVec){return v;}
-	//if(v->type == ltList){ v = lEval(c,v); }
 	if(v->type != ltList){
 		v = lnfFloat(c,v);
 		return lValVec(vecNew(v->vFloat,v->vFloat,v->vFloat));

@@ -121,16 +121,13 @@ test_sexpr "(div (vec 99) (cat 1 1))" "(vec 9.0 9.0 9.0)"
 test_sexpr "(mod (vec 9) 2)" "(vec 1.0 1.0 1.0)"
 test_sexpr "(float (int (+ (vec 1) (vec 0 9 9))))" "1.0"
 test_sexpr "(int (float (+ (vec 1) (vec 0 9 9))))" "1"
-test_sexpr "(define vs (lambda (a) (vec (vz a) (vy a) (vx a)))) (vs (vec 9 3.0 \"1\"))" "(vec 1.0 3.0 9.0)"
 test_sexpr "(and (nil? #nil) (not (nil? \"NotNil\") (inf? #inf) (not (inf? \"NotInf\") (vec? (vec 1)) (not (inf? \"NotVec\"))" "#t"
-
-print_report
-exit;
-
 test_sexpr "(define count (let ((a 0)) (lambda (b) (set! a (+ a (cond ((number? b) b) (#t 1))))))) (count 10) (count)" "11"
+test_sexpr "(define vs (lambda (a) (vec (vz a) (vy a) (vx a)))) (vs (vec 9 3.0 \"1\"))" "(vec 1.0 3.0 9.0)"
 test_sexpr "(define fib (lambda (a) (cond ((zero? a) 0) ((= a 1) 1) (#t (+ (fib (- a 1)) (fib (- a 2))))))) (fib 4)" "3"
 test_sexpr "(define fib (lambda (a) (cond ((zero? a) 0) ((= a 1) 1) (#t (+ (fib (- a 1)) (fib (- a 2))))))) (fib 8)" "21"
 test_sexpr_exitcode "(define fib (lambda (a) (cond ((zero? a) 0) ((= a 1) 1) (#t (+ (fib (- a 1)) (fib (- a 2))))))) (fib 32)" 0
 test_sexpr "(define fib-iter (lambda (a b count) (cond ((= count 0) b) (#t (fib-iter (+ a b) a (- count 1)))))) (define fib (lambda (n) (fib-iter 1 0 n))) (fib 40)" "102334155"
 
+print_report
 #test_sexpr "(div (vec 99) (cat 1 1.0))" "(vec 9.0 9.0 9.0)"
