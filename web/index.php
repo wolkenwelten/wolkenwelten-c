@@ -60,9 +60,10 @@ foreach(array_keys($platforms) as $plat){
 		<b>WARNING: Still really unstable, will most likely crash after a minute or two.</b><br/>
 		<i>Tested in latest Chrome/Firefox/Safari</i>
 	</div>
+	<hr/>
+	<br/>
 	-->
 
-	<hr/>
 	<h2>Have some Screenshots</h2>
 	<div align=center class=pics>
 		<a href="img/1.jpg"><img src="<?php echo baseSFS('img/1.jpg'); ?>" width=1920 height=1080/></a>
@@ -113,6 +114,6 @@ foreach(array_keys($platforms) as $plat){
 	<p><b>These controls are really nasty and you should try to get another input device somehow!</b></p>
 	<p>Put your thumb on the lower left corner of the screen to move around, in the lower right corner is a zone for looking around. The upper area of the screen is separated into 4 zones used for dropping items, jumping, activating items and destroying blocks. You might wonder how you might select an item, you can't right now ;) Improved touchscreen controls will have to wait until a later time, the current controls were mostly done as a proof of concept.</p>
 	<hr/>
-	<h4>Imprint</h4>
+	<center><h4>Imprint</h4></center>
 	<p><center>Benjamin Vincent Schulenburg - Steinmetzstr. 24 - 45139 Essen - GERMANY</center></p>
 </body>
