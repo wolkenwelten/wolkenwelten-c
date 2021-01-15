@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 #ifndef __EMSCRIPTEN__
-#define CHUNK_COUNT (1<<20)
+#define CHUNK_COUNT (1<<19)
 #else
 #define CHUNK_COUNT (1<<18)
 #endif
@@ -65,7 +65,7 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 	c->x = x & (~0xF);
 	c->y = y & (~0xF);
 	c->z = z & (~0xF);
-	c->clientsUpdated = (u64)1 << 31;
+	c->clientsUpdated = 1 << 31;
 	chungus *chng = worldTryChungus(x>>8,y>>8,z>>8);
 	if(chng == NULL){
 		beingListInit(&c->bl,NULL);
