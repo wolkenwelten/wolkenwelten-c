@@ -100,13 +100,9 @@ lVal *lnfMod(lClosure *c, lVal *v){
 }
 
 lVal *lnfAbs(lClosure *c, lVal *v){
-	if(v == NULL){return lValInt(0);}
-	if(v->type == ltList){v = v->vList.car;}
-	lVal *t = lEval(c,v);
-	if(t == NULL){return lValInt(0);}
-	if((t->type != ltInt) && (t->type != ltFloat) && (t->type != ltVec)){
-		t = lnfFloat(c,t);
-	}
+	lVal *t = lEvalCastNumeric(c,v);
+	if(t == NULL){return lValFloat(0);}
+	if(t->type == ltList){t = t->vList.car;}
 	switch(t->type){
 	default:
 		return lValInt(0);
@@ -120,10 +116,9 @@ lVal *lnfAbs(lClosure *c, lVal *v){
 }
 
 lVal *lnfVX(lClosure *c, lVal *v){
-	if(v == NULL){return lValFloat(0);}
-	if(v->type == ltList){v = v->vList.car;}
-	lVal *t = lEval(c,v);
+	lVal *t = lEvalCastSpecific(c,v,ltVec);
 	if(t == NULL){return lValFloat(0);}
+	if(t->type == ltList){t = t->vList.car;}
 	switch(t->type){
 	default:
 		return lValFloat(0);
@@ -137,10 +132,9 @@ lVal *lnfVX(lClosure *c, lVal *v){
 }
 
 lVal *lnfVY(lClosure *c, lVal *v){
-	if(v == NULL){return lValFloat(0);}
-	if(v->type == ltList){v = v->vList.car;}
-	lVal *t = lEval(c,v);
+	lVal *t = lEvalCastSpecific(c,v,ltVec);
 	if(t == NULL){return lValFloat(0);}
+	if(t->type == ltList){t = t->vList.car;}
 	switch(t->type){
 	default:
 		return lValFloat(0);
@@ -154,10 +148,9 @@ lVal *lnfVY(lClosure *c, lVal *v){
 }
 
 lVal *lnfVZ(lClosure *c, lVal *v){
-	if(v == NULL){return lValFloat(0);}
-	if(v->type == ltList){v = v->vList.car;}
-	lVal *t = lEval(c,v);
+	lVal *t = lEvalCastSpecific(c,v,ltVec);
 	if(t == NULL){return lValFloat(0);}
+	if(t->type == ltList){t = t->vList.car;}
 	switch(t->type){
 	default:
 		return lValFloat(0);

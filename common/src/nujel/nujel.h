@@ -115,6 +115,8 @@ lVal     *lValString    (const char *s);
 lVal     *lnfCat        (lClosure *c, lVal *v);
 lVal     *lValCopy      (lVal *dst, const lVal *src);
 
+#define forEach(n,v) for(lVal *n = v;(n != NULL) && (n->type == ltList) && (n->vList.car != NULL); n = n->vList.cdr)
+
 static inline lVal *lValDup(const lVal *v){
 	return v == NULL ? NULL : lValCopy(lValAlloc(),v);
 }
@@ -125,8 +127,20 @@ static inline lVal *lEvalCast(lClosure *c, lVal *v){
 	lVal *t = lApply(c,v,lEval);
 	return lCast(c,t,lTypecastList(t));
 }
-
-#define forEach(n,v) for(lVal *n = v;(n != NULL) && (n->type == ltList) && (n->vList.car != NULL); n = n->vList.cdr)
+static inline lVal *lEvalCastSpecific(lClosure *c, lVal *v, const lType type){
+	lVal *t = lApply(c,v,lEval);
+	return lCast(c,t,type);
+}
+static inline lVal *lEvalCastNumeric(lClosure *c, lVal *v){
+	lVal *t = lApply(c,v,lEval);
+	lType type = lTypecastList(t);
+	if(type == ltString){type = ltFloat;}
+	return lCast(c,t,type);
+}
+static inline lVal *lLastCar(lVal *v){
+	forEach(a,v){if(a->vList.cdr == NULL){return a->vList.car;}}
+	return NULL;
+}
 
 #define lEvalCastApply(FUNC, c , v) do { \
 	lVal *t = lEvalCast(c,v); \

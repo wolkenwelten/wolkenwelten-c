@@ -8,17 +8,13 @@ lVal *lnfNot(lClosure *c, lVal *v){
 }
 
 lVal *lnfAnd(lClosure *c, lVal *v){
-	forEach(n,v){
-		lVal *a = lnfBool(c,n->vList.car);
-		if(!a->vBool){return a;}
-	}
+	lVal *t = lCast(c,v,ltBool);
+	forEach(n,t){if(!n->vList.car->vBool){return n->vList.car;}}
 	return v == NULL ? NULL : lValBool(true);
 }
 
 lVal *lnfOr(lClosure *c, lVal *v){
-	forEach(n,v){
-		lVal *a = lnfBool(c,n->vList.car);
-		if(a->vBool){return a;}
-	}
-	return lValBool(false);
+	lVal *t = lCast(c,v,ltBool);
+	forEach(n,t){if(n->vList.car->vBool){return n->vList.car;}}
+	return v == NULL ? NULL : lValBool(false);
 }

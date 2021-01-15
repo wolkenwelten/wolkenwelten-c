@@ -527,7 +527,8 @@ static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
 		if(nn->vList.car->type != ltSymbol){continue;}
 		lVal *lv = lDefineClosureSym(tmpc,nn->vList.car->vSymbol);
 		lVal *t  = lEval(c,vn);
-		if(t  != NULL){lValCopy(lv,t);}
+		if(t != NULL && t->type == ltList){ t = lEval(c,t->vList.car); }
+		if(t  != NULL){lValCopy(lv,lCons(t,NULL));}
 		if(vn != NULL){vn = vn->vList.cdr;}
 	}
 
@@ -563,7 +564,7 @@ static lVal *lnfCond(lClosure *c, lVal *v){
 		if(t == NULL)                         {continue;}
 		if(t->type == ltNil)                  {continue;}
 		if((t->type == ltBool) && (!t->vBool)){continue;}
-		return lEval(c,n->vList.car->vList.cdr);
+		return lLastCar(lApply(c,n->vList.car->vList.cdr,lEval));
 	}
 	return lValNil();
 }
@@ -820,5 +821,7 @@ lVal *lCast(lClosure *c, lVal *v, lType t){
 		return lApply(c,v,lnfVec);
 	case ltInf:
 		return lApply(c,v,lnfInf);
+	case ltBool:
+		return lApply(c,v,lnfBool);
 	}
 }
