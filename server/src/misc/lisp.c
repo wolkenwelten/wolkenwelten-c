@@ -20,6 +20,7 @@
 
 #include "../../../common/src/nujel/nujel.h"
 #include "../../../common/src/nujel/casting.h"
+#include "../../../common/src/nujel/reader.h"
 #include "../../../common/src/nujel/string.h"
 
 #include <stdarg.h>
@@ -521,7 +522,7 @@ static lVal *wwlnfDbgItem(lClosure *c, lVal *v){
 }
 
 static void lispEvalNR(const char *str){
-	lEval(clRoot,lWrap(lParseSExprCS(str)));
+	lEval(clRoot,lWrap(lRead(str)));
 }
 
 lVal *lResolveNativeSym(const lSymbol s){
@@ -566,7 +567,7 @@ static void cmdLisp(int c,const char *str, u8 id){
 	lVal *sym = lValSym("pid");
 	lVal *pid = lResolveClosureSym(clRoot, sym->vSymbol);
 	pid->vInt = c;
-	lVal *v = lEval(clRoot,lParseSExprCS(str));
+	lVal *v = lEval(clRoot,lRead(str));
 	lSPrintVal(v,reply,&reply[sizeof(reply)-1]);
 	lClosureGC();
 

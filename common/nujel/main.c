@@ -7,6 +7,7 @@
 #include "../src/common.h"
 #include "../src/nujel/nujel.h"
 #include "../src/nujel/casting.h"
+#include "../src/nujel/reader.h"
 #include "../src/nujel/string.h"
 
 void *loadFile(const char *filename,size_t *len){
@@ -51,7 +52,7 @@ void doRepl(lClosure *c){
 			printf("Bye!\n");
 			return;
 		}
-		lVal *sexpr = lWrap(lParseSExprCS(str));
+		lVal *sexpr = lWrap(lRead(str));
 		lVal *v = lEval(c,sexpr);
 		lPrintVal(v);
 		lClosureGC();
@@ -126,7 +127,7 @@ int main(int argc, char *argv[]){
 		}
 		//printf("Str: '%s'\n",str);
 		if(!eval){str = loadFile(argv[i],&len);}
-		lVal *sexpr = lWrap(lParseSExprCS(str));
+		lVal *sexpr = lWrap(lRead(str));
 		//lPrintVal(sexpr);
 		lVal *v = lEval(c,sexpr);
 		lPrintVal(v);

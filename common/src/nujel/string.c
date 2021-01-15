@@ -71,7 +71,7 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			t = snprintf(cur,bufEnd-cur,")");
 			break; }
 		case ltList: {
-			if(v->vList.car->type == ltSymbol){
+			if((v->vList.car != NULL) && (v->vList.car->type == ltSymbol)){
 				if((v->vList.car->vSymbol.v[0] == symQuote.v[0]) &&
 				   (v->vList.car->vSymbol.v[1] == symQuote.v[1]) &&
 				   (v->vList.cdr != NULL)){
@@ -81,16 +81,16 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			}
 			t = snprintf(cur,bufEnd-cur,"(");
 			if(t > 0){cur += t;}
-			forEach(n,v){
-				cur = lSPrintVal(n->vList.car,cur,bufEnd);
-				if(n->type == ltNoAlloc){
-					*cur++ = '.';
-					*cur++ = '.';
+			for(lVal *n = v;n != NULL; n = n->vList.cdr){
+				if(n->type == ltList){
+					cur = lSPrintVal(n->vList.car,cur,bufEnd);
+					if(n->vList.cdr != NULL){*cur++ = ' ';}
+				}else{
 					*cur++ = '.';
 					*cur++ = ' ';
+					cur = lSPrintVal(n,cur,bufEnd);
 					break;
 				}
-				if(n->vList.cdr != NULL){*cur++ = ' ';}
 			}
 			t = snprintf(cur,bufEnd-cur,")");
 			break; }

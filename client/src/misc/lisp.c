@@ -10,6 +10,7 @@
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/nujel/nujel.h"
 #include "../../../common/src/nujel/casting.h"
+#include "../../../common/src/nujel/reader.h"
 #include "../../../common/src/nujel/string.h"
 
 #include <ctype.h>
@@ -34,7 +35,7 @@ lVal *lispSEvalSym(u8 id){
 }
 
 lVal *lispEvalNR(const char *str){
-	return lEval(clRoot,lWrap(lParseSExprCS(str)));
+	return lEval(clRoot,lWrap(lRead(str)));
 }
 
 lVal *wwlnfSEval(lClosure *c, lVal *v){
@@ -163,7 +164,7 @@ void lispFree(){
 const char *lispEval(const char *str){
 	static char reply[4096];
 	memset(reply,0,sizeof(reply));
-	lVal *v = lEval(clRoot,lParseSExprCS(str));
+	lVal *v = lEval(clRoot,lWrap(lRead(str)));
 	lSPrintVal(v,reply,&reply[sizeof(reply)-1]);
 
 	int soff,slen,len = strnlen(reply,sizeof(reply)-1);

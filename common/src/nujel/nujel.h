@@ -86,7 +86,6 @@ lCString *lCStringAlloc     ();
 void      lCStringFree      (lCString *s);
 
 void      lClosureGC        ();
-lVal     *lParseSExprCS     (const char *str);
 void      lPrintVal         (lVal *v);
 
 lVal     *lValNativeFunc    (lVal *(*func)(lClosure *,lVal *));
