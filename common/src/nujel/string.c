@@ -245,47 +245,6 @@ lVal *lnfCat(lClosure *c, lVal *v){
 	return ret;
 }
 
-lVal *lnfString(lClosure *c, lVal *t){
-	char tmpStringBuf[512];
-	char *buf = tmpStringBuf;
-	int len = 0;
-	if(t == NULL){return lValString("");}
-	(void)c;
-
-	switch(t->type){
-	default: break;
-	case ltFloat: {
-		int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%f",t->vFloat);
-		len += clen;
-		buf += clen;
-		break; }
-	case ltInt: {
-		int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%i",t->vInt);
-		len += clen;
-		buf += clen;
-		break; }
-	case ltCString: {
-		if(t->vCString == NULL){return lValString("");}
-		int clen = t->vCString->bufEnd - t->vCString->data;
-		memcpy(buf,t->vCString->data,clen);
-		len += clen;
-		buf += clen;
-		break; }
-	case ltString:
-		if(t->vString == NULL){return lValString("");}
-		memcpy(buf,t->vString->data,t->vString->len);
-		len += t->vString->len;
-		buf += t->vString->len;
-		break;
-	}
-
-	buf[len] = 0;
-	lVal *ret = lValAlloc();
-	ret->type = ltString;
-	ret->vString = lStringNew(tmpStringBuf, len);
-	return ret;
-}
-
 lVal *lnfAnsiFG(lClosure *c, lVal *v){
 	int i = 0;
 	if(v != NULL){

@@ -131,10 +131,12 @@ static inline lVal *lEvalCast(lClosure *c, lVal *v){
 #define lEvalCastApply(FUNC, c , v) do { \
 	lVal *t = lEvalCast(c,v); \
 	if((t == NULL) || (t->type != ltList)){return NULL;} \
-	switch(t->vList.car->type){ \
-	default: return lValNil(); \
-	case ltInf: return lValInf(); \
-	case ltInt: return FUNC##I(t); \
-	case ltFloat: return FUNC##F(t); \
-	case ltVec: return FUNC##V(t); \
+	lVal *d = lValDup(t->vList.car); \
+	if(d == NULL){return NULL;} \
+	switch(d->type){ \
+	default:      return lValNil(); \
+	case ltInf:   return lValInf(); \
+	case ltInt:   return FUNC##I(d,t); \
+	case ltFloat: return FUNC##F(d,t); \
+	case ltVec:   return FUNC##V(d,t); \
 	}} while (0)

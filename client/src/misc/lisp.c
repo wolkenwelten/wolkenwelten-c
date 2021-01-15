@@ -9,7 +9,7 @@
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/nujel/nujel.h"
-#include "../../../common/src/nujel/arithmetic.h"
+#include "../../../common/src/nujel/casting.h"
 #include "../../../common/src/nujel/string.h"
 
 #include <ctype.h>

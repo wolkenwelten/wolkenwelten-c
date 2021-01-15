@@ -6,22 +6,12 @@ CWARN  := -Wextra -Werror -Wall -Wcast-align -pedantic
 LIBS   := -lm
 
 SRCS   := $(shell find ./ -type f -name '*.c') $(shell find ../src/nujel/ -type f -name '*.c')
-OBJS   := ${SRCS:.c=.o}
 
 .PHONY: all
 all: nujel
 
-%.o: %.c
-	$(CC) $(COPT) $(CWARN) $(CSTD) $(CFLAGS) -g -c $< -o $@
-
-main.o: main.c
-main.o: ../src/common.h
-main.o: ../src/nujel/arithmetic.h
-main.o: ../src/nujel/nujel.h
-main.o: ../src/nujel/string.h
-
-nujel: $(OBJS)
-	$(CC) $(LIBS) $(COPT) $(CWARN) $(CSTD) $(CFLAGS) -g $(OBJS) -o $@
+nujel: $(SRCS)
+	$(CC) $(LIBS) $(COPT) $(CWARN) $(CSTD) $(CFLAGS) -g $(SRCS) -o $@
 
 .PHONY: run
 run: nujel
@@ -29,7 +19,7 @@ run: nujel
 
 .PHONY: clean
 clean:
-	rm -f nujel *.o
+	rm -f nujel
 
 .PHONY: test
 test: nujel
@@ -40,4 +30,4 @@ runl: test
 
 .PHONY: musl
 musl: $(SRCS)
-	$(CC) $(COPT) $(CWARN) $(CSTD) $(CFLAGS) $(SRCS) -o nujel
+	musl-gcc $(LIBS) $(COPT) $(CWARN) $(CSTD) $(CFLAGS) $(SRCS) -o nujel

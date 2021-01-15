@@ -2,6 +2,7 @@
 
 #include "arithmetic.h"
 #include "boolean.h"
+#include "casting.h"
 #include "predicates.h"
 #include "string.h"
 

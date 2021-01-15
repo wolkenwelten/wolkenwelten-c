@@ -2,6 +2,7 @@
 
 #include "../nujel/nujel.h"
 #include "../nujel/arithmetic.h"
+#include "../nujel/casting.h"
 #include "../misc/profiling.h"
 
 #include <string.h>

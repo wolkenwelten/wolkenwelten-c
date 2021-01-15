@@ -1,7 +1,7 @@
 #include "predicates.h"
 
 #include "nujel.h"
-#include "arithmetic.h"
+#include "casting.h"
 
 #include <ctype.h>
 #include <math.h>

@@ -5,8 +5,8 @@
 #include <unistd.h>
 
 #include "../src/common.h"
-#include "../src/nujel/arithmetic.h"
 #include "../src/nujel/nujel.h"
+#include "../src/nujel/casting.h"
 #include "../src/nujel/string.h"
 
 void *loadFile(const char *filename,size_t *len){
