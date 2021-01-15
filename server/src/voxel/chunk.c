@@ -113,3 +113,14 @@ void chunkUnsetUpdated(chunk *c, uint p){
 	if(c == NULL){return;}
 	c->clientsUpdated &= ~(1 << p);
 }
+
+void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
+	for(int cx = x; cx < gx; cx++){
+	for(int cy = y; cy < gy; cy++){
+	for(int cz = z; cz < gz; cz++){
+		c->data[cx][cy][cz] = block;
+	}
+	}
+	}
+	c->clientsUpdated = 0;
+}

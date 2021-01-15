@@ -72,7 +72,7 @@ static int waterFlowTo(water *w, int flowOut, int x, int y, int z){
 
 void waterUpdate(water *w){
 	if(w == NULL)                  {return;}
-	if((w-waterList) >= waterCount){return;}
+	if((uint)(w-waterList) >= waterCount){return;}
 	if((w->amount <= 0) || (w->y >= 0x8000)){
 		waterDel(w-waterList);
 		return waterUpdate(w);
