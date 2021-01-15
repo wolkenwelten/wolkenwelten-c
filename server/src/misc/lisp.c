@@ -31,6 +31,18 @@
 char replyBuf[256];
 lClosure *clRoot;
 
+static uint getPID(lClosure *c){
+	lVal *sym = lValSym("pid");
+	lVal *pid = lResolveClosureSym(c, sym->vSymbol);
+	if(pid == NULL){return 123;}
+	return pid->vInt;
+}
+
+static void setPID(lClosure *c, uint pid){
+	lVal *sym = lValSym("pid");
+	lVal *t = lDefineClosureSym(c, sym->vSymbol);
+	t->vList.car = lValInt(pid);
+}
 
 void lPrintError(const char *format, ...){
 	va_list ap;
@@ -82,12 +94,8 @@ static lVal *wwlnfWCount(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerPos(lClosure *c, lVal *v){
-	lVal *sym = lValSym("pid");
-	if(v == NULL){v = lResolveSym(c,sym->vSymbol);}
-	v = lEval(c,v);
-	if(v == NULL)             {return lValNil();}
-	if(v->type != ltInt)      {return lValNil();}
-	const int cc = v->vInt;
+	(void)v;
+	const int cc = getPID(c);
 	if((cc < 0) || (cc >= 32)){return lValNil();}
 	if(clients[cc].state)     {return lValNil();}
 	if(clients[cc].c == NULL) {return lValNil();}
@@ -223,10 +231,7 @@ static lVal *wwlnfMSphere(lClosure *c, lVal *v){
 
 static lVal *wwlnfGive(lClosure *c, lVal *v){
 	int args[3] = {1,1,-1};
-	lVal *sym = lValSym("pid");
-	lVal *pid = lResolveSym(c,sym->vSymbol);
-	pid = lEval(c,pid);
-	args[2] = pid->vInt;
+	args[2] = getPID(c);
 	for(int i=0;i<3;i++){
 		if(v == NULL){break;}
 		lVal *t = lEval(c,v->vList.car);
@@ -241,10 +246,7 @@ static lVal *wwlnfGive(lClosure *c, lVal *v){
 
 static lVal *wwlnfDmg(lClosure *c, lVal *v){
 	int args[2] = {4,-1};
-	lVal *sym = lValSym("pid");
-	lVal *pid = lResolveSym(c,sym->vSymbol);
-	pid = lEval(c,pid);
-	args[1] = pid->vInt;
+	args[1] = getPID(c);
 	for(int i=0;i<2;i++){
 		if(v == NULL){break;}
 		lVal *t = lEval(c,v->vList.car);
@@ -259,10 +261,7 @@ static lVal *wwlnfDmg(lClosure *c, lVal *v){
 
 static lVal *wwlnfDie(lClosure *c, lVal *v){
 	int args[1] = {-1};
-	lVal *sym = lValSym("pid");
-	lVal *pid = lResolveSym(c,sym->vSymbol);
-	pid = lEval(c,pid);
-	args[0] = pid->vInt;
+	args[0] = getPID(c);
 	for(int i=0;i<1;i++){
 		if(v == NULL){break;}
 		lVal *t = lEval(c,v->vList.car);
@@ -337,10 +336,7 @@ static lVal *wwlnfSetAnim(lClosure *c, lVal *v){
 
 static lVal *wwlnfTp(lClosure *c, lVal *v){
 	vec pos = vecNOne();
-	lVal *sym = lValSym("pid");
-	lVal *pid = lResolveSym(c,sym->vSymbol);
-	pid = lEval(c,pid);
-	uint playerid = pid->vInt;
+	uint playerid = getPID(c);
 	for(int i=0;i<2;i++){
 		if(v == NULL){break;}
 		lVal *t = lEval(c,v->vList.car);
@@ -480,10 +476,7 @@ static lVal *wwlnfDbgItem(lClosure *c, lVal *v){
 	(void)c;
 	(void)v;
 
-	lVal *sym = lValSym("pid");
-	lVal *pid = lResolveSym(c,sym->vSymbol);
-	pid = lEval(c,pid);
-	int target = pid->vInt;
+	int target = getPID(c);
 	item newInventory[40];
 	item newEquipment[3];
 	memset(newInventory,0,sizeof(newInventory));
@@ -564,10 +557,9 @@ lVal *lResolveNativeSym(const lSymbol s){
 static void cmdLisp(int c,const char *str, u8 id){
 	static char reply[8192];
 	memset(reply,0,sizeof(reply));
-	lVal *sym = lValSym("pid");
-	lVal *pid = lResolveClosureSym(clRoot, sym->vSymbol);
-	pid->vInt = c;
-	lVal *v = lEval(clRoot,lRead(str));
+	lClosure *cl = lClosureNew(clRoot);
+	setPID(cl,c);
+	lVal *v = lEval(cl,lWrap(lRead(str)));
 	lSPrintVal(v,reply,&reply[sizeof(reply)-1]);
 	lClosureGC();
 
@@ -581,10 +573,7 @@ static void cmdLisp(int c,const char *str, u8 id){
 void lispInit(){
 	lInit();
 	clRoot = lClosureNew(NULL);
-	lVal *sym = lValSym("pid");
-	lVal *pid = lDefineClosureSym(clRoot, sym->vSymbol);
-	pid->type = ltInt;
-	pid->vInt = 123;
+	setPID(clRoot,123);
 
 	lispEvalNR("(define heal     (λ (a) (- (dmg (cond (a (- a)) (#t -20))))))");
 	lispEvalNR("(define morning  (λ () (time  \"8:00\")))");
