@@ -378,7 +378,7 @@ static void chunkGenMesh(chunk *c) {
 	PROFILE_STOP();
 }
 
-void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
+void chunkBox(chunk *c, u16 x,u16 y,u16 z,u16 gx,u16 gy,u16 gz,u8 block){
 	for(int cx=x;cx<gx;cx++){
 	for(int cy=y;cy<gy;cy++){
 	for(int cz=z;cz<gz;cz++){
@@ -395,7 +395,7 @@ void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
 	if((gz&0xF) == 0xF){worldSetChunkUpdated(x  ,y  ,z+1);}
 }
 
-void chunkSetB(chunk *c,int x,int y,int z,u8 block){
+void chunkSetB(chunk *c,u16 x,u16 y,u16 z,u8 block){
 	c->data[x&0xF][y&0xF][z&0xF] = block;
 	c->dataCount |= 0x8000;
 	if((x&0xF) == 0x0){worldSetChunkUpdated(x-1,y  ,z  );}
