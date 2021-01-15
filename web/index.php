@@ -116,4 +116,6 @@ foreach(array_keys($platforms) as $plat){
 	<hr/>
 	<center><h4>Imprint</h4></center>
 	<p><center>Benjamin Vincent Schulenburg - Steinmetzstr. 24 - 45139 Essen - GERMANY</center></p>
+	<center><h4>Contact</h4></center>
+	<p><center>Discord gets checked most often, but you can also send me an <a href="mailto:ben@wolkenwelten.net">E-Mail</a>, although it might take a while for me to get to it.</center></p>
 </body>
