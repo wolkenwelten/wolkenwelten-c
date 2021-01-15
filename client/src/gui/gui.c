@@ -552,13 +552,9 @@ void drawDebuginfo(){
 		guim->font = 1;
 		guim->sx   = 4;
 		guim->sy   = getTilesize();
+		guim->size = 4;
+		textMeshPrintf(guim,"%s\n",gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
 		guim->size = 2;
-		const float compRatio = (float)recvUncompressedBytesCurrentSession / (float)recvBytesCurrentSession;
-		textMeshPrintf(guim,"Player     X: %05.2f VX: %02.4f GVX: %02.4f\n",player->pos.x,player->vel.x,player->gvel.x);
-		textMeshPrintf(guim,"Player     Y: %05.2f VY: %02.4f GVY: %02.4f\n",player->pos.y,player->vel.y,player->gvel.y);
-		textMeshPrintf(guim,"Player     Z: %05.2f VZ: %02.4f GVZ: %02.4f\n",player->pos.z,player->vel.z,player->gvel.z);
-		textMeshPrintf(guim,"Player   YPR: %04.2f %04.2f %04.2f\n",player->rot.yaw,player->rot.pitch,player->rot.roll);
-		textMeshPrintf(guim,"PlayerChungi: %u %u %u\n",((uint)player->pos.x)>>8,((uint)player->pos.y)>>8,((uint)player->pos.z)>>8);
 		textMeshPrintf(guim,"Active Tris.: %s%s\n",colorSignalLow(1<<21,1<<19,1<<18,tris),getHumanReadableSize(tris));
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Particles   : %s%s\n",colorSignalLow(1<<16,1<<15,1<<14,particleCount),getHumanReadableSize(particleCount));
@@ -571,22 +567,10 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"ActiveChunks: %s\n",getHumanReadableSize(chunkGetActive()));
 		textMeshPrintf(guim,"FreeChunks  : %2i\n",chunkGetFree());
 		textMeshPrintf(guim,"ActiveChungi: %2i\n",chungusGetActiveCount());
-		textMeshPrintf(guim,"Bytes Sent  : %sB\n",getHumanReadableSize(sentBytesCurrentSession));
-		textMeshPrintf(guim,"Bytes Recvd : %sB\n",getHumanReadableSize(recvBytesCurrentSession));
-		textMeshPrintf(guim,"Uncompressed: %sB\n",getHumanReadableSize(recvUncompressedBytesCurrentSession));
-		textMeshPrintf(guim,"Comp. Ratio : %s%2.2fX\n",colorSignalHigh(4,8,15,compRatio),compRatio);
-		guim->fgc  = colorPalette[15];
-		textMeshPrintf(guim,"Canvas Size : %ix%i\n",screenWidth,screenHeight);
-		guim->size =  2;
 		textMeshPrintf(guim,"Ping  : %s%u\n",colorSignalLow(400,200,50,lastLatency),lastLatency);
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"WorstF: %s%u\n",colorSignalLow(60,20,18,worstFrame),worstFrame);
 		guim->fgc  = colorPalette[15];
-		textMeshPrintf(guim,"Player: %u\n",playerID);
-		textMeshPrintf(guim,"Time  : %s\n",gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
-		textMeshPrintf(guim,"Bright: %f\n",skyBrightness);
-		textMeshPrintf(guim,"Rain  : %u\n",rainIntensity);
-		textMeshPrintf(guim,"Clouds: %u\n",cloudDensityMin);
 
 		animalOverlaysDrawn = 0;
 		for(uint i=0;i<animalCount;i++){
