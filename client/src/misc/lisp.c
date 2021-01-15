@@ -34,7 +34,7 @@ lVal *lispSEvalSym(u8 id){
 }
 
 lVal *lispEvalNR(const char *str){
-	return lEval(clRoot,lParseSExprCS(str));
+	return lEval(clRoot,lWrap(lParseSExprCS(str)));
 }
 
 lVal *wwlnfSEval(lClosure *c, lVal *v){

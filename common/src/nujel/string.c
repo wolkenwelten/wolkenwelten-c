@@ -56,15 +56,14 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			}
 			break;
 		case ltLambda: {
-			t = snprintf(cur,bufEnd-cur,"(λ (cl ");
+			t = snprintf(cur,bufEnd-cur,"(λ ");
 
 			if(t > 0){cur += t;}
 			forEach(n,v->vLambda->data){
 				cur = lSPrintVal(n,cur,bufEnd);
 				if(n->vList.cdr != NULL){*cur++ = ' ';}
 			}
-			t = snprintf(cur,bufEnd-cur," ) ");
-			if(t > 0){cur += t;}
+			*cur++ = ' ';
 			forEach(n,v->vLambda->text){
 				cur = lSPrintVal(n->vList.car,cur,bufEnd);
 				if(n->vList.cdr != NULL){*cur++ = ' ';}

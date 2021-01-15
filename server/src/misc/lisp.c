@@ -521,7 +521,7 @@ static lVal *wwlnfDbgItem(lClosure *c, lVal *v){
 }
 
 static void lispEvalNR(const char *str){
-	lEval(clRoot,lParseSExprCS(str));
+	lEval(clRoot,lWrap(lParseSExprCS(str)));
 }
 
 lVal *lResolveNativeSym(const lSymbol s){
