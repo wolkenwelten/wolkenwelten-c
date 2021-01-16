@@ -1,3 +1,4 @@
+- WorldSeeds should be anything, just sha1 the string
 - Add Clouds Trails from Characters/Entities/Projectiles, probably looks nice
 - SHRINK THE BLOCKS!
 - Have Wind affect fire spread direction
