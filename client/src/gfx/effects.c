@@ -88,15 +88,44 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 	}
 }
 
-void fxBlockBreak(const vec pos, u8 b, u8 cause){
-	if(cause == 0){
-		sfxPlayPos(sfxTock,1.f,pos);
-	}else{
-		sfxPlayPos(sfxTock,0.2f,pos);
-	}
+static void fxBlockBreakMining(const vec pos, u8 b){
+	sfxPlayPos(sfxTock,1.f,pos);
 	for(int i=0;i<1024;i++){
 		const vec p = vecAdd(pos,vecRngAbs());
 		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.7f,96);
+	}
+}
+static void fxBlockBreakFire(const vec pos, u8 b){
+	sfxPlayPos(sfxTock,0.2f,pos);
+	for(int i=0;i<128;i++){
+		const vec p = vecAdd(pos,vecRngAbs());
+		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.7f,96);
+	}
+	for(int i=0;i<64;i++){
+		newParticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.008f,0),vecMulS(vecRng(),0.004f)), 1.0f, 0.50f,0xFF60C8FF,  96);
+		newParticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.008f,0),vecMulS(vecRng(),0.004f)), 0.7f, 0.65f,0xFF5098FF, 128);
+		newParticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.008f,0),vecMulS(vecRng(),0.004f)), 0.6f, 0.75f,0xFF1F38EF, 156);
+		newParticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.008f,0),vecMulS(vecRng(),0.004f)), 0.5f, 0.75f,0xFF1F38EF, 178);
+	}
+	for(int i=0;i<8;i++){
+		const u32 c = 0x00101820 | (rngValR()&0x0003070F);
+		newSparticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.001f,0),vecMulS(vecRng(),0.0001f)), 0.01f, 0.2f,c,2048);
+	}
+}
+static void fxBlockBreakVegetation(const vec pos, u8 b){
+	sfxPlayPos(sfxTock,0.2f,pos);
+	for(int i=0;i<256;i++){
+		const vec p = vecAdd(pos,vecRngAbs());
+		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.7f,256);
+	}
+}
+
+void fxBlockBreak(const vec pos, u8 b, u8 cause){
+	switch(cause){
+	case 0: return fxBlockBreakMining(pos,b);
+	case 1: return fxBlockBreakFire(pos,b);
+	default:
+	case 2: return fxBlockBreakVegetation(pos,b);
 	}
 }
 void fxBlockMine(const vec pos, int dmg, unsigned char b){

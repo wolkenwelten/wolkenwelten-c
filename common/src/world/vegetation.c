@@ -1,13 +1,19 @@
 #include "vegetation.h"
 
 #include "../mods/api_v1.h"
+#include "../network/messages.h"
+
+static void vegSetB(u16 x, u16 y, u16 z, u8 b){
+	if(!isClient){msgMineBlock(x,y,z,b,2);}
+	worldSetB(x,y,z,b);
+}
 
 void vegShrub(int x,int y,int z){
 	int leaveBlock = 21;
-	worldSetB(x,y,z,I_Roots);
-	worldSetB(x,y+1,z,leaveBlock);
+	vegSetB(x,y,z,I_Roots);
+	vegSetB(x,y+1,z,leaveBlock);
 	if(rngValM(2) == 0){
-		worldSetB(x,y+2,z,leaveBlock);
+		vegSetB(x,y+2,z,leaveBlock);
 	}
 }
 
@@ -21,7 +27,7 @@ void vegRoots(int x,int y,int z){
 		case 1:
 		case 2:
 		case 6:
-			worldSetB(x,y+cy,z,I_Roots);
+			vegSetB(x,y+cy,z,I_Roots);
 			break;
 
 		default:
@@ -29,19 +35,19 @@ void vegRoots(int x,int y,int z){
 		}
 		b = worldGetB(x-1,y+cy,z);
 		if(((b == 1) || (b == 2)) && (rngValM(2)==0)){
-			worldSetB(x-1,y+cy,z,I_Roots);
+			vegSetB(x-1,y+cy,z,I_Roots);
 		}
 		b = worldGetB(x+1,y+cy,z);
 		if(((b == 1) || (b == 2)) && (rngValM(2)==0)){
-			worldSetB(x+1,y+cy,z,I_Roots);
+			vegSetB(x+1,y+cy,z,I_Roots);
 		}
 		b = worldGetB(x,y+cy,z-1);
 		if(((b == 1) || (b == 2)) && (rngValM(2)==0)){
-			worldSetB(x,y+cy,z-1,I_Roots);
+			vegSetB(x,y+cy,z-1,I_Roots);
 		}
 		b = worldGetB(x,y+cy,z+1);
 		if(((b == 1) || (b == 2)) && (rngValM(2)==0)){
-			worldSetB(x,y+cy,z+1,I_Roots);
+			vegSetB(x,y+cy,z+1,I_Roots);
 		}
 	}
 }
@@ -57,7 +63,7 @@ void vegBigRoots(int x,int y,int z){
 void vegDeadTree(int x,int y,int z){
 	int size       = rngValMM(12,16);
 	for(int cy = 0;cy < size;cy++){
-		worldSetB(x,cy+y,z,5);
+		vegSetB(x,cy+y,z,5);
 	}
 	vegRoots(x,y-1,z);
 }
@@ -66,15 +72,15 @@ void vegBigDeadTree(int x,int y,int z){
 	int size       = rngValMM(20,34);
 	for(int cy = -5;cy < size;cy++){
 		if(cy < -2){
-			worldSetB(x  ,cy+y,z  ,8);
-			worldSetB(x+1,cy+y,z  ,8);
-			worldSetB(x  ,cy+y,z+1,8);
-			worldSetB(x+1,cy+y,z+1,8);
+			vegSetB(x  ,cy+y,z  ,8);
+			vegSetB(x+1,cy+y,z  ,8);
+			vegSetB(x  ,cy+y,z+1,8);
+			vegSetB(x+1,cy+y,z+1,8);
 		}else{
-			worldSetB(x  ,cy+y,z  ,5);
-			worldSetB(x+1,cy+y,z  ,5);
-			worldSetB(x  ,cy+y,z+1,5);
-			worldSetB(x+1,cy+y,z+1,5);
+			vegSetB(x  ,cy+y,z  ,5);
+			vegSetB(x+1,cy+y,z  ,5);
+			vegSetB(x  ,cy+y,z+1,5);
+			vegSetB(x+1,cy+y,z+1,5);
 		}
 	}
 	vegBigRoots(x,y-5,z);
@@ -95,14 +101,14 @@ void vegSpruce(int x,int y,int z){
 			for(int cz = -lsize;cz<=lsize;cz++){
 				for(int cx = -lsize;cx<=lsize;cx++){
 					if((rngValM(sparseness)) == 0){continue;}
-					worldSetB(cx+x,cy+y,cz+z,6);
+					vegSetB(cx+x,cy+y,cz+z,6);
 				}
 			}
 		}
-		worldSetB(x,cy+y,z,5);
+		vegSetB(x,cy+y,z,5);
 	}
-	worldSetB(x,size+y  ,z,6);
-	worldSetB(x,size+y+1,z,6);
+	vegSetB(x,size+y  ,z,6);
+	vegSetB(x,size+y+1,z,6);
 	vegRoots(x,y-1,z);
 }
 
@@ -118,26 +124,26 @@ void vegBigSpruce(int x,int y,int z){
 			for(int cz = -lsize;cz<=lsize+1;cz++){
 				for(int cx = -lsize;cx<=lsize+1;cx++){
 					if(rngValM(sparseness) == 0){continue;}
-					worldSetB(cx+x,cy+y,cz+z,6);
+					vegSetB(cx+x,cy+y,cz+z,6);
 				}
 			}
 		}
 		if(cy < -2){
-			worldSetB(x  ,cy+y,z  ,8);
-			worldSetB(x+1,cy+y,z  ,8);
-			worldSetB(x  ,cy+y,z+1,8);
-			worldSetB(x+1,cy+y,z+1,8);
+			vegSetB(x  ,cy+y,z  ,8);
+			vegSetB(x+1,cy+y,z  ,8);
+			vegSetB(x  ,cy+y,z+1,8);
+			vegSetB(x+1,cy+y,z+1,8);
 		}else{
-			worldSetB(x  ,cy+y,z  ,5);
-			worldSetB(x+1,cy+y,z  ,5);
-			worldSetB(x  ,cy+y,z+1,5);
-			worldSetB(x+1,cy+y,z+1,5);
+			vegSetB(x  ,cy+y,z  ,5);
+			vegSetB(x+1,cy+y,z  ,5);
+			vegSetB(x  ,cy+y,z+1,5);
+			vegSetB(x+1,cy+y,z+1,5);
 		}
 	}
 	for(int cx=0;cx<2;cx++){
 		for(int cy=0;cy<2;cy++){
 			for(int cz=0;cz<2;cz++){
-				worldSetB(x+cx,size+y+cy,z+cz,6);
+				vegSetB(x+cx,size+y+cy,z+cz,6);
 			}
 		}
 	}
@@ -149,7 +155,7 @@ void vegSurroundWithLeafes(int x, int y, int z, u8 leafB){
 		for(int cy=0;cy<=1;cy++){
 			for(int cz=-1;cz<=1;cz++){
 				if(worldGetB(x+cx,y+cy,z+cz) != 0){continue;}
-				worldSetB(x+cx,y+cy,z+cz,leafB);
+				vegSetB(x+cx,y+cy,z+cz,leafB);
 			}
 		}
 	}
@@ -173,7 +179,7 @@ void vegOak(int x,int y,int z){
 			for(int cz = -lsize;cz<=lsize;cz++){
 				for(int cx = -lsize;cx<=lsize;cx++){
 					if((cx == 0) && (cz == 0)){
-						worldSetB(cx+x,cy+y,cz+z,leafes);
+						vegSetB(cx+x,cy+y,cz+z,leafes);
 						continue;
 					}
 					if((cx == -lsize) && (cz == -lsize  )){continue;}
@@ -181,47 +187,47 @@ void vegOak(int x,int y,int z){
 					if((cx ==  lsize) && (cz == -lsize  )){continue;}
 					if((cx ==  lsize) && (cz ==  lsize  )){continue;}
 					if((rngValM(sparseness)) == 0)        {continue;}
-					worldSetB(cx+x,cy+y,cz+z,leafes);
+					vegSetB(cx+x,cy+y,cz+z,leafes);
 				}
 			}
 		}
 		if(cy < size-2){
-			worldSetB(x,cy+y,z,logblock);
+			vegSetB(x,cy+y,z,logblock);
 			if(cy > 3){
 				r = rngValM(8);
 				switch(r){
 					case 1:
-						worldSetB(x+1,cy+y,z,logblock);
+						vegSetB(x+1,cy+y,z,logblock);
 						vegSurroundWithLeafes(x+1,cy+y,z,leafes);
 						if(rngValM(4) == 0){
-							worldSetB(x+2,cy+y,z,logblock);
+							vegSetB(x+2,cy+y,z,logblock);
 							vegSurroundWithLeafes(x+2,cy+y,z,leafes);
 						}
 					break;
 
 					case 2:
-						worldSetB(x-1,cy+y,z,logblock);
+						vegSetB(x-1,cy+y,z,logblock);
 						vegSurroundWithLeafes(x-1,cy+y,z,leafes);
 						if(rngValM(4) == 0){
-							worldSetB(x-2,cy+y,z,logblock);
+							vegSetB(x-2,cy+y,z,logblock);
 							vegSurroundWithLeafes(x-2,cy+y,z,leafes);
 						}
 					break;
 
 					case 3:
-						worldSetB(x,cy+y,z+1,logblock);
+						vegSetB(x,cy+y,z+1,logblock);
 						vegSurroundWithLeafes(x,cy+y,z+1,leafes);
 						if(rngValM(4) == 0){
-							worldSetB(x,cy+y,z+2,logblock);
+							vegSetB(x,cy+y,z+2,logblock);
 							vegSurroundWithLeafes(x,cy+y,z+2,leafes);
 						}
 					break;
 
 					case 4:
-						worldSetB(x,cy+y,z-1,logblock);
+						vegSetB(x,cy+y,z-1,logblock);
 						vegSurroundWithLeafes(x,cy+y,z-1,leafes);
 						if(rngValM(4) == 0){
-							worldSetB(x,cy+y,z-2,logblock);
+							vegSetB(x,cy+y,z-2,logblock);
 							vegSurroundWithLeafes(x,cy+y,z-2,leafes);
 						}
 					break;
@@ -254,20 +260,20 @@ void vegBigOak(int x,int y,int z){
 					if((cx ==  lsize+1) && (cz == -lsize  )){continue;}
 					if((cx ==  lsize+1) && (cz ==  lsize+1)){continue;}
 					if(rngValM(sparseness) == 0)            {continue;}
-					worldSetB(cx+x,cy+y,cz+z,leafes);
+					vegSetB(cx+x,cy+y,cz+z,leafes);
 				}
 			}
 		}
 		if(cy < -2){
-			worldSetB(x  ,cy+y,z  ,8);
-			worldSetB(x+1,cy+y,z  ,8);
-			worldSetB(x  ,cy+y,z+1,8);
-			worldSetB(x+1,cy+y,z+1,8);
+			vegSetB(x  ,cy+y,z  ,8);
+			vegSetB(x+1,cy+y,z  ,8);
+			vegSetB(x  ,cy+y,z+1,8);
+			vegSetB(x+1,cy+y,z+1,8);
 		}else if(cy < size-2){
-			worldSetB(x  ,cy+y,z  ,logblock);
-			worldSetB(x+1,cy+y,z  ,logblock);
-			worldSetB(x  ,cy+y,z+1,logblock);
-			worldSetB(x+1,cy+y,z+1,logblock);
+			vegSetB(x  ,cy+y,z  ,logblock);
+			vegSetB(x+1,cy+y,z  ,logblock);
+			vegSetB(x  ,cy+y,z+1,logblock);
+			vegSetB(x+1,cy+y,z+1,logblock);
 		}
 	}
 	vegBigRoots(x,y-5,z);

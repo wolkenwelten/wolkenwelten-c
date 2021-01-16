@@ -1,6 +1,9 @@
+- Add Clouds Trails from Characters/Entities/Projectiles, probably looks nice
+- SHRINK THE BLOCKS!
+- Have Wind affect fire spread direction
+- Complete Rewrite of the Water system, the current one is terrible
 - Add block variations by having each face use a 2x2 texture, and instead of having uv be in the range of 0-1 use 0-0.5 for single blocks, thereby adding some slight variations along the way.
 - Properly check if the server is still there and close the connection otherwise
-- Add beingList Intros!!!
 - Make client detect when the connection to the server is separated and show an error instead of just becoming unresponsive
 - Animals don't spawn after the limit has been reached, especially problematic if the limit is already reached with animals inside the spawn area which never gets freed
 - Simulate/Store Oxygen levels in chunks and have it spread to neighboring chunks, trees/plants increase oxygen, fires/animals/players decrease oxygen
@@ -8,7 +11,6 @@
 --- Off-stream work ---
 + Fancy Ropes
 + Fix WASM Singleplayer
-+ After some exploration FPS Drop, why?
 + Fix Guns shooting off center
 + Color/RGBA routines
 

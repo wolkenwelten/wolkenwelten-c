@@ -84,7 +84,8 @@ void chunkFree(chunk *c){
 		return;
 	}
 	chunkFreeCount++;
-	if(c->vbo){glDeleteBuffers(1,&c->vbo);}
+	if(c->vbo){glDeleteBuffers(1,&c->vbo); c->vbo = 0;}
+	if(c->vao){glDeleteVertexArrays(1,&c->vao); c->vao = 0;}
 	c->nextFree = chunkFirstFree;
 	chunkFirstFree = c;
 }
