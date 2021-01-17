@@ -592,7 +592,7 @@ void characterUpdate(character *c){
 		} else if((nvel.y < -0.05f) && c->vel.y > -0.01f){
 			sfxPlay(sfxStomp,1.f);
 		}
-		                                                                                                                                                                      if((damage > 0) && (hookGetHooked(c->hook))){
+		if((damage > 0) && (hookGetHooked(c->hook))){
 			hookReturnHook(c->hook);
 		}
 		characterUpdateWindVolume(c);

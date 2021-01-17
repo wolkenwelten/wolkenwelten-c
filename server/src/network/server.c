@@ -563,7 +563,6 @@ void serverParseIntro(uint c){
 		clients[c].state = STATE_READY;
 
 		characterLoadSendData(clients[c].c,clients[c].playerName,c);
-
 		sendPlayerJoinMessage(c);
 		msgSetTime(c, gtimeGetTime());
 		animalUpdatePriorities(c);

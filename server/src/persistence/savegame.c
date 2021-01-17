@@ -322,6 +322,7 @@ static void characterParseDataLine(character *p, const char *line){
 		if(argc < 7){return;}
 		p->pos = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
 		p->rot = vecNew(atof(argv[4]),atof(argv[5]),atof(argv[6]));
+		if(!inWorld(p->pos.x,p->pos.y,p->pos.z)){p->pos = vecAdd(vecNewI(worldGetSpawnPos()),vecNew(.5f,2.f,.5f));}
 		return;
 	}
 

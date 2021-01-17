@@ -1,6 +1,7 @@
 #include "lisp.h"
 
 #include "../main.h"
+#include "../game/character.h"
 #include "../gfx/gfx.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
@@ -38,7 +39,7 @@ lVal *lispEvalNR(const char *str){
 	return lEval(clRoot,lWrap(lRead(str)));
 }
 
-lVal *wwlnfSEval(lClosure *c, lVal *v){
+static lVal *wwlnfSEval(lClosure *c, lVal *v){
 	(void)c;
 	static char buf[1024];
 	memset(buf,0,sizeof(buf));
@@ -48,7 +49,7 @@ lVal *wwlnfSEval(lClosure *c, lVal *v){
 	return lispSEvalSym(SEvalID);
 }
 
-lVal *wwlnfPlayerName(lClosure *c, lVal *v){
+static lVal *wwlnfPlayerName(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfCat(c,lEval(c,v));
 		if(t->type == ltString){
@@ -60,7 +61,7 @@ lVal *wwlnfPlayerName(lClosure *c, lVal *v){
 	return lValString(playerName);
 }
 
-lVal *wwlnfSoundVolume(lClosure *c, lVal *v){
+static lVal *wwlnfSoundVolume(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfFloat(c,lEval(c,v));
 		optionSoundVolume = t->vFloat;
@@ -69,7 +70,7 @@ lVal *wwlnfSoundVolume(lClosure *c, lVal *v){
 	return lValFloat(optionSoundVolume);
 }
 
-lVal *wwlnfRenderDistance(lClosure *c, lVal *v){
+static lVal *wwlnfRenderDistance(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfFloat(c,lEval(c,v));
 		setRenderDistance(t->vFloat);
@@ -78,7 +79,7 @@ lVal *wwlnfRenderDistance(lClosure *c, lVal *v){
 	return lValFloat(renderDistance);
 }
 
-lVal *wwlnfThirdPerson(lClosure *c, lVal *v){
+static lVal *wwlnfThirdPerson(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfInt(c,lEval(c,v));
 		optionThirdPerson = t->vInt != 0;
@@ -87,7 +88,7 @@ lVal *wwlnfThirdPerson(lClosure *c, lVal *v){
 	return lValBool(optionThirdPerson);
 }
 
-lVal *wwlnfFullscreen(lClosure *c, lVal *v){
+static lVal *wwlnfFullscreen(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfInt(c,lEval(c,v));
 		setFullscreen(t->vInt != 0);
@@ -96,7 +97,7 @@ lVal *wwlnfFullscreen(lClosure *c, lVal *v){
 	return lValBool(optionThirdPerson);
 }
 
-lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
+static lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfInt(c,lEval(c,v));
 		optionDebugInfo = t->vInt != 0;
@@ -105,14 +106,14 @@ lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
 	return lValBool(optionDebugInfo);
 }
 
-lVal *wwlnfSaveOptions(lClosure *c, lVal *v){
+static lVal *wwlnfSaveOptions(lClosure *c, lVal *v){
 	(void)c;
 	(void)v;
 	saveOptions();
 	return lValBool(true);
 }
 
-lVal *wwlnfServerAdd(lClosure *c, lVal *v){
+static lVal *wwlnfServerAdd(lClosure *c, lVal *v){
 	char *address = "localhost";
 	char *name = "localhost";
 
@@ -130,9 +131,31 @@ lVal *wwlnfServerAdd(lClosure *c, lVal *v){
 	return lValFloat(renderDistance);
 }
 
+static lVal *wwlnfPlayerPos(lClosure *c, lVal *v){
+	(void)v;
+	(void)c;
+	return lValVec(player->pos);
+}
+
+static lVal *wwlnfPlayerRot(lClosure *c, lVal *v){
+	(void)v;
+	(void)c;
+	return lValVec(player->rot);
+}
+
+static lVal *wwlnfPlayerVel(lClosure *c, lVal *v){
+	(void)v;
+	(void)c;
+	return lValVec(player->vel);
+}
+
+
 lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"s") == 0)              {return lValNativeFunc(wwlnfSEval);}
 
+	if(strcmp(s.c,"player-pos") == 0)     {return lValNativeFunc(wwlnfPlayerPos);}
+	if(strcmp(s.c,"player-vel") == 0)     {return lValNativeFunc(wwlnfPlayerVel);}
+	if(strcmp(s.c,"player-rot") == 0)     {return lValNativeFunc(wwlnfPlayerRot);}
 	if(strcmp(s.c,"player-name") == 0)    {return lValNativeFunc(wwlnfPlayerName);}
 	if(strcmp(s.c,"sound-volume") == 0)   {return lValNativeFunc(wwlnfSoundVolume);}
 	if(strcmp(s.c,"render-distance") == 0){return lValNativeFunc(wwlnfRenderDistance);}

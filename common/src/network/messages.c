@@ -32,8 +32,11 @@ void msgPlayerSetPos(uint c, const vec pos, const vec rot){
 	packetQueue(p,1,6*4,c);
 }
 
+#include <stdio.h>
 void msgRequestChungus(u8 x, u8 y, u8 z){
 	packet *p = &packetBuffer;
+
+	printf("rq chungus: %u %u %u\n",x,y,z);
 
 	p->v.u8[0] = x;
 	p->v.u8[1] = y;
