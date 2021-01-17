@@ -177,7 +177,7 @@ void clientInit(){
 				menuSetError("Error connecting to host ECONNREFUSED");
 				return;
 			}
-			usleep(500);
+			usleep(50000);
 			clientFreeRetry();
 			return;
 		}
