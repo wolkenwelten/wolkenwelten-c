@@ -19,9 +19,8 @@ bool firestickPrimaryAction(item *cItem,character *cChar){
 		characterAddCooldown(cChar,200);
 		characterStartAnimation(cChar,3,600);
 		fireNew(p.x,p.y,p.z,8);
-		return true;
 	}
-	return false;
+	return true;
 }
 
 bool firestickSecondaryAction(item *cItem,character *cChar){

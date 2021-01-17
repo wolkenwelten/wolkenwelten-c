@@ -70,3 +70,4 @@ int   itemDecAmmo    (      item *i, i16 amount);
 #define I_Crystal_Dust  286
 #define I_Flamestick    287
 #define I_Waterthrower  288
+#define I_Stonespear    289

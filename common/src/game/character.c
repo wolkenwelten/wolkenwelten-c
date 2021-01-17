@@ -63,6 +63,11 @@ void characterCloseGlider(character *c){
 	c->flags &= ~CHAR_GLIDE;
 }
 
+
+bool characterIsAiming(const character *c){
+	if(c == NULL){return false;}
+	return c->flags & CHAR_AIMING;
+}
 void characterToggleAim(character *c, float zoom){
 	if(c == NULL){return;}
 	c->zoomFactor = zoom;

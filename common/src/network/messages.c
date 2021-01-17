@@ -482,7 +482,8 @@ char *messageNames[256] = {
 	"waterRecvUpdate",
 	"lispRecvSExpr",
 	"weatherRecvUpdate",
-	"rainRecvUpdate"
+	"rainRecvUpdate",
+	"throwableRecvUpdate"
 };
 
 const char *networkGetMessageName(uint i){

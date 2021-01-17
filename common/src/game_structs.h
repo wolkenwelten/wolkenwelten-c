@@ -49,7 +49,7 @@ inline being beingNew  (u8 type, u32 id){ return (id&0xFFFFFF) | ((u32)type << 2
 #define BEING_ITEMDROP   6
 #define BEING_FIRE       7
 #define BEING_WATER      8
-
+#define BEING_THROWABLE  9
 
 inline being beingCharacter (u32 id){ return beingNew(BEING_CHARACTER, id);}
 inline being beingAnimal    (u32 id){ return beingNew(BEING_ANIMAL,    id);}
@@ -59,6 +59,7 @@ inline being beingProjectile(u32 id){ return beingNew(BEING_PROJECTILE,id);}
 inline being beingItemDrop  (u32 id){ return beingNew(BEING_ITEMDROP,  id);}
 inline being beingFire      (u32 id){ return beingNew(BEING_FIRE,      id);}
 inline being beingWater     (u32 id){ return beingNew(BEING_WATER,     id);}
+inline being beingThrowable (u32 id){ return beingNew(BEING_THROWABLE, id);}
 
 typedef struct beingListEntry beingListEntry;
 struct beingListEntry {
@@ -210,6 +211,22 @@ typedef struct {
 	u16 lastFire;
 	i16 fireDmg;
 } itemDrop;
+
+
+typedef struct {
+	entity     *ent;
+	item        itm;
+	i16    nextFree;
+	u16     counter;
+	u16       flags;
+	being   thrower;
+} throwable;
+
+#define THROWABLE_PITCH_SPIN   (1   )
+#define THROWABLE_TIP_HEAVY    (1<<1)
+#define THROWABLE_PIERCE_BLOCK (1<<2)
+#define THROWABLE_COLLECTABLE  (1<<3)
+#define THROWABLE_BURNING      (1<<4)
 
 typedef struct {
 	vec pos,vel;

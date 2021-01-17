@@ -9,6 +9,7 @@
 #include "game/itemDrop.h"
 #include "game/landscape.h"
 #include "game/grenade.h"
+#include "game/throwable.h"
 #include "game/time.h"
 #include "game/rain.h"
 #include "game/water.h"
@@ -97,6 +98,7 @@ static void updateWorldStep(){
 	landscapeUpdateAll();
 	weatherUpdateAll();
 	rainUpdateAll();
+	throwableUpdateAll();
 
 	gtimeUpdate();
 }

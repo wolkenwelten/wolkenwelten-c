@@ -11,6 +11,7 @@
 #include "../game/rain.h"
 #include "../game/rope.h"
 #include "../game/projectile.h"
+#include "../game/throwable.h"
 #include "../game/time.h"
 #include "../game/water.h"
 #include "../game/weather.h"
@@ -147,152 +148,155 @@ void clientParsePacket(const packet *p){
 	nprofAddPacket(pType,pLen);
 
 	switch(pType){
-		case 0: // Keepalive
-			break;
-		case 1: // playerPos
-			characterSetPos(player,vecNewP(&p->v.f[0]));
-			characterSetRot(player,vecNewP(&p->v.f[3]));
-			characterSetVelocity(player,vecZero());
-			characterFreeHook(player);
-			player->flags &= ~CHAR_SPAWNING;
-			break;
-		case 2: // requestChungus
-			fprintf(stderr,"Received a requestChungus packet from the server which should never happen.\n");
-			break;
-		case 3: // placeBlock
-			fprintf(stderr,"Received a placeBlock packet from the server which should never happen.\n");
-			break;
-		case 4: // mineBlock
-			fxBlockBreak(vecNew(p->v.u16[0],p->v.u16[1],p->v.u16[2]),p->v.u8[6],p->v.u8[7]);
-			break;
-		case 5: // Goodbye
-			fprintf(stderr,"Received a Goodbye packet from the server which should never happen.\n");
-			break;
-		case 6: // blockMiningUpdate
-			blockMiningUpdateFromServer(p);
-			break;
-		case 7:
-			worldSetChungusLoaded(p->v.u8[0],p->v.u8[1],p->v.u8[2]);
-			break;
-		case 8:
-			// ToDo: beingGotHit
-			dispatchBeingGotHit(p);
-			break;
-		case 9: // setTime
-			gtimeSetTime(p->v.u32[0]);
-			break;
-		case 10:
-			fprintf(stderr,"Received an itemDropNew msg from the server, this should never happen.\n");
-			break;
-		case 11:
-			fprintf(stderr,"Received a grenadeNew packet from the server which should never happen.\n");
-			break;
-		case 12:
-			fprintf(stderr,"Received a beamblast packet from the server which should never happen.\n");
-			break;
-		case 13: // playerMoveDelta
-			characterMoveDelta(player,p);
-			break;
-		case 14: // characterName
-			characterSetName(p);
-			break;
-		case 15: // playerPos
-			characterUpdatePacket(p);
-			break;
-		case 16: // chatMsg
-			chatParsePacket(p);
-			break;
-		case 17: // dyingMsg
-			fprintf(stderr,"Received a dying message packet from the server which should never happen.\n");
-			break;
-		case 18: // chunkData
-			chunkRecvUpdate(p);
-			break;
-		case 19: // setPlayerCount
-			characterRemovePlayer(p->v.u16[1],p->v.u16[0]);
-			break;
-		case 20: // playerPickupItem
-			characterPickupPacket(player,p);
-			break;
-		case 21: // itemDropDel
-			fprintf(stderr,"Received an itemDropDel msg from the server, this should never happen.\n");
-			break;
-		case 22: // explode
-			explode(vecNewP(&p->v.f[0]),((float)p->v.u16[6])/256.f,p->v.u16[7]);
-			break;
-		case 23: // grenadeUpdate
-			grenadeUpdateFromServer(p);
-			break;
-		case 24: // fxBeamBlaster
-			fxBeamBlaster(vecNewP(&p->v.f[0]),vecNewP(&p->v.f[3]),p->v.f[6],p->v.f[7]);
-			break;
-		case 25: // msgItemDropUpdate
-			itemDropUpdateFromServer(p);
-			break;
-		case 26: // msgPlayerDamage ???UNUSED???
-			characterDamagePacket(player,p);
-			break;
-		case 27: // UNUSED
-			fprintf(stderr,"Received a chungusUnsubPlayer msg from the server, this should never happen.\n");
-			break;
-		case 28:
-			characterSetData(player,p);
-			break;
-		case 29:
-			characterSetInventoryP(player,p);
-			break;
-		case 30:
-			animalSyncFromServer(p);
-			break;
-		case 31:
-			fprintf(stderr,"Received an dirtyChunk msg from the server, this should never happen.\n");
-			break;
-		case 32:
-			fprintf(stderr,"Received an animalDmg msg from the server, this should never happen.\n");
-			break;
-		case 33:
-			handlePingPong();
-			msgPingPong(-1);
-			break;
-		case 34:
-			fxAnimalDiedPacket(p);
-			break;
-		case 35:
-			characterSetEquipmentP(player,p);
-			break;
-		case 36:
-			fprintf(stderr,"Received an itemDropPickup msg from the server, this should never happen.\n");
-			break;
-		case 37:
-			ropeUpdateP(p);
-			break;
-		case 38:
-			projectileRecvUpdate(-1,p);
-			break;
-		case 39:
-			fxProjectileHit(p);
-			break;
-		case 40:
-			fireRecvUpdate(-1,p);
-			break;
-		case 41:
-			waterRecvUpdate(-1,p);
-			break;
-		case 42:
-			lispRecvSExpr(p);
-			break;
-		case 43:
-			weatherRecvUpdate(p);
-			break;
-		case 44:
-			rainRecvUpdate(p);
-			break;
-		case 0xFF: // compressedMultiPacket
-			decompressPacket(p);
-			break;
-		default:
-			fprintf(stderr,"%i[%i] UNKNOWN PACKET\n",pType,pLen);
-			break;
+	case 0: // Keepalive
+		break;
+	case 1: // playerPos
+		characterSetPos(player,vecNewP(&p->v.f[0]));
+		characterSetRot(player,vecNewP(&p->v.f[3]));
+		characterSetVelocity(player,vecZero());
+		characterFreeHook(player);
+		player->flags &= ~CHAR_SPAWNING;
+		break;
+	case 2: // requestChungus
+		fprintf(stderr,"Received a requestChungus packet from the server which should never happen.\n");
+		break;
+	case 3: // placeBlock
+		fprintf(stderr,"Received a placeBlock packet from the server which should never happen.\n");
+		break;
+	case 4: // mineBlock
+		fxBlockBreak(vecNew(p->v.u16[0],p->v.u16[1],p->v.u16[2]),p->v.u8[6],p->v.u8[7]);
+		break;
+	case 5: // Goodbye
+		fprintf(stderr,"Received a Goodbye packet from the server which should never happen.\n");
+		break;
+	case 6: // blockMiningUpdate
+		blockMiningUpdateFromServer(p);
+		break;
+	case 7:
+		worldSetChungusLoaded(p->v.u8[0],p->v.u8[1],p->v.u8[2]);
+		break;
+	case 8:
+		// ToDo: beingGotHit
+		dispatchBeingGotHit(p);
+		break;
+	case 9: // setTime
+		gtimeSetTime(p->v.u32[0]);
+		break;
+	case 10:
+		fprintf(stderr,"Received an itemDropNew msg from the server, this should never happen.\n");
+		break;
+	case 11:
+		fprintf(stderr,"Received a grenadeNew packet from the server which should never happen.\n");
+		break;
+	case 12:
+		fprintf(stderr,"Received a beamblast packet from the server which should never happen.\n");
+		break;
+	case 13: // playerMoveDelta
+		characterMoveDelta(player,p);
+		break;
+	case 14: // characterName
+		characterSetName(p);
+		break;
+	case 15: // playerPos
+		characterUpdatePacket(p);
+		break;
+	case 16: // chatMsg
+		chatParsePacket(p);
+		break;
+	case 17: // dyingMsg
+		fprintf(stderr,"Received a dying message packet from the server which should never happen.\n");
+		break;
+	case 18: // chunkData
+		chunkRecvUpdate(p);
+		break;
+	case 19: // setPlayerCount
+		characterRemovePlayer(p->v.u16[1],p->v.u16[0]);
+		break;
+	case 20: // playerPickupItem
+		characterPickupPacket(player,p);
+		break;
+	case 21: // itemDropDel
+		fprintf(stderr,"Received an itemDropDel msg from the server, this should never happen.\n");
+		break;
+	case 22: // explode
+		explode(vecNewP(&p->v.f[0]),((float)p->v.u16[6])/256.f,p->v.u16[7]);
+		break;
+	case 23: // grenadeUpdate
+		grenadeUpdateFromServer(p);
+		break;
+	case 24: // fxBeamBlaster
+		fxBeamBlaster(vecNewP(&p->v.f[0]),vecNewP(&p->v.f[3]),p->v.f[6],p->v.f[7]);
+		break;
+	case 25: // msgItemDropUpdate
+		itemDropUpdateFromServer(p);
+		break;
+	case 26: // msgPlayerDamage ???UNUSED???
+		characterDamagePacket(player,p);
+		break;
+	case 27: // UNUSED
+		fprintf(stderr,"Received a chungusUnsubPlayer msg from the server, this should never happen.\n");
+		break;
+	case 28:
+		characterSetData(player,p);
+		break;
+	case 29:
+		characterSetInventoryP(player,p);
+		break;
+	case 30:
+		animalSyncFromServer(p);
+		break;
+	case 31:
+		fprintf(stderr,"Received an dirtyChunk msg from the server, this should never happen.\n");
+		break;
+	case 32:
+		fprintf(stderr,"Received an animalDmg msg from the server, this should never happen.\n");
+		break;
+	case 33:
+		handlePingPong();
+		msgPingPong(-1);
+		break;
+	case 34:
+		fxAnimalDiedPacket(p);
+		break;
+	case 35:
+		characterSetEquipmentP(player,p);
+		break;
+	case 36:
+		fprintf(stderr,"Received an itemDropPickup msg from the server, this should never happen.\n");
+		break;
+	case 37:
+		ropeUpdateP(p);
+		break;
+	case 38:
+		projectileRecvUpdate(-1,p);
+		break;
+	case 39:
+		fxProjectileHit(p);
+		break;
+	case 40:
+		fireRecvUpdate(-1,p);
+		break;
+	case 41:
+		waterRecvUpdate(-1,p);
+		break;
+	case 42:
+		lispRecvSExpr(p);
+		break;
+	case 43:
+		weatherRecvUpdate(p);
+		break;
+	case 44:
+		rainRecvUpdate(p);
+		break;
+	case 45:
+		throwableRecvUpdate(p);
+		break;
+	case 0xFF: // compressedMultiPacket
+		decompressPacket(p);
+		break;
+	default:
+		fprintf(stderr,"%i[%i] UNKNOWN PACKET\n",pType,pLen);
+		break;
 	}
 }
 
