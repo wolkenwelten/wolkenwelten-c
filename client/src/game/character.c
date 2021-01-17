@@ -440,7 +440,7 @@ int characterPhysics(character *c){
 			c->yoff += MAX(-.9f,c->vel.y * 10.f);
 		}
 		if(c->vel.y < -0.1f){
-			c->vel.y = c->vel.y*-0.3f;
+			c->vel.y = c->vel.y*-0.15f;
 		}else{
 			c->vel = vecMul(c->vel,vecNew(0.98f,0,0.98f));
 		}
