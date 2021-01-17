@@ -101,15 +101,15 @@ static void fxBlockBreakFire(const vec pos, u8 b){
 		const vec p = vecAdd(pos,vecRngAbs());
 		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.7f,96);
 	}
-	for(int i=0;i<64;i++){
-		newParticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.008f,0),vecMulS(vecRng(),0.004f)), 1.0f, 0.50f,0xFF60C8FF,  96);
-		newParticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.008f,0),vecMulS(vecRng(),0.004f)), 0.7f, 0.65f,0xFF5098FF, 128);
-		newParticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.008f,0),vecMulS(vecRng(),0.004f)), 0.6f, 0.75f,0xFF1F38EF, 156);
-		newParticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.008f,0),vecMulS(vecRng(),0.004f)), 0.5f, 0.75f,0xFF1F38EF, 178);
+	for(int i=0;i<96;i++){
+		newParticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.007f,0),vecMulS(vecRng(),0.005f)), 1.0f, 0.50f,0xFF60C8FF,  96);
+		newParticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.007f,0),vecMulS(vecRng(),0.005f)), 0.7f, 0.65f,0xFF5098FF, 128);
+		newParticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.007f,0),vecMulS(vecRng(),0.005f)), 0.6f, 0.75f,0xFF1F38EF, 156);
+		newParticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.007f,0),vecMulS(vecRng(),0.005f)), 0.5f, 0.75f,0xFF1F38EF, 172);
 	}
-	for(int i=0;i<8;i++){
+	for(int i=0;i<16;i++){
 		const u32 c = 0x00101820 | (rngValR()&0x0003070F);
-		newSparticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.001f,0),vecMulS(vecRng(),0.0001f)), 0.01f, 0.2f,c,2048);
+		newSparticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.001f+(rngValf()*0.001f),0),vecMulS(vecRng(),0.0001f)), 0.01f, 0.2f,c,768);
 	}
 }
 static void fxBlockBreakVegetation(const vec pos, u8 b){
