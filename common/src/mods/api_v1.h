@@ -60,6 +60,7 @@
 #define I_Crystal_Dust  286
 #define I_Flamestick    287
 #define I_Waterthrower  288
+#define I_Stonespear    289
 
 void recipeNew1 (const item result, const item ingred1);
 void recipeNew2 (const item result, const item ingred1, const item ingred2);
@@ -70,6 +71,7 @@ void ingredientSubstituteAdd (u16 ingredient, u16 substitute);
 
 void explode       (const vec pos, float pwr, int style);
 void grenadeNew    (const vec pos, const vec rot, float pwr, int cluster, float clusterPwr);
+void throwableNew  (const vec pos, const vec rot, float speed, const item itm, being thrower, u16 flags);
 void beamblast     (character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult);
 void projectileNew (const vec pos, const vec rot, being target, being source, uint style, float speed);
 void projectileNewC(const character *c, being target, uint style);
@@ -94,6 +96,7 @@ character *characterGetByBeing(being b);
 being      characterGetBeing (const character *c);
 int  characterHitCheck       (const vec pos, float mdd, int damage, int cause, u16 iteration, being source);
 void characterToggleAim      (      character *c, float zoom);
+bool characterIsAiming       (const character *c);
 
 void fireNew          (u16 x, u16 y, u16 z, i16 strength);
 void fireBox          (int x, int y, int z, int w, int h, int d, int strength);

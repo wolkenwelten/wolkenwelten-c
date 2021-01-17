@@ -203,6 +203,7 @@ void keyboardEventHandler(const SDL_Event *e){
 		case SDL_SCANCODE_L:
 			keysPressed[15] = 1;
 			break;
+		case SDL_SCANCODE_F12:
 		case SDL_SCANCODE_GRAVE:
 			openLispPanel();
 			break;

@@ -13,6 +13,7 @@
 #include "game/rain.h"
 #include "game/recipe.h"
 #include "game/rope.h"
+#include "game/throwable.h"
 #include "game/time.h"
 #include "game/weather.h"
 #include "gfx/gfx.h"
@@ -140,6 +141,8 @@ void worldUpdate(){
 		fireCheckPlayerBurn(calls);
 		weatherUpdateAll();
 		rainUpdateAll();
+		throwableUpdateAll();
+		throwableCheckPickup();
 
 		commitOverlayColor();
 		calls++;

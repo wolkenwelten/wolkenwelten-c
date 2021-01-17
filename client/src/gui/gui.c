@@ -530,7 +530,7 @@ void drawDebuginfo(){
 
 	guim->sx   = screenWidth-96;
 	guim->sy   = 24;
-	textMeshPrintf(guim,"FPS %s%02.0f\n",colorSignalHigh(20,40,59,curFPS),curFPS);
+	textMeshPrintf(guim,"FPS %s%3.0f\n",colorSignalHigh(20,40,59,curFPS),curFPS);
 	guim->fgc  = colorPalette[15];
 
 	guim->sy  += 16;

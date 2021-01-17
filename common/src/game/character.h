@@ -14,6 +14,7 @@ int        characterGetMaxHP       (const character *c);
 void       characterOpenGlider     (      character *c);
 void       characterCloseGlider    (      character *c);
 void       characterToggleGlider   (      character *c);
+bool       characterIsAiming       (const character *c);
 void       characterToggleAim      (      character *c, float zoom);
 void       characterStopAim        (      character *c);
 
