@@ -44,10 +44,12 @@ vec    camShake;
 
 #ifdef __EMSCRIPTEN__
 	float renderDistance = 320.f;
-#elif __HAIKU__
+#elif defined(__HAIKU__)
+	float renderDistance = 192.f;
+#elif defined(__aarch64__) || defined(__ARM_ARCH_7A__)
 	float renderDistance = 256.f;
 #else
-	float renderDistance = 384.f;
+	float renderDistance = 512.f;
 #endif
 float fadeoutDistance      =  32.f;
 float fadeoutStartDistance = 192;
