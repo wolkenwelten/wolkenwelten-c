@@ -41,9 +41,9 @@ lVal *lispEvalNR(const char *str){
 
 static lVal *wwlnfSEval(lClosure *c, lVal *v){
 	(void)c;
-	static char buf[1024];
+	static char buf[8192];
 	memset(buf,0,sizeof(buf));
-	lSPrintVal(v,buf,&buf[sizeof(buf)-1]);
+	lSPrintVal(lWrap(v),buf,&buf[sizeof(buf)-1]);
 	if(++SEvalID == 0){++SEvalID;}
 	msgLispSExpr(-1,SEvalID,buf);
 	return lispSEvalSym(SEvalID);
