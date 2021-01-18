@@ -52,10 +52,11 @@ clean:
 .PHONY: web
 web: release
 	rsync -avhe ssh web/ wolkenwelten.net:/var/www/html/
-	ssh wolkenwelten.net "mkdir -p /var/www/html/releases && cd /var/www/html/releases && mkdir -p win && mkdir -p macos && mkdir -p linux"
+	ssh wolkenwelten.net "mkdir -p /var/www/html/releases && cd /var/www/html/releases && mkdir -p win macos linux-x86_64 linux-aarch64 linux-armv7l"
 	if [ -d "releases/wasm" ]; then rsync -avhe ssh releases/wasm/ wolkenwelten.net:/var/www/html/releases/wasm/ ; fi
 	if [ -d "releases/win" ]; then rsync -avhe ssh releases/win/*.7z wolkenwelten.net:/var/www/html/releases/win/ ; fi
 	if [ -d "releases/macos" ]; then rsync -avhe ssh releases/macos/*.tgz wolkenwelten.net:/var/www/html/releases/macos/ ; fi
+	if [ -d "releases/linux-armv7l" ]; then rsync -avhe ssh releases/linux-armv7l/*.xz wolkenwelten.net:/var/www/html/releases/linux-armv7l/ ; fi
 	if [ -d "releases/linux-aarch64" ]; then rsync -avhe ssh releases/linux-aarch64/*.xz wolkenwelten.net:/var/www/html/releases/linux-aarch64/ ; fi
 	if [ -d "releases/linux-x86_64" ]; then rsync -avhe ssh releases/linux-x86_64/*.xz wolkenwelten.net:/var/www/html/releases/linux-x86_64/ ; fi
 	ssh wolkenwelten.net "cd /var/www/html/ && php index.php > index.html"

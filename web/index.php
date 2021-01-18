@@ -9,6 +9,7 @@ $platforms    = [
 	'win'   => 'Windows',
 	'macos' => 'MacOS',
 	'linux-x86_64' => 'GNU/Linux',
+	'linux-armv7l' => 'Linux ARM 32-Bit',
 	'linux-aarch64' => 'Linux ARM 64-Bit'
 ];
 

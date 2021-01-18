@@ -621,7 +621,6 @@ static void lGCSweep(){
 		lValFree(&lValBuf[i]);
 	}
 }
-
 void lClosureGC(){
 	lGCMark();
 	lGCSweep();

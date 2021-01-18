@@ -53,8 +53,7 @@ kbd.space {
 
 html {
 	background: #222;
-	background: linear-gradient(0deg, #0f57f9 0%, #4790ff 100%);
-	background-attachment: fixed;
+	background: #0f57f9;
 	color:#ddd;
 	font-family:sans-serif,sans;
 	font-size:14px;
@@ -327,6 +326,7 @@ span.key {
 .icon-wasm {
 	background:url("data:image/gif;base64,R0lGODlhEAAQAMIAAGVO8Kqqqt3d3f///2VO8GVO8GVO8GVO8CH5BAEKAAQALAAAAAAQABAAAAMwCKrUvhA6EiujNuvNu//RsIjKIFQkcALkurhrHMGKYAczq+ovJOC2XW+BUwAhRVACADs=");
 }
+.icon-linux-armv7l,
 .icon-linux-aarch64 {
 	background-image: url(data:image/gif;base64,R0lGODlhEAAQAMIFAAICA5EWOMMcSt1BbDmZFmq/S7Xznmq/SyH5BAEKAAcALAAAAAAQABAAAANNeAfMuu0BU2oBi1YMbPtdQXBEWTbmKH0D0EaPwggNjcXL+9k4QLcDWsAhedEENt9t8QMdl0qkTwgYxmZD5JAoSe6WK6kUfK2ayTgIOgEAOw==);
 }
