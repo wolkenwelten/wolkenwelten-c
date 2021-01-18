@@ -23,10 +23,11 @@ int stonespearBlockDamage(const item *cItem, blockCategory blockCat){
 }
 
 bool stonespearPrimaryAction(item *cItem, character *cChar){
-	//if(characterIsAiming(cChar) && characterTryToUse(cChar,cItem,10,0)){
-	if(characterTryToUse(cChar,cItem,200,0)){
-		throwableNew(cChar->pos, cChar->rot, 0.25f, *cItem, characterGetBeing(cChar), THROWABLE_PITCH_SPIN | THROWABLE_PIERCE_BLOCK);
+	if(characterIsAiming(cChar) && characterTryToUse(cChar,cItem,100,0)){
+		throwableNew(cChar->pos, cChar->rot, 0.25f, *cItem, characterGetBeing(cChar), THROWABLE_PITCH_SPIN | THROWABLE_PIERCE);
 		characterAddRecoil(cChar,1.f);
+		characterStopAim(cChar);
+		itemDiscard(cItem);
 		return true;
 	}
 	return false;
@@ -35,7 +36,7 @@ bool stonespearPrimaryAction(item *cItem, character *cChar){
 bool stonespearSecondaryAction(item *cItem, character *cChar){
 	if(characterTryToUse(cChar,cItem,200,0)){
 		characterAddCooldown(cChar,200);
-		characterToggleAim(cChar,2.f);
+		characterToggleThrowAim(cChar,2.f);
 		characterAddInaccuracy(cChar,32.f);
 		return true;
 	}

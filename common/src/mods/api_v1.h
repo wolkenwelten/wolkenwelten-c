@@ -96,7 +96,9 @@ character *characterGetByBeing(being b);
 being      characterGetBeing (const character *c);
 int  characterHitCheck       (const vec pos, float mdd, int damage, int cause, u16 iteration, being source);
 void characterToggleAim      (      character *c, float zoom);
+void characterToggleThrowAim (      character *c, float zoom);
 bool characterIsAiming       (const character *c);
+void characterStopAim        (      character *c);
 
 void fireNew          (u16 x, u16 y, u16 z, i16 strength);
 void fireBox          (int x, int y, int z, int w, int h, int d, int strength);

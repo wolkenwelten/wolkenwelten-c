@@ -68,6 +68,16 @@ bool characterIsAiming(const character *c){
 	if(c == NULL){return false;}
 	return c->flags & CHAR_AIMING;
 }
+void characterToggleThrowAim(character *c, float zoom){
+	if(c == NULL){return;}
+	if(c->flags & CHAR_AIMING){
+		characterStopAim(c);
+		return;
+	}
+	c->zoomFactor = zoom;
+	c->flags |= CHAR_AIMING;
+	c->flags |= CHAR_THROW_AIM;
+}
 void characterToggleAim(character *c, float zoom){
 	if(c == NULL){return;}
 	c->zoomFactor = zoom;
@@ -75,7 +85,8 @@ void characterToggleAim(character *c, float zoom){
 }
 void characterStopAim(character *c){
 	if(c == NULL){return;}
-	c->flags &= ~CHAR_AIMING;
+	c->zoomFactor = 1.f;
+	c->flags &= ~(CHAR_AIMING | CHAR_THROW_AIM);
 }
 
 void characterAddCooldown(character *c, int cooldown){

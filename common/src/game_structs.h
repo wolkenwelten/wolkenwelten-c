@@ -133,16 +133,17 @@ typedef struct {
 
 	void *nextFree;
 } character;
-#define CHAR_FALLING      (1   )
-#define CHAR_NOCLIP       (1<<1)
-#define CHAR_COLLIDE      (1<<2)
-#define CHAR_FALLINGSOUND (1<<3)
-#define CHAR_SNEAK        (1<<4)
-#define CHAR_GLIDE        (1<<5)
-#define CHAR_SPAWNING     (1<<6)
-#define CHAR_JUMPING      (1<<7)
-#define CHAR_BOOSTING     (1<<8)
-#define CHAR_AIMING       (1<<9)
+#define CHAR_FALLING      (1    )
+#define CHAR_NOCLIP       (1<< 1)
+#define CHAR_COLLIDE      (1<< 2)
+#define CHAR_FALLINGSOUND (1<< 3)
+#define CHAR_SNEAK        (1<< 4)
+#define CHAR_GLIDE        (1<< 5)
+#define CHAR_SPAWNING     (1<< 6)
+#define CHAR_JUMPING      (1<< 7)
+#define CHAR_BOOSTING     (1<< 8)
+#define CHAR_AIMING       (1<< 9)
+#define CHAR_THROW_AIM    (1<<10)
 
 #define CHAR_EQ_GLIDER     0
 #define CHAR_EQ_HOOK       1
@@ -224,7 +225,7 @@ typedef struct {
 
 #define THROWABLE_PITCH_SPIN   (1   )
 #define THROWABLE_TIP_HEAVY    (1<<1)
-#define THROWABLE_PIERCE_BLOCK (1<<2)
+#define THROWABLE_PIERCE       (1<<2)
 #define THROWABLE_COLLECTABLE  (1<<3)
 #define THROWABLE_BURNING      (1<<4)
 

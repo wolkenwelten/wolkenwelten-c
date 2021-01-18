@@ -1,4 +1,4 @@
-- 2020-01-17: Thrown axes/spears turn into thrown poops if one collects a spear and then throws another one afterwars
+- 2020-01-18: animalHitCheck sometimes doesn't work, seems to be constant for particular animals, probably something to do with beingLists
 - 2020-12-08: WASM SP Server crashes after a while
 - 2020-12-09: After attacking a sleeping chungus it is still looking up/down as if sleeping
 - 2020-12-09: Sometimes a lot of Enemies/Chungi fall from the sky

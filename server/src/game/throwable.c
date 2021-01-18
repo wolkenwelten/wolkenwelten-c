@@ -2,6 +2,7 @@
 
 #include "entity.h"
 
+#include <stdio.h>
 void throwableNew(const vec pos, const vec rot, float speed, const item itm, being thrower, u16 flags){
 	throwable *a = throwableAlloc();
 	a->ent       = entityNew(pos,rot);

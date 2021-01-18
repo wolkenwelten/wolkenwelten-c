@@ -44,6 +44,7 @@ static void throwableDel(uint i){
 
 	throwableList[i].nextFree = 0;
 	entityFree(throwableList[i].ent);
+	throwableList[i].ent = NULL;
 }
 
 void throwableCheckPickup(){
@@ -52,11 +53,12 @@ void throwableCheckPickup(){
 
 	for(uint i=(++calls&0xF);i<throwableCount;i+=0x10){
 		throwable *t = &throwableList[i];
-		if(t->nextFree >= 0){continue;}
+		if(t->nextFree   >= 0){continue;}
+		if(t->itm.amount <= 0){continue;}
 		if(t->flags & THROWABLE_COLLECTABLE){
 			vec dist = vecSub(player->pos,t->ent->pos);
 			float dd = vecDot(dist,dist);
-			if(dd < 1.5f * 1.5f){
+			if(dd < 2.f * 2.f){
 				characterPickupItem(player,t->itm.ID,t->itm.amount);
 				throwableDel(i);
 			}

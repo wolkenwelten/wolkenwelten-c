@@ -1,6 +1,7 @@
 #include "throwable.h"
 
 #include "entity.h"
+#include "../game/animal.h"
 #include "../network/messages.h"
 #include "../mods/mods.h"
 #include "../misc/profiling.h"
@@ -26,6 +27,7 @@ throwable *throwableAlloc(){
 		throwable *t = &throwableList[throwableFirstFree];
 		throwableFirstFree = t->nextFree;
 		t->nextFree = -1;
+		t->ent = NULL;
 		return t;
 	}
 	throwable *t = &throwableList[throwableCount++];
@@ -78,30 +80,37 @@ void throwableSendUpdate(uint c, uint i){
 void throwableRecvUpdate(const packet *p){
 	const uint i    = p->v.u16[0];
 	const uint nlen = p->v.u16[1];
+	const uint itmAmount = p->v.u16[ 5];
 
 	throwable *a = NULL;
 	if(isClient){
+		if(itmAmount == 0){
+			throwableFree(&throwableList[i]);
+			throwableList[i].itm.amount = 0;
+			return;
+		}
 		a = &throwableList[i];
-		for(uint ii=nlen;ii<throwableCount;ii++){
+		for(uint ii=nlen-1;ii<throwableCount;ii++){
 			throwableFree(&throwableList[ii]);
 		}
 		throwableCount = nlen;
 		a->nextFree = -1;
 	}else{
-		a = throwableAlloc();
 		if(nlen > 0){
-			throwableFree(a = &throwableList[i]);
+			throwableFree(&throwableList[i]);
 			throwableList[i].itm.amount = 0;
 			throwableSendUpdate(-1,i);
 			return;
+		}else{
+			a = throwableAlloc();
+			a->nextFree = -1;
 		}
-		a->nextFree = -1;
 	}
 
 	a->counter    = p->v.u16[ 2];
 	a->flags      = p->v.u16[ 3];
 	a->itm.ID     = p->v.u16[ 4];
-	a->itm.amount = p->v.u16[ 5];
+	a->itm.amount = itmAmount;
 
 	a->thrower    = p->v.u32[ 3];
 
@@ -126,12 +135,21 @@ void throwableRecvUpdate(const packet *p){
 static void throwableUpdate(throwable *t){
 	if(t->ent == NULL){return;}
 	entityUpdate(t->ent);
-	if((t->flags & THROWABLE_PIERCE_BLOCK) && (t->ent->flags & ENTITY_COLLIDE)){
+	if((t->flags & THROWABLE_PIERCE) && (t->ent->flags & ENTITY_COLLIDE)){
 		t->ent->flags |= ENTITY_NOCLIP;
 		t->flags &= ~THROWABLE_PITCH_SPIN;
 		t->flags |= THROWABLE_COLLECTABLE;
 		t->ent->vel = vecZero();
 	}
+	/*if(characterHitCheck(p->pos, mdd, 1, 3, iteration, p->source))*/
+	if((t->flags & THROWABLE_PIERCE) && (t->ent != NULL)){
+		if(animalHitCheck(t->ent->pos, 1.f, 8, 3, -1, 0)){
+			t->ent->flags &= ~THROWABLE_PIERCE;
+			t->ent->vel = vecMulS(t->ent->vel,-0.1f);
+			t->ent->vel.y = 0.01f;
+		}
+	}
+
 	if(t->flags & THROWABLE_PITCH_SPIN){
 		t->ent->rot.pitch -= 2.f;
 	}
