@@ -584,6 +584,7 @@ void lispInit(){
 	lispEvalNR("(define vx+      (λ (v o) (+ v (vec o 0 0))))");
 	lispEvalNR("(define vy+      (λ (v o) (+ v (vec 0 o 0))))");
 	lispEvalNR("(define vz+      (λ (v o) (+ v (vec 0 0 o))))");
+	lispEvalNR("(define rain     (λ () (cloud-density 0.9)))");
 	lispEvalNR("(define cloud-density (λ (a) (- 1.0 (/ (cloud-threshold (* (- 1.0 a) 256.0)) 256.0))))");
 }
 

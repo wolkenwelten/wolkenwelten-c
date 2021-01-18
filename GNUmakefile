@@ -1,3 +1,5 @@
+AS                   := as
+ASFLAGS              :=
 CC                   := cc
 OPTIMIZATION         := -O2 -fno-lto -ffast-math
 RELEASE_OPTIMIZATION := -O3 -flto -ffast-math
@@ -50,4 +52,11 @@ endif
 
 ifeq ($(VERSION_ARCH),aarch64)
 	LDFLAGS += -march=native
+	ASFLAGS += -march=aarch64 -mfloat-abi=hard -mfpu=neon
+	CFLAGS  += -march=aarch64 -mfloat-abi=hard -mfpu=neon
+endif
+ifeq ($(VERSION_ARCH),armv7l)
+	LDFLAGS += -march=native
+	ASFLAGS += -march=armv7-a -mfloat-abi=hard -mfpu=neon
+	CFLAGS  += -march=armv7-a -mfloat-abi=hard -mfpu=neon
 endif

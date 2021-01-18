@@ -51,12 +51,18 @@ void profStart(uint i){
 }
 
 void profStop(uint i){
+	u64 cticks = getUTicks();
+	if(profEntryList[i].ustart > cticks){cticks = profEntryList[i].ustart;}
 	profEntryList[i].total += getUTicks() - profEntryList[i].ustart;
 	profEntryList[i].count++;
 }
 
 u64 profGetTotal(uint i){
 	return profEntryList[i].total;
+}
+
+u64 profGetCount(uint i){
+	return profEntryList[i].count;
 }
 
 double profGetMean(uint i){
@@ -80,7 +86,7 @@ const char *profGetReport(){
 	buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"%sProfiling Report%s\n",ansiFG[2],ansiRS);
 	for(uint i=1;i<64;i++){
 		if(profEntryList[i].count == 0){continue;}
-		buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"%5.2f%% %-24s Avg.: %6.4fms\n",profGetShare(i)*100.0,profEntryList[i].funcName, profGetMean(i) / 1000000.0 );
+		buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"%5.2f%% %-24s Avg.: %6.4fms Count: %6u\n",profGetShare(i)*100.0,profEntryList[i].funcName, profGetMean(i) / 1000000.0, (uint)profGetCount(i));
 	}
 	*buf = 0;
 	return reportBuf;

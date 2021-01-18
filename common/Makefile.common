@@ -22,7 +22,7 @@ ASM_OBJS += common/src/asm/$(ARCH).o
 endif
 
 %.o: %.s
-	$(AS) -g -c $< -o $@
+	$(AS) $(ASFLAGS) -g -c $< -o $@
 
 %.o: %.c
 	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -g -c $< -o $@
