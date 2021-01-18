@@ -52,12 +52,11 @@ void doRepl(lClosure *c){
 			printf("Bye!\n");
 			return;
 		}
-		lVal *sexpr = lWrap(lRead(str));
-		lVal *v = lEval(c,sexpr);
+		lVal *v = lEval(c,lWrap(lRead(str)));
 		lPrintVal(v);
 		lClosureGC();
 		lVal *tmp = lValString(str);
-		if((tmp != NULL) && (lastl != NULL)){*lastl = *tmp;}
+		if((tmp != NULL) && (lastl != NULL)){lastl->vList.car = tmp;}
 	}
 }
 
@@ -125,11 +124,8 @@ int main(int argc, char *argv[]){
 				repl = 1;
 			}
 		}
-		//printf("Str: '%s'\n",str);
 		if(!eval){str = loadFile(argv[i],&len);}
-		lVal *sexpr = lWrap(lRead(str));
-		//lPrintVal(sexpr);
-		lVal *v = lEval(c,sexpr);
+		lVal *v = lEval(c,lWrap(lRead(str)));
 		lPrintVal(v);
 		lClosureGC();
 

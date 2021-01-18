@@ -594,29 +594,37 @@ int lMemUsage(){
 	return used;
 }
 
-static void lValGCMark(lVal *sv){
-	forEach(v,sv){
-		v->flags |= lfMarked;
-		lVal *car = v->vList.car;
-		if(car == NULL){continue;}
-		if(car->type == ltList)   {lValGCMark(car);}
-		if(car->type == ltLambda) {
-			lValGCMark(car->vLambda->data);
-			lValGCMark(car->vLambda->text);
-		}
+static void lValGCMark(lVal *v){
+	if(v == NULL){return;}
+	v->flags |= lfMarked;
+	if(v->type == ltList){
+		lValGCMark(v->vList.car);
+		lValGCMark(v->vList.cdr);
+	} else if(v->type == ltLambda) {
+		lValGCMark(v->vLambda->data);
+		lValGCMark(v->vLambda->text);
 	}
 }
 
-void lClosureGC(){
+static void lGCMark(){
 	for(uint i=0;i<lValMax;i++){lValBuf[i].flags &= ~lfMarked;}
 	//for(;c != NULL;c = c->parent){lValGCMark(c->data);}
-	for(uint i=0;i<lClosureMax;i++){lValGCMark(lClosureList[i].data);}
-	for(uint i=0;i<lClosureMax;i++){lValGCMark(lClosureList[i].text);}
+	for(uint i=0;i<lClosureMax;i++){
+		lValGCMark(lClosureList[i].data);
+		lValGCMark(lClosureList[i].text);
+	}
+}
+static void lGCSweep(){
 	for(uint i=0;i<lValMax;i++){
 		if(lValBuf[i].type == ltNoAlloc){continue;}
 		if(lValBuf[i].flags & lfMarked) {continue;}
 		lValFree(&lValBuf[i]);
 	}
+}
+
+void lClosureGC(){
+	lGCMark();
+	lGCSweep();
 }
 
 lType lTypecast(const lType a,const lType b){
