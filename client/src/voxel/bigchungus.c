@@ -272,5 +272,6 @@ bool worldIsLoaded(int x, int y, int z){
 
 void worldSetChunkUpdated(int x, int y, int z){
 	chunk *chnk = worldGetChunk(x,y,z);
+	if(chnk == NULL){return;}
 	chnk->dataCount |= 0x8000;
 }

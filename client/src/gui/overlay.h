@@ -4,5 +4,6 @@
 void commitOverlayColor ();
 u32  getOverlayColor    ();
 void setOverlayColor    (u32 color, u32 animationDuration);
+void nextOverlayColor   (u32 color, u32 animationDuration);
 void resetOverlayColor  ();
 void drawOverlay        (textMesh *m);

@@ -28,13 +28,16 @@ int chunkCount     = 0;
 int chunksGeneratedThisFrame = 0;
 chunk *chunkFirstFree = NULL;
 
-#define MAX_CHUNKS_GEN_PER_FRAME 32
-
-#ifndef __EMSCRIPTEN__
-#define CHUNK_COUNT (1<<18)
+#ifdef __EMSCRIPTEN__
+	#define MAX_CHUNKS_GEN_PER_FRAME 16
+#elif defined(__aarch64__) || defined(__ARM_ARCH_7A__)
+	#define MAX_CHUNKS_GEN_PER_FRAME 8
 #else
-#define CHUNK_COUNT (1<<17)
+	#define MAX_CHUNKS_GEN_PER_FRAME 48
 #endif
+
+#define CHUNK_COUNT (1<<17)
+
 chunk *chunkList;
 
 void chunkInit(){

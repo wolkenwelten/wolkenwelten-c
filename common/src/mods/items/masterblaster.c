@@ -22,7 +22,7 @@ int masterblasterGetStackSize(const item *cItem){
 
 bool masterblasterPrimaryAction(item *cItem, character *cChar){
 	if(!characterTryToShoot(cChar,cItem,350,45)){return false;}
-	beamblast(cChar,6.f,12.f,2.f,1024,1,32.f,1.f);
+	beamblast(cChar,6.f,12.f,.5f,1024,1,32.f,1.f);
 	return true;
 }
 

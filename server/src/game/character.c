@@ -43,8 +43,8 @@ int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 itera
 		if(beingCharacter(i) == source)    {continue;}
 		vec dis = vecSub(pos,clients[i].c->pos);
 		if(vecDot(dis,dis) < mdd){
-			msgBeingDamage(i,damage,cause,1.f,beingCharacter(i),0,pos);
-			msgBeingGotHit(damage, cause, 1.f,beingCharacter(i),0);
+			msgBeingDamage(i,damage, cause, 1.f,beingCharacter(i),0,pos);
+			msgBeingGotHit(  damage, cause, 1.f,beingCharacter(i),0);
 			clients[i].c->temp = iteration;
 			hits++;
 		}

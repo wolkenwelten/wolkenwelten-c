@@ -859,6 +859,11 @@ void characterGotHitPacket(const packet *p){
 	if(beingType(target) != BEING_CHARACTER){return;}
 	if(beingID(target) == (uint)playerID){
 		c = player;
+		nextOverlayColor(0xA03020F0,0);
+		const vec pos = vecNewP(&p->v.f[3]);
+		vec dist = vecNorm(vecSub(player->pos,pos));
+		dist.y = MAX(0.5f,dist.y);
+		player->vel = vecAdd(player->vel,vecMulS(dist,0.1f));
 	}else{
 		if(beingID(target) > 32){return;}
 		c = playerList[beingID(target)];
