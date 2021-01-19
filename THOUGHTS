@@ -3,7 +3,7 @@ Fast travel?
 	projects for players could be fun
 Tool/Weapon durability?
 	Seems to mostly be a hassle and not adding much fun while leading some players
-	to not use the materials they have for fear of wasting them (eg. S not using iron pickaxes in Minecraft)
+	to not use the materials they have for fear of wasting them (eg. Seb not using iron pickaxes in Minecraft)
 Art Style?
 	Currently too similar to Minecraft, the game needs to find its tone/color.
 	Probably should be as bright and colorful as Minecraft/Zelda to underline the abstract/cartoonish graphics necessiated by the voxel/blocks
@@ -11,8 +11,6 @@ NPCs? Maybe something like Terraria where one controls a "town"
 	Since every block can be changed enabling players to build houses, plazas and whole towns it could
 	be nice to nudge players into building a town since without npcs living in those houses and offering services
 	building towns could/would be seen as a waste from a pure gameplay perspective
-Positional Audio?
-	Probably a good idea, especially for Enemies making noises
 Fancy Grass "Blocks" / Crops?
 	For once they do quite a lot to reduce the blocky appearance, although this
 	would mean more code in the renderpath. How could farming crops be rendered apart from

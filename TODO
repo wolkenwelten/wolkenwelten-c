@@ -1,4 +1,4 @@
-- Make Assemby routine switchable during runtime for better performance comparison, as well as actual feature detection which mostly helps on x86 so we can switch between SSE/AVX
+- Make Assembly routines switchable during runtime for better performance comparison, as well as actual feature detection which mostly helps on x86 so we can switch between SSE/AVX
 - Generate Cloud Density Mod based on chunk data BUT with a much lower resolution, basically summing together the amount of blocks inside a chunk and using that as a modifier for the clouddensity
 - WorldSeeds should be anything, just sha1 the string
 - Add Clouds Trails from Characters/Entities/Projectiles, probably looks nice

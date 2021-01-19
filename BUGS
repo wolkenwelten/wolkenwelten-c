@@ -1,7 +1,7 @@
-- 2020-01-18: animalHitCheck sometimes doesn't work, seems to be constant for particular animals, probably something to do with beingLists
 - 2020-12-08: WASM SP Server crashes after a while
 - 2020-12-09: After attacking a sleeping chungus it is still looking up/down as if sleeping
 - 2020-12-09: Sometimes a lot of Enemies/Chungi fall from the sky
 - 2020-12-10: Booster trail is only shown for the current player
 - 2020-12-10: Server not shuttong down correctly still an issue
 - 2021-01-10: Glider sometimes gets draw filling the whole screen, but only for a split second, nost quite sure what the cause is, something to do with jumping maybe?
+- 2021-01-18: animalHitCheck sometimes doesn't work, seems to be constant for particular animals, probably something to do with beingLists
