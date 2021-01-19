@@ -6,3 +6,9 @@
 
 (define describe (λ (a) "Returns the DocString to its argument, if available"
 	(if (string? (car (cl-text a))) (car (cl-text a)) "No DocString found")))
+
+(define newline (λ () "Prints a single line feed character"
+	(print "\n")))
+
+(define display (λ (a) "Displays its argument"
+	(print a) #nil))
