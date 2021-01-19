@@ -18,6 +18,7 @@
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/network/messages.h"
 
+#include "../../../common/src/tmp/assets.h"
 #include "../../../common/src/nujel/nujel.h"
 #include "../../../common/src/nujel/casting.h"
 #include "../../../common/src/nujel/reader.h"
@@ -573,6 +574,7 @@ static void cmdLisp(int c,const char *str, u8 id){
 void lispInit(){
 	lInit();
 	clRoot = lClosureNew(NULL);
+	lEval(clRoot,lWrap(lRead((char *)src_tmp_stdlib_nuj_data)));
 	setPID(clRoot,123);
 
 	lispEvalNR("(define heal     (λ (a) (- (dmg (cond (a (- a)) (#t -20))))))");
