@@ -1,9 +1,13 @@
 ARCH             := $(shell uname -m)
 MODS_SRCS        := $(shell find common/src/mods -type f -name '*.c')
+NUJ_STDLIB       := $(shell find common/src/nujel/stdlib/ -type f -name '*.nuj')
+COMMON_ASSETS    := common/src/tmp/stdlib.nuj
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
 COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
 COMMON_DEPS      := ${COMMON_SRCS:.c=.deps}
+NUJEL_SRCS       := $(shell find common/nujel/ -type f -name '*.c') $(shell find common/src/nujel/ -type f -name '*.c') common/src/tmp/assets.c
+NUJEL_OBJS       := $(NUJEL_SRCS:.c=.o)
 ASM_OBJS         :=
 
 WEBEXCLUDE       += --exclude=releases/macos/wolkenwelten.iconset/
@@ -12,7 +16,7 @@ WEBEXCLUDE       += --exclude=releases/win/*.res
 TEST_WORLD       := -worldSeed=2600 -savegame=Test
 
 .PHONY: all
-all: wolkenwelten
+all: wolkenwelten nujel
 
 .PHONY: release
 .PHONY: .deps
@@ -20,6 +24,9 @@ all: wolkenwelten
 ifeq ("$(wildcard common/src/asm/$(ARCH).s)","common/src/asm/$(ARCH).s")
 ASM_OBJS += common/src/asm/$(ARCH).o
 endif
+
+common/src/tmp/stdlib.nuj: $(NUJ_STDLIB)
+	cat $< > $@
 
 %.o: %.s
 	$(AS) $(ASFLAGS) -g -c $< -o $@
@@ -30,10 +37,22 @@ endif
 %.deps: %.c
 	$(CC) -MM $< -MT "$(<:.c=.o)" $(CINCLUDES) $(CLIENT_CINCLUDES) > $@
 
+nujel: $(NUJEL_OBJS)
+	$(CC) -lm $(COPT) $(CWARN) $(CSTD) $(CFLAGS) -g $(NUJEL_OBJS) -o $@
+
 $(COMMON_DEPS): | common/src/tmp/cto.h
 .deps: common/make.deps
 common/make.deps: $(COMMON_DEPS)
 	cat $(COMMON_DEPS) > common/make.deps
+
+common/src/tmp/assets.c: tools/assets $(COMMON_ASSETS)
+	mkdir -p common/src/tmp/
+	tools/assets common/src/tmp/assets $(COMMON_ASSETS)
+common/src/tmp/assets.h: common/src/tmp/assets.c
+	@true
+
+tools/assets: tools/assets.c
+	$(CC) $(OPTIMIZATION) $(CSTD) $(CFLAGS) $< -o $@
 
 ifneq ($(MAKECMDGOALS),clean)
 -include client/make.deps
@@ -91,3 +110,11 @@ common/src/tmp/cto.c: tools/infogen
 	tools/infogen common/src/tmp/cto
 common/src/tmp/cto.h: common/src/tmp/cto.c
 	@true
+
+.PHONY: test
+test:
+	common/nujel/nujel-test
+
+.PHONY: runn
+runn: nujel
+	./nujel

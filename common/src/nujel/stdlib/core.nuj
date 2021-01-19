@@ -1,0 +1,8 @@
+(define ++ (λ (i) "Returns its argument + 1"
+	(+ i 1)))
+
+(define -- (λ (i) "Returns its argument - 1"
+	(- i 1)))
+
+(define describe (λ (a) "Returns the DocString to its argument, if available"
+	(if (string? (car (cl-text a))) (car (cl-text a)) "No DocString found")))

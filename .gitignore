@@ -51,8 +51,12 @@ platform/win_cross/pkgs/mingw-w64-sdl2/*
 /wolkenwelten.exe
 /wolkenwelten-server
 /wolkenwelten-server.exe
+/nujel
+/nujel.exe
 /client/tools/assets
 /client/tools/objparser
+/tools/assets
+/tools/assets.exe
 /tools/modscg
 /tools/modscg.exe
 /client/src/shader/*.h

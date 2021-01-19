@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "../src/common.h"
+#include "../src/tmp/assets.h"
 #include "../src/nujel/nujel.h"
 #include "../src/nujel/casting.h"
 #include "../src/nujel/reader.h"
@@ -82,7 +83,7 @@ lVal *lnfInput(lClosure *c, lVal *v){
 
 lVal *lnfPrint(lClosure *c, lVal *v){
 	if(v == NULL){return lValNil();}
-	lVal *t = lnfCat(c,v->vList.car);
+	lVal *t = lnfCat(c,v);
 	if((t != NULL) && (t->type == ltString)){
 		printf("%s",t->vString->data);
 	}
@@ -97,10 +98,11 @@ void lPrintError(const char *format, ...){
 }
 
 lVal *lResolveNativeSym(const lSymbol s){
-	if(strcmp(s.c,"print") == 0){return lValNativeFunc(lnfPrint);}
-	if(strcmp(s.c,"input") == 0){return lValNativeFunc(lnfInput);}
-	if(strcmp(s.c,"quit") == 0) {return lValNativeFunc(lnfQuit);}
-	if(strcmp(s.c,"exit") == 0) {return lValNativeFunc(lnfQuit);}
+	if(strcmp(s.c,"print") == 0)  {return lValNativeFunc(lnfPrint);}
+	if(strcmp(s.c,"display") == 0){return lValNativeFunc(lnfPrint);}
+	if(strcmp(s.c,"input") == 0)  {return lValNativeFunc(lnfInput);}
+	if(strcmp(s.c,"quit") == 0)   {return lValNativeFunc(lnfQuit);}
+	if(strcmp(s.c,"exit") == 0)   {return lValNativeFunc(lnfQuit);}
 
 	return lResolveNativeSymBuiltin(s);
 }
@@ -112,6 +114,7 @@ int main(int argc, char *argv[]){
 	setvbuf(stderr, NULL, _IONBF, 0);
 	lInit();
 	lClosure *c = lClosureNew(NULL);
+	lEval(c,lWrap(lRead((char *)src_tmp_stdlib_nuj_data)));
 
 	for(int i=1;i<argc;i++){
 		size_t len;

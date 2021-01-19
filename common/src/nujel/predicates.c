@@ -99,7 +99,13 @@ lVal *lnfNumberPred(lClosure *c, lVal *v){
 }
 
 lVal *lnfStringPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
+	lVal *t;
+	if(v == NULL){return lValBool(false);}
+	if(v->type == ltList){
+		t = lEval(c,v->vList.car);
+	}else{
+		t = lEval(c,v);
+	}
 	if(t == NULL){return lValBool(false);}
 	return lValBool((t->type == ltString) || (t->type == ltCString));
 }
@@ -138,8 +144,9 @@ lVal *lnfVecPred(lClosure *c, lVal *v){
 }
 
 lVal *lnfNilPred(lClosure *c, lVal *v){
+	if(v == NULL){return lValBool(true);}
 	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return lValBool(false);}
+	if(t == NULL){return lValBool(true);}
 	return lValBool(t->type == ltNil);
 }
 

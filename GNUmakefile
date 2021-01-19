@@ -50,11 +50,6 @@ ifdef EMSDK
 	include platform/wasm/Makefile.wasm
 endif
 
-ifeq ($(VERSION_ARCH),aarch64)
-	LDFLAGS += -march=native
-	ASFLAGS += -march=aarch64 -mfloat-abi=hard -mfpu=neon
-	CFLAGS  += -march=aarch64 -mfloat-abi=hard -mfpu=neon
-endif
 ifeq ($(VERSION_ARCH),armv7l)
 	LDFLAGS += -march=native
 	ASFLAGS += -march=armv7-a -mfloat-abi=hard -mfpu=neon

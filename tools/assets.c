@@ -18,8 +18,13 @@ char *fileSlug(char *path){
 }
 
 int main(int argc,char *argv[]){
-	FILE *cfp = fopen("client/src/tmp/assets.c","w");
-	FILE *hfp = fopen("client/src/tmp/assets.h","w");
+	char fn[512];
+	snprintf(fn,sizeof(fn)-1,"%s.c",argv[1]);
+	fn[sizeof(fn)-1] = 0;
+	FILE *cfp = fopen(fn,"w");
+	snprintf(fn,sizeof(fn)-1,"%s.h",argv[1]);
+	fn[sizeof(fn)-1] = 0;
+	FILE *hfp = fopen(fn,"w");
 	static unsigned char buffer[1024*1024*32];
 	size_t filelen=0,readlen=0,ii;
 	int lc=0,i;
@@ -29,7 +34,7 @@ int main(int argc,char *argv[]){
 	}
 	fprintf(hfp,"#pragma once\n#include <stddef.h>\n\n");
 	fprintf(cfp,"#include <stddef.h>\n\n");
-	for(i=1;i<argc;i++){
+	for(i=2;i<argc;i++){
 		FILE *afp = fopen(argv[i],"rb");
 		if(afp == NULL){
 			fprintf(stderr,"Error opening %s\n",argv[i]);

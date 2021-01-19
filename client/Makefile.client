@@ -8,7 +8,7 @@ RAW_SFX          := $(shell find client/sfx -type f -name '*.aif')
 SFX_ASSETS       := ${RAW_SFX:.aif=.ogg}
 SHD_ASSETS       := $(shell find client/src/shader -type f -name '*.glsl')
 TXT_ASSETS       := $(shell find client/txt -type f -name '*')
-ASSETS           := $(GFX_ASSETS) $(SFX_ASSETS) $(SHD_ASSETS) $(TXT_ASSETS)
+CLIENT_ASSETS    := $(GFX_ASSETS) $(SFX_ASSETS) $(SHD_ASSETS) $(TXT_ASSETS)
 MESHASSETS       := $(shell find client/mesh -type f -name '*')
 
 CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
@@ -38,9 +38,9 @@ endif
 %.ogg: %.aif
 	$(FFMPEG) -hide_banner -v panic -i $< -ac 1 -ar 22050 -acodec libvorbis $@
 
-client/src/tmp/assets.c: client/tools/assets $(ASSETS)
+client/src/tmp/assets.c: tools/assets $(CLIENT_ASSETS)
 	mkdir -p client/src/tmp/
-	client/tools/assets $(ASSETS)
+	tools/assets client/src/tmp/assets $(CLIENT_ASSETS)
 client/src/tmp/assets.h: client/src/tmp/assets.c
 	@true
 
