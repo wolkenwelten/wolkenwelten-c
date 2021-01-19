@@ -31,7 +31,7 @@ releases/linux-$(VERSION_ARCH)/wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME
 releases/linux-$(VERSION_ARCH)/wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME).tar.xz: $(LIN_REL)/wolkenwelten-server
 	cd releases/linux-$(VERSION_ARCH)/ && tar -c wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME)/ | xz -9 - > wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME).tar.xz
 
-$(LIN_REL)/README: README
+$(LIN_REL)/README: common/README
 	cp $< $@
 
 $(LIN_REL)/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)

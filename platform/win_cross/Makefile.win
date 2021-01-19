@@ -21,7 +21,7 @@ releases/win/wolkenwelten-win-$(VERSION_NAME).7z: $(WIN_RELDIR)/wolkenwelten-ser
 $(WIN_RELDIR):
 	mkdir -p $(WIN_RELDIR)
 
-$(WIN_RELDIR)/README.txt: README
+$(WIN_RELDIR)/README.txt: common/README
 	cp $< $@
 
 $(WIN_RELDIR)/wolkenwelten.exe: CFLAGS    += $(WIN_CLIENT_CFLAGS)

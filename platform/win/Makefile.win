@@ -29,7 +29,7 @@ releases/win/wolkenwelten-win-$(VERSION_NAME).7z: $(WIN_RELDIR)/wolkenwelten.exe
 releases/win/wolkenwelten-win-$(VERSION_NAME).7z: $(WIN_RELDIR)/wolkenwelten-server.exe
 	cd releases/win/ && 7z a wolkenwelten-win-$(VERSION_NAME).7z wolkenwelten-win-$(VERSION_NAME)
 
-$(WIN_RELDIR)/README.txt: README
+$(WIN_RELDIR)/README.txt: common/README
 	cp $< $@
 
 $(WIN_RELDIR)/wolkenwelten.exe: CFLAGS    += $(CLIENT_CFLAGS)

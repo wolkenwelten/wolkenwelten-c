@@ -1,1 +1,14 @@
-This project is NOT Free Software / Open Source, you are not allowed to distribute it without explicit permission. You are however free to look at, learn from, experiment with this code.
+This project is NOT Free Software / Open Source!
+
+
+You are not allowed to distribute it without explicit permission of the Author.
+
+You are however free to look at, learn from, experiment with this code and
+share YOUR modifications/patches to it as long as you make sure that you do not
+inadvertently include code written by me.
+
+Apart from that be careful about what you try with this codebase and which
+commits to run, since there are unstable commits in the history that might harm
+your machine and/or data for which I take no responsiblity for.
+
+And last but not least, Happy Hacking! :)
