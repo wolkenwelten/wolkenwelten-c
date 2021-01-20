@@ -357,7 +357,6 @@ static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
 		if(nn->vList.car->type != ltSymbol){continue;}
 		lVal *lv = lDefineClosureSym(tmpc,nn->vList.car->vSymbol);
 		lVal *t = lEval(c,vn->vList.car);
-		if(t  != NULL && t->type == ltList)  { t = lEval(c,t->vList.car); }
 		if(t  != NULL && t->type == ltSymbol){ t = lEval(c,t); }
 		if(t  != NULL){lValCopy(lv,lCons(t,NULL));}
 		if(vn != NULL){vn = vn->vList.cdr;}
@@ -432,7 +431,10 @@ static lVal *lnfCdr(lClosure *c, lVal *v){
 }
 static lVal *lnfCons(lClosure *c, lVal *v){
 	if((v == NULL) || (v->type != ltList)){return lCons(NULL,NULL);}
-	return lCons(lEval(c,v->vList.car),lEval(c,v->vList.cdr != NULL ? v->vList.cdr->vList.car : NULL));
+	lVal *car = lEval(c,v->vList.car);
+	lVal *cdr = lEval(c,v->vList.cdr != NULL ? v->vList.cdr->vList.car : NULL);
+	if((cdr != NULL) && (cdr->type == ltNil)){cdr = NULL;}
+	return lCons(car,cdr);
 }
 
 lVal *lResolveNativeSymBuiltin(const lSymbol s){

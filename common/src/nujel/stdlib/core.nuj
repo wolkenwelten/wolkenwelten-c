@@ -4,6 +4,29 @@
 (define -- (λ (i) "Returns its argument - 1"
 	(- i 1)))
 
+(define reverse (λ (l r) "Returns the list l in reverse order"
+	(if (nil? l) r (reverse (cdr l) (cons (car l) r)))))
+
+(define length (λ (a t) "Returns the length of list a"
+	(if (nil? a) t (length (cdr a) (++ t)))))
+
+(define filter-iter (λ (p l r) "Iterator for filter"
+	(cond ((nil? l) r)
+		((p (car l)) (filter-iter p (cdr l) (cons (car l) r)))
+		(#t (filter-iter p (cdr l) r)))))
+(define filter (λ (p l) "Runs predicate p over every item in list l and returns a list consiting solely of items where p is true"
+	(reverse (filter-iter p l #nil))))
+
+(define map-iter (λ (f l r) "Iterator for map"
+	(if (nil? l) r (map-iter f (cdr l) (cons (f (car l)) r)))))
+(define map (λ (f l) "Runs f over every item in list l and returns the resulting list"
+	(reverse (map-iter f l #nil))))
+
+(define append-iter (λ (a b) "Iterator for append"
+	(if (nil? a) b (append-iter (cdr a) (cons (car a) b)))))
+(define append (λ (a b) "Appends to two lists a and b together"
+	(append-iter (reverse a) b)))
+
 (define describe (λ (a) "Returns the DocString to its argument, if available"
 	(if (string? (car (cl-text a))) (car (cl-text a)) "No DocString found")))
 
