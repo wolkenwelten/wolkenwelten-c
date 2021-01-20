@@ -215,8 +215,14 @@ lVal *lnfCat(lClosure *c, lVal *v){
 	forEach(sexpr,v){
 		lVal *t = lEval(c,sexpr->vList.car);
 		if(t == NULL){continue;}
+		lPrintVal(t);
 		switch(t->type){
 		default: break;
+		case ltSymbol: {
+			int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%s",t->vSymbol.c);
+			len += clen;
+			buf += clen;
+			break; }
 		case ltInt: {
 			int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%i",t->vInt);
 			len += clen;

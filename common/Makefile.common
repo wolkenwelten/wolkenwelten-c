@@ -117,4 +117,4 @@ test: nujel
 
 .PHONY: runn
 runn: nujel
-	./nujel
+	gdb ./nujel -ex "r"

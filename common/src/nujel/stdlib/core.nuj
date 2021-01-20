@@ -30,6 +30,12 @@
 (define describe (λ (a) "Returns the DocString to its argument, if available"
 	(if (string? (car (cl-text a))) (car (cl-text a)) "No DocString found")))
 
+(define symbol-table (λ (i r) "Returns all a list of all symbols defined accessible from the current closure"
+	(if (nil? (cl i)) r (symbol-table (++ i) (map (λ (a) (car a)) (cl i))))))
+
+(define help (λ () "Returns a list describing every function accesible"
+	(map (λ (a) (cat a "\n  " (describe a) "\n")) (symbol-table))))
+
 (define newline (λ () "Prints a single line feed character"
 	(print "\n")))
 
