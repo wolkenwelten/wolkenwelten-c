@@ -18,3 +18,4 @@ lVal *lnfStringPred   (lClosure *c, lVal *v);
 lVal *lnfEmptyPred    (lClosure *c, lVal *v);
 lVal *lnfPosPred      (lClosure *c, lVal *v);
 lVal *lnfNegPred      (lClosure *c, lVal *v);
+lVal *lnfPairPred     (lClosure *c, lVal *v);

@@ -510,6 +510,7 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(strcmp(s.c,"nil?") == 0)   {return lValNativeFunc(lnfNilPred);}
 	if(strcmp(s.c,"inf?") == 0)   {return lValNativeFunc(lnfInfPred);}
 	if(strcmp(s.c,"number?") == 0){return lValNativeFunc(lnfNumberPred);}
+	if(strcmp(s.c,"pair?") == 0)  {return lValNativeFunc(lnfPairPred);}
 	if(strcmp(s.c,"empty?") == 0) {return lValNativeFunc(lnfEmptyPred);}
 	if(strcmp(s.c,"neg?") == 0)   {return lValNativeFunc(lnfNegPred);}
 	if(strcmp(s.c,"pos?") == 0)   {return lValNativeFunc(lnfPosPred);}

@@ -155,3 +155,9 @@ lVal *lnfInfPred(lClosure *c, lVal *v){
 	if(t == NULL){return lValBool(false);}
 	return lValBool(t->type == ltInf);
 }
+
+lVal *lnfPairPred(lClosure *c, lVal *v){
+	lVal *t = lEval(c,v->vList.car);
+	if(t == NULL){return lValBool(false);}
+	return lValBool(t->type == ltList);
+}
