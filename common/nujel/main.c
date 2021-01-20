@@ -115,6 +115,7 @@ int main(int argc, char *argv[]){
 	lInit();
 	lClosure *c = lClosureNew(NULL);
 	lEval(c,lWrap(lRead((char *)src_tmp_stdlib_nuj_data)));
+	lClosureGC();
 
 	for(int i=1;i<argc;i++){
 		size_t len;

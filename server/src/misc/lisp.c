@@ -588,6 +588,8 @@ void lispInit(){
 	lispEvalNR("(define vz+      (λ (v o) (+ v (vec 0 0 o))))");
 	lispEvalNR("(define rain     (λ () (cloud-density 0.9)))");
 	lispEvalNR("(define cloud-density (λ (a) (- 1.0 (/ (cloud-threshold (* (- 1.0 a) 256.0)) 256.0))))");
+
+	lClosureGC();
 }
 
 int parseCommand(uint c, const char *cmd){

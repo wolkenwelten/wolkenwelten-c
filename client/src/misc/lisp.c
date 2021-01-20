@@ -180,6 +180,8 @@ void lispInit(){
 	lispEvalNR("(define morning (λ ( ) (s (morning))))");
 	lispEvalNR("(define night   (λ ( ) (s (night))))");
 
+	lClosureGC();
+
 }
 
 void lispFree(){
