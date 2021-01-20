@@ -215,7 +215,7 @@ lVal *lnfCat(lClosure *c, lVal *v){
 	forEach(sexpr,v){
 		lVal *t = lEval(c,sexpr->vList.car);
 		if(t == NULL){continue;}
-		lPrintVal(t);
+		//lPrintVal(t);
 		switch(t->type){
 		default: break;
 		case ltSymbol: {
