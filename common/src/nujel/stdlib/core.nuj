@@ -74,6 +74,11 @@
 (define list-tail (λ (l k) "Returns the sublist of l obtained by omitting the first l elements"
 	(sublist l k (length l))))
 
+(define member (λ (m l) "Returns the first pair of list l whose car is equal to m"
+	(cond ((nil? l) #f)
+              ((eq? (car l) m) l)
+              (#t (member m (cdr l))))))
+
 (define delete (λ (e l) "Returns a filtered list l with all elements equal to e omitted"
 	(filter (λ (a) (not (eq? a e))) l)))
 

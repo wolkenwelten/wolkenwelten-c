@@ -33,6 +33,21 @@ static int lValCompare(lClosure *c, lVal *v){
 		if(b->vFloat == a->vFloat)     {return  0;}
 		else if(a->vFloat  < b->vFloat){return -1;}
 		return 1;
+	case ltString:
+		for(int i=0;i<a->vString->len;i++){
+			const u8 ac = a->vString->buf[i];
+			const u8 bc = b->vString->buf[i];
+			if(ac == bc){continue;}
+			if(ac < bc){return -1;}
+			return 1;
+		}
+		if(a->vString->len != b->vString->len){
+			if(a->vString->len < b->vString->len){
+				return -1;
+			}
+			return -1;
+		}
+		return 0;
 	}
 }
 
