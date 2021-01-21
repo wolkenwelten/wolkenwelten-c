@@ -4,6 +4,18 @@
 (define caddr (λ (p) "Returns the car of the cdr of the cdr of pair p"
 	(car (cdr (cdr p)))))
 
+(define number? (λ (a) "Returns #t if a is a number"
+	(or (int? a) (float? a) (vec? a))))
+
+(define empty? (λ (a) "Returns #t if a is empty"
+	(nil? a)))
+
+(define pos? (λ (a) "Returns #t if a is positive"
+	(>= a 0)))
+
+(define neg? (λ (a) "Returns #t if a is negative"
+	(< a 0)))
+
 (define make-list (λ (i e l) "Returns a list of i elements containing e in every car"
 	(if (<= i 0) l (make-list (-- i) e (cons e l)))))
 
@@ -24,8 +36,13 @@
 (define reverse (λ (l r) "Returns the list l in reverse order"
 	(if (nil? l) r (reverse (cdr l) (cons (car l) r)))))
 
-(define length (λ (a t) "Returns the length of list a"
-	(if (nil? a) t (length (cdr a) (++ t)))))
+(define list-length (λ (a t) "Returns the length of list a"
+	(if (nil? a) t (list-length (cdr a) (++ t)))))
+
+(define length (λ (a) "Returns the length of a"
+	(cond ((string? a) (str-len a))
+              ((pair? a) (list-length a))
+              (#t 0))))
 
 (define filter-iter (λ (p l r) "Iterator for filter"
 	(cond ((nil? l) r)
@@ -43,6 +60,22 @@
 	(if (nil? a) b (append-iter (cdr a) (cons (car a) b)))))
 (define append (λ (a b) "Appends to two lists a and b together"
 	(append-iter (reverse a) b)))
+
+(define sublist (λ (l start end ret) "Returns a new list containing all elements of l from start to end"
+	(cond ((nil?    l) (reverse ret))
+              ((neg?  end) (sublist      l      start  (+ (length l) end)))
+              ((zero? end) (reverse ret))
+              ((> start 0) (sublist (cdr l) (-- start) (-- end) #nil))
+              ((> end   0) (sublist (cdr l) 0          (-- end) (cons (car l) ret))))))
+
+(define list-head (λ (l k) "Returns the first k elemnts of list l"
+	(sublist l 0 k)))
+
+(define list-tail (λ (l k) "Returns the sublist of l obtained by omitting the first l elements"
+	(sublist l k (length l))))
+
+(define delete (λ (e l) "Returns a filtered list l with all elements equal to e omitted"
+	(filter (λ (a) (not (eq? a e))) l)))
 
 (define describe (λ (a) "Returns the DocString to its argument, if available"
 	(if (string? (car (cl-text a))) (car (cl-text a)) "No DocString found")))

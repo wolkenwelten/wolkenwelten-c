@@ -3,7 +3,7 @@
 
 char     *lSPrintVal        (lVal *v, char *buf, char *bufEnd);
 
-lVal *lnfLen    (lClosure *c, lVal *v);
+lVal *lnfStrlen (lClosure *c, lVal *v);
 lVal *lnfSubstr (lClosure *c, lVal *v);
 lVal *lnfBr     (lClosure *c, lVal *v);
 lVal *lnfCat    (lClosure *c, lVal *v);

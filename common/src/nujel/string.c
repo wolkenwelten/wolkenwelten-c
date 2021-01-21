@@ -128,7 +128,7 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 	return cur;
 }
 
-lVal *lnfLen(lClosure *c, lVal *v){
+lVal *lnfStrlen(lClosure *c, lVal *v){
 	if(v == NULL){return lValNil();}
 	lVal *t = lEval(c,lCarOrV(v));
 	if(t == NULL){return lValNil();}
@@ -219,6 +219,14 @@ lVal *lnfCat(lClosure *c, lVal *v){
 		default: break;
 		case ltSymbol: {
 			int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%s",t->vSymbol.c);
+			len += clen;
+			buf += clen;
+			break; }
+		case ltFloat: {
+			int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%.5f",t->vFloat);
+			for(;buf[clen-1] == '0';clen--){buf[clen]=0;}
+			if(buf[clen] == '0'){buf[clen] = 0;}
+			if(buf[clen-1] == '.'){buf[clen++] = '0';}
 			len += clen;
 			buf += clen;
 			break; }

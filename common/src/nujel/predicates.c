@@ -22,12 +22,14 @@ static int lValCompare(lClosure *c, lVal *v){
 	case ltInt:
 		a = lnfInt(c,a);
 		b = lnfInt(c,b);
+		if((a == NULL) || (b == NULL)){return 2;}
 		if(b->vInt == a->vInt)     {return  0;}
 		else if(a->vInt  < b->vInt){return -1;}
 		return 1;
 	case ltFloat:
 		a = lnfFloat(c,a);
 		b = lnfFloat(c,b);
+		if((a == NULL) || (b == NULL)){return 2;}
 		if(b->vFloat == a->vFloat)     {return  0;}
 		else if(a->vFloat  < b->vFloat){return -1;}
 		return 1;
@@ -74,45 +76,10 @@ lVal *lnfFloatPred(lClosure *c, lVal *v){
 	return lValBool(t == NULL ? false : t->type == ltFloat);
 }
 
-lVal *lnfNumberPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
-	if((t != NULL) && ((t->type == ltInt) || (t->type == ltFloat) || (t->type == ltVec))){
-		return lValBool(true);
-	}
-	return lValBool(false);
-}
-
 lVal *lnfStringPred(lClosure *c, lVal *v){
 	if(v == NULL){return lValBool(false);}
 	lVal *t = lEval(c,lCarOrV(v));
 	return lValBool((t != NULL) && ((t->type == ltString) || (t->type == ltCString)));
-}
-
-lVal *lnfEmptyPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
-	if(t == NULL){return lValBool(true);}
-	switch(t->type){
-	default: return lValBool(true);
-	case ltNil: return lValBool(false);
-	case ltString:
-		if(t->vString == NULL){return lValBool(true);}
-		for(const char *str = t->vString->data;str < t->vString->bufEnd;str++){if(!isspace(*str)){return lValBool(false);}}
-		return lValBool(true);
-	}
-}
-
-lVal *lnfPosPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
-	if(t == NULL){return lValBool(false);}
-	if(t->type != ltInt){return lValNil();}
-	return lValBool(t->vInt >= 0);
-}
-lVal *lnfNegPred(lClosure *c, lVal *v){
-
-	lVal *t = lEval(c,lCarOrV(v));
-	if(t == NULL){return lValBool(false);}
-	if(t->type != ltInt){return lValNil();}
-	return lValBool(t->vInt < 0);
 }
 
 lVal *lnfVecPred(lClosure *c, lVal *v){

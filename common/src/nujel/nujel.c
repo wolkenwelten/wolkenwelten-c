@@ -498,7 +498,7 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(strcmp(s.c,"ansifg") == 0) {return lValNativeFunc(lnfAnsiFG);}
 	if(strcmp(s.c,"br") == 0)     {return lValNativeFunc(lnfBr);}
 	if(strcmp(s.c,"cat") == 0)    {return lValNativeFunc(lnfCat);}
-	if(strcmp(s.c,"len") == 0)    {return lValNativeFunc(lnfLen);}
+	if(strcmp(s.c,"str-len") == 0){return lValNativeFunc(lnfStrlen);}
 	if(strcmp(s.c,"substr") == 0) {return lValNativeFunc(lnfSubstr);}
 
 	if(strcmp(s.c,"int?") == 0)   {return lValNativeFunc(lnfIntPred);}
@@ -507,11 +507,8 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(strcmp(s.c,"nil?") == 0)   {return lValNativeFunc(lnfNilPred);}
 	if(strcmp(s.c,"null?") == 0)  {return lValNativeFunc(lnfNilPred);}
 	if(strcmp(s.c,"inf?") == 0)   {return lValNativeFunc(lnfInfPred);}
-	if(strcmp(s.c,"number?") == 0){return lValNativeFunc(lnfNumberPred);}
+	if(strcmp(s.c,"eq?") == 0)    {return lValNativeFunc(lnfEqual);}
 	if(strcmp(s.c,"pair?") == 0)  {return lValNativeFunc(lnfPairPred);}
-	if(strcmp(s.c,"empty?") == 0) {return lValNativeFunc(lnfEmptyPred);}
-	if(strcmp(s.c,"neg?") == 0)   {return lValNativeFunc(lnfNegPred);}
-	if(strcmp(s.c,"pos?") == 0)   {return lValNativeFunc(lnfPosPred);}
 	if(strcmp(s.c,"string?") == 0){return lValNativeFunc(lnfStringPred);}
 	if(strcmp(s.c,"zero?") == 0)  {return lValNativeFunc(lnfZero);}
 
