@@ -70,7 +70,7 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			}
 			t = snprintf(cur,bufEnd-cur,")");
 			break; }
-		case ltList: {
+		case ltPair: {
 			if((v->vList.car != NULL) && (v->vList.car->type == ltSymbol)){
 				if((v->vList.car->vSymbol.v[0] == symQuote.v[0]) &&
 				   (v->vList.car->vSymbol.v[1] == symQuote.v[1]) &&
@@ -82,7 +82,7 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 			t = snprintf(cur,bufEnd-cur,"(");
 			if(t > 0){cur += t;}
 			for(lVal *n = v;n != NULL; n = n->vList.cdr){
-				if(n->type == ltList){
+				if(n->type == ltPair){
 					cur = lSPrintVal(n->vList.car,cur,bufEnd);
 					if(n->vList.cdr != NULL){*cur++ = ' ';}
 				}else{
@@ -130,8 +130,7 @@ char *lSPrintVal(lVal *v, char *buf, char *bufEnd){
 
 lVal *lnfLen(lClosure *c, lVal *v){
 	if(v == NULL){return lValNil();}
-	if(v->type == ltList){v = v->vList.car;}
-	lVal *t = lEval(c,v);
+	lVal *t = lEval(c,lCarOrV(v));
 	if(t == NULL){return lValNil();}
 	switch(t->type){
 	default: return lValNil();

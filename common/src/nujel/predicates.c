@@ -8,18 +8,15 @@
 #include <stdio.h>
 
 static int lValCompare(lClosure *c, lVal *v){
-	if(v->vList.car == NULL){return 2;}
-	if(v->vList.cdr == NULL){return 2;}
+	if((v->vList.car == NULL) || (v->vList.cdr == NULL)){return 2;}
 	lVal *a = lEval(c,v->vList.car);
 	v = v->vList.cdr;
 	if(v->vList.car == NULL){return 2;}
 	lVal *b = lEval(c,v->vList.car);
-	if(a       == NULL){return 2;}
-	if(b       == NULL){return 2;}
+	if((a == NULL) || (b == NULL)){return 2;}
 	lType ct = lTypecast(a->type, b->type);
 	switch(ct){
 	default:
-		printf("default typecast: %i\n",ct);
 		return 2;
 	case ltBool:
 	case ltInt:
@@ -39,79 +36,60 @@ static int lValCompare(lClosure *c, lVal *v){
 
 lVal *lnfLess(lClosure *c, lVal *v){
 	const int cmp = lValCompare(c,v);
-	if(cmp == 2){return lValBool(false);}
-	return lValBool(cmp < 0);
+	return lValBool(cmp == 2 ? false : cmp < 0);
 }
 
 lVal *lnfEqual(lClosure *c, lVal *v){
 	const int cmp = lValCompare(c,v);
-	if(cmp == 2){return lValBool(false);}
-	return lValBool(cmp == 0);
+	return lValBool(cmp == 2 ? false : cmp == 0);
 }
 
 lVal *lnfLessEqual(lClosure *c, lVal *v){
 	const int cmp = lValCompare(c,v);
-	if(cmp == 2){return lValBool(false);}
-	return lValBool(cmp <= 0);
+	return lValBool(cmp == 2 ? false : cmp <= 0);
 }
 
 lVal *lnfGreater(lClosure *c, lVal *v){
 	const int cmp = lValCompare(c,v);
-	if(cmp == 2){return lValBool(false);}
-	return lValBool(cmp > 0);
+	return lValBool(cmp == 2 ? false : cmp > 0);
 }
 
 lVal *lnfGreaterEqual(lClosure *c, lVal *v){
 	const int cmp = lValCompare(c,v);
-	if(cmp == 2){return lValBool(false);}
-	return lValBool(cmp >= 0);
+	return lValBool(cmp == 2 ? false : cmp >= 0);
 }
 
 lVal *lnfZero(lClosure *c, lVal *v){
 	const int cmp = lValCompare(c,lCons(lValInt(0),v));
-	if(cmp == 2){return lValBool(false);}
-	return lValBool(cmp == 0);
+	return lValBool(cmp == 2 ? false : cmp == 0);
 }
 
 lVal *lnfIntPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return lValBool(false);}
-	return lValBool(t->type == ltInt);
+	lVal *t = lEval(c,lCarOrV(v));
+	return lValBool(t == NULL ? false : t->type == ltInt);
 }
 
 lVal *lnfFloatPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return lValBool(false);}
-	return lValBool(t->type == ltFloat);
+	lVal *t = lEval(c,lCarOrV(v));
+	return lValBool(t == NULL ? false : t->type == ltFloat);
 }
 
 lVal *lnfNumberPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return lValBool(false);}
-	switch(t->type){
-	case ltInt:
-	case ltFloat:
-	case ltVec:
+	lVal *t = lEval(c,lCarOrV(v));
+	if((t != NULL) && ((t->type == ltInt) || (t->type == ltFloat) || (t->type == ltVec))){
 		return lValBool(true);
-	default:
-		return lValBool(false);
 	}
+	return lValBool(false);
 }
 
 lVal *lnfStringPred(lClosure *c, lVal *v){
-	lVal *t;
 	if(v == NULL){return lValBool(false);}
-	if(v->type == ltList){
-		t = lEval(c,v->vList.car);
-	}else{
-		t = lEval(c,v);
-	}
-	if(t == NULL){return lValBool(false);}
-	return lValBool((t->type == ltString) || (t->type == ltCString));
+	lVal *t = lEval(c,lCarOrV(v));
+	return lValBool((t != NULL) && ((t->type == ltString) || (t->type == ltCString)));
 }
 
 lVal *lnfEmptyPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v->vList.car);
+	lVal *t = lEval(c,lCarOrV(v));
 	if(t == NULL){return lValBool(true);}
 	switch(t->type){
 	default: return lValBool(true);
@@ -124,40 +102,35 @@ lVal *lnfEmptyPred(lClosure *c, lVal *v){
 }
 
 lVal *lnfPosPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v->vList.car);
+	lVal *t = lEval(c,lCarOrV(v));
 	if(t == NULL){return lValBool(false);}
 	if(t->type != ltInt){return lValNil();}
 	return lValBool(t->vInt >= 0);
 }
-
 lVal *lnfNegPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v->vList.car);
+
+	lVal *t = lEval(c,lCarOrV(v));
 	if(t == NULL){return lValBool(false);}
 	if(t->type != ltInt){return lValNil();}
 	return lValBool(t->vInt < 0);
 }
 
 lVal *lnfVecPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return lValBool(false);}
-	return lValBool(t->type == ltVec);
+	lVal *t = lEval(c,lCarOrV(v));
+	return lValBool((t != NULL) && (t->type == ltVec));
 }
 
 lVal *lnfNilPred(lClosure *c, lVal *v){
-	if(v == NULL){return lValBool(true);}
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return lValBool(true);}
-	return lValBool(t->type == ltNil);
+	lVal *t = lEval(c,lCarOrV(v));
+	return lValBool((t == NULL) || (t->type == ltNil));
 }
 
 lVal *lnfInfPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return lValBool(false);}
-	return lValBool(t->type == ltInf);
+	lVal *t = lEval(c,lCarOrV(v));
+	return lValBool((t != NULL) && (t->type == ltInf));
 }
 
 lVal *lnfPairPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v->vList.car);
-	if(t == NULL){return lValBool(false);}
-	return lValBool(t->type == ltList);
+	lVal *t = lEval(c,lCarOrV(v));
+	return lValBool((t != NULL) && (t->type == ltPair));
 }

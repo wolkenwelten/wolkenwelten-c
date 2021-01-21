@@ -32,7 +32,7 @@ lVal *lnfInt(lClosure *c, lVal *v){
 	case ltString:
 		if(t->vString == NULL){return lValInt(0);}
 		return lValInt(atoi(t->vString->data));
-	case ltList:
+	case ltPair:
 		return lnfInt(c,v->vList.car);
 	}
 }
@@ -55,7 +55,7 @@ lVal *lnfFloat(lClosure *c, lVal *v){
 	case ltString:
 		if(t->vString == NULL){return lValFloat(0);}
 		return lValFloat(atof(t->vString->data));
-	case ltList:
+	case ltPair:
 		return lnfFloat(c,v->vList.car);
 	}
 }
@@ -64,7 +64,7 @@ lVal *lnfVec(lClosure *c, lVal *v){
 	vec nv = vecNew(0,0,0);
 	if(v == NULL){return lValVec(nv);}
 	if(v->type == ltVec){return v;}
-	if(v->type != ltList){
+	if(v->type != ltPair){
 		v = lnfFloat(c,v);
 		return lValVec(vecNew(v->vFloat,v->vFloat,v->vFloat));
 	}
@@ -85,8 +85,8 @@ lVal *lnfVec(lClosure *c, lVal *v){
 
 lVal *lnfBool(lClosure *c, lVal *v){
 	lVal *a = lEval(c,v);
-	if(a->type == ltList)    {a = a->vList.car;}
-	if(a->type == ltList)    {a = lEval(c,a);}
+	if(a->type == ltPair)    {a = a->vList.car;}
+	if(a->type == ltPair)    {a = lEval(c,a);}
 	if(a == NULL)            {return lValBool(false);}
 	if(a->type == ltNil)     {return lValBool(false);}
 	if(a->type == ltNoAlloc) {return lValBool(false);}

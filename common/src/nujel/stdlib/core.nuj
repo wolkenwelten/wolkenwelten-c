@@ -1,3 +1,20 @@
+(define cadr (λ (p) "Returns the car of the cdr of pair p"
+	(car (cdr p))))
+
+(define caddr (λ (p) "Returns the car of the cdr of the cdr of pair p"
+	(car (cdr (cdr p)))))
+
+(define make-list (λ (i e l) "Returns a list of i elements containing e in every car"
+	(if (<= i 0) l (make-list (-- i) e (cons e l)))))
+
+(define sum (λ (o l s) "Returns the sum of list l with operation o and start value s"
+	(if (nil? l) s (sum o (cdr l) (o s (car l))))))
+
+(define list-ref (λ (l i) "Returns the the element of list l at location i"
+	(cond ((nil? l) #nil)
+	      ((<= i 0) (car l))
+              (#t (list-ref (cdr l) (-- i))))))
+
 (define ++ (λ (i) "Returns its argument + 1"
 	(+ i 1)))
 
@@ -37,7 +54,7 @@
 	(map (λ (a) (cat a "\n  " (describe a) "\n")) (symbol-table))))
 
 (define newline (λ () "Prints a single line feed character"
-	(print "\n")))
+	(print (br))))
 
 (define display (λ (a) "Displays its argument"
 	(print a) #nil))

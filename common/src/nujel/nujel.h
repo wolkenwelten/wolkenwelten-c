@@ -2,7 +2,7 @@
 #include "../common.h"
 
 typedef enum lType {
-	ltNoAlloc = 0, ltNil, ltBool, ltList, ltLambda, ltInt, ltFloat, ltVec, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf
+	ltNoAlloc = 0, ltNil, ltBool, ltPair, ltLambda, ltInt, ltFloat, ltVec, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf
 } lType;
 
 typedef struct lVal     lVal;
@@ -19,7 +19,7 @@ typedef struct {
 
 typedef struct {
 	lVal *car,*cdr;
-} lCell;
+} lPair;
 
 struct lVal {
 	u8 flags;
@@ -27,7 +27,7 @@ struct lVal {
 	union {
 		lVal         *vNA;
 		bool          vBool;
-		lCell         vList;
+		lPair         vList;
 		int           vInt;
 		vec           vVec;
 		float         vFloat;
@@ -114,7 +114,7 @@ lVal     *lValString    (const char *s);
 lVal     *lnfCat        (lClosure *c, lVal *v);
 lVal     *lValCopy      (lVal *dst, const lVal *src);
 
-#define forEach(n,v) for(lVal *n = v;(n != NULL) && (n->type == ltList) && (n->vList.car != NULL); n = n->vList.cdr)
+#define forEach(n,v) for(lVal *n = v;(n != NULL) && (n->type == ltPair) && (n->vList.car != NULL); n = n->vList.cdr)
 
 static inline lVal *lValDup(const lVal *v){
 	return v == NULL ? NULL : lValCopy(lValAlloc(),v);
@@ -140,10 +140,22 @@ static inline lVal *lLastCar(lVal *v){
 	forEach(a,v){if(a->vList.cdr == NULL){return a->vList.car;}}
 	return NULL;
 }
+static inline lVal *lCarOrV(lVal *v){
+	return (v != NULL) && (v->type == ltPair) ? v->vList.car : v;
+}
+static inline lVal *lCarOrN(lVal *v){
+	return (v != NULL) && (v->type == ltPair) ? v->vList.car : NULL;
+}
+static inline lVal *lCadrOrN(lVal *v){
+	return (v != NULL) && (v->type == ltPair) ? lCarOrN(v->vList.cdr) : NULL;
+}
+static inline lVal *lNilToNull(lVal *v){
+	return (v != NULL) && (v->type == ltNil) ? NULL : v;
+}
 
 #define lEvalCastApply(FUNC, c , v) do { \
 	lVal *t = lEvalCast(c,v); \
-	if((t == NULL) || (t->type != ltList)){return NULL;} \
+	if((t == NULL) || (t->type != ltPair)){return NULL;} \
 	lVal *d = lValDup(t->vList.car); \
 	if(d == NULL){return NULL;} \
 	switch(d->type){ \

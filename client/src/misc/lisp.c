@@ -118,12 +118,12 @@ static lVal *wwlnfServerAdd(lClosure *c, lVal *v){
 	char *address = "localhost";
 	char *name = "localhost";
 
-	if((v != NULL) && (v->type == ltList)){
+	if((v != NULL) && (v->type == ltPair)){
 		lVal *t = lnfCat(c,lEval(c,v->vList.car));
 		address = t->vString->buf;
 		v = v->vList.cdr;
 	}
-	if((v != NULL) && (v->type == ltList)){
+	if((v != NULL) && (v->type == ltPair)){
 		lVal *t = lnfCat(c,lEval(c,v->vList.car));
 		name = t->vString->buf;
 	}
