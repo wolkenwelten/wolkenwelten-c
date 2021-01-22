@@ -120,7 +120,7 @@ static inline lVal *lValDup(const lVal *v){
 	return v == NULL ? NULL : lValCopy(lValAlloc(),v);
 }
 static inline lVal *lWrap(lVal *v){
-	return lCons(lValSym("do"),lCons(lCons(NULL,NULL),v));
+	return lCons(lValSym("begin"),lCons(lCons(NULL,NULL),v));
 }
 static inline lVal *lEvalCast(lClosure *c, lVal *v){
 	lVal *t = lApply(c,v,lEval);

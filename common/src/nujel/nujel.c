@@ -329,10 +329,8 @@ static lVal *lnfLet(lClosure *c, lVal *v){
 	return ret == NULL ? NULL : ret;
 }
 
-static lVal *lnfDo(lClosure *c, lVal *v){
-	lVal *t = lApply(c,v,lEval);
-	//lDisplayVal(t);
-	return lLastCar(t);
+static lVal *lnfBegin(lClosure *c, lVal *v){
+	return lLastCar(lApply(c,v,lEval));
 }
 
 static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
@@ -468,7 +466,7 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 
 	if(strcmp(s.c,"define") == 0) {return lValNativeFunc(lnfDef);}
 	if(strcmp(s.c,"let") == 0)    {return lValNativeFunc(lnfLet);}
-	if(strcmp(s.c,"do") == 0)     {return lValNativeFunc(lnfDo);}
+	if(strcmp(s.c,"begin") == 0)  {return lValNativeFunc(lnfBegin);}
 	if(strcmp(s.c,"quote") == 0)  {return lValNativeFunc(lnfQuote);}
 	if(strcmp(s.c,"set!") == 0)   {return lValNativeFunc(lnfSet);}
 
