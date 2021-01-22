@@ -492,17 +492,18 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(strcmp(s.c,"str-len") == 0){return lValNativeFunc(lnfStrlen);}
 	if(strcmp(s.c,"substr") == 0) {return lValNativeFunc(lnfSubstr);}
 
-	if(strcmp(s.c,"int?") == 0)   {return lValNativeFunc(lnfIntPred);}
-	if(strcmp(s.c,"float?") == 0) {return lValNativeFunc(lnfFloatPred);}
-	if(strcmp(s.c,"vec?") == 0)   {return lValNativeFunc(lnfVecPred);}
-	if(strcmp(s.c,"bool?") == 0)  {return lValNativeFunc(lnfBoolPred);}
-	if(strcmp(s.c,"nil?") == 0)   {return lValNativeFunc(lnfNilPred);}
-	if(strcmp(s.c,"null?") == 0)  {return lValNativeFunc(lnfNilPred);}
-	if(strcmp(s.c,"inf?") == 0)   {return lValNativeFunc(lnfInfPred);}
-	if(strcmp(s.c,"eq?") == 0)    {return lValNativeFunc(lnfEqual);}
-	if(strcmp(s.c,"pair?") == 0)  {return lValNativeFunc(lnfPairPred);}
-	if(strcmp(s.c,"string?") == 0){return lValNativeFunc(lnfStringPred);}
-	if(strcmp(s.c,"zero?") == 0)  {return lValNativeFunc(lnfZero);}
+	if(strcmp(s.c,"int?") == 0)    {return lValNativeFunc(lnfIntPred);}
+	if(strcmp(s.c,"float?") == 0)  {return lValNativeFunc(lnfFloatPred);}
+	if(strcmp(s.c,"vec?") == 0)    {return lValNativeFunc(lnfVecPred);}
+	if(strcmp(s.c,"bool?") == 0)   {return lValNativeFunc(lnfBoolPred);}
+	if(strcmp(s.c,"boolean?") == 0){return lValNativeFunc(lnfBoolPred);}
+	if(strcmp(s.c,"nil?") == 0)    {return lValNativeFunc(lnfNilPred);}
+	if(strcmp(s.c,"null?") == 0)   {return lValNativeFunc(lnfNilPred);}
+	if(strcmp(s.c,"inf?") == 0)    {return lValNativeFunc(lnfInfPred);}
+	if(strcmp(s.c,"eq?") == 0)     {return lValNativeFunc(lnfEqual);}
+	if(strcmp(s.c,"pair?") == 0)   {return lValNativeFunc(lnfPairPred);}
+	if(strcmp(s.c,"string?") == 0) {return lValNativeFunc(lnfStringPred);}
+	if(strcmp(s.c,"zero?") == 0)   {return lValNativeFunc(lnfZero);}
 
 	return NULL;
 }
