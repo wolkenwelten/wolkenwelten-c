@@ -495,6 +495,7 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(strcmp(s.c,"int?") == 0)   {return lValNativeFunc(lnfIntPred);}
 	if(strcmp(s.c,"float?") == 0) {return lValNativeFunc(lnfFloatPred);}
 	if(strcmp(s.c,"vec?") == 0)   {return lValNativeFunc(lnfVecPred);}
+	if(strcmp(s.c,"bool?") == 0)  {return lValNativeFunc(lnfBoolPred);}
 	if(strcmp(s.c,"nil?") == 0)   {return lValNativeFunc(lnfNilPred);}
 	if(strcmp(s.c,"null?") == 0)  {return lValNativeFunc(lnfNilPred);}
 	if(strcmp(s.c,"inf?") == 0)   {return lValNativeFunc(lnfInfPred);}

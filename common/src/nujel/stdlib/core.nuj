@@ -66,17 +66,13 @@
               ((pair? a) (list-length a))
               (#t 0))))
 
-(define filter-iter (λ (p l r) "Iterator for filter"
-	(cond ((nil? l) r)
-		((p (car l)) (filter-iter p (cdr l) (cons (car l) r)))
-		(#t (filter-iter p (cdr l) r)))))
 (define filter (λ (p l) "Runs predicate p over every item in list l and returns a list consiting solely of items where p is true"
-	(reverse (filter-iter p l #nil))))
+        (cond ((nil? l) #nil)
+              ((p (car l)) (cons (car l) (filter p (cdr l))))
+              (#t                       (filter p (cdr l))))))
 
-(define map-iter (λ (f l r) "Iterator for map"
-	(if (nil? l) r (map-iter f (cdr l) (cons (f (car l)) r)))))
 (define map (λ (f l) "Runs f over every item in list l and returns the resulting list"
-	(reverse (map-iter f l #nil))))
+	(if (nil? l) l (cons (f (car l)) (map f (cdr l))))))
 
 (define append-iter (λ (a b) "Iterator for append"
 	(if (nil? a) b (append-iter (cdr a) (cons (car a) b)))))

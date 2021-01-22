@@ -102,6 +102,11 @@ lVal *lnfVecPred(lClosure *c, lVal *v){
 	return lValBool((t != NULL) && (t->type == ltVec));
 }
 
+lVal *lnfBoolPred(lClosure *c, lVal *v){
+	lVal *t = lEval(c,lCarOrV(v));
+	return lValBool((t != NULL) && (t->type == ltBool));
+}
+
 lVal *lnfNilPred(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrV(v));
 	return lValBool(t == NULL);
