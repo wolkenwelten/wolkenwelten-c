@@ -55,6 +55,19 @@ u32 entityCollision(const vec c){
 	return col;
 }
 
+u8 entityGetBlockCollision(const entity *e){
+	if(e == NULL){return 0;}
+	const vec c = e->pos;
+	u8 b;
+	if((b = worldGetB(c.x-0.3f,c.y     ,c.z     ))){return b;}
+	if((b = worldGetB(c.x+0.3f,c.y     ,c.z     ))){return b;}
+	if((b = worldGetB(c.x     ,c.y     ,c.z-0.3f))){return b;}
+	if((b = worldGetB(c.x     ,c.y     ,c.z+0.3f))){return b;}
+	if((b = worldGetB(c.x     ,c.y+0.5f,c.z     ))){return b;}
+	if((b = worldGetB(c.x     ,c.y-0.5f,c.z     ))){return b;}
+	return 0;
+}
+
 void entityUpdateCurChungus(entity *e){
 	const int cx = (int)e->pos.x >> 8;
 	const int cy = (int)e->pos.y >> 8;

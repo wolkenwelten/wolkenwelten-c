@@ -12,6 +12,7 @@ float    entityDistance         (const entity *e,const character *c);
 int      entityUpdate           (      entity *e);
 void     entityUpdateCurChungus (      entity *e);
 u32      entityCollision        (const vec c);
+u8       entityGetBlockCollision(const entity *e);
 void     entityUpdateAll        ();
 
 uint   lineOfSightBlockCount    (const vec a, const vec b, uint maxB);

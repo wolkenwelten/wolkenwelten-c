@@ -136,10 +136,17 @@ static void throwableUpdate(throwable *t){
 	if(t->ent == NULL){return;}
 	entityUpdate(t->ent);
 	if((t->flags & THROWABLE_PIERCE) && (t->ent->flags & ENTITY_COLLIDE)){
-		t->ent->flags |= ENTITY_NOCLIP;
+		const u8 b = entityGetBlockCollision(t->ent);
+		const blockCategory cat = blockTypeGetCat(b);
+		if(cat != STONE){
+			t->ent->flags |= ENTITY_NOCLIP;
+			t->ent->vel = vecZero();
+		}else{
+			t->ent->pos = vecAdd(t->ent->pos,t->ent->vel);
+			t->ent->vel = vecMulS(t->ent->vel,0.2f);
+		}
 		t->flags &= ~THROWABLE_PITCH_SPIN;
 		t->flags |= THROWABLE_COLLECTABLE;
-		t->ent->vel = vecZero();
 	}
 	/*if(characterHitCheck(p->pos, mdd, 1, 3, iteration, p->source))*/
 	if((t->flags & THROWABLE_PIERCE) && (t->ent != NULL)){
