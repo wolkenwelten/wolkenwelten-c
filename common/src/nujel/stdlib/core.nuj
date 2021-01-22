@@ -1,3 +1,6 @@
+(define cddr (λ (p) "Returns the cdr of the cdr of pair p"
+	(cdr (cdr p))))
+
 (define cadr (λ (p) "Returns the car of the cdr of pair p"
 	(car (cdr p))))
 
@@ -10,17 +13,36 @@
 (define empty? (λ (a) "Returns #t if a is empty"
 	(nil? a)))
 
+(define last? (λ (a) "Returns #t if a is the last pair in a list"
+	(and (pair? a) (nil? (cdr a)))))
+
 (define pos? (λ (a) "Returns #t if a is positive"
 	(>= a 0)))
 
 (define neg? (λ (a) "Returns #t if a is negative"
 	(< a 0)))
 
+(define there-exists? (λ (l pred) "Applies predicate to each element and return #t if it holds true for any element, otherwise #f"
+	(cond ((nil? l) #f)
+	      ((pred (car l)) #t)
+	      (#t (there-exists? (cdr l) pred)))))
+
+(define for-all? (λ (l pred) "Applies predicate to each element returns #t if it holds true for every element, otherwise #f"
+	(cond ((nil? l) #t)
+	      ((not (pred (car l))) #f)
+	      (#t (for-all? (cdr l) pred)))))
+
+(define last-pair (λ (l) "Returns the last pair of list l"
+	(if (nil? (cdr l)) l (last-pair (cdr l)))))
+
+(define except-last-pair (λ (l r) "Returns a copy of li without the last pair"
+	(if (nil? (cdr l)) (reverse r) (except-last-pair (cdr l) (cons (car l) r)))))
+
 (define make-list (λ (i e l) "Returns a list of i elements containing e in every car"
 	(if (<= i 0) l (make-list (-- i) e (cons e l)))))
 
-(define sum (λ (o l s) "Returns the sum of list l with operation o and start value s"
-	(if (nil? l) s (sum o (cdr l) (o s (car l))))))
+(define reduce (λ (o l s) "Combines all elements in l using operation o and starting value s"
+	(if (nil? l) s (reduce o (cdr l) (o s (car l))))))
 
 (define list-ref (λ (l i) "Returns the the element of list l at location i"
 	(cond ((nil? l) #nil)
@@ -81,6 +103,24 @@
 
 (define delete (λ (e l) "Returns a filtered list l with all elements equal to e omitted"
 	(filter (λ (a) (not (eq? a e))) l)))
+
+
+(define binarysort (λ (pred l) "Sorts list l using a binary tree sort"
+	(traverse (btree pred l))))
+
+(define btree (λ (pred l) "Creates a sorted btree from list l using pred"
+	(if (last? l) (leaf (car l)) (binsert pred (btree pred (cdr l)) (car l)))))
+
+(define binsert (λ (pred t a) "Insert a into tree t according to pred"
+	(cond  ((nil? t) (leaf a))
+	((pred (car t) a) (list (car t) (binsert pred (cadr t) a) (caddr t)))
+	(#t (list (car t) (cadr t) (binsert pred (caddr t) a))))))
+
+(define leaf (λ (a) "Adds leaf a"
+	(list a (cons) (cons))))
+
+(define traverse (λ (l) "Create a flat list from a tree"
+	(if (nil? (car l) #nil (append (traverse (cadr l)) (traverse (caddr l)))))))
 
 (define describe (λ (a) "Returns the DocString to its argument, if available"
 	(if (string? (car (cl-text a))) (car (cl-text a)) "No DocString found")))

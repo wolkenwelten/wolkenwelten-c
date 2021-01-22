@@ -2,7 +2,7 @@
 #include "../common.h"
 
 typedef enum lType {
-	ltNoAlloc = 0, ltNil, ltBool, ltPair, ltLambda, ltInt, ltFloat, ltVec, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf
+	ltNoAlloc = 0, ltBool, ltPair, ltLambda, ltInt, ltFloat, ltVec, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf
 } lType;
 
 typedef struct lVal     lVal;
@@ -101,7 +101,6 @@ lVal     *lEval             (lClosure *c, lVal *v);
 lType     lTypecast         (const lType a,const lType b);
 lType     lTypecastList     (lVal *a);
 
-lVal     *lValNil       ();
 lVal     *lCons         (lVal *car,lVal *cdr);
 lVal     *lValBool      (bool v);
 lVal     *lValInf       ();
@@ -149,9 +148,6 @@ static inline lVal *lCarOrN(lVal *v){
 static inline lVal *lCadrOrN(lVal *v){
 	return (v != NULL) && (v->type == ltPair) ? lCarOrN(v->vList.cdr) : NULL;
 }
-static inline lVal *lNilToNull(lVal *v){
-	return (v != NULL) && (v->type == ltNil) ? NULL : v;
-}
 
 #define lEvalCastApply(FUNC, c , v) do { \
 	lVal *t = lEvalCast(c,v); \
@@ -159,7 +155,7 @@ static inline lVal *lNilToNull(lVal *v){
 	lVal *d = lValDup(t->vList.car); \
 	if(d == NULL){return NULL;} \
 	switch(d->type){ \
-	default:      return lValNil(); \
+	default:      return NULL; \
 	case ltInf:   return lValInf(); \
 	case ltInt:   return FUNC##I(d,t); \
 	case ltFloat: return FUNC##F(d,t); \

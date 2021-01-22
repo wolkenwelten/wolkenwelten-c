@@ -76,13 +76,13 @@ lVal *lnfInput(lClosure *c, lVal *v){
 		}
 	}
 	if(fgets(buf,sizeof(buf),stdin) == NULL){
-		return lValNil();
+		return NULL;
 	}
 	return lValString(buf);
 }
 
 lVal *lnfPrint(lClosure *c, lVal *v){
-	if(v == NULL){return lValNil();}
+	if(v == NULL){return NULL;}
 	lVal *t = lnfCat(c,v);
 	if((t != NULL) && (t->type == ltString)){
 		printf("%s",t->vString->data);

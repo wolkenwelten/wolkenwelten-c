@@ -51,9 +51,7 @@ static lVal *lParseString(lCString *s){
 			*b++ = *s->data++;
 		}
 	}
-	lVal *v = lValAlloc();
-	v->type = ltNil;
-	return v;
+	return NULL;
 }
 
 static lVal *lParseNumber(lCString *s){
@@ -119,28 +117,16 @@ static lVal *lParseSymbol(lCString *s){
 }
 
 static lVal *lParseSpecial(lCString *s){
-	lVal *v = lValNil();
-	if(*s->data++ != '#'){return v;}
+	if(*s->data++ != '#'){return NULL;}
 	switch(*s->data++){
 	default:
-	case 'n': return v;
+	case 'n': s->data+=2; return NULL;
 	case 't':
-		v->type  = ltBool;
-		v->vBool = true;
-		return v;
+		return lValBool(true);
 	case 'f':
-		v->type  = ltBool;
-		v->vBool = false;
-		return v;
+		return lValBool(false);
 	case 'i':
-		v->type  = ltInf;
-		return v;
-	case 'z':
-		v->type  = ltNoAlloc;
-		return v;
-	case 'c':
-		v->type  = ltNativeFunc;
-		return v;
+		return lValInf();
 	}
 
 }

@@ -55,7 +55,7 @@ void lPrintError(const char *format, ...){
 static lVal *wwlnfUpdateAll(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	worldSetAllUpdated();
-	return lValNil();
+	return NULL;
 }
 static lVal *wwlnfACount(lClosure *c, lVal *v){
 	(void)c;(void)v;
@@ -97,9 +97,9 @@ static lVal *wwlnfWCount(lClosure *c, lVal *v){
 static lVal *wwlnfPlayerPos(lClosure *c, lVal *v){
 	(void)v;
 	const int cc = getPID(c);
-	if((cc < 0) || (cc >= 32)){return lValNil();}
-	if(clients[cc].state)     {return lValNil();}
-	if(clients[cc].c == NULL) {return lValNil();}
+	if((cc < 0) || (cc >= 32)){return NULL;}
+	if(clients[cc].state)     {return NULL;}
+	if(clients[cc].c == NULL) {return NULL;}
 	return lValVec(clients[cc].c->pos);
 }
 
@@ -108,7 +108,7 @@ static lVal *wwlnfSetB(lClosure *c, lVal *v){
 	u8 b = 0;
 
 	for(int i=0;i<2;i++){
-		if(v == NULL){return lValNil();}
+		if(v == NULL){return NULL;}
 		lVal *t = lEval(c,v->vList.car);
 		v = v->vList.cdr;
 		if(t == NULL){continue;}
@@ -141,7 +141,7 @@ static lVal *wwlnfBox(lClosure *c, lVal *v){
 	u8 b = 0;
 
 	for(int i=0;i<3;i++){
-		if(v == NULL){return lValNil();}
+		if(v == NULL){return NULL;}
 		lVal *t = lEval(c,v->vList.car);
 		v = v->vList.cdr;
 		if(t == NULL){continue;}
@@ -164,7 +164,7 @@ static lVal *wwlnfBox(lClosure *c, lVal *v){
 static lVal *wwlnfMBox(lClosure *c, lVal *v){
 	vec arg[2] = {vecNOne(),vecOne()};
 	for(int i=0;i<2;i++){
-		if(v == NULL){return lValNil();}
+		if(v == NULL){return NULL;}
 		lVal *t = lEval(c,v->vList.car);
 		v = v->vList.cdr;
 		if(t == NULL){continue;}
@@ -182,7 +182,7 @@ static lVal *wwlnfSphere(lClosure *c, lVal *v){
 	u8 b = 0;
 
 	for(int i=0;i<3;i++){
-		if(v == NULL){return lValNil();}
+		if(v == NULL){return NULL;}
 		lVal *t = lEval(c,v->vList.car);
 		v = v->vList.cdr;
 		if(t == NULL){continue;}
@@ -210,7 +210,7 @@ static lVal *wwlnfMSphere(lClosure *c, lVal *v){
 	float r = 4.f;
 
 	for(int i=0;i<2;i++){
-		if(v == NULL){return lValNil();}
+		if(v == NULL){return NULL;}
 		lVal *t = lEval(c,v->vList.car);
 		v = v->vList.cdr;
 		if(t == NULL){continue;}
@@ -283,7 +283,7 @@ static lVal *wwlnfNewAnim(lClosure *c, lVal *v){
 	for(int i=0;i<3;i++){
 		if(v == NULL){
 			if(i == 0){
-				return lValNil();
+				return NULL;
 			}else{
 				break;
 			}
@@ -306,7 +306,7 @@ static lVal *wwlnfNewAnim(lClosure *c, lVal *v){
 			break;
 		}
 	}
-	if(type <= 0){return lValNil();}
+	if(type <= 0){return NULL;}
 	for(uint i=0;i<amount;i++){
 		animalNew(pos,type,-1);
 	}
@@ -397,7 +397,6 @@ static lVal *wwlnfNoAggro(lClosure *c, lVal *v){
 		default: break;
 		case ltInt:  na = t->vInt != 0; break;
 		case ltBool: na = t->vBool;     break;
-		case ltNil:  na = false;        break;
 		}
 		animalNoAggro = na;
 	}

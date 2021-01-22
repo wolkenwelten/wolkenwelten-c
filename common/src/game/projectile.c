@@ -113,7 +113,10 @@ static inline int projectileUpdate(projectile *p){
 
 	if(p->target != 0){
 		mdd = 1.f;
-		if(projectileSelfHitCheck(p, 2.f, projectileGetBeing(p))){return 1;}
+		if(projectileSelfHitCheck(p, 2.f, projectileGetBeing(p))){
+
+			return 1;
+		}
 	}
 	if(!vecInWorld(p->pos)){return 1;}
 	if(characterHitCheck (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}

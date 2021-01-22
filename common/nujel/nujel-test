@@ -37,9 +37,10 @@ test_sexpr_oom () {
 	sexpr="$1"
 	goal="$2"
 	val=`./nujel -e "$sexpr" 2> /dev/null`
+	eval=$?
 	val=$(trim "$val")
 	val="${val%%*( )}"
-	if [ "$val" == "$goal" ]; then
+	if [ "$eval" -eq 0 ] && [ "$val" == "$goal" ]; then
 		test_success "$sexpr"
 		successCount=$((successCount + 1))
 	else
@@ -53,9 +54,10 @@ test_sexpr () {
 	sexpr="$1"
 	goal="$2"
 	val=`./nujel -e "$sexpr"`
+	eval=$?
 	val=$(trim "$val")
 	val="${val%%*( )}"
-	if [ "$val" == "$goal" ]; then
+	if [ "$eval" -eq 0 ] && [ "$val" == "$goal" ]; then
 		test_success "$sexpr"
 		successCount=$((successCount + 1))
 	else
@@ -110,7 +112,13 @@ test_sexpr "(+ 1.11111 2.22222)" "3.33333"
 test_sexpr "(let ((a \"Hallo, Welt!\")) (cat (substr a 0 1) (substr a -1) (substr a 0 -7)))" "\"H!Hallo\""
 test_sexpr "(length \"Hallo, Welt!\")" "12"
 test_sexpr "(define abs (lambda (a) (if (neg? a) (- 0 a) a))) (+ (abs -7) (abs 7))" "14"
+test_sexpr "(or #f #t)" "#t"
+test_sexpr "(and #t #t)" "#t"
 test_sexpr "(and (neg? -1) (neg? -0.01) (pos? 0) (pos? 0.01) (not (neg? 0)) (not (pos? -0.01)) (not (neg? #f)))" "#t"
+test_sexpr "(number? 0.1)" "#t"
+test_sexpr "(and (number? 1) (number? -1))" "#t"
+test_sexpr "(and (number? 0) (number? 0.1))" "#t"
+test_sexpr "(and (number? (vec 1)) (not (number? #f)) (not (number? \"123\")))" "#t"
 test_sexpr "(and (number? 1) (number? -1) (number? 0) (number? 0.1) (number? (vec 1)) (not (number? #f)) (not (number? \"123\")))" "#t"
 test_sexpr "(- (int (cat 12 \"3\" \"45 Test\")) 5)" "12340"
 test_sexpr "(define a \"Test\") a" "\"Test\""
@@ -144,7 +152,7 @@ test_sexpr "(cons)" "()"
 test_sexpr "(cons 1)" "(1)"
 test_sexpr "(cons 1 2)" "(1 . 2)"
 test_sexpr "(cons 1 '(2))" "(1 2)"
-test_sexpr "(- #nil)" "#nil"
+test_sexpr "(- #nil)" ""
 test_sexpr "(and #nil #nil)" "#f"
 test_sexpr "(cat (int #nil))" "\"0\""
 test_sexpr "(and (pair? (cons 1 '(2))) (not (pair? 1)))" "#t"
@@ -159,10 +167,15 @@ test_sexpr "(filter int? '(1 2.0 #t 4))" "(1 4)"
 test_sexpr "(sublist   '(1 2 3 4 5 6) 1 3)" "(2 3)"
 test_sexpr "(list-head '(1 2 3 4 5 6) 3)" "(1 2 3)"
 test_sexpr "(list-tail '(1 2 3 4 5 6) 3)" "(4 5 6)"
+test_sexpr "(last-pair '(1 2 3))" "(3)"
+test_sexpr "(except-last-pair '(1 2 3))" "(1 2)"
+test_sexpr "(let ((l '(1.0 #t \"a\"))) (append (except-last-pair l) (last-pair l))))" "(1.0 #t \"a\")"
+test_sexpr "(and (for-all? '(1 2 3) int?) (not (for-all? '(1 2 3.0) int?)))" "#t"
+test_sexpr "(and (there-exists? '(1.0 2 3.0) int?) (not (there-exists? '(1.0 2.0 3.0) int?)))" "#t"
 test_sexpr "(member \"asd\" '(123 456 \"asd\" #t #f))" "(\"asd\" #t #f)"
 test_sexpr "(and (eq? \"asd\" \"asd\") (not (eq? \"asd\" \"bsd\")) (not (eq? \"asd\" \"asdasd\")))" "#t"
-test_sexpr_oom "(define inf-loop (λ (a) (inf-loop (++ a)))) (inf-loop)" "#nil"
-test_sexpr "(+ (sum + (make-list 10 2)) (list-ref '(1 2 3 4) 1) (list-ref '(1 2) 3) (list-ref '(1 2) 0))" "23"
+test_sexpr_oom "(define inf-loop (λ (a) (inf-loop (++ a)))) (inf-loop)" ""
+test_sexpr "(+ (reduce + (make-list 10 2)) (list-ref '(1 2 3 4) 1) (list-ref '(1 2) 3) (list-ref '(1 2) 0))" "23"
 test_sexpr "(map (λ (a) (* a a)) (cons (vec 2) '(3 4.0)))" "((vec 4.0 4.0 4.0) 9 16.0)"
 test_sexpr "(and (nil? #nil) (not (nil? \"NotNil\") (inf? #inf) (not (inf? \"NotInf\") (vec? (vec 1)) (not (inf? \"NotVec\"))" "#t"
 test_sexpr "(define count (let ((a 0)) (lambda (b) (set! a (+ a (cond ((number? b) b) (#t 1))))))) (count 10) (count)" "11"
