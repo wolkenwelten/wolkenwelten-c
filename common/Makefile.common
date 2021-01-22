@@ -5,9 +5,9 @@ COMMON_ASSETS    := common/src/tmp/stdlib.nuj
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
 COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
-COMMON_DEPS      := ${COMMON_SRCS:.c=.deps}
 NUJEL_SRCS       := $(shell find common/nujel/ -type f -name '*.c') $(shell find common/src/nujel/ -type f -name '*.c') common/src/tmp/assets.c
 NUJEL_OBJS       := $(NUJEL_SRCS:.c=.o)
+COMMON_DEPS      := ${COMMON_SRCS:.c=.deps} ${NUJEL_SRCS:.c=.deps}
 ASM_OBJS         :=
 
 WEBEXCLUDE       += --exclude=releases/macos/wolkenwelten.iconset/
@@ -42,8 +42,8 @@ nujel: $(NUJEL_OBJS)
 
 $(COMMON_DEPS): | common/src/tmp/cto.h common/src/tmp/assets.h
 .deps: common/make.deps
-common/make.deps: $(COMMON_DEPS)
-	cat $(COMMON_DEPS) > common/make.deps
+common/make.deps: $(COMMON_DEPS) $(NUJEL_DEPS)
+	cat $(COMMON_DEPS) $(NUJEL_DEPS) > common/make.deps
 
 common/src/tmp/assets.c: tools/assets $(COMMON_ASSETS)
 	mkdir -p common/src/tmp/
@@ -55,7 +55,7 @@ tools/assets: tools/assets.c
 	$(CC) $(OPTIMIZATION) $(CSTD) $(CFLAGS) $< -o $@
 
 ifneq ($(MAKECMDGOALS),clean)
--include client/make.deps
+-include common/make.deps
 endif
 
 .PHONY: clean
