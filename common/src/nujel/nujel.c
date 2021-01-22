@@ -236,9 +236,14 @@ lClosure *lClosureNew(lClosure *parent){
 	return c;
 }
 
-void lPrintVal(lVal *v){
-	static char buf[256];
-	lSPrintVal(v,buf,&buf[sizeof(buf)]);
+void lDisplayVal(lVal *v){
+	char buf[8192];
+	lSDisplayVal(v,buf,&buf[sizeof(buf)]);
+	printf("%s",buf);
+}
+void lWriteVal(lVal *v){
+	char buf[8192];
+	lSWriteVal(v,buf,&buf[sizeof(buf)]);
 	printf("%s\n",buf);
 }
 
@@ -324,12 +329,10 @@ static lVal *lnfLet(lClosure *c, lVal *v){
 	return ret == NULL ? NULL : ret;
 }
 
-static lVal *lnfRepldo(lClosure *c, lVal *v){
-	lVal *ret = NULL;
-	forEach(n,v){
-		ret = lEval(c,n->vList.car);
-	}
-	return ret == NULL ? NULL : ret;
+static lVal *lnfDo(lClosure *c, lVal *v){
+	lVal *t = lApply(c,v,lEval);
+	//lDisplayVal(t);
+	return lLastCar(t);
 }
 
 static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
@@ -465,7 +468,7 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 
 	if(strcmp(s.c,"define") == 0) {return lValNativeFunc(lnfDef);}
 	if(strcmp(s.c,"let") == 0)    {return lValNativeFunc(lnfLet);}
-	if(strcmp(s.c,"repldo") == 0) {return lValNativeFunc(lnfRepldo);}
+	if(strcmp(s.c,"do") == 0)     {return lValNativeFunc(lnfDo);}
 	if(strcmp(s.c,"quote") == 0)  {return lValNativeFunc(lnfQuote);}
 	if(strcmp(s.c,"set!") == 0)   {return lValNativeFunc(lnfSet);}
 

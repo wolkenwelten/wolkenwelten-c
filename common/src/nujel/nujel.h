@@ -86,7 +86,8 @@ lCString *lCStringAlloc     ();
 void      lCStringFree      (lCString *s);
 
 void      lClosureGC        ();
-void      lPrintVal         (lVal *v);
+void      lDisplayVal       (lVal *v);
+void      lWriteVal         (lVal *v);
 
 lVal     *lValNativeFunc    (lVal *(*func)(lClosure *,lVal *));
 lVal     *lResolveNativeSymBuiltin(const lSymbol s);
@@ -119,7 +120,7 @@ static inline lVal *lValDup(const lVal *v){
 	return v == NULL ? NULL : lValCopy(lValAlloc(),v);
 }
 static inline lVal *lWrap(lVal *v){
-	return lCons(lValSym("repldo"),lCons(lCons(NULL,NULL),v));
+	return lCons(lValSym("do"),lCons(lCons(NULL,NULL),v));
 }
 static inline lVal *lEvalCast(lClosure *c, lVal *v){
 	lVal *t = lApply(c,v,lEval);
@@ -151,11 +152,11 @@ static inline lVal *lCadrOrN(lVal *v){
 
 #define lEvalCastApply(FUNC, c , v) do { \
 	lVal *t = lEvalCast(c,v); \
-	if((t == NULL) || (t->type != ltPair)){return NULL;} \
+	if((t == NULL) || (t->type != ltPair)){return lValInt(0);} \
 	lVal *d = lValDup(t->vList.car); \
-	if(d == NULL){return NULL;} \
+	if(d == NULL){return lValInt(0);} \
 	switch(d->type){ \
-	default:      return NULL; \
+	default:      return lValInt(0); \
 	case ltInf:   return lValInf(); \
 	case ltInt:   return FUNC##I(d,t); \
 	case ltFloat: return FUNC##F(d,t); \

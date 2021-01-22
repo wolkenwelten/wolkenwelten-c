@@ -38,9 +38,7 @@ test_sexpr_oom () {
 	goal="$2"
 	val=`./nujel -e "$sexpr" 2> /dev/null`
 	eval=$?
-	val=$(trim "$val")
-	val="${val%%*( )}"
-	if [ "$eval" -eq 0 ] && [ "$val" == "$goal" ]; then
+	if [ "$eval" -eq 0 ]; then
 		test_success "$sexpr"
 		successCount=$((successCount + 1))
 	else
@@ -152,7 +150,7 @@ test_sexpr "(cons)" "()"
 test_sexpr "(cons 1)" "(1)"
 test_sexpr "(cons 1 2)" "(1 . 2)"
 test_sexpr "(cons 1 '(2))" "(1 2)"
-test_sexpr "(- #nil)" ""
+test_sexpr "(- #nil)" "0"
 test_sexpr "(and #nil #nil)" "#f"
 test_sexpr "(cat (int #nil))" "\"0\""
 test_sexpr "(and (pair? (cons 1 '(2))) (not (pair? 1)))" "#t"

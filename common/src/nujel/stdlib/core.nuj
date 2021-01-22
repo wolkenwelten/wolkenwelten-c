@@ -14,7 +14,7 @@
 	(nil? a)))
 
 (define last? (λ (a) "Returns #t if a is the last pair in a list"
-	(and (pair? a) (nil? (cdr a)))))
+	(nil? (cdr a))))
 
 (define pos? (λ (a) "Returns #t if a is positive"
 	(>= a 0)))
@@ -104,35 +104,36 @@
 (define delete (λ (e l) "Returns a filtered list l with all elements equal to e omitted"
 	(filter (λ (a) (not (eq? a e))) l)))
 
-
-(define binarysort (λ (pred l) "Sorts list l using a binary tree sort"
-	(traverse (btree pred l))))
-
-(define btree (λ (pred l) "Creates a sorted btree from list l using pred"
-	(if (last? l) (leaf (car l)) (binsert pred (btree pred (cdr l)) (car l)))))
-
-(define binsert (λ (pred t a) "Insert a into tree t according to pred"
-	(cond  ((nil? t) (leaf a))
-	((pred (car t) a) (list (car t) (binsert pred (cadr t) a) (caddr t)))
-	(#t (list (car t) (cadr t) (binsert pred (caddr t) a))))))
-
-(define leaf (λ (a) "Adds leaf a"
-	(list a (cons) (cons))))
-
-(define traverse (λ (l) "Create a flat list from a tree"
-	(if (nil? (car l) #nil (append (traverse (cadr l)) (traverse (caddr l)))))))
-
 (define describe (λ (a) "Returns the DocString to its argument, if available"
 	(if (string? (car (cl-text a))) (car (cl-text a)) "No DocString found")))
 
 (define symbol-table (λ (i r) "Returns all a list of all symbols defined accessible from the current closure"
 	(if (nil? (cl i)) r (symbol-table (++ i) (map (λ (a) (car a)) (cl i))))))
 
+(define display (λ (a) "Displays its argument"
+	(print a) #nil))
+
+(define newline (λ () "Prints a single line feed character"
+	(display "\n")))
+
+
 (define help (λ () "Returns a list describing every function accesible"
 	(map (λ (a) (cat a "\n  " (describe a) "\n")) (symbol-table))))
 
-(define newline (λ () "Prints a single line feed character"
-	(print (br))))
+(define binarysort (λ (l) "Sorts list l using a binary tree sort"
+	(if (nil? l) '() (traverse (btree l)))))
 
-(define display (λ (a) "Displays its argument"
-	(print a) #nil))
+(define btree (λ (l) "Creates a sorted btree from list l using pred"
+	(if (last? l) (leaf (car l)) (binsert (btree (cdr l)) (car l)))))
+
+(define binsert (λ (t a) "Insert a into tree t according to pred"
+	(cond  ((nil? t) (leaf a))
+	((< (car t) a) (list (car t) (binsert (cadr t) a) (caddr t)))
+	(#t (list (car t) (cadr t) (binsert (caddr t) a))))))
+
+(define leaf (λ (a) "Adds leaf a"
+	(list a (cons) (cons))))
+
+(define traverse (λ (li) "Create a flat list from a tree"
+	(print li) (newline)
+	(if (nil? (car li) #nil (append (traverse (cadr li)) (traverse (caddr li)))))))

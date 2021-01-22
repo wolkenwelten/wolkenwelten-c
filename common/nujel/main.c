@@ -54,7 +54,7 @@ void doRepl(lClosure *c){
 			return;
 		}
 		lVal *v = lEval(c,lWrap(lRead(str)));
-		lPrintVal(v);
+		lWriteVal(v);
 		lClosureGC();
 		lVal *tmp = lValString(str);
 		if((tmp != NULL) && (lastl != NULL)){lastl->vList.car = tmp;}
@@ -82,11 +82,14 @@ lVal *lnfInput(lClosure *c, lVal *v){
 }
 
 lVal *lnfPrint(lClosure *c, lVal *v){
-	if(v == NULL){return NULL;}
-	lVal *t = lnfCat(c,v);
-	if((t != NULL) && (t->type == ltString)){
-		printf("%s",t->vString->data);
+	if(v == NULL){return v;}
+	lVal *t = NULL;
+	if(v->type == ltPair){
+		t = lEval(c,v->vList.car);
+	}else{
+		t = lEval(c,v);
 	}
+	lDisplayVal(t);
 	return t;
 }
 
@@ -130,7 +133,7 @@ int main(int argc, char *argv[]){
 		}
 		if(!eval){str = loadFile(argv[i],&len);}
 		lVal *v = lEval(c,lWrap(lRead(str)));
-		lPrintVal(v);
+		lWriteVal(v);
 		lClosureGC();
 
 		if(!eval){

@@ -560,7 +560,7 @@ static void cmdLisp(int c,const char *str, u8 id){
 	lClosure *cl = lClosureNew(clRoot);
 	setPID(cl,c);
 	lVal *v = lEval(cl,lWrap(lRead(str)));
-	lSPrintVal(v,reply,&reply[sizeof(reply)-1]);
+	lSWriteVal(v,reply,&reply[sizeof(reply)-1]);
 	lClosureGC();
 
 	if(id == 0){
