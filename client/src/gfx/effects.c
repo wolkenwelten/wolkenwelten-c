@@ -163,13 +163,23 @@ void fxAnimalDiedPacket (const packet *p){
 }
 
 void fxProjectileHit(const packet *p){
+	const u32 colorOffsets[] = {
+		0x00010713,
+		0x00031F39,
+		0x000F0B1B,
+		0x000C1D38
+	};
 	const u16 style = p->v.u16[0];
 
 	//const u16 size  = p->v.u16[1];
 	const vec pos = vecNewP(&p->v.f[1]);
 	for(int i=256;i>0;i--){
 		u32 color;
-		if(style == 2){
+		uint ttl = 64;
+		if(style == 3){
+			color = 0xFF50A0F0 | colorOffsets[rngValA(3)];
+			ttl   = 96;
+		}else if(style == 2){
 			if(rngValA(1)){
 				color = 0xFFB05020;
 			}else{
@@ -183,7 +193,7 @@ void fxProjectileHit(const packet *p){
 			}
 		}
 		const vec v  = vecMulS(vecRng(),0.03f);
-		newParticleV(pos,v,48.f,4.f,color,64);
+		newParticleV(pos,v,48.f,4.f,color,ttl);
 	}
 }
 

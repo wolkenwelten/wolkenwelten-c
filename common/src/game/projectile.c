@@ -114,7 +114,7 @@ static inline int projectileUpdate(projectile *p){
 	if(p->target != 0){
 		mdd = 1.f;
 		if(projectileSelfHitCheck(p, 2.f, projectileGetBeing(p))){
-
+			msgFxBeamBlastHit(-1, p->pos, 1, 3);
 			return 1;
 		}
 	}

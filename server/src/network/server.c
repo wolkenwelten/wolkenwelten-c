@@ -299,6 +299,15 @@ uint getClientLatency(uint c){
 	return getTicks() - clients[c].lastPing;
 }
 
+void packetEcho(u8 c,const packet *p){
+	(void)c;
+	sendToAll(p,packetLen(p)+4);
+}
+
+void packetEchoExcept(u8 c,const packet *p){
+	sendToAllExcept(c,p,packetLen(p)+4);
+}
+
 void serverParseSinglePacket(uint c, packet *p){
 	const int pLen  = p->typesize >> 10;
 	const int pType = p->typesize & 0xFF;
@@ -460,8 +469,7 @@ void serverParseSinglePacket(uint c, packet *p){
 		projectileRecvUpdate(c,p);
 		break;
 	case 39:
-		fprintf(stderr,"FxBeamBlastHit received from client\n");
-		serverKill(c);
+		packetEchoExcept(c,p);
 		break;
 	case 40:
 		fireRecvUpdate(c,p);
