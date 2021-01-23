@@ -112,6 +112,12 @@
 (define newline (λ () "Prints a single line feed character"
 	(display "\n")))
 
+(define list (λ (...l) "Returns its arguments as a list"
+	...l))
+
+(define when (dynamic (c &...l) "Evaluates l and returns the last result if c is #t"
+	(cond (c (eval (cons 'begin &...l))) (#t #f))))
+
 
 (define help (λ () "Returns a list describing every function accesible"
 	(map (λ (a) (cat a "\n  " (describe a) "\n")) (symbol-table))))

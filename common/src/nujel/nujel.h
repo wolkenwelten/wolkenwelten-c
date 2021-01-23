@@ -38,14 +38,15 @@ struct lVal {
 		lVal       *(*vNativeFunc)(lClosure *, lVal *);
 	};
 };
-#define lfMarked (1)
 
 struct lClosure {
 	lClosure *parent;
 	lVal *data;
 	lVal *text;
-	unsigned int flags;
+	uint flags;
 };
+#define lfMarked  (1)
+#define lfDynamic (2)
 
 struct lString {
 	char *buf,*data;

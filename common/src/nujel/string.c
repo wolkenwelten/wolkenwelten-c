@@ -81,8 +81,11 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 		}
 		break;
 	case ltLambda: {
-		t = snprintf(cur,bufEnd-cur,"(λ ");
-
+		if(v->vLambda->flags & lfDynamic){
+			t = snprintf(cur,bufEnd-cur,"(dynamic ");
+		}else{
+			t = snprintf(cur,bufEnd-cur,"(λ ");
+		}
 		if(t > 0){cur += t;}
 		forEach(n,v->vLambda->data){
 			cur = lSWriteVal(n,cur,bufEnd);
@@ -171,7 +174,11 @@ char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
 		}
 		break;
 	case ltLambda: {
-		t = snprintf(cur,bufEnd-cur,"(λ ");
+		if(v->vLambda->flags & lfDynamic){
+			t = snprintf(cur,bufEnd-cur,"(dynamic ");
+		}else{
+			t = snprintf(cur,bufEnd-cur,"(λ ");
+		}
 
 		if(t > 0){cur += t;}
 		forEach(n,v->vLambda->data){
