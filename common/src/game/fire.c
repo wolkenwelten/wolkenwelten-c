@@ -15,7 +15,7 @@ void fireSendUpdate(uint c, uint i){
 	msgFireUpdate(c,i,fireCount,f->x,f->y,f->z,f->strength);
 }
 
-void fireBox(int x, int y, int z, int w, int h, int d, int strength){
+void fireBox(u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, int strength){
 	for(int cx = x;cx < x+w;cx++){
 	for(int cy = y;cy < y+h;cy++){
 	for(int cz = z;cz < z+d;cz++){
@@ -27,16 +27,23 @@ void fireBox(int x, int y, int z, int w, int h, int d, int strength){
 	}
 }
 
-void fireBoxExtinguish(int x, int y, int z, int w, int h, int d, int strength){
+void fireBoxExtinguish(u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, int strength){
 	if(isClient){return;}
 	for(int cx = x;cx < x+w;cx++){
 	for(int cy = y;cy < y+h;cy++){
 	for(int cz = z;cz < z+d;cz++){
 		fire *f = fireGetAtPos(cx,cy,cz);
-		if(f == NULL){continue;}
-		f->strength = MAX(-strength,f->strength - strength);
-		fireSendUpdate(-1, f - fireList);
-		if(!isClient){msgFxBeamBlastHit(-1, vecNew(f->x,f->y,f->z), 256, 2);}
+		if(f != NULL){
+			f->strength = MAX(-strength,f->strength - strength);
+			fireSendUpdate(-1, f - fireList);
+			if(!isClient){msgFxBeamBlastHit(-1, vecNew(f->x,f->y,f->z), 256, 2);}
+		}
+		if(!isClient){
+			const u8 b = worldTryB(cx,cy,cz);
+			if((b == I_Dry_Grass) && (rngValA(1) == 0)){
+				worldSetB(cx,cy,cz,I_Grass);
+			}
+		}
 	}
 	}
 	}

@@ -7,6 +7,7 @@
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
 #include "../game/time.h"
+#include "../game/rain.h"
 #include "../game/water.h"
 #include "../game/weather.h"
 #include "../network/server.h"
@@ -515,6 +516,12 @@ static lVal *wwlnfDbgItem(lClosure *c, lVal *v){
 	return lValBool(true);
 }
 
+static lVal *wwlnfRCount(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+	return lValInt(rainCount);
+}
+
 static void lispEvalNR(const char *str){
 	lEval(clRoot,lWrap(lRead(str)));
 }
@@ -532,6 +539,7 @@ lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"item-drop-count") == 0)   {return lValNativeFunc(wwlnfIDCount);}
 	if(strcmp(s.c,"entity-count") == 0)      {return lValNativeFunc(wwlnfECount);}
 	if(strcmp(s.c,"chungus-count") == 0)     {return lValNativeFunc(wwlnfChungi);}
+	if(strcmp(s.c,"rain-count") == 0)        {return lValNativeFunc(wwlnfRCount);}
 	if(strcmp(s.c,"load-shed") == 0)         {return lValNativeFunc(wwlnfLShed);}
 	if(strcmp(s.c,"give") == 0)              {return lValNativeFunc(wwlnfGive);}
 	if(strcmp(s.c,"dmg") == 0)               {return lValNativeFunc(wwlnfDmg);}

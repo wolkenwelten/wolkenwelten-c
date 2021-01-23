@@ -101,8 +101,8 @@ bool characterIsAiming       (const character *c);
 void characterStopAim        (      character *c);
 
 void fireNew          (u16 x, u16 y, u16 z, i16 strength);
-void fireBox          (int x, int y, int z, int w, int h, int d, int strength);
-void fireBoxExtinguish(int x, int y, int z, int w, int h, int d, int strength);
+void fireBox          (u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, int strength);
+void fireBoxExtinguish(u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, int strength);
 
 item  itemNew      (u16 ID, i16 amount);
 item  itemEmpty    ();

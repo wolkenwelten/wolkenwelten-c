@@ -6,9 +6,7 @@
 #include "../voxel/chungus.h"
 
 void weatherDoRain(){
-	static uint calls = 0;
 	const ivec toff = ivecNewV(vecFloor(cloudOff));
-	if((++calls & 0x3) != 0){return;}
 	for(uint i=0;i<chungusCount;i++){
 		if(rngValA(255) > rainIntensity){continue;}
 		const chungus *c = &chungusList[i];
