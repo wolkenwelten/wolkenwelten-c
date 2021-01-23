@@ -444,6 +444,18 @@ static lVal *lnfCons(lClosure *c, lVal *v){
 	return lCons(car,cdr);
 }
 
+static uint getMSecs(){
+	struct timespec tv;
+	clock_gettime(CLOCK_MONOTONIC,&tv);
+	return (tv.tv_nsec / 100000) + (tv.tv_sec * 1000);
+}
+
+static lVal *lnfMsecs(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+	return lValInt(getMSecs());
+}
+
 lVal *lEval(lClosure *c, lVal *v){
 	//lWriteVal(v);
 	if((c == NULL) || (v == NULL)){return NULL;}
@@ -525,6 +537,7 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(strcmp(s.c,"float") == 0)  {return lValNativeFunc(lnfFloat);}
 	if(strcmp(s.c,"vec") == 0)    {return lValNativeFunc(lnfVec);}
 
+	if(strcmp(s.c,"msecs") == 0)  {return lValNativeFunc(lnfMsecs);}
 	if(strcmp(s.c,"ansirs") == 0) {return lValNativeFunc(lnfAnsiRS);}
 	if(strcmp(s.c,"ansifg") == 0) {return lValNativeFunc(lnfAnsiFG);}
 	if(strcmp(s.c,"br") == 0)     {return lValNativeFunc(lnfBr);}

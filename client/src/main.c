@@ -143,6 +143,7 @@ void worldUpdate(){
 		rainUpdateAll();
 		throwableUpdateAll();
 		throwableCheckPickup();
+		//lispEvents();
 
 		commitOverlayColor();
 		calls++;

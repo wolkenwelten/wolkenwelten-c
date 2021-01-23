@@ -8,6 +8,7 @@
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
 #include "../../../common/src/misc/lisp.h"
+#include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/nujel/nujel.h"
 #include "../../../common/src/nujel/casting.h"
@@ -206,4 +207,18 @@ void lispRecvSExpr(const packet *p){
 	u8 id = p->v.u8[0];
 	const char *str = (const char *)&p->v.u8[1];
 	lispPanelShowReply(lispSEvalSym(id),str);
+}
+
+void lispEvents(){
+	PROFILE_START();
+
+	static uint lastTicks = 0;
+	u64 cticks = getTicks();
+	if((lastTicks + 100) > cticks){return;}
+	lastTicks = cticks;
+
+	lispEvalNR("(yield-run)");
+	lClosureGC();
+
+	PROFILE_STOP();
 }

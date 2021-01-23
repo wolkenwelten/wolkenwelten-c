@@ -4,3 +4,4 @@
 void lispInit     ();
 int  parseCommand (uint c, const char *cmd);
 void lispRecvSExpr(uint c, const packet *p);
+void lispEvents   ();

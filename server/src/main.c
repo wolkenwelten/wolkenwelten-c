@@ -139,6 +139,7 @@ void mainTick(){
 	serverHandleEvents();
 	updateWorld();
 	serverHandleEvents();
+	//lispEvents();
 }
 
 void mainInit(){

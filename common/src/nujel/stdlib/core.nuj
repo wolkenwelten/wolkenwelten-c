@@ -115,9 +115,23 @@
 (define list (λ (...l) "Returns its arguments as a list"
 	...l))
 
-(define when (dynamic (c &...l) "Evaluates l and returns the last result if c is #t"
-	(cond (c (eval (cons 'begin &...l))) (#t #f))))
+(define when (dynamic (c &...expr) "Evaluates l and returns the last result if c is #t"
+	(cond (c (eval (cons 'begin &...expr))) (#t #f))))
 
+(define yield-queue '())
+(define yield (λ (pred &...expr) "Executes expr once pred is true, returns immediately otherwise"
+	(cond ((pred) (eval (cons 'begin &...expr)) #t)
+              (#t     (set! yield-queue (cons (cons 'yield (cons pred &...expr)) yield-queue))))))
+
+(define yield-run-iter (λ (l) "Iter for yield-run"
+	(cond ((nil? l) #t)
+              (#t (eval (car l)) (yield-run-iter (cdr l))))))
+(define yield-run (λ () "Executes pending coroutines if their predicate now evaluates to #t"
+	(let ((queue yield-queue)) (set! yield-queue '())
+	(yield-run-iter queue))))
+
+(define timeout (λ (millis) "Returns a function that evaluates to true once millis milliseconds have passed"
+	(let ((goal (+ (msecs) millis))) (lambda () (> (msecs) goal)))))
 
 (define help (λ () "Returns a list describing every function accesible"
 	(map (λ (a) (cat a "\n  " (describe a) "\n")) (symbol-table))))

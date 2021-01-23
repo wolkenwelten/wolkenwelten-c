@@ -5,3 +5,4 @@ void lispInit        ();
 void lispFree        ();
 const char *lispEval (const char *str);
 void lispRecvSExpr   (const packet *p);
+void lispEvents      ();
