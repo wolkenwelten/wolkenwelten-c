@@ -123,6 +123,7 @@ static void animalSHeat(animal *e,int stateChange[16]){
 }
 
 static void animalSFight(animal *e,int stateChange[16]){
+	e->grot.pitch = 0.f;
 	if(e->type != 2){
 		if((rngValA(15) == 0) && !(e->flags & ANIMAL_FALLING)){
 			e->vel.y = 0.03f;
@@ -132,6 +133,7 @@ static void animalSFight(animal *e,int stateChange[16]){
 }
 
 static void animalSFlee(animal *e,int stateChange[16]){
+	e->grot.pitch = 0.f;
 	if(e->type != 2){
 		if((fabsf(e->gvel.x) + fabsf(e->gvel.z)) < 0.02f){
 			vec dir = vecMulS(vecDegToVec(vecNew(-e->rot.yaw,0.f,0.f)),0.03f);

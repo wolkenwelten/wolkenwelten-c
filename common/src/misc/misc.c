@@ -210,3 +210,23 @@ u64 SHA1Simple(const void *data, uint len){
 	u64 ret = d[0] | ((u64)d[1] << 8) | ((u64)d[2] << 8) | ((u64)d[3] << 8) | ((u64)d[4] << 8) | ((u64)d[5] << 8) | ((u64)d[6] << 8) | ((u64)d[7] << 8);
 	return ret;
 }
+
+static u32 colorInterpolateSingle(u32 c1, u32 c2, int shift, int v){
+	uint acc = 0;
+	acc += ((c1 >> shift) & 0xFF) * (256-v);
+	acc += ((c2 >> shift) & 0xFF) *      v;
+	acc = acc >> 8;
+	return (acc & 0xFF) << shift;
+}
+
+u32 colorInterpolate(u32 c1, u32 c2, float i){
+	if(i < 0.01f){return c1;}
+	if(i > 0.99f){return c2;}
+	u32 ret = 0;
+	const int v = (int)(i*255.f);
+	ret |= colorInterpolateSingle(c1,c2, 0,v);
+	ret |= colorInterpolateSingle(c1,c2, 8,v);
+	ret |= colorInterpolateSingle(c1,c2,16,v);
+	ret |= colorInterpolateSingle(c1,c2,24,v);
+	return ret;
+}

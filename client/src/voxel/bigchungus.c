@@ -129,7 +129,7 @@ void worldDraw(const character *cam){
 	shaderBind(sBlockMesh);
 	matMul(matMVP,matView,matProjection);
 	shaderMatrix(sBlockMesh,matMVP);
-	shaderBrightness(sBlockMesh,skyBrightness);
+	shaderBrightness(sBlockMesh,worldBrightness);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);

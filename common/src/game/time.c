@@ -73,11 +73,21 @@ uint gtimeGetTimeCat(){
 	return (gameTime >> 18) & 0x3;
 }
 
-float gtimeGetBrightness(uint time){
+static float gtimeGetRawBrightness(uint time){
 	time &= (1<<20)-1;
 	const float t = .6f + (time / (float)(3<<19));
 	float v = cosf(t*(PI*2)) * 2.f;
+	return v;
+}
+
+float gtimeGetBrightness(uint time){
+	const float v = gtimeGetRawBrightness(time);
 	return MINMAX(0.3f,1.0f,v);
+}
+
+float gtimeGetSkyBrightness(uint time){
+	const float v = gtimeGetRawBrightness(time);
+	return MINMAX(0.0f,1.0f,v);
 }
 
 void printDebugtime(){

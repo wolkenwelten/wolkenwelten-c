@@ -3,6 +3,7 @@
 #include "../sdl/sdl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/textMesh.h"
+#include "../../../common/src/misc/misc.h"
 
 static u32  nextOverlayColorAnimNew = 0;
 static u32  nextOverlayColorAnimDur = 0;
@@ -12,28 +13,6 @@ static uint overlayColorAnimStart   = 0;
 static uint overlayColorAnimEnd     = 1;
 static u32  overlayColorAnimNew     = 0;
 static uint overlayColorAnimDur     = 0;
-
-u32 colorInterpolate(u32 c1,u32 c2,float i){
-	if(i < 0.f){return c1;}
-	if(i > 1.f){return c2;}
-
-	const float r1 = (c1    ) & 0xFF;
-	const float r2 = (c2    ) & 0xFF;
-	const float g1 = (c1>> 8) & 0xFF;
-	const float g2 = (c2>> 8) & 0xFF;
-	const float b1 = (c1>>16) & 0xFF;
-	const float b2 = (c2>>16) & 0xFF;
-	const float a1 = (c1>>24) & 0xFF;
-	const float a2 = (c2>>24) & 0xFF;
-	const float        i2 = 1.f-i;
-
-	const float r = (((float)r1 * i2) + ((float)r2 * i));
-	const float g = (((float)g1 * i2) + ((float)g2 * i));
-	const float b = (((float)b1 * i2) + ((float)b2 * i));
-	const float a = (((float)a1 * i2) + ((float)a2 * i));
-
-	return (u32)r | ((u32)g<<8) | ((u32)b<<16) | ((u32)a << 24);
-}
 
 void commitOverlayColor(){
 	if(overlayColorAnimNew == overlayColorAnimDst){return;}

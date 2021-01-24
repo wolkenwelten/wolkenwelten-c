@@ -62,7 +62,7 @@ static void animalDraw(animal *e){
 
 void animalDrawAll(){
 	shaderBind(sMesh);
-	shaderBrightness(sMesh,skyBrightness);
+	shaderBrightness(sMesh,worldBrightness);
 	for(uint i=0;i<animalCount;i++){
 		if(animalDistance(&animalList[i],player) > ANIMAL_FADEOUT){
 			animalList[i].screenPos = vecNOne();

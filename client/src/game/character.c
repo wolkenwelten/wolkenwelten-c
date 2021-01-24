@@ -710,7 +710,7 @@ void characterActiveItemDraw(const character *c){
 	mesh *aiMesh;
 	float sneakOff = 0.f;
 	if(c->flags & CHAR_SNEAK){sneakOff = 1.f;}
-	shaderBrightness(sMesh,skyBrightness);
+	shaderBrightness(sMesh,worldBrightness);
 
 	activeItem = &c->inventory[c->activeItem];
 	if(activeItem == NULL)     {return;}
@@ -810,7 +810,7 @@ void characterDraw(character *c){
 
 void characterDrawAll(){
 	shaderBind(sMesh);
-	shaderBrightness(sMesh,skyBrightness);
+	shaderBrightness(sMesh,worldBrightness);
 	for(uint i=0;i<characterCount;i++){
 		if(characterList[i].nextFree != NULL){ continue; }
 		characterDraw(&characterList[i]);
