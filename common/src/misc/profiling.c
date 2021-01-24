@@ -10,25 +10,23 @@
 #include <sys/time.h>
 
 typedef struct {
-    const char *funcName;
-    u64 total;
-    u64 ustart;
-    u64 count;
+	const char *funcName;
+	u64 total;
+	u64 ustart;
+	u64 count;
 } profEntry;
 
 #define PROFILER_MAX_ENTRIES 64
 profEntry profEntryList[PROFILER_MAX_ENTRIES];
 uint      profEntryCount = 0;
 
-
 typedef struct {
-    u64 total;
-    u64 count;
+	u64 total;
+	u64 count;
 } nprofEntry;
 
 profEntry nprofEntryList[256];
-
-static char reportBuf[4096];
+char reportBuf[1<<16];
 
 uint profGetIndex(const char *funcName){
 	const uint index = profEntryCount++;
@@ -52,8 +50,9 @@ void profStart(uint i){
 
 void profStop(uint i){
 	u64 cticks = getUTicks();
-	if(profEntryList[i].ustart > cticks){cticks = profEntryList[i].ustart;}
-	profEntryList[i].total += getUTicks() - profEntryList[i].ustart;
+	if(profEntryList[i].ustart < cticks){
+		profEntryList[i].total += cticks - profEntryList[i].ustart;
+	}
 	profEntryList[i].count++;
 }
 

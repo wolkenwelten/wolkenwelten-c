@@ -1,5 +1,7 @@
 #include "misc.h"
 
+#include "sha1.h"
+
 #include <ctype.h>
 #include <dirent.h>
 #include <stdlib.h>
@@ -197,4 +199,14 @@ int parseAnsiCode(const char *str, int *fgc, int *bgc){
 	*fgc = off + str[5] - '0';
 	*bgc = -1;
 	return 7;
+}
+
+u64 SHA1Simple(const void *data, uint len){
+	SHA1_CTX ctx;
+	u8 d[20];
+	SHA1Init(&ctx);
+	SHA1Update(&ctx,(u8 *)data,len);
+	SHA1Final(d,&ctx);
+	u64 ret = d[0] | ((u64)d[1] << 8) | ((u64)d[2] << 8) | ((u64)d[3] << 8) | ((u64)d[4] << 8) | ((u64)d[5] << 8) | ((u64)d[6] << 8) | ((u64)d[7] << 8);
+	return ret;
 }

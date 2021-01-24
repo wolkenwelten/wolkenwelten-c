@@ -20,3 +20,5 @@ void        rmDirR   (const char *name);
 static inline int inWorld(uint x, uint y, uint z){
 	return ((y&~0x7FFF) | ((x|z)&~0xFFFF))==0;
 }
+
+u64 SHA1Simple(const void *data, uint len);

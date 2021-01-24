@@ -9,6 +9,7 @@
 #include "../menu/mainmenu.h"
 #include "../../../common/src/tmp/cto.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/sha1.h"
 
 #include <dirent.h>
 #include <stdio.h>
@@ -97,7 +98,7 @@ static void handlerNewGameSubmit(widget *wid){
 	if(newGameName->vals[0] == 0){return;}
 	snprintf(optionSavegame,sizeof(optionSavegame),"%s",newGameName->vals);
 	if(newGameSeed->vals[0] != 0){
-		optionWorldSeed = atoi(newGameSeed->vals);
+		optionWorldSeed = SHA1Simple(newGameSeed->vals,strnlen(newGameSeed->vals,256));
 	}
 	handlerNewGameCancel(wid);
 	startSingleplayer();

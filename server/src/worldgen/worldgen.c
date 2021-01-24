@@ -111,12 +111,9 @@ void worldgenTestpattern(worldgen *wgen){
 }
 
 void worldgenGenerate(worldgen *wgen){
-	//static unsigned int averageTicks=0;
-	//static uint averageRuns=0;
 	PROFILE_START();
 
 	int oldSeed = getRNGSeed();
-	//unsigned int startTicks = getTicks();
 	uint seed = (optionWorldSeed | (optionWorldSeed << 16));
 	seed ^= (wgen->gx&0xFF00) | (wgen->gx >> 8) | ((wgen->gx&0xFF00)<<8) | ((wgen->gx&0xFF00)<<16);
 	seed ^= (wgen->gy&0xFF00) | (wgen->gy >> 8) | ((wgen->gy&0xFF00)<<8) | ((wgen->gy&0xFF00)<<16);
@@ -134,70 +131,55 @@ void worldgenGenerate(worldgen *wgen){
 		wgen->geoIslands      = false;
 	}
 	switch(wgen->layer){
-		default:
-			worldgenTestpattern(wgen);
+	case 0:
+	case 127:
 		break;
-
-		case 19:
-		case 18:
-			worldgenCluster(wgen,CHUNGUS_SIZE/52,CHUNGUS_SIZE/52,3,9);
+	default:
+		worldgenTestpattern(wgen);
 		break;
-		case 17:
-			worldgenLandmass(wgen,wgen->layer - 13);
-			//worldgenCluster(wgen,CHUNGUS_SIZE/52,CHUNGUS_SIZE/52,3,9);
+	case 19:
+	case 18:
+		worldgenCluster(wgen,CHUNGUS_SIZE/52,CHUNGUS_SIZE/52,3,9);
 		break;
-
-		case 16:
-		case 15:
-		case 14:
-		case 13:
-		case 12:
-		case 11:
-		case 10:
-		case 9:
-			worldgenLabyrinth(wgen);
+	case 17:
+		worldgenLandmass(wgen,wgen->layer - 13);
 		break;
-
-		case 8:
-			worldgenCluster(wgen,CHUNGUS_SIZE/44,CHUNGUS_SIZE/44,4,12);
+	case 16:
+	case 15:
+	case 14:
+	case 13:
+	case 12:
+	case 11:
+	case 10:
+	case 9:
+		worldgenLabyrinth(wgen);
 		break;
-
-		case 7:
-			worldgenCluster(wgen,CHUNGUS_SIZE/38,CHUNGUS_SIZE/38,7,22);
+	case 8:
+		worldgenCluster(wgen,CHUNGUS_SIZE/44,CHUNGUS_SIZE/44,4,12);
 		break;
-
-		case 6:
-			worldgenCluster(wgen,CHUNGUS_SIZE/32,CHUNGUS_SIZE/32,6,22);
+	case 7:
+		worldgenCluster(wgen,CHUNGUS_SIZE/38,CHUNGUS_SIZE/38,7,22);
 		break;
-
-		case 5:
-			worldgenCluster(wgen,CHUNGUS_SIZE/22,CHUNGUS_SIZE/28,4,16);
+	case 6:
+		worldgenCluster(wgen,CHUNGUS_SIZE/32,CHUNGUS_SIZE/32,6,22);
 		break;
-
-		case 4:
-			worldgenCluster(wgen,CHUNGUS_SIZE/12,CHUNGUS_SIZE/22,4,8);
+	case 5:
+		worldgenCluster(wgen,CHUNGUS_SIZE/22,CHUNGUS_SIZE/28,4,16);
 		break;
-
-		case 3:
-			worldgenCluster(wgen,CHUNGUS_SIZE/8,CHUNGUS_SIZE/32,1,3);
+	case 4:
+		worldgenCluster(wgen,CHUNGUS_SIZE/12,CHUNGUS_SIZE/22,4,8);
 		break;
-
-		case 2:
-			worldgenCluster(wgen,CHUNGUS_SIZE/14,CHUNGUS_SIZE/24,2,5);
+	case 3:
+		worldgenCluster(wgen,CHUNGUS_SIZE/8,CHUNGUS_SIZE/32,1,3);
 		break;
-
-		case 1:
-			worldgenCluster(wgen,CHUNGUS_SIZE/18,CHUNGUS_SIZE/22,5,12);
+	case 2:
+		worldgenCluster(wgen,CHUNGUS_SIZE/14,CHUNGUS_SIZE/24,2,5);
 		break;
-
-		case 0:
-		case 127:
-			break;
+	case 1:
+		worldgenCluster(wgen,CHUNGUS_SIZE/18,CHUNGUS_SIZE/22,5,12);
+		break;
 	}
 	seedRNG(oldSeed);
-	//averageTicks += getTicks()-startTicks;
-	//averageRuns++;
-	//printf("Worldgen took %3u ms (Avg.: %3ums   Total: %4ums)\n",(uint)getTicks()-startTicks,averageTicks/averageRuns,averageTicks);
-	//clay->debugInfo();
+
 	PROFILE_STOP();
 }

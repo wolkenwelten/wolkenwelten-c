@@ -1,6 +1,6 @@
 #include "server_ws.h"
 
-#include "../misc/sha1.h"
+#include "../../../common/src/misc/sha1.h"
 #include "../network/server.h"
 
 #include <stdio.h>

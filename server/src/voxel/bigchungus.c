@@ -24,11 +24,11 @@ void bigchungusInit(bigchungus *c){
 
 void bigchungusFree(bigchungus *c){
 	for(int x=0;x<256;x++){
-		for(int y=0;y<128;y++){
-			for(int z=0;z<256;z++){
-				chungusFree(c->chungi[x][y][z]);
-			}
-		}
+	for(int y=0;y<128;y++){
+	for(int z=0;z<256;z++){
+		chungusFree(c->chungi[x][y][z]);
+	}
+	}
 	}
 	memset(c->chungi,0,256*128*256*sizeof(chunk *));
 }

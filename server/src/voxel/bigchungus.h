@@ -4,14 +4,13 @@
 #define WORLD_SIZE (16*16*256)
 
 struct bigchungus {
+	chungus *chungi            [256][128][256];
 	ivec spawn;
-	chungus *chungi[256][128][256];
 	u8 heightModifier          [256][256];
 	u8 vegetationConcentration [256][256];
 	u8 islandSizeModifier      [256][256];
 	u8 islandCountModifier     [256][256];
 	u8 geoworldMap             [256][256];
-
 };
 extern bigchungus world;
 
