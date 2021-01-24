@@ -11,11 +11,21 @@
 - Animals don't spawn after the limit has been reached, especially problematic if the limit is already reached with animals inside the spawn area which never gets freed
 - Simulate/Store Oxygen levels in chunks and have it spread to neighboring chunks, trees/plants increase oxygen, fires/animals/players decrease oxygen
 
+--- Nujel work ---
++ Write "compile" lambda that resolves all symbols for a given λ, which should make things a lot faster
++ Store symbols in a BTree
++ No more strncmp to determine native funcs
++ Docstrings for native funcs
++ Describe should also describe the function name as well as its arguments
++ Arguments should all be single greek lowercase letters to easily distinguish them from normal test/code, also it looks kinda schway
++ Native Arrays
++ Native Hashmaps
++ Native Pointers with an associated type ID, which the GC uses for allocing and freeing the native object (especially useful for GUI widgets)
++ TCO?...!
+
 --- Off-stream work ---
 + Fancy Ropes
 + Fix WASM Singleplayer
-+ Fix Guns shooting off center
-+ Color/RGBA routines
 
 --- Low Prio Work ---------------------------------------------------------
 - Disable players equiping random items in their equipment slots
@@ -36,7 +46,7 @@
 (B) More worldgen variety
 
 (C) Make Blocks Modable
-(C) Enable tls/wss support
+(C) Enable tls/wss support (BearSSL seems nice!)
 (C) Windows Code signing (seems expensive :/)
 (C) Fix wasm fullscreen problems
 
