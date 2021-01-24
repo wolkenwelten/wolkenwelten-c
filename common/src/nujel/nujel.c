@@ -513,6 +513,7 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(strcmp(s.c,"mem") == 0)    {return lValNativeFunc(lnfMem);}
 	if(strcmp(s.c,"λ") == 0)      {return lValNativeFunc(lnfLambda);}
 	if(strcmp(s.c,"lambda") == 0) {return lValNativeFunc(lnfLambda);}
+	if(strcmp(s.c,"δ") == 0)      {return lValNativeFunc(lnfDynamic);}
 	if(strcmp(s.c,"dynamic") == 0){return lValNativeFunc(lnfDynamic);}
 	if(strcmp(s.c,"cl") == 0)     {return lValNativeFunc(lnfCl);}
 	if(strcmp(s.c,"cl-text") == 0){return lValNativeFunc(lnfClText);}

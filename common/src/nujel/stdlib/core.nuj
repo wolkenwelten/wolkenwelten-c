@@ -115,7 +115,7 @@
 (define list (λ (...l) "Returns its arguments as a list"
 	...l))
 
-(define when (dynamic (c &...expr) "Evaluates l and returns the last result if c is #t"
+(define when (δ (c &...expr) "Evaluates l and returns the last result if c is #t"
 	(cond (c (eval (cons 'begin &...expr))) (#t #f))))
 
 (define yield-queue '())
