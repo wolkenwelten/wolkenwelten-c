@@ -82,7 +82,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 		break;
 	case ltLambda: {
 		if(v->vLambda->flags & lfDynamic){
-			t = snprintf(cur,bufEnd-cur,"(dynamic ");
+			t = snprintf(cur,bufEnd-cur,"(δ ");
 		}else{
 			t = snprintf(cur,bufEnd-cur,"(λ ");
 		}

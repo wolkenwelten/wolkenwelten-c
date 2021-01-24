@@ -48,7 +48,7 @@ inline being beingNew  (u8 type, u32 id){ return (id&0xFFFFFF) | ((u32)type << 2
 #define BEING_PROJECTILE 5
 #define BEING_ITEMDROP   6
 #define BEING_FIRE       7
-#define BEING_WATER      8
+
 #define BEING_THROWABLE  9
 
 inline being beingCharacter (u32 id){ return beingNew(BEING_CHARACTER, id);}
@@ -58,7 +58,6 @@ inline being beingGrenade   (u32 id){ return beingNew(BEING_GRENADE,   id);}
 inline being beingProjectile(u32 id){ return beingNew(BEING_PROJECTILE,id);}
 inline being beingItemDrop  (u32 id){ return beingNew(BEING_ITEMDROP,  id);}
 inline being beingFire      (u32 id){ return beingNew(BEING_FIRE,      id);}
-inline being beingWater     (u32 id){ return beingNew(BEING_WATER,     id);}
 inline being beingThrowable (u32 id){ return beingNew(BEING_THROWABLE, id);}
 
 typedef struct beingListEntry beingListEntry;
@@ -243,10 +242,3 @@ typedef struct {
 	i16 oxygen;
 	beingList *bl;
 } fire;
-
-typedef struct {
-	u16 x,y,z;
-	i16 amount;
-	u8 b,bb;
-	beingList *bl;
-} water;

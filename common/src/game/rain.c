@@ -1,7 +1,6 @@
 #include "rain.h"
 
 #include "../asm/asm.h"
-#include "../game/water.h"
 #include "../game/weather.h"
 #include "../misc/profiling.h"
 #include "../mods/api_v1.h"
@@ -76,10 +75,6 @@ void rainUpdateAll(){
 					fxRainDrop(vecNew(glrd->x,glrd->y,glrd->z));
 				}else{
 					fireBoxExtinguish (glrd->x-1, glrd->y-1, glrd->z-1, 3, 3, 3, 256);
-					/*
-					waterNew(glrd->x,glrd->y,glrd->z,512);
-					waterNew(glrd->x,glrd->y-1,glrd->z,512);
-					*/
 				}
 				rainDel(i);
 				continue;

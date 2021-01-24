@@ -8,7 +8,6 @@
 #include "../game/itemDrop.h"
 #include "../game/time.h"
 #include "../game/rain.h"
-#include "../game/water.h"
 #include "../game/weather.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
@@ -90,10 +89,6 @@ static lVal *wwlnfIDCount(lClosure *c, lVal *v){
 static lVal *wwlnfECount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(entityCount);
-}
-static lVal *wwlnfWCount(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	return lValInt(waterCount);
 }
 
 static lVal *wwlnfPlayerPos(lClosure *c, lVal *v){
@@ -367,30 +362,6 @@ static lVal *wwlnfTp(lClosure *c, lVal *v){
 	return lValBool(true);
 }
 
-static lVal *wwlnfWaterNew(lClosure *c, lVal *v){
-	vec pos = vecNOne();
-	int amount = 8192;
-
-	for(int i=0;i<2;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
-		if(t == NULL){continue;}
-		switch(i){
-		case 0:
-			t = lnfVec(c,t);
-			pos = t->vVec;
-			break;
-		case 1:
-			t = lnfInt(c,t);
-			amount = t->vInt;
-			break;
-		}
-	}
-	waterNewF(pos.x,pos.y,pos.z,amount);
-	return lValInt(amount);
-}
-
 static lVal *wwlnfNoAggro(lClosure *c, lVal *v){
 	lVal *t = lEval(c,v->vList.car);
 	if(t != NULL){
@@ -534,7 +505,6 @@ lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"animal-used") == 0)       {return lValNativeFunc(wwlnfAUCount);}
 	if(strcmp(s.c,"animal-real") == 0)       {return lValNativeFunc(wwlnfARCount);}
 	if(strcmp(s.c,"fire-count") == 0)        {return lValNativeFunc(wwlnfFCount);}
-	if(strcmp(s.c,"water-count") == 0)       {return lValNativeFunc(wwlnfWCount);}
 	if(strcmp(s.c,"mining-count") == 0)      {return lValNativeFunc(wwlnfBMCount);}
 	if(strcmp(s.c,"item-drop-count") == 0)   {return lValNativeFunc(wwlnfIDCount);}
 	if(strcmp(s.c,"entity-count") == 0)      {return lValNativeFunc(wwlnfECount);}
@@ -546,7 +516,6 @@ lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"die") == 0)               {return lValNativeFunc(wwlnfDie);}
 	if(strcmp(s.c,"animal-new") == 0)        {return lValNativeFunc(wwlnfNewAnim);}
 	if(strcmp(s.c,"animal-set") == 0)        {return lValNativeFunc(wwlnfSetAnim);}
-	if(strcmp(s.c,"water-new") == 0)         {return lValNativeFunc(wwlnfWaterNew);}
 	if(strcmp(s.c,"cloud-threshold") == 0)   {return lValNativeFunc(wwlnfCDen);}
 	if(strcmp(s.c,"wind-velocity") == 0)     {return lValNativeFunc(wwlnfWVel);}
 	if(strcmp(s.c,"rain-set") == 0)          {return lValNativeFunc(wwlnfRain);}

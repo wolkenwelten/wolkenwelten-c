@@ -13,7 +13,6 @@
 #include "../game/projectile.h"
 #include "../game/throwable.h"
 #include "../game/time.h"
-#include "../game/water.h"
 #include "../game/weather.h"
 #include "../misc/lisp.h"
 #include "../misc/options.h"
@@ -277,7 +276,7 @@ void clientParsePacket(const packet *p){
 		fireRecvUpdate(-1,p);
 		break;
 	case 41:
-		waterRecvUpdate(-1,p);
+		//waterRecvUpdate(-1,p);
 		break;
 	case 42:
 		lispRecvSExpr(p);

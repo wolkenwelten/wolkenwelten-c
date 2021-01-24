@@ -4,7 +4,6 @@
 #include "../game/being.h"
 #include "../game/character.h"
 #include "../game/fire.h"
-#include "../game/water.h"
 #include "../misc/profiling.h"
 #include "../mods/api_v1.h"
 #include "../network/packet.h"
@@ -136,7 +135,6 @@ void projectileUpdateAll(){
 		if(projectileUpdate(p)){
 			if(p->style == 6){
 				fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3, 128);
-				waterBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,128);
 				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 2);}
 			}else if(p->style == 5){
 				fireBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,64);

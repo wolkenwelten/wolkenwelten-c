@@ -8,7 +8,6 @@
 #include "../game/grenade.h"
 #include "../game/hook.h"
 #include "../game/itemDrop.h"
-#include "../game/water.h"
 #include "../network/messages.h"
 
 #include <stdlib.h>
@@ -48,10 +47,6 @@ vec beingGetPos(being b){
 		fire *c = fireGetByBeing(b);
 		if(c == NULL)     {return vecNOne();}
 		return vecNew(c->x,c->y,c->z); }
-	case BEING_WATER: {
-		water *c = waterGetByBeing(b);
-		if(c == NULL)     {return vecNOne();}
-		return vecNew(c->x,c->y,c->z); }
 	default:
 		return vecNOne();
 	}
@@ -87,13 +82,6 @@ void beingSetPos(being b, const vec pos){
 		return; }
 	case BEING_FIRE: {
 		fire *c = fireGetByBeing(b);
-		if(c == NULL){return;}
-		c->x = pos.x;
-		c->y = pos.y;
-		c->z = pos.z;
-		return; }
-	case BEING_WATER: {
-		water *c = waterGetByBeing(b);
 		if(c == NULL){return;}
 		c->x = pos.x;
 		c->y = pos.y;
@@ -138,13 +126,6 @@ void beingAddPos(being b, const vec pos){
 		c->y += pos.y;
 		c->z += pos.z;
 		return; }
-	case BEING_WATER: {
-		water *c = waterGetByBeing(b);
-		if(c == NULL){return;}
-		c->x += pos.x;
-		c->y += pos.y;
-		c->z += pos.z;
-		return; }
 	default:
 		return;
 	}
@@ -173,7 +154,6 @@ vec beingGetVel(being b){
 		if(c == NULL){return vecZero();}
 		return c->ent->vel; }
 	case BEING_FIRE:
-	case BEING_WATER:
 	default:
 		return vecZero();
 	}
@@ -207,7 +187,6 @@ void beingSetVel(being b, const vec vel){
 		c->ent->vel = vel;
 		return; }
 	case BEING_FIRE:
-	case BEING_WATER:
 	default:
 		return;
 	}
@@ -241,7 +220,6 @@ void beingAddVel(being b, const vec vel){
 		c->ent->vel = vecAdd(c->ent->vel,vel);
 		return; }
 	case BEING_FIRE:
-	case BEING_WATER:
 	default:
 		return;
 	}

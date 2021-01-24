@@ -13,7 +13,6 @@
 #include "../game/throwable.h"
 #include "../game/rope.h"
 #include "../game/time.h"
-#include "../game/water.h"
 #include "../game/weather.h"
 #include "../misc/lisp.h"
 #include "../misc/options.h"
@@ -232,7 +231,6 @@ void msgUpdatePlayer(uint c){
 	animalSyncPlayer(c);
 	projectileSyncPlayer(c);
 	fireSyncPlayer(c);
-	waterSyncPlayer(c);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 }
@@ -476,7 +474,7 @@ void serverParseSinglePacket(uint c, packet *p){
 		fireRecvUpdate(c,p);
 		break;
 	case 41:
-		waterRecvUpdate(c,p);
+		//waterRecvUpdate(c,p);
 		break;
 	case 42:
 		lispRecvSExpr(c,p);

@@ -12,7 +12,6 @@
 #include "game/throwable.h"
 #include "game/time.h"
 #include "game/rain.h"
-#include "game/water.h"
 #include "game/weather.h"
 #include "persistence/savegame.h"
 #include "voxel/bigchungus.h"
@@ -92,7 +91,6 @@ static void updateWorldStep(){
 	projectileUpdateAll();
 	animalThinkAll();
 	fireUpdateAll();
-	waterUpdateAll();
 	animalNeedsAll();
 	animalCheckBurnAll();
 	landscapeUpdateAll();

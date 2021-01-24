@@ -3,7 +3,6 @@
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
 #include "../game/projectile.h"
-#include "../game/water.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
@@ -31,9 +30,6 @@ void beingSync(u8 c, being b){
 		return;
 	case BEING_FIRE:
 		fireSendUpdate(c,beingID(b));
-		return;
-	case BEING_WATER:
-		waterSendUpdate(c,beingID(b));
 		return;
 	}
 }

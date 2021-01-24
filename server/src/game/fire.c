@@ -3,7 +3,6 @@
 #include "../game/being.h"
 #include "../game/blockMining.h"
 #include "../game/grenade.h"
-#include "../game/water.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
@@ -138,27 +137,6 @@ void fireUpdate(fire *f){
 	f->oxygen  -= dmg;
 	f->oxygen  += MIN(airB,64-f->oxygen);
 
-	water *w = waterGetAtPos(f->x,f->y,f->z);
-	if((w != NULL) && (w->amount > 0)){
-		f->oxygen    = 0;
-		f->strength -= w->amount;
-		w->amount   -= f->strength;
-	}
-	if(f->strength <= 0){
-		fireDel(f-fireList);
-		fireSendUpdate(-1,fireCount);
-		fireSendUpdate(-1,f-fireList);
-		return;
-	}
-	int wx = f->x-1+rngValM(3);
-	int wy = f->y-1+rngValM(3);
-	int wz = f->z-1+rngValM(3);
-	w = waterGetAtPos(wx,wy,wz);
-	if((w != NULL) && (w->amount > 0)){
-		f->oxygen    = 0;
-		f->strength -= w->amount;
-		w->amount   -= f->strength;
-	}
 	if(f->strength <= 0){
 		fireDel(f-fireList);
 		fireSendUpdate(-1,fireCount);

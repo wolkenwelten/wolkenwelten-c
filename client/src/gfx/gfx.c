@@ -9,7 +9,6 @@
 #include "../game/projectile.h"
 #include "../game/rain.h"
 #include "../game/rope.h"
-#include "../game/water.h"
 #include "../game/weather.h"
 #include "../gfx/gl.h"
 #include "../gfx/mat.h"
@@ -175,7 +174,6 @@ void renderWorld(const character *cam){
 
 	projectileDrawAll();
 	fireDrawAll();
-	waterDrawAll();
 	particleDraw();
 
 	shadowDraw();
