@@ -7,6 +7,7 @@
 #include "../gui/menu.h"
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
+#include "../tmp/assets.h"
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
@@ -175,12 +176,7 @@ void lispInit(){
 	clRoot = lClosureNew(NULL);
 	clRoot->flags |= lfNoGC;
 	lEval(clRoot,lWrap(lRead((char *)src_tmp_stdlib_nuj_data)));
-	lispEvalNR("(define fasts   (λ (a) (mst  1) (s (mst  1))))");
-	lispEvalNR("(define norms   (λ (a) (mst  4) (s (mst  4))))");
-	lispEvalNR("(define slows   (λ (a) (mst 16) (s (mst 16))))");
-	lispEvalNR("(define bulls   (λ (a) (mst 64) (s (mst 64))))");
-	lispEvalNR("(define morning (λ ( ) (s (morning))))");
-	lispEvalNR("(define night   (λ ( ) (s (night))))");
+	lEval(clRoot,lWrap(lRead((char *)src_tmp_client_nuj_data)));
 
 	lClosureGC();
 

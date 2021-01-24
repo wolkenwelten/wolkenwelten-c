@@ -26,7 +26,7 @@ ASM_OBJS += common/src/asm/$(ARCH).o
 endif
 
 common/src/tmp/stdlib.nuj: $(NUJ_STDLIB)
-	cat $< > $@
+	cat $(NUJ_STDLIB) > $@
 
 %.o: %.s
 	$(AS) $(ASFLAGS) -g -c $< -o $@

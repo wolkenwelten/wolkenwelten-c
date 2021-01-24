@@ -1,0 +1,38 @@
+(define heal     (δ (α) "Heals oneself by α points"
+	(- (dmg (cond (a (- a)) (#t -20))))))
+
+(define morning (λ () "Sets the Time to 8:00 AM"
+	(time "8:00")))
+
+(define noon (λ () "Sets the Time to 12:00 PM"
+	(time "12:00")))
+
+(define evening (λ () "Sets the Time to 21:30 PM"
+	(time "21:30")))
+
+(define night (λ () "Sets the Time to Midnight"
+	(time "24:00")))
+
+(define player-x (δ () "Returns the current players X Position"
+	(vx (player-pos))))
+
+(define player-y (δ () "Returns the current players Y Position"
+	(vy (player-pos))))
+
+(define player-z (δ () "Returns the current players Z Position"
+	(vz (player-pos))))
+
+(define vx+      (λ (φ α) "Returns the sum of vector φ and (vec α 0 0)"
+	(+ v (vec α 0 0))))
+
+(define vy+      (λ (φ α) "Returns the sum of vector φ and (vec 0 α 0)"
+	(+ v (vec 0 α 0))))
+
+(define vz+      (λ (φ α) "Returns the sum of vector φ and (vec 0 0 α)"
+	(+ v (vec 0 0 α))))
+
+(define rain     (λ () "Make it Rain!"
+	(cloud-density 0.9)))
+
+(define cloud-density (λ (α) "Sets the new Goal Density to α which should be a float in the range 0.0 - 1.0."
+	(- 1.0 (/ (cloud-threshold (* (- 1.0 α) 256.0)) 256.0))))

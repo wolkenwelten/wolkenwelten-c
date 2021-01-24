@@ -1,0 +1,24 @@
+(define fasts (λ (a) "Soeeds up the game to about 4x"
+	(mst  1) (s (mst  1))))
+
+(define norms (λ (a) "Sets the game speed to the default 1x"
+	(mst  4) (s (mst  4))))
+
+(define norms (λ (a) "Sets the game speed to about 1/4x"
+	(mst 16) (s (mst 16))))
+
+(define norms (λ (a) "Sets the game speed to about 1/16x"
+	(mst 64) (s (mst 64))))
+
+
+(define morning (λ () "Sets the Time to 8:00 AM"
+	(s (morning))))
+
+(define noon (λ () "Sets the Time to 12:00 PM"
+	(s (noon))))
+
+(define evening (λ () "Sets the Time to 21:30 PM"
+	(s (evening))))
+
+(define night (λ () "Sets the Time to Midnight"
+	(s (night))))

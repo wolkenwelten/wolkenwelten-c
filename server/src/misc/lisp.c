@@ -10,6 +10,7 @@
 #include "../game/rain.h"
 #include "../game/weather.h"
 #include "../network/server.h"
+#include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../../../common/src/game/blockType.h"
@@ -493,10 +494,6 @@ static lVal *wwlnfRCount(lClosure *c, lVal *v){
 	return lValInt(rainCount);
 }
 
-static void lispEvalNR(const char *str){
-	lEval(clRoot,lWrap(lRead(str)));
-}
-
 lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"player-pos") == 0)        {return lValNativeFunc(wwlnfPlayerPos);}
 	if(strcmp(s.c,"no-aggro") == 0)          {return lValNativeFunc(wwlnfNoAggro);}
@@ -552,19 +549,7 @@ void lispInit(){
 	clRoot = lClosureNew(NULL);
 	clRoot->flags |= lfNoGC;
 	lEval(clRoot,lWrap(lRead((char *)src_tmp_stdlib_nuj_data)));
-	setPID(clRoot,123);
-
-	lispEvalNR("(define heal     (λ (a) (- (dmg (cond (a (- a)) (#t -20))))))");
-	lispEvalNR("(define morning  (λ () (time  \"8:00\")))");
-	lispEvalNR("(define night    (λ () (time \"23:00\")))");
-	lispEvalNR("(define player-x (λ () (vx (player-pos))))");
-	lispEvalNR("(define player-y (λ () (vy (player-pos))))");
-	lispEvalNR("(define player-z (λ () (vz (player-pos))))");
-	lispEvalNR("(define vx+      (λ (v o) (+ v (vec o 0 0))))");
-	lispEvalNR("(define vy+      (λ (v o) (+ v (vec 0 o 0))))");
-	lispEvalNR("(define vz+      (λ (v o) (+ v (vec 0 0 o))))");
-	lispEvalNR("(define rain     (λ () (cloud-density 0.9)))");
-	lispEvalNR("(define cloud-density (λ (a) (- 1.0 (/ (cloud-threshold (* (- 1.0 a) 256.0)) 256.0))))");
+	lEval(clRoot,lWrap(lRead((char *)src_tmp_server_nuj_data)));
 
 	lClosureGC();
 }

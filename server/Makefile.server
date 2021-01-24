@@ -9,6 +9,8 @@ SERVER_DEPS      := ${SERVER_SRCS:.c=.deps}
 
 SFX_ASSETS       := $(shell find client/sfx -type f -name '*')
 MESH_ASSETS      := $(shell find client/mesh -type f -name '*')
+SERVER_NUJ       := $(shell find server/src/nujel/ -type f -name '*.nuj')
+SERVER_ASSETS    := server/src/tmp/server.nuj
 
 $(SERVER_OBJS): CFLAGS    += $(SERVER_CFLAGS)
 $(SERVER_OBJS): CINCLUDES += $(SERVER_CINCLUDES)
@@ -19,7 +21,7 @@ wolkenwelten-server: LIBS      += $(SERVER_LIBS)
 wolkenwelten-server: server/make.deps $(SERVER_OBJS) $(ASM_OBJS)
 	$(LD) $(SERVER_OBJS) $(ASM_OBJS) -g -o wolkenwelten-server $(OPTIMIZATION) $(LDFLAGS) $(CINCLUDES) $(LIBS)
 
-$(SERVER_DEPS): | common/src/tmp/cto.h server/src/tmp/objs.h server/src/tmp/sfx.h server/src/tmp/mods_tmp.c
+$(SERVER_DEPS): | common/src/tmp/cto.h server/src/tmp/objs.h server/src/tmp/sfx.h server/src/tmp/mods_tmp.c server/src/tmp/assets.h
 .deps: server/make.deps
 server/make.deps: $(SERVER_DEPS)
 	cat $(SERVER_DEPS) > server/make.deps
@@ -27,6 +29,9 @@ server/make.deps: $(SERVER_DEPS)
 ifneq ($(MAKECMDGOALS),clean)
 -include server/make.deps
 endif
+
+server/src/tmp/server.nuj: $(SERVER_NUJ)
+	cat $(SERVER_NUJ) > $@
 
 server/src/tmp/sfx.c: $(SFX_ASSETS)
 server/src/tmp/sfx.c: server/tools/sfxgen
@@ -48,6 +53,12 @@ server/src/tmp/mods_tmp.c: tools/modscg
 	mkdir -p server/src/tmp/
 	tools/modscg $(shell find common/src/mods/items -type f -name '*.c') > server/src/tmp/mods_tmp.c
 server/src/tmp/mods_tmp.h: server/src/tmp/mods_tmp.c
+	@true
+
+server/src/tmp/assets.c: tools/assets $(SERVER_ASSETS)
+	mkdir -p server/src/tmp/
+	tools/assets server/src/tmp/assets $(SERVER_ASSETS)
+server/src/tmp/assets.h: server/src/tmp/assets.c
 	@true
 
 server/src/network/server.o: server/src/network/server_bsd.h
