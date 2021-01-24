@@ -38,7 +38,7 @@ common/src/tmp/stdlib.nuj: $(NUJ_STDLIB)
 	$(CC) -MM $< -MT "$(<:.c=.o)" $(CINCLUDES) $(CLIENT_CINCLUDES) > $@
 
 nujel: $(NUJEL_OBJS)
-	$(CC) -lm $(COPT) $(CWARN) $(CSTD) $(CFLAGS) -g $(NUJEL_OBJS) -o $@
+	$(CC) -lm $(COPT) $(CWARN) $(CSTD) $(CFLAGS) $(RELEASE_OPTIMIZATION) -g $(NUJEL_OBJS) -o $@
 
 $(COMMON_DEPS): | common/src/tmp/cto.h common/src/tmp/assets.h
 .deps: common/make.deps
