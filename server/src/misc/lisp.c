@@ -566,9 +566,8 @@ lVal *lResolveNativeSym(const lSymbol s){
 static void cmdLisp(int c,const char *str, u8 id){
 	static char reply[8192];
 	memset(reply,0,sizeof(reply));
-	lClosure *cl = lClosureNew(clRoot);
-	setPID(cl,c);
-	lVal *v = lEval(cl,lWrap(lRead(str)));
+
+	lVal *v = lEval(clients[c].cl,lWrap(lRead(str)));
 	lSDisplayVal(v,reply,&reply[sizeof(reply)-1]);
 	lClosureGC();
 
@@ -582,6 +581,7 @@ static void cmdLisp(int c,const char *str, u8 id){
 void lispInit(){
 	lInit();
 	clRoot = lClosureNew(NULL);
+	clRoot->flags |= lfNoGC;
 	lEval(clRoot,lWrap(lRead((char *)src_tmp_stdlib_nuj_data)));
 	setPID(clRoot,123);
 
@@ -600,6 +600,13 @@ void lispInit(){
 	lClosureGC();
 }
 
+lClosure *lispClientClosure(uint c){
+	lClosure *ret = lClosureNew(clRoot);
+	ret->flags |= lfNoGC;
+	setPID(ret,c);
+	return ret;
+}
+
 int parseCommand(uint c, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
@@ -615,14 +622,20 @@ void lispRecvSExpr(uint c,const packet *p){
 }
 
 void lispEvents(){
+	static u64 lastTicks = 0;
+	static lVal *expr = NULL;
+	if(expr == NULL){
+		expr = lWrap(lRead("(yield-run)"));
+		expr->flags |= lfNoGC;
+	}
+
 	PROFILE_START();
 
-	static uint lastTicks = 0;
-	u64 cticks = getTicks();
-	if((lastTicks + 100) > cticks){return;}
+	const u64 cticks = getTicks();
+	if((lastTicks + 500) > cticks){return;}
 	lastTicks = cticks;
 
-	lispEvalNR("(yield-run)");
+	lEval(clRoot,expr);
 	lClosureGC();
 
 	PROFILE_STOP();

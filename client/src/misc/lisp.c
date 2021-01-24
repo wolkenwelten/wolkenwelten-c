@@ -173,6 +173,7 @@ lVal *lResolveNativeSym(const lSymbol s){
 void lispInit(){
 	lInit();
 	clRoot = lClosureNew(NULL);
+	clRoot->flags |= lfNoGC;
 	lEval(clRoot,lWrap(lRead((char *)src_tmp_stdlib_nuj_data)));
 	lispEvalNR("(define fasts   (λ (a) (mst  1) (s (mst  1))))");
 	lispEvalNR("(define norms   (λ (a) (mst  4) (s (mst  4))))");
@@ -210,14 +211,20 @@ void lispRecvSExpr(const packet *p){
 }
 
 void lispEvents(){
+	static lVal *expr = NULL;
+
+	if(expr == NULL){
+		expr = lWrap(lRead("(yield-run)"));
+		expr->flags |= lfNoGC;
+	}
 	PROFILE_START();
 
 	static uint lastTicks = 0;
 	u64 cticks = getTicks();
-	if((lastTicks + 100) > cticks){return;}
+	if((lastTicks + 500) > cticks){return;}
 	lastTicks = cticks;
 
-	lispEvalNR("(yield-run)");
+	lEval(clRoot,expr);
 	lClosureGC();
 
 	PROFILE_STOP();

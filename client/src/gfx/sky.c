@@ -9,9 +9,10 @@
 #include "../gui/gui.h"
 #include "../game/entity.h"
 #include "../game/time.h"
+#include "../game/weather.h"
 #include "../voxel/chungus.h"
 #include "../tmp/assets.h"
-#include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/colors.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -22,10 +23,6 @@ float worldBrightness;
 
 mesh *sunMesh = NULL;
 texture *tSun = NULL;
-
-u32 skyColorDawn  = 0xFF419CF8;
-u32 skyColorDay   = 0xFFF89C41;
-u32 skyColorNight = 0xFF1A0C05;
 
 void initSky(){
 	if(sunMesh == NULL){
@@ -51,16 +48,18 @@ void initSky(){
 static void drawSkyColor(){
 	skyBrightness = gtimeGetSkyBrightness(gtimeGetTimeOfDay());
 	worldBrightness = gtimeGetBrightness(gtimeGetTimeOfDay());
-	u32 ccolor;
-	const u32 scolor = colorInterpolate(skyColorNight,skyColorDay,skyBrightness);
 
-	if(skyBrightness > 0.8f){
-		const float bright = 1.f - fabsf((MAX(0.f,(skyBrightness - 0.8f)) * 10.f) - 1.f);
-		ccolor = colorInterpolate(scolor,skyColorDawn,bright);
-	}else{
-		ccolor = scolor;
+	hsvaColor hsv;
+	hsv.h = 160;
+	hsv.s = cloudDensityMin - 32;
+	hsv.v = (skyBrightness * 231.f) + 24;
+
+	if((skyBrightness < 0.6f) && (skyBrightness > 0.5f)){
+		const float bright = 1.f - fabsf((MAX(0.f,(skyBrightness - 0.5f)) * 20.f) - 1.f);
+		hsv.h = (((int)(bright * 140.f)) + 160) & 0xFF;
 	}
 
+	u32 ccolor = RGBAToU(hsvToRGB(hsv));
 	glClearColor( (ccolor&0xFF)/256.f, ((ccolor>>8)&0xFF)/256.f, ((ccolor>>16)&0xFF)/256.f, 1.f );
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }

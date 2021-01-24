@@ -113,6 +113,7 @@ int updateWorld(){
 		updateWorldStep();
 		if(--i == 0){break;}
 	}
+	lispEvents();
 	if(lastUpdate < cTicks){return 0;}
 	return 1;
 }
@@ -139,7 +140,6 @@ void mainTick(){
 	serverHandleEvents();
 	updateWorld();
 	serverHandleEvents();
-	//lispEvents();
 }
 
 void mainInit(){

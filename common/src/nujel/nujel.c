@@ -12,18 +12,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-lVal      lValBuf[1<<18];
+#define VAL_MAX (1<<18)
+#define CLO_MAX (1<<12)
+#define STR_MAX (1<<10)
+#define CST_MAX (1<<10)
+
+lVal      lValBuf[VAL_MAX];
 uint      lValMax = 0;
 lVal     *lValFFree = NULL;
 
-lClosure  lClosureList[1<<10];
+lClosure  lClosureList[CLO_MAX];
 uint      lClosureMax   = 0;
 lClosure *lClosureFFree = NULL;
 
-lString   lStringList[1<<10];
+lString   lStringList[STR_MAX];
 lString  *lStringFFree = NULL;
 
-lCString   lCStringList[1<<10];
+lCString   lCStringList[CST_MAX];
 lCString  *lCStringFFree = NULL;
 
 lSymbol symQuote;
@@ -447,7 +452,7 @@ static lVal *lnfCons(lClosure *c, lVal *v){
 static uint getMSecs(){
 	struct timespec tv;
 	clock_gettime(CLOCK_MONOTONIC,&tv);
-	return (tv.tv_nsec / 100000) + (tv.tv_sec * 1000);
+	return (tv.tv_nsec / 1000000) + (tv.tv_sec * 1000);
 }
 
 static lVal *lnfMsecs(lClosure *c, lVal *v){
@@ -634,24 +639,38 @@ int lMemUsage(){
 	return used;
 }
 
+
+static void lClosureGCMark(lClosure *c);
+static void lValGCMark(lVal *v);
+
 static void lValGCMark(lVal *v){
 	if(v == NULL){return;}
+	if((v == NULL) || (v->flags & lfMarked)){return;} // Circular refs
 	v->flags |= lfMarked;
 	if(v->type == ltPair){
 		lValGCMark(v->vList.car);
 		lValGCMark(v->vList.cdr);
 	} else if(v->type == ltLambda) {
-		lValGCMark(v->vLambda->data);
-		lValGCMark(v->vLambda->text);
+		lClosureGCMark(v->vLambda);
 	}
 }
 
+static void lClosureGCMark(lClosure *c){
+	lValGCMark(c->data);
+	lValGCMark(c->text);
+}
+
 static void lGCMark(){
-	for(uint i=0;i<lValMax;i++){lValBuf[i].flags &= ~lfMarked;}
-	//for(;c != NULL;c = c->parent){lValGCMark(c->data);}
+	for(uint i=0;i<lValMax    ;i++){lValBuf[i].flags &= ~lfMarked;}
+	for(uint i=0;i<lClosureMax;i++){lClosureList[i].flags &= ~lfMarked;}
+
+	for(uint i=0;i<lValMax    ;i++){
+		if(!(lValBuf[i].flags & lfNoGC)){continue;}
+		lValGCMark(&lValBuf[i]);
+	}
 	for(uint i=0;i<lClosureMax;i++){
-		lValGCMark(lClosureList[i].data);
-		lValGCMark(lClosureList[i].text);
+		if(!(lClosureList[i].flags & lfNoGC)){continue;}
+		lClosureGCMark(&lClosureList[i]);
 	}
 }
 static void lGCSweep(){
@@ -662,6 +681,7 @@ static void lGCSweep(){
 	}
 }
 void lClosureGC(){
+	if((lValMax < (VAL_MAX/2)) && (lClosureMax < (CLO_MAX/2))){return;}
 	lGCMark();
 	lGCSweep();
 }

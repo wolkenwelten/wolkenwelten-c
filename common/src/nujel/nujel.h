@@ -47,6 +47,7 @@ struct lClosure {
 };
 #define lfMarked  (1)
 #define lfDynamic (2)
+#define lfNoGC    (4)
 
 struct lString {
 	char *buf,*data;

@@ -4,7 +4,6 @@
 
 float       animationInterpolation(int left, int max , float midPoint);
 float       animationInterpolationSustain(int left, int max , float startPoint, float stopPoint);
-u32         colorInterpolate(u32 c1, u32 c2, float i);
 
 void        saveFile(const char *filename,const void *buf, size_t len);
 void       *loadFile(const char *filename,size_t *len);

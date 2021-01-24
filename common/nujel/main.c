@@ -117,6 +117,7 @@ int main(int argc, char *argv[]){
 	setvbuf(stderr, NULL, _IONBF, 0);
 	lInit();
 	lClosure *c = lClosureNew(NULL);
+	c->flags |= lfNoGC;
 	lEval(c,lWrap(lRead((char *)src_tmp_stdlib_nuj_data)));
 	lClosureGC();
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../common/src/common.h"
+#include "../../../common/src/nujel/nujel.h"
 
 typedef struct {
 	u8 x,y,z,w;
@@ -33,6 +34,7 @@ typedef struct {
 	uint chnkReqQueueLen,chnkUpdateIter;
 	chunkReqEntry chnkReqQueue[8192];
 
+	lClosure *cl;
 
 	uint recvBufOff;
 	uint recvBufLen;

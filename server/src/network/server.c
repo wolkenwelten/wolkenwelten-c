@@ -127,6 +127,7 @@ void msgPlayerSpawnPos(uint c){
 void serverInitClient(uint c){
 	const vec spawn = vecAdd(vecNewI(worldGetSpawnPos()),vecNew(.5f,2.f,.5f));
 	clients[c].c                          = characterNew();
+	clients[c].cl                         = lispClientClosure(c);
 	clients[c].recvBufLen                 = 0;
 	clients[c].sendBufLastCompressed      = 0;
 	clients[c].sendBufSent                = 0;
@@ -779,6 +780,8 @@ void serverCloseClient(uint c){
 	msgSetPlayerCount(c,clientCount);
 	serverSendChatMsg(msg);
 	sendPlayerNames();
+	lClosureFree(clients[c].cl);
+	clients[c].cl = NULL;
 
 	int lowestClient=0;
 	for(uint i=0;i<clientCount;i++){

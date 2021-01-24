@@ -3,7 +3,7 @@
 #include "../sdl/sdl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/textMesh.h"
-#include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/colors.h"
 
 static u32  nextOverlayColorAnimNew = 0;
 static u32  nextOverlayColorAnimDur = 0;
