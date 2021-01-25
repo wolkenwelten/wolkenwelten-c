@@ -192,5 +192,6 @@ test_sexpr "(arr-set! #(1 2 3 4) 0 99)" "#(99 2 3 4)"
 test_sexpr "(arr-length #(1 2 3 4))" "4"
 test_sexpr "(arr-ref #(1 2 3 4) 1)" "2"
 test_sexpr "(arr-length (arr-new 3))" "3"
+test_sexpr "(arr-fill! (arr-new 4) 42)" "#(42 42 42 42)"
 
 print_report

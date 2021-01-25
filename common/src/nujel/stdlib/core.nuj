@@ -134,3 +134,7 @@
 
 (define help (λ () "Returns a list describing every function accesible"
 	(map (λ (a) (cat a "\n  " (describe a) "\n")) (symbol-table))))
+
+(define arr-fill! (λ (a v i) "Fills array a with value v"
+	(cond ((>= i (arr-length a)) a)
+	      (#t (arr-set! a i v) (arr-fill! a v (++ i))))))

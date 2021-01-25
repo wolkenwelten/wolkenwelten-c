@@ -1,0 +1,3 @@
+(define input_keydown  (arr-new 256))
+(define input_keyup    (arr-new 256))
+(define input_keypress (arr-new 256))
