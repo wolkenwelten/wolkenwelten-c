@@ -127,28 +127,10 @@
 	(if (nil? l) #t (eval (car l)) (yield-run-iter (cdr l)))))
 (define yield-run (λ () "Executes pending coroutines if their predicate now evaluates to #t"
 	(cond ((nil? (car yield-queue)) #f)
-	      (#t (let ((queue yield-queue)) (set! yield-queue '()) (yield-run-iter queue))))
+	      (#t (let ((queue yield-queue)) (set! yield-queue '()) (yield-run-iter queue))))))
 
 (define timeout (λ (millis) "Returns a function that evaluates to true once millis milliseconds have passed"
-	(let ((goal (+ (msecs) millis))) (lambda () (> (msecs) goal)))))
+	(let ((goal (+ (msecs) millis))) (λ () (> (msecs) goal)))))
 
 (define help (λ () "Returns a list describing every function accesible"
 	(map (λ (a) (cat a "\n  " (describe a) "\n")) (symbol-table))))
-
-(define binarysort (λ (l) "Sorts list l using a binary tree sort"
-	(if (nil? l) '() (traverse (btree l)))))
-
-(define btree (λ (l) "Creates a sorted btree from list l using pred"
-	(if (last? l) (leaf (car l)) (binsert (btree (cdr l)) (car l)))))
-
-(define binsert (λ (t a) "Insert a into tree t according to pred"
-	(cond  ((nil? t) (leaf a))
-	((< (car t) a) (list (car t) (binsert (cadr t) a) (caddr t)))
-	(#t (list (car t) (cadr t) (binsert (caddr t) a))))))
-
-(define leaf (λ (a) "Adds leaf a"
-	(list a (cons) (cons))))
-
-(define traverse (λ (li) "Create a flat list from a tree"
-	(print li) (newline)
-	(if (nil? (car li) #nil (append (traverse (cadr li)) (traverse (caddr li)))))))
