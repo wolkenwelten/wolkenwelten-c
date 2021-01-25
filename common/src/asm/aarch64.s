@@ -1,12 +1,12 @@
 .text
-.global  particlePosUpdate
-.type    particlePosUpdate, @function
-.global sparticlePosUpdate
-.type   sparticlePosUpdate, @function
-.global      rainPosUpdate
-.type        rainPosUpdate, @function
+.global  particlePosUpdateNEON
+.type    particlePosUpdateNEON, @function
+.global sparticlePosUpdateNEON
+.type   sparticlePosUpdateNEON, @function
+.global      rainPosUpdateNEON
+.type        rainPosUpdateNEON, @function
 
-rainPosUpdate:
+rainPosUpdateNEON:
   ldr x10,=rainCount
   ldr w9,[x10]
   lsr x9,x9,#1
@@ -17,7 +17,7 @@ rainPosUpdate:
 
   ldr x10,=glRainDrops
   ldr x11,=rainDrops
-.rainPosUpdateLoop:
+.rainPosUpdateLoopNEON:
   ld1 {v0.4s},[x10]
   ld1 {v1.4s},[x11]
   fadd v0.4s,v0.4s,v1.4s
@@ -33,17 +33,17 @@ rainPosUpdate:
   st1 {v3.4s},[x11],#16
 
   subs w9,w9,#1
-  bne .rainPosUpdateLoop
+  bne .rainPosUpdateLoopNEON
   ret
 
-particlePosUpdate:
+particlePosUpdateNEON:
   ldr x10,=particleCount
   ldr w9,[x10]
   lsr x9,x9,#2
   add w9,w9,#1
   ldr x10,=glParticles
   ldr x11,=particles
-.particlePosUpdateLoop:
+.particlePosUpdateLoopNEON:
 
   ld1 {v0.4s},[x10]
   ld1 {v1.4s},[x11],#16
@@ -66,11 +66,11 @@ particlePosUpdate:
   st1 {v6.4s},[x10],#16
 
   subs w9,w9,#1
-  bne .particlePosUpdateLoop
+  bne .particlePosUpdateLoopNEON
   ret
 
 
-sparticlePosUpdate:
+sparticlePosUpdateNEON:
   ldr x10,=sparticleCount
   ldr w9,[x10]
   lsr x9,x9,#2
@@ -84,7 +84,7 @@ sparticlePosUpdate:
 
   ldr x10,=glSparticles
   ldr x11,=sparticles
-.sparticlePosUpdateLoop:
+.sparticlePosUpdateLoopNEON:
 
   ld1 {v0.4s},[x10]
   ld1 {v1.4s},[x11]
@@ -115,5 +115,5 @@ sparticlePosUpdate:
   st1 {v7.4s},[x11],#16
 
   subs w9,w9,#1
-  bne .sparticlePosUpdateLoop
+  bne .sparticlePosUpdateLoopNEON
   ret

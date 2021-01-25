@@ -8,7 +8,7 @@
 
 __attribute__((aligned(32))) glRainDrop glRainDrops[RAIN_MAX];
 __attribute__((aligned(32)))   rainDrop   rainDrops[RAIN_MAX];
-__attribute__((aligned(32)))      float   rainVel[4];
+__attribute__((aligned(32)))      float   rainVel[8];
                                     u64   rainCoords[RAIN_MAX];
 uint rainCount = 0;
 
@@ -33,8 +33,7 @@ static void rainDel(uint i){
 	  rainCoords[i] =   rainCoords[ rainCount];
 }
 
-#ifndef WW_ASM_RAIN_POS_UPDATE
-void rainPosUpdate(){
+void rainPosUpdatePortable(){
 	for(uint i=0;i<rainCount;i++){
 		glRainDrops[i].x     += rainDrops[i].vx;
 		glRainDrops[i].y     += rainDrops[i].vy;
@@ -47,7 +46,6 @@ void rainPosUpdate(){
 		  rainDrops[i].vsize += rainVel[3];
 	}
 }
-#endif
 
 void rainUpdateAll(){
 	PROFILE_START();
@@ -56,6 +54,10 @@ void rainUpdateAll(){
 	rainVel[1] = -0.0005;
 	rainVel[2] = windVel.z / 40.f;
 	rainVel[3] = 0.f;
+
+	for(uint i=0;i<4;i++){
+		rainVel[i+4] = rainVel[i];
+	}
 
 	rainPosUpdate();
 	for(uint i=rainCount-1;i<rainCount;i--){

@@ -1,23 +1,11 @@
 #pragma once
 
-#ifndef __APPLE__
+extern int asmRoutineSupport;
 
-#ifdef __aarch64__
-	#define WW_ASM_PARTICLE_POS_UPDATE
-	#define WW_ASM_SPARTICLE_POS_UPDATE
-	#define WW_ASM_RAIN_POS_UPDATE
-#endif
+void  particlePosUpdate();
+void sparticlePosUpdate();
+void      rainPosUpdate();
 
-#ifdef __ARM_ARCH_7A__
-	#define WW_ASM_PARTICLE_POS_UPDATE
-	#define WW_ASM_SPARTICLE_POS_UPDATE
-	#define WW_ASM_RAIN_POS_UPDATE
-#endif
-
-#ifdef __x86_64__
-	#define WW_ASM_PARTICLE_POS_UPDATE
-	#define WW_ASM_SPARTICLE_POS_UPDATE
-	#define WW_ASM_RAIN_POS_UPDATE
-#endif
-
-#endif
+void  particlePosUpdatePortable();
+void sparticlePosUpdatePortable();
+void      rainPosUpdatePortable();

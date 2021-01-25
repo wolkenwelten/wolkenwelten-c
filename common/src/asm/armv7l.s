@@ -1,9 +1,9 @@
 .text
-.global sparticlePosUpdate
-.global  particlePosUpdate
-.global      rainPosUpdate
+.global sparticlePosUpdateNEON
+.global  particlePosUpdateNEON
+.global      rainPosUpdateNEON
 
-rainPosUpdate:
+rainPosUpdateNEON:
   ldr r3,=rainCount
   ldr r1,[r3]
   lsr r1,r1,#1
@@ -15,7 +15,7 @@ rainPosUpdate:
   mov r12,#16
   ldr r2,=glRainDrops
   ldr r3,=rainDrops
-.rainPosUpdateLoop:
+.rainPosUpdateLoopNEON:
   vld1.32 {q0},[r2]
   vld1.32 {q1},[r3]
   vadd.f32 q0,q0,q1
@@ -31,11 +31,11 @@ rainPosUpdate:
   vst1.32 {q3},[r3],r12
 
   subs r1,r1,#1
-  bne .rainPosUpdateLoop
+  bne .rainPosUpdateLoopNEON
   mov pc, lr
 
 
-particlePosUpdate:
+particlePosUpdateNEON:
   ldr r3,=particleCount
   ldr r1,[r3]
   lsr r1,r1,#2
@@ -44,7 +44,7 @@ particlePosUpdate:
   ldr r2,=glParticles
   ldr r3,=particles
   mov r12,#16
-.particlePosUpdateLoop:
+.particlePosUpdateLoopNEON:
 
   vld1.32 {q0},[r2]
   vld1.32 {q1},[r3],r12
@@ -67,11 +67,11 @@ particlePosUpdate:
   vst1.32 {q6},[r2],r12
 
   subs r1,r1,#1
-  bne .particlePosUpdateLoop
+  bne .particlePosUpdateLoopNEON
   mov pc, lr
 
 
-sparticlePosUpdate:
+sparticlePosUpdateNEON:
   ldr r3,=sparticleCount
   ldr r1,[r3]
   lsr r1,r1,#2
@@ -86,7 +86,7 @@ sparticlePosUpdate:
 
   ldr r2,=glSparticles
   ldr r3,=sparticles
-.sparticlePosUpdateLoop:
+.sparticlePosUpdateLoopNEON:
 
   vld1.32 {q0},[r2]
   vld1.32 {q1},[r3]
@@ -117,5 +117,5 @@ sparticlePosUpdate:
   vst1.32 {q7},[r3],r12
 
   subs r1,r1,#1
-  bne .sparticlePosUpdateLoop
+  bne .sparticlePosUpdateLoopNEON
   mov pc, lr

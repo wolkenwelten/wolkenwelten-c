@@ -155,7 +155,7 @@ void fxAnimalDiedPacket (const packet *p){
 	being t = p->v.u32[4];
 	sfxPlayPos(sfxBomb,0.3,pos);
 	sfxPlayPos(sfxUngh,0.6,pos);
-	for(int i=512;i>0;i--){
+	for(int i=0;i<512;i++){
 		const vec v  = vecMulS(vecRng(),0.06f);
 		newParticleV(pos,v,64.f,1.f,0xFF44AAFF,64);
 	}

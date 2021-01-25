@@ -10,8 +10,16 @@ uint   particles;
 uint   particleCount;
 uint glSparticles;
 uint   sparticles;
-uint   sparticleVV;
 uint   sparticleCount;
+
+__attribute__((aligned(32))) const float sparticleVV[4][4] = {
+	{  0.000001f,0.00004f, 0.000004f, 0.f},
+	{ -0.000004f,0.00004f, 0.000001f, 0.f},
+	{ -0.000001f,0.00004f,-0.000004f, 0.f},
+	{  0.000004f,0.00004f,-0.000001f, 0.f},
+};
+void particlePosUpdatePortable(){}
+void sparticlePosUpdatePortable(){}
 
 void fxRainDrop(const vec pos){
 	(void)pos;

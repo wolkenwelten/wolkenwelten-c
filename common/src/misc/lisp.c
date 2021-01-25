@@ -4,6 +4,7 @@
 #include "../nujel/arithmetic.h"
 #include "../nujel/casting.h"
 #include "../misc/profiling.h"
+#include "../../../common/src/asm/asm.h"
 
 #include <string.h>
 
@@ -47,12 +48,22 @@ lVal *wwlnfNProfReset(lClosure *c, lVal *v){
 	return lValBool(true);;
 }
 
+lVal *wwlnfNAsmSwitch(lClosure *c, lVal *v){
+	lVal *t = lEval(c,v);
+	if(t != NULL){
+		t = lnfInt(c,v);
+		asmRoutineSupport = t->vInt;
+	}
+	return lValInt(asmRoutineSupport);
+}
+
 lVal *lResolveNativeSymCommon(const lSymbol s){
 	if(strcmp(s.c,"mst") == 0)            {return lValNativeFunc(wwlnfMsPerTick);}
 	if(strcmp(s.c,"prof") == 0)           {return lValNativeFunc(wwlnfProf);}
 	if(strcmp(s.c,"prof-reset") == 0)     {return lValNativeFunc(wwlnfProfReset);}
 	if(strcmp(s.c,"nprof") == 0)          {return lValNativeFunc(wwlnfNProf);}
 	if(strcmp(s.c,"nprof-reset") == 0)    {return lValNativeFunc(wwlnfNProfReset);}
+	if(strcmp(s.c,"asm-switch") == 0)     {return lValNativeFunc(wwlnfNAsmSwitch);}
 
 	return lResolveNativeSymBuiltin(s);
 }

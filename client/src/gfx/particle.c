@@ -122,8 +122,7 @@ void newParticle(float x,float y,float z,float vx,float vy,float vz,float size,f
 	particleCount++;
 }
 
-#ifndef WW_ASM_PARTICLE_POS_UPDATE
-void particlePosUpdate(){
+void particlePosUpdatePortable(){
 	for(uint i=0;i<particleCount;i++){
 		glParticles[i].x    += particles[i].vx;
 		glParticles[i].y    += particles[i].vy;
@@ -131,7 +130,6 @@ void particlePosUpdate(){
 		glParticles[i].size += particles[i].vsize;
 	}
 }
-#endif
 
 __attribute__((aligned(32))) const float sparticleVV[4][4] = {
 	{  0.000001f,0.00004f, 0.000004f, 0.f},
@@ -140,8 +138,7 @@ __attribute__((aligned(32))) const float sparticleVV[4][4] = {
 	{  0.000004f,0.00004f,-0.000001f, 0.f},
 };
 
-#ifndef WW_ASM_SPARTICLE_POS_UPDATE
-void sparticlePosUpdate(){
+void sparticlePosUpdatePortable(){
 	for(uint i=0;i<sparticleCount;i++){
 		glSparticles[i].x    += sparticles[i].vx;
 		glSparticles[i].y    += sparticles[i].vy;
@@ -154,7 +151,6 @@ void sparticlePosUpdate(){
 		sparticles[i].vsize  += sparticleVV[i&0x3][3];
 	}
 }
-#endif
 
 void particleUpdate(){
 	PROFILE_START();

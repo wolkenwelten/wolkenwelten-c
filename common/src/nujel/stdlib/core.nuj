@@ -124,11 +124,10 @@
               (#t     (set! yield-queue (cons (cons 'yield (cons pred &...expr)) yield-queue))))))
 
 (define yield-run-iter (λ (l) "Iter for yield-run"
-	(cond ((nil? l) #t)
-              (#t (eval (car l)) (yield-run-iter (cdr l))))))
+	(if (nil? l) #t (eval (car l)) (yield-run-iter (cdr l)))))
 (define yield-run (λ () "Executes pending coroutines if their predicate now evaluates to #t"
-	(let ((queue yield-queue)) (set! yield-queue '())
-	(yield-run-iter queue))))
+	(cond ((nil? (car yield-queue)) #f)
+	      (#t (let ((queue yield-queue)) (set! yield-queue '()) (yield-run-iter queue))))
 
 (define timeout (λ (millis) "Returns a function that evaluates to true once millis milliseconds have passed"
 	(let ((goal (+ (msecs) millis))) (lambda () (> (msecs) goal)))))
