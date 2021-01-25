@@ -193,5 +193,11 @@ test_sexpr "(arr-length #(1 2 3 4))" "4"
 test_sexpr "(arr-ref #(1 2 3 4) 1)" "2"
 test_sexpr "(arr-length (arr-new 3))" "3"
 test_sexpr "(arr-fill! (arr-new 4) 42)" "#(42 42 42 42)"
+test_sexpr "(apply + '(1 2 3))" "6"
+test_sexpr "(apply ++ 3)" "4"
+test_sexpr "(apply quit)" ""
+test_sexpr "(apply +)" "0"
+test_sexpr "(define cb '+) (apply cb)" "0"
+test_sexpr "(define cb '++) (apply cb)" "1"
 
 print_report

@@ -487,6 +487,23 @@ lVal *lEval(lClosure *c, lVal *v){
 	return v;
 }
 
+lVal *lnfApply(lClosure *c, lVal *v){
+	lVal *func = lEval(c,lCarOrV(v));
+	if(func->type == ltSymbol){
+		func = lResolveSym(c,func->vSymbol);
+	}
+	switch(func->type){
+	case ltNativeFunc:
+		return func->vNativeFunc(c,lEval(c,lCarOrV(v->vList.cdr)));
+	case ltLambda: {
+		lVal *t = lCarOrV(v->vList.cdr);
+		if((t == NULL) || (t->type != ltPair)){t = lCons(t,NULL);}
+		return lLambda(c,t,func->vLambda);}
+	default:
+		return v;
+	}
+}
+
 lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(s.c[1] == 0){
 		switch(s.c[0]){
@@ -521,6 +538,7 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(strcmp(s.c,"cdr") == 0)    {return lValNativeFunc(lnfCdr);}
 	if(strcmp(s.c,"cons") == 0)   {return lValNativeFunc(lnfCons);}
 
+	if(strcmp(s.c,"apply") == 0)  {return lValNativeFunc(lnfApply);}
 	if(strcmp(s.c,"eval") == 0)   {return lValNativeFunc(lEval);}
 	if(strcmp(s.c,"mem") == 0)    {return lValNativeFunc(lnfMem);}
 	if(strcmp(s.c,"λ") == 0)      {return lValNativeFunc(lnfLambda);}

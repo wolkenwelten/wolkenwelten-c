@@ -62,9 +62,15 @@ void doRepl(lClosure *c){
 }
 
 lVal *lnfQuit(lClosure *c, lVal *v){
-	lVal *t = lnfInt(c,lEval(c,v->vList.car));
-	exit(t->vInt);
-	return t;
+	int ecode = 0;
+	if(v != NULL){
+		lVal *t = lnfInt(c,lEval(c,v->vList.car));
+		if((t != NULL) && (t->type == ltInt)){
+			ecode = t->vInt;
+		}
+	}
+	exit(ecode);
+	return NULL;
 }
 
 lVal *lnfInput(lClosure *c, lVal *v){
