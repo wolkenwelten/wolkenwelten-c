@@ -199,5 +199,6 @@ test_sexpr "(apply quit)" ""
 test_sexpr "(apply +)" "0"
 test_sexpr "(define cb '+) (apply cb)" "0"
 test_sexpr "(define cb '++) (apply cb)" "1"
+test_sexpr "(apply #nil)" "()"
 
 print_report

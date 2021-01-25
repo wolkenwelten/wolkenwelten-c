@@ -489,9 +489,8 @@ lVal *lEval(lClosure *c, lVal *v){
 
 lVal *lnfApply(lClosure *c, lVal *v){
 	lVal *func = lEval(c,lCarOrV(v));
-	if(func->type == ltSymbol){
-		func = lResolveSym(c,func->vSymbol);
-	}
+	if(func == NULL){return NULL;}
+	if(func->type == ltSymbol){func = lResolveSym(c,func->vSymbol);}
 	switch(func->type){
 	case ltNativeFunc:
 		return func->vNativeFunc(c,lEval(c,lCarOrV(v->vList.cdr)));
