@@ -127,6 +127,8 @@ static lVal *lParseSpecial(lCString *s){
 		return lValBool(false);
 	case 'i':
 		return lValInf();
+	case '(':
+		return lCons(lValSymS(symArr),lReadCString(s));
 	}
 
 }

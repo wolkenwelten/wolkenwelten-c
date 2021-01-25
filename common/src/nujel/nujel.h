@@ -2,7 +2,7 @@
 #include "../common.h"
 
 typedef enum lType {
-	ltNoAlloc = 0, ltBool, ltPair, ltLambda, ltInt, ltFloat, ltVec, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf
+	ltNoAlloc = 0, ltBool, ltPair, ltLambda, ltInt, ltFloat, ltVec, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf, ltArray
 } lType;
 
 typedef struct lVal     lVal;
@@ -21,6 +21,11 @@ typedef struct {
 	lVal *car,*cdr;
 } lPair;
 
+typedef struct {
+	lVal **data;
+	int length;
+} lArray;
+
 struct lVal {
 	u8 flags;
 	lType type;
@@ -35,6 +40,7 @@ struct lVal {
 		lCString     *vCString;
 		lSymbol       vSymbol;
 		lClosure     *vLambda;
+		lArray        vArr;
 		lVal       *(*vNativeFunc)(lClosure *, lVal *);
 	};
 };
@@ -66,7 +72,7 @@ struct lCString {
 	};
 };
 
-extern lSymbol symQuote;
+extern lSymbol symQuote,symArr;
 
 void      lInit             ();
 int       lMemUsage         ();
@@ -150,6 +156,11 @@ static inline lVal *lCarOrN(lVal *v){
 }
 static inline lVal *lCadrOrN(lVal *v){
 	return (v != NULL) && (v->type == ltPair) ? lCarOrN(v->vList.cdr) : NULL;
+}
+static inline int lListLength(lVal *v){
+	int i = 0;
+	for(lVal *n = v;(n != NULL) && (n->type == ltPair) && (n->vList.car != NULL); n = n->vList.cdr){i++;}
+	return i;
 }
 
 #define lEvalCastApply(FUNC, c , v) do { \

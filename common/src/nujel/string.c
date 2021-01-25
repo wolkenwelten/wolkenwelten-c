@@ -122,6 +122,15 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 		}
 		t = snprintf(cur,bufEnd-cur,")");
 		break; }
+	case ltArray: {
+		t = snprintf(cur,bufEnd-cur,"#(");
+		if(t > 0){cur += t;}
+		for(int i=0;i<v->vArr.length;i++){
+			cur = lSWriteVal(v->vArr.data[i],cur,bufEnd);
+			if(i < (v->vArr.length-1)){*cur++ = ' ';}
+		}
+		t = snprintf(cur,bufEnd-cur,")");
+		break; }
 	case ltInt:
 		t = snprintf(buf,len,"%i",v->vInt);
 		break;
@@ -213,6 +222,15 @@ char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
 				cur = lSWriteVal(n,cur,bufEnd);
 				break;
 			}
+		}
+		t = snprintf(cur,bufEnd-cur,")");
+		break; }
+	case ltArray: {
+		t = snprintf(cur,bufEnd-cur,"#(");
+		if(t > 0){cur += t;}
+		for(int i=0;i<v->vArr.length;i++){
+			cur = lSDisplayVal(v->vArr.data[i],cur,bufEnd);
+			if(i < (v->vArr.length-1)){*cur++ = ' ';}
 		}
 		t = snprintf(cur,bufEnd-cur,")");
 		break; }

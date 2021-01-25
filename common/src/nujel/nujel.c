@@ -1,6 +1,7 @@
 #include "nujel.h"
 
 #include "arithmetic.h"
+#include "array.h"
 #include "boolean.h"
 #include "casting.h"
 #include "predicates.h"
@@ -31,12 +32,13 @@ lString  *lStringFFree = NULL;
 lCString   lCStringList[CST_MAX];
 lCString  *lCStringFFree = NULL;
 
-lSymbol symQuote;
-
+lSymbol symQuote,symArr;
 
 
 void lInit(){
 	strncpy(symQuote.c,"quote",15);
+	symQuote.c[15] = 0;
+	strncpy(symArr.c,"arr",15);
 	symQuote.c[15] = 0;
 	lValMax       = 0;
 	lClosureMax   = 0;
@@ -149,6 +151,10 @@ lVal *lValAlloc(){
 void lValFree(lVal *v){
 	if(v == NULL){return;}
 	switch(v->type){
+	case ltArray:
+		free(v->vArr.data);
+		v->vArr.data = NULL;
+		break;
 	case ltString:
 		lStringFree(v->vString);
 		break;
@@ -501,6 +507,12 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 		}
 	}
 
+	if(strcmp(s.c,"arr-length") == 0){return lValNativeFunc(lnfArrLength);}
+	if(strcmp(s.c,"arr-ref") == 0)   {return lValNativeFunc(lnfArrRef);}
+	if(strcmp(s.c,"arr-set!") == 0)  {return lValNativeFunc(lnfArrSet);}
+	if(strcmp(s.c,"arr-new") == 0)   {return lValNativeFunc(lnfArrNew);}
+	if(strcmp(s.c,"arr") == 0)       {return lValNativeFunc(lnfArr);}
+
 	if(strcmp(s.c,"and") == 0)    {return lValNativeFunc(lnfAnd);}
 	if(strcmp(s.c,"not") == 0)    {return lValNativeFunc(lnfNot);}
 	if(strcmp(s.c,"or") == 0)     {return lValNativeFunc(lnfOr);}
@@ -645,7 +657,6 @@ static void lClosureGCMark(lClosure *c);
 static void lValGCMark(lVal *v);
 
 static void lValGCMark(lVal *v){
-	if(v == NULL){return;}
 	if((v == NULL) || (v->flags & lfMarked)){return;} // Circular refs
 	v->flags |= lfMarked;
 	if(v->type == ltPair){
@@ -653,6 +664,10 @@ static void lValGCMark(lVal *v){
 		lValGCMark(v->vList.cdr);
 	} else if(v->type == ltLambda) {
 		lClosureGCMark(v->vLambda);
+	} else if(v->type == ltArray) {
+		for(int i=0;i<v->vArr.length;i++){
+			lValGCMark(v->vArr.data[i]);
+		}
 	}
 }
 
