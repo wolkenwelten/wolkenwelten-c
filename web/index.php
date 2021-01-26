@@ -35,8 +35,7 @@ foreach(array_keys($platforms) as $plat){
 	<hr/>
 	<p>Greetings <b><?php echo hyper("Cybersurfer"); ?></b>, you have reached my little corner of the WWW offering a sneak peek of a videogame I have been developing in my spare time.</p>
 	<p>You can watch me work on this Game on my <a href="https://www.twitch.tv/melchizedek6809">Twitch channel</a>, I try to do more visually exciting features on stream but it is still just me coding away, so be prepared for that.</p>
-	<p>To find other People to play with be sure to Join our <a href="https://discord.gg/vPZffVS">Discord</a>.</p>
-	<p>For now only Win/Mac/Lin are supported with a native Release. WASM is working, but for now still has too many Bugs. Haiku/OpenBSD are working as well but I still haven't gotten around to building a proper release pipeline for them.</p><br/>
+	<p>To find other People to play with and/or smalltalk about LISP be sure to Join our <a href="https://discord.gg/vPZffVS">Discord</a>.</p>
 	<h2>Download a stable release:</h2>
 	<hr/>
 	<div class=nativedl align=center>
