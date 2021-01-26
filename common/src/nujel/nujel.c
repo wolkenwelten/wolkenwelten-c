@@ -18,8 +18,8 @@
 
 #define VAL_MAX (1<<18)
 #define CLO_MAX (1<<14)
-#define STR_MAX (1<<10)
-#define ARR_MAX (1<<10)
+#define STR_MAX (1<<14)
+#define ARR_MAX (1<<12)
 
 lVal      lValBuf[VAL_MAX];
 uint      lValMax = 0;
@@ -30,6 +30,7 @@ uint      lClosureMax   = 0;
 lClosure *lClosureFFree = NULL;
 
 lString   lStringList[STR_MAX];
+uint      lStringMax   = 0;
 lString  *lStringFFree = NULL;
 
 lArray     lArrayList[ARR_MAX];
@@ -46,6 +47,8 @@ void lInit(){
 	symQuote.c[15] = 0;
 	lValMax       = 0;
 	lClosureMax   = 0;
+	lStringMax    = 0;
+	lArrayMax     = 0;
 
 	for(uint i=0;i<VAL_MAX-1;i++){
 		lValBuf[i].type = ltNoAlloc;
@@ -95,11 +98,12 @@ lArray *lArrayAlloc(){
 		lPrintError("lArray OOM\n");
 		return NULL;
 	}
-	lArray *ret = lArrayFFree;
-	lArrayFFree = ret->nextFree;
-	ret->flags = 0;
-	ret->length = 0;
-	ret->data = NULL;
+	lArray *ret   = lArrayFFree;
+	lArrayMax     = MAX(lArrayMax,(uint)(ret-lArrayList) + 1);
+	lArrayFFree   = ret->nextFree;
+	ret->flags    = 0;
+	ret->length   = 0;
+	ret->data     = NULL;
 	ret->nextFree = NULL;
 	return ret;
 }
@@ -118,8 +122,9 @@ lString *lStringAlloc(){
 	}
 	lString *ret = lStringFFree;
 	lStringFFree = ret->next;
-	ret->data = ret->buf = ret->bufEnd = NULL;
-	ret->flags = 0;
+	lStringMax   = MAX(lStringMax,(uint)(ret-lStringList) + 1);
+	ret->data    = ret->buf = ret->bufEnd = NULL;
+	ret->flags   = 0;
 	return ret;
 }
 void lStringFree(lString *s){
@@ -731,10 +736,6 @@ static void lArrayGCMark(lArray *v){
 }
 
 static void lGCMark(){
-	for(uint i=0;i<lValMax    ;i++){lValBuf[i].flags      &= ~lfMarked;}
-	for(uint i=0;i<lClosureMax;i++){lClosureList[i].flags &= ~lfMarked;}
-	for(uint i=0;i<ARR_MAX;i++)    {lArrayList[i].flags   &= ~lfMarked;}
-
 	for(uint i=0;i<lValMax    ;i++){
 		if(!(lValBuf[i].flags & lfNoGC)){continue;}
 		lValGCMark(&lValBuf[i]);
@@ -743,11 +744,23 @@ static void lGCMark(){
 		if(!(lClosureList[i].flags & lfNoGC)){continue;}
 		lClosureGCMark(&lClosureList[i]);
 	}
-	for(uint i=0;i<ARR_MAX;i++){
+	for(uint i=0;i<lStringMax;i++){
+		if(!(lStringList[i].flags & lfNoGC)){continue;}
+		lStringList[i].flags |= lfMarked;
+	}
+	for(uint i=0;i<lArrayMax;i++){
 		if(!(lArrayList[i].flags & lfNoGC)){continue;}
 		lArrayGCMark(&lArrayList[i]);
 	}
 }
+
+static void lGCUnmark(){
+	for(uint i=0;i<lValMax    ;i++){lValBuf[i].flags      &= ~lfMarked;}
+	for(uint i=0;i<lClosureMax;i++){lClosureList[i].flags &= ~lfMarked;}
+	for(uint i=0;i<lStringMax;i++) {lStringList[i].flags  &= ~lfMarked;}
+	for(uint i=0;i<lArrayMax;i++)  {lArrayList[i].flags   &= ~lfMarked;}
+}
+
 static void lGCSweep(){
 	for(uint i=0;i<lValMax;i++){
 		if(lValBuf[i].type == ltNoAlloc){continue;}
@@ -758,13 +771,18 @@ static void lGCSweep(){
 		if(lClosureList[i].flags & lfMarked){continue;}
 		lClosureFree(&lClosureList[i]);
 	}
-	for(uint i=0;i<ARR_MAX;i++){
+	for(uint i=0;i<lStringMax;i++){
+		if(!(lStringList[i].flags & lfNoGC)){continue;}
+		lStringFree(&lStringList[i]);
+	}
+	for(uint i=0;i<lArrayMax;i++){
 		if(!(lArrayList[i].flags & lfNoGC)){continue;}
 		lArrayFree(&lArrayList[i]);
 	}
 }
 void lClosureGC(){
 	if((lValMax < (VAL_MAX/2)) && (lClosureMax < (CLO_MAX/2))){return;}
+	lGCUnmark();
 	lGCMark();
 	lGCSweep();
 }
