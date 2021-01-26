@@ -93,6 +93,9 @@ void newSparticleV(vec pos, vec v, float size, float vsize, u32 rgba, uint ttl){
 }
 
 void newParticleV(vec pos, vec v, float size, float vsize, u32 rgba,uint ttl){
+	if(particleCount > (1 << 14)){
+		(void)pos;
+	}
 	if(particleCount >= PART_MAX){
 		int i = rngValM(PART_MAX);
 		particles[i]    = particles[--particleCount];
