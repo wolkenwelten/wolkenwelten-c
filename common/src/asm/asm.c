@@ -56,6 +56,18 @@ int asmRoutineSupport = 0;
 #endif
 
 #ifdef __x86_64__
+#if defined(__APPLE__) || defined(__EMSCRIPTEN__)
+	static void      rainPosUpdateSSE(){}
+	static void      rainPosUpdateAVX(){}
+	static void  particlePosUpdateSSE(){}
+	static void  particlePosUpdateAVX(){}
+	static void sparticlePosUpdateSSE(){}
+	static void sparticlePosUpdateAVX(){}
+
+	void asmDetermineSupport(){
+		asmRoutineSupport = 1;
+	}
+#else
 	void      rainPosUpdateSSE();
 	void      rainPosUpdateAVX();
 	void  particlePosUpdateSSE();
@@ -71,7 +83,8 @@ int asmRoutineSupport = 0;
 		}else{
 			asmRoutineSupport = 1;
 		}
-	}
+}
+#endif
 
 	void particlePosUpdate(){
 		if(asmRoutineSupport == 0){asmDetermineSupport();}
