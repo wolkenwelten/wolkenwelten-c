@@ -21,8 +21,13 @@ test_success () {
 	printf "%.70s\n" "$1"
 }
 
-test_error () {
+test_rerror () {
 	echo -e "$red_bg[OHNO]$reset" "$2"
+	echo "$1"
+}
+
+test_ecerror () {
+	echo -e "$red_bg[EXIT]$reset" "$2"
 	echo "$1"
 }
 
@@ -42,7 +47,7 @@ test_sexpr_oom () {
 		test_success "$sexpr"
 		successCount=$((successCount + 1))
 	else
-		test_error "$sexpr" "'$goal' != '$val'"
+		test_rerror "$sexpr" "'$goal' != '$val'"
 		errorCount=$((errorCount + 1))
 
 	fi
@@ -55,13 +60,15 @@ test_sexpr () {
 	eval=$?
 	val=$(trim "$val")
 	val="${val%%*( )}"
-	if [ "$eval" -eq 0 ] && [ "$val" == "$goal" ]; then
+	if [ "$eval" -ne 0 ]; then
+		test_ecerror "$sexpr" "Interpreter exited with code $eval"
+		errorCount=$((errorCount + 1))
+	elif [ "$val" != "$goal" ]; then
+		test_rerror "$sexpr" "'$goal' != '$val'"
+		errorCount=$((errorCount + 1))
+	else
 		test_success "$sexpr"
 		successCount=$((successCount + 1))
-	else
-		test_error "$sexpr" "'$goal' != '$val'"
-		errorCount=$((errorCount + 1))
-
 	fi
 }
 
@@ -74,7 +81,7 @@ test_sexpr_exitcode () {
 		test_success "$sexpr"
 		successCount=$((successCount + 1))
 	else
-		test_error "$sexpr" "'$goal' != '$val'"
+		test_rerror "$sexpr" "Exitcode: $val != $goal"
 		errorCount=$((errorCount + 1))
 
 	fi
@@ -192,7 +199,7 @@ test_sexpr "(arr-set! #(1 2 3 4) 0 99)" "#(99 2 3 4)"
 test_sexpr "(arr-length #(1 2 3 4))" "4"
 test_sexpr "(arr-ref #(1 2 3 4) 1)" "2"
 test_sexpr "(arr-length (arr-new 3))" "3"
-test_sexpr "(arr-fill! (arr-new 4) 42)" "#(42 42 42 42)"
+test_sexpr "(arr-fill! (arr-new 2) 42)" "#(42 42)"
 test_sexpr "(apply + '(1 2 3))" "6"
 test_sexpr "(apply ++ 3)" "4"
 test_sexpr "(apply quit)" ""

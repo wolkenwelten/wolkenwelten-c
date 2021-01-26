@@ -9,6 +9,7 @@ typedef struct lVal     lVal;
 typedef struct lClosure lClosure;
 typedef struct lString  lString;
 typedef struct lCString lCString;
+typedef struct lArray   lArray;;
 
 typedef struct {
 	union {
@@ -21,10 +22,12 @@ typedef struct {
 	lVal *car,*cdr;
 } lPair;
 
-typedef struct {
+struct lArray {
 	lVal **data;
 	int length;
-} lArray;
+	uint flags;
+	lArray *nextFree;
+};
 
 struct lVal {
 	u8 flags;
@@ -40,7 +43,7 @@ struct lVal {
 		lCString     *vCString;
 		lSymbol       vSymbol;
 		lClosure     *vLambda;
-		lArray        vArr;
+		lArray       *vArr;
 		lVal       *(*vNativeFunc)(lClosure *, lVal *);
 	};
 };
@@ -85,6 +88,9 @@ lVal     *lClosureAddNF     (lClosure *c, const char *sym, lVal *(*func)(lClosur
 
 lVal     *lValAlloc         ();
 void      lValFree          (lVal *v);
+
+lArray   *lArrayAlloc       ();
+void      lArrayFree        (lArray *v);
 
 lString  *lStringAlloc      ();
 void      lStringFree       (lString *s);

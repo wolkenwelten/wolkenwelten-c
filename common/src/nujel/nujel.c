@@ -14,9 +14,10 @@
 #include <string.h>
 
 #define VAL_MAX (1<<18)
-#define CLO_MAX (1<<12)
+#define CLO_MAX (1<<14)
 #define STR_MAX (1<<10)
 #define CST_MAX (1<<10)
+#define ARR_MAX (1<<10)
 
 lVal      lValBuf[VAL_MAX];
 uint      lValMax = 0;
@@ -32,6 +33,9 @@ lString  *lStringFFree = NULL;
 lCString   lCStringList[CST_MAX];
 lCString  *lCStringFFree = NULL;
 
+lArray     lArrayList[ARR_MAX];
+lArray    *lArrayFFree = NULL;
+
 lSymbol symQuote,symArr;
 
 
@@ -43,26 +47,31 @@ void lInit(){
 	lValMax       = 0;
 	lClosureMax   = 0;
 
-	for(uint i=0;i<countof(lValBuf)-1;i++){
+	for(uint i=0;i<VAL_MAX-1;i++){
 		lValBuf[i].type = ltNoAlloc;
 		lValBuf[i].vNA  = &lValBuf[i+1];
 	}
 	lValFFree = &lValBuf[0];
 
-	for(uint i=0;i<countof(lClosureList)-1;i++){
+	for(uint i=0;i<CLO_MAX-1;i++){
 		lClosureList[i].parent = &lClosureList[i+1];
 	}
 	lClosureFFree = &lClosureList[0];
 
-	for(uint i=0;i<countof(lStringList)-1;i++){
+	for(uint i=0;i<STR_MAX-1;i++){
 		lStringList[i].next = &lStringList[i+1];
 	}
 	lStringFFree = &lStringList[0];
 
-	for(uint i=0;i<countof(lCStringList)-1;i++){
+	for(uint i=0;i<CST_MAX-1;i++){
 		lCStringList[i].next = &lCStringList[i+1];
 	}
 	lCStringFFree = &lCStringList[0];
+
+	for(uint i=0;i<ARR_MAX-1;i++){
+		lArrayList[i].nextFree = &lArrayList[i+1];
+	}
+	lArrayFFree = &lArrayList[0];
 }
 
 lClosure *lClosureAlloc(){
@@ -75,14 +84,36 @@ lClosure *lClosureAlloc(){
 	lClosureMax   = MAX(lClosureMax,(uint)(ret-lClosureList) + 1);
 	ret->data = NULL;
 	ret->text = NULL;
+	ret->flags = 0;
 	return ret;
 }
 void lClosureFree(lClosure *c){
 	if(c == NULL){return;}
 	c->parent = lClosureFFree;
 	c->data   = NULL;
+	c->flags  = 0;
 	lClosureFFree = c;
-	lValFree(c->data);
+}
+
+lArray *lArrayAlloc(){
+	if(lArrayFFree == NULL){
+		lPrintError("lArray OOM\n");
+		return NULL;
+	}
+	lArray *ret = lArrayFFree;
+	lArrayFFree = ret->nextFree;
+	ret->flags = 0;
+	ret->length = 0;
+	ret->data = NULL;
+	ret->nextFree = NULL;
+	return ret;
+}
+
+void lArrayFree(lArray *v){
+	if(v == NULL){return;}
+	free(v->data);
+	v->nextFree = lArrayFFree;
+	v->data     = NULL;
 }
 
 lString *lStringAlloc(){
@@ -152,8 +183,8 @@ void lValFree(lVal *v){
 	if(v == NULL){return;}
 	switch(v->type){
 	case ltArray:
-		free(v->vArr.data);
-		v->vArr.data = NULL;
+		lArrayFree(v->vArr);
+		v->vArr = NULL;
 		break;
 	case ltString:
 		lStringFree(v->vString);
@@ -234,6 +265,7 @@ lVal *lValSym(const char *s){
 
 lVal *lCons(lVal *car, lVal *cdr){
 	lVal *v = lValAlloc();
+	if(v == NULL){return NULL;}
 	v->type = ltPair;
 	v->vList.car = car;
 	v->vList.cdr = cdr;
@@ -572,9 +604,9 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(strcmp(s.c,"float") == 0)  {return lValNativeFunc(lnfFloat);}
 	if(strcmp(s.c,"vec") == 0)    {return lValNativeFunc(lnfVec);}
 
-	if(strcmp(s.c,"msecs") == 0)  {return lValNativeFunc(lnfMsecs);}
-	if(strcmp(s.c,"ansirs") == 0) {return lValNativeFunc(lnfAnsiRS);}
-	if(strcmp(s.c,"ansifg") == 0) {return lValNativeFunc(lnfAnsiFG);}
+	if(strcmp(s.c,"msecs") == 0)      {return lValNativeFunc(lnfMsecs);}
+	if(strcmp(s.c,"ansi-reset") == 0) {return lValNativeFunc(lnfAnsiRS);}
+	if(strcmp(s.c,"ansi-fg") == 0)    {return lValNativeFunc(lnfAnsiFG);}
 	if(strcmp(s.c,"br") == 0)     {return lValNativeFunc(lnfBr);}
 	if(strcmp(s.c,"cat") == 0)    {return lValNativeFunc(lnfCat);}
 	if(strcmp(s.c,"str-len") == 0){return lValNativeFunc(lnfStrlen);}
@@ -672,6 +704,7 @@ int lMemUsage(){
 
 static void lClosureGCMark(lClosure *c);
 static void lValGCMark(lVal *v);
+static void lArrayGCMark(lArray *v);
 
 static void lValGCMark(lVal *v){
 	if((v == NULL) || (v->flags & lfMarked)){return;} // Circular refs
@@ -682,9 +715,7 @@ static void lValGCMark(lVal *v){
 	} else if(v->type == ltLambda) {
 		lClosureGCMark(v->vLambda);
 	} else if(v->type == ltArray) {
-		for(int i=0;i<v->vArr.length;i++){
-			lValGCMark(v->vArr.data[i]);
-		}
+		lArrayGCMark(v->vArr);
 	}
 }
 
@@ -693,9 +724,16 @@ static void lClosureGCMark(lClosure *c){
 	lValGCMark(c->text);
 }
 
+static void lArrayGCMark(lArray *v){
+	for(int i=0;i<v->length;i++){
+		lValGCMark(v->data[i]);
+	}
+}
+
 static void lGCMark(){
-	for(uint i=0;i<lValMax    ;i++){lValBuf[i].flags &= ~lfMarked;}
+	for(uint i=0;i<lValMax    ;i++){lValBuf[i].flags      &= ~lfMarked;}
 	for(uint i=0;i<lClosureMax;i++){lClosureList[i].flags &= ~lfMarked;}
+	for(uint i=0;i<ARR_MAX;i++)    {lArrayList[i].flags   &= ~lfMarked;}
 
 	for(uint i=0;i<lValMax    ;i++){
 		if(!(lValBuf[i].flags & lfNoGC)){continue;}
@@ -705,12 +743,24 @@ static void lGCMark(){
 		if(!(lClosureList[i].flags & lfNoGC)){continue;}
 		lClosureGCMark(&lClosureList[i]);
 	}
+	for(uint i=0;i<ARR_MAX;i++){
+		if(!(lArrayList[i].flags & lfNoGC)){continue;}
+		lArrayGCMark(&lArrayList[i]);
+	}
 }
 static void lGCSweep(){
 	for(uint i=0;i<lValMax;i++){
 		if(lValBuf[i].type == ltNoAlloc){continue;}
 		if(lValBuf[i].flags & lfMarked) {continue;}
 		lValFree(&lValBuf[i]);
+	}
+	for(uint i=0;i<lClosureMax;i++){
+		if(lClosureList[i].flags & lfMarked){continue;}
+		lClosureFree(&lClosureList[i]);
+	}
+	for(uint i=0;i<ARR_MAX;i++){
+		if(!(lArrayList[i].flags & lfNoGC)){continue;}
+		lArrayFree(&lArrayList[i]);
 	}
 }
 void lClosureGC(){

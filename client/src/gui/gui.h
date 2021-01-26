@@ -4,6 +4,7 @@
 #include "widget.h"
 
 extern widget *widgetGameScreen;
+extern widget *lispLog;
 
 extern uint mousex,mousey,mouseClicked[3];
 extern bool mouseHidden;

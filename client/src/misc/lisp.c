@@ -6,6 +6,7 @@
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../misc/options.h"
+#include "../network/chat.h"
 #include "../sdl/sdl.h"
 #include "../tmp/assets.h"
 #include "../../../common/src/misc/lisp.h"
@@ -152,6 +153,19 @@ static lVal *wwlnfPlayerVel(lClosure *c, lVal *v){
 	return lValVec(player->vel);
 }
 
+static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
+	lVal *t = lEval(c,lCarOrV(v));
+	if((t == NULL) || ((t->type != ltString) && (t->type != ltCString))){return NULL;}
+	msgSendChatMessage(t->vString->data);
+	return t;
+}
+
+static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
+	lVal *t = lEval(c,lCarOrV(v));
+	if((t == NULL) || ((t->type != ltString) && (t->type != ltCString))){return NULL;}
+	widgetAddEntry(lispLog, t->vString->data);
+	return t;
+}
 
 lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"s") == 0)              {return lValNativeFunc(wwlnfSEval);}
@@ -167,6 +181,8 @@ lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"fullscreen") == 0)     {return lValNativeFunc(wwlnfFullscreen);}
 	if(strcmp(s.c,"save-options") == 0)   {return lValNativeFunc(wwlnfSaveOptions);}
 	if(strcmp(s.c,"debug-info") == 0)     {return lValNativeFunc(wwlnfDebugInfo);}
+	if(strcmp(s.c,"send-message") == 0)   {return lValNativeFunc(wwlnfSendMessage);}
+	if(strcmp(s.c,"console-print") == 0)  {return lValNativeFunc(wwlnfConsolePrint);}
 
 	return lResolveNativeSymCommon(s);
 }

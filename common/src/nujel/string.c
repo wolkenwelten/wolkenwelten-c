@@ -1,6 +1,7 @@
 #include "string.h"
 
 #include "nujel.h"
+#include "casting.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -125,9 +126,9 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 	case ltArray: {
 		t = snprintf(cur,bufEnd-cur,"#(");
 		if(t > 0){cur += t;}
-		for(int i=0;i<v->vArr.length;i++){
-			cur = lSWriteVal(v->vArr.data[i],cur,bufEnd);
-			if(i < (v->vArr.length-1)){*cur++ = ' ';}
+		for(int i=0;i<v->vArr->length;i++){
+			cur = lSWriteVal(v->vArr->data[i],cur,bufEnd);
+			if(i < (v->vArr->length-1)){*cur++ = ' ';}
 		}
 		t = snprintf(cur,bufEnd-cur,")");
 		break; }
@@ -228,9 +229,9 @@ char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
 	case ltArray: {
 		t = snprintf(cur,bufEnd-cur,"#(");
 		if(t > 0){cur += t;}
-		for(int i=0;i<v->vArr.length;i++){
-			cur = lSDisplayVal(v->vArr.data[i],cur,bufEnd);
-			if(i < (v->vArr.length-1)){*cur++ = ' ';}
+		for(int i=0;i<v->vArr->length;i++){
+			cur = lSDisplayVal(v->vArr->data[i],cur,bufEnd);
+			if(i < (v->vArr->length-1)){*cur++ = ' ';}
 		}
 		t = snprintf(cur,bufEnd-cur,")");
 		break; }
@@ -401,12 +402,12 @@ lVal *lnfCat(lClosure *c, lVal *v){
 lVal *lnfAnsiFG(lClosure *c, lVal *v){
 	int i = 0;
 	if(v != NULL){
-		lVal *t = lEval(c,v);
+		lVal *t = lnfInt(c,lEval(c,lCarOrV(v)));
 		if((t != NULL) && (t->type == ltInt)){
 			i = t->vInt;
 		}
 	}
-	if(i < 0){i = 0;}
+	if(i < 0) {i =  0;}
 	if(i > 16){i = 15;}
 	return lValString(ansiFG[i]);
 }
