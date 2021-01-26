@@ -27,9 +27,11 @@ ASM_OBJS += common/src/asm/$(ARCH).o
 endif
 
 common/src/tmp/stdlib.nuj: $(NUJ_STDLIB)
+	mkdir -p common/src/tmp
 	cat $(NUJ_STDLIB) > $@
 
 common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
+	mkdir -p common/src/tmp
 	cat $(NUJ_WWLIB) > $@
 
 %.o: %.s

@@ -1,10 +1,12 @@
 #include "lisp.h"
 
+#include "../asm/asm.h"
 #include "../nujel/nujel.h"
 #include "../nujel/arithmetic.h"
 #include "../nujel/casting.h"
+#include "../nujel/reader.h"
 #include "../misc/profiling.h"
-#include "../../../common/src/asm/asm.h"
+#include "../tmp/assets.h"
 
 #include <string.h>
 
@@ -66,4 +68,10 @@ lVal *lResolveNativeSymCommon(const lSymbol s){
 	if(strcmp(s.c,"asm-switch") == 0)     {return lValNativeFunc(wwlnfNAsmSwitch);}
 
 	return lResolveNativeSymBuiltin(s);
+}
+
+lClosure *lispCommonRoot(){
+	lClosure *c = lClosureNewRoot();
+	lEval(c,lWrap(lRead((const char *)src_tmp_wwlib_nuj_data)));
+	return c;
 }

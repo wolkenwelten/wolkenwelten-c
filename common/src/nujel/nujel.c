@@ -5,7 +5,10 @@
 #include "boolean.h"
 #include "casting.h"
 #include "predicates.h"
+#include "reader.h"
 #include "string.h"
+
+#include "../tmp/assets.h"
 
 #include <ctype.h>
 #include <math.h>
@@ -264,6 +267,13 @@ lClosure *lClosureNew(lClosure *parent){
 	lClosure *c = lClosureAlloc();
 	if(c == NULL){return NULL;}
 	c->parent = parent;
+	return c;
+}
+
+lClosure *lClosureNewRoot(){
+	lClosure *c = lClosureAlloc();
+	c->flags |= lfNoGC;
+	lEval(c,lWrap(lRead((const char *)src_tmp_stdlib_nuj_data)));
 	return c;
 }
 

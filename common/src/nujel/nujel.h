@@ -74,6 +74,7 @@ int       lMemUsage         ();
 void      lPrintError       (const char *format, ...);
 
 lClosure *lClosureAlloc     ();
+lClosure *lClosureNewRoot   ();
 lClosure *lClosureNew       (lClosure *parent);
 void      lClosureFree      (lClosure *c);
 lVal     *lClosureAddNF     (lClosure *c, const char *sym, lVal *(*func)(lClosure *,lVal *));

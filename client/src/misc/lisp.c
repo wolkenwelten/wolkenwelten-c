@@ -16,7 +16,6 @@
 #include "../../../common/src/nujel/casting.h"
 #include "../../../common/src/nujel/reader.h"
 #include "../../../common/src/nujel/string.h"
-#include "../../../common/src/tmp/assets.h"
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -188,11 +187,8 @@ lVal *lResolveNativeSym(const lSymbol s){
 
 void lispInit(){
 	lInit();
-	clRoot = lClosureNew(NULL);
-	clRoot->flags |= lfNoGC;
-	lEval(clRoot,lWrap(lRead((char *)src_tmp_stdlib_nuj_data)));
-	lEval(clRoot,lWrap(lRead((char *)src_tmp_wwlib_nuj_data)));
-	lEval(clRoot,lWrap(lRead((char *)src_tmp_client_nuj_data)));
+	clRoot = lispCommonRoot();
+	lEval(clRoot,lWrap(lRead((const char *)src_tmp_client_nuj_data)));
 	lClosureGC();
 }
 
