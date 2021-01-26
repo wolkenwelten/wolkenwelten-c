@@ -118,8 +118,8 @@ static lVal *wwlnfSaveOptions(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfServerAdd(lClosure *c, lVal *v){
-	char *address = "localhost";
-	char *name = "localhost";
+	const char *address = "localhost";
+	const char *name = "localhost";
 
 	if((v != NULL) && (v->type == ltPair)){
 		lVal *t = lnfCat(c,lEval(c,v->vList.car));
@@ -155,14 +155,14 @@ static lVal *wwlnfPlayerVel(lClosure *c, lVal *v){
 
 static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrV(v));
-	if((t == NULL) || ((t->type != ltString) && (t->type != ltCString))){return NULL;}
+	if((t == NULL) || (t->type != ltString)){return NULL;}
 	msgSendChatMessage(t->vString->data);
 	return t;
 }
 
 static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrV(v));
-	if((t == NULL) || ((t->type != ltString) && (t->type != ltCString))){return NULL;}
+	if((t == NULL) || (t->type != ltString)){return NULL;}
 	widgetAddEntry(lispLog, t->vString->data);
 	return t;
 }

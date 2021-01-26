@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void lStringAdvanceToNextCharacter(lCString *s){
+static void lStringAdvanceToNextCharacter(lString *s){
 	for(;(*s->data != 0) && (isspace(*s->data));s->data++){}
 }
 
-static lVal *lParseString(lCString *s){
+static lVal *lParseString(lString *s){
 	static char buf[4096];
 	char *b = buf;
 	for(uint i=0;i<sizeof(buf);i++){
@@ -40,12 +40,7 @@ static lVal *lParseString(lCString *s){
 			s->data++;
 			lVal *v = lValAlloc();
 			v->type = ltString;
-			lString *vs = v->vString = lStringAlloc();
-			vs->data = vs->buf = malloc((b-buf)+1);
-			memcpy(vs->buf,buf,b-buf);
-			vs->len = b-buf;
-			vs->data[vs->len] = 0;
-			vs->bufEnd = vs->data + vs->len;
+			v->vString = lStringNew(buf,b-buf);
 			return v;
 		}else{
 			*b++ = *s->data++;
@@ -54,7 +49,7 @@ static lVal *lParseString(lCString *s){
 	return NULL;
 }
 
-static lVal *lParseNumber(lCString *s){
+static lVal *lParseNumber(lString *s){
 	lVal *v = lValInt(0);
 	int c   = *s->data;
 	int fc  = c;
@@ -96,7 +91,7 @@ static lVal *lParseNumber(lCString *s){
 	return v;
 }
 
-static lVal *lParseSymbol(lCString *s){
+static lVal *lParseSymbol(lString *s){
 	lVal *v = lValAlloc();
 	v->type = ltSymbol;
 	v->vSymbol.v[0] = 0;
@@ -116,7 +111,7 @@ static lVal *lParseSymbol(lCString *s){
 	return v;
 }
 
-static lVal *lParseSpecial(lCString *s){
+static lVal *lParseSpecial(lString *s){
 	if(*s->data++ != '#'){return NULL;}
 	switch(*s->data++){
 	default:
@@ -128,12 +123,12 @@ static lVal *lParseSpecial(lCString *s){
 	case 'i':
 		return lValInf();
 	case '(':
-		return lCons(lValSymS(symArr),lReadCString(s));
+		return lCons(lValSymS(symArr),lReadString(s));
 	}
 
 }
 
-lVal *lReadCString(lCString *s){
+lVal *lReadString(lString *s){
 	lVal *v, *ret;
 	ret = v = lCons(NULL,NULL);
 	while(1){
@@ -151,12 +146,12 @@ lVal *lReadCString(lCString *s){
 
 		if(c == '('){
 			s->data+=1;
-			v->vList.car = lReadCString(s);
+			v->vList.car = lReadString(s);
 		}else if(c == '\''){
 			s->data++;
 			if(*s->data == '('){
 				s->data++;
-				v->vList.car = lCons(lValSymS(symQuote),lCons(lReadCString(s),NULL));
+				v->vList.car = lCons(lValSymS(symQuote),lCons(lReadString(s),NULL));
 			}else{
 				v->vList.car = lCons(lValSymS(symQuote),lCons(lParseSymbol(s),NULL));
 			}
@@ -176,11 +171,11 @@ lVal *lReadCString(lCString *s){
 }
 
 lVal *lRead(const char *str){
-	lCString *s = lCStringAlloc();
+	lString *s = lStringAlloc();
 	s->data     = str;
-	int len     = strlen(str);
-	s->bufEnd   = &str[len];
-	lVal *ret   = lReadCString(s);
-	lCStringFree(s);
+	s->buf      = str;
+	s->bufEnd   = &str[strlen(str)];
+	lVal *ret   = lReadString(s);
+	lStringFree(s);
 	return ret;
 }

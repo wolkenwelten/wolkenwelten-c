@@ -26,9 +26,6 @@ lVal *lnfInt(lClosure *c, lVal *v){
 		return lValInt(t->vFloat);
 	case ltVec:
 		return lValInt(t->vVec.x);
-	case ltCString:
-		if(t->vCString == NULL){return lValInt(0);}
-		return lValInt(atoi(t->vCString->data));
 	case ltString:
 		if(t->vString == NULL){return lValInt(0);}
 		return lValInt(atoi(t->vString->data));
@@ -49,9 +46,6 @@ lVal *lnfFloat(lClosure *c, lVal *v){
 		return lValFloat(t->vInt);
 	case ltVec:
 		return lValFloat(t->vVec.x);
-	case ltCString:
-		if(t->vCString == NULL){return lValFloat(0);}
-		return lValFloat(atof(t->vCString->data));
 	case ltString:
 		if(t->vString == NULL){return lValFloat(0);}
 		return lValFloat(atof(t->vString->data));
@@ -114,18 +108,10 @@ lVal *lnfString(lClosure *c, lVal *t){
 		len += clen;
 		buf += clen;
 		break; }
-	case ltCString: {
-		if(t->vCString == NULL){return lValString("");}
-		int clen = t->vCString->bufEnd - t->vCString->data;
-		memcpy(buf,t->vCString->data,clen);
-		len += clen;
-		buf += clen;
-		break; }
 	case ltString:
 		if(t->vString == NULL){return lValString("");}
-		memcpy(buf,t->vString->data,t->vString->len);
-		len += t->vString->len;
-		buf += t->vString->len;
+		memcpy(buf,t->vString->data,lStringLength(t->vString));
+		buf += lStringLength(t->vString);
 		break;
 	}
 

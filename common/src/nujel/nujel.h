@@ -2,13 +2,12 @@
 #include "../common.h"
 
 typedef enum lType {
-	ltNoAlloc = 0, ltBool, ltPair, ltLambda, ltInt, ltFloat, ltVec, ltString, ltCString, ltSymbol, ltNativeFunc, ltInf, ltArray
+	ltNoAlloc = 0, ltBool, ltPair, ltLambda, ltInt, ltFloat, ltVec, ltString, ltSymbol, ltNativeFunc, ltInf, ltArray
 } lType;
 
 typedef struct lVal     lVal;
 typedef struct lClosure lClosure;
 typedef struct lString  lString;
-typedef struct lCString lCString;
 typedef struct lArray   lArray;;
 
 typedef struct {
@@ -40,7 +39,6 @@ struct lVal {
 		vec           vVec;
 		float         vFloat;
 		lString      *vString;
-		lCString     *vCString;
 		lSymbol       vSymbol;
 		lClosure     *vLambda;
 		lArray       *vArr;
@@ -54,25 +52,19 @@ struct lClosure {
 	lVal *text;
 	uint flags;
 };
-#define lfMarked  (1)
-#define lfDynamic (2)
-#define lfNoGC    (4)
+#define lfMarked    ( 1)
+#define lfDynamic   ( 2)
+#define lfNoGC      ( 4)
+#define lfConst     ( 8)
+#define lfHeapAlloc (16)
 
 struct lString {
-	char *buf,*data;
-	union {
-		char *bufEnd;
-		lString *next;
-	};
-	int len;
-};
-
-struct lCString {
-	const char *data;
+	const char *buf,*data;
 	union {
 		const char *bufEnd;
-		lCString *next;
+		lString *next;
 	};
+	uint flags;
 };
 
 extern lSymbol symQuote,symArr;
@@ -95,9 +87,6 @@ void      lArrayFree        (lArray *v);
 lString  *lStringAlloc      ();
 void      lStringFree       (lString *s);
 lString  *lStringNew        (const char *str, uint len);
-
-lCString *lCStringAlloc     ();
-void      lCStringFree      (lCString *s);
 
 void      lClosureGC        ();
 void      lDisplayVal       (lVal *v);
@@ -167,6 +156,9 @@ static inline int lListLength(lVal *v){
 	int i = 0;
 	for(lVal *n = v;(n != NULL) && (n->type == ltPair) && (n->vList.car != NULL); n = n->vList.cdr){i++;}
 	return i;
+}
+static inline uint lStringLength(lString *s){
+	return s->bufEnd - s->buf;
 }
 
 #define lEvalCastApply(FUNC, c , v) do { \

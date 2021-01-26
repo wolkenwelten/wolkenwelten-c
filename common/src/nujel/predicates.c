@@ -33,21 +33,23 @@ static int lValCompare(lClosure *c, lVal *v){
 		if(b->vFloat == a->vFloat)     {return  0;}
 		else if(a->vFloat  < b->vFloat){return -1;}
 		return 1;
-	case ltString:
-		for(int i=0;i<a->vString->len;i++){
+	case ltString: {
+		const uint alen = lStringLength(a->vString);
+		const uint blen = lStringLength(b->vString);
+		for(uint i=0;i<alen;i++){
 			const u8 ac = a->vString->buf[i];
 			const u8 bc = b->vString->buf[i];
 			if(ac == bc){continue;}
 			if(ac < bc){return -1;}
 			return 1;
 		}
-		if(a->vString->len != b->vString->len){
-			if(a->vString->len < b->vString->len){
+		if(alen != blen){
+			if(alen < blen){
 				return -1;
 			}
 			return -1;
 		}
-		return 0;
+		return 0; }
 	}
 }
 
@@ -94,7 +96,7 @@ lVal *lnfFloatPred(lClosure *c, lVal *v){
 lVal *lnfStringPred(lClosure *c, lVal *v){
 	if(v == NULL){return lValBool(false);}
 	lVal *t = lEval(c,lCarOrV(v));
-	return lValBool((t != NULL) && ((t->type == ltString) || (t->type == ltCString)));
+	return lValBool((t != NULL) && (t->type == ltString));
 }
 
 lVal *lnfVecPred(lClosure *c, lVal *v){

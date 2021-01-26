@@ -16,7 +16,6 @@
 #define VAL_MAX (1<<18)
 #define CLO_MAX (1<<14)
 #define STR_MAX (1<<10)
-#define CST_MAX (1<<10)
 #define ARR_MAX (1<<10)
 
 lVal      lValBuf[VAL_MAX];
@@ -30,10 +29,8 @@ lClosure *lClosureFFree = NULL;
 lString   lStringList[STR_MAX];
 lString  *lStringFFree = NULL;
 
-lCString   lCStringList[CST_MAX];
-lCString  *lCStringFFree = NULL;
-
 lArray     lArrayList[ARR_MAX];
+uint       lArrayMax   = 0;
 lArray    *lArrayFFree = NULL;
 
 lSymbol symQuote,symArr;
@@ -62,11 +59,6 @@ void lInit(){
 		lStringList[i].next = &lStringList[i+1];
 	}
 	lStringFFree = &lStringList[0];
-
-	for(uint i=0;i<CST_MAX-1;i++){
-		lCStringList[i].next = &lCStringList[i+1];
-	}
-	lCStringFFree = &lCStringList[0];
 
 	for(uint i=0;i<ARR_MAX-1;i++){
 		lArrayList[i].nextFree = &lArrayList[i+1];
@@ -123,40 +115,28 @@ lString *lStringAlloc(){
 	}
 	lString *ret = lStringFFree;
 	lStringFFree = ret->next;
+	ret->data = ret->buf = ret->bufEnd = NULL;
+	ret->flags = 0;
 	return ret;
 }
 void lStringFree(lString *s){
 	if(s == NULL){return;}
-	if(s->buf != NULL){free(s->buf);}
+	if((s->buf != NULL) && (s->flags & lfHeapAlloc)){
+		free((void *)s->buf);
+	}
 	s->buf = s->data = NULL;
 	s->next = lStringFFree;
 	lStringFFree = s;
 }
 
-lCString *lCStringAlloc(){
-	if(lCStringFFree == NULL){
-		lPrintError("lCString OOM\n");
-		return NULL;
-	}
-	lCString *ret = lCStringFFree;
-	lCStringFFree = ret->next;
-	return ret;
-}
-
-void lCStringFree(lCString *s){
-	if(s == NULL){return;}
-	s->data = NULL;
-	s->next = lCStringFFree;
-	lCStringFFree = s;
-}
-
 lString *lStringNew(const char *str, unsigned int len){
 	lString *s = lStringAlloc();
-	s->buf = s->data = malloc(len+1);
-	memcpy(s->data,str,len);
-	s->data[len] = 0;
-	s->len       = len;
-	s->bufEnd    = &s->buf[len+1];
+	char *nbuf = malloc(len+1);
+	memcpy(nbuf,str,len);
+	nbuf[len] = 0;
+	s->flags |= lfHeapAlloc;
+	s->buf = s->data = nbuf;
+ 	s->bufEnd = &s->buf[len];
 	return s;
 }
 
@@ -165,6 +145,16 @@ lVal *lValString(const char *c){
 	lVal *t = lValAlloc();
 	t->type = ltString;
 	t->vString = lStringNew(c,strlen(c));
+	return t;
+}
+lVal *lValCString(const char *c){
+	if(c == NULL){return NULL;}
+	lVal *t = lValAlloc();
+	t->type = ltString;
+	t->vString = lStringAlloc();
+	t->vString->buf = t->vString->data = c;
+	t->vString->bufEnd = t->vString->buf + strlen(c);
+	t->vString->flags |= lfConst;
 	return t;
 }
 
@@ -203,9 +193,7 @@ lVal *lValCopy(lVal *dst, const lVal *src){
 	if(src == NULL){return NULL;}
 	*dst = *src;
 	if(dst->type == ltString){
-		dst->vString = lStringNew(src->vString->data,src->vString->len);
-	}else if(dst->type == ltCString){
-		dst->vString = lStringNew(src->vString->data,(int) (src->vString->bufEnd - src->vString->data));
+		dst->vString = lStringNew(src->vString->data,lStringLength(src->vString));
 	}else if(dst->type == ltPair){
 		dst->vList.car = lValDup(dst->vList.car);
 		dst->vList.cdr = lValDup(dst->vList.cdr);

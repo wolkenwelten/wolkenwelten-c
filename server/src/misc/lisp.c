@@ -496,14 +496,14 @@ static lVal *wwlnfRCount(lClosure *c, lVal *v){
 
 static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrV(v));
-	if((t == NULL) || ((t->type != ltString) && (t->type != ltCString))){return NULL;}
+	if((t == NULL) || (t->type != ltString)){return NULL;}
 	serverSendChatMsg(t->vString->data);
 	return t;
 }
 
 static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrV(v));
-	if((t == NULL) || ((t->type != ltString) && (t->type != ltCString))){return NULL;}
+	if((t == NULL) || (t->type != ltString)){return NULL;}
 	printf("%s\n",t->vString->data);
 	return t;
 }

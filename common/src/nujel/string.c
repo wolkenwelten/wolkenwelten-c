@@ -4,6 +4,7 @@
 #include "casting.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 char *ansiRS = "\033[0m";
@@ -147,7 +148,6 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 		t += bufPrintFloat(v->vVec.z,&buf[t],t,len);
 		t += snprintf(&buf[t],len,")");
 		break;
-	case ltCString:
 	case ltString:
 		t = bufWriteString(buf,len,v->vString->data);
 		break;
@@ -170,7 +170,7 @@ char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
 	if(v == NULL){return buf;}
 	char *cur = buf;
 	int t = 0;
-	int len = bufEnd-buf;
+	const int len = bufEnd-buf;
 
 	switch(v->type){
 	case ltNoAlloc:
@@ -250,7 +250,6 @@ char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
 		t += bufPrintFloat(v->vVec.z,&buf[t],t,len);
 		t += snprintf(&buf[t],len,")");
 		break;
-	case ltCString:
 	case ltString:
 		t = snprintf(buf,len,"%s",v->vString->data);
 		break;
@@ -272,16 +271,9 @@ char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
 lVal *lnfStrlen(lClosure *c, lVal *v){
 	if(v == NULL){return NULL;}
 	lVal *t = lEval(c,lCarOrV(v));
-	if(t == NULL){return NULL;}
-	switch(t->type){
-	default: return NULL;
-	case ltCString:
-		if(t->vCString == NULL){return lValInt(0);}
-		return lValInt(t->vCString->bufEnd - t->vCString->data);
-	case ltString:
-		if(t->vString == NULL){return lValInt(0);}
-		return lValInt(t->vString->len);
-	}
+	if((t == NULL) || (t->type != ltString)){return NULL;}
+	if((t->vString == NULL) || (t->vString->data == NULL)){return lValInt(0);}
+	return lValInt(lStringLength(t->vString));
 }
 
 lVal *lnfSubstr(lClosure *c, lVal *v){
@@ -294,15 +286,10 @@ lVal *lnfSubstr(lClosure *c, lVal *v){
 	if(str == NULL){return NULL;}
 	switch(str->type){
 	default: return NULL;
-	case ltCString:
-		if(str->vCString == NULL){return NULL;}
-		buf  = str->vCString->data;
-		slen = len = str->vCString->bufEnd - str->vCString->data;
-		break;
 	case ltString:
 		if(str->vString == NULL){return NULL;}
-		buf  = str->vCString->data;
-		slen = len = str->vString->len;
+		buf  = str->vString->data;
+		slen = len = lStringLength(str->vString);
 		break;
 	}
 	if(v->vList.cdr != NULL){
@@ -349,54 +336,40 @@ lVal *lnfBr(lClosure *c, lVal *v){
 }
 
 lVal *lnfCat(lClosure *c, lVal *v){
-	char tmpStringBuf[512];
+	char tmpStringBuf[8192];
 	char *buf = tmpStringBuf;
 	int len = 0;
 	forEach(sexpr,v){
 		lVal *t = lEval(c,sexpr->vList.car);
+		int clen = 0;
 		if(t == NULL){continue;}
-		//lPrintVal(t);
+		//lWriteVal(t);
 		switch(t->type){
 		default: break;
 		case ltSymbol: {
-			int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%s",t->vSymbol.c);
-			len += clen;
-			buf += clen;
+			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%s",t->vSymbol.c);
 			break; }
 		case ltFloat: {
-			int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%.5f",t->vFloat);
+			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%.5f",t->vFloat);
 			for(;buf[clen-1] == '0';clen--){buf[clen]=0;}
 			if(buf[clen] == '0'){buf[clen] = 0;}
 			if(buf[clen-1] == '.'){buf[clen++] = '0';}
-			len += clen;
-			buf += clen;
 			break; }
 		case ltInt: {
-			int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%i",t->vInt);
-			len += clen;
-			buf += clen;
-			break; }
-		case ltCString: {
-			if(t->vCString == NULL){continue;}
-			int clen = t->vCString->bufEnd - t->vCString->data;
-			memcpy(buf,t->vCString->data,clen);
-			len += clen;
-			buf += clen;
+			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%i",t->vInt);
 			break; }
 		case ltString:
 			if(t->vString == NULL){continue;}
-			memcpy(buf,t->vString->data,t->vString->len);
-			len += t->vString->len;
-			buf += t->vString->len;
+			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%s",t->vString->data);
 			break;
 		}
+		if(clen > 0){
+			len += clen;
+			buf += clen;
+		}
 	}
-
-	buf[len] = 0;
-	lVal *ret = lValAlloc();
-	ret->type = ltString;
-	ret->vString = lStringNew(tmpStringBuf, len);
-	return ret;
+	*buf = 0;
+	return lValString(tmpStringBuf);
 }
 
 lVal *lnfAnsiFG(lClosure *c, lVal *v){
