@@ -17,7 +17,6 @@
 + Docstrings for native funcs
 + Describe should also describe the function name as well as its arguments
 + Arguments should all be single greek lowercase letters to easily distinguish them from normal test/code, also it looks kinda schway
-+ Native Arrays
 + Native Hashmaps
 + Native Pointers with an associated type ID, which the GC uses for allocing and freeing the native object (especially useful for GUI widgets)
 + TCO?...!

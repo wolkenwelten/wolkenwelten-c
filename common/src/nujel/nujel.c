@@ -504,6 +504,15 @@ static lVal *lnfMsecs(lClosure *c, lVal *v){
 	return lValInt(getMSecs());
 }
 
+lVal *lResolve(lClosure *c, lVal *v){
+	v = lEval(c,lCarOrV(v));
+	for(int i=0;i<16;i++){
+		if((v == NULL) || (v->type != ltSymbol)){break;}
+		v = lResolveSym(c,v->vSymbol);
+	}
+	return v;
+}
+
 lVal *lEval(lClosure *c, lVal *v){
 	//lWriteVal(v);
 	if((c == NULL) || (v == NULL)){return NULL;}
@@ -576,6 +585,7 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 
 	if(strcmp(s.c,"apply") == 0)  {return lValNativeFunc(lnfApply);}
 	if(strcmp(s.c,"eval") == 0)   {return lValNativeFunc(lEval);}
+	if(strcmp(s.c,"resolve") == 0){return lValNativeFunc(lResolve);}
 	if(strcmp(s.c,"mem") == 0)    {return lValNativeFunc(lnfMem);}
 	if(strcmp(s.c,"λ") == 0)      {return lValNativeFunc(lnfLambda);}
 	if(strcmp(s.c,"lambda") == 0) {return lValNativeFunc(lnfLambda);}
@@ -609,13 +619,15 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(strcmp(s.c,"float") == 0)  {return lValNativeFunc(lnfFloat);}
 	if(strcmp(s.c,"vec") == 0)    {return lValNativeFunc(lnfVec);}
 
-	if(strcmp(s.c,"msecs") == 0)      {return lValNativeFunc(lnfMsecs);}
-	if(strcmp(s.c,"ansi-reset") == 0) {return lValNativeFunc(lnfAnsiRS);}
-	if(strcmp(s.c,"ansi-fg") == 0)    {return lValNativeFunc(lnfAnsiFG);}
-	if(strcmp(s.c,"br") == 0)     {return lValNativeFunc(lnfBr);}
-	if(strcmp(s.c,"cat") == 0)    {return lValNativeFunc(lnfCat);}
-	if(strcmp(s.c,"str-len") == 0){return lValNativeFunc(lnfStrlen);}
-	if(strcmp(s.c,"substr") == 0) {return lValNativeFunc(lnfSubstr);}
+	if(strcmp(s.c,"msecs") == 0)     {return lValNativeFunc(lnfMsecs);}
+	if(strcmp(s.c,"ansi-reset") == 0){return lValNativeFunc(lnfAnsiRS);}
+	if(strcmp(s.c,"ansi-fg") == 0)   {return lValNativeFunc(lnfAnsiFG);}
+	if(strcmp(s.c,"br") == 0)        {return lValNativeFunc(lnfBr);}
+	if(strcmp(s.c,"cat") == 0)       {return lValNativeFunc(lnfCat);}
+	if(strcmp(s.c,"str-len") == 0)   {return lValNativeFunc(lnfStrlen);}
+	if(strcmp(s.c,"substr") == 0)    {return lValNativeFunc(lnfSubstr);}
+	if(strcmp(s.c,"str->sym") == 0)  {return lValNativeFunc(lnfStrSym);}
+	if(strcmp(s.c,"sym->str") == 0)  {return lValNativeFunc(lnfSymStr);}
 
 	if(strcmp(s.c,"int?") == 0)    {return lValNativeFunc(lnfIntPred);}
 	if(strcmp(s.c,"float?") == 0)  {return lValNativeFunc(lnfFloatPred);}

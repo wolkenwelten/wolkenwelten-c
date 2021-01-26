@@ -100,11 +100,25 @@
 (define delete (λ (e l) "Returns a filtered list l with all elements equal to e omitted"
 	(filter (λ (a) (not (eq? a e))) l)))
 
-(define describe (λ (a) "Returns the DocString to its argument, if available"
+(define l-docstring (λ (a) "Returns the DocString to its argument, if available"
 	(if (string? (car (cl-text a))) (car (cl-text a)) "No DocString found")))
+
+(define describe-str (λ (a) "Returns the DocString to its argument, if available"
+	(let ((ds (car (cl-text (resolve (str->sym a)))))
+	      (args (reduce cat (map (λ (a) (cat " " (car a))) (cl-data (resolve (str->sym a))))))
+	      (fn (cat a)))
+		(cat "(" fn args ") - " (if (string? ds) ds "No DocString found")))))
+(define describe (λ (&a) "Returns the DocString to its argument, if available"
+	(describe-str (sym->str (resolve &a)))))
 
 (define symbol-table (λ (i r) "Returns all a list of all symbols defined accessible from the current closure"
 	(if (nil? (cl i)) r (symbol-table (++ i) (map (λ (a) (car a)) (cl i))))))
+
+(define help-iter (λ (l) "Iter for (help)"
+	(cond ((nil? l) #t)
+	      (#t (display (describe-str (car l))) (newline) (help-iter (cdr l))))))
+(define help (λ () "Returns a list describing every function accesible"
+	(help-iter (map cat (symbol-table)))))
 
 (define display (λ (a) "Displays its argument"
 	(print a) #nil))
@@ -133,16 +147,12 @@
 (define timeout (λ (millis) "Returns a function that evaluates to true once millis milliseconds have passed"
 	(let ((goal (+ (msecs) millis))) (λ () (> (msecs) goal)))))
 
-(define help (λ () "Returns a list describing every function accesible"
-	(map (λ (a) (cat a "\n  " (describe a) "\n")) (symbol-table))))
-
 (define arr-fill! (λ (a v i) "Fills array a with value v"
 	(cond ((>= i (arr-length a)) a)
 	      (#t (arr-set! a i v) (arr-fill! a v (++ i))))))
 
 (define ansi-wrap (λ (c s) "Wraps string s in the ansi color c"
 	(cat (ansi-fg c) s (ansi-fg 15))))
-
 (define ansi-grey (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
 	(ansi-wrap 8 (apply cat ...s))))
 (define ansi-red (λ (...s) "Wraps its arguments as a string in the a red ansi color code"

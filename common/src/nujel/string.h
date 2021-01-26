@@ -4,6 +4,8 @@
 char *lSDisplayVal(lVal *v, char *buf, char *bufEnd);
 char *lSWriteVal  (lVal *v, char *buf, char *bufEnd);
 
+lVal *lnfStrSym (lClosure *c, lVal *v);
+lVal *lnfSymStr (lClosure *c, lVal *v);
 lVal *lnfStrlen (lClosure *c, lVal *v);
 lVal *lnfSubstr (lClosure *c, lVal *v);
 lVal *lnfBr     (lClosure *c, lVal *v);

@@ -163,6 +163,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 	}
 
 	if(t > 0){cur += t;}
+	*cur = 0;
 	return cur;
 }
 
@@ -265,6 +266,7 @@ char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
 	}
 
 	if(t > 0){cur += t;}
+	*cur = 0;
 	return cur;
 }
 
@@ -389,4 +391,17 @@ lVal *lnfAnsiRS(lClosure *c, lVal *v){
 	(void)c;
 	(void)v;
 	return lValString(ansiRS);
+}
+
+lVal *lnfStrSym(lClosure *c, lVal *v){
+	v = lEval(c,lCarOrV(v));
+	if(v == NULL){return NULL;}
+	if(v->type != ltString){return NULL;}
+	return lValSym(v->vString->data);
+}
+lVal *lnfSymStr(lClosure *c, lVal *v){
+	v = lEval(c,lCarOrV(v));
+	if(v == NULL){return NULL;}
+	if(v->type != ltSymbol){return NULL;}
+	return lValString(v->vSymbol.c);
 }
