@@ -36,3 +36,8 @@
 
 (define cloud-density (λ (α) "Sets the new Goal Density to α which should be a float in the range 0.0 - 1.0."
 	(- 1.0 (/ (cloud-threshold (* (- 1.0 α) 256.0)) 256.0))))
+
+(define countdown (λ (i) "Counts down on the console"
+	(cond ((< (int i) 0) #t)
+		(#t (say  (cond ((zero? i) (cat (ansi-green "GO!") (ansi-yellow "!") (ansi-red "!"))) ((< i 4) (ansi-red i)) ((< i 6) (ansi-yellow i)) (#t i)))
+		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))

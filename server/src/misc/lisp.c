@@ -494,6 +494,20 @@ static lVal *wwlnfRCount(lClosure *c, lVal *v){
 	return lValInt(rainCount);
 }
 
+static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
+	lVal *t = lEval(c,lCarOrV(v));
+	if((t == NULL) || ((t->type != ltString) && (t->type != ltCString))){return NULL;}
+	serverSendChatMsg(t->vString->data);
+	return t;
+}
+
+static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
+	lVal *t = lEval(c,lCarOrV(v));
+	if((t == NULL) || ((t->type != ltString) && (t->type != ltCString))){return NULL;}
+	printf("%s\n",t->vString->data);
+	return t;
+}
+
 lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"player-pos") == 0)        {return lValNativeFunc(wwlnfPlayerPos);}
 	if(strcmp(s.c,"no-aggro") == 0)          {return lValNativeFunc(wwlnfNoAggro);}
@@ -525,6 +539,8 @@ lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"time") == 0)              {return lValNativeFunc(wwlnfTime);}
 	if(strcmp(s.c,"tp") == 0)                {return lValNativeFunc(wwlnfTp);}
 	if(strcmp(s.c,"debug-equipment") == 0)   {return lValNativeFunc(wwlnfDbgItem);}
+	if(strcmp(s.c,"send-message") == 0)      {return lValNativeFunc(wwlnfSendMessage);}
+	if(strcmp(s.c,"console-print") == 0)     {return lValNativeFunc(wwlnfConsolePrint);}
 
 	return lResolveNativeSymCommon(s);
 }
@@ -549,6 +565,7 @@ void lispInit(){
 	clRoot = lClosureNew(NULL);
 	clRoot->flags |= lfNoGC;
 	lEval(clRoot,lWrap(lRead((char *)src_tmp_stdlib_nuj_data)));
+	lEval(clRoot,lWrap(lRead((char *)src_tmp_wwlib_nuj_data)));
 	lEval(clRoot,lWrap(lRead((char *)src_tmp_server_nuj_data)));
 
 	lClosureGC();

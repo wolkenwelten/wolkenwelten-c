@@ -1,0 +1,5 @@
+(define say (λ (...args) "Sends its arguments as a chat message"
+	(send-message (apply cat ...args))))
+
+(define log (λ (...args) "Prints its arguments into the LISP console"
+	(console-print (cat "  " (apply cat ...args)))))

@@ -146,6 +146,37 @@ void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c, u32 fgc, u32 bg
 	}
 }
 
+void textMeshAddGlyphHG(textMesh *m, int x, int y, int size, u8 c, u32 fgc, u32 bgc1, u32 bgc2){
+	float gx;
+	float gy;
+	int   glyphWidth = 8*size;
+	float glyphSize  = 1.f / 64.f;
+
+	if(x < -size){return;}
+	if(y < -size){return;}
+	if(c==0)     {return;}
+
+	if(size == 1){
+		glyphSize = 1.f / 128.f;
+	}
+
+	gx = ((float)(c&0x0f))*glyphSize + (m->font * 1.f/4.f);
+	gy = ((float)(63-((c>>4)&0x0f)))*glyphSize;
+	if(size == 1){
+		gy = ((float)(15-((c>>4)&0x0f)))*glyphSize + 24.f/32.f;
+	}
+
+	textMeshAddVert( m, x           , y           , ((gx          )*128.f), ((gy          )*128.f),fgc);
+	textMeshAddVert( m, x+glyphWidth, y+glyphWidth, ((gx+glyphSize)*128.f), ((gy+glyphSize)*128.f),fgc);
+	textMeshAddVert( m, x+glyphWidth, y           , ((gx+glyphSize)*128.f), ((gy          )*128.f),fgc);
+
+	textMeshAddVert( m, x+glyphWidth, y+glyphWidth, ((gx+glyphSize)*128.f), ((gy+glyphSize)*128.f),fgc);
+	textMeshAddVert( m, x           , y           , ((gx          )*128.f), ((gy          )*128.f),fgc);
+	textMeshAddVert( m, x           , y+glyphWidth, ((gx          )*128.f), ((gy+glyphSize)*128.f),fgc);
+
+	textMeshHGradient(m,x,y,glyphWidth,glyphWidth,bgc1,bgc2);
+}
+
 bool textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 	const int glyphWidth = 8*size;
 	const int lineHeight = 10*size;
@@ -334,5 +365,19 @@ void textMeshVGradient(textMesh *m, int x, int y, int w, int h, u32 c1, u32 c2){
 
 	textMeshAddVert(m,x+w,y+h,u+s,v+s,c2);
 	textMeshAddVert(m,x+w,y  ,u+s,v  ,c1);
+	textMeshAddVert(m,x  ,y  ,u  ,v  ,c1);
+}
+
+void textMeshHGradient(textMesh *m, int x, int y, int w, int h, u32 c1, u32 c2){
+	float u = 19.f/32.f*128.f;
+	float v = 31.f/32.f*128.f;
+	float s =  1.f/32.f*128.f;
+
+	textMeshAddVert(m,x  ,y  ,u  ,v  ,c1);
+	textMeshAddVert(m,x  ,y+h,u  ,v+s,c1);
+	textMeshAddVert(m,x+w,y+h,u+s,v+s,c2);
+
+	textMeshAddVert(m,x+w,y+h,u+s,v+s,c2);
+	textMeshAddVert(m,x+w,y  ,u+s,v  ,c2);
 	textMeshAddVert(m,x  ,y  ,u  ,v  ,c1);
 }

@@ -1,7 +1,8 @@
 ARCH             := $(shell uname -m)
 MODS_SRCS        := $(shell find common/src/mods -type f -name '*.c')
 NUJ_STDLIB       := $(shell find common/src/nujel/stdlib/ -type f -name '*.nuj')
-COMMON_ASSETS    := common/src/tmp/stdlib.nuj
+NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj')
+COMMON_ASSETS    := common/src/tmp/stdlib.nuj common/src/tmp/wwlib.nuj
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
 COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
@@ -27,6 +28,9 @@ endif
 
 common/src/tmp/stdlib.nuj: $(NUJ_STDLIB)
 	cat $(NUJ_STDLIB) > $@
+
+common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
+	cat $(NUJ_WWLIB) > $@
 
 %.o: %.s
 	$(AS) $(ASFLAGS) -g -c $< -o $@

@@ -169,7 +169,6 @@ static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 
 lVal *lResolveNativeSym(const lSymbol s){
 	if(strcmp(s.c,"s") == 0)              {return lValNativeFunc(wwlnfSEval);}
-
 	if(strcmp(s.c,"player-pos") == 0)     {return lValNativeFunc(wwlnfPlayerPos);}
 	if(strcmp(s.c,"player-vel") == 0)     {return lValNativeFunc(wwlnfPlayerVel);}
 	if(strcmp(s.c,"player-rot") == 0)     {return lValNativeFunc(wwlnfPlayerRot);}
@@ -192,10 +191,9 @@ void lispInit(){
 	clRoot = lClosureNew(NULL);
 	clRoot->flags |= lfNoGC;
 	lEval(clRoot,lWrap(lRead((char *)src_tmp_stdlib_nuj_data)));
+	lEval(clRoot,lWrap(lRead((char *)src_tmp_wwlib_nuj_data)));
 	lEval(clRoot,lWrap(lRead((char *)src_tmp_client_nuj_data)));
-
 	lClosureGC();
-
 }
 
 void lispFree(){

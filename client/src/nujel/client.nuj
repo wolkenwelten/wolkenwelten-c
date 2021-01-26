@@ -23,18 +23,7 @@
 (define night (λ () "Sets the Time to Midnight"
 	(s (night))))
 
-(define say (λ (...args) "Sends its arguments as a chat message"
-	(send-message (apply cat ...args))))
-
-(define log (λ (...args) "Prints its arguments into the LISP console"
-	(console-print (cat "  " (apply cat ...args)))))
-
-(define countdown (λ (i o) "Counts down on the console"
-	(cond ((< (int i) 0) #t)
-		(#t (yield (timeout (* (+ o 1) 1000)) (λ () (log (cond ((< i 4) (ansi-red i)) ((< i 6) (ansi-yellow i)) (#t i)))))
-		(countdown (-- i) (++ (int o)))))))
-
 (define countdown (λ (i) "Counts down on the console"
 	(cond ((< (int i) 0) #t)
-		(#t (log (cond ((< i 4) (ansi-red i)) ((< i 6) (ansi-yellow i)) (#t i)))
+		(#t (log  (cond ((zero? i) (ansi-green "GO!")) ((< i 4) (ansi-red i)) ((< i 6) (ansi-yellow i)) (#t i)))
 		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))
