@@ -272,6 +272,8 @@ lClosure *lClosureNew(lClosure *parent){
 
 lClosure *lClosureNewRoot(){
 	lClosure *c = lClosureAlloc();
+	if(c == NULL){return NULL;}
+	c->parent = NULL;
 	c->flags |= lfNoGC;
 	lEval(c,lWrap(lRead((const char *)src_tmp_stdlib_nuj_data)));
 	return c;
