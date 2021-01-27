@@ -1,10 +1,10 @@
-(define cddr (λ (p) "Returns the cdr of the cdr of pair p"
+(define cddr (λ (p) "Short for (cdr (cdr p))"
 	(cdr (cdr p))))
 
-(define cadr (λ (p) "Returns the car of the cdr of pair p"
+(define cadr (λ (p) "Short for (car (cdr p))"
 	(car (cdr p))))
 
-(define caddr (λ (p) "Returns the car of the cdr of the cdr of pair p"
+(define caddr (λ (p) "Short for (car (cdr (cdr p)))"
 	(car (cdr (cdr p)))))
 
 (define last-pair (λ (l) "Returns the last pair of list l"
@@ -75,9 +75,6 @@
 
 (define delete (λ (e l) "Returns a filtered list l with all elements equal to e omitted"
 	(filter (λ (a) (not (eq? a e))) l)))
-
-(define l-docstring (λ (a) "Returns the DocString to its argument, if available"
-	(if (string? (car (cl-text a))) (car (cl-text a)) "No DocString found")))
 
 (define describe (λ (a) "Returns the DocString to its argument, if available"
 	(cond ((not (string? a)) "Please quote the symbol in question, like (describe \"help\")")

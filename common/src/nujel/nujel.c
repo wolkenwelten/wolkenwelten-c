@@ -615,6 +615,7 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(strcmp(s.c,"vy") == 0)     {return lValNativeFunc(lnfVY);}
 	if(strcmp(s.c,"vz") == 0)     {return lValNativeFunc(lnfVZ);}
 
+	if(strcmp(s.c,"bool") == 0)   {return lValNativeFunc(lnfBool);}
 	if(strcmp(s.c,"int") == 0)    {return lValNativeFunc(lnfInt);}
 	if(strcmp(s.c,"float") == 0)  {return lValNativeFunc(lnfFloat);}
 	if(strcmp(s.c,"vec") == 0)    {return lValNativeFunc(lnfVec);}
