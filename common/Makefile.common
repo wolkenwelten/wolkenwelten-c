@@ -2,6 +2,7 @@ ARCH             := $(shell uname -m)
 MODS_SRCS        := $(shell find common/src/mods -type f -name '*.c')
 NUJ_STDLIB       := $(shell find common/src/nujel/stdlib/ -type f -name '*.nuj')
 NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj')
+NUJ_SAOLIB       := $(shell find common/nujel/lib/ -type f -name '*.nuj')
 COMMON_ASSETS    := common/src/tmp/stdlib.nuj common/src/tmp/wwlib.nuj
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
@@ -34,6 +35,14 @@ common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
 	mkdir -p common/src/tmp
 	cat $(NUJ_WWLIB) > $@
 
+common/nujel/saolib.nuj: $(NUJ_SAOLIB)
+	cat $(NUJ_SAOLIB) > $@
+common/nujel/assets.c: tools/assets common/nujel/saolib.nuj
+	mkdir -p common/src/tmp/
+	tools/assets common/nujel/assets common/nujel/saolib.nuj
+common/nujel/assets.h: common/nujel/assets.c
+	@true
+
 %.o: %.s
 	$(AS) $(ASFLAGS) -g -c $< -o $@
 
@@ -46,7 +55,7 @@ common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
 nujel: $(NUJEL_OBJS)
 	$(CC) -lm $(COPT) $(CWARN) $(CSTD) $(CFLAGS) $(RELEASE_OPTIMIZATION) -g $(NUJEL_OBJS) -o $@
 
-$(COMMON_DEPS): | common/src/tmp/cto.h common/src/tmp/assets.h
+$(COMMON_DEPS): | common/src/tmp/cto.h common/src/tmp/assets.h common/nujel/assets.h
 .deps: common/make.deps
 common/make.deps: $(COMMON_DEPS) $(NUJEL_DEPS)
 	cat $(COMMON_DEPS) $(NUJEL_DEPS) > common/make.deps

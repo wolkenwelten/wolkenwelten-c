@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "assets.h"
 #include "../src/common.h"
 #include "../src/tmp/assets.h"
 #include "../src/nujel/nujel.h"
@@ -122,9 +123,8 @@ int main(int argc, char *argv[]){
 	setvbuf(stdout, NULL, _IONBF, 0);
 	setvbuf(stderr, NULL, _IONBF, 0);
 	lInit();
-	lClosure *c = lClosureNew(NULL);
-	c->flags |= lfNoGC;
-	lEval(c,lWrap(lRead((char *)src_tmp_stdlib_nuj_data)));
+	lClosure *c = lClosureNewRoot();
+	lEval(c,lWrap(lRead((const char *)nujel_saolib_nuj_data)));
 	lClosureGC();
 
 	for(int i=1;i<argc;i++){

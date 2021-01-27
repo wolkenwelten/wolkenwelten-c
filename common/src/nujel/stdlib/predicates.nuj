@@ -1,0 +1,24 @@
+(define number? (λ (a) "Returns #t if a is a number"
+	(or (int? a) (float? a) (vec? a))))
+
+(define empty? (λ (a) "Returns #t if a is empty"
+	(nil? a)))
+
+(define last? (λ (a) "Returns #t if a is the last pair in a list"
+	(nil? (cdr a))))
+
+(define pos? (λ (a) "Returns #t if a is positive"
+	(>= a 0)))
+
+(define neg? (λ (a) "Returns #t if a is negative"
+	(< a 0)))
+
+(define there-exists? (λ (l pred) "Applies predicate to each element and return #t if it holds true for any element, otherwise #f"
+	(cond ((nil? l) #f)
+	      ((pred (car l)) #t)
+	      (#t (there-exists? (cdr l) pred)))))
+
+(define for-all? (λ (l pred) "Applies predicate to each element returns #t if it holds true for every element, otherwise #f"
+	(cond ((nil? l) #t)
+	      ((not (pred (car l))) #f)
+	      (#t (for-all? (cdr l) pred)))))
