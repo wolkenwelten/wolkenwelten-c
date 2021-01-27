@@ -335,6 +335,19 @@ static lVal *lnfClData(lClosure *c, lVal *v){
 	return t->vLambda->data;
 }
 
+static lVal *lnfClLambda(lClosure *c, lVal *v){
+	if(c == NULL){return NULL;}
+	if(v == NULL){return c->data != NULL ? c->data : lCons(NULL,NULL);}
+	lVal *t = lnfInt(c,lEval(c,v->vList.car));
+	if((t != NULL) && (t->type == ltInt) && (t->vInt > 0)){
+		return lnfClLambda(c->parent,lCons(lValInt(t->vInt - 1),NULL));
+	}
+	lVal *ret = lValAlloc();
+	ret->type = ltLambda;
+	ret->vLambda = c;
+	return ret;
+}
+
 static lVal *lnfLambda(lClosure *c, lVal *v){
 	lClosure *cl = lClosureNew(c);
 	if((cl == NULL) || (v == NULL) || (v->vList.car == NULL) || (v->vList.cdr == NULL)){return NULL;}
@@ -412,6 +425,8 @@ static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
 	}else{
 		tmpc = lClosureNew(lambda);
 	}
+	if(tmpc == NULL){return NULL;}
+	tmpc->text = lambda->text;
 	forEach(n,lambda->data){
 		if(vn == NULL){break;}
 		lVal *nn = n->vList.car;
@@ -594,6 +609,7 @@ lVal *lResolveNativeSymBuiltin(const lSymbol s){
 	if(strcmp(s.c,"cl") == 0)     {return lValNativeFunc(lnfCl);}
 	if(strcmp(s.c,"cl-text") == 0){return lValNativeFunc(lnfClText);}
 	if(strcmp(s.c,"cl-data") == 0){return lValNativeFunc(lnfClData);}
+	if(strcmp(s.c,"cl-lambda") == 0){return lValNativeFunc(lnfClLambda);}
 
 	if(strcmp(s.c,"if") == 0)     {return lValNativeFunc(lnfIf);}
 	if(strcmp(s.c,"cond") == 0)   {return lValNativeFunc(lnfCond);}
