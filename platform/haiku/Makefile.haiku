@@ -2,6 +2,8 @@ AS := as
 CC := gcc
 LD := gcc
 
+CFLAGS += -fPIC
+
 CLIENT_CINCLUDES := $(shell sdl2-config --cflags)
 CLIENT_LIBS := -lnetwork -lm $(shell sdl2-config --cflags) -lGL -lGLEW -lpthread -lSDL2 -lSDL2_mixer
 
