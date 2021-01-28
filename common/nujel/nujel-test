@@ -213,5 +213,13 @@ test_sexpr "(lambda (a b c) (+ a b c))" "(λ (a b c) (+ a b c))"
 test_sexpr "((λ (a) (+ a 4)) 2)" "6"
 test_sexpr "((λ (a) (cond ((zero? a) 0) (#t (display a) ((cl-lambda 1) (-- a))))) 10)" "109876543210"
 test_sexpr "(define test 1) (define test 2) test" "2"
+test_sexpr "(max)" "0"
+test_sexpr "(min)" "0"
+test_sexpr "(max 1)" "1"
+test_sexpr "(min 4)" "4"
+test_sexpr "(min 4 9)" "4"
+test_sexpr "(max 4 9)" "9"
+test_sexpr "(max 1 4.0 9 25)" "25"
+test_sexpr "(min 1 4.0 9 25)" "1"
 
 print_report

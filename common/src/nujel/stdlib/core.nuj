@@ -101,3 +101,21 @@
 (define arr-fill! (λ (a v i) "Fills array a with value v"
 	(cond ((>= i (arr-length a)) a)
 	      (#t (arr-set! a i v) (arr-fill! a v (++ i))))))
+
+(define min-iter (λ (a l) "Iter for (min)"
+	(cond ((nil? l) a)
+	      ((< a (car l)) (min-iter a (cdr l)))
+	      (#t (min-iter (car l) (cdr l))))))
+(define min (λ (...l) "Returns the minimum value of its arguments"
+	(cond ((nil? ...l) 0)
+	      ((nil? (cdr ...l)) (car ...l))
+	      (#t (min-iter (car ...l) (cdr ...l))))))
+
+(define max-iter (λ (a l) "Iter for (max)"
+	(cond ((nil? l) a)
+	      ((> a (car l)) (max-iter a (cdr l)))
+	      (#t (max-iter (car l) (cdr l))))))
+(define max (λ (...l) "Returns the maximum value of its arguments"
+	(cond ((nil? ...l) 0)
+	      ((nil? (cdr ...l)) (car ...l))
+	      (#t (max-iter (car ...l) (cdr ...l))))))
