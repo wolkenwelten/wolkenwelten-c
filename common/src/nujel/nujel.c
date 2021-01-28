@@ -275,15 +275,6 @@ lClosure *lClosureNew(lClosure *parent){
 	return c;
 }
 
-lClosure *lClosureNewRoot(){
-	lClosure *c = lClosureAlloc();
-	if(c == NULL){return NULL;}
-	c->parent = NULL;
-	c->flags |= lfNoGC;
-	lEval(c,lWrap(lRead((const char *)src_tmp_stdlib_nuj_data)));
-	return c;
-}
-
 void lDisplayVal(lVal *v){
 	char buf[8192];
 	lSDisplayVal(v,buf,&buf[sizeof(buf)]);
@@ -324,8 +315,13 @@ static lVal *lnfCl(lClosure *c, lVal *v){
 static lVal *lnfClText(lClosure *c, lVal *v){
 	if((v == NULL) || (v->type != ltPair)){return NULL;}
 	lVal *t = lEval(c,v->vList.car);
-	if((t == NULL) || (t->type != ltLambda)){return NULL;}
-	return t->vLambda->text;
+	if(t == NULL){return NULL;}
+	if(t->type == ltLambda){
+		return t->vLambda->text;
+	}else if(t->type == ltNativeFunc){
+		return lCons(t->vFunc.docString,NULL);
+	}
+	return NULL;
 }
 
 static lVal *lnfClData(lClosure *c, lVal *v){
@@ -452,21 +448,13 @@ static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
 	return ret;
 }
 
-lVal *lValNativeFunc(lVal *(*func)(lClosure *,lVal *)){
+lVal *lValNativeFunc(lVal *(*func)(lClosure *,lVal *), lVal *docString){
 	lVal *v = lValAlloc();
 	if(v == NULL){return NULL;}
 	v->type = ltNativeFunc;
-	v->vNativeFunc = func;
+	v->vFunc.fp = func;
+	v->vFunc.docString = docString;
 	return v;
-}
-
-lVal *lClosureAddNF(lClosure *c, const char *sym, lVal *(*func)(lClosure *,lVal *)){
-	lVal *nf = lValNativeFunc(func);
-	lVal *vsym = lValSym(sym);
-	if((vsym == NULL) || (vsym->type != ltSymbol)){return NULL;}
-	lVal *t = lDefineClosureSym(c,vsym->vSymbol);
-	*t = *nf;
-	return t;
 }
 
 lVal *lnfCond(lClosure *c, lVal *v){
@@ -538,7 +526,7 @@ lVal *lEval(lClosure *c, lVal *v){
 		lVal *ret = lEval(c,v->vList.car);
 		if(ret == NULL){return v;}
 		if(ret->type == ltNativeFunc){
-			return ret->vNativeFunc(c,v->vList.cdr);
+			return ret->vFunc.fp(c,v->vList.cdr);
 		}else if(ret->type == ltLambda){
 			return lLambda(c,v->vList.cdr,ret->vLambda);
 		}else if(ret->type == ltPair){
@@ -554,7 +542,7 @@ lVal *lnfApply(lClosure *c, lVal *v){
 	if(func->type == ltSymbol){func = lResolveSym(c,func->vSymbol);}
 	switch(func->type){
 	case ltNativeFunc:
-		return func->vNativeFunc(c,lEval(c,lCarOrV(v->vList.cdr)));
+		return func->vFunc.fp(c,lEval(c,lCarOrV(v->vList.cdr)));
 	case ltLambda: {
 		lVal *t = lCarOrV(v->vList.cdr);
 		if((t == NULL) || (t->type != ltPair)){t = lCons(t,NULL);}
@@ -564,102 +552,126 @@ lVal *lnfApply(lClosure *c, lVal *v){
 	}
 }
 
-lVal *lResolveNativeSymBuiltin(const lSymbol s){
-	if(s.c[1] == 0){
-		switch(s.c[0]){
-		case '+': return lValNativeFunc(lnfAdd);
-		case '-': return lValNativeFunc(lnfSub);
-		case '*': return lValNativeFunc(lnfMul);
-		case '/': return lValNativeFunc(lnfDiv);
-		case '%': return lValNativeFunc(lnfMod);
-		case '<': return lValNativeFunc(lnfLess);
-		case '=': return lValNativeFunc(lnfEqual);
-		case '>': return lValNativeFunc(lnfGreater);
-		}
+void lAddNativeFunc(lClosure *c, const char *sym, const char *doc, lVal *(*func)(lClosure *,lVal *)){
+	lSymbol S;
+	strncpy(S.c,sym,sizeof(S.c)-1);
+	S.c[sizeof(S.c)-1] = 0;
+
+	lVal *var = lDefineClosureSym(c,S);
+	if(var == NULL){
+		lPrintError("Error adding NFunc %s\n",sym);
+		return;
 	}
-	if((s.c[2] == 0) && (s.c[1] == '=')){
-		switch(s.c[0]){
-		case '<': return lValNativeFunc(lnfLessEqual);
-		case '>': return lValNativeFunc(lnfGreaterEqual);
-		}
-	}
+	var->vList.car = lValNativeFunc(func,lValString(doc));
+}
 
-	if(strcmp(s.c,"arr-length") == 0){return lValNativeFunc(lnfArrLength);}
-	if(strcmp(s.c,"arr-ref") == 0)   {return lValNativeFunc(lnfArrRef);}
-	if(strcmp(s.c,"arr-set!") == 0)  {return lValNativeFunc(lnfArrSet);}
-	if(strcmp(s.c,"arr-new") == 0)   {return lValNativeFunc(lnfArrNew);}
-	if(strcmp(s.c,"arr") == 0)       {return lValNativeFunc(lnfArr);}
+static void lAddCoreFuncs(lClosure *c){
+	lAddNativeFunc(c,"+","Addition",lnfAdd);
+	lAddNativeFunc(c,"add","Addition",lnfAdd);
 
-	if(strcmp(s.c,"and") == 0)    {return lValNativeFunc(lnfAnd);}
-	if(strcmp(s.c,"not") == 0)    {return lValNativeFunc(lnfNot);}
-	if(strcmp(s.c,"or") == 0)     {return lValNativeFunc(lnfOr);}
+	lAddNativeFunc(c,"-","Substraction",lnfSub);
+	lAddNativeFunc(c,"sub","Substraction",lnfSub);
 
-	if(strcmp(s.c,"car") == 0)    {return lValNativeFunc(lnfCar);}
-	if(strcmp(s.c,"cdr") == 0)    {return lValNativeFunc(lnfCdr);}
-	if(strcmp(s.c,"cons") == 0)   {return lValNativeFunc(lnfCons);}
+	lAddNativeFunc(c,"*","Multiplication",lnfMul);
+	lAddNativeFunc(c,"mul","Multiplication",lnfMul);
 
-	if(strcmp(s.c,"apply") == 0)  {return lValNativeFunc(lnfApply);}
-	if(strcmp(s.c,"eval") == 0)   {return lValNativeFunc(lEval);}
-	if(strcmp(s.c,"resolve") == 0){return lValNativeFunc(lResolve);}
-	if(strcmp(s.c,"mem") == 0)    {return lValNativeFunc(lnfMem);}
-	if(strcmp(s.c,"λ") == 0)      {return lValNativeFunc(lnfLambda);}
-	if(strcmp(s.c,"lambda") == 0) {return lValNativeFunc(lnfLambda);}
-	if(strcmp(s.c,"δ") == 0)      {return lValNativeFunc(lnfDynamic);}
-	if(strcmp(s.c,"dynamic") == 0){return lValNativeFunc(lnfDynamic);}
-	if(strcmp(s.c,"cl") == 0)     {return lValNativeFunc(lnfCl);}
-	if(strcmp(s.c,"cl-text") == 0){return lValNativeFunc(lnfClText);}
-	if(strcmp(s.c,"cl-data") == 0){return lValNativeFunc(lnfClData);}
-	if(strcmp(s.c,"cl-lambda") == 0){return lValNativeFunc(lnfClLambda);}
+	lAddNativeFunc(c,"/","Division",lnfDiv);
+	lAddNativeFunc(c,"div","Division",lnfDiv);
 
-	if(strcmp(s.c,"if") == 0)     {return lValNativeFunc(lnfIf);}
-	if(strcmp(s.c,"cond") == 0)   {return lValNativeFunc(lnfCond);}
+	lAddNativeFunc(c,"%","Modulo",lnfMod);
+	lAddNativeFunc(c,"mod","Modulo",lnfMod);
 
-	if(strcmp(s.c,"define") == 0) {return lValNativeFunc(lnfDef);}
-	if(strcmp(s.c,"let") == 0)    {return lValNativeFunc(lnfLet);}
-	if(strcmp(s.c,"begin") == 0)  {return lValNativeFunc(lnfBegin);}
-	if(strcmp(s.c,"quote") == 0)  {return lValNativeFunc(lnfQuote);}
-	if(strcmp(s.c,"set!") == 0)   {return lValNativeFunc(lnfSet);}
+	lAddNativeFunc(c,"<","Less Predicate",lnfLess);
+	lAddNativeFunc(c,"less?","Less Predicate",lnfLess);
 
-	if(strcmp(s.c,"add") == 0)    {return lValNativeFunc(lnfAdd);}
-	if(strcmp(s.c,"div") == 0)    {return lValNativeFunc(lnfDiv);}
-	if(strcmp(s.c,"sub") == 0)    {return lValNativeFunc(lnfSub);}
-	if(strcmp(s.c,"mul") == 0)    {return lValNativeFunc(lnfMul);}
-	if(strcmp(s.c,"mod") == 0)    {return lValNativeFunc(lnfMod);}
-	if(strcmp(s.c,"modulo") == 0) {return lValNativeFunc(lnfMod);}
-	if(strcmp(s.c,"abs") == 0)    {return lValNativeFunc(lnfAbs);}
-	if(strcmp(s.c,"vx") == 0)     {return lValNativeFunc(lnfVX);}
-	if(strcmp(s.c,"vy") == 0)     {return lValNativeFunc(lnfVY);}
-	if(strcmp(s.c,"vz") == 0)     {return lValNativeFunc(lnfVZ);}
+	lAddNativeFunc(c,"<=","Less or Equal Predicate",lnfLessEqual);
+	lAddNativeFunc(c,"less-equal?","Less or Equal Predicate",lnfLessEqual);
 
-	if(strcmp(s.c,"bool") == 0)   {return lValNativeFunc(lnfBool);}
-	if(strcmp(s.c,"int") == 0)    {return lValNativeFunc(lnfInt);}
-	if(strcmp(s.c,"float") == 0)  {return lValNativeFunc(lnfFloat);}
-	if(strcmp(s.c,"vec") == 0)    {return lValNativeFunc(lnfVec);}
+	lAddNativeFunc(c,"=","Equal Predicate",lnfEqual);
+	lAddNativeFunc(c,"eq?","Equal Predicate",lnfEqual);
+	lAddNativeFunc(c,"equal?","Equal Predicate",lnfEqual);
 
-	if(strcmp(s.c,"msecs") == 0)     {return lValNativeFunc(lnfMsecs);}
-	if(strcmp(s.c,"ansi-reset") == 0){return lValNativeFunc(lnfAnsiRS);}
-	if(strcmp(s.c,"ansi-fg") == 0)   {return lValNativeFunc(lnfAnsiFG);}
-	if(strcmp(s.c,"br") == 0)        {return lValNativeFunc(lnfBr);}
-	if(strcmp(s.c,"cat") == 0)       {return lValNativeFunc(lnfCat);}
-	if(strcmp(s.c,"str-len") == 0)   {return lValNativeFunc(lnfStrlen);}
-	if(strcmp(s.c,"substr") == 0)    {return lValNativeFunc(lnfSubstr);}
-	if(strcmp(s.c,"str->sym") == 0)  {return lValNativeFunc(lnfStrSym);}
-	if(strcmp(s.c,"sym->str") == 0)  {return lValNativeFunc(lnfSymStr);}
+	lAddNativeFunc(c,">=","Greater or Equal Predicate",lnfGreaterEqual);
+	lAddNativeFunc(c,"greater-equal?","Greater or Equal Predicate",lnfGreaterEqual);
 
-	if(strcmp(s.c,"int?") == 0)    {return lValNativeFunc(lnfIntPred);}
-	if(strcmp(s.c,"float?") == 0)  {return lValNativeFunc(lnfFloatPred);}
-	if(strcmp(s.c,"vec?") == 0)    {return lValNativeFunc(lnfVecPred);}
-	if(strcmp(s.c,"bool?") == 0)   {return lValNativeFunc(lnfBoolPred);}
-	if(strcmp(s.c,"boolean?") == 0){return lValNativeFunc(lnfBoolPred);}
-	if(strcmp(s.c,"nil?") == 0)    {return lValNativeFunc(lnfNilPred);}
-	if(strcmp(s.c,"null?") == 0)   {return lValNativeFunc(lnfNilPred);}
-	if(strcmp(s.c,"inf?") == 0)    {return lValNativeFunc(lnfInfPred);}
-	if(strcmp(s.c,"eq?") == 0)     {return lValNativeFunc(lnfEqual);}
-	if(strcmp(s.c,"pair?") == 0)   {return lValNativeFunc(lnfPairPred);}
-	if(strcmp(s.c,"string?") == 0) {return lValNativeFunc(lnfStringPred);}
-	if(strcmp(s.c,"zero?") == 0)   {return lValNativeFunc(lnfZero);}
+	lAddNativeFunc(c,">","Greater Predicate",lnfGreater);
+	lAddNativeFunc(c,"greater?","Greater Predicate",lnfGreater);
 
-	return NULL;
+	lAddNativeFunc(c,"arr-length","Returns an arrays length",lnfArrLength);
+	lAddNativeFunc(c,"arr-ref","Returns array value at position",lnfArrRef);
+	lAddNativeFunc(c,"arr-set!","Sets array valus at position",lnfArrSet);
+	lAddNativeFunc(c,"arr-new","Allocates new array of length n",lnfArrNew);
+	lAddNativeFunc(c,"arr","Creates a new array from its argument list",lnfArr);
+
+	lAddNativeFunc(c,"and","Boolean and",lnfAnd);
+	lAddNativeFunc(c,"not","Boolean not",lnfNot);
+	lAddNativeFunc(c,"or","Boolean or",lnfOr);
+
+	lAddNativeFunc(c,"car","Car",lnfCar);
+	lAddNativeFunc(c,"cdr","Cdr",lnfCdr);
+	lAddNativeFunc(c,"cons","Cons",lnfCons);
+
+	lAddNativeFunc(c,"apply","Apply",lnfApply);
+	lAddNativeFunc(c,"eval","Eval",lEval);
+	lAddNativeFunc(c,"resolve","Resolve",lResolve);
+	lAddNativeFunc(c,"mem","Returns lVals in use",lnfMem);
+	lAddNativeFunc(c,"λ","New Lambda",lnfLambda);
+	lAddNativeFunc(c,"lambda","New Lambda",lnfLambda);
+	lAddNativeFunc(c,"δ","New Dynamic scoped lambda",lnfDynamic);
+	lAddNativeFunc(c,"dynamic","New Dynamic scoped lambda",lnfDynamic);
+	lAddNativeFunc(c,"cl","Returns closure",lnfCl);
+	lAddNativeFunc(c,"cl-text","Returns closures text segment",lnfClText);
+	lAddNativeFunc(c,"cl-data","Returns closures data segment",lnfClData);
+	lAddNativeFunc(c,"cl-lambda","Returns closure as a lambda",lnfClLambda);
+
+	lAddNativeFunc(c,"if","(if pred? then else...)",lnfIf);
+	lAddNativeFunc(c,"cond","(cond (pred? then...)...)",lnfCond);
+
+	lAddNativeFunc(c,"define","Define a new symbol",lnfDef);
+	lAddNativeFunc(c,"let","Let",lnfLet);
+	lAddNativeFunc(c,"begin","Being",lnfBegin);
+	lAddNativeFunc(c,"quote","Quote",lnfQuote);
+	lAddNativeFunc(c,"set!","Set",lnfSet);
+
+	lAddNativeFunc(c,"abs","Absolute value",lnfAbs);
+	lAddNativeFunc(c,"vx","Vectors X part",lnfVX);
+	lAddNativeFunc(c,"vy","Vectors Y part",lnfVY);
+	lAddNativeFunc(c,"vz","Vectors Z part",lnfVZ);
+
+	lAddNativeFunc(c,"bool","Casts to bool",lnfBool);
+	lAddNativeFunc(c,"int","Casts to int",lnfInt);
+	lAddNativeFunc(c,"float","Casts to float",lnfFloat);
+	lAddNativeFunc(c,"vec","Casts to vec",lnfVec);
+
+	lAddNativeFunc(c,"msecs","Returns monotonic msecs",lnfMsecs);
+	lAddNativeFunc(c,"ansi-reset","Ansi reset code",lnfAnsiRS);
+	lAddNativeFunc(c,"ansi-fg","Ansi fg color",lnfAnsiFG);
+	lAddNativeFunc(c,"br","Line break",lnfBr);
+	lAddNativeFunc(c,"cat","conCATenate",lnfCat);
+	lAddNativeFunc(c,"str-len","String length",lnfStrlen);
+	lAddNativeFunc(c,"substr","Substring",lnfSubstr);
+	lAddNativeFunc(c,"str->sym","Substring",lnfStrSym);
+	lAddNativeFunc(c,"sym->str","Substring",lnfSymStr);
+
+	lAddNativeFunc(c,"int?","Integer predicate",lnfIntPred);
+	lAddNativeFunc(c,"float?","Integer predicate",lnfFloatPred);
+	lAddNativeFunc(c,"vec?","Integer predicate",lnfVecPred);
+	lAddNativeFunc(c,"bool?","Integer predicate",lnfBoolPred);
+	lAddNativeFunc(c,"nil?","Integer predicate",lnfNilPred);
+	lAddNativeFunc(c,"inf?","Integer predicate",lnfInfPred);
+	lAddNativeFunc(c,"pair?","Integer predicate",lnfPairPred);
+	lAddNativeFunc(c,"string?","Integer predicate",lnfStringPred);
+	lAddNativeFunc(c,"zero?","Integer predicate",lnfZero);
+}
+
+lClosure *lClosureNewRoot(){
+	lClosure *c = lClosureAlloc();
+	if(c == NULL){return NULL;}
+	c->parent = NULL;
+	c->flags |= lfNoGC;
+	lAddCoreFuncs(c);
+	lEval(c,lWrap(lRead((const char *)src_tmp_stdlib_nuj_data)));
+	return c;
 }
 
 static lVal *lGetSym(lClosure *c, const lSymbol s){
@@ -700,14 +712,9 @@ lVal *lDefineClosureSym(lClosure *c,const lSymbol s){
 	return t->vList.cdr;
 }
 
-lVal *lResolveClosureSym(lClosure *c, const lSymbol s){
+lVal *lResolveSym(lClosure *c, const lSymbol s){
 	lVal *v = lGetClosureSym(c,s);
 	return v == NULL ? NULL : v->vList.car;
-}
-
-lVal *lResolveSym(lClosure *c, const lSymbol s){
-	lVal *v = lResolveClosureSym(c,s);
-	return v != NULL ? v : lResolveNativeSym(s);
 }
 
 lVal *lApply(lClosure *c, lVal *v, lVal *(*func)(lClosure *,lVal *)){

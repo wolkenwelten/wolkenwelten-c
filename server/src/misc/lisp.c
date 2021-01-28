@@ -35,7 +35,7 @@ lClosure *clRoot;
 
 static uint getPID(lClosure *c){
 	lVal *sym = lValSym("pid");
-	lVal *pid = lResolveClosureSym(c, sym->vSymbol);
+	lVal *pid = lResolveSym(c, sym->vSymbol);
 	if(pid == NULL){return 123;}
 	return pid->vInt;
 }
@@ -507,41 +507,39 @@ static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 	return t;
 }
 
-lVal *lResolveNativeSym(const lSymbol s){
-	if(strcmp(s.c,"player-pos") == 0)        {return lValNativeFunc(wwlnfPlayerPos);}
-	if(strcmp(s.c,"no-aggro") == 0)          {return lValNativeFunc(wwlnfNoAggro);}
-	if(strcmp(s.c,"update-all") == 0)        {return lValNativeFunc(wwlnfUpdateAll);}
-	if(strcmp(s.c,"animal-count") == 0)      {return lValNativeFunc(wwlnfACount);}
-	if(strcmp(s.c,"animal-used") == 0)       {return lValNativeFunc(wwlnfAUCount);}
-	if(strcmp(s.c,"animal-real") == 0)       {return lValNativeFunc(wwlnfARCount);}
-	if(strcmp(s.c,"fire-count") == 0)        {return lValNativeFunc(wwlnfFCount);}
-	if(strcmp(s.c,"mining-count") == 0)      {return lValNativeFunc(wwlnfBMCount);}
-	if(strcmp(s.c,"item-drop-count") == 0)   {return lValNativeFunc(wwlnfIDCount);}
-	if(strcmp(s.c,"entity-count") == 0)      {return lValNativeFunc(wwlnfECount);}
-	if(strcmp(s.c,"chungus-count") == 0)     {return lValNativeFunc(wwlnfChungi);}
-	if(strcmp(s.c,"rain-count") == 0)        {return lValNativeFunc(wwlnfRCount);}
-	if(strcmp(s.c,"load-shed") == 0)         {return lValNativeFunc(wwlnfLShed);}
-	if(strcmp(s.c,"give") == 0)              {return lValNativeFunc(wwlnfGive);}
-	if(strcmp(s.c,"dmg") == 0)               {return lValNativeFunc(wwlnfDmg);}
-	if(strcmp(s.c,"die") == 0)               {return lValNativeFunc(wwlnfDie);}
-	if(strcmp(s.c,"animal-new") == 0)        {return lValNativeFunc(wwlnfNewAnim);}
-	if(strcmp(s.c,"animal-set") == 0)        {return lValNativeFunc(wwlnfSetAnim);}
-	if(strcmp(s.c,"cloud-threshold") == 0)   {return lValNativeFunc(wwlnfCDen);}
-	if(strcmp(s.c,"wind-velocity") == 0)     {return lValNativeFunc(wwlnfWVel);}
-	if(strcmp(s.c,"rain-set") == 0)          {return lValNativeFunc(wwlnfRain);}
-	if(strcmp(s.c,"setb") == 0)              {return lValNativeFunc(wwlnfSetB);}
-	if(strcmp(s.c,"getb") == 0)              {return lValNativeFunc(wwlnfGetB);}
-	if(strcmp(s.c,"box") == 0)               {return lValNativeFunc(wwlnfBox);}
-	if(strcmp(s.c,"sphere") == 0)            {return lValNativeFunc(wwlnfSphere);}
-	if(strcmp(s.c,"mbox") == 0)              {return lValNativeFunc(wwlnfMBox);}
-	if(strcmp(s.c,"msphere") == 0)           {return lValNativeFunc(wwlnfMSphere);}
-	if(strcmp(s.c,"time") == 0)              {return lValNativeFunc(wwlnfTime);}
-	if(strcmp(s.c,"tp") == 0)                {return lValNativeFunc(wwlnfTp);}
-	if(strcmp(s.c,"debug-equipment") == 0)   {return lValNativeFunc(wwlnfDbgItem);}
-	if(strcmp(s.c,"send-message") == 0)      {return lValNativeFunc(wwlnfSendMessage);}
-	if(strcmp(s.c,"console-print") == 0)     {return lValNativeFunc(wwlnfConsolePrint);}
-
-	return lResolveNativeSymCommon(s);
+void addServerNativeFuncs(lClosure *c){
+	lAddNativeFunc(c,"player-pos","Adds a server",wwlnfPlayerPos);
+	lAddNativeFunc(c,"no-aggro","Adds a server",wwlnfNoAggro);
+	lAddNativeFunc(c,"update-all","Adds a server",wwlnfUpdateAll);
+	lAddNativeFunc(c,"animal-count","Adds a server",wwlnfACount);
+	lAddNativeFunc(c,"animal-used","Adds a server",wwlnfAUCount);
+	lAddNativeFunc(c,"animal-real","Adds a server",wwlnfARCount);
+	lAddNativeFunc(c,"fire-count","Adds a server",wwlnfFCount);
+	lAddNativeFunc(c,"mining-count","Adds a server",wwlnfBMCount);
+	lAddNativeFunc(c,"item-drop-count","Adds a server",wwlnfIDCount);
+	lAddNativeFunc(c,"entity-count","Adds a server",wwlnfECount);
+	lAddNativeFunc(c,"chungus-count","Adds a server",wwlnfChungi);
+	lAddNativeFunc(c,"rain-count","Adds a server",wwlnfRCount);
+	lAddNativeFunc(c,"load-shed","Adds a server",wwlnfLShed);
+	lAddNativeFunc(c,"give","Adds a server",wwlnfGive);
+	lAddNativeFunc(c,"dmg","Adds a server",wwlnfDmg);
+	lAddNativeFunc(c,"die","Adds a server",wwlnfDie);
+	lAddNativeFunc(c,"animal-new","Adds a server",wwlnfNewAnim);
+	lAddNativeFunc(c,"animal-set","Adds a server",wwlnfSetAnim);
+	lAddNativeFunc(c,"cloud-threshold","Adds a server",wwlnfCDen);
+	lAddNativeFunc(c,"wind-velocity","Adds a server",wwlnfWVel);
+	lAddNativeFunc(c,"rain-set","Adds a server",wwlnfRain);
+	lAddNativeFunc(c,"setb","Adds a server",wwlnfSetB);
+	lAddNativeFunc(c,"getb","Adds a server",wwlnfGetB);
+	lAddNativeFunc(c,"box","Adds a server",wwlnfBox);
+	lAddNativeFunc(c,"sphere","Adds a server",wwlnfSphere);
+	lAddNativeFunc(c,"mbox","Adds a server",wwlnfMBox);
+	lAddNativeFunc(c,"msphere","Adds a server",wwlnfMSphere);
+	lAddNativeFunc(c,"time","Adds a server",wwlnfTime);
+	lAddNativeFunc(c,"tp","Adds a server",wwlnfTp);
+	lAddNativeFunc(c,"debug-equipment","Adds a server",wwlnfDbgItem);
+	lAddNativeFunc(c,"send-message","Adds a server",wwlnfSendMessage);
+	lAddNativeFunc(c,"console-print","Adds a server",wwlnfConsolePrint);
 }
 
 static void cmdLisp(int c,const char *str, u8 id){
@@ -563,6 +561,7 @@ void lispInit(){
 	lInit();
 
 	clRoot = lispCommonRoot();
+	addServerNativeFuncs(clRoot);
 	lEval(clRoot,lWrap(lRead((char *)src_tmp_server_nuj_data)));
 
 	lClosureGC();

@@ -13,9 +13,6 @@
 --- Nujel work ---
 + Write "compile" lambda that resolves all symbols for a given λ, which should make things a lot faster
 + Store symbols in a BTree
-+ No more strncmp to determine native funcs
-+ Docstrings for native funcs
-+ Describe should also describe the function name as well as its arguments
 + Arguments should all be single greek lowercase letters to easily distinguish them from normal test/code, also it looks kinda schway
 + Native Hashmaps
 + Native Pointers with an associated type ID, which the GC uses for allocing and freeing the native object (especially useful for GUI widgets)

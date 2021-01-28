@@ -107,14 +107,12 @@ void lPrintError(const char *format, ...){
 	va_end(ap);
 }
 
-lVal *lResolveNativeSym(const lSymbol s){
-	if(strcmp(s.c,"print") == 0)  {return lValNativeFunc(lnfPrint);}
-	if(strcmp(s.c,"display") == 0){return lValNativeFunc(lnfPrint);}
-	if(strcmp(s.c,"input") == 0)  {return lValNativeFunc(lnfInput);}
-	if(strcmp(s.c,"quit") == 0)   {return lValNativeFunc(lnfQuit);}
-	if(strcmp(s.c,"exit") == 0)   {return lValNativeFunc(lnfQuit);}
-
-	return lResolveNativeSymBuiltin(s);
+void addNativeFuncs(lClosure *c){
+	lAddNativeFunc(c,"print","Prints its arguments",lnfPrint);
+	lAddNativeFunc(c,"display","Prints its arguments",lnfPrint);
+	lAddNativeFunc(c,"input","Gets input",lnfInput);
+	lAddNativeFunc(c,"quit","Exits",lnfQuit);
+	lAddNativeFunc(c,"exit","Quits",lnfQuit);
 }
 
 int main(int argc, char *argv[]){
@@ -124,6 +122,7 @@ int main(int argc, char *argv[]){
 	setvbuf(stderr, NULL, _IONBF, 0);
 	lInit();
 	lClosure *c = lClosureNewRoot();
+	addNativeFuncs(c);
 	lEval(c,lWrap(lRead((const char *)nujel_saolib_nuj_data)));
 	lClosureGC();
 

@@ -8,7 +8,8 @@ typedef enum lType {
 typedef struct lVal     lVal;
 typedef struct lClosure lClosure;
 typedef struct lString  lString;
-typedef struct lArray   lArray;;
+typedef struct lArray   lArray;
+typedef struct lNFunc   lNFunc;
 
 typedef struct {
 	union {
@@ -28,6 +29,11 @@ struct lArray {
 	lArray *nextFree;
 };
 
+struct lNFunc {
+	lVal *(*fp)(lClosure *, lVal *);
+	lVal *docString;
+};
+
 struct lVal {
 	u8 flags;
 	lType type;
@@ -42,7 +48,7 @@ struct lVal {
 		lSymbol       vSymbol;
 		lClosure     *vLambda;
 		lArray       *vArr;
-		lVal       *(*vNativeFunc)(lClosure *, lVal *);
+		lNFunc        vFunc;
 	};
 };
 
@@ -93,9 +99,8 @@ void      lClosureGC        ();
 void      lDisplayVal       (lVal *v);
 void      lWriteVal         (lVal *v);
 
-lVal     *lValNativeFunc    (lVal *(*func)(lClosure *,lVal *));
-lVal     *lResolveNativeSymBuiltin(const lSymbol s);
-lVal     *lResolveNativeSym (const lSymbol s);
+void      lAddNativeFunc    (lClosure *c, const char *sym, const char *doc, lVal *(*func)(lClosure *,lVal *));
+lVal     *lValNativeFunc    (lVal *(*func)(lClosure *,lVal *), lVal *docString);
 lVal     *lGetClosureSym    (lClosure *c, const lSymbol s);
 lVal     *lResolveClosureSym(lClosure *c, const lSymbol s);
 lVal     *lDefineClosureSym (lClosure *c, const lSymbol s);

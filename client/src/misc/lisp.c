@@ -166,28 +166,27 @@ static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 	return t;
 }
 
-lVal *lResolveNativeSym(const lSymbol s){
-	if(strcmp(s.c,"s") == 0)              {return lValNativeFunc(wwlnfSEval);}
-	if(strcmp(s.c,"player-pos") == 0)     {return lValNativeFunc(wwlnfPlayerPos);}
-	if(strcmp(s.c,"player-vel") == 0)     {return lValNativeFunc(wwlnfPlayerVel);}
-	if(strcmp(s.c,"player-rot") == 0)     {return lValNativeFunc(wwlnfPlayerRot);}
-	if(strcmp(s.c,"player-name") == 0)    {return lValNativeFunc(wwlnfPlayerName);}
-	if(strcmp(s.c,"sound-volume") == 0)   {return lValNativeFunc(wwlnfSoundVolume);}
-	if(strcmp(s.c,"render-distance") == 0){return lValNativeFunc(wwlnfRenderDistance);}
-	if(strcmp(s.c,"server-add") == 0)     {return lValNativeFunc(wwlnfServerAdd);}
-	if(strcmp(s.c,"third-person") == 0)   {return lValNativeFunc(wwlnfThirdPerson);}
-	if(strcmp(s.c,"fullscreen") == 0)     {return lValNativeFunc(wwlnfFullscreen);}
-	if(strcmp(s.c,"save-options") == 0)   {return lValNativeFunc(wwlnfSaveOptions);}
-	if(strcmp(s.c,"debug-info") == 0)     {return lValNativeFunc(wwlnfDebugInfo);}
-	if(strcmp(s.c,"send-message") == 0)   {return lValNativeFunc(wwlnfSendMessage);}
-	if(strcmp(s.c,"console-print") == 0)  {return lValNativeFunc(wwlnfConsolePrint);}
-
-	return lResolveNativeSymCommon(s);
+void addClientNFuncs(lClosure *c){
+	lAddNativeFunc(c,"s","Serverside evaluation",wwlnfSEval);
+	lAddNativeFunc(c,"player-pos","Returns players position",wwlnfPlayerPos);
+	lAddNativeFunc(c,"player-rot","Returns players rotation",wwlnfPlayerVel);
+	lAddNativeFunc(c,"player-vel","Returns players velocity",wwlnfPlayerRot);
+	lAddNativeFunc(c,"player-name","Returns/Sets players name",wwlnfPlayerName);
+	lAddNativeFunc(c,"sound-volume","Sets sound volume",wwlnfSoundVolume);
+	lAddNativeFunc(c,"render-distance","Sets sound volume",wwlnfRenderDistance);
+	lAddNativeFunc(c,"server-add","Adds a server",wwlnfServerAdd);
+	lAddNativeFunc(c,"third-person","Adds a server",wwlnfThirdPerson);
+	lAddNativeFunc(c,"fullscreen","Adds a server",wwlnfFullscreen);
+	lAddNativeFunc(c,"save-options","Adds a server",wwlnfSaveOptions);
+	lAddNativeFunc(c,"debug-info","Adds a server",wwlnfDebugInfo);
+	lAddNativeFunc(c,"send-message","Adds a server",wwlnfSendMessage);
+	lAddNativeFunc(c,"console-print","Adds a server",wwlnfConsolePrint);
 }
 
 void lispInit(){
 	lInit();
 	clRoot = lispCommonRoot();
+	addClientNFuncs(clRoot);
 	lEval(clRoot,lWrap(lRead((const char *)src_tmp_client_nuj_data)));
 	lClosureGC();
 }

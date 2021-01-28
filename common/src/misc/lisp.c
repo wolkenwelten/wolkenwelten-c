@@ -50,7 +50,7 @@ lVal *wwlnfNProfReset(lClosure *c, lVal *v){
 	return lValBool(true);;
 }
 
-lVal *wwlnfNAsmSwitch(lClosure *c, lVal *v){
+lVal *wwlnfAsmSwitch(lClosure *c, lVal *v){
 	lVal *t = lEval(c,v);
 	if(t != NULL){
 		t = lnfInt(c,v);
@@ -59,19 +59,14 @@ lVal *wwlnfNAsmSwitch(lClosure *c, lVal *v){
 	return lValInt(asmRoutineSupport);
 }
 
-lVal *lResolveNativeSymCommon(const lSymbol s){
-	if(strcmp(s.c,"mst") == 0)            {return lValNativeFunc(wwlnfMsPerTick);}
-	if(strcmp(s.c,"prof") == 0)           {return lValNativeFunc(wwlnfProf);}
-	if(strcmp(s.c,"prof-reset") == 0)     {return lValNativeFunc(wwlnfProfReset);}
-	if(strcmp(s.c,"nprof") == 0)          {return lValNativeFunc(wwlnfNProf);}
-	if(strcmp(s.c,"nprof-reset") == 0)    {return lValNativeFunc(wwlnfNProfReset);}
-	if(strcmp(s.c,"asm-switch") == 0)     {return lValNativeFunc(wwlnfNAsmSwitch);}
-
-	return lResolveNativeSymBuiltin(s);
-}
-
 lClosure *lispCommonRoot(){
 	lClosure *c = lClosureNewRoot();
 	lEval(c,lWrap(lRead((const char *)src_tmp_wwlib_nuj_data)));
+	lAddNativeFunc(c,"mst","Adds a server",wwlnfMsPerTick);
+	lAddNativeFunc(c,"prof","Adds a server",wwlnfProf);
+	lAddNativeFunc(c,"prof-reset","Adds a server",wwlnfProfReset);
+	lAddNativeFunc(c,"nprof","Adds a server",wwlnfNProf);
+	lAddNativeFunc(c,"nprof-reset","Adds a server",wwlnfNProfReset);
+	lAddNativeFunc(c,"asm-switch","Adds a server",wwlnfAsmSwitch);
 	return c;
 }

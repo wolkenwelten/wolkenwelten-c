@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 static int lValCompare(lClosure *c, lVal *v){
-	if((v->vList.car == NULL) || (v->vList.cdr == NULL)){return 2;}
+	if((v == NULL) || (v->vList.car == NULL) || (v->vList.cdr == NULL)){return 2;}
 	lVal *a = lEval(c,v->vList.car);
 	v = v->vList.cdr;
 	if(v->vList.car == NULL){return 2;}
