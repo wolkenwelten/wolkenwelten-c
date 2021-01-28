@@ -9,7 +9,7 @@
 (define print (λ (...a) "Prints to everyones chat"
 	(say (apply cat ...a))))
 
-(define heal     (δ (α) "Heals oneself by α points"
+(define heal     (δ (a) "Heals oneself by a points"
 	(- (dmg (cond (a (- a)) (#t -20))))))
 
 (define morning (λ () "Sets the Time to 8:00 AM"
@@ -33,22 +33,24 @@
 (define player-z (δ () "Returns the current players Z Position"
 	(vz (player-pos))))
 
-(define vx+      (λ (φ α) "Returns the sum of vector φ and (vec α 0 0)"
-	(+ v (vec α 0 0))))
+(define vx+      (λ (v a) "Returns the sum of vector v and (vec a 0 0)"
+	(+ v (vec a 0 0))))
 
-(define vy+      (λ (φ α) "Returns the sum of vector φ and (vec 0 α 0)"
-	(+ v (vec 0 α 0))))
+(define vy+      (λ (v a) "Returns the sum of vector v and (vec 0 a 0)"
+	(+ v (vec 0 a 0))))
 
-(define vz+      (λ (φ α) "Returns the sum of vector φ and (vec 0 0 α)"
-	(+ v (vec 0 0 α))))
+(define vz+      (λ (v a) "Returns the sum of vector v and (vec 0 0 a)"
+	(+ v (vec 0 0 a))))
 
 (define rain     (λ () "Make it Rain!"
 	(cloud-density 0.9)))
 
-(define cloud-density (λ (α) "Sets the new Goal Density to α which should be a float in the range 0.0 - 1.0."
-	(- 1.0 (/ (cloud-threshold (* (- 1.0 α) 256.0)) 256.0))))
+(define cloud-density (λ (a) "Sets the new Goal Density to a which should be a float in the range 0.0 - 1.0."
+	(- 1.0 (/ (cloud-threshold (* (- 1.0 a) 256.0)) 256.0))))
 
 (define countdown (λ (i) "Counts down on the console"
 	(cond ((< (int i) 0) #t)
-		(#t (say  (cond ((zero? i) (cat (ansi-green "GO!") (ansi-yellow "!") (ansi-red "!"))) ((< i 4) (ansi-red i)) ((< i 6) (ansi-yellow i)) (#t i)))
+		(#t (say  (cond ((zero? i) (cat (ansi-green "GO!") (ansi-yellow "!") (ansi-red "!")))
+				((< i 4) (ansi-red i))
+				((< i 6) (ansi-yellow i)) (#t i)))
 		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))

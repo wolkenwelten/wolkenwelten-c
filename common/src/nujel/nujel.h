@@ -31,7 +31,7 @@ struct lArray {
 
 struct lNFunc {
 	lVal *(*fp)(lClosure *, lVal *);
-	lVal *docString;
+	lVal *doc;;
 };
 
 struct lVal {
@@ -100,8 +100,8 @@ void      lDisplayVal       (lVal *v);
 void      lWriteVal         (lVal *v);
 
 void      lDefineVal        (lClosure *c, const char *sym, lVal *val);
-void      lAddNativeFunc    (lClosure *c, const char *sym, const char *doc, lVal *(*func)(lClosure *,lVal *));
-lVal     *lValNativeFunc    (lVal *(*func)(lClosure *,lVal *), lVal *docString);
+void      lAddNativeFunc    (lClosure *c, const char *sym, const char *args, const char *doc, lVal *(*func)(lClosure *,lVal *));
+lVal     *lValNativeFunc    (lVal *(*func)(lClosure *,lVal *), lVal *args, lVal *docString);
 lVal     *lGetClosureSym    (lClosure *c, const lSymbol s);
 lVal     *lResolveClosureSym(lClosure *c, const lSymbol s);
 lVal     *lDefineClosureSym (lClosure *c, const lSymbol s);

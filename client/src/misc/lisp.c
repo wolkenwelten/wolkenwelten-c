@@ -167,20 +167,20 @@ static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 }
 
 void addClientNFuncs(lClosure *c){
-	lAddNativeFunc(c,"s","Serverside evaluation",wwlnfSEval);
-	lAddNativeFunc(c,"player-pos","Returns players position",wwlnfPlayerPos);
-	lAddNativeFunc(c,"player-rot","Returns players rotation",wwlnfPlayerVel);
-	lAddNativeFunc(c,"player-vel","Returns players velocity",wwlnfPlayerRot);
-	lAddNativeFunc(c,"player-name","Returns/Sets players name",wwlnfPlayerName);
-	lAddNativeFunc(c,"sound-volume","Sets sound volume",wwlnfSoundVolume);
-	lAddNativeFunc(c,"render-distance","Sets sound volume",wwlnfRenderDistance);
-	lAddNativeFunc(c,"server-add","Adds a server",wwlnfServerAdd);
-	lAddNativeFunc(c,"third-person","Adds a server",wwlnfThirdPerson);
-	lAddNativeFunc(c,"fullscreen","Adds a server",wwlnfFullscreen);
-	lAddNativeFunc(c,"save-options","Adds a server",wwlnfSaveOptions);
-	lAddNativeFunc(c,"debug-info","Adds a server",wwlnfDebugInfo);
-	lAddNativeFunc(c,"send-message","Adds a server",wwlnfSendMessage);
-	lAddNativeFunc(c,"console-print","Adds a server",wwlnfConsolePrint);
+	lAddNativeFunc(c,"s",            "(...body)","Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
+	lAddNativeFunc(c,"player-pos",   "()",       "Returns players position",                                       wwlnfPlayerPos);
+	lAddNativeFunc(c,"player-rot",   "()",       "Returns players rotation",                                       wwlnfPlayerVel);
+	lAddNativeFunc(c,"player-vel",   "()",       "Returns players velocity",                                       wwlnfPlayerRot);
+	lAddNativeFunc(c,"player-name!", "(s)",      "Sets players name to s",                                         wwlnfPlayerName);
+	lAddNativeFunc(c,"sound-vol!",   "(f)",      "Sets sound volume to float f",                                   wwlnfSoundVolume);
+	lAddNativeFunc(c,"view-dist!",   "(f)",      "Sets render distance to f blocks",                               wwlnfRenderDistance);
+	lAddNativeFunc(c,"server-add!",  "(name ip)","Adds name ip to server list",                                    wwlnfServerAdd);
+	lAddNativeFunc(c,"third-person!","(b)",      "Sets third person view to b",                                    wwlnfThirdPerson);
+	lAddNativeFunc(c,"fullscreen!",  "(b)",      "Sets fullscreen to b",                                           wwlnfFullscreen);
+	lAddNativeFunc(c,"save-options", "()",       "Save options to disk",                                           wwlnfSaveOptions);
+	lAddNativeFunc(c,"debug-info!",  "(b)",      "Sets debug info view to b",                                      wwlnfDebugInfo);
+	lAddNativeFunc(c,"send-message", "(s)",      "Sends string s as a chat message",                               wwlnfSendMessage);
+	lAddNativeFunc(c,"console-print","(s)",      "Prints string s to the REPL",                                    wwlnfConsolePrint);
 }
 
 void lispInit(){

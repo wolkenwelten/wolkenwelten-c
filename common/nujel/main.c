@@ -108,11 +108,11 @@ void lPrintError(const char *format, ...){
 }
 
 void addNativeFuncs(lClosure *c){
-	lAddNativeFunc(c,"print","Prints its arguments",lnfPrint);
-	lAddNativeFunc(c,"display","Prints its arguments",lnfPrint);
-	lAddNativeFunc(c,"input","Gets input",lnfInput);
-	lAddNativeFunc(c,"quit","Exits",lnfQuit);
-	lAddNativeFunc(c,"exit","Quits",lnfQuit);
+	lAddNativeFunc(c,"print",  "(...args)","Displays ...args",                            lnfPrint);
+	lAddNativeFunc(c,"display","(...args)","Prints ...args",                              lnfPrint);
+	lAddNativeFunc(c,"input",  "()",       "Reads in a line of user input and returns it",lnfInput);
+	lAddNativeFunc(c,"quit",   "(a)",      "Exits with code a",                           lnfQuit);
+	lAddNativeFunc(c,"exit",   "(a)",      "Quits with code a",                           lnfQuit);
 }
 
 int main(int argc, char *argv[]){

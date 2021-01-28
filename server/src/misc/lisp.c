@@ -53,26 +53,9 @@ void lPrintError(const char *format, ...){
 	va_end(ap);
 }
 
-static lVal *wwlnfUpdateAll(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	worldSetAllUpdated();
-	return NULL;
-}
 static lVal *wwlnfACount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(animalCount);
-}
-static lVal *wwlnfAUCount(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	return lValInt(animalUsedCount);
-}
-static lVal *wwlnfARCount(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	uint rcount = 0;
-	for(uint i=0;i<countof(animalList);i++){
-		if(animalList[i].type){rcount++;}
-	}
-	return lValInt(rcount);
 }
 static lVal *wwlnfFCount(lClosure *c, lVal *v){
 	(void)c;(void)v;
@@ -131,6 +114,14 @@ static lVal *wwlnfGetB(lClosure *c, lVal *v){
 	t = lnfVec(c,v);
 	if(t == NULL){return lValInt(0);}
 	return lValInt(worldGetB(t->vVec.x,t->vVec.y,t->vVec.z));
+}
+
+static lVal *wwlnfTryB(lClosure *c, lVal *v){
+	lVal *t = lEval(c,v->vList.car);
+	if(t == NULL){return lValInt(0);}
+	t = lnfVec(c,v);
+	if(t == NULL){return lValInt(0);}
+	return lValInt(worldTryB(t->vVec.x,t->vVec.y,t->vVec.z));
 }
 
 static lVal *wwlnfBox(lClosure *c, lVal *v){
@@ -362,20 +353,6 @@ static lVal *wwlnfTp(lClosure *c, lVal *v){
 	return lValBool(true);
 }
 
-static lVal *wwlnfNoAggro(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v->vList.car);
-	if(t != NULL){
-		bool na = true;
-		switch(t->type){
-		default: break;
-		case ltInt:  na = t->vInt != 0; break;
-		case ltBool: na = t->vBool;     break;
-		}
-		animalNoAggro = na;
-	}
-	return lValBool(animalNoAggro);
-}
-
 static lVal *wwlnfCDen(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lEval(c,v->vList.car);
@@ -508,38 +485,35 @@ static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 }
 
 void addServerNativeFuncs(lClosure *c){
-	lAddNativeFunc(c,"player-pos","Adds a server",wwlnfPlayerPos);
-	lAddNativeFunc(c,"no-aggro","Adds a server",wwlnfNoAggro);
-	lAddNativeFunc(c,"update-all","Adds a server",wwlnfUpdateAll);
-	lAddNativeFunc(c,"animal-count","Adds a server",wwlnfACount);
-	lAddNativeFunc(c,"animal-used","Adds a server",wwlnfAUCount);
-	lAddNativeFunc(c,"animal-real","Adds a server",wwlnfARCount);
-	lAddNativeFunc(c,"fire-count","Adds a server",wwlnfFCount);
-	lAddNativeFunc(c,"mining-count","Adds a server",wwlnfBMCount);
-	lAddNativeFunc(c,"item-drop-count","Adds a server",wwlnfIDCount);
-	lAddNativeFunc(c,"entity-count","Adds a server",wwlnfECount);
-	lAddNativeFunc(c,"chungus-count","Adds a server",wwlnfChungi);
-	lAddNativeFunc(c,"rain-count","Adds a server",wwlnfRCount);
-	lAddNativeFunc(c,"load-shed","Adds a server",wwlnfLShed);
-	lAddNativeFunc(c,"give","Adds a server",wwlnfGive);
-	lAddNativeFunc(c,"dmg","Adds a server",wwlnfDmg);
-	lAddNativeFunc(c,"die","Adds a server",wwlnfDie);
-	lAddNativeFunc(c,"animal-new","Adds a server",wwlnfNewAnim);
-	lAddNativeFunc(c,"animal-set","Adds a server",wwlnfSetAnim);
-	lAddNativeFunc(c,"cloud-threshold","Adds a server",wwlnfCDen);
-	lAddNativeFunc(c,"wind-velocity","Adds a server",wwlnfWVel);
-	lAddNativeFunc(c,"rain-set","Adds a server",wwlnfRain);
-	lAddNativeFunc(c,"setb","Adds a server",wwlnfSetB);
-	lAddNativeFunc(c,"getb","Adds a server",wwlnfGetB);
-	lAddNativeFunc(c,"box","Adds a server",wwlnfBox);
-	lAddNativeFunc(c,"sphere","Adds a server",wwlnfSphere);
-	lAddNativeFunc(c,"mbox","Adds a server",wwlnfMBox);
-	lAddNativeFunc(c,"msphere","Adds a server",wwlnfMSphere);
-	lAddNativeFunc(c,"time","Adds a server",wwlnfTime);
-	lAddNativeFunc(c,"tp","Adds a server",wwlnfTp);
-	lAddNativeFunc(c,"debug-equipment","Adds a server",wwlnfDbgItem);
-	lAddNativeFunc(c,"send-message","Adds a server",wwlnfSendMessage);
-	lAddNativeFunc(c,"console-print","Adds a server",wwlnfConsolePrint);
+	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
+	lAddNativeFunc(c,"animal-count",   "()",                                           "Returns animal count",                                       wwlnfACount);
+	lAddNativeFunc(c,"fire-count",     "()",                                           "Returns fire count",                                         wwlnfFCount);
+	lAddNativeFunc(c,"mining-count",   "()",                                           "Returns block mining count",                                 wwlnfBMCount);
+	lAddNativeFunc(c,"item-drop-count","()",                                           "Returns item drop count",                                    wwlnfIDCount);
+	lAddNativeFunc(c,"entity-count",   "()",                                           "Returns entity count",                                       wwlnfECount);
+	lAddNativeFunc(c,"chungus-count",  "()",                                           "Returns chungus count",                                      wwlnfChungi);
+	lAddNativeFunc(c,"rain-count",     "()",                                           "Returns amount of rain drops",                               wwlnfRCount);
+	lAddNativeFunc(c,"load-shed!",     "()",                                           "Load shedding, mostly unloading chungi",                     wwlnfLShed);
+	lAddNativeFunc(c,"give!",          "(id &amount &player)",                         "Gives &player=pid &amount=1 of item id",                     wwlnfGive);
+	lAddNativeFunc(c,"dmg!",           "(&amount &player)",                            "Damages &player=pid by &amount=4 points",                    wwlnfDmg);
+	lAddNativeFunc(c,"die!",           "(&player)",                                    "Kills &player=pid immediatly",                               wwlnfDie);
+	lAddNativeFunc(c,"animal-new",     "(pos &type &amount)",                          "Creates &amount=1 new animals of &type=1 at pos",            wwlnfNewAnim);
+	lAddNativeFunc(c,"animal-set",     "(i &hunger &sleepy &pregnancy &state &health)","Sets the fields for animal i",                               wwlnfSetAnim);
+	lAddNativeFunc(c,"cloud-thresh!",  "(a)",                                          "Sets cloud threshold to a",                                  wwlnfCDen);
+	lAddNativeFunc(c,"wind-velocity",  "(v)",                                          "Sets wind velocity to vector v",                             wwlnfWVel);
+	lAddNativeFunc(c,"rain-set",       "(a)",                                          "Sets rain rate to a",                                        wwlnfRain);
+	lAddNativeFunc(c,"setb!",          "(pos b)",                                      "Sets block at pos to b",                                     wwlnfSetB);
+	lAddNativeFunc(c,"tryb",           "(pos)",                                        "Tries and gets block type at pos",                           wwlnfTryB);
+	lAddNativeFunc(c,"getb!",          "(pos)",                                        "Gets block type at pos, might trigger worldgen",             wwlnfGetB);
+	lAddNativeFunc(c,"box",            "(pos size &b)",                                "Sets every block in the box at pos with size to &b=1",       wwlnfBox);
+	lAddNativeFunc(c,"sphere",         "(pos r &b)",                                   "Sets every block in the sphere at pos with radius r to &b=1",wwlnfSphere);
+	lAddNativeFunc(c,"mbox",           "(pos size)",                                   "Mines every block in the box at pos with size",              wwlnfMBox);
+	lAddNativeFunc(c,"msphere",        "(pos r)",                                      "Mines every block in the sphere at pos with radius r",       wwlnfMSphere);
+	lAddNativeFunc(c,"time",           "(s)",                                          "Sets the time to the time string s",                         wwlnfTime);
+	lAddNativeFunc(c,"tp",             "(pos)",                                        "Teleports to pos",                                           wwlnfTp);
+	lAddNativeFunc(c,"debug-equipment","()",                                           "Gives the invoking player some nice gear",                   wwlnfDbgItem);
+	lAddNativeFunc(c,"send-message",   "(s)",                                          "Send a chat message to everyone",                            wwlnfSendMessage);
+	lAddNativeFunc(c,"console-print",  "(s)",                                          "Prints something to stdout",                                 wwlnfConsolePrint);
 }
 
 static void cmdLisp(int c,const char *str, u8 id){

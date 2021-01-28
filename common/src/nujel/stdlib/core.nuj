@@ -95,8 +95,8 @@
 (define list (λ (...l) "Returns its arguments as a list"
 	...l))
 
-(define when (δ (c &...expr) "Evaluates l and returns the last result if c is #t"
-	(cond (c (eval (cons 'begin &...expr))) (#t #f))))
+(define when (δ (c @...expr) "Evaluates l and returns the last result if c is #t"
+	(cond (c (eval (cons 'begin @...expr))) (#t #f))))
 
 (define arr-fill! (λ (a v i) "Fills array a with value v"
 	(cond ((>= i (arr-length a)) a)

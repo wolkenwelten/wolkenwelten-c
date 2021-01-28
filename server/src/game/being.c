@@ -34,7 +34,7 @@ void beingSync(u8 c, being b){
 	}
 }
 
-void beingListSync(u8 c, beingList *bl){
+void beingListSync(u8 c, const beingList *bl){
 	for(beingListEntry *ble = bl->first; ble != NULL; ble = ble->next){
 		for(uint i=0; i<countof(ble->v); i++){
 			if(ble->v[i] == 0){break;}

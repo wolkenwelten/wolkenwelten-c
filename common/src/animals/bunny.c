@@ -149,8 +149,6 @@ static void animalSFlee(animal *e,int stateChange[16]){
 }
 
 static void animalFightOrFlight(animal *e,int stateChange[16]){
-	if(animalNoAggro){return;}
-
 	if(e->state == ANIMAL_S_FIGHT){
 		if(e->target == 0){e->target = animalFindFOFTarget(e);}
 		if(e->target != 0){

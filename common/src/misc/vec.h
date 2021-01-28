@@ -74,6 +74,9 @@ static inline vec vecAbs(const vec a){
 static inline vec vecFloor(const vec a){
 	return (vec){{{__builtin_floorf(a.x),__builtin_floorf(a.y),__builtin_floorf(a.z)}}};
 }
+static inline vec vecPow(const vec a, const vec b){
+	return (vec){{{__builtin_powf(a.x,b.x),__builtin_powf(a.y,b.y),__builtin_powf(a.z,b.z)}}};
+}
 static inline float vecDot (const vec a, const vec b){
 	return (a.x*b.x)+(a.y*b.y)+(a.z*b.z);
 }

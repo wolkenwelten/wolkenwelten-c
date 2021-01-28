@@ -47,7 +47,7 @@ lVal *wwlnfNProfReset(lClosure *c, lVal *v){
 	(void)v;
 
 	nprofReset();
-	return lValBool(true);;
+	return lValBool(true);
 }
 
 lVal *wwlnfAsmSwitch(lClosure *c, lVal *v){
@@ -62,11 +62,11 @@ lVal *wwlnfAsmSwitch(lClosure *c, lVal *v){
 lClosure *lispCommonRoot(){
 	lClosure *c = lClosureNewRoot();
 	lEval(c,lWrap(lRead((const char *)src_tmp_wwlib_nuj_data)));
-	lAddNativeFunc(c,"mst","Adds a server",wwlnfMsPerTick);
-	lAddNativeFunc(c,"prof","Adds a server",wwlnfProf);
-	lAddNativeFunc(c,"prof-reset","Adds a server",wwlnfProfReset);
-	lAddNativeFunc(c,"nprof","Adds a server",wwlnfNProf);
-	lAddNativeFunc(c,"nprof-reset","Adds a server",wwlnfNProfReset);
-	lAddNativeFunc(c,"asm-switch","Adds a server",wwlnfAsmSwitch);
+	lAddNativeFunc(c,"mst!",        "(a)","Sets ms per tick to s",       wwlnfMsPerTick);
+	lAddNativeFunc(c,"prof",        "()", "Returns profiler info",       wwlnfProf);
+	lAddNativeFunc(c,"prof-reset!", "()", "Resets performance counters", wwlnfProfReset);
+	lAddNativeFunc(c,"nprof",       "()", "Return network profiler info",wwlnfNProf);
+	lAddNativeFunc(c,"nprof-reset!","()", "Resets network counters",     wwlnfNProfReset);
+	lAddNativeFunc(c,"asm-switch!", "(a)","Switches asm/simd routines",  wwlnfAsmSwitch);
 	return c;
 }

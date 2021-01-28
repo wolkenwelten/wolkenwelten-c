@@ -178,6 +178,26 @@ lVal *lnfRound(lClosure *c, lVal *v){
 	}
 }
 
+lVal *lnfPow(lClosure *c, lVal *v){
+	if((v == NULL) || (v->type != ltPair) || (v->vList.cdr == NULL)){return lValInt(0);}
+	v = lEvalCastNumeric(c,v);
+	if((v == NULL) || (v->type != ltPair) || (v->vList.cdr == NULL)){return lValInt(0);}
+	lVal *t = lCarOrV(v);
+	if(t == NULL){return lValInt(0);}
+	lVal *u = lCarOrV(v->vList.cdr);
+	if(u == NULL){return lValInt(0);}
+	switch(t->type){
+	default:
+		return lValInt(0);
+	case ltFloat:
+		return lValFloat(powf(t->vFloat,u->vFloat));
+	case ltInt:
+		return lValFloat(powf(t->vInt,u->vInt));
+	case ltVec:
+		return lValVec(vecPow(t->vVec,u->vVec));
+	}
+}
+
 lVal *lnfVX(lClosure *c, lVal *v){
 	lVal *t = lCarOrV(lEvalCastSpecific(c,v,ltVec));
 	if(t == NULL){return lValFloat(0);}

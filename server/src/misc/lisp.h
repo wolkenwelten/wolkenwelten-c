@@ -2,8 +2,8 @@
 #include "../../../common/src/common.h"
 #include "../../../common/src/nujel/nujel.h"
 
-void lispInit     ();
-int  parseCommand (uint c, const char *cmd);
-void lispRecvSExpr(uint c, const packet *p);
-void lispEvents   ();
+void      lispInit         ();
+int       parseCommand     (uint c, const char *cmd);
+void      lispRecvSExpr    (uint c, const packet *p);
 lClosure *lispClientClosure(uint c);
+void      lispEvents       ();

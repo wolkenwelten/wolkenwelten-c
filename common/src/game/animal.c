@@ -23,7 +23,6 @@ animal  animalList[ANIMAL_MAX];
 uint    animalCount     = 0;
 uint    animalUsedCount = 0;
 uint    animalFirstFree = 0xFFFFFFFF;
-bool    animalNoAggro   = false;
 
 void animalReset(animal *e){
 	memset(e,0,sizeof(animal));

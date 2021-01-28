@@ -324,7 +324,7 @@ static lVal *lnfClText(lClosure *c, lVal *v){
 	if(t->type == ltLambda){
 		return t->vLambda->text;
 	}else if(t->type == ltNativeFunc){
-		return lCons(t->vFunc.docString,NULL);
+		return lCons(t->vFunc.doc->vList.cdr,NULL);
 	}
 	return NULL;
 }
@@ -332,8 +332,12 @@ static lVal *lnfClText(lClosure *c, lVal *v){
 static lVal *lnfClData(lClosure *c, lVal *v){
 	if((v == NULL) || (v->type != ltPair)){return NULL;}
 	lVal *t = lEval(c,v->vList.car);
-	if((t == NULL) || (t->type != ltLambda)){return NULL;}
-	return t->vLambda->data;
+	if(t->type == ltLambda){
+		return t->vLambda->data;
+	}else if(t->type == ltNativeFunc){
+		return t->vFunc.doc->vList.car;
+	}
+	return NULL;
 }
 
 static lVal *lnfClLambda(lClosure *c, lVal *v){
@@ -402,16 +406,24 @@ static lVal *lnfBegin(lClosure *c, lVal *v){
 }
 
 static inline bool lSymVariadic(lSymbol s){
-	if((s.c[0] == '.') && (s.c[1] == '.') && (s.c[2] == '.')){
-		return true;
-	}else if((s.c[0] == '&') && (s.c[1] == '.') && (s.c[2] == '.') && (s.c[3] == '.')){
+	const char *p = s.c;
+	if((*p == '@') || (*p == '&')){p++;}
+	if((*p == '@') || (*p == '&')){p++;}
+	if((p[0] == '.') && (p[1] == '.') && (p[2] == '.')){
 		return true;
 	}
 	return false;
 }
-
+/*
+static inline bool lSymOptional(lSymbol s){
+	if(s.c[0] == '&'){return true;}
+	if((s.c[0] == '@') && (s.c[1] == '&')){return true;}
+	return false;
+}*/
 static inline bool lSymNoEval(lSymbol s){
-	return s.c[0] == '&';
+	if(s.c[0] == '@'){return true;}
+	if((s.c[0] == '&') && (s.c[1] == '@')){return true;}
+	return false;
 }
 
 static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
@@ -453,12 +465,12 @@ static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
 	return ret;
 }
 
-lVal *lValNativeFunc(lVal *(*func)(lClosure *,lVal *), lVal *docString){
+lVal *lValNativeFunc(lVal *(*func)(lClosure *,lVal *), lVal *args, lVal *docString){
 	lVal *v = lValAlloc();
 	if(v == NULL){return NULL;}
 	v->type = ltNativeFunc;
 	v->vFunc.fp = func;
-	v->vFunc.docString = docString;
+	v->vFunc.doc = lCons(args,docString);
 	v->flags |= lfConst;
 	return v;
 }
@@ -568,7 +580,7 @@ void lDefineVal(lClosure *c, const char *sym, lVal *val){
 	var->vList.car = val;
 }
 
-void lAddNativeFunc(lClosure *c, const char *sym, const char *doc, lVal *(*func)(lClosure *,lVal *)){
+void lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *doc, lVal *(*func)(lClosure *,lVal *)){
 	lSymbol S;
 	strncpy(S.c,sym,sizeof(S.c)-1);
 	S.c[sizeof(S.c)-1] = 0;
@@ -578,114 +590,113 @@ void lAddNativeFunc(lClosure *c, const char *sym, const char *doc, lVal *(*func)
 		lPrintError("Error adding NFunc %s\n",sym);
 		return;
 	}
-	var->vList.car = lValNativeFunc(func,lValString(doc));
+	var->vList.car = lValNativeFunc(func,lRead(args),lValString(doc));
 }
 
 static void lAddCoreFuncs(lClosure *c){
-	lAddNativeFunc(c,"+","Addition",lnfAdd);
-	lAddNativeFunc(c,"add","Addition",lnfAdd);
-	lAddNativeFunc(c,"-","Substraction",lnfSub);
-	lAddNativeFunc(c,"sub","Substraction",lnfSub);
-	lAddNativeFunc(c,"*","Multiplication",lnfMul);
-	lAddNativeFunc(c,"mul","Multiplication",lnfMul);
-	lAddNativeFunc(c,"/","Division",lnfDiv);
-	lAddNativeFunc(c,"div","Division",lnfDiv);
-	lAddNativeFunc(c,"%","Modulo",lnfMod);
-	lAddNativeFunc(c,"mod","Modulo",lnfMod);
+	lAddNativeFunc(c,"+",  "(...args)","Addition",      lnfAdd);
+	lAddNativeFunc(c,"add","(...args)","Addition",      lnfAdd);
+	lAddNativeFunc(c,"-",  "(...args)","Substraction",  lnfSub);
+	lAddNativeFunc(c,"sub","(...args)","Substraction",  lnfSub);
+	lAddNativeFunc(c,"*",  "(...args)","Multiplication",lnfMul);
+	lAddNativeFunc(c,"mul","(...args)","Multiplication",lnfMul);
+	lAddNativeFunc(c,"/",  "(...args)","Division",      lnfDiv);
+	lAddNativeFunc(c,"div","(...args)","Division",      lnfDiv);
+	lAddNativeFunc(c,"%",  "(...args)","Modulo",        lnfMod);
+	lAddNativeFunc(c,"mod","(...args)","Modulo",        lnfMod);
 
-	lAddNativeFunc(c,"<","Less Predicate",lnfLess);
-	lAddNativeFunc(c,"less?","Less Predicate",lnfLess);
+	lAddNativeFunc(c,"<",             "(a b)","#t if a < b", lnfLess);
+	lAddNativeFunc(c,"less?",         "(a b)","#t if a < b", lnfLess);
+	lAddNativeFunc(c,"<=",            "(a b)","#t if a <= b",lnfLessEqual);
+	lAddNativeFunc(c,"less-equal?",   "(a b)","#t if a <= b",lnfLessEqual);
+	lAddNativeFunc(c,"=",             "(a b)","#t if a == b",lnfEqual);
+	lAddNativeFunc(c,"eq?",           "(a b)","#t if a == b",lnfEqual);
+	lAddNativeFunc(c,"eqv?",          "(a b)","#t if a == b",lnfEqual);
+	lAddNativeFunc(c,"equal?",        "(a b)","#t if a == b",lnfEqual);
+	lAddNativeFunc(c,">=",            "(a b)","#t if a >= b",lnfGreaterEqual);
+	lAddNativeFunc(c,"greater-equal?","(a b)","#t if a >= b",lnfGreaterEqual);
+	lAddNativeFunc(c,">",             "(a b)","#t if a > b", lnfGreater);
+	lAddNativeFunc(c,"greater?",      "(a b)","#t if a > b", lnfGreater);
+	lAddNativeFunc(c,"zero?",         "(a)",  "#t if a is 0",lnfZero);
 
-	lAddNativeFunc(c,"<=","Less or Equal Predicate",lnfLessEqual);
-	lAddNativeFunc(c,"less-equal?","Less or Equal Predicate",lnfLessEqual);
+	lAddNativeFunc(c,"arr-length","(a)",      "Returns length of array a",                 lnfArrLength);
+	lAddNativeFunc(c,"arr-ref",   "(a i)",    "Returns value of array a at position i",    lnfArrRef);
+	lAddNativeFunc(c,"arr-set!",  "(a i v)",  "Sets array valus at position i to v",       lnfArrSet);
+	lAddNativeFunc(c,"arr-new",   "(l)",      "Allocates a new array of size l",           lnfArrNew);
+	lAddNativeFunc(c,"arr",       "(...args)","Creates a new array from its argument list",lnfArr);
 
-	lAddNativeFunc(c,"=","Equal Predicate",lnfEqual);
-	lAddNativeFunc(c,"eq?","Equal Predicate",lnfEqual);
-	lAddNativeFunc(c,"equal?","Equal Predicate",lnfEqual);
+	lAddNativeFunc(c,"and","(...args)","#t if all ...args evaluate to true",            lnfAnd);
+	lAddNativeFunc(c,"or" ,"(...args)","#t if one member of ...args evaluates to true", lnfOr);
+	lAddNativeFunc(c,"not","(a)",      "#t if a is #f, #f if a is #t",                  lnfNot);
 
-	lAddNativeFunc(c,">=","Greater or Equal Predicate",lnfGreaterEqual);
-	lAddNativeFunc(c,"greater-equal?","Greater or Equal Predicate",lnfGreaterEqual);
+	lAddNativeFunc(c,"car", "(l)",  "Returns the car of pair l",                            lnfCar);
+	lAddNativeFunc(c,"cdr", "(l)",  "Returns the cdr of pair l",                            lnfCdr);
+	lAddNativeFunc(c,"cons","(a b)","Returns a new pair with a as the car and b as the cdr",lnfCons);
 
-	lAddNativeFunc(c,">","Greater Predicate",lnfGreater);
-	lAddNativeFunc(c,"greater?","Greater Predicate",lnfGreater);
+	lAddNativeFunc(c,"apply",    "(f l)",         "Evaluates f with list l as arguments",     lnfApply);
+	lAddNativeFunc(c,"eval",     "(expr)",        "Evaluates expr",                           lEval);
+	lAddNativeFunc(c,"resolve",  "(s)",           "Resolves s until it is no longer a symbol",lResolve);
+	lAddNativeFunc(c,"mem",      "()",            "Returns lVals in use",                     lnfMem);
+	lAddNativeFunc(c,"λ",        "(args ...body)","Creates a new lambda",                     lnfLambda);
+	lAddNativeFunc(c,"lambda",   "(args ...body)","New Lambda",                               lnfLambda);
+	lAddNativeFunc(c,"δ",        "(args ...body)","New Dynamic scoped lambda",                lnfDynamic);
+	lAddNativeFunc(c,"dynamic",  "(args ...body)","New Dynamic scoped lambda",                lnfDynamic);
+	lAddNativeFunc(c,"cl",       "(i)",           "Returns closure",                          lnfCl);
+	lAddNativeFunc(c,"cl-lambda","(i)",           "Returns closure as a lambda",              lnfClLambda);
+	lAddNativeFunc(c,"cl-text",  "(f)",           "Returns closures text segment",            lnfClText);
+	lAddNativeFunc(c,"cl-data",  "(f)",           "Returns closures data segment",            lnfClData);
 
-	lAddNativeFunc(c,"arr-length","Returns an arrays length",lnfArrLength);
-	lAddNativeFunc(c,"arr-ref","Returns array value at position",lnfArrRef);
-	lAddNativeFunc(c,"arr-set!","Sets array valus at position",lnfArrSet);
-	lAddNativeFunc(c,"arr-new","Allocates new array of length n",lnfArrNew);
-	lAddNativeFunc(c,"arr","Creates a new array from its argument list",lnfArr);
+	lAddNativeFunc(c,"if",  "(pred? then ...else)","Evalutes then if pred? is #t, otherwise evaluates ...else", lnfIf);
+	lAddNativeFunc(c,"cond","(...c)",              "Contains at least 1 cond block of form (pred? ...body) and evaluates and returns the first where pred? is #t",lnfCond);
 
-	lAddNativeFunc(c,"and","Boolean and",lnfAnd);
-	lAddNativeFunc(c,"not","Boolean not",lnfNot);
-	lAddNativeFunc(c,"or","Boolean or",lnfOr);
+	lAddNativeFunc(c,"define","(s v)",         "Define a new symbol s and link it to value v",                      lnfDef);
+	lAddNativeFunc(c,"let",   "(args ...body)","Creates a new closure with args bound in which to evaluate ...body",lnfLet);
+	lAddNativeFunc(c,"begin", "(...body)",     "Evaluates ...body in order and returns the last result",            lnfBegin);
+	lAddNativeFunc(c,"quote", "(v)",           "Returns v as is without evaluating",                                lnfQuote);
+	lAddNativeFunc(c,"set!",  "(s v)",         "Binds a new value v to already defined symbol s",                   lnfSet);
 
-	lAddNativeFunc(c,"car","Car",lnfCar);
-	lAddNativeFunc(c,"cdr","Cdr",lnfCdr);
-	lAddNativeFunc(c,"cons","Cons",lnfCons);
+	lAddNativeFunc(c,"abs","(a)","Returns the absolute value of a",     lnfAbs);
+	lAddNativeFunc(c,"pow","(a b)","Returns a raised to the power of b",lnfPow);
+	lAddNativeFunc(c,"sqrt","(a)","Returns the squareroot of a",        lnfSqrt);
+	lAddNativeFunc(c,"floor","(a)","Rounds a down",                     lnfFloor);
+	lAddNativeFunc(c,"ceil","(a)","Rounds a up",                        lnfCeil);
+	lAddNativeFunc(c,"round","(a)","Rounds a",                          lnfRound);
 
-	lAddNativeFunc(c,"apply","Apply",lnfApply);
-	lAddNativeFunc(c,"eval","Eval",lEval);
-	lAddNativeFunc(c,"resolve","Resolve",lResolve);
-	lAddNativeFunc(c,"mem","Returns lVals in use",lnfMem);
-	lAddNativeFunc(c,"λ","New Lambda",lnfLambda);
-	lAddNativeFunc(c,"lambda","New Lambda",lnfLambda);
-	lAddNativeFunc(c,"δ","New Dynamic scoped lambda",lnfDynamic);
-	lAddNativeFunc(c,"dynamic","New Dynamic scoped lambda",lnfDynamic);
-	lAddNativeFunc(c,"cl","Returns closure",lnfCl);
-	lAddNativeFunc(c,"cl-text","Returns closures text segment",lnfClText);
-	lAddNativeFunc(c,"cl-data","Returns closures data segment",lnfClData);
-	lAddNativeFunc(c,"cl-lambda","Returns closure as a lambda",lnfClLambda);
+	lAddNativeFunc(c,"vx","(v)","Returns x part of vector v",lnfVX);
+	lAddNativeFunc(c,"vy","(v)","Returns x part of vector v",lnfVY);
+	lAddNativeFunc(c,"vz","(v)","Returns x part of vector v",lnfVZ);
 
-	lAddNativeFunc(c,"if","(if pred? then else...)",lnfIf);
-	lAddNativeFunc(c,"cond","(cond (pred? then...)...)",lnfCond);
+	lAddNativeFunc(c,"bool", "(a)","Casts a to bool",  lnfBool);
+	lAddNativeFunc(c,"int",  "(a)","Casts a to int",   lnfInt);
+	lAddNativeFunc(c,"float","(a)","Casts a to float", lnfFloat);
+	lAddNativeFunc(c,"vec",  "(a)","Casts a to vec",   lnfVec);
+	lAddNativeFunc(c,"str",  "(a)","Casts a to string",lnfCat);
 
-	lAddNativeFunc(c,"define","Define a new symbol",lnfDef);
-	lAddNativeFunc(c,"let","Let",lnfLet);
-	lAddNativeFunc(c,"begin","Being",lnfBegin);
-	lAddNativeFunc(c,"quote","Quote",lnfQuote);
-	lAddNativeFunc(c,"set!","Set",lnfSet);
+	lAddNativeFunc(c,"msecs","()","Returns monotonic msecs",lnfMsecs);
 
-	lAddNativeFunc(c,"abs","Absolute value",lnfAbs);
-	lAddNativeFunc(c,"sqrt","Squareroot ",lnfSqrt);
-	lAddNativeFunc(c,"floor","Floor value",lnfFloor);
-	lAddNativeFunc(c,"ceil","Ceiling value",lnfCeil);
-	lAddNativeFunc(c,"round","Round value",lnfRound);
+	lAddNativeFunc(c,"ansi-reset","()",  "Ansi reset code",                 lnfAnsiRS);
+	lAddNativeFunc(c,"ansi-fg",   "(a)", "Returns Ansi fg color code for a",lnfAnsiFG);
+	lAddNativeFunc(c,"br",        "(&a)","Returns &a=1 linebreaks",         lnfBr);
 
-	lAddNativeFunc(c,"vx","Vectors X part",lnfVX);
-	lAddNativeFunc(c,"vy","Vectors Y part",lnfVY);
-	lAddNativeFunc(c,"vz","Vectors Z part",lnfVZ);
+	lAddNativeFunc(c,"cat",           "(...args)",       "ConCATenates ...args into a single string",                                               lnfCat);
+	lAddNativeFunc(c,"str-len",       "(s)",             "Returns length of string s",                                                              lnfStrlen);
+	lAddNativeFunc(c,"str-up",        "(s)",             "Returns a copy of string s all uppercased",                                               lnfStrUp);
+	lAddNativeFunc(c,"str-down",      "(s)",             "Returns a copy of string s all lowercased",                                               lnfStrDown);
+	lAddNativeFunc(c,"str-capitalize","(s)",             "Returns a copy of string s capitalized",                                                  lnfStrCap);
+	lAddNativeFunc(c,"substr",        "(s &start &stop)","Returns a copy of string s starting at position &start=0 and ending at &stop=(str-len s)",lnfSubstr);
+	lAddNativeFunc(c,"str->sym",      "(s)",             "Converts string s to a symbol",                                                           lnfStrSym);
+	lAddNativeFunc(c,"sym->str",      "(s)",             "Converts symbol s to a string",                                                           lnfSymStr);
 
-	lAddNativeFunc(c,"bool","Casts to bool",lnfBool);
-	lAddNativeFunc(c,"int","Casts to int",lnfInt);
-	lAddNativeFunc(c,"float","Casts to float",lnfFloat);
-	lAddNativeFunc(c,"vec","Casts to vec",lnfVec);
+	lAddNativeFunc(c,"int?",   "(a)","#t if a is of type int",   lnfIntPred);
+	lAddNativeFunc(c,"float?", "(a)","#t if a is of type float", lnfFloatPred);
+	lAddNativeFunc(c,"vec?",   "(a)","#t if a is of type vec",   lnfVecPred);
+	lAddNativeFunc(c,"bool?",  "(a)","#t if a is of type bool",  lnfBoolPred);
+	lAddNativeFunc(c,"nil?",   "(a)","#t if a is of type nil",   lnfNilPred);
+	lAddNativeFunc(c,"inf?",   "(a)","#t if a is of type inf",   lnfInfPred);
+	lAddNativeFunc(c,"pair?",  "(a)","#t if a is of type pair",  lnfPairPred);
+	lAddNativeFunc(c,"string?","(a)","#t if a is of type string",lnfStringPred);
 
-	lAddNativeFunc(c,"msecs","Returns monotonic msecs",lnfMsecs);
-
-	lAddNativeFunc(c,"ansi-reset","Ansi reset code",lnfAnsiRS);
-	lAddNativeFunc(c,"ansi-fg","Ansi fg color",lnfAnsiFG);
-	lAddNativeFunc(c,"br","Line break",lnfBr);
-
-	lAddNativeFunc(c,"cat","conCATenate",lnfCat);
-	lAddNativeFunc(c,"str-len","String length",lnfStrlen);
-	lAddNativeFunc(c,"str-up","Returns its argument all caps",lnfStrUp);
-	lAddNativeFunc(c,"str-down","Returns its argument all lowercase",lnfStrDown);
-	lAddNativeFunc(c,"str-capitalize","Returns its argument capitalized",lnfStrCap);
-	lAddNativeFunc(c,"substr","Substring",lnfSubstr);
-	lAddNativeFunc(c,"str->sym","Substring",lnfStrSym);
-	lAddNativeFunc(c,"sym->str","Substring",lnfSymStr);
-
-	lAddNativeFunc(c,"int?","Integer predicate",lnfIntPred);
-	lAddNativeFunc(c,"float?","Integer predicate",lnfFloatPred);
-	lAddNativeFunc(c,"vec?","Integer predicate",lnfVecPred);
-	lAddNativeFunc(c,"bool?","Integer predicate",lnfBoolPred);
-	lAddNativeFunc(c,"nil?","Integer predicate",lnfNilPred);
-	lAddNativeFunc(c,"inf?","Integer predicate",lnfInfPred);
-	lAddNativeFunc(c,"pair?","Integer predicate",lnfPairPred);
-	lAddNativeFunc(c,"string?","Integer predicate",lnfStringPred);
-	lAddNativeFunc(c,"zero?","Integer predicate",lnfZero);
-
-	lDefineVal(c,"π",lConst(lValFloat(M_PI)));
+	lDefineVal(c,"π", lConst(lValFloat(M_PI)));
 	lDefineVal(c,"PI",lConst(lValFloat(M_PI)));
 }
 
