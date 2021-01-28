@@ -162,7 +162,7 @@ void loadOptions(){
 	#endif
 	if(optionNoSave){return;}
 	size_t len = 0;
-	char *b = loadFile("client.settings",&len);
+	char *b = loadFile("client.nuj",&len);
 	if((b == NULL) || (len == 0)){return;}
 
 	lispEval(b);
@@ -178,18 +178,18 @@ void saveOptions(){
 	if(optionNoSave){return;}
 
 	b  = buf;
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"(player-name \"%s\")\n",playerName);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"(sound-volume %f)\n",optionSoundVolume);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"(render-distance %f)\n",renderDistance);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"(fullscreen %s)\n",optionFullscreen ? "#t" : "#f");
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"(third-person %s)\n",optionThirdPerson ? "#t" : "#f");
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"(debug-info %s)\n",optionDebugInfo ? "#t" : "#f");
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"(player-name! \"%s\")\n",playerName);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"(sound-vol! %f)\n",optionSoundVolume);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"(view-dist! %f)\n",renderDistance);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"(fullscreen! %s)\n",optionFullscreen ? "#t" : "#f");
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"(third-person! %s)\n",optionThirdPerson ? "#t" : "#f");
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"(debug-info! %s)\n",optionDebugInfo ? "#t" : "#f");
 	for(int i=0;i<serverlistCount;i++){
-		b += snprintf(b,sizeof(buf)-(b-buf+1),"(server-add \"%s\" \"%s\")\n",serverlistIP[i],serverlistName[i]);
+		b += snprintf(b,sizeof(buf)-(b-buf+1),"(server-add! \"%s\" \"%s\")\n",serverlistIP[i],serverlistName[i]);
 	}
 
 	buf[sizeof(buf)-1] = 0;
-	saveFile("client.settings",buf,strlen(buf));
+	saveFile("client.nuj",buf,strlen(buf));
 }
 
 void initOptions(int argc,char *argv[]){
