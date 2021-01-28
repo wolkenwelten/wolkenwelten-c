@@ -221,5 +221,9 @@ test_sexpr "(min 4 9)" "4"
 test_sexpr "(max 4 9)" "9"
 test_sexpr "(max 1 4.0 9 25)" "25"
 test_sexpr "(min 1 4.0 9 25)" "1"
+test_sexpr "(even? 2)" "#t"
+test_sexpr "(even? 9)" "#f"
+test_sexpr "(odd? 7)" "#t"
+test_sexpr "(odd? 4)" "#f"
 
 print_report
