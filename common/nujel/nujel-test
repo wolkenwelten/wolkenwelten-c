@@ -227,5 +227,8 @@ test_sexpr "(odd? 7)" "#t"
 test_sexpr "(odd? 4)" "#f"
 test_sexpr "π" "3.14159"
 test_sexpr "(set! PI 3) PI" "3.14159"
+test_sexpr "(str-up \"asD123\")" "\"ASD123\""
+test_sexpr "(str-down \"aSD123\")" "\"asd123\""
+test_sexpr "(str-capitalize \"aSD123\")" "\"Asd123\""
 
 print_report

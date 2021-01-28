@@ -459,6 +459,7 @@ lVal *lValNativeFunc(lVal *(*func)(lClosure *,lVal *), lVal *docString){
 	v->type = ltNativeFunc;
 	v->vFunc.fp = func;
 	v->vFunc.docString = docString;
+	v->flags |= lfConst;
 	return v;
 }
 
@@ -659,11 +660,16 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"vec","Casts to vec",lnfVec);
 
 	lAddNativeFunc(c,"msecs","Returns monotonic msecs",lnfMsecs);
+
 	lAddNativeFunc(c,"ansi-reset","Ansi reset code",lnfAnsiRS);
 	lAddNativeFunc(c,"ansi-fg","Ansi fg color",lnfAnsiFG);
 	lAddNativeFunc(c,"br","Line break",lnfBr);
+
 	lAddNativeFunc(c,"cat","conCATenate",lnfCat);
 	lAddNativeFunc(c,"str-len","String length",lnfStrlen);
+	lAddNativeFunc(c,"str-up","Returns its argument all caps",lnfStrUp);
+	lAddNativeFunc(c,"str-down","Returns its argument all lowercase",lnfStrDown);
+	lAddNativeFunc(c,"str-capitalize","Returns its argument capitalized",lnfStrCap);
 	lAddNativeFunc(c,"substr","Substring",lnfSubstr);
 	lAddNativeFunc(c,"str->sym","Substring",lnfStrSym);
 	lAddNativeFunc(c,"sym->str","Substring",lnfSymStr);

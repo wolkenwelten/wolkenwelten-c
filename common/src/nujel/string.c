@@ -3,6 +3,7 @@
 #include "nujel.h"
 #include "casting.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -286,6 +287,77 @@ lVal *lnfStrlen(lClosure *c, lVal *v){
 	return lValInt(lStringLength(t->vString));
 }
 
+lVal *lnfStrDown(lClosure *c, lVal *v){
+	if(v == NULL){return NULL;}
+	lVal *t = lEval(c,lCarOrV(v));
+	if((t == NULL) || (t->type != ltString)){return NULL;}
+	if((t->vString == NULL) || (t->vString->data == NULL)){return lValInt(0);}
+	const int len = lStringLength(t->vString);
+	char *buf = malloc(len+1);
+	for(int i=0;i<len;i++){
+		buf[i] = tolower(t->vString->data[i]);
+	}
+	buf[len] = 0;
+	lVal *ret = lValAlloc();
+	ret->type = ltString;
+	ret->vString = lStringAlloc();
+	ret->vString->flags |= lfHeapAlloc;
+	ret->vString->buf = ret->vString->data = buf;
+	ret->vString->bufEnd = &ret->vString->buf[len];
+	return ret;
+}
+
+lVal *lnfStrUp(lClosure *c, lVal *v){
+	if(v == NULL){return NULL;}
+	lVal *t = lEval(c,lCarOrV(v));
+	if((t == NULL) || (t->type != ltString)){return NULL;}
+	if((t->vString == NULL) || (t->vString->data == NULL)){return lValInt(0);}
+	const int len = lStringLength(t->vString);
+	char *buf = malloc(len+1);
+	for(int i=0;i<len;i++){
+		buf[i] = toupper(t->vString->data[i]);
+	}
+	buf[len] = 0;
+	lVal *ret = lValAlloc();
+	ret->type = ltString;
+	ret->vString = lStringAlloc();
+	ret->vString->flags |= lfHeapAlloc;
+	ret->vString->buf = ret->vString->data = buf;
+	ret->vString->bufEnd = &ret->vString->buf[len];
+	return ret;
+}
+
+lVal *lnfStrCap(lClosure *c, lVal *v){
+	if(v == NULL){return NULL;}
+	lVal *t = lEval(c,lCarOrV(v));
+	if((t == NULL) || (t->type != ltString)){return NULL;}
+	if((t->vString == NULL) || (t->vString->data == NULL)){return lValInt(0);}
+	const int len = lStringLength(t->vString);
+	char *buf = malloc(len+1);
+	int cap = 1;
+	for(int i=0;i<len;i++){
+		if(isspace(t->vString->data[i])){
+			cap = 1;
+			buf[i] = t->vString->data[i];
+		}else{
+			if(cap){
+				buf[i] = toupper(t->vString->data[i]);
+				cap = 0;
+			}else{
+				buf[i] = tolower(t->vString->data[i]);
+			}
+		}
+	}
+	buf[len] = 0;
+	lVal *ret = lValAlloc();
+	ret->type = ltString;
+	ret->vString = lStringAlloc();
+	ret->vString->flags |= lfHeapAlloc;
+	ret->vString->buf = ret->vString->data = buf;
+	ret->vString->bufEnd = &ret->vString->buf[len];
+	return ret;
+}
+
 lVal *lnfSubstr(lClosure *c, lVal *v){
 	const char *buf;
 	int start = 0;
@@ -407,6 +479,7 @@ lVal *lnfStrSym(lClosure *c, lVal *v){
 	if(v->type != ltString){return NULL;}
 	return lValSym(v->vString->data);
 }
+
 lVal *lnfSymStr(lClosure *c, lVal *v){
 	v = lEval(c,lCarOrV(v));
 	if(v == NULL){return NULL;}
