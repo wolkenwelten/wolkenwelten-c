@@ -131,7 +131,7 @@ void textInputPaste(){
 void textInputHome(){
 	char *textInputBuffer = widgetFocused->vals;
 	char *c = &textInputBuffer[0];
-	for(; isspace(*c); c++){}
+	for(; isspace((u8)*c); c++){}
 	const int indentPos = c - textInputBuffer;
 	if(textInputCursorPos <= indentPos){
 		textInputCursorPos = 0;
@@ -143,7 +143,7 @@ void textInputHome(){
 void textInputEnd(){
 	char *textInputBuffer = widgetFocused->vals;
 	char *c = &textInputBuffer[textInputBufferLen-1];
-	for(; isspace(*c); c--){}
+	for(; isspace((u8)*c); c--){}
 	const int indentPos = c - textInputBuffer + 1;
 	if(textInputCursorPos >= indentPos){
 		textInputCursorPos = textInputBufferLen;;

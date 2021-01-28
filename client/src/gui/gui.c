@@ -171,8 +171,8 @@ void lispPanelShowReply(lVal *sym, const char *reply){
 		free(lispLog->valss[i]);
 
 		int soff,slen;
-		for(soff = 0;isspace(reply[soff]) || (reply[soff] == '"');soff++){}
-		for(slen = len-soff-1;isspace(reply[soff+slen-1]) || (reply[soff+slen-1] == '"');slen--){}
+		for(soff = 0;isspace((unsigned char)reply[soff]) || (reply[soff] == '"');soff++){}
+		for(slen = len-soff-1;isspace((unsigned char)reply[soff+slen-1]) || (reply[soff+slen-1] == '"');slen--){}
 		lispLog->valss[i] = malloc(slen+3);
 		for(int ii=0;ii<2;ii++){
 			lispLog->valss[i][ii] = ' ';

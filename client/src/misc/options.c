@@ -87,13 +87,13 @@ void parseOptions(int argc,char *argv[]){
 		if((l = checkString(argv[i]+1,"windowOrientation="))){
 			int newOrientation = 0;
 			if(argv[i][l] != 0){
-				u8 chr = toupper(argv[i][l]);
+				u8 chr = toupper((u8)argv[i][l]);
 				if(chr == 'T'){newOrientation |= 0x10;}
 				if(chr == 'B'){newOrientation |= 0x20;}
 				if(chr == 'L'){newOrientation |= 0x01;}
 				if(chr == 'R'){newOrientation |= 0x02;}
 				if(argv[i][l+1] != 0){
-					chr = toupper(argv[i][l+1]);
+					chr = toupper((u8)argv[i][l+1]);
 					if(chr == 'T'){newOrientation |= 0x10;}
 					if(chr == 'B'){newOrientation |= 0x20;}
 					if(chr == 'L'){newOrientation |= 0x01;}

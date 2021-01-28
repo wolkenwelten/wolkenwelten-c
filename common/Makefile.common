@@ -27,6 +27,9 @@ ifeq ("$(wildcard common/src/asm/$(ARCH).s)","common/src/asm/$(ARCH).s")
 ASM_OBJS += common/src/asm/$(ARCH).o
 endif
 
+common/src/asm/amd64.s: common/src/asm/x86_64.s
+	cp $< $@
+
 common/src/tmp/stdlib.nuj: $(NUJ_STDLIB)
 	mkdir -p common/src/tmp
 	cat $(NUJ_STDLIB) > $@

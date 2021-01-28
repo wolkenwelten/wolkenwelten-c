@@ -6,7 +6,7 @@
 #include <string.h>
 
 static void lStringAdvanceToNextCharacter(lString *s){
-	for(;(*s->data != 0) && (isspace(*s->data));s->data++){}
+	for(;(*s->data != 0) && (isspace((u8)*s->data));s->data++){}
 }
 
 static lVal *lParseString(lString *s){
@@ -57,7 +57,7 @@ static lVal *lParseNumber(lString *s){
 	int cval = 0;
 	int digits = 0;
 	if(fc == '-'){c = *++s->data;}
-	while(!isspace(c)){
+	while(!isspace((u8)c)){
 		if(c == 0){break;}
 		if(isdigit(c)){
 			cval *= 10;
@@ -98,13 +98,13 @@ static lVal *lParseSymbol(lString *s){
 	v->vSymbol.v[1] = 0;
 	for(int i=0;i<16;i++){
 		char c = *s->data++;
-		if(isspace(c) || (c == ')') || (c ==0)){
+		if(isspace((u8)c) || (c == ')') || (c ==0)){
 			s->data--;
 			break;
 		}
 		v->vSymbol.c[i] = c;
 	}
-	while(isspace(*s->data)){
+	while(isspace((u8)*s->data)){
 		if(*s->data == 0){break;}
 		s->data++;
 	}
@@ -158,11 +158,11 @@ lVal *lReadString(lString *s){
 		}else if(c == '"'){
 			s->data++;
 			v->vList.car = lParseString(s);
-		}else if(isdigit(c)){
+		}else if(isdigit((u8)c)){
 			v->vList.car = lParseNumber(s);
 		}else if(c == '#'){
 			v->vList.car = lParseSpecial(s);
-		}else if((c == '-') && (isdigit(s->data[1]))){
+		}else if((c == '-') && (isdigit((u8)s->data[1]))){
 			v->vList.car = lParseNumber(s);
 		}else{
 			v->vList.car = lParseSymbol(s);

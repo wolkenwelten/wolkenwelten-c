@@ -295,7 +295,7 @@ lVal *lnfStrDown(lClosure *c, lVal *v){
 	const int len = lStringLength(t->vString);
 	char *buf = malloc(len+1);
 	for(int i=0;i<len;i++){
-		buf[i] = tolower(t->vString->data[i]);
+		buf[i] = tolower((u8)t->vString->data[i]);
 	}
 	buf[len] = 0;
 	lVal *ret = lValAlloc();
@@ -315,7 +315,7 @@ lVal *lnfStrUp(lClosure *c, lVal *v){
 	const int len = lStringLength(t->vString);
 	char *buf = malloc(len+1);
 	for(int i=0;i<len;i++){
-		buf[i] = toupper(t->vString->data[i]);
+		buf[i] = toupper((u8)t->vString->data[i]);
 	}
 	buf[len] = 0;
 	lVal *ret = lValAlloc();
@@ -336,15 +336,15 @@ lVal *lnfStrCap(lClosure *c, lVal *v){
 	char *buf = malloc(len+1);
 	int cap = 1;
 	for(int i=0;i<len;i++){
-		if(isspace(t->vString->data[i])){
+		if(isspace((u8)t->vString->data[i])){
 			cap = 1;
 			buf[i] = t->vString->data[i];
 		}else{
 			if(cap){
-				buf[i] = toupper(t->vString->data[i]);
+				buf[i] = toupper((u8)t->vString->data[i]);
 				cap = 0;
 			}else{
-				buf[i] = tolower(t->vString->data[i]);
+				buf[i] = tolower((u8)t->vString->data[i]);
 			}
 		}
 	}

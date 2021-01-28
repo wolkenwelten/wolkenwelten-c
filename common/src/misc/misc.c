@@ -108,7 +108,7 @@ char **splitArgs(const char *cmd,int *rargc){
 				*s = 0;
 				mode =1;
 			}
-		} else if(isspace(*s)){
+		} else if(isspace((u8)*s)){
 			*s = 0;
 			mode = 1;
 		}else if(mode == 1){

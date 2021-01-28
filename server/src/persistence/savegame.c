@@ -276,7 +276,7 @@ static void characterParseDataLine(character *p, const char *line){
 	argv = splitArgs(line,&argc);
 	if(argc == 0)          {return;}
 	if(argv[0][0] == 0)    {return;}
-	if(isspace(argv[0][0])){return;}
+	if(isspace((u8)argv[0][0])){return;}
 
 	if(strcmp(argv[0],"Position") == 0){
 		if(argc < 7){return;}
@@ -546,7 +546,7 @@ static void savegameParseLine(const char *line){
 	argv = splitArgs(line,&argc);
 	if(argc == 0)          {return;}
 	if(argv[0][0] == 0)    {return;}
-	if(isspace(argv[0][0])){return;}
+	if(isspace((u8)argv[0][0])){return;}
 
 	if(strcmp(argv[0],"WorldSeed") == 0){
 		if(argc < 2){return;}

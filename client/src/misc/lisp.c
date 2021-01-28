@@ -202,8 +202,8 @@ const char *lispEval(const char *str){
 	lSDisplayVal(v,reply,&reply[sizeof(reply)-1]);
 
 	int soff,slen,len = strnlen(reply,sizeof(reply)-1);
-	for(soff = 0;    isspace(reply[soff]) || (reply[soff] == '"');soff++){}
-	for(slen = len-1;isspace(reply[slen]) || (reply[slen] == '"');slen--){reply[slen] = 0;}
+	for(soff = 0;    isspace((u8)reply[soff]) || (reply[soff] == '"');soff++){}
+	for(slen = len-1;isspace((u8)reply[slen]) || (reply[slen] == '"');slen--){reply[slen] = 0;}
 
 	lClosureGC();
 	return reply+soff;
