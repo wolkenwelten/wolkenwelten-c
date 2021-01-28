@@ -208,5 +208,6 @@ test_sexpr "(define cb '+) (apply cb)" "0"
 test_sexpr "(define cb '++) (apply cb)" "1"
 test_sexpr "(apply #nil)" "()"
 test_sexpr "(length \"12345\")" "5"
+test_sexpr "(define test 1) (define test 2) test" "2"
 
 print_report

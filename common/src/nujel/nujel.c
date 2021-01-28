@@ -667,10 +667,11 @@ lVal *lGetClosureSym(lClosure *c, const lSymbol s){
 }
 
 lVal *lDefineClosureSym(lClosure *c,const lSymbol s){
-	if((c == NULL) || (lGetSym(c,s) != NULL)){return NULL;}
+	if(c == NULL){return NULL;}
+	lVal *get = lGetSym(c,s);
+	if(get != NULL){return get;}
 	lVal *t = lCons(lValSymS(s),lCons(NULL,NULL));
 	if(t == NULL){return NULL;}
-
 	if(c->data == NULL){
 		c->data = lCons(t,NULL);
 	}else{
