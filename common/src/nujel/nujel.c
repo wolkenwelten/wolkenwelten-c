@@ -144,7 +144,7 @@ lString *lStringNew(const char *str, unsigned int len){
 	nbuf[len] = 0;
 	s->flags |= lfHeapAlloc;
 	s->buf = s->data = nbuf;
- 	s->bufEnd = &s->buf[len];
+	s->bufEnd = &s->buf[len];
 	return s;
 }
 
@@ -289,11 +289,16 @@ void lWriteVal(lVal *v){
 static lVal *lnfDefine(lClosure *c, lClosure *ec, lVal *v, lVal *(*func)(lClosure *,lSymbol)){
 	if((v == NULL) || (v->type != ltPair)){return NULL;}
 	lVal *sym = v->vList.car;
+	lVal *nv = lEval(ec,v->vList.cdr->vList.car);
 	if(sym->type != ltSymbol){sym = lEval(c,sym);}
 	if(sym->type != ltSymbol){return NULL;}
 	lVal *t = func(c,sym->vSymbol);
 	if((t == NULL) || (t->type != ltPair)){return NULL;}
-	return t->vList.car = lEval(ec,v->vList.cdr->vList.car);
+	if((t->vList.car != NULL) && (t->vList.car->flags & lfConst)){
+		return t->vList.car;
+	}else{
+		return t->vList.car = nv;
+	}
 }
 static lVal *lnfDef(lClosure *c, lVal *v){
 	return lnfDefine(c,c,v,lDefineClosureSym);
@@ -552,6 +557,16 @@ lVal *lnfApply(lClosure *c, lVal *v){
 	}
 }
 
+void lDefineVal(lClosure *c, const char *sym, lVal *val){
+	lSymbol S;
+	strncpy(S.c,sym,sizeof(S.c)-1);
+	S.c[sizeof(S.c)-1] = 0;
+
+	lVal *var = lDefineClosureSym(c,S);
+	if(var == NULL){return;}
+	var->vList.car = val;
+}
+
 void lAddNativeFunc(lClosure *c, const char *sym, const char *doc, lVal *(*func)(lClosure *,lVal *)){
 	lSymbol S;
 	strncpy(S.c,sym,sizeof(S.c)-1);
@@ -662,6 +677,9 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"pair?","Integer predicate",lnfPairPred);
 	lAddNativeFunc(c,"string?","Integer predicate",lnfStringPred);
 	lAddNativeFunc(c,"zero?","Integer predicate",lnfZero);
+
+	lDefineVal(c,"π",lConst(lValFloat(M_PI)));
+	lDefineVal(c,"PI",lConst(lValFloat(M_PI)));
 }
 
 lClosure *lClosureNewRoot(){

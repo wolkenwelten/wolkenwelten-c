@@ -99,6 +99,7 @@ void      lClosureGC        ();
 void      lDisplayVal       (lVal *v);
 void      lWriteVal         (lVal *v);
 
+void      lDefineVal        (lClosure *c, const char *sym, lVal *val);
 void      lAddNativeFunc    (lClosure *c, const char *sym, const char *doc, lVal *(*func)(lClosure *,lVal *));
 lVal     *lValNativeFunc    (lVal *(*func)(lClosure *,lVal *), lVal *docString);
 lVal     *lGetClosureSym    (lClosure *c, const lSymbol s);
@@ -127,6 +128,10 @@ lVal     *lValCopy      (lVal *dst, const lVal *src);
 
 static inline lVal *lValDup(const lVal *v){
 	return v == NULL ? NULL : lValCopy(lValAlloc(),v);
+}
+static inline lVal *lConst(lVal *v){
+	v->flags |= lfConst;
+	return v;
 }
 static inline lVal *lWrap(lVal *v){
 	return lCons(lValSym("begin"),lCons(lCons(NULL,NULL),v));
