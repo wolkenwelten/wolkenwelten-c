@@ -84,15 +84,19 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 		break;
 	case ltLambda: {
 		if(v->vLambda->flags & lfDynamic){
-			t = snprintf(cur,bufEnd-cur,"(δ ");
+			t = snprintf(cur,bufEnd-cur,"(δ (");
 		}else{
-			t = snprintf(cur,bufEnd-cur,"(λ ");
+			t = snprintf(cur,bufEnd-cur,"(λ (");
 		}
 		if(t > 0){cur += t;}
 		forEach(n,v->vLambda->data){
-			cur = lSWriteVal(n,cur,bufEnd);
+			if(n->vList.car == NULL){continue;}
+			if(n->vList.car->type != ltPair){continue;}
+			if(n->vList.car->vList.car == NULL){continue;}
+			cur = lSWriteVal(n->vList.car->vList.car,cur,bufEnd);
 			if(n->vList.cdr != NULL){*cur++ = ' ';}
 		}
+		*cur++ = ')';
 		*cur++ = ' ';
 		forEach(n,v->vLambda->text){
 			cur = lSWriteVal(n->vList.car,cur,bufEnd);
@@ -186,16 +190,20 @@ char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
 		break;
 	case ltLambda: {
 		if(v->vLambda->flags & lfDynamic){
-			t = snprintf(cur,bufEnd-cur,"(δ ");
+			t = snprintf(cur,bufEnd-cur,"(δ (");
 		}else{
-			t = snprintf(cur,bufEnd-cur,"(λ ");
+			t = snprintf(cur,bufEnd-cur,"(λ (");
 		}
 
 		if(t > 0){cur += t;}
 		forEach(n,v->vLambda->data){
-			cur = lSWriteVal(n,cur,bufEnd);
+			if(n->vList.car == NULL){continue;}
+			if(n->vList.car->type != ltPair){continue;}
+			if(n->vList.car->vList.car == NULL){continue;}
+			cur = lSWriteVal(n->vList.car->vList.car,cur,bufEnd);
 			if(n->vList.cdr != NULL){*cur++ = ' ';}
 		}
+		*cur++ = ')';
 		*cur++ = ' ';
 		forEach(n,v->vLambda->text){
 			cur = lSWriteVal(n->vList.car,cur,bufEnd);

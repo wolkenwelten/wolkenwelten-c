@@ -84,8 +84,8 @@ lVal *lnfBool(lClosure *c, lVal *v){
 	if(a == NULL)            {return lValBool(false);}
 	if(a->type == ltPair)    {a = lEval(c,a);}
 	if(a == NULL)            {return lValBool(false);}
-	if(a->type == ltNoAlloc) {return lValBool(false);}
 	if(a->type == ltBool)    {return a;}
+	if(a->type == ltInt)     {return lValBool(a->vInt != 0);}
 	return lValBool(true);
 }
 

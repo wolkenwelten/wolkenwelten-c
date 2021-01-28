@@ -44,7 +44,7 @@ common/nujel/assets.h: common/nujel/assets.c
 	@true
 
 %.o: %.s
-	$(AS) $(ASFLAGS) -g -c $< -o $@
+	$(CC) $(ASFLAGS) -g -c $< -o $@
 
 %.o: %.c
 	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -g -c $< -o $@

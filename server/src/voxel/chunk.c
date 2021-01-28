@@ -9,10 +9,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-#ifndef __EMSCRIPTEN__
-#define CHUNK_COUNT (1<<19)
-#else
+#if defined(__HAIKU__)
+#define CHUNK_COUNT (1<<17)
+#elif defined(__EMSCRIPTEN__)
 #define CHUNK_COUNT (1<<18)
+#else
+#define CHUNK_COUNT (1<<19)
 #endif
 
 chunk *chunkList;
