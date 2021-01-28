@@ -584,16 +584,12 @@ void lAddNativeFunc(lClosure *c, const char *sym, const char *doc, lVal *(*func)
 static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"+","Addition",lnfAdd);
 	lAddNativeFunc(c,"add","Addition",lnfAdd);
-
 	lAddNativeFunc(c,"-","Substraction",lnfSub);
 	lAddNativeFunc(c,"sub","Substraction",lnfSub);
-
 	lAddNativeFunc(c,"*","Multiplication",lnfMul);
 	lAddNativeFunc(c,"mul","Multiplication",lnfMul);
-
 	lAddNativeFunc(c,"/","Division",lnfDiv);
 	lAddNativeFunc(c,"div","Division",lnfDiv);
-
 	lAddNativeFunc(c,"%","Modulo",lnfMod);
 	lAddNativeFunc(c,"mod","Modulo",lnfMod);
 
@@ -650,6 +646,11 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"set!","Set",lnfSet);
 
 	lAddNativeFunc(c,"abs","Absolute value",lnfAbs);
+	lAddNativeFunc(c,"sqrt","Squareroot ",lnfSqrt);
+	lAddNativeFunc(c,"floor","Floor value",lnfFloor);
+	lAddNativeFunc(c,"ceil","Ceiling value",lnfCeil);
+	lAddNativeFunc(c,"round","Round value",lnfRound);
+
 	lAddNativeFunc(c,"vx","Vectors X part",lnfVX);
 	lAddNativeFunc(c,"vy","Vectors Y part",lnfVY);
 	lAddNativeFunc(c,"vz","Vectors Z part",lnfVZ);

@@ -105,7 +105,7 @@ lVal *lnfMod(lClosure *c, lVal *v){
 
 lVal *lnfAbs(lClosure *c, lVal *v){
 	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
-	if(t == NULL){return lValFloat(0);}
+	if(t == NULL){return lValInt(0);}
 	switch(t->type){
 	default:
 		return lValInt(0);
@@ -115,6 +115,66 @@ lVal *lnfAbs(lClosure *c, lVal *v){
 		return lValInt(abs(t->vInt));
 	case ltVec:
 		return lValVec(vecAbs(t->vVec));
+	}
+}
+
+lVal *lnfSqrt(lClosure *c, lVal *v){
+	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
+	if(t == NULL){return lValInt(0);}
+	switch(t->type){
+	default:
+		return lValInt(0);
+	case ltFloat:
+		return lValFloat(sqrtf(t->vFloat));
+	case ltInt:
+		return lValFloat(sqrtf(t->vInt));
+	case ltVec:
+		return lValVec(vecSqrt(t->vVec));
+	}
+}
+
+lVal *lnfCeil(lClosure *c, lVal *v){
+	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
+	if(t == NULL){return lValFloat(0);}
+	switch(t->type){
+	default:
+		return lValInt(0);
+	case ltFloat:
+		return lValFloat(ceilf(t->vFloat));
+	case ltInt:
+		return t;
+	case ltVec:
+		return lValVec(vecCeil(t->vVec));
+	}
+}
+
+lVal *lnfFloor(lClosure *c, lVal *v){
+	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
+	if(t == NULL){return lValFloat(0);}
+	switch(t->type){
+	default:
+		return lValInt(0);
+	case ltFloat:
+		return lValFloat(floorf(t->vFloat));
+	case ltInt:
+		return t;
+	case ltVec:
+		return lValVec(vecFloor(t->vVec));
+	}
+}
+
+lVal *lnfRound(lClosure *c, lVal *v){
+	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
+	if(t == NULL){return lValFloat(0);}
+	switch(t->type){
+	default:
+		return lValInt(0);
+	case ltFloat:
+		return lValFloat(roundf(t->vFloat));
+	case ltInt:
+		return t;
+	case ltVec:
+		return lValVec(vecRound(t->vVec));
 	}
 }
 

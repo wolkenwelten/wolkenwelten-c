@@ -7,6 +7,12 @@
 vec vecSqrt(const vec a){
 	return (vec){{{sqrtf(a.x),sqrtf(a.y),sqrtf(a.z)}}};
 }
+vec vecCeil(const vec a){
+	return (vec){{{ceilf(a.x),ceilf(a.y),ceilf(a.z)}}};
+}
+vec vecRound(const vec a){
+	return (vec){{{roundf(a.x),roundf(a.y),roundf(a.z)}}};
+}
 
 vec vecNorm(const vec a){
 	vec ret = a;
