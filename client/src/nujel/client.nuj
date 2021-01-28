@@ -1,3 +1,6 @@
+(define conf-v1! (λ (@...body) "Wrapper for auto generated config s-expressions, will be overwritten on every optionsave"
+	(eval (cons 'begin @...body))))
+
 (define help-iter (λ (l) "Iter for (help)"
 	(cond ((nil? l) #t)
 	      (#t (log (describe (car l))) (help-iter (cdr l))))))

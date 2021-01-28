@@ -11,6 +11,7 @@ xcuserdata/
 /tools/*.dSYM/
 /client/sfx/*.ogg
 client.settings
+client.nuj
 
 common/nujel/saolib.nuj
 common/nujel/assets.c
