@@ -34,8 +34,7 @@ char replyBuf[256];
 lClosure *clRoot;
 
 static uint getPID(lClosure *c){
-	lVal *sym = lValSym("pid");
-	lVal *pid = lResolveSym(c, sym->vSymbol);
+	lVal *pid = lResolveSym(c, lValSym("pid"));
 	if(pid == NULL){return 123;}
 	return pid->vInt;
 }

@@ -82,6 +82,7 @@ lClosure *lClosureAlloc(){
 	lClosureMax   = MAX(lClosureMax,(uint)(ret-lClosureList) + 1);
 	ret->data   = ret->text = NULL;
 	ret->parent = NULL;
+	ret->nextFree = NULL;
 	ret->flags  = 0;
 	return ret;
 }
@@ -121,10 +122,12 @@ lString *lStringAlloc(){
 		return NULL;
 	}
 	lString *ret = lStringFFree;
+
 	lStringFFree = ret->nextFree;
 	lStringMax   = MAX(lStringMax,(uint)(ret-lStringList) + 1);
 	ret->data    = ret->buf = ret->bufEnd = NULL;
 	ret->flags   = 0;
+	ret->nextFree = NULL;
 	return ret;
 }
 void lStringFree(lString *s){
@@ -132,25 +135,28 @@ void lStringFree(lString *s){
 	if((s->buf != NULL) && (s->flags & lfHeapAlloc)){
 		free((void *)s->buf);
 	}
-	s->data    = s->buf = s->bufEnd = NULL;
+	s->data = s->buf = s->bufEnd = NULL;
 	s->nextFree = lStringFFree;
 	lStringFFree = s;
 }
 
 lString *lStringNew(const char *str, unsigned int len){
 	lString *s = lStringAlloc();
+	if(s == NULL){return NULL;}
 	char *nbuf = malloc(len+1);
 	memcpy(nbuf,str,len);
 	nbuf[len] = 0;
 	s->flags |= lfHeapAlloc;
 	s->buf = s->data = nbuf;
 	s->bufEnd = &s->buf[len];
+	s->nextFree = NULL;
 	return s;
 }
 
 lVal *lValString(const char *c){
 	if(c == NULL){return NULL;}
 	lVal *t = lValAlloc();
+	if(t == NULL){return NULL;}
 	t->type = ltString;
 	t->vString = lStringNew(c,strlen(c));
 	return t;
@@ -158,6 +164,7 @@ lVal *lValString(const char *c){
 lVal *lValCString(const char *c){
 	if(c == NULL){return NULL;}
 	lVal *t = lValAlloc();
+	if(t == NULL){return NULL;}
 	t->type = ltString;
 	t->vString = lStringAlloc();
 	t->vString->buf = t->vString->data = c;
@@ -405,6 +412,8 @@ static lVal *lnfMem(lClosure *c, lVal *v){
 		strs++;
 	}
 	snprintf(buf,sizeof(buf)-1,"Vals:%u Closures:%u Arrs:%u Strings:%u",vals,clos,arrs,strs);
+	buf[sizeof(buf)-1]=0;
+	fprintf(stderr,"%s\n",buf);
 	return lValString(buf);
 }
 
@@ -549,7 +558,7 @@ lVal *lResolve(lClosure *c, lVal *v){
 	v = lEval(c,lCarOrV(v));
 	for(int i=0;i<16;i++){
 		if((v == NULL) || (v->type != ltSymbol)){break;}
-		v = lResolveSym(c,v->vSymbol);
+		v = lResolveSym(c,v);
 	}
 	return v;
 }
@@ -559,7 +568,7 @@ lVal *lEval(lClosure *c, lVal *v){
 	if((c == NULL) || (v == NULL)){return NULL;}
 
 	if(v->type == ltSymbol){
-		return lResolveSym(c,v->vSymbol);
+		return lResolveSym(c,v);
 	}else if(v->type == ltPair){
 		lVal *ret = lEval(c,v->vList.car);
 		if(ret == NULL){return v;}
@@ -577,7 +586,7 @@ lVal *lEval(lClosure *c, lVal *v){
 lVal *lnfApply(lClosure *c, lVal *v){
 	lVal *func = lEval(c,lCarOrV(v));
 	if(func == NULL){return NULL;}
-	if(func->type == ltSymbol){func = lResolveSym(c,func->vSymbol);}
+	if(func->type == ltSymbol){func = lResolveSym(c,func);}
 	switch(func->type){
 	case ltNativeFunc:
 		return func->vFunc.fp(c,lEval(c,lCarOrV(v->vList.cdr)));
@@ -768,9 +777,10 @@ lVal *lDefineClosureSym(lClosure *c,const lSymbol s){
 	return t->vList.cdr;
 }
 
-lVal *lResolveSym(lClosure *c, const lSymbol s){
-	lVal *v = lGetClosureSym(c,s);
-	return v == NULL ? NULL : v->vList.car;
+lVal *lResolveSym(lClosure *c, lVal *v){
+	if((v == NULL) || (v->type != ltSymbol)){return NULL;}
+	lVal *ret = lGetClosureSym(c,v->vSymbol);
+	return ret == NULL ? v : ret->vList.car;
 }
 
 lVal *lApply(lClosure *c, lVal *v, lVal *(*func)(lClosure *,lVal *)){
@@ -856,24 +866,28 @@ static void lGCSweep(){
 		lValFree(&lValBuf[i]);
 	}
 	for(uint i=0;i<lStringMax;i++){
-		if(!(lStringList[i].flags & lfMarked)){continue;}
+		if(!(lStringList[i].nextFree != NULL)){continue;}
 		lStringFree(&lStringList[i]);
 	}
 	for(uint i=0;i<lArrayMax;i++){
-		if(!(lArrayList[i].flags & lfMarked)){continue;}
+		if(!(lArrayList[i].nextFree != NULL)){continue;}
 		lArrayFree(&lArrayList[i]);
 	}
 	for(uint i=0;i<lClosureMax;i++){
-		if(lClosureList[i].flags & lfMarked){continue;}
+		if(lClosureList[i].nextFree != NULL){continue;}
 		lClosureFree(&lClosureList[i]);
 	}
 	printf("\n");
 }
 
 static void lClosureDoGC(){
+	//fprintf(stderr,"Pre-GC MEM:\n");
+	//lnfMem(NULL,NULL);
 	lGCUnmark();
 	lGCMark();
 	lGCSweep();
+	//fprintf(stderr,"Post-GC MEM:\n");
+	//lnfMem(NULL,NULL);
 }
 
 void lClosureGC(){
