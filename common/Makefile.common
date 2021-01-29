@@ -56,7 +56,7 @@ common/nujel/assets.h: common/nujel/assets.c
 	$(CC) -MM $< -MT "$(<:.c=.o)" $(CINCLUDES) $(CLIENT_CINCLUDES) > $@
 
 nujel: $(NUJEL_OBJS)
-	$(CC) -lm $(COPT) $(CWARN) $(CSTD) $(CFLAGS) $(RELEASE_OPTIMIZATION) -g $(NUJEL_OBJS) -o $@
+	$(CC) -lm $(COPT) $(CWARN) $(CSTD) $(CFLAGS) $(NUJEL_LIBS) $(OPTIMIZATION) -g $(NUJEL_OBJS) -o $@
 
 $(COMMON_DEPS): | common/src/tmp/cto.h common/src/tmp/assets.h common/nujel/assets.h
 .deps: common/make.deps

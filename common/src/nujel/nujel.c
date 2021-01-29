@@ -725,8 +725,8 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"pair?",  "(a)","#t if a is of type pair",  lnfPairPred);
 	lAddNativeFunc(c,"string?","(a)","#t if a is of type string",lnfStringPred);
 
-	lDefineVal(c,"π", lConst(lValFloat(M_PI)));
-	lDefineVal(c,"PI",lConst(lValFloat(M_PI)));
+	lDefineVal(c,"π",  lConst(lValFloat(PI)));
+	lDefineVal(c,"PI", lConst(lValFloat(PI)));
 }
 
 lClosure *lClosureNewRoot(){
