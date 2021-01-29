@@ -56,7 +56,10 @@ struct lClosure {
 	lClosure *parent;
 	lVal *data;
 	lVal *text;
-	uint flags;
+	union {
+		uint flags;
+		lClosure *nextFree;
+	};
 };
 #define lfMarked    ( 1)
 #define lfDynamic   ( 2)
@@ -66,11 +69,11 @@ struct lClosure {
 
 struct lString {
 	const char *buf,*data;
+	const char *bufEnd;
 	union {
-		const char *bufEnd;
-		lString *next;
+		lString *nextFree;
+		uint flags;
 	};
-	uint flags;
 };
 
 extern lSymbol symQuote,symArr;
