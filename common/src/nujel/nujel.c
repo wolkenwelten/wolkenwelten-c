@@ -104,7 +104,7 @@ lClosure *lClosureAlloc(){
 	return ret;
 }
 void lClosureFree(lClosure *c){
-	if(c == NULL){return;}
+	if((c == NULL) || (c->nextFree != NULL)){return;}
 	c->data       = c->text = NULL;
 	c->parent     = NULL;
 	c->nextFree   = lClosureFFree;
@@ -127,7 +127,7 @@ lArray *lArrayAlloc(){
 }
 
 void lArrayFree(lArray *v){
-	if(v == NULL){return;}
+	if((v == NULL) || (v->nextFree != NULL)){return;}
 	free(v->data);
 	v->nextFree = lArrayFFree;
 	v->data     = NULL;
@@ -148,7 +148,7 @@ lString *lStringAlloc(){
 }
 
 void lStringFree(lString *s){
-	if(s == NULL){return;}
+	if((s == NULL) || (s->nextFree != NULL)){return;}
 	if((s->buf != NULL) && (s->flags & lfHeapAlloc)){
 		free((void *)s->buf);
 	}
@@ -198,11 +198,12 @@ lVal *lValAlloc(){
 	lVal *ret  = lValFFree;
 	lValFFree  = ret->vNA;
 	ret->vNA   = NULL;
+	ret->type  = ltInt;
 	lValMax    = MAX(lValMax,(uint)(ret-lValList) + 1);
 	return ret;
 }
 void lValFree(lVal *v){
-	if(v == NULL){return;}
+	if((v == NULL) || (v->type == ltNoAlloc)){return;}
 	v->type   = ltNoAlloc;
 	v->vNA    = lValFFree;
 	v->flags  = 0;
@@ -845,6 +846,7 @@ static void lClosureGCMark(lClosure *c){
 }
 
 static void lArrayGCMark(lArray *v){
+	if((v == NULL) || (v->nextFree != NULL)){return;}
 	for(int i=0;i<v->length;i++){
 		lValGCMark(v->data[i]);
 	}
@@ -868,7 +870,7 @@ static void lGCMark(){
 	}
 	for(uint i=0;i<lStringMax ;i++){
 		if(!(lStringList[i].flags & lfNoGC)){continue;}
-		//lStringList[i].flags |= lfMarked;
+		lStringList[i].flags |= lfMarked;
 	}
 	for(uint i=0;i<lArrayMax  ;i++){
 		if(!(lArrayList[i].flags & lfNoGC)){continue;}
@@ -878,22 +880,18 @@ static void lGCMark(){
 
 static void lGCSweep(){
 	for(uint i=0;i<lValMax;i++){
-		if(lValList[i].type == ltNoAlloc){continue;}
 		if(lValList[i].flags & lfMarked) {continue;}
 		lValFree(&lValList[i]);
 	}
 	for(uint i=0;i<lClosureMax;i++){
-		if(lClosureList[i].nextFree != NULL){continue;}
 		if(lClosureList[i].flags & lfMarked){continue;}
 		lClosureFree(&lClosureList[i]);
 	}
 	for(uint i=0;i<lStringMax;i++){
-		if(!(lStringList[i].nextFree != NULL)){continue;}
 		if(lStringList[i].flags & lfMarked)   {continue;}
 		lStringFree(&lStringList[i]);
 	}
 	for(uint i=0;i<lArrayMax;i++){
-		if(!(lArrayList[i].nextFree != NULL)){continue;}
 		if(lArrayList[i].flags & lfMarked)   {continue;}
 		lArrayFree(&lArrayList[i]);
 	}
