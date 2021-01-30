@@ -9,7 +9,7 @@ and if you run into some bugs, have gameplay questions or want to talk about you
 favorite *nix, join us on [Discord](https://discord.gg/7rhnYH2) or preferrably on
 [Matrix](https://matrix.to/#/!RKZztYPGhtlgALDvMS:matrix.org?via=matrix.org).
 
-The newest releases are available over at this (projects website)[https://wolkenwelten.net]
+The newest releases are available over at this [projects website](https://wolkenwelten.net)
 , along with some descriptive text
 
 # Software Requirments
