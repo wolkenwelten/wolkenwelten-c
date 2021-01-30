@@ -3,7 +3,7 @@
 void asmDetermineSupport();
 int asmRoutineSupport = 0;
 
-#if defined(__ARM_ARCH_7A__) || defined(__aarch64__)
+#if defined(__arm__) || defined(__aarch64__)
 	void      rainPosUpdateNEON();
 	void  particlePosUpdateNEON();
 	void sparticlePosUpdateNEON();
