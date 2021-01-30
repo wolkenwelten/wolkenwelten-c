@@ -1,7 +1,16 @@
-Hello there dear Subscriber,
+Good morning,
 
-this file shall give you a brief overview about the build system and
-requirements so that you can start experimenting with the codebase.
+this Project is still in early Development so I highly recommend against writing
+patches/mods for it, as your work will probably go to waste due to some
+restructuring, although the codebase is getting more stable :)
+
+You can watch me develop this game over at [Twitch](https://twitch.tv/melchizedek6809)
+and if you run into some bugs, have gameplay questions or want to talk about your
+favorite *nix, join us on [Discord](https://discord.gg/7rhnYH2) or preferrably on
+[Matrix](https://matrix.to/#/!RKZztYPGhtlgALDvMS:matrix.org?via=matrix.org).
+
+The newest releases are available over at this (projects website)[https://wolkenwelten.net]
+, along with some descriptive text
 
 # Software Requirments
 

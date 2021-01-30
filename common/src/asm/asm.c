@@ -56,7 +56,8 @@ int asmRoutineSupport = 0;
 #endif
 
 #ifdef __x86_64__
-#if defined(__APPLE__) || defined(__EMSCRIPTEN__) || defined(__HAIKU__)
+// #if defined(__APPLE__) || defined(__EMSCRIPTEN__) || defined(__HAIKU__)
+#if 1==1
 	static void      rainPosUpdateSSE(){}
 	static void      rainPosUpdateAVX(){}
 	static void  particlePosUpdateSSE(){}

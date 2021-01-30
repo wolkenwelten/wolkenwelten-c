@@ -2,8 +2,8 @@
 #include "../common.h"
 
 #define RAIN_MAX (1<<16)
-extern glRainDrop glRainDrops[RAIN_MAX];
-extern   rainDrop   rainDrops[RAIN_MAX];
+extern glRainDrop glRainDrops[RAIN_MAX+4];
+extern   rainDrop   rainDrops[RAIN_MAX+4];
 extern uint rainCount;
 
 void rainNew(vec pos);

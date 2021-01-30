@@ -15,7 +15,8 @@ particlePosUpdateSSE:
   xor %ecx,%ecx
   movl particleCount@GOTPCREL(%rip), %ecx
   shrl $2,%ecx
-  jz .particleUpdateEndSSE
+  inc %ecx
+
   leaq glParticles@GOTPCREL(%rip), %rdx
   leaq   particles@GOTPCREL(%rip), %rax
 
@@ -43,7 +44,6 @@ particlePosUpdateSSE:
   add $64,%rax
   dec %ecx
   jnz .particleUpdateLoopSSE
-.particleUpdateEndSSE:
   fxrstor savedFloats(%rip)
   ret
 
@@ -52,7 +52,8 @@ particlePosUpdateAVX:
   xor %ecx,%ecx
   movl particleCount@GOTPCREL(%rip), %ecx
   shrl $2,%ecx
-  jz .particleUpdateEndAVX
+  inc %ecx
+
   leaq glParticles@GOTPCREL(%rip), %rdx
   leaq   particles@GOTPCREL(%rip), %rax
 
@@ -72,7 +73,6 @@ particlePosUpdateAVX:
   add $64,%rax
   dec %ecx
   jnz .particleUpdateLoopAVX
-.particleUpdateEndAVX:
   fxrstor savedFloats(%rip)
   ret
 
@@ -81,7 +81,7 @@ sparticlePosUpdateSSE:
   xor %ecx,%ecx
   movl sparticleCount@GOTPCREL(%rip), %ecx
   shrl $2,%ecx
-  jz .sparticleUpdateEndSSE
+  inc %ecx
 
   leaq sparticleVV@GOTPCREL(%rip), %rdx
   movaps   (%rdx),%xmm4
@@ -125,7 +125,6 @@ sparticlePosUpdateSSE:
   add $64,%rax
   dec %ecx
   jnz .sparticleUpdateLoopSSE
-.sparticleUpdateEndSSE:
   fxrstor savedFloats(%rip)
   ret
 
@@ -134,7 +133,7 @@ sparticlePosUpdateAVX:
   xor %ecx,%ecx
   movl sparticleCount@GOTPCREL(%rip), %ecx
   shrl $2,%ecx
-  jz .sparticleUpdateEndAVX
+  inc %ecx
 
   leaq sparticleVV@GOTPCREL(%rip), %rdx
   vmovaps   (%rdx),%ymm4
@@ -163,7 +162,6 @@ sparticlePosUpdateAVX:
   add $64,%rax
   dec %ecx
   jnz .sparticleUpdateLoopAVX
-.sparticleUpdateEndAVX:
   fxrstor savedFloats(%rip)
   ret
 
@@ -233,6 +231,5 @@ rainPosUpdateAVX:
   add $64,%rax
   dec %ecx
   jnz .rainPosUpdateLoopAVX
-.rainPosUpdateEndAVX:
   fxrstor savedFloats(%rip)
   ret
