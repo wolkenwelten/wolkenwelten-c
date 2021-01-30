@@ -7,4 +7,5 @@ bool mouseBoost        ();
 bool mousePrimary      ();
 bool mouseSecondary    ();
 bool mouseTertiary     ();
+bool mouseThrow        ();
 void mouseEventHandler (const SDL_Event *e);

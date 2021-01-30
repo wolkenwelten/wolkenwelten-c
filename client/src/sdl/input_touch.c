@@ -49,6 +49,9 @@ bool touchSecondary(){
 bool touchTertiary(){
 	return false;
 }
+bool touchThrow(){
+	return false;
+}
 
 vec doTouchupdate(vec vel){
 	if(leftFingerID != -1){

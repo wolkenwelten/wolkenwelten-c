@@ -85,6 +85,11 @@ bool characterIsAiming(const character *c){
 	if(c == NULL){return false;}
 	return c->flags & CHAR_AIMING;
 }
+bool characterIsThrowAiming(const character *c){
+	if(c == NULL){return false;}
+	const uint mask = CHAR_AIMING | CHAR_THROW_AIM;
+	return (c->flags & mask) == mask;
+}
 void characterToggleThrowAim(character *c, float zoom){
 	if(c == NULL){return;}
 	if(c->flags & CHAR_AIMING){

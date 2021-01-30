@@ -26,4 +26,5 @@ bool inputBoost();
 bool inputPrimary();
 bool inputSecondary();
 bool inputTertiary();
+bool inputThrow();
 bool gameControlsInactive();

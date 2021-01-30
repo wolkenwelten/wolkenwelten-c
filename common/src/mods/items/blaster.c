@@ -21,6 +21,7 @@ int blasterGetStackSize(const item *cItem){
 }
 
 bool blasterPrimaryAction(item *cItem, character *cChar){
+	if(throwableTry(cItem,cChar,0.25, THROWABLE_PITCH_SPIN)){return true;}
 	if(!characterTryToShoot(cChar,cItem,80,3)){return false;}
 	beamblast(cChar,1.f,8.0f,0.05f,3,1,2.f,1.f);
 	return true;

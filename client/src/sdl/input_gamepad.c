@@ -58,6 +58,9 @@ bool gamepadSecondary(){
 bool gamepadTertiary(){
 	return gamepadButtons[1];
 }
+bool gamepadThrow(){
+	return gamepadButtons[3];
+}
 
 void gamepadInit(){
 	if(SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) == 0){
@@ -196,9 +199,9 @@ vec doGamepadupdate(vec vel){
 	}
 	if(gamepadButtons[3]){
 		gamepadButtons[3] = false;
-		if(!isInventoryOpen()){
+		/*if(!isInventoryOpen()){
 			characterDropSingleItem(player,player->activeItem);
-		}
+		}*/
 	}
 	if(gamepadButtons[6]){
 		gamepadButtons[6] = false;

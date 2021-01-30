@@ -15,6 +15,7 @@ void       characterOpenGlider     (      character *c);
 void       characterCloseGlider    (      character *c);
 void       characterToggleGlider   (      character *c);
 bool       characterIsAiming       (const character *c);
+bool       characterIsThrowAiming  (const character *c);
 void       characterToggleAim      (      character *c, float zoom);
 void       characterToggleThrowAim (      character *c, float zoom);
 void       characterStopAim        (      character *c);

@@ -138,12 +138,9 @@ void worldUpdate(){
 			}else{
 				characterStopMining(player);
 			}
-			if(inputSecondary()){
-				characterSecondary(player);
-			}
-			if(inputTertiary()){
-				characterTertiary(player);
-			}
+			if(inputSecondary()){characterSecondary(player);}
+			if(inputTertiary()){characterTertiary(player);}
+			if(inputThrow()){characterThrow(player);}
 		}
 		resetOverlayColor();
 		charactersUpdate();

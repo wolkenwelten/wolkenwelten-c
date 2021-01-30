@@ -257,6 +257,9 @@ bool inputSecondary(){
 bool inputTertiary(){
 	return gamepadTertiary()  || keyboardTertiary()  || mouseTertiary()  || touchTertiary();
 }
+bool inputThrow(){
+	return gamepadThrow()     || keyboardThrow()     || mouseThrow()     || touchThrow();
+}
 
 bool gameControlsInactive(){
 	if(widgetFocused == NULL)             {return true;}

@@ -42,6 +42,9 @@ bool mouseSecondary(){
 bool mouseTertiary(){
 	return false;
 }
+bool mouseThrow(){
+	return false;
+}
 
 void mouseEventHandler(const SDL_Event *e){
 	switch(e->type){

@@ -60,10 +60,15 @@ int itemIncStack(item *i, i16 amount){
 	return amount;
 }
 int itemDecStack(item *i, i16 amount){
-	if(i == NULL)      {return 0;}
-	if(i->amount < amount){amount = i->amount;}
-	i->amount -= amount;
-	return amount;
+	if((i == NULL) || (amount == 0)){return 0;}
+	if(getStackSizeDispatch(i) == 1){
+		itemDiscard(i);
+		return 1;
+	}else{
+		if(i->amount < amount){amount = i->amount;}
+		i->amount -= amount;
+		return amount;
+	}
 }
 int itemGetAmmo(const item *i){
 	if(i == NULL)      {return 0;}

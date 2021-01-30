@@ -21,6 +21,7 @@ int assaultblasterGetStackSize(const item *cItem){
 }
 
 bool assaultblasterPrimaryAction(item *cItem, character *cChar){
+	if(throwableTry(cItem,cChar,0.25, THROWABLE_PITCH_SPIN)){return true;}
 	if(!characterTryToShoot(cChar,cItem,15,1)){return false;}
 	sfxPlay(sfxPhaser,0.2f);
 	projectileNewC(cChar, 0, 1);

@@ -37,9 +37,7 @@ int blockDamageDefault(const item *cItem, blockCategory blockCat){
 	return 1;
 }
 bool primaryActionDefault(item *cItem, character *cChar){
-	(void)cItem;
-	(void)cChar;
-
+	if(throwableTry(cItem,cChar,0.125f, 0)){return true;}
 	return false;
 }
 bool secondaryActionDefault(item *cItem, character *cChar){
@@ -107,4 +105,9 @@ int getFireHealthDefault(const itemDrop *id){
 		return blockTypeGetHP(id->itm.ID);
 	}
 	return 300;
+}
+
+int throwActionDefault(item *cItem, character *cChar){
+	if(throwableTryAim(cItem,cChar)){return true;}
+	return false;
 }

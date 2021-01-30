@@ -8,6 +8,7 @@ extern int        playerID;
 void  characterPrimary        (      character *c);
 void  characterSecondary      (      character *c);
 void  characterTertiary       (      character *c);
+void  characterThrow          (      character *c);
 void  characterStopMining     (      character *c);
 float characterMineProgress   (      character *c);
 void  characterUpdate         (      character *c);

@@ -12,6 +12,7 @@ bool        hasPrimaryAction        (const item *cItem);
 bool        secondaryActionDispatch (      item *cItem, character *cChar);
 bool        hasSecondaryAction      (const item *cItem);
 bool        tertiaryActionDispatch  (      item *cItem, character *cChar);
+bool        throwActionDispatch     (      item *cItem, character *cChar);
 bool        hasTertiaryAction       (const item *cItem);
 float       getInaccuracyDispatch   (const item *cItem);
 int         getAmmunitionDispatch   (const item *cItem);
@@ -31,6 +32,7 @@ int         getAmmunitionDefault    (const item *cItem);
 int         getStackSizeDefault     (const item *cItem);
 int         getMagSizeDefault       (const item *cItem);
 int         itemDropCallbackDefault (const item *cItem, float x, float y, float z);
+int         throwActionDefault      (      item *cItem, character *cChar);
 
 int         itemDropBurnUpDispatch  (      itemDrop *id);
 int         getFireDmgDispatch      (const itemDrop *id);

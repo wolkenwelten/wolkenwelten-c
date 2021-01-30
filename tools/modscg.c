@@ -299,6 +299,7 @@ int main(int argc, char *argv[]){
 	printHasTypeSwitch   ("SecondaryAction");
 	printItemTypeDispatch("TertiaryAction","item *cItem, character *cChar","cItem, cChar","bool ");
 	printHasTypeSwitch   ("TertiaryAction");
+	printItemTypeDispatch("ThrowAction","item *cItem, character *cChar","cItem, cChar","bool ");
 	printItemTypeDispatch("GetInaccuracy","const item *cItem","cItem","float ");
 	printItemTypeDispatch("GetAmmunition","const item *cItem","cItem","int ");
 	printItemTypeDispatch("GetStackSize","const item *cItem","cItem","int ");

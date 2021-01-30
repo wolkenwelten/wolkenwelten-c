@@ -7,6 +7,7 @@ bool gamepadBoost          ();
 bool gamepadPrimary        ();
 bool gamepadSecondary      ();
 bool gamepadTertiary       ();
+bool gamepadThrow          ();
 
 void gamepadInit           ();
 void closeGamepad          ();

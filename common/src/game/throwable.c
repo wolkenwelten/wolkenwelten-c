@@ -59,7 +59,7 @@ void throwableFree(throwable *t){
 	throwableFirstFree = t - throwableList;
 }
 
-void throwableSendUpdate(uint c, uint i){
+void throwableSendUpdate(int c, uint i){
 	if(i >= throwableCount){return;}
 	throwable *a = &throwableList[i];
 	packet    *p = &packetBuffer;
@@ -75,6 +75,7 @@ void throwableSendUpdate(uint c, uint i){
 
 	if(a->itm.amount == 0){
 		throwableFree(a);
+		packetQueue(p,45,12*4,c);
 		return;
 	}
 
@@ -173,9 +174,14 @@ static void throwableUpdate(throwable *t){
 			t->ent->vel.y = 0.01f;
 		}
 	}
-
 	if(t->flags & THROWABLE_PITCH_SPIN){
 		t->ent->rot.pitch -= 2.f;
+	}
+	if(!isClient && !(t->ent->flags & ENTITY_NOCLIP) && (t->ent->flags & ENTITY_COLLIDE) && (vecAbsSum(t->ent->vel) < 0.01f)){
+		itemDropNewP(t->ent->pos,&t->itm);
+		t->itm.amount = 0;
+		t->itm.ID = 0;
+		throwableSendUpdate(-1,t - throwableList);
 	}
 }
 
@@ -189,4 +195,36 @@ void throwableUpdateAll(){
 	}
 
 	PROFILE_STOP();
+}
+
+bool throwableTry(item *cItem,character *cChar, float strength, uint flags){
+	if(characterIsThrowAiming(cChar) && characterTryToUse(cChar,cItem,100,0)){
+		characterAddRecoil(cChar,1.f);
+		if(getStackSizeDispatch(cItem) == 1){
+			throwableNew(cChar->pos, cChar->rot, strength, *cItem, characterGetBeing(cChar), flags);
+		}else{
+			item tmp;
+			tmp = *cItem;
+			tmp.amount = 1;
+			throwableNew(cChar->pos, cChar->rot, strength, tmp, characterGetBeing(cChar), flags);
+		}
+		itemDecStack(cItem,1);
+		if(itemIsEmpty(cItem)){
+			characterStopAim(cChar);
+		}else{
+			characterStartAnimation(cChar,0,240);
+		}
+		return true;
+	}
+	return false;
+}
+
+bool throwableTryAim(item *cItem, character *cChar){
+	if(characterTryToUse(cChar,cItem,200,0)){
+		characterAddCooldown(cChar,200);
+		characterToggleThrowAim(cChar,2.f);
+		characterAddInaccuracy(cChar,32.f);
+		return true;
+	}
+	return false;
 }

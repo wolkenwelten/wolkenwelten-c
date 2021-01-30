@@ -285,9 +285,7 @@ void characterHit(character *c){
 
 void characterPrimary(character *c){
 	item *itm = &c->inventory[c->activeItem];
-	if(hasPrimaryAction(itm)){
-		if(primaryActionDispatch(itm,c)){return;}
-	}
+	if(primaryActionDispatch(itm,c)){return;}
 	ivec los = characterLOSBlock(c,0);
 	if(los.x < 0){
 		if(c->actionTimeout >= 0){characterHit(c);}
@@ -318,6 +316,13 @@ void characterTertiary(character *c){
 	item *cItem = characterGetItemBarSlot(c,c->activeItem);
 	if(!itemIsEmpty(cItem)){
 		tertiaryActionDispatch(cItem,c);
+	}
+}
+
+void characterThrow(character *c){
+	item *cItem = characterGetItemBarSlot(c,c->activeItem);
+	if(!itemIsEmpty(cItem)){
+		throwActionDispatch(cItem,c);
 	}
 }
 

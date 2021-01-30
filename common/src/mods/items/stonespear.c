@@ -34,12 +34,7 @@ bool stonespearPrimaryAction(item *cItem, character *cChar){
 }
 
 bool stonespearSecondaryAction(item *cItem, character *cChar){
-	if(characterTryToUse(cChar,cItem,200,0)){
-		characterAddCooldown(cChar,200);
-		characterToggleThrowAim(cChar,2.f);
-		characterAddInaccuracy(cChar,32.f);
-		return true;
-	}
+	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
 }
 

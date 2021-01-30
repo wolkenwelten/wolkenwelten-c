@@ -55,6 +55,11 @@ bool keyboardTertiary(){
 	return keysPressed[7];
 }
 
+bool keyboardThrow(){
+	if(gameControlsInactive()){return false;}
+	return keysPressed[6];
+}
+
 vec doKeyboardupdate(vec vel){
 	if(gameControlsInactive()){return vel;}
 
@@ -72,9 +77,10 @@ vec doKeyboardupdate(vec vel){
 	float rotSpeed = 2.f / (1.f + (player->aimFade * player->zoomFactor));
 	characterRotate(player,vecMulS(rot,rotSpeed));
 
+	/*
 	if(keysPressed[6]){
 		characterDropSingleItem(player,player->activeItem);
-	}
+	}*/
 	return vel;
 }
 
