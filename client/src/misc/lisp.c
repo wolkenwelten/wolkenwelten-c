@@ -232,21 +232,19 @@ void lispRecvSExpr(const packet *p){
 	lispPanelShowReply(lispSEvalSym(id),str);
 }
 
+#include <stdlib.h>
 void lispEvents(){
-	static lVal *expr = NULL;
-
-	if(expr == NULL){
-		expr = lWrap(lRead("(yield-run)"));
-		expr->flags |= lfNoGC;
-	}
 	PROFILE_START();
 
-	static uint lastTicks = 0;
+	static u64 lastTicks = 0;
 	u64 cticks = getTicks();
-	if((lastTicks + 500) > cticks){return;}
+	if((lastTicks + 500) > cticks){
+		if(labs((i64)cticks - (i64)lastTicks) > 1000){lastTicks = cticks;}
+		return;
+	}
 	lastTicks = cticks;
 
-	lEval(clRoot,expr);
+	lispEval("(begin (yield-run))");
 	lClosureGC();
 
 	PROFILE_STOP();

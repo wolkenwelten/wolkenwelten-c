@@ -39,6 +39,10 @@
 		(#t (log  (cond ((zero? i) (ansi-green "GO!")) ((< i 4) (ansi-red i)) ((< i 6) (ansi-yellow i)) (#t i)))
 		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))
 
+(define hammertime (λ (i) "It better not stop"
+	(cond ((<= i 0) #t)
+	      (#t (countdown 300) (hammertime (-- i))))))
+
 
 (define on-spawn '())
 (define on-join '())

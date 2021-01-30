@@ -910,9 +910,9 @@ static void lClosureDoGC(){
 }
 
 void lClosureGC(){
-	/*
 	static uint calls = 0;
-	if(++calls > (1<<16)){
+
+	if(++calls > (1<<12)){
 		calls = 0;
 		lClosureDoGC();
 		return;
@@ -923,9 +923,12 @@ void lClosureGC(){
 		lClosureDoGC();
 		return;
 	}
-	if(calls < 4096){return;}
-	calls = 0;*/
-	lClosureDoGC();
+	if(calls > 512){
+
+		calls = 0;
+		lClosureDoGC();
+		return;
+	}
 }
 
 lType lTypecast(const lType a,const lType b){

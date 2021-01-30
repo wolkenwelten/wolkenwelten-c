@@ -62,10 +62,12 @@ u64 getUTicks(){
 }
 
 void profStart(uint i){
+	if(i >= PROFILER_MAX_ENTRIES){return;}
 	profEntryList[i].ustart = getUTicks();
 }
 
 void profStop(uint i){
+	if(i >= PROFILER_MAX_ENTRIES){return;}
 	u64 cticks = getUTicks();
 	if(profEntryList[i].ustart < cticks){
 		profEntryList[i].total += cticks - profEntryList[i].ustart;
@@ -74,18 +76,22 @@ void profStop(uint i){
 }
 
 u64 profGetTotal(uint i){
+	if(i >= PROFILER_MAX_ENTRIES){return 0;}
 	return profEntryList[i].total;
 }
 
 u64 profGetCount(uint i){
+	if(i >= PROFILER_MAX_ENTRIES){return 0;}
 	return profEntryList[i].count;
 }
 
 double profGetMean(uint i){
+	if(i >= PROFILER_MAX_ENTRIES){return 0;}
 	return (double)profEntryList[i].total / (double)profEntryList[i].count;
 }
 
 double profGetShare(uint i){
+	if(i >= PROFILER_MAX_ENTRIES){return 0;}
 	u64 totalSum = 0;
 	for(uint ii=1;ii < 64;ii++){
 		totalSum += profEntryList[ii].total;
@@ -94,6 +100,7 @@ double profGetShare(uint i){
 }
 
 const char *profGetName(uint i){
+	if(i >= PROFILER_MAX_ENTRIES){return "Out of Bounds";}
 	return profEntryList[i].funcName;
 }
 
@@ -109,15 +116,15 @@ const char *profGetReport(){
 }
 
 void profReset(){
-	for(uint i=1;i<64;i++){
-		profEntryList[i].count = 0;
-		profEntryList[i].total = 0;
-	}
+	memset(nprofEntryList,0,sizeof(profEntryList));
+}
+void nprofReset(){
+	memset(nprofEntryList,0,sizeof(nprofEntryList));
 }
 
 void nprofAddPacket(uint type, uint size){
-	nprofEntryList[type].count++;
-	nprofEntryList[type].total+=size;
+	nprofEntryList[type&0xFF].count++;
+	nprofEntryList[type&0xFF].total+=size;
 }
 
 double nprofGetShare(uint type){
@@ -146,8 +153,4 @@ const char *nprofGetReport(){
 	}
 	*buf = 0;
 	return reportBuf;
-}
-
-void nprofReset(){
-	memset(nprofEntryList,0,sizeof(nprofEntryList));
 }
