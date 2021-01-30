@@ -1,5 +1,5 @@
 /*
- * Wolkenwelten - Copyright (C) 2020-2021 - Benjamin Vincent Schulenburg
+ * Woslkenwelten - Copyright (C) 2020-2021 - Benjamin Vincent Schulenburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -363,7 +363,7 @@ void characterDie(character *c){
 	setOverlayColor(0xFF000000,0);
 	msgRequestPlayerSpawnPos();
 	c->flags |= CHAR_SPAWNING;
-	//lispEval("(event-fire \"on-respawn\")");
+	lispEval("(event-fire \"on-spawn\")");
 }
 
 void updateGlide(character *c){
@@ -901,7 +901,7 @@ void characterSetData(character *c, const packet *p){
 		playerList[playerID] = player;
 	}
 	connectionState = 2;
-	//lispEval("(event-fire \"on-join\")");
+	lispEval("(event-fire \"on-join\")");
 }
 
 void characterSetName(const packet *p){

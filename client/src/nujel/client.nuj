@@ -40,7 +40,7 @@
 		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))
 
 
-(define on-respawn '())
+(define on-spawn '())
 (define on-join '())
 
 (define event-bind (λ (event-name handler) "Binds handler lambda to event-name"
@@ -52,5 +52,5 @@
 (define event-fire (λ (event-name ...val) "Applies ...val to all event handlers associated with event-name"
 	(event-fire-iter (resolve (str->sym event-name)) ...val)))
 
-(event-bind "on-respawn" (λ () "" (say "You died... Noob!") (s (debug-equipment))))
-(event-bind "on-join" (λ () "" (say "Here you go, some debug gear!") (s (debug-equipment))))
+(event-bind "on-spawn" (λ () "" (say (ansi-yellow "Have some Gear!")) (s (debug-equipment))))
+(event-bind "on-join" (λ () "" (say (ansi-green "Welcome!"))))

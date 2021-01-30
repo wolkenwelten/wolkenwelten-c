@@ -788,7 +788,7 @@ lVal *lResolveSym(lClosure *c, lVal *v){
 	return ret == NULL ? v : ret->vList.car;
 }
 
-lVal *lApply(lClosure *c, lVal *v, lVal *(*func)(lClosure *,lVal *)){
+lVal  *lApply(lClosure *c, lVal *v, lVal *(*func)(lClosure *,lVal *)){
 	if((c == NULL) || (v == NULL)){return NULL;}
 	//lPrintVal(v);
 	lVal *ret = NULL, *cc = NULL;
