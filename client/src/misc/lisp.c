@@ -239,7 +239,7 @@ void lispEvents(){
 	static u64 lastTicks = 0;
 	u64 cticks = getTicks();
 	if((lastTicks + 500) > cticks){
-		if(labs((i64)cticks - (i64)lastTicks) > 1000){lastTicks = cticks;}
+		if(lastTicks > cticks){lastTicks = cticks;}
 		return;
 	}
 	lastTicks = cticks;

@@ -28,10 +28,8 @@
 
 #if defined(__HAIKU__)
 #define CHUNK_COUNT (1<<17)
-#elif defined(__EMSCRIPTEN__)
-#define CHUNK_COUNT (1<<18)
 #else
-#define CHUNK_COUNT (1<<19)
+#define CHUNK_COUNT (1<<18)
 #endif
 
 chunk *chunkList;
