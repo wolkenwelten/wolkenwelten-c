@@ -31,7 +31,7 @@ struct lArray {
 
 struct lNFunc {
 	lVal *(*fp)(lClosure *, lVal *);
-	lVal *doc;;
+	lVal *doc;
 };
 
 struct lVal {

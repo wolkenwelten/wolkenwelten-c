@@ -14,3 +14,5 @@ extern int playerID;
 extern char *ansiRS;
 extern char *ansiFG[16];
 extern  int msPerTick;
+
+const char *lispEval(const char *str);

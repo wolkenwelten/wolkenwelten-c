@@ -172,10 +172,10 @@ lVal *lReadString(lString *s){
 
 lVal *lRead(const char *str){
 	lString *s = lStringAlloc();
+	if(s == NULL){return NULL;}
 	s->data     = str;
 	s->buf      = str;
 	s->bufEnd   = &str[strlen(str)];
 	lVal *ret   = lReadString(s);
-	lStringFree(s);
 	return ret;
 }

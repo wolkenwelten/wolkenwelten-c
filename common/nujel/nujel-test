@@ -225,7 +225,6 @@ test_sexpr "(even? 2)" "#t"
 test_sexpr "(even? 9)" "#f"
 test_sexpr "(odd? 7)" "#t"
 test_sexpr "(odd? 4)" "#f"
-#test_sexpr "π" "3.14159" Doesnt work on windows, why?
 test_sexpr "(set! PI 3) PI" "3.14159"
 test_sexpr "(str-up \"asD123\")" "\"ASD123\""
 test_sexpr "(str-down \"aSD123\")" "\"asd123\""
@@ -245,4 +244,5 @@ test_sexpr "(str 123)" "\"123\""
 test_sexpr "testerle" "testerle"
 test_sexpr "(:asd qwerty)" "(:asd qwerty)"
 
+#test_sexpr "π" "3.14159" Doesnt work on windows, why?
 print_report

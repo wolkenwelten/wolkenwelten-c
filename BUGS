@@ -1,5 +1,4 @@
 - 2020-12-08: WASM SP Server crashes after a while
-- 2020-12-09: After attacking a sleeping chungus it is still looking up/down as if sleeping
 - 2020-12-09: Sometimes a lot of Enemies/Chungi fall from the sky
 - 2020-12-10: Booster trail is only shown for the current player
 - 2020-12-10: Server not shuttong down correctly still an issue

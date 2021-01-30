@@ -38,3 +38,19 @@
 	(cond ((< (int i) 0) #t)
 		(#t (log  (cond ((zero? i) (ansi-green "GO!")) ((< i 4) (ansi-red i)) ((< i 6) (ansi-yellow i)) (#t i)))
 		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))
+
+
+(define on-respawn '())
+(define on-join '())
+
+(define event-bind (λ (event-name handler) "Binds handler lambda to event-name"
+	(set! (str->sym event-name) (cons handler on-respawn))))
+(define event-clear (λ (event-name) "Clears all event handlers for event-name"
+	(set! (str->sym event-name) '())))
+(define event-fire-iter (λ (l v) "Iter for event-fire"
+	(apply (car l) v) (event-fire-iter (cdr l) v)))
+(define event-fire (λ (event-name ...val) "Applies ...val to all event handlers associated with event-name"
+	(event-fire-iter (resolve (str->sym event-name)) ...val)))
+
+(event-bind "on-respawn" (λ () "" (say "You died... Noob!") (s (debug-equipment))))
+(event-bind "on-join" (λ () "" (say "Here you go, some debug gear!") (s (debug-equipment))))

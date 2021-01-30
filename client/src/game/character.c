@@ -346,6 +346,7 @@ void characterDie(character *c){
 	setOverlayColor(0xFF000000,0);
 	msgRequestPlayerSpawnPos();
 	c->flags |= CHAR_SPAWNING;
+	lispEval("(event-fire \"on-respawn\")");
 }
 
 void updateGlide(character *c){
@@ -882,8 +883,8 @@ void characterSetData(character *c, const packet *p){
 	if(playerList[playerID] == NULL){
 		playerList[playerID] = player;
 	}
-
 	connectionState = 2;
+	lispEval("(event-fire \"on-join\")");
 }
 
 void characterSetName(const packet *p){
