@@ -1,16 +1,19 @@
-Good morning,
+# WolkenWelten
 
-this Project is still in early Development so I highly recommend against writing
-patches/mods for it, as your work will probably go to waste due to some
-restructuring, although the codebase is getting more stable :)
+* mostly written in C99
+* runs at (close to) 60FPS on a Raspberry PI 4(00)
+* contains a custom LISP interpreter (nujel)
+* lets you swing around a proceduraly generated world of floating islands
+* fits on a standard 1.44MB Floppy Disk
+* lets you play together with your friends
 
 You can watch me develop this game over at [Twitch](https://twitch.tv/melchizedek6809)
 and if you run into some bugs, have gameplay questions or want to talk about your
 favorite *nix, join us on [Discord](https://discord.gg/7rhnYH2) or preferrably on
 [Matrix](https://matrix.to/#/!RKZztYPGhtlgALDvMS:matrix.org?via=matrix.org).
 
-The newest releases are available over at this [projects website](https://wolkenwelten.net)
-, along with some descriptive text
+The newest binary releases are available over at this [projects website](https://wolkenwelten.net),
+along with some more writings about the game.
 
 # Software Requirments
 
