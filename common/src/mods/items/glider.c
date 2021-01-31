@@ -4,6 +4,7 @@ static const int ITEMID=274;
 
 void gliderInit(){
 	recipeNew2(itemNew(ITEMID,1), itemNew(I_Board,16), itemNew(I_Fur,8));
+	lispDefineID("i-","glider",ITEMID);
 }
 
 mesh *gliderGetMesh(const item *cItem){

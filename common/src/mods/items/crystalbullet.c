@@ -4,6 +4,7 @@ static const int ITEMID=265;
 
 void crystalbulletInit(){
 	recipeNew2(itemNew(ITEMID,10), itemNew(I_Crystal,1), itemNew(I_Coal,1));
+	lispDefineID("i-","crystal bullet",ITEMID);
 }
 
 mesh *crystalbulletGetMesh(const item *cItem){

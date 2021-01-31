@@ -6,6 +6,7 @@ static const int MAGSIZE=30;
 void blasterInit(){
 	(void)ITEMID;
 	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,4), itemNew(I_Iron_Bar,4), itemNew(I_Crystalbullet,4));
+	lispDefineID("i-","blaster",ITEMID);
 }
 
 mesh *blasterGetMesh(const item *cItem){

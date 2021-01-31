@@ -2,9 +2,12 @@ static const int ITEMID=277;
 
 #include "../api_v1.h"
 
+void poopInit(){
+	lispDefineID("i-","poop",ITEMID);
+}
+
 mesh *poopGetMesh(const item *cItem){
 	(void)cItem;
-	(void)ITEMID;
 
 	return meshPoop;
 }

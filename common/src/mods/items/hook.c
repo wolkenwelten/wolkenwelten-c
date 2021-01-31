@@ -4,6 +4,7 @@ static const int ITEMID=275;
 
 void hookInit(){
 	recipeNew2(itemNew(ITEMID,1), itemNew(I_Iron_Bar,4), itemNew(I_Coal,4));
+	lispDefineID("i-","hook",ITEMID);
 }
 
 mesh *hookGetMesh(const item *cItem){

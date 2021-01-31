@@ -4,6 +4,7 @@ static const int ITEMID=270;
 
 void crystalaxeInit(){
 	recipeNew2(itemNew(ITEMID,1),itemNew(I_Iron_Axe,1),itemNew(I_Crystal_Bar,4));
+	lispDefineID("i-","crystal axe",ITEMID);
 }
 
 int crystalaxeDamage(const item *cItem){

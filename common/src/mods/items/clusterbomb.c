@@ -4,6 +4,7 @@ static const int ITEMID=273;
 
 void clusterbombInit(){
 	recipeNew3(itemNew(ITEMID,1), itemNew(I_Iron_Bar,3), itemNew(I_Coal, 12), itemNew(I_Crystal, 4));
+	lispDefineID("i-","cluster bomb",ITEMID);
 }
 
 bool clusterbombSecondaryAction(item *cItem,character *cChar){

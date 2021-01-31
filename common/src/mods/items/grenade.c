@@ -4,6 +4,7 @@ static const int ITEMID=256;
 
 void grenadeInit(){
 	recipeNew3(itemNew(ITEMID,3), itemNew(I_Iron_Bar,1), itemNew(I_Coal, 4), itemNew(I_Crystal, 1));
+	lispDefineID("i-","grenade",ITEMID);
 }
 
 bool grenadeSecondaryAction(item *cItem,character *cChar){

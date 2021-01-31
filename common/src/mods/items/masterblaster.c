@@ -4,8 +4,8 @@ static const int MAGSIZE=90;
 #include "../api_v1.h"
 
 void masterblasterInit(){
-	(void)ITEMID;
 	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,16), itemNew(I_Iron_Bar,12), itemNew(I_Crystalbullet,16));
+	lispDefineID("i-","masterblaster",ITEMID);
 }
 
 mesh *masterblasterGetMesh(const item *cItem){

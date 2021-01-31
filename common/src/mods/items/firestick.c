@@ -4,6 +4,7 @@ static const int ITEMID=287;
 
 void firestickInit(){
 	recipeNew2(itemNew(ITEMID,1), itemNew(I_Board,1), itemNew(I_Stone,1));
+	lispDefineID("i-","firestick",ITEMID);
 }
 
 int firestickGetStackSize(const item *cItem){

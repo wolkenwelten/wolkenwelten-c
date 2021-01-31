@@ -4,8 +4,8 @@ static const int MAGSIZE=90;
 #include "../api_v1.h"
 
 void flamethrowerInit(){
-	(void)ITEMID;
 	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,8), itemNew(I_Iron_Bar,8), itemNew(I_Crystalbullet,8));
+	lispDefineID("i-","flamethrower",ITEMID);
 }
 
 mesh *flamethrowerGetMesh(const item *cItem){

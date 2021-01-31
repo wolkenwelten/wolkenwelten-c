@@ -4,6 +4,7 @@ static const int ITEMID=289;
 
 void stonespearInit(){
 	recipeNew2(itemNew(ITEMID,1), itemNew(I_Board,4), itemNew(I_Stone,4));
+	lispDefineID("i-","stone spear",ITEMID);
 }
 
 int stonespearDamage(const item *cItem){

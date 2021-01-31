@@ -21,6 +21,7 @@
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
 
+#include <ctype.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -28,6 +29,7 @@ void blockTypeGenMeshes();
 void blockTypeSetTex(u8 b, int side, u32 tex);
 
 static void blockTypeInitBlock(u8 b, u32 tex, blockCategory ncat,const char *bname,int nhp, int nfirehp,u32 ncolor1,u32 ncolor2){
+
 	for(int i=0;i<6;i++){
 		blockTypeSetTex(b,i,tex);
 	}
@@ -37,6 +39,8 @@ static void blockTypeInitBlock(u8 b, u32 tex, blockCategory ncat,const char *bna
 	blocks[b].cat      = ncat;
 	blocks[b].color[0] = ncolor1;
 	blocks[b].color[1] = ncolor2;
+
+	lispDefineID("i-",bname,b);
 }
 
 static void blockTypeSetWaterProps(u8 b, int waterCapacity, int waterIngress, int waterEgress){

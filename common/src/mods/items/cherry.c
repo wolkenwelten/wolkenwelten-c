@@ -2,6 +2,10 @@ static const int ITEMID=272;
 
 #include "../api_v1.h"
 
+void cherryInit(){
+	lispDefineID("i-","cherry",ITEMID);
+}
+
 bool cherrySecondaryAction(item *cItem,character *cChar){
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
 	if(characterTryToUse(cChar,cItem,200,1)){

@@ -2,6 +2,10 @@ static const int ITEMID=258;
 
 #include "../api_v1.h"
 
+void pearInit(){
+	lispDefineID("i-","pear",ITEMID);
+}
+
 bool pearSecondaryAction(item *cItem,character *cChar){
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
 	if(characterTryToUse(cChar,cItem,200,1)){

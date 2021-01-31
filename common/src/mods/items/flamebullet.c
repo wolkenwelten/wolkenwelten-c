@@ -4,6 +4,7 @@ static const int ITEMID=284;
 
 void flamebulletInit(){
 	recipeNew2(itemNew(ITEMID,10), itemNew(I_Crystal,1), itemNew(I_Coal,1));
+	lispDefineID("i-","flame bullet",ITEMID);
 }
 
 mesh *flamebulletGetMesh(const item *cItem){

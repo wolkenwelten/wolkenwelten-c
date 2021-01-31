@@ -4,6 +4,7 @@ static const int ITEMID=286;
 
 void crystaldustInit(){
 	recipeNew1(itemNew(ITEMID,1), itemNew(I_Crystal,1));
+	lispDefineID("i-","crystal dust",ITEMID);
 }
 
 mesh *crystaldustGetMesh(const item *cItem){

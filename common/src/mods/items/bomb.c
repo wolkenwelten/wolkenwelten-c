@@ -4,6 +4,7 @@ static const int ITEMID=257;
 
 void bombInit(){
 	recipeNew3(itemNew(ITEMID,1), itemNew(I_Iron_Bar,1), itemNew(I_Coal, 4), itemNew(I_Crystal, 1));
+	lispDefineID("i-","bomb",ITEMID);
 }
 
 bool bombSecondaryAction(item *cItem,character *cChar){

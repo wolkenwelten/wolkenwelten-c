@@ -2,6 +2,10 @@ static const int ITEMID=280;
 
 #include "../api_v1.h"
 
+void furInit(){
+	lispDefineID("i-","fur",ITEMID);
+}
+
 mesh *furGetMesh(const item *cItem){
 	(void)cItem;
 

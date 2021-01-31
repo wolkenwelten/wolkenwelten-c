@@ -25,7 +25,9 @@
 #include "../misc/profiling.h"
 #include "../tmp/assets.h"
 
+#include <ctype.h>
 #include <string.h>
+#include <stdio.h>
 
 lClosure *clRoot;
 
@@ -96,4 +98,27 @@ lClosure *lispCommonRoot(){
 	lAddNativeFunc(c,"nprof-reset!","()", "Resets network counters",     wwlnfNProfReset);
 	lAddNativeFunc(c,"asm-switch!", "(a)","Switches asm/simd routines",  wwlnfAsmSwitch);
 	return c;
+}
+
+void lispDefineID(const char *prefix, const char *symbol, int val){
+	char lName[16];
+	int len = sizeof(lName);
+
+	memset(lName,0,sizeof(lName));
+	char *ln = lName;
+	const int off = snprintf(lName,len,"%s",prefix);
+	if(off > 0){
+		ln += off;
+		len -= off;
+	}
+	for(int i=0;i<len;i++){
+		u8 c = *symbol++;
+		if(isspace((u8)c)){
+			*ln++ = '-';
+		}else{
+			*ln++ = tolower(c);
+		}
+	}
+	lName[sizeof(lName)-1] = 0;
+	lispDefineInt(lName,val);
 }

@@ -18,3 +18,4 @@ extern  int msPerTick;
 const char *lispEval        (const char *expr);
 void        lispDefineInt   (const char *symbol, int val);
 void        lispDefineString(const char *symbol, char *str);
+void        lispDefineID    (const char *prefix, const char *symbol, int val);

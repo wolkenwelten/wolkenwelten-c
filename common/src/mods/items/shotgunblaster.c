@@ -4,8 +4,8 @@ static const int MAGSIZE=60;
 #include "../api_v1.h"
 
 void shotgunblasterInit(){
-	(void)ITEMID;
 	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,12), itemNew(I_Iron_Bar,24), itemNew(I_Flamebullet,24));
+	lispDefineID("i-","shotgun",ITEMID);
 }
 
 mesh *shotgunblasterGetMesh(const item *cItem){

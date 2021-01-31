@@ -2,6 +2,10 @@ static const int ITEMID=278;
 
 #include "../api_v1.h"
 
+void meatInit(){
+	lispDefineID("i-","meat raw",ITEMID);
+}
+
 bool meatSecondaryAction(item *cItem,character *cChar){
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
 	if(characterTryToUse(cChar,cItem,200,1)){
