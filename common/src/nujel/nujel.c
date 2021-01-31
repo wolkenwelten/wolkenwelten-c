@@ -313,6 +313,30 @@ static lVal *lnfDefine(lClosure *c, lClosure *ec, lVal *v, lVal *(*func)(lClosur
 		return t->vList.car = nv;
 	}
 }
+
+static lVal *lUndefineClosureSym(lClosure *c, lVal *s){
+	if(c == NULL){return lValBool(false);}
+
+	lVal *lastPair = c->data;
+	forEach(v,c->data){
+		const lVal *n = v->vList.car;
+		if((n == NULL) || (n->type != ltPair))  {break;}
+		const lVal *sym = n->vList.car;
+		if(lSymCmp(s,sym) == 0){
+			lastPair->vList.cdr = v->vList.cdr;
+			return lValBool(true);
+		}
+		lastPair = v;
+	}
+	return lUndefineClosureSym(c->parent,s);
+}
+static lVal *lnfUndef(lClosure *c, lVal *v){
+	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	lVal *sym = v->vList.car;
+	if(sym->type != ltSymbol){sym = lEval(c,sym);}
+	if(sym->type != ltSymbol){return NULL;}
+	return lUndefineClosureSym(c,sym);
+}
 static lVal *lnfDef(lClosure *c, lVal *v){
 	return lnfDefine(c,c,v,lDefineClosureSym);
 }
@@ -684,11 +708,12 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"if",  "(pred? then ...else)","Evalutes then if pred? is #t, otherwise evaluates ...else", lnfIf);
 	lAddNativeFunc(c,"cond","(...c)",              "Contains at least 1 cond block of form (pred? ...body) and evaluates and returns the first where pred? is #t",lnfCond);
 
-	lAddNativeFunc(c,"define","(s v)",         "Define a new symbol s and link it to value v",                      lnfDef);
-	lAddNativeFunc(c,"let",   "(args ...body)","Creates a new closure with args bound in which to evaluate ...body",lnfLet);
-	lAddNativeFunc(c,"begin", "(...body)",     "Evaluates ...body in order and returns the last result",            lnfBegin);
-	lAddNativeFunc(c,"quote", "(v)",           "Returns v as is without evaluating",                                lnfQuote);
-	lAddNativeFunc(c,"set!",  "(s v)",         "Binds a new value v to already defined symbol s",                   lnfSet);
+	lAddNativeFunc(c,"define",   "(s v)",         "Define a new symbol s and link it to value v",                      lnfDef);
+	lAddNativeFunc(c,"undefine!","(s)",           "Removes symbol s from the first symbol-table it is found in",       lnfUndef);
+	lAddNativeFunc(c,"let",      "(args ...body)","Creates a new closure with args bound in which to evaluate ...body",lnfLet);
+	lAddNativeFunc(c,"begin",    "(...body)",     "Evaluates ...body in order and returns the last result",            lnfBegin);
+	lAddNativeFunc(c,"quote",    "(v)",           "Returns v as is without evaluating",                                lnfQuote);
+	lAddNativeFunc(c,"set!",     "(s v)",         "Binds a new value v to already defined symbol s",                   lnfSet);
 
 	lAddNativeFunc(c,"abs","(a)","Returns the absolute value of a",     lnfAbs);
 	lAddNativeFunc(c,"pow","(a b)","Returns a raised to the power of b",lnfPow);

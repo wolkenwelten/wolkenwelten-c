@@ -170,6 +170,13 @@ static inline int lListLength(lVal *v){
 static inline uint lStringLength(lString *s){
 	return s->bufEnd - s->buf;
 }
+static inline int lSymCmp(const lVal *a,const lVal *b){
+	if((a == NULL) || (b == NULL)){return 2;}
+	if((a->type != ltSymbol) || (b->type != ltSymbol)){return 2;}
+	if(a->vSymbol.v[0] != b->vSymbol.v[0]){return -1;}
+	if(a->vSymbol.v[1] != b->vSymbol.v[1]){return -1;}
+	return 0;
+}
 
 #define lEvalCastApply(FUNC, c , v) do { \
 	lVal *t = lEvalCast(c,v); \
