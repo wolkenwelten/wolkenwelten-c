@@ -172,8 +172,12 @@ void chungusSetB(chungus *c, int x,int y,int z,u8 block){
 	int cz = z >> 4;
 	chunk *chnk = c->chunks[cx][cy][cz];
 	if(chnk == NULL){
-		chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
-		c->chunks[cx][cy][cz] = chnk;
+		c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
+		if(chnk == NULL){
+			chungusFreeOldChungi(1000);
+			c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
+			if(chnk == NULL){return;}
+		}
 	}
 	chunkSetB(chnk,x,y,z,block);
 	c->clientsUpdated = 0;
