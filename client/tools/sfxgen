@@ -4,20 +4,20 @@ C_FILE="$1.c"
 H_FILE="$1.h"
 shift
 
-echo "#pragma once"                                      > $H_FILE
-echo "#include \"../../../common/src/common.h\""        >> $H_FILE
-echo ""                                                 >> $H_FILE
-echo "void sfxInit();"                                  >> $H_FILE
-echo "void sfxFreeAll();"                               >> $H_FILE
-echo ""                                                 >> $H_FILE
+echo "#pragma once"                                                         > $H_FILE
+echo "#include \"../../../common/src/common.h\""                           >> $H_FILE
+echo ""                                                                    >> $H_FILE
+echo "void sfxInit();"                                                     >> $H_FILE
+echo "void sfxFreeAll();"                                                  >> $H_FILE
+echo ""                                                                    >> $H_FILE
 
-echo "#include \"sfx.h\""                                > $C_FILE
-echo "#include \"assets.h\""                            >> $C_FILE
-echo ""                                                 >> $C_FILE
-echo "sfx *sfxNew(unsigned char *data,size_t dataLen);" >> $C_FILE
-echo "void sfxFree(sfx *b);"                            >> $C_FILE
-echo "extern int sfxEnable;"                            >> $C_FILE
-echo ""                                                 >> $C_FILE
+echo "#include \"sfx.h\""                                                   > $C_FILE
+echo "#include \"assets.h\""                                               >> $C_FILE
+echo ""                                                                    >> $C_FILE
+echo "sfx *sfxNew(unsigned char *data,size_t dataLen, const char *lName);" >> $C_FILE
+echo "void sfxFree(sfx *b);"                                               >> $C_FILE
+echo "extern int sfxEnable;"                                               >> $C_FILE
+echo ""                                                                    >> $C_FILE
 
 free=""
 new=""
@@ -25,12 +25,13 @@ while (("$#")); do
 	for filename in $1*.aif; do
 		file=${filename##*/}
 		name=${file%.aif}
+		lname=${name//_/-}
 		uname=${name^}
 
 		echo "sfx *sfx$uname;"          >> $C_FILE
 		echo "extern sfx *sfx$uname;"   >> $H_FILE
 		new="$new
-	sfx$uname = sfxNew(sfx_""$name""_ogg_data,sfx_""$name""_ogg_len);"
+	sfx$uname = sfxNew(sfx_""$name""_ogg_data,sfx_""$name""_ogg_len,\"sfx-""$lname""\");"
 		free="$free
 	sfxFree(sfx$uname);"
 	done

@@ -27,6 +27,8 @@
 
 #include <string.h>
 
+lClosure *clRoot;
+
 lVal *wwlnfMsPerTick(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfInt(c,lEval(c,v));
@@ -74,6 +76,14 @@ lVal *wwlnfAsmSwitch(lClosure *c, lVal *v){
 		asmRoutineSupport = t->vInt;
 	}
 	return lValInt(asmRoutineSupport);
+}
+
+void lispDefineInt(const char *symbol, int val){
+	lDefineVal(clRoot,symbol,lValInt(val));
+}
+
+void lispDefineString(const char *symbol, char *str){
+	lDefineVal(clRoot,symbol,lValString(str));
 }
 
 lClosure *lispCommonRoot(){

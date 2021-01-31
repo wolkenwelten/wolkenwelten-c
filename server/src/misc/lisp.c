@@ -48,7 +48,6 @@
 #include <string.h>
 
 char replyBuf[256];
-lClosure *clRoot;
 
 static uint getPID(lClosure *c){
 	lVal *pid = lResolveSym(c, lValSym("pid"));

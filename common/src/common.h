@@ -15,4 +15,6 @@ extern char *ansiRS;
 extern char *ansiFG[16];
 extern  int msPerTick;
 
-const char *lispEval(const char *str);
+const char *lispEval        (const char *expr);
+void        lispDefineInt   (const char *symbol, int val);
+void        lispDefineString(const char *symbol, char *str);

@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../common/src/common.h"
+#include "../../../common/src/misc/lisp.h"
 
 void lispInit        ();
 void lispFree        ();

@@ -23,7 +23,9 @@ struct sfx {
 
 #include "../tmp/sfx.h"
 
-sfx *sfxNew    (const void *data,size_t dataLen);
+extern sfx sfxList[32];
+
+sfx *sfxNew    (const void *data,size_t dataLen, const char *lName);
 void sfxFree   (sfx *b);
 void sfxPlay   (sfx *b, float volume);
 void sfxLoop   (sfx *b, float volume);

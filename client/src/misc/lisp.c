@@ -25,6 +25,7 @@
 #include "../misc/options.h"
 #include "../network/chat.h"
 #include "../sdl/sdl.h"
+#include "../sdl/sfx.h"
 #include "../tmp/assets.h"
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/misc/profiling.h"
@@ -39,7 +40,6 @@
 #include <stdio.h>
 #include <string.h>
 
-lClosure *clRoot;
 u8 SEvalID;
 
 void lPrintError(const char *format, ...){
@@ -183,6 +183,36 @@ static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 	return t;
 }
 
+static lVal *wwlnfSfxPlay(lClosure *c, lVal *v){
+	int sfxID = -1;
+	float volume = 1.0;
+	vec pos = player->pos;
+
+	for(int i=0;i<3;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
+		switch(i){
+		case 0:
+			t = lnfInt(c,t);
+			sfxID = t->vInt;
+			break;
+		case 1:
+			t = lnfFloat(c,t);
+			volume = t->vFloat;
+			break;
+		case 2:
+			t = lnfVec(c,t);
+			pos = t->vVec;
+			break;
+		}
+	}
+	if(sfxID < 0){return lValBool(false);}
+	sfxPlayPos(&sfxList[sfxID],volume,pos);
+	return lValBool(true);
+}
+
 void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",            "(...body)","Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"player-pos",   "()",       "Returns players position",                                       wwlnfPlayerPos);
@@ -198,6 +228,7 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"debug-info!",  "(b)",      "Sets debug info view to b",                                      wwlnfDebugInfo);
 	lAddNativeFunc(c,"send-message", "(s)",      "Sends string s as a chat message",                               wwlnfSendMessage);
 	lAddNativeFunc(c,"console-print","(s)",      "Prints string s to the REPL",                                    wwlnfConsolePrint);
+	lAddNativeFunc(c,"sfx-play",     "(s &vol &pos)","Plays SFX s with volume &vol as if emitting from &pos.",     wwlnfSfxPlay);
 }
 
 void lispInit(){
@@ -232,7 +263,6 @@ void lispRecvSExpr(const packet *p){
 	lispPanelShowReply(lispSEvalSym(id),str);
 }
 
-#include <stdlib.h>
 void lispEvents(){
 	PROFILE_START();
 

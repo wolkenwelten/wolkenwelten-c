@@ -52,7 +52,7 @@ void bgmPlay(bgm *b, float volume){
 	Mix_FadeInMusic(b->mixMusic,-1,5000);
 }
 
-sfx *sfxNew(const void *data,size_t dataLen){
+sfx *sfxNew(const void *data,size_t dataLen, const char *lName){
 	sfx *b = &sfxList[sfxCount++];
 
 	b->chan = -1;
@@ -60,6 +60,7 @@ sfx *sfxNew(const void *data,size_t dataLen){
 	if(data == NULL){ return NULL; }
 	b->mixChunk = Mix_LoadWAV_RW(SDL_RWFromConstMem(data,dataLen),0);
 	if(!b->mixChunk) { return NULL; }
+	lispDefineInt(lName,b-sfxList);
 
 	return b;
 }
