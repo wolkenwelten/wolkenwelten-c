@@ -25,6 +25,9 @@
 static void lStringAdvanceToNextCharacter(lString *s){
 	for(;(*s->data != 0) && (isspace((u8)*s->data));s->data++){}
 }
+static void lStringAdvanceToNextLine(lString *s){
+	for(;(*s->data != 0) && (*s->data != '\n');s->data++){}
+}
 
 static lVal *lParseString(lString *s){
 	static char buf[4096];
@@ -161,10 +164,12 @@ lVal *lReadString(lString *s){
 			v = v->vList.cdr;
 		}
 
-		if(c == '('){
+		switch(c){
+		case '(':
 			s->data+=1;
 			v->vList.car = lReadString(s);
-		}else if(c == '\''){
+			break;
+		case '\'':
 			s->data++;
 			if(*s->data == '('){
 				s->data++;
@@ -172,17 +177,24 @@ lVal *lReadString(lString *s){
 			}else{
 				v->vList.car = lCons(lValSymS(symQuote),lCons(lParseSymbol(s),NULL));
 			}
-		}else if(c == '"'){
+			break;
+		case '"':
 			s->data++;
 			v->vList.car = lParseString(s);
-		}else if(isdigit((u8)c)){
-			v->vList.car = lParseNumber(s);
-		}else if(c == '#'){
+			break;
+		case '#':
 			v->vList.car = lParseSpecial(s);
-		}else if((c == '-') && (isdigit((u8)s->data[1]))){
-			v->vList.car = lParseNumber(s);
-		}else{
-			v->vList.car = lParseSymbol(s);
+			break;
+		case ';':
+			lStringAdvanceToNextLine(s);
+			break;
+		default:
+			if((isdigit((u8)c)) || ((c == '-') && (isdigit((u8)s->data[1])))){
+				v->vList.car = lParseNumber(s);
+			}else{
+				v->vList.car = lParseSymbol(s);
+			}
+			break;
 		}
 	}
 }

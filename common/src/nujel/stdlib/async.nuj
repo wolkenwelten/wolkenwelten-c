@@ -1,3 +1,5 @@
+;; Contains everything realted to the yield system
+
 (define yield-queue '())
 (define yield (λ (pred expr) "Executes expr once pred is true, returns immediately otherwise"
 	(cond ((pred) (expr) #t)

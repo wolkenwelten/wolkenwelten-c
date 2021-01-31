@@ -1,3 +1,5 @@
+;; This File contains various functions generating ansi escape sequences for colorful output
+
 (define ansi-wrap (λ (c s) "Wraps string s in the ansi color c"
 	(cat (ansi-fg c) s (ansi-fg 15))))
 (define ansi-grey (λ (...s) "Wraps its arguments as a string in the a red ansi color code"

@@ -1,3 +1,5 @@
+;; Some predicates that were simpler to do in nujel
+
 (define number? (λ (a) "Returns #t if a is a number"
 	(or (int? a) (float? a) (vec? a))))
 

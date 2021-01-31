@@ -246,6 +246,8 @@ test_sexpr "(:asd qwerty)" "(:asd qwerty)"
 test_sexpr "(define test 123) test" "123"
 test_sexpr "(define test 123) (undefine! test) test" "test"
 test_sexpr "(undefine! testerle)" "#f"
+test_sexpr "4 ; 5" "4"
+test_sexpr $'4 ; 5\n6' "6"
 
 #test_sexpr "π" "3.14159" Doesnt work on windows, why?
 print_report
