@@ -9,8 +9,9 @@
 
 You can watch me develop this game over at [Twitch](https://twitch.tv/melchizedek6809)
 and if you run into some bugs, have gameplay questions or want to talk about your
-favorite *nix, join us on [Discord](https://discord.gg/7rhnYH2) or preferrably on
-[Matrix](https://matrix.to/#/!RKZztYPGhtlgALDvMS:matrix.org?via=matrix.org).
+favorite *nix, join us over on [Discord](https://discord.gg/7rhnYH2), or preferrably on
+[Matrix](https://matrix.to/#/!RKZztYPGhtlgALDvMS:matrix.org?via=matrix.org), there
+is also a #WolkenWelten IRC channel on Freenode.
 
 The newest binary releases are available over at this [projects website](https://wolkenwelten.net),
 along with some more writings about the game.
