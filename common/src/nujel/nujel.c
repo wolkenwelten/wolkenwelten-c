@@ -54,6 +54,7 @@ lArray     lArrayList[ARR_MAX];
 uint       lArrayMax   = 0;
 lArray    *lArrayFFree = NULL;
 
+char dispWriteBuf[1<<16];
 lSymbol symQuote,symArr;
 
 
@@ -288,15 +289,14 @@ lClosure *lClosureNew(lClosure *parent){
 	return c;
 }
 
+/* TODO: Both seem to write outside of buf if v gets too long */
 void lDisplayVal(lVal *v){
-	char buf[8192];
-	lSDisplayVal(v,buf,&buf[sizeof(buf)]);
-	printf("%s",buf);
+	lSDisplayVal(v,dispWriteBuf,&dispWriteBuf[sizeof(dispWriteBuf)]);
+	printf("%s",dispWriteBuf);
 }
 void lWriteVal(lVal *v){
-	char buf[8192];
-	lSWriteVal(v,buf,&buf[sizeof(buf)]);
-	printf("%s\n",buf);
+	lSWriteVal(v,dispWriteBuf,&dispWriteBuf[sizeof(dispWriteBuf)]);
+	printf("%s\n",dispWriteBuf);
 }
 
 static lVal *lnfDefine(lClosure *c, lClosure *ec, lVal *v, lVal *(*func)(lClosure *,lSymbol)){
