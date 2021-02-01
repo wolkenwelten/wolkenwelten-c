@@ -22,7 +22,7 @@
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 
-void throwableNew(const vec pos, const vec rot, float speed, const item itm, being thrower, u16 flags){
+void throwableNew(const vec pos, const vec rot, float speed, const item itm, being thrower, i8 damage, u8 flags){
 	packet    *p = &packetBuffer;
 	const uint counter = 0;
 	const vec vel  = vecMulS(vecDegToVec(rot),speed);
@@ -31,7 +31,8 @@ void throwableNew(const vec pos, const vec rot, float speed, const item itm, bei
 	p->v.u16[ 1] = 0;
 
 	p->v.u16[ 2] = counter;
-	p->v.u16[ 3] = flags;
+	p->v.u8 [ 6] = damage;
+	p->v.u8 [ 7] = flags;
 	p->v.u16[ 4] = itm.ID;
 	p->v.u16[ 5] = itm.amount;
 

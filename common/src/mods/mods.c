@@ -37,7 +37,7 @@ int blockDamageDefault(const item *cItem, blockCategory blockCat){
 	return 1;
 }
 bool primaryActionDefault(item *cItem, character *cChar){
-	if(throwableTry(cItem,cChar,0.125f, 0)){return true;}
+	if(throwableTry(cItem,cChar,0.1f, 1, 0)){return true;}
 	return false;
 }
 bool secondaryActionDefault(item *cItem, character *cChar){

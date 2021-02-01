@@ -25,7 +25,7 @@ int stonespearBlockDamage(const item *cItem, blockCategory blockCat){
 
 bool stonespearPrimaryAction(item *cItem, character *cChar){
 	if(characterIsAiming(cChar) && characterTryToUse(cChar,cItem,100,0)){
-		throwableNew(cChar->pos, cChar->rot, 0.25f, *cItem, characterGetBeing(cChar), THROWABLE_PITCH_SPIN | THROWABLE_PIERCE);
+		throwableNew(cChar->pos, cChar->rot, 0.35f, *cItem, characterGetBeing(cChar), 4, THROWABLE_TIP_HEAVY | THROWABLE_PIERCE);
 		characterAddRecoil(cChar,1.f);
 		characterStopAim(cChar);
 		itemDiscard(cItem);
@@ -42,7 +42,7 @@ bool stonespearSecondaryAction(item *cItem, character *cChar){
 mesh *stonespearGetMesh(const item *cItem){
 	(void)cItem;
 
-	return meshStoneaxe;
+	return meshStonespear;
 }
 
 int stonespearGetStackSize(const item *cItem){

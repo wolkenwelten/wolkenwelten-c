@@ -24,7 +24,7 @@ int ironaxeBlockDamage(const item *cItem, blockCategory blockCat){
 
 bool ironaxePrimaryAction(item *cItem, character *cChar){
 	if(characterIsAiming(cChar) && characterTryToUse(cChar,cItem,100,0)){
-		throwableNew(cChar->pos, cChar->rot, 0.25f, *cItem, characterGetBeing(cChar), THROWABLE_PITCH_SPIN | THROWABLE_PIERCE);
+		throwableNew(cChar->pos, cChar->rot, 0.25f, *cItem, characterGetBeing(cChar), 5, THROWABLE_PITCH_SPIN | THROWABLE_PIERCE);
 		characterAddRecoil(cChar,1.f);
 		characterStopAim(cChar);
 		itemDiscard(cItem);

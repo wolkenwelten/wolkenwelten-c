@@ -218,7 +218,8 @@ typedef struct {
 	item        itm;
 	i16    nextFree;
 	u16     counter;
-	u16       flags;
+	u8        flags;
+	i8       damage;
 	being   thrower;
 } throwable;
 

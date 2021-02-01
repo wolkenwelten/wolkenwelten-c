@@ -71,8 +71,8 @@ void ingredientSubstituteAdd (u16 ingredient, u16 substitute);
 
 void explode       (const vec pos, float pwr, int style);
 void grenadeNew    (const vec pos, const vec rot, float pwr, int cluster, float clusterPwr);
-void throwableNew  (const vec pos, const vec rot, float speed, const item itm, being thrower, u16 flags);
-bool throwableTry  (item *cItem, character *cChar, float strength, uint flags);
+void throwableNew  (const vec pos, const vec rot, float speed, const item itm, being thrower, i8 damage, u8 flags);
+bool throwableTry  (item *cItem, character *cChar, float strength, int damage, uint flags);
 bool throwableTryAim(item *cItem, character *cChar);
 void beamblast     (character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult);
 void projectileNew (const vec pos, const vec rot, being target, being source, uint style, float speed);

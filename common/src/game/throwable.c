@@ -69,7 +69,8 @@ void throwableSendUpdate(int c, uint i){
 	p->v.u16[ 1] = throwableCount;
 
 	p->v.u16[ 2] = a->counter;
-	p->v.u16[ 3] = a->flags;
+	p->v.u8 [ 6] = a->damage;
+	p->v.u8 [ 7] = a->flags;
 	p->v.u16[ 4] = a->itm.ID;
 	p->v.u16[ 5] = a->itm.amount;
 
@@ -126,7 +127,8 @@ void throwableRecvUpdate(const packet *p){
 	}
 
 	a->counter    = p->v.u16[ 2];
-	a->flags      = p->v.u16[ 3];
+	a->damage     = p->v.u8 [ 6];
+	a->flags      = p->v.u8 [ 7];
 	a->itm.ID     = p->v.u16[ 4];
 	a->itm.amount = itmAmount;
 
@@ -163,12 +165,12 @@ static void throwableUpdate(throwable *t){
 			t->ent->pos = vecAdd(t->ent->pos,t->ent->vel);
 			t->ent->vel = vecMulS(t->ent->vel,0.2f);
 		}
-		t->flags &= ~THROWABLE_PITCH_SPIN;
+		t->flags &= ~(THROWABLE_PITCH_SPIN | THROWABLE_TIP_HEAVY);
 		t->flags |= THROWABLE_COLLECTABLE;
 	}
 	/*if(characterHitCheck(p->pos, mdd, 1, 3, iteration, p->source))*/
 	if((t->flags & THROWABLE_PIERCE) && (t->ent != NULL)){
-		if(animalHitCheck(t->ent->pos, 1.f, 8, 3, -1, 0)){
+		if(animalHitCheck(t->ent->pos, 1.f, t->damage, 3, -1, 0)){
 			t->ent->flags &= ~THROWABLE_PIERCE;
 			t->ent->vel = vecMulS(t->ent->vel,-0.1f);
 			t->ent->vel.y = 0.01f;
@@ -176,6 +178,13 @@ static void throwableUpdate(throwable *t){
 	}
 	if(t->flags & THROWABLE_PITCH_SPIN){
 		t->ent->rot.pitch -= 2.f;
+	}
+	if(t->flags & THROWABLE_TIP_HEAVY){
+		if(t->ent->rot.pitch > -90){
+			t->ent->rot.pitch -= 0.5f;
+		}else{
+			t->ent->rot.pitch = -90.f;
+		}
 	}
 	if(!isClient && !(t->ent->flags & ENTITY_NOCLIP) && (t->ent->flags & ENTITY_COLLIDE) && (vecAbsSum(t->ent->vel) < 0.01f)){
 		itemDropNewP(t->ent->pos,&t->itm);
@@ -197,16 +206,16 @@ void throwableUpdateAll(){
 	PROFILE_STOP();
 }
 
-bool throwableTry(item *cItem,character *cChar, float strength, uint flags){
+bool throwableTry(item *cItem,character *cChar, float strength, int damage, uint flags){
 	if(characterIsThrowAiming(cChar) && characterTryToUse(cChar,cItem,100,0)){
 		characterAddRecoil(cChar,1.f);
 		if(getStackSizeDispatch(cItem) == 1){
-			throwableNew(cChar->pos, cChar->rot, strength, *cItem, characterGetBeing(cChar), flags);
+			throwableNew(cChar->pos, cChar->rot, strength, *cItem, characterGetBeing(cChar), damage, flags);
 		}else{
 			item tmp;
 			tmp = *cItem;
 			tmp.amount = 1;
-			throwableNew(cChar->pos, cChar->rot, strength, tmp, characterGetBeing(cChar), flags);
+			throwableNew(cChar->pos, cChar->rot, strength, tmp, characterGetBeing(cChar), damage, flags);
 		}
 		itemDecStack(cItem,1);
 		if(itemIsEmpty(cItem)){

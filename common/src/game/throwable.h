@@ -13,7 +13,7 @@ being      throwableGetBeing   (const throwable *g);
 throwable *throwableAlloc      ();
 void       throwableFree       (throwable *t);
 
-void       throwableNew        (const vec pos, const vec rot, float speed, const item itm, being thrower, u16 flags);
+void       throwableNew        (const vec pos, const vec rot, float speed, const item itm, being thrower, i8 damage, u8 flags);
 void       throwableUpdateAll  ();
-bool       throwableTry        (item *cItem, character *cChar, float strength, uint flags);
+bool       throwableTry        (item *cItem, character *cChar, float strength, int dmg, uint flags);
 bool       throwableTryAim     (item *cItem, character *cChar);

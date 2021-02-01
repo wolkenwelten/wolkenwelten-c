@@ -13,7 +13,7 @@ int firestickGetStackSize(const item *cItem){
 }
 
 bool firestickPrimaryAction(item *cItem,character *cChar){
-	if(throwableTry(cItem,cChar,0.25, THROWABLE_PITCH_SPIN)){return true;}
+	if(throwableTry(cItem,cChar,0.1, 1, THROWABLE_PITCH_SPIN)){return true;}
 	ivec p = characterLOSBlock(cChar, 0);
 	if(p.x < 0){return false;}
 

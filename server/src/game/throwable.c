@@ -20,11 +20,12 @@
 #include "entity.h"
 
 #include <stdio.h>
-void throwableNew(const vec pos, const vec rot, float speed, const item itm, being thrower, u16 flags){
+void throwableNew(const vec pos, const vec rot, float speed, const item itm, being thrower, i8 damage, u8 flags){
 	throwable *a = throwableAlloc();
 	a->ent       = entityNew(pos,rot);
 	a->ent->vel  = vecMulS(vecDegToVec(rot),speed);
 	a->itm       = itm;
+	a->damage    = damage;
 	a->flags     = flags;
 	a->counter   = 0;
 	a->nextFree  = -1;

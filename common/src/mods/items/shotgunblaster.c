@@ -21,7 +21,7 @@ int shotgunblasterGetStackSize(const item *cItem){
 }
 
 bool shotgunblasterPrimaryAction(item *cItem, character *cChar){
-	if(throwableTry(cItem,cChar,0.25, THROWABLE_PITCH_SPIN)){return true;}
+	if(throwableTry(cItem,cChar,0.1, 1, THROWABLE_PITCH_SPIN)){return true;}
 	if(!characterTryToShoot(cChar,cItem,128,6)){return false;}
 	sfxPlay(sfxPhaser,0.5f);
 	for(int i=0;i<64;i++){

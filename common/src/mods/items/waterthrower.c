@@ -19,7 +19,7 @@ int waterthrowerGetStackSize(const item *cItem){
 }
 
 bool waterthrowerPrimaryAction(item *cItem, character *cChar){
-	if(throwableTry(cItem,cChar,0.25, THROWABLE_PITCH_SPIN)){return true;}
+	if(throwableTry(cItem,cChar,0.1, 1, THROWABLE_PITCH_SPIN)){return true;}
 	if(!characterTryToShoot(cChar,cItem,15,1)){return false;}
 	sfxPlay(sfxPhaser,0.2f);
 	for(uint i=0;i<4;i++){

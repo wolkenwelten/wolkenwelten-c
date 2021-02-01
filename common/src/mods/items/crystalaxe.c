@@ -23,7 +23,7 @@ int crystalaxeBlockDamage(const item *cItem, blockCategory blockCat){
 }
 
 bool crystalaxePrimaryAction(item *cItem, character *cChar){
-	if(throwableTry(cItem,cChar,0.25, THROWABLE_PITCH_SPIN | THROWABLE_PIERCE)){return true;}
+	if(throwableTry(cItem,cChar,0.25, 8, THROWABLE_PITCH_SPIN | THROWABLE_PIERCE)){return true;}
 	return false;
 }
 
