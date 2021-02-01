@@ -4,3 +4,4 @@
 - 2020-12-10: Server not shuttong down correctly still an issue
 - 2021-01-10: Glider sometimes gets draw filling the whole screen, but only for a split second, nost quite sure what the cause is, something to do with jumping maybe?
 - 2021-01-18: animalHitCheck sometimes doesn't work, seems to be constant for particular animals, probably something to do with beingLists
+- 2021-02-01: When one starts to mine a block but then moves the mouse the old block still gets mined
