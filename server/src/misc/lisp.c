@@ -454,6 +454,38 @@ static lVal *wwlnfClearInv(lClosure *c, lVal *v){
 	return lValBool(true);
 }
 
+static lVal *wwlnfSetInv(lClosure *c, lVal *v){
+	int args[4] = {-1, -1, 1, getPID(c)};
+
+	for(int i=0;i<4;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if((t == NULL) && (t->type != ltInt)){break;}
+		args[i] = t->vInt;
+	}
+	if((!getClientValid(args[3])) || (args[0] < 0) || (args[0] >= 40) || (args[0] < 0)){return lValBool(false);}
+	clients[args[3]].c->inventory[args[0]] = itemNew(args[1],args[2]);
+	msgPlayerSetInventory(args[3],clients[args[3]].c->inventory,40);
+	return lValBool(true);
+}
+
+static lVal *wwlnfSetEq(lClosure *c, lVal *v){
+	int args[4] = {-1, -1, 1, getPID(c)};
+
+	for(int i=0;i<4;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if((t == NULL) && (t->type != ltInt)){break;}
+		args[i] = t->vInt;
+	}
+	if((!getClientValid(args[3])) || (args[0] < 0) || (args[0] >= 3) || (args[0] < 0)){return lValBool(false);}
+	clients[args[3]].c->equipment[args[0]] = itemNew(args[1],args[2]);
+	msgPlayerSetEquipment(args[3],clients[args[3]].c->equipment,3);
+	return lValBool(true);
+}
+
 static lVal *wwlnfClearEq(lClosure *c, lVal *v){
 	item newEquipment[3];
 	memset(newEquipment,0,sizeof(newEquipment));
@@ -545,7 +577,9 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"load-shed!",     "()",                                           "Load shedding, mostly unloading chungi",                     wwlnfLShed);
 	lAddNativeFunc(c,"give!",          "(id &amount &player)",                         "Gives &player=pid &amount=1 of item id",                     wwlnfGive);
 	lAddNativeFunc(c,"clear-inv!",     "(&player)",                                    "Clears the inventory of &player=pid",                        wwlnfClearInv);
+	lAddNativeFunc(c,"set-inv!",       "(slot id &amount &player)",                    "Sets inventory slot of &player=pid to &amount=1 id items",   wwlnfSetInv);
 	lAddNativeFunc(c,"clear-eq!",      "(&player)",                                    "Clears the equipment of &player=pid",                        wwlnfClearEq);
+	lAddNativeFunc(c,"set-eq!",        "(slot id &amount &player)",                    "Sets inventory slot of &player=pid to &amount=1 id items",   wwlnfSetEq);
 	lAddNativeFunc(c,"dmg!",           "(&amount &player)",                            "Damages &player=pid by &amount=4 points",                    wwlnfDmg);
 	lAddNativeFunc(c,"die!",           "(&player)",                                    "Kills &player=pid immediatly",                               wwlnfDie);
 	lAddNativeFunc(c,"animal-new",     "(pos &type &amount)",                          "Creates &amount=1 new animals of &type=1 at pos",            wwlnfNewAnim);
