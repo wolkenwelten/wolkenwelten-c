@@ -503,48 +503,6 @@ static lVal *wwlnfClearEq(lClosure *c, lVal *v){
 	return lValBool(true);
 }
 
-static lVal *wwlnfDbgItem(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
-
-	int target = getPID(c);
-	item newInventory[40];
-	item newEquipment[3];
-	memset(newInventory,0,sizeof(newInventory));
-	memset(newEquipment,0,sizeof(newEquipment));
-
-	int i=0;
-	newInventory[i++] = itemNew(261, 1);
-	newInventory[i++] = itemNew(262, 1);
-	newInventory[i++] = itemNew(263, 1);
-	newInventory[i++] = itemNew(264, 1);
-	newInventory[i++] = itemNew(283, 1);
-	newInventory[i++] = itemNew(288, 1);
-	newInventory[i++] = itemNew(282, 1);
-	newInventory[i++] = itemNew(270, 1);
-	newInventory[i++] = itemNew(271, 1);
-	newInventory[i++] = itemNew(258,42);
-	newInventory[i++] = itemNew(256,99);
-
-	newInventory[i++] = itemNew(265,999);
-	newInventory[i++] = itemNew(265,999);
-	newInventory[i++] = itemNew(265,999);
-
-	newInventory[i++] = itemNew(284,999);
-	newInventory[i++] = itemNew(284,999);
-	newInventory[i++] = itemNew(284,999);
-
-	i=0;
-	newEquipment[i++] = itemNew(274,1);
-	newEquipment[i++] = itemNew(275,1);
-	newEquipment[i++] = itemNew(276,1);
-
-	msgPlayerSetInventory(target,newInventory,40);
-	msgPlayerSetEquipment(target,newEquipment, 3);
-
-	return lValBool(true);
-}
-
 static lVal *wwlnfRCount(lClosure *c, lVal *v){
 	(void)c;
 	(void)v;
@@ -596,7 +554,6 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"msphere",        "(pos r)",                                      "Mines every block in the sphere at pos with radius r",       wwlnfMSphere);
 	lAddNativeFunc(c,"time",           "(s)",                                          "Sets the time to the time string s",                         wwlnfTime);
 	lAddNativeFunc(c,"tp",             "(pos)",                                        "Teleports to pos",                                           wwlnfTp);
-	lAddNativeFunc(c,"debug-equipment","()",                                           "Gives the invoking player some nice gear",                   wwlnfDbgItem);
 	lAddNativeFunc(c,"send-message",   "(s)",                                          "Send a chat message to everyone",                            wwlnfSendMessage);
 	lAddNativeFunc(c,"console-print",  "(s)",                                          "Prints something to stdout",                                 wwlnfConsolePrint);
 }

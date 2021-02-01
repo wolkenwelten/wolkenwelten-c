@@ -56,5 +56,5 @@
 (define event-fire (λ (event-name ...val) "Applies ...val to all event handlers associated with event-name"
 	(event-fire-iter (resolve (str->sym event-name)) ...val)))
 
-(event-bind "on-spawn" (λ () "" (say (ansi-yellow "Have some Gear!")) (s (debug-equipment))))
+(event-bind "on-spawn" (λ () "" (say (ansi-yellow "Better luck next time!"))))
 (event-bind "on-join" (λ () "" (say (ansi-green "Welcome!"))))

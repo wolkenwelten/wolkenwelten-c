@@ -54,3 +54,26 @@
 				((< i 4) (ansi-red i))
 				((< i 6) (ansi-yellow i)) (#t i)))
 		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))
+
+(define debug-stuff! (δ () "Gives the issuing player some nice stuff to get started with"
+	(clear-eq!) (clear-inv!)
+
+	(set-eq! 0 i-glider)
+	(set-eq! 1 i-hook)
+	(set-eq! 2 i-jetpack)
+
+	(set-inv! 0 i-blaster)
+	(set-inv! 1 i-masterblaster)
+	(set-inv! 2 i-assaultblaste)
+	(set-inv! 3 i-shotgun)
+	(set-inv! 4 i-crystal-axe)
+	(set-inv! 5 i-crystal-picka)
+	(set-inv! 6 i-crystal-spear)
+	(set-inv! 7 i-pear 42)
+
+	(set-inv! 10 i-crystal-bulle 999)
+	(set-inv! 11 i-crystal-bulle 999)
+	(set-inv! 12 i-crystal-bulle 999)
+	(set-inv! 13 i-flame-bullet 999)
+	(set-inv! 14 i-flame-bullet 999)
+	(set-inv! 15 i-flame-bullet 999)))
