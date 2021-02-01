@@ -2,6 +2,6 @@
 	(cond ((nil? l) #t)
 	      (#t (display (describe (car l))) (newline) (help-iter (cdr l))))))
 (define help (λ (i) "Describes 10 functions at offset 1"
-	(let ((off (* (int i) 10)) (max (+ 10 (* (int i) 10))))
-	(help-iter (sublist (map cat (symbol-table)) off max))
-	(display (cat "Help page " (int i) " of " (/ (length (symbol-table)) 10) ""))) (newline) #t))
+	(let ((off (* (int i) 10)))
+	(help-iter (map cat (symbol-table off 10)))
+	(display (cat "Help page " (int i) " of " (/ (symbol-count) 10))) (newline) #t)))

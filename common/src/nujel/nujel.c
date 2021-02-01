@@ -344,6 +344,59 @@ static lVal *lnfSet(lClosure *c, lVal *v){
 	return lnfDefine(c,c,v,lGetClosureSym);
 }
 
+static lVal *lSymTable(lClosure *c, lVal *v, int off, int len){
+	(void)v;
+	if((c == NULL) || (len == 0)){return v;}
+	forEach(n,c->data){
+		if (n == NULL)                   {continue;}
+		if (n->type != ltPair)           {continue;}
+		if (n->vList.car == NULL)        {continue;}
+		if (n->vList.car->type != ltPair){continue;}
+		if (n->vList.car->vList.cdr == NULL){continue;}
+		if (n->vList.car->vList.cdr->type != ltPair){continue;}
+		if (n->vList.car->vList.cdr->vList.car == NULL){continue;}
+		if((n->vList.car->vList.cdr->vList.car->type != ltNativeFunc) &&
+		   (n->vList.car->vList.cdr->vList.car->type != ltLambda)){continue;}
+
+		if(off > 0){--off; continue;}
+		v = lCons(n->vList.car->vList.car,v);
+		if(--len <= 0){return v;}
+	}
+	return lSymTable(c->parent,v,off,len);
+}
+
+static lVal *lnfSymTable(lClosure *c, lVal *v){
+	lVal *loff = lnfInt(c,lEval(c,lCarOrV(v)));
+	lVal *llen = lnfInt(c,lEval(c,lCarOrV( v == NULL ? NULL : v->vList.cdr)));
+	int off = loff->vInt;
+	int len = llen->vInt;
+	if(len <= 0){len = 1<<30;}
+	return lSymTable(c,NULL,off,len);
+}
+
+static int lSymCount(lClosure *c, int ret){
+	if(c == NULL){return ret;}
+	forEach(n,c->data){
+		if (n == NULL)                   {continue;}
+		if (n->type != ltPair)           {continue;}
+		if (n->vList.car == NULL)        {continue;}
+		if (n->vList.car->type != ltPair){continue;}
+		if (n->vList.car->vList.cdr == NULL){continue;}
+		if (n->vList.car->vList.cdr->type != ltPair){continue;}
+		if (n->vList.car->vList.cdr->vList.car == NULL){continue;}
+		if((n->vList.car->vList.cdr->vList.car->type != ltNativeFunc) &&
+		   (n->vList.car->vList.cdr->vList.car->type != ltLambda)){continue;}
+
+		++ret;
+	}
+	return lSymCount(c->parent,ret);
+}
+
+static lVal *lnfSymCount(lClosure *c, lVal *v){
+	(void)v;
+	return lValInt(lSymCount(c,0));
+}
+
 static lVal *lnfCl(lClosure *c, lVal *v){
 	if(c == NULL){return NULL;}
 	if(v == NULL){return c->data != NULL ? c->data : lCons(NULL,NULL);}
@@ -692,18 +745,20 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"cdr", "(l)",  "Returns the cdr of pair l",                            lnfCdr);
 	lAddNativeFunc(c,"cons","(a b)","Returns a new pair with a as the car and b as the cdr",lnfCons);
 
-	lAddNativeFunc(c,"apply",    "(f l)",         "Evaluates f with list l as arguments",     lnfApply);
-	lAddNativeFunc(c,"eval",     "(expr)",        "Evaluates expr",                           lEval);
-	lAddNativeFunc(c,"resolve",  "(s)",           "Resolves s until it is no longer a symbol",lResolve);
-	lAddNativeFunc(c,"mem",      "()",            "Returns lVals in use",                     lnfMem);
-	lAddNativeFunc(c,"λ",        "(args ...body)","Creates a new lambda",                     lnfLambda);
-	lAddNativeFunc(c,"lambda",   "(args ...body)","New Lambda",                               lnfLambda);
-	lAddNativeFunc(c,"δ",        "(args ...body)","New Dynamic scoped lambda",                lnfDynamic);
-	lAddNativeFunc(c,"dynamic",  "(args ...body)","New Dynamic scoped lambda",                lnfDynamic);
-	lAddNativeFunc(c,"cl",       "(i)",           "Returns closure",                          lnfCl);
-	lAddNativeFunc(c,"cl-lambda","(i)",           "Returns closure as a lambda",              lnfClLambda);
-	lAddNativeFunc(c,"cl-text",  "(f)",           "Returns closures text segment",            lnfClText);
-	lAddNativeFunc(c,"cl-data",  "(f)",           "Returns closures data segment",            lnfClData);
+	lAddNativeFunc(c,"apply",       "(f l)",         "Evaluates f with list l as arguments",     lnfApply);
+	lAddNativeFunc(c,"eval",        "(expr)",        "Evaluates expr",                           lEval);
+	lAddNativeFunc(c,"resolve",     "(s)",           "Resolves s until it is no longer a symbol",lResolve);
+	lAddNativeFunc(c,"mem",         "()",            "Returns lVals in use",                     lnfMem);
+	lAddNativeFunc(c,"λ",           "(args ...body)","Creates a new lambda",                     lnfLambda);
+	lAddNativeFunc(c,"lambda",      "(args ...body)","New Lambda",                               lnfLambda);
+	lAddNativeFunc(c,"δ",           "(args ...body)","New Dynamic scoped lambda",                lnfDynamic);
+	lAddNativeFunc(c,"dynamic",     "(args ...body)","New Dynamic scoped lambda",                lnfDynamic);
+	lAddNativeFunc(c,"cl",          "(i)",           "Returns closure",                          lnfCl);
+	lAddNativeFunc(c,"cl-lambda",   "(i)",           "Returns closure as a lambda",              lnfClLambda);
+	lAddNativeFunc(c,"cl-text",     "(f)",           "Returns closures text segment",            lnfClText);
+	lAddNativeFunc(c,"cl-data",     "(f)",           "Returns closures data segment",            lnfClData);
+	lAddNativeFunc(c,"symbol-table","(off len)",     "Returns a list of len symbols defined, accessible from the current closure from offset off",lnfSymTable);
+	lAddNativeFunc(c,"symbol-count","()",            "Returns a count of the symbols accessible from the current closure",lnfSymCount);
 
 	lAddNativeFunc(c,"if",  "(pred? then ...else)","Evalutes then if pred? is #t, otherwise evaluates ...else", lnfIf);
 	lAddNativeFunc(c,"cond","(...c)",              "Contains at least 1 cond block of form (pred? ...body) and evaluates and returns the first where pred? is #t",lnfCond);

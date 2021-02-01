@@ -5,9 +5,9 @@
 	(cond ((nil? l) #t)
 	      (#t (log (describe (car l))) (help-iter (cdr l))))))
 (define help (λ (i) "Describes 10 functions at offset 1"
-	(let ((off (* (int i) 10)) (max (+ 10 (* (int i) 10))))
-	(help-iter (sublist (map cat (symbol-table)) off max))
-	(log (cat "Help page " (int i) " of " (/ (length (symbol-table)) 10) ""))) #t))
+	(let ((off (* (int i) 10)))
+	(help-iter (map cat (symbol-table off 10)))
+	(log (cat "Help page " (int i) " of " (/ (symbol-count) 10)))) #t))
 
 (define fasts (λ (a) "Soeeds up the game to about 4x"
 	(mst  1) (s (mst  1))))

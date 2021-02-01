@@ -101,9 +101,6 @@
 	      (fn (cat a)))
 		(cat "(" fn args ") - " (if (string? ds) ds "No DocString found")))))))
 
-(define symbol-table (λ (i r) "Returns all a list of all symbols defined accessible from the current closure"
-	(if (nil? (cl i)) r (symbol-table (++ i) (map (λ (a) (car a)) (cl i))))))
-
 (define display (λ (a) "Displays its argument"
 	(print a)))
 
