@@ -437,6 +437,40 @@ static lVal *wwlnfWVel(lClosure *c, lVal *v){
 	return lValVec(windVel);
 }
 
+static lVal *wwlnfClearInv(lClosure *c, lVal *v){
+	item newInventory[40];
+	memset(newInventory,0,sizeof(newInventory));
+
+	int target = getPID(c);
+	for(int i=0;i<1;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if((t == NULL) && (t->type != ltInt)){break;}
+		target= t->vInt;
+	}
+	if(!getClientValid(target)){return lValBool(false);}
+	msgPlayerSetInventory(target,newInventory,40);
+	return lValBool(true);
+}
+
+static lVal *wwlnfClearEq(lClosure *c, lVal *v){
+	item newEquipment[3];
+	memset(newEquipment,0,sizeof(newEquipment));
+
+	int target = getPID(c);
+	for(int i=0;i<1;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if((t == NULL) && (t->type != ltInt)){continue;}
+		target = t->vInt;
+	}
+	if(!getClientValid(target)){return lValBool(false);}
+	msgPlayerSetEquipment(target,newEquipment, 3);
+	return lValBool(true);
+}
+
 static lVal *wwlnfDbgItem(lClosure *c, lVal *v){
 	(void)c;
 	(void)v;
@@ -510,6 +544,8 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"rain-count",     "()",                                           "Returns amount of rain drops",                               wwlnfRCount);
 	lAddNativeFunc(c,"load-shed!",     "()",                                           "Load shedding, mostly unloading chungi",                     wwlnfLShed);
 	lAddNativeFunc(c,"give!",          "(id &amount &player)",                         "Gives &player=pid &amount=1 of item id",                     wwlnfGive);
+	lAddNativeFunc(c,"clear-inv!",     "(&player)",                                    "Clears the inventory of &player=pid",                        wwlnfClearInv);
+	lAddNativeFunc(c,"clear-eq!",      "(&player)",                                    "Clears the equipment of &player=pid",                        wwlnfClearEq);
 	lAddNativeFunc(c,"dmg!",           "(&amount &player)",                            "Damages &player=pid by &amount=4 points",                    wwlnfDmg);
 	lAddNativeFunc(c,"die!",           "(&player)",                                    "Kills &player=pid immediatly",                               wwlnfDie);
 	lAddNativeFunc(c,"animal-new",     "(pos &type &amount)",                          "Creates &amount=1 new animals of &type=1 at pos",            wwlnfNewAnim);

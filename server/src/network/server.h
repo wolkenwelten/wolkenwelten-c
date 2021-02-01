@@ -82,6 +82,7 @@ void msgSendChunk          (uint c, const chunk *chnk);
 
 int  getClientByName       (const char *name);
 int  getClientByCharacter  (const character *c);
+bool getClientValid        (uint c);
 uint getClientLatency      (uint c);
 uint serverSendRaw         (uint c, void *p, uint len);
 int  serverSendClient      (uint c);

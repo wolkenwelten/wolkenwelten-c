@@ -826,3 +826,10 @@ int getClientByCharacter(const character *c){
 	}
 	return -1;
 }
+
+bool getClientValid(uint c){
+	if(c > clientCount)     {return false;}
+	if(clients[c].state)    {return false;}
+	if(clients[c].c == NULL){return false;}
+	return true;
+}
