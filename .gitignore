@@ -21,7 +21,7 @@ common/nujel/assets.h
 # debugging/profiling data
 /callgrind.out.*
 /vgcore.*
-
+/screenshot.tga
 gmon.out
 
 /platform/wasm/emsdk

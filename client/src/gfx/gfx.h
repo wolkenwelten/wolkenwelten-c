@@ -1,6 +1,8 @@
 #pragma once
 #include "../../../common/src/common.h"
 
+extern bool   queueScreenshot;
+
 extern float  matProjection[16], matView[16];
 extern int    screenWidth;
 extern int    screenHeight;

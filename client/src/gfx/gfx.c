@@ -43,12 +43,13 @@
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/game/hook.h"
+#include "../../../common/src/misc/misc.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 
-
+bool  queueScreenshot = false;
 float matProjection[16], matView[16];
 
 int    screenWidth  = 800;
@@ -197,6 +198,38 @@ void renderWorld(const character *cam){
 	ropeDrawAll();
 }
 
+
+#pragma pack(push, 1)
+typedef struct {
+	u8  idlength;
+	u8  colourmaptype;
+	u8  datatypecode;
+	u16 colourmaporigin;
+	u16 colourmaplength;
+	u8  colourmapdepth;
+	u16 x_origin;
+	u16 y_origin;
+	u16 width;
+	u16 height;
+	u8  bitsperpixel;
+	u8  imagedescriptor;
+} tgaHeader;
+#pragma pack(pop)
+
+static void doScreenshot(){
+	const uint len = screenWidth * screenHeight * 3;
+	void *pixels = calloc(1, len + sizeof(tgaHeader));
+	tgaHeader *th = (tgaHeader *)pixels;
+	th->datatypecode = 2; // Uncompressed RGB
+	th->bitsperpixel = 24;
+	th->width = screenWidth;
+	th->height = screenHeight;
+
+	glReadPixels(0, 0, screenWidth, screenHeight, GL_BGR, GL_UNSIGNED_BYTE, pixels + sizeof(tgaHeader));
+	saveFile("screenshot.tga", pixels, len);
+	queueScreenshot = false;
+}
+
 void renderFrame(){
 	chunkResetCounter();
 	calcFOV(player);
@@ -208,5 +241,6 @@ void renderFrame(){
 	glClear(GL_DEPTH_BUFFER_BIT);
 	renderUI();
 	swapWindow();
+	if(queueScreenshot){doScreenshot();}
 	fpsTick();
 }
