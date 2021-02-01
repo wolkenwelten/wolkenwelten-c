@@ -69,6 +69,9 @@ foreach(array_keys($platforms) as $plat){
 		<a href="img/1.jpg"><img src="<?php echo baseSFS('img/1.jpg'); ?>" width=1920 height=1080/></a>
 		<a href="img/2.jpg"><img src="<?php echo baseSFS('img/2.jpg'); ?>" width=1920 height=1080/></a>
 		<a href="img/3.jpg"><img src="<?php echo baseSFS('img/3.jpg'); ?>" width=1920 height=1080/></a>
+		<a href="img/4.jpg"><img src="<?php echo baseSFS('img/4.jpg'); ?>" width=1920 height=1080/></a>
+		<a href="img/5.jpg"><img src="<?php echo baseSFS('img/5.jpg'); ?>" width=1920 height=1080/></a>
+		<a href="img/6.jpg"><img src="<?php echo baseSFS('img/6.jpg'); ?>" width=1920 height=1080/></a>
 	</div>
 	<hr/>
 	<h3>My priorities for this game</h3>

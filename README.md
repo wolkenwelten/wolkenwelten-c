@@ -7,6 +7,8 @@
 * fits on a standard 1.44MB Floppy Disk
 * lets you play together with your friends
 
+![Screenshot 1](https://wolkenwelten.net/img/1.jpg)
+
 You can watch me develop this game over at [Twitch](https://twitch.tv/melchizedek6809)
 and if you run into some bugs, have gameplay questions or want to talk about your
 favorite *nix, join us over on [Discord](https://discord.gg/7rhnYH2), or preferrably on
@@ -15,6 +17,12 @@ is also a #WolkenWelten IRC channel on Freenode.
 
 The newest binary releases are available over at this [projects website](https://wolkenwelten.net),
 along with some more writings about the game.
+
+![Screenshot 2](https://wolkenwelten.net/img/2.jpg)
+![Screenshot 3](https://wolkenwelten.net/img/3.jpg)
+![Screenshot 4](https://wolkenwelten.net/img/4.jpg)
+![Screenshot 5](https://wolkenwelten.net/img/5.jpg)
+![Screenshot 6](https://wolkenwelten.net/img/6.jpg)
 
 # Software Requirments
 
