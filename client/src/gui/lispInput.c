@@ -22,6 +22,8 @@
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
+#include "../misc/lisp.h"
+#include "../../../common/src/misc/misc.h"
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -31,8 +33,15 @@
 widget *lispPanel;
 widget *lispLog;
 widget *lispInput;
-int lispHistoryActive = -1;
-bool lispPanelVisible = false;
+int     lispHistoryActive = -1;
+bool    lispPanelVisible  = false;
+
+int     lispInputCheckCountdown = -1;
+lSymbol lispAutoCompleteList[32];
+uint    lispAutoCompleteLen   = 0;
+int     lispAutoCompleteStart = 0;
+int     lispAutoCompleteEnd   = 0;
+int     lispAutoCompleteSelection = -1;
 
 void lispPanelOpen(){
 	widgetSlideH(lispPanel, screenHeight-128);
@@ -88,6 +97,17 @@ void handlerLispSubmit(widget *wid){
 	char buf[8192];
 	int l;
 	if(lispInput->vals[0] == 0){return;}
+	if((lispAutoCompleteLen > 0) && (lispAutoCompleteSelection >= 0)){
+		strRemove(wid->vals,256,lispAutoCompleteStart,lispAutoCompleteEnd);
+		strInsert(wid->vals,256,lispAutoCompleteStart,lispAutoCompleteList[lispAutoCompleteSelection].c);
+		int slen = strnlen(lispAutoCompleteList[lispAutoCompleteSelection].c,16);
+		const int off = slen - (textInputCursorPos - lispAutoCompleteStart);
+		textInputCursorPos += off;
+		textInputBufferLen += off;
+		lispAutoCompleteLen = 0;
+		lispAutoCompleteSelection = -1;
+		return;
+	}
 	l = snprintf(buf,sizeof(buf)-1,"> %s",wid->vals);
 	buf[l] = 0;
 	widgetAddEntry(lispLog, buf);
@@ -101,6 +121,10 @@ void handlerLispSubmit(widget *wid){
 }
 
 void handlerLispSelectPrev(widget *wid){
+	if(lispAutoCompleteLen > 0){
+		if(++lispAutoCompleteSelection >= (int)lispAutoCompleteLen){lispAutoCompleteSelection = -1;}
+		return;
+	}
 	const char *msg = lispLog->valss[lispHistoryActive+1];
 	if(msg == NULL){return;}
 	if(*msg == 0)  {return;}
@@ -120,6 +144,10 @@ void handlerLispSelectPrev(widget *wid){
 }
 
 void handlerLispSelectNext(widget *wid){
+	if(lispAutoCompleteLen > 0){
+		if(--lispAutoCompleteSelection < -1){lispAutoCompleteSelection = lispAutoCompleteLen-1;}
+		return;
+	}
 	if(lispHistoryActive < 0){return;}
 	const char *msg = lispLog->valss[lispHistoryActive-1];
 	if(lispHistoryActive <= 0){
@@ -146,11 +174,69 @@ void handlerLispSelectNext(widget *wid){
 void lispInputInit(){
 	lispPanel = widgetNewCP(wPanel,rootMenu,64,0,screenWidth-128,0);
 	lispPanel->flags |= WIDGET_HIDDEN;
-	lispInput = widgetNewCP(wTextInput,lispPanel,0,-1,-1,32);
-	lispInput->flags |= WIDGET_LISP_SYNTAX_HIGHLIGHT;
 	lispLog = widgetNewCP(wTextLog,lispPanel,0,0,-1,-32);
-	lispLog->flags |= WIDGET_LISP_SYNTAX_HIGHLIGHT;
+	lispLog->flags |= WIDGET_LISP;
+	lispInput = widgetNewCP(wTextInput,lispPanel,0,-1,-1,32);
+	lispInput->flags |= WIDGET_LISP;
 	widgetBind(lispInput,"submit",handlerLispSubmit);
 	widgetBind(lispInput,"selectPrev",handlerLispSelectPrev);
 	widgetBind(lispInput,"selectNext",handlerLispSelectNext);
+}
+
+static lSymbol lispPanelGetPointSymbol(){
+	lSymbol sym;
+	sym.v[0] = sym.v[1] = 0;
+	int i,m;
+	const char *buf = widgetFocused->vals;
+	if(buf == NULL){return sym;}
+	for(i = textInputCursorPos; i >= 0; i--){
+		const u8 c = buf[i];
+		if(isspace(c))    {i++;break;}
+		else if(c == '(') {i++;break;}
+		else if(c == ')') {i++;break;}
+		else if(c == '\''){i++;break;}
+		else if(c == '"') {i++;break;}
+	}
+	for(m = i; buf[m] != 0; m++){
+		const u8 c = buf[i];
+		if(isspace(c))    {m--;break;}
+		else if(c == '(') {m--;break;}
+		else if(c == ')') {m--;break;}
+		else if(c == '\''){m--;break;}
+		else if(c == '"') {m--;break;}
+	}
+	if(m <= i){return sym;}
+	lispAutoCompleteStart = i;
+	lispAutoCompleteEnd = m;
+	int len = MIN(15,m-i);
+	memcpy(sym.v,&buf[i],len);
+	return sym;
+}
+
+void lispPanelCheckAutoComplete(){
+	static lSymbol lastSym = {0};
+	if(widgetFocused == NULL){
+		lispInputCheckCountdown = -1;
+	}
+	if(  lispInputCheckCountdown < 0){return;}
+	if(--lispInputCheckCountdown >= 0){return;}
+	lSymbol sym = lispPanelGetPointSymbol();
+	if((sym.v[0] == lastSym.v[0]) && (sym.v[1] == lastSym.v[1])){
+		return;
+	}
+	lispAutoCompleteSelection = -1;
+	lispAutoCompleteLen = 0;
+	if((sym.c[0] == 0) || (sym.c[1] == 0)){
+		lastSym = sym;
+		return;
+	}
+
+	lastSym = sym;
+	lVal *newAC = lMatchClosureSym(clRoot,NULL,sym);
+	for(lVal *n = newAC;(n != NULL) && (n->type == ltPair);n = n->vList.cdr){
+		if((sym.v[0] == n->vList.car->vSymbol.v[0]) && (sym.v[1] == n->vList.car->vSymbol.v[1])){continue;}
+		lispAutoCompleteList[lispAutoCompleteLen].v[0] = n->vList.car->vSymbol.v[0];
+		lispAutoCompleteList[lispAutoCompleteLen].v[1] = n->vList.car->vSymbol.v[1];
+		if(++lispAutoCompleteLen >= countof(lispAutoCompleteList)){break;}
+	}
 }

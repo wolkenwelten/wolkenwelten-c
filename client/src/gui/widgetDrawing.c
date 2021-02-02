@@ -20,6 +20,7 @@
 #include "../game/character.h"
 #include "../game/recipe.h"
 #include "../gui/gui.h"
+#include "../gui/lispInput.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
 #include "../gfx/textMesh.h"
@@ -30,6 +31,29 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+
+static void widgetDrawAutocomplete(textMesh *m,int x,int y,int size){
+	int cy = y - size*8 - size*4 - size*2;
+	const u32 c1[3] = {0xB0808080,0xB0909090,0xC0B86030};
+	const u32 c2[3] = {0xD0606060,0xD0A0A0A0,0xE0A05028};
+	for(uint i=0;i<lispAutoCompleteLen;i++){
+		u32 gc = 0xFFF8F0EA;
+		int c  = i&1;
+		if((int)i == lispAutoCompleteSelection){
+			c  = 2;
+			gc = 0xFF3950F0;
+		}
+		textMeshVGradient(m, x-size*8, cy-size, size*18*8,size*8+size*2,c1[c],c2[c]);
+		const lSymbol sym = lispAutoCompleteList[i];
+		int cx = x;
+		for(uint ii=0;(ii<16) && (sym.c[ii] != 0);ii++){
+			textMeshAddGlyph(m, cx, cy, size, sym.c[ii], gc, 0x00000000);
+			cx += size*8;
+		}
+		cy -= size*8+size*2;
+		if(cy < 0){break;}
+	}
+}
 
 static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h, const char *rawLine, int lambda, int mark, int cursor){
 	(void)h;
@@ -74,6 +98,11 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 	int selActive = 0;
 	for(const char *line = rawLine;*line != 0;line++){
 		const int curPos = line - rawLine;
+		if((lispAutoCompleteLen > 0) && (cursor >= 0)){
+			if(lispAutoCompleteStart == line-rawLine){
+				widgetDrawAutocomplete(m,cx,y,size);
+			}
+		}
 		if(curPos >= selMax){
 			selActive = 0;
 		}else if((curPos >= selMin) && (curPos < selMax)){
@@ -256,7 +285,7 @@ static void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, in
 	int textYOff = (h - (2*8))/2;
 	int textXOff = 8;
 	int size     = 2;
-	bool isLisp  = (wid->flags & WIDGET_LISP_SYNTAX_HIGHLIGHT) != 0;
+	bool isLisp  = (wid->flags & WIDGET_LISP) != 0;
 
 	if((wid->flags & WIDGET_BIGGER) == WIDGET_BIGGER){
 		size = 8;

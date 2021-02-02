@@ -66,8 +66,8 @@ void handlerChatSelectNext(widget *wid){
 }
 
 void handlerChatBlur(widget *wid){
+	(void)wid;
 	chatResetHistorySel();
-	wid->flags &= ~WIDGET_LISP_SYNTAX_HIGHLIGHT;
 }
 
 void chatInit(){

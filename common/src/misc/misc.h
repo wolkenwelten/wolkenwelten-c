@@ -8,6 +8,9 @@ float       animationInterpolationSustain(int left, int max , float startPoint, 
 void        saveFile(const char *filename,const void *buf, size_t len);
 void       *loadFile(const char *filename,size_t *len);
 
+void        strRemove(char *buf, int size, int start, int end);
+void        strInsert(char *buf, int size, int start, const char *snippet);
+
 int         parseAnsiCode(const char *str, int *fgc, int *bgc);
 const char *getHumanReadableSize(size_t n);
 char      **splitArgs(const char *cmd,int *rargc);

@@ -64,7 +64,7 @@ struct widget {
 #define WIDGET_ALT_CLICKED (1<<10)
 #define WIDGET_MID_CLICKED (1<<11)
 #define WIDGET_ACTIVE      (1<<12)
-#define WIDGET_LISP_SYNTAX_HIGHLIGHT (1<<13)
+#define WIDGET_LISP        (1<<13)
 
 #define WIDGET_ANIMATE (15<<4)
 #define WIDGET_HNS      (WIDGET_HIDDEN | WIDGET_NOSELECT)

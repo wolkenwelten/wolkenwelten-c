@@ -2,9 +2,9 @@
 #include "../../../common/src/common.h"
 #include "widget.h"
 
+extern int  textInputBufferLen;
 extern int  textInputCursorPos;
 extern int  textInputMark;
-extern uint textInputLastEvent;
 
 void  textInputFocus  (widget *wid);
 void  textInputBlur   (widget *wid);

@@ -5,9 +5,16 @@
 
 extern widget *lispPanel,*lispLog;
 extern bool    lispPanelVisible;
+extern int     lispInputCheckCountdown;
+extern lSymbol lispAutoCompleteList[32];
+extern uint    lispAutoCompleteLen;
+extern int     lispAutoCompleteStart;
+extern int     lispAutoCompleteEnd;
+extern int     lispAutoCompleteSelection;
 
-void lispPanelOpen      ();
-void lispPanelClose     ();
-void lispPanelToggle    ();
-void lispInputInit      ();
-void lispPanelShowReply (lVal *sym, const char *reply);
+void lispPanelOpen              ();
+void lispPanelClose             ();
+void lispPanelToggle            ();
+void lispInputInit              ();
+void lispPanelShowReply         (lVal *sym, const char *reply);
+void lispPanelCheckAutoComplete ();

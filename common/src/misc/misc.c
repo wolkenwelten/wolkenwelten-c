@@ -227,3 +227,24 @@ u64 SHA1Simple(const void *data, uint len){
 	u64 ret = d[0] | ((u64)d[1] << 8) | ((u64)d[2] << 8) | ((u64)d[3] << 8) | ((u64)d[4] << 8) | ((u64)d[5] << 8) | ((u64)d[6] << 8) | ((u64)d[7] << 8);
 	return ret;
 }
+
+void strRemove(char *buf, int size, int start, int end){
+	const int off = end-start;
+	int blen = strnlen(buf,size);
+	for(int i=start;i<blen-off;i++){
+		buf[i] = buf[i+off];
+	}
+	buf[blen-off] = 0;
+}
+void strInsert(char *buf, int size, int start,const char *snippet){
+	int off = strlen(snippet);
+	int blen = strnlen(buf,size);
+	if((off+blen) > size){return;}
+	for(int i=blen+off-1;i>=start+off;i--){
+		buf[i] = buf[i-off];
+	}
+	for(int i=start;i<start+off;i++){
+		buf[i] = *snippet++;
+	}
+	buf[blen+off] = 0;
+}

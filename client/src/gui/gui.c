@@ -557,6 +557,7 @@ void drawHud(){
 	drawDebuginfo();
 	drawAmmunition();
 	chatDraw(guim);
+	lispPanelCheckAutoComplete();
 	widgetDraw(rootMenu,guim,0,0,screenWidth,screenHeight);
 	if(isInventoryOpen()){
 		drawInventory(guim);
