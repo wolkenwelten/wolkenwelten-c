@@ -218,7 +218,7 @@ static lSymbol lispPanelGetPointSymbol(){
 }
 
 void lispPanelCheckAutoComplete(){
-	static lSymbol lastSym = {0};
+	static lSymbol lastSym;
 	if(widgetFocused == NULL){
 		lispInputCheckCountdown = -1;
 	}
@@ -246,7 +246,8 @@ void lispPanelCheckAutoComplete(){
 
 void lispPanelCheckAutoCompleteDescription(){
 	if((widgetFocused == NULL) || (lispAutoCompleteLen == 0) || (lispAutoCompleteSelection < 0)){
-		lispAutoCompleteDescription[0]=0;
+		lispAutoCompleteDescription[0] = 0;
+		memset(&lispAutoCompleteDescriptionSymbol,0,sizeof(lSymbol));
 		return;
 	}
 	if((lispAutoCompleteList[lispAutoCompleteSelection].v[0] == lispAutoCompleteDescriptionSymbol.v[0])
