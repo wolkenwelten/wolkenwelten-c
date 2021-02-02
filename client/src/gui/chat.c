@@ -18,6 +18,8 @@
 #include "chat.h"
 
 #include "../main.h"
+#include "../gfx/gfx.h"
+#include "../gfx/textMesh.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../gui/textInput.h"
@@ -88,4 +90,21 @@ void chatInit(){
 	widgetBind(chatText,"selectPrev",handlerChatSelectPrev);
 	widgetBind(chatText,"selectNext",handlerChatSelectNext);
 	widgetNewCPLH(wButton,chatPanel,-16,16,24,32,"\xA8","click",handlerChatSubmit);
+}
+
+void chatDraw(textMesh *guim){
+	guim->sy   = screenHeight - (9*16) - (chatPanel->h-8);
+	guim->sx   = 24;
+	guim->size = 1;
+	guim->font = 1;
+	for(int i=0;i<8;i++){
+		textMeshAddString(guim,chatLog[i]);
+		guim->sy += 8;
+	}
+	guim->size = 2;
+	for(int i=8;i<12;i++){
+		textMeshAddString(guim,chatLog[i]);
+		guim->sy += 16;
+	}
+	guim->font = 0;
 }

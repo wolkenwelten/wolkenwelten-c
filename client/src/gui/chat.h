@@ -5,5 +5,6 @@
 extern widget *chatPanel,*chatText;
 
 void chatClose();
-void chatOpen();
-void chatInit();
+void chatOpen ();
+void chatInit ();
+void chatDraw (textMesh *guim);
