@@ -41,7 +41,7 @@ typedef struct {
 } glCloud;
 #pragma pack(pop)
 
-#define CLOUDS_MAX (1<<16)
+#define CLOUDS_MAX (1<<18)
 
 typedef struct {
 	uint count,vbo,vao;
