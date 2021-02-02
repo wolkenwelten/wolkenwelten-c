@@ -41,21 +41,19 @@ typedef struct {
 } glCloud;
 #pragma pack(pop)
 
-#define CLOUDS_MAX (1<<19)
+#define CLOUDS_MAX (1<<16)
 
 typedef struct {
 	uint count,vbo,vao;
 	vec base;
 } cloudChunk;
 
-cloudChunk parts[8];
+cloudChunk parts[64];
 uint       cloudFrame = 0;
 glCloud    cloudData[CLOUDS_MAX];
 
 u32 cloudCT[128];
 u32 cloudCB[128];
-
-#define CLOUDS_MAX (1<<19)
 
 static inline void cloudPart(cloudChunk *part, float px,float py,float pz,float dd,u8 v){
 	if(dd > cloudMaxD){return;}
@@ -89,11 +87,11 @@ static inline void cloudPart(cloudChunk *part, float px,float py,float pz,float 
 }
 
 void cloudsRender(){
-	const u8 cpart = cloudFrame++ & 7;
+	const u8 cpart = cloudFrame++ & 63;
 
 	shaderBind(sCloud);
 	shaderSizeMul(sCloud,1.f + (player->aimFade * player->zoomFactor));
-	for(int i=0;i<8;i++){
+	for(int i=0;i<64;i++){
 		matMov(matMVP,matView);
 		const vec transOff = vecSub(cloudOff,parts[i].base);
 		matMulTrans(matMVP,transOff.x,transOff.y,transOff.z);
@@ -107,13 +105,13 @@ void cloudsRender(){
 		}
 		glDrawArrays(GL_POINTS,0,CLOUDS_MAX - parts[i].count);
 	}
-	parts[cloudFrame & 7].count = CLOUDS_MAX;
+	parts[cloudFrame & 63].count = CLOUDS_MAX;
 }
 
 void cloudsDraw(int cx, int cy, int cz){
 	if(cy&1){return;}
-	const u8 cpart = (cx&1) | ((cy&4)) | ((cz&1)<<1);
-	if((cloudFrame&7) != cpart){return;}
+	const u8 cpart = (cx&3) | ((cy&0xC)) | ((cz&3)<<4);
+	if((cloudFrame&63) != cpart){return;}
 	PROFILE_START();
 	cloudChunk *part = &parts[cpart];
 	part->base     = vecFloor(cloudOff);
@@ -209,7 +207,7 @@ void cloudsCalcColors(){
 }
 
 void cloudsInitGfx(){
-	for(int i=0;i<8;i++){
+	for(int i=0;i<64;i++){
 		parts[i].count = CLOUDS_MAX;
 		parts[i].base  = vecZero();
 		glGenVertexArrays(1,&parts[i].vao);

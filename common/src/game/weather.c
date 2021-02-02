@@ -31,7 +31,7 @@ u8  rainIntensity;
 
 void weatherInit(){
 	generateNoise(0x84407db3, cloudTex);
-	windGVel   = vecMulS(vecRng(),1.f/256.f);
+	windGVel   = vecMulS(vecRng(),1.f/512.f);
 	windGVel.y = 0.f;
 	windVel    = windGVel;
 	cloudGDensityMin  = 154;
@@ -46,7 +46,7 @@ void weatherUpdateAll(){
 	cloudGDensityMin = MAX(128,cloudGDensityMin);
 
 	if(!isClient && (rngValA((1<<18)-1) == 0)){
-		windGVel   = vecMulS(vecRng(),1.f/256.f);
+		windGVel   = vecMulS(vecRng(),1.f/512.f);
 		windGVel.y = 0.f;
 		weatherSendUpdate(-1);
 	}
