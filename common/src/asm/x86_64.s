@@ -12,13 +12,15 @@ savedFloats: .zero 512
 
 particlePosUpdateSSE:
   fxsave savedFloats(%rip)
-  xor %ecx,%ecx
-  movl particleCount@GOTPCREL(%rip), %ecx
+  movq particleCount@GOTPCREL(%rip), %rdx
+  movl (%rdx),%ecx
   shrl $2,%ecx
   inc %ecx
 
   leaq glParticles@GOTPCREL(%rip), %rdx
+  movq (%rdx),%rdx
   leaq   particles@GOTPCREL(%rip), %rax
+  movq (%rax),%rax
 
 .particleUpdateLoopSSE:
   movaps   (%rdx),%xmm0
@@ -49,13 +51,15 @@ particlePosUpdateSSE:
 
 particlePosUpdateAVX:
   fxsave savedFloats(%rip)
-  xor %ecx,%ecx
-  movl particleCount@GOTPCREL(%rip), %ecx
+  movq particleCount@GOTPCREL(%rip), %rdx
+  movl (%rdx),%ecx
   shrl $2,%ecx
   inc %ecx
 
   leaq glParticles@GOTPCREL(%rip), %rdx
+  movq (%rdx),%rdx
   leaq   particles@GOTPCREL(%rip), %rax
+  movq (%rax),%rax
 
 .particleUpdateLoopAVX:
   vmovaps   (%rdx),%ymm0
@@ -78,19 +82,22 @@ particlePosUpdateAVX:
 
 sparticlePosUpdateSSE:
   fxsave savedFloats(%rip)
-  xor %ecx,%ecx
-  movl sparticleCount@GOTPCREL(%rip), %ecx
+  movq sparticleCount@GOTPCREL(%rip), %rdx
+  movl (%rdx),%ecx
   shrl $2,%ecx
   inc %ecx
 
   leaq sparticleVV@GOTPCREL(%rip), %rdx
+  movq (%rdx),%rdx
   movaps   (%rdx),%xmm4
   movaps 16(%rdx),%xmm5
   movaps 32(%rdx),%xmm6
   movaps 48(%rdx),%xmm7
 
   leaq glSparticles@GOTPCREL(%rip), %rdx
+  movq (%rdx),%rdx
   leaq   sparticles@GOTPCREL(%rip), %rax
+  movq (%rax),%rax
 
 .sparticleUpdateLoopSSE:
   movaps   (%rdx),%xmm0
@@ -130,17 +137,20 @@ sparticlePosUpdateSSE:
 
 sparticlePosUpdateAVX:
   fxsave savedFloats(%rip)
-  xor %ecx,%ecx
-  movl sparticleCount@GOTPCREL(%rip), %ecx
+  movq sparticleCount@GOTPCREL(%rip), %rdx
+  movl (%rdx),%ecx
   shrl $2,%ecx
   inc %ecx
 
   leaq sparticleVV@GOTPCREL(%rip), %rdx
+  movq      (%rdx),%rdx
   vmovaps   (%rdx),%ymm4
   vmovaps 32(%rdx),%ymm5
 
   leaq glSparticles@GOTPCREL(%rip), %rdx
+  movq (%rdx),%rdx
   leaq   sparticles@GOTPCREL(%rip), %rax
+  movq (%rax),%rax
 
 .sparticleUpdateLoopAVX:
   vmovaps   (%rdx),%ymm0
@@ -167,15 +177,19 @@ sparticlePosUpdateAVX:
 
 rainPosUpdateSSE:
   fxsave savedFloats(%rip)
-  movl rainCount@GOTPCREL(%rip), %ecx
+  movq rainCount@GOTPCREL(%rip), %rdx
+  movl (%rdx),%ecx
   shrl $1,%ecx
   inc %ecx
 
   leaq rainVel@GOTPCREL(%rip), %rdx
+  movq (%rdx),%rdx
   movaps (%rdx),%xmm4
 
   leaq glRainDrops@GOTPCREL(%rip), %rdx
+  movq (%rdx),%rdx
   leaq   rainDrops@GOTPCREL(%rip), %rax
+  movq (%rax),%rax
 
 .rainPosUpdateLoopSSE:
   movaps   (%rdx),%xmm0
@@ -202,15 +216,19 @@ rainPosUpdateSSE:
 
 rainPosUpdateAVX:
   fxsave savedFloats(%rip)
-  movl rainCount@GOTPCREL(%rip), %ecx
+  movq rainCount@GOTPCREL(%rip), %rdx
+  movl (%rdx),%ecx
   shrl $2,%ecx
   inc %ecx
 
   leaq rainVel@GOTPCREL(%rip), %rdx
+  mov (%rdx),%rdx
   vmovaps (%rdx),%ymm8
 
   leaq glRainDrops@GOTPCREL(%rip), %rdx
+  mov (%rdx),%rdx
   leaq   rainDrops@GOTPCREL(%rip), %rax
+  mov (%rax),%rax
 
 .rainPosUpdateLoopAVX:
   vmovaps   (%rdx),%ymm0
