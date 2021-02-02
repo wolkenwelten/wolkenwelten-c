@@ -197,6 +197,7 @@ static lSymbol lispPanelGetPointSymbol(){
 		else if(c == '\''){i++;break;}
 		else if(c == '"') {i++;break;}
 	}
+	i = MAX(0,i);
 	for(m = i; buf[m] != 0; m++){
 		const u8 c = buf[i];
 		if(isspace(c))    {m--;break;}
