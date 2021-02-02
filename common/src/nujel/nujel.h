@@ -104,6 +104,7 @@ lVal     *lValNativeFunc    (lVal *(*func)(lClosure *,lVal *), lVal *args, lVal 
 lVal     *lGetClosureSym    (lClosure *c, const lSymbol s);
 lVal     *lResolveClosureSym(lClosure *c, const lSymbol s);
 lVal     *lDefineClosureSym (lClosure *c, const lSymbol s);
+lVal     *lMatchClosureSym  (lClosure *c, lVal *v, const lSymbol s);
 lVal     *lResolveSym       (lClosure *c, lVal *v);
 lVal     *lApply            (lClosure *c, lVal *v, lVal *(*func)(lClosure *,lVal *));
 lVal     *lCast             (lClosure *c, lVal *v, lType t);

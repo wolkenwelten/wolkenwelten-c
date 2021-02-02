@@ -299,6 +299,33 @@ void lWriteVal(lVal *v){
 	printf("%s\n",dispWriteBuf);
 }
 
+lVal *lMatchClosureSym(lClosure *c, lVal *ret, const lSymbol s){
+	if(c == NULL){return ret;}
+	const uint len = strnlen(s.c,16);
+
+	forEach(n,c->data){
+		if (n == NULL)                   {continue;}
+		if (n->type != ltPair)           {continue;}
+		if (n->vList.car == NULL)        {continue;}
+		if (n->vList.car->type != ltPair){continue;}
+		if (n->vList.car->vList.car == NULL){continue;}
+		if (n->vList.car->vList.car->type != ltSymbol){continue;}
+		if(strncmp(s.c,n->vList.car->vList.car->vSymbol.c,len) == 0){
+			ret = lCons(n->vList.car->vList.car,ret);
+		}
+	}
+
+	return lMatchClosureSym(c->parent,ret,s);
+}
+
+static lVal *lnfMatchClosureSym(lClosure *c, lVal *v){
+	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	lVal *sym = v->vList.car;
+	if(sym->type != ltSymbol){sym = lEval(c,sym);}
+	if(sym->type != ltSymbol){return NULL;}
+	return lMatchClosureSym(c,NULL,sym->vSymbol);
+}
+
 static lVal *lnfDefine(lClosure *c, lClosure *ec, lVal *v, lVal *(*func)(lClosure *,lSymbol)){
 	if((v == NULL) || (v->type != ltPair)){return NULL;}
 	lVal *sym = v->vList.car;
@@ -748,6 +775,7 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"apply",       "(f l)",         "Evaluates f with list l as arguments",     lnfApply);
 	lAddNativeFunc(c,"eval",        "(expr)",        "Evaluates expr",                           lEval);
 	lAddNativeFunc(c,"resolve",     "(s)",           "Resolves s until it is no longer a symbol",lResolve);
+	lAddNativeFunc(c,"match-sym",   "(s)",           "Returns all symbols partially matching s", lnfMatchClosureSym);
 	lAddNativeFunc(c,"mem",         "()",            "Returns lVals in use",                     lnfMem);
 	lAddNativeFunc(c,"λ",           "(args ...body)","Creates a new lambda",                     lnfLambda);
 	lAddNativeFunc(c,"lambda",      "(args ...body)","New Lambda",                               lnfLambda);
