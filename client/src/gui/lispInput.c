@@ -43,8 +43,11 @@ int     lispAutoCompleteStart = 0;
 int     lispAutoCompleteEnd   = 0;
 int     lispAutoCompleteSelection = -1;
 
+char    lispAutoCompleteDescription[256];
+lSymbol lispAutoCompleteDescriptionSymbol;
+
 void lispPanelOpen(){
-	widgetSlideH(lispPanel, screenHeight-128);
+	widgetSlideH(lispPanel, screenHeight-156);
 	widgetFocus(lispInput);
 	lispPanelVisible = true;
 }
@@ -199,7 +202,7 @@ static lSymbol lispPanelGetPointSymbol(){
 	}
 	i = MAX(0,i);
 	for(m = i; buf[m] != 0; m++){
-		const u8 c = buf[i];
+		const u8 c = buf[m];
 		if(isspace(c))    {m--;break;}
 		else if(c == '(') {m--;break;}
 		else if(c == ')') {m--;break;}
@@ -209,7 +212,7 @@ static lSymbol lispPanelGetPointSymbol(){
 	if(m <= i){return sym;}
 	lispAutoCompleteStart = i;
 	lispAutoCompleteEnd = m;
-	int len = MIN(15,m-i);
+	int len = MIN(15,m-i+1);
 	memcpy(sym.v,&buf[i],len);
 	return sym;
 }
@@ -235,9 +238,27 @@ void lispPanelCheckAutoComplete(){
 	lastSym = sym;
 	lVal *newAC = lMatchClosureSym(clRoot,NULL,sym);
 	for(lVal *n = newAC;(n != NULL) && (n->type == ltPair);n = n->vList.cdr){
-		if((sym.v[0] == n->vList.car->vSymbol.v[0]) && (sym.v[1] == n->vList.car->vSymbol.v[1])){continue;}
-		lispAutoCompleteList[lispAutoCompleteLen].v[0] = n->vList.car->vSymbol.v[0];
-		lispAutoCompleteList[lispAutoCompleteLen].v[1] = n->vList.car->vSymbol.v[1];
+		lispAutoCompleteList[lispAutoCompleteLen]  = n->vList.car->vSymbol;
 		if(++lispAutoCompleteLen >= countof(lispAutoCompleteList)){break;}
 	}
+	if(lispAutoCompleteLen == 1){lispAutoCompleteSelection = 0;}
+}
+
+void lispPanelCheckAutoCompleteDescription(){
+	if((widgetFocused == NULL) || (lispAutoCompleteLen == 0) || (lispAutoCompleteSelection < 0)){
+		lispAutoCompleteDescription[0]=0;
+		return;
+	}
+	if((lispAutoCompleteList[lispAutoCompleteSelection].v[0] == lispAutoCompleteDescriptionSymbol.v[0])
+	   && (lispAutoCompleteList[lispAutoCompleteSelection].v[1] == lispAutoCompleteDescriptionSymbol.v[1])){
+		return;
+	}
+	lispAutoCompleteDescriptionSymbol = lispAutoCompleteList[lispAutoCompleteSelection];
+
+	char sBuf[128];
+	snprintf(sBuf,sizeof(sBuf),"(describe \"%s\")",lispAutoCompleteDescriptionSymbol.c);
+	sBuf[sizeof(sBuf)-1] = 0;
+	const char *str = lispEval(sBuf);
+	snprintf(lispAutoCompleteDescription,sizeof(lispAutoCompleteDescription),"%s",str);
+	lispAutoCompleteDescription[sizeof(lispAutoCompleteDescription)-1]=0;
 }

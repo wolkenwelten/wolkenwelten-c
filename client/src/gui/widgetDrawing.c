@@ -142,6 +142,11 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 		cx += size * 8;
 	}
 	m->font = oldFont;
+
+	if((cursor >= 0) && (lispAutoCompleteDescription[0]!=0)){
+		textMeshVGradient(m, x-size*4, y+size*12, w+size*4 ,size*16,0xB0808080,0xD0606060);
+		widgetDrawLispLine(m, x, y+size*16, size, w, h,lispAutoCompleteDescription , 0, -1, -1);
+	}
 }
 
 static void widgetDrawButton(const widget *wid, textMesh *m, int x, int y, int w, int h){
