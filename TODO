@@ -8,7 +8,6 @@
 - If a player cant place a block because she is too close push him a bit so the block can be placed, also play an animation/sfx to acknowledge that the player wanted to do something because it might still be the case that the player can't be pushed away far enough
 
 - Precision Value for World generation, can be different for each chungus, the farther any players/animals are the less precise the simulation gets
-- Generate Cloud Density Mod based on chunk data BUT with a much lower resolution, basically summing together the amount of blocks inside a chunk and using that as a modifier for the clouddensity
 - Add Clouds Trails from Characters/Entities/Projectiles, probably looks nice
 - SHRINK THE BLOCKS!
 - Have Wind affect fire spread direction

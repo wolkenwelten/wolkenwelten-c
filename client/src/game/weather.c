@@ -26,9 +26,11 @@
 #include "../gfx/particle.h"
 #include "../game/character.h"
 #include "../sdl/sdl.h"
+#include "../voxel/bigchungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/noise.h"
+#include "../../../common/src/misc/profiling.h"
 
 #include <math.h>
 
@@ -62,13 +64,21 @@ static inline void cloudPart(cloudChunk *part, float px,float py,float pz,float 
 	if(dd > cloudMinD){
 		a = (u8)(v*(1.f-((dd - cloudMinD)/cloudFadeD))) << 24;
 	}
-	const   u32 ct = a | cloudCT[v-128];
-	const   u32 cb = a | cloudCB[v-128];
 	const float oy = 32.f;
 	py += oy;
-
 	const float vft = (vf/9.f);
 	const float vfb = (vf/18.f);
+
+	const u16 cx = px;
+	const u16 cz = pz;
+	const u16 cyb = py-vfb;
+	const u16 cyt = ((int)(py+vfb))+1;
+	for(u16 cy=cyb;cy < cyt;cy+=2){
+		if(worldTryB(cx,cy,cz)){return;}
+	}
+
+	const   u32 ct = a | cloudCT[v-128];
+	const   u32 cb = a | cloudCB[v-128];
 	if(py < player->pos.y){
 		cloudData[--part->count] = (glCloud){px,py+vft,pz,ct};
 		cloudData[--part->count] = (glCloud){px,py-vfb,pz,cb};
@@ -104,6 +114,7 @@ void cloudsDraw(int cx, int cy, int cz){
 	if(cy&1){return;}
 	const u8 cpart = (cx&1) | ((cy&4)) | ((cz&1)<<1);
 	if((cloudFrame&7) != cpart){return;}
+	PROFILE_START();
 	cloudChunk *part = &parts[cpart];
 	part->base     = vecFloor(cloudOff);
 	const ivec toff = ivecNewV(part->base);
@@ -175,6 +186,7 @@ void cloudsDraw(int cx, int cy, int cz){
 			}
 		}
 	}
+	PROFILE_STOP();
 }
 
 void cloudsCalcColors(){
