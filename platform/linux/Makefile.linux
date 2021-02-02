@@ -2,6 +2,8 @@ AS               := as
 CC               := clang
 LD               := clang
 
+AS_SYM           := USE_GOT=USE_GOT
+
 CFLAGS           += -D_GNU_SOURCE
 LDFLAGS          += -D_GNU_SOURCE
 
