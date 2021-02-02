@@ -70,7 +70,7 @@ void fireDrawAll(){
 		for(uint i=calls&0x1F;i<fireCount;i+=0x20){
 			fireDraw(&fireList[i]);
 		}
-		for(uint i=calls&0xFF;i<fireCount;i+=0xFF){
+		for(uint i=calls&0x7F;i<fireCount;i+=0x80){
 			fireDrawSmoke(&fireList[i]);
 		}
 		calls++;
