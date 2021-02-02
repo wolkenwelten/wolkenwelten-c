@@ -50,14 +50,12 @@ void fxBlockBreak(const vec pos, u8 b, u8 cause){
 void recipeNew1(const item result, const item ingred1){
 	(void)result;
 	(void)ingred1;
-	fprintf(stderr,"recipeNew1 got called on the serverside\n");
 }
 
 void recipeNew2(const item result, const item ingred1, const item ingred2){
 	(void)result;
 	(void)ingred1;
 	(void)ingred2;
-	fprintf(stderr,"recipeNew2 got called on the serverside\n");
 }
 
 void recipeNew3(const item result, const item ingred1, const item ingred2, const item ingred3){
@@ -65,7 +63,6 @@ void recipeNew3(const item result, const item ingred1, const item ingred2, const
 	(void)ingred1;
 	(void)ingred2;
 	(void)ingred3;
-	fprintf(stderr,"recipeNew3 got called on the serverside\n");
 }
 
 void recipeNew4(const item result, const item ingred1, const item ingred2, const item ingred3, const item ingred4){
@@ -74,7 +71,6 @@ void recipeNew4(const item result, const item ingred1, const item ingred2, const
 	(void)ingred2;
 	(void)ingred3;
 	(void)ingred4;
-	fprintf(stderr,"recipeNew4 got called on the serverside\n");
 }
 
 void ingredientSubstituteAdd(u16 ingredient, u16 substitute){
