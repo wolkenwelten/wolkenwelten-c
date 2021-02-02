@@ -8,6 +8,7 @@ character *characterNew            ();
 void       characterFree           (      character *c);
 void       characterInit           (      character *c);
 u32        characterCollision      (const vec pos);
+vec        characterGetCollisionVec(const vec pos);
 int        characterGetHP          (const character *c);
 int        characterGetMaxHP       (const character *c);
 

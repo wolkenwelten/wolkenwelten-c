@@ -204,21 +204,25 @@ bool characterPlaceBlock(character *c,item *i){
 	if(c->actionTimeout < 0)              { return false; }
 	ivec los = characterLOSBlock(c,true);
 	if(los.x < 0)                         { return false; }
-	if(!itemDecStack(i,1))                { return false; }
+	if(itemIsEmpty(i))                    { return false; }
 	characterStartAnimation(c,0,240);
 	characterAddCooldown(c,50);
 	if((characterCollision(c->pos)&0xFF0)){
 		sfxPlay(sfxStomp,1.f);
+		const vec cvec = characterGetCollisionVec(c->pos);
+		c->vel = vecAdd(c->vel,vecMulS(cvec,-0.01f));
 		return false;
 	}
 	worldSetB(los.x,los.y,los.z,i->ID);
 	if((characterCollision(c->pos)&0xFF0) != 0){
+		const vec cvec = characterGetCollisionVec(c->pos);
+		c->vel = vecAdd(c->vel,vecMulS(cvec,-0.01f));
 		worldSetB(los.x,los.y,los.z,0);
-		itemIncStack(i,1);
 		sfxPlay(sfxStomp,1.f);
 		return false;
 	} else {
 		msgPlaceBlock(los.x,los.y,los.z,i->ID);
+		itemDecStack(i,1);
 		sfxPlay(sfxPock,1.f);
 		return true;
 	}
@@ -321,6 +325,17 @@ u32 characterCollision(const vec c){
 	if(checkCollision(c.x   ,c.y-0.7f,c.z+WD)){col |= 0x800;}
 
 	return col;
+}
+
+vec characterGetCollisionVec(const vec pos){
+	u32 col = characterCollision(pos);
+	vec ret = vecNew(0.f,-0.8f,0.f);
+	if(col & 0x110){ret.x -= 1.f;}
+	if(col & 0x220){ret.x += 1.f;}
+	if(col & 0x440){ret.z -= 1.f;}
+	if(col & 0x880){ret.z += 1.f;}
+
+	return ret;
 }
 
 void characterMove(character *c, const vec mov){

@@ -70,6 +70,8 @@
 	(set-inv! 5 i-crystal-picka)
 	(set-inv! 6 i-crystal-spear)
 	(set-inv! 7 i-pear 42)
+	(set-inv! 8 i-dirt 99)
+	(set-inv! 9 i-stone 99)
 
 	(set-inv! 10 i-crystal-bulle 999)
 	(set-inv! 11 i-crystal-bulle 999)
