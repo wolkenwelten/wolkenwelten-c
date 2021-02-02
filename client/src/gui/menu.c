@@ -24,6 +24,7 @@
 #include "../menu/multiplayer.h"
 #include "../menu/inventory.h"
 #include "../menu/options.h"
+#include "../gui/lispInput.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
 #include "../gfx/gl.h"

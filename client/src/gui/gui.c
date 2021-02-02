@@ -17,9 +17,6 @@
 
 #include "gui.h"
 
-#include "../../../common/src/game/item.h"
-#include "../../../common/src/misc/misc.h"
-
 #include "../main.h"
 #include "../misc/lisp.h"
 #include "../misc/options.h"
@@ -41,6 +38,7 @@
 #include "../gfx/textMesh.h"
 #include "../gfx/sky.h"
 #include "../gui/menu.h"
+#include "../gui/lispInput.h"
 #include "../misc/options.h"
 #include "../menu/inventory.h"
 #include "../menu/mainmenu.h"
@@ -51,9 +49,10 @@
 #include "../sdl/sdl.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
-#include "../../../common/src/nujel/string.h"
-#include "../../../common/src/tmp/cto.h"
+#include "../../../common/src/game/item.h"
+#include "../../../common/src/misc/misc.h"
 #include "../../../common/src/mods/mods.h"
+#include "../../../common/src/tmp/cto.h"
 
 #include <ctype.h>
 #include <string.h>
@@ -69,16 +68,11 @@ textMesh *cursorMesh;
 widget *widgetGameScreen;
 widget *chatPanel;
 widget *chatText;
-widget *lispPanel;
-widget *lispLog;
-widget *lispInput;
-int lispHistoryActive = -1;
 
 bool mouseHidden = false;
 uint mousex,mousey;
 uint mouseClicked[3] = {0,0,0};
 uint animalOverlaysDrawn = 0;
-bool lispPanelVisible = false;
 
 float matOrthoProj[16];
 
@@ -159,115 +153,6 @@ void openChat(){
 	widgetFocus(chatText);
 }
 
-void openLispPanel(){
-	widgetSlideH(lispPanel, screenHeight-128);
-	widgetFocus(lispInput);
-	lispPanelVisible = true;
-}
-
-void closeLispPanel(){
-	widgetSlideH(lispPanel, 0);
-	if(gameRunning){
-		widgetFocus(widgetGameScreen);
-	}
-	lispPanelVisible = false;
-}
-
-void lispPanelShowReply(lVal *sym, const char *reply){
-	int len = strnlen(reply,8192) + 1;
-	if(lispLog == NULL){return;}
-	for(int i=0;i<256;i++){
-		const char *line = lispLog->valss[i];
-		if(line == NULL){continue;}
-		if(*line != ' '){continue;}
-		for(;*line == ' ';line++){}
-		if(strncmp(sym->vSymbol.c,line,6)){
-			//printf("'%s' != '%s'\n",line,sym->vSymbol.c);
-			continue;
-		}
-		free(lispLog->valss[i]);
-
-		int soff,slen;
-		for(soff = 0;isspace((unsigned char)reply[soff]) || (reply[soff] == '"');soff++){}
-		for(slen = len-soff-1;isspace((unsigned char)reply[soff+slen-1]) || (reply[soff+slen-1] == '"');slen--){}
-		lispLog->valss[i] = malloc(slen+3);
-		for(int ii=0;ii<2;ii++){
-			lispLog->valss[i][ii] = ' ';
-		}
-		memcpy(&lispLog->valss[i][2],&reply[soff],slen);
-		lispLog->valss[i][slen+2] = 0;
-		return;
-	}
-	fprintf(stderr,"Couldn't match SExpr Reply %s - %s\n",sym->vSymbol.c,reply);
-}
-
-void toggleLispPanel(){
-	if(lispPanelVisible){
-		closeLispPanel();
-	}else{
-		openLispPanel();
-	}
-}
-
-void handlerLispSubmit(widget *wid){
-	char buf[8192];
-	int l;
-	if(lispInput->vals[0] == 0){return;}
-	l = snprintf(buf,sizeof(buf)-1,"> %s",wid->vals);
-	buf[l] = 0;
-	widgetAddEntry(lispLog, buf);
-	const char *result = lispEval(wid->vals);
-	l = snprintf(buf,sizeof(buf)-1,"  %s",result);
-	buf[l] = 0;
-	widgetAddEntry(lispLog, buf);
-	wid->vals[0] = 0;
-	lispHistoryActive = -1;
-	textInputFocus(wid);
-}
-
-void handlerLispSelectPrev(widget *wid){
-	const char *msg = lispLog->valss[lispHistoryActive+1];
-	if(msg == NULL){return;}
-	if(*msg == 0)  {return;}
-	++lispHistoryActive;
-	if(*msg == ' '){
-		handlerLispSelectPrev(wid);
-		return;
-	}
-	int firstSpace;
-	for(firstSpace=0;firstSpace<255;firstSpace++){
-		if(msg[firstSpace] == ' '){break;}
-	}
-	firstSpace++;
-	memcpy(wid->vals,&msg[firstSpace],255-firstSpace);
-	wid->vals[255]=0;
-	textInputFocus(wid);
-}
-
-void handlerLispSelectNext(widget *wid){
-	if(lispHistoryActive < 0){return;}
-	const char *msg = lispLog->valss[lispHistoryActive-1];
-	if(lispHistoryActive <= 0){
-		memset(wid->vals,0,256);
-		textInputFocus(wid);
-		return;
-	}
-	if(msg == NULL){return;}
-	if(*msg == 0)  {return;}
-	--lispHistoryActive;
-	if(*msg == ' '){
-		handlerLispSelectNext(wid);
-		return;
-	}
-	int firstSpace;
-	for(firstSpace=0;firstSpace<255;firstSpace++){
-		if(wid->vals[firstSpace] == ' '){break;}
-	}
-	memcpy(wid->vals,&msg[firstSpace],255-firstSpace);
-	wid->vals[255]=0;
-	textInputFocus(wid);
-}
-
 static void handlerChatChange(widget *wid){
 	if(wid == NULL){return;}
 	if(wid->vals == NULL){return;}
@@ -329,15 +214,7 @@ void initUI(){
 	chatPanel = widgetNewCP(wPanel,rootMenu,0,-1,512,0);
 	chatPanel->flags |= WIDGET_HIDDEN;
 
-	lispPanel = widgetNewCP(wPanel,rootMenu,64,0,screenWidth-128,0);
-	lispPanel->flags |= WIDGET_HIDDEN;
-	lispInput = widgetNewCP(wTextInput,lispPanel,0,-1,-1,32);
-	lispInput->flags |= WIDGET_LISP_SYNTAX_HIGHLIGHT;
-	lispLog = widgetNewCP(wTextLog,lispPanel,0,0,-1,-32);
-	lispLog->flags |= WIDGET_LISP_SYNTAX_HIGHLIGHT;
-	widgetBind(lispInput,"submit",handlerLispSubmit);
-	widgetBind(lispInput,"selectPrev",handlerLispSelectPrev);
-	widgetBind(lispInput,"selectNext",handlerLispSelectNext);
+	lispInputInit();
 
 	chatText  = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Chat Message","submit",handlerChatSubmit);
 	widgetBind(chatText,"change",handlerChatChange);

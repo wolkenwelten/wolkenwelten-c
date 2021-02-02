@@ -1,10 +1,8 @@
 #pragma once
 #include "../../../common/src/common.h"
-#include "../../../common/src/nujel/nujel.h"
 #include "widget.h"
 
-extern widget *widgetGameScreen;
-extern widget *lispLog;
+extern widget *rootMenu,*widgetGameScreen;
 
 extern uint mousex,mousey,mouseClicked[3];
 extern bool mouseHidden;
@@ -18,10 +16,6 @@ void hideMouseCursor    ();
 void updateMouse        ();
 void drawCursor         ();
 void openChat           ();
-void openLispPanel      ();
-void closeLispPanel     ();
-void toggleLispPanel    ();
-void lispPanelShowReply (lVal *sym, const char *reply);
 void renderUI           ();
 void guiCancel          ();
 void renderLoadingUI    (const char *step);

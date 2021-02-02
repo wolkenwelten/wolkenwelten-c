@@ -22,6 +22,7 @@
 #include "../gfx/gfx.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
+#include "../gui/lispInput.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
 #include "../sdl/sdl.h"

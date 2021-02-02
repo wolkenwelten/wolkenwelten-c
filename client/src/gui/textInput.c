@@ -29,6 +29,7 @@ int  textInputMark      = -1;
 int  textInputBufferLen = 0;
 int  textInputCursorPos = 0;
 bool textInputStarted   = false;
+uint textInputLastEvent = 0;
 
 void textInputFocus(widget *wid){
 	textInputMark = -1;
@@ -182,6 +183,7 @@ void textInputCheckMark(const SDL_Event *e){
 bool textInputEvent(const SDL_Event *e){
 	if(!textInputActive()){return false;}
 	if(!textInputStarted){textInputFocus(widgetFocused);}
+	textInputLastEvent = getTicks();
 
 	switch(e->type){
 	case SDL_TEXTINPUT:
