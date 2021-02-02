@@ -63,6 +63,7 @@ hook *hookNew(character *p){
 }
 
 void hookFree(hook *ghk){
+	if(ghk == NULL){return;}
 	entityFree(ghk->ent);
 	ghk->ent    = NULL;
 	ghk->parent = NULL;
