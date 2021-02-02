@@ -204,21 +204,22 @@ bool characterPlaceBlock(character *c,item *i){
 	if(c->actionTimeout < 0)              { return false; }
 	ivec los = characterLOSBlock(c,true);
 	if(los.x < 0)                         { return false; }
-	if((characterCollision(c->pos)&0xFF0)){ return false; }
 	if(!itemDecStack(i,1))                { return false; }
+	characterStartAnimation(c,0,240);
+	characterAddCooldown(c,50);
+	if((characterCollision(c->pos)&0xFF0)){
+		sfxPlay(sfxStomp,1.f);
+		return false;
+	}
 	worldSetB(los.x,los.y,los.z,i->ID);
 	if((characterCollision(c->pos)&0xFF0) != 0){
 		worldSetB(los.x,los.y,los.z,0);
 		itemIncStack(i,1);
 		sfxPlay(sfxStomp,1.f);
-		characterStartAnimation(c,0,240);
-		characterAddCooldown(c,50);
 		return false;
 	} else {
 		msgPlaceBlock(los.x,los.y,los.z,i->ID);
 		sfxPlay(sfxPock,1.f);
-		characterStartAnimation(c,0,240);
-		characterAddCooldown(c,50);
 		return true;
 	}
 }
