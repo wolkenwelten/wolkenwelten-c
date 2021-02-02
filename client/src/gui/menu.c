@@ -94,7 +94,7 @@ static void handlerRoot(widget *wid){
 	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return;}
 	if(gameRunning){return;}
 	openMainMenu();
-	closeLispPanel();
+	lispPanelClose();
 }
 
 void initMenu(){
@@ -171,7 +171,7 @@ void menuCancel(){
 	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return;}
 	if(gameRunning){return;}
 	openMainMenu();
-	closeLispPanel();
+	lispPanelClose();
 }
 
 void menuCloseGame(){

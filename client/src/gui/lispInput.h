@@ -3,12 +3,11 @@
 #include "../../../common/src/nujel/nujel.h"
 #include "widget.h"
 
-extern widget *lispPanel;
-extern widget *lispLog;
+extern widget *lispPanel,*lispLog;
 extern bool    lispPanelVisible;
 
-void openLispPanel      ();
-void closeLispPanel     ();
-void toggleLispPanel    ();
+void lispPanelOpen      ();
+void lispPanelClose     ();
+void lispPanelToggle    ();
 void lispInputInit      ();
 void lispPanelShowReply (lVal *sym, const char *reply);

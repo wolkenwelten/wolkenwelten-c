@@ -22,6 +22,7 @@
 #include "../game/character.h"
 #include "../gfx/texture.h"
 #include "../gfx/gfx.h"
+#include "../gui/chat.h"
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
 #include "../gui/menu.h"
@@ -124,7 +125,7 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_RETURN:
 		case SDL_SCANCODE_KP_ENTER:
-			openChat();
+			chatOpen();
 			menuKeyClick(0);
 			break;
 		case SDL_SCANCODE_DELETE:
@@ -232,7 +233,7 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_F12:
 		case SDL_SCANCODE_GRAVE:
-			openLispPanel();
+			lispPanelOpen();
 			break;
 		case SDL_SCANCODE_ESCAPE:
 			menuCancel();

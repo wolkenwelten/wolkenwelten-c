@@ -34,13 +34,13 @@ widget *lispInput;
 int lispHistoryActive = -1;
 bool lispPanelVisible = false;
 
-void openLispPanel(){
+void lispPanelOpen(){
 	widgetSlideH(lispPanel, screenHeight-128);
 	widgetFocus(lispInput);
 	lispPanelVisible = true;
 }
 
-void closeLispPanel(){
+void lispPanelClose(){
 	widgetSlideH(lispPanel, 0);
 	if(gameRunning){
 		widgetFocus(widgetGameScreen);
@@ -76,11 +76,11 @@ void lispPanelShowReply(lVal *sym, const char *reply){
 	fprintf(stderr,"Couldn't match SExpr Reply %s - %s\n",sym->vSymbol.c,reply);
 }
 
-void toggleLispPanel(){
+void lispPanelToggle(){
 	if(lispPanelVisible){
-		closeLispPanel();
+		lispPanelOpen();
 	}else{
-		openLispPanel();
+		lispPanelClose();
 	}
 }
 

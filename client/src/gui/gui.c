@@ -37,6 +37,7 @@
 #include "../gfx/texture.h"
 #include "../gfx/textMesh.h"
 #include "../gfx/sky.h"
+#include "../gui/chat.h"
 #include "../gui/menu.h"
 #include "../gui/lispInput.h"
 #include "../misc/options.h"
@@ -66,8 +67,6 @@ textMesh *crosshairMesh;
 textMesh *cursorMesh;
 
 widget *widgetGameScreen;
-widget *chatPanel;
-widget *chatText;
 
 bool mouseHidden = false;
 uint mousex,mousey;
@@ -78,9 +77,8 @@ float matOrthoProj[16];
 
 void handlerRootHud(widget *wid){
 	(void)wid;
-	chatText->vals[0]  = 0;
 	widgetFocus(widgetGameScreen);
-	widgetSlideH(chatPanel, 0);
+	chatClose();
 	widgetSlideH(lispPanel, 0);
 }
 
@@ -147,52 +145,6 @@ void resizeUI(){
 	initInventory();
 }
 
-void openChat(){
-	if(gameControlsInactive()){return;}
-	widgetSlideH(chatPanel, 64);
-	widgetFocus(chatText);
-}
-
-static void handlerChatChange(widget *wid){
-	if(wid == NULL){return;}
-	if(wid->vals == NULL){return;}
-	if(wid->vals[0] == '.'){
-		wid->flags |= WIDGET_LISP_SYNTAX_HIGHLIGHT;
-	}else{
-		wid->flags &= ~WIDGET_LISP_SYNTAX_HIGHLIGHT;
-	}
-}
-
-void handlerChatSubmit(widget *wid){
-	if(chatText->vals[0] != 0){
-		msgSendChatMessage(chatText->vals);
-		chatResetHistorySel();
-	}
-	handlerRootHud(wid);
-	wid->flags &= ~WIDGET_LISP_SYNTAX_HIGHLIGHT;
-}
-
-void handlerChatSelectPrev(widget *wid){
-	const char *msg = chatGetPrevHistory();
-	if(*msg == 0){return;}
-	memcpy(wid->vals,msg,256);
-	textInputFocus(wid);
-	handlerChatChange(wid);
-}
-
-void handlerChatSelectNext(widget *wid){
-	const char *msg = chatGetNextHistory();
-	if(*msg == 0){return;}
-	memcpy(wid->vals,msg,256);
-	textInputFocus(wid);
-	handlerChatChange(wid);
-}
-
-void handlerChatBlur(widget *wid){
-	chatResetHistorySel();
-	wid->flags &= ~WIDGET_LISP_SYNTAX_HIGHLIGHT;
-}
-
 static void handlerGameFocus(widget *wid){
 	(void)wid;
 	showInventoryPanel();
@@ -215,13 +167,7 @@ void initUI(){
 	chatPanel->flags |= WIDGET_HIDDEN;
 
 	lispInputInit();
-
-	chatText  = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Chat Message","submit",handlerChatSubmit);
-	widgetBind(chatText,"change",handlerChatChange);
-	widgetBind(chatText,"blur",handlerChatBlur);
-	widgetBind(chatText,"selectPrev",handlerChatSelectPrev);
-	widgetBind(chatText,"selectNext",handlerChatSelectNext);
-	widgetNewCPLH(wButton,chatPanel,-16,16,24,32,"\xA8","click",handlerChatSubmit);
+	chatInit();
 
 	resizeUI();
 }
@@ -671,7 +617,7 @@ void guiCancel(){
 		return;
 	}
 	if(lispPanelVisible){
-		closeLispPanel();
+		lispPanelClose();
 		return;
 	}
 	if(widgetFocused == widgetGameScreen){
