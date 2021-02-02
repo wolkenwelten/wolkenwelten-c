@@ -9,17 +9,17 @@
 	(help-iter (map cat (symbol-table off 10)))
 	(log (cat "Help page " (int i) " of " (/ (symbol-count) 10)))) #t))
 
-(define fasts (λ (a) "Soeeds up the game to about 4x"
-	(mst  1) (s (mst  1))))
+(define fasts (λ (a) "Speeds up the game to about 4x"
+	(mst!  1) (s (mst!  1))))
 
 (define norms (λ (a) "Sets the game speed to the default 1x"
-	(mst  4) (s (mst  4))))
+	(mst!  4) (s (mst!  4))))
 
 (define norms (λ (a) "Sets the game speed to about 1/4x"
-	(mst 16) (s (mst 16))))
+	(mst! 16) (s (mst! 16))))
 
 (define norms (λ (a) "Sets the game speed to about 1/16x"
-	(mst 64) (s (mst 64))))
+	(mst! 64) (s (mst! 64))))
 
 
 (define morning (λ () "Sets the Time to 8:00 AM"
