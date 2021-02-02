@@ -117,7 +117,6 @@ void sendPlayerJoinMessage(uint c){
 
 void serverParseChatMsg(uint c,const packet *m){
 	char msg[256];
-	if(parseCommand(c,(const char *)(&m->v.u8[2]))){return;}
 	snprintf(msg,sizeof(msg),"%.32s: %.192s",clients[c].playerName,(char *)(&m->v.u8[2]));
 	serverSendChatMsg(msg);
 }
