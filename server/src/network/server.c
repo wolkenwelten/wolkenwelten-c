@@ -34,6 +34,7 @@
 #include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../network/server_ws.h"
+#include "../persistence/character.h"
 #include "../persistence/savegame.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
