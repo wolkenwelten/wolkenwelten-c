@@ -12,6 +12,7 @@ xcuserdata/
 /client/sfx/*.ogg
 client.settings
 client.nuj
+custom.nuj
 common/src/asm/amd64.s
 
 common/nujel/saolib.nuj
