@@ -48,7 +48,7 @@ typedef struct {
 	vec base;
 } cloudChunk;
 
-cloudChunk parts[64];
+cloudChunk parts[32];
 uint       cloudFrame = 0;
 glCloud    cloudData[CLOUDS_MAX];
 
@@ -87,11 +87,11 @@ static inline void cloudPart(cloudChunk *part, float px,float py,float pz,float 
 }
 
 void cloudsRender(){
-	const u8 cpart = cloudFrame++ & 63;
+	const u8 cpart = cloudFrame++ & 31;
 
 	shaderBind(sCloud);
 	shaderSizeMul(sCloud,1.f + (player->aimFade * player->zoomFactor));
-	for(int i=0;i<64;i++){
+	for(int i=0;i<32;i++){
 		matMov(matMVP,matView);
 		const vec transOff = vecSub(cloudOff,parts[i].base);
 		matMulTrans(matMVP,transOff.x,transOff.y,transOff.z);
@@ -105,13 +105,13 @@ void cloudsRender(){
 		}
 		glDrawArrays(GL_POINTS,0,CLOUDS_MAX - parts[i].count);
 	}
-	parts[cloudFrame & 63].count = CLOUDS_MAX;
+	parts[cloudFrame & 31].count = CLOUDS_MAX;
 }
 
 void cloudsDraw(int cx, int cy, int cz){
 	if(cy&1){return;}
-	const u8 cpart = (cx&3) | ((cy&0xC)) | ((cz&3)<<4);
-	if((cloudFrame&63) != cpart){return;}
+	const u8 cpart = (cx&3) | ((cy&0x4)) | ((cz&3)<<3 );
+	if((cloudFrame&31) != cpart){return;}
 	PROFILE_START();
 	cloudChunk *part = &parts[cpart];
 	part->base     = vecFloor(cloudOff);
@@ -207,7 +207,7 @@ void cloudsCalcColors(){
 }
 
 void cloudsInitGfx(){
-	for(int i=0;i<64;i++){
+	for(int i=0;i<32;i++){
 		parts[i].count = CLOUDS_MAX;
 		parts[i].base  = vecZero();
 		glGenVertexArrays(1,&parts[i].vao);
