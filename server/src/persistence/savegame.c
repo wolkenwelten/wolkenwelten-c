@@ -21,6 +21,7 @@
 #include "chunk.h"
 #include "fire.h"
 #include "itemDrop.h"
+#include "throwable.h"
 
 #include "../main.h"
 #include "../game/animal.h"
@@ -166,6 +167,9 @@ void chungusLoad(chungus *c){
 		case 4:
 			b = fireLoad(b);
 			break;
+		case 5:
+			b = throwableLoad(b);
+			break;
 		default:
 			fprintf(stderr,"Unknown id[%u] found in %i:%i:%i savestate\n",id,c->x,c->y,c->z);
 			goto chungusLoadEnd;
@@ -195,9 +199,10 @@ void chungusSave(chungus *c){
 			}
 		}
 	}
-	cbuf = itemDropSaveChungus(c,cbuf);
-	cbuf = animalSaveChungus  (c,cbuf);
-	cbuf = fireSaveChungus    (c,cbuf);
+	cbuf = itemDropSaveChungus (c,cbuf);
+	cbuf = animalSaveChungus   (c,cbuf);
+	cbuf = fireSaveChungus     (c,cbuf);
+	cbuf = throwableSaveChungus(c,cbuf);
 
 	size_t len = LZ4_compress_default((const char *)saveLoadBuffer, (char *)compressedBuffer, cbuf - saveLoadBuffer, 4100*4096);
 	if(len == 0){
