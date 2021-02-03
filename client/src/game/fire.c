@@ -67,10 +67,10 @@ void fireDrawAll(){
 	if(lastTick == 0){lastTick = getTicks();}
 	curTick = getTicks();
 	for(;lastTick < curTick;lastTick+=msPerTick){
-		for(uint i=calls&0x1F;i<fireCount;i+=0x20){
+		for(uint i=calls&0xF;i<fireCount;i+=0x10){
 			fireDraw(&fireList[i]);
 		}
-		for(uint i=calls&0x7F;i<fireCount;i+=0x80){
+		for(uint i=calls&0x3F;i<fireCount;i+=0x40){
 			fireDrawSmoke(&fireList[i]);
 		}
 		calls++;
