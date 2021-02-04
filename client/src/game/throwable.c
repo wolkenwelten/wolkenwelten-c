@@ -49,7 +49,7 @@ void throwableNew(const vec pos, const vec rot, float speed, const item itm, bei
 	p->v.f  [10] = -rot.yaw;
 	p->v.f  [11] = rot.pitch;
 
-	packetQueue(p,45,12*4,0);
+	packetQueue(p,msgtThrowableRecvUpdates,12*4,0);
 }
 
 static void throwableDel(uint i){
@@ -58,7 +58,7 @@ static void throwableDel(uint i){
 	p->v.u16[ 0] = i;
 	p->v.u16[ 1] = 1;
 
-	packetQueue(p,45,12*4,0);
+	packetQueue(p,msgtThrowableRecvUpdates,12*4,0);
 
 	throwableList[i].nextFree = 0;
 	entityFree(throwableList[i].ent);

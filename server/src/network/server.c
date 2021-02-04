@@ -93,7 +93,7 @@ void serverSendChatMsg(const char *msg){
 	packet *p = &packetBuffer;
 	strncpy((char *)(&p->v.u8[2]),msg,254);
 	p->v.u8[255] = 0;
-	packetQueue(p,16,256,-1);
+	packetQueue(p,msgtChatMsg,256,-1);
 	printf("%s[MSG]%s %s\n",termColors[6],termReset,msg);
 }
 
@@ -239,7 +239,7 @@ void msgUpdatePlayer(uint c){
 			pLen = 19*4;
 		}
 
-		packetQueue(rp,15,pLen,c);
+		packetQueue(rp,msgtCharacterUpdate,pLen,c);
 	}
 
 	clients[c].itemDropUpdateOffset = itemDropUpdatePlayer(c,clients[c].itemDropUpdateOffset);
@@ -289,7 +289,7 @@ void msgSendChunk(uint c, const chunk *chnk){
 	p->v.u16[2048] = chnk->x;
 	p->v.u16[2049] = chnk->y;
 	p->v.u16[2050] = chnk->z;
-	packetQueue(p,18,1026*4,c);
+	packetQueue(p,msgtChunkData,1026*4,c);
 }
 
 void dispatchBeingDmg(uint c, const packet *p){
@@ -334,181 +334,111 @@ void serverParseSinglePacket(uint c, packet *p){
 	}
 	nprofAddPacket(pType,pLen);
 
-	switch(pType){
-	case 0: // Keepalive
-		if(verbose){printf("[%02i] keepalive %i:%i\n",c,pType,pLen);}
+	switch((messageType)pType){
+	case msgtKeepalive:
 		break;
-	case 1: // requestPlayerSpawnPos
+	case msgtRequestSpawnPos:
 		msgPlayerSpawnPos(c);
-		if(verbose){printf("[%02i] requestPlayerSpawnPos\n",c);}
 		break;
-	case 2: // requestChungus
+	case msgtRequestChungus:
 		addChungusToQueue(c,p->v.u8[0],p->v.u8[1],p->v.u8[2]);
-		if(verbose){printf("[%02i] requestChungus\n",c);}
 		break;
-	case 3: // placeBlock
+	case msgtPlaceBlock:
 		worldSetB(p->v.u16[0],p->v.u16[1],p->v.u16[2],p->v.u16[3]);
-		if(verbose){printf("[%02i] placeBlock\n",c);}
 		break;
-	case 4: // mineBlock
+	case msgtMineBlock:
 		blockMiningDropItemsPos(p->v.u16[0],p->v.u16[1],p->v.u16[2],worldGetB(p->v.u16[0],p->v.u16[1],p->v.u16[2]));
 		worldSetB(p->v.u16[0],p->v.u16[1],p->v.u16[2],0);
 		//sendToAllExcept(c,p,pLen+4);
-		if(verbose){printf("[%02i] mineBlock\n",c);}
 		break;
-	case 5: // Goodbye
+	case msgtGoodbye:
 		errno=0;
 		serverKill(c);
-		if(verbose){printf("[%02i] Goodbye\n",c);}
 		break;
-	case 6: // blockMiningUpdate
-		fprintf(stderr,"blockMiningUpdate received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 7:
-		fprintf(stderr,"worldSetChungusLoaded received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 8: // BeingGotHit
-		fprintf(stderr,"beingGotHit received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 9: // setTime
-		fprintf(stderr,"Received a setTime from client, should not happen\n");
-		serverKill(c);
-		break;
-	case 10: // itemDropNewPacket
+	case msgtItemDropNew:
 		itemDropNewPacket(c,p);
-		if(verbose){printf("[%02i][%i] itemDropNewPacket\n",c,pLen);}
 		break;
-	case 11:
+	case msgtGrenadeNew:
 		grenadeNewP(p);
-		if(verbose){printf("[%02i] grenadeNew\n",c);}
 		break;
-	case 12:
+	case msgtBeamblast:
 		beamblastNewP(c,p);
-		if(verbose){printf("[%02i] beamblast\n",c);}
 		break;
-	case 13:
-		fprintf(stderr,"playerMoveDelta received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 14:
-		if(verbose){printf("[%02i] characterName\n",c);}
-		break;
-	case 15:
+	case msgtCharacterUpdate:
 		serverParsePlayerPos(c,p);
-		//if(verbose){printf("[%02i] sendPlayerPos\n",c);}
 		break;
-	case 16:
+	case msgtChatMsg:
 		serverParseChatMsg(c,p);
-		if(verbose){printf("[%02i] sendChatMsg\n",c);}
 		break;
-	case 17:
+	case msgtDyingMsg:
 		serverParseDyingMsg(c,p);
-		if(verbose){printf("[%02i] sendDyingMsg\n",c);}
 		break;
-	case 18:
-		fprintf(stderr,"chunkData received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 19:
-		fprintf(stderr,"setPlayerCount received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 20:
-		fprintf(stderr,"playerPickupItem received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 21:
-		fprintf(stderr,"itemDropUpdate received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 22:
-		fprintf(stderr,"grenadeExplode received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 23:
-		fprintf(stderr,"grenadeUpdate received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 24:
+	case msgtFxBeamBlaster:
 		beamblastNewP(c,p);
-		if(verbose){printf("[%02i] beamBlaster\n",c);}
 		break;
-	case 25:
-		fprintf(stderr,"msgItemDropUpdate received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 26:
+	case msgtBeingDamage:
 		dispatchBeingDmg(c,p);
 		break;
-	case 27:
+	case msgtChungusUnsub:
 		chungusUnsubscribePlayer(world.chungi[p->v.u8[0]][p->v.u8[1]&0x7F][p->v.u8[2]],c);
 		break;
-	case 28:
-		fprintf(stderr,"characterSetData received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 29:
+	case msgtCharacterSetInventory:
 		characterSetInventoryP(clients[c].c,p);
 		break;
-	case 30:
-		fprintf(stderr,"animalSync received from client, which should never happen\n");
-		serverKill(c);
-		break;
-	case 31:
+	case msgtDirtyChunk:
 		worldDirtyChunk(c,p->v.u16[0],p->v.u16[1],p->v.u16[2]);
 		break;
-	case 32:
-		fprintf(stderr,"animalDmg received from client, which should never happen\n");
-		//animalDmgPacket(c,p);
-		break;
-	case 33:
+	case msgtPingPong:
 		handlePingPong(c);
 		msgPingPong(c);
 		break;
-	case 34:
-		fprintf(stderr,"animalDied received from client\n");
-		serverKill(c);
-		break;
-	case 35:
+	case msgtCharacterSetEquipment:
 		characterSetEquipmentP(clients[c].c,p);
 		break;
-	case 36:
+	case msgtItemDropPickup:
 		itemDropPickupP(c,p);
 		break;
-	case 37:
+	case msgtRopeUpdate:
 		ropeUpdateP(c,p);
 		break;
-	case 38:
+	case msgtProjectileUpdate:
 		projectileRecvUpdate(c,p);
 		break;
-	case 39:
+	case msgtFxProjectileHit:
 		packetEchoExcept(c,p);
 		break;
-	case 40:
+	case msgtFireRecvUpdate:
 		fireRecvUpdate(c,p);
 		break;
-	case 41:
-		//waterRecvUpdate(c,p);
-		break;
-	case 42:
+	case msgtLispRecvSExpr:
 		lispRecvSExpr(c,p);
 		break;
-	case 43:
-		fprintf(stderr,"cloudsUpdate received from client\n");
-		serverKill(c);
-		break;
-	case 44:
-		fprintf(stderr,"rainUpdate received from client\n");
-		serverKill(c);
-		break;
-	case 45:
+	case msgtThrowableRecvUpdates:
 		throwableRecvUpdate(p);
 		break;
-	default:
-		printf("[%i] %i[%i] UNKNOWN PACKET\n",c,pType,pLen);
+
+	case msgtLZ4:
+	case msgtPlayerPos:
+	case msgtChunkData :
+	case msgtSetPlayerCount:
+	case msgtPlayerPickupItem:
+	case msgtItemDropDel:
+	case msgtExplode:
+	case msgtGrenadeUpdate:
+	case msgtBlockMiningUpdate:
+	case msgtSetChungusLoaded:
+	case msgtBeingGotHit:
+	case msgtSetTime:
+	case msgtPlayerMoveDelta:
+	case msgtCharacterName:
+	case msgtCharacterSetData:
+	case msgtAnimalSync:
+	case msgtAnimalDmg:
+	case msgtFxAnimalDied:
+	case msgtWeatherRecvUpdate:
+	case msgtRainRecvUpdate:
+	case msgtItemDropUpdate:
+		fprintf(stderr,"%s[%u] received from client, which should never happen\n",networkGetMessageName(pType),pType);
 		serverKill(c);
 		break;
 	}
@@ -702,7 +632,7 @@ void serverCheckCompression(int c){
 	//printf("Z %u -> %u\n",len,compressLen);
 	clients[c].sendBufLen -= len;
 	memcpy(start + 4,compressBuf,compressLen);
-	packetSet((packet *)start,0xFF,compressLen);
+	packetSet((packet *)start,msgtLZ4,compressLen);
 	clients[c].sendBufLen += alignedLen(compressLen + 4);
 	clients[c].sendBufLastCompressed += alignedLen(compressLen + 4);
 }

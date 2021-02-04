@@ -190,7 +190,7 @@ void projectileSendUpdate(uint c, uint i){
 	p->v.f  [8] = a->vel.y;
 	p->v.f  [9] = a->vel.z;
 
-	packetQueue(p,38,10*4,c);
+	packetQueue(p,msgtProjectileUpdate,10*4,c);
 }
 
 void projectileRecvUpdate(uint c, const packet *p){

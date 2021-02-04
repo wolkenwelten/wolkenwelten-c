@@ -42,7 +42,7 @@ void msgSendChatMessage(const char *msg){
 	p->v.u16[0]=0;
 	strncpy((char *)(&p->v.u8[2]),msg,254);
 	p->v.u8[255] = 0;
-	packetQueueToServer(p,16,256);
+	packetQueueToServer(p,msgtChatMsg,256);
 
 	for(int i=7;i>0;i--){
 		memcpy(chatHistory[i],chatHistory[i-1],256);
@@ -73,7 +73,7 @@ void msgSendDyingMessage(const char *msg, int c){
 	strncpy((char *)(&p->v.u8[2]),msg,254);
 	p->v.u16[0]  = c;
 	p->v.u8[255] = 0;
-	packetQueueToServer(p,17,256);
+	packetQueueToServer(p,msgtDyingMsg,256);
 }
 
 const char *chatGetPrevHistory(){

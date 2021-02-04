@@ -572,13 +572,13 @@ void animalSync(u8 c, u16 i){
 
 	rp->v.u32[16] = e->target;
 
-	packetQueue(rp,30,17*4,c);
+	packetQueue(rp,msgtAnimalSync,17*4,c);
 }
 
 void animalEmptySync(u8 c){
 	packet *rp = &packetBuffer;
 	memset(rp->v.u8,0,17*4);
-	packetQueue(rp,30,17*4,c);
+	packetQueue(rp,msgtAnimalSync,17*4,c);
 }
 
 void animalSyncInactive(u8 c, u16 i){
@@ -589,7 +589,7 @@ void animalSyncInactive(u8 c, u16 i){
 	rp->v.u16[4] = i;
 	rp->v.u16[5] = animalCount;
 
-	packetQueue(rp,30,17*4,c);
+	packetQueue(rp,msgtAnimalSync,17*4,c);
 }
 
 int animalHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, being source){

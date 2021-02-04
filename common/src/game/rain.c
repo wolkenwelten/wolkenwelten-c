@@ -112,5 +112,5 @@ void rainSendUpdate(uint c, uint i){
 	p->v.f[1] = glRainDrops[i].y;
 	p->v.f[2] = glRainDrops[i].z;
 
-	packetQueue(p,44,3*4,c);
+	packetQueue(p,msgtRainRecvUpdate,3*4,c);
 }

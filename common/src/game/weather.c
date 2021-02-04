@@ -118,7 +118,7 @@ void weatherSendUpdate(uint c){
 	p->v.u8 [38] = rainIntensity;
 	p->v.u8 [39] = 0;
 
-	packetQueue(p,43,10*4,c);
+	packetQueue(p,msgtWeatherRecvUpdate,10*4,c);
 }
 
 void weatherRecvUpdate(const packet *p){

@@ -76,7 +76,7 @@ void throwableSendUpdate(int c, uint i){
 
 	if(a->itm.amount == 0){
 		throwableFree(a);
-		packetQueue(p,45,12*4,c);
+		packetQueue(p,msgtThrowableRecvUpdates,12*4,c);
 		return;
 	}
 
@@ -93,7 +93,7 @@ void throwableSendUpdate(int c, uint i){
 	p->v.f  [10] = a->ent->rot.yaw;
 	p->v.f  [11] = a->ent->rot.pitch;
 
-	packetQueue(p,45,12*4,c);
+	packetQueue(p,msgtThrowableRecvUpdates,12*4,c);
 }
 
 void throwableRecvUpdate(const packet *p){
