@@ -1,20 +1,8 @@
-- Make Mouse sensitivity configurable and reduce the default
-- Guarantee that player starts off on a huge island with trees and other essentials
-- Change glider recipe to also be craftable with something other than fur
-- Have Item names be displayerd on Hover
-- Roots drop wooden logs when mined
-- InGame tutorial/quests introducing basic game conecepts to the player
-- Highlight the currently looked at block
-
 - Precision Value for World generation, can be different for each chungus, the farther any players/animals are the less precise the simulation gets
-- Add Clouds Trails from Characters/Entities/Projectiles, probably looks nice
 - SHRINK THE BLOCKS!
-- Have Wind affect fire spread direction
 - Proper water system
 - Proper light system
 - Add block variations by having each face use a 2x2 texture, and instead of having uv be in the range of 0-1 use 0-0.5 for single blocks, thereby adding some slight variations along the way.
-- Properly check if the server is still there and close the connection otherwise
-- Make client detect when the connection to the server is separated and show an error instead of just becoming unresponsive
 - Animals don't spawn after the limit has been reached, especially problematic if the limit is already reached with animals inside the spawn area which never gets freed
 - Simulate/Store Oxygen levels in chunks and have it spread to neighboring chunks, trees/plants increase oxygen, fires/animals/players decrease oxygen
 
@@ -38,9 +26,7 @@
 - Migrate to OpenAL
 - Simple Checksums for Savegames
 - Implement projectile flag to have the projectile bounce off surfaces
-
 ---------------------------------------------------------------------------
-
 
 (A) Armor
 (A) Proper Character Models
