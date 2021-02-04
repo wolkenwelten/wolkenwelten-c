@@ -47,10 +47,7 @@ void animalReset(animal *e){
 
 animal *animalNew(const vec pos , int type, int gender){
 	animal *e = NULL;
-	if(type == 0){
-		printf("animalNew Type==0!!!!!\n");
-		return NULL;
-	}
+	if(type == 0){return NULL;}
 	if(animalFirstFree < ANIMAL_MAX){
 		e = &animalList[animalFirstFree];
 		animalFirstFree = e->nextFree;
@@ -87,7 +84,7 @@ animal *animalNew(const vec pos , int type, int gender){
 		e->flags |= ANIMAL_MALE;
 	}
 
-	if(type == 2){e->flags |= ANIMAL_NO_NEEDS;}
+	if(type == animalGuardian){e->flags |= ANIMAL_NO_NEEDS;}
 	animalUsedCount++;
 
 	return e;
@@ -296,13 +293,14 @@ const char *animalGetStateName(const animal *e){
 }
 
 int animalGetMaxHealth (const animal *e){
-	switch(e->type){
-	default:
-	case 1:
+	switch((animalType)e->type){
+	case animalUnused:
+		return  0;
+	case animalBunny:
 		return  8;
-	case 2:
+	case animalGuardian:
 		return 12;
-	case 3:
+	case animalWerebunny:
 		return 20;
 	}
 }
@@ -424,14 +422,17 @@ being animalFindFOFTarget(const animal *e){
 
 void animalRDie(animal *e){
 	if(e->pos.y > 0.f){
-		switch(e->type){
-		default:
+		switch((animalType)e->type){
+		case animalUnused:
 			break;
-		case 1:
+		case animalBunny:
 			animalRDieBunny(e);
 			break;
-		case 2:
+		case animalGuardian:
 			animalRDieGuardian(e);
+			break;
+		case animalWerebunny:
+			animalRDieWerebunny(e);
 			break;
 		}
 	}
@@ -457,16 +458,16 @@ void animalRHit(animal *e, being culprit, u8 cause){
 }
 
 void animalThink(animal *e){
-	switch(e->type){
-	default:
+	switch((animalType)e->type){
+	case animalUnused:
 		return;
-	case 1:
+	case animalBunny:
 		animalThinkBunny(e);
 		break;
-	case 2:
+	case animalGuardian:
 		animalThinkGuardian(e);
 		break;
-	case 3:
+	case animalWerebunny:
 		animalThinkWerebunny(e);
 		break;
 	}
@@ -506,16 +507,16 @@ void animalNeedsAll(){
 
 /* TODO: Add proper reaction to fire (runing away?) */
 void animalRBurn(animal *e){
-	switch(e->type){
-	default:
+	switch((animalType)e->type){
+	case animalUnused:
 		return;
-	case 1:
+	case animalBunny:
 		animalRBurnBunny(e);
 		break;
-	case 2:
+	case animalGuardian:
 		animalRBurnGuardian(e);
 		break;
-	case 3:
+	case animalWerebunny:
 		animalRBurnWerebunny(e);
 		break;
 	}

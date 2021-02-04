@@ -1,6 +1,13 @@
 #pragma once
 #include "../../../common/src/common.h"
 
+typedef enum {
+	animalUnused=0,
+	animalBunny,
+	animalGuardian,
+	animalWerebunny
+} animalType;
+
 extern animal  animalList[1<<12];
 extern uint    animalCount;
 extern uint    animalUsedCount;
