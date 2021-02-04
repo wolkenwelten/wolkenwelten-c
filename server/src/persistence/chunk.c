@@ -16,6 +16,7 @@
  */
 #include "itemDrop.h"
 
+#include "savegame.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 
@@ -24,7 +25,7 @@
 void *chunkSave(chunk *c, void *rbuf){
 	u8 *buf = rbuf;
 	if((c->clientsUpdated & ((u64)1 << 31)) != 0){return buf;}
-	buf[0] = 0x01;
+	buf[0] = saveTypeChunk;
 	buf[1] = (c->x >> 4)&0xF;
 	buf[2] = (c->y >> 4)&0xF;
 	buf[3] = (c->z >> 4)&0xF;
@@ -34,7 +35,6 @@ void *chunkSave(chunk *c, void *rbuf){
 
 const void *chunkLoad(chungus *c, const void *rbuf){
 	const u8 *buf = rbuf;
-	if(buf[0] != 0x01){return buf;}
 
 	int cx = buf[1] & 0xF;
 	int cy = buf[2] & 0xF;

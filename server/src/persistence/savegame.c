@@ -153,25 +153,25 @@ void chungusLoad(chungus *c){
 	animalDelChungus(c);
 
 	for(b=saveLoadBuffer;b<end;){
-		u8 id = *b;
-		switch(id){
-		case 1:
+		saveType cType = *b;
+		switch(cType){
+		case saveTypeChunk:
 			b = chunkLoad(c,b);
 			break;
-		case 2:
+		case saveTypeItemDrop:
 			b = itemDropLoad(b);
 			break;
-		case 3:
+		case saveTypeAnimal:
 			b = animalLoad(b);
 			break;
-		case 4:
+		case saveTypeFire:
 			b = fireLoad(b);
 			break;
-		case 5:
+		case saveTypeThrowable:
 			b = throwableLoad(b);
 			break;
 		default:
-			fprintf(stderr,"Unknown id[%u] found in %i:%i:%i savestate\n",id,c->x,c->y,c->z);
+			fprintf(stderr,"Unknown type[%u] found in %i:%i:%i savestate\n",cType,c->x,c->y,c->z);
 			goto chungusLoadEnd;
 		}
 		if(b >= end){break;}

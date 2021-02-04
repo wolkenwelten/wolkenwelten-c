@@ -16,6 +16,7 @@
  */
 #include "throwable.h"
 
+#include "savegame.h"
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../game/throwable.h"
@@ -29,7 +30,7 @@ static void *throwableSave(const throwable *t, void *buf){
 	if(t      == NULL){return b;}
 	if(t->ent == NULL){return b;}
 
-	b[ 0] = 0x05;
+	b[ 0] = saveTypeThrowable;
 	b[ 1] = t->flags;
 	b[ 2] = t->damage;
 	b[ 3] = 0;

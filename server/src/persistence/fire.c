@@ -16,6 +16,7 @@
  */
 #include "fire.h"
 
+#include "savegame.h"
 #include "../game/fire.h"
 #include "../voxel/chungus.h"
 
@@ -26,7 +27,7 @@ static void *fireSave(const fire *f, void *buf){
 
 	if(f == NULL){return b;}
 
-	b[0] = 0x04;
+	b[0] = saveTypeFire;
 	b[1] = 0;
 
 	u[1] = f->x;

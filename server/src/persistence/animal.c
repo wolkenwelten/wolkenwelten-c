@@ -16,6 +16,7 @@
  */
 #include "animal.h"
 
+#include "savegame.h"
 #include "../game/animal.h"
 #include "../voxel/chungus.h"
 
@@ -25,7 +26,7 @@ static void *animalSave(const animal *e, void *buf){
 	float *f = (float *)buf;
 	if(e->type == 0){return b;}
 
-	b[ 0] = 0x03;
+	b[ 0] = saveTypeAnimal;
 	b[ 1] = e->flags;
 	b[ 2] = e->type;
 	b[ 3] = e->state;

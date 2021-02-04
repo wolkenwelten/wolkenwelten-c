@@ -16,6 +16,7 @@
  */
 #include "itemDrop.h"
 
+#include "savegame.h"
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../../../common/src/game/item.h"
@@ -28,7 +29,7 @@ static void *itemDropSave(const itemDrop *i, void *buf){
 	if(i      == NULL){return b;}
 	if(i->ent == NULL){return b;}
 
-	b[0] = 0x02;
+	b[0] = saveTypeItemDrop;
 	b[1] = 0;
 
 	s[1] = i->itm.ID;
