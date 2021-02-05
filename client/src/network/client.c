@@ -173,17 +173,8 @@ void clientParsePacket(const packet *p){
 		characterFreeHook(player);
 		player->flags &= ~CHAR_SPAWNING;
 		break;
-	case msgtRequestChungus:
-		fprintf(stderr,"Received a requestChungus packet from the server which should never happen.\n");
-		break;
-	case msgtPlaceBlock:
-		fprintf(stderr,"Received a placeBlock packet from the server which should never happen.\n");
-		break;
 	case msgtMineBlock:
 		fxBlockBreak(vecNew(p->v.u16[0],p->v.u16[1],p->v.u16[2]),p->v.u8[6],p->v.u8[7]);
-		break;
-	case msgtGoodbye:
-		fprintf(stderr,"Received a Goodbye packet from the server which should never happen.\n");
 		break;
 	case msgtBlockMiningUpdate:
 		blockMiningUpdateFromServer(p);
@@ -209,9 +200,6 @@ void clientParsePacket(const packet *p){
 	case msgtChatMsg:
 		chatParsePacket(p);
 		break;
-	case msgtDyingMsg:
-		fprintf(stderr,"Received a dying message packet from the server which should never happen.\n");
-		break;
 	case msgtChunkData:
 		chunkRecvUpdate(p);
 		break;
@@ -220,9 +208,6 @@ void clientParsePacket(const packet *p){
 		break;
 	case msgtPlayerPickupItem:
 		characterPickupPacket(player,p);
-		break;
-	case msgtItemDropDel:
-		fprintf(stderr,"Received an itemDropDel msg from the server, this should never happen.\n");
 		break;
 	case msgtExplode:
 		explode(vecNewP(&p->v.f[0]),((float)p->v.u16[6])/256.f,p->v.u16[7]);
@@ -287,14 +272,19 @@ void clientParsePacket(const packet *p){
 		decompressPacket(p);
 		break;
 
+	case msgtRequestChungus:
+	case msgtPlaceBlock:
+	case msgtGoodbye:
+	case msgtDyingMsg:
 	case msgtRequestSpawnPos:
 	case msgtChungusUnsub:
 	case msgtItemDropNew:
+	case msgtItemDropDel:
+	case msgtItemDropPickup:
 	case msgtGrenadeNew:
 	case msgtBeamblast:
 	case msgtDirtyChunk:
 	case msgtAnimalDmg:
-	case msgtItemDropPickup:
 		fprintf(stderr,"%s[%u] received from server, which should never happen\n",networkGetMessageName(pType),pType);
 		break;
 	}
