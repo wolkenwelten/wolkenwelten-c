@@ -159,15 +159,13 @@ void blockMiningUpdateAll(){
 		if(!bm->wasMined){
 			const int maxhp = blockTypeGetHP(bm->b);
 			bm->damage -= maxhp >> 5;
-			if(bm->damage <= 0){
-				blockMiningDel(i);
-			}
+			if(bm->damage <= 0){blockMiningDel(i);}
 		}else{
+			bm->wasMined = false;
 			if(bm->damage > blockTypeGetHP(bm->b)){
 				blockMiningMineBlock(bm->x,bm->y,bm->z,bm->b);
 				blockMiningDel(i);
 			}
-			bm->wasMined = false;
 		}
 	}
 

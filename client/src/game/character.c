@@ -289,6 +289,9 @@ void characterPrimary(character *c){
 	ivec los = characterLOSBlock(c,0);
 	if(los.x < 0){
 		if(c->actionTimeout >= 0){characterHit(c);}
+		c->blockMiningX = -1;
+		c->blockMiningY = -1;
+		c->blockMiningZ = -1;
 		return;
 	}
 	c->blockMiningX = los.x;
