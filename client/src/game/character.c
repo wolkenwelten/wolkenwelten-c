@@ -517,7 +517,7 @@ void characterUpdateBooster(character *c){
 void characterUpdateFalling(character *c){
 	if(c != player){return;}
 	if(c->flags & CHAR_NOCLIP){return;}
-	if(c->pos.y < -64){
+	if(c->pos.y < -32){
 		setOverlayColor(0xFF000000,1000);
 		if(!(c->flags & CHAR_FALLINGSOUND)){
 			c->flags |= CHAR_FALLINGSOUND;

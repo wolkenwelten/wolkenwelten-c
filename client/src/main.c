@@ -131,6 +131,7 @@ void worldUpdate(){
 	if(lastTick == 0){lastTick = SDL_GetTicks();}
 	if(!playerChunkActive){lastTick = SDL_GetTicks();return;}
 	curTick = SDL_GetTicks();
+	resetOverlayColor();
 	for(;lastTick < curTick;lastTick+=msPerTick){
 		if(!isInventoryOpen()){
 			if(inputPrimary()){
@@ -142,7 +143,6 @@ void worldUpdate(){
 			if(inputTertiary()){characterTertiary(player);}
 			if(inputThrow()){characterThrow(player);}
 		}
-		resetOverlayColor();
 		charactersUpdate();
 		grenadeUpdateAll();
 		animalUpdateAll();
@@ -159,9 +159,9 @@ void worldUpdate(){
 		throwableCheckPickup();
 		lispEvents();
 
-		commitOverlayColor();
 		calls++;
 	}
+	commitOverlayColor();
 }
 
 void mainloop(){

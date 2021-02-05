@@ -42,8 +42,8 @@ void commitOverlayColor(){
 u32 getOverlayColor(){
 	int animDur = overlayColorAnimEnd - overlayColorAnimStart;
 	int off =  getTicks() - overlayColorAnimStart;
-	float i = ((float)off) / ((float)animDur);
-	return colorInterpolate(overlayColorAnimSrc,overlayColorAnimDst,i);
+	float i = MINMAX(0.f,1.f,((float)off) / ((float)animDur));
+	return colorInterpolateRGB(overlayColorAnimSrc,overlayColorAnimDst,i);
 }
 
 void setOverlayColor(u32 color, u32 animationDuration){
