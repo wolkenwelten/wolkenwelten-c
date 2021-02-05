@@ -137,6 +137,11 @@ void blockMiningBurnBlock(int x, int y, int z, u8 b){
 	}
 }
 
+static void blockMiningDel(int i){
+	blockMiningList[i] = blockMiningList[--blockMiningCount];
+	if(blockMiningCount == 0){msgBlockMiningUpdate(-1,0,0,0,0,0,10);}
+}
+
 void blockMiningUpdateAll(){
 	PROFILE_START();
 
@@ -155,12 +160,12 @@ void blockMiningUpdateAll(){
 			const int maxhp = blockTypeGetHP(bm->b);
 			bm->damage -= maxhp >> 5;
 			if(bm->damage <= 0){
-				blockMiningList[i] = blockMiningList[--blockMiningCount];
+				blockMiningDel(i);
 			}
 		}else{
 			if(bm->damage > blockTypeGetHP(bm->b)){
 				blockMiningMineBlock(bm->x,bm->y,bm->z,bm->b);
-				blockMiningList[i] = blockMiningList[--blockMiningCount];
+				blockMiningDel(i);
 			}
 			bm->wasMined = false;
 		}
