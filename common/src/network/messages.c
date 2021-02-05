@@ -529,4 +529,5 @@ const char *networkGetMessageName(uint i){
 	case msgtLZ4:
 		return "LZ4 Message";
 	}
+	return "Unknown";
 }

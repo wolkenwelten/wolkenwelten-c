@@ -303,6 +303,7 @@ int animalGetMaxHealth (const animal *e){
 	case animalWerebunny:
 		return 20;
 	}
+	return 0;
 }
 
 animal *animalGetByBeing(being b){
