@@ -171,12 +171,13 @@ void blockMiningUpdateAll(){
 
 void blockMiningUpdatePlayer(uint c){
 	if(blockMiningCount == 0){
+		if((clients[c].syncCount & 0xFF) != msgtBlockMiningUpdate){return;}
 		msgBlockMiningUpdate(c,0,0,0,0,0,10);
-		return;
-	}
-	for(uint i=0;i<blockMiningCount;++i){
-		const blockMining *bm = &blockMiningList[i];
-		msgBlockMiningUpdate(c,bm->x,bm->y,bm->z,bm->damage,blockMiningCount,i);
+	}else{
+		for(uint i=0;i<blockMiningCount;++i){
+			const blockMining *bm = &blockMiningList[i];
+			msgBlockMiningUpdate(c,bm->x,bm->y,bm->z,bm->damage,blockMiningCount,i);
+		}
 	}
 }
 

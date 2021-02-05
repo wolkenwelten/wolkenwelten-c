@@ -153,6 +153,7 @@ void serverInitClient(uint c){
 	clients[c].chnkUpdateIter             = 0;
 	clients[c].state                      = STATE_CONNECTING;
 	clients[c].flags                      = 0;
+	clients[c].syncCount                  = 0;
 	clients[c].animalUpdateWindowSize     = 1;
 	clients[c].animalPriorityUpdateOffset = 0;
 	clients[c].animalUpdateOffset         = 0;
@@ -250,6 +251,7 @@ void msgUpdatePlayer(uint c){
 	fireSyncPlayer(c);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
+	clients[c].syncCount++;
 }
 
 void serverParsePlayerPos(uint c,const packet *p){

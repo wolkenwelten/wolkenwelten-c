@@ -18,6 +18,7 @@
 #include "grenade.h"
 
 #include "../game/entity.h"
+#include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/game/projectile.h"
 #include "../../../common/src/misc/misc.h"
@@ -97,6 +98,7 @@ void grenadeUpdateAll(){
 
 void grenadeUpdatePlayer(u8 c){
 	if(grenadeCount == 0){
+		if((clients[c].syncCount & 0xFF) != msgtGrenadeUpdate){return;}
 		msgGrenadeUpdate(c,vecZero(),vecZero(),0,0);
 	}else{
 		for(uint i=0;i<grenadeCount;i++){

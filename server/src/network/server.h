@@ -14,6 +14,7 @@ typedef struct {
 	char playerName[32];
 	character *c;
 	int state,flags;
+	uint syncCount;
 	u64 socket,lastPing;
 
 	uint fireUpdateOffset;
