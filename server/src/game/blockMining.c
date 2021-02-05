@@ -122,6 +122,10 @@ void blockMiningMineBlock(int x, int y, int z, u8 b){
 	msgMineBlock(x,y,z,b,0);
 	if((b == I_Grass) || (b == I_Dry_Grass) || (b == I_Roots)){
 		worldSetB(x,y,z,I_Dirt);
+		if(b == I_Roots){
+			item itm = itemNew(I_Oak,1);
+			itemDropNewP(vecNew(x,y,z),&itm);
+		}
 	}else{
 		worldSetB(x,y,z,0);
 		blockMiningDropItemsPos(x,y,z,b);
