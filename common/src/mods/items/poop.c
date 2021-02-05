@@ -32,8 +32,8 @@ int poopItemDropCallback(const item *cItem, float x, float y, float z){
 	u8 b = worldGetB(cx,cy,cz);
 	if(b == 0){return 0;}
 	if(b == I_Grass){
-		if(rngValM(1024) != 0){return 0;}
-		switch(rngValM(32)){
+		if(rngValA(1023) != 0){return 0;}
+		switch(rngValA(31)){
 		default:
 			return -1;
 		case 0:
@@ -50,11 +50,11 @@ int poopItemDropCallback(const item *cItem, float x, float y, float z){
 			return -cItem->amount;
 		}
 	}else if(b == I_Dirt){
-		if(rngValM(256) != 0){return 0;}
+		if(rngValM(255) != 0){return 0;}
 		worldSetB(x,y-0.5f,z,I_Grass);
 		return -1;
 	}else{
-		if(rngValM(1024) == 0){
+		if(rngValM(1023) == 0){
 			return -1;
 		}
 		return 0;

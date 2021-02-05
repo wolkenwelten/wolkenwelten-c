@@ -61,6 +61,10 @@
 #define I_Flamestick    287
 #define I_Waterthrower  288
 #define I_Stonespear    289
+#define I_Ironspear     290
+#define I_Crystalspear  291
+#define I_Plantmatter   292
+#define I_Straw         293
 
 void recipeNew1 (const item result, const item ingred1);
 void recipeNew2 (const item result, const item ingred1, const item ingred2);
