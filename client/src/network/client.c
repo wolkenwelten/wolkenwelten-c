@@ -167,7 +167,6 @@ void clientParsePacket(const packet *p){
 	case msgtKeepalive:
 		break;
 	case msgtPlayerPos:
-		printf("PlayerPos!\n");
 		characterSetPos(player,vecNewP(&p->v.f[0]));
 		characterSetRot(player,vecNewP(&p->v.f[3]));
 		characterSetVelocity(player,vecZero());
