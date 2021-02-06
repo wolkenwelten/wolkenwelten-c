@@ -111,3 +111,8 @@ int throwActionDefault(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
 }
+
+const char *getItemNameDefault(const item *cItem){
+	if(cItem->ID < 256){return blockTypeGetName(cItem->ID);}
+	return "Unknown Item";
+}

@@ -19,18 +19,71 @@
 
 #include "../game/character.h"
 #include "../game/recipe.h"
+#include "../gfx/gfx.h"
 #include "../gui/gui.h"
 #include "../gui/lispInput.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
 #include "../gfx/textMesh.h"
 #include "../sdl/sdl.h"
+#include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/game/item.h"
 
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+
+typedef struct {
+ 	uint x,y,w,h;
+	const widget *wid;
+} popupQueueEntry;
+
+popupQueueEntry popupQueue[16];
+uint popupQueueLength = 0;
+
+static void widgetAddPopup(const widget *wid, uint x, uint y, uint w, uint h){
+	if(popupQueueLength >= 16){return;}
+	popupQueue[popupQueueLength++] = (popupQueueEntry){x,y,w,h,wid};
+}
+
+static void widgetDrawPopupItemSlot(textMesh *m,const item *itm, uint x, uint y, uint w, uint h){
+	(void)h;
+
+	if(itm == NULL){return;}
+	const char *name = getItemNameDispatch(itm);
+	if(name == NULL){return;}
+	uint len = strnlen(name,256);
+
+	const u32 bcolor = 0xCC444444;
+	const u32 tcolor = 0xCC111111;
+	int xoff = (len * 8)+8;
+	int yoff = MAX(0,MIN((int)(y-32),(int)(screenHeight-32)));
+	int width = xoff * 2;
+	xoff = MAX(0,MIN((int)(x+(w/2)-xoff),(int)(screenWidth-width)));
+	textMeshVGradient(m,xoff,yoff,width,32,tcolor,bcolor);
+	textMeshAddStrPS(m,xoff+8,yoff+8,2,name);
+}
+
+void widgetDrawPopups(textMesh *m){
+	for(uint i=0;i<popupQueueLength;i++){
+		popupQueueEntry *qe = &popupQueue[i];
+		if(qe->wid == NULL){continue;}
+		switch(qe->wid->type){
+		default:
+			break;
+		case wRecipeSlot: {
+			const item recipe = recipeGetResult(qe->wid->valu);
+			widgetDrawPopupItemSlot(m,&recipe,qe->x,qe->y,qe->w,qe->h);
+			break; }
+		case wItemSlot: {
+			const item *itm = qe->wid->valItem;
+			widgetDrawPopupItemSlot(m,itm,qe->x,qe->y,qe->w,qe->h);
+			break; }
+		}
+	}
+	popupQueueLength = 0;
+}
 
 static void widgetDrawAutocomplete(textMesh *m,int x,int y,int size){
 	int cy = y - size*8 - size*4 - size*2;
@@ -421,6 +474,9 @@ static void widgetDrawItemSlot(const widget *wid, textMesh *m, int x, int y, int
 	(void)h;
 	int style = 0;
 	item *itm = wid->valItem;
+	if((wid == widgetFocused) || (wid->flags & WIDGET_HOVER)){
+		widgetAddPopup(wid,x,y,w,h);
+	}
 	if((wid == widgetFocused) || (wid->flags & WIDGET_HOVER) || (itm == characterGetActiveItem(player))){
 		style = 1;
 	}
@@ -436,6 +492,7 @@ static void widgetDrawRecipeSlot(const widget *wid, textMesh *m, int x, int y, i
 	}
 	if((wid == widgetFocused) || (wid->flags & WIDGET_HOVER)){
 		style = 1;
+		widgetAddPopup(wid,x,y,w,h);
 	}
 	textMeshItemSlot(m,x,y,MIN(w,h),style,recipe.ID,a);
 }
@@ -449,7 +506,6 @@ static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, i
 	const int animY = cos((float)ticks/24.f)*ts/8;
 	const item result = recipeGetResult(r);
 
-
 	for(ii=0;ii<4;ii++){
 		xx = ii*2*ts + x;
 		item ingred = recipeGetIngredient(r,ii);
@@ -460,11 +516,20 @@ static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, i
 			textMeshBox(m,xx-ts+ts/4+animX,y+ts/4+animY,ts/2,ts/2,24.f/32,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 		}
 		textMeshItem(m,xx,y,ts,3,&ingred);
+		const char *name = getItemNameDispatch(&ingred);
+		const uint len = strnlen(name,256);
+		const int yoff = ii & 1 ? 0 : ts/4;
+		int xoff = MAX((int)(x-ts/4),(int)(xx+ts/2-(len*8)));
+		textMeshAddStrPS(m,xoff,y+ts+yoff,2,name);
 	}
 
 	xx = ii*2*ts + x;
 	textMeshBox(m,xx-ts+ts/4+animX*2,y+ts/4,ts/2,ts/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 	textMeshItemSlot(m,xx,y,ts,3,result.ID,result.amount);
+	const char *name = getItemNameDispatch(&result);
+	const uint len = strnlen(name,256);
+	const int yoff = ii & 1 ? 0 : ts/4;
+	textMeshAddStrPS(m,xx+ts/2-(len*8),y+ts+yoff,2,name);
 }
 
 static void widgetDrawTextScroller(const widget *wid, textMesh *m, int x, int y, int w, int h){

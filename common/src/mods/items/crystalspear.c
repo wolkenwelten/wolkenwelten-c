@@ -7,6 +7,11 @@ void crystalspearInit(){
 	lispDefineID("i-","crystal spear",ITEMID);
 }
 
+char *crystalspearGetItemName(const item *cItem){
+	(void)cItem;
+	return "Crystal Spear";
+}
+
 int crystalspearDamage(const item *cItem){
 	(void)cItem;
 

@@ -7,6 +7,11 @@ void jetpackInit(){
 	lispDefineID("i-","jetpack",ITEMID);
 }
 
+char *jetpackGetItemName(const item *cItem){
+	(void)cItem;
+	return "Jetpack";
+}
+
 mesh *jetpackGetMesh(const item *cItem){
 	(void)cItem;
 	return meshGrenade;

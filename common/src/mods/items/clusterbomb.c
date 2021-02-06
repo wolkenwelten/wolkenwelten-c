@@ -7,6 +7,11 @@ void clusterbombInit(){
 	lispDefineID("i-","cluster bomb",ITEMID);
 }
 
+char *clusterbombGetItemName(const item *cItem){
+	(void)cItem;
+	return "Clusterbomb";
+}
+
 bool clusterbombSecondaryAction(item *cItem,character *cChar){
 	if(characterTryToUse(cChar,cItem,200,1)){
 		grenadeNew(vecAdd(cChar->pos,vecNew(0,0.5f,0)),cChar->rot,1,48,1.f);

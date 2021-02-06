@@ -7,6 +7,11 @@ void stonepickaxeInit(){
 	lispDefineID("i-","stone pickaxe",ITEMID);
 }
 
+char *stonepickaxeGetItemName(const item *cItem){
+	(void)cItem;
+	return "Stone Pickaxe";
+}
+
 int stonepickaxeDamage(const item *cItem){
 	(void)cItem;
 

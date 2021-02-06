@@ -6,6 +6,11 @@ void plantmatterInit(){
 	lispDefineID("i-","plantmatter",ITEMID);
 }
 
+char *plantmatterGetItemName(const item *cItem){
+	(void)cItem;
+	return "Plantmatter";
+}
+
 mesh *plantmatterGetMesh(const item *cItem){
 	(void)cItem;
 

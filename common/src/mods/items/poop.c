@@ -6,6 +6,11 @@ void poopInit(){
 	lispDefineID("i-","poop",ITEMID);
 }
 
+char *poopGetItemName(const item *cItem){
+	(void)cItem;
+	return "Poop";
+}
+
 mesh *poopGetMesh(const item *cItem){
 	(void)cItem;
 

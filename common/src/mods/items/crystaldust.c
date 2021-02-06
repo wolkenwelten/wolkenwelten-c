@@ -7,6 +7,11 @@ void crystaldustInit(){
 	lispDefineID("i-","crystal dust",ITEMID);
 }
 
+char *crystaldustGetItemName(const item *cItem){
+	(void)cItem;
+	return "Crystal Dust";
+}
+
 mesh *crystaldustGetMesh(const item *cItem){
 	(void)cItem;
 	(void)ITEMID;

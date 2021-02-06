@@ -3,3 +3,4 @@
 #include "../gui/widget.h"
 
 void widgetDrawSingle(const widget *wid, textMesh *mesh, int x, int y, int w, int h);
+void widgetDrawPopups(textMesh *mesh);

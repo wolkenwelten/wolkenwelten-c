@@ -7,6 +7,11 @@ void ironaxeInit(){
 	lispDefineID("i-","iron axe",ITEMID);
 }
 
+char *ironaxeGetItemName(const item *cItem){
+	(void)cItem;
+	return "Iron Axe";
+}
+
 int ironaxeDamage(const item *cItem){
 	(void)cItem;
 

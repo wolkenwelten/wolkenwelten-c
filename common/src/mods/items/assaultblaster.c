@@ -9,6 +9,11 @@ void assaultblasterInit(){
 	lispDefineID("i-","assaultblaster",ITEMID);
 }
 
+char *assaultblasterGetItemName(const item *cItem){
+	(void)cItem;
+	return "Assaultblaster";
+}
+
 mesh *assaultblasterGetMesh(const item *cItem){
 	(void)cItem;
 

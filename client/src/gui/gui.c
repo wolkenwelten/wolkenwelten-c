@@ -45,6 +45,7 @@
 #include "../menu/mainmenu.h"
 #include "../gui/overlay.h"
 #include "../gui/textInput.h"
+#include "../gui/widgetDrawing.h"
 #include "../network/chat.h"
 #include "../network/client.h"
 #include "../sdl/sdl.h"
@@ -560,9 +561,8 @@ void drawHud(){
 	lispPanelCheckAutoComplete();
 	lispPanelCheckAutoCompleteDescription();
 	widgetDraw(rootMenu,guim,0,0,screenWidth,screenHeight);
-	if(isInventoryOpen()){
-		drawInventory(guim);
-	}
+	if(isInventoryOpen()){drawInventory(guim);}
+	widgetDrawPopups(guim);
 	textMeshDraw(guim);
 }
 

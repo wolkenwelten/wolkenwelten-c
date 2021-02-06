@@ -7,6 +7,11 @@ void bombInit(){
 	lispDefineID("i-","bomb",ITEMID);
 }
 
+char *bombGetItemName(const item *cItem){
+	(void)cItem;
+	return "Bomb";
+}
+
 bool bombSecondaryAction(item *cItem,character *cChar){
 	if(characterTryToUse(cChar,cItem,200,1)){
 		grenadeNew(vecAdd(cChar->pos,vecNew(0,0.5f,0)),cChar->rot,3,0,0);

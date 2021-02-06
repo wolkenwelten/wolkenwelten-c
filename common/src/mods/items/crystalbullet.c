@@ -7,6 +7,11 @@ void crystalbulletInit(){
 	lispDefineID("i-","crystal bullet",ITEMID);
 }
 
+char *crystalbulletGetItemName(const item *cItem){
+	(void)cItem;
+	return "Crystal Bullet";
+}
+
 mesh *crystalbulletGetMesh(const item *cItem){
 	(void)cItem;
 

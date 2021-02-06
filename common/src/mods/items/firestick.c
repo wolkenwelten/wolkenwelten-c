@@ -7,6 +7,11 @@ void firestickInit(){
 	lispDefineID("i-","firestick",ITEMID);
 }
 
+char *firestickGetItemName(const item *cItem){
+	(void)cItem;
+	return "Fire Stick";
+}
+
 int firestickGetStackSize(const item *cItem){
 	(void)cItem;
 	return 1;

@@ -6,6 +6,11 @@ void crystalbarInit(){
 	lispDefineID("i-","crystal bar",ITEMID);
 }
 
+char *crystalbarGetItemName(const item *cItem){
+	(void)cItem;
+	return "Crystal Bar";
+}
+
 mesh *crystalbarGetMesh(const item *cItem){
 	(void)cItem;
 	(void)ITEMID;

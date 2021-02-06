@@ -6,6 +6,11 @@ void meatInit(){
 	lispDefineID("i-","meat raw",ITEMID);
 }
 
+char *meatGetItemName(const item *cItem){
+	(void)cItem;
+	return "Meat";
+}
+
 bool meatSecondaryAction(item *cItem,character *cChar){
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
 	if(characterTryToUse(cChar,cItem,200,1)){

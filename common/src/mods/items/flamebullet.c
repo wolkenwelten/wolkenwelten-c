@@ -7,6 +7,11 @@ void flamebulletInit(){
 	lispDefineID("i-","flame bullet",ITEMID);
 }
 
+char *flamebulletGetItemName(const item *cItem){
+	(void)cItem;
+	return "Flame Bullet";
+}
+
 mesh *flamebulletGetMesh(const item *cItem){
 	(void)cItem;
 

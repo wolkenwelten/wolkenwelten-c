@@ -7,6 +7,11 @@ void ironspearInit(){
 	lispDefineID("i-","iron spear",ITEMID);
 }
 
+char *ironspearGetItemName(const item *cItem){
+	(void)cItem;
+	return "Iron Spear";
+}
+
 int ironspearDamage(const item *cItem){
 	(void)cItem;
 

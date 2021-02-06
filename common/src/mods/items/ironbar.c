@@ -6,6 +6,11 @@ void ironbarInit(){
 	lispDefineID("i-","iron bar",ITEMID);
 }
 
+char *ironbarGetItemName(const item *cItem){
+	(void)cItem;
+	return "Iron Bar";
+}
+
 mesh *ironbarGetMesh(const item *cItem){
 	(void)cItem;
 	(void)ITEMID;

@@ -7,6 +7,11 @@ void flintandsteelInit(){
 	lispDefineID("i-","flint and steel",ITEMID);
 }
 
+char *flintandsteelGetItemName(const item *cItem){
+	(void)cItem;
+	return "Flint and Steel";
+}
+
 int flintandsteelGetStackSize(const item *cItem){
 	(void)cItem;
 	return 1;

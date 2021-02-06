@@ -8,6 +8,11 @@ void shotgunblasterInit(){
 	lispDefineID("i-","shotgun",ITEMID);
 }
 
+char *shotgunblasterGetItemName(const item *cItem){
+	(void)cItem;
+	return "Shotgun";
+}
+
 mesh *shotgunblasterGetMesh(const item *cItem){
 	(void)cItem;
 

@@ -7,6 +7,11 @@ void irondustInit(){
 	lispDefineID("i-","iron dust",ITEMID);
 }
 
+char *irondustGetItemName(const item *cItem){
+	(void)cItem;
+	return "Iron Dust";
+}
+
 mesh *irondustGetMesh(const item *cItem){
 	(void)ITEMID;
 	(void)cItem;

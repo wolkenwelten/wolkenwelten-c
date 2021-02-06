@@ -6,6 +6,11 @@ void furInit(){
 	lispDefineID("i-","fur",ITEMID);
 }
 
+char *furGetItemName(const item *cItem){
+	(void)cItem;
+	return "Fur";
+}
+
 mesh *furGetMesh(const item *cItem){
 	(void)cItem;
 

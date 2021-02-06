@@ -6,6 +6,11 @@ void pearInit(){
 	lispDefineID("i-","pear",ITEMID);
 }
 
+char *pearGetItemName(const item *cItem){
+	(void)cItem;
+	return "Pear";
+}
+
 bool pearSecondaryAction(item *cItem,character *cChar){
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
 	if(characterTryToUse(cChar,cItem,200,1)){
