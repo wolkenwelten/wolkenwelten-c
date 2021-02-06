@@ -1,0 +1,4 @@
+*.c linguist-language=C
+*.h linguist-language=C
+*.s linguist-language=Assembly
+*.nuj linguist-language=Scheme
