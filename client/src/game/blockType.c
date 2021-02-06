@@ -17,7 +17,10 @@
 
 #include "../game/blockType.h"
 
+#include "../gfx/gfx.h"
+#include "../gfx/mat.h"
 #include "../gfx/mesh.h"
+#include "../gfx/shader.h"
 #include "../gfx/texture.h"
 #include "../../../common/src/misc/misc.h"
 
@@ -107,4 +110,15 @@ void blockTypeAddToMesh(u8 b, mesh *m, const vec pos, const vec size) {
 	meshAddVertC(m, x  ,y+h,z+d,tileHiX[5],tileLoY[5],0.75f);
 	meshAddVertC(m, x  ,y+h,z  ,tileLoX[5],tileLoY[5],0.75f);
 	meshAddVertC(m, x  ,y  ,z  ,tileLoX[5],tileHiY[5],0.75f);
+}
+
+void blockTypeDraw(u8 b, vec pos, float alpha){
+	matMov      (matMVP,matView);
+	matMulTrans (matMVP,pos.x,pos.y,pos.z);
+	matMul      (matMVP,matMVP,matProjection);
+
+	shaderMatrix(sMesh,matMVP);
+	shaderAlpha (sMesh,alpha);
+	meshDraw(blocks[b].singleBlock);
+	shaderAlpha (sMesh,1.0);
 }

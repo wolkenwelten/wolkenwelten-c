@@ -39,3 +39,4 @@ int   characterHitCheck       (const vec pos, float mdd, int damage, int cause, 
 
 void  charactersUpdate        ();
 void  characterDrawAll        ();
+void  characterDrawConsHighlight(const character *c);

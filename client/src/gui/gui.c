@@ -369,10 +369,12 @@ void drawDebuginfo(){
 	textMeshPrintfRA(guim,"%s",VERSION);
 	drawHookIndicator();
 
-	guim->sx   = screenWidth-112;
-	guim->sy   = 24;
-	textMeshPrintf(guim,"FPS %s%3.0f\n",colorSignalHigh(20,40,59,curFPS),curFPS);
-	guim->fgc  = colorPalette[15];
+	if(player->flags & CHAR_CONS_MODE){
+		guim->sx   = screenWidth  - 256;
+		guim->sy   = screenHeight - 280;
+		guim->fgc  = colorPalette[15];
+		textMeshPrintf(guim,"CONS Mode");
+	}
 
 	guim->sy  += 16;
 	guim->sx   = screenWidth;

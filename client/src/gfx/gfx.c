@@ -187,6 +187,7 @@ void renderWorld(const character *cam){
 	animalDrawAll();
 	entityDrawAll();
 	characterDrawAll();
+	characterDrawConsHighlight(cam);
 	cloudsRender();
 	rainDrawAll();
 

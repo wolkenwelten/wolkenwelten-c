@@ -80,6 +80,25 @@ void characterCloseGlider(character *c){
 	c->flags &= ~CHAR_GLIDE;
 }
 
+void characterOpenConsMode   (      character *c){
+	if(c->flags & (CHAR_AIMING | CHAR_THROW_AIM)){characterStopAim(c);}
+	if(c->flags & (CHAR_GLIDE)){characterCloseGlider(c);}
+	c->flags |= CHAR_CONS_MODE;
+}
+
+void characterCloseConsMode  (      character *c){
+	if(c->flags & (CHAR_AIMING | CHAR_THROW_AIM)){characterStopAim(c);}
+	if(c->flags & (CHAR_GLIDE)){characterCloseGlider(c);}
+	c->flags &= ~CHAR_CONS_MODE;
+}
+
+void characterToggleConsMode (      character *c){
+	if(c->flags & CHAR_CONS_MODE){
+		characterCloseConsMode(c);
+	}else{
+		characterOpenConsMode(c);
+	}
+}
 
 bool characterIsAiming(const character *c){
 	if(c == NULL){return false;}
@@ -349,8 +368,14 @@ void characterMove(character *c, const vec mov){
 		c->gvel.z += sin((yaw)*PI/180)*mov.x*s;
 		c->gvel.y += mov.y;
 	}else{
-		float s = 0.05f;
-		if(c->flags & CHAR_AIMING){ s = 0.01f; }
+		float s;
+		if(c->flags & CHAR_AIMING){
+			s = 0.01f;
+		}else if(c->flags & CHAR_CONS_MODE){
+			s = 0.025f;
+		}else{
+			s = 0.05f;
+		}
 		c->gvel.y = mov.y;
 		c->gvel.x = (cos((yaw+90)*PI/180)*mov.z*s);
 		c->gvel.z = (sin((yaw+90)*PI/180)*mov.z*s);

@@ -143,6 +143,7 @@ typedef struct {
 #define CHAR_BOOSTING     (1<< 8)
 #define CHAR_AIMING       (1<< 9)
 #define CHAR_THROW_AIM    (1<<10)
+#define CHAR_CONS_MODE    (1<<11)
 
 #define CHAR_EQ_GLIDER     0
 #define CHAR_EQ_HOOK       1

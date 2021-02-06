@@ -15,6 +15,11 @@ int        characterGetMaxHP       (const character *c);
 void       characterOpenGlider     (      character *c);
 void       characterCloseGlider    (      character *c);
 void       characterToggleGlider   (      character *c);
+
+void       characterOpenConsMode   (      character *c);
+void       characterCloseConsMode  (      character *c);
+void       characterToggleConsMode (      character *c);
+
 bool       characterIsAiming       (const character *c);
 bool       characterIsThrowAiming  (const character *c);
 void       characterToggleAim      (      character *c, float zoom);

@@ -19,6 +19,7 @@
 
 #include "../main.h"
 #include "../game/animal.h"
+#include "../game/blockType.h"
 #include "../game/itemDrop.h"
 #include "../gfx/effects.h"
 #include "../gfx/gfx.h"
@@ -213,6 +214,7 @@ void characterUpdateWindVolume(const character *c){
 }
 
 int characterUpdateJumping(character *c){
+	if(c->flags & CHAR_CONS_MODE){return 0;}
 	if((c->gvel.y > 0) && !(c->flags & CHAR_FALLING) && ((c->hook == NULL) || (!hookGetHooked(c->hook)))){
 		if((rngValA(15))==0){
 			sfxPlay(sfxYahoo,1.f);
@@ -409,9 +411,29 @@ void updateGlide(character *c){
 	c->vel = vecAdd(vel,vecMulS(nv,c->gliderFade));
 }
 
+static void characterUpdateCons(character *c, uint oldCol, const vec oldPos){
+	if(!(c->flags & CHAR_CONS_MODE)){return;}
+	uint col = characterCollision(c->pos);
+	if(col & 0xF){return;}
+	if((oldCol & 0xF) == 0){return;}
+	c->pos = oldPos;
+	c->vel = vecZero();
+
+	if(oldCol & 3){
+		c->pos.x = oldPos.x;
+	}
+	if(oldCol & (4|8)){
+		c->pos.z = oldPos.z;
+	}
+}
+
 int characterPhysics(character *c){
 	int ret=0;
 	u32 col;
+
+	vec oldPos = c->pos;
+	uint oldCol = characterCollision(c->pos);
+
 	c->pos = vecAdd(c->pos,c->vel);
 	c->shake = MAX(0.f,c->shake-0.1f);
 	if(c->flags & CHAR_NOCLIP){
@@ -473,6 +495,7 @@ int characterPhysics(character *c){
 		c->pos.y = MAX(c->pos.y,floorf(c->pos.y)+.99f);
 	}
 
+	characterUpdateCons(c,oldCol,oldPos);
 	updateGlide(c);
 	return ret;
 }
@@ -966,4 +989,19 @@ int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 itera
 		}
 	}
 	return hits;
+}
+
+void characterDrawConsHighlight(const character *c){
+	static uint counter = 0;
+	if(!(c->flags & CHAR_CONS_MODE)){return;}
+	item *activeItem = &player->inventory[player->activeItem];
+	if(activeItem == NULL){return;}
+	if(itemIsEmpty(activeItem)){return;}
+	const u16 id = activeItem->ID;
+	if(id < 256){
+		ivec los = characterLOSBlock(c,true);
+		if(los.x < 0){return;}
+		const float a = 0.7f + cosf((++counter&0x7F)/128.f*PI*2)*0.1f;
+		blockTypeDraw(id, vecNew(los.x+0.5f,los.y+0.5f,los.z+0.5f),a);
+	}
 }

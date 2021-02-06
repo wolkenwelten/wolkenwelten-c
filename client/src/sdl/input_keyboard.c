@@ -305,7 +305,7 @@ void keyboardEventHandler(const SDL_Event *e){
 		case SDL_SCANCODE_7:
 			characterSetActiveItem(player,6);
 			break;
-		case SDL_SCANCODE_8:
+ 		case SDL_SCANCODE_8:
 			characterSetActiveItem(player,7);
 			break;
 		case SDL_SCANCODE_9:
@@ -313,6 +313,9 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_0:
 			characterSetActiveItem(player,9);
+			break;
+		case SDL_SCANCODE_C:
+			characterToggleConsMode(player);
 			break;
 		case SDL_SCANCODE_M:
 			optionDebugInfo = 1 - optionDebugInfo;
