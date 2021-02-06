@@ -78,7 +78,6 @@ static lVal *wwlnfPlayerName(lClosure *c, lVal *v){
 			playerName[sizeof(playerName)-1]=0;
 		}
 	}
-
 	return lValString(playerName);
 }
 
@@ -87,7 +86,6 @@ static lVal *wwlnfSoundVolume(lClosure *c, lVal *v){
 		lVal *t = lnfFloat(c,lEval(c,v));
 		optionSoundVolume = t->vFloat;
 	}
-
 	return lValFloat(optionSoundVolume);
 }
 
@@ -96,8 +94,15 @@ static lVal *wwlnfRenderDistance(lClosure *c, lVal *v){
 		lVal *t = lnfFloat(c,lEval(c,v));
 		setRenderDistance(t->vFloat);
 	}
-
 	return lValFloat(renderDistance);
+}
+
+static lVal *wwlnfMouseSensitivity(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfFloat(c,lEval(c,v));
+		optionMouseSensitivy = t->vFloat;
+	}
+	return lValFloat(optionMouseSensitivy);
 }
 
 static lVal *wwlnfThirdPerson(lClosure *c, lVal *v){
@@ -105,7 +110,6 @@ static lVal *wwlnfThirdPerson(lClosure *c, lVal *v){
 		lVal *t = lnfInt(c,lEval(c,v));
 		optionThirdPerson = t->vInt != 0;
 	}
-
 	return lValBool(optionThirdPerson);
 }
 
@@ -114,7 +118,6 @@ static lVal *wwlnfFullscreen(lClosure *c, lVal *v){
 		lVal *t = lnfInt(c,lEval(c,v));
 		setFullscreen(t->vInt != 0);
 	}
-
 	return lValBool(optionThirdPerson);
 }
 
@@ -123,7 +126,6 @@ static lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
 		lVal *t = lnfInt(c,lEval(c,v));
 		optionDebugInfo = t->vInt != 0;
 	}
-
 	return lValBool(optionDebugInfo);
 }
 
@@ -222,6 +224,7 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-name!", "(s)",      "Sets players name to s",                                         wwlnfPlayerName);
 	lAddNativeFunc(c,"sound-vol!",   "(f)",      "Sets sound volume to float f",                                   wwlnfSoundVolume);
 	lAddNativeFunc(c,"view-dist!",   "(f)",      "Sets render distance to f blocks",                               wwlnfRenderDistance);
+	lAddNativeFunc(c,"mouse-sens!",  "(f)",      "Sets the mouse sensitivity to f",                                wwlnfMouseSensitivity);
 	lAddNativeFunc(c,"server-add!",  "(name ip)","Adds name ip to server list",                                    wwlnfServerAdd);
 	lAddNativeFunc(c,"third-person!","(b)",      "Sets third person view to b",                                    wwlnfThirdPerson);
 	lAddNativeFunc(c,"fullscreen!",  "(b)",      "Sets fullscreen to b",                                           wwlnfFullscreen);

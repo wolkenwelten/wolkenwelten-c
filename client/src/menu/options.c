@@ -36,11 +36,17 @@ widget *optionsMenu;
 widget *optionsName;
 widget *optionsVolume;
 widget *optionsRenderDistance;
+widget *optionsMouseSensitivity;
 
-float oldRenderDistance = 0.f;
+float oldRenderDistance   = 0.f;
+float oldMouseSensitivity = 0.f;
 
 static void handlerRenderDistanceChanged(widget *wid){
 	setRenderDistance((wid->vali / 4096.f) * (512-64) + 64.f);
+}
+
+static void handlerMouseSensitivityChanged(widget *wid){
+	optionMouseSensitivy = (wid->vali / 4096.f)+0.01f;
 }
 
 static void handlerOptionsSave(widget *wid){
@@ -76,6 +82,10 @@ void initOptionsMenu(){
 	optionsRenderDistance->vali = ((renderDistance-64.f) / (512-64)) * 4096.f;
 	widgetBind(optionsRenderDistance,"change",handlerRenderDistanceChanged);
 
+	optionsMouseSensitivity = widgetNewCPL(wSlider,optionsMenu,16,0,256,32,"Mouse Sensitivy");
+	optionsMouseSensitivity->vali = (optionMouseSensitivy-0.01f) * 4096.f;
+	widgetBind(optionsMouseSensitivity,"change",handlerMouseSensitivityChanged);
+
 	widgetNewCP  (wHR ,optionsMenu,16,0,256,32);
 	widgetNewCPLH(wButton,optionsMenu,16,0,256,32,"Save","click",handlerOptionsSave);
 	widgetNewCPLH(wButton,optionsMenu,16,0,256,32,"Cancel","click",handlerOptionsCancel);
@@ -87,7 +97,9 @@ void openOptionsMenu(){
 	widgetSlideW(optionsMenu,288);
 	widgetFocus(NULL);
 	oldRenderDistance = renderDistance;
+	oldMouseSensitivity = optionMouseSensitivy;
 	optionsRenderDistance->vali = ((renderDistance-64.f) / (512-64)) * 4096.f;
+	optionsMouseSensitivity->vali = (optionMouseSensitivy-0.01f) * 4096.f;
 }
 
 void closeOptionsMenu(){

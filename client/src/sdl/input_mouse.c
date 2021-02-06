@@ -20,6 +20,7 @@
 #include "../sdl/sdl.h"
 #include "../gui/gui.h"
 #include "../menu/inventory.h"
+#include "../misc/options.h"
 #include "../game/character.h"
 #include "../main.h"
 
@@ -90,7 +91,7 @@ void mouseEventHandler(const SDL_Event *e){
 
 		case SDL_MOUSEMOTION:
 			if(mouseHidden && !gameControlsInactive()){
-				float mouseSpeed = 0.25f / (1.f + (player->aimFade * player->zoomFactor));
+				float mouseSpeed = 0.25f / (1.f + (player->aimFade * player->zoomFactor)) * optionMouseSensitivy;
 				characterRotate(player,vecNew(e->motion.xrel*mouseSpeed,e->motion.yrel*mouseSpeed,0));
 			}
 		break;

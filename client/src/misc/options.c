@@ -44,6 +44,7 @@ bool  optionFullscreen        = false;
 bool  optionRuntimeReloading  = false;
 bool  optionNoSave            = false;
 bool  optionMute              = false;
+float optionMouseSensitivy    = 0.5f;
 bool  optionThirdPerson       = false;
 int   optionWindowOrientation = 0;
 int   optionWindowWidth       = 0;
@@ -204,6 +205,7 @@ void saveOptions(){
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"  (player-name!  \"%s\")\n",playerName);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"  (sound-vol!    %f)\n",optionSoundVolume);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"  (view-dist!    %f)\n",renderDistance);
+	b += snprintf(b,sizeof(buf)-(b-buf+1),"  (mouse-sens!   %f)\n",optionMouseSensitivy);
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"  (fullscreen!   %s)\n",optionFullscreen ? "#t" : "#f");
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"  (third-person! %s)\n",optionThirdPerson ? "#t" : "#f");
 	b += snprintf(b,sizeof(buf)-(b-buf+1),"  (debug-info!   %s)",optionDebugInfo ? "#t" : "#f");
