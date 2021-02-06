@@ -50,10 +50,10 @@ uint         particleCount = 0;
 uint         particleVBO[2];
 uint         particleVAO;
 
-__attribute__((aligned(32))) glParticle glSparticles   [SPART_MAX];
-__attribute__((aligned(32))) particle     sparticles   [SPART_MAX];
-__attribute__((aligned(32))) u32          sparticleRGBA[SPART_MAX];
-__attribute__((aligned(32))) uint         sparticleTTL [SPART_MAX];
+__attribute__((aligned(32))) glParticle glSparticles   [SPART_MAX+4];
+__attribute__((aligned(32))) particle     sparticles   [SPART_MAX+4];
+__attribute__((aligned(32))) u32          sparticleRGBA[SPART_MAX+4];
+__attribute__((aligned(32))) uint         sparticleTTL [SPART_MAX+4];
 uint         sparticleCount = 0;
 uint         sparticleVBO[2];
 uint         sparticleVAO;
@@ -76,7 +76,8 @@ void particleInit(){
 void newParticleS(float x,float y,float z, u32 nrgba, float power, uint nttl){
 	if((particleCount >= PART_MAX)){
 		int i = rngValM(PART_MAX);
-		particles[i]    = particles[--particleCount];
+		particleCount = MIN(PART_MAX-1,particleCount);
+		particles[i]    = particles[particleCount];
 		glParticles[i]  = glParticles[particleCount];
 		particleRGBA[i] = particleRGBA[particleCount];
 		particleTTL[i]  = particleTTL[particleCount];
@@ -96,6 +97,7 @@ void newParticleS(float x,float y,float z, u32 nrgba, float power, uint nttl){
 void newSparticleV(vec pos, vec v, float size, float vsize, u32 rgba, uint ttl){
 	if(sparticleCount >= SPART_MAX){
 		int i = rngValM(SPART_MAX);
+		sparticleCount = MIN(SPART_MAX-1,sparticleCount);
 		sparticles[i]    = sparticles[--sparticleCount];
 		glSparticles[i]  = glSparticles[sparticleCount];
 		sparticleRGBA[i] = sparticleRGBA[sparticleCount];
@@ -110,11 +112,9 @@ void newSparticleV(vec pos, vec v, float size, float vsize, u32 rgba, uint ttl){
 }
 
 void newParticleV(vec pos, vec v, float size, float vsize, u32 rgba,uint ttl){
-	if(particleCount > (1 << 14)){
-		(void)pos;
-	}
 	if(particleCount >= PART_MAX){
 		int i = rngValM(PART_MAX);
+		particleCount = MIN(PART_MAX-1,particleCount);
 		particles[i]    = particles[--particleCount];
 		glParticles[i]  = glParticles[particleCount];
 		particleRGBA[i] = particleRGBA[particleCount];
@@ -130,6 +130,7 @@ void newParticleV(vec pos, vec v, float size, float vsize, u32 rgba,uint ttl){
 void newParticle(float x,float y,float z,float vx,float vy,float vz,float size,float vsize,u32 nrgba, uint nttl){
 	if(particleCount >= PART_MAX){
 		int i = rngValM(PART_MAX);
+		particleCount = MIN(PART_MAX-1,particleCount);
 		particles[i]   = particles[--particleCount];
 		glParticles[i] = glParticles[particleCount];
 		particleRGBA[i] = particleRGBA[particleCount];
@@ -184,7 +185,6 @@ void particleUpdate(){
 			glParticles [i] = glParticles [particleCount];
 			particleRGBA[i] = particleRGBA[particleCount];
 			particleTTL [i] = particleTTL [particleCount];
-			continue;
 		}else if(particleTTL[i] < 128){
 			particleRGBA[i] = (particleRGBA[i] & 0x00FFFFFF) | ((particleTTL[i] << 25) & 0xFF000000);
 		}
