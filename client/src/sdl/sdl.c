@@ -173,7 +173,6 @@ void initSDL(){
 }
 
 void setFullscreen(bool fs){
-	printf("setFullscreen %s\n",fs ? "true" : "false");
 	if(fs){
 		SDL_SetWindowFullscreen(gWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
 	}else{
