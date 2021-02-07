@@ -28,6 +28,7 @@
 #include "../gui/menu.h"
 #include "../gui/lispInput.h"
 #include "../menu/inventory.h"
+#include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../gui/widget.h"
 #include "../misc/options.h"
@@ -171,6 +172,7 @@ void keyboardEventHandler(const SDL_Event *e){
 	}
 
 	if(e->type == SDL_KEYDOWN){
+		lispKeyDown(e->key.keysym.scancode);
 		switch(e->key.keysym.scancode){
 		case SDL_SCANCODE_UP:
 		case SDL_SCANCODE_W:
@@ -228,9 +230,6 @@ void keyboardEventHandler(const SDL_Event *e){
 		case SDL_SCANCODE_L:
 			keysPressed[15] = 1;
 			break;
-		case SDL_SCANCODE_PRINTSCREEN:
-			queueScreenshot = true;
-			break;
 		case SDL_SCANCODE_F12:
 		case SDL_SCANCODE_GRAVE:
 			lispPanelOpen();
@@ -273,56 +272,6 @@ void keyboardEventHandler(const SDL_Event *e){
 			saveOptions();
 			break;
 		#endif
-		default:
-			break;
-		}
-	}
-
-	if(gameControlsInactive()){return;}
-	if(e->type == SDL_KEYDOWN){
-		switch(e->key.keysym.scancode){
-		case SDL_SCANCODE_E:
-			characterFireHook(player);
-			break;
-		case SDL_SCANCODE_1:
-			characterSetActiveItem(player,0);
-			break;
-		case SDL_SCANCODE_2:
-			characterSetActiveItem(player,1);
-			break;
-		case SDL_SCANCODE_3:
-			characterSetActiveItem(player,2);
-			break;
-		case SDL_SCANCODE_4:
-			characterSetActiveItem(player,3);
-			break;
-		case SDL_SCANCODE_5:
-			characterSetActiveItem(player,4);
-			break;
-		case SDL_SCANCODE_6:
-			characterSetActiveItem(player,5);
-			break;
-		case SDL_SCANCODE_7:
-			characterSetActiveItem(player,6);
-			break;
- 		case SDL_SCANCODE_8:
-			characterSetActiveItem(player,7);
-			break;
-		case SDL_SCANCODE_9:
-			characterSetActiveItem(player,8);
-			break;
-		case SDL_SCANCODE_0:
-			characterSetActiveItem(player,9);
-			break;
-		case SDL_SCANCODE_C:
-			characterToggleConsMode(player);
-			break;
-		case SDL_SCANCODE_M:
-			optionDebugInfo = 1 - optionDebugInfo;
-			break;
-		case SDL_SCANCODE_N:
-			player->flags ^= CHAR_NOCLIP;
-			break;
 		default:
 			break;
 		}

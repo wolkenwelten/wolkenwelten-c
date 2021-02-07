@@ -38,7 +38,7 @@ lVal *lnfArrRef(lClosure *c, lVal *v){
 	lVal *lkey = lnfInt(c,lEval(c, lCarOrV(v)));
 	if((lkey == NULL) || (lkey->type != ltInt)){return NULL;}
 	int key = lkey->vInt;
-	if((key < 0) || (key >= arr->vArr->length)){return NULL;}
+	if((key < 0) || (key >= arr->vArr->length) || (arr->vArr->data == NULL)){return NULL;}
 	return arr->vArr->data[key];
 }
 

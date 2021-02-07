@@ -1032,7 +1032,6 @@ void lClosureGC(){
 		return;
 	}
 	if(calls > 512){
-
 		calls = 0;
 		lClosureDoGC();
 		return;

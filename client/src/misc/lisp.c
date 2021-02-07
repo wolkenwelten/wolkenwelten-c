@@ -43,6 +43,14 @@
 
 u8 SEvalID;
 
+void lispKeyDown(int code){
+	lVal *expr;
+	lVal *lCode = lValInt(code);
+	lVal *lArrRef = lCons(lValSym("arr-ref"),lCons(lValSym("input-keydown"),lCons(lCode,NULL)));
+	expr = lCons(lArrRef,lCons(lCode,NULL));
+	lEval(clRoot,expr);
+}
+
 void lPrintError(const char *format, ...){
 	va_list ap;
 	va_start(ap,format);
@@ -129,6 +137,37 @@ static lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
 	return lValBool(optionDebugInfo);
 }
 
+static lVal *wwlnfConsMode(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfInt(c,lEval(c,v));
+		if(t->vInt != 0){
+			player->flags |=  CHAR_CONS_MODE;
+		}else{
+			player->flags &= ~CHAR_CONS_MODE;
+		}
+	}
+	return lValBool(player->flags & CHAR_CONS_MODE);
+}
+
+static lVal *wwlnfNoClip(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfInt(c,lEval(c,v));
+		if(t->vInt != 0){
+			player->flags |=  CHAR_NOCLIP;
+		}else{
+			player->flags &= ~CHAR_NOCLIP;
+		}
+	}
+	return lValBool(player->flags & CHAR_NOCLIP);
+}
+
+static lVal *wwlnfScreenshot(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+	queueScreenshot = true;
+	return NULL;
+}
+
 static lVal *wwlnfSaveOptions(lClosure *c, lVal *v){
 	(void)c;
 	(void)v;
@@ -171,6 +210,23 @@ static lVal *wwlnfPlayerVel(lClosure *c, lVal *v){
 	(void)c;
 	return lValVec(player->vel);
 }
+
+static lVal *wwlnfFireHook(lClosure *c, lVal *v){
+	(void)v;
+	(void)c;
+	characterFireHook(player);
+	return NULL;
+}
+
+
+static lVal *wwlnfInvActiveSlot(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfInt(c,lEval(c,v));
+		player->activeItem = t->vInt;
+	}
+	return lValInt(player->activeItem);
+}
+
 
 static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrV(v));
@@ -217,22 +273,27 @@ static lVal *wwlnfSfxPlay(lClosure *c, lVal *v){
 }
 
 void addClientNFuncs(lClosure *c){
-	lAddNativeFunc(c,"s",            "(...body)","Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
-	lAddNativeFunc(c,"player-pos",   "()",       "Returns players position",                                       wwlnfPlayerPos);
-	lAddNativeFunc(c,"player-rot",   "()",       "Returns players rotation",                                       wwlnfPlayerVel);
-	lAddNativeFunc(c,"player-vel",   "()",       "Returns players velocity",                                       wwlnfPlayerRot);
-	lAddNativeFunc(c,"player-name!", "(s)",      "Sets players name to s",                                         wwlnfPlayerName);
-	lAddNativeFunc(c,"sound-vol!",   "(f)",      "Sets sound volume to float f",                                   wwlnfSoundVolume);
-	lAddNativeFunc(c,"view-dist!",   "(f)",      "Sets render distance to f blocks",                               wwlnfRenderDistance);
-	lAddNativeFunc(c,"mouse-sens!",  "(f)",      "Sets the mouse sensitivity to f",                                wwlnfMouseSensitivity);
-	lAddNativeFunc(c,"server-add!",  "(name ip)","Adds name ip to server list",                                    wwlnfServerAdd);
-	lAddNativeFunc(c,"third-person!","(b)",      "Sets third person view to b",                                    wwlnfThirdPerson);
-	lAddNativeFunc(c,"fullscreen!",  "(b)",      "Sets fullscreen to b",                                           wwlnfFullscreen);
-	lAddNativeFunc(c,"save-options", "()",       "Save options to disk",                                           wwlnfSaveOptions);
-	lAddNativeFunc(c,"debug-info!",  "(b)",      "Sets debug info view to b",                                      wwlnfDebugInfo);
-	lAddNativeFunc(c,"send-message", "(s)",      "Sends string s as a chat message",                               wwlnfSendMessage);
-	lAddNativeFunc(c,"console-print","(s)",      "Prints string s to the REPL",                                    wwlnfConsolePrint);
-	lAddNativeFunc(c,"sfx-play",     "(s &vol &pos)","Plays SFX s with volume &vol as if emitting from &pos.",     wwlnfSfxPlay);
+	lAddNativeFunc(c,"s",              "(...body)",    "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
+	lAddNativeFunc(c,"player-pos",     "()",           "Returns players position",                                       wwlnfPlayerPos);
+	lAddNativeFunc(c,"player-rot",     "()",           "Returns players rotation",                                       wwlnfPlayerVel);
+	lAddNativeFunc(c,"player-vel",     "()",           "Returns players velocity",                                       wwlnfPlayerRot);
+	lAddNativeFunc(c,"player-name!",   "(s)",          "Sets players name to s",                                         wwlnfPlayerName);
+	lAddNativeFunc(c,"sound-vol!",     "(f)",          "Sets sound volume to float f",                                   wwlnfSoundVolume);
+	lAddNativeFunc(c,"view-dist!",     "(f)",          "Sets render distance to f blocks",                               wwlnfRenderDistance);
+	lAddNativeFunc(c,"mouse-sens!",    "(f)",          "Sets the mouse sensitivity to f",                                wwlnfMouseSensitivity);
+	lAddNativeFunc(c,"server-add!",    "(name ip)",    "Adds name ip to server list",                                    wwlnfServerAdd);
+	lAddNativeFunc(c,"third-person!",  "(b)",          "Sets third person view to b",                                    wwlnfThirdPerson);
+	lAddNativeFunc(c,"fullscreen!",    "(b)",          "Sets fullscreen to b",                                           wwlnfFullscreen);
+	lAddNativeFunc(c,"save-options",   "()",           "Save options to disk",                                           wwlnfSaveOptions);
+	lAddNativeFunc(c,"debug-info!",    "(b)",          "Sets debug info view to b",                                      wwlnfDebugInfo);
+	lAddNativeFunc(c,"cons-mode!",     "(b)",          "Sets cons-mode to b if passed, always returns the current state",wwlnfConsMode);
+	lAddNativeFunc(c,"no-clip!",       "(b)",          "Sets no clip to b if passed, always returns the current state",  wwlnfNoClip);
+	lAddNativeFunc(c,"send-message",   "(s)",          "Sends string s as a chat message",                               wwlnfSendMessage);
+	lAddNativeFunc(c,"console-print",  "(s)",          "Prints string s to the REPL",                                    wwlnfConsolePrint);
+	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)","Plays SFX s with volume &vol as if emitting from &pos.",         wwlnfSfxPlay);
+	lAddNativeFunc(c,"screenshot",     "()",           "Takes a screeshot",                                              wwlnfScreenshot);
+	lAddNativeFunc(c,"fire-hook",      "()",           "Fires the players Grappling hook, or retracts it if fired",      wwlnfFireHook);
+	lAddNativeFunc(c,"inv-active-slot","(i)",          "Sets the players active item to i",                              wwlnfInvActiveSlot);
 }
 
 void lispInit(){

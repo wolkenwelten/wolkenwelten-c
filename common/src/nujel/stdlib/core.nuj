@@ -134,9 +134,3 @@
 	(cond ((nil? ...l) 0)
 	      ((nil? (cdr ...l)) (car ...l))
 	      (#t (max-iter (car ...l) (cdr ...l))))))
-
-(define odd? (λ (a) "Predicate that returns #t if a is odd"
-	(= (% (int a) 2) 1)))
-
-(define even? (λ (a) "Predicate that returns #t if a is even"
-	(= (% (int a) 2) 0)))

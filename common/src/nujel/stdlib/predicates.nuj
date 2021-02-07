@@ -24,3 +24,9 @@
 	(cond ((nil? l) #t)
 	      ((not (pred (car l))) #f)
 	      (#t (for-all? (cdr l) pred)))))
+
+(define odd? (λ (a) "Predicate that returns #t if a is odd"
+	(= (% (int a) 2) 1)))
+
+(define even? (λ (a) "Predicate that returns #t if a is even"
+	(= (% (int a) 2) 0)))
