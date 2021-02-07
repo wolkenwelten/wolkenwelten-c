@@ -376,6 +376,11 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"CONS Mode");
 	}
 
+	guim->sx   = screenWidth-112;
+	guim->sy   = 32;
+	textMeshPrintf(guim,"FPS %s%3.0f\n",colorSignalHigh(20,40,59,curFPS),curFPS);
+	guim->fgc  = colorPalette[15];
+
 	guim->sy  += 16;
 	guim->sx   = screenWidth;
 	guim->size = 2;
