@@ -191,6 +191,34 @@ lVal *lValCString(const char *c){
 	return t;
 }
 
+static void lAddPlatformVars(lClosure *c){
+	#if defined(__HAIKU__)
+	lDefineVal(c, "OS", lConst(lValString("Haiku")));
+	#elif defined(__APPLE__)
+	lDefineVal(c, "OS", lConst(lValString("Macos")));
+	#elif defined(__EMSCRIPTEN__)
+	lDefineVal(c, "OS", lConst(lValString("Emscripten")));
+	#elif defined(__MINGW32__)
+	lDefineVal(c, "OS", lConst(lValString("Windows")));
+	#elif defined(__linux__))
+	lDefineVal(c, "OS", lConst(lValString("Linux")));
+	#else
+	lDefineVal(c, "OS", lConst(lValString("*nix")));
+	#endif
+
+	#if defined(__arm__)
+	lDefineVal(c, "ARCH", lConst(lValString("armv7l")));
+	#elif defined(__aarch64__)
+	lDefineVal(c, "ARCH", lConst(lValString("aarch64")));
+	#elif defined(__x86_64__)
+	lDefineVal(c, "ARCH", lConst(lValString("x86_64")));
+	#elif defined(__EMSCRIPTEN__)
+	lDefineVal(c, "ARCH", lConst(lValString("wasm")));
+	#else
+	lDefineVal(c, "ARCH", lConst(lValString("unknown")));
+	#endif
+}
+
 lVal *lValAlloc(){
 	if(lValFFree == NULL){
 		lPrintError("lVal OOM\n");
@@ -850,6 +878,7 @@ lClosure *lClosureNewRoot(){
 	c->flags |= lfNoGC;
 	lAddCoreFuncs(c);
 	lEval(c,lWrap(lRead((const char *)src_tmp_stdlib_nuj_data)));
+	lAddPlatformVars(c);
 	return c;
 }
 

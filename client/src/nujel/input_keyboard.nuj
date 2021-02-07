@@ -61,7 +61,7 @@
 (arr-set! input-keydown key-f1  (lambda (code) (third-person! #f) (save-options)))
 (arr-set! input-keydown key-f3  (lambda (code) (third-person! #t) (save-options)))
 (arr-set! input-keydown key-f10 (lambda (code) (wire-frame! (not (wire-frame!)))))
-(arr-set! input-keydown key-f11 (lambda (code) (fullscreen! (not (fullscreen!))) (save-options)))
+(unless (eq? OS "Emscripten") (arr-set! input-keydown key-f11 (lambda (code) (fullscreen! (not (fullscreen!))) (save-options))))
 
 (define inv-active-kh (lambda (code) "Sets the players active item depending on the keycode passed" (inv-active-slot (- code 30))))
 (arr-set! input-keydown key-1 inv-active-kh)
