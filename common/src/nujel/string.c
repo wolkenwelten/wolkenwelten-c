@@ -148,9 +148,11 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 	case ltArray: {
 		t = snprintf(cur,bufEnd-cur,"#(");
 		if(t > 0){cur += t;}
-		for(int i=0;i<v->vArr->length;i++){
-			cur = lSWriteVal(v->vArr->data[i],cur,bufEnd);
-			if(i < (v->vArr->length-1)){*cur++ = ' ';}
+		if(v->vArr->data != NULL){
+			for(int i=0;i<v->vArr->length;i++){
+				cur = lSWriteVal(v->vArr->data[i],cur,bufEnd);
+				if(i < (v->vArr->length-1)){*cur++ = ' ';}
+			}
 		}
 		t = snprintf(cur,bufEnd-cur,")");
 		break; }
@@ -255,9 +257,11 @@ char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
 	case ltArray: {
 		t = snprintf(cur,bufEnd-cur,"#(");
 		if(t > 0){cur += t;}
-		for(int i=0;i<v->vArr->length;i++){
-			cur = lSDisplayVal(v->vArr->data[i],cur,bufEnd);
-			if(i < (v->vArr->length-1)){*cur++ = ' ';}
+		if(v->vArr->data != NULL){
+			for(int i=0;i<v->vArr->length;i++){
+				cur = lSDisplayVal(v->vArr->data[i],cur,bufEnd);
+				if(i < (v->vArr->length-1)){*cur++ = ' ';}
+			}
 		}
 		t = snprintf(cur,bufEnd-cur,")");
 		break; }

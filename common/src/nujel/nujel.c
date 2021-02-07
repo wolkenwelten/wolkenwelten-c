@@ -955,6 +955,7 @@ static void lClosureGCMark(lClosure *c){
 
 static void lArrayGCMark(lArray *v){
 	if((v == NULL) || (v->nextFree != NULL)){return;}
+	v->flags |= lfMarked;
 	for(int i=0;i<v->length;i++){
 		lValGCMark(v->data[i]);
 	}
