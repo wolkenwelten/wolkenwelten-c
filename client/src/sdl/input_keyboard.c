@@ -172,7 +172,7 @@ void keyboardEventHandler(const SDL_Event *e){
 	}
 
 	if(e->type == SDL_KEYDOWN){
-		lispKeyDown(e->key.keysym.scancode);
+		if(!textInputActive()){lispKeyDown(e->key.keysym.scancode);}
 		switch(e->key.keysym.scancode){
 		case SDL_SCANCODE_UP:
 		case SDL_SCANCODE_W:
