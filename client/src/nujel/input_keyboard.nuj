@@ -38,12 +38,30 @@
 (define key-9 38)
 (define key-0 39)
 
+
+(define key-f1    58)
+(define key-f2    59)
+(define key-f3    60)
+(define key-f4    61)
+(define key-f5    62)
+(define key-f6    63)
+(define key-f7    64)
+(define key-f8    65)
+(define key-f9    66)
+(define key-f10   67)
+(define key-f11   68)
+(define key-f12   69)
 (define key-print 70)
 
 (arr-set! input-keydown key-c (lambda (code) (cons-mode!  (not (cons-mode!)))))
 (arr-set! input-keydown key-e (lambda (code) (fire-hook)))
 (arr-set! input-keydown key-m (lambda (code) (debug-info! (not (debug-info!)))))
 (arr-set! input-keydown key-n (lambda (code) (no-clip!    (not (no-clip!)))))
+
+(arr-set! input-keydown key-f1  (lambda (code) (third-person! #f) (save-options)))
+(arr-set! input-keydown key-f3  (lambda (code) (third-person! #t) (save-options)))
+(arr-set! input-keydown key-f10 (lambda (code) (wire-frame! (not (wire-frame!)))))
+(arr-set! input-keydown key-f11 (lambda (code) (fullscreen! (not (fullscreen!))) (save-options)))
 
 (define inv-active-kh (lambda (code) "Sets the players active item depending on the keycode passed" (inv-active-slot (- code 30))))
 (arr-set! input-keydown key-1 inv-active-kh)

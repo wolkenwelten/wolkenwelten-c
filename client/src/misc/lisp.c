@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "lisp.h"
 
 #include "../main.h"
 #include "../game/character.h"
 #include "../gfx/gfx.h"
+#include "../gfx/texture.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../gui/lispInput.h"
@@ -115,18 +115,18 @@ static lVal *wwlnfMouseSensitivity(lClosure *c, lVal *v){
 
 static lVal *wwlnfThirdPerson(lClosure *c, lVal *v){
 	if(v != NULL){
-		lVal *t = lnfInt(c,lEval(c,v));
-		optionThirdPerson = t->vInt != 0;
+		lVal *t = lnfBool(c,lEval(c,v));
+		optionThirdPerson = t->vBool;
 	}
 	return lValBool(optionThirdPerson);
 }
 
 static lVal *wwlnfFullscreen(lClosure *c, lVal *v){
 	if(v != NULL){
-		lVal *t = lnfInt(c,lEval(c,v));
-		setFullscreen(t->vInt != 0);
+		lVal *t = lnfBool(c,lEval(c,v));
+		setFullscreen(t->vBool);
 	}
-	return lValBool(optionThirdPerson);
+	return lValBool(optionFullscreen);
 }
 
 static lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
@@ -159,6 +159,15 @@ static lVal *wwlnfNoClip(lClosure *c, lVal *v){
 		}
 	}
 	return lValBool(player->flags & CHAR_NOCLIP);
+}
+
+static lVal *wwlnfWireFrame(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfBool(c,lEval(c,v));
+		optionWireframe = t->vBool;
+		initGL();
+	}
+	return lValBool(optionWireframe);
 }
 
 static lVal *wwlnfScreenshot(lClosure *c, lVal *v){
@@ -218,7 +227,6 @@ static lVal *wwlnfFireHook(lClosure *c, lVal *v){
 	return NULL;
 }
 
-
 static lVal *wwlnfInvActiveSlot(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfInt(c,lEval(c,v));
@@ -272,6 +280,20 @@ static lVal *wwlnfSfxPlay(lClosure *c, lVal *v){
 	return lValBool(true);
 }
 
+static lVal *wwlnfReloadTextures(lClosure *c, lVal *v){
+	(void)v;
+	(void)c;
+	textureReload();
+	return NULL;
+}
+
+static lVal *wwlnfResetWorstFrame(lClosure *c, lVal *v){
+	(void)v;
+	(void)c;
+	worstFrame = 0;
+	return NULL;
+}
+
 void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",    "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"player-pos",     "()",           "Returns players position",                                       wwlnfPlayerPos);
@@ -285,9 +307,12 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"third-person!",  "(b)",          "Sets third person view to b",                                    wwlnfThirdPerson);
 	lAddNativeFunc(c,"fullscreen!",    "(b)",          "Sets fullscreen to b",                                           wwlnfFullscreen);
 	lAddNativeFunc(c,"save-options",   "()",           "Save options to disk",                                           wwlnfSaveOptions);
+	lAddNativeFunc(c,"texture-reload", "()",           "Reloads all textures from disk",                                 wwlnfReloadTextures);
+	lAddNativeFunc(c,"reset-worst-f",  "()",           "Resets the worst frame counter",                                 wwlnfResetWorstFrame);
 	lAddNativeFunc(c,"debug-info!",    "(b)",          "Sets debug info view to b",                                      wwlnfDebugInfo);
 	lAddNativeFunc(c,"cons-mode!",     "(b)",          "Sets cons-mode to b if passed, always returns the current state",wwlnfConsMode);
 	lAddNativeFunc(c,"no-clip!",       "(b)",          "Sets no clip to b if passed, always returns the current state",  wwlnfNoClip);
+	lAddNativeFunc(c,"wire-frame!",    "(b)",          "Sets wireframe mode to b, always returns the current state",     wwlnfWireFrame);
 	lAddNativeFunc(c,"send-message",   "(s)",          "Sends string s as a chat message",                               wwlnfSendMessage);
 	lAddNativeFunc(c,"console-print",  "(s)",          "Prints string s to the REPL",                                    wwlnfConsolePrint);
 	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)","Plays SFX s with volume &vol as if emitting from &pos.",         wwlnfSfxPlay);
