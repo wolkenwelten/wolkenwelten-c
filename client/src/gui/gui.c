@@ -389,7 +389,7 @@ void drawDebuginfo(){
 		if(i == (uint)playerID){continue;}
 		if(cname == NULL){continue;}
 		guim->sx = screenWidth;
-		guim->sy = 32+(i*42);
+		guim->sy = 64+(i*42);
 		textMeshPrintfRA(guim,"%s",cname);
 		drawSingleHealthbar(characterGetPlayerHP(i),20,screenWidth-96,guim->sy+22,14,false);
 		drawPlayerOverlay(i);
