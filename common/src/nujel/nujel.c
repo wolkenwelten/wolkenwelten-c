@@ -200,7 +200,7 @@ static void lAddPlatformVars(lClosure *c){
 	lDefineVal(c, "OS", lConst(lValString("Emscripten")));
 	#elif defined(__MINGW32__)
 	lDefineVal(c, "OS", lConst(lValString("Windows")));
-	#elif defined(__linux__))
+	#elif defined(__linux__)
 	lDefineVal(c, "OS", lConst(lValString("Linux")));
 	#else
 	lDefineVal(c, "OS", lConst(lValString("*nix")));
