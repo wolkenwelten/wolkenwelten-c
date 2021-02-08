@@ -277,7 +277,7 @@ void characterHit(character *c){
 	iteration--;
 
 	const vec pos = vecAdd(c->pos,vecDegToVec(c->rot));
-	const being source = characterGetBeing(c);
+	const being source = beingCharacter(playerID);
 	characterHitCheck(pos,2.f,damageDispatch(itm),2,iteration, source);
 	animalHitCheck   (pos,2.f,damageDispatch(itm),2,iteration, source);
 
@@ -977,11 +977,11 @@ vec characterGetPlayerDist(uint i){
 int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 iteration, being source){
 	int hits = 0;
 	for(int i=0;i<32;i++){
-		if(playerList[i] == player)          {continue;}
 		if(playerList[i] == NULL  )          {continue;}
 		if(playerList[i]->temp == iteration) {continue;}
 		if(beingCharacter(i) == source)      {continue;}
 		vec dis = vecSub(pos,playerList[i]->pos);
+
 		if(vecDot(dis,dis) < mdd){
 			msgBeingDamage(0,damage,cause,1.f,beingCharacter(i),0,pos);
 			playerList[i]->temp = iteration;

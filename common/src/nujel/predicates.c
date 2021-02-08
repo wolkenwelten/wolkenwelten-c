@@ -140,3 +140,13 @@ lVal *lnfPairPred(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrV(v));
 	return lValBool((t != NULL) && (t->type == ltPair));
 }
+
+lVal *lnfLambdaPred(lClosure *c, lVal *v){
+	lVal *t = lEval(c,lCarOrV(v));
+	return lValBool((t != NULL) && (t->type == ltLambda));
+}
+
+lVal *lnfNativeFuncPred(lClosure *c, lVal *v){
+	lVal *t = lEval(c,lCarOrV(v));
+	return lValBool((t != NULL) && (t->type == ltNativeFunc));
+}

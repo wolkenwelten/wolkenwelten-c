@@ -23,6 +23,7 @@
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../gui/lispInput.h"
+#include "../gui/textInput.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
 #include "../sdl/sdl.h"
@@ -294,8 +295,15 @@ static lVal *wwlnfResetWorstFrame(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfTextInputFocusPred(lClosure *c, lVal *v){
+	(void)v;
+	(void)c;
+	return lValBool(textInputActive());
+}
+
 void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",    "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
+	lAddNativeFunc(c,"text-focus?",    "()",           "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
 	lAddNativeFunc(c,"player-pos",     "()",           "Returns players position",                                       wwlnfPlayerPos);
 	lAddNativeFunc(c,"player-rot",     "()",           "Returns players rotation",                                       wwlnfPlayerVel);
 	lAddNativeFunc(c,"player-vel",     "()",           "Returns players velocity",                                       wwlnfPlayerRot);
