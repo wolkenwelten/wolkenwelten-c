@@ -30,3 +30,6 @@
 
 (define even? (λ (a) "Predicate that returns #t if a is even"
 	(= (% (int a) 2) 0)))
+
+(define procedure? (λ (a) "Returns #t if a is a native or lisp function"
+	(or (lambda? a) (native? a))))
