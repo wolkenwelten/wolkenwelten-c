@@ -860,14 +860,15 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"str->sym",      "(s)",             "Converts string s to a symbol",                                                           lnfStrSym);
 	lAddNativeFunc(c,"sym->str",      "(s)",             "Converts symbol s to a string",                                                           lnfSymStr);
 
-	lAddNativeFunc(c,"int?",   "(a)","#t if a is of type int",   lnfIntPred);
-	lAddNativeFunc(c,"float?", "(a)","#t if a is of type float", lnfFloatPred);
-	lAddNativeFunc(c,"vec?",   "(a)","#t if a is of type vec",   lnfVecPred);
-	lAddNativeFunc(c,"bool?",  "(a)","#t if a is of type bool",  lnfBoolPred);
-	lAddNativeFunc(c,"nil?",   "(a)","#t if a is of type nil",   lnfNilPred);
-	lAddNativeFunc(c,"inf?",   "(a)","#t if a is of type inf",   lnfInfPred);
-	lAddNativeFunc(c,"pair?",  "(a)","#t if a is of type pair",  lnfPairPred);
-	lAddNativeFunc(c,"string?","(a)","#t if a is of type string",lnfStringPred);
+	lAddNativeFunc(c,"int?",    "(a)","#t if a is of type int",   lnfIntPred);
+	lAddNativeFunc(c,"float?",  "(a)","#t if a is of type float", lnfFloatPred);
+	lAddNativeFunc(c,"vec?",    "(a)","#t if a is of type vec",   lnfVecPred);
+	lAddNativeFunc(c,"bool?",   "(a)","#t if a is of type bool",  lnfBoolPred);
+	lAddNativeFunc(c,"boolean?","(a)","#t if a is of type bool",  lnfBoolPred);
+	lAddNativeFunc(c,"nil?",    "(a)","#t if a is of type nil",   lnfNilPred);
+	lAddNativeFunc(c,"inf?",    "(a)","#t if a is of type inf",   lnfInfPred);
+	lAddNativeFunc(c,"pair?",   "(a)","#t if a is of type pair",  lnfPairPred);
+	lAddNativeFunc(c,"string?", "(a)","#t if a is of type string",lnfStringPred);
 
 	lAddNativeFunc(c,"lambda?","(a)","#t if a is of type lambda",lnfLambdaPred);
 	lAddNativeFunc(c,"native?","(a)","#t if a is of type cfn",   lnfNativeFuncPred);
