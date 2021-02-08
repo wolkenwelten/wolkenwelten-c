@@ -94,10 +94,15 @@
 (define delete (λ (e l) "Returns a filtered list l with all elements equal to e omitted"
 	(filter (λ (a) (not (eq? a e))) l)))
 
+(define arg-list (λ (f) "Returns the Argument list of f which can be a Native Function or a Lambda"
+	(cond ((lambda? f) (reduce cat (map (λ (a) (cat " " (car a))) (cl-data f))))
+	      ((native? f) (reduce cat (map (λ (a) (cat " " a)) (car (cl-data f)))))
+	      (#t ""))))
+
 (define describe (λ (a) "Returns the DocString to its argument, if available"
 	(cond ((not (string? a)) "Please quote the symbol in question, like (describe \"help\")")
 	      (#t (let ((ds (car (cl-text (resolve (str->sym a)))))
-	      (args (reduce cat (map (λ (a) (cat " " (car a))) (cl-data (resolve (str->sym a))))))
+	      (args (arg-list (resolve (str->sym a))))
 	      (fn (cat a)))
 		(cat "(" fn args ") - " (if (string? ds) ds "No DocString found")))))))
 

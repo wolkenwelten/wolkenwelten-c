@@ -477,6 +477,7 @@ static lVal *lnfClText(lClosure *c, lVal *v){
 static lVal *lnfClData(lClosure *c, lVal *v){
 	if((v == NULL) || (v->type != ltPair)){return NULL;}
 	lVal *t = lEval(c,v->vList.car);
+	if(t == NULL){return NULL;}
 	if(t->type == ltLambda){
 		return t->vLambda->data;
 	}else if(t->type == ltNativeFunc){
@@ -757,7 +758,8 @@ void lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *
 		lPrintError("Error adding NFunc %s\n",sym);
 		return;
 	}
-	var->vList.car = lValNativeFunc(func,lRead(args),lValString(doc));
+	lVal *lArgs = lRead(args);
+	var->vList.car = lValNativeFunc(func,lArgs,lValString(doc));
 }
 
 static void lAddCoreFuncs(lClosure *c){
@@ -866,6 +868,9 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"inf?",   "(a)","#t if a is of type inf",   lnfInfPred);
 	lAddNativeFunc(c,"pair?",  "(a)","#t if a is of type pair",  lnfPairPred);
 	lAddNativeFunc(c,"string?","(a)","#t if a is of type string",lnfStringPred);
+
+	lAddNativeFunc(c,"lambda?","(a)","#t if a is of type lambda",lnfLambdaPred);
+	lAddNativeFunc(c,"native?","(a)","#t if a is of type cfn",   lnfNativeFuncPred);
 
 	lDefineVal(c,"π",  lConst(lValFloat(PI)));
 	lDefineVal(c,"PI", lConst(lValFloat(PI)));
