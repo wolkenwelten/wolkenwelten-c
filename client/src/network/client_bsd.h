@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/wait.h>
@@ -28,6 +27,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <string.h>
 
 bool signalHandlerBound = false;
 int serverSocket        = 0;
@@ -58,22 +58,32 @@ bool fileExists(const char *fn){
 		return NULL;
 	}
 #else
-	const char *getServerExecutablePath(){
-		static char *serverPath = NULL;
-		char *serverPaths[4] = {
-			"wolkenwelten-server",
-			"/bin/wolkenwelten-server",
-			"/usr/bin/wolkenwelten-server",
-			"/usr/local/bin/wolkenwelten-server",
-		};
-		if(serverPath == NULL){
-			for(int i=0;i<4;++i){
-				if(fileExists(serverPaths[i])){
-					serverPath = serverPaths[i];
-					break;
-				}
-			}
+	char* serverExecName = "wolkenwelten-server";
+	char *getServerExecutablePath(){
+		char* serverPath = NULL;
+		if (access(serverExecName, F_OK) != -1)
+			return serverExecName;
+		
+		char* path = getenv("PATH");
+		if (!path)	// How is this even possible
+			return NULL;
+		
+		char* token = strtok(path, ":");
+		char* tmp = malloc(0);
+		while (token)
+		{
+			tmp = (char*)realloc(tmp, sizeof(char) + 
+								(strlen(token) + strlen(serverExecName) + 2));
+			strcpy(tmp, token);
+			strcat(tmp, "/");
+			strcat(tmp, serverExecName);
+			
+			if (access(tmp, R_OK|X_OK) != -1)
+				break;
+			token = strtok(NULL, ":");
 		}
+		
+		serverPath = tmp;
 		return serverPath;
 	}
 #endif
@@ -81,7 +91,12 @@ bool fileExists(const char *fn){
 void startSingleplayerServer(){
 	char seed[64];
 	char save[64];
-	const char *wolkenweltenServer = getServerExecutablePath();
+	char *wolkenweltenServer = getServerExecutablePath();
+	if (!wolkenweltenServer)
+	{
+		printf("[CLI] Server exectuable not found\n");
+		return;
+	}
 	if(optionWorldSeed == 0){
 		optionWorldSeed = (int)(time(NULL)&0xFFFF);
 	}
@@ -95,6 +110,8 @@ void startSingleplayerServer(){
 	strncpy(serverName,"localhost",sizeof(serverName)-1);
 	serverName[sizeof(serverName)-1]=0;
 	usleep(1000);
+
+	free(wolkenweltenServer);
 }
 
 void closeSingleplayerServer(){

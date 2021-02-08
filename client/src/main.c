@@ -64,10 +64,15 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <signal.h>
 #include <unistd.h>
+#include <dirent.h>
+#include <errno.h>
 #ifdef __EMSCRIPTEN__
 	#include <emscripten.h>
 #endif
@@ -191,7 +196,59 @@ void checkAutostart(){
 	}
 }
 
+// Sets current working directory for game files.
+// Create directories if needed.
+// If the dir argument points to NULL,
+// it will set the CWD as ~/.wolkenwelten/
+static char* getDefaultPath(){
+	// [!!] Uses malloc, must be freed.
+	const char* dir  = "/.wolkenwelten";
+	const char* home = getenv("HOME");
+	if (!home) return NULL;
+	
+	char* result = (char*)malloc(sizeof(char) * 
+			(strlen(home) + strlen(dir) + 1));
+	strcpy(result, home);
+	strcat(result, dir);
+
+	return result;
+}
+
+static void setGameDir( const char* dir ){
+	const char* dirname;
+	char* alloc = NULL;
+	if (!dir){
+		dirname = alloc = getDefaultPath();
+		if (!dirname){
+			printf("[CLI] HOME environment variable not found.\n");
+			return;
+		}
+	} else
+		dirname = dir;
+
+	DIR* gamedir = opendir(dirname);
+
+	if (!gamedir && errno == ENOENT && mkdir(dirname, 0700) == -1){
+		perror("mkdir");
+		return;
+	} else if (!gamedir && errno != ENOENT) {
+		perror("opendir");
+		return;
+	}
+	closedir(gamedir);
+
+	if (chdir(dirname) == -1) {
+		perror("chdir");
+		return;
+	}
+	if (alloc)
+		free(alloc);
+}
+
 int main( int argc, char* argv[] ){
+	// Setting the dir
+	setGameDir(getenv("WOLKENWELTEN_DIR"));
+
 	clientGetName();
 	lispInit();
 	initOptions(argc,argv);
