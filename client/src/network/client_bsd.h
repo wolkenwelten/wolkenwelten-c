@@ -53,15 +53,14 @@ void startSingleplayerServer(){
 	if(optionWorldSeed == 0){
 		optionWorldSeed = (int)(time(NULL)&0xFFFF);
 	}
-	snprintf(save,sizeof(seed)-1,"-worldSeed=%i",optionWorldSeed);
-	snprintf(seed,sizeof(seed)-1,"-savegame=%s",optionSavegame);
+	snprintf(save,sizeof(seed),"-worldSeed=%i",optionWorldSeed);
+	snprintf(seed,sizeof(seed),"-savegame=%s",optionSavegame);
 	singlePlayerPID = fork();
 	if (singlePlayerPID == 0){
 		execl(wolkenweltenServer,"wolkenwelten-server",seed,"-singleplayer",save, (char *)NULL);
 		return;
 	}
-	strncpy(serverName,"localhost",sizeof(serverName)-1);
-	serverName[sizeof(serverName)-1]=0;
+	strncpy(serverName,"localhost",sizeof(serverName));
 	usleep(1000);
 }
 

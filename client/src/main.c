@@ -59,6 +59,7 @@
 #include "voxel/bigchungus.h"
 #include "voxel/chungus.h"
 
+#include "../../common/src/misc/test.h"
 #include "../../common/src/misc/misc.h"
 #include "../../common/src/mods/mods.h"
 
@@ -197,6 +198,7 @@ void checkAutostart(){
 }
 
 int main( int argc, char* argv[] ){
+	selfTest();
 	clientGetName();
 	clientGetServerExecutable();
 	lispInit();

@@ -192,17 +192,15 @@ void rmDirR(const char *name){
 	if(dp == NULL){return;}
 	struct dirent *de = NULL;
 	while((de = readdir(dp)) != NULL){
+		char buf[512];
 		if(de->d_name[0] == '.'){continue;}
-		char *buf = malloc(512);
-		snprintf(buf,512,"%s/%s",name,de->d_name);
-		buf[511]=0;
+		snprintf(buf,sizeof(buf),"%s/%s",name,de->d_name);
 		if(isDir(buf)){
 			rmDirR(buf);
 			rmdir(buf);
 		}else{
 			unlink(buf);
 		}
-		free(buf);
 	}
 	closedir(dp);
 	rmdir(name);
@@ -231,7 +229,6 @@ void changeToDataDir(){
 	const char* home = getenv("HOME");
 	if(!home){return;}
 	#endif
-	printf("Home: %s\n",home);
 
 	if(snprintf(buf,sizeof(buf),"%s/%s",home,dir) <= 0){ // snprintf instead of strcpy/strcat
 		fprintf(stderr,"Can't create dataDirBuffer, $HOME too long?\n");

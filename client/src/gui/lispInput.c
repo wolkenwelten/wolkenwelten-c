@@ -98,7 +98,6 @@ void lispPanelToggle(){
 
 void handlerLispSubmit(widget *wid){
 	char buf[8192];
-	int l;
 	if(lispInput->vals[0] == 0){return;}
 	if((lispAutoCompleteLen > 0) && (lispAutoCompleteSelection >= 0)){
 		strRemove(wid->vals,256,lispAutoCompleteStart,lispAutoCompleteEnd);
@@ -111,14 +110,11 @@ void handlerLispSubmit(widget *wid){
 		lispAutoCompleteSelection = -1;
 		return;
 	}
-	l = snprintf(buf,sizeof(buf)-1,"> %s",wid->vals);
-	buf[l] = 0;
+	snprintf(buf,sizeof(buf),"> %s",wid->vals);
 	widgetAddEntry(lispLog, buf);
 	const char *result = lispEval(wid->vals);
-	l = snprintf(buf,sizeof(buf)-1,"  %s",result);
-	buf[l] = 0;
+	snprintf(buf,sizeof(buf),"  %s",result);
 	widgetAddEntry(lispLog, buf);
-	wid->vals[0] = 0;
 	lispHistoryActive = -1;
 	textInputFocus(wid);
 }
@@ -258,7 +254,6 @@ void lispPanelCheckAutoCompleteDescription(){
 
 	char sBuf[128];
 	snprintf(sBuf,sizeof(sBuf),"(describe \"%s\")",lispAutoCompleteDescriptionSymbol.c);
-	sBuf[sizeof(sBuf)-1] = 0;
 	const char *str = lispEval(sBuf);
 	snprintf(lispAutoCompleteDescription,sizeof(lispAutoCompleteDescription),"%s",str);
 	lispAutoCompleteDescription[sizeof(lispAutoCompleteDescription)-1]=0;

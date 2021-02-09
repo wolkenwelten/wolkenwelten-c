@@ -61,7 +61,7 @@ void lPrintError(const char *format, ...){
 
 lVal *lispSEvalSym(u8 id){
 	static char buf[8];
-	snprintf(buf,sizeof(buf)-1,"SEv%03u",id);
+	snprintf(buf,sizeof(buf),"SEv%03u",id);
 	return lValSym(buf);
 }
 

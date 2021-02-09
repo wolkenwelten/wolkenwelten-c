@@ -86,7 +86,7 @@ void initSDL(){
 	int desktopHeight = optionWindowHeight;
 	char windowTitle[64];
 
-	snprintf(windowTitle,sizeof(windowTitle)-1,"%s - WolkenWelten",playerName);
+	snprintf(windowTitle,sizeof(windowTitle),"%s - WolkenWelten",playerName);
 
 	SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
 	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS,"0");

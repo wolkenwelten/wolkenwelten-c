@@ -351,7 +351,7 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtMineBlock:
 		blockMiningDropItemsPos(p->v.u16[0],p->v.u16[1],p->v.u16[2],worldGetB(p->v.u16[0],p->v.u16[1],p->v.u16[2]));
 		worldSetB(p->v.u16[0],p->v.u16[1],p->v.u16[2],0);
-		//sendToAllExcept(c,p,pLen+4);
+		sendToAllExcept(c,p,pLen+4);
 		break;
 	case msgtGoodbye:
 		errno=0;
@@ -424,7 +424,6 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtChunkData :
 	case msgtSetPlayerCount:
 	case msgtPlayerPickupItem:
-	case msgtItemDropDel:
 	case msgtExplode:
 	case msgtGrenadeUpdate:
 	case msgtBlockMiningUpdate:
@@ -435,7 +434,6 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtCharacterName:
 	case msgtCharacterSetData:
 	case msgtAnimalSync:
-	case msgtAnimalDmg:
 	case msgtFxAnimalDied:
 	case msgtWeatherRecvUpdate:
 	case msgtRainRecvUpdate:

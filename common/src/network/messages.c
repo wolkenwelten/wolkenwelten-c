@@ -476,8 +476,6 @@ const char *networkGetMessageName(uint i){
 		return "setPlayerCount";
 	case msgtPlayerPickupItem:
 		return "playerPickupItem";
-	case msgtItemDropDel:
-		return "itemDropDel";
 	case msgtExplode:
 		return "explode";
 	case msgtGrenadeUpdate:
@@ -498,8 +496,6 @@ const char *networkGetMessageName(uint i){
 		return "animalSync";
 	case msgtDirtyChunk:
 		return "dirtyChunk";
-	case msgtAnimalDmg:
-		return "animalDmg";
 	case msgtPingPong:
 		return "pingPong";
 	case msgtFxAnimalDied:

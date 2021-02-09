@@ -36,7 +36,6 @@ bool wasmInFlight = false;
 
 void clientGetName(){
 	snprintf(playerName,sizeof(playerName),"WASM_Player");
-	playerName[sizeof(playerName)-1]=0;
 }
 
 bool fileExists(const char *fn){

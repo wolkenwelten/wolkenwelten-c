@@ -84,19 +84,11 @@ int checkString(const char *a, const char *b){
 	return 0;
 }
 
-#include "../../../common/src/game/time.h"
-
 void parseOptions(int argc,const char *argv[]){
 	int l;
 	for(int i=0;i<argc;i++){
 		if(argv[i][0] != '-'){continue;}
 
-
-		if((l = checkString(argv[i]+1,"debugTime"))){
-			printDebugtime();
-			exit(0);
-			return;
-		}
 		if((l = checkString(argv[i]+1,"version"))){
 			printVersion();
 			exit(0);
@@ -113,10 +105,6 @@ void parseOptions(int argc,const char *argv[]){
 		if((l = checkString(argv[i]+1,"savegame="))){
 			strncpy(optionSavegame,argv[i]+l,sizeof(optionSavegame)-1);
 			optionSavegame[sizeof(optionSavegame)-1]=0;
-			continue;
-		}
-		if((l = checkString(argv[i]+1,"verbose"))){
-			verbose = true;
 			continue;
 		}
 		if((l = checkString(argv[i]+1,"profileWG"))){
@@ -136,8 +124,7 @@ void sanityCheckOptions(){
 		optionWorldSeed = (int)(time(NULL)&0xFFFF);
 	}
 	if(*optionSavegame == 0){
-		snprintf(optionSavegame,sizeof(optionSavegame)-1,"%04X",optionWorldSeed);
-		optionSavegame[sizeof(optionSavegame)-1]=0;
+		snprintf(optionSavegame,sizeof(optionSavegame),"%04X",optionWorldSeed);
 	}
 	if(optionPort <= 0){
 		optionPort = 6309;

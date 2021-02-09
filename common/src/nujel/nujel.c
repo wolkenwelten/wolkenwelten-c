@@ -550,8 +550,7 @@ static lVal *lnfMem(lClosure *c, lVal *v){
 		if(lStringList[i].nextFree != NULL){continue;}
 		strs++;
 	}
-	snprintf(buf,sizeof(buf)-1,"Vals:%u Closures:%u Arrs:%u Strings:%u",vals,clos,arrs,strs);
-	buf[sizeof(buf)-1]=0;
+	snprintf(buf,sizeof(buf),"Vals:%u Closures:%u Arrs:%u Strings:%u",vals,clos,arrs,strs);
 	fprintf(stderr,"%s\n",buf);
 	return lValString(buf);
 }

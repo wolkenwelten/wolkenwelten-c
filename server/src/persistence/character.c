@@ -83,8 +83,7 @@ static void characterParseDataLine(character *p, const char *line){
 
 static const char *characterFileName(const char *name){
 	static char filename[128];
-	snprintf(filename,sizeof(filename)-1,"save/%s/%s.player",optionSavegame,name);
-	filename[sizeof(filename)-1] = 0;
+	snprintf(filename,sizeof(filename),"save/%s/%s.player",optionSavegame,name);
 	return filename;
 }
 
@@ -132,22 +131,21 @@ void characterSaveData(const character *p, const char *pName){
 	if(*pName == 0){return;}
 
 	b = buf;
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"Position %f %f %f %f %f %f\n",p->pos.x,p->pos.y,p->pos.z,p->rot.yaw,p->rot.pitch,p->rot.roll);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"ActiveItem %i\n",p->activeItem);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"Health %i\n",p->hp);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"Flags %u\n",p->flags);
+	b += snprintf(b,sizeof(buf)-(b-buf),"Position %f %f %f %f %f %f\n",p->pos.x,p->pos.y,p->pos.z,p->rot.yaw,p->rot.pitch,p->rot.roll);
+	b += snprintf(b,sizeof(buf)-(b-buf),"ActiveItem %i\n",p->activeItem);
+	b += snprintf(b,sizeof(buf)-(b-buf),"Health %i\n",p->hp);
+	b += snprintf(b,sizeof(buf)-(b-buf),"Flags %u\n",p->flags);
 
 	for(uint i=0;i<40;i++){
 		if(itemIsEmpty(&p->inventory[i])){continue;}
-		b += snprintf(b,sizeof(buf)-(b-buf+1),"Item %u %u %i\n",i,p->inventory[i].ID,p->inventory[i].amount);
+		b += snprintf(b,sizeof(buf)-(b-buf),"Item %u %u %i\n",i,p->inventory[i].ID,p->inventory[i].amount);
 	}
 	for(uint i=0;i<3;i++){
 		if(itemIsEmpty(&p->equipment[i])){continue;}
-		b += snprintf(b,sizeof(buf)-(b-buf+1),"Equipment %u %u %i\n",i,p->equipment[i].ID,p->equipment[i].amount);
+		b += snprintf(b,sizeof(buf)-(b-buf),"Equipment %u %u %i\n",i,p->equipment[i].ID,p->equipment[i].amount);
 	}
 
 	*b = 0;
-	buf[sizeof(buf)-1]=0;
 	saveFile(characterFileName(pName),buf,strlen(buf));
 }
 

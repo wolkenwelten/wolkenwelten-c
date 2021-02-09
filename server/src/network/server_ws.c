@@ -134,19 +134,11 @@ void serverParseWebSocketHeaderField(uint c,const char *key, const char *val){
 	uint len=0;
 	if(strncmp(key,"Sec-WebSocket-Key",18) != 0){return;}
 	len = snprintf(buf,sizeof(buf),"%s%s",val,"258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
-	printf("Sec-WebSocket-Key = '%s'\nConcat: '%s'\n",val,buf);
 
 	SHA1Init(&ctx);
 	SHA1Update(&ctx,(unsigned char *)buf,len);
 	SHA1Final(webSocketKeyHash,&ctx);
 	b64hash = base64_encode(webSocketKeyHash,20,NULL);
-
-	printf("SHA1 = ");
-	for(int i=0;i<20;i++){
-		printf("%X ",webSocketKeyHash[i]);
-	}
-	printf("\n");
-	printf("B64 = %s\n",b64hash);
 
 	len = snprintf(buf,sizeof(buf),
 		"HTTP/1.1 101 Switching Protocols\r\n"

@@ -106,19 +106,3 @@ float gtimeGetSkyBrightness(uint time){
 	const float v = gtimeGetRawBrightness(time);
 	return MINMAX(0.0f,1.0f,v);
 }
-
-void printDebugtime(){
-	char brightnessBuf[32];
-	for(uint t = 0;t< (1<<20);t+=(1<<15)){
-		uint cb = gtimeGetBrightness(t)*32.f;
-		for(uint i=0;i<31;i++){
-			if(i < cb){
-				brightnessBuf[i] = '*';
-			}else{
-				brightnessBuf[i] = ' ';
-			}
-		}
-		brightnessBuf[31]=0;
-		printf("%s: %s\n",gtimeGetTimeOfDayHRS(t),brightnessBuf);
-	}
-}

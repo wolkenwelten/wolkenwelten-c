@@ -82,7 +82,7 @@ int connectionTries   = 0;
 		static char ret[512];
 		u32 size = sizeof(path);
 		if (_NSGetExecutablePath(path, &size) == 0){
-			snprintf(ret,sizeof(ret)-1,"%s/wolkenwelten-server",dirname(path));
+			snprintf(ret,sizeof(ret),"%s/wolkenwelten-server",dirname(path));
 			return ret;
 		} else {
 			fprintf(stderr,"buffer too small; need size %u\n", size);
@@ -115,7 +115,6 @@ int connectionTries   = 0;
 		for(char *token = strtok(path,":"); token != NULL ; token = strtok(NULL,":")){
 			const int t = snprintf(buf,sizeof(buf),"%s/%s",token,serverExecName);
 			if(t <= 0){continue;}
-			buf[sizeof(buf)-1] = 0;
 			if (access(buf, R_OK|X_OK) >= 0){return buf;}
 		}
 		*buf = 0;
@@ -330,12 +329,10 @@ void clientParsePacket(const packet *p){
 	case msgtRequestSpawnPos:
 	case msgtChungusUnsub:
 	case msgtItemDropNew:
-	case msgtItemDropDel:
 	case msgtItemDropPickup:
 	case msgtGrenadeNew:
 	case msgtBeamblast:
 	case msgtDirtyChunk:
-	case msgtAnimalDmg:
 		fprintf(stderr,"%s[%u] received from server, which should never happen\n",networkGetMessageName(pType),pType);
 		break;
 	}

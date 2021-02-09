@@ -82,23 +82,20 @@ static void bigchungusSafeSaveClient(const bigchungus *c, const character *chara
 
 static const char *chungusGetFilename(chungus *c){
 	static char buf[64];
-	snprintf(buf,sizeof(buf)-1,"save/%s/%02X%02X%02X.chunk",optionSavegame,c->x,c->y,c->z);
-	buf[sizeof(buf)-1] = 0;
+	snprintf(buf,sizeof(buf),"save/%s/%02X%02X%02X.chunk",optionSavegame,c->x,c->y,c->z);
 	return buf;
 }
 
 static const char *savegameFileName(const char *name){
 	static char filename[128];
-	snprintf(filename,sizeof(filename)-1,"save/%s/world.global",name);
-	filename[sizeof(filename)-1] = 0;
+	snprintf(filename,sizeof(filename),"save/%s/world.global",name);
 	return filename;
 }
 
 static void checkValidSavegame(const char *name){
 	static char buf[128];
 	if(!isDir("save")){makeDir("save");}
-	snprintf(buf,sizeof(buf)-1,"save/%.63s",name);
-	buf[sizeof(buf)-1] = 0;
+	snprintf(buf,sizeof(buf),"save/%.120s",name);
 	if(!isDir(buf)){makeDir(buf);}
 }
 
@@ -307,16 +304,15 @@ void savegameSave(){
 	char *b;
 
 	b  = buf;
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"SaveFormat 1\n");
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"WorldSeed %i\n",optionWorldSeed);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"Time %u\n",gtimeGetTime());
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"CloudDensity %u %u\n",cloudDensityMin,cloudGDensityMin);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"Rain %u\n",rainIntensity);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"CloudOffset %f %f %f\n",cloudOff.x,cloudOff.y,cloudOff.z);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"WindVel %f %f %f\n",windVel.x,windVel.y,windVel.z);
-	b += snprintf(b,sizeof(buf)-(b-buf+1),"WindGVel %f %f %f\n",windGVel.x,windGVel.y,windGVel.z);
+	b += snprintf(b,sizeof(buf)-(b-buf),"SaveFormat 1\n");
+	b += snprintf(b,sizeof(buf)-(b-buf),"WorldSeed %i\n",optionWorldSeed);
+	b += snprintf(b,sizeof(buf)-(b-buf),"Time %u\n",gtimeGetTime());
+	b += snprintf(b,sizeof(buf)-(b-buf),"CloudDensity %u %u\n",cloudDensityMin,cloudGDensityMin);
+	b += snprintf(b,sizeof(buf)-(b-buf),"Rain %u\n",rainIntensity);
+	b += snprintf(b,sizeof(buf)-(b-buf),"CloudOffset %f %f %f\n",cloudOff.x,cloudOff.y,cloudOff.z);
+	b += snprintf(b,sizeof(buf)-(b-buf),"WindVel %f %f %f\n",windVel.x,windVel.y,windVel.z);
+	b += snprintf(b,sizeof(buf)-(b-buf),"WindGVel %f %f %f\n",windGVel.x,windGVel.y,windGVel.z);
 
-	buf[sizeof(buf)-1] = 0;
 	saveFile(savegameFileName(optionSavegame),buf,strlen(buf));
 }
 

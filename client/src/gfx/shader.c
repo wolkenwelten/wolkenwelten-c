@@ -74,9 +74,9 @@ void shaderCompile(shader *s){
 	memset(buf,0,sizeof(buf));
 
 	#ifdef WOLKENWELTEN__GL_ES
-	snprintf(buf,sizeof(buf)-1,"#version 300 es\nprecision mediump float;\nprecision mediump int;\n\n%s",s->vss);
+	snprintf(buf,sizeof(buf),"#version 300 es\nprecision mediump float;\nprecision mediump int;\n\n%s",s->vss);
 	#else
-	snprintf(buf,sizeof(buf)-1,"#version 130\n\n%s",s->vss);
+	snprintf(buf,sizeof(buf),"#version 130\n\n%s",s->vss);
 	#endif
 
 
@@ -89,9 +89,9 @@ void shaderCompile(shader *s){
 	memset(buf,0,sizeof(buf));
 
 	#ifdef WOLKENWELTEN__GL_ES
-	snprintf(buf,sizeof(buf)-1,"#version 300 es\nprecision mediump float;\nprecision mediump int;\nprecision lowp sampler2DArray;\n\n%s",s->fss);
+	snprintf(buf,sizeof(buf),"#version 300 es\nprecision mediump float;\nprecision mediump int;\nprecision lowp sampler2DArray;\n\n%s",s->fss);
 	#else
-	snprintf(buf,sizeof(buf)-1,"#version 130\n\n%s",s->fss);
+	snprintf(buf,sizeof(buf),"#version 130\n\n%s",s->fss);
 	#endif
 
 	glShaderSource(s->fsID,1,(const GLchar **)&bufp,NULL);

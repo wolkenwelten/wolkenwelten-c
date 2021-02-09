@@ -17,5 +17,4 @@ const char *gtimeGetTimeOfDayHRS (uint timeCur);
 float       gtimeGetBrightness   (uint time);
 float       gtimeGetSkyBrightness(uint time);
 
-void printDebugtime();
 void gtimeUpdate();

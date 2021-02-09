@@ -64,7 +64,6 @@ static void checkSavegames(){
 	while((de = readdir(dp)) != NULL){
 		if(de->d_name[0] == '.'){continue;}
 		snprintf(savegameName[savegameCount],sizeof(savegameName[0]),"%.31s",de->d_name);
-		savegameName[savegameCount][sizeof(savegameName[0])-1] = 0;
 		if(++savegameCount >= 16){break;}
 	}
 	closedir(dp);
@@ -75,8 +74,7 @@ static void loadSavegame(int i){
 	if(i < 0){return;}
 	if(i >= savegameCount){return;}
 	menuCloseGame();
-	strncpy(optionSavegame,savegameName[i],32);
-	optionSavegame[31] = 0;
+	snprintf(optionSavegame,sizeof(optionSavegame),"%s",savegameName[i]);
 	startSingleplayer();
 }
 
@@ -84,8 +82,7 @@ static void deleteSavegame(int i){
 	static char buf[64];
 	if(i < 0)             {return;}
 	if(i > savegameCount) {return;}
-	snprintf(buf,64,"save/%s",savegameName[i]);
-	buf[63]=0;
+	snprintf(buf,sizeof(buf),"save/%s",savegameName[i]);
 	rmDirR(buf);
 }
 

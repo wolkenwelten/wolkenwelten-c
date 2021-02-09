@@ -41,6 +41,7 @@
 #include "../../common/src/tmp/cto.h"
 #include "../../common/src/misc/misc.h"
 #include "../../common/src/misc/profiling.h"
+#include "../../common/src/misc/test.h"
 #include "../../common/src/mods/mods.h"
 #include "../../common/src/game/blockType.h"
 #include "../../common/src/game/projectile.h"
@@ -190,6 +191,7 @@ static void checkSPQuit(){
 
 #ifndef __EMSCRIPTEN__
 int main( int argc, const char* argv[] ){
+	selfTest();
 	initSignals();
 	initTermColors();
 	initOptions(argc,argv);
