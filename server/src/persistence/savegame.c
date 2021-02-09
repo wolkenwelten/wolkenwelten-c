@@ -183,18 +183,17 @@ void chungusSave(chungus *c){
 	return;
 	#endif
 	if(c == NULL)                                 { return; }
-	if((c->clientsUpdated & ((u64)1 << 31)) != 0) { return; }
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
 
 	u8 *cbuf = saveLoadBuffer;
 	for(int x=0;x<16;x++){
-		for(int y=0;y<16;y++){
-			for(int z=0;z<16;z++){
-				if(c->chunks[x][y][z] == NULL){continue;}
-				cbuf = chunkSave(c->chunks[x][y][z],cbuf);
-			}
-		}
+	for(int y=0;y<16;y++){
+	for(int z=0;z<16;z++){
+		if(c->chunks[x][y][z] == NULL){continue;}
+		cbuf = chunkSave(c->chunks[x][y][z],cbuf);
+	}
+	}
 	}
 	cbuf = itemDropSaveChungus (c,cbuf);
 	cbuf = animalSaveChungus   (c,cbuf);
