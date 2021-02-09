@@ -17,9 +17,9 @@
 
 #include "throwable.h"
 
-#include "entity.h"
+#include "../game/entity.h"
+#include "../network/server.h"
 
-#include <stdio.h>
 void throwableNew(const vec pos, const vec rot, float speed, const item itm, being thrower, i8 damage, u8 flags){
 	throwable *a = throwableAlloc();
 	a->ent       = entityNew(pos,rot);
@@ -31,4 +31,16 @@ void throwableNew(const vec pos, const vec rot, float speed, const item itm, bei
 	a->nextFree  = -1;
 	a->thrower   = thrower;
 	throwableSendUpdate(-1,a - throwableList);
+}
+
+void throwableSyncPlayer(uint c){
+	if(throwableCount == 0){
+		throwableEmptyUpdate(c);
+		return;
+	}
+
+	for(uint i=clients[c].throwableUpdateOffset&0xF;i < throwableCount;i+=0x10){
+		throwableSendUpdate(c,i);
+	}
+	clients[c].throwableUpdateOffset++;
 }

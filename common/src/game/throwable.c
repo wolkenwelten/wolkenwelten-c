@@ -96,6 +96,15 @@ void throwableSendUpdate(int c, uint i){
 	packetQueue(p,msgtThrowableRecvUpdates,12*4,c);
 }
 
+void throwableEmptyUpdate(int c){
+	packet *p = &packetBuffer;
+
+	p->v.u32[ 0] = 0;
+	p->v.u32[ 2] = 0;
+
+	packetQueue(p,msgtThrowableRecvUpdates,12*4,c);
+}
+
 void throwableRecvUpdate(const packet *p){
 	const uint i    = p->v.u16[0];
 	const uint nlen = p->v.u16[1];
@@ -109,7 +118,7 @@ void throwableRecvUpdate(const packet *p){
 			return;
 		}
 		a = &throwableList[i];
-		for(uint ii=nlen-1;ii<throwableCount;ii++){
+		for(uint ii=nlen;ii<throwableCount;ii++){
 			throwableFree(&throwableList[ii]);
 		}
 		throwableCount = nlen;

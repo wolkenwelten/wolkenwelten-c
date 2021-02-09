@@ -249,6 +249,7 @@ void msgUpdatePlayer(uint c){
 	animalSyncPlayer(c);
 	projectileSyncPlayer(c);
 	fireSyncPlayer(c);
+	throwableSyncPlayer(c);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 	clients[c].syncCount++;

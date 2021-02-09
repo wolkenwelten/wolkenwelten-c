@@ -20,6 +20,7 @@ typedef struct {
 	uint fireUpdateOffset;
 	uint waterUpdateOffset;
 	uint projectileUpdateOffset;
+	uint throwableUpdateOffset;
 
 	uint animalUpdateOffset;
 	uint animalPriorityUpdateOffset;

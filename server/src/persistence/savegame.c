@@ -182,7 +182,7 @@ void chungusSave(chungus *c){
 	#ifdef __EMSCRIPTEN__
 	return;
 	#endif
-	if(c == NULL)                                 { return; }
+	if(c == NULL){ return; }
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
 

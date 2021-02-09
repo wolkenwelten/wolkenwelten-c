@@ -196,7 +196,10 @@ void fireUpdateAll(){
 }
 
 void fireSyncPlayer(uint c){
-	if(fireCount == 0){return;}
+	if(fireCount == 0){
+		fireEmptyUpdate(c);
+		return;
+	}
 
 	const int count = 16;
 	const uint max = MIN(fireCount,clients[c].fireUpdateOffset+count);

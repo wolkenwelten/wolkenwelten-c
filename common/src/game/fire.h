@@ -10,6 +10,7 @@ fire *fireGetAtPos     (u16 x,u16 y, u16 z);
 void fireBox           (u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, int strength);
 void fireBoxExtinguish (u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, int strength);
 void fireSendUpdate    (uint c, uint i);
+void fireEmptyUpdate   (uint c);
 
 fire *fireGetByBeing   (being b);
 being fireGetBeing     (const fire *f);

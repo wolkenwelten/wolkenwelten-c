@@ -27,6 +27,10 @@ uint fireCount = 0;
 #include <stdio.h>
 #include <stdlib.h>
 
+void fireEmptyUpdate(uint c){
+	msgFireUpdate(c,0,0,0,0,0,0);
+}
+
 void fireSendUpdate(uint c, uint i){
 	fire *f = &fireList[i];
 	msgFireUpdate(c,i,fireCount,f->x,f->y,f->z,f->strength);

@@ -20,6 +20,7 @@
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../game/throwable.h"
+#include "../voxel/chungus.h"
 #include "../../../common/src/game/item.h"
 
 static void *throwableSave(const throwable *t, void *buf){
@@ -52,6 +53,7 @@ static void *throwableSave(const throwable *t, void *buf){
 	return b+44;
 }
 
+#include <stdio.h>
 const void *throwableLoad(const void *buf){
 	u8    *b = (u8 *)    buf;
 	u16   *s = (u16 *)   buf;
@@ -78,7 +80,10 @@ void *throwableSaveChungus(const chungus *c,void *buf){
 	for(uint i=0;i<throwableCount;i++){
 		if(itemIsEmpty(&throwableList[i].itm))   {continue;}
 		if(throwableList[i].ent == NULL)         {continue;}
-		if(throwableList[i].ent->curChungus != c){continue;}
+		//if(throwableList[i].ent->curChungus != c){continue;}
+		if(c->x != (((int)throwableList[i].ent->pos.x) >> 8)){continue;}
+		if(c->y != (((int)throwableList[i].ent->pos.y) >> 8)){continue;}
+		if(c->z != (((int)throwableList[i].ent->pos.z) >> 8)){continue;}
 		buf = throwableSave(&throwableList[i],buf);
 	}
 	return buf;
