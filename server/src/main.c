@@ -193,6 +193,7 @@ int main( int argc, const char* argv[] ){
 	initSignals();
 	initTermColors();
 	initOptions(argc,argv);
+	changeToDataDir(); // Change to data dir after parsing args so we can add an argument later to set the data dir
 	mainInit();
 
 	printf("%sWolkenwelten",termColors[2]                );

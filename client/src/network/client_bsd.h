@@ -58,42 +58,41 @@ bool fileExists(const char *fn){
 		return NULL;
 	}
 #else
-	char* serverExecName = "wolkenwelten-server";
-	char *getServerExecutablePath(){
-		char* serverPath = NULL;
-		if (access(serverExecName, F_OK) != -1)
-			return serverExecName;
-		
-		char* path = getenv("PATH");
-		if (!path)	// How is this even possible
-			return NULL;
-		
-		char* token = strtok(path, ":");
-		char* tmp = malloc(0);
-		while (token)
-		{
-			tmp = (char*)realloc(tmp, sizeof(char) + 
-								(strlen(token) + strlen(serverExecName) + 2));
-			strcpy(tmp, token);
-			strcat(tmp, "/");
-			strcat(tmp, serverExecName);
-			
-			if (access(tmp, R_OK|X_OK) != -1)
-				break;
-			token = strtok(NULL, ":");
+
+	char *clientGetServerExecutable(){
+		static char buf[512];
+		char cwd[512];
+		if(buf[0] != 0){return buf;} // Already found an executable the last time
+		char* serverExecName = "wolkenwelten-server";
+		getcwd(cwd,sizeof(cwd));
+
+		snprintf(buf,sizeof(buf),"%s/%s",cwd,serverExecName);
+		if(access(buf,R_OK|X_OK) >= 0){
+			return buf;
 		}
-		
-		serverPath = tmp;
-		return serverPath;
+		*buf=0;
+
+		char* path = getenv("PATH");
+		if(!path){
+			return NULL;
+		}
+
+		for(char *token = strtok(path,":"); token != NULL ; token = strtok(NULL,":")){
+			const int t = snprintf(buf,sizeof(buf),"%s/%s",token,serverExecName);
+			if(t <= 0){continue;}
+			buf[sizeof(buf)-1] = 0;
+			if (access(buf, R_OK|X_OK) >= 0){return buf;}
+		}
+		*buf = 0;
+		return buf;
 	}
 #endif
 
 void startSingleplayerServer(){
 	char seed[64];
 	char save[64];
-	char *wolkenweltenServer = getServerExecutablePath();
-	if (!wolkenweltenServer)
-	{
+	char *wolkenweltenServer = clientGetServerExecutable();
+	if (!wolkenweltenServer){
 		printf("[CLI] Server exectuable not found\n");
 		return;
 	}
@@ -110,8 +109,6 @@ void startSingleplayerServer(){
 	strncpy(serverName,"localhost",sizeof(serverName)-1);
 	serverName[sizeof(serverName)-1]=0;
 	usleep(1000);
-
-	free(wolkenweltenServer);
 }
 
 void closeSingleplayerServer(){

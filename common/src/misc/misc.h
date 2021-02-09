@@ -15,10 +15,12 @@ int         parseAnsiCode(const char *str, int *fgc, int *bgc);
 const char *getHumanReadableSize(size_t n);
 char      **splitArgs(const char *cmd,int *rargc);
 
-int         isDir    (const char *name);
-int         isFile   (const char *name);
-void        makeDir  (const char *name);
-void        rmDirR   (const char *name);
+int         isDir           (const char *name);
+int         isFile          (const char *name);
+void        makeDir         (const char *name);
+void        rmDirR          (const char *name);
+void        makeDirR        (const char *name);
+void        changeToDataDir ();
 
 static inline int inWorld(uint x, uint y, uint z){
 	return ((y&~0x7FFF) | ((x|z)&~0xFFFF))==0;

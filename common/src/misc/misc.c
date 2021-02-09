@@ -146,30 +146,40 @@ char **splitArgs(const char *cmd,int *rargc){
 
 int isDir(const char *name){
 	DIR *dp = opendir(name);
-	if(dp == NULL){
-		return 0;
-	}
+	if(dp == NULL){return 0;}
 	closedir(dp);
 	return 1;
 }
 
 int isFile(const char *name){
 	FILE *fp = fopen(name,"r");
-	if(fp == NULL){
-		return 0;
-	}
+	if(fp == NULL){return 0;}
 	fclose(fp);
 	return 1;
 }
 
 void makeDir(const char *name){
+	if(isDir(name)){return;}
 	#ifdef __MINGW32__
 	mkdir(name);
-	#elif __EMSCRIPTEN__
+	#elif defined(__EMSCRIPTEN__)
 	(void)name;
 	#else
 	mkdir(name,0755);
 	#endif
+}
+
+void makeDirR(const char *name){
+	char buf[256];
+	strncpy(buf,name,sizeof(buf));
+	buf[sizeof(buf)-1] = 0;
+	for(int i=0;i<256;i++){
+		if(buf[i] != '/'){continue;}
+		buf[i] = 0;
+		makeDir(buf);
+		buf[i] = '/';
+	}
+	makeDir(buf);
 }
 
 void rmDirR(const char *name){
@@ -192,6 +202,35 @@ void rmDirR(const char *name){
 	closedir(dp);
 	rmdir(name);
 }
+
+
+// Sets current working directory for game files.
+// Create directories if needed.
+// If the dir argument points to NULL,
+// it will set the CWD as ~/.wolkenwelten/
+void changeToDataDir(){
+	char buf[256];
+	const char* dir  = ".wolkenwelten";
+	const char* home = getenv("HOME");
+	if(!home){return;}
+
+	if(snprintf(buf,sizeof(buf),"%s/%s",home,dir) <= 0){ // snprintf instead of strcpy/strcat
+		fprintf(stderr,"Can't create dataDirBuffer, $HOME too long?\n");
+		return;
+	}
+	buf[sizeof(buf)-1]=0;
+
+	makeDirR(buf); // Do not call mkdir directly because of win32 incompat
+	if(!isDir(buf)){
+		fprintf(stderr,"Can't create/access data dir at '%s'\n",buf);
+		return;
+	}
+	if(chdir(buf) == -1) {
+		perror("chdir");
+		return;
+	}
+}
+
 
 int parseAnsiCode(const char *str, int *fgc, int *bgc){
 	int off = 0;

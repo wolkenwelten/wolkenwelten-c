@@ -24,3 +24,4 @@ void parseOptions       (int argc,char *argv[]);
 void initOptions        (int argc,char *argv[]);
 void sanityCheckOptions ();
 void saveOptions        ();
+void loadOptions        ();

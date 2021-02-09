@@ -219,7 +219,6 @@ void saveOptions(){
 }
 
 void initOptions(int argc,char *argv[]){
-	loadOptions();
 	parseOptions(argc,argv);
 	sanityCheckOptions();
 }
