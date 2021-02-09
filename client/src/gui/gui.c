@@ -512,17 +512,14 @@ void drawActiveGlider(){
 
 	const float shake = MINMAX(0.f,0.2f,player->shake);
 	float deg  = ((float)++ticks*0.4f);
-	float yoff = cos(deg * 2.1f) * shake;
-	float xoff = sin(deg * 1.3f) * shake;
+	float yoff = fabsf(cosf(deg * 2.1f) * shake);
+	float xoff = fabsf(sinf(deg * 1.3f) * shake);
 
 	float breath = sinf((float)(player->breathing-256)/512.f)*3.f;
-	if(player->flags & CHAR_FALLING){
-		breath = 0.f;
-	}
 
 	shaderBind(sMesh);
-	matTranslation(matViewAI,0.f,player->yoff+0.9f,-0.65f);
-	matMulRotYX(matViewAI,0.f+xoff,player->rot.pitch*-0.08f + yoff + breath);
+	matTranslation(matViewAI,0.f,player->yoff*0.35f+0.9f,-0.65f);
+	matMulRotYX(matViewAI,0.f+xoff,player->rot.pitch*-0.08f + yoff + breath*0.01f);
 	matMulScale(matViewAI,player->gliderFade, player->gliderFade, player->gliderFade);
 	matMul(matViewAI, matViewAI, matProjection);
 	shaderMatrix(sMesh, matViewAI);
