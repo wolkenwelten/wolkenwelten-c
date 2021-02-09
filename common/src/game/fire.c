@@ -85,6 +85,18 @@ void fireDel(uint i){
 	fireCount--;
 }
 
+void fireDelChungus(const chungus *c){
+	if(c == NULL){return;}
+	const ivec cp = chungusGetPos(c);
+	for(uint i=fireCount-1;i<fireCount;i--){
+		const fire *f = &fireList[i];
+		if((f->x >> 8) != cp.x){continue;}
+		if((f->y >> 8) != cp.y){continue;}
+		if((f->z >> 8) != cp.z){continue;}
+		fireDel(i);
+	}
+}
+
 fire *fireGetAtPos(u16 x, u16 y, u16 z){
 	beingList *bl = beingListGet(x,y,z);
 	if(bl == NULL){return NULL;}

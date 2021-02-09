@@ -30,6 +30,18 @@ itemDrop itemDropList[1<<14];
 uint     itemDropCount = 0;
 int      itemDropFirstFree = -1;
 
+void itemDropEmptyMsg(uint c, uint i){
+	item itm = itemEmpty();
+	msgItemDropUpdate(
+		c,
+		vecNOne(),
+		vecZero(),
+		&itm,
+		i,
+		itemDropCount
+	);
+}
+
 itemDrop *itemDropGetByBeing(being b){
 	if(beingType(b) != BEING_ITEMDROP){return NULL;}
 	uint i = beingID(b);
@@ -40,4 +52,29 @@ itemDrop *itemDropGetByBeing(being b){
 being itemDropGetBeing(const itemDrop *id){
 	if(id == NULL){return 0;}
 	return beingItemDrop(id - itemDropList);
+}
+
+void itemDropDel(uint d){
+	if(d >= itemDropCount) {return;}
+
+	entityFree(itemDropList[d].ent);
+	itemDropList[d].ent = NULL;
+	itemDropList[d].itm = itemEmpty();
+	itemDropList[d].nextFree = itemDropFirstFree;
+	itemDropFirstFree = d;
+	itemDropEmptyMsg(-1,d);
+}
+
+void itemDropDelChungus(const chungus *c){
+	if(c == NULL){return;}
+	const ivec cp = chungusGetPos(c);
+	for(uint i=itemDropCount-1;i<itemDropCount;i--){
+		if(itemIsEmpty(&itemDropList[i].itm))   {continue;}
+		if(itemDropList[i].ent == NULL)         {continue;}
+		const vec *p = &itemDropList[i].ent->pos;
+		if(((int)p->x >> 8) != cp.x){continue;}
+		if(((int)p->y >> 8) != cp.y){continue;}
+		if(((int)p->z >> 8) != cp.z){continue;}
+		itemDropDel(i);
+	}
 }

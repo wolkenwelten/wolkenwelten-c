@@ -107,6 +107,19 @@ void animalDel(uint i){
 	animalUsedCount--;
 }
 
+void animalDelChungus(const chungus *c){
+	if(c == NULL){return;}
+	const ivec cp = chungusGetPos(c);
+	for(uint i=0;i<animalCount;i++){
+		if(animalList[i].type == 0)  {continue;}
+		const vec *p = &animalList[i].pos;
+		if(((int)p->x >> 8) != cp.x){continue;}
+		if(((int)p->y >> 8) != cp.y){continue;}
+		if(((int)p->z >> 8) != cp.z){continue;}
+		animalDel(i);
+	}
+}
+
 u32 animalCollision(const vec c){
 	u32 col = 0;
 

@@ -14,6 +14,7 @@ extern uint    animalUsedCount;
 
 animal     *animalNew              (const vec pos , int type, int gender);
 void        animalDel              (uint i);
+void        animalDelChungus       (const chungus *c);
 void        animalReset            (      animal *e);
 float       animalDistance         (const animal *e,const character *c);
 const char *animalGetStateName     (const animal *e);

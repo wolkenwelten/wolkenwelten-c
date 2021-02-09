@@ -59,6 +59,10 @@ void throwableFree(throwable *t){
 	throwableFirstFree = t - throwableList;
 }
 
+void throwableDel(uint i){
+	throwableFree(&throwableList[i]);
+}
+
 void throwableSendUpdate(int c, uint i){
 	if(i >= throwableCount){return;}
 	throwable *a = &throwableList[i];
@@ -245,4 +249,17 @@ bool throwableTryAim(item *cItem, character *cChar){
 		return true;
 	}
 	return false;
+}
+
+void throwableDelChungus(chungus *c){
+	if(c == NULL){return;}
+	const ivec cp = chungusGetPos(c);
+	for(uint i=0;i<throwableCount;i++){
+		if(throwableList[i].ent == NULL){continue;}
+		const vec *p = &throwableList[i].ent->pos;
+		if(((int)p->x >> 8) != cp.x){continue;}
+		if(((int)p->y >> 8) != cp.y){continue;}
+		if(((int)p->z >> 8) != cp.z){continue;}
+		throwableDel(i);
+	}
 }

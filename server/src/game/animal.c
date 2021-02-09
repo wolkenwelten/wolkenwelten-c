@@ -78,18 +78,6 @@ void animalSyncPlayer(u8 c){
 	clients[c].animalUpdateWindowSize = MAX(4,MIN(12,clients[c].animalUpdateWindowSize));
 }
 
-void animalDelChungus(const chungus *c){
-	if(c == NULL){return;}
-	for(uint i=0;i<animalCount;i++){
-		if(animalList[i].type == 0)  {continue;}
-		const vec *p = &animalList[i].pos;
-		if(((uint)p->x >> 8) != c->x){continue;}
-		if(((uint)p->y >> 8) != c->y){continue;}
-		if(((uint)p->z >> 8) != c->z){continue;}
-		animalDel(i);
-	}
-}
-
 void animalUpdatePriorities(u8 c){
 	const u64 prio = 1 << c;
 	const u64 mask = ~(prio);

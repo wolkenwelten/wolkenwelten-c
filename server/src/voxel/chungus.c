@@ -22,6 +22,7 @@
 #include "../game/being.h"
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
+#include "../game/throwable.h"
 #include "../network/server.h"
 #include "../persistence/savegame.h"
 #include "../worldgen/worldgen.h"
@@ -120,6 +121,7 @@ void chungusFree(chungus *c){
 	animalDelChungus(c);
 	itemDropDelChungus(c);
 	fireDelChungus(c);
+	throwableDelChungus(c);
 	for(int x=0;x<16;x++){
 	for(int y=0;y<16;y++){
 	for(int z=0;z<16;z++){
@@ -471,4 +473,9 @@ void chungusUnsubFarChungi(){
 			}
 		}
 	}
+}
+
+ivec chungusGetPos(const chungus *c){
+	if(c == NULL){return ivecNOne();}
+	return ivecNew(c->x,c->y,c->z);
 }

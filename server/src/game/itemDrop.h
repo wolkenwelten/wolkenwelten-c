@@ -3,10 +3,8 @@
 #include "../../../common/src/game/itemDrop.h"
 
 itemDrop *itemDropNew          ();
-void      itemDropDel          (uint d);
 void      itemDropNewPacket    (uint c, const packet *p);
 void      itemDropPickupP      (uint c, const packet *p);
-void      itemDropDelChungus   (const chungus *c);
 void      itemDropUpdateFire   (uint i);
 uint      itemDropUpdatePlayer (uint c, uint offset);
 uint      itemDropGetActive    ();

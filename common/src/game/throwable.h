@@ -18,3 +18,4 @@ void       throwableNew         (const vec pos, const vec rot, float speed, cons
 void       throwableUpdateAll   ();
 bool       throwableTry         (item *cItem, character *cChar, float strength, int dmg, uint flags);
 bool       throwableTryAim      (item *cItem, character *cChar);
+void       throwableDelChungus  (chungus *c);

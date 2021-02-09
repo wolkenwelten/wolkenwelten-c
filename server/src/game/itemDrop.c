@@ -31,18 +31,6 @@
 
 #include <stdio.h>
 
-static inline void itemDropEmptyMsg(uint c, uint i){
-	item itm = itemEmpty();
-	msgItemDropUpdate(
-		c,
-		vecNOne(),
-		vecZero(),
-		&itm,
-		i,
-		itemDropCount
-	);
-}
-
 void itemDropUpdateMsg(u8 c,uint i){
 	if(i >= itemDropCount)         {return;}
 	if(itemDropList[i].ent == NULL){return;}
@@ -94,17 +82,6 @@ itemDrop *itemDropNew(){
 	return &itemDropList[itemDropCount++];
 }
 
-void itemDropDel(uint d){
-	if(d >= itemDropCount) {return;}
-
-	entityFree(itemDropList[d].ent);
-	itemDropList[d].ent = NULL;
-	itemDropList[d].itm = itemEmpty();
-	itemDropList[d].nextFree = itemDropFirstFree;
-	itemDropFirstFree = d;
-	itemDropEmptyMsg(-1,d);
-}
-
 void itemDropNewP(const vec pos,const item *itm){
         if(itm == NULL){return;}
         itemDrop *id = itemDropNew();
@@ -131,19 +108,6 @@ void itemDropNewPacket(uint c, const packet *p){
 	id->lastFire   = 0;
 	id->fireDmg    = 0;
 	entityUpdateCurChungus(id->ent);
-}
-
-void itemDropDelChungus(const chungus *c){
-	if(c == NULL){return;}
-	for(uint i=itemDropCount-1;i<itemDropCount;i--){
-		if(itemIsEmpty(&itemDropList[i].itm))   {continue;}
-		if(itemDropList[i].ent == NULL)         {continue;}
-		const vec *p = &itemDropList[i].ent->pos;
-		if(((uint)p->x >> 8) != c->x){continue;}
-		if(((uint)p->y >> 8) != c->y){continue;}
-		if(((uint)p->z >> 8) != c->z){continue;}
-		itemDropDel(i);
-	}
 }
 
 void itemDropPickupP(uint c, const packet *p){

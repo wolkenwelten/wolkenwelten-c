@@ -19,7 +19,11 @@
 
 #include "../main.h"
 #include "../sdl/sdl.h"
+#include "../game/animal.h"
 #include "../game/blockType.h"
+#include "../game/fire.h"
+#include "../game/itemDrop.h"
+#include "../game/throwable.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
 #include "../voxel/chunk.h"
@@ -85,13 +89,17 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
+	animalDelChungus(c);
+	itemDropDelChungus(c);
+	fireDelChungus(c);
+	throwableDelChungus(c);
 	for(int x=0;x<16;x++){
-		for(int y=0;y<16;y++){
-			for(int z=0;z<16;z++){
-				chunkFree(c->chunks[x][y][z]);
-				c->chunks[x][y][z] = NULL;
-			}
-		}
+	for(int y=0;y<16;y++){
+	for(int z=0;z<16;z++){
+		chunkFree(c->chunks[x][y][z]);
+		c->chunks[x][y][z] = NULL;
+	}
+	}
 	}
 	c->nextFree = chungusFirstFree;
 	chungusFirstFree = c;
@@ -192,10 +200,15 @@ void chungusBoxF(chungus *c, u16 x,u16 y,u16 z, u16 w,u16 h,u16 d,u8 block){
 
 void chungusBox(chungus *c, u16 x,u16 y,u16 z, u16 w,u16 h,u16 d,u8 block){
 	for(u16 cx=0;cx<w;cx++){
-		for(u16 cy=0;cy<h;cy++){
-			for(u16 cz=0;cz<d;cz++){
-				chungusSetB(c,cx+x,cy+y,cz+z,block);
-			}
-		}
+	for(u16 cy=0;cy<h;cy++){
+	for(u16 cz=0;cz<d;cz++){
+		chungusSetB(c,cx+x,cy+y,cz+z,block);
 	}
+	}
+	}
+}
+
+ivec chungusGetPos(const chungus *c){
+	if(c == NULL){return ivecNOne();}
+	return ivecNew(c->x,c->y,c->z);
 }

@@ -6,4 +6,3 @@ void  fireNew          (u16 x, u16 y, u16 z, i16 strength);
 void  fireRecvUpdate   (uint c, const packet *p);
 void  fireUpdateAll    ();
 void  fireSyncPlayer   (uint c);
-void  fireDelChungus   (const chungus *c);

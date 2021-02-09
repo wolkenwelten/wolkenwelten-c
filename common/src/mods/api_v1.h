@@ -139,6 +139,7 @@ bool     worldSetB          (int x, int y, int z, u8 block);
 int      checkCollision     (int x, int y, int z);
 void     worldBoxMine       (int x, int y, int z, int w,int h,int d);
 void     worldBoxMineSphere (int x, int y, int z, int r);
+ivec     chungusGetPos      (const chungus *c);
 
 void     sfxPlay   (sfx *b, float volume);
 void     sfxPlayPos(sfx *b, float volume, vec pos);
