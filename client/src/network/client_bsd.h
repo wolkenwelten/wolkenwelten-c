@@ -42,52 +42,6 @@ bool fileExists(const char *fn){
 	return (stat(fn, &buffer) == 0);
 }
 
-#ifdef __APPLE__
-	#include <mach-o/dyld.h>
-	#include <libgen.h>
-	const char *getServerExecutablePath(){
-		static char path[512];
-		static char ret[512];
-		u32 size = sizeof(path);
-		if (_NSGetExecutablePath(path, &size) == 0){
-			snprintf(ret,sizeof(ret)-1,"%s/wolkenwelten-server",dirname(path));
-			return ret;
-		} else {
-			fprintf(stderr,"buffer too small; need size %u\n", size);
-		}
-		return NULL;
-	}
-#else
-
-	char *clientGetServerExecutable(){
-		static char buf[512];
-		char cwd[512];
-		if(buf[0] != 0){return buf;} // Already found an executable the last time
-		char* serverExecName = "wolkenwelten-server";
-		getcwd(cwd,sizeof(cwd));
-
-		snprintf(buf,sizeof(buf),"%s/%s",cwd,serverExecName);
-		if(access(buf,R_OK|X_OK) >= 0){
-			return buf;
-		}
-		*buf=0;
-
-		char* path = getenv("PATH");
-		if(!path){
-			return NULL;
-		}
-
-		for(char *token = strtok(path,":"); token != NULL ; token = strtok(NULL,":")){
-			const int t = snprintf(buf,sizeof(buf),"%s/%s",token,serverExecName);
-			if(t <= 0){continue;}
-			buf[sizeof(buf)-1] = 0;
-			if (access(buf, R_OK|X_OK) >= 0){return buf;}
-		}
-		*buf = 0;
-		return buf;
-	}
-#endif
-
 void startSingleplayerServer(){
 	char seed[64];
 	char save[64];

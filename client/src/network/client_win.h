@@ -55,14 +55,20 @@ void clientGetName(){
 
 
 void startSingleplayerServer(){
-	static char cmd[128];
+	char cmd[1024];
 	STARTUPINFO si;
 
 	if(spSpawned){return;}
 	if(optionWorldSeed == 0){
 		optionWorldSeed = (int)(time(NULL)&0xFFFF);
 	}
-	snprintf(cmd,sizeof(cmd)-1,"wolkenwelten-server.exe -singleplayer -worldSeed=%i -savegame=%s",optionWorldSeed,optionSavegame);
+	char *exeFile = clientGetServerExecutable();
+	if(exeFile == NULL){
+		fprintf(stderr,"Couldn't find server executable");
+		closeSingleplayerServer();
+		return;
+	}
+	snprintf(cmd,sizeof(cmd)-1,"%s -singleplayer -worldSeed=%i -savegame=%s",exeFile,optionWorldSeed,optionSavegame);
 	ZeroMemory( &si, sizeof(si) );
 	ZeroMemory( &pi, sizeof(pi) );
 	si.cb = sizeof(si);

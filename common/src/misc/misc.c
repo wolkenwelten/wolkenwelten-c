@@ -27,6 +27,11 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+#ifdef __MINGW32__
+#include <windows.h>
+#include <shlobj.h>
+#endif
+
 float animationInterpolation(int left, int max , float midPoint){
 	if(max  == 0){return 0.f;}
 	if(left <= 0){return 0.f;}
@@ -203,16 +208,30 @@ void rmDirR(const char *name){
 	rmdir(name);
 }
 
-
-// Sets current working directory for game files.
-// Create directories if needed.
-// If the dir argument points to NULL,
-// it will set the CWD as ~/.wolkenwelten/
+// Sets current working directory for game files, per default ~/.wolkenwelten/.
+// Create directories as needed.
 void changeToDataDir(){
-	char buf[256];
+	char buf[512];
+	#ifdef __MINGW32__
+	const char* dir  = "WolkenWelten";
+	#else
 	const char* dir  = ".wolkenwelten";
+	#endif
+	const char* wwdir = getenv("WOLKENWELTEN_DIR");
+	if(wwdir != NULL){
+		if(chdir(wwdir) == -1){perror("chdir");}
+		return;
+	}
+
+	#ifdef __MINGW32__
+	char home[512];
+	HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, home);
+	if(result != S_OK){return;}
+	#else
 	const char* home = getenv("HOME");
 	if(!home){return;}
+	#endif
+	printf("Home: %s\n",home);
 
 	if(snprintf(buf,sizeof(buf),"%s/%s",home,dir) <= 0){ // snprintf instead of strcpy/strcat
 		fprintf(stderr,"Can't create dataDirBuffer, $HOME too long?\n");
@@ -230,7 +249,6 @@ void changeToDataDir(){
 		return;
 	}
 }
-
 
 int parseAnsiCode(const char *str, int *fgc, int *bgc){
 	int off = 0;
