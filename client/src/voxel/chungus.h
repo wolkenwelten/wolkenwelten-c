@@ -14,6 +14,7 @@ struct chungus {
 
 typedef struct {
 	float distance;
+	sideMask mask;
 	union {
 		chunk   *chnk;
 		chungus *chng;

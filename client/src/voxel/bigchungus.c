@@ -205,7 +205,7 @@ void worldDraw(const character *cam){
 
 	quicksortQueue(drawQueue,0,drawQueueLen-1);
 	for(int i=0;i<drawQueueLen;i++){
-		chunkDraw(drawQueue[i].chnk,drawQueue[i].distance);
+		chunkDraw(drawQueue[i].chnk,drawQueue[i].distance,drawQueue[i].mask);
 	}
 	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 }
@@ -290,5 +290,5 @@ bool worldIsLoaded(int x, int y, int z){
 void worldSetChunkUpdated(int x, int y, int z){
 	chunk *chnk = worldGetChunk(x,y,z);
 	if(chnk == NULL){return;}
-	chnk->dataCount |= 0x8000;
+	chnk->flags |= CHUNK_FLAG_DIRTY;
 }

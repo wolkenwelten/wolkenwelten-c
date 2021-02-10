@@ -1,4 +1,5 @@
 #pragma once
+#include <stdbool.h>
 
 #if defined(__arm__) || defined(__aarch64__) || defined(__EMSCRIPTEN__)
 #define WOLKENWELTEN__GL_ES 1
@@ -6,14 +7,22 @@
 
 #ifdef __APPLE__
 	#include <OpenGL/gl3.h>
-	#define INITGLEXT() 0
+	#define WOLKENWELTEN__GL_USE_APPLE
 #elif __EMSCRIPTEN__
 	#include "GL/glew.h"
-	#define INITGLEXT() glewExperimental=GL_TRUE; if(glewInit() != GLEW_OK){exit(3);}
+	#define WOLKENWELTEN__GL_USE_GLEW
 #elif __HAIKU__
 	#include "GL/glew.h"
-	#define INITGLEXT() glewExperimental=GL_TRUE; if(glewInit() != GLEW_OK){exit(3);}
+	#define WOLKENWELTEN__GL_USE_GLEW
 #else
 	#include "gl3w.h"
-	#define INITGLEXT() if(gl3wInit()){exit(3);}
+	#define WOLKENWELTEN__GL_USE_GL3W
 #endif
+
+#ifdef WOLKENWELTEN__GL_ES
+extern bool glIsMultiDrawAvailable;
+#else
+static const bool glIsMultiDrawAvailable = true;
+#endif
+
+bool glInitialize();

@@ -108,16 +108,32 @@ void chungusFree(chungus *c){
 void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,int *drawQueueLen){
 	const vec coff = vecNew(c->x<<8,c->y<<8,c->z<<8);
 	for(int x=0;x<16;x++){
-		const int cx = x*CHUNK_SIZE+CHUNK_SIZE/2+(c->x<<8);
+		const int bx = x*CHUNK_SIZE+(c->x<<8);
+		const int cx = bx+CHUNK_SIZE/2;
+		const sideMask xMask =
+			cam->pos.x < bx ? sideMaskLeft :
+			cam->pos.x < bx + CHUNK_SIZE ? sideMaskLeft | sideMaskRight :
+			sideMaskRight;
 		for(int y=0;y<16;y++){
-			const int cy = y*CHUNK_SIZE+CHUNK_SIZE/2+(c->y<<8);
+			const int by = y*CHUNK_SIZE+(c->y<<8);
+			const int cy = by+CHUNK_SIZE/2;
+			const sideMask yMask =
+				cam->pos.y < by ? sideMaskBottom :
+				cam->pos.y < by + CHUNK_SIZE ? sideMaskBottom | sideMaskTop :
+				sideMaskTop;
 			for(int z=0;z<16;z++){
 				if(c->chunks[x][y][z] == NULL){continue;}
 				if(!chunkInFrustum(vecNew(x,y,z),coff)){continue;}
-				const int cz = z*CHUNK_SIZE+CHUNK_SIZE/2+(c->z<<8);
+				const int bz = z*CHUNK_SIZE+(c->z<<8);
+				const int cz = bz+CHUNK_SIZE/2;
+				const sideMask zMask =
+					cam->pos.z < bz ? sideMaskBack :
+					cam->pos.z < bz + CHUNK_SIZE ? sideMaskBack | sideMaskFront :
+					sideMaskFront;
 				const float d = chunkDistance(cam->pos,vecNew(cx,cy,cz));
 				if(d > renderDistance){continue;}
 				drawQueue[*drawQueueLen].distance = d;
+				drawQueue[*drawQueueLen].mask = xMask | yMask | zMask;
 				drawQueue[*drawQueueLen].chnk = c->chunks[x][y][z];
 
 				*drawQueueLen = *drawQueueLen+1;
