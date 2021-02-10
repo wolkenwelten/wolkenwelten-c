@@ -2,7 +2,7 @@
 #include "../../../common/src/common.h"
 #include "../voxel/chunk.h"
 
-#define CHUNGUS_SIZE (16*16)
+#define CHUNGUS_SIZE (16*CHUNK_SIZE)
 
 struct chungus {
 	u8 x,y,z;

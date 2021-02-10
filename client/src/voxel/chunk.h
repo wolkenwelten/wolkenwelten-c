@@ -1,7 +1,8 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-#define CHUNK_SIZE (16)
+#define CHUNK_SIZE_BITS (4)
+#define CHUNK_SIZE (1<<CHUNK_SIZE_BITS)
 
 struct chunk {
 	u16 x,y,z,dataCount,vboSize;
