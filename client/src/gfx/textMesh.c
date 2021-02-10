@@ -135,6 +135,7 @@ void textMeshDraw(textMesh *m){
 	glDrawArrays(GL_TRIANGLES,0,m->dataCount);
 
 	vboTrisCount += m->dataCount/3;
+	drawCallCount++;
 }
 
 void textMeshAddGlyph(textMesh *m, int x, int y, int size, u8 c, u32 fgc, u32 bgc){

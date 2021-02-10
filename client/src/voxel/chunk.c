@@ -448,6 +448,7 @@ void chunkDraw(chunk *c, float d){
 	glBindVertexArray(c->vao);
 	glDrawArrays(GL_TRIANGLES,0,(c->dataCount&0x7FFF)*6);
 	vboTrisCount += (c->dataCount&0x7FFF)*2;
+	drawCallCount++;
 }
 
 void chunkRecvUpdate(const packet *p){

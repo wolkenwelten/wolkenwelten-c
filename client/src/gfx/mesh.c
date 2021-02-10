@@ -56,6 +56,7 @@ static void meshDrawVBO(const mesh *m){
 	glBindBuffer(GL_ARRAY_BUFFER, m->vbo);
 	glDrawArrays(GL_TRIANGLES,0,m->dataCount);
 	vboTrisCount += m->dataCount/3;
+	drawCallCount++;
 }
 
 static void meshFinish(mesh *m, unsigned int usage){

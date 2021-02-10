@@ -344,7 +344,7 @@ static void drawHookIndicator(){
 
 void drawDebuginfo(){
 	static uint ticks = 0;
-	int tris = vboTrisCount;
+	size_t tris = vboTrisCount, draws = drawCallCount;
 
 	guim->font = 1;
 	if(recvBytesCurrentSession <= 0){
@@ -396,6 +396,7 @@ void drawDebuginfo(){
 	}
 
 	vboTrisCount = 0;
+	drawCallCount = 0;
 	if(optionDebugInfo){
 		guim->font = 1;
 		guim->sx   = 4;
@@ -404,6 +405,8 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"%s\n",gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
 		guim->size = 2;
 		textMeshPrintf(guim,"Active Tris.: %s%s\n",colorSignalLow(1<<21,1<<19,1<<18,tris),getHumanReadableSize(tris));
+		guim->fgc  = colorPalette[15];
+		textMeshPrintf(guim,"Draw calls  : %s%s\n",colorSignalLow(1<<15,1<<14,1<<8,draws),getHumanReadableSize(draws));
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Particles   : %s%s\n",colorSignalLow(1<<16,1<<15,1<<14,particleCount),getHumanReadableSize(particleCount));
 		guim->fgc  = colorPalette[15];

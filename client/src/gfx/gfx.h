@@ -8,6 +8,7 @@ extern float  matProjection[16], matView[16];
 extern int    screenWidth;
 extern int    screenHeight;
 extern size_t vboTrisCount;
+extern size_t drawCallCount;
 extern vec    camShake;
 extern float  gfxCurFOV;
 

@@ -59,10 +59,11 @@ bool  gfxUseSubData = false;
 
 float matProjection[16], matView[16];
 
-int    screenWidth  = 800;
-int    screenHeight = 600;
-size_t vboTrisCount = 0;
-float  gfxCurFOV    = 80.0f;
+int    screenWidth   = 800;
+int    screenHeight  = 600;
+size_t vboTrisCount  = 0;
+size_t drawCallCount = 0;
+float  gfxCurFOV     = 80.0f;
 vec    camShake;
 
 
