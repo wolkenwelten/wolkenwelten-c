@@ -62,15 +62,15 @@ void itemDropDel(uint d){
 	itemDropList[d].itm = itemEmpty();
 	itemDropList[d].nextFree = itemDropFirstFree;
 	itemDropFirstFree = d;
-	itemDropEmptyMsg(-1,d);
+	if(!isClient){itemDropEmptyMsg(-1,d);}
 }
 
 void itemDropDelChungus(const chungus *c){
 	if(c == NULL){return;}
 	const ivec cp = chungusGetPos(c);
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){
-		if(itemIsEmpty(&itemDropList[i].itm))   {continue;}
-		if(itemDropList[i].ent == NULL)         {continue;}
+		if(itemIsEmpty(&itemDropList[i].itm)){continue;}
+		if(itemDropList[i].ent == NULL)      {continue;}
 		const vec *p = &itemDropList[i].ent->pos;
 		if(((int)p->x >> 8) != cp.x){continue;}
 		if(((int)p->y >> 8) != cp.y){continue;}

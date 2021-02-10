@@ -523,6 +523,13 @@ static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 	return t;
 }
 
+static lVal *wwlnfQuit(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+	quit = true;
+	return NULL;
+}
+
 void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
 	lAddNativeFunc(c,"animal-count",   "()",                                           "Returns animal count",                                       wwlnfACount);
@@ -556,6 +563,8 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"tp",             "(pos)",                                        "Teleports to pos",                                           wwlnfTp);
 	lAddNativeFunc(c,"send-message",   "(s)",                                          "Send a chat message to everyone",                            wwlnfSendMessage);
 	lAddNativeFunc(c,"console-print",  "(s)",                                          "Prints something to stdout",                                 wwlnfConsolePrint);
+
+	lAddNativeFunc(c,"quit!",          "()",                                           "Cleanly shuts down the server",                              wwlnfQuit);
 }
 
 static void cmdLisp(int c,const char *str, u8 id){

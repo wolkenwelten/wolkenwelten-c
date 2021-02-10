@@ -216,15 +216,15 @@ void bigchungusDetermineSpawn(bigchungus *c, const ivec s){
 	const ivec sp = ivecAndS(s,~0xFF);
 	for(int step = CHUNGUS_SIZE; step >= 1;step/=2){
 		for(int x = step/2;x<CHUNGUS_SIZE;x+=step){
-			for(int y = step/2;y<CHUNGUS_SIZE;y+=step){
-				for(int z = step/2;z<CHUNGUS_SIZE;z+=step){
-					const ivec cp = ivecOr(sp,ivecNew(x,y,z));
-					if(bigchungusTrySpawn(c,cp)){
-						c->spawn = cp;
-						return;
-					}
-				}
+		for(int y = step/2;y<CHUNGUS_SIZE;y+=step){
+		for(int z = step/2;z<CHUNGUS_SIZE;z+=step){
+			const ivec cp = ivecOr(sp,ivecNew(x,y,z));
+			if(bigchungusTrySpawn(c,cp)){
+				c->spawn = cp;
+				return;
 			}
+		}
+		}
 		}
 	}
 }

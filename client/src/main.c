@@ -254,7 +254,6 @@ int main( int argc, char* argv[] ){
 	meshFreeAll();
 	textureFree();
 	shaderFree();
-	clientGoodbye();
 	clientFree();
 	closeSDL();
 	closeSingleplayerServer();

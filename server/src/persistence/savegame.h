@@ -11,7 +11,7 @@ typedef enum {
 } saveType;
 
 void playerSafeSave        ();
-void bigchungusSafeSave    (const bigchungus *c);
+void bigchungusSafeSave    (const bigchungus *c, bool force);
 void chungusLoad           (chungus *c);
 void chungusSave           (chungus *c);
 void savegameLoad          ();

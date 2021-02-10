@@ -88,13 +88,6 @@ void zombieKiller(int sig){
 	if(pid == singlePlayerPID){singlePlayerPID = 0;}
 }
 
-void clientFreeSpecific(){
-	if(serverSocket > 0){
-		close(serverSocket);
-		serverSocket = 0;
-	}
-}
-
 void clientFreeRetry(){
 	if(serverSocket > 0){
 		close(serverSocket);
@@ -209,5 +202,13 @@ void clientWrite(){
 	if(sendBufSent >= sendBufLen){
 		sendBufSent = 0;
 		sendBufLen  = 0;
+	}
+}
+
+void clientFreeSpecific(){
+	clientWrite();
+	if(serverSocket > 0){
+		close(serverSocket);
+		serverSocket = 0;
 	}
 }

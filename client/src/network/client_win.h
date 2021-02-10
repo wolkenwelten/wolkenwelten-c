@@ -135,7 +135,7 @@ void clientInit(){
 	serv_addr.sin_family = AF_INET;
 	memcpy((char *)&serv_addr.sin_addr.s_addr, (char *)serveraddr->h_addr_list[0], serveraddr->h_length);
 	serv_addr.sin_port   = htons(serverPort);
-
+	err = setsockopt(serverSocket,IPPROTO_TCP,TCP_NODELAY,(const char *)&yes,sizeof(yes));
 
 	while(connect(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) != 0){
 		err = WSAGetLastError();
@@ -154,15 +154,6 @@ void clientInit(){
 	recvBytesCurrentSession = 0;
 	recvUncompressedBytesCurrentSession = 0;
 	clientGreetServer();
-}
-
-void clientFreeSpecific(){
-	if(serverSocket > 0){
-		closesocket(serverSocket);
-		serverSocket = 0;
-	}
-	spSpawned = false;
-	singlePlayerPID = 0;
 }
 
 void clientRead(){
@@ -202,4 +193,14 @@ void clientWrite(){
 		sendBufSent = 0;
 		sendBufLen  = 0;
 	}
+}
+
+void clientFreeSpecific(){
+	clientWrite();
+	if(serverSocket > 0){
+		closesocket(serverSocket);
+		serverSocket = 0;
+	}
+	spSpawned = false;
+	singlePlayerPID = 0;
 }

@@ -357,6 +357,7 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtGoodbye:
 		errno=0;
 		serverKill(c);
+		printf("Client said goodbye\n");
 		break;
 	case msgtItemDropNew:
 		itemDropNewPacket(c,p);
@@ -739,6 +740,7 @@ void serverCloseClient(uint c){
 	if((clientCount == 1) && (clients[0].state == STATE_CLOSED)){
 		clientCount = 0;
 	}
+	bigchungusSafeSave(&world,true);
 }
 
 int getClientByName(const char *name){

@@ -152,7 +152,7 @@ void mainTick(){
 	chungusUnsubFarChungi();
 	chungusFreeOldChungi(30000);
 	handleAnimalPriorities();
-	bigchungusSafeSave(&world);
+	bigchungusSafeSave(&world,false);
 	playerSafeSave();
 	serverHandleEvents();
 	updateWorld();
@@ -215,6 +215,7 @@ int main( int argc, const char* argv[] ){
 	printf("[SRV] Exiting cleanly\n");
 	savegameSave();
 	serverFree();
+	bigchungusSafeSave(&world,true);
 	fflush(stdout);
 	fflush(stderr);
 	return 0;

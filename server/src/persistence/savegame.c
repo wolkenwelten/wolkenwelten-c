@@ -99,18 +99,13 @@ static void checkValidSavegame(const char *name){
 	if(!isDir(buf)){makeDir(buf);}
 }
 
-void bigchungusSafeSave(const bigchungus *c){
+void bigchungusSafeSave(const bigchungus *c, bool force){
 	static u64 lastSave = 0;
-	if(getTicks() < lastSave+1000){return;}
+	if((!force) && (getTicks() < lastSave+60000)){return;}
 	lastSave = getTicks();
 
-	for(int x=127;x <= 129;x++){
-		for(int y=1;y <= 3;y++){
-			for(int z=127;z <= 129;z++){
-				if(c->chungi[x][y][z] == NULL){continue;}
-				chungusSave(c->chungi[x][y][z]);
-			}
-		}
+	for(uint i=0;i < chungusCount; i++){
+		chungusSave(&chungusList[i]);
 	}
 
 	for(uint i=0;i<clientCount;i++){
@@ -178,6 +173,7 @@ void chungusLoad(chungus *c){
 	fclose(fp);
 }
 
+#include <stdio.h>
 void chungusSave(chungus *c){
 	#ifdef __EMSCRIPTEN__
 	return;
