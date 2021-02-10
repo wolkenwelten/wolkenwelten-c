@@ -84,7 +84,8 @@ void meshFinishStatic(mesh *m){
 	meshFinish(m,GL_STATIC_DRAW);
 }
 void meshFinishStream(mesh *m){
-	meshFinish(m,GL_STREAM_DRAW);
+	//meshFinish(m,GL_STREAM_DRAW);
+	meshFinish(m,GL_DYNAMIC_DRAW);
 }
 
 mesh *meshNew(){

@@ -77,7 +77,7 @@ void rainDrawAll(){
 
 	glBindVertexArray(rainVAO);
 	glBindBuffer(GL_ARRAY_BUFFER,rainVBO);
-	glBufferData(GL_ARRAY_BUFFER, rainCount*sizeof(glRainDrop), glRainDrops, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, rainCount*sizeof(glRainDrop), glRainDrops, GL_DYNAMIC_DRAW);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void *)0);
 	glDrawArrays(GL_POINTS,0,rainCount);
 

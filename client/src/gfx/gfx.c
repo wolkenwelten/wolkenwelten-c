@@ -237,9 +237,11 @@ void renderFrame(){
 	calcView(player);
 	cloudsCalcColors();
 
-	renderSky(player);
-	renderWorld(player);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	if(gameRunning){
+		renderSky(player);
+		renderWorld(player);
+		glClear(GL_DEPTH_BUFFER_BIT);
+	}
 	renderUI();
 	swapWindow();
 	if(queueScreenshot){doScreenshot();}

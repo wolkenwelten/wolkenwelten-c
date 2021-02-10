@@ -65,7 +65,7 @@ textMesh *textMeshNew(uint bufferSize){
 	m->size       = 1;
 	m->tex        = tGui;
 	m->dataCount  = m->finished   = 0;
-	m->usage      = GL_STREAM_DRAW;
+	m->usage      = GL_DYNAMIC_DRAW;
 	m->fgc        = colorPalette[15];
 	m->bgc        = colorPalette[ 0];
 	m->dataBuffer = malloc(sizeof(vertex2D) * bufferSize);
