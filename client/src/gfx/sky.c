@@ -95,5 +95,5 @@ void renderSky(const character *cam){
 	matMulRotX(matMVP,sunAngle);
 	matMul(matMVP,matMVP,matProjection);
 	shaderMatrix(sMesh,matMVP);
-	meshDrawLin(sunMesh);
+	meshDraw(sunMesh);
 }

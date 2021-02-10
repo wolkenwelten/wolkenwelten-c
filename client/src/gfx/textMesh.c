@@ -116,8 +116,8 @@ void textMeshDraw(textMesh *m){
 	if(!m->vbo) {
 		glGenBuffers(1,&m->vbo);
 	}
-	glBindBuffer(GL_ARRAY_BUFFER, m->vbo);
 	if(!m->finished){
+		glBindBuffer(GL_ARRAY_BUFFER, m->vbo);
 		glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex2D), m->dataBuffer, m->usage);
 		glVertexAttribPointer(0, 2, GL_SHORT        , GL_FALSE, sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].x)    - ((char *)m->dataBuffer)));
 		glVertexAttribPointer(1, 2, GL_SHORT        , GL_FALSE, sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].u)    - ((char *)m->dataBuffer)));

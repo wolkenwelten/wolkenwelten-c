@@ -11,4 +11,3 @@ void  meshAddVertC     (mesh *m, float x,float y,float z,float u,float v,float c
 void  meshFinishStatic (mesh *m);
 void  meshFinishStream (mesh *m);
 void  meshDraw         (const mesh *m);
-void  meshDrawLin      (const mesh *m);

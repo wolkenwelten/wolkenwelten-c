@@ -96,20 +96,14 @@ void initSDL(){
 		exit(1);
 	}
 
-	#if defined __EMSCRIPTEN__
+	#if defined(__EMSCRIPTEN__) || defined(WOLKENWELTEN__GL_ES)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
 	#else
-		#ifdef WOLKENWELTEN__GL_ES
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
-		#else
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2 );
-		#endif
 	#endif
 
 	if( SDL_GetDesktopDisplayMode(0, &dm) == 0){

@@ -102,6 +102,8 @@ void cloudsRender(){
 		if(i == cpart){
 			glBindBuffer(GL_ARRAY_BUFFER, parts[cpart].vbo);
 			glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count], GL_STREAM_DRAW);
+			glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&cloudData[0].x) -     ((char *)cloudData)));
+			glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&cloudData[0].color) - ((char *)cloudData)));
 		}
 		glDrawArrays(GL_POINTS,0,CLOUDS_MAX - parts[i].count);
 	}
@@ -216,8 +218,6 @@ void cloudsInitGfx(){
 		glBindBuffer(GL_ARRAY_BUFFER, parts[i].vbo);
 		glEnableVertexAttribArray (0);
 		glEnableVertexAttribArray (2);
-		glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&cloudData[0].x) -     ((char *)cloudData)));
-		glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&cloudData[0].color) - ((char *)cloudData)));
 	}
 	cloudsCalcColors();
 }
