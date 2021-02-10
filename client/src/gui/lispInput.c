@@ -108,13 +108,14 @@ void handlerLispSubmit(widget *wid){
 		textInputBufferLen += off;
 		lispAutoCompleteLen = 0;
 		lispAutoCompleteSelection = -1;
-		return;
+	}else{
+		snprintf(buf,sizeof(buf),"> %s",wid->vals);
+		widgetAddEntry(lispLog, buf);
+		const char *result = lispEval(wid->vals);
+		snprintf(buf,sizeof(buf),"  %s",result);
+		widgetAddEntry(lispLog, buf);
 	}
-	snprintf(buf,sizeof(buf),"> %s",wid->vals);
-	widgetAddEntry(lispLog, buf);
-	const char *result = lispEval(wid->vals);
-	snprintf(buf,sizeof(buf),"  %s",result);
-	widgetAddEntry(lispLog, buf);
+	lispInput->vals[0] = 0;
 	lispHistoryActive = -1;
 	textInputFocus(wid);
 }
