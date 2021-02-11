@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void testSnprintf(){
 	char buf[4];
@@ -27,6 +28,7 @@ void testSnprintf(){
 		exit(1);
 	}
 }
+
 
 /* Does some test to see if it is running in a sane environment */
 void selfTest(){

@@ -739,8 +739,8 @@ lVal *lnfApply(lClosure *c, lVal *v){
 
 void lDefineVal(lClosure *c, const char *sym, lVal *val){
 	lSymbol S;
-	strncpy(S.c,sym,sizeof(S.c)-1);
-	S.c[sizeof(S.c)-1] = 0;
+	memset(S.c,0,sizeof(S.c));
+	snprintf(S.c,sizeof(S.c),"%s",sym);
 
 	lVal *var = lDefineClosureSym(c,S);
 	if(var == NULL){return;}
@@ -749,8 +749,8 @@ void lDefineVal(lClosure *c, const char *sym, lVal *val){
 
 void lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *doc, lVal *(*func)(lClosure *,lVal *)){
 	lSymbol S;
-	strncpy(S.c,sym,sizeof(S.c)-1);
-	S.c[sizeof(S.c)-1] = 0;
+	memset(S.c,0,sizeof(S.c));
+	snprintf(S.c,sizeof(S.c),"%s",sym);
 
 	lVal *var = lDefineClosureSym(c,S);
 	if(var == NULL){
