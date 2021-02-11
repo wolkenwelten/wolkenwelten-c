@@ -108,6 +108,7 @@ void handlerLispSubmit(widget *wid){
 		textInputBufferLen += off;
 		lispAutoCompleteLen = 0;
 		lispAutoCompleteSelection = -1;
+		return;
 	}else{
 		snprintf(buf,sizeof(buf),"> %s",wid->vals);
 		widgetAddEntry(lispLog, buf);
