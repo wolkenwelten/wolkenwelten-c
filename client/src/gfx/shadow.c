@@ -36,8 +36,9 @@ void shadowInit(){
 }
 
 void shadowDraw(){
+	if(meshShadow->dataCount == 0){return;}
 	glDepthFunc      (GL_LEQUAL);
-	meshFinishStream (meshShadow);
+	meshFinishDynamic(meshShadow);
 	shaderBind       (sShadow);
 	matMov           (matMVP,matView);
 	matMul           (matMVP,matMVP,matProjection);

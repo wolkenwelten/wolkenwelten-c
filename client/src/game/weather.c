@@ -44,7 +44,7 @@ typedef struct {
 #define CLOUDS_MAX (1<<18)
 
 typedef struct {
-	uint count,vbo,vao;
+	uint count,vbo,vao,vboSize;
 	vec base;
 } cloudChunk;
 
@@ -101,7 +101,12 @@ void cloudsRender(){
 		glBindVertexArray(parts[i].vao);
 		if(i == cpart){
 			glBindBuffer(GL_ARRAY_BUFFER, parts[cpart].vbo);
-			glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count], GL_STREAM_DRAW);
+			if(gfxUseSubData && (parts[cpart].vboSize >= (CLOUDS_MAX - parts[cpart].count))){
+				glBufferSubData(GL_ARRAY_BUFFER, 0, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count]);
+			}else{
+				glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count], GL_DYNAMIC_DRAW);
+				parts[cpart].vboSize = (CLOUDS_MAX - parts[cpart].count);
+			}
 			glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&cloudData[0].x) -     ((char *)cloudData)));
 			glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&cloudData[0].color) - ((char *)cloudData)));
 		}

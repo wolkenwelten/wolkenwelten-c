@@ -50,6 +50,13 @@
 #include <math.h>
 
 bool  queueScreenshot = false;
+
+#ifdef __EMSCRIPTEN__
+bool  gfxUseSubData = true;
+#else
+bool  gfxUseSubData = false;
+#endif
+
 float matProjection[16], matView[16];
 
 int    screenWidth  = 800;
@@ -59,15 +66,14 @@ float  gfxCurFOV    = 80.0f;
 vec    camShake;
 
 
-#ifdef __EMSCRIPTEN__
-	float renderDistance = 320.f;
-#elif defined(__HAIKU__)
+#if   defined(__HAIKU__)
 	float renderDistance = 192.f;
-#elif defined(__aarch64__) || defined(__ARM_ARCH_7A__)
+#elif defined(__EMSCRIPTEN__) || defined(__aarch64__) || defined(__ARM_ARCH_7A__)
 	float renderDistance = 256.f;
 #else
-	float renderDistance = 512.f;
+	float renderDistance = 384.f;
 #endif
+
 float fadeoutDistance      =  32.f;
 float fadeoutStartDistance = 192;
 float cloudFadeD           = 256*256;
@@ -182,6 +188,7 @@ void calcView(const character *cam){
 }
 
 void renderWorld(const character *cam){
+	(void)cam;
 	worldDraw(cam);
 	blockMiningDraw();
 	animalDrawAll();

@@ -106,6 +106,14 @@ static lVal *wwlnfRenderDistance(lClosure *c, lVal *v){
 	return lValFloat(renderDistance);
 }
 
+static lVal *wwlnfSubData(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfBool(c,lEval(c,v));
+		gfxUseSubData = t->vBool;
+	}
+	return lValBool(gfxUseSubData);
+}
+
 static lVal *wwlnfMouseSensitivity(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfFloat(c,lEval(c,v));
@@ -310,6 +318,7 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-name!",   "(s)",          "Sets players name to s",                                         wwlnfPlayerName);
 	lAddNativeFunc(c,"sound-vol!",     "(f)",          "Sets sound volume to float f",                                   wwlnfSoundVolume);
 	lAddNativeFunc(c,"view-dist!",     "(f)",          "Sets render distance to f blocks",                               wwlnfRenderDistance);
+	lAddNativeFunc(c,"use-sub-data!",  "(b)",          "Sets useSubdata boolean to b",                                   wwlnfSubData);
 	lAddNativeFunc(c,"mouse-sens!",    "(f)",          "Sets the mouse sensitivity to f",                                wwlnfMouseSensitivity);
 	lAddNativeFunc(c,"server-add!",    "(name ip)",    "Adds name ip to server list",                                    wwlnfServerAdd);
 	lAddNativeFunc(c,"third-person!",  "(b)",          "Sets third person view to b",                                    wwlnfThirdPerson);

@@ -91,6 +91,7 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 	c->y         = y & (~0xF);
 	c->z         = z & (~0xF);
 	c->vbo       = 0;
+	c->vboSize   = 0;
 	c->vao       = 0;
 	c->dataCount = 0xFFFF;
 	memset(c->data,0,sizeof(c->data));
@@ -122,7 +123,12 @@ static inline void chunkFinish(chunk *c){
 	}
 	if(!c->vbo) { glGenBuffers(1,&c->vbo); }
 	glBindBuffer(GL_ARRAY_BUFFER, c->vbo);
-	glBufferData(GL_ARRAY_BUFFER, c->dataCount*(6*sizeof(vertexTiny)), blockMeshBuffer, GL_STATIC_DRAW);
+	if(gfxUseSubData && (c->vboSize >= c->dataCount)){
+		glBufferSubData(GL_ARRAY_BUFFER, 0, c->dataCount*(6*sizeof(vertexTiny)), blockMeshBuffer);
+	}else{
+		glBufferData(GL_ARRAY_BUFFER, c->dataCount*(6*sizeof(vertexTiny)), blockMeshBuffer, GL_DYNAMIC_DRAW);
+		c->vboSize = c->dataCount;
+	}
 	glVertexAttribPointer(0, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].x) - ((char *)blockMeshBuffer)));
 	glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].u) - ((char *)blockMeshBuffer)));
 	glVertexAttribPointer(2, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)(((char *)&blockMeshBuffer[0].f) - ((char *)blockMeshBuffer)));

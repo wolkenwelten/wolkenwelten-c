@@ -122,7 +122,7 @@ void blockMiningDraw(){
 		}
 		blockMiningList[i].lastDamage = blockMiningList[i].damage;
 	}
-	meshFinishStream(blockMiningProgressMesh);
+	meshFinishDynamic(blockMiningProgressMesh);
 
 	glPolygonOffset(-8,-8);
 	glEnable(GL_POLYGON_OFFSET_FILL);

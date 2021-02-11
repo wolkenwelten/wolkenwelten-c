@@ -48,6 +48,7 @@ __attribute__((aligned(32))) u32          particleRGBA[PART_MAX+4];
 __attribute__((aligned(32))) uint         particleTTL [PART_MAX+4];
 uint         particleCount = 0;
 uint         particleVBO[2];
+uint         particleVBOSize = 0;
 uint         particleVAO;
 
 __attribute__((aligned(32))) glParticle glSparticles   [SPART_MAX+4];
@@ -56,6 +57,7 @@ __attribute__((aligned(32))) u32          sparticleRGBA[SPART_MAX+4];
 __attribute__((aligned(32))) uint         sparticleTTL [SPART_MAX+4];
 uint         sparticleCount = 0;
 uint         sparticleVBO[2];
+uint         sparticleVBOSize = 0;
 uint         sparticleVAO;
 
 void particleInit(){
@@ -219,22 +221,40 @@ void particleDraw(){
 
 	glBindVertexArray(particleVAO);
 	glBindBuffer(GL_ARRAY_BUFFER,particleVBO[0]);
-	glBufferData(GL_ARRAY_BUFFER, particleCount*sizeof(glParticle), glParticles, GL_DYNAMIC_DRAW);
+	if(gfxUseSubData && (particleVBOSize >+ particleCount)){
+		glBufferSubData(GL_ARRAY_BUFFER, 0, particleCount*sizeof(glParticle), glParticles);
+	}else{
+		glBufferData(GL_ARRAY_BUFFER, particleCount*sizeof(glParticle), glParticles, GL_DYNAMIC_DRAW);
+	}
 	glVertexAttribPointer(0, 4, GL_FLOAT        , GL_FALSE, 0, (void *)0);
 
 	glBindBuffer(GL_ARRAY_BUFFER,particleVBO[1]);
-	glBufferData(GL_ARRAY_BUFFER, particleCount*sizeof(u32), particleRGBA, GL_DYNAMIC_DRAW);
+	if(gfxUseSubData && (particleVBOSize >+ particleCount)){
+		glBufferSubData(GL_ARRAY_BUFFER, 0, particleCount*sizeof(u32), particleRGBA);
+	}else{
+		glBufferData(GL_ARRAY_BUFFER, particleCount*sizeof(u32), particleRGBA, GL_DYNAMIC_DRAW);
+		particleVBOSize = particleCount;
+	}
 	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  0, (void *)0);
 
 	glDrawArrays(GL_POINTS,0,particleCount);
 
 	glBindVertexArray(sparticleVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, sparticleVBO[0]);
-	glBufferData(GL_ARRAY_BUFFER, sparticleCount*sizeof(glParticle), glSparticles, GL_DYNAMIC_DRAW);
+	if(gfxUseSubData && (sparticleVBOSize >= sparticleCount)){
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sparticleCount*sizeof(glParticle), glSparticles);
+	}else{
+		glBufferData(GL_ARRAY_BUFFER, sparticleCount*sizeof(glParticle), glSparticles, GL_DYNAMIC_DRAW);
+	}
 	glVertexAttribPointer(0, 4, GL_FLOAT        , GL_FALSE, 0, (void *)0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, sparticleVBO[1]);
-	glBufferData(GL_ARRAY_BUFFER, sparticleCount*sizeof(u32), sparticleRGBA, GL_DYNAMIC_DRAW);
+	if(gfxUseSubData && (sparticleVBOSize >= sparticleCount)){
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sparticleCount*sizeof(u32), sparticleRGBA);
+	}else{
+		glBufferData(GL_ARRAY_BUFFER, sparticleCount*sizeof(u32), sparticleRGBA, GL_DYNAMIC_DRAW);
+		sparticleVBOSize = sparticleCount;
+	}
 	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  0, (void *)0);
 
 	glDrawArrays(GL_POINTS,0,sparticleCount);

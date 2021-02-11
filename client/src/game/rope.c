@@ -122,18 +122,19 @@ void ropeInit(){
 }
 
 void ropeDrawAll(){
-	shaderBind(sMesh);
-	matMul(matMVP,matView,matProjection);
-	shaderMatrix(sMesh,matMVP);
-	meshEmpty(ropeMesh);
 	for(uint i=0;i<512;i++){
 		rope *r = &ropeList[i];
 		if(r->a == 0){continue;}
 		if(r->b == 0){continue;}
 		ropeDraw(r);
 	}
-	meshFinishStream(ropeMesh);
+	if(ropeMesh->dataCount == 0){return;}
+	shaderBind(sMesh);
+	matMul(matMVP,matView,matProjection);
+	shaderMatrix(sMesh,matMVP);
+	meshFinishDynamic(ropeMesh);
 	meshDraw(ropeMesh);
+	meshEmpty(ropeMesh);
 }
 
 void ropeUpdateP(const packet *p){

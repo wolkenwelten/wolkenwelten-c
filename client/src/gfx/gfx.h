@@ -2,6 +2,7 @@
 #include "../../../common/src/common.h"
 
 extern bool   queueScreenshot;
+extern bool   gfxUseSubData;
 
 extern float  matProjection[16], matView[16];
 extern int    screenWidth;

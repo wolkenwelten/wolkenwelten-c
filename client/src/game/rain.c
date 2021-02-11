@@ -27,6 +27,7 @@
 
 uint rainVAO;
 uint rainVBO;
+uint rainVBOSize = 0;
 
 #include <math.h>
 
@@ -77,7 +78,12 @@ void rainDrawAll(){
 
 	glBindVertexArray(rainVAO);
 	glBindBuffer(GL_ARRAY_BUFFER,rainVBO);
-	glBufferData(GL_ARRAY_BUFFER, rainCount*sizeof(glRainDrop), glRainDrops, GL_DYNAMIC_DRAW);
+	if(gfxUseSubData && (rainVBOSize >= rainCount)){
+		glBufferSubData(GL_ARRAY_BUFFER, 0, rainCount*sizeof(glRainDrop), glRainDrops);
+	}else{
+		glBufferData(GL_ARRAY_BUFFER, rainCount*sizeof(glRainDrop), glRainDrops, GL_DYNAMIC_DRAW);
+		rainVBOSize = rainCount;
+	}
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void *)0);
 	glDrawArrays(GL_POINTS,0,rainCount);
 

@@ -70,6 +70,7 @@ textMesh *textMeshNew(uint bufferSize){
 	m->bgc        = colorPalette[ 0];
 	m->dataBuffer = malloc(sizeof(vertex2D) * bufferSize);
 	m->bufferSize = bufferSize;
+	m->vboSize    = 0;
 
 	return m;
 }
@@ -78,6 +79,7 @@ void textMeshFree(textMesh *m){
 	if(m == NULL){return;}
 	if(m->vbo){
 		glDeleteBuffers(1,&m->vbo);
+		m->vboSize = 0;
 	}
 	if(m->dataBuffer != NULL){
 		free(m->dataBuffer);
@@ -118,7 +120,12 @@ void textMeshDraw(textMesh *m){
 	}
 	if(!m->finished){
 		glBindBuffer(GL_ARRAY_BUFFER, m->vbo);
-		glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex2D), m->dataBuffer, m->usage);
+		if(gfxUseSubData && (m->vboSize >= m->dataCount)){
+			glBufferSubData(GL_ARRAY_BUFFER, 0, m->dataCount*sizeof(vertex2D), m->dataBuffer);
+		}else{
+			glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex2D), m->dataBuffer, GL_DYNAMIC_DRAW);
+			m->vboSize = m->dataCount;
+		}
 		glVertexAttribPointer(0, 2, GL_SHORT        , GL_FALSE, sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].x)    - ((char *)m->dataBuffer)));
 		glVertexAttribPointer(1, 2, GL_SHORT        , GL_FALSE, sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].u)    - ((char *)m->dataBuffer)));
 		glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].rgba) - ((char *)m->dataBuffer)));

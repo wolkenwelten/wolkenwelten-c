@@ -4,7 +4,7 @@
 #define CHUNK_SIZE (16)
 
 struct chunk {
-	u16 x,y,z,dataCount;
+	u16 x,y,z,dataCount,vboSize;
 	void *nextFree;
 	uint vbo;
 	uint vao;

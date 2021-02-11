@@ -59,6 +59,7 @@ static void meshDrawVBO(const mesh *m){
 }
 
 static void meshFinish(mesh *m, unsigned int usage){
+	if(m->dataCount == 0){return;}
 	if(!m->vao) {
 		glGenVertexArrays(1, &m->vao);
 		glBindVertexArray(m->vao);
@@ -70,10 +71,12 @@ static void meshFinish(mesh *m, unsigned int usage){
 	}
 	if(!m->vbo){ glGenBuffers(1,&m->vbo); }
 	glBindBuffer(GL_ARRAY_BUFFER,m->vbo);
-	if(m->roData){
-		glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex),  m->roData, usage);
+	const void *data = m->roData == NULL ? meshBuffer : m->roData;
+	if(gfxUseSubData && (m->vboSize >= m->dataCount)){
+		glBufferSubData(GL_ARRAY_BUFFER, 0, m->dataCount*sizeof(vertex),  data);
 	}else{
-		glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex), meshBuffer, usage);
+		glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex),  data, usage);
+		m->vboSize = m->dataCount;
 	}
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(((char *)&meshBuffer[0].x) - ((char *)meshBuffer)));
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(((char *)&meshBuffer[0].u) - ((char *)meshBuffer)));
@@ -83,8 +86,7 @@ static void meshFinish(mesh *m, unsigned int usage){
 void meshFinishStatic(mesh *m){
 	meshFinish(m,GL_STATIC_DRAW);
 }
-void meshFinishStream(mesh *m){
-	//meshFinish(m,GL_STREAM_DRAW);
+void meshFinishDynamic(mesh *m){
 	meshFinish(m,GL_DYNAMIC_DRAW);
 }
 
@@ -128,6 +130,7 @@ void meshFreeAll(){
 }
 
 void meshDraw(const mesh *m){
+	if(m->dataCount == 0){return;}
 	textureBind(m->tex);
 	meshDrawVBO(m);
 }

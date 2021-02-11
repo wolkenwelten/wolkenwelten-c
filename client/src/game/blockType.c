@@ -117,6 +117,7 @@ void blockTypeDraw(u8 b, vec pos, float alpha){
 	matMulTrans (matMVP,pos.x,pos.y,pos.z);
 	matMul      (matMVP,matMVP,matProjection);
 
+	shaderBind(sMesh);
 	shaderMatrix(sMesh,matMVP);
 	shaderAlpha (sMesh,alpha);
 	meshDraw(blocks[b].singleBlock);

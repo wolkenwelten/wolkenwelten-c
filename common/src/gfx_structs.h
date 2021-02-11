@@ -25,7 +25,7 @@ typedef struct {
 	vertex2D *dataBuffer;
 	 int sx,sy,mx,my,wrap,size,font;
 	 u32 fgc, bgc;
-	uint vao,vbo,usage,dataCount,bufferSize;
+	uint vao,vbo,usage,dataCount,bufferSize,vboSize;
 	texture *tex;
 	 int finished;
 } textMesh;
@@ -33,7 +33,7 @@ typedef struct {
 typedef struct {
 	texture *tex;
 	const vertex *roData;
-	uint dataCount;
+	uint dataCount,vboSize;
 	uint vbo,vao;
 	void *nextFree;
 } mesh;
