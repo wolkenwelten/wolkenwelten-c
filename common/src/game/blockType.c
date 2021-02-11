@@ -78,12 +78,12 @@ int blockTypeGetFireDmg(u8 b){
 	}
 }
 
-u16 blockTypeGetTexX(u8 b, side side){
-	return blocks[b].texX[side];
+u16 blockTypeGetTexX(u8 b, side cside){
+	return blocks[b].texX[cside];
 }
 
-u16 blockTypeGetTexY(u8 b, side side){
-	return blocks[b].texY[side];
+u16 blockTypeGetTexY(u8 b, side cside){
+	return blocks[b].texY[cside];
 }
 
 mesh *blockTypeGetMesh(u8 b){

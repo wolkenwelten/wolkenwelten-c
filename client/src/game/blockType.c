@@ -36,10 +36,10 @@ void blockTypeGenMeshes(){
 	}
 }
 
-void blockTypeSetTex(u8 b, side side, uint tex){
-	blocks[b].tex[side]  = tex;
-	blocks[b].texX[side] = tex & 0xF;
-	blocks[b].texY[side] = tex >> 4;
+void blockTypeSetTex(u8 b, side cside, uint tex){
+	blocks[b].tex[cside]  = tex;
+	blocks[b].texX[cside] = tex & 0xF;
+	blocks[b].texY[cside] = tex >> 4;
 }
 
 void blockTypeAddToMesh(u8 b, mesh *m, const vec pos, const vec size) {
@@ -55,11 +55,11 @@ void blockTypeAddToMesh(u8 b, mesh *m, const vec pos, const vec size) {
 	const float h    = size.y;
 	const float d    = size.z;
 
-	for(int side=0;side<6;side++){
-		tileLoX[side] = ((float)blocks[b].texX[side]*TILE);
-		tileLoY[side] = ((float)blocks[b].texY[side]*TILE);
-		tileHiX[side] = tileLoX[side] + TILE;
-		tileHiY[side] = tileLoY[side] + TILE;
+	for(int cside=0;cside<6;cside++){
+		tileLoX[cside] = ((float)blocks[b].texX[cside]*TILE);
+		tileLoY[cside] = ((float)blocks[b].texY[cside]*TILE);
+		tileHiX[cside] = tileLoX[cside] + TILE;
+		tileHiY[cside] = tileLoY[cside] + TILE;
 	}
 
 	// Front Face

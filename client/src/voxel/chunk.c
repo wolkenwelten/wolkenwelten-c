@@ -471,7 +471,7 @@ void chunkDraw(chunk *c, float d, sideMask mask){
 			c->sideQuads[sideLeft].count +
 			c->sideQuads[sideRight].count;
 		glDrawArrays(GL_TRIANGLES,0,quadCount*6);
-		vboTrisCount += quadCount*2;
+		vboTrisCount += quadCount * 2;
 		drawCallCount++;
 	}else{
 		GLint first[sideMAX];
@@ -479,13 +479,14 @@ void chunkDraw(chunk *c, float d, sideMask mask){
 		u16 index = 0, quadCount = 0;
 		for(side sideIndex = 0; sideIndex < sideMAX; sideIndex++){
 			if(mask & (1 << sideIndex)){
+				if(c->sideQuads[sideIndex].count == 0){continue;}
 				first[index] = c->sideQuads[sideIndex].offset*6;
 				count[index] = c->sideQuads[sideIndex].count*6;
 				quadCount += c->sideQuads[sideIndex].count;
 				index++;
 			}
 		}
-		glMultiDrawArrays(GL_TRIANGLES,first,count,__builtin_popcount(mask));
+		glMultiDrawArrays(GL_TRIANGLES,first,count,index);
 		vboTrisCount += quadCount*2;
 		drawCallCount++;
 	}

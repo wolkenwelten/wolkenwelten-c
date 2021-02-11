@@ -104,8 +104,8 @@ void sfxLoop(sfx *b, float volume){
 }
 
 void blockTypeGenMeshes(){}
-void blockTypeSetTex(u8 b, side side, u32 tex){
+void blockTypeSetTex(u8 b, side cside, u32 tex){
 	(void)b;
-	(void)side;
+	(void)cside;
 	(void)tex;
 }
