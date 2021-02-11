@@ -20,17 +20,18 @@
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/side.h"
 
 #include <ctype.h>
 #include <stddef.h>
 #include <string.h>
 
 void blockTypeGenMeshes();
-void blockTypeSetTex(u8 b, int side, u32 tex);
+void blockTypeSetTex(u8 b, side side, u32 tex);
 
 static void blockTypeInitBlock(u8 b, u32 tex, blockCategory ncat,const char *bname,int nhp, int nfirehp,u32 ncolor1,u32 ncolor2){
 
-	for(int i=0;i<6;i++){
+	for(side i=0;i<sideMAX;i++){
 		blockTypeSetTex(b,i,tex);
 	}
 	blocks[b].name     = (char *)bname;
@@ -77,11 +78,11 @@ int blockTypeGetFireDmg(u8 b){
 	}
 }
 
-u16 blockTypeGetTexX(u8 b, int side){
+u16 blockTypeGetTexX(u8 b, side side){
 	return blocks[b].texX[side];
 }
 
-u16 blockTypeGetTexY(u8 b, int side){
+u16 blockTypeGetTexY(u8 b, side side){
 	return blocks[b].texY[side];
 }
 
@@ -106,8 +107,8 @@ void blockTypeInit(){
 
 	blockTypeInitBlock    ( 2, 16, DIRT,  "Grass", 240,  400, 0xFF004227,0xFF051B45);
 	blockTypeSetWaterProps( 2, 8192, 24, 8);
-	blockTypeSetTex       ( 2, 2, 0);
-	blockTypeSetTex       ( 2, 3, 1);
+	blockTypeSetTex       ( 2, sideTop, 0);
+	blockTypeSetTex       ( 2, sideBottom, 1);
 
 	blockTypeInitBlock    ( 3, 2, STONE, "Stone", 1000, 4000, 0xFF5E5E5E,0xFF484848);
 	blockTypeSetWaterProps( 3, 0, 0, 8);
@@ -126,13 +127,13 @@ void blockTypeInit(){
 
 	blockTypeInitBlock    ( 2, 16, DIRT,  "Grass", 240,  400, 0xFF004227,0xFF051B45);
 	blockTypeSetWaterProps( 2, 8192, 24, 8);
-	blockTypeSetTex       ( 2, 2, 0);
-	blockTypeSetTex       ( 2, 3, 1);
+	blockTypeSetTex       ( 2, sideTop, 0);
+	blockTypeSetTex       ( 2, sideBottom, 1);
 
 	blockTypeInitBlock    ( 8, 22, LEAVES,  "Dry Grass", 240, 1000, 0xFF11644B,0xFF007552);
 	blockTypeSetWaterProps( 8, 8192, 24, 8);
-	blockTypeSetTex       ( 8, 2, 6);
-	blockTypeSetTex       ( 8, 3, 1);
+	blockTypeSetTex       ( 8, sideTop, 6);
+	blockTypeSetTex       ( 8, sideBottom, 1);
 
 	blockTypeInitBlock    ( 9, 8, STONE, "Obsidian",      2000, 8000, 0xFF222222,0xFF171717);
 	blockTypeSetWaterProps( 9, 0, 0, 8);
@@ -151,8 +152,8 @@ void blockTypeInit(){
 
 	blockTypeInitBlock    (14,13, STONE, "Marble Pillar", 1600, 8000, 0xFFF0F0F0,0xFFEBEBEB);
 	blockTypeSetWaterProps(14, 0, 0, 8);
-	blockTypeSetTex       (14,2,12);
-	blockTypeSetTex       (14,3,12);
+	blockTypeSetTex       (14,sideTop,12);
+	blockTypeSetTex       (14,sideBottom,12);
 
 	blockTypeInitBlock    (15,14, STONE, "Marble Blocks", 1600, 8000, 0xFFF0F0F0,0xFFEBEBEB);
 	blockTypeSetWaterProps(15, 0, 0, 8);

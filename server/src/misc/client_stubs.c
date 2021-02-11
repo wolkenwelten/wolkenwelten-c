@@ -18,6 +18,7 @@
  * meant for the client side.
  */
 #include "../../../common/src/common.h"
+#include "../../../common/src/misc/side.h"
 
 #include <stdio.h>
 
@@ -103,7 +104,7 @@ void sfxLoop(sfx *b, float volume){
 }
 
 void blockTypeGenMeshes(){}
-void blockTypeSetTex(u8 b, int side, u32 tex){
+void blockTypeSetTex(u8 b, side side, u32 tex){
 	(void)b;
 	(void)side;
 	(void)tex;

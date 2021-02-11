@@ -66,6 +66,8 @@ uint    chunkGetActive()             { return chunkCount;               }
 uint    chunkGetGeneratedThisFrame() { return chunksGeneratedThisFrame; }
 void    chunkResetCounter()          { chunksGeneratedThisFrame = 0;    }
 
+#define POS_MASK (CHUNK_SIZE-1)
+
 chunk *chunkNew(u16 x,u16 y,u16 z){
 	chunk *c = NULL;
 	if(chunkFirstFree == NULL){
@@ -87,9 +89,9 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 		//fprintf(stderr,"--cfp=%i\n",chunkFreeCount);
 		chunkFreeCount--;
 	}
-	c->x         = x & (~0xF);
-	c->y         = y & (~0xF);
-	c->z         = z & (~0xF);
+	c->x         = x & (~POS_MASK);
+	c->y         = y & (~POS_MASK);
+	c->z         = z & (~POS_MASK);
 	c->flags     = 0;
 	c->vbo       = 0;
 	c->vboSize   = 0;
@@ -147,7 +149,7 @@ static inline void chunkFinish(chunk *c){
 }
 
 static inline void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const u8 bt = blocks[b].tex[0];
+	const u8 bt = blocks[b].tex[sideFront];
 	vertexTiny *vt = &blockMeshBuffer[sideFront][c->sideQuads[sideFront].count++ * 6];
 	*vt++ = (vertexTiny){x  ,y  ,z+d,0,h,bt,2};
 	*vt++ = (vertexTiny){x+w,y  ,z+d,w,h,bt,2};
@@ -158,7 +160,7 @@ static inline void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d
 }
 static inline void chunkAddBack(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)d;
-	const u8 bt = blocks[b].tex[1];
+	const u8 bt = blocks[b].tex[sideBack];
 	vertexTiny *vt = &blockMeshBuffer[sideBack][c->sideQuads[sideBack].count++ * 6];
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,2};
 	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,2};
@@ -168,7 +170,7 @@ static inline void chunkAddBack(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d)
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,2};
 }
 static inline void chunkAddTop(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const u8 bt = blocks[b].tex[2];
+	const u8 bt = blocks[b].tex[sideTop];
 	vertexTiny *vt = &blockMeshBuffer[sideTop][c->sideQuads[sideTop].count++ * 6];
 	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,3};
 	*vt++ = (vertexTiny){x  ,y+h,z+d,0,d,bt,3};
@@ -179,7 +181,7 @@ static inline void chunkAddTop(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) 
 }
 static inline void chunkAddBottom(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)h;
-	const u8 bt = blocks[b].tex[3];
+	const u8 bt = blocks[b].tex[sideBottom];
 	vertexTiny *vt = &blockMeshBuffer[sideBottom][c->sideQuads[sideBottom].count++ * 6];
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,0,bt,0};
 	*vt++ = (vertexTiny){x+w,y  ,z  ,w,0,bt,0};
@@ -189,7 +191,7 @@ static inline void chunkAddBottom(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,0,bt,0};
 }
 static inline void chunkAddRight(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const u8 bt = blocks[b].tex[4];
+	const u8 bt = blocks[b].tex[sideRight];
 	vertexTiny *vt = &blockMeshBuffer[sideRight][c->sideQuads[sideRight].count++ * 6];
 	*vt++ = (vertexTiny){x+w,y  ,z  ,0,h,bt,2};
 	*vt++ = (vertexTiny){x+w,y+h,z  ,0,0,bt,2};
@@ -200,7 +202,7 @@ static inline void chunkAddRight(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d
 }
 static inline void chunkAddLeft(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)w;
-	const u8 bt = blocks[b].tex[5];
+	const u8 bt = blocks[b].tex[sideLeft];
 	vertexTiny *vt = &blockMeshBuffer[sideLeft][c->sideQuads[sideLeft].count++ * 6];
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,2};
 	*vt++ = (vertexTiny){x  ,y  ,z+d,d,h,bt,2};
@@ -232,12 +234,12 @@ static void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
 static inline u8 chunkGetSides(u16 x,u16 y,u16 z,u8 b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2]){
 	u8 sides = 0;
 
-	if(b[x][y][z+1] == 0){ sides |=  1;}
-	if(b[x][y][z-1] == 0){ sides |=  2;}
-	if(b[x][y+1][z] == 0){ sides |=  4;}
-	if(b[x][y-1][z] == 0){ sides |=  8;}
-	if(b[x+1][y][z] == 0){ sides |= 16;}
-	if(b[x-1][y][z] == 0){ sides |= 32;}
+	if(b[x][y][z+1] == 0){ sides |= sideMaskFront; }
+	if(b[x][y][z-1] == 0){ sides |= sideMaskBack; }
+	if(b[x][y+1][z] == 0){ sides |= sideMaskTop; }
+	if(b[x][y-1][z] == 0){ sides |= sideMaskBottom; }
+	if(b[x+1][y][z] == 0){ sides |= sideMaskLeft; }
+	if(b[x-1][y][z] == 0){ sides |= sideMaskRight; }
 
 	return sides;
 }
@@ -295,11 +297,11 @@ static void chunkGenMesh(chunk *c) {
 			const u8 b = c->data[x][y][z];
 			if(b == 0){continue;}
 			const u8 sides = sideCache[x][y][z];
-			if(sides&1){
+			if(sides&sideMaskFront){
 				counts[sideFront]++;
 				plane[sideFront][y][x] = b | 0x010100;
 			}
-			if(sides&2){
+			if(sides&sideMaskBack){
 				counts[sideBack]++;
 				plane[sideBack][y][x] = b | 0x010100;
 			}
@@ -338,11 +340,11 @@ static void chunkGenMesh(chunk *c) {
 			const u8 b = c->data[x][y][z];
 			if(b == 0){continue;}
 			const u8 sides = sideCache[x][y][z];
-			if(sides&4){
+			if(sides&sideMaskTop){
 				counts[sideTop]++;
 				plane[sideTop][z][x] = b | 0x010100;
 			}
-			if(sides&8){
+			if(sides&sideMaskBottom){
 				counts[sideBottom]++;
 				plane[sideBottom][z][x] = b | 0x010100;
 			}
@@ -381,11 +383,11 @@ static void chunkGenMesh(chunk *c) {
 			const u8 b = c->data[x][y][z];
 			if(b == 0){continue;}
 			const u8 sides = sideCache[x][y][z];
-			if(sides&16){
+			if(sides&sideMaskLeft){
 				counts[sideLeft]++;
 				plane[sideLeft][y][z] = b | 0x010100;
 			}
-			if(sides&32){
+			if(sides&sideMaskRight){
 				counts[sideRight]++;
 				plane[sideRight][y][z] = b | 0x010100;
 			}
@@ -418,6 +420,8 @@ static void chunkGenMesh(chunk *c) {
 	PROFILE_STOP();
 }
 
+#define EDGE (CHUNK_SIZE-1)
+
 void chunkBox(chunk *c, u16 x,u16 y,u16 z,u16 gx,u16 gy,u16 gz,u8 block){
 	for(int cx=x;cx<gx;cx++){
 	for(int cy=y;cy<gy;cy++){
@@ -427,23 +431,23 @@ void chunkBox(chunk *c, u16 x,u16 y,u16 z,u16 gx,u16 gy,u16 gz,u8 block){
 	}
 	}
 	c->flags |= CHUNK_FLAG_DIRTY;
-	if(( x&0xF) == 0x0){worldSetChunkUpdated(x-1,y  ,z  );}
-	if(( y&0xF) == 0x0){worldSetChunkUpdated(x  ,y-1,z  );}
-	if(( z&0xF) == 0x0){worldSetChunkUpdated(x  ,y  ,z-1);}
-	if((gx&0xF) == 0xF){worldSetChunkUpdated(x+1,y  ,z  );}
-	if((gy&0xF) == 0xF){worldSetChunkUpdated(x  ,y+1,z  );}
-	if((gz&0xF) == 0xF){worldSetChunkUpdated(x  ,y  ,z+1);}
+	if(( x&EDGE) ==  0x0){worldSetChunkUpdated(x-1,y  ,z  );}
+	if(( y&EDGE) ==  0x0){worldSetChunkUpdated(x  ,y-1,z  );}
+	if(( z&EDGE) ==  0x0){worldSetChunkUpdated(x  ,y  ,z-1);}
+	if((gx&EDGE) == EDGE){worldSetChunkUpdated(x+1,y  ,z  );}
+	if((gy&EDGE) == EDGE){worldSetChunkUpdated(x  ,y+1,z  );}
+	if((gz&EDGE) == EDGE){worldSetChunkUpdated(x  ,y  ,z+1);}
 }
 
 void chunkSetB(chunk *c,u16 x,u16 y,u16 z,u8 block){
-	c->data[x&0xF][y&0xF][z&0xF] = block;
+	c->data[x&POS_MASK][y&POS_MASK][z&POS_MASK] = block;
 	c->flags |= CHUNK_FLAG_DIRTY;
-	if((x&0xF) == 0x0){worldSetChunkUpdated(x-1,y  ,z  );}
-	if((x&0xF) == 0xF){worldSetChunkUpdated(x+1,y  ,z  );}
-	if((y&0xF) == 0x0){worldSetChunkUpdated(x  ,y-1,z  );}
-	if((y&0xF) == 0xF){worldSetChunkUpdated(x  ,y+1,z  );}
-	if((z&0xF) == 0x0){worldSetChunkUpdated(x  ,y  ,z-1);}
-	if((z&0xF) == 0xF){worldSetChunkUpdated(x  ,y  ,z+1);}
+	if((x&EDGE) ==  0x0){worldSetChunkUpdated(x-1,y  ,z  );}
+	if((x&EDGE) == EDGE){worldSetChunkUpdated(x+1,y  ,z  );}
+	if((y&EDGE) ==  0x0){worldSetChunkUpdated(x  ,y-1,z  );}
+	if((y&EDGE) == EDGE){worldSetChunkUpdated(x  ,y+1,z  );}
+	if((z&EDGE) ==  0x0){worldSetChunkUpdated(x  ,y  ,z-1);}
+	if((z&EDGE) == EDGE){worldSetChunkUpdated(x  ,y  ,z+1);}
 }
 
 void chunkDraw(chunk *c, float d, sideMask mask){

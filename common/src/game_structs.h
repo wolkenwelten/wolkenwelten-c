@@ -1,5 +1,6 @@
 #pragma once
 #include "gfx_structs.h"
+#include "misc/side.h"
 
 
 typedef struct sfx sfx;
@@ -18,9 +19,9 @@ typedef enum blockCategory {
 } blockCategory;
 
 typedef struct {
-	u8            tex[6];
-	u8            texX[6];
-	u8            texY[6];
+	u8            tex[sideMAX];
+	u8            texX[sideMAX];
+	u8            texY[sideMAX];
 	u32           color[2];
 	mesh         *singleBlock;
 	int           hp,firehp;
