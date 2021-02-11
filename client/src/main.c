@@ -187,6 +187,9 @@ void mainloop(){
 		doGamepadMenuUpdate();
 		renderFrame();
 	}
+	#ifdef __EMSCRIPTEN__
+	if(quit){emscripten_cancel_main_loop();}
+	#endif
 }
 
 void checkAutostart(){

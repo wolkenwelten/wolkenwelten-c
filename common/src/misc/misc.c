@@ -61,6 +61,12 @@ void *loadFile(const char *filename,size_t *len){
 	size_t filelen,readlen,read;
 	u8 *buf = NULL;
 
+	#if defined (__EMSCRIPTEN__)
+	*len = 0;
+	(void)filename;
+	return NULL;
+	#endif
+
 	fp = fopen(filename,"rb");
 	if(fp == NULL){return NULL;}
 
@@ -89,6 +95,12 @@ void *loadFile(const char *filename,size_t *len){
 void saveFile(const char *filename,const void *buf, size_t len){
 	FILE *fp;
 	size_t written,wlen = 0;
+	#if defined (__EMSCRIPTEN__)
+	(void)filename;
+	(void)buf;
+	(void)len;
+	return;
+	#endif
 
 	fp = fopen(filename,"wb");
 	if(fp == NULL){return;}
@@ -150,6 +162,10 @@ char **splitArgs(const char *cmd,int *rargc){
 }
 
 int isDir(const char *name){
+	#if defined (__EMSCRIPTEN__)
+	(void)name;
+	return 0;
+	#endif
 	DIR *dp = opendir(name);
 	if(dp == NULL){return 0;}
 	closedir(dp);
@@ -167,7 +183,7 @@ void makeDir(const char *name){
 	if(isDir(name)){return;}
 	#ifdef __MINGW32__
 	mkdir(name);
-	#elif defined(__EMSCRIPTEN__)
+	#elif defined (__EMSCRIPTEN__)
 	(void)name;
 	#else
 	mkdir(name,0755);
@@ -188,6 +204,9 @@ void makeDirR(const char *name){
 }
 
 void rmDirR(const char *name){
+	#if defined (__EMSCRIPTEN__)
+	return;
+	#endif
 	DIR *dp = opendir(name);
 	if(dp == NULL){return;}
 	struct dirent *de = NULL;
@@ -210,7 +229,10 @@ void rmDirR(const char *name){
 // Create directories as needed.
 void changeToDataDir(){
 	char buf[512];
-	#ifdef __MINGW32__
+	#if defined (__EMSCRIPTEN__)
+	const char* dir  = "WolkenWelten";
+	return;
+	#elif defined (__MINGW32__)
 	const char* dir  = "WolkenWelten";
 	#else
 	const char* dir  = ".wolkenwelten";

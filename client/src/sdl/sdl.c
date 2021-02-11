@@ -37,6 +37,8 @@
 #include <SDL_hints.h>
 #ifdef EMSCRIPTEN
 	#include <SDL2/SDL_mixer.h>
+	#include <emscripten/html5.h>
+	#include <emscripten.h>
 #else
 	#include <SDL_mixer.h>
 #endif
@@ -80,6 +82,18 @@ static void initSDLMixer(){
 	sfxEnable = 1;
 }
 
+#ifdef __EMSCRIPTEN__
+
+EM_JS(int, emGetWindowWidth, (), {
+  return window.innerWidth;
+});
+
+EM_JS(int, emGetWindowHeight, (), {
+  return window.innerHeight;
+});
+
+#endif
+
 void initSDL(){
 	SDL_DisplayMode dm;
 	int desktopWidth  = optionWindowWidth;
@@ -96,7 +110,7 @@ void initSDL(){
 		exit(1);
 	}
 
-	#if defined(__EMSCRIPTEN__) || defined(WOLKENWELTEN__GL_ES)
+	#if defined (__EMSCRIPTEN__) || defined (WOLKENWELTEN__GL_ES)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
@@ -106,15 +120,17 @@ void initSDL(){
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2 );
 	#endif
 
-	if( SDL_GetDesktopDisplayMode(0, &dm) == 0){
-		desktopWidth  = screenWidth  = dm.w;
-		desktopHeight = screenHeight = dm.h;
-	}
-
 	int cwflags = SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_RESIZABLE;
 	#ifdef __EMSCRIPTEN__
-		cwflags |= SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_INPUT_GRABBED;
+		cwflags |= SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_INPUT_GRABBED;
+		desktopWidth = screenWidth = emGetWindowWidth();
+		desktopHeight = screenHeight = emGetWindowHeight();
 	#else
+		if( SDL_GetDesktopDisplayMode(0, &dm) == 0){
+			desktopWidth  = screenWidth  = dm.w;
+			desktopHeight = screenHeight = dm.h;
+		}
+
 		if(optionFullscreen){
 			cwflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}else{
@@ -201,10 +217,15 @@ void handleEvents(){
 }
 
 void sdlResize(int newW,int newH){
+	#ifdef __EMSCRIPTEN__
+	newW = screenWidth = emGetWindowWidth();
+	newH = screenHeight = emGetWindowHeight();
+	#endif
 	if((newW == screenWidth) && (newH == screenHeight)){return;}
 	screenWidth  = newW;
 	screenHeight = newH;
 	SDL_SetWindowSize(gWindow,screenWidth,screenHeight);
+
 	initGL();
 	resizeUI();
 }

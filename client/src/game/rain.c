@@ -73,7 +73,7 @@ void rainDrawAll(){
 	shaderBind(sRain);
 	matMul(matMVP,matView,matProjection);
 	shaderMatrix(sParticle,matMVP);
-	shaderSizeMul(sCloud,1.f + (player->aimFade * player->zoomFactor));
+	shaderSizeMul(sRain,1.f + (player->aimFade * player->zoomFactor));
 	glDepthMask(GL_FALSE);
 
 	glBindVertexArray(rainVAO);

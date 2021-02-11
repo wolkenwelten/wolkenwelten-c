@@ -55,14 +55,16 @@ __attribute__((aligned(32))) glParticle glSparticles   [SPART_MAX+4];
 __attribute__((aligned(32))) particle     sparticles   [SPART_MAX+4];
 __attribute__((aligned(32))) u32          sparticleRGBA[SPART_MAX+4];
 __attribute__((aligned(32))) uint         sparticleTTL [SPART_MAX+4];
-uint         sparticleCount = 0;
+uint         sparticleCount;
 uint         sparticleVBO[2];
-uint         sparticleVBOSize = 0;
+uint         sparticleVBOSize;
 uint         sparticleVAO;
 
 void particleInit(){
 	glGenBuffers(2,particleVBO);
 	glGenBuffers(2,sparticleVBO);
+	particleVBOSize = 0;
+	sparticleVBOSize = 0;
 
 	glGenVertexArrays(1, &particleVAO);
 	glBindVertexArray(particleVAO);
@@ -236,7 +238,6 @@ void particleDraw(){
 		particleVBOSize = particleCount;
 	}
 	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  0, (void *)0);
-
 	glDrawArrays(GL_POINTS,0,particleCount);
 
 	glBindVertexArray(sparticleVAO);
@@ -256,7 +257,6 @@ void particleDraw(){
 		sparticleVBOSize = sparticleCount;
 	}
 	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  0, (void *)0);
-
 	glDrawArrays(GL_POINTS,0,sparticleCount);
 
 
