@@ -57,7 +57,7 @@ bool  gfxUseSubData = true;
 bool  gfxUseSubData = false;
 #endif
 
-float matProjection[16], matView[16];
+float matProjection[16], matView[16], matSkyProjection[16];
 
 int    screenWidth   = 800;
 int    screenHeight  = 600;
@@ -162,7 +162,8 @@ void calcFOV(const character *cam){
 	if(gfxCurFOV <  80.1){gfxCurFOV =  80.0f;}
 	if(gfxCurFOV > 170.1){gfxCurFOV = 170.0f;}
 	float fov = gfxCurFOV / (1.f + (cam->zoomFactor * cam->aimFade));
-	matPerspective(matProjection, fov, (float)screenWidth / (float)screenHeight, 0.165f, renderDistance + 32.f);
+	matPerspective(matProjection,    fov, (float)screenWidth / (float)screenHeight, 0.165f, renderDistance + 32.f);
+	matPerspective(matSkyProjection, fov, (float)screenWidth / (float)screenHeight, 1.f, 4096.f);
 }
 
 vec calcShake(const character *cam){

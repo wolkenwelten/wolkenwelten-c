@@ -50,15 +50,15 @@ void initSky(){
 		tSun = textureNew(gfx_sun_png_data, gfx_sun_png_len, "client/gfx/sun.png");
 		sunMesh->tex = tSun;
 	}
-	const float d = renderDistance+24;
+	const float d = 2048.f;
 
-	meshAddVert(sunMesh, -48,  d, -48, 0.0f, 0.0f);
-	meshAddVert(sunMesh,  48,  d, -48, 1.0f, 0.0f);
-	meshAddVert(sunMesh,  48,  d,  48, 1.0f, 1.0f);
+	meshAddVert(sunMesh, -128,  d, -128, 0.0f, 0.0f);
+	meshAddVert(sunMesh,  128,  d, -128, 1.0f, 0.0f);
+	meshAddVert(sunMesh,  128,  d,  128, 1.0f, 1.0f);
 
-	meshAddVert(sunMesh,  48,  d,  48, 1.0f, 1.0f);
-	meshAddVert(sunMesh, -48,  d,  48, 0.0f, 1.0f);
-	meshAddVert(sunMesh, -48,  d, -48, 0.0f, 0.0f);
+	meshAddVert(sunMesh,  128,  d,  128, 1.0f, 1.0f);
+	meshAddVert(sunMesh, -128,  d,  128, 0.0f, 1.0f);
+	meshAddVert(sunMesh, -128,  d, -128, 0.0f, 0.0f);
 	meshFinishStatic(sunMesh);
 }
 
@@ -82,8 +82,6 @@ static void drawSkyColor(){
 }
 
 void renderSky(const character *cam){
-	static float lastRD = 0;
-	if(fabsf(lastRD - renderDistance) > .1f){initSky();}
 	drawSkyColor();
 
 	shaderBind(sMesh);
@@ -93,7 +91,7 @@ void renderSky(const character *cam){
 	matIdentity(matMVP);
 	matMulRotXY(matMVP,shake.yaw,shake.pitch);
 	matMulRotX(matMVP,sunAngle);
-	matMul(matMVP,matMVP,matProjection);
+	matMul(matMVP,matMVP,matSkyProjection);
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(sunMesh);
 }

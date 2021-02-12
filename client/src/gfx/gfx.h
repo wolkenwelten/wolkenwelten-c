@@ -4,7 +4,7 @@
 extern bool   queueScreenshot;
 extern bool   gfxUseSubData;
 
-extern float  matProjection[16], matView[16];
+extern float  matProjection[16], matView[16], matSkyProjection[16];
 extern int    screenWidth;
 extern int    screenHeight;
 extern size_t vboTrisCount;
