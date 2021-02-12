@@ -52,17 +52,15 @@ foreach(array_keys($platforms) as $plat){
 
 	<hr/>
 	<br/>
-	<!--
 	<h2>Or play directly in your Browser using WebAssembly</h2>
 	<hr/>
 	<div class=wasmdl align=center>
-		<a href="releases/wasm/index.html?worldSeed=2600&savegame=Test" class=button><span class=buttonlabel>Start WASM version</span><span class="buttonicon icon-wasm"></span></a><br/>
-		<b>WARNING: Still really unstable, will most likely crash after a minute or two.</b><br/>
-		<i>Tested in latest Chrome/Firefox/Safari</i>
+		<a href="releases/wasm/index.html?worldSeed=6809&savegame=Test" class=button><span class=buttonlabel>Start WASM version</span><span class="buttonicon icon-wasm"></span></a><br/>
+		<b>WARNING: Still quite experimental!.</b><br/>
+		<i>Tested in latest Chrome/Firefox</i>
 	</div>
 	<hr/>
 	<br/>
-	-->
 
 	<h2>Have some Screenshots</h2>
 	<div align=center class=pics>
