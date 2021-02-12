@@ -77,7 +77,7 @@ int connectionTries   = 0;
 #ifdef __APPLE__
 	#include <mach-o/dyld.h>
 	#include <libgen.h>
-	const char *clientGetServerExecutable(){
+	char *clientGetServerExecutable(){
 		static char path[512];
 		static char ret[512];
 		u32 size = sizeof(path);
@@ -92,14 +92,14 @@ int connectionTries   = 0;
 #else
 	char *clientGetServerExecutable(){
 		static char buf[512];
-		char cwd[512];
+		char cwdBuf[512];
 		if(buf[0] != 0){return buf;} // Already found an executable the last time
 		#ifdef __MINGW32__
 		char* serverExecName = "wolkenwelten-server.exe";
 		#else
 		char* serverExecName = "wolkenwelten-server";
 		#endif
-		getcwd(cwd,sizeof(cwd));
+		char *cwd = getcwd(cwdBuf,sizeof(cwdBuf));
 
 		snprintf(buf,sizeof(buf),"%s/%s",cwd,serverExecName);
 		if(access(buf,R_OK|X_OK) >= 0){
