@@ -1,16 +1,21 @@
-;; Contains everything realted to the yield system
+;; Contains everything related to the yield/coroutine system
 
-(define yield-queue '())
+(define yield-queue (cons "Start of Yield Queue"))
 (define yield (λ (pred expr) "Executes expr once pred is true, returns immediately otherwise"
-	(cond ((pred) (expr) #t)
-              (#t     (set! yield-queue (cons (cons 'yield (cons pred (cons expr #nil))) yield-queue))))))
+	(set-cdr! (last-pair yield-queue) (cons (cons pred expr))) #t))
+
+(define yield-try (λ (l) "Tries to evaluate part an entry of the yield queue"
+	(cond ((eval (car l)) (eval (cdr l)) #t)
+	      (#t #f))))
 
 (define yield-run-iter (λ (l) "Iter for yield-run"
 	(cond ((nil? l) #t)
-	      (#t (eval (car l)) (yield-run-iter (cdr l))))))
+	      ((nil? (cdr l)) #t)
+	      ((yield-try (cadr l)) (set-cdr! l (cddr l)) (yield-run-iter l))
+	      (#t (yield-run-iter (cdr l))))))
+
 (define yield-run (λ () "Executes pending coroutines if their predicate now evaluates to #t"
-	(cond ((nil? (car yield-queue)) #f)
-	      (#t (let ((queue yield-queue)) (set! yield-queue '()) (yield-run-iter queue))))))
+	(yield-run-iter yield-queue)))
 
 (define timeout (λ (millis) "Returns a function that evaluates to true once millis milliseconds have passed"
 	(let ((goal (+ (msecs) millis))) (λ () (> (msecs) goal)))))

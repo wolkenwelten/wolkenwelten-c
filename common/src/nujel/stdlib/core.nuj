@@ -25,9 +25,6 @@
 (define caddr (λ (p) "Short for (car (cdr (cdr p)))"
 	(car (cdr (cdr p)))))
 
-(define last-pair (λ (l) "Returns the last pair of list l"
-	(if (nil? (cdr l)) l (last-pair (cdr l)))))
-
 (define except-last-pair (λ (l r) "Returns a copy of li without the last pair"
 	(if (nil? (cdr l)) (reverse r) (except-last-pair (cdr l) (cons (car l) r)))))
 

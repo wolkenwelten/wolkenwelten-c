@@ -617,12 +617,12 @@ static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
 		lVal *lv = lDefineClosureSym(tmpc,csym);
 		if(lSymVariadic(csym)){
 			lVal *t = lSymNoEval(csym) ? vn : lApply(c,vn,lEval);
-			lValCopy(lv,lCons(t,NULL));
+			if((lv != NULL) && (lv->type == ltPair)){ lv->vList.car = t;}
 			break;
 		}else{
 			lVal *t = lSymNoEval(csym) ? vn->vList.car : lEval(c,vn->vList.car);
-			if(t  != NULL && t->type == ltSymbol && !lSymNoEval(csym)){ t = lEval(c,t); }
-			if(t  != NULL){lValCopy(lv,lCons(t,NULL));}
+			if(t  != NULL && t->type == ltSymbol && !lSymNoEval(csym)){t = lEval(c,t);}
+			if((lv != NULL) && (lv->type == ltPair)){ lv->vList.car = t;}
 			if(vn != NULL){vn = vn->vList.cdr;}
 		}
 	}
@@ -689,11 +689,21 @@ static lVal *lnfSetCar(lClosure *c, lVal *v){
 }
 static lVal *lnfSetCdr(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrN(v));
+	//printf("SetCdr: %llu\n",t-lValList);
 	if((t == NULL) || (t->type != ltPair)){return NULL;}
 	lVal *cdr = NULL;
 	if((v != NULL) && (v->type == ltPair) && (v->vList.cdr != NULL)){cdr = lEval(c,lCarOrN(v->vList.cdr));}
 	t->vList.cdr = cdr;
 	return t;
+}
+
+static lVal *lnfLastPair(lClosure *c, lVal *v){
+	lVal *t = lEval(c,lCarOrN(v));
+	if((t == NULL) || (t->type != ltPair)){return NULL;}
+	for(lVal *r=t;r != NULL;r = r->vList.cdr){
+		if(r->vList.cdr == NULL){return r;}
+	}
+	return NULL;
 }
 
 static uint getMSecs(){
@@ -844,6 +854,7 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"begin",    "(...body)",     "Evaluates ...body in order and returns the last result",            lnfBegin);
 	lAddNativeFunc(c,"quote",    "(v)",           "Returns v as is without evaluating",                                lnfQuote);
 	lAddNativeFunc(c,"set!",     "(s v)",         "Binds a new value v to already defined symbol s",                   lnfSet);
+	lAddNativeFunc(c,"last-pair","(l)",           "Returns the last pair of list l",                                   lnfLastPair);
 
 	lAddNativeFunc(c,"abs","(a)","Returns the absolute value of a",     lnfAbs);
 	lAddNativeFunc(c,"pow","(a b)","Returns a raised to the power of b",lnfPow);
