@@ -39,7 +39,7 @@ typedef struct vertexTiny {
 } vertexTiny;
 #pragma pack(pop)
 
-vertexTiny blockMeshBuffer[sideMAX][CHUNK_SIZE * CHUNK_SIZE * 2 * 3];
+vertexTiny blockMeshBuffer[CHUNK_SIZE * CHUNK_SIZE * 2 * 3 * sideMAX];
 int chunkFreeCount = 0;
 int chunkCount     = 0;
 int chunksGeneratedThisFrame = 0;
@@ -125,22 +125,11 @@ static inline void chunkFinish(chunk *c){
 	}
 	if(!c->vbo) { glGenBuffers(1,&c->vbo); }
 	glBindBuffer(GL_ARRAY_BUFFER, c->vbo);
-	const u16 quadCount =
-		c->sideQuads[sideFront].count +
-		c->sideQuads[sideBack].count +
-		c->sideQuads[sideTop].count +
-		c->sideQuads[sideBottom].count +
-		c->sideQuads[sideLeft].count +
-		c->sideQuads[sideRight].count;
-	if (c->vboSize < quadCount) {
-		glBufferData(GL_ARRAY_BUFFER, quadCount*(6*sizeof(vertexTiny)), NULL, GL_STATIC_DRAW);
-		c->vboSize = quadCount;
-	}
-	u16 offset = 0;
-	for(side sideIndex = 0; sideIndex < sideMAX; sideIndex++){
-		glBufferSubData(GL_ARRAY_BUFFER, offset*(6*sizeof(vertexTiny)), c->sideQuads[sideIndex].count*(6*sizeof(vertexTiny)), blockMeshBuffer[sideIndex]);
-		c->sideQuads[sideIndex].offset = offset;
-		offset += c->sideQuads[sideIndex].count;
+	if(gfxUseSubData && (c->vboSize >= c->sideEnd[sideMAX-1])){
+		glBufferSubData(GL_ARRAY_BUFFER, 0, c->sideEnd[sideMAX-1] * (6 * sizeof(vertexTiny)), blockMeshBuffer);
+	}else{
+		glBufferData(GL_ARRAY_BUFFER, c->sideEnd[sideMAX-1]*(6*sizeof(vertexTiny)), blockMeshBuffer, GL_STATIC_DRAW);
+		c->vboSize = c->sideEnd[sideMAX-1];
 	}
 	glVertexAttribPointer(0, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, x));
 	glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, u));
@@ -148,9 +137,9 @@ static inline void chunkFinish(chunk *c){
 	c->flags &= ~CHUNK_FLAG_DIRTY;
 }
 
-static inline void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+static void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	const u8 bt = blocks[b].tex[sideFront];
-	vertexTiny *vt = &blockMeshBuffer[sideFront][c->sideQuads[sideFront].count++ * 6];
+	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideFront]++ * 6];
 	*vt++ = (vertexTiny){x  ,y  ,z+d,0,h,bt,2};
 	*vt++ = (vertexTiny){x+w,y  ,z+d,w,h,bt,2};
 	*vt++ = (vertexTiny){x+w,y+h,z+d,w,0,bt,2};
@@ -158,10 +147,10 @@ static inline void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d
 	*vt++ = (vertexTiny){x  ,y+h,z+d,0,0,bt,2};
 	*vt++ = (vertexTiny){x  ,y  ,z+d,0,h,bt,2};
 }
-static inline void chunkAddBack(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+static void chunkAddBack(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)d;
 	const u8 bt = blocks[b].tex[sideBack];
-	vertexTiny *vt = &blockMeshBuffer[sideBack][c->sideQuads[sideBack].count++ * 6];
+	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideBack]++ * 6];
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,2};
 	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,2};
 	*vt++ = (vertexTiny){x+w,y+h,z  ,w,0,bt,2};
@@ -169,9 +158,9 @@ static inline void chunkAddBack(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d)
 	*vt++ = (vertexTiny){x+w,y  ,z  ,w,h,bt,2};
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,2};
 }
-static inline void chunkAddTop(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+static void chunkAddTop(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	const u8 bt = blocks[b].tex[sideTop];
-	vertexTiny *vt = &blockMeshBuffer[sideTop][c->sideQuads[sideTop].count++ * 6];
+	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideTop]++ * 6];
 	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,3};
 	*vt++ = (vertexTiny){x  ,y+h,z+d,0,d,bt,3};
 	*vt++ = (vertexTiny){x+w,y+h,z+d,w,d,bt,3};
@@ -179,10 +168,10 @@ static inline void chunkAddTop(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) 
 	*vt++ = (vertexTiny){x+w,y+h,z  ,w,0,bt,3};
 	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,3};
 }
-static inline void chunkAddBottom(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+static void chunkAddBottom(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)h;
 	const u8 bt = blocks[b].tex[sideBottom];
-	vertexTiny *vt = &blockMeshBuffer[sideBottom][c->sideQuads[sideBottom].count++ * 6];
+	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideBottom]++ * 6];
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,0,bt,0};
 	*vt++ = (vertexTiny){x+w,y  ,z  ,w,0,bt,0};
 	*vt++ = (vertexTiny){x+w,y  ,z+d,w,d,bt,0};
@@ -190,26 +179,26 @@ static inline void chunkAddBottom(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 
 	*vt++ = (vertexTiny){x  ,y  ,z+d,0,d,bt,0};
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,0,bt,0};
 }
-static inline void chunkAddRight(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const u8 bt = blocks[b].tex[sideRight];
-	vertexTiny *vt = &blockMeshBuffer[sideRight][c->sideQuads[sideRight].count++ * 6];
-	*vt++ = (vertexTiny){x+w,y  ,z  ,0,h,bt,2};
-	*vt++ = (vertexTiny){x+w,y+h,z  ,0,0,bt,2};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,d,0,bt,2};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,d,0,bt,2};
-	*vt++ = (vertexTiny){x+w,y  ,z+d,d,h,bt,2};
-	*vt++ = (vertexTiny){x+w,y  ,z  ,0,h,bt,2};
-}
-static inline void chunkAddLeft(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+static void chunkAddLeft(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)w;
 	const u8 bt = blocks[b].tex[sideLeft];
-	vertexTiny *vt = &blockMeshBuffer[sideLeft][c->sideQuads[sideLeft].count++ * 6];
+	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideLeft]++ * 6];
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,2};
 	*vt++ = (vertexTiny){x  ,y  ,z+d,d,h,bt,2};
 	*vt++ = (vertexTiny){x  ,y+h,z+d,d,0,bt,2};
 	*vt++ = (vertexTiny){x  ,y+h,z+d,d,0,bt,2};
 	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,2};
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,2};
+}
+static void chunkAddRight(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+	const u8 bt = blocks[b].tex[sideRight];
+	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideRight]++ * 6];
+	*vt++ = (vertexTiny){x+w,y  ,z  ,0,h,bt,2};
+	*vt++ = (vertexTiny){x+w,y+h,z  ,0,0,bt,2};
+	*vt++ = (vertexTiny){x+w,y+h,z+d,d,0,bt,2};
+	*vt++ = (vertexTiny){x+w,y+h,z+d,d,0,bt,2};
+	*vt++ = (vertexTiny){x+w,y  ,z+d,d,h,bt,2};
+	*vt++ = (vertexTiny){x+w,y  ,z  ,0,h,bt,2};
 }
 
 static void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
@@ -258,14 +247,10 @@ static void chunkPopulateBlockData(u8 b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2
 static void chunkGenMesh(chunk *c) {
 	PROFILE_START();
 
-	int counts[sideMAX];
 	static u8 blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
 	static u8 sideCache[CHUNK_SIZE  ][CHUNK_SIZE  ][CHUNK_SIZE  ];
-	static u32    plane[sideMAX     ][CHUNK_SIZE  ][CHUNK_SIZE  ];
+	static u32    plane[CHUNK_SIZE  ][CHUNK_SIZE  ];
 	if(++chunksGeneratedThisFrame > MAX_CHUNKS_GEN_PER_FRAME){return;}
-	memset(c->sideQuads,0,sizeof(c->sideQuads));
-	memset(plane,       0,sizeof(plane));
-	memset(counts,      0,sizeof(counts));
 	memset(blockData,   0,sizeof(blockData));
 	chunkPopulateBlockData(blockData,c,1,1,1);
 	chunkPopulateBlockData(blockData,worldGetChunk(c->x-CHUNK_SIZE,c->y,c->z),1-CHUNK_SIZE,1,1);
@@ -278,139 +263,180 @@ static void chunkGenMesh(chunk *c) {
 	for(int x=CHUNK_SIZE-1;x>=0;--x){
 	for(int y=CHUNK_SIZE-1;y>=0;--y){
 	for(int z=CHUNK_SIZE-1;z>=0;--z){
-		if(c->data[x][y][z] == 0){
-			sideCache[x][y][z] = 0;
-		}else{
-			sideCache[x][y][z] = chunkGetSides(x+1,y+1,z+1,blockData);
-		}
+		sideCache[x][y][z] = c->data[x][y][z] == 0 ? 0 : chunkGetSides(x+1,y+1,z+1,blockData);
 	}
 	}
 	}
 
-	// Front / Back
+	c->sideEnd[sideFront] = 0;
 	for(int z=CHUNK_SIZE-1;z>=0;--z){
-		memset(plane[sideFront],0,sizeof(plane[sideFront]));
-		memset(plane[sideBack],0,sizeof(plane[sideBack]));
-		counts[sideFront] = counts[sideBack] = 0;
+		bool found = false;
+		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
 			const u8 b = c->data[x][y][z];
 			if(b == 0){continue;}
-			const u8 sides = sideCache[x][y][z];
-			if(sides&sideMaskFront){
-				counts[sideFront]++;
-				plane[sideFront][y][x] = b | 0x010100;
-			}
-			if(sides&sideMaskBack){
-				counts[sideBack]++;
-				plane[sideBack][y][x] = b | 0x010100;
+			if(sideCache[x][y][z] &sideMaskFront){
+				found = true;
+				plane[y][x] = b | 0x010100;
 			}
 		}
 		}
-		chunkOptimizePlane(plane[sideFront]);
-		chunkOptimizePlane(plane[sideBack]);
-		if(counts[sideFront] || counts[sideBack]){
+		if(found){
+			chunkOptimizePlane(plane);
 			const int cd = 1;
 			for(int y=CHUNK_SIZE-1;y>=0;--y){
 			for(int x=CHUNK_SIZE-1;x>=0;--x){
-				if(plane[sideFront][y][x]){
-					const int cw = ((plane[sideFront][y][x] >> 16) & 0xFF);
-					const int ch = ((plane[sideFront][y][x] >>  8) & 0xFF);
-					const u8 b = plane[sideFront][y][x] & 0xFF;
-					chunkAddFront(c,b,x,y,z,cw,ch,cd);
-				}
-				if(plane[sideBack][y][x]){
-					const int cw = ((plane[sideBack][y][x] >> 16) & 0xFF);
-					const int ch = ((plane[sideBack][y][x] >>  8) & 0xFF);
-					const u8 b = plane[sideBack][y][x] & 0xFF;
-					chunkAddBack(c,b,x,y,z,cw,ch,cd);
-				}
+				if(!plane[y][x]){continue;}
+				const int cw = ((plane[y][x] >> 16) & 0xFF);
+				const int ch = ((plane[y][x] >>  8) & 0xFF);
+				const u8 b = plane[y][x] & 0xFF;
+				chunkAddFront(c,b,x,y,z,cw,ch,cd);
 			}
 			}
 		}
 	}
 
-	// Top / Bottom
+	c->sideEnd[sideBack] = c->sideEnd[sideFront];
+	for(int z=CHUNK_SIZE-1;z>=0;--z){
+		bool found = false;
+		memset(plane,0,sizeof(plane));
+		for(int y=CHUNK_SIZE-1;y>=0;--y){
+		for(int x=CHUNK_SIZE-1;x>=0;--x){
+			const u8 b = c->data[x][y][z];
+			if(b == 0){continue;}
+			if(sideCache[x][y][z] & sideMaskBack){
+				found = true;
+				plane[y][x] = b | 0x010100;
+			}
+		}
+		}
+		if(found){
+			chunkOptimizePlane(plane);
+			const int cd = 1;
+			for(int y=CHUNK_SIZE-1;y>=0;--y){
+			for(int x=CHUNK_SIZE-1;x>=0;--x){
+				if(!plane[y][x]){continue;}
+				const int cw = ((plane[y][x] >> 16) & 0xFF);
+				const int ch = ((plane[y][x] >>  8) & 0xFF);
+				const u8 b = plane[y][x] & 0xFF;
+				chunkAddBack(c,b,x,y,z,cw,ch,cd);
+			}
+			}
+		}
+	}
+
+	c->sideEnd[sideTop] = c->sideEnd[sideBack];
 	for(int y=CHUNK_SIZE-1;y>=0;--y){
-		memset(plane[sideTop],0,sizeof(plane[sideTop]));
-		memset(plane[sideBottom],0,sizeof(plane[sideBottom]));
-		counts[sideTop] = counts[sideBottom] = 0;
+		bool found = false;
+		memset(plane,0,sizeof(plane));
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
 			const u8 b = c->data[x][y][z];
 			if(b == 0){continue;}
-			const u8 sides = sideCache[x][y][z];
-			if(sides&sideMaskTop){
-				counts[sideTop]++;
-				plane[sideTop][z][x] = b | 0x010100;
-			}
-			if(sides&sideMaskBottom){
-				counts[sideBottom]++;
-				plane[sideBottom][z][x] = b | 0x010100;
+			if(sideCache[x][y][z] & sideMaskTop){
+				found = true;
+				plane[z][x] = b | 0x010100;
 			}
 		}
 		}
-		chunkOptimizePlane(plane[sideTop]);
-		chunkOptimizePlane(plane[sideBottom]);
-		if(counts[sideTop] || counts[sideBottom]){
+		if(found){
+			chunkOptimizePlane(plane);
 			const int ch = 1;
 			for(int z=CHUNK_SIZE-1;z>=0;--z){
 			for(int x=CHUNK_SIZE-1;x>=0;--x){
-				if(plane[sideTop][z][x]){
-					const int cw = ((plane[sideTop][z][x] >> 16) & 0xFF);
-					const int cd = ((plane[sideTop][z][x] >>  8) & 0xFF);
-					const u8 b = plane[sideTop][z][x] & 0xFF;
-					chunkAddTop(c,b,x,y,z,cw,ch,cd);
-				}
-				if(plane[sideBottom][z][x]){
-					const int cw = ((plane[sideBottom][z][x] >> 16) & 0xFF);
-					const int cd = ((plane[sideBottom][z][x] >>  8) & 0xFF);
-					const u8 b = plane[sideBottom][z][x] & 0xFF;
-					chunkAddBottom(c,b,x,y,z,cw,ch,cd);
-				}
+				if(!plane[z][x]){continue;}
+				const int cw = ((plane[z][x] >> 16) & 0xFF);
+				const int cd = ((plane[z][x] >>  8) & 0xFF);
+				const u8 b = plane[z][x] & 0xFF;
+				chunkAddTop(c,b,x,y,z,cw,ch,cd);
 			}
 			}
 		}
 	}
 
-	// Right / Left
+	c->sideEnd[sideBottom] = c->sideEnd[sideTop];
+	for(int y=CHUNK_SIZE-1;y>=0;--y){
+		bool found = false;
+		memset(plane,0,sizeof(plane));
+		for(int z=CHUNK_SIZE-1;z>=0;--z){
+		for(int x=CHUNK_SIZE-1;x>=0;--x){
+			const u8 b = c->data[x][y][z];
+			if(b == 0){continue;}
+			if(sideCache[x][y][z] & sideMaskBottom){
+				found = true;
+				plane[z][x] = b | 0x010100;
+			}
+		}
+		}
+		if(found){
+			chunkOptimizePlane(plane);
+			const int ch = 1;
+			for(int z=CHUNK_SIZE-1;z>=0;--z){
+			for(int x=CHUNK_SIZE-1;x>=0;--x){
+				if(!plane[z][x]){continue;}
+				const int cw = ((plane[z][x] >> 16) & 0xFF);
+				const int cd = ((plane[z][x] >>  8) & 0xFF);
+				const u8 b = plane[z][x] & 0xFF;
+				chunkAddBottom(c,b,x,y,z,cw,ch,cd);
+			}
+			}
+		}
+	}
+
+	c->sideEnd[sideLeft] = c->sideEnd[sideBottom];
 	for(int x=CHUNK_SIZE-1;x>=0;--x){
-		memset(plane[sideLeft],0,sizeof(plane[sideLeft]));
-		memset(plane[sideRight],0,sizeof(plane[sideRight]));
-		counts[sideLeft] = counts[sideRight] = 0;
+		bool found = false;
+		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
 			const u8 b = c->data[x][y][z];
 			if(b == 0){continue;}
-			const u8 sides = sideCache[x][y][z];
-			if(sides&sideMaskLeft){
-				counts[sideLeft]++;
-				plane[sideLeft][y][z] = b | 0x010100;
-			}
-			if(sides&sideMaskRight){
-				counts[sideRight]++;
-				plane[sideRight][y][z] = b | 0x010100;
+			if(sideCache[x][y][z] & sideMaskRight){
+				found = true;
+				plane[y][z] = b | 0x010100;
 			}
 		}
 		}
-		chunkOptimizePlane(plane[sideLeft]);
-		chunkOptimizePlane(plane[sideRight]);
-		if(counts[sideLeft] || counts[sideRight]){
+		if(found){
+			chunkOptimizePlane(plane);
 			const int cw = 1;
 			for(int y=CHUNK_SIZE-1;y>=0;--y){
 			for(int z=CHUNK_SIZE-1;z>=0;--z){
-				if(plane[sideLeft][y][z]){
-					const int ch = ((plane[sideLeft][y][z] >>  8) & 0xFF);
-					const int cd = ((plane[sideLeft][y][z] >> 16) & 0xFF);
-					const u8 b = plane[sideLeft][y][z] & 0xFF;
-					chunkAddRight(c,b,x,y,z,cw,ch,cd);
-				}
-				if(plane[sideRight][y][z]){
-					const int ch = ((plane[sideRight][y][z] >>  8) & 0xFF);
-					const int cd = ((plane[sideRight][y][z] >> 16) & 0xFF);
-					const u8 b = plane[sideRight][y][z] & 0xFF;
-					chunkAddLeft(c,b,x,y,z,cw,ch,cd);
-				}
+				if(!plane[y][z]){continue;}
+				const int ch = ((plane[y][z] >>  8) & 0xFF);
+				const int cd = ((plane[y][z] >> 16) & 0xFF);
+				const u8 b = plane[y][z] & 0xFF;
+				chunkAddLeft(c,b,x,y,z,cw,ch,cd);
+			}
+			}
+		}
+	}
+
+	c->sideEnd[sideRight] = c->sideEnd[sideLeft];
+	for(int x=CHUNK_SIZE-1;x>=0;--x){
+		bool found = false;
+		memset(plane,0,sizeof(plane));
+		for(int y=CHUNK_SIZE-1;y>=0;--y){
+		for(int z=CHUNK_SIZE-1;z>=0;--z){
+			const u8 b = c->data[x][y][z];
+			if(b == 0){continue;}
+			if(sideCache[x][y][z] & sideMaskLeft){
+				found = true;
+				plane[y][z] = b | 0x010100;
+			}
+		}
+		}
+		if(found){
+			chunkOptimizePlane(plane);
+			const int cw = 1;
+			for(int y=CHUNK_SIZE-1;y>=0;--y){
+			for(int z=CHUNK_SIZE-1;z>=0;--z){
+				if(!plane[y][z]){continue;}
+				const int ch = ((plane[y][z] >>  8) & 0xFF);
+				const int cd = ((plane[y][z] >> 16) & 0xFF);
+				const u8 b = plane[y][z] & 0xFF;
+				chunkAddRight(c,b,x,y,z,cw,ch,cd);
 			}
 			}
 		}
@@ -463,31 +489,29 @@ void chunkDraw(chunk *c, float d, sideMask mask){
 
 	glBindVertexArray(c->vao);
 	if(mask == sideMaskALL || !glIsMultiDrawAvailable){
-		const u16 quadCount =
-			c->sideQuads[sideFront].count +
-			c->sideQuads[sideBack].count +
-			c->sideQuads[sideTop].count +
-			c->sideQuads[sideBottom].count +
-			c->sideQuads[sideLeft].count +
-			c->sideQuads[sideRight].count;
-		glDrawArrays(GL_TRIANGLES,0,quadCount*6);
-		vboTrisCount += quadCount * 2;
+		glDrawArrays(GL_TRIANGLES,0,c->sideEnd[sideMAX-1]*6);
+		vboTrisCount += c->sideEnd[sideMAX-1] * 2;
 		drawCallCount++;
 	}else{
 		GLint first[sideMAX];
 		GLsizei count[sideMAX];
-		u16 index = 0, quadCount = 0;
+		uint index = 0;
+		bool lastSide = false;
 		for(side sideIndex = 0; sideIndex < sideMAX; sideIndex++){
 			if(mask & (1 << sideIndex)){
-				if(c->sideQuads[sideIndex].count == 0){continue;}
-				first[index] = c->sideQuads[sideIndex].offset*6;
-				count[index] = c->sideQuads[sideIndex].count*6;
-				quadCount += c->sideQuads[sideIndex].count;
-				index++;
+				const uint cFirst = sideIndex == 0 ? 0 : c->sideEnd[sideIndex-1];
+				const uint cCount = c->sideEnd[sideIndex] - cFirst;
+				if(cCount == 0){continue;}
+				if(lastSide){count[index-1] += cCount * 6;}
+				first[index]   = cFirst * 6;
+				count[index++] = cCount * 6;
+				vboTrisCount  += cCount * 2;
+				lastSide = true;
+			}else{
+				lastSide = false;
 			}
 		}
 		glMultiDrawArrays(GL_TRIANGLES,first,count,index);
-		vboTrisCount += quadCount*2;
 		drawCallCount++;
 	}
 }

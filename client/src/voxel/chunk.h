@@ -9,10 +9,7 @@
 
 struct chunk {
 	u16 x,y,z,vboSize;
-	struct {
-		u16 count;
-		u16 offset;
-	} sideQuads[sideMAX];
+	u16 sideEnd[sideMAX];
 	u16 flags;
 	void *nextFree;
 	uint vbo;
