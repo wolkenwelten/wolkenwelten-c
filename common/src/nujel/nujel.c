@@ -679,6 +679,22 @@ static lVal *lnfCons(lClosure *c, lVal *v){
 	lVal *cdr = lEval(c,lCadrOrN(v));
 	return lCons(car,cdr);
 }
+static lVal *lnfSetCar(lClosure *c, lVal *v){
+	lVal *t = lEval(c,lCarOrN(v));
+	if((t == NULL) || (t->type != ltPair)){return NULL;}
+	lVal *car = NULL;
+	if((v != NULL) && (v->type == ltPair) && (v->vList.cdr != NULL)){car = lEval(c,lCarOrN(v->vList.cdr));}
+	t->vList.car = car;
+	return t;
+}
+static lVal *lnfSetCdr(lClosure *c, lVal *v){
+	lVal *t = lEval(c,lCarOrN(v));
+	if((t == NULL) || (t->type != ltPair)){return NULL;}
+	lVal *cdr = NULL;
+	if((v != NULL) && (v->type == ltPair) && (v->vList.cdr != NULL)){cdr = lEval(c,lCarOrN(v->vList.cdr));}
+	t->vList.cdr = cdr;
+	return t;
+}
 
 static uint getMSecs(){
 	struct timespec tv;
@@ -797,9 +813,11 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"or" ,"(...args)","#t if one member of ...args evaluates to true", lnfOr);
 	lAddNativeFunc(c,"not","(a)",      "#t if a is #f, #f if a is #t",                  lnfNot);
 
-	lAddNativeFunc(c,"car", "(l)",  "Returns the car of pair l",                            lnfCar);
-	lAddNativeFunc(c,"cdr", "(l)",  "Returns the cdr of pair l",                            lnfCdr);
-	lAddNativeFunc(c,"cons","(a b)","Returns a new pair with a as the car and b as the cdr",lnfCons);
+	lAddNativeFunc(c,"car",     "(l)",  "Returns the car of pair l",                            lnfCar);
+	lAddNativeFunc(c,"cdr",     "(l)",  "Returns the cdr of pair l",                            lnfCdr);
+	lAddNativeFunc(c,"cons",    "(a b)","Returns a new pair with a as the car and b as the cdr",lnfCons);
+	lAddNativeFunc(c,"set-car!","(l a)","Sets the car of pair l to a",                          lnfSetCar);
+	lAddNativeFunc(c,"set-cdr!","(l a)","Sets the cdr of pair l to a",                          lnfSetCdr);
 
 	lAddNativeFunc(c,"apply",       "(f l)",         "Evaluates f with list l as arguments",     lnfApply);
 	lAddNativeFunc(c,"eval",        "(expr)",        "Evaluates expr",                           lEval);
