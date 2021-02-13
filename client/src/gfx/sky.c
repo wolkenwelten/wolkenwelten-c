@@ -93,5 +93,7 @@ void renderSky(const character *cam){
 	matMulRotX(matMVP,sunAngle);
 	matMul(matMVP,matMVP,matSkyProjection);
 	shaderMatrix(sMesh,matMVP);
+	glDepthMask(GL_FALSE);
 	meshDraw(sunMesh);
+	glDepthMask(GL_TRUE);
 }
