@@ -70,7 +70,7 @@ void landscapeUpdateAll(){
 	static uint calls = 0;
 	PROFILE_START();
 
-	for(uint i=calls&0x3F;i<chunkCount;i+=0x40){
+	for(uint i=calls&0x3FFF;i<chunkCount;i+=0x4000){
 		landscapeUpdateChunk(&chunkList[i]);
 	}
 	calls++;
