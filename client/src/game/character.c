@@ -517,7 +517,8 @@ void characterUpdateBooster(character *c){
 	if(c == player){
 		sfxLoop(sfxJet,1.f);
 		if(rngValA(15) == 0){
-			projectileNew(c->pos,vecAdd(rot,vecInvert(vecMulS(vecRng(),10.f))),0,characterGetBeing(player),1,0.01f);
+			const vec ppos = vecSub(c->pos,vecMulS(vecDegToVec(rot),2.f));
+			projectileNew(ppos,vecAdd(rot,vecInvert(vecMulS(vecRng(),10.f))),0,characterGetBeing(player),1,0.01f);
 		}
 	}
 
