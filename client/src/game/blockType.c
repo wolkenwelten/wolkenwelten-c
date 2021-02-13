@@ -18,6 +18,7 @@
 #include "../game/blockType.h"
 
 #include "../gfx/gfx.h"
+#include "../gfx/gl.h"
 #include "../gfx/mat.h"
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
@@ -112,14 +113,24 @@ void blockTypeAddToMesh(u8 b, mesh *m, const vec pos, const vec size) {
 	meshAddVertC(m, x  ,y  ,z  ,tileLoX[5],tileHiY[5],0.75f);
 }
 
-void blockTypeDraw(u8 b, vec pos, float alpha){
+void blockTypeDraw(u8 b, vec pos, float alpha, int depthOffset){
 	matMov      (matMVP,matView);
 	matMulTrans (matMVP,pos.x,pos.y,pos.z);
 	matMul      (matMVP,matMVP,matProjection);
+
+	if(depthOffset){
+		glPolygonOffset(depthOffset,depthOffset);
+		glEnable(GL_POLYGON_OFFSET_FILL);
+	}
 
 	shaderBind(sMesh);
 	shaderMatrix(sMesh,matMVP);
 	shaderAlpha (sMesh,alpha);
 	meshDraw(blocks[b].singleBlock);
 	shaderAlpha (sMesh,1.0);
+
+	if(depthOffset){
+		glPolygonOffset(0,0);
+		glDisable(GL_POLYGON_OFFSET_FILL);
+	}
 }
