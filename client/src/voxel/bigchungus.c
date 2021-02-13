@@ -146,7 +146,22 @@ void worldDraw(const character *cam){
 	shaderBind(sBlockMesh);
 	matMul(matMVP,matView,matProjection);
 	shaderMatrix(sBlockMesh,matMVP);
-	shaderBrightness(sBlockMesh,worldBrightness);
+	const float degToRad = 2*M_PI/360;
+	const float shadeFront = .5f*worldBrightness + .5f*MAX(0.f, sin(sunAngle*degToRad));
+	const float shadeBack = .5f*worldBrightness + .5f*MAX(0.f, sin(sunAngle*degToRad-180*degToRad));
+	const float shadeTop = .5f*worldBrightness + .5f*MAX(0.f, sin(sunAngle*degToRad-270*degToRad));
+	const float shadeBottom = .3f*worldBrightness;
+	const float shadeLeft = .55f*worldBrightness;
+	const float shadeRight = shadeLeft;
+	const vec sideTints[sideMAX] = {
+		(vec){{{shadeFront,shadeFront,shadeFront}}},
+		(vec){{{shadeBack,shadeBack,shadeBack}}},
+		(vec){{{shadeTop,shadeTop,shadeTop}}},
+		(vec){{{shadeBottom,shadeBottom,shadeBottom}}},
+		(vec){{{shadeLeft,shadeLeft,shadeLeft}}},
+		(vec){{{shadeRight,shadeRight,shadeRight}}},
+	};
+	shaderSideTint(sBlockMesh,sideTints);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);

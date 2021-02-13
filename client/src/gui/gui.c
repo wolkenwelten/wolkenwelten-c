@@ -406,7 +406,7 @@ void drawDebuginfo(){
 		guim->size = 2;
 		textMeshPrintf(guim,"Active Tris.: %s%s\n",colorSignalLow(1<<21,1<<19,1<<18,tris),getHumanReadableSize(tris));
 		guim->fgc  = colorPalette[15];
-		textMeshPrintf(guim,"Draw calls  : %s%s\n",colorSignalLow(1<<15,1<<14,1<<8,draws),getHumanReadableSize(draws));
+		textMeshPrintf(guim,"Draw calls  : %s%s %f\n",colorSignalLow(1<<15,1<<14,1<<8,draws),getHumanReadableSize(draws),sunAngle);
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Particles   : %s%s\n",colorSignalLow(1<<16,1<<15,1<<14,particleCount),getHumanReadableSize(particleCount));
 		guim->fgc  = colorPalette[15];

@@ -133,72 +133,72 @@ static inline void chunkFinish(chunk *c){
 	}
 	glVertexAttribPointer(0, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, x));
 	glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, u));
-	glVertexAttribPointer(2, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, f));
+	glVertexAttribIPointer(2, 1, GL_UNSIGNED_BYTE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, f));
 	c->flags &= ~CHUNK_FLAG_DIRTY;
 }
 
 static void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	const u8 bt = blocks[b].tex[sideFront];
 	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideFront]++ * 6];
-	*vt++ = (vertexTiny){x  ,y  ,z+d,0,h,bt,2};
-	*vt++ = (vertexTiny){x+w,y  ,z+d,w,h,bt,2};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,w,0,bt,2};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,w,0,bt,2};
-	*vt++ = (vertexTiny){x  ,y+h,z+d,0,0,bt,2};
-	*vt++ = (vertexTiny){x  ,y  ,z+d,0,h,bt,2};
+	*vt++ = (vertexTiny){x  ,y  ,z+d,0,h,bt,sideFront};
+	*vt++ = (vertexTiny){x+w,y  ,z+d,w,h,bt,sideFront};
+	*vt++ = (vertexTiny){x+w,y+h,z+d,w,0,bt,sideFront};
+	*vt++ = (vertexTiny){x+w,y+h,z+d,w,0,bt,sideFront};
+	*vt++ = (vertexTiny){x  ,y+h,z+d,0,0,bt,sideFront};
+	*vt++ = (vertexTiny){x  ,y  ,z+d,0,h,bt,sideFront};
 }
 static void chunkAddBack(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)d;
 	const u8 bt = blocks[b].tex[sideBack];
 	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideBack]++ * 6];
-	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,2};
-	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,2};
-	*vt++ = (vertexTiny){x+w,y+h,z  ,w,0,bt,2};
-	*vt++ = (vertexTiny){x+w,y+h,z  ,w,0,bt,2};
-	*vt++ = (vertexTiny){x+w,y  ,z  ,w,h,bt,2};
-	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,2};
+	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,sideBack};
+	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,sideBack};
+	*vt++ = (vertexTiny){x+w,y+h,z  ,w,0,bt,sideBack};
+	*vt++ = (vertexTiny){x+w,y+h,z  ,w,0,bt,sideBack};
+	*vt++ = (vertexTiny){x+w,y  ,z  ,w,h,bt,sideBack};
+	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,sideBack};
 }
 static void chunkAddTop(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	const u8 bt = blocks[b].tex[sideTop];
 	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideTop]++ * 6];
-	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,3};
-	*vt++ = (vertexTiny){x  ,y+h,z+d,0,d,bt,3};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,w,d,bt,3};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,w,d,bt,3};
-	*vt++ = (vertexTiny){x+w,y+h,z  ,w,0,bt,3};
-	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,3};
+	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,sideTop};
+	*vt++ = (vertexTiny){x  ,y+h,z+d,0,d,bt,sideTop};
+	*vt++ = (vertexTiny){x+w,y+h,z+d,w,d,bt,sideTop};
+	*vt++ = (vertexTiny){x+w,y+h,z+d,w,d,bt,sideTop};
+	*vt++ = (vertexTiny){x+w,y+h,z  ,w,0,bt,sideTop};
+	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,sideTop};
 }
 static void chunkAddBottom(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)h;
 	const u8 bt = blocks[b].tex[sideBottom];
 	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideBottom]++ * 6];
-	*vt++ = (vertexTiny){x  ,y  ,z  ,0,0,bt,0};
-	*vt++ = (vertexTiny){x+w,y  ,z  ,w,0,bt,0};
-	*vt++ = (vertexTiny){x+w,y  ,z+d,w,d,bt,0};
-	*vt++ = (vertexTiny){x+w,y  ,z+d,w,d,bt,0};
-	*vt++ = (vertexTiny){x  ,y  ,z+d,0,d,bt,0};
-	*vt++ = (vertexTiny){x  ,y  ,z  ,0,0,bt,0};
+	*vt++ = (vertexTiny){x  ,y  ,z  ,0,0,bt,sideBottom};
+	*vt++ = (vertexTiny){x+w,y  ,z  ,w,0,bt,sideBottom};
+	*vt++ = (vertexTiny){x+w,y  ,z+d,w,d,bt,sideBottom};
+	*vt++ = (vertexTiny){x+w,y  ,z+d,w,d,bt,sideBottom};
+	*vt++ = (vertexTiny){x  ,y  ,z+d,0,d,bt,sideBottom};
+	*vt++ = (vertexTiny){x  ,y  ,z  ,0,0,bt,sideBottom};
 }
 static void chunkAddLeft(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)w;
 	const u8 bt = blocks[b].tex[sideLeft];
 	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideLeft]++ * 6];
-	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,2};
-	*vt++ = (vertexTiny){x  ,y  ,z+d,d,h,bt,2};
-	*vt++ = (vertexTiny){x  ,y+h,z+d,d,0,bt,2};
-	*vt++ = (vertexTiny){x  ,y+h,z+d,d,0,bt,2};
-	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,2};
-	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,2};
+	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,sideLeft};
+	*vt++ = (vertexTiny){x  ,y  ,z+d,d,h,bt,sideLeft};
+	*vt++ = (vertexTiny){x  ,y+h,z+d,d,0,bt,sideLeft};
+	*vt++ = (vertexTiny){x  ,y+h,z+d,d,0,bt,sideLeft};
+	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,sideLeft};
+	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,sideLeft};
 }
 static void chunkAddRight(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	const u8 bt = blocks[b].tex[sideRight];
 	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideRight]++ * 6];
-	*vt++ = (vertexTiny){x+w,y  ,z  ,0,h,bt,2};
-	*vt++ = (vertexTiny){x+w,y+h,z  ,0,0,bt,2};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,d,0,bt,2};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,d,0,bt,2};
-	*vt++ = (vertexTiny){x+w,y  ,z+d,d,h,bt,2};
-	*vt++ = (vertexTiny){x+w,y  ,z  ,0,h,bt,2};
+	*vt++ = (vertexTiny){x+w,y  ,z  ,0,h,bt,sideRight};
+	*vt++ = (vertexTiny){x+w,y+h,z  ,0,0,bt,sideRight};
+	*vt++ = (vertexTiny){x+w,y+h,z+d,d,0,bt,sideRight};
+	*vt++ = (vertexTiny){x+w,y+h,z+d,d,0,bt,sideRight};
+	*vt++ = (vertexTiny){x+w,y  ,z+d,d,h,bt,sideRight};
+	*vt++ = (vertexTiny){x+w,y  ,z  ,0,h,bt,sideRight};
 }
 
 static void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
