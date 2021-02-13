@@ -452,6 +452,10 @@ static lVal *lnfSymCount(lClosure *c, lVal *v){
 	return lValInt(lSymCount(c,0));
 }
 
+static lVal *lnfBegin(lClosure *c, lVal *v){
+	return lLastCar(lApply(c,v,lEval));
+}
+
 static lVal *lnfCl(lClosure *c, lVal *v){
 	if(c == NULL){return NULL;}
 	if(v == NULL){return c->data != NULL ? c->data : lCons(NULL,NULL);}
@@ -519,7 +523,29 @@ static lVal *lnfLambda(lClosure *c, lVal *v){
 
 static lVal *lnfDynamic(lClosure *c, lVal *v){
 	lVal *ret = lnfLambda(c,v);
+	if(ret == NULL){return NULL;}
 	ret->vLambda->flags |= lfDynamic;
+	return ret;
+}
+
+static lVal *lnfObject(lClosure *c, lVal *v){
+	lClosure *cl = lClosureNew(c);
+	if(cl == NULL){return NULL;}
+	lVal *ret = lValAlloc();
+	ret->type = ltLambda;
+	ret->vLambda = cl;
+	cl->flags |= lfObject;
+
+	if((v != NULL) && (v->type == ltPair)){
+		forEach(n,v->vList.car){
+			if(n->vList.car->type != ltSymbol){continue;}
+			lVal *t = lnfDefine(cl,cl,n,lDefineClosureSym);
+			t->vList.car = NULL;
+			(void)t;
+		}
+		lnfBegin(cl,v->vList.cdr);
+	}
+
 	return ret;
 }
 
@@ -568,10 +594,6 @@ static lVal *lnfLet(lClosure *c, lVal *v){
 	return ret == NULL ? NULL : ret;
 }
 
-static lVal *lnfBegin(lClosure *c, lVal *v){
-	return lLastCar(lApply(c,v,lEval));
-}
-
 static inline bool lSymVariadic(lSymbol s){
 	const char *p = s.c;
 	if((*p == '@') || (*p == '&')){p++;}
@@ -597,6 +619,9 @@ static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
 	if(lambda == NULL){
 		lPrintError("lLambda: NULL\n");
 		return NULL;
+	}
+	if(lambda->flags & lfObject){
+		return lnfBegin(lambda,v);
 	}
 	lVal *vn = v;
 	lClosure *tmpc;
@@ -838,6 +863,8 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"lambda",      "(args ...body)","New Lambda",                               lnfLambda);
 	lAddNativeFunc(c,"δ",           "(args ...body)","New Dynamic scoped lambda",                lnfDynamic);
 	lAddNativeFunc(c,"dynamic",     "(args ...body)","New Dynamic scoped lambda",                lnfDynamic);
+	lAddNativeFunc(c,"ω",           "(args ...body)","Creates a new object",                     lnfObject);
+	lAddNativeFunc(c,"object",      "(args ...body)","Creates a new object",                     lnfObject);
 	lAddNativeFunc(c,"cl",          "(i)",           "Returns closure",                          lnfCl);
 	lAddNativeFunc(c,"cl-lambda",   "(i)",           "Returns closure as a lambda",              lnfClLambda);
 	lAddNativeFunc(c,"cl-text",     "(f)",           "Returns closures text segment",            lnfClText);

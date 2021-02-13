@@ -100,17 +100,23 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 		}
 		break;
 	case ltLambda: {
-		if(v->vLambda->flags & lfDynamic){
+		if(v->vLambda->flags & lfObject){
+			t = snprintf(cur,bufEnd-cur,"(ω (");
+		}else if(v->vLambda->flags & lfDynamic){
 			t = snprintf(cur,bufEnd-cur,"(δ (");
 		}else{
 			t = snprintf(cur,bufEnd-cur,"(λ (");
 		}
 		if(t > 0){cur += t;}
 		forEach(n,v->vLambda->data){
-			if(n->vList.car == NULL){continue;}
-			if(n->vList.car->type != ltPair){continue;}
-			if(n->vList.car->vList.car == NULL){continue;}
-			cur = lSWriteVal(n->vList.car->vList.car,cur,bufEnd);
+			if(n->vList.car == NULL)            {continue;}
+			if(n->vList.car->type != ltPair)    {continue;}
+			if(n->vList.car->vList.car == NULL) {continue;}
+			if((n->vList.car->vList.cdr != NULL) && (n->vList.car->vList.cdr->type == ltPair) && (n->vList.car->vList.cdr->vList.car != NULL)){
+				cur = lSWriteVal(n->vList.car,cur,bufEnd);
+			}else{
+				cur = lSWriteVal(n->vList.car->vList.car,cur,bufEnd);
+			}
 			if(n->vList.cdr != NULL){*cur++ = ' ';}
 		}
 		*cur++ = ')';
@@ -208,7 +214,9 @@ char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
 		}
 		break;
 	case ltLambda: {
-		if(v->vLambda->flags & lfDynamic){
+		if(v->vLambda->flags & lfObject){
+			t = snprintf(cur,bufEnd-cur,"(ω (");
+		}else if(v->vLambda->flags & lfDynamic){
 			t = snprintf(cur,bufEnd-cur,"(δ (");
 		}else{
 			t = snprintf(cur,bufEnd-cur,"(λ (");
@@ -216,10 +224,14 @@ char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
 
 		if(t > 0){cur += t;}
 		forEach(n,v->vLambda->data){
-			if(n->vList.car == NULL){continue;}
-			if(n->vList.car->type != ltPair){continue;}
+			if(n->vList.car == NULL)           {continue;}
+			if(n->vList.car->type != ltPair)   {continue;}
 			if(n->vList.car->vList.car == NULL){continue;}
-			cur = lSWriteVal(n->vList.car->vList.car,cur,bufEnd);
+			if((n->vList.car->vList.cdr != NULL) && (n->vList.car->vList.cdr->type == ltPair) && (n->vList.car->vList.cdr->vList.car != NULL)){
+				cur = lSWriteVal(n->vList.car,cur,bufEnd);
+			}else{
+				cur = lSWriteVal(n->vList.car->vList.car,cur,bufEnd);
+			}
 			if(n->vList.cdr != NULL){*cur++ = ' ';}
 		}
 		*cur++ = ')';

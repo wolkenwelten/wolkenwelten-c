@@ -64,6 +64,7 @@ struct lClosure {
 #define lfNoGC      ( 4)
 #define lfConst     ( 8)
 #define lfHeapAlloc (16)
+#define lfObject    (32)
 
 struct lString {
 	const char *buf,*data;
