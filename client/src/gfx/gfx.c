@@ -57,8 +57,9 @@ bool  gfxUseSubData = true;
 bool  gfxUseSubData = false;
 #endif
 
-float matProjection[16], matView[16], matSkyProjection[16];
+float matProjection[16], matSubBlockView[16], matView[16], matSkyProjection[16];
 
+vec    subBlockViewOffset;
 int    screenWidth   = 800;
 int    screenHeight  = 600;
 size_t vboTrisCount  = 0;
@@ -177,15 +178,21 @@ vec calcShake(const character *cam){
 
 void calcView(const character *cam){
 	matIdentity(matView);
+	matIdentity(matSubBlockView);
 	camShake = calcShake(cam);
 	const vec shake = vecAdd(cam->rot,camShake);
 	matMulRotXY(matView,shake.yaw,shake.pitch);
+	matMulRotXY(matSubBlockView,shake.yaw,shake.pitch);
 	if(optionThirdPerson){
 		vec cpos = vecAdd(cam->pos,vecNew(0,0.5f,0));
 		cpos = vecSub(cpos,vecDegToVec(shake));
 		matMulTrans(matView,-cpos.x,-cpos.y,-cpos.z);
+		matMulTrans(matSubBlockView,fmod(-cpos.x,1),fmod(-cpos.y,1),fmod(-cpos.z,1));
+		subBlockViewOffset = (vec){{{(int)cpos.x,(int)cpos.y,(int)cpos.z}}};
 	}else{
 		matMulTrans(matView,-cam->pos.x,-(cam->pos.y+0.5+cam->yoff),-cam->pos.z);
+		matMulTrans(matSubBlockView,fmod(-cam->pos.x,1),fmod(-(cam->pos.y+0.5+cam->yoff),1),fmod(-cam->pos.z,1));
+		subBlockViewOffset = (vec){{{(int)cam->pos.x,(int)(cam->pos.y+0.5+cam->yoff),(int)cam->pos.z}}};
 	}
 }
 

@@ -485,7 +485,7 @@ void chunkDraw(chunk *c, float d, sideMask mask){
 	}else{
 		shaderAlpha(sBlockMesh,1.f);
 	}
-	shaderTransform(sBlockMesh,c->x,c->y,c->z);
+	shaderTransform(sBlockMesh,c->x-subBlockViewOffset.x,c->y-subBlockViewOffset.y,c->z-subBlockViewOffset.z);
 
 	glBindVertexArray(c->vao);
 	if(mask == sideMaskALL || !glIsMultiDrawAvailable){

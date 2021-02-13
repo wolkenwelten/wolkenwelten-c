@@ -144,7 +144,10 @@ void worldDraw(const character *cam){
 	extractFrustum();
 
 	shaderBind(sBlockMesh);
-	matMul(matMVP,matView,matProjection);
+	// Use the subBlock view matrix in order to render chunks relative to the player.
+	// This allows for maximum rendering floating point precision to avoid shaky surfaces
+	// and visible block seams.
+	matMul(matMVP,matSubBlockView,matProjection);
 	shaderMatrix(sBlockMesh,matMVP);
 	const float shadeFront  = .50f*worldBrightness + .5f*MAX(0.f, sin(sunAngle*PI180));
 	const float shadeBack   = .50f*worldBrightness + .5f*MAX(0.f, sin(sunAngle*PI180-180*PI180));
