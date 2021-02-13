@@ -23,28 +23,29 @@
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/profiling.h"
 
+#include <stdio.h>
 #include <string.h>
 
 static void landscapeUpdateChunk(chunk *c){
-	static u8 topBlocks[16][16];
+	static u8 topBlocks[CHUNK_SIZE][CHUNK_SIZE];
 
 	chunk *tc = worldTryChunk(c->x,c->y+1,c->z);
 	if(tc == NULL){
 		memset(topBlocks,0,sizeof(topBlocks));
 	}else{
-		for(int x=0;x<16;x++){
-		for(int z=0;z<16;z++){
-			topBlocks[x][z] = tc->data[x][15][z];
+		for(int x=0;x<CHUNK_SIZE;x++){
+		for(int z=0;z<CHUNK_SIZE;z++){
+			topBlocks[x][z] = tc->data[x][0][z];
 		}
 		}
 	}
 
-	for(uint x=0; x < 16; x++){
-	for(uint y=0; y < 16; y++){
-	for(uint z=0; z < 16; z++){
+	for(uint x=0; x < CHUNK_SIZE; x++){
+	for(uint y=0; y < CHUNK_SIZE; y++){
+	for(uint z=0; z < CHUNK_SIZE; z++){
 		const u8 b = c->data[x][y][z];
 		u8 tb;
-		if(y == 15){
+		if(y == CHUNK_SIZE-1){
 			tb = topBlocks[x][z];
 		}else{
 			tb = c->data[x][y+1][z];
@@ -69,7 +70,7 @@ void landscapeUpdateAll(){
 	static uint calls = 0;
 	PROFILE_START();
 
-	for(uint i=calls&0x3FFF;i<chunkCount;i+=0x4000){
+	for(uint i=calls&0x3F;i<chunkCount;i+=0x40){
 		landscapeUpdateChunk(&chunkList[i]);
 	}
 	calls++;
