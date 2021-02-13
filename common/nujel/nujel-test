@@ -253,6 +253,10 @@ test_sexpr "(define test (cons 1 2)) (set-car! test 3)" "(3 . 2)"
 test_sexpr "(define test (cons 1 2)) (set-car! test 3) (set-cdr! test 4)" "(3 . 4)"
 test_sexpr "(define eins (object () (define say (lambda () \"Eins\")))) (eins (say))" "\"Eins\""
 test_sexpr "(define eins (object () (define say (lambda () \"Eins\")))) (define zwei (eins (object))) (zwei (say))" "\"Eins\""
+test_sexpr "(define a 1) (unless (= 2 2) (set! a 4)) a" "1"
+test_sexpr "(define a 1) (unless (= 2 3) (set! a 4)) a" "4"
+test_sexpr "(define a 1) (when   (= 2 2) (set! a 4)) a" "4"
+test_sexpr "(define a 1) (when   (= 2 3) (set! a 4)) a" "1"
 
 #test_sexpr "π" "3.14159" Doesnt work on windows, why?
 print_report

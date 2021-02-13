@@ -112,10 +112,10 @@
 (define list (λ (...l) "Returns its arguments as a list"
 	...l))
 
-(define when (δ (c @...expr) "Evaluates l and returns the last result if c is #t"
+(define when   (δ (c @...expr) "Evaluates l and returns the last result if c is #t"
 	(cond (c (eval (cons 'begin @...expr))) (#t #f))))
 (define unless (δ (c @...expr) "Evaluates l and returns the last result if c is #f"
-	(cond ((not c) (eval (cons 'begin @...expr))) (#t #f))))
+	(cond (c #f) (#t (eval (cons 'begin @...expr))))))
 
 (define arr-fill! (λ (a v i) "Fills array a with value v"
 	(cond ((>= i (arr-length a)) a)
