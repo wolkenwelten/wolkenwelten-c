@@ -586,12 +586,12 @@ void addChunksToQueue(uint c){
 	}
 	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = (chunkReqEntry){entry.x,entry.y,entry.z,0xFF};
 	for(int x=15;x>= 0;--x){
-		for(int y=15;y>= 0;--y){
-			for(int z=15;z>= 0;--z){
-				if(chng->chunks[x][y][z] == NULL){continue;}
-				addChunkToQueue(c,(entry.x<<8)|(x<<4),(entry.y<<8)|(y<<4),(entry.z<<8)|(z<<4));
-			}
-		}
+	for(int y=15;y>= 0;--y){
+	for(int z=15;z>= 0;--z){
+		if(chng->chunks[x][y][z] == NULL){continue;}
+		addChunkToQueue(c,(entry.x<<8)|(x<<4),(entry.y<<8)|(y<<4),(entry.z<<8)|(z<<4));
+	}
+	}
 	}
 	chungusSetUpdated(chng,c);
 }

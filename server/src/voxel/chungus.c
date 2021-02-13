@@ -49,9 +49,9 @@ void chungusInit(){
 
 void chungusSetClientUpdated(chungus *c,u64 updated){
 	c->clientsUpdated = updated;
-	for(int x=0;x<16;x++){
-	for(int y=0;y<16;y++){
-	for(int z=0;z<16;z++){
+	for(int x=0;x<CHUNGUS_COORDS;x++){
+	for(int y=0;y<CHUNGUS_COORDS;y++){
+	for(int z=0;z<CHUNGUS_COORDS;z++){
 		if(c->chunks[x][y][z] == NULL){continue;}
 		c->chunks[x][y][z]->clientsUpdated = updated;
 	}
@@ -122,14 +122,14 @@ void chungusFree(chungus *c){
 	itemDropDelChungus(c);
 	fireDelChungus(c);
 	throwableDelChungus(c);
-	for(int x=0;x<16;x++){
-	for(int y=0;y<16;y++){
-	for(int z=0;z<16;z++){
+	for(int x=0;x<CHUNGUS_COORDS;x++){
+	for(int y=0;y<CHUNGUS_COORDS;y++){
+	for(int z=0;z<CHUNGUS_COORDS;z++){
 		chunkFree(c->chunks[x][y][z]);
 	}
 	}
 	}
-	memset(c->chunks,0,16*16*16*sizeof(chunk *));
+	memset(c->chunks,0,sizeof(c->chunks));
 	c->nextFree = chungusFirstFree;
 	chungusFirstFree = c;
 	chungusFreeCount++;
@@ -319,12 +319,12 @@ void chungusFill(chungus *c, int x,int y,int z,u8 b){
 void chungusSubscribePlayer(chungus *c, uint p){
 	if(c == NULL){return;}
 	u64 mask = ~(1 << p);
-	if(c->clientsSubscribed & mask){return;}
+	if(c->clientsSubscribed & (1 << p)){return;}
 
 	c->clientsSubscribed |= 1 << p;
-	for(int x = 0; x < 16; x++){
-	for(int y = 0; y < 16; y++){
-	for(int z = 0; z < 16; z++){
+	for(int x = 0; x < CHUNGUS_COORDS; x++){
+	for(int y = 0; y < CHUNGUS_COORDS; y++){
+	for(int z = 0; z < CHUNGUS_COORDS; z++){
 		if(c->chunks[x][y][z] == NULL){ continue; }
 		c->chunks[x][y][z]->clientsUpdated &= mask;
 		beingListSync(p, &c->chunks[x][y][z]->bl);
@@ -335,9 +335,9 @@ void chungusSubscribePlayer(chungus *c, uint p){
 }
 
 void chungusSetAllUpdated(chungus *c, u64 nUpdated){
-	for(int x = 0; x < 16; x++){
-	for(int y = 0; y < 16; y++){
-	for(int z = 0; z < 16; z++){
+	for(int x = 0; x < CHUNGUS_COORDS; x++){
+	for(int y = 0; y < CHUNGUS_COORDS; y++){
+	for(int z = 0; z < CHUNGUS_COORDS; z++){
 		if(c->chunks[x][y][z] == NULL){ continue; }
 		c->chunks[x][y][z]->clientsUpdated = nUpdated;
 	}
@@ -351,9 +351,9 @@ int chungusUnsubscribePlayer(chungus *c, uint p){
 
 	c->clientsSubscribed &= mask;
 	c->clientsUpdated    &= mask;
-	for(int x = 0; x < 16; x++){
-	for(int y = 0; y < 16; y++){
-	for(int z = 0; z < 16; z++){
+	for(int x = 0; x < CHUNGUS_COORDS; x++){
+	for(int y = 0; y < CHUNGUS_COORDS; y++){
+	for(int z = 0; z < CHUNGUS_COORDS; z++){
 		if(c->chunks[x][y][z] == NULL){ continue; }
 		c->chunks[x][y][z]->clientsUpdated &= mask;
 	}
@@ -393,9 +393,9 @@ int chungusUpdateClient(chungus *c, uint p){
 	bool fullUpdate = (clients[p].chnkUpdateIter & 0xFFF) == 0;
 	if(clients[p].chnkUpdateIter & 0x3){ return 0;}
 
-	for(uint x=0;x<16;x++){
-	for(uint y=0;y<16;y++){
-	for(uint z=0;z<16;z++){
+	for(uint x=0;x<CHUNGUS_COORDS;x++){
+	for(uint y=0;y<CHUNGUS_COORDS;y++){
+	for(uint z=0;z<CHUNGUS_COORDS;z++){
 		chunk *chnk = c->chunks[x][y][z];
 		if(chnk == NULL){continue;}
 		if(!fullUpdate){
@@ -465,7 +465,11 @@ void chungusUnsubFarChungi(){
 		chng->clientsSubscribed &= 0xFFFFFFFF;
 
 		for(uint ii=0;ii<clientCount;++ii){
+			if(clients[ii].state){continue;}
 			const float cdist = chungusDistance(clients[ii].c,chng);
+			if((chng->x == 129) && (chng->y == 3) && (chng->z == 129)){
+				printf("[%u] %f - %llx\n",ii,cdist,chng->clientsSubscribed);
+			}
 			if(cdist < 256.f){
 				chungusSubscribePlayer(chng,ii);
 			}else if(cdist > 2048.f){

@@ -1,8 +1,10 @@
 #pragma once
 
+#include "../voxel/chunk.h"
 #include "../../../common/src/common.h"
 
-#define CHUNGUS_SIZE (16*16)
+#define CHUNGUS_COORDS (16)
+#define CHUNGUS_SIZE (CHUNGUS_COORDS*CHUNK_SIZE)
 
 struct chungus {
 	u8     x,y,z;
@@ -12,7 +14,7 @@ struct chungus {
 	u64    freeTimer;
 	void  *nextFree;
 	beingList bl;
-	chunk *chunks[16][16][16];
+	chunk *chunks[CHUNGUS_COORDS][CHUNGUS_COORDS][CHUNGUS_COORDS];
 };
 
 extern chungus *chungusList;

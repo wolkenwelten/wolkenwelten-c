@@ -30,6 +30,7 @@
 #include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
+#include "../voxel/chunk.h"
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
@@ -530,6 +531,38 @@ static lVal *wwlnfQuit(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfChunkInfo(lClosure *c, lVal *v){
+	char buf[256];
+
+	if(v == NULL){return NULL;}
+	lVal *t = lEval(c,v->vList.car);
+	if(t == NULL){return NULL;}
+	t = lnfVec(c,t);
+	vec pos = t->vVec;
+
+	chunk *chnk = worldTryChunk((uint)pos.x & 0xFFF0,(uint)pos.y & 0xFFF0,(uint)pos.z & 0xFFF0);
+	if(chnk == NULL){return NULL;}
+	snprintf(buf,sizeof(buf),"[%u:%u:%u] clientsUpdated: %x",chnk->x,chnk->y,chnk->z,chnk->clientsUpdated);
+
+	return lValString(buf);
+}
+
+static lVal *wwlnfChungusInfo(lClosure *c, lVal *v){
+	char buf[256];
+
+	if(v == NULL){return NULL;}
+	lVal *t = lEval(c,v->vList.car);
+	if(t == NULL){return NULL;}
+	t = lnfVec(c,t);
+	vec pos = t->vVec;
+
+	chungus *chng = worldTryChungus((uint)pos.x >> 8,(uint)pos.y >> 8,(uint)pos.z >> 8);
+	if(chng == NULL){return NULL;}
+	snprintf(buf,sizeof(buf),"[%u:%u:%u] clientsUpdated: %llx | clientsSubscribed: %llx | freeTimer: %llu",chng->x, chng->y, chng->z, chng->clientsUpdated,chng->clientsSubscribed,chng->freeTimer);
+
+	return lValString(buf);
+}
+
 void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
 	lAddNativeFunc(c,"animal-count",   "()",                                           "Returns animal count",                                       wwlnfACount);
@@ -563,6 +596,8 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"tp",             "(pos)",                                        "Teleports to pos",                                           wwlnfTp);
 	lAddNativeFunc(c,"send-message",   "(s)",                                          "Send a chat message to everyone",                            wwlnfSendMessage);
 	lAddNativeFunc(c,"console-print",  "(s)",                                          "Prints something to stdout",                                 wwlnfConsolePrint);
+	lAddNativeFunc(c,"chunk-info",     "(pos)",                                        "Returns a description of the chunk at pos",                  wwlnfChunkInfo);
+	lAddNativeFunc(c,"chungus-info",   "(pos)",                                        "Returns a description of the chungus at pos",                wwlnfChungusInfo);
 
 	lAddNativeFunc(c,"quit!",          "()",                                           "Cleanly shuts down the server",                              wwlnfQuit);
 }
