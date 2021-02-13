@@ -505,7 +505,7 @@ void characterUpdateBooster(character *c){
 		sfxLoop(sfxJet,0.f);
 		return;
 	}
-	if((itemIsEmpty(&c->equipment[CHAR_EQ_PACK])) || (c->equipment[CHAR_EQ_PACK].ID != I_Jetpack)){
+	if((c == player) && ((itemIsEmpty(&c->equipment[CHAR_EQ_PACK])) || (c->equipment[CHAR_EQ_PACK].ID != I_Jetpack))){
 		sfxLoop(sfxJet,0.f);
 		return;
 	}
