@@ -633,7 +633,7 @@ void animalDoDamage(animal *a,i16 hp, u8 cause, float knockbackMult, being culpr
 	a->health -= hp;
 	if(a->health <= 0){
 		animalRDie(a);
-		animalDel(animalList - a);
+		animalDel(a - animalList);
 		return;
 	}
 	animalRHit(a,culprit,cause);
