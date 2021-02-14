@@ -47,6 +47,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
 
 char replyBuf[256];
 
@@ -558,7 +559,7 @@ static lVal *wwlnfChungusInfo(lClosure *c, lVal *v){
 
 	chungus *chng = worldTryChungus((uint)pos.x >> 8,(uint)pos.y >> 8,(uint)pos.z >> 8);
 	if(chng == NULL){return NULL;}
-	snprintf(buf,sizeof(buf),"[%u:%u:%u] clientsUpdated: %llx | clientsSubscribed: %llx | freeTimer: %llu",chng->x, chng->y, chng->z, chng->clientsUpdated,chng->clientsSubscribed,chng->freeTimer);
+	snprintf(buf,sizeof(buf),"[%u:%u:%u] clientsUpdated: %" PRIx64 " | clientsSubscribed: %" PRIx64 " | freeTimer: %" PRIu64 ,chng->x, chng->y, chng->z, chng->clientsUpdated,chng->clientsSubscribed,chng->freeTimer);
 
 	return lValString(buf);
 }
