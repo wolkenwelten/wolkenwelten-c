@@ -214,8 +214,9 @@ int main( int argc, const char* argv[] ){
 
 	printf("[SRV] Exiting cleanly\n");
 	savegameSave();
-	serverFree();
 	bigchungusSafeSave(&world,true);
+	serverFree();
+
 	fflush(stdout);
 	fflush(stderr);
 	return 0;

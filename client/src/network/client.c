@@ -321,6 +321,7 @@ void clientParsePacket(const packet *p){
 		throwableRecvUpdate(p);
 		break;
 	case msgtGoodbye:
+		printf("[CLI] Received Goodbye\n");
 		clientFree();
 		break;
 	case msgtLZ4:
@@ -389,7 +390,7 @@ void clientGoodbye(){
 	msgSendPlayerPos();
 	msgPlayerSetInventory(-1,player->inventory,40);
 	msgPlayerSetEquipment(-1,player->equipment, 3);
-	msgGoodbye();
+	msgGoodbye(0);
 	clientWrite();
 	goodbyeSent = true;
 }

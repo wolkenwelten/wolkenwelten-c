@@ -53,6 +53,8 @@ void serverInit(){
 
 void serverFree(){
 	for(uint i=0;i<clientCount;i++){
+		msgGoodbye(i);
+		serverSendClient(i);
 		close(clients[i].socket);
 		serverCloseClient(i);
 	}

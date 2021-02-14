@@ -356,7 +356,13 @@ void serverParseSinglePacket(uint c, packet *p){
 		break;
 	case msgtGoodbye:
 		errno=0;
-		serverKill(c);
+		if(!optionSingleplayer){
+			msgGoodbye(c);
+			serverSendClient(c);
+			serverKill(c);
+		}else if(clientCount == 1){
+			quit = true;
+		}
 		printf("Client said goodbye\n");
 		break;
 	case msgtItemDropNew:
