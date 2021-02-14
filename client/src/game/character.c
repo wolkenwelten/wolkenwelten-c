@@ -742,8 +742,8 @@ void characterGliderDraw(const character *c){
 	if(c->gliderFade < 0.01f){return;}
 	const float breath = sinf((float)(c->breathing-384)/512.f)*4.f;
 	float deg  = ((float)++ticks*0.4f);
-	float yoff = cos(deg*2.1f)*player->shake;
-	float xoff = sin(deg*1.3f)*player->shake;
+	float yoff = cosf(deg*2.1f)*player->shake;
+	float xoff = sinf(deg*1.3f)*player->shake;
 
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->pos.x,c->pos.y+c->yoff,c->pos.z);

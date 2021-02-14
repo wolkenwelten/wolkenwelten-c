@@ -149,9 +149,9 @@ void worldDraw(const character *cam){
 	// and visible block seams.
 	matMul(matMVP,matSubBlockView,matProjection);
 	shaderMatrix(sBlockMesh,matMVP);
-	const float shadeFront  = .50f*worldBrightness + .5f*MAX(0.f, sin(sunAngle*PI180));
-	const float shadeBack   = .50f*worldBrightness + .5f*MAX(0.f, sin(sunAngle*PI180-180*PI180));
-	const float shadeTop    = .50f*worldBrightness + .5f*MAX(0.f, sin(sunAngle*PI180-270*PI180));
+	const float shadeFront  = .50f*worldBrightness + .5f*MAX(0.f, sinf(sunAngle*PI180));
+	const float shadeBack   = .50f*worldBrightness + .5f*MAX(0.f, sinf(sunAngle*PI180-180*PI180));
+	const float shadeTop    = .50f*worldBrightness + .5f*MAX(0.f, sinf(sunAngle*PI180-270*PI180));
 	const float shadeBottom = .30f*worldBrightness;
 	const float shadeLeft   = .55f*worldBrightness;
 	const float shadeRight  = shadeLeft;

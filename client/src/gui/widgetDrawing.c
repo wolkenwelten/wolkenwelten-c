@@ -326,7 +326,7 @@ static void widgetDrawRadioButton(const widget *wid, textMesh *m, int x, int y, 
 
 static void widgetDrawBackground(const widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)wid;
-	int o = h/2 + sin(getTicks()*0.001f)*((float)(h/6));
+	int o = h/2 + sinf(getTicks()*0.001f)*((float)(h/6));
 	textMeshVGradient(m,x,y    ,w,o,0xFFFFBF83, 0xFFFF6825);
 	textMeshVGradient(m,x,y+o,w,h-o,0xFFFF6825, 0xFFE82410);
 }
@@ -502,8 +502,8 @@ static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, i
 	const uint ts    = MIN(w,h);
 	uint ii,xx,r = wid->vali;
 	if(r >= recipeGetCount()){return;}
-	const int animX = sin((float)ticks/24.f)*ts/8;
-	const int animY = cos((float)ticks/24.f)*ts/8;
+	const int animX = sinf((float)ticks/24.f)*ts/8;
+	const int animY = cosf((float)ticks/24.f)*ts/8;
 	const item result = recipeGetResult(r);
 
 	for(ii=0;ii<4;ii++){

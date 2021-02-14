@@ -65,9 +65,9 @@ void beamblast(character *ent, float beamSize, float damageMultiplier, float rec
 	const float mx =  1.f - ent->aimFade;
 	const float mz = -1.f;
 	vec pos = ent->pos;
-	pos.x += ((cos((ent->rot.yaw+90.f)*PI/180) * cos(ent->rot.pitch*PI/180))*mz) + cos((ent->rot.yaw)*PI/180)*mx;
-	pos.y += (sin(ent->rot.pitch*PI/180)*mz);
-	pos.z += ((sin((ent->rot.yaw+90.f)*PI/180) * cos(ent->rot.pitch*PI/180))*mz) + sin((ent->rot.yaw)*PI/180)*mx;
+	pos.x += ((cosf((ent->rot.yaw+90.f)*PI/180) * cosf(ent->rot.pitch*PI/180))*mz) + cosf((ent->rot.yaw)*PI/180)*mx;
+	pos.y += (sinf(ent->rot.pitch*PI/180)*mz);
+	pos.z += ((sinf((ent->rot.yaw+90.f)*PI/180) * cosf(ent->rot.pitch*PI/180))*mz) + sinf((ent->rot.yaw)*PI/180)*mx;
 
 	for(int i=shots;i>0;i--){
 		const float inacc = MIN(96.f,(ent->inaccuracy*inaccuracyMult)) / (1.f + (ent->aimFade * ent->zoomFactor));

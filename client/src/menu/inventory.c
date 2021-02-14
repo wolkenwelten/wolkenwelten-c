@@ -268,8 +268,8 @@ void drawInventory(textMesh *guim){
 	const uint tilesize = getTilesize();
 	if(!isInventoryOpen()){return;}
 
-	const int animX = sin((float)ticks/24.f)*tilesize/8;
-	const int animY = cos((float)ticks/24.f)*tilesize/8;
+	const int animX = sinf((float)ticks/24.f)*tilesize/8;
+	const int animY = cosf((float)ticks/24.f)*tilesize/8;
 	++ticks;
 
 	if(!mouseHidden && !itemIsEmpty(&inventoryCurrentPickup)){

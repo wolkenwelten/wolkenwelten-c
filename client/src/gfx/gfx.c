@@ -172,8 +172,8 @@ vec calcShake(const character *cam){
 	static u64 ticks=0;
 	if(cam->shake < 0.001f){return vecZero();}
 	float deg = ((float)++ticks)*0.4f;
-	const float   yaw = sin(deg*1.3f)*(cam->shake/2.f);
-	const float pitch = cos(deg*2.1f)*(cam->shake/2.f);
+	const float   yaw = sinf(deg*1.3f)*(cam->shake/2.f);
+	const float pitch = cosf(deg*2.1f)*(cam->shake/2.f);
 	return vecNew(yaw,pitch,0.f);
 }
 

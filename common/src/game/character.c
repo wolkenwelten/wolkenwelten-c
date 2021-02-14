@@ -364,8 +364,8 @@ void characterMove(character *c, const vec mov){
 		float s = 0.2f;
 		if(c->flags & CHAR_BOOSTING){ s = 1.f;}
 		c->gvel    = vecMulS(vecDegToVec(c->rot),mov.z*(-s));
-		c->gvel.x += cos((yaw)*PI/180)*mov.x*s;
-		c->gvel.z += sin((yaw)*PI/180)*mov.x*s;
+		c->gvel.x += cosf((yaw)*PI/180)*mov.x*s;
+		c->gvel.z += sinf((yaw)*PI/180)*mov.x*s;
 		c->gvel.y += mov.y;
 	}else{
 		float s;
@@ -377,11 +377,11 @@ void characterMove(character *c, const vec mov){
 			s = 0.05f;
 		}
 		c->gvel.y = mov.y;
-		c->gvel.x = (cos((yaw+90)*PI/180)*mov.z*s);
-		c->gvel.z = (sin((yaw+90)*PI/180)*mov.z*s);
+		c->gvel.x = (cosf((yaw+90)*PI/180)*mov.z*s);
+		c->gvel.z = (sinf((yaw+90)*PI/180)*mov.z*s);
 
-		c->gvel.x += cos((yaw)*PI/180)*mov.x*s;
-		c->gvel.z += sin((yaw)*PI/180)*mov.x*s;
+		c->gvel.x += cosf((yaw)*PI/180)*mov.x*s;
+		c->gvel.z += sinf((yaw)*PI/180)*mov.x*s;
 		c->inaccuracy += s*78.f*vecMag(mov);
 	}
 }
