@@ -88,6 +88,7 @@ static inline void cloudPart(cloudChunk *part, float px,float py,float pz,float 
 
 void cloudsRender(){
 	const u8 cpart = cloudFrame++ & 31;
+	cloudFrame &= 31;
 
 	shaderBind(sCloud);
 	shaderSizeMul(sCloud,1.f + (player->aimFade * player->zoomFactor));
