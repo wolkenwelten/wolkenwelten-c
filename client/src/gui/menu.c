@@ -66,6 +66,7 @@ void startMultiplayer(){
 	hideMouseCursor();
 	showInventoryPanel();
 	widgetFocus(widgetGameScreen);
+	clientInit();
 }
 
 void startSingleplayer(){

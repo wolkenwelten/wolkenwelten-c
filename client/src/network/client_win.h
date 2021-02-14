@@ -92,6 +92,7 @@ void startSingleplayerServer(){
 		singlePlayerPID = pi.dwProcessId;
 	}
 	strncpy(serverName,"localhost",sizeof(serverName)-1);
+	clientInit();
 }
 
 void closeSingleplayerServer(){
@@ -115,6 +116,10 @@ void clientInit(){
 	if(serverSocket != 0){return;}
 	if(singleplayer && (singlePlayerPID == 0)){
 		startSingleplayerServer();
+		return;
+	}
+	if(++connectionTries > 5){
+		menuSetError("Too many failed attempts");
 		return;
 	}
 
@@ -157,7 +162,6 @@ void clientInit(){
 }
 
 void clientRead(){
-	if(serverSocket <= 0){clientInit();}
 	if(serverSocket <= 0){return;}
 	for(int i=4;i>0;i--){
 		const int len = recv(serverSocket,(void *)(recvBuf + recvBufLen),sizeof(recvBuf) - recvBufLen, 0);
@@ -175,7 +179,6 @@ void clientRead(){
 }
 
 void clientWrite(){
-	if(serverSocket <= 0){clientInit();}
 	if(serverSocket <= 0){return;}
 	for(int i=4;i>0;i--){
 		const int ret = send(serverSocket,(void *)(sendBuf+sendBufSent),sendBufLen-sendBufSent, 0);
@@ -196,7 +199,6 @@ void clientWrite(){
 }
 
 void clientFreeSpecific(){
-	clientWrite();
 	if(serverSocket > 0){
 		closesocket(serverSocket);
 		serverSocket = 0;

@@ -43,7 +43,6 @@ bool fileExists(const char *fn){
 	return (stat(fn, &buffer) == 0);
 }
 
-
 void startSingleplayerServer(){
 	spServer = emscripten_create_worker("server.js");
 	serverSocket = 1;

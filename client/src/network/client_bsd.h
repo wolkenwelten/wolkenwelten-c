@@ -109,7 +109,7 @@ void clientInit(){
 		startSingleplayerServer();
 		return;
 	}
-	++connectionTries;
+	connectionTries++;
 
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(serverSocket <= 0){
@@ -206,7 +206,6 @@ void clientWrite(){
 }
 
 void clientFreeSpecific(){
-	clientWrite();
 	if(serverSocket > 0){
 		close(serverSocket);
 		serverSocket = 0;

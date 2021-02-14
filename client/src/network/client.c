@@ -31,6 +31,7 @@
 #include "../game/throwable.h"
 #include "../game/time.h"
 #include "../game/weather.h"
+#include "../menu/mainmenu.h"
 #include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
@@ -406,4 +407,6 @@ void clientFree(){
 	characterInit(player);
 	chatEmpty();
 	connectionState = 0;
+	gameRunning=false;
+	openMainMenu();
 }
