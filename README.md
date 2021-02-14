@@ -1,30 +1,46 @@
 # WolkenWelten
 
-* mostly written in C99
-* runs at (close to) 60FPS on a Raspberry PI 4(00)
-* contains a custom LISP interpreter (nujel)
-* lets you swing around a proceduraly generated world of floating islands
-* fits on a standard 1.44MB Floppy Disk
-* lets you play together with your friends
-
 ![Screenshot 1](https://wolkenwelten.net/img/1.jpg)
 
-You can watch me develop this game over at [Twitch](https://twitch.tv/melchizedek6809)
-and if you run into some bugs, have gameplay questions or want to talk about your
+## Imagine a mix between Minecraft, Quake ]I[ and Emacs.
+Apart from that there is no clear plan for this game, just a bunch of ideas that
+hopefully will turn out to be fun. Some of these are stored here in this repo,
+others have been talked about on [Twitch](https://twitch.tv/melchizedek6809)
+during dev streams.
+
+* mostly written in C99
+* fits on a floppy disk
+* runs at ~60FPS on a Raspberry PI
+* multiplayer!
+* contains a custom LISP interpreter
+* use a grappling hook to swing around
+* nice fire simulation
+* can even run in your browser
+
+![Screenshot 2](https://wolkenwelten.net/img/2.jpg)
+
+## Contact
+If you run into some bugs, have gameplay questions or want to talk about your
 favorite *nix, join us over on [Discord](https://discord.gg/7rhnYH2), or preferrably on
 [Matrix](https://matrix.to/#/!RKZztYPGhtlgALDvMS:matrix.org?via=matrix.org), there
 is also a #WolkenWelten IRC channel on Freenode.
 
+![Screenshot 4](https://wolkenwelten.net/img/4.jpg)
+
+## Contributing
+As a Free Software Project any form of help you can give would be highly
+appreciated, be it testing the game, drawing nice artwork, coding that cool
+feature or telling your friends about this game. You have my gratitude :)
+
+## Release Builds
 The newest binary releases are available over at this [projects website](https://wolkenwelten.net),
 along with some more writings about the game.
 
-![Screenshot 2](https://wolkenwelten.net/img/2.jpg)
 ![Screenshot 3](https://wolkenwelten.net/img/3.jpg)
-![Screenshot 4](https://wolkenwelten.net/img/4.jpg)
 ![Screenshot 5](https://wolkenwelten.net/img/5.jpg)
 ![Screenshot 6](https://wolkenwelten.net/img/6.jpg)
 
-# Software Requirments
+# Development Requirements
 
 ## Windows
 On Windows you need a working installation of msys2 and the mingw-w64 64-bit
