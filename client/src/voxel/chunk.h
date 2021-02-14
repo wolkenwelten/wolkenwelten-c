@@ -10,10 +10,10 @@
 struct chunk {
 	u16 x,y,z,vboSize;
 	u16 sideEnd[sideMAX];
-	u16 flags;
+	u8 flags;
+	u8 fadeIn;
 	void *nextFree;
-	uint vbo;
-	uint vao;
+	uint vao,vbo;
 	beingList bl;
 	u8 data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 };

@@ -48,6 +48,7 @@ chunk *chunkFirstFree = NULL;
 
 #define CHUNK_COUNT (1<<17)
 #define MIN_CHUNKS_GENERATED_PER_FRAME (4)
+#define FADE_IN_FRAMES 48
 
 chunk *chunkList;
 
@@ -114,6 +115,7 @@ static inline void chunkFinish(chunk *c){
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
+		c->fadeIn = FADE_IN_FRAMES;
 	}else{
 		glBindVertexArray(c->vao);
 	}
@@ -475,10 +477,16 @@ void chunkDraw(chunk *c, float d, sideMask mask){
 	if(c == NULL){return;}
 	if(c->flags & CHUNK_FLAG_DIRTY){ chunkGenMesh(c); }
 	if(!c->vao){ return; }
+
+	float fIn = 1.f;
+	if(c->fadeIn > 0){
+		fIn = 1.f - ((--c->fadeIn) / (float)FADE_IN_FRAMES);
+	}
+
 	if(d > (fadeoutStartDistance)){
-		shaderAlpha(sBlockMesh,(1.f-((d-(fadeoutStartDistance))/fadeoutDistance)));
+		shaderAlpha(sBlockMesh,(1.f-((d-(fadeoutStartDistance))/fadeoutDistance)) * fIn);
 	}else{
-		shaderAlpha(sBlockMesh,1.f);
+		shaderAlpha(sBlockMesh,1.f * fIn);
 	}
 	shaderTransform(sBlockMesh,c->x-subBlockViewOffset.x,c->y-subBlockViewOffset.y,c->z-subBlockViewOffset.z);
 
