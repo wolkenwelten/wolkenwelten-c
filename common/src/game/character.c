@@ -53,7 +53,7 @@ character *characterNew(){
 void characterFree(character *c){
 	c->eMesh = NULL;
 	c->hp = -1;
-	if(c->hook != NULL){
+	if((c->hook != NULL) && isClient){
 		hookFree(c->hook);
 		c->hook = NULL;
 	}
