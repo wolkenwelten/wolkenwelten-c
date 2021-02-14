@@ -143,8 +143,8 @@ void clientSPInitCB(char *data,int size,void *arg){
 
 void clientSPInit(){
 	emscripten_call_worker(spServer,"wasmInit",NULL,0,(em_worker_callback_func)clientSPInitCB,NULL);
-	wasmInFlight=true;
-	connectionState = 1;
+	wasmInFlight            = true;
+	connectionState         = 1;
 	sendBufLen              = 0;
 	sendBufSent             = 0;
 	sentBytesCurrentSession = 0;
@@ -158,6 +158,7 @@ void clientInit(){
 	if(singleplayer && (singlePlayerPID == 0)){
 		startSingleplayerServer();
 	}
+	goodbyeSent = false;
 	if(singlePlayerPID == 0){
 		clientWSInit();
 	}else{

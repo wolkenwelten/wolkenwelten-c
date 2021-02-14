@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 
+extern bool   goodbyeSent;
 extern uint   lastPing;
 extern uint   lastLatency;
 extern int    connectionTries;

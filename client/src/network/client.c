@@ -65,6 +65,8 @@ int serverPort        = 6309;
 pid_t singlePlayerPID = 0;
 int connectionTries   = 0;
 
+bool goodbyeSent = false;
+
 #ifdef __EMSCRIPTEN__
 #include "client_wasm.h"
 #elif defined __MINGW32__
@@ -318,14 +320,15 @@ void clientParsePacket(const packet *p){
 	case msgtThrowableRecvUpdates:
 		throwableRecvUpdate(p);
 		break;
-
+	case msgtGoodbye:
+		clientFree();
+		break;
 	case msgtLZ4:
 		decompressPacket(p);
 		break;
 
 	case msgtRequestChungus:
 	case msgtPlaceBlock:
-	case msgtGoodbye:
 	case msgtDyingMsg:
 	case msgtRequestSpawnPos:
 	case msgtChungusUnsub:
@@ -380,6 +383,7 @@ void clientTranceive(){
 }
 
 void clientGoodbye(){
+	if(goodbyeSent)      {return;}
 	if(serverSocket <= 0){return;}
 	printf("[CLI] Goodbye \n");
 	msgSendPlayerPos();
@@ -387,6 +391,7 @@ void clientGoodbye(){
 	msgPlayerSetEquipment(-1,player->equipment, 3);
 	msgGoodbye();
 	clientWrite();
+	goodbyeSent = true;
 }
 
 void queueToServer(const void *data, uint len){
@@ -408,5 +413,6 @@ void clientFree(){
 	chatEmpty();
 	connectionState = 0;
 	gameRunning=false;
+	closeSingleplayerServer();
 	openMainMenu();
 }

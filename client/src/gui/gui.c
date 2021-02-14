@@ -347,21 +347,20 @@ void drawDebuginfo(){
 	size_t tris = vboTrisCount, draws = drawCallCount;
 
 	guim->font = 1;
+	guim->size = 2;
+	guim->sy   = screenHeight/2+32;
 	if(recvBytesCurrentSession <= 0){
 		guim->sx   = screenWidth/2-(10*16);
-		guim->sy   = screenHeight/2+32;
-		guim->size = 2;
 		textMeshPrintf(guim,"%.*s",20 + ((ticks++ >> 4)&3),"Connecting to server...");
 	}else if(!playerChunkActive){
 		guim->sx   = screenWidth/2-(8*16);
-		guim->sy   = screenHeight/2+32;
-		guim->size = 2;
 		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Loading World...");
 	}else if(player->flags & CHAR_SPAWNING){
 		guim->sx   = screenWidth/2-(8*16);
-		guim->sy   = screenHeight/2+32;
-		guim->size = 2;
 		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Respawning...");
+	}else if(goodbyeSent){
+		guim->sx   = screenWidth/2-(8*16);
+		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Closing . . .");
 	}
 	guim->size = 2;
 	guim->sx   = screenWidth;

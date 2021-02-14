@@ -183,12 +183,13 @@ void mainloop(){
 		}
 		worldFreeFarChungi(player);
 		clientTranceive();
+		if(quit){clientGoodbye();}
 	}else{
 		doGamepadMenuUpdate();
 		renderFrame();
 	}
 	#ifdef __EMSCRIPTEN__
-	if(quit){emscripten_cancel_main_loop();}
+	if(quit && !gameRunning){emscripten_cancel_main_loop();}
 	#endif
 }
 
@@ -250,7 +251,7 @@ int main( int argc, char* argv[] ){
 	#ifdef __EMSCRIPTEN__
 		emscripten_set_main_loop(mainloop, 0, true);
 	#else
-		while(!quit){ mainloop(); }
+		while(!quit || gameRunning){ mainloop(); }
 	#endif
 
 	sfxFreeAll();

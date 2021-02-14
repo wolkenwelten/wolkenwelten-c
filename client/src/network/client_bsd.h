@@ -66,10 +66,6 @@ void startSingleplayerServer(){
 
 void closeSingleplayerServer(){
 	int tries = 10;
-	clientGoodbye();
-	usleep(1000);
-	clientFree();
-	usleep(1000);
 	while(singlePlayerPID != 0){
 		if(--tries < 0){
 			kill(singlePlayerPID,SIGKILL);
@@ -77,7 +73,7 @@ void closeSingleplayerServer(){
 		}
 		kill(singlePlayerPID,SIGTERM);
 		printf("[CLI] Kill");
-		usleep(10000);
+		usleep(1000);
 	}
 }
 
@@ -110,6 +106,7 @@ void clientInit(){
 		return;
 	}
 	connectionTries++;
+	goodbyeSent = false;
 
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(serverSocket <= 0){

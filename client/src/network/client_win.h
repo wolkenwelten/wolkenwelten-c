@@ -97,10 +97,6 @@ void startSingleplayerServer(){
 
 void closeSingleplayerServer(){
 	if(!singleplayer){return;}
-	clientGoodbye();
-	usleep(1000);
-	clientFree();
-	usleep(1000);
 	TerminateProcess(pi.hProcess,0);
 	spSpawned       = false;
 	singlePlayerPID = 0;
@@ -122,6 +118,7 @@ void clientInit(){
 		menuSetError("Too many failed attempts");
 		return;
 	}
+	goodbyeSent = false;
 
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(serverSocket <= 0){

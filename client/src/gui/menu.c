@@ -176,9 +176,7 @@ void menuCancel(){
 }
 
 void menuCloseGame(){
-	gameRunning=false;
 	clientGoodbye();
-	clientFree();
 	openMainMenu();
 }
 
