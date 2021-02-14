@@ -8,6 +8,7 @@ extern float  matProjection[16], matSubBlockView[16], matView[16], matSkyProject
 extern vec    subBlockViewOffset;
 extern int    screenWidth;
 extern int    screenHeight;
+extern int    screenRefreshRate;
 extern size_t vboTrisCount;
 extern size_t drawCallCount;
 extern vec    camShake;

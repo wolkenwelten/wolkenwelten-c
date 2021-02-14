@@ -129,6 +129,7 @@ void initSDL(){
 		if( SDL_GetDesktopDisplayMode(0, &dm) == 0){
 			desktopWidth  = screenWidth  = dm.w;
 			desktopHeight = screenHeight = dm.h;
+			screenRefreshRate = dm.refresh_rate;
 		}
 
 		if(optionFullscreen){
