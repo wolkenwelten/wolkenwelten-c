@@ -9,6 +9,7 @@ extern vec    subBlockViewOffset;
 extern int    screenWidth;
 extern int    screenHeight;
 extern int    screenRefreshRate;
+extern uint   frameRelaxedDeadline;
 extern size_t vboTrisCount;
 extern size_t drawCallCount;
 extern vec    camShake;

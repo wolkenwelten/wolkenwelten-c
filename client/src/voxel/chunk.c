@@ -25,6 +25,7 @@
 #include "../gfx/mat.h"
 #include "../gfx/shader.h"
 #include "../gfx/sky.h"
+#include "../sdl/sdl.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
@@ -45,15 +46,8 @@ int chunkCount     = 0;
 int chunksGeneratedThisFrame = 0;
 chunk *chunkFirstFree = NULL;
 
-#ifdef __EMSCRIPTEN__
-	#define MAX_CHUNKS_GEN_PER_FRAME 16
-#elif defined(__aarch64__) || defined(__ARM_ARCH_7A__)
-	#define MAX_CHUNKS_GEN_PER_FRAME 8
-#else
-	#define MAX_CHUNKS_GEN_PER_FRAME 48
-#endif
-
 #define CHUNK_COUNT (1<<17)
+#define MIN_CHUNKS_GENERATED_PER_FRAME (4)
 
 chunk *chunkList;
 
@@ -250,7 +244,8 @@ static void chunkGenMesh(chunk *c) {
 	static u8 blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
 	static u8 sideCache[CHUNK_SIZE  ][CHUNK_SIZE  ][CHUNK_SIZE  ];
 	static u32    plane[CHUNK_SIZE  ][CHUNK_SIZE  ];
-	if(++chunksGeneratedThisFrame > MAX_CHUNKS_GEN_PER_FRAME){return;}
+	if((chunksGeneratedThisFrame >= MIN_CHUNKS_GENERATED_PER_FRAME) && (getTicks() > frameRelaxedDeadline)){return;}
+	++chunksGeneratedThisFrame;
 	memset(blockData,   0,sizeof(blockData));
 	chunkPopulateBlockData(blockData,c,1,1,1);
 	chunkPopulateBlockData(blockData,worldGetChunk(c->x-CHUNK_SIZE,c->y,c->z),1-CHUNK_SIZE,1,1);

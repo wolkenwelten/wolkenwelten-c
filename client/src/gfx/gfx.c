@@ -60,12 +60,13 @@ bool  gfxUseSubData = false;
 float matProjection[16], matSubBlockView[16], matView[16], matSkyProjection[16];
 
 vec    subBlockViewOffset;
-int    screenWidth       = 800;
-int    screenHeight      = 600;
-int    screenRefreshRate = 60;
-size_t vboTrisCount      = 0;
-size_t drawCallCount     = 0;
-float  gfxCurFOV         = 90.0f;
+int    screenWidth          = 800;
+int    screenHeight         = 600;
+int    screenRefreshRate    = 60;
+uint   frameRelaxedDeadline = 0;
+size_t vboTrisCount         = 0;
+size_t drawCallCount        = 0;
+float  gfxCurFOV            = 90.0f;
 vec    camShake;
 
 
@@ -250,6 +251,7 @@ static void doScreenshot(){
 
 void renderFrame(){
 	chunkResetCounter();
+	frameRelaxedDeadline = getTicks() + ((1000/screenRefreshRate)/4); // Gotta hurry after 1/4 frame
 	calcFOV(player);
 	calcView(player);
 	cloudsCalcColors();
