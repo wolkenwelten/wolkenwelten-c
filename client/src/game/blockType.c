@@ -28,7 +28,7 @@
 void blockTypeGenMeshes(){
 	for(int i=0;i<256;i++){
 		if(!blockTypeValid(i)){continue;}
-		blocks[i].singleBlock = meshNew();
+		blocks[i].singleBlock = meshNew(NULL);
 		mesh *singleBlock = blocks[i].singleBlock;
 		singleBlock->dataCount = 0;
 		singleBlock->tex = tBlocks;

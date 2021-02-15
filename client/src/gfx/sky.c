@@ -43,7 +43,7 @@ texture *tSun = NULL;
 
 void initSky(){
 	if(sunMesh == NULL){
-		sunMesh = meshNew();
+		sunMesh = meshNew(NULL);
 	}
 	meshEmpty(sunMesh);
 	if(tSun == NULL){

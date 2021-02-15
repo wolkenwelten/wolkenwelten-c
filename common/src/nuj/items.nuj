@@ -1,0 +1,115 @@
+; This File contains all the item defitions
+
+(let ((ID 256))
+	(it-name ID "Grenade"))
+
+(let ((ID 257))
+	(it-name ID "Bomb"))
+
+(let ((ID 258))
+	(it-name ID "Pear"))
+
+(let ((ID 259))
+	(it-name ID "Stone Axe"))
+
+(let ((ID 260))
+	(it-name ID "Stone Pick"))
+
+(let ((ID 261))
+	(it-name ID "Blaster"))
+
+(let ((ID 262))
+	(it-name ID "Master Blaster"))
+
+(let ((ID 263))
+	(it-name ID "Assault Rifle"))
+
+(let ((ID 264))
+	(it-name ID "Shotgun"))
+
+(let ((ID 265))
+	(it-name ID "Crystal Bullet"))
+
+(let ((ID 266))
+	(it-name ID "Iron Bar"))
+
+(let ((ID 267))
+	(it-name ID "Iron Axe"))
+
+(let ((ID 268))
+	(it-name ID "Iron Pickaxe"))
+
+(let ((ID 269))
+	(it-name ID "Crystal Bar"))
+
+(let ((ID 270))
+	(it-name ID "Crystal Axe"))
+
+(let ((ID 271))
+	(it-name ID "Crystal Pickaxe"))
+
+(let ((ID 272))
+	(it-name ID "Cherry"))
+
+(let ((ID 273))
+	(it-name ID "Cluster Bomb"))
+
+(let ((ID 274))
+	(it-name ID "Glider"))
+
+(let ((ID 275))
+	(it-name ID "Hook"))
+
+(let ((ID 276))
+	(it-name ID "Jetpack"))
+
+(let ((ID 277))
+	(it-name ID "Poop"))
+
+(let ((ID 278))
+	(it-name ID "Meat"))
+
+(let ((ID 279))
+	(it-name ID "Cooked Meat"))
+
+(let ((ID 280))
+	(it-name ID "Fur"))
+
+(let ((ID 281))
+	(it-name ID "Burnt Meat"))
+
+(let ((ID 282))
+	(it-name ID "Flint and Steel"))
+
+(let ((ID 283))
+	(it-name ID "Flamethrower"))
+
+(let ((ID 284))
+	(it-name ID "Flamebullet"))
+
+(let ((ID 285))
+	(it-name ID "Iron Dust"))
+
+(let ((ID 286))
+	(it-name ID "Crystal Dust"))
+
+(let ((ID 287))
+	(it-name ID "Flamestick"))
+
+(let ((ID 288))
+	(it-name ID "Waterthrower"))
+
+(let ((ID 289))
+	(it-name ID "Stone Spear"))
+
+(let ((ID 290))
+	(it-name ID "Iron Spear"))
+
+(let ((ID 291))
+	(it-name ID "Crystal Spear"))
+
+(let ((ID 292))
+	(it-name ID "Plantmatter"))
+
+(let ((ID 293))
+	(it-name ID "Straw"))

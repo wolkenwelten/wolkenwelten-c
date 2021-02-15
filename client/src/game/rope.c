@@ -116,7 +116,7 @@ static void ropeDraw(rope *r){
 }
 
 void ropeInit(){
-	ropeMesh = meshNew();
+	ropeMesh = meshNew(NULL);
 	ropeMesh->tex = tRope;
 	memset(ropeList,0,sizeof(ropeList));
 }

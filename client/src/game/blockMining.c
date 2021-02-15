@@ -134,7 +134,7 @@ void blockMiningDraw(){
 }
 
 void blockMiningInit(){
-	blockMiningProgressMesh = meshNew();
+	blockMiningProgressMesh = meshNew(NULL);
 	blockMiningProgressMesh->tex = tBlockMining;
 }
 

@@ -91,7 +91,7 @@ void lispDefineString(const char *symbol, char *str){
 
 lClosure *lispCommonRoot(){
 	lClosure *c = lClosureNewRoot();
-	lEval(c,lWrap(lRead((const char *)src_tmp_wwlib_nuj_data)));
+
 	lAddNativeFunc(c,"mst!",        "(a)","Sets ms per tick to s",       wwlnfMsPerTick);
 	lAddNativeFunc(c,"prof",        "()", "Returns profiler info",       wwlnfProf);
 	lAddNativeFunc(c,"prof-reset!", "()", "Resets performance counters", wwlnfProfReset);
@@ -99,6 +99,9 @@ lClosure *lispCommonRoot(){
 	lAddNativeFunc(c,"nprof-reset!","()", "Resets network counters",     wwlnfNProfReset);
 	lAddNativeFunc(c,"asm-switch!", "(a)","Switches asm/simd routines",  wwlnfAsmSwitch);
 	itemTypeLispClosure(c);
+
+	lEval(c,lWrap(lRead((const char *)src_tmp_wwlib_nuj_data)));
+
 	return c;
 }
 

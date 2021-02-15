@@ -31,7 +31,7 @@
 mesh *meshShadow = NULL;
 
 void shadowInit(){
-	meshShadow = meshNew();
+	meshShadow = meshNew(NULL);
 	meshShadow->tex = textureNew(gfx_shadow_png_data,gfx_shadow_png_len,"client/gfx/shadow.png");
 }
 

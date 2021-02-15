@@ -91,7 +91,7 @@ void meshFinishDynamic(mesh *m){
 	meshFinish(m,GL_DYNAMIC_DRAW);
 }
 
-mesh *meshNew(){
+mesh *meshNew(const char *name){
 	mesh *m = NULL;
 	if(meshFirstFree != NULL){
 		m = meshFirstFree;
@@ -104,16 +104,18 @@ mesh *meshNew(){
 		}
 		m = &meshList[meshCount++];
 	}
+	if(name != NULL){lispDefineID("m-", name, m - meshList);}
 	memset(m,0,sizeof(mesh));
 	m->vao = m->vbo = 0;
 	return m;
 }
 
-mesh *meshNewRO(const vertex *roData,size_t roSize){
+mesh *meshNewRO(const char *name, const vertex *roData,size_t roSize){
 	mesh *m = &meshList[meshCount++];
 	memset(m,0,sizeof(mesh));
 	m->dataCount = roSize;
 	m->roData    = roData;
+	if(name != NULL){lispDefineID("m-", name, m - meshList);}
 	return m;
 }
 

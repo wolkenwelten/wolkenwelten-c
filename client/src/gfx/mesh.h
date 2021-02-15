@@ -1,8 +1,8 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-mesh *meshNew           ();
-mesh *meshNewRO         (const vertex *nroData,size_t roSize);
+mesh *meshNew           (const char *name);
+mesh *meshNewRO         (const char *name, const vertex *nroData,size_t roSize);
 mesh *meshGet           (uint i);
 void  meshFreeAll       ();
 void  meshFree          (mesh *m);

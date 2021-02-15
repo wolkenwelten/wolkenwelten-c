@@ -23,11 +23,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-itemType *itemTypes;
+itemType itemTypes[256];
 
 void itemTypeInit(){
-	if(itemTypes != NULL){return;}
-	itemTypes = calloc(256,sizeof(itemType));
+
 }
 
 static lVal *wwlnfITName(lClosure *c, lVal *v){
@@ -42,7 +41,8 @@ static lVal *wwlnfITName(lClosure *c, lVal *v){
 	if((v != NULL) && (v->type == ltPair)){
 		t = lEval(c,v->vList.car);
 		if(t != NULL){
-			snprintf(it->name,sizeof(it->name),"%s",t->vString->data);
+			//printf("[%u]{%p} '%s' -> '%s'",ID,it,it->name,t->vString->data);
+			snprintf(it->name,32,"%s",t->vString->data);
 		}
 	}
 	return lValString(it->name);
