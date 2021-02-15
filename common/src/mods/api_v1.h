@@ -154,6 +154,8 @@ bool          blockTypeValid           (u8 b);
 u32           blockTypeGetParticleColor(u8 b);
 mesh         *blockTypeGetMesh         (u8 b);
 
+mesh *meshGet(uint i);
+
 void vegShrub              (int x,int y,int z);
 void vegDeadTree           (int x,int y,int z);
 void vegBigDeadTree        (int x,int y,int z);

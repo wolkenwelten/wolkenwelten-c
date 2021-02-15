@@ -109,3 +109,8 @@ void blockTypeSetTex(u8 b, side cside, u32 tex){
 	(void)cside;
 	(void)tex;
 }
+
+mesh *meshGet(uint i){
+	(void)i;
+	return NULL;
+}

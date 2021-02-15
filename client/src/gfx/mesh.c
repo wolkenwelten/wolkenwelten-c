@@ -135,3 +135,8 @@ void meshDraw(const mesh *m){
 	textureBind(m->tex);
 	meshDrawVBO(m);
 }
+
+mesh *meshGet(uint i){
+	if(i > countof(meshList)){return NULL;}
+	return &meshList[i];
+}

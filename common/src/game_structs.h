@@ -37,6 +37,15 @@ typedef struct {
 	i16 amount;
 } item;
 
+typedef struct {
+	char name[32];
+	mesh *iMesh;
+	i16 damage[5];
+	u16 ammunition,stackSize;
+	i16 fireDmg;
+	u16 fireHealth;
+} itemType;
+
 typedef uint32_t being;
 inline  u8   beingType (being b){ return b>>24; }
 inline u32   beingID   (being b){ return b&0xFFFFFF; }

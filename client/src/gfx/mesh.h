@@ -3,6 +3,7 @@
 
 mesh *meshNew           ();
 mesh *meshNewRO         (const vertex *nroData,size_t roSize);
+mesh *meshGet           (uint i);
 void  meshFreeAll       ();
 void  meshFree          (mesh *m);
 void  meshEmpty         (mesh *m);

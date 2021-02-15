@@ -18,6 +18,7 @@
 #include "lisp.h"
 
 #include "../asm/asm.h"
+#include "../game/itemType.h"
 #include "../nujel/nujel.h"
 #include "../nujel/arithmetic.h"
 #include "../nujel/casting.h"
@@ -97,6 +98,7 @@ lClosure *lispCommonRoot(){
 	lAddNativeFunc(c,"nprof",       "()", "Return network profiler info",wwlnfNProf);
 	lAddNativeFunc(c,"nprof-reset!","()", "Resets network counters",     wwlnfNProfReset);
 	lAddNativeFunc(c,"asm-switch!", "(a)","Switches asm/simd routines",  wwlnfAsmSwitch);
+	itemTypeLispClosure(c);
 	return c;
 }
 
