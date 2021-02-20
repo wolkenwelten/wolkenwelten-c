@@ -501,11 +501,9 @@ int characterPhysics(character *c){
 }
 
 void characterUpdateBooster(character *c){
-	if(!(c->flags & CHAR_BOOSTING)){
-		sfxLoop(sfxJet,0.f);
-		return;
-	}
-	if((c == player) && ((itemIsEmpty(&c->equipment[CHAR_EQ_PACK])) || (c->equipment[CHAR_EQ_PACK].ID != I_Jetpack))){
+	if(!(c->flags & CHAR_BOOSTING)
+	 || ((c == player) && ((itemIsEmpty(&c->equipment[CHAR_EQ_PACK])) || (c->equipment[CHAR_EQ_PACK].ID != I_Jetpack)))
+	 || (c->flags & CHAR_CONS_MODE)){
 		sfxLoop(sfxJet,0.f);
 		return;
 	}
