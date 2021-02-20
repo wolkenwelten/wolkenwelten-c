@@ -138,6 +138,19 @@ static lVal *wwlnfFullscreen(lClosure *c, lVal *v){
 	return lValBool(optionFullscreen);
 }
 
+static lVal *wwlnfWindowed(lClosure *c, lVal *v){
+	int args[4] = {800,600,-1,-1};
+	for(int i=0;i<4;i++){
+		if(v == NULL){break;}
+		lVal *t = lnfInt(c,lEval(c,v->vList.car));
+		if(t == NULL){break;}
+		v = v->vList.cdr;
+		args[i] = t->vInt;
+	}
+	setWindowed(args[0],args[1],args[2],args[3]);
+	return NULL;
+}
+
 static lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfInt(c,lEval(c,v));
@@ -322,7 +335,8 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"mouse-sens!",    "(f)",          "Sets the mouse sensitivity to f",                                wwlnfMouseSensitivity);
 	lAddNativeFunc(c,"server-add!",    "(name ip)",    "Adds name ip to server list",                                    wwlnfServerAdd);
 	lAddNativeFunc(c,"third-person!",  "(b)",          "Sets third person view to b",                                    wwlnfThirdPerson);
-	lAddNativeFunc(c,"fullscreen!",    "(b)",          "Sets fullscreen to b",                                           wwlnfFullscreen);
+	lAddNativeFunc(c,"fullscreen",     "(b)",          "Sets fullscreen to b",                                           wwlnfFullscreen);
+	lAddNativeFunc(c,"windowed",       "(&w &h &x &y)","Switches to windowed mode of size &w/&h at position &x/&y",      wwlnfWindowed);
 	lAddNativeFunc(c,"save-options",   "()",           "Save options to disk",                                           wwlnfSaveOptions);
 	lAddNativeFunc(c,"texture-reload", "()",           "Reloads all textures from disk",                                 wwlnfReloadTextures);
 	lAddNativeFunc(c,"reset-worst-f",  "()",           "Resets the worst frame counter",                                 wwlnfResetWorstFrame);

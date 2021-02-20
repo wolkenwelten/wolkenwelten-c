@@ -47,7 +47,6 @@
 #include "menu/mainmenu.h"
 #include "misc/lisp.h"
 #include "misc/options.h"
-#include "misc/tests.h"
 #include "network/chat.h"
 #include "network/client.h"
 #include "sdl/input_gamepad.h"
@@ -124,7 +123,6 @@ void playerUpdate(){
 	nv = doKeyboardupdate (nv);
 	nv = doTouchupdate    (nv);
 	nv = doGamepadupdate  (nv);
-	nv = doAutomatedupdate(nv);
 	characterMove  (player,nv);
 	msgSendPlayerPos();
 }

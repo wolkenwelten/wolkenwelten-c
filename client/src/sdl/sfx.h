@@ -11,11 +11,6 @@ extern int sfxEnable;
 void sfxInit();
 void sfxFreeAll();
 
-struct bgm {
-	Mix_Music *mixMusic;
-	int chan;
-};
-
 struct sfx {
 	Mix_Chunk *mixChunk;
 	int chan;
@@ -30,9 +25,5 @@ void sfxFree   (sfx *b);
 void sfxPlay   (sfx *b, float volume);
 void sfxLoop   (sfx *b, float volume);
 void sfxPlayPos(sfx *b, float volume, const vec pos);
-
-bgm *bgmNew    (const void *data,size_t dataLen);
-void bgmFree   (bgm *b);
-void bgmPlay   (bgm *b,float volume);
 
 void sfxStopAll();

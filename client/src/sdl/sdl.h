@@ -14,6 +14,10 @@ void handleEvents();
 void sdlResize(int newW,int newH);
 void closeSDL();
 void setFullscreen(bool fs);
+void setWindowed(int width, int height, int x, int y);
+
+int getWindowX();
+int getWindowY();
 
 void swapWindow();
 void setRelativeMouseMode(bool ra);

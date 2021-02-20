@@ -96,8 +96,6 @@ EM_JS(int, emGetWindowHeight, (), {
 
 void initSDL(){
 	SDL_DisplayMode dm;
-	int desktopWidth  = optionWindowWidth;
-	int desktopHeight = optionWindowHeight;
 	char windowTitle[64];
 
 	snprintf(windowTitle,sizeof(windowTitle),"%s - WolkenWelten",playerName);
@@ -123,12 +121,12 @@ void initSDL(){
 	int cwflags = SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_RESIZABLE;
 	#ifdef __EMSCRIPTEN__
 		cwflags |= SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_INPUT_GRABBED;
-		desktopWidth = screenWidth = emGetWindowWidth();
-		desktopHeight = screenHeight = emGetWindowHeight();
+		screenWidth = emGetWindowWidth();
+		screenHeight = emGetWindowHeight();
 	#else
 		if( SDL_GetDesktopDisplayMode(0, &dm) == 0){
-			desktopWidth  = screenWidth  = dm.w;
-			desktopHeight = screenHeight = dm.h;
+			screenWidth  = dm.w;
+			screenHeight = dm.h;
 			screenRefreshRate = dm.refresh_rate;
 		}
 
@@ -140,20 +138,8 @@ void initSDL(){
 		}
 	#endif
 
-	int windowx = SDL_WINDOWPOS_CENTERED;
-	int windowy = SDL_WINDOWPOS_CENTERED;
-	if((optionWindowOrientation & 0x0F) == 0x01){
-		windowx = 0;
-	}else if((optionWindowOrientation & 0x0F) == 0x02){
-		windowx = desktopWidth - screenWidth;
-	}
-	if((optionWindowOrientation & 0xF0) == 0x10){
-		windowy = 0;
-	}else if((optionWindowOrientation & 0xF0) == 0x20){
-		windowy = desktopHeight - screenHeight;
-	}
 
-	gWindow = SDL_CreateWindow( windowTitle, windowx, windowy, screenWidth, screenHeight, cwflags);
+	gWindow = SDL_CreateWindow( windowTitle, optionWindowX, optionWindowY, screenWidth, screenHeight, cwflags);
 	if( gWindow == NULL ) {
 		fprintf(stderr, "Window could not be created! SDL Error: %s\n", SDL_GetError() );
 		exit(1);
@@ -229,13 +215,41 @@ void sdlResize(int newW,int newH){
 
 	initGL();
 	resizeUI();
+	saveOptions();
+}
+
+void setWindowed(int width, int height, int x, int y){
+	if(x == -1){x = SDL_WINDOWPOS_CENTERED;}
+	if(y == -1){y = SDL_WINDOWPOS_CENTERED;}
+	if(gfxInitComplete){
+		setFullscreen(false);
+		SDL_SetWindowPosition(gWindow,x,y);
+		sdlResize(width,height);
+	}else{
+		optionFullscreen   = false;
+		optionWindowWidth  = width;
+		optionWindowHeight = height;;
+		optionWindowX = x;
+		optionWindowY = y;
+	}
 }
 
 void closeSDL(){
-	SDL_DestroyWindow( gWindow );
+	SDL_DestroyWindow(gWindow);
 	closeGamepad();
 	Mix_Quit();
 	SDL_Quit();
+}
+
+int getWindowX(){
+	int x,y;
+	SDL_GetWindowPosition(gWindow,&x,&y);
+	return x;
+}
+int getWindowY(){
+	int x,y;
+	SDL_GetWindowPosition(gWindow,&x,&y);
+	return y;
 }
 
 void swapWindow(){

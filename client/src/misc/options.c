@@ -22,6 +22,7 @@
 #include "../gfx/gfx.h"
 #include "../tmp/assets.h"
 #include "../misc/lisp.h"
+#include "../sdl/sdl.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/tmp/cto.h"
 
@@ -35,21 +36,20 @@ char playerName[28];
 char serverName[64];
 char optionSavegame[32];
 
-float optionMusicVolume       = 0.25f;
-float optionSoundVolume       = 0.5f;
-int   optionAutomatedTest     = 0;
-int   optionWorldSeed         = 0;
-bool  optionDebugInfo         = false;
-bool  optionFullscreen        = false;
-bool  optionRuntimeReloading  = false;
-bool  optionNoSave            = false;
-bool  optionMute              = false;
-float optionMouseSensitivy    = 0.5f;
-bool  optionThirdPerson       = false;
-int   optionWindowOrientation = 0;
-int   optionWindowWidth       = 0;
-int   optionWindowHeight      = 0;
-bool  optionWireframe         = false;
+float optionSoundVolume      = 0.5f;
+int   optionWorldSeed        = 0;
+bool  optionDebugInfo        = false;
+bool  optionRuntimeReloading = false;
+bool  optionNoSave           = false;
+bool  optionMute             = false;
+float optionMouseSensitivy   = 0.5f;
+bool  optionThirdPerson      = false;
+bool  optionWireframe        = false;
+int   optionWindowWidth      = 800;
+int   optionWindowHeight     = 800;
+int   optionWindowX          = -1;
+int   optionWindowY          = -1;
+bool  optionFullscreen       = false;
 
 void printVersion(){
 	printf("Wolkenwelten Pre-Alpha\n");
@@ -72,10 +72,6 @@ void parseOptions(int argc,char *argv[]){
 	for(int i=1;i<argc;i++){
 		if(argv[i][0] != '-'){continue;}
 
-		if((l = checkString(argv[i]+1,"musicVolume="))){
-			tmp = atoi(argv[i]+l);
-			optionMusicVolume = (float)tmp / 100.f;
-		}
 		if((l = checkString(argv[i]+1,"soundVolume="))){
 			tmp = atoi(argv[i]+l);
 			optionSoundVolume = (float)tmp / 100.f;
@@ -99,40 +95,7 @@ void parseOptions(int argc,char *argv[]){
 			strncpy(optionSavegame,argv[i]+l,sizeof(optionSavegame)-1);
 			optionSavegame[sizeof(optionSavegame)-1]=0;
 		}
-		if((l = checkString(argv[i]+1,"automatedTest="))){
-			optionAutomatedTest = atoi(argv[i]+l);
-		}
-		if((l = checkString(argv[i]+1,"windowOrientation="))){
-			int newOrientation = 0;
-			if(argv[i][l] != 0){
-				u8 chr = toupper((u8)argv[i][l]);
-				if(chr == 'T'){newOrientation |= 0x10;}
-				if(chr == 'B'){newOrientation |= 0x20;}
-				if(chr == 'L'){newOrientation |= 0x01;}
-				if(chr == 'R'){newOrientation |= 0x02;}
-				if(argv[i][l+1] != 0){
-					chr = toupper((u8)argv[i][l+1]);
-					if(chr == 'T'){newOrientation |= 0x10;}
-					if(chr == 'B'){newOrientation |= 0x20;}
-					if(chr == 'L'){newOrientation |= 0x01;}
-					if(chr == 'R'){newOrientation |= 0x02;}
-				}
-			}
-			optionWindowOrientation = newOrientation;
-		}
-		if((l = checkString(argv[i]+1,"windowWidth="))){
-			optionWindowWidth = atoi(argv[i]+l);
-		}
-		if((l = checkString(argv[i]+1,"windowHeight="))){
-			optionWindowHeight = atoi(argv[i]+l);
-		}
 
-		if(checkString(argv[i]+1,"windowed")){
-			optionFullscreen = false;
-		}
-		if(checkString(argv[i]+1,"fullscreen")){
-			optionFullscreen = true;
-		}
 		if(checkString(argv[i]+1,"noSave")){
 			optionNoSave = true;
 		}
@@ -140,21 +103,10 @@ void parseOptions(int argc,char *argv[]){
 			printVersion();
 			exit(0);
 		}
-		if(checkString(argv[i]+1,"thirdPerson")){
-			optionThirdPerson = true;
-		}
 	}
 }
 
 void sanityCheckOptions(){
-	if(optionMusicVolume < 0.f){
-		optionMusicVolume = 0.f;
-		printf("Using Minimum musicVolume of 0\n");
-	}
-	if(optionMusicVolume > 1.f){
-		optionMusicVolume = 1.f;
-		printf("Using Maximum musicVolume of 100\n");
-	}
 	if(optionSoundVolume < 0.f){
 		optionSoundVolume = 0.f;
 		printf("Using Minimum soundVolume of 0\n");
@@ -168,9 +120,6 @@ void sanityCheckOptions(){
 	}
 	if(optionWindowHeight <= 0){
 		optionWindowHeight = 480;
-	}
-	if(optionAutomatedTest < 0){
-		optionAutomatedTest = 0;
 	}
 }
 
@@ -207,7 +156,11 @@ void saveOptions(){
 	b += snprintf(b,sizeof(buf)-(b-buf),"  (sound-vol!    %f)\n",optionSoundVolume);
 	b += snprintf(b,sizeof(buf)-(b-buf),"  (view-dist!    %f)\n",renderDistance);
 	b += snprintf(b,sizeof(buf)-(b-buf),"  (mouse-sens!   %f)\n",optionMouseSensitivy);
-	b += snprintf(b,sizeof(buf)-(b-buf),"  (fullscreen!   %s)\n",optionFullscreen ? "#t" : "#f");
+	if(optionFullscreen){
+		b += snprintf(b,sizeof(buf)-(b-buf),"  (fullscreen #t)\n");
+	}else{
+		b += snprintf(b,sizeof(buf)-(b-buf),"  (windowed %u %u %u %u)\n",screenWidth,screenHeight,getWindowX(),getWindowY());
+	}
 	b += snprintf(b,sizeof(buf)-(b-buf),"  (third-person! %s)\n",optionThirdPerson ? "#t" : "#f");
 	b += snprintf(b,sizeof(buf)-(b-buf),"  (debug-info!   %s)",optionDebugInfo ? "#t" : "#f");
 	for(int i=0;i<serverlistCount;i++){

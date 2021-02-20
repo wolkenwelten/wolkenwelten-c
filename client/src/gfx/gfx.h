@@ -3,6 +3,7 @@
 
 extern bool   queueScreenshot;
 extern bool   gfxUseSubData;
+extern bool   gfxInitComplete;
 
 extern float  matProjection[16], matSubBlockView[16], matView[16], matSkyProjection[16];
 extern vec    subBlockViewOffset;

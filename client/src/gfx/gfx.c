@@ -84,6 +84,7 @@ float cloudFadeD           = 256*256;
 float cloudMinD            = 256*256*3;
 float cloudMaxD            = 256*256*4;
 float renderDistanceSquare = 256*256;
+bool gfxInitComplete = false;
 
 static void recalcDistances(){
 	renderDistance = MIN(renderDistance,512.f);
@@ -134,6 +135,8 @@ void initGL(){
 
 	glScissor(0,0,screenWidth,screenHeight);
 	glEnable(GL_SCISSOR_TEST);
+
+	gfxInitComplete = true;
 
 #ifndef __EMSCRIPTEN__
 	glEnable(GL_PROGRAM_POINT_SIZE);

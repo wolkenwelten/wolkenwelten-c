@@ -26,40 +26,16 @@ int sfxEnable = 0;
 sfx sfxList[32];
 int sfxCount=0;
 
-bgm bgmList[8];
-int bgmCount=0;
-
 #include "../tmp/sfx.h"
-
-bgm *bgmNew(const void *data,size_t dataLen){
-	bgm *b = &bgmList[bgmCount++];
-	b->chan = -1;
-	b->mixMusic = NULL;
-	if(data == NULL){ return NULL; }
-	b->mixMusic = Mix_LoadMUS_RW(SDL_RWFromConstMem(data,dataLen),0);
-	if(!b->mixMusic) { return NULL; }
-	return b;
-}
-
-void bgmFree(bgm *b){
-	if(b->mixMusic == NULL){return;}
-	Mix_FreeMusic(b->mixMusic);
-}
-
-void bgmPlay(bgm *b, float volume){
-	if(b == NULL){return;}
-	Mix_VolumeMusic((int)(MIX_MAX_VOLUME*(optionMusicVolume*volume)));
-	Mix_FadeInMusic(b->mixMusic,-1,5000);
-}
 
 sfx *sfxNew(const void *data,size_t dataLen, const char *lName){
 	sfx *b = &sfxList[sfxCount++];
 
 	b->chan = -1;
 	b->mixChunk = NULL;
-	if(data == NULL){ return NULL; }
+	if(data == NULL){return NULL;}
 	b->mixChunk = Mix_LoadWAV_RW(SDL_RWFromConstMem(data,dataLen),0);
-	if(!b->mixChunk) { return NULL; }
+	if(!b->mixChunk) {return NULL;}
 	lispDefineInt(lName,b-sfxList);
 
 	return b;
