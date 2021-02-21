@@ -114,3 +114,7 @@ mesh *meshGet(uint i){
 	(void)i;
 	return NULL;
 }
+uint meshIndex(const mesh *m){
+	(void)m;
+	return 0;
+}

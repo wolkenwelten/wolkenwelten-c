@@ -6,17 +6,6 @@ void poopInit(){
 	lispDefineID("i-","poop",ITEMID);
 }
 
-char *poopGetItemName(const item *cItem){
-	(void)cItem;
-	return "Poop";
-}
-
-mesh *poopGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshPoop;
-}
-
 bool poopSecondaryAction(item *cItem,character *cChar){
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
 	if(characterTryToUse(cChar,cItem,200,1)){

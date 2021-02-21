@@ -8,16 +8,6 @@ void gliderInit(){
 	lispDefineID("i-","glider",ITEMID);
 }
 
-char *gliderGetItemName(const item *cItem){
-	(void)cItem;
-	return "Glider";
-}
-
-mesh *gliderGetMesh(const item *cItem){
-	(void)cItem;
-	return meshGlider;
-}
-
 int gliderGetStackSize(const item *cItem){
 	(void)cItem;
 	return 1;

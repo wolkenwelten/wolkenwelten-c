@@ -7,11 +7,6 @@ void stoneaxeInit(){
 	lispDefineID("i-","stoneaxe",ITEMID);
 }
 
-char *stoneaxeGetItemName(const item *cItem){
-	(void)cItem;
-	return "Stone Axe";
-}
-
 int stoneaxeDamage(const item *cItem){
 	(void)cItem;
 
@@ -41,12 +36,6 @@ bool stoneaxePrimaryAction(item *cItem, character *cChar){
 bool stoneaxeSecondaryAction(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
-}
-
-mesh *stoneaxeGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshStoneaxe;
 }
 
 int stoneaxeGetStackSize(const item *cItem){

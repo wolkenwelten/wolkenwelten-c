@@ -6,11 +6,6 @@ void meatInit(){
 	lispDefineID("i-","meat raw",ITEMID);
 }
 
-char *meatGetItemName(const item *cItem){
-	(void)cItem;
-	return "Meat";
-}
-
 bool meatSecondaryAction(item *cItem,character *cChar){
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
 	if(characterTryToUse(cChar,cItem,200,1)){
@@ -21,12 +16,6 @@ bool meatSecondaryAction(item *cItem,character *cChar){
 		return true;
 	}
 	return false;
-}
-
-mesh *meatGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshMeat;
 }
 
 int meatGetAmmunition(const item *cItem){

@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "item.h"
 
+#include "../game/itemType.h"
 #include "../mods/mods.h"
 
 #include <stddef.h>
@@ -52,6 +52,7 @@ int itemCanStack(const item *i, u16 ID){
 	if(i->amount ==  0){return 0;}
 	return ma-i->amount;
 }
+
 int itemIncStack(item *i, i16 amount){
 	if(i == NULL)      {return 0;}
 	const int ma = getStackSizeDispatch(i);
@@ -59,6 +60,7 @@ int itemIncStack(item *i, i16 amount){
 	i->amount += amount;
 	return amount;
 }
+
 int itemDecStack(item *i, i16 amount){
 	if((i == NULL) || (amount == 0)){return 0;}
 	if(getStackSizeDispatch(i) == 1){
@@ -70,10 +72,12 @@ int itemDecStack(item *i, i16 amount){
 		return amount;
 	}
 }
+
 int itemGetAmmo(const item *i){
 	if(i == NULL)      {return 0;}
 	return i->amount-1;
 }
+
 int itemIncAmmo(item *i, i16 amount){
 	if(i == NULL)      {return 0;}
 	const int ma = getMagSizeDispatch(i)+1;
@@ -81,9 +85,24 @@ int itemIncAmmo(item *i, i16 amount){
 	i->amount += amount;
 	return amount;
 }
+
 int itemDecAmmo(item *i, i16 amount){
 	if(i == NULL)      {return 0;}
 	if((i->amount-1) < amount){amount = i->amount-1;}
 	i->amount -= amount;
 	return amount;
+}
+
+const char *itemGetName(const item *i){
+	if(i == NULL)  {return "NULL";}
+	if(i->ID < 256){return blockTypeGetName(i->ID);}
+	if(i->ID > 512){return "OVER";}
+	return itemTypes[i->ID-256].name;
+}
+
+mesh *itemGetMesh(const item *i){
+	if(i == NULL)  {return meshPear;}
+	if(i->ID < 256){return blockTypeGetMesh(i->ID);}
+	if(i->ID > 512){return meshBunny;}
+	return itemTypes[i->ID - 256].iMesh;
 }

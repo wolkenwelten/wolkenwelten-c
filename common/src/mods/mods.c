@@ -17,14 +17,6 @@
 
 #include "mods.h"
 
-mesh *getMeshDefault(const item *cItem){
-	int ID = cItem->ID;
-	if(ID < 256){
-		if(!blockTypeValid(ID)){ return NULL; }
-		return blockTypeGetMesh(ID);
-	}
-	return NULL;
-}
 int damageDefault(const item *cItem){
 	(void)cItem;
 
@@ -110,9 +102,4 @@ int getFireHealthDefault(const itemDrop *id){
 int throwActionDefault(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
-}
-
-const char *getItemNameDefault(const item *cItem){
-	if(cItem->ID < 256){return blockTypeGetName(cItem->ID);}
-	return "Unknown Item";
 }

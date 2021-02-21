@@ -6,17 +6,6 @@ void plantmatterInit(){
 	lispDefineID("i-","plantmatter",ITEMID);
 }
 
-char *plantmatterGetItemName(const item *cItem){
-	(void)cItem;
-	return "Plantmatter";
-}
-
-mesh *plantmatterGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshPlantmatter;
-}
-
 int plantmatterItemDropCallback(const item *cItem, float x, float y, float z){
 	(void)cItem;
 	if(rngValA(65535) != 0){return 0;}

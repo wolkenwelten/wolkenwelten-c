@@ -25,9 +25,7 @@
 
 itemType itemTypes[256];
 
-void itemTypeInit(){
-
-}
+void itemTypeInit(){}
 
 static lVal *wwlnfITName(lClosure *c, lVal *v){
 	if((v == NULL) || (v->type != ltPair)){return NULL;}
@@ -61,7 +59,7 @@ static lVal *wwlnfITMesh(lClosure *c, lVal *v){
 		t = lnfInt(c,lEval(c,v->vList.car));
 		if(t != NULL){it->iMesh = meshGet(t->vInt);}
 	}
-	return lValString(it->name);
+	return lValInt(meshIndex(it->iMesh));
 }
 
 static lVal *wwlnfITDamage(lClosure *c, lVal *v){

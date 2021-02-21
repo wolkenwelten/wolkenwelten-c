@@ -7,11 +7,6 @@ void ironaxeInit(){
 	lispDefineID("i-","iron axe",ITEMID);
 }
 
-char *ironaxeGetItemName(const item *cItem){
-	(void)cItem;
-	return "Iron Axe";
-}
-
 int ironaxeDamage(const item *cItem){
 	(void)cItem;
 
@@ -41,12 +36,6 @@ bool ironaxePrimaryAction(item *cItem, character *cChar){
 bool ironaxeSecondaryAction(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
-}
-
-mesh *ironaxeGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshIronaxe;
 }
 
 int ironaxeGetStackSize(const item *cItem){

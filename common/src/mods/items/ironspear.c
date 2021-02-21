@@ -7,11 +7,6 @@ void ironspearInit(){
 	lispDefineID("i-","iron spear",ITEMID);
 }
 
-char *ironspearGetItemName(const item *cItem){
-	(void)cItem;
-	return "Iron Spear";
-}
-
 int ironspearDamage(const item *cItem){
 	(void)cItem;
 
@@ -42,12 +37,6 @@ bool ironspearPrimaryAction(item *cItem, character *cChar){
 bool ironspearSecondaryAction(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
-}
-
-mesh *ironspearGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshIronspear;
 }
 
 int ironspearGetStackSize(const item *cItem){

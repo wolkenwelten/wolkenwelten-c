@@ -4,6 +4,7 @@
 mesh *meshNew           (const char *name);
 mesh *meshNewRO         (const char *name, const vertex *nroData,size_t roSize);
 mesh *meshGet           (uint i);
+uint  meshIndex         (const mesh *m);
 void  meshFreeAll       ();
 void  meshFree          (mesh *m);
 void  meshEmpty         (mesh *m);

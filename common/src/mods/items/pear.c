@@ -6,11 +6,6 @@ void pearInit(){
 	lispDefineID("i-","pear",ITEMID);
 }
 
-char *pearGetItemName(const item *cItem){
-	(void)cItem;
-	return "Pear";
-}
-
 bool pearSecondaryAction(item *cItem,character *cChar){
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
 	if(characterTryToUse(cChar,cItem,200,1)){
@@ -21,11 +16,6 @@ bool pearSecondaryAction(item *cItem,character *cChar){
 		return true;
 	}
 	return false;
-}
-
-mesh *pearGetMesh(const item *cItem){
-	(void)cItem;
-	return meshPear;
 }
 
 int pearGetAmmunition(const item *cItem){

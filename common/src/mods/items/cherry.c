@@ -6,11 +6,6 @@ void cherryInit(){
 	lispDefineID("i-","cherry",ITEMID);
 }
 
-char *cherryGetItemName(const item *cItem){
-	(void)cItem;
-	return "Cherry";
-}
-
 bool cherrySecondaryAction(item *cItem,character *cChar){
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
 	if(characterTryToUse(cChar,cItem,200,1)){
@@ -21,12 +16,6 @@ bool cherrySecondaryAction(item *cItem,character *cChar){
 		return true;
 	}
 	return false;
-}
-
-mesh *cherryGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshCherry;
 }
 
 int cherryGetAmmunition(const item *cItem){

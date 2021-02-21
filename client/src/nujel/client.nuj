@@ -42,19 +42,5 @@
 	(cond ((<= i 0) #t)
 	      (#t (countdown 300) (hammertime (-- i))))))
 
-
-(define on-spawn '())
-(define on-join '())
-
-(define event-bind (λ (event-name handler) "Binds handler lambda to event-name"
-	(set! (str->sym event-name) (cons handler on-respawn))))
-(define event-clear (λ (event-name) "Clears all event handlers for event-name"
-	(set! (str->sym event-name) '())))
-(define event-fire-iter (λ (l v) "Iter for event-fire"
-	(cond ((nil? l) #t)
-	      (#t (apply (car l) v) (event-fire-iter (cdr l) v)))))
-(define event-fire (λ (event-name ...val) "Applies ...val to all event handlers associated with event-name"
-	(event-fire-iter (resolve (str->sym event-name)) ...val)))
-
 (event-bind "on-spawn" (λ () "" (say (ansi-yellow "Better luck next time!"))))
 (event-bind "on-join" (λ () "" (say (ansi-green "Welcome!"))))

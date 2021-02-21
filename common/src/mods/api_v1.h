@@ -155,6 +155,7 @@ u32           blockTypeGetParticleColor(u8 b);
 mesh         *blockTypeGetMesh         (u8 b);
 
 mesh *meshGet(uint i);
+uint meshIndex(const mesh *m);
 
 void vegShrub              (int x,int y,int z);
 void vegDeadTree           (int x,int y,int z);

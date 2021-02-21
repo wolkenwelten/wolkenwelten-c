@@ -230,8 +230,9 @@ int main( int argc, char* argv[] ){
 	blockMiningInit();
 	initMeshobjs();
 	particleInit();
-	recipeInit();
 
+	lispEval("(event-fire \"on-init\")");
+	recipeInit();
 	modsInit();
 	textureBuildBlockIcons(0);
 	ropeInit();

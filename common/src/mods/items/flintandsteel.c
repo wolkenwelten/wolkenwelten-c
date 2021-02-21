@@ -7,11 +7,6 @@ void flintandsteelInit(){
 	lispDefineID("i-","flint and steel",ITEMID);
 }
 
-char *flintandsteelGetItemName(const item *cItem){
-	(void)cItem;
-	return "Flint and Steel";
-}
-
 int flintandsteelGetStackSize(const item *cItem){
 	(void)cItem;
 	return 1;
@@ -41,12 +36,4 @@ bool flintandsteelSecondaryAction(item *cItem,character *cChar){
 		return true;
 	}
 	return false;
-}
-
-
-
-mesh *flintandsteelGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshFlintandsteel;
 }

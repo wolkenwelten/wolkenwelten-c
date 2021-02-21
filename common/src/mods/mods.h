@@ -6,8 +6,6 @@ void        modsInit                ();
 
 int         damageDispatch          (const item *cItem);
 int         blockDamageDispatch     (const item *cItem, blockCategory blockCat);
-mesh       *getMeshDispatch         (const item *cItem);
-const char *getItemNameDispatch     (const item *cItem);
 bool        primaryActionDispatch   (      item *cItem, character *cChar);
 bool        hasPrimaryAction        (const item *cItem);
 bool        secondaryActionDispatch (      item *cItem, character *cChar);
@@ -22,10 +20,8 @@ int         getMagSizeDispatch      (const item *cItem);
 bool        hasGetMagSize           (const item *cItem);
 int         itemDropCallbackDispatch(const item *cItem, float x, float y, float z);
 
-const char *getItemNameDefault      (const item *cItem);
 int         damageDefault           (const item *cItem);
 int         blockDamageDefault      (const item *cItem, blockCategory blockCat);
-mesh       *getMeshDefault          (const item *cItem);
 bool        primaryActionDefault    (      item *cItem, character *cChar);
 bool        secondaryActionDefault  (      item *cItem, character *cChar);
 bool        tertiaryActionDefault   (      item *cItem, character *cChar);

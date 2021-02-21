@@ -26,6 +26,7 @@
 #include "../gui/widget.h"
 #include "../gfx/textMesh.h"
 #include "../sdl/sdl.h"
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/game/item.h"
@@ -51,15 +52,15 @@ static void widgetDrawPopupItemSlot(textMesh *m,const item *itm, uint x, uint y,
 	(void)h;
 
 	if(itm == NULL){return;}
-	const char *name = getItemNameDispatch(itm);
+	const char *name = itemGetName(itm);
 	if(name == NULL){return;}
 	uint len = strnlen(name,256);
 
-	const u32 bcolor = 0xCC444444;
-	const u32 tcolor = 0xCC111111;
-	int xoff = (len * 8)+8;
-	int yoff = MAX(0,MIN((int)(y-32),(int)(screenHeight-32)));
-	int width = xoff * 2;
+	u32 bcolor = 0xCC444444;
+	u32 tcolor = 0xCC111111;
+	int xoff   = (len * 8)+8;
+	int yoff   = MAX(0,MIN((int)(y-32),(int)(screenHeight-32)));
+	int width  = xoff * 2;
 	xoff = MAX(0,MIN((int)(x+(w/2)-xoff),(int)(screenWidth-width)));
 	textMeshVGradient(m,xoff,yoff,width,32,tcolor,bcolor);
 	textMeshAddStrPS(m,xoff+8,yoff+8,2,name);
@@ -516,7 +517,7 @@ static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, i
 			textMeshBox(m,xx-ts+ts/4+animX,y+ts/4+animY,ts/2,ts/2,24.f/32,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 		}
 		textMeshItem(m,xx,y,ts,3,&ingred);
-		const char *name = getItemNameDispatch(&ingred);
+		const char *name = itemGetName(&ingred);
 		const uint len = strnlen(name,256);
 		const int yoff = ii & 1 ? 0 : ts/4;
 		int xoff = MAX((int)(x-ts/4),(int)(xx+ts/2-(len*8)));
@@ -526,7 +527,7 @@ static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, i
 	xx = ii*2*ts + x;
 	textMeshBox(m,xx-ts+ts/4+animX*2,y+ts/4,ts/2,ts/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 	textMeshItemSlot(m,xx,y,ts,3,result.ID,result.amount);
-	const char *name = getItemNameDispatch(&result);
+	const char *name = itemGetName(&result);
 	const uint len = strnlen(name,256);
 	const int yoff = ii & 1 ? 0 : ts/4;
 	textMeshAddStrPS(m,xx+ts/2-(len*8),y+ts+yoff,2,name);

@@ -7,11 +7,6 @@ void grenadeInit(){
 	lispDefineID("i-","grenade",ITEMID);
 }
 
-char *grenadeGetItemName(const item *cItem){
-	(void)cItem;
-	return "Grenade";
-}
-
 bool grenadeSecondaryAction(item *cItem,character *cChar){
 	if(characterTryToUse(cChar,cItem,200,1)){
 		grenadeNew(vecAdd(cChar->pos,vecNew(0,0.5f,0)),cChar->rot,1,0,0);
@@ -20,11 +15,6 @@ bool grenadeSecondaryAction(item *cItem,character *cChar){
 		return true;
 	}
 	return false;
-}
-
-mesh *grenadeGetMesh(const item *cItem){
-	(void)cItem;
-	return meshGrenade;
 }
 
 int grenadeGetAmmunition(const item *cItem){

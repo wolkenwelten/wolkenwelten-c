@@ -19,6 +19,7 @@
 
 #include "../game/character.h"
 #include "../game/entity.h"
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
@@ -92,7 +93,7 @@ void itemDropUpdateFromServer(const packet *p){
 		itemDropList[d].player = -1;
 	}
 
-	itemDropList[d].ent->eMesh = getMeshDispatch(&itemDropList[d].itm);
+	itemDropList[d].ent->eMesh = itemGetMesh(&itemDropList[d].itm);
 	itemDropList[d].ent->pos   = idpos;
 	itemDropList[d].ent->vel   = idvel;
 }

@@ -7,11 +7,6 @@ void firestickInit(){
 	lispDefineID("i-","firestick",ITEMID);
 }
 
-char *firestickGetItemName(const item *cItem){
-	(void)cItem;
-	return "Fire Stick";
-}
-
 int firestickGetStackSize(const item *cItem){
 	(void)cItem;
 	return 1;
@@ -41,12 +36,4 @@ bool firestickSecondaryAction(item *cItem,character *cChar){
 		return true;
 	}
 	return false;
-}
-
-
-
-mesh *firestickGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshFlintandsteel;
 }

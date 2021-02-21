@@ -6,11 +6,6 @@ void burntmeatInit(){
 	lispDefineID("i-","meat burnt",ITEMID);
 }
 
-char *burntmeatGetItemName(const item *cItem){
-	(void)cItem;
-	return "Burned Meat";
-}
-
 bool burntmeatSecondaryAction(item *cItem,character *cChar){
 	(void)ITEMID;
 	if(characterTryToUse(cChar,cItem,200,1)){
@@ -20,9 +15,4 @@ bool burntmeatSecondaryAction(item *cItem,character *cChar){
 		return true;
 	}
 	return false;
-}
-
-mesh *burntmeatGetMesh(const item *cItem){
-	(void)cItem;
-	return meshBurntmeat;
 }

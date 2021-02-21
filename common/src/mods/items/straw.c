@@ -6,17 +6,6 @@ void strawInit(){
 	lispDefineID("i-","straw",ITEMID);
 }
 
-char *strawGetItemName(const item *cItem){
-	(void)cItem;
-	return "Straw";
-}
-
-mesh *strawGetMesh(const item *cItem){
-	(void)ITEMID;
-	(void)cItem;
-	return meshStraw;
-}
-
 int strawGetFireDmg(const itemDrop *id){
 	(void)id;
 	return 8;

@@ -142,3 +142,7 @@ mesh *meshGet(uint i){
 	if(i > countof(meshList)){return NULL;}
 	return &meshList[i];
 }
+uint meshIndex(const mesh *m){
+	if(m == NULL){return 0;}
+	return m - meshList;
+}

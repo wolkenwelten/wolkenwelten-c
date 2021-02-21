@@ -7,11 +7,6 @@ void crystalspearInit(){
 	lispDefineID("i-","crystal spear",ITEMID);
 }
 
-char *crystalspearGetItemName(const item *cItem){
-	(void)cItem;
-	return "Crystal Spear";
-}
-
 int crystalspearDamage(const item *cItem){
 	(void)cItem;
 
@@ -42,12 +37,6 @@ bool crystalspearPrimaryAction(item *cItem, character *cChar){
 bool crystalspearSecondaryAction(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
-}
-
-mesh *crystalspearGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshCrystalspear;
 }
 
 int crystalspearGetStackSize(const item *cItem){

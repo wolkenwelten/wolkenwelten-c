@@ -8,16 +8,6 @@ void flamethrowerInit(){
 	lispDefineID("i-","flamethrower",ITEMID);
 }
 
-char *flamethrowerGetItemName(const item *cItem){
-	(void)cItem;
-	return "Flamethrower";
-}
-
-mesh *flamethrowerGetMesh(const item *cItem){
-	(void)cItem;
-	return meshFlamethrower;
-}
-
 int flamethrowerGetStackSize(const item *cItem){
 	(void)cItem;
 	return 1;

@@ -7,11 +7,6 @@ void ironpickaxeInit(){
 	lispDefineID("i-","iron pickaxe",ITEMID);
 }
 
-char *ironpickaxeGetItemName(const item *cItem){
-	(void)cItem;
-	return "Iron Pickaxe";
-}
-
 int ironpickaxeDamage(const item *cItem){
 	(void)cItem;
 
@@ -27,12 +22,6 @@ int ironpickaxeBlockDamage(const item *cItem, blockCategory blockCat){
 		return 3;
 	}
 	return 1;
-}
-
-mesh *ironpickaxeGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshIronpickaxe;
 }
 
 int ironpickaxeGetStackSize(const item *cItem){

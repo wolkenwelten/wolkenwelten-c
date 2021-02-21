@@ -7,11 +7,6 @@ void crystalaxeInit(){
 	lispDefineID("i-","crystal axe",ITEMID);
 }
 
-char *crystalaxeGetItemName(const item *cItem){
-	(void)cItem;
-	return "Crystal Axe";
-}
-
 int crystalaxeDamage(const item *cItem){
 	(void)cItem;
 
@@ -35,12 +30,6 @@ bool crystalaxePrimaryAction(item *cItem, character *cChar){
 bool crystalaxeSecondaryAction(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
-}
-
-mesh *crystalaxeGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshCrystalaxe;
 }
 
 int crystalaxeGetStackSize(const item *cItem){

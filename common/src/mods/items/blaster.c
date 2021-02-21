@@ -9,17 +9,6 @@ void blasterInit(){
 	lispDefineID("i-","blaster",ITEMID);
 }
 
-char *blasterGetItemName(const item *cItem){
-	(void)cItem;
-	return "Blaster";
-}
-
-mesh *blasterGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshBlaster;
-}
-
 int blasterGetStackSize(const item *cItem){
 	(void)cItem;
 

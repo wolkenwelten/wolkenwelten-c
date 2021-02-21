@@ -19,6 +19,7 @@
 
 #include "entity.h"
 #include "../game/animal.h"
+#include "../game/item.h"
 #include "../network/messages.h"
 #include "../mods/mods.h"
 #include "../misc/profiling.h"
@@ -150,7 +151,7 @@ void throwableRecvUpdate(const packet *p){
 	if(a->ent == NULL){
 		a->ent = entityNew(vecNewP(&p->v.f[ 4]),vecZero());
 		if(isClient){
-			a->ent->eMesh = getMeshDispatch(&a->itm);
+			a->ent->eMesh = itemGetMesh(&a->itm);
 		}
 	}else{
 		a->ent->pos = vecNewP(&p->v.f[ 4]);

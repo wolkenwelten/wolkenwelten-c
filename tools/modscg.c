@@ -292,8 +292,6 @@ int main(int argc, char *argv[]){
 	printTypeCaller("modsInit","Init");
 	printItemTypeDispatch("Damage","const item *cItem","cItem","int ");
 	printItemTypeDispatch("BlockDamage","const item *cItem, blockCategory blockCat","cItem, blockCat","int ");
-	printItemTypeDispatch("GetMesh","const item *cItem","cItem","mesh *");
-	printItemTypeDispatch("GetItemName","const item *cItem","cItem","const char *");
 	printItemTypeDispatch("PrimaryAction","item *cItem, character *cChar","cItem, cChar","bool ");
 	printHasTypeSwitch   ("PrimaryAction");
 	printItemTypeDispatch("SecondaryAction","item *cItem, character *cChar","cItem, cChar","bool ");

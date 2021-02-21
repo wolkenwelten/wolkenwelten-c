@@ -8,17 +8,6 @@ void masterblasterInit(){
 	lispDefineID("i-","masterblaster",ITEMID);
 }
 
-char *masterblasterGetItemName(const item *cItem){
-	(void)cItem;
-	return "Masterblaster";
-}
-
-mesh *masterblasterGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshMasterblaster;
-}
-
 int masterblasterGetStackSize(const item *cItem){
 	(void)cItem;
 

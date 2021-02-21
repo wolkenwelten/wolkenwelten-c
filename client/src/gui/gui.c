@@ -437,7 +437,7 @@ void drawActiveItem(){
 	if(activeItem == NULL){return;}
 	if(itemIsEmpty(activeItem)){return;}
 
-	mesh *aiMesh = getMeshDispatch(activeItem);
+	mesh *aiMesh = itemGetMesh(activeItem);
 	if(aiMesh == NULL){return;}
 
 	const float afx = (player->flags & CHAR_THROW_AIM) ? 1.3f : 1.f;

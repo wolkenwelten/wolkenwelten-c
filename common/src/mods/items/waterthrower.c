@@ -8,16 +8,6 @@ void waterthrowerInit(){
 	lispDefineID("i-","waterthrower",ITEMID);
 }
 
-char *waterthrowerGetItemName(const item *cItem){
-	(void)cItem;
-	return "Waterthrower";
-}
-
-mesh *waterthrowerGetMesh(const item *cItem){
-	(void)cItem;
-	return meshWaterthrower;
-}
-
 int waterthrowerGetStackSize(const item *cItem){
 	(void)cItem;
 	return 1;

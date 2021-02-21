@@ -763,7 +763,7 @@ void characterActiveItemDraw(const character *c){
 	activeItem = &c->inventory[c->activeItem];
 	if(activeItem == NULL)     {return;}
 	if(itemIsEmpty(activeItem)){return;}
-	aiMesh = getMeshDispatch(activeItem);
+	aiMesh = itemGetMesh(activeItem);
 	if(aiMesh == NULL)         {return;}
 
 	const float breath = cosf((float)c->breathing/512.f)*4.f;

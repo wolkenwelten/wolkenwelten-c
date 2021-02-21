@@ -7,11 +7,6 @@ void stonespearInit(){
 	lispDefineID("i-","stone spear",ITEMID);
 }
 
-char *stonespearGetItemName(const item *cItem){
-	(void)cItem;
-	return "Stone Spear";
-}
-
 int stonespearDamage(const item *cItem){
 	(void)cItem;
 
@@ -42,12 +37,6 @@ bool stonespearPrimaryAction(item *cItem, character *cChar){
 bool stonespearSecondaryAction(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
-}
-
-mesh *stonespearGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshStonespear;
 }
 
 int stonespearGetStackSize(const item *cItem){

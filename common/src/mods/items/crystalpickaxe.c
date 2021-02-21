@@ -7,11 +7,6 @@ void crystalpickaxeInit(){
 	lispDefineID("i-","crystal pickaxe",ITEMID);
 }
 
-char *crystalpickaxeGetItemName(const item *cItem){
-	(void)cItem;
-	return "Crystal Pickaxe";
-}
-
 int crystalpickaxeDamage(const item *cItem){
 	(void)cItem;
 
@@ -27,12 +22,6 @@ int crystalpickaxeBlockDamage(const item *cItem, blockCategory blockCat){
 		return 5;
 	}
 	return 1;
-}
-
-mesh *crystalpickaxeGetMesh(const item *cItem){
-	(void)cItem;
-
-	return meshCrystalpickaxe;
 }
 
 int crystalpickaxeGetStackSize(const item *cItem){
