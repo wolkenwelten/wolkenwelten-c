@@ -81,7 +81,7 @@ int itemGetAmmo(const item *i){
 
 int itemIncAmmo(item *i, i16 amount){
 	if(i == NULL)      {return 0;}
-	const int ma = getMagSizeDispatch(i)+1;
+	const int ma = itemGetMagazineSize(i)+1;
 	if((i->amount+amount)>ma){amount = ma - i->amount;}
 	i->amount += amount;
 	return amount;
@@ -111,6 +111,10 @@ mesh *itemGetMesh(const item *i){
 int itemGetStackSize(const item *i){
 	if((i == NULL) || (i->ID < 256) || (i->ID > 512)){return 99;}
 	return itemTypes[i->ID - 256].stackSize;
+}
+int itemGetMagazineSize(const item *i){
+	if((i == NULL) || (i->ID < 256) || (i->ID > 512)){return 0;}
+	return itemTypes[i->ID - 256].magazineSize;
 }
 int itemGetAmmunition(const item *i){
 	if((i == NULL) || (i->ID > 512)){return -1;}

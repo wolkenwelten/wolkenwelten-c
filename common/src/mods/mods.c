@@ -38,12 +38,6 @@ bool hasPrimaryActionDefault(const item *cItem){
 
 	return false;
 }
-int getMagSizeDefault (const item *cItem){
-	(void)cItem;
-
-	return 0;
-}
-
 int itemDropCallbackDefault(const item *cItem, float x, float y, float z){
 	(void)cItem;
 	(void)x;

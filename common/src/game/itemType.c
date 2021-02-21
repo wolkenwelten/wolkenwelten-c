@@ -122,6 +122,22 @@ static lVal *wwlnfITStackSize(lClosure *c, lVal *v){
 	return lValInt(it->stackSize);
 }
 
+static lVal *wwlnfITMagazineSize(lClosure *c, lVal *v){
+	if((v == NULL) || (v->type != ltPair)){return NULL;}
+
+	lVal *t = lnfInt(c,lEval(c,v->vList.car));
+	if((t->vInt < 256) || (t->vInt > 512)){return NULL;}
+	const int ID = t->vInt;
+	itemType *it = &itemTypes[ID-256];
+	v = v->vList.cdr;
+
+	if((v != NULL) && (v->type == ltPair)){
+		t = lnfInt(c,lEval(c,v->vList.car));
+		if(t != NULL){it->magazineSize = t->vInt;}
+	}
+	return lValInt(it->magazineSize);
+}
+
 static lVal *wwlnfITFireDamage(lClosure *c, lVal *v){
 	if((v == NULL) || (v->type != ltPair)){return NULL;}
 
@@ -175,6 +191,7 @@ void itemTypeLispClosure(lClosure *c){
 	lAddNativeFunc(c,"it-mesh",       "(id &m)",    "Sets the mesh of itemType ID to &m if passed",                 wwlnfITMesh);
 	lAddNativeFunc(c,"it-ammunition", "(id &a)",    "Sets the ammunition of itemType ID to &a if passed",           wwlnfITAmmunition);
 	lAddNativeFunc(c,"it-stack-size", "(id &s)",    "Sets the stackSize of itemType ID to &d if passed",            wwlnfITStackSize);
+	lAddNativeFunc(c,"it-mag-size",   "(id &s)",    "Sets the Magazine Size of itemType ID to &d if passed",        wwlnfITMagazineSize);
 	lAddNativeFunc(c,"it-damage" ,    "(id cat &d)","Sets the damage to cat blocks of itemType ID to &d if passed", wwlnfITDamage);
 	lAddNativeFunc(c,"it-fire-damage","(id &d)",    "Sets the fire damage of itemType ID to &d if passed",          wwlnfITFireDamage);
 	lAddNativeFunc(c,"it-fire-health","(id &h)",    "Sets the fire health of itemType ID to &h if passed",          wwlnfITFireHealth);

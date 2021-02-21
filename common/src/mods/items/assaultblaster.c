@@ -1,5 +1,4 @@
 static const int ITEMID=263;
-static const int MAGSIZE=60;
 
 #include "../api_v1.h"
 
@@ -31,12 +30,6 @@ bool assaultblasterSecondaryAction(item *cItem, character *cChar){
 
 bool assaultblasterTertiaryAction(item *cItem, character *cChar){
 	return characterItemReload(cChar, cItem, 50);
-}
-
-int assaultblasterGetMagSize(const item *cItem){
-	(void)cItem;
-
-	return MAGSIZE;
 }
 
 int assaultblasterItemDropBurnUp(itemDrop *id){

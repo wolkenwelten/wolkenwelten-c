@@ -14,14 +14,15 @@ int   itemGetAmmo    (const item *i);
 int   itemIncAmmo    (      item *i, i16 amount);
 int   itemDecAmmo    (      item *i, i16 amount);
 
-const char *itemGetName      (const item *i);
-      mesh *itemGetMesh      (const item *i);
-      int   itemGetStackSize (const item *i);
-      int   itemGetAmmunition(const item *i);
-      int   itemGetFireDamage(const item *i);
-      int   itemGetFireHealth(const item *i);
-      int   itemGetDamage    (const item *i, blockCategory cat);
-      float itemGetInaccuracy(const item *i);
+const char *itemGetName         (const item *i);
+      mesh *itemGetMesh         (const item *i);
+      int   itemGetStackSize    (const item *i);
+      int   itemGetMagazineSize (const item *i);
+      int   itemGetAmmunition   (const item *i);
+      int   itemGetFireDamage   (const item *i);
+      int   itemGetFireHealth   (const item *i);
+      int   itemGetDamage       (const item *i, blockCategory cat);
+      float itemGetInaccuracy   (const item *i);
 
 #define I_Dirt           1
 #define I_Grass          2

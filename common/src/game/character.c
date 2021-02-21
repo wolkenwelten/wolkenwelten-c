@@ -408,7 +408,7 @@ void characterStartAnimation(character *c, int index, int duration){
 }
 
 bool characterItemReload(character *c, item *i, int cooldown){
-	const int MAGSIZE = getMagSizeDispatch(i);
+	const int MAGSIZE = itemGetMagazineSize(i);
 	const int AMMO    = itemGetAmmunition(i);
 	int ammoleft      = characterGetItemAmount(c,AMMO);
 

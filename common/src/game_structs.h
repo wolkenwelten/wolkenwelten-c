@@ -41,7 +41,7 @@ typedef struct {
 	char name[32];
 	mesh *iMesh;
 	i16 damage[5];
-	u16 ammunition,stackSize;
+	u16 ammunition,stackSize,magazineSize;
 	i16 fireDmg;
 	u16 fireHealth;
 	float inaccuracy;

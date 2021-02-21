@@ -1,5 +1,4 @@
 static const int ITEMID=283;
-static const int MAGSIZE=90;
 
 #include "../api_v1.h"
 
@@ -32,11 +31,6 @@ bool flamethrowerSecondaryAction(item *cItem, character *cChar){
 
 bool flamethrowerTertiaryAction(item *cItem, character *cChar){
 	return characterItemReload(cChar, cItem, 50);
-}
-
-int flamethrowerGetMagSize(const item *cItem){
-	(void)cItem;
-	return MAGSIZE;
 }
 
 int flamethrowerItemDropBurnUp(itemDrop *id){

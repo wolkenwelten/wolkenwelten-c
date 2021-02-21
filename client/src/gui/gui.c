@@ -545,10 +545,11 @@ void drawAmmunition(){
 	textMeshItemSprite(guim,guim->sx+32,guim->sy-18,64,ammo);
 
 	if(itemGetStackSize(activeItem) <= 1){
-		if(hasGetMagSize(activeItem)){
+		const int magSize = itemGetMagazineSize(activeItem);
+		if(magSize){
 			guim->sx += 4;
 			textMeshNumber(guim,guim->sx-32,guim->sy-tilesize+tilesize/3,2,itemGetAmmo(activeItem));
-			textMeshNumber(guim,guim->sx+32,guim->sy-tilesize+tilesize/3,2,getMagSizeDispatch(activeItem));
+			textMeshNumber(guim,guim->sx+32,guim->sy-tilesize+tilesize/3,2,magSize);
 			textMeshDigit(guim,guim->sx-12,guim->sy-tilesize+tilesize/3, 2, 10);
 		}
 	}

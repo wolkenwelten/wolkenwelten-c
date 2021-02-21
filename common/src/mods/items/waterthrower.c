@@ -1,5 +1,4 @@
 static const int ITEMID=288;
-static const int MAGSIZE=90;
 
 #include "../api_v1.h"
 
@@ -32,9 +31,4 @@ bool waterthrowerSecondaryAction(item *cItem, character *cChar){
 
 bool waterthrowerTertiaryAction(item *cItem, character *cChar){
 	return characterItemReload(cChar, cItem, 50);
-}
-
-int waterthrowerGetMagSize(const item *cItem){
-	(void)cItem;
-	return MAGSIZE;
 }
