@@ -23,13 +23,3 @@ int clusterbombItemDropBurnUp(itemDrop *id){
 	explode(id->ent->pos, 4, 0);
 	return 0;
 }
-
-int clusterbombGetFireDmg(const itemDrop *id){
-	(void)id;
-	return 8;
-}
-
-int clusterbombGetFireHealth(const itemDrop *id){
-	(void)id;
-	return 48;
-}

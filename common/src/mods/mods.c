@@ -73,20 +73,6 @@ int itemDropBurnUpDefault(itemDrop *id){
 	return 0;
 }
 
-int getFireDmgDefault(const itemDrop *id){
-	if(id->itm.ID < 256){
-		return blockTypeGetFireDmg(id->itm.ID);
-	}
-	return 1;
-}
-
-int getFireHealthDefault(const itemDrop *id){
-	if(id->itm.ID < 256){
-		return blockTypeGetHP(id->itm.ID);
-	}
-	return 300;
-}
-
 int throwActionDefault(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;

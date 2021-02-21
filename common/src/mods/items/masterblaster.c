@@ -40,13 +40,3 @@ int masterblasterItemDropBurnUp(itemDrop *id){
 	explode(id->ent->pos, 0.2f*id->itm.amount, 0);
 	return 0;
 }
-
-int masterblasterGetFireDmg(const itemDrop *id){
-	(void)id;
-	return 6;
-}
-
-int masterblasterGetFireHealth(const itemDrop *id){
-	(void)id;
-	return 64;
-}

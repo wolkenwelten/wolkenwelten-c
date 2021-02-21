@@ -16,6 +16,7 @@
  */
 #include "item.h"
 
+#include "../game/blockType.h"
 #include "../game/itemType.h"
 #include "../mods/mods.h"
 
@@ -115,4 +116,14 @@ int itemGetAmmunition(const item *i){
 	if((i == NULL) || (i->ID > 512)){return -1;}
 	if(i->ID < 256){return i->ID;}
 	return itemTypes[i->ID - 256].ammunition;
+}
+int itemGetFireDamage(const item *i){
+	if((i == NULL) || (i->ID > 512)){return 1;}
+	if(i->ID < 256){return blockTypeGetFireDamage(i->ID);}
+	return itemTypes[i->ID - 256].fireDmg;
+}
+int itemGetFireHealth(const item *i){
+	if((i == NULL) || (i->ID > 512)){return 1;}
+	if(i->ID < 256){return blockTypeGetFireHealth(i->ID);}
+	return itemTypes[i->ID - 256].fireHealth;
 }

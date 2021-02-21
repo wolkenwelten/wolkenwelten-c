@@ -148,7 +148,7 @@ void fireUpdate(fire *f){
 	}
 
 	const u8 b    = worldGetB(f->x,f->y,f->z);
-	const int dmg = MIN(f->oxygen,blockTypeGetFireDmg(b));
+	const int dmg = MIN(f->oxygen,blockTypeGetFireDamage(b));
 
 	f->strength = MIN(30000,f->strength+dmg-1);
 	f->oxygen  -= dmg;
@@ -165,7 +165,7 @@ void fireUpdate(fire *f){
 		f->blockDmg = 0;
 		fireSpread(f);
 	}else{
-		const int maxhp = blockTypeGetFireHP(b);
+		const int maxhp = blockTypeGetFireHealth(b);
 		f->blockDmg = MIN(maxhp,f->blockDmg + dmg);
 		if(f->blockDmg >= maxhp){
 			blockMiningBurnBlock(f->x,f->y,f->z,b);

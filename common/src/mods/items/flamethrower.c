@@ -34,11 +34,6 @@ bool flamethrowerTertiaryAction(item *cItem, character *cChar){
 	return characterItemReload(cChar, cItem, 50);
 }
 
-int flamethrowerGetAmmunition(const item *cItem){
-	(void)cItem;
-	return I_Flamebullet;
-}
-
 int flamethrowerGetMagSize(const item *cItem){
 	(void)cItem;
 	return MAGSIZE;
@@ -48,16 +43,6 @@ int flamethrowerItemDropBurnUp(itemDrop *id){
 	if(id->ent == NULL){return 0;}
 	explode(id->ent->pos, 0.2f*id->itm.amount, 0);
 	return 0;
-}
-
-int flamethrowerGetFireDmg(const itemDrop *id){
-	(void)id;
-	return 6;
-}
-
-int flamethrowerGetFireHealth(const itemDrop *id){
-	(void)id;
-	return 64;
 }
 
 float flamethrowerGetInaccuracy(const item *cItem){

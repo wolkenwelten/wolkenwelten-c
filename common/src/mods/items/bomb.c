@@ -23,13 +23,3 @@ int bombItemDropBurnUp(itemDrop *id){
 	explode(id->ent->pos, 3*id->itm.amount, 0);
 	return 0;
 }
-
-int bombGetFireDmg(const itemDrop *id){
-	(void)id;
-	return 8;
-}
-
-int bombGetFireHealth(const itemDrop *id){
-	(void)id;
-	return 64;
-}

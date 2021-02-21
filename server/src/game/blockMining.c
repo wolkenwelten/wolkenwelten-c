@@ -55,7 +55,7 @@ int blockMiningNew(int x,int y,int z){
 
 float blockMiningGetProgress(blockMining *bm){
 	if(bm->b == 0){return 0.f;}
-	return ((float)bm->damage) / ((float)blockTypeGetHP(bm->b));
+	return ((float)bm->damage) / ((float)blockTypeGetHealth(bm->b));
 }
 
 void blockMiningDropItemsPos(int x, int y, int z, u8 b){
@@ -171,12 +171,12 @@ void blockMiningUpdateAll(){
 	for(uint i=blockMiningCount-1;i<blockMiningCount;i--){
 		blockMining *bm = &blockMiningList[i];
 		if(!bm->wasMined){
-			const int maxhp = blockTypeGetHP(bm->b);
+			const int maxhp = blockTypeGetHealth(bm->b);
 			bm->damage -= maxhp >> 5;
 			if(bm->damage <= 0){blockMiningDel(i);}
 		}else{
 			bm->wasMined = false;
-			if(bm->damage > blockTypeGetHP(bm->b)){
+			if(bm->damage > blockTypeGetHealth(bm->b)){
 				blockMiningMineBlock(bm->x,bm->y,bm->z,bm->b);
 				blockMiningDel(i);
 			}

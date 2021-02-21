@@ -22,8 +22,3 @@ int cookedmeatItemDropBurnUpCallback(itemDrop *id){
 	id->itm.ID = I_Burntmeat;
 	return 1;
 }
-
-int cookedmeatGetFireHealth(const itemDrop *id){
-	(void)id;
-	return 40;
-}

@@ -18,6 +18,8 @@ const char *itemGetName      (const item *i);
       mesh *itemGetMesh      (const item *i);
       int   itemGetStackSize (const item *i);
       int   itemGetAmmunition(const item *i);
+      int   itemGetFireDamage(const item *i);
+      int   itemGetFireHealth(const item *i);
 
 #define I_Dirt           1
 #define I_Grass          2

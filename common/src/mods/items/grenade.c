@@ -22,13 +22,3 @@ int grenadeItemDropBurnUp(itemDrop *id){
 	explode(id->ent->pos, 1*id->itm.amount, 0);
 	return 0;
 }
-
-int grenadeGetFireDmg(const itemDrop *id){
-	(void)id;
-	return 8;
-}
-
-int grenadeGetFireHealth(const itemDrop *id){
-	(void)id;
-	return 32;
-}

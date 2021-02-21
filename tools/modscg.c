@@ -303,8 +303,6 @@ int main(int argc, char *argv[]){
 	printItemTypeDispatch("GetMagSize","const item *cItem","cItem","int ");
 	printHasTypeSwitch   ("GetMagSize");
 	printItemTypeDispatch("ItemDropCallback","const item *cItem, float x, float y, float z","cItem, x, y, z","int ");
-	printItemDropDispatch("GetFireDmg","const itemDrop *id","id","int ");
-	printItemDropDispatch("GetFireHealth","const itemDrop *id","id","int ");
 	printItemDropDispatch("ItemDropBurnUp","itemDrop *id","id","int ");
 
 	return 0;

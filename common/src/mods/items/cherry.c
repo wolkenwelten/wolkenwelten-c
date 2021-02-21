@@ -17,13 +17,3 @@ bool cherrySecondaryAction(item *cItem,character *cChar){
 	}
 	return false;
 }
-
-int cherryGetFireDmg(const itemDrop *id){
-	(void)id;
-	return 8;
-}
-
-int cherryGetFireHealth(const itemDrop *id){
-	(void)id;
-	return 100;
-}

@@ -51,13 +51,3 @@ int shotgunblasterItemDropBurnUp(itemDrop *id){
 	explode(id->ent->pos, 0.2f*id->itm.amount, 0);
 	return 0;
 }
-
-int shotgunblasterGetFireDmg(const itemDrop *id){
-	(void)id;
-	return 6;
-}
-
-int shotgunblasterGetFireHealth(const itemDrop *id){
-	(void)id;
-	return 64;
-}

@@ -54,17 +54,17 @@ const char *blockTypeGetName(u8 b){
 	return blocks[b].name;
 }
 
-int blockTypeGetHP(u8 b){
+int blockTypeGetHealth(u8 b){
 	return blocks[b].hp;
 }
 blockCategory blockTypeGetCat(u8 b){
 	return blocks[b].cat;
 }
 
-int blockTypeGetFireHP(u8 b){
+int blockTypeGetFireHealth(u8 b){
 	return blocks[b].firehp;
 }
-int blockTypeGetFireDmg(u8 b){
+int blockTypeGetFireDamage(u8 b){
 	if(b == I_Grass){return 4;}
 	if(b == I_Coal) {return 4;}
 

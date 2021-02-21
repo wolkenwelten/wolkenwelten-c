@@ -29,8 +29,4 @@ int         itemDropCallbackDefault (const item *cItem, float x, float y, float 
 int         throwActionDefault      (      item *cItem, character *cChar);
 
 int         itemDropBurnUpDispatch  (      itemDrop *id);
-int         getFireDmgDispatch      (const itemDrop *id);
-int         getFireHealthDispatch   (const itemDrop *id);
 int         itemDropBurnUpDefault   (      itemDrop *id);
-int         getFireDmgDefault       (const itemDrop *id);
-int         getFireHealthDefault    (const itemDrop *id);

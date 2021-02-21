@@ -24,6 +24,7 @@
 #include "../voxel/chungus.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/game/blockType.h"
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/mods/mods.h"
@@ -226,16 +227,16 @@ void itemDropUpdateFire(uint i){
 		id->lastFire = (u16)(f - fireList);
 	}
 	if((f != NULL) && (f->x == cx) && (f->y == cy) && (f->z == cz)){
-		const int dmg = MIN(f->oxygen,getFireDmgDispatch(id) * id->itm.amount);
+		const int dmg = MIN(f->oxygen,itemGetFireDamage(&id->itm) * id->itm.amount);
 		id->fireDmg += dmg;
 		f->strength += dmg - id->itm.amount;
 		f->oxygen   -= dmg;
 	}else if(id->fireDmg > 0){
-		const int dmg = MIN(id->fireDmg,getFireDmgDispatch(id) * id->itm.amount);
+		const int dmg = MIN(id->fireDmg,itemGetFireDamage(&id->itm) * id->itm.amount);
 		fireNew(cx,cy,cz,dmg);
 	}
 
-	int maxhp = getFireHealthDispatch(id) * id->itm.amount;
+	int maxhp = itemGetFireHealth(&id->itm) * id->itm.amount;
 	if(id->fireDmg >= maxhp){
 		if(!itemDropBurnUpDispatch(id)){
 			itemDropDel(i);

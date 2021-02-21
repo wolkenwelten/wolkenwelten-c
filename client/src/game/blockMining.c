@@ -46,7 +46,7 @@ mesh       *blockMiningProgressMesh;
 
 float blockMiningGetProgress(blockMining *bm){
 	if(bm->b == 0){return 0.f;}
-	return ((float)bm->damage) / ((float)blockTypeGetHP(bm->b));
+	return ((float)bm->damage) / ((float)blockTypeGetHealth(bm->b));
 }
 
 int blockMiningUpdateMesh(int d){
