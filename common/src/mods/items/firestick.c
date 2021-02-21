@@ -7,11 +7,6 @@ void firestickInit(){
 	lispDefineID("i-","firestick",ITEMID);
 }
 
-int firestickGetStackSize(const item *cItem){
-	(void)cItem;
-	return 1;
-}
-
 bool firestickPrimaryAction(item *cItem,character *cChar){
 	if(throwableTry(cItem,cChar,0.1, 1, THROWABLE_PITCH_SPIN)){return true;}
 	ivec p = characterLOSBlock(cChar, 0);

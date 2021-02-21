@@ -43,6 +43,7 @@
 #include "../../../common/src/nujel/reader.h"
 #include "../../../common/src/nujel/string.h"
 
+#include <ctype.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -667,4 +668,18 @@ void lispEvents(){
 	lClosureGC();
 
 	PROFILE_STOP();
+}
+
+const char *lispEval(const char *str){
+	static char reply[4096];
+	memset(reply,0,sizeof(reply));
+	lVal *v = lEval(clRoot,lWrap(lRead(str)));
+	lSDisplayVal(v,reply,&reply[sizeof(reply)-1]);
+
+	int soff,slen,len = strnlen(reply,sizeof(reply)-1);
+	for(soff = 0;    isspace((u8)reply[soff]) || (reply[soff] == '"');soff++){}
+	for(slen = len-1;isspace((u8)reply[slen]) || (reply[slen] == '"');slen--){reply[slen] = 0;}
+
+	lClosureGC();
+	return reply+soff;
 }

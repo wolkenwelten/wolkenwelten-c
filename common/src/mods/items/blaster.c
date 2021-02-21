@@ -9,12 +9,6 @@ void blasterInit(){
 	lispDefineID("i-","blaster",ITEMID);
 }
 
-int blasterGetStackSize(const item *cItem){
-	(void)cItem;
-
-	return 1;
-}
-
 bool blasterPrimaryAction(item *cItem, character *cChar){
 	if(throwableTry(cItem,cChar,0.1, 1, THROWABLE_PITCH_SPIN)){return true;}
 	if(!characterTryToShoot(cChar,cItem,80,3)){return false;}

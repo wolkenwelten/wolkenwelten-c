@@ -23,9 +23,3 @@ int ironpickaxeBlockDamage(const item *cItem, blockCategory blockCat){
 	}
 	return 1;
 }
-
-int ironpickaxeGetStackSize(const item *cItem){
-	(void)cItem;
-
-	return 1;
-}

@@ -8,12 +8,6 @@ void masterblasterInit(){
 	lispDefineID("i-","masterblaster",ITEMID);
 }
 
-int masterblasterGetStackSize(const item *cItem){
-	(void)cItem;
-
-	return 1;
-}
-
 bool masterblasterPrimaryAction(item *cItem, character *cChar){
 	if(throwableTry(cItem,cChar,0.1, 1, THROWABLE_PITCH_SPIN)){return true;}
 	if(!characterTryToShoot(cChar,cItem,350,45)){return false;}

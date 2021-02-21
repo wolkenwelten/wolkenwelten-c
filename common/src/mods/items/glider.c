@@ -7,8 +7,3 @@ void gliderInit(){
 	recipeNew2(itemNew(ITEMID,1), itemNew(I_Board,12), itemNew(I_Straw,16));
 	lispDefineID("i-","glider",ITEMID);
 }
-
-int gliderGetStackSize(const item *cItem){
-	(void)cItem;
-	return 1;
-}

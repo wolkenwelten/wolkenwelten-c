@@ -182,7 +182,7 @@ int characterDecItemAmount(character *c, u16 itemID,int amount){
 int characterPickupItem(character *c, u16 itemID,int amount){
 	int a = 0;
 	item ci = itemNew(itemID,amount);
-	if(getStackSizeDispatch(&ci) == 1){
+	if(itemGetStackSize(&ci) == 1){
 		ci.amount = amount;
 		for(uint i=0;i<40;i++){
 			if(itemIsEmpty(&c->inventory[i])){

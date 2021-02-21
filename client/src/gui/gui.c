@@ -544,7 +544,7 @@ void drawAmmunition(){
 	textMeshNumber(guim,guim->sx,guim->sy,2,amount);
 	textMeshItemSprite(guim,guim->sx+32,guim->sy-18,64,ammo);
 
-	if(getStackSizeDispatch(activeItem) <= 1){
+	if(itemGetStackSize(activeItem) <= 1){
 		if(hasGetMagSize(activeItem)){
 			guim->sx += 4;
 			textMeshNumber(guim,guim->sx-32,guim->sy-tilesize+tilesize/3,2,itemGetAmmo(activeItem));

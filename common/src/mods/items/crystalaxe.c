@@ -31,9 +31,3 @@ bool crystalaxeSecondaryAction(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
 }
-
-int crystalaxeGetStackSize(const item *cItem){
-	(void)cItem;
-
-	return 1;
-}

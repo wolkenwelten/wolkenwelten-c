@@ -6,8 +6,3 @@ void jetpackInit(){
 	recipeNew2(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,16), itemNew(I_Coal,32));
 	lispDefineID("i-","jetpack",ITEMID);
 }
-
-int jetpackGetStackSize(const item *cItem){
-	(void)cItem;
-	return 1;
-}

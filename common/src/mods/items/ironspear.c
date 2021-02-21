@@ -38,9 +38,3 @@ bool ironspearSecondaryAction(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
 }
-
-int ironspearGetStackSize(const item *cItem){
-	(void)cItem;
-
-	return 1;
-}

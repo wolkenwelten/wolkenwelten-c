@@ -8,11 +8,6 @@ void waterthrowerInit(){
 	lispDefineID("i-","waterthrower",ITEMID);
 }
 
-int waterthrowerGetStackSize(const item *cItem){
-	(void)cItem;
-	return 1;
-}
-
 bool waterthrowerPrimaryAction(item *cItem, character *cChar){
 	if(throwableTry(cItem,cChar,0.1, 1, THROWABLE_PITCH_SPIN)){return true;}
 	if(!characterTryToShoot(cChar,cItem,15,1)){return false;}

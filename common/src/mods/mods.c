@@ -61,11 +61,6 @@ int getAmmunitionDefault(const item *cItem){
 	}
 	return 0;
 }
-int getStackSizeDefault (const item *cItem){
-	(void)cItem;
-
-	return 99;
-}
 int getMagSizeDefault (const item *cItem){
 	(void)cItem;
 

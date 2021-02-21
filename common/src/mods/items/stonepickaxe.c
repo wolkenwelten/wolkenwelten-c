@@ -23,9 +23,3 @@ int stonepickaxeBlockDamage(const item *cItem, blockCategory blockCat){
 	}
 	return 1;
 }
-
-int stonepickaxeGetStackSize(const item *cItem){
-	(void)cItem;
-
-	return 1;
-}

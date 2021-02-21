@@ -30,12 +30,14 @@
 #include "game/time.h"
 #include "game/rain.h"
 #include "game/weather.h"
+#include "misc/lisp.h"
 #include "persistence/savegame.h"
 #include "voxel/bigchungus.h"
 #include "voxel/chungus.h"
 #include "voxel/chunk.h"
 #include "network/server.h"
 
+#include "../../common/src/game/itemType.h"
 #include "../../common/src/nujel/nujel.h"
 #include "../../common/src/nujel/string.h"
 #include "../../common/src/tmp/cto.h"
@@ -169,6 +171,8 @@ void mainInit(){
 	chungusInit();
 	chunkInit();
 	lispInit();
+	itemTypeInit();
+	lispEval("(event-fire \"on-init\")");
 	modsInit();
 	savegameSave();
 

@@ -38,9 +38,3 @@ bool crystalspearSecondaryAction(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
 }
-
-int crystalspearGetStackSize(const item *cItem){
-	(void)cItem;
-
-	return 1;
-}

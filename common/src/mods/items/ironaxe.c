@@ -37,9 +37,3 @@ bool ironaxeSecondaryAction(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
 }
-
-int ironaxeGetStackSize(const item *cItem){
-	(void)cItem;
-
-	return 1;
-}

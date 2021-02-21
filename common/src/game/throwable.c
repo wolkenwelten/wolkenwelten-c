@@ -223,7 +223,7 @@ void throwableUpdateAll(){
 bool throwableTry(item *cItem,character *cChar, float strength, int damage, uint flags){
 	if(characterIsThrowAiming(cChar) && characterTryToUse(cChar,cItem,100,0)){
 		characterAddRecoil(cChar,1.f);
-		if(getStackSizeDispatch(cItem) == 1){
+		if(itemGetStackSize(cItem) == 1){
 			throwableNew(cChar->pos, cChar->rot, strength, *cItem, characterGetBeing(cChar), damage, flags);
 		}else{
 			item tmp;

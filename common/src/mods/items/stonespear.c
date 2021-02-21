@@ -38,9 +38,3 @@ bool stonespearSecondaryAction(item *cItem, character *cChar){
 	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
 }
-
-int stonespearGetStackSize(const item *cItem){
-	(void)cItem;
-
-	return 1;
-}

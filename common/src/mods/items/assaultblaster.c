@@ -9,12 +9,6 @@ void assaultblasterInit(){
 	lispDefineID("i-","assaultblaster",ITEMID);
 }
 
-int assaultblasterGetStackSize(const item *cItem){
-	(void)cItem;
-
-	return 1;
-}
-
 bool assaultblasterPrimaryAction(item *cItem, character *cChar){
 	if(throwableTry(cItem,cChar,0.1, 1, THROWABLE_PITCH_SPIN)){return true;}
 	if(!characterTryToShoot(cChar,cItem,15,1)){return false;}

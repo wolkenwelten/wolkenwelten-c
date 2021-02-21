@@ -346,7 +346,7 @@ void characterDropSingleItem(character *c, int i){
 	item *cItem = characterGetItemBarSlot(c,i);
 	if(cItem == NULL)       { return; }
 	if(itemIsEmpty(cItem))  { return; }
-	if(getStackSizeDispatch(cItem) <= 1){
+	if(itemGetStackSize(cItem) <= 1){
 		itemDropNewC(c, cItem);
 		*cItem = itemEmpty();
 	}else{

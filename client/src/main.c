@@ -58,6 +58,7 @@
 #include "voxel/bigchungus.h"
 #include "voxel/chungus.h"
 
+#include "../../common/src/game/itemType.h"
 #include "../../common/src/misc/test.h"
 #include "../../common/src/misc/misc.h"
 #include "../../common/src/mods/mods.h"
@@ -231,6 +232,7 @@ int main( int argc, char* argv[] ){
 	initMeshobjs();
 	particleInit();
 
+	itemTypeInit();
 	lispEval("(event-fire \"on-init\")");
 	recipeInit();
 	modsInit();

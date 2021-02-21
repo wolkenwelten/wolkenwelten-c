@@ -24,7 +24,7 @@
 item itemNew(u16 ID, i16 amount){
 	item i;
 	i.ID     = ID;
-	i.amount = MIN(getStackSizeDispatch(&i),amount);
+	i.amount = MIN(itemGetStackSize(&i),amount);
 	return i;
 }
 
@@ -45,7 +45,7 @@ bool itemIsEmpty(const item *i){
 
 int itemCanStack(const item *i, u16 ID){
 	if(i == NULL)      {return 0;}
-	const int ma = getStackSizeDispatch(i);
+	const int ma = itemGetStackSize(i);
 	if(ma == 1)        {return 0;}
 	if(i->ID != ID)    {return 0;}
 	if(i->amount >= ma){return 0;}
@@ -55,7 +55,7 @@ int itemCanStack(const item *i, u16 ID){
 
 int itemIncStack(item *i, i16 amount){
 	if(i == NULL)      {return 0;}
-	const int ma = getStackSizeDispatch(i);
+	const int ma = itemGetStackSize(i);
 	if((i->amount+amount)>ma){amount = ma - i->amount;}
 	i->amount += amount;
 	return amount;
@@ -63,7 +63,7 @@ int itemIncStack(item *i, i16 amount){
 
 int itemDecStack(item *i, i16 amount){
 	if((i == NULL) || (amount == 0)){return 0;}
-	if(getStackSizeDispatch(i) == 1){
+	if(itemGetStackSize(i) == 1){
 		itemDiscard(i);
 		return 1;
 	}else{
@@ -105,4 +105,9 @@ mesh *itemGetMesh(const item *i){
 	if(i->ID < 256){return blockTypeGetMesh(i->ID);}
 	if(i->ID > 512){return meshBunny;}
 	return itemTypes[i->ID - 256].iMesh;
+}
+
+int itemGetStackSize(const item *i){
+	if((i == NULL) || (i->ID < 256) || (i->ID > 512)){return 99;}
+	return itemTypes[i->ID - 256].stackSize;
 }

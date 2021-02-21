@@ -23,9 +23,3 @@ int crystalpickaxeBlockDamage(const item *cItem, blockCategory blockCat){
 	}
 	return 1;
 }
-
-int crystalpickaxeGetStackSize(const item *cItem){
-	(void)cItem;
-
-	return 1;
-}

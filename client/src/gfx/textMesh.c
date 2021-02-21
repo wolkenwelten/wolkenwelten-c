@@ -21,6 +21,7 @@
 #include "../gfx/shader.h"
 #include "../tmp/assets.h"
 
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/nujel/nujel.h"
 #include "../../../common/src/mods/mods.h"
@@ -368,7 +369,7 @@ void textMeshItem(textMesh *m, int x, int y, int size, int style, item *itm){
 	const int itemsize    = size - size / 6;
 	const int itemsizeoff = (size-itemsize)/2;
 	textMeshItemSprite(m,x+itemsizeoff,y+itemsizeoff,itemsize,itm->ID);
-	if(getStackSizeDispatch(itm) <= 1){
+	if(itemGetStackSize(itm) <= 1){
 		if(hasGetMagSize(itm)){
 			textMeshNumber(m,x+size/4,y+size/8,1,itemGetAmmo(itm));
 			textMeshNumber(m,x+size-size/4,y+size/8,1,getMagSizeDispatch(itm));
