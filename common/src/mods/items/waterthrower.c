@@ -34,11 +34,6 @@ bool waterthrowerTertiaryAction(item *cItem, character *cChar){
 	return characterItemReload(cChar, cItem, 50);
 }
 
-int waterthrowerGetAmmunition(const item *cItem){
-	(void)cItem;
-	return I_Flamebullet;
-}
-
 int waterthrowerGetMagSize(const item *cItem){
 	(void)cItem;
 	return MAGSIZE;

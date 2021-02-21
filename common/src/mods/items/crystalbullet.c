@@ -7,11 +7,6 @@ void crystalbulletInit(){
 	lispDefineID("i-","crystal bullet",ITEMID);
 }
 
-int crystalbulletGetStackSize(const item *cItem){
-	(void)cItem;
-	return 999;
-}
-
 int crystalbulletItemDropBurnUp(itemDrop *id){
 	if(id->ent == NULL){return 0;}
 	explode(id->ent->pos, 0.2f*id->itm.amount, 0);

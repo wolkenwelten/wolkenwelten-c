@@ -233,9 +233,9 @@ int main( int argc, char* argv[] ){
 	particleInit();
 
 	itemTypeInit();
-	lispEval("(event-fire \"on-init\")");
-	recipeInit();
 	modsInit();
+	recipeInit();
+	lispEval("(event-fire \"on-init\")");
 	textureBuildBlockIcons(0);
 	ropeInit();
 

@@ -54,13 +54,6 @@ float getInaccuracyDefault(const item *cItem){
 
 	return 4.f;
 }
-int getAmmunitionDefault(const item *cItem){
-	int ID = cItem->ID;
-	if(ID < 256){
-		return ID;
-	}
-	return 0;
-}
 int getMagSizeDefault (const item *cItem){
 	(void)cItem;
 

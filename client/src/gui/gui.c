@@ -532,7 +532,7 @@ void drawAmmunition(){
 	item *activeItem = &player->inventory[player->activeItem];
 	if(activeItem == NULL){return;}
 	if(itemIsEmpty(activeItem)){return;}
-	int ammo = getAmmunitionDispatch(activeItem);
+	int ammo = itemGetAmmunition(activeItem);
 	if(ammo <= 0){return;}
 	int amount = characterGetItemAmount(player,ammo);
 

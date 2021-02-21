@@ -17,12 +17,6 @@ bool clusterbombSecondaryAction(item *cItem,character *cChar){
 	return false;
 }
 
-int clusterbombGetAmmunition(const item *cItem){
-	(void)cItem;
-
-	return ITEMID;
-}
-
 int clusterbombItemDropBurnUp(itemDrop *id){
 	(void)id;
 	if(id->ent == NULL){return 0;}

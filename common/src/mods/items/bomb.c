@@ -17,12 +17,6 @@ bool bombSecondaryAction(item *cItem,character *cChar){
 	return false;
 }
 
-int bombGetAmmunition(const item *cItem){
-	(void)cItem;
-
-	return ITEMID;
-}
-
 int bombItemDropBurnUp(itemDrop *id){
 	(void)id;
 	if(id->ent == NULL){return 0;}

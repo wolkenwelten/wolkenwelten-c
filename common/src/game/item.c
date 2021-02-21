@@ -111,3 +111,8 @@ int itemGetStackSize(const item *i){
 	if((i == NULL) || (i->ID < 256) || (i->ID > 512)){return 99;}
 	return itemTypes[i->ID - 256].stackSize;
 }
+int itemGetAmmunition(const item *i){
+	if((i == NULL) || (i->ID > 512)){return -1;}
+	if(i->ID < 256){return i->ID;}
+	return itemTypes[i->ID - 256].ammunition;
+}

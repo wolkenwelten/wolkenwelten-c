@@ -18,11 +18,6 @@ bool pearSecondaryAction(item *cItem,character *cChar){
 	return false;
 }
 
-int pearGetAmmunition(const item *cItem){
-	(void)cItem;
-	return ITEMID;
-}
-
 int pearGetFireDmg(const itemDrop *id){
 	(void)id;
 	return 8;

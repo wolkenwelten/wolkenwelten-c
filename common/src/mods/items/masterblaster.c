@@ -29,12 +29,6 @@ bool masterblasterTertiaryAction(item *cItem, character *cChar){
 	return characterItemReload(cChar, cItem, 200);
 }
 
-int masterblasterGetAmmunition(const item *cItem){
-	(void)cItem;
-
-	return I_Crystalbullet;
-}
-
 int masterblasterGetMagSize(const item *cItem){
 	(void)cItem;
 

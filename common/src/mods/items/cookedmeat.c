@@ -18,12 +18,6 @@ bool cookedmeatSecondaryAction(item *cItem,character *cChar){
 	return false;
 }
 
-int cookedmeatGetAmmunition(const item *cItem){
-	(void)cItem;
-
-	return ITEMID;
-}
-
 int cookedmeatItemDropBurnUpCallback(itemDrop *id){
 	id->itm.ID = I_Burntmeat;
 	return 1;

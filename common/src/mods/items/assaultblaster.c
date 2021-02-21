@@ -33,12 +33,6 @@ bool assaultblasterTertiaryAction(item *cItem, character *cChar){
 	return characterItemReload(cChar, cItem, 50);
 }
 
-int assaultblasterGetAmmunition(const item *cItem){
-	(void)cItem;
-
-	return I_Flamebullet;
-}
-
 int assaultblasterGetMagSize(const item *cItem){
 	(void)cItem;
 

@@ -17,11 +17,6 @@ bool grenadeSecondaryAction(item *cItem,character *cChar){
 	return false;
 }
 
-int grenadeGetAmmunition(const item *cItem){
-	(void)cItem;
-	return ITEMID;
-}
-
 int grenadeItemDropBurnUp(itemDrop *id){
 	if(id->ent == NULL){return 0;}
 	explode(id->ent->pos, 1*id->itm.amount, 0);

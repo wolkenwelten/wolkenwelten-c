@@ -18,12 +18,6 @@ bool cherrySecondaryAction(item *cItem,character *cChar){
 	return false;
 }
 
-int cherryGetAmmunition(const item *cItem){
-	(void)cItem;
-
-	return ITEMID;
-}
-
 int cherryGetFireDmg(const itemDrop *id){
 	(void)id;
 	return 8;

@@ -40,12 +40,6 @@ float shotgunblasterGetInaccuracy(const item *cItem){
 	return 48.f;
 }
 
-int shotgunblasterGetAmmunition(const item *cItem){
-	(void)cItem;
-
-	return I_Flamebullet;
-}
-
 int shotgunblasterGetMagSize(const item *cItem){
 	(void)cItem;
 

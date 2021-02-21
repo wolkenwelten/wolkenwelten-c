@@ -18,12 +18,6 @@ bool meatSecondaryAction(item *cItem,character *cChar){
 	return false;
 }
 
-int meatGetAmmunition(const item *cItem){
-	(void)cItem;
-
-	return ITEMID;
-}
-
 int meatItemDropCallback(const item *cItem, float x, float y, float z){
 	(void)cItem;
 	(void)x;

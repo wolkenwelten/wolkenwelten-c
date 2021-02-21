@@ -30,12 +30,6 @@ bool blasterTertiaryAction(item *cItem, character *cChar){
 	return characterItemReload(cChar, cItem, 50);
 }
 
-int blasterGetAmmunition(const item *cItem){
-	(void)cItem;
-
-	return I_Crystalbullet;
-}
-
 int blasterGetMagSize(const item *cItem){
 	(void)cItem;
 
