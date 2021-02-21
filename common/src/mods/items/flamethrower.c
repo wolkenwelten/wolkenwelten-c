@@ -44,9 +44,3 @@ int flamethrowerItemDropBurnUp(itemDrop *id){
 	explode(id->ent->pos, 0.2f*id->itm.amount, 0);
 	return 0;
 }
-
-float flamethrowerGetInaccuracy(const item *cItem){
-	(void)cItem;
-
-	return 16.f;
-}

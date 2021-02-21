@@ -297,7 +297,6 @@ int main(int argc, char *argv[]){
 	printItemTypeDispatch("TertiaryAction","item *cItem, character *cChar","cItem, cChar","bool ");
 	printHasTypeSwitch   ("TertiaryAction");
 	printItemTypeDispatch("ThrowAction","item *cItem, character *cChar","cItem, cChar","bool ");
-	printItemTypeDispatch("GetInaccuracy","const item *cItem","cItem","float ");
 	printItemTypeDispatch("GetMagSize","const item *cItem","cItem","int ");
 	printHasTypeSwitch   ("GetMagSize");
 	printItemTypeDispatch("ItemDropCallback","const item *cItem, float x, float y, float z","cItem, x, y, z","int ");

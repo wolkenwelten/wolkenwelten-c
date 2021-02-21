@@ -38,9 +38,3 @@ int waterthrowerGetMagSize(const item *cItem){
 	(void)cItem;
 	return MAGSIZE;
 }
-
-float waterthrowerGetInaccuracy(const item *cItem){
-	(void)cItem;
-
-	return 16.f;
-}

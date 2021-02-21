@@ -44,6 +44,7 @@ typedef struct {
 	u16 ammunition,stackSize;
 	i16 fireDmg;
 	u16 fireHealth;
+	float inaccuracy;
 } itemType;
 
 typedef uint32_t being;

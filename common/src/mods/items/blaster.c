@@ -36,12 +36,6 @@ int blasterGetMagSize(const item *cItem){
 	return MAGSIZE;
 }
 
-float blasterGetInaccuracy(const item *cItem){
-	(void)cItem;
-
-	return 2.f;
-}
-
 int blasterItemDropBurnUp(itemDrop *id){
 	if(id->ent == NULL){return 0;}
 	explode(id->ent->pos, 0.2f*id->itm.amount, 0);

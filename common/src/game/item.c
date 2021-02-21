@@ -131,3 +131,7 @@ int itemGetDamage(const item *i, blockCategory cat){
 	if((i == NULL) || (i->ID < 256) || (i->ID > 512)){return 1;}
 	return itemTypes[i->ID - 256].damage[cat];
 }
+float itemGetInaccuracy(const item *i){
+	if((i == NULL) || (i->ID < 256) || (i->ID > 512)){return 8.f;}
+	return itemTypes[i->ID - 256].inaccuracy;
+}

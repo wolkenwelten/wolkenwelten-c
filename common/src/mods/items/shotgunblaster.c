@@ -34,12 +34,6 @@ bool shotgunblasterTertiaryAction(item *cItem, character *cChar){
 	return characterItemReload(cChar, cItem, 256);
 }
 
-float shotgunblasterGetInaccuracy(const item *cItem){
-	(void)cItem;
-
-	return 48.f;
-}
-
 int shotgunblasterGetMagSize(const item *cItem){
 	(void)cItem;
 

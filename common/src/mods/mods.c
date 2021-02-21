@@ -38,11 +38,6 @@ bool hasPrimaryActionDefault(const item *cItem){
 
 	return false;
 }
-float getInaccuracyDefault(const item *cItem){
-	(void)cItem;
-
-	return 4.f;
-}
 int getMagSizeDefault (const item *cItem){
 	(void)cItem;
 

@@ -126,7 +126,7 @@ void characterRemovePlayer(int c, int len){
 
 void characterUpdateInaccuracy(character *c){
 	item *itm = &c->inventory[c->activeItem];
-	float minInaccuracy = getInaccuracyDispatch(itm);
+	float minInaccuracy = itemGetInaccuracy(itm);
 
 	if(c->shake > c->inaccuracy){c->inaccuracy = c->shake;}
 	c->inaccuracy = MINMAX(minInaccuracy,128.f,c->inaccuracy - 0.5f);

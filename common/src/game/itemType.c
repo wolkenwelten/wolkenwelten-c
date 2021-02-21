@@ -28,6 +28,7 @@ itemType itemTypes[256];
 void itemTypeInit(){
 	for(int i=0;i<256;i++){
 		itemTypes[i].stackSize = 99;
+		itemTypes[i].inaccuracy = 8.f;
 		for(int ii=0;ii<5;ii++){itemTypes[i].damage[ii] = 1;}
 	}
 }
@@ -153,6 +154,22 @@ static lVal *wwlnfITFireHealth(lClosure *c, lVal *v){
 	return lValInt(it->fireHealth);
 }
 
+static lVal *wwlnfITInaccuracy(lClosure *c, lVal *v){
+	if((v == NULL) || (v->type != ltPair)){return NULL;}
+
+	lVal *t = lnfInt(c,lEval(c,v->vList.car));
+	if((t->vInt < 256) || (t->vInt > 512)){return NULL;}
+	const int ID = t->vInt;
+	itemType *it = &itemTypes[ID-256];
+	v = v->vList.cdr;
+
+	if((v != NULL) && (v->type == ltPair)){
+		t = lnfFloat(c,lEval(c,v->vList.car));
+		if(t != NULL){it->inaccuracy = t->vFloat;}
+	}
+	return lValFloat(it->inaccuracy);
+}
+
 void itemTypeLispClosure(lClosure *c){
 	lAddNativeFunc(c,"it-name",       "(id &n)",    "Sets the name of itemType ID to &n if passed",                 wwlnfITName);
 	lAddNativeFunc(c,"it-mesh",       "(id &m)",    "Sets the mesh of itemType ID to &m if passed",                 wwlnfITMesh);
@@ -161,4 +178,5 @@ void itemTypeLispClosure(lClosure *c){
 	lAddNativeFunc(c,"it-damage" ,    "(id cat &d)","Sets the damage to cat blocks of itemType ID to &d if passed", wwlnfITDamage);
 	lAddNativeFunc(c,"it-fire-damage","(id &d)",    "Sets the fire damage of itemType ID to &d if passed",          wwlnfITFireDamage);
 	lAddNativeFunc(c,"it-fire-health","(id &h)",    "Sets the fire health of itemType ID to &h if passed",          wwlnfITFireHealth);
+	lAddNativeFunc(c,"it-inaccuracy", "(id &a)",    "Sets the fire inaccuracy of itemType ID to &a if passed",      wwlnfITInaccuracy);
 }
