@@ -6,12 +6,6 @@ void furInit(){
 	lispDefineID("i-","fur",ITEMID);
 }
 
-int furGetAmmunition(const item *cItem){
-	(void)cItem;
-
-	return ITEMID;
-}
-
 int furItemDropCallback(const item *cItem, float x, float y, float z){
 	(void)cItem;
 	(void)x;

@@ -7,22 +7,6 @@ void stonespearInit(){
 	lispDefineID("i-","stone spear",ITEMID);
 }
 
-int stonespearDamage(const item *cItem){
-	(void)cItem;
-
-	return 8;
-}
-
-int stonespearBlockDamage(const item *cItem, blockCategory blockCat){
-	(void)cItem;
-
-	if(blockCat == STONE){
-		return 1; // Destroy spear!
-	}
-
-	return 1;
-}
-
 bool stonespearPrimaryAction(item *cItem, character *cChar){
 	if(characterIsAiming(cChar) && characterTryToUse(cChar,cItem,100,0)){
 		throwableNew(cChar->pos, cChar->rot, 0.35f, *cItem, characterGetBeing(cChar), 4, THROWABLE_TIP_HEAVY | THROWABLE_PIERCE);

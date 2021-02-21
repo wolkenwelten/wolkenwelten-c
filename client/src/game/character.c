@@ -278,8 +278,8 @@ void characterHit(character *c){
 
 	const vec pos = vecAdd(c->pos,vecDegToVec(c->rot));
 	const being source = beingCharacter(playerID);
-	characterHitCheck(pos,2.f,damageDispatch(itm),2,iteration, source);
-	animalHitCheck   (pos,2.f,damageDispatch(itm),2,iteration, source);
+	characterHitCheck(pos,2.f,itemGetDamage(itm,0),2,iteration, source);
+	animalHitCheck   (pos,2.f,itemGetDamage(itm,0),2,iteration, source);
 
 	characterStartAnimation(c,0,240);
 	characterAddCooldown(c,80);

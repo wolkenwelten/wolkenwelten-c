@@ -290,8 +290,6 @@ int main(int argc, char *argv[]){
 	}
 
 	printTypeCaller("modsInit","Init");
-	printItemTypeDispatch("Damage","const item *cItem","cItem","int ");
-	printItemTypeDispatch("BlockDamage","const item *cItem, blockCategory blockCat","cItem, blockCat","int ");
 	printItemTypeDispatch("PrimaryAction","item *cItem, character *cChar","cItem, cChar","bool ");
 	printHasTypeSwitch   ("PrimaryAction");
 	printItemTypeDispatch("SecondaryAction","item *cItem, character *cChar","cItem, cChar","bool ");

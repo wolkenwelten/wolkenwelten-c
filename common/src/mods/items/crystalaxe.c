@@ -7,21 +7,6 @@ void crystalaxeInit(){
 	lispDefineID("i-","crystal axe",ITEMID);
 }
 
-int crystalaxeDamage(const item *cItem){
-	(void)cItem;
-
-	return 8;
-}
-
-int crystalaxeBlockDamage(const item *cItem, blockCategory blockCat){
-	(void)cItem;
-
-	if(blockCat == WOOD){
-		return 8;
-	}
-	return 1;
-}
-
 bool crystalaxePrimaryAction(item *cItem, character *cChar){
 	if(throwableTry(cItem,cChar,0.25, 8, THROWABLE_PITCH_SPIN | THROWABLE_PIERCE)){return true;}
 	return false;

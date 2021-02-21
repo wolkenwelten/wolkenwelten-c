@@ -7,21 +7,6 @@ void ironaxeInit(){
 	lispDefineID("i-","iron axe",ITEMID);
 }
 
-int ironaxeDamage(const item *cItem){
-	(void)cItem;
-
-	return 6;
-}
-
-int ironaxeBlockDamage(const item *cItem, blockCategory blockCat){
-	(void)cItem;
-
-	if(blockCat == WOOD){
-		return 5;
-	}
-	return 1;
-}
-
 bool ironaxePrimaryAction(item *cItem, character *cChar){
 	if(characterIsAiming(cChar) && characterTryToUse(cChar,cItem,100,0)){
 		throwableNew(cChar->pos, cChar->rot, 0.25f, *cItem, characterGetBeing(cChar), 5, THROWABLE_PITCH_SPIN | THROWABLE_PIERCE);

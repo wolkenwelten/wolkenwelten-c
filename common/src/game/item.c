@@ -127,3 +127,7 @@ int itemGetFireHealth(const item *i){
 	if(i->ID < 256){return blockTypeGetFireHealth(i->ID);}
 	return itemTypes[i->ID - 256].fireHealth;
 }
+int itemGetDamage(const item *i, blockCategory cat){
+	if((i == NULL) || (i->ID < 256) || (i->ID > 512)){return 1;}
+	return itemTypes[i->ID - 256].damage[cat];
+}

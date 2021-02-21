@@ -20,6 +20,7 @@ const char *itemGetName      (const item *i);
       int   itemGetAmmunition(const item *i);
       int   itemGetFireDamage(const item *i);
       int   itemGetFireHealth(const item *i);
+      int   itemGetDamage    (const item *i, blockCategory cat);
 
 #define I_Dirt           1
 #define I_Grass          2

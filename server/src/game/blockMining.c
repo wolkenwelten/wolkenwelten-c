@@ -113,7 +113,7 @@ int blockMiningMinePosItem(item *itm, int x, int y, int z){
 	if(b == 0){return 1;}
 	int dmg = 1;
 	if(itm != NULL){
-		dmg = blockDamageDispatch(itm,blockTypeGetCat(b));
+		dmg = itemGetDamage(itm,blockTypeGetCat(b));
 	}
 	return blockMiningMinePos(dmg,x,y,z);
 }

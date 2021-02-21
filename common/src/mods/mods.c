@@ -17,17 +17,6 @@
 
 #include "mods.h"
 
-int damageDefault(const item *cItem){
-	(void)cItem;
-
-	return 1;
-}
-int blockDamageDefault(const item *cItem, blockCategory blockCat){
-	(void)cItem;
-	(void)blockCat;
-
-	return 1;
-}
 bool primaryActionDefault(item *cItem, character *cChar){
 	if(throwableTry(cItem,cChar,0.1f, 1, 0)){return true;}
 	return false;
