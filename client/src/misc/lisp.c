@@ -253,6 +253,7 @@ static lVal *wwlnfInvActiveSlot(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfInt(c,lEval(c,v));
 		player->activeItem = t->vInt;
+		player->flags &= ~(CHAR_AIMING | CHAR_THROW_AIM);
 	}
 	return lValInt(player->activeItem);
 }
