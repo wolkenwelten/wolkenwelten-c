@@ -90,7 +90,7 @@ void serverParseWebSocketPacket(uint i){
 		}
 		if((masklen&0x80) == 0){
 			//See: https://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-17
-			fprintf(stderr,"Clients MUST mask: %X\n",masklen);
+			fprintf(stderr,"[SRV] Clients MUST mask: %X\n",masklen);
 			serverKill(i);
 		}
 		if((masklen&0x7F) == 0x7E){

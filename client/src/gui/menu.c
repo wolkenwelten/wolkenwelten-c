@@ -162,8 +162,10 @@ void menuKeyClick(int btn){
 	}
 }
 
-void menuSetError(char *error){
-	menuErrorLabel->vals = error;
+void menuSetError(const char *error){
+	static char buf[64];
+	snprintf(buf,sizeof(buf),"%s",error);
+	menuErrorLabel->vals = buf;
 	clientFree();
 	menuCloseGame();
 }

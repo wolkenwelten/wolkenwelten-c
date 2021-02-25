@@ -48,7 +48,7 @@ void serverInit(){
 	if(err < 0){ perror("bind"); exit(1); }
 	err = listen(serverSocket,128);
 	if(err < 0){ perror("listen"); exit(1); }
-	printf("Listening on Port %i\n",optionPort);
+	printf("[SRV] Listening on Port %i\n",optionPort);
 }
 
 void serverFree(){

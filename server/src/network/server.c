@@ -363,7 +363,7 @@ void serverParseSinglePacket(uint c, packet *p){
 		}else if(clientCount == 1){
 			quit = true;
 		}
-		printf("Client said goodbye\n");
+		printf("[SRV] Client said goodbye\n");
 		break;
 	case msgtItemDropNew:
 		itemDropNewPacket(c,p);
@@ -518,6 +518,13 @@ void serverParseIntro(uint c){
 		if(clients[c].recvBuf[ii] != '\n'){ continue; }
 		memcpy(clients[c].playerName,clients[c].recvBuf,MIN(sizeof(clients[c].playerName)-1,ii));
 		clients[c].playerName[sizeof(clients[c].playerName)-1] = 0;
+		for(uint i=0;i<clientCount;i++){
+			if(i == c){continue;}
+			if(strncmp(clients[c].playerName,clients[i].playerName,sizeof(clients[i].playerName)) != 0){continue;}
+			fprintf(stderr,"[SRV] %s already in use\n",clients[c].playerName);
+			serverKill(c);
+			return;
+		}
 		for(uint i=0;i<clients[c].recvBufLen-(ii);i++){
 			clients[c].recvBuf[i] = clients[c].recvBuf[i+(ii+1)];
 		}
@@ -673,7 +680,6 @@ int serverSendClient(uint c){
 	if(len > 0){
 		uint ret = serverSendRaw(c,clients[c].sendBuf+clients[c].sendBufSent,len);
 		clients[c].sendBufSent += ret;
-		//printf("Sent %u bytes\n",ret);
 	}
 	if(clients[c].sendBufSent >= clients[c].sendBufLen){
 		clients[c].sendBufLastCompressed = 0;
@@ -729,9 +735,11 @@ void serverCloseClient(uint c){
 		characterFree(clients[c].c);
 		clients[c].c = NULL;
 	}
+	if(clients[c].state == STATE_READY){
+		serverSendChatMsg(msg);
+	}
 	clients[c].state = STATE_CLOSED;
 	msgSetPlayerCount(c,clientCount);
-	serverSendChatMsg(msg);
 	sendPlayerNames();
 	lClosureFree(clients[c].cl);
 	clients[c].cl = NULL;

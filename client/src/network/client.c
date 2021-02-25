@@ -198,6 +198,13 @@ void dispatchBeingGotHit(const packet *p){
 	}
 }
 
+void handleGoodbye(const packet *p){
+	const char *msg = (const char *)p->v.u8;
+	if(*msg != 0){ menuSetError(msg); }
+	printf("[CLI] Received Goodbye: '%s'\n",msg);
+	clientFree();
+}
+
 static void handlePingPong(){
 	uint curPing = getTicks();
 	lastLatency = ((curPing - lastPing) + lastLatency)/2;
@@ -321,8 +328,7 @@ void clientParsePacket(const packet *p){
 		throwableRecvUpdate(p);
 		break;
 	case msgtGoodbye:
-		printf("[CLI] Received Goodbye\n");
-		clientFree();
+		handleGoodbye(p);
 		break;
 	case msgtLZ4:
 		decompressPacket(p);
@@ -365,6 +371,7 @@ void clientParse(){
 void clientGreetServer(){
 	char introStr[34];
 	connectionState = 1;
+	lastPing = getTicks();
 	#ifdef __EMSCRIPTEN__
 		if(singlePlayerPID != 0){queueToServer("NATIVE\r\n\r\n",10);}
 	#else
@@ -373,10 +380,18 @@ void clientGreetServer(){
 	uint len = snprintf(introStr,sizeof(introStr),"%.32s\n",playerName);
 	queueToServer(introStr,len);
 	clientWrite();
-	lastPing = getTicks();
+}
+
+void clientCheckPing(){
+	u64 curPing = getTicks();
+	if(curPing > lastPing+3000){
+		menuSetError("Server timed out");
+		clientFree();
+	}
 }
 
 void clientTranceive(){
+	clientCheckPing();
 	clientRead();
 	clientParse();
 	ropeSyncAll();

@@ -20,6 +20,7 @@
 #include "../common.h"
 #include "../game/animal.h"
 
+#include <stdio.h>
 #include <string.h>
 
 packet packetBuffer;
@@ -97,11 +98,6 @@ void msgMineBlock(u16 x, u16 y, u16 z, u8 b, u8 cause){
 	p->v.u8[6]  = b;
 	p->v.u8[7]  = cause;
 	packetQueue(p,msgtMineBlock,2*4,-1);
-}
-
-void msgGoodbye(int c){
-	packet *p = &packetBuffer;
-	packetQueue(p,msgtGoodbye,0,c);
 }
 
 void msgBlockMiningUpdate(int c, u16 x, u16 y, u16 z, i16 damage, u16 count, u16 i){
@@ -431,6 +427,10 @@ void msgLispSExpr(int c, u8 id, const char *str){
 	packetQueue(p,msgtLispRecvSExpr,alignedLen(len+2),c);
 }
 
+void msgGoodbye(int c){
+	packet *p = &packetBuffer;
+	packetQueue(p,msgtGoodbye,0,c);
+}
 
 const char *networkGetMessageName(uint i){
 	switch((messageType)i){

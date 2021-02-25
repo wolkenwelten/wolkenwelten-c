@@ -46,7 +46,7 @@ void startSingleplayerServer(){
 	char seed[64];
 	char save[64];
 	char *wolkenweltenServer = clientGetServerExecutable();
-	if (!wolkenweltenServer){
+	if (wolkenweltenServer == NULL){
 		printf("[CLI] Server exectuable not found\n");
 		return;
 	}
@@ -105,7 +105,10 @@ void clientInit(){
 		startSingleplayerServer();
 		return;
 	}
-	connectionTries++;
+	if(++connectionTries > 10){
+		menuSetError("Error connecting to host");
+		return;
+	}
 	goodbyeSent = false;
 
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -157,7 +160,6 @@ void clientInit(){
 		menuSetError("Error connecting to host ELSE");
 		return;
 	}
-	connectionTries = 0;
 	fcntl(serverSocket, F_SETFL, O_NONBLOCK);
 	err = setsockopt(serverSocket,IPPROTO_TCP,TCP_NODELAY,&yes,sizeof(yes));
 	sendBufLen              = 0;

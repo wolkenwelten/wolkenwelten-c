@@ -28,24 +28,24 @@ void serverInit(){
 	WSADATA wsaData;
 	err = WSAStartup(MAKEWORD(2,2), &wsaData);
 	if(err != NO_ERROR){
-		fprintf(stderr,"WSAStartup failed with error %i\n", WSAGetLastError());
+		fprintf(stderr,"[SRV] WSAStartup failed with error %i\n", WSAGetLastError());
 		return;
 	}
 
 	serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if(serverSocket == INVALID_SOCKET){
-		fprintf(stderr,"Invalid Socket: %i\n",WSAGetLastError());
+		fprintf(stderr,"[SRV] Invalid Socket: %i\n",WSAGetLastError());
 		exit(1);
 	}
 
 	err = ioctlsocket(serverSocket, FIONBIO, &yesl);
 	if (err == SOCKET_ERROR){
-		fprintf(stderr,"ioctl Socket Error: %i\n",WSAGetLastError());
+		fprintf(stderr,"[SRV] ioctl Socket Error: %i\n",WSAGetLastError());
 		exit(1);
 	}
 
 	err = setsockopt(serverSocket,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(yes));
-	if (err < 0){ perror("setsockopt: SO_REUSEADDR"); exit(1); }
+	if (err < 0){ perror("[SRV] setsockopt: SO_REUSEADDR"); exit(1); }
 
 	memset((char *) &serv_addr,0,sizeof(serv_addr));
 	serv_addr.sin_family      = AF_INET;
@@ -54,15 +54,15 @@ void serverInit(){
 
 	err = bind(serverSocket,(struct sockaddr *) &serv_addr,sizeof(serv_addr));
 	if(err == SOCKET_ERROR){
-		fprintf(stderr,"Bind Socket Error: %i\n",WSAGetLastError());
+		fprintf(stderr,"[SRV] Bind Socket Error: %i\n",WSAGetLastError());
 		exit(1);
 	}
 	err = listen(serverSocket,128);
 	if(err == SOCKET_ERROR){
-		fprintf(stderr,"Listen Socket Error: %i\n",WSAGetLastError());
+		fprintf(stderr,"[SRV] Listen Socket Error: %i\n",WSAGetLastError());
 		exit(1);
 	}
-	printf("Listening on Port %i\n",optionPort);
+	printf("[SRV] Listening on Port %i\n",optionPort);
 }
 
 void serverFree(){
@@ -84,12 +84,12 @@ void serverAccept(){
 	if (clientSock == INVALID_SOCKET){
 		err = WSAGetLastError();
 		if(err == WSAEWOULDBLOCK){return;}
-		fprintf(stderr,"Accept Error: %i\n",err);
+		fprintf(stderr,"[SRV] Accept Error: %i\n",err);
 		return;
 	}
 	err = ioctlsocket(clientSock, FIONBIO, (unsigned long *) &yes);
 	if (err == SOCKET_ERROR){
-		fprintf(stderr,"accept ioctl Socket Error: %i\n",WSAGetLastError());
+		fprintf(stderr,"[SRv] accept ioctl Socket Error: %i\n",WSAGetLastError());
 		close(clientSock);
 		return;
 	}
@@ -116,7 +116,7 @@ void serverRead(){
 				const int err = WSAGetLastError();
 				if(err == WSAEWOULDBLOCK){break;}
 				if(err == WSAEINPROGRESS){break;}
-				fprintf(stderr,"ERROR receiving: %i\n",err);
+				fprintf(stderr,"[SRV] ERROR receiving: %i\n",err);
 				serverKill(i);
 				break;
 			}else{

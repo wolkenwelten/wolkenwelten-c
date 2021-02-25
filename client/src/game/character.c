@@ -930,6 +930,7 @@ void characterSetData(character *c, const packet *p){
 	if(playerList[playerID] == NULL){
 		playerList[playerID] = player;
 	}
+	connectionTries = 0;
 	connectionState = 2;
 	lispEval("(event-fire \"on-join\")");
 }
