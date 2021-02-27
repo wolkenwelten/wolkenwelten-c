@@ -84,6 +84,8 @@
 	(let ((ID 265))
 		(it-stack-size ID 999)
 		(it-mesh ID m-crystalbullet)
+		(it-fire-dmg ID 8)
+		(it-fire-health ID 64)
 		(it-name ID "Crystal Bullet"))
 	(let ((ID 266))
 		(it-mesh ID m-ironbar)

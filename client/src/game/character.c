@@ -360,17 +360,17 @@ void characterDropSingleItem(character *c, int i){
 }
 
 void characterDie(character *c){
-	if(c != player)               { return; }
-	if(c->flags & CHAR_SPAWNING)  { return; }
-	if(c->flags & CHAR_NOCLIP)    { return; }
+	if(c != player)             {return;}
+	if(c->flags & CHAR_SPAWNING){return;}
+	if(c->flags & CHAR_NOCLIP)  {return;}
 	for(int i=0;i<40;i++){
 		itemDropNewP(c->pos, characterGetItemBarSlot(c,i));
 	}
 	for(int i=0;i<3;i++){
 		itemDropNewP(c->pos, &c->equipment[i]);
 	}
-	characterInit(c);
 	setOverlayColor(0xFF000000,0);
+	characterInit(c);
 	msgRequestPlayerSpawnPos();
 	c->flags |= CHAR_SPAWNING;
 	lispEval("(event-fire \"on-spawn\")");

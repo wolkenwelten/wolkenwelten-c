@@ -78,8 +78,7 @@ void serverAccept(){
 		close(clientSock);
 		return;
 	}
-	clients[clientCount].socket = clientSock;
-	serverInitClient(clientCount++);
+	serverInitClient(clientCount++,clientSock);
 }
 
 void serverKill(uint c){

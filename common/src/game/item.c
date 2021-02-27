@@ -124,7 +124,7 @@ int itemGetAmmunition(const item *i){
 int itemGetFireDamage(const item *i){
 	if((i == NULL) || (i->ID > 512)){return 1;}
 	if(i->ID < 256){return blockTypeGetFireDamage(i->ID);}
-	return itemTypes[i->ID - 256].fireDmg;
+	return itemTypes[i->ID - 256].fireDamage;
 }
 int itemGetFireHealth(const item *i){
 	if((i == NULL) || (i->ID > 512)){return 1;}

@@ -140,26 +140,15 @@ void msgPlayerSpawnPos(uint c){
 	if(clients[c].c != NULL){clients[c].c->pos = spos;}
 }
 
-void serverInitClient(uint c){
+void serverInitClient(uint c, u64 socket){
+	memset(&clients[c],0,sizeof(clients[c]));
+	clients[c].socket = socket;
 	const vec spawn = vecAdd(vecNewI(worldGetSpawnPos()),vecNew(.5f,2.f,.5f));
-	clients[c].c                          = characterNew();
-	clients[c].cl                         = lispClientClosure(c);
-	clients[c].recvBufLen                 = 0;
-	clients[c].sendBufLastCompressed      = 0;
-	clients[c].sendBufSent                = 0;
-	clients[c].sendBufLen                 = 0;
-	clients[c].chngReqQueueLen            = 0;
-	clients[c].chnkReqQueueLen            = 0;
-	clients[c].chnkUpdateIter             = 0;
-	clients[c].state                      = STATE_CONNECTING;
-	clients[c].flags                      = 0;
-	clients[c].syncCount                  = 0;
-	clients[c].animalUpdateWindowSize     = 1;
-	clients[c].animalPriorityUpdateOffset = 0;
-	clients[c].animalUpdateOffset         = 0;
-	clients[c].itemDropUpdateWindowSize   = 1;
-	clients[c].itemDropUpdateOffset       = 0;
-	clients[c].itemDropPriorityQueueLen   = 0;
+	clients[c].c                        = characterNew();
+	clients[c].cl                       = lispClientClosure(c);
+	clients[c].state                    = STATE_CONNECTING;
+	clients[c].animalUpdateWindowSize   = 1;
+	clients[c].itemDropUpdateWindowSize = 1;
 	clients[c].c->pos = spawn;
 
 	bigchungusUnsubscribeClient(&world,c);
@@ -461,21 +450,22 @@ void serverParsePacket(uint i){
 	}
 
 	for(int max=64;max > 0;--max){
-		if((clients[i].recvBufLen-off) < 4)     { break; }
+		if((clients[i].recvBufLen-off) < 4)     {break; }
 		unsigned int pLen = packetLen((packet *)(clients[i].recvBuf+off));
-		if((pLen+4) > clients[i].recvBufLen-off){ break; }
+		if((pLen+4) > clients[i].recvBufLen-off){break; }
 		serverParseSinglePacket(i,(packet *)(clients[i].recvBuf+off));
 		off += pLen+4;
+		if(clients[i].state){break;}
 	}
 
 	if(off > clients[i].recvBufLen){
-		fprintf(stderr,"Offset greater than buffer length, sumething went horribly wrong...\n");
+		fprintf(stderr,"[SRV] Offset greater than buffer length, sumething went horribly wrong...\n");
 		serverKill(i);
 	} else if(off == clients[i].recvBufLen){
 		clients[i].recvBufLen = 0;
 		off = 0;
 	} else if(off > sizeof(clients[i].recvBuf)/2){
-		fprintf(stderr,"Couldn't parse all packets, off=%i len=%i\n",off,clients[i].recvBufLen);
+		fprintf(stderr,"[SRV] Couldn't parse all packets, off=%i len=%i\n",off,clients[i].recvBufLen);
 		memmove(clients[i].recvBuf,&clients[i].recvBuf[off],(clients[i].recvBufLen - off));
 		clients[i].recvBufLen -= off;
 		off = 0;

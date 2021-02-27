@@ -79,8 +79,8 @@ void throwableNew  (const vec pos, const vec rot, float speed, const item itm, b
 bool throwableTry  (item *cItem, character *cChar, float strength, int damage, uint flags);
 bool throwableTryAim(item *cItem, character *cChar);
 void beamblast     (character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult);
-void projectileNew (const vec pos, const vec rot, being target, being source, uint style, float speed);
-void projectileNewC(const character *c, being target, uint style);
+bool projectileNew (const vec pos, const vec rot, being target, being source, uint style, float speed);
+bool projectileNewC(const character *c, being target, uint style);
 void fxBlockBreak  (const vec pos, u8 b, u8 cause);
 
 bool characterHP             (      character *c, int addhp);

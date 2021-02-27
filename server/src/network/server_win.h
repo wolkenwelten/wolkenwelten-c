@@ -93,8 +93,7 @@ void serverAccept(){
 		close(clientSock);
 		return;
 	}
-	clients[clientCount].socket = clientSock;
-	serverInitClient(clientCount++);
+	serverInitClient(clientCount++,clientSock);
 }
 
 void serverKill(uint c){
@@ -116,7 +115,7 @@ void serverRead(){
 				const int err = WSAGetLastError();
 				if(err == WSAEWOULDBLOCK){break;}
 				if(err == WSAEINPROGRESS){break;}
-				fprintf(stderr,"[SRV] ERROR receiving: %i\n",err);
+				if(err != WSAECONNABORTED){fprintf(stderr,"[SRV] ERROR receiving: %i\n",err);}
 				serverKill(i);
 				break;
 			}else{

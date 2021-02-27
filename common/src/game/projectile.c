@@ -36,14 +36,14 @@ int projectileNewID(){
 	if(ID == 64){ID = 31;} // ToDo: make this a bit nicer
 	const int start = ID << 8;
 	for(int i = start;i<start+256;i++){
-		if(projectileList[i].style == 0){return i;}
+		if(projectileList[i].style == 0){return  i;}
 	}
 	return -1;
 }
 
-void projectileNew(const vec pos, const vec rot, being target, being source, uint style, float speed){
+bool projectileNew(const vec pos, const vec rot, being target, being source, uint style, float speed){
 	const int ID = projectileNewID();
-	if(ID < 0){return;}
+	if(ID < 0){return true;}
 
 	uint ttl = 512;
 	if(target != 0){ttl = 4096;}
@@ -56,9 +56,10 @@ void projectileNew(const vec pos, const vec rot, being target, being source, uin
 	p->vel    = vecMulS(vecDegToVec(rot),speed);
 
 	projectileSendUpdate(-1,ID);
+	return false;
 }
 
-void projectileNewC(const character *c, being target, uint style){
+bool projectileNewC(const character *c, being target, uint style){
 	const float mx =  1.f - c->aimFade;
 	const float mz = -1.f;
 	vec pos = c->pos;
@@ -76,7 +77,7 @@ void projectileNewC(const character *c, being target, uint style){
 		speed = 0.5f;
 	}
 
-	projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style,speed);
+	return projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style,speed);
 }
 
 int projectileGetClient(uint i){

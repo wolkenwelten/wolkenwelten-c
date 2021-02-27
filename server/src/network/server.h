@@ -71,7 +71,7 @@ const char *getPlayerLeaveMessage(uint c);
 void serverInit            ();
 void serverFree            ();
 void serverHandleEvents    ();
-void serverInitClient      (uint c);
+void serverInitClient      (uint c, u64 socket);
 void sendToAll             (const void *data, uint len);
 void sendToAllExcept       (uint e, const void *data, uint len);
 void sendToClient          (uint c, const void *data, uint len);

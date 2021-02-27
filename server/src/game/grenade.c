@@ -29,7 +29,8 @@
 
 void explode(const vec pos, float pw, int style){
 	entity *exEnt;
-	worldBoxMineSphere(pos.x,pos.y,pos.z,pw*4.f);
+	pw = MIN(pw,64.f);
+	worldBoxMineSphere(pos.x,pos.y,pos.z,pw);
 
 	for(uint i=0;i<entityCount;i++){
 		exEnt = &entityList[i];
@@ -39,9 +40,9 @@ void explode(const vec pos, float pw, int style){
 		const vec dn = vecNorm(d);
 		exEnt->vel = vecAdd(exEnt->vel,vecMulS(dn,sqrtf((16*pw*pw)/dist)*-0.02f));
 	}
-	for(uint i=0;i<pw*64;i++){
+	for(int i=pw;i>=0;i--){
 		const vec rot = vecMul(vecRng(),vecNew(180.f,90.f,0.f));
-		projectileNew(pos, rot, 0, 0, 5, 0.07f);
+		if(projectileNew(pos, rot, 0, 0, 5, 0.07f)){break;}
 	}
 	msgGrenadeExplode(pos, pw, style);
 }

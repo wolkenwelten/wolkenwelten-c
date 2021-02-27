@@ -111,12 +111,12 @@ void playerUpdate(){
 	if(player->flags & CHAR_SPAWNING){ return; }
 	if(!playerChunkActive)           { return; }
 	if(inputSneak()){
-		player->flags |= CHAR_SNEAK;
+		player->flags |=  CHAR_SNEAK;
 	}else{
 		player->flags &= ~CHAR_SNEAK;
 	}
 	if(inputBoost()){
-		player->flags |= CHAR_BOOSTING;
+		player->flags |=  CHAR_BOOSTING;
 	}else{
 		player->flags &= ~CHAR_BOOSTING;
 	}

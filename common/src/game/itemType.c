@@ -27,7 +27,9 @@ itemType itemTypes[256];
 
 void itemTypeInit(){
 	for(int i=0;i<256;i++){
-		itemTypes[i].stackSize = 99;
+		itemTypes[i].stackSize  = 99;
+		itemTypes[i].fireHealth = 256;
+		itemTypes[i].fireDamage = 1;
 		itemTypes[i].inaccuracy = 8.f;
 		for(int ii=0;ii<5;ii++){itemTypes[i].damage[ii] = 1;}
 	}
@@ -149,9 +151,9 @@ static lVal *wwlnfITFireDamage(lClosure *c, lVal *v){
 
 	if((v != NULL) && (v->type == ltPair)){
 		t = lnfInt(c,lEval(c,v->vList.car));
-		if(t != NULL){it->fireDmg = t->vInt;}
+		if(t != NULL){it->fireDamage = t->vInt;}
 	}
-	return lValInt(it->fireDmg);
+	return lValInt(it->fireDamage);
 }
 
 static lVal *wwlnfITFireHealth(lClosure *c, lVal *v){
