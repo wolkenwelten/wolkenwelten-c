@@ -371,6 +371,16 @@ static lVal *wwlnfTp(lClosure *c, lVal *v){
 	return lValBool(true);
 }
 
+static lVal *wwlnfWVel(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfVec(c,lEval(c,v));
+		if(t != NULL){
+			cloudsSetWind(t->vVec);
+		}
+	}
+	return lValVec(windVel);
+}
+
 static lVal *wwlnfCDen(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lEval(c,v->vList.car);
@@ -426,18 +436,6 @@ static lVal *wwlnfChungi(lClosure *c, lVal *v){
 	(void)c;
 	(void)v;
 	return lValInt(chungusCount - chungusFreeCount);
-}
-
-static lVal *wwlnfWVel(lClosure *c, lVal *v){
-	vec nvel = vecZero();
-	if(v != NULL){
-		lVal *t = lnfVec(c,lEval(c,v));
-		if(t != NULL){
-			nvel = t->vVec;
-		}
-	}
-	cloudsSetWind(nvel);
-	return lValVec(windVel);
 }
 
 static lVal *wwlnfClearInv(lClosure *c, lVal *v){

@@ -33,11 +33,12 @@
 #include "../../../common/src/misc/profiling.h"
 
 #include <math.h>
+#include <stdio.h>
 
 #pragma pack(push, 1)
 typedef struct {
 	float x,y,z;
-	unsigned int color;
+	u32 color;
 } glCloud;
 #pragma pack(pop)
 

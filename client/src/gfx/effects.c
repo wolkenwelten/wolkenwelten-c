@@ -30,20 +30,20 @@
 void fxExplosionBomb(const vec pos,float pw){
 	sfxPlayPos(sfxBomb,1.f,pos);
 
-	for(int i=0;i<4096*pw;i++){
-		const vec v  = vecMulS(vecRng(),0.15f*pw);
+	for(int i=0;i<1024*pw;i++){
+		const vec v  = vecMulS(vecRng(),0.03f*pw);
 		newParticleV(pos,v,64.f,1.f,0xFF44AAFF,64);
 	}
-	for(int i=0;i<4096*pw;i++){
-		const vec v  = vecMulS(vecRng(),0.1f*pw);
+	for(int i=0;i<768*pw;i++){
+		const vec v  = vecMulS(vecRng(),0.02f*pw);
 		newParticleV(pos,v,64.f,1.f,0xFF0099FF,78);
 	}
-	for(int i=0;i<2048*pw;i++){
-		const vec v  = vecMulS(vecRng(),0.06f*pw);
+	for(int i=0;i<512*pw;i++){
+		const vec v  = vecMulS(vecRng(),0.01f*pw);
 		newParticleV(pos,v,64.f,1.f,0xFF0066CC,96);
 	}
-	for(int i=0;i<2048*pw;i++){
-		const vec v  = vecMulS(vecRng(),0.03f*pw);
+	for(int i=0;i<256*pw;i++){
+		const vec v  = vecMulS(vecRng(),0.005f*pw);
 		newParticleV(pos,v,64.f,1.f,0xFF082299,128);
 	}
 

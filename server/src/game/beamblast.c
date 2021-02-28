@@ -37,7 +37,7 @@ void beamblastNewP(uint c, const packet *p){
 		for(int i=0;i<8;i++){
 			spos = vecAdd(spos,tvel);
 			if(worldGetB(spos.x,spos.y,spos.z) != 0){
-				explode(pos,0.5f*beamSize,1);
+				explode(pos,2.f*beamSize,1);
 			}
 		}
 		pos = vecAdd(pos,vel);

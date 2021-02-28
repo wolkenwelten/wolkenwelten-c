@@ -18,6 +18,7 @@
 
 #include "../main.h"
 #include "../game/character.h"
+#include "../game/weather.h"
 #include "../gfx/gfx.h"
 #include "../gfx/texture.h"
 #include "../gui/gui.h"
@@ -323,6 +324,38 @@ static lVal *wwlnfTextInputFocusPred(lClosure *c, lVal *v){
 	return lValBool(textInputActive());
 }
 
+static lVal *wwlnfWVel(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lnfVec(c,lEval(c,v));
+		if(t != NULL){
+			cloudsSetWind(t->vVec);
+		}
+	}
+	return lValVec(windVel);
+}
+
+static lVal *wwlnfCDen(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lEval(c,v->vList.car);
+		if(t != NULL){
+			t = lnfInt(c,t);
+			cloudsSetDensity(t->vInt);
+		}
+	}
+	return lValInt(cloudGDensityMin);
+}
+
+static lVal *wwlnfRain(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lEval(c,v->vList.car);
+		if(t != NULL){
+			t = lnfInt(c,t);
+			weatherSetRainDuration(t->vInt);
+		}
+	}
+	return lValInt(rainIntensity);
+}
+
 void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",    "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",           "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
@@ -351,6 +384,9 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"screenshot",     "()",           "Takes a screeshot",                                              wwlnfScreenshot);
 	lAddNativeFunc(c,"fire-hook",      "()",           "Fires the players Grappling hook, or retracts it if fired",      wwlnfFireHook);
 	lAddNativeFunc(c,"inv-active-slot","(i)",          "Sets the players active item to i",                              wwlnfInvActiveSlot);
+	lAddNativeFunc(c,"cloud-thresh!",  "(a)",          "Sets cloud threshold to a",                                      wwlnfCDen);
+	lAddNativeFunc(c,"wind-velocity",  "(v)",          "Sets wind velocity to vector v",                                 wwlnfWVel);
+	lAddNativeFunc(c,"rain-set",       "(a)",          "Sets rain rate to a",                                            wwlnfRain);
 }
 
 void lispInit(){

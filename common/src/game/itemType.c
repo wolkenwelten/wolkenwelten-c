@@ -47,7 +47,6 @@ static lVal *wwlnfITName(lClosure *c, lVal *v){
 	if((v != NULL) && (v->type == ltPair)){
 		t = lEval(c,v->vList.car);
 		if(t != NULL){
-			//printf("[%u]{%p} '%s' -> '%s'",ID,it,it->name,t->vString->data);
 			snprintf(it->name,32,"%s",t->vString->data);
 		}
 	}

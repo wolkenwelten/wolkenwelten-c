@@ -38,7 +38,7 @@ void explode(const vec pos, float pw, int style){
 		const float dist = vecMag(d);
 		if(dist > (16*pw*pw)){continue;}
 		const vec dn = vecNorm(d);
-		exEnt->vel = vecAdd(exEnt->vel,vecMulS(dn,sqrtf((16*pw*pw)/dist)*-0.02f));
+		exEnt->vel = vecAdd(exEnt->vel,vecMulS(dn,sqrtf((pw*pw)/dist)*-0.02f));
 	}
 	for(int i=pw;i>=0;i--){
 		const vec rot = vecMul(vecRng(),vecNew(180.f,90.f,0.f));

@@ -20,6 +20,7 @@
 #include "../game/being.h"
 #include "../game/blockMining.h"
 #include "../game/grenade.h"
+#include "../game/weather.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
@@ -78,7 +79,7 @@ void fireRecvUpdate(uint c, const packet *p){
 	fireNew(x,y,z,strength);
 }
 
-static inline void fireSpreadToBlock(fire *f, int r){
+static inline void fireSpreadToBlock(fire *f, int r,blockCategory ccat){
 	u16 fx,fy,fz;
 	fx = (f->x - r) + rngValM(r*2+1);
 	fy = (f->y - r) + rngValM(r*2+1);
@@ -88,23 +89,11 @@ static inline void fireSpreadToBlock(fire *f, int r){
 		fy = fy + (f->y-fy);
 	}
 	const u8 nb = worldGetB(fx,fy,fz);
+	if(ccat != 0){
+		blockCategory nbt = blockTypeGetCat(nb);
+		if(nbt != ccat){return;}
+	}
 	if(nb == 0){return;}
-	fireNew(fx,fy,fz,8);
-	f->strength -= 8;
-}
-
-static inline void fireSpreadToLeaf(fire *f, int r){
-	u16 fx,fy,fz;
-	fx = (f->x - r) + rngValM(r*2+1);
-	fy = (f->y - r) + rngValM(r*2+1);
-	fz = (f->z - r) + rngValM(r*2+1);
-
-	if((fy < f->y) && (rngValR() & 1)){
-		fy = fy + (f->y-fy);
-	}
-	const u8 nb = worldGetB(fx,fy,fz);
-	blockCategory nbt = blockTypeGetCat(nb);
-	if(nbt != LEAVES){return;}
 	fireNew(fx,fy,fz,8);
 	f->strength -= 8;
 }
@@ -115,7 +104,7 @@ static inline void fireSpread(fire *f){
 		if((rngValR() & 0x1F)!= 0){continue;}
 		int r = 1;
 		if((f->strength > 0xFF) && ((rngValR() & 0x07) == 0)){r = 2;}
-		fireSpreadToBlock(f,r);
+		fireSpreadToBlock(f,r,0);
 	}
 	count = f->strength >> 6;
 	for(int i=0;i<count+1;i++){
@@ -124,7 +113,7 @@ static inline void fireSpread(fire *f){
 		const uint rv = (rngValR() & 0x07);
 		if(     (f->strength > 0x1F) && (rv != 0)){r = 2;}
 		else if((f->strength > 0xFF) && (rv == 0)){r = 3;}
-		fireSpreadToLeaf(f,r);
+		fireSpreadToBlock(f,r,LEAVES);
 	}
 }
 
