@@ -203,9 +203,9 @@ void checkAutostart(){
 int main( int argc, char* argv[] ){
 	selfTest();
 	clientGetName();
-	clientGetServerExecutable();
 	lispInit();
 	initOptions(argc,argv);
+	clientGetServerExecutable();
 	changeToDataDir();  // Change to data dir after parsing args so we can add an argument later to set the data dir
 	loadOptions();
 	initSDL();

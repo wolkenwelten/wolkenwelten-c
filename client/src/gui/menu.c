@@ -70,7 +70,8 @@ void startMultiplayer(){
 }
 
 void startSingleplayer(){
-	singleplayer    = true;
+	singleplayer        = true;
+	mayTryToStartServer = true;
 	startMultiplayer();
 }
 

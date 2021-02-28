@@ -46,6 +46,11 @@ void startSingleplayerServer(){
 	char seed[64];
 	char save[64];
 	char *wolkenweltenServer = clientGetServerExecutable();
+	if(!mayTryToStartServer){
+		menuSetError("Couldn't start Server!");
+		return;
+	}
+	mayTryToStartServer = false;
 	if (wolkenweltenServer == NULL){
 		printf("[CLI] Server exectuable not found\n");
 		return;
@@ -57,11 +62,12 @@ void startSingleplayerServer(){
 	snprintf(seed,sizeof(seed),"-savegame=%s",optionSavegame);
 	singlePlayerPID = fork();
 	if (singlePlayerPID == 0){
-		execl(wolkenweltenServer,"wolkenwelten-server",seed,"-singleplayer",save, (char *)NULL);
-		return;
+		execl(wolkenweltenServer,wolkenweltenServer,seed,"-singleplayer",save, (char *)NULL);
+		menuSetError("Error exec'ing Server!");
+		exit(1); // So we immediatly exit if we can't exec, otherwise we might fork again
 	}
 	strncpy(serverName,"localhost",sizeof(serverName));
-	usleep(1000);
+	usleep(100000);
 }
 
 void closeSingleplayerServer(){
@@ -73,7 +79,7 @@ void closeSingleplayerServer(){
 		}
 		kill(singlePlayerPID,SIGTERM);
 		printf("[CLI] Kill");
-		usleep(1000);
+		usleep(100000);
 	}
 }
 
@@ -89,7 +95,7 @@ void clientFreeRetry(){
 		close(serverSocket);
 		serverSocket = 0;
 	}
-	usleep(1000);
+	usleep(100000);
 }
 
 void clientInit(){
@@ -153,7 +159,7 @@ void clientInit(){
 				menuSetError("Error connecting to host ECONNREFUSED");
 				return;
 			}
-			usleep(50000);
+			usleep(500000);
 			clientFreeRetry();
 			return;
 		}

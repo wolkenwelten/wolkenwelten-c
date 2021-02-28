@@ -30,11 +30,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <time.h>
 
 char playerName[28];
 char serverName[64];
 char optionSavegame[32];
+char optionExecPath[256];
 
 float optionSoundVolume      = 0.5f;
 int   optionWorldSeed        = 0;
@@ -51,6 +53,7 @@ int   optionWindowX          = -1;
 int   optionWindowY          = -1;
 bool  optionFullscreen       = false;
 
+
 void printVersion(){
 	printf("Wolkenwelten Pre-Alpha\n");
 	printf("Version:   %s\n",VERSION);
@@ -66,8 +69,26 @@ int checkString(const char *a, const char *b){
 	return 0;
 }
 
+void getExecPath(const char *argvZero){
+	char cwdBuf[512];
+	char *cwd = getcwd(cwdBuf,sizeof(cwdBuf));
+	int ll;
+
+	if((argvZero[0] == '.') && (argvZero[1] == '/')){
+		ll = snprintf(optionExecPath,sizeof(optionExecPath),"%s/%s",cwd,argvZero+2);
+	}else{
+		ll = snprintf(optionExecPath,sizeof(optionExecPath),"%s",argvZero);
+	}
+	for(;(ll>0);ll--){
+		if(optionExecPath[ll] != '/'){continue;}
+		optionExecPath[ll] = 0;
+		return;
+	}
+}
+
 void parseOptions(int argc,char *argv[]){
 	int tmp,l;
+	getExecPath(argv[0]);
 
 	for(int i=1;i<argc;i++){
 		if(argv[i][0] != '-'){continue;}

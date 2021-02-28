@@ -27,6 +27,7 @@
 #include "../gui/textInput.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
+#include "../network/client.h"
 #include "../sdl/sdl.h"
 #include "../sdl/sfx.h"
 #include "../tmp/assets.h"
@@ -356,6 +357,12 @@ static lVal *wwlnfRain(lClosure *c, lVal *v){
 	return lValInt(rainIntensity);
 }
 
+static lVal *wwlnfServerExecutable(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+	return lValString(clientGetServerExecutable());
+}
+
 void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",    "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",           "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
@@ -387,6 +394,7 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"cloud-thresh!",  "(a)",          "Sets cloud threshold to a",                                      wwlnfCDen);
 	lAddNativeFunc(c,"wind-velocity",  "(v)",          "Sets wind velocity to vector v",                                 wwlnfWVel);
 	lAddNativeFunc(c,"rain-set",       "(a)",          "Sets rain rate to a",                                            wwlnfRain);
+	lAddNativeFunc(c,"server-path",    "()",           "Returns the path to the server executable, if found.",           wwlnfServerExecutable);
 }
 
 void lispInit(){

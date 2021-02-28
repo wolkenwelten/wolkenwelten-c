@@ -47,6 +47,7 @@
 #include <string.h>
 #include <sys/types.h>
 
+bool mayTryToStartServer = false;
 uint connectionState = 0;
 uint lastPing        = 0;
 uint lastLatency     = 0;
@@ -110,18 +111,23 @@ bool goodbyeSent = false;
 		}
 		*buf=0;
 
-		char* path = getenv("PATH");
-		if(!path){
-			return NULL;
+		const int tt = snprintf(buf,sizeof(buf),"%s/%s",optionExecPath,serverExecName);
+		if((tt > 0) && (access(buf, R_OK|X_OK) >= 0)){
+			return buf;
 		}
+
+		char* path = getenv("PATH");
+		if(!path){return NULL;}
 
 		for(char *token = strtok(path,":"); token != NULL ; token = strtok(NULL,":")){
 			const int t = snprintf(buf,sizeof(buf),"%s/%s",token,serverExecName);
 			if(t <= 0){continue;}
 			if (access(buf, R_OK|X_OK) >= 0){return buf;}
 		}
-		*buf = 0;
-		return buf;
+
+		buf[0] = 20; // So we don't try again
+		buf[1] = 0;
+		return NULL;
 	}
 #endif
 

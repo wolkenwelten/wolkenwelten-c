@@ -3,6 +3,7 @@
 
 extern char  playerName[28];
 extern char  serverName[64];
+extern char  optionExecPath[256];
 extern char  optionSavegame[32];
 extern float optionSoundVolume;
 extern int   optionWorldSeed;

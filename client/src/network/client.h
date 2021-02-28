@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 
+extern bool   mayTryToStartServer;
 extern bool   goodbyeSent;
 extern uint   lastPing;
 extern uint   lastLatency;
