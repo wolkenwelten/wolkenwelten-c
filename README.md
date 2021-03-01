@@ -49,7 +49,7 @@ which you can install using pacman, or build slimmer versions using the
 PKGBUILDS in `platform/win`.
 
 ## MacOS
-On Windows you need the XCode command line tools, the SDL2 and SDL2_mixer
+On Macintosh you need the XCode command line tools, the SDL2 and SDL2_mixer
 development Frameworks installed as well as the 10.10 SDK. Additionally you need
 `ffmpeg` available, which is probably best installed using Homebrew.
 
