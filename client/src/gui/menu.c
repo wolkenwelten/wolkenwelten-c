@@ -158,6 +158,9 @@ void menuKeyClick(int btn){
 	if(btn == 1){
 		widgetEmit(widgetFocused,"altclick");
 	}else{
+		if(widgetFocused->type == wTextInput){
+			widgetEmit(widgetFocused,"submit");
+		}
 		widgetEmit(widgetFocused,"click");
 	}
 }

@@ -18,6 +18,7 @@
 #include "input_gamepad.h"
 #include "../sdl/sdl.h"
 #include "../game/character.h"
+#include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../gui/widget.h"
 #include "../menu/inventory.h"
@@ -146,6 +147,11 @@ void doGamepadMenuUpdate(){
 		gamepadButtons[1] = false;
 		menuKeyClick(1);
 	}
+	if(gamepadButtons[4]){
+		gamepadButtons[4] = false;
+		menuCancel();
+		guiCancel();
+	}
 	if(gamepadButtons[11]){
 		gamepadButtons[11] = false;
 		menuChangeFocus(0, 1, 0);
@@ -167,7 +173,7 @@ void doGamepadMenuUpdate(){
 vec doGamepadupdate(vec vel){
 	static unsigned int lastDown[16] = {0};
 	if(!gamepadActive){return vel;}
-	if((widgetFocused != NULL) && (widgetFocused->type != wGameScreen)){
+	if(isInventoryOpen() || ((widgetFocused != NULL) && (widgetFocused->type != wGameScreen))){
 		doGamepadMenuUpdate();
 	}
 	if( fabsf(gamepadLeftAxisX) > 0.2f){ vel.x = gamepadLeftAxisX; }
@@ -188,7 +194,6 @@ vec doGamepadupdate(vec vel){
 	if(!gamepadButtons[0]){
 		lastDown[0] = 0;
 	}else if(gamepadButtons[0] && (curticks > (lastDown[0] + 600))){
-
 		if(isInventoryOpen()){
 			if(lastDown[0] == 0){
 				lastDown[0] = curticks;
@@ -213,6 +218,16 @@ vec doGamepadupdate(vec vel){
 		}else{
 			showInventory();
 		}
+	}
+	if(gamepadButtons[4]){
+		gamepadButtons[4] = false;
+		menuCancel();
+		guiCancel();
+	}
+	if(gamepadButtons[5]){
+		gamepadButtons[5] = false;
+		menuCancel();
+		guiCancel();
 	}
 
 	if(gamepadButtons[10]){

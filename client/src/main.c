@@ -188,6 +188,7 @@ void mainloop(){
 		clientTranceive();
 		if(quit){clientGoodbye();}
 	}else{
+		doGamepadMenuUpdate();
 		renderFrame();
 	}
 	#ifdef __EMSCRIPTEN__
