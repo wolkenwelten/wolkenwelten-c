@@ -234,7 +234,7 @@ void clientParsePacket(const packet *p){
 	case msgtPlayerPos:
 		characterSetPos(player,vecNewP(&p->v.f[0]));
 		characterSetRot(player,vecNewP(&p->v.f[3]));
-		characterSetVelocity(player,vecZero());
+		characterSetVelocity(player,vecNewP(&p->v.f[6]));
 		characterFreeHook(player);
 		player->flags &= ~CHAR_SPAWNING;
 		break;

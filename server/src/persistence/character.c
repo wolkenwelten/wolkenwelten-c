@@ -37,10 +37,19 @@ static void characterParseDataLine(character *p, const char *line){
 	if(isspace((u8)argv[0][0])){return;}
 
 	if(strcmp(argv[0],"Position") == 0){
-		if(argc < 7){return;}
+		if(argc < 4){return;}
 		p->pos = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
-		p->rot = vecNew(atof(argv[4]),atof(argv[5]),atof(argv[6]));
 		if(!inWorld(p->pos.x,p->pos.y,p->pos.z)){p->pos = vecAdd(vecNewI(worldGetSpawnPos()),vecNew(.5f,2.f,.5f));}
+		return;
+	}
+	if(strcmp(argv[0],"Rotation") == 0){
+		if(argc < 4){return;}
+		p->rot = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
+		return;
+	}
+	if(strcmp(argv[0],"Velocity") == 0){
+		if(argc < 4){return;}
+		p->vel = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
 		return;
 	}
 
@@ -88,7 +97,7 @@ static const char *characterFileName(const char *name){
 }
 
 static void characterSendData(const character *p, uint c){
-	msgPlayerSetPos(c,p->pos,p->rot);
+	msgPlayerSetPos(c,p->pos,p->rot,p->vel);
 	msgPlayerSetInventory(c,p->inventory,40);
 	msgPlayerSetEquipment(c,p->equipment, 3);
 
@@ -131,7 +140,9 @@ void characterSaveData(const character *p, const char *pName){
 	if(*pName == 0){return;}
 
 	b = buf;
-	b += snprintf(b,sizeof(buf)-(b-buf),"Position %f %f %f %f %f %f\n",p->pos.x,p->pos.y,p->pos.z,p->rot.yaw,p->rot.pitch,p->rot.roll);
+	b += snprintf(b,sizeof(buf)-(b-buf),"Position %f %f %f\n",p->pos.x,p->pos.y,p->pos.z);
+	b += snprintf(b,sizeof(buf)-(b-buf),"Rotation %f %f %f\n",p->rot.yaw,p->rot.pitch,p->rot.roll);
+	b += snprintf(b,sizeof(buf)-(b-buf),"Velocity %f %f %f\n",p->vel.x,p->vel.y,p->vel.z);
 	b += snprintf(b,sizeof(buf)-(b-buf),"ActiveItem %i\n",p->activeItem);
 	b += snprintf(b,sizeof(buf)-(b-buf),"Health %i\n",p->hp);
 	b += snprintf(b,sizeof(buf)-(b-buf),"Flags %u\n",p->flags);

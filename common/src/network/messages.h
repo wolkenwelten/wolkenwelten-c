@@ -6,7 +6,7 @@ extern packet packetBuffer;
 
 void msgNOP                      (uint len);
 void msgRequestPlayerSpawnPos    ();
-void msgPlayerSetPos             (int c, const vec pos, const vec rot);
+void msgPlayerSetPos             (int c, const vec pos, const vec rot, const vec vel);
 void msgRequestChungus           (u8  x,  u8 y,  u8 z);
 void msgUnsubChungus             (u8  x,  u8 y,  u8 z);
 void msgDirtyChunk               (u16 x, u16 y, u16 z);

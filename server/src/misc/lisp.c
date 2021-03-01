@@ -363,9 +363,9 @@ static lVal *wwlnfTp(lClosure *c, lVal *v){
 	if(!vecInWorld(pos)){return lValBool(false);}
 	character *tpc = clients[playerid].c;
 	if(tpc != NULL){
-		msgPlayerSetPos(playerid, pos, tpc->rot);
+		msgPlayerSetPos(playerid, pos, tpc->rot, vecZero());
 	}else{
-		msgPlayerSetPos(playerid, pos, vecZero());
+		msgPlayerSetPos(playerid, pos, vecZero(), vecZero());
 	}
 
 	return lValBool(true);

@@ -36,7 +36,7 @@ void msgRequestPlayerSpawnPos(){
 	packetQueueToServer(p,msgtRequestSpawnPos,0);
 }
 
-void msgPlayerSetPos(int c, const vec pos, const vec rot){
+void msgPlayerSetPos(int c, const vec pos, const vec rot, const vec vel){
 	packet *p = &packetBuffer;
 
 	p->v.f[0] = pos.x;
@@ -47,7 +47,11 @@ void msgPlayerSetPos(int c, const vec pos, const vec rot){
 	p->v.f[4] = rot.pitch;
 	p->v.f[5] = rot.roll;
 
-	packetQueue(p,msgtPlayerPos,6*4,c);
+	p->v.f[6] = vel.x;
+	p->v.f[7] = vel.y;
+	p->v.f[8] = vel.z;
+
+	packetQueue(p,msgtPlayerPos,9*4,c);
 }
 
 void msgRequestChungus(u8 x, u8 y, u8 z){

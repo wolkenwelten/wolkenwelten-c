@@ -136,7 +136,7 @@ void msgPlayerSpawnPos(uint c){
 	const vec spawn = vecNewI(worldGetSpawnPos());
 	const vec nrot  = vecNew(135.f,15.f,0.f);
 	const vec spos  = vecAdd(spawn,vecNew(.5f,2.f,.5f));
-	msgPlayerSetPos(c,spos,nrot);
+	msgPlayerSetPos(c,spos,nrot,vecZero());
 	if(clients[c].c != NULL){clients[c].c->pos = spos;}
 }
 
