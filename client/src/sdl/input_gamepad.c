@@ -27,6 +27,7 @@
 
 bool sdlGamepadInit         = false;
 bool sdlHapticInit          = false;
+bool sdlGamepadEverPressed  = false;
 
 SDL_GameController *gamepad = NULL;
 SDL_Haptic *haptic          = NULL;
@@ -92,6 +93,7 @@ void checkForHaptic(){
 }
 
 void vibrate(float force){
+	if(!sdlGamepadEverPressed){return;}
 	if(!sdlHapticInit || (haptic == NULL)){return;}
 	SDL_HapticRumblePlay(haptic,force,80);
 }
@@ -199,9 +201,6 @@ vec doGamepadupdate(vec vel){
 	}
 	if(gamepadButtons[3]){
 		gamepadButtons[3] = false;
-		/*if(!isInventoryOpen()){
-			characterDropSingleItem(player,player->activeItem);
-		}*/
 	}
 	if(gamepadButtons[6]){
 		gamepadButtons[6] = false;
@@ -277,6 +276,7 @@ void gamepadEventHandler(const SDL_Event *e){
 
 		case SDL_CONTROLLERBUTTONDOWN:
 			gamepadButtons[e->cbutton.button] = true;
+			sdlGamepadEverPressed = true;
 		break;
 
 		case SDL_CONTROLLERBUTTONUP:
