@@ -7,7 +7,6 @@ extern bool   mayTryToStartServer;
 extern bool   goodbyeSent;
 extern uint   lastPing;
 extern uint   lastLatency;
-extern int    connectionTries;
 extern uint   connectionState;
 extern size_t sentBytesCurrentSession;
 extern size_t recvBytesCurrentSession;

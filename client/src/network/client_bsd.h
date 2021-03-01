@@ -67,7 +67,9 @@ void startSingleplayerServer(){
 		exit(1); // So we immediatly exit if we can't exec, otherwise we might fork again
 	}
 	strncpy(serverName,"localhost",sizeof(serverName));
-	usleep(100000);
+	usleep(1000);
+	lastPing = getTicks();
+	clientInit();
 }
 
 void closeSingleplayerServer(){
@@ -79,7 +81,7 @@ void closeSingleplayerServer(){
 		}
 		kill(singlePlayerPID,SIGTERM);
 		printf("[CLI] Kill");
-		usleep(100000);
+		usleep(10000);
 	}
 }
 
@@ -95,7 +97,7 @@ void clientFreeRetry(){
 		close(serverSocket);
 		serverSocket = 0;
 	}
-	usleep(100000);
+	usleep(4000);
 }
 
 void clientInit(){
@@ -108,11 +110,8 @@ void clientInit(){
 	}
 	if(serverSocket > 0){return;}
 	if(singleplayer && (singlePlayerPID == 0)){
+		printf("[CLI] Trying to start SP Server: %u\n",singlePlayerPID);
 		startSingleplayerServer();
-		return;
-	}
-	if(++connectionTries > 10){
-		menuSetError("Error connecting to host");
 		return;
 	}
 	goodbyeSent = false;
@@ -149,17 +148,9 @@ void clientInit(){
 			menuSetError("Error connecting to host EINVAL");
 			return;
 		}else if(errno == EINPROGRESS){
-			if(++connectionTries > 10){
-				menuSetError("Error connecting to host EINPROGRESS");
-				return;
-			}
+			usleep(4000);
 			break;
 		}else if(errno == ECONNREFUSED){
-			if(++connectionTries > 10){
-				menuSetError("Error connecting to host ECONNREFUSED");
-				return;
-			}
-			usleep(500000);
 			clientFreeRetry();
 			return;
 		}

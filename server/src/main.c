@@ -166,7 +166,6 @@ void mainInit(){
 	seedRNG(time(NULL));
 	weatherInit();
 	savegameLoad();
-	serverInit();
 	beingListEntryInit();
 	chungusInit();
 	chunkInit();
@@ -178,6 +177,7 @@ void mainInit(){
 
 	bigchungusInit(&world);
 	blockTypeInit();
+	serverInit();
 	if(optionProfileWG){
 		bigchungusGenHugeSpawn(&world);
 	}else{

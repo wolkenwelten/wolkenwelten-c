@@ -92,6 +92,7 @@ void startSingleplayerServer(){
 		singlePlayerPID = pi.dwProcessId;
 	}
 	strncpy(serverName,"localhost",sizeof(serverName)-1);
+	lastPing = getTicks();
 	clientInit();
 }
 
@@ -112,10 +113,6 @@ void clientInit(){
 	if(serverSocket != 0){return;}
 	if(singleplayer && (singlePlayerPID == 0)){
 		startSingleplayerServer();
-		return;
-	}
-	if(++connectionTries > 5){
-		menuSetError("Too many failed attempts");
 		return;
 	}
 	goodbyeSent = false;

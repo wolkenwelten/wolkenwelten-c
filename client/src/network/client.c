@@ -64,7 +64,6 @@ size_t recvUncompressedBytesCurrentSession = 0;
 
 int serverPort        = 6309;
 pid_t singlePlayerPID = 0;
-int connectionTries   = 0;
 
 bool goodbyeSent = false;
 

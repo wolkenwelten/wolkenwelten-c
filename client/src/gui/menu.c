@@ -60,7 +60,6 @@ widget *menuAttribution;
 
 void startMultiplayer(){
 	gameRunning     = true;
-	connectionTries = 0;
 
 	closeAllMenus();
 	hideMouseCursor();
