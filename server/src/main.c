@@ -70,6 +70,10 @@ u64 getTicks(){
 
 void signalQuit(int signo){
 	(void)signo;
+	if(quit){
+		fprintf(stderr,"[SRV] Exiting immediatly due to multiple signals\n");
+		exit(0);
+	}
 	quit = true;
 }
 

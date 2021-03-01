@@ -87,6 +87,10 @@ bool chnkChngOverflow  = false;
 
 void signalQuit(int signo){
 	(void)signo;
+	if(quit){
+		fprintf(stderr,"[CLI] Exiting immediatly due to multiple signals\n");
+		exit(0);
+	}
 	quit = true;
 }
 
