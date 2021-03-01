@@ -34,9 +34,14 @@
 
 widget *mainMenu;
 
+widget *buttonSP;
 widget *buttonQuit;
 widget *buttonReturnToGame;
 widget *buttonExitToMenu;
+
+static void focusMainMenu(){
+	widgetFocus(gameRunning ? buttonReturnToGame : buttonSP);
+}
 
 static void handlerSingleplayer(widget *wid){
 	(void)wid;
@@ -76,12 +81,13 @@ static void handlerExitToMenu(widget *wid){
 	if(!gameRunning){return;}
 	menuCloseGame();
 	openMainMenu();
+	focusMainMenu();
 }
 
 void initMainMenu(){
 	mainMenu = widgetNewCP(wPanel,rootMenu,-1,0,0,-1);
 	widgetNewCP  (wSpace ,mainMenu,16,0,256,0);
-	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
+	buttonSP = widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
 	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Multiplayer","click",handlerMultiplayer);
 	widgetNewCP  (wHR ,mainMenu,16,0,256,32);
 	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Options","click",handlerOptions);
@@ -107,6 +113,7 @@ void openMainMenu(){
 	}
 	widgetSlideW(mainMenu, 288);
 	mainMenu->gw = 288;
+	focusMainMenu();
 }
 
 void closeMainMenu(){

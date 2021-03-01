@@ -19,6 +19,7 @@
 #include "../sdl/sdl.h"
 #include "../game/character.h"
 #include "../gui/menu.h"
+#include "../gui/widget.h"
 #include "../menu/inventory.h"
 #include "../main.h"
 #include "../../../common/src/common.h"
@@ -166,6 +167,9 @@ void doGamepadMenuUpdate(){
 vec doGamepadupdate(vec vel){
 	static unsigned int lastDown[16] = {0};
 	if(!gamepadActive){return vel;}
+	if((widgetFocused != NULL) && (widgetFocused->type != wGameScreen)){
+		doGamepadMenuUpdate();
+	}
 	if( fabsf(gamepadLeftAxisX) > 0.2f){ vel.x = gamepadLeftAxisX; }
 	if( fabsf(gamepadLeftAxisY) > 0.2f){ vel.z = gamepadLeftAxisY; }
 

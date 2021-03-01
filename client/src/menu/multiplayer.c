@@ -35,20 +35,30 @@ widget *serverList;
 widget *newServer;
 widget *newServerName;
 widget *newServerIP;
+widget *firstServer = NULL;
+widget *buttonNewServer;
+
+static void focusMultiPlayer(){
+	widgetFocus(firstServer != NULL ? firstServer : buttonNewServer);
+}
+
 
 static void handlerJoinServer(widget *wid);
 static void handlerDeleteServer(widget *wid);
 static void refreshServerList(){
 	widgetEmpty(serverList);
+	firstServer = NULL;
 	for(int i=0;i<serverlistCount;i++){
 		widget *button = widgetNewCPL(wButtonDel,serverList,16,i*48,256,32,serverlistName[i]);
 		widgetBind(button,"click",handlerJoinServer);
 		widgetBind(button,"altclick",handlerDeleteServer);
 		button->vali = i;
+		firstServer = button;
 	}
 
 	serverList->h = serverlistCount * 48;
 	widgetLayVert(multiplayerMenu,16);
+	focusMultiPlayer();
 }
 
 static void checkServers(){
@@ -104,6 +114,7 @@ static void handlerNewServerSubmit(widget *wid){
 	refreshServerList();
 	saveOptions();
 	handlerNewServerCancel(wid);
+	focusMultiPlayer();
 }
 static void handlerNewServerNext(widget *wid){
 	(void)wid;
@@ -121,7 +132,7 @@ void initMultiplayerMenu(){
 
 	serverList = widgetNewCP(wSpace,multiplayerMenu,0,0,288,32);
 	widgetNewCP(wHR,multiplayerMenu,16,0,256,32);
-	widgetNewCPLH(wButton,multiplayerMenu,16,0,256,32,"New Server","click",handlerNewServer);
+	buttonNewServer = widgetNewCPLH(wButton,multiplayerMenu,16,0,256,32,"New Server","click",handlerNewServer);
 	widgetNewCPLH(wButton,multiplayerMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
 	widgetLayVert(multiplayerMenu,16);
 
@@ -138,7 +149,7 @@ void openMultiplayerMenu(){
 	closeAllMenus();
 	checkServers();
 	widgetSlideW(multiplayerMenu,288);
-	widgetFocus(NULL);
+	focusMultiPlayer();
 }
 
 void closeMultiplayerMenu(){

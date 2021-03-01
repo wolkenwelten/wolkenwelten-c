@@ -162,6 +162,13 @@ void menuKeyClick(int btn){
 	}
 }
 
+void menuCancel(){
+	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return;}
+	if(gameRunning){return;}
+	openMainMenu();
+	lispPanelClose();
+}
+
 void menuSetError(const char *error){
 	static char buf[64];
 	snprintf(buf,sizeof(buf),"%s",error);
@@ -170,15 +177,9 @@ void menuSetError(const char *error){
 	menuCloseGame();
 }
 
-void menuCancel(){
-	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return;}
-	if(gameRunning){return;}
-	openMainMenu();
-	lispPanelClose();
-}
-
 void menuCloseGame(){
 	clientGoodbye();
+	clientFree();
 	openMainMenu();
 }
 

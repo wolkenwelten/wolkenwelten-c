@@ -37,21 +37,28 @@ widget *saveList;
 widget *newGame;
 widget *newGameName;
 widget *newGameSeed;
+widget *firstSave;
+widget *buttonNewGame;
 
 int  savegameCount = 0;
 char savegameName[16][32];
+
+static void focusSinglePlayer(){
+	widgetFocus(firstSave != NULL ? firstSave : buttonNewGame);
+}
 
 static void handlerLoadGame(widget *wid);
 static void handlerDeleteGame(widget *wid);
 static void refreshSaveList(){
 	widgetEmpty(saveList);
+	firstSave = NULL;
 	for(int i=0;i<savegameCount;i++){
 		widget *button = widgetNewCPL(wButtonDel,saveList,16,i*48,256,32,savegameName[i]);
 		widgetBind(button,"click",handlerLoadGame);
 		widgetBind(button,"altclick",handlerDeleteGame);
 		button->vali = i;
+		if(firstSave == NULL){firstSave = button;}
 	}
-
 	saveList->h = savegameCount * 48;
 	widgetLayVert(singleplayerMenu,16);
 }
@@ -68,6 +75,7 @@ static void checkSavegames(){
 	}
 	closedir(dp);
 	refreshSaveList();
+	focusSinglePlayer();
 }
 
 static void loadSavegame(int i){
@@ -120,7 +128,12 @@ static void handlerNewGameSubmit(widget *wid){
 
 static void handlerNewGameNext(widget *wid){
 	(void)wid;
-	widgetFocus(newGameSeed);
+	if(wid == newGameName){
+		if(newGameName->vals[0] == 0){snprintf(newGameName->vals,256,"New Game");}
+		widgetFocus(newGameSeed);
+	}else if(wid == newGameSeed){
+		handlerNewGameSubmit(wid);
+	}
 }
 
 static void handlerBackToMenu(widget *wid){
@@ -134,7 +147,7 @@ void initSingleplayerMenu(){
 
 	saveList = widgetNewCP(wSpace,singleplayerMenu,0,0,288,32);
 	widgetNewCP(wHR,singleplayerMenu,16,0,256,32);
-	widgetNewCPLH(wButton,singleplayerMenu,16,0,256,32,"New Game","click",handlerNewGame);
+	buttonNewGame = widgetNewCPLH(wButton,singleplayerMenu,16,0,256,32,"New Game","click",handlerNewGame);
 	widgetNewCPLH(wButton,singleplayerMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
 	widgetLayVert(singleplayerMenu,16);
 
@@ -151,7 +164,6 @@ void openSingleplayerMenu(){
 	closeAllMenus();
 	checkSavegames();
 	widgetSlideW(singleplayerMenu,288);
-	widgetFocus(NULL);
 }
 
 void closeSingleplayerMenu(){

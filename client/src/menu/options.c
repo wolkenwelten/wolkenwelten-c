@@ -41,6 +41,10 @@ widget *optionsMouseSensitivity;
 float oldRenderDistance   = 0.f;
 float oldMouseSensitivity = 0.f;
 
+static void focusOptions(){
+	widgetFocus(optionsName);
+}
+
 static void handlerRenderDistanceChanged(widget *wid){
 	setRenderDistance((wid->vali / 4096.f) * (512-64) + 64.f);
 }
@@ -95,7 +99,7 @@ void initOptionsMenu(){
 void openOptionsMenu(){
 	closeAllMenus();
 	widgetSlideW(optionsMenu,288);
-	widgetFocus(NULL);
+	focusOptions();
 	oldRenderDistance = renderDistance;
 	oldMouseSensitivity = optionMouseSensitivy;
 	optionsRenderDistance->vali = ((renderDistance-64.f) / (512-64)) * 4096.f;

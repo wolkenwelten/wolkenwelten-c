@@ -614,7 +614,6 @@ void guiCancel(){
 	}
 	if(widgetFocused == widgetGameScreen){
 		openMainMenu();
-		widgetFocus(NULL);
 		return;
 	}
 	closeAllMenus();

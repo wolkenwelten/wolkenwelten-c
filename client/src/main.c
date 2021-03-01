@@ -188,7 +188,6 @@ void mainloop(){
 		clientTranceive();
 		if(quit){clientGoodbye();}
 	}else{
-		doGamepadMenuUpdate();
 		renderFrame();
 	}
 	#ifdef __EMSCRIPTEN__
@@ -243,9 +242,7 @@ int main( int argc, char* argv[] ){
 	textureBuildBlockIcons(0);
 	ropeInit();
 
-	if(!gameRunning){
-		openMainMenu();
-	}
+	if(!gameRunning){openMainMenu();}
 	cloudsInitGfx();
 	rainInitGfx();
 
