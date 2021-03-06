@@ -10,16 +10,65 @@
 (define cat-wood   3)
 (define cat-leaves 4)
 
+(define items (arr-new 256))
+(define item-new-id)
+(let ((item-cur-id 256))
+	(set! item-new-id (λ () "Returns an unused item ID"
+		(set! item-cur-id (+ item-cur-id 1)) (- item-cur-id 1))))
+
+(define item-sync (λ (obj) "Syncs the itemType with the ω OBJ"
+	(it-name (obj id) (obj name))
+	(it-fire-health (obj id) (obj fire-health))
+	(it-fire-dmg (obj id) (obj fire-dmg))
+	(it-ammunition (obj id) (obj ammunition))
+	(it-mesh (obj id) (resolve (obj mesh)))
+	(it-damage (obj id) cat-none (obj dmg))
+	(it-damage (obj id) cat-dirt (obj dmg-dirt))
+	(it-damage (obj id) cat-stone (obj dmg-stone))
+	(it-damage (obj id) cat-wood (obj dmg-wood))
+	(it-damage (obj id) cat-leaves (obj dmg-leaves))
+	(it-inaccuracy (obj id) (obj inaccuracy))
+	(it-mag-size (obj id) (obj mag-size))
+	(it-stack-size (obj id) (obj stack-size))
+
+	(set! (obj sym) (obj id))
+	(arr-set! items (- (obj id) 256) obj)))
+
+(define item-sync-all (λ (i) "Syncs all itemTypes with their respective ω"
+	(cond ((nil? (arr-ref items i)) #t)
+	      (#t (item-sync (arr-ref items i)) (item-sync-all (+ i 1))))))
+
+(define item-default (ω () "Default item parent, having every method defined with default values or λ."
+	(define id 0)
+	(define sym 'i-default)
+	(define name "DEFAULT")
+	(define fire-health 256)
+	(define fire-dmg 1)
+	(define ammunition 0)
+	(define mesh 'm-pear)
+	(define dmg 1)
+	(define dmg-dirt 1)
+	(define dmg-stone 1)
+	(define dmg-wood 1)
+	(define dmg-leaves 1)
+	(define inaccuracy 8.0)
+	(define mag-size 0)
+	(define stack-size 99)))
+
+(define i-grenade)
+(item-sync (item-default (ω () "Grenade go BOOM!"
+	(define id (item-new-id))
+	(define sym 'i-grenade)
+	(define name "Grenade")
+	(define fire-health 78)
+	(define fire-dmg 78)
+	(define ammunition id)
+	(define mesh 'm-grenade))))
+
 (event-bind "on-init" (λ () ""
 	(define i-flamebullet 284) ; Workaround for now
 	(define i-crystalbulle 265)
 
-	(let ((ID 256))
-		(it-mesh ID m-grenade)
-		(it-ammunition ID ID)
-		(it-fire-dmg ID 8)
-		(it-fire-health ID 78)
-		(it-name ID "Grenade"))
 	(let ((ID 257))
 		(it-mesh ID m-bomb)
 		(it-ammunition ID ID)
@@ -224,5 +273,7 @@
 		(it-fire-dmg ID 8)
 		(it-fire-health ID 240)
 		(it-name ID "Straw"))
+
+	(item-sync-all)
 	(log (ansi-green "Items initialized"))
 ))

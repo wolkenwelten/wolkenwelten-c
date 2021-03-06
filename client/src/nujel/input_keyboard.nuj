@@ -53,17 +53,17 @@
 (define key-f12   69)
 (define key-print 70)
 
-(arr-set! input-keydown key-c (lambda (code) (cons-mode!  (not (cons-mode!)))))
-(arr-set! input-keydown key-e (lambda (code) (fire-hook)))
-(arr-set! input-keydown key-m (lambda (code) (debug-info! (not (debug-info!)))))
-(arr-set! input-keydown key-n (lambda (code) (no-clip!    (not (no-clip!)))))
+(arr-set! input-keydown key-c (λ (code) (cons-mode!  (not (cons-mode!)))))
+(arr-set! input-keydown key-e (λ (code) (fire-hook)))
+(arr-set! input-keydown key-m (λ (code) (debug-info! (not (debug-info!)))))
+(arr-set! input-keydown key-n (λ (code) (no-clip!    (not (no-clip!)))))
 
-(arr-set! input-keydown key-f1  (lambda (code) (third-person! #f) (save-options)))
-(arr-set! input-keydown key-f3  (lambda (code) (third-person! #t) (save-options)))
-(arr-set! input-keydown key-f10 (lambda (code) (wire-frame! (not (wire-frame!)))))
-(unless (eq? OS "Emscripten") (arr-set! input-keydown key-f11 (lambda (code) (fullscreen! (not (fullscreen!))) (save-options))))
+(arr-set! input-keydown key-f1  (λ (code) (third-person! #f) (save-options)))
+(arr-set! input-keydown key-f3  (λ (code) (third-person! #t) (save-options)))
+(arr-set! input-keydown key-f10 (λ (code) (wire-frame! (not (wire-frame!)))))
+(unless (eq? OS "Emscripten") (arr-set! input-keydown key-f11 (λ (code) (fullscreen! (not (fullscreen!))) (save-options))))
 
-(define inv-active-kh (lambda (code) "Sets the players active item depending on the keycode passed" (inv-active-slot (- code 30))))
+(define inv-active-kh (λ (code) "Sets the players active item depending on the keycode passed" (inv-active-slot (- code 30))))
 (arr-set! input-keydown key-1 inv-active-kh)
 (arr-set! input-keydown key-2 inv-active-kh)
 (arr-set! input-keydown key-3 inv-active-kh)
@@ -75,6 +75,5 @@
 (arr-set! input-keydown key-9 inv-active-kh)
 (arr-set! input-keydown key-0 inv-active-kh)
 
-(arr-set! input-keydown key-print (lambda (code) (screenshot)))
-
-(define log-keydown (lambda () "Overwrites all keydown handler so they print their respective keycode" (arr-fill! input-keydown (lambda (code) (say (cat "KeyCode: " code))))))
+(arr-set! input-keydown key-print (λ (code) (screenshot)))
+(define log-keydown (λ () "Overwrites all keydown handler so they print their respective keycode" (arr-fill! input-keydown (λ (code) (say (cat "KeyCode: " code))))))
