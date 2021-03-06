@@ -122,7 +122,6 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_SPACE:
 			keysPressed[4] = 0;
-			menuKeyClick(0);
 			break;
 		case SDL_SCANCODE_RETURN:
 		case SDL_SCANCODE_KP_ENTER:
