@@ -357,7 +357,10 @@ static lVal *lnfMatchClosureSym(lClosure *c, lVal *v){
 static lVal *lnfDefine(lClosure *c, lClosure *ec, lVal *v, lVal *(*func)(lClosure *,lSymbol)){
 	if((v == NULL) || (v->type != ltPair)){return NULL;}
 	lVal *sym = v->vList.car;
-	lVal *nv = lEval(ec,v->vList.cdr->vList.car);
+	lVal *nv = NULL;
+	if(v->vList.cdr != NULL){
+		nv = lEval(ec,v->vList.cdr->vList.car);
+	}
 	if(sym->type != ltSymbol){sym = lEval(c,sym);}
 	if(sym->type != ltSymbol){return NULL;}
 	lVal *t = func(c,sym->vSymbol);
