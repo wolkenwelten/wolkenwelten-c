@@ -25,6 +25,7 @@
 #include "../../../common/src/common.h"
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/item.h"
+#include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/mods/mods.h"
@@ -238,9 +239,10 @@ void itemDropUpdateFire(uint i){
 
 	int maxhp = itemGetFireHealth(&id->itm) * id->itm.amount;
 	if(id->fireDmg >= maxhp){
-		if(!itemDropBurnUpDispatch(id)){
-			itemDropDel(i);
+		if(id->ent != NULL){
+			lispCallFuncVII("item-burn-up",id->ent->pos, id->itm.ID , id->itm.amount);
 		}
+		itemDropDel(i);
 		addPriorityItemDrop(i);
 		id->fireDmg = 0;
 	}

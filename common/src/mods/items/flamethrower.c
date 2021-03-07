@@ -14,9 +14,3 @@ bool flamethrowerPrimaryAction(item *cItem, character *cChar){
 	characterAddRecoil(cChar,1.f);
 	return true;
 }
-
-int flamethrowerItemDropBurnUp(itemDrop *id){
-	if(id->ent == NULL){return 0;}
-	explode(id->ent->pos, 0.2f*id->itm.amount, 0);
-	return 0;
-}

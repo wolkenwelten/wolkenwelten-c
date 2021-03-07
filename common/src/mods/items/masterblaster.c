@@ -9,9 +9,3 @@ bool masterblasterPrimaryAction(item *cItem, character *cChar){
 	beamblast(cChar,6.f,12.f,.5f,1024,1,32.f,1.f);
 	return true;
 }
-
-int masterblasterItemDropBurnUp(itemDrop *id){
-	if(id->ent == NULL){return 0;}
-	explode(id->ent->pos, 0.2f*id->itm.amount, 0);
-	return 0;
-}

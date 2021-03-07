@@ -59,6 +59,7 @@
 (arr-set! input-keydown key-n (λ (code) (no-clip!    (not (no-clip!)))))
 
 (arr-set! input-keydown key-f1  (λ (code) (third-person! #f) (save-options)))
+(arr-set! input-keydown key-f2  (λ (code) (s (debug-stuff!))))
 (arr-set! input-keydown key-f3  (λ (code) (third-person! #t) (save-options)))
 (arr-set! input-keydown key-f10 (λ (code) (wire-frame! (not (wire-frame!)))))
 (unless (eq? OS "Emscripten") (arr-set! input-keydown key-f11 (λ (code) (fullscreen! (not (fullscreen!))) (save-options))))

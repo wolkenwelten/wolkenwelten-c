@@ -14,9 +14,3 @@ bool shotgunblasterPrimaryAction(item *cItem, character *cChar){
 	characterAddRecoil(cChar,3.f);
 	return true;
 }
-
-int shotgunblasterItemDropBurnUp(itemDrop *id){
-	if(id->ent == NULL){return 0;}
-	explode(id->ent->pos, 0.2f*id->itm.amount, 0);
-	return 0;
-}

@@ -54,6 +54,10 @@
 		(add-cooldown 1000)
 		(sfx-play sfx-chomp) #t))))
 
+(define item-burn-up (λ (pos id amount) "Calls the specific burn up handler that AMOUNT ID items have burned up at POS"
+	(cond ((procedure? ((arr-ref items (- id 256)) burn-up)) (((arr-ref items (- id 256)) burn-up) pos id amount))
+	      (#t #f))))
+
 
 (define item-default (ω ()
 	(define id 0)
@@ -83,13 +87,14 @@
 	(define sym 'i-grenade)
 	(define name "Grenade")
 	(define description (cat "Grenade that after being\nthrown goes B" (ansi-yellow "OO") (ansi-red "M!!!")))
-	(define fire-health 96)
+	(define fire-health 48)
 	(define fire-dmg 24)
 	(define ammunition id)
 	(define secondary (λ () (cond ((try-to-use)
 		(grenade-new (vy+ (player-pos) 0.5))
 		(start-anim 0 300) #t)
 		(#t #f))))
+	(define burn-up (λ (pos id amount) (explode pos (* amount 3)) (say (ansi-red "Kabloom"))))
 	(define mesh 'm-grenade))))
 
 (define i-bomb)
@@ -97,13 +102,14 @@
 	(define id (item-new-id))
 	(define sym 'i-bomb)
 	(define name "Bomb")
-	(define fire-health 96)
+	(define fire-health 48)
 	(define fire-dmg 16)
 	(define ammunition id)
 	(define secondary (λ () (cond ((try-to-use)
 		(grenade-new (vy+ (player-pos) 0.5) (player-rot) 8.0)
 		(start-anim 0 300) #t)
 		(#t #f))))
+	(define burn-up (λ (pos id amount) (explode pos (* amount 6)) (say (cat (ansi-yellow "Ka") (ansi-red "booooom")))))
 	(define mesh 'm-bomb))))
 
 (define i-pear)
@@ -154,6 +160,7 @@
 	(define secondary (λ ()
 		(cond ((try-to-use 200 0) (toggle-aim 4.0) (add-inaccuracy 64.0) #t) (#t #f))))
 	(define tertiary (λ () (item-reload 50)))
+	(define burn-up (λ (pos id amount) (explode pos (* amount 0.5))))
 	(define mesh 'm-blaster))))
 
 (define i-masterblaster)
@@ -170,6 +177,7 @@
 	(define secondary (λ ()
 		(cond ((try-to-use 200 0) (toggle-aim 3.0) (add-inaccuracy 48.0) #t) (#t #f))))
 	(define tertiary (λ () (item-reload 200)))
+	(define burn-up (λ (pos id amount) (explode pos (* amount 0.5))))
 	(define mesh 'm-masterblaster))))
 
 (define i-assaultblaste)
@@ -186,6 +194,7 @@
 	(define secondary (λ ()
 		(cond ((try-to-use 200 0) (toggle-aim 2.0) (add-inaccuracy 32.0) #t) (#t #f))))
 	(define tertiary (λ () (item-reload 50)))
+	(define burn-up (λ (pos id amount) (explode pos (* amount 0.2))))
 	(define mesh 'm-assaultblaste))))
 
 (define i-shotgun)
@@ -202,6 +211,7 @@
 	(define secondary (λ ()
 		(cond ((try-to-use 200 0) (toggle-aim 2.0) (add-inaccuracy 32.0) #t) (#t #f))))
 	(define tertiary (λ () (item-reload 256)))
+	(define burn-up (λ (pos id amount) (explode pos (* amount 0.2))))
 	(define mesh 'm-shotgunblaste))))
 
 (define i-crystalbulle)
@@ -212,6 +222,7 @@
 	(define fire-dmg 8)
 	(define fire-health 64)
 	(define stack-size 999)
+	(define burn-up (λ (pos id amount) (explode pos (* amount 0.1))))
 	(define mesh 'm-crystalbulle))))
 
 (define i-ironbar)
@@ -294,6 +305,7 @@
 		(grenade-new (vy+ (player-pos) 0.5) (player-rot) 0.1 256 3.0)
 		(start-anim 0 300) #t)
 		(#t #f))))
+	(define burn-up (λ (pos id amount) (explode pos (* amount 6)) (say (cat (ansi-yellow "Ka") (ansi-red "bo000oom")))))
 	(define mesh 'm-bomb))))
 
 (define i-glider)
@@ -344,6 +356,7 @@
 		(cond	((>= (player-hp) (player-maxhp)) #f)
 			((try-to-use) (start-anim 4 1200) (player-hp (+ (player-hp) 4)) (sfx-play sfx-chomp) #t)
 			(#t #f))))
+	(define burn-up (λ (pos id amount) (item-drop-new pos i-cookedmeat amount)))
 	(define mesh 'm-meat))))
 
 (define i-cookedmeat)
@@ -357,6 +370,7 @@
 		(cond	((>= (player-hp) (player-maxhp)) #f)
 			((try-to-use) (do-eat 20) #t)
 			(#t #f))))
+	(define burn-up (λ (pos id amount) (item-drop-new pos i-burntmeat amount)))
 	(define mesh 'm-cookedmeat))))
 
 (define i-fur)
@@ -397,6 +411,7 @@
 	(define secondary (λ ()
 		(cond ((try-to-use 200 0) (toggle-aim 2.0) (add-inaccuracy 32.0) #t) (#t #f))))
 	(define tertiary (lambda () (item-reload 128)))
+	(define burn-up (λ (pos id amount) (explode pos (* amount 0.2))))
 	(define mesh 'm-flamethrower))))
 
 (define i-flamebullet)
@@ -407,6 +422,7 @@
 	(define fire-dmg 8)
 	(define fire-health 64)
 	(define name "Flamebullet")
+	(define burn-up (λ (pos id amount) (explode pos (* amount 0.1))))
 	(define mesh 'm-flamebullet))))
 
 (define i-irondust)
@@ -416,6 +432,7 @@
 	(define fire-dmg 1)
 	(define fire-health 256)
 	(define name "Irondust")
+	(define burn-up (λ (pos id amount) (item-drop-new pos i-ironbar amount)))
 	(define mesh 'm-irondust))))
 
 (define i-crystaldust)
@@ -425,6 +442,7 @@
 	(define fire-dmg 1)
 	(define fire-health 512)
 	(define name "Crystaldust")
+	(define burn-up (λ (pos id amount) (item-drop-new pos i-crystalbar amount)))
 	(define mesh 'm-crystaldust))))
 
 (define i-flamestick)

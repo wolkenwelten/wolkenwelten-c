@@ -148,7 +148,7 @@ bool itemDoPrimary(item *cItem, character *cChar){
 		return false;
 	}
 	if((cItem->ID >= 256) && (cItem->ID < 512)){
-		lVal *ret = lispCallFuncInt("item-primary", cItem->ID);
+		lVal *ret = lispCallFuncI("item-primary", cItem->ID);
 		if((ret == NULL) || ((ret->type == ltBool) && (!ret->vBool))){return false;}
 		return true;
 	}
@@ -161,7 +161,7 @@ bool itemDoSecondary(item *cItem, character *cChar){
 		return characterPlaceBlock(cChar, cItem);
 	}
 	if((cItem->ID >= 256) && (cItem->ID < 512)){
-		lVal *ret = lispCallFuncInt("item-secondary", cItem->ID);
+		lVal *ret = lispCallFuncI("item-secondary", cItem->ID);
 		if((ret == NULL) || ((ret->type == ltBool) && (!ret->vBool))){return false;}
 		return true;
 	}
@@ -174,7 +174,7 @@ bool itemDoTertiary(item *cItem, character *cChar){
 		return false;
 	}
 	if((cItem->ID >= 256) && (cItem->ID < 512)){
-		lVal *ret = lispCallFuncInt("item-tertiary", cItem->ID);
+		lVal *ret = lispCallFuncI("item-tertiary", cItem->ID);
 		if((ret == NULL) || ((ret->type == ltBool) && (!ret->vBool))){return false;}
 		return true;
 	}

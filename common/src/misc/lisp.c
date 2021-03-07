@@ -23,6 +23,7 @@
 #include "../nujel/arithmetic.h"
 #include "../nujel/casting.h"
 #include "../nujel/reader.h"
+#include "../mods/api_v1.h"
 #include "../misc/profiling.h"
 #include "../tmp/assets.h"
 
@@ -81,6 +82,67 @@ lVal *wwlnfAsmSwitch(lClosure *c, lVal *v){
 	return lValInt(asmRoutineSupport);
 }
 
+lVal *wwlnfExplode(lClosure *c, lVal *v){
+	vec   pos      = vecNOne();
+	float strength = 4.f;
+	int   style    = 0;
+
+	for(int i=0;i<3;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
+		switch(i){
+		case 0:
+			t = lnfVec(c,t);
+			pos = t->vVec;
+			break;
+		case 1:
+			t = lnfFloat(c,t);
+			strength = t->vFloat;
+			break;
+		case 2:
+			t = lnfInt(c,t);
+			style = t->vInt;
+			break;
+		}
+	}
+	if((pos.x < 0.f) || (pos.y < 0.f) || (pos.z < 0.f) || (strength < .1f)){return NULL;}
+	explode(pos,strength,style);
+	return NULL;
+}
+
+static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
+	vec pos = vecNOne();
+	int id  = 4.f;
+	int amt = 0;
+
+	for(int i=0;i<3;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
+		switch(i){
+		case 0:
+			t = lnfVec(c,t);
+			pos = t->vVec;
+			break;
+		case 1:
+			t = lnfInt(c,t);
+			id = t->vInt;
+			break;
+		case 2:
+			t = lnfInt(c,t);
+			amt = t->vInt;
+			break;
+		}
+	}
+	if((pos.x < 0.f) || (pos.y < 0.f) || (pos.z < 0.f) || (id <= 0) || (amt <= 0)){return NULL;}
+	item itm = itemNew(id,amt);
+	itemDropNewP(pos,&itm);
+	return NULL;
+}
+
 void lispDefineInt(const char *symbol, int val){
 	lDefineVal(clRoot,symbol,lValInt(val));
 }
@@ -88,6 +150,8 @@ void lispDefineInt(const char *symbol, int val){
 void lispDefineString(const char *symbol, char *str){
 	lDefineVal(clRoot,symbol,lValString(str));
 }
+
+
 
 lClosure *lispCommonRoot(){
 	lClosure *c = lClosureNewRoot();
@@ -98,6 +162,9 @@ lClosure *lispCommonRoot(){
 	lAddNativeFunc(c,"nprof",       "()", "Return network profiler info",wwlnfNProf);
 	lAddNativeFunc(c,"nprof-reset!","()", "Resets network counters",     wwlnfNProfReset);
 	lAddNativeFunc(c,"asm-switch!", "(a)","Switches asm/simd routines",  wwlnfAsmSwitch);
+
+	lAddNativeFunc(c,"explode",      "(pos &strength &style)","Create an explosion at POS with &STRENGTH=4.0 and &STYLE=0",  wwlnfExplode);
+	lAddNativeFunc(c,"item-drop-new","(pos id amount)","Create a new item at POS for AMOUNT ID.",  wwlnfItemDropNew);
 	itemTypeLispClosure(c);
 
 	lEval(c,lWrap(lRead((const char *)src_tmp_wwlib_nuj_data)));
@@ -105,11 +172,16 @@ lClosure *lispCommonRoot(){
 	return c;
 }
 
-lVal *lispCallFuncInt(const char *symbol, int val){
-	lVal *func = lValSym(symbol);
-	lVal *arg  = lValInt(val);
-	lVal *expr = lCons(func,lCons(arg,NULL));
-	return lEval(clRoot,expr);
+lVal *lispCallFuncI(const char *symbol, int ia){
+	lVal *arg  = lCons(lValInt(ia),NULL);
+	return lEval(clRoot,lCons(lValSym(symbol),arg));
+}
+
+lVal *lispCallFuncVII(const char *symbol,const vec va, int ib , int ic){
+	lVal *arg = lCons(lValInt(ic),NULL);
+	      arg = lCons(lValInt(ib),arg);
+	      arg = lCons(lValVec(va),arg);
+	return lEval(clRoot,lCons(lValSym(symbol),arg));
 }
 
 void lispDefineID(const char *prefix, const char *symbol, int val){

@@ -7,4 +7,5 @@ extern lClosure *clRoot;
 lClosure *lispCommonRoot  ();
 void      lispDefineInt   (const char *symbol, int val);
 void      lispDefineString(const char *symbol, char *str);
-lVal     *lispCallFuncInt (const char *symbol, int val);
+lVal     *lispCallFuncI  (const char *symbol, int ia);
+lVal     *lispCallFuncVII(const char *symbol, const vec va, int ib, int ic);
