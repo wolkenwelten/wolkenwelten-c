@@ -4,7 +4,6 @@ static const int ITEMID=259;
 
 void stoneaxeInit(){
 	recipeNew2(itemNew(ITEMID,1), itemNew(I_Board,4), itemNew(I_Stone,4));
-	lispDefineID("i-","stoneaxe",ITEMID);
 }
 
 bool stoneaxePrimaryAction(item *cItem, character *cChar){
@@ -15,10 +14,5 @@ bool stoneaxePrimaryAction(item *cItem, character *cChar){
 		itemDiscard(cItem);
 		return true;
 	}
-	return false;
-}
-
-bool stoneaxeSecondaryAction(item *cItem, character *cChar){
-	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
 }

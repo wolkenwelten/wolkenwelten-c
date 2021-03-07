@@ -32,7 +32,7 @@
 void explode(const vec pos, float pw, int style){
 	const vec   pd  = vecSub(pos,player->pos);
 	const float pdm = vecMag(pd);
-	const float max = MAX(1,16*pw*pw);
+	const float max = MAX(1,4*pw);
 
 	if(pdm < max){
 		const float dm = sqrtf(max-pdm)/max * -0.1f;
@@ -44,8 +44,8 @@ void explode(const vec pos, float pw, int style){
 		entity *exEnt = &entityList[i];
 		const vec exd = vecSub(pos,exEnt->pos);
 		const float expd = vecMag(exd);
-		if(expd > (2*pw*pw)){continue;}
-		const float dm = sqrtf((2*pw*pw)/expd) * -0.02f;
+		if(expd > (2*pw)){continue;}
+		const float dm = sqrtf((2*pw)/expd) * -0.05f;
 		exEnt->vel = vecAdd(exEnt->vel,vecMulS(exd,dm));
 	}
 

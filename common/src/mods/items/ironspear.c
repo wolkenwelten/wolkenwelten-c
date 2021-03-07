@@ -4,7 +4,6 @@ static const int ITEMID=290;
 
 void ironspearInit(){
 	recipeNew2(itemNew(ITEMID,1), itemNew(I_Board,4), itemNew(I_Stone,4));
-	lispDefineID("i-","iron spear",ITEMID);
 }
 
 bool ironspearPrimaryAction(item *cItem, character *cChar){
@@ -15,10 +14,5 @@ bool ironspearPrimaryAction(item *cItem, character *cChar){
 		itemDiscard(cItem);
 		return true;
 	}
-	return false;
-}
-
-bool ironspearSecondaryAction(item *cItem, character *cChar){
-	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
 }

@@ -4,5 +4,4 @@ static const int ITEMID=271;
 
 void crystalpickaxeInit(){
 	recipeNew2(itemNew(ITEMID,1), itemNew(I_Iron_Pick,1), itemNew(I_Crystal_Bar,4));
-	lispDefineID("i-","crystal pickaxe",ITEMID);
 }

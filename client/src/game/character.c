@@ -287,6 +287,7 @@ void characterHit(character *c){
 
 void characterPrimary(character *c){
 	item *itm = &c->inventory[c->activeItem];
+	if(itemDoPrimary(itm,c)){return;}
 	if(primaryActionDispatch(itm,c)){return;}
 	ivec los = characterLOSBlock(c,0);
 	if(los.x < 0){
@@ -312,16 +313,16 @@ void characterStopMining(character *c){
 
 void characterSecondary(character *c){
 	item *cItem = characterGetItemBarSlot(c,c->activeItem);
-	if(!itemIsEmpty(cItem)){
-		secondaryActionDispatch(cItem,c);
-	}
+	if(itemIsEmpty(cItem)){return;}
+	if(itemDoSecondary(cItem,c)){return;}
+	secondaryActionDispatch(cItem,c);
 }
 
 void characterTertiary(character *c){
 	item *cItem = characterGetItemBarSlot(c,c->activeItem);
-	if(!itemIsEmpty(cItem)){
-		tertiaryActionDispatch(cItem,c);
-	}
+	if(itemIsEmpty(cItem)){return;}
+	if(itemDoTertiary(cItem,c)){return;}
+	tertiaryActionDispatch(cItem,c);
 }
 
 void characterThrow(character *c){

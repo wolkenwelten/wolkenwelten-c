@@ -18,6 +18,8 @@
 
 #include "../main.h"
 #include "../game/character.h"
+#include "../game/grenade.h"
+#include "../game/throwable.h"
 #include "../game/weather.h"
 #include "../gfx/gfx.h"
 #include "../gfx/texture.h"
@@ -363,12 +365,125 @@ static lVal *wwlnfServerExecutable(lClosure *c, lVal *v){
 	return lValString(clientGetServerExecutable());
 }
 
+static lVal *wwlnfTryToUse(lClosure *c, lVal *v){
+	int ms = 200;
+	int amount = 1;
+	item *itm = &player->inventory[player->activeItem];
+
+	for(int i=0;i<2;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
+		switch(i){
+		case 0:
+			t = lnfInt(c,t);
+			ms = t->vInt;
+			break;
+		case 1:
+			t = lnfInt(c,t);
+			amount = t->vInt;
+			break;
+		}
+	}
+
+	bool ret = characterTryToUse(player,itm,ms,amount);
+	return lValBool(ret);
+}
+
+static lVal *wwlnfStartAnim(lClosure *c, lVal *v){
+	int anim = 0;
+	int ms = 200;
+
+	for(int i=0;i<2;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
+		switch(i){
+		case 0:
+			t = lnfInt(c,t);
+			anim = t->vInt;
+			break;
+		case 1:
+			t = lnfInt(c,t);
+			ms = t->vInt;
+			break;
+		}
+	}
+
+	characterStartAnimation(player,anim,ms);
+	return NULL;
+}
+
+static lVal *wwlnfGrenadeNew(lClosure *c, lVal *v){
+	vec pos = player->pos;
+	vec rot = player->rot;
+	float pwr = 4.f;
+	int cluster = 0;
+	float clusterPwr = 0.f;
+
+	for(int i=0;i<5;i++){
+		if(v == NULL){break;}
+		lVal *t = lEval(c,v->vList.car);
+		v = v->vList.cdr;
+		if(t == NULL){continue;}
+		switch(i){
+		case 0:
+			t = lnfVec(c,t);
+			pos = t->vVec;
+			break;
+		case 1:
+			t = lnfVec(c,t);
+			rot = t->vVec;
+			break;
+		case 2:
+			t = lnfFloat(c,t);
+			pwr = t->vFloat;
+			break;
+		case 3:
+			t = lnfInt(c,t);
+			cluster = t->vInt;
+			break;
+		case 4:
+			t = lnfFloat(c,t);
+			clusterPwr = t->vFloat;
+			break;
+		}
+	}
+	grenadeNew(pos,rot,pwr,cluster,clusterPwr);
+	return NULL;
+}
+
+static lVal *wwlnfTryToThrow(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+	item *itm = &player->inventory[player->activeItem];
+	return lValBool(throwableTryAim(itm,player));
+}
+
+static lVal *wwlnfItemReload(lClosure *c, lVal *v){
+	int ms = 200;
+	item *itm = &player->inventory[player->activeItem];
+
+	if(v != NULL){
+		lVal *t = lEval(c,v->vList.car);
+		if(t != NULL){
+			t = lnfInt(c,t);
+			ms = t->vInt;
+		}
+	}
+
+	characterItemReload(player,itm,ms);
+	return NULL;
+}
+
 void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",    "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",           "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
 	lAddNativeFunc(c,"player-pos",     "()",           "Returns players position",                                       wwlnfPlayerPos);
-	lAddNativeFunc(c,"player-rot",     "()",           "Returns players rotation",                                       wwlnfPlayerVel);
-	lAddNativeFunc(c,"player-vel",     "()",           "Returns players velocity",                                       wwlnfPlayerRot);
+	lAddNativeFunc(c,"player-rot",     "()",           "Returns players rotation",                                       wwlnfPlayerRot);
+	lAddNativeFunc(c,"player-vel",     "()",           "Returns players velocity",                                       wwlnfPlayerVel);
 	lAddNativeFunc(c,"player-name!",   "(s)",          "Sets players name to s",                                         wwlnfPlayerName);
 	lAddNativeFunc(c,"sound-vol!",     "(f)",          "Sets sound volume to float f",                                   wwlnfSoundVolume);
 	lAddNativeFunc(c,"view-dist!",     "(f)",          "Sets render distance to f blocks",                               wwlnfRenderDistance);
@@ -395,6 +510,11 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"wind-velocity",  "(v)",          "Sets wind velocity to vector v",                                 wwlnfWVel);
 	lAddNativeFunc(c,"rain-set",       "(a)",          "Sets rain rate to a",                                            wwlnfRain);
 	lAddNativeFunc(c,"server-path",    "()",           "Returns the path to the server executable, if found.",           wwlnfServerExecutable);
+	lAddNativeFunc(c,"try-to-use",     "(&ms &amount)","Try to use &AMOUNT=1 and wait for &MS=200.",                     wwlnfTryToUse);
+	lAddNativeFunc(c,"start-anim",     "(id ms)",      "Starts animation &ID=0 for &MS=200",                             wwlnfStartAnim);
+	lAddNativeFunc(c,"grenade-new",    "(pos rot pwr cluster clusterpwr)", "Creates a new grenade a POS moving into ROT creating an explosion of size PWR and then splitting into CLUSTER grenades with a power of CLUSTERPWR.", wwlnfGrenadeNew);
+	lAddNativeFunc(c,"try-to-throw",   "()",           "Try to switch into a throwing mode for the currently held item", wwlnfTryToThrow);
+	lAddNativeFunc(c,"item-reload",    "(&ms)",         "Reloads the currently held item in &MS=200.", wwlnfItemReload);
 }
 
 void lispInit(){

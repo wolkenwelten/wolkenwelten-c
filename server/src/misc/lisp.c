@@ -462,7 +462,7 @@ static lVal *wwlnfSetInv(lClosure *c, lVal *v){
 		if(v == NULL){break;}
 		lVal *t = lEval(c,v->vList.car);
 		v = v->vList.cdr;
-		if((t == NULL) && (t->type != ltInt)){break;}
+		if((t == NULL) || (t->type != ltInt)){break;}
 		args[i] = t->vInt;
 	}
 	if((!getClientValid(args[3])) || (args[0] < 0) || (args[0] >= 40) || (args[0] < 0)){return lValBool(false);}

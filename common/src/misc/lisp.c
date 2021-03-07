@@ -105,6 +105,13 @@ lClosure *lispCommonRoot(){
 	return c;
 }
 
+lVal *lispCallFuncInt(const char *symbol, int val){
+	lVal *func = lValSym(symbol);
+	lVal *arg  = lValInt(val);
+	lVal *expr = lCons(func,lCons(arg,NULL));
+	return lEval(clRoot,expr);
+}
+
 void lispDefineID(const char *prefix, const char *symbol, int val){
 	char lName[16];
 	int len = sizeof(lName);

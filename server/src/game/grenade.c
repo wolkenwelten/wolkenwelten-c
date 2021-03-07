@@ -28,18 +28,18 @@
 #include <math.h>
 
 void explode(const vec pos, float pw, int style){
-	entity *exEnt;
 	pw = MIN(pw,64.f);
 	worldBoxMineSphere(pos.x,pos.y,pos.z,pw);
 
 	for(uint i=0;i<entityCount;i++){
-		exEnt = &entityList[i];
-		const vec d      = vecSub(pos,exEnt->pos);
-		const float dist = vecMag(d);
-		if(dist > (16*pw*pw)){continue;}
-		const vec dn = vecNorm(d);
-		exEnt->vel = vecAdd(exEnt->vel,vecMulS(dn,sqrtf((pw*pw)/dist)*-0.02f));
+		entity *exEnt = &entityList[i];
+		const vec exd = vecSub(pos,exEnt->pos);
+		const float expd = vecMag(exd);
+		if(expd > (2*pw)){continue;}
+		const float dm = sqrtf((2*pw)/expd) * -0.05f;
+		exEnt->vel = vecAdd(exEnt->vel,vecMulS(exd,dm));
 	}
+
 	for(int i=pw;i>=0;i--){
 		const vec rot = vecMul(vecRng(),vecNew(180.f,90.f,0.f));
 		if(projectileNew(pos, rot, 0, 0, 5, 0.07f)){break;}

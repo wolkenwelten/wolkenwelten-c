@@ -4,7 +4,6 @@ static const int ITEMID=267;
 
 void ironaxeInit(){
 	recipeNew2(itemNew(ITEMID,1),itemNew(I_Stone_Axe,1),itemNew(I_Iron_Bar,4));
-	lispDefineID("i-","iron axe",ITEMID);
 }
 
 bool ironaxePrimaryAction(item *cItem, character *cChar){
@@ -15,10 +14,5 @@ bool ironaxePrimaryAction(item *cItem, character *cChar){
 		itemDiscard(cItem);
 		return true;
 	}
-	return false;
-}
-
-bool ironaxeSecondaryAction(item *cItem, character *cChar){
-	if(throwableTryAim(cItem,cChar)){return true;}
 	return false;
 }

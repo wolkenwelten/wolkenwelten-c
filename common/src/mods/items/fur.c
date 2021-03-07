@@ -2,11 +2,8 @@ static const int ITEMID=280;
 
 #include "../api_v1.h"
 
-void furInit(){
-	lispDefineID("i-","fur",ITEMID);
-}
-
 int furItemDropCallback(const item *cItem, float x, float y, float z){
+	(void)ITEMID;
 	(void)cItem;
 	(void)x;
 	(void)y;

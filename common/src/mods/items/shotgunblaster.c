@@ -4,7 +4,6 @@ static const int ITEMID=264;
 
 void shotgunblasterInit(){
 	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,12), itemNew(I_Iron_Bar,24), itemNew(I_Flamebullet,24));
-	lispDefineID("i-","shotgun",ITEMID);
 }
 
 bool shotgunblasterPrimaryAction(item *cItem, character *cChar){
@@ -27,10 +26,6 @@ bool shotgunblasterSecondaryAction(item *cItem,character *cChar){
 		return true;
 	}
 	return false;
-}
-
-bool shotgunblasterTertiaryAction(item *cItem, character *cChar){
-	return characterItemReload(cChar, cItem, 256);
 }
 
 int shotgunblasterItemDropBurnUp(itemDrop *id){

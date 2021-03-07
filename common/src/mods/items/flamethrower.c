@@ -4,7 +4,6 @@ static const int ITEMID=283;
 
 void flamethrowerInit(){
 	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,8), itemNew(I_Iron_Bar,8), itemNew(I_Crystalbullet,8));
-	lispDefineID("i-","flamethrower",ITEMID);
 }
 
 bool flamethrowerPrimaryAction(item *cItem, character *cChar){

@@ -38,6 +38,18 @@
 	(cond ((nil? (arr-ref items i)) #t)
 	      (#t (item-sync (arr-ref items i)) (item-sync-all (+ i 1))))))
 
+(define item-primary (λ (id) "Evaluates the primary callback of item ID"
+	(cond ((procedure? ((arr-ref items (- id 256)) primary)) (((arr-ref items (- id 256)) primary)))
+	      (#t #f))))
+
+(define item-secondary (λ (id) "Evaluates the secondary callback of item ID"
+	(cond ((procedure? ((arr-ref items (- id 256)) secondary)) (((arr-ref items (- id 256)) secondary)))
+	      (#t #f))))
+
+(define item-tertiary (λ (id) "Evaluates the tertiary callback of item ID"
+	(cond ((procedure? ((arr-ref items (- id 256)) tertiary)) (((arr-ref items (- id 256)) tertiary)))
+	      (#t #f))))
+
 (define item-default (ω () "Default item parent, having every method defined with default values or λ."
 	(define id 0)
 	(define sym 'i-default)
@@ -53,7 +65,11 @@
 	(define dmg-leaves 1)
 	(define inaccuracy 8.0)
 	(define mag-size 0)
+	(define primary   (lambda () #f))
+	(define secondary (lambda () #f))
+	(define tertiary  (lambda () #f))
 	(define stack-size 99)))
+
 
 (define i-grenade)
 (item-sync (item-default (ω () "Grenade go BOOM!"
@@ -63,6 +79,10 @@
 	(define fire-health 96)
 	(define fire-dmg 24)
 	(define ammunition id)
+	(define secondary (lambda () (cond ((try-to-use)
+		(grenade-new (vy+ (player-pos) 0.5))
+		(start-anim 0 300) #t)
+		(#t #f))))
 	(define mesh 'm-grenade))))
 
 (define i-bomb)
@@ -73,6 +93,10 @@
 	(define fire-health 96)
 	(define fire-dmg 16)
 	(define ammunition id)
+	(define secondary (lambda () (cond ((try-to-use)
+		(grenade-new (vy+ (player-pos) 0.5) (player-rot) 8.0)
+		(start-anim 0 300) #t)
+		(#t #f))))
 	(define mesh 'm-bomb))))
 
 (define i-pear)
@@ -92,6 +116,7 @@
 	(define name "Stone Axe")
 	(define dmg 4)
 	(define dmg-wood 3)
+	(define secondary (lambda () (try-to-throw)))
 	(define mesh 'm-stoneaxe))))
 
 (define i-stonepickaxe)
@@ -115,6 +140,7 @@
 	(define fire-health 64)
 	(define stack-size 1)
 	(define mag-size 30)
+	(define tertiary (lambda () (item-reload 50)))
 	(define mesh 'm-blaster))))
 
 (define i-masterblaster)
@@ -128,12 +154,13 @@
 	(define fire-health 64)
 	(define stack-size 1)
 	(define mag-size 90)
+	(define tertiary (lambda () (item-reload 200)))
 	(define mesh 'm-masterblaster))))
 
 (define i-assaultblaste)
 (item-sync (item-default (ω () "A simple but powerful energy weapon"
 	(define id (item-new-id))
-	(define sym 'i-assaultblaster)
+	(define sym 'i-assaultblaste)
 	(define name "Assault Blaster")
 	(define inaccuracy 8)
 	(define ammunition 'i-flamebullet)
@@ -141,6 +168,7 @@
 	(define fire-health 64)
 	(define stack-size 1)
 	(define mag-size 60)
+	(define tertiary (lambda () (item-reload 50)))
 	(define mesh 'm-assaultblaste))))
 
 (define i-shotgun)
@@ -154,6 +182,7 @@
 	(define fire-health 64)
 	(define stack-size 1)
 	(define mag-size 60)
+	(define tertiary (lambda () (item-reload 256)))
 	(define mesh 'm-shotgunblaste))))
 
 (define i-crystalbulle)
@@ -181,6 +210,7 @@
 	(define stack-size 1)
 	(define dmg 6)
 	(define dmg-wood 5)
+	(define secondary (lambda () (try-to-throw)))
 	(define mesh 'm-ironaxe))))
 
 (define i-ironpickaxe)
@@ -208,12 +238,13 @@
 	(define name "Crystal Axe")
 	(define dmg 8)
 	(define dmg-wood 8)
+	(define secondary (lambda () (try-to-throw)))
 	(define mesh 'm-crystalaxe))))
 
-(define i-crystalpickaxe)
+(define i-crystalpickax)
 (item-sync (item-default (ω () "A simple but powerful energy weapon"
 	(define id (item-new-id))
-	(define sym 'i-crystalpickaxe)
+	(define sym 'i-crystalpickax)
 	(define name "Crystal Pickaxe")
 	(define dmg 8)
 	(define dmg-stone 8)
@@ -236,6 +267,10 @@
 	(define name "Cluster Bomb")
 	(define fire-dmg 12)
 	(define fire-health 96)
+	(define secondary (lambda () (cond ((try-to-use)
+		(grenade-new (vy+ (player-pos) 0.5) (player-rot) 0.1 256 3.0)
+		(start-anim 0 300) #t)
+		(#t #f))))
 	(define mesh 'm-bomb))))
 
 (define i-glider)
@@ -320,6 +355,7 @@
 	(define inaccuracy 16)
 	(define ammunition 'i-flamebullet)
 	(define name "Flamethrower")
+	(define tertiary (lambda () (item-reload 128)))
 	(define mesh 'm-flamethrower))))
 
 (define i-flamebullet)
@@ -357,7 +393,7 @@
 	(define name "Flamestick")
 	(define mesh 'm-flamestick))))
 
-(define i-flamestick)
+(define i-waterthrower)
 (item-sync (item-default (ω () "A simple but powerful energy weapon"
 	(define id (item-new-id))
 	(define sym 'i-waterthrower)
@@ -366,6 +402,7 @@
 	(define inaccuracy 16)
 	(define mag-size 90)
 	(define stack-size 1)
+	(define tertiary (lambda () (item-reload 128)))
 	(define mesh 'm-waterthrower))))
 
 (define i-stonespear)
@@ -374,6 +411,7 @@
 	(define sym 'i-stonespear)
 	(define name "Stone Spear")
 	(define dmg 6)
+	(define secondary (lambda () (try-to-throw)))
 	(define mesh 'm-stonespear))))
 
 (define i-ironspear)
@@ -382,6 +420,7 @@
 	(define sym 'i-ironspear)
 	(define name "Iron Spear")
 	(define dmg 8)
+	(define secondary (lambda () (try-to-throw)))
 	(define mesh 'm-ironspear))))
 
 (define i-crystalspear)
@@ -390,6 +429,7 @@
 	(define sym 'i-crystalspear)
 	(define name "Crystal Spear")
 	(define dmg 10)
+	(define secondary (lambda () (try-to-throw)))
 	(define mesh 'm-crystalspear))))
 
 (define i-plantmatter)

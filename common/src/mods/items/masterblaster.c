@@ -4,7 +4,6 @@ static const int ITEMID=262;
 
 void masterblasterInit(){
 	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,16), itemNew(I_Iron_Bar,12), itemNew(I_Crystalbullet,16));
-	lispDefineID("i-","masterblaster",ITEMID);
 }
 
 bool masterblasterPrimaryAction(item *cItem, character *cChar){
@@ -22,10 +21,6 @@ bool masterblasterSecondaryAction(item *cItem, character *cChar){
 		return true;
 	}
 	return false;
-}
-
-bool masterblasterTertiaryAction(item *cItem, character *cChar){
-	return characterItemReload(cChar, cItem, 200);
 }
 
 int masterblasterItemDropBurnUp(itemDrop *id){

@@ -247,6 +247,8 @@ int main( int argc, char* argv[] ){
 	cloudsInitGfx();
 	rainInitGfx();
 
+
+
 	player = characterNew();
 	initInventory();
 	gtimeSetTime(1<<19);

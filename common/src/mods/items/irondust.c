@@ -4,7 +4,6 @@ static const int ITEMID=285;
 
 void irondustInit(){
 	recipeNew1(itemNew(ITEMID,1), itemNew(I_Hematite_Ore,1));
-	lispDefineID("i-","iron dust",ITEMID);
 }
 
 int irondustItemDropBurnUpCallback(itemDrop *id){

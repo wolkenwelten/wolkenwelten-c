@@ -4,7 +4,6 @@ static const int ITEMID=282;
 
 void flintandsteelInit(){
 	recipeNew2(itemNew(ITEMID,1), itemNew(I_Iron_Bar,1), itemNew(I_Stone,1));
-	lispDefineID("i-","flint and steel",ITEMID);
 }
 
 bool flintandsteelPrimaryAction(item *cItem,character *cChar){

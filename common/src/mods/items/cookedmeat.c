@@ -2,11 +2,8 @@ static const int ITEMID=279;
 
 #include "../api_v1.h"
 
-void cookedmeatInit(){
-	lispDefineID("i-","meat cooked",ITEMID);
-}
-
 bool cookedmeatSecondaryAction(item *cItem,character *cChar){
+	(void)ITEMID;
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
 	if(characterTryToUse(cChar,cItem,200,1)){
 		characterHP(cChar,20);

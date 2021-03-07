@@ -18,6 +18,7 @@
 
 #include "../game/blockType.h"
 #include "../game/itemType.h"
+#include "../misc/lisp.h"
 #include "../mods/mods.h"
 
 #include <stddef.h>
@@ -138,4 +139,44 @@ int itemGetDamage(const item *i, blockCategory cat){
 float itemGetInaccuracy(const item *i){
 	if((i == NULL) || (i->ID < 256) || (i->ID > 512)){return 8.f;}
 	return itemTypes[i->ID - 256].inaccuracy;
+}
+
+bool itemDoPrimary(item *cItem, character *cChar){
+	if((cItem == NULL) || (cChar == NULL)){return false;}
+	if((cItem->ID < 256) && blockTypeValid(cItem->ID)){
+		if(throwableTry(cItem,cChar,0.1f, 1, 0)){return true;}
+		return false;
+	}
+	if((cItem->ID >= 256) && (cItem->ID < 512)){
+		lVal *ret = lispCallFuncInt("item-primary", cItem->ID);
+		if((ret == NULL) || ((ret->type == ltBool) && (!ret->vBool))){return false;}
+		return true;
+	}
+	return false;
+}
+
+bool itemDoSecondary(item *cItem, character *cChar){
+	if((cItem == NULL) || (cChar == NULL)){return false;}
+	if((cItem->ID < 256) && blockTypeValid(cItem->ID)){
+		return characterPlaceBlock(cChar, cItem);
+	}
+	if((cItem->ID >= 256) && (cItem->ID < 512)){
+		lVal *ret = lispCallFuncInt("item-secondary", cItem->ID);
+		if((ret == NULL) || ((ret->type == ltBool) && (!ret->vBool))){return false;}
+		return true;
+	}
+	return false;
+}
+
+bool itemDoTertiary(item *cItem, character *cChar){
+	if((cItem == NULL) || (cChar == NULL)){return false;}
+	if((cItem->ID < 256) && blockTypeValid(cItem->ID)){
+		return false;
+	}
+	if((cItem->ID >= 256) && (cItem->ID < 512)){
+		lVal *ret = lispCallFuncInt("item-tertiary", cItem->ID);
+		if((ret == NULL) || ((ret->type == ltBool) && (!ret->vBool))){return false;}
+		return true;
+	}
+	return false;
 }

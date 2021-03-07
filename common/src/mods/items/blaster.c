@@ -5,7 +5,6 @@ static const int ITEMID=261;
 void blasterInit(){
 	(void)ITEMID;
 	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,4), itemNew(I_Iron_Bar,4), itemNew(I_Crystalbullet,4));
-	lispDefineID("i-","blaster",ITEMID);
 }
 
 bool blasterPrimaryAction(item *cItem, character *cChar){
@@ -23,10 +22,6 @@ bool blasterSecondaryAction(item *cItem, character *cChar){
 		return true;
 	}
 	return false;
-}
-
-bool blasterTertiaryAction(item *cItem, character *cChar){
-	return characterItemReload(cChar, cItem, 50);
 }
 
 int blasterItemDropBurnUp(itemDrop *id){

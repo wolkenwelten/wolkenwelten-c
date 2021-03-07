@@ -4,7 +4,6 @@ static const int ITEMID=288;
 
 void waterthrowerInit(){
 	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,8), itemNew(I_Iron_Bar,8), itemNew(I_Crystalbullet,8));
-	lispDefineID("i-","waterthrower",ITEMID);
 }
 
 bool waterthrowerPrimaryAction(item *cItem, character *cChar){
@@ -27,8 +26,4 @@ bool waterthrowerSecondaryAction(item *cItem, character *cChar){
 		return true;
 	}
 	return false;
-}
-
-bool waterthrowerTertiaryAction(item *cItem, character *cChar){
-	return characterItemReload(cChar, cItem, 50);
 }

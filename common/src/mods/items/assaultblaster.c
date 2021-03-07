@@ -5,7 +5,6 @@ static const int ITEMID=263;
 void assaultblasterInit(){
 	(void)ITEMID;
 	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,8), itemNew(I_Iron_Bar,8), itemNew(I_Flamebullet,8));
-	lispDefineID("i-","assaultblaster",ITEMID);
 }
 
 bool assaultblasterPrimaryAction(item *cItem, character *cChar){
@@ -26,10 +25,6 @@ bool assaultblasterSecondaryAction(item *cItem, character *cChar){
 		return true;
 	}
 	return false;
-}
-
-bool assaultblasterTertiaryAction(item *cItem, character *cChar){
-	return characterItemReload(cChar, cItem, 50);
 }
 
 int assaultblasterItemDropBurnUp(itemDrop *id){

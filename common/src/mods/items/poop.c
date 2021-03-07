@@ -2,11 +2,8 @@ static const int ITEMID=277;
 
 #include "../api_v1.h"
 
-void poopInit(){
-	lispDefineID("i-","poop",ITEMID);
-}
-
 bool poopSecondaryAction(item *cItem,character *cChar){
+	(void)ITEMID;
 	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
 	if(characterTryToUse(cChar,cItem,200,1)){
 		characterHP(cChar,1);
