@@ -1,15 +1,5 @@
 ; This File contains all the item defitions
 ; ToDo find a better way for these defines
-(define on-init  '())
-(define on-spawn '())
-(define on-join  '())
-
-(define cat-none   0)
-(define cat-dirt   1)
-(define cat-stone  2)
-(define cat-wood   3)
-(define cat-leaves 4)
-
 (define items (arr-new 256))
 (define item-new-id)
 (let ((item-cur-id 256))
@@ -52,6 +42,18 @@
 
 (define add-inaccuracy (λ (amt) "Increase players inaccuracy my AMT"
 	(inaccuracy (+ (inaccuracy) amt))))
+
+(define do-eat (λ (hp) "Make the player Eat and restores HP health over time"
+	(cond ((or (<= hp 0) (>= (player-hp) (player-maxhp))) #t)
+		(#t (yield (timeout 1000) (λ () (do-eat (- hp 1))))
+		(cond ((or (= hp 1) (= (player-hp) (- (player-maxhp) 1))) (say (ansi-green "Omnomnom")))
+			((even? hp) (say (ansi-green "Om")))
+			(#t (say (ansi-darkgreen "Nom"))))
+		(player-hp (+ (player-hp) 1))
+		(start-anim 4 800)
+		(add-cooldown 1000)
+		(sfx-play sfx-chomp) #t))))
+
 
 (define item-default (ω ()
 	(define id 0)
@@ -114,7 +116,7 @@
 	(define ammunition id)
 	(define secondary (λ ()
 		(cond	((>= (player-hp) (player-maxhp)) #f)
-			((try-to-use) (start-anim 4 1200) (player-hp (+ (player-hp) 8)) (sfx-play sfx-chomp) #t)
+			((try-to-use) (do-eat 8) #t)
 			(#t #f))))
 	(define mesh 'm-pear))))
 
@@ -277,7 +279,7 @@
 	(define fire-health 96)
 	(define secondary (λ ()
 		(cond	((>= (player-hp) (player-maxhp)) #f)
-			((try-to-use) (start-anim 4 1200) (player-hp (+ (player-hp) 8)) (sfx-play sfx-chomp) #t)
+			((try-to-use) (do-eat 6) #t)
 			(#t #f))))
 	(define mesh 'm-cherry))))
 
@@ -353,7 +355,7 @@
 	(define fire-health 48)
 	(define secondary (λ ()
 		(cond	((>= (player-hp) (player-maxhp)) #f)
-			((try-to-use) (start-anim 4 1200) (player-hp (player-maxhp)) (sfx-play sfx-chomp) #t)
+			((try-to-use) (do-eat 20) #t)
 			(#t #f))))
 	(define mesh 'm-cookedmeat))))
 

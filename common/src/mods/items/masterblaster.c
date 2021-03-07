@@ -13,16 +13,6 @@ bool masterblasterPrimaryAction(item *cItem, character *cChar){
 	return true;
 }
 
-bool masterblasterSecondaryAction(item *cItem, character *cChar){
-	if(characterTryToUse(cChar,cItem,200,0)){
-		characterAddCooldown(cChar,200);
-		characterToggleAim(cChar,6.f);
-		characterAddInaccuracy(cChar,32.f);
-		return true;
-	}
-	return false;
-}
-
 int masterblasterItemDropBurnUp(itemDrop *id){
 	if(id->ent == NULL){return 0;}
 	explode(id->ent->pos, 0.2f*id->itm.amount, 0);

@@ -1,0 +1,10 @@
+; Contains definitions needed in the other .nuj files
+(define on-init  '())
+(define on-spawn '())
+(define on-join  '())
+
+(define cat-none   0)
+(define cat-dirt   1)
+(define cat-stone  2)
+(define cat-wood   3)
+(define cat-leaves 4)

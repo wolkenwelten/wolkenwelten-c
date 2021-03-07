@@ -21,7 +21,7 @@
 	(let ((goal (+ (msecs) millis))) (λ () (> (msecs) goal)))))
 
 (define event-bind (λ (event-name handler) "Binds handler lambda to event-name"
-	(set! (str->sym event-name) (cons handler on-respawn))))
+	(set! (str->sym event-name) (cons handler (resolve (str->sym event-name))))))
 (define event-clear (λ (event-name) "Clears all event handlers for event-name"
 	(set! (str->sym event-name) '())))
 (define event-fire-iter (λ (l v) "Iter for event-fire"

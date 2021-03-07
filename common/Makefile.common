@@ -1,8 +1,8 @@
 ARCH             := $(shell uname -m)
 MODS_SRCS        := $(shell find common/src/mods -type f -name '*.c')
-NUJ_STDLIB       := $(shell find common/src/nujel/stdlib/ -type f -name '*.nuj')
-NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj')
-NUJ_SAOLIB       := $(shell find common/nujel/lib/ -type f -name '*.nuj')
+NUJ_STDLIB       := $(shell find common/src/nujel/stdlib/ -type f -name '*.nuj' | sort)
+NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj' | sort)
+NUJ_SAOLIB       := $(shell find common/nujel/lib/ -type f -name '*.nuj' | sort)
 COMMON_ASSETS    := common/src/tmp/stdlib.nuj common/src/tmp/wwlib.nuj
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')

@@ -9,7 +9,7 @@ SERVER_DEPS      := ${SERVER_SRCS:.c=.deps}
 
 SFX_ASSETS       := $(shell find client/sfx -type f -name '*')
 MESH_ASSETS      := $(shell find client/mesh -type f -name '*')
-SERVER_NUJ       := $(shell find server/src/nujel/ -type f -name '*.nuj')
+SERVER_NUJ       := $(shell find server/src/nujel/ -type f -name '*.nuj' | sort)
 SERVER_ASSETS    := server/src/tmp/server.nuj
 
 $(SERVER_OBJS): CFLAGS    += $(SERVER_CFLAGS)
