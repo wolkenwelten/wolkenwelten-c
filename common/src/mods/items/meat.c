@@ -2,20 +2,8 @@ static const int ITEMID=278;
 
 #include "../api_v1.h"
 
-bool meatSecondaryAction(item *cItem,character *cChar){
-	(void)ITEMID;
-	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
-	if(characterTryToUse(cChar,cItem,200,1)){
-		characterHP(cChar,2);
-		characterAddCooldown(cChar,200);
-		characterStartAnimation(cChar,4,600);
-		sfxPlay(sfxChomp,1.f);
-		return true;
-	}
-	return false;
-}
-
 int meatItemDropCallback(const item *cItem, float x, float y, float z){
+	(void)ITEMID;
 	(void)cItem;
 	(void)x;
 	(void)y;

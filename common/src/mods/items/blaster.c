@@ -14,16 +14,6 @@ bool blasterPrimaryAction(item *cItem, character *cChar){
 	return true;
 }
 
-bool blasterSecondaryAction(item *cItem, character *cChar){
-	if(characterTryToUse(cChar,cItem,200,0)){
-		characterAddCooldown(cChar,200);
-		characterToggleAim(cChar,4.f);
-		characterAddInaccuracy(cChar,32.f);
-		return true;
-	}
-	return false;
-}
-
 int blasterItemDropBurnUp(itemDrop *id){
 	if(id->ent == NULL){return 0;}
 	explode(id->ent->pos, 0.2f*id->itm.amount, 0);

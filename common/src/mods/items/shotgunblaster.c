@@ -18,16 +18,6 @@ bool shotgunblasterPrimaryAction(item *cItem, character *cChar){
 	return true;
 }
 
-bool shotgunblasterSecondaryAction(item *cItem,character *cChar){
-	if(characterTryToUse(cChar,cItem,200,0)){
-		characterAddCooldown(cChar,200);
-		characterToggleAim(cChar,1.5f);
-		characterAddInaccuracy(cChar,32.f);
-		return true;
-	}
-	return false;
-}
-
 int shotgunblasterItemDropBurnUp(itemDrop *id){
 	if(id->ent == NULL){return 0;}
 	explode(id->ent->pos, 0.2f*id->itm.amount, 0);

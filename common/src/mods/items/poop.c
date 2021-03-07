@@ -2,20 +2,8 @@ static const int ITEMID=277;
 
 #include "../api_v1.h"
 
-bool poopSecondaryAction(item *cItem,character *cChar){
-	(void)ITEMID;
-	if(characterGetHP(cChar) >= characterGetMaxHP(cChar)){return false;}
-	if(characterTryToUse(cChar,cItem,200,1)){
-		characterHP(cChar,1);
-		characterAddCooldown(cChar,200);
-		characterStartAnimation(cChar,4,600);
-		sfxPlay(sfxChomp,1.f);
-		return true;
-	}
-	return false;
-}
-
 int poopItemDropCallback(const item *cItem, float x, float y, float z){
+	(void)ITEMID;
 	(void)cItem;
 	uint cx = x;
 	uint cy = y-0.5f;

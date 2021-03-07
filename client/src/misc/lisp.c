@@ -478,6 +478,52 @@ static lVal *wwlnfItemReload(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfToggleAim(lClosure *c, lVal *v){
+	float zoom = 2.f;
+	if(v != NULL){
+		lVal *t = lEval(c,v->vList.car);
+		if(t != NULL){
+			t = lnfFloat(c,t);
+			zoom = t->vFloat;
+		}
+	}
+	characterToggleAim(player,zoom);
+	return NULL;
+}
+
+static lVal *wwlnfInaccuracy(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lEval(c,v->vList.car);
+		if(t != NULL){
+			t = lnfFloat(c,t);
+			characterAddInaccuracy(player,t->vFloat);
+		}
+	}
+	return lValFloat(player->inaccuracy);
+}
+
+static lVal *wwlnfPlayerHP(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lEval(c,v->vList.car);
+		if(t != NULL){
+			t = lnfInt(c,t);
+			player->hp = MIN(player->maxhp,t->vInt);
+		}
+	}
+	return lValInt(player->hp);
+}
+
+static lVal *wwlnfPlayerMaxHP(lClosure *c, lVal *v){
+	if(v != NULL){
+		lVal *t = lEval(c,v->vList.car);
+		if(t != NULL){
+			t = lnfInt(c,t);
+			player->maxhp = MAX(1,t->vInt);
+		}
+	}
+	return lValInt(player->maxhp);
+}
+
 void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",    "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",           "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
@@ -485,6 +531,8 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-rot",     "()",           "Returns players rotation",                                       wwlnfPlayerRot);
 	lAddNativeFunc(c,"player-vel",     "()",           "Returns players velocity",                                       wwlnfPlayerVel);
 	lAddNativeFunc(c,"player-name!",   "(s)",          "Sets players name to s",                                         wwlnfPlayerName);
+	lAddNativeFunc(c,"player-hp",      "(&hp)",        "Sets the players health to &HP, returns the current value.",     wwlnfPlayerHP);
+	lAddNativeFunc(c,"player-maxhp",   "(&mhp)",       "Sets the players max health to &MHP, returns the current value.",wwlnfPlayerMaxHP);
 	lAddNativeFunc(c,"sound-vol!",     "(f)",          "Sets sound volume to float f",                                   wwlnfSoundVolume);
 	lAddNativeFunc(c,"view-dist!",     "(f)",          "Sets render distance to f blocks",                               wwlnfRenderDistance);
 	lAddNativeFunc(c,"use-sub-data!",  "(b)",          "Sets useSubdata boolean to b",                                   wwlnfSubData);
@@ -502,7 +550,7 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"wire-frame!",    "(b)",          "Sets wireframe mode to b, always returns the current state",     wwlnfWireFrame);
 	lAddNativeFunc(c,"send-message",   "(s)",          "Sends string s as a chat message",                               wwlnfSendMessage);
 	lAddNativeFunc(c,"console-print",  "(s)",          "Prints string s to the REPL",                                    wwlnfConsolePrint);
-	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)","Plays SFX s with volume &vol as if emitting from &pos.",         wwlnfSfxPlay);
+	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)","Plays SFX S with volume &VOL=1.0 as if emitting from &POS.",         wwlnfSfxPlay);
 	lAddNativeFunc(c,"screenshot",     "()",           "Takes a screeshot",                                              wwlnfScreenshot);
 	lAddNativeFunc(c,"fire-hook",      "()",           "Fires the players Grappling hook, or retracts it if fired",      wwlnfFireHook);
 	lAddNativeFunc(c,"inv-active-slot","(i)",          "Sets the players active item to i",                              wwlnfInvActiveSlot);
@@ -514,7 +562,9 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"start-anim",     "(id ms)",      "Starts animation &ID=0 for &MS=200",                             wwlnfStartAnim);
 	lAddNativeFunc(c,"grenade-new",    "(pos rot pwr cluster clusterpwr)", "Creates a new grenade a POS moving into ROT creating an explosion of size PWR and then splitting into CLUSTER grenades with a power of CLUSTERPWR.", wwlnfGrenadeNew);
 	lAddNativeFunc(c,"try-to-throw",   "()",           "Try to switch into a throwing mode for the currently held item", wwlnfTryToThrow);
-	lAddNativeFunc(c,"item-reload",    "(&ms)",         "Reloads the currently held item in &MS=200.", wwlnfItemReload);
+	lAddNativeFunc(c,"item-reload",    "(&ms)",        "Reloads the currently held item in &MS=200.",                    wwlnfItemReload);
+	lAddNativeFunc(c,"toggle-aim",     "(&zoom)",      "Toggles aiming with a &ZOOM=4 factor.",                          wwlnfToggleAim);
+	lAddNativeFunc(c,"inaccuracy",     "(&acc)",       "Sets the player inaccuracy to &ACC if set, returns inaccuracy",  wwlnfInaccuracy);
 }
 
 void lispInit(){

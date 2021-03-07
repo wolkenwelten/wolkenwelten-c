@@ -17,13 +17,3 @@ bool waterthrowerPrimaryAction(item *cItem, character *cChar){
 	characterAddRecoil(cChar,1.f);
 	return true;
 }
-
-bool waterthrowerSecondaryAction(item *cItem, character *cChar){
-	if(characterTryToUse(cChar,cItem,200,0)){
-		characterAddCooldown(cChar,200);
-		characterToggleAim(cChar,2.f);
-		characterAddInaccuracy(cChar,32.f);
-		return true;
-	}
-	return false;
-}

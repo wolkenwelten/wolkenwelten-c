@@ -18,20 +18,6 @@ bool flamethrowerPrimaryAction(item *cItem, character *cChar){
 	return true;
 }
 
-bool flamethrowerSecondaryAction(item *cItem, character *cChar){
-	if(characterTryToUse(cChar,cItem,200,0)){
-		characterAddCooldown(cChar,200);
-		characterToggleAim(cChar,2.f);
-		characterAddInaccuracy(cChar,32.f);
-		return true;
-	}
-	return false;
-}
-
-bool flamethrowerTertiaryAction(item *cItem, character *cChar){
-	return characterItemReload(cChar, cItem, 50);
-}
-
 int flamethrowerItemDropBurnUp(itemDrop *id){
 	if(id->ent == NULL){return 0;}
 	explode(id->ent->pos, 0.2f*id->itm.amount, 0);
