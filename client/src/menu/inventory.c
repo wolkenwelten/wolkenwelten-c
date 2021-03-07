@@ -137,7 +137,7 @@ static void initCraftingSpace(){
 	craftingInfo->vali = 5;
 	for(uint r=0;r<MIN(40,recipeGetCount());r++){
 		const int x = r%10;
-		const int y = (r/10)+2;
+		const int y = (r/10)+3;
 		widget *slot = widgetNewCP(wRecipeSlot,craftingSpace,x*ts,y*ts+32,ts,ts);
 		slot->vali = r;
 		widgetBind(slot,"click",   handlerCraftingSlotClick);
@@ -229,7 +229,7 @@ void showInventory(){
 	widgetFocus(NULL);
 }
 void showCrafting(){
-	int gh = getTilesize() * ((recipeGetCount()/10)+2) + 32;
+	int gh = getTilesize() * (1+((recipeGetCount()/10)+2)) + 32;
 	if(recipeGetCount() % 10){gh+=getTilesize();}
 	if(!gameRunning){return;}
 	if((inventoryPanel->h == gh) && (craftingRadio->flags & WIDGET_ACTIVE)){

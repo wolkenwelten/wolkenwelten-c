@@ -2,11 +2,8 @@ static const int ITEMID=282;
 
 #include "../api_v1.h"
 
-void flintandsteelInit(){
-	recipeNew2(itemNew(ITEMID,1), itemNew(I_Iron_Bar,1), itemNew(I_Stone,1));
-}
-
 bool flintandsteelPrimaryAction(item *cItem,character *cChar){
+	(void)ITEMID;
 	if(throwableTry(cItem,cChar,0.1, 1, THROWABLE_PITCH_SPIN)){return true;}
 	ivec p = characterLOSBlock(cChar, 0);
 	if(p.x < 0){return false;}

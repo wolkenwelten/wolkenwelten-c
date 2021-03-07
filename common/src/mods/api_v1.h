@@ -66,11 +66,6 @@
 #define I_Plantmatter   292
 #define I_Straw         293
 
-void recipeNew1 (const item result, const item ingred1);
-void recipeNew2 (const item result, const item ingred1, const item ingred2);
-void recipeNew3 (const item result, const item ingred1, const item ingred2, const item ingred3);
-void recipeNew4 (const item result, const item ingred1, const item ingred2, const item ingred3, const item ingred4);
-
 void ingredientSubstituteAdd (u16 ingredient, u16 substitute);
 
 void explode       (const vec pos, float pwr, int style);

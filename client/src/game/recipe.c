@@ -19,11 +19,6 @@
 #include "../game/character.h"
 #include "../../../common/src/game/item.h"
 
-typedef struct {
-	item result;
-	item ingredient[4];
-} recipe;
-
 struct ingredientSubstitute;
 struct ingredientSubstitute {
 	u16 ingredient;
@@ -80,45 +75,12 @@ item recipeGetResult(uint r){
 	if(r >= recipeCount){return itemEmpty();}
 	return recipes[r].result;
 }
+
 item recipeGetIngredient(uint r,uint i){
 	if(r >= recipeCount) { return itemEmpty(); }
 	if(i >= 4)           { return itemEmpty(); }
 	return recipes[r].ingredient[i];
 }
-
-void recipeNew1(const item result, const item ingred1){
-	int r = recipeCount++;
-	recipes[r].result = result;
-	recipes[r].ingredient[0] = ingred1;
-	recipes[r].ingredient[1] = itemEmpty();
-}
-
-void recipeNew2(const item result, const item ingred1, const item ingred2){
-	int r = recipeCount++;
-	recipes[r].result = result;
-	recipes[r].ingredient[0] = ingred1;
-	recipes[r].ingredient[1] = ingred2;
-	recipes[r].ingredient[2] = itemEmpty();
-}
-
-void recipeNew3(const item result, const item ingred1, const item ingred2, const item ingred3){
-	int r = recipeCount++;
-	recipes[r].result = result;
-	recipes[r].ingredient[0] = ingred1;
-	recipes[r].ingredient[1] = ingred2;
-	recipes[r].ingredient[2] = ingred3;
-	recipes[r].ingredient[3] = itemEmpty();
-}
-
-void recipeNew4(const item result, const item ingred1, const item ingred2, const item ingred3, const item ingred4){
-	int r = recipeCount++;
-	recipes[r].result = result;
-	recipes[r].ingredient[0] = ingred1;
-	recipes[r].ingredient[1] = ingred2;
-	recipes[r].ingredient[2] = ingred3;
-	recipes[r].ingredient[3] = ingred4;
-}
-
 
 int characterGetItemOrSubstituteAmount(const character *c, u16 i){
 	ingredientSubstitute *s;
@@ -193,9 +155,4 @@ uint recipeGetCraftableCount(const character *c){
 void recipeInit(){
 	ingredientSubstituteAdd(I_Oak,I_Spruce);
 	ingredientSubstituteAdd(I_Oak,I_Birch);
-
-	recipeNew1(itemNew(I_Board,2), itemNew(I_Oak,1));
-	recipeNew1(itemNew(I_Marble_Pillar,1), itemNew(I_Marble_Block,1));
-	recipeNew1(itemNew(I_Marble_Blocks,1), itemNew(I_Marble_Block,1));
-	recipeNew1(itemNew(I_Coal,1), itemNew(I_Oak,3));
 }

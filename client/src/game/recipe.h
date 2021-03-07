@@ -1,10 +1,13 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-void recipeNew1 (const item result, const item ingred1);
-void recipeNew2 (const item result, const item ingred1, const item ingred2);
-void recipeNew3 (const item result, const item ingred1, const item ingred2, const item ingred3);
-void recipeNew4 (const item result, const item ingred1, const item ingred2, const item ingred3, const item ingred4);
+typedef struct {
+	item result;
+	item ingredient[4];
+} recipe;
+
+extern recipe recipes[256];
+extern uint recipeCount;
 
 item recipeGetResult     (uint r);
 item recipeGetIngredient (uint r, uint i);

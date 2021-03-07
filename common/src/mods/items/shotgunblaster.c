@@ -2,11 +2,8 @@ static const int ITEMID=264;
 
 #include "../api_v1.h"
 
-void shotgunblasterInit(){
-	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,12), itemNew(I_Iron_Bar,24), itemNew(I_Flamebullet,24));
-}
-
 bool shotgunblasterPrimaryAction(item *cItem, character *cChar){
+	(void)ITEMID;
 	if(throwableTry(cItem,cChar,0.1, 1, THROWABLE_PITCH_SPIN)){return true;}
 	if(!characterTryToShoot(cChar,cItem,128,6)){return false;}
 	sfxPlay(sfxPhaser,0.5f);

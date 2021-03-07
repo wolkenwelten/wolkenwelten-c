@@ -2,12 +2,8 @@ static const int ITEMID=263;
 
 #include "../api_v1.h"
 
-void assaultblasterInit(){
-	(void)ITEMID;
-	recipeNew3(itemNew(ITEMID,1), itemNew(I_Crystal_Bar,8), itemNew(I_Iron_Bar,8), itemNew(I_Flamebullet,8));
-}
-
 bool assaultblasterPrimaryAction(item *cItem, character *cChar){
+	(void)ITEMID;
 	if(throwableTry(cItem,cChar,0.1, 1, THROWABLE_PITCH_SPIN)){return true;}
 	if(!characterTryToShoot(cChar,cItem,15,1)){return false;}
 	sfxPlay(sfxPhaser,0.2f);

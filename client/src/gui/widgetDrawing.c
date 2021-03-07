@@ -36,7 +36,7 @@
 #include <stdlib.h>
 
 typedef struct {
- 	uint x,y,w,h;
+	uint x,y,w,h;
 	const widget *wid;
 } popupQueueEntry;
 
@@ -519,18 +519,19 @@ static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, i
 		textMeshItem(m,xx,y,ts,3,&ingred);
 		const char *name = itemGetName(&ingred);
 		const uint len = strnlen(name,256);
-		const int yoff = ii & 1 ? 0 : ts/4;
+		const int yoff = ii & 1 ? 0 : ts/3;
 		int xoff = MAX((int)(x-ts/4),(int)(xx+ts/2-(len*8)));
-		textMeshAddStrPS(m,xoff,y+ts+yoff,2,name);
+		textMeshAddStrPS(m,xoff,y+ts+yoff+ts/6,2,name);
 	}
 
 	xx = ii*2*ts + x;
 	textMeshBox(m,xx-ts+ts/4+animX*2,y+ts/4,ts/2,ts/2,25.f/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
 	textMeshItemSlot(m,xx,y,ts,3,result.ID,result.amount);
 	const char *name = itemGetName(&result);
+	if(name == NULL){return;}
 	const uint len = strnlen(name,256);
-	const int yoff = ii & 1 ? 0 : ts/4;
-	textMeshAddStrPS(m,xx+ts/2-(len*8),y+ts+yoff,2,name);
+	const int yoff = ii & 1 ? 0 : ts/3;
+	textMeshAddStrPS(m,xx+ts/2-(len*8),y+ts+yoff+ts/6,2,name);
 }
 
 static void widgetDrawTextScroller(const widget *wid, textMesh *m, int x, int y, int w, int h){
