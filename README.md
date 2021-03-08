@@ -3,19 +3,24 @@
 ![Screenshot 1](https://wolkenwelten.net/img/1.jpg)
 
 ## Imagine a mix between Minecraft, Quake ]I[ and Emacs.
-Apart from that there is no clear plan for this game, just a bunch of ideas that
-hopefully will turn out to be fun. Some of these are stored here in this repo,
-others have been talked about on [Twitch](https://twitch.tv/melchizedek6809)
-during dev streams.
+This game is meant to be a cooperative multiplayer survival game, using voxels
+to enable a fully modifiable world. Although it is turning into some sort of
+LISP-Powered Voxel Runtime, we will see where that goes.
+There is no definitive plan for this game, mostly ideas to experiment with until
+something fun surfaces. You can read about some ideas in this repository, though
+some have only been talked about during the Weekly [Twitch](https://twitch.tv/melchizedek6809)
+dev streams.
 
-* mostly written in C99
-* fits on a floppy disk
-* runs at ~60FPS on a Raspberry PI
-* multiplayer!
-* contains a custom LISP interpreter
-* use a grappling hook to swing around
-* nice fire simulation
-* can even run in your browser
+### Some Bullet Points
+* Mostly written in C99
+* Fits on a **floppy disk**
+* Runs at **~60FPS** on a **Raspberry PI 4**
+* Play in **Multiplayer** with up to 31 people!
+* Contains a custom LISP interpreter/dialect, _nujel_
+* Reprogram item behaviour, while the game is running
+* Use a **grappling hook** to swing around
+* Nice fire system, beware of forest fires
+* Can even run in your browser, using **Emscripten/WASM**
 
 ![Screenshot 2](https://wolkenwelten.net/img/2.jpg)
 
@@ -30,7 +35,7 @@ is also a #WolkenWelten IRC channel on Freenode.
 ## Contributing
 As a Free Software Project any form of help you can give would be highly
 appreciated, be it testing the game, drawing nice artwork, coding that cool
-feature or telling your friends about this game. You have my gratitude :)
+feature or telling your friends about this game. You have my gratitude in advance :)
 
 ## Release Builds
 The newest binary releases are available over at this [projects website](https://wolkenwelten.net),
