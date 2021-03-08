@@ -19,6 +19,7 @@
 
 #include "../asm/asm.h"
 #include "../game/itemType.h"
+#include "../game/weather.h"
 #include "../nujel/nujel.h"
 #include "../nujel/arithmetic.h"
 #include "../nujel/casting.h"
@@ -34,51 +35,38 @@
 lClosure *clRoot;
 
 lVal *wwlnfMsPerTick(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfInt(c,lEval(c,v));
-		if(t->vInt > 0){
-			msPerTick = t->vInt;
-		}
-	}
+	int newVal = 0;
+	getLArgI(newVal);
+	if(newVal > 0){ msPerTick = newVal; }
 	return lValInt(msPerTick);
 }
 
 lVal *wwlnfProf(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
-
+	(void)c,(void)v;
 	return lValString(profGetReport());
 }
 
 lVal *wwlnfProfReset(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
-
+	(void)c,(void)v;
 	profReset();
 	return lValBool(true);
 }
 
 lVal *wwlnfNProf(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
-
+	(void)c,(void)v;
 	return lValString(nprofGetReport());
 }
 
 lVal *wwlnfNProfReset(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
-
+	(void)c,(void)v;
 	nprofReset();
 	return lValBool(true);
 }
 
 lVal *wwlnfAsmSwitch(lClosure *c, lVal *v){
-	lVal *t = lEval(c,v);
-	if(t != NULL){
-		t = lnfInt(c,v);
-		asmRoutineSupport = t->vInt;
-	}
+	int newVal = -1;
+	getLArgI(newVal);
+	if(newVal >= 0){asmRoutineSupport = newVal;}
 	return lValInt(asmRoutineSupport);
 }
 
@@ -87,26 +75,10 @@ lVal *wwlnfExplode(lClosure *c, lVal *v){
 	float strength = 4.f;
 	int   style    = 0;
 
-	for(int i=0;i<3;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
-		if(t == NULL){continue;}
-		switch(i){
-		case 0:
-			t = lnfVec(c,t);
-			pos = t->vVec;
-			break;
-		case 1:
-			t = lnfFloat(c,t);
-			strength = t->vFloat;
-			break;
-		case 2:
-			t = lnfInt(c,t);
-			style = t->vInt;
-			break;
-		}
-	}
+	getLArgV(pos);
+	getLArgF(strength);
+	getLArgI(style);
+
 	if((pos.x < 0.f) || (pos.y < 0.f) || (pos.z < 0.f) || (strength < .1f)){return NULL;}
 	explode(pos,strength,style);
 	return NULL;
@@ -114,33 +86,40 @@ lVal *wwlnfExplode(lClosure *c, lVal *v){
 
 static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
 	vec pos = vecNOne();
-	int id  = 4.f;
+	int id  = 0;
 	int amt = 0;
 
-	for(int i=0;i<3;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
-		if(t == NULL){continue;}
-		switch(i){
-		case 0:
-			t = lnfVec(c,t);
-			pos = t->vVec;
-			break;
-		case 1:
-			t = lnfInt(c,t);
-			id = t->vInt;
-			break;
-		case 2:
-			t = lnfInt(c,t);
-			amt = t->vInt;
-			break;
-		}
-	}
+	getLArgV(pos);
+	getLArgI(id);
+	getLArgI(amt);
+
 	if((pos.x < 0.f) || (pos.y < 0.f) || (pos.z < 0.f) || (id <= 0) || (amt <= 0)){return NULL;}
 	item itm = itemNew(id,amt);
 	itemDropNewP(pos,&itm);
 	return NULL;
+}
+
+static lVal *wwlnfWVel(lClosure *c, lVal *v){
+	if(v != NULL){
+		vec nwval = vecZero();
+		getLArgV(nwval);
+		cloudsSetWind(nwval);
+	}
+	return lValVec(windVel);
+}
+
+static lVal *wwlnfCDen(lClosure *c, lVal *v){
+	int cden = -1;
+	getLArgI(cden);
+	if(cden >= 0){cloudsSetDensity(cden);}
+	return lValInt(cloudGDensityMin);
+}
+
+static lVal *wwlnfRain(lClosure *c, lVal *v){
+	int inten = -1;
+	getLArgI(inten);
+	if(inten >= 0){weatherSetRainDuration(inten);}
+	return lValInt(rainIntensity);
 }
 
 void lispDefineInt(const char *symbol, int val){
@@ -151,24 +130,23 @@ void lispDefineString(const char *symbol, char *str){
 	lDefineVal(clRoot,symbol,lValString(str));
 }
 
-
-
 lClosure *lispCommonRoot(){
 	lClosure *c = lClosureNewRoot();
 
-	lAddNativeFunc(c,"mst!",        "(a)","Sets ms per tick to s",       wwlnfMsPerTick);
-	lAddNativeFunc(c,"prof",        "()", "Returns profiler info",       wwlnfProf);
-	lAddNativeFunc(c,"prof-reset!", "()", "Resets performance counters", wwlnfProfReset);
-	lAddNativeFunc(c,"nprof",       "()", "Return network profiler info",wwlnfNProf);
-	lAddNativeFunc(c,"nprof-reset!","()", "Resets network counters",     wwlnfNProfReset);
-	lAddNativeFunc(c,"asm-switch!", "(a)","Switches asm/simd routines",  wwlnfAsmSwitch);
-
-	lAddNativeFunc(c,"explode",      "(pos &strength &style)","Create an explosion at POS with &STRENGTH=4.0 and &STYLE=0",  wwlnfExplode);
-	lAddNativeFunc(c,"item-drop-new","(pos id amount)","Create a new item at POS for AMOUNT ID.",  wwlnfItemDropNew);
+	lAddNativeFunc(c,"mst!",         "(a)",                    "Set ms per tick to s",                                       wwlnfMsPerTick);
+	lAddNativeFunc(c,"prof",         "()",                     "Return profiler info",                                       wwlnfProf);
+	lAddNativeFunc(c,"prof-reset!",  "()",                     "Reset performance counters",                                 wwlnfProfReset);
+	lAddNativeFunc(c,"nprof",        "()",                     "Return network profiler info",                               wwlnfNProf);
+	lAddNativeFunc(c,"nprof-reset!", "()",                     "Reset network counters",                                     wwlnfNProfReset);
+	lAddNativeFunc(c,"asm-switch!",  "(a)",                    "Switch asm/simd routines",                                   wwlnfAsmSwitch);
+	lAddNativeFunc(c,"cloud-thresh!","(&thresh)",              "Set cloud threshold to &THRESH",                             wwlnfCDen);
+	lAddNativeFunc(c,"wind-velocity","(&vel)",                 "Set wind velocity to vector &VEL",                           wwlnfWVel);
+	lAddNativeFunc(c,"rain-set",     "(&intensity)",           "Set rain rate to a",                                         wwlnfRain);
+	lAddNativeFunc(c,"explode",      "(pos &strength &style)", "Create an explosion at POS with &STRENGTH=4.0 and &STYLE=0", wwlnfExplode);
+	lAddNativeFunc(c,"item-drop-new","(pos id amount)",        "Create a new item at POS for AMOUNT ID.",                    wwlnfItemDropNew);
 	itemTypeLispClosure(c);
 
 	lEval(c,lWrap(lRead((const char *)src_tmp_wwlib_nuj_data)));
-
 	return c;
 }
 

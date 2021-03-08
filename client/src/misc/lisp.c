@@ -96,78 +96,77 @@ static lVal *wwlnfPlayerName(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfSoundVolume(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfFloat(c,lEval(c,v));
-		optionSoundVolume = t->vFloat;
-	}
+	float nvol = -1.f;
+	getLArgF(nvol);
+	if(nvol > -0.1f){optionSoundVolume = nvol;}
 	return lValFloat(optionSoundVolume);
 }
 
 static lVal *wwlnfRenderDistance(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfFloat(c,lEval(c,v));
-		setRenderDistance(t->vFloat);
-	}
+	float rdist = 0.f;
+	getLArgF(rdist);
+	if(rdist > 1.f){ setRenderDistance(rdist); }
 	return lValFloat(renderDistance);
 }
 
 static lVal *wwlnfSubData(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfBool(c,lEval(c,v));
+	if((v != NULL) && (v->type == ltPair)){
+		lVal *t = lnfBool(c,lEval(c,v->vList.car));
 		gfxUseSubData = t->vBool;
 	}
 	return lValBool(gfxUseSubData);
 }
 
 static lVal *wwlnfMouseSensitivity(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfFloat(c,lEval(c,v));
-		optionMouseSensitivy = t->vFloat;
-	}
+	float msen = 0.f;
+	getLArgF(msen);
+	if(msen > 0.f){ optionMouseSensitivy = msen; }
 	return lValFloat(optionMouseSensitivy);
 }
 
 static lVal *wwlnfThirdPerson(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfBool(c,lEval(c,v));
+	if((v != NULL) && (v->type == ltPair)){
+		lVal *t = lnfBool(c,lEval(c,v->vList.car));
 		optionThirdPerson = t->vBool;
 	}
 	return lValBool(optionThirdPerson);
 }
 
 static lVal *wwlnfFullscreen(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfBool(c,lEval(c,v));
+	if((v != NULL) && (v->type == ltPair)){
+		lVal *t = lnfBool(c,lEval(c,v->vList.car));
 		setFullscreen(t->vBool);
 	}
 	return lValBool(optionFullscreen);
 }
 
 static lVal *wwlnfWindowed(lClosure *c, lVal *v){
-	int args[4] = {800,600,-1,-1};
-	for(int i=0;i<4;i++){
-		if(v == NULL){break;}
-		lVal *t = lnfInt(c,lEval(c,v->vList.car));
-		if(t == NULL){break;}
-		v = v->vList.cdr;
-		args[i] = t->vInt;
-	}
-	setWindowed(args[0],args[1],args[2],args[3]);
+	int w = 800;
+	int h = 600;
+	int x = -1;
+	int y = -1;
+
+	getLArgI(w);
+	getLArgI(h);
+	getLArgI(x);
+	getLArgI(y);
+
+	setWindowed(w,h,x,y);
 	return NULL;
 }
 
 static lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfInt(c,lEval(c,v));
-		optionDebugInfo = t->vInt != 0;
+	if((v != NULL) && (v->type == ltPair)){
+		lVal *t = lnfBool(c,lEval(c,v->vList.car));
+		optionDebugInfo = t->vBool;
 	}
 	return lValBool(optionDebugInfo);
 }
 
 static lVal *wwlnfConsMode(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfInt(c,lEval(c,v));
-		if(t->vInt != 0){
+	if((v != NULL) && (v->type == ltPair)){
+		lVal *t = lnfBool(c,lEval(c,v->vList.car));
+		if(t->vBool){
 			player->flags |=  CHAR_CONS_MODE;
 		}else{
 			player->flags &= ~CHAR_CONS_MODE;
@@ -177,9 +176,9 @@ static lVal *wwlnfConsMode(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfNoClip(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfInt(c,lEval(c,v));
-		if(t->vInt != 0){
+	if((v != NULL) && (v->type == ltPair)){
+		lVal *t = lnfBool(c,lEval(c,v->vList.car));
+		if(t->vBool != 0){
 			player->flags |=  CHAR_NOCLIP;
 		}else{
 			player->flags &= ~CHAR_NOCLIP;
@@ -189,8 +188,8 @@ static lVal *wwlnfNoClip(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfWireFrame(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfBool(c,lEval(c,v));
+	if((v != NULL) && (v->type == ltPair)){
+		lVal *t = lnfBool(c,lEval(c,v->vList.car));
 		optionWireframe = t->vBool;
 		initGL();
 	}
@@ -198,17 +197,15 @@ static lVal *wwlnfWireFrame(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfScreenshot(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
+	(void)c;(void)v;
 	queueScreenshot = true;
 	return NULL;
 }
 
 static lVal *wwlnfSaveOptions(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
+	(void)c;(void)v;
 	saveOptions();
-	return lValBool(true);
+	return NULL;
 }
 
 static lVal *wwlnfServerAdd(lClosure *c, lVal *v){
@@ -230,34 +227,31 @@ static lVal *wwlnfServerAdd(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerPos(lClosure *c, lVal *v){
-	(void)v;
-	(void)c;
+	(void)v;(void)c;
 	return lValVec(player->pos);
 }
 
 static lVal *wwlnfPlayerRot(lClosure *c, lVal *v){
-	(void)v;
-	(void)c;
+	(void)v;(void)c;
 	return lValVec(player->rot);
 }
 
 static lVal *wwlnfPlayerVel(lClosure *c, lVal *v){
-	(void)v;
-	(void)c;
+	(void)v;(void)c;
 	return lValVec(player->vel);
 }
 
 static lVal *wwlnfFireHook(lClosure *c, lVal *v){
-	(void)v;
-	(void)c;
+	(void)v;(void)c;
 	characterFireHook(player);
 	return NULL;
 }
 
 static lVal *wwlnfInvActiveSlot(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfInt(c,lEval(c,v));
-		player->activeItem = t->vInt;
+	int ai = -1;
+	getLArgI(ai);
+	if(ai >= 0){
+		player->activeItem = ai;
 		player->flags &= ~(CHAR_AIMING | CHAR_THROW_AIM);
 	}
 	return lValInt(player->activeItem);
@@ -279,39 +273,16 @@ static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfSfxPlay(lClosure *c, lVal *v){
-	int sfxID = -1;
+	int sfxID    = -1;
 	float volume = 1.0;
-	vec pos = player->pos;
+	vec pos      = player->pos;
 
-	for(int i=0;i<3;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
-		if(t == NULL){continue;}
-		switch(i){
-		case 0:
-			t = lnfInt(c,t);
-			sfxID = t->vInt;
-			break;
-		case 1:
-			t = lnfFloat(c,t);
-			volume = t->vFloat;
-			break;
-		case 2:
-			t = lnfVec(c,t);
-			pos = t->vVec;
-			break;
-		}
-	}
-	if(sfxID < 0){return lValBool(false);}
+	getLArgI(sfxID);
+	getLArgF(volume);
+	getLArgV(pos);
+
+	if(sfxID < 0){return NULL;}
 	sfxPlayPos(&sfxList[sfxID],volume,pos);
-	return lValBool(true);
-}
-
-static lVal *wwlnfReloadTextures(lClosure *c, lVal *v){
-	(void)v;
-	(void)c;
-	textureReload();
 	return NULL;
 }
 
@@ -328,65 +299,18 @@ static lVal *wwlnfTextInputFocusPred(lClosure *c, lVal *v){
 	return lValBool(textInputActive());
 }
 
-static lVal *wwlnfWVel(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfVec(c,lEval(c,v));
-		if(t != NULL){
-			cloudsSetWind(t->vVec);
-		}
-	}
-	return lValVec(windVel);
-}
-
-static lVal *wwlnfCDen(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lEval(c,v->vList.car);
-		if(t != NULL){
-			t = lnfInt(c,t);
-			cloudsSetDensity(t->vInt);
-		}
-	}
-	return lValInt(cloudGDensityMin);
-}
-
-static lVal *wwlnfRain(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lEval(c,v->vList.car);
-		if(t != NULL){
-			t = lnfInt(c,t);
-			weatherSetRainDuration(t->vInt);
-		}
-	}
-	return lValInt(rainIntensity);
-}
-
 static lVal *wwlnfServerExecutable(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
+	(void)c;(void)v;
 	return lValString(clientGetServerExecutable());
 }
 
 static lVal *wwlnfTryToUse(lClosure *c, lVal *v){
-	int ms = 200;
+	int ms     = 200;
 	int amount = 1;
-	item *itm = &player->inventory[player->activeItem];
+	item *itm  = &player->inventory[player->activeItem];
 
-	for(int i=0;i<2;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
-		if(t == NULL){continue;}
-		switch(i){
-		case 0:
-			t = lnfInt(c,t);
-			ms = t->vInt;
-			break;
-		case 1:
-			t = lnfInt(c,t);
-			amount = t->vInt;
-			break;
-		}
-	}
+	getLArgI(ms);
+	getLArgI(amount);
 
 	bool ret = characterTryToUse(player,itm,ms,amount);
 	return lValBool(ret);
@@ -396,84 +320,41 @@ static lVal *wwlnfStartAnim(lClosure *c, lVal *v){
 	int anim = 0;
 	int ms = 200;
 
-	for(int i=0;i<2;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
-		if(t == NULL){continue;}
-		switch(i){
-		case 0:
-			t = lnfInt(c,t);
-			anim = t->vInt;
-			break;
-		case 1:
-			t = lnfInt(c,t);
-			ms = t->vInt;
-			break;
-		}
-	}
+	getLArgI(anim);
+	getLArgI(ms);
 
 	characterStartAnimation(player,anim,ms);
 	return NULL;
 }
 
 static lVal *wwlnfGrenadeNew(lClosure *c, lVal *v){
-	vec pos = player->pos;
-	vec rot = player->rot;
-	float pwr = 4.f;
-	int cluster = 0;
+	vec pos          = player->pos;
+	vec rot          = player->rot;
+	float pwr        = 4.f;
+	int cluster      = 0;
 	float clusterPwr = 0.f;
 
-	for(int i=0;i<5;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
-		if(t == NULL){continue;}
-		switch(i){
-		case 0:
-			t = lnfVec(c,t);
-			pos = t->vVec;
-			break;
-		case 1:
-			t = lnfVec(c,t);
-			rot = t->vVec;
-			break;
-		case 2:
-			t = lnfFloat(c,t);
-			pwr = t->vFloat;
-			break;
-		case 3:
-			t = lnfInt(c,t);
-			cluster = t->vInt;
-			break;
-		case 4:
-			t = lnfFloat(c,t);
-			clusterPwr = t->vFloat;
-			break;
-		}
-	}
+	getLArgV(pos);
+	getLArgV(rot);
+	getLArgF(pwr);
+	getLArgI(cluster);
+	getLArgF(clusterPwr);
+
 	grenadeNew(pos,rot,pwr,cluster,clusterPwr);
 	return NULL;
 }
 
 static lVal *wwlnfTryToThrow(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
+	(void)c;(void)v;
 	item *itm = &player->inventory[player->activeItem];
 	return lValBool(throwableTryAim(itm,player));
 }
 
 static lVal *wwlnfItemReload(lClosure *c, lVal *v){
-	int ms = 200;
+	int ms     = 200;
 	item *itm = &player->inventory[player->activeItem];
 
-	if(v != NULL){
-		lVal *t = lEval(c,v->vList.car);
-		if(t != NULL){
-			t = lnfInt(c,t);
-			ms = t->vInt;
-		}
-	}
+	getLArgI(ms);
 
 	characterItemReload(player,itm,ms);
 	return NULL;
@@ -481,75 +362,43 @@ static lVal *wwlnfItemReload(lClosure *c, lVal *v){
 
 static lVal *wwlnfToggleAim(lClosure *c, lVal *v){
 	float zoom = 2.f;
-	if(v != NULL){
-		lVal *t = lEval(c,v->vList.car);
-		if(t != NULL){
-			t = lnfFloat(c,t);
-			zoom = t->vFloat;
-		}
-	}
+
+	getLArgF(zoom);
+
 	characterToggleAim(player,zoom);
 	return NULL;
 }
 
 static lVal *wwlnfInaccuracy(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lEval(c,v->vList.car);
-		if(t != NULL){
-			t = lnfFloat(c,t);
-			characterAddInaccuracy(player,t->vFloat);
-		}
-	}
+	float inacc = -1024.f;
+	getLArgF(inacc);
+	if(inacc > -1024.f){characterAddInaccuracy(player,inacc);}
 	return lValFloat(player->inaccuracy);
 }
 
 static lVal *wwlnfPlayerHP(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lEval(c,v->vList.car);
-		if(t != NULL){
-			t = lnfInt(c,t);
-			player->hp = MIN(player->maxhp,t->vInt);
-		}
-	}
+	int hp = -1024;
+	getLArgI(hp);
+	if(hp > -1024){ player->hp = MIN(player->maxhp,hp); }
 	return lValInt(player->hp);
 }
 
 static lVal *wwlnfPlayerMaxHP(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lEval(c,v->vList.car);
-		if(t != NULL){
-			t = lnfInt(c,t);
-			player->maxhp = MAX(1,t->vInt);
-		}
-	}
+	int maxhp = -1024;
+	getLArgI(maxhp);
+	if(maxhp > -1024){ player->maxhp = MAX(1,maxhp); }
 	return lValInt(player->maxhp);
 }
 
 static lVal *wwlnfRResult(lClosure *c, lVal *v){
-	int id = -1;
+	int id     = -1;
 	int result = 0;
 	int amount = 0;
 
-	for(int i=0;i<3;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
-		if(t == NULL){continue;}
-		switch(i){
-		case 0:
-			t = lnfInt(c,t);
-			id = t->vInt;
-			break;
-		case 1:
-			t = lnfInt(c,t);
-			result = t->vInt;
-			break;
-		case 2:
-			t = lnfInt(c,t);
-			amount = t->vInt;
-			break;
-		}
-	}
+	getLArgI(id);
+	getLArgI(result);
+	getLArgI(amount);
+
 	if((id < 0) || (result <= 0) || (amount <= 0)){return NULL;}
 	recipeCount = MAX(id+1,(int)recipeCount);
 	recipes[id].result.ID = result;
@@ -563,30 +412,11 @@ static lVal *wwlnfRIngred(lClosure *c, lVal *v){
 	int ingred = 0;
 	int amount = 0;
 
-	for(int i=0;i<4;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
-		if(t == NULL){continue;}
-		switch(i){
-		case 0:
-			t = lnfInt(c,t);
-			id = t->vInt;
-			break;
-		case 1:
-			t = lnfInt(c,t);
-			ii = t->vInt;
-			break;
-		case 2:
-			t = lnfInt(c,t);
-			ingred = t->vInt;
-			break;
-		case 3:
-			t = lnfInt(c,t);
-			amount = t->vInt;
-			break;
-		}
-	}
+	getLArgI(id);
+	getLArgI(ii);
+	getLArgI(ingred);
+	getLArgI(amount);
+
 	if((id < 0) || (ii < 0) || (ii >= 4) || (ingred <= 0) || (amount <= 0)){return NULL;}
 	recipeCount = MAX(id+1,(int)recipeCount);
 	recipes[id].ingredient[ii].ID = ingred;
@@ -612,7 +442,6 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"fullscreen",     "(b)",            "Sets fullscreen to b",                                           wwlnfFullscreen);
 	lAddNativeFunc(c,"windowed",       "(&w &h &x &y)",  "Switches to windowed mode of size &w/&h at position &x/&y",      wwlnfWindowed);
 	lAddNativeFunc(c,"save-options",   "()",             "Save options to disk",                                           wwlnfSaveOptions);
-	lAddNativeFunc(c,"texture-reload", "()",             "Reloads all textures from disk",                                 wwlnfReloadTextures);
 	lAddNativeFunc(c,"reset-worst-f",  "()",             "Resets the worst frame counter",                                 wwlnfResetWorstFrame);
 	lAddNativeFunc(c,"debug-info!",    "(b)",            "Sets debug info view to b",                                      wwlnfDebugInfo);
 	lAddNativeFunc(c,"cons-mode!",     "(b)",            "Sets cons-mode to b if passed, always returns the current state",wwlnfConsMode);
@@ -620,13 +449,10 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"wire-frame!",    "(b)",            "Sets wireframe mode to b, always returns the current state",     wwlnfWireFrame);
 	lAddNativeFunc(c,"send-message",   "(s)",            "Sends string s as a chat message",                               wwlnfSendMessage);
 	lAddNativeFunc(c,"console-print",  "(s)",            "Prints string s to the REPL",                                    wwlnfConsolePrint);
-	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)",  "Plays SFX S with volume &VOL=1.0 as if emitting from &POS.",         wwlnfSfxPlay);
+	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)",  "Plays SFX S with volume &VOL=1.0 as if emitting from &POS.",     wwlnfSfxPlay);
 	lAddNativeFunc(c,"screenshot",     "()",             "Takes a screeshot",                                              wwlnfScreenshot);
 	lAddNativeFunc(c,"fire-hook",      "()",             "Fires the players Grappling hook, or retracts it if fired",      wwlnfFireHook);
 	lAddNativeFunc(c,"inv-active-slot","(i)",            "Sets the players active item to i",                              wwlnfInvActiveSlot);
-	lAddNativeFunc(c,"cloud-thresh!",  "(a)",            "Sets cloud threshold to a",                                      wwlnfCDen);
-	lAddNativeFunc(c,"wind-velocity",  "(v)",            "Sets wind velocity to vector v",                                 wwlnfWVel);
-	lAddNativeFunc(c,"rain-set",       "(a)",            "Sets rain rate to a",                                            wwlnfRain);
 	lAddNativeFunc(c,"server-path",    "()",             "Returns the path to the server executable, if found.",           wwlnfServerExecutable);
 	lAddNativeFunc(c,"try-to-use",     "(&ms &amount)",  "Try to use &AMOUNT=1 and wait for &MS=200.",                     wwlnfTryToUse);
 	lAddNativeFunc(c,"start-anim",     "(id ms)",        "Starts animation &ID=0 for &MS=200",                             wwlnfStartAnim);
@@ -635,7 +461,7 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"item-reload",    "(&ms)",          "Reloads the currently held item in &MS=200.",                    wwlnfItemReload);
 	lAddNativeFunc(c,"toggle-aim",     "(&zoom)",        "Toggles aiming with a &ZOOM=4 factor.",                          wwlnfToggleAim);
 	lAddNativeFunc(c,"inaccuracy",     "(&acc)",         "Set the player inaccuracy to &ACC if set, return inaccuracy",    wwlnfInaccuracy);
-	lAddNativeFunc(c,"r-result",       "(id result amt)", "Set the result of recipe ID to AMT times RESULT.",               wwlnfRResult);
+	lAddNativeFunc(c,"r-result",       "(id result amt)", "Set the result of recipe ID to AMT times RESULT.",              wwlnfRResult);
 	lAddNativeFunc(c,"r-ingred",       "(id i ingred amt)","Set the ingredient I of recipe ID to AMT times INGRED.",       wwlnfRIngred);
 }
 

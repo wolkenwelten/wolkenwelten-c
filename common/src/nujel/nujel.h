@@ -126,6 +126,10 @@ lVal     *lnfCat        (lClosure *c, lVal *v);
 lVal     *lValCopy      (lVal *dst, const lVal *src);
 
 #define forEach(n,v) for(lVal *n = v;(n != NULL) && (n->type == ltPair) && (n->vList.car != NULL); n = n->vList.cdr)
+#define getLArgB(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfBool(c,lEval(c,v->vList.car));  if(tlv != NULL){ res = tlv->vBool; } v = v->vList.cdr; }
+#define getLArgI(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfInt(c,lEval(c,v->vList.car));   if(tlv != NULL){ res = tlv->vInt;  } v = v->vList.cdr; }
+#define getLArgF(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfFloat(c,lEval(c,v->vList.car)); if(tlv != NULL){ res = tlv->vFloat;} v = v->vList.cdr; }
+#define getLArgV(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfVec(c,lEval(c,v->vList.car));   if(tlv != NULL){ res = tlv->vVec;  } v = v->vList.cdr; }
 
 static inline lVal *lValDup(const lVal *v){
 	return v == NULL ? NULL : lValCopy(lValAlloc(),v);

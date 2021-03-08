@@ -354,7 +354,7 @@
 	(define fire-health 96)
 	(define secondary (λ ()
 		(cond	((>= (player-hp) (player-maxhp)) #f)
-			((try-to-use) (start-anim 4 1200) (player-hp (+ (player-hp) 4)) (sfx-play sfx-chomp) #t)
+			((try-to-use) (do-eat 4) #t)
 			(#t #f))))
 	(define burn-up (λ (pos id amount) (item-drop-new pos i-cookedmeat amount)))
 	(define mesh 'm-meat))))
