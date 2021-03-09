@@ -125,8 +125,9 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_RETURN:
 		case SDL_SCANCODE_KP_ENTER:
-			chatOpen();
-			menuKeyClick(0);
+			if(chatOpen()){
+				menuKeyClick(0);
+			}
 			break;
 		case SDL_SCANCODE_DELETE:
 		case SDL_SCANCODE_BACKSPACE:

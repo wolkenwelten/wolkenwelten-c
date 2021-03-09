@@ -32,10 +32,11 @@
 widget *chatPanel;
 widget *chatText;
 
-void chatOpen(){
-	if(gameControlsInactive()){return;}
+bool chatOpen(){
+	if(gameControlsInactive()){return true;}
 	widgetSlideH(chatPanel, 64);
 	widgetFocus(chatText);
+	return false;
 }
 
 void chatClose(){
