@@ -59,8 +59,7 @@ void wasmInit(){
 	optionWorldSeed    = 69;
 	optionSingleplayer = true;
 	mainInit();
-	clients[clientCount].socket = 1;
-	serverInitClient(clientCount++);
+	serverInitClient(clientCount++,1);
 
 	emscripten_worker_respond(NULL, 0);
 }

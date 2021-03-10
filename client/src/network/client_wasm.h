@@ -79,8 +79,13 @@ void clientWSInit(){
 	struct sockaddr_in serv_addr;
 	struct hostent *serveraddr;
 	int err,yes=1;
-	if(singleplayer){return;}
-	++connectionTries;
+	if(serverSocket > 0){return;}
+	if(singleplayer && (singlePlayerPID == 0)){
+		printf("[CLI] Trying to start SP Server: %u\n",singlePlayerPID);
+		startSingleplayerServer();
+		return;
+	}
+	goodbyeSent = false;
 
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(serverSocket <= 0){
@@ -104,25 +109,15 @@ void clientWSInit(){
 			menuSetError("Error connecting to host EINVAL");
 			return;
 		}else if(errno == EINPROGRESS){
-			if(++connectionTries > 10){
-				menuSetError("Error connecting to host EINPROGRESS");
-				return;
-			}
+			usleep(4000);
 			break;
 		}else if(errno == ECONNREFUSED){
-			if(++connectionTries > 10){
-				menuSetError("Error connecting to host ECONNREFUSED");
-				return;
-			}
-			usleep(500);
 			clientFreeRetry();
 			return;
 		}
 		menuSetError("Error connecting to host ELSE");
 		return;
 	}
-	connectionState = 0;
-	connectionTries = 0;
 	fcntl(serverSocket, F_SETFL, O_NONBLOCK);
 	err = setsockopt(serverSocket,IPPROTO_TCP,TCP_NODELAY,&yes,sizeof(yes));
 	sendBufLen              = 0;

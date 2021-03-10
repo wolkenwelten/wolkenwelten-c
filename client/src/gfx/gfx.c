@@ -192,12 +192,12 @@ void calcView(const character *cam){
 		vec cpos = vecAdd(cam->pos,vecNew(0,0.5f,0));
 		cpos = vecSub(cpos,vecDegToVec(shake));
 		matMulTrans(matView,-cpos.x,-cpos.y,-cpos.z);
-		matMulTrans(matSubBlockView,fmod(-cpos.x,1),fmod(-cpos.y,1),fmod(-cpos.z,1));
-		subBlockViewOffset = (vec){{{(int)cpos.x,(int)cpos.y,(int)cpos.z}}};
+		subBlockViewOffset = vecNew((int)cpos.x,(int)cpos.y,(int)cpos.z);
+		matMulTrans(matSubBlockView,subBlockViewOffset.x-cpos.x,subBlockViewOffset.y-cpos.y,subBlockViewOffset.z-cpos.z);
 	}else{
 		matMulTrans(matView,-cam->pos.x,-(cam->pos.y+0.5+cam->yoff),-cam->pos.z);
-		matMulTrans(matSubBlockView,fmod(-cam->pos.x,1),fmod(-(cam->pos.y+0.5+cam->yoff),1),fmod(-cam->pos.z,1));
-		subBlockViewOffset = (vec){{{(int)cam->pos.x,(int)(cam->pos.y+0.5+cam->yoff),(int)cam->pos.z}}};
+		subBlockViewOffset = vecNew((int)cam->pos.x,(int)(cam->pos.y+0.5+cam->yoff),(int)cam->pos.z);
+		matMulTrans(matSubBlockView,subBlockViewOffset.x-cam->pos.x,subBlockViewOffset.y-(cam->pos.y+0.5+cam->yoff),subBlockViewOffset.z-cam->pos.z);
 	}
 }
 

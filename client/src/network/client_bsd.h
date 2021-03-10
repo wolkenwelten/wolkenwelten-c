@@ -133,7 +133,6 @@ void clientInit(){
 	memcpy((char *)&serv_addr.sin_addr.s_addr, (char *)serveraddr->h_addr_list[0], serveraddr->h_length);
 	serv_addr.sin_port        = htons(serverPort);
 
-#ifndef __EMSCRIPTEN__
 	int rcvbuf = 1<<20;
 	setsockopt(serverSocket, SOL_SOCKET, SO_RCVBUF, &rcvbuf, sizeof(rcvbuf));
 	err = setsockopt(serverSocket,IPPROTO_TCP,TCP_NODELAY,&yes,sizeof(yes));
@@ -141,7 +140,6 @@ void clientInit(){
 		menuSetError("ERROR, setsockopt");
 		return;
 	}
-#endif
 
 	while(connect(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0){
 		if(errno == EINVAL){

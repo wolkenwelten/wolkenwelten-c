@@ -124,7 +124,7 @@ static inline void chunkFinish(chunk *c){
 	if(gfxUseSubData && (c->vboSize >= c->sideEnd[sideMAX-1])){
 		glBufferSubData(GL_ARRAY_BUFFER, 0, c->sideEnd[sideMAX-1] * (6 * sizeof(vertexTiny)), blockMeshBuffer);
 	}else{
-		glBufferData(GL_ARRAY_BUFFER, c->sideEnd[sideMAX-1]*(6*sizeof(vertexTiny)), blockMeshBuffer, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, c->sideEnd[sideMAX-1] * (6 * sizeof(vertexTiny)), blockMeshBuffer, GL_STATIC_DRAW);
 		c->vboSize = c->sideEnd[sideMAX-1];
 	}
 	glVertexAttribPointer(0, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, x));
