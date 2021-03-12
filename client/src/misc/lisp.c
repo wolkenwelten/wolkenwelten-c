@@ -85,12 +85,12 @@ static lVal *wwlnfSEval(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerName(lClosure *c, lVal *v){
-	if(v != NULL){
-		lVal *t = lnfCat(c,lEval(c,v));
-		if(t->type == ltString){
-			strncpy(playerName,t->vString->buf,sizeof(playerName)-1);
-			playerName[sizeof(playerName)-1]=0;
-		}
+	const char *npName = NULL;
+
+	getLArgS(npName);
+
+	if(npName != NULL){
+		snprintf(playerName,sizeof(playerName),"%s",npName);
 	}
 	return lValString(playerName);
 }
