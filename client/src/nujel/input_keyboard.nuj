@@ -77,4 +77,4 @@
 (arr-set! input-keydown key-0 inv-active-kh)
 
 (arr-set! input-keydown key-print (λ (code) (screenshot)))
-(define log-keydown (λ () "Overwrites all keydown handler so they print their respective keycode" (arr-fill! input-keydown (λ (code) (say (cat "KeyCode: " code))))))
+(define log-keydown (λ () "Overwrites all keydown handler so they print their respective keycode" (arr-fill! input-keydown (λ (code) (say ("KeyCode: " code))))))

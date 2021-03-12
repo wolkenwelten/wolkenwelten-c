@@ -7,7 +7,7 @@
 (define help (λ (i) "Describes 10 functions at offset 1"
 	(let ((off (* (int i) 10)))
 	(help-iter (map cat (symbol-table off 10)))
-	(log (cat "Help page " (int i) " of " (/ (symbol-count) 10)))) #t))
+	(log ("Help page " (int i) " of " (/ (symbol-count) 10)))) #t))
 
 (define time-fast! (λ (a) "Speeds up the game to about 4x"
 	(mst!  1) (s (mst!  1))))

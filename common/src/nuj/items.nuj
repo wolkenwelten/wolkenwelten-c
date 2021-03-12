@@ -92,7 +92,7 @@
 	(define id (item-new-id))
 	(define sym 'i-grenade)
 	(define name "Grenade")
-	(define description (cat "Grenade that after being\nthrown goes B" (ansi-yellow "OO") (ansi-red "M!!!")))
+	(define description ("Grenade that after being\nthrown goes B" (ansi-yellow "OO") (ansi-red "M!!!")))
 	(define fire-health 48)
 	(define fire-dmg 24)
 	(define ammunition id)
@@ -115,7 +115,7 @@
 		(grenade-new (vy+ (player-pos) 0.5) (player-rot) 8.0)
 		(start-anim 0 300) #t)
 		(#t #f))))
-	(define burn-up (λ (pos id amount) (explode pos (* amount 6)) (say (cat (ansi-yellow "Ka") (ansi-red "booooom")))))
+	(define burn-up (λ (pos id amount) (explode pos (* amount 6)) (say ((ansi-yellow "Ka") (ansi-red "booooom")))))
 	(define mesh 'm-bomb))))
 
 (define i-pear)
@@ -315,7 +315,7 @@
 		(grenade-new (vy+ (player-pos) 0.5) (player-rot) 0.1 256 3.0)
 		(start-anim 0 300) #t)
 		(#t #f))))
-	(define burn-up (λ (pos id amount) (explode pos (* amount 6)) (say (cat (ansi-yellow "Ka") (ansi-red "bo000oom")))))
+	(define burn-up (λ (pos id amount) (explode pos (* amount 6)) (say ((ansi-yellow "Ka") (ansi-red "bo000oom")))))
 	(define mesh 'm-bomb))))
 
 (define i-glider)

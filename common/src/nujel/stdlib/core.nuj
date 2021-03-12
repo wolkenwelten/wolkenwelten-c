@@ -92,8 +92,8 @@
 	(filter (λ (a) (not (eq? a e))) l)))
 
 (define arg-list (λ (f) "Returns the Argument list of f which can be a Native Function or a Lambda"
-	(cond ((lambda? f) (reduce cat (map (λ (a) (cat " " (car a))) (cl-data f))))
-	      ((native? f) (reduce cat (map (λ (a) (cat " " a)) (car (cl-data f)))))
+	(cond ((lambda? f) (reduce cat (map (λ (a) (" " (car a))) (cl-data f))))
+	      ((native? f) (reduce cat (map (λ (a) (" " a)) (car (cl-data f)))))
 	      (#t ""))))
 
 (define describe (λ (a) "Returns the DocString to its argument, if available"
@@ -101,7 +101,7 @@
 	      (#t (let ((ds (car (cl-text (resolve (str->sym a)))))
 	      (args (arg-list (resolve (str->sym a))))
 	      (fn (cat a)))
-		(cat "(" fn args ") - " (if (string? ds) ds "No DocString found")))))))
+		("(" fn args ") - " (if (string? ds) ds "No DocString found")))))))
 
 (define display (λ (a) "Displays its argument"
 	(print a)))
