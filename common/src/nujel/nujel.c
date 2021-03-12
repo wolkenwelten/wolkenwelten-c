@@ -764,12 +764,17 @@ lVal *lEval(lClosure *c, lVal *v){
 	}else if(v->type == ltPair){
 		lVal *ret = lEval(c,v->vList.car);
 		if(ret == NULL){return v;}
-		if(ret->type == ltNativeFunc){
+		switch(ret->type){
+		default:
+			return v;
+		case ltNativeFunc:
 			return ret->vFunc.fp(c,v->vList.cdr);
-		}else if(ret->type == ltLambda){
+		case ltLambda:
 			return lLambda(c,v->vList.cdr,ret->vLambda);
-		}else if(ret->type == ltPair){
+		case ltPair:
 			return lEval(c,ret);
+		case ltString:
+			return lnfCat(c,v);
 		}
 	}
 	return v;
@@ -992,7 +997,6 @@ lVal *lResolveSym(lClosure *c, lVal *v){
 
 lVal  *lApply(lClosure *c, lVal *v, lVal *(*func)(lClosure *,lVal *)){
 	if((c == NULL) || (v == NULL)){return NULL;}
-	//lPrintVal(v);
 	lVal *ret = NULL, *cc = NULL;
 
 	forEach(t,v){
@@ -1100,15 +1104,9 @@ static void lGCSweep(){
 }
 
 static void lClosureDoGC(){
-	//fprintf(stderr,"Pre-GC MEM:\n");
-	//lnfMem(NULL,NULL);
-
 	lGCUnmark();
 	lGCMark();
 	lGCSweep();
-
-	//fprintf(stderr,"Post-GC MEM:\n");
-	//lnfMem(NULL,NULL);
 }
 
 void lClosureGC(){

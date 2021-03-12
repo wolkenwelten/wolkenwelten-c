@@ -257,6 +257,7 @@ test_sexpr "(define a 1) (unless (= 2 2) (set! a 4)) a" "1"
 test_sexpr "(define a 1) (unless (= 2 3) (set! a 4)) a" "4"
 test_sexpr "(define a 1) (when   (= 2 2) (set! a 4)) a" "4"
 test_sexpr "(define a 1) (when   (= 2 3) (set! a 4)) a" "1"
+test_sexpr "(\"a\" \"s\" \"d\")" "\"asd\""
 
 #test_sexpr "π" "3.14159" Doesnt work on windows, why?
 print_report
