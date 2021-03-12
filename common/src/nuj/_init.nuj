@@ -8,3 +8,9 @@
 (define cat-stone  2)
 (define cat-wood   3)
 (define cat-leaves 4)
+
+(define throw-spin     1)
+(define throw-heavy    2)
+(define throw-pierce   4)
+(define throw-collect  8)
+(define throw-burning 16)

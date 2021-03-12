@@ -17,6 +17,7 @@
 #include "lisp.h"
 
 #include "../main.h"
+#include "../game/beamblast.h"
 #include "../game/character.h"
 #include "../game/grenade.h"
 #include "../game/recipe.h"
@@ -424,45 +425,108 @@ static lVal *wwlnfRIngred(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfAimingPred(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValBool(characterIsAiming(player));
+}
+
+static lVal *wwlnfThrowingPred(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValBool(characterIsThrowAiming(player));
+}
+
+static lVal *wwlnfThrowItem(lClosure *c, lVal *v){
+	int flags   = 0;
+	float force = 0.1f;
+	int damage  = 1;
+
+	getLArgI(flags);
+	getLArgF(force);
+	getLArgI(damage);
+
+	item *itm = &player->inventory[player->activeItem];
+	bool ret  = throwableTry(itm,player,force,damage,flags);
+	return lValBool(ret);
+}
+
+static lVal *wwlnfTryToShoot(lClosure *c, lVal *v){
+	int cooldown    = 200;
+	int bulletcount = 1;
+
+	getLArgI(cooldown);
+	getLArgI(bulletcount);
+
+	item *itm = &player->inventory[player->activeItem];
+	bool ret  = characterTryToShoot(player,itm,cooldown,bulletcount);
+	return lValBool(ret);
+}
+
+static lVal *wwlnfBeamblast(lClosure *c, lVal *v){
+	float beamSize = 1.f;
+	float damage = 8.f;
+	float recoil = 0.05f;
+	int hitsLeft = 3;
+	int shots = 1;
+	float inaccuracyInc = 2.f;
+	float inaccuracyMult = 1.f;
+
+	getLArgF(beamSize);
+	getLArgF(damage);
+	getLArgF(recoil);
+	getLArgI(hitsLeft);
+	getLArgI(shots);
+	getLArgF(inaccuracyInc);
+	getLArgF(inaccuracyMult);
+
+	beamblast(player,beamSize,damage,recoil,hitsLeft,shots,inaccuracyInc,inaccuracyMult);
+	return NULL;
+}
+
 void addClientNFuncs(lClosure *c){
-	lAddNativeFunc(c,"s",              "(...body)",      "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
-	lAddNativeFunc(c,"text-focus?",    "()",             "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
-	lAddNativeFunc(c,"player-pos",     "()",             "Returns players position",                                       wwlnfPlayerPos);
-	lAddNativeFunc(c,"player-rot",     "()",             "Returns players rotation",                                       wwlnfPlayerRot);
-	lAddNativeFunc(c,"player-vel",     "()",             "Returns players velocity",                                       wwlnfPlayerVel);
-	lAddNativeFunc(c,"player-name!",   "(s)",            "Sets players name to s",                                         wwlnfPlayerName);
-	lAddNativeFunc(c,"player-hp",      "(&hp)",          "Sets the players health to &HP, returns the current value.",     wwlnfPlayerHP);
-	lAddNativeFunc(c,"player-maxhp",   "(&mhp)",         "Sets the players max health to &MHP, returns the current value.",wwlnfPlayerMaxHP);
-	lAddNativeFunc(c,"sound-vol!",     "(f)",            "Sets sound volume to float f",                                   wwlnfSoundVolume);
-	lAddNativeFunc(c,"view-dist!",     "(f)",            "Sets render distance to f blocks",                               wwlnfRenderDistance);
-	lAddNativeFunc(c,"use-sub-data!",  "(b)",            "Sets useSubdata boolean to b",                                   wwlnfSubData);
-	lAddNativeFunc(c,"mouse-sens!",    "(f)",            "Sets the mouse sensitivity to f",                                wwlnfMouseSensitivity);
-	lAddNativeFunc(c,"server-add!",    "(name ip)",      "Adds name ip to server list",                                    wwlnfServerAdd);
-	lAddNativeFunc(c,"third-person!",  "(b)",            "Sets third person view to b",                                    wwlnfThirdPerson);
-	lAddNativeFunc(c,"fullscreen",     "(b)",            "Sets fullscreen to b",                                           wwlnfFullscreen);
-	lAddNativeFunc(c,"windowed",       "(&w &h &x &y)",  "Switches to windowed mode of size &w/&h at position &x/&y",      wwlnfWindowed);
-	lAddNativeFunc(c,"save-options",   "()",             "Save options to disk",                                           wwlnfSaveOptions);
-	lAddNativeFunc(c,"reset-worst-f",  "()",             "Resets the worst frame counter",                                 wwlnfResetWorstFrame);
-	lAddNativeFunc(c,"debug-info!",    "(b)",            "Sets debug info view to b",                                      wwlnfDebugInfo);
-	lAddNativeFunc(c,"cons-mode!",     "(b)",            "Sets cons-mode to b if passed, always returns the current state",wwlnfConsMode);
-	lAddNativeFunc(c,"no-clip!",       "(b)",            "Sets no clip to b if passed, always returns the current state",  wwlnfNoClip);
-	lAddNativeFunc(c,"wire-frame!",    "(b)",            "Sets wireframe mode to b, always returns the current state",     wwlnfWireFrame);
-	lAddNativeFunc(c,"send-message",   "(s)",            "Sends string s as a chat message",                               wwlnfSendMessage);
-	lAddNativeFunc(c,"console-print",  "(s)",            "Prints string s to the REPL",                                    wwlnfConsolePrint);
-	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)",  "Plays SFX S with volume &VOL=1.0 as if emitting from &POS.",     wwlnfSfxPlay);
-	lAddNativeFunc(c,"screenshot",     "()",             "Takes a screeshot",                                              wwlnfScreenshot);
-	lAddNativeFunc(c,"fire-hook",      "()",             "Fires the players Grappling hook, or retracts it if fired",      wwlnfFireHook);
-	lAddNativeFunc(c,"inv-active-slot","(i)",            "Sets the players active item to i",                              wwlnfInvActiveSlot);
-	lAddNativeFunc(c,"server-path",    "()",             "Returns the path to the server executable, if found.",           wwlnfServerExecutable);
-	lAddNativeFunc(c,"try-to-use",     "(&ms &amount)",  "Try to use &AMOUNT=1 and wait for &MS=200.",                     wwlnfTryToUse);
-	lAddNativeFunc(c,"start-anim",     "(id ms)",        "Starts animation &ID=0 for &MS=200",                             wwlnfStartAnim);
+	lAddNativeFunc(c,"s",              "(...body)",        "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
+	lAddNativeFunc(c,"text-focus?",    "()",               "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
+	lAddNativeFunc(c,"player-pos",     "()",               "Returns players position",                                       wwlnfPlayerPos);
+	lAddNativeFunc(c,"player-rot",     "()",               "Returns players rotation",                                       wwlnfPlayerRot);
+	lAddNativeFunc(c,"player-vel",     "()",               "Returns players velocity",                                       wwlnfPlayerVel);
+	lAddNativeFunc(c,"player-name!",   "(s)",              "Sets players name to s",                                         wwlnfPlayerName);
+	lAddNativeFunc(c,"player-hp",      "(&hp)",            "Sets the players health to &HP, returns the current value.",     wwlnfPlayerHP);
+	lAddNativeFunc(c,"player-maxhp",   "(&mhp)",           "Sets the players max health to &MHP, returns the current value.",wwlnfPlayerMaxHP);
+	lAddNativeFunc(c,"sound-vol!",     "(f)",              "Sets sound volume to float f",                                   wwlnfSoundVolume);
+	lAddNativeFunc(c,"view-dist!",     "(f)",              "Sets render distance to f blocks",                               wwlnfRenderDistance);
+	lAddNativeFunc(c,"use-sub-data!",  "(b)",              "Sets useSubdata boolean to b",                                   wwlnfSubData);
+	lAddNativeFunc(c,"mouse-sens!",    "(f)",              "Sets the mouse sensitivity to f",                                wwlnfMouseSensitivity);
+	lAddNativeFunc(c,"server-add!",    "(name ip)",        "Adds name ip to server list",                                    wwlnfServerAdd);
+	lAddNativeFunc(c,"third-person!",  "(b)",              "Sets third person view to b",                                    wwlnfThirdPerson);
+	lAddNativeFunc(c,"fullscreen",     "(b)",              "Sets fullscreen to b",                                           wwlnfFullscreen);
+	lAddNativeFunc(c,"windowed",       "(&w &h &x &y)",    "Switches to windowed mode of size &w/&h at position &x/&y",      wwlnfWindowed);
+	lAddNativeFunc(c,"save-options",   "()",               "Save options to disk",                                           wwlnfSaveOptions);
+	lAddNativeFunc(c,"reset-worst-f",  "()",               "Resets the worst frame counter",                                 wwlnfResetWorstFrame);
+	lAddNativeFunc(c,"debug-info!",    "(b)",              "Sets debug info view to b",                                      wwlnfDebugInfo);
+	lAddNativeFunc(c,"cons-mode!",     "(b)",              "Sets cons-mode to b if passed, always returns the current state",wwlnfConsMode);
+	lAddNativeFunc(c,"no-clip!",       "(b)",              "Sets no clip to b if passed, always returns the current state",  wwlnfNoClip);
+	lAddNativeFunc(c,"wire-frame!",    "(b)",              "Sets wireframe mode to b, always returns the current state",     wwlnfWireFrame);
+	lAddNativeFunc(c,"send-message",   "(s)",              "Sends string s as a chat message",                               wwlnfSendMessage);
+	lAddNativeFunc(c,"console-print",  "(s)",              "Prints string s to the REPL",                                    wwlnfConsolePrint);
+	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)",    "Plays SFX S with volume &VOL=1.0 as if emitting from &POS.",     wwlnfSfxPlay);
+	lAddNativeFunc(c,"screenshot",     "()",               "Takes a screeshot",                                              wwlnfScreenshot);
+	lAddNativeFunc(c,"fire-hook",      "()",               "Fires the players Grappling hook, or retracts it if fired",      wwlnfFireHook);
+	lAddNativeFunc(c,"inv-active-slot","(i)",              "Sets the players active item to i",                              wwlnfInvActiveSlot);
+	lAddNativeFunc(c,"server-path",    "()",               "Returns the path to the server executable, if found.",           wwlnfServerExecutable);
+	lAddNativeFunc(c,"try-to-use",     "(&ms &amount)",    "Try to use &AMOUNT=1 and wait for &MS=200.",                     wwlnfTryToUse);
+	lAddNativeFunc(c,"start-anim",     "(id ms)",          "Starts animation &ID=0 for &MS=200",                             wwlnfStartAnim);
 	lAddNativeFunc(c,"grenade-new",    "(pos rot pwr cluster clusterpwr)", "Creates a new grenade a POS moving into ROT creating an explosion of size PWR and then splitting into CLUSTER grenades with a power of CLUSTERPWR.", wwlnfGrenadeNew);
-	lAddNativeFunc(c,"try-to-throw",   "()",             "Try to switch into a throwing mode for the currently held item", wwlnfTryToThrow);
-	lAddNativeFunc(c,"item-reload",    "(&ms)",          "Reloads the currently held item in &MS=200.",                    wwlnfItemReload);
-	lAddNativeFunc(c,"toggle-aim",     "(&zoom)",        "Toggles aiming with a &ZOOM=4 factor.",                          wwlnfToggleAim);
-	lAddNativeFunc(c,"inaccuracy",     "(&acc)",         "Set the player inaccuracy to &ACC if set, return inaccuracy",    wwlnfInaccuracy);
-	lAddNativeFunc(c,"r-result",       "(id result amt)", "Set the result of recipe ID to AMT times RESULT.",              wwlnfRResult);
-	lAddNativeFunc(c,"r-ingred",       "(id i ingred amt)","Set the ingredient I of recipe ID to AMT times INGRED.",       wwlnfRIngred);
+	lAddNativeFunc(c,"try-to-throw",   "()",               "Try to switch into a throwing mode for the currently held item", wwlnfTryToThrow);
+	lAddNativeFunc(c,"item-reload",    "(&ms)",            "Reloads the currently held item in &MS=200.",                    wwlnfItemReload);
+	lAddNativeFunc(c,"toggle-aim",     "(&zoom)",          "Toggles aiming with a &ZOOM=4 factor.",                          wwlnfToggleAim);
+	lAddNativeFunc(c,"inaccuracy",     "(&acc)",           "Set the player inaccuracy to &ACC if set, return inaccuracy",    wwlnfInaccuracy);
+	lAddNativeFunc(c,"r-result",       "(id result amt)",  "Set the result of recipe ID to AMT times RESULT.",               wwlnfRResult);
+	lAddNativeFunc(c,"r-ingred",       "(id i ingred amt)","Set the ingredient I of recipe ID to AMT times INGRED.",         wwlnfRIngred);
+
+	lAddNativeFunc(c,"aiming?",        "()",               "Predicate that evaluates to #t when the player is aiming.",      wwlnfAimingPred);
+	lAddNativeFunc(c,"throwing?",      "()",               "Predicate that evaluates to #t when the player is throw-aiming.",wwlnfThrowingPred);
+	lAddNativeFunc(c,"throw-item",     "(flags &force &amount)", "Throw the currently held item with FLAGS, &FORCE=0.1 and &AMOUNT=1",wwlnfThrowItem);
+	lAddNativeFunc(c,"try-to-shoot",   "(cd ammo)",        "Try to shoot and cooldown for CD and use AMMO bullets"          ,wwlnfTryToShoot);
+	lAddNativeFunc(c,"beamblast",      "(size damage recoil hits-left shots inacc-inc inacc-mult)", "Calls cFunc beamblast",wwlnfBeamblast);
 }
 
 void lispInit(){
