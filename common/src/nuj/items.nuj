@@ -20,6 +20,7 @@
 	(it-inaccuracy (obj id) (obj inaccuracy))
 	(it-mag-size (obj id) (obj mag-size))
 	(it-stack-size (obj id) (obj stack-size))
+	(it-item-drop-cb (obj id) (obj drop-chance))
 
 	(set! (obj sym) (obj id))
 	(arr-set! items (- (obj id) 256) obj)))
@@ -58,6 +59,10 @@
 	(cond ((procedure? ((arr-ref items (- id 256)) burn-up)) (((arr-ref items (- id 256)) burn-up) pos id amount))
 	      (#t #f))))
 
+(define item-drop-cb (λ (pos id amount) "Calls the specific drop handler that AMOUNT ID items are dropped at POS, only gets called when the a random value masked by chance equals 0"
+	(cond ((procedure? ((arr-ref items (- id 256)) drop-handler)) (((arr-ref items (- id 256)) drop-handler) pos id amount))
+	      (#t 0))))
+
 
 (define item-default (ω ()
 	(define id 0)
@@ -78,6 +83,7 @@
 	(define primary   (λ () #f))
 	(define secondary (λ () #f))
 	(define tertiary  (λ () #f))
+	(define item-drop-chance 0)
 	(define stack-size 99)))
 
 
@@ -343,6 +349,9 @@
 			(yield (timeout 2000) (λ () (say (ansi-yellow "Lecker")) (player-hp (- (player-hp) 1))))
 			(yield (timeout 3000) (λ () (say (ansi-dark-red "Schmecker")) (player-hp (- (player-hp) 1)))) #t)
 			(#t #f))))
+	(define drop-chance 4095)
+	; Still need to spawn in the plants/trees
+	(define drop-handler (λ (pos id amount) -1))
 	(define mesh 'm-poop))))
 
 (define i-meat)
@@ -357,6 +366,8 @@
 			((try-to-use) (do-eat 4) #t)
 			(#t #f))))
 	(define burn-up (λ (pos id amount) (item-drop-new pos i-cookedmeat amount)))
+	(define drop-chance 65535)
+	(define drop-handler (λ (pos id amount) -1))
 	(define mesh 'm-meat))))
 
 (define i-cookedmeat)
@@ -378,6 +389,8 @@
 	(define id (item-new-id))
 	(define sym 'i-fur)
 	(define name "Fur")
+	(define drop-chance 65535)
+	(define drop-handler (λ (pos id amount) -1))
 	(define mesh 'm-fur))))
 
 (define i-burntmeat)
@@ -387,6 +400,8 @@
 	(define name "Burnt Meat")
 	(define secondary (λ ()
 		(cond ((try-to-use) (start-anim 4 1800) (sfx-play sfx-chomp) #t) (#t #f))))
+	(define drop-chance 65535)
+	(define drop-handler (λ (pos id amount) -1))
 	(define mesh 'm-burntmeat))))
 
 (define i-flintandsteel)
@@ -500,6 +515,8 @@
 	(define name "Plantmatter")
 	(define fire-dmg 2)
 	(define fire-health 256)
+	(define drop-chance 65535)
+	(define drop-handler (λ (pos id amount) (item-drop-new pos i-straw 1) -1))
 	(define mesh 'm-plantmatter))))
 
 (define i-straw)

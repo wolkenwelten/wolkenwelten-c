@@ -30,6 +30,7 @@
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/mods/mods.h"
 #include "../../../common/src/network/messages.h"
+#include "../../../common/src/nujel/casting.h"
 
 #include <stdio.h>
 
@@ -198,7 +199,12 @@ void itemDropUpdateAll(){
 		if(e == NULL){continue;}
 		entityUpdate(e);
 
-		itemDropList[i].itm.amount += itemDropCallbackDispatch(&itemDropList[i].itm, e->pos.x, e->pos.y,e->pos.z);
+		const uint chance = itemGetIDChance(&itemDropList[i].itm);
+		if((chance > 0) && (rngValA(chance) == 0)){
+			lVal *r = lispCallFuncVII("item-drop-cb",itemDropList[i].ent->pos, itemDropList[i].itm.ID, itemDropList[i].itm.amount);
+			if(r != NULL){ itemDropList[i].itm.amount += r->vInt; }
+		}
+
 		if((itemDropList[i].itm.amount < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || (e->pos.y < 0)){
 			itemDropDel(i);
 			addPriorityItemDrop(i);

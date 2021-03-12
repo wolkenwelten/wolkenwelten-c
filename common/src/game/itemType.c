@@ -36,165 +36,176 @@ void itemTypeInit(){
 }
 
 static lVal *wwlnfITName(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	int   itemID     = -1;
+	const char *name = NULL;
 
-	lVal *t = lnfInt(c,lEval(c,v->vList.car));
-	if((t->vInt < 256) || (t->vInt > 512)){return NULL;}
-	const int ID = t->vInt;
-	itemType *it = &itemTypes[ID-256];
-	v = v->vList.cdr;
+	getLArgI(itemID);
+	getLArgS(name);
 
-	if((v != NULL) && (v->type == ltPair)){
-		t = lEval(c,v->vList.car);
-		if(t != NULL){
-			snprintf(it->name,32,"%s",t->vString->data);
-		}
+	if(itemID < 0){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	if(name != NULL){
+		snprintf(it->name,32,"%s",name);
 	}
+
 	return lValString(it->name);
 }
 
 static lVal *wwlnfITMesh(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	int itemID = -1;
+	int mesh   = -1;
 
-	lVal *t = lnfInt(c,lEval(c,v->vList.car));
-	if((t->vInt < 256) || (t->vInt > 512)){return NULL;}
-	const int ID = t->vInt;
-	itemType *it = &itemTypes[ID-256];
-	v = v->vList.cdr;
+	getLArgI(itemID);
+	getLArgI(mesh);
 
-	if((v != NULL) && (v->type == ltPair)){
-		t = lnfInt(c,lEval(c,v->vList.car));
-		if(t != NULL){it->iMesh = meshGet(t->vInt);}
+	if(itemID < 0){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	if(mesh >= 0){
+		it->iMesh = meshGet(mesh);
 	}
+
 	return lValInt(meshIndex(it->iMesh));
 }
 
 static lVal *wwlnfITDamage(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	int itemID = -1;
+	int cat    = -1;
+	int damage = -1;
 
-	lVal *t = lnfInt(c,lEval(c,v->vList.car));
-	if((t->vInt < 256) || (t->vInt > 512)){return NULL;}
-	const int ID = t->vInt;
-	itemType *it = &itemTypes[ID-256];
-	v = v->vList.cdr;
+	getLArgI(itemID);
+	getLArgI(cat);
+	getLArgI(damage);
 
-	if((v == NULL) || (v->type != ltPair)){return NULL;}
-	t = lnfInt(c,lEval(c,v->vList.car));
-	const int dmgCat = t->vInt;
-	if((dmgCat < 0) || (dmgCat >= 5)){return NULL;}
-	v = v->vList.cdr;
-
-	if((v != NULL) && (v->type == ltPair)){
-		t = lnfInt(c,lEval(c,v->vList.car));
-		if(t != NULL){it->damage[dmgCat] = t->vInt;}
+	if((itemID < 0) || (cat < 0) || (cat > 4)){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	if(damage >= 0){
+		it->damage[cat] = damage;
 	}
-	return lValInt(it->damage[dmgCat]);
+
+	return lValInt(it->damage[cat]);
 }
 
 static lVal *wwlnfITAmmunition(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	int itemID = -1;
+	int ammunition = -1;
 
-	lVal *t = lnfInt(c,lEval(c,v->vList.car));
-	if((t->vInt < 256) || (t->vInt > 512)){return NULL;}
-	const int ID = t->vInt;
-	itemType *it = &itemTypes[ID-256];
-	v = v->vList.cdr;
+	getLArgI(itemID);
+	getLArgI(ammunition);
 
-	if((v != NULL) && (v->type == ltPair)){
-		t = lnfInt(c,lEval(c,v->vList.car));
-		if(t != NULL){it->ammunition = t->vInt;}
+	if(itemID < 0){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	if(ammunition >= 0){
+		it->ammunition = ammunition;
 	}
+
 	return lValInt(it->ammunition);
 }
 
 static lVal *wwlnfITStackSize(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	int itemID    = -1;
+	int stackSize = -1;
 
-	lVal *t = lnfInt(c,lEval(c,v->vList.car));
-	if((t->vInt < 256) || (t->vInt > 512)){return NULL;}
-	const int ID = t->vInt;
-	itemType *it = &itemTypes[ID-256];
-	v = v->vList.cdr;
+	getLArgI(itemID);
+	getLArgI(stackSize);
 
-	if((v != NULL) && (v->type == ltPair)){
-		t = lnfInt(c,lEval(c,v->vList.car));
-		if(t != NULL){it->stackSize = t->vInt;}
+	if(itemID < 0){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	if(stackSize >= 0){
+		it->stackSize = stackSize;
 	}
+
 	return lValInt(it->stackSize);
 }
 
 static lVal *wwlnfITMagazineSize(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	int itemID       = -1;
+	int magazineSize = -1;
 
-	lVal *t = lnfInt(c,lEval(c,v->vList.car));
-	if((t->vInt < 256) || (t->vInt > 512)){return NULL;}
-	const int ID = t->vInt;
-	itemType *it = &itemTypes[ID-256];
-	v = v->vList.cdr;
+	getLArgI(itemID);
+	getLArgI(magazineSize);
 
-	if((v != NULL) && (v->type == ltPair)){
-		t = lnfInt(c,lEval(c,v->vList.car));
-		if(t != NULL){it->magazineSize = t->vInt;}
+	if(itemID < 0){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	if(magazineSize >= 0){
+		it->magazineSize = magazineSize;
 	}
+
 	return lValInt(it->magazineSize);
 }
 
 static lVal *wwlnfITFireDamage(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	int itemID     = -1;
+	int fireDamage = -1;
 
-	lVal *t = lnfInt(c,lEval(c,v->vList.car));
-	if((t->vInt < 256) || (t->vInt > 512)){return NULL;}
-	const int ID = t->vInt;
-	itemType *it = &itemTypes[ID-256];
-	v = v->vList.cdr;
+	getLArgI(itemID);
+	getLArgI(fireDamage);
 
-	if((v != NULL) && (v->type == ltPair)){
-		t = lnfInt(c,lEval(c,v->vList.car));
-		if(t != NULL){it->fireDamage = t->vInt;}
+	if(itemID < 0){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	if(fireDamage >= 0){
+		it->fireDamage = fireDamage;
 	}
+
 	return lValInt(it->fireDamage);
 }
 
 static lVal *wwlnfITFireHealth(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	int itemID     = -1;
+	int fireHealth = -1;
 
-	lVal *t = lnfInt(c,lEval(c,v->vList.car));
-	if((t->vInt < 256) || (t->vInt > 512)){return NULL;}
-	const int ID = t->vInt;
-	itemType *it = &itemTypes[ID-256];
-	v = v->vList.cdr;
+	getLArgI(itemID);
+	getLArgI(fireHealth);
 
-	if((v != NULL) && (v->type == ltPair)){
-		t = lnfInt(c,lEval(c,v->vList.car));
-		if(t != NULL){it->fireHealth = t->vInt;}
+	if(itemID < 0){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	if(fireHealth >= 0){
+		it->fireHealth = fireHealth;
 	}
+
 	return lValInt(it->fireHealth);
 }
 
 static lVal *wwlnfITInaccuracy(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	int itemID  = -1;
+	float inacc = -1.f;
 
-	lVal *t = lnfInt(c,lEval(c,v->vList.car));
-	if((t->vInt < 256) || (t->vInt > 512)){return NULL;}
-	const int ID = t->vInt;
-	itemType *it = &itemTypes[ID-256];
-	v = v->vList.cdr;
+	getLArgI(itemID);
+	getLArgF(inacc);
 
-	if((v != NULL) && (v->type == ltPair)){
-		t = lnfFloat(c,lEval(c,v->vList.car));
-		if(t != NULL){it->inaccuracy = t->vFloat;}
+	if(itemID < 0){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	if(inacc >= 0.f){
+		it->inaccuracy = inacc;
 	}
+
 	return lValFloat(it->inaccuracy);
 }
 
+static lVal *wwlnfITIDChance(lClosure *c, lVal *v){
+	int itemID = -1;
+	int chance = -1;
+
+	getLArgI(itemID);
+	getLArgI(chance);
+
+	if(itemID < 0){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	if(chance >= 0){
+		it->itemDropChance = chance;
+	}
+
+	return lValInt(it->itemDropChance);
+}
+
 void itemTypeLispClosure(lClosure *c){
-	lAddNativeFunc(c,"it-name",       "(id &n)",    "Sets the name of itemType ID to &n if passed",                 wwlnfITName);
-	lAddNativeFunc(c,"it-mesh",       "(id &m)",    "Sets the mesh of itemType ID to &m if passed",                 wwlnfITMesh);
-	lAddNativeFunc(c,"it-ammunition", "(id &a)",    "Sets the ammunition of itemType ID to &a if passed",           wwlnfITAmmunition);
-	lAddNativeFunc(c,"it-stack-size", "(id &s)",    "Sets the stackSize of itemType ID to &d if passed",            wwlnfITStackSize);
-	lAddNativeFunc(c,"it-mag-size",   "(id &s)",    "Sets the Magazine Size of itemType ID to &d if passed",        wwlnfITMagazineSize);
-	lAddNativeFunc(c,"it-damage" ,    "(id cat &d)","Sets the damage to cat blocks of itemType ID to &d if passed", wwlnfITDamage);
-	lAddNativeFunc(c,"it-fire-damage","(id &d)",    "Sets the fire damage of itemType ID to &d if passed",          wwlnfITFireDamage);
-	lAddNativeFunc(c,"it-fire-health","(id &h)",    "Sets the fire health of itemType ID to &h if passed",          wwlnfITFireHealth);
-	lAddNativeFunc(c,"it-inaccuracy", "(id &a)",    "Sets the fire inaccuracy of itemType ID to &a if passed",      wwlnfITInaccuracy);
+	lAddNativeFunc(c,"it-name",        "(id &n)",     "Sets the name of itemType ID to &n if passed",                 wwlnfITName);
+	lAddNativeFunc(c,"it-mesh",        "(id &m)",     "Sets the mesh of itemType ID to &m if passed",                 wwlnfITMesh);
+	lAddNativeFunc(c,"it-ammunition",  "(id &a)",     "Sets the ammunition of itemType ID to &a if passed",           wwlnfITAmmunition);
+	lAddNativeFunc(c,"it-stack-size",  "(id &s)",     "Sets the stackSize of itemType ID to &d if passed",            wwlnfITStackSize);
+	lAddNativeFunc(c,"it-mag-size",    "(id &s)",     "Sets the Magazine Size of itemType ID to &d if passed",        wwlnfITMagazineSize);
+	lAddNativeFunc(c,"it-damage" ,     "(id cat &d)", "Sets the damage to cat blocks of itemType ID to &d if passed", wwlnfITDamage);
+	lAddNativeFunc(c,"it-fire-damage", "(id &d)",     "Sets the fire damage of itemType ID to &d if passed",          wwlnfITFireDamage);
+	lAddNativeFunc(c,"it-fire-health", "(id &h)",     "Sets the fire health of itemType ID to &h if passed",          wwlnfITFireHealth);
+	lAddNativeFunc(c,"it-inaccuracy",  "(id &a)",     "Sets the fire inaccuracy of itemType ID to &a if passed",      wwlnfITInaccuracy);
+	lAddNativeFunc(c,"it-item-drop-cb","(id &chance)","Sets the chance mask for the itemDrop callback to execute",    wwlnfITIDChance);
 }

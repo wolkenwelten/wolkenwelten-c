@@ -141,6 +141,11 @@ float itemGetInaccuracy(const item *i){
 	return itemTypes[i->ID - 256].inaccuracy;
 }
 
+uint itemGetIDChance(const item *i){
+	if((i == NULL) || (i->ID < 256) || (i->ID > 512)){return 0;}
+	return itemTypes[i->ID - 256].itemDropChance;
+}
+
 bool itemDoPrimary(item *cItem, character *cChar){
 	if((cItem == NULL) || (cChar == NULL)){return false;}
 	if((cItem->ID < 256) && blockTypeValid(cItem->ID)){

@@ -107,7 +107,7 @@ lVal *lnfBool(lClosure *c, lVal *v){
 }
 
 lVal *lnfString(lClosure *c, lVal *t){
-	char tmpStringBuf[512];
+	char tmpStringBuf[32];
 	char *buf = tmpStringBuf;
 	int len = 0;
 	if(t == NULL){return lValString("");}
@@ -126,10 +126,7 @@ lVal *lnfString(lClosure *c, lVal *t){
 		buf += clen;
 		break; }
 	case ltString:
-		if(t->vString == NULL){return lValString("");}
-		memcpy(buf,t->vString->data,lStringLength(t->vString));
-		buf += lStringLength(t->vString);
-		break;
+		return t;
 	}
 
 	buf[len] = 0;

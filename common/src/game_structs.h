@@ -44,6 +44,7 @@ typedef struct {
 	u16 ammunition,stackSize,magazineSize;
 	i16 fireDamage;
 	u16 fireHealth;
+	u32 itemDropChance;
 	float inaccuracy;
 } itemType;
 
