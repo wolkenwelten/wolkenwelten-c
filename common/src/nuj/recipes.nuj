@@ -13,15 +13,15 @@
 	(r-ingred (obj id) 2 (resolve (obj ingred-id-2)) (obj ingred-amt-2))
 	(r-ingred (obj id) 3 (resolve (obj ingred-id-3)) (obj ingred-amt-3))
 
-	(arr-set! recipes (obj id) obj)))
+	(recipes (obj id) obj)))
 
 (define recipe-sync-all (λ (i) "Syncs all Recipes with their respective ω"
-	(cond ((nil? (arr-ref recipes i)) #t)
-	      (#t (recipe-sync (arr-ref recipes i)) (recipe-sync-all (+ i 1))))))
+	(cond ((nil? (recipes i)) #t)
+	      (#t (recipe-sync (recipes i)) (recipe-sync-all (+ i 1))))))
 
 
 (define recipe-craft (λ (id times) "Crafts recipe with ID"
-	((arr-ref recipes id) craft)))
+	((recipes id) craft)))
 
 (define recipe-default (ω ()
 	(define id -1)

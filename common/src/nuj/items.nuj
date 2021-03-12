@@ -23,22 +23,22 @@
 	(it-item-drop-cb (obj id) (obj drop-chance))
 
 	(set! (obj sym) (obj id))
-	(arr-set! items (- (obj id) 256) obj)))
+	(items (- (obj id) 256) obj)))
 
 (define item-sync-all (λ (i) "Syncs all itemTypes with their respective ω"
-	(cond ((nil? (arr-ref items i)) #t)
-	      (#t (item-sync (arr-ref items i)) (item-sync-all (+ i 1))))))
+	(cond ((nil? (items i)) #t)
+	      (#t (item-sync (items i)) (item-sync-all (+ i 1))))))
 
 (define item-primary (λ (id) "Evaluates the primary callback of item ID"
-	(cond ((procedure? ((arr-ref items (- id 256)) primary)) (((arr-ref items (- id 256)) primary)))
+	(cond ((procedure? ((items (- id 256)) primary)) (((items (- id 256)) primary)))
 	      (#t #f))))
 
 (define item-secondary (λ (id) "Evaluates the secondary callback of item ID"
-	(cond ((procedure? ((arr-ref items (- id 256)) secondary)) (((arr-ref items (- id 256)) secondary)))
+	(cond ((procedure? ((items (- id 256)) secondary)) (((items (- id 256)) secondary)))
 	      (#t #f))))
 
 (define item-tertiary (λ (id) "Evaluates the tertiary callback of item ID"
-	(cond ((procedure? ((arr-ref items (- id 256)) tertiary)) (((arr-ref items (- id 256)) tertiary)))
+	(cond ((procedure? ((items (- id 256)) tertiary)) (((items (- id 256)) tertiary)))
 	      (#t #f))))
 
 (define add-inaccuracy (λ (amt) "Increase players inaccuracy my AMT"
@@ -56,11 +56,11 @@
 		(sfx-play sfx-chomp) #t))))
 
 (define item-burn-up (λ (pos id amount) "Calls the specific burn up handler that AMOUNT ID items have burned up at POS"
-	(cond ((procedure? ((arr-ref items (- id 256)) burn-up)) (((arr-ref items (- id 256)) burn-up) pos id amount))
+	(cond ((procedure? ((items (- id 256)) burn-up)) (((items (- id 256)) burn-up) pos id amount))
 	      (#t #f))))
 
 (define item-drop-cb (λ (pos id amount) "Calls the specific drop handler that AMOUNT ID items are dropped at POS, only gets called when the a random value masked by chance equals 0"
-	(cond ((procedure? ((arr-ref items (- id 256)) drop-handler)) (((arr-ref items (- id 256)) drop-handler) pos id amount))
+	(cond ((procedure? ((items (- id 256)) drop-handler)) (((items (- id 256)) drop-handler) pos id amount))
 	      (#t 0))))
 
 
