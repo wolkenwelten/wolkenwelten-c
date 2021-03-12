@@ -30,32 +30,20 @@ lVal *lnfArrLength(lClosure *c, lVal *v){
 	return lValInt(arr->vArr->length);
 }
 
-lVal *lnfArrRef(lClosure *c, lVal *v){
+lVal *lnfArrRS(lClosure *c, lVal *v){
 	if((c == NULL) || (v == NULL)){return NULL;}
 	lVal *arr = lEval(c,lCarOrV(v));
 	if((arr == NULL) || (arr->type != ltArray)){return NULL;}
 	v = v->vList.cdr;
-	lVal *lkey = lnfInt(c,lEval(c, lCarOrV(v)));
-	if((lkey == NULL) || (lkey->type != ltInt)){return NULL;}
-	int key = lkey->vInt;
-	if((key < 0) || (key >= arr->vArr->length) || (arr->vArr->data == NULL)){return NULL;}
-	return arr->vArr->data[key];
-}
-
-lVal *lnfArrSet(lClosure *c, lVal *v){
-	if((c == NULL) || (v == NULL)){return NULL;}
-	lVal *arr = lEval(c,lCarOrV(v));
-	if((arr == NULL) || (arr->type != ltArray)){return NULL;}
-	v = v->vList.cdr;
-	lVal *lkey = lnfInt(c,lEval(c, lCarOrV(v)));
-	if((lkey == NULL) || (lkey->type != ltInt)){return NULL;}
+	const lVal *lkey = lnfInt(c,lEval(c, lCarOrV(v)));
+	if(lkey == NULL){return NULL;}
 	int key = lkey->vInt;
 	v = v->vList.cdr;
 	forEach(cur,v){
 		if(key >= arr->vArr->length){return NULL;}
 		arr->vArr->data[key++] = lEval(c,lCarOrV(cur));
 	}
-	return arr;
+	return arr->vArr->data[key];
 }
 
 lVal *lnfArrNew(lClosure *c, lVal *v){

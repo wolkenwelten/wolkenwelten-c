@@ -775,6 +775,8 @@ lVal *lEval(lClosure *c, lVal *v){
 			return lEval(c,ret);
 		case ltString:
 			return lnfCat(c,v);
+		case ltArray:
+			return lnfArrRS(c,v);
 		}
 	}
 	return v;
@@ -846,11 +848,11 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"greater?",      "(a b)","#t if a > b", lnfGreater);
 	lAddNativeFunc(c,"zero?",         "(a)",  "#t if a is 0",lnfZero);
 
-	lAddNativeFunc(c,"arr-length","(a)",      "Returns length of array a",                 lnfArrLength);
-	lAddNativeFunc(c,"arr-ref",   "(a i)",    "Returns value of array a at position i",    lnfArrRef);
-	lAddNativeFunc(c,"arr-set!",  "(a i v)",  "Sets array valus at position i to v",       lnfArrSet);
-	lAddNativeFunc(c,"arr-new",   "(l)",      "Allocates a new array of size l",           lnfArrNew);
-	lAddNativeFunc(c,"arr",       "(...args)","Creates a new array from its argument list",lnfArr);
+	lAddNativeFunc(c,"arr-length","(a)",        "Returns length of array a",                 lnfArrLength);
+	lAddNativeFunc(c,"arr-ref",   "(a i)",      "Returns value of array a at position i",    lnfArrRS);
+	lAddNativeFunc(c,"arr-set!",  "(a i &...v)","Sets array valus at position i to v",       lnfArrRS);
+	lAddNativeFunc(c,"arr-new",   "(l)",        "Allocates a new array of size l",           lnfArrNew);
+	lAddNativeFunc(c,"arr",       "(...args)",  "Creates a new array from its argument list",lnfArr);
 
 	lAddNativeFunc(c,"and","(...args)","#t if all ...args evaluate to true",            lnfAnd);
 	lAddNativeFunc(c,"or" ,"(...args)","#t if one member of ...args evaluates to true", lnfOr);

@@ -193,7 +193,7 @@ test_sexpr_exitcode "(define fib (lambda (a) (cond ((zero? a) 0) ((= a 1) 1) (#t
 test_sexpr "(cat 1 1.0)" "\"11.0\""
 test_sexpr "(div (vec 99) (cat 1 1.0))" "(vec 9.0 9.0 9.0)"
 test_sexpr "(eval '(+ 1 2 3))" "6"
-test_sexpr "(arr-set! #(1 2 3 4) 0 99)" "#(99 2 3 4)"
+test_sexpr "(let ((cur-arr #(1 2 3 4))) (arr-set! cur-arr 0 99 12) cur-arr)" "#(99 12 3 4)"
 test_sexpr "(arr-length #(1 2 3 4))" "4"
 test_sexpr "(arr-ref #(1 2 3 4) 1)" "2"
 test_sexpr "(arr-length (arr-new 3))" "3"
