@@ -20,6 +20,7 @@
 #include "../game/beamblast.h"
 #include "../game/character.h"
 #include "../game/grenade.h"
+#include "../game/projectile.h"
 #include "../game/recipe.h"
 #include "../game/throwable.h"
 #include "../game/weather.h"
@@ -377,6 +378,13 @@ static lVal *wwlnfInaccuracy(lClosure *c, lVal *v){
 	return lValFloat(player->inaccuracy);
 }
 
+static lVal *wwlnfRecoil(lClosure *c, lVal *v){
+	float recoil = 1.f;
+	getLArgF(recoil);
+	characterAddRecoil(player,recoil);
+	return NULL;
+}
+
 static lVal *wwlnfPlayerHP(lClosure *c, lVal *v){
 	int hp = -1024;
 	getLArgI(hp);
@@ -482,6 +490,17 @@ static lVal *wwlnfBeamblast(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfProjectile(lClosure *c, lVal *v){
+	int type = 0;
+	int num  = 1;
+
+	getLArgI(type);
+	getLArgI(num);
+
+	projectileNewC(player,type,num);
+	return NULL;
+}
+
 void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",        "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",               "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
@@ -519,6 +538,7 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"item-reload",    "(&ms)",            "Reloads the currently held item in &MS=200.",                    wwlnfItemReload);
 	lAddNativeFunc(c,"toggle-aim",     "(&zoom)",          "Toggles aiming with a &ZOOM=4 factor.",                          wwlnfToggleAim);
 	lAddNativeFunc(c,"inaccuracy",     "(&acc)",           "Set the player inaccuracy to &ACC if set, return inaccuracy",    wwlnfInaccuracy);
+	lAddNativeFunc(c,"recoil",         "(&rec)",           "Adds recoil to the player of &REC=1.0",                          wwlnfRecoil);
 	lAddNativeFunc(c,"r-result",       "(id result amt)",  "Set the result of recipe ID to AMT times RESULT.",               wwlnfRResult);
 	lAddNativeFunc(c,"r-ingred",       "(id i ingred amt)","Set the ingredient I of recipe ID to AMT times INGRED.",         wwlnfRIngred);
 
@@ -526,7 +546,8 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"throwing?",      "()",               "Predicate that evaluates to #t when the player is throw-aiming.",wwlnfThrowingPred);
 	lAddNativeFunc(c,"throw-item",     "(flags &force &amount)", "Throw the currently held item with FLAGS, &FORCE=0.1 and &AMOUNT=1",wwlnfThrowItem);
 	lAddNativeFunc(c,"try-to-shoot",   "(cd ammo)",        "Try to shoot and cooldown for CD and use AMMO bullets"          ,wwlnfTryToShoot);
-	lAddNativeFunc(c,"beamblast",      "(size damage recoil hits-left shots inacc-inc inacc-mult)", "Calls cFunc beamblast",wwlnfBeamblast);
+	lAddNativeFunc(c,"beamblast",      "(size damage recoil hits-left shots inacc-inc inacc-mult)", "Calls cFunc beamblast", wwlnfBeamblast);
+	lAddNativeFunc(c,"projectile",     "(&type &num)",      "Fire &NUM=1 projectiles of &TYPE=0",                            wwlnfProjectile);
 }
 
 void lispInit(){
