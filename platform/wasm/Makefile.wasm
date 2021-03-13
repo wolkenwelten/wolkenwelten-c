@@ -16,7 +16,6 @@ release.wasm: releases/wasm/manifest.json
 releases/wasm/wolkenwelten.html: $(CLIENT_SRCS) $(CLIENT_HDRS) client/src/network/client_wasm.h
 releases/wasm/wolkenwelten.html: client/src/tmp/assets.c client/src/tmp/assets.h
 releases/wasm/wolkenwelten.html: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
-releases/wasm/wolkenwelten.html: client/src/tmp/mods_tmp.c
 releases/wasm/wolkenwelten.html: client/src/tmp/objs.c client/src/tmp/objs.h
 releases/wasm/wolkenwelten.html: client/src/tmp/sfx.c client/src/tmp/sfx.h
 releases/wasm/wolkenwelten.html: common/src/tmp/cto.c common/src/tmp/cto.h
@@ -26,7 +25,6 @@ releases/wasm/wolkenwelten.html: common/src/tmp/cto.c common/src/tmp/cto.h
 releases/wasm/server.js: $(SERVER_SRCS) $(SERVER_HDRS) server/src/network/server_wasm.h
 releases/wasm/server.js: server/src/tmp/sfx.c server/src/tmp/sfx.h
 releases/wasm/server.js: server/src/tmp/objs.c server/src/tmp/objs.h
-releases/wasm/server.js: server/src/tmp/mods_tmp.c
 releases/wasm/server.js: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p releases/wasm/
 	$(EMCC) $(SERVER_SRCS) -D_GNU_SOURCE -std=c99 -O3 -s BUILD_AS_WORKER=1 -s EXPORTED_FUNCTIONS="['_wasmInit','_wasmTranceive']" -fno-rtti --closure 0 $(SERVER_EMMEM) -o releases/wasm/server.js

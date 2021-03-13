@@ -39,7 +39,6 @@ $(WIN_RELDIR)/wolkenwelten.exe: CINCLUDES += $(CLIENT_CINCLUDES)
 $(WIN_RELDIR)/wolkenwelten.exe: $(CLIENT_SRCS) $(CLIENT_HDRS)
 $(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/assets.c client/src/tmp/assets.h
 $(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
-$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/mods_tmp.c
 $(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/objs.c client/src/tmp/objs.h
 $(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/sfx.c client/src/tmp/sfx.h
 $(WIN_RELDIR)/wolkenwelten.exe: common/src/tmp/cto.c common/src/tmp/cto.h
@@ -55,7 +54,6 @@ $(WIN_RELDIR)/wolkenwelten-server.exe: LIBS      += $(SERVER_LIBS)
 $(WIN_RELDIR)/wolkenwelten-server.exe: $(SERVER_SRCS) $(SERVER_HDRS)
 $(WIN_RELDIR)/wolkenwelten-server.exe: server/src/tmp/sfx.c server/src/tmp/sfx.h
 $(WIN_RELDIR)/wolkenwelten-server.exe: server/src/tmp/objs.c server/src/tmp/objs.h
-$(WIN_RELDIR)/wolkenwelten-server.exe: server/src/tmp/mods_tmp.c
 $(WIN_RELDIR)/wolkenwelten-server.exe: common/src/tmp/cto.c common/src/tmp/cto.h
 $(WIN_RELDIR)/wolkenwelten-server.exe: releases/win/wolkenwelten-server.res
 $(WIN_RELDIR)/wolkenwelten-server.exe: | $(WIN_RELDIR)

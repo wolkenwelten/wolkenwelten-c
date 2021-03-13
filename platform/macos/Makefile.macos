@@ -29,7 +29,6 @@ $(OSX_APP)/Contents/MacOS/wolkenwelten: LIBS      += $(CLIENT_LIBS)
 $(OSX_APP)/Contents/MacOS/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
 $(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
 $(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
-$(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/mods_tmp.c
 $(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/objs.c client/src/tmp/objs.h
 $(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/sfx.c client/src/tmp/sfx.h
 $(OSX_APP)/Contents/MacOS/wolkenwelten: common/src/tmp/cto.c common/src/tmp/cto.h
@@ -45,7 +44,6 @@ $(OSX_APP)/Contents/MacOS/wolkenwelten-server: LIBS      += $(SERVER_LIBS)
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: server/src/tmp/sfx.c server/src/tmp/sfx.h
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: server/src/tmp/objs.c server/src/tmp/objs.h
-$(OSX_APP)/Contents/MacOS/wolkenwelten-server: server/src/tmp/mods_tmp.c
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: common/src/tmp/cto.c common/src/tmp/cto.h
 	mkdir -p $(OSX_APP)/Contents/MacOS
 	$(CC) $(SERVER_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(LDFLAGS) $(CINCLUDES) $(WARNINGS) $(LIBS)

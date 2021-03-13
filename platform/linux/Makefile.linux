@@ -41,7 +41,6 @@ $(LIN_REL)/wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
 $(LIN_REL)/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
 $(LIN_REL)/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
 $(LIN_REL)/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
-$(LIN_REL)/wolkenwelten: client/src/tmp/mods_tmp.c
 $(LIN_REL)/wolkenwelten: client/src/tmp/objs.c client/src/tmp/objs.h
 $(LIN_REL)/wolkenwelten: client/src/tmp/sfx.c client/src/tmp/sfx.h
 $(LIN_REL)/wolkenwelten: common/src/tmp/cto.c common/src/tmp/cto.h
@@ -55,7 +54,6 @@ $(LIN_REL)/wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
 $(LIN_REL)/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
 $(LIN_REL)/wolkenwelten-server: server/src/tmp/sfx.c server/src/tmp/sfx.h
 $(LIN_REL)/wolkenwelten-server: server/src/tmp/objs.c server/src/tmp/objs.h
-$(LIN_REL)/wolkenwelten-server: server/src/tmp/mods_tmp.c
 $(LIN_REL)/wolkenwelten-server: common/src/tmp/cto.c common/src/tmp/cto.h
 $(LIN_REL)/wolkenwelten-server: $(ASM_OBJS)
 $(LIN_REL)/wolkenwelten-server: | $(LIN_REL)
