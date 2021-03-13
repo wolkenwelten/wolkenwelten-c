@@ -1,3 +1,6 @@
+(define log (λ (...args) "Prints its arguments into the LISP console"
+	(console-print (apply cat ...args))))
+
 (define help-iter (λ (l) "Iter for (help)"
 	(cond ((nil? l) #t)
 	      (#t (say (describe (car l))) (help-iter (cdr l))))))

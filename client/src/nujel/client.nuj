@@ -1,3 +1,6 @@
+(define log (λ (...args) "Prints its arguments into the LISP console"
+	(console-print ("  " (apply cat ...args)))))
+
 (define conf-v1! (λ (@...body) "Wrapper for auto generated config s-expressions, will be overwritten on every optionsave"
 	(eval (cons 'begin @...body))))
 
