@@ -53,15 +53,15 @@ static lVal *wwlnfITName(lClosure *c, lVal *v){
 
 static lVal *wwlnfITMesh(lClosure *c, lVal *v){
 	int itemID = -1;
-	int mesh   = -1;
+	int meshID = -1;
 
 	getLArgI(itemID);
-	getLArgI(mesh);
+	getLArgI(meshID);
 
 	if(itemID < 0){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
-	if(mesh >= 0){
-		it->iMesh = meshGet(mesh);
+	if(meshID >= 0){
+		it->iMesh = meshGet(meshID);
 	}
 
 	return lValInt(meshIndex(it->iMesh));

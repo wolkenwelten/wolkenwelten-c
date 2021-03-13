@@ -213,7 +213,7 @@
 	(define mag-size 60)
 	(define primary (λ ()
 		(cond ((throwing?) (throw-item throw-spin))
-		      ((try-to-shoot 15 1) (sfx-play sfx-phaser 0.2) (projectile 0 1) (add-inaccuracy 1.0) (recoil 1.0) #t) (#t #f))))
+		      ((try-to-shoot 15 1) (sfx-play sfx-phaser 0.2) (projectile 0 1) (add-inaccuracy 0.1) (recoil 1.0) #t) (#t #f))))
 	(define secondary (λ ()
 		(cond ((try-to-use 200 0) (toggle-aim 2.0) (add-inaccuracy 32.0) #t) (#t #f))))
 	(define tertiary (λ () (item-reload 50)))

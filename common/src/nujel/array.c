@@ -35,13 +35,18 @@ lVal *lnfArrRS(lClosure *c, lVal *v){
 	lVal *arr = lEval(c,lCarOrV(v));
 	if((arr == NULL) || (arr->type != ltArray)){return NULL;}
 	v = v->vList.cdr;
-	const lVal *lkey = lnfInt(c,lEval(c, lCarOrV(v)));
+	if(v == NULL){return arr;}
+	lVal *t = lEval(c, lCarOrV(v));
+	if(t == NULL){return NULL;}
+	if((t->type != ltInt) && (t->type != ltFloat)){return NULL;}
+	const lVal *lkey = lnfInt(c,t);
 	if(lkey == NULL){return NULL;}
 	int key = lkey->vInt;
+	if((key < 0) || (key >= arr->vArr->length)){return NULL;}
 	v = v->vList.cdr;
 	forEach(cur,v){
-		if(key >= arr->vArr->length){return NULL;}
 		arr->vArr->data[key++] = lEval(c,lCarOrV(cur));
+		if(key >= arr->vArr->length){return NULL;}
 	}
 	return arr->vArr->data[key];
 }

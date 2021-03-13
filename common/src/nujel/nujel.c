@@ -456,7 +456,11 @@ static lVal *lnfSymCount(lClosure *c, lVal *v){
 }
 
 static lVal *lnfBegin(lClosure *c, lVal *v){
-	return lLastCar(lApply(c,v,lEval));
+	lVal *ret = NULL;
+	forEach(n,v){
+		ret = lEval(c,n->vList.car);
+	}
+	return ret;
 }
 
 static lVal *lnfCl(lClosure *c, lVal *v){
