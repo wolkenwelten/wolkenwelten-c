@@ -267,6 +267,7 @@ test_sexpr "(define test #(1 2 3)) (test)" "#(1 2 3)"
 test_sexpr "(define test #(1 2 3)) (test #t)" ""
 test_sexpr "(define test #(1 2 3)) (test (vec 1 2 3))" ""
 test_sexpr "(define test #(1 2 3)) (test 2.2)" "3"
+test_sexpr "(define i-assaultmegablaster 123) i-assaultmegablaster" "123"
 
 #test_sexpr "π" "3.14159" Doesnt work on windows, why?
 print_report

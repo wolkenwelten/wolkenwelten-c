@@ -16,7 +16,7 @@
 	(recipes (obj id) obj)))
 
 (define recipe-sync-all (λ (i) "Syncs all Recipes with their respective ω"
-	(cond ((nil? (recipes i)) #t)
+	(cond ((nil? (recipes (int i))) #t)
 	      (#t (recipe-sync (recipes i)) (recipe-sync-all (+ i 1))))))
 
 

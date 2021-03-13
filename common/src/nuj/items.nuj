@@ -26,7 +26,7 @@
 	(items (- (obj id) 256) obj)))
 
 (define item-sync-all (λ (i) "Syncs all itemTypes with their respective ω"
-	(cond ((nil? (items i)) #t)
+	(cond ((nil? (items (int i))) #t)
 	      (#t (item-sync (items i)) (item-sync-all (+ i 1))))))
 
 (define item-primary (λ (id) "Evaluates the primary callback of item ID"
@@ -587,5 +587,4 @@
 
 (event-bind "on-init" (λ () ""
 	(item-sync-all)
-	(log (ansi-green "Items initialized"))
-))
+	(log (ansi-green "Items initialized"))))
