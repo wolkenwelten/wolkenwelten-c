@@ -175,7 +175,6 @@ void mainInit(){
 	chunkInit();
 	lispInit();
 	itemTypeInit();
-	modsInit();
 	lispEval("(event-fire \"on-init\")");
 	savegameSave();
 

@@ -19,6 +19,7 @@
 #include "../main.h"
 #include "../game/beamblast.h"
 #include "../game/character.h"
+#include "../game/fire.h"
 #include "../game/grenade.h"
 #include "../game/projectile.h"
 #include "../game/recipe.h"
@@ -501,6 +502,23 @@ static lVal *wwlnfProjectile(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfFireNew(lClosure *c, lVal *v){
+	vec pos = vecNOne();
+	int str = 8;
+
+	getLArgV(pos);
+	getLArgI(str);
+
+	if(vecInWorld(pos)){fireNew(pos.x,pos.y,pos.z,str);}
+	return NULL;
+}
+
+static lVal *wwlnfRaycast(lClosure *c, lVal *v){
+	bool before = false;
+	getLArgB(before);
+	return lValVec(vecNewI(characterLOSBlock(player,before)));
+}
+
 void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",        "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",               "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
@@ -541,13 +559,14 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"recoil",         "(&rec)",           "Adds recoil to the player of &REC=1.0",                          wwlnfRecoil);
 	lAddNativeFunc(c,"r-result",       "(id result amt)",  "Set the result of recipe ID to AMT times RESULT.",               wwlnfRResult);
 	lAddNativeFunc(c,"r-ingred",       "(id i ingred amt)","Set the ingredient I of recipe ID to AMT times INGRED.",         wwlnfRIngred);
-
 	lAddNativeFunc(c,"aiming?",        "()",               "Predicate that evaluates to #t when the player is aiming.",      wwlnfAimingPred);
 	lAddNativeFunc(c,"throwing?",      "()",               "Predicate that evaluates to #t when the player is throw-aiming.",wwlnfThrowingPred);
 	lAddNativeFunc(c,"throw-item",     "(flags &force &amount)", "Throw the currently held item with FLAGS, &FORCE=0.1 and &AMOUNT=1",wwlnfThrowItem);
 	lAddNativeFunc(c,"try-to-shoot",   "(cd ammo)",        "Try to shoot and cooldown for CD and use AMMO bullets"          ,wwlnfTryToShoot);
 	lAddNativeFunc(c,"beamblast",      "(size damage recoil hits-left shots inacc-inc inacc-mult)", "Calls cFunc beamblast", wwlnfBeamblast);
 	lAddNativeFunc(c,"projectile",     "(&type &num)",      "Fire &NUM=1 projectiles of &TYPE=0",                            wwlnfProjectile);
+	lAddNativeFunc(c,"fire-new",       "(pos &strength)",   "Create/Grow a fire at POS with &STRENGTH=8",                    wwlnfFireNew);
+	lAddNativeFunc(c,"player-raycast", "(beforeBlock)",     "Return the position of the first intersection, or before if BEFOREBLOCK is #t", wwlnfRaycast);
 }
 
 void lispInit(){

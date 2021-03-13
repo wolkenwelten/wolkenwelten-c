@@ -92,7 +92,6 @@ bool characterTryToShoot     (      character *c, item *i, int cooldown, int bul
 bool characterTryToUse       (      character *c, item *i, int cooldown, int itemcount);
 bool characterPlaceBlock     (      character *c, item *i);
 void characterStartAnimation (      character *c, int index, int duration);
-ivec characterLOSBlock       (const character *c, int returnBeforeBlock);
 character *characterGetByBeing(being b);
 being      characterGetBeing (const character *c);
 int  characterHitCheck       (const vec pos, float mdd, int damage, int cause, u16 iteration, being source);

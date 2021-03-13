@@ -302,7 +302,7 @@ void characterSwapItemSlots(character *c, uint a,uint b){
 	c->inventory[b] = tmp;
 }
 
-ivec characterLOSBlock(const character *c, int returnBeforeBlock) {
+ivec characterLOSBlock(const character *c, bool returnBeforeBlock) {
 	const vec cv = vecMulS(vecDegToVec(c->rot),0.0625f);
 	vec       cp = vecAdd(c->pos,vecNew(0,0.5,0));
 	ivec      l  = ivecNewV(cp);
@@ -312,10 +312,7 @@ ivec characterLOSBlock(const character *c, int returnBeforeBlock) {
 		const ivec ip = ivecNewV(cp);
 		if(!ivecEq(ip,l)){
 			if(worldGetB(ip.x,ip.y,ip.z) > 0){
-				if(returnBeforeBlock){
-					return l;
-				}
-				return ip;
+				return returnBeforeBlock ? l : ip;
 			}
 			l = ip;
 		}

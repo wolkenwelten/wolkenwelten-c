@@ -441,6 +441,11 @@
 	(define sym 'i-flintandsteel)
 	(define stack-size 1)
 	(define name "Flint and Steel")
+	(define primary (λ ()
+		(cond ((throwing?) (throw-item throw-spin))
+		      ((try-to-use 200 0) (add-cooldown 200) (start-anim 3 600) (fire-new (player-raycast 0) 8) #t) (#t #t))))
+	(define secondary (λ ()
+		(cond ((try-to-use 200 0) (add-cooldown 200) (start-anim 3 600) (fire-new (player-raycast 1) 8) #t) (#t #f))))
 	(define mesh 'm-flintandsteel))))
 
 (define i-flamethrower)
@@ -500,6 +505,11 @@
 	(define sym 'i-flamestick)
 	(define stack-size 1)
 	(define name "Flamestick")
+	(define primary (λ ()
+		(cond ((throwing?) (throw-item throw-spin))
+		      ((try-to-use 200 0) (add-cooldown 200) (start-anim 3 600) (fire-new (player-raycast 0) 8) #t) (#t #t))))
+	(define secondary (λ ()
+		(cond ((try-to-use 200 0) (add-cooldown 200) (start-anim 3 600) (fire-new (player-raycast 1) 8) #t) (#t #f))))
 	(define mesh 'm-flamestick))))
 
 (define i-waterthrower)
