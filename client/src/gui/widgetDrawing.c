@@ -73,8 +73,8 @@ void widgetDrawPopups(textMesh *m){
 		default:
 			break;
 		case wRecipeSlot: {
-			const item recipe = recipeGetResult(qe->wid->valu);
-			widgetDrawPopupItemSlot(m,&recipe,qe->x,qe->y,qe->w,qe->h);
+			const item recipeRes = recipeGetResult(qe->wid->valu);
+			widgetDrawPopupItemSlot(m,&recipeRes,qe->x,qe->y,qe->w,qe->h);
 			break; }
 		case wItemSlot: {
 			const item *itm = qe->wid->valItem;
@@ -485,7 +485,7 @@ static void widgetDrawItemSlot(const widget *wid, textMesh *m, int x, int y, int
 
 static void widgetDrawRecipeSlot(const widget *wid, textMesh *m, int x, int y, int w, int h){
 	int style = 0;
-	const item recipe = recipeGetResult(wid->valu);
+	const item recipeRes = recipeGetResult(wid->valu);
 	i16 a = recipeCanCraft(player,wid->valu);
 	if(a == 0){
 		style = 2;
@@ -494,7 +494,7 @@ static void widgetDrawRecipeSlot(const widget *wid, textMesh *m, int x, int y, i
 		style = 1;
 		widgetAddPopup(wid,x,y,w,h);
 	}
-	textMeshItemSlot(m,x,y,MIN(w,h),style,recipe.ID,a);
+	textMeshItemSlot(m,x,y,MIN(w,h),style,recipeRes.ID,a);
 }
 
 static void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, int w, int h){
