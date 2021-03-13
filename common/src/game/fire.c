@@ -17,9 +17,10 @@
 
 #include "fire.h"
 
-#include "../mods/api_v1.h"
 #include "../game/being.h"
-#include "../../../common/src/network/messages.h"
+#include "../game/item.h"
+#include "../network/messages.h"
+#include "../world/world.h"
 
 fire fireList[1<<14];
 uint fireCount = 0;

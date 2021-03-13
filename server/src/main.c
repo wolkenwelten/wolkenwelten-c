@@ -44,7 +44,6 @@
 #include "../../common/src/misc/misc.h"
 #include "../../common/src/misc/profiling.h"
 #include "../../common/src/misc/test.h"
-#include "../../common/src/mods/mods.h"
 #include "../../common/src/game/blockType.h"
 #include "../../common/src/game/projectile.h"
 

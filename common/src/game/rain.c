@@ -18,10 +18,11 @@
 #include "rain.h"
 
 #include "../asm/asm.h"
+#include "../game/fire.h"
 #include "../game/weather.h"
 #include "../misc/profiling.h"
-#include "../mods/api_v1.h"
 #include "../network/messages.h"
+#include "../world/world.h"
 
 __attribute__((aligned(32))) glRainDrop glRainDrops[RAIN_MAX+4];
 __attribute__((aligned(32)))   rainDrop   rainDrops[RAIN_MAX+4];

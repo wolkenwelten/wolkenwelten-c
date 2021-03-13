@@ -24,7 +24,6 @@
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/nujel/nujel.h"
-#include "../../../common/src/mods/mods.h"
 
 #include <stdarg.h>
 #include <stdio.h>

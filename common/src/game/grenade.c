@@ -20,7 +20,6 @@
 #include "../game/animal.h"
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../mods/api_v1.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/network/messages.h"
 

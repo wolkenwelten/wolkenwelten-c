@@ -49,11 +49,11 @@
 #include "../network/chat.h"
 #include "../network/client.h"
 #include "../sdl/sdl.h"
+#include "../tmp/objs.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
-#include "../../../common/src/mods/mods.h"
 #include "../../../common/src/tmp/cto.h"
 
 #include <ctype.h>

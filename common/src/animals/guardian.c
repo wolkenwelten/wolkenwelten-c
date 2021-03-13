@@ -21,10 +21,10 @@
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/item.h"
+#include "../game/itemDrop.h"
 #include "../game/projectile.h"
 #include "../network/messages.h"
 #include "../misc/misc.h"
-#include "../mods/api_v1.h"
 
 #include <math.h>
 

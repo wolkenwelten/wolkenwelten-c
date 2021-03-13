@@ -21,7 +21,7 @@ wolkenwelten-server: LIBS      += $(SERVER_LIBS)
 wolkenwelten-server: server/make.deps $(SERVER_OBJS) $(ASM_OBJS)
 	$(LD) $(SERVER_OBJS) $(ASM_OBJS) -g -o wolkenwelten-server $(OPTIMIZATION) $(LDFLAGS) $(CINCLUDES) $(LIBS)
 
-$(SERVER_DEPS): | common/src/tmp/cto.h server/src/tmp/objs.h server/src/tmp/sfx.h server/src/tmp/mods_tmp.c server/src/tmp/assets.h
+$(SERVER_DEPS): | common/src/tmp/cto.h server/src/tmp/objs.h server/src/tmp/sfx.h server/src/tmp/assets.h
 .deps: server/make.deps
 server/make.deps: $(SERVER_DEPS)
 	cat $(SERVER_DEPS) > server/make.deps
@@ -46,14 +46,6 @@ server/src/tmp/objs.c: server/tools/objgen
 	mkdir -p server/src/tmp/
 	server/tools/objgen server/src/tmp/objs client/mesh/
 server/src/tmp/objs.h: server/src/tmp/objs.c
-	@true
-
-server/src/tmp/mods_tmp.o: server/src/tmp/mods_tmp.c
-server/src/tmp/mods_tmp.c: $(MODS_SRCS)
-server/src/tmp/mods_tmp.c: tools/modscg
-	mkdir -p server/src/tmp/
-	tools/modscg $(shell find common/src/mods/items -type f -name '*.c') > server/src/tmp/mods_tmp.c
-server/src/tmp/mods_tmp.h: server/src/tmp/mods_tmp.c
 	@true
 
 server/src/tmp/assets.c: tools/assets $(SERVER_ASSETS)

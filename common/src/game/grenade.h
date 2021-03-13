@@ -18,3 +18,5 @@ being    grenadeGetBeing         (const grenade *g);
 
 void     grenadeNew              (const vec pos, const vec rot, float pwr, int cluster, float clusterPwr);
 void     grenadeUpdateAll        ();
+
+void     explode                 (const vec pos, float pw, int style);

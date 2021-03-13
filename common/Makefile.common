@@ -1,5 +1,4 @@
 ARCH             := $(shell uname -m)
-MODS_SRCS        := $(shell find common/src/mods -type f -name '*.c')
 NUJ_STDLIB       := $(shell find common/src/nujel/stdlib/ -type f -name '*.nuj' | sort)
 NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj' | sort)
 NUJ_SAOLIB       := $(shell find common/nujel/lib/ -type f -name '*.nuj' | sort)
@@ -82,7 +81,7 @@ clean:
 	rm -f client/sfx/*.ogg
 	rm -f $(shell find client/src common/src server/src -type f -name '*.o')
 	rm -f $(shell find client/src common/src server/src -type f -name '*.deps')
-	rm -f wolkenwelten wolkenwelten.exe wolkenwelten-server wolkenwelten-server.exe tools/modscg.exe tools/modscg
+	rm -f wolkenwelten wolkenwelten.exe wolkenwelten-server wolkenwelten-server.exe
 	rm -f server/make.deps client/make.deps common/make.deps
 	rm -rf client/src/tmp server/src/tmp common/src/tmp web/releases releases
 
@@ -119,9 +118,6 @@ sanitize: all
 archive:
 	git archive --format=tar --prefix=wolkenwelten-HEAD.tar.gz/ HEAD | gzip > wolkenwelten-HEAD.tar.gz
 
-
-tools/modscg: tools/modscg.c
-	$(CC) -Os $(CFLAGS) $(CSTD) $< -o $@
 
 common/src/tmp/cto.c: tools/infogen
 	mkdir -p common/src/tmp/

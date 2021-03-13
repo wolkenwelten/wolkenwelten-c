@@ -64,8 +64,6 @@ platform/win_cross/pkgs/mingw-w64-sdl2/*
 /client/tools/objparser
 /tools/assets
 /tools/assets.exe
-/tools/modscg
-/tools/modscg.exe
 /client/src/shader/*.h
 /common/src/tmp/
 /client/src/tmp/

@@ -19,9 +19,10 @@
 
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../../../common/src/mods/mods.h"
-#include "../../../common/src/misc/misc.h"
-#include "../../../common/src/network/messages.h"
+#include "../game/item.h"
+#include "../misc/misc.h"
+#include "../network/messages.h"
+#include "../world/world.h"
 
 #include <math.h>
 #include <stdio.h>

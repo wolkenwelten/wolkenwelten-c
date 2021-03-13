@@ -18,9 +18,9 @@
 #include "character.h"
 #include "../game/item.h"
 #include "../game/hook.h"
-#include "../mods/api_v1.h"
-#include "../mods/mods.h"
+#include "../misc/sfx.h"
 #include "../network/messages.h"
+#include "../world/world.h"
 
 #include <stdio.h>
 #include <stddef.h>

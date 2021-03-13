@@ -21,8 +21,11 @@
 #include "../game/blockType.h"
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../mods/api_v1.h"
+#include "../misc/effects.h"
+#include "../misc/mesh.h"
 #include "../misc/misc.h"
+#include "../misc/sfx.h"
+#include "../world/world.h"
 #include "../../../common/src/game/rope.h"
 
 #include <math.h>
@@ -31,6 +34,7 @@
 
 hook hookList[128];
 uint hookCount = 0;
+
 
 hook *hookNew(character *p){
 	hook *ghk = NULL;

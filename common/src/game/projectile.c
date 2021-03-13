@@ -22,9 +22,9 @@
 #include "../game/character.h"
 #include "../game/fire.h"
 #include "../misc/profiling.h"
-#include "../mods/api_v1.h"
 #include "../network/packet.h"
 #include "../network/messages.h"
+#include "../world/world.h"
 
 #include <math.h>
 

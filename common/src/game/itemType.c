@@ -16,7 +16,7 @@
  */
 #include "itemType.h"
 
-#include "../mods/api_v1.h"
+#include "../misc/mesh.h"
 #include "../nujel/casting.h"
 
 #include <stdio.h>

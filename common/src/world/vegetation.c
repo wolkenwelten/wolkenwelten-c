@@ -17,7 +17,8 @@
 
 #include "vegetation.h"
 
-#include "../mods/api_v1.h"
+#include "world.h"
+#include "../game/item.h"
 #include "../network/messages.h"
 
 static void vegSetB(u16 x, u16 y, u16 z, u8 b){

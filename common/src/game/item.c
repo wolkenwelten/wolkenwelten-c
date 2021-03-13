@@ -17,11 +17,14 @@
 #include "item.h"
 
 #include "../game/blockType.h"
+#include "../game/character.h"
 #include "../game/itemType.h"
+#include "../game/throwable.h"
+#include "../misc/mesh.h"
 #include "../misc/lisp.h"
-#include "../mods/mods.h"
 
 #include <stddef.h>
+
 
 item itemNew(u16 ID, i16 amount){
 	item i;

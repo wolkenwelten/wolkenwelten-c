@@ -11,6 +11,7 @@ void itemDropDel              (uint d);
 void itemDropDelChungus       (const chungus *c);
 void itemDropUpdateAll        ();
 void itemDropEmptyMsg         (uint c, uint i);
+void itemDropNewP             (const vec pos,const item *itm);
 
 itemDrop *itemDropGetByBeing  (being b);
 being     itemDropGetBeing    (const itemDrop *id);

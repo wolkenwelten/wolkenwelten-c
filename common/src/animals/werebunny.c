@@ -22,10 +22,11 @@
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/item.h"
+#include "../game/itemDrop.h"
 #include "../game/time.h"
 #include "../misc/misc.h"
 #include "../network/messages.h"
-#include "../mods/api_v1.h"
+#include "../world/world.h"
 
 #include <stdio.h>
 #include <math.h>

@@ -17,8 +17,8 @@
 
 #include "entity.h"
 
-#include "../mods/api_v1.h"
 #include "../misc/profiling.h"
+#include "../world/world.h"
 
 #include <string.h>
 #include <math.h>

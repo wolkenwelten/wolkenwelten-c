@@ -18,13 +18,15 @@
 #include "lisp.h"
 
 #include "../asm/asm.h"
+#include "../game/grenade.h"
+#include "../game/item.h"
+#include "../game/itemDrop.h"
 #include "../game/itemType.h"
 #include "../game/weather.h"
 #include "../nujel/nujel.h"
 #include "../nujel/arithmetic.h"
 #include "../nujel/casting.h"
 #include "../nujel/reader.h"
-#include "../mods/api_v1.h"
 #include "../misc/profiling.h"
 #include "../tmp/assets.h"
 

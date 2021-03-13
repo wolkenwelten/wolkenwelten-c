@@ -61,7 +61,6 @@
 #include "../../common/src/game/itemType.h"
 #include "../../common/src/misc/test.h"
 #include "../../common/src/misc/misc.h"
-#include "../../common/src/mods/mods.h"
 
 #include <math.h>
 #include <stdio.h>

@@ -21,13 +21,14 @@
 #include "../animals/guardian.h"
 #include "../animals/werebunny.h"
 #include "../game/being.h"
+#include "../game/blockType.h"
 #include "../game/character.h"
 #include "../game/fire.h"
 #include "../game/rope.h"
 #include "../game/time.h"
 #include "../misc/profiling.h"
-#include "../mods/api_v1.h"
 #include "../network/messages.h"
+#include "../world/world.h"
 
 #include <stdio.h>
 #include <string.h>

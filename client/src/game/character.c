@@ -21,6 +21,8 @@
 #include "../game/animal.h"
 #include "../game/blockType.h"
 #include "../game/itemDrop.h"
+#include "../game/projectile.h"
+#include "../game/throwable.h"
 #include "../gfx/effects.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
@@ -37,13 +39,13 @@
 #include "../sdl/input_gamepad.h"
 #include "../sdl/sdl.h"
 #include "../sdl/sfx.h"
+#include "../tmp/objs.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/game/hook.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/game/weather.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
-#include "../../../common/src/mods/mods.h"
 #include "../../../common/src/network/messages.h"
 
 #include <stdio.h>

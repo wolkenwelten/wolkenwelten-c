@@ -27,7 +27,6 @@
 #include "../gfx/textMesh.h"
 #include "../sdl/sdl.h"
 #include "../../../common/src/game/item.h"
-#include "../../../common/src/mods/mods.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/game/item.h"
 

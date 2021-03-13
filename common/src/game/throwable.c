@@ -19,10 +19,13 @@
 
 #include "entity.h"
 #include "../game/animal.h"
+#include "../game/blockType.h"
+#include "../game/character.h"
 #include "../game/item.h"
+#include "../game/itemDrop.h"
 #include "../network/messages.h"
-#include "../mods/mods.h"
 #include "../misc/profiling.h"
+#include "../world/world.h"
 
 throwable throwableList[2048];
 uint      throwableCount = 0;
