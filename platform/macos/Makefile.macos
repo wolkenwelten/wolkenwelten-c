@@ -3,7 +3,7 @@ CC               := clang
 LD               := clang
 
 CLIENT_LIBS      :=-F /Library/Frameworks -framework SDL2 -framework SDL2_mixer -framework OpenGL
-CFLAGS           += -mmacosx-version-min=10.10 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.10.sdk
+CFLAGS           += -DGL_SILENCE_DEPRECATION
 CLIENT_CINCLUDES := -I/usr/local/include/ -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_mixer.framework/Headers
 
 OSX_APP          := releases/macos/wolkenwelten-$(VERSION_NAME).app
@@ -13,6 +13,11 @@ all: wolkenwelten wolkenwelten-server
 
 .PHONY: release.macos
 release: release.macos
+
+# Assemble empty object files, easier than removing the deps which wont assemble due to
+# clang as missing --defsym support
+%.o: %.s
+	$(AS) -c -o $@ -- < /dev/null
 
 release.macos: releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz
 releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz: $(OSX_APP)/Contents/Info.plist
