@@ -202,7 +202,6 @@ void calcView(const character *cam){
 }
 
 void renderWorld(const character *cam){
-	(void)cam;
 	worldDraw(cam);
 	blockMiningDraw();
 	animalDrawAll();
@@ -211,12 +210,12 @@ void renderWorld(const character *cam){
 	characterDrawConsHighlight(cam);
 	cloudsRender();
 	rainDrawAll();
+	shadowDraw();
 
 	projectileDrawAll();
 	fireDrawAll();
 	particleDraw();
 
-	shadowDraw();
 	ropeDrawAll();
 }
 
