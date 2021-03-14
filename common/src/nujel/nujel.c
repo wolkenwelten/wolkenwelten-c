@@ -58,7 +58,20 @@ char dispWriteBuf[1<<16];
 lSymbol symQuote,symArr;
 
 
+u64 randomValueSeed;
+static inline u64 getRandom(){
+	randomValueSeed = ((randomValueSeed * 1103515245)) + 12345;
+	return ((randomValueSeed&0xFFFF)<<16) | ((randomValueSeed>>16)&0xFFFF);
+}
+
+static uint getMSecs(){
+	struct timespec tv;
+	clock_gettime(CLOCK_MONOTONIC,&tv);
+	return (tv.tv_nsec / 1000000) + (tv.tv_sec * 1000);
+}
+
 void lInit(){
+	randomValueSeed = getMSecs();
 	strncpy(symQuote.c,"quote",15);
 	symQuote.c[15] = 0;
 	strncpy(symArr.c,"arr",15);
@@ -738,10 +751,23 @@ static lVal *lnfLastPair(lClosure *c, lVal *v){
 	return NULL;
 }
 
-static uint getMSecs(){
-	struct timespec tv;
-	clock_gettime(CLOCK_MONOTONIC,&tv);
-	return (tv.tv_nsec / 1000000) + (tv.tv_sec * 1000);
+static lVal *lnfRandom(lClosure *c, lVal *v){
+	int n = 0;
+	getLArgI(n);
+	if(n == 0){
+		return lValInt(getRandom());
+	}else{
+		return lValInt(getRandom() % n);
+	}
+}
+
+static lVal *lnfRandomSeed(lClosure *c, lVal *v){
+	if(v != NULL){
+		int n = 0;
+		getLArgI(n);
+		randomValueSeed = n;
+	}
+	return lValInt(randomValueSeed);
 }
 
 static lVal *lnfMsecs(lClosure *c, lVal *v){
@@ -914,7 +940,9 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"vec",  "(a)","Casts a to vec",   lnfVec);
 	lAddNativeFunc(c,"str",  "(a)","Casts a to string",lnfCat);
 
-	lAddNativeFunc(c,"msecs","()","Returns monotonic msecs",lnfMsecs);
+	lAddNativeFunc(c,"msecs", "()","Returns monotonic msecs",lnfMsecs);
+	lAddNativeFunc(c,"random","(&n)","Retur a random value from 0 to &N, if &N is #nil then return a random value up to INT_MAX",lnfRandom);
+	lAddNativeFunc(c,"random-seed","(seed)","Sets the RNG Seed to SEED",lnfRandomSeed);
 
 	lAddNativeFunc(c,"ansi-reset","()",  "Ansi reset code",                 lnfAnsiRS);
 	lAddNativeFunc(c,"ansi-fg",   "(a)", "Returns Ansi fg color code for a",lnfAnsiFG);

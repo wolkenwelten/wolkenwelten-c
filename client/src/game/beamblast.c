@@ -25,7 +25,7 @@
 
 #include <math.h>
 
-void singleBeamblast(character *ent, const vec start, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){
+void singleBeamblast(const vec start, const vec rot, float beamSize, float damageMultiplier, int hitsLeft){
 	static u16 iteration = 0;
 
 	vec pos         = start;
@@ -55,13 +55,9 @@ void singleBeamblast(character *ent, const vec start, const vec rot, float beamS
 	}
 	fxBeamBlaster(start,pos,beamSize,damageMultiplier);
 	msgFxBeamBlaster(0,start,pos,beamSize,damageMultiplier);
-
-	recoilMultiplier /= 1.f + (ent->aimFade * ent->zoomFactor);
-	ent->vel = vecAdd(ent->vel, vecMulS(vel,-0.75f*recoilMultiplier));
-	ent->rot = vecAdd(ent->rot, vecNew((rngValf()-0.5f) * 64.f * recoilMultiplier, (rngValf()-.8f) * 64.f * recoilMultiplier, 0.f));
 }
 
-void beamblast(character *ent, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft, int shots, float inaccuracyInc, float inaccuracyMult){
+void beamblast(character *ent, float beamSize, float damageMultiplier, int hitsLeft){
 	const float mx =  1.f - ent->aimFade;
 	const float mz = -1.f;
 	vec pos = ent->pos;
@@ -69,11 +65,8 @@ void beamblast(character *ent, float beamSize, float damageMultiplier, float rec
 	pos.y += (sinf(ent->rot.pitch*PI/180)*mz);
 	pos.z += ((sinf((ent->rot.yaw+90.f)*PI/180) * cosf(ent->rot.pitch*PI/180))*mz) + sinf((ent->rot.yaw)*PI/180)*mx;
 
-	for(int i=shots;i>0;i--){
-		const float inacc = MIN(96.f,(ent->inaccuracy*inaccuracyMult)) / (1.f + (ent->aimFade * ent->zoomFactor));
-		const float yaw   = ent->rot.yaw   + (rngValf()-0.5f)*inacc;
-		const float pitch = ent->rot.pitch + (rngValf()-0.5f)*inacc;
-		singleBeamblast(ent, pos, vecNew(yaw, pitch, 0.f), beamSize, damageMultiplier, recoilMultiplier, hitsLeft);
-	}
-	characterAddInaccuracy(ent,inaccuracyInc);
+	const float inacc = MIN(96.f,(ent->inaccuracy)) / (1.f + (ent->aimFade * ent->zoomFactor));
+	const float yaw   = ent->rot.yaw   + (rngValf()-0.5f)*inacc;
+	const float pitch = ent->rot.pitch + (rngValf()-0.5f)*inacc;
+	singleBeamblast(pos, vecNew(yaw, pitch, 0.f), beamSize, damageMultiplier, hitsLeft);
 }

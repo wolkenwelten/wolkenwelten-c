@@ -146,6 +146,10 @@ void characterSetVelocity(character *c, const vec vel){
 	c->vel = vel;
 }
 
+void characterSetInaccuracy(character *c, float inacc){
+	c->inaccuracy = inacc;
+}
+
 void characterAddInaccuracy(character *c, float inc){
 	c->inaccuracy += inc;
 }
@@ -399,8 +403,13 @@ void characterRotate(character *c, const vec rot){
 	}
 }
 
+void characterStopAnimation(character *c){
+	c->animationIndex     = 0;
+	c->animationTicksLeft = 0;
+}
+
 void characterStartAnimation(character *c, int index, int duration){
-	c->animationIndex = index;
+	c->animationIndex     = index;
 	c->animationTicksLeft = c->animationTicksMax = duration;
 }
 

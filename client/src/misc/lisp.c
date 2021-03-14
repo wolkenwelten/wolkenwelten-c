@@ -37,6 +37,7 @@
 #include "../sdl/sdl.h"
 #include "../sdl/sfx.h"
 #include "../tmp/assets.h"
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
@@ -330,6 +331,12 @@ static lVal *wwlnfStartAnim(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfStopAnim(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	characterStopAnimation(player);
+	return NULL;
+}
+
 static lVal *wwlnfGrenadeNew(lClosure *c, lVal *v){
 	vec pos          = player->pos;
 	vec rot          = player->rot;
@@ -375,7 +382,7 @@ static lVal *wwlnfToggleAim(lClosure *c, lVal *v){
 static lVal *wwlnfInaccuracy(lClosure *c, lVal *v){
 	float inacc = -1024.f;
 	getLArgF(inacc);
-	if(inacc > -1024.f){characterAddInaccuracy(player,inacc);}
+	if(inacc > -1024.f){characterSetInaccuracy(player,inacc);}
 	return lValFloat(player->inaccuracy);
 }
 
@@ -472,22 +479,14 @@ static lVal *wwlnfTryToShoot(lClosure *c, lVal *v){
 
 static lVal *wwlnfBeamblast(lClosure *c, lVal *v){
 	float beamSize = 1.f;
-	float damage = 8.f;
-	float recoil = 0.05f;
-	int hitsLeft = 3;
-	int shots = 1;
-	float inaccuracyInc = 2.f;
-	float inaccuracyMult = 1.f;
+	float damage   = 8.f;
+	int hitsLeft   = 3;
 
 	getLArgF(beamSize);
 	getLArgF(damage);
-	getLArgF(recoil);
 	getLArgI(hitsLeft);
-	getLArgI(shots);
-	getLArgF(inaccuracyInc);
-	getLArgF(inaccuracyMult);
 
-	beamblast(player,beamSize,damage,recoil,hitsLeft,shots,inaccuracyInc,inaccuracyMult);
+	beamblast(player,beamSize,damage,hitsLeft);
 	return NULL;
 }
 
@@ -519,6 +518,21 @@ static lVal *wwlnfRaycast(lClosure *c, lVal *v){
 	return lValVec(vecNewI(characterLOSBlock(player,before)));
 }
 
+static lVal *wwlnfPlayerInventory(lClosure *c, lVal *v){
+	int slot   = -1;
+	int itemID = -1;
+	int amount = -1;
+
+	getLArgI(slot);
+	getLArgI(itemID);
+	getLArgI(amount);
+	if(slot < 0){return NULL;}
+	if((itemID > 0) && (amount > 0)){
+		player->inventory[slot] = itemNew(itemID,amount);
+	}
+	return lValInt(player->inventory[slot].ID);
+}
+
 void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",        "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",               "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
@@ -547,10 +561,12 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)",    "Plays SFX S with volume &VOL=1.0 as if emitting from &POS.",     wwlnfSfxPlay);
 	lAddNativeFunc(c,"screenshot",     "()",               "Takes a screeshot",                                              wwlnfScreenshot);
 	lAddNativeFunc(c,"fire-hook",      "()",               "Fires the players Grappling hook, or retracts it if fired",      wwlnfFireHook);
-	lAddNativeFunc(c,"inv-active-slot","(i)",              "Sets the players active item to i",                              wwlnfInvActiveSlot);
+	lAddNativeFunc(c,"inv-active-slot","(&i)",             "Get/Set the players active slot to I",                           wwlnfInvActiveSlot);
+	lAddNativeFunc(c,"player-inv",     "(i &id &amount)",  "Get/Set the players invetory slot I to &ID and &AMOUNT",         wwlnfPlayerInventory);
 	lAddNativeFunc(c,"server-path",    "()",               "Returns the path to the server executable, if found.",           wwlnfServerExecutable);
 	lAddNativeFunc(c,"try-to-use",     "(&ms &amount)",    "Try to use &AMOUNT=1 and wait for &MS=200.",                     wwlnfTryToUse);
 	lAddNativeFunc(c,"start-anim",     "(id ms)",          "Starts animation &ID=0 for &MS=200",                             wwlnfStartAnim);
+	lAddNativeFunc(c,"stop-anim" ,     "()",               "Stops any animation that is currently playing",                  wwlnfStopAnim);
 	lAddNativeFunc(c,"grenade-new",    "(pos rot pwr cluster clusterpwr)", "Creates a new grenade a POS moving into ROT creating an explosion of size PWR and then splitting into CLUSTER grenades with a power of CLUSTERPWR.", wwlnfGrenadeNew);
 	lAddNativeFunc(c,"try-to-throw",   "()",               "Try to switch into a throwing mode for the currently held item", wwlnfTryToThrow);
 	lAddNativeFunc(c,"item-reload",    "(&ms)",            "Reloads the currently held item in &MS=200.",                    wwlnfItemReload);
@@ -563,7 +579,7 @@ void addClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"throwing?",      "()",               "Predicate that evaluates to #t when the player is throw-aiming.",wwlnfThrowingPred);
 	lAddNativeFunc(c,"throw-item",     "(flags &force &amount)", "Throw the currently held item with FLAGS, &FORCE=0.1 and &AMOUNT=1",wwlnfThrowItem);
 	lAddNativeFunc(c,"try-to-shoot",   "(cd ammo)",        "Try to shoot and cooldown for CD and use AMMO bullets"          ,wwlnfTryToShoot);
-	lAddNativeFunc(c,"beamblast",      "(size damage recoil hits-left shots inacc-inc inacc-mult)", "Calls cFunc beamblast", wwlnfBeamblast);
+	lAddNativeFunc(c,"beamblast",      "(size damage hits-left)", "Calls cFunc beamblast",                                   wwlnfBeamblast);
 	lAddNativeFunc(c,"projectile",     "(&type &num)",      "Fire &NUM=1 projectiles of &TYPE=0",                            wwlnfProjectile);
 	lAddNativeFunc(c,"fire-new",       "(pos &strength)",   "Create/Grow a fire at POS with &STRENGTH=8",                    wwlnfFireNew);
 	lAddNativeFunc(c,"player-raycast", "(beforeBlock)",     "Return the position of the first intersection, or before if BEFOREBLOCK is #t", wwlnfRaycast);

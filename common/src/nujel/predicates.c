@@ -39,14 +39,14 @@ static int lValCompare(lClosure *c, lVal *v){
 	case ltInt:
 		a = lnfInt(c,a);
 		b = lnfInt(c,b);
-		if((a == NULL) || (b == NULL)){return 2;}
-		if(b->vInt == a->vInt)     {return  0;}
-		else if(a->vInt  < b->vInt){return -1;}
+		if((a == NULL) || (b == NULL)){return  2;}
+		if(b->vInt == a->vInt)        {return  0;}
+		else if(a->vInt  < b->vInt)   {return -1;}
 		return 1;
 	case ltFloat:
 		a = lnfFloat(c,a);
 		b = lnfFloat(c,b);
-		if((a == NULL) || (b == NULL)){return 2;}
+		if((a == NULL) || (b == NULL)) {return  2;}
 		if(b->vFloat == a->vFloat)     {return  0;}
 		else if(a->vFloat  < b->vFloat){return -1;}
 		return 1;

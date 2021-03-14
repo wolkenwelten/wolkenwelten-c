@@ -15,6 +15,9 @@
 (define neg? (λ (a) "Returns #t if a is negative"
 	(< a 0)))
 
+(define ineq? (λ (a b) "Returns #t a does not equal b"
+	(not (eq? a b))))
+
 (define there-exists? (λ (l pred) "Applies predicate to each element and return #t if it holds true for any element, otherwise #f"
 	(cond ((nil? l) #f)
 	      ((pred (car l)) #t)

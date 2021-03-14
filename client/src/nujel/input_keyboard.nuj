@@ -64,7 +64,7 @@
 (input-keydown key-f10 (λ (code) (wire-frame! (not (wire-frame!)))))
 (unless (eq? OS "Emscripten") (input-keydown key-f11 (λ (code) (fullscreen! (not (fullscreen!))) (save-options))))
 
-(define inv-active-kh (λ (code) "Sets the players active item depending on the keycode passed" (inv-active-slot (- code 30))))
+(define inv-active-kh (λ (code) "Sets the players active item depending on the keycode passed" (inv-active-slot (- code 30)) (stop-anim)))
 (input-keydown key-1 inv-active-kh)
 (input-keydown key-2 inv-active-kh)
 (input-keydown key-3 inv-active-kh)
