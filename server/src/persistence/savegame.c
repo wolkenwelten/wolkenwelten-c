@@ -35,6 +35,7 @@
 #include "../../../common/src/game/weather.h"
 #include "../../../common/src/misc/lz4.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -179,6 +180,7 @@ void chungusSave(chungus *c){
 	return;
 	#endif
 	if(c == NULL){ return; }
+	PROFILE_START();
 	if(saveLoadBuffer == NULL)  { saveLoadBuffer   = malloc(4100*4096); }
 	if(compressedBuffer == NULL){ compressedBuffer = malloc(4100*4096); }
 
@@ -199,12 +201,14 @@ void chungusSave(chungus *c){
 	size_t len = LZ4_compress_default((const char *)saveLoadBuffer, (char *)compressedBuffer, cbuf - saveLoadBuffer, 4100*4096);
 	if(len == 0){
 		fprintf(stderr,"No Data for chungus %i:%i:%i\n",c->x,c->y,c->z);
+		PROFILE_STOP();
 		return;
 	}
 	size_t written = 0;
 	FILE *fp = fopen(chungusGetFilename(c),"wb");
 	if(fp == NULL){
 		fprintf(stderr,"Error opening %s for writing\n",chungusGetFilename(c));
+		PROFILE_STOP();
 		return;
 	}
 	for(int i=0;i<64;i++){
@@ -212,11 +216,13 @@ void chungusSave(chungus *c){
 		if(written >= len){
 			fclose(fp);
 			c->clientsUpdated |= ((u64)1 << 31);
+			PROFILE_STOP();
 			return;
 		}
 	}
 	fclose(fp);
 	fprintf(stderr,"Write error on chungus %i:%i:%i\n",c->x,c->y,c->z);
+	PROFILE_STOP();
 }
 
 static void savegameParseLine(const char *line){

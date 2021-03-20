@@ -389,7 +389,7 @@ void clientGreetServer(){
 
 void clientCheckPing(){
 	u64 curPing = getTicks();
-	if(curPing > lastPing+3000){
+	if(curPing > lastPing+60000){
 		menuSetError("Server timed out");
 		clientFree();
 	}

@@ -365,7 +365,7 @@ void drawDebuginfo(){
 	guim->size = 2;
 	guim->sx   = screenWidth;
 	guim->sy   = 4;
-	textMeshPrintfRA(guim,"%s",VERSION);
+	textMeshPrintfAlignRight(guim,"%s",VERSION);
 	drawHookIndicator();
 
 	if(player->flags & CHAR_CONS_MODE){
@@ -389,9 +389,24 @@ void drawDebuginfo(){
 		if(cname == NULL){continue;}
 		guim->sx = screenWidth;
 		guim->sy = 64+(i*42);
-		textMeshPrintfRA(guim,"%s",cname);
+		textMeshPrintfAlignRight(guim,"%s",cname);
 		drawSingleHealthbar(characterGetPlayerHP(i),20,screenWidth-96,guim->sy+22,14,false);
 		drawPlayerOverlay(i);
+	}
+
+	const u64 curPing = getTicks();
+	if(curPing > lastPing + 30000){
+		guim->sx   = (screenWidth/2);
+		guim->sy   = (screenHeight/2)-(screenHeight/8);
+		guim->size = 4;
+		guim->fgc  = colorPalette[9];
+		textMeshPrintfAlignCenter(guim,"Critically High Ping!!!");
+	}else if(curPing > lastPing + 3000){
+		guim->sx   = (screenWidth/2);
+		guim->sy   = (screenHeight/2)-(screenHeight/4);
+		guim->size = 2;
+		guim->fgc  = colorPalette[11];
+		textMeshPrintfAlignCenter(guim,"High Ping!");
 	}
 
 	vboTrisCount = 0;

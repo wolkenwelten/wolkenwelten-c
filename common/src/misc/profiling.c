@@ -31,6 +31,7 @@ typedef struct {
 	u64 total;
 	u64 ustart;
 	u64 count;
+	u64 worstCase;
 } profEntry;
 
 #define PROFILER_MAX_ENTRIES 64
@@ -70,7 +71,9 @@ void profStop(uint i){
 	if(i >= PROFILER_MAX_ENTRIES){return;}
 	u64 cticks = getUTicks();
 	if(profEntryList[i].ustart < cticks){
-		profEntryList[i].total += cticks - profEntryList[i].ustart;
+		const u64 curDuration = cticks - profEntryList[i].ustart;
+		profEntryList[i].total += curDuration;
+		profEntryList[i].worstCase = MAX(profEntryList[i].worstCase,curDuration);
 	}
 	profEntryList[i].count++;
 }
@@ -88,6 +91,11 @@ u64 profGetCount(uint i){
 double profGetMean(uint i){
 	if(i >= PROFILER_MAX_ENTRIES){return 0;}
 	return (double)profEntryList[i].total / (double)profEntryList[i].count;
+}
+
+double profGetWorst(uint i){
+	if(i >= PROFILER_MAX_ENTRIES){return 0;}
+	return (double)profEntryList[i].worstCase / 1000000.0;
 }
 
 double profGetShare(uint i){
@@ -109,7 +117,7 @@ const char *profGetReport(){
 	buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"%sProfiling Report%s\n",ansiFG[2],ansiRS);
 	for(uint i=1;i<64;i++){
 		if(profEntryList[i].count == 0){continue;}
-		buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"%5.2f%% %-24s Avg.: %6.4fms Count: %6u\n",profGetShare(i)*100.0,profEntryList[i].funcName, profGetMean(i) / 1000000.0, (uint)profGetCount(i));
+		buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"%5.2f%% %-24s Avg.: %6.4fms Count: %6u WorstCase: %6.4fms\n",profGetShare(i)*100.0,profEntryList[i].funcName, profGetMean(i) / 1000000.0, (uint)profGetCount(i),profGetWorst(i));
 	}
 	*buf = 0;
 	return reportBuf;

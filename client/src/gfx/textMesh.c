@@ -285,7 +285,19 @@ bool textMeshPrintf(textMesh *m, const char *format, ...){
 	return textMeshAddString(m,stringBuffer);
 }
 
-bool textMeshPrintfRA(textMesh *m, const char *format, ...){
+bool textMeshPrintfAlignCenter(textMesh *m, const char *format, ...){
+	va_list ap;
+	va_start(ap,format);
+	vsnprintf(stringBuffer,sizeof(stringBuffer),format,ap);
+	va_end(ap);
+	stringBuffer[sizeof(stringBuffer)-1]=0;
+	if(stringBuffer[0]==0){return 0;}
+	m->sx -= (strnlen(stringBuffer,sizeof(stringBuffer))*(m->size*8))/2;
+
+	return textMeshAddString(m,stringBuffer);
+}
+
+bool textMeshPrintfAlignRight(textMesh *m, const char *format, ...){
 	va_list ap;
 	va_start(ap,format);
 	vsnprintf(stringBuffer,sizeof(stringBuffer),format,ap);

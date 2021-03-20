@@ -432,7 +432,7 @@ uint chungusFreeOldChungi(u64 threshold){
 		}
 		if((x >= 127) && (x <= 129) && (y <= 3) && (z >= 127) && (z <= 129)){continue;}
 		bigchungusFreeChungus(&world,chng->x,chng->y,chng->z);
-		ret++;
+		if(++ret > 8){break;}
 	}
 	return ret;
 }
