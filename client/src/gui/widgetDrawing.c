@@ -161,7 +161,6 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 		}else if((curPos >= selMin) && (curPos < selMax)){
 			selActive = 8;
 		}
-		if(cx > w){break;}
 		if(((u8)line[0] == 0xCE) && ((u8)line[1] == 0xBB)){ // UTF-8 Lambda
 			line++;
 			c = 20;
@@ -180,11 +179,15 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 		}
 		if(*line == '('){
 			openParens++;
-			textMeshAddGlyphHG(m, cx, cy, size, c, cfgc, colors[((openParens-1)&7) | selActive],colors[(openParens&7) | selActive]);
+			if(cx < w){
+				textMeshAddGlyphHG(m, cx, cy, size, c, cfgc, colors[((openParens-1)&7) | selActive],colors[(openParens&7) | selActive]);
+			}
 		}else if(*line == ')'){
-			textMeshAddGlyphHG(m, cx, cy, size, c, cfgc, colors[((openParens)&7) | selActive],colors[((openParens-1)&7) | selActive]);
+			if(cx < w){
+				textMeshAddGlyphHG(m, cx, cy, size, c, cfgc, colors[((openParens)&7) | selActive],colors[((openParens-1)&7) | selActive]);
+			}
 			openParens--;
-		}else{
+		}else if(cx < w){
 			textMeshAddGlyph(m, cx, cy, size, c, cfgc, colors[(openParens&7) | selActive]);
 		}
 		cx += size * 8;

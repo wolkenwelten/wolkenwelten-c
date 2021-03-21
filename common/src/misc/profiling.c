@@ -117,7 +117,7 @@ const char *profGetReport(){
 	buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"%sProfiling Report%s\n",ansiFG[2],ansiRS);
 	for(uint i=1;i<64;i++){
 		if(profEntryList[i].count == 0){continue;}
-		buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"%5.2f%% %-24s Avg.: %6.4fms Count: %6u WorstCase: %6.4fms\n",profGetShare(i)*100.0,profEntryList[i].funcName, profGetMean(i) / 1000000.0, (uint)profGetCount(i),profGetWorst(i));
+		buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"%5.2f%% %-24s Avg.: %7.4fms Count: %6u WorstCase: %8.4fms\n",profGetShare(i)*100.0,profEntryList[i].funcName, profGetMean(i) / 1000000.0, (uint)profGetCount(i),profGetWorst(i));
 	}
 	*buf = 0;
 	return reportBuf;
