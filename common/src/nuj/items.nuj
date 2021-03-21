@@ -22,6 +22,16 @@
 		(it-mag-size (obj id) (obj mag-size))
 		(it-stack-size (obj id) (obj stack-size))
 		(it-item-drop-cb (obj id) (obj drop-chance))
+
+		(it-sprite-id (obj id) 0 (obj sprite-id-0))
+		(it-sprite-id (obj id) 1 (obj sprite-id-1))
+		(it-sprite-id (obj id) 2 (obj sprite-id-2))
+		(it-sprite-id (obj id) 3 (obj sprite-id-3))
+		(it-sprite-color (obj id) 0 (obj sprite-color-0))
+		(it-sprite-color (obj id) 1 (obj sprite-color-1))
+		(it-sprite-color (obj id) 2 (obj sprite-color-2))
+		(it-sprite-color (obj id) 3 (obj sprite-color-3))
+
 		(set! (obj sym) (obj id))
 		(items (- (obj id) 256) obj)))))
 
@@ -90,6 +100,14 @@
 	(define primary   (λ () #f))
 	(define secondary (λ () #f))
 	(define tertiary  (λ () #f))
+	(define sprite-id-0 -1)
+	(define sprite-id-1 -1)
+	(define sprite-id-2 -1)
+	(define sprite-id-3 -1)
+	(define sprite-color-0 -1)
+	(define sprite-color-1 -1)
+	(define sprite-color-2 -1)
+	(define sprite-color-3 -1)
 	(define item-drop-chance 0)
 	(define stack-size 99)))
 
@@ -108,6 +126,7 @@
 		(start-anim 0 300) #t)
 		(#t #f))))
 	(define burn-up (λ (pos id amount) (explode pos (* amount 3)) (say (ansi-red "Kabloom"))))
+	(define sprite-id-0 256)
 	(define mesh 'm-grenade))))
 
 (define i-bomb)
@@ -123,6 +142,7 @@
 		(start-anim 0 300) #t)
 		(#t #f))))
 	(define burn-up (λ (pos id amount) (explode pos (* amount 6)) (say ((ansi-yellow "Ka") (ansi-red "booooom")))))
+	(define sprite-id-0 257)
 	(define mesh 'm-bomb))))
 
 (define i-pear)
@@ -137,6 +157,7 @@
 		(cond	((>= (player-hp) (player-maxhp)) #f)
 			((try-to-use) (do-eat 8 id) #t)
 			(#t #f))))
+	(define sprite-id-0 258)
 	(define mesh 'm-pear))))
 
 (define i-stoneaxe)
@@ -151,6 +172,7 @@
 		(cond ((throwing?) (throw-item (+ throw-spin throw-pierce) 0.17 3))
 		      (#t #f))))
 	(define secondary (λ () (try-to-throw)))
+	(define sprite-id-0 259)
 	(define mesh 'm-stoneaxe))))
 
 (define i-stonepickaxe)
@@ -162,6 +184,7 @@
 	(define dmg 4)
 	(define dmg-stone 3)
 	(define dmg-dirt 2)
+	(define sprite-id-0 260)
 	(define mesh 'm-stonepickaxe))))
 
 (define i-blaster)
@@ -182,6 +205,7 @@
 		(cond ((try-to-use 200 0) (toggle-aim 4.0) (add-inaccuracy 64.0) #t) (#t #f))))
 	(define tertiary (λ () (item-reload 400)))
 	(define burn-up (λ (pos id amount) (explode pos (* amount 0.5))))
+	(define sprite-id-0 261)
 	(define mesh 'm-blaster))))
 
 (define i-masterblaster)
@@ -202,6 +226,7 @@
 		(cond ((try-to-use 200 0) (toggle-aim 3.0) (add-inaccuracy 48.0) #t) (#t #f))))
 	(define tertiary (λ () (item-reload 200)))
 	(define burn-up (λ (pos id amount) (explode pos (* amount 0.5))))
+	(define sprite-id-0 262)
 	(define mesh 'm-masterblaster))))
 
 (define i-assaultblaste)
@@ -222,6 +247,7 @@
 		(cond ((try-to-use 200 0) (toggle-aim 2.0) (add-inaccuracy 32.0) #t) (#t #f))))
 	(define tertiary (λ () (item-reload 50)))
 	(define burn-up (λ (pos id amount) (explode pos (* amount 0.2))))
+	(define sprite-id-0 263)
 	(define mesh 'm-assaultblaste))))
 
 (define i-shotgun)
@@ -242,6 +268,7 @@
 		(cond ((try-to-use 200 0) (toggle-aim 2.0) (add-inaccuracy 32.0) #t) (#t #f))))
 	(define tertiary (λ () (item-reload 256)))
 	(define burn-up (λ (pos id amount) (explode pos (* amount 0.2))))
+	(define sprite-id-0 264)
 	(define mesh 'm-shotgunblaste))))
 
 (define i-crystalbulle)
@@ -253,6 +280,7 @@
 	(define fire-health 64)
 	(define stack-size 999)
 	(define burn-up (λ (pos id amount) (explode pos (* amount 0.1))))
+	(define sprite-id-0 265)
 	(define mesh 'm-crystalbulle))))
 
 (define i-ironbar)
@@ -260,6 +288,7 @@
 	(define id (item-new-id))
 	(define sym 'i-ironbar)
 	(define name "Iron Bar")
+	(define sprite-id-0 266)
 	(define mesh 'm-ironbar))))
 
 (define i-ironaxe)
@@ -274,6 +303,7 @@
 		(cond ((throwing?) (throw-item (+ throw-spin throw-pierce) 0.2 5))
 		      (#t #f))))
 	(define secondary (λ () (try-to-throw)))
+	(define sprite-id-0 267)
 	(define mesh 'm-ironaxe))))
 
 (define i-ironpickaxe)
@@ -285,6 +315,7 @@
 	(define dmg 6)
 	(define dmg-stone 5)
 	(define dmg-dirt 3)
+	(define sprite-id-0 268)
 	(define mesh 'm-ironpickaxe))))
 
 (define i-crystalbar)
@@ -292,6 +323,7 @@
 	(define id (item-new-id))
 	(define sym 'i-crystalbar)
 	(define name "Crystal Bar")
+	(define sprite-id-0 269)
 	(define mesh 'm-crystalbar))))
 
 (define i-crystalaxe)
@@ -306,6 +338,7 @@
 		(cond ((throwing?) (throw-item (+ throw-spin throw-pierce) 0.25 8))
 		      (#t #f))))
 	(define secondary (lambda () (try-to-throw)))
+	(define sprite-id-0 270)
 	(define mesh 'm-crystalaxe))))
 
 (define i-crystalpickax)
@@ -317,6 +350,7 @@
 	(define dmg 8)
 	(define dmg-stone 8)
 	(define dmg-diro 8)
+	(define sprite-id-0 271)
 	(define mesh 'm-crystalpickax))))
 
 (define i-cherry)
@@ -330,6 +364,7 @@
 		(cond	((>= (player-hp) (player-maxhp)) #f)
 			((try-to-use) (do-eat 6 id) #t)
 			(#t #f))))
+	(define sprite-id-0 272)
 	(define mesh 'm-cherry))))
 
 (define i-clusterbomb)
@@ -344,6 +379,7 @@
 		(start-anim 0 300) #t)
 		(#t #f))))
 	(define burn-up (λ (pos id amount) (explode pos (* amount 6)) (say ((ansi-yellow "Ka") (ansi-red "bo000oom")))))
+	(define sprite-id-0 273)
 	(define mesh 'm-bomb))))
 
 (define i-glider)
@@ -354,6 +390,7 @@
 	(define stack-size 1)
 	(define fire-dmg 8)
 	(define fire-health 198)
+	(define sprite-id-0 274)
 	(define mesh 'm-glider))))
 
 (define i-hook)
@@ -363,6 +400,7 @@
 	(define name "Hook")
 	(define stack-size 1)
 	(define fire-health 1024)
+	(define sprite-id-0 275)
 	(define mesh 'm-hook))))
 
 (define i-jetpack)
@@ -371,6 +409,7 @@
 	(define sym 'i-jetpack)
 	(define name "Jetpack")
 	(define stack-size 1)
+	(define sprite-id-0 276)
 	(define mesh 'm-jetpack))))
 
 (define i-poop)
@@ -387,6 +426,7 @@
 	(define drop-chance 4095)
 	; Still need to spawn in the plants/trees
 	(define drop-handler (λ (pos id amount) -1))
+	(define sprite-id-0 277)
 	(define mesh 'm-poop))))
 
 (define i-meat)
@@ -403,6 +443,7 @@
 	(define burn-up (λ (pos id amount) (item-drop-new pos i-cookedmeat amount)))
 	(define drop-chance 65535)
 	(define drop-handler (λ (pos id amount) -1))
+	(define sprite-id-0 278)
 	(define mesh 'm-meat))))
 
 (define i-cookedmeat)
@@ -417,6 +458,7 @@
 			((try-to-use) (do-eat 20 id) #t)
 			(#t #f))))
 	(define burn-up (λ (pos id amount) (item-drop-new pos i-burntmeat amount)))
+	(define sprite-id-0 279)
 	(define mesh 'm-cookedmeat))))
 
 (define i-fur)
@@ -426,6 +468,7 @@
 	(define name "Fur")
 	(define drop-chance 65535)
 	(define drop-handler (λ (pos id amount) -1))
+	(define sprite-id-0 280)
 	(define mesh 'm-fur))))
 
 (define i-burntmeat)
@@ -437,6 +480,7 @@
 		(cond ((try-to-use) (start-anim 4 1800) (sfx-play sfx-chomp) #t) (#t #f))))
 	(define drop-chance 65535)
 	(define drop-handler (λ (pos id amount) -1))
+	(define sprite-id-0 281)
 	(define mesh 'm-burntmeat))))
 
 (define i-flintandsteel)
@@ -450,6 +494,7 @@
 		      ((try-to-use 200 0) (add-cooldown 200) (start-anim 3 600) (fire-new (player-raycast 0) 8) #t) (#t #t))))
 	(define secondary (λ ()
 		(cond ((try-to-use 200 0) (add-cooldown 200) (start-anim 3 600) (fire-new (player-raycast 1) 8) #t) (#t #f))))
+	(define sprite-id-0 282)
 	(define mesh 'm-flintandsteel))))
 
 (define i-flamethrower)
@@ -470,6 +515,7 @@
 		(cond ((try-to-use 200 0) (toggle-aim 2.0) (add-inaccuracy 32.0) #t) (#t #f))))
 	(define tertiary (lambda () (item-reload 128)))
 	(define burn-up (λ (pos id amount) (explode pos (* amount 0.2))))
+	(define sprite-id-0 283)
 	(define mesh 'm-flamethrower))))
 
 (define i-flamebullet)
@@ -481,6 +527,7 @@
 	(define fire-health 64)
 	(define name "Flamebullet")
 	(define burn-up (λ (pos id amount) (explode pos (* amount 0.1))))
+	(define sprite-id-0 284)
 	(define mesh 'm-flamebullet))))
 
 (define i-irondust)
@@ -491,6 +538,7 @@
 	(define fire-health 256)
 	(define name "Irondust")
 	(define burn-up (λ (pos id amount) (item-drop-new pos i-ironbar amount)))
+	(define sprite-id-0 285)
 	(define mesh 'm-irondust))))
 
 (define i-crystaldust)
@@ -501,6 +549,7 @@
 	(define fire-health 512)
 	(define name "Crystaldust")
 	(define burn-up (λ (pos id amount) (item-drop-new pos i-crystalbar amount)))
+	(define sprite-id-0 286)
 	(define mesh 'm-crystaldust))))
 
 (define i-flamestick)
@@ -517,6 +566,7 @@
 					(begin (say "No luck, maybe next time")) #t)) (#t #t))))
 	(define secondary (λ ()
 		(cond ((try-to-use 200 0) (add-cooldown 200) (start-anim 3 600) (fire-new (player-raycast 1) 8) #t) (#t #f))))
+	(define sprite-id-0 287)
 	(define mesh 'm-flintandsteel))))
 
 (define i-waterthrower)
@@ -534,6 +584,7 @@
 	(define secondary (λ ()
 		(cond ((try-to-use 200 0) (toggle-aim 2.0) (add-inaccuracy 32.0) #t) (#t #f))))
 	(define tertiary (λ () (item-reload 128)))
+	(define sprite-id-0 288)
 	(define mesh 'm-waterthrower))))
 
 (define i-stonespear)
@@ -546,6 +597,12 @@
 	(define primary (λ ()
 		(cond ((throwing?) (throw-item (+ throw-heavy throw-pierce) 0.25 4)) (#t #f))))
 	(define secondary (λ () (try-to-throw)))
+	(define sprite-id-0 291)
+	(define sprite-color-0 #xFF01232F)
+	(define sprite-id-1 290)
+	(define sprite-color-1 #xFF666666)
+	(define sprite-id-2 289)
+	(define sprite-color-2 #xFFDDDDDD)
 	(define mesh 'm-stonespear))))
 
 (define i-ironspear)
@@ -558,6 +615,12 @@
 	(define primary (λ ()
 		(cond ((throwing?) (throw-item (+ throw-heavy throw-pierce) 0.35 8)) (#t #f))))
 	(define secondary (λ () (try-to-throw)))
+	(define sprite-id-0 291)
+	(define sprite-color-0 #xFF01232F)
+	(define sprite-id-1 290)
+	(define sprite-color-1 #xFFAAAAAA)
+	(define sprite-id-2 289)
+	(define sprite-color-2 #xFFFFFFFF)
 	(define mesh 'm-ironspear))))
 
 (define i-crystalspear)
@@ -570,6 +633,12 @@
 	(define primary (λ ()
 		(cond ((throwing?) (throw-item (+ throw-heavy throw-pierce) 0.4 12)) (#t #f))))
 	(define secondary (λ () (try-to-throw)))
+	(define sprite-id-0 291)
+	(define sprite-color-0 #xFF01232F)
+	(define sprite-id-1 290)
+	(define sprite-color-1 #xFF5f32d6)
+	(define sprite-id-2 289)
+	(define sprite-color-2 #xFFFFFFFF)
 	(define mesh 'm-crystalspear))))
 
 (define i-plantmatter)
@@ -578,9 +647,11 @@
 	(define sym 'i-plantmatter)
 	(define name "Plantmatter")
 	(define fire-dmg 2)
-	(define fire-health 256)
+	(define fire-health 255)
 	(define drop-chance 65535)
 	(define drop-handler (λ (pos id amount) (item-drop-new pos i-straw 1) -1))
+	(define sprite-id-0 292)
+	(define sprite-color-0 #xFF087500)
 	(define mesh 'm-plantmatter))))
 
 (define i-straw)
@@ -590,6 +661,8 @@
 	(define name "Straw")
 	(define fire-dmg 8)
 	(define fire-health 256)
+	(define sprite-id-0 292)
+	(define sprite-color-0 #xFF48A7D3)
 	(define mesh 'm-straw))))
 
 (event-bind "on-init" (λ () ""

@@ -46,6 +46,9 @@ typedef struct {
 	u16 fireHealth;
 	u32 itemDropChance;
 	float inaccuracy;
+
+	i16 spriteIndex[4];
+	u32 spriteColor[4];
 } itemType;
 
 typedef uint32_t being;

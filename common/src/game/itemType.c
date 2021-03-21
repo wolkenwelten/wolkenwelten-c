@@ -32,6 +32,10 @@ void itemTypeInit(){
 		itemTypes[i].fireDamage = 1;
 		itemTypes[i].inaccuracy = 8.f;
 		for(int ii=0;ii<5;ii++){itemTypes[i].damage[ii] = 1;}
+		for(int ii=0;ii<4;ii++){
+			itemTypes[i].spriteIndex[ii] = -1;
+			itemTypes[i].spriteColor[ii] = 0xFFFFFFFF;
+		}
 	}
 }
 
@@ -42,7 +46,7 @@ static lVal *wwlnfITName(lClosure *c, lVal *v){
 	getLArgI(itemID);
 	getLArgS(name);
 
-	if(itemID < 0){return NULL;}
+	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
 	if(name != NULL){
 		snprintf(it->name,32,"%s",name);
@@ -58,7 +62,7 @@ static lVal *wwlnfITMesh(lClosure *c, lVal *v){
 	getLArgI(itemID);
 	getLArgI(meshID);
 
-	if(itemID < 0){return NULL;}
+	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
 	if(meshID >= 0){
 		it->iMesh = meshGet(meshID);
@@ -76,7 +80,7 @@ static lVal *wwlnfITDamage(lClosure *c, lVal *v){
 	getLArgI(cat);
 	getLArgI(damage);
 
-	if((itemID < 0) || (cat < 0) || (cat > 4)){return NULL;}
+	if((itemID < 256) || (cat < 0) || (cat > 4)){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
 	if(damage >= 0){
 		it->damage[cat] = damage;
@@ -92,7 +96,7 @@ static lVal *wwlnfITAmmunition(lClosure *c, lVal *v){
 	getLArgI(itemID);
 	getLArgI(ammunition);
 
-	if(itemID < 0){return NULL;}
+	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
 	if(ammunition >= 0){
 		it->ammunition = ammunition;
@@ -108,7 +112,7 @@ static lVal *wwlnfITStackSize(lClosure *c, lVal *v){
 	getLArgI(itemID);
 	getLArgI(stackSize);
 
-	if(itemID < 0){return NULL;}
+	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
 	if(stackSize >= 0){
 		it->stackSize = stackSize;
@@ -124,7 +128,7 @@ static lVal *wwlnfITMagazineSize(lClosure *c, lVal *v){
 	getLArgI(itemID);
 	getLArgI(magazineSize);
 
-	if(itemID < 0){return NULL;}
+	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
 	if(magazineSize >= 0){
 		it->magazineSize = magazineSize;
@@ -140,7 +144,7 @@ static lVal *wwlnfITFireDamage(lClosure *c, lVal *v){
 	getLArgI(itemID);
 	getLArgI(fireDamage);
 
-	if(itemID < 0){return NULL;}
+	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
 	if(fireDamage >= 0){
 		it->fireDamage = fireDamage;
@@ -156,7 +160,7 @@ static lVal *wwlnfITFireHealth(lClosure *c, lVal *v){
 	getLArgI(itemID);
 	getLArgI(fireHealth);
 
-	if(itemID < 0){return NULL;}
+	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
 	if(fireHealth >= 0){
 		it->fireHealth = fireHealth;
@@ -172,7 +176,7 @@ static lVal *wwlnfITInaccuracy(lClosure *c, lVal *v){
 	getLArgI(itemID);
 	getLArgF(inacc);
 
-	if(itemID < 0){return NULL;}
+	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
 	if(inacc >= 0.f){
 		it->inaccuracy = inacc;
@@ -188,7 +192,7 @@ static lVal *wwlnfITIDChance(lClosure *c, lVal *v){
 	getLArgI(itemID);
 	getLArgI(chance);
 
-	if(itemID < 0){return NULL;}
+	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
 	if(chance >= 0){
 		it->itemDropChance = chance;
@@ -197,15 +201,49 @@ static lVal *wwlnfITIDChance(lClosure *c, lVal *v){
 	return lValInt(it->itemDropChance);
 }
 
+static lVal *wwlnfITSpriteID(lClosure *c, lVal *v){
+	int itemID      = -1;
+	int i           = -1;
+	int spriteIndex = -1;
+
+	getLArgI(itemID);
+	getLArgI(i);
+	getLArgI(spriteIndex);
+
+	if((itemID < 256) || (i < 0) || (i > 3)){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	if(spriteIndex >= 0){
+		it->spriteIndex[i] = spriteIndex;
+	}
+	return lValInt(it->spriteIndex[i]);
+}
+
+static lVal *wwlnfITSpriteColor(lClosure *c, lVal *v){
+	int itemID   = -1;
+	int i        = -1;
+	int color    = -1;
+
+	getLArgI(itemID);
+	getLArgI(i);
+	getLArgI(color);
+
+	if((itemID < 256) || (i < 0) || (i > 3)){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	it->spriteColor[i] = color;
+	return NULL;
+}
+
 void itemTypeLispClosure(lClosure *c){
-	lAddNativeFunc(c,"it-name",        "(id &n)",     "Sets the name of itemType ID to &n if passed",                 wwlnfITName);
-	lAddNativeFunc(c,"it-mesh",        "(id &m)",     "Sets the mesh of itemType ID to &m if passed",                 wwlnfITMesh);
-	lAddNativeFunc(c,"it-ammunition",  "(id &a)",     "Sets the ammunition of itemType ID to &a if passed",           wwlnfITAmmunition);
-	lAddNativeFunc(c,"it-stack-size",  "(id &s)",     "Sets the stackSize of itemType ID to &d if passed",            wwlnfITStackSize);
-	lAddNativeFunc(c,"it-mag-size",    "(id &s)",     "Sets the Magazine Size of itemType ID to &d if passed",        wwlnfITMagazineSize);
-	lAddNativeFunc(c,"it-damage" ,     "(id cat &d)", "Sets the damage to cat blocks of itemType ID to &d if passed", wwlnfITDamage);
-	lAddNativeFunc(c,"it-fire-damage", "(id &d)",     "Sets the fire damage of itemType ID to &d if passed",          wwlnfITFireDamage);
-	lAddNativeFunc(c,"it-fire-health", "(id &h)",     "Sets the fire health of itemType ID to &h if passed",          wwlnfITFireHealth);
-	lAddNativeFunc(c,"it-inaccuracy",  "(id &a)",     "Sets the fire inaccuracy of itemType ID to &a if passed",      wwlnfITInaccuracy);
-	lAddNativeFunc(c,"it-item-drop-cb","(id &chance)","Sets the chance mask for the itemDrop callback to execute",    wwlnfITIDChance);
+	lAddNativeFunc(c,"it-name",        "(id &n)",       "Set name of itemType ID to &n if passed",                 wwlnfITName);
+	lAddNativeFunc(c,"it-mesh",        "(id &m)",       "Set mesh of itemType ID to &m if passed",                 wwlnfITMesh);
+	lAddNativeFunc(c,"it-ammunition",  "(id &a)",       "Set ammunition of itemType ID to &a if passed",           wwlnfITAmmunition);
+	lAddNativeFunc(c,"it-stack-size",  "(id &s)",       "Set stackSize of itemType ID to &d if passed",            wwlnfITStackSize);
+	lAddNativeFunc(c,"it-mag-size",    "(id &s)",       "Set Magazine Size of itemType ID to &d if passed",        wwlnfITMagazineSize);
+	lAddNativeFunc(c,"it-damage" ,     "(id cat &d)",   "Set damage to cat blocks of itemType ID to &d if passed", wwlnfITDamage);
+	lAddNativeFunc(c,"it-fire-damage", "(id &d)",       "Set fire damage of itemType ID to &d if passed",          wwlnfITFireDamage);
+	lAddNativeFunc(c,"it-fire-health", "(id &h)",       "Set fire health of itemType ID to &h if passed",          wwlnfITFireHealth);
+	lAddNativeFunc(c,"it-inaccuracy",  "(id &a)",       "Set fire inaccuracy of itemType ID to &a if passed",      wwlnfITInaccuracy);
+	lAddNativeFunc(c,"it-item-drop-cb","(id &chance)",  "Set chance mask for the itemDrop callback to execute",    wwlnfITIDChance);
+	lAddNativeFunc(c,"it-sprite-id",   "(id i &sprite)","Set sprite id I of ID to &SPRITE",                        wwlnfITSpriteID);
+	lAddNativeFunc(c,"it-sprite-color","(id i &color)", "Set sprite color of ID to &COLOR",                        wwlnfITSpriteColor);
 }

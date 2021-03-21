@@ -22,6 +22,7 @@
 #include "../tmp/assets.h"
 
 #include "../../../common/src/game/item.h"
+#include "../../../common/src/game/itemType.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/nujel/nujel.h"
 
@@ -350,11 +351,26 @@ void textMeshSolidBox(textMesh *m, int x, int y, int w, int h, u32 rgba){
 	textMeshBox(m,x, y,w, h,19.f/32.f, 31.f/32.f,1.f/32.f,1.f/32.f,rgba);
 }
 
-void textMeshItemSprite(textMesh *m, int x, int y, int size, int itemID){
+void textMeshItemSingleSprite(textMesh *m, int x, int y, int size, int spriteIndex, u32 color){
 	const float ITEMTILE = (1.f/32.f);
-	int u = itemID % 32;
-	int v = itemID / 32;
-	textMeshBox(m,x,y,size,size,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,~1);
+	int u = spriteIndex % 32;
+	int v = spriteIndex / 32;
+	textMeshBox(m,x,y,size,size,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,color);
+}
+
+void textMeshItemSprite(textMesh *m, int x, int y, int size, int itemID){
+	if(itemID < 256){
+		textMeshItemSingleSprite(m,x,y,size,itemID,~1);
+	}else{
+		itemType *it = &itemTypes[itemID-256];
+		for(int i=0;i<4;i++){
+			const int spriteIndex = it->spriteIndex[i];
+			if(spriteIndex < 0){continue;}
+			const u32 color = it->spriteColor[i];
+			textMeshItemSingleSprite(m,x,y,size,spriteIndex,color);
+		}
+	}
+	//itemType *it =
 }
 
 void textMeshSlot(textMesh *m, int x, int y, int size, int style){

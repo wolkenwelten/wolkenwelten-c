@@ -81,7 +81,7 @@ void lispPanelShowReply(lVal *sym, const char *reply){
 		for(int ii=0;ii<2;ii++){
 			lispLog->valss[i][ii] = ' ';
 		}
-		memcpy(&lispLog->valss[i][2],&reply[soff],slen);
+		memcpy(&lispLog->valss[i][2],&reply[soff],MINMAX(slen,0,256));
 		lispLog->valss[i][slen+2] = 0;
 		return;
 	}
