@@ -69,7 +69,7 @@ static lVal *lParseString(lString *s){
 	return NULL;
 }
 
-static lVal *lParseNumber(lString *s){
+static lVal *lParseNumberDecimal(lString *s){
 	lVal *v = lValInt(0);
 	int c   = *s->data;
 	int fc  = c;
@@ -133,10 +133,46 @@ static lVal *lParseSymbol(lString *s){
 	return v;
 }
 
+static lVal *lParseNumberBinary(lString *s){
+	int ret;
+	for(ret = 0; !isspace((u8)*s->data) && *s->data != 0; s->data++){
+		if((*s->data == '(') || (*s->data == ')')){break;}
+		if((*s->data == '0') || (*s->data == '1')){
+			ret <<= 1;
+			if(*s->data == '1'){ret |= 1;}
+		}
+	}
+	return lValInt(ret);
+}
+
+static lVal *lParseNumberHex(lString *s){
+	int ret;
+	for(ret = 0; !isspace((u8)*s->data) && *s->data != 0; s->data++){
+		if((*s->data == '(') || (*s->data == ')')){break;}
+		if((*s->data >= '0') && (*s->data <= '9')){ret = (ret << 4) |  (*s->data - '0');}
+		if((*s->data >= 'A') && (*s->data <= 'F')){ret = (ret << 4) | ((*s->data - 'A')+0xA);}
+		if((*s->data >= 'a') && (*s->data <= 'f')){ret = (ret << 4) | ((*s->data - 'a')+0xA);}
+	}
+	return lValInt(ret);
+}
+
+static lVal *lParseNumberOctal(lString *s){
+	int ret;
+	for(ret = 0; !isspace((u8)*s->data) && *s->data != 0; s->data++){
+		if((*s->data == '(') || (*s->data == ')')){break;}
+		if((*s->data >= '0') && (*s->data <= '7')){ret = (ret << 3) |  (*s->data - '0');}
+	}
+	return lValInt(ret);
+}
+
 static lVal *lParseSpecial(lString *s){
 	if(*s->data++ != '#'){return NULL;}
 	switch(*s->data++){
 	default:
+	case 'x': return lParseNumberHex(s);
+	case 'o': return lParseNumberOctal(s);
+	case 'b': return lParseNumberBinary(s);
+	case 'd': return lParseNumberDecimal(s);
 	case 'n': s->data+=2; return NULL;
 	case 't':
 		return lValBool(true);
@@ -192,7 +228,7 @@ lVal *lReadString(lString *s){
 			break;
 		default:
 			if((isdigit((u8)c)) || ((c == '-') && (isdigit((u8)s->data[1])))){
-				v->vList.car = lParseNumber(s);
+				v->vList.car = lParseNumberDecimal(s);
 			}else{
 				v->vList.car = lParseSymbol(s);
 			}
