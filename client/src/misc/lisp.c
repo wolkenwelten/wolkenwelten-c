@@ -533,6 +533,18 @@ static lVal *wwlnfPlayerInventory(lClosure *c, lVal *v){
 	return lValInt(player->inventory[slot].ID);
 }
 
+static lVal *wwlnfWindowWidth(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+	return lValInt(screenWidth);
+}
+
+static lVal *wwlnfWindowHeight(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+	return lValInt(screenHeight);
+}
+
 static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",        "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",               "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
@@ -550,6 +562,8 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"third-person!",  "(b)",              "Sets third person view to b",                                    wwlnfThirdPerson);
 	lAddNativeFunc(c,"fullscreen",     "(b)",              "Sets fullscreen to b",                                           wwlnfFullscreen);
 	lAddNativeFunc(c,"windowed",       "(&w &h &x &y)",    "Switches to windowed mode of size &w/&h at position &x/&y",      wwlnfWindowed);
+	lAddNativeFunc(c,"window-width",   "()",               "Returns the width of the widow in pixels",                       wwlnfWindowWidth);
+	lAddNativeFunc(c,"window-height",  "()",               "Returns the height of the widow in pixels",                      wwlnfWindowHeight);
 	lAddNativeFunc(c,"save-options",   "()",               "Save options to disk",                                           wwlnfSaveOptions);
 	lAddNativeFunc(c,"reset-worst-f",  "()",               "Resets the worst frame counter",                                 wwlnfResetWorstFrame);
 	lAddNativeFunc(c,"debug-info!",    "(b)",              "Sets debug info view to b",                                      wwlnfDebugInfo);
