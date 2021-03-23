@@ -53,11 +53,14 @@ struct lVal {
 };
 
 struct lClosure {
-	lClosure *parent;
+	union {
+		lClosure *parent;
+		lClosure *nextFree;
+	};
 	lVal *data;
 	lVal *text;
-	uint flags;
-	lClosure *nextFree;
+	u16 flags;
+	u16 refCount;
 };
 #define lfMarked    ( 1)
 #define lfDynamic   ( 2)
@@ -65,6 +68,7 @@ struct lClosure {
 #define lfConst     ( 8)
 #define lfHeapAlloc (16)
 #define lfObject    (32)
+#define lfUsed      (64)
 
 struct lString {
 	const char *buf,*data;
@@ -139,8 +143,9 @@ static inline lVal *lConst(lVal *v){
 	v->flags |= lfConst;
 	return v;
 }
+lVal *lnfBegin(lClosure *c, lVal *v);
 static inline lVal *lWrap(lVal *v){
-	return lCons(lValSym("begin"),lCons(lCons(NULL,NULL),v));
+	return lCons(lValSym("begin"),v);
 }
 static inline lVal *lEvalCast(lClosure *c, lVal *v){
 	lVal *t = lApply(c,v,lEval);

@@ -533,7 +533,7 @@ static lVal *wwlnfPlayerInventory(lClosure *c, lVal *v){
 	return lValInt(player->inventory[slot].ID);
 }
 
-void addClientNFuncs(lClosure *c){
+static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",        "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",               "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
 	lAddNativeFunc(c,"player-pos",     "()",               "Returns players position",                                       wwlnfPlayerPos);
@@ -588,7 +588,7 @@ void addClientNFuncs(lClosure *c){
 void lispInit(){
 	lInit();
 	clRoot = lispCommonRoot();
-	addClientNFuncs(clRoot);
+	lispAddClientNFuncs(clRoot);
 	lEval(clRoot,lWrap(lRead((const char *)src_tmp_client_nuj_data)));
 	lClosureGC();
 }
@@ -600,14 +600,13 @@ void lispFree(){
 const char *lispEval(const char *str){
 	static char reply[4096];
 	memset(reply,0,sizeof(reply));
-	lVal *v = lEval(clRoot,lWrap(lRead(str)));
+	lVal *v = lnfBegin(clRoot,lRead(str));
 	lSDisplayVal(v,reply,&reply[sizeof(reply)-1]);
 
 	int soff,slen,len = strnlen(reply,sizeof(reply)-1);
 	for(soff = 0;    isspace((u8)reply[soff]) || (reply[soff] == '"');soff++){}
 	for(slen = len-1;isspace((u8)reply[slen]) || (reply[slen] == '"');slen--){reply[slen] = 0;}
 
-	lClosureGC();
 	return reply+soff;
 }
 
@@ -622,13 +621,13 @@ void lispEvents(){
 
 	static u64 lastTicks = 0;
 	u64 cticks = getTicks();
-	if((lastTicks + 500) > cticks){
+	if((lastTicks + 100) > cticks){
 		if(lastTicks > cticks){lastTicks = cticks;}
 		return;
 	}
 	lastTicks = cticks;
 
-	lispEval("(begin (yield-run))");
+	lnfBegin(clRoot,lRead("(yield-run)"));
 	lClosureGC();
 
 	PROFILE_STOP();

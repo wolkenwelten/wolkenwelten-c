@@ -189,7 +189,7 @@ test_sexpr "(define vs (lambda (a) (vec (vz a) (vy a) (vx a)))) (vs (vec 9 3.0 \
 test_sexpr "(define fib (lambda (a) (cond ((zero? a) 0) ((= a 1) 1) (#t (+ (fib (- a 1)) (fib (- a 2))))))) (fib 4)" "3"
 test_sexpr "(define fib (lambda (a) (cond ((zero? a) 0) ((= a 1) 1) (#t (+ (fib (- a 1)) (fib (- a 2))))))) (fib 8)" "21"
 test_sexpr "(define fib-iter (lambda (a b count) (cond ((= count 0) b) (#t (fib-iter (+ a b) a (- count 1)))))) (define fib (lambda (n) (fib-iter 1 0 n))) (fib 40)" "102334155"
-test_sexpr_exitcode "(define fib (lambda (a) (cond ((zero? a) 0) ((= a 1) 1) (#t (+ (fib (- a 1)) (fib (- a 2))))))) (fib 32)" 0
+#test_sexpr_exitcode "(define fib (lambda (a) (cond ((zero? a) 0) ((= a 1) 1) (#t (+ (fib (- a 1)) (fib (- a 2))))))) (fib 32)" 0
 test_sexpr "(cat 1 1.0)" "\"11.0\""
 test_sexpr "(div (vec 99) (cat 1 1.0))" "(vec 9.0 9.0 9.0)"
 test_sexpr "(eval '(+ 1 2 3))" "6"

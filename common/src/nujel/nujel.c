@@ -114,14 +114,15 @@ lClosure *lClosureAlloc(){
 	ret->data     = ret->text = NULL;
 	ret->parent   = NULL;
 	ret->nextFree = NULL;
-	ret->flags    = 0;
+	ret->flags    = lfUsed;
 	return ret;
 }
 void lClosureFree(lClosure *c){
-	if((c == NULL) || (c->nextFree != NULL)){return;}
+	if((c == NULL) || (!(c->flags & lfUsed))){return;}
 	c->data       = c->text = NULL;
 	c->parent     = NULL;
 	c->nextFree   = lClosureFFree;
+	c->flags      = 0;
 	lClosureFFree = c;
 }
 
@@ -246,6 +247,7 @@ lVal *lValAlloc(){
 }
 void lValFree(lVal *v){
 	if((v == NULL) || (v->type == ltNoAlloc)){return;}
+	if(v->type == ltLambda){v->vLambda->refCount--;}
 	v->type   = ltNoAlloc;
 	v->vNA    = lValFFree;
 	v->flags  = 0;
@@ -327,6 +329,8 @@ lClosure *lClosureNew(lClosure *parent){
 	lClosure *c = lClosureAlloc();
 	if(c == NULL){return NULL;}
 	c->parent = parent;
+	parent->refCount++;
+	c->flags = lfUsed;
 	return c;
 }
 
@@ -468,7 +472,7 @@ static lVal *lnfSymCount(lClosure *c, lVal *v){
 	return lValInt(lSymCount(c,0));
 }
 
-static lVal *lnfBegin(lClosure *c, lVal *v){
+lVal *lnfBegin(lClosure *c, lVal *v){
 	lVal *ret = NULL;
 	forEach(n,v){
 		ret = lEval(c,n->vList.car);
@@ -520,6 +524,7 @@ static lVal *lnfClLambda(lClosure *c, lVal *v){
 	lVal *ret = lValAlloc();
 	ret->type = ltLambda;
 	ret->vLambda = c;
+	c->refCount++;
 	return ret;
 }
 
@@ -585,7 +590,7 @@ static lVal *lnfMem(lClosure *c, lVal *v){
 		vals++;
 	}
 	for(uint i=0;i<lClosureMax;i++){
-		if(lClosureList[i].nextFree != NULL){continue;}
+		if(!(lClosureList[i].flags & lfUsed)){continue;}
 		clos++;
 	}
 	for(uint i=0;i<lArrayMax;i++){
@@ -611,6 +616,7 @@ static lVal *lnfLet(lClosure *c, lVal *v){
 	forEach(n,v->vList.cdr){
 		ret = lEval(nc,n->vList.car);
 	}
+	c->refCount--;
 	return ret == NULL ? NULL : ret;
 }
 
@@ -673,7 +679,10 @@ static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
 	}
 
 	lVal *ret = NULL;
-	forEach(n,lambda->text){ ret = lEval(tmpc,n->vList.car); }
+	forEach(n,lambda->text){
+		ret = lEval(tmpc,n->vList.car);
+	}
+	if(tmpc->refCount == 0){lClosureFree(tmpc);}
 	return ret;
 }
 
@@ -734,7 +743,6 @@ static lVal *lnfSetCar(lClosure *c, lVal *v){
 }
 static lVal *lnfSetCdr(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrN(v));
-	//printf("SetCdr: %llu\n",t-lValList);
 	if((t == NULL) || (t->type != ltPair)){return NULL;}
 	lVal *cdr = NULL;
 	if((v != NULL) && (v->type == ltPair) && (v->vList.cdr != NULL)){cdr = lEval(c,lCarOrN(v->vList.cdr));}
@@ -1105,6 +1113,7 @@ static void lGCMark(){
 		lValGCMark(&lValList[i]);
 	}
 	for(uint i=0;i<lClosureMax;i++){
+		if(!(lClosureList[i].flags & lfUsed)){continue;}
 		if(!(lClosureList[i].flags & lfNoGC)){continue;}
 		lClosureGCMark(&lClosureList[i]);
 	}
@@ -1120,15 +1129,16 @@ static void lGCMark(){
 
 static void lGCSweep(){
 	for(uint i=0;i<lValMax;i++){
-		if(lValList[i].flags & lfMarked) {continue;}
+		if(lValList[i].flags & lfMarked)     {continue;}
 		lValFree(&lValList[i]);
 	}
 	for(uint i=0;i<lClosureMax;i++){
-		if(lClosureList[i].flags & lfMarked){continue;}
+		if(!(lClosureList[i].flags & lfUsed)){continue;}
+		if(lClosureList[i].flags & lfMarked) {continue;}
 		lClosureFree(&lClosureList[i]);
 	}
 	for(uint i=0;i<lStringMax;i++){
-		if(lStringList[i].flags & lfMarked)   {continue;}
+		if(lStringList[i].flags & lfMarked)  {continue;}
 		lStringFree(&lStringList[i]);
 	}
 	for(uint i=0;i<lArrayMax;i++){
@@ -1144,21 +1154,16 @@ static void lClosureDoGC(){
 }
 
 void lClosureGC(){
-	static uint calls = 0;
+	static int calls = 0;
 
-	if(++calls > (1<<12)){
-		calls = 0;
-		lClosureDoGC();
-		return;
-	}
 	if((lValMax < (VAL_MAX/2)) && (lClosureMax < (CLO_MAX/2)) && (lArrayMax < (ARR_MAX / 2)) && (lStringMax < (STR_MAX /2))){return;}
 	if((lValMax > (VAL_MAX - 4096)) || (lClosureMax > (CLO_MAX - 256)) || (lArrayMax > (ARR_MAX - 128)) || (lStringMax > (STR_MAX - 256))){
-		calls = 0;
+		calls = -64;
 		lClosureDoGC();
 		return;
 	}
-	if(calls > 512){
-		calls = 0;
+	if(++calls > 0){
+		calls = -1024;
 		lClosureDoGC();
 		return;
 	}
