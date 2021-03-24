@@ -42,8 +42,6 @@ int ropeNewID(){
 }
 
 static void ropeDrawSegment(const rope *r, const vec h, const vec p){
-	if(h.y < 0.f){return;}
-	if(p.y < 0.f){return;}
 	const float rlen = vecMag(vecSub(h,p))*8;
 	const float xs = 1.f/2.f;
 	float xo = 0.f;
@@ -112,7 +110,10 @@ static void ropeDraw(rope *r){
 	if(r == NULL){return;}
 	const vec h = beingGetPos(r->a);
 	const vec p = beingGetPos(r->b);
-	ropeDrawSegment(r,h,p);
+	if(h.y < 0.f){return;}
+	if(p.y < 0.f){return;}
+
+	ropeDrawSegment(r,vecSub(h,subBlockViewOffset),vecSub(p,subBlockViewOffset));
 }
 
 void ropeInit(){
@@ -122,19 +123,18 @@ void ropeInit(){
 }
 
 void ropeDrawAll(){
+	meshEmpty(ropeMesh);
 	for(uint i=0;i<512;i++){
 		rope *r = &ropeList[i];
-		if(r->a == 0){continue;}
-		if(r->b == 0){continue;}
+		if((r->a == 0) || (r->b == 0)){continue;}
 		ropeDraw(r);
 	}
 	if(ropeMesh->dataCount == 0){return;}
 	shaderBind(sMesh);
-	matMul(matMVP,matView,matProjection);
+	matMul(matMVP,matSubBlockView,matProjection);
 	shaderMatrix(sMesh,matMVP);
 	meshFinishDynamic(ropeMesh);
 	meshDraw(ropeMesh);
-	meshEmpty(ropeMesh);
 }
 
 void ropeUpdateP(const packet *p){
