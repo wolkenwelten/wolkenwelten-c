@@ -1,31 +1,31 @@
 ;; Contains everything related to the yield/coroutine system
 
-(define yield-queue (cons "Start of Yield Queue"))
-(define yield (λ (pred expr) "Executes expr once pred is true, returns immediately otherwise"
+(def yield-queue (cons "Start of Yield Queue"))
+(def yield (λ (pred expr) "Executes expr once pred is true, returns immediately otherwise"
 	(set-cdr! (last-pair yield-queue) (cons (cons pred expr))) #t))
 
-(define yield-try (λ (l) "Tries to evaluate part an entry of the yield queue"
+(def yield-try (λ (l) "Tries to evaluate part an entry of the yield queue"
 	(cond ((eval (car l)) (eval (cdr l)) #t)
 	      (#t #f))))
 
-(define yield-run-iter (λ (l) "Iter for yield-run"
+(def yield-run-iter (λ (l) "Iter for yield-run"
 	(cond ((nil? l) #t)
 	      ((nil? (cdr l)) #t)
 	      ((yield-try (cadr l)) (set-cdr! l (cddr l)) (yield-run-iter l))
 	      (#t (yield-run-iter (cdr l))))))
 
-(define yield-run (λ () "Executes pending coroutines if their predicate now evaluates to #t"
+(def yield-run (λ () "Executes pending coroutines if their predicate now evaluates to #t"
 	(yield-run-iter yield-queue)))
 
-(define timeout (λ (millis) "Returns a function that evaluates to true once millis milliseconds have passed"
+(def timeout (λ (millis) "Returns a function that evaluates to true once millis milliseconds have passed"
 	(let ((goal (+ (msecs) millis))) (λ () (> (msecs) goal)))))
 
-(define event-bind (λ (event-name handler) "Binds handler lambda to event-name"
+(def event-bind (λ (event-name handler) "Binds handler lambda to event-name"
 	(set! (str->sym event-name) (cons handler (resolve (str->sym event-name))))))
-(define event-clear (λ (event-name) "Clears all event handlers for event-name"
+(def event-clear (λ (event-name) "Clears all event handlers for event-name"
 	(set! (str->sym event-name) '())))
-(define event-fire-iter (λ (l v) "Iter for event-fire"
+(def event-fire-iter (λ (l v) "Iter for event-fire"
 	(cond ((nil? l) #t)
 	      (#t (apply (car l) v) (event-fire-iter (cdr l) v)))))
-(define event-fire (λ (event-name ...val) "Applies ...val to all event handlers associated with event-name"
+(def event-fire (λ (event-name ...val) "Applies ...val to all event handlers associated with event-name"
 	(event-fire-iter (resolve (str->sym event-name)) ...val)))

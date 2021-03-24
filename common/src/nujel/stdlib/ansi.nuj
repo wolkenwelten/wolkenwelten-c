@@ -1,38 +1,38 @@
 ;; This File contains various functions generating ansi escape sequences for colorful output
 
-(define ansi-wrap (λ (c s) "Wraps string s in the ansi color c"
+(def ansi-wrap (λ (c s) "Wraps string s in the ansi color c"
 	((ansi-fg c) s (ansi-fg 15))))
 
-(define ansi-black (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
+(def ansi-black (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
 	(ansi-wrap 0 (apply cat ...s))))
-(define ansi-dark-red (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
+(def ansi-dark-red (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
 	(ansi-wrap 1 (apply cat ...s))))
-(define ansi-darkgreen (λ (...s) "Wraps its arguments as a string in the a green ansi color code"
+(def ansi-darkgreen (λ (...s) "Wraps its arguments as a string in the a green ansi color code"
 	(ansi-wrap 2 (apply cat ...s))))
-(define ansi-brown (λ (...s) "Wraps its arguments as a string in the a yellow ansi color code"
+(def ansi-brown (λ (...s) "Wraps its arguments as a string in the a yellow ansi color code"
 	(ansi-wrap 3 (apply cat ...s))))
-(define ansi-dark-blue (λ (...s) "Wraps its arguments as a string in the a blue ansi color code"
+(def ansi-dark-blue (λ (...s) "Wraps its arguments as a string in the a blue ansi color code"
 	(ansi-wrap 4 (apply cat ...s))))
-(define ansi-purple (λ (...s) "Wraps its arguments as a string in the a pink ansi color code"
+(def ansi-purple (λ (...s) "Wraps its arguments as a string in the a pink ansi color code"
 	(ansi-wrap 5 (apply cat ...s))))
-(define ansi-teal (λ (...s) "Wraps its arguments as a string in the a cyan ansi color code"
+(def ansi-teal (λ (...s) "Wraps its arguments as a string in the a cyan ansi color code"
 	(ansi-wrap 6 (apply cat ...s))))
-(define ansi-dgrey (λ (...s) "Wraps its arguments as a string in the a white ansi color code"
+(def ansi-dgrey (λ (...s) "Wraps its arguments as a string in the a white ansi color code"
 	(ansi-wrap 7 (apply cat ...s))))
 
-(define ansi-grey (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
+(def ansi-grey (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
 	(ansi-wrap 8 (apply cat ...s))))
-(define ansi-red (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
+(def ansi-red (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
 	(ansi-wrap 9 (apply cat ...s))))
-(define ansi-green (λ (...s) "Wraps its arguments as a string in the a green ansi color code"
+(def ansi-green (λ (...s) "Wraps its arguments as a string in the a green ansi color code"
 	(ansi-wrap 10 (apply cat ...s))))
-(define ansi-yellow (λ (...s) "Wraps its arguments as a string in the a yellow ansi color code"
+(def ansi-yellow (λ (...s) "Wraps its arguments as a string in the a yellow ansi color code"
 	(ansi-wrap 11 (apply cat ...s))))
-(define ansi-blue (λ (...s) "Wraps its arguments as a string in the a blue ansi color code"
+(def ansi-blue (λ (...s) "Wraps its arguments as a string in the a blue ansi color code"
 	(ansi-wrap 12 (apply cat ...s))))
-(define ansi-pink (λ (...s) "Wraps its arguments as a string in the a pink ansi color code"
+(def ansi-pink (λ (...s) "Wraps its arguments as a string in the a pink ansi color code"
 	(ansi-wrap 13 (apply cat ...s))))
-(define ansi-cyan (λ (...s) "Wraps its arguments as a string in the a cyan ansi color code"
+(def ansi-cyan (λ (...s) "Wraps its arguments as a string in the a cyan ansi color code"
 	(ansi-wrap 14 (apply cat ...s))))
-(define ansi-white (λ (...s) "Wraps its arguments as a string in the a white ansi color code"
+(def ansi-white (λ (...s) "Wraps its arguments as a string in the a white ansi color code"
 	(ansi-wrap 15 (apply cat ...s))))

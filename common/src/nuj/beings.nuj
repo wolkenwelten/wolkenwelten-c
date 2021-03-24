@@ -1,4 +1,4 @@
 ; Contains defines having to do with all kinds of beings, mostly players
 
-(define player-die (λ (&player) "Orders &PLAYER=pid to Die"
+(def player-die (λ (&player) "Orders &PLAYER=pid to Die"
 	(player-dmg 8192 &player)))

@@ -1,64 +1,64 @@
-(define log (λ (...args) "Prints its arguments into the LISP console"
+(def log (λ (...args) "Prints its arguments into the LISP console"
 	(console-print (apply cat ...args))))
 
-(define help-iter (λ (l) "Iter for (help)"
+(def help-iter (λ (l) "Iter for (help)"
 	(cond ((nil? l) #t)
 	      (#t (say (describe (car l))) (help-iter (cdr l))))))
-(define help (λ (i) "Describes 10 functions at offset 1"
+(def help (λ (i) "Describes 10 functions at offset 1"
 	(let ((off (* (int i) 10)))
 	(help-iter (map cat (symbol-table off 10)))
 	(say ("Help page " (int i) " of " (/ (symbol-count) 10))) #t)))
 
-(define print (λ (...a) "Prints to everyones chat"
+(def print (λ (...a) "Prints to everyones chat"
 	(say (apply cat ...a))))
 
-(define heal     (δ (a) "Heals oneself by a points"
+(def heal     (δ (a) "Heals oneself by a points"
 	(- (dmg (cond (a (- a)) (#t -20))))))
 
-(define morning (λ () "Sets the Time to 8:00 AM"
+(def morning (λ () "Sets the Time to 8:00 AM"
 	(time "8:00")))
 
-(define noon (λ () "Sets the Time to 12:00 PM"
+(def noon (λ () "Sets the Time to 12:00 PM"
 	(time "12:00")))
 
-(define evening (λ () "Sets the Time to 21:30 PM"
+(def evening (λ () "Sets the Time to 21:30 PM"
 	(time "21:30")))
 
-(define night (λ () "Sets the Time to Midnight"
+(def night (λ () "Sets the Time to Midnight"
 	(time "24:00")))
 
-(define player-x (δ () "Returns the current players X Position"
+(def player-x (δ () "Returns the current players X Position"
 	(vx (player-pos))))
 
-(define player-y (δ () "Returns the current players Y Position"
+(def player-y (δ () "Returns the current players Y Position"
 	(vy (player-pos))))
 
-(define player-z (δ () "Returns the current players Z Position"
+(def player-z (δ () "Returns the current players Z Position"
 	(vz (player-pos))))
 
-(define vx+      (λ (v a) "Returns the sum of vector v and (vec a 0 0)"
+(def vx+      (λ (v a) "Returns the sum of vector v and (vec a 0 0)"
 	(+ v (vec a 0 0))))
 
-(define vy+      (λ (v a) "Returns the sum of vector v and (vec 0 a 0)"
+(def vy+      (λ (v a) "Returns the sum of vector v and (vec 0 a 0)"
 	(+ v (vec 0 a 0))))
 
-(define vz+      (λ (v a) "Returns the sum of vector v and (vec 0 0 a)"
+(def vz+      (λ (v a) "Returns the sum of vector v and (vec 0 0 a)"
 	(+ v (vec 0 0 a))))
 
-(define rain     (λ () "Make it Rain!"
+(def rain     (λ () "Make it Rain!"
 	(cloud-density 0.9)))
 
-(define cloud-density (λ (a) "Sets the new Goal Density to a which should be a float in the range 0.0 - 1.0."
+(def cloud-density (λ (a) "Sets the new Goal Density to a which should be a float in the range 0.0 - 1.0."
 	(- 1.0 (/ (cloud-threshold (* (- 1.0 a) 256.0)) 256.0))))
 
-(define countdown (λ (i) "Counts down on the console"
+(def countdown (λ (i) "Counts down on the console"
 	(cond ((< (int i) 0) #t)
 		(#t (say  (cond ((zero? i) ((ansi-green "GO!") (ansi-yellow "!") (ansi-red "!")))
 				((< i 4) (ansi-red i))
 				((< i 6) (ansi-yellow i)) (#t i)))
 		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))
 
-(define debug-stuff! (δ () "Gives the issuing player some nice stuff to get started with"
+(def debug-stuff! (δ () "Gives the issuing player some nice stuff to get started with"
 	(clear-eq!) (clear-inv!)
 
 	(set-eq! 0 i-glider)

@@ -1,38 +1,38 @@
 ;; Some predicates that were simpler to do in nujel
 
-(define number? (λ (a) "Returns #t if a is a number"
+(def number? (λ (a) "Returns #t if a is a number"
 	(or (int? a) (float? a) (vec? a))))
 
-(define empty? (λ (a) "Returns #t if a is empty"
+(def empty? (λ (a) "Returns #t if a is empty"
 	(nil? a)))
 
-(define last? (λ (a) "Returns #t if a is the last pair in a list"
+(def last? (λ (a) "Returns #t if a is the last pair in a list"
 	(nil? (cdr a))))
 
-(define pos? (λ (a) "Returns #t if a is positive"
+(def pos? (λ (a) "Returns #t if a is positive"
 	(>= a 0)))
 
-(define neg? (λ (a) "Returns #t if a is negative"
+(def neg? (λ (a) "Returns #t if a is negative"
 	(< a 0)))
 
-(define ineq? (λ (a b) "Returns #t a does not equal b"
+(def ineq? (λ (a b) "Returns #t a does not equal b"
 	(not (eq? a b))))
 
-(define there-exists? (λ (l pred) "Applies predicate to each element and return #t if it holds true for any element, otherwise #f"
+(def there-exists? (λ (l pred) "Applies predicate to each element and return #t if it holds true for any element, otherwise #f"
 	(cond ((nil? l) #f)
 	      ((pred (car l)) #t)
 	      (#t (there-exists? (cdr l) pred)))))
 
-(define for-all? (λ (l pred) "Applies predicate to each element returns #t if it holds true for every element, otherwise #f"
+(def for-all? (λ (l pred) "Applies predicate to each element returns #t if it holds true for every element, otherwise #f"
 	(cond ((nil? l) #t)
 	      ((not (pred (car l))) #f)
 	      (#t (for-all? (cdr l) pred)))))
 
-(define odd? (λ (a) "Predicate that returns #t if a is odd"
+(def odd? (λ (a) "Predicate that returns #t if a is odd"
 	(= (% (int a) 2) 1)))
 
-(define even? (λ (a) "Predicate that returns #t if a is even"
+(def even? (λ (a) "Predicate that returns #t if a is even"
 	(= (% (int a) 2) 0)))
 
-(define procedure? (λ (a) "Returns #t if a is a native or lisp function"
+(def procedure? (λ (a) "Returns #t if a is a native or lisp function"
 	(or (lambda? a) (native? a))))

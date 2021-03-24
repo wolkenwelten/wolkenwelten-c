@@ -16,125 +16,125 @@
 ;; Contains various little pieces that were implemented in nujel instead of
 ;; C because of various reasons
 
-(define cddr (λ (p) "Short for (cdr (cdr p))"
+(def cddr (λ (p) "Short for (cdr (cdr p))"
 	(cdr (cdr p))))
 
-(define cadr (λ (p) "Short for (car (cdr p))"
+(def cadr (λ (p) "Short for (car (cdr p))"
 	(car (cdr p))))
 
-(define caddr (λ (p) "Short for (car (cdr (cdr p)))"
+(def caddr (λ (p) "Short for (car (cdr (cdr p)))"
 	(car (cdr (cdr p)))))
 
-(define except-last-pair (λ (l r) "Returns a copy of li without the last pair"
+(def except-last-pair (λ (l r) "Returns a copy of li without the last pair"
 	(if (nil? (cdr l)) (reverse r) (except-last-pair (cdr l) (cons (car l) r)))))
 
-(define make-list (λ (i e l) "Returns a list of i elements containing e in every car"
+(def make-list (λ (i e l) "Returns a list of i elements containing e in every car"
 	(if (<= i 0) l (make-list (-- i) e (cons e l)))))
 
-(define reduce (λ (o l s) "Combines all elements in l using operation o and starting value s"
+(def reduce (λ (o l s) "Combines all elements in l using operation o and starting value s"
 	(if (nil? l) s (reduce o (cdr l) (o s (car l))))))
 
-(define list-ref (λ (l i) "Returns the the element of list l at location i"
+(def list-ref (λ (l i) "Returns the the element of list l at location i"
 	(cond ((nil? l) #nil)
 	      ((<= i 0) (car l))
               (#t (list-ref (cdr l) (-- i))))))
 
-(define ++ (λ (i) "Returns its argument + 1"
+(def ++ (λ (i) "Returns its argument + 1"
 	(+ i 1)))
 
-(define -- (λ (i) "Returns its argument - 1"
+(def -- (λ (i) "Returns its argument - 1"
 	(- i 1)))
 
-(define reverse (λ (l r) "Returns the list l in reverse order"
+(def reverse (λ (l r) "Returns the list l in reverse order"
 	(if (nil? l) r (reverse (cdr l) (cons (car l) r)))))
 
-(define list-length (λ (a t) "Returns the length of list a"
+(def list-length (λ (a t) "Returns the length of list a"
 	(if (nil? a) t (list-length (cdr a) (++ t)))))
 
-(define length (λ (a) "Returns the length of a"
+(def length (λ (a) "Returns the length of a"
 	(cond ((string? a) (str-len a))
               ((pair? a) (list-length a))
               (#t 0))))
 
-(define filter (λ (p l) "Runs predicate p over every item in list l and returns a list consiting solely of items where p is true"
+(def filter (λ (p l) "Runs predicate p over every item in list l and returns a list consiting solely of items where p is true"
         (cond ((nil? l) #nil)
               ((p (car l)) (cons (car l) (filter p (cdr l))))
               (#t                       (filter p (cdr l))))))
 
-(define map (λ (f l) "Runs f over every item in list l and returns the resulting list"
+(def map (λ (f l) "Runs f over every item in list l and returns the resulting list"
 	(if (nil? l) l (cons (f (car l)) (map f (cdr l))))))
 
-(define append-iter (λ (a b) "Iterator for append"
+(def append-iter (λ (a b) "Iterator for append"
 	(if (nil? a) b (append-iter (cdr a) (cons (car a) b)))))
-(define append (λ (a b) "Appends to two lists a and b together"
+(def append (λ (a b) "Appends to two lists a and b together"
 	(append-iter (reverse a) b)))
 
-(define sublist (λ (l start end ret) "Returns a new list containing all elements of l from start to end"
+(def sublist (λ (l start end ret) "Returns a new list containing all elements of l from start to end"
 	(cond ((nil?    l) (reverse ret))
               ((neg?  end) (sublist      l      start  (+ (length l) end)))
               ((zero? end) (reverse ret))
               ((> start 0) (sublist (cdr l) (-- start) (-- end) #nil))
               ((> end   0) (sublist (cdr l) 0          (-- end) (cons (car l) ret))))))
 
-(define list-head (λ (l k) "Returns the first k elemnts of list l"
+(def list-head (λ (l k) "Returns the first k elemnts of list l"
 	(sublist l 0 k)))
 
-(define list-tail (λ (l k) "Returns the sublist of l obtained by omitting the first l elements"
+(def list-tail (λ (l k) "Returns the sublist of l obtained by omitting the first l elements"
 	(sublist l k (length l))))
 
-(define member (λ (m l) "Returns the first pair of list l whose car is equal to m"
+(def member (λ (m l) "Returns the first pair of list l whose car is equal to m"
 	(cond ((nil? l) #f)
               ((eq? (car l) m) l)
               (#t (member m (cdr l))))))
 
 
-(define delete (λ (e l) "Returns a filtered list l with all elements equal to e omitted"
+(def delete (λ (e l) "Returns a filtered list l with all elements equal to e omitted"
 	(filter (λ (a) (not (eq? a e))) l)))
 
-(define arg-list (λ (f) "Returns the Argument list of f which can be a Native Function or a Lambda"
+(def arg-list (λ (f) "Returns the Argument list of f which can be a Native Function or a Lambda"
 	(cond ((lambda? f) (reduce cat (map (λ (a) (" " (car a))) (cl-data f))))
 	      ((native? f) (reduce cat (map (λ (a) (" " a)) (car (cl-data f)))))
 	      (#t ""))))
 
-(define describe (λ (a) "Returns the DocString to its argument, if available"
+(def describe (λ (a) "Returns the DocString to its argument, if available"
 	(cond ((not (string? a)) "Please quote the symbol in question, like (describe \"help\")")
 	      (#t (let ((ds (car (cl-text (resolve (str->sym a)))))
 	      (args (arg-list (resolve (str->sym a))))
 	      (fn (cat a)))
 		("(" fn args ") - " (if (string? ds) ds "No DocString found")))))))
 
-(define display (λ (a) "Displays its argument"
+(def display (λ (a) "Displays its argument"
 	(print a)))
 
-(define newline (λ () "Prints a single line feed character"
+(def newline (λ () "Prints a single line feed character"
 	(display "\n")))
 
-(define list (λ (...l) "Returns its arguments as a list"
+(def list (λ (...l) "Returns its arguments as a list"
 	...l))
 
-(define when   (δ (c @...expr) "Evaluates l and returns the last result if c is #t"
+(def when   (δ (c @...expr) "Evaluates l and returns the last result if c is #t"
 	(cond (c (eval (cons 'begin @...expr))) (#t #f))))
-(define unless (δ (c @...expr) "Evaluates l and returns the last result if c is #f"
+(def unless (δ (c @...expr) "Evaluates l and returns the last result if c is #f"
 	(cond (c #f) (#t (eval (cons 'begin @...expr))))))
 
-(define arr-fill! (λ (a v i) "Fills array a with value v"
+(def arr-fill! (λ (a v i) "Fills array a with value v"
 	(cond ((>= i (arr-length a)) a)
 	      (#t (a (int i) v) (arr-fill! a v (++ i))))))
 
-(define min-iter (λ (a l) "Iter for (min)"
+(def min-iter (λ (a l) "Iter for (min)"
 	(cond ((nil? l) a)
 	      ((< a (car l)) (min-iter a (cdr l)))
 	      (#t (min-iter (car l) (cdr l))))))
-(define min (λ (...l) "Returns the minimum value of its arguments"
+(def min (λ (...l) "Returns the minimum value of its arguments"
 	(cond ((nil? ...l) 0)
 	      ((nil? (cdr ...l)) (car ...l))
 	      (#t (min-iter (car ...l) (cdr ...l))))))
 
-(define max-iter (λ (a l) "Iter for (max)"
+(def max-iter (λ (a l) "Iter for (max)"
 	(cond ((nil? l) a)
 	      ((> a (car l)) (max-iter a (cdr l)))
 	      (#t (max-iter (car l) (cdr l))))))
-(define max (λ (...l) "Returns the maximum value of its arguments"
+(def max (λ (...l) "Returns the maximum value of its arguments"
 	(cond ((nil? ...l) 0)
 	      ((nil? (cdr ...l)) (car ...l))
 	      (#t (max-iter (car ...l) (cdr ...l))))))

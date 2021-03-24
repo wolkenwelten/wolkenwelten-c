@@ -1,47 +1,47 @@
-(define log (λ (...args) "Prints its arguments into the LISP console"
+(def log (λ (...args) "Prints its arguments into the LISP console"
 	(console-print ("  " (apply cat ...args)))))
 
-(define conf-v1! (λ (@...body) "Wrapper for auto generated config s-expressions, will be overwritten on every optionsave"
+(def conf-v1! (λ (@...body) "Wrapper for auto generated config s-expressions, will be overwritten on every optionsave"
 	(eval (cons 'begin @...body))))
 
-(define help-iter (λ (l) "Iter for (help)"
+(def help-iter (λ (l) "Iter for (help)"
 	(cond ((nil? l) #t)
 	      (#t (log (describe (car l))) (help-iter (cdr l))))))
-(define help (λ (i) "Describes 10 functions at offset 1"
+(def help (λ (i) "Describes 10 functions at offset 1"
 	(let ((off (* (int i) 10)))
 	(help-iter (map cat (symbol-table off 10)))
 	(log ("Help page " (int i) " of " (/ (symbol-count) 10)))) #t))
 
-(define time-fast! (λ (a) "Speeds up the game to about 4x"
+(def time-fast! (λ (a) "Speeds up the game to about 4x"
 	(mst!  1) (s (mst!  1))))
 
-(define time-norm! (λ (a) "Sets the game speed to the default 1x"
+(def time-norm! (λ (a) "Sets the game speed to the default 1x"
 	(mst!  4) (s (mst!  4))))
 
-(define time-slow! (λ (a) "Sets the game speed to about 1/4x"
+(def time-slow! (λ (a) "Sets the game speed to about 1/4x"
 	(mst! 16) (s (mst! 16))))
 
-(define time-bullet! (λ (a) "Sets the game speed to about 1/16x"
+(def time-bullet! (λ (a) "Sets the game speed to about 1/16x"
 	(mst! 64) (s (mst! 64))))
 
-(define morning (λ () "Sets the Time to 8:00 AM"
+(def morning (λ () "Sets the Time to 8:00 AM"
 	(s (morning))))
 
-(define noon (λ () "Sets the Time to 12:00 PM"
+(def noon (λ () "Sets the Time to 12:00 PM"
 	(s (noon))))
 
-(define evening (λ () "Sets the Time to 21:30 PM"
+(def evening (λ () "Sets the Time to 21:30 PM"
 	(s (evening))))
 
-(define night (λ () "Sets the Time to Midnight"
+(def night (λ () "Sets the Time to Midnight"
 	(s (night))))
 
-(define countdown (λ (i) "Counts down on the console"
+(def countdown (λ (i) "Counts down on the console"
 	(cond ((< (int i) 0) #t)
 		(#t (log  (cond ((zero? i) (ansi-green "GO!")) ((< i 4) (ansi-red i)) ((< i 6) (ansi-yellow i)) (#t i)))
 		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))
 
-(define hammertime (λ (i) "It better not stop"
+(def hammertime (λ (i) "It better not stop"
 	(cond ((<= i 0) #t)
 	      (#t (countdown 300) (hammertime (-- i))))))
 

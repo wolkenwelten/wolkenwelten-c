@@ -111,18 +111,19 @@ lClosure *lClosureAlloc(){
 	lClosure *ret = lClosureFFree;
 	lClosureFFree = ret->nextFree;
 	lClosureMax   = MAX(lClosureMax,(uint)(ret-lClosureList) + 1);
+	memset(ret,0,sizeof(lClosure));
 	ret->data     = ret->text = NULL;
 	ret->parent   = NULL;
 	ret->nextFree = NULL;
-	ret->flags    = lfUsed;
+	ret->flags    = 0;
 	return ret;
 }
 void lClosureFree(lClosure *c){
-	if((c == NULL) || (!(c->flags & lfUsed))){return;}
+	if((c == NULL) || (c->flags & lfFree)){return;}
 	c->data       = c->text = NULL;
 	c->parent     = NULL;
 	c->nextFree   = lClosureFFree;
-	c->flags      = 0;
+	c->flags      = lfFree;
 	lClosureFFree = c;
 }
 
@@ -134,6 +135,7 @@ lArray *lArrayAlloc(){
 	lArray *ret   = lArrayFFree;
 	lArrayMax     = MAX(lArrayMax,(uint)(ret-lArrayList) + 1);
 	lArrayFFree   = ret->nextFree;
+	memset(ret,0,sizeof(lArray));
 	ret->flags    = 0;
 	ret->length   = 0;
 	ret->data     = NULL;
@@ -155,6 +157,7 @@ lString *lStringAlloc(){
 	}
 	lString *ret  = lStringFFree;
 	lStringFFree  = ret->nextFree;
+	memset(ret,0,sizeof(lString));
 	lStringMax    = MAX(lStringMax,(uint)(ret-lStringList) + 1);
 	ret->data     = ret->buf = ret->bufEnd = NULL;
 	ret->flags    = 0;
@@ -240,7 +243,7 @@ lVal *lValAlloc(){
 	}
 	lVal *ret  = lValFFree;
 	lValFFree  = ret->vNA;
-	ret->vNA   = NULL;
+	memset(ret,0,sizeof(lVal));
 	ret->type  = ltInt;
 	lValMax    = MAX(lValMax,(uint)(ret-lValList) + 1);
 	return ret;
@@ -330,7 +333,7 @@ lClosure *lClosureNew(lClosure *parent){
 	if(c == NULL){return NULL;}
 	c->parent = parent;
 	parent->refCount++;
-	c->flags = lfUsed;
+	c->flags = 0;
 	return c;
 }
 
@@ -585,19 +588,19 @@ static lVal *lnfMem(lClosure *c, lVal *v){
 
 	char buf[4096];
 	int vals=0,clos=0,arrs=0,strs=0;
-	for(uint i=0;i<lValMax;i++){
+	for(uint i=0;i<VAL_MAX;i++){
 		if(lValList[i].type == ltNoAlloc){continue;}
 		vals++;
 	}
-	for(uint i=0;i<lClosureMax;i++){
-		if(!(lClosureList[i].flags & lfUsed)){continue;}
+	for(uint i=0;i<CLO_MAX;i++){
+		if(lClosureList[i].flags & lfFree){continue;}
 		clos++;
 	}
-	for(uint i=0;i<lArrayMax;i++){
+	for(uint i=0;i<ARR_MAX;i++){
 		if(lArrayList[i].nextFree  != NULL){continue;}
 		arrs++;
 	}
-	for(uint i=0;i<lStringMax;i++){
+	for(uint i=0;i<STR_MAX;i++){
 		if(lStringList[i].nextFree != NULL){continue;}
 		strs++;
 	}
@@ -923,8 +926,9 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"if",  "(pred? then ...else)","Evalutes then if pred? is #t, otherwise evaluates ...else", lnfIf);
 	lAddNativeFunc(c,"cond","(...c)",              "Contains at least 1 cond block of form (pred? ...body) and evaluates and returns the first where pred? is #t",lnfCond);
 
-	lAddNativeFunc(c,"define",   "(s v)",         "Define a new symbol s and link it to value v",                      lnfDef);
-	lAddNativeFunc(c,"undefine!","(s)",           "Removes symbol s from the first symbol-table it is found in",       lnfUndef);
+	lAddNativeFunc(c,"def",      "(sym val)",         "Define a new symbol SYM and link it to value VAL",              lnfDef);
+	lAddNativeFunc(c,"define",   "(sym val)",         "Define a new symbol SYM and link it to value VAL",              lnfDef);
+	lAddNativeFunc(c,"undefine!","(sym)",           "Removes symbol SYM from the first symbol-table it is found in",   lnfUndef);
 	lAddNativeFunc(c,"let",      "(args ...body)","Creates a new closure with args bound in which to evaluate ...body",lnfLet);
 	lAddNativeFunc(c,"begin",    "(...body)",     "Evaluates ...body in order and returns the last result",            lnfBegin);
 	lAddNativeFunc(c,"quote",    "(v)",           "Returns v as is without evaluating",                                lnfQuote);
@@ -1113,7 +1117,7 @@ static void lGCMark(){
 		lValGCMark(&lValList[i]);
 	}
 	for(uint i=0;i<lClosureMax;i++){
-		if(!(lClosureList[i].flags & lfUsed)){continue;}
+		if(  lClosureList[i].flags & lfFree ){continue;}
 		if(!(lClosureList[i].flags & lfNoGC)){continue;}
 		lClosureGCMark(&lClosureList[i]);
 	}
@@ -1133,7 +1137,6 @@ static void lGCSweep(){
 		lValFree(&lValList[i]);
 	}
 	for(uint i=0;i<lClosureMax;i++){
-		if(!(lClosureList[i].flags & lfUsed)){continue;}
 		if(lClosureList[i].flags & lfMarked) {continue;}
 		lClosureFree(&lClosureList[i]);
 	}
@@ -1148,9 +1151,12 @@ static void lGCSweep(){
 }
 
 static void lClosureDoGC(){
+	//fprintf(stderr,"GC!\n");
+	//lnfMem(NULL,NULL);
 	lGCUnmark();
 	lGCMark();
 	lGCSweep();
+	//lnfMem(NULL,NULL);
 }
 
 void lClosureGC(){
