@@ -1,8 +1,8 @@
 AS                   := as
 ASFLAGS              :=
 CC                   := cc
-OPTIMIZATION         := -O2 -fno-lto -ffast-math
-RELEASE_OPTIMIZATION := -O3 -flto -ffast-math
+OPTIMIZATION         := -O2 -fno-lto -ffast-math -freciprocal-math
+RELEASE_OPTIMIZATION := -O3 -flto -ffast-math -freciprocal-math
 CINCLUDES            :=
 LIBS                 := -lm
 WARNINGS             := -Wall -Werror -Wextra -Wshadow -Wcast-align
