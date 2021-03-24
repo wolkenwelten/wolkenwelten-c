@@ -6,7 +6,5 @@ in vec4 frontColor;
 out vec4 fragColor;
 
 void main() {
-	vec4 pixel;
-	pixel = texture(curTex, multiTexCoord);
-	fragColor = frontColor * pixel;
+	fragColor = frontColor * texture(curTex, multiTexCoord);
 }

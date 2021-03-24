@@ -9,6 +9,6 @@ out vec4 frontColor;
 
 void main(){
 	gl_Position   = matMVP * pos;
-	multiTexCoord = tex / 128.0;
+	multiTexCoord = tex * 0.0078125; // 1/128
 	frontColor    = color;
 }
