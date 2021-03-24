@@ -53,12 +53,12 @@ struct lVal {
 };
 
 struct lClosure {
+	lVal *data;
+	lVal *text;
 	union {
 		lClosure *parent;
 		lClosure *nextFree;
 	};
-	lVal *data;
-	lVal *text;
 	u16 flags;
 	u16 refCount;
 };

@@ -72,14 +72,12 @@ static uint getMSecs(){
 
 void lInit(){
 	randomValueSeed = getMSecs();
+	lValMax         = 0;
+	lClosureMax     = 0;
+	lStringMax      = 0;
+	lArrayMax       = 0;
 	strncpy(symQuote.c,"quote",15);
-	symQuote.c[15] = 0;
 	strncpy(symArr.c,"arr",15);
-	symQuote.c[15] = 0;
-	lValMax        = 0;
-	lClosureMax    = 0;
-	lStringMax     = 0;
-	lArrayMax      = 0;
 
 	for(uint i=0;i<VAL_MAX-1;i++){
 		lValList[i].type = ltNoAlloc;
@@ -111,17 +109,11 @@ lClosure *lClosureAlloc(){
 	lClosure *ret = lClosureFFree;
 	lClosureFFree = ret->nextFree;
 	lClosureMax   = MAX(lClosureMax,(uint)(ret-lClosureList) + 1);
-	memset(ret,0,sizeof(lClosure));
-	ret->data     = ret->text = NULL;
-	ret->parent   = NULL;
-	ret->nextFree = NULL;
-	ret->flags    = 0;
+	*ret = (lClosure){0};
 	return ret;
 }
 void lClosureFree(lClosure *c){
 	if((c == NULL) || (c->flags & lfFree)){return;}
-	c->data       = c->text = NULL;
-	c->parent     = NULL;
 	c->nextFree   = lClosureFFree;
 	c->flags      = lfFree;
 	lClosureFFree = c;
@@ -135,11 +127,7 @@ lArray *lArrayAlloc(){
 	lArray *ret   = lArrayFFree;
 	lArrayMax     = MAX(lArrayMax,(uint)(ret-lArrayList) + 1);
 	lArrayFFree   = ret->nextFree;
-	memset(ret,0,sizeof(lArray));
-	ret->flags    = 0;
-	ret->length   = 0;
-	ret->data     = NULL;
-	ret->nextFree = NULL;
+	*ret = (lArray){0};
 	return ret;
 }
 
@@ -147,7 +135,6 @@ void lArrayFree(lArray *v){
 	if((v == NULL) || (v->nextFree != NULL)){return;}
 	free(v->data);
 	v->nextFree = lArrayFFree;
-	v->data     = NULL;
 }
 
 lString *lStringAlloc(){
@@ -157,11 +144,8 @@ lString *lStringAlloc(){
 	}
 	lString *ret  = lStringFFree;
 	lStringFFree  = ret->nextFree;
-	memset(ret,0,sizeof(lString));
+	*ret = (lString){0};
 	lStringMax    = MAX(lStringMax,(uint)(ret-lStringList) + 1);
-	ret->data     = ret->buf = ret->bufEnd = NULL;
-	ret->flags    = 0;
-	ret->nextFree = NULL;
 	return ret;
 }
 
@@ -170,7 +154,6 @@ void lStringFree(lString *s){
 	if((s->buf != NULL) && (s->flags & lfHeapAlloc)){
 		free((void *)s->buf);
 	}
-	s->data = s->buf = s->bufEnd = NULL;
 	s->nextFree = lStringFFree;
 	lStringFFree = s;
 }
@@ -208,34 +191,6 @@ lVal *lValCString(const char *c){
 	return t;
 }
 
-static void lAddPlatformVars(lClosure *c){
-	#if defined(__HAIKU__)
-	lDefineVal(c, "OS", lConst(lValString("Haiku")));
-	#elif defined(__APPLE__)
-	lDefineVal(c, "OS", lConst(lValString("Macos")));
-	#elif defined(__EMSCRIPTEN__)
-	lDefineVal(c, "OS", lConst(lValString("Emscripten")));
-	#elif defined(__MINGW32__)
-	lDefineVal(c, "OS", lConst(lValString("Windows")));
-	#elif defined(__linux__)
-	lDefineVal(c, "OS", lConst(lValString("Linux")));
-	#else
-	lDefineVal(c, "OS", lConst(lValString("*nix")));
-	#endif
-
-	#if defined(__arm__)
-	lDefineVal(c, "ARCH", lConst(lValString("armv7l")));
-	#elif defined(__aarch64__)
-	lDefineVal(c, "ARCH", lConst(lValString("aarch64")));
-	#elif defined(__x86_64__)
-	lDefineVal(c, "ARCH", lConst(lValString("x86_64")));
-	#elif defined(__EMSCRIPTEN__)
-	lDefineVal(c, "ARCH", lConst(lValString("wasm")));
-	#else
-	lDefineVal(c, "ARCH", lConst(lValString("unknown")));
-	#endif
-}
-
 lVal *lValAlloc(){
 	if(lValFFree == NULL){
 		lPrintError("lVal OOM\n");
@@ -243,17 +198,17 @@ lVal *lValAlloc(){
 	}
 	lVal *ret  = lValFFree;
 	lValFFree  = ret->vNA;
-	memset(ret,0,sizeof(lVal));
+	*ret = (lVal){0};
 	ret->type  = ltInt;
 	lValMax    = MAX(lValMax,(uint)(ret-lValList) + 1);
 	return ret;
 }
+
 void lValFree(lVal *v){
 	if((v == NULL) || (v->type == ltNoAlloc)){return;}
 	if(v->type == ltLambda){v->vLambda->refCount--;}
 	v->type   = ltNoAlloc;
 	v->vNA    = lValFFree;
-	v->flags  = 0;
 	lValFFree = v;
 }
 
@@ -275,6 +230,7 @@ lVal *lValInf(){
 	ret->type = ltInf;
 	return ret;
 }
+
 lVal *lValInt(int v){
 	lVal *ret = lValAlloc();
 	if(ret == NULL){return ret;}
@@ -282,6 +238,7 @@ lVal *lValInt(int v){
 	ret->vInt = v;
 	return ret;
 }
+
 lVal *lValVec(const vec v){
 	lVal *ret = lValAlloc();
 	if(ret == NULL){return ret;}
@@ -342,6 +299,7 @@ void lDisplayVal(lVal *v){
 	lSDisplayVal(v,dispWriteBuf,&dispWriteBuf[sizeof(dispWriteBuf)]);
 	printf("%s",dispWriteBuf);
 }
+
 void lWriteVal(lVal *v){
 	lSWriteVal(v,dispWriteBuf,&dispWriteBuf[sizeof(dispWriteBuf)]);
 	printf("%s\n",dispWriteBuf);
@@ -583,8 +541,7 @@ static lVal *lnfQuote(lClosure *c, lVal *v){
 }
 
 static lVal *lnfMem(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
+	(void)c; (void)v;
 
 	char buf[4096];
 	int vals=0,clos=0,arrs=0,strs=0;
@@ -782,8 +739,7 @@ static lVal *lnfRandomSeed(lClosure *c, lVal *v){
 }
 
 static lVal *lnfMsecs(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
+	(void)c; (void)v;
 	return lValInt(getMSecs());
 }
 
@@ -861,6 +817,35 @@ void lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *
 	}
 	lVal *lArgs = lRead(args);
 	var->vList.car = lValNativeFunc(func,lArgs,lValString(doc));
+}
+
+
+static void lAddPlatformVars(lClosure *c){
+	#if defined(__HAIKU__)
+	lDefineVal(c, "OS", lConst(lValString("Haiku")));
+	#elif defined(__APPLE__)
+	lDefineVal(c, "OS", lConst(lValString("Macos")));
+	#elif defined(__EMSCRIPTEN__)
+	lDefineVal(c, "OS", lConst(lValString("Emscripten")));
+	#elif defined(__MINGW32__)
+	lDefineVal(c, "OS", lConst(lValString("Windows")));
+	#elif defined(__linux__)
+	lDefineVal(c, "OS", lConst(lValString("Linux")));
+	#else
+	lDefineVal(c, "OS", lConst(lValString("*nix")));
+	#endif
+
+	#if defined(__arm__)
+	lDefineVal(c, "ARCH", lConst(lValString("armv7l")));
+	#elif defined(__aarch64__)
+	lDefineVal(c, "ARCH", lConst(lValString("aarch64")));
+	#elif defined(__x86_64__)
+	lDefineVal(c, "ARCH", lConst(lValString("x86_64")));
+	#elif defined(__EMSCRIPTEN__)
+	lDefineVal(c, "ARCH", lConst(lValString("wasm")));
+	#else
+	lDefineVal(c, "ARCH", lConst(lValString("unknown")));
+	#endif
 }
 
 static void lAddCoreFuncs(lClosure *c){
@@ -1088,7 +1073,7 @@ static void lValGCMark(lVal *v){
 }
 
 static void lClosureGCMark(lClosure *c){
-	if((c == NULL) || (c->flags & lfMarked)){return;}
+	if((c == NULL) || (c->flags & lfMarked)){return;} // Circular refs
 	c->flags |= lfMarked;
 
 	lValGCMark(c->data);
@@ -1151,7 +1136,6 @@ static void lGCSweep(){
 }
 
 static void lClosureDoGC(){
-	//fprintf(stderr,"GC!\n");
 	//lnfMem(NULL,NULL);
 	lGCUnmark();
 	lGCMark();
@@ -1181,7 +1165,7 @@ lType lTypecast(const lType a,const lType b){
 	if((a == ltFloat) || (b == ltFloat)){return ltFloat;}
 	if((a == ltInt)   || (b == ltInt)  ){return ltInt;}
 	if((a == ltBool)  || (b == ltBool) ){return ltBool;}
-	if(a == b){ return a;}
+	if (a == b){ return a;}
 	return ltNoAlloc;
 }
 

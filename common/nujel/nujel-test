@@ -292,6 +292,10 @@ test_sexpr "#xFFFFFFFF" "-1"
 test_sexpr "(- (+ 1 #b10) 1)" "2"
 test_sexpr "(- (+ 1 #o10) 1)" "8"
 test_sexpr "(- (+ 1 #x10) 1)" "16"
+test_sexpr "(+ #x10#x10)" "32"
+test_sexpr "(+ #x10#f)" "16"
+test_sexpr "(+ #x10\"16\")" "32"
+test_sexpr "(+ #x10(+ 0#x10))" "32"
 
 #test_sexpr "π" "3.14159" Doesnt work on windows, why?
 print_report
