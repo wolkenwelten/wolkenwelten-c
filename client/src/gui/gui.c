@@ -53,6 +53,7 @@
 #include "../voxel/chunk.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/game/time.h"
+#include "../../../common/src/misc/colors.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/tmp/cto.h"
 
@@ -66,6 +67,7 @@
 textMesh *guim;
 textMesh *crosshairMesh;
 textMesh *cursorMesh;
+textMesh *logoMesh;
 
 widget *widgetGameScreen;
 
@@ -154,6 +156,9 @@ static void handlerGameFocus(widget *wid){
 void initUI(){
 	cursorMesh           = textMeshNew(8);
 	cursorMesh->tex      = tCursor;
+
+	logoMesh             = textMeshNew(8);
+	logoMesh->tex        = tWolkenwelten;
 
 	crosshairMesh        = textMeshNew(16);
 	crosshairMesh->tex   = tCrosshair;
@@ -345,6 +350,7 @@ static void drawHookIndicator(){
 void drawDebuginfo(){
 	static uint ticks = 0;
 	size_t tris = vboTrisCount, draws = drawCallCount;
+	if(!gameRunning){return;}
 
 	guim->font = 1;
 	guim->size = 2;
@@ -571,15 +577,51 @@ void drawAmmunition(){
 	guim->font = 0;
 }
 
+void drawMenuBackground(){
+	static uint ticks = 0;
+	hsvaColor hsv;
+	hsv.h = 160 + sinf(++ticks*0.0002f) * 16.f;
+	hsv.s = 128;
+	hsv.v = 128 + cosf(++ticks*0.0009f) * 28.f;
+
+	if((skyBrightness < 0.6f) && (skyBrightness > 0.5f)){
+		const float bright = 1.f - fabsf((MAX(0.f,(skyBrightness - 0.5f)) * 20.f) - 1.f);
+		hsv.h = (((int)(bright * 140.f)) + 160) & 0xFF;
+	}
+
+	u32 ccolor = RGBAToU(hsvToRGB(hsv));
+	glClearColor( (ccolor&0xFF)/256.f, ((ccolor>>8)&0xFF)/256.f, ((ccolor>>16)&0xFF)/256.f, 1.f );
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+
+	textMeshEmpty(logoMesh);
+	int off = -128;
+	int size = MIN(screenWidth,screenHeight)/4;
+
+	textMeshAddVert(logoMesh,off+(screenWidth/2)-size,(screenHeight/2)-size,  0.f,  0.f,~1);
+	textMeshAddVert(logoMesh,off+(screenWidth/2)+size,(screenHeight/2)+size,128.f,128.f,~1);
+	textMeshAddVert(logoMesh,off+(screenWidth/2)+size,(screenHeight/2)-size,128.f,  0.f,~1);
+
+	textMeshAddVert(logoMesh,off+(screenWidth/2)+size,(screenHeight/2)+size,128.f,128.f,~1);
+	textMeshAddVert(logoMesh,off+(screenWidth/2)-size,(screenHeight/2)-size,  0.f,  0.f,~1);
+	textMeshAddVert(logoMesh,off+(screenWidth/2)-size,(screenHeight/2)+size,  0.f,128.f,~1);
+
+	textMeshDraw(logoMesh);
+}
+
 void drawHud(){
 	textMeshEmpty(guim);
 	guim->wrap = 0;
+	guim->font = 1;
+	guim->size = 2;
 
-	drawOverlay(guim);
-	drawHealthbar();
-	drawDebuginfo();
-	drawAmmunition();
-	chatDraw(guim);
+	if(gameRunning){
+		drawOverlay(guim);
+		drawHealthbar();
+		drawDebuginfo();
+		drawAmmunition();
+		chatDraw(guim);
+	}
 	lispPanelCheckAutoComplete();
 	lispPanelCheckAutoCompleteDescription();
 	widgetDraw(rootMenu,guim,0,0,screenWidth,screenHeight);

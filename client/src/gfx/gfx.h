@@ -23,6 +23,7 @@ extern float cloudFadeD;
 extern float cloudMinD;
 extern float cloudMaxD;
 
+void initMenuBackground();
 void initGL            ();
 void setRenderDistance (float newRD);
 void renderWorld       (const character *cam);

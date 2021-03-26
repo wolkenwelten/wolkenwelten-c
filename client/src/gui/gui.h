@@ -15,6 +15,7 @@ void resizeUI           ();
 void showMouseCursor    ();
 void hideMouseCursor    ();
 void updateMouse        ();
+void drawMenuBackground ();
 void drawCursor         ();
 void renderUI           ();
 void guiCancel          ();

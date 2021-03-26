@@ -34,6 +34,7 @@
 #include "../gfx/shadow.h"
 #include "../gfx/sky.h"
 #include "../gfx/texture.h"
+#include "../gfx/textMesh.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../misc/options.h"
@@ -44,6 +45,7 @@
 #include "../voxel/chunk.h"
 #include "../../../common/src/game/hook.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/colors.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -262,6 +264,8 @@ void renderFrame(){
 		renderSky(player);
 		renderWorld(player);
 		glClear(GL_DEPTH_BUFFER_BIT);
+	}else{
+		drawMenuBackground();
 	}
 	renderUI();
 	swapWindow();

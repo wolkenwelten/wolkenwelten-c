@@ -41,6 +41,7 @@ texture *tCrosshair;
 texture *tRope;
 texture *tSteelrope;
 texture *tBlockMining;
+texture *tWolkenwelten;
 
 static void textureLoadSurface(texture *t, uint w, uint h, const void *data){
 	t->w = w;
@@ -246,14 +247,15 @@ void textureBuildBlockIcons(int loadFromFile){
 }
 
 void textureInit(){
-	tBlocks      = textureNew(gfx_blocks_png_data,    gfx_blocks_png_len   ,"client/gfx/blocks.png");
-	tCursor      = textureNew(gfx_cursor_png_data,    gfx_cursor_png_len   ,"client/gfx/cursor.png");
-	tGui         = textureNew(gfx_gui_png_data,       gfx_gui_png_len      ,"client/gfx/gui.png");
-	tCrosshair   = textureNew(gfx_crosshair_png_data, gfx_crosshair_png_len,"client/gfx/crosshair.png");
-	tRope        = textureNew(gfx_rope_png_data,      gfx_rope_png_len     ,"client/gfx/rope.png");
-	tSteelrope   = textureNew(gfx_steelrope_png_data, gfx_steelrope_png_len,"client/gfx/steelrope.png");
-	tBlockMining = textureNew(gfx_mining_png_data,    gfx_mining_png_len   ,"client/gfx/mining.png");
-	tBlocksArr   = textureNewArray(gfx_blocks_png_data,gfx_blocks_png_len   ,"client/gfx/blocks.png", 256);
+	tBlocks       = textureNew(gfx_blocks_png_data,      gfx_blocks_png_len   ,   "client/gfx/blocks.png");
+	tCursor       = textureNew(gfx_cursor_png_data,      gfx_cursor_png_len   ,   "client/gfx/cursor.png");
+	tGui          = textureNew(gfx_gui_png_data,         gfx_gui_png_len      ,   "client/gfx/gui.png");
+	tCrosshair    = textureNew(gfx_crosshair_png_data,   gfx_crosshair_png_len,   "client/gfx/crosshair.png");
+	tRope         = textureNew(gfx_rope_png_data,        gfx_rope_png_len     ,   "client/gfx/rope.png");
+	tBlockMining  = textureNew(gfx_mining_png_data,      gfx_mining_png_len   ,   "client/gfx/mining.png");
+	tSteelrope    = textureNew(gfx_steelrope_png_data,   gfx_steelrope_png_len,   "client/gfx/steelrope.png");
+	tWolkenwelten = textureNew(gfx_wolkenwelten_png_data,gfx_wolkenwelten_png_len,"client/gfx/wolkenwelten.png");
+	tBlocksArr    = textureNewArray(gfx_blocks_png_data, gfx_blocks_png_len   ,   "client/gfx/blocks.png", 256);
 }
 
 void reloadTexture(texture *tex){

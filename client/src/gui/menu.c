@@ -103,7 +103,7 @@ void initMenu(){
 
 	rootMenu = widgetNewCP(wSpace,NULL,0,0,-1,-1);
 
-	menuBackground = widgetNewCP(wBackground,rootMenu,0,0,-1,-1);
+	menuBackground = widgetNewCP(wSpace,rootMenu,0,0,-1,-1);
 	menuText = widgetNewCP(wSpace,menuBackground,32,32,256,-65);
 	wid = widgetNewCPL(wLabel,menuText,0,0,256,32,"WolkenWelten");
 	wid->flags |= WIDGET_BIG;
