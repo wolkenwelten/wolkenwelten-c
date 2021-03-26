@@ -156,7 +156,7 @@ void fireUpdate(fire *f){
 
 	if(b == 0){
 		f->blockDmg = 0;
-		fireSpread(f);
+		firespread(f);
 	}else{
 		const int maxhp = blockTypeGetFireHealth(b);
 		f->blockDmg = MIN(maxhp,f->blockDmg + dmg);

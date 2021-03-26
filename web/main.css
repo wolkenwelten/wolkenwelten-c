@@ -367,3 +367,8 @@ span.key {
 		display:none;
 	}
 }
+
+img.logo {
+	margin:0px auto 2em;
+	max-width:256px;
+}

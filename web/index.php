@@ -33,6 +33,7 @@ foreach(array_keys($platforms) as $plat){
 <body bgcolor="#333333" text="#cccccc"  link="#cc3366" vlink="#cc3366" alink="#cc3366">
 	<h1>WolkenWelten - Alpha</h1>
 	<hr/>
+	<img class="logo" src="<?php echo baseSF('img/logo.png'); ?>" alt="Logo" width="512" height="512"/>
 	<p><b><?php echo hyper("Greetings Cybersurfer"); ?></b>, here you may find the newest release builds of the Free Software, LISP-Powered Voxel Sandbox called WolkenWelten (German for CloudWorlds).</p>
 	<p>Everything is licensed under the AGPLv3 and you can follow and hopefully join the development effort over on <a href="https://sr.ht/~melchizedek6809/WolkenWelten/">SourceHut</a> or on <a href="https://github.com/Melchizedek6809/WolkenWelten">GitHub</a>.</p>
 	<p>As for myself, my name is Ben, the lead dev of this project and you can watch me work on this Game on my <a href="https://www.twitch.tv/melchizedek6809">Twitch channel</a>, I try to do more visually exciting features on stream but it is still just me coding away, so be prepared for that.</p>

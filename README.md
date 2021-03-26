@@ -1,6 +1,6 @@
 # WolkenWelten
 
-![Screenshot 1](https://wolkenwelten.net/img/1.jpg)
+![Have a schway Logo](https://wolkenwelten.net/img/logo.png)
 
 ## Imagine a mix between Minecraft, Quake ]I[ and Emacs.
 This game is meant to be a cooperative multiplayer survival game, using voxels
@@ -10,6 +10,8 @@ There is no definitive plan for this game, mostly ideas to experiment with until
 something fun surfaces. You can read about some ideas in this repository, though
 some have only been talked about during the Weekly [Twitch](https://twitch.tv/melchizedek6809)
 dev streams.
+
+![Screenshot 1](https://wolkenwelten.net/img/1.jpg)
 
 ### Some Bullet Points
 * Mostly written in C99
