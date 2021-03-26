@@ -31,6 +31,10 @@
 
 #include <stdio.h>
 
+int windFireOffX = 0;
+int windFireOffY = 0;
+int windFireOffZ = 0;
+
 void fireNewF(u16 x, u16 y, u16 z, i16 strength, i16 blockDmg, i16 oxygen){
 	fire *f = NULL;
 	if(fireCount < countof(fireList)){
@@ -81,9 +85,9 @@ void fireRecvUpdate(uint c, const packet *p){
 
 static inline void fireSpreadToBlock(fire *f, int r,blockCategory ccat){
 	u16 fx,fy,fz;
-	fx = (f->x - r) + rngValM(r*2+1);
-	fy = (f->y - r) + rngValM(r*2+1);
-	fz = (f->z - r) + rngValM(r*2+1);
+	fx = (f->x - r) + rngValM(r*2+1) + windFireOffX;
+	fy = (f->y - r) + rngValM(r*2+1) + windFireOffY;
+	fz = (f->z - r) + rngValM(r*2+1) + windFireOffZ;
 
 	if((fy < f->y) && (rngValR() & 1)){
 		fy = fy + (f->y-fy);
@@ -101,14 +105,14 @@ static inline void fireSpreadToBlock(fire *f, int r,blockCategory ccat){
 static inline void fireSpread(fire *f){
 	int count = f->strength >> 7;
 	for(int i=0;i<count;i++){
-		if((rngValR() & 0x1F)!= 0){continue;}
+		if(rngValA(0x1F)){continue;}
 		int r = 1;
 		if((f->strength > 0xFF) && ((rngValR() & 0x07) == 0)){r = 2;}
 		fireSpreadToBlock(f,r,0);
 	}
 	count = f->strength >> 6;
 	for(int i=0;i<count+1;i++){
-		if((rngValR() & 0x1F)!= 0){continue;}
+		if(rngValA(0x1F)){continue;}
 		int r = 1;
 		const uint rv = (rngValR() & 0x07);
 		if(     (f->strength > 0x1F) && (rv != 0)){r = 2;}
@@ -172,9 +176,22 @@ void fireUpdate(fire *f){
 	fireSpread(f);
 }
 
+static void fireCalcWindOff(){
+	windFireOffX = 0;
+	windFireOffY = 0;
+	windFireOffZ = 0;
+	if(windVel.x >  0.0001){windFireOffX++;}
+	if(windVel.y >  0.0001){windFireOffY++;}
+	if(windVel.z >  0.0001){windFireOffZ++;}
+	if(windVel.x < -0.0001){windFireOffX--;}
+	if(windVel.y < -0.0001){windFireOffY--;}
+	if(windVel.z < -0.0001){windFireOffZ--;}
+}
+
 void fireUpdateAll(){
 	static uint calls = 0;
 	PROFILE_START();
+	fireCalcWindOff();
 
 	for(uint i=(calls&0x1F);i<fireCount;i+=0x20){
 		fireUpdate(&fireList[i]);
