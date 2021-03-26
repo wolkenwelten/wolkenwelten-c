@@ -17,8 +17,8 @@
 #include "itemDrop.h"
 
 #include "savegame.h"
-#include "../game/entity.h"
 #include "../game/itemDrop.h"
+#include "../../../common/src/game/entity.h"
 #include "../../../common/src/game/item.h"
 
 static void *itemDropSave(const itemDrop *i, void *buf){

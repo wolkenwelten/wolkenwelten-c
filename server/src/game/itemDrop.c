@@ -17,13 +17,13 @@
 
 #include "itemDrop.h"
 
-#include "../game/entity.h"
 #include "../game/fire.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/game/blockType.h"
+#include "../../../common/src/game/entity.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/misc/misc.h"

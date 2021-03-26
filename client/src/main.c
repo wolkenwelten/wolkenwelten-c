@@ -31,7 +31,6 @@
 #include "game/recipe.h"
 #include "game/rope.h"
 #include "game/throwable.h"
-#include "game/time.h"
 #include "game/weather.h"
 #include "gfx/gfx.h"
 #include "gfx/mesh.h"
@@ -59,6 +58,7 @@
 #include "voxel/chungus.h"
 
 #include "../../common/src/game/itemType.h"
+#include "../../common/src/game/time.h"
 #include "../../common/src/misc/test.h"
 #include "../../common/src/misc/misc.h"
 

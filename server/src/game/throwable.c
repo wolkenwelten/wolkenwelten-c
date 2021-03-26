@@ -17,8 +17,8 @@
 
 #include "throwable.h"
 
-#include "../game/entity.h"
 #include "../network/server.h"
+#include "../../../common/src/game/entity.h"
 
 void throwableNew(const vec pos, const vec rot, float speed, const item itm, being thrower, i8 damage, u8 flags){
 	throwable *a = throwableAlloc();

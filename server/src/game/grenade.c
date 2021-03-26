@@ -17,9 +17,9 @@
 
 #include "grenade.h"
 
-#include "../game/entity.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
+#include "../../../common/src/game/entity.h"
 #include "../../../common/src/game/projectile.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"

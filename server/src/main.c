@@ -27,8 +27,6 @@
 #include "game/landscape.h"
 #include "game/grenade.h"
 #include "game/throwable.h"
-#include "game/time.h"
-#include "game/rain.h"
 #include "game/weather.h"
 #include "misc/lisp.h"
 #include "persistence/savegame.h"
@@ -38,6 +36,8 @@
 #include "network/server.h"
 
 #include "../../common/src/game/itemType.h"
+#include "../../common/src/game/rain.h"
+#include "../../common/src/game/time.h"
 #include "../../common/src/nujel/nujel.h"
 #include "../../common/src/nujel/string.h"
 #include "../../common/src/tmp/cto.h"

@@ -25,10 +25,10 @@
 #include "../gfx/mesh.h"
 #include "../gui/gui.h"
 #include "../game/entity.h"
-#include "../game/time.h"
 #include "../game/weather.h"
 #include "../voxel/chungus.h"
 #include "../tmp/assets.h"
+#include "../../../common/src/game/time.h"
 #include "../../../common/src/misc/colors.h"
 
 #include <math.h>
