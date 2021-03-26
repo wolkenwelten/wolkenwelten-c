@@ -14,7 +14,7 @@ ASM_OBJS         :=
 WEBEXCLUDE       += --exclude=releases/macos/wolkenwelten.iconset/
 WEBEXCLUDE       += --exclude=releases/win/*.res
 
-TEST_WORLD       := -worldSeed=2600 -savegame=Test
+TEST_WORLD       := -worldSeed=6502 -savegame=Test
 
 .PHONY: all
 all: wolkenwelten nujel

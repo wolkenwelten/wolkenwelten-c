@@ -28,6 +28,7 @@ typedef struct {
 void worldgenFindSpawn  (worldgen *wgen,int x,int z,int tries);
 void worldgenMonolith   (worldgen *wgen,int x,int y,int z);
 void worldgenObelisk    (worldgen *wgen,int x,int y,int z);
+void worldgenFirstInit  ();
 
 worldgen *worldgenNew(chungus *clay);
 void worldgenFree(worldgen *wgen);

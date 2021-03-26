@@ -31,6 +31,7 @@
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
+#include "../worldgen/worldgen.h"
 #include "../../../common/src/game/time.h"
 #include "../../../common/src/game/weather.h"
 #include "../../../common/src/misc/lz4.h"
@@ -282,11 +283,15 @@ void savegameLoad(){
 	size_t len = 0;
 	char *b,*line;
 	#ifdef __EMSCRIPTEN__
+	worldgenFirstInit();
 	return;
 	#endif
 	checkValidSavegame(optionSavegame);
 	b = loadFile(savegameFileName(optionSavegame),&len);
-	if((b == NULL) || (len == 0)){return;}
+	if((b == NULL) || (len == 0)){
+		worldgenFirstInit();
+		return;
+	}
 
 	line = b;
 	for(uint i=0;i<len;i++){

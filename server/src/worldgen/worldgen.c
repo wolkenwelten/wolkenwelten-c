@@ -23,6 +23,8 @@
 #include "../voxel/chungus.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/common.h"
+#include "../../../common/src/game/time.h"
+#include "../../../common/src/game/weather.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
 
@@ -199,4 +201,22 @@ void worldgenGenerate(worldgen *wgen){
 	seedRNG(oldSeed);
 
 	PROFILE_STOP();
+}
+
+void worldgenFirstInit(){
+	const uint oldSeed = getRNGSeed();
+	const uint seed = (optionWorldSeed | (optionWorldSeed << 16)) ^ 0xAC79AB97;
+	seedRNG(seed);
+
+	gtimeSetTimeOfDay(rngValA(0xFFFFF));
+	windGVel   = vecMulS(vecRng(),1.f/512.f);
+	windGVel.y = 0.f;
+	windVel    = windGVel;
+	cloudGDensityMin  = 128+rngValA(0x7F);
+	cloudDensityMin   = cloudGDensityMin;
+	if((cloudDensityMin < 156) && (rngValA(0x3F) == 0)){
+		rainIntensity = rngValM((256-cloudDensityMin) / 2);
+	}
+
+	seedRNG(oldSeed);
 }
