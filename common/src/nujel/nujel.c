@@ -19,6 +19,7 @@
 
 #include "arithmetic.h"
 #include "array.h"
+#include "binary.h"
 #include "boolean.h"
 #include "casting.h"
 #include "predicates.h"
@@ -850,6 +851,7 @@ static void lAddPlatformVars(lClosure *c){
 
 static void lAddCoreFuncs(lClosure *c){
 	lAddArithmeticFuncs(c);
+	lAddBinaryFuncs(c);
 	lAddPredicateFuncs(c);
 	lAddBooleanFuncs(c);
 	lAddCastingFuncs(c);

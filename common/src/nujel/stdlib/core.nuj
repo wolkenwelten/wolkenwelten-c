@@ -138,3 +138,6 @@
 	(cond ((nil? ...l) 0)
 	      ((nil? (cdr ...l)) (car ...l))
 	      (#t (max-iter (car ...l) (cdr ...l))))))
+
+(def lognand (λ (...l) "Returns the Nand of its arguments"
+	(lognot (apply logand ...l))))

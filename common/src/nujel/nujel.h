@@ -190,6 +190,15 @@ static inline int lSymCmp(const lVal *a,const lVal *b){
 	return 0;
 }
 
+#define lEvalCastIApply(FUNC, c , v) do { \
+	if((c == NULL) || (v == NULL)){return lValInt(0);} \
+	lVal *t = lEvalCastSpecific(c,v,ltInt); \
+	if((t == NULL) || (t->type != ltPair)){return lValInt(0);} \
+	lVal *d = lValDup(t->vList.car); \
+	if(d == NULL){return lValInt(0);} \
+	return FUNC(d,t); \
+	} while (0)
+
 #define lEvalCastApply(FUNC, c , v) do { \
 	lVal *t = lEvalCast(c,v); \
 	if((t == NULL) || (t->type != ltPair)){return lValInt(0);} \
