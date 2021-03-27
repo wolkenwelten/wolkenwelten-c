@@ -18,3 +18,5 @@ lVal *lnfStringPred     (lClosure *c, lVal *v);
 lVal *lnfPairPred       (lClosure *c, lVal *v);
 lVal *lnfLambdaPred     (lClosure *c, lVal *v);
 lVal *lnfNativeFuncPred (lClosure *c, lVal *v);
+
+void lAddPredicateFuncs (lClosure *c);

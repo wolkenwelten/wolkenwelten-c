@@ -259,3 +259,16 @@ lVal *lnfVZ(lClosure *c, lVal *v){
 		return lValFloat(t->vVec.z);
 	}
 }
+
+void lAddArithmeticFuncs(lClosure *c){
+	lAddNativeFunc(c,"+",  "(...args)","Addition",      lnfAdd);
+	lAddNativeFunc(c,"add","(...args)","Addition",      lnfAdd);
+	lAddNativeFunc(c,"-",  "(...args)","Substraction",  lnfSub);
+	lAddNativeFunc(c,"sub","(...args)","Substraction",  lnfSub);
+	lAddNativeFunc(c,"*",  "(...args)","Multiplication",lnfMul);
+	lAddNativeFunc(c,"mul","(...args)","Multiplication",lnfMul);
+	lAddNativeFunc(c,"/",  "(...args)","Division",      lnfDiv);
+	lAddNativeFunc(c,"div","(...args)","Division",      lnfDiv);
+	lAddNativeFunc(c,"%",  "(...args)","Modulo",        lnfMod);
+	lAddNativeFunc(c,"mod","(...args)","Modulo",        lnfMod);
+}

@@ -135,3 +135,11 @@ lVal *lnfString(lClosure *c, lVal *t){
 	ret->vString = lStringNew(tmpStringBuf, len);
 	return ret;
 }
+
+void lAddCastingFuncs(lClosure *c){
+	lAddNativeFunc(c,"bool", "(a)","Casts a to bool",  lnfBool);
+	lAddNativeFunc(c,"int",  "(a)","Casts a to int",   lnfInt);
+	lAddNativeFunc(c,"float","(a)","Casts a to float", lnfFloat);
+	lAddNativeFunc(c,"vec",  "(a)","Casts a to vec",   lnfVec);
+	lAddNativeFunc(c,"str",  "(a)","Casts a to string",lnfCat);
+}

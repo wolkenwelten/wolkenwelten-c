@@ -17,3 +17,5 @@ lVal *lnfRound (lClosure *c, lVal *v);
 lVal *lnfVX    (lClosure *c, lVal *v);
 lVal *lnfVY    (lClosure *c, lVal *v);
 lVal *lnfVZ    (lClosure *c, lVal *v);
+
+void lAddArithmeticFuncs(lClosure *c);

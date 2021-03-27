@@ -15,3 +15,5 @@ lVal *lnfBr     (lClosure *c, lVal *v);
 lVal *lnfCat    (lClosure *c, lVal *v);
 lVal *lnfAnsiFG (lClosure *c, lVal *v);
 lVal *lnfAnsiRS (lClosure *c, lVal *v);
+
+void lAddStringFuncs(lClosure *c);

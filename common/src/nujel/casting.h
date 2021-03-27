@@ -7,3 +7,5 @@ lVal *lnfVec    (lClosure *c, lVal *v);
 lVal *lnfInf    (lClosure *c, lVal *v);
 lVal *lnfBool   (lClosure *c, lVal *v);
 lVal *lnfString (lClosure *c, lVal *v);
+
+void lAddCastingFuncs(lClosure *c);
