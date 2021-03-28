@@ -79,7 +79,7 @@ static void initSDLMixer(){
 		fprintf(stderr,"Mix_Init Error\n");
 	}
 	Mix_AllocateChannels(128);
-	sfxEnable = 1;
+	sfxEnable = true;
 }
 
 #ifdef __EMSCRIPTEN__
@@ -102,7 +102,7 @@ void initSDL(){
 
 	SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
 	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS,"0");
-	unsigned int initFlags = SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS | SDL_INIT_AUDIO;
+	uint initFlags = SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS | SDL_INIT_AUDIO;
 	if(SDL_Init( initFlags) < 0){
 		fprintf(stderr, "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
 		exit(1);
@@ -118,11 +118,12 @@ void initSDL(){
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2 );
 	#endif
 
-	int cwflags = SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_RESIZABLE;
+	int cwflags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_GRABBED;
 	#ifdef __EMSCRIPTEN__
 		cwflags |= SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_INPUT_GRABBED;
 		screenWidth = emGetWindowWidth();
 		screenHeight = emGetWindowHeight();
+		screenRefreshRate = 60;
 	#else
 		if( SDL_GetDesktopDisplayMode(0, &dm) == 0){
 			screenWidth  = dm.w;
@@ -131,19 +132,19 @@ void initSDL(){
 		}
 
 		if(optionFullscreen){
-			cwflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+			cwflags |= SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_INPUT_GRABBED;
 		}else{
-			screenWidth = optionWindowWidth;
+			screenWidth  = optionWindowWidth;
 			screenHeight = optionWindowHeight;
 		}
 	#endif
-
 
 	gWindow = SDL_CreateWindow( windowTitle, optionWindowX, optionWindowY, screenWidth, screenHeight, cwflags);
 	if( gWindow == NULL ) {
 		fprintf(stderr, "Window could not be created! SDL Error: %s\n", SDL_GetError() );
 		exit(1);
 	}
+	SDL_SetWindowGrab(gWindow,SDL_FALSE);
 
 	gContext = SDL_GL_CreateContext( gWindow );
 	if( gContext == NULL ){
