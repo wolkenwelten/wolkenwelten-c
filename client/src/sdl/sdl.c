@@ -138,6 +138,10 @@ void initSDL(){
 			screenHeight = optionWindowHeight;
 		}
 	#endif
+	if((optionWindowX < 0) || (optionWindowY < 0)){
+		optionWindowX = SDL_WINDOWPOS_CENTERED;
+		optionWindowY = SDL_WINDOWPOS_CENTERED;
+	}
 
 	gWindow = SDL_CreateWindow( windowTitle, optionWindowX, optionWindowY, screenWidth, screenHeight, cwflags);
 	if( gWindow == NULL ) {
