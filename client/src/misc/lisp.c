@@ -634,6 +634,7 @@ void lispEvents(){
 	PROFILE_START();
 
 	static u64 lastTicks = 0;
+	lClosureGC();
 	u64 cticks = getTicks();
 	if((lastTicks + 100) > cticks){
 		if(lastTicks > cticks){lastTicks = cticks;}
@@ -642,7 +643,6 @@ void lispEvents(){
 	lastTicks = cticks;
 
 	lnfBegin(clRoot,lRead("(yield-run)"));
-	lClosureGC();
 
 	PROFILE_STOP();
 }

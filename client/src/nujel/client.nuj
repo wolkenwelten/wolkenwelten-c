@@ -41,9 +41,13 @@
 		(#t (log  (cond ((zero? i) (ansi-green "GO!")) ((< i 4) (ansi-red i)) ((< i 6) (ansi-yellow i)) (#t i)))
 		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))
 
-(def hammertime (λ (i) "It better not stop"
+(def hammertime (λ (i) "Spawns I countdown coroutines that run for 10 Minutes"
 	(cond ((<= i 0) #t)
-	      (#t (countdown 300) (hammertime (-- i))))))
+	      (#t (countdown 600) (hammertime (-- i))))))
+(def chiseltime (λ (i) "Spawns I coundown coroutines that run for 10 Seconds"
+	(cond ((<= i 0) #t)
+	      (#t (countdown 10) (chiseltime (-- i))))))
+
 
 (event-bind "on-spawn" (λ () "" (say (ansi-yellow "Better luck next time!"))))
 (event-bind "on-join" (λ () "" (say (ansi-green "Welcome!"))))

@@ -507,6 +507,7 @@ static lVal *lnfLambda(lClosure *c, lVal *v){
 	if((cl == NULL) || (v == NULL) || (v->vList.car == NULL) || (v->vList.cdr == NULL)){return NULL;}
 	cl->text = v->vList.cdr;
 	lVal *ret = lValAlloc();
+	if(ret == NULL){return NULL;}
 	ret->type = ltLambda;
 	ret->vLambda = cl;
 
