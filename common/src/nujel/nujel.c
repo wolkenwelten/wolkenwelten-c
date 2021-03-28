@@ -1114,8 +1114,8 @@ static void lClosureDoGC(){
 void lClosureGC(){
 	static int calls = 0;
 
-	int thresh = (VAL_MAX - (int)lValActive)-256;
-	thresh = MIN(thresh,((CLO_MAX - (int)lClosureActive)-64)*8);
+	int thresh = (VAL_MAX - (int)lValActive)-4096;
+	thresh = MIN(thresh,((CLO_MAX - (int)lClosureActive)-128)*4);
 	thresh = MIN(thresh,((ARR_MAX - (int)lArrayActive)-64)*8);
 	thresh = MIN(thresh,((STR_MAX - (int)lStringActive)-64)*8);
 	if(++calls < thresh){return;}
