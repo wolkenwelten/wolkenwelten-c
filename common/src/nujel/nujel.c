@@ -161,6 +161,7 @@ void lStringFree(lString *s){
 	if((s == NULL) || (s->nextFree != NULL)){return;}
 	if((s->buf != NULL) && (s->flags & lfHeapAlloc)){
 		free((void *)s->buf);
+		s->buf = NULL;
 	}
 	lStringActive--;
 	s->nextFree = lStringFFree;
@@ -186,6 +187,10 @@ lVal *lValString(const char *c){
 	if(t == NULL){return NULL;}
 	t->type = ltString;
 	t->vString = lStringNew(c,strlen(c));
+	if(t->vString == NULL){
+		lValFree(t);
+		return NULL;
+	}
 	return t;
 }
 lVal *lValCString(const char *c){
@@ -194,6 +199,10 @@ lVal *lValCString(const char *c){
 	if(t == NULL){return NULL;}
 	t->type = ltString;
 	t->vString = lStringAlloc();
+	if(t->vString == NULL){
+		lValFree(t);
+		return NULL;
+	}
 	t->vString->buf = t->vString->data = c;
 	t->vString->bufEnd = t->vString->buf + strlen(c);
 	t->vString->flags |= lfConst;

@@ -271,7 +271,7 @@ static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
 
 static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrV(v));
-	if((t == NULL) || (t->type != ltString)){return NULL;}
+	if((t == NULL) || (t->type != ltString) || (t->vString == NULL)){return NULL;}
 	widgetAddEntry(lispLog, t->vString->data);
 	return t;
 }

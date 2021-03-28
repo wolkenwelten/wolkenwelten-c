@@ -126,7 +126,8 @@ void handlerLispSelectPrev(widget *wid){
 		if(++lispAutoCompleteSelection >= (int)lispAutoCompleteLen){lispAutoCompleteSelection = -1;}
 		return;
 	}
-	const char *msg = lispLog->valss[MIN(255,lispHistoryActive+1)];
+	if(lispHistoryActive+1 > 255){return;}
+	const char *msg = lispLog->valss[lispHistoryActive+1];
 	if(msg == NULL){return;}
 	if(*msg == 0)  {return;}
 	++lispHistoryActive;

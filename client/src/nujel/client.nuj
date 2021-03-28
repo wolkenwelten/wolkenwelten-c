@@ -46,7 +46,7 @@
 	      (#t (countdown 600) (hammertime (-- i))))))
 (def chiseltime (λ (i) "Spawns I coundown coroutines that run for 10 Seconds"
 	(cond ((<= i 0) #t)
-	      (#t (countdown 10) (chiseltime (-- i))))))
+	      (#t (countdown 5) (chiseltime (-- i))))))
 
 
 (event-bind "on-spawn" (λ () "" (say (ansi-yellow "Better luck next time!"))))
