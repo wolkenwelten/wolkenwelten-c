@@ -166,6 +166,7 @@ bool itemDoPrimary(item *cItem, character *cChar){
 bool itemDoSecondary(item *cItem, character *cChar){
 	if((cItem == NULL) || (cChar == NULL)){return false;}
 	if((cItem->ID < 256) && blockTypeValid(cItem->ID)){
+		if(throwableTry(cItem,cChar,0.025f, 1, 0)){return true;}
 		return characterPlaceBlock(cChar, cItem);
 	}
 	if((cItem->ID >= 256) && (cItem->ID < 512)){

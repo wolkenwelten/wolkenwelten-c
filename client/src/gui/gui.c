@@ -438,6 +438,7 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"ActiveChunks: %s\n",getHumanReadableSize(chunkGetActive()));
 		textMeshPrintf(guim,"FreeChunks  : %2i\n",chunkGetFree());
 		textMeshPrintf(guim,"ActiveChungi: %2i\n",chungusGetActiveCount());
+		textMeshPrintf(guim,"GarbageRuns : %u\n",lGCRuns);
 		textMeshPrintf(guim,"Latency     : %s%u\n",colorSignalLow(400,200,50,lastLatency),lastLatency);
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"WorstFrame  : %s%u\n",colorSignalLow(60,20,18,worstFrame),worstFrame);

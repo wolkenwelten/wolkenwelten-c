@@ -202,7 +202,7 @@ lVal *lReadString(lString *s){
 	while(1){
 		lStringAdvanceToNextCharacter(s);
 		char c = *s->data;
-		if((c == 0) || (c == ')') || (s->data >= s->bufEnd)){
+		if((v == NULL) || (c == 0) || (c == ')') || (s->data >= s->bufEnd)){
 			s->data++;
 			return ret;
 		}

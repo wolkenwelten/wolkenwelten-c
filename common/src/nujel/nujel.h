@@ -1,6 +1,8 @@
 #pragma once
 #include "../common.h"
 
+extern int lGCRuns;
+
 typedef enum lType {
 	ltNoAlloc = 0, ltBool, ltPair, ltLambda, ltInt, ltFloat, ltVec, ltString, ltSymbol, ltNativeFunc, ltInf, ltArray
 } lType;
@@ -68,7 +70,7 @@ struct lClosure {
 #define lfConst     ( 8)
 #define lfHeapAlloc (16)
 #define lfObject    (32)
-#define lfFree      (64)
+#define lfUsed      (64)
 
 struct lString {
 	const char *buf,*data;
