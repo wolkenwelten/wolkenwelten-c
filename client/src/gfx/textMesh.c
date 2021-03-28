@@ -400,8 +400,10 @@ void textMeshItem(textMesh *m, int x, int y, int size, int style, item *itm){
 		const int magSize = itemGetMagazineSize(itm);
 		if(magSize){
 			textMeshNumber(m,x+size/4,y+size/8,1,itemGetAmmo(itm));
-			textMeshNumber(m,x+size-size/4,y+size/8,1,magSize);
-			textMeshDigit (m,x+size/2-size/16,y+size/8, 1, 10);
+			if(screenWidth > 900){
+				textMeshNumber(m,x+size-size/4,y+size/8,1,magSize);
+				textMeshDigit (m,x+size/2-size/16,y+size/8, 1, 10);
+			}
 		}
 	}else{
 		textMeshNumber(m,x+size-size/4,y+(size-size/4-size/32),1,itm->amount);
