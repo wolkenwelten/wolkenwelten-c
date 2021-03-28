@@ -1036,7 +1036,7 @@ static void lValGCMark(lVal *v){
 }
 
 static void lClosureGCMark(lClosure *c){
-	if((c == NULL) || (c->flags & lfMarked)){return;} // Circular refs
+	if((c == NULL) || (c->flags & lfMarked) || (!(c->flags & lfUsed))){return;} // Circular refs
 	c->flags |= lfMarked;
 
 	lValGCMark(c->data);
@@ -1052,20 +1052,13 @@ static void lArrayGCMark(lArray *v){
 	}
 }
 
-static void lGCUnmark(){
-	for(uint i=0;i<lValMax    ;i++){lValList[i].flags     &= ~lfMarked;}
-	for(uint i=0;i<lClosureMax;i++){lClosureList[i].flags &= ~lfMarked;}
-	for(uint i=0;i<lStringMax ;i++){lStringList[i].flags  &= ~lfMarked;}
-	for(uint i=0;i<lArrayMax  ;i++){lArrayList[i].flags   &= ~lfMarked;}
-}
-
 static void lGCMark(){
 	for(uint i=0;i<lValMax;i++){
 		if(!(lValList[i].flags & lfNoGC)){continue;}
 		lValGCMark(&lValList[i]);
 	}
 	for(uint i=0;i<lClosureMax;i++){
-		if(!(lClosureList[i].flags & (lfUsed | lfNoGC))){continue;}
+		if(!(lClosureList[i].flags & lfNoGC)){continue;}
 		lClosureGCMark(&lClosureList[i]);
 	}
 	for(uint i=0;i<lStringMax;i++){
@@ -1080,19 +1073,31 @@ static void lGCMark(){
 
 static void lGCSweep(){
 	for(uint i=0;i<lValMax;i++){
-		if(lValList[i].flags & lfMarked)     {continue;}
+		if(lValList[i].flags & lfMarked){
+			lValList[i].flags &= ~lfMarked;
+			continue;
+		}
 		lValFree(&lValList[i]);
 	}
 	for(uint i=0;i<lClosureMax;i++){
-		if(lClosureList[i].flags & lfMarked) {continue;}
+		if(lClosureList[i].flags & lfMarked){
+			lClosureList[i].flags &= ~lfMarked;
+			continue;
+		}
 		lClosureFree(&lClosureList[i]);
 	}
 	for(uint i=0;i<lStringMax;i++){
-		if(lStringList[i].flags & lfMarked)  {continue;}
+		if(lStringList[i].flags & lfMarked){
+			lStringList[i].flags &= ~lfMarked;
+			continue;
+		}
 		lStringFree(&lStringList[i]);
 	}
 	for(uint i=0;i<lArrayMax;i++){
-		if(lArrayList[i].flags & lfMarked)   {continue;}
+		if(lArrayList[i].flags & lfMarked){
+			lArrayList[i].flags &= ~lfMarked;
+			continue;
+		}
 		lArrayFree(&lArrayList[i]);
 	}
 }
@@ -1101,7 +1106,6 @@ static void lClosureDoGC(){
 	lGCRuns++;
 	fprintf(stderr,"GC!\n");
 	lnfMem(NULL,NULL);
-	lGCUnmark();
 	lGCMark();
 	lGCSweep();
 	lnfMem(NULL,NULL);
