@@ -902,6 +902,17 @@ void lDefineVal(lClosure *c, const char *sym, lVal *val){
 	var->vList.car = val;
 }
 
+lVal *lnfRead(lClosure *c, lVal *v){
+	lVal *t = lEval(c,v);
+	if((t == NULL) || (t->type != ltString)){return NULL;}
+	t = lReadString(&lStr(t));
+	if((t != NULL) && (t->type == ltPair) && (t->vList.car != NULL) && (t->vList.cdr == NULL)){
+		return t->vList.car;
+	}else{
+		return t;
+	}
+}
+
 void lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *doc, lVal *(*func)(lClosure *,lVal *)){
 	lSymbol S;
 	memset(S.c,0,sizeof(S.c));
@@ -962,6 +973,7 @@ static void lAddCoreFuncs(lClosure *c){
 
 	lAddNativeFunc(c,"apply",       "(f l)",         "Evaluates f with list l as arguments",     lnfApply);
 	lAddNativeFunc(c,"eval",        "(expr)",        "Evaluates expr",                           lEval);
+	lAddNativeFunc(c,"read",        "(s)",           "Reads and Parses the S-Expression in S ",  lnfRead);
 	lAddNativeFunc(c,"resolve",     "(s)",           "Resolves s until it is no longer a symbol",lResolve);
 	lAddNativeFunc(c,"match-sym",   "(s)",           "Returns all symbols partially matching s", lnfMatchClosureSym);
 	lAddNativeFunc(c,"mem",         "()",            "Returns memory usage data",                lnfMem);

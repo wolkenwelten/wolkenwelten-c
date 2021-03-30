@@ -310,6 +310,7 @@ test_sexpr "(ash 1 30)" "1073741824"
 test_sexpr "(ash -1 -1)" "-1"
 test_sexpr "(lognot (ash 1 31))" "2147483647"
 test_sexpr "(lognand #b1111 #b1111)" "-16"
+test_sexpr "(eval (read \"(+ 1 2 3)\"))" "6"
 
 #test_sexpr "π" "3.14159" Doesnt work on windows, why?
 print_report
