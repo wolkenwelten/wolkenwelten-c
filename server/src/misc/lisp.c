@@ -53,14 +53,14 @@
 char replyBuf[256];
 
 static uint getPID(lClosure *c){
-	lVal *pid = lResolveSym(c, lValSym("pid"));
+	lVal *pid = lResolveSym(c - lClosureList, lValSym("pid"));
 	if(pid == NULL){return 123;}
 	return pid->vInt;
 }
 
 static void setPID(lClosure *c, uint pid){
 	lVal *sym = lValSym("pid");
-	lVal *t = lDefineClosureSym(c, sym->vSymbol);
+	lVal *t = lDefineClosureSym(c - lClosureList, sym->vSymbol);
 	t->vList.car = lValInt(pid);
 }
 
@@ -263,7 +263,7 @@ static lVal *wwlnfTime(lClosure *c, lVal *v){
 		lVal *t = lEval(c,v->vList.car);
 		if(t != NULL){
 			if(t->type == ltString){
-				gtimeSetTimeOfDayHRS(t->vString->buf);
+				gtimeSetTimeOfDayHRS(lStrData(t));
 			}else{
 				t = lnfInt(c,t);
 				gtimeSetTime(t->vInt);
@@ -365,14 +365,14 @@ static lVal *wwlnfRCount(lClosure *c, lVal *v){
 static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrV(v));
 	if((t == NULL) || (t->type != ltString)){return NULL;}
-	serverSendChatMsg(t->vString->data);
+	serverSendChatMsg(lStrData(t));
 	return t;
 }
 
 static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrV(v));
 	if((t == NULL) || (t->type != ltString)){return NULL;}
-	printf("%s\n",t->vString->data);
+	printf("%s\n",lStrData(t));
 	return t;
 }
 
@@ -469,7 +469,8 @@ void lispInit(){
 }
 
 lClosure *lispClientClosure(uint c){
-	lClosure *ret = lClosureNew(clRoot);
+	const uint i = lClosureNew(clRoot - lClosureList);
+	lClosure *ret = &lClosureList[i];
 	ret->flags |= lfNoGC;
 	setPID(ret,c);
 	return ret;

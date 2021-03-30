@@ -27,7 +27,7 @@ lVal *lnfArrLength(lClosure *c, lVal *v){
 	if((c == NULL) || (v == NULL)){return NULL;}
 	lVal *arr = lEval(c,lCarOrV(v));
 	if((arr == NULL) || (arr->type != ltArray)){return NULL;}
-	return lValInt(arr->vArr->length);
+	return lValInt(lArrLength(arr));
 }
 
 lVal *lnfArrRS(lClosure *c, lVal *v){
@@ -42,13 +42,13 @@ lVal *lnfArrRS(lClosure *c, lVal *v){
 	const lVal *lkey = lnfInt(c,t);
 	if(lkey == NULL){return NULL;}
 	int key = lkey->vInt;
-	if((key < 0) || (key >= arr->vArr->length)){return NULL;}
+	if((key < 0) || (key >= lArrLength(arr))){return NULL;}
 	v = v->vList.cdr;
 	forEach(cur,v){
-		arr->vArr->data[key++] = lEval(c,lCarOrV(cur));
-		if(key >= arr->vArr->length){return NULL;}
+		lArrData(arr)[key++] = lEval(c,lCarOrV(cur));
+		if(key >= lArrLength(arr)){return NULL;}
 	}
-	return arr->vArr->data[key];
+	return lArrData(arr)[key];
 }
 
 lVal *lnfArrNew(lClosure *c, lVal *v){
@@ -57,33 +57,37 @@ lVal *lnfArrNew(lClosure *c, lVal *v){
 	if((t == NULL) || (t->type != ltInt)){return NULL;}
 	lVal *r = lValAlloc();
 	r->type = ltArray;
-	r->vArr = lArrayAlloc();
-	r->vArr->length = t->vInt;
-	r->vArr->data = malloc(r->vArr->length * sizeof(lVal *));
-	if(r->vArr->data == NULL){
-		r->vArr->length = 0;
+	r->vCdr = lArrayAlloc();
+	lArrLength(r) = t->vInt;
+	lArrData(r) = malloc(t->vInt * sizeof(lVal *));
+	if(lArrData(r) == NULL){
+		lArrLength(r) = 0;
 		return NULL;
 	}
-	memset(r->vArr->data,0,r->vArr->length * sizeof(lVal *));
+	memset(lArrData(r),0,lArrLength(r) * sizeof(lVal *));
 	return r;
 }
 
 lVal *lnfArr(lClosure *c, lVal *v){
 	if((c == NULL) || (v == NULL)){return NULL;}
-	int length = lListLength(v);
+	lVal *vals = lApply(c,v,lEval);;
+	int length = lListLength(vals);
 	lVal *r = lValAlloc();
 	r->type = ltArray;
-	r->vArr = lArrayAlloc();
-	r->vArr->length = length;
-	r->vArr->data = malloc(r->vArr->length * sizeof(lVal *));
-	if(r->vArr->data == NULL){
-		r->vArr->length = 0;
+	r->vCdr = lArrayAlloc();
+	if(r->vCdr == 0){return NULL;}
+	lArray *arr = &lArr(r);
+	arr->length = length;
+	arr->data = malloc(length * sizeof(lVal *));
+	if(arr->data == NULL){
+		arr->length = 0;
+		lValFree(r);
 		return NULL;
 	}
-	memset(r->vArr->data,0,r->vArr->length * sizeof(lVal *));
+	memset(lArrData(r),0,lArrLength(r) * sizeof(lVal *));
 	int key = 0;
-	forEach(cur,v){
-		r->vArr->data[key++] = lEval(c,lCarOrV(cur));
+	forEach(cur,vals){
+		lArrData(r)[key++] = cur->vList.car;
 	}
 	return r;
 }

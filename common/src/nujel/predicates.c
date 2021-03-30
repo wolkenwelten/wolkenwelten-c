@@ -51,11 +51,13 @@ static int lValCompare(lClosure *c, lVal *v){
 		else if(a->vFloat  < b->vFloat){return -1;}
 		return 1;
 	case ltString: {
-		const uint alen = lStringLength(a->vString);
-		const uint blen = lStringLength(b->vString);
+		const uint alen = lStringLength(&lStr(a));
+		const uint blen = lStringLength(&lStr(b));
+		const char *ab = lStrBuf(a);
+		const char *bb = lStrBuf(b);
 		for(uint i=0;i<alen;i++){
-			const u8 ac = a->vString->buf[i];
-			const u8 bc = b->vString->buf[i];
+			const u8 ac = ab[i];
+			const u8 bc = bb[i];
 			if(ac == bc){continue;}
 			if(ac < bc){return -1;}
 			return 1;

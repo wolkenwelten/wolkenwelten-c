@@ -69,7 +69,6 @@ void lispPanelShowReply(lVal *sym, const char *reply){
 		if(*line != ' '){continue;}
 		for(;*line == ' ';line++){}
 		if(strncmp(sym->vSymbol.c,line,6)){
-			//printf("'%s' != '%s'\n",line,sym->vSymbol.c);
 			continue;
 		}
 		free(lispLog->valss[i]);
@@ -235,7 +234,7 @@ void lispPanelCheckAutoComplete(){
 	}
 
 	lastSym = sym;
-	lVal *newAC = lMatchClosureSym(clRoot,NULL,sym);
+	lVal *newAC = lMatchClosureSym(clRoot - lClosureList,NULL,sym);
 	for(lVal *n = newAC;(n != NULL) && (n->type == ltPair);n = n->vList.cdr){
 		lispAutoCompleteList[lispAutoCompleteLen]  = n->vList.car->vSymbol;
 		if(++lispAutoCompleteLen >= countof(lispAutoCompleteList)){break;}

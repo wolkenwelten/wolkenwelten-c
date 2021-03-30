@@ -218,12 +218,12 @@ static lVal *wwlnfServerAdd(lClosure *c, lVal *v){
 
 	if((v != NULL) && (v->type == ltPair)){
 		lVal *t = lnfCat(c,lEval(c,v->vList.car));
-		address = t->vString->buf;
+		address = lStrBuf(t);
 		v = v->vList.cdr;
 	}
 	if((v != NULL) && (v->type == ltPair)){
 		lVal *t = lnfCat(c,lEval(c,v->vList.car));
-		name = t->vString->buf;
+		name = lStrBuf(t);
 	}
 	serverListAdd(address,name);
 
@@ -265,14 +265,14 @@ static lVal *wwlnfInvActiveSlot(lClosure *c, lVal *v){
 static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrV(v));
 	if((t == NULL) || (t->type != ltString)){return NULL;}
-	msgSendChatMessage(t->vString->data);
+	msgSendChatMessage(lStrData(t));
 	return t;
 }
 
 static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCarOrV(v));
-	if((t == NULL) || (t->type != ltString) || (t->vString == NULL)){return NULL;}
-	widgetAddEntry(lispLog, t->vString->data);
+	if((t == NULL) || (t->type != ltString) || lStrNull(t)){return NULL;}
+	widgetAddEntry(lispLog, lStrData(t));
 	return t;
 }
 
@@ -608,7 +608,7 @@ void lispInit(){
 }
 
 void lispFree(){
-	lClosureFree(clRoot);
+	lClosureFree(clRoot - lClosureList);
 }
 
 const char *lispEval(const char *str){

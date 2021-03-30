@@ -732,7 +732,7 @@ void serverCloseClient(uint c){
 	clients[c].state = STATE_CLOSED;
 	msgSetPlayerCount(c,clientCount);
 	sendPlayerNames();
-	lClosureFree(clients[c].cl);
+	lClosureFree(clients[c].cl - lClosureList);
 	clients[c].cl = NULL;
 
 	int lowestClient=0;

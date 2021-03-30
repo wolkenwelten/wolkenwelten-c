@@ -12,7 +12,6 @@ typedef struct lClosure lClosure;
 typedef struct lString  lString;
 typedef struct lArray   lArray;
 typedef struct lNFunc   lNFunc;
-
 typedef struct {
 	union {
 		char c[16];
@@ -27,40 +26,36 @@ typedef struct {
 struct lArray {
 	lVal **data;
 	int length;
-	uint flags;
-	lArray *nextFree;
+	u8 flags;
+	u32 nextFree;
 };
 
 struct lNFunc {
 	lVal *(*fp)(lClosure *, lVal *);
 	lVal *doc;
+	u16 flags;
+	u16 nextFree;
 };
 
 struct lVal {
 	u8 flags;
-	lType type;
+	u8 type;
 	union {
-		lVal         *vNA;
-		bool          vBool;
-		lPair         vList;
-		int           vInt;
-		vec           vVec;
-		float         vFloat;
-		lString      *vString;
-		lSymbol       vSymbol;
-		lClosure     *vLambda;
-		lArray       *vArr;
-		lNFunc        vFunc;
+		u32        vCdr;
+		bool       vBool;
+		lPair      vList;
+		int        vInt;
+		vec        vVec;
+		float      vFloat;
+		lSymbol    vSymbol;
 	};
 };
 
 struct lClosure {
 	lVal *data;
 	lVal *text;
-	union {
-		lClosure *parent;
-		lClosure *nextFree;
-	};
+	u16 parent;
+	u16 nextFree;
 	u16 flags;
 	u16 refCount;
 };
@@ -73,33 +68,51 @@ struct lClosure {
 #define lfUsed      (64)
 
 struct lString {
-	const char *buf,*data;
-	const char *bufEnd;
-	lString *nextFree;
-	uint flags;
+	const char *buf,*data,*bufEnd;
+	u16 nextFree;
+	u16 flags;
 };
 
 extern lSymbol symQuote,symArr;
+
+#define VAL_MAX (1<<16)
+#define CLO_MAX (1<<12)
+#define STR_MAX (1<<12)
+#define ARR_MAX (1<<12)
+#define NFN_MAX (1<<10)
+
+#define VAL_MASK ((VAL_MAX)-1)
+#define CLO_MASK ((CLO_MAX)-1)
+#define STR_MASK ((STR_MAX)-1)
+#define ARR_MASK ((ARR_MAX)-1)
+#define NFN_MASK ((NFN_MAX)-1)
+
+extern lVal     lValList    [VAL_MAX];
+extern lClosure lClosureList[CLO_MAX];
+extern lString  lStringList [STR_MAX];
+extern lArray   lArrayList  [ARR_MAX];
+extern lNFunc   lNFuncList  [NFN_MAX];
+
 
 void      lInit             ();
 int       lMemUsage         ();
 void      lPrintError       (const char *format, ...);
 
-lClosure *lClosureAlloc     ();
+uint      lClosureAlloc     ();
 lClosure *lClosureNewRoot   ();
-lClosure *lClosureNew       (lClosure *parent);
-void      lClosureFree      (lClosure *c);
-lVal     *lClosureAddNF     (lClosure *c, const char *sym, lVal *(*func)(lClosure *,lVal *));
+uint      lClosureNew       (uint parent);
+void      lClosureFree      (uint c);
+lVal     *lClosureAddNF     (uint c, const char *sym, lVal *(*func)(lClosure *,lVal *));
 
 lVal     *lValAlloc         ();
 void      lValFree          (lVal *v);
 
-lArray   *lArrayAlloc       ();
-void      lArrayFree        (lArray *v);
+uint      lArrayAlloc       ();
+void      lArrayFree        (uint v);
 
-lString  *lStringAlloc      ();
-void      lStringFree       (lString *s);
-lString  *lStringNew        (const char *str, uint len);
+uint      lStringAlloc      ();
+void      lStringFree       (uint v);
+uint      lStringNew        (const char *str, uint len);
 
 void      lClosureGC        ();
 void      lDisplayVal       (lVal *v);
@@ -108,11 +121,11 @@ void      lWriteVal         (lVal *v);
 void      lDefineVal        (lClosure *c, const char *sym, lVal *val);
 void      lAddNativeFunc    (lClosure *c, const char *sym, const char *args, const char *doc, lVal *(*func)(lClosure *,lVal *));
 lVal     *lValNativeFunc    (lVal *(*func)(lClosure *,lVal *), lVal *args, lVal *docString);
-lVal     *lGetClosureSym    (lClosure *c, const lSymbol s);
-lVal     *lResolveClosureSym(lClosure *c, const lSymbol s);
-lVal     *lDefineClosureSym (lClosure *c, const lSymbol s);
-lVal     *lMatchClosureSym  (lClosure *c, lVal *v, const lSymbol s);
-lVal     *lResolveSym       (lClosure *c, lVal *v);
+lVal     *lGetClosureSym    (uint      c, const lSymbol s);
+lVal     *lResolveClosureSym(uint      c, const lSymbol s);
+lVal     *lDefineClosureSym (uint      c, const lSymbol s);
+lVal     *lMatchClosureSym  (uint      c, lVal *v, const lSymbol s);
+lVal     *lResolveSym       (uint      c, lVal *v);
 lVal     *lApply            (lClosure *c, lVal *v, lVal *(*func)(lClosure *,lVal *));
 lVal     *lCast             (lClosure *c, lVal *v, lType t);
 lVal     *lEval             (lClosure *c, lVal *v);
@@ -136,7 +149,26 @@ lVal     *lValCopy      (lVal *dst, const lVal *src);
 #define getLArgI(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfInt   (c,lEval(c,v->vList.car)); if(tlv != NULL){ res = tlv->vInt;         } v = v->vList.cdr; }
 #define getLArgF(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfFloat (c,lEval(c,v->vList.car)); if(tlv != NULL){ res = tlv->vFloat;       } v = v->vList.cdr; }
 #define getLArgV(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfVec   (c,lEval(c,v->vList.car)); if(tlv != NULL){ res = tlv->vVec;         } v = v->vList.cdr; }
-#define getLArgS(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfString(c,lEval(c,v->vList.car)); if(tlv != NULL){ res = tlv->vString->data;} v = v->vList.cdr; }
+#define getLArgS(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfString(c,lEval(c,v->vList.car)); if(tlv != NULL){ res = lStringList[tlv->vCdr & STR_MASK].data;} v = v->vList.cdr; }
+
+#define lStrNull(val) (((val->vCdr & STR_MASK) == 0) || (lStringList[val->vCdr & STR_MASK].data == NULL))
+#define lStr(val) lStringList[val->vCdr & STR_MASK]
+#define lStrData(val) lStr(val).data
+#define lStrBuf(val) lStr(val).buf
+#define lStrEnd(val) lStr(val).bufEnd
+#define lStrFlags(val) lStr(val).flags
+
+#define lArrNull(val) (((val->vCdr & ARR_MASK) == 0) || (lArrayList[val->vCdr & ARR_MASK].data == NULL))
+#define lArr(val) lArrayList[val->vCdr & ARR_MASK]
+#define lArrLength(val) lArr(val).length
+#define lArrData(val) lArr(val).data
+
+#define lClo(i) lClosureList[i & CLO_MASK]
+#define lCloParent(i) lClosureList[i & CLO_MASK].parent
+#define lCloData(i) lClosureList[i & CLO_MASK].data
+#define lCloText(i) lClosureList[i & CLO_MASK].text
+
+#define lNFN(i) lNFuncList[i & NFN_MASK]
 
 static inline lVal *lValDup(const lVal *v){
 	return v == NULL ? NULL : lValCopy(lValAlloc(),v);
@@ -154,8 +186,7 @@ static inline lVal *lEvalCast(lClosure *c, lVal *v){
 	return lCast(c,t,lTypecastList(t));
 }
 static inline lVal *lEvalCastSpecific(lClosure *c, lVal *v, const lType type){
-	lVal *t = lApply(c,v,lEval);
-	return lCast(c,t,type);
+	return lCast(c,lApply(c,v,lEval),type);
 }
 static inline lVal *lEvalCastNumeric(lClosure *c, lVal *v){
 	lVal *t = lApply(c,v,lEval);
@@ -164,7 +195,11 @@ static inline lVal *lEvalCastNumeric(lClosure *c, lVal *v){
 	return lCast(c,t,type);
 }
 static inline lVal *lLastCar(lVal *v){
-	forEach(a,v){if(a->vList.cdr == NULL){return a->vList.car;}}
+	forEach(a,v){
+		if(a->vList.cdr == NULL){
+			return a->vList.car;
+		}
+	}
 	return NULL;
 }
 static inline lVal *lCarOrV(lVal *v){

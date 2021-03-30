@@ -63,7 +63,7 @@ void *loadFile(const char *filename,size_t *len){
 void doRepl(lClosure *c){
 	static char str[4096];
 	lVal *lastlsym = lValSym("lastl");
-	lVal *lastl = lDefineClosureSym(c, lastlsym->vSymbol);
+	lVal *lastl = lDefineClosureSym(c - lClosureList, lastlsym->vSymbol);
 	while(1){
 		printf("%sλ%s>%s ",ansiFG[1],ansiFG[12],ansiRS);
 		fflush(stdout);
@@ -96,7 +96,7 @@ lVal *lnfInput(lClosure *c, lVal *v){
 	if(v != NULL){
 		lVal *t = lnfCat(c,v);
 		if((t != NULL) && (t->type == ltString)){
-			printf("%s",t->vString->data);
+			printf("%s",lStrData(t));
 		}
 	}
 	if(fgets(buf,sizeof(buf),stdin) == NULL){
@@ -168,6 +168,6 @@ int main(int argc, char *argv[]){
 	if(repl){
 		doRepl(c);
 	}
-	lClosureFree(c);
+	lClosureFree(c - lClosureList);
 	return 0;
 }
