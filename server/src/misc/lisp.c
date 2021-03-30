@@ -103,10 +103,10 @@ static lVal *wwlnfPlayerPos(lClosure *c, lVal *v){
 
 static lVal *wwlnfSetB(lClosure *c, lVal *v){
 	vec pos = vecNOne();
-	u8 b = 0;
+	int b   = 0;
 
-	getLArgV(pos);
-	getLArgI(b);
+	v = getLArgV(c,v,&pos);
+	v = getLArgI(c,v,&b);
 
 	worldSetB(pos.x,pos.y,pos.z,b);
 	return lValInt(b);
@@ -115,7 +115,7 @@ static lVal *wwlnfSetB(lClosure *c, lVal *v){
 static lVal *wwlnfGetB(lClosure *c, lVal *v){
 	vec pos = vecNOne();
 
-	getLArgV(pos);
+	v = getLArgV(c,v,&pos);
 
 	return lValInt(worldGetB(pos.x,pos.y,pos.z));
 }
@@ -123,7 +123,7 @@ static lVal *wwlnfGetB(lClosure *c, lVal *v){
 static lVal *wwlnfTryB(lClosure *c, lVal *v){
 	vec pos = vecNOne();
 
-	getLArgV(pos);
+	v = getLArgV(c,v,&pos);
 
 	return lValInt(worldTryB(pos.x,pos.y,pos.z));
 }
@@ -131,11 +131,11 @@ static lVal *wwlnfTryB(lClosure *c, lVal *v){
 static lVal *wwlnfBox(lClosure *c, lVal *v){
 	vec pos  = vecNOne();
 	vec size = vecZero();
-	u8 b     = 0;
+	int b    = 0;
 
-	getLArgV(pos);
-	getLArgV(size);
-	getLArgI(b);
+	v = getLArgV(c,v,&pos);
+	v = getLArgV(c,v,&size);
+	v = getLArgI(c,v,&b);
 
 	if((pos.x < 0) || (size.x <= 0)){return NULL;}
 	worldBox(pos.x,pos.y,pos.z,size.x,size.y,size.z,b);
@@ -146,8 +146,8 @@ static lVal *wwlnfMBox(lClosure *c, lVal *v){
 	vec pos  = vecNOne();
 	vec size = vecZero();
 
-	getLArgV(pos);
-	getLArgV(size);
+	v = getLArgV(c,v,&pos);
+	v = getLArgV(c,v,&size);
 
 	worldBoxMine(pos.x,pos.y,pos.z,size.x,size.y,size.z);
 	return lValBool(true);
@@ -156,11 +156,11 @@ static lVal *wwlnfMBox(lClosure *c, lVal *v){
 static lVal *wwlnfSphere(lClosure *c, lVal *v){
 	vec pos = vecNOne();
 	float r = 1.f;
-	u8 b    = 0;
+	int b   = 0;
 
-	getLArgV(pos);
-	getLArgF(r);
-	getLArgI(b);
+	v = getLArgV(c,v,&pos);
+	v = getLArgF(c,v,&r);
+	v = getLArgI(c,v,&b);
 
 	worldBoxSphere(pos.x,pos.y,pos.z,r,b);
 	return lValInt(b);
@@ -170,8 +170,8 @@ static lVal *wwlnfMSphere(lClosure *c, lVal *v){
 	vec pos = vecNOne();
 	float r = 4.f;
 
-	getLArgV(pos);
-	getLArgF(r);
+	v = getLArgV(c,v,&pos);
+	v = getLArgF(c,v,&r);
 
 	worldBoxMineSphere(pos.x,pos.y,pos.z,r);
 	return lValBool(true);
@@ -182,9 +182,9 @@ static lVal *wwlnfGive(lClosure *c, lVal *v){
 	int amt      =  0;
 	int cplayer  = -1;
 
-	getLArgI(id);
-	getLArgI(amt);
-	getLArgI(cplayer);
+	v = getLArgI(c,v,&id);
+	v = getLArgI(c,v,&amt);
+	v = getLArgI(c,v,&cplayer);
 	if(cplayer < 0){cplayer = getPID(c);}
 
 	msgPickupItem(cplayer,itemNew(id,amt));
@@ -195,8 +195,8 @@ static lVal *wwlnfDmg(lClosure *c, lVal *v){
 	int hp      =  4;
 	int cplayer = -1;
 
-	getLArgI(hp);
-	getLArgI(cplayer);
+	v = getLArgI(c,v,&hp);
+	v = getLArgI(c,v,&cplayer);
 	if(cplayer < 0){cplayer = getPID(c);}
 
 	msgBeingDamage(cplayer,hp,0,1.f,beingCharacter(cplayer),-1,vecZero());
@@ -204,16 +204,18 @@ static lVal *wwlnfDmg(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfNewAnim(lClosure *c, lVal *v){
-	vec pos     = vecNOne();
-	uint amount = 1;
-	uint type   = 1;
+	vec pos    = vecNOne();
+	int amount = 1;
+	int type   = 1;
 
-	getLArgV(pos);
-	getLArgI(amount);
-	getLArgI(type);
+	v = getLArgV(c,v,&pos);
+	v = getLArgI(c,v,&amount);
+	v = getLArgI(c,v,&type);
 
 	if(pos.x < 0){return NULL;}
-	for(uint i=0;i<amount;i++){ animalNew(pos,type,-1); }
+	for(int i=0;i < amount;i++){
+		animalNew(pos,type,-1);
+	}
 	return NULL;
 }
 
@@ -225,12 +227,12 @@ static lVal *wwlnfSetAnim(lClosure *c, lVal *v){
 	int state  = -1;
 	int health = -1;
 
-	getLArgI(index);
-	getLArgI(hunger);
-	getLArgI(sleepy);
-	getLArgI(pregna);
-	getLArgI(state);
-	getLArgI(health);
+	v = getLArgI(c,v,&index);
+	v = getLArgI(c,v,&hunger);
+	v = getLArgI(c,v,&sleepy);
+	v = getLArgI(c,v,&pregna);
+	v = getLArgI(c,v,&state);
+	v = getLArgI(c,v,&health);
 
 	if((index < 0) || (index > (int)animalCount)){return NULL;}
 	animal *a = &animalList[index];
@@ -247,8 +249,8 @@ static lVal *wwlnfTp(lClosure *c, lVal *v){
 	vec pos     = vecNOne();
 	int cplayer = -1;
 
-	getLArgV(pos);
-	getLArgI(cplayer);
+	v = getLArgV(c,v,&pos);
+	v = getLArgI(c,v,&cplayer);
 
 	if(cplayer < 0){cplayer = getPID(c);}
 	if(!vecInWorld(pos)){return NULL;}
@@ -385,7 +387,8 @@ static lVal *wwlnfQuit(lClosure *c, lVal *v){
 static lVal *wwlnfChunkInfo(lClosure *c, lVal *v){
 	char buf[256];
 	vec pos = vecNOne();
-	getLArgV(pos);
+
+	v = getLArgV(c,v,&pos);
 	if(pos.x < 0){return NULL;}
 
 	chunk *chnk = worldTryChunk((uint)pos.x & 0xFFF0,(uint)pos.y & 0xFFF0,(uint)pos.z & 0xFFF0);
@@ -398,7 +401,7 @@ static lVal *wwlnfChunkInfo(lClosure *c, lVal *v){
 static lVal *wwlnfChungusInfo(lClosure *c, lVal *v){
 	char buf[256];
 	vec pos = vecNOne();
-	getLArgV(pos);
+	v= getLArgV(c,v,&pos);
 	if(pos.x < 0){return NULL;}
 
 	chungus *chng = worldTryChungus((uint)pos.x >> 8,(uint)pos.y >> 8,(uint)pos.z >> 8);

@@ -60,6 +60,11 @@ uint     lNFuncActive = 0;
 uint     lNFuncMax    = 1;
 uint     lNFuncFFree  = 0;
 
+lVec     lVecList[VEC_MAX];
+uint     lVecActive = 0;
+uint     lVecMax    = 1;
+uint     lVecFFree  = 0;
+
 char dispWriteBuf[1<<16];
 lSymbol symQuote,symArr;
 
@@ -94,11 +99,41 @@ void lInit(){
 	lNFuncActive    = 0;
 	lNFuncMax       = 1;
 
+	lVecActive      = 0;
+	lVecMax         = 1;
+
 	strncpy(symQuote.c,"quote",15);
 	strncpy(symArr.c,"arr",15);
 }
 
-void lNFuncFree(uint i){
+static void lVecFree(uint i){
+	if((i == 0) || (i >= lVecMax)){return;}
+	lVec *v = &lVecList[i];
+	if(v->nextFree != 0){return;}
+	lVecActive--;
+	v->nextFree   = lVecFFree;
+	v->flags      = 0;
+	lClosureFFree = i;
+}
+
+static uint lVecAlloc(){
+	lVec *ret;
+	if(lVecFFree == 0){
+		if(lVecMax >= VEC_MAX-1){
+			lPrintError("lVec OOM\n");
+			return 0;
+		}
+		ret = &lVecList[lVecMax++];
+	}else{
+		ret = &lVecList[lVecFFree & VEC_MASK];
+		lVecFFree = ret->nextFree;
+	}
+	lVecActive++;
+	*ret = (lVec){0};
+	return ret - lVecList;
+}
+
+static void lNFuncFree(uint i){
 	if((i == 0) || (i >= lNFuncMax)){return;}
 	lNFunc *nfn = &lNFuncList[i];
 	if(nfn->nextFree != 0){return;}
@@ -110,7 +145,7 @@ void lNFuncFree(uint i){
 	lClosureFFree = i;
 }
 
-uint lNFuncAlloc(){
+static uint lNFuncAlloc(){
 	lNFunc *ret;
 	if(lNFuncFFree == 0){
 		if(lNFuncMax >= NFN_MAX-1){
@@ -313,7 +348,12 @@ lVal *lValVec(const vec v){
 	lVal *ret = lValAlloc();
 	if(ret == NULL){return ret;}
 	ret->type = ltVec;
-	ret->vVec = v;
+	ret->vCdr = lVecAlloc();
+	if(ret->vCdr == 0){
+		lValFree(ret);
+		return NULL;
+	}
+	lVecV(ret->vCdr) = v;
 	return ret;
 }
 lVal *lValFloat(float v){
@@ -817,7 +857,7 @@ static lVal *lnfLastPair(lClosure *c, lVal *v){
 
 static lVal *lnfRandom(lClosure *c, lVal *v){
 	int n = 0;
-	getLArgI(n);
+	v = getLArgI(c,v,&n);
 	if(n == 0){
 		return lValInt(getRandom());
 	}else{
@@ -828,7 +868,7 @@ static lVal *lnfRandom(lClosure *c, lVal *v){
 static lVal *lnfRandomSeed(lClosure *c, lVal *v){
 	if(v != NULL){
 		int n = 0;
-		getLArgI(n);
+		v = getLArgI(c,v,&n);
 		randomValueSeed = n;
 	}
 	return lValInt(randomValueSeed);
@@ -1117,6 +1157,9 @@ static void lValGCMark(lVal *v){
 	case ltString:
 		lStrFlags(v) |= lfMarked;
 		break;
+	case ltVec:
+		lVecFlags(v->vCdr) |= lfMarked;
+		break;
 	case ltNativeFunc:
 		lNFuncGCMark(&lNFN(v->vCdr));
 		break;
@@ -1169,6 +1212,10 @@ static void lGCMark(){
 		if(!(lNFuncList[i].flags & lfNoGC)){continue;}
 		lNFuncGCMark(&lNFuncList[i]);
 	}
+	for(uint i=0;i<lNFuncMax;i++){
+		if(!(lVecList[i].flags & lfNoGC)){continue;}
+		lVecFlags(i) |= lfMarked;
+	}
 }
 
 static void lGCSweep(){
@@ -1206,6 +1253,13 @@ static void lGCSweep(){
 			continue;
 		}
 		lNFuncFree(i);
+	}
+	for(uint i=0;i<lVecMax;i++){
+		if(lVecList[i].flags & lfMarked){
+			lVecList[i].flags &= ~lfMarked;
+			continue;
+		}
+		lVecFree(i);
 	}
 }
 
@@ -1263,4 +1317,50 @@ lVal *lCast(lClosure *c, lVal *v, lType t){
 	case ltNoAlloc:
 		return NULL;
 	}
+}
+
+
+lVal *getLArgB(lClosure *c, lVal *v, bool *res){
+	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	lVal *tlv = lnfBool(c,lEval(c,v->vList.car));
+	if(tlv != NULL){
+		*res = tlv->vBool;
+	}
+	return v->vList.cdr;
+}
+
+lVal *getLArgI(lClosure *c, lVal *v, int *res){
+	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	lVal *tlv = lnfInt(c,lEval(c,v->vList.car));
+	if(tlv != NULL){
+		*res = tlv->vInt;
+	}
+	return v->vList.cdr;
+}
+
+lVal *getLArgF(lClosure *c, lVal *v, float *res){
+	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	lVal *tlv = lnfFloat(c,lEval(c,v->vList.car));
+	if(tlv != NULL){
+		*res = tlv->vFloat;
+	}
+	return v->vList.cdr;
+}
+
+lVal *getLArgV(lClosure *c, lVal *v, vec *res){
+	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	lVal *tlv = lnfVec(c,lEval(c,v->vList.car));
+	if(tlv != NULL){
+		*res = lVecV(tlv->vCdr);
+	}
+	return v->vList.cdr;
+}
+
+lVal *getLArgS(lClosure *c, lVal *v,const char **res){
+	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	lVal *tlv = lnfString(c,lEval(c,v->vList.car));
+	if(tlv != NULL){
+		*res = lStrData(tlv);
+	}
+	return v->vList.cdr;
 }

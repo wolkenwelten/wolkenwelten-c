@@ -24,15 +24,21 @@
 #include <stdio.h>
 
 static lVal *lnfAddV(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vVec = vecAdd(t->vVec,vv->vList.car->vVec); }
+	forEach(vv,v->vList.cdr){
+		lVecV(t->vCdr) = vecAdd(lVecV(t->vCdr),lVecV(vv->vList.car->vCdr));
+	}
 	return t;
 }
 static lVal *lnfAddF(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vFloat += vv->vList.car->vFloat; }
+	forEach(vv,v->vList.cdr){
+		t->vFloat += vv->vList.car->vFloat;
+	}
 	return t;
 }
 static lVal *lnfAddI(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vInt += vv->vList.car->vInt; }
+	forEach(vv,v->vList.cdr){
+		t->vInt += vv->vList.car->vInt;
+	}
 	return t;
 }
 lVal *lnfAdd(lClosure *c, lVal *v){
@@ -42,15 +48,21 @@ lVal *lnfAdd(lClosure *c, lVal *v){
 
 
 static lVal *lnfSubV(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vVec = vecSub(t->vVec,vv->vList.car->vVec); }
+	forEach(vv,v->vList.cdr){
+		lVecV(t->vCdr) = vecSub(lVecV(t->vCdr),lVecV(vv->vList.car->vCdr));
+	}
 	return t;
 }
 static lVal *lnfSubF(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vFloat -= vv->vList.car->vFloat; }
+	forEach(vv,v->vList.cdr){
+		t->vFloat -= vv->vList.car->vFloat;
+	}
 	return t;
 }
 static lVal *lnfSubI(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vInt -= vv->vList.car->vInt; }
+	forEach(vv,v->vList.cdr){
+		t->vInt -= vv->vList.car->vInt;
+	}
 	return t;
 }
 lVal *lnfSub(lClosure *c, lVal *v){
@@ -62,7 +74,9 @@ lVal *lnfSub(lClosure *c, lVal *v){
 }
 
 static lVal *lnfMulV(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vVec = vecMul(t->vVec,vv->vList.car->vVec); }
+	forEach(vv,v->vList.cdr){
+		lVecV(t->vCdr) = vecMul(lVecV(t->vCdr),lVecV(vv->vList.car->vCdr));
+	}
 	return t;
 }
 static lVal *lnfMulF(lVal *t, lVal *v){
@@ -80,7 +94,9 @@ lVal *lnfMul(lClosure *c, lVal *v){
 
 
 static lVal *lnfDivV(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vVec = vecDiv(t->vVec,vv->vList.car->vVec); }
+	forEach(vv,v->vList.cdr){
+		lVecV(t->vCdr) = vecDiv(lVecV(t->vCdr),lVecV(vv->vList.car->vCdr));
+	}
 	return t;
 }
 static lVal *lnfDivF(lVal *t, lVal *v){
@@ -105,11 +121,15 @@ lVal *lnfDiv(lClosure *c, lVal *v){
 
 
 static lVal *lnfModV(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vVec = vecMod(t->vVec,vv->vList.car->vVec); }
+	forEach(vv,v->vList.cdr){
+		lVecV(t->vCdr) = vecMod(lVecV(t->vCdr),lVecV(vv->vList.car->vCdr));
+	}
 	return t;
 }
 static lVal *lnfModF(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vFloat = fmodf(t->vFloat,vv->vList.car->vFloat); }
+	forEach(vv,v->vList.cdr){
+		t->vFloat = fmodf(t->vFloat,vv->vList.car->vFloat);
+	}
 	return t;
 }
 static lVal *lnfModI(lVal *t, lVal *v){
@@ -131,7 +151,7 @@ lVal *lnfAbs(lClosure *c, lVal *v){
 	case ltInt:
 		return lValInt(abs(t->vInt));
 	case ltVec:
-		return lValVec(vecAbs(t->vVec));
+		return lValVec(vecAbs(lVecV(t->vCdr)));
 	}
 }
 
@@ -146,7 +166,7 @@ lVal *lnfSqrt(lClosure *c, lVal *v){
 	case ltInt:
 		return lValFloat(sqrtf(t->vInt));
 	case ltVec:
-		return lValVec(vecSqrt(t->vVec));
+		return lValVec(vecSqrt(lVecV(t->vCdr)));
 	}
 }
 
@@ -161,7 +181,7 @@ lVal *lnfCeil(lClosure *c, lVal *v){
 	case ltInt:
 		return t;
 	case ltVec:
-		return lValVec(vecCeil(t->vVec));
+		return lValVec(vecCeil(lVecV(t->vCdr)));
 	}
 }
 
@@ -176,7 +196,7 @@ lVal *lnfFloor(lClosure *c, lVal *v){
 	case ltInt:
 		return t;
 	case ltVec:
-		return lValVec(vecFloor(t->vVec));
+		return lValVec(vecFloor(lVecV(t->vCdr)));
 	}
 }
 
@@ -191,7 +211,7 @@ lVal *lnfRound(lClosure *c, lVal *v){
 	case ltInt:
 		return t;
 	case ltVec:
-		return lValVec(vecRound(t->vVec));
+		return lValVec(vecRound(lVecV(t->vCdr)));
 	}
 }
 
@@ -211,7 +231,7 @@ lVal *lnfPow(lClosure *c, lVal *v){
 	case ltInt:
 		return lValFloat(powf(t->vInt,u->vInt));
 	case ltVec:
-		return lValVec(vecPow(t->vVec,u->vVec));
+		return lValVec(vecPow(lVecV(t->vCdr),lVecV(u->vCdr)));
 	}
 }
 
@@ -226,7 +246,7 @@ lVal *lnfVX(lClosure *c, lVal *v){
 	case ltInt:
 		return lnfFloat(c,t);
 	case ltVec:
-		return lValFloat(t->vVec.x);
+		return lValFloat(lVecV(t->vCdr).x);
 	}
 }
 
@@ -241,7 +261,7 @@ lVal *lnfVY(lClosure *c, lVal *v){
 	case ltInt:
 		return lnfFloat(c,t);
 	case ltVec:
-		return lValFloat(t->vVec.y);
+		return lValFloat(lVecV(t->vCdr).y);
 	}
 }
 
@@ -256,7 +276,7 @@ lVal *lnfVZ(lClosure *c, lVal *v){
 	case ltInt:
 		return lnfFloat(c,t);
 	case ltVec:
-		return lValFloat(t->vVec.z);
+		return lValFloat(lVecV(t->vCdr).z);
 	}
 }
 

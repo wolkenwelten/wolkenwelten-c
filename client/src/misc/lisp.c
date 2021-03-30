@@ -91,7 +91,7 @@ static lVal *wwlnfSEval(lClosure *c, lVal *v){
 static lVal *wwlnfPlayerName(lClosure *c, lVal *v){
 	const char *npName = NULL;
 
-	getLArgS(npName);
+	v = getLArgS(c,v,&npName);
 
 	if(npName != NULL){
 		snprintf(playerName,sizeof(playerName),"%s",npName);
@@ -101,14 +101,14 @@ static lVal *wwlnfPlayerName(lClosure *c, lVal *v){
 
 static lVal *wwlnfSoundVolume(lClosure *c, lVal *v){
 	float nvol = -1.f;
-	getLArgF(nvol);
+	v = getLArgF(c,v,&nvol);
 	if(nvol > -0.1f){optionSoundVolume = nvol;}
 	return lValFloat(optionSoundVolume);
 }
 
 static lVal *wwlnfRenderDistance(lClosure *c, lVal *v){
 	float rdist = 0.f;
-	getLArgF(rdist);
+	v = getLArgF(c,v,&rdist);
 	if(rdist > 1.f){ setRenderDistance(rdist); }
 	return lValFloat(renderDistance);
 }
@@ -123,7 +123,7 @@ static lVal *wwlnfSubData(lClosure *c, lVal *v){
 
 static lVal *wwlnfMouseSensitivity(lClosure *c, lVal *v){
 	float msen = 0.f;
-	getLArgF(msen);
+	v = getLArgF(c,v,&msen);
 	if(msen > 0.f){ optionMouseSensitivy = msen; }
 	return lValFloat(optionMouseSensitivy);
 }
@@ -150,10 +150,10 @@ static lVal *wwlnfWindowed(lClosure *c, lVal *v){
 	int x = -1;
 	int y = -1;
 
-	getLArgI(w);
-	getLArgI(h);
-	getLArgI(x);
-	getLArgI(y);
+	v = getLArgI(c,v,&w);
+	v = getLArgI(c,v,&h);
+	v = getLArgI(c,v,&x);
+	v = getLArgI(c,v,&y);
 
 	setWindowed(w,h,x,y);
 	return NULL;
@@ -253,7 +253,7 @@ static lVal *wwlnfFireHook(lClosure *c, lVal *v){
 
 static lVal *wwlnfInvActiveSlot(lClosure *c, lVal *v){
 	int ai = -1;
-	getLArgI(ai);
+	v = getLArgI(c,v,&ai);
 	if(ai >= 0){
 		player->activeItem = ai;
 		player->flags &= ~(CHAR_AIMING | CHAR_THROW_AIM);
@@ -281,9 +281,9 @@ static lVal *wwlnfSfxPlay(lClosure *c, lVal *v){
 	float volume = 1.0;
 	vec pos      = player->pos;
 
-	getLArgI(sfxID);
-	getLArgF(volume);
-	getLArgV(pos);
+	v = getLArgI(c,v,&sfxID);
+	v = getLArgF(c,v,&volume);
+	v = getLArgV(c,v,&pos);
 
 	if(sfxID < 0){return NULL;}
 	sfxPlayPos(&sfxList[sfxID],volume,pos);
@@ -313,8 +313,8 @@ static lVal *wwlnfTryToUse(lClosure *c, lVal *v){
 	int amount = 1;
 	item *itm  = &player->inventory[player->activeItem];
 
-	getLArgI(ms);
-	getLArgI(amount);
+	v = getLArgI(c,v,&ms);
+	v = getLArgI(c,v,&amount);
 
 	bool ret = characterTryToUse(player,itm,ms,amount);
 	return lValBool(ret);
@@ -324,8 +324,8 @@ static lVal *wwlnfStartAnim(lClosure *c, lVal *v){
 	int anim = 0;
 	int ms = 200;
 
-	getLArgI(anim);
-	getLArgI(ms);
+	v = getLArgI(c,v,&anim);
+	v = getLArgI(c,v,&ms);
 
 	characterStartAnimation(player,anim,ms);
 	return NULL;
@@ -344,11 +344,11 @@ static lVal *wwlnfGrenadeNew(lClosure *c, lVal *v){
 	int cluster      = 0;
 	float clusterPwr = 0.f;
 
-	getLArgV(pos);
-	getLArgV(rot);
-	getLArgF(pwr);
-	getLArgI(cluster);
-	getLArgF(clusterPwr);
+	v = getLArgV(c,v,&pos);
+	v = getLArgV(c,v,&rot);
+	v = getLArgF(c,v,&pwr);
+	v = getLArgI(c,v,&cluster);
+	v = getLArgF(c,v,&clusterPwr);
 
 	grenadeNew(pos,rot,pwr,cluster,clusterPwr);
 	return NULL;
@@ -364,7 +364,7 @@ static lVal *wwlnfItemReload(lClosure *c, lVal *v){
 	int ms     = 200;
 	item *itm = &player->inventory[player->activeItem];
 
-	getLArgI(ms);
+	v = getLArgI(c,v,&ms);
 
 	characterItemReload(player,itm,ms);
 	return NULL;
@@ -373,7 +373,7 @@ static lVal *wwlnfItemReload(lClosure *c, lVal *v){
 static lVal *wwlnfToggleAim(lClosure *c, lVal *v){
 	float zoom = 2.f;
 
-	getLArgF(zoom);
+	v = getLArgF(c,v,&zoom);
 
 	characterToggleAim(player,zoom);
 	return NULL;
@@ -381,28 +381,28 @@ static lVal *wwlnfToggleAim(lClosure *c, lVal *v){
 
 static lVal *wwlnfInaccuracy(lClosure *c, lVal *v){
 	float inacc = -1024.f;
-	getLArgF(inacc);
+	v = getLArgF(c,v,&inacc);
 	if(inacc > -1024.f){characterSetInaccuracy(player,inacc);}
 	return lValFloat(player->inaccuracy);
 }
 
 static lVal *wwlnfRecoil(lClosure *c, lVal *v){
 	float recoil = 1.f;
-	getLArgF(recoil);
+	v = getLArgF(c,v,&recoil);
 	characterAddRecoil(player,recoil);
 	return NULL;
 }
 
 static lVal *wwlnfPlayerHP(lClosure *c, lVal *v){
 	int hp = -1024;
-	getLArgI(hp);
+	v = getLArgI(c,v,&hp);
 	if(hp > -1024){ player->hp = MIN(player->maxhp,hp); }
 	return lValInt(player->hp);
 }
 
 static lVal *wwlnfPlayerMaxHP(lClosure *c, lVal *v){
 	int maxhp = -1024;
-	getLArgI(maxhp);
+	v = getLArgI(c,v,&maxhp);
 	if(maxhp > -1024){ player->maxhp = MAX(1,maxhp); }
 	return lValInt(player->maxhp);
 }
@@ -412,9 +412,9 @@ static lVal *wwlnfRResult(lClosure *c, lVal *v){
 	int result = 0;
 	int amount = 0;
 
-	getLArgI(id);
-	getLArgI(result);
-	getLArgI(amount);
+	v = getLArgI(c,v,&id);
+	v = getLArgI(c,v,&result);
+	v = getLArgI(c,v,&amount);
 
 	if((id < 0) || (result <= 0) || (amount <= 0)){return NULL;}
 	recipeCount = MAX(id+1,(int)recipeCount);
@@ -429,10 +429,10 @@ static lVal *wwlnfRIngred(lClosure *c, lVal *v){
 	int ingred = 0;
 	int amount = 0;
 
-	getLArgI(id);
-	getLArgI(ii);
-	getLArgI(ingred);
-	getLArgI(amount);
+	v = getLArgI(c,v,&id);
+	v = getLArgI(c,v,&ii);
+	v = getLArgI(c,v,&ingred);
+	v = getLArgI(c,v,&amount);
 
 	if((id < 0) || (ii < 0) || (ii >= 4) || (ingred <= 0) || (amount <= 0)){return NULL;}
 	recipeCount = MAX(id+1,(int)recipeCount);
@@ -456,9 +456,9 @@ static lVal *wwlnfThrowItem(lClosure *c, lVal *v){
 	float force = 0.1f;
 	int damage  = 1;
 
-	getLArgI(flags);
-	getLArgF(force);
-	getLArgI(damage);
+	v = getLArgI(c,v,&flags);
+	v = getLArgF(c,v,&force);
+	v = getLArgI(c,v,&damage);
 
 	item *itm = &player->inventory[player->activeItem];
 	bool ret  = throwableTry(itm,player,force,damage,flags);
@@ -469,8 +469,8 @@ static lVal *wwlnfTryToShoot(lClosure *c, lVal *v){
 	int cooldown    = 200;
 	int bulletcount = 1;
 
-	getLArgI(cooldown);
-	getLArgI(bulletcount);
+	v = getLArgI(c,v,&cooldown);
+	v = getLArgI(c,v,&bulletcount);
 
 	item *itm = &player->inventory[player->activeItem];
 	bool ret  = characterTryToShoot(player,itm,cooldown,bulletcount);
@@ -482,9 +482,9 @@ static lVal *wwlnfBeamblast(lClosure *c, lVal *v){
 	float damage   = 8.f;
 	int hitsLeft   = 3;
 
-	getLArgF(beamSize);
-	getLArgF(damage);
-	getLArgI(hitsLeft);
+	v = getLArgF(c,v,&beamSize);
+	v = getLArgF(c,v,&damage);
+	v = getLArgI(c,v,&hitsLeft);
 
 	beamblast(player,beamSize,damage,hitsLeft);
 	return NULL;
@@ -494,8 +494,8 @@ static lVal *wwlnfProjectile(lClosure *c, lVal *v){
 	int type = 0;
 	int num  = 1;
 
-	getLArgI(type);
-	getLArgI(num);
+	v = getLArgI(c,v,&type);
+	v = getLArgI(c,v,&num);
 
 	projectileNewC(player,type,num);
 	return NULL;
@@ -505,8 +505,8 @@ static lVal *wwlnfFireNew(lClosure *c, lVal *v){
 	vec pos = vecNOne();
 	int str = 8;
 
-	getLArgV(pos);
-	getLArgI(str);
+	v = getLArgV(c,v,&pos);
+	v = getLArgI(c,v,&str);
 
 	if(vecInWorld(pos)){fireNew(pos.x,pos.y,pos.z,str);}
 	return NULL;
@@ -514,7 +514,9 @@ static lVal *wwlnfFireNew(lClosure *c, lVal *v){
 
 static lVal *wwlnfRaycast(lClosure *c, lVal *v){
 	bool before = false;
-	getLArgB(before);
+
+	v = getLArgB(c,v,&before);
+
 	return lValVec(vecNewI(characterLOSBlock(player,before)));
 }
 
@@ -523,9 +525,10 @@ static lVal *wwlnfPlayerInventory(lClosure *c, lVal *v){
 	int itemID = -1;
 	int amount = -1;
 
-	getLArgI(slot);
-	getLArgI(itemID);
-	getLArgI(amount);
+	v = getLArgI(c,v,&slot);
+	v = getLArgI(c,v,&itemID);
+	v = getLArgI(c,v,&amount);
+
 	if(slot < 0){return NULL;}
 	if((itemID > 0) && (amount > 0)){
 		player->inventory[slot] = itemNew(itemID,amount);

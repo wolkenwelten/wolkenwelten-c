@@ -23,6 +23,12 @@ typedef struct {
 	lVal *car,*cdr;
 } lPair;
 
+typedef struct {
+	vec v;
+	u16 nextFree;
+	u16 flags;
+} lVec;
+
 struct lArray {
 	lVal **data;
 	int length;
@@ -45,7 +51,6 @@ struct lVal {
 		bool       vBool;
 		lPair      vList;
 		int        vInt;
-		vec        vVec;
 		float      vFloat;
 		lSymbol    vSymbol;
 	};
@@ -76,22 +81,25 @@ struct lString {
 extern lSymbol symQuote,symArr;
 
 #define VAL_MAX (1<<16)
-#define CLO_MAX (1<<12)
+#define CLO_MAX (1<<14)
 #define STR_MAX (1<<12)
 #define ARR_MAX (1<<12)
 #define NFN_MAX (1<<10)
+#define VEC_MAX (1<<12)
 
 #define VAL_MASK ((VAL_MAX)-1)
 #define CLO_MASK ((CLO_MAX)-1)
 #define STR_MASK ((STR_MAX)-1)
 #define ARR_MASK ((ARR_MAX)-1)
 #define NFN_MASK ((NFN_MAX)-1)
+#define VEC_MASK ((VEC_MAX)-1)
 
 extern lVal     lValList    [VAL_MAX];
 extern lClosure lClosureList[CLO_MAX];
 extern lString  lStringList [STR_MAX];
 extern lArray   lArrayList  [ARR_MAX];
 extern lNFunc   lNFuncList  [NFN_MAX];
+extern lVec     lVecList    [VEC_MAX];
 
 
 void      lInit             ();
@@ -145,11 +153,16 @@ lVal     *lnfCat        (lClosure *c, lVal *v);
 lVal     *lValCopy      (lVal *dst, const lVal *src);
 
 #define forEach(n,v) for(lVal *n = v;(n != NULL) && (n->type == ltPair) && (n->vList.car != NULL); n = n->vList.cdr)
-#define getLArgB(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfBool  (c,lEval(c,v->vList.car)); if(tlv != NULL){ res = tlv->vBool;        } v = v->vList.cdr; }
-#define getLArgI(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfInt   (c,lEval(c,v->vList.car)); if(tlv != NULL){ res = tlv->vInt;         } v = v->vList.cdr; }
-#define getLArgF(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfFloat (c,lEval(c,v->vList.car)); if(tlv != NULL){ res = tlv->vFloat;       } v = v->vList.cdr; }
-#define getLArgV(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfVec   (c,lEval(c,v->vList.car)); if(tlv != NULL){ res = tlv->vVec;         } v = v->vList.cdr; }
-#define getLArgS(res) if((v != NULL) && (v->type == ltPair)){lVal *tlv = lnfString(c,lEval(c,v->vList.car)); if(tlv != NULL){ res = lStringList[tlv->vCdr & STR_MASK].data;} v = v->vList.cdr; }
+
+lVal *getLArgB(lClosure *c, lVal *v, bool *res);
+lVal *getLArgI(lClosure *c, lVal *v, int *res);
+lVal *getLArgF(lClosure *c, lVal *v, float *res);
+lVal *getLArgV(lClosure *c, lVal *v, vec *res);
+lVal *getLArgS(lClosure *c, lVal *v, const char **res);
+
+#define lVec(i)  lVecList[i & VEC_MASK]
+#define lVecV(i) lVec(i).v
+#define lVecFlags(i) lVec(i).flags
 
 #define lStrNull(val) (((val->vCdr & STR_MASK) == 0) || (lStringList[val->vCdr & STR_MASK].data == NULL))
 #define lStr(val) lStringList[val->vCdr & STR_MASK]

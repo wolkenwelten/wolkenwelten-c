@@ -172,11 +172,11 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 		break;
 	case ltVec:
 		t  = snprintf(buf,len,"(vec ");
-		t += bufPrintFloat(v->vVec.x,&buf[t],t,len);
+		t += bufPrintFloat(lVecV(v->vCdr).x,&buf[t],t,len);
 		buf[t++] = ' ';
-		t += bufPrintFloat(v->vVec.y,&buf[t],t,len);
+		t += bufPrintFloat(lVecV(v->vCdr).y,&buf[t],t,len);
 		buf[t++] = ' ';
-		t += bufPrintFloat(v->vVec.z,&buf[t],t,len);
+		t += bufPrintFloat(lVecV(v->vCdr).z,&buf[t],t,len);
 		t += snprintf(&buf[t],len,")");
 		break;
 	case ltString:
@@ -288,11 +288,11 @@ char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
 		break;
 	case ltVec:
 		t  = snprintf(buf,len,"(vec ");
-		t += bufPrintFloat(v->vVec.x,&buf[t],t,len);
+		t += bufPrintFloat(lVecV(v->vCdr).x,&buf[t],t,len);
 		buf[t++] = ' ';
-		t += bufPrintFloat(v->vVec.y,&buf[t],t,len);
+		t += bufPrintFloat(lVecV(v->vCdr).y,&buf[t],t,len);
 		buf[t++] = ' ';
-		t += bufPrintFloat(v->vVec.z,&buf[t],t,len);
+		t += bufPrintFloat(lVecV(v->vCdr).z,&buf[t],t,len);
 		t += snprintf(&buf[t],len,")");
 		break;
 	case ltString:

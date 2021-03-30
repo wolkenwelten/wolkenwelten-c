@@ -42,7 +42,7 @@ lVal *lnfInt(lClosure *c, lVal *v){
 	case ltFloat:
 		return lValInt(t->vFloat);
 	case ltVec:
-		return lValInt(t->vVec.x);
+		return lValInt(lVecV(t->vCdr).x);
 	case ltString:
 		if(t->vCdr == 0){return lValInt(0);}
 		return lValInt(atoi(lStrData(t)));
@@ -62,7 +62,7 @@ lVal *lnfFloat(lClosure *c, lVal *v){
 	case ltInt:
 		return lValFloat(t->vInt);
 	case ltVec:
-		return lValFloat(t->vVec.x);
+		return lValFloat(lVecV(t->vCdr).x);
 	case ltString:
 		if(t->vCdr == 0){return lValFloat(0);}
 		return lValFloat(atof(lStrData(t)));

@@ -38,7 +38,7 @@ lClosure *clRoot;
 
 lVal *wwlnfMsPerTick(lClosure *c, lVal *v){
 	int newVal = 0;
-	getLArgI(newVal);
+	v = getLArgI(c,v,&newVal);
 	if(newVal > 0){ msPerTick = newVal; }
 	return lValInt(msPerTick);
 }
@@ -67,7 +67,7 @@ lVal *wwlnfNProfReset(lClosure *c, lVal *v){
 
 lVal *wwlnfAsmSwitch(lClosure *c, lVal *v){
 	int newVal = -1;
-	getLArgI(newVal);
+	v = getLArgI(c,v,&newVal);
 	if(newVal >= 0){asmRoutineSupport = newVal;}
 	return lValInt(asmRoutineSupport);
 }
@@ -77,9 +77,9 @@ lVal *wwlnfExplode(lClosure *c, lVal *v){
 	float strength = 4.f;
 	int   style    = 0;
 
-	getLArgV(pos);
-	getLArgF(strength);
-	getLArgI(style);
+	v = getLArgV(c,v,&pos);
+	v = getLArgF(c,v,&strength);
+	v = getLArgI(c,v,&style);
 
 	if((pos.x < 0.f) || (pos.y < 0.f) || (pos.z < 0.f) || (strength < .1f)){return NULL;}
 	explode(pos,strength,style);
@@ -91,9 +91,9 @@ static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
 	int id  = 0;
 	int amt = 0;
 
-	getLArgV(pos);
-	getLArgI(id);
-	getLArgI(amt);
+	v = getLArgV(c,v,&pos);
+	v = getLArgI(c,v,&id);
+	v = getLArgI(c,v,&amt);
 
 	if((pos.x < 0.f) || (pos.y < 0.f) || (pos.z < 0.f) || (id <= 0) || (amt <= 0)){return NULL;}
 	item itm = itemNew(id,amt);
@@ -104,7 +104,7 @@ static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
 static lVal *wwlnfWVel(lClosure *c, lVal *v){
 	if(v != NULL){
 		vec nwval = vecZero();
-		getLArgV(nwval);
+		v = getLArgV(c,v,&nwval);
 		cloudsSetWind(nwval);
 	}
 	return lValVec(windVel);
@@ -112,14 +112,14 @@ static lVal *wwlnfWVel(lClosure *c, lVal *v){
 
 static lVal *wwlnfCDen(lClosure *c, lVal *v){
 	int cden = -1;
-	getLArgI(cden);
+	v = getLArgI(c,v,&cden);
 	if(cden >= 0){cloudsSetDensity(cden);}
 	return lValInt(cloudGDensityMin);
 }
 
 static lVal *wwlnfRain(lClosure *c, lVal *v){
 	int inten = -1;
-	getLArgI(inten);
+	v = getLArgI(c,v,&inten);
 	if(inten >= 0){weatherSetRainDuration(inten);}
 	return lValInt(rainIntensity);
 }
