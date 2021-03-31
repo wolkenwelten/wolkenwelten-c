@@ -65,6 +65,11 @@ You need your distributions development tools meta package ( `build-essentials`
 on Ubuntu/Debian, `base-devel` on Arch), `clang`,`SDL2`,`SDL2_mixer` and
 `ffmpeg`, everything of course with their dev packages for the header files.
 
+### OpenBSD
+In order to build the Game you need the following ports/packages installed:
+`pkg_add clang gas gmake bash sdl2 sdl2-mixer glew ffmpeg`
+You can the build the game using `gmake`
+
 # Build System
 Now that you have all the packages installed you can just type `make` within
 the repos folder to create a development binary, I highly recommend adding
