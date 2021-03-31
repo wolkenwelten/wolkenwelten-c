@@ -67,6 +67,7 @@ on Ubuntu/Debian, `base-devel` on Arch), `clang`,`SDL2`,`SDL2_mixer` and
 
 ### OpenBSD
 In order to build the Game you need the following ports/packages installed:
+<<<<<<< HEAD
 ```shell
 pkg_add clang gas gmake bash sdl2 sdl2-mixer glew ffmpeg
 ```
