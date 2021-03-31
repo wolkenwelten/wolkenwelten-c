@@ -1,4 +1,8 @@
 AS               := gas
+ifeq (, $(shell which gas))
+	AS       := as
+endif
+
 CC               := clang
 LD               := clang
 
