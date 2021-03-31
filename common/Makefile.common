@@ -22,9 +22,7 @@ all: wolkenwelten nujel
 .PHONY: release
 .PHONY: .deps
 
-ifeq ("$(wildcard common/src/asm/$(ARCH).s)","common/src/asm/$(ARCH).s")
 ASM_OBJS += common/src/asm/$(ARCH).o
-endif
 
 common/src/asm/amd64.s: common/src/asm/x86_64.s
 	cp $< $@
