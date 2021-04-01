@@ -7,7 +7,7 @@
 		(set! recipe-cur-id (+ recipe-cur-id 1)) (- recipe-cur-id 1))))
 
 (def recipe-sync (λ (obj) "Syncs the Recipe with the ω OBJ"
-	(r-result (obj id)  (resolve (obj result-id  )) (obj result-amt  ))
+	(r-result (obj id)   (resolve (obj result-id))   (obj result-amt))
 	(r-ingred (obj id) 0 (resolve (obj ingred-id-0)) (obj ingred-amt-0))
 	(r-ingred (obj id) 1 (resolve (obj ingred-id-1)) (obj ingred-amt-1))
 	(r-ingred (obj id) 2 (resolve (obj ingred-id-2)) (obj ingred-amt-2))
@@ -17,7 +17,7 @@
 
 (def recipe-sync-all (λ (i) "Syncs all Recipes with their respective ω"
 	(cond ((nil? (recipes (int i))) #t)
-	      (#t (recipe-sync (recipes i)) (recipe-sync-all (+ i 1))))))
+	      (#t (recipe-sync (recipes (int i))) (recipe-sync-all (+ (int i) 1))))))
 
 
 (def recipe-craft (λ (id times) "Crafts recipe with ID"
