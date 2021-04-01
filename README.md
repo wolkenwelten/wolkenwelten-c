@@ -66,7 +66,7 @@ pacman -S base-devel clang ffmpeg sdl2 sdl2_mixer
 
 ### Debian / Ubuntu / Raspberry PI OS
 ```shell
-apt install build-essential clang ffmpeg libsdl2-dev libsdl2-mixer-dev
+apt install build-essential clang ffmpeg libsdl2-dev libsdl2-mixer-dev musl-dev musl-tools libvorbis-dev
 ```
 
 ### OpenBSD

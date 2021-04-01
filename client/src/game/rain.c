@@ -32,7 +32,7 @@ uint rainVBOSize = 0;
 #include <math.h>
 
 #ifdef __x86_64__
-int rainFakeIters = 32;
+int rainFakeIters = 128;
 #else
 int rainFakeIters = 16;
 #endif

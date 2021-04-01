@@ -24,17 +24,19 @@
 void weatherDoRain(){
 	const ivec toff = ivecNewV(vecFloor(cloudOff));
 	for(uint i=0;i<chungusCount;i++){
-		if(rngValA(255) > rainIntensity){continue;}
-		const chungus *c = &chungusList[i];
-		if(c->y & 1){continue;}
-		const vec cpos = vecNew(c->x << 8, c->y << 8, c->z << 8);
-		u8 x = rngValA(255);
-		u8 z = rngValA(255);
-		const int tx = (x-toff.x) & 0xFF;
-		const int tz = (z-toff.z) & 0xFF;
-		int v = cloudTex[tx][tz];
-		if(v > (cloudDensityMin+16)){continue;}
-		const vec rpos = vecAdd(cpos,vecNew(x,32.f,z));
-		rainNew(rpos);
+		for(uint t=0;t<4;t++){
+			if(rngValA(255) > rainIntensity){continue;}
+			const chungus *c = &chungusList[i];
+			if(c->y & 1){continue;}
+			const vec cpos = vecNew(c->x << 8, c->y << 8, c->z << 8);
+			u8 x = rngValA(255);
+			u8 z = rngValA(255);
+			const int tx = (x-toff.x) & 0xFF;
+			const int tz = (z-toff.z) & 0xFF;
+			int v = cloudTex[tx][tz];
+			if(v > (cloudDensityMin+16)){continue;}
+			const vec rpos = vecAdd(cpos,vecNew(x,32.f,z));
+			rainNew(rpos);
+		}
 	}
 }
