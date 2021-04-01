@@ -43,42 +43,43 @@ feature or telling your friends about this game. You have my gratitude in advanc
 The newest binary releases are available over at this [projects website](https://wolkenwelten.net),
 along with some more writings about the game.
 
-![Screenshot 3](https://wolkenwelten.net/img/3.jpg)
 ![Screenshot 5](https://wolkenwelten.net/img/5.jpg)
-![Screenshot 6](https://wolkenwelten.net/img/6.jpg)
 
 # Development Requirements
 
 ## Windows
-On Windows you need a working installation of msys2 and the mingw-w64 64-bit
-toolchain installed, apart from that you need `SDL2`,`SDL2_mixer` and `ffmpeg`,
-which you can install using pacman, or build slimmer versions using the
-PKGBUILDS in `platform/win`.
+On Windows you need a working installation of [MSYS2](https://www.msys2.org/),
+and then install the following packages from within MSYS2:
+```shell
+pacman -Sy base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-ffmpeg mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_mixer
+```
 
 ## MacOS
 On Macintosh you need the XCode command line tools, the SDL2 and SDL2_mixer
-development Frameworks installed as well as the 10.10 SDK. Additionally you need
-`ffmpeg` available, which is probably best installed using Homebrew.
+development Frameworks installed. Additionally you need `ffmpeg`,
+which is probably best installed using Homebrew or MacPorts.
 
-## Linux/BSD/Haiku
-You need your distributions development tools meta package ( `build-essentials`
-on Ubuntu/Debian, `base-devel` on Arch), `clang`,`SDL2`,`SDL2_mixer` and
-`ffmpeg`, everything of course with their dev packages for the header files.
+### Arch Linux
+```shell
+pacman -S base-devel clang ffmpeg sdl2 sdl2_mixer
+```
+
+### Debian / Ubuntu / Raspberry PI OS
+```shell
+apt install build-essential clang ffmpeg libsdl2-dev libsdl2-mixer-dev
+```
 
 ### OpenBSD
-In order to build the Game you need the following ports/packages installed:
-<<<<<<< HEAD
 ```shell
 pkg_add clang gas gmake bash sdl2 sdl2-mixer glew ffmpeg
 ```
-You can the build the game using `gmake`
+You can then build the game using `gmake`
 
 ### NetBSD
-In order to build the Game you need the following ports/packages installed:
 ```shell
 pkgin in clang gas gmake bash SDL2 SDL2_mixer glew ffmpeg
 ```
-You can the build the game using `gmake`
+You can then build the game using `gmake`
 
 # Build System
 Now that you have all the packages installed you can just type `make` within
