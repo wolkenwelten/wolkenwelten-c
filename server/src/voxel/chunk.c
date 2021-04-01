@@ -26,7 +26,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#if defined(__HAIKU__) || defined(__EMSCRIPTEN__)
+#if defined(__HAIKU__) || defined(__EMSCRIPTEN__) || defined(__OpenBSD__)
 #define CHUNK_COUNT (1<<17)
 #else
 #define CHUNK_COUNT (1<<18)

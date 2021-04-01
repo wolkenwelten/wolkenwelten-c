@@ -5,18 +5,16 @@
 	#define WOLKENWELTEN__GL_ES 1
 #endif
 
-
 #ifdef __APPLE__
 	#include <OpenGL/gl3.h>
 	#define WOLKENWELTEN__GL_USE_APPLE
-#elif defined(__EMSCRIPTEN__) || defined(__HAIKU__)
-	#include "GL/glew.h"
-	#define WOLKENWELTEN__GL_USE_GLEW
-#else
+#elif defined (__MINGW32__) || defined (__linux__)
 	#include "gl3w.h"
 	#define WOLKENWELTEN__GL_USE_GL3W
+#else
+	#include "GL/glew.h"
+	#define WOLKENWELTEN__GL_USE_GLEW
 #endif
-
 
 #ifdef WOLKENWELTEN__GL_ES
 	extern bool glIsMultiDrawAvailable;

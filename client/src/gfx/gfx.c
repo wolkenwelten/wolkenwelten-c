@@ -121,7 +121,9 @@ GLenum glCheckError_(const char *file, int line){
 #define glCheckError() glCheckError_(__FILE__, __LINE__)
 
 void initGL(){
-	if(!glInitialize()){exit(3);}
+	if(!glInitialize()){
+		exit(3);
+	}
 	recalcDistances();
 	glClearColor( 0.32f, 0.63f, 0.96f, 1.f );
 	glViewport(0,0,screenWidth,screenHeight);
