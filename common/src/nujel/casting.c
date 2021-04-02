@@ -115,6 +115,11 @@ lVal *lnfString(lClosure *c, lVal *t){
 
 	switch(t->type){
 	default: break;
+	case ltInf: {
+		int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"#inf");
+		len += clen;
+		buf += clen;
+		break; }
 	case ltFloat: {
 		int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%f",t->vFloat);
 		len += clen;
@@ -122,6 +127,11 @@ lVal *lnfString(lClosure *c, lVal *t){
 		break; }
 	case ltInt: {
 		int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%i",t->vInt);
+		len += clen;
+		buf += clen;
+		break; }
+	case ltBool: {
+		int clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%s",t->vBool ? "#t" : "#f");
 		len += clen;
 		buf += clen;
 		break; }
@@ -137,9 +147,10 @@ lVal *lnfString(lClosure *c, lVal *t){
 }
 
 void lAddCastingFuncs(lClosure *c){
-	lAddNativeFunc(c,"bool", "(a)","Casts a to bool",  lnfBool);
-	lAddNativeFunc(c,"int",  "(a)","Casts a to int",   lnfInt);
-	lAddNativeFunc(c,"float","(a)","Casts a to float", lnfFloat);
-	lAddNativeFunc(c,"vec",  "(a)","Casts a to vec",   lnfVec);
-	lAddNativeFunc(c,"str",  "(a)","Casts a to string",lnfCat);
+	lAddNativeFunc(c,"bool", " (a)","Casts a to bool",  lnfBool);
+	lAddNativeFunc(c,"int",  " (a)","Casts a to int",   lnfInt);
+	lAddNativeFunc(c,"float", "(a)","Casts a to float", lnfFloat);
+	lAddNativeFunc(c,"vec",   "(a)","Casts a to vec",   lnfVec);
+	lAddNativeFunc(c,"str",   "(a)","Casts a to string",lnfCat);
+	lAddNativeFunc(c,"string","(a)","Casts a to string",lnfCat);
 }

@@ -125,7 +125,7 @@ common/src/tmp/cto.h: common/src/tmp/cto.c
 
 .PHONY: test
 test: nujel
-	common/nujel/nujel-test
+	./nujel common/nujel/test.nuj
 
 .PHONY: runn
 runn: nujel

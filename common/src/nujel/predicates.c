@@ -35,6 +35,11 @@ static int lValCompare(lClosure *c, lVal *v){
 	switch(ct){
 	default:
 		return 2;
+	case ltInf:
+		if((a == NULL) || (b == NULL)){return  2;}
+		if((a->type == ltInf) && (b->type == ltInf)){return 0;}
+		if(a->type == ltInf){return 1;}
+		return -1;
 	case ltBool:
 	case ltInt:
 		a = lnfInt(c,a);

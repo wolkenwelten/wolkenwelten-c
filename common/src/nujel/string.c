@@ -466,6 +466,9 @@ lVal *lnfCat(lClosure *c, lVal *v){
 		//lWriteVal(t);
 		switch(t->type){
 		default: break;
+		case ltInf: {
+			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"#inf");
+			break; }
 		case ltSymbol: {
 			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%s",t->vSymbol.c);
 			break; }
@@ -477,6 +480,9 @@ lVal *lnfCat(lClosure *c, lVal *v){
 			break; }
 		case ltInt: {
 			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%i",t->vInt);
+			break; }
+		case ltBool: {
+			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%s",t->vBool ? "#t" : "#f");
 			break; }
 		case ltString:
 			if(t->vCdr == 0){continue;}
@@ -525,6 +531,19 @@ lVal *lnfSymStr(lClosure *c, lVal *v){
 	return lValString(v->vSymbol.c);
 }
 
+lVal *lnfWriteStr(lClosure *c, lVal *v){
+	lVal *t = lApply(c,v,lEval);
+	if(t == NULL){
+		return lValString("#nil");
+	}
+	char *buf = malloc(1<<19);
+	lSWriteVal(t->vList.car, buf, &buf[1<<19]);
+	buf[(1<<19)-1]=0;
+	t = lValString(buf);
+	free(buf);
+	return t;
+}
+
 void lAddStringFuncs(lClosure *c){
 	lAddNativeFunc(c,"cat",           "(...args)",       "ConCATenates ...args into a single string",                                               lnfCat);
 	lAddNativeFunc(c,"str-len",       "(s)",             "Returns length of string s",                                                              lnfStrlen);
@@ -534,6 +553,7 @@ void lAddStringFuncs(lClosure *c){
 	lAddNativeFunc(c,"substr",        "(s &start &stop)","Returns a copy of string s starting at position &start=0 and ending at &stop=(str-len s)",lnfSubstr);
 	lAddNativeFunc(c,"str->sym",      "(s)",             "Converts string s to a symbol",                                                           lnfStrSym);
 	lAddNativeFunc(c,"sym->str",      "(s)",             "Converts symbol s to a string",                                                           lnfSymStr);
+	lAddNativeFunc(c,"write-str",     "(v)",             "Writes V into a string and returns it",                                                   lnfWriteStr);
 
 	lAddNativeFunc(c,"ansi-reset","()",  "Ansi reset code",                 lnfAnsiRS);
 	lAddNativeFunc(c,"ansi-fg",   "(a)", "Returns Ansi fg color code for a",lnfAnsiFG);

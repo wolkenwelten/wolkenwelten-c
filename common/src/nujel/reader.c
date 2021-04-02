@@ -189,7 +189,7 @@ static lVal *lParseSpecial(lString *s){
 	case 'f':
 		return lValBool(false);
 	case 'i':
-		return lValInf();
+		s->data+=2; return lValInf();
 	case '(':
 		return lCons(lValSymS(symArr),lReadString(s));
 	}
