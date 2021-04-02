@@ -166,6 +166,26 @@ static lVal *lnfWriteFile(lClosure *c, lVal *v){
 
 }
 
+static lVal *lnfSystem(lClosure *c, lVal *v){
+	const char *command = NULL;
+
+	v = getLArgS(c,v,&command);
+	if(command == NULL){return NULL;}
+
+	char *buf  = malloc(1<<20);
+	size_t len = 0;
+
+	FILE *fp   = popen(command,"r");
+	char ch;
+	while((ch=fgetc(fp)) != EOF){
+		buf[len++] = ch;
+	}
+	fclose(fp);
+	lVal *ret = lValString(buf);
+	free(buf);
+	return ret;
+}
+
 void lPrintError(const char *format, ...){
 	va_list ap;
 	va_start(ap,format);
@@ -183,6 +203,7 @@ static void addNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"load-file", "(filename)",        "Loads FILENAME and returns the contents as a string",lnfReadFile);
 	lAddNativeFunc(c,"save-file", "(filename content)","Writes CONTENT into FILENAME",                       lnfWriteFile);
 	lAddNativeFunc(c,"write-file","(filename content)","Writes CONTENT into FILENAME",                       lnfWriteFile);
+	lAddNativeFunc(c,"system",    "(command)",         "Executes COMMAND and returns stdout as a string",    lnfSystem);
 }
 
 int main(int argc, char *argv[]){
