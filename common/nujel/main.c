@@ -29,7 +29,7 @@
 #include "../src/nujel/reader.h"
 #include "../src/nujel/string.h"
 
-void *loadFile(const char *filename,size_t *len){
+static void *loadFile(const char *filename,size_t *len){
 	FILE *fp;
 	size_t filelen,readlen,read;
 	u8 *buf = NULL;
@@ -60,6 +60,27 @@ void *loadFile(const char *filename,size_t *len){
 	return buf;
 }
 
+static void saveFile(const char *filename,const void *buf, size_t len){
+	FILE *fp;
+	size_t written,wlen = 0;
+	#if defined (__EMSCRIPTEN__)
+	(void)filename;
+	(void)buf;
+	(void)len;
+	return;
+	#endif
+
+	fp = fopen(filename,"wb");
+	if(fp == NULL){return;}
+
+	while(wlen < len){
+		written = fwrite(buf+wlen,1,len-wlen,fp);
+		if(written == 0){return;}
+		wlen += written;
+	}
+	fclose(fp);
+}
+
 void doRepl(lClosure *c){
 	static char str[4096];
 	lVal *lastlsym = lValSym("lastl");
@@ -79,7 +100,7 @@ void doRepl(lClosure *c){
 	}
 }
 
-lVal *lnfQuit(lClosure *c, lVal *v){
+static lVal *lnfQuit(lClosure *c, lVal *v){
 	int ecode = 0;
 	if(v != NULL){
 		lVal *t = lnfInt(c,lEval(c,v->vList.car));
@@ -91,7 +112,7 @@ lVal *lnfQuit(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *lnfInput(lClosure *c, lVal *v){
+static lVal *lnfInput(lClosure *c, lVal *v){
 	static char buf[512];
 	if(v != NULL){
 		lVal *t = lnfCat(c,v);
@@ -105,7 +126,7 @@ lVal *lnfInput(lClosure *c, lVal *v){
 	return lValString(buf);
 }
 
-lVal *lnfPrint(lClosure *c, lVal *v){
+static lVal *lnfPrint(lClosure *c, lVal *v){
 	if(v == NULL){return v;}
 	lVal *t = NULL;
 	if(v->type == ltPair){
@@ -117,6 +138,34 @@ lVal *lnfPrint(lClosure *c, lVal *v){
 	return t;
 }
 
+static lVal *lnfReadFile(lClosure *c, lVal *v){
+	const char *filename = NULL;
+	size_t len = 0;
+
+	v = getLArgS(c,v,&filename);
+	if(filename == NULL){return NULL;}
+	const char *data = loadFile(filename,&len);
+	lVal *ret = lValString(data);
+	free((void *)data);
+
+	return ret;
+
+}
+
+static lVal *lnfWriteFile(lClosure *c, lVal *v){
+	const char *filename = NULL;
+	const char *content = NULL;
+
+	v = getLArgS(c,v,&filename);
+	v = getLArgS(c,v,&content);
+	if(filename == NULL){return NULL;}
+	if(content == NULL) {return NULL;}
+	size_t len = strnlen(content,1<<20);
+	saveFile(filename,content,len);
+	return NULL;
+
+}
+
 void lPrintError(const char *format, ...){
 	va_list ap;
 	va_start(ap,format);
@@ -124,12 +173,16 @@ void lPrintError(const char *format, ...){
 	va_end(ap);
 }
 
-void addNativeFuncs(lClosure *c){
-	lAddNativeFunc(c,"print",  "(...args)","Displays ...args",                            lnfPrint);
-	lAddNativeFunc(c,"display","(...args)","Prints ...args",                              lnfPrint);
-	lAddNativeFunc(c,"input",  "()",       "Reads in a line of user input and returns it",lnfInput);
-	lAddNativeFunc(c,"quit",   "(a)",      "Exits with code a",                           lnfQuit);
-	lAddNativeFunc(c,"exit",   "(a)",      "Quits with code a",                           lnfQuit);
+static void addNativeFuncs(lClosure *c){
+	lAddNativeFunc(c,"print",     "(...args)",         "Displays ...args",                                   lnfPrint);
+	lAddNativeFunc(c,"display",   "(...args)",         "Prints ...args",                                     lnfPrint);
+	lAddNativeFunc(c,"input",     "()",                "Reads in a line of user input and returns it",       lnfInput);
+	lAddNativeFunc(c,"quit",      "(a)",               "Exits with code a",                                  lnfQuit);
+	lAddNativeFunc(c,"exit",      "(a)",               "Quits with code a",                                  lnfQuit);
+	lAddNativeFunc(c,"read-file", "(filename)",        "Loads FILENAME and returns the contents as a string",lnfReadFile);
+	lAddNativeFunc(c,"load-file", "(filename)",        "Loads FILENAME and returns the contents as a string",lnfReadFile);
+	lAddNativeFunc(c,"save-file", "(filename content)","Writes CONTENT into FILENAME",                       lnfWriteFile);
+	lAddNativeFunc(c,"write-file","(filename content)","Writes CONTENT into FILENAME",                       lnfWriteFile);
 }
 
 int main(int argc, char *argv[]){
