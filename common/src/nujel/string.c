@@ -322,6 +322,28 @@ lVal *lnfStrlen(lClosure *c, lVal *v){
 	return lValInt(lStringLength(&lStr(t)));
 }
 
+lVal *lnfTrim(lClosure *c, lVal *v){
+	if(v == NULL){return NULL;}
+	lVal *t = lEval(c,lCarOrV(v));
+	if((t == NULL) || (t->type != ltString)){return NULL;}
+	if(lStrNull(t)){return lValInt(0);}
+	const char *s;
+	for(s = lStrData(t);*s != 0 && isspace((u8)*s);s++){}
+	int len = lStringLength(&lStr(t)) - (s -  lStrData(t));
+	for(;len > 0 && isspace((u8)s[len-1]);len--){}
+	char *buf = malloc(len+1);
+	memcpy(buf,s,len);
+	buf[len] = 0;
+	lVal *ret = lValAlloc();
+	ret->type = ltString;
+	ret->vCdr = lStringAlloc();
+	if(ret->vCdr == 0){return NULL;}
+	lStr(ret).flags |= lfHeapAlloc;
+	lStr(ret).buf = lStr(ret).data = buf;
+	lStr(ret).bufEnd = &lStrBuf(ret)[len];
+	return ret;
+}
+
 lVal *lnfStrDown(lClosure *c, lVal *v){
 	if(v == NULL){return NULL;}
 	lVal *t = lEval(c,lCarOrV(v));
@@ -546,6 +568,7 @@ lVal *lnfWriteStr(lClosure *c, lVal *v){
 
 void lAddStringFuncs(lClosure *c){
 	lAddNativeFunc(c,"cat",           "(...args)",       "ConCATenates ...args into a single string",                                               lnfCat);
+	lAddNativeFunc(c,"trim",          "(s)",             "Trims s of any excessive whitespace",                                                     lnfTrim);
 	lAddNativeFunc(c,"str-len",       "(s)",             "Returns length of string s",                                                              lnfStrlen);
 	lAddNativeFunc(c,"str-up",        "(s)",             "Returns a copy of string s all uppercased",                                               lnfStrUp);
 	lAddNativeFunc(c,"str-down",      "(s)",             "Returns a copy of string s all lowercased",                                               lnfStrDown);

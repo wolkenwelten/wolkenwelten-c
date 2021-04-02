@@ -24,6 +24,16 @@ all: wolkenwelten nujel
 
 ASM_OBJS += common/src/asm/$(ARCH).o
 
+%.o: %.s
+	$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) $< -o $@
+
+%.o: %.c
+	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -g -c $< -o $@
+
+%.deps: %.c
+	$(CC) -MM $< -MT "$(<:.c=.o)" $(CINCLUDES) $(CLIENT_CINCLUDES) > $@
+
+
 common/src/asm/amd64.s: common/src/asm/x86_64.s
 	cp $< $@
 
@@ -43,17 +53,8 @@ common/nujel/assets.c: tools/assets common/nujel/saolib.nuj
 common/nujel/assets.h: common/nujel/assets.c
 	@true
 
-%.o: %.s
-	$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) $< -o $@
-
-%.o: %.c
-	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) -g -c $< -o $@
-
-%.deps: %.c
-	$(CC) -MM $< -MT "$(<:.c=.o)" $(CINCLUDES) $(CLIENT_CINCLUDES) > $@
-
 nujel: $(NUJEL_OBJS)
-	$(CC) -lm $(COPT) $(CWARN) $(CSTD) $(CFLAGS) $(NUJEL_LIBS) $(OPTIMIZATION) -g $(NUJEL_OBJS) -o $@
+	$(CC) -lm $(COPT) $(CWARN) $(CSTD) $(CFLAGS) $(NUJEL_LIBS) $(OPTIMIZATION) $(NUJEL_OBJS) -o $@
 
 $(COMMON_DEPS): | common/src/tmp/cto.h common/src/tmp/assets.h common/nujel/assets.h
 .deps: common/make.deps
@@ -116,10 +117,9 @@ sanitize: all
 archive:
 	git archive --format=tar --prefix=wolkenwelten-HEAD.tar.gz/ HEAD | gzip > wolkenwelten-HEAD.tar.gz
 
-
-common/src/tmp/cto.c: tools/infogen
+common/src/tmp/cto.c: tools/tools.nuj nujel
 	mkdir -p common/src/tmp/
-	tools/infogen common/src/tmp/cto
+	./nujel tools/tools.nuj -x "(infogen \"common/src/tmp/cto\")"
 common/src/tmp/cto.h: common/src/tmp/cto.c
 	@true
 

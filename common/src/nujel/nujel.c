@@ -25,7 +25,7 @@
 #include "reader.h"
 #include "string.h"
 
-#include "../tmp/assets.h"
+extern unsigned char src_tmp_stdlib_nuj_data[];
 
 #include <ctype.h>
 #include <math.h>
@@ -1034,9 +1034,9 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"if",  "(pred? then ...else)","Evalutes then if pred? is #t, otherwise evaluates ...else", lnfIf);
 	lAddNativeFunc(c,"cond","(...c)",              "Contains at least 1 cond block of form (pred? ...body) and evaluates and returns the first where pred? is #t",lnfCond);
 
-	lAddNativeFunc(c,"def",      "(sym val)",         "Define a new symbol SYM and link it to value VAL",              lnfDef);
-	lAddNativeFunc(c,"define",   "(sym val)",         "Define a new symbol SYM and link it to value VAL",              lnfDef);
-	lAddNativeFunc(c,"undefine!","(sym)",           "Removes symbol SYM from the first symbol-table it is found in",   lnfUndef);
+	lAddNativeFunc(c,"def",      "(sym val)",     "Define a new symbol SYM and link it to value VAL",                  lnfDef);
+	lAddNativeFunc(c,"define",   "(sym val)",     "Define a new symbol SYM and link it to value VAL",                  lnfDef);
+	lAddNativeFunc(c,"undefine!","(sym)",         "Removes symbol SYM from the first symbol-table it is found in",     lnfUndef);
 	lAddNativeFunc(c,"let",      "(args ...body)","Creates a new closure with args bound in which to evaluate ...body",lnfLet);
 	lAddNativeFunc(c,"begin",    "(...body)",     "Evaluates ...body in order and returns the last result",            lnfBegin);
 	lAddNativeFunc(c,"quote",    "(v)",           "Returns v as is without evaluating",                                lnfQuote);

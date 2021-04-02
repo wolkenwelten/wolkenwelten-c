@@ -21,7 +21,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "assets.h"
+extern unsigned char nujel_saolib_nuj_data[];
+
 #include "../src/common.h"
 #include "../src/tmp/assets.h"
 #include "../src/nujel/nujel.h"
@@ -224,13 +225,19 @@ int main(int argc, char *argv[]){
 			if(argv[i][1] == 'e'){
 				eval = 1;
 				continue;
+			}else if(argv[i][1] == 'x'){
+				eval = 2;
+				continue;
 			}else if(argv[i][1] == '-'){
 				repl = 1;
+				continue;
+			}else{
+				break;
 			}
 		}
 		if(!eval){str = loadFile(argv[i],&len);}
 		lVal *v = lEval(c,lWrap(lRead(str)));
-		lWriteVal(v);
+		if((i == argc-1) && !repl && (eval != 2)){lWriteVal(v);}
 		lClosureGC();
 
 		if(!eval){

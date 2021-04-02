@@ -220,6 +220,7 @@
 (test-str "#(1 2 3)" (define testerle #(1 2 3)) (testerle))
 (test-str "#nil" (define testerle #(1 2 3)) (testerle #t))
 (test-str "#nil" (define testerle #(1 2 3)) (testerle (vec 1 2 3)))
+(test-str "Trim Test" (trim "   Trim Test    \n"))
 
 ; Those have to wait until we can fork off another interpreter
 ; test_sexpr_exitcode "(quit (+ 20 3))" 23
