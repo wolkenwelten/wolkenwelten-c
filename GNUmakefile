@@ -13,6 +13,8 @@ VERSION_NAME         := $(shell tools/versionname)
 VERSION_ARCH         := $(shell uname -m)
 AS_SYM               := NO_SYM=NO_SYM
 
+
+include common/disable_implicit_rules.mk
 include common/Makefile.common
 include client/Makefile.client
 include server/Makefile.server
