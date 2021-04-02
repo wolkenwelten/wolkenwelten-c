@@ -15,42 +15,45 @@ AS_SYM               := NO_SYM=NO_SYM
 
 
 include common/disable_implicit_rules.mk
-include common/Makefile.common
-include client/Makefile.client
-include server/Makefile.server
+include common/common.mk
+include client/client.mk
+include server/server.mk
 
 ifeq ($(OS),Windows_NT)
-	include platform/win/Makefile.win
+	include platform/win/win.mk
 else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Darwin)
-		include platform/macos/Makefile.macos
+		include platform/macos/macos.mk
 	endif
 	ifeq ($(UNAME_S),Linux)
-		include platform/linux/Makefile.linux
+		include platform/linux/linux.mk
 		ifdef MINGWCROSS
-			include platform/win_cross/Makefile.win
+			include platform/win_cross/win_cross.mk
 		endif
 		ifdef OSXCROSS
-			include platform/macos_cross/Makefile.macos
+			include platform/macos_cross/macos_cross.mk
 		endif
 	endif
 	ifeq ($(UNAME_S),Haiku)
-		include platform/haiku/Makefile.haiku
+		include platform/haiku/haiku.mk
+	endif
+	ifeq ($(UNAME_S),DragonflyBSD)
+		include platform/bsd/bsd.mk
 	endif
 	ifeq ($(UNAME_S),OpenBSD)
-		include platform/bsd/Makefile.bsd
+		include platform/bsd/bsd.mk
 	endif
 	ifeq ($(UNAME_S),NetBSD)
-		include platform/bsd/Makefile.bsd
+		include platform/bsd/bsd.mk
 	endif
 	ifeq ($(UNAME_S),FreeBSD)
-		include platform/bsd/Makefile.bsd
+		include platform/bsd/bsd.mk
 	endif
 endif
 
 ifdef EMSDK
-	include platform/wasm/Makefile.wasm
+	include platform/wasm/wasm.mk
 endif
 
 ifeq ($(VERSION_ARCH),armv7l)

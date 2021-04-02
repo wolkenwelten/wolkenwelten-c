@@ -1,6 +1,6 @@
-FFMPEG           := ffmpeg4
-ifeq (, $(shell which ffmpeg4))
-	FFMPEG   := ffmpeg
+FFMPEG           := ffmpeg
+ifeq (, $(shell which ffmpeg))
+	FFMPEG   := ffmpeg4
 endif
 CLIENT_CFLAGS    :=
 CLIENT_CINCLUDES :=
