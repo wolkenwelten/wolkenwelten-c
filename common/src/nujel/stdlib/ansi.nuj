@@ -36,3 +36,6 @@
 	(ansi-wrap 14 (apply cat ...s))))
 (def ansi-white (λ (...s) "Wraps its arguments as a string in the a white ansi color code"
 	(ansi-wrap 15 (apply cat ...s))))
+
+(def ansi-rainbow (λ (...s) "Wraps its arguments in the colors of the rainbow"
+	(let ((count 0)) (join (map (λ (a) (set! count (logand (++ count) #x7)) (ansi-wrap (if (zero? count) 7 (+ count 8)) a)) (split (apply cat ...s) "")) ""))))

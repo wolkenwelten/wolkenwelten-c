@@ -532,7 +532,7 @@ lVal *lnfIndexOf(lClosure *c, lVal *v){
 	if(needle == NULL)   {return lValInt(-1);}
 	if(haystack == NULL) {return lValInt(-1);}
 	const int needleLength = strnlen(needle,256);
-	if(needleLength <= 0){return lValInt(-1);}
+	if(needleLength <= 0){return lValInt(pos);}
 
 	for(const char *s = &haystack[pos]; *s != 0; s++){
 		if(strncmp(s,needle,needleLength) == 0){

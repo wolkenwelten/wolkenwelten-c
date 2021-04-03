@@ -21,9 +21,9 @@
 	(join-iter "" l (str glue))))
 
 (def split (λ (s separator &start) "Splits String S on every SEPARATOR with &START=0"
-	(let ((pos (index-of s separator (int &start))) (start (int &start)))
-		(cond ((>= pos start) (cons (substr s start pos) (split s separator (+ pos (str-len separator)))))
-		      (#t (cons (substr s start)))))))
+	(let ((pos (max (+ (int &start) 1) (index-of s separator (int &start)))) (start (int &start)) (slen (str-len s)))
+		(cond ((and (>= pos start) (< pos slen)) (cons (substr s start pos) (split s separator (+ pos (str-len separator)))))
+		      (#t (cons (substr s start slen)))))))
 
 (def reverse (λ (l r) "Returns the list l in reverse order"
 	(if (nil? l) r (reverse (cdr l) (cons (car l) r)))))
