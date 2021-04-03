@@ -520,6 +520,28 @@ lVal *lnfCat(lClosure *c, lVal *v){
 	return lValString(tmpStringBuf);
 }
 
+lVal *lnfIndexOf(lClosure *c, lVal *v){
+	const char *haystack = NULL;
+	const char *needle = NULL;
+	int pos = 0;
+
+	v = getLArgS(c,v,&haystack);
+	v = getLArgS(c,v,&needle);
+	v = getLArgI(c,v,&pos);
+
+	if(needle == NULL)   {return lValInt(-1);}
+	if(haystack == NULL) {return lValInt(-1);}
+	const int needleLength = strnlen(needle,256);
+	if(needleLength <= 0){return lValInt(-1);}
+
+	for(const char *s = &haystack[pos]; *s != 0; s++){
+		if(strncmp(s,needle,needleLength) == 0){
+			return lValInt(s-haystack);
+		}
+	}
+	return lValInt(-1);
+}
+
 lVal *lnfAnsiFG(lClosure *c, lVal *v){
 	int i = 0;
 	if(v != NULL){
@@ -574,6 +596,7 @@ void lAddStringFuncs(lClosure *c){
 	lAddNativeFunc(c,"str-down",      "(s)",             "Returns a copy of string s all lowercased",                                               lnfStrDown);
 	lAddNativeFunc(c,"str-capitalize","(s)",             "Returns a copy of string s capitalized",                                                  lnfStrCap);
 	lAddNativeFunc(c,"substr",        "(s &start &stop)","Returns a copy of string s starting at position &start=0 and ending at &stop=(str-len s)",lnfSubstr);
+	lAddNativeFunc(c,"index-of",      "(haystack needle &start)","Returns the position of NEEDLE in HAYSTACK, searcing from &START=0, or -1 if not found",lnfIndexOf);
 	lAddNativeFunc(c,"str->sym",      "(s)",             "Converts string s to a symbol",                                                           lnfStrSym);
 	lAddNativeFunc(c,"sym->str",      "(s)",             "Converts symbol s to a string",                                                           lnfSymStr);
 	lAddNativeFunc(c,"write-str",     "(v)",             "Writes V into a string and returns it",                                                   lnfWriteStr);

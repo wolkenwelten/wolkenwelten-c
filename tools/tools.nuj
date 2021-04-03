@@ -1,8 +1,13 @@
+(def git-get-head (λ () "Gets the current git head"
+	(let ((cur-head (file-load "./.git/HEAD")))
+		(let ((path-pos (index-of
+	)))
+
 (def infogen-version (λ () "Return the infogen version"
 	(trim (system "tools/versionname"))))
 
 (def infogen-builddate (λ () "Return the infogen builddate"
-	(trim (system "date \"+%F %k:%M\""))))
+	(strftime (time) "%Y-%m-%d %H:%M")))
 
 (def infogen-commit (λ () "Return the infogen commit"
 	(trim (system "git rev-parse HEAD | tr '[:lower:]' '[:upper:]'"))))
@@ -22,5 +27,5 @@ const char *BUILDDATE=\"" (infogen-builddate) "\";
 const char *COMMIT=\"" (infogen-commit) "\";\n")))
 
 (def infogen (λ (prefix) "Generate build info and writes C source/header files PREFIX"
-	(write-file (cat prefix ".h") (infogen-header))
-	(write-file (cat prefix ".c") (infogen-source))))
+	(file-load (cat prefix ".h") (infogen-header))
+	(file-load (cat prefix ".c") (infogen-source))))

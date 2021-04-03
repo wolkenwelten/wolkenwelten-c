@@ -967,6 +967,24 @@ void lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *
 	var->vList.car = lValNativeFunc(func,lArgs,lValString(doc));
 }
 
+static lVal *lnfTime(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValInt(time(NULL));
+}
+
+static lVal *lnfStrftime(lClosure *c, lVal *v){
+	int timestamp = 0;
+	const char *format = "%Y-%m-%d %H:%M:%S";
+
+	v = getLArgI(c,v,&timestamp);
+	v = getLArgS(c,v,&format);
+
+	char buf[1024];
+	time_t ts = timestamp;
+	strftime(buf,sizeof(buf),format,localtime(&ts));
+
+	return lValString(buf);
+}
 
 static void lAddPlatformVars(lClosure *c){
 	#if defined(__HAIKU__)
@@ -1054,9 +1072,11 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"vy","(v)","Returns x part of vector v",lnfVY);
 	lAddNativeFunc(c,"vz","(v)","Returns x part of vector v",lnfVZ);
 
-	lAddNativeFunc(c,"msecs", "()","Returns monotonic msecs",lnfMsecs);
-	lAddNativeFunc(c,"random","(&n)","Retur a random value from 0 to &N, if &N is #nil then return a random value up to INT_MAX",lnfRandom);
-	lAddNativeFunc(c,"random-seed","(seed)","Sets the RNG Seed to SEED",lnfRandomSeed);
+	lAddNativeFunc(c,"time",       "()",         "Returns unix time",lnfTime);
+	lAddNativeFunc(c,"strftime",   "(ts format)","Returns TS as a date using FORMAT (uses strftime)",lnfStrftime);
+	lAddNativeFunc(c,"msecs",      "()",         "Returns monotonic msecs",lnfMsecs);
+	lAddNativeFunc(c,"random",     "(&n)",       "Return a random value from 0 to &N, if &N is #nil then return a random value up to INT_MAX",lnfRandom);
+	lAddNativeFunc(c,"random-seed","(seed)",     "Sets the RNG Seed to SEED",lnfRandomSeed);
 
 	lDefineVal(c,"π",  lConst(lValFloat(PI)));
 	lDefineVal(c,"PI", lConst(lValFloat(PI)));

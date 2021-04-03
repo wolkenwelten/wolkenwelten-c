@@ -220,7 +220,10 @@
 (test-str "#(1 2 3)" (define testerle #(1 2 3)) (testerle))
 (test-str "#nil" (define testerle #(1 2 3)) (testerle #t))
 (test-str "#nil" (define testerle #(1 2 3)) (testerle (vec 1 2 3)))
-(test-str "Trim Test" (trim "   Trim Test    \n"))
+(test-str "\"Trim Test\"" (trim "   Trim Test    \n"))
+(test-str "\"1,asd,3.0,#f\"" (join '(1 "asd" 3.0 #f) ","))
+(test-str "(1.0 2.0 3.0)" (map float (split "1,2,3" ",")))
+(test-str "\"1983-09-27 12:34:56\"" (strftime 433510496 "%Y-%m-%d %H:%M:%S"))
 
 ; Those have to wait until we can fork off another interpreter
 ; test_sexpr_exitcode "(quit (+ 20 3))" 23
