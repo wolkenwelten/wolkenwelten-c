@@ -9,7 +9,7 @@ WARNINGS             := -Wall -Werror -Wextra -Wshadow -Wcast-align
 CFLAGS               := -g
 CSTD                 := -std=c99
 
-VERSION_NAME         := $(shell tools/versionname)
+VERSION_NAME         := $(shell ./nujel tools/tools.nuj -x "(display (infogen-version))")
 VERSION_ARCH         := $(shell uname -m)
 AS_SYM               := NO_SYM=NO_SYM
 

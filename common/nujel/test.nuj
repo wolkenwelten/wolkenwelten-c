@@ -232,6 +232,7 @@
 (test-str "\"Trim Test\"" (trim "   Trim Test    \n"))
 (test-str "\"1,asd,3.0,#f\"" (join '(1 "asd" 3.0 #f) ","))
 (test-str "(1.0 2.0 3.0)" (map float (split "1,2,3" ",")))
+(test-str "(\"dies ist\" \"ein\" \"test\")" (split "dies ist/ein/test" "/"))
 (test-str "\"1983-09-27 12:34:56\"" (strftime 433510496 "%Y-%m-%d %H:%M:%S"))
 (test 1 (index-of "1,2,3" ","))
 (test #x123 (read (join (cons "#x" (split "123" "")))))
