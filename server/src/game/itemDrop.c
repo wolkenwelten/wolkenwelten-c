@@ -36,14 +36,7 @@
 void itemDropUpdateMsg(u8 c,uint i){
 	if(i >= itemDropCount)         {return;}
 	if(itemDropList[i].ent == NULL){return;}
-	msgItemDropUpdate(
-		c,
-		itemDropList[i].ent->pos,
-		itemDropList[i].ent->vel,
-		&itemDropList[i].itm,
-		i,
-		itemDropCount
-	);
+	msgItemDropUpdate(c,itemDropList[i].ent->pos,itemDropList[i].ent->vel,&itemDropList[i].itm,i,itemDropCount);
 }
 
 uint itemDropUpdatePlayer(uint c, uint offset){
@@ -196,18 +189,18 @@ void itemDropUpdateAll(){
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){
 		entity *e = itemDropList[i].ent;
 		if(e == NULL){continue;}
-		entityUpdate(e);
+		const int ret = entityUpdate(e);
+
+		if((ret < 0) || (itemDropList[i].itm.amount < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || (e->pos.y < 0)){
+			itemDropDel(i);
+			addPriorityItemDrop(i);
+			continue;
+		}
 
 		const uint chance = itemGetIDChance(&itemDropList[i].itm);
 		if((chance > 0) && (rngValA(chance) == 0)){
 			lVal *r = lispCallFuncVII("item-drop-cb",itemDropList[i].ent->pos, itemDropList[i].itm.ID, itemDropList[i].itm.amount);
 			if(r != NULL){ itemDropList[i].itm.amount += r->vInt; }
-		}
-
-		if((itemDropList[i].itm.amount < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || (e->pos.y < 0)){
-			itemDropDel(i);
-			addPriorityItemDrop(i);
-			continue;
 		}
 	}
 

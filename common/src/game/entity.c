@@ -96,6 +96,7 @@ int entityUpdate(entity *e){
 	int ret=0;
 	u32 col;
 	e->pos = vecAdd(e->pos,e->vel);
+	if(!worldShouldBeLoaded(e->pos)){return -1;}
 	if(e->flags & ENTITY_NOCLIP){
 		e->flags &= ~ENTITY_COLLIDE;
 		if(entityCollision(e->pos)){ e->flags |= ENTITY_COLLIDE; }

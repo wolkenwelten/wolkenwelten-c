@@ -15,3 +15,4 @@ bool     worldIsLoaded      (int x, int y, int z);
 ivec     chungusGetPos      (const chungus *c);
 void     worldBoxMine       (int x, int y, int z, int w,int h,int d);
 void     worldBoxMineSphere (int x, int y, int z, int r);
+bool     worldShouldBeLoaded(const vec cpos);

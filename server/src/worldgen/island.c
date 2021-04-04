@@ -538,6 +538,11 @@ void worldgenIsland(worldgen *wgen, int x,int y,int z,int size){
 	}
 }
 
+void worldgenSpawnIsland(worldgen *wgen, int x,int y,int z,int size){
+	worldgenIsland(wgen,x,y,z,size);
+	worldgenFindSpawn(wgen,x,z,0);
+}
+
 void worldgenSCluster(worldgen *wgen, int x,int y,int z,int size,int csize){
 	if(rngValM(4)==0){
 		worldgenIsland(wgen,x,y,z,size);
@@ -569,8 +574,9 @@ void worldgenCluster(worldgen *wgen, int size, int iSize, int iMin,int iMax){
 	int xoff = rngValM(CHUNGUS_SIZE-(size*4))-(CHUNGUS_SIZE-(size*4))/2;
 	int yoff = rngValM(CHUNGUS_SIZE-(size*4))-(CHUNGUS_SIZE-(size*4))/2;
 	int zoff = rngValM(CHUNGUS_SIZE-(size*4))-(CHUNGUS_SIZE-(size*4))/2;
-	if(rngValM(6)==1){
-		worldgenIsland(wgen,CHUNGUS_SIZE/2+xoff,CHUNGUS_SIZE/2+yoff,CHUNGUS_SIZE/2+zoff,size);
+	const uint roll = rngValA(3);
+	if(roll == 0){
+		worldgenSpawnIsland(wgen,CHUNGUS_SIZE/2+xoff,CHUNGUS_SIZE/2+yoff,CHUNGUS_SIZE/2+zoff,size);
 	}else{
 		iMin*=2;
 	}
@@ -586,5 +592,4 @@ void worldgenCluster(worldgen *wgen, int size, int iSize, int iMin,int iMax){
 		int nz = rngValM(CHUNGUS_SIZE-CHUNGUS_SIZE/8)+CHUNGUS_SIZE/16;
 		worldgenIsland(wgen,nx,ny,nz,iSize);
 	}
-	worldgenFindSpawn(wgen,CHUNGUS_SIZE/2+xoff,CHUNGUS_SIZE/2+zoff,0);
 }

@@ -86,6 +86,7 @@ extern lSymbol symQuote,symArr;
 #define ARR_MAX (1<<12)
 #define NFN_MAX (1<<10)
 #define VEC_MAX (1<<12)
+#define SYM_MAX (1<<12)
 
 #define VAL_MASK ((VAL_MAX)-1)
 #define CLO_MASK ((CLO_MAX)-1)
@@ -93,6 +94,7 @@ extern lSymbol symQuote,symArr;
 #define ARR_MASK ((ARR_MAX)-1)
 #define NFN_MASK ((NFN_MAX)-1)
 #define VEC_MASK ((VEC_MAX)-1)
+#define SYM_MASK ((SYM_MAX)-1)
 
 extern lVal     lValList    [VAL_MAX];
 extern lClosure lClosureList[CLO_MAX];
@@ -100,6 +102,7 @@ extern lString  lStringList [STR_MAX];
 extern lArray   lArrayList  [ARR_MAX];
 extern lNFunc   lNFuncList  [NFN_MAX];
 extern lVec     lVecList    [VEC_MAX];
+extern lSymbol  lSymbolList [SYM_MAX];
 
 
 void      lInit             ();

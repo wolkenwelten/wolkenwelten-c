@@ -93,5 +93,5 @@ void chatDraw(textMesh *guim){
 		textMeshAddString(guim,chatLog[i]);
 		guim->sy += 16;
 	}
-	guim->font = 0;
+	textMeshResetFont(guim);
 }

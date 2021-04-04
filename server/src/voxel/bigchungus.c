@@ -397,3 +397,15 @@ chungus* worldTryChungusV(const vec pos){
 bool worldIsLoaded(int x, int y, int z){
 	return worldTryChungus(x>>8,y>>8,z>>8) != NULL;
 }
+
+bool worldShouldBeLoaded(const vec cpos){
+	if(worldIsLoaded(cpos.x,cpos.y,cpos.z)){return true;}
+
+	for(uint ii=0;ii<clientCount;++ii){
+		if(clients[ii].state)    {continue;}
+		if(clients[ii].c == NULL){continue;}
+		const float cdist = vecMag(vecSub(cpos,clients[ii].c->pos));
+		if(cdist < 1024.f){return true;}
+	}
+	return false;
+}

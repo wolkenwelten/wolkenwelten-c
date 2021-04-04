@@ -198,7 +198,11 @@ void chungusSave(chungus *c){
 	cbuf = animalSaveChungus   (c,cbuf);
 	cbuf = fireSaveChungus     (c,cbuf);
 	cbuf = throwableSaveChungus(c,cbuf);
-
+	const size_t uncompressedLen = cbuf - saveLoadBuffer;
+	if(uncompressedLen == 0){
+		PROFILE_STOP();
+		return;
+	}
 	size_t len = LZ4_compress_default((const char *)saveLoadBuffer, (char *)compressedBuffer, cbuf - saveLoadBuffer, 4100*4096);
 	if(len == 0){
 		fprintf(stderr,"No Data for chungus %i:%i:%i\n",c->x,c->y,c->z);

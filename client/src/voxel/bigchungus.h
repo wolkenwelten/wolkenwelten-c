@@ -20,3 +20,4 @@ void     worldBoxMine          (int x, int y, int z, int w, int h, int d);
 int      checkCollision        (int x, int y, int z);
 bool     worldIsLoaded         (int x, int y, int z);
 void     worldSetChunkUpdated  (int x, int y, int z);
+bool     worldShouldBeLoaded   (const vec cpos);

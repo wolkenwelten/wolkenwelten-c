@@ -309,3 +309,8 @@ void worldSetChunkUpdated(int x, int y, int z){
 	if(chnk == NULL){return;}
 	chnk->flags |= CHUNK_FLAG_DIRTY;
 }
+
+bool worldShouldBeLoaded(const vec cpos){
+	(void)cpos;
+	return true;
+}

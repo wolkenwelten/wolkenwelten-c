@@ -65,6 +65,11 @@ uint     lVecActive = 0;
 uint     lVecMax    = 1;
 uint     lVecFFree  = 0;
 
+lSymbol lSymbolList[VEC_MAX];
+uint    lSymbolActive = 0;
+uint    lSymbolMax    = 1;
+uint    lSymbolFFree  = 0;
+
 char dispWriteBuf[1<<16];
 lSymbol symQuote,symArr;
 
@@ -102,9 +107,40 @@ void lInit(){
 	lVecActive      = 0;
 	lVecMax         = 1;
 
+	lSymbolActive   = 0;
+	lSymbolMax      = 1;
+
 	strncpy(symQuote.c,"quote",15);
 	strncpy(symArr.c,"arr",15);
 }
+/*
+static void lSymbolFree(uint i){
+	if((i == 0) || (i >= lSymbolMax)){return;}
+	lSymbol *v = &lSymbolList[i];
+	if(v->nextFree != 0){return;}
+	lSymbolActive--;
+	v->nextFree   = lSymbolFFree;
+	v->flags      = 0;
+	lSymbolFFree  = i;
+}
+
+static uint lSymbolAlloc(){
+	lVec *ret;
+	if(lSymbolFFree == 0){
+		if(lSymbolMax >= SYM_MAX-1){
+			lPrintError("lVec OOM\n");
+			return 0;
+		}
+		ret = &lSymbolList[lSymbolMax++];
+	}else{
+		ret = &lSymbolList[lSymbolFFree & SYM_MASK];
+		lVecFFree = ret->nextFree;
+	}
+	lVecActive++;
+	*ret = (lVec){0};
+	return ret - lVecList;
+}
+*/
 
 static void lVecFree(uint i){
 	if((i == 0) || (i >= lVecMax)){return;}
@@ -113,7 +149,7 @@ static void lVecFree(uint i){
 	lVecActive--;
 	v->nextFree   = lVecFFree;
 	v->flags      = 0;
-	lClosureFFree = i;
+	lVecFFree = i;
 }
 
 static uint lVecAlloc(){
@@ -142,7 +178,7 @@ static void lNFuncFree(uint i){
 	nfn->doc      = NULL;
 	nfn->nextFree = lNFuncFFree;
 	nfn->flags    = 0;
-	lClosureFFree = i;
+	lNFuncFFree   = i;
 }
 
 static uint lNFuncAlloc(){
@@ -161,7 +197,6 @@ static uint lNFuncAlloc(){
 	*ret = (lNFunc){0};
 	return ret - lNFuncList;
 }
-
 
 uint lClosureAlloc(){
 	lClosure *ret;
@@ -256,7 +291,7 @@ u32 lStringNew(const char *str, unsigned int len){
 	memcpy(nbuf,str,len);
 	nbuf[len] = 0;
 	s->flags |= lfHeapAlloc;
-	s->buf = s->data = nbuf;
+	s->buf    = s->data = nbuf;
 	s->bufEnd = &s->buf[len];
 	return i;
 }
@@ -981,7 +1016,8 @@ static lVal *lnfStrftime(lClosure *c, lVal *v){
 
 	char buf[1024];
 	time_t ts = timestamp;
-	strftime(buf,sizeof(buf),format,localtime(&ts));
+	struct tm *info = localtime(&ts);
+	strftime(buf,sizeof(buf),format,info);
 
 	return lValString(buf);
 }
@@ -1305,8 +1341,8 @@ lType lTypecast(const lType a,const lType b){
 	if((a == ltInf)   || (b == ltInf))  {return ltInf;}
 	if((a == ltVec)   || (b == ltVec))  {return ltVec;}
 	if((a == ltFloat) || (b == ltFloat)){return ltFloat;}
-	if((a == ltInt)   || (b == ltInt)  ){return ltInt;}
-	if((a == ltBool)  || (b == ltBool) ){return ltBool;}
+	if((a == ltInt)   || (b == ltInt))  {return ltInt;}
+	if((a == ltBool)  || (b == ltBool)) {return ltBool;}
 	if (a == b){ return a;}
 	return ltNoAlloc;
 }

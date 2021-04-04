@@ -33,14 +33,7 @@ int      itemDropFirstFree = -1;
 
 void itemDropEmptyMsg(uint c, uint i){
 	item itm = itemEmpty();
-	msgItemDropUpdate(
-		c,
-		vecNOne(),
-		vecZero(),
-		&itm,
-		i,
-		itemDropCount
-	);
+	msgItemDropUpdate(c,vecNOne(),vecZero(),&itm,i,itemDropCount);
 }
 
 itemDrop *itemDropGetByBeing(being b){
@@ -56,7 +49,7 @@ being itemDropGetBeing(const itemDrop *id){
 }
 
 void itemDropDel(uint d){
-	if(d >= itemDropCount) {return;}
+	if(d >= itemDropCount){return;}
 
 	entityFree(itemDropList[d].ent);
 	itemDropList[d].ent = NULL;

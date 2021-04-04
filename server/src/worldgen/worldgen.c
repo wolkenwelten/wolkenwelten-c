@@ -205,7 +205,7 @@ void worldgenGenerate(worldgen *wgen){
 
 void worldgenFirstInit(){
 	const uint oldSeed = getRNGSeed();
-	const uint seed = (optionWorldSeed | (optionWorldSeed << 16)) ^ 0xAC79AB97;
+	const uint seed    = (optionWorldSeed | (optionWorldSeed << 16)) ^ 0xAC79AB97;
 	seedRNG(seed);
 
 	gtimeSetTimeOfDay(rngValA(0xFFFFF));
@@ -217,6 +217,5 @@ void worldgenFirstInit(){
 	if((cloudDensityMin < 156) && (rngValA(0x3F) == 0)){
 		rainIntensity = rngValM((256-cloudDensityMin) / 2);
 	}
-
 	seedRNG(oldSeed);
 }

@@ -26,3 +26,4 @@ void      textMeshItemSprite       (textMesh *m, int x, int y, int size, int ite
 void      textMeshSlot             (textMesh *m, int x, int y, int size, int style);
 void      textMeshItemSlot         (textMesh *m, int x, int y, int size, int style, int itemID, int amount);
 void      textMeshItem             (textMesh *m, int x, int y, int size, int style, item *itm);
+void      textMeshResetFont        (textMesh *m);

@@ -437,3 +437,10 @@ void textMeshHGradient(textMesh *m, int x, int y, int w, int h, u32 c1, u32 c2){
 	textMeshAddVert(m,x+w,y  ,u+s,v  ,c2);
 	textMeshAddVert(m,x  ,y  ,u  ,v  ,c1);
 }
+
+void textMeshResetFont(textMesh *m){
+	m->font = 0;
+	m->size = 1;
+	m->fgc  = colorPalette[15];
+	m->bgc  = colorPalette[ 0];
+}

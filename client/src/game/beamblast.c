@@ -33,6 +33,7 @@ void singleBeamblast(const vec start, const vec rot, float beamSize, float damag
 	vec tvel        = vecMulS(vel,1.f/8.f);
 	const float mdd = MAX(1,beamSize * beamSize);
 	const int dmg   = ((int)damageMultiplier)+1;
+	being source    = characterGetBeing(player);
 	--iteration;
 
 	for(int ticksLeft = 0x1FFF; ticksLeft > 0; ticksLeft--){
@@ -48,12 +49,12 @@ void singleBeamblast(const vec start, const vec rot, float beamSize, float damag
 					break;
 				}
 			}
-			characterHitCheck(spos, mdd, dmg, 1, iteration, 0);
-			animalHitCheck   (spos, mdd, dmg, 1, iteration, 0);
+			characterHitCheck(spos, mdd, dmg, 1, iteration, source);
+			animalHitCheck   (spos, mdd, dmg, 1, iteration, source);
 		}
 		pos = vecAdd(pos,vel);
 	}
-	fxBeamBlaster(start,pos,beamSize,damageMultiplier);
+	   fxBeamBlaster(  start,pos,beamSize,damageMultiplier);
 	msgFxBeamBlaster(0,start,pos,beamSize,damageMultiplier);
 }
 
