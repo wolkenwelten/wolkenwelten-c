@@ -16,19 +16,25 @@
 ;; Contains various little pieces that were implemented in nujel instead of
 ;; C because of various reasons
 
-(def cddr (λ (p) "Short for (cdr (cdr p))"
-	(cdr (cdr p))))
+(def caar (λ (p) "(car (car p))"
+	(car (car p))))
 
-(def cadr (λ (p) "Short for (car (cdr p))"
+(def cadr (λ (p) "(car (cdr p))"
 	(car (cdr p))))
 
-(def caddr (λ (p) "Short for (car (cdr (cdr p)))"
+(def cdar (λ (p) "(cdr (car p))"
+	(cdr (car p))))
+
+(def cddr (λ (p) "(cdr (cdr p))"
+	(cdr (cdr p))))
+
+(def caddr (λ (p) "(car (cdr (cdr p)))"
 	(car (cdr (cdr p)))))
 
-(def ++ (λ (i) "Returns its argument + 1"
+(def ++ (λ (i) "(+ I 1)"
 	(+ i 1)))
 
-(def -- (λ (i) "Returns its argument - 1"
+(def -- (λ (i) "(- I 1)"
 	(- i 1)))
 
 (def length (λ (a) "Returns the length of a"

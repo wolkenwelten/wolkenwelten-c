@@ -1,23 +1,32 @@
 (def nujel-start (msecs))
-(def error-count 0)
+
+(def test-count 0)
 (def success-count 0)
-(def out-buf '())
+(def error-count 0)
+(def test-errors '())
+
+(def display-errors (λ (i) "Displays all the failed Tests"
+	(map (λ (i) (when (pair? i) (display (cat (ansi-red "[Error] ") (ansi-red (caar i)) " != " (ansi-green (cdar i)) "\n" (write-str (cdr i)) "\n\n")))) test-errors)))
 
 (def display-results (λ () "Prints the result Message"
-	(display ("Results: [" (ansi-green success-count) " / " (ansi-red error-count) "] in " (- (msecs) nujel-start) "ms - " (if (zero? error-count) (ansi-rainbow "Everything is working, very nice!") (ansi-red "Better fix those!")) "\n")) (mem)))
+	(display ("results: [" (ansi-green success-count) " / " (ansi-red error-count) "] in "(- (msecs) nujel-start) "ms - " (if (zero? error-count) (ansi-rainbow "Everything is working, very nice!") (ansi-red "Better fix those!")) "\n")) (mem) (display-errors)))
 
-(def save-out (λ (str) "Appends STR to the output buffer"
-	(set! out-buf (cons str out-buf))))
+(def test-success (λ () "Should be called after a test has finished successfully"
+	(set! success-count (++ success-count))))
+
+(def test-failure (λ (res-should res-is expr) "Should be called if EXPR does not equal RES"
+	(set! test-errors (cons (cons (cons res-should res-is) expr) test-errors))
+	(set! error-count (++ error-count))))
 
 (def test (λ (result @...expr) "Tests that @...EXPR evaluates to RESULT"
 	(let ((expr (eval (cons begin @...expr))))
-		(cond ((eq? result expr) (set! success-count (++ success-count)) (save-out (cat (ansi-green "[YEAH]") " " result "\t" (substr (write-str @...expr) 0 40) "\n")))
-			(#t (set! error-count (++ error-count)) (save-out (cat (ansi-red "[NOES]") " " result " != " expr "\n" (write-str @...expr) "\n\n")))))))
+		(cond ((eq? result expr) (test-success))
+			(#t (test-failure result expr @...expr))))))
 
 (def test-str (λ (result @...expr) "Tests that @...EXPR evaluates to RESULT"
 	(let ((expr (write-str (eval (cons begin @...expr)))))
-		(cond ((eq? result expr) (set! success-count (++ success-count)) (save-out (cat (ansi-green "[YEAH]") " " result "\t" (substr (write-str @...expr) 0 40) "\n")))
-			(#t (set! error-count (++ error-count)) (save-out (cat (ansi-red "[NOES]") " " result " != " expr "\n" (write-str @...expr) "\n\n")))))))
+		(cond ((eq? result expr) (test-success))
+			(#t (test-failure result expr @...expr))))))
 
 ; (display "Evaluating comments is a terrible Idea!") (newline) (quit 2)
 (test 1073741824 (ash 1 30))
@@ -244,9 +253,4 @@
 ; test_sexpr_oom "(define inf-loop (lambda (a) (inf-loop (++ a)))) (inf-loop)" ""
 
 (display-results)
-(newline)
-(map display (reverse out-buf))
-(newline)
-(display-results)
-(newline)
 (if (zero? error-count) (quit 0) (quit 1))
