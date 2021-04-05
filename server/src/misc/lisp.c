@@ -495,19 +495,13 @@ void lispRecvSExpr(uint c,const packet *p){
 
 void lispEvents(){
 	static u64 lastTicks = 0;
-	static lVal *expr = NULL;
-	if(expr == NULL){
-		expr = lWrap(lRead("(yield-run)"));
-		expr->flags |= lfNoGC;
-	}
-
 	PROFILE_START();
 
 	const u64 cticks = getTicks();
 	if((lastTicks + 500) > cticks){return;}
 	lastTicks = cticks;
 
-	lEval(clRoot,expr);
+	lEval(clRoot,lCons(lValSym("yield-run"),NULL));
 	lClosureGC();
 
 	PROFILE_STOP();

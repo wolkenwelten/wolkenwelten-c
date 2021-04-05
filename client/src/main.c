@@ -237,7 +237,7 @@ int main( int argc, char* argv[] ){
 
 	itemTypeInit();
 	recipeInit();
-	lispEval("(event-fire \"on-init\")");
+	lispCallFuncS("event-fire","on-init");
 	textureBuildBlockIcons(0);
 	ropeInit();
 

@@ -645,7 +645,7 @@ void lispEvents(){
 	}
 	lastTicks = cticks;
 
-	lnfBegin(clRoot,lRead("(yield-run)"));
+	lEval(clRoot,lCons(lValSym("yield-run"),NULL));
 
 	PROFILE_STOP();
 }
