@@ -23,8 +23,8 @@ else
 	ASSET := ../tools/assets
 endif
 
-$(NUJEL): $(NUJEL_SRCS) $(NUJEL_HDRS) tmp/assets.c tmp/assets.h
-	$(CC) -DNUJEL_STANDALONE $(CFLAGS) $(LIBS) $(CINCLUDES) $(WARNINGS) $(CSTD) $(OPTIMIZATION) $(NUJEL_SRCS) tmp/assets.c -o $(NUJEL)
+$(NUJEL): $(NUJEL_SRCS) tmp/assets.c | $(NUJEL_HDRS) tmp/assets.h
+	$(CC) -DNUJEL_STANDALONE $(CFLAGS) $(LIBS) $(CINCLUDES) $(WARNINGS) $(CSTD) $(OPTIMIZATION) $^ -o $(NUJEL)
 
 tmp/saolib.nuj: $(SAOLIB_NUJS)
 	mkdir -p tmp/
