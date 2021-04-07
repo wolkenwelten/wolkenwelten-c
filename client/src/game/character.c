@@ -993,15 +993,14 @@ int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 itera
 void characterDrawConsHighlight(const character *c){
 	static uint counter = 0;
 	item *activeItem = &player->inventory[player->activeItem];
-	if(activeItem == NULL){return;}
-	if(itemIsEmpty(activeItem)){return;}
+	if((activeItem == NULL) || itemIsEmpty(activeItem) || (!(player->flags & CHAR_CONS_MODE))){return;}
 	const u16 id = activeItem->ID;
 	if(id < 256){
 		ivec los = characterLOSBlock(c,true);
 		if(los.x < 0){return;}
 		const float a = 0.7f + cosf((++counter&0x7F)/128.f*PI*2)*0.15f;
 		blockTypeDraw(id, vecNew(los.x+0.5f,los.y+0.5f,los.z+0.5f),a,0);
-	}else if(player->flags & CHAR_CONS_MODE){
+	}else{
 		ivec los = characterLOSBlock(c,false);
 		if(los.x < 0){return;}
 		const float a = 0.5f + cosf((++counter&0x7F)/128.f*PI*2)*0.15f;
