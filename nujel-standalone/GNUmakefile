@@ -3,7 +3,7 @@ OPTIMIZATION         := -O2
 CINCLUDES            :=
 LIBS                 := -lm
 WARNINGS             := -Wall -Werror -Wextra -Wshadow -Wcast-align -Wno-missing-braces
-CFLAGS               := -g
+CFLAGS               := -g -D_GNU_SOURCE
 CSTD                 := -std=c99
 VERSION_ARCH         := $(shell uname -m)
 NUJEL_SRCS           := $(shell find ./ -type f -name '*.c') $(shell find ../common/src/nujel -type f -name '*.c') ../common/src/misc/vec.c
