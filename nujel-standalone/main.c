@@ -21,14 +21,11 @@
 #include <string.h>
 #include <unistd.h>
 
-extern unsigned char nujel_saolib_nuj_data[];
-
-#include "../src/common.h"
-#include "../src/tmp/assets.h"
-#include "../src/nujel/nujel.h"
-#include "../src/nujel/casting.h"
-#include "../src/nujel/reader.h"
-#include "../src/nujel/string.h"
+#include "../common/src/common.h"
+#include "../common/src/nujel/nujel.h"
+#include "../common/src/nujel/casting.h"
+#include "../common/src/nujel/reader.h"
+#include "../common/src/nujel/string.h"
 
 static void *loadFile(const char *filename,size_t *len){
 	FILE *fp;
@@ -184,6 +181,7 @@ static void addNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"file-save", "(filename content)","Writes CONTENT into FILENAME",                       lnfWriteFile);
 }
 
+extern char saolib_nuj_data[];
 int main(int argc, char *argv[]){
 	int eval = 0;
 	int repl = 1;
@@ -192,7 +190,7 @@ int main(int argc, char *argv[]){
 	lInit();
 	lClosure *c = lClosureNewRoot();
 	addNativeFuncs(c);
-	lEval(c,lWrap(lRead((const char *)nujel_saolib_nuj_data)));
+	lEval(c,lWrap(lRead((const char *)saolib_nuj_data)));
 	lClosureGC();
 
 	for(int i=1;i<argc;i++){

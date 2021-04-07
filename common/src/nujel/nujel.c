@@ -25,8 +25,6 @@
 #include "reader.h"
 #include "string.h"
 
-extern unsigned char src_tmp_stdlib_nuj_data[];
-
 #include <ctype.h>
 #include <math.h>
 #include <stdio.h>
@@ -1118,6 +1116,12 @@ static void lAddCoreFuncs(lClosure *c){
 	lDefineVal(c,"PI", lConst(lValFloat(PI)));
 }
 
+#ifdef NUJEL_STANDALONE
+extern unsigned char stdlib_nuj_data[];
+#else
+extern unsigned char src_tmp_stdlib_nuj_data[];
+#endif
+
 lClosure *lClosureNewRoot(){
 	const uint ci = lClosureAlloc();
 	if(ci == 0){return NULL;}
@@ -1125,7 +1129,11 @@ lClosure *lClosureNewRoot(){
 	c->parent = 0;
 	c->flags |= lfNoGC;
 	lAddCoreFuncs(c);
+	#ifdef NUJEL_STANDALONE
+	lEval(c,lWrap(lRead((const char *)stdlib_nuj_data)));
+	#else
 	lEval(c,lWrap(lRead((const char *)src_tmp_stdlib_nuj_data)));
+	#endif
 	lAddPlatformVars(c);
 	return c;
 }

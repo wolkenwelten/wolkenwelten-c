@@ -1,4 +1,8 @@
 AS                   := as
+ifneq ($(MAKECMDGOALS),clean)
+NUJEL_MAKE           := $(shell cd nujel-standalone && $(MAKE))
+VERSION_NAME         := $(shell ./nujel tools/tools.nuj -x "(display (infogen-version))")
+endif
 ASFLAGS              :=
 CC                   := cc
 OPTIMIZATION         := -O2 -fno-lto -ffast-math -freciprocal-math
@@ -9,11 +13,11 @@ WARNINGS             := -Wall -Werror -Wextra -Wshadow -Wcast-align -Wno-missing
 CFLAGS               := -g
 CSTD                 := -std=c99
 
-VERSION_NAME         := $(shell ./nujel tools/tools.nuj -x "(display (infogen-version))")
-#VERSION_NAME         := test
 VERSION_ARCH         := $(shell uname -m)
 AS_SYM               := NO_SYM=NO_SYM
 
+all: wolkenwelten
+.PHONY: all release .deps
 
 include common/disable_implicit_rules.mk
 include common/common.mk
