@@ -14,10 +14,7 @@ client.settings
 client.nuj
 custom.nuj
 common/src/asm/amd64.s
-
-common/nujel/saolib.nuj
-common/nujel/assets.c
-common/nujel/assets.h
+/nujel-standalone/tmp
 
 # debugging/profiling data
 /callgrind.out.*
