@@ -48,9 +48,9 @@ server/src/tmp/objs.c: server/tools/objgen
 server/src/tmp/objs.h: server/src/tmp/objs.c
 	@true
 
-server/src/tmp/assets.c: tools/assets $(SERVER_ASSETS)
-	mkdir -p server/src/tmp/
-	tools/assets server/src/tmp/assets $(SERVER_ASSETS)
+server/src/tmp/assets.c: $(ASSET) $(SERVER_ASSETS)
+	@mkdir -p server/src/tmp/
+	./$(ASSET) server/src/tmp/assets $(SERVER_ASSETS)
 server/src/tmp/assets.h: server/src/tmp/assets.c
 	@true
 

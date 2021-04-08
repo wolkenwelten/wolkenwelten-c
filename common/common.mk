@@ -40,13 +40,13 @@ $(COMMON_DEPS): | common/src/tmp/cto.h common/src/tmp/assets.c common/src/tmp/as
 .deps: common/make.deps
 common/make.deps: $(COMMON_DEPS) $(NUJEL_DEPS)
 	cat $(COMMON_DEPS) $(NUJEL_DEPS) > common/make.deps
-common/src/tmp/assets.c: tools/assets $(COMMON_ASSETS)
+common/src/tmp/assets.c: $(ASSET) $(COMMON_ASSETS)
 	@mkdir -p common/src/tmp/
-	tools/assets common/src/tmp/assets $(COMMON_ASSETS)
+	./$(ASSET) common/src/tmp/assets $(COMMON_ASSETS)
 common/src/tmp/assets.h: common/src/tmp/assets.c
 	@true
 
-tools/assets: tools/assets.c
+$(ASSET): tools/assets.c
 	$(CC) $(OPTIMIZATION) $(CSTD) $(CFLAGS) $^ -o $@
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -96,8 +96,8 @@ sanitize: all
 archive:
 	git archive --format=tar --prefix=wolkenwelten-HEAD.tar.gz/ HEAD | gzip > wolkenwelten-HEAD.tar.gz
 
-common/src/tmp/cto.c: tools/tools.nuj nujel
+common/src/tmp/cto.c: tools/tools.nuj $(NUJEL)
 	@mkdir -p common/src/tmp/
-	./nujel tools/tools.nuj -x "(infogen \"common/src/tmp/cto\")"
+	./$(NUJEL) tools/tools.nuj -x "(infogen \"common/src/tmp/cto\")"
 common/src/tmp/cto.h: common/src/tmp/cto.c
 	@true

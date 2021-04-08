@@ -2,20 +2,30 @@ ifneq (, $(shell which dash))
 	SHELL   := $(shell which dash)
 endif
 
-AS                   := as
+NUJEL        := nujel
+ASSET        := tools/assets
 
+ifeq ($(OS),Windows_NT)
+	NUJEL := nujel.exe
+	ASSET := tools/assets.exe
+endif
+
+AS                   := as
+AS_SYM               := NO_SYM=NO_SYM
 ASFLAGS              :=
+
 CC                   := cc
-OPTIMIZATION         := -O2 -fno-lto -ffast-math -freciprocal-math
-RELEASE_OPTIMIZATION := -O3 -flto -ffast-math -freciprocal-math
-CINCLUDES            :=
-LIBS                 := -lm
-WARNINGS             := -Wall -Werror -Wextra -Wshadow -Wcast-align -Wno-missing-braces
 CFLAGS               := -g
 CSTD                 := -std=c99
+CINCLUDES            :=
+OPTIMIZATION         := -O2 -fno-lto -ffast-math -freciprocal-math
+WARNINGS             := -Wall -Werror -Wextra -Wshadow -Wcast-align -Wno-missing-braces
 
+LD                   := cc
+LIBS                 := -lm
+
+RELEASE_OPTIMIZATION := -O3 -flto -ffast-math -freciprocal-math
 VERSION_ARCH         := $(shell uname -m)
-AS_SYM               := NO_SYM=NO_SYM
 
 all: wolkenwelten wolkenwelten-server nujel infogen-version
 .PHONY: all release .deps

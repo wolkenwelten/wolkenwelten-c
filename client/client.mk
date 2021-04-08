@@ -46,14 +46,11 @@ endif
 %.ogg: %.aif
 	$(FFMPEG) -hide_banner -v panic -i $< -ac 1 -ar 22050 -acodec libvorbis $@
 
-client/src/tmp/assets.c: tools/assets $(CLIENT_ASSETS)
+client/src/tmp/assets.c: $(ASSET) $(CLIENT_ASSETS)
 	@mkdir -p client/src/tmp/
-	tools/assets client/src/tmp/assets $(CLIENT_ASSETS)
+	./$(ASSET) client/src/tmp/assets $(CLIENT_ASSETS)
 client/src/tmp/assets.h: client/src/tmp/assets.c
 	@true
-
-client/tools/assets: client/tools/assets.c
-	$(CC) $(OPTIMIZATION) $(CSTD) $(CFLAGS) $< -o $@
 
 client/src/tmp/meshassets.c: client/tools/objparser $(MESHASSETS)
 	@mkdir -p client/src/tmp/
