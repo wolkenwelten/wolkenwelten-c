@@ -444,6 +444,11 @@ void lDisplayVal(lVal *v){
 	printf("%s",dispWriteBuf);
 }
 
+void lDisplayErrorVal(lVal *v){
+	lSDisplayVal(v,dispWriteBuf,&dispWriteBuf[sizeof(dispWriteBuf)]);
+	fprintf(stderr,"%s",dispWriteBuf);
+}
+
 void lWriteVal(lVal *v){
 	lSWriteVal(v,dispWriteBuf,&dispWriteBuf[sizeof(dispWriteBuf)]);
 	printf("%s\n",dispWriteBuf);
@@ -1117,7 +1122,7 @@ static void lAddCoreFuncs(lClosure *c){
 }
 
 #ifdef NUJEL_STANDALONE
-extern unsigned char stdlib_nuj_data[];
+extern unsigned char tmp_stdlib_nuj_data[];
 #else
 extern unsigned char src_tmp_stdlib_nuj_data[];
 #endif
@@ -1130,7 +1135,7 @@ lClosure *lClosureNewRoot(){
 	c->flags |= lfNoGC;
 	lAddCoreFuncs(c);
 	#ifdef NUJEL_STANDALONE
-	lEval(c,lWrap(lRead((const char *)stdlib_nuj_data)));
+	lEval(c,lWrap(lRead((const char *)tmp_stdlib_nuj_data)));
 	#else
 	lEval(c,lWrap(lRead((const char *)src_tmp_stdlib_nuj_data)));
 	#endif

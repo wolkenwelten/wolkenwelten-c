@@ -31,19 +31,19 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 
 server/src/tmp/server.nuj: $(SERVER_NUJ)
-	mkdir -p server/src/tmp
+	@mkdir -p server/src/tmp
 	cat $(SERVER_NUJ) > $@
 
 server/src/tmp/sfx.c: $(SFX_ASSETS)
 server/src/tmp/sfx.c: server/tools/sfxgen
-	mkdir -p server/src/tmp/
+	@mkdir -p server/src/tmp/
 	server/tools/sfxgen server/src/tmp/sfx client/sfx/
 server/src/tmp/sfx.h: server/src/tmp/sfx.c
 	@true
 
 server/src/tmp/objs.c: $(MESH_ASSETS)
 server/src/tmp/objs.c: server/tools/objgen
-	mkdir -p server/src/tmp/
+	@mkdir -p server/src/tmp/
 	server/tools/objgen server/src/tmp/objs client/mesh/
 server/src/tmp/objs.h: server/src/tmp/objs.c
 	@true

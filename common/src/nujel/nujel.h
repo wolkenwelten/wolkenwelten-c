@@ -127,6 +127,7 @@ uint      lStringNew        (const char *str, uint len);
 
 void      lClosureGC        ();
 void      lDisplayVal       (lVal *v);
+void      lDisplayErrorVal  (lVal *v);
 void      lWriteVal         (lVal *v);
 
 void      lDefineVal        (lClosure *c, const char *sym, lVal *val);

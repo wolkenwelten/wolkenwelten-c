@@ -1,8 +1,5 @@
 AS                   := as
-ifneq ($(MAKECMDGOALS),clean)
-NUJEL_MAKE           := $(shell cd nujel-standalone && $(MAKE))
-VERSION_NAME         := $(shell ./nujel tools/tools.nuj -x "(display (infogen-version))")
-endif
+
 ASFLAGS              :=
 CC                   := cc
 OPTIMIZATION         := -O2 -fno-lto -ffast-math -freciprocal-math
@@ -16,10 +13,11 @@ CSTD                 := -std=c99
 VERSION_ARCH         := $(shell uname -m)
 AS_SYM               := NO_SYM=NO_SYM
 
-all: wolkenwelten
+all: wolkenwelten wolkenwelten-server nujel infogen-version
 .PHONY: all release .deps
 
 include common/disable_implicit_rules.mk
+include nujel-standalone/nujel.mk
 include common/common.mk
 include client/client.mk
 include server/server.mk

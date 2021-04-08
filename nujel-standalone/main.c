@@ -136,6 +136,18 @@ static lVal *lnfPrint(lClosure *c, lVal *v){
 	return t;
 }
 
+static lVal *lnfError(lClosure *c, lVal *v){
+	if(v == NULL){return v;}
+	lVal *t = NULL;
+	if(v->type == ltPair){
+		t = lEval(c,v->vList.car);
+	}else{
+		t = lEval(c,v);
+	}
+	lDisplayErrorVal(t);
+	return t;
+}
+
 static lVal *lnfReadFile(lClosure *c, lVal *v){
 	const char *filename = NULL;
 	size_t len = 0;
@@ -172,6 +184,7 @@ void lPrintError(const char *format, ...){
 }
 
 static void addNativeFuncs(lClosure *c){
+	lAddNativeFunc(c,"error",     "(...args)",         "Prints ...args to stderr",                           lnfError);
 	lAddNativeFunc(c,"print",     "(...args)",         "Displays ...args",                                   lnfPrint);
 	lAddNativeFunc(c,"display",   "(...args)",         "Prints ...args",                                     lnfPrint);
 	lAddNativeFunc(c,"input",     "()",                "Reads in a line of user input and returns it",       lnfInput);
@@ -181,7 +194,8 @@ static void addNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"file-save", "(filename content)","Writes CONTENT into FILENAME",                       lnfWriteFile);
 }
 
-extern char saolib_nuj_data[];
+extern char tmp_saolib_nuj_data[];
+
 int main(int argc, char *argv[]){
 	int eval = 0;
 	int repl = 1;
@@ -190,7 +204,7 @@ int main(int argc, char *argv[]){
 	lInit();
 	lClosure *c = lClosureNewRoot();
 	addNativeFuncs(c);
-	lEval(c,lWrap(lRead((const char *)saolib_nuj_data)));
+	lEval(c,lWrap(lRead((const char *)tmp_saolib_nuj_data)));
 	lClosureGC();
 
 	for(int i=1;i<argc;i++){

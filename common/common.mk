@@ -11,7 +11,7 @@ ASM_OBJS         :=
 WEBEXCLUDE       += --exclude=releases/macos/wolkenwelten.iconset/
 WEBEXCLUDE       += --exclude=releases/win/*.res
 
-TEST_WORLD       := -worldSeed=6502 -savegame=Test
+TEST_WORLD       := -worldSeed=12345 -savegame=Test
 
 ASM_OBJS += common/src/asm/$(ARCH).o
 
@@ -29,11 +29,11 @@ common/src/asm/amd64.s: common/src/asm/x86_64.s
 	cp $< $@
 
 common/src/tmp/stdlib.nuj: $(NUJ_STDLIB)
-	mkdir -p common/src/tmp
+	@mkdir -p common/src/tmp
 	cat $(NUJ_STDLIB) > $@
 
 common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
-	mkdir -p common/src/tmp
+	@mkdir -p common/src/tmp
 	cat $(NUJ_WWLIB) > $@
 
 $(COMMON_DEPS): | common/src/tmp/cto.h common/src/tmp/assets.c common/src/tmp/assets.h
@@ -41,7 +41,7 @@ $(COMMON_DEPS): | common/src/tmp/cto.h common/src/tmp/assets.c common/src/tmp/as
 common/make.deps: $(COMMON_DEPS) $(NUJEL_DEPS)
 	cat $(COMMON_DEPS) $(NUJEL_DEPS) > common/make.deps
 common/src/tmp/assets.c: tools/assets $(COMMON_ASSETS)
-	mkdir -p common/src/tmp/
+	@mkdir -p common/src/tmp/
 	tools/assets common/src/tmp/assets $(COMMON_ASSETS)
 common/src/tmp/assets.h: common/src/tmp/assets.c
 	@true
@@ -97,15 +97,7 @@ archive:
 	git archive --format=tar --prefix=wolkenwelten-HEAD.tar.gz/ HEAD | gzip > wolkenwelten-HEAD.tar.gz
 
 common/src/tmp/cto.c: tools/tools.nuj nujel
-	mkdir -p common/src/tmp/
+	@mkdir -p common/src/tmp/
 	./nujel tools/tools.nuj -x "(infogen \"common/src/tmp/cto\")"
 common/src/tmp/cto.h: common/src/tmp/cto.c
 	@true
-
-.PHONY: test
-test: nujel
-	./nujel nujel-standalone/test.nuj
-
-.PHONY: runn
-runn: nujel
-	gdb ./nujel -ex "r"

@@ -36,7 +36,7 @@ client/make.deps: $(CLIENT_DEPS)
 	cat $(CLIENT_DEPS) > client/make.deps
 
 client/src/tmp/client.nuj: $(CLIENT_NUJ)
-	mkdir -p client/src/tmp
+	@mkdir -p client/src/tmp
 	cat $(CLIENT_NUJ) > $@
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -47,7 +47,7 @@ endif
 	$(FFMPEG) -hide_banner -v panic -i $< -ac 1 -ar 22050 -acodec libvorbis $@
 
 client/src/tmp/assets.c: tools/assets $(CLIENT_ASSETS)
-	mkdir -p client/src/tmp/
+	@mkdir -p client/src/tmp/
 	tools/assets client/src/tmp/assets $(CLIENT_ASSETS)
 client/src/tmp/assets.h: client/src/tmp/assets.c
 	@true
@@ -56,7 +56,7 @@ client/tools/assets: client/tools/assets.c
 	$(CC) $(OPTIMIZATION) $(CSTD) $(CFLAGS) $< -o $@
 
 client/src/tmp/meshassets.c: client/tools/objparser $(MESHASSETS)
-	mkdir -p client/src/tmp/
+	@mkdir -p client/src/tmp/
 	client/tools/objparser $(MESHASSETS)
 client/src/tmp/meshassets.h: client/src/tmp/meshassets.c
 	@true
@@ -66,14 +66,14 @@ client/tools/objparser: client/tools/objparser.c
 
 client/src/tmp/objs.c: $(MESHASSETS)
 client/src/tmp/objs.c: client/tools/objgen
-	mkdir -p client/src/tmp/
+	@mkdir -p client/src/tmp/
 	client/tools/objgen client/src/tmp/objs client/mesh/
 client/src/tmp/objs.h: client/src/tmp/objs.c
 	@true
 
 client/src/tmp/sfx.c: $(SFX_ASSETS)
 client/src/tmp/sfx.c: client/tools/sfxgen
-	mkdir -p client/src/tmp/
+	@mkdir -p client/src/tmp/
 	client/tools/sfxgen client/src/tmp/sfx client/sfx/
 client/src/tmp/sfx.h: client/src/tmp/sfx.c
 	@true
