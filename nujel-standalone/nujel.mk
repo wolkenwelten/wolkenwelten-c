@@ -25,7 +25,7 @@ nujel-standalone/tmp/assets.h: nujel-standalone/tmp/assets.c
 
 .PHONY: test
 test: nujel
-	$(NUJEL) nujel-standalone/test.nuj
+	./$(NUJEL) nujel-standalone/test.nuj
 
 .PHONY: runn
 runn: nujel
