@@ -1,3 +1,7 @@
+ifneq (, $(shell which dash))
+	SHELL   := $(shell which dash)
+endif
+
 AS                   := as
 
 ASFLAGS              :=
