@@ -27,6 +27,7 @@
 #include "../nujel/arithmetic.h"
 #include "../nujel/casting.h"
 #include "../nujel/reader.h"
+#include "../misc/colors.h"
 #include "../misc/profiling.h"
 #include "../tmp/assets.h"
 
@@ -124,6 +125,18 @@ static lVal *wwlnfRain(lClosure *c, lVal *v){
 	return lValInt(rainIntensity);
 }
 
+static lVal *wwlnfColorInterpolate(lClosure *c, lVal *v){
+	int ca = 0;
+	int cb = 0;
+	float i = 0;
+
+	v = getLArgI(c,v,&ca);
+	v = getLArgI(c,v,&cb);
+	v = getLArgF(c,v,&i);
+
+	return lValInt(colorInterpolate(ca,cb,i));
+}
+
 void lispDefineInt(const char *symbol, int val){
 	lDefineVal(clRoot,symbol,lValInt(val));
 }
@@ -146,6 +159,7 @@ lClosure *lispCommonRoot(){
 	lAddNativeFunc(c,"rain-set",     "(&intensity)",           "Set rain rate to a",                                         wwlnfRain);
 	lAddNativeFunc(c,"explode",      "(pos &strength &style)", "Create an explosion at POS with &STRENGTH=4.0 and &STYLE=0", wwlnfExplode);
 	lAddNativeFunc(c,"item-drop-new","(pos id amount)",        "Create a new item at POS for AMOUNT ID.",                    wwlnfItemDropNew);
+	lAddNativeFunc(c,"color-inter",  "(a b i)",                "Interpolate betweent A and B with 0.0 <= i <= 1.0",          wwlnfColorInterpolate);
 	itemTypeLispClosure(c);
 
 	lEval(c,lWrap(lRead((const char *)src_tmp_wwlib_nuj_data)));

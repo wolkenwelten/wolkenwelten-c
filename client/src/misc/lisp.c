@@ -639,7 +639,7 @@ void lispEvents(){
 	static u64 lastTicks = 0;
 	lClosureGC();
 	u64 cticks = getTicks();
-	if((lastTicks + 100) > cticks){
+	if((lastTicks + 20) > cticks){
 		if(lastTicks > cticks){lastTicks = cticks;}
 		return;
 	}

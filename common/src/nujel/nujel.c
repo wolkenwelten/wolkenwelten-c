@@ -1106,6 +1106,9 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"floor","(a)","Rounds a down",                     lnfFloor);
 	lAddNativeFunc(c,"ceil","(a)","Rounds a up",                        lnfCeil);
 	lAddNativeFunc(c,"round","(a)","Rounds a",                          lnfRound);
+	lAddNativeFunc(c,"sin","(a)","Sin A",                               lnfSin);
+	lAddNativeFunc(c,"cos","(a)","Cos A",                               lnfCos);
+	lAddNativeFunc(c,"tan","(a)","Tan A",                               lnfTan);
 
 	lAddNativeFunc(c,"vx","(v)","Returns x part of vector v",lnfVX);
 	lAddNativeFunc(c,"vy","(v)","Returns x part of vector v",lnfVY);

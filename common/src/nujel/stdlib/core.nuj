@@ -31,6 +31,12 @@
 (def caddr (λ (p) "(car (cdr (cdr p)))"
 	(car (cdr (cdr p)))))
 
+(def cdddr (λ (p) "(cdr (cdr (cdr p)))"
+	(cdr (cdr (cdr p)))))
+
+(def cadddr (λ (p) "(car (cdr (cdr (cdr p))))"
+	(car (cdr (cdr (cdr p))))))
+
 (def ++ (λ (i) "(+ I 1)"
 	(+ i 1)))
 

@@ -13,6 +13,9 @@ lVal *lnfPow   (lClosure *c, lVal *v);
 lVal *lnfCeil  (lClosure *c, lVal *v);
 lVal *lnfFloor (lClosure *c, lVal *v);
 lVal *lnfRound (lClosure *c, lVal *v);
+lVal *lnfSin   (lClosure *c, lVal *v);
+lVal *lnfCos   (lClosure *c, lVal *v);
+lVal *lnfTan   (lClosure *c, lVal *v);
 
 lVal *lnfVX    (lClosure *c, lVal *v);
 lVal *lnfVY    (lClosure *c, lVal *v);

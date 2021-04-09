@@ -59,7 +59,6 @@
 
 #include "../../common/src/game/itemType.h"
 #include "../../common/src/game/time.h"
-#include "../../common/src/misc/test.h"
 #include "../../common/src/misc/misc.h"
 
 #include <math.h>
@@ -204,7 +203,6 @@ void checkAutostart(){
 }
 
 int main( int argc, char* argv[] ){
-	selfTest();
 	clientGetName();
 	lispInit();
 	initOptions(argc,argv);

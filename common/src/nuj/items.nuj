@@ -488,6 +488,8 @@
 	(def drop-chance 65535)
 	(def drop-handler (λ (pos id amount) -1))
 	(def sprite-id-0 278)
+	(def sprite-id-1 279)
+	(def sprite-color-1 #xFF274FF7)
 	(def mesh 'm-meat))))
 
 (def i-cookedmeat)
@@ -502,7 +504,9 @@
 			((try-to-use) (do-eat 20 id) #t)
 			(#t #f))))
 	(def burn-up (λ (pos id amount) (item-drop-new pos i-burntmeat amount)))
-	(def sprite-id-0 279)
+	(def sprite-id-0 278)
+	(def sprite-id-1 279)
+	(def sprite-color-1 #xFF6091D3)
 	(def mesh 'm-cookedmeat))))
 
 (def i-fur)
@@ -524,7 +528,9 @@
 		(cond ((try-to-use) (start-anim 4 1800) (sfx-play sfx-chomp) #t) (#t #f))))
 	(def drop-chance 65535)
 	(def drop-handler (λ (pos id amount) -1))
-	(def sprite-id-0 281)
+	(def sprite-id-0 278)
+	(def sprite-id-1 279)
+	(def sprite-color-1 #xFF606060)
 	(def mesh 'm-burntmeat))))
 
 (def i-flintandsteel)
@@ -538,7 +544,7 @@
 		      ((try-to-use 200 0) (add-cooldown 200) (start-anim 3 600) (fire-new (player-raycast 0) 8) #t) (#t #t))))
 	(def secondary (λ ()
 		(cond ((try-to-use 200 0) (add-cooldown 200) (start-anim 3 600) (fire-new (player-raycast 1) 8) #t) (#t #f))))
-	(def sprite-id-0 282)
+	(def sprite-id-0 286)
 	(def mesh 'm-flintandsteel))))
 
 (def i-flamethrower)
@@ -560,6 +566,8 @@
 	(def tertiary (lambda () (item-reload 128)))
 	(def burn-up (λ (pos id amount) (explode pos (* amount 0.2))))
 	(def sprite-id-0 283)
+	(def sprite-id-1 284)
+	(def sprite-color-1 #xFF2163D4)
 	(def mesh 'm-flamethrower))))
 
 (def i-flamebullet)
@@ -633,7 +641,9 @@
 	(def secondary (λ ()
 		(cond ((try-to-use 200 0) (toggle-aim 2.0) (add-inaccuracy 32.0) #t) (#t #f))))
 	(def tertiary (λ () (item-reload 128)))
-	(def sprite-id-0 288)
+	(def sprite-id-0 283)
+	(def sprite-id-1 284)
+	(def sprite-color-1 #xFFB36213)
 	(def mesh 'm-waterthrower))))
 
 (def i-stonespear)
@@ -716,4 +726,7 @@
 
 (event-bind "on-init" (λ () ""
 	(item-sync-all)
+	; (when client? (yield (λ () (it-sprite-color i-crystalbulle 1 (color-inter #xFF5f32d6 #xFF6f32F6 (abs (sin (* 0.01 (msecs)))))) #f) #t))
+	(when client? (yield (λ () (it-sprite-color i-crystalbulle 1 (logior #XFF501600 (+ 180 (* 75.0 (abs (sin (* 0.003 (msecs)))))))) #f) #t))
+	(when client? (yield (λ () (it-sprite-color i-flamebullet 1 (logior #XFF165000 (+ 180 (* 75.0 (abs (cos (* 0.002 (msecs)))))))) #f) #t))
 	(log (ansi-green "Items initialized"))))
