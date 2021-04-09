@@ -241,6 +241,7 @@
 (test-str "(1.0 2.0 3.0)" (map float (split "1,2,3" ",")))
 (test-str "(\"dies ist\" \"ein\" \"test\")" (split "dies ist/ein/test" "/"))
 (test 1 (index-of "1,2,3" ","))
+(test 5 (ω
 (test #x123 (read (join (cons "#x" (split "123" "")))))
 
 ; Not sure how to best handle this, needs some more thorough thinking

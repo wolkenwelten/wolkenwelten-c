@@ -672,18 +672,21 @@ static lVal *lnfObject(lClosure *c, lVal *v){
 	ret->type = ltLambda;
 	ret->vCdr = cli;
 	lClo(cli).flags |= lfObject;
-
-	if((v != NULL) && (v->type == ltPair)){
-		forEach(n,v->vList.car){
-			if(n->vList.car->type != ltSymbol){continue;}
-			lVal *t = lnfDefine(cli,&lClo(cli),n,lDefineClosureSym);
-			t->vList.car = NULL;
-			(void)t;
-		}
-		lnfBegin(&lClo(cli),v->vList.cdr);
-	}
+	lnfBegin(&lClo(cli),v);
 
 	return ret;
+}
+
+static lVal *lnfSelf(lClosure *c, lVal *v){
+	if(c == NULL){return NULL;}
+	if(c->flags & lfObject){
+		lVal *t = lValAlloc();
+		t->type = ltLambda;
+		t->vCdr = c - lClosureList;
+		return t;
+	}
+	if(c->parent == 0){return NULL;}
+	return lnfSelf(&lClosureList[c->parent],v);
 }
 
 static lVal *lnfQuote(lClosure *c, lVal *v){
@@ -1081,6 +1084,7 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"dynamic",     "(args ...body)","New Dynamic scoped lambda",                lnfDynamic);
 	lAddNativeFunc(c,"ω",           "(args ...body)","Creates a new object",                     lnfObject);
 	lAddNativeFunc(c,"object",      "(args ...body)","Creates a new object",                     lnfObject);
+	lAddNativeFunc(c,"self",        "()",            "Returns the closest object closure",       lnfSelf);
 	lAddNativeFunc(c,"cl",          "(i)",           "Returns closure",                          lnfCl);
 	lAddNativeFunc(c,"cl-lambda",   "(i)",           "Returns closure as a lambda",              lnfClLambda);
 	lAddNativeFunc(c,"cl-text",     "(f)",           "Returns closures text segment",            lnfClText);
