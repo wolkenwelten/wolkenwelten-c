@@ -81,7 +81,7 @@ int bufWriteString(char *buf, int len, const char *data){
 	return written;
 }
 
-char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
+char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display){
 	*buf = 0;
 	if(v == NULL){return buf;}
 	char *cur = buf;
@@ -102,55 +102,108 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 	case ltLambda: {
 		lClosure *cl = &lClosureList[v->vCdr & CLO_MASK];
 		if(cl->flags & lfObject){
-			t = snprintf(cur,bufEnd-cur,"(ω (");
+			t = snprintf(cur,bufEnd-cur,"(ω ");
+			indentLevel += 2;
 		}else if(cl->flags & lfDynamic){
 			t = snprintf(cur,bufEnd-cur,"(δ (");
+			indentLevel += 3;
 		}else{
 			t = snprintf(cur,bufEnd-cur,"(λ (");
+			indentLevel += 3;
 		}
 		if(t > 0){cur += t;}
-		forEach(n,lCloData(v->vCdr)){
+		lVal *cloData = lCloData(v->vCdr);
+		forEach(n,cloData){
 			if(n->vList.car == NULL)            {continue;}
 			if(n->vList.car->type != ltPair)    {continue;}
 			if(n->vList.car->vList.car == NULL) {continue;}
-			if((n->vList.car->vList.cdr != NULL) && (n->vList.car->vList.cdr->type == ltPair) && (n->vList.car->vList.cdr->vList.car != NULL)){
-				cur = lSWriteVal(n->vList.car,cur,bufEnd);
-			}else{
-				cur = lSWriteVal(n->vList.car->vList.car,cur,bufEnd);
+			if(n != cloData){
+				if(cl->flags & lfObject){
+					*cur++ = '\n';
+					for(int i=indentLevel;i>=0;i--){*cur++=' ';}
+				}else{
+					*cur++ = ' ';
+				}
 			}
-			if(n->vList.cdr != NULL){*cur++ = ' ';}
+			lVal *cv = NULL;
+			if((n->vList.car->vList.cdr != NULL) && (n->vList.car->vList.cdr->type == ltPair) && (n->vList.car->vList.cdr->vList.car != NULL)){
+				cv = n->vList.car;
+			}else{
+				cv = n->vList.car->vList.car;
+			}
+			if(cl->flags & lfObject){
+				cv = lCons(lValSym("def"),cv);
+			}
+			cur = lSWriteVal(cv,cur,bufEnd,indentLevel,display);
 		}
-		*cur++ = ')';
-		*cur++ = ' ';
-		forEach(n,lCloText(v->vCdr)){
-			cur = lSWriteVal(n->vList.car,cur,bufEnd);
-			if(n->vList.cdr != NULL){*cur++ = ' ';}
+		if(!(cl->flags & lfObject)){*cur++ = ')';}
+		lVal *cloText = lCloText(v->vCdr);
+		forEach(n,cloText){
+			*cur++ = '\n';
+			for(int i=indentLevel;i>=0;i--){*cur++=' ';}
+			cur = lSWriteVal(n->vList.car,cur,bufEnd,indentLevel,display);
 		}
+		indentLevel -= 2;
 		t = snprintf(cur,bufEnd-cur,")");
 		break; }
 	case ltPair: {
+		int indentStyle = 0;
+		int oldIndent = indentLevel;
 		if((v->vList.car != NULL) && (v->vList.car->type == ltSymbol)){
 			if((v->vList.car->vSymbol.v[0] == symQuote.v[0]) &&
 			   (v->vList.car->vSymbol.v[1] == symQuote.v[1]) &&
 			   (v->vList.cdr != NULL)){
 				v = v->vList.cdr->vList.car;
 				*cur++ = '\'';
+			}else if((v->vList.car->vSymbol.v[0] == symCond.v[0]) &&
+			   (v->vList.car->vSymbol.v[1] == symCond.v[1]) &&
+			   (v->vList.cdr != NULL)){
+				indentStyle = 1;
+				indentLevel += 6;
+			}else if((v->vList.car->vSymbol.v[0] == symWhen.v[0]) &&
+			   (v->vList.car->vSymbol.v[1] == symWhen.v[1]) &&
+			   (v->vList.cdr != NULL)){
+				indentStyle = 1;
+				indentLevel += 6;
+			}else if((v->vList.car->vSymbol.v[0] == symUnless.v[0]) &&
+			   (v->vList.car->vSymbol.v[1] == symUnless.v[1]) &&
+			   (v->vList.cdr != NULL)){
+				indentStyle = 1;
+				indentLevel += 8;
+			}else if((v->vList.car->vSymbol.v[0] == symIf.v[0]) &&
+			   (v->vList.car->vSymbol.v[1] == symIf.v[1]) &&
+			   (v->vList.cdr != NULL)){
+				indentStyle = 1;
+				indentLevel += 4;
+			}else if((v->vList.car->vSymbol.v[0] == symLet.v[0]) &&
+			   (v->vList.car->vSymbol.v[1] == symLet.v[1]) &&
+			   (v->vList.cdr != NULL)){
+				indentStyle = 1;
+				indentLevel += 5;
 			}
 		}
 		t = snprintf(cur,bufEnd-cur,"(");
 		if(t > 0){cur += t;}
 		for(lVal *n = v;n != NULL; n = n->vList.cdr){
 			if(n->type == ltPair){
-				cur = lSWriteVal(n->vList.car,cur,bufEnd);
-				if(n->vList.cdr != NULL){*cur++ = ' ';}
+				cur = lSWriteVal(n->vList.car,cur,bufEnd,indentLevel,display);
+				if(n->vList.cdr != NULL){
+					if((indentStyle == 1) && (n != v)){
+						*cur++ = '\n';
+						for(int i=indentLevel;i>=0;i--){*cur++=' ';}
+					}else{
+						*cur++ = ' ';
+					}
+				}
 			}else{
 				*cur++ = '.';
 				*cur++ = ' ';
-				cur = lSWriteVal(n,cur,bufEnd);
+				cur = lSWriteVal(n,cur,bufEnd,indentLevel,display);
 				break;
 			}
 		}
 		t = snprintf(cur,bufEnd-cur,")");
+		indentLevel = oldIndent;
 		break; }
 	case ltArray: {
 		t = snprintf(cur,bufEnd-cur,"#(");
@@ -158,7 +211,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 		if(lArrData(v) != NULL){
 			const int arrLen = lArrLength(v);
 			for(int i=0;i<arrLen;i++){
-				cur = lSWriteVal(lArrData(v)[i],cur,bufEnd);
+				cur = lSWriteVal(lArrData(v)[i],cur,bufEnd,indentLevel,display);
 				if(i < (lArrLength(v)-1)){*cur++ = ' ';}
 			}
 		}
@@ -180,123 +233,11 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd){
 		t += snprintf(&buf[t],len,")");
 		break;
 	case ltString:
-		t = bufWriteString(buf,len,lStrData(v));
-		break;
-	case ltSymbol:
-		t = snprintf(buf,len,"%.16s",v->vSymbol.c);
-		break;
-	case ltNativeFunc:
-		t = snprintf(buf,len,"#cfn_%u",v->vCdr);
-		break;
-	case ltInf:
-		t = snprintf(buf,len,"#inf");
-		break;
-	}
-
-	if(t > 0){cur += t;}
-	*cur = 0;
-	return cur;
-}
-
-char *lSDisplayVal(lVal *v, char *buf, char *bufEnd){
-	if(v == NULL){return buf;}
-	char *cur = buf;
-	int t = 0;
-	const int len = bufEnd-buf;
-
-	switch(v->type){
-	case ltNoAlloc:
-		t = snprintf(buf,len,"#zzz");
-		break;
-	case ltBool:
-		if(v->vBool){
-			t = snprintf(buf,len,"#t");
+		if(display){
+			t = snprintf(buf,len,"%s",lStrData(v));
 		}else{
-			t = snprintf(buf,len,"#f");
+			t = bufWriteString(buf,len,lStrData(v));
 		}
-		break;
-	case ltLambda: {
-		lClosure *cl = &lClosureList[v->vCdr & CLO_MASK];
-		if(cl->flags & lfObject){
-			t = snprintf(cur,bufEnd-cur,"(ω (");
-		}else if(cl->flags & lfDynamic){
-			t = snprintf(cur,bufEnd-cur,"(δ (");
-		}else{
-			t = snprintf(cur,bufEnd-cur,"(λ (");
-		}
-
-		if(t > 0){cur += t;}
-		forEach(n,lCloData(v->vCdr)){
-			if(n->vList.car == NULL)           {continue;}
-			if(n->vList.car->type != ltPair)   {continue;}
-			if(n->vList.car->vList.car == NULL){continue;}
-			if((n->vList.car->vList.cdr != NULL) && (n->vList.car->vList.cdr->type == ltPair) && (n->vList.car->vList.cdr->vList.car != NULL)){
-				cur = lSWriteVal(n->vList.car,cur,bufEnd);
-			}else{
-				cur = lSWriteVal(n->vList.car->vList.car,cur,bufEnd);
-			}
-			if(n->vList.cdr != NULL){*cur++ = ' ';}
-		}
-		*cur++ = ')';
-		*cur++ = ' ';
-		forEach(n,lCloText(v->vCdr)){
-			cur = lSWriteVal(n->vList.car,cur,bufEnd);
-			if(n->vList.cdr != NULL){*cur++ = ' ';}
-		}
-		t = snprintf(cur,bufEnd-cur,")");
-		break; }
-	case ltPair: {
-		if((v->vList.car != NULL) && (v->vList.car->type == ltSymbol)){
-			if((v->vList.car->vSymbol.v[0] == symQuote.v[0]) &&
-			   (v->vList.car->vSymbol.v[1] == symQuote.v[1]) &&
-			   (v->vList.cdr != NULL)){
-				v = v->vList.cdr->vList.car;
-				*cur++ = '\'';
-			}
-		}
-		t = snprintf(cur,bufEnd-cur,"(");
-		if(t > 0){cur += t;}
-		for(lVal *n = v;n != NULL; n = n->vList.cdr){
-			if(n->type == ltPair){
-				cur = lSWriteVal(n->vList.car,cur,bufEnd);
-				if(n->vList.cdr != NULL){*cur++ = ' ';}
-			}else{
-				*cur++ = '.';
-				*cur++ = ' ';
-				cur = lSWriteVal(n,cur,bufEnd);
-				break;
-			}
-		}
-		t = snprintf(cur,bufEnd-cur,")");
-		break; }
-	case ltArray: {
-		t = snprintf(cur,bufEnd-cur,"#(");
-		if(t > 0){cur += t;}
-		if(lArrData(v) != NULL){
-			for(int i=0;i<lArrLength(v);i++){
-				cur = lSDisplayVal(lArrData(v)[i],cur,bufEnd);
-				if(i < (lArrLength(v)-1)){*cur++ = ' ';}
-			}
-		}
-		t = snprintf(cur,bufEnd-cur,")");
-		break; }
-	case ltInt:
-		t = snprintf(buf,len,"%i",v->vInt);
-		break;
-	case ltFloat:
-		t = bufPrintFloat(v->vFloat,buf,t,len);
-		break;
-	case ltVec:
-		t  = snprintf(buf,len,"(vec ");
-		t += bufPrintFloat(lVecV(v->vCdr).x,&buf[t],t,len);
-		buf[t++] = ' ';
-		t += bufPrintFloat(lVecV(v->vCdr).y,&buf[t],t,len);
-		buf[t++] = ' ';
-		t += bufPrintFloat(lVecV(v->vCdr).z,&buf[t],t,len);
-		t += snprintf(&buf[t],len,")");
-		break;
-	case ltString:
-		t = snprintf(buf,len,"%s",lStrData(v));
 		break;
 	case ltSymbol:
 		t = snprintf(buf,len,"%.16s",v->vSymbol.c);
@@ -581,7 +522,7 @@ lVal *lnfWriteStr(lClosure *c, lVal *v){
 		return lValString("#nil");
 	}
 	char *buf = malloc(1<<19);
-	lSWriteVal(t->vList.car, buf, &buf[1<<19]);
+	lSWriteVal(t->vList.car, buf, &buf[1<<19],0,false);
 	buf[(1<<19)-1]=0;
 	t = lValString(buf);
 	free(buf);

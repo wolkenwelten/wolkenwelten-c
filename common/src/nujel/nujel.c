@@ -69,7 +69,7 @@ uint    lSymbolMax    = 1;
 uint    lSymbolFFree  = 0;
 
 char dispWriteBuf[1<<16];
-lSymbol symQuote,symArr;
+lSymbol symQuote,symArr,symIf,symCond,symWhen,symUnless,symLet,symBegin;
 
 
 u64 randomValueSeed;
@@ -110,6 +110,12 @@ void lInit(){
 
 	strncpy(symQuote.c,"quote",15);
 	strncpy(symArr.c,"arr",15);
+	strncpy(symIf.c,"if",15);
+	strncpy(symCond.c,"cond",15);
+	strncpy(symWhen.c,"when",15);
+	strncpy(symUnless.c,"unless",15);
+	strncpy(symLet.c,"let",15);
+	strncpy(symBegin.c,"begin",15);
 }
 /*
 static void lSymbolFree(uint i){
@@ -440,17 +446,17 @@ uint lClosureNew(uint parent){
 
 /* TODO: Both seem to write outside of buf if v gets too long */
 void lDisplayVal(lVal *v){
-	lSDisplayVal(v,dispWriteBuf,&dispWriteBuf[sizeof(dispWriteBuf)]);
+	lSWriteVal(v,dispWriteBuf,&dispWriteBuf[sizeof(dispWriteBuf)],0,true);
 	printf("%s",dispWriteBuf);
 }
 
 void lDisplayErrorVal(lVal *v){
-	lSDisplayVal(v,dispWriteBuf,&dispWriteBuf[sizeof(dispWriteBuf)]);
+	lSWriteVal(v,dispWriteBuf,&dispWriteBuf[sizeof(dispWriteBuf)],0,true);
 	fprintf(stderr,"%s",dispWriteBuf);
 }
 
 void lWriteVal(lVal *v){
-	lSWriteVal(v,dispWriteBuf,&dispWriteBuf[sizeof(dispWriteBuf)]);
+	lSWriteVal(v,dispWriteBuf,&dispWriteBuf[sizeof(dispWriteBuf)],0,false);
 	printf("%s\n",dispWriteBuf);
 }
 

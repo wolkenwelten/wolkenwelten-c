@@ -87,7 +87,7 @@ void doRepl(lClosure *c){
 		printf("%sλ%s>%s ",ansiFG[1],ansiFG[12],ansiRS);
 		fflush(stdout);
 		if(fgets(str,sizeof(str),stdin) == NULL){
-			printf("Bye!\n");
+			printf("\nBye!\n");
 			return;
 		}
 		lVal *v = lEval(c,lWrap(lRead(str)));

@@ -78,7 +78,7 @@ struct lString {
 	u16 flags;
 };
 
-extern lSymbol symQuote,symArr;
+extern lSymbol symQuote,symArr,symIf,symCond,symWhen,symUnless,symLet,symBegin;
 
 #define VAL_MAX (1<<16)
 #define CLO_MAX (1<<14)

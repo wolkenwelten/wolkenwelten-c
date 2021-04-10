@@ -451,7 +451,7 @@ static void cmdLisp(int c,const char *str, u8 id){
 	memset(reply,0,sizeof(reply));
 
 	lVal *v = lEval(clients[c].cl,lWrap(lRead(str)));
-	lSDisplayVal(v,reply,&reply[sizeof(reply)-1]);
+	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,true);
 	lClosureGC();
 
 	if(id == 0){
@@ -511,7 +511,7 @@ const char *lispEval(const char *str){
 	static char reply[4096];
 	memset(reply,0,sizeof(reply));
 	lVal *v = lEval(clRoot,lWrap(lRead(str)));
-	lSDisplayVal(v,reply,&reply[sizeof(reply)-1]);
+	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,true);
 
 	int soff,slen,len = strnlen(reply,sizeof(reply)-1);
 	for(soff = 0;    isspace((u8)reply[soff]) || (reply[soff] == '"');soff++){}

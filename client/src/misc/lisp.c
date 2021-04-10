@@ -82,7 +82,7 @@ static lVal *wwlnfSEval(lClosure *c, lVal *v){
 	(void)c;
 	static char buf[8192];
 	memset(buf,0,sizeof(buf));
-	lSWriteVal(lWrap(v),buf,&buf[sizeof(buf)-1]);
+	lSWriteVal(lWrap(v),buf,&buf[sizeof(buf)-1],0,false);
 	if(++SEvalID == 0){++SEvalID;}
 	msgLispSExpr(-1,SEvalID,buf);
 	return lispSEvalSym(SEvalID);
@@ -618,7 +618,7 @@ const char *lispEval(const char *str){
 	static char reply[4096];
 	memset(reply,0,sizeof(reply));
 	lVal *v = lnfBegin(clRoot,lRead(str));
-	lSDisplayVal(v,reply,&reply[sizeof(reply)-1]);
+	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,false);
 
 	int soff,slen,len = strnlen(reply,sizeof(reply)-1);
 	for(soff = 0;    isspace((u8)reply[soff]) || (reply[soff] == '"');soff++){}

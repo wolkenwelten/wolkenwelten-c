@@ -1,8 +1,7 @@
 #pragma once
 #include "nujel.h"
 
-char *lSDisplayVal(lVal *v, char *buf, char *bufEnd);
-char *lSWriteVal  (lVal *v, char *buf, char *bufEnd);
+char *lSWriteVal  (lVal *v, char *buf, char *bufEnd, int indentLevel, bool display);
 
 lVal *lnfStrSym (lClosure *c, lVal *v);
 lVal *lnfSymStr (lClosure *c, lVal *v);

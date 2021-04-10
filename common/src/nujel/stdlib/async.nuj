@@ -18,7 +18,8 @@
 	(yield-run-iter yield-queue)))
 
 (def timeout (λ (millis) "Returns a function that evaluates to true once millis milliseconds have passed"
-	(let ((goal (+ (msecs) millis))) (λ () (> (msecs) goal)))))
+	(let ((goal (+ (msecs) millis)))
+		(λ () (> (msecs) goal)))))
 
 (def event-bind (λ (event-name handler) "Binds handler lambda to event-name"
 	(set! (str->sym event-name) (cons handler (resolve (str->sym event-name))))))
