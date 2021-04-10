@@ -161,9 +161,15 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 		}else if((curPos >= selMin) && (curPos < selMax)){
 			selActive = 8;
 		}
-		if(((u8)line[0] == 0xCE) && ((u8)line[1] == 0xBB)){ // UTF-8 Lambda
+		if(((u8)line[0] == 0xCE) && ((u8)line[1] == 0xBB)){ // UTF-8 λ
 			line++;
 			c = 20;
+		}else if(((u8)line[0] == 0xCE) && ((u8)line[1] == 0xB4)){ // UTF-8 δ
+			line++;
+			c = 19;
+		}else if(((u8)line[0] == 0xCF) && ((u8)line[1] == 0x89)){ // UTF-8 ω
+			line++;
+			c = 18;
 		}else if((u8)line[0] == '\n'){
 			cy += size * 8;
 			cx = x;

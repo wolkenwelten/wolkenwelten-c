@@ -206,10 +206,8 @@ void textMeshAddGlyphHG(textMesh *m, int x, int y, int size, u8 c, u32 fgc, u32 
 bool textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 	const int glyphWidth = 8*size;
 	const int lineHeight = 10*size;
-	int maxX = m->mx;
-	if(maxX == -1){maxX = screenWidth;}
-	int maxY = m->my;
-	if(maxY == -1){maxY = screenHeight;}
+	const int maxX = m->mx >= 0 ? m->mx : screenWidth;
+	const int maxY = m->my >= 0 ? m->my : screenHeight;
 
 	if(str == NULL){return 0;}
 	while(*str != 0){
@@ -226,10 +224,21 @@ bool textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 				continue;
 			}
 		}
-		if(((u8)str[0] == 0xCE) && ((u8)str[1] == 0xBB)){ // UTF-8 Lambda
+		if(((u8)str[0] == 0xCE) && ((u8)str[1] == 0xBB)){ // UTF-8 λ
 			textMeshAddGlyph(m,x,y,size,20,m->fgc,m->bgc);
 			x += glyphWidth;
 			str+=2;
+			continue;
+		}else if(((u8)str[0] == 0xCE) && ((u8)str[1] == 0xB4)){ // UTF-8 δ
+			textMeshAddGlyph(m,x,y,size,19,m->fgc,m->bgc);
+			x += glyphWidth;
+			str+=2;
+			continue;
+		}else if(((u8)str[0] == 0xCF) && ((u8)str[1] == 0x89)){ // UTF-8 ω
+			textMeshAddGlyph(m,x,y,size,18,m->fgc,m->bgc);
+			x += glyphWidth;
+			str+=2;
+			continue;
 		}else if(*str == '\n'){
 			x = m->sx;
 			m->sy += lineHeight;
