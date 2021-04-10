@@ -11,7 +11,7 @@ ASM_OBJS         :=
 WEBEXCLUDE       += --exclude=releases/macos/wolkenwelten.iconset/
 WEBEXCLUDE       += --exclude=releases/win/*.res
 
-TEST_WORLD       := -worldSeed=12345 -savegame=Test
+TEST_WORLD       := -worldSeed=68040 -savegame=Test
 
 ASM_OBJS += common/src/asm/$(ARCH).o
 
