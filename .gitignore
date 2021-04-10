@@ -45,10 +45,14 @@ platform/win_cross/pkgs/mingw-w64-sdl2/*
 
 
 # Executables/Object files
+/client/client.d
 /client/make.deps
 /common/make.deps
+/common/common.d
 /common/nujel/nujel
 /server/make.deps
+/server/server.d
+/nujel-standalone/nujel.d
 /releases/
 /web/releases/
 /wolkenwelten
@@ -71,6 +75,7 @@ platform/win_cross/pkgs/mingw-w64-sdl2/*
 *.lib
 *.so
 *.o
+*.d
 *.deps
 *.gch
 /src/*.obj

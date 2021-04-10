@@ -18,29 +18,56 @@ CLIENT_NUJ       := $(shell find client/src/nujel/ -type f -name '*.nuj' | sort)
 CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
 CLIENT_SRCS      := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
 CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
-CLIENT_DEPS      := ${CLIENT_SRCS:.c=.deps}
+CLIENT_DEPS      := ${CLIENT_SRCS:.c=.d}
 
 WINDOW_WIDTH     := 960
 WINDOW_HEIGHT    := 524
 TESTNR           := 1
 
+client/src/menu/singleplayer.o: common/src/tmp/cto.h
+client/src/menu/mainmenu.o:     common/src/tmp/cto.h
+client/src/menu/multiplayer.o:  common/src/tmp/cto.h
+client/src/menu/options.o:      common/src/tmp/cto.h
+client/src/misc/options.o:      common/src/tmp/cto.h
+client/src/gui/menu.o:          common/src/tmp/cto.h
+client/src/gui/gui.o:           common/src/tmp/cto.h
+client/src/gfx/gfx.o:           common/src/tmp/assets.h
+client/src/gfx/sky.o:           common/src/tmp/assets.h
+client/src/gfx/shadow.o:        common/src/tmp/assets.h
+client/src/gfx/textMesh.o:      common/src/tmp/assets.h
+client/src/gfx/particle.o:      common/src/tmp/assets.h
+client/src/gfx/mesh.o:          common/src/tmp/assets.h
+client/src/gfx/shader.o:        common/src/tmp/assets.h
+client/src/gfx/texture.o:       common/src/tmp/assets.h
+client/src/game/blockMining.o:  client/src/tmp/assets.h
+client/src/main.o:              client/src/tmp/sfx.h
+client/src/game/character.o:    client/src/tmp/sfx.h
+client/src/gfx/effects.o:       client/src/tmp/sfx.h
+client/src/sdl/sfx.o:           client/src/tmp/sfx.h
+client/src/sdl/sdl.o:           client/src/tmp/sfx.h
+client/src/game/entity.o:       client/src/tmp/sfx.h
+client/src/game/fire.o:         client/src/tmp/sfx.h
+client/src/game/projectile.o:   client/src/tmp/sfx.h
+client/src/misc/lisp.o:         client/src/tmp/sfx.h
+client/src/menu/inventory.o:    client/src/tmp/sfx.h
+
 wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
 wolkenwelten: LIBS      += $(CLIENT_LIBS)
-wolkenwelten: client/make.deps $(CLIENT_OBJS) $(ASM_OBJS)
+wolkenwelten: client/client.d $(CLIENT_OBJS) $(ASM_OBJS)
 	$(LD) $(CLIENT_OBJS) $(ASM_OBJS) -g -o wolkenwelten $(OPTIMIZATION) $(LDFLAGS) $(LIBS) $(CSTD)
 
 $(CLIENT_DEPS): | client/src/tmp/client.nuj client/src/tmp/assets.h client/src/tmp/meshassets.h common/src/tmp/cto.h client/src/tmp/objs.h client/src/tmp/sfx.h
-.deps: client/make.deps
-client/make.deps: $(CLIENT_DEPS)
-	cat $(CLIENT_DEPS) > client/make.deps
+.deps: client/client.d
+client/client.d: $(CLIENT_DEPS)
+	cat $(CLIENT_DEPS) > client/client.d
 
 client/src/tmp/client.nuj: $(CLIENT_NUJ)
 	@mkdir -p client/src/tmp
 	cat $(CLIENT_NUJ) > $@
 
 ifneq ($(MAKECMDGOALS),clean)
--include client/make.deps
+-include client/client.d
 endif
 
 %.ogg: %.aif

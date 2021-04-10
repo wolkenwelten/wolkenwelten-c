@@ -15,9 +15,8 @@ AS_SYM               := NO_SYM=NO_SYM
 ASFLAGS              :=
 
 CC                   := cc
-CFLAGS               := -g
+CFLAGS               := -g $(shell sdl2-config --cflags)
 CSTD                 := -std=c99
-CINCLUDES            :=
 OPTIMIZATION         := -O2 -fno-lto -ffast-math -freciprocal-math
 WARNINGS             := -Wall -Werror -Wextra -Wshadow -Wcast-align -Wno-missing-braces
 

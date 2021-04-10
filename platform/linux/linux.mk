@@ -7,7 +7,6 @@ AS_SYM           := USE_GOT=USE_GOT
 CFLAGS           += -D_GNU_SOURCE
 LDFLAGS          += -D_GNU_SOURCE
 
-CLIENT_CINCLUDES := $(shell sdl2-config --cflags)
 CLIENT_LIBS      := -lGL -lpthread -ldl -lSDL2 -lSDL2_mixer
 
 DYNLIBS          := -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lvorbis
