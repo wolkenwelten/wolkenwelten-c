@@ -27,7 +27,12 @@ LIBS                 := -lm
 RELEASE_OPTIMIZATION := -O3 -flto -ffast-math -freciprocal-math
 VERSION_ARCH         := $(shell uname -m)
 
-all: wolkenwelten wolkenwelten-server nujel infogen-version
+ifneq (, $(wildcard ./$(NUJEL)))
+VERSION_NAME         := $(shell ./$(NUJEL) tools/tools.nuj -x "(display (infogen-version))")
+endif
+
+
+all: wolkenwelten wolkenwelten-server nujel
 .PHONY: all release .deps
 
 include common/disable_implicit_rules.mk

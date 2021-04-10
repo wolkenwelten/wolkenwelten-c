@@ -6,11 +6,6 @@ STDLIB_NUJS  := $(shell find common/src/nujel/stdlib -type f -name '*.nuj')
 $(NUJEL): $(NUJEL_SRCS) nujel-standalone/tmp/assets.c | $(NUJEL_HDRS) nujel-standalone/tmp/assets.h
 	$(CC) -DNUJEL_STANDALONE $(CFLAGS) $(LIBS) $(CINCLUDES) $(WARNINGS) $(CSTD) $(OPTIMIZATION) $^ -o $(NUJEL) && ./$(NUJEL) nujel-standalone/test.nuj
 
-
-.PHONY: infogen-version
-infogen-version: $(NUJEL)
-	$(eval VERSION_NAME := $(shell ./$(NUJEL) tools/tools.nuj -x "(display (infogen-version))"))
-
 nujel-standalone/tmp/saolib.nuj: $(SAOLIB_NUJS)
 	@mkdir -p nujel-standalone/tmp/
 	cat $^ > $@
