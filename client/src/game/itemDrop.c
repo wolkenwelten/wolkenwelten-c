@@ -50,8 +50,8 @@ void itemDropUpdateAll(){
 		const vec dist = vecSub(player->pos,itemDropList[i].ent->pos);
 		const float dd = vecDot(dist,dist);
 		if(itemDropList[i].player == playerID){
-			if(dd > 2.f * 2.f){itemDropList[i].player = -1;}
-		}else if(dd < 1.5f*1.5f){
+			if(dd > 4.f * 4.f){itemDropList[i].player = -1;}
+		}else if(dd < 3.f*3.f){
 			msgItemDropPickup(-1, i);
 			itemDropList[i].player = playerID;
 		}

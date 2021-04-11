@@ -7,6 +7,7 @@ void wgBigRoots           (chungus *c, int x,int y,int z);
 
 void wgDate               (chungus *c, int x,int y,int z);
 void wgShrub              (chungus *c, int x,int y,int z);
+void wgBush               (chungus *c, int x,int y,int z);
 void wgSpruce             (chungus *c, int x,int y,int z);
 void wgOak                (chungus *c, int x,int y,int z);
 void wgBirch              (chungus *c, int x,int y,int z);

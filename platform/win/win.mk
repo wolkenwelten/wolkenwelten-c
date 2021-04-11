@@ -62,14 +62,14 @@ $(WIN_RELDIR)/wolkenwelten-server.exe: | $(WIN_RELDIR)
 wolkenwelten.exe: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten.exe: CINCLUDES += $(CLIENT_CINCLUDES)
 wolkenwelten.exe: LIBS      += $(CLIENT_LIBS)
-wolkenwelten.exe: client/make.deps releases/win/wolkenwelten.res $(CLIENT_OBJS) $(ASM_OBJS)
+wolkenwelten.exe: client/client.d releases/win/wolkenwelten.res $(CLIENT_OBJS) $(ASM_OBJS)
 	rm -f wolkenwelten.exe
 	$(CC) $(CLIENT_OBJS) $(ASM_OBJS) releases/win/wolkenwelten.res -g -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 
 wolkenwelten-server.exe: CFLAGS    += $(SERVER_CFLAGS)
 wolkenwelten-server.exe: CINCLUDES += $(SERVER_CINCLUDES)
 wolkenwelten-server.exe: LIBS      += $(SERVER_LIBS)
-wolkenwelten-server.exe: server/make.deps releases/win/wolkenwelten-server.res $(SERVER_OBJS) $(ASM_OBJS)
+wolkenwelten-server.exe: server/server.d releases/win/wolkenwelten-server.res $(SERVER_OBJS) $(ASM_OBJS)
 	rm -f wolkenwelten-server.exe
 	$(CC) $(SERVER_OBJS) $(ASM_OBJS) releases/win/wolkenwelten-server.res -g -o $@ $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(LIBS)
 

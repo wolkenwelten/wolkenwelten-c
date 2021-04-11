@@ -40,7 +40,7 @@ typedef struct vertexTiny {
 } vertexTiny;
 #pragma pack(pop)
 
-vertexTiny blockMeshBuffer[CHUNK_SIZE * CHUNK_SIZE * 2 * 3 * sideMAX];
+vertexTiny blockMeshBuffer[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * 6 * 6];
 int chunkFreeCount = 0;
 int chunkCount     = 0;
 int chunksGeneratedThisFrame = 0;

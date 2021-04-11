@@ -454,27 +454,39 @@ int characterPhysics(character *c){
 	c->flags &= ~CHAR_COLLIDE;
 	col = characterCollision(c->pos);
 	if(col){ c->flags |= CHAR_COLLIDE; }
-	if((col&0x110) && (c->vel.x < 0.f)){
+	if((col&0x1110) && (c->vel.x < 0.f)){
 		if(c->vel.x < -0.1f){ ret += (int)(fabsf(c->vel.x)*512.f); }
 		c->pos.x = MAX(c->pos.x,floor(c->pos.x)+0.3f);
 		c->vel.x = c->vel.x*-0.3f;
+		if(((col&0x1111) == 0x0101) && (fabsf(c->vel.y) < 0.001f)){
+			c->vel.y = 0.035f;
+		}
 	}
-	if((col&0x220) && (c->vel.x > 0.f)){
+	if((col&0x2220) && (c->vel.x > 0.f)){
 		if(c->vel.x >  0.1f){ ret += (int)(fabsf(c->vel.x)*512.f); }
 		c->pos.x = MIN(c->pos.x,floorf(c->pos.x)+0.7f);
 		c->vel.x = c->vel.x*-0.3f;
+		if(((col&0x2222) == 0x0202) && (fabsf(c->vel.y) < 0.001f)){
+			c->vel.y = 0.035f;
+		}
 	}
-	if((col&0x880) && (c->vel.z > 0.f)){
+	if((col&0x8880) && (c->vel.z > 0.f)){
 		if(c->vel.z >  0.1f){ ret += (int)(fabsf(c->vel.z)*512.f); }
 		c->pos.z = MIN(c->pos.z,floorf(c->pos.z)+0.7f);
 		c->vel.z = c->vel.z*-0.3f;
+		if(((col&0x8888) == 0x0808) && (fabsf(c->vel.y) < 0.001f)){
+			c->vel.y = 0.035f;
+		}
 	}
-	if((col&0x440) && (c->vel.z < 0.f)){
+	if((col&0x4440) && (c->vel.z < 0.f)){
 		if(c->vel.z < -0.1f){ ret += (int)(fabsf(c->vel.z)*512.f); }
 		c->pos.z = MAX(c->pos.z,floorf(c->pos.z)+0.3f);
 		c->vel.z = c->vel.z*-0.3f;
+		if(((col&0x4444) == 0x0404) && (fabsf(c->vel.y) < 0.001f)){
+			c->vel.y = 0.035f;
+		}
 	}
-	if((col&0x0F0) && (c->vel.y > 0.f)){
+	if((col&0xF0F0) && (c->vel.y > 0.f)){
 		if(c->vel.y >  0.1f){ ret += (int)(fabsf(c->vel.y)*512.f); }
 		c->pos.y = MIN(c->pos.y,floorf(c->pos.y)+0.5f);
 		c->vel.y = c->vel.y*-0.3f;
@@ -627,7 +639,7 @@ void characterUpdate(character *c){
 		if((c->gvel.z >  0.001)&&(nvel.z < c->vel.z)){nvel.z=c->vel.z;}
 	}
 	if(characterUpdateJumping(c)){
-		nvel.y = 0.05f;
+		nvel.y = 0.055f;
 		c->flags |= CHAR_JUMPING;
 	}
 	c->vel = nvel;

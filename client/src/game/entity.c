@@ -40,16 +40,17 @@
 
 void entityDraw(const entity *e){
 	if(e->eMesh == NULL){return;}
+	const float scale = 0.8f;
 
 	matMov      (matMVP,matView);
 	matMulTrans (matMVP,e->pos.x,e->pos.y,e->pos.z);
 	matMulRotYX (matMVP,e->rot.yaw,e->rot.pitch);
-	matMulScale (matMVP,0.4f,0.4f,0.4f);
+	matMulScale (matMVP,scale,scale,scale);
 	matMul      (matMVP,matMVP,matProjection);
 
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(e->eMesh);
-	shadowAdd(e->pos,0.5f);
+	shadowAdd(e->pos,scale);
 }
 
 void entityDrawAll(){

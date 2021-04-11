@@ -174,28 +174,28 @@ void worldgenGenerate(worldgen *wgen){
 		worldgenLabyrinth(wgen);
 		break;
 	case 8:
-		worldgenCluster(wgen,CHUNGUS_SIZE/44,CHUNGUS_SIZE/44,4,12);
+		worldgenCluster(wgen,CHUNGUS_SIZE/32,CHUNGUS_SIZE/64,4,14);
 		break;
 	case 7:
-		worldgenCluster(wgen,CHUNGUS_SIZE/38,CHUNGUS_SIZE/38,7,22);
+		worldgenCluster(wgen,CHUNGUS_SIZE/20,CHUNGUS_SIZE/20,3,12);
 		break;
 	case 6:
-		worldgenCluster(wgen,CHUNGUS_SIZE/32,CHUNGUS_SIZE/32,6,22);
+		worldgenCluster(wgen,CHUNGUS_SIZE/16,CHUNGUS_SIZE/16,6,10);
 		break;
 	case 5:
-		worldgenCluster(wgen,CHUNGUS_SIZE/22,CHUNGUS_SIZE/28,4,16);
+		worldgenCluster(wgen,CHUNGUS_SIZE/10,CHUNGUS_SIZE/14,4,8);
 		break;
 	case 4:
-		worldgenCluster(wgen,CHUNGUS_SIZE/12,CHUNGUS_SIZE/22,4,8);
+		worldgenCluster(wgen,CHUNGUS_SIZE/7,CHUNGUS_SIZE/14,2,4);
 		break;
 	case 3:
-		worldgenCluster(wgen,CHUNGUS_SIZE/8,CHUNGUS_SIZE/32,1,3);
+		worldgenCluster(wgen,CHUNGUS_SIZE/6,CHUNGUS_SIZE/12,1,3);
 		break;
 	case 2:
-		worldgenCluster(wgen,CHUNGUS_SIZE/14,CHUNGUS_SIZE/24,2,5);
+		worldgenCluster(wgen,CHUNGUS_SIZE/10,CHUNGUS_SIZE/20,1,3);
 		break;
 	case 1:
-		worldgenCluster(wgen,CHUNGUS_SIZE/18,CHUNGUS_SIZE/22,5,12);
+		worldgenCluster(wgen,CHUNGUS_SIZE/14,CHUNGUS_SIZE/18,2,6);
 		break;
 	}
 	seedRNG(oldSeed);

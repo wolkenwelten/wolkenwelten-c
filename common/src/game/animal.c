@@ -123,13 +123,14 @@ void animalDelChungus(const chungus *c){
 
 u32 animalCollision(const vec c){
 	u32 col = 0;
+	float size = 2.f;
 
-	if(checkCollision(c.x-0.3f,c.y     ,c.z     )){col |= 0x100;}
-	if(checkCollision(c.x+0.3f,c.y     ,c.z     )){col |= 0x200;}
-	if(checkCollision(c.x     ,c.y     ,c.z-0.3f)){col |= 0x400;}
-	if(checkCollision(c.x     ,c.y     ,c.z+0.3f)){col |= 0x800;}
-	if(checkCollision(c.x     ,c.y+0.5f,c.z     )){col |= 0x0F0;}
-	if(checkCollision(c.x     ,c.y-1.0f,c.z     )){col |= 0x00F;}
+	if(checkCollision(c.x-0.3f*size,c.y     ,c.z          )){col |= 0x100;}
+	if(checkCollision(c.x+0.3f*size,c.y     ,c.z          )){col |= 0x200;}
+	if(checkCollision(c.x     ,c.y          ,c.z-0.3f*size)){col |= 0x400;}
+	if(checkCollision(c.x     ,c.y          ,c.z+0.3f*size)){col |= 0x800;}
+	if(checkCollision(c.x     ,c.y+0.5f*size,c.z          )){col |= 0x0F0;}
+	if(checkCollision(c.x     ,c.y-1.0f*size,c.z          )){col |= 0x00F;}
 
 	return col;
 }

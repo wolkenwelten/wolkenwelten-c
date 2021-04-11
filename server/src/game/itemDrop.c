@@ -170,7 +170,7 @@ static int itemDropCheckCollation(uint ai){
 		const vec    b = itemDropList[bi].ent->pos;
 		const vec    d = vecSub(b,a);
 		const float di = vecDot(d,d);
-		if(di < 0.75f){
+		if(di < 2.f){
 			itemDropList[bi].itm.amount += itemDropList[ai].itm.amount;
 			itemDropList[bi].fireDmg    += itemDropList[ai].fireDmg;
 			itemDropList[bi].ent->vel    = vecAdd(itemDropList[bi].ent->vel,itemDropList[ai].ent->vel);

@@ -113,6 +113,7 @@ typedef struct {
 	int  deadTreeChance;
 
 	int  shrubChance;
+	int  bushChance;
 	int  stoneChance;
 	int  dirtChance;
 
@@ -152,14 +153,14 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 	switch(wgen->vegetationConcentration){
 		case 7:
 			w->treeType       = 0;
-			w->bigTreeChance  = (1<< 9)-1;
+			w->bigTreeChance  = (1<< 6)-1;
 			w->treeChance     = (1<< 5)-1;
 			w->shrubChance    = (1<< 4)-1;
 			w->animalChance   = (1<< 9)-1;
 			break;
 		case 6:
 			w->treeType       = 0;
-			w->bigTreeChance  = (1<<12)-1;
+			w->bigTreeChance  = (1<< 6)-1;
 			w->treeChance     = (1<< 5)-1;
 			w->shrubChance    = (1<< 4)-1;
 			w->animalChance   = (1<< 9)-1;
@@ -167,20 +168,21 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 		default:
 		case 5:
 			w->treeType       = 1;
-			w->bigTreeChance  = (1<<13)-1;
+			w->bigTreeChance  = (1<< 7)-1;
 			w->treeChance     = (1<< 6)-1;
 			w->shrubChance    = (1<< 5)-1;
 			w->animalChance   = (1<<10)-1;
 			break;
 		case 4:
 			w->treeType       = 1;
-			w->bigTreeChance  = (1<<15)-1;
+			w->bigTreeChance  = (1<< 9)-1;
 			w->treeChance     = (1<< 9)-1;
 			w->shrubChance    = (1<< 6)-1;
 			w->animalChance   = (1<<11)-1;
 			break;
 		case 3:
 			w->treeType       = 2;
+			w->bigTreeChance  = (1<<11)-1;
 			w->treeChance     = (1<<10)-1;
 			w->shrubChance    = (1<< 5)-1;
 			w->dirtChance     = (1<< 5)-1;
@@ -190,6 +192,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			break;
 		case 2:
 			w->treeType       = 2;
+			w->bigTreeChance  = (1<<13)-1;
 			w->treeChance     = (1<<12)-1;
 			w->shrubChance    = (1<< 6)-1;
 			w->dirtChance     = (1<< 4)-1;
@@ -202,6 +205,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->shrubChance    = (1<< 7)-1;
 			w->dirtChance     = (1<< 2)-1;
 			w->stoneChance    = (1<< 5)-1;
+			w->bigTreeChance  = (1<<14)-1;
 			w->treeChance     = (1<<12)-1;
 			w->animalChance   = (1<<14)-1;
 			w->grassBlock     = I_Dry_Grass;
@@ -212,12 +216,13 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->dirtChance     = (1<< 1)-1;
 			w->stoneChance    = (1<< 5)-1;
 			w->monolithChance = (1<<18)-1;
-			w->bigTreeChance  = (1<<18)-1;
+			w->bigTreeChance  = (1<<15)-1;
 			w->treeChance     = (1<<14)-1;
 			w->animalChance   = (1<<15)-1;
 			w->grassBlock     = I_Dry_Grass;
 			break;
 	}
+	w->bushChance = w->shrubChance >> 1;
 
 	if(w->treeType == 1){
 		switch(rngValA(31)){
@@ -322,7 +327,13 @@ static inline bool worldgenRDDeadTree(worldgen *wgen, wgChances *w, int cx, int 
 
 static inline bool worldgenRDShrub(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
 	if(w->airBlocks <= 8){return false;}
-	if(w->shrubChance && (rngValA(w->shrubChance)==0)){
+	if(rngValA(w->bushChance)==1){
+		wgBush(wgen->clay,cx,cy,cz);
+		w->lastBlock = I_Dirt;
+		w->airBlocks = 0;
+		return true;
+	}
+	if(rngValA(w->shrubChance)==1){
 		if(w->treeType == 2){
 			wgDate(wgen->clay,cx,cy,cz);
 		}else{
@@ -332,12 +343,12 @@ static inline bool worldgenRDShrub(worldgen *wgen, wgChances *w, int cx, int cy,
 		w->airBlocks = 0;
 		return true;
 	}
-	if((w->dirtChance) && (rngValA(w->dirtChance)==0)){
+	if((rngValA(w->dirtChance)==1)){
 		w->lastBlock = I_Dirt;
 		w->airBlocks = 0;
 		return true;
 	}
-	if(w->stoneChance && (rngValA(w->stoneChance)==0)){
+	if(rngValA(w->stoneChance)==1){
 		chungusSetB(wgen->clay,cx,cy  ,cz,I_Stone);
 		chungusSetB(wgen->clay,cx,cy+1,cz,I_Stone);
 		return true;
@@ -571,9 +582,9 @@ void worldgenCluster(worldgen *wgen, int size, int iSize, int iMin,int iMax){
 		iSize += ((float)iSize*((wgen->islandSizeModifier-128.f)/128.f));
 	}
 
-	int xoff = rngValM(CHUNGUS_SIZE-(size*4))-(CHUNGUS_SIZE-(size*4))/2;
-	int yoff = rngValM(CHUNGUS_SIZE-(size*4))-(CHUNGUS_SIZE-(size*4))/2;
-	int zoff = rngValM(CHUNGUS_SIZE-(size*4))-(CHUNGUS_SIZE-(size*4))/2;
+	int xoff = rngValM(MAX(CHUNGUS_SIZE/4,CHUNGUS_SIZE-(size*4)))-(CHUNGUS_SIZE-(size*4))/2;
+	int yoff = rngValM(MAX(CHUNGUS_SIZE/4,CHUNGUS_SIZE-(size*4)))-(CHUNGUS_SIZE-(size*4))/2;
+	int zoff = rngValM(MAX(CHUNGUS_SIZE/4,CHUNGUS_SIZE-(size*4)))-(CHUNGUS_SIZE-(size*4))/2;
 	const uint roll = rngValA(3);
 	if(roll == 0){
 		worldgenSpawnIsland(wgen,CHUNGUS_SIZE/2+xoff,CHUNGUS_SIZE/2+yoff,CHUNGUS_SIZE/2+zoff,size);

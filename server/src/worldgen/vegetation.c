@@ -22,11 +22,31 @@
 #include "../../../common/src/misc/misc.h"
 
 void wgShrub(chungus *c, int x,int y,int z){
-	int leaveBlock = I_Flower;
-	chungusSetB(c,x,y,z,I_Roots);
-	chungusSetB(c,x,y+1,z,leaveBlock);
-	if(rngValM(2) == 0){
-		chungusSetB(c,x,y+2,z,leaveBlock);
+	int leafBlock = I_Oak_Leaf;
+	int otherLeafBlock = I_Flower;
+	int woodBlock = I_Oak;
+	chungusSetB(c,x,y-1,z,I_Roots);
+	chungusSetB(c,x,y  ,z,I_Roots);
+	chungusSetB(c,x,y+1,z,woodBlock);
+
+	for(int ox = -1;ox<2;ox++){
+	for(int oy =  2;oy<4;oy++){
+	for(int oz = -1;oz<2;oz++){
+		if(rngValA(15) == 0){continue;}
+		chungusSetB(c,x+ox,y+oy,z+oz,rngValA(7) != 0 ? leafBlock : otherLeafBlock);
+	}
+	}
+	}
+	chungusSetB(c,x,y+2,z,woodBlock);
+	chungusSetB(c,x,y+3,z,leafBlock);
+	chungusSetB(c,x,y+4,z,leafBlock);
+}
+
+void wgBush(chungus *c, int x,int y,int z){
+	chungusSetB(c,x,y  ,z,I_Roots);
+	chungusSetB(c,x,y+1,z,I_Flower);
+	if(rngValA(7) == 1){
+		chungusSetB(c,x,y+2,z,I_Flower);
 	}
 }
 
@@ -255,16 +275,16 @@ void wgAcacia(chungus *c, int x, int y, int z){
 }
 
 static void wgTree(chungus *c, int x, int y, int z, int logblock, int leafes){
-	int size       = rngValA(3)+8;
+	int size       = rngValA(7)+12;
 	int sparseness = rngValA(3)+3;
-	int lsize      = 3;
+	int lsize      = 4;
 	int r;
 
 	for(int cy = 0;cy < size;cy++){
-		if(cy == size-1){lsize=2;}
-		else if(cy == 5){lsize=2;}
+		if(cy >= size-2){lsize=2;}
+		else if(cy < 10){lsize=2;}
 		else {lsize = 3;}
-		if(cy >= 5){
+		if(cy >= 8){
 			for(int cz = -lsize;cz<=lsize;cz++){
 				for(int cx = -lsize;cx<=lsize;cx++){
 					if((cx == 0) && (cz == 0)){
@@ -338,16 +358,16 @@ void wgSakura(chungus *c, int x,int y,int z){
 }
 
 void wgBigTree(chungus *c, int x,int y,int z, int logblock, int leafes){
-	int size       = rngValA(15)+8;
+	int size       = rngValA(15)+12;
 	int sparseness = rngValA( 3)+4;
-	int lsize      = 8;
+	int lsize      = 5;
 
 	for(int cy = -5;cy < size;cy++){
 		lsize = (cy-9);
 		if((size - cy) < lsize){
 			lsize = size-cy;
 		}
-		if(cy >= 9){
+		if(cy >= 12){
 			for(int cz = -lsize;cz<=lsize+1;cz++){
 				for(int cx = -lsize;cx<=lsize+1;cx++){
 					if((cx == -lsize  ) && (cz == -lsize  )){continue;}

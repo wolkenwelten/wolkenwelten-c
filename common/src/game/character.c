@@ -326,23 +326,28 @@ ivec characterLOSBlock(const character *c, bool returnBeforeBlock) {
 
 u32 characterCollision(const vec c){
 	u32 col = 0;
-	const float wd = 0.28f;
-	const float WD = wd*1.75f;
+	const float wd = 0.4f;
+	const float WD = 0.9f;
 
-	if(checkCollision(c.x-wd,c.y+0.5f,c.z   )){col |=  0x10;}
-	if(checkCollision(c.x+wd,c.y+0.5f,c.z   )){col |=  0x20;}
-	if(checkCollision(c.x   ,c.y+0.5f,c.z-wd)){col |=  0x40;}
-	if(checkCollision(c.x   ,c.y+0.5f,c.z+wd)){col |=  0x80;}
+	if(checkCollision(c.x-wd,c.y+1.f,c.z   )) {col |=  0x10;}
+	if(checkCollision(c.x+wd,c.y+1.f,c.z   )) {col |=  0x20;}
+	if(checkCollision(c.x   ,c.y+1.f,c.z-wd)) {col |=  0x40;}
+	if(checkCollision(c.x   ,c.y+1.f,c.z+wd)) {col |=  0x80;}
 
-	if(checkCollision(c.x-wd,c.y-1.f ,c.z   )){col |=   0x1;}
-	if(checkCollision(c.x+wd,c.y-1.f ,c.z   )){col |=   0x2;}
-	if(checkCollision(c.x   ,c.y-1.f ,c.z-wd)){col |=   0x4;}
-	if(checkCollision(c.x   ,c.y-1.f ,c.z+wd)){col |=   0x8;}
+	if(checkCollision(c.x-wd,c.y-2.f ,c.z   )){col |=   0x1;}
+	if(checkCollision(c.x+wd,c.y-2.f ,c.z   )){col |=   0x2;}
+	if(checkCollision(c.x   ,c.y-2.f ,c.z-wd)){col |=   0x4;}
+	if(checkCollision(c.x   ,c.y-2.f ,c.z+wd)){col |=   0x8;}
 
-	if(checkCollision(c.x-WD,c.y-0.7f,c.z   )){col |= 0x100;}
-	if(checkCollision(c.x+WD,c.y-0.7f,c.z   )){col |= 0x200;}
-	if(checkCollision(c.x   ,c.y-0.7f,c.z-WD)){col |= 0x400;}
-	if(checkCollision(c.x   ,c.y-0.7f,c.z+WD)){col |= 0x800;}
+	if(checkCollision(c.x-WD,c.y-1.4f,c.z   )){col |= 0x100;}
+	if(checkCollision(c.x+WD,c.y-1.4f,c.z   )){col |= 0x200;}
+	if(checkCollision(c.x   ,c.y-1.4f,c.z-WD)){col |= 0x400;}
+	if(checkCollision(c.x   ,c.y-1.4f,c.z+WD)){col |= 0x800;}
+
+	if(checkCollision(c.x-WD,c.y-0.9f,c.z   )){col |= 0x1000;}
+	if(checkCollision(c.x+WD,c.y-0.9f,c.z   )){col |= 0x2000;}
+	if(checkCollision(c.x   ,c.y-0.9f,c.z-WD)){col |= 0x4000;}
+	if(checkCollision(c.x   ,c.y-0.9f,c.z+WD)){col |= 0x8000;}
 
 	return col;
 }

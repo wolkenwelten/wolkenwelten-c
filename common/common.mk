@@ -4,7 +4,7 @@ NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj' | sort)
 COMMON_ASSETS    := common/src/tmp/stdlib.nuj common/src/tmp/wwlib.nuj
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
-COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
+COMMON_OBJS      := ${COMMON_SRCS:.c=.o}>
 COMMON_DEPS      := ${COMMON_SRCS:.c=.d}
 ASM_OBJS         :=
 
@@ -19,7 +19,7 @@ ASM_OBJS += common/src/asm/$(ARCH).o
 	$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) $< -o $@
 
 %.o: %.c
-	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) -g -c $< -o $@ -MMD > ${<:.c=.deps}
+	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) -g -c $< -o $@ -MMD > ${<:.c=.d}
 
 %.d: %.o
 	@true
@@ -55,9 +55,9 @@ endif
 clean:
 	rm -f gmon.out client/tools/assets client/tools/objparser callgrind.out.* vgcore.* platform/win/wolkenwelten.res
 	rm -f client/sfx/*.ogg
-	rm -f $(shell find client/src common/src nujel-standalone/src server/src -type f -name '*.o')
-	rm -f $(shell find client/src common/src nujel-standalone/src server/src -type f -name '*.d')
-	rm -f $(shell find client/src common/src nujel-standalone/src server/src -type f -name '*.deps')
+	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.o')
+	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.d')
+	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.deps')
 	rm -f wolkenwelten wolkenwelten.exe wolkenwelten-server wolkenwelten-server.exe tools/assets nujel nujel.exe
 	rm -f server/make.deps client/make.deps common/make.deps server/server.d client/client.d common/common.d nujel-standalone/nujel.d
 	rm -rf client/src/tmp server/src/tmp common/src/tmp web/releases releases nujel-standalone/tmp

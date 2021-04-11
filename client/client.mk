@@ -2,8 +2,7 @@ FFMPEG           := ffmpeg
 ifeq (, $(shell which ffmpeg))
 	FFMPEG   := ffmpeg4
 endif
-CLIENT_CFLAGS    :=
-CLIENT_CINCLUDES :=
+CLIENT_CFLAGS    := $(shell sdl2-config --cflags)
 CLIENT_LIBS      :=
 
 GFX_ASSETS       := $(shell find client/gfx -type f -name '*')
@@ -39,6 +38,7 @@ client/src/gfx/particle.o:      common/src/tmp/assets.h
 client/src/gfx/mesh.o:          common/src/tmp/assets.h
 client/src/gfx/shader.o:        common/src/tmp/assets.h
 client/src/gfx/texture.o:       common/src/tmp/assets.h
+client/src/game/animal.o:       client/src/tmp/objs.h
 client/src/game/blockMining.o:  client/src/tmp/assets.h
 client/src/main.o:              client/src/tmp/sfx.h
 client/src/game/character.o:    client/src/tmp/sfx.h
@@ -50,6 +50,8 @@ client/src/game/fire.o:         client/src/tmp/sfx.h
 client/src/game/projectile.o:   client/src/tmp/sfx.h
 client/src/misc/lisp.o:         client/src/tmp/sfx.h
 client/src/menu/inventory.o:    client/src/tmp/sfx.h
+
+$(CLIENT_OBJS): CFLAGS += $(CLIENT_CFLAGS)
 
 wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
