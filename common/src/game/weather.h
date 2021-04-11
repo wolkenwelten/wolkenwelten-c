@@ -15,3 +15,4 @@ void weatherSetRainDuration(u8 dur);
 
 void weatherRecvUpdate(const packet *p);
 void weatherSendUpdate(uint c);
+bool isInClouds(const vec p);

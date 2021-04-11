@@ -140,6 +140,7 @@ typedef struct {
 
 	 int actionTimeout;
 	uint stepTimeout;
+	 int cloudyness;
 
 	uint activeItem;
 	item inventory[40];

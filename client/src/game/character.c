@@ -23,6 +23,7 @@
 #include "../game/itemDrop.h"
 #include "../game/projectile.h"
 #include "../game/throwable.h"
+#include "../game/weather.h"
 #include "../gfx/effects.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
@@ -505,6 +506,15 @@ int characterPhysics(character *c){
 			c->vel = vecMul(c->vel,vecNew(0.98f,0,0.98f));
 		}
 		c->pos.y = MAX(c->pos.y,floorf(c->pos.y)+.99f);
+	}
+
+	if(isInClouds(c->pos)){
+		int cloudyness = vecMag(c->vel) * 1024.f;
+		c->cloudyness = MAX(c->cloudyness,cloudyness);
+	}
+	if(c->cloudyness > 0){
+		--c->cloudyness;
+		newParticle(c->pos.x,c->pos.y,c->pos.z,0.f,0.f,0.f,78.f,2.5f,cloudCT[c->cloudyness&0x1F]|0xFF000000, MAX(32,MIN(768,c->cloudyness*2)));
 	}
 
 	characterUpdateCons(c,oldCol,oldPos);

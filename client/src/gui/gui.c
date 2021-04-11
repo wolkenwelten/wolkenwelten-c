@@ -444,6 +444,7 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"WorstFrame  : %s%u\n",colorSignalLow(60,20,18,worstFrame),worstFrame);
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Brightness  : %f\n",gtimeGetBrightness(gtimeGetTimeOfDay()));
+		textMeshPrintf(guim,"Cloudyness  : %i\n",player->cloudyness);
 
 		animalOverlaysDrawn = 0;
 		for(uint i=0;i<animalCount;i++){
