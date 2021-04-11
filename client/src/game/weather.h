@@ -8,3 +8,6 @@ void cloudsRender    ();
 void cloudsDraw      (int cx, int cy, int cz);
 void cloudsCalcColors();
 void cloudsInitGfx   ();
+
+void rainDrawAll();
+void rainRecvUpdate(const packet *p);

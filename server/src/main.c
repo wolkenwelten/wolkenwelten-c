@@ -36,7 +36,6 @@
 #include "network/server.h"
 
 #include "../../common/src/game/itemType.h"
-#include "../../common/src/game/rain.h"
 #include "../../common/src/game/time.h"
 #include "../../common/src/nujel/nujel.h"
 #include "../../common/src/nujel/string.h"

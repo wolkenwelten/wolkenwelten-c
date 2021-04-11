@@ -35,6 +35,16 @@
 #include <math.h>
 #include <stdio.h>
 
+uint rainVAO;
+uint rainVBO;
+uint rainVBOSize = 0;
+
+#ifdef __x86_64__
+int rainFakeIters = 128;
+#else
+int rainFakeIters = 16;
+#endif
+
 #pragma pack(push, 1)
 typedef struct {
 	float x,y,z;
@@ -227,6 +237,64 @@ void cloudsInitGfx(){
 		glEnableVertexAttribArray (2);
 	}
 	cloudsCalcColors();
+
+	glGenVertexArrays(1, &rainVAO);
+	glGenBuffers     (1, &rainVBO);
+	glBindVertexArray    (rainVAO);
+	glEnableVertexAttribArray(0);
+}
+
+void rainFakeDrops(){
+	if(rainIntensity == 0){return;}
+	vec pos = player->pos;
+	int cy = (((int)pos.y) & 0xFE00)-0x100;
+	pos.y = cy + (32.f - 256.f);
+	for(uint i=0;i<8;i++){
+		float v = 48.f;
+		for(int ii=0;ii<4;ii++){
+			for(int iii=0;iii<rainFakeIters;iii++){
+				if(rngValA(255) > rainIntensity){continue;}
+				const vec rpos = vecAdd(pos,vecMul(vecRng(), vecNew( v,0.f, v)));
+				const u8 vv = cloudTex[(uint)(rpos.x - cloudOff.x)&0xFF][(uint)(rpos.z - cloudOff.z)&0xFF];
+				if(vv < cloudDensityMin){continue;}
+				rainNew(rpos);
+			}
+			v *= 2.f;
+		}
+		pos.y += 256.f;
+	}
+}
+
+void rainDrawAll(){
+	if(!rainCount){return;}
+	rainFakeDrops();
+
+	shaderBind(sRain);
+	matMul(matMVP,matView,matProjection);
+	shaderMatrix(sParticle,matMVP);
+	shaderSizeMul(sRain,1.f + (player->aimFade * player->zoomFactor));
+	glDepthMask(GL_FALSE);
+
+	glBindVertexArray(rainVAO);
+	glBindBuffer(GL_ARRAY_BUFFER,rainVBO);
+	if(gfxUseSubData && (rainVBOSize >= rainCount)){
+		glBufferSubData(GL_ARRAY_BUFFER, 0, rainCount*sizeof(glRainDrop), glRainDrops);
+	}else{
+		glBufferData(GL_ARRAY_BUFFER, rainCount*sizeof(glRainDrop), glRainDrops, GL_DYNAMIC_DRAW);
+		rainVBOSize = rainCount;
+	}
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void *)0);
+	glDrawArrays(GL_POINTS,0,rainCount);
+
+	glDepthMask(GL_TRUE);
+}
+
+void rainRecvUpdate(const packet *p){
+	const vec pos  = vecNew(p->v.f[0],p->v.f[1],p->v.f[2]);
+	const vec dist = vecSub(pos,player->pos);
+	const float dd = vecDot(dist,dist);
+	if(dd > renderDistanceSquare){return;}
+	rainNew(pos);
 }
 
 void weatherDoRain(){}

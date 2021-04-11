@@ -25,7 +25,6 @@
 #include "../game/fire.h"
 #include "../game/grenade.h"
 #include "../game/itemDrop.h"
-#include "../game/rain.h"
 #include "../game/rope.h"
 #include "../game/projectile.h"
 #include "../game/throwable.h"

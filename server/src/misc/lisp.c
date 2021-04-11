@@ -31,7 +31,6 @@
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/entity.h"
 #include "../../../common/src/game/item.h"
-#include "../../../common/src/game/rain.h"
 #include "../../../common/src/game/time.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"

@@ -24,7 +24,6 @@
 #include "../game/entity.h"
 #include "../game/fire.h"
 #include "../game/projectile.h"
-#include "../game/rain.h"
 #include "../game/rope.h"
 #include "../game/weather.h"
 #include "../gfx/gl.h"

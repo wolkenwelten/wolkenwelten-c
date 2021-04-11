@@ -19,7 +19,6 @@
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
-#include "../../../common/src/game/rain.h"
 
 void weatherDoRain(){
 	const ivec toff = ivecNewV(vecFloor(cloudOff));

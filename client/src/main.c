@@ -27,7 +27,6 @@
 #include "game/grenade.h"
 #include "game/itemDrop.h"
 #include "game/projectile.h"
-#include "game/rain.h"
 #include "game/recipe.h"
 #include "game/rope.h"
 #include "game/throwable.h"
@@ -241,9 +240,6 @@ int main( int argc, char* argv[] ){
 
 	if(!gameRunning){openMainMenu();}
 	cloudsInitGfx();
-	rainInitGfx();
-
-
 
 	player = characterNew();
 	initInventory();

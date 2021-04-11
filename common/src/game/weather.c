@@ -17,10 +17,14 @@
 
 #include "weather.h"
 
+#include "../asm/asm.h"
+#include "../game/fire.h"
+#include "../game/weather.h"
 #include "../misc/noise.h"
 #include "../misc/profiling.h"
 #include "../network/packet.h"
 #include "../network/messages.h"
+#include "../world/world.h"
 
 u8  cloudTex[256][256];
 vec cloudOff;
@@ -28,6 +32,15 @@ vec windVel,windGVel;
 u8  cloudGDensityMin;
 u8  cloudDensityMin;
 u8  rainIntensity;
+
+__attribute__((aligned(32))) glRainDrop glRainDrops[RAIN_MAX+4];
+__attribute__((aligned(32)))   rainDrop   rainDrops[RAIN_MAX+4];
+__attribute__((aligned(32)))      float   rainVel[8];
+                                    u64   rainCoords[RAIN_MAX+4];
+uint rainCount = 0;
+
+void rainPosUpdate();
+void fxRainDrop(const vec pos);
 
 void weatherInit(){
 	generateNoise(0x84407db3, cloudTex);
@@ -158,4 +171,86 @@ bool isInClouds(const vec p){
 	float ymax = cy+(v-cloudDensityMin)*0.18;
 	float ymin = cy-(v-cloudDensityMin)*0.09;
 	return (p.y > ymin) && (p.y < ymax);
+}
+
+void rainNew(vec pos){
+	uint i = ++rainCount;
+	if(i >= RAIN_MAX){i = rngValA(RAIN_MAX-1); rainCount--;}
+
+	glRainDrops[i]  = (glRainDrop){ pos.x, pos.y, pos.z, 256.f };
+	  rainDrops[i]  = (  rainDrop){ windVel.x, -0.1f, windVel.z, -0.1f };
+          rainCoords[i] = 0;
+
+	if(!isClient){rainSendUpdate(-1,i);}
+}
+
+static void rainDel(uint i){
+	glRainDrops[i]  = glRainDrops[--rainCount];
+	  rainDrops[i]  =   rainDrops[  rainCount];
+	  rainCoords[i] =   rainCoords[ rainCount];
+}
+
+void rainPosUpdatePortable(){
+	for(uint i=0;i<rainCount;i++){
+		glRainDrops[i].x     += rainDrops[i].vx;
+		glRainDrops[i].y     += rainDrops[i].vy;
+		glRainDrops[i].z     += rainDrops[i].vz;
+		glRainDrops[i].size  += rainDrops[i].vsize;
+
+		  rainDrops[i].vx    += rainVel[0];
+		  rainDrops[i].vy    += rainVel[1];
+		  rainDrops[i].vz    += rainVel[2];
+		  rainDrops[i].vsize += rainVel[3];
+	}
+}
+
+void rainUpdateAll(){
+	PROFILE_START();
+
+	rainVel[0] = windVel.x / 40.f;
+	rainVel[1] = -0.0005;
+	rainVel[2] = windVel.z / 40.f;
+	rainVel[3] = 0.f;
+
+	for(uint i=0;i<4;i++){
+		rainVel[i+4] = rainVel[i];
+	}
+
+	rainPosUpdate();
+	for(uint i=rainCount-1;i<rainCount;i--){
+		const glRainDrop *glrd = &glRainDrops[i];
+		if((glrd->y < 0.f) || (glrd->size < 0.f)){
+			rainDel(i);
+			continue;
+		}
+		const u64 newCoords = ((u64)glrd->x & 0xFFFF) | (((u64)glrd->y & 0xFFFF) << 16) | (((u64)glrd->z & 0xFFFF) << 32);
+		if(newCoords != rainCoords[i]){
+			if(!worldIsLoaded(glrd->x,glrd->y,glrd->z)){
+				rainDel(i);
+				continue;
+			}
+			if(worldGetB(glrd->x,glrd->y,glrd->z) != 0){
+				if(isClient){
+					fxRainDrop(vecNew(glrd->x,glrd->y,glrd->z));
+				}else{
+					fireBoxExtinguish (glrd->x-1, glrd->y-1, glrd->z-1, 3, 3, 3, 256);
+				}
+				rainDel(i);
+				continue;
+			}
+			rainCoords[i] = newCoords;
+		}
+	}
+
+	PROFILE_STOP();
+}
+
+void rainSendUpdate(uint c, uint i){
+	packet *p = &packetBuffer;
+
+	p->v.f[0] = glRainDrops[i].x;
+	p->v.f[1] = glRainDrops[i].y;
+	p->v.f[2] = glRainDrops[i].z;
+
+	packetQueue(p,msgtRainRecvUpdate,3*4,c);
 }

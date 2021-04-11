@@ -24,7 +24,6 @@
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
-#include "../game/rain.h"
 #include "../game/weather.h"
 #include "../sdl/sdl.h"
 #include "../gfx/gl.h"
