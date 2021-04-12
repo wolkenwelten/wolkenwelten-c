@@ -4,7 +4,7 @@ LD               := clang
 
 CLIENT_LIBS      :=-F /Library/Frameworks -framework SDL2 -framework SDL2_mixer -framework OpenGL
 CFLAGS           += -DGL_SILENCE_DEPRECATION
-CLIENT_CINCLUDES := -I/usr/local/include/ -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_mixer.framework/Headers
+CLIENT_CFLAGS    := -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_mixer.framework/Headers
 
 OSX_APP          := releases/macos/wolkenwelten-$(VERSION_NAME).app
 
