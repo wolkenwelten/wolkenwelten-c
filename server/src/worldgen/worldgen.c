@@ -83,24 +83,24 @@ void worldgenObelisk(worldgen *wgen, int x,int y,int z){
 
 void worldgenMonolith(worldgen *wgen, int x,int y,int z){
 	chungus *clay = wgen->clay;
-	for(int ox=-3;ox<6;ox++){
-		for(int oy=0;oy<12;oy++){
-			for(int oz=-3;oz<4;oz++){
-				chungusSetB(clay,x+ox,y+oy,z+oz,0);
-			}
-		}
+	for(int ox=-3;ox< 6;ox++){
+	for(int oy= 0;oy<12;oy++){
+	for(int oz=-3;oz< 4;oz++){
+		chungusSetB(clay,x+ox,y+oy,z+oz,0);
+	}
+	}
 	}
 	for(int ox=-1;ox<4;ox++){
-		for(int oy=0;oy<10;oy++){
-			chungusSetB(clay,x+ox,y+oy,z,9);
-		}
+	for(int oy=0;oy<10;oy++){
+		chungusSetB(clay,x+ox,y+oy,z,9);
+	}
 	}
 	for(int ox=-3;ox<6;ox++){
-		for(int oy=-5;oy<0;oy++){
-			for(int oz=-3;oz<4;oz++){
-				chungusSetB(clay,x+ox,y+oy,z+oz,3);
-			}
-		}
+	for(int oy=-5;oy<0;oy++){
+	for(int oz=-3;oz<4;oz++){
+		chungusSetB(clay,x+ox,y+oy,z+oz,3);
+	}
+	}
 	}
 }
 
@@ -120,12 +120,12 @@ void worldgenFindSpawn(worldgen *wgen, int x,int z,int tries){
 void worldgenTestpattern(worldgen *wgen){
 	u8 b=1;
 	for(int x=0;x<CHUNK_SIZE;x+=2){
-		for(int y=0;y<CHUNK_SIZE;y+=2){
-			for(int z=0;z<CHUNK_SIZE;z+=2){
-				chungusFill(wgen->clay,x*CHUNK_SIZE,y*CHUNK_SIZE,z*CHUNK_SIZE,b);
-				if(++b > 21){b=1;}
-			}
-		}
+	for(int y=0;y<CHUNK_SIZE;y+=2){
+	for(int z=0;z<CHUNK_SIZE;z+=2){
+		chungusFill(wgen->clay,x*CHUNK_SIZE,y*CHUNK_SIZE,z*CHUNK_SIZE,b);
+		if(++b > 21){b=1;}
+	}
+	}
 	}
 }
 
@@ -212,10 +212,8 @@ void worldgenFirstInit(){
 	windGVel   = vecMulS(vecRng(),1.f/512.f);
 	windGVel.y = 0.f;
 	windVel    = windGVel;
-	cloudGDensityMin  = 128+rngValA(0x7F);
+	cloudGDensityMin  = 156+rngValA(0x3F);
 	cloudDensityMin   = cloudGDensityMin;
-	if((cloudDensityMin < 156) && (rngValA(0x3F) == 0)){
-		rainIntensity = rngValM((256-cloudDensityMin) / 2);
-	}
+	rainIntensity = 0;
 	seedRNG(oldSeed);
 }

@@ -22,9 +22,9 @@
 #include "../../../common/src/misc/misc.h"
 
 void wgShrub(chungus *c, int x,int y,int z){
-	int leafBlock = I_Oak_Leaf;
-	int otherLeafBlock = I_Flower;
-	int woodBlock = I_Oak;
+	const int leafBlock      = I_Oak_Leaf;
+	const int otherLeafBlock = I_Flower;
+	const int woodBlock      = I_Oak;
 	chungusSetB(c,x,y-1,z,I_Roots);
 	chungusSetB(c,x,y  ,z,I_Roots);
 	chungusSetB(c,x,y+1,z,woodBlock);
@@ -33,7 +33,8 @@ void wgShrub(chungus *c, int x,int y,int z){
 	for(int oy =  2;oy<4;oy++){
 	for(int oz = -1;oz<2;oz++){
 		if(rngValA(15) == 0){continue;}
-		chungusSetB(c,x+ox,y+oy,z+oz,rngValA(7) != 0 ? leafBlock : otherLeafBlock);
+		const u8 b = rngValA(7) != 0 ? leafBlock : otherLeafBlock;
+		chungusSetB(c,x+ox,y+oy,z+oz,b);
 	}
 	}
 	}
@@ -101,7 +102,7 @@ void wgBigRoots(chungus *c, int x,int y,int z){
 void wgDeadTree(chungus *c, int x,int y,int z){
 	int size       = rngValMM(12,16);
 	for(int cy = 0;cy < size;cy++){
-		chungusSetB(c,x,cy+y,z,5);
+		chungusSetB(c,x,cy+y,z,I_Oak);
 	}
 	wgRoots(c,x,y-1,z);
 }
@@ -110,15 +111,15 @@ void wgBigDeadTree(chungus *c, int x,int y,int z){
 	int size       = rngValMM(20,34);
 	for(int cy = -5;cy < size;cy++){
 		if(cy < -2){
-			chungusSetB(c,x  ,cy+y,z  ,8);
-			chungusSetB(c,x+1,cy+y,z  ,8);
-			chungusSetB(c,x  ,cy+y,z+1,8);
-			chungusSetB(c,x+1,cy+y,z+1,8);
+			chungusSetB(c,x  ,cy+y,z  ,I_Roots);
+			chungusSetB(c,x+1,cy+y,z  ,I_Roots);
+			chungusSetB(c,x  ,cy+y,z+1,I_Roots);
+			chungusSetB(c,x+1,cy+y,z+1,I_Roots);
 		}else{
-			chungusSetB(c,x  ,cy+y,z  ,5);
-			chungusSetB(c,x+1,cy+y,z  ,5);
-			chungusSetB(c,x  ,cy+y,z+1,5);
-			chungusSetB(c,x+1,cy+y,z+1,5);
+			chungusSetB(c,x  ,cy+y,z  ,I_Oak);
+			chungusSetB(c,x+1,cy+y,z  ,I_Oak);
+			chungusSetB(c,x  ,cy+y,z+1,I_Oak);
+			chungusSetB(c,x+1,cy+y,z+1,I_Oak);
 		}
 	}
 	wgBigRoots(c,x,y-5,z);
@@ -139,14 +140,14 @@ void wgSpruce(chungus *c, int x,int y,int z){
 			for(int cz = -lsize;cz<=lsize;cz++){
 				for(int cx = -lsize;cx<=lsize;cx++){
 					if((rngValM(sparseness)) == 0){continue;}
-					chungusSetB(c,cx+x,cy+y,cz+z,6);
+					chungusSetB(c,cx+x,cy+y,cz+z,I_Oak_Leaf);
 				}
 			}
 		}
-		chungusSetB(c,x,cy+y,z,5);
+		chungusSetB(c,x,cy+y,z,I_Oak);
 	}
-	chungusSetB(c,x,size+y  ,z,6);
-	chungusSetB(c,x,size+y+1,z,6);
+	chungusSetB(c,x,size+y  ,z,I_Oak_Leaf);
+	chungusSetB(c,x,size+y+1,z,I_Oak_Leaf);
 	wgRoots(c,x,y-1,z);
 }
 
@@ -162,26 +163,26 @@ void wgBigSpruce(chungus *c, int x,int y,int z){
 			for(int cz = -lsize;cz<=lsize+1;cz++){
 				for(int cx = -lsize;cx<=lsize+1;cx++){
 					if(rngValM(sparseness) == 0){continue;}
-					chungusSetB(c,cx+x,cy+y,cz+z,6);
+					chungusSetB(c,cx+x,cy+y,cz+z,I_Spruce_Leaf);
 				}
 			}
 		}
 		if(cy < -2){
-			chungusSetB(c,x  ,cy+y,z  ,8);
-			chungusSetB(c,x+1,cy+y,z  ,8);
-			chungusSetB(c,x  ,cy+y,z+1,8);
-			chungusSetB(c,x+1,cy+y,z+1,8);
+			chungusSetB(c,x  ,cy+y,z  ,I_Roots);
+			chungusSetB(c,x+1,cy+y,z  ,I_Roots);
+			chungusSetB(c,x  ,cy+y,z+1,I_Roots);
+			chungusSetB(c,x+1,cy+y,z+1,I_Roots);
 		}else{
-			chungusSetB(c,x  ,cy+y,z  ,5);
-			chungusSetB(c,x+1,cy+y,z  ,5);
-			chungusSetB(c,x  ,cy+y,z+1,5);
-			chungusSetB(c,x+1,cy+y,z+1,5);
+			chungusSetB(c,x  ,cy+y,z  ,I_Spruce);
+			chungusSetB(c,x+1,cy+y,z  ,I_Spruce);
+			chungusSetB(c,x  ,cy+y,z+1,I_Spruce);
+			chungusSetB(c,x+1,cy+y,z+1,I_Spruce);
 		}
 	}
 	for(int cx=0;cx<2;cx++){
 		for(int cy=0;cy<2;cy++){
 			for(int cz=0;cz<2;cz++){
-				chungusSetB(c,x+cx,size+y+cy,z+cz,6);
+				chungusSetB(c,x+cx,size+y+cy,z+cz,I_Oak_Leaf);
 			}
 		}
 	}
@@ -190,12 +191,12 @@ void wgBigSpruce(chungus *c, int x,int y,int z){
 
 void wgSurroundWithLeafes(chungus *c, int x, int y, int z, u8 leafB){
 	for(int cx=-1;cx<=1;cx++){
-		for(int cy=0;cy<=1;cy++){
-			for(int cz=-1;cz<=1;cz++){
-				if(chungusGetB(c,x+cx,y+cy,z+cz) != 0){continue;}
-				chungusSetB(c,x+cx,y+cy,z+cz,leafB);
-			}
-		}
+	for(int cy= 0;cy<=1;cy++){
+	for(int cz=-1;cz<=1;cz++){
+		if(chungusGetB(c,x+cx,y+cy,z+cz) != 0){continue;}
+		chungusSetB(c,x+cx,y+cy,z+cz,leafB);
+	}
+	}
 	}
 }
 
@@ -213,18 +214,18 @@ void wgAcacia(chungus *c, int x, int y, int z){
 		else if(cy == size-3){lsize=1;}
 		if(cy >= 5){
 			for(int cz = -lsize;cz<=lsize;cz++){
-				for(int cx = -lsize;cx<=lsize;cx++){
-					if((cx == 0) && (cz == 0)){
-						chungusSetB(c,cx+x,cy+y,cz+z,leafes);
-						continue;
-					}
-					if((cx == -lsize) && (cz == -lsize  )){continue;}
-					if((cx == -lsize) && (cz ==  lsize  )){continue;}
-					if((cx ==  lsize) && (cz == -lsize  )){continue;}
-					if((cx ==  lsize) && (cz ==  lsize  )){continue;}
-					if((rngValM(sparseness)) == 0)        {continue;}
+			for(int cx = -lsize;cx<=lsize;cx++){
+				if((cx == 0) && (cz == 0)){
 					chungusSetB(c,cx+x,cy+y,cz+z,leafes);
+					continue;
 				}
+				if((cx == -lsize) && (cz == -lsize  )){continue;}
+				if((cx == -lsize) && (cz ==  lsize  )){continue;}
+				if((cx ==  lsize) && (cz == -lsize  )){continue;}
+				if((cx ==  lsize) && (cz ==  lsize  )){continue;}
+				if((rngValM(sparseness)) == 0)        {continue;}
+				chungusSetB(c,cx+x,cy+y,cz+z,leafes);
+			}
 			}
 		}
 		if(cy < size-2){
@@ -232,41 +233,41 @@ void wgAcacia(chungus *c, int x, int y, int z){
 			if(cy > 3){
 				r = rngValM(8);
 				switch(r){
-					case 1:
-						chungusSetB(c,x+1,cy+y,z,logblock);
-						wgSurroundWithLeafes(c,x+1,cy+y,z,leafes);
-						if(rngValM(4) == 0){
-							chungusSetB(c,x+2,cy+y,z,logblock);
-							wgSurroundWithLeafes(c,x+2,cy+y,z,leafes);
-						}
-					break;
+				case 1:
+					chungusSetB(c,x+1,cy+y,z,logblock);
+					wgSurroundWithLeafes(c,x+1,cy+y,z,leafes);
+					if(rngValM(4) == 0){
+						chungusSetB(c,x+2,cy+y,z,logblock);
+						wgSurroundWithLeafes(c,x+2,cy+y,z,leafes);
+					}
+				break;
 
-					case 2:
-						chungusSetB(c,x-1,cy+y,z,logblock);
-						wgSurroundWithLeafes(c,x-1,cy+y,z,leafes);
-						if(rngValM(4) == 0){
-							chungusSetB(c,x-2,cy+y,z,logblock);
-							wgSurroundWithLeafes(c,x-2,cy+y,z,leafes);
-						}
-					break;
+				case 2:
+					chungusSetB(c,x-1,cy+y,z,logblock);
+					wgSurroundWithLeafes(c,x-1,cy+y,z,leafes);
+					if(rngValM(4) == 0){
+						chungusSetB(c,x-2,cy+y,z,logblock);
+						wgSurroundWithLeafes(c,x-2,cy+y,z,leafes);
+					}
+				break;
 
-					case 3:
-						chungusSetB(c,x,cy+y,z+1,logblock);
-						wgSurroundWithLeafes(c,x,cy+y,z+1,leafes);
-						if(rngValM(4) == 0){
-							chungusSetB(c,x,cy+y,z+2,logblock);
-							wgSurroundWithLeafes(c,x,cy+y,z+2,leafes);
-						}
-					break;
+				case 3:
+					chungusSetB(c,x,cy+y,z+1,logblock);
+					wgSurroundWithLeafes(c,x,cy+y,z+1,leafes);
+					if(rngValM(4) == 0){
+						chungusSetB(c,x,cy+y,z+2,logblock);
+						wgSurroundWithLeafes(c,x,cy+y,z+2,leafes);
+					}
+				break;
 
-					case 4:
-						chungusSetB(c,x,cy+y,z-1,logblock);
-						wgSurroundWithLeafes(c,x,cy+y,z-1,leafes);
-						if(rngValM(4) == 0){
-							chungusSetB(c,x,cy+y,z-2,logblock);
-							wgSurroundWithLeafes(c,x,cy+y,z-2,leafes);
-						}
-					break;
+				case 4:
+					chungusSetB(c,x,cy+y,z-1,logblock);
+					wgSurroundWithLeafes(c,x,cy+y,z-1,leafes);
+					if(rngValM(4) == 0){
+						chungusSetB(c,x,cy+y,z-2,logblock);
+						wgSurroundWithLeafes(c,x,cy+y,z-2,leafes);
+					}
+				break;
 				}
 			}
 		}
@@ -286,18 +287,18 @@ static void wgTree(chungus *c, int x, int y, int z, int logblock, int leafes){
 		else {lsize = 3;}
 		if(cy >= 8){
 			for(int cz = -lsize;cz<=lsize;cz++){
-				for(int cx = -lsize;cx<=lsize;cx++){
-					if((cx == 0) && (cz == 0)){
-						chungusSetB(c,cx+x,cy+y,cz+z,leafes);
-						continue;
-					}
-					if((cx == -lsize) && (cz == -lsize  )){continue;}
-					if((cx == -lsize) && (cz ==  lsize  )){continue;}
-					if((cx ==  lsize) && (cz == -lsize  )){continue;}
-					if((cx ==  lsize) && (cz ==  lsize  )){continue;}
-					if((rngValM(sparseness)) == 0)        {continue;}
+			for(int cx = -lsize;cx<=lsize;cx++){
+				if((cx == 0) && (cz == 0)){
 					chungusSetB(c,cx+x,cy+y,cz+z,leafes);
+					continue;
 				}
+				if((cx == -lsize) && (cz == -lsize  )){continue;}
+				if((cx == -lsize) && (cz ==  lsize  )){continue;}
+				if((cx ==  lsize) && (cz == -lsize  )){continue;}
+				if((cx ==  lsize) && (cz ==  lsize  )){continue;}
+				if((rngValM(sparseness)) == 0)        {continue;}
+				chungusSetB(c,cx+x,cy+y,cz+z,leafes);
+			}
 			}
 		}
 		if(cy < size-2){
@@ -305,41 +306,41 @@ static void wgTree(chungus *c, int x, int y, int z, int logblock, int leafes){
 			if(cy > 3){
 				r = rngValM(8);
 				switch(r){
-					case 1:
-						chungusSetB(c,x+1,cy+y,z,logblock);
-						wgSurroundWithLeafes(c,x+1,cy+y,z,leafes);
-						if(rngValM(4) == 0){
-							chungusSetB(c,x+2,cy+y,z,logblock);
-							wgSurroundWithLeafes(c,x+2,cy+y,z,leafes);
-						}
-					break;
+				case 1:
+					chungusSetB(c,x+1,cy+y,z,logblock);
+					wgSurroundWithLeafes(c,x+1,cy+y,z,leafes);
+					if(rngValM(4) == 0){
+						chungusSetB(c,x+2,cy+y,z,logblock);
+						wgSurroundWithLeafes(c,x+2,cy+y,z,leafes);
+					}
+				break;
 
-					case 2:
-						chungusSetB(c,x-1,cy+y,z,logblock);
-						wgSurroundWithLeafes(c,x-1,cy+y,z,leafes);
-						if(rngValM(4) == 0){
-							chungusSetB(c,x-2,cy+y,z,logblock);
-							wgSurroundWithLeafes(c,x-2,cy+y,z,leafes);
-						}
-					break;
+				case 2:
+					chungusSetB(c,x-1,cy+y,z,logblock);
+					wgSurroundWithLeafes(c,x-1,cy+y,z,leafes);
+					if(rngValM(4) == 0){
+						chungusSetB(c,x-2,cy+y,z,logblock);
+						wgSurroundWithLeafes(c,x-2,cy+y,z,leafes);
+					}
+				break;
 
-					case 3:
-						chungusSetB(c,x,cy+y,z+1,logblock);
-						wgSurroundWithLeafes(c,x,cy+y,z+1,leafes);
-						if(rngValM(4) == 0){
-							chungusSetB(c,x,cy+y,z+2,logblock);
-							wgSurroundWithLeafes(c,x,cy+y,z+2,leafes);
-						}
-					break;
+				case 3:
+					chungusSetB(c,x,cy+y,z+1,logblock);
+					wgSurroundWithLeafes(c,x,cy+y,z+1,leafes);
+					if(rngValM(4) == 0){
+						chungusSetB(c,x,cy+y,z+2,logblock);
+						wgSurroundWithLeafes(c,x,cy+y,z+2,leafes);
+					}
+				break;
 
-					case 4:
-						chungusSetB(c,x,cy+y,z-1,logblock);
-						wgSurroundWithLeafes(c,x,cy+y,z-1,leafes);
-						if(rngValM(4) == 0){
-							chungusSetB(c,x,cy+y,z-2,logblock);
-							wgSurroundWithLeafes(c,x,cy+y,z-2,leafes);
-						}
-					break;
+				case 4:
+					chungusSetB(c,x,cy+y,z-1,logblock);
+					wgSurroundWithLeafes(c,x,cy+y,z-1,leafes);
+					if(rngValM(4) == 0){
+						chungusSetB(c,x,cy+y,z-2,logblock);
+						wgSurroundWithLeafes(c,x,cy+y,z-2,leafes);
+					}
+				break;
 				}
 			}
 		}
@@ -358,8 +359,8 @@ void wgSakura(chungus *c, int x,int y,int z){
 }
 
 void wgBigTree(chungus *c, int x,int y,int z, int logblock, int leafes){
-	int size       = rngValA(15)+12;
-	int sparseness = rngValA( 3)+4;
+	const int size       = rngValA(15)+12;
+	const int sparseness = rngValA( 3)+4;
 	int lsize      = 5;
 
 	for(int cy = -5;cy < size;cy++){
@@ -369,21 +370,21 @@ void wgBigTree(chungus *c, int x,int y,int z, int logblock, int leafes){
 		}
 		if(cy >= 12){
 			for(int cz = -lsize;cz<=lsize+1;cz++){
-				for(int cx = -lsize;cx<=lsize+1;cx++){
-					if((cx == -lsize  ) && (cz == -lsize  )){continue;}
-					if((cx == -lsize  ) && (cz ==  lsize+1)){continue;}
-					if((cx ==  lsize+1) && (cz == -lsize  )){continue;}
-					if((cx ==  lsize+1) && (cz ==  lsize+1)){continue;}
-					if(rngValM(sparseness) == 0)            {continue;}
-					chungusSetB(c,cx+x,cy+y,cz+z,leafes);
-				}
+			for(int cx = -lsize;cx<=lsize+1;cx++){
+				if((cx == -lsize  ) && (cz == -lsize  )){continue;}
+				if((cx == -lsize  ) && (cz ==  lsize+1)){continue;}
+				if((cx ==  lsize+1) && (cz == -lsize  )){continue;}
+				if((cx ==  lsize+1) && (cz ==  lsize+1)){continue;}
+				if(rngValM(sparseness) == 0)            {continue;}
+				chungusSetB(c,cx+x,cy+y,cz+z,leafes);
+			}
 			}
 		}
 		if(cy < -2){
-			chungusSetB(c,x  ,cy+y,z  ,8);
-			chungusSetB(c,x+1,cy+y,z  ,8);
-			chungusSetB(c,x  ,cy+y,z+1,8);
-			chungusSetB(c,x+1,cy+y,z+1,8);
+			chungusSetB(c,x  ,cy+y,z  ,I_Roots);
+			chungusSetB(c,x+1,cy+y,z  ,I_Roots);
+			chungusSetB(c,x  ,cy+y,z+1,I_Roots);
+			chungusSetB(c,x+1,cy+y,z+1,I_Roots);
 		}else if(cy < size-2){
 			chungusSetB(c,x  ,cy+y,z  ,logblock);
 			chungusSetB(c,x+1,cy+y,z  ,logblock);
@@ -437,21 +438,21 @@ void wgBigAcacia(chungus *c, int x,int y,int z){
 		}
 		if(cy >= (size - 5)){
 			for(int cz = -lsize;cz<=lsize+1;cz++){
-				for(int cx = -lsize;cx<=lsize+1;cx++){
-					if((cx == -lsize  ) && (cz == -lsize  )){continue;}
-					if((cx == -lsize  ) && (cz ==  lsize+1)){continue;}
-					if((cx ==  lsize+1) && (cz == -lsize  )){continue;}
-					if((cx ==  lsize+1) && (cz ==  lsize+1)){continue;}
-					if(rngValM(sparseness) == 0)            {continue;}
-					chungusSetB(c,cx+x,cy+y,cz+z,leafes);
-				}
+			for(int cx = -lsize;cx<=lsize+1;cx++){
+				if((cx == -lsize  ) && (cz == -lsize  )){continue;}
+				if((cx == -lsize  ) && (cz ==  lsize+1)){continue;}
+				if((cx ==  lsize+1) && (cz == -lsize  )){continue;}
+				if((cx ==  lsize+1) && (cz ==  lsize+1)){continue;}
+				if(rngValM(sparseness) == 0)            {continue;}
+				chungusSetB(c,cx+x,cy+y,cz+z,leafes);
+			}
 			}
 		}
 		if(cy < -2){
-			chungusSetB(c,x  ,cy+y,z  ,8);
-			chungusSetB(c,x+1,cy+y,z  ,8);
-			chungusSetB(c,x  ,cy+y,z+1,8);
-			chungusSetB(c,x+1,cy+y,z+1,8);
+			chungusSetB(c,x  ,cy+y,z  ,I_Roots);
+			chungusSetB(c,x+1,cy+y,z  ,I_Roots);
+			chungusSetB(c,x  ,cy+y,z+1,I_Roots);
+			chungusSetB(c,x+1,cy+y,z+1,I_Roots);
 		}else if(cy < size-2){
 			chungusSetB(c,x  ,cy+y,z  ,logblock);
 			chungusSetB(c,x+1,cy+y,z  ,logblock);
