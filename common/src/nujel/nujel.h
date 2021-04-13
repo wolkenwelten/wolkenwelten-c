@@ -80,9 +80,9 @@ struct lString {
 
 extern lSymbol symQuote,symArr,symIf,symCond,symWhen,symUnless,symLet,symBegin;
 
-#define VAL_MAX (1<<16)
+#define VAL_MAX (1<<18)
 #define CLO_MAX (1<<14)
-#define STR_MAX (1<<12)
+#define STR_MAX (1<<14)
 #define ARR_MAX (1<<12)
 #define NFN_MAX (1<<10)
 #define VEC_MAX (1<<12)

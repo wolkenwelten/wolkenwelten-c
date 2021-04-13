@@ -1,6 +1,9 @@
 (def client? #t)
 (def server? #f)
 
+(def error (λ (...args) "Prints its arguments into the LISP console and might alert the user"
+	(console-print ("  " (apply cat ...args)))))
+
 (def log (λ (...args) "Prints its arguments into the LISP console"
 	(console-print ("  " (apply cat ...args)))))
 

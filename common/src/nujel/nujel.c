@@ -1112,28 +1112,11 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"set!",     "(s v)",         "Binds a new value v to already defined symbol s",                   lnfSet);
 	lAddNativeFunc(c,"last-pair","(l)",           "Returns the last pair of list l",                                   lnfLastPair);
 
-	lAddNativeFunc(c,"abs","(a)","Returns the absolute value of a",     lnfAbs);
-	lAddNativeFunc(c,"pow","(a b)","Returns a raised to the power of b",lnfPow);
-	lAddNativeFunc(c,"sqrt","(a)","Returns the squareroot of a",        lnfSqrt);
-	lAddNativeFunc(c,"floor","(a)","Rounds a down",                     lnfFloor);
-	lAddNativeFunc(c,"ceil","(a)","Rounds a up",                        lnfCeil);
-	lAddNativeFunc(c,"round","(a)","Rounds a",                          lnfRound);
-	lAddNativeFunc(c,"sin","(a)","Sin A",                               lnfSin);
-	lAddNativeFunc(c,"cos","(a)","Cos A",                               lnfCos);
-	lAddNativeFunc(c,"tan","(a)","Tan A",                               lnfTan);
-
-	lAddNativeFunc(c,"vx","(v)","Returns x part of vector v",lnfVX);
-	lAddNativeFunc(c,"vy","(v)","Returns x part of vector v",lnfVY);
-	lAddNativeFunc(c,"vz","(v)","Returns x part of vector v",lnfVZ);
-
 	lAddNativeFunc(c,"time",       "()",         "Returns unix time",lnfTime);
 	lAddNativeFunc(c,"strftime",   "(ts format)","Returns TS as a date using FORMAT (uses strftime)",lnfStrftime);
 	lAddNativeFunc(c,"msecs",      "()",         "Returns monotonic msecs",lnfMsecs);
 	lAddNativeFunc(c,"random",     "(&n)",       "Return a random value from 0 to &N, if &N is #nil then return a random value up to INT_MAX",lnfRandom);
 	lAddNativeFunc(c,"random-seed","(seed)",     "Sets the RNG Seed to SEED",lnfRandomSeed);
-
-	lDefineVal(c,"π",  lConst(lValFloat(PI)));
-	lDefineVal(c,"PI", lConst(lValFloat(PI)));
 }
 
 extern unsigned char src_tmp_stdlib_nuj_data[];

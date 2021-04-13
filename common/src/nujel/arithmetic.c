@@ -325,4 +325,21 @@ void lAddArithmeticFuncs(lClosure *c){
 	lAddNativeFunc(c,"div","(...args)","Division",      lnfDiv);
 	lAddNativeFunc(c,"%",  "(...args)","Modulo",        lnfMod);
 	lAddNativeFunc(c,"mod","(...args)","Modulo",        lnfMod);
+
+	lAddNativeFunc(c,"abs","(a)","Returns the absolute value of a",     lnfAbs);
+	lAddNativeFunc(c,"pow","(a b)","Returns a raised to the power of b",lnfPow);
+	lAddNativeFunc(c,"sqrt","(a)","Returns the squareroot of a",        lnfSqrt);
+	lAddNativeFunc(c,"floor","(a)","Rounds a down",                     lnfFloor);
+	lAddNativeFunc(c,"ceil","(a)","Rounds a up",                        lnfCeil);
+	lAddNativeFunc(c,"round","(a)","Rounds a",                          lnfRound);
+	lAddNativeFunc(c,"sin","(a)","Sin A",                               lnfSin);
+	lAddNativeFunc(c,"cos","(a)","Cos A",                               lnfCos);
+	lAddNativeFunc(c,"tan","(a)","Tan A",                               lnfTan);
+
+	lAddNativeFunc(c,"vx","(v)","Returns x part of vector v",lnfVX);
+	lAddNativeFunc(c,"vy","(v)","Returns x part of vector v",lnfVY);
+	lAddNativeFunc(c,"vz","(v)","Returns x part of vector v",lnfVZ);
+
+	lDefineVal(c,"π",  lConst(lValFloat(PI)));
+	lDefineVal(c,"PI", lConst(lValFloat(PI)));
 }
