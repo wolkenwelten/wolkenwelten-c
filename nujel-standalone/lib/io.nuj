@@ -1,7 +1,14 @@
-(define help-iter (λ (l) "Iter for (help)"
+(def help-iter (λ (l) "Iter for (help)"
 	(cond ((nil? l) #t)
 	      (#t (display (describe (car l))) (newline) (help-iter (cdr l))))))
-(define help (λ (i) "Describes 10 functions at offset 1"
+
+(def help (λ (i) "Describes 10 functions at offset 1"
 	(let ((off (* (int i) 10)))
 	(help-iter (map cat (symbol-table off 10)))
 	(display (cat "Help page " (int i) " of " (/ (symbol-count) 10))) (newline) #t)))
+
+(def repl-prompt #nil)
+(let ((repl-count -1))
+	(set! repl-prompt (λ (i) "Displays the REPL prompt"
+		(set! repl-count (++ repl-count))
+		(display (cat "[" repl-count "]" (ansi-fg 1) "λ" (ansi-fg 12) ">" (ansi-reset) " ")))))

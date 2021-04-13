@@ -84,7 +84,7 @@ void doRepl(lClosure *c){
 	lVal *lastlsym = lValSym("lastl");
 	lVal *lastl = lDefineClosureSym(c - lClosureList, lastlsym->vSymbol);
 	while(1){
-		printf("%sλ%s>%s ",ansiFG[1],ansiFG[12],ansiRS);
+		lEval(c,lCons(lValSym("repl-prompt"),NULL));
 		fflush(stdout);
 		if(fgets(str,sizeof(str),stdin) == NULL){
 			printf("\nBye!\n");
