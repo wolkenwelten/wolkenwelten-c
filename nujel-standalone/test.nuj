@@ -260,6 +260,8 @@
 (test #x0B (char-at "\v" 0))
 (test #x27 (char-at "\'" 0))
 (test #x22 (char-at "\"" 0))
+(test #t (> (symbol-count) 200)) ; Probably not gonna shrink over time
+(test #t (pair? (symbol-table)))
 
 
 ; Not sure how to best handle this, needs some more thorough thinking

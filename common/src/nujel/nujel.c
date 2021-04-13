@@ -553,6 +553,7 @@ static lVal *lSymTable(lClosure *c, lVal *v, int off, int len){
 		v = lCons(n->vList.car->vList.car,v);
 		if(--len <= 0){return v;}
 	}
+	if(c->parent == 0){return v;}
 	return lSymTable(&lClo(c->parent),v,off,len);
 }
 
@@ -561,7 +562,7 @@ static lVal *lnfSymTable(lClosure *c, lVal *v){
 	lVal *llen = lnfInt(c,lEval(c,lCarOrV( v == NULL ? NULL : v->vList.cdr)));
 	int off = loff->vInt;
 	int len = llen->vInt;
-	if(len <= 0){len = 1<<30;}
+	if(len <= 0){len = 1<<16;}
 	return lSymTable(c,NULL,off,len);
 }
 
@@ -580,6 +581,7 @@ static int lSymCount(lClosure *c, int ret){
 
 		++ret;
 	}
+	if(c->parent == 0){return ret;}
 	return lSymCount(&lClo(c->parent),ret);
 }
 
