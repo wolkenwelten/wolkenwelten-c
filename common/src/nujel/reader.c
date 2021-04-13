@@ -26,6 +26,16 @@ static void lStringAdvanceToNextCharacter(lString *s){
 	for(;(*s->data != 0) && (isspace((u8)*s->data));s->data++){}
 }
 
+static void lStringAdvanceToNextSpaceOrSpecial(lString *s){
+	for(;(*s->data != 0) && (!isspace((u8)*s->data));s->data++){
+		if(*s->data == '('){break;}
+		if(*s->data == ')'){break;}
+		if(*s->data == '"'){break;}
+		if(*s->data == '#'){break;}
+		if(*s->data == ':'){break;}
+	}
+}
+
 static void lStringAdvanceToNextLine(lString *s){
 	for(;(*s->data != 0) && (*s->data != '\n');s->data++){}
 }
@@ -37,23 +47,41 @@ static lVal *lParseString(lString *s){
 		if(*s->data == '\\'){
 			s->data++;
 			switch(*s->data){
-			case '\\':
-				*b++ = '\\';
+			case '0':
+				*b++ = 0;
 				break;
-			case '"':
-				*b++ = '"';
+			case 'a':
+				*b++ = '\a';
 				break;
-			case 'n':
-				*b++ = '\n';
-				break;
-			case 'r':
-				*b++ = '\r';
+			case 'b':
+				*b++ = '\b';
 				break;
 			case 't':
 				*b++ = '\t';
 				break;
-			case '0':
-				*b++ = 0;
+			case 'n':
+				*b++ = '\n';
+				break;
+			case 'v':
+				*b++ = '\v';
+				break;
+			case 'f':
+				*b++ = '\f';
+				break;
+			case 'r':
+				*b++ = '\r';
+				break;
+			case 'e':
+				*b++ = '\e';
+				break;
+			case '"':
+				*b++ = '"';
+				break;
+			case '\'':
+				*b++ = '\'';
+				break;
+			case '\\':
+				*b++ = '\\';
 				break;
 			}
 			s->data++;
@@ -175,10 +203,23 @@ static lVal *lParseNumberOctal(lString *s){
 	return lValInt(ret);
 }
 
+static lVal *lParseCharacter(lString *s){
+	int ret = s->data[0];
+	if((s->data[0] == 'B') && (s->data[1] == 'a')){ret = '\b';}
+	if((s->data[0] == 'T') && (s->data[1] == 'a')){ret = '\t';}
+	if((s->data[0] == 'L') && (s->data[1] == 'i')){ret = '\n';}
+	if((s->data[0] == 'R') && (s->data[1] == 'e')){ret = '\r';}
+	if((s->data[0] == 'l') && (s->data[1] == 'f')){ret = '\n';}
+	if((s->data[0] == 'c') && (s->data[1] == 'r')){ret = '\r';}
+	lStringAdvanceToNextSpaceOrSpecial(s);
+	return lValInt(ret);
+}
+
 static lVal *lParseSpecial(lString *s){
 	if(*s->data++ != '#'){return NULL;}
 	switch(*s->data++){
 	default:
+	case '\\':return lParseCharacter(s);
 	case 'x': return lParseNumberHex(s);
 	case 'o': return lParseNumberOctal(s);
 	case 'b': return lParseNumberBinary(s);

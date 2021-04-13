@@ -54,31 +54,55 @@ int bufPrintFloat(float v, char *buf, int t, int len){
 
 int bufWriteString(char *buf, int len, const char *data){
 	u8 c;
-	int written=0;
-	buf[written++] = '\"';
-	while((c = *data++) != 0){
-		if((written + 2) > len){break;}
-		if(c == '\n'){
-			buf[written++] = '\\';
-			buf[written++] = 'n';
-			continue;
-		}else if(c == '"'){
-			buf[written++] = '\\';
-			buf[written++] = '"';
-			continue;
-		}else if(c == '\''){
-			buf[written++] = '\\';
-			buf[written++] = '\'';
-			continue;
-		}else if(c == '\\'){
-			buf[written++] = '\\';
-			buf[written++] = '\\';
-			continue;
+	char *out = buf;
+	char *end = &buf[len-2];
+	if(buf >= end){return 0;}
+	*out++ = '\"';
+	while(out < end){
+		switch(c = *data++){
+		case 0:
+			goto bufWriteStringExit;
+		case '\a': // Bell
+			*out++ = '\\'; *out++ = '\a';
+			break;
+		case '\b': // Backspace
+			*out++ = '\\'; *out++ = '\b';
+			break;
+		case '\t': // Horiz. Tab
+			*out++ = '\\'; *out++ = '\t';
+			break;
+		case '\n': // Line Feed
+			*out++ = '\\'; *out++ = '\n';
+			break;
+		case '\v': // Vert. Tab
+			*out++ = '\\'; *out++ = '\v';
+			break;
+		case '\f': // Form Feed
+			*out++ = '\\'; *out++ = '\f';
+			break;
+		case '\r': // Carriage Return
+			*out++ = '\\'; *out++ = '\r';
+			break;
+		case '\e': // Escape
+			*out++ = '\\'; *out++ = '\e';
+			break;
+		case '"':
+			*out++ = '\\'; *out++ = '"';
+			break;
+		case '\'':
+			*out++ = '\\'; *out++ = '\'';
+			break;
+		case '\\':
+			*out++ = '\\'; *out++ = '\\';
+			break;
+		default:
+			*out++ = c;
+			break;
 		}
-		buf[written++] = c;
 	}
-	buf[written++] = '\"';
-	return written;
+	bufWriteStringExit:
+	*out++ = '\"';
+	return out-buf;
 }
 
 char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display){
@@ -472,7 +496,7 @@ lVal *lnfIndexOf(lClosure *c, lVal *v){
 
 	if(needle == NULL)   {return lValInt(-1);}
 	if(haystack == NULL) {return lValInt(-1);}
-	const int needleLength = strnlen(needle,256);
+	const int needleLength = strlen(needle);
 	if(needleLength <= 0){return lValInt(pos);}
 
 	for(const char *s = &haystack[pos]; *s != 0; s++){
@@ -529,6 +553,34 @@ lVal *lnfWriteStr(lClosure *c, lVal *v){
 	return t;
 }
 
+lVal *lnfCharAt(lClosure *c,lVal *v){
+	const char *str = NULL;
+	int pos = 0;
+
+	v = getLArgS(c,v,&str);
+	v = getLArgI(c,v,&pos);
+
+	if(str == NULL){return NULL;}
+	const int len = strlen(str);
+	if(pos >= len){return NULL;}
+	return lValInt(str[pos]);
+}
+
+lVal *lnfFromCharCode(lClosure *c,lVal *v){
+	int len = lListLength(v)+1;
+	char *buf = malloc(len);
+	int i=0,code;
+
+	while(v != NULL){
+		v = getLArgI(c,v,&code);
+		buf[i++] = code;
+		if(i >= len){break;}
+	}
+	v = lValString(buf);
+	free(buf);
+	return v;
+}
+
 void lAddStringFuncs(lClosure *c){
 	lAddNativeFunc(c,"cat",           "(...args)",       "ConCATenates ...args into a single string",                                               lnfCat);
 	lAddNativeFunc(c,"trim",          "(s)",             "Trims s of any excessive whitespace",                                                     lnfTrim);
@@ -538,6 +590,8 @@ void lAddStringFuncs(lClosure *c){
 	lAddNativeFunc(c,"str-capitalize","(s)",             "Returns a copy of string s capitalized",                                                  lnfStrCap);
 	lAddNativeFunc(c,"substr",        "(s &start &stop)","Returns a copy of string s starting at position &start=0 and ending at &stop=(str-len s)",lnfSubstr);
 	lAddNativeFunc(c,"index-of",      "(haystack needle &start)","Returns the position of NEEDLE in HAYSTACK, searcing from &START=0, or -1 if not found",lnfIndexOf);
+	lAddNativeFunc(c,"char-at",       "(str pos)",       "Returns the character at position POS in String STR",lnfCharAt);
+	lAddNativeFunc(c,"from-char-code","(...codes)",      "Construct a string out of ...CODE codepoints and return it",lnfFromCharCode);
 	lAddNativeFunc(c,"str->sym",      "(s)",             "Converts string s to a symbol",                                                           lnfStrSym);
 	lAddNativeFunc(c,"sym->str",      "(s)",             "Converts symbol s to a string",                                                           lnfSymStr);
 	lAddNativeFunc(c,"write-str",     "(v)",             "Writes V into a string and returns it",                                                   lnfWriteStr);

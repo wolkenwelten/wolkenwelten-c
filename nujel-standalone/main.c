@@ -133,7 +133,7 @@ static lVal *lnfPrint(lClosure *c, lVal *v){
 		t = lEval(c,v);
 	}
 	lDisplayVal(t);
-	return t;
+	return NULL;
 }
 
 static lVal *lnfError(lClosure *c, lVal *v){
@@ -145,7 +145,7 @@ static lVal *lnfError(lClosure *c, lVal *v){
 		t = lEval(c,v);
 	}
 	lDisplayErrorVal(t);
-	return t;
+	return NULL;
 }
 
 static lVal *lnfReadFile(lClosure *c, lVal *v){
