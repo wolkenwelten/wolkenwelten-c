@@ -121,34 +121,6 @@ void lInit(){
 	strncpy(symFloatAt.c,"float@",15);
 	strncpy(symVecAt.c,"vec@",15);
 }
-/*
-static void lSymbolFree(uint i){
-	if((i == 0) || (i >= lSymbolMax)){return;}
-	lSymbol *v = &lSymbolList[i];
-	if(v->nextFree != 0){return;}
-	lSymbolActive--;
-	v->nextFree   = lSymbolFFree;
-	v->flags      = 0;
-	lSymbolFFree  = i;
-}
-
-static uint lSymbolAlloc(){
-	lVec *ret;
-	if(lSymbolFFree == 0){
-		if(lSymbolMax >= SYM_MAX-1){
-			lPrintError("lVec OOM\n");
-			return 0;
-		}
-		ret = &lSymbolList[lSymbolMax++];
-	}else{
-		ret = &lSymbolList[lSymbolFFree & SYM_MASK];
-		lVecFFree = ret->nextFree;
-	}
-	lVecActive++;
-	*ret = (lVec){0};
-	return ret - lVecList;
-}
-*/
 
 static void lVecFree(uint i){
 	if((i == 0) || (i >= lVecMax)){return;}
@@ -164,7 +136,7 @@ static uint lVecAlloc(){
 	lVec *ret;
 	if(lVecFFree == 0){
 		if(lVecMax >= VEC_MAX-1){
-			lPrintError("lVec OOM\n");
+			lPrintError("lVec OOM ");
 			return 0;
 		}
 		ret = &lVecList[lVecMax++];
@@ -193,7 +165,7 @@ static uint lNFuncAlloc(){
 	lNFunc *ret;
 	if(lNFuncFFree == 0){
 		if(lNFuncMax >= NFN_MAX-1){
-			lPrintError("lNFunc OOM\n");
+			lPrintError("lNFunc OOM ");
 			return 0;
 		}
 		ret = &lNFuncList[lNFuncMax++];
@@ -210,7 +182,7 @@ uint lClosureAlloc(){
 	lClosure *ret;
 	if(lClosureFFree == 0){
 		if(lClosureMax >= CLO_MAX-1){
-			lPrintError("lClosure OOM\n");
+			lPrintError("lClosure OOM ");
 			return 0;
 		}
 		ret = &lClosureList[lClosureMax++];
@@ -238,7 +210,7 @@ u32 lArrayAlloc(){
 	lArray *ret;
 	if(lArrayFFree == 0){
 		if(lArrayMax >= ARR_MAX-1){
-			lPrintError("lArray OOM\n");
+			lPrintError("lArray OOM ");
 			return 0;
 		}
 		ret = &lArrayList[lArrayMax++];
@@ -264,7 +236,7 @@ u32 lStringAlloc(){
 	lString *ret;
 	if(lStringFFree == 0){
 		if(lStringMax >= STR_MAX){
-			lPrintError("lString OOM\n");
+			lPrintError("lString OOM ");
 			return 0;
 		}
 		ret = &lStringList[lStringMax++];
@@ -336,7 +308,7 @@ lVal *lValAlloc(){
 	lVal *ret;
 	if(lValFFree == 0){
 		if(lValMax >= VAL_MAX-1){
-			lPrintError("lVal OOM\n");
+			lPrintError("lVal OOM ");
 			return NULL;
 		}
 		ret = &lValList[lValMax++];

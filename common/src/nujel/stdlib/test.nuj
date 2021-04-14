@@ -25,7 +25,7 @@
 		(def test-str (λ (result rawexpr) "Tests that RAWEXPR evaluates to RESULT"
 			(let ((expr (write-str (eval rawexpr))))
 				(cond ((eq? result expr) (test-success))
-					(#t (test-failure result expr @...expr))))))
+					(#t (test-failure result expr rawexpr))))))
 		(def test-run-iter (λ (list) "Recurses through LIST and runs eatch test"
 			(cond ((nil? list) #t)
 			      (#t ((if (string? (caar list)) test-str test) (caar list) (cdar list)) (test-run-iter (cdr list))))))
@@ -158,7 +158,6 @@
 (test-add -1 (ash -1 -1))
 (test-add -16 (lognand #b1111 #b1111))
 (test-add 6 (eval (read "(+ 1 2 3)")))
-(test-add "(1 2 3)" (1 2 3))
 (test-add "(vec 1.0 2.0 3.0)" (abs (vec -1 -2 -3)))
 (test-add "3.33333" (+ 1.11111 2.22222))
 (test-add "\"H#Hallo\"" (let ((a "Hallo, Welt#")) (cat (substr a 0 1) (substr a -1) (substr a 0 -7))))
@@ -270,3 +269,6 @@
 (test-add #t (pair? (symbol-table)))
 (test-add #t (equal? + add))
 (test-add #t (eq? min min))
+(test-add #t (let ((some-value #f)) (not some-value)))
+(test-add 4 (>> 8 1))
+(test-add 15 (1 + 2 * (3 + 4)))

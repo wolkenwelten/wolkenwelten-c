@@ -53,7 +53,7 @@ lVal *lnfArrRS(lClosure *c, lVal *v){
 
 lVal *lnfArrNew(lClosure *c, lVal *v){
 	if((c == NULL) || (v == NULL)){return NULL;}
-	lVal *t = lCarOrV(lCast(c,lEval(c, v),ltInt));
+	lVal *t = lnfInt(c,v);
 	if((t == NULL) || (t->type != ltInt)){return NULL;}
 	lVal *r = lValAlloc();
 	r->type = ltArray;

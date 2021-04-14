@@ -43,6 +43,9 @@
 (def -- (λ (i) "(- I 1)"
 	(- i 1)))
 
+(def >> (λ (val amount) "Shifts VAL by AMOUNT bits to the right"
+	(ash val (- amount))))
+
 (def length (λ (a) "Returns the length of a"
 	(cond ((string? a) (str-len a))
               ((pair? a) (list-length a))
@@ -98,10 +101,21 @@
 	(apply cat ...l)))
 
 (def int@ (λ (...l) "Int convenience function"
-	...l))
+	(apply infix ...l)))
 
 (def float@ (λ (...l) "Float convenience function"
-	...l))
+	(apply infix ...l)))
 
 (def vec@ (λ (...l) "Vec convenience function"
-	...l))
+	(apply infix ...l)))
+
+(def infix-operator-iter (λ (expr operation return)
+	(cond ((nil? expr) return)
+	      ((eq? (cadr expr) operation)
+		(infix-operator-iter (cdddr expr) operation
+			(cons (apply operation (list (car expr) (caddr expr))) return)))
+	      (#t (infix-operator-iter (cdr expr) operation (cons (car expr) return))))))
+(def infix-iter (λ (expr operators)
+	(if (nil? operators) expr (infix-iter (infix-operator-iter expr (car operators)) (cdr operators)))))
+(def infix (λ (expr) "Evaluates EXPR using infix notation"
+		(car (infix-iter expr '(/ * + - & ^ << >>)))))
