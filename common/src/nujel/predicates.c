@@ -35,6 +35,11 @@ static int lValCompare(lClosure *c, lVal *v){
 	switch(ct){
 	default:
 		return 2;
+	case ltLambda:
+	case ltNativeFunc:
+		if(a->type != b->type){return -1;}
+		if(b->vCdr != a->vCdr){return -1;}
+		return 0;
 	case ltInf:
 		if((a == NULL) || (b == NULL)){return  2;}
 		if((a->type == ltInf) && (b->type == ltInf)){return 0;}

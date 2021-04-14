@@ -20,7 +20,7 @@
 		(def test (λ (result rawexpr) "Tests that RAWEXPR evaluates to RESULT"
 			(let ((expr (eval rawexpr)))
 				(cond ((eq? result expr) (test-success))
-					(#t (test-failure result expr @...expr))))))
+					(#t (test-failure result expr rawexpr))))))
 		(def test-str (λ (result rawexpr) "Tests that RAWEXPR evaluates to RESULT"
 			(let ((expr (write-str (eval rawexpr))))
 				(cond ((eq? result expr) (test-success))
@@ -267,3 +267,5 @@
 (test-add #x22 (char-at "\"" 0))
 (test-add #t (> (symbol-count) 200)) ; Probably not gonna shrink over time
 (test-add #t (pair? (symbol-table)))
+(test-add #t (equal? + add))
+(test-add #t (eq? min min))
