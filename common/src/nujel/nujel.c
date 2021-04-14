@@ -69,7 +69,7 @@ uint    lSymbolMax    = 1;
 uint    lSymbolFFree  = 0;
 
 char dispWriteBuf[1<<16];
-lSymbol symQuote,symArr,symIf,symCond,symWhen,symUnless,symLet,symBegin;
+lSymbol symQuote,symArr,symIf,symCond,symWhen,symUnless,symLet,symBegin,symStringAt,symIntAt,symFloatAt,symVecAt;
 
 
 u64 randomValueSeed;
@@ -116,6 +116,10 @@ void lInit(){
 	strncpy(symUnless.c,"unless",15);
 	strncpy(symLet.c,"let",15);
 	strncpy(symBegin.c,"begin",15);
+	strncpy(symStringAt.c,"string@",15);
+	strncpy(symIntAt.c,"int@",15);
+	strncpy(symFloatAt.c,"float@",15);
+	strncpy(symVecAt.c,"vec@",15);
 }
 /*
 static void lSymbolFree(uint i){
@@ -956,7 +960,13 @@ lVal *lEval(lClosure *c, lVal *v){
 		case ltPair:
 			return lEval(c,ret);
 		case ltString:
-			return lnfCat(c,v);
+			return lEval(c,lCons(lValSymS(symStringAt),v));
+		case ltInt:
+			return lEval(c,lCons(lValSymS(symIntAt),v));
+		case ltFloat:
+			return lEval(c,lCons(lValSymS(symFloatAt),v));
+		case ltVec:
+			return lEval(c,lCons(lValSymS(symVecAt),v));
 		case ltArray:
 			return lnfArrRS(c,v);
 		}

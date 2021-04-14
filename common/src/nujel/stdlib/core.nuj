@@ -93,3 +93,15 @@
 
 (def lognand (λ (...l) "Returns the Nand of its arguments"
 	(lognot (apply logand ...l))))
+
+(def string@ (λ (...l) "String convenience function"
+	(apply cat ...l)))
+
+(def int@ (λ (...l) "Int convenience function"
+	...l))
+
+(def float@ (λ (...l) "Float convenience function"
+	...l))
+
+(def vec@ (λ (...l) "Vec convenience function"
+	...l))
