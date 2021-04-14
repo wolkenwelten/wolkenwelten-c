@@ -74,7 +74,7 @@
 
 (def arr-fill! (λ (a v i) "Fills array a with value v"
 	(cond ((>= i (arr-length a)) a)
-	      (#t (a (int i) v) (arr-fill! a v (++ i))))))
+	      (#t (arr-set! a (int i) v) (arr-fill! a v (++ i))))))
 
 (def min-iter (λ (a l) "Iter for (min)"
 	(cond ((nil? l) a)

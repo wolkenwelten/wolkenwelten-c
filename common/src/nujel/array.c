@@ -30,7 +30,23 @@ lVal *lnfArrLength(lClosure *c, lVal *v){
 	return lValInt(lArrLength(arr));
 }
 
-lVal *lnfArrRS(lClosure *c, lVal *v){
+lVal *lnfArrRef(lClosure *c, lVal *v){
+	if((c == NULL) || (v == NULL)){return NULL;}
+	lVal *arr = lEval(c,lCarOrV(v));
+	if((arr == NULL) || (arr->type != ltArray)){return NULL;}
+	v = v->vList.cdr;
+	if(v == NULL){return arr;}
+	lVal *t = lEval(c, lCarOrV(v));
+	if(t == NULL){return NULL;}
+	if((t->type != ltInt) && (t->type != ltFloat)){return NULL;}
+	const lVal *lkey = lnfInt(c,t);
+	if(lkey == NULL){return NULL;}
+	int key = lkey->vInt;
+	if((key < 0) || (key >= lArrLength(arr))){return NULL;}
+	return lArrData(arr)[key];
+}
+
+lVal *lnfArrSet(lClosure *c, lVal *v){
 	if((c == NULL) || (v == NULL)){return NULL;}
 	lVal *arr = lEval(c,lCarOrV(v));
 	if((arr == NULL) || (arr->type != ltArray)){return NULL;}
@@ -101,9 +117,9 @@ lVal *lnfArrPred(lClosure *c, lVal *v){
 
 void lAddArrayFuncs(lClosure *c){
 	lAddNativeFunc(c,"arr-length","(a)",        "Returns length of array a",                 lnfArrLength);
-	lAddNativeFunc(c,"arr-ref",   "(a i)",      "Returns value of array a at position i",    lnfArrRS);
-	lAddNativeFunc(c,"arr-set!",  "(a i &...v)","Sets array valus at position i to v",       lnfArrRS);
+	lAddNativeFunc(c,"arr-ref",   "(a i)",      "Returns value of array a at position i",    lnfArrRef);
+	lAddNativeFunc(c,"arr-set!",  "(a i &...v)","Sets array valus at position i to v",       lnfArrSet);
 	lAddNativeFunc(c,"arr-new",   "(l)",        "Allocates a new array of size l",           lnfArrNew);
 	lAddNativeFunc(c,"arr",       "(...args)",  "Creates a new array from its argument list",lnfArr);
-	lAddNativeFunc(c,"array? arr?","(val)",     "Return #t if VAL is an array",lnfArrPred);
+	lAddNativeFunc(c,"array? arr?","(val)",     "Return #t if VAL is an array",              lnfArrPred);
 }

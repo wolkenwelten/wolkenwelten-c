@@ -111,7 +111,7 @@
 (test-add 256 (int (pow 2 8)))
 (test-add #f (undefine! testerle))
 (test-add 3 (define ein-test-arr #(1 2 3)) (ein-test-arr 2))
-(test-add 9 (define ein-test-arr #(1 2 3)) (ein-test-arr 2 9) (ein-test-arr 2))
+(test-add 3 (define ein-test-arr #(1 2 3)) (ein-test-arr 2 9) (ein-test-arr 2))
 (test-add 123 (define i-assaultmegablaster 123) i-assaultmegablaster)
 (test-add #t (int? (random)))
 (test-add #t (random-seed 123) (define first-value (random)) (random-seed 123) (= first-value (random)))

@@ -15,4 +15,5 @@
 (def throw-collect  8)
 (def throw-burning 16)
 
-(event-bind "on-init" (λ () (log (ansi-blue "Let's test the Nujel Runtime")) (test-run)))
+(event-bind "on-init" (λ ()
+	(log (ansi-blue "Let's test the Nujel Runtime")) (test-run)))

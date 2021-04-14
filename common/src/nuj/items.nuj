@@ -33,7 +33,7 @@
 		(it-sprite-color (obj id) 3 (obj sprite-color-3))
 
 		(set! (obj sym) (obj id))
-		(items (- (obj id) 256) obj)))))
+		(arr-set! items (- (obj id) 256) obj)))))
 
 (def item-sync-all (λ (i) "Syncs all itemTypes with their respective ω"
 	(cond ((> i (arr-length items)) #t)

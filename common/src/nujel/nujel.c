@@ -940,7 +940,7 @@ lVal *lEval(lClosure *c, lVal *v){
 		case ltVec:
 			return lEval(c,lCons(lValSymS(symVecAt),v));
 		case ltArray:
-			return lnfArrRS(c,v);
+			return lnfArrRef(c,v);
 		}
 	}
 	return v;

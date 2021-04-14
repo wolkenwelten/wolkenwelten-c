@@ -13,7 +13,7 @@
 	(r-ingred (obj id) 2 (resolve (obj ingred-id-2)) (obj ingred-amt-2))
 	(r-ingred (obj id) 3 (resolve (obj ingred-id-3)) (obj ingred-amt-3))
 
-	(recipes (obj id) obj)))
+	(arr-set! recipes (obj id) obj)))
 
 (def recipe-sync-all (λ (i) "Syncs all Recipes with their respective ω"
 	(cond ((nil? (recipes (int i))) #t)
