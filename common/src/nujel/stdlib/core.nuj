@@ -109,13 +109,18 @@
 (def vec@ (λ (...l) "Vec convenience function"
 	(apply infix ...l)))
 
+(def infix-swap? (λ (operation)
+	(cond ((equal? / operation) #t)
+	      ((equal? << operation) #t)
+	      (#t #f))))
 (def infix-operator-iter (λ (expr operation return)
 	(cond ((nil? expr) return)
 	      ((eq? (cadr expr) operation)
 		(infix-operator-iter (cdddr expr) operation
-			(cons (apply operation (list (car expr) (caddr expr))) return)))
+			(let ((a (caddr expr)) (b (car expr)))
+			(cons (if (infix-swap? operation) (operation b a) (operation a b)) return))))
 	      (#t (infix-operator-iter (cdr expr) operation (cons (car expr) return))))))
 (def infix-iter (λ (expr operators)
 	(if (nil? operators) expr (infix-iter (infix-operator-iter expr (car operators)) (cdr operators)))))
 (def infix (λ (expr) "Evaluates EXPR using infix notation"
-		(car (infix-iter expr '(/ * + - & ^ << >>)))))
+		(car (infix-iter expr '(/ * + - & ^ << >> )))))

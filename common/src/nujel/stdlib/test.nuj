@@ -272,3 +272,7 @@
 (test-add #t (let ((some-value #f)) (not some-value)))
 (test-add 4 (>> 8 1))
 (test-add 15 (1 + 2 * (3 + 4)))
+(test-add 9 (10 - 1))
+(test-add 5 (10 / 2))
+(test-add 256 (1 << 8))
+(test-add 64 (512 >> 3))
