@@ -582,19 +582,19 @@ lVal *lnfFromCharCode(lClosure *c,lVal *v){
 }
 
 void lAddStringFuncs(lClosure *c){
-	lAddNativeFunc(c,"cat",           "(...args)",       "ConCATenates ...args into a single string",                                               lnfCat);
-	lAddNativeFunc(c,"trim",          "(s)",             "Trims s of any excessive whitespace",                                                     lnfTrim);
-	lAddNativeFunc(c,"str-len",       "(s)",             "Returns length of string s",                                                              lnfStrlen);
-	lAddNativeFunc(c,"str-up",        "(s)",             "Returns a copy of string s all uppercased",                                               lnfStrUp);
-	lAddNativeFunc(c,"str-down",      "(s)",             "Returns a copy of string s all lowercased",                                               lnfStrDown);
-	lAddNativeFunc(c,"str-capitalize","(s)",             "Returns a copy of string s capitalized",                                                  lnfStrCap);
-	lAddNativeFunc(c,"substr",        "(s &start &stop)","Returns a copy of string s starting at position &start=0 and ending at &stop=(str-len s)",lnfSubstr);
+	lAddNativeFunc(c,"cat",           "(...args)",       "ConCATenates ...ARGS into a single string",                                                     lnfCat);
+	lAddNativeFunc(c,"trim",          "(str)",           "Trims STR of any excessive whitespace",                                                         lnfTrim);
+	lAddNativeFunc(c,"str-len",       "(str)",           "Returns length of string STR",                                                                  lnfStrlen);
+	lAddNativeFunc(c,"str-up",        "(str)",           "Returns a copy of string STR all uppercased",                                                   lnfStrUp);
+	lAddNativeFunc(c,"str-down",      "(str)",           "Returns a copy of string STR all lowercased",                                                   lnfStrDown);
+	lAddNativeFunc(c,"str-capitalize","(str)",           "Returns a copy of string STR capitalized",                                                      lnfStrCap);
+	lAddNativeFunc(c,"substr",        "(str &start &stop)","Returns a copy of string STR starting at position &start=0 and ending at &stop=(str-len s)",  lnfSubstr);
 	lAddNativeFunc(c,"index-of",      "(haystack needle &start)","Returns the position of NEEDLE in HAYSTACK, searcing from &START=0, or -1 if not found",lnfIndexOf);
-	lAddNativeFunc(c,"char-at",       "(str pos)",       "Returns the character at position POS in String STR",lnfCharAt);
-	lAddNativeFunc(c,"from-char-code","(...codes)",      "Construct a string out of ...CODE codepoints and return it",lnfFromCharCode);
-	lAddNativeFunc(c,"str->sym",      "(s)",             "Converts string s to a symbol",                                                           lnfStrSym);
-	lAddNativeFunc(c,"sym->str",      "(s)",             "Converts symbol s to a string",                                                           lnfSymStr);
-	lAddNativeFunc(c,"write-str",     "(v)",             "Writes V into a string and returns it",                                                   lnfWriteStr);
+	lAddNativeFunc(c,"char-at",       "(str pos)",       "Returns the character at position POS in STR",                                                  lnfCharAt);
+	lAddNativeFunc(c,"from-char-code","(...codes)",      "Construct a string out of ...CODE codepoints and return it",                                    lnfFromCharCode);
+	lAddNativeFunc(c,"str->sym",      "(str)",           "Converts STR to a symbol",                                                                      lnfStrSym);
+	lAddNativeFunc(c,"sym->str",      "(sym)",           "Converts SYM to a string",                                                                      lnfSymStr);
+	lAddNativeFunc(c,"write-str",     "(val)",           "Writes V into a string and returns it",                                                         lnfWriteStr);
 
 	lAddNativeFunc(c,"ansi-reset","()",  "Ansi reset code",                 lnfAnsiRS);
 	lAddNativeFunc(c,"ansi-fg",   "(a)", "Returns Ansi fg color code for a",lnfAnsiFG);

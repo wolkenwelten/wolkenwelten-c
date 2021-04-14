@@ -1013,17 +1013,32 @@ lVal *lnfRead(lClosure *c, lVal *v){
 }
 
 void lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *doc, lVal *(*func)(lClosure *,lVal *)){
-	lSymbol S;
-	memset(S.c,0,sizeof(S.c));
-	snprintf(S.c,sizeof(S.c),"%s",sym);
+	lVal *lNF   = lValNativeFunc(func,lRead(args),lValString(doc)); // Generate the Value first so each symbol points to the same value
+	const char *cur = sym;
 
-	lVal *var = lDefineClosureSym(c - lClosureList,S);
-	if(var == NULL){
-		lPrintError("Error adding NFunc %s\n",sym);
-		return;
+	// Run at most 64 times, just a precaution
+	for(int i=0;i<64;i++){
+		lSymbol S;
+		int len;
+		for(len=0;len<15;len++){ // Find the end of the current token, either space or 0
+			if(cur[len] == 0)    {break;}
+			if(isspace(cur[len])){break;}
+		}
+		memset(S.c,0,sizeof(S.c));
+		memcpy(S.c,cur,len);
+		lVal *var = lDefineClosureSym(c - lClosureList,S);
+		if(var == NULL){
+			lPrintError("Error adding NFunc %s\n",sym);
+			return;
+		}
+		var->vList.car = lNF;
+		for(;len<32;len++){ // Advance to the next non whitespace character
+			if(cur[len] == 0)     {return;} // Or return if we reached the final 0 byte
+			if(!isspace(cur[len])){break;}
+		}
+		cur += len;
 	}
-	lVal *lArgs = lRead(args);
-	var->vList.car = lValNativeFunc(func,lArgs,lValString(doc));
+	lPrintError("Quite the amount of aliases we have there (%s)\n",sym);
 }
 
 static lVal *lnfTime(lClosure *c, lVal *v){
@@ -1096,12 +1111,9 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"match-sym",   "(s)",           "Returns all symbols partially matching s", lnfMatchClosureSym);
 	lAddNativeFunc(c,"mem",         "()",            "Returns memory usage data",                lnfMem);
 	lAddNativeFunc(c,"mem-count",   "()",            "Returns memory usage data by counting",    lnfMemCount);
-	lAddNativeFunc(c,"λ",           "(args ...body)","Creates a new lambda",                     lnfLambda);
-	lAddNativeFunc(c,"lambda",      "(args ...body)","New Lambda",                               lnfLambda);
-	lAddNativeFunc(c,"δ",           "(args ...body)","New Dynamic scoped lambda",                lnfDynamic);
-	lAddNativeFunc(c,"dynamic",     "(args ...body)","New Dynamic scoped lambda",                lnfDynamic);
-	lAddNativeFunc(c,"ω",           "(args ...body)","Creates a new object",                     lnfObject);
-	lAddNativeFunc(c,"object",      "(args ...body)","Creates a new object",                     lnfObject);
+	lAddNativeFunc(c,"lambda lam λ \\","(args ...body)","Creates a new lambda",                  lnfLambda);
+	lAddNativeFunc(c,"dynamic dyn δ",  "(args ...body)","New Dynamic scoped lambda",             lnfDynamic);
+	lAddNativeFunc(c,"object obj ω",   "(args ...body)","Creates a new object",                  lnfObject);
 	lAddNativeFunc(c,"self",        "()",            "Returns the closest object closure",       lnfSelf);
 	lAddNativeFunc(c,"cl",          "(i)",           "Returns closure",                          lnfCl);
 	lAddNativeFunc(c,"cl-lambda",   "(i)",           "Returns closure as a lambda",              lnfClLambda);
@@ -1113,14 +1125,13 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"if",  "(pred? then ...else)","Evalutes then if pred? is #t, otherwise evaluates ...else", lnfIf);
 	lAddNativeFunc(c,"cond","(...c)",              "Contains at least 1 cond block of form (pred? ...body) and evaluates and returns the first where pred? is #t",lnfCond);
 
-	lAddNativeFunc(c,"def",      "(sym val)",     "Define a new symbol SYM and link it to value VAL",                  lnfDef);
-	lAddNativeFunc(c,"define",   "(sym val)",     "Define a new symbol SYM and link it to value VAL",                  lnfDef);
-	lAddNativeFunc(c,"undefine!","(sym)",         "Removes symbol SYM from the first symbol-table it is found in",     lnfUndef);
-	lAddNativeFunc(c,"let",      "(args ...body)","Creates a new closure with args bound in which to evaluate ...body",lnfLet);
-	lAddNativeFunc(c,"begin",    "(...body)",     "Evaluates ...body in order and returns the last result",            lnfBegin);
-	lAddNativeFunc(c,"quote",    "(v)",           "Returns v as is without evaluating",                                lnfQuote);
-	lAddNativeFunc(c,"set!",     "(s v)",         "Binds a new value v to already defined symbol s",                   lnfSet);
-	lAddNativeFunc(c,"last-pair","(l)",           "Returns the last pair of list l",                                   lnfLastPair);
+	lAddNativeFunc(c,"define def","(sym val)",     "Define a new symbol SYM and link it to value VAL",                  lnfDef);
+	lAddNativeFunc(c,"undefine!", "(sym)",         "Removes symbol SYM from the first symbol-table it is found in",     lnfUndef);
+	lAddNativeFunc(c,"let",       "(args ...body)","Creates a new closure with args bound in which to evaluate ...body",lnfLet);
+	lAddNativeFunc(c,"begin",     "(...body)",     "Evaluates ...body in order and returns the last result",            lnfBegin);
+	lAddNativeFunc(c,"quote",     "(v)",           "Returns v as is without evaluating",                                lnfQuote);
+	lAddNativeFunc(c,"set!",      "(s v)",         "Binds a new value v to already defined symbol s",                   lnfSet);
+	lAddNativeFunc(c,"last-pair", "(l)",           "Returns the last pair of list l",                                   lnfLastPair);
 
 	lAddNativeFunc(c,"time",       "()",         "Returns unix time",lnfTime);
 	lAddNativeFunc(c,"strftime",   "(ts format)","Returns TS as a date using FORMAT (uses strftime)",lnfStrftime);

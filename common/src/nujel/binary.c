@@ -67,9 +67,9 @@ lVal *lnfAsh(lClosure *c, lVal *v){
 }
 
 void lAddBinaryFuncs(lClosure *c){
-	lAddNativeFunc(c,"logand","(...args)","And all the arguments together",lnfLogAnd);
-	lAddNativeFunc(c,"logior","(...args)","Or all the arguments together", lnfLogIor);
-	lAddNativeFunc(c,"logxor","(...args)","Xor all the arguments together",lnfLogXor);
-	lAddNativeFunc(c,"lognot","(a)",      "Binary not of A",               lnfLogNot);
-	lAddNativeFunc(c,"ash",   "(a b)",    "Shift A left bit B bits",       lnfAsh);
+	lAddNativeFunc(c,"logand &","(...args)","And all the arguments together",lnfLogAnd);
+	lAddNativeFunc(c,"logior |","(...args)","Or all the arguments together", lnfLogIor);
+	lAddNativeFunc(c,"logxor ^","(...args)","Xor all the arguments together",lnfLogXor);
+	lAddNativeFunc(c,"lognot ~","(a)",      "Binary not of A",               lnfLogNot);
+	lAddNativeFunc(c,"ash <<",  "(a b)",    "Shift A left bit B bits",       lnfAsh);
 }

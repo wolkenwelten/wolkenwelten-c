@@ -159,29 +159,21 @@ lVal *lnfNativeFuncPred(lClosure *c, lVal *v){
 }
 
 void lAddPredicateFuncs(lClosure *c){
-	lAddNativeFunc(c,"<",             "(a b)","#t if a < b", lnfLess);
-	lAddNativeFunc(c,"less?",         "(a b)","#t if a < b", lnfLess);
-	lAddNativeFunc(c,"<=",            "(a b)","#t if a <= b",lnfLessEqual);
-	lAddNativeFunc(c,"less-equal?",   "(a b)","#t if a <= b",lnfLessEqual);
-	lAddNativeFunc(c,"=",             "(a b)","#t if a == b",lnfEqual);
-	lAddNativeFunc(c,"eq?",           "(a b)","#t if a == b",lnfEqual);
-	lAddNativeFunc(c,"eqv?",          "(a b)","#t if a == b",lnfEqual);
-	lAddNativeFunc(c,"equal?",        "(a b)","#t if a == b",lnfEqual);
-	lAddNativeFunc(c,">=",            "(a b)","#t if a >= b",lnfGreaterEqual);
-	lAddNativeFunc(c,"greater-equal?","(a b)","#t if a >= b",lnfGreaterEqual);
-	lAddNativeFunc(c,">",             "(a b)","#t if a > b", lnfGreater);
-	lAddNativeFunc(c,"greater?",      "(a b)","#t if a > b", lnfGreater);
-	lAddNativeFunc(c,"zero?",         "(a)",  "#t if a is 0",lnfZero);
+	lAddNativeFunc(c,"less? <",           "(a b)","#t if A < B", lnfLess);
+	lAddNativeFunc(c,"less-equal? <=",    "(a b)","#t if A <= B",lnfLessEqual);
+	lAddNativeFunc(c,"equal? eqv? eq? =", "(a b)","#t if A == B",lnfEqual);
+	lAddNativeFunc(c,"greater-equal? >=", "(a b)","#t if A >= B",lnfGreaterEqual);
+	lAddNativeFunc(c,"greater? >",        "(a b)","#t if A > B", lnfGreater);
+	lAddNativeFunc(c,"zero? z?",          "(a)",  "#t if A == 0",lnfZero);
 
-	lAddNativeFunc(c,"int?",    "(a)","#t if a is of type int",   lnfIntPred);
-	lAddNativeFunc(c,"float?",  "(a)","#t if a is of type float", lnfFloatPred);
-	lAddNativeFunc(c,"vec?",    "(a)","#t if a is of type vec",   lnfVecPred);
-	lAddNativeFunc(c,"bool?",   "(a)","#t if a is of type bool",  lnfBoolPred);
-	lAddNativeFunc(c,"boolean?","(a)","#t if a is of type bool",  lnfBoolPred);
-	lAddNativeFunc(c,"nil?",    "(a)","#t if a is of type nil",   lnfNilPred);
-	lAddNativeFunc(c,"inf?",    "(a)","#t if a is of type inf",   lnfInfPred);
-	lAddNativeFunc(c,"pair?",   "(a)","#t if a is of type pair",  lnfPairPred);
-	lAddNativeFunc(c,"string?", "(a)","#t if a is of type string",lnfStringPred);
-	lAddNativeFunc(c,"lambda?","(a)","#t if a is of type lambda", lnfLambdaPred);
-	lAddNativeFunc(c,"native?","(a)","#t if a is of type cfn",    lnfNativeFuncPred);
+	lAddNativeFunc(c,"int?",              "(a)","#t if A an int",   lnfIntPred);
+	lAddNativeFunc(c,"float?",            "(a)","#t if A a float",  lnfFloatPred);
+	lAddNativeFunc(c,"vec?",              "(a)","#t if A a vec",    lnfVecPred);
+	lAddNativeFunc(c,"boolean? bool?",    "(a)","#t if A a bool",   lnfBoolPred);
+	lAddNativeFunc(c,"nil?",              "(a)","#t if A #nil",     lnfNilPred);
+	lAddNativeFunc(c,"inf?",              "(a)","#t if A an #inf",  lnfInfPred);
+	lAddNativeFunc(c,"pair?",             "(a)","#t if A a pair",   lnfPairPred);
+	lAddNativeFunc(c,"string?",           "(a)","#t if A a string", lnfStringPred);
+	lAddNativeFunc(c,"lambda?",           "(a)","#t if A a lambda", lnfLambdaPred);
+	lAddNativeFunc(c,"native?",           "(a)","#t if A a #cfn",   lnfNativeFuncPred);
 }

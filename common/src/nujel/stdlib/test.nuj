@@ -1,5 +1,5 @@
 (def test-list (cons (cons 1 1) #nil))
-(def test-add (λ (result @...expr) "Adds a testcase where @EXPR should evaluate to RESULT"
+(def test-add (λ (result @...expr) "Add a test where @...EXPR must eval to RESULT"
 	(set! test-list (cons (cons result (cons 'begin @...expr)) test-list))))
 
 (def test-run (λ () "Runs through all automated Tests"
