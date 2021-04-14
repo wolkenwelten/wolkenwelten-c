@@ -1,3 +1,4 @@
+(def test-context "Nujel")
 (def test-list (cons (cons 1 1) #nil))
 (def test-add (λ (result @...expr) "Add a test where @...EXPR must eval to RESULT"
 	(set! test-list (cons (cons result (cons 'begin @...expr)) test-list))))
@@ -11,7 +12,7 @@
 		(def display-errors (λ (i) "Displays all the failed Tests"
 			(map (λ (i) (when (pair? i) (error (cat (ansi-red "[Error] ") (ansi-red (caar i)) " != " (ansi-green (cdar i)) "\n" (write-str (cdr i)) "\n\n")))) test-errors)))
 		(def display-results (λ () "Prints the result Message"
-			(error ("[" (ansi-green success-count) " / " (ansi-red error-count) "] in "(- (msecs) nujel-start) "ms - " (if (zero? error-count) (ansi-rainbow "Everything is working, very nice!") (ansi-red "Better fix those!")) "\n")) (mem) (display-errors)))
+			(error (cat test-context " [" (ansi-green success-count) " / " (ansi-red error-count) "] in "(- (msecs) nujel-start) "ms - " (if (zero? error-count) (ansi-rainbow "Everything is working, very nice!") (ansi-red "Better fix those!")) "\n")) (mem) (display-errors)))
 		(def test-success (λ () "Should be called after a test has finished successfully"
 			(set! success-count (++ success-count))))
 		(def test-failure (λ (res-should res-is expr) "Should be called if EXPR does not equal RES"

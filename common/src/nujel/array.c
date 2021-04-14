@@ -92,10 +92,18 @@ lVal *lnfArr(lClosure *c, lVal *v){
 	return r;
 }
 
+lVal *lnfArrPred(lClosure *c, lVal *v){
+	if((c == NULL) || (v == NULL)){return lValBool(false);}
+	lVal *arr = lEval(c,lCarOrV(v));
+	if((arr == NULL) || (arr->type != ltArray)){return lValBool(false);}
+	return lValBool(true);
+}
+
 void lAddArrayFuncs(lClosure *c){
 	lAddNativeFunc(c,"arr-length","(a)",        "Returns length of array a",                 lnfArrLength);
 	lAddNativeFunc(c,"arr-ref",   "(a i)",      "Returns value of array a at position i",    lnfArrRS);
 	lAddNativeFunc(c,"arr-set!",  "(a i &...v)","Sets array valus at position i to v",       lnfArrRS);
 	lAddNativeFunc(c,"arr-new",   "(l)",        "Allocates a new array of size l",           lnfArrNew);
 	lAddNativeFunc(c,"arr",       "(...args)",  "Creates a new array from its argument list",lnfArr);
+	lAddNativeFunc(c,"array? arr?","(val)",     "Return #t if VAL is an array",lnfArrPred);
 }

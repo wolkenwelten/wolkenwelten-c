@@ -78,3 +78,6 @@
 
 (input-keydown key-print (λ (code) (screenshot)))
 (def log-keydown (λ () "Overwrites all keydown handler so they print their respective keycode" (arr-fill! input-keydown (λ (code) (say ("KeyCode: " code))))))
+
+(test-add #t (int? key-1))
+(test-add #t (array? input-keydown))

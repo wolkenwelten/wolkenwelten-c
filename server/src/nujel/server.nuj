@@ -1,6 +1,9 @@
 (def client? #f)
 (def server? #t)
 
+(def test-context "WolkenWelten Server")
+(test-add #t (and (not client?) server?))
+
 (def error (λ (...args) "Prints its arguments into the LISP console and might alert the user"
 	(say (apply cat ...args))))
 
@@ -42,16 +45,16 @@
 (def player-z (δ () "Returns the current players Z Position"
 	(vz (player-pos))))
 
-(def vx+      (λ (v a) "Returns the sum of vector v and (vec a 0 0)"
+(def vx+ (λ (v a) "Returns the sum of vector v and (vec a 0 0)"
 	(+ v (vec a 0 0))))
 
-(def vy+      (λ (v a) "Returns the sum of vector v and (vec 0 a 0)"
+(def vy+ (λ (v a) "Returns the sum of vector v and (vec 0 a 0)"
 	(+ v (vec 0 a 0))))
 
-(def vz+      (λ (v a) "Returns the sum of vector v and (vec 0 0 a)"
+(def vz+ (λ (v a) "Returns the sum of vector v and (vec 0 0 a)"
 	(+ v (vec 0 0 a))))
 
-(def rain     (λ () "Make it Rain!"
+(def rain (λ () "Make it Rain!"
 	(cloud-density 0.9)))
 
 (def cloud-density (λ (a) "Sets the new Goal Density to a which should be a float in the range 0.0 - 1.0."

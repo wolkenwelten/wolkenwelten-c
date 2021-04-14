@@ -97,10 +97,15 @@ lVal *lnfVec(lClosure *c, lVal *v){
 lVal *lnfBool(lClosure *c, lVal *v){
 	lVal *a = lEval(c,v);
 	if(a == NULL)            {return lValBool(false);}
+	if(a->type == ltSymbol)  {a = lResolveSym(c - lClosureList,a);}
+	if(a->type == ltBool)    {return a;}
 	if(a->type == ltPair)    {a = a->vList.car;}
 	if(a == NULL)            {return lValBool(false);}
+	if(a->type == ltSymbol)  {a = lResolveSym(c - lClosureList,a);}
+	if(a->type == ltBool)    {return a;}
 	if(a->type == ltPair)    {a = lEval(c,a);}
 	if(a == NULL)            {return lValBool(false);}
+	if(a->type == ltSymbol)  {a = lResolveSym(c - lClosureList,a);}
 	if(a->type == ltBool)    {return a;}
 	if(a->type == ltInt)     {return lValBool(a->vInt != 0);}
 	return lValBool(true);

@@ -1,5 +1,9 @@
+(def test-context "WolkenWelten Client")
 (def client? #t)
 (def server? #f)
+
+(test-add #t (string? OS))
+(test-add #t (and (not server?) client?))
 
 (def error (λ (...args) "Prints its arguments into the LISP console and might alert the user"
 	(console-print ("  " (apply cat ...args)))))
@@ -55,5 +59,5 @@
 	      (#t (countdown 5) (chiseltime (-- i))))))
 
 
-(event-bind "on-spawn" (λ () "" (say (ansi-yellow "Better luck next time!"))))
-(event-bind "on-join" (λ () "" (say (ansi-green "Welcome!"))))
+(event-bind "on-spawn" (λ () (say (ansi-yellow "Better luck next time!"))))
+(event-bind "on-join" (λ () (say (ansi-green "Welcome!"))))

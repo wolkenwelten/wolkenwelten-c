@@ -12,3 +12,5 @@
 	(set! repl-prompt (λ (i) "Displays the REPL prompt"
 		(set! repl-count (++ repl-count))
 		(display (cat "[" repl-count "]" (ansi-fg 1) "λ" (ansi-fg 12) ">" (ansi-reset) " ")))))
+
+(def test-context "Nujel Standalone")
