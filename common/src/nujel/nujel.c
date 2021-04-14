@@ -994,7 +994,7 @@ void lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *
 		int len;
 		for(len=0;len<15;len++){ // Find the end of the current token, either space or 0
 			if(cur[len] == 0)    {break;}
-			if(isspace(cur[len])){break;}
+			if(isspace((u8)cur[len])){break;}
 		}
 		memset(S.c,0,sizeof(S.c));
 		memcpy(S.c,cur,len);
@@ -1006,7 +1006,7 @@ void lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *
 		var->vList.car = lNF;
 		for(;len<32;len++){ // Advance to the next non whitespace character
 			if(cur[len] == 0)     {return;} // Or return if we reached the final 0 byte
-			if(!isspace(cur[len])){break;}
+			if(!isspace((u8)cur[len])){break;}
 		}
 		cur += len;
 	}
