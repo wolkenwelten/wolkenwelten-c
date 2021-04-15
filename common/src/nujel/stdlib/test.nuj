@@ -203,7 +203,7 @@
 (test-add "\"11.0\"" (cat 1 1.0))
 (test-add "(vec 9.0 9.0 9.0)" (div (vec 99) (cat 1 1.0)))
 (test-add "#(99 12 3 4)" (let ((cur-arr #(1 2 3 4))) (arr-set! cur-arr 0 99 12) cur-arr))
-(test-add "#(42 42)" (arr-fill! (arr-new 2) 42))
+(test-add "#(42 42 42 42 42 42)" (arr-fill! (arr-new 6) 42))
 (test-add "#nil" (apply #nil))
 (test-add "(vec 1.0 3.0 9.0)" (define vs (lambda (a) (vec (vz a) (vy a) (vx a)))) (vs (vec 9 3.0 "1")))
 (test-add "3" (define fib (lambda (a) (cond ((zero? a) 0) ((= a 1) 1) (#t (+ (fib (- a 1)) (fib (- a 2))))))) (fib 4))

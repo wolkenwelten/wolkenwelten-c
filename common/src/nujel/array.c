@@ -24,34 +24,30 @@
 #include <string.h>
 
 lVal *lnfArrLength(lClosure *c, lVal *v){
-	if((c == NULL) || (v == NULL)){return NULL;}
 	lVal *arr = lEval(c,lCarOrV(v));
-	if((arr == NULL) || (arr->type != ltArray)){return NULL;}
+	if((arr == NULL) || (arr->type != ltArray)){return lValInt(0);}
 	return lValInt(lArrLength(arr));
 }
 
 lVal *lnfArrRef(lClosure *c, lVal *v){
-	if((c == NULL) || (v == NULL)){return NULL;}
 	lVal *arr = lEval(c,lCarOrV(v));
-	if((arr == NULL) || (arr->type != ltArray)){return NULL;}
+	if((arr == NULL) || (arr->type != ltArray) || (v == NULL)){return NULL;}
 	v = v->vList.cdr;
-	if(v == NULL){return arr;}
 	lVal *t = lEval(c, lCarOrV(v));
-	if(t == NULL){return NULL;}
+	if(t == NULL){return arr;}
 	if((t->type != ltInt) && (t->type != ltFloat)){return NULL;}
 	const lVal *lkey = lnfInt(c,t);
 	if(lkey == NULL){return NULL;}
-	int key = lkey->vInt;
+	const int key = lkey->vInt;
 	if((key < 0) || (key >= lArrLength(arr))){return NULL;}
-	return lArrData(arr)[key];
+	const int val = lArrData(arr)[key];
+	return lValD(val);
 }
 
 lVal *lnfArrSet(lClosure *c, lVal *v){
-	if((c == NULL) || (v == NULL)){return NULL;}
 	lVal *arr = lEval(c,lCarOrV(v));
-	if((arr == NULL) || (arr->type != ltArray)){return NULL;}
+	if((arr == NULL) || (arr->type != ltArray) || (v == NULL)){return NULL;}
 	v = v->vList.cdr;
-	if(v == NULL){return arr;}
 	lVal *t = lEval(c, lCarOrV(v));
 	if(t == NULL){return NULL;}
 	if((t->type != ltInt) && (t->type != ltFloat)){return NULL;}
@@ -61,26 +57,27 @@ lVal *lnfArrSet(lClosure *c, lVal *v){
 	if((key < 0) || (key >= lArrLength(arr))){return NULL;}
 	v = v->vList.cdr;
 	forEach(cur,v){
-		lArrData(arr)[key++] = lEval(c,lCarOrV(cur));
+		lVal *cv = lEval(c,lCarOrV(cur));
+		lArrData(arr)[key++] = cv == NULL ? 0 : cv - lValList;
 		if(key >= lArrLength(arr)){return NULL;}
 	}
-	return lArrData(arr)[key];
+	int val = lArrData(arr)[key];
+	return lValD(val);
 }
 
 lVal *lnfArrNew(lClosure *c, lVal *v){
-	if((c == NULL) || (v == NULL)){return NULL;}
 	lVal *t = lnfInt(c,v);
 	if((t == NULL) || (t->type != ltInt)){return NULL;}
 	lVal *r = lValAlloc();
 	r->type = ltArray;
 	r->vCdr = lArrayAlloc();
 	lArrLength(r) = t->vInt;
-	lArrData(r) = malloc(t->vInt * sizeof(lVal *));
+	lArrData(r) = malloc(t->vInt * sizeof(*lArrData(r)));
 	if(lArrData(r) == NULL){
 		lArrLength(r) = 0;
 		return NULL;
 	}
-	memset(lArrData(r),0,lArrLength(r) * sizeof(lVal *));
+	memset(lArrData(r),0,lArrLength(r) * sizeof(*lArrData(r)));
 	return r;
 }
 
@@ -94,22 +91,21 @@ lVal *lnfArr(lClosure *c, lVal *v){
 	if(r->vCdr == 0){return NULL;}
 	lArray *arr = &lArr(r);
 	arr->length = length;
-	arr->data = malloc(length * sizeof(lVal *));
+	arr->data = malloc(length * sizeof(*arr->data));
 	if(arr->data == NULL){
 		arr->length = 0;
 		lValFree(r);
 		return NULL;
 	}
-	memset(lArrData(r),0,lArrLength(r) * sizeof(lVal *));
+	memset(lArrData(r),0,lArrLength(r) * sizeof(*arr->data));
 	int key = 0;
 	forEach(cur,vals){
-		lArrData(r)[key++] = cur->vList.car;
+		lArrData(r)[key++] = cur->vList.car == NULL ? 0 : cur->vList.car - lValList;
 	}
 	return r;
 }
 
 lVal *lnfArrPred(lClosure *c, lVal *v){
-	if((c == NULL) || (v == NULL)){return lValBool(false);}
 	lVal *arr = lEval(c,lCarOrV(v));
 	if((arr == NULL) || (arr->type != ltArray)){return lValBool(false);}
 	return lValBool(true);

@@ -30,10 +30,10 @@ typedef struct {
 } lVec;
 
 struct lArray {
-	lVal **data;
-	int length;
-	u8 flags;
-	u32 nextFree;
+	u32 *data;
+	i32 length;
+	u16 flags;
+	u16 nextFree;
 };
 
 struct lNFunc {
@@ -184,6 +184,8 @@ lVal *getLArgS(lClosure *c, lVal *v, const char **res);
 #define lCloParent(i) lClosureList[i & CLO_MASK].parent
 #define lCloData(i) lClosureList[i & CLO_MASK].data
 #define lCloText(i) lClosureList[i & CLO_MASK].text
+
+#define lValD(i) (i == 0 ? NULL : &lValList[i & VAL_MASK])
 
 #define lNFN(i) lNFuncList[i & NFN_MASK]
 

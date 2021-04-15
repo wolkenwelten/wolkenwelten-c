@@ -235,7 +235,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 		if(lArrData(v) != NULL){
 			const int arrLen = lArrLength(v);
 			for(int i=0;i<arrLen;i++){
-				cur = lSWriteVal(lArrData(v)[i],cur,bufEnd,indentLevel,display);
+				cur = lSWriteVal(lValD(lArrData(v)[i]),cur,bufEnd,indentLevel,display);
 				if(i < (lArrLength(v)-1)){*cur++ = ' ';}
 			}
 		}

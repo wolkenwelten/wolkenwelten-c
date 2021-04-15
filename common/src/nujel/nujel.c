@@ -932,15 +932,15 @@ lVal *lEval(lClosure *c, lVal *v){
 		case ltPair:
 			return lEval(c,ret);
 		case ltString:
-			return lEval(c,lCons(lValSymS(symStringAt),v));
+			return v->vList.cdr == NULL ? ret : lEval(c,lCons(lValSymS(symStringAt),v));
 		case ltInt:
-			return lEval(c,lCons(lValSymS(symIntAt),v));
+			return v->vList.cdr == NULL ? ret : lEval(c,lCons(lValSymS(symIntAt),v));
 		case ltFloat:
-			return lEval(c,lCons(lValSymS(symFloatAt),v));
+			return v->vList.cdr == NULL ? ret : lEval(c,lCons(lValSymS(symFloatAt),v));
 		case ltVec:
-			return lEval(c,lCons(lValSymS(symVecAt),v));
+			return v->vList.cdr == NULL ? ret : lEval(c,lCons(lValSymS(symVecAt),v));
 		case ltArray:
-			return lnfArrRef(c,v);
+			return v->vList.cdr == NULL ? ret : lnfArrRef(c,v);
 		}
 	}
 	return v;
@@ -1233,7 +1233,8 @@ static void lArrayGCMark(lArray *v){
 	if((v == NULL) || (v->nextFree != 0)){return;}
 	v->flags |= lfMarked;
 	for(int i=0;i<v->length;i++){
-		lValGCMark(v->data[i]);
+		if(v->data[i] == 0){continue;}
+		lValGCMark(lValD(v->data[i]));
 	}
 }
 
@@ -1324,7 +1325,7 @@ static void lClosureDoGC(){
 void lClosureGC(){
 	static int calls = 0;
 
-	int thresh = (VAL_MAX - (int)lValActive)-4096;
+	int thresh = (VAL_MAX - (int)lValActive) - (VAL_MAX / 4096);
 	thresh = MIN(thresh,((CLO_MAX - (int)lClosureActive)-128)*4);
 	thresh = MIN(thresh,((ARR_MAX - (int)lArrayActive)-64)*8);
 	thresh = MIN(thresh,((STR_MAX - (int)lStringActive)-64)*8);
