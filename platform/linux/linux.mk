@@ -38,11 +38,15 @@ $(LIN_REL)/README: common/README
 $(LIN_REL)/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 $(LIN_REL)/wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
 $(LIN_REL)/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
-$(LIN_REL)/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
-$(LIN_REL)/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
+$(LIN_REL)/wolkenwelten: client/src/tmp/gfxAssets.c  client/src/tmp/gfxAssets.h
+$(LIN_REL)/wolkenwelten: client/src/tmp/sfxAssets.c  client/src/tmp/sfxAssets.h
+$(LIN_REL)/wolkenwelten: client/src/tmp/shdAssets.c  client/src/tmp/shdAssets.h
+$(LIN_REL)/wolkenwelten: client/src/tmp/txtAssets.c  client/src/tmp/txtAssets.h
+$(LIN_REL)/wolkenwelten: client/src/tmp/nujAssets.c  client/src/tmp/nujAssets.h
+$(LIN_REL)/wolkenwelten: client/src/tmp/meshAssets.c client/src/tmp/meshAssets.h
 $(LIN_REL)/wolkenwelten: client/src/tmp/objs.c client/src/tmp/objs.h
 $(LIN_REL)/wolkenwelten: client/src/tmp/sfx.c client/src/tmp/sfx.h
-$(LIN_REL)/wolkenwelten: common/src/tmp/cto.c common/src/tmp/cto.h
+$(LIN_REL)/wolkenwelten: common/src/tmp/cto.c
 $(LIN_REL)/wolkenwelten: $(ASM_OBJS)
 $(LIN_REL)/wolkenwelten: | $(LIN_REL)
 	gcc $(CLIENT_SRCS) $(ASM_OBJS) -o $@ $(RELEASE_OPTIMIZATION) $(LDFLAGS) $(CSTD) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
@@ -53,7 +57,7 @@ $(LIN_REL)/wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
 $(LIN_REL)/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
 $(LIN_REL)/wolkenwelten-server: server/src/tmp/sfx.c server/src/tmp/sfx.h
 $(LIN_REL)/wolkenwelten-server: server/src/tmp/objs.c server/src/tmp/objs.h
-$(LIN_REL)/wolkenwelten-server: common/src/tmp/cto.c common/src/tmp/cto.h
+$(LIN_REL)/wolkenwelten-server: common/src/tmp/cto.c
 $(LIN_REL)/wolkenwelten-server: $(ASM_OBJS)
 $(LIN_REL)/wolkenwelten-server: | $(LIN_REL)
 	musl-gcc -static $(SERVER_SRCS) $(ASM_OBJS) -o $@ $(RELEASE_OPTIMIZATION) $(LDFLAGS) $(CSTD) $(CINCLUDES)

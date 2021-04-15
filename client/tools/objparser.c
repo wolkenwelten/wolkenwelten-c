@@ -160,9 +160,9 @@ int main(int argc,char *argv[]){
 		fprintf(stderr,"Usage: ./objparser file.obj...\n");
 		return 1;
 	}
-	cfp = fopen("client/src/tmp/meshassets.c","w");
-	fprintf(cfp,"#include \"meshassets.h\"\n\n");
-	hfp = fopen("client/src/tmp/meshassets.h","w");
+	cfp = fopen("client/src/tmp/meshAssets.c","w");
+	fprintf(cfp,"#include \"meshAssets.h\"\n\n");
+	hfp = fopen("client/src/tmp/meshAssets.h","w");
 	fprintf(hfp,"#pragma once\n");
 	fprintf(hfp,"#include \"../gfx/mesh.h\"\n\n");
 	for(i=1;i<argc;i++){

@@ -10,9 +10,11 @@ RAW_SFX          := $(shell find client/sfx -type f -name '*.aif')
 SFX_ASSETS       := ${RAW_SFX:.aif=.ogg}
 SHD_ASSETS       := $(shell find client/src/shader -type f -name '*.glsl')
 TXT_ASSETS       := $(shell find client/txt -type f -name '*')
-CLIENT_ASSETS    := $(GFX_ASSETS) $(SFX_ASSETS) $(SHD_ASSETS) $(TXT_ASSETS) client/src/tmp/client.nuj
 MESHASSETS       := $(shell find client/mesh -type f -name '*')
 CLIENT_NUJ       := $(shell find client/src/nujel/ -type f -name '*.nuj' | sort)
+CLIENT_NUJ_ASSETS := client/src/tmp/client.nuj
+CLIENT_TMP_SRCS  := client/src/tmp/gfxAssets.c client/src/tmp/sfxAssets.c client/src/tmp/shdAssets.c client/src/tmp/txtAssets.c client/src/tmp/nujAssets.c client/src/tmp/meshAssets.c
+CLIENT_TMP_OBJS  := ${CLIENT_TMP_SRCS:.c=.o}
 
 CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
 CLIENT_SRCS      := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
@@ -23,23 +25,8 @@ WINDOW_WIDTH     := 960
 WINDOW_HEIGHT    := 524
 TESTNR           := 1
 
-client/src/menu/singleplayer.o: common/src/tmp/cto.h
-client/src/menu/mainmenu.o:     common/src/tmp/cto.h
-client/src/menu/multiplayer.o:  common/src/tmp/cto.h
-client/src/menu/options.o:      common/src/tmp/cto.h
-client/src/misc/options.o:      common/src/tmp/cto.h
-client/src/gui/menu.o:          common/src/tmp/cto.h
-client/src/gui/gui.o:           common/src/tmp/cto.h
-client/src/gfx/gfx.o:           common/src/tmp/assets.h
-client/src/gfx/sky.o:           common/src/tmp/assets.h
-client/src/gfx/shadow.o:        common/src/tmp/assets.h
-client/src/gfx/textMesh.o:      common/src/tmp/assets.h
-client/src/gfx/particle.o:      common/src/tmp/assets.h
-client/src/gfx/mesh.o:          common/src/tmp/assets.h
-client/src/gfx/shader.o:        common/src/tmp/assets.h
-client/src/gfx/texture.o:       common/src/tmp/assets.h
 client/src/game/animal.o:       client/src/tmp/objs.h
-client/src/game/blockMining.o:  client/src/tmp/assets.h
+client/src/main.o:              common/src/tmp/cto.o
 client/src/main.o:              client/src/tmp/sfx.h
 client/src/game/character.o:    client/src/tmp/sfx.h
 client/src/gfx/effects.o:       client/src/tmp/sfx.h
@@ -56,10 +43,10 @@ $(CLIENT_OBJS): CFLAGS += $(CLIENT_CFLAGS)
 wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
 wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
 wolkenwelten: LIBS      += $(CLIENT_LIBS)
-wolkenwelten: client/client.d $(CLIENT_OBJS) $(ASM_OBJS)
-	$(LD) $(CLIENT_OBJS) $(ASM_OBJS) -g -o wolkenwelten $(OPTIMIZATION) $(LDFLAGS) $(LIBS) $(CSTD)
+wolkenwelten: $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS)
+	$(LD) $^ -g -o wolkenwelten $(OPTIMIZATION) $(LDFLAGS) $(LIBS) $(CSTD)
 
-$(CLIENT_DEPS): | client/src/tmp/client.nuj client/src/tmp/assets.h client/src/tmp/meshassets.h common/src/tmp/cto.h client/src/tmp/objs.h client/src/tmp/sfx.h
+$(CLIENT_DEPS): | client/src/tmp/client.nuj
 .deps: client/client.d
 client/client.d: $(CLIENT_DEPS)
 	cat $(CLIENT_DEPS) > client/client.d
@@ -75,16 +62,40 @@ endif
 %.ogg: %.aif
 	$(FFMPEG) -hide_banner -v panic -i $< -ac 1 -ar 22050 -acodec libvorbis $@
 
-client/src/tmp/assets.c: $(ASSET) $(CLIENT_ASSETS)
+client/src/tmp/gfxAssets.c: $(ASSET) $(GFX_ASSETS)
 	@mkdir -p client/src/tmp/
-	./$(ASSET) client/src/tmp/assets $(CLIENT_ASSETS)
-client/src/tmp/assets.h: client/src/tmp/assets.c
+	./$(ASSET) client/src/tmp/gfxAssets $(GFX_ASSETS)
+client/src/tmp/gfxAssets.h: client/src/tmp/gfxAssets.c
 	@true
 
-client/src/tmp/meshassets.c: client/tools/objparser $(MESHASSETS)
+client/src/tmp/sfxAssets.c: $(ASSET) $(SFX_ASSETS)
+	@mkdir -p client/src/tmp/
+	./$(ASSET) client/src/tmp/sfxAssets $(SFX_ASSETS)
+client/src/tmp/sfxAssets.h: client/src/tmp/sfxAssets.c
+	@true
+
+client/src/tmp/shdAssets.c: $(ASSET) $(SHD_ASSETS)
+	@mkdir -p client/src/tmp/
+	./$(ASSET) client/src/tmp/shdAssets $(SHD_ASSETS)
+client/src/tmp/shdAssets.h: client/src/tmp/shdAssets.c
+	@true
+
+client/src/tmp/txtAssets.c: $(ASSET) $(TXT_ASSETS)
+	@mkdir -p client/src/tmp/
+	./$(ASSET) client/src/tmp/txtAssets $(TXT_ASSETS)
+client/src/tmp/txtAssets.h: client/src/tmp/txtAssets.c
+	@true
+
+client/src/tmp/nujAssets.c: $(ASSET) $(CLIENT_NUJ_ASSETS)
+	@mkdir -p client/src/tmp/
+	./$(ASSET) client/src/tmp/nujAssets $(CLIENT_NUJ_ASSETS)
+client/src/tmp/nujAssets.h: client/src/tmp/nujAssets.c
+	@true
+
+client/src/tmp/meshAssets.c: client/tools/objparser $(MESHASSETS)
 	@mkdir -p client/src/tmp/
 	client/tools/objparser $(MESHASSETS)
-client/src/tmp/meshassets.h: client/src/tmp/meshassets.c
+client/src/tmp/meshAssets.h: client/src/tmp/meshAssets.c
 	@true
 
 client/tools/objparser: client/tools/objparser.c

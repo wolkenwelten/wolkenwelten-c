@@ -18,10 +18,11 @@ $(SERVER_OBJS): CINCLUDES += $(SERVER_CINCLUDES)
 wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
 wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
 wolkenwelten-server: LIBS      += $(SERVER_LIBS)
-wolkenwelten-server: server/server.d $(SERVER_OBJS) $(ASM_OBJS)
-	$(LD) $(SERVER_OBJS) $(ASM_OBJS) -g -o wolkenwelten-server $(OPTIMIZATION) $(LDFLAGS) $(CINCLUDES) $(LIBS)
+wolkenwelten-server: $(SERVER_OBJS) $(ASM_OBJS) common/src/tmp/cto.o server/src/tmp/assets.o
+	$(LD) $^ -g -o wolkenwelten-server $(OPTIMIZATION) $(LDFLAGS) $(CINCLUDES) $(LIBS)
 
-$(SERVER_DEPS): | common/src/tmp/cto.h server/src/tmp/objs.h server/src/tmp/sfx.h server/src/tmp/assets.h
+
+$(SERVER_DEPS): | server/src/tmp/objs.h server/src/tmp/sfx.h
 .deps: server/server.d
 server/server.d: $(SERVER_DEPS)
 	cat $(SERVER_DEPS) > server/server.d
@@ -29,10 +30,6 @@ server/server.d: $(SERVER_DEPS)
 ifneq ($(MAKECMDGOALS),clean)
 -include server/server.d
 endif
-
-server/src/main.c: common/src/tmp/cto.h
-server/src/misc/options.c: common/src/tmp/cto.h
-server/src/misc/lisp.c: common/src/tmp/assets.h
 
 server/src/tmp/server.nuj: $(SERVER_NUJ)
 	@mkdir -p server/src/tmp

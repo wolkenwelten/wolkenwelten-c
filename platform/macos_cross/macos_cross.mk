@@ -21,11 +21,15 @@ $(OSX_APP)/Contents/MacOS/wolkenwelten: LIBS      += $(OSX_CLIENT_LIBS)
 $(OSX_APP)/Contents/MacOS/wolkenwelten: CFLAGS    += $(OSX_CLIENT_CFLAGS)
 $(OSX_APP)/Contents/MacOS/wolkenwelten: CINCLUDES += $(OSX_CLIENT_CINCLUDES)
 $(OSX_APP)/Contents/MacOS/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
-$(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/assets.c client/src/tmp/assets.h
-$(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
+$(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/gfxAssets.c client/src/tmp/gfxAssets.h
+$(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/sfxAssets.c client/src/tmp/sfxAssets.h
+$(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/shdAssets.c client/src/tmp/shdAssets.h
+$(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/txtAssets.c client/src/tmp/txtAssets.h
+$(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/nujAssets.c client/src/tmp/nujAssets.h
+$(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/meshAssets.c client/src/tmp/meshAssets.h
 $(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/objs.c client/src/tmp/objs.h
 $(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/sfx.c client/src/tmp/sfx.h
-$(OSX_APP)/Contents/MacOS/wolkenwelten: common/src/tmp/cto.c common/src/tmp/cto.h
+$(OSX_APP)/Contents/MacOS/wolkenwelten: common/src/tmp/cto.c
 	mkdir -p $(OSX_APP)/Contents/MacOS
 	o64-clang $(CLIENT_SRCS)  -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WARNINGS) $(LIBS)
 	x86_64-apple-darwin16-strip -SxX $@
@@ -38,7 +42,7 @@ $(OSX_APP)/Contents/MacOS/wolkenwelten-server: LIBS      += $(SERVER_LIBS)
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: server/src/tmp/sfx.c server/src/tmp/sfx.h
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: server/src/tmp/objs.c server/src/tmp/objs.h
-$(OSX_APP)/Contents/MacOS/wolkenwelten-server: common/src/tmp/cto.c common/src/tmp/cto.h
+$(OSX_APP)/Contents/MacOS/wolkenwelten-server: common/src/tmp/cto.c
 	mkdir -p $(OSX_APP)/Contents/MacOS
 	o64-clang $(SERVER_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WARNINGS) $(LIBS)
 	x86_64-apple-darwin16-strip -SxX $@

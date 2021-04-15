@@ -22,13 +22,15 @@
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
-#include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
 
 #include <math.h>
 #include "../gfx/gl.h"
 
 mesh *meshShadow = NULL;
+
+extern        size_t gfx_shadow_png_len;
+extern unsigned char gfx_shadow_png_data[];
 
 void shadowInit(){
 	meshShadow = meshNew(NULL);

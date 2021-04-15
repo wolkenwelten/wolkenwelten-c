@@ -14,18 +14,22 @@ release.wasm: releases/wasm/server.js
 release.wasm: releases/wasm/manifest.json
 
 releases/wasm/wolkenwelten.html: $(CLIENT_SRCS) $(CLIENT_HDRS) client/src/network/client_wasm.h
-releases/wasm/wolkenwelten.html: client/src/tmp/assets.c client/src/tmp/assets.h
-releases/wasm/wolkenwelten.html: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
+releases/wasm/wolkenwelten.html: client/src/tmp/gfxAssets.c client/src/tmp/gfxAssets.h
+releases/wasm/wolkenwelten.html: client/src/tmp/sfxAssets.c client/src/tmp/sfxAssets.h
+releases/wasm/wolkenwelten.html: client/src/tmp/shdAssets.c client/src/tmp/shdAssets.h
+releases/wasm/wolkenwelten.html: client/src/tmp/txtAssets.c client/src/tmp/txtAssets.h
+releases/wasm/wolkenwelten.html: client/src/tmp/nujAssets.c client/src/tmp/nujAssets.h
+releases/wasm/wolkenwelten.html: client/src/tmp/meshAssets.c client/src/tmp/meshAssets.h
 releases/wasm/wolkenwelten.html: client/src/tmp/objs.c client/src/tmp/objs.h
 releases/wasm/wolkenwelten.html: client/src/tmp/sfx.c client/src/tmp/sfx.h
-releases/wasm/wolkenwelten.html: common/src/tmp/cto.c common/src/tmp/cto.h
+releases/wasm/wolkenwelten.html: common/src/tmp/cto.c
 	mkdir -p releases/wasm/
 	$(EMCC) $(CLIENT_SRCS) -D_GNU_SOURCE -std=c99 -O3 -fno-rtti --closure 0 -s MINIFY_HTML=0 -s WASM=1 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 $(CLIENT_EMMEM) $(EMLIBS) --shell-file platform/wasm/shell.html -o releases/wasm/index.html
 
 releases/wasm/server.js: $(SERVER_SRCS) $(SERVER_HDRS) server/src/network/server_wasm.h
 releases/wasm/server.js: server/src/tmp/sfx.c server/src/tmp/sfx.h
 releases/wasm/server.js: server/src/tmp/objs.c server/src/tmp/objs.h
-releases/wasm/server.js: common/src/tmp/cto.c common/src/tmp/cto.h
+releases/wasm/server.js: common/src/tmp/cto.c
 	mkdir -p releases/wasm/
 	$(EMCC) $(SERVER_SRCS) -D_GNU_SOURCE -std=c99 -O3 -s BUILD_AS_WORKER=1 -s EXPORTED_FUNCTIONS="['_wasmInit','_wasmTranceive']" -fno-rtti --closure 0 $(SERVER_EMMEM) -o releases/wasm/server.js
 

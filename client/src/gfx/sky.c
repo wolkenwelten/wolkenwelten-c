@@ -27,7 +27,6 @@
 #include "../game/entity.h"
 #include "../game/weather.h"
 #include "../voxel/chungus.h"
-#include "../tmp/assets.h"
 #include "../../../common/src/game/time.h"
 #include "../../../common/src/misc/colors.h"
 
@@ -40,6 +39,9 @@ float worldBrightness;
 
 mesh *sunMesh = NULL;
 texture *tSun = NULL;
+
+extern        size_t gfx_sun_png_len;
+extern unsigned char gfx_sun_png_data[];
 
 void initSky(){
 	if(sunMesh == NULL){

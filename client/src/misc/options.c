@@ -20,11 +20,10 @@
 #include "../main.h"
 #include "../gui/menu.h"
 #include "../gfx/gfx.h"
-#include "../tmp/assets.h"
 #include "../misc/lisp.h"
 #include "../sdl/sdl.h"
 #include "../../../common/src/misc/misc.h"
-#include "../../../common/src/tmp/cto.h"
+#include "../../../common/src/cto.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -32,6 +31,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
+
+extern        size_t txt_attribution_txt_len;
+extern unsigned char txt_attribution_txt_data[];
 
 char playerName[28];
 char serverName[64];

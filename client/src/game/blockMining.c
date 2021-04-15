@@ -26,7 +26,6 @@
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
-#include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/misc/misc.h"
 

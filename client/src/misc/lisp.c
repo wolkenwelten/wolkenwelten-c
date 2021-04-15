@@ -36,7 +36,6 @@
 #include "../network/client.h"
 #include "../sdl/sdl.h"
 #include "../sdl/sfx.h"
-#include "../tmp/assets.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/misc/profiling.h"
@@ -52,6 +51,9 @@
 #include <string.h>
 
 u8 SEvalID;
+
+extern        size_t src_tmp_client_nuj_len;
+extern unsigned char src_tmp_client_nuj_data[];
 
 void lispKeyDown(int code){
 	lVal *expr;

@@ -17,7 +17,6 @@
 
 #include "../gfx/shader.h"
 #include "../gfx/gl.h"
-#include "../tmp/assets.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -32,6 +31,48 @@ shader *sParticle;
 shader *sRain;
 shader *sTextMesh;
 shader *sCloud;
+
+extern        size_t src_shader_blockShaderFS_glsl_len;
+extern unsigned char src_shader_blockShaderFS_glsl_data[];
+
+extern        size_t src_shader_blockShaderVS_glsl_len;
+extern unsigned char src_shader_blockShaderVS_glsl_data[];
+
+extern        size_t src_shader_cloudShaderFS_glsl_len;
+extern unsigned char src_shader_cloudShaderFS_glsl_data[];
+
+extern        size_t src_shader_cloudShaderVS_glsl_len;
+extern unsigned char src_shader_cloudShaderVS_glsl_data[];
+
+extern        size_t src_shader_meshShaderFS_glsl_len;
+extern unsigned char src_shader_meshShaderFS_glsl_data[];
+
+extern        size_t src_shader_meshShaderVS_glsl_len;
+extern unsigned char src_shader_meshShaderVS_glsl_data[];
+
+extern        size_t src_shader_particleShaderFS_glsl_len;
+extern unsigned char src_shader_particleShaderFS_glsl_data[];
+
+extern        size_t src_shader_particleShaderVS_glsl_len;
+extern unsigned char src_shader_particleShaderVS_glsl_data[];
+
+extern        size_t src_shader_rainShaderFS_glsl_len;
+extern unsigned char src_shader_rainShaderFS_glsl_data[];
+
+extern        size_t src_shader_rainShaderVS_glsl_len;
+extern unsigned char src_shader_rainShaderVS_glsl_data[];
+
+extern        size_t src_shader_shadowShaderFS_glsl_len;
+extern unsigned char src_shader_shadowShaderFS_glsl_data[];
+
+extern        size_t src_shader_shadowShaderVS_glsl_len;
+extern unsigned char src_shader_shadowShaderVS_glsl_data[];
+
+extern        size_t src_shader_textShaderFS_glsl_len;
+extern unsigned char src_shader_textShaderFS_glsl_data[];
+
+extern        size_t src_shader_textShaderVS_glsl_len;
+extern unsigned char src_shader_textShaderVS_glsl_data[];
 
 void shaderInit(){
 	sMesh      = shaderNew((const char *)src_shader_meshShaderVS_glsl_data,     (const char *)src_shader_meshShaderFS_glsl_data,     0x3);
@@ -81,7 +122,7 @@ void compileVertexShader(shader *s){
 "precision mediump float;\n"
 "precision mediump int;\n"
 "\n"
-"%s",s->vss);	
+"%s",s->vss);
 	#else
 	snprintf(buf,sizeof(buf),"#version 130\n"
 "\n"
@@ -111,7 +152,7 @@ void compileFragmentShader(shader *s){
 "precision mediump int;\n"
 "precision lowp sampler2DArray;\n"
 "\n"
-"%s",s->fss);	
+"%s",s->fss);
 	#else
 	snprintf(buf,sizeof(buf),"#version 130\n"
 "\n"

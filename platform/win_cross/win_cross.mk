@@ -27,11 +27,15 @@ $(WIN_RELDIR)/README.txt: common/README
 $(WIN_RELDIR)/wolkenwelten.exe: CFLAGS    += $(WIN_CLIENT_CFLAGS)
 $(WIN_RELDIR)/wolkenwelten.exe: CINCLUDES += $(WIN_CLIENT_CINCLUDES)
 $(WIN_RELDIR)/wolkenwelten.exe: $(CLIENT_SRCS) $(CLIENT_HDRS)
-$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/assets.c client/src/tmp/assets.h
-$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/meshassets.c client/src/tmp/meshassets.h
+$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/gfxAssets.c client/src/tmp/gfxAssets.h
+$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/sfxAssets.c client/src/tmp/sfxAssets.h
+$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/shdAssets.c client/src/tmp/shdAssets.h
+$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/txtAssets.c client/src/tmp/txtAssets.h
+$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/nujAssets.c client/src/tmp/nujAssets.h
+$(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/meshAssets.c client/src/tmp/meshAssets.h
 $(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/objs.c client/src/tmp/objs.h
 $(WIN_RELDIR)/wolkenwelten.exe: client/src/tmp/sfx.c client/src/tmp/sfx.h
-$(WIN_RELDIR)/wolkenwelten.exe: common/src/tmp/cto.c common/src/tmp/cto.h
+$(WIN_RELDIR)/wolkenwelten.exe: common/src/tmp/cto.c
 $(WIN_RELDIR)/wolkenwelten.exe: releases/win/wolkenwelten.res
 $(WIN_RELDIR)/wolkenwelten.exe: $(ASM_OBJS)
 $(WIN_RELDIR)/wolkenwelten.exe: | $(WIN_RELDIR)
@@ -43,7 +47,7 @@ $(WIN_RELDIR)/wolkenwelten-server.exe: CINCLUDES += $(WIN_SERVER_CINCLUDES)
 $(WIN_RELDIR)/wolkenwelten-server.exe: $(SERVER_SRCS) $(SERVER_HDRS)
 $(WIN_RELDIR)/wolkenwelten-server.exe: server/src/tmp/sfx.c server/src/tmp/sfx.h
 $(WIN_RELDIR)/wolkenwelten-server.exe: server/src/tmp/objs.c server/src/tmp/objs.h
-$(WIN_RELDIR)/wolkenwelten-server.exe: common/src/tmp/cto.c common/src/tmp/cto.h
+$(WIN_RELDIR)/wolkenwelten-server.exe: common/src/tmp/cto.c
 $(WIN_RELDIR)/wolkenwelten-server.exe: releases/win/wolkenwelten-server.res
 $(WIN_RELDIR)/wolkenwelten-server.exe: $(ASM_OBJS)
 $(WIN_RELDIR)/wolkenwelten-server.exe: | $(WIN_RELDIR)

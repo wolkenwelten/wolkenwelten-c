@@ -18,20 +18,10 @@
 (def infogen-commit (λ () "Return the infogen commit"
 	(str-up (git-get-head))))
 
-(def infogen-header (λ () "Return the header part"
-("#pragma once
-
-extern const char *VERSION;
-extern const char *BUILDDATE;
-extern const char *COMMIT;\n")))
-
 (def infogen-source (λ () "Return the source part"
-("#include \"cto.h\"
-
-const char *VERSION=\"" (infogen-version) "\";
+("const char *VERSION=\"" (infogen-version) "\";
 const char *BUILDDATE=\"" (infogen-builddate) "\";
 const char *COMMIT=\"" (infogen-commit) "\";\n")))
 
 (def infogen (λ (prefix) "Generate build info and writes C source/header files PREFIX"
-	(file-save (cat prefix ".h") (infogen-header))
 	(file-save (cat prefix ".c") (infogen-source))))

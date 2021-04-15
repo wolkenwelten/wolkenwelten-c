@@ -28,7 +28,6 @@
 #include "../gfx/shadow.h"
 #include "../gfx/sky.h"
 #include "../gfx/texture.h"
-#include "../tmp/assets.h"
 #include "../tmp/objs.h"
 #include "../voxel/bigchungus.h"
 

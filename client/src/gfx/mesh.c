@@ -19,7 +19,7 @@
 #include "../gfx/gfx.h"
 #include "../gfx/texture.h"
 #include "../gfx/shader.h"
-#include "../tmp/assets.h"
+
 
 #include <stdio.h>
 #include <stdlib.h>

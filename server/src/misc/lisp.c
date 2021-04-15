@@ -24,7 +24,6 @@
 #include "../game/itemDrop.h"
 #include "../game/weather.h"
 #include "../network/server.h"
-#include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
@@ -48,6 +47,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <inttypes.h>
+
+extern        size_t src_tmp_server_nuj_len;
+extern unsigned char src_tmp_server_nuj_data[];
 
 char replyBuf[256];
 

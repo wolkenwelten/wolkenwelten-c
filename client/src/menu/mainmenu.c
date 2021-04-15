@@ -26,7 +26,7 @@
 #include "../menu/multiplayer.h"
 #include "../menu/options.h"
 #include "../misc/options.h"
-#include "../../../common/src/tmp/cto.h"
+#include "../../../common/src/cto.h"
 #include "../../../common/src/misc/misc.h"
 
 #include <stdio.h>

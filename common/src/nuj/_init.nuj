@@ -1,4 +1,5 @@
 ; Contains definitions needed in the other .nuj files
+
 (def on-init  '())
 (def on-spawn '())
 (def on-join  '())

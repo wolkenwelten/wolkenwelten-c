@@ -38,7 +38,6 @@
 #include "../gui/menu.h"
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
-#include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"

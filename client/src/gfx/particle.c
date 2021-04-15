@@ -20,7 +20,6 @@
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
 #include "../gfx/mat.h"
-#include "../tmp/assets.h"
 #include "../../../common/src/asm/asm.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"

@@ -29,7 +29,9 @@
 #include "../nujel/reader.h"
 #include "../misc/colors.h"
 #include "../misc/profiling.h"
-#include "../tmp/assets.h"
+
+extern        size_t src_tmp_wwlib_nuj_len;
+extern unsigned char src_tmp_wwlib_nuj_data[];
 
 #include <ctype.h>
 #include <string.h>

@@ -24,8 +24,6 @@ ASM_OBJS += common/src/asm/$(ARCH).o
 %.d: %.o
 	@true
 
-common/src/misc/lisp.c: common/src/tmp/assets.h
-
 common/src/tmp/stdlib.nuj: $(NUJ_STDLIB)
 	@mkdir -p common/src/tmp
 	cat $(NUJ_STDLIB) > $@
@@ -34,7 +32,7 @@ common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
 	@mkdir -p common/src/tmp
 	cat $(NUJ_WWLIB) > $@
 
-$(COMMON_DEPS): | common/src/tmp/cto.h common/src/tmp/assets.c common/src/tmp/assets.h
+$(COMMON_DEPS): | common/src/tmp/assets.c common/src/tmp/assets.h
 .deps: common/common.d
 common/common.d: $(COMMON_DEPS)
 	cat $(COMMON_DEPS) > common/common.d
@@ -98,5 +96,3 @@ archive:
 common/src/tmp/cto.c: tools/tools.nuj $(NUJEL)
 	@mkdir -p common/src/tmp/
 	./$(NUJEL) tools/tools.nuj -x "(infogen \"common/src/tmp/cto\")"
-common/src/tmp/cto.h: common/src/tmp/cto.c
-	@true

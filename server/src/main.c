@@ -39,7 +39,7 @@
 #include "../../common/src/game/time.h"
 #include "../../common/src/nujel/nujel.h"
 #include "../../common/src/nujel/string.h"
-#include "../../common/src/tmp/cto.h"
+#include "../../common/src/cto.h"
 #include "../../common/src/misc/misc.h"
 #include "../../common/src/misc/profiling.h"
 #include "../../common/src/game/blockType.h"

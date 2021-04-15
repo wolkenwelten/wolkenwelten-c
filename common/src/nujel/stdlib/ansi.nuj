@@ -1,5 +1,6 @@
 ;; This File contains various functions generating ansi escape sequences for colorful output
 
+
 (def ansi-wrap (λ (c s) "Wraps string s in the ansi color c"
 	((ansi-fg c) s (ansi-fg 7))))
 

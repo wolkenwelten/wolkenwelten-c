@@ -34,13 +34,15 @@
 #include "../gfx/textMesh.h"
 #include "../network/client.h"
 #include "../misc/options.h"
-#include "../tmp/assets.h"
 #include "../voxel/bigchungus.h"
-#include "../../../common/src/tmp/cto.h"
+#include "../../../common/src/cto.h"
 #include "../../../common/src/misc/misc.h"
 
 #include <stdio.h>
 #include <string.h>
+
+extern        size_t txt_attribution_txt_len;
+extern unsigned char txt_attribution_txt_data[];
 
 bool showAttribution  = false;
 int  attributionLines = 0;

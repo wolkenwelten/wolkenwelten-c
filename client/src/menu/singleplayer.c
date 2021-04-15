@@ -24,7 +24,7 @@
 #include "../gui/widget.h"
 #include "../misc/options.h"
 #include "../menu/mainmenu.h"
-#include "../../../common/src/tmp/cto.h"
+#include "../../../common/src/cto.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/sha1.h"
 

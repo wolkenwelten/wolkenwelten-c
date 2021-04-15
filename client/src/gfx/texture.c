@@ -19,7 +19,6 @@
 #include "../game/blockType.h"
 #include "../misc/options.h"
 #include "../../../common/src/misc/misc.h"
-#include "../tmp/assets.h"
 
 #include "../gfx/gl.h"
 #include "../gfx/lodepng.h"
@@ -42,6 +41,30 @@ texture *tRope;
 texture *tSteelrope;
 texture *tBlockMining;
 texture *tWolkenwelten;
+
+extern        size_t gfx_blocks_png_len;
+extern unsigned char gfx_blocks_png_data[];
+
+extern        size_t gfx_crosshair_png_len;
+extern unsigned char gfx_crosshair_png_data[];
+
+extern        size_t gfx_cursor_png_len;
+extern unsigned char gfx_cursor_png_data[];
+
+extern        size_t gfx_gui_png_len;
+extern unsigned char gfx_gui_png_data[];
+
+extern        size_t gfx_mining_png_len;
+extern unsigned char gfx_mining_png_data[];
+
+extern        size_t gfx_rope_png_len;
+extern unsigned char gfx_rope_png_data[];
+
+extern        size_t gfx_steelrope_png_len;
+extern unsigned char gfx_steelrope_png_data[];
+
+extern        size_t gfx_wolkenwelten_png_len;
+extern unsigned char gfx_wolkenwelten_png_data[];
 
 static void textureLoadSurface(texture *t, uint w, uint h, const void *data){
 	t->w = w;
