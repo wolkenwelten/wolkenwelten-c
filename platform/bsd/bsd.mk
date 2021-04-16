@@ -4,7 +4,6 @@ ifeq (, $(shell which gas))
 endif
 
 CC               := clang
-LD               := clang
 
 CFLAGS           += -D_GNU_SOURCE
 LDFLAGS          += -D_GNU_SOURCE

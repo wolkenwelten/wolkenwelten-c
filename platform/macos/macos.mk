@@ -1,6 +1,5 @@
 AS               := as
 CC               := clang
-LD               := clang
 
 CLIENT_LIBS      :=-F /Library/Frameworks -framework SDL2 -framework SDL2_mixer -framework OpenGL
 CFLAGS           += -DGL_SILENCE_DEPRECATION

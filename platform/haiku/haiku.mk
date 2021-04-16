@@ -1,6 +1,5 @@
 AS := as
 CC := gcc
-LD := gcc
 
 ASFLAGS += -gdwarf-2
 CFLAGS  += -gdwarf-2
