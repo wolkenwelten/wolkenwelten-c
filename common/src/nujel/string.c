@@ -163,7 +163,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 		forEach(n,cloText){
 			*cur++ = '\n';
 			for(int i=indentLevel;i>=0;i--){*cur++=' ';}
-			cur = lSWriteVal(n->vList.car,cur,bufEnd,indentLevel,display);
+			cur = lSWriteVal(lCar(n),cur,bufEnd,indentLevel,display);
 		}
 		indentLevel -= 2;
 		t = snprintf(cur,bufEnd-cur,")");
@@ -171,35 +171,24 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 	case ltPair: {
 		int indentStyle = 0;
 		int oldIndent = indentLevel;
-		if((v->vList.car != NULL) && (v->vList.car->type == ltSymbol)){
-			if((v->vList.car->vSymbol.v[0] == symQuote.v[0]) &&
-			   (v->vList.car->vSymbol.v[1] == symQuote.v[1]) &&
-			   (v->vList.cdr != NULL)){
-				v = v->vList.cdr->vList.car;
+		lVal *carSym = lCar(v);
+		if((carSym != NULL) && (carSym->type == ltSymbol) && (lCdr(v) != NULL)){
+			if(lSymEq(&carSym->vSymbol,&symQuote) == 0){
+				v = lCdar(v);
 				*cur++ = '\'';
-			}else if((v->vList.car->vSymbol.v[0] == symCond.v[0]) &&
-			   (v->vList.car->vSymbol.v[1] == symCond.v[1]) &&
-			   (v->vList.cdr != NULL)){
+			}else if(lSymEq(&carSym->vSymbol,&symCond) == 0){
 				indentStyle = 1;
 				indentLevel += 6;
-			}else if((v->vList.car->vSymbol.v[0] == symWhen.v[0]) &&
-			   (v->vList.car->vSymbol.v[1] == symWhen.v[1]) &&
-			   (v->vList.cdr != NULL)){
+			}else if(lSymEq(&carSym->vSymbol,&symWhen) == 0){
 				indentStyle = 1;
 				indentLevel += 6;
-			}else if((v->vList.car->vSymbol.v[0] == symUnless.v[0]) &&
-			   (v->vList.car->vSymbol.v[1] == symUnless.v[1]) &&
-			   (v->vList.cdr != NULL)){
+			}else if(lSymEq(&carSym->vSymbol,&symUnless) == 0){
 				indentStyle = 1;
 				indentLevel += 8;
-			}else if((v->vList.car->vSymbol.v[0] == symIf.v[0]) &&
-			   (v->vList.car->vSymbol.v[1] == symIf.v[1]) &&
-			   (v->vList.cdr != NULL)){
+			}else if(lSymEq(&carSym->vSymbol,&symIf) == 0){
 				indentStyle = 1;
 				indentLevel += 4;
-			}else if((v->vList.car->vSymbol.v[0] == symLet.v[0]) &&
-			   (v->vList.car->vSymbol.v[1] == symLet.v[1]) &&
-			   (v->vList.cdr != NULL)){
+			}else if(lSymEq(&carSym->vSymbol,&symLet) == 0){
 				indentStyle = 1;
 				indentLevel += 5;
 			}
@@ -209,7 +198,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 		for(lVal *n = v;n != NULL; n = lCdr(n)){
 			if(n->type == ltPair){
 				cur = lSWriteVal(lCar(n),cur,bufEnd,indentLevel,display);
-				if(n->vList.cdr != NULL){
+				if(lCdr(n) != NULL){
 					if((indentStyle == 1) && (n != v)){
 						*cur++ = '\n';
 						for(int i=indentLevel;i>=0;i--){*cur++=' ';}
@@ -387,7 +376,7 @@ lVal *lnfSubstr(lClosure *c, lVal *v){
 	int len   = 0;
 	int slen  = 0;
 	if(v == NULL){return NULL;}
-	lVal *str = lEval(c,v->vList.car);
+	lVal *str = lEval(c,lCar(v));
 	if(str == NULL){return NULL;}
 	switch(str->type){
 	default: return NULL;
@@ -404,7 +393,7 @@ lVal *lnfSubstr(lClosure *c, lVal *v){
 			start = lStart->vInt;
 		}
 		if(lCdr(v) != NULL){
-			v = v->vList.cdr;
+			v = lCdr(v);
 			lVal *lLen = lEval(c,lCar(v));
 			if(lLen->type == ltInt){
 				len = lLen->vInt;
@@ -448,7 +437,6 @@ lVal *lnfCat(lClosure *c, lVal *v){
 		lVal *t = lEval(c,lCar(sexpr));
 		int clen = 0;
 		if(t == NULL){continue;}
-		//lWriteVal(t);
 		switch(t->type){
 		default: break;
 		case ltInf: {

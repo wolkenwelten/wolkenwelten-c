@@ -263,7 +263,7 @@ static lVal *wwlnfTp(lClosure *c, lVal *v){
 
 static lVal *wwlnfTime(lClosure *c, lVal *v){
 	if(v != NULL){
-		lVal *t = lEval(c,v->vList.car);
+		lVal *t = lEval(c,lCar(v));
 		if(t != NULL){
 			if(t->type == ltString){
 				gtimeSetTimeOfDayHRS(lStrData(t));
@@ -301,8 +301,8 @@ static lVal *wwlnfClearInv(lClosure *c, lVal *v){
 	int target = getPID(c);
 	for(int i=0;i<1;i++){
 		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
+		lVal *t = lEval(c,lCar(v));
+		v = lCdr(v);
 		if((t == NULL) && (t->type != ltInt)){break;}
 		target= t->vInt;
 	}
@@ -316,8 +316,8 @@ static lVal *wwlnfSetInv(lClosure *c, lVal *v){
 
 	for(int i=0;i<4;i++){
 		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
+		lVal *t = lEval(c,lCar(v));
+		v = lCdr(v);
 		if((t == NULL) || (t->type != ltInt)){break;}
 		args[i] = t->vInt;
 	}
@@ -332,8 +332,8 @@ static lVal *wwlnfSetEq(lClosure *c, lVal *v){
 
 	for(int i=0;i<4;i++){
 		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
+		lVal *t = lEval(c,lCar(v));
+		v = lCdr(v);
 		if((t == NULL) && (t->type != ltInt)){break;}
 		args[i] = t->vInt;
 	}
@@ -350,8 +350,8 @@ static lVal *wwlnfClearEq(lClosure *c, lVal *v){
 	int target = getPID(c);
 	for(int i=0;i<1;i++){
 		if(v == NULL){break;}
-		lVal *t = lEval(c,v->vList.car);
-		v = v->vList.cdr;
+		lVal *t = lEval(c,lCar(v));
+		v = lCdr(v);
 		if((t == NULL) && (t->type != ltInt)){continue;}
 		target = t->vInt;
 	}

@@ -117,7 +117,7 @@ static lVal *wwlnfRenderDistance(lClosure *c, lVal *v){
 
 static lVal *wwlnfSubData(lClosure *c, lVal *v){
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,v->vList.car));
+		lVal *t = lnfBool(c,lEval(c,lCar(v)));
 		gfxUseSubData = t->vBool;
 	}
 	return lValBool(gfxUseSubData);
@@ -132,7 +132,7 @@ static lVal *wwlnfMouseSensitivity(lClosure *c, lVal *v){
 
 static lVal *wwlnfThirdPerson(lClosure *c, lVal *v){
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,v->vList.car));
+		lVal *t = lnfBool(c,lEval(c,lCar(v)));
 		optionThirdPerson = t->vBool;
 	}
 	return lValBool(optionThirdPerson);
@@ -140,7 +140,7 @@ static lVal *wwlnfThirdPerson(lClosure *c, lVal *v){
 
 static lVal *wwlnfFullscreen(lClosure *c, lVal *v){
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,v->vList.car));
+		lVal *t = lnfBool(c,lEval(c,lCar(v)));
 		setFullscreen(t->vBool);
 	}
 	return lValBool(optionFullscreen);
@@ -163,7 +163,7 @@ static lVal *wwlnfWindowed(lClosure *c, lVal *v){
 
 static lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,v->vList.car));
+		lVal *t = lnfBool(c,lEval(c,lCar(v)));
 		optionDebugInfo = t->vBool;
 	}
 	return lValBool(optionDebugInfo);
@@ -171,7 +171,7 @@ static lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
 
 static lVal *wwlnfConsMode(lClosure *c, lVal *v){
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,v->vList.car));
+		lVal *t = lnfBool(c,lEval(c,lCar(v)));
 		if(t->vBool){
 			player->flags |=  CHAR_CONS_MODE;
 		}else{
@@ -183,7 +183,7 @@ static lVal *wwlnfConsMode(lClosure *c, lVal *v){
 
 static lVal *wwlnfNoClip(lClosure *c, lVal *v){
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,v->vList.car));
+		lVal *t = lnfBool(c,lEval(c,lCar(v)));
 		if(t->vBool != 0){
 			player->flags |=  CHAR_NOCLIP;
 		}else{
@@ -195,7 +195,7 @@ static lVal *wwlnfNoClip(lClosure *c, lVal *v){
 
 static lVal *wwlnfWireFrame(lClosure *c, lVal *v){
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,v->vList.car));
+		lVal *t = lnfBool(c,lEval(c,lCar(v)));
 		optionWireframe = t->vBool;
 		initGL();
 	}
@@ -219,12 +219,12 @@ static lVal *wwlnfServerAdd(lClosure *c, lVal *v){
 	const char *name = "localhost";
 
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfCat(c,lEval(c,v->vList.car));
+		lVal *t = lnfCat(c,lEval(c,lCar(v)));
 		address = lStrBuf(t);
-		v = v->vList.cdr;
+		v = lCdr(v);
 	}
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfCat(c,lEval(c,v->vList.car));
+		lVal *t = lnfCat(c,lEval(c,lCar(v)));
 		name = lStrBuf(t);
 	}
 	serverListAdd(address,name);

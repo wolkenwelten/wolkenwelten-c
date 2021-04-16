@@ -248,9 +248,9 @@ lVal *lReadString(lString *s){
 			return ret;
 		}
 
-		if(v->vList.car != NULL){
+		if(lCar(v) != NULL){
 			v->vList.cdr = lCons(NULL,NULL);
-			v = v->vList.cdr;
+			v = lCdr(v);
 		}
 
 		switch(c){

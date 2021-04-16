@@ -1483,6 +1483,13 @@ int lSymCmp(const lVal *a,const lVal *b){
 	return 0;
 }
 
+int lSymEq(const lSymbol *a,const lSymbol *b){
+	if((a == NULL) || (b == NULL)){return 2;}
+	if(a->v[0] != b->v[0]){return -1;}
+	if(a->v[1] != b->v[1]){return -1;}
+	return 0;
+}
+
 lVal *lConst(lVal *v){
 	v->flags |= lfConst;
 	return v;

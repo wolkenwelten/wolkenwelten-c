@@ -183,6 +183,7 @@ lSymbol   lGetSymbol        (lVal *v);
 
 int       lStringLength     (const lString *s);
 int       lSymCmp           (const lVal *a,const lVal *b);
+int       lSymEq            (const lSymbol *a,const lSymbol *b);
 
 #define forEach(n,v) for(lVal *n = v;(n != NULL) && (n->type == ltPair) && (n->vList.car != NULL); n = n->vList.cdr)
 
