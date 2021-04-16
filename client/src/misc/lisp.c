@@ -263,16 +263,15 @@ static lVal *wwlnfInvActiveSlot(lClosure *c, lVal *v){
 	return lValInt(player->activeItem);
 }
 
-
 static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	if((t == NULL) || (t->type != ltString)){return NULL;}
 	msgSendChatMessage(lStrData(t));
 	return t;
 }
 
 static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	if((t == NULL) || (t->type != ltString) || lStrNull(t)){return NULL;}
 	widgetAddEntry(lispLog, lStrData(t));
 	return t;

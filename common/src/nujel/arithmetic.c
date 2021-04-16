@@ -24,20 +24,20 @@
 #include <stdio.h>
 
 static lVal *lnfAddV(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){
-		lVecV(t->vCdr) = vecAdd(lVecV(t->vCdr),lVecV(vv->vList.car->vCdr));
+	forEach(vv,lCdr(v)){
+		lVecV(t->vCdr) = vecAdd(lVecV(t->vCdr),lVecV(lCar(vv)->vCdr));
 	}
 	return t;
 }
 static lVal *lnfAddF(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){
-		t->vFloat += vv->vList.car->vFloat;
+	forEach(vv,lCdr(v)){
+		t->vFloat += lCar(vv)->vFloat;
 	}
 	return t;
 }
 static lVal *lnfAddI(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){
-		t->vInt += vv->vList.car->vInt;
+	forEach(vv,lCdr(v)){
+		t->vInt += lCar(vv)->vInt;
 	}
 	return t;
 }
@@ -48,43 +48,43 @@ lVal *lnfAdd(lClosure *c, lVal *v){
 
 
 static lVal *lnfSubV(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){
-		lVecV(t->vCdr) = vecSub(lVecV(t->vCdr),lVecV(vv->vList.car->vCdr));
+	forEach(vv,lCdr(v)){
+		lVecV(t->vCdr) = vecSub(lVecV(t->vCdr),lVecV(lCar(vv)->vCdr));
 	}
 	return t;
 }
 static lVal *lnfSubF(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){
-		t->vFloat -= vv->vList.car->vFloat;
+	forEach(vv,lCdr(v)){
+		t->vFloat -= lCar(vv)->vFloat;
 	}
 	return t;
 }
 static lVal *lnfSubI(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){
-		t->vInt -= vv->vList.car->vInt;
+	forEach(vv,lCdr(v)){
+		t->vInt -= lCar(vv)->vInt;
 	}
 	return t;
 }
 lVal *lnfSub(lClosure *c, lVal *v){
 	if(v == NULL){return lValInt(0);}
-	if((v->type == ltPair) && (v->vList.car != NULL) && (v->vList.cdr == NULL)){
+	if((v->type == ltPair) && (lCar(v) != NULL) && (lCdr(v) == NULL)){
 		v = lCons(lValInt(0),v);
 	}
 	lEvalCastApply(lnfSub,c,v);
 }
 
 static lVal *lnfMulV(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){
-		lVecV(t->vCdr) = vecMul(lVecV(t->vCdr),lVecV(vv->vList.car->vCdr));
+	forEach(vv,lCdr(v)){
+		lVecV(t->vCdr) = vecMul(lVecV(t->vCdr),lVecV(lCar(vv)->vCdr));
 	}
 	return t;
 }
 static lVal *lnfMulF(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vFloat *= vv->vList.car->vFloat; }
+	forEach(vv,lCdr(v)){ t->vFloat *= lCar(vv)->vFloat; }
 	return t;
 }
 static lVal *lnfMulI(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vInt *= vv->vList.car->vInt; }
+	forEach(vv,lCdr(v)){ t->vInt *= lCar(vv)->vInt; }
 	return t;
 }
 lVal *lnfMul(lClosure *c, lVal *v){
@@ -94,22 +94,23 @@ lVal *lnfMul(lClosure *c, lVal *v){
 
 
 static lVal *lnfDivV(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){
-		lVecV(t->vCdr) = vecDiv(lVecV(t->vCdr),lVecV(vv->vList.car->vCdr));
+	forEach(vv,lCdr(v)){
+		lVecV(t->vCdr) = vecDiv(lVecV(t->vCdr),lVecV(lCar(vv)->vCdr));
 	}
 	return t;
 }
 static lVal *lnfDivF(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){
-		if(vv->vList.car->vFloat == 0){return lValInf();}
-		t->vFloat /= vv->vList.car->vFloat;
+	forEach(vv,lCdr(v)){
+		const float cv = lCar(vv)->vFloat;
+		if(cv == 0){return lValInf();}
+		t->vFloat /= cv;
 	}
 	return t;
 }
 static lVal *lnfDivI(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){
-		if(vv->vList.car->vInt == 0){return lValInf();}
-		t->vInt /= vv->vList.car->vInt;
+	forEach(vv,lCdr(v)){
+		if(lCar(vv)->vInt == 0){return lValInf();}
+		t->vInt /= lCar(vv)->vInt;
 	}
 	return t;
 }
@@ -121,19 +122,19 @@ lVal *lnfDiv(lClosure *c, lVal *v){
 
 
 static lVal *lnfModV(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){
-		lVecV(t->vCdr) = vecMod(lVecV(t->vCdr),lVecV(vv->vList.car->vCdr));
+	forEach(vv,lCdr(v)){
+		lVecV(t->vCdr) = vecMod(lVecV(t->vCdr),lVecV(lCar(vv)->vCdr));
 	}
 	return t;
 }
 static lVal *lnfModF(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){
-		t->vFloat = fmodf(t->vFloat,vv->vList.car->vFloat);
+	forEach(vv,lCdr(v)){
+		t->vFloat = fmodf(t->vFloat,lCar(vv)->vFloat);
 	}
 	return t;
 }
 static lVal *lnfModI(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vInt %= vv->vList.car->vInt; }
+	forEach(vv,lCdr(v)){ t->vInt %= lCar(vv)->vInt; }
 	return t;
 }
 lVal *lnfMod(lClosure *c, lVal *v){
@@ -141,7 +142,7 @@ lVal *lnfMod(lClosure *c, lVal *v){
 }
 
 lVal *lnfAbs(lClosure *c, lVal *v){
-	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
+	lVal *t = lCar(lEvalCastNumeric(c,v));
 	if(t == NULL){return lValInt(0);}
 	switch(t->type){
 	default:
@@ -156,7 +157,7 @@ lVal *lnfAbs(lClosure *c, lVal *v){
 }
 
 lVal *lnfSqrt(lClosure *c, lVal *v){
-	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
+	lVal *t = lCar(lEvalCastNumeric(c,v));
 	if(t == NULL){return lValInt(0);}
 	switch(t->type){
 	default:
@@ -171,7 +172,7 @@ lVal *lnfSqrt(lClosure *c, lVal *v){
 }
 
 lVal *lnfCeil(lClosure *c, lVal *v){
-	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
+	lVal *t = lCar(lEvalCastNumeric(c,v));
 	if(t == NULL){return lValFloat(0);}
 	switch(t->type){
 	default:
@@ -186,7 +187,7 @@ lVal *lnfCeil(lClosure *c, lVal *v){
 }
 
 lVal *lnfFloor(lClosure *c, lVal *v){
-	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
+	lVal *t = lCar(lEvalCastNumeric(c,v));
 	if(t == NULL){return lValFloat(0);}
 	switch(t->type){
 	default:
@@ -201,7 +202,7 @@ lVal *lnfFloor(lClosure *c, lVal *v){
 }
 
 lVal *lnfRound(lClosure *c, lVal *v){
-	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
+	lVal *t = lCar(lEvalCastNumeric(c,v));
 	if(t == NULL){return lValFloat(0);}
 	switch(t->type){
 	default:
@@ -216,7 +217,7 @@ lVal *lnfRound(lClosure *c, lVal *v){
 }
 
 lVal *lnfSin(lClosure *c, lVal *v){
-	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
+	lVal *t = lCar(lEvalCastNumeric(c,v));
 	if(t == NULL){return lValFloat(0);}
 	switch(t->type){
 	default:
@@ -227,7 +228,7 @@ lVal *lnfSin(lClosure *c, lVal *v){
 }
 
 lVal *lnfCos(lClosure *c, lVal *v){
-	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
+	lVal *t = lCar(lEvalCastNumeric(c,v));
 	if(t == NULL){return lValFloat(0);}
 	switch(t->type){
 	default:
@@ -238,7 +239,7 @@ lVal *lnfCos(lClosure *c, lVal *v){
 }
 
 lVal *lnfTan(lClosure *c, lVal *v){
-	lVal *t = lCarOrV(lEvalCastNumeric(c,v));
+	lVal *t = lCar(lEvalCastNumeric(c,v));
 	if(t == NULL){return lValFloat(0);}
 	switch(t->type){
 	default:
@@ -253,9 +254,9 @@ lVal *lnfPow(lClosure *c, lVal *v){
 	if((v == NULL) || (v->type != ltPair) || (v->vList.cdr == NULL)){return lValInt(0);}
 	v = lEvalCastNumeric(c,v);
 	if((v == NULL) || (v->type != ltPair) || (v->vList.cdr == NULL)){return lValInt(0);}
-	lVal *t = lCarOrV(v);
+	lVal *t = lCar(v);
 	if(t == NULL){return lValInt(0);}
-	lVal *u = lCarOrV(v->vList.cdr);
+	lVal *u = lCar(v->vList.cdr);
 	if(u == NULL){return lValInt(0);}
 	switch(t->type){
 	default:
@@ -270,7 +271,7 @@ lVal *lnfPow(lClosure *c, lVal *v){
 }
 
 lVal *lnfVX(lClosure *c, lVal *v){
-	lVal *t = lCarOrV(lEvalCastSpecific(c,v,ltVec));
+	lVal *t = lCar(lEvalCastSpecific(c,v,ltVec));
 	if(t == NULL){return lValFloat(0);}
 	switch(t->type){
 	default:
@@ -285,7 +286,7 @@ lVal *lnfVX(lClosure *c, lVal *v){
 }
 
 lVal *lnfVY(lClosure *c, lVal *v){
-	lVal *t = lCarOrV(lEvalCastSpecific(c,v,ltVec));
+	lVal *t = lCar(lEvalCastSpecific(c,v,ltVec));
 	if(t == NULL){return lValFloat(0);}
 	switch(t->type){
 	default:
@@ -300,7 +301,7 @@ lVal *lnfVY(lClosure *c, lVal *v){
 }
 
 lVal *lnfVZ(lClosure *c, lVal *v){
-	lVal *t = lCarOrV(lEvalCastSpecific(c,v,ltVec));
+	lVal *t = lCar(lEvalCastSpecific(c,v,ltVec));
 	if(t == NULL){return lValFloat(0);}
 	switch(t->type){
 	default:
@@ -321,15 +322,15 @@ void lAddArithmeticFuncs(lClosure *c){
 	lAddNativeFunc(c,"div /",  "(...args)","Division",      lnfDiv);
 	lAddNativeFunc(c,"mod %",  "(...args)","Modulo",        lnfMod);
 
-	lAddNativeFunc(c,"abs","(a)",  "Returns the absolute value of a",     lnfAbs);
-	lAddNativeFunc(c,"pow","(a b)","Returns a raised to the power of b",lnfPow);
-	lAddNativeFunc(c,"sqrt","(a)", "Returns the squareroot of a",        lnfSqrt);
-	lAddNativeFunc(c,"floor","(a)","Rounds a down",                     lnfFloor);
-	lAddNativeFunc(c,"ceil","(a)", "Rounds a up",                        lnfCeil);
-	lAddNativeFunc(c,"round","(a)","Rounds a",                          lnfRound);
-	lAddNativeFunc(c,"sin","(a)",  "Sin A",                               lnfSin);
-	lAddNativeFunc(c,"cos","(a)",  "Cos A",                               lnfCos);
-	lAddNativeFunc(c,"tan","(a)",  "Tan A",                               lnfTan);
+	lAddNativeFunc(c,"abs","(a)",  "Return the absolute value of a",   lnfAbs);
+	lAddNativeFunc(c,"pow","(a b)","Return a raised to the power of b",lnfPow);
+	lAddNativeFunc(c,"sqrt","(a)", "Return the squareroot of a",       lnfSqrt);
+	lAddNativeFunc(c,"floor","(a)","Round a down",                     lnfFloor);
+	lAddNativeFunc(c,"ceil","(a)", "Round a up",                       lnfCeil);
+	lAddNativeFunc(c,"round","(a)","Round a",                          lnfRound);
+	lAddNativeFunc(c,"sin","(a)",  "Sin A",                            lnfSin);
+	lAddNativeFunc(c,"cos","(a)",  "Cos A",                            lnfCos);
+	lAddNativeFunc(c,"tan","(a)",  "Tan A",                            lnfTan);
 
 	lAddNativeFunc(c,"vx","(v)","Returns x part of vector v",lnfVX);
 	lAddNativeFunc(c,"vy","(v)","Returns x part of vector v",lnfVY);

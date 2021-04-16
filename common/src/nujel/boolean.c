@@ -27,18 +27,18 @@ lVal *lnfAnd(lClosure *c, lVal *v){
 	if(v == NULL){return lValBool(true);}
 	lVal *t = lnfBool(c,v);
 	if((t == NULL) || (!t->vBool)){return lValBool(false);}
-	return lnfAnd(c,v->vList.cdr);
+	return lnfAnd(c,lCdr(v));
 }
 
 lVal *lnfOr(lClosure *c, lVal *v){
 	if(v == NULL){return lValBool(false);}
 	lVal *t = lnfBool(c,v);
 	if((t != NULL) && t->vBool){return lValBool(true);}
-	return lnfOr(c,v->vList.cdr);
+	return lnfOr(c,lCdr(v));
 }
 
 void lAddBooleanFuncs(lClosure *c){
-	lAddNativeFunc(c,"and &&","(...args)","#t if all ...args evaluate to true",            lnfAnd);
-	lAddNativeFunc(c,"or ||" ,"(...args)","#t if one member of ...args evaluates to true", lnfOr);
-	lAddNativeFunc(c,"not !","(a)",      "#t if a is #f, #f if a is #t",                  lnfNot);
+	lAddNativeFunc(c,"and &&","(...args)","#t if all ...ARGS evaluate to true",            lnfAnd);
+	lAddNativeFunc(c,"or ||" ,"(...args)","#t if one member of ...ARGS evaluates to true", lnfOr);
+	lAddNativeFunc(c,"not !","(val)",     "#t if VAL is #f, #f if VAL is #t",              lnfNot);
 }

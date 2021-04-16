@@ -47,7 +47,7 @@ lVal *lnfInt(lClosure *c, lVal *v){
 		if(t->vCdr == 0){return lValInt(0);}
 		return lValInt(atoi(lStrData(t)));
 	case ltPair:
-		return lnfInt(c,v->vList.car);
+		return lnfInt(c,lCar(v));
 	}
 }
 
@@ -81,7 +81,7 @@ lVal *lnfVec(lClosure *c, lVal *v){
 	}
 	int i = 0;
 	forEach(cv,v){
-		lVal *t = lEval(c,cv->vList.car);
+		lVal *t = lEval(c,lCar(cv));
 		if(t == NULL){break;}
 		if(t->type == ltVec){return t;}
 		t = lnfFloat(c,t);
@@ -99,7 +99,7 @@ lVal *lnfBool(lClosure *c, lVal *v){
 	if(a == NULL)            {return lValBool(false);}
 	if(a->type == ltSymbol)  {a = lResolveSym(c - lClosureList,a);}
 	if(a->type == ltBool)    {return a;}
-	if(a->type == ltPair)    {a = a->vList.car;}
+	if(a->type == ltPair)    {a = lCar(a);}
 	if(a == NULL)            {return lValBool(false);}
 	if(a->type == ltSymbol)  {a = lResolveSym(c - lClosureList,a);}
 	if(a->type == ltBool)    {return a;}
@@ -152,10 +152,9 @@ lVal *lnfString(lClosure *c, lVal *t){
 }
 
 void lAddCastingFuncs(lClosure *c){
-	lAddNativeFunc(c,"bool", " (a)","Casts a to bool",  lnfBool);
-	lAddNativeFunc(c,"int",  " (a)","Casts a to int",   lnfInt);
-	lAddNativeFunc(c,"float", "(a)","Casts a to float", lnfFloat);
-	lAddNativeFunc(c,"vec",   "(a)","Casts a to vec",   lnfVec);
-	lAddNativeFunc(c,"str",   "(a)","Casts a to string",lnfCat);
-	lAddNativeFunc(c,"string","(a)","Casts a to string",lnfCat);
+	lAddNativeFunc(c,"bool",      "(val)","VAL -> bool ", lnfBool);
+	lAddNativeFunc(c,"int",       "(val)","VAL -> int",   lnfInt);
+	lAddNativeFunc(c,"float",     "(val)","VAL -> float", lnfFloat);
+	lAddNativeFunc(c,"vec",       "(val)","VAL -> vec",   lnfVec);
+	lAddNativeFunc(c,"string str","(val)","VAL -> string",lnfCat);
 }

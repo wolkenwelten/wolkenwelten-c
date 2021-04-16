@@ -55,6 +55,9 @@ struct lVal {
 		lSymbol    vSymbol;
 	};
 };
+#define lfMarked    ( 1)
+#define lfNoGC      ( 2)
+#define lfConst     ( 4)
 
 struct lClosure {
 	lVal *data;
@@ -64,21 +67,16 @@ struct lClosure {
 	u16 flags;
 	u16 refCount;
 };
-#define lfMarked    ( 1)
-#define lfDynamic   ( 2)
-#define lfNoGC      ( 4)
-#define lfConst     ( 8)
-#define lfHeapAlloc (16)
-#define lfObject    (32)
-#define lfUsed      (64)
+#define lfDynamic   ( 8)
+#define lfObject    (16)
+#define lfUsed      (32)
 
 struct lString {
 	const char *buf,*data,*bufEnd;
 	u16 nextFree;
 	u16 flags;
 };
-
-extern lSymbol symQuote,symArr,symIf,symCond,symWhen,symUnless,symLet,symBegin,symStringAt,symIntAt,symFloatAt,symVecAt;
+#define lfHeapAlloc (16)
 
 #define VAL_MAX (1<<18)
 #define CLO_MAX (1<<14)
@@ -104,6 +102,7 @@ extern lNFunc   lNFuncList  [NFN_MAX];
 extern lVec     lVecList    [VEC_MAX];
 extern lSymbol  lSymbolList [SYM_MAX];
 
+extern lSymbol symNull,symQuote,symArr,symIf,symCond,symWhen,symUnless,symLet,symBegin,symStringAt,symIntAt,symFloatAt,symVecAt;
 
 void      lInit             ();
 int       lMemUsage         ();
@@ -144,25 +143,48 @@ lVal     *lEval             (lClosure *c, lVal *v);
 lType     lTypecast         (const lType a,const lType b);
 lType     lTypecastList     (lVal *a);
 
-lVal     *lCons         (lVal *car,lVal *cdr);
-lVal     *lValBool      (bool v);
-lVal     *lValInf       ();
-lVal     *lValInt       (int v);
-lVal     *lValFloat     (float v);
-lVal     *lValVec       (const vec v);
-lVal     *lValSymS      (const lSymbol s);
-lVal     *lValSym       (const char *s);
-lVal     *lValString    (const char *s);
-lVal     *lnfCat        (lClosure *c, lVal *v);
-lVal     *lValCopy      (lVal *dst, const lVal *src);
+lVal     *lValBool          (bool v);
+lVal     *lValInf           ();
+lVal     *lValInt           (int v);
+lVal     *lValFloat         (float v);
+lVal     *lValVec           (const vec v);
+lVal     *lValSymS          (const lSymbol s);
+lVal     *lValSym           (const char *s);
+lVal     *lValString        (const char *s);
+lVal     *lnfCat            (lClosure *c, lVal *v);
+lVal     *lValCopy          (lVal *dst, const lVal *src);
+lVal     *getLArgB          (lClosure *c, lVal *v, bool *res);
+lVal     *getLArgI          (lClosure *c, lVal *v, int *res);
+lVal     *getLArgF          (lClosure *c, lVal *v, float *res);
+lVal     *getLArgV          (lClosure *c, lVal *v, vec *res);
+lVal     *getLArgS          (lClosure *c, lVal *v, const char **res);
+lVal     *lConst            (lVal *v);
+lVal     *lValDup           (const lVal *v);
+lVal     *lnfBegin          (lClosure *c, lVal *v);
+lVal     *lWrap             (lVal *v);
+lVal     *lEvalCast         (lClosure *c, lVal *v);
+lVal     *lEvalCastSpecific (lClosure *c, lVal *v, const lType type);
+lVal     *lEvalCastNumeric  (lClosure *c, lVal *v);
+
+lVal     *lCons             (lVal *car,lVal *cdr);
+lVal     *lCar              (lVal *v);
+lVal     *lCdr              (lVal *v);
+lVal     *lCaar             (lVal *v);
+lVal     *lCadr             (lVal *v);
+lVal     *lCdar             (lVal *v);
+lVal     *lCddr             (lVal *v);
+lVal     *lCadar            (lVal *v);
+lVal     *lCaddr            (lVal *v);
+lVal     *lCdddr            (lVal *v);
+lVal     *lLastCar          (lVal *v);
+int       lListLength       (lVal *v);
+lType     lGetType          (lVal *v);
+lSymbol   lGetSymbol        (lVal *v);
+
+int       lStringLength     (const lString *s);
+int       lSymCmp           (const lVal *a,const lVal *b);
 
 #define forEach(n,v) for(lVal *n = v;(n != NULL) && (n->type == ltPair) && (n->vList.car != NULL); n = n->vList.cdr)
-
-lVal *getLArgB(lClosure *c, lVal *v, bool *res);
-lVal *getLArgI(lClosure *c, lVal *v, int *res);
-lVal *getLArgF(lClosure *c, lVal *v, float *res);
-lVal *getLArgV(lClosure *c, lVal *v, vec *res);
-lVal *getLArgS(lClosure *c, lVal *v, const char **res);
 
 #define lVec(i)  lVecList[i & VEC_MASK]
 #define lVecV(i) lVec(i).v
@@ -186,65 +208,9 @@ lVal *getLArgS(lClosure *c, lVal *v, const char **res);
 #define lCloText(i) lClosureList[i & CLO_MASK].text
 
 #define lValD(i) (i == 0 ? NULL : &lValList[i & VAL_MASK])
+#define lValI(v) (v == NULL ? 0 : v - lValList)
 
 #define lNFN(i) lNFuncList[i & NFN_MASK]
-
-static inline lVal *lValDup(const lVal *v){
-	return v == NULL ? NULL : lValCopy(lValAlloc(),v);
-}
-static inline lVal *lConst(lVal *v){
-	v->flags |= lfConst;
-	return v;
-}
-lVal *lnfBegin(lClosure *c, lVal *v);
-static inline lVal *lWrap(lVal *v){
-	return lCons(lValSym("begin"),v);
-}
-static inline lVal *lEvalCast(lClosure *c, lVal *v){
-	lVal *t = lApply(c,v,lEval);
-	return lCast(c,t,lTypecastList(t));
-}
-static inline lVal *lEvalCastSpecific(lClosure *c, lVal *v, const lType type){
-	return lCast(c,lApply(c,v,lEval),type);
-}
-static inline lVal *lEvalCastNumeric(lClosure *c, lVal *v){
-	lVal *t = lApply(c,v,lEval);
-	lType type = lTypecastList(t);
-	if(type == ltString){type = ltFloat;}
-	return lCast(c,t,type);
-}
-static inline lVal *lLastCar(lVal *v){
-	forEach(a,v){
-		if(a->vList.cdr == NULL){
-			return a->vList.car;
-		}
-	}
-	return NULL;
-}
-static inline lVal *lCarOrV(lVal *v){
-	return (v != NULL) && (v->type == ltPair) ? v->vList.car : v;
-}
-static inline lVal *lCarOrN(lVal *v){
-	return (v != NULL) && (v->type == ltPair) ? v->vList.car : NULL;
-}
-static inline lVal *lCadrOrN(lVal *v){
-	return (v != NULL) && (v->type == ltPair) ? lCarOrN(v->vList.cdr) : NULL;
-}
-static inline int lListLength(lVal *v){
-	int i = 0;
-	for(lVal *n = v;(n != NULL) && (n->type == ltPair) && (n->vList.car != NULL); n = n->vList.cdr){i++;}
-	return i;
-}
-static inline uint lStringLength(lString *s){
-	return s->bufEnd - s->buf;
-}
-static inline int lSymCmp(const lVal *a,const lVal *b){
-	if((a == NULL) || (b == NULL)){return 2;}
-	if((a->type != ltSymbol) || (b->type != ltSymbol)){return 2;}
-	if(a->vSymbol.v[0] != b->vSymbol.v[0]){return -1;}
-	if(a->vSymbol.v[1] != b->vSymbol.v[1]){return -1;}
-	return 0;
-}
 
 #define lEvalCastIApply(FUNC, c , v) do { \
 	if((c == NULL) || (v == NULL)){return lValInt(0);} \

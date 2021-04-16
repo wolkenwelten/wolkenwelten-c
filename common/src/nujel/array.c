@@ -24,16 +24,16 @@
 #include <string.h>
 
 lVal *lnfArrLength(lClosure *c, lVal *v){
-	lVal *arr = lEval(c,lCarOrV(v));
+	lVal *arr = lEval(c,lCar(v));
 	if((arr == NULL) || (arr->type != ltArray)){return lValInt(0);}
 	return lValInt(lArrLength(arr));
 }
 
 lVal *lnfArrRef(lClosure *c, lVal *v){
-	lVal *arr = lEval(c,lCarOrV(v));
+	lVal *arr = lEval(c,lCar(v));
 	if((arr == NULL) || (arr->type != ltArray) || (v == NULL)){return NULL;}
-	v = v->vList.cdr;
-	lVal *t = lEval(c, lCarOrV(v));
+	v = lCdr(v);
+	lVal *t = lEval(c, lCar(v));
 	if(t == NULL){return arr;}
 	if((t->type != ltInt) && (t->type != ltFloat)){return NULL;}
 	const lVal *lkey = lnfInt(c,t);
@@ -45,20 +45,20 @@ lVal *lnfArrRef(lClosure *c, lVal *v){
 }
 
 lVal *lnfArrSet(lClosure *c, lVal *v){
-	lVal *arr = lEval(c,lCarOrV(v));
+	lVal *arr = lEval(c,lCar(v));
 	if((arr == NULL) || (arr->type != ltArray) || (v == NULL)){return NULL;}
-	v = v->vList.cdr;
-	lVal *t = lEval(c, lCarOrV(v));
+	v = lCdr(v);
+	lVal *t = lEval(c, lCar(v));
 	if(t == NULL){return NULL;}
 	if((t->type != ltInt) && (t->type != ltFloat)){return NULL;}
 	const lVal *lkey = lnfInt(c,t);
 	if(lkey == NULL){return NULL;}
 	int key = lkey->vInt;
 	if((key < 0) || (key >= lArrLength(arr))){return NULL;}
-	v = v->vList.cdr;
+	v = lCdr(v);
 	forEach(cur,v){
-		lVal *cv = lEval(c,lCarOrV(cur));
-		lArrData(arr)[key++] = cv == NULL ? 0 : cv - lValList;
+		lVal *cv = lEval(c,lCar(cur));
+		lArrData(arr)[key++] = cv == NULL ? 0 : lValI(cv);
 		if(key >= lArrLength(arr)){return NULL;}
 	}
 	int val = lArrData(arr)[key];
@@ -100,22 +100,22 @@ lVal *lnfArr(lClosure *c, lVal *v){
 	memset(lArrData(r),0,lArrLength(r) * sizeof(*arr->data));
 	int key = 0;
 	forEach(cur,vals){
-		lArrData(r)[key++] = cur->vList.car == NULL ? 0 : cur->vList.car - lValList;
+		lArrData(r)[key++] = lValI(lCar(cur));
 	}
 	return r;
 }
 
 lVal *lnfArrPred(lClosure *c, lVal *v){
-	lVal *arr = lEval(c,lCarOrV(v));
+	lVal *arr = lEval(c,lCar(v));
 	if((arr == NULL) || (arr->type != ltArray)){return lValBool(false);}
 	return lValBool(true);
 }
 
 void lAddArrayFuncs(lClosure *c){
-	lAddNativeFunc(c,"arr-length","(a)",        "Returns length of array a",                 lnfArrLength);
-	lAddNativeFunc(c,"arr-ref",   "(a i)",      "Returns value of array a at position i",    lnfArrRef);
-	lAddNativeFunc(c,"arr-set!",  "(a i &...v)","Sets array valus at position i to v",       lnfArrSet);
-	lAddNativeFunc(c,"arr-new",   "(l)",        "Allocates a new array of size l",           lnfArrNew);
-	lAddNativeFunc(c,"arr",       "(...args)",  "Creates a new array from its argument list",lnfArr);
-	lAddNativeFunc(c,"array? arr?","(val)",     "Return #t if VAL is an array",              lnfArrPred);
+	lAddNativeFunc(c,"arr-length", "(array)",    "Return length of ARRAY",                          lnfArrLength);
+	lAddNativeFunc(c,"arr-ref",    "(array index)",  "Return value of ARRAY at position INDEX",     lnfArrRef);
+	lAddNativeFunc(c,"arr-set!",   "(array index &...values)","Set ARRAY at INDEX to &...VALUES",   lnfArrSet);
+	lAddNativeFunc(c,"arr-new",    "(size)",     "Allocate a new array of SIZE",                    lnfArrNew);
+	lAddNativeFunc(c,"arr",        "(...args)",  "Create a new array from ...ARGS",                 lnfArr);
+	lAddNativeFunc(c,"array? arr?","(val)",     "Return #t if VAL is an array",                     lnfArrPred);
 }

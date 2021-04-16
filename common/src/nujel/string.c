@@ -138,9 +138,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 		if(t > 0){cur += t;}
 		lVal *cloData = lCloData(v->vCdr);
 		forEach(n,cloData){
-			if(n->vList.car == NULL)            {continue;}
-			if(n->vList.car->type != ltPair)    {continue;}
-			if(n->vList.car->vList.car == NULL) {continue;}
+			if(lCaar(n) == NULL){continue;}
 			if(n != cloData){
 				if(cl->flags & lfObject){
 					*cur++ = '\n';
@@ -150,10 +148,10 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 				}
 			}
 			lVal *cv = NULL;
-			if((n->vList.car->vList.cdr != NULL) && (n->vList.car->vList.cdr->type == ltPair) && (n->vList.car->vList.cdr->vList.car != NULL)){
-				cv = n->vList.car;
+			if(lCadar(n) != NULL){
+				cv = lCar(n);
 			}else{
-				cv = n->vList.car->vList.car;
+				cv = lCaar(n);
 			}
 			if(cl->flags & lfObject){
 				cv = lCons(lValSym("def"),cv);
@@ -208,9 +206,9 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 		}
 		t = snprintf(cur,bufEnd-cur,"(");
 		if(t > 0){cur += t;}
-		for(lVal *n = v;n != NULL; n = n->vList.cdr){
+		for(lVal *n = v;n != NULL; n = lCdr(n)){
 			if(n->type == ltPair){
-				cur = lSWriteVal(n->vList.car,cur,bufEnd,indentLevel,display);
+				cur = lSWriteVal(lCar(n),cur,bufEnd,indentLevel,display);
 				if(n->vList.cdr != NULL){
 					if((indentStyle == 1) && (n != v)){
 						*cur++ = '\n';
@@ -281,7 +279,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 
 lVal *lnfStrlen(lClosure *c, lVal *v){
 	if(v == NULL){return NULL;}
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	if((t == NULL) || (t->type != ltString)){return NULL;}
 	if(lStrNull(t)){return lValInt(0);}
 	return lValInt(lStringLength(&lStr(t)));
@@ -289,7 +287,7 @@ lVal *lnfStrlen(lClosure *c, lVal *v){
 
 lVal *lnfTrim(lClosure *c, lVal *v){
 	if(v == NULL){return NULL;}
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	if((t == NULL) || (t->type != ltString)){return NULL;}
 	if(lStrNull(t)){return lValInt(0);}
 	const char *s;
@@ -311,7 +309,7 @@ lVal *lnfTrim(lClosure *c, lVal *v){
 
 lVal *lnfStrDown(lClosure *c, lVal *v){
 	if(v == NULL){return NULL;}
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	if((t == NULL) || (t->type != ltString)){return NULL;}
 	if(lStrNull(t)){return lValInt(0);}
 	const int len = lStringLength(&lStr(t));
@@ -332,7 +330,7 @@ lVal *lnfStrDown(lClosure *c, lVal *v){
 
 lVal *lnfStrUp(lClosure *c, lVal *v){
 	if(v == NULL){return NULL;}
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	if((t == NULL) || (t->type != ltString)){return NULL;}
 	if(lStrNull(t)){return lValInt(0);}
 	const int len = lStringLength(&lStr(t));
@@ -353,7 +351,7 @@ lVal *lnfStrUp(lClosure *c, lVal *v){
 
 lVal *lnfStrCap(lClosure *c, lVal *v){
 	if(v == NULL){return NULL;}
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	if((t == NULL) || (t->type != ltString)){return NULL;}
 	if(lStrNull(t)){return lValInt(0);}
 	const int len = lStringLength(&lStr(t));
@@ -399,15 +397,15 @@ lVal *lnfSubstr(lClosure *c, lVal *v){
 		slen = len = lStringLength(&lStr(str));
 		break;
 	}
-	if(v->vList.cdr != NULL){
-		v = v->vList.cdr;
-		lVal *lStart = lEval(c,v->vList.car);
+	if(lCdr(v) != NULL){
+		v = lCdr(v);
+		lVal *lStart = lEval(c,lCar(v));
 		if(lStart->type == ltInt){
 			start = lStart->vInt;
 		}
-		if(v->vList.cdr != NULL){
+		if(lCdr(v) != NULL){
 			v = v->vList.cdr;
-			lVal *lLen = lEval(c,v->vList.car);
+			lVal *lLen = lEval(c,lCar(v));
 			if(lLen->type == ltInt){
 				len = lLen->vInt;
 			}
@@ -447,7 +445,7 @@ lVal *lnfCat(lClosure *c, lVal *v){
 	char *buf = tmpStringBuf;
 	int len = 0;
 	forEach(sexpr,v){
-		lVal *t = lEval(c,sexpr->vList.car);
+		lVal *t = lEval(c,lCar(sexpr));
 		int clen = 0;
 		if(t == NULL){continue;}
 		//lWriteVal(t);
@@ -510,7 +508,7 @@ lVal *lnfIndexOf(lClosure *c, lVal *v){
 lVal *lnfAnsiFG(lClosure *c, lVal *v){
 	int i = 0;
 	if(v != NULL){
-		lVal *t = lnfInt(c,lEval(c,lCarOrV(v)));
+		lVal *t = lnfInt(c,lEval(c,lCar(v)));
 		if((t != NULL) && (t->type == ltInt)){
 			i = t->vInt;
 		}
@@ -527,14 +525,14 @@ lVal *lnfAnsiRS(lClosure *c, lVal *v){
 }
 
 lVal *lnfStrSym(lClosure *c, lVal *v){
-	v = lEval(c,lCarOrV(v));
+	v = lEval(c,lCar(v));
 	if(v == NULL){return NULL;}
 	if(v->type != ltString){return NULL;}
 	return lValSym(lStrData(v));
 }
 
 lVal *lnfSymStr(lClosure *c, lVal *v){
-	v = lEval(c,lCarOrV(v));
+	v = lEval(c,lCar(v));
 	if(v == NULL){return NULL;}
 	if(v->type != ltSymbol){return NULL;}
 	return lValString(v->vSymbol.c);
@@ -546,7 +544,7 @@ lVal *lnfWriteStr(lClosure *c, lVal *v){
 		return lValString("#nil");
 	}
 	char *buf = malloc(1<<19);
-	lSWriteVal(t->vList.car, buf, &buf[1<<19],0,false);
+	lSWriteVal(lCar(t), buf, &buf[1<<19],0,false);
 	buf[(1<<19)-1]=0;
 	t = lValString(buf);
 	free(buf);

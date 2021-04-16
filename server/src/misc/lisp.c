@@ -366,14 +366,14 @@ static lVal *wwlnfRCount(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	if((t == NULL) || (t->type != ltString)){return NULL;}
 	serverSendChatMsg(lStrData(t));
 	return t;
 }
 
 static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	if((t == NULL) || (t->type != ltString)){return NULL;}
 	printf("%s\n",lStrData(t));
 	return t;

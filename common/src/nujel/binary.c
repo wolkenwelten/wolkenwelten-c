@@ -19,7 +19,7 @@
 #include "casting.h"
 
 static lVal *lnfLogAndI(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vInt &= vv->vList.car->vInt; }
+	forEach(vv,lCdr(v)){ t->vInt &= lCar(vv)->vInt; }
 	return t;
 }
 lVal *lnfLogAnd (lClosure *c, lVal *v){
@@ -27,7 +27,7 @@ lVal *lnfLogAnd (lClosure *c, lVal *v){
 }
 
 static lVal *lnfLogIorI(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vInt |= vv->vList.car->vInt; }
+	forEach(vv,lCdr(v)){ t->vInt |= lCar(vv)->vInt; }
 	return t;
 }
 lVal *lnfLogIor (lClosure *c, lVal *v){
@@ -36,7 +36,7 @@ lVal *lnfLogIor (lClosure *c, lVal *v){
 }
 
 static lVal *lnfLogXorI(lVal *t, lVal *v){
-	forEach(vv,v->vList.cdr){ t->vInt ^= vv->vList.car->vInt; }
+	forEach(vv,lCdr(v)){ t->vInt ^= lCar(vv)->vInt; }
 	return t;
 }
 lVal *lnfLogXor (lClosure *c, lVal *v){
@@ -47,7 +47,7 @@ lVal *lnfLogNot (lClosure *c, lVal *v){
 	if(v == NULL){return lValInt(0);}
 	lVal *t = lEvalCastSpecific(c,v,ltInt);
 	if((t == NULL) || (t->type != ltPair)){return lValInt(0);}
-	return lValInt(~t->vList.car->vInt);
+	return lValInt(~lCar(t)->vInt);
 }
 
 #include <stdio.h>
@@ -55,9 +55,9 @@ lVal *lnfAsh(lClosure *c, lVal *v){
 	if((v == NULL) || (v->type != ltPair)){return lValInt(0);}
 	lVal *vals  = lEvalCastSpecific(c,v,ltInt);
 	if(vals == NULL){return lValInt(0);}
-	lVal *val   = vals->vList.car;
-	if(vals->vList.cdr == NULL){return val;}
-	lVal *shift = vals->vList.cdr->vList.car;
+	lVal *val   = lCar(vals);
+	lVal *shift = lCadr(vals);
+	if(shift == NULL){return val;}
 	const int sv = shift->vInt;
 	if(sv > 0){
 		return lValInt(val->vInt << shift->vInt);
@@ -67,9 +67,9 @@ lVal *lnfAsh(lClosure *c, lVal *v){
 }
 
 void lAddBinaryFuncs(lClosure *c){
-	lAddNativeFunc(c,"logand &","(...args)","And all the arguments together",lnfLogAnd);
-	lAddNativeFunc(c,"logior |","(...args)","Or all the arguments together", lnfLogIor);
-	lAddNativeFunc(c,"logxor ^","(...args)","Xor all the arguments together",lnfLogXor);
-	lAddNativeFunc(c,"lognot ~","(a)",      "Binary not of A",               lnfLogNot);
-	lAddNativeFunc(c,"ash <<",  "(a b)",    "Shift A left bit B bits",       lnfAsh);
+	lAddNativeFunc(c,"logand &","(...args)","And ...ARGS together",                 lnfLogAnd);
+	lAddNativeFunc(c,"logior |","(...args)","Or ...ARGS",                           lnfLogIor);
+	lAddNativeFunc(c,"logxor ^","(...args)","Xor ...ARGS",                          lnfLogXor);
+	lAddNativeFunc(c,"lognot ~","(val)",    "Binary not of VAL",                    lnfLogNot);
+	lAddNativeFunc(c,"ash <<",  "(value amount)","Shift VALUE left AMOUNT bits",    lnfAsh);
 }

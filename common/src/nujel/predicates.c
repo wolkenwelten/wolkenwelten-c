@@ -25,11 +25,11 @@
 #include <stdio.h>
 
 static int lValCompare(lClosure *c, lVal *v){
-	if((v == NULL) || (v->vList.car == NULL) || (v->vList.cdr == NULL)){return 2;}
-	lVal *a = lEval(c,v->vList.car);
-	v = v->vList.cdr;
-	if(v->vList.car == NULL){return 2;}
-	lVal *b = lEval(c,v->vList.car);
+	if((v == NULL) || (lCar(v) == NULL) || (lCdr(v) == NULL)){return 2;}
+	lVal *a = lEval(c,lCar(v));
+	v = lCdr(v);
+	if(lCar(v) == NULL){return 2;}
+	lVal *b = lEval(c,lCar(v));
 	if((a == NULL) || (b == NULL)){return 2;}
 	lType ct = lTypecast(a->type, b->type);
 	switch(ct){
@@ -113,53 +113,53 @@ lVal *lnfZero(lClosure *c, lVal *v){
 }
 
 lVal *lnfIntPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	return lValBool(t == NULL ? false : t->type == ltInt);
 }
 
 lVal *lnfFloatPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	return lValBool(t == NULL ? false : t->type == ltFloat);
 }
 
 lVal *lnfStringPred(lClosure *c, lVal *v){
 	if(v == NULL){return lValBool(false);}
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	return lValBool((t != NULL) && (t->type == ltString));
 }
 
 lVal *lnfVecPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	return lValBool((t != NULL) && (t->type == ltVec));
 }
 
 lVal *lnfBoolPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	return lValBool((t != NULL) && (t->type == ltBool));
 }
 
 lVal *lnfNilPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	return lValBool(t == NULL);
 }
 
 lVal *lnfInfPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	return lValBool((t != NULL) && (t->type == ltInf));
 }
 
 lVal *lnfPairPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	return lValBool((t != NULL) && (t->type == ltPair));
 }
 
 lVal *lnfLambdaPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	return lValBool((t != NULL) && (t->type == ltLambda));
 }
 
 lVal *lnfNativeFuncPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCarOrV(v));
+	lVal *t = lEval(c,lCar(v));
 	return lValBool((t != NULL) && (t->type == ltNativeFunc));
 }
 

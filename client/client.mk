@@ -26,6 +26,7 @@ WINDOW_HEIGHT    := 524
 TESTNR           := 1
 
 client/src/game/animal.o:       client/src/tmp/objs.h
+client/src/game/grenade.o:      client/src/tmp/objs.h
 client/src/main.o:              common/src/tmp/cto.o
 client/src/main.o:              client/src/tmp/sfx.h
 client/src/game/character.o:    client/src/tmp/sfx.h
