@@ -95,15 +95,15 @@ void entityUpdateCurChungus(entity *e){
 int entityUpdate(entity *e){
 	int ret=0;
 	u32 col;
-	e->pos = vecAdd(e->pos,e->vel);
 	if(!worldShouldBeLoaded(e->pos)){return -1;}
+	if(!vecInWorld(e->pos))         {return  1;}
+	e->pos = vecAdd(e->pos,e->vel);
 	if(e->flags & ENTITY_NOCLIP){
 		e->flags &= ~ENTITY_COLLIDE;
 		if(entityCollision(e->pos)){ e->flags |= ENTITY_COLLIDE; }
 		entityUpdateCurChungus(e);
 		return 0;
 	}
-	if(!vecInWorld(e->pos)){return 1;}
 
 	e->vel.y -= 0.0005f;
 	// ToDo: implement terminal veolocity in a better way

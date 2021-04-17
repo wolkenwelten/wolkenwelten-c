@@ -29,9 +29,10 @@
 #include <string.h>
 
 void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
-	int iterations = 12;
+	int iterations = 6;
 	chungus *clay = wgen->clay;
 
+	if((w < 2) || (h < 2) || (d < 2)){return;}
 	if((w < 8) || (h < 8) || (d < 8)){
 		chungusBoxFWG(clay,x-w,y-h,z-d,w*2,h*2,d*2);
 		wgen->minX = MIN(wgen->minX,x-w);
@@ -42,7 +43,6 @@ void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
 		wgen->maxZ = MAX(wgen->maxZ,z+d);
 	}
 
-	if((w < 2) || (h < 2) || (d < 2)){return;}
 	for(int i=0;i<iterations;i++){
 		int nx,ny,nz;
 		int nw = w/2;
@@ -83,12 +83,12 @@ void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
 		break;
 		case 2:
 			nx = rngValMM(x-w,x+w);
-			ny = y-h;
+			ny = y - h;
 			nz = rngValMM(z-d,z+d);
 		break;
 		case 3:
 			nx = rngValMM(x-w,x+w);
-			ny = y+h;
+			ny = y + h;
 			nz = rngValMM(z-d,z+d);
 		break;
 		case 4:
@@ -100,7 +100,7 @@ void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
 		case 5:
 			nx = rngValMM(x-w,x+w);
 			ny = rngValMM(y-h,y+h);
-			nz = z + d;
+			nz = z + d + (rngValM(d)-d/2);
 		break;
 		}
 		worldgenRock(wgen,nx,ny,nz,nw,nh,nd);

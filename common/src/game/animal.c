@@ -189,6 +189,7 @@ int animalUpdate(animal *e){
 	u32 col;
 	if(e->type == 0)       {return 0;}
 	e->pos = vecAdd(e->pos,e->vel);
+	if(!worldShouldBeLoaded(e->pos)){return -1;}
 	if(!vecInWorld(e->pos)){return 1;}
 	e->breathing += 5;
 	animalCheckForHillOrCliff(e);
@@ -362,9 +363,10 @@ void animalUpdateAll(){
 		animalList[i].health -= dmg;
 		if(isClient){continue;}
 		if((animalList[i].pos.y  <  0.f) ||
-		   (animalList[i].health <= 0) ||
-		   (animalList[i].hunger <= 0) ||
-		   (animalList[i].sleepy <= 0)) {
+		   (animalList[i].health <= 0)   ||
+		   (animalList[i].hunger <= 0)   ||
+		   (animalList[i].sleepy <= 0)   ||
+		   (dmg < 0)) {
 			animalRDie(&animalList[i]);
 			animalDel(i);
 			continue;
