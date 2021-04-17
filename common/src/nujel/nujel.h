@@ -83,8 +83,8 @@ struct lString {
 #define STR_MAX (1<<14)
 #define ARR_MAX (1<<12)
 #define NFN_MAX (1<<10)
-#define VEC_MAX (1<<12)
-#define SYM_MAX (1<<12)
+#define VEC_MAX (1<<14)
+#define SYM_MAX (1<<14)
 
 #define VAL_MASK ((VAL_MAX)-1)
 #define CLO_MASK ((CLO_MAX)-1)

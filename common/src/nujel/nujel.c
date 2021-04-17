@@ -229,6 +229,7 @@ void lArrayFree(u32 v){
 	if((v == 0) || (v >= lArrayMax)){return;}
 	lArrayActive--;
 	free(lArrayList[v].data);
+	lArrayList[v].data = NULL;
 	lArrayList[v].nextFree = lArrayFFree;
 	lArrayFFree = v;
 }
@@ -1301,6 +1302,8 @@ void lClosureGC(){
 	thresh = MIN(thresh,((CLO_MAX - (int)lClosureActive) - 128) * 4);
 	thresh = MIN(thresh,((ARR_MAX - (int)lArrayActive)   -  64) * 8);
 	thresh = MIN(thresh,((STR_MAX - (int)lStringActive)  -  64) * 8);
+	thresh = MIN(thresh,((VEC_MAX - (int)lVecActive)     -  64) * 8);
+	thresh = MIN(thresh,((SYM_MAX - (int)lSymbolActive)  -  64) * 8);
 	if(++calls < thresh){return;}
 	lClosureDoGC();
 	calls = 0;
