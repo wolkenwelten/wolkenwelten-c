@@ -402,7 +402,7 @@ static lVal *wwlnfChunkInfo(lClosure *c, lVal *v){
 static lVal *wwlnfChungusInfo(lClosure *c, lVal *v){
 	char buf[256];
 	vec pos = vecNOne();
-	v= getLArgV(c,v,&pos);
+	v=  getLArgV(c,v,&pos);
 	if(pos.x < 0){return NULL;}
 
 	chungus *chng = worldTryChungus((uint)pos.x >> 8,(uint)pos.y >> 8,(uint)pos.z >> 8);
@@ -410,6 +410,21 @@ static lVal *wwlnfChungusInfo(lClosure *c, lVal *v){
 	snprintf(buf,sizeof(buf),"[%u:%u:%u] clientsUpdated: %" PRIx64 " | clientsSubscribed: %" PRIx64 " | freeTimer: %" PRIu64 ,chng->x, chng->y, chng->z, chng->clientsUpdated,chng->clientsSubscribed,chng->freeTimer);
 
 	return lValString(buf);
+}
+
+static lVal *wwlnfSetSpawnPos(lClosure *c, lVal *v){
+	vec pos = vecNOne();
+
+	v =  getLArgV(c,v,&pos);
+	if(pos.x < 0){return NULL;}
+	worldSetSpawnPos(ivecNewV(pos));
+
+	return NULL;
+}
+
+static lVal *wwlnfSpawnPos(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValVec(vecNewI(worldGetSpawnPos()));
 }
 
 void addServerNativeFuncs(lClosure *c){
@@ -443,6 +458,8 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"console-print",  "(s)",                                          "Prints something to stdout",                                 wwlnfConsolePrint);
 	lAddNativeFunc(c,"chunk-info",     "(pos)",                                        "Returns a description of the chunk at pos",                  wwlnfChunkInfo);
 	lAddNativeFunc(c,"chungus-info",   "(pos)",                                        "Returns a description of the chungus at pos",                wwlnfChungusInfo);
+	lAddNativeFunc(c,"spawn-pos",      "()",                                           "Return the current spawn position as a vec",                 wwlnfSpawnPos);
+	lAddNativeFunc(c,"spawn-pos!",     "(pos)",                                        "Set the spawn POS",                                          wwlnfSetSpawnPos);
 
 	lAddNativeFunc(c,"quit!",          "()",                                           "Cleanly shuts down the server",                              wwlnfQuit);
 }

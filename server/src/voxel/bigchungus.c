@@ -268,10 +268,15 @@ void bigchungusGenHugeSpawn(bigchungus *c){
 }
 
 ivec bigchungusGetSpawnPos(bigchungus *c){
+	/*
 	if(!bigchungusTrySpawn(c,c->spawn)){
 		bigchungusDetermineSpawn(c,c->spawn);
-	}
+	}*/
 	return c->spawn;
+}
+
+void bigchungusSetSpawnPos(bigchungus *c, ivec pos){
+	c->spawn = pos;
 }
 
 void bigchungusUpdateClient(bigchungus *c, int p){
@@ -373,6 +378,9 @@ void worldBoxMineSphere(int x, int y, int z, int r){
 }
 ivec worldGetSpawnPos(){
 	return bigchungusGetSpawnPos(&world);
+}
+void worldSetSpawnPos(ivec pos){
+	bigchungusSetSpawnPos(&world,pos);
 }
 void worldSetAllUpdated(){
 	for(int ox=0;ox < 256; ox++){

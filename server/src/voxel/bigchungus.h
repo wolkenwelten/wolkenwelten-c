@@ -32,6 +32,7 @@ bool        bigchungusSetB              (bigchungus *c, int x, int y, int z, u8 
 void        bigchungusGenSpawn          (bigchungus *c);
 void        bigchungusGenHugeSpawn      (bigchungus *c);
 ivec        bigchungusGetSpawnPos       (bigchungus *c);
+void        bigchungusSetSpawnPos       (bigchungus *c, ivec pos);
 void        bigchungusUpdateClient      (bigchungus *c, int p);
 void        bigchungusUnsubscribeClient (bigchungus *c, int p);
 void        bigchungusDirtyChunk        (bigchungus *c, int x, int y, int z, int client);
@@ -53,4 +54,5 @@ void     worldBoxMineSphere (int x, int y, int z, int r);
 bool     worldIsLoaded      (int x, int y, int z);
 bool     worldShouldBeLoaded(const vec cpos);
 ivec     worldGetSpawnPos   ();
+void     worldSetSpawnPos   (ivec pos);
 void     worldSetAllUpdated ();
