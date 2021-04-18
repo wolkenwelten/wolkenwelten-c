@@ -216,7 +216,7 @@ static void widgetDrawButton(const widget *wid, textMesh *m, int x, int y, int w
 	u32 tcolor   = 0xFF777777;
 	u32 bcolor   = 0xFF333333;
 	int textYOff = (h - (2*8))/2;
-	int textXOff = (w-(strnlen(wid->label,w/16)*16))/2;
+	int textXOff = (w - (wid->label == NULL ? 0 : strnlen(wid->label,w/16)*16)) / 2;
 
 	if(wid == widgetFocused){
 		 color = 0xFFAA6666;
@@ -255,7 +255,7 @@ static void widgetDrawButtondel(const widget *wid, textMesh *m, int x, int y, in
 	u32 dbcolor  = 0xFF333377;
 
 	int textYOff = (h - (2*8))/2;
-	int textXOff = (w-(strnlen(wid->label,w/16)*16))/2;
+	int textXOff = (w-(wid->label == NULL ? 0 : strnlen(wid->label,w/16) * 16))/2;
 
 	if(wid == widgetFocused){
 		 color = 0xFFAA6666;
@@ -285,15 +285,15 @@ static void widgetDrawButtondel(const widget *wid, textMesh *m, int x, int y, in
 		}
 	}
 
-	textMeshVGradient(m,x+1, y+1,w-41,h-1, color,bcolor);
-	textMeshSolidBox (m,x+1, y  ,w-42,  1, tcolor);
-	textMeshSolidBox (m,x  , y+1,   1,h-2, tcolor);
-	textMeshSolidBox (m,x+1, y+h-1,w-42,  1, bcolor);
+	textMeshVGradient(m,x+1, y+1,w-41,h-1,    color,bcolor);
+	textMeshSolidBox (m,x+1, y  ,w-42,  1,    tcolor);
+	textMeshSolidBox (m,x  , y+1,   1,h-2,    tcolor);
+	textMeshSolidBox (m,x+1, y+h-1,w-42,  1,  bcolor);
 
-	textMeshVGradient(m,x+w-41, y+1,40,h-2, dcolor,dbcolor);
+	textMeshVGradient(m,x+w-41, y+1,40,h-2,   dcolor,dbcolor);
 	textMeshSolidBox (m,x+w-1 , y+1  , 1,h-2, dbcolor);
 	textMeshSolidBox (m,x+w-41, y+h-1,40,  1, dbcolor);
-	textMeshSolidBox (m,x+w-41, y  ,40,  1, dtcolor);
+	textMeshSolidBox (m,x+w-41, y  ,40,  1,   dtcolor);
 
 	textMeshAddStrPS(m,x+textXOff,y+textYOff,2,wid->label);
 	textMeshAddStrPS(m,x+w-24,y+textYOff,2,"X");

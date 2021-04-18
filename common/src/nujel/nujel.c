@@ -323,10 +323,13 @@ lVal *lValAlloc(){
 	return ret;
 }
 
+void lGUIWidgetFree(lVal *v);
 void lValFree(lVal *v){
 	if((v == NULL) || (v->type == ltNoAlloc)){return;}
 	if(v->type == ltLambda){
 		lClo(v->vCdr).refCount--;
+	}else if(v->type == ltGUIWidget){
+		lGUIWidgetFree(v);
 	}
 	lValActive--;
 	v->type   = ltNoAlloc;
@@ -1397,6 +1400,15 @@ lVal *getLArgS(lClosure *c, lVal *v,const char **res){
 	lVal *tlv = lnfString(c,lEval(c,lCar(v)));
 	if(tlv != NULL){
 		*res = lStrData(tlv);
+	}
+	return lCdr(v);
+}
+
+lVal *getLArgL(lClosure *c, lVal *v,lVal **res){
+	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	lVal *tlv = lEval(c,lCar(v));
+	if((tlv != NULL) && ((tlv->type == ltLambda) || (tlv->type == ltNativeFunc))){
+		*res = tlv;
 	}
 	return lCdr(v);
 }

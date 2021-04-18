@@ -521,3 +521,7 @@ const char *lispEval(const char *str){
 	lClosureGC();
 	return reply+soff;
 }
+
+void lGUIWidgetFree(lVal *v){
+	(void)v;
+}

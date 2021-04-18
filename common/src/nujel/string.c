@@ -259,6 +259,9 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 	case ltInf:
 		t = snprintf(buf,len,"#inf");
 		break;
+	case ltGUIWidget:
+		t = snprintf(buf,len,"#gui_%u",v->vCdr);
+		break;
 	}
 
 	if(t > 0){cur += t;}

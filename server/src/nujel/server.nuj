@@ -67,8 +67,9 @@
 				((< i 6) (ansi-yellow i)) (#t i)))
 		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))
 
-(def debug-stuff! (δ () "Gives the issuing player some nice stuff to get started with"
-	(clear-eq!) (clear-inv!)
+(def debug-stuff! (λ () "Gives the issuing player some nice stuff to get started with"
+	(clear-eq!)
+	(clear-inv!)
 
 	(set-eq! 0 i-glider)
 	(set-eq! 1 i-hook)
@@ -85,7 +86,6 @@
 	(set-inv! 7 i-pear 42)
 	(set-inv! 8 i-dirt 99)
 	(set-inv! 9 i-grenade 99)
-
 
 	(set-inv! 10 i-crystalbulle 999)
 	(set-inv! 11 i-crystalbulle 999)

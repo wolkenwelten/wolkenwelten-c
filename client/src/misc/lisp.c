@@ -31,6 +31,7 @@
 #include "../gui/menu.h"
 #include "../gui/lispInput.h"
 #include "../gui/textInput.h"
+#include "../gui/widget.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
 #include "../network/client.h"
@@ -607,6 +608,7 @@ void lispInit(){
 	lInit();
 	clRoot = lispCommonRoot();
 	lispAddClientNFuncs(clRoot);
+	widgetAddLispFunctions(clRoot);
 	lEval(clRoot,lWrap(lRead((const char *)src_tmp_client_nuj_data)));
 	lClosureGC();
 }
@@ -626,6 +628,10 @@ const char *lispEval(const char *str){
 	for(slen = len-1;isspace((u8)reply[slen]) || (reply[slen] == '"');slen--){reply[slen] = 0;}
 
 	return reply+soff;
+}
+
+lVal *lispEvalL(lVal *expr){
+	return lEval(clRoot,expr);
 }
 
 void lispRecvSExpr(const packet *p){

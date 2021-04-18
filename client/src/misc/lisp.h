@@ -6,5 +6,6 @@ void lispKeyDown     (int code);
 void lispInit        ();
 void lispFree        ();
 const char *lispEval (const char *str);
+lVal *lispEvalL(lVal *expr);
 void lispRecvSExpr   (const packet *p);
 void lispEvents      ();

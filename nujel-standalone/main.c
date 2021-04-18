@@ -27,6 +27,10 @@
 #include "../common/src/nujel/reader.h"
 #include "../common/src/nujel/string.h"
 
+void lGUIWidgetFree(lVal *v){
+	(void)v;
+}
+
 static void *loadFile(const char *filename,size_t *len){
 	FILE *fp;
 	size_t filelen,readlen,read;

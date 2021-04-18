@@ -4,7 +4,19 @@
 extern int lGCRuns;
 
 typedef enum lType {
-	ltNoAlloc = 0, ltBool, ltPair, ltLambda, ltInt, ltFloat, ltVec, ltString, ltSymbol, ltNativeFunc, ltInf, ltArray
+	ltNoAlloc = 0,
+	ltBool,
+	ltPair,
+	ltLambda,
+	ltInt,
+	ltFloat,
+	ltVec,
+	ltString,
+	ltSymbol,
+	ltNativeFunc,
+	ltInf,
+	ltArray,
+	ltGUIWidget
 } lType;
 
 typedef struct lVal     lVal;
@@ -157,6 +169,7 @@ lVal     *getLArgB          (lClosure *c, lVal *v, bool *res);
 lVal     *getLArgI          (lClosure *c, lVal *v, int *res);
 lVal     *getLArgF          (lClosure *c, lVal *v, float *res);
 lVal     *getLArgV          (lClosure *c, lVal *v, vec *res);
+lVal     *getLArgL          (lClosure *c, lVal *v, lVal **res);
 lVal     *getLArgS          (lClosure *c, lVal *v, const char **res);
 lVal     *lConst            (lVal *v);
 lVal     *lValDup           (const lVal *v);

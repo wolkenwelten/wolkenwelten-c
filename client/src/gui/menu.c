@@ -104,6 +104,7 @@ void initMenu(){
 	widget *wid;
 
 	rootMenu = widgetNewCP(wSpace,NULL,0,0,-1,-1);
+	widgetExport(rootMenu,"w-root-menu");
 
 	menuBackground = widgetNewCP(wSpace,rootMenu,0,0,-1,-1);
 	menuText = widgetNewCP(wSpace,menuBackground,32,32,256,-65);

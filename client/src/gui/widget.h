@@ -1,17 +1,23 @@
 #pragma once
 #include "../../../common/src/common.h"
 
+#include "../misc/lisp.h"
+
 typedef struct widget widget;
 typedef struct eventHandler eventHandler;
 
 struct eventHandler {
 	const char *eventName;
-	void (*handler)(widget *);
+	bool lisp;
+	union {
+		void (*handler)(widget *);
+		lVal *lispHandler;
+	};
 	eventHandler *next;
 };
 
 typedef enum {
-	wNone,
+	wNone = 0,
 	wSpace,
 	wPanel,
 	wBackground,
@@ -38,7 +44,7 @@ struct widget {
 
 	widget *parent,*child;
 	widget *prev,*next;
-	eventHandler  *firstHandler;
+	eventHandler *firstHandler;
 
 	const char *label;
 	union {
@@ -72,12 +78,16 @@ struct widget {
 extern widget *widgetFocused;
 
 
+
 widget *widgetNew     (widgetType type);
 widget *widgetNewC    (widgetType type, widget *p);
 widget *widgetNewCP   (widgetType type, widget *p, int x, int y, int w, int h);
 widget *widgetNewCPL  (widgetType type, widget *p, int x, int y, int w, int h, const char *label);
 widget *widgetNewCPLH (widgetType type, widget *p, int x, int y, int w, int h, const char *label,const char *eventName, void (*handler)(widget *));
+widget *widgetGet     (uint i);
 void    widgetFree    (widget *w);
+void    widgetExport  (widget *w, const char *symbol);
+void    widgetAddLispFunctions(lClosure *c);
 
 void    widgetFocus   (widget *w);
 void    widgetEmpty   (widget *w);
@@ -86,9 +96,11 @@ void    widgetChildPre(widget *parent, widget *child);
 widget *widgetNextSel (const widget *cur);
 widget *widgetPrevSel (const widget *cur);
 void    widgetBind    (widget *w, const char *eventName, void (*handler)(widget *));
+void    widgetBindL   (widget *w, const char *eventName, lVal *val);
 int     widgetEmit    (widget *w, const char *eventName);
 void    widgetDraw    (widget *w, textMesh *mesh, int x, int y, int pw, int ph);
 void    widgetLayVert (widget *w, int padding);
+void    widgetLabel   (widget *w, const char *newLabel);
 void    widgetFinish  (widget *w);
 void    widgetSlideW  (widget *w, int nw);
 void    widgetSlideH  (widget *w, int nh);

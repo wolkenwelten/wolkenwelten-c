@@ -21,6 +21,7 @@
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
 #include "../gui/widgetDrawing.h"
+#include "../misc/lisp.h"
 #include "../sdl/sdl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/textMesh.h"
@@ -32,6 +33,11 @@
 
 widget *widgetFocused = NULL;
 
+#define WIDGET_COUNT (1<<12)
+widget  widgetList[WIDGET_COUNT];
+int     widgetMax = 1;
+widget *widgetFirstFree = NULL;
+
 static bool mouseInBox(uint x, uint y, uint w, uint h){
 	if(mouseHidden) {return false;}
 	if(mousex < x  ){return false;}
@@ -41,9 +47,299 @@ static bool mouseInBox(uint x, uint y, uint w, uint h){
 	return true;
 }
 
+widget *widgetGet(uint i){
+	if(i >= WIDGET_COUNT){return NULL;}
+	return &widgetList[i];
+}
+
+void lGUIWidgetFree(lVal *v){
+	if(v->type != ltGUIWidget){return;}
+	widgetFree(widgetGet(v->vCdr));
+}
+
+void widgetExport(widget *w, const char *symbol){
+	lVal *v = lValAlloc();
+	v->type = ltGUIWidget;
+	v->vCdr = w - widgetList;
+	lDefineVal(clRoot,symbol,v);
+}
+
+static lVal *getLArgW(lClosure *c, lVal *v, widget **res){
+	if((v == NULL) || (v->type != ltPair)){return NULL;}
+	lVal *tlv = lEval(c,lCar(v));
+	if((tlv != NULL) && (tlv->type == ltGUIWidget)){
+		*res = widgetGet(tlv->vCdr);
+	}
+	return lCdr(v);
+}
+
+static lVal *lValW(widget *w){
+	if(w == NULL){return NULL;}
+	lVal *ret = lValAlloc();
+	if(ret == NULL){return NULL;}
+	ret->type = ltGUIWidget;
+	ret->vCdr = w - widgetList;
+	return ret;
+}
+
+lVal *wwlnfWidgetNew(lClosure *c, lVal *v){
+	int type = -1;
+
+	v = getLArgI(c,v,&type);
+	if(type < 0){return NULL;}
+	widget *w = widgetNew(type);
+	lVal *ret = lValW(w);
+	if(ret == NULL){widgetFree(w);}
+
+	return ret;
+}
+
+lVal *wwlnfWidgetParent(lClosure *c, lVal *v){
+	widget *w = NULL;
+	v = getLArgW(c,v,&w);
+	if(w == NULL){return NULL;}
+
+	return lValW(w->parent);
+}
+
+lVal *wwlnfWidgetSetParent(lClosure *c, lVal *v){
+	widget *w = NULL,*newParent = NULL;
+	v = getLArgW(c,v,&w);
+	v = getLArgW(c,v,&newParent);
+	if((w == NULL) || (newParent == NULL)){return NULL;}
+	widgetChild(newParent,w);
+
+	return NULL;
+}
+
+lVal *wwlnfWidgetX(lClosure *c, lVal *v){
+	widget *w = NULL;
+	v = getLArgW(c,v,&w);
+	if(w == NULL){return NULL;}
+	return lValInt(w->x);
+}
+
+lVal *wwlnfWidgetSetX(lClosure *c, lVal *v){
+	widget *w = NULL;
+	int nv = INT_MIN;
+	v = getLArgW(c,v,&w);
+	v = getLArgI(c,v,&nv);
+	if((w == NULL) || (nv == INT_MIN)){return NULL;}
+	w->x = nv;
+	return NULL;
+}
+
+lVal *wwlnfWidgetY(lClosure *c, lVal *v){
+	widget *w = NULL;
+	v = getLArgW(c,v,&w);
+	if(w == NULL){return NULL;}
+	return lValInt(w->y);
+}
+
+lVal *wwlnfWidgetSetY(lClosure *c, lVal *v){
+	widget *w = NULL;
+	int nv = INT_MIN;
+	v = getLArgW(c,v,&w);
+	v = getLArgI(c,v,&nv);
+	if((w == NULL) || (nv == INT_MIN)){return NULL;}
+	w->y = nv;
+	return NULL;
+}
+
+lVal *wwlnfWidgetW(lClosure *c, lVal *v){
+	widget *w = NULL;
+	v = getLArgW(c,v,&w);
+	if(w == NULL){return NULL;}
+	return lValInt(w->w);
+}
+
+lVal *wwlnfWidgetSetW(lClosure *c, lVal *v){
+	widget *w = NULL;
+	int nv = INT_MIN;
+	v = getLArgW(c,v,&w);
+	v = getLArgI(c,v,&nv);
+	if((w == NULL) || (nv == INT_MIN)){return NULL;}
+	w->w = nv;
+	return NULL;
+}
+
+lVal *wwlnfWidgetH(lClosure *c, lVal *v){
+	widget *w = NULL;
+	v = getLArgW(c,v,&w);
+	if(w == NULL){return NULL;}
+	return lValInt(w->h);
+}
+
+lVal *wwlnfWidgetSetH(lClosure *c, lVal *v){
+	widget *w = NULL;
+	int nv = INT_MIN;
+	v = getLArgW(c,v,&w);
+	v = getLArgI(c,v,&nv);
+	if((w == NULL) || (nv == INT_MIN)){return NULL;}
+	w->h = nv;
+	return NULL;
+}
+
+lVal *wwlnfWidgetFlags(lClosure *c, lVal *v){
+	widget *w = NULL;
+	v = getLArgW(c,v,&w);
+	if(w == NULL){return NULL;}
+	return lValInt(w->flags);
+}
+
+lVal *wwlnfWidgetSetFlags(lClosure *c, lVal *v){
+	widget *w = NULL;
+	int nv = INT_MIN;
+	v = getLArgW(c,v,&w);
+	v = getLArgI(c,v,&nv);
+	if((w == NULL) || (nv == INT_MIN)){return NULL;}
+	w->flags = nv;
+	return NULL;
+}
+
+lVal *wwlnfWidgetGX(lClosure *c, lVal *v){
+	widget *w = NULL;
+	v = getLArgW(c,v,&w);
+	if(w == NULL){return NULL;}
+	return lValInt(w->gx);
+}
+
+lVal *wwlnfWidgetSetGX(lClosure *c, lVal *v){
+	widget *w = NULL;
+	int nv = INT_MIN;
+	v = getLArgW(c,v,&w);
+	v = getLArgI(c,v,&nv);
+	if((w == NULL) || (nv == INT_MIN)){return NULL;}
+	w->gx = nv;
+	return NULL;
+}
+
+lVal *wwlnfWidgetGY(lClosure *c, lVal *v){
+	widget *w = NULL;
+	v = getLArgW(c,v,&w);
+	if(w == NULL){return NULL;}
+	return lValInt(w->gy);
+}
+
+lVal *wwlnfWidgetSetGY(lClosure *c, lVal *v){
+	widget *w = NULL;
+	int nv = INT_MIN;
+	v = getLArgW(c,v,&w);
+	v = getLArgI(c,v,&nv);
+	if((w == NULL) || (nv == INT_MIN)){return NULL;}
+	w->gy = nv;
+	return NULL;
+}
+
+lVal *wwlnfWidgetGW(lClosure *c, lVal *v){
+	widget *w = NULL;
+	v = getLArgW(c,v,&w);
+	if(w == NULL){return NULL;}
+	return lValInt(w->gw);
+}
+
+lVal *wwlnfWidgetSetGW(lClosure *c, lVal *v){
+	widget *w = NULL;
+	int nv = INT_MIN;
+	v = getLArgW(c,v,&w);
+	v = getLArgI(c,v,&nv);
+	if((w == NULL) || (nv == INT_MIN)){return NULL;}
+	w->gw = nv;
+	return NULL;
+}
+
+lVal *wwlnfWidgetGH(lClosure *c, lVal *v){
+	widget *w = NULL;
+	v = getLArgW(c,v,&w);
+	if(w == NULL){return NULL;}
+	return lValInt(w->gh);
+}
+
+lVal *wwlnfWidgetSetGH(lClosure *c, lVal *v){
+	widget *w = NULL;
+	int nv = INT_MIN;
+	v = getLArgW(c,v,&w);
+	v = getLArgI(c,v,&nv);
+	if((w == NULL) || (nv == INT_MIN)){return NULL;}
+	w->gh = nv;
+	return NULL;
+}
+
+lVal *wwlnfWidgetLabel(lClosure *c, lVal *v){
+	widget *w = NULL;
+	v = getLArgW(c,v,&w);
+	if(w == NULL){return NULL;}
+	return lValString(w->label);
+}
+
+lVal *wwlnfWidgetSetLabel(lClosure *c, lVal *v){
+	widget *w = NULL;
+	const char *str;
+	v = getLArgW(c,v,&w);
+	v = getLArgS(c,v,&str);
+	if((w == NULL) || (str == NULL)){return NULL;}
+	widgetLabel(w,str);
+
+	return NULL;
+}
+
+lVal *wwlnfWidgetBind(lClosure *c, lVal *v){
+	widget *w = NULL;
+	const char *str;
+	lVal *lam;
+	v = getLArgW(c,v,&w);
+	v = getLArgS(c,v,&str);
+	v = getLArgL(c,v,&lam);
+	if((w == NULL) || (str == NULL) || (lam == NULL)){return NULL;}
+	widgetBindL(w,str,lam);
+
+	return NULL;
+}
+
+void widgetAddLispFunctions(lClosure *c){
+	lAddNativeFunc(c,"widget-new",    "(type)","Create a new widget of TYPE",      wwlnfWidgetNew);
+	lAddNativeFunc(c,"widget-parent", "(widget)","Return the parent of WIDGET",    wwlnfWidgetParent);
+	lAddNativeFunc(c,"widget-parent!","(widget parent)","Set the PARENT of WIDGET",wwlnfWidgetSetParent);
+
+	lAddNativeFunc(c,"widget-x",      "(widget)","Get the X position of WIDGET",   wwlnfWidgetX);
+	lAddNativeFunc(c,"widget-x!",     "(widget x)","Set the X position of WIDGET", wwlnfWidgetSetX);
+	lAddNativeFunc(c,"widget-y",      "(widget)","Get the Y position of WIDGET",   wwlnfWidgetY);
+	lAddNativeFunc(c,"widget-y!",     "(widget y)","Set the Y position of WIDGET", wwlnfWidgetSetY);
+	lAddNativeFunc(c,"widget-width",  "(widget)","Get the W position of WIDGET",   wwlnfWidgetW);
+	lAddNativeFunc(c,"widget-width!", "(widget w)","Set the W position of WIDGET", wwlnfWidgetSetW);
+	lAddNativeFunc(c,"widget-height", "(widget)","Get the H position of WIDGET",   wwlnfWidgetH);
+	lAddNativeFunc(c,"widget-height!","(widget h)","Set the H position of WIDGET", wwlnfWidgetSetH);
+
+	lAddNativeFunc(c,"widget-goal-x",      "(widget)","Get the X position of WIDGET",   wwlnfWidgetGX);
+	lAddNativeFunc(c,"widget-goal-x!",     "(widget x)","Set the X position of WIDGET", wwlnfWidgetSetGX);
+	lAddNativeFunc(c,"widget-goal-y",      "(widget)","Get the Y position of WIDGET",   wwlnfWidgetGY);
+	lAddNativeFunc(c,"widget-goal-y!",     "(widget y)","Set the Y position of WIDGET", wwlnfWidgetSetGY);
+	lAddNativeFunc(c,"widget-goal-w",      "(widget)","Get the W position of WIDGET",   wwlnfWidgetGW);
+	lAddNativeFunc(c,"widget-goal-w!",     "(widget w)","Set the W position of WIDGET", wwlnfWidgetSetGW);
+	lAddNativeFunc(c,"widget-goal-h",      "(widget)","Get the H position of WIDGET",   wwlnfWidgetGH);
+	lAddNativeFunc(c,"widget-goal-h!",     "(widget h)","Set the H position of WIDGET", wwlnfWidgetSetGH);
+
+	lAddNativeFunc(c,"widget-label",  "(widget)","get the label of WIDGET",         wwlnfWidgetLabel);
+	lAddNativeFunc(c,"widget-label!", "(widget label)","Set the LABEL of WIDGET",   wwlnfWidgetSetLabel);
+	lAddNativeFunc(c,"widget-flags",  "(widget)","Get the flags WIDGET",            wwlnfWidgetFlags);
+	lAddNativeFunc(c,"widget-flags!", "(widget flags)","Set the FLAGS of WIDGET",   wwlnfWidgetSetFlags);
+	lAddNativeFunc(c,"widget-bind",   "(widget event handler)","Binds HANDLER to be evaluated on EVENT for WIDGET", wwlnfWidgetBind);
+}
+
 widget *widgetNew(widgetType type){
-	widget *wid = calloc(1,sizeof(widget));
-	if(wid == NULL){return NULL;}
+	widget *wid;
+	if(widgetFirstFree != NULL){
+		wid = widgetFirstFree;
+		widgetFirstFree = wid->next;
+	}else{
+		if(widgetMax >= WIDGET_COUNT){
+			fprintf(stderr,"widget Overflow!!!\n");
+			return NULL;
+
+		}
+		wid = &widgetList[widgetMax++];
+	}
+	memset(wid,0,sizeof(widget));
 	wid->type = type;
 	if(wid->type == wTextInput){
 		wid->vals = calloc(1,256);
@@ -73,7 +369,7 @@ widget *widgetNewCP(widgetType type,widget *p, int x, int y, int w, int h){
 widget *widgetNewCPL(widgetType type,widget *p, int x, int y, int w, int h, const char *label){
 	widget *wid = widgetNewCP(type,p,x,y,w,h);
 	if(wid == NULL){return NULL;}
-	wid->label = label;
+	widgetLabel(wid,label);
 	return wid;
 }
 widget *widgetNewCPLH(widgetType type,widget *p, int x, int y, int w, int h, const char *label,const char *eventName, void (*handler)(widget *)){
@@ -99,14 +395,14 @@ void widgetFree(widget *w){
 		}
 		w->parent = w->next = w->prev = NULL;
 	}
-	if(w->type == wTextInput){
-		free(w->vals);
-	}
-	free(w);
+	if(w->type == wTextInput){free(w->vals); w->vals = NULL;}
+	if(w->label != NULL){free((void *)w->label); w->label = NULL;}
+	w->next = widgetFirstFree;
+	widgetFirstFree = w;
 }
 
 void widgetEmpty(widget *w){
-	widget *n=NULL;
+	widget *n = NULL;
 	if(w == NULL){return;}
 	for(widget *c=w->child;c!=NULL;c=n){
 		n = c->next;
@@ -243,7 +539,17 @@ void widgetLayVert(widget *w, int padding){
 void widgetBind(widget *w, const char *eventName, void (*handler)(widget *)){
 	eventHandler *h = calloc(1,sizeof(eventHandler));
 	h->eventName    = eventName;
+	h->lisp         = false;
 	h->handler      = handler;
+	h->next         = w->firstHandler;
+	w->firstHandler = h;
+}
+
+void widgetBindL(widget *w, const char *eventName, lVal *handler){
+	eventHandler *h = calloc(1,sizeof(eventHandler));
+	h->eventName    = eventName;
+	h->lisp         = true;
+	h->lispHandler  = handler;
 	h->next         = w->firstHandler;
 	w->firstHandler = h;
 }
@@ -252,7 +558,11 @@ int widgetEmit(widget *w, const char *eventName){
 	int ret = 0;
 	for(eventHandler *h=w->firstHandler;h!=NULL;h=h->next){
 		if(strcmp(eventName,h->eventName) != 0){continue;}
-		h->handler(w);
+		if(h->lisp){
+			lispEvalL(lCons(lCons(h->lispHandler,lCons(lValW(w),lCons(lValString(eventName),NULL))),NULL));
+		}else{
+			h->handler(w);
+		}
 		ret++;
 	}
 	return ret;
@@ -462,4 +772,19 @@ void widgetAddEntry(widget *w, const char *entry){
 	w->valss[0] = malloc(len+1);
 	memcpy(w->valss[0],entry,len);
 	w->valss[0][len] = 0;
+}
+
+void widgetLabel(widget *w, const char *newLabel){
+	if(w == NULL){return;}
+	if(newLabel == NULL){
+		if(w->label != NULL){
+			free((void *)w->label);
+			w->label = NULL;
+		}
+		return;
+	}
+	size_t len = strlen(newLabel)+1;
+	char *buf = malloc(len);
+	snprintf(buf,len,"%s",newLabel);
+	w->label = buf;
 }
