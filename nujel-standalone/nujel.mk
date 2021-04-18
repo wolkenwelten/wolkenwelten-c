@@ -6,7 +6,7 @@ SAOLIB_NUJS  := $(shell find nujel-standalone/lib -type f -name '*.nuj')
 STDLIB_NUJS  := $(shell find common/src/nujel/stdlib -type f -name '*.nuj')
 
 $(NUJEL): $(NUJEL_SRCS) nujel-standalone/tmp/assets.c
-	$(CC) $(LIBS) $(CINCLUDES) $(WARNINGS) $(CSTD) $(OPTIMIZATION) $^ -o $(NUJEL) && ./$(NUJEL) -x "(quit (test-run))"
+	$(CC) -D_GNU_SOURCE $(LIBS) $(CINCLUDES) $(WARNINGS) $(CSTD) $(OPTIMIZATION) $^ -o $(NUJEL) && ./$(NUJEL) -x "(quit (test-run))"
 
 $(NUJEL_DEPS): | nujel-standalone/tmp/assets.h
 .deps: nujel-standalone/nujel.d
