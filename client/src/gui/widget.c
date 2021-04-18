@@ -26,6 +26,7 @@
 #include "../gfx/gfx.h"
 #include "../gfx/textMesh.h"
 
+#include <limits.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
