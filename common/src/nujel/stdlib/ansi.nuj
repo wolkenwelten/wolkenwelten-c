@@ -1,42 +1,42 @@
 ;; This File contains various functions generating ansi escape sequences for colorful output
 
 
-(def ansi-wrap (λ (c s) "Wraps string s in the ansi color c"
-	((ansi-fg c) s (ansi-fg 7))))
+(def ansi-wrap (λ (code string) "Wraps STRING in the ansi color CODE"
+	((ansi-fg code) string (ansi-reset))))
 
-(def ansi-black (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
-	(ansi-wrap 0 (apply cat ...s))))
-(def ansi-dark-red (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
-	(ansi-wrap 1 (apply cat ...s))))
-(def ansi-darkgreen (λ (...s) "Wraps its arguments as a string in the a green ansi color code"
-	(ansi-wrap 2 (apply cat ...s))))
-(def ansi-brown (λ (...s) "Wraps its arguments as a string in the a yellow ansi color code"
-	(ansi-wrap 3 (apply cat ...s))))
-(def ansi-dark-blue (λ (...s) "Wraps its arguments as a string in the a blue ansi color code"
-	(ansi-wrap 4 (apply cat ...s))))
-(def ansi-purple (λ (...s) "Wraps its arguments as a string in the a pink ansi color code"
-	(ansi-wrap 5 (apply cat ...s))))
-(def ansi-teal (λ (...s) "Wraps its arguments as a string in the a cyan ansi color code"
-	(ansi-wrap 6 (apply cat ...s))))
-(def ansi-dgrey (λ (...s) "Wraps its arguments as a string in the a white ansi color code"
-	(ansi-wrap 7 (apply cat ...s))))
+(def ansi-black (λ (...args) "Wrap ...ARGS in black"
+	(ansi-wrap 0 (apply cat ...args))))
+(def ansi-dark-red (λ (...args) "Wrap ...ARGS in dark red"
+	(ansi-wrap 1 (apply cat ...args))))
+(def ansi-darkgreen (λ (...args) "Wrap ...ARGS in dark green"
+	(ansi-wrap 2 (apply cat ...args))))
+(def ansi-brown (λ (...args) "Wrap ...ARGS in brown"
+	(ansi-wrap 3 (apply cat ...args))))
+(def ansi-dark-blue (λ (...args) "Wrap ...ARGS in dark blue"
+	(ansi-wrap 4 (apply cat ...args))))
+(def ansi-purple (λ (...args) "Wrap ...ARGS in purple"
+	(ansi-wrap 5 (apply cat ...args))))
+(def ansi-teal (λ (...args) "Wrap ...ARGS in teal"
+	(ansi-wrap 6 (apply cat ...args))))
+(def ansi-dgray (λ (...args) "Wrap ...ARGS in dark gray"
+	(ansi-wrap 7 (apply cat ...args))))
 
-(def ansi-grey (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
-	(ansi-wrap 8 (apply cat ...s))))
-(def ansi-red (λ (...s) "Wraps its arguments as a string in the a red ansi color code"
-	(ansi-wrap 9 (apply cat ...s))))
-(def ansi-green (λ (...s) "Wraps its arguments as a string in the a green ansi color code"
-	(ansi-wrap 10 (apply cat ...s))))
-(def ansi-yellow (λ (...s) "Wraps its arguments as a string in the a yellow ansi color code"
-	(ansi-wrap 11 (apply cat ...s))))
-(def ansi-blue (λ (...s) "Wraps its arguments as a string in the a blue ansi color code"
-	(ansi-wrap 12 (apply cat ...s))))
-(def ansi-pink (λ (...s) "Wraps its arguments as a string in the a pink ansi color code"
-	(ansi-wrap 13 (apply cat ...s))))
-(def ansi-cyan (λ (...s) "Wraps its arguments as a string in the a cyan ansi color code"
-	(ansi-wrap 14 (apply cat ...s))))
-(def ansi-white (λ (...s) "Wraps its arguments as a string in the a white ansi color code"
-	(ansi-wrap 15 (apply cat ...s))))
+(def ansi-gray (λ (...args) "Wrap ...ARGS in gray"
+	(ansi-wrap 8 (apply cat ...args))))
+(def ansi-red (λ (...args) "Wrap ...ARGS in red"
+	(ansi-wrap 9 (apply cat ...args))))
+(def ansi-green (λ (...args) "Wrap ...ARGS in green"
+	(ansi-wrap 10 (apply cat ...args))))
+(def ansi-yellow (λ (...args) "Wrap ...ARGS in yellow"
+	(ansi-wrap 11 (apply cat ...args))))
+(def ansi-blue (λ (...args) "Wrap ...ARGS in blue"
+	(ansi-wrap 12 (apply cat ...args))))
+(def ansi-pink (λ (...args) "Wrap ...ARGS in pink"
+	(ansi-wrap 13 (apply cat ...args))))
+(def ansi-cyan (λ (...args) "Wrap ...ARGS in cyan"
+	(ansi-wrap 14 (apply cat ...args))))
+(def ansi-white (λ (...args) "Wrap ...ARGS in white"
+	(ansi-wrap 15 (apply cat ...args))))
 
-(def ansi-rainbow (λ (...s) "Wraps its arguments in the colors of the rainbow"
-	(let ((count 0)) (join (map (λ (a) (set! count (logand (++ count) #x7)) (ansi-wrap (if (zero? count) 7 (+ count 8)) a)) (split (apply cat ...s) "")) ""))))
+(def ansi-rainbow (λ (...args) "Wrap ...ARGS in the colors of the rainbow!"
+	(let ((count 0)) (join (map (λ (a) (set! count (logand (++ count) #x7)) (ansi-wrap (if (zero? count) 7 (+ count 8)) a)) (split (apply cat ...args) "")) ""))))
