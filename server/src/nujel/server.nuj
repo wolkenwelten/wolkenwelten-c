@@ -67,7 +67,8 @@
 				((< i 6) (ansi-yellow i)) (#t i)))
 		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))
 
-(def debug-stuff! (λ () "Gives the issuing player some nice stuff to get started with"
+; Needs to be a dynamic function because the player's ID is only in the calling context
+(def debug-stuff! (δ () "Gives the issuing player some nice stuff to get started with"
 	(clear-eq!)
 	(clear-inv!)
 
