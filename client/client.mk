@@ -100,7 +100,7 @@ client/src/tmp/meshAssets.h: client/src/tmp/meshAssets.c
 	@true
 
 client/tools/objparser: client/tools/objparser.c
-	$(CC) $(OPTIMIZATION) $(CFLAGS) $(CSTD) $< -o $@
+	$(CC) $(OPTIMIZATION) $(CSTD) $< -o $@
 
 client/src/tmp/objs.c: $(MESHASSETS)
 client/src/tmp/objs.c: client/tools/objgen
