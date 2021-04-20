@@ -13,7 +13,7 @@ TXT_ASSETS       := $(shell find client/txt -type f -name '*')
 MESHASSETS       := $(shell find client/mesh -type f -name '*')
 CLIENT_NUJ       := $(shell find client/src/nujel/ -type f -name '*.nuj' | sort)
 CLIENT_NUJ_ASSETS := client/src/tmp/client.nuj
-CLIENT_TMP_SRCS  := client/src/tmp/gfxAssets.c client/src/tmp/sfxAssets.c client/src/tmp/shdAssets.c client/src/tmp/txtAssets.c client/src/tmp/nujAssets.c client/src/tmp/meshAssets.c
+CLIENT_TMP_SRCS  := client/src/tmp/objs.c client/src/tmp/gfxAssets.c client/src/tmp/sfxAssets.c client/src/tmp/shdAssets.c client/src/tmp/txtAssets.c client/src/tmp/nujAssets.c client/src/tmp/meshAssets.c common/src/tmp/assets.c common/src/tmp/cto.c client/src/tmp/sfx.c
 CLIENT_TMP_OBJS  := ${CLIENT_TMP_SRCS:.c=.o}
 
 CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
@@ -25,22 +25,20 @@ WINDOW_WIDTH     := 960
 WINDOW_HEIGHT    := 524
 TESTNR           := 1
 
--include $(CLIENT_DEPS)
-
-client/src/game/animal.o:       client/src/tmp/objs.h
-client/src/game/grenade.o:      client/src/tmp/objs.h
-client/src/gui/gui.o:           client/src/tmp/objs.h
-client/src/main.o:              common/src/tmp/cto.o
-client/src/main.o:              client/src/tmp/sfx.h
-client/src/game/character.o:    client/src/tmp/sfx.h
-client/src/gfx/effects.o:       client/src/tmp/sfx.h
-client/src/sdl/sfx.o:           client/src/tmp/sfx.h
-client/src/sdl/sdl.o:           client/src/tmp/sfx.h
-client/src/game/entity.o:       client/src/tmp/sfx.h
-client/src/game/fire.o:         client/src/tmp/sfx.h
-client/src/game/projectile.o:   client/src/tmp/sfx.h
-client/src/misc/lisp.o:         client/src/tmp/sfx.h
-client/src/menu/inventory.o:    client/src/tmp/sfx.h
+client/src/game/animal.o:      | client/src/tmp/objs.h
+client/src/game/grenade.o:     | client/src/tmp/objs.h
+client/src/gui/gui.o:          | client/src/tmp/objs.h
+client/src/main.o:             | common/src/tmp/cto.o
+client/src/main.o:             | client/src/tmp/sfx.h
+client/src/game/character.o:   | client/src/tmp/sfx.h
+client/src/gfx/effects.o:      | client/src/tmp/sfx.h
+client/src/sdl/sfx.o:          | client/src/tmp/sfx.h
+client/src/sdl/sdl.o:          | client/src/tmp/sfx.h
+client/src/game/entity.o:      | client/src/tmp/sfx.h
+client/src/game/fire.o:        | client/src/tmp/sfx.h
+client/src/game/projectile.o:  | client/src/tmp/sfx.h
+client/src/misc/lisp.o:        | client/src/tmp/sfx.h
+client/src/menu/inventory.o:   | client/src/tmp/sfx.h
 
 $(CLIENT_OBJS): CFLAGS += $(CLIENT_CFLAGS)
 

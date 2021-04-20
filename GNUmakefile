@@ -40,6 +40,13 @@ include common/common.mk
 include client/client.mk
 include server/server.mk
 
+ifneq ($(MAKECMDGOALS),clean)
+-include $(CLIENT_DEPS)
+-include $(COMMON_DEPS)
+-include $(NUJEL_DEPS)
+-include $(SERVER_DEPS)
+endif
+
 ifeq ($(OS),Windows_NT)
 	include platform/win/win.mk
 else

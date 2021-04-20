@@ -558,7 +558,7 @@ lVal *lnfCharAt(lClosure *c,lVal *v){
 lVal *lnfFromCharCode(lClosure *c,lVal *v){
 	int len = lListLength(v)+1;
 	char *buf = malloc(len);
-	int i=0,code;
+	int i=0,code=0;
 
 	while(v != NULL){
 		v = getLArgI(c,v,&code);

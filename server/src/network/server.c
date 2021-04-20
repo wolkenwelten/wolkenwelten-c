@@ -91,8 +91,7 @@ void serverKeepalive(){
 
 void serverSendChatMsg(const char *msg){
 	packet *p = &packetBuffer;
-	strncpy((char *)(&p->v.u8[2]),msg,254);
-	p->v.u8[255] = 0;
+	snprintf((char *)(&p->v.u8[2]),254,"%.253s",msg);
 	packetQueue(p,msgtChatMsg,256,-1);
 	printf("%s[MSG]%s %s\n",termColors[6],termReset,msg);
 }

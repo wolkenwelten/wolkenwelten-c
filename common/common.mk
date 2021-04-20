@@ -15,23 +15,18 @@ TEST_WORLD       := -worldSeed=68040 -savegame=Test
 
 ASM_OBJS += common/src/asm/$(ARCH).o
 
--include $(COMMON_DEPS)
-
-common/src/misc/lisp.o: common/src/tmp/assets.o
-common/src/game/item.o: server/src/tmp/assets.o
-common/src/game/item.o: client/src/tmp/objs.o
-common/src/game/item.o: server/src/tmp/objs.o
-common/src/game/character.o: client/src/tmp/sfx.o
-common/src/game/character.o: server/src/tmp/sfx.o
+common/src/misc/lisp.o:      | common/src/tmp/assets.o
+common/src/game/item.o:      | server/src/tmp/assets.o
+common/src/game/item.o:      | client/src/tmp/objs.o
+common/src/game/item.o:      | server/src/tmp/objs.o
+common/src/game/character.o: | client/src/tmp/sfx.o
+common/src/game/character.o: | server/src/tmp/sfx.o
 
 %.o: %.s
 	$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) $< -o $@
 
 %.o: %.c
 	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) -g -c $< -o $@ -MMD > ${<:.c=.d}
-
-%.d: %.o
-	@true
 
 common/src/tmp/stdlib.nuj: $(NUJ_STDLIB)
 	@mkdir -p common/src/tmp
