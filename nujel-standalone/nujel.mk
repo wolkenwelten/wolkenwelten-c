@@ -8,10 +8,8 @@ STDLIB_NUJS  := $(shell find common/src/nujel/stdlib -type f -name '*.nuj')
 $(NUJEL): $(NUJEL_SRCS) nujel-standalone/tmp/assets.c
 	$(CC) -D_GNU_SOURCE $(LIBS) $(CINCLUDES) $(WARNINGS) $(CSTD) $(OPTIMIZATION) $^ -o $(NUJEL) && ./$(NUJEL) -x "(quit (test-run))"
 
-$(NUJEL_DEPS): | nujel-standalone/tmp/assets.h
-.deps: nujel-standalone/nujel.d
-nujel-standalone/nujel.d: $(NUJEL_DEPS)
-	cat $(NUJEL_DEPS) > nujel-standalone/nujel.d
+-include $(NUJEL_DEPS)
+
 nujel-standalone/tmp/saolib.nuj: $(SAOLIB_NUJS)
 	@mkdir -p nujel-standalone/tmp/
 	cat $^ > $@
@@ -20,10 +18,6 @@ nujel-standalone/tmp/assets.c: nujel-standalone/tmp/saolib.nuj common/src/tmp/st
 	./$(ASSET) nujel-standalone/tmp/assets nujel-standalone/tmp/saolib.nuj common/src/tmp/stdlib.nuj
 nujel-standalone/tmp/assets.h: nujel-standalone/tmp/assets.c
 	@true
-
-ifneq ($(MAKECMDGOALS),clean)
--include nujel-standalone/nujel.d
-endif
 
 .PHONY: test
 test: nujel

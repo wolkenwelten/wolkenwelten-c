@@ -25,8 +25,11 @@ WINDOW_WIDTH     := 960
 WINDOW_HEIGHT    := 524
 TESTNR           := 1
 
+-include $(CLIENT_DEPS)
+
 client/src/game/animal.o:       client/src/tmp/objs.h
 client/src/game/grenade.o:      client/src/tmp/objs.h
+client/src/gui/gui.o:           client/src/tmp/objs.h
 client/src/main.o:              common/src/tmp/cto.o
 client/src/main.o:              client/src/tmp/sfx.h
 client/src/game/character.o:    client/src/tmp/sfx.h
@@ -47,18 +50,10 @@ wolkenwelten: LIBS      += $(CLIENT_LIBS)
 wolkenwelten: $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS)
 	$(CC) $^ -g -o wolkenwelten $(OPTIMIZATION) $(LDFLAGS) $(LIBS) $(CSTD)
 
-$(CLIENT_DEPS): | client/src/tmp/client.nuj
-.deps: client/client.d
-client/client.d: $(CLIENT_DEPS)
-	cat $(CLIENT_DEPS) > client/client.d
 
 client/src/tmp/client.nuj: $(CLIENT_NUJ)
 	@mkdir -p client/src/tmp
 	cat $(CLIENT_NUJ) > $@
-
-ifneq ($(MAKECMDGOALS),clean)
--include client/client.d
-endif
 
 %.ogg: %.aif
 	$(FFMPEG) -hide_banner -v panic -i $< -ac 1 -ar 22050 -acodec libvorbis $@

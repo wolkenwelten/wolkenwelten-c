@@ -15,21 +15,13 @@ SERVER_ASSETS    := server/src/tmp/server.nuj
 $(SERVER_OBJS): CFLAGS    += $(SERVER_CFLAGS)
 $(SERVER_OBJS): CINCLUDES += $(SERVER_CINCLUDES)
 
+-include server/server.d
+
 wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
 wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
 wolkenwelten-server: LIBS      += $(SERVER_LIBS)
 wolkenwelten-server: $(SERVER_OBJS) $(ASM_OBJS) common/src/tmp/cto.o server/src/tmp/assets.o
 	$(CC) -D_GNU_SOURCE $^ -g -o wolkenwelten-server $(OPTIMIZATION) $(LDFLAGS) $(CINCLUDES) $(LIBS)
-
-
-$(SERVER_DEPS): | server/src/tmp/objs.h server/src/tmp/sfx.h
-.deps: server/server.d
-server/server.d: $(SERVER_DEPS)
-	cat $(SERVER_DEPS) > server/server.d
-
-ifneq ($(MAKECMDGOALS),clean)
--include server/server.d
-endif
 
 server/src/tmp/server.nuj: $(SERVER_NUJ)
 	@mkdir -p server/src/tmp

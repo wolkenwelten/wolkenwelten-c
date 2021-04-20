@@ -15,6 +15,15 @@ TEST_WORLD       := -worldSeed=68040 -savegame=Test
 
 ASM_OBJS += common/src/asm/$(ARCH).o
 
+-include $(COMMON_DEPS)
+
+common/src/misc/lisp.o: common/src/tmp/assets.o
+common/src/game/item.o: server/src/tmp/assets.o
+common/src/game/item.o: client/src/tmp/objs.o
+common/src/game/item.o: server/src/tmp/objs.o
+common/src/game/character.o: client/src/tmp/sfx.o
+common/src/game/character.o: server/src/tmp/sfx.o
+
 %.o: %.s
 	$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) $< -o $@
 
@@ -32,10 +41,6 @@ common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
 	@mkdir -p common/src/tmp
 	cat $(NUJ_WWLIB) > $@
 
-$(COMMON_DEPS): | common/src/tmp/assets.c common/src/tmp/assets.h
-.deps: common/common.d
-common/common.d: $(COMMON_DEPS)
-	cat $(COMMON_DEPS) > common/common.d
 common/src/tmp/assets.c: $(ASSET) $(COMMON_ASSETS)
 	@mkdir -p common/src/tmp/
 	./$(ASSET) common/src/tmp/assets $(COMMON_ASSETS)
@@ -44,10 +49,6 @@ common/src/tmp/assets.h: common/src/tmp/assets.c
 
 $(ASSET): tools/assets.c
 	$(CC) $(OPTIMIZATION) $(CSTD) $(CFLAGS) $^ -o $@
-
-ifneq ($(MAKECMDGOALS),clean)
--include common/common.d
-endif
 
 .PHONY: clean
 clean:
