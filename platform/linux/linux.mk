@@ -1,5 +1,5 @@
 AS               := as
-CC               := clang
+CC               := gcc
 
 AS_SYM           := USE_GOT=USE_GOT
 
