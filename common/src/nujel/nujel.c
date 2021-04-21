@@ -1040,6 +1040,27 @@ static lVal *lnfStrftime(lClosure *c, lVal *v){
 	return lValString(buf);
 }
 
+static lVal *lnfTypeOf(lClosure *c, lVal *v){
+	v = lEval(c,lCar(v));
+	if(v == NULL){return lValSym(":nil");}
+	switch(v->type){
+	case ltNoAlloc:    return lValSym(":no-alloc");
+	case ltBool:       return lValSym(":bool");
+	case ltPair:       return lValSym(":pair");
+	case ltLambda:     return lValSym(":lambda");
+	case ltInt:        return lValSym(":int");
+	case ltFloat:      return lValSym(":float");
+	case ltVec:        return lValSym(":vec");
+	case ltString:     return lValSym(":string");
+	case ltSymbol:     return lValSym(":symbol");
+	case ltNativeFunc: return lValSym(":native-function");
+	case ltInf:        return lValSym(":infinity");
+	case ltArray:      return lValSym(":array");
+	case ltGUIWidget:  return lValSym(":gui-widget");
+	}
+	return lValSym(":nil");
+}
+
 static void lAddPlatformVars(lClosure *c){
 	#if defined(__HAIKU__)
 	lDefineVal(c, "OS", lConst(lValString("Haiku")));
@@ -1097,6 +1118,7 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"cl-lambda",   "(i)",           "Returns closure as a lambda",              lnfClLambda);
 	lAddNativeFunc(c,"cl-text",     "(f)",           "Returns closures text segment",            lnfClText);
 	lAddNativeFunc(c,"cl-data",     "(f)",           "Returns closures data segment",            lnfClData);
+	lAddNativeFunc(c,"type-of",     "(val)",         "Return a symbol describing the type of VAL",lnfTypeOf);
 	lAddNativeFunc(c,"symbol-table","(off len)",     "Returns a list of len symbols defined, accessible from the current closure from offset off",lnfSymTable);
 	lAddNativeFunc(c,"symbol-count","()",            "Returns a count of the symbols accessible from the current closure",lnfSymCount);
 
