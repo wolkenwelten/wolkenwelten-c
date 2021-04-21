@@ -228,6 +228,7 @@
 (test-add "\"#t\"" (str #t))
 (test-add "testerle" testerle)
 (test-add "(:asd qwerty)" (:asd qwerty))
+(test-add ":asd" (begin (def :asd #t) :asd))
 (test-add "testerle" (define testerle 123) (undefine! testerle) testerle)
 (test-add "(1 . 2)" (define test (cons 1 2)) test)
 (test-add "(3 . 2)" (define test (cons 1 2)) (set-car! test 3))

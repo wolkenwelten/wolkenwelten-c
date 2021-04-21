@@ -501,7 +501,9 @@ static lVal *lnfDefine(uint c, lClosure *ec, lVal *v, lVal *(*func)(uint ,lSymbo
 	}
 	if(sym->type != ltSymbol){sym = lEval(&lClo(c),sym);}
 	if(sym->type != ltSymbol){return NULL;}
-	lVal *t = func(c,lvSym(sym->vCdr));
+	lSymbol *lsym = lvSym(sym->vCdr);
+	if((lsym != NULL) && (lsym->c[0] == ':')){return NULL;}
+	lVal *t = func(c,lsym);
 	if((t == NULL) || (t->type != ltPair)){return NULL;}
 	if((lCar(t) != NULL) && (lCar(t)->flags & lfConst)){
 		return lCar(t);
