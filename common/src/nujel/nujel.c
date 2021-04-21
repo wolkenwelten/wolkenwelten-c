@@ -69,7 +69,7 @@ uint    lSymbolMax    = 1;
 uint    lSymbolFFree  = 0;
 
 char dispWriteBuf[1<<16];
-lSymbol symNull,symQuote,symArr,symIf,symCond,symWhen,symUnless,symLet,symBegin,symStringAt,symIntAt,symFloatAt,symVecAt;
+lSymbol *symNull,*symQuote,*symArr,*symIf,*symCond,*symWhen,*symUnless,*symLet,*symBegin,*symStringAt,*symIntAt,*symFloatAt,*symVecAt;
 
 
 u64 randomValueSeed;
@@ -108,19 +108,19 @@ void lInit(){
 	lSymbolActive   = 0;
 	lSymbolMax      = 1;
 
-	strncpy(symNull.c,"",15);
-	strncpy(symQuote.c,"quote",15);
-	strncpy(symArr.c,"arr",15);
-	strncpy(symIf.c,"if",15);
-	strncpy(symCond.c,"cond",15);
-	strncpy(symWhen.c,"when",15);
-	strncpy(symUnless.c,"unless",15);
-	strncpy(symLet.c,"let",15);
-	strncpy(symBegin.c,"begin",15);
-	strncpy(symStringAt.c,"string@",15);
-	strncpy(symIntAt.c,"int@",15);
-	strncpy(symFloatAt.c,"float@",15);
-	strncpy(symVecAt.c,"vec@",15);
+	symNull     = lSymS("");
+	symQuote    = lSymS("quote");
+	symArr      = lSymS("arr");
+	symIf       = lSymS("if");
+	symCond     = lSymS("cond");
+	symWhen     = lSymS("when");
+	symUnless   = lSymS("unless");
+	symLet      = lSymS("let");
+	symBegin    = lSymS("begin");
+	symStringAt = lSymS("string@");
+	symIntAt    = lSymS("int@");
+	symFloatAt  = lSymS("float@");
+	symVecAt    = lSymS("vec@");
 }
 
 static void lVecFree(uint i){
@@ -391,19 +391,38 @@ lVal *lValBool(bool v){
 	return ret;
 }
 
-lVal *lValSymS(const lSymbol s){
+lSymbol *lSymSL(const char *str, uint len){
+	char buf[32];
+	len = MIN(sizeof(buf)-1,len);
+	memcpy(buf,str,len);
+	buf[len] = 0;
+	return lSymS(buf);
+}
+
+lSymbol *lSymS(const char *str){
+	for(uint i = 0;i<lSymbolMax;i++){
+		if(strcmp(str,lSymbolList[i].c)){continue;}
+		return &lSymbolList[i];
+	}
+	if(lSymbolMax >= SYM_MAX){
+		fprintf(stderr,"lSym Overflow\n");
+		return NULL;
+	}
+	snprintf(lSymbolList[lSymbolMax].c,sizeof(lSymbolList[0].c),"%s",str);
+	return &lSymbolList[lSymbolMax++];
+}
+
+lVal *lValSymS(const lSymbol *s){
+	if(s == NULL){return NULL;}
 	lVal *ret = lValAlloc();
-	if(ret == NULL){return ret;}
+	if(ret == NULL){return NULL;}
 	ret->type = ltSymbol;
-	memcpy(&ret->vSymbol,&s,sizeof(s));
+	ret->vCdr = lvSymI(s);
 	return ret;
 }
 
 lVal *lValSym(const char *s){
-	lSymbol sym;
-	strncpy(sym.c,s,sizeof(sym.c)-1);
-	sym.c[sizeof(sym.c)-1] = 0;
-	return lValSymS(sym);
+	return lValSymS(lSymS(s));
 }
 
 lVal *lCons(lVal *car, lVal *cdr){
@@ -441,28 +460,21 @@ void lWriteVal(lVal *v){
 	printf("%s\n",dispWriteBuf);
 }
 
-lVal *lMatchClosureSym(uint c, lVal *ret, const lSymbol s){
+lVal *lSearchClosureSym(uint c, lVal *ret, const char *str, uint len){
 	if(c == 0){return ret;}
 
 	forEach(n,lCloData(c)){
 		lVal *e = lCaar(n);
-		if(lGetSymbol(e).v[0] != s.v[0]){continue;}
-		if(lGetSymbol(e).v[1] != s.v[1]){continue;}
-		return lCons(lCaar(n),ret);
+		if((e == NULL) || (e->type != ltSymbol)){continue;}
+		lSymbol *sym = lvSym(e->vCdr);
+		if(sym == NULL){continue;}
+		if(strncmp(sym->c,str,len)){continue;}
+		ret = lCons(e,ret);
 	}
-
-	return lMatchClosureSym(lCloParent(c),ret,s);
+	return lSearchClosureSym(lCloParent(c),ret,str,len);
 }
 
-static lVal *lnfMatchClosureSym(lClosure *c, lVal *v){
-	if((v == NULL) || (v->type != ltPair)){return NULL;}
-	lVal *sym = lCar(v);
-	if(sym->type != ltSymbol){sym = lEval(c,sym);}
-	if(sym->type != ltSymbol){return NULL;}
-	return lMatchClosureSym(c - lClosureList,NULL,sym->vSymbol);
-}
-
-static lVal *lnfDefine(uint c, lClosure *ec, lVal *v, lVal *(*func)(uint ,lSymbol)){
+static lVal *lnfDefine(uint c, lClosure *ec, lVal *v, lVal *(*func)(uint ,lSymbol *)){
 	if((v == NULL) || (v->type != ltPair)){return NULL;}
 	lVal *sym = lCar(v);
 	lVal *nv = NULL;
@@ -471,7 +483,7 @@ static lVal *lnfDefine(uint c, lClosure *ec, lVal *v, lVal *(*func)(uint ,lSymbo
 	}
 	if(sym->type != ltSymbol){sym = lEval(&lClo(c),sym);}
 	if(sym->type != ltSymbol){return NULL;}
-	lVal *t = func(c,sym->vSymbol);
+	lVal *t = func(c,lvSym(sym->vCdr));
 	if((t == NULL) || (t->type != ltPair)){return NULL;}
 	if((lCar(t) != NULL) && (lCar(t)->flags & lfConst)){
 		return lCar(t);
@@ -669,7 +681,7 @@ static lVal *lnfMem(lClosure *c, lVal *v){
 	(void)c; (void)v;
 
 	char buf[1024];
-	snprintf(buf,sizeof(buf),"Vals:%u Closures:%u Arrs:%u Strings:%u NFuncs:%u",lValActive,lClosureActive,lArrayActive,lStringActive,lNFuncActive);
+	snprintf(buf,sizeof(buf),"Vals:%u Closures:%u Arrs:%u Strings:%u NFuncs:%u Symbols:%u",lValActive,lClosureActive,lArrayActive,lStringActive,lNFuncActive,lSymbolMax);
 	fprintf(stderr,"%s\n",buf);
 	return lValString(buf);
 }
@@ -719,8 +731,8 @@ static lVal *lnfLet(lClosure *c, lVal *v){
 	return ret == NULL ? NULL : ret;
 }
 
-static inline bool lSymVariadic(lSymbol s){
-	const char *p = s.c;
+static inline bool lSymVariadic(lSymbol *s){
+	const char *p = s->c;
 	if((*p == '@') || (*p == '&')){p++;}
 	if((*p == '@') || (*p == '&')){p++;}
 	if((p[0] == '.') && (p[1] == '.') && (p[2] == '.')){
@@ -734,9 +746,9 @@ static inline bool lSymOptional(lSymbol s){
 	if((s.c[0] == '@') && (s.c[1] == '&')){return true;}
 	return false;
 }*/
-static inline bool lSymNoEval(lSymbol s){
-	if(s.c[0] == '@'){return true;}
-	if((s.c[0] == '&') && (s.c[1] == '@')){return true;}
+static inline bool lSymNoEval(lSymbol *s){
+	if(s->c[0] == '@'){return true;}
+	if((s->c[0] == '&') && (s->c[1] == '@')){return true;}
 	return false;
 }
 
@@ -751,18 +763,18 @@ static lVal *lLambda(lClosure *c,lVal *v, lClosure *lambda){
 	lVal *vn = v;
 	uint tmpci = 0;
 	if(lambda->flags & lfDynamic){
-		tmpci = lClosureNew(c - lClosureList);
+		tmpci = lClosureNew(lCloI(c));
 	}else{
-		tmpci = lClosureNew(lambda - lClosureList);
+		tmpci = lClosureNew(lCloI(lambda));
 	}
 	if(tmpci == 0){return NULL;}
-	lClosure *tmpc = &lClosureList[tmpci & CLO_MASK];
+	lClosure *tmpc = &lClo(tmpci);
 	tmpc->text = lambda->text;
 	forEach(n,lambda->data){
 		if(vn == NULL){break;}
 		lVal *nn = lCar(n);
 		if(lGetType(lCar(nn)) != ltSymbol){continue;}
-		const lSymbol csym = lGetSymbol(lCar(nn));
+		lSymbol *csym = lGetSymbol(lCar(nn));
 		lVal *lv = lDefineClosureSym(tmpci,csym);
 		if(lSymVariadic(csym)){
 			lVal *t = lSymNoEval(csym) ? vn : lApply(c,vn,lEval);
@@ -943,12 +955,8 @@ lVal *lnfApply(lClosure *c, lVal *v){
 	}
 }
 
-void lDefineVal(lClosure *c, const char *sym, lVal *val){
-	lSymbol S;
-	memset(S.c,0,sizeof(S.c));
-	snprintf(S.c,sizeof(S.c),"%s",sym);
-
-	lVal *var = lDefineClosureSym(c - lClosureList,S);
+void lDefineVal(lClosure *c, const char *str, lVal *val){
+	lVal *var = lDefineClosureSym(lCloI(c),lSymS(str));
 	if(var == NULL){return;}
 	var->vList.car = val;
 }
@@ -970,15 +978,12 @@ void lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *
 
 	// Run at most 64 times, just a precaution
 	for(int i=0;i<64;i++){
-		lSymbol S;
-		int len;
-		for(len=0;len<15;len++){ // Find the end of the current token, either space or 0
+		uint len;
+		for(len=0;len < sizeof(lSymbol);len++){ // Find the end of the current token, either space or 0
 			if(cur[len] == 0)    {break;}
 			if(isspace((u8)cur[len])){break;}
 		}
-		memset(S.c,0,sizeof(S.c));
-		memcpy(S.c,cur,len);
-		lVal *var = lDefineClosureSym(c - lClosureList,S);
+		lVal *var = lDefineClosureSym(lCloI(c),lSymSL(cur,len));
 		if(var == NULL){
 			lPrintError("Error adding NFunc %s\n",sym);
 			return;
@@ -1060,7 +1065,6 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"eval",        "(expr)",        "Evaluates expr",                           lEval);
 	lAddNativeFunc(c,"read",        "(s)",           "Reads and Parses the S-Expression in S ",  lnfRead);
 	lAddNativeFunc(c,"resolve",     "(s)",           "Resolves s until it is no longer a symbol",lResolve);
-	lAddNativeFunc(c,"match-sym",   "(s)",           "Returns all symbols partially matching s", lnfMatchClosureSym);
 	lAddNativeFunc(c,"mem",         "()",            "Returns memory usage data",                lnfMem);
 	lAddNativeFunc(c,"mem-count",   "()",            "Returns memory usage data by counting",    lnfMemCount);
 	lAddNativeFunc(c,"lambda lam λ \\","(args ...body)","Creates a new lambda",                  lnfLambda);
@@ -1106,24 +1110,24 @@ lClosure *lClosureNewRoot(){
 	return c;
 }
 
-static lVal *lGetSym(uint c, const lSymbol s){
-	if(c == 0){return NULL;}
+static lVal *lGetSym(uint c, lSymbol *s){
+	if((c == 0) || (s == NULL)){return NULL;}
+	uint sym = lvSymI(s);
 	forEach(v,lCloData(c)){
-		lVal *sym = lCaar(v);
-		if(lGetSymbol(sym).v[0] != s.v[0]){continue;}
-		if(lGetSymbol(sym).v[1] != s.v[1]){continue;}
+		lVal *cursym = lCaar(v);
+		if((cursym == NULL) || (sym != cursym->vCdr)){continue;}
 		return lCdar(v);
 	}
 	return NULL;
 }
 
-lVal *lGetClosureSym(uint c, const lSymbol s){
+lVal *lGetClosureSym(uint c, lSymbol *s){
 	if(c == 0){return NULL;}
 	lVal *t = lGetSym(c,s);
 	return t != NULL ? t : lGetClosureSym(lCloParent(c),s);
 }
 
-lVal *lDefineClosureSym(uint c,const lSymbol s){
+lVal *lDefineClosureSym(uint c, lSymbol *s){
 	if(c == 0){return NULL;}
 	lVal *get = lGetSym(c,s);
 	if(get != NULL){return get;}
@@ -1142,7 +1146,7 @@ lVal *lDefineClosureSym(uint c,const lSymbol s){
 
 lVal *lResolveSym(uint c, lVal *v){
 	if((v == NULL) || (v->type != ltSymbol)){return NULL;}
-	lVal *ret = lGetClosureSym(c,v->vSymbol);
+	lVal *ret = lGetClosureSym(c,lvSym(v->vCdr));
 	return ret == NULL ? v : lCar(ret);
 }
 
@@ -1333,10 +1337,6 @@ lType lGetType(lVal *v){
 	return v == NULL ? ltNoAlloc : v->type;
 }
 
-lSymbol lGetSymbol(lVal *v){
-	return (v == NULL) || (v->type != ltSymbol) ? symNull : v->vSymbol;
-}
-
 lVal *lCast(lClosure *c, lVal *v, lType t){
 	switch(t){
 	default:
@@ -1492,17 +1492,12 @@ int lStringLength(const lString *s){
 
 int lSymCmp(const lVal *a,const lVal *b){
 	if((a == NULL) || (b == NULL)){return 2;}
-	if((a->type != ltSymbol) || (b->type != ltSymbol)){return 2;}
-	if(a->vSymbol.v[0] != b->vSymbol.v[0]){return -1;}
-	if(a->vSymbol.v[1] != b->vSymbol.v[1]){return -1;}
-	return 0;
+	if((a->type != ltSymbol) || (b->type != ltSymbol) || (a->vCdr == 0)){return 2;}
+	return a->vCdr == b->vCdr ? 0 : -1;
 }
 
 int lSymEq(const lSymbol *a,const lSymbol *b){
-	if((a == NULL) || (b == NULL)){return 2;}
-	if(a->v[0] != b->v[0]){return -1;}
-	if(a->v[1] != b->v[1]){return -1;}
-	return 0;
+	return a == b ? 0 : -1;
 }
 
 lVal *lConst(lVal *v){

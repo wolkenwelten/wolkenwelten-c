@@ -86,6 +86,7 @@ void widgetDrawPopups(textMesh *m){
 }
 
 static void widgetDrawAutocomplete(textMesh *m,int x,int y,int size){
+	if(lispAutoCompleteCompleteSymbol){return;}
 	int cy = y - size*8 - size*4 - size*2;
 	const u32 c1[3] = {0xB0808080,0xB0909090,0xC0B86030};
 	const u32 c2[3] = {0xD0606060,0xD0A0A0A0,0xE0A05028};
@@ -97,10 +98,10 @@ static void widgetDrawAutocomplete(textMesh *m,int x,int y,int size){
 			gc = 0xFF3950F0;
 		}
 		textMeshVGradient(m, x-size*8, cy-size, size*18*8,size*8+size*2,c1[c],c2[c]);
-		const lSymbol sym = lispAutoCompleteList[i];
+		const lSymbol *sym = lispAutoCompleteList[i];
 		int cx = x;
-		for(uint ii=0;(ii<16) && (sym.c[ii] != 0);ii++){
-			textMeshAddGlyph(m, cx, cy, size, sym.c[ii], gc, 0x00000000);
+		for(uint ii=0;(ii<sizeof(lSymbol)) && (sym->c[ii] != 0);ii++){
+			textMeshAddGlyph(m, cx, cy, size, sym->c[ii], gc, 0x00000000);
 			cx += size*8;
 		}
 		cy -= size*8+size*2;

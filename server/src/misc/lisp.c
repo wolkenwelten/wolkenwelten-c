@@ -61,7 +61,7 @@ static uint getPID(lClosure *c){
 
 static void setPID(lClosure *c, uint pid){
 	lVal *sym = lValSym("pid");
-	lVal *t = lDefineClosureSym(c - lClosureList, sym->vSymbol);
+	lVal *t = lDefineClosureSym(c - lClosureList, lvSym(sym->vCdr));
 	t->vList.car = lValInt(pid);
 }
 
@@ -464,7 +464,7 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"quit!",          "()",                                           "Cleanly shuts down the server",                              wwlnfQuit);
 }
 
-static void cmdLisp(int c,const char *str, u8 id){
+static void cmdLisp(int c,const char *str){
 	static char reply[8192];
 	memset(reply,0,sizeof(reply));
 
@@ -472,11 +472,7 @@ static void cmdLisp(int c,const char *str, u8 id){
 	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,true);
 	lClosureGC();
 
-	if(id == 0){
-		serverSendChatMsg(reply);
-	}else{
-		msgLispSExpr(c, id, reply);
-	}
+	msgLispSExpr(c, reply);
 }
 
 void lispInit(){
@@ -501,25 +497,29 @@ int parseCommand(uint c, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
 
-	cmdLisp(c,tcmp,0);
+	cmdLisp(c,tcmp);
 	return 1;
 }
 
 void lispRecvSExpr(uint c,const packet *p){
-	u8 id = p->v.u8[0];
-	const char *str = (const char *)&p->v.u8[1];
-	cmdLisp(c,str,id);
+	cmdLisp(c,(const char *)p->v.u8);
 }
 
 void lispEvents(){
+	static lVal *yieldRun = NULL;
 	static u64 lastTicks = 0;
 	PROFILE_START();
 
 	const u64 cticks = getTicks();
-	if((lastTicks + 500) > cticks){return;}
+	if((lastTicks + 50) > cticks){return;}
 	lastTicks = cticks;
+	if(yieldRun == NULL){
+		yieldRun = lCons(lValSym("yield-run"),NULL);
+	}
 
-	lEval(clRoot,lCons(lValSym("yield-run"),NULL));
+	yieldRun->flags |= lfNoGC;
+
+	lEval(clRoot,yieldRun);
 	lClosureGC();
 
 	PROFILE_STOP();

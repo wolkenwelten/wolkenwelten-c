@@ -86,9 +86,8 @@ static lVal *wwlnfSEval(lClosure *c, lVal *v){
 	static char buf[8192];
 	memset(buf,0,sizeof(buf));
 	lSWriteVal(lWrap(v),buf,&buf[sizeof(buf)-1],0,false);
-	if(++SEvalID == 0){++SEvalID;}
-	msgLispSExpr(-1,SEvalID,buf);
-	return lispSEvalSym(SEvalID);
+	msgLispSExpr(-1,buf);
+	return NULL;
 }
 
 static lVal *wwlnfPlayerName(lClosure *c, lVal *v){
@@ -635,9 +634,7 @@ lVal *lispEvalL(lVal *expr){
 }
 
 void lispRecvSExpr(const packet *p){
-	u8 id = p->v.u8[0];
-	const char *str = (const char *)&p->v.u8[1];
-	lispPanelShowReply(lispSEvalSym(id),str);
+	lispPanelShowReply((const char *)&p->v.u8);
 }
 
 void lispEvents(){

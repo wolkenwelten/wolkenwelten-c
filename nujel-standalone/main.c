@@ -86,9 +86,11 @@ static void saveFile(const char *filename,const void *buf, size_t len){
 void doRepl(lClosure *c){
 	static char str[4096];
 	lVal *lastlsym = lValSym("lastl");
-	lVal *lastl = lDefineClosureSym(c - lClosureList, lastlsym->vSymbol);
+	lVal *lastl    = lDefineClosureSym(c - lClosureList, lvSym(lastlsym->vCdr));
+	lVal *repl     = lCons(lValSym("repl-prompt"),NULL);
+	repl->flags |= lfNoGC;
 	while(1){
-		lEval(c,lCons(lValSym("repl-prompt"),NULL));
+		lEval(c,repl);
 		fflush(stdout);
 		if(fgets(str,sizeof(str),stdin) == NULL){
 			printf("\nBye!\n");

@@ -173,22 +173,23 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 		int oldIndent = indentLevel;
 		lVal *carSym = lCar(v);
 		if((carSym != NULL) && (carSym->type == ltSymbol) && (lCdr(v) != NULL)){
-			if(lSymEq(&carSym->vSymbol,&symQuote) == 0){
+			lSymbol *sym = lvSym(carSym->vCdr);
+			if(sym == symQuote){
 				v = lCdar(v);
 				*cur++ = '\'';
-			}else if(lSymEq(&carSym->vSymbol,&symCond) == 0){
+			}else if(sym == symCond){
 				indentStyle = 1;
 				indentLevel += 6;
-			}else if(lSymEq(&carSym->vSymbol,&symWhen) == 0){
+			}else if(sym == symWhen){
 				indentStyle = 1;
 				indentLevel += 6;
-			}else if(lSymEq(&carSym->vSymbol,&symUnless) == 0){
+			}else if(sym == symUnless){
 				indentStyle = 1;
 				indentLevel += 8;
-			}else if(lSymEq(&carSym->vSymbol,&symIf) == 0){
+			}else if(sym == symIf){
 				indentStyle = 1;
 				indentLevel += 4;
-			}else if(lSymEq(&carSym->vSymbol,&symLet) == 0){
+			}else if(sym == symLet){
 				indentStyle = 1;
 				indentLevel += 5;
 			}
@@ -251,7 +252,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 		}
 		break;
 	case ltSymbol:
-		t = snprintf(buf,len,"%.16s",v->vSymbol.c);
+		t = snprintf(buf,len,"%.16s",lvSym(v->vCdr)->c);
 		break;
 	case ltNativeFunc:
 		t = snprintf(buf,len,"#cfn_%u",v->vCdr);
@@ -446,7 +447,7 @@ lVal *lnfCat(lClosure *c, lVal *v){
 			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"#inf");
 			break; }
 		case ltSymbol: {
-			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%s",t->vSymbol.c);
+			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%.16s",lvSym(t->vCdr)->c);
 			break; }
 		case ltFloat: {
 			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%.5f",t->vFloat);
@@ -526,7 +527,7 @@ lVal *lnfSymStr(lClosure *c, lVal *v){
 	v = lEval(c,lCar(v));
 	if(v == NULL){return NULL;}
 	if(v->type != ltSymbol){return NULL;}
-	return lValString(v->vSymbol.c);
+	return lValString(lvSym(v->vCdr)->c);
 }
 
 lVal *lnfWriteStr(lClosure *c, lVal *v){

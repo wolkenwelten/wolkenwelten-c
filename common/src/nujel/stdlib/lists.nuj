@@ -20,10 +20,13 @@
 (def join (λ (l glue) "Joins all elements of L together with GLUE in between"
 	(join-iter "" l (str glue))))
 
-(def split (λ (s separator &start) "Splits String S on every SEPARATOR with &START=0"
-	(let ((pos (index-of s separator (int &start))) (start (int &start)) (slen (str-len s)))
-		(cond ((and (>= pos start) (< pos slen)) (cons (substr s start (max (+ start 1) pos)) (split s separator (+ pos (max 1 (str-len separator))))))
+(def split-iter (λ (s separator separator-len start slen)
+	(let ((pos (index-of s separator start)))
+		(cond ((and (>= pos start) (< pos slen)) (cons (substr s start (max (+ start 1) pos)) (split-iter s separator separator-len (+ pos separator-len) slen)))
 		      (#t (cons (substr s start slen)))))))
+
+(def split (λ (s separator) "Splits String S on every SEPARATOR with &START=0"
+	(split-iter s separator (max 1 (str-len separator)) 0 (str-len s))))
 
 (def reverse (λ (l r) "Returns the list l in reverse order"
 	(if (nil? l) r (reverse (cdr l) (cons (car l) r)))))

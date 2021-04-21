@@ -25,10 +25,7 @@ typedef struct lString  lString;
 typedef struct lArray   lArray;
 typedef struct lNFunc   lNFunc;
 typedef struct {
-	union {
-		char c[16];
-		u64 v[2];
-	};
+	char c[32];
 } lSymbol;
 
 typedef struct {
@@ -64,7 +61,6 @@ struct lVal {
 		lPair      vList;
 		int        vInt;
 		float      vFloat;
-		lSymbol    vSymbol;
 	};
 };
 #define lfMarked    ( 1)
@@ -114,7 +110,7 @@ extern lNFunc   lNFuncList  [NFN_MAX];
 extern lVec     lVecList    [VEC_MAX];
 extern lSymbol  lSymbolList [SYM_MAX];
 
-extern lSymbol symNull,symQuote,symArr,symIf,symCond,symWhen,symUnless,symLet,symBegin,symStringAt,symIntAt,symFloatAt,symVecAt;
+extern lSymbol *symNull,*symQuote,*symArr,*symIf,*symCond,*symWhen,*symUnless,*symLet,*symBegin,*symStringAt,*symIntAt,*symFloatAt,*symVecAt;
 
 void      lInit             ();
 int       lMemUsage         ();
@@ -144,10 +140,11 @@ void      lWriteVal         (lVal *v);
 void      lDefineVal        (lClosure *c, const char *sym, lVal *val);
 void      lAddNativeFunc    (lClosure *c, const char *sym, const char *args, const char *doc, lVal *(*func)(lClosure *,lVal *));
 lVal     *lValNativeFunc    (lVal *(*func)(lClosure *,lVal *), lVal *args, lVal *docString);
-lVal     *lGetClosureSym    (uint      c, const lSymbol s);
-lVal     *lResolveClosureSym(uint      c, const lSymbol s);
-lVal     *lDefineClosureSym (uint      c, const lSymbol s);
-lVal     *lMatchClosureSym  (uint      c, lVal *v, const lSymbol s);
+lVal     *lGetClosureSym    (uint      c, lSymbol *s);
+lVal     *lResolveClosureSym(uint      c, lSymbol *s);
+lVal     *lDefineClosureSym (uint      c, lSymbol *s);
+lVal     *lMatchClosureSym  (uint      c, lVal *v, lSymbol *s);
+lVal     *lSearchClosureSym (uint      c, lVal *v, const char *str, uint len);
 lVal     *lResolveSym       (uint      c, lVal *v);
 lVal     *lApply            (lClosure *c, lVal *v, lVal *(*func)(lClosure *,lVal *));
 lVal     *lCast             (lClosure *c, lVal *v, lType t);
@@ -160,8 +157,10 @@ lVal     *lValInf           ();
 lVal     *lValInt           (int v);
 lVal     *lValFloat         (float v);
 lVal     *lValVec           (const vec v);
-lVal     *lValSymS          (const lSymbol s);
+lVal     *lValSymS          (const lSymbol *s);
 lVal     *lValSym           (const char *s);
+lSymbol  *lSymS             (const char *s);
+lSymbol  *lSymSL            (const char *s, uint len);
 lVal     *lValString        (const char *s);
 lVal     *lnfCat            (lClosure *c, lVal *v);
 lVal     *lValCopy          (lVal *dst, const lVal *src);
@@ -192,7 +191,6 @@ lVal     *lCdddr            (lVal *v);
 lVal     *lLastCar          (lVal *v);
 int       lListLength       (lVal *v);
 lType     lGetType          (lVal *v);
-lSymbol   lGetSymbol        (lVal *v);
 
 int       lStringLength     (const lString *s);
 int       lSymCmp           (const lVal *a,const lVal *b);
@@ -200,31 +198,35 @@ int       lSymEq            (const lSymbol *a,const lSymbol *b);
 
 #define forEach(n,v) for(lVal *n = v;(n != NULL) && (n->type == ltPair) && (n->vList.car != NULL); n = n->vList.cdr)
 
-#define lVec(i)  lVecList[i & VEC_MASK]
-#define lVecV(i) lVec(i).v
+#define lVec(i)      lVecList[i & VEC_MASK]
+#define lVecV(i)     lVec(i).v
 #define lVecFlags(i) lVec(i).flags
 
-#define lStrNull(val) (((val->vCdr & STR_MASK) == 0) || (lStringList[val->vCdr & STR_MASK].data == NULL))
-#define lStr(val) lStringList[val->vCdr & STR_MASK]
-#define lStrData(val) lStr(val).data
-#define lStrBuf(val) lStr(val).buf
-#define lStrEnd(val) lStr(val).bufEnd
+#define lStrNull(val)  (((val->vCdr & STR_MASK) == 0) || (lStringList[val->vCdr & STR_MASK].data == NULL))
+#define lStr(val)      lStringList[val->vCdr & STR_MASK]
+#define lStrData(val)  lStr(val).data
+#define lStrBuf(val)   lStr(val).buf
+#define lStrEnd(val)   lStr(val).bufEnd
 #define lStrFlags(val) lStr(val).flags
 
-#define lArrNull(val) (((val->vCdr & ARR_MASK) == 0) || (lArrayList[val->vCdr & ARR_MASK].data == NULL))
-#define lArr(val) lArrayList[val->vCdr & ARR_MASK]
+#define lArrNull(val)   (((val->vCdr & ARR_MASK) == 0) || (lArrayList[val->vCdr & ARR_MASK].data == NULL))
+#define lArr(val)       lArrayList[val->vCdr & ARR_MASK]
 #define lArrLength(val) lArr(val).length
-#define lArrData(val) lArr(val).data
+#define lArrData(val)   lArr(val).data
 
-#define lClo(i) lClosureList[i & CLO_MASK]
+#define lClo(i)       lClosureList[i & CLO_MASK]
+#define lCloI(c)      (c == NULL ? 0 : c - lClosureList)
 #define lCloParent(i) lClosureList[i & CLO_MASK].parent
-#define lCloData(i) lClosureList[i & CLO_MASK].data
-#define lCloText(i) lClosureList[i & CLO_MASK].text
+#define lCloData(i)   lClosureList[i & CLO_MASK].data
+#define lCloText(i)   lClosureList[i & CLO_MASK].text
 
 #define lValD(i) (i == 0 ? NULL : &lValList[i & VAL_MASK])
 #define lValI(v) (v == NULL ? 0 : v - lValList)
 
 #define lNFN(i) lNFuncList[i & NFN_MASK]
+#define lvSym(i)  (i == 0 ? symNull : &lSymbolList[i & SYM_MASK])
+#define lvSymI(s) (s == NULL ? 0 : s - lSymbolList)
+#define lGetSymbol(v) (((v == NULL) || (v->type != ltSymbol)) ? symNull : lvSym(v->vCdr))
 
 #define lEvalCastIApply(FUNC, c , v) do { \
 	if((c == NULL) || (v == NULL)){return lValInt(0);} \

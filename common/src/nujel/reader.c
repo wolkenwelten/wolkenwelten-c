@@ -141,25 +141,24 @@ static lVal *lParseNumberDecimal(lString *s){
 }
 
 static lVal *lParseSymbol(lString *s){
-	int i;
-	lVal *v = lValAlloc();
-	v->type = ltSymbol;
+	uint i;
+	char buf[128];
 	for(i=0;i<4096;i++){
 		char c = *s->data++;
 		if(isspace((u8)c) || (c == ')') || (c ==0)){
 			s->data--;
 			break;
 		}
-		if(i < (int)(sizeof(v->vSymbol.c)-1)){
-			v->vSymbol.c[i] = c;
+		if(i < sizeof(buf)){
+			buf[i] = c;
 		}
 	}
-	v->vSymbol.c[MIN((int)sizeof(v->vSymbol.c)-1,i)] = 0;
+	buf[MIN(sizeof(buf)-1,i)] = 0;
 	while(isspace((u8)*s->data)){
 		if(*s->data == 0){break;}
 		s->data++;
 	}
-	return v;
+	return lValSym(buf);
 }
 
 static lVal *lParseNumberBinary(lString *s){

@@ -45,6 +45,6 @@ void msgItemDropPickup           (int c, uint i);
 void msgRopeUpdate               (int c, uint i, rope *r);
 void msgFireUpdate               (int c, u16 i, u16 count, u16 x, u16 y, u16 z, i16 strength);
 void msgWaterUpdate              (int c, u16 i, u16 count, u16 x, u16 y, u16 z, i16 strength);
-void msgLispSExpr                (int c, u8 id, const char *str);
+void msgLispSExpr                (int c, const char *str);
 
 const char *networkGetMessageName(uint i);
