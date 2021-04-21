@@ -278,6 +278,24 @@ u32 lStringNew(const char *str, unsigned int len){
 	return i;
 }
 
+u32 lStringDup(uint oi){
+	lString *os = &lStringList[oi & STR_MASK];
+	uint len = os->bufEnd - os->buf;
+	const char *str = os->data;
+	const u32 i = lStringAlloc();
+	if(i == 0){return 0;}
+	lString *s = &lStringList[i & STR_MASK];
+	if(s == NULL){return 0;}
+	char *nbuf = malloc(len+1);
+	memcpy(nbuf,str,len);
+	nbuf[len] = 0;
+	s->flags |= lfHeapAlloc;
+	s->buf    = s->data = nbuf;
+	s->bufEnd = &s->buf[len];
+	return i;
+}
+
+
 lVal *lValString(const char *c){
 	if(c == NULL){return NULL;}
 	lVal *t = lValAlloc();
@@ -964,7 +982,9 @@ void lDefineVal(lClosure *c, const char *str, lVal *val){
 lVal *lnfRead(lClosure *c, lVal *v){
 	lVal *t = lEval(c,v);
 	if((t == NULL) || (t->type != ltString)){return NULL;}
-	t = lReadString(&lStr(t));
+	uint dup = lStringDup(t->vCdr);
+	if(dup == 0){return NULL;}
+	t = lReadString(&lStringList[dup]);
 	if((t != NULL) && (t->type == ltPair) && (lCar(t) != NULL) && (lCdr(t) == NULL)){
 		return lCar(t);
 	}else{

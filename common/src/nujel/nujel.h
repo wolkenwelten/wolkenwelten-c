@@ -131,6 +131,7 @@ void      lArrayFree        (uint v);
 uint      lStringAlloc      ();
 void      lStringFree       (uint v);
 uint      lStringNew        (const char *str, uint len);
+uint      lStringDup        (uint i);
 
 void      lClosureGC        ();
 void      lDisplayVal       (lVal *v);

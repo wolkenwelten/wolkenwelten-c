@@ -158,6 +158,7 @@
 (test-add -1 (ash -1 -1))
 (test-add -16 (lognand #b1111 #b1111))
 (test-add 6 (eval (read "(+ 1 2 3)")))
+(test-add 3 (let ((test-string "3")) (read test-string) (read test-string)))
 (test-add "(vec 1.0 2.0 3.0)" (abs (vec -1 -2 -3)))
 (test-add "3.33333" (+ 1.11111 2.22222))
 (test-add "\"H#Hallo\"" (let ((a "Hallo, Welt#")) (cat (substr a 0 1) (substr a -1) (substr a 0 -7))))
