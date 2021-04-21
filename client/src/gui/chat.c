@@ -87,11 +87,15 @@ void chatDraw(textMesh *guim){
 	for(int i=0;i<8;i++){
 		textMeshAddString(guim,chatLog[i]);
 		guim->sy += 8;
+		guim->fgc = colorPalette[15];
+		guim->bgc = colorPalette[0];
 	}
 	guim->size = 2;
 	for(int i=8;i<12;i++){
 		textMeshAddString(guim,chatLog[i]);
 		guim->sy += 16;
+		guim->fgc = colorPalette[15];
+		guim->bgc = colorPalette[0];
 	}
 	textMeshResetFont(guim);
 }
