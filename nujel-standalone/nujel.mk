@@ -1,5 +1,5 @@
-NUJEL_SRCS   := $(shell find nujel-standalone -type f -name '*.c') $(shell find common/src/nujel -type f -name '*.c') common/src/misc/vec.c
-NUJEL_HDRS   := $(shell find nujel-standalone -type f -name '*.h') $(shell find common/src/nujel -type f -name '*.h') common/src/misc/vec.h
+NUJEL_SRCS   := $(shell find nujel-standalone -type f -name '*.c') $(shell find common/src/nujel -type f -name '*.c') common/src/misc/vec.c common/src/misc/rng.c
+NUJEL_HDRS   := $(shell find nujel-standalone -type f -name '*.h') $(shell find common/src/nujel -type f -name '*.h') common/src/misc/vec.h common/src/misc/rng.h
 NUJEL_OBJS   := $(NUJEL_SRCS:.c=.o)
 NUJEL_DEPS   := ${NUJEL_SRCS:.c=.d}
 SAOLIB_NUJS  := $(shell find nujel-standalone/lib -type f -name '*.nuj')

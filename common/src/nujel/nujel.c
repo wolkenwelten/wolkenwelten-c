@@ -72,13 +72,6 @@ uint    lSymbolFFree  = 0;
 char dispWriteBuf[1<<16];
 lSymbol *symNull,*symQuote,*symArr,*symIf,*symCond,*symWhen,*symUnless,*symLet,*symBegin,*symStringAt,*symIntAt,*symFloatAt,*symVecAt;
 
-
-u64 randomValueSeed;
-static inline u64 getRandom(){
-	randomValueSeed = ((randomValueSeed * 1103515245)) + 12345;
-	return ((randomValueSeed&0xFFFF)<<16) | ((randomValueSeed>>16)&0xFFFF);
-}
-
 void lInit(){
 	lValActive      = 0;
 	lValMax         = 1;
@@ -871,9 +864,9 @@ static lVal *lnfRandom(lClosure *c, lVal *v){
 	int n = 0;
 	v = getLArgI(c,v,&n);
 	if(n == 0){
-		return lValInt(getRandom());
+		return lValInt(rngValR());
 	}else{
-		return lValInt(getRandom() % n);
+		return lValInt(rngValR() % n);
 	}
 }
 
@@ -881,9 +874,9 @@ static lVal *lnfRandomSeed(lClosure *c, lVal *v){
 	if(v != NULL){
 		int n = 0;
 		v = getLArgI(c,v,&n);
-		randomValueSeed = n;
+		seedRNG(n);
 	}
-	return lValInt(randomValueSeed);
+	return lValInt(RNGValue);
 }
 
 lVal *lResolve(lClosure *c, lVal *v){
