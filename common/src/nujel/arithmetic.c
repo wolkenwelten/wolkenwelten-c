@@ -332,9 +332,9 @@ void lAddArithmeticFuncs(lClosure *c){
 	lAddNativeFunc(c,"cos","(a)",  "Cos A",                            lnfCos);
 	lAddNativeFunc(c,"tan","(a)",  "Tan A",                            lnfTan);
 
-	lAddNativeFunc(c,"vx","(v)","Returns x part of vector v",lnfVX);
-	lAddNativeFunc(c,"vy","(v)","Returns x part of vector v",lnfVY);
-	lAddNativeFunc(c,"vz","(v)","Returns x part of vector v",lnfVZ);
+	lAddNativeFunc(c,"vx","(v)","Return x part of vector v",lnfVX);
+	lAddNativeFunc(c,"vy","(v)","Return x part of vector v",lnfVY);
+	lAddNativeFunc(c,"vz","(v)","Return x part of vector v",lnfVZ);
 
 	lDefineVal(c,"π",  lConst(lValFloat(PI)));
 	lDefineVal(c,"PI", lConst(lValFloat(PI)));

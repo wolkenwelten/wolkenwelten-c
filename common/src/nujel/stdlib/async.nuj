@@ -1,25 +1,26 @@
 ;; Contains everything related to the yield/coroutine system
 
 (def yield-queue (cons "Start of Yield Queue"))
-(def yield (λ (pred expr) "Executes expr once pred is true, returns immediately otherwise"
+(def yield (λ (pred expr) "Evaluates EXPR once PRED is true"
 	(set-cdr! (last-pair yield-queue) (cons (cons pred expr))) #t))
 
-(def yield-try (λ (l) "Tries to evaluate part an entry of the yield queue"
-	(cond ((eval (car l)) (eval (cdr l)) #t)
-	      (#t #f))))
+(def yield-run #f)
+(let ()
+	(def yield-try (λ (l)
+		(cond ((eval (car l)) (eval (cdr l)) #t)
+		      (#t #f))))
+	(def yield-run-iter (λ (l)
+		(cond ((nil? l) #t)
+		      ((nil? (cdr l)) #t)
+		      ((yield-try (cadr l)) (set-cdr! l (cddr l)) (yield-run-iter l))
+		      (#t (yield-run-iter (cdr l))))))
+	(set! yield-run (λ () "Executes pending coroutines if their predicate evaluates to #t"
+		(yield-run-iter yield-queue)))
+)
 
-(def yield-run-iter (λ (l) "Iter for yield-run"
-	(cond ((nil? l) #t)
-	      ((nil? (cdr l)) #t)
-	      ((yield-try (cadr l)) (set-cdr! l (cddr l)) (yield-run-iter l))
-	      (#t (yield-run-iter (cdr l))))))
-
-(def yield-run (λ () "Executes pending coroutines if their predicate now evaluates to #t"
-	(yield-run-iter yield-queue)))
-
-(def timeout (λ (millis) "Returns a function that evaluates to true once millis milliseconds have passed"
-	(let ((goal (+ (msecs) millis)))
-		(λ () (> (msecs) goal)))))
+(def timeout (λ (milliseconds) "Returns a function that evaluates to true once MILLISECONDS have passed"
+	(let ((goal (+ (time-milliseconds) milliseconds)))
+		(λ () (> (time-milliseconds) goal)))))
 
 (def event-bind (λ (event-name handler) "Binds handler lambda to event-name"
 	(set! (str->sym event-name) (cons handler (resolve (str->sym event-name))))))

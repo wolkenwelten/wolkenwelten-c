@@ -292,3 +292,4 @@
 (test-add "\"\\n\"" "\n")
 (test-add "\"\\n\"" (br))
 (test-add "\"\\n\\n\\n\"" (br 3))
+(test-add :dies-ist-ein-test-ob-lange-symbole-funktionieren :dies-ist-ein-test-ob-lange-symbole-funktionieren)

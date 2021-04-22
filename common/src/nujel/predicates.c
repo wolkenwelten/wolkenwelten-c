@@ -108,78 +108,16 @@ lVal *lnfGreaterEqual(lClosure *c, lVal *v){
 	return lValBool(cmp == 2 ? false : cmp >= 0);
 }
 
-lVal *lnfZero(lClosure *c, lVal *v){
-	const int cmp = lValCompare(c,lCons(lValInt(0),v));
-	return lValBool(cmp == 2 ? false : cmp == 0);
-}
-
-lVal *lnfIntPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCar(v));
-	return lValBool(t == NULL ? false : t->type == ltInt);
-}
-
-lVal *lnfFloatPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCar(v));
-	return lValBool(t == NULL ? false : t->type == ltFloat);
-}
-
-lVal *lnfStringPred(lClosure *c, lVal *v){
-	if(v == NULL){return lValBool(false);}
-	lVal *t = lEval(c,lCar(v));
-	return lValBool((t != NULL) && (t->type == ltString));
-}
-
-lVal *lnfVecPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCar(v));
-	return lValBool((t != NULL) && (t->type == ltVec));
-}
-
-lVal *lnfBoolPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCar(v));
-	return lValBool((t != NULL) && (t->type == ltBool));
-}
-
 lVal *lnfNilPred(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCar(v));
 	return lValBool(t == NULL);
 }
 
-lVal *lnfInfPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCar(v));
-	return lValBool((t != NULL) && (t->type == ltInf));
-}
-
-lVal *lnfPairPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCar(v));
-	return lValBool((t != NULL) && (t->type == ltPair));
-}
-
-lVal *lnfLambdaPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCar(v));
-	return lValBool((t != NULL) && (t->type == ltLambda));
-}
-
-lVal *lnfNativeFuncPred(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCar(v));
-	return lValBool((t != NULL) && (t->type == ltNativeFunc));
-}
-
 void lAddPredicateFuncs(lClosure *c){
-	lAddNativeFunc(c,"less? <",           "(a b)","#t if A < B", lnfLess);
-	lAddNativeFunc(c,"less-equal? <=",    "(a b)","#t if A <= B",lnfLessEqual);
-	lAddNativeFunc(c,"equal? eqv? eq? =", "(a b)","#t if A == B",lnfEqual);
-	lAddNativeFunc(c,"greater-equal? >=", "(a b)","#t if A >= B",lnfGreaterEqual);
-	lAddNativeFunc(c,"greater? >",        "(a b)","#t if A > B", lnfGreater);
-	lAddNativeFunc(c,"zero? z?",          "(a)",  "#t if A == 0",lnfZero);
-
-	lAddNativeFunc(c,"int?",              "(a)","#t if A an int",   lnfIntPred);
-	lAddNativeFunc(c,"float?",            "(a)","#t if A a float",  lnfFloatPred);
-	lAddNativeFunc(c,"vec?",              "(a)","#t if A a vec",    lnfVecPred);
-	lAddNativeFunc(c,"boolean? bool?",    "(a)","#t if A a bool",   lnfBoolPred);
-	lAddNativeFunc(c,"nil?",              "(a)","#t if A #nil",     lnfNilPred);
-	lAddNativeFunc(c,"inf?",              "(a)","#t if A an #inf",  lnfInfPred);
-	lAddNativeFunc(c,"pair?",             "(a)","#t if A a pair",   lnfPairPred);
-	lAddNativeFunc(c,"string?",           "(a)","#t if A a string", lnfStringPred);
-	lAddNativeFunc(c,"lambda?",           "(a)","#t if A a lambda", lnfLambdaPred);
-	lAddNativeFunc(c,"native?",           "(a)","#t if A a #cfn",   lnfNativeFuncPred);
+	lAddNativeFunc(c,"less? <",           "(a b)","#t if A < B",  lnfLess);
+	lAddNativeFunc(c,"less-equal? <=",    "(a b)","#t if A <= B", lnfLessEqual);
+	lAddNativeFunc(c,"equal? eqv? eq? =", "(a b)","#t if A == B", lnfEqual);
+	lAddNativeFunc(c,"greater-equal? >=", "(a b)","#t if A >= B", lnfGreaterEqual);
+	lAddNativeFunc(c,"greater? >",        "(a b)","#t if A > B",  lnfGreater);
+	lAddNativeFunc(c,"nil?",              "(a)","#t if A #nil",   lnfNilPred);
 }
