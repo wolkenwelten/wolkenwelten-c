@@ -132,29 +132,29 @@ vec vecDivS(const vec a, const float b){
 	return (vec){{{a.x/b,a.y/b,a.z/b}}};
 }
 vec vecMod (const vec a, const vec b){
-	return (vec){{{__builtin_fmodf(a.x,b.x),__builtin_fmodf(a.y,b.y),__builtin_fmodf(a.z,b.z)}}};
+	return (vec){{{fmodf(a.x,b.x),fmodf(a.y,b.y),fmodf(a.z,b.z)}}};
 }
 vec vecAbs(const vec a){
-	return (vec){{{__builtin_fabsf(a.x),__builtin_fabsf(a.y),__builtin_fabsf(a.z)}}};
+	return (vec){{{fabsf(a.x),fabsf(a.y),fabsf(a.z)}}};
 }
 vec vecFloor(const vec a){
-	return (vec){{{__builtin_floorf(a.x),__builtin_floorf(a.y),__builtin_floorf(a.z)}}};
+	return (vec){{{floorf(a.x),floorf(a.y),floorf(a.z)}}};
 }
 vec vecPow(const vec a, const vec b){
-	return (vec){{{__builtin_powf(a.x,b.x),__builtin_powf(a.y,b.y),__builtin_powf(a.z,b.z)}}};
+	return (vec){{{powf(a.x,b.x),powf(a.y,b.y),powf(a.z,b.z)}}};
 }
 float vecDot (const vec a, const vec b){
 	return (a.x*b.x)+(a.y*b.y)+(a.z*b.z);
 }
 float vecMag(const vec a){
 	float dot = vecDot(a,a);
-	return (dot > 0) ? __builtin_sqrtf(dot) : 0;
+	return (dot > 0) ? sqrtf(dot) : 0;
 }
 float vecSum(const vec a){
 	return a.x+a.y+a.z;
 }
 float vecAbsSum(const vec a){
-	return __builtin_fabsf(a.x)+__builtin_fabsf(a.y)+__builtin_fabsf(a.z);
+	return fabsf(a.x)+fabsf(a.y)+fabsf(a.z);
 }
 vec vecRngAbs(){
 	return (vec){{{rngValf(),rngValf(),rngValf()}}};
