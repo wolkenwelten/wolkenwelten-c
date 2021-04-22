@@ -3,7 +3,7 @@ ifeq (, $(shell which ffmpeg))
 	FFMPEG   := ffmpeg4
 endif
 CLIENT_CFLAGS    := $(shell sdl2-config --cflags)
-CLIENT_LIBS      :=
+CLIENT_LIBS      := -lm
 
 GFX_ASSETS       := $(shell find client/gfx -type f -name '*')
 RAW_SFX          := $(shell find client/sfx -type f -name '*.aif')
@@ -41,12 +41,10 @@ client/src/misc/lisp.o:        | client/src/tmp/sfx.h
 client/src/menu/inventory.o:   | client/src/tmp/sfx.h
 
 $(CLIENT_OBJS): CFLAGS += $(CLIENT_CFLAGS)
+$(CLIENT_OBJS): CINCLUDES += $(CLIENT_CINCLUDES)
 
-wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
-wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
-wolkenwelten: LIBS      += $(CLIENT_LIBS)
 wolkenwelten: $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS)
-	$(CC) $^ -g -o wolkenwelten $(OPTIMIZATION) $(LDFLAGS) $(LIBS) $(CSTD)
+	$(CC) $^ -g -o wolkenwelten $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(CLIENT_LIBS) $(CSTD)
 
 
 client/src/tmp/client.nuj: $(CLIENT_NUJ)

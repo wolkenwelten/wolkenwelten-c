@@ -1,6 +1,6 @@
 SERVER_CFLAGS    :=
 SERVER_CINCLUDES :=
-SERVER_LIBS      :=
+SERVER_LIBS      := -lm
 
 SERVER_HDRS      := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
 SERVER_SRCS      := $(shell find server/src -type f -name '*.c') $(COMMON_SRCS)
@@ -13,11 +13,8 @@ SERVER_ASSETS    := server/src/tmp/server.nuj
 $(SERVER_OBJS): CFLAGS    += $(SERVER_CFLAGS)
 $(SERVER_OBJS): CINCLUDES += $(SERVER_CINCLUDES)
 
-wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
-wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
-wolkenwelten-server: LIBS      += $(SERVER_LIBS)
 wolkenwelten-server: $(SERVER_OBJS) $(ASM_OBJS) server/src/tmp/objs.o server/src/tmp/sfx.o common/src/tmp/cto.o server/src/tmp/assets.o
-	$(CC) -D_GNU_SOURCE $^ -g -o wolkenwelten-server $(OPTIMIZATION) $(LDFLAGS) $(CINCLUDES) $(LIBS)
+	$(CC) -D_GNU_SOURCE $^ -g -o wolkenwelten-server $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES) $(SERVER_LIBS)
 
 server/src/tmp/server.nuj: $(SERVER_NUJ)
 	@mkdir -p server/src/tmp
