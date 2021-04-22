@@ -3,13 +3,10 @@ CC               := gcc
 
 AS_SYM           := USE_GOT=USE_GOT
 
-CFLAGS           += -D_GNU_SOURCE
-LDFLAGS          += -D_GNU_SOURCE
-
 CLIENT_LIBS      := -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lvorbis
-
 DYNLIBS          := -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lvorbis
 STATICLIBS       :=
+SERVER_LIBS      := -lm
 
 LIN_REL          := releases/linux-$(VERSION_ARCH)/wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME)
 

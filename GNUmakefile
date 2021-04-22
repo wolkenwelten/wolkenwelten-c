@@ -2,12 +2,11 @@ ifneq (, $(shell which dash))
 	SHELL   := $(shell which dash)
 endif
 
-NUJEL        := nujel
-ASSET        := tools/assets
-
+NUJEL         := ./nujel
+ASSET         := ./tools/assets
 ifeq ($(OS),Windows_NT)
-	NUJEL := nujel.exe
-	ASSET := tools/assets.exe
+	NUJEL := ./nujel.exe
+	ASSET := ./tools/assets.exe
 endif
 
 AS                   := as
@@ -15,19 +14,18 @@ AS_SYM               := NO_SYM=NO_SYM
 ASFLAGS              :=
 
 CC                   := cc
-CFLAGS               := -g
+CFLAGS               := -g -D_GNU_SOURCE
 CSTD                 := -std=c99
 OPTIMIZATION         := -O2 -fno-lto -ffast-math -freciprocal-math
 WARNINGS             := -Wall -Werror -Wextra -Wshadow -Wcast-align -Wno-missing-braces
 
-LD                   := cc
-LIBS                 := -lm
+LIBS                 :=
 
 RELEASE_OPTIMIZATION := -O3 -flto -ffast-math -freciprocal-math
 VERSION_ARCH         := $(shell uname -m)
 
-ifneq (, $(wildcard ./$(NUJEL)))
-VERSION_NAME         := $(shell ./$(NUJEL) tools/tools.nuj -x "(display (infogen-version))")
+ifneq (, $(shell which $(NUJEL)))
+	VERSION_NAME := $(shell $(NUJEL) tools/tools.nuj -x "(display (infogen-version))")
 endif
 
 

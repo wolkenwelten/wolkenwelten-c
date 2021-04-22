@@ -13,7 +13,7 @@ WEBEXCLUDE       += --exclude=releases/win/*.res
 
 TEST_WORLD       := -worldSeed=68040 -savegame=Test
 
-ASM_OBJS += common/src/asm/$(ARCH).o
+ASM_OBJS         += common/src/asm/$(ARCH).o
 
 common/src/misc/lisp.o:      | common/src/tmp/assets.o
 common/src/game/item.o:      | server/src/tmp/assets.o
@@ -26,7 +26,7 @@ common/src/game/character.o: | server/src/tmp/sfx.o
 	$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) $< -o $@
 
 %.o: %.c
-	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) -g -c $< -o $@ -MMD > ${<:.c=.d}
+	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) $(if $(findstring client/, $<),$(CLIENT_CFLAGS) $(CLIENT_CINCLUDES),) -g -c $< -o $@ -MMD > ${<:.c=.d}
 
 common/src/tmp/stdlib.nuj: $(NUJ_STDLIB)
 	@mkdir -p common/src/tmp
@@ -38,7 +38,7 @@ common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
 
 common/src/tmp/assets.c: $(ASSET) $(COMMON_ASSETS)
 	@mkdir -p common/src/tmp/
-	./$(ASSET) common/src/tmp/assets $(COMMON_ASSETS)
+	$(ASSET) common/src/tmp/assets $(COMMON_ASSETS)
 common/src/tmp/assets.h: common/src/tmp/assets.c
 	@true
 
@@ -91,4 +91,4 @@ archive:
 
 common/src/tmp/cto.c: tools/tools.nuj $(NUJEL)
 	@mkdir -p common/src/tmp/
-	./$(NUJEL) tools/tools.nuj -x "(infogen \"common/src/tmp/cto\")"
+	$(NUJEL) tools/tools.nuj -x "(infogen \"common/src/tmp/cto\")"

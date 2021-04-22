@@ -1,9 +1,8 @@
 AS               := as
 CC               := clang
 
-CLIENT_LIBS      :=-F /Library/Frameworks -framework SDL2 -framework SDL2_mixer -framework OpenGL
-CFLAGS           += -DGL_SILENCE_DEPRECATION
-CLIENT_CFLAGS    := -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_mixer.framework/Headers
+CLIENT_LIBS      := -F /Library/Frameworks -framework SDL2 -framework SDL2_mixer -framework OpenGL
+CLIENT_CFLAGS    := -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_mixer.framework/Headers -DGL_SILENCE_DEPRECATION
 
 OSX_APP          := releases/macos/wolkenwelten-$(VERSION_NAME).app
 
@@ -41,20 +40,17 @@ $(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/objs.c client/src/tmp/obj
 $(OSX_APP)/Contents/MacOS/wolkenwelten: client/src/tmp/sfx.c client/src/tmp/sfx.h
 $(OSX_APP)/Contents/MacOS/wolkenwelten: common/src/tmp/cto.c
 	mkdir -p $(OSX_APP)/Contents/MacOS
-	$(CC) $(CLIENT_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(LDFLAGS) $(CINCLUDES) $(WARNINGS) $(LIBS)
+	$(CC) $(CLIENT_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WARNINGS) $(LIBS)
 	strip -SxX $@
 	install_name_tool -change "@rpath/SDL2.framework/Versions/A/SDL2" "@executable_path/../Frameworks/SDL2.framework/SDL2" $@
 	install_name_tool -change "@rpath/SDL2_mixer.framework/Versions/A/SDL2_mixer" "@executable_path/../Frameworks/SDL2_mixer.framework/SDL2_mixer" $@
 
-$(OSX_APP)/Contents/MacOS/wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
-$(OSX_APP)/Contents/MacOS/wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
-$(OSX_APP)/Contents/MacOS/wolkenwelten-server: LIBS      += $(SERVER_LIBS)
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: server/src/tmp/sfx.c server/src/tmp/sfx.h
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: server/src/tmp/objs.c server/src/tmp/objs.h
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: common/src/tmp/cto.c
 	mkdir -p $(OSX_APP)/Contents/MacOS
-	$(CC) $(SERVER_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(LDFLAGS) $(CINCLUDES) $(WARNINGS) $(LIBS)
+	$(CC) $(SERVER_SRCS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WARNINGS) $(LIBS)
 	strip -SxX $@
 
 $(OSX_APP)/Contents/Info.plist:  platform/macos/Info.plist

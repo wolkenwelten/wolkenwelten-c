@@ -2,8 +2,6 @@ WIN_CLIENT_CFLAGS    := -DSDL_SOUND -mwindows -Wl,-subsystem,windows
 WIN_CLIENT_CINCLUDES := -I/usr/x86_64-w64-mingw32/include/SDL2/
 
 WIN_SERVER_LIBS      := -lmingw32 -static-libgcc -lws2_32 -luser32 -static -lpthread
-WIN_SERVER_CFLAGS    :=
-
 WINLIBS              := -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -lgdi32 -lopengl32 -lshlwapi -lsetupapi -lws2_32
 WIN_STATICLIBS       := -static-libgcc -static -lmingw32 -lm -lstdc++ -lpthread -lopengl32 -lSDL2main -lssp -lSDL2 -lSDL2_mixer -lvorbis -logg -lvorbisfile $(WINLIBS)
 

@@ -1,5 +1,3 @@
-SERVER_CFLAGS    :=
-SERVER_CINCLUDES :=
 SERVER_LIBS      := -lm
 
 SERVER_HDRS      := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
@@ -10,11 +8,8 @@ SERVER_DEPS      := ${SERVER_SRCS:.c=.d}
 SERVER_NUJ       := $(shell find server/src/nujel/ -type f -name '*.nuj' | sort)
 SERVER_ASSETS    := server/src/tmp/server.nuj
 
-$(SERVER_OBJS): CFLAGS    += $(SERVER_CFLAGS)
-$(SERVER_OBJS): CINCLUDES += $(SERVER_CINCLUDES)
-
 wolkenwelten-server: $(SERVER_OBJS) $(ASM_OBJS) server/src/tmp/objs.o server/src/tmp/sfx.o common/src/tmp/cto.o server/src/tmp/assets.o
-	$(CC) -D_GNU_SOURCE $^ -g -o wolkenwelten-server $(OPTIMIZATION) $(SERVER_CFLAGS) $(SERVER_CINCLUDES) $(SERVER_LIBS)
+	$(CC) -D_GNU_SOURCE $^ -g -o wolkenwelten-server $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(SERVER_LIBS)
 
 server/src/tmp/server.nuj: $(SERVER_NUJ)
 	@mkdir -p server/src/tmp
@@ -36,7 +31,7 @@ server/src/tmp/objs.h: server/src/tmp/objs.c
 
 server/src/tmp/assets.c: $(ASSET) $(SERVER_ASSETS)
 	@mkdir -p server/src/tmp/
-	./$(ASSET) server/src/tmp/assets $(SERVER_ASSETS)
+	$(ASSET) server/src/tmp/assets $(SERVER_ASSETS)
 server/src/tmp/assets.h: server/src/tmp/assets.c
 	@true
 

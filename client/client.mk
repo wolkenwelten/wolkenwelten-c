@@ -1,29 +1,29 @@
-FFMPEG           := ffmpeg
+FFMPEG            := ffmpeg
 ifeq (, $(shell which ffmpeg))
-	FFMPEG   := ffmpeg4
+	FFMPEG    := ffmpeg4
 endif
-CLIENT_CFLAGS    := $(shell sdl2-config --cflags)
-CLIENT_LIBS      := -lm
+CLIENT_CFLAGS     := $(shell sdl2-config --cflags)
+CLIENT_LIBS       := -lm
 
-GFX_ASSETS       := $(shell find client/gfx -type f -name '*')
-RAW_SFX          := $(shell find client/sfx -type f -name '*.aif')
-SFX_ASSETS       := ${RAW_SFX:.aif=.ogg}
-SHD_ASSETS       := $(shell find client/src/shader -type f -name '*.glsl')
-TXT_ASSETS       := $(shell find client/txt -type f -name '*')
-MESHASSETS       := $(shell find client/mesh -type f -name '*')
-CLIENT_NUJ       := $(shell find client/src/nujel/ -type f -name '*.nuj' | sort)
+GFX_ASSETS        := $(shell find client/gfx -type f -name '*')
+RAW_SFX           := $(shell find client/sfx -type f -name '*.aif')
+SFX_ASSETS        := ${RAW_SFX:.aif=.ogg}
+SHD_ASSETS        := $(shell find client/src/shader -type f -name '*.glsl')
+TXT_ASSETS        := $(shell find client/txt -type f -name '*')
+MESHASSETS        := $(shell find client/mesh -type f -name '*')
+CLIENT_NUJ        := $(shell find client/src/nujel/ -type f -name '*.nuj' | sort)
 CLIENT_NUJ_ASSETS := client/src/tmp/client.nuj
-CLIENT_TMP_SRCS  := client/src/tmp/objs.c client/src/tmp/gfxAssets.c client/src/tmp/sfxAssets.c client/src/tmp/shdAssets.c client/src/tmp/txtAssets.c client/src/tmp/nujAssets.c client/src/tmp/meshAssets.c common/src/tmp/assets.c common/src/tmp/cto.c client/src/tmp/sfx.c
-CLIENT_TMP_OBJS  := ${CLIENT_TMP_SRCS:.c=.o}
+CLIENT_TMP_SRCS   := client/src/tmp/objs.c client/src/tmp/gfxAssets.c client/src/tmp/sfxAssets.c client/src/tmp/shdAssets.c client/src/tmp/txtAssets.c client/src/tmp/nujAssets.c client/src/tmp/meshAssets.c common/src/tmp/assets.c common/src/tmp/cto.c client/src/tmp/sfx.c
+CLIENT_TMP_OBJS   := ${CLIENT_TMP_SRCS:.c=.o}
 
-CLIENT_HDRS      := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
-CLIENT_SRCS      := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
-CLIENT_OBJS      := ${CLIENT_SRCS:.c=.o}
-CLIENT_DEPS      := ${CLIENT_SRCS:.c=.d}
+CLIENT_HDRS       := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
+CLIENT_SRCS       := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
+CLIENT_OBJS       := ${CLIENT_SRCS:.c=.o}
+CLIENT_DEPS       := ${CLIENT_SRCS:.c=.d}
 
-WINDOW_WIDTH     := 960
-WINDOW_HEIGHT    := 524
-TESTNR           := 1
+WINDOW_WIDTH      := 960
+WINDOW_HEIGHT     := 524
+TESTNR            := 1
 
 client/src/game/animal.o:      | client/src/tmp/objs.h
 client/src/game/grenade.o:     | client/src/tmp/objs.h
@@ -40,11 +40,8 @@ client/src/game/projectile.o:  | client/src/tmp/sfx.h
 client/src/misc/lisp.o:        | client/src/tmp/sfx.h
 client/src/menu/inventory.o:   | client/src/tmp/sfx.h
 
-$(CLIENT_OBJS): CFLAGS += $(CLIENT_CFLAGS)
-$(CLIENT_OBJS): CINCLUDES += $(CLIENT_CINCLUDES)
-
 wolkenwelten: $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS)
-	$(CC) $^ -g -o wolkenwelten $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CLIENT_CINCLUDES) $(CLIENT_LIBS) $(CSTD)
+	$(CC) $^ -g -o wolkenwelten $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_CINCLUDES) $(CINCLUDES) $(CLIENT_LIBS) $(CSTD)
 
 
 client/src/tmp/client.nuj: $(CLIENT_NUJ)
@@ -56,31 +53,31 @@ client/src/tmp/client.nuj: $(CLIENT_NUJ)
 
 client/src/tmp/gfxAssets.c: $(ASSET) $(GFX_ASSETS)
 	@mkdir -p client/src/tmp/
-	./$(ASSET) client/src/tmp/gfxAssets $(GFX_ASSETS)
+	$(ASSET) client/src/tmp/gfxAssets $(GFX_ASSETS)
 client/src/tmp/gfxAssets.h: client/src/tmp/gfxAssets.c
 	@true
 
 client/src/tmp/sfxAssets.c: $(ASSET) $(SFX_ASSETS)
 	@mkdir -p client/src/tmp/
-	./$(ASSET) client/src/tmp/sfxAssets $(SFX_ASSETS)
+	$(ASSET) client/src/tmp/sfxAssets $(SFX_ASSETS)
 client/src/tmp/sfxAssets.h: client/src/tmp/sfxAssets.c
 	@true
 
 client/src/tmp/shdAssets.c: $(ASSET) $(SHD_ASSETS)
 	@mkdir -p client/src/tmp/
-	./$(ASSET) client/src/tmp/shdAssets $(SHD_ASSETS)
+	$(ASSET) client/src/tmp/shdAssets $(SHD_ASSETS)
 client/src/tmp/shdAssets.h: client/src/tmp/shdAssets.c
 	@true
 
 client/src/tmp/txtAssets.c: $(ASSET) $(TXT_ASSETS)
 	@mkdir -p client/src/tmp/
-	./$(ASSET) client/src/tmp/txtAssets $(TXT_ASSETS)
+	$(ASSET) client/src/tmp/txtAssets $(TXT_ASSETS)
 client/src/tmp/txtAssets.h: client/src/tmp/txtAssets.c
 	@true
 
 client/src/tmp/nujAssets.c: $(ASSET) $(CLIENT_NUJ_ASSETS)
 	@mkdir -p client/src/tmp/
-	./$(ASSET) client/src/tmp/nujAssets $(CLIENT_NUJ_ASSETS)
+	$(ASSET) client/src/tmp/nujAssets $(CLIENT_NUJ_ASSETS)
 client/src/tmp/nujAssets.h: client/src/tmp/nujAssets.c
 	@true
 

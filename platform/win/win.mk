@@ -5,8 +5,7 @@ CLIENT_CFLAGS    := -DSDL_SOUND -mwindows -Wl,-subsystem,windows $(shell pkg-con
 
 NUJEL_LIBS       := -static-libgcc -lws2_32 -luser32 -static -lpthread
 
-SERVER_LIBS      := -lmingw32 -static-libgcc -lws2_32 -luser32 -static -lpthread
-SERVER_CFLAGS    :=
+LIBS             := -lmingw32 -static-libgcc -lws2_32 -luser32 -static -lpthread
 
 WINLIBS          := -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -lgdi32 -lopengl32 -lshlwapi -lsetupapi -lws2_32
 STATICLIBS       := -static-libgcc -static -lmingw32 -lm -lstdc++ -lpthread -lopengl32 -lSDL2main -lSDL2 -lSDL2_mixer -lvorbis -logg -lvorbisfile $(WINLIBS)
