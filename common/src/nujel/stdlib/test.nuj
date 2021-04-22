@@ -287,3 +287,5 @@
 (test-add #t (eq? :native-function (type-of +)))
 (test-add #t (eq? :lambda (type-of test-add)))
 (test-add #t (eq? :string (type-of "asd")))
+(test-add 2 (getf (list :a 1 :b 2 :c 3) :b))
+(test-add "#nil" (getf (list :a 1 :b 2 :c 3) :d))

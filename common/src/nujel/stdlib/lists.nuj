@@ -72,3 +72,8 @@
 	(cond ((lambda? f) (reduce cat (map (λ (a) (" " (car a))) (cl-data f))))
 	      ((native? f) (reduce cat (map (λ (a) (" " a)) (car (cl-data f)))))
 	      (#t ""))))
+
+(def getf (λ (list key) "Retursn the value in LIST following KEY"
+	(cond ((nil? list) #nil)
+	      ((eq? key (car list)) (cadr list))
+	      (#t (getf (cdr list) key)))))
