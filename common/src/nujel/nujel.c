@@ -697,42 +697,24 @@ static lVal *lnfQuote(lClosure *c, lVal *v){
 	return lCar(v);
 }
 
-static lVal *lnfMem(lClosure *c, lVal *v){
+static lVal *lnfMemInfo(lClosure *c, lVal *v){
 	(void)c; (void)v;
-
-	char buf[1024];
-	snprintf(buf,sizeof(buf),"Vals:%u Closures:%u Arrs:%u Strings:%u NFuncs:%u Symbols:%u",lValActive,lClosureActive,lArrayActive,lStringActive,lNFuncActive,lSymbolMax);
-	fprintf(stderr,"%s\n",buf);
-	return lValString(buf);
-}
-
-static lVal *lnfMemCount(lClosure *c, lVal *v){
-	(void)c; (void)v;
-
-	char buf[1024];
-	int vals=0,clos=0,arrs=0,strs=0,nfuncs=0;
-	for(uint i=0;i<VAL_MAX;i++){
-		if(lValList[i].type == ltNoAlloc){continue;}
-		vals++;
-	}
-	for(uint i=0;i<CLO_MAX;i++){
-		if(lClosureList[i].flags & lfUsed){clos++;}
-	}
-	for(uint i=0;i<ARR_MAX;i++){
-		if(lArrayList[i].nextFree != 0){continue;}
-		arrs++;
-	}
-	for(uint i=0;i<STR_MAX;i++){
-		if(lStringList[i].nextFree != 0){continue;}
-		strs++;
-	}
-	for(uint i=0;i<NFN_MAX;i++){
-		if(lNFuncList[i].nextFree != 0){continue;}
-		nfuncs++;
-	}
-	snprintf(buf,sizeof(buf),"Vals:%u Closures:%u Arrs:%u Strings:%u NFuncs:%u",vals,clos,arrs,strs,nfuncs);
-	fprintf(stderr,"%s\n",buf);
-	return lValString(buf);
+	lVal *ret = NULL;
+	ret = lCons(lValInt(lSymbolMax),ret);
+	ret = lCons(lValSym(":symbol"),ret);
+	ret = lCons(lValInt(lNFuncActive),ret);
+	ret = lCons(lValSym(":native-function"),ret);
+	ret = lCons(lValInt(lStringActive),ret);
+	ret = lCons(lValSym(":string"),ret);
+	ret = lCons(lValInt(lClosureActive),ret);
+	ret = lCons(lValSym(":array"),ret);
+	ret = lCons(lValInt(lArrayActive),ret);
+	ret = lCons(lValSym(":vector"),ret);
+	ret = lCons(lValInt(lVecActive),ret);
+	ret = lCons(lValSym(":closure"),ret);
+	ret = lCons(lValInt(lValActive),ret);
+	ret = lCons(lValSym(":value"),ret);
+	return ret;
 }
 
 static lVal *lnfLet(lClosure *c, lVal *v){
@@ -1108,8 +1090,7 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"eval",        "(expr)",        "Evaluates expr",                           lEval);
 	lAddNativeFunc(c,"read",        "(s)",           "Reads and Parses the S-Expression in S ",  lnfRead);
 	lAddNativeFunc(c,"resolve",     "(s)",           "Resolves s until it is no longer a symbol",lResolve);
-	lAddNativeFunc(c,"mem",         "()",            "Returns memory usage data",                lnfMem);
-	lAddNativeFunc(c,"mem-count",   "()",            "Returns memory usage data by counting",    lnfMemCount);
+	lAddNativeFunc(c,"memory-info", "()",            "Returns memory usage data",                lnfMemInfo);
 	lAddNativeFunc(c,"lambda lam λ \\","(args ...body)","Creates a new lambda",                  lnfLambda);
 	lAddNativeFunc(c,"dynamic dyn δ",  "(args ...body)","New Dynamic scoped lambda",             lnfDynamic);
 	lAddNativeFunc(c,"object obj ω",   "(args ...body)","Creates a new object",                  lnfObject);

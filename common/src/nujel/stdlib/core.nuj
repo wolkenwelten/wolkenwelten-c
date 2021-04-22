@@ -124,3 +124,16 @@
 	(if (nil? operators) expr (infix-iter (infix-operator-iter expr (car operators)) (cdr operators)))))
 (def infix (λ (expr) "Evaluates EXPR using infix notation"
 		(car (infix-iter expr '(/ * + - & ^ << >> )))))
+
+(def mem (λ () "Return some pretty printed memory usage information"
+	(let ((info (memory-info))) (cat
+		(ansi-white "Memory Info") "\n"
+		(ansi-green "Values:   ")  (getf info :value) "\n"
+		(ansi-blue "Closures: ")   (getf info :closure) "\n"
+		(ansi-red "Arrays:   ")    (getf info :array) "\n"
+		(ansi-yellow "STrings:  ") (getf info :string) "\n"
+		(ansi-cyan "NFunc:    ")   (getf info :native-function) "\n"
+		(ansi-purple "Vectors:  ") (getf info :vector) "\n"
+		(ansi-pink "Symbols:  ")   (getf info :symbol) "\n"
+	))
+))

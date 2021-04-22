@@ -1,0 +1,5 @@
+; Some nujel string λs
+
+(def br (λ (&a) "Return &A=1 linebreaks"
+	(cond ((or (nil? &a) (<= (int &a) 1)) "\n")
+	      (#t ("\n" (br (-- &a)))))))

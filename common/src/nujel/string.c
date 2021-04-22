@@ -63,28 +63,28 @@ int bufWriteString(char *buf, int len, const char *data){
 		case 0:
 			goto bufWriteStringExit;
 		case '\a': // Bell
-			*out++ = '\\'; *out++ = '\a';
+			*out++ = '\\'; *out++ = 'a';
 			break;
 		case '\b': // Backspace
-			*out++ = '\\'; *out++ = '\b';
+			*out++ = '\\'; *out++ = 'b';
 			break;
 		case '\t': // Horiz. Tab
-			*out++ = '\\'; *out++ = '\t';
+			*out++ = '\\'; *out++ = 't';
 			break;
 		case '\n': // Line Feed
-			*out++ = '\\'; *out++ = '\n';
+			*out++ = '\\'; *out++ = 'n';
 			break;
 		case '\v': // Vert. Tab
-			*out++ = '\\'; *out++ = '\v';
+			*out++ = '\\'; *out++ = 'v';
 			break;
 		case '\f': // Form Feed
-			*out++ = '\\'; *out++ = '\f';
+			*out++ = '\\'; *out++ = 'f';
 			break;
 		case '\r': // Carriage Return
-			*out++ = '\\'; *out++ = '\r';
+			*out++ = '\\'; *out++ = 'r';
 			break;
 		case '\e': // Escape
-			*out++ = '\\'; *out++ = '\e';
+			*out++ = '\\'; *out++ = 'e';
 			break;
 		case '"':
 			*out++ = '\\'; *out++ = '"';
@@ -416,23 +416,6 @@ lVal *lnfSubstr(lClosure *c, lVal *v){
 	return ret;
 }
 
-lVal *lnfBr(lClosure *c, lVal *v){
-	char tmpStringBuf[256];
-	int nr = 1;
-	if(v != NULL){
-		lVal *t = lEval(c,v);
-		if((t != NULL) && (t->type == ltInt)){
-			nr = t->vInt;
-		}
-	}
-	char *buf = tmpStringBuf;
-	for(;nr>0;nr--){
-		*buf++='\n';
-	}
-	*buf++ = 0;
-	return lValString(tmpStringBuf);
-}
-
 lVal *lnfCat(lClosure *c, lVal *v){
 	char tmpStringBuf[8192];
 	char *buf = tmpStringBuf;
@@ -497,25 +480,6 @@ lVal *lnfIndexOf(lClosure *c, lVal *v){
 	return lValInt(-1);
 }
 
-lVal *lnfAnsiFG(lClosure *c, lVal *v){
-	int i = 0;
-	if(v != NULL){
-		lVal *t = lnfInt(c,lEval(c,lCar(v)));
-		if((t != NULL) && (t->type == ltInt)){
-			i = t->vInt;
-		}
-	}
-	if(i < 0) {i =  0;}
-	if(i > 16){i = 15;}
-	return lValString(ansiFG[i]);
-}
-
-lVal *lnfAnsiRS(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
-	return lValString(ansiRS);
-}
-
 lVal *lnfStrSym(lClosure *c, lVal *v){
 	v = lEval(c,lCar(v));
 	if(v == NULL){return NULL;}
@@ -531,15 +495,15 @@ lVal *lnfSymStr(lClosure *c, lVal *v){
 }
 
 lVal *lnfWriteStr(lClosure *c, lVal *v){
+	static char *buf = NULL;
 	lVal *t = lApply(c,v,lEval);
 	if(t == NULL){
 		return lValString("#nil");
 	}
-	char *buf = malloc(1<<19);
-	lSWriteVal(lCar(t), buf, &buf[1<<19],0,false);
-	buf[(1<<19)-1]=0;
+	if(buf == NULL){buf = malloc(1<<16);}
+	lSWriteVal(lCar(t), buf, &buf[1<<16],0,false);
+	buf[(1<<16)-1]=0;
 	t = lValString(buf);
-	free(buf);
 	return t;
 }
 
@@ -585,8 +549,4 @@ void lAddStringFuncs(lClosure *c){
 	lAddNativeFunc(c,"str->sym",      "(str)",           "Converts STR to a symbol",                                                                      lnfStrSym);
 	lAddNativeFunc(c,"sym->str",      "(sym)",           "Converts SYM to a string",                                                                      lnfSymStr);
 	lAddNativeFunc(c,"write-str",     "(val)",           "Writes V into a string and returns it",                                                         lnfWriteStr);
-
-	lAddNativeFunc(c,"ansi-reset","()",  "Ansi reset code",                 lnfAnsiRS);
-	lAddNativeFunc(c,"ansi-fg",   "(a)", "Returns Ansi fg color code for a",lnfAnsiFG);
-	lAddNativeFunc(c,"br",        "(&a)","Returns &a=1 linebreaks",         lnfBr);
 }

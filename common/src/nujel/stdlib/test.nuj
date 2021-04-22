@@ -289,3 +289,6 @@
 (test-add #t (eq? :string (type-of "asd")))
 (test-add 2 (getf (list :a 1 :b 2 :c 3) :b))
 (test-add "#nil" (getf (list :a 1 :b 2 :c 3) :d))
+(test-add "\"\\n\"" "\n")
+(test-add "\"\\n\"" (br))
+(test-add "\"\\n\\n\\n\"" (br 3))
