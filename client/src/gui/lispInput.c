@@ -95,7 +95,8 @@ void lispPanelToggle(){
 void handlerLispSubmit(widget *wid){
 	char buf[8192];
 	if(lispInput->vals[0] == 0){return;}
-	if((lispAutoCompleteLen > 0) && (lispAutoCompleteSelection >= 0)){
+
+	if(!lispAutoCompleteCompleteSymbol && (lispAutoCompleteLen > 0) && (lispAutoCompleteSelection >= 0)){
 		strRemove(wid->vals,256,lispAutoCompleteStart,lispAutoCompleteEnd);
 		strInsert(wid->vals,256,lispAutoCompleteStart,lispAutoCompleteList[lispAutoCompleteSelection]->c);
 		int slen = strnlen(lispAutoCompleteList[lispAutoCompleteSelection]->c,sizeof(lSymbol));
@@ -188,20 +189,18 @@ void lispPanelGetPointSymbol(){
 	if(buf == NULL){return;}
 	for(i = textInputCursorPos; i >= 0; i--){
 		const u8 c = buf[i];
-		if(isspace(c))    {i++;break;}
-		else if(c == '(') {i++;break;}
-		else if(c == ')') {i++;break;}
-		else if(c == '\''){i++;break;}
-		else if(c == '"') {i++;break;}
+		if(isspace(c) || (c == '(') || (c == ')') || (c == '\'') || (c == '\"')){
+			i++;
+			break;
+		}
 	}
 	i = MAX(0,i);
 	for(m = i; buf[m] != 0; m++){
 		const u8 c = buf[m];
-		if(isspace(c))    {m--;break;}
-		else if(c == '(') {m--;break;}
-		else if(c == ')') {m--;break;}
-		else if(c == '\''){m--;break;}
-		else if(c == '"') {m--;break;}
+		if(isspace(c) || (c == '(') || (c == ')') || (c == '\'') || (c == '\"')){
+			m--;
+			break;
+		}
 	}
 	if(m <= i){return;}
 	lispAutoCompleteStart = i;
