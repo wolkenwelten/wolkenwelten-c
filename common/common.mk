@@ -50,7 +50,9 @@ clean:
 	rm -f gmon.out client/tools/assets client/tools/objparser callgrind.out.* vgcore.* platform/win/wolkenwelten.res
 	rm -f client/sfx/*.ogg
 	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.o')
+	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.wo')
 	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.d')
+	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.wd')
 	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.deps')
 	rm -f wolkenwelten wolkenwelten.exe wolkenwelten-server wolkenwelten-server.exe tools/assets nujel nujel.exe
 	rm -f server/make.deps client/make.deps common/make.deps server/server.d client/client.d common/common.d nujel-standalone/nujel.d

@@ -15,4 +15,4 @@ cd "$DIR"
 
 
 source "$DIR/platform/wasm/emsdk/emsdk_env.sh"
-make -j4 release.wasm
+make -j16 release.wasm
