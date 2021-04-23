@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+cd "$(dirname "$0")"
+cd ../
+
 sudo rm -rf /var/chroots/steamrt_scout_amd64/root/wolkenwelten/
 sudo git clone ./ /var/chroots/steamrt_scout_amd64/root/wolkenwelten
 sudo schroot -c steamrt_scout_amd64 -- bash -c "cd ~/wolkenwelten/ && make clean && make release.linux -j4"

@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+cd "$(dirname "$0")"
+cd ../
+
 EMSDK_TESTED_VERSION="2.0.15"
 EMSDK_REPO_URL="https://github.com/emscripten-core/emsdk.git"
 
