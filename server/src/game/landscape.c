@@ -29,7 +29,7 @@
 static void landscapeUpdateChunk(chunk *c){
 	static u8 topBlocks[CHUNK_SIZE][CHUNK_SIZE];
 
-	chunk *tc = worldTryChunk(c->x,c->y+1,c->z);
+	chunk *tc = worldTryChunk(c->x,c->y+CHUNK_SIZE,c->z);
 	if(tc == NULL){
 		memset(topBlocks,0,sizeof(topBlocks));
 	}else{
@@ -44,12 +44,7 @@ static void landscapeUpdateChunk(chunk *c){
 	for(uint y=0; y < CHUNK_SIZE; y++){
 	for(uint z=0; z < CHUNK_SIZE; z++){
 		const u8 b = c->data[x][y][z];
-		u8 tb;
-		if(y == CHUNK_SIZE-1){
-			tb = topBlocks[x][z];
-		}else{
-			tb = c->data[x][y+1][z];
-		}
+		const u8 tb = y == CHUNK_SIZE-1 ? topBlocks[x][z] : c->data[x][y+1][z];
 
 		switch(b){
 		default:
