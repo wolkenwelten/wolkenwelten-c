@@ -428,6 +428,11 @@ static void characterUpdateCons(character *c, uint oldCol, const vec oldPos){
 	}
 }
 
+void characterGoStepUp(character *c){
+	c->pos.y += 0.1f;
+	c->vel.y = 0.03f;
+}
+
 int characterPhysics(character *c){
 	int ret=0;
 	u32 col;
@@ -460,7 +465,7 @@ int characterPhysics(character *c){
 		c->pos.x = MAX(c->pos.x,floor(c->pos.x)+0.3f);
 		c->vel.x = c->vel.x*-0.3f;
 		if(((col&0x1111) == 0x0101) && (fabsf(c->vel.y) < 0.001f)){
-			c->vel.y = 0.035f;
+			characterGoStepUp(c);
 		}
 	}
 	if((col&0x2220) && (c->vel.x > 0.f)){
@@ -468,7 +473,7 @@ int characterPhysics(character *c){
 		c->pos.x = MIN(c->pos.x,floorf(c->pos.x)+0.7f);
 		c->vel.x = c->vel.x*-0.3f;
 		if(((col&0x2222) == 0x0202) && (fabsf(c->vel.y) < 0.001f)){
-			c->vel.y = 0.035f;
+			characterGoStepUp(c);
 		}
 	}
 	if((col&0x8880) && (c->vel.z > 0.f)){
@@ -476,7 +481,7 @@ int characterPhysics(character *c){
 		c->pos.z = MIN(c->pos.z,floorf(c->pos.z)+0.7f);
 		c->vel.z = c->vel.z*-0.3f;
 		if(((col&0x8888) == 0x0808) && (fabsf(c->vel.y) < 0.001f)){
-			c->vel.y = 0.035f;
+			characterGoStepUp(c);
 		}
 	}
 	if((col&0x4440) && (c->vel.z < 0.f)){
@@ -484,7 +489,7 @@ int characterPhysics(character *c){
 		c->pos.z = MAX(c->pos.z,floorf(c->pos.z)+0.3f);
 		c->vel.z = c->vel.z*-0.3f;
 		if(((col&0x4444) == 0x0404) && (fabsf(c->vel.y) < 0.001f)){
-			c->vel.y = 0.035f;
+			characterGoStepUp(c);
 		}
 	}
 	if((col&0xF0F0) && (c->vel.y > 0.f)){
