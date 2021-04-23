@@ -279,11 +279,11 @@ void worldBoxSphereDirty(int x,int y,int z, int r){
 	if(ze==zs){ze++;}
 
 	for(int cx=xs;cx<=xe;cx++){
-		for(int cy=ys;cy<=ye;cy++){
-			for(int cz=zs;cz<=ze;cz++){
-				msgDirtyChunk(cx<<4,cy<<4,cz<<4);
-			}
-		}
+	for(int cy=ys;cy<=ye;cy++){
+	for(int cz=zs;cz<=ze;cz++){
+		msgDirtyChunk(cx<<4,cy<<4,cz<<4);
+	}
+	}
 	}
 }
 
@@ -294,6 +294,10 @@ void worldSetChungusLoaded(int x, int y, int z){
 
 int checkCollision(int x, int y, int z){
 	return worldGetB(x,y,z);
+}
+
+void worldMine(int x, int y, int z){
+	worldSetB(x,y,z,0);
 }
 
 void worldBoxMine(int x, int y, int z, int w, int h, int d){

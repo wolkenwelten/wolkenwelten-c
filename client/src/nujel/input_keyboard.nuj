@@ -80,3 +80,4 @@
 
 (test-add #t (int? key-1))
 (test-add #t (array? input-keydown))
+(test-add 58 key-f1)

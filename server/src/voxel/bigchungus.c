@@ -156,53 +156,60 @@ bool bigchungusSetB(bigchungus *c, int x,int y,int z,u8 block){
 
 void bigchungusBox(bigchungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 	for(int cx=0;cx<w;cx++){
-		for(int cy=0;cy<h;cy++){
-			for(int cz=0;cz<d;cz++){
-				bigchungusSetB(c,cx+x,cy+y,cz+z,block);
-			}
-		}
+	for(int cy=0;cy<h;cy++){
+	for(int cz=0;cz<d;cz++){
+		bigchungusSetB(c,cx+x,cy+y,cz+z,block);
+	}
+	}
 	}
 }
 
 void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, u8 block){
 	const int md = r*r;
 	for(int cx=-r;cx<=r;cx++){
-		for(int cy=-r;cy<=r;cy++){
-			for(int cz=-r;cz<=r;cz++){
-				const int d = (cx*cx)+(cy*cy)+(cz*cz);
-				if(d >= md){continue;}
-				bigchungusSetB(c,cx+x,cy+y,cz+z,block);
-			}
-		}
+	for(int cy=-r;cy<=r;cy++){
+	for(int cz=-r;cz<=r;cz++){
+		const int d = (cx*cx)+(cy*cy)+(cz*cz);
+		if(d >= md){continue;}
+		bigchungusSetB(c,cx+x,cy+y,cz+z,block);
 	}
+	}
+	}
+}
+
+void bigchungusMine(bigchungus *c, int x,int y,int z){
+	u8 b = bigchungusGetB(c,x,y,z);
+	if(b==0){return;}
+	bigchungusSetB(c,x,y,z,0);
+	blockMiningDropItemsPos(x,y,z,b);
 }
 
 void bigchungusBoxMine(bigchungus *c, int x,int y,int z, int w,int h,int d){
 	for(int cx=0;cx<w;cx++){
-		for(int cy=0;cy<h;cy++){
-			for(int cz=0;cz<d;cz++){
-				u8 b = bigchungusGetB(c,cx+x,cy+y,cz+z);
-				if(b==0){continue;}
-				blockMiningDropItemsPos(cx+x,cy+y,cz+z,b);
-				bigchungusSetB(c,cx+x,cy+y,cz+z,0);
-			}
-		}
+	for(int cy=0;cy<h;cy++){
+	for(int cz=0;cz<d;cz++){
+		u8 b = bigchungusGetB(c,cx+x,cy+y,cz+z);
+		if(b==0){continue;}
+		bigchungusSetB(c,cx+x,cy+y,cz+z,0);
+		blockMiningDropItemsPos(cx+x,cy+y,cz+z,b);
+	}
+	}
 	}
 }
 
 void bigchungusBoxMineSphere(bigchungus *c, int x,int y,int z, int r){
 	const int md = r*r;
 	for(int cx=-r;cx<=r;cx++){
-		for(int cy=-r;cy<=r;cy++){
-			for(int cz=-r;cz<=r;cz++){
-				u8 b = bigchungusGetB(c,cx+x,cy+y,cz+z);
-				if(b==0){continue;}
-				const int d = (cx*cx)+(cy*cy)+(cz*cz);
-				if(d >= md){continue;}
-				blockMiningDropItemsPos(cx+x,cy+y,cz+z,b);
-				bigchungusSetB(c,cx+x,cy+y,cz+z,0);
-			}
-		}
+	for(int cy=-r;cy<=r;cy++){
+	for(int cz=-r;cz<=r;cz++){
+		u8 b = bigchungusGetB(c,cx+x,cy+y,cz+z);
+		if(b==0){continue;}
+		const int d = (cx*cx)+(cy*cy)+(cz*cz);
+		if(d >= md){continue;}
+		bigchungusSetB(c,cx+x,cy+y,cz+z,0);
+		blockMiningDropItemsPos(cx+x,cy+y,cz+z,b);
+	}
+	}
 	}
 }
 
@@ -231,17 +238,17 @@ void bigchungusDetermineSpawn(bigchungus *c, const ivec s){
 
 void bigchungusGenSpawn(bigchungus *c){
 	for(int x=127;x<=129;x++){
-		for(int y=1;y<=3;y++){
-			for(int z=127;z<=129;z++){
-				if(c->chungi[x][y][z] == NULL){
-					c->chungi[x][y][z] = chungusNew(x,y,z);
-					chungusWorldGenLoad(c->chungi[x][y][z]);
-				}
-				if(c->chungi[x][y][z]->spawn.x >= 0){
-					c->spawn = ivecAdd(c->chungi[x][y][z]->spawn,ivecMulS(ivecNew(x,y,z),CHUNGUS_SIZE));
-				}
-			}
+	for(int y=1;y<=3;y++){
+	for(int z=127;z<=129;z++){
+		if(c->chungi[x][y][z] == NULL){
+			c->chungi[x][y][z] = chungusNew(x,y,z);
+			chungusWorldGenLoad(c->chungi[x][y][z]);
 		}
+		if(c->chungi[x][y][z]->spawn.x >= 0){
+			c->spawn = ivecAdd(c->chungi[x][y][z]->spawn,ivecMulS(ivecNew(x,y,z),CHUNGUS_SIZE));
+		}
+	}
+	}
 	}
 	if(!bigchungusTrySpawn(c,c->spawn)){
 		bigchungusDetermineSpawn(c,c->spawn);
@@ -250,17 +257,17 @@ void bigchungusGenSpawn(bigchungus *c){
 
 void bigchungusGenHugeSpawn(bigchungus *c){
 	for(int x=126;x<=130;x++){
-		for(int y=1;y<=32;y++){
-			for(int z=126;z<=130;z++){
-				if(c->chungi[x][y][z] == NULL){
-					c->chungi[x][y][z] = chungusNew(x,y,z);
-					chungusWorldGenLoad(c->chungi[x][y][z]);
-				}
-				if(c->chungi[x][y][z]->spawn.x >= 0){
-					c->spawn = ivecAdd(c->chungi[x][y][z]->spawn,ivecMulS(ivecNew(x,y,z),CHUNGUS_SIZE));
-				}
-			}
+	for(int y=1;y<=32;y++){
+	for(int z=126;z<=130;z++){
+		if(c->chungi[x][y][z] == NULL){
+			c->chungi[x][y][z] = chungusNew(x,y,z);
+			chungusWorldGenLoad(c->chungi[x][y][z]);
 		}
+		if(c->chungi[x][y][z]->spawn.x >= 0){
+			c->spawn = ivecAdd(c->chungi[x][y][z]->spawn,ivecMulS(ivecNew(x,y,z),CHUNGUS_SIZE));
+		}
+	}
+	}
 	}
 	if(!bigchungusTrySpawn(c,c->spawn)){
 		bigchungusDetermineSpawn(c,c->spawn);
@@ -292,44 +299,44 @@ void bigchungusUpdateClient(bigchungus *c, int p){
 		chungusUpdateClient(c->chungi[cx][cy][cz],p);
 	}
 	for(int ix=0;ix < 12; ix++){
-		for(int iy=0;iy < 12; iy++){
-			for(int iz=0;iz < 12; iz++){
+	for(int iy=0;iy < 12; iy++){
+	for(int iz=0;iz < 12; iz++){
 
-				int ox = ix >> 1;
-				if(ix & 1){ox = -ox;}
-				ox = cx+ox;
-				if(ox <=  0){goto xcontinue;}
-				if(ox > 255){goto xcontinue;}
+		int ox = ix >> 1;
+		if(ix & 1){ox = -ox;}
+		ox = cx+ox;
+		if(ox <=  0){goto xcontinue;}
+		if(ox > 255){goto xcontinue;}
 
-				int oy = iy >> 1;
-				if(iy & 1){oy = -oy;}
-				oy = cy+oy;
-				if(oy <=  0){goto ycontinue;}
-				if(oy > 127){goto ycontinue;}
+		int oy = iy >> 1;
+		if(iy & 1){oy = -oy;}
+		oy = cy+oy;
+		if(oy <=  0){goto ycontinue;}
+		if(oy > 127){goto ycontinue;}
 
-				int oz = iz >> 1;
-				if(iz & 1){oz = -oz;}
-				oz = cz+oz;
-				if(oz <=  0){continue;}
-				if(oz > 255){continue;}
+		int oz = iz >> 1;
+		if(iz & 1){oz = -oz;}
+		oz = cz+oz;
+		if(oz <=  0){continue;}
+		if(oz > 255){continue;}
 
-				chungusUpdateClient(c->chungi[ox][oy][oz],p);
-			}
-			ycontinue: (void)c;
-		}
-		xcontinue: (void)c;
+		chungusUpdateClient(c->chungi[ox][oy][oz],p);
+	}
+	ycontinue: (void)c;
+	}
+	xcontinue: (void)c;
 	}
 }
 
 void bigchungusUnsubscribeClient(bigchungus *c, int p){
 	for(int ox=0;ox < 256; ox++){
-		for(int oy=0;oy < 128; oy++){
-			for(int oz=0;oz < 256; oz++){
-				chungus *chng = c->chungi[ox][oy][oz];
-				if(chng == NULL){continue;}
-				chungusUnsubscribePlayer(chng,p);
-			}
-		}
+	for(int oy=0;oy < 128; oy++){
+	for(int oz=0;oz < 256; oz++){
+		chungus *chng = c->chungi[ox][oy][oz];
+		if(chng == NULL){continue;}
+		chungusUnsubscribePlayer(chng,p);
+	}
+	}
 	}
 }
 
@@ -369,6 +376,9 @@ void worldDirtyChunk(int x, int y, int z, int c){
 }
 int checkCollision(int x, int y, int z){
 	return bigchungusGetB(&world,x,y,z) != 0;
+}
+void worldMine(int x, int y, int z){
+	bigchungusMine(&world,x,y,z);
 }
 void worldBoxMine(int x, int y, int z, int w,int h,int d){
 	bigchungusBoxMine(&world,x,y,z,w,h,d);

@@ -264,42 +264,42 @@ vec doGamepadupdate(vec vel){
 
 void gamepadEventHandler(const SDL_Event *e){
 	switch(e->type){
-		case SDL_CONTROLLERDEVICEADDED:
-		case SDL_CONTROLLERDEVICEREMOVED:
-		case SDL_CONTROLLERDEVICEREMAPPED:
-			controllerDeviceEvent(e);
+	case SDL_CONTROLLERDEVICEADDED:
+	case SDL_CONTROLLERDEVICEREMOVED:
+	case SDL_CONTROLLERDEVICEREMAPPED:
+		controllerDeviceEvent(e);
+	break;
+
+	case SDL_CONTROLLERAXISMOTION:
+		switch(e->caxis.axis){
+		case 0:
+			gamepadLeftAxisX = ((float)e->caxis.value/32768.f);
+		break;
+		case 1:
+			gamepadLeftAxisY = ((float)e->caxis.value/32768.f);
+		break;
+		case 2:
+			gamepadRightAxisX = ((float)e->caxis.value/32768.f);
+		break;
+		case 3:
+			gamepadRightAxisY = ((float)e->caxis.value/32768.f);
+		break;
+		case 4:
+			gamepadLeftTrigger = ((float)e->caxis.value/32768.f);
+		break;
+		case 5:
+			gamepadRightTrigger = ((float)e->caxis.value/32768.f);
+		break;
+		}
 		break;
 
-		case SDL_CONTROLLERAXISMOTION:
-			switch(e->caxis.axis){
-				case 0:
-					gamepadLeftAxisX = ((float)e->caxis.value/32768.f);
-				break;
-				case 1:
-					gamepadLeftAxisY = ((float)e->caxis.value/32768.f);
-				break;
-				case 2:
-					gamepadRightAxisX = ((float)e->caxis.value/32768.f);
-				break;
-				case 3:
-					gamepadRightAxisY = ((float)e->caxis.value/32768.f);
-				break;
-				case 4:
-					gamepadLeftTrigger = ((float)e->caxis.value/32768.f);
-				break;
-				case 5:
-					gamepadRightTrigger = ((float)e->caxis.value/32768.f);
-				break;
-			}
-		break;
+	case SDL_CONTROLLERBUTTONDOWN:
+		gamepadButtons[e->cbutton.button] = true;
+		sdlGamepadEverPressed = true;
+	break;
 
-		case SDL_CONTROLLERBUTTONDOWN:
-			gamepadButtons[e->cbutton.button] = true;
-			sdlGamepadEverPressed = true;
-		break;
-
-		case SDL_CONTROLLERBUTTONUP:
-			gamepadButtons[e->cbutton.button] = false;
-		break;
+	case SDL_CONTROLLERBUTTONUP:
+		gamepadButtons[e->cbutton.button] = false;
+	break;
 	}
 }
