@@ -311,7 +311,7 @@ ivec characterLOSBlock(const character *c, bool returnBeforeBlock) {
 	vec       cp = vecAdd(c->pos,vecNew(0,0.5,0));
 	ivec      l  = ivecNewV(cp);
 
-	for(int i=0;i<48;i++){
+	for(int i=0;i<64;i++){
 		cp = vecAdd(cp,cv);
 		const ivec ip = ivecNewV(cp);
 		if(!ivecEq(ip,l)){
