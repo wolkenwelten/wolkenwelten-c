@@ -48,6 +48,7 @@ char     lispAutoCompleteDescription[256];
 lSymbol *lispAutoCompleteDescriptionSymbol;
 
 void lispPanelOpen(){
+	guiCancel();
 	widgetSlideH(lispPanel, screenHeight-156);
 	widgetFocus(lispInput);
 	lispPanelVisible = true;

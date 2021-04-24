@@ -236,7 +236,7 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_ESCAPE:
 			menuCancel();
-			guiCancel();
+			guiEscape();
 			break;
 		case SDL_SCANCODE_I:
 		case SDL_SCANCODE_TAB:

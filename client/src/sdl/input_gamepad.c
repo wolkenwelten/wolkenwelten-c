@@ -222,12 +222,12 @@ vec doGamepadupdate(vec vel){
 	if(gamepadButtons[4]){
 		gamepadButtons[4] = false;
 		menuCancel();
-		guiCancel();
+		guiEscape();
 	}
 	if(gamepadButtons[5]){
 		gamepadButtons[5] = false;
 		menuCancel();
-		guiCancel();
+		guiEscape();
 	}
 
 	if(gamepadButtons[10]){

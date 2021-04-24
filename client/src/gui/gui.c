@@ -656,24 +656,29 @@ void renderUI(){
 	glEnable(GL_DEPTH_TEST);
 }
 
-void guiCancel(){
-	if(!gameRunning){return;}
+bool guiCancel(){
+	if(!gameRunning){return true;}
+	if(lispPanelVisible){
+		lispPanelClose();
+		return true;
+	}
 	if(isInventoryOpen()){
 		hideInventory();
-		return;
+		return true;
 	}
 	if(widgetFocused == chatText){
 		handlerRootHud(NULL);
-		return;
+		return true;
 	}
-	if(lispPanelVisible){
-		lispPanelClose();
-		return;
-	}
+	closeAllMenus();
+	widgetFocus(widgetGameScreen);
+	return false;
+}
+
+void guiEscape(){
+	if(guiCancel()){return;}
 	if(widgetFocused == widgetGameScreen){
 		openMainMenu();
 		return;
 	}
-	closeAllMenus();
-	widgetFocus(widgetGameScreen);
 }
