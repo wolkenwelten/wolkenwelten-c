@@ -283,18 +283,6 @@ bool inputSneak(){
 bool inputBoost(){
 	return gamepadBoost()     || keyboardBoost()     || touchBoost();
 }
-bool inputPrimary(){
-	return gamepadPrimary()   || keyboardPrimary()   || touchPrimary();
-}
-bool inputSecondary(){
-	return gamepadSecondary() || keyboardSecondary() || touchSecondary();
-}
-bool inputTertiary(){
-	return gamepadTertiary()  || keyboardTertiary()  || touchTertiary();
-}
-bool inputThrow(){
-	return gamepadThrow()     || keyboardThrow()     || touchThrow();
-}
 
 bool gameControlsInactive(){
 	if(widgetFocused == NULL)             {return true;}

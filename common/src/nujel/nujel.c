@@ -1032,6 +1032,20 @@ static void lAddPlatformVars(lClosure *c){
 	#endif
 }
 
+static lVal *lnfWhen(lClosure *c, lVal *v){
+	if(v == NULL){return NULL;}
+	lVal *condition = lnfBool(c,lEval(c,lCar(v)));
+	if((condition == NULL) || (condition->type != ltBool) || (!condition->vBool)){return NULL;}
+	return lnfBegin(c,lCdr(v));
+}
+
+static lVal *lnfUnless(lClosure *c, lVal *v){
+	if(v == NULL){return NULL;}
+	lVal *condition = lnfBool(c,lEval(c,lCar(v)));
+	if((condition != NULL) && (condition->type == ltBool) && (condition->vBool)){return NULL;}
+	return lnfBegin(c,lCdr(v));
+}
+
 static void lAddCoreFuncs(lClosure *c){
 	lAddArithmeticFuncs(c);
 	lAddBinaryFuncs(c);
@@ -1067,6 +1081,8 @@ static void lAddCoreFuncs(lClosure *c){
 
 	lAddNativeFunc(c,"if",             "(pred? then ...else)","Evalute then if pred? is #t, otherwise evaluates ...else", lnfIf);
 	lAddNativeFunc(c,"cond",           "(...c)",              "Contain at least 1 cond block of form (pred? ...body) and evaluates and returns the first where pred? is #t",lnfCond);
+	lAddNativeFunc(c,"when",           "(condition ...body)", "Evaluates BODY if CONDITION is #t",lnfWhen);
+	lAddNativeFunc(c,"unless",         "(condition ...body)", "Evaluates BODY if CONDITION is #f",lnfUnless);
 
 	lAddNativeFunc(c,"define def","(sym val)",     "Define a new symbol SYM and link it to value VAL",                  lnfDef);
 	lAddNativeFunc(c,"undefine!", "(sym)",         "Remove symbol SYM from the first symbol-table it is found in",     lnfUndef);

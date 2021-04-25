@@ -45,23 +45,6 @@ bool keyboardBoost(){
 	if(gameControlsInactive()){return false;}
 	return keysPressed[5];
 }
-bool keyboardPrimary(){
-	if(gameControlsInactive()){return false;}
-	return keysPressed[10];
-}
-bool keyboardSecondary(){
-	if(gameControlsInactive()){return false;}
-	return keysPressed[11];
-}
-bool keyboardTertiary(){
-	if(gameControlsInactive()){return false;}
-	return keysPressed[7];
-}
-
-bool keyboardThrow(){
-	if(gameControlsInactive()){return false;}
-	return keysPressed[6];
-}
 
 vec doKeyboardupdate(vec vel){
 	if(gameControlsInactive()){return vel;}

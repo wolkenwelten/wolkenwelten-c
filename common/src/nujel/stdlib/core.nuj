@@ -67,11 +67,6 @@
 (def list (λ (...l) "Returns its arguments as a list"
 	...l))
 
-(def when   (δ (c @...expr) "Evaluates l and returns the last result if c is #t"
-	(cond (c (eval (cons 'begin @...expr))) (#t #f))))
-(def unless (δ (c @...expr) "Evaluates l and returns the last result if c is #f"
-	(cond (c #f) (#t (eval (cons 'begin @...expr))))))
-
 (def arr-fill! (λ (a v i) "Fills array a with value v"
 	(cond ((>= (int i) (arr-length a)) a)
 	      (#t (arr-set! a (int i) v) (arr-fill! a v (++ i))))))
@@ -134,6 +129,6 @@
 		(ansi-yellow "STrings:  ") (getf info :string) "\n"
 		(ansi-cyan "NFunc:    ")   (getf info :native-function) "\n"
 		(ansi-purple "Vectors:  ") (getf info :vector) "\n"
-		(ansi-pink "Symbols:  ")   (getf info :symbol) "\n"
+		(ansi-pink "Symbols:  ")   (getf info :symbol) "\n" (ansi-reset)
 	))
 ))
