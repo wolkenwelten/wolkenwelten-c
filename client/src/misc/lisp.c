@@ -33,6 +33,7 @@
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
 #include "../misc/options.h"
+#include "../menu/inventory.h"
 #include "../network/chat.h"
 #include "../network/client.h"
 #include "../sdl/sdl.h"
@@ -636,6 +637,70 @@ static lVal *wwlnfDropItem(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfPlayerJump(lClosure *c, lVal *v){
+	float vel = 0;
+
+	v = getLArgF(c,v,&vel);
+	player->controls.y = vel;
+
+	return NULL;
+}
+
+static lVal *wwlnfPlayerSneak(lClosure *c, lVal *v){
+	bool active = false;
+
+	v = getLArgB(c,v,&active);
+	if(active){
+		player->flags |=  CHAR_SNEAK;
+	}else{
+		player->flags &= ~CHAR_SNEAK;
+	}
+
+	return NULL;
+}
+
+static lVal *wwlnfPlayerWalk(lClosure *c, lVal *v){
+	float vel = 0;
+
+	v = getLArgF(c,v,&vel);
+	player->controls.z = vel;
+
+	return NULL;
+}
+
+static lVal *wwlnfPlayerStrafe(lClosure *c, lVal *v){
+	float vel = 0;
+
+	v = getLArgF(c,v,&vel);
+	player->controls.x = vel;
+
+	return NULL;
+}
+
+static lVal *wwlnfToggleInventory(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	toggleInventory();
+	return NULL;
+}
+
+static lVal *wwlnfPlayerBoost(lClosure *c, lVal *v){
+	bool active = false;
+
+	v = getLArgB(c,v,&active);
+	if(active){
+		player->flags |=  CHAR_BOOSTING;
+	}else{
+		player->flags &= ~CHAR_BOOSTING;
+	}
+
+	return NULL;
+}
+
+static lVal *wwlnfGuiFocusOnGame(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValBool(!gameControlsInactive());
+}
+
 static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",         "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",                "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
@@ -645,6 +710,11 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-name!",   "(s)",               "Sets players name to s",                                         wwlnfPlayerName);
 	lAddNativeFunc(c,"player-hp",      "(&hp)",             "Sets the players health to &HP, returns the current value.",     wwlnfPlayerHP);
 	lAddNativeFunc(c,"player-maxhp",   "(&mhp)",            "Sets the players max health to &MHP, returns the current value.",wwlnfPlayerMaxHP);
+	lAddNativeFunc(c,"player-jump!",   "(velocity)",        "Jump with VELOCITY!",                                            wwlnfPlayerJump);
+	lAddNativeFunc(c,"player-sneak!",  "()",                "Sneak for a while",                                              wwlnfPlayerSneak);
+	lAddNativeFunc(c,"player-walk!",   "(velocity)",        "Walk forward with VELOCITY",                                     wwlnfPlayerWalk);
+	lAddNativeFunc(c,"player-strafe!", "(velocity)",        "Strafe sideways with VEOLOCITY",                                 wwlnfPlayerStrafe);
+	lAddNativeFunc(c,"player-boost!" , "(active)",          "Set Boost to ACTIVE",                                            wwlnfPlayerBoost);
 	lAddNativeFunc(c,"player-raycast", "(beforeBlock)",     "Return the position of the first intersection, or before if BEFOREBLOCK is #t", wwlnfRaycast);
 	lAddNativeFunc(c,"player-do-primary!", "()",            "Let the player Mine/Hit",                                        wwlnfPlayerDoPrimary);
 	lAddNativeFunc(c,"player-stop-mining!","()",            "Stop mining",                                                    wwlnfPlayerStopMining);
@@ -697,6 +767,8 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"beamblast",      "(size damage hits-left)", "Calls cFunc beamblast",                                   wwlnfBeamblast);
 	lAddNativeFunc(c,"projectile",     "(&type &num)",      "Fire &NUM=1 projectiles of &TYPE=0",                            wwlnfProjectile);
 	lAddNativeFunc(c,"fire-new",       "(pos &strength)",   "Create/Grow a fire at POS with &STRENGTH=8",                    wwlnfFireNew);
+	lAddNativeFunc(c,"toggle-inventory!","()",              "Toggle the inveotory",                                          wwlnfToggleInventory);
+	lAddNativeFunc(c,"widget-focus-on-game?","()",          "Return #t if the game is focused and not some menu",            wwlnfGuiFocusOnGame);
 }
 
 void lispInit(){

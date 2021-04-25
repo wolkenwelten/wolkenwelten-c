@@ -68,7 +68,8 @@ void characterInit(character *c){
 	c->breathing      = rngValM(1024);
 	c->maxhp = c->hp  = 20;
 	c->blockMiningX   = c->blockMiningY = c->blockMiningZ = -1;
-	c->pos            = vecNew(0,0,0);
+	c->pos            = vecZero();
+	c->controls       = vecZero();
 	c->rot            = vecNew(135.f,15.f,0.f);
 	c->eMesh          = meshPear;
 	c->goalZoomFactor = c->zoomFactor = 1.f;
@@ -127,7 +128,7 @@ void characterRemovePlayer(int c, int len){
 	}
 }
 
-void characterUpdateInaccuracy(character *c){
+static void characterUpdateInaccuracy(character *c){
 	item *itm = &c->inventory[c->activeItem];
 	float minInaccuracy = itemGetInaccuracy(itm);
 
@@ -135,7 +136,7 @@ void characterUpdateInaccuracy(character *c){
 	c->inaccuracy = MINMAX(minInaccuracy,128.f,c->inaccuracy - 0.5f);
 }
 
-void characterUpdateHook(character *c){
+static void characterUpdateHook(character *c){
 	if(c->hook == NULL){ return; }
 	if(hookUpdate(c->hook)){
 		hookFree(c->hook);
@@ -158,7 +159,7 @@ void characterUpdateHook(character *c){
 		const float gl     = hookGetGoalLength(c->hook);
 		const float wspeed = characterGetHookWinchS(c);
 		const float maxl   = characterGetMaxHookLen(c);
-		if((c->gvel.y > 0) && (gl > 1.f)){
+		if((c->controls.y > 0) && (gl > 1.f)){
 			hookSetGoalLength(c->hook,gl-wspeed);
 			c->flags |= CHAR_JUMPING;
 		}
@@ -187,7 +188,7 @@ float characterGetRopeLength(const character *c){
 	return hookGetRopeLength(c->hook);
 }
 
-void characterUpdateAnimation(character *c){
+static void characterUpdateAnimation(character *c){
 	c->animationTicksLeft -= msPerTick;
 	c->breathing          += msPerTick;
 	if(c->animationTicksLeft <= 0){
@@ -203,7 +204,7 @@ void characterUpdateAnimation(character *c){
 	c->gliderFade = MINMAX(0.f,1.f,c->gliderFade);
 }
 
-void characterUpdateWindVolume(const character *c){
+static void characterUpdateWindVolume(const character *c){
 	float windVol = vecMag(c->vel);
 	if(windVol < 0.01f){
 		sfxLoop(sfxWind,0.f);
@@ -216,9 +217,8 @@ void characterUpdateWindVolume(const character *c){
 	}
 }
 
-int characterUpdateJumping(character *c){
-	if(c->flags & CHAR_CONS_MODE){return 0;}
-	if((c->gvel.y > 0) && !(c->flags & CHAR_FALLING) && ((c->hook == NULL) || (!hookGetHooked(c->hook)))){
+static bool characterUpdateJumping(character *c){
+	if((c->controls.y > 0) && !(c->flags & (CHAR_FALLING | CHAR_JUMPING)) && ((c->hook == NULL) || (!hookGetHooked(c->hook)))){
 		if((rngValA(15))==0){
 			sfxPlay(sfxYahoo,1.f);
 		}else{
@@ -231,10 +231,11 @@ int characterUpdateJumping(character *c){
 		c->inaccuracy += 24.f;
 		return 1;
 	}
+	c->flags &= ~CHAR_JUMP_NEXT;
 	return 0;
 }
 
-void characterUpdateDamage(character *c, int damage){
+static void characterUpdateDamage(character *c, int damage){
 	if(damage <= 0){ return; }
 	if(damage > 8){
 		sfxPlay(sfxImpact,1.f);
@@ -250,7 +251,7 @@ void characterUpdateDamage(character *c, int damage){
 	}
 }
 
-void characterUpdateYOff(character *c){
+static void characterUpdateYOff(character *c){
 	if(!(c->flags & CHAR_FALLING) && ((fabsf(c->gvel.x) > 0.001f) || (fabsf(c->gvel.z) > 0.001f))){
 		if(getTicks() > (c->stepTimeout + 200)){
 			c->stepTimeout = getTicks();
@@ -356,14 +357,14 @@ void characterDie(character *c){
 	lispEval("(event-fire \"on-spawn\")");
 }
 
-void updateGlide(character *c){
+static void updateGlide(character *c){
 	if((c == player) && ((itemIsEmpty(&c->equipment[CHAR_EQ_GLIDER])) || (c->equipment[CHAR_EQ_GLIDER].ID != I_Glider))){
 		c->flags &= ~CHAR_GLIDE;
 	}
 	if(!(c->flags & CHAR_FALLING)){
 		c->flags &= ~CHAR_GLIDE;
 	}
-	if(!(c->flags & CHAR_JUMPING) && (c->gvel.y > 0) && (c->flags & CHAR_FALLING) && (c->hook == NULL)){
+	if(!(c->flags & CHAR_JUMPING) && (c->controls.y > 0) && (c->flags & CHAR_FALLING) && (c->hook == NULL)){
 		characterToggleGlider(c);
 		c->flags |= CHAR_JUMPING;
 	}
@@ -407,12 +408,12 @@ static void characterUpdateCons(character *c, uint oldCol, const vec oldPos){
 	}
 }
 
-void characterGoStepUp(character *c){
+static void characterGoStepUp(character *c){
 	c->pos.y += 0.1f;
 	c->vel.y = 0.03f;
 }
 
-int characterPhysics(character *c){
+static int characterPhysics(character *c){
 	int ret=0;
 	u32 col;
 
@@ -506,7 +507,7 @@ int characterPhysics(character *c){
 	return ret;
 }
 
-void characterUpdateBooster(character *c){
+static void characterUpdateBooster(character *c){
 	if(!(c->flags & CHAR_BOOSTING)
 	 || ((c == player) && ((itemIsEmpty(&c->equipment[CHAR_EQ_PACK])) || (c->equipment[CHAR_EQ_PACK].ID != I_Jetpack)))
 	 || (c->flags & CHAR_CONS_MODE)){
@@ -542,7 +543,7 @@ void characterUpdateBooster(character *c){
 	}
 }
 
-void characterUpdateFalling(character *c){
+static void characterUpdateFalling(character *c){
 	if(c != player){return;}
 	if(c->flags & CHAR_NOCLIP){return;}
 	if(c->pos.y < -32){
@@ -596,7 +597,7 @@ void characterUpdate(character *c){
 		return;
 	}
 	characterUpdateBooster(c);
-	if((c->flags & CHAR_JUMPING) && (c->gvel.y < 0.001f)){
+	if((c->flags & CHAR_JUMPING) && (c->controls.y < 0.001f)){
 		c->flags &= ~CHAR_JUMPING;
 	}
 	if((c->flags & (CHAR_GLIDE | CHAR_FALLING)) == (CHAR_GLIDE | CHAR_FALLING)){
@@ -726,7 +727,7 @@ void characterMoveDelta(character *c, const packet *p){
 	c->shake = vecMag(c->vel)*8.f;
 }
 
-void characterShadesDraw(const character *c){
+static void characterShadesDraw(const character *c){
 	float sneakOff = 0.f;
 	if(c->flags & CHAR_SNEAK){sneakOff = 1.f;}
 	const float breath = sinf((float)(c->breathing-256)/512.f)*6.f;
@@ -741,7 +742,7 @@ void characterShadesDraw(const character *c){
 	meshDraw(meshSunglasses);
 }
 
-void characterGliderDraw(const character *c){
+static void characterGliderDraw(const character *c){
 	static u64 ticks = 0;
 	if(c->gliderFade < 0.01f){return;}
 	const float breath = sinf((float)(c->breathing-384)/512.f)*4.f;
@@ -759,7 +760,7 @@ void characterGliderDraw(const character *c){
 	meshDraw(meshGlider);
 }
 
-void characterActiveItemDraw(const character *c){
+static void characterActiveItemDraw(const character *c){
 	const item *activeItem;
 	mesh *aiMesh;
 	float sneakOff = 0.f;

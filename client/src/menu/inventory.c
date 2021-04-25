@@ -257,6 +257,13 @@ void hideInventory(){
 	showInventoryPanel();
 	widgetFocus(widgetGameScreen);
 }
+void toggleInventory(){
+	if(inventoryOpen){
+		hideInventory();
+	}else{
+		showInventory();
+	}
+}
 
 bool isInventoryOpen(){
 	return inventoryOpen;

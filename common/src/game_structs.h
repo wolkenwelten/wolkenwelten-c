@@ -114,7 +114,7 @@ typedef struct {
 #define ROPE_DIRTY     0x100
 
 typedef struct {
-	 vec  pos,vel,gvel,rot,screenPos;
+	 vec  pos,vel,gvel,controls,rot,screenPos;
 	float yoff,shake,inaccuracy;
 	float gyoff;
 
@@ -160,6 +160,7 @@ typedef struct {
 #define CHAR_AIMING       (1<< 9)
 #define CHAR_THROW_AIM    (1<<10)
 #define CHAR_CONS_MODE    (1<<11)
+#define CHAR_JUMP_NEXT    (1<<12)
 
 #define CHAR_EQ_GLIDER     0
 #define CHAR_EQ_HOOK       1

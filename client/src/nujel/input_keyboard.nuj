@@ -39,6 +39,25 @@
 (def key-9 38)
 (def key-0 39)
 
+(def key-return       40)
+(def key-escape       41)
+(def key-backspace    42)
+(def key-tab          43)
+(def key-space        44)
+(def key-minus        45)
+(def key-backspace    46)
+(def key-leftbracket  47)
+(def key-rightbracket 48)
+(def key-backslash    49)
+(def key-hash         50)
+(def key-semicolon    51)
+(def key-apostrophe   52)
+(def key-grave        53)
+(def key-comma        54)
+(def key-period       55)
+(def key-slash        56)
+(def key-capslock     57)
+
 (def key-f1    58)
 (def key-f2    59)
 (def key-f3    60)
@@ -53,14 +72,23 @@
 (def key-f12   69)
 (def key-print 70)
 
+(def key-lshift 225)
+
 (def input-keyboard-handler-default (λ (code value)
 	"Default handler to be used for continuously firing actions"
 
 	(arr-set! input-keyboard-state code (> value 0))
 ))
 
-(arr-set! input-keyboard-handler key-r input-keyboard-handler-default)
-(arr-set! input-keyboard-handler key-q input-keyboard-handler-default)
+(arr-set! input-keyboard-handler key-r      input-keyboard-handler-default)
+(arr-set! input-keyboard-handler key-q      input-keyboard-handler-default)
+(arr-set! input-keyboard-handler key-space  input-keyboard-handler-default)
+(arr-set! input-keyboard-handler key-w      input-keyboard-handler-default)
+(arr-set! input-keyboard-handler key-a      input-keyboard-handler-default)
+(arr-set! input-keyboard-handler key-s      input-keyboard-handler-default)
+(arr-set! input-keyboard-handler key-d      input-keyboard-handler-default)
+(arr-set! input-keyboard-handler key-v      input-keyboard-handler-default)
+(arr-set! input-keyboard-handler key-lshift input-keyboard-handler-default)
 
 (arr-set! input-keyboard-handler key-c   (λ (code value) (when value (cons-mode!  (not (cons-mode!))))))
 (arr-set! input-keyboard-handler key-e   (λ (code value) (when value (fire-hook))))
@@ -71,6 +99,8 @@
 (arr-set! input-keyboard-handler key-f2  (λ (code value) (when value (s (debug-stuff!)))))
 (arr-set! input-keyboard-handler key-f3  (λ (code value) (when value (third-person! #t) (save-options))))
 (arr-set! input-keyboard-handler key-f10 (λ (code value) (when value (wire-frame! (not (wire-frame!))))))
+(arr-set! input-keyboard-handler key-print (λ (code value) (when value (screenshot))))
+(arr-set! input-keyboard-handler key-tab (λ (code value) (when value (toggle-inventory!))))
 
 (unless (eq? OS "Emscripten")
 	(input-keyboard-handler key-f11 (λ (code value)
@@ -100,15 +130,24 @@
 (arr-set! input-keyboard-handler key-8 inv-active-kh)
 (arr-set! input-keyboard-handler key-9 inv-active-kh)
 (arr-set! input-keyboard-handler key-0 inv-active-kh)
-(arr-set! input-keyboard-handler key-print (λ (code value) (when value (screenshot))))
-
-(test-add #t (int? key-1))
-(test-add #t (array? input-keyboard-handler))
-(test-add 58 key-f1)
 
 (def input-keyboard-tick (λ ()
 	"Keyboard input handler"
 
-	(when (input-keyboard-state key-r) (player-tertiary!))
-	(when (input-keyboard-state key-q) (player-throw!))
+	(when (widget-focus-on-game?)
+		(when (input-keyboard-state key-w)     (player-walk!   -1.0))
+		(when (input-keyboard-state key-s)     (player-walk!    1.0))
+		(when (input-keyboard-state key-a)     (player-strafe! -1.0))
+		(when (input-keyboard-state key-d)     (player-strafe!  1.0))
+		(when (input-keyboard-state key-space) (player-jump!    1.0))
+		(when (input-keyboard-state key-r)     (player-tertiary!))
+		(when (input-keyboard-state key-q)     (player-throw!))
+		(player-sneak! (input-keyboard-state key-v))
+		(player-boost! (input-keyboard-state key-lshift))
+	)
 ))
+
+(test-add #t (int? key-1))
+(test-add #t (array? input-keyboard-handler))
+(test-add 58 key-f1)
+(test-add #t (bool? (widget-focus-on-game?)))

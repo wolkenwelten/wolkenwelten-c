@@ -386,7 +386,6 @@ void characterMove(character *c, const vec mov){
 		}else{
 			s = 0.05f;
 		}
-		c->gvel.y = mov.y;
 		c->gvel.x = (cosf((yaw+90)*PI/180)*mov.z*s);
 		c->gvel.z = (sinf((yaw+90)*PI/180)*mov.z*s);
 

@@ -6,6 +6,7 @@ extern widget *inventoryPanel;
 
 void showCrafting       ();
 void showInventory      ();
+void toggleInventory    ();
 void hideInventory      ();
 bool isInventoryOpen    ();
 void initInventory      ();

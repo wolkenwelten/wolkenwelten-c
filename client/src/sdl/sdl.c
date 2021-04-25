@@ -277,15 +277,6 @@ unsigned int getTicks(){
 	return SDL_GetTicks();
 }
 
-bool inputSneak(){
-	return gamepadSneak()     || keyboardSneak()     || touchSneak();
-}
-bool inputBoost(){
-	return gamepadBoost()     || keyboardBoost()     || touchBoost();
-}
-
 bool gameControlsInactive(){
-	if(widgetFocused == NULL)             {return true;}
-	if(widgetFocused->type == wGameScreen){return false;}
-	return true;
+	return ((widgetFocused == NULL) || (widgetFocused->type != wGameScreen));
 }

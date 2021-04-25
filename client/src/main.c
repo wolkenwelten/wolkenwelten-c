@@ -105,27 +105,17 @@ void initSignals(){
 }
 
 void playerUpdate(){
-	vec nv = vecZero();
 	chungus *chng = worldGetChungus((int)player->pos.x >> 8,(int)player->pos.y >> 8,(int)player->pos.z >> 8);
 	if(chng != NULL){ playerChunkActive = chng->requested == 0; }
 	if(!vecInWorld(player->pos)){ playerChunkActive = true; }
 	if(player->flags & CHAR_SPAWNING){ return; }
 	if(!playerChunkActive)           { return; }
-	if(inputSneak()){
-		player->flags |=  CHAR_SNEAK;
-	}else{
-		player->flags &= ~CHAR_SNEAK;
+	player->controls = vecZero();
+	if(!isInventoryOpen()){
+		lispInputTick();
 	}
-	if(inputBoost()){
-		player->flags |=  CHAR_BOOSTING;
-	}else{
-		player->flags &= ~CHAR_BOOSTING;
-	}
+	characterMove(player,player->controls);
 
-	nv = doKeyboardupdate (nv);
-	nv = doTouchupdate    (nv);
-	nv = doGamepadupdate  (nv);
-	characterMove  (player,nv);
 	msgSendPlayerPos();
 }
 
@@ -139,9 +129,6 @@ void worldUpdate(){
 	curTick = SDL_GetTicks();
 	resetOverlayColor();
 	for(;lastTick < curTick;lastTick+=msPerTick){
-		if(!isInventoryOpen()){
-			lispInputTick();
-		}
 		charactersUpdate();
 		grenadeUpdateAll();
 		animalUpdateAll();
