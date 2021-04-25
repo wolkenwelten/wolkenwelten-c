@@ -28,6 +28,8 @@ static void lStringAdvanceToNextCharacter(lString *s){
 
 static void lStringAdvanceToNextSpaceOrSpecial(lString *s){
 	for(;(*s->data != 0) && (!isspace((u8)*s->data));s->data++){
+		if(*s->data == '['){break;}
+		if(*s->data == ']'){break;}
 		if(*s->data == '('){break;}
 		if(*s->data == ')'){break;}
 		if(*s->data == '"'){break;}
@@ -145,7 +147,7 @@ static lVal *lParseSymbol(lString *s){
 	char buf[128];
 	for(i=0;i<4096;i++){
 		char c = *s->data++;
-		if(isspace((u8)c) || (c == ')') || (c ==0)){
+		if(isspace((u8)c) || (c == ']') ||(c == ')') || (c ==0)){
 			s->data--;
 			break;
 		}
@@ -165,6 +167,7 @@ static lVal *lParseNumberBinary(lString *s){
 	int ret;
 	for(ret = 0;;s->data++){
 		if (*s->data <= ' ')                       {break;}
+		if((*s->data == '[')  || (*s->data == ']')){break;}
 		if((*s->data == '(')  || (*s->data == ')')){break;}
 		if((*s->data == '\'') || (*s->data == '"')){break;}
 		if((*s->data == '#') ||  (*s->data == '`')){break;}
@@ -180,6 +183,7 @@ static lVal *lParseNumberHex(lString *s){
 	int ret;
 	for(ret = 0;;s->data++){
 		if (*s->data <= ' ')                       {break;}
+		if((*s->data == '[')  || (*s->data == ']')){break;}
 		if((*s->data == '(')  || (*s->data == ')')){break;}
 		if((*s->data == '\'') || (*s->data == '"')){break;}
 		if((*s->data == '#') ||  (*s->data == '`')){break;}
@@ -194,6 +198,7 @@ static lVal *lParseNumberOctal(lString *s){
 	int ret;
 	for(ret = 0;;s->data++){
 		if (*s->data <= ' ')                       {break;}
+		if((*s->data == '[')  || (*s->data == ']')){break;}
 		if((*s->data == '(')  || (*s->data == ')')){break;}
 		if((*s->data == '\'') || (*s->data == '"')){break;}
 		if((*s->data == '#') ||  (*s->data == '`')){break;}
@@ -230,7 +235,7 @@ static lVal *lParseSpecial(lString *s){
 		return lValBool(false);
 	case 'i':
 		s->data+=2; return lValInf();
-	case '(':
+	case '[':
 		return lCons(lValSymS(symArr),lReadString(s));
 	}
 
@@ -242,7 +247,7 @@ lVal *lReadString(lString *s){
 	while(1){
 		lStringAdvanceToNextCharacter(s);
 		char c = *s->data;
-		if((v == NULL) || (c == 0) || (c == ')') || (s->data >= s->bufEnd)){
+		if((v == NULL) || (c == 0) || (c == ']') || (c == ')') || (s->data >= s->bufEnd)){
 			s->data++;
 			return ret;
 		}
@@ -254,12 +259,13 @@ lVal *lReadString(lString *s){
 
 		switch(c){
 		case '(':
+		case '[':
 			s->data+=1;
 			v->vList.car = lReadString(s);
 			break;
 		case '\'':
 			s->data++;
-			if(*s->data == '('){
+			if(*s->data == '['){
 				s->data++;
 				v->vList.car = lCons(lValSymS(symQuote),lCons(lReadString(s),NULL));
 			}else{

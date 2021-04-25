@@ -25,7 +25,7 @@ RELEASE_OPTIMIZATION := -O3 -flto -ffast-math -freciprocal-math
 VERSION_ARCH         := $(shell uname -m)
 
 ifneq (, $(shell which $(NUJEL)))
-	VERSION_NAME := $(shell $(NUJEL) tools/tools.nuj -x "(display (infogen-version))")
+	VERSION_NAME := $(shell $(NUJEL) tools/tools.nuj -x "[display [infogen-version]]")
 endif
 
 

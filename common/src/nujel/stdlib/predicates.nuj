@@ -1,51 +1,111 @@
 ;; Some predicates that were simpler to do in nujel
 
-(def number? (λ (a) "Returns #t if a is a number"
-	(or (int? a) (float? a) (vec? a))))
-(def empty? (λ (a) "Returns #t if a is empty"
-	(nil? a)))
-(def last? (λ (a) "Returns #t if a is the last pair in a list"
-	(nil? (cdr a))))
-(def pos? (λ (a) "Returns #t if a is positive"
-	(>= a 0)))
-(def neg? (λ (a) "Returns #t if a is negative"
-	(< a 0)))
-(def ineq? (λ (a b) "Returns #t a does not equal b"
-	(not (eq? a b))))
-(def odd? (λ (a) "Predicate that returns #t if a is odd"
-	(= (% (int a) 2) 1)))
-(def even? (λ (a) "Predicate that returns #t if a is even"
-	(= (% (int a) 2) 0)))
-(def zero? (λ (val) "#t if VAL is a integer"
-	(eq? 0 val)))
+[def number? [λ [a]
+	"Return #t if a is a number"
+	[or [int? a] [float? a] [vec? a]]
+]]
 
-(def there-exists? (λ (l pred) "Applies predicate to each element and return #t if it holds true for any element, otherwise #f"
-	(cond ((nil? l) #f)
-	      ((pred (car l)) #t)
-	      (#t (there-exists? (cdr l) pred)))))
+[def empty? [λ [a]
+	"Return #t if a is empty"
+	[nil? a]
+]]
 
-(def for-all? (λ (l pred) "Applies predicate to each element returns #t if it holds true for every element, otherwise #f"
-	(cond ((nil? l) #t)
-	      ((not (pred (car l))) #f)
-	      (#t (for-all? (cdr l) pred)))))
+[def last? [λ [a]
+	"Return #t if a is the last pair in a list"
+	[nil? [cdr a]]
+]]
 
-(def int? (λ (val) "#t if VAL is a integer"
-	(eq? :int (type-of val))))
-(def float? (λ (val) "#t if VAL is a floating-point number"
-	(eq? :float (type-of val))))
-(def vec? (λ (val) "#t if VAL is a vector"
-	(eq? :vec (type-of val))))
-(def bool? (λ (val) "#t if VAL is a boolean"
-	(eq? :bool (type-of val))))
-(def inf? (λ (val) "#t if VAL is infinite"
-	(eq? :infinity (type-of val))))
-(def pair? (λ (val) "#t if VAL is a pair"
-	(eq? :pair (type-of val))))
-(def string? (λ (val) "#t if VAL is a string"
-	(eq? :string (type-of val))))
-(def lambda? (λ (val) "#t if VAL is a lambda"
-	(eq? :lambda (type-of val))))
-(def native? (λ (val) "#t if VAL is a native function"
-	(eq? :native-function (type-of val))))
-(def procedure? (λ (a) "Returns #t if a is a native or lisp function"
-	(or (lambda? a) (native? a))))
+[def pos? [λ [a]
+	"Return #t if a is positive"
+	[>= a 0]
+]]
+
+[def neg? [λ [a]
+	"Returns #t if a is negative"
+	[< a 0]
+]]
+
+[def ineq? [λ [a b]
+	"Returns #t a does not equal b"
+	[not [eq? a b]]
+]]
+
+[def odd? [λ [a]
+	"Predicate that returns #t if a is odd"
+	[= [% [int a] 2] 1]
+]]
+[def even? [λ [a]
+	"Predicate that returns #t if a is even"
+	[= [% [int a] 2] 0]
+]]
+
+[def zero? [λ [val]
+	"#t if VAL is a integer"
+	[eq? 0 val]
+]]
+
+[def there-exists? [λ [l pred]
+	"Applies predicate to each element and return #t if it holds true for any element, otherwise #f"
+	[cond [[nil? l] #f]
+	      [[pred [car l]] #t]
+	      [#t [there-exists? [cdr l] pred]]
+	]
+]]
+
+[def for-all? [λ [l pred]
+	"Applies predicate to each element returns #t if it holds true for every element, otherwise #f"
+	[cond [[nil? l] #t]
+	      [[not [pred [car l]]] #f]
+	      [#t [for-all? [cdr l] pred]]
+	]
+]]
+
+[def int? [λ [val]
+	"#t if VAL is a integer"
+	[eq? :int [type-of val]]
+]]
+
+[def float? [λ [val]
+	"#t if VAL is a floating-point number"
+	[eq? :float [type-of val]]
+]]
+
+[def vec? [λ [val]
+	"#t if VAL is a vector"
+	[eq? :vec [type-of val]]
+]]
+
+[def bool? [λ [val]
+	"#t if VAL is a boolean"
+	[eq? :bool [type-of val]]
+]]
+
+[def inf? [λ [val]
+	"#t if VAL is infinite"
+	[eq? :infinity [type-of val]]
+]]
+
+[def pair? [λ [val]
+	"#t if VAL is a pair"
+	[eq? :pair [type-of val]]
+]]
+
+[def string? [λ [val]
+	"#t if VAL is a string"
+	[eq? :string [type-of val]]
+]]
+
+[def lambda? [λ [val]
+	"#t if VAL is a lambda"
+	[eq? :lambda [type-of val]]
+]]
+
+[def native? [λ [val]
+	"#t if VAL is a native function"
+	[eq? :native-function [type-of val]]
+]]
+
+[def procedure? [λ [val]
+	"#t if VAL is a native or lisp function"
+	[or [lambda? val] [native? val]]
+]]

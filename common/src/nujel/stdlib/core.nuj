@@ -1,9 +1,9 @@
-;; Wolkenwelten - Copyright (C) 2020-2021 - Benjamin Vincent Schulenburg
+;; Wolkenwelten - Copyright [C] 2020-2021 - Benjamin Vincent Schulenburg
 ;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU Affero General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; [at your option] any later version.
 ;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,119 +16,191 @@
 ;; Contains various little pieces that were implemented in nujel instead of
 ;; C because of various reasons
 
-(def caar (λ (p) "(car (car p))"
-	(car (car p))))
+[def caar [λ [p]
+	"[car [car p]]"
+	[car [car p]]
+]]
 
-(def cadr (λ (p) "(car (cdr p))"
-	(car (cdr p))))
+[def cadr [λ [p]
+	"[car [cdr p]]"
+	[car [cdr p]]
+]]
 
-(def cdar (λ (p) "(cdr (car p))"
-	(cdr (car p))))
+[def cdar [λ [p]
+	"[cdr [car p]]"
+	[cdr [car p]]
+]]
 
-(def cddr (λ (p) "(cdr (cdr p))"
-	(cdr (cdr p))))
+[def cddr [λ [p]
+	"[cdr [cdr p]]"
+	[cdr [cdr p]]
+]]
 
-(def caddr (λ (p) "(car (cdr (cdr p)))"
-	(car (cdr (cdr p)))))
+[def caddr [λ [p] "[car [cdr [cdr p]]]"
+	[car [cdr [cdr p]]]
+]]
 
-(def cdddr (λ (p) "(cdr (cdr (cdr p)))"
-	(cdr (cdr (cdr p)))))
+[def cdddr [λ [p] "[cdr [cdr [cdr p]]]"
+	[cdr [cdr [cdr p]]]
+]]
 
-(def cadddr (λ (p) "(car (cdr (cdr (cdr p))))"
-	(car (cdr (cdr (cdr p))))))
+[def cadddr [λ [p] "[car [cdr [cdr [cdr p]]]]"
+	[car [cdr [cdr [cdr p]]]]
+]]
 
-(def ++ (λ (i) "(+ I 1)"
-	(+ i 1)))
+[def ++ [λ [i]
+	"[+ I 1]"
+	[+ i 1]
+]]
 
-(def -- (λ (i) "(- I 1)"
-	(- i 1)))
+[def -- [λ [i]
+	"[- I 1]"
+	[- i 1]
+]]
 
-(def >> (λ (val amount) "Shifts VAL by AMOUNT bits to the right"
-	(ash val (- amount))))
+[def >> [λ [val amount]
+	"Shifts VAL by AMOUNT bits to the right"
+	[ash val [- amount]]
+]]
 
-(def length (λ (a) "Returns the length of a"
-	(cond ((string? a) (str-len a))
-              ((pair? a) (list-length a))
-              (#t 0))))
+[def length [λ [a]
+	"Returns the length of a"
+	[cond [[string? a] [str-len a]]
+              [[pair? a] [list-length a]]
+              [#t 0]
+	]
+]]
 
-(def describe (λ (a) "Returns the DocString to its argument, if available"
-	(cond ((not (string? a)) "Please quote the symbol in question, like (describe \"help\")")
-	      (#t (let ((ds (car (cl-text (resolve (str->sym a)))))
-	      (args (arg-list (resolve (str->sym a))))
-	      (fn (cat a)))
-		("(" fn args ") - " (if (string? ds) ds "No DocString found")))))))
+[def describe [λ [a] "Returns the DocString to its argument, if available"
+	[cond [[not [string? a]] "Please quote the symbol in question, like [describe \"help\"]"]
+	      [#t [let [[ds [car [cl-text [resolve [str->sym a]]]]]
+		[args [arg-list [resolve [str->sym a]]]]
+		[fn [cat a]]]
+		["[" fn args "] - " [if [string? ds] ds "No DocString found"]]]]
+	]
+]]
 
-(def display (λ (a) "Displays its argument"
-	(print a)))
+[def display [λ [value]
+	"Display VALUE"
+	[print value]
+]]
 
-(def newline (λ () "Prints a single line feed character"
-	(display "\n")))
+[def newline [λ []
+	"Print a single line feed character"
+	[display "\n"]
+]]
 
-(def list (λ (...l) "Returns its arguments as a list"
-	...l))
+[def list [λ [...arguments]
+	"Return ARGUMENTS as a list"
+	...arguments
+]]
 
-(def arr-fill! (λ (a v i) "Fills array a with value v"
-	(cond ((>= (int i) (arr-length a)) a)
-	      (#t (arr-set! a (int i) v) (arr-fill! a v (++ i))))))
+[def arr-fill! [λ [a v i]
+	"Fills array a with value v"
+	[cond [[>= [int i] [arr-length a]] a]
+	      [#t [arr-set! a [int i] v] [arr-fill! a v [++ i]]]
+	]
+]]
 
-(def min-iter (λ (a l) "Iter for (min)"
-	(cond ((nil? l) a)
-	      ((< a (car l)) (min-iter a (cdr l)))
-	      (#t (min-iter (car l) (cdr l))))))
-(def min (λ (...l) "Returns the minimum value of its arguments"
-	(cond ((nil? ...l) 0)
-	      ((nil? (cdr ...l)) (car ...l))
-	      (#t (min-iter (car ...l) (cdr ...l))))))
+[def min]
+[let []
+	[def iter [λ [a l]
+		[cond [[nil? l] a]
+		      [[< a [car l]] [iter a [cdr l]]]
+		      [#t [iter [car l] [cdr l]]]
+		]
+	]]
 
-(def max-iter (λ (a l) "Iter for (max)"
-	(cond ((nil? l) a)
-	      ((> a (car l)) (max-iter a (cdr l)))
-	      (#t (max-iter (car l) (cdr l))))))
-(def max (λ (...l) "Returns the maximum value of its arguments"
-	(cond ((nil? ...l) 0)
-	      ((nil? (cdr ...l)) (car ...l))
-	      (#t (max-iter (car ...l) (cdr ...l))))))
+	[set! min [λ [...l]
+		"Returns the minimum value of its arguments"
+		[cond [[nil? ...l] 0]
+		      [[nil? [cdr ...l]] [car ...l]]
+		      [#t [iter [car ...l] [cdr ...l]]]
+		]
+	]]
+]
 
-(def lognand (λ (...l) "Returns the Nand of its arguments"
-	(lognot (apply logand ...l))))
+[def max]
+[let []
+	[def iter [λ [a l]
+		[cond [[nil? l] a]
+		      [[> a [car l]] [iter a [cdr l]]]
+		      [#t [iter [car l] [cdr l]]]
+		]
+	]]
 
-(def string@ (λ (...l) "String convenience function"
-	(apply cat ...l)))
+	[set! max [λ [...l]
+		"Returns the maximum value of its arguments"
+		[cond [[nil? ...l] 0]
+		      [[nil? [cdr ...l]] [car ...l]]
+		      [#t [iter [car ...l] [cdr ...l]]]
+		]
+	]]
+]
 
-(def int@ (λ (...l) "Int convenience function"
-	(apply infix ...l)))
+[def lognand [λ [...l]
+	"Returns the Nand of its arguments"
+	[lognot [apply logand ...l]]
+]]
 
-(def float@ (λ (...l) "Float convenience function"
-	(apply infix ...l)))
+[def string@ [λ [...l]
+	"String convenience function"
+	[apply cat ...l]
+]]
 
-(def vec@ (λ (...l) "Vec convenience function"
-	(apply infix ...l)))
+[def int@ [λ [...l]
+	"Int convenience function"
+	[apply infix ...l]
+]]
 
-(def infix-swap? (λ (operation)
-	(cond ((equal? / operation) #t)
-	      ((equal? << operation) #t)
-	      (#t #f))))
-(def infix-operator-iter (λ (expr operation return)
-	(cond ((nil? expr) return)
-	      ((eq? (cadr expr) operation)
-		(infix-operator-iter (cdddr expr) operation
-			(let ((a (caddr expr)) (b (car expr)))
-			(cons (if (infix-swap? operation) (operation b a) (operation a b)) return))))
-	      (#t (infix-operator-iter (cdr expr) operation (cons (car expr) return))))))
-(def infix-iter (λ (expr operators)
-	(if (nil? operators) expr (infix-iter (infix-operator-iter expr (car operators)) (cdr operators)))))
-(def infix (λ (expr) "Evaluates EXPR using infix notation"
-		(car (infix-iter expr '(/ * + - & ^ << >> )))))
+[def float@ [λ [...l]
+	"Float convenience function"
+	[apply infix ...l]
+]]
 
-(def mem (λ () "Return some pretty printed memory usage information"
-	(let ((info (memory-info))) (cat
-		(ansi-white "Memory Info") "\n"
-		(ansi-green "Values:   ")  (getf info :value) "\n"
-		(ansi-blue "Closures: ")   (getf info :closure) "\n"
-		(ansi-red "Arrays:   ")    (getf info :array) "\n"
-		(ansi-yellow "STrings:  ") (getf info :string) "\n"
-		(ansi-cyan "NFunc:    ")   (getf info :native-function) "\n"
-		(ansi-purple "Vectors:  ") (getf info :vector) "\n"
-		(ansi-pink "Symbols:  ")   (getf info :symbol) "\n" (ansi-reset)
-	))
-))
+[def vec@ [λ [...l]
+	"Vec convenience function"
+	[apply infix ...l]
+]]
+
+[def infix]
+[let []
+	[def infix-swap? [λ [operation]
+		[cond [[equal? / operation] #t]
+		      [[equal? << operation] #t]
+		      [#t #f]
+		]
+	]]
+
+	[def infix-operator-iter [λ [expr operation return]
+		[cond [[nil? expr] return]
+		      [[eq? [cadr expr] operation]
+			[infix-operator-iter [cdddr expr] operation
+				[let [[a [caddr expr]] [b [car expr]]]
+				[cons [if [infix-swap? operation] [operation b a] [operation a b]] return]]]]
+		      [#t [infix-operator-iter [cdr expr] operation [cons [car expr] return]]]
+		]
+	]]
+
+	[def infix-iter [λ [expr operators]
+		[if [nil? operators] expr [infix-iter [infix-operator-iter expr [car operators]] [cdr operators]]]
+	]]
+
+	[set! infix [λ [expr]
+		"Evaluates EXPR using infix notation"
+		[car [infix-iter expr '[/ * + - & ^ << >> ]]]
+	]]
+]
+
+[def mem [λ [] "Return some pretty printed memory usage information"
+	[let [[info [memory-info]]] [cat
+		[ansi-white  "Memory Info"] "\n"
+		[ansi-green  "Values:   "] [getf info :value] "\n"
+		[ansi-blue   "Closures: "] [getf info :closure] "\n"
+		[ansi-red    "Arrays:   "] [getf info :array] "\n"
+		[ansi-yellow "STrings:  "] [getf info :string] "\n"
+		[ansi-cyan   "NFunc:    "] [getf info :native-function] "\n"
+		[ansi-purple "Vectors:  "] [getf info :vector] "\n"
+		[ansi-pink   "Symbols:  "] [getf info :symbol] "\n" [ansi-reset]
+	]]
+]]

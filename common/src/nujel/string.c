@@ -105,6 +105,14 @@ int bufWriteString(char *buf, int len, const char *data){
 	return out-buf;
 }
 
+char *lSIndent(char *buf, char *bufEnd, int indentLevel){
+	for(int i=0;i<indentLevel;i++){
+		if(buf >= bufEnd){return buf;}
+		*buf++ = ' ';
+	}
+	return buf;
+}
+
 char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display){
 	*buf = 0;
 	if(v == NULL){return buf;}
@@ -126,13 +134,13 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 	case ltLambda: {
 		lClosure *cl = &lClosureList[v->vCdr & CLO_MASK];
 		if(cl->flags & lfObject){
-			t = snprintf(cur,bufEnd-cur,"(ω ");
+			t = snprintf(cur,bufEnd-cur,"[ω ");
 			indentLevel += 2;
 		}else if(cl->flags & lfDynamic){
-			t = snprintf(cur,bufEnd-cur,"(δ (");
+			t = snprintf(cur,bufEnd-cur,"[δ [");
 			indentLevel += 3;
 		}else{
-			t = snprintf(cur,bufEnd-cur,"(λ (");
+			t = snprintf(cur,bufEnd-cur,"[λ [");
 			indentLevel += 3;
 		}
 		if(t > 0){cur += t;}
@@ -158,7 +166,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 			}
 			cur = lSWriteVal(cv,cur,bufEnd,indentLevel,display);
 		}
-		if(!(cl->flags & lfObject)){*cur++ = ')';}
+		if(!(cl->flags & lfObject)){*cur++ = ']';}
 		lVal *cloText = lCloText(v->vCdr);
 		forEach(n,cloText){
 			*cur++ = '\n';
@@ -166,7 +174,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 			cur = lSWriteVal(lCar(n),cur,bufEnd,indentLevel,display);
 		}
 		indentLevel -= 2;
-		t = snprintf(cur,bufEnd-cur,")");
+		t = snprintf(cur,bufEnd-cur,"]");
 		break; }
 	case ltPair: {
 		int indentStyle = 0;
@@ -194,7 +202,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 				indentLevel += 5;
 			}
 		}
-		t = snprintf(cur,bufEnd-cur,"(");
+		t = snprintf(cur,bufEnd-cur,"[");
 		if(t > 0){cur += t;}
 		for(lVal *n = v;n != NULL; n = lCdr(n)){
 			if(n->type == ltPair){
@@ -214,11 +222,11 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 				break;
 			}
 		}
-		t = snprintf(cur,bufEnd-cur,")");
+		t = snprintf(cur,bufEnd-cur,"]");
 		indentLevel = oldIndent;
 		break; }
 	case ltArray: {
-		t = snprintf(cur,bufEnd-cur,"#(");
+		t = snprintf(cur,bufEnd-cur,"#[");
 		if(t > 0){cur += t;}
 		if(lArrData(v) != NULL){
 			const int arrLen = lArrLength(v);
@@ -227,7 +235,7 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 				if(i < (lArrLength(v)-1)){*cur++ = ' ';}
 			}
 		}
-		t = snprintf(cur,bufEnd-cur,")");
+		t = snprintf(cur,bufEnd-cur,"]");
 		break; }
 	case ltInt:
 		t = snprintf(buf,len,"%i",v->vInt);
@@ -236,13 +244,13 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 		t = bufPrintFloat(v->vFloat,buf,t,len);
 		break;
 	case ltVec:
-		t  = snprintf(buf,len,"(vec ");
+		t  = snprintf(buf,len,"[vec ");
 		t += bufPrintFloat(lVecV(v->vCdr).x,&buf[t],t,len);
 		buf[t++] = ' ';
 		t += bufPrintFloat(lVecV(v->vCdr).y,&buf[t],t,len);
 		buf[t++] = ' ';
 		t += bufPrintFloat(lVecV(v->vCdr).z,&buf[t],t,len);
-		t += snprintf(&buf[t],len,")");
+		t += snprintf(&buf[t],len,"]");
 		break;
 	case ltString:
 		if(display){
@@ -271,9 +279,9 @@ char *lSWriteVal(lVal *v, char *buf, char *bufEnd, int indentLevel, bool display
 }
 
 lVal *lnfStrlen(lClosure *c, lVal *v){
-	if(v == NULL){return NULL;}
+	if(v == NULL){return lValInt(0);}
 	lVal *t = lEval(c,lCar(v));
-	if((t == NULL) || (t->type != ltString)){return NULL;}
+	if((t == NULL) || (t->type != ltString)){return lValInt(0);}
 	if(lStrNull(t)){return lValInt(0);}
 	return lValInt(lStringLength(&lStr(t)));
 }
@@ -381,25 +389,22 @@ lVal *lnfSubstr(lClosure *c, lVal *v){
 	int slen  = 0;
 	if(v == NULL){return NULL;}
 	lVal *str = lEval(c,lCar(v));
-	if(str == NULL){return NULL;}
-	switch(str->type){
-	default: return NULL;
-	case ltString:
-		if(str->vCdr == 0){return NULL;}
-		buf  = lStrData(str);
-		slen = len = lStringLength(&lStr(str));
-		break;
-	}
+	if(str == NULL)          {return NULL;}
+	if(str->type != ltString){return NULL;}
+	if(str->vCdr == 0)       {return NULL;}
+	buf  = lStrData(str);
+	slen = len = lStringLength(&lStr(str));
+
 	if(lCdr(v) != NULL){
 		v = lCdr(v);
 		lVal *lStart = lEval(c,lCar(v));
-		if(lStart->type == ltInt){
+		if((lStart != NULL) && (lStart->type == ltInt)){
 			start = lStart->vInt;
 		}
 		if(lCdr(v) != NULL){
 			v = lCdr(v);
 			lVal *lLen = lEval(c,lCar(v));
-			if(lLen->type == ltInt){
+			if((lLen != NULL) && (lLen->type == ltInt)){
 				len = lLen->vInt;
 			}
 		}
@@ -430,7 +435,7 @@ lVal *lnfCat(lClosure *c, lVal *v){
 			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"#inf");
 			break; }
 		case ltSymbol: {
-			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%.16s",lvSym(t->vCdr)->c);
+			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%s",lvSym(t->vCdr)->c);
 			break; }
 		case ltFloat: {
 			clen = snprintf(buf,sizeof(tmpStringBuf) - (buf-tmpStringBuf),"%.5f",t->vFloat);
@@ -536,17 +541,17 @@ lVal *lnfFromCharCode(lClosure *c,lVal *v){
 }
 
 void lAddStringFuncs(lClosure *c){
-	lAddNativeFunc(c,"cat",           "(...args)",       "ConCATenates ARGS into a single string",                                                     lnfCat);
-	lAddNativeFunc(c,"trim",          "(str)",           "Trim STR of any excessive whitespace",                                                         lnfTrim);
-	lAddNativeFunc(c,"str-len",       "(str)",           "Return length of STR",                                                                  lnfStrlen);
-	lAddNativeFunc(c,"str-up",        "(str)",           "Return STR uppercased",                                                   lnfStrUp);
-	lAddNativeFunc(c,"str-down",      "(str)",           "Return STR lowercased",                                                   lnfStrDown);
-	lAddNativeFunc(c,"str-capitalize","(str)",           "Return STR capitalized",                                                      lnfStrCap);
-	lAddNativeFunc(c,"substr",        "(str &start &stop)","Return STR starting at position START=0 and ending at &STOP=(str-len s)",  lnfSubstr);
-	lAddNativeFunc(c,"index-of",      "(haystack needle &start)","Return the position of NEEDLE in HAYSTACK, searcing from START=0, or -1 if not found",lnfIndexOf);
-	lAddNativeFunc(c,"char-at",       "(str pos)",       "Return the character at position POS in STR",                                                  lnfCharAt);
-	lAddNativeFunc(c,"from-char-code","(...codes)",      "Construct a string out of ...CODE codepoints and return it",                                    lnfFromCharCode);
-	lAddNativeFunc(c,"str->sym",      "(str)",           "Convert STR to a symbol",                                                                      lnfStrSym);
-	lAddNativeFunc(c,"sym->str",      "(sym)",           "Convert SYM to a string",                                                                      lnfSymStr);
-	lAddNativeFunc(c,"write-str",     "(val)",           "Write V into a string and return it",                                                         lnfWriteStr);
+	lAddNativeFunc(c,"cat",           "[...args]",       "ConCATenates ARGS into a single string",                                                     lnfCat);
+	lAddNativeFunc(c,"trim",          "[str]",           "Trim STR of any excessive whitespace",                                                         lnfTrim);
+	lAddNativeFunc(c,"str-len",       "[str]",           "Return length of STR",                                                                  lnfStrlen);
+	lAddNativeFunc(c,"str-up",        "[str]",           "Return STR uppercased",                                                   lnfStrUp);
+	lAddNativeFunc(c,"str-down",      "[str]",           "Return STR lowercased",                                                   lnfStrDown);
+	lAddNativeFunc(c,"str-capitalize","[str]",           "Return STR capitalized",                                                      lnfStrCap);
+	lAddNativeFunc(c,"substr",        "[str &start &stop]","Return STR starting at position START=0 and ending at &STOP=[str-len s]",  lnfSubstr);
+	lAddNativeFunc(c,"index-of",      "[haystack needle &start]","Return the position of NEEDLE in HAYSTACK, searcing from START=0, or -1 if not found",lnfIndexOf);
+	lAddNativeFunc(c,"char-at",       "[str pos]",       "Return the character at position POS in STR",                                                  lnfCharAt);
+	lAddNativeFunc(c,"from-char-code","[...codes]",      "Construct a string out of ...CODE codepoints and return it",                                    lnfFromCharCode);
+	lAddNativeFunc(c,"str->sym",      "[str]",           "Convert STR to a symbol",                                                                      lnfStrSym);
+	lAddNativeFunc(c,"sym->str",      "[sym]",           "Convert SYM to a string",                                                                      lnfSymStr);
+	lAddNativeFunc(c,"write-str",     "[val]",           "Write V into a string and return it",                                                         lnfWriteStr);
 }

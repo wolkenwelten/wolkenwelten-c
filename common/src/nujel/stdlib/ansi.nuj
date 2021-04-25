@@ -1,6 +1,6 @@
 ;; This File contains various functions generating ansi escape sequences for colorful output
 
-(def ansi-fg #(
+[def ansi-fg #[
 	"\e[0;30m"
 	"\e[0;31m"
 	"\e[0;32m"
@@ -17,45 +17,96 @@
 	"\e[1;35m"
 	"\e[1;36m"
 	"\e[1;37m"
-))
-(def ansi-reset "\e[0m")
+]]
+[def ansi-reset "\e[0m"]
 
-(def ansi-wrap (λ (code string) "Wrap STRING in the ansi color CODE"
-	((ansi-fg code) string (ansi-reset))))
+[def ansi-wrap [λ [code string]
+	"Wrap STRING in the ansi color CODE"
+	[[ansi-fg code] string [ansi-reset]]
+]]
 
-(def ansi-black (λ (...args) "Wrap ARGS in black"
-	(ansi-wrap 0 (apply cat ...args))))
-(def ansi-dark-red (λ (...args) "Wrap ARGS in dark red"
-	(ansi-wrap 1 (apply cat ...args))))
-(def ansi-darkgreen (λ (...args) "Wrap ARGS in dark green"
-	(ansi-wrap 2 (apply cat ...args))))
-(def ansi-brown (λ (...args) "Wrap ARGS in brown"
-	(ansi-wrap 3 (apply cat ...args))))
-(def ansi-dark-blue (λ (...args) "Wrap ARGS in dark blue"
-	(ansi-wrap 4 (apply cat ...args))))
-(def ansi-purple (λ (...args) "Wrap ARGS in purple"
-	(ansi-wrap 5 (apply cat ...args))))
-(def ansi-teal (λ (...args) "Wrap ARGS in teal"
-	(ansi-wrap 6 (apply cat ...args))))
-(def ansi-dgray (λ (...args) "Wrap ARGS in dark gray"
-	(ansi-wrap 7 (apply cat ...args))))
+[def ansi-black [λ [...args]
+	"Wrap ARGS in black"
+	[ansi-wrap 0 [apply cat ...args]]
+]]
 
-(def ansi-gray (λ (...args) "Wrap ARGS in gray"
-	(ansi-wrap 8 (apply cat ...args))))
-(def ansi-red (λ (...args) "Wrap ARGS in red"
-	(ansi-wrap 9 (apply cat ...args))))
-(def ansi-green (λ (...args) "Wrap ARGS in green"
-	(ansi-wrap 10 (apply cat ...args))))
-(def ansi-yellow (λ (...args) "Wrap ARGS in yellow"
-	(ansi-wrap 11 (apply cat ...args))))
-(def ansi-blue (λ (...args) "Wrap ARGS in blue"
-	(ansi-wrap 12 (apply cat ...args))))
-(def ansi-pink (λ (...args) "Wrap ARGS in pink"
-	(ansi-wrap 13 (apply cat ...args))))
-(def ansi-cyan (λ (...args) "Wrap ARGS in cyan"
-	(ansi-wrap 14 (apply cat ...args))))
-(def ansi-white (λ (...args) "Wrap ARGS in white"
-	(ansi-wrap 15 (apply cat ...args))))
+[def ansi-dark-red [λ [...args]
+	"Wrap ARGS in dark red"
+	[ansi-wrap 1 [apply cat ...args]]
+]]
+[def ansi-darkgreen [λ [...args]
+	"Wrap ARGS in dark green"
+	[ansi-wrap 2 [apply cat ...args]]
+]]
 
-(def ansi-rainbow (λ (...args) "Wrap ARGS in the colors of the rainbow!"
-	(let ((count 0)) (join (map (λ (a) (set! count (logand (++ count) #x7)) (ansi-wrap (if (zero? count) 7 (+ count 8)) a)) (split (apply cat ...args) "")) ""))))
+[def ansi-brown [λ [...args]
+	"Wrap ARGS in brown"
+	[ansi-wrap 3 [apply cat ...args]]
+]]
+
+[def ansi-dark-blue [λ [...args]
+	"Wrap ARGS in dark blue"
+	[ansi-wrap 4 [apply cat ...args]]
+]]
+
+[def ansi-purple [λ [...args]
+	"Wrap ARGS in purple"
+	[ansi-wrap 5 [apply cat ...args]]
+]]
+
+[def ansi-teal [λ [...args]
+	"Wrap ARGS in teal"
+	[ansi-wrap 6 [apply cat ...args]]
+]]
+
+[def ansi-dgray [λ [...args]
+	"Wrap ARGS in dark gray"
+	[ansi-wrap 7 [apply cat ...args]]
+]]
+
+[def ansi-gray [λ [...args]
+	"Wrap ARGS in gray"
+	[ansi-wrap 8 [apply cat ...args]]
+]]
+
+[def ansi-red [λ [...args]
+	"Wrap ARGS in red"
+	[ansi-wrap 9 [apply cat ...args]]
+]]
+
+[def ansi-green [λ [...args]
+	"Wrap ARGS in green"
+	[ansi-wrap 10 [apply cat ...args]]
+]]
+
+[def ansi-yellow [λ [...args]
+	"Wrap ARGS in yellow"
+	[ansi-wrap 11 [apply cat ...args]]
+]]
+
+[def ansi-blue [λ [...args]
+	"Wrap ARGS in blue"
+	[ansi-wrap 12 [apply cat ...args]]
+]]
+
+[def ansi-pink [λ [...args]
+	"Wrap ARGS in pink"
+	[ansi-wrap 13 [apply cat ...args]]
+]]
+
+[def ansi-cyan [λ [...args]
+	"Wrap ARGS in cyan"
+	[ansi-wrap 14 [apply cat ...args]]
+]]
+
+[def ansi-white [λ [...args]
+	"Wrap ARGS in white"
+	[ansi-wrap 15 [apply cat ...args]]
+]]
+
+[def ansi-rainbow [λ [...args]
+	"Wrap ARGS in the colors of the rainbow!"
+	[let [[count 0]]
+		[join [map [λ [a] [set! count [logand [++ count] #x7]] [ansi-wrap [if [zero? count] 7 [+ count 8]] a]] [split [apply cat ...args] ""]] ""]
+	]
+]]

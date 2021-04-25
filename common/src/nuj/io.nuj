@@ -1,2 +1,4 @@
-(def say (λ (...args) "Sends its arguments as a chat message"
-	(send-message (apply cat ...args))))
+[def say [λ [...args]
+	"Sends ...ARGS as a chat message"
+	[send-message [apply cat ...args]]
+]]

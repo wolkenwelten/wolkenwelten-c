@@ -1,27 +1,45 @@
-(def git-get-commit (λ (branch) "Gets the commit hash of BRANCH"
-	(trim (file-load (".git/refs/heads/" branch)))))
+[def git-get-commit [λ [branch]
+	"Gets the commit hash of BRANCH"
+	[trim [file-load [".git/refs/heads/" branch]]]
+]]
 
-(def git-get-branch (λ () "Returns the currently active branch"
-	(let ((cur-head (trim (file-load "./.git/HEAD"))))
-		(cond ((eq? (substr cur-head 0 4) "ref:") (join (list-tail (split cur-head "/") 2) "/"))
-		      (#t "UNKNOWN")))))
+[def git-get-branch [λ []
+	"Returns the currently active branch"
+	[let [[cur-head [trim [file-load "./.git/HEAD"]]]]
+		[cond [[eq? [substr cur-head 0 4] "ref:"] [join [list-tail [split cur-head "/"] 2] "/"]]
+		       [#t "UNKNOWN"]
+		]
+	]
+]]
 
-(def git-get-head (λ () "Gets the current git head"
-	(git-get-commit (git-get-branch))))
+[def git-get-head [λ []
+	"Gets the current git head"
+	[git-get-commit [git-get-branch]]
+]]
 
-(def infogen-version (λ () "Return the infogen version"
-	(cat (git-get-branch) "-" (strftime (time) "%Y-%m-%d") "-" (str-up (substr (git-get-head) 0 8)))))
+[def infogen-version [λ []
+	"Return the infogen version"
+	[cat [git-get-branch] "-" [strftime [time] "%Y-%m-%d"] "-" [str-up [substr [git-get-head] 0 8]]]
+]]
 
-(def infogen-builddate (λ () "Return the infogen builddate"
-	(strftime (time) "%Y-%m-%d %H:%M")))
+[def infogen-builddate [λ []
+	"Return the infogen builddate"
+	[strftime [time] "%Y-%m-%d %H:%M"]
+]]
 
-(def infogen-commit (λ () "Return the infogen commit"
-	(str-up (git-get-head))))
+[def infogen-commit [λ []
+	"Return the infogen commit"
+	[str-up [git-get-head]]
+]]
 
-(def infogen-source (λ () "Return the source part"
-("const char *VERSION=\"" (infogen-version) "\";
-const char *BUILDDATE=\"" (infogen-builddate) "\";
-const char *COMMIT=\"" (infogen-commit) "\";\n")))
+[def infogen-source [λ []
+	"Return the source part"
+	["const char *VERSION=\""   [infogen-version]   "\";\n"
+	 "const char *BUILDDATE=\"" [infogen-builddate] "\";\n"
+	 "const char *COMMIT=\""    [infogen-commit]    "\";\n\n"]
+]]
 
-(def infogen (λ (prefix) "Generate build info and writes C source/header files PREFIX"
-	(file-save (cat prefix ".c") (infogen-source))))
+[def infogen [λ [prefix]
+	"Generate build info and writes C source/header files PREFIX"
+	[file-save [cat prefix ".c"] [infogen-source]]
+]]

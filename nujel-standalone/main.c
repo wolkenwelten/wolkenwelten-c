@@ -190,14 +190,14 @@ void lPrintError(const char *format, ...){
 }
 
 static void addNativeFuncs(lClosure *c){
-	lAddNativeFunc(c,"error",     "(...args)",         "Prints ...args to stderr",                           lnfError);
-	lAddNativeFunc(c,"print",     "(...args)",         "Displays ...args",                                   lnfPrint);
-	lAddNativeFunc(c,"display",   "(...args)",         "Prints ...args",                                     lnfPrint);
-	lAddNativeFunc(c,"input",     "()",                "Reads in a line of user input and returns it",       lnfInput);
-	lAddNativeFunc(c,"quit",      "(a)",               "Exits with code a",                                  lnfQuit);
-	lAddNativeFunc(c,"exit",      "(a)",               "Quits with code a",                                  lnfQuit);
-	lAddNativeFunc(c,"file-load", "(filename)",        " FILENAME and returns the contents as a string",lnfReadFile);
-	lAddNativeFunc(c,"file-save", "(filename content)","Writes CONTENT into FILENAME",                       lnfWriteFile);
+	lAddNativeFunc(c,"error",     "[...args]",         "Prints ...args to stderr",                           lnfError);
+	lAddNativeFunc(c,"print",     "[...args]",         "Displays ...args",                                   lnfPrint);
+	lAddNativeFunc(c,"display",   "[...args]",         "Prints ...args",                                     lnfPrint);
+	lAddNativeFunc(c,"input",     "[]",                "Reads in a line of user input and returns it",       lnfInput);
+	lAddNativeFunc(c,"quit",      "[a]",               "Exits with code a",                                  lnfQuit);
+	lAddNativeFunc(c,"exit",      "[a]",               "Quits with code a",                                  lnfQuit);
+	lAddNativeFunc(c,"file-load", "[filename]",        "Load FILENAME and return the contents as a string",  lnfReadFile);
+	lAddNativeFunc(c,"file-save", "[filename content]","Writes CONTENT into FILENAME",                       lnfWriteFile);
 }
 
 extern char tmp_saolib_nuj_data[];

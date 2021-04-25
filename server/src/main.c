@@ -172,7 +172,7 @@ void mainInit(){
 	chunkInit();
 	lispInit();
 	itemTypeInit();
-	lispEval("(event-fire \"on-init\")");
+	lispEval("[event-fire \"on-init\"]");
 	savegameSave();
 
 	bigchungusInit(&world);

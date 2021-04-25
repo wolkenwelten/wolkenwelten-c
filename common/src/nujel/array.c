@@ -112,10 +112,10 @@ lVal *lnfArrPred(lClosure *c, lVal *v){
 }
 
 void lAddArrayFuncs(lClosure *c){
-	lAddNativeFunc(c,"arr-length", "(array)",    "Return length of ARRAY",                          lnfArrLength);
-	lAddNativeFunc(c,"arr-ref",    "(array index)",  "Return value of ARRAY at position INDEX",     lnfArrRef);
-	lAddNativeFunc(c,"arr-set!",   "(array index &...values)","Set ARRAY at INDEX to &...VALUES",   lnfArrSet);
-	lAddNativeFunc(c,"arr-new",    "(size)",     "Allocate a new array of SIZE",                    lnfArrNew);
-	lAddNativeFunc(c,"arr",        "(...args)",  "Create a new array from ...ARGS",                 lnfArr);
-	lAddNativeFunc(c,"array? arr?","(val)",     "Return #t if VAL is an array",                     lnfArrPred);
+	lAddNativeFunc(c,"arr-length", "[array]",    "Return length of ARRAY",                          lnfArrLength);
+	lAddNativeFunc(c,"arr-ref",    "[array index]",  "Return value of ARRAY at position INDEX",     lnfArrRef);
+	lAddNativeFunc(c,"arr-set!",   "[array index &...values]","Set ARRAY at INDEX to &...VALUES",   lnfArrSet);
+	lAddNativeFunc(c,"arr-new",    "[size]",     "Allocate a new array of SIZE",                    lnfArrNew);
+	lAddNativeFunc(c,"arr",        "[...args]",  "Create a new array from ...ARGS",                 lnfArr);
+	lAddNativeFunc(c,"array? arr?","[val]",     "Return #t if VAL is an array",                     lnfArrPred);
 }

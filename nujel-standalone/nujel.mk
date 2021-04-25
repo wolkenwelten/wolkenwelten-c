@@ -6,7 +6,7 @@ SAOLIB_NUJS  := $(shell find nujel-standalone/lib -type f -name '*.nuj')
 STDLIB_NUJS  := $(shell find common/src/nujel/stdlib -type f -name '*.nuj')
 
 $(NUJEL): $(NUJEL_OBJS) nujel-standalone/tmp/assets.o
-	$(CC) $(CFLAGS) $(CINCLUDES) $(WARNINGS) $(CSTD) $(OPTIMIZATION) $^ $(SERVER_LIBS) -o $(NUJEL) && $(NUJEL) -x "(quit (test-run))"
+	$(CC) $(CFLAGS) $(CINCLUDES) $(WARNINGS) $(CSTD) $(OPTIMIZATION) $^ $(SERVER_LIBS) -o $(NUJEL) # && $(NUJEL) -x "[quit [test-run]]"
 
 nujel-standalone/tmp/saolib.nuj: $(SAOLIB_NUJS)
 	@mkdir -p nujel-standalone/tmp/
@@ -19,7 +19,7 @@ nujel-standalone/tmp/assets.h: nujel-standalone/tmp/assets.c
 
 .PHONY: test
 test: nujel
-	$(NUJEL) -x "(quit (test-run))"
+	$(NUJEL) -x "[quit [test-run]]"
 
 .PHONY: runn
 runn: nujel

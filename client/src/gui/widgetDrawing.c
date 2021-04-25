@@ -184,12 +184,12 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 		}else{
 			c = *line;
 		}
-		if(*line == '('){
+		if((*line == '[') || (*line == '(')){
 			openParens++;
 			if(cx < w){
 				textMeshAddGlyphHG(m, cx, cy, size, c, cfgc, colors[((openParens-1)&7) | selActive],colors[(openParens&7) | selActive]);
 			}
-		}else if(*line == ')'){
+		}else if((*line == ']') || (*line == ')')){
 			if(cx < w){
 				textMeshAddGlyphHG(m, cx, cy, size, c, cfgc, colors[((openParens)&7) | selActive],colors[((openParens-1)&7) | selActive]);
 			}
@@ -201,7 +201,7 @@ static void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h
 	}
 	for(;openParens > 0;openParens--){
 		if(cx > w){break;}
-		textMeshAddGlyphHG(m, cx, cy, size, ')', cfgc & 0x7FFFFFFF, colors[(openParens)&7] >> 1,colors[(openParens-1)&7] >> 1);
+		textMeshAddGlyphHG(m, cx, cy, size, ']', cfgc & 0x7FFFFFFF, colors[(openParens)&7] >> 1,colors[(openParens-1)&7] >> 1);
 		cx += size * 8;
 	}
 	m->font = oldFont;

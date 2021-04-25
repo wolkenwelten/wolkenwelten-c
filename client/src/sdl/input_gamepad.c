@@ -274,32 +274,30 @@ void gamepadEventHandler(const SDL_Event *e){
 		switch(e->caxis.axis){
 		case 0:
 			gamepadLeftAxisX = ((float)e->caxis.value/32768.f);
-		break;
+			break;
 		case 1:
 			gamepadLeftAxisY = ((float)e->caxis.value/32768.f);
-		break;
+			break;
 		case 2:
 			gamepadRightAxisX = ((float)e->caxis.value/32768.f);
-		break;
+			break;
 		case 3:
 			gamepadRightAxisY = ((float)e->caxis.value/32768.f);
-		break;
+			break;
 		case 4:
 			gamepadLeftTrigger = ((float)e->caxis.value/32768.f);
-		break;
+			break;
 		case 5:
 			gamepadRightTrigger = ((float)e->caxis.value/32768.f);
-		break;
+			break;
 		}
 		break;
-
 	case SDL_CONTROLLERBUTTONDOWN:
 		gamepadButtons[e->cbutton.button] = true;
 		sdlGamepadEverPressed = true;
-	break;
-
+		break;
 	case SDL_CONTROLLERBUTTONUP:
 		gamepadButtons[e->cbutton.button] = false;
-	break;
+		break;
 	}
 }

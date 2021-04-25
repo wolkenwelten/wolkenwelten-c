@@ -1,97 +1,142 @@
-(def client? #f)
-(def server? #t)
+[def client? #f]
+[def server? #t]
 
-(def test-context "WolkenWelten Server")
-(test-add #t (and (not client?) server?))
+[def test-context "WolkenWelten Server"]
+[test-add #t [and [not client?] server?]]
 
-(def error (λ (...args) "Prints its arguments into the LISP console and might alert the user"
-	(say (apply cat ...args))))
+[def error [λ [...args]
+	"Print its arguments into the LISP console and might alert the user"
+	[say [apply cat ...args]]
+]]
 
-(def log (λ (...args) "Prints its arguments into the LISP console"
-	(console-print (apply cat ...args))))
+[def log [λ [...args]
+	"Print its arguments into the LISP console"
+	[console-print [apply cat ...args]]
+]]
 
-(def help-iter (λ (l) "Iter for (help)"
-	(cond ((nil? l) #t)
-	      (#t (say (describe (car l))) (help-iter (cdr l))))))
-(def help (λ (i) "Describes 10 functions at offset 1"
-	(let ((off (* (int i) 10)))
-	(help-iter (map cat (symbol-table off 10)))
-	(say ("Help page " (int i) " of " (/ (symbol-count) 10))) #t)))
+[def help]
+[let []
+	[def iter [λ [l]
+		[cond [[nil? l] #t]
+		       [#t [say [describe [car l]]] [iter [cdr l]]
+		]]
+	]]
 
-(def print (λ (...a) "Prints to everyones chat"
-	(say (apply cat ...a))))
+	[set! help [λ [i]
+		"Describe 10 functions at offset 1"
+		[let [[off [* [int i] 10]]]
+		[iter [map cat [symbol-table off 10]]]
+		[say ["Help page " [int i] " of " [/ [symbol-count] 10]]] #t]
+	]]
+]
 
-(def heal     (δ (a) "Heals oneself by a points"
-	(- (dmg (cond (a (- a)) (#t -20))))))
+[def print [λ [...a]
+	"Print to everyone's chat"
+	[say [apply cat ...a]]
+]]
 
-(def morning (λ () "Sets the Time to 8:00 AM"
-	(time "8:00")))
+[def heal [δ [a]
+	"Heals oneself by a points"
+	[- [dmg [cond [a [- a]] [#t -20]]]]
+]]
 
-(def noon (λ () "Sets the Time to 12:00 PM"
-	(time "12:00")))
+[def time-morning! [λ []
+	"Sets the Time to 8:00 AM"
+	[time "8:00"]
+]]
 
-(def evening (λ () "Sets the Time to 21:30 PM"
-	(time "21:30")))
+[def time-noon! [λ []
+	"Sets the Time to 12:00 PM"
+	[time "12:00"]
+]]
 
-(def night (λ () "Sets the Time to Midnight"
-	(time "24:00")))
+[def time-evening! [λ []
+	"Sets the Time to 21:30 PM"
+	[time "21:30"]
+]]
 
-(def player-x (δ () "Returns the current players X Position"
-	(vx (player-pos))))
+[def time-night! [λ []
+	"Sets the Time to Midnight"
+	[time "24:00"]
+]]
 
-(def player-y (δ () "Returns the current players Y Position"
-	(vy (player-pos))))
+[def player-x [δ []
+	"Return the current players X Position"
+	[vx [player-pos]]
+]]
 
-(def player-z (δ () "Returns the current players Z Position"
-	(vz (player-pos))))
+[def player-y [δ []
+	"Return the current players Y Position"
+	[vy [player-pos]]
+]]
 
-(def vx+ (λ (v a) "Returns the sum of vector v and (vec a 0 0)"
-	(+ v (vec a 0 0))))
+[def player-z [δ []
+	"Return the current players Z Position"
+	[vz [player-pos]]
+]]
 
-(def vy+ (λ (v a) "Returns the sum of vector v and (vec 0 a 0)"
-	(+ v (vec 0 a 0))))
+[def vx+ [λ [v a]
+	"Return the sum of vector v and [vec a 0 0]"
+	[+ v [vec a 0 0]]
+]]
 
-(def vz+ (λ (v a) "Returns the sum of vector v and (vec 0 0 a)"
-	(+ v (vec 0 0 a))))
+[def vy+ [λ [v a]
+	"Return the sum of vector v and [vec 0 a 0]"
+	[+ v [vec 0 a 0]]
+]]
 
-(def rain (λ () "Make it Rain!"
-	(cloud-density 0.9)))
+[def vz+ [λ [v a]
+	"Return the sum of vector v and [vec 0 0 a]"
+	[+ v [vec 0 0 a]]
+]]
 
-(def cloud-density (λ (a) "Sets the new Goal Density to a which should be a float in the range 0.0 - 1.0."
-	(- 1.0 (/ (cloud-threshold (* (- 1.0 a) 256.0)) 256.0))))
+[def rain [λ []
+	"Make it Rain!"
+	[cloud-density 0.9]
+]]
 
-(def countdown (λ (i) "Counts down on the console"
-	(cond ((< (int i) 0) #t)
-		(#t (say  (cond ((zero? i) ((ansi-green "GO!") (ansi-yellow "!") (ansi-red "!")))
-				((< i 4) (ansi-red i))
-				((< i 6) (ansi-yellow i)) (#t i)))
-		(yield (timeout 1000) (lambda ()  (countdown (-- i))))))))
+[def cloud-density [λ [a]
+	"Set the new Goal Density to a which should be a float in the range 0.0 - 1.0."
+	[- 1.0 [/ [cloud-threshold [* [- 1.0 a] 256.0]] 256.0]]
+]]
+
+[def countdown [λ [i]
+	"Counts down on the console"
+	[cond [[< [int i] 0] #t]
+		[#t [say  [cond [[zero? i] [[ansi-green "GO!"] [ansi-yellow "!"] [ansi-red "!"]]]
+				[[< i 4] [ansi-red i]]
+				[[< i 6] [ansi-yellow i]] [#t i]]]
+		[yield [timeout 1000] [lambda []  [countdown [-- i]]]]
+	]]
+]]
 
 ; Needs to be a dynamic function because the player's ID is only in the calling context
-(def debug-stuff! (δ () "Gives the issuing player some nice stuff to get started with"
-	(clear-eq!)
-	(clear-inv!)
+[def debug-stuff! [δ []
+	"Gives the issuing player some nice stuff to get started with"
+	[clear-eq!]
+	[clear-inv!]
 
-	(set-eq! 0 i-glider)
-	(set-eq! 1 i-hook)
-	(set-eq! 2 i-jetpack)
+	[set-eq! 0 i-glider]
+	[set-eq! 1 i-hook]
+	[set-eq! 2 i-jetpack]
 
-	(set-inv! 0 i-blaster)
-	(set-inv! 1 i-masterblaster)
-	(set-inv! 2 i-assaultblaste)
-	(set-inv! 3 i-shotgun)
-	(set-inv! 4 i-crystalaxe)
-	; (set-inv! 5 i-flintandsteel)
-	(set-inv! 5 i-flamestick)
-	(set-inv! 6 i-crystalspear)
-	(set-inv! 7 i-pear 42)
-	(set-inv! 8 i-dirt 99)
-	(set-inv! 9 i-grenade 99)
+	[set-inv! 0 i-blaster]
+	[set-inv! 1 i-masterblaster]
+	[set-inv! 2 i-assaultblaste]
+	[set-inv! 3 i-shotgun]
+	[set-inv! 4 i-crystalaxe]
+	; [set-inv! 5 i-flintandsteel]
+	[set-inv! 5 i-flamestick]
+	[set-inv! 6 i-crystalspear]
+	[set-inv! 7 i-pear 42]
+	[set-inv! 8 i-dirt 99]
+	[set-inv! 9 i-grenade 99]
 
-	(set-inv! 10 i-crystalbulle 999)
-	(set-inv! 11 i-crystalbulle 999)
-	(set-inv! 12 i-crystalbulle 999)
-	(set-inv! 13 i-flamebullet 999)
-	(set-inv! 14 i-flamebullet 999)
-	(set-inv! 15 i-flamebullet 999)
-	(set-inv! 16 i-crystalpickax)))
+	[set-inv! 10 i-crystalbulle 999]
+	[set-inv! 11 i-crystalbulle 999]
+	[set-inv! 12 i-crystalbulle 999]
+	[set-inv! 13 i-flamebullet 999]
+	[set-inv! 14 i-flamebullet 999]
+	[set-inv! 15 i-flamebullet 999]
+	[set-inv! 16 i-crystalpickax]
+]]

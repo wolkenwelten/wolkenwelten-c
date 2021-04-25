@@ -193,7 +193,7 @@ void lispPanelGetPointSymbol(){
 	if(buf == NULL){return;}
 	for(i = textInputCursorPos; i >= 0; i--){
 		const u8 c = buf[i];
-		if(isspace(c) || (c == '(') || (c == ')') || (c == '\'') || (c == '\"')){
+		if(isspace(c) || (c == '[') || (c == ']') ||(c == '(') || (c == ')') || (c == '\'') || (c == '\"')){
 			i++;
 			break;
 		}
@@ -201,7 +201,7 @@ void lispPanelGetPointSymbol(){
 	i = MAX(0,i);
 	for(m = i; buf[m] != 0; m++){
 		const u8 c = buf[m];
-		if(isspace(c) || (c == '(') || (c == ')') || (c == '\'') || (c == '\"')){
+		if(isspace(c) || (c == '[') || (c == ']') || (c == '(') || (c == ')') || (c == '\'') || (c == '\"')){
 			m--;
 			break;
 		}
@@ -249,7 +249,7 @@ void lispPanelCheckAutoCompleteDescription(){
 	lispAutoCompleteDescriptionSymbol = lispAutoCompleteList[lispAutoCompleteSelection];
 
 	char sBuf[128];
-	snprintf(sBuf,sizeof(sBuf),"(describe \"%s\")",lispAutoCompleteDescriptionSymbol->c);
+	snprintf(sBuf,sizeof(sBuf),"[describe \"%s\"]",lispAutoCompleteDescriptionSymbol->c);
 	const char *str = lispEval(sBuf);
 	snprintf(lispAutoCompleteDescription,sizeof(lispAutoCompleteDescription),"%s",str);
 	lispAutoCompleteDescription[sizeof(lispAutoCompleteDescription)-1]=0;

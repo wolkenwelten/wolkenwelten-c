@@ -114,10 +114,10 @@ lVal *lnfNilPred(lClosure *c, lVal *v){
 }
 
 void lAddPredicateFuncs(lClosure *c){
-	lAddNativeFunc(c,"less? <",           "(a b)","#t if A < B",  lnfLess);
-	lAddNativeFunc(c,"less-equal? <=",    "(a b)","#t if A <= B", lnfLessEqual);
-	lAddNativeFunc(c,"equal? eqv? eq? =", "(a b)","#t if A == B", lnfEqual);
-	lAddNativeFunc(c,"greater-equal? >=", "(a b)","#t if A >= B", lnfGreaterEqual);
-	lAddNativeFunc(c,"greater? >",        "(a b)","#t if A > B",  lnfGreater);
-	lAddNativeFunc(c,"nil?",              "(a)","#t if A #nil",   lnfNilPred);
+	lAddNativeFunc(c,"less? <",           "[a b]","#t if A < B",  lnfLess);
+	lAddNativeFunc(c,"less-equal? <=",    "[a b]","#t if A <= B", lnfLessEqual);
+	lAddNativeFunc(c,"equal? eqv? eq? =", "[a b]","#t if A == B", lnfEqual);
+	lAddNativeFunc(c,"greater-equal? >=", "[a b]","#t if A >= B", lnfGreaterEqual);
+	lAddNativeFunc(c,"greater? >",        "[a b]","#t if A > B",  lnfGreater);
+	lAddNativeFunc(c,"nil?",              "[a]","#t if A #nil",   lnfNilPred);
 }

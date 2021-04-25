@@ -314,6 +314,7 @@ lVal *lValAlloc(){
 	lVal *ret;
 	if(lValFFree == 0){
 		if(lValMax >= VAL_MAX-1){
+			exit(1);
 			lPrintError("lVal OOM ");
 			return NULL;
 		}
@@ -1056,44 +1057,44 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddArrayFuncs(c);
 	lAddTimeFuncs(c);
 
-	lAddNativeFunc(c,"car",     "(list)",     "Returs the head of LIST",                          lnfCar);
-	lAddNativeFunc(c,"cdr",     "(list)",     "Return the rest of LIST",                          lnfCdr);
-	lAddNativeFunc(c,"cons",    "(car cdr)",  "Return a new pair of CAR and CDR",                lnfCons);
-	lAddNativeFunc(c,"set-car!","(list car)", "Set the CAR of LIST",                           lnfSetCar);
-	lAddNativeFunc(c,"set-cdr!","(list cdr)", "Set the CDR of LIST",                           lnfSetCdr);
+	lAddNativeFunc(c,"car",     "[list]",     "Returs the head of LIST",                          lnfCar);
+	lAddNativeFunc(c,"cdr",     "[list]",     "Return the rest of LIST",                          lnfCdr);
+	lAddNativeFunc(c,"cons",    "[car cdr]",  "Return a new pair of CAR and CDR",                lnfCons);
+	lAddNativeFunc(c,"set-car!","[list car]", "Set the CAR of LIST",                           lnfSetCar);
+	lAddNativeFunc(c,"set-cdr!","[list cdr]", "Set the CDR of LIST",                           lnfSetCdr);
 
-	lAddNativeFunc(c,"apply",          "(func list)",             "Evaluate FUNC with LIST as arguments",     lnfApply);
-	lAddNativeFunc(c,"eval",           "(expr)",            "Evaluate EXPR",                           lEval);
-	lAddNativeFunc(c,"read",           "(str)",             "Read and Parses STR as an S-Expression",  lnfRead);
-	lAddNativeFunc(c,"resolve",        "(sym)",             "Resolve SYM until it is no longer a symbol",lResolve);
-	lAddNativeFunc(c,"memory-info",    "()",                "Return memory usage data",                lnfMemInfo);
-	lAddNativeFunc(c,"lambda lam λ \\","(args ...body)", "Create a new lambda",                  lnfLambda);
-	lAddNativeFunc(c,"dynamic dyn δ",  "(args ...body)", "New Dynamic scoped lambda",             lnfDynamic);
-	lAddNativeFunc(c,"object obj ω",   "(args ...body)", "Create a new object",                  lnfObject);
-	lAddNativeFunc(c,"self",           "()",             "Return the closest object closure",       lnfSelf);
-	lAddNativeFunc(c,"cl",             "(i)",            "Return closure",                          lnfCl);
-	lAddNativeFunc(c,"cl-lambda",      "(i)",            "Return closure as a lambda",              lnfClLambda);
-	lAddNativeFunc(c,"cl-text",        "(f)",            "Return closures text segment",            lnfClText);
-	lAddNativeFunc(c,"cl-data",        "(f)",            "Return closures data segment",            lnfClData);
-	lAddNativeFunc(c,"type-of",        "(val)",          "Return a symbol describing the type of VAL",lnfTypeOf);
-	lAddNativeFunc(c,"symbol-table",   "(off len)",      "Return a list of len symbols defined, accessible from the current closure from offset off",lnfSymTable);
-	lAddNativeFunc(c,"symbol-count",   "()",             "Return a count of the symbols accessible from the current closure",lnfSymCount);
+	lAddNativeFunc(c,"apply",          "[func list]",             "Evaluate FUNC with LIST as arguments",     lnfApply);
+	lAddNativeFunc(c,"eval",           "[expr]",            "Evaluate EXPR",                           lEval);
+	lAddNativeFunc(c,"read",           "[str]",             "Read and Parses STR as an S-Expression",  lnfRead);
+	lAddNativeFunc(c,"resolve",        "[sym]",             "Resolve SYM until it is no longer a symbol",lResolve);
+	lAddNativeFunc(c,"memory-info",    "[]",                "Return memory usage data",                lnfMemInfo);
+	lAddNativeFunc(c,"lambda lam λ \\","[args ...body]", "Create a new lambda",                  lnfLambda);
+	lAddNativeFunc(c,"dynamic dyn δ",  "[args ...body]", "New Dynamic scoped lambda",             lnfDynamic);
+	lAddNativeFunc(c,"object obj ω",   "[args ...body]", "Create a new object",                  lnfObject);
+	lAddNativeFunc(c,"self",           "[]",             "Return the closest object closure",       lnfSelf);
+	lAddNativeFunc(c,"cl",             "[i]",            "Return closure",                          lnfCl);
+	lAddNativeFunc(c,"cl-lambda",      "[i]",            "Return closure as a lambda",              lnfClLambda);
+	lAddNativeFunc(c,"cl-text",        "[f]",            "Return closures text segment",            lnfClText);
+	lAddNativeFunc(c,"cl-data",        "[f]",            "Return closures data segment",            lnfClData);
+	lAddNativeFunc(c,"type-of",        "[val]",          "Return a symbol describing the type of VAL",lnfTypeOf);
+	lAddNativeFunc(c,"symbol-table",   "[off len]",      "Return a list of len symbols defined, accessible from the current closure from offset off",lnfSymTable);
+	lAddNativeFunc(c,"symbol-count",   "[]",             "Return a count of the symbols accessible from the current closure",lnfSymCount);
 
-	lAddNativeFunc(c,"if",             "(pred? then ...else)","Evalute then if pred? is #t, otherwise evaluates ...else", lnfIf);
-	lAddNativeFunc(c,"cond",           "(...c)",              "Contain at least 1 cond block of form (pred? ...body) and evaluates and returns the first where pred? is #t",lnfCond);
-	lAddNativeFunc(c,"when",           "(condition ...body)", "Evaluates BODY if CONDITION is #t",lnfWhen);
-	lAddNativeFunc(c,"unless",         "(condition ...body)", "Evaluates BODY if CONDITION is #f",lnfUnless);
+	lAddNativeFunc(c,"if",             "[pred? then ...else]","Evalute then if pred? is #t, otherwise evaluates ...else", lnfIf);
+	lAddNativeFunc(c,"cond",           "[...c]",              "Contain at least 1 cond block of form (pred? ...body) and evaluates and returns the first where pred? is #t",lnfCond);
+	lAddNativeFunc(c,"when",           "[condition ...body]", "Evaluates BODY if CONDITION is #t",lnfWhen);
+	lAddNativeFunc(c,"unless",         "[condition ...body]", "Evaluates BODY if CONDITION is #f",lnfUnless);
 
-	lAddNativeFunc(c,"define def","(sym val)",     "Define a new symbol SYM and link it to value VAL",                  lnfDef);
-	lAddNativeFunc(c,"undefine!", "(sym)",         "Remove symbol SYM from the first symbol-table it is found in",     lnfUndef);
-	lAddNativeFunc(c,"let",       "(args ...body)","Create a new closure with args bound in which to evaluate ...body",lnfLet);
-	lAddNativeFunc(c,"begin",     "(...body)",     "Evaluate ...body in order and returns the last result",            lnfBegin);
-	lAddNativeFunc(c,"quote",     "(v)",           "Return v as is without evaluating",                                lnfQuote);
-	lAddNativeFunc(c,"set!",      "(s v)",         "Bind a new value v to already defined symbol s",                   lnfSet);
-	lAddNativeFunc(c,"last-pair", "(l)",           "Return the last pair of list l",                                   lnfLastPair);
+	lAddNativeFunc(c,"define def","[sym val]",     "Define a new symbol SYM and link it to value VAL",                  lnfDef);
+	lAddNativeFunc(c,"undefine!", "[sym]",         "Remove symbol SYM from the first symbol-table it is found in",     lnfUndef);
+	lAddNativeFunc(c,"let",       "[args ...body]","Create a new closure with args bound in which to evaluate ...body",lnfLet);
+	lAddNativeFunc(c,"begin",     "[...body]",     "Evaluate ...body in order and returns the last result",            lnfBegin);
+	lAddNativeFunc(c,"quote",     "[v]",           "Return v as is without evaluating",                                lnfQuote);
+	lAddNativeFunc(c,"set!",      "[s v]",         "Bind a new value v to already defined symbol s",                   lnfSet);
+	lAddNativeFunc(c,"last-pair", "[l]",           "Return the last pair of list l",                                   lnfLastPair);
 
-	lAddNativeFunc(c,"random",     "(&max)",       "Return a random value from 0 to MAX ot INT_MAX if MAX is #nil",lnfRandom);
-	lAddNativeFunc(c,"random-seed","(seed)",       "Set the Random Number Generator Seed to SEED",lnfRandomSeed);
+	lAddNativeFunc(c,"random",     "[&max]",       "Return a random value from 0 to MAX ot INT_MAX if MAX is #nil",lnfRandom);
+	lAddNativeFunc(c,"random-seed","[seed]",       "Set the Random Number Generator Seed to SEED",lnfRandomSeed);
 }
 
 extern unsigned char src_tmp_stdlib_nuj_data[];

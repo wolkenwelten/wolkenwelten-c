@@ -38,7 +38,7 @@ lVal *lnfOr(lClosure *c, lVal *v){
 }
 
 void lAddBooleanFuncs(lClosure *c){
-	lAddNativeFunc(c,"and &&", "(...args)", "#t if all ARGS evaluate to true",            lnfAnd);
-	lAddNativeFunc(c,"or ||" , "(...args)", "#t if one member of ARGS evaluates to true", lnfOr);
-	lAddNativeFunc(c,"not !",  "(val)",     "#t if VAL is #f, #f if VAL is #t",           lnfNot);
+	lAddNativeFunc(c,"and &&", "[...args]", "#t if all ARGS evaluate to true",            lnfAnd);
+	lAddNativeFunc(c,"or ||" , "[...args]", "#t if one member of ARGS evaluates to true", lnfOr);
+	lAddNativeFunc(c,"not !",  "[val]",     "#t if VAL is #f, #f if VAL is #t",           lnfNot);
 }

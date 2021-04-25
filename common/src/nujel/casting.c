@@ -152,9 +152,9 @@ lVal *lnfString(lClosure *c, lVal *t){
 }
 
 void lAddCastingFuncs(lClosure *c){
-	lAddNativeFunc(c,"bool",      "(val)","VAL -> bool ", lnfBool);
-	lAddNativeFunc(c,"int",       "(val)","VAL -> int",   lnfInt);
-	lAddNativeFunc(c,"float",     "(val)","VAL -> float", lnfFloat);
-	lAddNativeFunc(c,"vec",       "(val)","VAL -> vec",   lnfVec);
-	lAddNativeFunc(c,"string str","(val)","VAL -> string",lnfCat);
+	lAddNativeFunc(c,"bool",      "[val]","VAL -> bool ", lnfBool);
+	lAddNativeFunc(c,"int",       "[val]","VAL -> int",   lnfInt);
+	lAddNativeFunc(c,"float",     "[val]","VAL -> float", lnfFloat);
+	lAddNativeFunc(c,"vec",       "[val]","VAL -> vec",   lnfVec);
+	lAddNativeFunc(c,"string str","[val]","VAL -> string",lnfCat);
 }

@@ -316,25 +316,25 @@ lVal *lnfVZ(lClosure *c, lVal *v){
 }
 
 void lAddArithmeticFuncs(lClosure *c){
-	lAddNativeFunc(c,"add +",  "(...args)","Addition",      lnfAdd);
-	lAddNativeFunc(c,"sub -",  "(...args)","Substraction",  lnfSub);
-	lAddNativeFunc(c,"mul *",  "(...args)","Multiplication",lnfMul);
-	lAddNativeFunc(c,"div /",  "(...args)","Division",      lnfDiv);
-	lAddNativeFunc(c,"mod %",  "(...args)","Modulo",        lnfMod);
+	lAddNativeFunc(c,"add +",  "[...args]","Addition",      lnfAdd);
+	lAddNativeFunc(c,"sub -",  "[...args]","Substraction",  lnfSub);
+	lAddNativeFunc(c,"mul *",  "[...args]","Multiplication",lnfMul);
+	lAddNativeFunc(c,"div /",  "[...args]","Division",      lnfDiv);
+	lAddNativeFunc(c,"mod %",  "[...args]","Modulo",        lnfMod);
 
-	lAddNativeFunc(c,"abs","(a)",  "Return the absolute value of a",   lnfAbs);
-	lAddNativeFunc(c,"pow","(a b)","Return a raised to the power of b",lnfPow);
-	lAddNativeFunc(c,"sqrt","(a)", "Return the squareroot of a",       lnfSqrt);
-	lAddNativeFunc(c,"floor","(a)","Round a down",                     lnfFloor);
-	lAddNativeFunc(c,"ceil","(a)", "Round a up",                       lnfCeil);
-	lAddNativeFunc(c,"round","(a)","Round a",                          lnfRound);
-	lAddNativeFunc(c,"sin","(a)",  "Sin A",                            lnfSin);
-	lAddNativeFunc(c,"cos","(a)",  "Cos A",                            lnfCos);
-	lAddNativeFunc(c,"tan","(a)",  "Tan A",                            lnfTan);
+	lAddNativeFunc(c,"abs","[a]",  "Return the absolute value of a",   lnfAbs);
+	lAddNativeFunc(c,"pow","[a b]","Return a raised to the power of b",lnfPow);
+	lAddNativeFunc(c,"sqrt","[a]", "Return the squareroot of a",       lnfSqrt);
+	lAddNativeFunc(c,"floor","[a]","Round a down",                     lnfFloor);
+	lAddNativeFunc(c,"ceil","[a]", "Round a up",                       lnfCeil);
+	lAddNativeFunc(c,"round","[a]","Round a",                          lnfRound);
+	lAddNativeFunc(c,"sin","[a]",  "Sin A",                            lnfSin);
+	lAddNativeFunc(c,"cos","[a]",  "Cos A",                            lnfCos);
+	lAddNativeFunc(c,"tan","[a]",  "Tan A",                            lnfTan);
 
-	lAddNativeFunc(c,"vx","(v)","Return x part of vector v",lnfVX);
-	lAddNativeFunc(c,"vy","(v)","Return x part of vector v",lnfVY);
-	lAddNativeFunc(c,"vz","(v)","Return x part of vector v",lnfVZ);
+	lAddNativeFunc(c,"vx","[vec]","Return x part of VEC",lnfVX);
+	lAddNativeFunc(c,"vy","[vec]","Return y part of VEC",lnfVY);
+	lAddNativeFunc(c,"vz","[vec]","Return z part of VEC",lnfVZ);
 
 	lDefineVal(c,"π",  lConst(lValFloat(PI)));
 	lDefineVal(c,"PI", lConst(lValFloat(PI)));

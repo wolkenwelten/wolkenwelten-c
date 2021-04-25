@@ -1,4 +1,4 @@
 ; Time related λs
 
 ; Initialize the RNG
-(random-seed (logxor (time) (time-millliseconds)))
+[random-seed [logxor [time] [time-millliseconds]]]
