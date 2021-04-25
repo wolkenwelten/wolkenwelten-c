@@ -116,6 +116,9 @@ void handlerLispSubmit(widget *wid){
 	}
 	lispInput->vals[0] = 0;
 	lispHistoryActive = -1;
+	lispAutoCompleteCompleteSymbol = NULL;
+	lispAutoCompleteLen = 0;
+	lispAutoCompleteSelection = -1;
 	textInputFocus(wid);
 }
 

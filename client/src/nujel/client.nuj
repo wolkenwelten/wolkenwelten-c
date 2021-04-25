@@ -5,6 +5,16 @@
 (test-add #t (string? OS))
 (test-add #t (and (not server?) client?))
 
+(def player-active-item-id (λ ()
+	"Return the Id of the currenlty selected item"
+	(car (player-inventory (player-active-slot)))
+))
+
+(def player-active-item-amount (λ ()
+	"Return the Id of the currenlty selected item"
+	(cdr (player-inventory (player-active-slot)))
+))
+
 (def error (λ (...args) "Prints its arguments into the LISP console and might alert the user"
 	(console-print ("  " (apply cat ...args)))))
 

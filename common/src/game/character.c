@@ -115,18 +115,22 @@ void characterToggleThrowAim(character *c, float zoom){
 		characterStopAim(c);
 		return;
 	}
-	c->zoomFactor = zoom;
+	c->goalZoomFactor = zoom;
 	c->flags |= CHAR_AIMING;
 	c->flags |= CHAR_THROW_AIM;
 }
 void characterToggleAim(character *c, float zoom){
 	if(c == NULL){return;}
-	c->zoomFactor = zoom;
 	c->flags ^= CHAR_AIMING;
+	if(c->flags & CHAR_AIMING){
+		c->goalZoomFactor = zoom;
+	}else{
+		c->goalZoomFactor = 1.f;
+	}
 }
 void characterStopAim(character *c){
 	if(c == NULL){return;}
-	c->zoomFactor = 1.f;
+	c->goalZoomFactor = 1.f;
 	c->flags &= ~(CHAR_AIMING | CHAR_THROW_AIM);
 }
 
@@ -394,7 +398,7 @@ void characterMove(character *c, const vec mov){
 
 void characterRotate(character *c, const vec rot){
 	c->rot = vecAdd(c->rot,rot);
-	c->inaccuracy += vecAbsSum(rot)*(1.f+(c->aimFade*c->zoomFactor));
+	c->inaccuracy += vecAbsSum(rot) * c->zoomFactor;
 
 	if(c->rot.pitch < -90.f){
 		 c->rot.pitch = -90.f;

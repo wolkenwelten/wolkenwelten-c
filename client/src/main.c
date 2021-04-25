@@ -140,14 +140,7 @@ void worldUpdate(){
 	resetOverlayColor();
 	for(;lastTick < curTick;lastTick+=msPerTick){
 		if(!isInventoryOpen()){
-			if(inputPrimary()){
-				characterPrimary(player);
-			}else{
-				characterStopMining(player);
-			}
-			if(inputSecondary()){characterSecondary(player);}
-			if(inputTertiary()){characterTertiary(player);}
-			if(inputThrow()){characterThrow(player);}
+			lispInputTick();
 		}
 		charactersUpdate();
 		grenadeUpdateAll();

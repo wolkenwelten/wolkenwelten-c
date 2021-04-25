@@ -1,4 +1,5 @@
-(def input-keydown (arr-new 256))
+(def input-keyboard-handler (arr-new 256))
+(def input-keyboard-state   (arr-new 256))
 
 (def key-a  4)
 (def key-b  5)
@@ -38,7 +39,6 @@
 (def key-9 38)
 (def key-0 39)
 
-
 (def key-f1    58)
 (def key-f2    59)
 (def key-f3    60)
@@ -53,31 +53,62 @@
 (def key-f12   69)
 (def key-print 70)
 
-(arr-set! input-keydown key-c (λ (code) (cons-mode!  (not (cons-mode!)))))
-(arr-set! input-keydown key-e (λ (code) (fire-hook)))
-(arr-set! input-keydown key-m (λ (code) (debug-info! (not (debug-info!)))))
-(arr-set! input-keydown key-n (λ (code) (no-clip!    (not (no-clip!)))))
+(def input-keyboard-handler-default (λ (code value)
+	"Default handler to be used for continuously firing actions"
 
-(arr-set! input-keydown key-f1  (λ (code) (third-person! #f) (save-options)))
-(arr-set! input-keydown key-f2  (λ (code) (s (debug-stuff!))))
-(arr-set! input-keydown key-f3  (λ (code) (third-person! #t) (save-options)))
-(arr-set! input-keydown key-f10 (λ (code) (wire-frame! (not (wire-frame!)))))
-(unless (eq? OS "Emscripten") (input-keydown key-f11 (λ (code) (fullscreen! (not (fullscreen!))) (save-options))))
+	(arr-set! input-keyboard-state code (> value 0))
+))
 
-(def inv-active-kh (λ (code) "Sets the players active item depending on the keycode passed" (inv-active-slot (- code 30)) (stop-anim)))
-(arr-set! input-keydown key-1 inv-active-kh)
-(arr-set! input-keydown key-2 inv-active-kh)
-(arr-set! input-keydown key-3 inv-active-kh)
-(arr-set! input-keydown key-4 inv-active-kh)
-(arr-set! input-keydown key-5 inv-active-kh)
-(arr-set! input-keydown key-6 inv-active-kh)
-(arr-set! input-keydown key-7 inv-active-kh)
-(arr-set! input-keydown key-8 inv-active-kh)
-(arr-set! input-keydown key-9 inv-active-kh)
-(arr-set! input-keydown key-0 inv-active-kh)
-(arr-set! input-keydown key-print (λ (code) (screenshot)))
-(def log-keydown (λ () "Overwrites all keydown handler so they print their respective keycode" (arr-fill! input-keydown (λ (code) (say ("KeyCode: " code))))))
+(arr-set! input-keyboard-handler key-r input-keyboard-handler-default)
+(arr-set! input-keyboard-handler key-q input-keyboard-handler-default)
+
+(arr-set! input-keyboard-handler key-c   (λ (code value) (when value (cons-mode!  (not (cons-mode!))))))
+(arr-set! input-keyboard-handler key-e   (λ (code value) (when value (fire-hook))))
+(arr-set! input-keyboard-handler key-m   (λ (code value) (when value (debug-info! (not (debug-info!))))))
+(arr-set! input-keyboard-handler key-n   (λ (code value) (when value (no-clip!    (not (no-clip!))))))
+
+(arr-set! input-keyboard-handler key-f1  (λ (code value) (when value (third-person! #f) (save-options))))
+(arr-set! input-keyboard-handler key-f2  (λ (code value) (when value (s (debug-stuff!)))))
+(arr-set! input-keyboard-handler key-f3  (λ (code value) (when value (third-person! #t) (save-options))))
+(arr-set! input-keyboard-handler key-f10 (λ (code value) (when value (wire-frame! (not (wire-frame!))))))
+
+(unless (eq? OS "Emscripten")
+	(input-keyboard-handler key-f11 (λ (code value)
+		(when value
+			(fullscreen! (not (fullscreen!)))
+			(save-options)
+		)
+	))
+)
+
+(def inv-active-kh (λ (code value)
+	"Sets the players active item depending on the keycode passed"
+
+	(when value
+		(player-active-slot! (- code 30))
+		(stop-anim)
+	)
+))
+
+(arr-set! input-keyboard-handler key-1 inv-active-kh)
+(arr-set! input-keyboard-handler key-2 inv-active-kh)
+(arr-set! input-keyboard-handler key-3 inv-active-kh)
+(arr-set! input-keyboard-handler key-4 inv-active-kh)
+(arr-set! input-keyboard-handler key-5 inv-active-kh)
+(arr-set! input-keyboard-handler key-6 inv-active-kh)
+(arr-set! input-keyboard-handler key-7 inv-active-kh)
+(arr-set! input-keyboard-handler key-8 inv-active-kh)
+(arr-set! input-keyboard-handler key-9 inv-active-kh)
+(arr-set! input-keyboard-handler key-0 inv-active-kh)
+(arr-set! input-keyboard-handler key-print (λ (code value) (when value (screenshot))))
 
 (test-add #t (int? key-1))
-(test-add #t (array? input-keydown))
+(test-add #t (array? input-keyboard-handler))
 (test-add 58 key-f1)
+
+(def input-keyboard-tick (λ ()
+	"Keyboard input handler"
+
+	(when (input-keyboard-state key-r) (player-tertiary!))
+	(when (input-keyboard-state key-q) (player-throw!))
+))

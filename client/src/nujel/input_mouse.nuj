@@ -1,0 +1,27 @@
+(def input-mouse-handler (arr-new 6))
+(def input-mouse-tick)
+
+(let ()
+	(def input-mouse-button-left  #f)
+	(def input-mouse-button-right #f)
+
+	(set! input-mouse-tick (λ () "Mouse Input handler"
+		(when input-mouse-button-left  (player-primary!))
+		(when input-mouse-button-right (player-secondary!))
+	))
+
+	(arr-set! input-mouse-handler 0 (λ (code value)
+		(set! input-mouse-button-left (> value 0))
+	))
+	(arr-set! input-mouse-handler 2 (λ (code value)
+		(set! input-mouse-button-right (> value 0))
+	))
+
+	(arr-set! input-mouse-handler 5 (λ (code value)
+		(let ((newvalue (- (player-active-slot) value)))
+			(when (< newvalue 0) (set! newvalue 9))
+			(when (> newvalue 9) (set! newvalue 0))
+			(player-active-slot! newvalue)
+		)
+	))
+)

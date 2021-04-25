@@ -2,7 +2,8 @@
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/lisp.h"
 
-void lispKeyDown     (int code);
+void lispInputHandler(lSymbol *input, int key, int action);
+void lispInputTick   ();
 void lispInit        ();
 void lispFree        ();
 const char *lispEval (const char *str);

@@ -5,7 +5,7 @@
 extern character *player;
 extern int        playerID;
 
-void  characterPrimary        (      character *c);
+void  characterDoPrimary      (      character *c);
 void  characterSecondary      (      character *c);
 void  characterTertiary       (      character *c);
 void  characterThrow          (      character *c);

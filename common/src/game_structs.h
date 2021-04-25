@@ -127,7 +127,7 @@ typedef struct {
 	 u32  flags;
 
 	float gliderFade;
-	float aimFade;
+	float goalZoomFactor;
 	float zoomFactor;
 
 	mesh *eMesh;

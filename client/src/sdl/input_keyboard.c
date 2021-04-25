@@ -77,7 +77,7 @@ vec doKeyboardupdate(vec vel){
 	if(keysPressed[13]){rot.y =  1;}
 	if(keysPressed[14]){rot.y = -1;}
 	if(keysPressed[15]){rot.x =  1;}
-	float rotSpeed = 2.f / (1.f + (player->aimFade * player->zoomFactor));
+	float rotSpeed = 2.f / player->zoomFactor;
 	characterRotate(player,vecMulS(rot,rotSpeed));
 
 	/*
@@ -98,7 +98,13 @@ int keyboardCmdKey(const SDL_Event *e){
 }
 
 void keyboardEventHandler(const SDL_Event *e){
+	static lSymbol *keyInput = NULL;
+	if(keyInput == NULL){keyInput = lSymS("input-keyboard-handler");}
+
 	if(e->type == SDL_KEYUP){
+		if(!textInputActive()){
+			lispInputHandler(keyInput,e->key.keysym.scancode,0);
+		}
 		switch(e->key.keysym.scancode){
 		case SDL_SCANCODE_UP:
 		case SDL_SCANCODE_W:
@@ -172,7 +178,9 @@ void keyboardEventHandler(const SDL_Event *e){
 	}
 
 	if(e->type == SDL_KEYDOWN){
-		if(!textInputActive()){lispKeyDown(e->key.keysym.scancode);}
+		if(!textInputActive()){
+			lispInputHandler(keyInput,e->key.keysym.scancode,1);
+		}
 		switch(e->key.keysym.scancode){
 		case SDL_SCANCODE_UP:
 		case SDL_SCANCODE_W:

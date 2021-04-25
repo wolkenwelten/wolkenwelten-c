@@ -65,13 +65,13 @@ void characterInit(character *c){
 	}
 	memset(c,0,sizeof(character));
 
-	c->breathing     = rngValM(1024);
-	c->maxhp = c->hp = 20;
-	c->blockMiningX  = c->blockMiningY = c->blockMiningZ = -1;
-	c->pos           = vecNew(0,0,0);
-	c->rot           = vecNew(135.f,15.f,0.f);
-	c->eMesh         = meshPear;
-	c->zoomFactor    = 1.f;
+	c->breathing      = rngValM(1024);
+	c->maxhp = c->hp  = 20;
+	c->blockMiningX   = c->blockMiningY = c->blockMiningZ = -1;
+	c->pos            = vecNew(0,0,0);
+	c->rot            = vecNew(135.f,15.f,0.f);
+	c->eMesh          = meshPear;
+	c->goalZoomFactor = c->zoomFactor = 1.f;
 
 	if(c == player){
 		sfxLoop(sfxWind,0.f);
@@ -288,10 +288,8 @@ void characterHit(character *c){
 	characterAddCooldown(c,80);
 }
 
-void characterPrimary(character *c){
-	item *itm = &c->inventory[c->activeItem];
-	if(itemDoPrimary(itm,c)){return;}
-	ivec los = characterLOSBlock(c,0);
+void characterDoPrimary(character *c){
+	const ivec los = characterLOSBlock(c,0);
 	if(los.x < 0){
 		if(c->actionTimeout >= 0){characterHit(c);}
 		c->blockMiningX = -1;
@@ -311,25 +309,6 @@ void characterPrimary(character *c){
 
 void characterStopMining(character *c){
 	c->blockMiningX = c->blockMiningY = c->blockMiningZ = -1;
-}
-
-void characterSecondary(character *c){
-	item *cItem = characterGetItemBarSlot(c,c->activeItem);
-	if(itemIsEmpty(cItem)){return;}
-	itemDoSecondary(cItem,c);
-}
-
-void characterTertiary(character *c){
-	item *cItem = characterGetItemBarSlot(c,c->activeItem);
-	if(itemIsEmpty(cItem)){return;}
-	itemDoTertiary(cItem,c);
-}
-
-void characterThrow(character *c){
-	item *cItem = characterGetItemBarSlot(c,c->activeItem);
-	if(!itemIsEmpty(cItem)){
-		throwableTryAim(cItem,c);
-	}
 }
 
 void characterDropItem(character *c, int i){
@@ -580,12 +559,12 @@ void characterUpdateFalling(character *c){
 }
 
 static void characterUpdateAim(character *c){
-	if(c->flags & CHAR_AIMING){
-		c->aimFade += 0.02f;
-	}else{
-		c->aimFade -= 0.02f;
+	float diff = c->goalZoomFactor - c->zoomFactor;
+	if(fabsf(diff) < 0.001f){
+		c->zoomFactor = c->goalZoomFactor;
+		return;
 	}
-	c->aimFade = MINMAX(0,1,c->aimFade);
+	c->zoomFactor += diff * 0.03f;
 }
 
 void characterUpdate(character *c){

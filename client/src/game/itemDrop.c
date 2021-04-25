@@ -30,7 +30,7 @@
 void itemDropNewC(const character *chr,const item *itm){
 	const vec vel = vecMulS(vecDegToVec(chr->rot),0.03f);
 	const vec pos = vecAdd(vecAdd(chr->pos,vecNew(0,0.5,0)),vecMulS(vel,6.f));
-	msgItemDropNew(-1,vecAdd(pos,vecMulS(vel,60)),vel,itm);
+	msgItemDropNew(-1,vecAdd(pos,vecMulS(vel,100)),vel,itm);
 }
 
 void itemDropNewP(const vec pos,const item *itm){

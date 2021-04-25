@@ -42,6 +42,9 @@
 (def map (λ (f l) "Runs f over every item in list l and returns the resulting list"
 	(if (nil? l) l (cons (f (car l)) (map f (cdr l))))))
 
+(def eval-all (λ (list) "Run every lambda contained within the LIST"
+	(if (nil? list) #nil (begin ((car list)) (eval-all (cdr list))))))
+
 (def append-iter (λ (a b) "Iterator for append"
 	(if (nil? a) b (append-iter (cdr a) (cons (car a) b)))))
 (def append (λ (a b) "Appends to two lists a and b together"

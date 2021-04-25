@@ -163,20 +163,6 @@ bool itemDoPrimary(item *cItem, character *cChar){
 	return false;
 }
 
-bool itemDoSecondary(item *cItem, character *cChar){
-	if((cItem == NULL) || (cChar == NULL)){return false;}
-	if((cItem->ID < 256) && blockTypeValid(cItem->ID)){
-		if(throwableTry(cItem,cChar,0.025f, 1, 0)){return true;}
-		return characterPlaceBlock(cChar, cItem);
-	}
-	if((cItem->ID >= 256) && (cItem->ID < 512)){
-		lVal *ret = lispCallFuncI("item-secondary", cItem->ID);
-		if((ret == NULL) || ((ret->type == ltBool) && (!ret->vBool))){return false;}
-		return true;
-	}
-	return false;
-}
-
 bool itemDoTertiary(item *cItem, character *cChar){
 	if((cItem == NULL) || (cChar == NULL)){return false;}
 	if((cItem->ID < 256) && blockTypeValid(cItem->ID)){

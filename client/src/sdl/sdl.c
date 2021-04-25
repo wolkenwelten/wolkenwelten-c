@@ -278,22 +278,22 @@ unsigned int getTicks(){
 }
 
 bool inputSneak(){
-	return gamepadSneak()     || keyboardSneak()     || mouseSneak()     || touchSneak();
+	return gamepadSneak()     || keyboardSneak()     || touchSneak();
 }
 bool inputBoost(){
-	return gamepadBoost()     || keyboardBoost()     || mouseBoost()     || touchBoost();
+	return gamepadBoost()     || keyboardBoost()     || touchBoost();
 }
 bool inputPrimary(){
-	return gamepadPrimary()   || keyboardPrimary()   || mousePrimary()   || touchPrimary();
+	return gamepadPrimary()   || keyboardPrimary()   || touchPrimary();
 }
 bool inputSecondary(){
-	return gamepadSecondary() || keyboardSecondary() || mouseSecondary() || touchSecondary();
+	return gamepadSecondary() || keyboardSecondary() || touchSecondary();
 }
 bool inputTertiary(){
-	return gamepadTertiary()  || keyboardTertiary()  || mouseTertiary()  || touchTertiary();
+	return gamepadTertiary()  || keyboardTertiary()  || touchTertiary();
 }
 bool inputThrow(){
-	return gamepadThrow()     || keyboardThrow()     || mouseThrow()     || touchThrow();
+	return gamepadThrow()     || keyboardThrow()     || touchThrow();
 }
 
 bool gameControlsInactive(){

@@ -217,7 +217,7 @@ void particleDraw(){
 	shaderBind(sParticle);
 	matMul(matMVP,matView,matProjection);
 	shaderMatrix(sParticle,matMVP);
-	shaderSizeMul(sCloud,1.f + (player->aimFade * player->zoomFactor));
+	shaderSizeMul(sCloud,player->zoomFactor);
 	glDepthMask(GL_FALSE);
 
 	glBindVertexArray(particleVAO);
