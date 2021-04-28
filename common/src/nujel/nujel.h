@@ -110,7 +110,7 @@ extern lNFunc   lNFuncList  [NFN_MAX];
 extern lVec     lVecList    [VEC_MAX];
 extern lSymbol  lSymbolList [SYM_MAX];
 
-extern lSymbol *symNull,*symQuote,*symArr,*symIf,*symCond,*symWhen,*symUnless,*symLet,*symBegin,*symStringAt,*symIntAt,*symFloatAt,*symVecAt;
+extern lSymbol *symNull,*symQuote,*symArr,*symIf,*symCond,*symWhen,*symUnless,*symLet,*symBegin,*symIntAt,*symFloatAt,*symVecAt;
 
 void      lInit             ();
 int       lMemUsage         ();

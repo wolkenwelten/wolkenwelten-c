@@ -143,11 +143,6 @@
 	[lognot [apply logand ...l]]
 ]]
 
-[def string@ [λ [...l]
-	"String convenience function"
-	[apply cat ...l]
-]]
-
 [def int@ [λ [...l]
 	"Int convenience function"
 	[apply infix ...l]

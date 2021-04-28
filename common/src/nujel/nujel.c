@@ -908,7 +908,7 @@ lVal *lEval(lClosure *c, lVal *v){
 		case ltPair:
 			return lEval(c,ret);
 		case ltString:
-			return v->vList.cdr == NULL ? ret : lEval(c,lCons(lValSymS(symStringAt),v));
+			return lnfCat(c,v);
 		case ltInt:
 			return v->vList.cdr == NULL ? ret : lEval(c,lCons(lValSymS(symIntAt),v));
 		case ltFloat:
