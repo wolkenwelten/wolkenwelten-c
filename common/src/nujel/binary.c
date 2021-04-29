@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "arithmetic.h"
 #include "binary.h"
 #include "casting.h"
 
@@ -50,7 +51,6 @@ lVal *lnfLogNot (lClosure *c, lVal *v){
 	return lValInt(~lCar(t)->vInt);
 }
 
-#include <stdio.h>
 lVal *lnfAsh(lClosure *c, lVal *v){
 	if((v == NULL) || (v->type != ltPair)){return lValInt(0);}
 	lVal *vals  = lEvalCastSpecific(c,v,ltInt);
@@ -66,10 +66,26 @@ lVal *lnfAsh(lClosure *c, lVal *v){
 	}
 }
 
+lVal *lnfAshRight(lClosure *c, lVal *v){
+	if((v == NULL) || (v->type != ltPair)){return lValInt(0);}
+	lVal *vals  = lEvalCastSpecific(c,v,ltInt);
+	if(vals == NULL){return lValInt(0);}
+	lVal *val   = lCar(vals);
+	lVal *shift = lCadr(vals);
+	if(shift == NULL){return val;}
+	const int sv = shift->vInt;
+	if(sv > 0){
+		return lValInt(val->vInt >> shift->vInt);
+	}else{
+		return lValInt(val->vInt << -sv);
+	}
+}
+
 void lAddBinaryFuncs(lClosure *c){
-	lAddNativeFunc(c,"logand &","[...args]","And ...ARGS together",                 lnfLogAnd);
-	lAddNativeFunc(c,"logior |","[...args]","Or ...ARGS",                           lnfLogIor);
-	lAddNativeFunc(c,"logxor ^","[...args]","Xor ...ARGS",                          lnfLogXor);
-	lAddNativeFunc(c,"lognot ~","[val]",    "Binary not of VAL",                    lnfLogNot);
-	lAddNativeFunc(c,"ash <<",  "[value amount]","Shift VALUE left AMOUNT bits",    lnfAsh);
+	lAddInfix(lAddNativeFunc(c,"logand &","[...args]","And ...ARGS together",             lnfLogAnd));
+	lAddInfix(lAddNativeFunc(c,"logior |","[...args]","Or ...ARGS",                       lnfLogIor));
+	lAddInfix(lAddNativeFunc(c,"logxor ^","[...args]","Xor ...ARGS",                      lnfLogXor));
+	lAddNativeFunc(c,"lognot ~","[val]",    "Binary not of VAL",                          lnfLogNot);
+	lAddInfix(lAddNativeFunc(c,"ash <<",  "[value amount]","Shift VALUE left AMOUNT bits",lnfAsh));
+	lAddInfix(lAddNativeFunc(c,">>",  "[value amount]","Shift VALUE left AMOUNT bits",    lnfAshRight));
 }

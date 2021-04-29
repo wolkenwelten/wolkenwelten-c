@@ -143,50 +143,6 @@
 	[lognot [apply logand ...l]]
 ]]
 
-[def int@ [λ [...l]
-	"Int convenience function"
-	[apply infix ...l]
-]]
-
-[def float@ [λ [...l]
-	"Float convenience function"
-	[apply infix ...l]
-]]
-
-[def vec@ [λ [...l]
-	"Vec convenience function"
-	[apply infix ...l]
-]]
-
-[def infix]
-[let []
-	[def infix-swap? [λ [operation]
-		[cond [[equal? / operation] #t]
-		      [[equal? << operation] #t]
-		      [#t #f]
-		]
-	]]
-
-	[def infix-operator-iter [λ [expr operation return]
-		[cond [[nil? expr] return]
-		      [[eq? [cadr expr] operation]
-			[infix-operator-iter [cdddr expr] operation
-				[let [[a [caddr expr]] [b [car expr]]]
-				[cons [if [infix-swap? operation] [operation b a] [operation a b]] return]]]]
-		      [#t [infix-operator-iter [cdr expr] operation [cons [car expr] return]]]
-		]
-	]]
-
-	[def infix-iter [λ [expr operators]
-		[if [nil? operators] expr [infix-iter [infix-operator-iter expr [car operators]] [cdr operators]]]
-	]]
-
-	[set! infix [λ [expr]
-		"Evaluates EXPR using infix notation"
-		[car [infix-iter expr '[/ * + - & ^ << >> ]]]
-	]]
-]
-
 [def mem [λ [] "Return some pretty printed memory usage information"
 	[let [[info [memory-info]]] [cat
 		[ansi-white  "Memory Info"] "\n"

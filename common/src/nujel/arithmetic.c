@@ -315,15 +315,22 @@ lVal *lnfVZ(lClosure *c, lVal *v){
 	}
 }
 
+lVal *infixFunctions[32];
+int infixFunctionCount = 0;
+
+void lAddInfix(lVal *v){
+	infixFunctions[infixFunctionCount++] = v;
+}
+
 void lAddArithmeticFuncs(lClosure *c){
-	lAddNativeFunc(c,"add +",  "[...args]","Addition",      lnfAdd);
-	lAddNativeFunc(c,"sub -",  "[...args]","Substraction",  lnfSub);
-	lAddNativeFunc(c,"mul *",  "[...args]","Multiplication",lnfMul);
-	lAddNativeFunc(c,"div /",  "[...args]","Division",      lnfDiv);
-	lAddNativeFunc(c,"mod %",  "[...args]","Modulo",        lnfMod);
+	lAddInfix(lAddNativeFunc(c,"mod %",  "[...args]","Modulo",        lnfMod));
+	lAddInfix(lAddNativeFunc(c,"div /",  "[...args]","Division",      lnfDiv));
+	lAddInfix(lAddNativeFunc(c,"mul *",  "[...args]","Multiplication",lnfMul));
+	lAddInfix(lAddNativeFunc(c,"sub -",  "[...args]","Substraction",  lnfSub));
+	lAddInfix(lAddNativeFunc(c,"add +",  "[...args]","Addition",      lnfAdd));
 
 	lAddNativeFunc(c,"abs","[a]",  "Return the absolute value of a",   lnfAbs);
-	lAddNativeFunc(c,"pow","[a b]","Return a raised to the power of b",lnfPow);
+	lAddInfix(lAddNativeFunc(c,"pow","[a b]","Return a raised to the power of b",lnfPow));
 	lAddNativeFunc(c,"sqrt","[a]", "Return the squareroot of a",       lnfSqrt);
 	lAddNativeFunc(c,"floor","[a]","Round a down",                     lnfFloor);
 	lAddNativeFunc(c,"ceil","[a]", "Round a up",                       lnfCeil);
@@ -338,4 +345,37 @@ void lAddArithmeticFuncs(lClosure *c){
 
 	lDefineVal(c,"π",  lConst(lValFloat(PI)));
 	lDefineVal(c,"PI", lConst(lValFloat(PI)));
+}
+
+lVal *lnfInfix (lClosure *c, lVal *v){
+	lVal *l = NULL, *start = NULL;
+	for(lVal *cur=v;cur != NULL;cur=lCdr(cur)){
+		lVal *cv = lEval(c,lCar(cur));
+		lVal *new = lCons(cv,NULL);
+		if(l == NULL){
+			l = start = new;
+		}else{
+			l->vList.cdr = new;
+			l = new;
+		}
+	}
+	for(int i=0;i<infixFunctionCount;i++){
+		lVal *func;
+		for(lVal *cur=start;cur != NULL;cur=lCdr(cur)){
+			tryAgain: func = lCadr(cur);
+			if((func == NULL) || (func->vCdr == 0))  {break;}
+			if(func->vCdr != infixFunctions[i]->vCdr){continue;}
+			if(func->type != infixFunctions[i]->type){continue;}
+			lVal *args = cur;
+			lVal *tmp = args->vList.car;
+			args->vList.car = lCadr(args);
+			lCdr(args)->vList.car = tmp;
+			tmp = lCddr(args)->vList.cdr;
+			lCddr(args)->vList.cdr = NULL;
+			args->vList.car = lEval(c,args);
+			args->vList.cdr = tmp;
+			goto tryAgain;
+		}
+	}
+	return start;
 }

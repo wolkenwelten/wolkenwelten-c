@@ -139,7 +139,7 @@ void      lDisplayErrorVal  (lVal *v);
 void      lWriteVal         (lVal *v);
 
 void      lDefineVal        (lClosure *c, const char *sym, lVal *val);
-void      lAddNativeFunc    (lClosure *c, const char *sym, const char *args, const char *doc, lVal *(*func)(lClosure *,lVal *));
+lVal     *lAddNativeFunc    (lClosure *c, const char *sym, const char *args, const char *doc, lVal *(*func)(lClosure *,lVal *));
 lVal     *lValNativeFunc    (lVal *(*func)(lClosure *,lVal *), lVal *args, lVal *docString);
 lVal     *lGetClosureSym    (uint      c, lSymbol *s);
 lVal     *lResolveClosureSym(uint      c, lSymbol *s);

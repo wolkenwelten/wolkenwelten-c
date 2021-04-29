@@ -910,11 +910,9 @@ lVal *lEval(lClosure *c, lVal *v){
 		case ltString:
 			return lnfCat(c,v);
 		case ltInt:
-			return v->vList.cdr == NULL ? ret : lEval(c,lCons(lValSymS(symIntAt),v));
 		case ltFloat:
-			return v->vList.cdr == NULL ? ret : lEval(c,lCons(lValSymS(symFloatAt),v));
 		case ltVec:
-			return v->vList.cdr == NULL ? ret : lEval(c,lCons(lValSymS(symVecAt),v));
+			return v->vList.cdr == NULL ? ret : lnfInfix(c,v);
 		case ltArray:
 			return v->vList.cdr == NULL ? ret : lnfArrRef(c,v);
 		}
@@ -958,7 +956,7 @@ lVal *lnfRead(lClosure *c, lVal *v){
 	}
 }
 
-void lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *doc, lVal *(*func)(lClosure *,lVal *)){
+lVal *lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *doc, lVal *(*func)(lClosure *,lVal *)){
 	lVal *lNF   = lValNativeFunc(func,lRead(args),lValString(doc)); // Generate the Value first so each symbol points to the same value
 	const char *cur = sym;
 
@@ -972,16 +970,17 @@ void lAddNativeFunc(lClosure *c, const char *sym, const char *args, const char *
 		lVal *var = lDefineClosureSym(lCloI(c),lSymSL(cur,len));
 		if(var == NULL){
 			lPrintError("Error adding NFunc %s\n",sym);
-			return;
+			return NULL;
 		}
 		var->vList.car = lNF;
 		for(;len<32;len++){ // Advance to the next non whitespace character
-			if(cur[len] == 0)     {return;} // Or return if we reached the final 0 byte
+			if(cur[len] == 0)     {return lNF;} // Or return if we reached the final 0 byte
 			if(!isspace((u8)cur[len])){break;}
 		}
 		cur += len;
 	}
 	lPrintError("Quite the amount of aliases we have there (%s)\n",sym);
+	return NULL;
 }
 
 static lVal *lnfTypeOf(lClosure *c, lVal *v){

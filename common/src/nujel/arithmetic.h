@@ -21,4 +21,7 @@ lVal *lnfVX    (lClosure *c, lVal *v);
 lVal *lnfVY    (lClosure *c, lVal *v);
 lVal *lnfVZ    (lClosure *c, lVal *v);
 
+lVal *lnfInfix (lClosure *c, lVal *v);
+void lAddInfix(lVal *v);
+
 void lAddArithmeticFuncs(lClosure *c);
