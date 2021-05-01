@@ -104,9 +104,9 @@
 [arr-set! input-keyboard-handler key-tab [λ [code value] [when value [toggle-inventory!]]]]
 
 [unless [eq? OS "Emscripten"]
-	[input-keyboard-handler key-f11 [λ [code value]
+	[arr-set! input-keyboard-handler key-f11 [λ [code value]
 		[when value
-			[fullscreen! [not [fullscreen!]]]
+			[fullscreen! [not [fullscreen?]]]
 			[save-options]
 		]
 	]]

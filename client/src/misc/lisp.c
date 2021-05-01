@@ -151,6 +151,11 @@ static lVal *wwlnfFullscreen(lClosure *c, lVal *v){
 		lVal *t = lnfBool(c,lEval(c,lCar(v)));
 		setFullscreen(t->vBool);
 	}
+	return NULL;
+}
+
+static lVal *wwlnfFullscreenPred(lClosure *c, lVal *v){
+	(void)c;(void)v;
 	return lValBool(optionFullscreen);
 }
 
@@ -728,8 +733,9 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"mouse-hidden",   "()",                "Return if the mouse cursor is currently hidden",                 wwlnfMouseHidden);
 	lAddNativeFunc(c,"server-add!",    "(name ip)",         "Adds name ip to server list",                                    wwlnfServerAdd);
 	lAddNativeFunc(c,"third-person!",  "(b)",               "Sets third person view to b",                                    wwlnfThirdPerson);
-	lAddNativeFunc(c,"fullscreen",     "(b)",               "Sets fullscreen to b",                                           wwlnfFullscreen);
-	lAddNativeFunc(c,"windowed",       "(&w &h &x &y)",     "Switches to windowed mode of size &w/&h at position &x/&y",      wwlnfWindowed);
+	lAddNativeFunc(c,"fullscreen?",    "()",                "#t if Fullscreen",                                               wwlnfFullscreenPred);
+	lAddNativeFunc(c,"fullscreen!",    "(b)",               "Sets fullscreen to b",                                           wwlnfFullscreen);
+	lAddNativeFunc(c,"windowed",       "(&width &height &x &y)",     "Switches to windowed mode of size WIDTH/HEIGHT at position X/Y", wwlnfWindowed);
 	lAddNativeFunc(c,"window-width",   "()",                "Returns the width of the widow in pixels",                       wwlnfWindowWidth);
 	lAddNativeFunc(c,"window-height",  "()",                "Returns the height of the widow in pixels",                      wwlnfWindowHeight);
 	lAddNativeFunc(c,"save-options",   "()",                "Save options to disk",                                           wwlnfSaveOptions);
