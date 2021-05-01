@@ -168,11 +168,17 @@ void menuKeyClick(int btn){
 	}
 }
 
-void menuCancel(){
-	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return;}
-	if(gameRunning){return;}
+bool menuCancel(){
+	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return false;}
+	if(gameRunning){
+		printf("menuCancel\n");
+		closeMainMenu();
+		lispPanelClose();
+		return true;
+	}
 	openMainMenu();
 	lispPanelClose();
+	return true;
 }
 
 void menuSetError(const char *error){

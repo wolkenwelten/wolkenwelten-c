@@ -67,7 +67,7 @@ void keyboardEventHandler(const SDL_Event *e){
 			lispPanelOpen();
 			break;
 		case SDL_SCANCODE_ESCAPE:
-			menuCancel();
+			if(menuCancel()){break;}
 			guiEscape();
 			break;
 		case SDL_SCANCODE_DELETE:
