@@ -150,7 +150,7 @@ void loadOptionFile(const char *fname){
 	size_t len = 0;
 	char *b = loadFile(fname,&len);
 	if((b == NULL) || (len == 0)){return;}
-	lispEval(b);
+	lispEval(b,false);
 	free(b);
 }
 

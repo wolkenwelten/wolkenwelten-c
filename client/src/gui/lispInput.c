@@ -110,7 +110,7 @@ void handlerLispSubmit(widget *wid){
 	}else{
 		snprintf(buf,sizeof(buf),"> %s",wid->vals);
 		widgetAddEntry(lispLog, buf);
-		const char *result = lispEval(wid->vals);
+		const char *result = lispEval(wid->vals,true);
 		snprintf(buf,sizeof(buf),"  %s",result);
 		widgetAddEntry(lispLog, buf);
 	}
@@ -250,7 +250,7 @@ void lispPanelCheckAutoCompleteDescription(){
 
 	char sBuf[128];
 	snprintf(sBuf,sizeof(sBuf),"[describe \"%s\"]",lispAutoCompleteDescriptionSymbol->c);
-	const char *str = lispEval(sBuf);
+	const char *str = lispEval(sBuf,true);
 	snprintf(lispAutoCompleteDescription,sizeof(lispAutoCompleteDescription),"%s",str);
 	lispAutoCompleteDescription[sizeof(lispAutoCompleteDescription)-1]=0;
 }

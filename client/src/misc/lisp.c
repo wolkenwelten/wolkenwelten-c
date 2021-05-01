@@ -287,7 +287,7 @@ static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 	lVal *t = lEval(c,lCar(v));
 	if((t == NULL) || (t->type != ltString) || lStrNull(t)){return NULL;}
 	widgetAddEntry(lispLog, lStrData(t));
-	return t;
+	return NULL;
 }
 
 static lVal *wwlnfSfxPlay(lClosure *c, lVal *v){
@@ -784,17 +784,13 @@ void lispFree(){
 	lClosureFree(clRoot - lClosureList);
 }
 
-const char *lispEval(const char *str){
+const char *lispEval(const char *str, bool humanReadable){
 	static char reply[4096];
 	memset(reply,0,sizeof(reply));
 	lVal *v = lnfBegin(clRoot,lRead(str));
-	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,false);
-
-	int soff,slen,len = strnlen(reply,sizeof(reply)-1);
-	for(soff = 0;    isspace((u8)reply[soff]) || (reply[soff] == '"');soff++){}
-	for(slen = len-1;isspace((u8)reply[slen]) || (reply[slen] == '"');slen--){reply[slen] = 0;}
-
-	return reply+soff;
+	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,humanReadable);
+	lClosureGC();
+	return reply;
 }
 
 lVal *lispEvalL(lVal *expr){

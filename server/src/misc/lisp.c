@@ -525,18 +525,13 @@ void lispEvents(){
 	PROFILE_STOP();
 }
 
-const char *lispEval(const char *str){
+const char *lispEval(const char *str, bool humanReadable){
 	static char reply[4096];
 	memset(reply,0,sizeof(reply));
 	lVal *v = lEval(clRoot,lWrap(lRead(str)));
-	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,true);
-
-	int soff,slen,len = strnlen(reply,sizeof(reply)-1);
-	for(soff = 0;    isspace((u8)reply[soff]) || (reply[soff] == '"');soff++){}
-	for(slen = len-1;isspace((u8)reply[slen]) || (reply[slen] == '"');slen--){reply[slen] = 0;}
-
+	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,humanReadable);
 	lClosureGC();
-	return reply+soff;
+	return reply;
 }
 
 void lGUIWidgetFree(lVal *v){
