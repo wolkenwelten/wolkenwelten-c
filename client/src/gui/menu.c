@@ -171,7 +171,6 @@ void menuKeyClick(int btn){
 bool menuCancel(){
 	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return false;}
 	if(gameRunning){
-		printf("menuCancel\n");
 		closeMainMenu();
 		lispPanelClose();
 		return true;

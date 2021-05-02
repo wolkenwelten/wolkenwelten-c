@@ -65,7 +65,7 @@
 
 [def length [λ [a]
 	"Returns the length of a"
-	[cond [[string? a] [str-len a]]
+	[cond [[string? a] [str/length a]]
               [[pair? a] [list-length a]]
               [#t 0]
 	]

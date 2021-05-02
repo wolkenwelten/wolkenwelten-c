@@ -29,6 +29,7 @@
 #include "../../../common/src/misc/profiling.h"
 
 #include "island.h"
+#include "nujel.h"
 #include "labyrinth.h"
 #include "landmass.h"
 
@@ -195,7 +196,7 @@ void worldgenGenerate(worldgen *wgen){
 		worldgenCluster(wgen,CHUNGUS_SIZE/10,CHUNGUS_SIZE/20,1,3);
 		break;
 	case 1:
-		worldgenCluster(wgen,CHUNGUS_SIZE/14,CHUNGUS_SIZE/18,2,6);
+		worldgenNujel(wgen);
 		break;
 	}
 	seedRNG(oldSeed);

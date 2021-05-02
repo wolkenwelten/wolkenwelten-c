@@ -48,40 +48,40 @@
 	]]
 ]
 
-[def time-fast! [λ [a]
+[def time/fast! [λ [a]
 	"Speeds up the game to about 4x"
 	[mst!  1] [s [mst!  1]]
 ]]
 
-[def time-norm! [λ [a]
+[def time/norm! [λ [a]
 	"Sets the game speed to the default 1x"
 	[mst!  4] [s [mst!  4]]
 ]]
 
-[def time-slow! [λ [a] "Sets the game speed to about 1/4x"
+[def time/slow! [λ [a] "Sets the game speed to about 1/4x"
 	[mst! 16] [s [mst! 16]]]]
 
-[def time-bullet! [λ [a]
+[def time/bullet! [λ [a]
 	"Sets the game speed to about 1/16x"
 	[mst! 64] [s [mst! 64]]
 ]]
 
-[def time-morning! [λ []
+[def time/morning! [λ []
 	"Sets the Time to 8:00 AM"
-	[s [time-morning!]]]]
+	[s [time/morning!]]]]
 
-[def time-noon! [λ []
+[def time/noon! [λ []
 	"Sets the Time to 12:00 PM"
-	[s [time-noon!]]]]
+	[s [time/noon!]]]]
 
-[def time-evening! [λ []
+[def time/evening! [λ []
 	"Sets the Time to 21:30 PM"
-	[s [time-evening!]]
+	[s [time/evening!]]
 ]]
 
-[def time-night! [λ []
+[def time/night! [λ []
 	"Set the Time to Midnight"
-	[s [time-night!]]
+	[s [time/night!]]
 ]]
 
 [def countdown [λ [i]

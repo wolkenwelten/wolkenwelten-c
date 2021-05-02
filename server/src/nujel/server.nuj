@@ -40,22 +40,22 @@
 	[- [dmg [cond [a [- a]] [#t -20]]]]
 ]]
 
-[def time-morning! [λ []
+[def time/morning! [λ []
 	"Sets the Time to 8:00 AM"
 	[time "8:00"]
 ]]
 
-[def time-noon! [λ []
+[def time/noon! [λ []
 	"Sets the Time to 12:00 PM"
 	[time "12:00"]
 ]]
 
-[def time-evening! [λ []
+[def time/evening! [λ []
 	"Sets the Time to 21:30 PM"
 	[time "21:30"]
 ]]
 
-[def time-night! [λ []
+[def time/night! [λ []
 	"Sets the Time to Midnight"
 	[time "24:00"]
 ]]

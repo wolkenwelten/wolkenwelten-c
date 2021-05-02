@@ -129,12 +129,18 @@ static lVal *lnfModV(lVal *t, lVal *v){
 }
 static lVal *lnfModF(lVal *t, lVal *v){
 	forEach(vv,lCdr(v)){
-		t->vFloat = fmodf(t->vFloat,lCar(vv)->vFloat);
+		const float cv = lCar(vv)->vFloat;
+		if(cv == 0){return lValInf();}
+		t->vFloat = fmodf(t->vFloat,cv);
 	}
 	return t;
 }
 static lVal *lnfModI(lVal *t, lVal *v){
-	forEach(vv,lCdr(v)){ t->vInt %= lCar(vv)->vInt; }
+	forEach(vv,lCdr(v)){
+		const int cv = lCar(vv)->vInt;
+		if(cv == 0){return lValInf();}
+		t->vInt %= cv;
+	}
 	return t;
 }
 lVal *lnfMod(lClosure *c, lVal *v){
@@ -272,47 +278,26 @@ lVal *lnfPow(lClosure *c, lVal *v){
 
 lVal *lnfVX(lClosure *c, lVal *v){
 	lVal *t = lCar(lEvalCastSpecific(c,v,ltVec));
-	if(t == NULL){return lValFloat(0);}
-	switch(t->type){
-	default:
-		return lValFloat(0);
-	case ltFloat:
-		return t;
-	case ltInt:
-		return lnfFloat(c,t);
-	case ltVec:
-		return lValFloat(lVecV(t->vCdr).x);
-	}
+	if((t == NULL) || (t->type != ltVec)){return lValFloat(0);}
+	return lValFloat(lVecV(t->vCdr).x);
 }
 
 lVal *lnfVY(lClosure *c, lVal *v){
 	lVal *t = lCar(lEvalCastSpecific(c,v,ltVec));
-	if(t == NULL){return lValFloat(0);}
-	switch(t->type){
-	default:
-		return lValFloat(0);
-	case ltFloat:
-		return t;
-	case ltInt:
-		return lnfFloat(c,t);
-	case ltVec:
-		return lValFloat(lVecV(t->vCdr).y);
-	}
+	if((t == NULL) || (t->type != ltVec)){return lValFloat(0);}
+	return lValFloat(lVecV(t->vCdr).y);
 }
 
 lVal *lnfVZ(lClosure *c, lVal *v){
 	lVal *t = lCar(lEvalCastSpecific(c,v,ltVec));
-	if(t == NULL){return lValFloat(0);}
-	switch(t->type){
-	default:
-		return lValFloat(0);
-	case ltFloat:
-		return t;
-	case ltInt:
-		return lnfFloat(c,t);
-	case ltVec:
-		return lValFloat(lVecV(t->vCdr).z);
-	}
+	if((t == NULL) || (t->type != ltVec)){return lValFloat(0);}
+	return lValFloat(lVecV(t->vCdr).z);
+}
+
+lVal *lnfVMag(lClosure *c, lVal *v){
+	lVal *t = lCar(lEvalCastSpecific(c,v,ltVec));
+	if((t == NULL) || (t->type != ltVec)){return lValFloat(0);}
+	return lValFloat(vecMag(lVecV(t->vCdr)));
 }
 
 lVal *infixFunctions[32];
@@ -339,9 +324,10 @@ void lAddArithmeticFuncs(lClosure *c){
 	lAddNativeFunc(c,"cos","[a]",  "Cos A",                            lnfCos);
 	lAddNativeFunc(c,"tan","[a]",  "Tan A",                            lnfTan);
 
-	lAddNativeFunc(c,"vx","[vec]","Return x part of VEC",lnfVX);
-	lAddNativeFunc(c,"vy","[vec]","Return y part of VEC",lnfVY);
-	lAddNativeFunc(c,"vz","[vec]","Return z part of VEC",lnfVZ);
+	lAddNativeFunc(c,"vec/x","[vec]","Return x part of VEC",lnfVX);
+	lAddNativeFunc(c,"vec/y","[vec]","Return y part of VEC",lnfVY);
+	lAddNativeFunc(c,"vec/z","[vec]","Return z part of VEC",lnfVZ);
+	lAddNativeFunc(c,"vec/length vec/magnitude","[vec]","Return the length of VEC",lnfVMag);
 
 	lDefineVal(c,"π",  lConst(lValFloat(PI)));
 	lDefineVal(c,"PI", lConst(lValFloat(PI)));

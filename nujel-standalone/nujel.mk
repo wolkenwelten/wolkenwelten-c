@@ -18,7 +18,7 @@ nujel-standalone/tmp/assets.h: nujel-standalone/tmp/assets.c
 	@true
 
 .PHONY: test
-test: nujel
+test: $(NUJEL)
 	$(NUJEL) -x "[quit [test-run]]"
 
 .PHONY: runn

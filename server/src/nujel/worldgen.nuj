@@ -1,0 +1,32 @@
+[def random-offset [λ [minmax] "Returns a random value between -MINMAX and MINMAX"
+	[- [% [abs [random]] [* minmax 2]] minmax]
+]]
+
+[def little-islands [λ [x y z num] "Generate NUM islands suround X Y Z"
+	[cond [[<= num 0] #nil]
+		[#t
+			[let [
+				[cx [+ x [random-offset 64]]]
+				[cy [+ y [random-offset 64]]]
+				[cz [+ z [random-offset 64]]]
+				[radius [+ 8 [random-offset 6]]]
+			]
+				[sphere [vec cx cy cz] radius i-dirt]
+				[little-islands x y z [-- num]]
+			]
+		]
+	]
+]]
+
+[def worldgen [λ [x y z] "Worldgen of a single chungus a X Y Z"
+	[let [
+		[cx [+ x 128 [random-offset 32]]]
+		[cy [+ y 128 [random-offset 32]]]
+		[cz [+ z 128 [random-offset 32]]]
+		[radius [+ 32 [random-offset 16]]]
+	]
+		[sphere [vec cx cy cz] radius i-dirt]
+		[little-islands cx cy cz [+ 4 [% [abs [random]] 8]]]
+		; [box [vec cx cy cz] [vec radius] i-dirt]
+	]
+]]

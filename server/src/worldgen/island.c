@@ -29,7 +29,7 @@
 #include <string.h>
 
 void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
-	int iterations = 6;
+	int iterations = 10;
 	chungus *clay = wgen->clay;
 
 	if((w < 2) || (h < 2) || (d < 2)){return;}
@@ -436,6 +436,7 @@ static void worldgenRDFirstPass(worldgen *wgen, wgChances *w){
 					if(worldgenRDDirt    (wgen,w,cx,cy,cz)){continue;}
 					break;
 				case I_Dirt:
+					w->airBlocks = 0;
 					if(worldgenRDMonolith(wgen,w,cx,cy,cz)){continue;}
 					if(worldgenRDBigTree (wgen,w,cx,cy,cz)){continue;}
 					if(worldgenRDTree    (wgen,w,cx,cy,cz)){continue;}

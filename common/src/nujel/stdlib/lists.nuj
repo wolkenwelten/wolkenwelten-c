@@ -41,7 +41,7 @@
 [def join]
 [let []
 	[def iter [λ [str list glue]
-		[cond [[nil? list] [substr str 0 [- [str-len str] [str-len glue]]]]
+		[cond [[nil? list] [substr str 0 [- [str/length str] [str/length glue]]]]
 		      [#t [iter [cat str [car list] glue] [cdr list] glue]]
 		]
 	]]
@@ -65,7 +65,7 @@
 
 	[set! split [λ [str separator]
 		"Split STR on every SEPARATOR"
-		[iter str separator [max 1 [str-len separator]] 0 [str-len str]]
+		[iter str separator [max 1 [str/length separator]] 0 [str/length str]]
 	]]
 ]
 
@@ -83,7 +83,7 @@
 	"Runs predicate p over every item in list l and returns a list consiting solely of items where p is true"
 	[cond [[nil? l] #nil]
 	      [[p [car l]] [cons [car l] [filter p [cdr l]]]]
-	      [#t                       [filter p [cdr l]]]
+	      [#t                        [filter p [cdr l]]]
 	]
 ]]
 

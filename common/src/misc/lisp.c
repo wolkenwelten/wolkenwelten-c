@@ -173,6 +173,11 @@ lVal *lispCallFuncI(const char *symbol, int ia){
 	return lEval(clRoot,lCons(lValSym(symbol),arg));
 }
 
+lVal *lispCallFuncIII(const char *symbol, int ia, int ib, int ic){
+	lVal *arg  = lCons(lValInt(ia),lCons(lValInt(ib),lCons(lValInt(ic),NULL)));
+	return lEval(clRoot,lCons(lValSym(symbol),arg));
+}
+
 lVal *lispCallFuncS(const char *symbol, const char *str){
 	lVal *arg  = lCons(lValString(str),NULL);
 	return lEval(clRoot,lCons(lValSym(symbol),arg));
