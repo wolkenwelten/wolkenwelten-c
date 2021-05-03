@@ -70,7 +70,7 @@ uint    lSymbolMax    = 1;
 uint    lSymbolFFree  = 0;
 
 char dispWriteBuf[1<<16];
-lSymbol *symNull,*symQuote,*symArr,*symIf,*symCond,*symWhen,*symUnless,*symLet,*symBegin,*symStringAt,*symIntAt,*symFloatAt,*symVecAt;
+lSymbol *symNull,*symQuote,*symArr,*symIf,*symCond,*symWhen,*symUnless,*symLet,*symBegin,*symStringAt,*symIntAt,*symFloatAt,*symVecAt, *symMinus;
 
 void lInit(){
 	lValActive      = 0;
@@ -107,6 +107,7 @@ void lInit(){
 	symIntAt    = lSymS("int@");
 	symFloatAt  = lSymS("float@");
 	symVecAt    = lSymS("vec@");
+	symMinus    = lSymS("-");
 }
 
 static void lVecFree(uint i){

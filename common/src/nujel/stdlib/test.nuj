@@ -337,3 +337,8 @@
 [test-add :float [type-of [2.0 + 2.1]]]
 [test-add :float [type-of [+ 2 2.1]]]
 [test-add :float [type-of [2 + 2.1]]]
+[test-add -1 [-1]]
+[test-add -1 [- 1]]
+[test-add -1 [let [[a 1]] [- a]]]
+[test-add -1 [let [[a 1]] [-a]]]
+[test-add -1 [let [[a 1]] -a]]
