@@ -363,5 +363,5 @@ lVal *lnfInfix (lClosure *c, lVal *v){
 			goto tryAgain;
 		}
 	}
-	return start;
+	return lCar(start);
 }
