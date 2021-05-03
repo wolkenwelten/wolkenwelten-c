@@ -1,11 +1,12 @@
 [def git-get-commit [λ [branch]
 	"Gets the commit hash of BRANCH"
-	[trim [file-load [".git/refs/heads/" branch]]]
+	[display [".git/refs/heads/" branch]]
+	[str/trim [file/load [".git/refs/heads/" branch]]]
 ]]
 
 [def git-get-branch [λ []
 	"Returns the currently active branch"
-	[let [[cur-head [trim [file-load "./.git/HEAD"]]]]
+	[let [[cur-head [str/trim [file/load "./.git/HEAD"]]]]
 		[cond [[eq? [substr cur-head 0 4] "ref:"] [join [list-tail [split cur-head "/"] 2] "/"]]
 		       [#t "UNKNOWN"]
 		]
@@ -19,7 +20,7 @@
 
 [def infogen-version [λ []
 	"Return the infogen version"
-	[cat [git-get-branch] "-" [strftime [time] "%Y-%m-%d"] "-" [str-up [substr [git-get-head] 0 8]]]
+	[cat [git-get-branch] "-" [strftime [time] "%Y-%m-%d"] "-" [str/uppercase [substr [git-get-head] 0 8]]]
 ]]
 
 [def infogen-builddate [λ []
@@ -41,5 +42,5 @@
 
 [def infogen [λ [prefix]
 	"Generate build info and writes C source/header files PREFIX"
-	[file-save [cat prefix ".c"] [infogen-source]]
+	[file/save [cat prefix ".c"] [infogen-source]]
 ]]

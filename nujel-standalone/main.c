@@ -196,8 +196,8 @@ static void addNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"input",     "[]",                "Reads in a line of user input and returns it",       lnfInput);
 	lAddNativeFunc(c,"quit",      "[a]",               "Exits with code a",                                  lnfQuit);
 	lAddNativeFunc(c,"exit",      "[a]",               "Quits with code a",                                  lnfQuit);
-	lAddNativeFunc(c,"file-load", "[filename]",        "Load FILENAME and return the contents as a string",  lnfReadFile);
-	lAddNativeFunc(c,"file-save", "[filename content]","Writes CONTENT into FILENAME",                       lnfWriteFile);
+	lAddNativeFunc(c,"file/load file/read",  "[filename]",        "Load FILENAME and return the contents as a string",  lnfReadFile);
+	lAddNativeFunc(c,"file/save file/write", "[filename content]","Writes CONTENT into FILENAME",                       lnfWriteFile);
 }
 
 extern char tmp_saolib_nuj_data[];
