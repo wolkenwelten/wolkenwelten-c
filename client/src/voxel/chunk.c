@@ -199,19 +199,15 @@ static void chunkAddRight(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 
 static void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
 	for(int y=CHUNK_SIZE-1;y>=0;y--){
-	for(int x=CHUNK_SIZE-2;x>=0;x--){
-		if(!plane[x][y])                                       {continue;}
-		if((plane[x][y] & 0xFF00FF) != (plane[x+1][y] & 0xF0FF)) {continue;}
-		plane[x  ][y] += plane[x+1][y] & 0xFF00;
-		plane[x+1][y]  = 0;
-	}
-	}
 	for(int x=CHUNK_SIZE-1;x>=0;x--){
-	for(int y=CHUNK_SIZE-2;y>=0;y--){
-		if(!plane[x][y])                                   {continue;}
-		if((plane[x][y]&0xFFFF) != (plane[x][y+1]&0xFFFF)) {continue;}
-		plane[x][y  ] += plane[x][y+1]&0xFF0000;
-		plane[x][y+1]  = 0;
+		if((x < CHUNK_SIZE-1) && (plane[x][y]) && ((plane[x][y] & 0xFF00FF) == (plane[x+1][y] & 0xFF00FF))){
+			plane[x  ][y] += plane[x+1][y] & 0xFF00;
+			plane[x+1][y]  = 0;
+		}
+		if((y < CHUNK_SIZE-1) && (plane[x][y]) && ((plane[x][y] & 0x00FFFF) == (plane[x][y+1] & 0x00FFFF))){
+			plane[x][y  ] += plane[x][y+1]&0xFF0000;
+			plane[x][y+1]  = 0;
+		}
 	}
 	}
 }
