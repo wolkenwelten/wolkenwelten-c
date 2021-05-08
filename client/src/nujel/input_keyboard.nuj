@@ -99,7 +99,8 @@
 [arr-set! input-keyboard-handler key-f1  [λ [code value] [when value [third-person! #f] [save-options]]]]
 [arr-set! input-keyboard-handler key-f2  [λ [code value] [when value [s [debug-stuff!]]]]]
 [arr-set! input-keyboard-handler key-f3  [λ [code value] [when value [third-person! #t] [save-options]]]]
-[arr-set! input-keyboard-handler key-f10 [λ [code value] [when value [wire-frame! [not [wire-frame!]]]]]]
+[arr-set! input-keyboard-handler key-f9  [λ [code value] [when value [draw-boundaries! [wrap-value [++ [draw-boundaries]] 0 3]]]]
+[arr-set! input-keyboard-handler key-f10 [λ [code value] [when value [wire-frame! [not [wire-frame?]]]]]]
 [arr-set! input-keyboard-handler key-print [λ [code value] [when value [screenshot]]]]
 [arr-set! input-keyboard-handler key-tab [λ [code value] [when value [toggle-inventory!]]]]
 

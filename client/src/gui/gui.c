@@ -26,6 +26,7 @@
 #include "../game/itemDrop.h"
 #include "../game/weather.h"
 #include "../sdl/sdl.h"
+#include "../gfx/boundaries.h"
 #include "../gfx/gl.h"
 #include "../gfx/mesh.h"
 #include "../gfx/gfx.h"

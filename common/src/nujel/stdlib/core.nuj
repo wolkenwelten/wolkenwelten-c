@@ -155,3 +155,7 @@
 		[ansi-pink   "Symbols:  "] [getf info :symbol] "\n" [ansi-reset]
 	]]
 ]]
+
+[def wrap-value [λ [val min max] "Constrains VAL to be within MIN and MAX, wrapping it around"
+	[+ min [% [- val min] [- max min]]]
+]]

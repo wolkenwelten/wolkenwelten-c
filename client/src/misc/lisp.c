@@ -25,6 +25,7 @@
 #include "../game/recipe.h"
 #include "../game/throwable.h"
 #include "../game/weather.h"
+#include "../gfx/boundaries.h"
 #include "../gfx/gfx.h"
 #include "../gfx/texture.h"
 #include "../gui/gui.h"
@@ -718,7 +719,20 @@ static lVal *wwlnfPlayerSetFlags(lClosure *c, lVal *v){
 
 	v = getLArgI(c,v,&flags);
 	player->flags = flags;
+	return NULL;
+}
 
+static lVal *wwlnfDrawBoundariesGet(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValInt(drawBoundariesStyle);
+}
+
+static lVal *wwlnfDrawBoundariesSet(lClosure *c, lVal *v){
+	int newStyle = -1;
+	v = getLArgI(c,v,&newStyle);
+	if(newStyle >= 0){
+		drawBoundariesStyle = newStyle;
+	}
 	return NULL;
 }
 
@@ -793,6 +807,8 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"fire-new",       "(pos &strength)",   "Create/Grow a fire at POS with &STRENGTH=8",                    wwlnfFireNew);
 	lAddNativeFunc(c,"toggle-inventory!","()",              "Toggle the inveotory",                                          wwlnfToggleInventory);
 	lAddNativeFunc(c,"widget-focus-on-game?","()",          "Return #t if the game is focused and not some menu",            wwlnfGuiFocusOnGame);
+	lAddNativeFunc(c,"draw-boundaries", "()",                "Return the current boundary drawing style",                    wwlnfDrawBoundariesGet);
+	lAddNativeFunc(c,"draw-boundaries!","(v)",               "Set the current boundary drawing style",                       wwlnfDrawBoundariesSet);
 }
 
 void lispInit(){

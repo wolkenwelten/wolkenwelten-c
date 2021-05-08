@@ -55,7 +55,6 @@ int   optionWindowX          = -1;
 int   optionWindowY          = -1;
 bool  optionFullscreen       = false;
 
-
 void printVersion(){
 	printf("Wolkenwelten Pre-Alpha\n");
 	printf("Version:   %s\n",VERSION);

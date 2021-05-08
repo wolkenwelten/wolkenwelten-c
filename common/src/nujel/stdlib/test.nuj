@@ -342,3 +342,13 @@
 [test-add -1 [let [[a 1]] [- a]]]
 [test-add -1 [let [[a 1]] [-a]]]
 [test-add -1 [let [[a 1]] -a]]
+[test-add  0 [wrap-value 0 0 2]]
+[test-add  1 [wrap-value 1 0 2]]
+[test-add  0 [wrap-value 2 0 2]]
+[test-add  1 [wrap-value 3 0 2]]
+[test-add  0 [wrap-value 4 0 2]]
+
+[test-add  2 [wrap-value 2 2 4]]
+[test-add  3 [wrap-value 3 2 4]]
+[test-add  2 [wrap-value 4 2 4]]
+[test-add  3 [wrap-value 5 2 4]]

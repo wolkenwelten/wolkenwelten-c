@@ -14,6 +14,11 @@ typedef struct vertex {
 	float c;
 } vertex;
 
+typedef struct vertexFlat {
+	float x,y,z;
+	u32 rgba;
+} vertexFlat;
+
 typedef struct vertex2D {
 	i16 x,y;
 	i16 u,v;
@@ -23,11 +28,11 @@ typedef struct vertex2D {
 
 typedef struct {
 	vertex2D *dataBuffer;
-	 int sx,sy,mx,my,wrap,size,font;
-	 u32 fgc, bgc;
+	int sx,sy,mx,my,wrap,size,font;
+	u32 fgc, bgc;
 	uint vao,vbo,usage,dataCount,bufferSize,vboSize;
 	texture *tex;
-	 int finished;
+	int finished;
 } textMesh;
 
 typedef struct {

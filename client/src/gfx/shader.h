@@ -19,3 +19,4 @@ extern shader *sParticle;
 extern shader *sRain;
 extern shader *sTextMesh;
 extern shader *sCloud;
+extern shader *sBoundary;

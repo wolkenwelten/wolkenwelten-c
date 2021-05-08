@@ -26,6 +26,7 @@
 #include "../game/projectile.h"
 #include "../game/rope.h"
 #include "../game/weather.h"
+#include "../gfx/boundaries.h"
 #include "../gfx/gl.h"
 #include "../gfx/mat.h"
 #include "../gfx/particle.h"
@@ -261,6 +262,9 @@ void renderFrame(){
 
 	if(gameRunning){
 		renderSky(player);
+		if(drawBoundariesStyle){
+			drawBoundaries(drawBoundariesStyle == 2 ? CHUNGUS_SIZE : CHUNK_SIZE);
+		}
 		renderWorld(player);
 		glClear(GL_DEPTH_BUFFER_BIT);
 	}else{
