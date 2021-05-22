@@ -872,13 +872,18 @@ static lVal *lnfRandom(lClosure *c, lVal *v){
 	}
 }
 
-static lVal *lnfRandomSeed(lClosure *c, lVal *v){
+static lVal *lnfRandomSeedGet(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValInt(RNGValue);
+}
+
+static lVal *lnfRandomSeedSet(lClosure *c, lVal *v){
 	if(v != NULL){
 		int n = 0;
 		v = getLArgI(c,v,&n);
 		seedRNG(n);
 	}
-	return lValInt(RNGValue);
+	return NULL;
 }
 
 lVal *lResolve(lClosure *c, lVal *v){
@@ -1093,8 +1098,9 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"set!",      "[s v]",         "Bind a new value v to already defined symbol s",                   lnfSet);
 	lAddNativeFunc(c,"last-pair", "[l]",           "Return the last pair of list l",                                   lnfLastPair);
 
-	lAddNativeFunc(c,"random",     "[&max]",       "Return a random value from 0 to MAX ot INT_MAX if MAX is #nil",lnfRandom);
-	lAddNativeFunc(c,"random-seed","[seed]",       "Set the Random Number Generator Seed to SEED",lnfRandomSeed);
+	lAddNativeFunc(c,"random",      "[&max]",       "Return a random value from 0 to MAX ot INT_MAX if MAX is #nil",lnfRandom);
+	lAddNativeFunc(c,"random-seed", "[]",           "get the Random Number Generator Seed to SEED",lnfRandomSeedGet);
+	lAddNativeFunc(c,"random-seed!","[seed]",       "Set the Random Number Generator Seed to SEED",lnfRandomSeedSet);
 }
 
 extern unsigned char src_tmp_stdlib_nuj_data[];
@@ -1306,12 +1312,12 @@ static void lClosureDoGC(){
 void lClosureGC(){
 	static int calls = 0;
 
-	int thresh =         (VAL_MAX - (int)lValActive)     - (VAL_MAX / 4096);
-	thresh = MIN(thresh,((CLO_MAX - (int)lClosureActive) - 128) * 4);
-	thresh = MIN(thresh,((ARR_MAX - (int)lArrayActive)   -  64) * 8);
-	thresh = MIN(thresh,((STR_MAX - (int)lStringActive)  -  64) * 8);
-	thresh = MIN(thresh,((VEC_MAX - (int)lVecActive)     -  64) * 8);
-	thresh = MIN(thresh,((SYM_MAX - (int)lSymbolActive)  -  64) * 8);
+	int thresh =         (VAL_MAX - (int)lValActive)     - (VAL_MAX / 128);
+	thresh = MIN(thresh,((CLO_MAX - (int)lClosureActive) - 128) *  8);
+	thresh = MIN(thresh,((ARR_MAX - (int)lArrayActive)   -  64) * 16);
+	thresh = MIN(thresh,((STR_MAX - (int)lStringActive)  -  64) * 16);
+	thresh = MIN(thresh,((VEC_MAX - (int)lVecActive)     -  64) * 16);
+	thresh = MIN(thresh,((SYM_MAX - (int)lSymbolActive)  -  64) *  8);
 	if(++calls < thresh){return;}
 	lClosureDoGC();
 	calls = 0;

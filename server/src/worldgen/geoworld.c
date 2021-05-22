@@ -25,7 +25,7 @@
 
 #include <stdlib.h>
 
-void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b, int fb){
+void worldgenGeoSphere(worldgen *wgen, int x,int y,int z,int size,int b, int fb){
 	float rsq      = (size*size);
 	float crystalr = rsq / 2.f;
 	if(crystalr < 5.f){crystalr = 0.f;}
@@ -44,7 +44,7 @@ void worldgenSphere(worldgen *wgen, int x,int y,int z,int size,int b, int fb){
 	}
 }
 
-void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b,int fb){
+void worldgenGeoRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b,int fb){
 	for(int cy=-size;cy<=size;cy++){
 		int r     = (size-abs(cy))/2;
 		float rsq = (r*r)*0.8f;
@@ -63,7 +63,7 @@ void worldgenRoundPrism(worldgen *wgen, int x,int y,int z,int size,int b,int fb)
 	}
 }
 
-void worldgenPrism(worldgen *wgen, int x,int y,int z,int size,int b,int fb){
+void worldgenGeoPrism(worldgen *wgen, int x,int y,int z,int size,int b,int fb){
 	for(int cy=-size;cy<=size;cy++){
 		int r  = (size-abs(cy))/2;
 		int cr = r / 2;
@@ -82,7 +82,7 @@ void worldgenPrism(worldgen *wgen, int x,int y,int z,int size,int b,int fb){
 	}
 }
 
-void worldgenPyramid(worldgen *wgen, int x,int y,int z,int size,int b,int fb){
+void worldgenGeoPyramid(worldgen *wgen, int x,int y,int z,int size,int b,int fb){
 	for(int cy=-size;cy<=size;cy++){
 		int r  = size-abs(cy);
 		int cr = r / 2;
@@ -101,7 +101,7 @@ void worldgenPyramid(worldgen *wgen, int x,int y,int z,int size,int b,int fb){
 	}
 }
 
-void worldgenCube(worldgen *wgen, int x, int y, int z, int size, int b, int fb){
+void worldgenGeoCube(worldgen *wgen, int x, int y, int z, int size, int b, int fb){
 	chungusBox(wgen->clay,x,y,z,size,size,size,b);
 	if(size > 4){
 		chungusBox(wgen->clay,x+size/4,y+size/4,z+size/4,size/2,size/2,size/2,fb);
@@ -168,19 +168,19 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 	switch(rngValM(5)){
 		default:
 		case 0:
-			worldgenCube(wgen,x,y,z,size,b,fb);
+			worldgenGeoCube(wgen,x,y,z,size,b,fb);
 		break;
 		case 1:
-			worldgenPrism(wgen,x,y,z,size,b,fb);
+			worldgenGeoPrism(wgen,x,y,z,size,b,fb);
 		break;
 		case 2:
-			worldgenPyramid(wgen,x,y,z,size,b,fb);
+			worldgenGeoPyramid(wgen,x,y,z,size,b,fb);
 		break;
 		case 3:
-			worldgenRoundPrism(wgen,x,y,z,size,b,fb);
+			worldgenGeoRoundPrism(wgen,x,y,z,size,b,fb);
 		break;
 		case 4:
-			worldgenSphere(wgen,x,y,z,size,b,fb);
+			worldgenGeoSphere(wgen,x,y,z,size,b,fb);
 		break;
 	}
 	if(rngValM(32) == 0){

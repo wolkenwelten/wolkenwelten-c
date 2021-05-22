@@ -36,9 +36,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-worldgen worldgenList[4];
-int worldgenCount = 0;
+worldgen  worldgenList[32];
+int       worldgenCount = 0;
 worldgen *worldgenFirstFree = NULL;
+worldgen *worldgenActive = NULL;
 
 worldgen *worldgenNew(chungus *nclay){
 	worldgen *wgen = NULL;
@@ -67,12 +68,20 @@ worldgen *worldgenNew(chungus *nclay){
 	wgen->geoworld                = world.geoworldMap            [gx][gz] + ((gy & 0xF0) << 2);
 	wgen->geoIslandChance         = wgen->geoIslands = false;
 
+	if(worldgenActive == NULL){
+		worldgenActive = wgen;
+	}
+
 	return wgen;
 }
 
 void worldgenFree(worldgen *wgen){
 	wgen->nextFree = worldgenFirstFree;
 	worldgenFirstFree = wgen;
+
+	if(wgen == worldgenActive){
+		worldgenActive = NULL;
+	}
 }
 
 void worldgenObelisk(worldgen *wgen, int x,int y,int z){
@@ -151,7 +160,6 @@ void worldgenGenerate(worldgen *wgen){
 		wgen->geoIslands      = false;
 	}
 	switch(wgen->layer){
-	case 0:
 	case 127:
 		break;
 	default:
@@ -193,11 +201,15 @@ void worldgenGenerate(worldgen *wgen){
 		worldgenCluster(wgen,CHUNGUS_SIZE/6,CHUNGUS_SIZE/12,1,3);
 		break;
 	case 2:
-		worldgenCluster(wgen,CHUNGUS_SIZE/10,CHUNGUS_SIZE/20,1,3);
+		//worldgenCluster(wgen,CHUNGUS_SIZE/10,CHUNGUS_SIZE/20,1,3);
+		worldgenNujel(wgen);
 		break;
 	case 1:
 		worldgenCluster(wgen,CHUNGUS_SIZE/12,CHUNGUS_SIZE/24,2,4);
 		//worldgenNujel(wgen);
+		break;
+	case 0:
+		worldgenNujel(wgen);
 		break;
 	}
 	seedRNG(oldSeed);
@@ -218,4 +230,16 @@ void worldgenFirstInit(){
 	cloudDensityMin   = cloudGDensityMin;
 	rainIntensity = 0;
 	seedRNG(oldSeed);
+}
+
+void worldgenSphere(int x, int y, int z, int r, u8 b){
+	if(worldgenActive == NULL){return;}
+	chungus *chng = worldgenActive->clay;
+	const int gx = (chng->x << 8);
+	if(abs(x - gx) > r){return;}
+	const int gy = (chng->y << 8);
+	if(abs(y - gy) > r){return;}
+	const int gz = (chng->z << 8);
+	if(abs(z - gz) > r){return;}
+	chungusBoxSphere(chng, x - gx, y - gy, z - gz, r, b);
 }

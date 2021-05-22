@@ -148,7 +148,7 @@
 [test-add 3 [define ein-test-arr #[1 2 3]] [ein-test-arr 2 9] [ein-test-arr 2]]
 [test-add 123 [define i-assaultmegablaster 123] i-assaultmegablaster]
 [test-add #t [int? [random]]]
-[test-add #t [random-seed 123] [define first-value [random]] [random-seed 123] [= first-value [random]]]
+[test-add #t [random-seed! 123] [define first-value [random]] [random-seed! 123] [= first-value [random]]]
 [test-add 1 [define a 1] [unless [= 2 2] [set! a 4]] a]
 [test-add 4 [define a 1] [unless [= 2 3] [set! a 4]] a]
 [test-add 4 [define a 1] [when   [= 2 2] [set! a 4]] a]

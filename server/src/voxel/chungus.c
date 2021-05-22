@@ -293,12 +293,22 @@ void chungusBoxIfEmpty(chungus *c, int x,int y,int z, int w,int h,int d,u8 block
 
 void chungusBoxSphere(chungus *c, int x, int y, int z, int r, u8 block){
 	const int md = r*r;
-	for(int cx = -r; cx <= r; cx++){
-	for(int cy = -r; cy <= r; cy++){
-	for(int cz = -r; cz <= r; cz++){
-		const int d = (cx*cx)+(cy*cy)+(cz*cz);
+	const int sx = MAX(0,-r + x);
+	const int ex = MIN(CHUNGUS_SIZE-1,r + x);
+	const int sy = MAX(0,-r + y);
+	const int ey = MIN(CHUNGUS_SIZE-1,r + y);
+	const int sz = MAX(0,-r + z);
+	const int ez = MIN(CHUNGUS_SIZE-1,r + z);
+
+	for(int cx = sx; cx <= ex; cx++){
+	for(int cy = sy; cy <= ey; cy++){
+	for(int cz = sz; cz <= ez; cz++){
+		const int ox = cx - x;
+		const int oy = cy - y;
+		const int oz = cz - z;
+		const int d = (ox*ox)+(oy*oy)+(oz*oz);
 		if(d >= md){continue;}
-		chungusSetB(c,cx+x,cy+y,cz+z,block);
+		chungusSetB(c,cx,cy,cz,block);
 	}
 	}
 	}

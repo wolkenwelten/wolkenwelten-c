@@ -28,6 +28,7 @@
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
+#include "../worldgen/worldgen.h"
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/entity.h"
 #include "../../../common/src/game/item.h"
@@ -428,6 +429,23 @@ static lVal *wwlnfSpawnPos(lClosure *c, lVal *v){
 	return lValVec(vecNewI(worldGetSpawnPos()));
 }
 
+static lVal *wwlnfWorldgenSphere(lClosure *c, lVal *v){
+	int x = -1;
+	int y = -1;
+	int z = -1;
+	int r = -1;
+	int b = -1;
+
+	v = getLArgI(c,v,&x);
+	v = getLArgI(c,v,&y);
+	v = getLArgI(c,v,&z);
+	v = getLArgI(c,v,&r);
+	v = getLArgI(c,v,&b);
+
+	worldgenSphere(x,y,z,r,b);
+	return NULL;
+}
+
 void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
 	lAddNativeFunc(c,"animal-count",   "()",                                           "Returns animal count",                                       wwlnfACount);
@@ -461,6 +479,8 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"chungus-info",   "(pos)",                                        "Returns a description of the chungus at pos",                wwlnfChungusInfo);
 	lAddNativeFunc(c,"spawn-pos",      "()",                                           "Return the current spawn position as a vec",                 wwlnfSpawnPos);
 	lAddNativeFunc(c,"spawn-pos!",     "(pos)",                                        "Set the spawn POS",                                          wwlnfSetSpawnPos);
+
+	lAddNativeFunc(c,"worldgen/sphere","(x y z r b)",                                  "Only use during worldgen, sets a sphere of radius R at X Y Z to B",wwlnfWorldgenSphere);
 
 	lAddNativeFunc(c,"quit!",          "()",                                           "Cleanly shuts down the server",                              wwlnfQuit);
 }
