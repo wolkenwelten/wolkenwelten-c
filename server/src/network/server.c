@@ -338,9 +338,7 @@ void serverParseSinglePacket(uint c, packet *p){
 		worldSetB(p->v.u16[0],p->v.u16[1],p->v.u16[2],p->v.u16[3]);
 		break;
 	case msgtMineBlock:
-		blockMiningDropItemsPos(p->v.u16[0],p->v.u16[1],p->v.u16[2],worldGetB(p->v.u16[0],p->v.u16[1],p->v.u16[2]));
-		worldSetB(p->v.u16[0],p->v.u16[1],p->v.u16[2],0);
-		sendToAllExcept(c,p,pLen+4);
+		blockMiningMineBlock(p->v.u16[0],p->v.u16[1],p->v.u16[2]);
 		break;
 	case msgtGoodbye:
 		errno=0;

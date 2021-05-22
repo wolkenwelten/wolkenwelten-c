@@ -31,6 +31,7 @@
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/network/messages.h"
+#include "../../../common/src/game/item.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -297,11 +298,23 @@ int checkCollision(int x, int y, int z){
 }
 
 void worldMine(int x, int y, int z){
-	worldSetB(x,y,z,0);
+	const u8 b = worldGetB(x,y,z);
+	msgMineBlock(x,y,z,b,0);
+	if((b == I_Grass) || (b == I_Dry_Grass)){
+		worldSetB(x,y,z,I_Dirt);
+	}else{
+		worldSetB(x,y,z,0);
+	}
 }
 
 void worldBoxMine(int x, int y, int z, int w, int h, int d){
-	worldBox(x,y,z,w,h,d,0);
+	for(int cx=0;cx<w;cx++){
+	for(int cy=0;cy<h;cy++){
+	for(int cz=0;cz<d;cz++){
+		worldMine(x+cx,y+cy,z+cz);
+	}
+	}
+	}
 }
 
 bool worldIsLoaded(int x, int y, int z){

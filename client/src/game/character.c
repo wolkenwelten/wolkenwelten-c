@@ -415,6 +415,28 @@ static void characterGoStepUp(character *c){
 	c->vel.y = 0.03f;
 }
 
+static float characterBlockRepulsion(character *c, float *vel){
+	(void)c;
+	int ret = 0;
+	vec blockPos;
+	const u8 b = characterCollisionBlock(c->pos,&blockPos);
+	if(b == 0){return 0;}
+
+	float strength = *vel;
+	const int blockDamage = fabsf(strength) * 4192.f;
+	const int blockHealth = blockTypeGetHealth(b);
+	if(blockDamage > blockHealth){
+		worldMine(blockPos.x,blockPos.y,blockPos.z);
+		strength = strength * ((float)blockHealth / (float)blockDamage);
+		fxBlockBreak(blockPos,b,0);
+	}
+
+	if(fabsf(strength) > 0.1f){ret += (int)(fabsf(strength)*512.f);}
+	*vel += strength* -1.3f;
+
+	return ret;
+}
+
 static int characterPhysics(character *c){
 	int ret=0;
 	u32 col;
@@ -431,68 +453,58 @@ static int characterPhysics(character *c){
 	}
 
 	c->vel.y -= 0.0005f;
-	if(c->vel.y < -1.0f){c->vel.y+=0.0007f;}
-	if(c->vel.y >  1.0f){c->vel.y-=0.0007f;}
-	if(c->vel.x < -1.0f){c->vel.x+=0.0007f;}
-	if(c->vel.x >  1.0f){c->vel.x-=0.0007f;}
-	if(c->vel.z < -1.0f){c->vel.z+=0.0007f;}
-	if(c->vel.z >  1.0f){c->vel.z-=0.0007f;}
+	if(c->vel.y < -1.0f){c->vel.y += 0.0007f;}
+	if(c->vel.y >  1.0f){c->vel.y -= 0.0007f;}
+	if(c->vel.x < -1.0f){c->vel.x += 0.0007f;}
+	if(c->vel.x >  1.0f){c->vel.x -= 0.0007f;}
+	if(c->vel.z < -1.0f){c->vel.z += 0.0007f;}
+	if(c->vel.z >  1.0f){c->vel.z -= 0.0007f;}
 
 	c->flags |=  CHAR_FALLING;
 	c->flags &= ~CHAR_COLLIDE;
 	col = characterCollision(c->pos);
 	if(col){ c->flags |= CHAR_COLLIDE; }
 	if((col&0x1110) && (c->vel.x < 0.f)){
-		if(c->vel.x < -0.1f){ ret += (int)(fabsf(c->vel.x)*512.f); }
 		c->pos.x = MAX(c->pos.x,floor(c->pos.x)+0.3f);
-		c->vel.x = c->vel.x*-0.3f;
+		ret += characterBlockRepulsion(c,&c->vel.x);
 		if(((col&0x1111) == 0x0101) && (fabsf(c->vel.y) < 0.001f)){
 			characterGoStepUp(c);
 		}
 	}
 	if((col&0x2220) && (c->vel.x > 0.f)){
-		if(c->vel.x >  0.1f){ ret += (int)(fabsf(c->vel.x)*512.f); }
 		c->pos.x = MIN(c->pos.x,floorf(c->pos.x)+0.7f);
-		c->vel.x = c->vel.x*-0.3f;
+		ret += characterBlockRepulsion(c,&c->vel.x);
 		if(((col&0x2222) == 0x0202) && (fabsf(c->vel.y) < 0.001f)){
 			characterGoStepUp(c);
 		}
 	}
 	if((col&0x8880) && (c->vel.z > 0.f)){
-		if(c->vel.z >  0.1f){ ret += (int)(fabsf(c->vel.z)*512.f); }
 		c->pos.z = MIN(c->pos.z,floorf(c->pos.z)+0.7f);
-		c->vel.z = c->vel.z*-0.3f;
+		ret += characterBlockRepulsion(c,&c->vel.z);
 		if(((col&0x8888) == 0x0808) && (fabsf(c->vel.y) < 0.001f)){
 			characterGoStepUp(c);
 		}
 	}
 	if((col&0x4440) && (c->vel.z < 0.f)){
-		if(c->vel.z < -0.1f){ ret += (int)(fabsf(c->vel.z)*512.f); }
 		c->pos.z = MAX(c->pos.z,floorf(c->pos.z)+0.3f);
-		c->vel.z = c->vel.z*-0.3f;
+		ret += characterBlockRepulsion(c,&c->vel.z);
 		if(((col&0x4444) == 0x0404) && (fabsf(c->vel.y) < 0.001f)){
 			characterGoStepUp(c);
 		}
 	}
 	if((col&0xF0F0) && (c->vel.y > 0.f)){
-		if(c->vel.y >  0.1f){ ret += (int)(fabsf(c->vel.y)*512.f); }
 		c->pos.y = MIN(c->pos.y,floorf(c->pos.y)+0.5f);
-		c->vel.y = c->vel.y*-0.3f;
+		ret += characterBlockRepulsion(c,&c->vel.y);
 	}
 	if((col&0x00F) && (c->vel.y < 0.f)){
 		c->flags &= ~CHAR_FALLING;
-		if(c->vel.y < -0.15f){
-			ret += (int)(fabsf(c->vel.y)*512.f);
-		}
-		if(c->vel.y < -0.02f){
-			c->yoff += MAX(-.9f,c->vel.y * 10.f);
-		}
-		if(c->vel.y < -0.1f){
-			c->vel.y = c->vel.y*-0.15f;
-		}else{
-			c->vel = vecMul(c->vel,vecNew(0.98f,0,0.98f));
-		}
+		if(c->vel.y < -0.02f){c->yoff += MAX(-.9f,c->vel.y * 10.f);}
 		c->pos.y = MAX(c->pos.y,floorf(c->pos.y)+.99f);
+		if(c->vel.y > -0.01f) {
+			c->vel = vecMul(c->vel,vecNew(0.98f,0,0.98f));
+		}else{
+			ret += characterBlockRepulsion(c,&c->vel.y);
+		}
 	}
 
 	if(isInClouds(c->pos)){

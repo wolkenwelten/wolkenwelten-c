@@ -157,8 +157,8 @@ bool itemDoPrimary(item *cItem, character *cChar){
 	}
 	if((cItem->ID >= 256) && (cItem->ID < 512)){
 		lVal *ret = lispCallFuncI("item-primary", cItem->ID);
-		if((ret == NULL) || ((ret->type == ltBool) && (!ret->vBool))){return false;}
-		return true;
+		if((ret == NULL) || ((ret->type == ltBool) && (ret->vBool))){return true;}
+		return false;
 	}
 	return false;
 }

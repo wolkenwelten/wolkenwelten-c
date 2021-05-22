@@ -118,7 +118,9 @@ int blockMiningMinePosItem(item *itm, int x, int y, int z){
 	return blockMiningMinePos(dmg,x,y,z);
 }
 
-void blockMiningMineBlock(int x, int y, int z, u8 b){
+void blockMiningMineBlock(int x, int y, int z){
+	const u8 b = worldGetB(x,y,z);
+	if(b == 0){return;}
 	msgMineBlock(x,y,z,b,0);
 	if((b == I_Grass) || (b == I_Dry_Grass) || (b == I_Roots)){
 		worldSetB(x,y,z,I_Dirt);
@@ -177,7 +179,7 @@ void blockMiningUpdateAll(){
 		}else{
 			bm->wasMined = false;
 			if(bm->damage > blockTypeGetHealth(bm->b)){
-				blockMiningMineBlock(bm->x,bm->y,bm->z,bm->b);
+				blockMiningMineBlock(bm->x,bm->y,bm->z);
 				blockMiningDel(i);
 			}
 		}

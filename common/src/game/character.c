@@ -357,6 +357,36 @@ u32 characterCollision(const vec c){
 	return col;
 }
 
+
+
+u8 characterCollisionBlock(const vec c, vec *retPos){
+	u8 b = 0;
+	const float wd = 0.4f;
+	const float WD = 0.9f;
+
+	if((b = worldGetB(c.x-wd,c.y+1.f,c.z   ))) {*retPos = vecNew(c.x-wd,c.y+1.f,c.z   ); return b;}
+	if((b = worldGetB(c.x+wd,c.y+1.f,c.z   ))) {*retPos = vecNew(c.x+wd,c.y+1.f,c.z   ); return b;}
+	if((b = worldGetB(c.x   ,c.y+1.f,c.z-wd))) {*retPos = vecNew(c.x   ,c.y+1.f,c.z-wd); return b;}
+	if((b = worldGetB(c.x   ,c.y+1.f,c.z+wd))) {*retPos = vecNew(c.x   ,c.y+1.f,c.z+wd); return b;}
+
+	if((b = worldGetB(c.x-WD,c.y-0.9f,c.z   ))){*retPos = vecNew(c.x-WD,c.y-0.9f,c.z   ); return b;}
+	if((b = worldGetB(c.x+WD,c.y-0.9f,c.z   ))){*retPos = vecNew(c.x+WD,c.y-0.9f,c.z   ); return b;}
+	if((b = worldGetB(c.x   ,c.y-0.9f,c.z-WD))){*retPos = vecNew(c.x   ,c.y-0.9f,c.z-WD); return b;}
+	if((b = worldGetB(c.x   ,c.y-0.9f,c.z+WD))){*retPos = vecNew(c.x   ,c.y-0.9f,c.z+WD); return b;}
+
+	if((b = worldGetB(c.x-WD,c.y-1.4f,c.z   ))){*retPos = vecNew(c.x-WD,c.y-1.4f,c.z   ); return b;}
+	if((b = worldGetB(c.x+WD,c.y-1.4f,c.z   ))){*retPos = vecNew(c.x+WD,c.y-1.4f,c.z   ); return b;}
+	if((b = worldGetB(c.x   ,c.y-1.4f,c.z-WD))){*retPos = vecNew(c.x   ,c.y-1.4f,c.z-WD); return b;}
+	if((b = worldGetB(c.x   ,c.y-1.4f,c.z+WD))){*retPos = vecNew(c.x   ,c.y-1.4f,c.z+WD); return b;}
+
+	if((b = worldGetB(c.x-wd,c.y-2.f ,c.z   ))){*retPos = vecNew(c.x-wd,c.y-2.f,c.z   ); return b;}
+	if((b = worldGetB(c.x+wd,c.y-2.f ,c.z   ))){*retPos = vecNew(c.x+wd,c.y-2.f,c.z   ); return b;}
+	if((b = worldGetB(c.x   ,c.y-2.f ,c.z-wd))){*retPos = vecNew(c.x   ,c.y-2.f,c.z-wd); return b;}
+	if((b = worldGetB(c.x   ,c.y-2.f ,c.z+wd))){*retPos = vecNew(c.x   ,c.y-2.f,c.z+wd); return b;}
+
+	return 0;
+}
+
 vec characterGetCollisionVec(const vec pos){
 	u32 col = characterCollision(pos);
 	vec ret = vecNew(0.f,-0.8f,0.f);

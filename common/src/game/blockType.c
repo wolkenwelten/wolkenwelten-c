@@ -102,13 +102,13 @@ bool blockTypeValid(u8 b){
 void blockTypeInit(){
 	blockTypeSetWaterProps( 0, (1<<15)-1, (1<<15)-1, (1<<15)-1);
 
-	blockTypeInitBlock    ( 1, 1, DIRT,  "Dirt", 200, 2000, 0xFF0A234F,0xFF051B45);
+	blockTypeInitBlock    ( 1, 1, DIRT,  "Dirt", 500, 2000, 0xFF0A234F,0xFF051B45);
 	blockTypeSetWaterProps( 1, 8192, 32, 8);
 
 	blockTypeInitBlock    ( 2, 0, DIRT,  "Grass", 240,  400, 0xFF004227,0xFF051B45);
 	blockTypeSetWaterProps( 2, 8192, 24, 8);
 
-	blockTypeInitBlock    ( 3, 2, STONE, "Stone", 1000, 4000, 0xFF5E5E5E,0xFF484848);
+	blockTypeInitBlock    ( 3, 2, STONE, "Stone", 1200, 4000, 0xFF5E5E5E,0xFF484848);
 	blockTypeSetWaterProps( 3, 0, 0, 8);
 
 	blockTypeInitBlock    ( 4, 3, STONE, "Coal", 800, 4000, 0xFF262626,0xFF101010);
@@ -117,7 +117,7 @@ void blockTypeInit(){
 	blockTypeInitBlock    ( 5, 4, WOOD,  "Spruce Log", 500,  800, 0xFF051B25,0xFF07161D);
 	blockTypeSetWaterProps( 5, 2048, 0, 8);
 
-	blockTypeInitBlock    ( 6, 5, LEAVES,"Spruce Leafes",  110,  400, 0xFF012C12,0xFF01250F);
+	blockTypeInitBlock    ( 6, 5, LEAVES,"Spruce Leafes",  60,  400, 0xFF012C12,0xFF01250F);
 	blockTypeSetWaterProps( 6, 128, 128, 128);
 
 	blockTypeInitBlock    ( 7, 7, WOOD,  "Roots", 480,  480, 0xFF14323E,0xFF0D2029);
@@ -129,10 +129,10 @@ void blockTypeInit(){
 	blockTypeInitBlock    ( 9, 8, STONE, "Obsidian",      2000, 8000, 0xFF222222,0xFF171717);
 	blockTypeSetWaterProps( 9, 0, 0, 8);
 
-	blockTypeInitBlock    (10, 9, WOOD,  "Oak Log",        500,  800, 0xFF082C3C,0xFF08242E);
+	blockTypeInitBlock    (10, 9, WOOD,  "Oak Log",        600,  800, 0xFF082C3C,0xFF08242E);
 	blockTypeSetWaterProps(10, 2048, 0, 8);
 
-	blockTypeInitBlock    (11,10, LEAVES,"Oak Leaves",     100,  440, 0xFF004227,0xFF003318);
+	blockTypeInitBlock    (11,10, LEAVES,"Oak Leaves",     70,  440, 0xFF004227,0xFF003318);
 	blockTypeSetWaterProps(11, 128, 128, 128);
 
 	blockTypeInitBlock    (12,12, STONE, "Marble Block",  1600, 8000, 0xFFF0F0F0,0xFFEBEBEB);
@@ -149,25 +149,25 @@ void blockTypeInit(){
 	blockTypeInitBlock    (15,14, STONE, "Marble Blocks", 1600, 8000, 0xFFF0F0F0,0xFFEBEBEB);
 	blockTypeSetWaterProps(15, 0, 0, 8);
 
-	blockTypeInitBlock    (16,24, LEAVES,"Acacia Leafes",  110,  600, 0xFF000230,0xFF1c638f);
+	blockTypeInitBlock    (16,24, LEAVES,"Acacia Leafes",  70,  600, 0xFF000230,0xFF1c638f);
 	blockTypeSetWaterProps(16, 128, 128, 128);
 
-	blockTypeInitBlock    (17,17, WOOD,  "Boards",         300,  600, 0xFF09678f,0xFF1380af);
+	blockTypeInitBlock    (17,17, WOOD,  "Boards",         400,  600, 0xFF09678f,0xFF1380af);
 	blockTypeSetWaterProps(17, 0, 0, 8);
 
 	blockTypeInitBlock    (18,18, STONE, "Crystals",      2500, 8000, 0xFF997CE8,0xFF4D25B5);
 	blockTypeSetWaterProps(18, 0, 0, 8);
 
-	blockTypeInitBlock    (19,19, LEAVES,"Sakura Leafes",  120,  420, 0xFF997CE8,0xFF4D25B5);
+	blockTypeInitBlock    (19,19, LEAVES,"Sakura Leafes",  70,  420, 0xFF997CE8,0xFF4D25B5);
 	blockTypeSetWaterProps(19, 128, 128, 128);
 
 	blockTypeInitBlock    (20,20, WOOD,  "Birch Log",      500,  800, 0xFF525255,0xFF525555);
 	blockTypeSetWaterProps(20, 2048, 0, 8);
 
-	blockTypeInitBlock    (21,21, LEAVES,"Flower Bush",    160,  640, 0xFF004227,0xFF003318);
+	blockTypeInitBlock    (21,21, LEAVES,"Flower Bush",    90,  640, 0xFF004227,0xFF003318);
 	blockTypeSetWaterProps(21, 128, 128, 128);
 
-	blockTypeInitBlock    (22,23, LEAVES,"Date Bush",      120,  840, 0xFF00334f,0xFF128394);
+	blockTypeInitBlock    (22,23, LEAVES,"Date Bush",      80,  840, 0xFF00334f,0xFF128394);
 	blockTypeSetWaterProps(22, 128, 128, 128);
 
 	blockTypeGenMeshes();
