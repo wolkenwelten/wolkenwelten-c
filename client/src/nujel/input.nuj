@@ -14,7 +14,7 @@
 		"Make the player do a primary action"
 
 		[let [[itemid [player-active-item-id]]]
-			[if [< itemid 256] [player-do-primary!] [item-primary! itemid]]
+			[if [< itemid 256] [player-do-primary!] [unless [item-primary! itemid] [player-do-primary!]]]
 		]
 
 		[set! did-primary #t]
