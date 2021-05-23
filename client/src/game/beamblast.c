@@ -30,13 +30,13 @@ void singleBeamblast(const vec start, const vec rot, float beamSize, float damag
 
 	vec pos         = start;
 	vec vel         = vecDegToVec(rot);
-	vec tvel        = vecMulS(vel,1.f/8.f);
+	vec tvel        = vecMulS(vel,1.f/2.f);
 	const float mdd = MAX(1,beamSize * beamSize);
 	const int dmg   = ((int)damageMultiplier)+1;
 	being source    = characterGetBeing(player);
 	--iteration;
 
-	for(int ticksLeft = 0x1FFF; ticksLeft > 0; ticksLeft--){
+	for(int ticksLeft = 0x7FF; ticksLeft > 0; ticksLeft--){
 		vec spos = pos;
 		for(int i=0;i<8;i++){
 			spos = vecAdd(spos,tvel);
@@ -46,6 +46,7 @@ void singleBeamblast(const vec start, const vec rot, float beamSize, float damag
 				fxExplosionBlaster(spos,beamSize/2.f);
 				if(--hitsLeft <= 0){
 					ticksLeft = 0;
+					pos = vecAdd(pos,vecMulS(vel,4.f));
 					break;
 				}
 			}

@@ -195,24 +195,6 @@ int animalUpdate(animal *e){
 	animalCheckForHillOrCliff(e);
 	animalChaseTarget(e);
 
-	/*
-	if(vecSum(vecAbs(e->gvel)) > 2.f){
-		if(isClient){
-			fprintf(stderr,"Client: ");
-		}else{
-			fprintf(stderr,"Server: ");
-		}
-		fprintf(stderr,"Animal[%u] wants to go too fast\n Vel X:%f Y:%f Z:%f\n GVL X:%f Y:%f Z:%f\n\n",(int)(e-animalList),e->vel.x,e->vel.y,e->vel.z,e->gvel.x,e->gvel.y,e->gvel.z);
-	}
-	if(vecSum(vecAbs(e->vel)) > 2.f){
-		if(isClient){
-			fprintf(stderr,"Client: ");
-		}else{
-			fprintf(stderr,"Server: ");
-		}
-		fprintf(stderr,"Animal[%u] going too fast\n Vel X:%f Y:%f Z:%f\n GVL X:%f Y:%f Z:%f\n\n",(int)(e-animalList),e->vel.x,e->vel.y,e->vel.z,e->gvel.x,e->gvel.y,e->gvel.z);
-	}*/
-
 	if(fabsf(e->rot.yaw - e->grot.yaw) > 0.3f){
 		if(e->rot.yaw > e->grot.yaw){
 			e->rot.yaw -= 0.2f;

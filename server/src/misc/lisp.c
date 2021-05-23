@@ -33,6 +33,7 @@
 #include "../../../common/src/game/entity.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/game/time.h"
+#include "../../../common/src/misc/line.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/misc/lisp.h"
@@ -446,6 +447,27 @@ static lVal *wwlnfWorldgenSphere(lClosure *c, lVal *v){
 	return NULL;
 }
 
+u8 wwlnfLineBlockSelection = 1;
+void wwlnfLineSetBlock(int x, int y, int z){
+	worldSetB(x,y,z,wwlnfLineBlockSelection);
+
+}
+
+static lVal *wwlnfLine(lClosure *c, lVal *v){
+	vec p1 = vecNOne();
+	vec p2 = vecNOne();
+	int b = 1;
+
+	v =  getLArgV(c,v,&p1);
+	v =  getLArgV(c,v,&p2);
+	v =  getLArgI(c,v,&b);
+
+	wwlnfLineBlockSelection = b;
+	if((p1.x < 0) || (p2.x < 0)){return NULL;}
+	lineFromTo(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z,wwlnfLineSetBlock);
+	return NULL;
+}
+
 void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
 	lAddNativeFunc(c,"animal-count",   "()",                                           "Returns animal count",                                       wwlnfACount);
@@ -468,6 +490,7 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"tryb",           "(pos)",                                        "Tries and gets block type at pos",                           wwlnfTryB);
 	lAddNativeFunc(c,"getb!",          "(pos)",                                        "Gets block type at pos, might trigger worldgen",             wwlnfGetB);
 	lAddNativeFunc(c,"box",            "(pos size &b)",                                "Sets every block in the box at pos with size to &b=1",       wwlnfBox);
+	lAddNativeFunc(c,"line",           "(p1 p2 &b)",                                   "Set every block from P1 to P2 to &b=1",                      wwlnfLine);
 	lAddNativeFunc(c,"sphere",         "(pos r &b)",                                   "Sets every block in the sphere at pos with radius r to &b=1",wwlnfSphere);
 	lAddNativeFunc(c,"mbox",           "(pos size)",                                   "Mines every block in the box at pos with size",              wwlnfMBox);
 	lAddNativeFunc(c,"msphere",        "(pos r)",                                      "Mines every block in the sphere at pos with radius r",       wwlnfMSphere);
