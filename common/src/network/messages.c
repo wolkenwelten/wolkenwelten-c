@@ -384,6 +384,14 @@ void msgItemDropPickup(int c, uint i){
 	packetQueue(p,msgtItemDropPickup,2,c);
 }
 
+void msgItemDropBounce(int c, uint i){
+	packet *p = &packetBuffer;
+
+	p->v.u16[0] = i;
+
+	packetQueue(p,msgtItemDropBounce,2,c);
+}
+
 void msgRopeUpdate(int c, uint i, rope *r){
 	packet *p = &packetBuffer;
 
@@ -507,6 +515,8 @@ const char *networkGetMessageName(uint i){
 		return "characterSetEquipment";
 	case msgtItemDropPickup:
 		return "itemDropPickup";
+	case msgtItemDropBounce:
+		return "itemDropBounce";
 	case msgtRopeUpdate:
 		return "ropeUpdate";
 	case msgtProjectileUpdate:

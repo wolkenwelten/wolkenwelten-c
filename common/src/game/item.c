@@ -175,3 +175,9 @@ bool itemDoTertiary(item *cItem, character *cChar){
 	}
 	return false;
 }
+
+float itemGetWeight(const item *i){
+	if((i == NULL) || (i->ID > 512)){return 1;}
+	if(i->ID < 256){return blockTypeGetWeight(i->ID) * i->amount;}
+	return itemTypes[i->ID - 256].weight * i->amount;
+}

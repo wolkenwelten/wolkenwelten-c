@@ -35,6 +35,8 @@
 		[it-sprite-color [obj id] 2 [obj sprite-color-2]]
 		[it-sprite-color [obj id] 3 [obj sprite-color-3]]
 
+		[it-weight [obj id] [obj weight]]
+
 		[set! [obj sym] [obj id]]
 		[arr-set! items [- [obj id] 256] obj]
 	]]
@@ -136,6 +138,7 @@
 	[def sprite-color-3 -1]
 	[def item-drop-chance 0]
 	[def stack-size 99]
+	[def weight 1.0]
 ]]
 
 [def i-grenade]
@@ -197,6 +200,7 @@
 			[#t #f]]]]
 	[def sprite-id-0 258]
 	[def mesh 'm-pear]
+	[def weight 0.2]
 
 	[sync]
 ]]
@@ -224,6 +228,7 @@
 	[def sprite-id-2 260]
 	[def sprite-color-2 #xFFDDDDDD]
 	[def mesh 'm-stoneaxe]
+	[def weight 5.0]
 
 	[sync]
 ]]
@@ -244,6 +249,7 @@
 	[def sprite-id-2 268]
 	[def sprite-color-2 #xFFDDDDDD]
 	[def mesh 'm-stonepickaxe]
+	[def weight 5.0]
 
 	[sync]
 ]]
@@ -254,7 +260,7 @@
 	[def sym 'i-blaster]
 	[def name "Blaster"]
 	[def inaccuracy 2]
-	[def ammunition 'i-crystalbulle]
+	[def ammunition 'i-crystalbullet]
 	[def fire-dmg 6]
 	[def fire-health 64]
 	[def stack-size 1]
@@ -289,7 +295,7 @@
 	[def sym 'i-masterblaster]
 	[def name "Master Blaster"]
 	[def inaccuracy 4]
-	[def ammunition 'i-crystalbulle]
+	[def ammunition 'i-crystalbullet]
 	[def fire-dmg 6]
 	[def fire-health 64]
 	[def stack-size 1]
@@ -314,6 +320,7 @@
 	[def burn-up [λ [pos id amount] [explode pos [* amount 0.5]]]]
 	[def sprite-id-0 262]
 	[def mesh 'm-masterblaster]
+	[def weight 3.0]
 
 	[sync]
 ]]
@@ -353,6 +360,7 @@
 	[def burn-up [λ [pos id amount] [explode pos [* amount 0.2]]]]
 	[def sprite-id-0 263]
 	[def mesh 'm-assaultblaste]
+	[def weight 3.0]
 
 	[sync]
 ]]
@@ -376,14 +384,15 @@
 	[def burn-up [λ [pos id amount] [explode pos [* amount 0.2]]]]
 	[def sprite-id-0 264]
 	[def mesh 'm-shotgunblaste]
+	[def weight 3.0]
 
 	[sync]
 ]]
 
-[def i-crystalbulle]
+[def i-crystalbullet]
 [item-default [ω
 	[def id [item-new-id]]
-	[def sym 'i-crystalbulle]
+	[def sym 'i-crystalbullet]
 	[def name "Crystal Bullet"]
 	[def fire-dmg 8]
 	[def fire-health 64]
@@ -393,7 +402,8 @@
 	[def sprite-color-0 #xFFFFFFFF]
 	[def sprite-id-1 270]
 	[def sprite-color-1 #xFF5f32d6]
-	[def mesh 'm-crystalbulle]
+	[def mesh 'm-crystalbullet]
+	[def weight 5.0]
 
 	[sync]
 ]]
@@ -408,6 +418,7 @@
 	[def sprite-id-1 266]
 	[def sprite-color-1 #xFFEEEEEE]
 	[def mesh 'm-ironbar]
+	[def weight 8.0]
 
 	[sync]
 ]]
@@ -435,6 +446,7 @@
 	[def sprite-id-2 260]
 	[def sprite-color-2 #xFFEEEEEE]
 	[def mesh 'm-ironaxe]
+	[def weight 5.0]
 
 	[sync]
 ]]
@@ -455,6 +467,7 @@
 	[def sprite-id-2 268]
 	[def sprite-color-2 #xFFEEEEEE]
 	[def mesh 'm-ironpickaxe]
+	[def weight 5.0]
 
 	[sync]
 ]]
@@ -469,6 +482,7 @@
 	[def sprite-id-2 266]
 	[def sprite-color-2 #xFFFFFFFF]
 	[def mesh 'm-crystalbar]
+	[def weight 2.0]
 
 	[sync]
 ]]
@@ -496,14 +510,15 @@
 	[def sprite-id-2 260]
 	[def sprite-color-2 #xFFFFFFFF]
 	[def mesh 'm-crystalaxe]
+	[def weight 3.0]
 
 	[sync]
 ]]
 
-[def i-crystalpickax]
+[def i-crystalpickaxe]
 [item-default [ω
 	[def id [item-new-id]]
-	[def sym 'i-crystalpickax]
+	[def sym 'i-crystalpickaxe]
 	[def name "Crystal Pickaxe"]
 	[def stack-size 1]
 	[def dmg 8]
@@ -515,7 +530,8 @@
 	[def sprite-color-1 #xFF5f32d6]
 	[def sprite-id-2 268]
 	[def sprite-color-2 #xFFFFFFFF]
-	[def mesh 'm-crystalpickax]
+	[def mesh 'm-crystalpickaxe]
+	[def weight 3.0]
 
 	[sync]
 ]]
@@ -535,6 +551,7 @@
 	]]
 	[def sprite-id-0 272]
 	[def mesh 'm-cherry]
+	[def weight 0.1]
 
 	[sync]
 ]]
@@ -555,6 +572,7 @@
 	[def burn-up [λ [pos id amount] [explode pos [* amount 6]] [say [[ansi-yellow "Ka"] [ansi-red "bo000oom"]]]]]
 	[def sprite-id-0 273]
 	[def mesh 'm-bomb]
+	[def weight 3.0]
 
 	[sync]
 ]]
@@ -569,6 +587,7 @@
 	[def fire-health 198]
 	[def sprite-id-0 274]
 	[def mesh 'm-glider]
+	[def weight 3.0]
 
 	[sync]
 ]]
@@ -582,6 +601,7 @@
 	[def fire-health 1024]
 	[def sprite-id-0 275]
 	[def mesh 'm-hook]
+	[def weight 3.0]
 
 	[sync]
 ]]
@@ -594,6 +614,7 @@
 	[def stack-size 1]
 	[def sprite-id-0 276]
 	[def mesh 'm-jetpack]
+	[def weight 3.0]
 
 	[sync]
 ]]
@@ -616,6 +637,7 @@
 	[def drop-handler [λ [pos id amount] -1]]
 	[def sprite-id-0 277]
 	[def mesh 'm-poop]
+	[def weight 2.0]
 
 	[sync]
 ]]
@@ -769,6 +791,7 @@
 	[def sprite-id-1 284]
 	[def sprite-color-1 #xFF2163D4]
 	[def mesh 'm-flamethrower]
+	[def weight 3.0]
 
 	[sync]
 ]]
@@ -789,6 +812,7 @@
 	[def sprite-id-1 271]
 	[def sprite-color-1 #xFF2468e0]
 	[def mesh 'm-flamebullet]
+	[def weight 0.2]
 
 	[sync]
 ]]
@@ -806,6 +830,7 @@
 	[def sprite-id-0 285]
 	[def sprite-color-0 #xFF3e3e8f]
 	[def mesh 'm-irondust]
+	[def weight 2.0]
 
 	[sync]
 ]]
@@ -919,6 +944,7 @@
 	[def sprite-id-2 289]
 	[def sprite-color-2 #xFFDDDDDD]
 	[def mesh 'm-stonespear]
+	[def weight 3.0]
 
 	[sync]
 ]]
@@ -945,6 +971,7 @@
 	[def sprite-id-2 289]
 	[def sprite-color-2 #xFFFFFFFF]
 	[def mesh 'm-ironspear]
+	[def weight 3.0]
 
 	[sync]
 ]]
@@ -971,6 +998,7 @@
 	[def sprite-id-2 289]
 	[def sprite-color-2 #xFFFFFFFF]
 	[def mesh 'm-crystalspear]
+	[def weight 2.0]
 
 	[sync]
 ]]
@@ -990,6 +1018,7 @@
 	[def sprite-id-0 292]
 	[def sprite-color-0 #xFF087500]
 	[def mesh 'm-plantmatter]
+	[def weight 0.4]
 
 	[sync]
 ]]
@@ -1004,14 +1033,15 @@
 	[def sprite-id-0 292]
 	[def sprite-color-0 #xFF48A7D3]
 	[def mesh 'm-straw]
+	[def weight 0.3]
 
 	[sync]
 ]]
 
 [event-bind "on-init" [λ []
 	[item-sync-all]
-	; [when client? [yield [λ [] [it-sprite-color i-crystalbulle 1 [color-inter #xFF5f32d6 #xFF6f32F6 [abs [sin [* 0.01 [msecs]]]]]] #f] #t]]
-	; [when client? [yield [λ [] [it-sprite-color i-crystalbulle 1 [logior #XFF501600 [+ 180 [* 75.0 [abs [sin [* 0.003 [msecs]]]]]]]] #f] #t]]
+	; [when client? [yield [λ [] [it-sprite-color i-crystalbullet 1 [color-inter #xFF5f32d6 #xFF6f32F6 [abs [sin [* 0.01 [msecs]]]]]] #f] #t]]
+	; [when client? [yield [λ [] [it-sprite-color i-crystalbullet 1 [logior #XFF501600 [+ 180 [* 75.0 [abs [sin [* 0.003 [msecs]]]]]]]] #f] #t]]
 	; [when client? [yield [λ [] [it-sprite-color i-flamebullet 1 [logior #XFF165000 [+ 180 [* 75.0 [abs [cos [* 0.002 [msecs]]]]]]]] #f] #t]]
 	[log [ansi-green "Items initialized"]]
 ]]

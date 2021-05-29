@@ -42,6 +42,7 @@ void msgPingPong                 (int c);
 void msgAnimalDied               (int c, const animal *a);
 void msgPlayerSetEquipment       (int c, const item *itm, size_t itemCount);
 void msgItemDropPickup           (int c, uint i);
+void msgItemDropBounce           (int c, uint i);
 void msgRopeUpdate               (int c, uint i, rope *r);
 void msgFireUpdate               (int c, u16 i, u16 count, u16 x, u16 y, u16 z, i16 strength);
 void msgWaterUpdate              (int c, u16 i, u16 count, u16 x, u16 y, u16 z, i16 strength);

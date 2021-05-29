@@ -69,3 +69,7 @@ int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 itera
 	}
 	return hits;
 }
+
+bool characterDamage(character *c, int hp){
+	return characterHP(c,-hp);
+}

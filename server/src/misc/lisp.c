@@ -468,6 +468,21 @@ static lVal *wwlnfLine(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
+	vec pos    = vecNOne();
+	int id     = 0;
+	int amount = 0;
+
+	v = getLArgV(c,v,&pos);
+	v = getLArgI(c,v,&id);
+	v = getLArgI(c,v,&amount);
+
+	if((pos.x < 0) || (id < 0) || (amount < 0)){return NULL;}
+	item itm = itemNew(id,amount);
+	itemDropNewP(pos,&itm);
+	return NULL;
+}
+
 void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
 	lAddNativeFunc(c,"animal-count",   "()",                                           "Returns animal count",                                       wwlnfACount);
@@ -486,6 +501,7 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-dmg",     "(&amount &player)",                            "Damages &player=pid by &amount=4 points",                    wwlnfDmg);
 	lAddNativeFunc(c,"animal-new",     "(pos &type &amount)",                          "Creates &amount=1 new animals of &type=1 at pos",            wwlnfNewAnim);
 	lAddNativeFunc(c,"animal-set",     "(i &hunger &sleepy &pregnancy &state &health)","Sets the fields for animal i",                               wwlnfSetAnim);
+	lAddNativeFunc(c,"item-drop-new",  "(pos item-id amount)",                         "Creates a new itemDrop at POS with AMOUNT of ITEM-ID",       wwlnfItemDropNew);
 	lAddNativeFunc(c,"setb!",          "(pos b)",                                      "Sets block at pos to b",                                     wwlnfSetB);
 	lAddNativeFunc(c,"tryb",           "(pos)",                                        "Tries and gets block type at pos",                           wwlnfTryB);
 	lAddNativeFunc(c,"getb!",          "(pos)",                                        "Gets block type at pos, might trigger worldgen",             wwlnfGetB);

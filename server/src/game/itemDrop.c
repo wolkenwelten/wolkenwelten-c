@@ -78,17 +78,17 @@ itemDrop *itemDropNew(){
 }
 
 void itemDropNewP(const vec pos,const item *itm){
-        if(itm == NULL){return;}
-        itemDrop *id = itemDropNew();
-        if(id == NULL){return;}
+	if(itm == NULL){return;}
+	itemDrop *id = itemDropNew();
+	if(id == NULL){return;}
 
-        id->itm      = *itm;
-        id->ent      = entityNew(pos,vecZero());
-        id->player   = -1;
-        id->lastFire =  0;
-        id->fireDmg  =  0;
-        entityUpdateCurChungus(id->ent);
-        itemDropUpdateFire(id - itemDropList);
+	id->itm      = *itm;
+	id->ent      = entityNew(pos,vecZero());
+	id->player   = -1;
+	id->lastFire =  0;
+	id->fireDmg  =  0;
+	entityUpdateCurChungus(id->ent);
+	itemDropUpdateFire(id - itemDropList);
 }
 
 void itemDropNewPacket(uint c, const packet *p){
@@ -116,6 +116,19 @@ void itemDropPickupP(uint c, const packet *p){
 	if(dd > 32.f * 32.f)     {return;}
 	msgPickupItem(c,itemDropList[i].itm);
 	itemDropDel(i);
+	addPriorityItemDrop(i);
+}
+
+void itemDropBounceP(uint c, const packet *p){
+	uint i = p->v.u16[0];
+	if(i >= itemDropCount)         {return;}
+	if(c >= clientCount)           {return;}
+	if(clients[c].c == NULL)       {return;}
+	if(itemDropList[i].ent == NULL){return;}
+	const vec dist = vecSub(clients[c].c->pos,itemDropList[i].ent->pos);
+	const float dd = vecDot(dist,dist);
+	if(dd > 32.f * 32.f)           {return;}
+	itemDropList[i].ent->vel = vecMulS(itemDropList[i].ent->vel, -0.8f);
 	addPriorityItemDrop(i);
 }
 

@@ -95,6 +95,7 @@ typedef enum {
 	msgtFxAnimalDied,
 	msgtCharacterSetEquipment,
 	msgtItemDropPickup,
+	msgtItemDropBounce,
 	msgtRopeUpdate,
 	msgtProjectileUpdate,
 	msgtFxProjectileHit,

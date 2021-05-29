@@ -347,6 +347,7 @@ void clientParsePacket(const packet *p){
 	case msgtChungusUnsub:
 	case msgtItemDropNew:
 	case msgtItemDropPickup:
+	case msgtItemDropBounce:
 	case msgtGrenadeNew:
 	case msgtBeamblast:
 	case msgtDirtyChunk:

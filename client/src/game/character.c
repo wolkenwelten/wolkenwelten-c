@@ -1029,3 +1029,16 @@ void characterDrawConsHighlight(const character *c){
 		blockTypeDraw(I_Marble_Block, vecNew(los.x+0.5f,los.y+0.5f,los.z+0.5f),a,-4);
 	}
 }
+
+bool characterDamage(character *c, int hp){
+	sfxPlay(sfxImpact,1.f);
+	sfxPlay(sfxUngh,1.f);
+	setOverlayColor(0xA03020F0,0);
+	bool ret = characterHP(c,-hp);
+	if(ret){
+		//msgSendDyingMessage("died", 65535);
+		setOverlayColor(0xFF000000,0);
+		commitOverlayColor();
+	}
+	return ret;
+}

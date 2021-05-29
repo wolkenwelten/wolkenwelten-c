@@ -24,6 +24,7 @@ const char *itemGetName         (const item *i);
       int   itemGetDamage       (const item *i, blockCategory cat);
       float itemGetInaccuracy   (const item *i);
       uint  itemGetIDChance     (const item *i);
+      float itemGetWeight       (const item *i);
       bool  itemDoPrimary       (item *cItem, character *cChar);
       bool  itemDoSecondary     (item *cItem, character *cChar);
       bool  itemDoTertiary      (item *cItem, character *cChar);

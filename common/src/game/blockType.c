@@ -29,7 +29,7 @@
 void blockTypeGenMeshes();
 void blockTypeSetTex(u8 b, side side, u32 tex);
 
-static void blockTypeInitBlock(u8 b, u32 tex, blockCategory ncat,const char *bname,int nhp, int nfirehp,u32 ncolor1,u32 ncolor2){
+static void blockTypeInitBlock(u8 b, u32 tex, blockCategory ncat,const char *bname,int nhp, int nfirehp, float weight, u32 ncolor1,u32 ncolor2){
 
 	for(side i=0;i<sideMAX;i++){
 		blockTypeSetTex(b,i,tex);
@@ -40,6 +40,7 @@ static void blockTypeInitBlock(u8 b, u32 tex, blockCategory ncat,const char *bna
 	blocks[b].cat      = ncat;
 	blocks[b].color[0] = ncolor1;
 	blocks[b].color[1] = ncolor2;
+	blocks[b].weight   = weight;
 
 	lispDefineID("i-",bname,b);
 }
@@ -78,6 +79,10 @@ int blockTypeGetFireDamage(u8 b){
 	}
 }
 
+float blockTypeGetWeight(u8 b){
+	return blocks[b].weight;
+}
+
 u16 blockTypeGetTexX(u8 b, side cside){
 	return blocks[b].texX[cside];
 }
@@ -102,72 +107,72 @@ bool blockTypeValid(u8 b){
 void blockTypeInit(){
 	blockTypeSetWaterProps( 0, (1<<15)-1, (1<<15)-1, (1<<15)-1);
 
-	blockTypeInitBlock    ( 1, 1, DIRT,  "Dirt", 500, 2000, 0xFF0A234F,0xFF051B45);
+	blockTypeInitBlock    ( 1, 1, DIRT,  "Dirt", 500, 2000, 1.5f, 0xFF0A234F,0xFF051B45);
 	blockTypeSetWaterProps( 1, 8192, 32, 8);
 
-	blockTypeInitBlock    ( 2, 0, DIRT,  "Grass", 240,  400, 0xFF004227,0xFF051B45);
+	blockTypeInitBlock    ( 2, 0, DIRT,  "Grass", 240,  400, 1.7f, 0xFF004227,0xFF051B45);
 	blockTypeSetWaterProps( 2, 8192, 24, 8);
 
-	blockTypeInitBlock    ( 3, 2, STONE, "Stone", 1200, 4000, 0xFF5E5E5E,0xFF484848);
+	blockTypeInitBlock    ( 3, 2, STONE, "Stone", 1200, 4000, 5.f, 0xFF5E5E5E,0xFF484848);
 	blockTypeSetWaterProps( 3, 0, 0, 8);
 
-	blockTypeInitBlock    ( 4, 3, STONE, "Coal", 800, 4000, 0xFF262626,0xFF101010);
+	blockTypeInitBlock    ( 4, 3, STONE, "Coal", 800, 4000, 4.f, 0xFF262626,0xFF101010);
 	blockTypeSetWaterProps( 4, 0, 0, 8);
 
-	blockTypeInitBlock    ( 5, 4, WOOD,  "Spruce Log", 500,  800, 0xFF051B25,0xFF07161D);
+	blockTypeInitBlock    ( 5, 4, WOOD,  "Spruce Log", 500, 800, 3.f, 0xFF051B25,0xFF07161D);
 	blockTypeSetWaterProps( 5, 2048, 0, 8);
 
-	blockTypeInitBlock    ( 6, 5, LEAVES,"Spruce Leafes",  60,  400, 0xFF012C12,0xFF01250F);
+	blockTypeInitBlock    ( 6, 5, LEAVES,"Spruce Leafes",  60,  400, 0.2f, 0xFF012C12,0xFF01250F);
 	blockTypeSetWaterProps( 6, 128, 128, 128);
 
-	blockTypeInitBlock    ( 7, 7, WOOD,  "Roots", 480,  480, 0xFF14323E,0xFF0D2029);
+	blockTypeInitBlock    ( 7, 7, WOOD,  "Roots", 480,  480, 1.5f, 0xFF14323E,0xFF0D2029);
 	blockTypeSetWaterProps( 7, 8192, 128, 8);
 
-	blockTypeInitBlock    ( 8, 6, LEAVES,  "Dry Grass", 240, 1000, 0xFF11644B,0xFF007552);
+	blockTypeInitBlock    ( 8, 6, LEAVES,  "Dry Grass", 240, 1000, 1.6f, 0xFF11644B,0xFF007552);
 	blockTypeSetWaterProps( 8, 8192, 24, 8);
 
-	blockTypeInitBlock    ( 9, 8, STONE, "Obsidian",      2000, 8000, 0xFF222222,0xFF171717);
+	blockTypeInitBlock    ( 9, 8, STONE, "Obsidian",      2000, 8000, 10.f, 0xFF222222,0xFF171717);
 	blockTypeSetWaterProps( 9, 0, 0, 8);
 
-	blockTypeInitBlock    (10, 9, WOOD,  "Oak Log",        600,  800, 0xFF082C3C,0xFF08242E);
+	blockTypeInitBlock    (10, 9, WOOD,  "Oak Log",        600,  800, 3.f, 0xFF082C3C,0xFF08242E);
 	blockTypeSetWaterProps(10, 2048, 0, 8);
 
-	blockTypeInitBlock    (11,10, LEAVES,"Oak Leaves",     70,  440, 0xFF004227,0xFF003318);
+	blockTypeInitBlock    (11,10, LEAVES,"Oak Leaves",     70,  440, 0.2f, 0xFF004227,0xFF003318);
 	blockTypeSetWaterProps(11, 128, 128, 128);
 
-	blockTypeInitBlock    (12,12, STONE, "Marble Block",  1600, 8000, 0xFFF0F0F0,0xFFEBEBEB);
+	blockTypeInitBlock    (12,12, STONE, "Marble Block",  1600, 8000, 8.f, 0xFFF0F0F0,0xFFEBEBEB);
 	blockTypeSetWaterProps(12, 0, 0, 8);
 
-	blockTypeInitBlock    (13,11, STONE, "Hematite Ore",  1100, 4000, 0xFF5B5B72,0xFF5E5E5E);
+	blockTypeInitBlock    (13,11, STONE, "Hematite Ore",  1100, 4000, 6.f, 0xFF5B5B72,0xFF5E5E5E);
 	blockTypeSetWaterProps(13, 0, 0, 8);
 
-	blockTypeInitBlock    (14,13, STONE, "Marble Pillar", 1600, 8000, 0xFFF0F0F0,0xFFEBEBEB);
+	blockTypeInitBlock    (14,13, STONE, "Marble Pillar", 1600, 8000, 8.f, 0xFFF0F0F0,0xFFEBEBEB);
 	blockTypeSetWaterProps(14, 0, 0, 8);
 	blockTypeSetTex       (14,sideTop,12);
 	blockTypeSetTex       (14,sideBottom,12);
 
-	blockTypeInitBlock    (15,14, STONE, "Marble Blocks", 1600, 8000, 0xFFF0F0F0,0xFFEBEBEB);
+	blockTypeInitBlock    (15,14, STONE, "Marble Blocks", 1600, 8000, 8.f, 0xFFF0F0F0,0xFFEBEBEB);
 	blockTypeSetWaterProps(15, 0, 0, 8);
 
-	blockTypeInitBlock    (16,24, LEAVES,"Acacia Leafes",  70,  600, 0xFF000230,0xFF1c638f);
+	blockTypeInitBlock    (16,24, LEAVES,"Acacia Leafes",  70,  600, 0.2f, 0xFF000230,0xFF1c638f);
 	blockTypeSetWaterProps(16, 128, 128, 128);
 
-	blockTypeInitBlock    (17,17, WOOD,  "Boards",         400,  600, 0xFF09678f,0xFF1380af);
+	blockTypeInitBlock    (17,17, WOOD,  "Boards",         400,  600, 2.5f, 0xFF09678f,0xFF1380af);
 	blockTypeSetWaterProps(17, 0, 0, 8);
 
-	blockTypeInitBlock    (18,18, STONE, "Crystals",      2500, 8000, 0xFF997CE8,0xFF4D25B5);
+	blockTypeInitBlock    (18,18, STONE, "Crystals",      2500, 8000, 2.f, 0xFF997CE8,0xFF4D25B5);
 	blockTypeSetWaterProps(18, 0, 0, 8);
 
-	blockTypeInitBlock    (19,19, LEAVES,"Sakura Leafes",  70,  420, 0xFF997CE8,0xFF4D25B5);
+	blockTypeInitBlock    (19,19, LEAVES,"Sakura Leafes",  70,  420, 0.2f, 0xFF997CE8,0xFF4D25B5);
 	blockTypeSetWaterProps(19, 128, 128, 128);
 
-	blockTypeInitBlock    (20,20, WOOD,  "Birch Log",      500,  800, 0xFF525255,0xFF525555);
+	blockTypeInitBlock    (20,20, WOOD,  "Birch Log",      500,  800, 3.f, 0xFF525255,0xFF525555);
 	blockTypeSetWaterProps(20, 2048, 0, 8);
 
-	blockTypeInitBlock    (21,21, LEAVES,"Flower Bush",    90,  640, 0xFF004227,0xFF003318);
+	blockTypeInitBlock    (21,21, LEAVES,"Flower Bush",    90,  640, 0.3f, 0xFF004227,0xFF003318);
 	blockTypeSetWaterProps(21, 128, 128, 128);
 
-	blockTypeInitBlock    (22,23, LEAVES,"Date Bush",      80,  840, 0xFF00334f,0xFF128394);
+	blockTypeInitBlock    (22,23, LEAVES,"Date Bush",      80,  840, 0.25f, 0xFF00334f,0xFF128394);
 	blockTypeSetWaterProps(22, 128, 128, 128);
 
 	blockTypeGenMeshes();

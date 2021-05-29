@@ -30,6 +30,7 @@ typedef struct {
 	i16           waterCapacity;
 	blockCategory cat;
 	char         *name;
+	float         weight;
 } blockType;
 
 typedef struct {
@@ -46,6 +47,7 @@ typedef struct {
 	u16 fireHealth;
 	u32 itemDropChance;
 	float inaccuracy;
+	float weight;
 
 	i16 spriteIndex[4];
 	u32 spriteColor[4];

@@ -19,6 +19,7 @@
 
 #include "../game/character.h"
 #include "../game/entity.h"
+#include "../sdl/sfx.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
@@ -51,9 +52,22 @@ void itemDropUpdateAll(){
 		const float dd = vecDot(dist,dist);
 		if(itemDropList[i].player == playerID){
 			if(dd > 4.f * 4.f){itemDropList[i].player = -1;}
-		}else if(dd < 3.f*3.f){
-			msgItemDropPickup(-1, i);
-			itemDropList[i].player = playerID;
+		}else if(dd < 3.f * 3.f){
+			const float vel    = vecMag(itemDropList[i].ent->vel);
+			const float weight = itemGetWeight(&itemDropList[i].itm);
+			const float vw     = vel * weight;
+			if(vw > 2.f){
+				msgItemDropBounce(-1, i);
+				itemDropList[i].player = playerID;
+				sfxPlay(sfxImpact,1.0f);
+				if(vw > 4.f){
+					characterDamage(player,(int)vw);
+				}
+			}else{
+				msgItemDropPickup(-1, i);
+				itemDropList[i].player = playerID;
+				sfxPlay(sfxPock,0.5f);
+			}
 		}
 	}
 

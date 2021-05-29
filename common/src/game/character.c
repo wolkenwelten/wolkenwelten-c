@@ -268,10 +268,6 @@ bool characterHP(character *c, int addhp){
 	return false;
 }
 
-bool characterDamage(character *c, int hp){
-	return characterHP(c,-hp);
-}
-
 void characterEmptyInventory(character *c){
 	for(uint i=0;i<40;i++){
 		c->inventory[i] = itemEmpty();

@@ -394,6 +394,9 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtItemDropPickup:
 		itemDropPickupP(c,p);
 		break;
+	case msgtItemDropBounce:
+		itemDropBounceP(c,p);
+		break;
 	case msgtRopeUpdate:
 		ropeUpdateP(c,p);
 		break;

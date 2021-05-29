@@ -233,6 +233,19 @@ static lVal *wwlnfITSpriteColor(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfITWeight(lClosure *c, lVal *v){
+	int itemID   = -1;
+	float weight = -1.f;
+
+	v = getLArgI(c,v,&itemID);
+	v = getLArgF(c,v,&weight);
+
+	if((itemID < 256) || (weight < 0)){return NULL;}
+	itemType *it = &itemTypes[itemID-256];
+	it->weight = weight;
+	return NULL;
+}
+
 void itemTypeLispClosure(lClosure *c){
 	lAddNativeFunc(c,"it-name",        "(id &n)",       "Set name of itemType ID to &n if passed",                 wwlnfITName);
 	lAddNativeFunc(c,"it-mesh",        "(id &m)",       "Set mesh of itemType ID to &m if passed",                 wwlnfITMesh);
@@ -246,4 +259,5 @@ void itemTypeLispClosure(lClosure *c){
 	lAddNativeFunc(c,"it-item-drop-cb","(id &chance)",  "Set chance mask for the itemDrop callback to execute",    wwlnfITIDChance);
 	lAddNativeFunc(c,"it-sprite-id",   "(id i &sprite)","Set sprite id I of ID to &SPRITE",                        wwlnfITSpriteID);
 	lAddNativeFunc(c,"it-sprite-color","(id i &color)", "Set sprite color of ID to &COLOR",                        wwlnfITSpriteColor);
+	lAddNativeFunc(c,"it-weight",      "(id weight)",   "Set the WEIGHT of ID",                                    wwlnfITWeight);
 }
