@@ -283,7 +283,7 @@ static void bunnySEat(animal *e,int stateChange[16]){
 
 static void bunnyDoPoop(animal *e,int stateChange[16]){
 	item ipoop = itemNew(I_Poop,1);
-	itemDropNewP(e->pos, &ipoop);
+	itemDropNewP(e->pos, &ipoop,-1);
 	stateChange[ANIMAL_S_FLEE] += 256;
 }
 
@@ -420,8 +420,8 @@ void animalThinkBunny(animal *e){
 void animalRDieBunny(animal *e){
 	item mdrop = itemNew(I_Meat,rngValMM(2,4));
 	item fdrop = itemNew(I_Fur, rngValMM(1,2));
-	itemDropNewP(e->pos,&mdrop);
-	itemDropNewP(e->pos,&fdrop);
+	itemDropNewP(e->pos,&mdrop,-1);
+	itemDropNewP(e->pos,&fdrop,-1);
 }
 
 void animalRBurnBunny(animal *e){

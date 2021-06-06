@@ -3,7 +3,7 @@
 
 void blockMiningBurnBlock    (int x, int y, int z, u8 b);
 void blockMiningDropItemsPos (int x, int y, int z, u8 b);
-void blockMiningMineBlock    (int x, int y, int z);
+void blockMiningMineBlock    (int x, int y, int z, u8 cause);
 int  blockMiningMinePos      (int dmg, int x, int y, int z);
 int  blockMiningMinePosItem  (item *itm, int x, int y, int z);
 void blockMiningUpdateAll    ();

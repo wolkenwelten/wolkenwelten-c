@@ -14,6 +14,7 @@ chunk   *worldGetChunk      (int x, int y, int z);
 bool     worldIsLoaded      (int x, int y, int z);
 ivec     chungusGetPos      (const chungus *c);
 void     worldMine          (int x, int y, int z);
+void     worldBreak         (int x, int y, int z);
 void     worldBoxMine       (int x, int y, int z, int w,int h,int d);
 void     worldBoxMineSphere (int x, int y, int z, int r);
 bool     worldShouldBeLoaded(const vec cpos);

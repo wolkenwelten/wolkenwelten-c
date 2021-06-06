@@ -18,6 +18,7 @@
  * meant for the client side.
  */
 #include "../../../common/src/common.h"
+#include "../../../common/src/network/messages.h"
 #include "../../../common/src/misc/side.h"
 
 #include <stdio.h>
@@ -43,9 +44,7 @@ void fxRainDrop(const vec pos){
 }
 
 void fxBlockBreak(const vec pos, u8 b, u8 cause){
-	(void)pos;
-	(void)b;
-	(void)cause;
+	msgMineBlock(pos.x,pos.y,pos.z,b,cause);
 }
 
 void ingredientSubstituteAdd(u16 ingredient, u16 substitute){

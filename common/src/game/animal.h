@@ -19,6 +19,7 @@ void        animalReset            (      animal *e);
 float       animalDistance         (const animal *e,const character *c);
 const char *animalGetStateName     (const animal *e);
 int         animalGetMaxHealth     (const animal *e);
+float        animalGetWeight        (const animal *e);
 int         animalUpdate           (      animal *e);
 void        animalThink            (      animal *e);
 float       animalClosestAnimal    (const animal *e, animal **cAnim, int typeFilter, uint flagsMask, uint flagsCompare);

@@ -17,6 +17,7 @@ void msgBlockMiningUpdate        (int c, u16 x, u16 y, u16 z, i16 damage, u16 co
 void msgSendChungusComplete      (int c,  u8 x,  u8 y,  u8 z);
 void msgBeingGotHit              (       i16 hp, u8 cause, float knockbackMult, being target, being culprit);
 void msgBeingDamage              (int c, i16 hp, u8 cause, float knockbackMult, being target, being culprit, const vec pos);
+void msgBeingMove                (being b, vec dpos, vec dvel);
 void msgSetTime                  (int c, u32 time);
 // 9 = playerSendName
 void msgItemDropNew              (int c, const vec pos, const vec vel, const item *itm);
@@ -35,7 +36,7 @@ void msgGrenadeExplode           (const vec pos,float pwr, u16 style);
 void msgGrenadeUpdate            (int c, const vec pos, const vec vel, u16 i, u16 count);
 void msgFxBeamBlaster            (int c, const vec pa, const vec pb, float beamSize, float damageMultiplier);
 void msgFxBeamBlastHit           (int c, const vec pos, u16 size, u16 style);
-void msgItemDropUpdate           (int c, const vec pos, const vec vel, const item *itm, u16 i, u16 len);
+void msgItemDropUpdate           (int c, const vec pos, const vec vel, const item *itm, u16 i, u16 len, i16 IDPlayer);
 void msgPlayerSetData            (int c, i16 hp, u16 activeItem, u32 flags, u16 id);
 void msgPlayerSetInventory       (int c, const item *itm, size_t itemCount);
 void msgPingPong                 (int c);

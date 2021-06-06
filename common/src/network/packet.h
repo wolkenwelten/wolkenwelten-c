@@ -69,6 +69,7 @@ typedef enum {
 	msgtBlockMiningUpdate,
 	msgtSetChungusLoaded,
 	msgtBeingGotHit,
+	msgtBeingMove,
 	msgtSetTime,
 	msgtItemDropNew,
 	msgtGrenadeNew,

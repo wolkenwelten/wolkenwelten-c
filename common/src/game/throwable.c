@@ -148,7 +148,7 @@ void throwableRecvUpdate(const packet *p){
 	a->thrower    = p->v.u32[ 3];
 
 	if(a->ent == NULL){
-		a->ent = entityNew(vecNewP(&p->v.f[ 4]),vecZero());
+		a->ent = entityNew(vecNewP(&p->v.f[ 4]),vecZero(),itemGetWeight(&a->itm));
 		if(isClient){
 			a->ent->eMesh = itemGetMesh(&a->itm);
 		}
@@ -165,11 +165,14 @@ void throwableRecvUpdate(const packet *p){
 	}
 }
 
+#include <stdio.h>
+int getClientByCharacter(const character *c);
 static void throwableUpdate(throwable *t){
 	if(t->ent == NULL){return;}
 	entityUpdate(t->ent);
 	if((t->flags & THROWABLE_PIERCE) && (t->ent->flags & ENTITY_COLLIDE)){
-		const u8 b = entityGetBlockCollision(t->ent);
+		vec retPos;
+		const u8 b = entityCollisionBlock(t->ent->pos,&retPos);
 		const blockCategory cat = blockTypeGetCat(b);
 		if(cat != STONE){
 			t->ent->flags |= ENTITY_NOCLIP;
@@ -200,7 +203,9 @@ static void throwableUpdate(throwable *t){
 		}
 	}
 	if(!isClient && !(t->ent->flags & ENTITY_NOCLIP) && (t->ent->flags & ENTITY_COLLIDE) && (vecAbsSum(t->ent->vel) < 0.01f)){
-		itemDropNewP(t->ent->pos,&t->itm);
+		const i16 clientID = getClientByCharacter(characterGetByBeing(t->thrower));
+		printf("clientID: %i\n",clientID);
+		itemDropNewP(t->ent->pos,&t->itm,clientID);
 		t->itm.amount = 0;
 		t->itm.ID = 0;
 		throwableSendUpdate(-1,t - throwableList);

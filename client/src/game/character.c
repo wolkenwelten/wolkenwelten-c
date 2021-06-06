@@ -21,6 +21,7 @@
 #include "../game/animal.h"
 #include "../game/being.h"
 #include "../game/blockType.h"
+#include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../game/projectile.h"
 #include "../game/throwable.h"
@@ -160,9 +161,16 @@ static void characterUpdateHook(character *c){
 		const float gl     = hookGetGoalLength(c->hook);
 		const float wspeed = characterGetHookWinchS(c);
 		const float maxl   = characterGetMaxHookLen(c);
-		if((c->controls.y > 0) && (gl > 1.f)){
-			hookSetGoalLength(c->hook,gl-wspeed);
-			c->flags |= CHAR_JUMPING;
+		if(c->controls.y > 0){
+			if(gl > 2.f){
+				hookSetGoalLength(c->hook,gl-wspeed);
+				c->flags |= CHAR_JUMPING;
+			}else{
+				hookReturnHook(c->hook);
+				c->vel = vecMul(c->vel,vecNew(0.5f,1.f,0.5));
+				c->vel.y += 0.05f;
+				c->flags |= CHAR_JUMPING;
+			}
 		}
 		if((c->flags & CHAR_SNEAK) && (gl < maxl)){
 			hookSetGoalLength(c->hook,gl+wspeed);
@@ -346,10 +354,10 @@ void characterDie(character *c){
 	if(c->flags & CHAR_SPAWNING){return;}
 	if(c->flags & CHAR_NOCLIP)  {return;}
 	for(int i=0;i<40;i++){
-		itemDropNewP(c->pos, characterGetItemBarSlot(c,i));
+		itemDropNewP(c->pos, characterGetItemBarSlot(c,i),-1);
 	}
 	for(int i=0;i<3;i++){
-		itemDropNewP(c->pos, &c->equipment[i]);
+		itemDropNewP(c->pos, &c->equipment[i],-1);
 	}
 	setOverlayColor(0xFF000000,0);
 	characterInit(c);
@@ -416,25 +424,7 @@ static void characterGoStepUp(character *c){
 }
 
 static float characterBlockRepulsion(character *c, float *vel){
-	(void)c;
-	int ret = 0;
-	vec blockPos;
-	const u8 b = characterCollisionBlock(c->pos,&blockPos);
-	if(b == 0){return 0;}
-
-	float strength = *vel;
-	const int blockDamage = fabsf(strength) * 4192.f;
-	const int blockHealth = blockTypeGetHealth(b);
-	if(blockDamage > blockHealth){
-		worldMine(blockPos.x,blockPos.y,blockPos.z);
-		strength = strength * ((float)blockHealth / (float)blockDamage);
-		fxBlockBreak(blockPos,b,0);
-	}
-
-	if(fabsf(strength) > 0.1f){ret += (int)(fabsf(strength)*512.f);}
-	*vel += strength* -1.3f;
-
-	return ret;
+	return blockRepulsion(c->pos,vel,80.f,characterCollisionBlock);
 }
 
 static int characterPhysics(character *c){

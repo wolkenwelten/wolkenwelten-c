@@ -34,7 +34,7 @@ int      itemDropFirstFree = -1;
 
 void itemDropEmptyMsg(uint c, uint i){
 	item itm = itemEmpty();
-	msgItemDropUpdate(c,vecNOne(),vecZero(),&itm,i,itemDropCount);
+	msgItemDropUpdate(c,vecNOne(),vecZero(),&itm,i,itemDropCount,-1);
 }
 
 itemDrop *itemDropGetByBeing(being b){

@@ -178,10 +178,13 @@ void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, u8 block){
 }
 
 void bigchungusMine(bigchungus *c, int x,int y,int z){
-	u8 b = bigchungusGetB(c,x,y,z);
-	if(b==0){return;}
-	bigchungusSetB(c,x,y,z,0);
-	blockMiningDropItemsPos(x,y,z,b);
+	(void)c;
+	blockMiningMineBlock(x,y,z,0);
+}
+
+void bigchungusBreak(bigchungus *c, int x,int y,int z){
+	(void)c;
+	blockMiningMineBlock(x,y,z,1);
 }
 
 void bigchungusBoxMine(bigchungus *c, int x,int y,int z, int w,int h,int d){
@@ -379,6 +382,9 @@ int checkCollision(int x, int y, int z){
 }
 void worldMine(int x, int y, int z){
 	bigchungusMine(&world,x,y,z);
+}
+void worldBreak(int x, int y, int z){
+	bigchungusBreak(&world,x,y,z);
 }
 void worldBoxMine(int x, int y, int z, int w,int h,int d){
 	bigchungusBoxMine(&world,x,y,z,w,h,d);

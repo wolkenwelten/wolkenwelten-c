@@ -18,10 +18,11 @@
 
 #include "../network/server.h"
 #include "../../../common/src/game/entity.h"
+#include "../../../common/src/game/item.h"
 
 void throwableNew(const vec pos, const vec rot, float speed, const item itm, being thrower, i8 damage, u8 flags){
 	throwable *a = throwableAlloc();
-	a->ent       = entityNew(pos,rot);
+	a->ent       = entityNew(pos,rot,itemGetWeight(&itm));
 	a->ent->vel  = vecMulS(vecDegToVec(rot),speed);
 	a->itm       = itm;
 	a->damage    = damage;

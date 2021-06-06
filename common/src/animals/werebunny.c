@@ -293,7 +293,7 @@ static void werebunnySEat(animal *e,int stateChange[16]){
 
 static void werebunnyDoPoop(animal *e,int stateChange[16]){
 	item ipoop = itemNew(I_Poop,1);
-	itemDropNewP(e->pos, &ipoop);
+	itemDropNewP(e->pos, &ipoop,-1);
 	stateChange[ANIMAL_S_FLEE] += 256;
 }
 
@@ -430,6 +430,6 @@ void animalRBurnWerebunny(animal *e){
 void animalRDieWerebunny(animal *e){
 	item mdrop = itemNew(I_Meat,rngValMM(4,6));
 	item fdrop = itemNew(I_Fur, rngValMM(3,4));
-	itemDropNewP(e->pos,&mdrop);
-	itemDropNewP(e->pos,&fdrop);
+	itemDropNewP(e->pos,&mdrop,-1);
+	itemDropNewP(e->pos,&fdrop,-1);
 }

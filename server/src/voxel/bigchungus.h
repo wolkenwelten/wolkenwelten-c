@@ -51,6 +51,7 @@ bool     worldSetB          (int x, int y, int z, u8 block);
 int      checkCollision     (int x, int y, int z);
 void     worldDirtyChunk    (int x, int y, int z, int client);
 void     worldMine          (int x, int y, int z);
+void     worldBreak         (int x, int y, int z);
 void     worldBoxMine       (int x, int y, int z, int w,int h,int d);
 void     worldBoxMineSphere (int x, int y, int z, int r);
 bool     worldIsLoaded      (int x, int y, int z);

@@ -100,7 +100,7 @@ static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
 
 	if((pos.x < 0.f) || (pos.y < 0.f) || (pos.z < 0.f) || (id <= 0) || (amt <= 0)){return NULL;}
 	item itm = itemNew(id,amt);
-	itemDropNewP(pos,&itm);
+	itemDropNewP(pos,&itm,-1);
 	return NULL;
 }
 
@@ -191,7 +191,7 @@ lVal *lispCallFuncVII(const char *symbol,const vec va, int ib , int ic){
 }
 
 void lispDefineID(const char *prefix, const char *symbol, int val){
-	char lName[16];
+	char lName[sizeof(lSymbol)];
 	int len = sizeof(lName);
 
 	memset(lName,0,sizeof(lName));

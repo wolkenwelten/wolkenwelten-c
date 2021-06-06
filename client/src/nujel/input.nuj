@@ -6,7 +6,7 @@
 [def input-tick]
 
 [let []
-	[def did-primary #f]
+	[def did-primary #f]e
 	[def did-throw #f]
 	[def throw-start 0]
 
@@ -67,7 +67,7 @@
 
 		[when [not did-primary] [player-stop-mining!]]
 		[when did-primary [set! did-primary #f]]
-		[when [and [not did-throw] [> throw-start 0]] [player-do-throw! [- [time-milliseconds] throw-start]]]
-		[when did-throw [set! did-throw #f]]
+		[when [and [not did-throw] [ineq? throw-start 0]] [player-do-throw! [- [time-milliseconds] throw-start]]]
+		[set! did-throw #f]
 	]]
 ]

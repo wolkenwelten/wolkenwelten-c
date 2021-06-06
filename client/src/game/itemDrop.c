@@ -34,7 +34,8 @@ void itemDropNewC(const character *chr,const item *itm){
 	msgItemDropNew(-1,vecAdd(pos,vecMulS(vel,100)),vel,itm);
 }
 
-void itemDropNewP(const vec pos,const item *itm){
+void itemDropNewP(const vec pos,const item *itm, i16 IDPlayer){
+	(void)IDPlayer;
 	if(itemIsEmpty(itm)){return;}
 	const vec vel = vecMulS(vecRngAbs(),0.03);
 	msgItemDropNew(-1,pos,vel,itm);
@@ -101,10 +102,11 @@ void itemDropUpdateFromServer(const packet *p){
 	const vec idpos = vecNewP(&p->v.f[2]);
 	const vec idvel = vecNewP(&p->v.f[5]);
 	if(itemDropList[d].ent == NULL){
-		itemDropList[d].ent     = entityNew(idpos,vecZero());
+		itemDropList[d].ent     = entityNew(idpos,vecZero(),itemGetWeight(&itemDropList[d].itm));
 		itemDropList[d].aniStep = rngValM(1024);
 		itemDropList[d].player = -1;
 	}
+	itemDropList[d].player     = p->v.i16[16];
 
 	itemDropList[d].ent->eMesh = itemGetMesh(&itemDropList[d].itm);
 	itemDropList[d].ent->pos   = idpos;

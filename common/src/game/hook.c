@@ -51,7 +51,7 @@ hook *hookNew(character *p){
 	if(characterGetMaxHookLen(p) > 128.f){flags |= ROPE_TEX_CHAIN;}
 
 	ghk->parent       = p;
-	ghk->ent          = entityNew(vecAdd(vecNew(0,1,0),p->pos),vecNew(-p->rot.yaw,-p->rot.pitch-90.f,p->rot.roll));
+	ghk->ent          = entityNew(vecAdd(vecNew(0,1,0),p->pos),vecNew(-p->rot.yaw,-p->rot.pitch-90.f,p->rot.roll),3000.f);
 	ghk->ent->vel     = vecAdd(vecMulS(vecDegToVec(p->rot),1.3f),p->vel);
 	ghk->ent->eMesh   = meshHook;
 	ghk->ent->flags   = ENTITY_NOREPULSION;
@@ -134,7 +134,7 @@ bool hookUpdate(hook *ghk){
 			if(b){ fxBlockBreak(vecFloor(ghk->ent->pos),b,0);}
 		}else{
 			being closest = beingClosest(ghk->ent->pos,1.f);
-			if((closest != 0) && (closest != characterGetBeing(ghk->parent))){
+			if((closest != 0) && (closest != characterGetBeing(ghk->parent)) && (closest != ghk->attached)){
 				ghk->ent->vel     = vecZero();
 				ghk->ent->flags  |= ENTITY_NOCLIP;
 				ghk->hooked       = true;
@@ -144,8 +144,8 @@ bool hookUpdate(hook *ghk){
 				ghk->rope->a      = closest;
 				ghk->ent->pos     = beingGetPos(closest);
 				ghk->rope->flags |= ROPE_DIRTY;
-				//sfxPlay(sfxHookHit,1.f);
-				//sfxPlay(sfxUngh,1.f);
+				sfxPlay(sfxHookHit,1.f);
+				sfxPlay(sfxUngh,1.f);
 				fxBlockBreak(ghk->ent->pos,2,0);
 				sfxLoop(sfxHookRope,0.f);
 			}else if(!ghk->hooked && !ghk->returning){

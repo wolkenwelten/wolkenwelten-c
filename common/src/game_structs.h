@@ -81,6 +81,7 @@ struct beingList {
 typedef struct {
 	vec pos,vel,rot;
 	float yoff;
+	float weight;
 	u32 flags;
 
 	mesh    *eMesh;

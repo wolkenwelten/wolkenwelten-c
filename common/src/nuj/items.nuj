@@ -325,10 +325,10 @@
 	[sync]
 ]]
 
-[def i-assaultblaste]
+[def i-assaultblaster]
 [item-default [ω
 	[def id [item-new-id]]
-	[def sym 'i-assaultblaste]
+	[def sym 'i-assaultblaster]
 	[def name "Assault Blaster"]
 	[def inaccuracy 8]
 	[def ammunition 'i-flamebullet]
@@ -359,7 +359,7 @@
 	]]
 	[def burn-up [λ [pos id amount] [explode pos [* amount 0.2]]]]
 	[def sprite-id-0 263]
-	[def mesh 'm-assaultblaste]
+	[def mesh 'm-assaultblaster]
 	[def weight 3.0]
 
 	[sync]
@@ -383,7 +383,7 @@
 	[def tertiary [λ [] [item-reload 256]]]
 	[def burn-up [λ [pos id amount] [explode pos [* amount 0.2]]]]
 	[def sprite-id-0 264]
-	[def mesh 'm-shotgunblaste]
+	[def mesh 'm-shotgunblaster]
 	[def weight 3.0]
 
 	[sync]

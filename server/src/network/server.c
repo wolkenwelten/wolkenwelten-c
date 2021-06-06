@@ -315,6 +315,15 @@ void packetEchoExcept(u8 c,const packet *p){
 	sendToAllExcept(c,p,packetLen(p)+4);
 }
 
+void beingMove(u8 c, const packet *p){
+	(void)c;
+	being b = p->v.u32[0];
+	vec dpos = vecNewP(&p->v.f[1]);
+	vec dvel = vecNewP(&p->v.f[4]);
+	beingAddPos(b,dpos);
+	beingAddVel(b,dvel);
+}
+
 void serverParseSinglePacket(uint c, packet *p){
 	const int pLen  = p->typesize >> 10;
 	const int pType = p->typesize & 0xFF;
@@ -338,7 +347,7 @@ void serverParseSinglePacket(uint c, packet *p){
 		worldSetB(p->v.u16[0],p->v.u16[1],p->v.u16[2],p->v.u16[3]);
 		break;
 	case msgtMineBlock:
-		blockMiningMineBlock(p->v.u16[0],p->v.u16[1],p->v.u16[2]);
+		blockMiningMineBlock(p->v.u16[0],p->v.u16[1],p->v.u16[2],p->v.u8[7]);
 		break;
 	case msgtGoodbye:
 		errno=0;
@@ -414,6 +423,9 @@ void serverParseSinglePacket(uint c, packet *p){
 		break;
 	case msgtThrowableRecvUpdates:
 		throwableRecvUpdate(p);
+		break;
+	case msgtBeingMove:
+		beingMove(c,p);
 		break;
 
 	case msgtLZ4:

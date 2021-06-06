@@ -800,15 +800,15 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"aiming?",        "()",                "Predicate that evaluates to #t when the player is aiming.",      wwlnfAimingPred);
 	lAddNativeFunc(c,"throwing?",      "()",                "Predicate that evaluates to #t when the player is throw-aiming.",wwlnfThrowingPred);
 	lAddNativeFunc(c,"throw-item",     "(flags &force &amount)", "Throw the currently held item with FLAGS, &FORCE=0.1 and &AMOUNT=1",wwlnfThrowItem);
-	lAddNativeFunc(c,"player-drop-item!","(slot)",          "Throw a single item from SLOT in front of the player" ,wwlnfDropItem);
-	lAddNativeFunc(c,"try-to-shoot",   "(cd ammo)",         "Try to shoot and cooldown for CD and use AMMO bullets"          ,wwlnfTryToShoot);
-	lAddNativeFunc(c,"beamblast",      "(size damage hits-left)", "Calls cFunc beamblast",                                   wwlnfBeamblast);
-	lAddNativeFunc(c,"projectile",     "(&type &num)",      "Fire &NUM=1 projectiles of &TYPE=0",                            wwlnfProjectile);
-	lAddNativeFunc(c,"fire-new",       "(pos &strength)",   "Create/Grow a fire at POS with &STRENGTH=8",                    wwlnfFireNew);
-	lAddNativeFunc(c,"toggle-inventory!","()",              "Toggle the inveotory",                                          wwlnfToggleInventory);
-	lAddNativeFunc(c,"widget-focus-on-game?","()",          "Return #t if the game is focused and not some menu",            wwlnfGuiFocusOnGame);
-	lAddNativeFunc(c,"draw-boundaries", "()",                "Return the current boundary drawing style",                    wwlnfDrawBoundariesGet);
-	lAddNativeFunc(c,"draw-boundaries!","(v)",               "Set the current boundary drawing style",                       wwlnfDrawBoundariesSet);
+	lAddNativeFunc(c,"player-drop-item!","(slot)",          "Throw a single item from SLOT in front of the player",           wwlnfDropItem);
+	lAddNativeFunc(c,"try-to-shoot",   "(cd ammo)",         "Try to shoot and cooldown for CD and use AMMO bullets",          wwlnfTryToShoot);
+	lAddNativeFunc(c,"beamblast",      "(size damage hits-left)", "Calls cFunc beamblast",                                    wwlnfBeamblast);
+	lAddNativeFunc(c,"projectile",     "(&type &num)",      "Fire &NUM=1 projectiles of &TYPE=0",                             wwlnfProjectile);
+	lAddNativeFunc(c,"fire-new",       "(pos &strength)",   "Create/Grow a fire at POS with &STRENGTH=8",                     wwlnfFireNew);
+	lAddNativeFunc(c,"toggle-inventory!","()",              "Toggle the inveotory",                                           wwlnfToggleInventory);
+	lAddNativeFunc(c,"widget-focus-on-game?","()",          "Return #t if the game is focused and not some menu",             wwlnfGuiFocusOnGame);
+	lAddNativeFunc(c,"draw-boundaries", "()",                "Return the current boundary drawing style",                     wwlnfDrawBoundariesGet);
+	lAddNativeFunc(c,"draw-boundaries!","(v)",               "Set the current boundary drawing style",                        wwlnfDrawBoundariesSet);
 }
 
 void lispInit(){

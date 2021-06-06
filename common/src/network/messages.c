@@ -153,6 +153,23 @@ void msgItemDropNew(int c, const vec pos, const vec vel, const item *itm){
 	packetQueue(p,msgtItemDropNew,8*4,c);
 }
 
+void msgBeingMove(being b, vec dpos, vec dvel){
+	packet *p = &packetBuffer;
+
+	p->v.u32[0] = b;
+
+	p->v.f[1] = dpos.x;
+	p->v.f[2] = dpos.y;
+	p->v.f[3] = dpos.z;
+
+	p->v.f[4] = dvel.x;
+	p->v.f[5] = dvel.y;
+	p->v.f[6] = dvel.z;
+
+
+	packetQueue(p,msgtBeingMove,7*4,-1);
+}
+
 void msgNewGrenade(const vec pos, const vec rot, float pwr, int cluster, float clusterPwr){
 	packet *p = &packetBuffer;
 
@@ -274,7 +291,7 @@ void msgFxBeamBlaster(int c, const vec pa, const vec pb, float beamSize, float d
 	packetQueueExcept(p,msgtFxBeamBlaster,8*4,c);
 }
 
-void msgItemDropUpdate(int c, const vec pos, const vec vel, const item *itm, u16 i, u16 len){
+void msgItemDropUpdate(int c, const vec pos, const vec vel, const item *itm, u16 i, u16 len, i16 IDPlayer){
 	packet *p = &packetBuffer;
 
 	p->v.u16[0] = i;
@@ -291,7 +308,10 @@ void msgItemDropUpdate(int c, const vec pos, const vec vel, const item *itm, u16
 	p->v.f[6]   = vel.y;
 	p->v.f[7]   = vel.z;
 
-	packetQueue(p,msgtItemDropUpdate,8*4,c);
+	p->v.i16[16] = IDPlayer;
+	p->v.i16[17] = 0;
+
+	packetQueue(p,msgtItemDropUpdate,9*4,c);
 }
 
 void msgBeingGotHit(i16 hp, u8 cause,float knockbackMult, being target, being culprit){
@@ -463,6 +483,8 @@ const char *networkGetMessageName(uint i){
 		return "setChungusLoaded";
 	case msgtBeingGotHit:
 		return "beingGotHit";
+	case msgtBeingMove:
+		return "beingMove";
 	case msgtSetTime:
 		return "setTime";
 	case msgtItemDropNew:

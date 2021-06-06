@@ -91,6 +91,14 @@ static lVal *wwlnfIDCount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(itemDropGetActive());
 }
+static lVal *wwlnfIDFlush(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	for(int i=itemDropCount-1;i>=0;i--){
+		itemDropDel(i);
+		addPriorityItemDrop(i);
+	}
+	return NULL;
+}
 static lVal *wwlnfECount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(entityCount);
@@ -479,7 +487,7 @@ static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
 
 	if((pos.x < 0) || (id < 0) || (amount < 0)){return NULL;}
 	item itm = itemNew(id,amount);
-	itemDropNewP(pos,&itm);
+	itemDropNewP(pos,&itm,-1);
 	return NULL;
 }
 
@@ -489,6 +497,7 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"fire-count",     "()",                                           "Returns fire count",                                         wwlnfFCount);
 	lAddNativeFunc(c,"mining-count",   "()",                                           "Returns block mining count",                                 wwlnfBMCount);
 	lAddNativeFunc(c,"item-drop-count","()",                                           "Returns item drop count",                                    wwlnfIDCount);
+	lAddNativeFunc(c,"item-drop-flush!","()",                                          "Remove all itemDrops",                                       wwlnfIDFlush);
 	lAddNativeFunc(c,"entity-count",   "()",                                           "Returns entity count",                                       wwlnfECount);
 	lAddNativeFunc(c,"chungus-count",  "()",                                           "Returns chungus count",                                      wwlnfChungi);
 	lAddNativeFunc(c,"rain-count",     "()",                                           "Returns amount of rain drops",                               wwlnfRCount);

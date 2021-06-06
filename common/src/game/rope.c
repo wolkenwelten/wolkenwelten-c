@@ -19,6 +19,7 @@
 
 #include "../game/being.h"
 #include "../game/entity.h"
+#include "../network/messages.h"
 
 #include <string.h>
 
@@ -60,18 +61,21 @@ static void ropePullTowards(being a, being b, float goalLen, float mul){
 	vec velAdd = vecZero();
 	if(((d.x > 0) && !((col & 0x110))) || ((d.x < 0) && !((col & 0x220)))){
 		posAdd.x = d.x * -0.6f * mul;
-		velAdd.x = d.x * -0.2f * mul;
+		velAdd.x = MINMAX(d.x * -0.1f * mul,-0.01,0.01);
 	}
 	if(((d.z > 0) && !((col & 0x440))) || ((d.z < 0) && !((col & 0x880)))){
 		posAdd.z = d.z * -0.6f * mul;
-		velAdd.z = d.z * -0.2f * mul;
+		velAdd.z = MINMAX(d.z * -0.1f * mul,-0.01,0.01);
 	}
 	if(((d.y > 0) && !((col & 0x00F))) || ((d.y < 0) && !((col & 0x0F0)))){
 		posAdd.y = d.y * -0.6f * mul;
-		velAdd.y = d.y * -0.2f * mul;
+		velAdd.y = MINMAX(d.y * -0.1f * mul,-0.01,0.01);
 	}
 	beingAddPos(b,posAdd);
 	beingAddVel(b,velAdd);
+	if(isClient && beingType(b) == BEING_ANIMAL){
+		msgBeingMove(b,posAdd,velAdd);
+	}
 }
 
 static void ropeUpdate(rope *r){
@@ -94,8 +98,8 @@ static void ropeUpdate(rope *r){
 		bm = 0.f;
 	}
 
-	ropePullTowards(r->a,r->b,r->length,bm);
 	ropePullTowards(r->b,r->a,r->length,am);
+	ropePullTowards(r->a,r->b,r->length,bm);
 }
 
 void  ropeUpdateAll(){

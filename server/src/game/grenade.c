@@ -51,7 +51,7 @@ void grenadeNew(const vec pos, const vec rot, float pwr, int cluster, float clus
 	int g       = grenadeCount++;
 	float speed = 0.12f;
 
-	grenadeList[g].ent = entityNew(pos,rot);
+	grenadeList[g].ent = entityNew(pos,rot,pwr*3.f);
 	if(pwr < 1.5f){
 		speed = 0.15f;
 	}

@@ -345,6 +345,7 @@ void clientParsePacket(const packet *p){
 	case msgtDyingMsg:
 	case msgtRequestSpawnPos:
 	case msgtChungusUnsub:
+	case msgtBeingMove:
 	case msgtItemDropNew:
 	case msgtItemDropPickup:
 	case msgtItemDropBounce:
@@ -438,4 +439,9 @@ void clientFree(){
 	gameRunning = false;
 	closeSingleplayerServer();
 	openMainMenu();
+}
+
+int getClientByCharacter(const character *c){
+	(void)c;
+	return -1;
 }

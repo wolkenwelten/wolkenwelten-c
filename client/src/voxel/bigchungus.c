@@ -307,6 +307,16 @@ void worldMine(int x, int y, int z){
 	}
 }
 
+void worldBreak(int x, int y, int z){
+	const u8 b = worldGetB(x,y,z);
+	msgMineBlock(x,y,z,b,1);
+	if((b == I_Grass) || (b == I_Dry_Grass)){
+		worldSetB(x,y,z,I_Dirt);
+	}else{
+		worldSetB(x,y,z,0);
+	}
+}
+
 void worldBoxMine(int x, int y, int z, int w, int h, int d){
 	for(int cx=0;cx<w;cx++){
 	for(int cy=0;cy<h;cy++){

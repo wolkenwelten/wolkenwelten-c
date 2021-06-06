@@ -68,7 +68,7 @@ const void *throwableLoad(const void *buf){
 	t->itm.amount = s[3];
 	t->counter    = s[4];
 
-	t->ent = entityNew(vecNewP(&f[3]),vecNew(f[9],f[10],0));
+	t->ent = entityNew(vecNewP(&f[3]),vecNew(f[9],f[10],0),itemGetWeight(&t->itm));
 	if(t->ent == NULL){return b+44;}
 	t->ent->vel = vecNewP(&f[6]);
 

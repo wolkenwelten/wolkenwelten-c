@@ -80,7 +80,7 @@ void blockMiningDropItemsPos(int x, int y, int z, u8 b){
 	float xoff = ((float)rngValM(1024) / 2048.f)+0.25f;
 	float yoff = ((float)rngValM(1024) / 4096.f)+0.25f;
 	float zoff = ((float)rngValM(1024) / 2048.f)+0.25f;
-	itemDropNewP(vecNew(x + xoff,y + yoff,z + zoff), &i);
+	itemDropNewP(vecNew(x + xoff,y + yoff,z + zoff), &i, -1);
 }
 
 void blockMiningMine(uint i, int dmg){
@@ -118,25 +118,27 @@ int blockMiningMinePosItem(item *itm, int x, int y, int z){
 	return blockMiningMinePos(dmg,x,y,z);
 }
 
-void blockMiningMineBlock(int x, int y, int z){
+void blockMiningMineBlock(int x, int y, int z, u8 cause){
 	const u8 b = worldGetB(x,y,z);
 	if(b == 0){return;}
 	msgMineBlock(x,y,z,b,0);
 	if((b == I_Grass) || (b == I_Dry_Grass) || (b == I_Roots)){
 		worldSetB(x,y,z,I_Dirt);
-		switch(b){
-		case I_Roots: {
-			item itm = itemNew(I_Oak,1);
-			itemDropNewP(vecNew(x,y,z),&itm);
-			break; }
-		case I_Grass: {
-			item itm = itemNew(I_Plantmatter,1);
-			itemDropNewP(vecNew(x,y,z),&itm);
-			break; }
-		case I_Dry_Grass: {
-			item itm = itemNew(I_Straw,1);
-			itemDropNewP(vecNew(x,y,z),&itm);
-			break; }
+		if(cause == 0){
+			switch(b){
+			case I_Roots: {
+				item itm = itemNew(I_Oak,1);
+				itemDropNewP(vecNew(x,y,z),&itm,-1);
+				break; }
+			case I_Grass: {
+				item itm = itemNew(I_Plantmatter,1);
+				itemDropNewP(vecNew(x,y,z),&itm,-1);
+				break; }
+			case I_Dry_Grass: {
+				item itm = itemNew(I_Straw,1);
+				itemDropNewP(vecNew(x,y,z),&itm,-1);
+				break; }
+			}
 		}
 	}else{
 		worldSetB(x,y,z,0);
@@ -179,7 +181,7 @@ void blockMiningUpdateAll(){
 		}else{
 			bm->wasMined = false;
 			if(bm->damage > blockTypeGetHealth(bm->b)){
-				blockMiningMineBlock(bm->x,bm->y,bm->z);
+				blockMiningMineBlock(bm->x,bm->y,bm->z,0);
 				blockMiningDel(i);
 			}
 		}

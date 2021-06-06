@@ -85,7 +85,7 @@ void grenadeUpdateFromServer(const packet *p){
 	if(index >= grenadeCount){return;}
 
 	if(grenadeList[index].ent == NULL){
-		grenadeList[index].ent = entityNew(vecZero(),vecZero());
+		grenadeList[index].ent = entityNew(vecZero(),vecZero(),grenadeList[index].pwr * 3.f);
 		grenadeList[index].ent->eMesh = meshBomb;
 	}
 	grenadeList[index].ent->pos = vecNewP(&p->v.f[1]);

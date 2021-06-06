@@ -18,6 +18,8 @@
 #include "entity.h"
 
 #include "../game/being.h"
+#include "../game/blockType.h"
+#include "../misc/effects.h"
 #include "../misc/profiling.h"
 #include "../world/world.h"
 
@@ -32,7 +34,7 @@ void entityReset(entity *e){
 	memset(e,0,sizeof(entity));
 }
 
-entity *entityNew(vec pos, vec rot){
+entity *entityNew(vec pos, vec rot, float weight){
 	entity *e = NULL;
 	if(entityFirstFree == NULL){
 		e = &entityList[entityCount++];
@@ -47,6 +49,7 @@ entity *entityNew(vec pos, vec rot){
 
 	e->pos = pos;
 	e->rot = rot;
+	e->weight = weight;
 
 	return e;
 }
@@ -73,16 +76,14 @@ u32 entityCollision(const vec c){
 	return col;
 }
 
-u8 entityGetBlockCollision(const entity *e){
-	if(e == NULL){return 0;}
-	const vec c = e->pos;
+u8 entityCollisionBlock(const vec c, vec *retPos){
 	u8 b;
-	if((b = worldGetB(c.x-0.3f,c.y     ,c.z     ))){return b;}
-	if((b = worldGetB(c.x+0.3f,c.y     ,c.z     ))){return b;}
-	if((b = worldGetB(c.x     ,c.y     ,c.z-0.3f))){return b;}
-	if((b = worldGetB(c.x     ,c.y     ,c.z+0.3f))){return b;}
-	if((b = worldGetB(c.x     ,c.y+0.5f,c.z     ))){return b;}
-	if((b = worldGetB(c.x     ,c.y-0.5f,c.z     ))){return b;}
+	if((b = worldGetB(c.x-0.3f,c.y     ,c.z     ))){*retPos = vecNew(c.x-0.3f,c.y,c.z); return b;}
+	if((b = worldGetB(c.x+0.3f,c.y     ,c.z     ))){*retPos = vecNew(c.x+0.3f,c.y,c.z); return b;}
+	if((b = worldGetB(c.x     ,c.y     ,c.z-0.3f))){*retPos = vecNew(c.x,c.y,c.z-0.3f); return b;}
+	if((b = worldGetB(c.x     ,c.y     ,c.z+0.3f))){*retPos = vecNew(c.x,c.y,c.z+0.3f); return b;}
+	if((b = worldGetB(c.x     ,c.y+0.5f,c.z     ))){*retPos = vecNew(c.x,c.y+0.5f,c.z); return b;}
+	if((b = worldGetB(c.x     ,c.y-0.5f,c.z     ))){*retPos = vecNew(c.x,c.y-0.5f,c.z); return b;}
 	return 0;
 }
 
@@ -91,6 +92,10 @@ void entityUpdateCurChungus(entity *e){
 	const int cy = (int)e->pos.y >> 8;
 	const int cz = (int)e->pos.z >> 8;
 	e->curChungus = worldTryChungus(cx,cy,cz);
+}
+
+static float entityBlockRepulsion(entity *c, float *vel){
+	return blockRepulsion(c->pos,vel,c->weight,entityCollisionBlock);
 }
 
 int entityUpdate(entity *e){
@@ -127,42 +132,60 @@ int entityUpdate(entity *e){
 		return 0;
 	}
 	if((col&0x110) && (e->vel.x < 0.f)){
-		if(e->vel.x < -0.1f){ ret += (int)(fabsf(e->vel.x)*128.f); }
+		if(e->vel.x < -0.1f){
+			ret += entityBlockRepulsion(e,&e->vel.x);
+		} else {
+			e->vel.x *= -0.97f;
+		}
 		e->pos.x = MAX(e->pos.x,floor(e->pos.x)+0.3f);
-		e->vel.x = e->vel.x*-0.3f;
 	}
 	if((col&0x220) && (e->vel.x > 0.f)){
-		if(e->vel.x >  0.1f){ ret += (int)(fabsf(e->vel.x)*128.f); }
+		if(e->vel.x >  0.1f){
+			ret += entityBlockRepulsion(e,&e->vel.x);
+		}else{
+			e->vel.x *= -0.97f;
+		}
 		e->pos.x = MIN(e->pos.x,floorf(e->pos.x)+0.7f);
-		e->vel.x = e->vel.x*-0.3f;
 	}
 	if((col&0x880) && (e->vel.z > 0.f)){
-		if(e->vel.z >  0.1f){ ret += (int)(fabsf(e->vel.z)*128.f); }
+		if(e->vel.z >  0.1f){
+			ret += entityBlockRepulsion(e,&e->vel.z);
+		} else {
+			e->vel.z *= -0.97f;
+		}
 		e->pos.z = MIN(e->pos.z,floorf(e->pos.z)+0.7f);
-		e->vel.z = e->vel.z*-0.3f;
 	}
 	if((col&0x440) && (e->vel.z < 0.f)){
-		if(e->vel.z < -0.1f){ ret += (int)(fabsf(e->vel.z)*128.f); }
+		if(e->vel.z < -0.1f){
+			ret += entityBlockRepulsion(e,&e->vel.z);
+		}else{
+			e->vel.z *= -0.97f;
+		}
 		e->pos.z = MAX(e->pos.z,floorf(e->pos.z)+0.3f);
-		e->vel.z = e->vel.z*-0.3f;
 	}
 	if((col&0x0F0) && (e->vel.y > 0.f)){
-		if(e->vel.y >  0.1f){ ret += (int)(fabsf(e->vel.y)*128.f); }
-		e->pos.y = MIN(e->pos.y,floorf(e->pos.y)+0.5f);
-		e->vel.y = e->vel.y*-0.3f;
+		e->pos.y = MIN(e->pos.y,floorf(e->pos.y)+0.3f); // Still needed?
+		if(e->vel.y >  0.1f){
+			ret += entityBlockRepulsion(e,&e->vel.y);
+		}else{
+			e->vel.y *= 0.97f;
+		}
 	}
 	if((col&0x00F) && (e->vel.y < 0.f)){
 		e->flags &= ~ENTITY_FALLING;
 		if(e->vel.y < -0.15f){
 			e->yoff = -0.8f;
-			ret += (int)(fabsf(e->vel.y)*128.f);
+			ret += entityBlockRepulsion(e,&e->vel.y);
 		}else if(e->vel.y < -0.07f){
 			e->yoff += -0.4f;
 		}else if(e->vel.y < -0.04f){
 			e->yoff += -0.2f;
+		}else{
+			e->vel = vecMul(e->vel,vecNew(0.93f,0,0.93f));
 		}
-		e->vel = vecMul(e->vel,vecNew(0.93f,0,0.93f));
-		e->vel.y = 0.001f;
+		if(fabsf(e->vel.y) < 0.001f){ // Still needed?
+			e->pos.y = floorf(e->pos.y)+.5f;
+		}
 	}
 	col = entityCollision(e->pos);
 	if((col & 0xFFF) == 0xFFF){
@@ -221,4 +244,29 @@ entity *entityGetByBeing(being b){
 	if(beingType(b) != BEING_GRENADE){ return NULL; }
 	if(i >= entityCount)             { return NULL; }
 	return &entityList[i];
+}
+
+float blockRepulsion(const vec pos, float *vel, float weight, u8 (*colFunc)(const vec,vec *)){
+	int ret = 0;
+	vec blockPos;
+	const u8 b = colFunc(pos,&blockPos);
+	if(b == 0){return 0;}
+
+	float strength = *vel;
+	const int blockDamage = fabsf(strength) * weight * 50.f;
+	const int blockHealth = blockTypeGetHealth(b);
+	if(blockDamage > blockHealth){
+		worldBreak(blockPos.x,blockPos.y,blockPos.z);
+		strength = strength * ((float)blockHealth / (float)blockDamage);
+		fxBlockBreak(blockPos,b,0);
+	}
+
+	if(fabsf(strength) > 0.1f){ret += (int)(fabsf(strength)*512.f);}
+	if(strength < 1.f){
+		*vel = 0;
+	}else{
+		*vel += strength* -1.3f;
+	}
+
+	return ret;
 }

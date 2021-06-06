@@ -23,6 +23,7 @@
 #include "../game/being.h"
 #include "../game/blockType.h"
 #include "../game/character.h"
+#include "../game/entity.h"
 #include "../game/fire.h"
 #include "../game/rope.h"
 #include "../game/time.h"
@@ -101,6 +102,7 @@ void animalDel(uint i){
 		printf("AnimalDel: type==0!!!\n");
 		return;
 	}
+	animalList[i].pos      = vecNOne();
 	animalList[i].bl       = NULL;
 	animalList[i].type     = 0;
 	animalList[i].nextFree = animalFirstFree;
@@ -133,6 +135,21 @@ u32 animalCollision(const vec c){
 	if(checkCollision(c.x     ,c.y-1.0f*size,c.z          )){col |= 0x00F;}
 
 	return col;
+}
+
+u8 animalCollisionBlock(const vec c, vec *retPos){
+	u8 b;
+	if((b = worldGetB(c.x-0.3f,c.y     ,c.z     ))){*retPos = vecNew(c.x-0.3f,c.y,c.z); return b;}
+	if((b = worldGetB(c.x+0.3f,c.y     ,c.z     ))){*retPos = vecNew(c.x+0.3f,c.y,c.z); return b;}
+	if((b = worldGetB(c.x     ,c.y     ,c.z-0.3f))){*retPos = vecNew(c.x,c.y,c.z-0.3f); return b;}
+	if((b = worldGetB(c.x     ,c.y     ,c.z+0.3f))){*retPos = vecNew(c.x,c.y,c.z+0.3f); return b;}
+	if((b = worldGetB(c.x     ,c.y+0.5f,c.z     ))){*retPos = vecNew(c.x,c.y+0.5f,c.z); return b;}
+	if((b = worldGetB(c.x     ,c.y-1.0f,c.z     ))){*retPos = vecNew(c.x,c.y-1.0f,c.z); return b;}
+	return 0;
+}
+
+static float animalBlockRepulsion(animal *c, float *vel){
+	return blockRepulsion(c->pos,vel,animalGetWeight(c),animalCollisionBlock);
 }
 
 void animalCheckForHillOrCliff(animal *e){
@@ -228,36 +245,35 @@ int animalUpdate(animal *e){
 	if(col){ e->flags |= ANIMAL_COLLIDE; }
 
 	if((col&0x110) && (e->vel.x < 0.f)){
-		if(e->vel.x < -0.05f){ ret += (int)(fabsf(e->vel.x)*ANIMAL_FALL_DMG); }
+		if(e->vel.x < -0.05f){ ret += animalBlockRepulsion(e,&e->pos.x); }
 		e->pos.x = MAX(e->pos.x,floor(e->pos.x)+0.3f);
-		e->vel.x = e->vel.x*-0.3f;
 	}
 	if((col&0x220) && (e->vel.x > 0.f)){
-		if(e->vel.x >  0.05f){ ret += (int)(fabsf(e->vel.x)*ANIMAL_FALL_DMG); }
+		if(e->vel.x >  0.05f){ ret += animalBlockRepulsion(e,&e->pos.x); }
 		e->pos.x = MIN(e->pos.x,floorf(e->pos.x)+0.7f);
-		e->vel.x = e->vel.x*-0.3f;
 	}
 	if((col&0x880) && (e->vel.z > 0.f)){
-		if(e->vel.z >  0.05f){ ret += (int)(fabsf(e->vel.z)*ANIMAL_FALL_DMG); }
+		if(e->vel.z >  0.05f){ ret += animalBlockRepulsion(e,&e->pos.z); }
 		e->pos.z = MIN(e->pos.z,floorf(e->pos.z)+0.7f);
-		e->vel.z = e->vel.z*-0.3f;
 	}
 	if((col&0x440) && (e->vel.z < 0.f)){
-		if(e->vel.z < -0.05f){ ret += (int)(fabsf(e->vel.z)*ANIMAL_FALL_DMG); }
+		if(e->vel.z < -0.05f){ ret += animalBlockRepulsion(e,&e->pos.z); }
 		e->pos.z = MAX(e->pos.z,floorf(e->pos.z)+0.3f);
-		e->vel.z = e->vel.z*-0.3f;
 	}
 	if((col&0x0F0) && (e->vel.y > 0.f)){
-		if(e->vel.y >  0.05f){ ret += (int)(fabsf(e->vel.y)*ANIMAL_FALL_DMG); }
+		if(e->vel.y >  0.05f){ ret += animalBlockRepulsion(e,&e->pos.y); }
 		e->pos.y = MIN(e->pos.y,floorf(e->pos.y)+0.5f);
-		e->vel.y = e->vel.y*-0.3f;
 	}
 	if((col&0x00F) && (e->vel.y < 0.f)){
 		e->flags &= ~ANIMAL_FALLING;
-		if(e->vel.y < -0.05f){
-			ret += (int)(fabsf(e->vel.y)*ANIMAL_FALL_DMG);
+		if(e->vel.y < -0.15f){
+			ret += animalBlockRepulsion(e,&e->vel.y);
+		}else if(e->vel.y > -0.04f){
+			e->vel = vecMul(e->vel,vecNew(0.97f,0,0.97f));
 		}
-		e->vel = vecMul(e->vel,vecNew(0.97f,0,0.97f));
+		if(fabsf(e->vel.y) < 0.001f){
+			e->pos.y = floorf(e->pos.y)+1.0f;
+		}
 	}
 	return ret;
 }
@@ -300,6 +316,20 @@ int animalGetMaxHealth (const animal *e){
 		return 12;
 	case animalWerebunny:
 		return 20;
+	}
+	return 0;
+}
+
+float animalGetWeight (const animal *e){
+	switch((animalType)e->type){
+	case animalUnused:
+		return 2.f;
+	case animalBunny:
+		return 2.f;
+	case animalGuardian:
+		return 100.f;
+	case animalWerebunny:
+		return 6.f;
 	}
 	return 0;
 }

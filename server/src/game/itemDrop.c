@@ -36,13 +36,13 @@
 void itemDropUpdateMsg(u8 c,uint i){
 	if(i >= itemDropCount)         {return;}
 	if(itemDropList[i].ent == NULL){return;}
-	msgItemDropUpdate(c,itemDropList[i].ent->pos,itemDropList[i].ent->vel,&itemDropList[i].itm,i,itemDropCount);
+	msgItemDropUpdate(c,itemDropList[i].ent->pos,itemDropList[i].ent->vel,&itemDropList[i].itm,i,itemDropCount,itemDropList[i].player);
 }
 
 uint itemDropUpdatePlayer(uint c, uint offset){
 	const item iZero = {0,0};
 	const uint max = MIN(offset+clients[c].itemDropUpdateWindowSize,itemDropCount);
-	if(itemDropCount == 0){msgItemDropUpdate(c,vecZero(),vecZero(),&iZero,0,0);}
+	if(itemDropCount == 0){msgItemDropUpdate(c,vecZero(),vecZero(),&iZero,0,0,-1);}
 	for(uint i=0;i<clients[c].itemDropPriorityQueueLen;i++){
 		itemDropUpdateMsg(c,clients[c].itemDropPriorityQueue[i]);
 	}
@@ -77,14 +77,14 @@ itemDrop *itemDropNew(){
 	return &itemDropList[itemDropCount++];
 }
 
-void itemDropNewP(const vec pos,const item *itm){
+void itemDropNewP(const vec pos,const item *itm, i16 IDPlayer){
 	if(itm == NULL){return;}
 	itemDrop *id = itemDropNew();
 	if(id == NULL){return;}
 
 	id->itm      = *itm;
-	id->ent      = entityNew(pos,vecZero());
-	id->player   = -1;
+	id->ent      = entityNew(pos,vecZero(),itemGetWeight(&id->itm));
+	id->player   = IDPlayer;
 	id->lastFire =  0;
 	id->fireDmg  =  0;
 	entityUpdateCurChungus(id->ent);
@@ -95,10 +95,10 @@ void itemDropNewPacket(uint c, const packet *p){
 	itemDrop *id = itemDropNew();
 	if(id == NULL){return;}
 
-	id->ent        = entityNew(vecNewP(&p->v.f[0]),vecZero());
-	id->ent->vel   = vecNewP(&p->v.f[3]);
 	id->itm.ID     = p->v.u16[12];
 	id->itm.amount = p->v.i16[13];
+	id->ent        = entityNew(vecNewP(&p->v.f[0]),vecZero(),itemGetWeight(&id->itm));
+	id->ent->vel   = vecNewP(&p->v.f[3]);
 	id->player     = c;
 	id->lastFire   = 0;
 	id->fireDmg    = 0;
@@ -217,7 +217,7 @@ void itemDropUpdateAll(){
 		}
 	}
 
-	for(uint i=itemDropCount-(1+(calls&0x1F));i<itemDropCount;i-=0x20){
+	for(uint i=itemDropCount-(1+(calls&0x3F));i<itemDropCount;i-=0x40){
 		itemDropUpdateFire(i);
 	}
 	calls++;
