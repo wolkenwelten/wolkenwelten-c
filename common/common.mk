@@ -4,7 +4,7 @@ NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj' | sort)
 COMMON_ASSETS    := common/src/tmp/stdlib.nuj common/src/tmp/wwlib.nuj
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
-COMMON_OBJS      := ${COMMON_SRCS:.c=.o}>
+COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
 COMMON_DEPS      := ${COMMON_SRCS:.c=.d}
 ASM_OBJS         :=
 
