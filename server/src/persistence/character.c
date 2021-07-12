@@ -64,7 +64,7 @@ static void characterParseDataLine(character *p, const char *line){
 
 	if(strcmp(argv[0],"Flags") == 0){
 		if(argc < 2){return;}
-		p->flags = atoi(argv[1]) & CHAR_CONS_MODE | CHAR_NOCLIP;
+		p->flags = atoi(argv[1]) & (CHAR_CONS_MODE | CHAR_NOCLIP);
 		return;
 	}
 
