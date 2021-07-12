@@ -1,6 +1,8 @@
 #pragma once
 #include "../../../common/src/common.h"
 
+#define ITEMTILE (1.f/32.f)
+
 extern u32 colorPalette[16];
 
 textMesh *textMeshNew              (uint bufferSize);

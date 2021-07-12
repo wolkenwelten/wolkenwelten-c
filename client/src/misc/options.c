@@ -32,7 +32,7 @@
 #include <unistd.h>
 #include <time.h>
 
-extern        size_t txt_attribution_txt_len;
+extern unsigned  int txt_attribution_txt_len;
 extern unsigned char txt_attribution_txt_data[];
 
 char playerName[28];

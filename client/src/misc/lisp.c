@@ -54,7 +54,7 @@
 
 u8 SEvalID;
 
-extern        size_t src_tmp_client_nuj_len;
+extern unsigned  int src_tmp_client_nuj_len;
 extern unsigned char src_tmp_client_nuj_data[];
 
 void lispInputHandler(lSymbol *input, int key, int action){
@@ -706,15 +706,33 @@ static lVal *wwlnfGuiFocusOnGame(lClosure *c, lVal *v){
 	return lValBool(!gameControlsInactive());
 }
 
+static lVal *wwlnfPlayerGetFlags(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	if(player == NULL){return NULL;}
+	return lValInt(player->flags);
+}
+
+static lVal *wwlnfPlayerSetFlags(lClosure *c, lVal *v){
+	if(player == NULL){return NULL;}
+	int flags = 0;
+
+	v = getLArgI(c,v,&flags);
+	player->flags = flags;
+
+	return NULL;
+}
+
 static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",         "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",                "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
-	lAddNativeFunc(c,"player-pos",     "()",                "Returns players position",                                       wwlnfPlayerPos);
-	lAddNativeFunc(c,"player-rot",     "()",                "Returns players rotation",                                       wwlnfPlayerRot);
-	lAddNativeFunc(c,"player-vel",     "()",                "Returns players velocity",                                       wwlnfPlayerVel);
-	lAddNativeFunc(c,"player-name!",   "(s)",               "Sets players name to s",                                         wwlnfPlayerName);
-	lAddNativeFunc(c,"player-hp",      "(&hp)",             "Sets the players health to &HP, returns the current value.",     wwlnfPlayerHP);
-	lAddNativeFunc(c,"player-maxhp",   "(&mhp)",            "Sets the players max health to &MHP, returns the current value.",wwlnfPlayerMaxHP);
+	lAddNativeFunc(c,"player-pos",     "()",                "Return players position",                                        wwlnfPlayerPos);
+	lAddNativeFunc(c,"player-rot",     "()",                "Return players rotation",                                        wwlnfPlayerRot);
+	lAddNativeFunc(c,"player-vel",     "()",                "Return players velocity",                                        wwlnfPlayerVel);
+	lAddNativeFunc(c,"player-flags",   "()",                "Return players flags",                                           wwlnfPlayerGetFlags);
+	lAddNativeFunc(c,"player-flags!",  "(flags)",           "Set players flags",                                              wwlnfPlayerSetFlags);
+	lAddNativeFunc(c,"player-name!",   "(s)",               "Set players name to s",                                          wwlnfPlayerName);
+	lAddNativeFunc(c,"player-hp",      "(&hp)",             "Set the players health to &HP, returns the current value.",      wwlnfPlayerHP);
+	lAddNativeFunc(c,"player-maxhp",   "(&mhp)",            "Set the players max health to &MHP, returns the current value.", wwlnfPlayerMaxHP);
 	lAddNativeFunc(c,"player-jump!",   "(velocity)",        "Jump with VELOCITY!",                                            wwlnfPlayerJump);
 	lAddNativeFunc(c,"player-sneak!",  "()",                "Sneak for a while",                                              wwlnfPlayerSneak);
 	lAddNativeFunc(c,"player-walk!",   "(velocity)",        "Walk forward with VELOCITY",                                     wwlnfPlayerWalk);

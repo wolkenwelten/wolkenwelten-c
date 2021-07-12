@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "textMesh.h"
 #include "../gfx/gfx.h"
 #include "../gfx/texture.h"
@@ -360,7 +359,6 @@ void textMeshSolidBox(textMesh *m, int x, int y, int w, int h, u32 rgba){
 }
 
 void textMeshItemSingleSprite(textMesh *m, int x, int y, int size, int spriteIndex, u32 color){
-	const float ITEMTILE = (1.f/32.f);
 	int u = spriteIndex % 32;
 	int v = spriteIndex / 32;
 	textMeshBox(m,x,y,size,size,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,color);

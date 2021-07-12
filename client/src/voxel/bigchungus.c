@@ -73,12 +73,12 @@ static float chungusDistance(const vec cam, const vec pos) {
 
 void worldFree(){
 	for(int x=0;x<256;x++){
-		for(int y=0;y<128;y++){
-			for(int z=0;z<256;z++){
-				if(world[x][y][z] == NULL){continue;}
-				chungusFree(world[x][y][z]);
-			}
-		}
+	for(int y=0;y<128;y++){
+	for(int z=0;z<256;z++){
+		if(world[x][y][z] == NULL){continue;}
+		chungusFree(world[x][y][z]);
+	}
+	}
 	}
 	memset(world,0,256*128*256*sizeof(chunk *));
 }
@@ -229,11 +229,11 @@ void worldDraw(const character *cam){
 
 void worldBox(int x,int y,int z, int w,int h,int d,u8 block){
 	for(int cx=0;cx<w;cx++){
-		for(int cy=0;cy<h;cy++){
-			for(int cz=0;cz<d;cz++){
-				worldSetB(cx+x,cy+y,cz+z,block);
-			}
-		}
+	for(int cy=0;cy<h;cy++){
+	for(int cz=0;cz<d;cz++){
+		worldSetB(cx+x,cy+y,cz+z,block);
+	}
+	}
 	}
 }
 
@@ -257,13 +257,13 @@ void worldFreeFarChungi(const character *cam){
 void worldBoxSphere(int x,int y,int z, int r, u8 block){
 	const int md = r*r;
 	for(int cx=-r;cx<=r;cx++){
-		for(int cy=-r;cy<=r;cy++){
-			for(int cz=-r;cz<=r;cz++){
-				const int d = (cx*cx)+(cy*cy)+(cz*cz);
-				if(d >= md){continue;}
-				worldSetB(cx+x,cy+y,cz+z,block);
-			}
-		}
+	for(int cy=-r;cy<=r;cy++){
+	for(int cz=-r;cz<=r;cz++){
+		const int d = (cx*cx)+(cy*cy)+(cz*cz);
+		if(d >= md){continue;}
+		worldSetB(cx+x,cy+y,cz+z,block);
+	}
+	}
 	}
 }
 

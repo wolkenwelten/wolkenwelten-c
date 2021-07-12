@@ -41,7 +41,7 @@
 #include <stdio.h>
 #include <string.h>
 
-extern        size_t txt_attribution_txt_len;
+extern unsigned  int txt_attribution_txt_len;
 extern unsigned char txt_attribution_txt_data[];
 
 bool showAttribution  = false;

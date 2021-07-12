@@ -32,7 +32,6 @@
 #include <stddef.h>
 #include <math.h>
 
-const float ITEMTILE   = (1.f/32.f);
 int  inventoryOpen     = 0;
 uint gamepadSelection  = 4096;
 item inventoryCurrentPickup;

@@ -28,7 +28,7 @@ int sfxCount=0;
 
 #include "../tmp/sfx.h"
 
-sfx *sfxNew(const void *data,size_t dataLen, const char *lName){
+sfx *sfxNew(const void *data, unsigned int dataLen, const char *lName){
 	sfx *b = &sfxList[sfxCount++];
 
 	b->chan = -1;

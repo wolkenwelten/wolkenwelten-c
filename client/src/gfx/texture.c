@@ -42,28 +42,28 @@ texture *tSteelrope;
 texture *tBlockMining;
 texture *tWolkenwelten;
 
-extern        size_t gfx_blocks_png_len;
+extern unsigned  int gfx_blocks_png_len;
 extern unsigned char gfx_blocks_png_data[];
 
-extern        size_t gfx_crosshair_png_len;
+extern unsigned  int gfx_crosshair_png_len;
 extern unsigned char gfx_crosshair_png_data[];
 
-extern        size_t gfx_cursor_png_len;
+extern unsigned  int gfx_cursor_png_len;
 extern unsigned char gfx_cursor_png_data[];
 
-extern        size_t gfx_gui_png_len;
+extern unsigned  int gfx_gui_png_len;
 extern unsigned char gfx_gui_png_data[];
 
-extern        size_t gfx_mining_png_len;
+extern unsigned  int gfx_mining_png_len;
 extern unsigned char gfx_mining_png_data[];
 
-extern        size_t gfx_rope_png_len;
+extern unsigned  int gfx_rope_png_len;
 extern unsigned char gfx_rope_png_data[];
 
-extern        size_t gfx_steelrope_png_len;
+extern unsigned  int gfx_steelrope_png_len;
 extern unsigned char gfx_steelrope_png_data[];
 
-extern        size_t gfx_wolkenwelten_png_len;
+extern unsigned  int gfx_wolkenwelten_png_len;
 extern unsigned char gfx_wolkenwelten_png_data[];
 
 static void textureLoadSurface(texture *t, uint w, uint h, const void *data){
@@ -76,7 +76,7 @@ static void textureLoadSurface(texture *t, uint w, uint h, const void *data){
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
 
-static void textureLoad(texture *t, const u8 *data, const size_t dataLen){
+static void textureLoad(texture *t, const u8 *data, const unsigned int dataLen){
 	u8 *pixels = NULL;
 	if(lodepng_decode32(&pixels, &t->w, &t->h, data, dataLen)){
 		fprintf(stderr,"Error decoding PNG\n");
@@ -99,7 +99,7 @@ static void textureGetTile(texture *t, u8 *pixels, u8 *pbuf, int iw, int tx, int
 	}
 }
 
-static void textureLoadArray(texture *t, const u8 *data, const size_t dataLen){
+static void textureLoadArray(texture *t, const u8 *data, const unsigned int dataLen){
 	u8 *pixels = NULL;
 	u8 *pbuf = NULL;
 	uint iw,ih,itw,ith;
@@ -129,7 +129,7 @@ static void textureLoadArray(texture *t, const u8 *data, const size_t dataLen){
 	free(pbuf);
 }
 
-texture *textureNew(const u8 *data, size_t dataLen,const char *filename){
+texture *textureNew(const u8 *data, unsigned int dataLen,const char *filename){
 	texture *tex = &textureList[textureCount++];
 	tex->filename = filename;
 	tex->ID = 0;
@@ -138,7 +138,7 @@ texture *textureNew(const u8 *data, size_t dataLen,const char *filename){
 	return tex;
 }
 
-texture *textureNewArray(const u8 *data, size_t dataLen,const char *filename, int d){
+texture *textureNewArray(const u8 *data, unsigned int dataLen,const char *filename, int d){
 	texture *tex = &textureList[textureCount++];
 	tex->filename = filename;
 	tex->ID = 0;
@@ -197,12 +197,15 @@ void textureBuildBlockIcons(int loadFromFile){
 	u32 *tblocks, *tgui;
 	uint bw,bh,iw,ih;
 
-	size_t blocks_len,gui_len;
+	unsigned int blocks_len,gui_len;
 	void *blocks_data,*gui_data;
 
 	if(loadFromFile){
-		blocks_data = loadFile(tBlocks->filename,&blocks_len);
-		gui_data    = loadFile(tGui->filename,&gui_len);
+		size_t blocks_file_len,gui_file_len;
+		blocks_data = loadFile(tBlocks->filename,&blocks_file_len);
+		gui_data    = loadFile(tGui->filename,&gui_file_len);
+		blocks_len  = blocks_file_len;
+		gui_len     = gui_file_len;
 	}else{
 		blocks_data = gfx_blocks_png_data;
 		blocks_len  = gfx_blocks_png_len;

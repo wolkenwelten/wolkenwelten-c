@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "throwable.h"
 
 #include "entity.h"
 #include "../game/animal.h"
+#include "../game/being.h"
 #include "../game/blockType.h"
 #include "../game/character.h"
 #include "../game/item.h"
@@ -61,10 +61,6 @@ void throwableFree(throwable *t){
 	t->ent = NULL;
 	t->nextFree = throwableFirstFree;
 	throwableFirstFree = t - throwableList;
-}
-
-void throwableDel(uint i){
-	throwableFree(&throwableList[i]);
 }
 
 void throwableSendUpdate(int c, uint i){

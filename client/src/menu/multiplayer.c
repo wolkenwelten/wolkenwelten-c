@@ -121,7 +121,7 @@ static void handlerNewServerNext(widget *wid){
 	widgetFocus(newServerIP);
 }
 
-static void handlerBackToMenu(widget *wid){
+static void handlerMPBackToMenu(widget *wid){
 	(void)wid;
 	openMainMenu();
 }
@@ -133,7 +133,7 @@ void initMultiplayerMenu(){
 	serverList = widgetNewCP(wSpace,multiplayerMenu,0,0,288,32);
 	widgetNewCP(wHR,multiplayerMenu,16,0,256,32);
 	buttonNewServer = widgetNewCPLH(wButton,multiplayerMenu,16,0,256,32,"New Server","click",handlerNewServer);
-	widgetNewCPLH(wButton,multiplayerMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
+	widgetNewCPLH(wButton,multiplayerMenu,16,0,256,32,"Back to Menu","click",handlerMPBackToMenu);
 	widgetLayVert(multiplayerMenu,16);
 
 	newServer = widgetNewCP(wPanel,rootMenu,32,-1,288,0);

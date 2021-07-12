@@ -67,10 +67,10 @@ int main(int argc,char *argv[]){
 		}
 		fclose(afp);
 
-		fprintf(hfp,"extern        size_t %s_len;\n",fileSlug(argv[i]));
+		fprintf(hfp,"extern unsigned  int %s_len;\n",fileSlug(argv[i]));
 		fprintf(hfp,"extern unsigned char %s_data[];\n\n",fileSlug(argv[i]));
 
-		fprintf(cfp,"       size_t %s_len    = %u;\n",fileSlug(argv[i]),(int)filelen);
+		fprintf(cfp,"unsigned  int %s_len    = %u;\n",fileSlug(argv[i]),(int)filelen);
 		fprintf(cfp,"unsigned char %s_data[] = {\n ",fileSlug(argv[i]));
 		lc=0;
 		for(ii=0;ii<filelen;ii++){

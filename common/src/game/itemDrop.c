@@ -17,6 +17,7 @@
 
 #include "itemDrop.h"
 
+#include "../game/being.h"
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/item.h"

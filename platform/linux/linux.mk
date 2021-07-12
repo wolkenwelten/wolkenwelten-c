@@ -42,9 +42,8 @@ $(LIN_REL)/wolkenwelten: client/src/tmp/objs.c client/src/tmp/objs.h
 $(LIN_REL)/wolkenwelten: client/src/tmp/sfx.c client/src/tmp/sfx.h
 $(LIN_REL)/wolkenwelten: common/src/tmp/cto.c
 $(LIN_REL)/wolkenwelten: $(ASM_OBJS)
-$(LIN_REL)/wolkenwelten: | $(LIN_REL)
 	@mkdir -p $(LIN_REL)
-	gcc $(CLIENT_SRCS) $(ASM_OBJS) -o $@ $(RELEASE_OPTIMIZATION) $(LDFLAGS) $(CSTD) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
+	gcc $(CLIENT_SRCS) $(ASM_OBJS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CSTD) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
 	strip -gxX $@
 
 $(LIN_REL)/wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
@@ -54,7 +53,6 @@ $(LIN_REL)/wolkenwelten-server: server/src/tmp/sfx.c server/src/tmp/sfx.h
 $(LIN_REL)/wolkenwelten-server: server/src/tmp/objs.c server/src/tmp/objs.h
 $(LIN_REL)/wolkenwelten-server: common/src/tmp/cto.c
 $(LIN_REL)/wolkenwelten-server: $(ASM_OBJS)
-$(LIN_REL)/wolkenwelten-server: | $(LIN_REL)
 	@mkdir -p $(LIN_REL)
-	musl-gcc -static $(SERVER_SRCS) $(ASM_OBJS) -o $@ $(RELEASE_OPTIMIZATION) $(LDFLAGS) $(CSTD) $(CINCLUDES)
+	musl-gcc -static  $(SERVER_SRCS) $(ASM_OBJS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CSTD) $(CINCLUDES)
 	strip -gxX $@

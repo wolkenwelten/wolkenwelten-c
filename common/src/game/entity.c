@@ -17,6 +17,7 @@
 
 #include "entity.h"
 
+#include "../game/being.h"
 #include "../misc/profiling.h"
 #include "../world/world.h"
 

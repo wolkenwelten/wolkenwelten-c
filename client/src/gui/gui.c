@@ -61,8 +61,6 @@
 #include <stdio.h>
 #include <math.h>
 
-#define ITEMTILE (1.f/32.f)
-
 textMesh *guim;
 textMesh *crosshairMesh;
 textMesh *cursorMesh;
@@ -357,12 +355,12 @@ void drawDebuginfo(){
 	if(recvBytesCurrentSession <= 0){
 		guim->sx   = screenWidth/2-(10*16);
 		textMeshPrintf(guim,"%.*s",20 + ((ticks++ >> 4)&3),"Connecting to server...");
-	}else if(!playerChunkActive){
-		guim->sx   = screenWidth/2-(8*16);
-		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Loading World...");
 	}else if(player->flags & CHAR_SPAWNING){
 		guim->sx   = screenWidth/2-(8*16);
 		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Respawning...");
+	}else if(!playerChunkActive){
+		guim->sx   = screenWidth/2-(8*16);
+		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Loading World...");
 	}else if(goodbyeSent){
 		guim->sx   = screenWidth/2-(8*16);
 		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Closing . . .");

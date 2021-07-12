@@ -53,32 +53,31 @@ static void bigchungusSafeSaveClient(const bigchungus *c, const character *chara
 		chungusSave(c->chungi[cp.x][cp.y][cp.z]);
 	}
 	for(int ix=0;ix < 12; ix++){
-		for(int iy=0;iy < 12; iy++){
-			for(int iz=0;iz < 12; iz++){
+	for(int iy=0;iy < 12; iy++){
+	for(int iz=0;iz < 12; iz++){
+		int ox = ix >> 1;
+		if(ix & 1){ox = -ox;}
+		ox = cp.x+ox;
+		if(ox <   0){goto xcontinue;}
+		if(ox > 255){goto xcontinue;}
 
-				int ox = ix >> 1;
-				if(ix & 1){ox = -ox;}
-				ox = cp.x+ox;
-				if(ox <   0){goto xcontinue;}
-				if(ox > 255){goto xcontinue;}
+		int oy = iy >> 1;
+		if(iy & 1){oy = -oy;}
+		oy = cp.y+oy;
+		if(oy <   0){goto ycontinue;}
+		if(oy > 127){goto ycontinue;}
 
-				int oy = iy >> 1;
-				if(iy & 1){oy = -oy;}
-				oy = cp.y+oy;
-				if(oy <   0){goto ycontinue;}
-				if(oy > 127){goto ycontinue;}
+		int oz = iz >> 1;
+		if(iz & 1){oz = -oz;}
+		oz = cp.z+oz;
+		if(oz <   0){continue;}
+		if(oz > 255){continue;}
 
-				int oz = iz >> 1;
-				if(iz & 1){oz = -oz;}
-				oz = cp.z+oz;
-				if(oz <   0){continue;}
-				if(oz > 255){continue;}
-
-				chungusSave(c->chungi[ox][oy][oz]);
-			}
-			ycontinue: (void)c;
-		}
-		xcontinue: (void)c;
+		chungusSave(c->chungi[ox][oy][oz]);
+	}
+	ycontinue: (void)c;
+	}
+	xcontinue: (void)c;
 	}
 }
 

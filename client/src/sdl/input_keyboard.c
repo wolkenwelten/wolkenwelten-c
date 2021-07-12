@@ -34,7 +34,7 @@
 #include "../misc/options.h"
 #include "../network/chat.h"
 
-void textInputEvent(const SDL_Event *e);
+bool textInputEvent(const SDL_Event *e);
 
 int keyboardCmdKey(const SDL_Event *e){
 	#ifdef __APPLE__

@@ -13,6 +13,7 @@ being      throwableGetBeing    (const throwable *g);
 
 throwable *throwableAlloc       ();
 void       throwableFree        (throwable *t);
+void       throwableDel         (uint i);
 
 void       throwableNew         (const vec pos, const vec rot, float speed, const item itm, being thrower, i8 damage, u8 flags);
 void       throwableUpdateAll   ();

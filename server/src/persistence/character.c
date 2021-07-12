@@ -32,14 +32,17 @@ static void characterParseDataLine(character *p, const char *line){
 	char **argv;
 
 	argv = splitArgs(line,&argc);
-	if(argc == 0)          {return;}
-	if(argv[0][0] == 0)    {return;}
+	if(argc == 0)              {return;}
+	if(argv[0][0] == 0)        {return;}
 	if(isspace((u8)argv[0][0])){return;}
 
 	if(strcmp(argv[0],"Position") == 0){
 		if(argc < 4){return;}
 		p->pos = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
-		if(!inWorld(p->pos.x,p->pos.y,p->pos.z)){p->pos = vecAdd(vecNewI(worldGetSpawnPos()),vecNew(.5f,2.f,.5f));}
+		if(!inWorld(p->pos.x,p->pos.y,p->pos.z)){
+			fprintf(stderr,"!inWorld\n");
+			p->pos = vecAdd(vecNewI(worldGetSpawnPos()),vecNew(.5f,2.f,.5f));
+		}
 		return;
 	}
 	if(strcmp(argv[0],"Rotation") == 0){
@@ -61,7 +64,7 @@ static void characterParseDataLine(character *p, const char *line){
 
 	if(strcmp(argv[0],"Flags") == 0){
 		if(argc < 2){return;}
-		p->flags = atoi(argv[1]);
+		p->flags = (atoi(argv[1]) & ~CHAR_SPAWNING);
 		return;
 	}
 
@@ -145,7 +148,7 @@ void characterSaveData(const character *p, const char *pName){
 	b += snprintf(b,sizeof(buf)-(b-buf),"Velocity %f %f %f\n",p->vel.x,p->vel.y,p->vel.z);
 	b += snprintf(b,sizeof(buf)-(b-buf),"ActiveItem %i\n",p->activeItem);
 	b += snprintf(b,sizeof(buf)-(b-buf),"Health %i\n",p->hp);
-	b += snprintf(b,sizeof(buf)-(b-buf),"Flags %u\n",p->flags);
+	b += snprintf(b,sizeof(buf)-(b-buf),"Flags %u\n",(p->flags & ~CHAR_SPAWNING));
 
 	for(uint i=0;i<40;i++){
 		if(itemIsEmpty(&p->inventory[i])){continue;}

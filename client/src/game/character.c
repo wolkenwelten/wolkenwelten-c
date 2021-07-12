@@ -19,6 +19,7 @@
 
 #include "../main.h"
 #include "../game/animal.h"
+#include "../game/being.h"
 #include "../game/blockType.h"
 #include "../game/itemDrop.h"
 #include "../game/projectile.h"
@@ -354,6 +355,7 @@ void characterDie(character *c){
 	characterInit(c);
 	msgRequestPlayerSpawnPos();
 	c->flags |= CHAR_SPAWNING;
+	printf("Character Died\n");
 	lispEval("[event-fire \"on-spawn\"]",false);
 }
 
@@ -938,6 +940,7 @@ void characterSetData(character *c, const packet *p){
 		playerList[playerID] = player;
 	}
 	connectionState = 2;
+	c->flags &= ~CHAR_SPAWNING;
 	lispEval("[event-fire \"on-join\"]",false);
 }
 

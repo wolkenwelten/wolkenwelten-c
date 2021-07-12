@@ -136,7 +136,7 @@ static void handlerNewGameNext(widget *wid){
 	}
 }
 
-static void handlerBackToMenu(widget *wid){
+static void handlerSPBackToMenu(widget *wid){
 	(void)wid;
 	openMainMenu();
 }
@@ -148,7 +148,7 @@ void initSingleplayerMenu(){
 	saveList = widgetNewCP(wSpace,singleplayerMenu,0,0,288,32);
 	widgetNewCP(wHR,singleplayerMenu,16,0,256,32);
 	buttonNewGame = widgetNewCPLH(wButton,singleplayerMenu,16,0,256,32,"New Game","click",handlerNewGame);
-	widgetNewCPLH(wButton,singleplayerMenu,16,0,256,32,"Back to Menu","click",handlerBackToMenu);
+	widgetNewCPLH(wButton,singleplayerMenu,16,0,256,32,"Back to Menu","click",handlerSPBackToMenu);
 	widgetLayVert(singleplayerMenu,16);
 
 	newGame = widgetNewCP(wPanel,rootMenu,32,-1,288,0);

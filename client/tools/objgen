@@ -26,7 +26,7 @@ while (("$#")); do
 		echo "texture *tex$uname;"        >> $C_FILE
 		echo ""                           >> $C_FILE
 		echo "extern unsigned char gfx_""$name""_png_data[];" >> $C_FILE
-		echo "extern size_t gfx_""$name""_png_len;" >> $C_FILE
+		echo "extern unsigned int gfx_""$name""_png_len;" >> $C_FILE
 		echo "extern vertex ""$name""_verts[];" >> $C_FILE
 		echo "extern unsigned int ""$name""_count;" >> $C_FILE
 

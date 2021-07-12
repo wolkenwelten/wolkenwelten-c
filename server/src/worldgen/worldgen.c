@@ -196,7 +196,8 @@ void worldgenGenerate(worldgen *wgen){
 		worldgenCluster(wgen,CHUNGUS_SIZE/10,CHUNGUS_SIZE/20,1,3);
 		break;
 	case 1:
-		worldgenNujel(wgen);
+		worldgenCluster(wgen,CHUNGUS_SIZE/12,CHUNGUS_SIZE/24,2,4);
+		//worldgenNujel(wgen);
 		break;
 	}
 	seedRNG(oldSeed);

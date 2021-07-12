@@ -19,6 +19,7 @@
 
 #include "../main.h"
 #include "../game/animal.h"
+#include "../game/being.h"
 #include "../game/blockMining.h"
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
@@ -48,7 +49,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-extern        size_t src_tmp_server_nuj_len;
+extern unsigned  int src_tmp_server_nuj_len;
 extern unsigned char src_tmp_server_nuj_data[];
 
 char replyBuf[256];

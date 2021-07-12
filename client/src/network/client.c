@@ -20,6 +20,7 @@
 #include "../gfx/effects.h"
 #include "../gui/menu.h"
 #include "../game/animal.h"
+#include "../game/being.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
 #include "../game/fire.h"
@@ -235,6 +236,7 @@ void clientParsePacket(const packet *p){
 		characterSetRot(player,vecNewP(&p->v.f[3]));
 		characterSetVelocity(player,vecNewP(&p->v.f[6]));
 		characterFreeHook(player);
+		printf("Respawn Finished!\n");
 		player->flags &= ~CHAR_SPAWNING;
 		break;
 	case msgtMineBlock:
@@ -432,7 +434,7 @@ void clientFree(){
 	characterInit(player);
 	chatEmpty();
 	connectionState = 0;
-	gameRunning=false;
+	gameRunning = false;
 	closeSingleplayerServer();
 	openMainMenu();
 }

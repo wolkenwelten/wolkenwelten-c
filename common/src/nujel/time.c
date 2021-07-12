@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "time.h"
 
 #include "boolean.h"
 #include "casting.h"
@@ -28,17 +29,17 @@ static u64 getMSecs(){
 }
 
 
-static lVal *lnfTime(lClosure *c, lVal *v){
+lVal *lnfTime(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(time(NULL));
 }
 
-static lVal *lnfTimeMsecs(lClosure *c, lVal *v){
+lVal *lnfTimeMsecs(lClosure *c, lVal *v){
 	(void)c; (void)v;
 	return lValInt(getMSecs());
 }
 
-static lVal *lnfStrftime(lClosure *c, lVal *v){
+lVal *lnfStrftime(lClosure *c, lVal *v){
 	int timestamp = 0;
 	const char *format = "%Y-%m-%d %H:%M:%S";
 

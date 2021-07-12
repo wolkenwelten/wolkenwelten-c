@@ -31,24 +31,24 @@
 #include <stdio.h>
 #include <math.h>
 
-static void animalAgeing(animal *e,int stateChange[16]){
+static void werebunnyAgeing(animal *e,int stateChange[16]){
 	if(e->age > 64){
 		if(rngValA((1<<12)-1) <= (uint)(e->age-64)){e->health = 0;}
 	}
 	stateChange[ANIMAL_S_HEAT] -= e->age*2;
 }
 
-static void animalSleepyness(animal *e,int stateChange[16]){
+static void werebunnySleepyness(animal *e,int stateChange[16]){
 	const int v = 48 - e->sleepy;
 	stateChange[ANIMAL_S_SLEEP] += v*v;
 }
 
-static void animalHunger(animal *e,int stateChange[16]){
+static void werebunnyHunger(animal *e,int stateChange[16]){
 	const int v = 48 - e->hunger;
 	stateChange[ANIMAL_S_FOOD_SEARCH] += v*v;
 }
 
-static void animalSLoiter(animal *e,int stateChange[16]){
+static void werebunnySLoiter(animal *e,int stateChange[16]){
 	if(rngValA( 7) == 0){
 		e->grot.yaw = e->rot.yaw + ((rngValf()*2.f)-1.f)*4.f;
 	}
@@ -70,7 +70,7 @@ static void animalSLoiter(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_PLAYING] += rngValA(127);
 }
 
-static void animalSSleep(animal *e,int stateChange[16]){
+static void werebunnySSleep(animal *e,int stateChange[16]){
 	e->gvel = vecZero();
 	const int v = e->sleepy - 16;
 	stateChange[ANIMAL_S_LOITER] += v*v;
@@ -88,7 +88,7 @@ static void animalSSleep(animal *e,int stateChange[16]){
 	}
 }
 
-static void animalSHunt(animal *e,int stateChange[16]){
+static void werebunnySHunt(animal *e,int stateChange[16]){
 	if(e->target == 0){
 		e->state = ANIMAL_S_LOITER;
 		return;
@@ -117,7 +117,7 @@ static void animalSHunt(animal *e,int stateChange[16]){
 	}
 }
 
-static void animalSFight(animal *e,int stateChange[16]){
+static void werebunnySFight(animal *e,int stateChange[16]){
 	if(e->type != 2){
 		if((rngValA(15) == 0) && !(e->flags & ANIMAL_FALLING)){
 			e->vel.y = 0.03f;
@@ -126,7 +126,7 @@ static void animalSFight(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_FLEE] += rngValA(127) + e->stateTicks;
 }
 
-static void animalSFlee(animal *e,int stateChange[16]){
+static void werebunnySFlee(animal *e,int stateChange[16]){
 	if(e->type != 2){
 		if((fabsf(e->gvel.x) + fabsf(e->gvel.z)) < 0.02f){
 			vec dir = vecMulS(vecDegToVec(vecNew(-e->rot.yaw,0.f,0.f)),0.03f);
@@ -141,7 +141,7 @@ static void animalSFlee(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_FIGHT] += rngValA(127) + e->stateTicks;
 }
 
-static void animalFightOrFlightDay(animal *e,int stateChange[16]){
+static void werebunnyFightOrFlightDay(animal *e,int stateChange[16]){
 	if(e->state == ANIMAL_S_FIGHT){
 		if(e->target == 0){e->target = animalFindFOFTarget(e);}
 		if(e->target != 0){
@@ -186,7 +186,7 @@ static void animalFightOrFlightDay(animal *e,int stateChange[16]){
 	}
 }
 
-static void animalFightOrFlightNight(animal *e,int stateChange[16]){
+static void werebunnyFightOrFlightNight(animal *e,int stateChange[16]){
 	if(e->state == ANIMAL_S_FIGHT){
 		if(e->target == 0){e->target = animalFindFOFTarget(e);}
 		if(e->target != 0){
@@ -216,16 +216,16 @@ static void animalFightOrFlightNight(animal *e,int stateChange[16]){
 	}
 }
 
-static void animalFightOrFlight(animal *e, int stateChange[16]){
+static void werebunnyFightOrFlight(animal *e, int stateChange[16]){
 	float sunlight = gtimeGetBrightness(gtimeGetTimeOfDay());
 	if(sunlight < 0.5f){
-		animalFightOrFlightNight(e,stateChange);
+		werebunnyFightOrFlightNight(e,stateChange);
 	}else{
-		animalFightOrFlightDay(e,stateChange);
+		werebunnyFightOrFlightDay(e,stateChange);
 	}
 }
 
-static void animalSPlayful(animal *e,int stateChange[16]){
+static void werebunnySPlayful(animal *e,int stateChange[16]){
 	if((rngValA(31) == 0) && !(e->flags & ANIMAL_FALLING)){
 		e->vel.y = 0.03f;
 	}
@@ -248,7 +248,7 @@ static void animalSPlayful(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_LOITER] += (e->age*4);
 }
 
-static void animalSFoodSearch(animal *e,int stateChange[16]){
+static void werebunnySFoodSearch(animal *e,int stateChange[16]){
 	const u8 cb = worldGetB(e->pos.x,e->pos.y-1,e->pos.z);
 	if(cb == 2){
 		e->gvel = vecZero();
@@ -273,7 +273,7 @@ static void animalSFoodSearch(animal *e,int stateChange[16]){
 	}
 }
 
-static void animalSEat(animal *e,int stateChange[16]){
+static void werebunnySEat(animal *e,int stateChange[16]){
 	const u8 cb = worldGetB(e->pos.x,(int)e->pos.y-1,e->pos.z);
 	if(cb != 2){
 		stateChange[ANIMAL_S_EAT] -= 1<<16;
@@ -291,22 +291,22 @@ static void animalSEat(animal *e,int stateChange[16]){
 	}
 }
 
-static void animalDoPoop(animal *e,int stateChange[16]){
+static void werebunnyDoPoop(animal *e,int stateChange[16]){
 	item ipoop = itemNew(I_Poop,1);
 	itemDropNewP(e->pos, &ipoop);
 	stateChange[ANIMAL_S_FLEE] += 256;
 }
 
-static void animalPoop(animal *e,int stateChange[16]){
+static void werebunnyPoop(animal *e,int stateChange[16]){
 	if(e->hunger < 24){return;}
 	if(e->hunger < 48){
-		if(rngValA(2047) == 0){animalDoPoop(e,stateChange);}
+		if(rngValA(2047) == 0){werebunnyDoPoop(e,stateChange);}
 	}else{
-		if(rngValA(1023) == 0){animalDoPoop(e,stateChange);}
+		if(rngValA(1023) == 0){werebunnyDoPoop(e,stateChange);}
 	}
 }
 
-static void animalSocialDistancing(animal *e,int stateChange[16]){
+static void werebunnySocialDistancing(animal *e,int stateChange[16]){
 	if(rngValA(31) != 0){return;}
 	float d;
 	being ca = beingListGetClosest(e->bl, animalGetBeing(e), BEING_ANIMAL, &d);
@@ -321,14 +321,7 @@ static void animalSocialDistancing(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_FLEE] += 256;
 }
 
-void animalRBurnWerebunny(animal *e){
-	e->state = ANIMAL_S_FLEE;
-	if(!(e->flags & ANIMAL_FALLING)){
-		e->vel.y = 0.04f;
-	}
-}
-
-static void animalStateChange(animal *e,int stateChange[16]){
+static void werebunnyStateChange(animal *e,int stateChange[16]){
 	uint max=0;
 
 	stateChange[e->state] += 512;
@@ -352,7 +345,7 @@ static void animalStateChange(animal *e,int stateChange[16]){
 	e->state = max;
 }
 
-void animalSearchPrey(animal *e,int stateChange[16]){
+void werebunnySearchPrey(animal *e,int stateChange[16]){
 	(void)stateChange;
 	if((e->state != ANIMAL_S_LOITER) && (e->state != ANIMAL_S_PLAYING) && (e->state != ANIMAL_S_FOOD_SEARCH)){return;}
 	if(e->hunger > 70) {return;}
@@ -377,13 +370,13 @@ void animalThinkWerebunny(animal *e){
 
 	e->stateTicks++;
 	animalCheckSuffocation(e);
-	animalFightOrFlight   (e,stateChange);
-	animalAgeing          (e,stateChange);
-	animalSleepyness      (e,stateChange);
-	animalHunger          (e,stateChange);
-	animalPoop            (e,stateChange);
-	animalSocialDistancing(e,stateChange);
-	animalSearchPrey      (e,stateChange);
+	werebunnyFightOrFlight   (e,stateChange);
+	werebunnyAgeing          (e,stateChange);
+	werebunnySleepyness      (e,stateChange);
+	werebunnyHunger          (e,stateChange);
+	werebunnyPoop            (e,stateChange);
+	werebunnySocialDistancing(e,stateChange);
+	werebunnySearchPrey      (e,stateChange);
 
 	int tcat = gtimeGetTimeCat();
 	if((tcat == TIME_NIGHT) || (tcat == TIME_EVENING)){
@@ -397,34 +390,42 @@ void animalThinkWerebunny(animal *e){
 	switch(e->state){
 	default:
 	case ANIMAL_S_LOITER:
-		animalSLoiter(e,stateChange);
+		werebunnySLoiter(e,stateChange);
 		break;
 	case ANIMAL_S_FLEE:
-		animalSFlee(e,stateChange);
+		werebunnySFlee(e,stateChange);
 		break;
 	case ANIMAL_S_HEAT:
 		break;
 	case ANIMAL_S_SLEEP:
-		animalSSleep(e,stateChange);
+		werebunnySSleep(e,stateChange);
 		break;
 	case ANIMAL_S_PLAYING:
-		animalSPlayful(e,stateChange);
+		werebunnySPlayful(e,stateChange);
 		break;
 	case ANIMAL_S_FOOD_SEARCH:
-		animalSFoodSearch(e,stateChange);
+		werebunnySFoodSearch(e,stateChange);
 		break;
 	case ANIMAL_S_EAT:
-		animalSEat(e,stateChange);
+		werebunnySEat(e,stateChange);
 		break;
 	case ANIMAL_S_FIGHT:
-		animalSFight(e,stateChange);
+		werebunnySFight(e,stateChange);
 		break;
 	case ANIMAL_S_HUNT:
-		animalSHunt(e,stateChange);
+		werebunnySHunt(e,stateChange);
 		break;
 	}
-	animalStateChange(e,stateChange);
+	werebunnyStateChange(e,stateChange);
 }
+
+void animalRBurnWerebunny(animal *e){
+	e->state = ANIMAL_S_FLEE;
+	if(!(e->flags & ANIMAL_FALLING)){
+		e->vel.y = 0.04f;
+	}
+}
+
 
 void animalRDieWerebunny(animal *e){
 	item mdrop = itemNew(I_Meat,rngValMM(4,6));

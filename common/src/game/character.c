@@ -16,6 +16,7 @@
  */
 
 #include "character.h"
+#include "../game/being.h"
 #include "../game/item.h"
 #include "../game/hook.h"
 #include "../misc/sfx.h"

@@ -52,7 +52,7 @@ void throwableNew(const vec pos, const vec rot, float speed, const item itm, bei
 	packetQueue(p,msgtThrowableRecvUpdates,12*4,0);
 }
 
-static void throwableDel(uint i){
+void throwableDel(uint i){
 	packet    *p = &packetBuffer;
 
 	p->v.u16[ 0] = i;

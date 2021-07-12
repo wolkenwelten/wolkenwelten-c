@@ -1,6 +1,5 @@
 [def git-get-commit [λ [branch]
 	"Gets the commit hash of BRANCH"
-	[display [".git/refs/heads/" branch]]
 	[str/trim [file/load [".git/refs/heads/" branch]]]
 ]]
 

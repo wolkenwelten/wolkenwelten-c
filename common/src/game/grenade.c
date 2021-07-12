@@ -18,6 +18,7 @@
 #include "../game/grenade.h"
 
 #include "../game/animal.h"
+#include "../game/being.h"
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../../../common/src/misc/misc.h"

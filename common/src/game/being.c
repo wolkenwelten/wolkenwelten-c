@@ -35,6 +35,50 @@ beingListEntry *beingListEntryList;
 beingListEntry *beingListEntryFirstFree;
 uint            beingListEntryCount = 0;
 
+u8 beingType(being b){
+	return b>>24;
+}
+
+u32 beingID(being b){
+	return b&0xFFFFFF;
+}
+
+being beingNew(u8 type, u32 id){
+	return (id&0xFFFFFF) | ((u32)type << 24);
+}
+
+being beingCharacter (u32 id){
+	return beingNew(BEING_CHARACTER, id);
+}
+
+being beingAnimal(u32 id){
+	return beingNew(BEING_ANIMAL,    id);
+}
+
+being beingHook(u32 id){
+	return beingNew(BEING_HOOK,      id);
+}
+
+being beingGrenade   (u32 id){
+	return beingNew(BEING_GRENADE,   id);
+}
+
+being beingProjectile(u32 id){
+	return beingNew(BEING_PROJECTILE,id);
+}
+
+being beingItemDrop  (u32 id){
+	return beingNew(BEING_ITEMDROP,  id);
+}
+
+being beingFire      (u32 id){
+	return beingNew(BEING_FIRE,      id);
+}
+
+being beingThrowable (u32 id){
+	return beingNew(BEING_THROWABLE, id);
+}
+
 vec beingGetPos(being b){
 	switch(beingType(b)){
 	case BEING_CHARACTER: {

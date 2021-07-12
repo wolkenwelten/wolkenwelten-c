@@ -31,7 +31,7 @@
 #include <stdio.h>
 #include <math.h>
 
-static void animalCheckHeat(animal *e,int stateChange[16]){
+static void bunnyCheckHeat(animal *e,int stateChange[16]){
 	animal *cAnim;
 	float d;
 	if((e->pregnancy > 0) || (e->age < 20)){return;}
@@ -43,24 +43,24 @@ static void animalCheckHeat(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_HEAT] += (256.f - d)*4.f;
 }
 
-static void animalAgeing(animal *e,int stateChange[16]){
+static void bunnyAgeing(animal *e,int stateChange[16]){
 	if(e->age > 64){
 		if(rngValA((1<<12)-1) <= (uint)(e->age-64)){e->health = 0;}
 	}
 	stateChange[ANIMAL_S_HEAT] -= e->age*2;
 }
 
-static void animalSleepyness(animal *e,int stateChange[16]){
+static void bunnySleepyness(animal *e,int stateChange[16]){
 	const int v = 48 - e->sleepy;
 	stateChange[ANIMAL_S_SLEEP] += v*v;
 }
 
-static void animalHunger(animal *e,int stateChange[16]){
+static void bunnyHunger(animal *e,int stateChange[16]){
 	const int v = 48 - e->hunger;
 	stateChange[ANIMAL_S_FOOD_SEARCH] += v*v;
 }
 
-static void animalSLoiter(animal *e,int stateChange[16]){
+static void bunnySLoiter(animal *e,int stateChange[16]){
 	if(rngValA( 7) == 0){
 		e->grot.yaw = e->rot.yaw + ((rngValf()*2.f)-1.f)*4.f;
 	}
@@ -82,7 +82,7 @@ static void animalSLoiter(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_PLAYING] += rngValA(127);
 }
 
-static void animalSSleep(animal *e,int stateChange[16]){
+static void bunnySSleep(animal *e,int stateChange[16]){
 	e->gvel = vecZero();
 	const int v = e->sleepy - 16;
 	stateChange[ANIMAL_S_LOITER] += v*v;
@@ -100,7 +100,7 @@ static void animalSSleep(animal *e,int stateChange[16]){
 	}
 }
 
-static void animalSHeat(animal *e,int stateChange[16]){
+static void bunnySHeat(animal *e,int stateChange[16]){
 	animal *cAnim;
 	float dist;
 	if(e->pregnancy > 0){
@@ -140,7 +140,7 @@ static void animalSHeat(animal *e,int stateChange[16]){
 	e->rot.yaw = -caRot.yaw + 180.f;
 }
 
-static void animalSFight(animal *e,int stateChange[16]){
+static void bunnySFight(animal *e,int stateChange[16]){
 	e->grot.pitch = 0.f;
 	if(e->type != 2){
 		if((rngValA(15) == 0) && !(e->flags & ANIMAL_FALLING)){
@@ -150,7 +150,7 @@ static void animalSFight(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_FLEE] += rngValA(127) + e->stateTicks;
 }
 
-static void animalSFlee(animal *e,int stateChange[16]){
+static void bunnySFlee(animal *e,int stateChange[16]){
 	e->grot.pitch = 0.f;
 	if(e->type != 2){
 		if((fabsf(e->gvel.x) + fabsf(e->gvel.z)) < 0.02f){
@@ -166,7 +166,7 @@ static void animalSFlee(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_FIGHT] += rngValA(127) + e->stateTicks;
 }
 
-static void animalFightOrFlight(animal *e,int stateChange[16]){
+static void bunnyFightOrFlight(animal *e,int stateChange[16]){
 	if(e->state == ANIMAL_S_FIGHT){
 		if(e->target == 0){e->target = animalFindFOFTarget(e);}
 		if(e->target != 0){
@@ -215,7 +215,7 @@ static void animalFightOrFlight(animal *e,int stateChange[16]){
 	}
 }
 
-static void animalSPlayful(animal *e,int stateChange[16]){
+static void bunnySPlayful(animal *e,int stateChange[16]){
 	if((rngValA(31) == 0) && !(e->flags & ANIMAL_FALLING)){
 		e->vel.y = 0.03f;
 	}
@@ -238,7 +238,7 @@ static void animalSPlayful(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_LOITER] += (e->age*4);
 }
 
-static void animalSFoodSearch(animal *e,int stateChange[16]){
+static void bunnySFoodSearch(animal *e,int stateChange[16]){
 	const u8 cb = worldGetB(e->pos.x,e->pos.y-1,e->pos.z);
 	if(cb == 2){
 		e->gvel = vecZero();
@@ -263,7 +263,7 @@ static void animalSFoodSearch(animal *e,int stateChange[16]){
 	}
 }
 
-static void animalSEat(animal *e,int stateChange[16]){
+static void bunnySEat(animal *e,int stateChange[16]){
 	const u8 cb = worldGetB(e->pos.x,(int)e->pos.y-1,e->pos.z);
 	if(cb != 2){
 		stateChange[ANIMAL_S_EAT] -= 1<<16;
@@ -281,13 +281,13 @@ static void animalSEat(animal *e,int stateChange[16]){
 	}
 }
 
-static void animalDoPoop(animal *e,int stateChange[16]){
+static void bunnyDoPoop(animal *e,int stateChange[16]){
 	item ipoop = itemNew(I_Poop,1);
 	itemDropNewP(e->pos, &ipoop);
 	stateChange[ANIMAL_S_FLEE] += 256;
 }
 
-static void animalPregnancy(animal *e,int stateChange[16]){
+static void bunnyPregnancy(animal *e,int stateChange[16]){
 	if(e->flags & ANIMAL_MALE){e->pregnancy = -1; return;}
 	if(e->pregnancy  <  0)    {return;}
 	if(e->age        < 21)    {e->pregnancy = -1;}
@@ -300,21 +300,21 @@ static void animalPregnancy(animal *e,int stateChange[16]){
 		e->hunger   -= 8;
 		e->sleepy    = MAX(8,e->sleepy-24);
 		e->pregnancy = -1;
-		animalDoPoop(e,stateChange);
+		bunnyDoPoop(e,stateChange);
 	}
 	(void)stateChange;
 }
 
-static void animalPoop(animal *e,int stateChange[16]){
+static void bunnyPoop(animal *e,int stateChange[16]){
 	if(e->hunger < 24){return;}
 	if(e->hunger < 48){
-		if(rngValA(2047) == 0){animalDoPoop(e,stateChange);}
+		if(rngValA(2047) == 0){bunnyDoPoop(e,stateChange);}
 	}else{
-		if(rngValA(1023) == 0){animalDoPoop(e,stateChange);}
+		if(rngValA(1023) == 0){bunnyDoPoop(e,stateChange);}
 	}
 }
 
-static void animalSocialDistancing(animal *e,int stateChange[16]){
+static void bunnySocialDistancing(animal *e,int stateChange[16]){
 	if(rngValA(15) != 0){return;}
 	float d;
 	being ca = beingListGetClosest(e->bl, animalGetBeing(e), BEING_ANIMAL, &d);
@@ -335,14 +335,7 @@ static void animalSocialDistancing(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_FLEE] += 256;
 }
 
-void animalRBurnBunny(animal *e){
-	e->state = ANIMAL_S_FLEE;
-	if(!(e->flags & ANIMAL_FALLING)){
-		e->vel.y = 0.04f;
-	}
-}
-
-static void animalStateChange(animal *e,int stateChange[16]){
+static void bunnyStateChange(animal *e,int stateChange[16]){
 	uint max=0;
 
 	stateChange[e->state] += 512;
@@ -375,15 +368,15 @@ void animalThinkBunny(animal *e){
 	stateChange[ANIMAL_S_FLEE]  = 0;
 
 	e->stateTicks++;
-	animalCheckHeat       (e,stateChange);
 	animalCheckSuffocation(e);
-	animalFightOrFlight   (e,stateChange);
-	animalAgeing          (e,stateChange);
-	animalSleepyness      (e,stateChange);
-	animalHunger          (e,stateChange);
-	animalPregnancy       (e,stateChange);
-	animalPoop            (e,stateChange);
-	animalSocialDistancing(e,stateChange);
+	bunnyCheckHeat       (e,stateChange);
+	bunnyFightOrFlight   (e,stateChange);
+	bunnyAgeing          (e,stateChange);
+	bunnySleepyness      (e,stateChange);
+	bunnyHunger          (e,stateChange);
+	bunnyPregnancy       (e,stateChange);
+	bunnyPoop            (e,stateChange);
+	bunnySocialDistancing(e,stateChange);
 
 	int tcat = gtimeGetTimeCat();
 	if((tcat == TIME_NIGHT) || (tcat == TIME_EVENING)){
@@ -397,31 +390,31 @@ void animalThinkBunny(animal *e){
 	switch(e->state){
 	default:
 	case ANIMAL_S_LOITER:
-		animalSLoiter(e,stateChange);
+		bunnySLoiter(e,stateChange);
 		break;
 	case ANIMAL_S_FLEE:
-		animalSFlee(e,stateChange);
+		bunnySFlee(e,stateChange);
 		break;
 	case ANIMAL_S_HEAT:
-		animalSHeat(e,stateChange);
+		bunnySHeat(e,stateChange);
 		break;
 	case ANIMAL_S_SLEEP:
-		animalSSleep(e,stateChange);
+		bunnySSleep(e,stateChange);
 		break;
 	case ANIMAL_S_PLAYING:
-		animalSPlayful(e,stateChange);
+		bunnySPlayful(e,stateChange);
 		break;
 	case ANIMAL_S_FOOD_SEARCH:
-		animalSFoodSearch(e,stateChange);
+		bunnySFoodSearch(e,stateChange);
 		break;
 	case ANIMAL_S_EAT:
-		animalSEat(e,stateChange);
+		bunnySEat(e,stateChange);
 		break;
 	case ANIMAL_S_FIGHT:
-		animalSFight(e,stateChange);
+		bunnySFight(e,stateChange);
 		break;
 	}
-	animalStateChange(e,stateChange);
+	bunnyStateChange(e,stateChange);
 }
 
 void animalRDieBunny(animal *e){
@@ -429,4 +422,11 @@ void animalRDieBunny(animal *e){
 	item fdrop = itemNew(I_Fur, rngValMM(1,2));
 	itemDropNewP(e->pos,&mdrop);
 	itemDropNewP(e->pos,&fdrop);
+}
+
+void animalRBurnBunny(animal *e){
+	e->state = ANIMAL_S_FLEE;
+	if(!(e->flags & ANIMAL_FALLING)){
+		e->vel.y = 0.04f;
+	}
 }

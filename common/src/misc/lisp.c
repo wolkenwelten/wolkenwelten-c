@@ -30,7 +30,7 @@
 #include "../misc/colors.h"
 #include "../misc/profiling.h"
 
-extern        size_t src_tmp_wwlib_nuj_len;
+extern unsigned  int src_tmp_wwlib_nuj_len;
 extern unsigned char src_tmp_wwlib_nuj_data[];
 
 #include <ctype.h>

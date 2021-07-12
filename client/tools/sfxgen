@@ -13,7 +13,7 @@ echo ""                                                                    >> $H
 
 echo "#include \"sfx.h\""                                                   > $C_FILE
 echo ""                                                                    >> $C_FILE
-echo "sfx *sfxNew(unsigned char *data,size_t dataLen, const char *lName);" >> $C_FILE
+echo "sfx *sfxNew(const void *data,unsigned int dataLen, const char *lName);" >> $C_FILE
 echo "void sfxFree(sfx *b);"                                               >> $C_FILE
 echo "extern int sfxEnable;"                                               >> $C_FILE
 echo ""                                                                    >> $C_FILE

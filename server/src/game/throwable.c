@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "throwable.h"
 
 #include "../network/server.h"
@@ -31,6 +30,10 @@ void throwableNew(const vec pos, const vec rot, float speed, const item itm, bei
 	a->nextFree  = -1;
 	a->thrower   = thrower;
 	throwableSendUpdate(-1,a - throwableList);
+}
+
+void throwableDel(uint i){
+	throwableFree(&throwableList[i]);
 }
 
 void throwableSyncPlayer(uint c){

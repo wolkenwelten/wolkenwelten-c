@@ -17,6 +17,7 @@
 
 #include "character.h"
 
+#include "../game/being.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/network/messages.h"

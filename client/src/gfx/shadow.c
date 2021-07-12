@@ -29,7 +29,7 @@
 
 mesh *meshShadow = NULL;
 
-extern        size_t gfx_shadow_png_len;
+extern unsigned  int gfx_shadow_png_len;
 extern unsigned char gfx_shadow_png_data[];
 
 void shadowInit(){

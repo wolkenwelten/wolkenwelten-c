@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "guardian.h"
 
 #include "../game/animal.h"
@@ -28,7 +27,7 @@
 
 #include <math.h>
 
-static void animalAggresive(animal *e){
+static void guardianAggresive(animal *e){
 	character *cChar;
 	float dist = animalClosestPlayer(e,&cChar);
 	uint los   = 0;
@@ -88,7 +87,7 @@ static void animalAggresive(animal *e){
 	if(e->temp > 0){e->temp = MIN(e->temp-1,64);}
 }
 
-static void animalSLoiter(animal *e){
+static void guardianSLoiter(animal *e){
 	if(rngValA( 7) == 0){
 		e->grot.yaw = e->rot.yaw + ((rngValf()*2.f)-1.f)*4.f;
 	}
@@ -110,13 +109,13 @@ static void animalSLoiter(animal *e){
 
 void animalThinkGuardian(animal *e){
 	animalCheckSuffocation(e);
-	animalAggresive(e);
+	guardianAggresive(e);
 
 	switch(e->state){
 	default:
 		break;
 	case ANIMAL_S_LOITER:
-		animalSLoiter(e);
+		guardianSLoiter(e);
 		break;
 	}
 }

@@ -147,10 +147,10 @@ void printObj(){
 		fprintf(cfp,"{%f,%f,%f,%f,%f,1.f}\n",verts[i].x,verts[i].y,verts[i].z,verts[i].u,verts[i].v);
 	}
 	fprintf(cfp,"};\n");
-	fprintf(cfp,"size_t %s_count = %i;\n\n",name,vertCount);
+	fprintf(cfp,"unsigned int %s_count = %i;\n\n",name,vertCount);
 
 	fprintf(hfp,"extern vertex %s_verts[];\n",name);
-	fprintf(hfp,"extern size_t %s_count;\n\n",name);
+	fprintf(hfp,"extern unsigned int %s_count;\n\n",name);
 }
 
 int main(int argc,char *argv[]){
