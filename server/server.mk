@@ -8,6 +8,10 @@ SERVER_DEPS      := ${SERVER_SRCS:.c=.d}
 SERVER_NUJ       := $(shell find server/src/nujel/ -type f -name '*.nuj' | sort)
 SERVER_ASSETS    := server/src/tmp/server.nuj
 
+$(SERVER_OBJS): | server/src/tmp/assets.o
+$(SERVER_OBJS): | server/src/tmp/objs.o
+$(SERVER_OBJS): | server/src/tmp/sfx.o
+
 wolkenwelten-server: $(SERVER_OBJS) $(ASM_OBJS) server/src/tmp/objs.o server/src/tmp/sfx.o common/src/tmp/cto.o server/src/tmp/assets.o
 	$(CC) -D_GNU_SOURCE $^ -g -o wolkenwelten-server $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(SERVER_LIBS)
 

@@ -25,23 +25,9 @@ WINDOW_WIDTH      := 960
 WINDOW_HEIGHT     := 524
 TESTNR            := 1
 
-client/src/game/animal.o:      | client/src/tmp/objs.h
-client/src/game/character.o:   | client/src/tmp/objs.h
-client/src/game/entity.o:      | client/src/tmp/objs.h
-client/src/game/grenade.o:     | client/src/tmp/objs.h
-client/src/gui/gui.o:          | client/src/tmp/objs.h
-client/src/main.o:             | client/src/tmp/objs.h
-client/src/main.o:             | common/src/tmp/cto.o
-client/src/main.o:             | client/src/tmp/sfx.h
-client/src/game/character.o:   | client/src/tmp/sfx.h
-client/src/game/entity.o:      | client/src/tmp/sfx.h
-client/src/game/fire.o:        | client/src/tmp/sfx.h
-client/src/game/projectile.o:  | client/src/tmp/sfx.h
-client/src/gfx/effects.o:      | client/src/tmp/sfx.h
-client/src/misc/lisp.o:        | client/src/tmp/sfx.h
-client/src/menu/inventory.o:   | client/src/tmp/sfx.h
-client/src/sdl/sdl.o:          | client/src/tmp/sfx.h
-client/src/sdl/sfx.o:          | client/src/tmp/sfx.h
+$(CLIENT_OBJS): | client/src/tmp/objs.h
+$(CLIENT_OBJS): | common/src/tmp/cto.o
+$(CLIENT_OBJS): | client/src/tmp/sfx.h
 
 wolkenwelten: $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS)
 	$(CC) $^ -g -o wolkenwelten $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_CINCLUDES) $(CINCLUDES) $(CLIENT_LIBS) $(CSTD)
