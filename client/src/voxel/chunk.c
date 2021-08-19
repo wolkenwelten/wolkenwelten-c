@@ -469,10 +469,11 @@ void chunkSetB(chunk *c,u16 x,u16 y,u16 z,u8 block){
 	if((z&EDGE) == EDGE){worldSetChunkUpdated(x  ,y  ,z+1);}
 }
 
-void chunkDraw(chunk *c, float d, sideMask mask){
+void chunkDraw(chunk *c, float d, sideMask mask, const vec sideTints[6]){
 	if(c == NULL){return;}
 	if(c->flags & CHUNK_FLAG_DIRTY){ chunkGenMesh(c); }
 	if(!c->vao){ return; }
+	if(c->sideEnd[sideMAX-1] <= 0){return;}
 
 	float fIn = 1.f;
 	if(c->fadeIn > 0){
@@ -487,32 +488,21 @@ void chunkDraw(chunk *c, float d, sideMask mask){
 	shaderTransform(sBlockMesh,c->x-subBlockViewOffset.x,c->y-subBlockViewOffset.y,c->z-subBlockViewOffset.z);
 
 	glBindVertexArray(c->vao);
-	if(mask == sideMaskALL || !glIsMultiDrawAvailable){
-		glDrawArrays(GL_TRIANGLES,0,c->sideEnd[sideMAX-1]*6);
-		vboTrisCount += c->sideEnd[sideMAX-1] * 2;
-		drawCallCount++;
-	}else{
-		GLint first[sideMAX];
-		GLsizei count[sideMAX];
-		uint index = 0;
-		bool lastSide = false;
-		for(side sideIndex = 0; sideIndex < sideMAX; sideIndex++){
-			if(mask & (1 << sideIndex)){
-				const uint cFirst = sideIndex == 0 ? 0 : c->sideEnd[sideIndex-1];
-				const uint cCount = c->sideEnd[sideIndex] - cFirst;
-				if(cCount == 0){continue;}
-				if(lastSide){count[index-1] += cCount * 6;}
-				first[index]   = cFirst * 6;
-				count[index++] = cCount * 6;
+
+	for(side sideIndex = 0; sideIndex < sideMAX; sideIndex++){
+		if(mask & 1){
+			const uint cFirst = sideIndex == 0 ? 0 : c->sideEnd[sideIndex-1];
+			const uint cCount = c->sideEnd[sideIndex] - cFirst;
+			if(cCount){
+				shaderSideTint(sBlockMesh,sideTints[sideIndex]);
+				glDrawArrays(GL_TRIANGLES,cFirst*6,cCount*6);
+				drawCallCount++;
 				vboTrisCount  += cCount * 2;
-				lastSide = true;
-			}else{
-				lastSide = false;
 			}
 		}
-		glMultiDrawArrays(GL_TRIANGLES,first,count,index);
-		drawCallCount++;
+		mask = mask >> 1;
 	}
+	drawCallCount++;
 }
 
 void chunkRecvUpdate(const packet *p){

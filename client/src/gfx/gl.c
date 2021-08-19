@@ -2,10 +2,6 @@
 #include <stdio.h>
 #include "gl.h"
 
-#ifdef WOLKENWELTEN__GL_ES
-bool glIsMultiDrawAvailable;
-#endif
-
 bool glHasExtension(const char *name){
 	GLint numExt;
 	glGetIntegerv(GL_NUM_EXTENSIONS, &numExt);
@@ -22,10 +18,6 @@ bool glInitialize() {
 #endif
 #ifdef WOLKENWELTEN__GL_USE_GL3W
 	if(gl3wInit()){ return false; }
-#endif
-
-#ifdef WOLKENWELTEN__GL_ES
-	glIsMultiDrawAvailable = glHasExtension("GL_EXT_multi_draw_arrays");
 #endif
 
 	return true;

@@ -23,7 +23,7 @@ chunk  *chunkNew                   (u16 x,u16 y,u16 z);
 void    chunkFree                  (chunk *c);
 void    chunkBox                   (chunk *c, u16 x, u16 y, u16 z,u16 gx,u16 gy,u16 gz,u8 b);
 void    chunkSetB                  (chunk *c, u16 x, u16 y, u16 z, u8 b);
-void    chunkDraw                  (chunk *c, float d, sideMask mask);
+void    chunkDraw                  (chunk *c, float d, sideMask mask, const vec sideTints[6]);
 uint    chunkGetFree               ();
 uint    chunkGetActive             ();
 uint    chunkGetGeneratedThisFrame ();

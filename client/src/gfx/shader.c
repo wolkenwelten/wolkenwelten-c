@@ -53,7 +53,7 @@ extern unsigned char src_shader_textShaderVS_glsl_data[];
 void shaderInit(){
 	sMesh      = shaderNew((const char *)src_shader_meshShaderVS_glsl_data,     (const char *)src_shader_meshShaderFS_glsl_data,     0x3);
 	sShadow    = shaderNew((const char *)src_shader_shadowShaderVS_glsl_data,   (const char *)src_shader_shadowShaderFS_glsl_data,   0x3);
-	sBlockMesh = shaderNew((const char *)src_shader_blockShaderVS_glsl_data,    (const char *)src_shader_blockShaderFS_glsl_data,    0x3);
+	sBlockMesh = shaderNew((const char *)src_shader_blockShaderVS_glsl_data,    (const char *)src_shader_blockShaderFS_glsl_data,    0x7);
 	sParticle  = shaderNew((const char *)src_shader_particleShaderVS_glsl_data, (const char *)src_shader_particleShaderFS_glsl_data, 0x5);
 	sRain      = shaderNew((const char *)src_shader_rainShaderVS_glsl_data,     (const char *)src_shader_rainShaderFS_glsl_data,     0x1);
 	sTextMesh  = shaderNew((const char *)src_shader_textShaderVS_glsl_data,     (const char *)src_shader_textShaderFS_glsl_data,     0x7);
@@ -215,9 +215,9 @@ void shaderBrightness(shader *s, float v){
 	glUniform1f(s->lBrightness,v);
 }
 
-void shaderSideTint(shader *s, const vec v[sideMAX]){
+void shaderSideTint(shader *s, const vec v){
 	if(s->lSideTint == -1){return;}
-	glUniform3fv(s->lSideTint,sideMAX,(const GLfloat*)v);
+	glUniform3f(s->lSideTint,v.x,v.y,v.z);
 }
 
 void shaderTransform(shader *s,float x,float y,float z){

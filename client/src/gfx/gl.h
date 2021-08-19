@@ -16,10 +16,4 @@
 	#define WOLKENWELTEN__GL_USE_GLEW
 #endif
 
-#ifdef WOLKENWELTEN__GL_ES
-	extern bool glIsMultiDrawAvailable;
-#else
-	static const bool glIsMultiDrawAvailable = true;
-#endif
-
 bool glInitialize();

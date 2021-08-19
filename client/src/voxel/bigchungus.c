@@ -164,7 +164,6 @@ void worldDraw(const character *cam){
 		(vec){{{shadeLeft,  shadeLeft,  shadeLeft}}},
 		(vec){{{shadeRight, shadeRight, shadeRight}}},
 	};
-	shaderSideTint(sBlockMesh,sideTints);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -223,7 +222,7 @@ void worldDraw(const character *cam){
 
 	quicksortQueue(drawQueue,0,drawQueueLen-1);
 	for(int i=0;i<drawQueueLen;i++){
-		chunkDraw(drawQueue[i].chnk,drawQueue[i].distance,drawQueue[i].mask);
+		chunkDraw(drawQueue[i].chnk,drawQueue[i].distance,drawQueue[i].mask, sideTints);
 	}
 	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 }
