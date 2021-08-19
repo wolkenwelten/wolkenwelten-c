@@ -1,18 +1,23 @@
 SERVER_LIBS      := -lm
 
 SERVER_HDRS      := $(shell find server/src -type f -name '*.h') $(COMMON_HDRS)
-SERVER_SRCS      := $(shell find server/src -type f -name '*.c') $(COMMON_SRCS)
-SERVER_OBJS      := ${SERVER_SRCS:.c=.o} common/src/tmp/assets.o
+SERVER_SRCS_EXCL := $(shell find server/src -type f -name '*.c')
+SERVER_SRCS      := $(SERVER_SRCS_EXCL) $(COMMON_SRCS)
+SERVER_TMP_SRCS  := common/src/tmp/assets.c common/src/tmp/cto.c server/src/tmp/assets.c server/src/tmp/objs.c server/src/tmp/sfx.c
+SERVER_TMP_OBJS  := ${SERVER_TMP_SRCS:.c=.o}
+SERVER_OBJS_EXCL := ${SERVER_SRCS_EXCL:.c=.o}
+SERVER_OBJS      := $(SERVER_OBJS_EXCL) $(SERVER_TMP_OBJS) ${COMMON_OBJS}
 SERVER_DEPS      := ${SERVER_SRCS:.c=.d}
 
 SERVER_NUJ       := $(shell find server/src/nujel/ -type f -name '*.nuj' | sort)
 SERVER_ASSETS    := server/src/tmp/server.nuj
 
-$(SERVER_OBJS): | server/src/tmp/assets.o
-$(SERVER_OBJS): | server/src/tmp/objs.o
-$(SERVER_OBJS): | server/src/tmp/sfx.o
+$(SERVER_OBJS_EXCL): | common/src/tmp/cto.c
+$(SERVER_OBJS): | server/src/tmp/assets.h
+$(SERVER_OBJS): | server/src/tmp/objs.h
+$(SERVER_OBJS): | server/src/tmp/sfx.h
 
-wolkenwelten-server: $(SERVER_OBJS) $(ASM_OBJS) server/src/tmp/objs.o server/src/tmp/sfx.o common/src/tmp/cto.o server/src/tmp/assets.o
+wolkenwelten-server: $(SERVER_OBJS) $(ASM_OBJS) ${SERVER_TMP_OBJS}
 	$(CC) -D_GNU_SOURCE $^ -g -o wolkenwelten-server $(OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(SERVER_LIBS)
 
 server/src/tmp/server.nuj: $(SERVER_NUJ)

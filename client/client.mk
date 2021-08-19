@@ -17,17 +17,19 @@ CLIENT_TMP_SRCS   := client/src/tmp/objs.c client/src/tmp/gfxAssets.c client/src
 CLIENT_TMP_OBJS   := ${CLIENT_TMP_SRCS:.c=.o}
 
 CLIENT_HDRS       := $(shell find client/src -type f -name '*.h') $(COMMON_HDRS)
-CLIENT_SRCS       := $(shell find client/src -type f -name '*.c') $(COMMON_SRCS)
-CLIENT_OBJS       := ${CLIENT_SRCS:.c=.o}
+CLIENT_SRCS_EXCL  := $(shell find client/src -type f -name '*.c')
+CLIENT_SRCS       := $(CLIENT_SRCS_EXCL) $(COMMON_SRCS)
+CLIENT_OBJS_EXCL  := ${CLIENT_SRCS_EXCL:.c=.o}
+CLIENT_OBJS       := $(CLIENT_OBJS_EXCL) ${COMMON_SRCS:.c=.o}
 CLIENT_DEPS       := ${CLIENT_SRCS:.c=.d}
 
 WINDOW_WIDTH      := 960
 WINDOW_HEIGHT     := 524
 TESTNR            := 1
 
-$(CLIENT_OBJS): | client/src/tmp/objs.h
-$(CLIENT_OBJS): | common/src/tmp/cto.o
-$(CLIENT_OBJS): | client/src/tmp/sfx.h
+$(CLIENT_OBJS_EXCL): | common/src/tmp/cto.c
+$(CLIENT_OBJS):      | client/src/tmp/objs.h
+$(CLIENT_OBJS):      | client/src/tmp/sfx.h
 
 wolkenwelten: $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS)
 	$(CC) $^ -g -o wolkenwelten $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_CINCLUDES) $(CINCLUDES) $(CLIENT_LIBS) $(CSTD)

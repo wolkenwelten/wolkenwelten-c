@@ -15,12 +15,12 @@ TEST_WORLD       := -worldSeed=68040 -savegame=Test
 
 ASM_OBJS         += common/src/asm/$(ARCH).o
 
-$(COMMON_OBJS): | client/src/tmp/objs.o
-$(COMMON_OBJS): | client/src/tmp/sfx.o
-$(COMMON_OBJS): | common/src/tmp/assets.o
-$(COMMON_OBJS): | server/src/tmp/assets.o
-$(COMMON_OBJS): | server/src/tmp/objs.o
-$(COMMON_OBJS): | server/src/tmp/sfx.o
+$(COMMON_OBJS): | client/src/tmp/objs.h
+$(COMMON_OBJS): | client/src/tmp/sfx.h
+$(COMMON_OBJS): | common/src/tmp/assets.h
+$(COMMON_OBJS): | server/src/tmp/assets.h
+$(COMMON_OBJS): | server/src/tmp/objs.h
+$(COMMON_OBJS): | server/src/tmp/sfx.h
 
 %.o: %.s
 	$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) $< -o $@
