@@ -439,6 +439,7 @@ static int characterPhysics(character *c){
 	if(c->flags & CHAR_NOCLIP){
 		col = characterCollision(c->pos);
 		if(col){ c->flags |= CHAR_COLLIDE; }
+		characterUpdateWindVolume(c);
 		return 0;
 	}
 
