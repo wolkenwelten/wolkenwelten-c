@@ -66,8 +66,8 @@ foreach(array_keys($platforms) as $plat){
 	<h2>Or play directly in you Browser, thanks to the magic that is Emscripten</h2>
 	<hr/>
 	<div class=wasmdl align=center>
-		<a href="releases/wasm/index.html?worldSeed=6809&savegame=Test" class=button><span class=buttonlabel>Start WASM version</span><span class="buttonicon icon-wasm"></span></a><br/>
-		<b>WARNING: Still quite experimental!</b><br/>
+		<a href="releases/wasm/index.html?savegame=Test" class=button><span class=buttonlabel>Start WASM version</span><span class="buttonicon icon-wasm"></span></a><br/>
+		<b>WARNING: Still very experimental!</b><br/>
 		<i>Tested in latest Chrome/Firefox</i>
 	</div>
 	<hr/>
