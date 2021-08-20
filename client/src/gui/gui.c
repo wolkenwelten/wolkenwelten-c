@@ -405,12 +405,14 @@ void drawDebuginfo(){
 		guim->size = 4;
 		guim->fgc  = colorPalette[9];
 		textMeshPrintfAlignCenter(guim,"Critically High Ping!!!");
+		guim->fgc  = colorPalette[15];
 	}else if(curPing > lastPing + 3000){
 		guim->sx   = (screenWidth/2);
 		guim->sy   = (screenHeight/2)-(screenHeight/4);
 		guim->size = 2;
 		guim->fgc  = colorPalette[11];
 		textMeshPrintfAlignCenter(guim,"High Ping!");
+		guim->fgc  = colorPalette[15];
 	}
 
 	vboTrisCount = 0;
