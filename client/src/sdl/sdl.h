@@ -1,6 +1,8 @@
 #pragma once
 #include "../../../common/src/common.h"
 
+extern  int GLVersionMajor;
+extern  int GLVersionMinor;
 extern uint  frameTimeLast;
 extern uint  frameCountSinceLast;
 extern float curFPS;

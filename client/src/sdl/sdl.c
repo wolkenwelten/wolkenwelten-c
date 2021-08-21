@@ -94,6 +94,9 @@ EM_JS(int, emGetWindowHeight, (), {
 
 #endif
 
+int GLVersionMajor = 0;
+int GLVersionMinor = 0;
+
 void initSDL(){
 	SDL_DisplayMode dm;
 	char windowTitle[64];
@@ -109,14 +112,17 @@ void initSDL(){
 	}
 
 	#if defined (__EMSCRIPTEN__) || defined (WOLKENWELTEN__GL_ES)
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
 	#else
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
 	#endif
+	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &GLVersionMajor);
+	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &GLVersionMinor);
+	printf("Created an OpenGL %u.%u context.\n",GLVersionMajor,GLVersionMinor);
 
 	int cwflags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_GRABBED;
 	#ifdef __EMSCRIPTEN__
