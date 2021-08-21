@@ -161,7 +161,7 @@ lClosure *lispCommonRoot(){
 	lAddNativeFunc(c,"rain-set",     "(&intensity)",           "Set rain rate to a",                                         wwlnfRain);
 	lAddNativeFunc(c,"explode",      "(pos &strength &style)", "Create an explosion at POS with &STRENGTH=4.0 and &STYLE=0", wwlnfExplode);
 	lAddNativeFunc(c,"item-drop-new","(pos id amount)",        "Create a new item at POS for AMOUNT ID.",                    wwlnfItemDropNew);
-	lAddNativeFunc(c,"color-inter",  "(a b i)",                "Interpolate betweent A and B with 0.0 <= i <= 1.0",          wwlnfColorInterpolate);
+	lAddNativeFunc(c,"color-inter",  "(a b i)",                "Interpolate between A and B with 0.0 <= i <= 1.0",          wwlnfColorInterpolate);
 	itemTypeLispClosure(c);
 
 	lEval(c,lWrap(lRead((const char *)src_tmp_wwlib_nuj_data)));

@@ -1040,8 +1040,8 @@
 
 [event-bind "on-init" [λ []
 	[item-sync-all]
-	; [when client? [yield [λ [] [it-sprite-color i-crystalbullet 1 [color-inter #xFF5f32d6 #xFF6f32F6 [abs [sin [* 0.01 [msecs]]]]]] #f] #t]]
-	; [when client? [yield [λ [] [it-sprite-color i-crystalbullet 1 [logior #XFF501600 [+ 180 [* 75.0 [abs [sin [* 0.003 [msecs]]]]]]]] #f] #t]]
-	; [when client? [yield [λ [] [it-sprite-color i-flamebullet 1 [logior #XFF165000 [+ 180 [* 75.0 [abs [cos [* 0.002 [msecs]]]]]]]] #f] #t]]
 	[log [ansi-green "Items initialized"]]
+
+	[recipe-sync-all]
+	[log [ansi-green "Recipes initialized"]]
 ]]

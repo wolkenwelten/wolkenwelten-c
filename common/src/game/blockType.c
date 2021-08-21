@@ -30,7 +30,6 @@ void blockTypeGenMeshes();
 void blockTypeSetTex(u8 b, side side, u32 tex);
 
 static void blockTypeInitBlock(u8 b, u32 tex, blockCategory ncat,const char *bname,int nhp, int nfirehp, float weight, u32 ncolor1,u32 ncolor2){
-
 	for(side i=0;i<sideMAX;i++){
 		blockTypeSetTex(b,i,tex);
 	}

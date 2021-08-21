@@ -172,11 +172,11 @@ void mainInit(){
 	chunkInit();
 	lispInit();
 	itemTypeInit();
+	blockTypeInit();
 	lispEval("[event-fire \"on-init\"]",false);
 	savegameSave();
 
 	bigchungusInit(&world);
-	blockTypeInit();
 	serverInit();
 	if(optionProfileWG){
 		bigchungusGenHugeSpawn(&world);

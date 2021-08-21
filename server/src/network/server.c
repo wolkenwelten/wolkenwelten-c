@@ -636,7 +636,7 @@ void serverCheckCompression(int c){
 	int len,compressLen;
 	u8 *start;
 	static u8 compressBuf[LZ4_COMPRESSBOUND(sizeof(clients[c].sendBuf))];
-	if(clients[c].flags & CONNECTION_WEBSOCKET){return;}
+	//if(clients[c].flags & CONNECTION_WEBSOCKET){return;}
 	start = &clients[c].sendBuf[clients[c].sendBufLastCompressed];
 	len = &clients[c].sendBuf[clients[c].sendBufLen] - start;
 	if(len <= (1<<8)){return;}
