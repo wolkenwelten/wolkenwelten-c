@@ -17,7 +17,7 @@ bool glInitialize() {
 	if(glewInit() != GLEW_OK){ return false; }
 #endif
 #ifdef WOLKENWELTEN__GL_USE_GL3W
-	if(gl3wInit()){ return false; }
+	if(gl3wInit() || !gl3wIsSupported(3, 1)){ return false; }
 #endif
 
 	return true;
