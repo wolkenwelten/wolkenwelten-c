@@ -10,9 +10,6 @@ SERVER_LIBS      := -lm
 
 LIN_REL          := releases/linux-$(VERSION_ARCH)/wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME)
 
-.PHONY: all
-all: wolkenwelten wolkenwelten-server
-
 .PHONY:  release.linux
 
 ifndef NOLINUXRELEASE

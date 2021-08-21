@@ -22,5 +22,5 @@ test: $(NUJEL)
 	$(NUJEL) -x "[quit [test-run]]"
 
 .PHONY: runn
-runn: nujel
+runn: $(NUJEL)
 	gdb $(NUJEL) -ex "r"

@@ -6,9 +6,6 @@ CLIENT_CFLAGS    := -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Fr
 
 OSX_APP          := releases/macos/wolkenwelten-$(VERSION_NAME).app
 
-.PHONY: all
-all: wolkenwelten wolkenwelten-server
-
 .PHONY: release.macos
 release: release.macos
 

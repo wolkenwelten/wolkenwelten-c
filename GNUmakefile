@@ -2,11 +2,15 @@ ifneq (, $(shell which dash))
 	SHELL   := $(shell which dash)
 endif
 
-NUJEL         := ./nujel
-ASSET         := ./tools/assets
+WOLKENWELTEN        := ./wolkenwelten
+WOLKENWELTEN_SERVER := ./wolkenwelten-server
+NUJEL               := ./nujel
+ASSET               := ./tools/assets
 ifeq ($(OS),Windows_NT)
-	NUJEL := ./nujel.exe
-	ASSET := ./tools/assets.exe
+	NUJEL               := ./nujel.exe
+	ASSET               := ./tools/assets.exe
+	WOLKENWELTEN        := ./wolkenwelten.exe
+	WOLKENWELTEN_SERVER := ./wolkenwelten-server.exe
 endif
 
 AS                   := as
@@ -28,8 +32,7 @@ ifneq (, $(shell which $(NUJEL)))
 	VERSION_NAME := $(shell $(NUJEL) tools/tools.nuj -x "[display [infogen-version]]")
 endif
 
-
-all: wolkenwelten wolkenwelten-server nujel
+all: $(WOLKENWELTEN) $(WOLKENWELTEN_SERVER) $(NUJEL)
 .PHONY: all release .deps
 
 include common/disable_implicit_rules.mk

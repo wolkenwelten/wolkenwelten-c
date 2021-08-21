@@ -31,8 +31,8 @@ $(CLIENT_OBJS_EXCL): | common/src/tmp/cto.c
 $(CLIENT_OBJS):      | client/src/tmp/objs.h
 $(CLIENT_OBJS):      | client/src/tmp/sfx.h
 
-wolkenwelten: $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS)
-	$(CC) $^ -g -o wolkenwelten $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_CINCLUDES) $(CINCLUDES) $(CLIENT_LIBS) $(CSTD)
+$(WOLKENWELTEN): $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS)
+	$(CC) $^ -g -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_CINCLUDES) $(CINCLUDES) $(CLIENT_LIBS) $(CSTD)
 
 
 client/src/tmp/client.nuj: $(CLIENT_NUJ)
