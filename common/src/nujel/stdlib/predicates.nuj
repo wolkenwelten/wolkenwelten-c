@@ -20,6 +20,11 @@
 	[>= a 0]
 ]]
 
+[def zn? [λ [a]
+	"Return #t if a is zero or negative"
+	[<= a 0]
+]]
+
 [def neg? [λ [a]
 	"Returns #t if a is negative"
 	[< a 0]
@@ -93,6 +98,11 @@
 [def string? [λ [val]
 	"#t if VAL is a string"
 	[eq? :string [type-of val]]
+]]
+
+[def symbol? [λ [val]
+	"#t if VAL is a symbol"
+	[eq? :symbol [type-of val]]
 ]]
 
 [def lambda? [λ [val]

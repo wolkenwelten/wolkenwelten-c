@@ -347,6 +347,9 @@
 [test-add  0 [wrap-value 2 0 2]]
 [test-add  1 [wrap-value 3 0 2]]
 [test-add  0 [wrap-value 4 0 2]]
+[test-add #t [zn? 0]]
+[test-add #t [zn? -4.0]]
+[test-add #f [zn? 0.1]]
 
 [test-add  2 [wrap-value 2 2 4]]
 [test-add  3 [wrap-value 3 2 4]]

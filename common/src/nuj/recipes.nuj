@@ -11,6 +11,8 @@
 
 [def recipe-sync [λ [obj]
 	"Syncs the Recipe with the ω OBJ"
+	[when [or [symbol? [resolve [obj result-id]]] [zn? [obj result-amt]]] [log [ansi-red "No valid Result for Recipe " [obj id]]]]
+	[when [or [symbol? [resolve [obj ingred-id-0]]] [zn? [obj ingred-amt-0]]] [log [ansi-red "No valid first ingredient for Recipe " [obj id]]]]
 	[r-result [obj id]   [resolve [obj result-id]]   [obj result-amt]]
 	[r-ingred [obj id] 0 [resolve [obj ingred-id-0]] [obj ingred-amt-0]]
 	[r-ingred [obj id] 1 [resolve [obj ingred-id-1]] [obj ingred-amt-1]]
@@ -257,7 +259,7 @@
 	[def ingred-amt-0  1]
 	[def ingred-id-1 'i-crystalbar]
 	[def ingred-amt-1  4]
-	[def result-id 'i-crystalpickax]
+	[def result-id 'i-crystalpickaxe]
 	[def result-amt 1]
 
 	[sync]
@@ -337,7 +339,7 @@
 	[def ingred-amt-1  6]
 	[def ingred-id-2 'i-flamebullet]
 	[def ingred-amt-2 24]
-	[def result-id 'i-assaultblaste]
+	[def result-id 'i-assaultblaster]
 	[def result-amt 1]
 
 	[sync]
@@ -349,7 +351,7 @@
 	[def ingred-amt-0  12]
 	[def ingred-id-1 'i-ironbar]
 	[def ingred-amt-1  16]
-	[def ingred-id-2 'i-crystalbulle]
+	[def ingred-id-2 'i-crystalbullet]
 	[def ingred-amt-2  60]
 	[def result-id 'i-shotgun]
 	[def result-amt 1]
@@ -393,7 +395,7 @@
 	[def ingred-amt-1  2]
 	[def ingred-id-2 'i-coal]
 	[def ingred-amt-2  4]
-	[def result-id 'i-crystalbulle]
+	[def result-id 'i-crystalbullet]
 	[def result-amt 30]
 
 	[sync]
@@ -405,7 +407,7 @@
 	[def ingred-amt-0  3]
 	[def ingred-id-1 'i-ironbar]
 	[def ingred-amt-1  6]
-	[def ingred-id-2 'i-crystalbulle]
+	[def ingred-id-2 'i-crystalbullet]
 	[def ingred-amt-2 12]
 	[def result-id 'i-blaster]
 	[def result-amt 1]
@@ -419,7 +421,7 @@
 	[def ingred-amt-0  16]
 	[def ingred-id-1 'i-ironbar]
 	[def ingred-amt-1  24]
-	[def ingred-id-2 'i-crystalbulle]
+	[def ingred-id-2 'i-crystalbullet]
 	[def ingred-amt-2  90]
 	[def result-id 'i-masterblaster]
 	[def result-amt 1]
