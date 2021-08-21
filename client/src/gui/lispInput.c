@@ -202,11 +202,11 @@ void lispPanelGetPointSymbol(){
 	for(m = i; buf[m] != 0; m++){
 		const u8 c = buf[m];
 		if(isspace(c) || (c == '[') || (c == ']') || (c == '(') || (c == ')') || (c == '\'') || (c == '\"')){
-			m--;
 			break;
 		}
 	}
 	if(m <= i){return;}
+	if((textInputCursorPos < i) || (textInputCursorPos > m)){return;}
 	lispAutoCompleteStart = i;
 	lispAutoCompleteEnd = m;
 }
