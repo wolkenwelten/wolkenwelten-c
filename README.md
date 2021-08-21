@@ -29,8 +29,7 @@ dev streams.
 ## Contact
 If you run into some bugs, have gameplay questions or want to talk about your
 favorite *nix, join us over on [Discord](https://discord.gg/7rhnYH2), or preferrably on
-[Matrix](https://matrix.to/#/!RKZztYPGhtlgALDvMS:matrix.org?via=matrix.org), there
-is also a #WolkenWelten IRC channel on Freenode.
+[Matrix](https://matrix.to/#/!RKZztYPGhtlgALDvMS:matrix.org?via=matrix.org).
 
 ![Screenshot 4](https://wolkenwelten.net/img/4.jpg)
 
