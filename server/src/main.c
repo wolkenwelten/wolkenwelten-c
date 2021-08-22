@@ -195,7 +195,10 @@ static void checkSPQuit(){
 
 #ifndef __EMSCRIPTEN__
 int main( int argc, const char* argv[] ){
+	setvbuf(stdout, NULL, _IONBF, 0);
+	setvbuf(stderr, NULL, _IONBF, 0);
 	initSignals();
+
 	initTermColors();
 	initOptions(argc,argv);
 	changeToDataDir(); // Change to data dir after parsing args so we can add an argument later to set the data dir
