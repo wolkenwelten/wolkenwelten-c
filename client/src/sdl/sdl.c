@@ -116,6 +116,7 @@ void initSDL(){
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
 	#else
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
@@ -162,10 +163,8 @@ void initSDL(){
 		exit(1);
 	}
 	#ifndef __HAIKU__
-	if( SDL_GL_SetSwapInterval(-1) != 0 ){ //Use AdaptiveVsync
-		if( SDL_GL_SetSwapInterval(1) != 0 ){ //Use Vsync
-			fprintf(stderr, "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError() );
-		}
+	if( SDL_GL_SetSwapInterval(-1)){ //Try to use AdaptiveVsync
+		SDL_GL_SetSwapInterval(1);
 	}
 	#endif
 
