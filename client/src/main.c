@@ -182,6 +182,11 @@ void checkAutostart(){
 }
 
 int main( int argc, char* argv[] ){
+	setvbuf(stdout, NULL, _IONBF, 0);
+	setvbuf(stderr, NULL, _IONBF, 0);
+	initSignals();
+	seedRNG(time(NULL));
+
 	clientGetName();
 	lispInit();
 	initOptions(argc,argv);
@@ -189,11 +194,6 @@ int main( int argc, char* argv[] ){
 	changeToDataDir();  // Change to data dir after parsing args so we can add an argument later to set the data dir
 	loadOptions();
 	initSDL();
-	seedRNG(time(NULL));
-
-	setvbuf(stdout, NULL, _IONBF, 0);
-	setvbuf(stderr, NULL, _IONBF, 0);
-	initSignals();
 
 	shaderInit();
 	textureInit();
