@@ -101,7 +101,7 @@ void compileVertexShader(shader *s){
 "\n"
 "%s",s->vss);
 	#else
-	snprintf(buf,sizeof(buf),"#version 130\n"
+	snprintf(buf,sizeof(buf),"#version 140\n"
 "\n"
 "%s",s->vss);
 	#endif
