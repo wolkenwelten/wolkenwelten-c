@@ -161,7 +161,7 @@ void characterAddInaccuracy(character *c, float inc){
 
 int characterGetItemAmount(const character *c, u16 itemID){
 	int amount = 0;
-	for(unsigned int i=0;i<40;i++){
+	for(unsigned int i=0;i<CHAR_INV_MAX;i++){
 		if(c->inventory[i].ID == itemID){
 			amount += c->inventory[i].amount;
 		}
@@ -173,7 +173,7 @@ int characterDecItemAmount(character *c, u16 itemID,int amount){
 	int ret=0;
 
 	if(amount == 0){return 0;}
-	for(uint i=0;i<40;i++){
+	for(uint i=0;i<CHAR_INV_MAX;i++){
 		if(c->inventory[i].ID == itemID){
 			if(c->inventory[i].amount > amount){
 				itemDecStack(&c->inventory[i],amount);
@@ -193,7 +193,7 @@ int characterPickupItem(character *c, u16 itemID,int amount){
 	item ci = itemNew(itemID,amount);
 	if(itemGetStackSize(&ci) == 1){
 		ci.amount = amount;
-		for(uint i=0;i<40;i++){
+		for(uint i=0;i<CHAR_INV_MAX;i++){
 			if(itemIsEmpty(&c->inventory[i])){
 				c->inventory[i] = ci;
 				sfxPlay(sfxPock,.8f);
@@ -203,13 +203,13 @@ int characterPickupItem(character *c, u16 itemID,int amount){
 		return -1;
 	}
 
-	for(uint i=0;i<40;i++){
+	for(uint i=0;i<CHAR_INV_MAX;i++){
 		if(a >= amount){break;}
 		if(itemCanStack(&c->inventory[i],itemID)){
 			a += itemIncStack(&c->inventory[i],amount - a);
 		}
 	}
-	for(uint i=0;i<40;i++){
+	for(uint i=0;i<CHAR_INV_MAX;i++){
 		if(a >= amount){break;}
 		if(itemIsEmpty(&c->inventory[i])){
 			c->inventory[i] = itemNew(itemID,amount - a);
@@ -269,13 +269,13 @@ bool characterHP(character *c, int addhp){
 }
 
 void characterEmptyInventory(character *c){
-	for(uint i=0;i<40;i++){
+	for(uint i=0;i<CHAR_INV_MAX;i++){
 		c->inventory[i] = itemEmpty();
 	}
 }
 
 item *characterGetItemBarSlot(character *c, uint i){
-	if(i >= 40){return NULL;}
+	if(i >= CHAR_INV_MAX){return NULL;}
 	return &c->inventory[i];
 }
 
@@ -284,7 +284,7 @@ item *characterGetActiveItem(character *c){
 }
 
 void characterSetItemBarSlot(character *c, uint i, item *itm){
-	if(i >= 40){return;}
+	if(i >= CHAR_INV_MAX){return;}
 	c->inventory[i] = *itm;
 }
 
@@ -299,8 +299,8 @@ void characterSetActiveItem(character *c,  int i){
 }
 
 void characterSwapItemSlots(character *c, uint a,uint b){
-	if(a >= 40){return;}
-	if(b >= 40){return;}
+	if(a >= CHAR_INV_MAX){return;}
+	if(b >= CHAR_INV_MAX){return;}
 
 	item tmp = c->inventory[a];
 	c->inventory[a] = c->inventory[b];
@@ -496,7 +496,7 @@ bool characterTryToUse(character *c, item *i, int cooldown, int itemcount){
 
 void characterSetInventoryP(character *c, const packet *p){
 	if(c == NULL){return;}
-	uint max = MIN(40,packetLen(p)/4);
+	uint max = MIN(CHAR_INV_MAX,packetLen(p)/4);
 	uint ii = 0;
 	for(uint i=0;i<max;i++){
 		c->inventory[i].ID     = p->v.u16[ii++];
@@ -506,7 +506,7 @@ void characterSetInventoryP(character *c, const packet *p){
 
 void characterSetEquipmentP(character *c, const packet *p){
 	if(c == NULL){return;}
-	uint max = MIN(3,packetLen(p)/4);
+	uint max = MIN(CHAR_EQ_MAX,packetLen(p)/4);
 	uint ii = 0;
 	for(uint i=0;i<max;i++){
 		c->equipment[i].ID     = p->v.u16[ii++];

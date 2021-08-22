@@ -353,10 +353,10 @@ void characterDie(character *c){
 	if(c != player)             {return;}
 	if(c->flags & CHAR_SPAWNING){return;}
 	if(c->flags & CHAR_NOCLIP)  {return;}
-	for(int i=0;i<40;i++){
+	for(int i=0;i<CHAR_INV_MAX;i++){
 		itemDropNewP(c->pos, characterGetItemBarSlot(c,i),-1);
 	}
-	for(int i=0;i<3;i++){
+	for(int i=0;i<CHAR_EQ_MAX;i++){
 		itemDropNewP(c->pos, &c->equipment[i],-1);
 	}
 	setOverlayColor(0xFF000000,0);

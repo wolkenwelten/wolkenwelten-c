@@ -48,6 +48,20 @@ bool itemIsEmpty(const item *i){
 	return ((i == NULL) || (i->amount==0) || (i->ID==0));
 }
 
+bool itemIsValidEquipment(const item *i, int slot){
+	if(i == NULL){return false;}
+	switch(slot){
+	default:
+		return false;
+	case CHAR_EQ_GLIDER:
+		return i->ID == I_Glider;
+	case CHAR_EQ_HOOK:
+		return i->ID == I_Hook;
+	case CHAR_EQ_PACK:
+		return i->ID == I_Jetpack;
+	}
+}
+
 int itemCanStack(const item *i, u16 ID){
 	if(i == NULL)      {return 0;}
 	const int ma = itemGetStackSize(i);

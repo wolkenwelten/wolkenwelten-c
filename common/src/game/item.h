@@ -5,6 +5,7 @@ item  itemNew        (u16 ID, i16 amount);
 item  itemEmpty      ();
 void  itemDiscard    (      item *i);
 bool  itemIsEmpty    (const item *i);
+bool  itemIsValidEquipment(const item *i, int slot);
 
 int   itemCanStack   (const item *i, u16 ID);
 int   itemIncStack   (      item *i, i16 amount);

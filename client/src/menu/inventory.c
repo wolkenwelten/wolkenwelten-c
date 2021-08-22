@@ -146,14 +146,44 @@ static void initCraftingSpace(){
 	}
 }
 
-static widget *widgetNewItemSlot(widget *parent, int x, int y, item *islot){
+static widget *widgetNewItemSlot(widget *parent, int x, int y, item *iSlot){
 	const int ts = getTilesize();
 
 	widget *slot = widgetNewCP(wItemSlot,parent,x,y,ts,ts);
-	slot->valItem = islot;
+	slot->valItem = iSlot;
 	widgetBind(slot,"click",   handlerInventoryItemClick);
 	widgetBind(slot,"altclick",handlerInventoryItemAltClick);
 	widgetBind(slot,"midclick",handlerInventoryItemMidClick);
+	return slot;
+}
+
+static void handlerEquipmentItemClick(widget *wid){
+	item *cItem = wid->valItem;
+	if(cItem == NULL){return;}
+
+	if(itemIsEmpty(&inventoryCurrentPickup)){
+		if(itemIsEmpty(cItem)){return;}
+		inventoryCurrentPickup = *cItem;
+		itemDiscard(cItem);
+	}else{
+		const int i = cItem - player->equipment;
+		if(!itemIsValidEquipment(&inventoryCurrentPickup,i)){
+			sfxPlay(sfxTock,1.f);
+			return;
+		}
+		item tmp = inventoryCurrentPickup;
+		inventoryCurrentPickup = *cItem;
+		*cItem = tmp;
+	}
+	sfxPlay(sfxPock,1.f);
+}
+
+static widget *widgetNewEquipmentSlot(widget *parent, int x, int y, item *iSlot){
+	const int ts = getTilesize();
+
+	widget *slot = widgetNewCP(wItemSlot,parent,x,y,ts,ts);
+	slot->valItem = iSlot;
+	widgetBind(slot,"click",handlerEquipmentItemClick);
 	return slot;
 }
 
@@ -162,9 +192,12 @@ static void initInventorySpace(){
 
 	inventorySpace = widgetNewCP(wSpace,inventoryPanel,-1,0,ts*10,-1);
 	inventoryRadio = widgetNewCPLH(wRadioButton,inventoryPanel,0,0,5*ts,32,"Inventory","click",handlerInventoryRadioInventory);
-	for(int y=0;y<4;y++){
+
+	for(int y=0;y<(CHAR_INV_MAX/10);y++){
 		for(int x=0;x<10;x++){
-			widgetNewItemSlot(inventorySpace,x*ts,y*ts+32,&player->inventory[x+y*10]);
+			const int i = x+y*10;
+			if(i > CHAR_INV_MAX){return;}
+			widgetNewItemSlot(inventorySpace,x*ts,y*ts+32,&player->inventory[i]);
 		}
 	}
 }
@@ -173,9 +206,9 @@ static void initEquipmentSpace(){
 	const int ts = getTilesize();
 
 	equipmentSpace = widgetNewCP(wSpace,inventoryPanel,-1,0,ts*10,ts*3);
-	widgetNewItemSlot(equipmentSpace,5*ts,ts+32,&player->equipment[0]);
-	widgetNewItemSlot(equipmentSpace,6*ts+ts/2,ts+32,&player->equipment[1]);
-	widgetNewItemSlot(equipmentSpace,8*ts,ts+32,&player->equipment[2]);
+	widgetNewEquipmentSlot(equipmentSpace,5*ts,ts+32,&player->equipment[0]);
+	widgetNewEquipmentSlot(equipmentSpace,6*ts+ts/2,ts+32,&player->equipment[1]);
+	widgetNewEquipmentSlot(equipmentSpace,8*ts,ts+32,&player->equipment[2]);
 	widgetNewCPL(wLabel,equipmentSpace,5*ts-ts/4,32+ts/2,ts,ts/2,"Glider");
 	widgetNewCPL(wLabel,equipmentSpace,6*ts+ts/2,32+ts/2,ts,ts/2,"Hook");
 	widgetNewCPL(wLabel,equipmentSpace,8*ts,32+ts/2,ts,ts/2,"Pack");
@@ -209,7 +242,7 @@ void initInventory(){
 }
 
 void showInventory(){
-	const int gh = getTilesize()* 7 + 32;
+	const int gh = (getTilesize() * (3 + (CHAR_INV_MAX / 10))) + 32;
 	if(!gameRunning){return;}
 
 	if((inventoryPanel->h == gh) && (inventoryRadio->flags & WIDGET_ACTIVE)){

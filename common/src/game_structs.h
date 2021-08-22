@@ -104,6 +104,28 @@ typedef struct {
 #define ROPE_TEX_CHAIN 0x001
 #define ROPE_DIRTY     0x100
 
+
+#define CHAR_FALLING      (1    )
+#define CHAR_NOCLIP       (1<< 1)
+#define CHAR_COLLIDE      (1<< 2)
+#define CHAR_FALLINGSOUND (1<< 3)
+#define CHAR_SNEAK        (1<< 4)
+#define CHAR_GLIDE        (1<< 5)
+#define CHAR_SPAWNING     (1<< 6)
+#define CHAR_JUMPING      (1<< 7)
+#define CHAR_BOOSTING     (1<< 8)
+#define CHAR_AIMING       (1<< 9)
+#define CHAR_THROW_AIM    (1<<10)
+#define CHAR_CONS_MODE    (1<<11)
+#define CHAR_JUMP_NEXT    (1<<12)
+
+#define CHAR_EQ_MAX    3
+#define CHAR_INV_MAX  40
+
+#define CHAR_EQ_GLIDER     0
+#define CHAR_EQ_HOOK       1
+#define CHAR_EQ_PACK       2
+
 typedef struct {
 	 vec  pos,vel,gvel,controls,rot,screenPos;
 	float yoff,shake,inaccuracy;
@@ -134,28 +156,11 @@ typedef struct {
 	 int cloudyness;
 
 	uint activeItem;
-	item inventory[40];
-	item equipment[3];
+	item inventory[CHAR_INV_MAX];
+	item equipment[CHAR_EQ_MAX];
 
 	void *nextFree;
 } character;
-#define CHAR_FALLING      (1    )
-#define CHAR_NOCLIP       (1<< 1)
-#define CHAR_COLLIDE      (1<< 2)
-#define CHAR_FALLINGSOUND (1<< 3)
-#define CHAR_SNEAK        (1<< 4)
-#define CHAR_GLIDE        (1<< 5)
-#define CHAR_SPAWNING     (1<< 6)
-#define CHAR_JUMPING      (1<< 7)
-#define CHAR_BOOSTING     (1<< 8)
-#define CHAR_AIMING       (1<< 9)
-#define CHAR_THROW_AIM    (1<<10)
-#define CHAR_CONS_MODE    (1<<11)
-#define CHAR_JUMP_NEXT    (1<<12)
-
-#define CHAR_EQ_GLIDER     0
-#define CHAR_EQ_HOOK       1
-#define CHAR_EQ_PACK       2
 
 typedef struct {
 	vec pos,vel,rot;

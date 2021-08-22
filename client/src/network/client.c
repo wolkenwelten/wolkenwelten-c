@@ -135,8 +135,8 @@ void msgSendPlayerPos(){
 	int pLen = 15*4;
 	if(player == NULL){return;}
 	if(--inventoryCountDown <= 0){
-		msgPlayerSetInventory(-1,player->inventory,40);
-		msgPlayerSetEquipment(-1,player->equipment, 3);
+		msgPlayerSetInventory(-1,player->inventory,CHAR_INV_MAX);
+		msgPlayerSetEquipment(-1,player->equipment,CHAR_EQ_MAX);
 		inventoryCountDown = 60;
 	}
 	packet *p = &packetBuffer;
@@ -411,8 +411,8 @@ void clientGoodbye(){
 	if(serverSocket <= 0){return;}
 	printf("[CLI] Goodbye \n");
 	msgSendPlayerPos();
-	msgPlayerSetInventory(-1,player->inventory,40);
-	msgPlayerSetEquipment(-1,player->equipment, 3);
+	msgPlayerSetInventory(-1,player->inventory,CHAR_INV_MAX);
+	msgPlayerSetEquipment(-1,player->equipment,CHAR_EQ_MAX);
 	msgGoodbye(0);
 	clientWrite();
 	goodbyeSent = true;
