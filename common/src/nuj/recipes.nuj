@@ -130,7 +130,7 @@
 	[def ingred-amt-1  1]
 	[def ingred-id-2 'i-plantmatter]
 	[def ingred-amt-2  8]
-	[def result-id 'i-flamestick]
+	[def result-id 'i-firedrill]
 	[def result-amt 1]
 
 	[sync]

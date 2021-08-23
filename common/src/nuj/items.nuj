@@ -852,12 +852,12 @@
 	[sync]
 ]]
 
-[def i-flamestick]
+[def i-firedrill]
 [item-default [ω
 	[def id [item-new-id]]
-	[def sym 'i-flamestick]
+	[def sym 'i-firedrill]
 	[def stack-size 1]
-	[def name "Flamestick"]
+	[def name "Fire drill"]
 	[def primary [λ []
 		[cond [[try-to-use 200 0]
 			[add-cooldown 200]
