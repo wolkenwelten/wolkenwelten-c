@@ -173,6 +173,7 @@ bool menuCancel(){
 	if(gameRunning){
 		closeMainMenu();
 		lispPanelClose();
+		hideInventory();
 		return true;
 	}
 	openMainMenu();
