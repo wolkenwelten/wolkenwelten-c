@@ -100,16 +100,10 @@ void grenadeUpdateAll(){
 void grenadeUpdatePlayer(u8 c){
 	if(grenadeCount == 0){
 		if((clients[c].syncCount & 0xFF) != msgtGrenadeUpdate){return;}
-		msgGrenadeUpdate(c,vecZero(),vecZero(),0,0);
+		msgGrenadeUpdate(c,NULL,0,0);
 	}else{
 		for(uint i=0;i<grenadeCount;i++){
-			msgGrenadeUpdate(
-				c,
-				grenadeList[i].ent->pos,
-				grenadeList[i].ent->vel,
-				i,
-				grenadeCount
-			);
+			msgGrenadeUpdate(c,&grenadeList[i],i,grenadeCount);
 		}
 	}
 }

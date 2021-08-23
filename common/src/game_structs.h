@@ -257,3 +257,9 @@ typedef struct {
 	i16 oxygen;
 	beingList *bl;
 } fire;
+
+typedef struct {
+	entity *ent;
+	int ticksLeft,cluster;
+	float pwr,clusterPwr;
+} grenade;

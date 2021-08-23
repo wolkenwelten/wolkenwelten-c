@@ -1,12 +1,6 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-typedef struct {
-	entity *ent;
-	int ticksLeft;
-	float pwr,cluster,clusterPwr;
-} grenade;
-
 extern grenade grenadeList[512];
 extern uint    grenadeCount;
 

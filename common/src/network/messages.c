@@ -170,24 +170,6 @@ void msgBeingMove(being b, vec dpos, vec dvel){
 	packetQueue(p,msgtBeingMove,7*4,-1);
 }
 
-void msgNewGrenade(const vec pos, const vec rot, float pwr, int cluster, float clusterPwr){
-	packet *p = &packetBuffer;
-
-	p->v.f[0] = pos.x;
-	p->v.f[1] = pos.y;
-	p->v.f[2] = pos.z;
-
-	p->v.f[3] = rot.yaw;
-	p->v.f[4] = rot.pitch;
-	p->v.f[5] = rot.roll;
-
-	p->v.f[6] = pwr;
-	p->v.i32[7] = cluster;
-	p->v.f[8] = clusterPwr;
-
-	packetQueueToServer(p,msgtGrenadeNew,9*4);
-}
-
 void msgBeamBlast(const vec pos, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft){
 	packet *p = &packetBuffer;
 
@@ -257,21 +239,49 @@ void msgGrenadeExplode(const vec pos,float pwr, u16 style){
 	packetQueue(p,msgtExplode,4*4,-1);
 }
 
-void msgGrenadeUpdate(int c, const vec pos, const vec vel, u16 i, u16 count){
+void msgNewGrenade(const vec pos, const vec rot, float pwr, int cluster, float clusterPwr){
+	packet *p = &packetBuffer;
+
+	p->v.f[0] = pos.x;
+	p->v.f[1] = pos.y;
+	p->v.f[2] = pos.z;
+
+	p->v.f[3] = rot.yaw;
+	p->v.f[4] = rot.pitch;
+	p->v.f[5] = rot.roll;
+
+	p->v.f[6] = pwr;
+	p->v.i32[7] = cluster;
+	p->v.f[8] = clusterPwr;
+
+	packetQueueToServer(p,msgtGrenadeNew,9*4);
+}
+
+void msgGrenadeUpdate(int c, const grenade *g, u16 i, u16 count){
 	packet *p = &packetBuffer;
 
 	p->v.u16[0] = i;
 	p->v.u16[1] = count;
 
-	p->v.f[1]   = pos.x;
-	p->v.f[2]   = pos.y;
-	p->v.f[3]   = pos.z;
+	if(g != NULL){
+		p->v.f[1]   = g->ent->pos.x;
+		p->v.f[2]   = g->ent->pos.y;
+		p->v.f[3]   = g->ent->pos.z;
 
-	p->v.f[4]   = vel.x;
-	p->v.f[5]   = vel.y;
-	p->v.f[6]   = vel.z;
+		p->v.f[4]   = g->ent->vel.x;
+		p->v.f[5]   = g->ent->vel.y;
+		p->v.f[6]   = g->ent->vel.z;
 
-	packetQueue(p,msgtGrenadeUpdate,7*4,c);
+		p->v.f[7]   = g->pwr;
+		p->v.i32[8] = g->cluster;
+		p->v.f[9]   = g->clusterPwr;
+	}else{
+		if(i || count){
+			fprintf(stderr,"Trying to sync a NULL grenade!\n");
+		}
+	}
+
+	packetQueue(p,msgtGrenadeUpdate,10*4,c);
 }
 
 void msgFxBeamBlaster(int c, const vec pa, const vec pb, float beamSize, float damageMultiplier){

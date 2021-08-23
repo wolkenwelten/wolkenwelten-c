@@ -33,7 +33,7 @@ void msgPlayerName               (int c, u16 i, const char *name);
 void msgSetPlayerCount           (u16 playerLeaving, u16 playerMax);
 void msgPickupItem               (int c, const item itm);
 void msgGrenadeExplode           (const vec pos,float pwr, u16 style);
-void msgGrenadeUpdate            (int c, const vec pos, const vec vel, u16 i, u16 count);
+void msgGrenadeUpdate            (int c, const grenade *g, u16 i, u16 count);
 void msgFxBeamBlaster            (int c, const vec pa, const vec pb, float beamSize, float damageMultiplier);
 void msgFxBeamBlastHit           (int c, const vec pos, u16 size, u16 style);
 void msgItemDropUpdate           (int c, const vec pos, const vec vel, const item *itm, u16 i, u16 len, i16 IDPlayer);
