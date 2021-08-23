@@ -564,7 +564,7 @@
 	[def fire-health 96]
 	[def secondary [λ []
 		[cond [[try-to-use]
-			[grenade-new [vy+ [player-pos] 0.5] [player-rot] 0.1 64 4.0]
+			[grenade-new [vy+ [player-pos] 0.5] [player-rot] 0.1 16 4.0]
 			[start-anim 0 300]
 			#t]
 		      [#t #f]]
