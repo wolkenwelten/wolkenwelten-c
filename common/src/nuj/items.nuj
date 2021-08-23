@@ -600,7 +600,7 @@
 	[def stack-size 1]
 	[def fire-health 1024]
 	[def sprite-id-0 275]
-	[def mesh 'm-hook]
+	;[def mesh 'm-hook]
 	[def weight 3.0]
 
 	[sync]
