@@ -55,6 +55,7 @@ const void *itemDropLoad(const void *buf){
 	if(id == NULL){return b+32;}
 	id->itm.ID     = s[1];
 	id->itm.amount = s[2];
+	id->player     = -1;
 
 	id->ent = entityNew(vecNewP(&f[2]),vecZero(), itemGetWeight(&id->itm));
 	if(id->ent == NULL){return b+32;}

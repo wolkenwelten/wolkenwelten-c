@@ -52,7 +52,9 @@ void itemDropUpdateAll(){
 		const vec dist = vecSub(player->pos,itemDropList[i].ent->pos);
 		const float dd = vecDot(dist,dist);
 		if(itemDropList[i].player == playerID){
-			if(dd > 4.f * 4.f){itemDropList[i].player = -1;}
+			if(dd > 3.f * 3.f){
+				itemDropList[i].player = -1;
+			}
 		}else if(dd < 3.f * 3.f){
 			const float vel    = vecMag(itemDropList[i].ent->vel);
 			const float weight = itemGetWeight(&itemDropList[i].itm);
@@ -104,9 +106,8 @@ void itemDropUpdateFromServer(const packet *p){
 	if(itemDropList[d].ent == NULL){
 		itemDropList[d].ent     = entityNew(idpos,vecZero(),itemGetWeight(&itemDropList[d].itm));
 		itemDropList[d].aniStep = rngValM(1024);
-		itemDropList[d].player = -1;
+		itemDropList[d].player  = p->v.i16[16];
 	}
-	itemDropList[d].player     = p->v.i16[16];
 
 	itemDropList[d].ent->eMesh = itemGetMesh(&itemDropList[d].itm);
 	itemDropList[d].ent->pos   = idpos;
