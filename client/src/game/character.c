@@ -250,6 +250,7 @@ static void characterUpdateDamage(character *c, int damage){
 		sfxPlay(sfxImpact,1.f);
 		sfxPlay(sfxUngh,1.f);
 		setOverlayColor(0xA03020F0,0);
+		c->flags &= ~CHAR_GLIDE;
 		if(characterHP(c,damage / -8)){
 			msgSendDyingMessage("did not bounce", 65535);
 			setOverlayColor(0xFF000000,0);
