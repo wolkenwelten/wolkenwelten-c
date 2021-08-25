@@ -28,7 +28,6 @@ void  characterSetData        (character *c, const packet *p);
 void  characterPickupPacket   (character *c, const packet *p);
 void  characterUpdatePacket   (              const packet *p);
 void  characterSetName        (              const packet *p);
-void  characterCheckInventory (character *c);
 
 character *characterGetPlayer (uint i);
 char *characterGetPlayerName  (uint i);

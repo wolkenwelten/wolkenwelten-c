@@ -1035,14 +1035,3 @@ bool characterDamage(character *c, int hp){
 	}
 	return ret;
 }
-
-void characterCheckInventory(character *c){
-	if(c == NULL){return;}
-	static u16 lastInventorySize = 0;
-	if(lastInventorySize == c->inventorySize){return;}
-	lastInventorySize = c->inventorySize;
-	for(int i=c->inventorySize;i<CHAR_INV_MAX;i++){
-		if(itemIsEmpty(&c->inventory[i])){continue;}
-		characterDropItem(c,i);
-	}
-}

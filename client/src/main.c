@@ -56,6 +56,7 @@
 #include "voxel/bigchungus.h"
 #include "voxel/chungus.h"
 
+#include "../../common/src/game/item.h"
 #include "../../common/src/game/itemType.h"
 #include "../../common/src/game/time.h"
 #include "../../common/src/misc/misc.h"
@@ -104,6 +105,18 @@ void initSignals(){
 	signal(SIGINT,  signalQuit);
 }
 
+void playerCheckInventory(){
+	if(player == NULL){return;}
+	static u16 lastInventorySize = 0;
+	if(lastInventorySize == player->inventorySize){return;}
+	lastInventorySize = player->inventorySize;
+	for(int i=player->inventorySize;i<CHAR_INV_MAX;i++){
+		if(itemIsEmpty(&player->inventory[i])){continue;}
+		characterDropItem(player,i);
+	}
+	if(isInventoryOpen()){showInventory();}
+}
+
 void playerUpdate(){
 	chungus *chng = worldGetChungus((int)player->pos.x >> 8,(int)player->pos.y >> 8,(int)player->pos.z >> 8);
 	if(chng != NULL){ playerChunkActive = chng->requested == 0; }
@@ -115,7 +128,7 @@ void playerUpdate(){
 		lispInputTick();
 	}
 	characterMove(player,player->controls);
-	characterCheckInventory(player);
+	playerCheckInventory();
 
 	msgSendPlayerPos();
 }
