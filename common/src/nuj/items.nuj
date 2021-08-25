@@ -1045,7 +1045,7 @@
 	[def name "Backpack"]
 	[def stack-size 1]
 	[def sprite-id-0 281]
-	[def mesh 'm-jetpack]
+	[def mesh 'm-backpack]
 	[def weight 3.0]
 
 	[sync]
