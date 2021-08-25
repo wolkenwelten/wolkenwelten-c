@@ -120,7 +120,7 @@ typedef struct {
 #define CHAR_JUMP_NEXT    (1<<12)
 
 #define CHAR_EQ_MAX    3
-#define CHAR_INV_MAX  40
+#define CHAR_INV_MAX  60
 
 #define CHAR_EQ_GLIDER     0
 #define CHAR_EQ_HOOK       1
@@ -155,7 +155,7 @@ typedef struct {
 	uint stepTimeout;
 	 int cloudyness;
 
-	uint activeItem;
+	u16 activeItem,inventorySize;
 	item inventory[CHAR_INV_MAX];
 	item equipment[CHAR_EQ_MAX];
 

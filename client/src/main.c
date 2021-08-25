@@ -115,6 +115,7 @@ void playerUpdate(){
 		lispInputTick();
 	}
 	characterMove(player,player->controls);
+	characterCheckInventory(player);
 
 	msgSendPlayerPos();
 }

@@ -32,6 +32,7 @@
 #include <stddef.h>
 #include <math.h>
 
+int  inventoryGuiSize  = 0;
 int  inventoryOpen     = 0;
 uint gamepadSelection  = 4096;
 item inventoryCurrentPickup;
@@ -176,6 +177,8 @@ static void handlerEquipmentItemClick(widget *wid){
 		*cItem = tmp;
 	}
 	sfxPlay(sfxPock,1.f);
+	characterUpdateEquipment(player);
+	showInventory();
 }
 
 static widget *widgetNewEquipmentSlot(widget *parent, int x, int y, item *iSlot){
@@ -190,16 +193,18 @@ static widget *widgetNewEquipmentSlot(widget *parent, int x, int y, item *iSlot)
 static void initInventorySpace(){
 	const int ts = getTilesize();
 
+	widgetEmpty(inventorySpace);
 	inventorySpace = widgetNewCP(wSpace,inventoryPanel,-1,0,ts*10,-1);
-	inventoryRadio = widgetNewCPLH(wRadioButton,inventoryPanel,0,0,5*ts,32,"Inventory","click",handlerInventoryRadioInventory);
 
-	for(int y=0;y<(CHAR_INV_MAX/10);y++){
+	if(player == NULL){return;}
+	int i = 0;
+	for(int y=0;y<(player->inventorySize/10);y++){
 		for(int x=0;x<10;x++){
-			const int i = x+y*10;
-			if(i > CHAR_INV_MAX){return;}
-			widgetNewItemSlot(inventorySpace,x*ts,y*ts+32,&player->inventory[i]);
+			if(i > player->inventorySize){return;}
+			widgetNewItemSlot(inventorySpace,x*ts,y*ts+32,&player->inventory[i++]);
 		}
 	}
+	inventoryGuiSize = player->inventorySize;
 }
 
 static void initEquipmentSpace(){
@@ -221,6 +226,7 @@ void initInventory(){
 	inventoryPanel = widgetNewCP(wPanel,rootMenu,-1,-1,ts*10,0);
 	inventoryPanel->flags |= WIDGET_HIDDEN;
 
+	inventoryRadio = widgetNewCPLH(wRadioButton,inventoryPanel,0,0,5*ts,32,"Inventory","click",handlerInventoryRadioInventory);
 	initInventorySpace();
 	initEquipmentSpace();
 	initCraftingSpace();
@@ -242,8 +248,12 @@ void initInventory(){
 }
 
 void showInventory(){
-	const int gh = (getTilesize() * (3 + (CHAR_INV_MAX / 10))) + 32;
+	const int invSize = player != NULL ? player->inventorySize : 20;
+	const int gh = (getTilesize() * (3 + (invSize / 10))) + 32;
 	if(!gameRunning){return;}
+	if(inventoryGuiSize != invSize){
+		initInventorySpace();
+	}
 
 	if((inventoryPanel->h == gh) && (inventoryRadio->flags & WIDGET_ACTIVE)){
 		hideInventory();

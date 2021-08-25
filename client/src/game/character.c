@@ -69,6 +69,7 @@ void characterInit(character *c){
 
 	c->breathing      = rngValM(1024);
 	c->maxhp = c->hp  = 20;
+	c->inventorySize  = 20;
 	c->blockMiningX   = c->blockMiningY = c->blockMiningZ = -1;
 	c->pos            = vecZero();
 	c->controls       = vecZero();
@@ -1033,4 +1034,15 @@ bool characterDamage(character *c, int hp){
 		commitOverlayColor();
 	}
 	return ret;
+}
+
+void characterCheckInventory(character *c){
+	if(c == NULL){return;}
+	static u16 lastInventorySize = 0;
+	if(lastInventorySize == c->inventorySize){return;}
+	lastInventorySize = c->inventorySize;
+	for(int i=c->inventorySize;i<CHAR_INV_MAX;i++){
+		if(itemIsEmpty(&c->inventory[i])){continue;}
+		characterDropItem(c,i);
+	}
 }

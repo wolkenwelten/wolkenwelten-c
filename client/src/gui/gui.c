@@ -51,6 +51,7 @@
 #include "../tmp/objs.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
+#include "../../../common/src/game/hook.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/game/time.h"
 #include "../../../common/src/misc/colors.h"

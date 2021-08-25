@@ -47,6 +47,7 @@ character *characterNew(){
 		c = &characterList[characterCount++];
 	}
 	characterInit(c);
+	characterUpdateEquipment(c);
 
 	return c;
 }
@@ -353,8 +354,6 @@ u32 characterCollision(const vec c){
 	return col;
 }
 
-
-
 u8 characterCollisionBlock(const vec c, vec *retPos){
 	u8 b = 0;
 	const float wd = 0.4f;
@@ -502,6 +501,7 @@ void characterSetInventoryP(character *c, const packet *p){
 		c->inventory[i].ID     = p->v.u16[ii++];
 		c->inventory[i].amount = p->v.i16[ii++];
 	}
+	characterUpdateEquipment(c);
 }
 
 void characterSetEquipmentP(character *c, const packet *p){
@@ -512,6 +512,7 @@ void characterSetEquipmentP(character *c, const packet *p){
 		c->equipment[i].ID     = p->v.u16[ii++];
 		c->equipment[i].amount = p->v.i16[ii++];
 	}
+	characterUpdateEquipment(c);
 }
 
 float characterGetMaxHookLen(const character *c){
@@ -554,4 +555,13 @@ void characterAddRecoil(character *c, float recoil){
 	const vec vel = vecMulS(vecDegToVec(c->rot),.01f);
 	c->vel = vecAdd(c->vel, vecMulS(vel,-0.75f*recoil));
 	c->rot = vecAdd(c->rot, vecNew((rngValf()-0.5f) * recoil, (rngValf()-.8f) * recoil, 0.f));
+}
+
+void characterUpdateEquipment(character *c){
+	if(c == NULL){return;}
+	int invSize = 20;
+	if(!itemIsEmpty(&c->equipment[CHAR_EQ_PACK])){
+		if(c->equipment[CHAR_EQ_PACK].ID == I_Jetpack){invSize = 60;}
+	}
+	c->inventorySize = invSize;
 }
