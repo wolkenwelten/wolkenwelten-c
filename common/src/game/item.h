@@ -91,3 +91,4 @@ const char *itemGetName         (const item *i);
 #define I_Crystalspear  291
 #define I_Plantmatter   292
 #define I_Straw         293
+#define I_Backpack      294

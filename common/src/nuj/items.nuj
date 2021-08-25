@@ -1038,6 +1038,19 @@
 	[sync]
 ]]
 
+[def i-backpack]
+[item-default [ω
+	[def id [item-new-id]]
+	[def sym 'i-backpack]
+	[def name "Backpack"]
+	[def stack-size 1]
+	[def sprite-id-0 281]
+	[def mesh 'm-jetpack]
+	[def weight 3.0]
+
+	[sync]
+]]
+
 [event-bind "on-init" [λ []
 	[item-sync-all]
 	[log [ansi-green "Items initialized"]]

@@ -162,7 +162,7 @@ void characterAddInaccuracy(character *c, float inc){
 
 int characterGetItemAmount(const character *c, u16 itemID){
 	int amount = 0;
-	for(unsigned int i=0;i<CHAR_INV_MAX;i++){
+	for(unsigned int i=0;i<c->inventorySize;i++){
 		if(c->inventory[i].ID == itemID){
 			amount += c->inventory[i].amount;
 		}
@@ -174,7 +174,7 @@ int characterDecItemAmount(character *c, u16 itemID,int amount){
 	int ret=0;
 
 	if(amount == 0){return 0;}
-	for(uint i=0;i<CHAR_INV_MAX;i++){
+	for(uint i=0;i<c->inventorySize;i++){
 		if(c->inventory[i].ID == itemID){
 			if(c->inventory[i].amount > amount){
 				itemDecStack(&c->inventory[i],amount);
@@ -194,7 +194,7 @@ int characterPickupItem(character *c, u16 itemID,int amount){
 	item ci = itemNew(itemID,amount);
 	if(itemGetStackSize(&ci) == 1){
 		ci.amount = amount;
-		for(uint i=0;i<CHAR_INV_MAX;i++){
+		for(uint i=0;i<c->inventorySize;i++){
 			if(itemIsEmpty(&c->inventory[i])){
 				c->inventory[i] = ci;
 				sfxPlay(sfxPock,.8f);
@@ -204,13 +204,13 @@ int characterPickupItem(character *c, u16 itemID,int amount){
 		return -1;
 	}
 
-	for(uint i=0;i<CHAR_INV_MAX;i++){
+	for(uint i=0;i<c->inventorySize;i++){
 		if(a >= amount){break;}
 		if(itemCanStack(&c->inventory[i],itemID)){
 			a += itemIncStack(&c->inventory[i],amount - a);
 		}
 	}
-	for(uint i=0;i<CHAR_INV_MAX;i++){
+	for(uint i=0;i<c->inventorySize;i++){
 		if(a >= amount){break;}
 		if(itemIsEmpty(&c->inventory[i])){
 			c->inventory[i] = itemNew(itemID,amount - a);
@@ -561,6 +561,7 @@ void characterUpdateEquipment(character *c){
 	if(c == NULL){return;}
 	int invSize = 20;
 	if(!itemIsEmpty(&c->equipment[CHAR_EQ_PACK])){
+		if(c->equipment[CHAR_EQ_PACK].ID == I_Backpack){invSize = 40;}
 		if(c->equipment[CHAR_EQ_PACK].ID == I_Jetpack){invSize = 60;}
 	}
 	c->inventorySize = invSize;

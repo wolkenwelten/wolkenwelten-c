@@ -58,7 +58,7 @@ bool itemIsValidEquipment(const item *i, int slot){
 	case CHAR_EQ_HOOK:
 		return i->ID == I_Hook;
 	case CHAR_EQ_PACK:
-		return i->ID == I_Jetpack;
+		return (i->ID == I_Jetpack) || (i->ID == I_Backpack);
 	}
 }
 

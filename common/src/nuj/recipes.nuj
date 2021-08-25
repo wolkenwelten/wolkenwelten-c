@@ -138,6 +138,16 @@
 
 [recipe-default [ω
 	[def id [recipe-new-id]]
+	[def ingred-id-0 'i-fur]
+	[def ingred-amt-0  12]
+	[def result-id 'i-backpack]
+	[def result-amt 1]
+
+	[sync]
+]]
+
+[recipe-default [ω
+	[def id [recipe-new-id]]
 	[def ingred-id-0 'i-boards]
 	[def ingred-amt-0  16]
 	[def ingred-id-1 'i-fur]
