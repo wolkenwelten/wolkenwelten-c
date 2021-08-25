@@ -588,7 +588,7 @@ static void widgetDrawTextLog(const widget *wid, textMesh *m, int x, int y, int 
 }
 
 void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h){
-	if(wid == NULL){return;}
+	if((wid == NULL) || (x >= screenWidth) || (y >= screenHeight) || ((x+w) <= 0) || ((y+h) <= 0)){return;}
 
 	switch(wid->type){
 	case wNone:

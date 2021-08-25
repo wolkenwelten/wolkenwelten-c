@@ -618,7 +618,7 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 	}
 }
 
-static void widgetAnimate(widget *wid, int x, int y, int w, int h){
+static void widgetAnimate(widget *wid){
 	if(!(wid->flags & WIDGET_ANIMATE)){return;}
 
 	if(wid->flags & WIDGET_ANIMATEX){
@@ -661,33 +661,6 @@ static void widgetAnimate(widget *wid, int x, int y, int w, int h){
 			wid->flags &= ~WIDGET_ANIMATEH;
 		}
 	}
-
-	if(wid->flags & WIDGET_ANIMATE){return;}
-	int wx = wid->x + x;
-	int wy = wid->y + y;
-	int ww = wid->w;
-	int wh = wid->h;
-
-	if(wid->x < 0){
-		wx = (x + w) - wid->w + (wid->x+1);
-	}
-	if(wid->y < 0){
-		wy = (y + h) - wid->h + (wid->y+1);
-	}
-	if(ww < 0){ ww = w+(wid->w+1); }
-	if(wh < 0){ wh = h+(wid->h+1); }
-
-	if((ww == 0) || (wh == 0)){
-		wid->flags |= WIDGET_HIDDEN;
-		return;
-	}
-
-	if((wx >= screenWidth)  ||
-	   (wy >= screenHeight) ||
-	   (wx+ww <= 0)         ||
-	   (wy+wh <= 0)){
-		wid->flags |= WIDGET_HIDDEN;
-	}
 }
 
 void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
@@ -706,7 +679,7 @@ void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
 	if(w < 0){ w = pw+(wid->w+1); }
 	if(h < 0){ h = ph+(wid->h+1); }
 	widgetCheckEvents(wid,x,y,w,h);
-	widgetAnimate(wid,x,y,w,h);
+	widgetAnimate(wid);
 	widgetDrawSingle(wid,m,x,y,w,h);
 	for(widget *c=wid->child;c!=NULL;c=c->next){
 		widgetDraw(c,m,x,y,w,h);
