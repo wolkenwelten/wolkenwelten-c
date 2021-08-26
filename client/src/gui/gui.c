@@ -505,11 +505,11 @@ void drawActiveItem(){
 		case animationEat:
 			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,1.f)*3.f;
 			if(hitOff < 1.f){
-				matTranslation(matViewAI,ix-hitOff*1.4,player->yoff+iy,iz + hitOff*0.3f);
+				matTranslation(matViewAI,ix-hitOff*1.4,player->yoff+iy+sinf(hitOff*PI)*0.6f,iz + hitOff*0.3f - sinf(hitOff*PI)*0.7f);
 				matMulRotYX(matViewAI,hitOff*20.f,hitOff*40.f);
 			}else if(hitOff < 2.f){
 				hitOff = hitOff-1.f;
-				matTranslation(matViewAI,ix-1.4f,player->yoff+iy-hitOff*0.2f,iz + 0.3f);
+				matTranslation(matViewAI,ix-1.4f - sinf((hitOff-1)*PI)* 0.2f,player->yoff+iy-hitOff*0.2f,iz + 0.3f);
 				matMulRotYX(matViewAI,hitOff*60.f+20.f,hitOff*120.f+40.f);
 				matMulScale(matViewAI, 1.f-hitOff, 1.f-hitOff, 1.f-hitOff);
 			}else if(hitOff < 3.f){
