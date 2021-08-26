@@ -109,6 +109,7 @@ void playerCheckInventory(){
 	if(player == NULL){return;}
 	static u16 lastInventorySize = 0;
 	if(lastInventorySize == player->inventorySize){return;}
+
 	lastInventorySize = player->inventorySize;
 	for(int i=player->inventorySize;i<CHAR_INV_MAX;i++){
 		if(itemIsEmpty(&player->inventory[i])){continue;}

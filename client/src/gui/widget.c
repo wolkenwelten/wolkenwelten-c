@@ -405,6 +405,7 @@ void widgetFree(widget *w){
 void widgetEmpty(widget *w){
 	widget *n = NULL;
 	if(w == NULL){return;}
+	if(w == w->child){return;}
 	for(widget *c=w->child;c!=NULL;c=n){
 		n = c->next;
 		widgetFree(c);

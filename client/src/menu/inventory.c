@@ -190,21 +190,26 @@ static widget *widgetNewEquipmentSlot(widget *parent, int x, int y, item *iSlot)
 	return slot;
 }
 
-static void initInventorySpace(){
+static void refreshInventorySpace(){
 	const int ts = getTilesize();
 
 	widgetEmpty(inventorySpace);
-	inventorySpace = widgetNewCP(wSpace,inventoryPanel,-1,0,ts*10,-1);
-
 	if(player == NULL){return;}
 	int i = 0;
 	for(int y=0;y<(player->inventorySize/10);y++){
 		for(int x=0;x<10;x++){
-			if(i > player->inventorySize){return;}
+			if(i > player->inventorySize){break;}
 			widgetNewItemSlot(inventorySpace,x*ts,y*ts+32,&player->inventory[i++]);
 		}
 	}
 	inventoryGuiSize = player->inventorySize;
+}
+
+static void initInventorySpace(){
+	const int ts = getTilesize();
+
+	inventorySpace = widgetNewCP(wSpace,inventoryPanel,-1,0,ts*10,-1);
+	refreshInventorySpace();
 }
 
 static void initEquipmentSpace(){
@@ -222,7 +227,10 @@ static void initEquipmentSpace(){
 void initInventory(){
 	const int ts = getTilesize();
 
-	if(inventoryPanel != NULL){ widgetFree(inventoryPanel); }
+	if(inventoryPanel != NULL){
+		widgetFree(inventoryPanel);
+		inventorySpace = NULL;
+	}
 	inventoryPanel = widgetNewCP(wPanel,rootMenu,-1,-1,ts*10,0);
 	inventoryPanel->flags |= WIDGET_HIDDEN;
 
@@ -251,9 +259,7 @@ void showInventory(){
 	const int invSize = player != NULL ? player->inventorySize : 20;
 	const int gh = (getTilesize() * (3 + (invSize / 10))) + 32;
 	if(!gameRunning){return;}
-	if(inventoryGuiSize != invSize){
-		initInventorySpace();
-	}
+	if(inventoryGuiSize != invSize){refreshInventorySpace();}
 
 	if((inventoryPanel->h == gh) && (inventoryRadio->flags & WIDGET_ACTIVE)){
 		hideInventory();
