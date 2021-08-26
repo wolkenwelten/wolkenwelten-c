@@ -234,7 +234,7 @@ bool characterPlaceBlock(character *c,item *i){
 	ivec los = characterLOSBlock(c,true);
 	if(los.x < 0)                         { return false; }
 	if(itemIsEmpty(i))                    { return false; }
-	characterStartAnimation(c,0,240);
+	characterStartAnimation(c,animationHit,240);
 	characterAddCooldown(c,50);
 	if((characterCollision(c->pos)&0xFF0)){
 		sfxPlay(sfxStomp,1.f);
@@ -293,7 +293,7 @@ void characterSetActiveItem(character *c,  int i){
 	if(i > 9){i = 0;}
 	if(i < 0){i = 9;}
 	if((uint)i != c->activeItem){
-		characterStartAnimation(c,5,200);
+		characterStartAnimation(c,animationSwitch,200);
 	}
 	characterStopAim(c);
 	c->activeItem = i;
@@ -442,7 +442,7 @@ void characterStopAnimation(character *c){
 	c->animationTicksLeft = 0;
 }
 
-void characterStartAnimation(character *c, int index, int duration){
+void characterStartAnimation(character *c, animType index, int duration){
 	c->animationIndex     = index;
 	c->animationTicksLeft = c->animationTicksMax = duration;
 }
@@ -461,7 +461,7 @@ bool characterItemReload(character *c, item *i, int cooldown){
 
 	characterAddCooldown(c,cooldown);
 	sfxPlay(sfxHookReturned,1.f);
-	characterStartAnimation(c,2,MAX(cooldown*2,500));
+	characterStartAnimation(c,animationReload,MAX(cooldown*2,500));
 
 	return true;
 }
@@ -472,12 +472,12 @@ bool characterTryToShoot(character *c, item *i, int cooldown, int bulletcount){
 		if(characterItemReload(c,i,256)){return false;}
 		sfxPlay(sfxHookFire,0.3f);
 		characterAddCooldown(c,64);
-		characterStartAnimation(c,3,250);
+		characterStartAnimation(c,animationEmpty,250);
 		return false;
 	}
 	itemDecAmmo(i,bulletcount);
 	characterAddCooldown(c,cooldown);
-	characterStartAnimation(c,1,250);
+	characterStartAnimation(c,animationFire,250);
 	return true;
 }
 

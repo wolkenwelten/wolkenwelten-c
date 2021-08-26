@@ -16,6 +16,13 @@
 [def throw-collect  8]
 [def throw-burning 16]
 
+[def anim-hit       0]
+[def anim-fire      1]
+[def anim-reload    2]
+[def anim-empty     3]
+[def anim-eat       4]
+[def anim-switch    5]
+
 [event-bind "on-init" [λ []
 	[log [ansi-blue "Let's test the Nujel Runtime"]]
 	[test-run]

@@ -119,6 +119,15 @@ typedef struct {
 #define CHAR_CONS_MODE    (1<<11)
 #define CHAR_JUMP_NEXT    (1<<12)
 
+typedef enum animType {
+	animationHit = 0,
+	animationFire,
+	animationReload,
+	animationEmpty,
+	animationEat,
+	animationSwitch
+} animType;
+
 #define CHAR_EQ_MAX    3
 #define CHAR_INV_MAX  60
 
@@ -131,7 +140,7 @@ typedef struct {
 	float yoff,shake,inaccuracy;
 	float gyoff;
 
-	 int  animationIndex;
+    animType  animationIndex;
 	 int  animationTicksMax;
 	 int  animationTicksLeft;
 	uint  breathing;

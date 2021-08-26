@@ -476,33 +476,33 @@ void drawActiveItem(){
 
 	shaderBind(sMesh);
 	switch(player->animationIndex){
-		default:
+		case animationHit:
 			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.3f);
 			y = iy+player->yoff-(hitOff/8);
 			matTranslation(matViewAI,ix-hitOff*1.2f,y+(hitOff/3),iz - hitOff*1.1f);
 			matMulRotYX(matViewAI,hitOff*10.f,hitOff*-35.f);
 		break;
 
-		case 1:
+		case animationFire:
 			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
 			matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff);
 			matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
 		break;
 
-		case 2:
+		case animationReload:
 			hitOff = animationInterpolationSustain(player->animationTicksLeft,player->animationTicksMax,0.3f,0.5f);
 			y = iy+player->yoff-(hitOff/8);
 			matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
 			matMulRotYX(matViewAI,hitOff*15.f,hitOff*-55.f);
 		break;
 
-		case 3:
+		case animationEmpty:
 			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
 			matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff*0.1f);
 			matMulRotYX(matViewAI,hitOff*3.f,hitOff*9.f);
 		break;
 
-		case 4:
+		case animationEat:
 			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,1.f)*3.f;
 			if(hitOff < 1.f){
 				matTranslation(matViewAI,ix-hitOff*1.4,player->yoff+iy,iz + hitOff*0.3f);
@@ -519,7 +519,7 @@ void drawActiveItem(){
 			}
 		break;
 
-		case 5:
+		case animationSwitch:
 			hitOff = (float)player->animationTicksLeft / (float)player->animationTicksMax;
 			y = iy+player->yoff-hitOff;
 			matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);

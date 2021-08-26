@@ -296,7 +296,7 @@ void characterHit(character *c){
 	characterHitCheck(pos,2.f,itemGetDamage(itm,0),2,iteration, source);
 	animalHitCheck   (pos,2.f,itemGetDamage(itm,0),2,iteration, source);
 
-	characterStartAnimation(c,0,240);
+	characterStartAnimation(c,animationHit,240);
 	characterAddCooldown(c,80);
 }
 
@@ -685,10 +685,10 @@ void characterFireHook(character *c){
 	if(c->hook == NULL){
 		c->hook = hookNew(c);
 		sfxPlay(sfxHookFire,1.f);
-		characterStartAnimation(c,1,350);
+		characterStartAnimation(c,animationFire,350);
 	}else{
 		hookReturnHook(c->hook);
-		characterStartAnimation(c,1,350);
+		characterStartAnimation(c,animationFire,350);
 	}
 }
 
@@ -792,33 +792,33 @@ static void characterActiveItemDraw(const character *c){
 	float hitOff,y;
 
 	switch(c->animationIndex){
-	default:
+	case animationHit:
 		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.3f);
 		y = iy+c->yoff-(hitOff/8);
 		matMulTrans(matMVP,ix-hitOff*0.2f,y+(hitOff/3),iz - hitOff*0.5f);
 		matMulRotYX(matMVP,hitOff*5.f,hitOff*-20.f);
 	break;
 
-	case 1:
+	case animationFire:
 		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
 		matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.3f);
 		matMulRotYX(matMVP,hitOff*10.f,hitOff*45.f);
 	break;
 
-	case 2:
+	case animationReload:
 		hitOff = animationInterpolationSustain(c->animationTicksLeft,c->animationTicksMax,0.3f,0.5f);
 		y = iy+c->yoff-(hitOff/8);
 		matMulTrans(matMVP,ix-hitOff*0.5f,y-(hitOff*0.5f),iz - hitOff*0.2f);
 		matMulRotYX(matMVP,hitOff*15.f,hitOff*-55.f);
 	break;
 
-	case 3:
+	case animationEmpty:
 		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
 		matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.1f);
 		matMulRotYX(matMVP,hitOff*3.f,hitOff*9.f);
 	break;
 
-	case 4:
+	case animationEat:
 		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,1.f)*3.f;
 		if(hitOff < 1.f){
 			matMulTrans(matMVP,ix-hitOff*0.4,c->yoff+iy,iz - hitOff*0.2f);
@@ -835,7 +835,7 @@ static void characterActiveItemDraw(const character *c){
 		}
 	break;
 
-	case 5:
+	case animationSwitch:
 		hitOff = (float)c->animationTicksLeft / (float)c->animationTicksMax;
 		y = iy+c->yoff-(hitOff/8);
 		matMulTrans(matMVP,ix-hitOff*0.5f,y-(hitOff*0.5f),iz - hitOff*0.2f);
