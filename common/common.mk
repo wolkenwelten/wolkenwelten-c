@@ -68,12 +68,12 @@ web: release
 	if [ -d "releases/linux-armv7l" ]; then rsync -avhe ssh releases/linux-armv7l/*.xz wolkenwelten.net:/var/www/html/releases/linux-armv7l/ ; fi
 	if [ -d "releases/linux-aarch64" ]; then rsync -avhe ssh releases/linux-aarch64/*.xz wolkenwelten.net:/var/www/html/releases/linux-aarch64/ ; fi
 	if [ -d "releases/linux-x86_64" ]; then rsync -avhe ssh releases/linux-x86_64/*.xz wolkenwelten.net:/var/www/html/releases/linux-x86_64/ ; fi
-	ssh wolkenwelten.net "cd /var/www/html/ && php index.php > index.html"
+	ssh wolkenwelten.net "cd /var/www/html/ && guile template.scm"
 
 .PHONY: website
 website:
 	rsync -avhe ssh web/ wolkenwelten.net:/var/www/html/
-	ssh wolkenwelten.net "cd /var/www/html/ && php index.php > index.html"
+	ssh wolkenwelten.net "cd /var/www/html/ && guile template.scm"
 
 .PHONY: debug
 debug: CFLAGS += -O0

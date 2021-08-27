@@ -55,6 +55,7 @@ platform/win_cross/pkgs/mingw-w64-sdl2/*
 /nujel-standalone/nujel.d
 /releases/
 /web/releases/
+/web/index.html
 /wolkenwelten
 /wolkenwelten.exe
 /wolkenwelten-server

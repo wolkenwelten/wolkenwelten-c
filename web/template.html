@@ -1,56 +1,35 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<?php
-
-require "func.php";
-
-$stable       = [];
-$experimental = [];
-$platforms    = [
-	'win'   => 'Windows',
-	'macos' => 'MacOS',
-	'linux-x86_64' => 'GNU/Linux',
-	'linux-armv7l' => 'Linux ARM 32-Bit',
-	'linux-aarch64' => 'Linux ARM 64-Bit'
-];
-
-foreach(array_keys($platforms) as $plat){
-	checkReleases($plat);
-}
-
-?>
 <html>
 <head>
 	<meta charset="utf-8"/>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>WolkenWelten</title>
-	<link rel="icon" type="image/png" href="<?php echo baseSF('favicon16.png'); ?>" sizes="16x16">
-	<link rel="icon" type="image/png" href="<?php echo baseSF('favicon32.png'); ?>" sizes="32x32">
-	<style>
-	<?php echo file_get_contents("main.css"); ?>
-	</style>
+	<link rel="icon" type="image/png" href="<?scm (baseSF "favicon16.png") ?>" sizes="16x16">
+	<link rel="icon" type="image/png" href="<?scm (baseSF "favicon32.png") ?>" sizes="32x32">
+	<style><?scm (read-all "main.css") ?></style>
 </head>
 <body bgcolor="#333333" text="#cccccc"  link="#cc3366" vlink="#cc3366" alink="#cc3366">
 	<h1>WolkenWelten - Alpha</h1>
 	<hr/>
-	<img class="logo" src="<?php echo baseSF('img/logo.png'); ?>" alt="Logo" width="512" height="512"/>
-	<p><b><?php echo hyper("Greetings Cybersurfer"); ?></b>, here you may find the newest release builds of the Free Software, LISP-Powered Voxel Sandbox called WolkenWelten (German for CloudWorlds).</p>
+	<img class="logo" src="<?scm (baseSF "img/logo.png") ?>" alt="Logo" width="512" height="512"/>
+	<p><b><?scm (hyper "Greetings Cybersurfer") ?></b>, here you may find the newest release builds of the Free Software, LISP-Powered Voxel Sandbox called WolkenWelten (German for CloudWorlds).</p>
 	<p>Everything is licensed under the AGPLv3 and you can follow and hopefully join the development effort over on <a href="https://sr.ht/~melchizedek6809/WolkenWelten/">SourceHut</a> or on <a href="https://github.com/Melchizedek6809/WolkenWelten">GitHub</a>.</p>
 	<p>As for myself, my name is Ben, the lead dev of this project and you can watch me work on this Game on my <a href="https://www.twitch.tv/melchizedek6809">Twitch channel</a>, I try to do more visually exciting features on stream but it is still just me coding away, so be prepared for that.</p>
 	<p>To find other People to play with and/or smalltalk about LISP be sure to Join our <a href="https://discord.gg/vPZffVS">Discord</a> or <a href="https://matrix.to/#/!RKZztYPGhtlgALDvMS:matrix.org?via=matrix.org">Matrix</a> communities.</p>
 
 	<h2>Something to look at</h2>
 	<div align=center class=pics>
-		<a href="img/1.jpg"><img src="<?php echo baseSFS('img/1.jpg'); ?>" width=1920 height=1080/></a>
-		<a href="img/2.jpg"><img src="<?php echo baseSFS('img/2.jpg'); ?>" width=1920 height=1080/></a>
-		<a href="img/6.jpg"><img src="<?php echo baseSFS('img/6.jpg'); ?>" width=1920 height=1080/></a>
+		<a href="img/1.jpg"><img src="<?scm (baseSFS "img/1.jpg") ?>" width=1920 height=1080/></a>
+		<a href="img/2.jpg"><img src="<?scm (baseSFS "img/2.jpg") ?>" width=1920 height=1080/></a>
+		<a href="img/6.jpg"><img src="<?scm (baseSFS "img/6.jpg") ?>" width=1920 height=1080/></a>
 	</div>
 	<hr/>
 
 	<h2>Download a Stable release:</h2>
 	<hr/>
 	<div class=nativedl align=center>
-		<?php echoBuilds($stable); ?>
+		<?scm (stable-releases) ?>
 		<i>Current versions are not even close to stable, but you may try an experimental build below.</i>
 	</div>
 	<br/>
@@ -58,7 +37,7 @@ foreach(array_keys($platforms) as $plat){
 	<h2>Try the freshest experimental builds:</h2>
 	<hr/>
 	<div class=nativedl align=center>
-		<?php echoBuilds($experimental); ?>
+		<?scm (experimental-releases) ?>
 	</div>
 
 	<hr/>
@@ -75,9 +54,9 @@ foreach(array_keys($platforms) as $plat){
 
 	<h2>Some more pictures</h2>
 	<div align=center class=pics>
-		<a href="img/3.jpg"><img src="<?php echo baseSFS('img/3.jpg'); ?>" width=1920 height=1080/></a>
-		<a href="img/5.jpg"><img src="<?php echo baseSFS('img/5.jpg'); ?>" width=1920 height=1080/></a>
-		<a href="img/4.jpg"><img src="<?php echo baseSFS('img/4.jpg'); ?>" width=1920 height=1080/></a>
+		<a href="img/3.jpg"><img src="<?scm (baseSFS "img/3.jpg") ?>" width=1920 height=1080/></a>
+		<a href="img/5.jpg"><img src="<?scm (baseSFS "img/5.jpg") ?>" width=1920 height=1080/></a>
+		<a href="img/4.jpg"><img src="<?scm (baseSFS "img/4.jpg") ?>" width=1920 height=1080/></a>
 	</div>
 	<hr/>
 	<h3>Cool things that are already true</h3>
@@ -128,7 +107,7 @@ foreach(array_keys($platforms) as $plat){
 	<p><span class=key>`</span><span class=key>F12</span> toggle LISP REPL.</p>
 	<br/>
 	<h4>Gamepad</h4>
-	<img src="<?php echo baseSF('img/padcontrols.png'); ?>" width=900 height=504 class="imgfw" />
+	<img src="<?scm (baseSF "img/padcontrols.png") ?>" width=900 height=504 class="imgfw" />
 	<p><i>The layout is based on an Xbox360 controller, if you have a different controller it might differ but should be in a similar physical location.</i></p>
 	<p>Use the left analog stick to walk around and the right analog stick to look around. Use the D-Pad to select the active item. A for jumping and Y for dropping items. Use the left shoulder trigger for activating the current item and the right one for destroying blocks, the right shoulder button shoots the grappling hook. To open the Inventory press the left Menu button, most probably labeled "Back".</p>
 	<br/>
