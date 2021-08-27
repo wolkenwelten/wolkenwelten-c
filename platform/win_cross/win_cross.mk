@@ -38,7 +38,9 @@ $(WIN_RELDIR)/wolkenwelten-server.exe: releases/win/wolkenwelten-server.res
 	$(MINGW_STRIP) -gxX $@
 
 releases/win/wolkenwelten-server.res: platform/win/wolkenwelten-server.rc platform/win/icon.ico
+	@mkdir -p $(WIN_RELDIR)
 	$(MINGW_WINDRES) $< -O coff -o $@
 
 releases/win/wolkenwelten.res: platform/win/wolkenwelten.rc platform/win/icon.ico
+	@mkdir -p $(WIN_RELDIR)
 	$(MINGW_WINDRES) $< -O coff -o $@
