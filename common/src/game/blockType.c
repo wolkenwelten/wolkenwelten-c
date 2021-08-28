@@ -106,16 +106,16 @@ bool blockTypeValid(u8 b){
 void blockTypeInit(){
 	blockTypeSetWaterProps( 0, (1<<15)-1, (1<<15)-1, (1<<15)-1);
 
-	blockTypeInitBlock    ( 1, 1, DIRT,  "Dirt", 500, 2000, 1.5f, 0xFF0A234F,0xFF051B45);
+	blockTypeInitBlock    ( 1, 1, DIRT,  "Dirt", 500, 1000, 1.5f, 0xFF0A234F,0xFF051B45);
 	blockTypeSetWaterProps( 1, 8192, 32, 8);
 
 	blockTypeInitBlock    ( 2, 0, DIRT,  "Grass", 240,  400, 1.7f, 0xFF004227,0xFF051B45);
 	blockTypeSetWaterProps( 2, 8192, 24, 8);
 
-	blockTypeInitBlock    ( 3, 2, STONE, "Stone", 1200, 4000, 5.f, 0xFF5E5E5E,0xFF484848);
+	blockTypeInitBlock    ( 3, 2, STONE, "Stone", 1200, 2000, 5.f, 0xFF5E5E5E,0xFF484848);
 	blockTypeSetWaterProps( 3, 0, 0, 8);
 
-	blockTypeInitBlock    ( 4, 3, STONE, "Coal", 800, 4000, 4.f, 0xFF262626,0xFF101010);
+	blockTypeInitBlock    ( 4, 3, STONE, "Coal", 800, 3000, 4.f, 0xFF262626,0xFF101010);
 	blockTypeSetWaterProps( 4, 0, 0, 8);
 
 	blockTypeInitBlock    ( 5, 4, WOOD,  "Spruce Log", 500, 800, 3.f, 0xFF051B25,0xFF07161D);
