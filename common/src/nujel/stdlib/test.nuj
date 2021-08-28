@@ -350,6 +350,8 @@
 [test-add #t [zn? 0]]
 [test-add #t [zn? -4.0]]
 [test-add #f [zn? 0.1]]
+[test-add  0 [let [[tmp [vec 0 0 0]]] [+ tmp [vec 1 1 1]] [vec/y tmp]]]
+[test-add  0 [let [[tmp 0]] [+ tmp 1] tmp]]
 
 [test-add  2 [wrap-value 2 2 4]]
 [test-add  3 [wrap-value 3 2 4]]

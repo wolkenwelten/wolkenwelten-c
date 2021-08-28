@@ -348,6 +348,9 @@ lVal *lValCopy(lVal *dst, const lVal *src){
 	*dst = *src;
 	if(dst->type == ltString){
 		dst->vCdr = lStringNew(lStrData(src),lStringLength(&lStr(src)));
+	}else if(dst->type == ltVec){
+		dst->vCdr = lVecAlloc();
+		lVecV(dst->vCdr) = lVecV(src->vCdr);
 	}else if(dst->type == ltPair){
 		dst->vList.car = lValDup(dst->vList.car);
 		dst->vList.cdr = lValDup(dst->vList.cdr);
