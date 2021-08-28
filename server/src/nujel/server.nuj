@@ -75,6 +75,22 @@
 	[vz [player-pos]]
 ]]
 
+[def item-drop-stress]
+[let []
+	[def item-drop-stress-xz [λ [pos max x z]
+		[item-drop-new [+ [vec x -6 z] pos] i-crystals 1]
+		[when [< z max] [item-drop-stress-xz pos max x [+ 2 z]]]
+	]]
+	[def item-drop-stress-x [λ [pos max x]
+		[item-drop-stress-xz pos max x -max]
+		[when [< x max] [item-drop-stress-x pos max [+ 2 x]]]
+	]]
+	[set! item-drop-stress [λ [pos max]
+		"Stress test the itemDrop code by generating a lot of them"
+		[item-drop-stress-x pos max -max]
+	]]
+]
+
 [def vx+ [λ [v a]
 	"Return the sum of vector v and [vec a 0 0]"
 	[+ v [vec a 0 0]]

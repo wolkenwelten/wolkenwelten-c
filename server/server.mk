@@ -62,5 +62,5 @@ runsd: all
 .PHONY: run
 runsp: all
 	rm -rf save/ callgrind.*
-	/usr/bin/time valgrind --tool=callgrind --dump-instr=yes ./wolkenwelten-server $(TEST_WORLD) -profileWG
+	valgrind --tool=callgrind --dump-instr=yes ./wolkenwelten-server $(TEST_WORLD) -profileWG
 	kcachegrind

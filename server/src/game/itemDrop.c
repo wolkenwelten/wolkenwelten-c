@@ -154,19 +154,16 @@ static int itemDropCheckSubmersion(uint i){
 		}
 	}
 
-	for(int x=-1;x<2;x++){
-		if(x == 0){continue;}
-		for(int y=1;y>-2;y--){
-			if(y == 0){continue;}
-			for(int z=-1;z<2;z++){
-				if(z == 0){continue;}
-				if(worldGetB(e->pos.x+x,e->pos.y+y,e->pos.z+z) == 0){
-					e->pos = vecAdd(e->pos,vecNew(x,y,z));
-					addPriorityItemDrop(i);
-					return 0;
-				}
-			}
+	for(int x=-1;x<2;x+=2){
+	for(int y=1;y>-2;y-=2){
+	for(int z=-1;z<2;z+=2){
+		if(worldGetB(e->pos.x+x,e->pos.y+y,e->pos.z+z) == 0){
+			e->pos = vecAdd(e->pos,vecNew(x,y,z));
+			addPriorityItemDrop(i);
+			return 0;
 		}
+	}
+	}
 	}
 	return 1;
 }

@@ -29,6 +29,7 @@
 entity  entityList[1<<14];
 uint    entityCount = 0;
 entity *entityFirstFree = NULL;
+uint    entityUpdateCount = 0;
 
 void entityReset(entity *e){
 	memset(e,0,sizeof(entity));
@@ -99,8 +100,10 @@ static float entityBlockRepulsion(entity *c, float *vel){
 }
 
 int entityUpdate(entity *e){
-	int ret=0;
+	int ret = 0;
 	u32 col;
+	if((e->flags & ENTITY_SLOW_UPDATE) && (entityUpdateCount & 0xFF)){return 0;}
+	e->flags &= ~ENTITY_SLOW_UPDATE;
 	if(!worldShouldBeLoaded(e->pos)){return -1;}
 	if(!vecInWorld(e->pos))         {return  1;}
 	e->pos = vecAdd(e->pos,e->vel);
@@ -110,11 +113,14 @@ int entityUpdate(entity *e){
 		entityUpdateCurChungus(e);
 		return 0;
 	}
-
 	e->vel.y -= 0.0005f;
-	// ToDo: implement terminal veolocity in a better way
-	if(e->vel.y < -1.0f){e->vel.y+=0.005f;}
-	if(e->vel.y >  1.0f){e->vel.y-=0.005f;}
+	// ToDo: implement terminal velocity in a better way
+	if(e->vel.y < -1.0f){e->vel.y += 0.0007f;}
+	if(e->vel.y >  1.0f){e->vel.y -= 0.0007f;}
+	if(e->vel.x < -1.0f){e->vel.x += 0.0007f;}
+	if(e->vel.x >  1.0f){e->vel.x -= 0.0007f;}
+	if(e->vel.z < -1.0f){e->vel.z += 0.0007f;}
+	if(e->vel.z >  1.0f){e->vel.z -= 0.0007f;}
 
 	if(e->yoff > 0.01f){
 		e->yoff -= 0.01f;
@@ -182,9 +188,10 @@ int entityUpdate(entity *e){
 			e->yoff += -0.2f;
 		}else{
 			e->vel = vecMul(e->vel,vecNew(0.93f,0,0.93f));
-		}
-		if(fabsf(e->vel.y) < 0.001f){ // Still needed?
 			e->pos.y = floorf(e->pos.y)+.5f;
+			if(vecMag(e->vel) < 0.0001f){
+				e->flags |= ENTITY_SLOW_UPDATE;
+			}
 		}
 	}
 	col = entityCollision(e->pos);
@@ -235,6 +242,7 @@ void entityUpdateAll(){
 		}
 		entityList[i].flags &= ~ENTITY_UPDATED;
 	}
+	entityUpdateCount++;
 
 	PROFILE_STOP();
 }

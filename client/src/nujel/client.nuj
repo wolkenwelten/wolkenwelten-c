@@ -24,6 +24,7 @@
 	"Print its arguments into the LISP console"
 	[console-print ["  " [apply cat ...args]]]
 ]]
+[def print log]
 
 [def conf-v1! [λ [@...body]
 	"Wrapper for auto generated config s-expressions, will be overwritten on every optionsave"

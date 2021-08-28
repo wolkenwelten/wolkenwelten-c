@@ -93,6 +93,8 @@ typedef struct {
 #define ENTITY_UPDATED     (1<<2)
 #define ENTITY_COLLIDE     (1<<3)
 #define ENTITY_NOREPULSION (1<<4)
+#define ENTITY_SLOW_UPDATE (1<<5)
+
 
 typedef struct {
 	being a,b;
