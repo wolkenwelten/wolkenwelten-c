@@ -73,9 +73,9 @@ bool projectileNewC(const character *c, being target, uint style){
 	const float pitch = c->rot.pitch + (rngValf()-0.5f)*inacc;
 	float speed = 0.5f;
 	if(style == 5){
-		speed = 0.3f;
+		speed = 0.1f;
 	}else if(style == 6){
-		speed = 0.4f;
+		speed = 0.2f;
 	}
 
 	return projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style,speed);
