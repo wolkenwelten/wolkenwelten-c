@@ -91,6 +91,10 @@ static lVal *wwlnfIDCount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(itemDropGetActive());
 }
+static lVal *wwlnfIDSlowCount(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValInt(itemDropGetSlow());
+}
 static lVal *wwlnfIDFlush(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	for(int i=itemDropCount-1;i>=0;i--){
@@ -497,6 +501,7 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"fire-count",     "()",                                           "Returns fire count",                                         wwlnfFCount);
 	lAddNativeFunc(c,"mining-count",   "()",                                           "Returns block mining count",                                 wwlnfBMCount);
 	lAddNativeFunc(c,"item-drop-count","()",                                           "Returns item drop count",                                    wwlnfIDCount);
+	lAddNativeFunc(c,"item-drop-slow", "()",                                           "Returns amount of itemDrops that have the slow update bit",  wwlnfIDSlowCount);
 	lAddNativeFunc(c,"item-drop-flush!","()",                                          "Remove all itemDrops",                                       wwlnfIDFlush);
 	lAddNativeFunc(c,"entity-count",   "()",                                           "Returns entity count",                                       wwlnfECount);
 	lAddNativeFunc(c,"chungus-count",  "()",                                           "Returns chungus count",                                      wwlnfChungi);

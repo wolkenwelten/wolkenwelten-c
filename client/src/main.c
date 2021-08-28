@@ -147,7 +147,6 @@ void worldUpdate(){
 		charactersUpdate();
 		grenadeUpdateAll();
 		animalUpdateAll();
-		entityUpdateAll();
 		itemDropUpdateAll();
 		particleUpdate();
 		ropeUpdateAll();
@@ -158,6 +157,7 @@ void worldUpdate(){
 		rainUpdateAll();
 		throwableUpdateAll();
 		throwableCheckPickup();
+		entityUpdateAll();
 		lispEvents();
 
 		calls++;

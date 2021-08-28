@@ -9,4 +9,5 @@ void      itemDropBounceP      (uint c, const packet *p);
 void      itemDropUpdateFire   (uint i);
 uint      itemDropUpdatePlayer (uint c, uint offset);
 uint      itemDropGetActive    ();
+uint      itemDropGetSlow      ();
 void      itemDropUpdateMsg    (u8 c,uint i);

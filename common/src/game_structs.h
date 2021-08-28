@@ -95,7 +95,6 @@ typedef struct {
 #define ENTITY_NOREPULSION (1<<4)
 #define ENTITY_SLOW_UPDATE (1<<5)
 
-
 typedef struct {
 	being a,b;
 	float length;

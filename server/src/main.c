@@ -35,6 +35,7 @@
 #include "voxel/chunk.h"
 #include "network/server.h"
 
+#include "../../common/src/game/entity.h"
 #include "../../common/src/game/itemType.h"
 #include "../../common/src/game/time.h"
 #include "../../common/src/nujel/nujel.h"
@@ -119,6 +120,7 @@ static void updateWorldStep(){
 	weatherUpdateAll();
 	rainUpdateAll();
 	throwableUpdateAll();
+	entityUpdateAll();
 
 	gtimeUpdate();
 }

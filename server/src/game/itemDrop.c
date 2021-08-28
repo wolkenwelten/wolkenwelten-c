@@ -200,8 +200,9 @@ void itemDropUpdateAll(){
 		entity *e = itemDropList[i].ent;
 		if(e == NULL){continue;}
 		const int ret = entityUpdate(e);
+		(void)ret;
 
-		if((ret < 0) || (itemDropList[i].itm.amount < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i) || (e->pos.y < 0)){
+		if((ret < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i)){
 			itemDropDel(i);
 			addPriorityItemDrop(i);
 			continue;
@@ -258,4 +259,14 @@ void itemDropUpdateFire(uint i){
 
 uint itemDropGetActive(){
 	return itemDropCount;
+}
+
+uint itemDropGetSlow(){
+	uint ret = 0;
+	for(uint i=0;i<itemDropCount;i++){
+		entity *e = itemDropList[i].ent;
+		if(e == NULL){continue;}
+		if(e->flags & ENTITY_SLOW_UPDATE){ret++;}
+	}
+	return ret;
 }

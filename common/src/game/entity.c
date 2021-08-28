@@ -102,7 +102,7 @@ static float entityBlockRepulsion(entity *c, float *vel){
 int entityUpdate(entity *e){
 	int ret = 0;
 	u32 col;
-	if((e->flags & ENTITY_SLOW_UPDATE) && (entityUpdateCount & 0xFF)){return 0;}
+	if((e->flags & ENTITY_SLOW_UPDATE) && (entityUpdateCount & 0x3F)){return 0;}
 	e->flags &= ~ENTITY_SLOW_UPDATE;
 	if(!worldShouldBeLoaded(e->pos)){return -1;}
 	if(!vecInWorld(e->pos))         {return  1;}
@@ -189,15 +189,12 @@ int entityUpdate(entity *e){
 		}else{
 			e->vel = vecMul(e->vel,vecNew(0.93f,0,0.93f));
 			e->pos.y = floorf(e->pos.y)+.5f;
-			if(vecMag(e->vel) < 0.0001f){
+			if(vecMag(e->vel) < 0.001f){
 				e->flags |= ENTITY_SLOW_UPDATE;
 			}
 		}
 	}
 	col = entityCollision(e->pos);
-	if((col & 0xFFF) == 0xFFF){
-		e->pos.y += 1.f;
-	}
 
 	entityUpdateCurChungus(e);
 	return ret;
