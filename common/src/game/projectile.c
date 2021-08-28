@@ -19,6 +19,7 @@
 
 #include "../game/animal.h"
 #include "../game/being.h"
+#include "../game/blockType.h"
 #include "../game/character.h"
 #include "../game/fire.h"
 #include "../misc/profiling.h"
@@ -70,11 +71,11 @@ bool projectileNewC(const character *c, being target, uint style){
 	const float inacc = MIN(96.f,(c->inaccuracy*0.2f)) / c->zoomFactor;
 	const float yaw   = c->rot.yaw   + (rngValf()-0.5f)*inacc;
 	const float pitch = c->rot.pitch + (rngValf()-0.5f)*inacc;
-	float speed = 2.f;
+	float speed = 0.5f;
 	if(style == 5){
-		speed = 0.4f;
+		speed = 0.3f;
 	}else if(style == 6){
-		speed = 0.5f;
+		speed = 0.4f;
 	}
 
 	return projectileNew(pos,vecNew(yaw,pitch,0),target,characterGetBeing(c),style,speed);
@@ -120,6 +121,32 @@ int projectileSelfHitCheck(projectile *p, float mdd, being source){
 	return 0;
 }
 
+static int projectileBounce(projectile *p, u8 b){
+	blockCategory bc = blockTypeGetCat(b);
+	if(bc != STONE){return 1;}
+	const float px  = (p->pos.x - floorf(p->pos.x))-0.5f;
+	const float py  = (p->pos.y - floorf(p->pos.y))-0.5f;
+	const float pz  = (p->pos.z - floorf(p->pos.z))-0.5f;
+	const float apx = fabsf(px);
+	const float apy = fabsf(py);
+	const float apz = fabsf(pz);
+	if((apx > apy) && (apx > apz)){
+		p->vel.x *= -0.98f;
+	}
+	if((apy > apx) && (apy > apz)){
+		p->vel.y *= -0.98f;
+	}
+	if((apz > apy) && (apz > apx)){
+		p->vel.z *= -0.98f;
+	}
+	p->vel = vecMulS(p->vel,0.8f);
+	p->pos = vecAdd(p->pos,p->vel);
+	p->pos = vecAdd(p->pos,p->vel);
+	p->source = 0;
+	if(checkCollision(p->pos.x,p->pos.y,p->pos.z)){return 1;}
+	return 0;
+}
+
 static inline int projectileUpdate(projectile *p){
 	static uint iteration = 0;
 	if(--p->ttl < 0){return 1;}
@@ -139,7 +166,8 @@ static inline int projectileUpdate(projectile *p){
 	if(characterHitCheck (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
 	if(animalHitCheck    (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
 	if((p->style == 6) && fireHitCheck(p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
-	if(checkCollision(p->pos.x,p->pos.y,p->pos.z)){return 1;}
+	const u8 b = worldGetB(p->pos.x,p->pos.y,p->pos.z);
+	if(b){return projectileBounce(p,b);}
 	if(p->target != 0){return projectileHomeIn(p);}
 	return 0;
 }
@@ -167,7 +195,6 @@ void projectileUpdateAll(){
 			}
 		}
 	}
-
 	PROFILE_STOP();
 }
 
