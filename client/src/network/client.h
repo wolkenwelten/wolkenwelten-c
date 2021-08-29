@@ -23,5 +23,5 @@ void  closeSingleplayerServer  ();
 void  msgSendPlayerPos         ();
 void  decompressPacket         (const packet *p);
 void  clientParsePacket        (const packet *p);
-void  queueToServer            (const void *data, unsigned int len);
+void  queueToServer            (const void *data, uint len);
 char *clientGetServerExecutable();

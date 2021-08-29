@@ -3,13 +3,13 @@
 
 void    shaderInit();
 void    shaderFree();
-shader *shaderNew        (const char *vss,const char *fss,unsigned int attrMask);
+shader *shaderNew        (const char *vss,const char *fss,uint attrMask);
 void    shaderBind       (shader *s);
 void    shaderMatrix     (shader *s, float mvp[16]);
 void    shaderAlpha      (shader *s, float alpha);
 void    shaderBrightness (shader *s, float v);
 void    shaderSideTint   (shader *s, const vec v);
-void    shaderTransform  (shader *s, float x,float y,float z);
+void    shaderTransform  (shader *s, float x, float y, float z);
 void    shaderSizeMul    (shader *s, float sizeMul);
 
 extern shader *sMesh;

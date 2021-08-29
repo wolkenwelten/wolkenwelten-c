@@ -251,7 +251,7 @@ void lStringFree(u32 v){
 	lStringFFree = v;
 }
 
-u32 lStringNew(const char *str, unsigned int len){
+u32 lStringNew(const char *str, uint len){
 	const u32 i = lStringAlloc();
 	if(i == 0){return 0;}
 	lString *s = &lStringList[i & STR_MASK];
@@ -1106,7 +1106,7 @@ static void lAddCoreFuncs(lClosure *c){
 	lAddNativeFunc(c,"random-seed!","[seed]",       "Set the Random Number Generator Seed to SEED",lnfRandomSeedSet);
 }
 
-extern unsigned char src_tmp_stdlib_nuj_data[];
+extern u8 src_tmp_stdlib_nuj_data[];
 
 lClosure *lClosureNewRoot(){
 	const uint ci = lClosureAlloc();

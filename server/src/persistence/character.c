@@ -119,7 +119,7 @@ static int characterLoadData(character *p, const char *pName){
 	if((b == NULL) || (len == 0)){return 0;}
 
 	line = b;
-	for(unsigned int i=0;i<len;i++){
+	for(uint i=0;i<len;i++){
 		if(b[i] == '\r'){b[i] = 0;}
 		if(b[i] == '\n'){
 			b[i] = 0;

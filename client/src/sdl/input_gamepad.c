@@ -34,8 +34,8 @@ bool sdlGamepadEverPressed  = false;
 SDL_GameController *gamepad = NULL;
 SDL_Haptic *haptic          = NULL;
 
-int gamepadI                = -1;
-unsigned int hapticStart    =  0;
+int  gamepadI               = -1;
+uint hapticStart            =  0;
 
 bool  gamepadActive         = false;
 float gamepadLeftAxisX      = 0.f;
@@ -171,7 +171,7 @@ void doGamepadMenuUpdate(){
 }
 
 vec doGamepadupdate(vec vel){
-	static unsigned int lastDown[16] = {0};
+	static uint lastDown[16] = {0};
 	if(!gamepadActive){return vel;}
 	if(isInventoryOpen() || ((widgetFocused != NULL) && (widgetFocused->type != wGameScreen))){
 		doGamepadMenuUpdate();
@@ -189,7 +189,7 @@ vec doGamepadupdate(vec vel){
 			characterRotate(player,vecNew(mx,my,0));
 		}
 	}
-	unsigned int curticks = getTicks();
+	uint curticks = getTicks();
 
 	if(!gamepadButtons[0]){
 		lastDown[0] = 0;
@@ -245,7 +245,7 @@ vec doGamepadupdate(vec vel){
 		gamepadButtons[13] = false;
 
 		if(!isInventoryOpen()){
-			unsigned int nai = player->activeItem-1;
+			uint nai = player->activeItem-1;
 			if(nai > 9){nai=9;}
 			characterSetActiveItem(player,nai);
 		}
@@ -254,7 +254,7 @@ vec doGamepadupdate(vec vel){
 		gamepadButtons[14] = false;
 
 		if(!isInventoryOpen()){
-			unsigned int nai = player->activeItem+1;
+			uint nai = player->activeItem+1;
 			if(nai > 9){nai=0;}
 			characterSetActiveItem(player,nai);
 		}

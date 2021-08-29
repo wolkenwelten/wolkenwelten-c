@@ -59,7 +59,7 @@ static void meshDrawVBO(const mesh *m){
 	drawCallCount++;
 }
 
-static void meshFinish(mesh *m, unsigned int usage){
+static void meshFinish(mesh *m, uint usage){
 	if(m->dataCount == 0){return;}
 	if(!m->vao) {
 		glGenVertexArrays(1, &m->vao);

@@ -46,14 +46,14 @@ const char *base64_encode(const u8 *data,uint input_length,const char *prefix){
 	}
 
 	if ((output_length+j) >= sizeof(encoded_data)){
-		fprintf(stderr,"b64 too big ol:%i j:%i >= ed:%u\n",output_length,j,(unsigned int)sizeof(encoded_data));
+		fprintf(stderr,"b64 too big ol:%i j:%i >= ed:%u\n",output_length,j,(uint)sizeof(encoded_data));
 		return NULL;
 	}
 
 	for (i = 0; i < input_length;) {
-		a = i < input_length ? (unsigned char)data[i++] : 0;
-		b = i < input_length ? (unsigned char)data[i++] : 0;
-		c = i < input_length ? (unsigned char)data[i++] : 0;
+		a = i < input_length ? (u8)data[i++] : 0;
+		b = i < input_length ? (u8)data[i++] : 0;
+		c = i < input_length ? (u8)data[i++] : 0;
 
 		triple = (a << 0x10) | (b << 0x08) | c;
 
@@ -118,7 +118,7 @@ void serverParseWebSocketPacket(uint i){
 
 		ii += mlen;
 		if(clients[i].recvWSBufLen != ii){
-			for(unsigned int iii=0;iii < (clients[i].recvWSBufLen - ii);++iii){
+			for(uint iii=0;iii < (clients[i].recvWSBufLen - ii);++iii){
 				clients[i].recvWSBuf[iii] = clients[i].recvWSBuf[iii+ii];
 			}
 		}
@@ -136,7 +136,7 @@ void serverParseWebSocketHeaderField(uint c,const char *key, const char *val){
 	len = snprintf(buf,sizeof(buf),"%s%s",val,"258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
 
 	SHA1Init(&ctx);
-	SHA1Update(&ctx,(unsigned char *)buf,len);
+	SHA1Update(&ctx,(u8 *)buf,len);
 	SHA1Final(webSocketKeyHash,&ctx);
 	b64hash = base64_encode(webSocketKeyHash,20,NULL);
 

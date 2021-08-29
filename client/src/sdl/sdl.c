@@ -107,7 +107,7 @@ void initSDL(){
 	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS,"0");
 	uint initFlags = SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS | SDL_INIT_AUDIO;
 	if(SDL_Init( initFlags) < 0){
-		fprintf(stderr, "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
+		fprintf(stderr, "[CLI] SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
 		exit(1);
 	}
 
@@ -123,7 +123,7 @@ void initSDL(){
 	#endif
 	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &GLVersionMajor);
 	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &GLVersionMinor);
-	printf("Created an OpenGL %u.%u context.\n",GLVersionMajor,GLVersionMinor);
+	printf("[CLI] Created an OpenGL %u.%u context.\n",GLVersionMajor,GLVersionMinor);
 
 	int cwflags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_GRABBED;
 	#ifdef __EMSCRIPTEN__
@@ -152,14 +152,14 @@ void initSDL(){
 
 	gWindow = SDL_CreateWindow( windowTitle, optionWindowX, optionWindowY, screenWidth, screenHeight, cwflags);
 	if( gWindow == NULL ) {
-		fprintf(stderr, "Window could not be created! SDL Error: %s\n", SDL_GetError() );
+		fprintf(stderr, "[CLI] Window could not be created! SDL Error: %s\n", SDL_GetError() );
 		exit(1);
 	}
 	SDL_SetWindowGrab(gWindow,SDL_FALSE);
 
 	gContext = SDL_GL_CreateContext( gWindow );
 	if( gContext == NULL ){
-		fprintf(stderr, "OpenGL context could not be created! SDL Error: %s\n", SDL_GetError() );
+		fprintf(stderr, "[CLI] OpenGL context could not be created! SDL Error: %s\n", SDL_GetError() );
 		exit(1);
 	}
 	#ifndef __HAIKU__
@@ -274,11 +274,11 @@ void setRelativeMouseMode(bool ra){
 	SDL_SetRelativeMouseMode(ra == true ? SDL_TRUE : SDL_FALSE);
 }
 
-unsigned int getMouseState(int *mx, int *my){
+uint getMouseState(int *mx, int *my){
 	return SDL_GetMouseState(mx,my);
 }
 
-unsigned int getTicks(){
+uint getTicks(){
 	return SDL_GetTicks();
 }
 

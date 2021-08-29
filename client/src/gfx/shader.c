@@ -21,9 +21,9 @@
 #include <stdio.h>
 #include <string.h>
 
-shader shaderList[8];
-int    shaderCount = 0;
-unsigned int activeProgram = 0;
+shader  shaderList[8];
+int     shaderCount = 0;
+uint    activeProgram = 0;
 shader *sMesh;
 shader *sShadow;
 shader *sBlockMesh;
@@ -33,22 +33,22 @@ shader *sTextMesh;
 shader *sCloud;
 shader *sBoundary;
 
-extern unsigned char src_shader_boundaryShaderFS_glsl_data[];
-extern unsigned char src_shader_boundaryShaderVS_glsl_data[];
-extern unsigned char src_shader_blockShaderFS_glsl_data[];
-extern unsigned char src_shader_blockShaderVS_glsl_data[];
-extern unsigned char src_shader_cloudShaderFS_glsl_data[];
-extern unsigned char src_shader_cloudShaderVS_glsl_data[];
-extern unsigned char src_shader_meshShaderFS_glsl_data[];
-extern unsigned char src_shader_meshShaderVS_glsl_data[];
-extern unsigned char src_shader_particleShaderFS_glsl_data[];
-extern unsigned char src_shader_particleShaderVS_glsl_data[];
-extern unsigned char src_shader_rainShaderFS_glsl_data[];
-extern unsigned char src_shader_rainShaderVS_glsl_data[];
-extern unsigned char src_shader_shadowShaderFS_glsl_data[];
-extern unsigned char src_shader_shadowShaderVS_glsl_data[];
-extern unsigned char src_shader_textShaderFS_glsl_data[];
-extern unsigned char src_shader_textShaderVS_glsl_data[];
+extern u8 src_shader_boundaryShaderFS_glsl_data[];
+extern u8 src_shader_boundaryShaderVS_glsl_data[];
+extern u8 src_shader_blockShaderFS_glsl_data[];
+extern u8 src_shader_blockShaderVS_glsl_data[];
+extern u8 src_shader_cloudShaderFS_glsl_data[];
+extern u8 src_shader_cloudShaderVS_glsl_data[];
+extern u8 src_shader_meshShaderFS_glsl_data[];
+extern u8 src_shader_meshShaderVS_glsl_data[];
+extern u8 src_shader_particleShaderFS_glsl_data[];
+extern u8 src_shader_particleShaderVS_glsl_data[];
+extern u8 src_shader_rainShaderFS_glsl_data[];
+extern u8 src_shader_rainShaderVS_glsl_data[];
+extern u8 src_shader_shadowShaderFS_glsl_data[];
+extern u8 src_shader_shadowShaderVS_glsl_data[];
+extern u8 src_shader_textShaderFS_glsl_data[];
+extern u8 src_shader_textShaderVS_glsl_data[];
 
 void shaderInit(){
 	sMesh      = shaderNew((const char *)src_shader_meshShaderVS_glsl_data,     (const char *)src_shader_meshShaderFS_glsl_data,     0x3);
@@ -61,7 +61,7 @@ void shaderInit(){
 	sBoundary  = shaderNew((const char *)src_shader_boundaryShaderVS_glsl_data, (const char *)src_shader_boundaryShaderFS_glsl_data, 0x5);
 }
 
-void shaderPrintLog(unsigned int obj, const char *msg, const char *src){
+void shaderPrintLog(uint obj, const char *msg, const char *src){
 	int infologLength = 0;
 	int maxLength;
 
@@ -163,7 +163,7 @@ void shaderCompile(shader *s){
 	s->lSizeMul    = glGetUniformLocation(s->pID,"sizeMul");
 }
 
-shader *shaderNew(const char *vss,const char *fss,unsigned int attrMask){
+shader *shaderNew(const char *vss,const char *fss,uint attrMask){
 	shader *s = &shaderList[shaderCount++];
 	s->vss      = (char *)vss;
 	s->fss      = (char *)fss;
@@ -220,7 +220,7 @@ void shaderSideTint(shader *s, const vec v){
 	glUniform3f(s->lSideTint,v.x,v.y,v.z);
 }
 
-void shaderTransform(shader *s,float x,float y,float z){
+void shaderTransform(shader *s, float x, float y, float z){
 	if(s->lTransform == -1){ return; }
 	glUniform3f(s->lTransform,x,y,z);
 }

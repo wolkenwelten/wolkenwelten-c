@@ -463,7 +463,7 @@ void serverParsePacket(uint i){
 
 	for(int max=64;max > 0;--max){
 		if((clients[i].recvBufLen-off) < 4)     {break; }
-		unsigned int pLen = packetLen((packet *)(clients[i].recvBuf+off));
+		uint pLen = packetLen((packet *)(clients[i].recvBuf+off));
 		if((pLen+4) > clients[i].recvBufLen-off){break; }
 		serverParseSinglePacket(i,(packet *)(clients[i].recvBuf+off));
 		off += pLen+4;

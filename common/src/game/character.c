@@ -162,7 +162,7 @@ void characterAddInaccuracy(character *c, float inc){
 
 int characterGetItemAmount(const character *c, u16 itemID){
 	int amount = 0;
-	for(unsigned int i=0;i<c->inventorySize;i++){
+	for(uint i=0;i<c->inventorySize;i++){
 		if(c->inventory[i].ID == itemID){
 			amount += c->inventory[i].amount;
 		}

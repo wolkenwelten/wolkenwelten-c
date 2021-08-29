@@ -42,29 +42,29 @@ texture *tSteelrope;
 texture *tBlockMining;
 texture *tWolkenwelten;
 
-extern unsigned  int gfx_blocks_png_len;
-extern unsigned char gfx_blocks_png_data[];
+extern uint gfx_blocks_png_len;
+extern u8   gfx_blocks_png_data[];
 
-extern unsigned  int gfx_crosshair_png_len;
-extern unsigned char gfx_crosshair_png_data[];
+extern uint gfx_crosshair_png_len;
+extern u8   gfx_crosshair_png_data[];
 
-extern unsigned  int gfx_cursor_png_len;
-extern unsigned char gfx_cursor_png_data[];
+extern uint gfx_cursor_png_len;
+extern u8   gfx_cursor_png_data[];
 
-extern unsigned  int gfx_gui_png_len;
-extern unsigned char gfx_gui_png_data[];
+extern uint gfx_gui_png_len;
+extern u8   gfx_gui_png_data[];
 
-extern unsigned  int gfx_mining_png_len;
-extern unsigned char gfx_mining_png_data[];
+extern uint gfx_mining_png_len;
+extern u8   gfx_mining_png_data[];
 
-extern unsigned  int gfx_rope_png_len;
-extern unsigned char gfx_rope_png_data[];
+extern uint gfx_rope_png_len;
+extern u8   gfx_rope_png_data[];
 
-extern unsigned  int gfx_steelrope_png_len;
-extern unsigned char gfx_steelrope_png_data[];
+extern uint gfx_steelrope_png_len;
+extern u8   gfx_steelrope_png_data[];
 
-extern unsigned  int gfx_wolkenwelten_png_len;
-extern unsigned char gfx_wolkenwelten_png_data[];
+extern uint gfx_wolkenwelten_png_len;
+extern u8   gfx_wolkenwelten_png_data[];
 
 static void textureLoadSurface(texture *t, uint w, uint h, const void *data){
 	t->w = w;
@@ -76,7 +76,7 @@ static void textureLoadSurface(texture *t, uint w, uint h, const void *data){
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
 
-static void textureLoad(texture *t, const u8 *data, const unsigned int dataLen){
+static void textureLoad(texture *t, const u8 *data, const uint dataLen){
 	u8 *pixels = NULL;
 	if(lodepng_decode32(&pixels, &t->w, &t->h, data, dataLen)){
 		fprintf(stderr,"Error decoding PNG\n");
@@ -99,7 +99,7 @@ static void textureGetTile(texture *t, u8 *pixels, u8 *pbuf, int iw, int tx, int
 	}
 }
 
-static void textureLoadArray(texture *t, const u8 *data, const unsigned int dataLen){
+static void textureLoadArray(texture *t, const u8 *data, const uint dataLen){
 	u8 *pixels = NULL;
 	u8 *pbuf = NULL;
 	uint iw,ih,itw,ith;
@@ -129,7 +129,7 @@ static void textureLoadArray(texture *t, const u8 *data, const unsigned int data
 	free(pbuf);
 }
 
-texture *textureNew(const u8 *data, unsigned int dataLen,const char *filename){
+texture *textureNew(const u8 *data, uint dataLen,const char *filename){
 	texture *tex = &textureList[textureCount++];
 	tex->filename = filename;
 	tex->ID = 0;
@@ -138,7 +138,7 @@ texture *textureNew(const u8 *data, unsigned int dataLen,const char *filename){
 	return tex;
 }
 
-texture *textureNewArray(const u8 *data, unsigned int dataLen,const char *filename, int d){
+texture *textureNewArray(const u8 *data, uint dataLen,const char *filename, int d){
 	texture *tex = &textureList[textureCount++];
 	tex->filename = filename;
 	tex->ID = 0;
@@ -197,7 +197,7 @@ void textureBuildBlockIcons(int loadFromFile){
 	u32 *tblocks, *tgui;
 	uint bw,bh,iw,ih;
 
-	unsigned int blocks_len,gui_len;
+	uint blocks_len,gui_len;
 	void *blocks_data,*gui_data;
 
 	if(loadFromFile){
@@ -213,8 +213,8 @@ void textureBuildBlockIcons(int loadFromFile){
 		gui_len     = gfx_gui_png_len;
 	}
 
-	lodepng_decode32((unsigned char **)&tblocks, &bw, &bh, blocks_data, blocks_len);
-	lodepng_decode32((unsigned char **)&tgui, &iw, &ih, gui_data, gui_len);
+	lodepng_decode32((u8 **)&tblocks, &bw, &bh, blocks_data, blocks_len);
+	lodepng_decode32((u8 **)&tgui, &iw, &ih, gui_data, gui_len);
 
 	if(loadFromFile){
 		free(blocks_data);
@@ -227,44 +227,44 @@ void textureBuildBlockIcons(int loadFromFile){
 		const int dy = (i >> 5)   << 5;
 		int sx,sy;
 		for(int y=0;y<32;y++){
-			for(int x=0;x<32;x++){
-				tgui[((y+dy)*iw) | (x+dx)] = 0x000000FF;
-			}
+		for(int x=0;x<32;x++){
+			tgui[((y+dy)*iw) | (x+dx)] = 0x000000FF;
+		}
 		}
 		sx = blockTypeGetTexX(i,0) << 5;
 		sy = blockTypeGetTexY(i,0) << 5;
 		for(int y=0;y<16;y++){
-			for(int x=0;x<16;x++){
-				const u32 c = interpol(
-					tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)  )],
-					tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)+1)],
-					tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)  )],
-					tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)+1)]
-				);
-				tgui[((y+dy+8+(x>>1))*iw) | (x+dx)] = darken(c);
-			}
+		for(int x=0;x<16;x++){
+			const u32 c = interpol(
+				tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)  )],
+				tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)+1)],
+				tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)  )],
+				tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)+1)]
+			);
+			tgui[((y+dy+8+(x>>1))*iw) | (x+dx)] = darken(c);
+		}
 		}
 		sx = blockTypeGetTexX(i,4) << 5;
 		sy = blockTypeGetTexY(i,4) << 5;
 		for(int y=0;y<16;y++){
-			for(int x=0;x<16;x++){
-				const u32 c = interpol(
-					tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)  )],
-					tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)+1)],
-					tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)  )],
-					tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)+1)]
-				);
-				tgui[((y+dy+8+(7-(x>>1)))*iw) | (x+dx+16)] = darken(c);
-			}
+		for(int x=0;x<16;x++){
+			const u32 c = interpol(
+				tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)  )],
+				tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)+1)],
+				tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)  )],
+				tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)+1)]
+			);
+			tgui[((y+dy+8+(7-(x>>1)))*iw) | (x+dx+16)] = darken(c);
+		}
 		}
 		sx = blockTypeGetTexX(i,2) << 5;
 		sy = blockTypeGetTexY(i,2) << 5;
 		for(int y=0;y<32;y++){
-			for(int x=0;x<32;x++){
-				int ndx = 16 + (x>>1) - (y >> 1);
-				int ndy = (x>>2) + (y>>2) + (x&1);
-				tgui[((ndy+dy)*iw) | (ndx+dx)] = tblocks[((sy+y)<<9) | (sx+x)];
-			}
+		for(int x=0;x<32;x++){
+			int ndx = 16 + (x>>1) - (y >> 1);
+			int ndy = (x>>2) + (y>>2) + (x&1);
+			tgui[((ndy+dy)*iw) | (ndx+dx)] = tblocks[((sy+y)<<9) | (sx+x)];
+		}
 		}
 	}
 	textureLoadSurface(tGui,iw,ih,tgui);

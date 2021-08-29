@@ -28,7 +28,7 @@ int sfxCount=0;
 
 #include "../tmp/sfx.h"
 
-sfx *sfxNew(const void *data, unsigned int dataLen, const char *lName){
+sfx *sfxNew(const void *data, uint dataLen, const char *lName){
 	sfx *b = &sfxList[sfxCount++];
 
 	b->chan = -1;
@@ -47,14 +47,14 @@ void sfxFree(sfx *b){
 	Mix_FreeChunk(b->mixChunk);
 }
 
-void sfxPlay(sfx *b,float volume){
+void sfxPlay(sfx *b, float volume){
 	if(b == NULL)       {return;}
 	if(volume < 0.001f) {return;}
 	b->chan = Mix_PlayChannel(-1,b->mixChunk,0);
 	Mix_Volume(b->chan,(int)(MIX_MAX_VOLUME*(optionSoundVolume*volume)));
 }
 
-void sfxPlayPos(sfx *b,float volume, const vec pos){
+void sfxPlayPos(sfx *b, float volume, const vec pos){
 	if(b == NULL)       {return;}
 	if(volume < 0.001f) {return;}
 	const float d = vecMag(vecSub(pos,player->pos));
