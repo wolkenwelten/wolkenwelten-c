@@ -53,8 +53,8 @@ bool projectileNew(const vec pos, const vec rot, being target, being source, uin
 	p->target = target;
 	p->source = source;
 	p->style  = style;
-	p->ttl    = ttl;
-	p->vel    = vecMulS(vecDegToVec(rot),speed);
+	p->ttl    = ttl*4;
+	p->vel    = vecMulS(vecDegToVec(rot),speed*0.25f);
 
 	projectileSendUpdate(-1,ID);
 	return false;
@@ -151,7 +151,7 @@ static inline int projectileUpdate(projectile *p){
 	static uint iteration = 0;
 	if(--p->ttl < 0){return 1;}
 	p->pos    = vecAdd(p->pos,p->vel);
-	p->vel.y -= 0.0005f;
+	p->vel.y -= 0.00003f;
 	--iteration;
 	float mdd = 1.f;
 
@@ -172,28 +172,33 @@ static inline int projectileUpdate(projectile *p){
 	return 0;
 }
 
+static void projectileStep(projectile *p){
+	if(p->style == 0){return;}
+	if(projectileUpdate(p)){
+		if(p->style == 6){
+			fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3, 128);
+			if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 2);}
+		}else if(p->style == 5){
+			fireBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,64);
+			if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 1);}
+		}else{
+			fireBox(p->pos.x,p->pos.y,p->pos.z,1,1,1,64);
+			if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 1);}
+		}
+		p->style = 0;
+		if(isClient){return;}
+		projectileSendUpdate(-1,p - projectileList);
+	}
+}
+
 void projectileUpdateAll(){
 	PROFILE_START();
-
 	for(uint i=0;i<countof(projectileList);i++){
 		projectile *p = &projectileList[i];
-		if(p->style == 0){continue;}
-		if(projectileUpdate(p)){
-			if(p->style == 6){
-				fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3, 128);
-				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 2);}
-			}else if(p->style == 5){
-				fireBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,64);
-				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 1);}
-			}else{
-				fireBox(p->pos.x,p->pos.y,p->pos.z,1,1,1,64);
-				if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 1);}
-			}
-			projectileList[i].style = 0;
-			if(!isClient){
-				projectileSendUpdate(-1,i);
-			}
-		}
+		projectileStep(p);
+		projectileStep(p);
+		projectileStep(p);
+		projectileStep(p);
 	}
 	PROFILE_STOP();
 }
