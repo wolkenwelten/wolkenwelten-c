@@ -907,7 +907,7 @@ void characterDamagePacket(character *c, const packet *p){
 
 		const vec pos = vecNewP(&p->v.f[3]);
 		vec dis = vecNorm(vecSub(c->pos,pos));
-		dis.y = MAX(0.4f,dis.y);
+		dis.y = MAX(0.1f,dis.y);
 		c->vel = vecAdd(c->vel,vecMulS(dis,0.05f * knockbackMult));
 	}
 	if(characterDamage(c,hp)){
@@ -924,8 +924,8 @@ void characterGotHitPacket(const packet *p){
 		nextOverlayColor(0xA03020F0,0);
 		const vec pos = vecNewP(&p->v.f[3]);
 		vec dist = vecNorm(vecSub(player->pos,pos));
-		dist.y = MAX(0.5f,dist.y);
-		player->vel = vecAdd(player->vel,vecMulS(dist,0.1f));
+		dist.y = MAX(0.4f,dist.y);
+		player->vel = vecAdd(player->vel,vecMulS(dist,0.02f));
 	}else{
 		if(beingID(target) > 32){return;}
 		c = playerList[beingID(target)];
@@ -997,7 +997,7 @@ int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 itera
 		vec dis = vecSub(pos,playerList[i]->pos);
 
 		if(vecDot(dis,dis) < mdd){
-			msgBeingDamage(0,damage,cause,1.f,beingCharacter(i),0,pos);
+			msgBeingDamage(0,damage,cause,0.01f,beingCharacter(i),0,pos);
 			playerList[i]->temp = iteration;
 			hits++;
 		}
