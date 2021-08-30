@@ -182,11 +182,12 @@ int entityUpdate(entity *e){
 		if(e->vel.y < -0.15f){
 			e->yoff = -0.8f;
 			ret += entityBlockRepulsion(e,&e->vel.y);
-		}else if(e->vel.y < -0.07f){
-			e->yoff += -0.4f;
-		}else if(e->vel.y < -0.04f){
-			e->yoff += -0.2f;
 		}else{
+			if(e->vel.y < -0.07f){
+				e->yoff += -0.4f;
+			}else if(e->vel.y < -0.04f){
+				e->yoff += -0.2f;
+			}
 			e->vel = vecMul(e->vel,vecNew(0.93f,0,0.93f));
 			e->pos.y = floorf(e->pos.y)+.5f;
 			if(vecMag(e->vel) < 0.001f){
