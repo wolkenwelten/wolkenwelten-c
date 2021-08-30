@@ -107,4 +107,5 @@
 ]]
 
 [event-bind "on-spawn" [λ [] [say [ansi-yellow "Better luck next time!"]]]]
-[event-bind "on-join" [λ [] [say [ansi-green "Welcome!"]]]]
+[event-bind "on-join" [λ [] [say [ansi-green "Press F2 for some equipment"]]]]
+[event-bind "on-join" [λ [] [say [ansi-green "Guten Tag!"]]]]

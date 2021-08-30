@@ -135,7 +135,7 @@
 	[set-eq! 1 i-hook]
 	[set-eq! 2 i-jetpack]
 
-	[set-inv! 0 i-blaster]
+	[set-inv! 0 i-flamethrower]
 	[set-inv! 1 i-masterblaster]
 	[set-inv! 2 i-assaultblaster]
 	[set-inv! 3 i-shotgun]
@@ -148,11 +148,15 @@
 	[set-inv! 9 i-clusterbomb 99]
 	;[set-inv! 9 i-grenade 99]
 
-	[set-inv! 10 i-crystalbullet 999]
-	[set-inv! 11 i-crystalbullet 999]
-	[set-inv! 12 i-crystalbullet 999]
-	[set-inv! 13 i-flamebullet 999]
-	[set-inv! 14 i-flamebullet 999]
-	[set-inv! 15 i-flamebullet 999]
-	[set-inv! 16 i-flintandsteel]
+	[set-inv! 10 i-blaster]
+	[set-inv! 11 i-waterthrower]
+	[set-inv! 12 i-flintandsteel]
+
+	[set-inv! 20 i-crystalbullet 999]
+	[set-inv! 21 i-crystalbullet 999]
+	[set-inv! 22 i-crystalbullet 999]
+	[set-inv! 23 i-flamebullet 999]
+	[set-inv! 24 i-flamebullet 999]
+	[set-inv! 25 i-flamebullet 999]
+
 ]]

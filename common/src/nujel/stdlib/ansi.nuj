@@ -34,7 +34,7 @@
 	"Wrap ARGS in dark red"
 	[ansi-wrap 1 [apply cat ...args]]
 ]]
-[def ansi-darkgreen [λ [...args]
+[def ansi-dark-green [λ [...args]
 	"Wrap ARGS in dark green"
 	[ansi-wrap 2 [apply cat ...args]]
 ]]
