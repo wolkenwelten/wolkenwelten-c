@@ -1,13 +1,12 @@
 1[def items [arr-new 256]]
 
-[def item-new-id]
-[let [[item-cur-id 256]]
-	[set! item-new-id [λ []
+[def item-new-id [let [[item-cur-id 256]]
+	[λ []
 		"Return an unused item ID"
 		[set! item-cur-id [+ item-cur-id 1]]
 		[- item-cur-id 1]
-	]]
-]
+	]
+]]
 
 [def item-sync [λ [obj] "Syncs the itemType with the ω OBJ"
 	[cond [[nil? obj] #f]

@@ -14,21 +14,20 @@
 	[console-print [apply cat ...args]]
 ]]
 
-[def help]
-[let []
+[def help [let []
 	[def iter [λ [l]
 		[cond [[nil? l] #t]
 		       [#t [say [describe [car l]]] [iter [cdr l]]
 		]]
 	]]
 
-	[set! help [λ [i]
+	[λ [i]
 		"Describe 10 functions at offset 1"
 		[let [[off [* [int i] 10]]]
 		[iter [map cat [symbol-table off 10]]]
 		[say ["Help page " [int i] " of " [/ [symbol-count] 10]]] #t]
-	]]
-]
+	]
+]]
 
 [def print [λ [...a]
 	"Print to everyone's chat"
@@ -75,8 +74,7 @@
 	[vz [player-pos]]
 ]]
 
-[def item-drop-stress]
-[let []
+[def item-drop-stress [let []
 	[def item-drop-stress-xz [λ [pos max x z]
 		[item-drop-new [+ [vec x -6 z] pos] i-crystals 1]
 		[when [< z max] [item-drop-stress-xz pos max x [+ 2 z]]]
@@ -85,11 +83,12 @@
 		[item-drop-stress-xz pos max x -max]
 		[when [< x max] [item-drop-stress-x pos max [+ 2 x]]]
 	]]
-	[set! item-drop-stress [λ [pos max]
+
+	[λ [pos max]
 		"Stress test the itemDrop code by generating a lot of them"
 		[item-drop-stress-x pos max -max]
-	]]
-]
+	]
+]]
 
 [def vx+ [λ [v a]
 	"Return the sum of vector v and [vec a 0 0]"

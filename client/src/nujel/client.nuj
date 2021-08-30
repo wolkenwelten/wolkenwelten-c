@@ -31,23 +31,22 @@
 	[eval [cons 'begin @...body]]
 ]]
 
-[def help]
-[let []
+[def help [let []
 	[def iter [λ [l]
 		[cond [[nil? l] #t]
 		      [#t [log [describe [car l]]] [iter [cdr l]]
 		]]
 	]]
 
-	[set help [λ [i]
+	[λ [i]
 		"Describes 10 functions at offset 1"
 		[let [[off [* [int i] 10]]]
 			[iter [map cat [symbol-table off 10]]]
 			[log ["Help page " [int i] " of " [/ [symbol-count] 10]]]
 		]
 		#t
-	]]
-]
+	]
+]]
 
 [def time/fast! [λ [a]
 	"Speeds up the game to about 4x"

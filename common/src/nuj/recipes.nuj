@@ -1,13 +1,12 @@
 ; All the Recipes
 
 [def recipes [arr-new 256]]
-[def recipe-new-id]
-[let [[recipe-cur-id 0]]
-	[set! recipe-new-id [λ []
+[def recipe-new-id [let [[recipe-cur-id 0]]
+	[λ []
 		"Returns an unused item ID"
 		[set! recipe-cur-id [+ recipe-cur-id 1]] [- recipe-cur-id 1]
-	]]
-]
+	]
+]]
 
 [def recipe-sync [λ [obj]
 	"Syncs the Recipe with the ω OBJ"

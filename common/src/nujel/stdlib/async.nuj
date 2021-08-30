@@ -7,8 +7,7 @@
 	#t
 ]]
 
-[def yield-run #f]
-[let []
+[def yield-run [let []
 	[def yield-try [λ [l]
 		[cond [[eval [car l]] [eval [cdr l]] #t]
 		      [#t #f]
@@ -23,10 +22,10 @@
 		]
 	]]
 
-	[set! yield-run [λ [] "Executes pending coroutines if their predicate evaluates to #t"
+	[λ [] "Executes pending coroutines if their predicate evaluates to #t"
 		[yield-run-iter yield-queue]
-	]]
-]
+	]
+]]
 
 [def timeout [λ [milliseconds] "Returns a function that evaluates to true once MILLISECONDS have passed"
 	[let [[goal [+ [time-milliseconds] milliseconds]]]

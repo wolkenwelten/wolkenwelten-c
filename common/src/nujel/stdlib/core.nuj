@@ -102,8 +102,7 @@
 	]
 ]]
 
-[def min]
-[let []
+[def min [let []
 	[def iter [λ [a l]
 		[cond [[nil? l] a]
 		      [[< a [car l]] [iter a [cdr l]]]
@@ -111,17 +110,16 @@
 		]
 	]]
 
-	[set! min [λ [...l]
+	[λ [...l]
 		"Returns the minimum value of its arguments"
 		[cond [[nil? ...l] 0]
 		      [[nil? [cdr ...l]] [car ...l]]
 		      [#t [iter [car ...l] [cdr ...l]]]
 		]
-	]]
-]
+	]
+]]
 
-[def max]
-[let []
+[def max [let []
 	[def iter [λ [a l]
 		[cond [[nil? l] a]
 		      [[> a [car l]] [iter a [cdr l]]]
@@ -129,14 +127,14 @@
 		]
 	]]
 
-	[set! max [λ [...l]
+	[λ [...l]
 		"Returns the maximum value of its arguments"
 		[cond [[nil? ...l] 0]
 		      [[nil? [cdr ...l]] [car ...l]]
 		      [#t [iter [car ...l] [cdr ...l]]]
 		]
-	]]
-]
+	]
+]]
 
 [def lognand [λ [...l]
 	"Returns the Nand of its arguments"
