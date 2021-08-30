@@ -125,7 +125,7 @@ void animalDelChungus(const chungus *c){
 
 u32 animalCollision(const vec c){
 	u32 col = 0;
-	float size = 2.f;
+	float size = 1.f;
 
 	if(checkCollision(c.x-0.3f*size,c.y     ,c.z          )){col |= 0x100;}
 	if(checkCollision(c.x+0.3f*size,c.y     ,c.z          )){col |= 0x200;}
@@ -189,7 +189,7 @@ void animalChaseTarget(animal *e){
 	if(e->state == ANIMAL_S_FLEE){
 		e->gvel.x  = -caVel.x;
 		e->gvel.z  = -caVel.z;
-		e->rot.yaw =  caRot.yaw;
+		e->rot.yaw = -caRot.yaw + 180;
 	}else{
 		e->gvel.x  =  caVel.x;
 		e->gvel.z  =  caVel.z;
@@ -199,6 +199,7 @@ void animalChaseTarget(animal *e){
 			e->gvel.z  = 0;
 		}
 	}
+	e->yoff = cosf(gameTicks * 0.1f) * 0.1f;
 }
 
 int animalUpdate(animal *e){

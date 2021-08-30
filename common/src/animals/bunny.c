@@ -115,7 +115,6 @@ static void bunnySHeat(animal *e,int stateChange[16]){
 		stateChange[ANIMAL_S_LOITER] += rngValA(1023);
 		return;
 	}
-
 	if(dist < 2.f){
 		if((cAnim->pregnancy < 0) && (e->pregnancy < 0)){
 			if(e->flags & ANIMAL_MALE){
@@ -206,9 +205,9 @@ static void bunnyFightOrFlight(animal *e,int stateChange[16]){
 		if(e->state == ANIMAL_S_PLAYING){fd = 15.f;}
 		if((cChar != NULL) && (dist < fd)){
 			if(e->state == ANIMAL_S_SLEEP){
-				stateChange[ANIMAL_S_FIGHT] += 4096 * (fd - dist);
+				stateChange[ANIMAL_S_FIGHT] += (1<<14) * (fd - dist) * (fd - dist);
 			}else{
-				stateChange[ANIMAL_S_FLEE] += 4096 * (fd - dist);
+				stateChange[ANIMAL_S_FLEE] += (1<<14) * (fd - dist) * (fd - dist);
 			}
 			return;
 		}

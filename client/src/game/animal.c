@@ -59,14 +59,14 @@ static void animalDraw(animal *e){
 	}else{
 		breath = cosf((float)e->breathing/256.f)*6.f;
 	}
-	float scale = MIN(2.f,1.f + ((float)e->age/20.f));
+	float scale = MIN(1.f,.5f + 0.5f * ((float)e->age/20.f));
 	if(e->type == 3){
 		const float sunlight = gtimeGetBrightness(gtimeGetTimeOfDay());
-		scale *= MAX(0.f,(((1.f - sunlight) - 1.f) * 10.f))+1.f;
+		scale *= MAX(0.f,(((1.f - sunlight) - 1.f) * 5.f))+1.f;
 	}
 
 	matMov      (matMVP,matView);
-	matMulTrans (matMVP,e->pos.x,e->pos.y,e->pos.z);
+	matMulTrans (matMVP,e->pos.x,e->pos.y + e->yoff,e->pos.z);
 	matMulRotYX (matMVP,e->rot.yaw,e->rot.pitch-breath);
 	matMulScale (matMVP,scale,scale,scale);
 	matMul      (matMVP,matMVP,matProjection);

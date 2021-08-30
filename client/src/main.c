@@ -82,6 +82,7 @@ bool gameRunning       = false;
 bool playerChunkActive = false;
 bool singleplayer      = false;
 bool chnkChngOverflow  = false;
+u64 gameTicks = 0;
 
 void signalQuit(int signo){
 	(void)signo;
@@ -135,7 +136,6 @@ void playerUpdate(){
 }
 
 void worldUpdate(){
-	static uint calls = 0;
 	static  int lastTick = 0;
 	int curTick;
 
@@ -152,7 +152,7 @@ void worldUpdate(){
 		ropeUpdateAll();
 		projectileUpdateAll();
 		gtimeUpdate();
-		fireCheckPlayerBurn(calls);
+		fireCheckPlayerBurn(gameTicks);
 		weatherUpdateAll();
 		rainUpdateAll();
 		throwableUpdateAll();
@@ -160,7 +160,7 @@ void worldUpdate(){
 		entityUpdateAll();
 		lispEvents();
 
-		calls++;
+		gameTicks++;
 	}
 	commitOverlayColor();
 }

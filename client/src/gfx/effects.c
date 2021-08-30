@@ -174,8 +174,8 @@ void fxAnimalDiedPacket (const packet *p){
 	sfxPlayPos(sfxBomb,0.3,pos);
 	sfxPlayPos(sfxUngh,0.6,pos);
 	for(int i=0;i<(512-(int)d);i++){
-		//const vec v  = vecMulS(vecRng(),0.06f);
-		//newParticleV(pos,v,64.f,1.f,0xFF44AAFF,64);
+		const vec v  = vecMulS(vecRng(),0.06f);
+		newParticleV(pos,v,64.f,1.f,0xFF44AAFF,64);
 	}
 	ropeDelBeing(t);
 }

@@ -59,6 +59,7 @@ bool quit = false;
 char *termColors[16];
 char *termReset;
 char *nop = "";
+u64 gameTicks = 0;
 
 u64 getTicks(){
 	struct timeval tv;
@@ -123,6 +124,7 @@ static void updateWorldStep(){
 	entityUpdateAll();
 
 	gtimeUpdate();
+	gameTicks++;
 }
 
 int updateWorld(){

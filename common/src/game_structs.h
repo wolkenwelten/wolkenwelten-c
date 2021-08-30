@@ -2,6 +2,7 @@
 #include "gfx_structs.h"
 #include "misc/side.h"
 
+extern u64 gameTicks;
 
 typedef struct sfx sfx;
 typedef struct bgm bgm;
@@ -176,6 +177,7 @@ typedef struct {
 	vec pos,vel,rot;
 	vec gvel,grot;
 	vec screenPos;
+	float yoff;
 
 	i8 age;
 	i8 health;
