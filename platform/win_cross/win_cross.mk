@@ -21,6 +21,7 @@ releases/win/wolkenwelten-win-$(VERSION_NAME).7z: $(WIN_RELDIR)/wolkenwelten-ser
 	cd releases/win/ && 7z a wolkenwelten-win-$(VERSION_NAME).7z wolkenwelten-win-$(VERSION_NAME)/
 
 $(WIN_RELDIR)/README.txt: common/README
+	@mkdir -p $(WIN_RELDIR)
 	cp $< $@
 
 $(WIN_RELDIR)/wolkenwelten.exe: $(CLIENT_SRCS)
