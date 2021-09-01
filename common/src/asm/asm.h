@@ -2,6 +2,8 @@
 
 extern int asmRoutineSupport;
 
+void asmDetermineSupport();
+
 void  particlePosUpdate();
 void sparticlePosUpdate();
 void      rainPosUpdate();

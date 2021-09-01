@@ -50,7 +50,6 @@ void asmDetermineSupport(){
 #endif
 
 void particlePosUpdate(){
-	if(asmRoutineSupport == 0){asmDetermineSupport();}
 	switch(asmRoutineSupport){
 	case 0:
 	case 1:
@@ -76,7 +75,6 @@ void particlePosUpdate(){
 }
 
 void sparticlePosUpdate(){
-	if(asmRoutineSupport == 0){asmDetermineSupport();}
 	switch(asmRoutineSupport){
 	case 0:
 	case 1:
@@ -102,7 +100,6 @@ void sparticlePosUpdate(){
 }
 
 void rainPosUpdate(){
-	if(asmRoutineSupport == 0){asmDetermineSupport();}
 	switch(asmRoutineSupport){
 	case 0:
 	case 1:

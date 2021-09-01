@@ -35,6 +35,7 @@
 #include "voxel/chunk.h"
 #include "network/server.h"
 
+#include "../../common/src/asm/asm.h"
 #include "../../common/src/game/entity.h"
 #include "../../common/src/game/itemType.h"
 #include "../../common/src/game/time.h"
@@ -201,6 +202,7 @@ static void checkSPQuit(){
 int main( int argc, const char* argv[] ){
 	setvbuf(stdout, NULL, _IONBF, 0);
 	setvbuf(stderr, NULL, _IONBF, 0);
+	asmDetermineSupport();
 	initSignals();
 
 	initTermColors();

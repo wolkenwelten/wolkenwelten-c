@@ -56,6 +56,7 @@
 #include "voxel/bigchungus.h"
 #include "voxel/chungus.h"
 
+#include "../../common/src/asm/asm.h"
 #include "../../common/src/game/item.h"
 #include "../../common/src/game/itemType.h"
 #include "../../common/src/game/time.h"
@@ -199,6 +200,7 @@ void checkAutostart(){
 int main( int argc, char* argv[] ){
 	setvbuf(stdout, NULL, _IONBF, 0);
 	setvbuf(stderr, NULL, _IONBF, 0);
+	asmDetermineSupport();
 	initSignals();
 	seedRNG(time(NULL));
 
