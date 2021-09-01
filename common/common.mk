@@ -13,7 +13,13 @@ WEBEXCLUDE       += --exclude=releases/win/*.res
 
 TEST_WORLD       := -worldSeed=68040 -savegame=Test
 
-ASM_OBJS         += common/src/asm/$(ARCH).o
+ASM_SRCS         := common/src/asm/$(ARCH).s
+
+ifneq ("$(wildcard $(ASM_SRCS))","")
+	ASM_OBJS := ${ASM_SRCS:.s=.o}
+else
+	ASM_SRCS :=
+endif
 
 $(COMMON_OBJS): | client/src/tmp/objs.h
 $(COMMON_OBJS): | client/src/tmp/sfx.h
