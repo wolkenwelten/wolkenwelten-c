@@ -1,6 +1,6 @@
 #pragma once
 #include "../../../common/src/common.h"
-#include "../../../common/src/nujel/nujel.h"
+#include "../../../common/nujel/lib/nujel.h"
 
 typedef struct {
 	u8 x,y,z,w;

@@ -22,7 +22,7 @@
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/game/itemType.h"
 #include "../../../common/src/misc/misc.h"
-#include "../../../common/src/nujel/nujel.h"
+#include "../../../common/nujel/lib/nujel.h"
 
 #include <stdarg.h>
 #include <stdio.h>

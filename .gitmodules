@@ -1,0 +1,3 @@
+[submodule "common/nujel"]
+	path = common/nujel
+	url = https://git.sr.ht/~melchizedek6809/Nujel

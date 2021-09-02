@@ -1,8 +1,0 @@
-; Some nujel string λs
-
-[def br [λ [&num]
-	"Return NUM=1 linebreaks"
-	[cond [[or [nil? &num] [<= [int &num] 1]] "\n"]
-	      [#t ["\n" [br [-- &num]]]]
-	]
-]]

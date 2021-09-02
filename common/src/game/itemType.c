@@ -17,7 +17,7 @@
 #include "itemType.h"
 
 #include "../misc/mesh.h"
-#include "../nujel/casting.h"
+#include "../../nujel/lib/casting.h"
 
 #include <stdio.h>
 #include <stdlib.h>

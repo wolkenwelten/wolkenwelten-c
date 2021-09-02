@@ -1,7 +1,6 @@
 ARCH             := $(shell uname -m)
-NUJ_STDLIB       := $(shell find common/src/nujel/stdlib/ -type f -name '*.nuj' | sort)
 NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj' | sort)
-COMMON_ASSETS    := common/src/tmp/stdlib.nuj common/src/tmp/wwlib.nuj
+COMMON_ASSETS    := common/src/tmp/wwlib.nuj
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
 COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
@@ -28,15 +27,13 @@ $(COMMON_OBJS): | server/src/tmp/assets.h
 $(COMMON_OBJS): | server/src/tmp/objs.h
 $(COMMON_OBJS): | server/src/tmp/sfx.h
 
+common/nujel/nujel.a: $(NUJEL)
+
 %.o: %.s
 	$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) $< -o $@
 
 %.o: %.c
 	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) $(if $(findstring client/, $<),$(CLIENT_CFLAGS) $(CLIENT_CINCLUDES),) -g -c $< -o $@ -MMD > ${<:.c=.d}
-
-common/src/tmp/stdlib.nuj: $(NUJ_STDLIB)
-	@mkdir -p common/src/tmp
-	cat $(NUJ_STDLIB) > $@
 
 common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
 	@mkdir -p common/src/tmp
@@ -53,6 +50,7 @@ $(ASSET): tools/assets.c
 
 .PHONY: clean
 clean:
+	$(MAKE) -C common/nujel clean
 	rm -f gmon.out client/tools/assets client/tools/objparser callgrind.out.* vgcore.* platform/win/wolkenwelten.res
 	rm -f client/sfx/*.ogg
 	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.o')

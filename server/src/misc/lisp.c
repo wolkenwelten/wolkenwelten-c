@@ -39,10 +39,10 @@
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/network/messages.h"
 
-#include "../../../common/src/nujel/nujel.h"
-#include "../../../common/src/nujel/casting.h"
-#include "../../../common/src/nujel/reader.h"
-#include "../../../common/src/nujel/string.h"
+#include "../../../common/nujel/lib/nujel.h"
+#include "../../../common/nujel/lib/casting.h"
+#include "../../../common/nujel/lib/reader.h"
+#include "../../../common/nujel/lib/string.h"
 
 #include <ctype.h>
 #include <stdarg.h>

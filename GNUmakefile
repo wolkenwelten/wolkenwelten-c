@@ -4,10 +4,10 @@ endif
 
 WOLKENWELTEN        := ./wolkenwelten
 WOLKENWELTEN_SERVER := ./wolkenwelten-server
-NUJEL               := ./nujel
+NUJEL               := ./common/nujel/nujel
 ASSET               := ./tools/assets
 ifeq ($(OS),Windows_NT)
-	NUJEL               := ./nujel.exe
+	NUJEL               := ./common/nujel/nujel.exe
 	ASSET               := ./tools/assets.exe
 	WOLKENWELTEN        := ./wolkenwelten.exe
 	WOLKENWELTEN_SERVER := ./wolkenwelten-server.exe
@@ -35,8 +35,10 @@ endif
 all: $(WOLKENWELTEN) $(WOLKENWELTEN_SERVER) $(NUJEL)
 .PHONY: all release .deps
 
+ $(NUJEL):
+	$(MAKE) -C common/nujel -j8
+
 include common/disable_implicit_rules.mk
-include nujel-standalone/nujel.mk
 include common/common.mk
 include client/client.mk
 include server/server.mk
@@ -44,7 +46,6 @@ include server/server.mk
 ifneq ($(MAKECMDGOALS),clean)
 -include $(CLIENT_DEPS)
 -include $(COMMON_DEPS)
--include $(NUJEL_DEPS)
 -include $(SERVER_DEPS)
 endif
 

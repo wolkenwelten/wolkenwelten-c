@@ -29,7 +29,7 @@
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
-#include "../../../common/src/nujel/casting.h"
+#include "../../../common/nujel/lib/casting.h"
 
 #include <stdio.h>
 

@@ -39,8 +39,10 @@
 #include "../../common/src/game/entity.h"
 #include "../../common/src/game/itemType.h"
 #include "../../common/src/game/time.h"
-#include "../../common/src/nujel/nujel.h"
-#include "../../common/src/nujel/string.h"
+
+#include "../../common/nujel/lib/nujel.h"
+#include "../../common/nujel/lib/string.h"
+
 #include "../../common/src/cto.h"
 #include "../../common/src/misc/misc.h"
 #include "../../common/src/misc/profiling.h"

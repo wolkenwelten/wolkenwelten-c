@@ -1,6 +1,6 @@
 #pragma once
 #include "../common.h"
-#include "../nujel/nujel.h"
+#include "../../nujel/lib/nujel.h"
 
 extern itemType itemTypes[256];
 

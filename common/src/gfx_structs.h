@@ -1,6 +1,7 @@
 #pragma once
 #include "stdint.h"
 #include <time.h>
+#include "../nujel/lib/vec.h"
 
 typedef struct {
 	uint ID,w,h,d;
@@ -50,14 +51,6 @@ typedef struct {
 	uint attrMask;
   int lMVP,lAlpha,lTransform,lBrightness,lSideTint,lSizeMul;
 } shader;
-
-typedef struct {
-	union {
-		struct { float x,y,z; };
-		struct { float v[3]; };
-		struct { float yaw,pitch,roll; };
-	};
-} vec;
 
 typedef struct {
 	union {

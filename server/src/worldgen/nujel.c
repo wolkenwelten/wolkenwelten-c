@@ -1,7 +1,7 @@
 #include "nujel.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/lisp.h"
-#include "../../../common/src/nujel/nujel.h"
+#include "../../../common/nujel/lib/nujel.h"
 #include "island.h"
 
 #include <stdio.h>
