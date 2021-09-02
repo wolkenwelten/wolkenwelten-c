@@ -2,6 +2,10 @@ ifneq (, $(shell which dash))
 	SHELL   := $(shell which dash)
 endif
 
+ifeq (, $(wildcard ./common/nujel/LICENSE))
+$(error Cant find Nujel, try loading submodules using "git submodule update --init --recursive")
+endif
+
 WOLKENWELTEN        := ./wolkenwelten
 WOLKENWELTEN_SERVER := ./wolkenwelten-server
 NUJEL               := ./common/nujel/nujel
