@@ -329,12 +329,12 @@ ivec characterLOSBlock(const character *c, bool returnBeforeBlock) {
 u32 characterCollision(const vec c){
 	u32 col = 0;
 	const float wd = 0.4f;
-	const float WD = 0.9f;
+	const float WD = 0.5f;
 
-	if(checkCollision(c.x-wd,c.y+1.f,c.z   )) {col |=  0x10;}
-	if(checkCollision(c.x+wd,c.y+1.f,c.z   )) {col |=  0x20;}
-	if(checkCollision(c.x   ,c.y+1.f,c.z-wd)) {col |=  0x40;}
-	if(checkCollision(c.x   ,c.y+1.f,c.z+wd)) {col |=  0x80;}
+	if(checkCollision(c.x-wd,c.y+0.9f,c.z   )) {col |=  0x10;}
+	if(checkCollision(c.x+wd,c.y+0.9f,c.z   )) {col |=  0x20;}
+	if(checkCollision(c.x   ,c.y+0.9f,c.z-wd)) {col |=  0x40;}
+	if(checkCollision(c.x   ,c.y+0.9f,c.z+wd)) {col |=  0x80;}
 
 	if(checkCollision(c.x-wd,c.y-2.f ,c.z   )){col |=   0x1;}
 	if(checkCollision(c.x+wd,c.y-2.f ,c.z   )){col |=   0x2;}
@@ -346,10 +346,10 @@ u32 characterCollision(const vec c){
 	if(checkCollision(c.x   ,c.y-1.4f,c.z-WD)){col |= 0x400;}
 	if(checkCollision(c.x   ,c.y-1.4f,c.z+WD)){col |= 0x800;}
 
-	if(checkCollision(c.x-WD,c.y-0.9f,c.z   )){col |= 0x1000;}
-	if(checkCollision(c.x+WD,c.y-0.9f,c.z   )){col |= 0x2000;}
-	if(checkCollision(c.x   ,c.y-0.9f,c.z-WD)){col |= 0x4000;}
-	if(checkCollision(c.x   ,c.y-0.9f,c.z+WD)){col |= 0x8000;}
+	if(checkCollision(c.x-wd,c.y-0.5f,c.z-wd)){col |= 0x1000;}
+	if(checkCollision(c.x-wd,c.y-0.5f,c.z+wd)){col |= 0x2000;}
+	if(checkCollision(c.x+wd,c.y-0.5f,c.z-wd)){col |= 0x4000;}
+	if(checkCollision(c.x+wd,c.y-0.5f,c.z+wd)){col |= 0x8000;}
 
 	return col;
 }
@@ -357,27 +357,27 @@ u32 characterCollision(const vec c){
 u8 characterCollisionBlock(const vec c, vec *retPos){
 	u8 b = 0;
 	const float wd = 0.4f;
-	const float WD = 0.9f;
+	const float WD = 0.5f;
 
 	if((b = worldGetB(c.x-wd,c.y+1.f,c.z   ))) {*retPos = vecNew(c.x-wd,c.y+1.f,c.z   ); return b;}
 	if((b = worldGetB(c.x+wd,c.y+1.f,c.z   ))) {*retPos = vecNew(c.x+wd,c.y+1.f,c.z   ); return b;}
 	if((b = worldGetB(c.x   ,c.y+1.f,c.z-wd))) {*retPos = vecNew(c.x   ,c.y+1.f,c.z-wd); return b;}
 	if((b = worldGetB(c.x   ,c.y+1.f,c.z+wd))) {*retPos = vecNew(c.x   ,c.y+1.f,c.z+wd); return b;}
 
-	if((b = worldGetB(c.x-WD,c.y-0.9f,c.z   ))){*retPos = vecNew(c.x-WD,c.y-0.9f,c.z   ); return b;}
-	if((b = worldGetB(c.x+WD,c.y-0.9f,c.z   ))){*retPos = vecNew(c.x+WD,c.y-0.9f,c.z   ); return b;}
-	if((b = worldGetB(c.x   ,c.y-0.9f,c.z-WD))){*retPos = vecNew(c.x   ,c.y-0.9f,c.z-WD); return b;}
-	if((b = worldGetB(c.x   ,c.y-0.9f,c.z+WD))){*retPos = vecNew(c.x   ,c.y-0.9f,c.z+WD); return b;}
+	if((b = worldGetB(c.x-wd,c.y-2.f ,c.z   ))){*retPos = vecNew(c.x-wd,c.y-2.f,c.z   ); return b;}
+	if((b = worldGetB(c.x+wd,c.y-2.f ,c.z   ))){*retPos = vecNew(c.x+wd,c.y-2.f,c.z   ); return b;}
+	if((b = worldGetB(c.x   ,c.y-2.f ,c.z-wd))){*retPos = vecNew(c.x   ,c.y-2.f,c.z-wd); return b;}
+	if((b = worldGetB(c.x   ,c.y-2.f ,c.z+wd))){*retPos = vecNew(c.x   ,c.y-2.f,c.z+wd); return b;}
 
 	if((b = worldGetB(c.x-WD,c.y-1.4f,c.z   ))){*retPos = vecNew(c.x-WD,c.y-1.4f,c.z   ); return b;}
 	if((b = worldGetB(c.x+WD,c.y-1.4f,c.z   ))){*retPos = vecNew(c.x+WD,c.y-1.4f,c.z   ); return b;}
 	if((b = worldGetB(c.x   ,c.y-1.4f,c.z-WD))){*retPos = vecNew(c.x   ,c.y-1.4f,c.z-WD); return b;}
 	if((b = worldGetB(c.x   ,c.y-1.4f,c.z+WD))){*retPos = vecNew(c.x   ,c.y-1.4f,c.z+WD); return b;}
 
-	if((b = worldGetB(c.x-wd,c.y-2.f ,c.z   ))){*retPos = vecNew(c.x-wd,c.y-2.f,c.z   ); return b;}
-	if((b = worldGetB(c.x+wd,c.y-2.f ,c.z   ))){*retPos = vecNew(c.x+wd,c.y-2.f,c.z   ); return b;}
-	if((b = worldGetB(c.x   ,c.y-2.f ,c.z-wd))){*retPos = vecNew(c.x   ,c.y-2.f,c.z-wd); return b;}
-	if((b = worldGetB(c.x   ,c.y-2.f ,c.z+wd))){*retPos = vecNew(c.x   ,c.y-2.f,c.z+wd); return b;}
+	if((b = worldGetB(c.x-WD,c.y-0.9f,c.z-WD))){*retPos = vecNew(c.x-WD,c.y-0.9f,c.z-WD); return b;}
+	if((b = worldGetB(c.x-WD,c.y-0.9f,c.z+WD))){*retPos = vecNew(c.x-WD,c.y-0.9f,c.z+WD); return b;}
+	if((b = worldGetB(c.x+WD,c.y-0.9f,c.z-WD))){*retPos = vecNew(c.x+WD,c.y-0.9f,c.z-WD); return b;}
+	if((b = worldGetB(c.x+WD,c.y-0.9f,c.z+WD))){*retPos = vecNew(c.x+WD,c.y-0.9f,c.z+WD); return b;}
 
 	return 0;
 }
