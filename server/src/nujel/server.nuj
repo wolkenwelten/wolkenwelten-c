@@ -88,6 +88,22 @@
 		"Stress test the itemDrop code by generating a lot of them"
 		[item-drop-stress-x pos max -max]
 	]
+	]]
+
+[def animal-stress [let []
+	[def stress-xz [λ [pos max x z]
+		[animal-new [+ [vec x 6 z] pos] 1 1]
+		[when [< z max] [stress-xz pos max x [+ 4 z]]]
+	]]
+	[def stress-x [λ [pos max x]
+		[stress-xz pos max x -max]
+		[when [< x max] [stress-x pos max [+ 4 x]]]
+	]]
+
+	[λ [pos max]
+		"Generate a lot of animals"
+		[stress-x pos max -max]
+	]
 ]]
 
 [def vx+ [λ [v a]
