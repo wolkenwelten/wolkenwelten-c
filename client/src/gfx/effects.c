@@ -154,11 +154,13 @@ void fxBlockMine(const vec pos, int dmg, unsigned char b){
 }
 
 void fxBleeding(const vec pos, being victim, i16 dmg, u8 cause){
-	(void)victim;
 	(void)dmg;
 	(void)cause;
-	sfxPlayPos(sfxImpact,1,pos);
-	sfxPlayPos(sfxUngh,1,pos);
+	if(!sfxIsBeingBlocked(victim)){
+		sfxBlocKBeing(victim);
+		sfxPlayPos(sfxImpact,1,pos);
+		sfxPlayPos(sfxUngh,1,pos);
+	}
 	for(int i=dmg*64;i>0;i--){
 		const vec v  = vecMulS(vecRng(),0.06f);
 		newParticleV(pos,v,64.f,1.f,0xFF44AAFF,64);
@@ -171,8 +173,11 @@ void fxAnimalDiedPacket (const packet *p){
 	const vec pos = vecNewP(&p->v.f[1]);
 	const float d = vecMag(vecSub(pos,player->pos));
 	being t = p->v.u32[4];
-	sfxPlayPos(sfxBomb,0.3,pos);
-	sfxPlayPos(sfxUngh,0.6,pos);
+	if(!sfxIsBeingBlocked(t)){
+		sfxBlocKBeing(t);
+		sfxPlayPos(sfxBomb,0.3,pos);
+		sfxPlayPos(sfxUngh,0.6,pos);
+	}
 	for(int i=0;i<(512-(int)d);i++){
 		const vec v  = vecMulS(vecRng(),0.06f);
 		newParticleV(pos,v,64.f,1.f,0xFF44AAFF,64);

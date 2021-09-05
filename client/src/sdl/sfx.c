@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "sfx.h"
+
 #include "../game/character.h"
 #include "../misc/options.h"
 
-#include <stdio.h>
+#define MAX_BEINGS_EMITTING_SFX 4
 
 int sfxEnable = 0;
 
@@ -81,5 +81,27 @@ void sfxStopALl(){
 	if(!sfxEnable){return;}
 	for(int i=0;i<sfxCount;i++){
 		sfxLoop(&sfxList[i],0);
+	}
+}
+
+being sfxBeingsBlocked[MAX_BEINGS_EMITTING_SFX];
+
+void sfxResetBeingBlocker(){
+	memset(sfxBeingsBlocked,0,sizeof(sfxBeingsBlocked));
+}
+
+bool sfxIsBeingBlocked(being b){
+	for(int i=0;i<MAX_BEINGS_EMITTING_SFX;i++){
+		if(sfxBeingsBlocked[i] == b){return true;}
+		if(sfxBeingsBlocked[i] == 0){return false;}
+	}
+	return true;
+}
+
+void sfxBlocKBeing(being b){
+	for(int i=0;i<MAX_BEINGS_EMITTING_SFX;i++){
+		if(sfxBeingsBlocked[i] != 0){continue;}
+		sfxBeingsBlocked[i] = b;
+		break;
 	}
 }

@@ -27,3 +27,6 @@ void sfxLoop   (sfx *b, float volume);
 void sfxPlayPos(sfx *b, float volume, const vec pos);
 
 void sfxStopAll();
+void sfxResetBeingBlocker();
+bool sfxIsBeingBlocked(being b);
+void sfxBlocKBeing(being b);

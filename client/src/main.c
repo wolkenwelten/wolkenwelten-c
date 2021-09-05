@@ -177,6 +177,7 @@ void mainloop(){
 			setRenderDistance(renderDistance*0.9f);
 			chnkChngOverflow = false;
 		}
+		sfxResetBeingBlocker();
 		worldFreeFarChungi(player);
 		clientTranceive();
 		if(quit){clientGoodbye();}

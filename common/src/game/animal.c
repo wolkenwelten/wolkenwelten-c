@@ -312,7 +312,7 @@ int animalGetMaxHealth (const animal *e){
 	case animalUnused:
 		return  0;
 	case animalBunny:
-		return  8;
+		return  6;
 	case animalGuardian:
 		return 12;
 	case animalWerebunny:
