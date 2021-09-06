@@ -63,6 +63,7 @@ static void bunnyHunger(animal *e,int stateChange[16]){
 static void bunnySLoiter(animal *e,int stateChange[16]){
 	if(rngValA( 7) == 0){
 		e->grot.yaw = e->rot.yaw + ((rngValf()*2.f)-1.f)*4.f;
+		e->gvel = vecZero();
 	}
 	if(rngValA(15) == 0){
 		e->gvel = vecZero();
@@ -72,6 +73,7 @@ static void bunnySLoiter(animal *e,int stateChange[16]){
 	}
 	if(rngValA(63) == 0){
 		e->grot.yaw = ((rngValf()*2.f)-1.f)*360.f;
+		e->gvel = vecZero();
 	}
 	if(rngValA(31) == 0){
 		vec dir = vecMulS(vecDegToVec(vecNew(e->rot.yaw,0.f,0.f)),0.01f);

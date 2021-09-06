@@ -40,8 +40,8 @@ float worldBrightness;
 mesh *sunMesh = NULL;
 texture *tSun = NULL;
 
-extern unsigned  int gfx_sun_png_len;
-extern unsigned char gfx_sun_png_data[];
+extern uint  gfx_sun_png_len;
+extern uchar gfx_sun_png_data[];
 
 void initSky(){
 	if(sunMesh == NULL){
