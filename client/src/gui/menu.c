@@ -116,6 +116,7 @@ void initMenu(){
 	menuAttribution = widgetNewCPL(wTextScroller,rootMenu,0,0,-1,-1,(const char *)txt_attribution_txt_data);
 	menuAttribution->flags |= WIDGET_HIDDEN;
 	widgetBind(menuAttribution,"click",handlerRoot);
+	widgetBind(menuAttribution,"blur",handlerRoot);
 
 	initMainMenu();
 	initSingleplayerMenu();
@@ -126,6 +127,7 @@ void initMenu(){
 void openAttributions(){
 	menuText->flags |=  WIDGET_HIDDEN;
 	menuAttribution->flags &= ~WIDGET_HIDDEN;
+	widgetFocus(menuAttribution);
 }
 
 void menuChangeFocus(int xoff,int yoff,bool ignoreOnTextInput){
@@ -174,10 +176,11 @@ bool menuCancel(){
 		closeMainMenu();
 		lispPanelClose();
 		hideInventory();
-		return true;
+		menuAttribution->flags |= WIDGET_HIDDEN;
+	} else {
+		openMainMenu();
+		lispPanelClose();
 	}
-	openMainMenu();
-	lispPanelClose();
 	return true;
 }
 

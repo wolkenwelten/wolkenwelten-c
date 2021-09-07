@@ -61,7 +61,6 @@ static void handlerAttribution(widget *wid){
 	(void)wid;
 	closeAllMenus();
 	openAttributions();
-	widgetFocus(NULL);
 }
 
 static void handlerQuit(widget *wid){

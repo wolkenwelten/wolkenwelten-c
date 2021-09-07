@@ -454,10 +454,10 @@ void widgetChildPre(widget *parent, widget *child){
 
 void widgetFocus(widget *w){
 	if(w == widgetFocused){return;}
+	widgetFocused = w;
 	if(widgetFocused != NULL){
 		widgetEmit(widgetFocused,"blur");
 	}
-	widgetFocused = w;
 	if(w == NULL){return;}
 	widgetEmit(w,"focus");
 }
