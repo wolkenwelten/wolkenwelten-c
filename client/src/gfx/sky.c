@@ -24,6 +24,7 @@
 #include "../gfx/texture.h"
 #include "../gfx/mesh.h"
 #include "../gui/gui.h"
+#include "../tmp/objs.h"
 #include "../game/entity.h"
 #include "../game/weather.h"
 #include "../voxel/chungus.h"
@@ -32,6 +33,8 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 float sunAngle = 45.f;
 float skyBrightness;
@@ -40,10 +43,27 @@ float worldBrightness;
 mesh *sunMesh = NULL;
 texture *tSun = NULL;
 
+texture *tSky = NULL;
+mesh *mSky = NULL;
+
 extern uint  gfx_sun_png_len;
 extern uchar gfx_sun_png_data[];
 
+u32 *skyTextureBuffer;
+int skyTextureSize = 128;
+
+extern vertex skydome_verts[];
+extern unsigned int skydome_count;
+
 void initSky(){
+	mSky = meshNewRO("skydome",skydome_verts,skydome_count);
+	tSky = textureNewRaw();
+	tSky->w = skyTextureSize;
+	tSky->h = skyTextureSize;
+	tSky->d = 0;
+	mSky->tex = tSky;
+	meshFinishStatic( mSky );
+
 	if(sunMesh == NULL){
 		sunMesh = meshNew(NULL);
 	}
@@ -64,38 +84,70 @@ void initSky(){
 	meshFinishStatic(sunMesh);
 }
 
-static void drawSkyColor(){
+static void getSkyColors(u32 *hi, u32 *lo){
 	skyBrightness = gtimeGetSkyBrightness(gtimeGetTimeOfDay());
 	worldBrightness = gtimeGetBrightness(gtimeGetTimeOfDay());
 
 	hsvaColor hsv;
 	hsv.h = 160;
 	hsv.s = cloudDensityMin - 32;
-	hsv.v = (skyBrightness * 231.f) + 24;
+	hsv.v = (skyBrightness * 192.f) + 62;
 
 	if((skyBrightness < 0.6f) && (skyBrightness > 0.5f)){
 		const float bright = 1.f - fabsf((MAX(0.f,(skyBrightness - 0.5f)) * 20.f) - 1.f);
 		hsv.h = (((int)(bright * 140.f)) + 160) & 0xFF;
 	}
 
-	u32 ccolor = RGBAToU(hsvToRGB(hsv));
-	glClearColor( (ccolor&0xFF)/256.f, ((ccolor>>8)&0xFF)/256.f, ((ccolor>>16)&0xFF)/256.f, 1.f );
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	*hi = RGBAToU(hsvToRGB(hsv)) | 0xFF000000;
+	hsv.v = MAX(8,hsv.v-80);
+	hsv.s = MIN(255,hsv.s+120);
+	*lo = RGBAToU(hsvToRGB(hsv)) | 0xFF000000;
 }
 
+static void genSkyTexture(){
+	static u32 lastHi = 0;
+	if(skyTextureBuffer == NULL){
+		skyTextureBuffer = malloc(skyTextureSize * skyTextureSize * sizeof(u32));
+	}
+	if(skyTextureBuffer == NULL){return;}
+	u32 hi,lo;
+	getSkyColors(&hi,&lo);
+	if(hi == lastHi){return;}
+	lastHi = hi;
+	u32 *p = skyTextureBuffer;
+
+	for(int y = 0; y < skyTextureSize; y++){
+		const u32 c = colorInterpolateRGB(hi,lo,abs(y-skyTextureSize/2) / (skyTextureSize/2.f));
+		for(int x = 0; x < skyTextureSize; x++){
+			*p++ = c;
+		}
+	}
+	textureLoadSurface(tSky,skyTextureSize,skyTextureSize,skyTextureBuffer);
+}
+
+
 void renderSky(const character *cam){
-	drawSkyColor();
+	glClear(GL_DEPTH_BUFFER_BIT);
+	genSkyTexture();
 
 	shaderBind(sMesh);
 	shaderBrightness(sMesh,1.f);
 	const vec shake = vecAdd(cam->rot,camShake);
+	matIdentity(matMVP);
+	matMulRotXY(matMVP,shake.yaw,shake.pitch);
+	matMulScale (matMVP,renderDistance,renderDistance,renderDistance);
+
+	matMul(matMVP,matMVP,matSkyProjection);
+	shaderMatrix(sMesh,matMVP);
+	glDepthMask(GL_FALSE);
+	meshDraw(mSky);
+
 	sunAngle = (((float)gtimeGetTimeOfDay() / (float)(1<<20)) * 360.f)+180.f;
 	matIdentity(matMVP);
 	matMulRotXY(matMVP,shake.yaw,shake.pitch);
 	matMulRotX(matMVP,sunAngle);
 	matMul(matMVP,matMVP,matSkyProjection);
 	shaderMatrix(sMesh,matMVP);
-	glDepthMask(GL_FALSE);
 	meshDraw(sunMesh);
 	glDepthMask(GL_TRUE);
 }

@@ -1,8 +1,10 @@
 #pragma once
 #include "../../../common/src/common.h"
 
+texture *textureNewRaw            ();
 texture *textureNew               (const u8 *data, uint dataLen,const char *filename);
 texture *textureNewArray          (const u8 *data, uint dataLen,const char *filename, int d);
+void     textureLoadSurface       (texture *t, uint w, uint h, const void *data);
 void     textureFree              ();
 void     textureBind              (const texture *tex);
 void     textureInit              ();

@@ -66,7 +66,7 @@ extern u8   gfx_steelrope_png_data[];
 extern uint gfx_wolkenwelten_png_len;
 extern u8   gfx_wolkenwelten_png_data[];
 
-static void textureLoadSurface(texture *t, uint w, uint h, const void *data){
+void textureLoadSurface(texture *t, uint w, uint h, const void *data){
 	t->w = w;
 	t->h = h;
 	if(t->ID == 0){glGenTextures(1, &t->ID);}
@@ -127,6 +127,11 @@ static void textureLoadArray(texture *t, const u8 *data, const uint dataLen){
 
 	free(pixels);
 	free(pbuf);
+}
+
+texture *textureNewRaw(){
+	texture *tex = &textureList[textureCount++];
+	return tex;
 }
 
 texture *textureNew(const u8 *data, uint dataLen,const char *filename){
