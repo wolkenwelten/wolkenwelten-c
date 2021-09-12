@@ -50,7 +50,7 @@ extern uint  gfx_sun_png_len;
 extern uchar gfx_sun_png_data[];
 
 u32 *skyTextureBuffer;
-int skyTextureSize = 128;
+int skyTextureSize = 16;
 
 extern vertex skydome_verts[];
 extern unsigned int skydome_count;
@@ -122,7 +122,7 @@ static void genSkyTexture(){
 			*p++ = c;
 		}
 	}
-	textureLoadSurface(tSky,skyTextureSize,skyTextureSize,skyTextureBuffer);
+	textureLoadSurface(tSky,skyTextureSize,skyTextureSize,skyTextureBuffer,true);
 }
 
 

@@ -66,13 +66,13 @@ extern u8   gfx_steelrope_png_data[];
 extern uint gfx_wolkenwelten_png_len;
 extern u8   gfx_wolkenwelten_png_data[];
 
-void textureLoadSurface(texture *t, uint w, uint h, const void *data){
+void textureLoadSurface(texture *t, uint w, uint h, const void *data, bool linear){
 	t->w = w;
 	t->h = h;
 	if(t->ID == 0){glGenTextures(1, &t->ID);}
 	glBindTexture(GL_TEXTURE_2D, t->ID);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,linear ? GL_LINEAR : GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,linear ? GL_LINEAR : GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
 
@@ -156,7 +156,7 @@ texture *textureNewSurface(uint w, uint h, const void *data){
 	texture *tex = &textureList[textureCount++];
 	tex->ID = 0;
 	tex->d  = 0;
-	textureLoadSurface(tex,w,h,data);
+	textureLoadSurface(tex,w,h,data,false);
 	return tex;
 }
 
@@ -272,7 +272,7 @@ void textureBuildBlockIcons(int loadFromFile){
 		}
 		}
 	}
-	textureLoadSurface(tGui,iw,ih,tgui);
+	textureLoadSurface(tGui,iw,ih,tgui,false);
 	free(tblocks);
 	free(tgui);
 }
