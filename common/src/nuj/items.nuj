@@ -75,7 +75,7 @@
 		[#t [yield [timeout 1000] [λ [] [do-eat [- hp 1] itemid]]]
 		[cond [[or [= hp 1] [= [player-hp] [- [player-maxhp] 1]]] [say [ansi-green "Omnomnom"]]]
 			[[even? hp] [say [ansi-green "Om"]]]
-			[#t [say [ansi-darkgreen "Nom"]]]]
+			[#t [say [ansi-dark-green "Nom"]]]]
 		[player-hp [+ [player-hp] 1]]
 		[start-anim anim-eat 800]
 		[add-cooldown 1000]
