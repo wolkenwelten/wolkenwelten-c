@@ -249,7 +249,6 @@ static inline bool worldgenRDMonolith(worldgen *wgen, wgChances *w, int cx, int 
 	return true;
 }
 
-#include <stdio.h>
 static inline bool worldgenRDBigTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
 	if(rngValA(w->bigTreeChance)){return false;}
 	switch(w->treeType){
