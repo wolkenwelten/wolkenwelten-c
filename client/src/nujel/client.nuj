@@ -107,5 +107,10 @@
 ]]
 
 [event-bind "on-spawn" [λ [] [say [ansi-yellow "Better luck next time!"]]]]
-[event-bind "on-join" [λ [] [say [ansi-green "Press F2 for some equipment"]]]]
-[event-bind "on-join" [λ [] [say [ansi-green "Guten Tag!"]]]]
+[event-bind "on-join" [λ []
+	[say "Guten Tag!"]
+	[say ["Press " [ansi-green "F2"] " for some equipment"]]
+	[say ["Use your " [ansi-yellow "grappling hook"] " with " [ansi-green "E"]]]
+	[say ["Open Inventory/Crafting panel with " [ansi-green "TAB"]]]
+]]
+[event-bind "on-join" [λ [] ]]
