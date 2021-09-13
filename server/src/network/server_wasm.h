@@ -56,7 +56,7 @@ uint serverSendRaw(uint c, void *p, uint len){
 }
 
 void wasmInit(){
-	optionWorldSeed    = 6502;
+	optionWorldSeed    = 68040;
 	optionSingleplayer = true;
 	mainInit();
 	serverInitClient(clientCount++,1);
