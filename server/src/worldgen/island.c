@@ -249,8 +249,9 @@ static inline bool worldgenRDMonolith(worldgen *wgen, wgChances *w, int cx, int 
 	return true;
 }
 
+#include <stdio.h>
 static inline bool worldgenRDBigTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(!w->bigTreeChance || (w->airBlocks <= 32) || rngValA(w->bigTreeChance)){return false;}
+	if(rngValA(w->bigTreeChance)){return false;}
 	switch(w->treeType){
 	default:
 	case 0:
@@ -278,7 +279,7 @@ static inline bool worldgenRDBigTree(worldgen *wgen, wgChances *w, int cx, int c
 }
 
 static inline bool worldgenRDTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(!w->treeChance || (w->airBlocks <= 16) || rngValA(w->treeChance)){return false;}
+	if(rngValA(w->treeChance)){return false;}
 	switch(w->treeType){
 	default:
 	case 0:
@@ -306,7 +307,7 @@ static inline bool worldgenRDTree(worldgen *wgen, wgChances *w, int cx, int cy, 
 }
 
 static inline bool worldgenRDAnimal(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(!w->animalChance || (w->airBlocks <= 4) || rngValA(w->animalChance)){return false;}
+	if(!w->animalChance || rngValA(w->animalChance)){return false;}
 	const vec pos = vecNew(wgen->gx+cx,wgen->gy+cy+2.f,wgen->gz+cz);
 	if(rngValA(15) == 0){
 		animalNew(pos,3,rngValA(1));
@@ -318,7 +319,7 @@ static inline bool worldgenRDAnimal(worldgen *wgen, wgChances *w, int cx, int cy
 }
 
 static inline bool worldgenRDDeadTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(!w->deadTreeChance || (w->airBlocks <= 16) || rngValA(w->deadTreeChance)){return false;}
+	if(!w->deadTreeChance || rngValA(w->deadTreeChance)){return false;}
 	wgDeadTree(wgen->clay,cx,cy,cz);
 	w->lastBlock = I_Oak;
 	w->airBlocks = 0;
@@ -326,7 +327,7 @@ static inline bool worldgenRDDeadTree(worldgen *wgen, wgChances *w, int cx, int 
 }
 
 static inline bool worldgenRDShrub(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(w->airBlocks <= 8){return false;}
+	if(w->airBlocks <= 6){return false;}
 	if(rngValA(w->bushChance)==1){
 		wgBush(wgen->clay,cx,cy,cz);
 		w->lastBlock = I_Dirt;
@@ -436,6 +437,7 @@ static void worldgenRDFirstPass(worldgen *wgen, wgChances *w){
 					if(worldgenRDDirt    (wgen,w,cx,cy,cz)){continue;}
 					break;
 				case I_Dirt:
+					if(w->airBlocks <= 12){continue;}
 					w->airBlocks = 0;
 					if(worldgenRDMonolith(wgen,w,cx,cy,cz)){continue;}
 					if(worldgenRDBigTree (wgen,w,cx,cy,cz)){continue;}

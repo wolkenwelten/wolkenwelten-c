@@ -333,12 +333,12 @@ static void wgTree(chungus *c, int x, int y, int z, int logblock, int leafes){
 }
 
 static void wgBigTree(chungus *c, int x,int y,int z, int logblock, int leafes){
-	const int size       = rngValA(15)+12;
-	const int sparseness = rngValA( 3)+4;
+	const int size       = rngValA(7)+14;
+	const int sparseness = rngValA(3)+4;
 	int lsize = 5;
 
 	for(int cy = -5;cy < size;cy++){
-		lsize = (cy-9);
+		lsize = (cy-6);
 		if((size - cy) < lsize){
 			lsize = size-cy;
 		}
