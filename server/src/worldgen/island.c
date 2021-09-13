@@ -492,6 +492,13 @@ void worldgenRemoveDirt(worldgen *wgen){
 				case I_Sakura_Leaf:
 					w.leafBlocks++; /* Fall through */
 				case 0:
+					if(w.lastBlock == I_Stone){
+						chnk->data[x][cy&0xF][z] = I_Stone;
+						w.lastBlock = rngValA(3) ? 0 : I_Stone;
+					} else if(w.lastBlock == I_Dirt){
+						chnk->data[x][cy&0xF][z] = I_Dirt;
+						w.lastBlock = rngValA(7) ? 0 : I_Dirt;
+					}
 					w.airBlocks++;
 					break;
 				case I_Dirt:
@@ -499,10 +506,17 @@ void worldgenRemoveDirt(worldgen *wgen){
 				case I_Hematite_Ore:
 				case I_Coal:
 				case I_Crystal:
+					if(w.lastBlock == w.grassBlock){
+						chnk->data[x][cy&0xF][z] = I_Dirt;
+						w.lastBlock = rngValA(1) ? 0 : w.grassBlock;
+						continue;
+					}
+					w.lastBlock = b;
 					if(!w.airBlocks)                      {continue;}
 					if(worldgenRDShrub(wgen,&w,cx,cy,cz)) {continue;}
 					if((w.airBlocks > 8) && (w.leafBlocks < 3)){
 						chnk->data[x][cy&0xF][z] = w.grassBlock;
+						w.lastBlock = w.grassBlock;
 					}else if(w.airBlocks > 3){
 						chnk->data[x][cy&0xF][z] = I_Dirt;
 					}

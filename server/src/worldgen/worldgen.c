@@ -100,14 +100,14 @@ void worldgenMonolith(worldgen *wgen, int x,int y,int z){
 	}
 	}
 	}
-	for(int ox=-1;ox<4;ox++){
-	for(int oy=0;oy<10;oy++){
+	for(int ox=-1;ox< 4;ox++){
+	for(int oy= 0;oy<10;oy++){
 		chungusSetB(clay,x+ox,y+oy,z,9);
 	}
 	}
-	for(int ox=-3;ox<6;ox++){
-	for(int oy=-5;oy<0;oy++){
-	for(int oz=-3;oz<4;oz++){
+	for(int ox=-3;ox< 6;ox++){
+	for(int oy=-5;oy< 0;oy++){
+	for(int oz=-3;oz< 4;oz++){
 		chungusSetB(clay,x+ox,y+oy,z+oz,3);
 	}
 	}
