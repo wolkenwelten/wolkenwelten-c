@@ -63,7 +63,7 @@ clean:
 	rm -rf client/src/tmp server/src/tmp common/src/tmp web/releases releases nujel-standalone/tmp
 
 .PHONY: web
-web: release
+web:
 	rsync -avhe ssh web/ wolkenwelten.net:/var/www/html/
 	ssh wolkenwelten.net "mkdir -p /var/www/html/releases && cd /var/www/html/releases && mkdir -p win macos linux-x86_64 linux-aarch64 linux-armv7l"
 	if [ -d "releases/wasm" ]; then rsync -avhe ssh releases/wasm/ wolkenwelten.net:/var/www/html/releases/wasm/ ; fi
