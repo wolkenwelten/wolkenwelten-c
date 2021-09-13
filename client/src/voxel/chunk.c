@@ -47,7 +47,7 @@ int chunksGeneratedThisFrame = 0;
 chunk *chunkFirstFree = NULL;
 
 #define CHUNK_COUNT (1<<17)
-#define MIN_CHUNKS_GENERATED_PER_FRAME (4)
+#define MIN_CHUNKS_GENERATED_PER_FRAME (16)
 #define FADE_IN_FRAMES 48
 
 chunk *chunkList;
