@@ -340,7 +340,7 @@
 			[sfx-play sfx-phaser 0.2]
 			[projectile 0 1]
 			[add-inaccuracy 9.0]
-			[recoil 1.0]
+			[recoil 0.4]
 			#t]
 		      [#t #f]
 		]
