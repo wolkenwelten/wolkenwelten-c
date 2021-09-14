@@ -95,7 +95,7 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	c->z = z;
 	c->nextFree = NULL;
 	c->freeTimer = freeTime;
-	c->spawn = ivecNOne();
+	c->sx = c->sy = c->sz = 0;
 	c->clientsSubscribed = (u64)1 << 63;
 	c->clientsUpdated    = (u64)1 << 31;
 	beingListInit(&c->bl,NULL);

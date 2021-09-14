@@ -216,21 +216,27 @@ void bigchungusBoxMineSphere(bigchungus *c, int x,int y,int z, int r){
 	}
 }
 
-int bigchungusTrySpawn(bigchungus *c, const ivec s){
-	return((bigchungusGetB(c,s.x,s.y  ,s.z)!=0) &&
-	       (bigchungusGetB(c,s.x,s.y+1,s.z)==0) &&
-	       (bigchungusGetB(c,s.x,s.y+2,s.z)==0));
+static int bigchungusTrySpawn(bigchungus *c, int sx, int sy, int sz){
+	return((bigchungusGetB(c,sx,sy  ,sz)!=0) &&
+	       (bigchungusGetB(c,sx,sy+1,sz)==0) &&
+	       (bigchungusGetB(c,sx,sy+2,sz)==0));
 }
 
-void bigchungusDetermineSpawn(bigchungus *c, const ivec s){
-	const ivec sp = ivecAndS(s,~0xFF);
+static void bigchungusDetermineSpawn(bigchungus *c, int sx, int sy, int sz){
+	const int spx = sx & ~0xFF;
+	const int spy = sy & ~0xFF;
+	const int spz = sz & ~0xFF;
 	for(int step = CHUNGUS_SIZE; step >= 1;step/=2){
 		for(int x = step/2;x<CHUNGUS_SIZE;x+=step){
 		for(int y = step/2;y<CHUNGUS_SIZE;y+=step){
 		for(int z = step/2;z<CHUNGUS_SIZE;z+=step){
-			const ivec cp = ivecOr(sp,ivecNew(x,y,z));
-			if(bigchungusTrySpawn(c,cp)){
-				c->spawn = cp;
+			const int cpx = spx | x;
+			const int cpy = spy | y;
+			const int cpz = spz | z;
+			if(bigchungusTrySpawn(c,cpx,cpy,cpz)){
+				c->sx = cpx;
+				c->sy = cpy;
+				c->sz = cpz;
 				return;
 			}
 		}
@@ -243,18 +249,21 @@ void bigchungusGenSpawn(bigchungus *c){
 	for(int x=127;x<=129;x++){
 	for(int y=1;y<=3;y++){
 	for(int z=127;z<=129;z++){
-		if(c->chungi[x][y][z] == NULL){
-			c->chungi[x][y][z] = chungusNew(x,y,z);
-			chungusWorldGenLoad(c->chungi[x][y][z]);
+		chungus *chng = c->chungi[x][y][z];
+		if(chng == NULL){
+			chng = c->chungi[x][y][z] = chungusNew(x,y,z);
+			chungusWorldGenLoad(chng);
 		}
-		if(c->chungi[x][y][z]->spawn.x >= 0){
-			c->spawn = ivecAdd(c->chungi[x][y][z]->spawn,ivecMulS(ivecNew(x,y,z),CHUNGUS_SIZE));
+		if(chng->sx | chng->sy | chng->sz){
+			c->sx = chng->sx | (x << 8);
+			c->sy = chng->sy | (y << 8);
+			c->sz = chng->sz | (z << 8);
 		}
 	}
 	}
 	}
-	if(!bigchungusTrySpawn(c,c->spawn)){
-		bigchungusDetermineSpawn(c,c->spawn);
+	if(!bigchungusTrySpawn(c,c->sx,c->sy,c->sz)){
+		bigchungusDetermineSpawn(c,c->sx,c->sy,c->sz);
 	}
 }
 
@@ -262,31 +271,36 @@ void bigchungusGenHugeSpawn(bigchungus *c){
 	for(int x=126;x<=130;x++){
 	for(int y=1;y<=32;y++){
 	for(int z=126;z<=130;z++){
-		if(c->chungi[x][y][z] == NULL){
-			c->chungi[x][y][z] = chungusNew(x,y,z);
-			chungusWorldGenLoad(c->chungi[x][y][z]);
+		chungus *chng = c->chungi[x][y][z];
+		if(chng == NULL){
+			chng = c->chungi[x][y][z] = chungusNew(x,y,z);
+			chungusWorldGenLoad(chng);
 		}
-		if(c->chungi[x][y][z]->spawn.x >= 0){
-			c->spawn = ivecAdd(c->chungi[x][y][z]->spawn,ivecMulS(ivecNew(x,y,z),CHUNGUS_SIZE));
+		if(chng->sx | chng->sy | chng->sz){
+			c->sx = chng->sx | (x << 8);
+			c->sy = chng->sy | (y << 8);
+			c->sz = chng->sz | (z << 8);
 		}
 	}
 	}
 	}
-	if(!bigchungusTrySpawn(c,c->spawn)){
-		bigchungusDetermineSpawn(c,c->spawn);
+	if(!bigchungusTrySpawn(c,c->sx,c->sy,c->sz)){
+		bigchungusDetermineSpawn(c,c->sx,c->sy,c->sz);
 	}
 }
 
-ivec bigchungusGetSpawnPos(bigchungus *c){
+vec bigchungusGetSpawnPos(bigchungus *c){
 	/*
 	if(!bigchungusTrySpawn(c,c->spawn)){
 		bigchungusDetermineSpawn(c,c->spawn);
 	}*/
-	return c->spawn;
+	return vecNew(c->sx,c->sy,c->sz);
 }
 
-void bigchungusSetSpawnPos(bigchungus *c, ivec pos){
-	c->spawn = pos;
+void bigchungusSetSpawnPos(bigchungus *c, vec pos){
+	c->sx = pos.x;
+	c->sy = pos.y;
+	c->sz = pos.z;
 }
 
 void bigchungusUpdateClient(bigchungus *c, int p){
@@ -392,10 +406,10 @@ void worldBoxMine(int x, int y, int z, int w,int h,int d){
 void worldBoxMineSphere(int x, int y, int z, int r){
 	bigchungusBoxMineSphere(&world,x,y,z,r);
 }
-ivec worldGetSpawnPos(){
+vec worldGetSpawnPos(){
 	return bigchungusGetSpawnPos(&world);
 }
-void worldSetSpawnPos(ivec pos){
+void worldSetSpawnPos(vec pos){
 	bigchungusSetSpawnPos(&world,pos);
 }
 void worldSetAllUpdated(){

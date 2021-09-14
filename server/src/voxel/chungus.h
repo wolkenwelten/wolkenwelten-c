@@ -8,7 +8,7 @@
 
 struct chungus {
 	u8     x,y,z;
-	ivec   spawn;
+	u8     sx,sy,sz;
 	u64    clientsSubscribed;
 	u64    clientsUpdated;
 	u64    freeTimer;
@@ -29,7 +29,7 @@ void         chungusFree             (chungus *c);
 void         chungusBox              (chungus *c, int x, int y, int z, int w, int h, int d, u8 block);
 void         chungusBoxIfEmpty       (chungus *c, int x, int y, int z, int w, int h, int d, u8 block);
 void         chungusBoxF             (chungus *c, int x, int y, int z, int w, int h, int d, u8 block);
-void         chungusBoxFWG           (chungus *c, int x,int y,int z,int w,int h,int d);
+void         chungusBoxFWG           (chungus *c, int x, int y, int z, int w, int h, int d);
 void         chungusBoxSphere        (chungus *c, int x, int y, int z, int r, u8 block);
 void         chungusFill             (chungus *c, int x, int y, int z, u8 block);
 void         chungusSetB             (chungus *c, int x, int y, int z, u8 block);

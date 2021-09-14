@@ -432,14 +432,14 @@ static lVal *wwlnfSetSpawnPos(lClosure *c, lVal *v){
 
 	v =  getLArgV(c,v,&pos);
 	if(pos.x < 0){return NULL;}
-	worldSetSpawnPos(ivecNewV(pos));
+	worldSetSpawnPos(pos);
 
 	return NULL;
 }
 
 static lVal *wwlnfSpawnPos(lClosure *c, lVal *v){
 	(void)c;(void)v;
-	return lValVec(vecNewI(worldGetSpawnPos()));
+	return lValVec(worldGetSpawnPos());
 }
 
 static lVal *wwlnfWorldgenSphere(lClosure *c, lVal *v){

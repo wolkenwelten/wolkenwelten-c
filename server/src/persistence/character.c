@@ -41,7 +41,7 @@ static void characterParseDataLine(character *p, const char *line){
 		p->pos = vecNew(atof(argv[1]),atof(argv[2]),atof(argv[3]));
 		if(!inWorld(p->pos.x,p->pos.y,p->pos.z)){
 			fprintf(stderr,"!inWorld\n");
-			p->pos = vecAdd(vecNewI(worldGetSpawnPos()),vecNew(.5f,2.f,.5f));
+			p->pos = vecAdd(worldGetSpawnPos(),vecNew(.5f,2.f,.5f));
 		}
 		return;
 	}
@@ -166,7 +166,7 @@ void characterSaveData(const character *p, const char *pName){
 void characterLoadSendData(character *p, const char *pName, uint c){
 	if(p == NULL){return;}
 	if(!characterLoadData(p,pName)){
-		const vec spawn = vecNewI(worldGetSpawnPos());
+		const vec spawn = worldGetSpawnPos();
 		p->pos = vecAdd(spawn,vecNew(.5f,2.f,.5f));
 		p->rot = vecNew(135.f,15.f,0.f);
 	}

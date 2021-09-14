@@ -5,7 +5,7 @@
 
 struct bigchungus {
 	chungus *chungi            [256][128][256];
-	ivec spawn;
+	u16 sx,sy,sz;
 	u8 heightModifier          [256][256];
 	u8 vegetationConcentration [256][256];
 	u8 islandSizeModifier      [256][256];
@@ -32,8 +32,8 @@ u8          bigchungusGetB              (bigchungus *c, int x, int y, int z);
 bool        bigchungusSetB              (bigchungus *c, int x, int y, int z, u8 b);
 void        bigchungusGenSpawn          (bigchungus *c);
 void        bigchungusGenHugeSpawn      (bigchungus *c);
-ivec        bigchungusGetSpawnPos       (bigchungus *c);
-void        bigchungusSetSpawnPos       (bigchungus *c, ivec pos);
+vec         bigchungusGetSpawnPos       (bigchungus *c);
+void        bigchungusSetSpawnPos       (bigchungus *c, vec pos);
 void        bigchungusUpdateClient      (bigchungus *c, int p);
 void        bigchungusUnsubscribeClient (bigchungus *c, int p);
 void        bigchungusDirtyChunk        (bigchungus *c, int x, int y, int z, int client);
@@ -56,6 +56,6 @@ void     worldBoxMine       (int x, int y, int z, int w,int h,int d);
 void     worldBoxMineSphere (int x, int y, int z, int r);
 bool     worldIsLoaded      (int x, int y, int z);
 bool     worldShouldBeLoaded(const vec cpos);
-ivec     worldGetSpawnPos   ();
-void     worldSetSpawnPos   (ivec pos);
+vec      worldGetSpawnPos   ();
+void     worldSetSpawnPos   (vec pos);
 void     worldSetAllUpdated ();

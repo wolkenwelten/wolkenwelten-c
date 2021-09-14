@@ -132,7 +132,7 @@ void serverParseDyingMsg(uint c,const packet *m){
 }
 
 void msgPlayerSpawnPos(uint c){
-	const vec spawn = vecNewI(worldGetSpawnPos());
+	const vec spawn = worldGetSpawnPos();
 	const vec nrot  = vecNew(135.f,15.f,0.f);
 	const vec spos  = vecAdd(spawn,vecNew(1.f,4.f,1.f));
 	msgPlayerSetPos(c,spos,nrot,vecZero());
@@ -142,7 +142,7 @@ void msgPlayerSpawnPos(uint c){
 void serverInitClient(uint c, u64 socket){
 	memset(&clients[c],0,sizeof(clients[c]));
 	clients[c].socket = socket;
-	const vec spawn = vecAdd(vecNewI(worldGetSpawnPos()),vecNew(1.f,4.f,1.f));
+	const vec spawn = vecAdd(worldGetSpawnPos(),vecNew(1.f,4.f,1.f));
 	clients[c].c                        = characterNew();
 	clients[c].cl                       = lispClientClosure(c);
 	clients[c].state                    = STATE_CONNECTING;
