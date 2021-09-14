@@ -59,13 +59,6 @@ typedef struct {
 	};
 } ivec;
 
-typedef struct {
-	union {
-		struct { uint x,y,z; };
-		struct { uint w,h,d; };
-	};
-} uvec;
-
 #pragma pack(push, 1)
 typedef struct {
 	float x,y,z,size;

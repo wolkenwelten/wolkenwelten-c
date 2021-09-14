@@ -1,7 +1,6 @@
 #pragma once
 #include "../gfx_structs.h"
 
-vec   vecNewU     (const uvec a);
 vec   vecNewI     (const ivec a);
 int   vecInWorld  (const vec a);
 
@@ -13,7 +12,6 @@ ivec ivecOne      ();
 ivec ivecNOne     ();
 ivec ivecRng      ();
 ivec ivecInvert   (const ivec a);
-ivec ivecUvec     (const uvec a);
 ivec ivecAdd      (const ivec a, const ivec b);
 ivec ivecAddS     (const ivec a, const int  b);
 ivec ivecSub      (const ivec a, const ivec b);
@@ -33,30 +31,3 @@ ivec ivecXorS     (const ivec a, const int  b);
 int  ivecOrSum    (const ivec a);
 int  ivecSum      (const ivec a);
 bool ivecEq       (const ivec a, const ivec b);
-
-uvec uvecNew      (uint x, uint y, uint z);
-uvec uvecNewV     (const vec a);
-uvec uvecNewP     (const uint *p);
-uvec uvecZero     ();
-uvec uvecOne      ();
-uvec uvecRng      ();
-uvec uvecNot      (const uvec a);
-uvec uvecIvec     (const ivec a);
-uvec uvecAdd      (const uvec a, const uvec b);
-uvec uvecAddS     (const uvec a, const uint b);
-uvec uvecSub      (const uvec a, const uvec b);
-uvec uvecSubS     (const uvec a, const uint b);
-uvec uvecMul      (const uvec a, const uvec b);
-uvec uvecMulS     (const uvec a, const uint b);
-uvec uvecDiv      (const uvec a, const uvec b);
-uvec uvecDivS     (const uvec a, const uint b);
-uvec uvecShlS     (const uvec a, const uint b);
-uvec uvecShrS     (const uvec a, const uint b);
-uvec uvecAnd      (const uvec a, const uvec b);
-uvec uvecAndS     (const uvec a, const uint b);
-uvec uvecOr       (const uvec a, const uvec b);
-uvec uvecOrS      (const uvec a, const uint b);
-uint uvecOrSum    (const uvec a);
-uvec uvecXor      (const uvec a, const uvec b);
-uvec uvecXorS     (const uvec a, const uint b);
-bool uvecEq       (const uvec a, const uvec b);
