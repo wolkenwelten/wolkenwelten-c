@@ -48,9 +48,12 @@ u8 *compressedBuffer = NULL;
 
 static void bigchungusSafeSaveClient(const bigchungus *c, const character *chara){
 	if(chara == NULL){return;}
-	ivec cp = ivecNewV(chara->pos);
+	vec cp = chara->pos;
+	const int cpx = ((int)chara->pos.x) >> 8;
+	const int cpy = ((int)chara->pos.y) >> 8;
+	const int cpz = ((int)chara->pos.z) >> 8;
 	if((cp.x >= 0) && (cp.x < 256) && (cp.y >= 0) && (cp.y < 128) && (cp.z >= 0) && (cp.z < 256)){
-		chungusSave(c->chungi[cp.x][cp.y][cp.z]);
+		chungusSave(c->chungi[cpx][cpy][cpz]);
 	}
 	for(int ix=0;ix < 12; ix++){
 	for(int iy=0;iy < 12; iy++){

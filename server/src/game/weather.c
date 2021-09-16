@@ -21,7 +21,8 @@
 #include "../voxel/chungus.h"
 
 void weatherDoRain(){
-	const ivec toff = ivecNewV(vecFloor(cloudOff));
+	const int toffx = cloudOff.x;
+	const int toffz = cloudOff.z;
 	for(uint i=0;i<chungusCount;i++){
 		for(uint t=0;t<4;t++){
 			if(rngValA(255) > rainIntensity){continue;}
@@ -30,8 +31,8 @@ void weatherDoRain(){
 			const vec cpos = vecNew(c->x << 8, c->y << 8, c->z << 8);
 			u8 x = rngValA(255);
 			u8 z = rngValA(255);
-			const int tx = (x-toff.x) & 0xFF;
-			const int tz = (z-toff.z) & 0xFF;
+			const int tx = (x-toffx) & 0xFF;
+			const int tz = (z-toffz) & 0xFF;
 			int v = cloudTex[tx][tz];
 			if(v > (cloudDensityMin+16)){continue;}
 			const vec rpos = vecAdd(cpos,vecNew(x,32.f,z));

@@ -258,7 +258,7 @@ bool throwableTryAim(item *cItem, character *cChar){
 
 void throwableDelChungus(chungus *c){
 	if(c == NULL){return;}
-	const ivec cp = chungusGetPos(c);
+	const vec cp = chungusGetPos(c);
 	for(uint i=0;i<throwableCount;i++){
 		if(throwableList[i].ent == NULL){continue;}
 		const vec *p = &throwableList[i].ent->pos;

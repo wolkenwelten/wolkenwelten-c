@@ -62,7 +62,7 @@ void itemDropDel(uint d){
 
 void itemDropDelChungus(const chungus *c){
 	if(c == NULL){return;}
-	const ivec cp = chungusGetPos(c);
+	const vec cp = chungusGetPos(c);
 	for(uint i=itemDropCount-1;i<itemDropCount;i--){
 		if(itemIsEmpty(&itemDropList[i].itm)){continue;}
 		if(itemDropList[i].ent == NULL)      {continue;}

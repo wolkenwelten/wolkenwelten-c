@@ -162,9 +162,10 @@ void weatherSetRainDuration(u8 dur){
 bool isInClouds(const vec p){
 	const int ty = (uint)p.y >> 8;
 	if(ty & 1){return false;}
-	const ivec toff = ivecNewV(vecFloor(cloudOff));
-	const int tx = ((u8)p.x-toff.x) & 0xFF;
-	const int tz = ((u8)p.z-toff.z) & 0xFF;
+	const int toffx = cloudOff.x;
+	const int toffz = cloudOff.z;
+	const int tx = ((u8)p.x-toffx) & 0xFF;
+	const int tz = ((u8)p.z-toffz) & 0xFF;
 	int v = cloudTex[tx][tz];
 	if(v < (cloudDensityMin+2)){return false;}
 	float cy = (ty << 8) + 32.0;

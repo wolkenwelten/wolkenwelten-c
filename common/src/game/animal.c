@@ -112,7 +112,7 @@ void animalDel(uint i){
 
 void animalDelChungus(const chungus *c){
 	if(c == NULL){return;}
-	const ivec cp = chungusGetPos(c);
+	const vec cp = chungusGetPos(c);
 	for(uint i=0;i<animalCount;i++){
 		if(animalList[i].type == 0)  {continue;}
 		const vec *p = &animalList[i].pos;

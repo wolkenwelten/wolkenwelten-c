@@ -209,7 +209,7 @@ uint lineOfSightBlockCount(const vec a, const vec b, uint maxB){
 	float lastDist = 999999.f;
 	uint ret = 0;
 	vec p = a;
-	ivec lastB = ivecNOne();
+	u64 lastB = -1;
 	vec dist = vecSub(b,p);
 	if(vecMag(dist) > 128.f){return maxB+1;}
 
@@ -220,8 +220,8 @@ uint lineOfSightBlockCount(const vec a, const vec b, uint maxB){
 		lastDist = curDist;
 		const vec v = vecMulS(vecNorm(dist),0.5f);
 		p = vecAdd(p,v);
-		const ivec newB = ivecNewV(p);
-		if(!ivecEq(lastB,newB) && worldGetB(newB.x,newB.y,newB.z)){
+		const u64 newB = vecToPacked(p);
+		if(newB != lastB && worldGetB(p.x,p.y,p.z)){
 			lastB = newB;
 			if(++ret > maxB){return ret;}
 		}

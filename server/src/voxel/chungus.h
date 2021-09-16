@@ -34,9 +34,9 @@ void         chungusBoxSphere        (chungus *c, int x, int y, int z, int r, u8
 void         chungusFill             (chungus *c, int x, int y, int z, u8 block);
 void         chungusSetB             (chungus *c, int x, int y, int z, u8 block);
 u8           chungusGetB             (chungus *c, int x, int y, int z);
-ivec         chungusGetPos           (const chungus *c);
+vec          chungusGetPos           (const chungus *c);
 chunk       *chungusGetChunk         (chungus *c, int x, int y, int z);
-void         chungusSetSpawn         (chungus *c, const ivec spawn);
+void         chungusSetSpawn         (chungus *c, const vec spawn);
 void         chungusSubscribePlayer  (chungus *c, uint p);
 int          chungusUnsubscribePlayer(chungus *c, uint p);
 uint         chungusIsSubscribed     (chungus *c, uint p);

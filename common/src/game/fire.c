@@ -88,7 +88,7 @@ void fireDel(uint i){
 
 void fireDelChungus(const chungus *c){
 	if(c == NULL){return;}
-	const ivec cp = chungusGetPos(c);
+	const vec cp = chungusGetPos(c);
 	for(uint i=fireCount-1;i<fireCount;i--){
 		const fire *f = &fireList[i];
 		if((f->x >> 8) != cp.x){continue;}

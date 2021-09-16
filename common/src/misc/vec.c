@@ -22,94 +22,22 @@
 #include <math.h>
 
 
-
-vec vecNewI(const ivec a){
-	return (vec){{{a.x,a.y,a.z}}};
-}
 int vecInWorld(const vec a){
 	if((a.x < 0.f) || (a.y < 0.f) || (a.z < 0.f))            {return 0;}
 	if((a.x > 65536.f) || (a.y > 32768.f) || (a.z > 65536.f)){return 0;}
 	return 1;
 }
 
-ivec ivecNew(int x, int y, int z){
-	return (ivec){{{x,y,z}}};
+u64 vecToPacked (const vec v){
+	const u64 x = v.x;
+	const u64 y = v.y;
+	const u64 z = v.z;
+	return (x & 0xFFFF) | ((y & 0xFFFF) << 16) | ((z & 0xFFFF) << 32);
 }
-ivec ivecNewV(const vec a){
-	return (ivec){{{(int)a.x,(int)a.y,(int)a.z}}};
-}
-ivec ivecNewP(const int *p){
-	return (ivec){{{p[0],p[1],p[2]}}};
-}
-ivec ivecZero(){
-	return (ivec){{{0,0,0}}};
-}
-ivec ivecOne(){
-	return (ivec){{{1,1,1}}};
-}
-ivec ivecNOne(){
-	return (ivec){{{-1,-1,-1}}};
-}
-ivec ivecRng(){
-	return (ivec){{{(int)rngValR(),(int)rngValR(),(int)rngValR()}}};
-}
-ivec ivecInvert(const ivec a){
-	return (ivec){{{-a.x,-a.y,-a.z}}};
-}
-ivec ivecAdd(const ivec a, const ivec b){
-	return (ivec){{{a.x+b.x,a.y+b.y,a.z+b.z}}};
-}
-ivec ivecAddS(const ivec a, const int  b){
-	return (ivec){{{a.x+b  ,a.y+b  ,a.z+b  }}};
-}
-ivec ivecSub(const ivec a, const ivec b){
-	return (ivec){{{a.x-b.x,a.y-b.y,a.z-b.z}}};
-}
-ivec ivecSubS(const ivec a, const int  b){
-	return (ivec){{{a.x-b  ,a.y-b  ,a.z-b  }}};
-}
-ivec ivecMul(const ivec a, const ivec b){
-	return (ivec){{{a.x*b.x,a.y*b.y,a.z*b.z}}};
-}
-ivec ivecMulS(const ivec a, const int  b){
-	return (ivec){{{a.x*b  ,a.y*b  ,a.z*b  }}};
-}
-ivec ivecDiv(const ivec a, const ivec b){
-	return (ivec){{{a.x/b.x,a.y/b.y,a.z/b.z}}};
-}
-ivec ivecDivS(const ivec a, const int  b){
-	return (ivec){{{a.x/b  ,a.y/b  ,a.z/b  }}};
-}
-ivec ivecShlS(const ivec a, const int  b){
-	return (ivec){{{a.x<<b ,a.y<<b ,a.z<<b }}};
-}
-ivec ivecShrS(const ivec a, const int  b){
-	return (ivec){{{a.x>>b ,a.y>>b ,a.z>>b }}};
-}
-ivec ivecAnd(const ivec a, const ivec b){
-	return (ivec){{{a.x&b.x,a.y&b.y,a.z&b.z}}};
-}
-ivec ivecAndS(const ivec a, const int b){
-	return (ivec){{{a.x&b  ,a.y&b  ,a.z&b  }}};
-}
-ivec ivecOr(const ivec a, const ivec b){
-	return (ivec){{{a.x|b.x,a.y|b.y,a.z|b.z}}};
-}
-ivec ivecOrS(const ivec a, const int b){
-	return (ivec){{{a.x|b  ,a.y|b  ,a.z|b  }}};
-}
-ivec ivecXor(const ivec a, const ivec b){
-	return (ivec){{{a.x^b.x,a.y^b.y,a.z^b.z}}};
-}
-ivec ivecXorS(const ivec a, const int b){
-	return (ivec){{{a.x^b  ,a.y^b  ,a.z^b  }}};
-}
-int ivecOrSum(const ivec a){
-	return a.x|a.y|a.z;
-}
-int ivecSum  (const ivec a){
-	return a.x+a.y+a.z;
-}
-bool ivecEq  (const ivec a, const ivec b){
-	return ((a.x == b.x) && (a.y == b.y) && (a.z == b.z));
+
+vec packedToVec (const u64 v){
+	const u64 x =  v        & 0xFFFF;
+	const u64 y = (v >> 16) & 0xFFFF;;
+	const u64 z = (v >> 32) & 0xFFFF;;
+	return vecNew(x,y,z);
 }

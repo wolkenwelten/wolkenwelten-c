@@ -537,7 +537,7 @@ static lVal *wwlnfRaycast(lClosure *c, lVal *v){
 
 	v = getLArgB(c,v,&before);
 
-	return lValVec(vecNewI(characterLOSBlock(player,before)));
+	return lValVec(characterLOSBlock(player,before));
 }
 
 static lVal *wwlnfWindowWidth(lClosure *c, lVal *v){

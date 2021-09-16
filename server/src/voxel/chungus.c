@@ -234,19 +234,21 @@ void chungusBoxFWG(chungus *c,int x,int y,int z,int w,int h,int d){
 
 	if( (x   | y   | z  ) &(~0xFF)){ return; }
 	if(((x+w)|(y+h)|(z+d))&(~0xFF)){ return; }
+	const int bx = x>>4;
+	const int by = y>>4;
+	const int bz = z>>4;
 
 	int sx = x & 0xF;
 	int sw = CHUNK_SIZE;
-	for(int cx=x>>4;cx<=gx;cx++){
+	for(int cx=bx;cx<=gx;cx++){
 		if(cx == gx){sw = (x+w)&0xF;}
 		int sy = y&0xF;
 		int sh = CHUNK_SIZE;
-		for(int cy=y>>4;cy<=gy;cy++){
+		for(int cy=by;cy<=gy;cy++){
 			if(cy == gy){sh = (y+h)&0xF;}
 			int sz = z&0xF;
 			int sd = CHUNK_SIZE;
-			if(cy == gy-1){block = I_Dirt;}
-			for(int cz=z>>4;cz<=gz;cz++){
+			for(int cz=bz;cz<=gz;cz++){
 				if(cz == gz){sd = (z+d)&0xF;}
 				chunk *chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF];
 				if(chnk == NULL){
@@ -487,7 +489,7 @@ void chungusUnsubFarChungi(){
 	}
 }
 
-ivec chungusGetPos(const chungus *c){
-	if(c == NULL){return ivecNOne();}
-	return ivecNew(c->x,c->y,c->z);
+vec chungusGetPos(const chungus *c){
+	if(c == NULL){return vecNOne();}
+	return vecNew(c->x,c->y,c->z);
 }

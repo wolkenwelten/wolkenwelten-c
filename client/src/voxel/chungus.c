@@ -224,7 +224,7 @@ void chungusBox(chungus *c, u16 x,u16 y,u16 z, u16 w,u16 h,u16 d,u8 block){
 	}
 }
 
-ivec chungusGetPos(const chungus *c){
-	if(c == NULL){return ivecNOne();}
-	return ivecNew(c->x,c->y,c->z);
+vec chungusGetPos(const chungus *c){
+	if(c == NULL){return vecNOne();}
+	return vecNew(c->x,c->y,c->z);
 }

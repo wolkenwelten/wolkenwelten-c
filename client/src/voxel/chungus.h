@@ -28,7 +28,7 @@ void     chungusBox            (chungus *c, u16 x, u16 y, u16 z, u16 w, u16 h, u
 void     chungusBoxF           (chungus *c, u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, u8 block);
 void     chungusSetB           (chungus *c, u16 x, u16 y, u16 z, u8 block);
 u8       chungusGetB           (chungus *c, u16 x, u16 y, u16 z);
-ivec     chungusGetPos         (const chungus *c);
+vec      chungusGetPos         (const chungus *c);
 chunk   *chungusGetChunk       (chungus *c, u16 x, u16 y, u16 z);
 chunk   *chungusGetChunkOrNew  (chungus *c, u16 x, u16 y, u16 z);
 void     chungusQueueDraws     (chungus *c,const character *cam, queueEntry *drawQueue,int *drawQueueLen);

@@ -52,13 +52,6 @@ typedef struct {
   int lMVP,lAlpha,lTransform,lBrightness,lSideTint,lSizeMul;
 } shader;
 
-typedef struct {
-	union {
-		struct { int x,y,z; };
-		struct { int w,h,d; };
-	};
-} ivec;
-
 #pragma pack(push, 1)
 typedef struct {
 	float x,y,z,size;

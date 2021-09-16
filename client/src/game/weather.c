@@ -134,72 +134,76 @@ void cloudsDraw(int cx, int cy, int cz){
 	PROFILE_START();
 	cloudChunk *part = &parts[cpart];
 	part->base     = vecFloor(cloudOff);
-	const ivec toff = ivecNewV(part->base);
+	//const ivec toff = ivecNewV(part->base);
+	const int toffx = part->base.x;
+	const int toffz = part->base.z;
 	const int divx = (int)player->pos.x - (cx*256);
 	const int divz = (int)player->pos.z - (cz*256);
 	const int minx = MIN(divx,255);
 	const int maxx = MAX(divx,  0);
 	const int minz = MIN(divz,255);
 	const int maxz = MAX(divz,  0);
-	const ivec cp  = ivecNew(cx*256,cy*256,cz*256);
-	const ivec pp  = ivecNewV(player->pos);
-	ivec dp        = ivecZero();
-	dp.y = (cp.y - pp.y)*(cp.y - pp.y);
+	const int cpx  = cx<<8;
+	const int cpy  = cy<<8;
+	const int cpz  = cz<<8;
+	vec dp         = vecZero();
+	dp.y = ((cpy) - player->pos.y);
+	dp.y *= dp.y;
 
 	if(maxz<256){
 		for(int x=maxx;x<256;x++){
-			const int tx  = (x-toff.x)&0xFF;
-			const int cxx = cp.x+x;
-			dp.x = (cxx - pp.x)*(cxx - pp.x);
+			const int tx  = (x-toffx)&0xFF;
+			const int cxx = cpx+x;
+			dp.x = (cxx - player->pos.x)*(cxx - player->pos.x);
 			for(int z=maxz;z<256;z++){
-				const int tz  = (z-toff.z)&0xFF;
+				const int tz  = (z-toffz)&0xFF;
 				const u8 v    = cloudTex[tx][tz];
-				const int czz = cp.z+z;
+				const int czz = cpz+z;
 				if(v < cloudDensityMin){ continue; }
-				dp.z = (czz - pp.z)*(czz - pp.z);
-				cloudPart(part,cxx,cp.y,czz,ivecSum(dp),v);
+				dp.z = (czz - player->pos.z)*(czz - player->pos.z);
+				cloudPart(part,cxx,cpy,czz,vecSum(dp),v);
 			}
 		}
 		for(int x=minx;x>=0;x--){
-			const int tx  = (x-toff.x)&0xFF;
-			const int cxx = cp.x+x;
-			dp.x = (cxx - pp.x)*(cxx - pp.x);
+			const int tx  = (x-toffx)&0xFF;
+			const int cxx = cpx+x;
+			dp.x = (cxx - player->pos.x)*(cxx - player->pos.x);
 			for(int z=maxz;z<256;z++){
-				const int tz  = (z-toff.z)&0xFF;
-				const int czz = cp.z+z;
+				const int tz  = (z-toffz)&0xFF;
+				const int czz = cpz+z;
 				const u8 v = cloudTex[tx][tz];
 				if(v < cloudDensityMin){ continue; }
-				dp.z = (czz - pp.z)*(czz - pp.z);
-				cloudPart(part,cxx,cp.y,czz,ivecSum(dp),v);
+				dp.z = (czz - player->pos.z)*(czz - player->pos.z);
+				cloudPart(part,cxx,cpy,czz,vecSum(dp),v);
 			}
 		}
 	}
 
 	if(minz>0){
 		for(int x=maxx;x<256;x++){
-			const int tx = (x-toff.x)&0xFF;
-			const int cxx = cp.x+x;
-			dp.x = (cxx - pp.x)*(cxx - pp.x);
+			const int tx = (x-toffx)&0xFF;
+			const int cxx = cpx+x;
+			dp.x = (cxx - player->pos.x)*(cxx - player->pos.x);
 			for(int z=minz;z>=0;z--){
-				const int tz  = (z-toff.z)&0xFF;
+				const int tz  = (z-toffz)&0xFF;
 				const u8 v = cloudTex[tx][tz];
-				const int czz = cp.z+z;
+				const int czz = cpz+z;
 				if(v < cloudDensityMin){ continue; }
-				dp.z = (czz - pp.z)*(czz - pp.z);
-				cloudPart(part,cxx,cp.y,czz,ivecSum(dp),v);
+				dp.z = (czz - player->pos.z)*(czz - player->pos.z);
+				cloudPart(part,cxx,cpy,czz,vecSum(dp),v);
 			}
 		}
 		for(int x=minx;x>=0;x--){
-			const int tx = (x-toff.x)&0xFF;
-			const int cxx = cp.x+x;
-			dp.x = (cxx - pp.x)*(cxx - pp.x);
+			const int tx = (x-toffx)&0xFF;
+			const int cxx = cpx+x;
+			dp.x = (cxx - player->pos.x)*(cxx - player->pos.x);
 			for(int z=minz;z>=0;z--){
-				const int tz  = (z-toff.z)&0xFF;
+				const int tz  = (z-toffz)&0xFF;
 				const u8 v = cloudTex[tx][tz];
-				const int czz = cp.z+z;
+				const int czz = cpz+z;
 				if(v < cloudDensityMin){ continue; }
-				dp.z = (czz - pp.z)*(czz - pp.z);
-				cloudPart(part,cxx,cp.y,czz,ivecSum(dp),v);
+				dp.z = (czz - player->pos.z)*(czz - player->pos.z);
+				cloudPart(part,cxx,cpy,czz,vecSum(dp),v);
 			}
 		}
 	}

@@ -301,7 +301,7 @@ void characterHit(character *c){
 }
 
 void characterDoPrimary(character *c){
-	const ivec los = characterLOSBlock(c,0);
+	const vec los = characterLOSBlock(c,0);
 	if(los.x < 0){
 		if(c->actionTimeout >= 0){characterHit(c);}
 		c->blockMiningX = -1;
@@ -1013,12 +1013,12 @@ void characterDrawConsHighlight(const character *c){
 	if((activeItem == NULL) || itemIsEmpty(activeItem) || (!(player->flags & CHAR_CONS_MODE))){return;}
 	const u16 id = activeItem->ID;
 	if(id < 256){
-		ivec los = characterLOSBlock(c,true);
+		vec los = characterLOSBlock(c,true);
 		if(los.x < 0){return;}
 		const float a = 0.7f + cosf((++counter&0x7F)/128.f*PI*2)*0.15f;
 		blockTypeDraw(id, vecNew(los.x+0.5f,los.y+0.5f,los.z+0.5f),a,0);
 	}else{
-		ivec los = characterLOSBlock(c,false);
+		vec los = characterLOSBlock(c,false);
 		if(los.x < 0){return;}
 		const float a = 0.5f + cosf((++counter&0x7F)/128.f*PI*2)*0.15f;
 		blockTypeDraw(I_Marble_Block, vecNew(los.x+0.5f,los.y+0.5f,los.z+0.5f),a,-4);

@@ -231,7 +231,7 @@ int characterPickupItem(character *c, u16 itemID,int amount){
 
 bool characterPlaceBlock(character *c,item *i){
 	if(c->actionTimeout < 0)              { return false; }
-	ivec los = characterLOSBlock(c,true);
+	vec los = characterLOSBlock(c,true);
 	if(los.x < 0)                         { return false; }
 	if(itemIsEmpty(i))                    { return false; }
 	characterStartAnimation(c,animationHit,240);
@@ -308,22 +308,22 @@ void characterSwapItemSlots(character *c, uint a,uint b){
 	c->inventory[b] = tmp;
 }
 
-ivec characterLOSBlock(const character *c, bool returnBeforeBlock) {
+vec characterLOSBlock(const character *c, bool returnBeforeBlock) {
 	const vec cv = vecMulS(vecDegToVec(c->rot),0.0625f);
 	vec       cp = vecAdd(c->pos,vecNew(0,0.5,0));
-	ivec      l  = ivecNewV(cp);
+	u64       l  = vecToPacked(cp);
 
 	for(int i=0;i<64;i++){
 		cp = vecAdd(cp,cv);
-		const ivec ip = ivecNewV(cp);
-		if(!ivecEq(ip,l)){
-			if(worldGetB(ip.x,ip.y,ip.z) > 0){
-				return returnBeforeBlock ? l : ip;
+		const u64 ip = vecToPacked(cp);
+		if(ip != l){
+			if(worldGetB(cp.x,cp.y,cp.z) > 0){
+				return returnBeforeBlock ? packedToVec(l) : packedToVec(ip);
 			}
 			l = ip;
 		}
 	}
-	return ivecNOne();
+	return vecNOne();
 }
 
 u32 characterCollision(const vec c){
