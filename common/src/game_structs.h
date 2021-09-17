@@ -26,9 +26,6 @@ typedef struct {
 	u32           color[2];
 	mesh         *singleBlock;
 	int           hp,firehp;
-	i16           waterIngress;
-	i16           waterEgress;
-	i16           waterCapacity;
 	blockCategory cat;
 	char         *name;
 	float         weight;
