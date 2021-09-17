@@ -334,25 +334,21 @@ static void wgTree(chungus *c, int x, int y, int z, int logblock, int leafes){
 
 static void wgBigTree(chungus *c, int x,int y,int z, int logblock, int leafes){
 	const int size       = rngValA(7)+14;
-	const int sparseness = rngValA(3)+4;
 	int lsize = 5;
 
 	for(int cy = -5;cy < size;cy++){
-		lsize = (cy-6);
-		if((size - cy) < lsize){
-			lsize = size-cy;
+		lsize = MIN(size/3,MIN((cy-6),(size-cy)));
+		for(int cz = -lsize;cz <= lsize+1;cz++){
+		for(int cx = -lsize;cx <= lsize+1;cx++){
+			if((cx == -lsize  ) && (cz == -lsize  )){continue;}
+			if((cx == -lsize  ) && (cz ==  lsize+1)){continue;}
+			if((cx ==  lsize+1) && (cz == -lsize  )){continue;}
+			if((cx ==  lsize+1) && (cz ==  lsize+1)){continue;}
+			if((cx == -lsize) || (cx == lsize+1) || (cz == -lsize) || (cz == lsize+1)){
+				if(rngValA(3)){continue;}
+			}
+			chungusSetB(c,cx+x,cy+y,cz+z,leafes);
 		}
-		if(cy >= 12){
-			for(int cz = -lsize;cz<=lsize+1;cz++){
-			for(int cx = -lsize;cx<=lsize+1;cx++){
-				if((cx == -lsize  ) && (cz == -lsize  )){continue;}
-				if((cx == -lsize  ) && (cz ==  lsize+1)){continue;}
-				if((cx ==  lsize+1) && (cz == -lsize  )){continue;}
-				if((cx ==  lsize+1) && (cz ==  lsize+1)){continue;}
-				if(rngValM(sparseness) == 0)            {continue;}
-				chungusSetB(c,cx+x,cy+y,cz+z,leafes);
-			}
-			}
 		}
 		if(cy < -2){
 			chungusSetB(c,x  ,cy+y,z  ,I_Roots);
