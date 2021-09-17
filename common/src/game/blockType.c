@@ -117,7 +117,7 @@ void blockTypeInit(){
 	blockTypeSetTex       (14,sideBottom,12);
 
 	blockTypeInitBlock    (15,14, STONE, "Marble Blocks", 1600, 8000, 8.f, 0xFFF0F0F0,0xFFEBEBEB);
-	blockTypeInitBlock    (16,24, LEAVES,"Acacia Leafes",  70,  600, 0.2f, 0xFF000230,0xFF1c638f);
+	blockTypeInitBlock    (16,24, LEAVES,"Acacia Leafes",  70,  600, 0.2f, 0xFF003002,0xFF1c6f32);
 	blockTypeInitBlock    (17,17, WOOD,  "Boards",         400,  600, 2.5f, 0xFF09678f,0xFF1380af);
 	blockTypeInitBlock    (18,18, STONE, "Crystals",      2500, 8000, 2.f, 0xFF997CE8,0xFF4D25B5);
 	blockTypeInitBlock    (19,19, LEAVES,"Sakura Leafes",  70,  420, 0.2f, 0xFF997CE8,0xFF4D25B5);
