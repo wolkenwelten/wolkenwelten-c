@@ -333,11 +333,34 @@ static void wgTree(chungus *c, int x, int y, int z, int logblock, int leafes){
 }
 
 static void wgBigTree(chungus *c, int x,int y,int z, int logblock, int leafes){
-	const int size       = rngValA(7)+14;
+	const int size = rngValA(7)+21;
+	int bendPoint = rngValM(size/2);
 	int lsize = 5;
 
 	for(int cy = -5;cy < size;cy++){
-		lsize = MIN(size/3,MIN((cy-6),(size-cy)));
+		lsize = MIN(size/4,MIN((cy-6),(size-cy)));
+		if(cy == bendPoint){
+			chungusSetB(c,x  ,cy+y,z  ,logblock);
+			chungusSetB(c,x+1,cy+y,z  ,logblock);
+			chungusSetB(c,x  ,cy+y,z+1,logblock);
+			chungusSetB(c,x+1,cy+y,z+1,logblock);
+			switch(rngValA(3)){
+			case 0:
+				x--;
+				break;
+			case 1:
+				x++;
+				break;
+			case 2:
+				z--;
+				break;
+			case 3:
+				z++;
+				break;
+			}
+			cy--;
+			bendPoint = -1;
+		}
 		for(int cz = -lsize;cz <= lsize+1;cz++){
 		for(int cx = -lsize;cx <= lsize+1;cx++){
 			if((cx == -lsize  ) && (cz == -lsize  )){continue;}
