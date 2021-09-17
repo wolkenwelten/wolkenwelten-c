@@ -110,17 +110,15 @@ void wgDeadTree(chungus *c, int x,int y,int z){
 void wgBigDeadTree(chungus *c, int x,int y,int z){
 	const int size = rngValMM(20,34);
 	for(int cy = -5;cy < size;cy++){
-		if(cy < -2){
-			chungusSetB(c,x  ,cy+y,z  ,I_Roots);
-			chungusSetB(c,x+1,cy+y,z  ,I_Roots);
-			chungusSetB(c,x  ,cy+y,z+1,I_Roots);
-			chungusSetB(c,x+1,cy+y,z+1,I_Roots);
-		}else{
-			chungusSetB(c,x  ,cy+y,z  ,I_Oak);
-			chungusSetB(c,x+1,cy+y,z  ,I_Oak);
-			chungusSetB(c,x  ,cy+y,z+1,I_Oak);
-			chungusSetB(c,x+1,cy+y,z+1,I_Oak);
-		}
+		chungusBoxF(c,x,cy+y,z,2,1,2,cy < -2 ? I_Roots : I_Oak);
+	}
+	wgBigRoots(c,x,y-5,z);
+}
+
+void wgMammothDeadTree(chungus *c, int x,int y,int z){
+	const int size = rngValMM(30,44);
+	for(int cy = -5;cy < size;cy++){
+		chungusBoxF(c,x,cy+y,z,3,1,3,cy < -2 ? I_Roots : I_Oak);
 	}
 	wgBigRoots(c,x,y-5,z);
 }
@@ -135,14 +133,14 @@ void wgSpruce(chungus *c, int x,int y,int z){
 			for(int cz = -lsize;cz<=lsize;cz++){
 			for(int cx = -lsize;cx<=lsize;cx++){
 				if((rngValM(sparseness)) == 0){continue;}
-				chungusSetB(c,cx+x,cy+y,cz+z,I_Oak_Leaf);
+				chungusSetB(c,cx+x,cy+y,cz+z,I_Spruce_Leaf);
 			}
 			}
 		}
-		chungusSetB(c,x,cy+y,z,I_Oak);
+		chungusSetB(c,x,cy+y,z,I_Spruce);
 	}
-	chungusSetB(c,x,size+y  ,z,I_Oak_Leaf);
-	chungusSetB(c,x,size+y+1,z,I_Oak_Leaf);
+	chungusSetB(c,x,size+y  ,z,I_Spruce_Leaf);
+	chungusSetB(c,x,size+y+1,z,I_Spruce_Leaf);
 	wgRoots(c,x,y-1,z);
 }
 
@@ -175,7 +173,33 @@ void wgBigSpruce(chungus *c, int x,int y,int z){
 	for(int cx=0;cx<2;cx++){
 	for(int cy=0;cy<2;cy++){
 	for(int cz=0;cz<2;cz++){
-		chungusSetB(c,x+cx,size+y+cy,z+cz,I_Oak_Leaf);
+		chungusSetB(c,x+cx,size+y+cy,z+cz,I_Spruce_Leaf);
+	}
+	}
+	}
+	wgBigRoots(c,x,y-5,z);
+}
+
+void wgMammothSpruce(chungus *c, int x,int y,int z){
+	const int size       = rngValMM(30,44);
+	const int sparseness = rngValMM(3,5);
+
+	for(int cy = -5;cy < size;cy++){
+		const int lsize = MAX(1,(size-cy)/4);
+		if(cy >= 8){
+			for(int cz = -lsize;cz<=lsize+1;cz++){
+			for(int cx = -lsize;cx<=lsize+1;cx++){
+				if(rngValM(sparseness) == 0){continue;}
+				chungusSetB(c,cx+x,cy+y,cz+z,I_Spruce_Leaf);
+			}
+			}
+		}
+		chungusBoxF(c,x-1,cy+y,z-1,3,1,3, cy < -2 ? I_Roots : I_Spruce);
+	}
+	for(int cx=0;cx<2;cx++){
+	for(int cy=0;cy<2;cy++){
+	for(int cz=0;cz<2;cz++){
+		chungusSetB(c,x+cx,size+y+cy,z+cz,I_Spruce_Leaf);
 	}
 	}
 	}
@@ -335,10 +359,9 @@ static void wgTree(chungus *c, int x, int y, int z, int logblock, int leafes){
 static void wgBigTree(chungus *c, int x,int y,int z, int logblock, int leafes){
 	const int size = rngValA(7)+21;
 	int bendPoint = rngValM(size/2);
-	int lsize = 5;
 
 	for(int cy = -5;cy < size;cy++){
-		lsize = MIN(size/4,MIN((cy-6),(size-cy)));
+		const int lsize = MIN(size/4,MIN((cy-6),(size-cy)));
 		if(cy == bendPoint){
 			chungusSetB(c,x  ,cy+y,z  ,logblock);
 			chungusSetB(c,x+1,cy+y,z  ,logblock);
@@ -388,6 +411,51 @@ static void wgBigTree(chungus *c, int x,int y,int z, int logblock, int leafes){
 	wgBigRoots(c,x,y-5,z);
 }
 
+static void wgMammothTree(chungus *c, int x,int y,int z, int logblock, int leafes){
+	const int size = rngValA(15)+31;
+
+	for(int cy = -5;cy < size;cy++){
+		const int lsize = MIN(size/4,MIN((cy-12),(size-cy)));
+		switch(rngValA(31)){
+		case 0:
+			x--;
+			break;
+		case 1:
+			x++;
+			break;
+		case 2:
+			z--;
+			break;
+		case 3:
+			z++;
+			break;
+		}
+
+		for(int cz = -lsize;cz <= lsize+1;cz++){
+		for(int cx = -lsize;cx <= lsize+1;cx++){
+			if((cx == -lsize  ) && (cz == -lsize  )){continue;}
+			if((cx == -lsize  ) && (cz ==  lsize+1)){continue;}
+			if((cx ==  lsize+1) && (cz == -lsize  )){continue;}
+			if((cx ==  lsize+1) && (cz ==  lsize+1)){continue;}
+			if((cx == -lsize) || (cx == lsize+1) || (cz == -lsize) || (cz == lsize+1)){
+				if(rngValA(3)){continue;}
+			}else{
+				if(rngValA(63) == 0){
+					for(int ty=rngValA(15);ty>=0;ty--){
+						chungusSetB(c,cx+x,cy+y-ty,cz+z,leafes);
+					}
+				}
+			}
+			chungusSetB(c,cx+x,cy+y,cz+z,leafes);
+		}
+		}
+		if(cy < size-4){
+			chungusBoxF(c,x-1,y+cy+1,z-1,3,1,3,cy < -2 ? I_Roots : logblock);
+		}
+	}
+	wgBigRoots(c,x,y-5,z);
+}
+
 void wgOak(chungus *c, int x,int y,int z){
 	wgTree(c,x,y,z,I_Oak,I_Oak_Leaf);
 }
@@ -402,12 +470,24 @@ void wgBigOak(chungus *c, int x,int y,int z){
 	wgBigTree(c,x,y,z,I_Oak,I_Oak_Leaf);
 }
 
+void wgMammothOak(chungus *c, int x,int y,int z){
+	wgMammothTree(c,x,y,z,I_Oak,I_Oak_Leaf);
+}
+
 void wgBigBirch(chungus *c, int x,int y,int z){
 	wgBigTree(c,x,y,z,I_Birch,I_Oak_Leaf);
 }
 
+void wgMammothBirch(chungus *c, int x,int y,int z){
+	wgMammothTree(c,x,y,z,I_Birch,I_Oak_Leaf);
+}
+
 void wgBigSakura(chungus *c, int x,int y,int z){
 	wgBigTree(c,x,y,z,I_Oak,I_Sakura_Leaf);
+}
+
+void wgMammothSakura(chungus *c, int x,int y,int z){
+	wgMammothTree(c,x,y,z,I_Oak,I_Sakura_Leaf);
 }
 
 void wgBigAcacia(chungus *c, int x,int y,int z){
@@ -461,6 +541,50 @@ void wgBigAcacia(chungus *c, int x,int y,int z){
 			chungusSetB(c,x+1,cy+y,z  ,logblock);
 			chungusSetB(c,x  ,cy+y,z+1,logblock);
 			chungusSetB(c,x+1,cy+y,z+1,logblock);
+		}
+	}
+	wgBigRoots(c,x,y-5,z);
+}
+
+void wgMammothAcacia(chungus *c, int x,int y,int z){
+	const int size       = rngValA(15) + 31;
+	const int sparseness = rngValA(3) + 3;
+	const int logblock   = I_Spruce;
+	const int leafes     = I_Acacia_Leaf;
+	int lsize = 8;
+
+	for(int cy = -5;cy < size;cy++){
+		switch(size - cy){
+		case 0:
+		default:
+			lsize = 0;
+			break;
+		case 1:
+			lsize = 8;
+			break;
+		case 2:
+			lsize = 18;
+			break;
+		case 3:
+			lsize = 12;
+			break;
+		case 4:
+			lsize = 5;
+			break;
+		case 5:
+			lsize = 1;
+			break;
+		}
+		const int rr = lsize * lsize;
+		for(int cz = -lsize;cz<=lsize+1;cz++){
+		for(int cx = -lsize;cx<=lsize+1;cx++){
+			if(((cz*cz)+(cx*cx)) > rr)  {continue;}
+			if(rngValM(sparseness) == 0){continue;}
+			chungusSetB(c,cx+x,cy+y,cz+z,leafes);
+		}
+		}
+		if(cy < size-2){
+			chungusBoxF(c,x-1,cy+y,z-1,3,1,3, cy < -2 ? I_Roots : logblock);
 		}
 	}
 	wgBigRoots(c,x,y-5,z);

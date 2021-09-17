@@ -108,6 +108,7 @@ void worldgenRock(worldgen *wgen,int x,int y,int z,int w,int h,int d){
 }
 
 typedef struct {
+	int  mammothTreeChance;
 	int  bigTreeChance;
 	int  treeChance;
 	int  deadTreeChance;
@@ -153,6 +154,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 	switch(wgen->vegetationConcentration){
 		case 7:
 			w->treeType       = 0;
+			w->mammothTreeChance = (1<<12)-1;
 			w->bigTreeChance  = (1<< 6)-1;
 			w->treeChance     = (1<< 5)-1;
 			w->shrubChance    = (1<< 4)-1;
@@ -160,6 +162,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			break;
 		case 6:
 			w->treeType       = 0;
+			w->mammothTreeChance = (1<<12)-1;
 			w->bigTreeChance  = (1<< 6)-1;
 			w->treeChance     = (1<< 5)-1;
 			w->shrubChance    = (1<< 4)-1;
@@ -168,6 +171,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 		default:
 		case 5:
 			w->treeType       = 1;
+			w->mammothTreeChance = (1<<13)-1;
 			w->bigTreeChance  = (1<< 7)-1;
 			w->treeChance     = (1<< 6)-1;
 			w->shrubChance    = (1<< 5)-1;
@@ -175,6 +179,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			break;
 		case 4:
 			w->treeType       = 1;
+			w->mammothTreeChance = (1<<13)-1;
 			w->bigTreeChance  = (1<< 9)-1;
 			w->treeChance     = (1<< 9)-1;
 			w->shrubChance    = (1<< 6)-1;
@@ -182,6 +187,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			break;
 		case 3:
 			w->treeType       = 2;
+			w->mammothTreeChance = (1<<14)-1;
 			w->bigTreeChance  = (1<<11)-1;
 			w->treeChance     = (1<<10)-1;
 			w->shrubChance    = (1<< 5)-1;
@@ -192,6 +198,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			break;
 		case 2:
 			w->treeType       = 2;
+			w->mammothTreeChance = (1<<15)-1;
 			w->bigTreeChance  = (1<<13)-1;
 			w->treeChance     = (1<<12)-1;
 			w->shrubChance    = (1<< 6)-1;
@@ -202,6 +209,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			break;
 		case 1:
 			w->treeType       = 5;
+			w->mammothTreeChance = (1<<16)-1;
 			w->shrubChance    = (1<< 7)-1;
 			w->dirtChance     = (1<< 2)-1;
 			w->stoneChance    = (1<< 5)-1;
@@ -212,6 +220,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			break;
 		case 0:
 			w->treeType       = 5;
+			w->mammothTreeChance = (1<<16)-1;
 			w->shrubChance    = (1<< 9)-1;
 			w->dirtChance     = (1<< 1)-1;
 			w->stoneChance    = (1<< 5)-1;
@@ -245,6 +254,34 @@ static bool worldgenRDMonolith(worldgen *wgen, wgChances *w, int cx, int cy, int
 	w->lastBlock  = I_Obsidian;
 	w->airBlocks  = 0;
 	w->hasSpecial = true;
+	return true;
+}
+
+static bool worldgenRDMammothTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
+	if(rngValA(w->mammothTreeChance)){return false;}
+	switch(w->treeType){
+	default:
+	case 0:
+		wgMammothSpruce(wgen->clay,cx,cy,cz);
+		break;
+	case 1:
+		wgMammothOak(wgen->clay,cx,cy,cz);
+		break;
+	case 2:
+		wgMammothAcacia(wgen->clay,cx,cy,cz);
+		break;
+	case 3:
+		wgMammothBirch(wgen->clay,cx,cy,cz);
+		break;
+	case 4:
+		wgMammothSakura(wgen->clay,cx,cy,cz);
+		break;
+	case 5:
+		wgMammothDeadTree(wgen->clay,cx,cy,cz);
+		break;
+	}
+	w->lastBlock = I_Oak;
+	w->airBlocks = 0;
 	return true;
 }
 
@@ -450,6 +487,7 @@ static void worldgenRDFirstPass(worldgen *wgen, wgChances *w){
 						}
 						w->airBlocks = 0;
 						if(worldgenRDMonolith(wgen,w,cx,cy,cz)){continue;}
+						if(worldgenRDMammothTree(wgen,w,cx,cy,cz)){continue;}
 						if(worldgenRDBigTree (wgen,w,cx,cy,cz)){continue;}
 						if(worldgenRDTree    (wgen,w,cx,cy,cz)){continue;}
 						if(worldgenRDDeadTree(wgen,w,cx,cy,cz)){continue;}
