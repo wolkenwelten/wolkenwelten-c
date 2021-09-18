@@ -26,9 +26,7 @@
 #include "../gfx/gfx.h"
 #include "../gfx/textMesh.h"
 
-#include "../../../common/nujel/lib/datatypes/closure.h"
-#include "../../../common/nujel/lib/datatypes/native-function.h"
-#include "../../../common/nujel/lib/datatypes/string.h"
+#include "../../../common/nujel/lib/api.h"
 
 #include <limits.h>
 #include <stdlib.h>

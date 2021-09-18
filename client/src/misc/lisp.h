@@ -1,6 +1,7 @@
 #pragma once
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/lisp.h"
+#include "../../../common/nujel/lib/api.h"
 
 void lispInputHandler(lSymbol *input, int key, int action);
 void lispInputTick   ();

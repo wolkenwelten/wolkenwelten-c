@@ -23,6 +23,7 @@
 #include "../misc/options.h"
 #include "../game/character.h"
 #include "../main.h"
+#include "../../../common/nujel/lib/api.h"
 
 void mouseEventHandler(const SDL_Event *e){
 	static lSymbol *keyInput = NULL;

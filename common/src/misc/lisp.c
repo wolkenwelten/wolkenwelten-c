@@ -23,12 +23,7 @@
 #include "../game/itemDrop.h"
 #include "../game/itemType.h"
 #include "../game/weather.h"
-#include "../../nujel/lib/nujel.h"
-#include "../../nujel/lib/casting.h"
-#include "../../nujel/lib/reader.h"
-#include "../../nujel/lib/datatypes/closure.h"
-#include "../../nujel/lib/datatypes/native-function.h"
-#include "../../nujel/lib/datatypes/vec.h"
+#include "../../nujel/lib/api.h"
 #include "../misc/colors.h"
 #include "../misc/profiling.h"
 

@@ -33,6 +33,7 @@
 #include "../gui/widget.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
+#include "../../../common/nujel/lib/api.h"
 
 bool textInputEvent(const SDL_Event *e);
 

@@ -17,9 +17,7 @@
 #include "itemType.h"
 
 #include "../misc/mesh.h"
-#include "../../nujel/lib/casting.h"
-#include "../../nujel/lib/datatypes/native-function.h"
-#include "../../nujel/lib/datatypes/string.h"
+#include "../../nujel/lib/api.h"
 
 #include <stdio.h>
 #include <stdlib.h>

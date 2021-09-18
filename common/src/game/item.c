@@ -22,6 +22,7 @@
 #include "../game/throwable.h"
 #include "../misc/mesh.h"
 #include "../misc/lisp.h"
+#include "../../../common/nujel/lib/api.h"
 
 #include <stddef.h>
 

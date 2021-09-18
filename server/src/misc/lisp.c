@@ -39,14 +39,7 @@
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/network/messages.h"
 
-#include "../../../common/nujel/lib/nujel.h"
-#include "../../../common/nujel/lib/casting.h"
-#include "../../../common/nujel/lib/garbage-collection.h"
-#include "../../../common/nujel/lib/reader.h"
-#include "../../../common/nujel/lib/datatypes/closure.h"
-#include "../../../common/nujel/lib/datatypes/native-function.h"
-#include "../../../common/nujel/lib/datatypes/string.h"
-#include "../../../common/nujel/lib/datatypes/vec.h"
+#include "../../../common/nujel/lib/api.h"
 
 #include <ctype.h>
 #include <stdarg.h>

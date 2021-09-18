@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/lisp.h"
-#include "../../../common/nujel/lib/nujel.h"
+#include "../../../common/nujel/lib/api.h"
 
 void      lispInit         ();
 int       parseCommand     (uint c, const char *cmd);

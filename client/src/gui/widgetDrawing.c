@@ -29,6 +29,7 @@
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/game/item.h"
+#include "../../../common/nujel/lib/api.h"
 
 #include <math.h>
 #include <string.h>

@@ -1,6 +1,6 @@
 #pragma once
 #include "../common.h"
-#include "../../nujel/lib/nujel.h"
+#include "../../nujel/lib/api.h"
 
 extern lClosure *clRoot;
 
