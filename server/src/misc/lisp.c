@@ -41,8 +41,12 @@
 
 #include "../../../common/nujel/lib/nujel.h"
 #include "../../../common/nujel/lib/casting.h"
+#include "../../../common/nujel/lib/garbage-collection.h"
 #include "../../../common/nujel/lib/reader.h"
-#include "../../../common/nujel/lib/string.h"
+#include "../../../common/nujel/lib/datatypes/closure.h"
+#include "../../../common/nujel/lib/datatypes/native-function.h"
+#include "../../../common/nujel/lib/datatypes/string.h"
+#include "../../../common/nujel/lib/datatypes/vec.h"
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -544,7 +548,7 @@ static void cmdLisp(int c,const char *str){
 
 	lVal *v = lEval(clients[c].cl,lWrap(lRead(str)));
 	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,true);
-	lClosureGC();
+	lGarbageCollect();
 
 	msgLispSExpr(c, reply);
 }
@@ -556,7 +560,7 @@ void lispInit(){
 	addServerNativeFuncs(clRoot);
 	lEval(clRoot,lWrap(lRead((char *)src_tmp_server_nuj_data)));
 
-	lClosureGC();
+	lGarbageCollect();
 }
 
 lClosure *lispClientClosure(uint c){
@@ -594,7 +598,7 @@ void lispEvents(){
 	yieldRun->flags |= lfNoGC;
 
 	lEval(clRoot,yieldRun);
-	lClosureGC();
+	lGarbageCollect();
 
 	PROFILE_STOP();
 }
@@ -604,7 +608,7 @@ const char *lispEval(const char *str, bool humanReadable){
 	memset(reply,0,sizeof(reply));
 	lVal *v = lEval(clRoot,lWrap(lRead(str)));
 	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,humanReadable);
-	lClosureGC();
+	lGarbageCollect();
 	return reply;
 }
 

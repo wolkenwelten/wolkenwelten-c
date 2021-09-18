@@ -18,6 +18,8 @@
 
 #include "../misc/mesh.h"
 #include "../../nujel/lib/casting.h"
+#include "../../nujel/lib/datatypes/native-function.h"
+#include "../../nujel/lib/datatypes/string.h"
 
 #include <stdio.h>
 #include <stdlib.h>

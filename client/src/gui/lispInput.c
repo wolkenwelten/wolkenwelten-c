@@ -24,6 +24,7 @@
 #include "../gui/widget.h"
 #include "../misc/lisp.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/nujel/lib/datatypes/closure.h"
 
 #include <ctype.h>
 #include <stdlib.h>

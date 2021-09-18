@@ -44,6 +44,8 @@
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 
+#include "../../../common/nujel/lib/datatypes/closure.h"
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>

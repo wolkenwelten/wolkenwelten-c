@@ -41,7 +41,7 @@
 #include "../../common/src/game/time.h"
 
 #include "../../common/nujel/lib/nujel.h"
-#include "../../common/nujel/lib/string.h"
+#include "../../common/nujel/lib/datatypes/string.h"
 
 #include "../../common/src/cto.h"
 #include "../../common/src/misc/misc.h"

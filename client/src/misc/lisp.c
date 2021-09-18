@@ -45,8 +45,12 @@
 #include "../../../common/src/network/messages.h"
 #include "../../../common/nujel/lib/nujel.h"
 #include "../../../common/nujel/lib/casting.h"
+#include "../../../common/nujel/lib/garbage-collection.h"
 #include "../../../common/nujel/lib/reader.h"
-#include "../../../common/nujel/lib/string.h"
+#include "../../../common/nujel/lib/datatypes/closure.h"
+#include "../../../common/nujel/lib/datatypes/native-function.h"
+#include "../../../common/nujel/lib/datatypes/string.h"
+#include "../../../common/nujel/lib/datatypes/vec.h"
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -817,7 +821,7 @@ void lispInit(){
 	lispAddClientNFuncs(clRoot);
 	widgetAddLispFunctions(clRoot);
 	lEval(clRoot,lWrap(lRead((const char *)src_tmp_client_nuj_data)));
-	lClosureGC();
+	lGarbageCollect();
 }
 
 void lispFree(){
@@ -829,7 +833,7 @@ const char *lispEval(const char *str, bool humanReadable){
 	memset(reply,0,sizeof(reply));
 	lVal *v = lnfBegin(clRoot,lRead(str));
 	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,humanReadable);
-	lClosureGC();
+	lGarbageCollect();
 	return reply;
 }
 
@@ -845,7 +849,7 @@ void lispEvents(){
 	PROFILE_START();
 
 	static u64 lastTicks = 0;
-	lClosureGC();
+	lGarbageCollect();
 	u64 cticks = getTicks();
 	if((lastTicks + 20) > cticks){
 		if(lastTicks > cticks){lastTicks = cticks;}

@@ -2,6 +2,7 @@
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/nujel/lib/nujel.h"
+#include "../../../common/nujel/lib/garbage-collection.h"
 #include "island.h"
 
 #include <stdio.h>
@@ -16,7 +17,7 @@ void worldgenNujel(worldgen *wgen){
 		const int cy = wgen->gy + y * CHUNGUS_SIZE;
 		const int cz = wgen->gz + z * CHUNGUS_SIZE;
 		lispCallFuncIII("worldgen",cx,cy,cz);
-		lClosureGC();
+		lGarbageCollect();
 	}
 	}
 	}
