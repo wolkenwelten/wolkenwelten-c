@@ -93,9 +93,9 @@ void serverKeepalive(){
 
 void serverSendChatMsg(const char *msg){
 	packet *p = &packetBuffer;
-	snprintf((char *)(&p->v.u8[2]),254,"%.253s",msg);
-	packetQueue(p,msgtChatMsg,256,-1);
-	printf("%s[MSG]%s %s\n",termColors[6],termReset,msg);
+	size_t len = snprintf((void *)packetBuffer.v.u8,sizeof(packetBuffer.v.u8),"%s",msg);
+	packetQueue(p,msgtChatMsg,alignedLen(len+1),-1);
+	printf("%s[MSG]%s %s\n",termColors[6],termReset,p->v.u8);
 }
 
 void sendPlayerNames(){
@@ -118,19 +118,8 @@ void sendPlayerJoinMessage(uint c){
 }
 
 void serverParseChatMsg(uint c,const packet *m){
-	char msg[256];
-	snprintf(msg,sizeof(msg),"%.32s: %.192s",clients[c].playerName,(char *)(&m->v.u8[2]));
-	serverSendChatMsg(msg);
-}
-
-void serverParseDyingMsg(uint c,const packet *m){
-	char msg[256];
-	if((m->v.u16[0] != 65535) && (m->v.u16[0] < clientCount)){
-		snprintf(msg,sizeof(msg),"%.32s %.128s %.32s",clients[m->v.u16[0]].playerName,(char *)(&m->v.u8[2]),clients[c].playerName);
-	}else{
-		snprintf(msg,sizeof(msg),"%.32s %.128s",clients[c].playerName,(char *)(&m->v.u8[2]));
-	}
-	serverSendChatMsg(msg);
+	(void)c;
+	serverSendChatMsg((void *)m->v.u8);
 }
 
 void msgPlayerSpawnPos(uint c){
@@ -376,9 +365,6 @@ void serverParseSinglePacket(uint c, packet *p){
 		break;
 	case msgtChatMsg:
 		serverParseChatMsg(c,p);
-		break;
-	case msgtDyingMsg:
-		serverParseDyingMsg(c,p);
 		break;
 	case msgtFxBeamBlaster:
 		beamblastNewP(c,p);

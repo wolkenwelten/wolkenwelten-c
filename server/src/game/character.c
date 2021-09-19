@@ -73,3 +73,8 @@ int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 itera
 bool characterDamage(character *c, int hp){
 	return characterHP(c,-hp);
 }
+
+const char *characterGetName(const character *c) {
+	(void)c;
+	return "Unknown Player";
+}

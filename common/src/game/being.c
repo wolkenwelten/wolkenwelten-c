@@ -484,3 +484,18 @@ being beingListGetClosest(const beingList *bl, const being source, uint type, fl
 	if(d != NULL){*d = maxD;}
 	return maxB;
 }
+
+const char *beingGetName(being b){
+	switch(beingType(b)){
+	case BEING_CHARACTER:
+		return characterGetName(characterGetByBeing(b));
+	case BEING_ANIMAL:
+		return animalGetName(animalGetByBeing(b));
+	case BEING_HOOK:
+		return "Hook";
+	case BEING_GRENADE:
+		return "Grenade";
+	default:
+		return NULL;
+	}
+}

@@ -16,64 +16,71 @@
  */
 
 #include "chat.h"
+#include "../misc/options.h"
 #include "../../../common/src/common.h"
 
 #include "../gfx/gfx.h"
 #include "../gui/textInput.h"
 #include "../../../common/src/network/messages.h"
 
+#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
-char chatLog[12][256];
-
-char chatHistory[8][256];
+char *chatLog[12];
+char *chatHistory[8];
 int  chatHistoryCount =  0;
 int  chatHistorySel   = -1;
 
 void chatEmpty(){
 	for(int i=0;i < 12;i++){
-		*chatLog[i]=0;
+		free(chatLog[i]);
+		chatLog[i] = NULL;
 	}
+}
+
+void msgSendRawMessage(const char *msg){
+	size_t len = strnlen(msg,4096);
+	memcpy(packetBuffer.v.u8,msg,len+1);
+	packetQueueToServer(&packetBuffer, msgtChatMsg, alignedLen(len+1));
 }
 
 void msgSendChatMessage(const char *msg){
-	packet *p = &packetBuffer;
-	p->v.u16[0]=0;
-	strncpy((char *)(&p->v.u8[2]),msg,254);
-	p->v.u8[255] = 0;
-	packetQueueToServer(p,msgtChatMsg,256);
-
-	for(int i=7;i>0;i--){
-		memcpy(chatHistory[i],chatHistory[i-1],256);
+	char tmp[4096];
+	const size_t len = snprintf(tmp,sizeof(tmp),"%s%s%s: %s",ansiFG[10],playerName,ansiRS,msg);
+	if(len == 0){
+		fprintf(stderr,"Couldn't send message %s",msg);
+		return;
 	}
-	strncpy(chatHistory[0],msg,256);
-	chatHistory[0][255]=0;
+	msgSendRawMessage(tmp);
+	char *buf = malloc(len+1);
+	snprintf(buf,len,"%s",packetBuffer.v.u8);
+
+	free(chatHistory[7]);
+	for(int i=7;i>0;i--){
+		chatHistory[i] = chatHistory[i-1];
+	}
 	if(++chatHistoryCount > 8){chatHistoryCount = 8;}
+	chatHistory[0] = buf;
+}
+
+static void chatAddMessage(const char *msg){
+	size_t len = strnlen(msg,4096);
+	char *buf = malloc(len+1);
+	snprintf(buf,len+1,"%s",msg);
+
+	for(int i=0;i<11;i++){
+		chatLog[i] = chatLog[i+1];
+	}
+	chatLog[11] = buf;
 }
 
 void chatParsePacket(const packet *p){
-	for(int i=0;i<11;i++){
-		memcpy(chatLog[i],chatLog[i+1],256);
-	}
-	memcpy(chatLog[11],(char *)(&p->v.u8[2]),254);
-	chatLog[11][255]=0;
+	chatAddMessage((void *)p->v.u8);
 }
 
 void chatPrintDebug(const char *msg){
-	for(int i=0;i<11;i++){
-		memcpy(chatLog[i],chatLog[i+1],256-1);
-	}
-	strncpy(chatLog[11],msg,256-1);
-	chatLog[11][255]=0;
-}
-
-void msgSendDyingMessage(const char *msg, int c){
-	packet *p = &packetBuffer;
-	strncpy((char *)(&p->v.u8[2]),msg,254);
-	p->v.u16[0]  = c;
-	p->v.u8[255] = 0;
-	packetQueueToServer(p,msgtDyingMsg,256);
+	chatAddMessage(msg);
 }
 
 const char *chatGetPrevHistory(){

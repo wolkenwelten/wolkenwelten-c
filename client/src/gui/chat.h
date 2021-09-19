@@ -6,5 +6,6 @@ extern widget *chatPanel,*chatText;
 
 void chatClose();
 bool chatOpen ();
+bool chatIsOpen();
 void chatInit ();
 void chatDraw (textMesh *guim);

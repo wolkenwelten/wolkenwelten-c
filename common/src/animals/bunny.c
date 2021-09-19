@@ -241,9 +241,10 @@ static void bunnySPlayful(animal *e,int stateChange[16]){
 
 static void bunnySFoodSearch(animal *e,int stateChange[16]){
 	const u8 cb = worldGetB(e->pos.x,e->pos.y-1,e->pos.z);
-	if(cb == 2){
+	const u8 tb = worldGetB(e->pos.x,e->pos.y-2,e->pos.z);
+	if((cb == I_Grass) || (tb == I_Grass)){
 		e->gvel = vecZero();
-		stateChange[ANIMAL_S_EAT] += 1<<16;
+		stateChange[ANIMAL_S_EAT] += 1<<20;
 	}
 	const int v = MAX(0,e->hunger - 16);
 	stateChange[ANIMAL_S_FOOD_SEARCH] -= v*v;
@@ -266,11 +267,12 @@ static void bunnySFoodSearch(animal *e,int stateChange[16]){
 
 static void bunnySEat(animal *e,int stateChange[16]){
 	const u8 cb = worldGetB(e->pos.x,(int)e->pos.y-1,e->pos.z);
-	if(cb != 2){
+	const u8 tb = worldGetB(e->pos.x,(int)e->pos.y-2,e->pos.z);
+	if((cb != I_Grass) && (tb != I_Grass)){
 		stateChange[ANIMAL_S_EAT] -= 1<<16;
 		return;
 	}
-	const int v = MAX(1,e->hunger - 16);
+	const int v = MAX(1,e->hunger - 48);
 	stateChange[ANIMAL_S_EAT] -= v*v;
 
 	if(rngValA(  7) == 0){e->hunger++;}
@@ -278,7 +280,7 @@ static void bunnySEat(animal *e,int stateChange[16]){
 		if(e->health < animalGetMaxHealth(e)){e->health++;}
 	}
 	if(rngValA(127) == 0){
-		worldSetB(e->pos.x,(int)e->pos.y-1,e->pos.z,1);
+		worldSetB(e->pos.x,(int)e->pos.y - cb == I_Grass ? -1 : -2,e->pos.z,1);
 	}
 }
 

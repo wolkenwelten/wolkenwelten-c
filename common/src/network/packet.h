@@ -4,12 +4,10 @@
 #pragma pack(push, 1)
 typedef struct {
 	u32 typesize;
-
 	/*
 	 *  type     = typesize & 0xFF
 	 *  size     = typesize >> 10
 	 */
-
 	union {
 		float f[1030];
 		i32   i32[1030];
@@ -78,7 +76,6 @@ typedef enum {
 	msgtCharacterUpdate,
 	msgtCharacterName,
 	msgtChatMsg,
-	msgtDyingMsg,
 	msgtChunkData,
 	msgtSetPlayerCount,
 	msgtPlayerPickupItem,

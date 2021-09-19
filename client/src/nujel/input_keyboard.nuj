@@ -81,6 +81,11 @@
 	[arr-set! input-keyboard-state code [> value 0]]
 ]]
 
+[def toggle-chat! [λ
+	"Toggle the chat visibility"
+	[chat-open! [not [chat-open]]]
+]]
+
 [arr-set! input-keyboard-handler key-r      input-keyboard-handler-default]
 [arr-set! input-keyboard-handler key-q      input-keyboard-handler-default]
 [arr-set! input-keyboard-handler key-space  input-keyboard-handler-default]
@@ -104,6 +109,7 @@
 [arr-set! input-keyboard-handler key-f10 [λ [code value] [when value [wire-frame! [not [wire-frame?]]]]]]
 [arr-set! input-keyboard-handler key-print [λ [code value] [when value [screenshot]]]]
 [arr-set! input-keyboard-handler key-tab [λ [code value] [when value [toggle-inventory!]]]]
+[arr-set! input-keyboard-handler key-t [λ [code value] [when value [toggle-chat!]]]]
 
 [unless [eq? OS "Emscripten"]
 	[arr-set! input-keyboard-handler key-f11 [λ [code value]

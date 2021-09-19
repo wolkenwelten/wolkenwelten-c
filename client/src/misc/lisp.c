@@ -28,6 +28,7 @@
 #include "../gfx/boundaries.h"
 #include "../gfx/gfx.h"
 #include "../gfx/texture.h"
+#include "../gui/chat.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../gui/lispInput.h"
@@ -733,6 +734,23 @@ static lVal *wwlnfDrawBoundariesSet(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfChatOpenGet(lClosure *c, lVal *v){
+	(void)c;
+	(void)v;
+	return lValBool(chatIsOpen());
+}
+
+static lVal *wwlnfChatOpenSet(lClosure *c, lVal *v){
+	bool open = false;
+	v = getLArgB(c,v,&open);
+	if(open){
+		chatOpen();
+	}else{
+		chatClose();
+	}
+	return NULL;
+}
+
 static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"s",              "(...body)",         "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",                "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
@@ -806,6 +824,8 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"widget-focus-on-game?","()",          "Return #t if the game is focused and not some menu",             wwlnfGuiFocusOnGame);
 	lAddNativeFunc(c,"draw-boundaries", "()",                "Return the current boundary drawing style",                     wwlnfDrawBoundariesGet);
 	lAddNativeFunc(c,"draw-boundaries!","(v)",               "Set the current boundary drawing style",                        wwlnfDrawBoundariesSet);
+	lAddNativeFunc(c,"chat-open", "()",                      "Return #t if the chat is open right now",                       wwlnfChatOpenGet);
+	lAddNativeFunc(c,"chat-open!","(v)",                     "Opens/Closes the chat",                                         wwlnfChatOpenSet);
 }
 
 void lispInit(){

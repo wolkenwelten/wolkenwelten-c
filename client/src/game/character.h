@@ -28,6 +28,7 @@ void  characterSetData        (character *c, const packet *p);
 void  characterPickupPacket   (character *c, const packet *p);
 void  characterUpdatePacket   (              const packet *p);
 void  characterSetName        (              const packet *p);
+void  characterDyingMessage   (const being victim, const being culprit, deathCause cause);
 
 character *characterGetPlayer (uint i);
 char *characterGetPlayerName  (uint i);
@@ -40,3 +41,5 @@ int   characterHitCheck       (const vec pos, float mdd, int damage, int cause, 
 void  charactersUpdate        ();
 void  characterDrawAll        ();
 void  characterDrawConsHighlight(const character *c);
+
+const char *characterGetName(const character *c);

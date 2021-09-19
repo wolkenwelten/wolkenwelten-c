@@ -19,6 +19,17 @@ typedef enum blockCategory {
 	LEAVES
 } blockCategory;
 
+typedef enum deathCause {
+	deathCauseCommand = 0,
+	deathCauseBeamblast,
+	deathCauseMelee,
+	deathCauseProjectile,
+	deathCausePhysics,
+	deathCauseAbyss,
+	deathCauseFire,
+	deathCauseGrenade
+} deathCause;
+
 typedef struct {
 	u8            tex[sideMAX];
 	u8            texX[sideMAX];

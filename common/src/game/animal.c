@@ -659,3 +659,17 @@ void animalDoDamage(animal *a,i16 hp, u8 cause, float knockbackMult, being culpr
 	if(cause != 2){knockback = 0.01f;}
 	a->vel = vecAdd(a->vel,vecMulS(dis,knockback * knockbackMult));
 }
+
+const char *animalGetName(const animal *e){
+	switch((animalType)e->type){
+	case animalUnused:
+		return  "An unknown entity";
+	case animalBunny:
+		return  "A little Bunny";
+	case animalGuardian:
+		return "A Guardian";
+	case animalWerebunny:
+		return "A massive Werebunny";
+	}
+	return "Unknown";
+}

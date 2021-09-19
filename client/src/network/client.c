@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "client.h"
 #include "../main.h"
 #include "../gfx/effects.h"
@@ -56,7 +55,7 @@ u8 recvBuf[1<<22];
 
 uint sendBufSent = 0;
 uint sendBufLen  = 0;
-u8 sendBuf[1<<16];
+u8 sendBuf[1<<18];
 
 size_t sentBytesCurrentSession             = 0;
 size_t recvBytesCurrentSession             = 0;
@@ -342,7 +341,6 @@ void clientParsePacket(const packet *p){
 
 	case msgtRequestChungus:
 	case msgtPlaceBlock:
-	case msgtDyingMsg:
 	case msgtRequestSpawnPos:
 	case msgtChungusUnsub:
 	case msgtBeingMove:

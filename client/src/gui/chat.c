@@ -44,6 +44,10 @@ void chatClose(){
 	widgetSlideH(chatPanel, 0);
 }
 
+bool chatIsOpen(){
+	return (widgetFocused == chatText);
+}
+
 void handlerChatSubmit(widget *wid){
 	if(chatText->vals[0] != 0){
 		msgSendChatMessage(chatText->vals);

@@ -253,7 +253,7 @@ static void characterUpdateDamage(character *c, int damage){
 		setOverlayColor(0xA03020F0,0);
 		c->flags &= ~CHAR_GLIDE;
 		if(characterHP(c,damage / -8)){
-			msgSendDyingMessage("did not bounce", 65535);
+			characterDyingMessage(characterGetBeing(c),0,deathCausePhysics);
 			setOverlayColor(0xFF000000,0);
 			commitOverlayColor();
 		}
@@ -564,7 +564,7 @@ static void characterUpdateFalling(character *c){
 	}
 	if(c->pos.y < -512){
 		characterDie(c);
-		msgSendDyingMessage("fell into the abyss", 65535);
+		characterDyingMessage(characterGetBeing(player),0,deathCauseAbyss);
 	}
 }
 
@@ -881,15 +881,37 @@ void characterDrawAll(){
 	}
 }
 
-static void characterDyingMessage(u8 cause, u16 culprit){
-	const char *messages[4] = {
-		"died by command",
-		"beamblasted",
-		"clubbed",
-		"shot"
-	};
-	if(cause >= 4){ cause = 0; }
-	msgSendDyingMessage(messages[cause], culprit);
+void characterDyingMessage(const being victim, const being culprit, deathCause cause){
+	char tmp[4096];
+	const char *victimName = beingGetName(victim);
+	const char *culpritName = beingGetName(culprit);
+	switch(cause){
+	case deathCauseCommand:
+		snprintf(tmp,sizeof(tmp),"%s died by command",victimName);
+		break;
+	case deathCauseBeamblast:
+		snprintf(tmp,sizeof(tmp),"%s beamblasted %s",culpritName,victimName);
+		break;
+	case deathCauseMelee:
+		snprintf(tmp,sizeof(tmp),"%s clubbed %s",culpritName,victimName);
+		break;
+	case deathCauseProjectile:
+		snprintf(tmp,sizeof(tmp),"%s shot %s",culpritName,victimName);
+		break;
+	case deathCausePhysics:
+		snprintf(tmp,sizeof(tmp),"%s didn't bounce",victimName);
+		break;
+	case deathCauseAbyss:
+		snprintf(tmp,sizeof(tmp),"%s fell into the abyss",victimName);
+		break;
+	case deathCauseFire:
+		snprintf(tmp,sizeof(tmp),"%s burned",victimName);
+		break;
+	case deathCauseGrenade:
+		snprintf(tmp,sizeof(tmp),"%s bombed %s",culpritName,victimName);
+		break;
+	}
+	msgSendRawMessage(tmp);
 }
 
 void characterDamagePacket(character *c, const packet *p){
@@ -913,7 +935,7 @@ void characterDamagePacket(character *c, const packet *p){
 		c->vel = vecAdd(c->vel,vecMulS(dis,0.05f * knockbackMult));
 	}
 	if(characterDamage(c,hp)){
-		characterDyingMessage(cause,culprit);
+		characterDyingMessage(target,culprit,cause);
 	}
 }
 
@@ -1031,9 +1053,15 @@ bool characterDamage(character *c, int hp){
 	setOverlayColor(0xA03020F0,0);
 	bool ret = characterHP(c,-hp);
 	if(ret){
-		//msgSendDyingMessage("died", 65535);
 		setOverlayColor(0xFF000000,0);
 		commitOverlayColor();
 	}
 	return ret;
+}
+
+const char *characterGetName(const character *c) {
+	if(c == NULL){return "Unknown Player";}
+	uint id = beingID(characterGetBeing(c));
+	if(id > 31){return "Out of Bounds Player";}
+	return playerNames[id];
 }

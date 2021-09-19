@@ -103,7 +103,7 @@ void fireCheckPlayerBurn(uint off){
 			sfxPlay(sfxUngh,1.f);
 			setOverlayColor(0xA03020F0,0);
 			if(characterHP(player,-1)){
-				msgSendDyingMessage("burned", 65535);
+				characterDyingMessage(characterGetBeing(player),0,deathCauseFire);
 				setOverlayColor(0xFF000000,0);
 				commitOverlayColor();
 			}
