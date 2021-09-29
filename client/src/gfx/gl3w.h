@@ -1,3 +1,4 @@
+#pragma once
 /*
  * This file was generated with gl3w_gen.py, part of gl3w
  * (hosted at https://github.com/skaslev/gl3w)
@@ -25,11 +26,6 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-
-#ifndef __APPLE__
-#ifndef __gl3w_h_
-#define __gl3w_h_
-
 #include "glcorearb.h"
 
 #ifndef __gl_h_
@@ -42,12 +38,9 @@
 #define GL3W_ERROR_OPENGL_VERSION -3
 
 typedef void (*GL3WglProc)(void);
-typedef GL3WglProc (*GL3WGetProcAddressProc)(const char *proc);
 
 /* gl3w api */
 int gl3wInit(void);
-int gl3wInit2(GL3WGetProcAddressProc proc);
-int gl3wIsSupported(int major, int minor);
 GL3WglProc gl3wGetProcAddress(const char *proc);
 
 /* gl3w internal state */
@@ -1378,6 +1371,3 @@ extern union GL3WProcs gl3wProcs;
 #define glViewportIndexedf                               gl3wProcs.gl.ViewportIndexedf
 #define glViewportIndexedfv                              gl3wProcs.gl.ViewportIndexedfv
 #define glWaitSync                                       gl3wProcs.gl.WaitSync
-
-#endif
-#endif
