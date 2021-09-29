@@ -3,14 +3,6 @@
 #include "gl.h"
 
 bool glInitialize() {
-	#ifdef WOLKENWELTEN__GL_USE_GLEW
-	glewExperimental = GL_TRUE;
-	if(glewInit() != GLEW_OK){
-		fprintf(stderr,"\nERROR: Can't initialize OpenGL 3.1 using GLEW, you might need a newer GPU/Driver.\n\n");
-		return false;
-	}
-	#endif
-
 	#ifdef WOLKENWELTEN__GL_USE_GL3W
 	int errCode = gl3wInit();
 	if(errCode){
