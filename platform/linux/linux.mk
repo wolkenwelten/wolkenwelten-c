@@ -3,8 +3,10 @@ CC               := gcc
 
 AS_SYM           := USE_GOT=USE_GOT
 
-CLIENT_LIBS      := -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lvorbis
-DYNLIBS          := -lGL -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lvorbis
+GL_LIBS          := $(shell pkg-config --silence-errors --libs gl || pkg-config --libs opengl)
+
+CLIENT_LIBS      := $(GL_LIBS) -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lvorbis
+DYNLIBS          := $(GL_LIBS) -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lvorbis
 STATICLIBS       :=
 SERVER_LIBS      := -lm
 
