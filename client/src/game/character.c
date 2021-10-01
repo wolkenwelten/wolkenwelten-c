@@ -774,7 +774,6 @@ static void characterActiveItemDraw(const character *c){
 	mesh *aiMesh;
 	float sneakOff = 0.f;
 	if(c->flags & CHAR_SNEAK){sneakOff = 1.f;}
-	shaderBrightness(sMesh,worldBrightness);
 
 	activeItem = &c->inventory[c->activeItem];
 	if(activeItem == NULL)     {return;}
@@ -858,7 +857,13 @@ void characterDraw(character *c){
 	shadowAdd(c->pos,0.75f);
 
 	const float breath = sinf((float)c->breathing/512.f)*6.f;
-
+	if(c->effectValue){
+		const float effectMult = 1.f - (--c->effectValue / 31.f);
+		const float lowBrightness = worldBrightness * effectMult * effectMult;
+		shaderColor(sMesh, worldBrightness, lowBrightness, lowBrightness, 1.f);
+	}else{
+		shaderColor(sMesh, worldBrightness, worldBrightness, worldBrightness, 1.f);
+	}
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->pos.x,c->pos.y+c->yoff+breath/128.f,c->pos.z);
 	matMulRotYX(matMVP,-c->rot.yaw,-c->rot.pitch/6.f + breath);
@@ -866,6 +871,7 @@ void characterDraw(character *c){
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(c->eMesh);
 	c->screenPos = matMulVec(matMVP,vecNew(0,0.5f,0));
+	shaderColor(sMesh, worldBrightness, worldBrightness, worldBrightness, 1.f);
 
 	characterActiveItemDraw(c);
 	characterShadesDraw(c);
@@ -874,7 +880,6 @@ void characterDraw(character *c){
 
 void characterDrawAll(){
 	shaderBind(sMesh);
-	shaderBrightness(sMesh,worldBrightness);
 	for(uint i=0;i<characterCount;i++){
 		if(characterList[i].nextFree != NULL){ continue; }
 		characterDraw(&characterList[i]);
@@ -958,6 +963,7 @@ void characterGotHitPacket(const packet *p){
 	const i16 hp   = p->v.i16[0];
 	const u8 cause = p->v.u8[2];
 	fxBleeding(c->pos,target,hp,cause);
+	c->effectValue = 31;
 }
 
 void characterSetData(character *c, const packet *p){

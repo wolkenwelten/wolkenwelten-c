@@ -23,6 +23,7 @@
 #include "../gfx/mesh.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
+#include "../gfx/sky.h"
 #include "../../../common/src/misc/misc.h"
 
 void blockTypeGenMeshes(){
@@ -125,9 +126,9 @@ void blockTypeDraw(u8 b, vec pos, float alpha, int depthOffset){
 
 	shaderBind(sMesh);
 	shaderMatrix(sMesh,matMVP);
-	shaderAlpha (sMesh,alpha);
+	shaderColor(sMesh, worldBrightness, worldBrightness, worldBrightness, alpha);
 	meshDraw(blocks[b].singleBlock);
-	shaderAlpha (sMesh,1.0);
+	shaderColor(sMesh, worldBrightness, worldBrightness, worldBrightness, 1.f);
 
 	if(depthOffset){
 		glPolygonOffset(0,0);

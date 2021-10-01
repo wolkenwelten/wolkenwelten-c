@@ -1,11 +1,10 @@
 uniform sampler2D curTex;
 
 in vec2 multiTexCoord;
-in float lightness;
-in float alpha;
+in vec4 color;
 
 out vec4 fragColor;
 
 void main() {
-	fragColor = texture(curTex, multiTexCoord) * vec4(lightness,lightness,lightness,alpha);
+	fragColor = texture(curTex, multiTexCoord) * color;
 }

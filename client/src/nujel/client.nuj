@@ -84,6 +84,11 @@
 	[s [time/night!]]
 ]]
 
+[def animal-stress [λ []
+	"Generate a bunch of bunnies surrounding the player"
+	[s [animal-stress [player-pos] 6]]
+]]
+
 [def countdown [λ [i]
 	"Count down on the console"
 	[cond [[< [int i] 0] #t]

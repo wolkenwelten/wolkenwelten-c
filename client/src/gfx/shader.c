@@ -156,8 +156,8 @@ void shaderCompile(shader *s){
 	shaderPrintLog(s->pID,"Program","");
 
 	s->lMVP        = glGetUniformLocation(s->pID,"matMVP");
+	s->lColor      = glGetUniformLocation(s->pID,"inColor");
 	s->lAlpha      = glGetUniformLocation(s->pID,"colorAlpha");
-	s->lBrightness = glGetUniformLocation(s->pID,"colorBrightness");
 	s->lSideTint   = glGetUniformLocation(s->pID,"sideTint");
 	s->lTransform  = glGetUniformLocation(s->pID,"transPos");
 	s->lSizeMul    = glGetUniformLocation(s->pID,"sizeMul");
@@ -174,6 +174,7 @@ shader *shaderNew(const char *vss,const char *fss,uint attrMask){
 
 	s->attrMask = attrMask;
 	s->lMVP     = -1;
+	s->lColor   = -1;
 	s->lAlpha   = -1;
 	s->lSizeMul = -1;
 
@@ -210,9 +211,9 @@ void shaderAlpha(shader *s, float alpha){
 	glUniform1f(s->lAlpha,alpha);
 }
 
-void shaderBrightness(shader *s, float v){
-	if(s->lBrightness == -1){return;}
-	glUniform1f(s->lBrightness,v);
+void shaderColor(shader *s, float r, float g, float b, float a){
+	if(s->lColor == -1){return;}
+	glUniform4f(s->lColor,r,g,b,a);
 }
 
 void shaderSideTint(shader *s, const vec v){

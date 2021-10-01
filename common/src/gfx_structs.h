@@ -49,7 +49,7 @@ typedef struct {
 	uint vsID,fsID;
 	char *vss,*fss;
 	uint attrMask;
-  int lMVP,lAlpha,lTransform,lBrightness,lSideTint,lSizeMul;
+  int lMVP,lAlpha,lColor,lTransform,lSideTint,lSizeMul;
 } shader;
 
 #pragma pack(push, 1)

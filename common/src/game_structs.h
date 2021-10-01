@@ -173,6 +173,7 @@ typedef struct {
 	 int actionTimeout;
 	uint stepTimeout;
 	 int cloudyness;
+          u8 effectValue;
 
 	u16 activeItem,inventorySize;
 	item inventory[CHAR_INV_MAX];
@@ -195,6 +196,7 @@ typedef struct {
 	u8 flags;
 	u8 type;
 	u8 state;
+	u8 effectValue;
 
 	u16 nextFree;
 	u16 breathing;

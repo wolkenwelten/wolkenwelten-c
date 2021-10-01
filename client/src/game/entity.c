@@ -54,7 +54,8 @@ void entityDraw(const entity *e){
 
 void entityDrawAll(){
 	shaderBind(sMesh);
-	shaderBrightness(sMesh,worldBrightness);
+	//shaderBrightness(sMesh,worldBrightness);
+	shaderColor(sMesh,worldBrightness,worldBrightness,worldBrightness,1.f);
 	for(uint i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL)                        { continue; }
 		if(entityDistance(&entityList[i],player) > ENTITY_FADEOUT){ continue; }

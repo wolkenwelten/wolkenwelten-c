@@ -73,14 +73,19 @@ static void animalDraw(animal *e){
 	e->screenPos = matMulVec(matMVP,vecNew(0,scale/2.f,0));
 
 	shaderMatrix(sMesh,matMVP);
+	if(e->effectValue){
+		const float effectMult = 1.f - (--e->effectValue / 31.f);
+		const float lowBrightness = worldBrightness * effectMult * effectMult;
+		shaderColor(sMesh, worldBrightness, lowBrightness, lowBrightness, 1.f);
+	}else{
+		shaderColor(sMesh, worldBrightness, worldBrightness, worldBrightness, 1.f);
+	}
 	meshDraw(animalGetMesh(e));
 	shadowAdd(e->pos,scale*1.5f);
 }
 
 void animalDrawAll(){
 	shaderBind(sMesh);
-	shaderBrightness(sMesh,worldBrightness);
-	shaderAlpha (sMesh,1.f);
 	for(uint i=0;i<animalCount;i++){
 		if(animalDistance(&animalList[i],player) > ANIMAL_FADEOUT){
 			animalList[i].screenPos = vecNOne();
@@ -134,6 +139,7 @@ void animalGotHitPacket(const packet *p){
 	const being target  = p->v.u32[1];
 	if(beingType(target) != BEING_ANIMAL){return;}
 	if(beingID(target) > animalCount)    {return;}
-	const animal *c = &animalList[beingID(target)];
+	animal *c = &animalList[beingID(target)];
 	fxBleeding(c->pos,target,p->v.i16[0],p->v.u16[1]);
+	c->effectValue = 31;
 }

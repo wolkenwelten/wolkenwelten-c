@@ -131,7 +131,7 @@ void renderSky(const character *cam){
 	genSkyTexture();
 
 	shaderBind(sMesh);
-	shaderBrightness(sMesh,1.f);
+	shaderColor(sMesh, 1.f, 1.f, 1.f, 1.f);
 	const vec shake = vecAdd(cam->rot,camShake);
 	matIdentity(matMVP);
 	matMulRotXY(matMVP,shake.yaw,shake.pitch);
