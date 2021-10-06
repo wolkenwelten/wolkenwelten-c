@@ -26,17 +26,17 @@ all: wolkenwelten
 release: release.wasm
 
 release: release.wasm
-release.wasm: releases/wasm/wolkenwelten.html
+release.wasm: releases/wasm/index.html
 release.wasm: releases/wasm/server.js
 release.wasm: releases/wasm/manifest.json
 
 .PHONY: common/nujel/nujel.wa
 common/nujel/nujel.wa:
-	$(MAKE) -C common/nujel -j8 nujel.wa
+	$(MAKE) -C common/nujel nujel.wa
 
-releases/wasm/wolkenwelten.html: $(CLIENT_WASM_OBJS) $(COMMON_WASM_OBJS) common/nujel/nujel.wa
+releases/wasm/index.html: $(CLIENT_WASM_OBJS) $(COMMON_WASM_OBJS) common/nujel/nujel.wa
 	@mkdir -p releases/wasm/
-	$(EMCC) $^ -D_GNU_SOURCE $(CSTD) -O3 -fno-rtti --closure 0 -s MINIFY_HTML=0 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 -s MAX_WEBGL_VERSION=2 $(CLIENT_EMMEM) $(EMLIBS) --shell-file platform/wasm/shell.html -o releases/wasm/index.html
+	$(EMCC) $^ -D_GNU_SOURCE $(CSTD) -O3 -fno-rtti --closure 0 -s MINIFY_HTML=0 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 -s MAX_WEBGL_VERSION=2 $(CLIENT_EMMEM) $(EMLIBS) --shell-file platform/wasm/shell.html -o $@
 
 releases/wasm/server.js: $(SERVER_WASM_OBJS) $(COMMON_WASM_OBJS) $(NUJEL_WASM_OBJS) common/nujel/nujel.wa
 	@mkdir -p releases/wasm/

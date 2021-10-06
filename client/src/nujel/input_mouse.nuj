@@ -19,7 +19,7 @@
 
 	[arr-set! input-mouse-handler 5 [λ [code value]
 		[when [widget-focus-on-game?]
-			[let [[newvalue [- [player-active-slot] value]]]
+			[let [[newvalue [- [player-active-slot] [if [> value 0] 1 -1]]]]
 				[when [< newvalue 0] [set! newvalue 9]]
 				[when [> newvalue 9] [set! newvalue 0]]
 				[player-active-slot! newvalue]
