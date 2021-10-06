@@ -20,6 +20,9 @@
 	<body>
 		<canvas class="emscripten" id="canvas"></canvas>
 		<script type='text/javascript'>
+			window.addEventListener('unload', () => {
+				navigator.sendBeacon('/wolkenwelten-quit-dev-server',{});
+			});
 			var args = window.location.search+'';
 			if(args.charAt(0) == '?'){
 				args = args.substr(1);

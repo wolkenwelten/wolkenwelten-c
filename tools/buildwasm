@@ -2,16 +2,17 @@
 EMSDK_TESTED_VERSION="2.0.27"
 EMSDK_REPO_URL="https://github.com/emscripten-core/emsdk.git"
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-if [ ! -d "$DIR/../platform/wasm/emsdk" ]; then
-	cd "$DIR/../platform/wasm/"
+cd "$( dirname "${BASH_SOURCE[0]}" )" && cd ..
+DIR=`pwd`
+if [ ! -d "platform/wasm/emsdk" ]; then
+	cd "platform/wasm/"
 	git clone "$EMSDK_REPO_URL"
 fi
-cd "$DIR/../platform/wasm/emsdk"
+cd "platform/wasm/emsdk"
 git pull
 ./emsdk install "$EMSDK_TESTED_VERSION"
 ./emsdk activate "$EMSDK_TESTED_VERSION"
-cd "$DIR/../"
+cd "$DIR"
 
-source "$DIR/../platform/wasm/emsdk/emsdk_env.sh"
+source "platform/wasm/emsdk/emsdk_env.sh"
 make -j16 release.wasm
