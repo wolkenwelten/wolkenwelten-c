@@ -14,26 +14,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "keyboard.h"
 
-#include "input_keyboard.h"
-
-#include "sdl.h"
-#include "../main.h"
-#include "../game/character.h"
-#include "../gfx/texture.h"
-#include "../gfx/gfx.h"
-#include "../gui/chat.h"
-#include "../gui/gui.h"
-#include "../gui/textInput.h"
-#include "../gui/menu.h"
-#include "../gui/lispInput.h"
-#include "../menu/inventory.h"
-#include "../misc/lisp.h"
-#include "../misc/options.h"
-#include "../gui/widget.h"
-#include "../misc/options.h"
-#include "../network/chat.h"
-#include "../../../common/nujel/lib/api.h"
+#include "../sdl.h"
+#include "../../main.h"
+#include "../../game/character.h"
+#include "../../gfx/texture.h"
+#include "../../gfx/gfx.h"
+#include "../../gui/chat.h"
+#include "../../gui/gui.h"
+#include "../../gui/textInput.h"
+#include "../../gui/menu.h"
+#include "../../gui/lispInput.h"
+#include "../../menu/inventory.h"
+#include "../../misc/lisp.h"
+#include "../../misc/options.h"
+#include "../../gui/widget.h"
+#include "../../misc/options.h"
+#include "../../network/chat.h"
+#include "../../../../common/nujel/lib/api.h"
 
 bool textInputEvent(const SDL_Event *e);
 

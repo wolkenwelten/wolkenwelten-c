@@ -26,10 +26,10 @@
 #include "../misc/options.h"
 #include "../sdl/sfx.h"
 
-#include "../sdl/input_mouse.h"
-#include "../sdl/input_keyboard.h"
-#include "../sdl/input_gamepad.h"
-#include "../sdl/input_touch.h"
+#include "../sdl/input/mouse.h"
+#include "../sdl/input/keyboard.h"
+#include "../sdl/input/gamepad.h"
+#include "../sdl/input/touch.h"
 
 #include <stdlib.h>
 #include <stdio.h>

@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "input_touch.h"
+#include "touch.h"
 
-#include "../game/character.h"
-#include "../menu/inventory.h"
-#include "../main.h"
+#include "../../game/character.h"
+#include "../../menu/inventory.h"
+#include "../../main.h"
 
 #include <SDL.h>
 

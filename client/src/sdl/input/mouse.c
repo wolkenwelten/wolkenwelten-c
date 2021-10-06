@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "input_mouse.h"
+#include "mouse.h"
 
-#include "../sdl/sdl.h"
-#include "../gui/gui.h"
-#include "../misc/lisp.h"
-#include "../misc/options.h"
-#include "../game/character.h"
-#include "../main.h"
-#include "../../../common/nujel/lib/api.h"
+#include "../sdl.h"
+#include "../../gui/gui.h"
+#include "../../misc/lisp.h"
+#include "../../misc/options.h"
+#include "../../game/character.h"
+#include "../../main.h"
+#include "../../../../common/nujel/lib/api.h"
 
 void mouseEventHandler(const SDL_Event *e){
 	static lSymbol *keyInput = NULL;

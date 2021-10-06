@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "gamepad.h"
 
-#include "input_gamepad.h"
-#include "../sdl/sdl.h"
-#include "../game/character.h"
-#include "../gui/gui.h"
-#include "../gui/menu.h"
-#include "../gui/widget.h"
-#include "../menu/inventory.h"
-#include "../main.h"
-#include "../../../common/src/common.h"
+#include "../sdl.h"
+#include "../../game/character.h"
+#include "../../gui/gui.h"
+#include "../../gui/menu.h"
+#include "../../gui/widget.h"
+#include "../../menu/inventory.h"
+#include "../../main.h"
+#include "../../../../common/src/common.h"
 
 #include <math.h>
 
