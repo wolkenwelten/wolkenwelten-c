@@ -25,6 +25,9 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+#include "gl.h"
+#ifdef WOLKENWELTEN__GL_USE_GL3W
+
 #include "gl3w.h"
 #include <stdlib.h>
 #include <SDL.h>
@@ -727,3 +730,5 @@ static void load_procs(){
 		gl3wProcs.ptr[i] = SDL_GL_GetProcAddress(proc_names[i]);
 	}
 }
+
+#endif
