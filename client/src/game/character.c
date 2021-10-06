@@ -39,7 +39,6 @@
 #include "../misc/options.h"
 #include "../network/chat.h"
 #include "../network/client.h"
-#include "../sdl/input_gamepad.h"
 #include "../sdl/sdl.h"
 #include "../sdl/sfx.h"
 #include "../tmp/objs.h"

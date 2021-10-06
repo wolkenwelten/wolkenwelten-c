@@ -17,7 +17,7 @@
 
 #include "textInput.h"
 #include "../gui/lispInput.h"
-#include "../sdl/input_keyboard.h"
+#include "../sdl/input/keyboard.h"
 #include "../sdl/sdl.h"
 #include "../gfx/textMesh.h"
 #include "../gui/widget.h"

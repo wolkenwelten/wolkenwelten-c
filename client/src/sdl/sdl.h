@@ -34,3 +34,5 @@ bool inputSecondary();
 bool inputTertiary();
 bool inputThrow();
 bool gameControlsInactive();
+
+void vibrate(float force);
