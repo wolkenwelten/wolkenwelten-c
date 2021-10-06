@@ -32,66 +32,77 @@ $(CLIENT_OBJS):      | client/src/tmp/objs.h
 $(CLIENT_OBJS):      | client/src/tmp/sfx.h
 
 $(WOLKENWELTEN): $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS) common/nujel/nujel.a
-	$(CC) $^ -g -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_CINCLUDES) $(CINCLUDES) $(CLIENT_LIBS) $(CSTD)
-
+	@$(CC) $^ -g -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_CINCLUDES) $(CINCLUDES) $(CLIENT_LIBS) $(CSTD)
+	@echo "$(ANSI_BG_GREEN)" "[LD] " "$(ANSI_RESET)" $@
 
 client/src/tmp/client.nuj: $(CLIENT_NUJ)
 	@mkdir -p client/src/tmp
-	cat $(CLIENT_NUJ) > $@
+	@cat $(CLIENT_NUJ) > $@
+	@echo "$(ANSI_GREY)" "[CAT]" "$(ANSI_RESET)" $@
 
 %.ogg: %.aif
-	$(FFMPEG) -hide_banner -v panic -i $< -ac 1 -ar 22050 -acodec libvorbis $@
+	@$(FFMPEG) -hide_banner -v panic -i $< -ac 1 -ar 22050 -acodec libvorbis $@
+	@echo "$(ANSI_CYAN)" "[FF] " "$(ANSI_RESET)" $@
 
 client/src/tmp/gfxAssets.c: $(ASSET) $(GFX_ASSETS)
 	@mkdir -p client/src/tmp/
-	$(ASSET) client/src/tmp/gfxAssets $(GFX_ASSETS)
+	@$(ASSET) client/src/tmp/gfxAssets $(GFX_ASSETS)
+	@echo "$(ANSI_GREY)" "[ST] " "$(ANSI_RESET)" $@
 client/src/tmp/gfxAssets.h: client/src/tmp/gfxAssets.c
 	@true
 
 client/src/tmp/sfxAssets.c: $(ASSET) $(SFX_ASSETS)
 	@mkdir -p client/src/tmp/
-	$(ASSET) client/src/tmp/sfxAssets $(SFX_ASSETS)
+	@$(ASSET) client/src/tmp/sfxAssets $(SFX_ASSETS)
+	@echo "$(ANSI_GREY)" "[ST] " "$(ANSI_RESET)" $@
 client/src/tmp/sfxAssets.h: client/src/tmp/sfxAssets.c
 	@true
 
 client/src/tmp/shdAssets.c: $(ASSET) $(SHD_ASSETS)
 	@mkdir -p client/src/tmp/
-	$(ASSET) client/src/tmp/shdAssets $(SHD_ASSETS)
+	@$(ASSET) client/src/tmp/shdAssets $(SHD_ASSETS)
+	@echo "$(ANSI_GREY)" "[ST] " "$(ANSI_RESET)" $@
 client/src/tmp/shdAssets.h: client/src/tmp/shdAssets.c
 	@true
 
 client/src/tmp/txtAssets.c: $(ASSET) $(TXT_ASSETS)
 	@mkdir -p client/src/tmp/
-	$(ASSET) client/src/tmp/txtAssets $(TXT_ASSETS)
+	@$(ASSET) client/src/tmp/txtAssets $(TXT_ASSETS)
+	@echo "$(ANSI_GREY)" "[ST] " "$(ANSI_RESET)" $@
 client/src/tmp/txtAssets.h: client/src/tmp/txtAssets.c
 	@true
 
 client/src/tmp/nujAssets.c: $(ASSET) $(CLIENT_NUJ_ASSETS)
 	@mkdir -p client/src/tmp/
-	$(ASSET) client/src/tmp/nujAssets $(CLIENT_NUJ_ASSETS)
+	@$(ASSET) client/src/tmp/nujAssets $(CLIENT_NUJ_ASSETS)
+	@echo "$(ANSI_GREY)" "[ST] " "$(ANSI_RESET)" $@
 client/src/tmp/nujAssets.h: client/src/tmp/nujAssets.c
 	@true
 
 client/src/tmp/meshAssets.c: client/tools/objparser $(MESHASSETS)
 	@mkdir -p client/src/tmp/
-	client/tools/objparser $(MESHASSETS)
+	@client/tools/objparser $(MESHASSETS)
+	@echo "$(ANSI_GREY)" "[ST] " "$(ANSI_RESET)" $@
 client/src/tmp/meshAssets.h: client/src/tmp/meshAssets.c
 	@true
 
 client/tools/objparser: client/tools/objparser.c
-	$(CC) $(OPTIMIZATION) $(CSTD) $< -o $@
+	@$(CC) $(OPTIMIZATION) $(CSTD) $< -o $@
+	@echo "$(ANSI_BG_GREY)" "[CC] " "$(ANSI_RESET)" $@
 
 client/src/tmp/objs.c: $(MESHASSETS)
 client/src/tmp/objs.c: client/tools/objgen
 	@mkdir -p client/src/tmp/
-	client/tools/objgen client/src/tmp/objs client/mesh/
+	@client/tools/objgen client/src/tmp/objs client/mesh/
+	@echo "$(ANSI_GREY)" "[OBJ]" "$(ANSI_RESET)" $@
 client/src/tmp/objs.h: client/src/tmp/objs.c
 	@true
 
 client/src/tmp/sfx.c: $(SFX_ASSETS)
 client/src/tmp/sfx.c: client/tools/sfxgen
 	@mkdir -p client/src/tmp/
-	client/tools/sfxgen client/src/tmp/sfx client/sfx/
+	@client/tools/sfxgen client/src/tmp/sfx client/sfx/
+	@echo "$(ANSI_GREY)" "[SFX]" "$(ANSI_RESET)" $@
 client/src/tmp/sfx.h: client/src/tmp/sfx.c
 	@true
 

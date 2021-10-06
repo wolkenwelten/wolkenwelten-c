@@ -40,9 +40,10 @@ all: $(WOLKENWELTEN) $(WOLKENWELTEN_SERVER) $(NUJEL)
 .PHONY: all release .deps
 
  $(NUJEL):
-	$(MAKE) -C common/nujel -j8
+	@$(MAKE) -C common/nujel
 
 include common/disable_implicit_rules.mk
+include common/ansi_colors.mk
 include common/common.mk
 include client/client.mk
 include server/server.mk

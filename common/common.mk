@@ -30,37 +30,43 @@ $(COMMON_OBJS): | server/src/tmp/sfx.h
 common/nujel/nujel.a: $(NUJEL)
 
 %.o: %.s
-	$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) $< -o $@
+	@$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) $< -o $@
+	@echo "$(ANSI_BLUE)" "[AS] " "$(ANSI_RESET)" $@
 
 %.o: %.c
-	$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) $(if $(findstring client/, $<),$(CLIENT_CFLAGS) $(CLIENT_CINCLUDES),) -g -c $< -o $@ -MMD > ${<:.c=.d}
+	@$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) $(if $(findstring client/, $<),$(CLIENT_CFLAGS) $(CLIENT_CINCLUDES),) -g -c $< -o $@ -MMD > ${<:.c=.d}
+	@echo "$(ANSI_GREEN)" "[CC] " "$(ANSI_RESET)" $@
 
 common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
 	@mkdir -p common/src/tmp
-	cat $(NUJ_WWLIB) > $@
+	@cat $(NUJ_WWLIB) > $@
+	@echo "$(ANSI_GREY)" "[CAT]" "$(ANSI_RESET)" $@
 
 common/src/tmp/assets.c: $(ASSET) $(COMMON_ASSETS)
 	@mkdir -p common/src/tmp/
-	$(ASSET) common/src/tmp/assets $(COMMON_ASSETS)
+	@$(ASSET) common/src/tmp/assets $(COMMON_ASSETS)
+	@echo "$(ANSI_GREY)" "[ST] " "$(ANSI_RESET)" $@
 common/src/tmp/assets.h: common/src/tmp/assets.c
 	@true
 
 $(ASSET): tools/assets.c
-	$(CC) $(OPTIMIZATION) $(CSTD) $(CFLAGS) $^ -o $@
+	@$(CC) $(OPTIMIZATION) $(CSTD) $(CFLAGS) $^ -o $@
+	@echo "$(ANSI_BG_GREY)" "[CC] " "$(ANSI_RESET)" $@
 
 .PHONY: clean
 clean:
-	$(MAKE) -C common/nujel clean
-	rm -f gmon.out client/tools/assets client/tools/objparser callgrind.out.* vgcore.* platform/win/wolkenwelten.res
-	rm -f client/sfx/*.ogg
-	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.o')
-	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.wo')
-	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.d')
-	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.wd')
-	rm -f $(shell find client/src common/src nujel-standalone/ server/src -type f -name '*.deps')
-	rm -f wolkenwelten wolkenwelten.exe wolkenwelten-server wolkenwelten-server.exe tools/assets nujel nujel.exe
-	rm -f server/make.deps client/make.deps common/make.deps server/server.d client/client.d common/common.d nujel-standalone/nujel.d
-	rm -rf client/src/tmp server/src/tmp common/src/tmp web/releases releases nujel-standalone/tmp
+	@$(MAKE) -C common/nujel clean
+	@rm -f gmon.out client/tools/assets client/tools/objparser callgrind.out.* vgcore.* platform/win/wolkenwelten.res
+	@rm -f client/sfx/*.ogg
+	@rm -f $(shell find client/src common/src server/src -type f -name '*.o')
+	@rm -f $(shell find client/src common/src server/src -type f -name '*.wo')
+	@rm -f $(shell find client/src common/src server/src -type f -name '*.d')
+	@rm -f $(shell find client/src common/src server/src -type f -name '*.wd')
+	@rm -f $(shell find client/src common/src server/src -type f -name '*.deps')
+	@rm -f wolkenwelten wolkenwelten.exe wolkenwelten-server wolkenwelten-server.exe tools/assets nujel nujel.exe
+	@rm -f server/make.deps client/make.deps common/make.deps server/server.d client/client.d common/common.d nujel-standalone/nujel.d
+	@rm -rf client/src/tmp server/src/tmp common/src/tmp web/releases releases nujel-standalone/tmp
+	@echo "$(ANSI_BG_RED)" "[CLEAN]" "$(ANSI_RESET)" "wolkenwelten"
 
 .PHONY: web
 web:
@@ -97,4 +103,5 @@ archive:
 
 common/src/tmp/cto.c: tools/tools.nuj $(NUJEL)
 	@mkdir -p common/src/tmp/
-	$(NUJEL) tools/tools.nuj -x "[infogen \"common/src/tmp/cto\"]"
+	@$(NUJEL) tools/tools.nuj -x "[infogen \"common/src/tmp/cto\"]"
+	@echo "$(ANSI_GREY)" "[NUJ]" "$(ANSI_RESET)" $@

@@ -12,7 +12,8 @@ release: release.macos
 # Assemble empty object files, easier than removing the deps which wont assemble due to
 # clang as missing --defsym support
 %.o: %.s
-	$(AS) -c -o $@ -- < /dev/null
+	@$(AS) -c -o $@ -- < /dev/null
+	@echo "$(ANSI_GREY)" "[00] " "$(ANSI_RESET)" $@
 
 release.macos: releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz
 releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz: $(OSX_APP)/Contents/Info.plist
