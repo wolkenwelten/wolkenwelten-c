@@ -1,4 +1,4 @@
-ANSI_RESET  := $(shell tput reset)
+ANSI_RESET  := $(shell tput init)
 
 ANSI_RED    := $(shell tput setaf 1)
 ANSI_GREEN  := $(shell tput setaf 2)
