@@ -1,17 +1,19 @@
-ANSI_RESET  := $(shell tput init)
+ANSI_RESET  := [0m
 
-ANSI_RED    := $(shell tput setaf 1)
-ANSI_GREEN  := $(shell tput setaf 2)
-ANSI_YELLOW := $(shell tput setaf 3)
-ANSI_BLUE   := $(shell tput setaf 4)
-ANSI_PINK   := $(shell tput setaf 5)
-ANSI_CYAN   := $(shell tput setaf 6)
-ANSI_GREY   := $(shell tput setaf 7)
+ANSI_BLACK  := [0;30m
+ANSI_RED    := [0;31m
+ANSI_GREEN  := [0;32m
+ANSI_YELLOW := [0;33m
+ANSI_BLUE   := [0;34m
+ANSI_PINK   := [0;35m
+ANSI_CYAN   := [0;36m
+ANSI_GREY   := [0;37m
 
-ANSI_BG_RED    := $(shell tput setab 1)
-ANSI_BG_GREEN  := $(shell tput setab 2)
-ANSI_BG_YELLOW := $(shell tput setab 3)
-ANSI_BG_BLUE   := $(shell tput setab 4)
-ANSI_BG_PINK   := $(shell tput setab 5)
-ANSI_BG_CYAN   := $(shell tput setab 6)
-ANSI_BG_GREY   := $(shell tput setab 7)
+ANSI_BG_BLACK  := [0;40m
+ANSI_BG_RED    := [0;41m
+ANSI_BG_GREEN  := [0;42m
+ANSI_BG_YELLOW := [0;43m
+ANSI_BG_BLUE   := [0;44m
+ANSI_BG_PINK   := [0;45m
+ANSI_BG_CYAN   := [0;46m
+ANSI_BG_GREY   := [0;47m
