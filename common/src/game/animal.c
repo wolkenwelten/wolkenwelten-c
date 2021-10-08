@@ -358,13 +358,11 @@ animal *animalClosest(const vec pos, float maxDistance){
 }
 
 static void animalUpdateBL(){
-	static uint calls = 0;
-	for(uint i=calls&0x1F;i<animalCount;i+=0x20){
+	for(uint i=0;i<animalCount;i++){
 		if(animalList[i].type == 0){continue;}
 		animal *a = &animalList[i];
 		a->bl = beingListUpdate(a->bl,animalGetBeing(a));
 	}
-	calls++;
 }
 
 void animalUpdateAll(){

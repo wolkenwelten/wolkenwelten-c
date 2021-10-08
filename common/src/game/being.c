@@ -442,8 +442,9 @@ beingList *beingListUpdate(beingList *bl, being entry){
 	if(entry == 0){return NULL;}
 	vec pos = beingGetPos(entry);
 	beingList *nbl = beingListGet(pos.x,pos.y,pos.z);
-	if(bl == nbl){return bl;}
-	beingListDel( bl,entry);
+	if(bl != nbl){
+		beingListDel( bl,entry);
+	}
 	beingListAdd(nbl,entry);
 	return nbl;
 }
