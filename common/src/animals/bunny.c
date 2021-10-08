@@ -174,7 +174,7 @@ static void bunnyFightOrFlight(animal *e,int stateChange[16]){
 			const vec tpos = beingGetPos(e->target);
 			const float dist = vecMag(vecSub(tpos,e->pos));
 
-			if((dist < 1.5f) && (rngValA(7)==0)){
+			if((dist < 3.f) && (rngValA(3)==0)){
 				int dmg = 1;
 				if(rngValM(8)==0){dmg = 4;}
 				beingDamage(e->target,dmg,2,1.f,animalGetBeing(e),e->pos);

@@ -290,10 +290,11 @@ void characterHit(character *c){
 	item *itm = &c->inventory[c->activeItem];
 	iteration--;
 
+	const float range = 4.f;
 	const vec pos = vecAdd(c->pos,vecDegToVec(c->rot));
 	const being source = beingCharacter(playerID);
-	characterHitCheck(pos,2.f,itemGetDamage(itm,0),2,iteration, source);
-	animalHitCheck   (pos,2.f,itemGetDamage(itm,0),2,iteration, source);
+	characterHitCheck(pos,range,itemGetDamage(itm,0),2,iteration, source);
+	animalHitCheck   (pos,range,itemGetDamage(itm,0),2,iteration, source);
 
 	characterStartAnimation(c,animationHit,240);
 	characterAddCooldown(c,80);

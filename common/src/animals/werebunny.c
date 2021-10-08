@@ -96,7 +96,7 @@ static void werebunnySHunt(animal *e,int stateChange[16]){
 		const vec tpos = beingGetPos(e->target);
 		const float dist = vecMag(vecSub(tpos,e->pos));
 
-		if(dist < 2.f){
+		if(dist < 4.f){
 			int dmg = 1;
 			if(rngValM(8)==0){dmg = 4;}
 			beingDamage(e->target,dmg,2,1.f,animalGetBeing(e),e->pos);
