@@ -1,11 +1,11 @@
 [def git-get-commit [λ [branch]
 	"Gets the commit hash of BRANCH"
-	[str/trim [file/load [".git/refs/heads/" branch]]]
+	[str/trim [file/read [".git/refs/heads/" branch]]]
 ]]
 
 [def git-get-branch [λ []
 	"Returns the currently active branch"
-	[let [[cur-head [str/trim [file/load "./.git/HEAD"]]]]
+	[let [[cur-head [str/trim [file/read "./.git/HEAD"]]]]
 		[cond [[eq? [substr cur-head 0 4] "ref:"] [join [list-tail [split cur-head "/"] 2] "/"]]
 		       [#t "UNKNOWN"]
 		]
@@ -41,5 +41,5 @@
 
 [def infogen [λ [prefix]
 	"Generate build info and writes C source/header files PREFIX"
-	[file/save [cat prefix ".c"] [infogen-source]]
+	[file/write [cat prefix ".c"] [infogen-source]]
 ]]
