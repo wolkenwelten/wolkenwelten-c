@@ -116,8 +116,12 @@ bool hookUpdate(hook *ghk){
 		if(!(ghk->ent->flags & ENTITY_COLLIDE) && (ghk->attached == 0)){
 			hookReturnHook(ghk);
 		}
-		if((ghk->attached != 0) && (ghk->rope->a == 0)){
-			hookReturnHook(ghk);
+		if(ghk->attached != 0){
+			if((ghk->rope->a == 0) || (ghk->rope->b == 0)){
+				hookReturnHook(ghk);
+			}else{
+				ghk->ent->pos = beingGetPos(ghk->attached);
+			}
 		}
 	}else{
 		if(!ghk->hooked && !ghk->returning && (ghk->ent->flags & ENTITY_COLLIDE)){

@@ -27,13 +27,13 @@
 #include "../network/chat.h"
 #include "../sdl/sdl.h"
 
+#include <stdio.h>
 #include <string.h>
 
 widget *chatPanel;
 widget *chatText;
 
 bool chatOpen(){
-	if(gameControlsInactive()){return true;}
 	widgetSlideH(chatPanel, 64);
 	widgetFocus(chatText);
 	return false;
@@ -73,10 +73,11 @@ void handlerChatSelectNext(widget *wid){
 void handlerChatBlur(widget *wid){
 	(void)wid;
 	chatResetHistorySel();
+	handlerRootHud(wid);
 }
 
 void chatInit(){
-	chatText  = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Chat Message","submit",handlerChatSubmit);
+	chatText = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Chat Message","submit",handlerChatSubmit);
 	widgetBind(chatText,"blur",handlerChatBlur);
 	widgetBind(chatText,"selectPrev",handlerChatSelectPrev);
 	widgetBind(chatText,"selectNext",handlerChatSelectNext);

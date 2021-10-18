@@ -44,7 +44,7 @@ static void animalServerSync(u8 c, u16 i){
 }
 
 void animalSyncPlayer(u8 c){
-	if(animalCount == 0){
+	if(animalListMax == 0){
 		animalEmptySync(c);
 		return;
 	}
@@ -54,7 +54,7 @@ void animalSyncPlayer(u8 c){
 	for(uint tries = 256;count >= 0;clients[c].animalUpdateOffset++){
 		if(--tries == 0){break;}
 		const uint i = clients[c].animalUpdateOffset;
-		if(i >= animalCount){clients[c].animalUpdateOffset = 0;}
+		if(i >= animalListMax){clients[c].animalUpdateOffset = 0;}
 		if(animalList[i].clientPriorization & mask){continue;}
 		animalServerSync(c,i);
 		count--;
@@ -64,7 +64,7 @@ void animalSyncPlayer(u8 c){
 	for(uint tries=2048;count >= 0;clients[c].animalPriorityUpdateOffset++){
 		if(--tries == 0){break;}
 		const uint i = clients[c].animalPriorityUpdateOffset;
-		if(i >= animalCount){clients[c].animalPriorityUpdateOffset = 0;}
+		if(i >= animalListMax){clients[c].animalPriorityUpdateOffset = 0;}
 		if(!(animalList[i].clientPriorization & mask)){continue;}
 		animalServerSync(c,i);
 		count--;
@@ -85,7 +85,7 @@ void animalUpdatePriorities(u8 c){
 	if(clients[c].state)     {return;}
 	if(clients[c].c == NULL) {return;}
 	const vec cpos = clients[c].c->pos;
-	for(uint i=0;i<animalCount;i++){
+	for(uint i=0;i<animalListMax;i++){
 		const float d = vecMag(vecSub(animalList[i].pos,cpos));
 		if(d < 78.f){
 			animalList[i].clientPriorization |= prio;

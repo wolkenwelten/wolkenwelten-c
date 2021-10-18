@@ -257,8 +257,7 @@ bool characterPlaceBlock(character *c,item *i){
 	}
 }
 
-bool characterHP(character *c, int addhp){
-	c->hp += addhp;
+bool characterCheckHealth(character *c){
 	if(c->hp <= 0){
 		characterDie(c);
 		return true;
@@ -267,6 +266,11 @@ bool characterHP(character *c, int addhp){
 		c->hp = c->maxhp;
 	}
 	return false;
+}
+
+bool characterHP(character *c, int addhp){
+	c->hp += addhp;
+	return characterCheckHealth(c);
 }
 
 void characterEmptyInventory(character *c){

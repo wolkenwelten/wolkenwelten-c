@@ -110,6 +110,7 @@
 [arr-set! input-keyboard-handler key-print [λ [code value] [when value [screenshot]]]]
 [arr-set! input-keyboard-handler key-tab [λ [code value] [when value [toggle-inventory!]]]]
 [arr-set! input-keyboard-handler key-t [λ [code value] [when value [toggle-chat!]]]]
+[arr-set! input-keyboard-handler key-y [λ [code value] [when value [toggle-chat!]]]]
 
 [unless [eq? OS "Emscripten"]
 	[arr-set! input-keyboard-handler key-f11 [λ [code value]

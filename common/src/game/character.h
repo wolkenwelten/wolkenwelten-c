@@ -40,6 +40,7 @@ void       characterStartAnimation (      character *c, animType index, int dura
 bool       characterTryToShoot     (      character *c, item *i, int cooldown, int bulletcount);
 bool       characterTryToUse       (      character *c, item *i, int cooldown, int itemcount);
 bool       characterHP             (      character *c, int addhp);
+bool       characterCheckHealth    (      character *c);
 bool       characterDamage         (      character *c, int hp);
 int        characterGetItemAmount  (const character *c, u16 itemID);
 int        characterDecItemAmount  (      character *c, u16 itemID, int amount);

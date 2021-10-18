@@ -86,7 +86,7 @@ static void animalDraw(animal *e){
 
 void animalDrawAll(){
 	shaderBind(sMesh);
-	for(uint i=0;i<animalCount;i++){
+	for(uint i=0;i<animalListMax;i++){
 		if(animalDistance(&animalList[i],player) > ANIMAL_FADEOUT){
 			animalList[i].screenPos = vecNOne();
 			continue;
@@ -97,14 +97,14 @@ void animalDrawAll(){
 
 void animalSyncFromServer(const packet *p){
 	const uint newC = p->v.u16[5];
-	if(newC > animalCount){
-		for(uint ii=animalCount;ii<newC;ii++){
+	if(newC > animalListMax){
+		for(uint ii=animalListMax;ii<newC;ii++){
 			animalList[ii].type = 0;
 		}
 	}
-	animalCount   = newC;
+	animalListMax = newC;
 	const uint i  = p->v.u16[4];
-	if (i >= animalCount){ return; }
+	if (i >= animalListMax){ return; }
 	animal *e     = &animalList[i];
 
 	e->pos        = vecNewP(&p->v.f[3]);
@@ -138,7 +138,7 @@ void animalSyncFromServer(const packet *p){
 void animalGotHitPacket(const packet *p){
 	const being target  = p->v.u32[1];
 	if(beingType(target) != BEING_ANIMAL){return;}
-	if(beingID(target) > animalCount)    {return;}
+	if(beingID(target) > animalListMax)  {return;}
 	animal *c = &animalList[beingID(target)];
 	fxBleeding(c->pos,target,p->v.i16[0],p->v.u16[1]);
 	c->effectValue = 31;

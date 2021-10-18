@@ -13,3 +13,4 @@ void initInventory      ();
 void drawInventory      (textMesh *guim);
 void showInventoryPanel ();
 void hideInventoryPanel ();
+void inventoryCheckCursorItem();

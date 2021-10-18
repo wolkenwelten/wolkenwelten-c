@@ -39,8 +39,8 @@
 #define ANIMAL_MAX (1<<12)
 
 animal  animalList[ANIMAL_MAX];
+uint    animalListMax   = 0;
 uint    animalCount     = 0;
-uint    animalUsedCount = 0;
 uint    animalFirstFree = 0xFFFFFFFF;
 
 void animalReset(animal *e){
@@ -54,12 +54,12 @@ animal *animalNew(const vec pos , int type, int gender){
 		e = &animalList[animalFirstFree];
 		animalFirstFree = e->nextFree;
 	}else{
-		if(animalCount >= countof(animalList)){
+		if(animalListMax >= countof(animalList)){
 			e = &animalList[rngValA(ANIMAL_MAX-1)];
 			animalDel(e-animalList);
 			return animalNew(pos,type,gender);
 		}
-		e = &animalList[animalCount++];
+		e = &animalList[animalListMax++];
 	}
 	animalReset(e);
 
@@ -87,14 +87,14 @@ animal *animalNew(const vec pos , int type, int gender){
 	}
 
 	if(type == animalGuardian){e->flags |= ANIMAL_NO_NEEDS;}
-	animalUsedCount++;
+	animalCount++;
 
 	return e;
 }
 
 void animalDel(uint i){
-	if(i >= animalCount){
-		printf("AnimalDel: %u > %u\n",i,animalCount);
+	if(i >= animalListMax){
+		printf("AnimalDel: %u > %u\n",i,animalListMax);
 		return;
 	}
 	beingListDel(animalList[i].bl,beingAnimal(i));
@@ -107,13 +107,13 @@ void animalDel(uint i){
 	animalList[i].type     = 0;
 	animalList[i].nextFree = animalFirstFree;
 	animalFirstFree        = i;
-	animalUsedCount--;
+	animalCount--;
 }
 
 void animalDelChungus(const chungus *c){
 	if(c == NULL){return;}
 	const vec cp = chungusGetPos(c);
-	for(uint i=0;i<animalCount;i++){
+	for(uint i=0;i<animalListMax;i++){
 		if(animalList[i].type == 0)  {continue;}
 		const vec *p = &animalList[i].pos;
 		if(((int)p->x >> 8) != cp.x){continue;}
@@ -205,7 +205,7 @@ void animalChaseTarget(animal *e){
 int animalUpdate(animal *e){
 	int ret=0;
 	u32 col;
-	if(e->type == 0)       {return 0;}
+	if(e->type == 0){return 0;}
 	e->pos = vecAdd(e->pos,e->vel);
 	if(!worldShouldBeLoaded(e->pos)){return -1;}
 	if(!vecInWorld(e->pos)){return 1;}
@@ -307,7 +307,7 @@ const char *animalGetStateName(const animal *e){
 	}
 }
 
-int animalGetMaxHealth (const animal *e){
+int animalGetMaxHealth(const animal *e){
 	switch((animalType)e->type){
 	case animalUnused:
 		return  0;
@@ -321,7 +321,7 @@ int animalGetMaxHealth (const animal *e){
 	return 0;
 }
 
-float animalGetWeight (const animal *e){
+float animalGetWeight(const animal *e){
 	switch((animalType)e->type){
 	case animalUnused:
 		return 2.f;
@@ -338,7 +338,7 @@ float animalGetWeight (const animal *e){
 animal *animalGetByBeing(being b){
 	const uint i = beingID(b);
 	if(beingType(b) != BEING_ANIMAL){ return NULL; }
-	if(i >= animalCount)            { return NULL; }
+	if(i >= animalListMax)          { return NULL; }
 	return &animalList[i];
 }
 
@@ -348,7 +348,7 @@ being animalGetBeing(const animal *c){
 }
 
 animal *animalClosest(const vec pos, float maxDistance){
-	for(uint i=0;i<animalCount;i++){
+	for(uint i=0;i<animalListMax;i++){
 		if(animalList[i].type == 0){continue;}
 		const float d = vecMag(vecSub(pos,animalList[i].pos));
 		if(d > maxDistance){continue;}
@@ -358,7 +358,7 @@ animal *animalClosest(const vec pos, float maxDistance){
 }
 
 static void animalUpdateBL(){
-	for(uint i=0;i<animalCount;i++){
+	for(uint i=0;i<animalListMax;i++){
 		if(animalList[i].type == 0){continue;}
 		animal *a = &animalList[i];
 		a->bl = beingListUpdate(a->bl,animalGetBeing(a));
@@ -368,7 +368,7 @@ static void animalUpdateBL(){
 void animalUpdateAll(){
 	PROFILE_START();
 
-	for(int i=animalCount-1;i>=0;i--){
+	for(int i=animalListMax-1;i>=0;i--){
 		if(animalList[i].type == 0){continue;}
 		int dmg = animalUpdate(&animalList[i]);
 		animalList[i].health -= dmg;
@@ -412,7 +412,7 @@ float animalClosestPlayer(const animal *e, character **cChar){
 float animalClosestAnimal(const animal *e, animal **cAnim, int typeFilter, uint flagsMask, uint flagsCompare){
 	*cAnim = NULL;
 	float ret = 256.f*256.f;
-	for(uint i=0;i<animalCount;i++){
+	for(uint i=0;i<animalListMax;i++){
 		if(animalList[i].type == 0)                                {continue;}
 		if(e == &animalList[i])                                    {continue;}
 		if((typeFilter >= 0) && (animalList[i].type != typeFilter)){continue;}
@@ -506,7 +506,7 @@ void animalThinkAll(){
 	PROFILE_START();
 
 	static uint calls = 0;
-	for(uint i=(calls&0x1F);i<animalCount;i+=0x20){
+	for(uint i=(calls&0x1F);i<animalListMax;i+=0x20){
 		animalThink(&animalList[i]);
 	}
 	calls++;
@@ -522,7 +522,7 @@ void animalNeedsAll(){
 	int tcat = gtimeGetTimeCat();
 	if((tcat == TIME_NIGHT) || (tcat == TIME_EVENING)){sleepyi = 2;}
 
-	for(uint i=(calls&0xFFF);i<animalCount;i+=0x1000){
+	for(uint i=(calls&0xFFF);i<animalListMax;i+=0x1000){
 		animal *e = &animalList[i];
 		if(e->flags & ANIMAL_NO_NEEDS){continue;}
 		e->hunger--;
@@ -553,7 +553,7 @@ void animalRBurn(animal *e){
 
 void animalCheckBurnAll(){
 	static uint calls = 0;
-	for(uint i=(calls&0x7F);i<animalCount;i+=0x80){
+	for(uint i=(calls&0x7F);i<animalListMax;i+=0x80){
 		animal *a = &animalList[i];
 		fire *f = fireGetAtPos(a->pos.x,a->pos.y,a->pos.z);
 		if(f == NULL)       {continue;}
@@ -579,7 +579,7 @@ void animalSync(u8 c, u16 i){
 	rp->v.i8[ 7] = e->sleepy;
 
 	rp->v.u16[4] = i;
-	rp->v.u16[5] = animalCount;
+	rp->v.u16[5] = animalListMax;
 
 	rp->v.f[ 3]  = e->pos.x;
 	rp->v.f[ 4]  = e->pos.y;
@@ -616,7 +616,7 @@ void animalSyncInactive(u8 c, u16 i){
 	rp->v.u8[ 0] = 0;
 
 	rp->v.u16[4] = i;
-	rp->v.u16[5] = animalCount;
+	rp->v.u16[5] = animalListMax;
 
 	packetQueue(rp,msgtAnimalSync,17*4,c);
 }
@@ -670,4 +670,11 @@ const char *animalGetName(const animal *e){
 		return "A massive Werebunny";
 	}
 	return "Unknown";
+}
+
+void animalDeleteAll(){
+	for(uint i=0;i<animalListMax;i++){
+		if(animalList[i].type == 0){continue;}
+		animalDel(i);
+	}
 }

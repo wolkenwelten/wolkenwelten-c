@@ -9,9 +9,10 @@ typedef enum {
 } animalType;
 
 extern animal  animalList[1<<12];
+extern uint    animalListMax;
 extern uint    animalCount;
-extern uint    animalUsedCount;
 
+void        animalDeleteAll        ();
 animal     *animalNew              (const vec pos , int type, int gender);
 void        animalDel              (uint i);
 void        animalDelChungus       (const chungus *c);
@@ -19,7 +20,7 @@ void        animalReset            (      animal *e);
 float       animalDistance         (const animal *e,const character *c);
 const char *animalGetStateName     (const animal *e);
 int         animalGetMaxHealth     (const animal *e);
-float        animalGetWeight        (const animal *e);
+float       animalGetWeight        (const animal *e);
 int         animalUpdate           (      animal *e);
 void        animalThink            (      animal *e);
 float       animalClosestAnimal    (const animal *e, animal **cAnim, int typeFilter, uint flagsMask, uint flagsCompare);

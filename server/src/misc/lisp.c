@@ -247,7 +247,7 @@ static lVal *wwlnfSetAnim(lClosure *c, lVal *v){
 	v = getLArgI(c,v,&state);
 	v = getLArgI(c,v,&health);
 
-	if((index < 0) || (index > (int)animalCount)){return NULL;}
+	if((index < 0) || (index > (int)animalListMax)){return NULL;}
 	animal *a = &animalList[index];
 	if(a->type ==  0){return NULL;}
 	if(hunger >=  0){a->hunger    = hunger;}
@@ -293,7 +293,7 @@ static lVal *wwlnfLShed(lClosure *c, lVal *v){
 	(void)c;(void)v;
 
 	chungusFreeOldChungi(100);
-	for(uint i = animalCount/2-1;i < animalCount;i--){
+	for(uint i = animalListMax/2-1;i < animalListMax;i--){
 		if(animalList[i].type == 0){continue;}
 		animalDel(i);
 	}
@@ -492,9 +492,16 @@ static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
 	return NULL;
 }
 
+lVal *wwlnfAnimalKillAll(lClosure *c, lVal *v){
+	(void)c; (void) v;
+	animalDeleteAll();
+	return NULL;
+}
+
 void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
 	lAddNativeFunc(c,"animal-count",   "()",                                           "Returns animal count",                                       wwlnfACount);
+	lAddNativeFunc(c,"animal-kill-all","()",                                           "Returns animal count",                                       wwlnfAnimalKillAll);
 	lAddNativeFunc(c,"fire-count",     "()",                                           "Returns fire count",                                         wwlnfFCount);
 	lAddNativeFunc(c,"mining-count",   "()",                                           "Returns block mining count",                                 wwlnfBMCount);
 	lAddNativeFunc(c,"item-drop-count","()",                                           "Returns item drop count",                                    wwlnfIDCount);

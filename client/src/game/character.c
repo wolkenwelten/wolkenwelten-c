@@ -431,6 +431,23 @@ static float characterBlockRepulsion(character *c, float *vel){
 	return blockRepulsion(c->pos,vel,80.f,characterCollisionBlock);
 }
 
+// ToDo: Check blockRepulsion and also set Positions */
+static void characterBeingCollisionCallback(vec pos, being b, being source){
+	if(beingType(b) != BEING_ANIMAL){return;}
+	const vec beingPos = beingGetPos(b);
+	const vec delta = vecSub(pos, beingPos);
+	//const float power = (2.f - vecMag(delta));
+	const vec deltaS = vecMulS(vecNorm(delta),0.0001f);
+	const float weightDistribution = beingGetWeight(source) / beingGetWeight(b);
+	beingAddVel(b,vecMulS(deltaS,weightDistribution));
+	msgBeingMove(b,vecZero(),vecMulS(deltaS,-weightDistribution));
+	beingAddVel(source,vecMulS(deltaS,(-1.f + weightDistribution)));
+}
+
+static void characterCheckForAnimalCollision(character *c){
+	beingGetInSphere(c->pos, 2.f, characterGetBeing(c), characterBeingCollisionCallback);
+}
+
 static int characterPhysics(character *c){
 	int ret=0;
 	u32 col;
@@ -511,6 +528,7 @@ static int characterPhysics(character *c){
 		newParticle(c->pos.x,c->pos.y,c->pos.z,0.f,0.f,0.f,78.f,2.5f,cloudCT[c->cloudyness&0x1F]|0xFF000000, MAX(32,MIN(768,c->cloudyness*2)));
 	}
 
+	characterCheckForAnimalCollision(c);
 	characterUpdateCons(c,oldCol,oldPos);
 	updateGlide(c);
 	return ret;
@@ -665,7 +683,7 @@ void characterUpdate(character *c){
 	characterUpdateInaccuracy(c);
 	characterUpdateYOff(c);
 	characterUpdateAnimation(c);
-	characterHP(c,0);
+	characterCheckHealth(c);
 }
 
 void charactersUpdate(){

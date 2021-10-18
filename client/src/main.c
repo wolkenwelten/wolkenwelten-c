@@ -166,8 +166,14 @@ void worldUpdate(){
 	commitOverlayColor();
 }
 
-void mainloop(){
+static void UIStuff(){
 	handleEvents();
+	widgetUpdateAllEvents();
+	inventoryCheckCursorItem();
+}
+
+void mainloop(){
+	UIStuff();
 	if(gameRunning){
 		clientTranceive();
 		playerUpdate();

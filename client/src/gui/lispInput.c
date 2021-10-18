@@ -94,6 +94,16 @@ void lispPanelToggle(){
 	}
 }
 
+void handlerLispReset(widget *wid){
+	(void)wid;
+	lispAutoCompleteLen = 0;
+	lispAutoCompleteSelection = 0;
+	lispAutoCompleteCompleteSymbol = NULL;
+	lispAutoCompleteStart = 0;
+	lispAutoCompleteEnd = 0;
+	lispInputCheckCountdown = 1;
+}
+
 void handlerLispSubmit(widget *wid){
 	char buf[8192];
 	if(lispInput->vals[0] == 0){return;}
@@ -182,6 +192,7 @@ void lispInputInit(){
 	lispLog->flags |= WIDGET_LISP;
 	lispInput = widgetNewCP(wTextInput,lispPanel,0,-1,-1,32);
 	lispInput->flags |= WIDGET_LISP;
+	widgetBind(lispInput,"change",handlerLispReset);
 	widgetBind(lispInput,"submit",handlerLispSubmit);
 	widgetBind(lispInput,"selectPrev",handlerLispSelectPrev);
 	widgetBind(lispInput,"selectNext",handlerLispSelectNext);
@@ -213,7 +224,6 @@ void lispPanelGetPointSymbol(){
 }
 
 void lispPanelCheckAutoComplete(){
-	static u64 lastSel = 0;
 	if(widgetFocused == NULL){
 		lispInputCheckCountdown = -1;
 	}
@@ -221,10 +231,7 @@ void lispPanelCheckAutoComplete(){
 	if(--lispInputCheckCountdown >= 0){return;}
 	lispPanelGetPointSymbol();
 	if(lispAutoCompleteEnd <= lispAutoCompleteStart){return;}
-	const u64 newSel = lispAutoCompleteEnd ^ lispAutoCompleteStart;
-	if(newSel == lastSel){return;}
 	lispAutoCompleteCompleteSymbol = false;
-	lastSel = newSel;
 	lispAutoCompleteSelection = -1;
 	lispAutoCompleteLen = 0;
 	lVal *newAC = lSearchClosureSym(lCloI(clRoot),NULL,&widgetFocused->vals[lispAutoCompleteStart],lispAutoCompleteEnd - lispAutoCompleteStart);

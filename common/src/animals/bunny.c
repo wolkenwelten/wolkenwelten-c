@@ -151,7 +151,7 @@ static void bunnySFight(animal *e,int stateChange[16]){
 	stateChange[ANIMAL_S_FLEE] += rngValA(127) + e->stateTicks;
 }
 
-static void bunnySFlee(animal *e,int stateChange[16]){
+static void bunnySFlee(animal *e, int stateChange[16]){
 	e->grot.pitch = 0.f;
 	if(e->type != 2){
 		if((fabsf(e->gvel.x) + fabsf(e->gvel.z)) < 0.02f){
@@ -168,6 +168,7 @@ static void bunnySFlee(animal *e,int stateChange[16]){
 }
 
 static void bunnyFightOrFlight(animal *e,int stateChange[16]){
+	return;
 	if(e->state == ANIMAL_S_FIGHT){
 		if(e->target == 0){e->target = animalFindFOFTarget(e);}
 		if(e->target != 0){

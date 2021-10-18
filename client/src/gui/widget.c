@@ -457,11 +457,6 @@ void widgetChildPre(widget *parent, widget *child){
 void widgetFocus(widget *w){
 	if(w == widgetFocused){return;}
 	widgetFocused = w;
-	if(widgetFocused != NULL){
-		widgetEmit(widgetFocused,"blur");
-	}
-	if(w == NULL){return;}
-	widgetEmit(w,"focus");
 }
 
 static int widgetIsSelectable(const widget *cur){
@@ -560,6 +555,7 @@ void widgetBindL(widget *w, const char *eventName, lVal *handler){
 
 int widgetEmit(widget *w, const char *eventName){
 	int ret = 0;
+	if(w == NULL){return 0;}
 	for(eventHandler *h=w->firstHandler;h!=NULL;h=h->next){
 		if(strcmp(eventName,h->eventName) != 0){continue;}
 		if(h->lisp){
@@ -616,7 +612,6 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 			wid->flags &= ~WIDGET_MID_CLICKED;
 		}
 	}else{
-		if(wid->flags & WIDGET_HOVER){widgetEmit(wid,"blur");}
 		wid->flags &= ~(WIDGET_HOVER | WIDGET_CLICKED);
 	}
 }
@@ -764,4 +759,12 @@ void widgetLabel(widget *w, const char *newLabel){
 	char *buf = malloc(len);
 	snprintf(buf,len,"%s",newLabel);
 	w->label = buf;
+}
+
+void widgetUpdateAllEvents(){
+	static widget *lastFocused = NULL;
+	if(widgetFocused == lastFocused){return;}
+	widgetEmit(lastFocused,"blur");
+	lastFocused = widgetFocused;
+	widgetEmit(widgetFocused,"focus");
 }

@@ -183,9 +183,6 @@ void textInputCheckMark(const SDL_Event *e){
 bool textInputEvent(const SDL_Event *e){
 	if(!textInputActive()){return false;}
 	if(!textInputStarted){textInputFocus(widgetFocused);}
-	if((widgetFocused != NULL) && (widgetFocused->type == wTextInput) && (widgetFocused->flags & WIDGET_LISP)){
-		lispInputCheckCountdown = 1;
-	}
 
 	switch(e->type){
 	case SDL_TEXTINPUT:

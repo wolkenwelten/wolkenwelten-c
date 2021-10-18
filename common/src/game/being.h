@@ -39,3 +39,4 @@ void            beingListEntryInit();
 beingListEntry *beingListEntryNew ();
 void            beingListEntryFree(beingListEntry *ble);
 void            beingListPrint(beingList *bl);
+void            beingGetInSphere(vec pos, float r, being source, void (*callback)(vec pos, being b, being source));

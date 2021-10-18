@@ -298,10 +298,6 @@ void showCrafting(){
 void hideInventory(){
 	if(!gameRunning){return;}
 	inventoryOpen = false;
-	if(!itemIsEmpty(&inventoryCurrentPickup)){
-		itemDropNewC(player, &inventoryCurrentPickup);
-		itemDiscard(&inventoryCurrentPickup);
-	}
 	showInventoryPanel();
 	widgetFocus(widgetGameScreen);
 }
@@ -361,4 +357,13 @@ void hideInventoryPanel(){
 	widgetSlideW(inventorySpace,getTilesize()*10);
 	widgetSlideW(craftingSpace,                0);
 	widgetSlideW(equipmentSpace,               0);
+}
+
+void inventoryCheckCursorItem(){
+	printf("Check Item!\n");
+	if(isInventoryOpen()){return;}
+	if(!itemIsEmpty(&inventoryCurrentPickup)){
+		itemDropNewC(player, &inventoryCurrentPickup);
+		itemDiscard(&inventoryCurrentPickup);
+	}
 }

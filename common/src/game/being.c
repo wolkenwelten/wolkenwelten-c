@@ -299,7 +299,7 @@ float beingGetWeight(being b){
 	case BEING_CHARACTER:
 		return 80.f;
 	case BEING_ANIMAL:
-		return 10.f;
+		return 5.f;
 	case BEING_HOOK:
 		return 1.f;
 	case BEING_GRENADE:
@@ -498,5 +498,33 @@ const char *beingGetName(being b){
 		return "Grenade";
 	default:
 		return NULL;
+	}
+}
+
+static void beingListGetInSphere(beingList *bl, vec pos, float r, being source, void (*callback)(vec pos, being b, being source)){
+	if(bl == NULL){return;}
+	for(beingListEntry *ble = bl->first; ble != NULL; ble = ble->next){
+		for(uint i=0;i<countof(ble->v);i++){
+			const being b = ble->v[i];
+			if(b == 0)     {break;}
+			if(b == source){continue;}
+			const float distance = vecMag(vecSub(pos,beingGetPos(ble->v[i])));
+			if(distance < r){
+				callback(pos,b,source);
+			}
+		}
+	}
+}
+
+void beingGetInSphere(vec pos, float r, being ignore, void (*callback)(vec pos, being b, being source)){
+	const int xMax = (int)(pos.x + r) + 1 + 16;
+	const int yMax = (int)(pos.y + r) + 1 + 16;
+	const int zMax = (int)(pos.z + r) + 1 + 16;
+	for(int x = (pos.x - r); x < xMax; x += 16){
+	for(int y = (pos.y - r); y < yMax; y += 16){
+	for(int z = (pos.z - r); z < zMax; z += 16){
+		beingListGetInSphere(beingListGet(x,y,z),pos,r,ignore,callback);
+	}
+	}
 	}
 }

@@ -107,3 +107,4 @@ void    widgetSlideH  (widget *w, int nh);
 void    widgetSlideX  (widget *w, int nw);
 void    widgetSlideY  (widget *w, int nh);
 void    widgetAddEntry(widget *w, const char *entry);
+void    widgetUpdateAllEvents();

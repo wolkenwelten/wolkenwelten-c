@@ -450,7 +450,7 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"Cloudyness  : %i\n",player->cloudyness);
 
 		animalOverlaysDrawn = 0;
-		for(uint i=0;i<animalCount;i++){
+		for(uint i=0;i<animalListMax;i++){
 			drawAnimalDebugOverlay(&animalList[i],i);
 		}
 	}
