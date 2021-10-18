@@ -2,7 +2,7 @@ FFMPEG            := ffmpeg
 ifeq (, $(shell which ffmpeg))
 	FFMPEG    := ffmpeg4
 endif
-CLIENT_CFLAGS     := $(shell sdl2-config --cflags)
+CLIENT_CFLAGS     := $(shell pkg-config --cflags sdl2 SDL2_mixer)
 CLIENT_LIBS       := -lm
 
 GFX_ASSETS        := $(shell find client/gfx -type f -name '*')
