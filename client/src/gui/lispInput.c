@@ -37,8 +37,8 @@ widget *lispInput;
 int     lispHistoryActive = -1;
 bool    lispPanelVisible  = false;
 
+const lSymbol *lispAutoCompleteList[32];
 int      lispInputCheckCountdown = -1;
-lSymbol *lispAutoCompleteList[32];
 uint     lispAutoCompleteLen   = 0;
 int      lispAutoCompleteStart = 0;
 int      lispAutoCompleteEnd   = 0;
@@ -46,7 +46,7 @@ int      lispAutoCompleteSelection = -1;
 bool     lispAutoCompleteCompleteSymbol = false;
 
 char     lispAutoCompleteDescription[256];
-lSymbol *lispAutoCompleteDescriptionSymbol;
+const lSymbol *lispAutoCompleteDescriptionSymbol;
 
 void lispPanelOpen(){
 	guiCancel();
@@ -234,7 +234,7 @@ void lispPanelCheckAutoComplete(){
 	lispAutoCompleteCompleteSymbol = false;
 	lispAutoCompleteSelection = -1;
 	lispAutoCompleteLen = 0;
-	lVal *newAC = lSearchClosureSym(lCloI(clRoot),NULL,&widgetFocused->vals[lispAutoCompleteStart],lispAutoCompleteEnd - lispAutoCompleteStart);
+	lVal *newAC = lSearchClosureSym(clRoot,NULL,&widgetFocused->vals[lispAutoCompleteStart],lispAutoCompleteEnd - lispAutoCompleteStart);
 	for(lVal *n = newAC;(n != NULL) && (n->type == ltPair);n = n->vList.cdr){
 		lispAutoCompleteList[lispAutoCompleteLen] = lGetSymbol(lCar(n));
 		if(++lispAutoCompleteLen >= countof(lispAutoCompleteList)){break;}

@@ -57,7 +57,7 @@
 
 int playerID  = 64;
 bool isClient = false;
-bool quit = false;
+bool quit     = false;
 char *termColors[16];
 char *termReset;
 char *nop = "";

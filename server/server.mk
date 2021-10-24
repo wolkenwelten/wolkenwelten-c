@@ -17,8 +17,8 @@ $(SERVER_OBJS): | server/src/tmp/assets.h
 $(SERVER_OBJS): | server/src/tmp/objs.h
 $(SERVER_OBJS): | server/src/tmp/sfx.h
 
-$(WOLKENWELTEN_SERVER): $(SERVER_OBJS) $(ASM_OBJS) ${SERVER_TMP_OBJS} common/nujel/nujel.a
-	@$(CC) -D_GNU_SOURCE $^ -g -o $@ $(OPTIMIZATION) $(CFLAGS) $(SERVER_CFLAGS) $(CINCLUDES) $(SERVER_CINCLUDES) $(SERVER_LIBS) $(CSTD)
+$(WOLKENWELTEN_SERVER): $(SERVER_OBJS) $(ASM_OBJS) ${SERVER_TMP_OBJS} common/nujel/nujel.a common/nujel/tmp/stdlib.o
+	$(CC) -D_GNU_SOURCE $^ -g -o $@ $(OPTIMIZATION) $(CFLAGS) $(SERVER_CFLAGS) $(CINCLUDES) $(SERVER_CINCLUDES) $(SERVER_LIBS) $(CSTD)
 	@echo "$(ANSI_BG_GREEN)" "[LD] " "$(ANSI_RESET)" $@
 
 server/src/tmp/server.nuj: $(SERVER_NUJ)

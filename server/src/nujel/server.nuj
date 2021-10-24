@@ -41,22 +41,22 @@
 
 [def time/morning! [λ []
 	"Sets the Time to 8:00 AM"
-	[time "8:00"]
+	[game/time "8:00"]
 ]]
 
 [def time/noon! [λ []
 	"Sets the Time to 12:00 PM"
-	[time "12:00"]
+	[game/time "12:00"]
 ]]
 
 [def time/evening! [λ []
 	"Sets the Time to 21:30 PM"
-	[time "21:30"]
+	[game/time "21:30"]
 ]]
 
 [def time/night! [λ []
 	"Sets the Time to Midnight"
-	[time "24:00"]
+	[game/time "24:00"]
 ]]
 
 [def player-x [δ []
@@ -88,7 +88,7 @@
 		"Stress test the itemDrop code by generating a lot of them"
 		[item-drop-stress-x pos max -max]
 	]
-	]]
+]]
 
 [def animal-stress [let []
 	[def stress-xz [λ [pos max x z]
@@ -142,37 +142,36 @@
 ]]
 
 ; Needs to be a dynamic function because the player's ID is only in the calling context
-[def debug-stuff! [δ []
+[def debug-stuff! [λ [pid]
 	"Gives the issuing player some nice stuff to get started with"
-	[clear-eq!]
-	[clear-inv!]
+	[clear-eq! pid]
+	[clear-inv! pid]
 
-	[set-eq! 0 i-glider]
-	[set-eq! 1 i-hook]
-	[set-eq! 2 i-jetpack]
+	[set-eq! 0 i-glider 1 pid]
+	[set-eq! 1 i-hook 1 pid]
+	[set-eq! 2 i-jetpack 1 pid]
 
-	[set-inv! 0 i-flamethrower]
-	[set-inv! 1 i-masterblaster]
-	[set-inv! 2 i-assaultblaster]
-	[set-inv! 3 i-shotgun]
-	[set-inv! 4 i-crystalaxe]
-	[set-inv! 5 i-crystalpickaxe]
+	[set-inv! 0 i-flamethrower 1 pid]
+	[set-inv! 1 i-masterblaster 1 pid]
+	[set-inv! 2 i-assaultblaster 1 pid]
+	[set-inv! 3 i-shotgun 1 pid]
+	[set-inv! 4 i-crystalaxe 1 pid]
+	[set-inv! 5 i-crystalpickaxe 1 pid]
 	;[set-inv! 5 i-flamestick]
-	[set-inv! 6 i-crystalspear]
-	[set-inv! 7 i-pear 42]
-	[set-inv! 8 i-dirt 99]
-	[set-inv! 9 i-clusterbomb 99]
+	[set-inv! 6 i-crystalspear 1 pid]
+	[set-inv! 7 i-pear 42 pid]
+	[set-inv! 8 i-dirt 99 pid ]
+	[set-inv! 9 i-clusterbomb 99 pid]
 	;[set-inv! 9 i-grenade 99]
 
-	[set-inv! 10 i-blaster]
-	[set-inv! 11 i-waterthrower]
-	[set-inv! 12 i-flintandsteel]
+	[set-inv! 10 i-blaster 1 pid]
+	[set-inv! 11 i-waterthrower 1 pid]
+	[set-inv! 12 i-flintandsteel 1 pid]
 
-	[set-inv! 20 i-crystalbullet 999]
-	[set-inv! 21 i-crystalbullet 999]
-	[set-inv! 22 i-crystalbullet 999]
-	[set-inv! 23 i-flamebullet 999]
-	[set-inv! 24 i-flamebullet 999]
-	[set-inv! 25 i-flamebullet 999]
-
+	[set-inv! 20 i-crystalbullet 999 pid]
+	[set-inv! 21 i-crystalbullet 999 pid]
+	[set-inv! 22 i-crystalbullet 999 pid]
+	[set-inv! 23 i-flamebullet 999 pid]
+	[set-inv! 24 i-flamebullet 999 pid]
+	[set-inv! 25 i-flamebullet 999 pid]
 ]]

@@ -131,7 +131,7 @@ bool goodbyeSent = false;
 
 void msgSendPlayerPos(){
 	static int inventoryCountDown=0;
-	int pLen = 15*4;
+	int pLen = 15 * 4;
 	if(player == NULL){return;}
 	if(--inventoryCountDown <= 0){
 		msgPlayerSetInventory(-1,player->inventory,CHAR_INV_MAX);
@@ -390,7 +390,7 @@ void clientGreetServer(){
 
 void clientCheckPing(){
 	u64 curPing = getTicks();
-	if(curPing > lastPing+60000){
+	if(curPing > lastPing + 60000){
 		menuSetError("Server timed out");
 		clientFree();
 	}
@@ -437,9 +437,4 @@ void clientFree(){
 	gameRunning = false;
 	closeSingleplayerServer();
 	openMainMenu();
-}
-
-int getClientByCharacter(const character *c){
-	(void)c;
-	return -1;
 }

@@ -29,7 +29,7 @@
 
 [def infogen-commit [λ []
 	"Return the infogen commit"
-	[str-up [git-get-head]]
+	[str/uppercase [git-get-head]]
 ]]
 
 [def infogen-source [λ []

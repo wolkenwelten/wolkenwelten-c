@@ -44,7 +44,7 @@
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 
-#include "../../../common/nujel/lib/datatypes/closure.h"
+#include "../../../common/nujel/lib/api.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -731,7 +731,7 @@ void serverCloseClient(uint c){
 	clients[c].state = STATE_CLOSED;
 	msgSetPlayerCount(c,clientCount);
 	sendPlayerNames();
-	lClosureFree(clients[c].cl - lClosureList);
+	lClosureFree(clients[c].cl);
 	clients[c].cl = NULL;
 
 	int lowestClient=0;

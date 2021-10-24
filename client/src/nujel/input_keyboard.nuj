@@ -86,6 +86,14 @@
 	[chat-open! [not [chat-open]]]
 ]]
 
+[def keyboard-once [λ [fun]
+	"Run FUN only once per keypress"
+	[λ [code value]
+	   [and value [not [input-keyboard-state code]] [fun]]
+	   [arr-set! input-keyboard-state code [not [zero? value]]]
+	]
+]]
+
 [arr-set! input-keyboard-handler key-r      input-keyboard-handler-default]
 [arr-set! input-keyboard-handler key-q      input-keyboard-handler-default]
 [arr-set! input-keyboard-handler key-space  input-keyboard-handler-default]
@@ -96,21 +104,21 @@
 [arr-set! input-keyboard-handler key-v      input-keyboard-handler-default]
 [arr-set! input-keyboard-handler key-lshift input-keyboard-handler-default]
 
-[arr-set! input-keyboard-handler key-c   [λ [code value] [when value [cons-mode!  [not [cons-mode!]]]]]]
-[arr-set! input-keyboard-handler key-e   [λ [code value] [when value [fire-hook]]]]
-[arr-set! input-keyboard-handler key-m   [λ [code value] [when value [debug-info! [not [debug-info!]]]]]]
-[arr-set! input-keyboard-handler key-n   [λ [code value] [when value [no-clip!    [not [no-clip!]]]]]]
+[arr-set! input-keyboard-handler key-c     [keyboard-once [λ [] [cons-mode!  [not [cons-mode!]]]]]]
+[arr-set! input-keyboard-handler key-e     [keyboard-once [λ [] [fire-hook]]]]
+[arr-set! input-keyboard-handler key-m     [keyboard-once [λ [] [debug-info! [not [debug-info!]]]]]]
+[arr-set! input-keyboard-handler key-n     [keyboard-once [λ [] [no-clip! [not [no-clip!]]]]]]
 
-[arr-set! input-keyboard-handler key-f1  [λ [code value] [when value [third-person! #f] [save-options]]]]
-[arr-set! input-keyboard-handler key-f2  [λ [code value] [when value [s [debug-stuff!]]]]]
-[arr-set! input-keyboard-handler key-f3  [λ [code value] [when value [third-person! #t] [save-options]]]]
-[arr-set! input-keyboard-handler key-f8  [λ [code value] [when value [player-hp 12]]]]
-[arr-set! input-keyboard-handler key-f9  [λ [code value] [when value [draw-boundaries! [wrap-value [++ [draw-boundaries]] 0 3]]]]
-[arr-set! input-keyboard-handler key-f10 [λ [code value] [when value [wire-frame! [not [wire-frame?]]]]]]
-[arr-set! input-keyboard-handler key-print [λ [code value] [when value [screenshot]]]]
-[arr-set! input-keyboard-handler key-tab [λ [code value] [when value [toggle-inventory!]]]]
-[arr-set! input-keyboard-handler key-t [λ [code value] [when value [toggle-chat!]]]]
-[arr-set! input-keyboard-handler key-y [λ [code value] [when value [toggle-chat!]]]]
+[arr-set! input-keyboard-handler key-f1    [keyboard-once [λ [] [third-person! #f] [save-options]]]]
+[arr-set! input-keyboard-handler key-f2    [keyboard-once [λ [] [say "Debug stuff!"] [s [debug-stuff! pid]]]]]
+[arr-set! input-keyboard-handler key-f3    [keyboard-once [λ [] [third-person! #t] [save-options]]]]
+[arr-set! input-keyboard-handler key-f8    [keyboard-once [λ [] [player-hp 12]]]]
+[arr-set! input-keyboard-handler key-f9    [keyboard-once [λ [] [draw-boundaries! [wrap-value [++ [draw-boundaries]] 0 3]]]]]
+[arr-set! input-keyboard-handler key-f10   [keyboard-once [λ [] [wire-frame! [not [wire-frame?]]]]]]
+[arr-set! input-keyboard-handler key-print [keyboard-once [λ [] [screenshot]]]]
+[arr-set! input-keyboard-handler key-tab   [keyboard-once [λ [] [toggle-inventory!]]]]
+[arr-set! input-keyboard-handler key-t     [keyboard-once [λ [] [toggle-chat!]]]]
+[arr-set! input-keyboard-handler key-y     [keyboard-once [λ [] [toggle-chat!]]]]
 
 [unless [eq? OS "Emscripten"]
 	[arr-set! input-keyboard-handler key-f11 [λ [code value]
@@ -125,8 +133,8 @@
 	"Sets the players active item depending on the keycode passed"
 
 	[when value
-		[player-active-slot! [- code 30]]
-		[stop-anim]
+	      [player-active-slot! [- code 30]]
+	      [stop-anim]
 	]
 ]]
 
@@ -145,15 +153,15 @@
 	"Keyboard input handler"
 
 	[when [widget-focus-on-game?]
-		[when [input-keyboard-state key-w]     [player-walk!   -1.0]]
-		[when [input-keyboard-state key-s]     [player-walk!    1.0]]
-		[when [input-keyboard-state key-a]     [player-strafe! -1.0]]
-		[when [input-keyboard-state key-d]     [player-strafe!  1.0]]
-		[when [input-keyboard-state key-space] [player-jump!    1.0]]
-		[when [input-keyboard-state key-r]     [player-tertiary!]]
-		[when [input-keyboard-state key-q]     [player-throw!]]
-		[player-sneak! [input-keyboard-state key-v]]
-		[player-boost! [input-keyboard-state key-lshift]]
+	      [when [input-keyboard-state key-w]     [player-walk!   -1.0]]
+	      [when [input-keyboard-state key-s]     [player-walk!    1.0]]
+	      [when [input-keyboard-state key-a]     [player-strafe! -1.0]]
+	      [when [input-keyboard-state key-d]     [player-strafe!  1.0]]
+	      [when [input-keyboard-state key-space] [player-jump!    1.0]]
+	      [when [input-keyboard-state key-r]     [player-tertiary!]]
+	      [when [input-keyboard-state key-q]     [player-throw!]]
+	      [player-sneak! [input-keyboard-state key-v]]
+	      [player-boost! [input-keyboard-state key-lshift]]
 	]
 ]]
 

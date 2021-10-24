@@ -21,6 +21,7 @@
 #include "../game/hook.h"
 #include "../misc/sfx.h"
 #include "../network/messages.h"
+#include "../network/network.h"
 #include "../world/world.h"
 
 #include <stdio.h>
@@ -279,6 +280,12 @@ void characterEmptyInventory(character *c){
 	}
 }
 
+void characterEmptyEquipment(character *c){
+	for(uint i=0;i<CHAR_EQ_MAX;i++){
+		c->equipment[i] = itemEmpty();
+	}
+}
+
 item *characterGetItemBarSlot(character *c, uint i){
 	if(i >= CHAR_INV_MAX){return NULL;}
 	return &c->inventory[i];
@@ -291,6 +298,11 @@ item *characterGetActiveItem(character *c){
 void characterSetItemBarSlot(character *c, uint i, item *itm){
 	if(i >= CHAR_INV_MAX){return;}
 	c->inventory[i] = *itm;
+}
+
+void characterSetEquipmentSlot(character *c, uint i, item *itm){
+	if(i >= CHAR_EQ_MAX){return;}
+	c->equipment[i] = *itm;
 }
 
 void characterSetActiveItem(character *c,  int i){
@@ -569,4 +581,10 @@ void characterUpdateEquipment(character *c){
 		if(c->equipment[CHAR_EQ_PACK].ID == I_Jetpack){invSize = 60;}
 	}
 	c->inventorySize = invSize;
+}
+
+void characterUpdateItems(const character *c){
+	const int target = getClientByCharacter(c);
+	msgPlayerSetInventory(target, c->inventory,CHAR_INV_MAX);
+	msgPlayerSetEquipment(target, c->equipment,CHAR_EQ_MAX);
 }

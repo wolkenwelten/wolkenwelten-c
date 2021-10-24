@@ -2,11 +2,11 @@
 #include "../../../common/src/common.h"
 #include "widget.h"
 
+extern const lSymbol *lispAutoCompleteList[32];
 extern widget  *lispPanel,*lispLog;
 extern bool     lispPanelVisible;
 extern int      lispInputCheckCountdown;
 extern char     lispAutoCompleteDescription[256];
-extern lSymbol *lispAutoCompleteList[32];
 extern uint     lispAutoCompleteLen;
 extern int      lispAutoCompleteStart;
 extern int      lispAutoCompleteEnd;

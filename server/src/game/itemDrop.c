@@ -34,6 +34,8 @@
 
 #include <stdio.h>
 
+#define ID_FIRE_UPDATE_RATE (0x10)
+
 void itemDropUpdateMsg(u8 c,uint i){
 	if(i >= itemDropCount)         {return;}
 	if(itemDropList[i].ent == NULL){return;}
@@ -216,9 +218,14 @@ void itemDropUpdateAll(){
 		}
 	}
 
-	for(uint i=itemDropCount-(1+(calls&0x3F));i<itemDropCount;i-=0x40){
+	for(uint i=itemDropCount-(1 + (calls&(ID_FIRE_UPDATE_RATE-1)));i<itemDropCount;i-=ID_FIRE_UPDATE_RATE){
 		itemDropUpdateFire(i);
 	}
+	/*
+	for(uint i=itemDropCount-1;i<itemDropCount;i--){
+		itemDropUpdateFire(i);
+	}
+	*/
 	calls++;
 
 	PROFILE_STOP();
@@ -227,11 +234,12 @@ void itemDropUpdateAll(){
 void itemDropUpdateFire(uint i){
 	itemDrop *id = &itemDropList[i];
 	entity *e    = id->ent;
+	if(id->itm.amount <= 0){return;}
 	if(e == NULL)   {return;}
 	if(e->pos.y < 0){return;}
-	const u16 cx = e->pos.x;
-	const u16 cy = e->pos.y;
-	const u16 cz = e->pos.z;
+	const uint cx = e->pos.x;
+	const uint cy = e->pos.y;
+	const uint cz = e->pos.z;
 	fire *f = &fireList[id->lastFire];
 	if((id->lastFire >= fireCount) || (f->x != cx) || (f->y != cy) || (f->z != cz)){
 		f = fireGetAtPos(cx,cy,cz);
@@ -244,6 +252,7 @@ void itemDropUpdateFire(uint i){
 		f->oxygen   -= dmg;
 	}else if(id->fireDmg > 0){
 		const int dmg = MIN(id->fireDmg,itemGetFireDamage(&id->itm) * id->itm.amount);
+		id->fireDmg -= dmg;
 		fireNew(cx,cy,cz,dmg);
 	}
 

@@ -360,7 +360,6 @@ void hideInventoryPanel(){
 }
 
 void inventoryCheckCursorItem(){
-	printf("Check Item!\n");
 	if(isInventoryOpen()){return;}
 	if(!itemIsEmpty(&inventoryCurrentPickup)){
 		itemDropNewC(player, &inventoryCurrentPickup);

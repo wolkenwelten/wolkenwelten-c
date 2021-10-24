@@ -1,10 +1,12 @@
 ; All the Recipes
 
 [def recipes [arr-new 256]]
-[def recipe-new-id [let [[recipe-cur-id 0]]
-	[λ []
-		"Returns an unused item ID"
-		[set! recipe-cur-id [+ recipe-cur-id 1]] [- recipe-cur-id 1]
+[def recipe-new-id [let*
+	[def recipe-cur-id 0]
+
+	[λ [] "Returns an unused item ID"
+	   [set! recipe-cur-id [+ recipe-cur-id 1]]
+	   [- recipe-cur-id 1]
 	]
 ]]
 

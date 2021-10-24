@@ -27,6 +27,7 @@ $(COMMON_OBJS): | server/src/tmp/assets.h
 $(COMMON_OBJS): | server/src/tmp/objs.h
 $(COMMON_OBJS): | server/src/tmp/sfx.h
 
+common/nujel/tmp/stdlib.o: $(NUJEL)
 common/nujel/nujel.a: $(NUJEL)
 
 %.o: %.s

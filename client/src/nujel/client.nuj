@@ -28,7 +28,7 @@
 
 [def conf-v1! [λ [@...body]
 	"Wrapper for auto generated config s-expressions, will be overwritten on every optionsave"
-	[eval [cons 'begin @...body]]
+	[eval* [cons 'begin @...body]]
 ]]
 
 [def help [let []
@@ -92,8 +92,12 @@
 [def countdown [λ [i]
 	"Count down on the console"
 	[cond [[< [int i] 0] #t]
-	      [#t [log  [cond [[zero? i] [ansi-green "GO!"]] [[< i 4] [ansi-red i]] [[< i 6] [ansi-yellow i]] [#t i]]]
-			[yield [timeout 1000] [lambda []  [countdown [-- i]]]]]
+	      [#t [log  [cond [[zero? i] [ansi-green "GO!"]]
+			      [[< i 4] [ansi-red i]]
+			      [[< i 6] [ansi-yellow i]]
+			      [#t i]
+			]]
+		  [yield [timeout 1000] [λ [] [countdown [- i 1]]]]]
 	]
 ]]
 

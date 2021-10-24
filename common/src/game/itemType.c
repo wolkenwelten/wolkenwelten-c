@@ -40,11 +40,9 @@ void itemTypeInit(){
 }
 
 static lVal *wwlnfITName(lClosure *c, lVal *v){
-	int   itemID     = -1;
-	const char *name = NULL;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgS(c,v,&name);
+	(void)c;
+	const int   itemID = castToInt(lCar(v),-1); v = lCdr(v);
+	const char *name   = castToString(lCar(v),NULL);
 
 	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
@@ -56,11 +54,9 @@ static lVal *wwlnfITName(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfITMesh(lClosure *c, lVal *v){
-	int itemID = -1;
-	int meshID = -1;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgI(c,v,&meshID);
+	(void)c;
+	int itemID = castToInt(lCar(v),-1);  v = lCdr(v);
+	int meshID = castToInt(lCar(v),-1);
 
 	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
@@ -72,13 +68,10 @@ static lVal *wwlnfITMesh(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfITDamage(lClosure *c, lVal *v){
-	int itemID = -1;
-	int cat    = -1;
-	int damage = -1;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgI(c,v,&cat);
-	v = getLArgI(c,v,&damage);
+	(void)c;
+	const int itemID = castToInt(lCar(v),-1); v = lCdr(v);
+	const int cat    = castToInt(lCar(v),-1); v = lCdr(v);
+	const int damage = castToInt(lCar(v),-1);
 
 	if((itemID < 256) || (cat < 0) || (cat > 4)){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
@@ -90,11 +83,9 @@ static lVal *wwlnfITDamage(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfITAmmunition(lClosure *c, lVal *v){
-	int itemID = -1;
-	int ammunition = -1;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgI(c,v,&ammunition);
+	(void)c;
+	const int itemID     = castToInt(lCar(v),-1); v = lCdr(v);
+	const int ammunition = castToInt(lCar(v),-1);
 
 	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
@@ -106,11 +97,9 @@ static lVal *wwlnfITAmmunition(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfITStackSize(lClosure *c, lVal *v){
-	int itemID    = -1;
-	int stackSize = -1;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgI(c,v,&stackSize);
+	(void)c;
+	const int itemID    = castToInt(lCar(v),-1); v = lCdr(v);
+	const int stackSize = castToInt(lCar(v),-1); v = lCdr(v);
 
 	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
@@ -122,11 +111,9 @@ static lVal *wwlnfITStackSize(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfITMagazineSize(lClosure *c, lVal *v){
-	int itemID       = -1;
-	int magazineSize = -1;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgI(c,v,&magazineSize);
+	(void)c;
+	const int itemID       = castToInt(lCar(v),-1); v = lCdr(v);
+	const int magazineSize = castToInt(lCar(v),-1);
 
 	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
@@ -138,11 +125,9 @@ static lVal *wwlnfITMagazineSize(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfITFireDamage(lClosure *c, lVal *v){
-	int itemID     = -1;
-	int fireDamage = -1;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgI(c,v,&fireDamage);
+	(void)c;
+	const int itemID     = castToInt(lCar(v),-1); v = lCdr(v);
+	const int fireDamage = castToInt(lCar(v),-1);
 
 	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
@@ -154,11 +139,9 @@ static lVal *wwlnfITFireDamage(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfITFireHealth(lClosure *c, lVal *v){
-	int itemID     = -1;
-	int fireHealth = -1;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgI(c,v,&fireHealth);
+	(void)c;
+	const int itemID     = castToInt(lCar(v),-1); v = lCdr(v);
+	const int fireHealth = castToInt(lCar(v),-1);
 
 	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
@@ -170,11 +153,9 @@ static lVal *wwlnfITFireHealth(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfITInaccuracy(lClosure *c, lVal *v){
-	int itemID  = -1;
-	float inacc = -1.f;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgF(c,v,&inacc);
+	(void)c;
+	const int itemID  = castToInt(lCar(v),-1); v = lCdr(v);
+	const float inacc = castToFloat(lCar(v),-1.f);
 
 	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
@@ -186,11 +167,9 @@ static lVal *wwlnfITInaccuracy(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfITIDChance(lClosure *c, lVal *v){
-	int itemID = -1;
-	int chance = -1;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgI(c,v,&chance);
+	(void)c;
+	const int itemID = castToInt(lCar(v),-1); v = lCdr(v);
+	const int chance = castToInt(lCar(v),-1);
 
 	if(itemID < 256){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
@@ -202,13 +181,10 @@ static lVal *wwlnfITIDChance(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfITSpriteID(lClosure *c, lVal *v){
-	int itemID      = -1;
-	int i           = -1;
-	int spriteIndex = -1;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgI(c,v,&i);
-	v = getLArgI(c,v,&spriteIndex);
+	(void)c;
+	const int itemID      = castToInt(lCar(v),-1); v = lCdr(v);
+	const int i           = castToInt(lCar(v),-1); v = lCdr(v);
+	const int spriteIndex = castToInt(lCar(v),-1);
 
 	if((itemID < 256) || (i < 0) || (i > 3)){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
@@ -219,13 +195,10 @@ static lVal *wwlnfITSpriteID(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfITSpriteColor(lClosure *c, lVal *v){
-	int itemID   = -1;
-	int i        = -1;
-	int color    = -1;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgI(c,v,&i);
-	v = getLArgI(c,v,&color);
+	(void)c;
+	const int itemID   = castToInt(lCar(v),-1); v = lCdr(v);
+	const int i        = castToInt(lCar(v),-1); v = lCdr(v);
+	const int color    = castToInt(lCar(v),-1);
 
 	if((itemID < 256) || (i < 0) || (i > 3)){return NULL;}
 	itemType *it = &itemTypes[itemID-256];
@@ -234,11 +207,9 @@ static lVal *wwlnfITSpriteColor(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfITWeight(lClosure *c, lVal *v){
-	int itemID   = -1;
-	float weight = -1.f;
-
-	v = getLArgI(c,v,&itemID);
-	v = getLArgF(c,v,&weight);
+	(void)c;
+	const int itemID   = castToInt(lCar(v),-1); v = lCdr(v);
+	const float weight = castToFloat(lCar(v),-1.f);
 
 	if((itemID < 256) || (weight < 0)){return NULL;}
 	itemType *it = &itemTypes[itemID-256];

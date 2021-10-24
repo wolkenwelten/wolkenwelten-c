@@ -16,7 +16,6 @@ void worldgenNujel(worldgen *wgen){
 		const int cy = wgen->gy + y * CHUNGUS_SIZE;
 		const int cz = wgen->gz + z * CHUNGUS_SIZE;
 		lispCallFuncIII("worldgen",cx,cy,cz);
-		lGarbageCollect();
 	}
 	}
 	}

@@ -44,7 +44,11 @@
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
+
 #include "../../../common/nujel/lib/api.h"
+#include "../../../common/nujel/lib/allocation/roots.h"
+#include "../../../common/nujel/lib/operator/special.h"
+#include "../../../common/nujel/lib/s-expression/writer.h"
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -90,7 +94,7 @@ lVal *lispEvalNR(const char *str){
 
 static lVal *wwlnfSEval(lClosure *c, lVal *v){
 	(void)c;
-	static char buf[8192];
+	char buf[1<<14];
 	memset(buf,0,sizeof(buf));
 	lSWriteVal(lWrap(v),buf,&buf[sizeof(buf)-1],0,false);
 	msgLispSExpr(-1,buf);
@@ -98,9 +102,8 @@ static lVal *wwlnfSEval(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerName(lClosure *c, lVal *v){
-	const char *npName = NULL;
-
-	v = getLArgS(c,v,&npName);
+	(void)c;
+	const char *npName = castToString(lCar(v),NULL);
 
 	if(npName != NULL){
 		snprintf(playerName,sizeof(playerName),"%s",npName);
@@ -109,46 +112,46 @@ static lVal *wwlnfPlayerName(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfSoundVolume(lClosure *c, lVal *v){
-	float nvol = -1.f;
-	v = getLArgF(c,v,&nvol);
+	(void)c;
+	const float nvol = castToFloat(lCar(v),-1.f);
 	if(nvol > -0.1f){optionSoundVolume = nvol;}
 	return lValFloat(optionSoundVolume);
 }
 
 static lVal *wwlnfRenderDistance(lClosure *c, lVal *v){
-	float rdist = 0.f;
-	v = getLArgF(c,v,&rdist);
+	(void)c;
+	const float rdist = castToFloat(lCar(v),0.f);
 	if(rdist > 1.f){ setRenderDistance(rdist); }
 	return lValFloat(renderDistance);
 }
 
 static lVal *wwlnfSubData(lClosure *c, lVal *v){
+	(void)c;
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,lCar(v)));
-		gfxUseSubData = t->vBool;
+		gfxUseSubData = castToBool(lCar(v));
 	}
 	return lValBool(gfxUseSubData);
 }
 
 static lVal *wwlnfMouseSensitivity(lClosure *c, lVal *v){
-	float msen = 0.f;
-	v = getLArgF(c,v,&msen);
+	(void)c;
+	const float msen = castToFloat(lCar(v),0.f);
 	if(msen > 0.f){ optionMouseSensitivy = msen; }
 	return lValFloat(optionMouseSensitivy);
 }
 
 static lVal *wwlnfThirdPerson(lClosure *c, lVal *v){
+	(void)c;
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,lCar(v)));
-		optionThirdPerson = t->vBool;
+		optionThirdPerson = castToBool(lCar(v));
 	}
 	return lValBool(optionThirdPerson);
 }
 
 static lVal *wwlnfFullscreen(lClosure *c, lVal *v){
+	(void)c;
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,lCar(v)));
-		setFullscreen(t->vBool);
+		setFullscreen(castToBool(lCar(v)));
 	}
 	return NULL;
 }
@@ -159,32 +162,28 @@ static lVal *wwlnfFullscreenPred(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfWindowed(lClosure *c, lVal *v){
-	int w = 800;
-	int h = 600;
-	int x = -1;
-	int y = -1;
-
-	v = getLArgI(c,v,&w);
-	v = getLArgI(c,v,&h);
-	v = getLArgI(c,v,&x);
-	v = getLArgI(c,v,&y);
+	(void)c;
+	const int w = castToInt(lCar(v),800); v = lCdr(v);
+	const int h = castToInt(lCar(v),600); v = lCdr(v);
+	const int x = castToInt(lCar(v), -1); v = lCdr(v);
+	const int y = castToInt(lCar(v), -1);
 
 	setWindowed(w,h,x,y);
 	return NULL;
 }
 
 static lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
+	(void)c;
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,lCar(v)));
-		optionDebugInfo = t->vBool;
+		optionDebugInfo = castToBool(lCar(v));
 	}
 	return lValBool(optionDebugInfo);
 }
 
 static lVal *wwlnfConsMode(lClosure *c, lVal *v){
+	(void)c;
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,lCar(v)));
-		if(t->vBool){
+		if(castToBool(lCar(v))){
 			player->flags |=  CHAR_CONS_MODE;
 		}else{
 			player->flags &= ~CHAR_CONS_MODE;
@@ -194,9 +193,9 @@ static lVal *wwlnfConsMode(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfNoClip(lClosure *c, lVal *v){
+	(void)c;
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,lCar(v)));
-		if(t->vBool != 0){
+		if(castToBool(lCar(v))){
 			player->flags |=  CHAR_NOCLIP;
 		}else{
 			player->flags &= ~CHAR_NOCLIP;
@@ -206,9 +205,9 @@ static lVal *wwlnfNoClip(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfWireFrame(lClosure *c, lVal *v){
+	(void)c;
 	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfBool(c,lEval(c,lCar(v)));
-		optionWireframe = t->vBool;
+		optionWireframe = castToBool(lCar(v));
 		initGL();
 	}
 	return lValBool(optionWireframe);
@@ -227,40 +226,31 @@ static lVal *wwlnfSaveOptions(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfServerAdd(lClosure *c, lVal *v){
-	const char *address = "localhost";
-	const char *name = "localhost";
-
-	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfCat(c,lEval(c,lCar(v)));
-		address = lStrBuf(t);
-		v = lCdr(v);
-	}
-	if((v != NULL) && (v->type == ltPair)){
-		lVal *t = lnfCat(c,lEval(c,lCar(v)));
-		name = lStrBuf(t);
-	}
+	(void)c;
+	const char *address = castToString(lCar(v),"localhost"); v = lCdr(v);
+	const char *name =    castToString(lCar(v),"Local");
 	serverListAdd(address,name);
 
 	return lValFloat(renderDistance);
 }
 
 static lVal *wwlnfPlayerPos(lClosure *c, lVal *v){
-	(void)v;(void)c;
+	(void)c;(void)v;
 	return lValVec(player->pos);
 }
 
 static lVal *wwlnfPlayerRot(lClosure *c, lVal *v){
-	(void)v;(void)c;
+	(void)c;(void)v;
 	return lValVec(player->rot);
 }
 
 static lVal *wwlnfPlayerVel(lClosure *c, lVal *v){
-	(void)v;(void)c;
+	(void)c;(void)v;
 	return lValVec(player->vel);
 }
 
 static lVal *wwlnfFireHook(lClosure *c, lVal *v){
-	(void)v;(void)c;
+	(void)c;(void)v;
 	characterFireHook(player);
 	return NULL;
 }
@@ -271,8 +261,8 @@ static lVal *wwlnfPlayerActiveSlotGet(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerActiveSlotSet(lClosure *c, lVal *v){
-	int ai = -1;
-	v = getLArgI(c,v,&ai);
+	(void)c;
+	const int ai = castToInt(lCar(v),-1);
 	if(ai >= 0){
 		player->activeItem = ai;
 		player->flags &= ~(CHAR_AIMING | CHAR_THROW_AIM);
@@ -281,27 +271,26 @@ static lVal *wwlnfPlayerActiveSlotSet(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCar(v));
-	if((t == NULL) || (t->type != ltString)){return NULL;}
-	msgSendChatMessage(lStrData(t));
-	return t;
+	(void)c;
+	const char *msg = castToString(lCar(v),NULL);
+	if(msg == NULL){return NULL;}
+	msgSendChatMessage(msg);
+	return lCar(v);
 }
 
 static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCar(v));
-	if((t == NULL) || (t->type != ltString) || lStrNull(t)){return NULL;}
-	widgetAddEntry(lispLog, lStrData(t));
-	return NULL;
+	(void)c;
+	const char *msg = castToString(lCar(v),NULL);
+	if(msg == NULL){return NULL;}
+	widgetAddEntry(lispLog, msg);
+	return lCar(v);
 }
 
 static lVal *wwlnfSfxPlay(lClosure *c, lVal *v){
-	int sfxID    = -1;
-	float volume = 1.0;
-	vec pos      = player->pos;
-
-	v = getLArgI(c,v,&sfxID);
-	v = getLArgF(c,v,&volume);
-	v = getLArgV(c,v,&pos);
+	(void)c;
+	const int sfxID    = castToInt(lCar(v),-1);    v = lCdr(v);
+	const float volume = castToFloat(lCar(v),1.0); v = lCdr(v);
+	const vec pos      = castToVec(lCar(v),player->pos);
 
 	if(sfxID < 0){return NULL;}
 	sfxPlayPos(&sfxList[sfxID],volume,pos);
@@ -309,15 +298,13 @@ static lVal *wwlnfSfxPlay(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfResetWorstFrame(lClosure *c, lVal *v){
-	(void)v;
-	(void)c;
+	(void)v; (void)c;
 	worstFrame = 0;
 	return NULL;
 }
 
 static lVal *wwlnfTextInputFocusPred(lClosure *c, lVal *v){
-	(void)v;
-	(void)c;
+	(void)v; (void)c;
 	return lValBool(textInputActive());
 }
 
@@ -327,23 +314,19 @@ static lVal *wwlnfServerExecutable(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfTryToUse(lClosure *c, lVal *v){
-	int ms     = 200;
-	int amount = 1;
+	(void)c;
+	const int ms     = castToInt(lCar(v),200); v = lCdr(v);
+	const int amount = castToInt(lCar(v),1);
 	item *itm  = &player->inventory[player->activeItem];
-
-	v = getLArgI(c,v,&ms);
-	v = getLArgI(c,v,&amount);
 
 	bool ret = characterTryToUse(player,itm,ms,amount);
 	return lValBool(ret);
 }
 
 static lVal *wwlnfStartAnim(lClosure *c, lVal *v){
-	int anim = 0;
-	int ms = 200;
-
-	v = getLArgI(c,v,&anim);
-	v = getLArgI(c,v,&ms);
+	(void)c;
+	const int anim = castToInt(lCar(v),0); v = lCdr(v);
+	const int ms =   castToInt(lCar(v),200);
 
 	characterStartAnimation(player,anim,ms);
 	return NULL;
@@ -356,17 +339,12 @@ static lVal *wwlnfStopAnim(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfGrenadeNew(lClosure *c, lVal *v){
-	vec pos          = player->pos;
-	vec rot          = player->rot;
-	float pwr        = 4.f;
-	int cluster      = 0;
-	float clusterPwr = 0.f;
-
-	v = getLArgV(c,v,&pos);
-	v = getLArgV(c,v,&rot);
-	v = getLArgF(c,v,&pwr);
-	v = getLArgI(c,v,&cluster);
-	v = getLArgF(c,v,&clusterPwr);
+	(void)c;
+	const vec pos          = castToVec(lCar(v),player->pos); v = lCdr(v);
+	const vec rot          = castToVec(lCar(v),player->rot); v = lCdr(v);
+	const float pwr        = castToFloat(lCar(v),4.f);       v = lCdr(v);
+	const int cluster      = castToInt(lCar(v),0);           v = lCdr(v);
+	const float clusterPwr = castToFloat(lCar(v),0.f);
 
 	grenadeNew(pos,rot,pwr,cluster,clusterPwr);
 	return NULL;
@@ -379,60 +357,55 @@ static lVal *wwlnfTryToThrow(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfItemReload(lClosure *c, lVal *v){
-	int ms     = 200;
+	(void)c;
+	const int ms = castToInt(lCar(v),200);
 	item *itm = &player->inventory[player->activeItem];
-
-	v = getLArgI(c,v,&ms);
 
 	characterItemReload(player,itm,ms);
 	return NULL;
 }
 
 static lVal *wwlnfToggleAim(lClosure *c, lVal *v){
-	float zoom = 2.f;
-
-	v = getLArgF(c,v,&zoom);
+	(void)c;
+	const float zoom = castToFloat(lCar(v),2.f);
 
 	characterToggleAim(player,zoom);
 	return NULL;
 }
 
 static lVal *wwlnfInaccuracy(lClosure *c, lVal *v){
-	float inacc = -1024.f;
-	v = getLArgF(c,v,&inacc);
+	(void)c;
+	const float inacc = castToFloat(lCar(v),-1024.f);
 	if(inacc > -1024.f){characterSetInaccuracy(player,inacc);}
 	return lValFloat(player->inaccuracy);
 }
 
 static lVal *wwlnfRecoil(lClosure *c, lVal *v){
-	float recoil = 1.f;
-	v = getLArgF(c,v,&recoil);
+	(void)c;
+	const float recoil = castToFloat(lCar(v),1.f);
 	characterAddRecoil(player,recoil);
 	return NULL;
 }
 
 static lVal *wwlnfPlayerHP(lClosure *c, lVal *v){
-	int hp = -1024;
-	v = getLArgI(c,v,&hp);
+	(void)c;
+	const int hp = castToInt(lCar(v),-1024);
 	if(hp > -1024){ player->hp = MIN(player->maxhp,hp); }
 	return lValInt(player->hp);
 }
 
 static lVal *wwlnfPlayerMaxHP(lClosure *c, lVal *v){
-	int maxhp = -1024;
-	v = getLArgI(c,v,&maxhp);
+	(void)c;
+	const int maxhp = castToInt(lCar(v),-1024);
 	if(maxhp > -1024){ player->maxhp = MAX(1,maxhp); }
 	return lValInt(player->maxhp);
 }
 
 static lVal *wwlnfRResult(lClosure *c, lVal *v){
-	int id     = -1;
-	int result = 0;
-	int amount = 0;
-
-	v = getLArgI(c,v,&id);
-	v = getLArgI(c,v,&result);
-	v = getLArgI(c,v,&amount);
+	(void)c;
+	const int id     = castToInt(lCar(v),-1); v = lCdr(v);
+	const int result = castToInt(lCar(v),0);  v = lCdr(v);
+	const int amount = castToInt(lCar(v),0);
 
 	if((id < 0) || (result <= 0) || (amount <= 0)){return NULL;}
 	recipeCount = MAX(id+1,(int)recipeCount);
@@ -442,15 +415,11 @@ static lVal *wwlnfRResult(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfRIngred(lClosure *c, lVal *v){
-	int id = -1;
-	int ii = -1;
-	int ingred = 0;
-	int amount = 0;
-
-	v = getLArgI(c,v,&id);
-	v = getLArgI(c,v,&ii);
-	v = getLArgI(c,v,&ingred);
-	v = getLArgI(c,v,&amount);
+	(void)c;
+	const int id     = castToInt(lCar(v),-1); v = lCdr(v);
+	const int ii     = castToInt(lCar(v),-1); v = lCdr(v);
+	const int ingred = castToInt(lCar(v),0);  v = lCdr(v);
+	const int amount = castToInt(lCar(v),0);
 
 	if((id < 0) || (ii < 0) || (ii >= 4) || (ingred <= 0) || (amount <= 0)){return NULL;}
 	recipeCount = MAX(id+1,(int)recipeCount);
@@ -470,13 +439,10 @@ static lVal *wwlnfThrowingPred(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfThrowItem(lClosure *c, lVal *v){
-	int flags   = 0;
-	float force = 0.1f;
-	int damage  = 1;
-
-	v = getLArgI(c,v,&flags);
-	v = getLArgF(c,v,&force);
-	v = getLArgI(c,v,&damage);
+	(void)c;
+	const int flags   = castToInt(lCar(v),0);      v = lCdr(v);
+	const float force = castToFloat(lCar(v),0.1f); v = lCdr(v);
+	const int damage  = castToInt(lCar(v),1);
 
 	item *itm = &player->inventory[player->activeItem];
 	bool ret  = throwableTry(itm,player,force,damage,flags);
@@ -484,11 +450,9 @@ static lVal *wwlnfThrowItem(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfTryToShoot(lClosure *c, lVal *v){
-	int cooldown    = 200;
-	int bulletcount = 1;
-
-	v = getLArgI(c,v,&cooldown);
-	v = getLArgI(c,v,&bulletcount);
+	(void)c;
+	const int cooldown    = castToInt(lCar(v),200); v = lCdr(v);
+	const int bulletcount = castToInt(lCar(v),1);
 
 	item *itm = &player->inventory[player->activeItem];
 	bool ret  = characterTryToShoot(player,itm,cooldown,bulletcount);
@@ -496,44 +460,36 @@ static lVal *wwlnfTryToShoot(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfBeamblast(lClosure *c, lVal *v){
-	float beamSize = 1.f;
-	float damage   = 8.f;
-	int hitsLeft   = 3;
-
-	v = getLArgF(c,v,&beamSize);
-	v = getLArgF(c,v,&damage);
-	v = getLArgI(c,v,&hitsLeft);
+	(void)c;
+	const float beamSize = castToFloat(lCar(v),1.f); v = lCdr(v);
+	const float damage   = castToFloat(lCar(v),8.f); v = lCdr(v);
+	const int hitsLeft   = castToInt(lCar(v),3);
 
 	beamblast(player,beamSize,damage,hitsLeft);
 	return NULL;
 }
 
 static lVal *wwlnfProjectile(lClosure *c, lVal *v){
-	int type = 0;
-	int num  = 1;
-
-	v = getLArgI(c,v,&type);
-	v = getLArgI(c,v,&num);
+	(void)c;
+	const int type = castToInt(lCar(v),0); v = lCdr(v);
+	const int num  = castToInt(lCar(v),1);
 
 	projectileNewC(player,type,num);
 	return NULL;
 }
 
 static lVal *wwlnfFireNew(lClosure *c, lVal *v){
-	vec pos = vecNOne();
-	int str = 8;
-
-	v = getLArgV(c,v,&pos);
-	v = getLArgI(c,v,&str);
+	(void)c;
+	const vec pos = castToVec(lCar(v),vecNOne()); v = lCdr(v);
+	const int str = castToInt(lCar(v),8);
 
 	if(vecInWorld(pos)){fireNew(pos.x,pos.y,pos.z,str);}
 	return NULL;
 }
 
 static lVal *wwlnfRaycast(lClosure *c, lVal *v){
-	bool before = false;
-
-	v = getLArgB(c,v,&before);
+	(void)c;
+	bool before = castToBool(lCar(v));
 
 	return lValVec(characterLOSBlock(player,before));
 }
@@ -566,9 +522,8 @@ static lVal *wwlnfPlayerStopMining(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerInventoryGet(lClosure *c, lVal *v){
-	int slot   = -1;
-
-	v = getLArgI(c,v,&slot);
+	(void)c;
+	const int slot = castToInt(lCar(v),-1);
 
 	if(slot < 0)                               {return NULL;}
 	if(slot >= (int)countof(player->inventory)){return NULL;}
@@ -577,13 +532,10 @@ static lVal *wwlnfPlayerInventoryGet(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerInventorySet(lClosure *c, lVal *v){
-	int slot   = -1;
-	int itemID = -1;
-	int amount = -1;
-
-	v = getLArgI(c,v,&slot);
-	v = getLArgI(c,v,&itemID);
-	v = getLArgI(c,v,&amount);
+	(void)c;
+	const int slot   = castToInt(lCar(v),-1); v = lCdr(v);
+	const int itemID = castToInt(lCar(v),-1); v = lCdr(v);
+	const int amount = castToInt(lCar(v),-1);
 
 	if(slot < 0)                               {return NULL;}
 	if(slot >= (int)countof(player->inventory)){return NULL;}
@@ -594,9 +546,8 @@ static lVal *wwlnfPlayerInventorySet(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerPlaceBlock(lClosure *c, lVal *v){
-	int slot   = -1;
-
-	v = getLArgI(c,v,&slot);
+	(void)c;
+	const int slot = castToInt(lCar(v),-1);
 
 	if(slot < 0)                               {return NULL;}
 	if(slot >= (int)countof(player->inventory)){return NULL;}
@@ -612,11 +563,8 @@ static lVal *wwlnfPlayerZoomGet(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerZoomSet(lClosure *c, lVal *v){
-	float zoom   = -1.0;
-
-	v = getLArgF(c,v,&zoom);
-
-	zoom = MINMAX(zoom,1.f,8.f);
+	(void)c;
+	const float zoom = MINMAX(castToFloat(lCar(v),-1.0),1.f,8.f);
 	if(zoom > 1.01f){
 		player->goalZoomFactor = zoom;
 		player->flags |=   CHAR_AIMING | CHAR_THROW_AIM;
@@ -628,11 +576,9 @@ static lVal *wwlnfPlayerZoomSet(lClosure *c, lVal *v){
 	return NULL;
 }
 
-
 static lVal *wwlnfDropItem(lClosure *c, lVal *v){
-	int slot   = -1;
-
-	v = getLArgI(c,v,&slot);
+	(void)c;
+	const int slot = castToInt(lCar(v),-1);
 
 	if(slot < 0)                               {return NULL;}
 	if(slot >= (int)countof(player->inventory)){return NULL;}
@@ -642,19 +588,15 @@ static lVal *wwlnfDropItem(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerJump(lClosure *c, lVal *v){
-	float vel = 0;
-
-	v = getLArgF(c,v,&vel);
-	player->controls.y = vel;
+	(void)c;
+	player->controls.y = castToFloat(lCar(v),0.f);
 
 	return NULL;
 }
 
 static lVal *wwlnfPlayerSneak(lClosure *c, lVal *v){
-	bool active = false;
-
-	v = getLArgB(c,v,&active);
-	if(active){
+	(void)c;
+	if(castToBool(lCar(v))){
 		player->flags |=  CHAR_SNEAK;
 	}else{
 		player->flags &= ~CHAR_SNEAK;
@@ -664,19 +606,15 @@ static lVal *wwlnfPlayerSneak(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerWalk(lClosure *c, lVal *v){
-	float vel = 0;
-
-	v = getLArgF(c,v,&vel);
-	player->controls.z = vel;
+	(void)c;
+	player->controls.z = castToFloat(lCar(v),0.f);
 
 	return NULL;
 }
 
 static lVal *wwlnfPlayerStrafe(lClosure *c, lVal *v){
-	float vel = 0;
-
-	v = getLArgF(c,v,&vel);
-	player->controls.x = vel;
+	(void)c;
+	player->controls.x = castToFloat(lCar(v),0.f);
 
 	return NULL;
 }
@@ -688,10 +626,8 @@ static lVal *wwlnfToggleInventory(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerBoost(lClosure *c, lVal *v){
-	bool active = false;
-
-	v = getLArgB(c,v,&active);
-	if(active){
+	(void)c;
+	if(castToBool(lCar(v))){
 		player->flags |=  CHAR_BOOSTING;
 	}else{
 		player->flags &= ~CHAR_BOOSTING;
@@ -712,11 +648,9 @@ static lVal *wwlnfPlayerGetFlags(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfPlayerSetFlags(lClosure *c, lVal *v){
+	(void)c;
 	if(player == NULL){return NULL;}
-	int flags = 0;
-
-	v = getLArgI(c,v,&flags);
-	player->flags = flags;
+	player->flags = castToInt(lCar(v),0);
 	return NULL;
 }
 
@@ -726,8 +660,8 @@ static lVal *wwlnfDrawBoundariesGet(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfDrawBoundariesSet(lClosure *c, lVal *v){
-	int newStyle = -1;
-	v = getLArgI(c,v,&newStyle);
+	(void)c;
+	const int newStyle = castToInt(lCar(v),-1);
 	if(newStyle >= 0){
 		drawBoundariesStyle = newStyle;
 	}
@@ -735,15 +669,13 @@ static lVal *wwlnfDrawBoundariesSet(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfChatOpenGet(lClosure *c, lVal *v){
-	(void)c;
-	(void)v;
+	(void)c; (void)v;
 	return lValBool(chatIsOpen());
 }
 
 static lVal *wwlnfChatOpenSet(lClosure *c, lVal *v){
-	bool open = false;
-	v = getLArgB(c,v,&open);
-	if(open){
+	(void)c;
+	if(castToBool(lCar(v))){
 		chatOpen();
 	}else{
 		chatClose();
@@ -752,7 +684,7 @@ static lVal *wwlnfChatOpenSet(lClosure *c, lVal *v){
 }
 
 static void lispAddClientNFuncs(lClosure *c){
-	lAddNativeFunc(c,"s",              "(...body)",         "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
+	lAddSpecialForm(c,"s",             "(...body)",         "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",                "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
 	lAddNativeFunc(c,"player-pos",     "()",                "Return players position",                                        wwlnfPlayerPos);
 	lAddNativeFunc(c,"player-rot",     "()",                "Return players rotation",                                        wwlnfPlayerRot);
@@ -838,15 +770,14 @@ void lispInit(){
 }
 
 void lispFree(){
-	lClosureFree(clRoot - lClosureList);
+	lClosureFree(clRoot);
 }
 
 const char *lispEval(const char *str, bool humanReadable){
 	static char reply[4096];
 	memset(reply,0,sizeof(reply));
-	lVal *v = lnfBegin(clRoot,lRead(str));
+	lVal *v = lnfDo(clRoot,lRead(str));
 	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,humanReadable);
-	lGarbageCollect();
 	return reply;
 }
 
@@ -860,17 +791,21 @@ void lispRecvSExpr(const packet *p){
 
 void lispEvents(){
 	PROFILE_START();
+	lVal *form = NULL;
+	if(form == NULL){
+		form = lRootsValPush(lCons(NULL,NULL));
+		form->vList.car = lValSym("yield-run");
+	}
 
 	static u64 lastTicks = 0;
-	lGarbageCollect();
 	u64 cticks = getTicks();
-	if((lastTicks + 20) > cticks){
+	if((lastTicks + 50) > cticks){
 		if(lastTicks > cticks){lastTicks = cticks;}
 		return;
 	}
 	lastTicks = cticks;
 
-	lEval(clRoot,lCons(lValSym("yield-run"),NULL));
+	lEval(clRoot,form);
 
 	PROFILE_STOP();
 }

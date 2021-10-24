@@ -23,9 +23,11 @@
 #include "../game/itemDrop.h"
 #include "../game/itemType.h"
 #include "../game/weather.h"
-#include "../../nujel/lib/api.h"
 #include "../misc/colors.h"
 #include "../misc/profiling.h"
+
+#include "../../nujel/lib/api.h"
+#include "../../nujel/lib/allocation/roots.h"
 
 extern unsigned  int src_tmp_wwlib_nuj_len;
 extern unsigned char src_tmp_wwlib_nuj_data[];
@@ -37,8 +39,8 @@ extern unsigned char src_tmp_wwlib_nuj_data[];
 lClosure *clRoot;
 
 lVal *wwlnfMsPerTick(lClosure *c, lVal *v){
-	int newVal = 0;
-	v = getLArgI(c,v,&newVal);
+	(void)c;
+	const int newVal = castToInt(lCar(v),0);
 	if(newVal > 0){ msPerTick = newVal; }
 	return lValInt(msPerTick);
 }
@@ -66,20 +68,17 @@ lVal *wwlnfNProfReset(lClosure *c, lVal *v){
 }
 
 lVal *wwlnfAsmSwitch(lClosure *c, lVal *v){
-	int newVal = -1;
-	v = getLArgI(c,v,&newVal);
+	(void)c;
+	const int newVal = castToInt(lCar(v),-1);
 	if(newVal >= 0){asmRoutineSupport = newVal;}
 	return lValInt(asmRoutineSupport);
 }
 
 lVal *wwlnfExplode(lClosure *c, lVal *v){
-	vec   pos      = vecNOne();
-	float strength = 4.f;
-	int   style    = 0;
-
-	v = getLArgV(c,v,&pos);
-	v = getLArgF(c,v,&strength);
-	v = getLArgI(c,v,&style);
+	(void)c;
+	const vec   pos      = castToVec(lCar(v),vecNOne()); v = lCdr(v);
+	const float strength = castToFloat(lCar(v),4.f);     v = lCdr(v);
+	const int   style    = castToInt(lCar(v),0);
 
 	if((pos.x < 0.f) || (pos.y < 0.f) || (pos.z < 0.f) || (strength < .1f)){return NULL;}
 	explode(pos,strength,style);
@@ -87,13 +86,10 @@ lVal *wwlnfExplode(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
-	vec pos = vecNOne();
-	int id  = 0;
-	int amt = 0;
-
-	v = getLArgV(c,v,&pos);
-	v = getLArgI(c,v,&id);
-	v = getLArgI(c,v,&amt);
+	(void)c;
+	const vec pos = castToVec(lCar(v),vecNOne()); v = lCdr(v);
+	const int id  = castToInt(lCar(v),0);         v = lCdr(v);
+	const int amt = castToInt(lCar(v),0);
 
 	if((pos.x < 0.f) || (pos.y < 0.f) || (pos.z < 0.f) || (id <= 0) || (amt <= 0)){return NULL;}
 	item itm = itemNew(id,amt);
@@ -102,36 +98,32 @@ static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfWVel(lClosure *c, lVal *v){
-	if(v != NULL){
-		vec nwval = vecZero();
-		v = getLArgV(c,v,&nwval);
-		cloudsSetWind(nwval);
+	(void)c;
+	if((v != NULL) && (lCar(v) != NULL) && (lCar(v)->type == ltVec)){
+		cloudsSetWind(castToVec(lCar(v),vecZero()));
 	}
 	return lValVec(windVel);
 }
 
 static lVal *wwlnfCDen(lClosure *c, lVal *v){
-	int cden = -1;
-	v = getLArgI(c,v,&cden);
+	(void)c;
+	const int cden = castToInt(lCar(v),-1);
 	if(cden >= 0){cloudsSetDensity(cden);}
 	return lValInt(cloudGDensityMin);
 }
 
 static lVal *wwlnfRain(lClosure *c, lVal *v){
-	int inten = -1;
-	v = getLArgI(c,v,&inten);
+	(void)c;
+	const int inten = castToInt(lCar(v),-1);
 	if(inten >= 0){weatherSetRainDuration(inten);}
 	return lValInt(rainIntensity);
 }
 
 static lVal *wwlnfColorInterpolate(lClosure *c, lVal *v){
-	int ca = 0;
-	int cb = 0;
-	float i = 0;
-
-	v = getLArgI(c,v,&ca);
-	v = getLArgI(c,v,&cb);
-	v = getLArgF(c,v,&i);
+	(void)c;
+	const int ca  = castToInt(lCar(v),0); v = lCdr(v);
+	const int cb  = castToInt(lCar(v),0); v = lCdr(v);
+	const float i = castToFloat(lCar(v),0.f);
 
 	return lValInt(colorInterpolate(ca,cb,i));
 }
@@ -166,25 +158,61 @@ lClosure *lispCommonRoot(){
 }
 
 lVal *lispCallFuncI(const char *symbol, int ia){
-	lVal *arg  = lCons(lValInt(ia),NULL);
-	return lEval(clRoot,lCons(lValSym(symbol),arg));
+	lVal *form = lCons(NULL,NULL);
+	lRootsValPush(form);
+	form->vList.car = lValSym(symbol);
+	lVal *l = form->vList.cdr = lCons(NULL,NULL);
+	l->vList.car = lValInt(ia);
+	lVal *result = lEval(clRoot,form);
+	lRootsValPop();
+	return result;
 }
 
 lVal *lispCallFuncIII(const char *symbol, int ia, int ib, int ic){
-	lVal *arg  = lCons(lValInt(ia),lCons(lValInt(ib),lCons(lValInt(ic),NULL)));
-	return lEval(clRoot,lCons(lValSym(symbol),arg));
+	lVal *form = lCons(NULL,NULL);
+	lRootsValPush(form);
+	form->vList.car = lValSym(symbol);
+	lVal *l = form->vList.cdr = lCons(NULL,NULL);
+	l->vList.car = lValInt(ia);
+	l->vList.cdr = lCons(NULL,NULL);
+	l = l->vList.cdr;
+	l->vList.car = lValInt(ib);
+	l->vList.cdr = lCons(NULL,NULL);
+	l = l->vList.cdr;
+	l->vList.car = lValInt(ic);
+
+	lVal *result = lEval(clRoot,form);
+	lRootsValPop();
+	return result;
 }
 
 lVal *lispCallFuncS(const char *symbol, const char *str){
-	lVal *arg  = lCons(lValString(str),NULL);
-	return lEval(clRoot,lCons(lValSym(symbol),arg));
+	lVal *form = lCons(NULL,NULL);
+	lRootsValPush(form);
+	form->vList.car = lValSym(symbol);
+	lVal *l = form->vList.cdr = lCons(NULL,NULL);
+	l->vList.car = lValString(str);
+	lVal *result = lEval(clRoot,form);
+	lRootsValPop();
+	return result;
 }
 
 lVal *lispCallFuncVII(const char *symbol,const vec va, int ib , int ic){
-	lVal *arg = lCons(lValInt(ic),NULL);
-	      arg = lCons(lValInt(ib),arg);
-	      arg = lCons(lValVec(va),arg);
-	return lEval(clRoot,lCons(lValSym(symbol),arg));
+	lVal *form = lCons(NULL,NULL);
+	lRootsValPush(form);
+	form->vList.car = lValSym(symbol);
+	lVal *l = form->vList.cdr = lCons(NULL,NULL);
+	l->vList.car = lValVec(va);
+	l->vList.cdr = lCons(NULL,NULL);
+	l = l->vList.cdr;
+	l->vList.car = lValInt(ib);
+	l->vList.cdr = lCons(NULL,NULL);
+	l = l->vList.cdr;
+	l->vList.car = lValInt(ic);
+
+	lVal *result = lEval(clRoot,form);
+	lRootsValPop();
+	return result;
 }
 
 void lispDefineID(const char *prefix, const char *symbol, int val){

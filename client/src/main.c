@@ -137,7 +137,7 @@ void playerUpdate(){
 }
 
 void worldUpdate(){
-	static  int lastTick = 0;
+	static int lastTick = 0;
 	int curTick;
 
 	if(lastTick == 0){lastTick = SDL_GetTicks();}

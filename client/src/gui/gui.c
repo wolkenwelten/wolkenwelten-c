@@ -58,8 +58,6 @@
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/cto.h"
 
-#include "../../../common/nujel/lib/garbage-collection.h"
-
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>

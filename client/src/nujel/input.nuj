@@ -5,8 +5,8 @@
 [def player-do-throw!]
 [def input-tick]
 
-[let []
-	[def did-primary #f]e
+[let*
+	[def did-primary #f]
 	[def did-throw #f]
 	[def throw-start 0]
 
@@ -39,9 +39,9 @@
 	[set! player-throw! [λ []
 		"Try to throw the currently held item"
 
-		[when [zero? throw-start] [set! throw-start [time-milliseconds]]]
-		[when [> [- [time-milliseconds] throw-start] 500]
-			[let [[zoom [+ 1.0 [min 1.0 [/ [- [time-milliseconds] throw-start 500] 1000.0]]]]]
+		[when [zero? throw-start] [set! throw-start [time/milliseconds]]]
+		[when [> [- [time/milliseconds] throw-start] 500]
+			[let [[zoom [+ 1.0 [min 1.0 [/ [- [time/milliseconds] throw-start 500] 1000.0]]]]]
 				[player-zoom! zoom]
 			]
 		]
@@ -49,8 +49,8 @@
 	]]
 
 	[set! player-do-throw! [λ [timeheld]
-		; [say ["You held the button for " [/ timeheld 1000.0] " seconds"]]
-		[if [<= [- [time-milliseconds] throw-start] 500]
+		;[say ["You held the button for " [/ timeheld 1000.0] " seconds"]]
+		[if [<= [- [time/milliseconds] throw-start] 500]
 			[player-drop-item! [player-active-slot]]
 			[throw-item throw-spin [* [player-zoom] [player-zoom] 0.03]]
 		]
@@ -67,7 +67,7 @@
 
 		[when [not did-primary] [player-stop-mining!]]
 		[when did-primary [set! did-primary #f]]
-		[when [and [not did-throw] [ineq? throw-start 0]] [player-do-throw! [- [time-milliseconds] throw-start]]]
+		[when [and [not did-throw] [ineq? throw-start 0]] [player-do-throw! [- [time/milliseconds] throw-start]]]
 		[set! did-throw #f]
 	]]
 ]

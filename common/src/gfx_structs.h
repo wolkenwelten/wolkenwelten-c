@@ -1,7 +1,7 @@
 #pragma once
 #include "stdint.h"
 #include <time.h>
-#include "../nujel/lib/vec.h"
+#include "../nujel/lib/api.h"
 
 typedef struct {
 	uint ID,w,h,d;

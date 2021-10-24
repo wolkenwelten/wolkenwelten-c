@@ -41,6 +41,23 @@ widget  widgetList[WIDGET_COUNT];
 int     widgetMax = 1;
 widget *widgetFirstFree = NULL;
 
+static widget *castToWidget(lVal *v){
+	if(v->type != ltGUIWidget){return NULL;}
+	const int i = v->vInt;
+	if(i < 0){return NULL;}
+	if(i > widgetMax){return NULL;}
+	return &widgetList[i];
+}
+
+static lVal *lValW(widget *w){
+	if(w == NULL){return NULL;}
+	lVal *ret = lValAlloc();
+	if(ret == NULL){return NULL;}
+	ret->type = ltGUIWidget;
+	ret->vInt = w - widgetList;
+	return ret;
+}
+
 static bool mouseInBox(uint x, uint y, uint w, uint h){
 	if(mouseHidden) {return false;}
 	if(mousex < x  ){return false;}
@@ -57,38 +74,16 @@ widget *widgetGet(uint i){
 
 void lGUIWidgetFree(lVal *v){
 	if(v->type != ltGUIWidget){return;}
-	widgetFree(widgetGet(v->vCdr));
+	widgetFree(widgetGet(v->vInt));
 }
 
 void widgetExport(widget *w, const char *symbol){
-	lVal *v = lValAlloc();
-	v->type = ltGUIWidget;
-	v->vCdr = w - widgetList;
-	lDefineVal(clRoot,symbol,v);
-}
-
-static lVal *getLArgW(lClosure *c, lVal *v, widget **res){
-	if((v == NULL) || (v->type != ltPair)){return NULL;}
-	lVal *tlv = lEval(c,lCar(v));
-	if((tlv != NULL) && (tlv->type == ltGUIWidget)){
-		*res = widgetGet(tlv->vCdr);
-	}
-	return lCdr(v);
-}
-
-static lVal *lValW(widget *w){
-	if(w == NULL){return NULL;}
-	lVal *ret = lValAlloc();
-	if(ret == NULL){return NULL;}
-	ret->type = ltGUIWidget;
-	ret->vCdr = w - widgetList;
-	return ret;
+	lDefineVal(clRoot,symbol,lValW(w));
 }
 
 lVal *wwlnfWidgetNew(lClosure *c, lVal *v){
-	int type = -1;
-
-	v = getLArgI(c,v,&type);
+	(void)c;
+	const int type = castToInt(lCar(v),-1);
 	if(type < 0){return NULL;}
 	widget *w = widgetNew(type);
 	lVal *ret = lValW(w);
@@ -98,17 +93,15 @@ lVal *wwlnfWidgetNew(lClosure *c, lVal *v){
 }
 
 lVal *wwlnfWidgetParent(lClosure *c, lVal *v){
-	widget *w = NULL;
-	v = getLArgW(c,v,&w);
-	if(w == NULL){return NULL;}
-
-	return lValW(w->parent);
+	(void)c;
+	widget *w = castToWidget(lCar(v));
+	return w == NULL ? NULL : lValW(w->parent);
 }
 
 lVal *wwlnfWidgetSetParent(lClosure *c, lVal *v){
-	widget *w = NULL,*newParent = NULL;
-	v = getLArgW(c,v,&w);
-	v = getLArgW(c,v,&newParent);
+	(void)c;
+	widget *w = castToWidget(lCar(v)); v = lCdr(v);
+	widget *newParent = castToWidget(lCar(v));
 	if((w == NULL) || (newParent == NULL)){return NULL;}
 	widgetChild(newParent,w);
 
@@ -116,170 +109,152 @@ lVal *wwlnfWidgetSetParent(lClosure *c, lVal *v){
 }
 
 lVal *wwlnfWidgetX(lClosure *c, lVal *v){
-	widget *w = NULL;
-	v = getLArgW(c,v,&w);
-	if(w == NULL){return NULL;}
-	return lValInt(w->x);
+	(void)c;
+	widget *w = castToWidget(lCar(v));
+	return w == NULL ? NULL : lValInt(w->x);
 }
 
 lVal *wwlnfWidgetSetX(lClosure *c, lVal *v){
-	widget *w = NULL;
-	int nv = INT_MIN;
-	v = getLArgW(c,v,&w);
-	v = getLArgI(c,v,&nv);
+	(void)c;
+	widget *w = castToWidget(lCar(v)); v = lCdr(v);
+	const int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
 	w->x = nv;
 	return NULL;
 }
 
 lVal *wwlnfWidgetY(lClosure *c, lVal *v){
-	widget *w = NULL;
-	v = getLArgW(c,v,&w);
-	if(w == NULL){return NULL;}
-	return lValInt(w->y);
+	(void)c;
+	widget *w = castToWidget(lCar(v));
+	return w == NULL ? NULL : lValInt(w->y);
 }
 
 lVal *wwlnfWidgetSetY(lClosure *c, lVal *v){
-	widget *w = NULL;
-	int nv = INT_MIN;
-	v = getLArgW(c,v,&w);
-	v = getLArgI(c,v,&nv);
+	(void)c;
+	widget *w = castToWidget(lCar(v));
+	const int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
 	w->y = nv;
 	return NULL;
 }
 
 lVal *wwlnfWidgetW(lClosure *c, lVal *v){
-	widget *w = NULL;
-	v = getLArgW(c,v,&w);
-	if(w == NULL){return NULL;}
-	return lValInt(w->w);
+	(void)c;
+	widget *w = castToWidget(lCar(v));
+	return w == NULL ? NULL : lValInt(w->w);
 }
 
 lVal *wwlnfWidgetSetW(lClosure *c, lVal *v){
-	widget *w = NULL;
-	int nv = INT_MIN;
-	v = getLArgW(c,v,&w);
-	v = getLArgI(c,v,&nv);
+	(void)c;
+	widget *w = castToWidget(lCar(v)); v = lCdr(v);
+	const int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
 	w->w = nv;
 	return NULL;
 }
 
 lVal *wwlnfWidgetH(lClosure *c, lVal *v){
-	widget *w = NULL;
-	v = getLArgW(c,v,&w);
-	if(w == NULL){return NULL;}
-	return lValInt(w->h);
+	(void)c;
+	widget *w = castToWidget(lCar(v));
+	return w == NULL ? NULL : lValInt(w->h);
 }
 
 lVal *wwlnfWidgetSetH(lClosure *c, lVal *v){
-	widget *w = NULL;
-	int nv = INT_MIN;
-	v = getLArgW(c,v,&w);
-	v = getLArgI(c,v,&nv);
+	(void)c;
+	widget *w = castToWidget(lCar(v)); v = lCdr(v);
+	const int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
 	w->h = nv;
 	return NULL;
 }
 
 lVal *wwlnfWidgetFlags(lClosure *c, lVal *v){
-	widget *w = NULL;
-	v = getLArgW(c,v,&w);
-	if(w == NULL){return NULL;}
-	return lValInt(w->flags);
+	(void)c;
+	widget *w = castToWidget(lCar(v));
+	return w == NULL ? NULL : lValInt(w->flags);
 }
 
 lVal *wwlnfWidgetSetFlags(lClosure *c, lVal *v){
-	widget *w = NULL;
-	int nv = INT_MIN;
-	v = getLArgW(c,v,&w);
-	v = getLArgI(c,v,&nv);
+	(void)c;
+	widget *w = castToWidget(lCar(v)); v = lCdr(v);
+	const int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
 	w->flags = nv;
 	return NULL;
 }
 
 lVal *wwlnfWidgetGX(lClosure *c, lVal *v){
-	widget *w = NULL;
-	v = getLArgW(c,v,&w);
+	(void)c;
+	widget *w = castToWidget(lCar(v));
 	if(w == NULL){return NULL;}
 	return lValInt(w->gx);
 }
 
 lVal *wwlnfWidgetSetGX(lClosure *c, lVal *v){
-	widget *w = NULL;
-	int nv = INT_MIN;
-	v = getLArgW(c,v,&w);
-	v = getLArgI(c,v,&nv);
+	(void)c;
+	widget *w = castToWidget(lCar(v)); v = lCdr(v);
+	int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
 	w->gx = nv;
 	return NULL;
 }
 
 lVal *wwlnfWidgetGY(lClosure *c, lVal *v){
-	widget *w = NULL;
-	v = getLArgW(c,v,&w);
-	if(w == NULL){return NULL;}
-	return lValInt(w->gy);
+	(void)c;
+	widget *w = castToWidget(lCar(v));
+	return w == NULL ? NULL : lValInt(w->gy);
 }
 
 lVal *wwlnfWidgetSetGY(lClosure *c, lVal *v){
-	widget *w = NULL;
-	int nv = INT_MIN;
-	v = getLArgW(c,v,&w);
-	v = getLArgI(c,v,&nv);
+	(void)c;
+	widget *w = castToWidget(lCar(v)); v = lCdr(v);
+	const int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
 	w->gy = nv;
 	return NULL;
 }
 
 lVal *wwlnfWidgetGW(lClosure *c, lVal *v){
-	widget *w = NULL;
-	v = getLArgW(c,v,&w);
+	(void)c;
+	widget *w = castToWidget(lCar(v));
 	if(w == NULL){return NULL;}
 	return lValInt(w->gw);
 }
 
 lVal *wwlnfWidgetSetGW(lClosure *c, lVal *v){
-	widget *w = NULL;
-	int nv = INT_MIN;
-	v = getLArgW(c,v,&w);
-	v = getLArgI(c,v,&nv);
+	(void)c;
+	widget *w = castToWidget(lCar(v)); v = lCdr(v);
+	int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
 	w->gw = nv;
 	return NULL;
 }
 
 lVal *wwlnfWidgetGH(lClosure *c, lVal *v){
-	widget *w = NULL;
-	v = getLArgW(c,v,&w);
-	if(w == NULL){return NULL;}
-	return lValInt(w->gh);
+	(void)c;
+	widget *w = castToWidget(lCar(v));
+	return w == NULL ? NULL : lValInt(w->gh);
 }
 
 lVal *wwlnfWidgetSetGH(lClosure *c, lVal *v){
-	widget *w = NULL;
-	int nv = INT_MIN;
-	v = getLArgW(c,v,&w);
-	v = getLArgI(c,v,&nv);
+	(void)c;
+	widget *w = castToWidget(lCar(v)); v = lCdr(v);
+	const int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
 	w->gh = nv;
 	return NULL;
 }
 
 lVal *wwlnfWidgetLabel(lClosure *c, lVal *v){
-	widget *w = NULL;
-	v = getLArgW(c,v,&w);
-	if(w == NULL){return NULL;}
-	return lValString(w->label);
+	(void)c;
+	widget *w = castToWidget(lCar(v));
+	return w == NULL ? NULL : lValString(w->label);
 }
 
 lVal *wwlnfWidgetSetLabel(lClosure *c, lVal *v){
-	widget *w = NULL;
-	const char *str;
-	v = getLArgW(c,v,&w);
-	v = getLArgS(c,v,&str);
+	(void)c;
+	widget *w = castToWidget(lCar(v)); v = lCdr(v);
+	const char *str = castToString(lCar(v),NULL);
 	if((w == NULL) || (str == NULL)){return NULL;}
 	widgetLabel(w,str);
 
@@ -287,14 +262,13 @@ lVal *wwlnfWidgetSetLabel(lClosure *c, lVal *v){
 }
 
 lVal *wwlnfWidgetBind(lClosure *c, lVal *v){
-	widget *w = NULL;
-	const char *str;
-	lVal *lam;
-	v = getLArgW(c,v,&w);
-	v = getLArgS(c,v,&str);
-	v = getLArgL(c,v,&lam);
-	if((w == NULL) || (str == NULL) || (lam == NULL)){return NULL;}
-	widgetBindL(w,str,lam);
+	(void)c;
+	widget *w = castToWidget(lCar(v)); v = lCdr(v);
+	const char *str = castToString(lCar(v),NULL); v = lCdr(v);
+	lVal *callback = lCar(v);
+	if((w == NULL) || (str == NULL) || (callback == NULL)){return NULL;}
+	if(callback->type != ltLambda){return NULL;}
+	widgetBindL(w,str,callback);
 
 	return NULL;
 }

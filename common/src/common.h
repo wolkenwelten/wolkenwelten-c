@@ -6,6 +6,7 @@
 #include "game_structs.h"
 #include "misc/rng.h"
 #include "misc/vec.h"
+#include "../nujel/lib/api.h"
 
 extern blockType blocks[256];
 extern bool isClient;

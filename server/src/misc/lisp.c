@@ -21,6 +21,7 @@
 #include "../game/animal.h"
 #include "../game/being.h"
 #include "../game/blockMining.h"
+#include "../game/character.h"
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
 #include "../game/weather.h"
@@ -40,6 +41,8 @@
 #include "../../../common/src/network/messages.h"
 
 #include "../../../common/nujel/lib/api.h"
+#include "../../../common/nujel/lib/s-expression/writer.h"
+#include "../../../common/nujel/lib/allocation/roots.h"
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -51,18 +54,19 @@
 extern unsigned  int src_tmp_server_nuj_len;
 extern unsigned char src_tmp_server_nuj_data[];
 
+lSymbol *lsPID;
+
 char replyBuf[256];
 
 static uint getPID(lClosure *c){
-	lVal *pid = lResolveSym(c - lClosureList, lValSym("pid"));
+	lVal *pid = lCar(lGetClosureSym(c, lsPID));
 	if(pid == NULL){return 123;}
 	return pid->vInt;
 }
 
 static void setPID(lClosure *c, uint pid){
-	lVal *sym = lValSym("pid");
-	lVal *t = lDefineClosureSym(c - lClosureList, lvSym(sym->vCdr));
-	t->vList.car = lValInt(pid);
+	(void)c;
+	lDefineVal(clRoot,"pid",lValInt(pid));
 }
 
 void lPrintError(const char *format, ...){
@@ -115,40 +119,33 @@ static lVal *wwlnfPlayerPos(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfSetB(lClosure *c, lVal *v){
-	vec pos = vecNOne();
-	int b   = 0;
-
-	v = getLArgV(c,v,&pos);
-	v = getLArgI(c,v,&b);
+	(void)c;
+	const vec pos = castToVec(lCar(v),vecNOne());
+	const int b = castToInt(lCadr(v),0);
 
 	worldSetB(pos.x,pos.y,pos.z,b);
 	return lValInt(b);
 }
 
 static lVal *wwlnfGetB(lClosure *c, lVal *v){
-	vec pos = vecNOne();
-
-	v = getLArgV(c,v,&pos);
+	(void)c;
+	const vec pos = castToVec(lCar(v),vecNOne());
 
 	return lValInt(worldGetB(pos.x,pos.y,pos.z));
 }
 
 static lVal *wwlnfTryB(lClosure *c, lVal *v){
-	vec pos = vecNOne();
-
-	v = getLArgV(c,v,&pos);
+	(void)c;
+	const vec pos = castToVec(lCar(v),vecNOne());
 
 	return lValInt(worldTryB(pos.x,pos.y,pos.z));
 }
 
 static lVal *wwlnfBox(lClosure *c, lVal *v){
-	vec pos  = vecNOne();
-	vec size = vecZero();
-	int b    = 0;
-
-	v = getLArgV(c,v,&pos);
-	v = getLArgV(c,v,&size);
-	v = getLArgI(c,v,&b);
+	(void)c;
+	const vec pos  = castToVec(lCar(v),vecNOne()); v = lCdr(v);
+	const vec size = castToVec(lCar(v),vecZero()); v = lCdr(v);
+	const int b    = castToInt(lCar(v),0);         v = lCdr(v);
 
 	if((pos.x < 0) || (size.x <= 0)){return NULL;}
 	worldBox(pos.x,pos.y,pos.z,size.x,size.y,size.z,b);
@@ -156,74 +153,56 @@ static lVal *wwlnfBox(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfMBox(lClosure *c, lVal *v){
-	vec pos  = vecNOne();
-	vec size = vecZero();
-
-	v = getLArgV(c,v,&pos);
-	v = getLArgV(c,v,&size);
+	(void)c;
+	const vec pos  = castToVec(lCar(v), vecNOne()); v = lCdr(v);
+	const vec size = castToVec(lCar(v),vecZero()); v = lCdr(v);
 
 	worldBoxMine(pos.x,pos.y,pos.z,size.x,size.y,size.z);
 	return lValBool(true);
 }
 
 static lVal *wwlnfSphere(lClosure *c, lVal *v){
-	vec pos = vecNOne();
-	float r = 1.f;
-	int b   = 0;
-
-	v = getLArgV(c,v,&pos);
-	v = getLArgF(c,v,&r);
-	v = getLArgI(c,v,&b);
+	(void)c;
+	const vec pos = castToVec  (lCar(v),vecNOne()); v = lCdr(v);
+	const float r = castToFloat(lCar(v),1.f);       v = lCdr(v);
+	const int b   = castToInt  (lCar(v),0);
 
 	worldBoxSphere(pos.x,pos.y,pos.z,r,b);
 	return lValInt(b);
 }
 
 static lVal *wwlnfMSphere(lClosure *c, lVal *v){
-	vec pos = vecNOne();
-	float r = 4.f;
-
-	v = getLArgV(c,v,&pos);
-	v = getLArgF(c,v,&r);
+	(void)c;
+	const vec pos = castToVec  (lCar(v),vecNOne()); v = lCdr(v);
+	const float r = castToFloat(lCar(v),4.f);
 
 	worldBoxMineSphere(pos.x,pos.y,pos.z,r);
 	return lValBool(true);
 }
 
 static lVal *wwlnfGive(lClosure *c, lVal *v){
-	int id       = -1;
-	int amt      =  0;
-	int cplayer  = -1;
-
-	v = getLArgI(c,v,&id);
-	v = getLArgI(c,v,&amt);
-	v = getLArgI(c,v,&cplayer);
-	if(cplayer < 0){cplayer = getPID(c);}
+	(void)c;
+	const int id       = castToInt(lCar(v), -1); v = lCdr(v);
+	const int amt      = castToInt(lCar(v),  0); v = lCdr(v);
+	const int cplayer  = castToInt(lCar(v),getPID(c));
 
 	msgPickupItem(cplayer,itemNew(id,amt));
 	return NULL;
 }
 
 static lVal *wwlnfDmg(lClosure *c, lVal *v){
-	int hp      =  4;
-	int cplayer = -1;
-
-	v = getLArgI(c,v,&hp);
-	v = getLArgI(c,v,&cplayer);
-	if(cplayer < 0){cplayer = getPID(c);}
+	const int hp      = castToInt(lCar(v),4); v = lCdr(v);
+	const int cplayer = castToInt(lCar(v),getPID(c));
 
 	msgBeingDamage(cplayer,hp,0,1.f,beingCharacter(cplayer),-1,vecZero());
 	return NULL;
 }
 
 static lVal *wwlnfNewAnim(lClosure *c, lVal *v){
-	vec pos    = vecNOne();
-	int amount = 1;
-	int type   = 1;
-
-	v = getLArgV(c,v,&pos);
-	v = getLArgI(c,v,&amount);
-	v = getLArgI(c,v,&type);
+	(void)c;
+	const vec pos    = castToVec(lCar(v),vecNOne()); v = lCdr(v);
+	const int amount = castToInt(lCar(v),1);         v = lCdr(v);
+	const int type   = castToInt(lCar(v),1);
 
 	if(pos.x < 0){return NULL;}
 	for(int i=0;i < amount;i++){
@@ -233,23 +212,17 @@ static lVal *wwlnfNewAnim(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfSetAnim(lClosure *c, lVal *v){
-	int index  = -1;
-	int hunger = -1;
-	int sleepy = -1;
-	int pregna = -2;
-	int state  = -1;
-	int health = -1;
-
-	v = getLArgI(c,v,&index);
-	v = getLArgI(c,v,&hunger);
-	v = getLArgI(c,v,&sleepy);
-	v = getLArgI(c,v,&pregna);
-	v = getLArgI(c,v,&state);
-	v = getLArgI(c,v,&health);
+	(void)c;
+	const int index  = castToInt(lCar(v),-2); v = lCdr(v);
+	const int hunger = castToInt(lCar(v),-2); v = lCdr(v);
+	const int sleepy = castToInt(lCar(v),-2); v = lCdr(v);
+	const int pregna = castToInt(lCar(v),-2); v = lCdr(v);
+	const int state  = castToInt(lCar(v),-2); v = lCdr(v);
+	const int health = castToInt(lCar(v),-2); v = lCdr(v);
 
 	if((index < 0) || (index > (int)animalListMax)){return NULL;}
 	animal *a = &animalList[index];
-	if(a->type ==  0){return NULL;}
+	if(a->type == 0){return NULL;}
 	if(hunger >=  0){a->hunger    = hunger;}
 	if(sleepy >=  0){a->sleepy    = sleepy;}
 	if(pregna >= -1){a->pregnancy = pregna;}
@@ -259,13 +232,9 @@ static lVal *wwlnfSetAnim(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfTp(lClosure *c, lVal *v){
-	vec pos     = vecNOne();
-	int cplayer = -1;
+	vec pos     = castToVec(lCar(v),vecNOne()); v = lCdr(v);
+	int cplayer = castToInt(lCar(v),getPID(c));
 
-	v = getLArgV(c,v,&pos);
-	v = getLArgI(c,v,&cplayer);
-
-	if(cplayer < 0){cplayer = getPID(c);}
 	if(!vecInWorld(pos)){return NULL;}
 	const character *tpc = clients[cplayer].c;
 	const vec rot = tpc == NULL ? vecZero() : tpc->rot;
@@ -274,13 +243,13 @@ static lVal *wwlnfTp(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfTime(lClosure *c, lVal *v){
+	(void)c;
 	if(v != NULL){
-		lVal *t = lEval(c,lCar(v));
+		lVal *t = lCar(v);
 		if(t != NULL){
 			if(t->type == ltString){
-				gtimeSetTimeOfDayHRS(lStrData(t));
-			}else{
-				t = lnfInt(c,t);
+				gtimeSetTimeOfDayHRS(t->vString->data);
+			}else if(t->type == ltInt){
 				gtimeSetTime(t->vInt);
 			}
 			msgSetTime(-1, gtimeGetTime());
@@ -307,68 +276,57 @@ static lVal *wwlnfChungi(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfClearInv(lClosure *c, lVal *v){
-	item newInventory[40];
-	memset(newInventory,0,sizeof(newInventory));
-
-	int target = getPID(c);
-	for(int i=0;i<1;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,lCar(v));
-		v = lCdr(v);
-		if((t == NULL) && (t->type != ltInt)){break;}
-		target= t->vInt;
-	}
+	const uint target = castToInt(lCar(v),getPID(c));
 	if(!getClientValid(target)){return NULL;}
-	msgPlayerSetInventory(target,newInventory,40);
-	return NULL;
-}
+	character *player = clients[target].c;
+	if(player == NULL){return NULL;}
 
-static lVal *wwlnfSetInv(lClosure *c, lVal *v){
-	int args[4] = {-1, -1, 1, getPID(c)};
-
-	for(int i=0;i<4;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,lCar(v));
-		v = lCdr(v);
-		if((t == NULL) || (t->type != ltInt)){break;}
-		args[i] = t->vInt;
-	}
-	if((!getClientValid(args[3])) || (args[0] < 0) || (args[0] >= 40) || (args[0] < 0)){return NULL;}
-	clients[args[3]].c->inventory[args[0]] = itemNew(args[1],args[2]);
-	msgPlayerSetInventory(args[3],clients[args[3]].c->inventory,40);
-	return NULL;
-}
-
-static lVal *wwlnfSetEq(lClosure *c, lVal *v){
-	int args[4] = {-1, -1, 1, getPID(c)};
-
-	for(int i=0;i<4;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,lCar(v));
-		v = lCdr(v);
-		if((t == NULL) && (t->type != ltInt)){break;}
-		args[i] = t->vInt;
-	}
-	if((!getClientValid(args[3])) || (args[0] < 0) || (args[0] >= 3) || (args[0] < 0)){return NULL;}
-	clients[args[3]].c->equipment[args[0]] = itemNew(args[1],args[2]);
-	msgPlayerSetEquipment(args[3],clients[args[3]].c->equipment,3);
+	characterEmptyInventory(player);
+	characterUpdateItems(player);
 	return NULL;
 }
 
 static lVal *wwlnfClearEq(lClosure *c, lVal *v){
-	item newEquipment[3];
-	memset(newEquipment,0,sizeof(newEquipment));
-
-	int target = getPID(c);
-	for(int i=0;i<1;i++){
-		if(v == NULL){break;}
-		lVal *t = lEval(c,lCar(v));
-		v = lCdr(v);
-		if((t == NULL) && (t->type != ltInt)){continue;}
-		target = t->vInt;
-	}
+	const uint target = castToInt(lCar(v),getPID(c));
 	if(!getClientValid(target)){return NULL;}
-	msgPlayerSetEquipment(target,newEquipment, 3);
+	character *player = clients[target].c;
+	if(player == NULL){return NULL;}
+
+	characterEmptyEquipment(player);
+	characterUpdateItems(player);
+	return NULL;
+}
+
+static lVal *wwlnfSetInv(lClosure *c, lVal *v){
+	const int slot   = castToInt(lCar(v),-1); v = lCdr(v);
+	const int itemID = castToInt(lCar(v),-1); v = lCdr(v);
+	const int amount = castToInt(lCar(v),1);  v = lCdr(v);
+	const int target = castToInt(lCar(v),getPID(c));
+
+	if((!getClientValid(target)) || (slot < 0)){return NULL;}
+	if((itemID < 0) || (itemID > 4096)){return NULL;}
+	character *player = clients[target].c;
+	if(player == NULL){return NULL;}
+	item itm = itemNew(itemID,amount);
+	characterSetItemBarSlot(clients[target].c,slot,&itm);
+	characterUpdateItems(player);
+
+	return NULL;
+}
+
+static lVal *wwlnfSetEq(lClosure *c, lVal *v){
+	const int slot   = castToInt(lCar(v),-1); v = lCdr(v);
+	const int itemID = castToInt(lCar(v),-1); v = lCdr(v);
+	const int amount = castToInt(lCar(v),1);  v = lCdr(v);
+	const int target = castToInt(lCar(v),getPID(c));
+
+	if((!getClientValid(target)) || (slot < 0)){return NULL;}
+	character *player = clients[target].c;
+	if(player == NULL){return NULL;}
+	item itm = itemNew(itemID,amount);
+	characterSetEquipmentSlot(clients[target].c,slot,&itm);
+	characterUpdateItems(player);
+
 	return NULL;
 }
 
@@ -378,17 +336,19 @@ static lVal *wwlnfRCount(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCar(v));
-	if((t == NULL) || (t->type != ltString)){return NULL;}
-	serverSendChatMsg(lStrData(t));
-	return t;
+	(void)c;
+	const char *msg = castToString(lCar(v),NULL);
+	if(msg == NULL){return NULL;}
+	serverSendChatMsg(msg);
+	return lCar(v);
 }
 
 static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
-	lVal *t = lEval(c,lCar(v));
-	if((t == NULL) || (t->type != ltString)){return NULL;}
-	printf("%s\n",lStrData(t));
-	return t;
+	(void)c;
+	const char *msg = castToString(lCar(v),NULL);
+	if(msg == NULL){return NULL;}
+	printf("%s\n",msg);
+	return lCar(v);
 }
 
 static lVal *wwlnfQuit(lClosure *c, lVal *v){
@@ -398,10 +358,9 @@ static lVal *wwlnfQuit(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfChunkInfo(lClosure *c, lVal *v){
+	(void)c;
 	char buf[256];
-	vec pos = vecNOne();
-
-	v = getLArgV(c,v,&pos);
+	const vec pos = castToVec(lCar(v),vecNOne());
 	if(pos.x < 0){return NULL;}
 
 	chunk *chnk = worldTryChunk((uint)pos.x & 0xFFF0,(uint)pos.y & 0xFFF0,(uint)pos.z & 0xFFF0);
@@ -412,9 +371,9 @@ static lVal *wwlnfChunkInfo(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfChungusInfo(lClosure *c, lVal *v){
+	(void)c;
 	char buf[256];
-	vec pos = vecNOne();
-	v=  getLArgV(c,v,&pos);
+	const vec pos = castToVec(lCar(v),vecNOne());
 	if(pos.x < 0){return NULL;}
 
 	chungus *chng = worldTryChungus((uint)pos.x >> 8,(uint)pos.y >> 8,(uint)pos.z >> 8);
@@ -425,9 +384,8 @@ static lVal *wwlnfChungusInfo(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfSetSpawnPos(lClosure *c, lVal *v){
-	vec pos = vecNOne();
-
-	v =  getLArgV(c,v,&pos);
+	(void)c;
+	const vec pos = castToVec(lCar(v),vecNOne());
 	if(pos.x < 0){return NULL;}
 	worldSetSpawnPos(pos);
 
@@ -440,17 +398,12 @@ static lVal *wwlnfSpawnPos(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfWorldgenSphere(lClosure *c, lVal *v){
-	int x = -1;
-	int y = -1;
-	int z = -1;
-	int r = -1;
-	int b = -1;
-
-	v = getLArgI(c,v,&x);
-	v = getLArgI(c,v,&y);
-	v = getLArgI(c,v,&z);
-	v = getLArgI(c,v,&r);
-	v = getLArgI(c,v,&b);
+	(void)c;
+	const int x = castToInt(lCar(v),-1); v = lCdr(v);
+	const int y = castToInt(lCar(v),-1); v = lCdr(v);
+	const int z = castToInt(lCar(v),-1); v = lCdr(v);
+	const int r = castToInt(lCar(v),16); v = lCdr(v);
+	const int b = castToInt(lCar(v),I_Dirt);
 
 	worldgenSphere(x,y,z,r,b);
 	return NULL;
@@ -459,36 +412,17 @@ static lVal *wwlnfWorldgenSphere(lClosure *c, lVal *v){
 u8 wwlnfLineBlockSelection = 1;
 void wwlnfLineSetBlock(int x, int y, int z){
 	worldSetB(x,y,z,wwlnfLineBlockSelection);
-
 }
 
 static lVal *wwlnfLine(lClosure *c, lVal *v){
-	vec p1 = vecNOne();
-	vec p2 = vecNOne();
-	int b = 1;
-
-	v =  getLArgV(c,v,&p1);
-	v =  getLArgV(c,v,&p2);
-	v =  getLArgI(c,v,&b);
+	(void)c;
+	const vec p1 = castToVec(lCar(v),vecNOne()); v = lCdr(v);
+	const vec p2 = castToVec(lCar(v),vecNOne()); v = lCdr(v);
+	const int b =  castToInt(lCar(v),I_Dirt);
 
 	wwlnfLineBlockSelection = b;
 	if((p1.x < 0) || (p2.x < 0)){return NULL;}
 	lineFromTo(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z,wwlnfLineSetBlock);
-	return NULL;
-}
-
-static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
-	vec pos    = vecNOne();
-	int id     = 0;
-	int amount = 0;
-
-	v = getLArgV(c,v,&pos);
-	v = getLArgI(c,v,&id);
-	v = getLArgI(c,v,&amount);
-
-	if((pos.x < 0) || (id < 0) || (amount < 0)){return NULL;}
-	item itm = itemNew(id,amount);
-	itemDropNewP(pos,&itm,-1);
 	return NULL;
 }
 
@@ -519,7 +453,6 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-dmg",     "(&amount &player)",                            "Damages &player=pid by &amount=4 points",                    wwlnfDmg);
 	lAddNativeFunc(c,"animal-new",     "(pos &type &amount)",                          "Creates &amount=1 new animals of &type=1 at pos",            wwlnfNewAnim);
 	lAddNativeFunc(c,"animal-set",     "(i &hunger &sleepy &pregnancy &state &health)","Sets the fields for animal i",                               wwlnfSetAnim);
-	lAddNativeFunc(c,"item-drop-new",  "(pos item-id amount)",                         "Creates a new itemDrop at POS with AMOUNT of ITEM-ID",       wwlnfItemDropNew);
 	lAddNativeFunc(c,"setb!",          "(pos b)",                                      "Sets block at pos to b",                                     wwlnfSetB);
 	lAddNativeFunc(c,"tryb",           "(pos)",                                        "Tries and gets block type at pos",                           wwlnfTryB);
 	lAddNativeFunc(c,"getb!",          "(pos)",                                        "Gets block type at pos, might trigger worldgen",             wwlnfGetB);
@@ -528,7 +461,7 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"sphere",         "(pos r &b)",                                   "Sets every block in the sphere at pos with radius r to &b=1",wwlnfSphere);
 	lAddNativeFunc(c,"mbox",           "(pos size)",                                   "Mines every block in the box at pos with size",              wwlnfMBox);
 	lAddNativeFunc(c,"msphere",        "(pos r)",                                      "Mines every block in the sphere at pos with radius r",       wwlnfMSphere);
-	lAddNativeFunc(c,"time",           "(s)",                                          "Sets the time to the time string s",                         wwlnfTime);
+	lAddNativeFunc(c,"game/time",      "(s)",                                          "Sets the time to the time string s",                         wwlnfTime);
 	lAddNativeFunc(c,"tp",             "(pos)",                                        "Teleports to pos",                                           wwlnfTp);
 	lAddNativeFunc(c,"send-message",   "(s)",                                          "Send a chat message to everyone",                            wwlnfSendMessage);
 	lAddNativeFunc(c,"console-print",  "(s)",                                          "Prints something to stdout",                                 wwlnfConsolePrint);
@@ -536,21 +469,18 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"chungus-info",   "(pos)",                                        "Returns a description of the chungus at pos",                wwlnfChungusInfo);
 	lAddNativeFunc(c,"spawn-pos",      "()",                                           "Return the current spawn position as a vec",                 wwlnfSpawnPos);
 	lAddNativeFunc(c,"spawn-pos!",     "(pos)",                                        "Set the spawn POS",                                          wwlnfSetSpawnPos);
-
 	lAddNativeFunc(c,"worldgen/sphere","(x y z r b)",                                  "Only use during worldgen, sets a sphere of radius R at X Y Z to B",wwlnfWorldgenSphere);
-
 	lAddNativeFunc(c,"quit!",          "()",                                           "Cleanly shuts down the server",                              wwlnfQuit);
 }
 
-static void cmdLisp(int c,const char *str){
-	static char reply[8192];
+static void cmdLisp(uint pid, const char *str){
+	char reply[1<<16];
 	memset(reply,0,sizeof(reply));
 
-	lVal *v = lEval(clients[c].cl,lWrap(lRead(str)));
+	lVal *v = lEval(clients[pid].cl,lWrap(lRead(str)));
 	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,true);
-	lGarbageCollect();
 
-	msgLispSExpr(c, reply);
+	msgLispSExpr(pid, reply);
 }
 
 void lispInit(){
@@ -558,29 +488,27 @@ void lispInit(){
 
 	clRoot = lispCommonRoot();
 	addServerNativeFuncs(clRoot);
+	lsPID = lSymS("pid");
 	lEval(clRoot,lWrap(lRead((char *)src_tmp_server_nuj_data)));
-
-	lGarbageCollect();
 }
 
-lClosure *lispClientClosure(uint c){
-	const uint i = lClosureNew(clRoot - lClosureList);
-	lClosure *ret = &lClosureList[i];
-	ret->flags |= lfNoGC;
-	setPID(ret,c);
+lClosure *lispClientClosure(uint pid){
+	lClosure *ret = lClosureNew(clRoot);
+	lRootsClosurePush(ret);
+	setPID(ret,pid);
 	return ret;
 }
 
-int parseCommand(uint c, const char *cmd){
+int parseCommand(uint pid, const char *cmd){
 	if(cmd[0] != '.'){return 0;}
 	const char *tcmp = cmd+1;
 
-	cmdLisp(c,tcmp);
+	cmdLisp(pid,tcmp);
 	return 1;
 }
 
-void lispRecvSExpr(uint c,const packet *p){
-	cmdLisp(c,(const char *)p->v.u8);
+void lispRecvSExpr(uint pid,const packet *p){
+	cmdLisp(pid,(const char *)p->v.u8);
 }
 
 void lispEvents(){
@@ -592,23 +520,19 @@ void lispEvents(){
 	if((lastTicks + 50) > cticks){return;}
 	lastTicks = cticks;
 	if(yieldRun == NULL){
-		yieldRun = lCons(lValSym("yield-run"),NULL);
+		yieldRun = lRootsValPush(lCons(NULL,NULL));
+		yieldRun->vList.car = lValSym("yield-run");
 	}
-
-	yieldRun->flags |= lfNoGC;
-
 	lEval(clRoot,yieldRun);
-	lGarbageCollect();
 
 	PROFILE_STOP();
 }
 
 const char *lispEval(const char *str, bool humanReadable){
-	static char reply[4096];
+	static char reply[1<<12];
 	memset(reply,0,sizeof(reply));
 	lVal *v = lEval(clRoot,lWrap(lRead(str)));
 	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,humanReadable);
-	lGarbageCollect();
 	return reply;
 }
 
