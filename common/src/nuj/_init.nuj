@@ -3,6 +3,7 @@
 [def on-init  '[]]
 [def on-spawn '[]]
 [def on-join  '[]]
+[def on-gameplay-tick '[]]
 
 [def cat-none   0]
 [def cat-dirt   1]

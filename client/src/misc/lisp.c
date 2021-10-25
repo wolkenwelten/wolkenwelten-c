@@ -789,9 +789,27 @@ void lispRecvSExpr(const packet *p){
 	lispPanelShowReply((const char *)&p->v.u8);
 }
 
+static void lispGameplay(){
+	static lVal *form = NULL;
+	if(form == NULL){
+		form = lRootsValPush(lCons(NULL,NULL));
+		form->vList.car = lValSym("gameplay-run");
+	}
+
+	static u64 lastTicks = 0;
+	u64 cticks = getTicks();
+	if((lastTicks + 1000) > cticks){
+		if(lastTicks > cticks){lastTicks = cticks;}
+		return;
+	}
+	lastTicks = cticks;
+
+	lEval(clRoot,form);
+}
+
 void lispEvents(){
 	PROFILE_START();
-	lVal *form = NULL;
+	static lVal *form = NULL;
 	if(form == NULL){
 		form = lRootsValPush(lCons(NULL,NULL));
 		form->vList.car = lValSym("yield-run");
@@ -806,6 +824,7 @@ void lispEvents(){
 	lastTicks = cticks;
 
 	lEval(clRoot,form);
+	lispGameplay();
 
 	PROFILE_STOP();
 }
