@@ -28,14 +28,14 @@ $(WIN_RELDIR)/README.txt: common/README
 	cp $< $@
 
 $(WIN_RELDIR)/wolkenwelten.exe: $(CLIENT_SRCS)
-$(WIN_RELDIR)/wolkenwelten.exe: $(ASM_OBJS)
+$(WIN_RELDIR)/wolkenwelten.exe: $(ASM_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
 $(WIN_RELDIR)/wolkenwelten.exe: releases/win/wolkenwelten.res
 	@mkdir -p $(WIN_RELDIR)
 	$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CLIENT_CFLAGS) $(CINCLUDES) $(CLIENT_CINCLUDES) $(STATICLIBS)
 	strip -gxX $@
 
-$(WIN_RELDIR)/wolkenwelten-server.exe: $(SERVER_SRCS)
-$(WIN_RELDIR)/wolkenwelten-server.exe: $(ASM_OBJS)
+$(WIN_RELDIR)/wolkenwelten-server.exe: $(SERVER_SRCS) 
+$(WIN_RELDIR)/wolkenwelten-server.exe: $(ASM_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
 $(WIN_RELDIR)/wolkenwelten-server.exe: releases/win/wolkenwelten-server.res
 	@mkdir -p $(WIN_RELDIR)
 	$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(SERVER_CFLAGS) $(CINCLUDES) $(SERVER_CINCLUDES) $(LIBS) $(SERVER_LIBS)
@@ -45,6 +45,8 @@ $(WOLKENWELTEN): releases/win/wolkenwelten.res
 $(WOLKENWELTEN_SERVER): releases/win/wolkenwelten-server.res
 
 releases/win/wolkenwelten-server.res: platform/win/wolkenwelten-server.rc platform/win/icon.ico
+	@mkdir -p $(WIN_RELDIR)
 	windres $< -O coff -o $@
 releases/win/wolkenwelten.res: platform/win/wolkenwelten.rc platform/win/icon.ico
+	@mkdir -p $(WIN_RELDIR)
 	windres $< -O coff -o $@
