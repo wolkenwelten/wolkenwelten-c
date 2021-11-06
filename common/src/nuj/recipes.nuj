@@ -60,6 +60,7 @@
 	[def result-id 0]
 ]]
 
+
 [recipe-default [ω
 	[def id [recipe-new-id]]
 	[def ingred-id-0 'i-oak-log]

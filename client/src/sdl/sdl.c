@@ -172,6 +172,7 @@ void initSDL(){
 	mousey = screenHeight/2;
 	mouseHidden = true;
 	SDL_ShowCursor(SDL_FALSE);
+	SDL_SetRelativeMouseMode(true);
 	SDL_DisableScreenSaver();
 
 	initSDLMixer();

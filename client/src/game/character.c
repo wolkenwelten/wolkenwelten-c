@@ -477,41 +477,37 @@ static int characterPhysics(character *c){
 	col = characterCollision(c->pos);
 	if(col){ c->flags |= CHAR_COLLIDE; }
 	if((col&0x3110) && (c->vel.x < 0.f)){
-		c->pos.x = MAX(c->pos.x,floor(c->pos.x)+0.4f);
 		ret += characterBlockRepulsion(c,&c->vel.x);
 		if(((col&0x3111) == 0x0101) && (fabsf(c->vel.y) < 0.001f)){
 			characterGoStepUp(c);
 		}
 	}
 	if((col&0xC220) && (c->vel.x > 0.f)){
-		c->pos.x = MIN(c->pos.x,floorf(c->pos.x)+0.6f);
 		ret += characterBlockRepulsion(c,&c->vel.x);
 		if(((col&0xC222) == 0x0202) && (fabsf(c->vel.y) < 0.001f)){
 			characterGoStepUp(c);
 		}
 	}
 	if((col&0xA880) && (c->vel.z > 0.f)){
-		c->pos.z = MIN(c->pos.z,floorf(c->pos.z)+0.6f);
 		ret += characterBlockRepulsion(c,&c->vel.z);
 		if(((col&0x5888) == 0x0808) && (fabsf(c->vel.y) < 0.001f)){
 			characterGoStepUp(c);
 		}
 	}
 	if((col&0x5440) && (c->vel.z < 0.f)){
-		c->pos.z = MAX(c->pos.z,floorf(c->pos.z)+0.4f);
 		ret += characterBlockRepulsion(c,&c->vel.z);
 		if(((col&0xA444) == 0x0404) && (fabsf(c->vel.y) < 0.001f)){
 			characterGoStepUp(c);
 		}
 	}
 	if((col&0xF0F0) && (c->vel.y > 0.f)){
-		c->pos.y = MIN(c->pos.y,floorf(c->pos.y)+0.5f);
 		ret += characterBlockRepulsion(c,&c->vel.y);
 	}
 	if((col&0x000F) && (c->vel.y < 0.f)){
 		c->flags &= ~CHAR_FALLING;
-		if(c->vel.y < -0.02f){c->yoff += MAX(-.9f,c->vel.y * 10.f);}
-		c->pos.y = MAX(c->pos.y,floorf(c->pos.y)+.99f);
+		if(c->vel.y < -0.02f){
+			c->yoff += MAX(-.1f,c->vel.y * 10.f);
+		}
 		if(c->vel.y > -0.01f) {
 			c->vel = vecMul(c->vel,vecNew(0.98f,0,0.98f));
 		}else{
