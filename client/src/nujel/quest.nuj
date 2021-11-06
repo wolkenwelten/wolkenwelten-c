@@ -45,6 +45,18 @@
 	]]
 ]]
 
+[def quest-test [quest/new
+	[def name [cat "Gather some wood"]]
+	[def body "To complete this quest you need to collect " [ansi-red "10"] " wooden logs"]
+	[def finished? [λ []
+		[[player-ingredient-get i-oak-log] > 10]
+	]]
+	[def active? [λ [] #t]]
+	[def active! [λ []
+		[[[self 1] active!]]
+	]]
+]]
+
 [def quest/refresh [λ []
 	[def l quests]
 	[def cur #nil]

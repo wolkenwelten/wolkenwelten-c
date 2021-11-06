@@ -18,6 +18,7 @@
 #include "gui.h"
 
 #include "../main.h"
+#include "../binding/widget.h"
 #include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../game/animal.h"
@@ -170,6 +171,7 @@ void initUI(){
 	widgetBind(widgetGameScreen,"focus",handlerGameFocus);
 	chatPanel = widgetNewCP(wPanel,rootMenu,0,-1,512,0);
 	chatPanel->flags |= WIDGET_HIDDEN;
+	widgetExport(widgetGameScreen, "w-game-screen");
 
 	lispInputInit();
 	chatInit();

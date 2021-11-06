@@ -164,7 +164,6 @@ lVal *lispCallFuncI(const char *symbol, int ia){
 	lVal *l = form->vList.cdr = lCons(NULL,NULL);
 	l->vList.car = lValInt(ia);
 	lVal *result = lEval(clRoot,form);
-	lRootsValPop();
 	return result;
 }
 
@@ -182,7 +181,6 @@ lVal *lispCallFuncIII(const char *symbol, int ia, int ib, int ic){
 	l->vList.car = lValInt(ic);
 
 	lVal *result = lEval(clRoot,form);
-	lRootsValPop();
 	return result;
 }
 
@@ -193,7 +191,6 @@ lVal *lispCallFuncS(const char *symbol, const char *str){
 	lVal *l = form->vList.cdr = lCons(NULL,NULL);
 	l->vList.car = lValString(str);
 	lVal *result = lEval(clRoot,form);
-	lRootsValPop();
 	return result;
 }
 
@@ -211,7 +208,6 @@ lVal *lispCallFuncVII(const char *symbol,const vec va, int ib , int ic){
 	l->vList.car = lValInt(ic);
 
 	lVal *result = lEval(clRoot,form);
-	lRootsValPop();
 	return result;
 }
 

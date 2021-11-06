@@ -117,9 +117,29 @@
 	[say ["Press " [ansi-green "F2"] " for some equipment"]]
 	[say ["Use your " [ansi-yellow "grappling hook"] " with " [ansi-green "E"]]]
 	[say ["Open Inventory/Crafting panel with " [ansi-green "TAB"]]]
+	;[yield [timeout 10] [λ [] [pop]]]
 ]]
-[event-bind "on-join" [λ [] ]]
 
 [def gameplay-run [λ []
 	[event-fire "on-gameplay-tick"]
+]]
+
+[def inv-has-atleast? [let*
+	[def iter [λ [id amount-goal i amount-found]
+		[def slot [player-inventory i]]
+		[when [eq? id [car slot]]
+		      [set! amount-found [+ amount-found [cdr slot]]]
+		]
+		[if [>= amount-found amount-goal]
+		    #t
+		    [if [< i [player-inventory-size]]
+			[iter id amount-goal [+ 1 i] amount-found]
+			#f]]
+	]]
+
+	[λ [id amount-goal]
+		[unless id [set! 0]]
+		[unless amount-goal [set! 1]]
+		[iter id amount-goal 0 0]
+	]
 ]]

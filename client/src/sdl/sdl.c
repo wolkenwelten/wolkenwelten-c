@@ -170,6 +170,7 @@ void initSDL(){
 
 	mousex = screenWidth/2;
 	mousey = screenHeight/2;
+	mouseHidden = true;
 	SDL_ShowCursor(SDL_FALSE);
 	SDL_DisableScreenSaver();
 

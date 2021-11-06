@@ -77,34 +77,36 @@ struct widget {
 
 extern widget *widgetFocused;
 
-
+#define WIDGET_COUNT (1<<12)
+extern widget  widgetList[WIDGET_COUNT];
+extern int     widgetMax;
+extern widget *widgetFirstFree;
 
 widget *widgetNew     (widgetType type);
 widget *widgetNewC    (widgetType type, widget *p);
 widget *widgetNewCP   (widgetType type, widget *p, int x, int y, int w, int h);
 widget *widgetNewCPL  (widgetType type, widget *p, int x, int y, int w, int h, const char *label);
 widget *widgetNewCPLH (widgetType type, widget *p, int x, int y, int w, int h, const char *label,const char *eventName, void (*handler)(widget *));
-widget *widgetGet     (uint i);
 void    widgetFree    (widget *w);
-void    widgetExport  (widget *w, const char *symbol);
-void    widgetAddLispFunctions(lClosure *c);
-
-void    widgetFocus   (widget *w);
 void    widgetEmpty   (widget *w);
+
 void    widgetChild   (widget *parent, widget *child);
 void    widgetChildPre(widget *parent, widget *child);
 widget *widgetNextSel (const widget *cur);
 widget *widgetPrevSel (const widget *cur);
+
+void    widgetFocus   (widget *w);
 void    widgetBind    (widget *w, const char *eventName, void (*handler)(widget *));
 void    widgetBindL   (widget *w, const char *eventName, lVal *val);
 int     widgetEmit    (widget *w, const char *eventName);
+
 void    widgetDraw    (widget *w, textMesh *mesh, int x, int y, int pw, int ph);
 void    widgetLayVert (widget *w, int padding);
-void    widgetLabel   (widget *w, const char *newLabel);
 void    widgetFinish  (widget *w);
 void    widgetSlideW  (widget *w, int nw);
 void    widgetSlideH  (widget *w, int nh);
 void    widgetSlideX  (widget *w, int nw);
 void    widgetSlideY  (widget *w, int nh);
+void    widgetLabel   (widget *w, const char *newLabel);
 void    widgetAddEntry(widget *w, const char *entry);
 void    widgetUpdateAllEvents();

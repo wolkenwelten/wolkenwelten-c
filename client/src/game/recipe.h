@@ -22,3 +22,6 @@ uint recipeGetCraftableCount (const character *c);
  int recipeCanCraft          (const character *c, uint r);
 void recipeDoCraft           (      character *c, uint r, int amount);
 void recipeInit              ();
+
+int characterGetItemOrSubstituteAmount(const character *c, u16 i);
+int characterDecItemOrSubstituteAmount(character *c, u16 i, int a);

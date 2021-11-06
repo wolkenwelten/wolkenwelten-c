@@ -24,6 +24,7 @@
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/nujel/lib/nujel.h"
 
+#include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -201,11 +202,31 @@ void textMeshAddGlyphHG(textMesh *m, int x, int y, int size, u8 c, u32 fgc, u32 
 	textMeshHGradient(m,x,y,glyphWidth,glyphWidth,bgc1,bgc2);
 }
 
+static int wordWidth(const char *str){
+	int ret = 0;
+	while(*str && !isspace(*str)){
+		if((((u8)str[0] == 0xCE) && ((u8)str[1] == 0xBB))
+			|| (((u8)str[0] == 0xCE) && ((u8)str[1] == 0xB4))
+			|| (((u8)str[0] == 0xCF) && ((u8)str[1] == 0x89))) // UTF-8 λδω
+		{
+			str+=2;
+			ret++;
+		}else if(*str == '\033'){
+			int fgc = -1, bgc = -1;;
+			str += parseAnsiCode(str,&fgc,&bgc);
+		}else{
+			ret++;
+			str++;
+		}
+	}
+	return ret;
+}
+
 bool textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 	const int glyphWidth = 8*size;
 	const int lineHeight = 10*size;
-	const int maxX = m->mx >= 0 ? m->mx : screenWidth;
-	const int maxY = m->my >= 0 ? m->my : screenHeight;
+	const int maxX = (m->mx >= 0 ? m->mx : screenWidth) - glyphWidth;
+	const int maxY = (m->my >= 0 ? m->my : screenHeight) - lineHeight;
 
 	if(str == NULL){return 0;}
 	while(*str != 0){
@@ -216,11 +237,12 @@ bool textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 			if(m->wrap == 0){return 1;}
 			x = m->sx;
 			y += lineHeight;
-			if(x+glyphWidth > screenWidth){
+			if(y+lineHeight > maxY){
 				return 1;
-			}else{
-				continue;
 			}
+			while(*str && isspace(*str++)){}
+			str--;
+			continue;
 		}
 		if(((u8)str[0] == 0xCE) && ((u8)str[1] == 0xBB)){ // UTF-8 λ
 			textMeshAddGlyph(m,x,y,size,20,m->fgc,m->bgc);
@@ -256,12 +278,38 @@ bool textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 			if(fgc >= 0){m->fgc = colorPalette[fgc];}
 			if(bgc >= 0){m->bgc = colorPalette[bgc];}
 			continue;
+		}else if(isspace((u8)*str) && m->wrap){
+			const int spaceNeeded = wordWidth(str+1);
+			if((x + (spaceNeeded * glyphWidth)) > maxX){
+				x = m->sx;
+				y += lineHeight;
+				str++;
+				continue;
+			}
 		}
 
 		textMeshAddGlyph(m,x,y,size,*str,m->fgc,m->bgc);
 		x += glyphWidth;
 		str++;
 	}
+	return 0;
+}
+
+int textMeshAddWrappedPS(textMesh *m, int x, int y, int w, int h, int size, const char *str){
+	const int MX = m->mx;
+	const int MY = m->my;
+	const int WRAP = m->wrap;
+
+	m->mx = x + w;
+	m->my = y + h;
+	m->wrap = 1;
+
+	textMeshAddStrPS(m, x, y, size, str);
+
+	m->wrap = WRAP;
+	m->mx = MX;
+	m->my = MY;
+
 	return 0;
 }
 

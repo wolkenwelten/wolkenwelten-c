@@ -428,10 +428,10 @@ static void widgetDrawLabel(const widget *wid, textMesh *m, int x, int y, int w,
 
 	m->sx = x;
 	if(wid->label != NULL){
-		textMeshAddStrPS(m,x,y,size,wid->label);
+		textMeshAddWrappedPS(m,x,y,w,h,size,wid->label);
 	}
 	if(wid->vals != NULL){
-		textMeshAddStrPS(m,m->sx,y,size,wid->vals);
+		textMeshAddWrappedPS(m,m->sx,y,w,h,size,wid->vals);
 	}
 }
 

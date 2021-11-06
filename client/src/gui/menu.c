@@ -18,6 +18,7 @@
 #include "menu.h"
 
 #include "../main.h"
+#include "../binding/widget.h"
 #include "../gui/gui.h"
 #include "../menu/mainmenu.h"
 #include "../menu/singleplayer.h"

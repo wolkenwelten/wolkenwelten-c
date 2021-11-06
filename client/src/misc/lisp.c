@@ -17,6 +17,7 @@
 #include "lisp.h"
 
 #include "../main.h"
+#include "../binding/widget.h"
 #include "../game/beamblast.h"
 #include "../game/character.h"
 #include "../game/fire.h"
@@ -529,8 +530,8 @@ static lVal *wwlnfPlayerInventoryGet(lClosure *c, lVal *v){
 	if(slot >= (int)countof(player->inventory)){return NULL;}
 	const item *itm = &player->inventory[slot];
 	return lCons(lValInt(itm->ID),lValInt(itm->amount));
-}
 
+}
 static lVal *wwlnfPlayerInventorySet(lClosure *c, lVal *v){
 	(void)c;
 	const int slot   = castToInt(lCar(v),-1); v = lCdr(v);
@@ -543,6 +544,32 @@ static lVal *wwlnfPlayerInventorySet(lClosure *c, lVal *v){
 		player->inventory[slot] = itemNew(itemID,amount);
 	}
 	return NULL;
+}
+
+static lVal *wwlnfPlayerInventorySizeGet(lClosure *c, lVal *v){
+	(void)c; (void)v;
+	return lValInt(player->inventorySize);
+}
+
+static lVal *wwlnfIngredientAmountGet(lClosure *c, lVal *v){
+	(void)c;
+	const int id = castToInt(lCar(v),-1);
+	if(id <= 0){
+		return lValInt(0);
+	}else{
+		return lValInt(characterGetItemOrSubstituteAmount(player,id));
+	}
+}
+
+static lVal *wwlnfIngredientAmountDecrement(lClosure *c, lVal *v){
+	(void)c;
+	const int id  = castToInt(lCar(v),-1); v = lCdr(v);
+	const int amt = castToInt(lCar(v),-1);
+	if(id <= 0){
+		return lValInt(0);
+	}else{
+		return lValInt(characterDecItemOrSubstituteAmount(player, id, amt));
+	}
 }
 
 static lVal *wwlnfPlayerPlaceBlock(lClosure *c, lVal *v){
@@ -732,6 +759,9 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-active-slot!","(slot)",        "Set the players active SLOT",                                    wwlnfPlayerActiveSlotSet);
 	lAddNativeFunc(c,"player-inventory",   "(slot)",           "Get the players inventory SLOT",                              wwlnfPlayerInventoryGet);
 	lAddNativeFunc(c,"player-inventory!",  "(slot id &amount)","Set the players inventory SLOT to ID and AMOUNT",             wwlnfPlayerInventorySet);
+	lAddNativeFunc(c,"player-inventory-size","()",          "Return the size of the players inventory",                       wwlnfPlayerInventorySizeGet);
+	lAddNativeFunc(c,"player-ingredient-get","(id)",        "Return the amount of items the player has of ID and its substitutes",wwlnfIngredientAmountGet);
+	lAddNativeFunc(c,"player-ingredient-decrement","(id amount)","Remove AMOUNT items of ID and its substitutes",             wwlnfIngredientAmountDecrement);
 	lAddNativeFunc(c,"server-path",    "()",                "Returns the path to the server executable, if found.",           wwlnfServerExecutable);
 	lAddNativeFunc(c,"try-to-use",     "(&ms &amount)",     "Try to use &AMOUNT=1 and wait for &MS=200.",                     wwlnfTryToUse);
 	lAddNativeFunc(c,"start-anim",     "(id ms)",           "Starts animation &ID=0 for &MS=200",                             wwlnfStartAnim);
@@ -764,7 +794,7 @@ void lispInit(){
 	lInit();
 	clRoot = lispCommonRoot();
 	lispAddClientNFuncs(clRoot);
-	widgetAddLispFunctions(clRoot);
+	lOperatorsWidget(clRoot);
 	lEval(clRoot,lWrap(lRead((const char *)src_tmp_client_nuj_data)));
 	lGarbageCollect();
 }
