@@ -41,6 +41,7 @@
 #include "../../../common/src/network/messages.h"
 
 #include "../../../common/nujel/lib/api.h"
+#include "../../../common/nujel/lib/exception.h"
 #include "../../../common/nujel/lib/s-expression/writer.h"
 #include "../../../common/nujel/lib/allocation/roots.h"
 
@@ -432,6 +433,37 @@ lVal *wwlnfAnimalKillAll(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfRResult(lClosure *c, lVal *v){
+	(void)c;
+	const int id     = castToInt(lCar(v),-1); v = lCdr(v);
+	const int result = castToInt(lCar(v),0);  v = lCdr(v);
+	const int amount = castToInt(lCar(v),0);
+
+	if((id < 0) || (result <= 0) || (amount <= 0)){return NULL;}
+	/*
+	recipeCount = MAX(id+1,(int)recipeCount);
+	recipes[id].result.ID = result;
+	recipes[id].result.amount = amount;
+	*/
+	return NULL;
+}
+
+static lVal *wwlnfRIngred(lClosure *c, lVal *v){
+	(void)c;
+	const int id     = castToInt(lCar(v),-1); v = lCdr(v);
+	const int ii     = castToInt(lCar(v),-1); v = lCdr(v);
+	const int ingred = castToInt(lCar(v),0);  v = lCdr(v);
+	const int amount = castToInt(lCar(v),0);
+
+	if((id < 0) || (ii < 0) || (ii >= 4) || (ingred <= 0) || (amount <= 0)){return NULL;}
+	/*
+	recipeCount = MAX(id+1,(int)recipeCount);
+	recipes[id].ingredient[ii].ID = ingred;
+	recipes[id].ingredient[ii].amount = amount;
+	*/
+	return NULL;
+}
+
 void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
 	lAddNativeFunc(c,"animal-count",   "()",                                           "Returns animal count",                                       wwlnfACount);
@@ -471,25 +503,44 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"spawn-pos!",     "(pos)",                                        "Set the spawn POS",                                          wwlnfSetSpawnPos);
 	lAddNativeFunc(c,"worldgen/sphere","(x y z r b)",                                  "Only use during worldgen, sets a sphere of radius R at X Y Z to B",wwlnfWorldgenSphere);
 	lAddNativeFunc(c,"quit!",          "()",                                           "Cleanly shuts down the server",                              wwlnfQuit);
+
+	lAddNativeFunc(c,"r-result",       "(id result amt)",   "Set the result of recipe ID to AMT times RESULT.",       wwlnfRResult);
+	lAddNativeFunc(c,"r-ingred",       "(id i ingred amt)", "Set the ingredient I of recipe ID to AMT times INGRED.", wwlnfRIngred);
 }
 
-static void cmdLisp(uint pid, const char *str){
+static void *cmdLispReal(void *a, void *b){
 	char reply[1<<16];
 	memset(reply,0,sizeof(reply));
 
-	lVal *v = lEval(clients[pid].cl,lWrap(lRead(str)));
+	u16 pid = *((uint *)a);
+	const char *str = (const char *)b;
+
+	lVal *expr = lRead(str);
+	lVal *v = lnfDo(clients[pid].cl, expr);
 	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,true);
 
 	msgLispSExpr(pid, reply);
+
+	return NULL;
+}
+
+static void cmdLisp(uint pid, const char *str){
+	volatile uint pidp = pid;
+	lExceptionTry(cmdLispReal, (void *)&pidp, (void *)str);
+}
+
+static void *lispInitReal(void *a, void *b){
+	(void)a; (void)b;
+	clRoot = lispCommonRoot(addServerNativeFuncs);
+	lVal *expr = lRead((char *)src_tmp_server_nuj_data);
+	lnfDo(clRoot, expr);
+	lsPID = lSymS("pid");
+
+	return NULL;
 }
 
 void lispInit(){
-	lInit();
-
-	clRoot = lispCommonRoot();
-	addServerNativeFuncs(clRoot);
-	lsPID = lSymS("pid");
-	lEval(clRoot,lWrap(lRead((char *)src_tmp_server_nuj_data)));
+	lExceptionTry(lispInitReal,NULL,NULL);
 }
 
 lClosure *lispClientClosure(uint pid){
@@ -528,12 +579,21 @@ void lispEvents(){
 	PROFILE_STOP();
 }
 
-const char *lispEval(const char *str, bool humanReadable){
+void *lispEvalReal(void *a, void *b){
 	static char reply[1<<12];
+	const char *str = a;
+	bool humanReadable = b != NULL;
 	memset(reply,0,sizeof(reply));
-	lVal *v = lEval(clRoot,lWrap(lRead(str)));
+
+	lVal *expr = lRead(str);
+	lVal *v = lnfDo(clRoot,expr);
 	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,humanReadable);
+
 	return reply;
+}
+
+const char *lispEval(const char *str, bool humanReadable){
+	return lExceptionTry(lispEvalReal, (void *)str, humanReadable ? (void *)str : NULL);
 }
 
 void lGUIWidgetFree(lVal *v){

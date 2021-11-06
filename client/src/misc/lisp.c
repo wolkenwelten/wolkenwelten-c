@@ -47,8 +47,8 @@
 #include "../../../common/src/network/messages.h"
 
 #include "../../../common/nujel/lib/api.h"
+#include "../../../common/nujel/lib/exception.h"
 #include "../../../common/nujel/lib/allocation/roots.h"
-#include "../../../common/nujel/lib/operator/special.h"
 #include "../../../common/nujel/lib/s-expression/writer.h"
 
 #include <ctype.h>
@@ -71,9 +71,15 @@ void lispInputHandler(lSymbol *input, int key, int action){
 }
 
 void lispInputTick(){
-	static lSymbol *keyInput = NULL;
-	if(keyInput == NULL){keyInput = lSymS("input-tick");}
-	lEval(clRoot,lCons(lCons(lValSymS(keyInput),NULL),NULL));
+	static lVal *form = NULL;
+	if(form == NULL){
+		form = lRootsValPush(lCons(NULL,NULL));
+		form->vList.car = lCons(NULL,NULL);
+		form->vList.car->vList.car = lValSym("input-tick");
+	}
+	const int SP = lRootsGet();
+	lExceptionTry(lispCallFuncReal,clRoot,form);
+	lRootsRet(SP);
 }
 
 void lPrintError(const char *format, ...){
@@ -89,15 +95,22 @@ lVal *lispSEvalSym(u8 id){
 	return lValSym(buf);
 }
 
+static void *lispEvalNRReal(void *a, void *b){
+	(void)b;
+	const char *str = a;
+	lVal *expr = lRead(str);
+	return lnfDo(clRoot,expr);
+}
+
 lVal *lispEvalNR(const char *str){
-	return lEval(clRoot,lWrap(lRead(str)));
+	return lExceptionTry(lispEvalNRReal,(void *)str, NULL);
 }
 
 static lVal *wwlnfSEval(lClosure *c, lVal *v){
 	(void)c;
 	char buf[1<<14];
 	memset(buf,0,sizeof(buf));
-	lSWriteVal(lWrap(v),buf,&buf[sizeof(buf)-1],0,false);
+	lSWriteVal(v,buf,&buf[sizeof(buf)-1],0,false);
 	msgLispSExpr(-1,buf);
 	return NULL;
 }
@@ -259,6 +272,16 @@ static lVal *wwlnfFireHook(lClosure *c, lVal *v){
 static lVal *wwlnfPlayerActiveSlotGet(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(player->activeItem);
+}
+
+static lVal *wwlnfAddCooldown(lClosure *c, lVal *v){
+	(void)c;
+	if(player == NULL){return NULL;}
+	const int cd = castToInt(lCar(v),0);
+
+	characterAddCooldown(player,cd);
+
+	return lValInt(player->actionTimeout);
 }
 
 static lVal *wwlnfPlayerActiveSlotSet(lClosure *c, lVal *v){
@@ -711,6 +734,8 @@ static lVal *wwlnfChatOpenSet(lClosure *c, lVal *v){
 }
 
 static void lispAddClientNFuncs(lClosure *c){
+	lOperatorsWidget(c);
+
 	lAddSpecialForm(c,"s",             "(...body)",         "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",                "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
 	lAddNativeFunc(c,"player-pos",     "()",                "Return players position",                                        wwlnfPlayerPos);
@@ -788,15 +813,22 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"draw-boundaries!","(v)",               "Set the current boundary drawing style",                        wwlnfDrawBoundariesSet);
 	lAddNativeFunc(c,"chat-open", "()",                      "Return #t if the chat is open right now",                       wwlnfChatOpenGet);
 	lAddNativeFunc(c,"chat-open!","(v)",                     "Opens/Closes the chat",                                         wwlnfChatOpenSet);
+	lAddNativeFunc(c,"add-cooldown", "(cd)",                 "Add CD to the current cooldown timer",                          wwlnfAddCooldown);
+}
+
+void *lispInitReal(void *a, void *b){
+	(void)a; (void)b;
+
+	clRoot = lispCommonRoot(lispAddClientNFuncs);
+	lVal *expr = lRead((const char *)src_tmp_client_nuj_data);
+	lnfDo(clRoot,expr);
+	lGarbageCollect();
+
+	return NULL;
 }
 
 void lispInit(){
-	lInit();
-	clRoot = lispCommonRoot();
-	lispAddClientNFuncs(clRoot);
-	lOperatorsWidget(clRoot);
-	lEval(clRoot,lWrap(lRead((const char *)src_tmp_client_nuj_data)));
-	lGarbageCollect();
+	lExceptionTry(lispInitReal,NULL,NULL);
 }
 
 void lispFree(){
@@ -812,7 +844,7 @@ const char *lispEval(const char *str, bool humanReadable){
 }
 
 lVal *lispEvalL(lVal *expr){
-	return lEval(clRoot,expr);
+	return lExceptionTry(lispCallFuncReal,clRoot,expr);
 }
 
 void lispRecvSExpr(const packet *p){
@@ -834,7 +866,9 @@ static void lispGameplay(){
 	}
 	lastTicks = cticks;
 
-	lEval(clRoot,form);
+	const int SP = lRootsGet();
+	lExceptionTry(lispCallFuncReal,clRoot,form);
+	lRootsRet(SP);
 }
 
 void lispEvents(){
@@ -853,7 +887,9 @@ void lispEvents(){
 	}
 	lastTicks = cticks;
 
-	lEval(clRoot,form);
+	const int SP = lRootsGet();
+	lExceptionTry(lispCallFuncReal,clRoot,form);
+	lRootsRet(SP);
 	lispGameplay();
 
 	PROFILE_STOP();

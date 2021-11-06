@@ -166,6 +166,6 @@
 ]]
 
 [test-add #t [int? key-1]]
-[test-add #t [array? input-keyboard-handler]]
+[test-add #t [arr? input-keyboard-handler]]
 [test-add 58 key-f1]
 [test-add #t [bool? [widget-focus-on-game?]]]

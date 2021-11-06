@@ -27,6 +27,7 @@
 #include "../misc/profiling.h"
 
 #include "../../nujel/lib/api.h"
+#include "../../nujel/lib/exception.h"
 #include "../../nujel/lib/allocation/roots.h"
 
 extern unsigned  int src_tmp_wwlib_nuj_len;
@@ -136,8 +137,11 @@ void lispDefineString(const char *symbol, char *str){
 	lDefineVal(clRoot,symbol,lValString(str));
 }
 
-lClosure *lispCommonRoot(){
+void *lispCommonRootReal(void *a, void *b){
+	(void)a; (void)b;
+	lInit();
 	lClosure *c = lClosureNewRoot();
+	void (*specificInit)(lClosure *c) = (void (*)(lClosure *))a;
 
 	lAddNativeFunc(c,"mst!",         "(a)",                    "Set ms per tick to s",                                       wwlnfMsPerTick);
 	lAddNativeFunc(c,"prof",         "()",                     "Return profiler info",                                       wwlnfProf);
@@ -150,11 +154,25 @@ lClosure *lispCommonRoot(){
 	lAddNativeFunc(c,"rain-set",     "(&intensity)",           "Set rain rate to a",                                         wwlnfRain);
 	lAddNativeFunc(c,"explode",      "(pos &strength &style)", "Create an explosion at POS with &STRENGTH=4.0 and &STYLE=0", wwlnfExplode);
 	lAddNativeFunc(c,"item-drop-new","(pos id amount)",        "Create a new item at POS for AMOUNT ID.",                    wwlnfItemDropNew);
-	lAddNativeFunc(c,"color-inter",  "(a b i)",                "Interpolate between A and B with 0.0 <= i <= 1.0",          wwlnfColorInterpolate);
-	itemTypeLispClosure(c);
+	lAddNativeFunc(c,"color-inter",  "(a b i)",                "Interpolate between A and B with 0.0 <= i <= 1.0",           wwlnfColorInterpolate);
 
-	lEval(c,lWrap(lRead((const char *)src_tmp_wwlib_nuj_data)));
+	itemTypeLispClosure(c);
+	specificInit(c);
+
+	lVal *expr = lRead((const char *)src_tmp_wwlib_nuj_data);
+	lnfDo(c,expr);
+
 	return c;
+}
+
+lClosure *lispCommonRoot(void (*specificInit)(lClosure *)){
+	return lExceptionTry(lispCommonRootReal, (void *)specificInit,NULL);
+}
+
+void *lispCallFuncReal(void *closure, void *vv){
+	lClosure *c = (lClosure *)closure;
+	lVal *v = (lVal *)vv;
+	return lEval(c,v);
 }
 
 lVal *lispCallFuncI(const char *symbol, int ia){
@@ -163,8 +181,8 @@ lVal *lispCallFuncI(const char *symbol, int ia){
 	form->vList.car = lValSym(symbol);
 	lVal *l = form->vList.cdr = lCons(NULL,NULL);
 	l->vList.car = lValInt(ia);
-	lVal *result = lEval(clRoot,form);
-	return result;
+
+	return lExceptionTry(lispCallFuncReal,clRoot,form);
 }
 
 lVal *lispCallFuncIII(const char *symbol, int ia, int ib, int ic){
@@ -180,8 +198,7 @@ lVal *lispCallFuncIII(const char *symbol, int ia, int ib, int ic){
 	l = l->vList.cdr;
 	l->vList.car = lValInt(ic);
 
-	lVal *result = lEval(clRoot,form);
-	return result;
+	return lExceptionTry(lispCallFuncReal,clRoot,form);
 }
 
 lVal *lispCallFuncS(const char *symbol, const char *str){
@@ -190,8 +207,8 @@ lVal *lispCallFuncS(const char *symbol, const char *str){
 	form->vList.car = lValSym(symbol);
 	lVal *l = form->vList.cdr = lCons(NULL,NULL);
 	l->vList.car = lValString(str);
-	lVal *result = lEval(clRoot,form);
-	return result;
+
+	return lExceptionTry(lispCallFuncReal,clRoot,form);
 }
 
 lVal *lispCallFuncVII(const char *symbol,const vec va, int ib , int ic){
@@ -207,8 +224,7 @@ lVal *lispCallFuncVII(const char *symbol,const vec va, int ib , int ic){
 	l = l->vList.cdr;
 	l->vList.car = lValInt(ic);
 
-	lVal *result = lEval(clRoot,form);
-	return result;
+	return lExceptionTry(lispCallFuncReal,clRoot,form);
 }
 
 void lispDefineID(const char *prefix, const char *symbol, int val){

@@ -104,5 +104,5 @@ archive:
 
 common/src/tmp/cto.c: tools/tools.nuj $(NUJEL)
 	@mkdir -p common/src/tmp/
-	@$(NUJEL) tools/tools.nuj -x "[infogen \"common/src/tmp/cto\"]"
+	@$(NUJEL) tools/tools.nuj -x "[try repl/exception-handler[infogen \"common/src/tmp/cto\"]]"
 	@echo "$(ANSI_GREY)" "[NUJ]" "$(ANSI_RESET)" $@

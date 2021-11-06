@@ -41,3 +41,11 @@ vec packedToVec (const u64 v){
 	const u64 z = (v >> 32) & 0xFFFF;;
 	return vecNew(x,y,z);
 }
+
+vec vecRngAbs(){
+	return (vec){{{rngValf(),rngValf(),rngValf()}}};
+}
+
+vec vecRng(){
+	return vecMulS(vecSubS(vecRngAbs(),0.5f),2.f);
+}
