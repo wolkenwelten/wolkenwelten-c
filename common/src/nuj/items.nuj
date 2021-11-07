@@ -642,7 +642,7 @@
 	[def drop-handler [λ [pos id amount] -1]]
 	[def sprite-id-0 277]
 	[def mesh 'm-poop]
-	[def weight 2.0]
+	;[def weight 2.0]
 
 	[sync]
 ]]
@@ -670,6 +670,7 @@
 	[def sprite-id-1 279]
 	[def sprite-color-1 #xFF274FF7]
 	[def mesh 'm-meat]
+	[def weight 2.0]
 
 	[sync]
 ]]
@@ -692,6 +693,7 @@
 	[def sprite-id-1 279]
 	[def sprite-color-1 #xFF6091D3]
 	[def mesh 'm-cookedmeat]
+	[def weight 2.0]
 
 	[sync]
 ]]
@@ -705,6 +707,7 @@
 	[def drop-handler [λ [pos id amount] -1]]
 	[def sprite-id-0 280]
 	[def mesh 'm-fur]
+	[def weight 2.0]
 
 	[sync]
 ]]
@@ -728,6 +731,7 @@
 	[def sprite-id-1 279]
 	[def sprite-color-1 #xFF606060]
 	[def mesh 'm-burntmeat]
+	[def weight 2.0]
 
 	[sync]
 ]]
@@ -758,6 +762,7 @@
 	]]
 	[def sprite-id-0 286]
 	[def mesh 'm-flintandsteel]
+	[def weight 2.0]
 
 	[sync]
 ]]

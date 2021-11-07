@@ -252,14 +252,12 @@ entity *entityGetByBeing(being b){
 	return &entityList[i];
 }
 
-#include <stdio.h>
 float blockRepulsion(const vec pos, float *vel, float weight, u8 (*colFunc)(const vec,vec *)){
 	int ret = 0;
 	vec blockPos;
 	const u8 b = colFunc(pos,&blockPos);
 	if(b == 0){return 0;}
 
-	printf("Repulsion %f\n",*vel);
 	float strength = *vel;
 	const int blockDamage = fabsf(strength) * weight * 50.f;
 	const int blockHealth = blockTypeGetHealth(b);

@@ -449,7 +449,7 @@ static void characterCheckForAnimalCollision(character *c){
 }
 
 static int characterPhysics(character *c){
-	int ret=0;
+	int ret = 0;
 	u32 col;
 
 	vec oldPos = c->pos;
@@ -538,8 +538,8 @@ static void characterUpdateBooster(character *c){
 		return;
 	}
 	const vec rot = c->rot;
-	float speed    = 0.0002f / MAX(0.1,vecMag(c->vel));
-	const vec nv   = vecMulS(vecDegToVec(rot),speed);
+	float speed   = 0.0002f / MAX(0.1,vecMag(c->vel));
+	const vec nv  = vecMulS(vecDegToVec(rot),speed);
 	c->vel = vecAdd(c->vel,nv);
 	c->shake = MAX(c->shake,1.25f + speed);
 	if(c == player){

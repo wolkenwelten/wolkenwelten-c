@@ -1,4 +1,4 @@
-/*
+ /*
  * Wolkenwelten - Copyright (C) 2020-2021 - Benjamin Vincent Schulenburg
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,8 +31,6 @@
 #include "../../../common/src/network/messages.h"
 
 #include "../../../common/nujel/lib/api.h"
-
-#include <stdio.h>
 
 #define ID_FIRE_UPDATE_RATE (0x10)
 
@@ -110,9 +108,9 @@ void itemDropNewPacket(uint c, const packet *p){
 
 void itemDropPickupP(uint c, const packet *p){
 	uint i = p->v.u16[0];
-	if(i >= itemDropCount)      {return;}
-	if(c >= clientCount)        {return;}
-	if(clients[c].c == NULL)    {return;}
+	if(i >= itemDropCount)         {return;}
+	if(c >= clientCount)           {return;}
+	if(clients[c].c == NULL)       {return;}
 	if(itemDropList[i].ent == NULL){return;}
 	const vec dist = vecSub(clients[c].c->pos,itemDropList[i].ent->pos);
 	const float dd = vecDot(dist,dist);
@@ -205,16 +203,18 @@ void itemDropUpdateAll(){
 		const int ret = entityUpdate(e);
 		(void)ret;
 
-		if((ret < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i)){
-			itemDropDel(i);
-			addPriorityItemDrop(i);
-			continue;
-		}
-
 		const uint chance = itemGetIDChance(&itemDropList[i].itm);
 		if((chance > 0) && (rngValA(chance) == 0)){
 			lVal *r = lispCallFuncVII("item-drop-cb",itemDropList[i].ent->pos, itemDropList[i].itm.ID, itemDropList[i].itm.amount);
-			if(r != NULL){ itemDropList[i].itm.amount += r->vInt; }
+			if(r != NULL){
+				itemDropList[i].itm.amount += r->vInt;
+			}
+		}
+
+		if((itemDropList[i].itm.amount <= 0) || (ret < 0) || itemDropCheckCollation(i) || itemDropCheckSubmersion(i)){
+			itemDropDel(i);
+			addPriorityItemDrop(i);
+			continue;
 		}
 	}
 
