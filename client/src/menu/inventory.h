@@ -3,6 +3,7 @@
 #include "../gui/widget.h"
 
 extern widget *inventoryPanel;
+extern item inventoryCurrentPickup;
 
 void showCrafting       ();
 void showInventory      ();

@@ -37,6 +37,7 @@
 #include "../gui/gui.h"
 #include "../gui/overlay.h"
 #include "../misc/options.h"
+#include "../menu/inventory.h"
 #include "../network/chat.h"
 #include "../network/client.h"
 #include "../sdl/sdl.h"
@@ -362,6 +363,9 @@ void characterDie(character *c){
 	for(int i=0;i<CHAR_EQ_MAX;i++){
 		itemDropNewP(c->pos, &c->equipment[i],-1);
 	}
+	itemDropNewC(player, &inventoryCurrentPickup);
+	itemDiscard(&inventoryCurrentPickup);
+
 	setOverlayColor(0xFF000000,0);
 	characterInit(c);
 	msgRequestPlayerSpawnPos();
