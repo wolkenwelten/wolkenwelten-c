@@ -1,48 +1,49 @@
 # WolkenWelten
 
-![Have a schway Logo](https://wolkenwelten.net/img/logo.png)
+## Mixing the best parts of Minecraft, Quake ]I[ and Emacs.
+WolkenWelten is meant to be the ultimate **voxel sandbox**, letting not only
+players choose their own adventures in a big procedural world but giving
+the ability to change the rules of said world, either by making use
+of the **custom Lisp runtime**, or creating patches to the underlying C code.
 
-## Imagine a mix between Minecraft, Quake ]I[ and Emacs.
-This game is meant to be a cooperative multiplayer survival game, using voxels
-to enable a fully modifiable world. Although it is turning into some sort of
-LISP-Powered Voxel Runtime, we will see where that goes.
-There is no definitive plan for this game, mostly ideas to experiment with until
-something fun surfaces. You can read about some ideas in this repository, though
-some have only been talked about during the Weekly [Twitch](https://twitch.tv/melchizedek6809)
-dev streams.
+While there is a default gamemode that makes players fend for themselves
+on an archipelago within the clouds, this is just the beginning.
+Most gameplay parts are currently rewritten to make the client as generic
+as possible, enabling completely different games by just connecting to a
+server.
 
-![Screenshot 1](https://wolkenwelten.net/img/1.jpg)
+[Twitch streams](https://twitch.tv/melchizedek6809) focussing on the development of this game happen every Saturday
+and Sunday, as well as on Monday and Tuesday where we dive deep into the internals of the Nujel runtime, trying to turn it into something resembling a proper language.
 
-### Some Bullet Points
+This project puts a lot of effort into supporting all kinds of devices, nut just high-end gaming PCs, because of this the **Raspberry PI 4/(00)** is a viable system to play this game on, the **WASM** version should also run on many **mobile devices**, although a Gamepad of some sort is probably needed due to the touch controls being
+absolutely terrible at the moment.
+
+![screenshot](https://wolkenwelten.net/img/1.jpg)
+
+## Some Bullet Points
 * Mostly written in C99
 * Fits on a **floppy disk**
-* Runs at **~60FPS** on a **Raspberry PI 4**
+* Runs on a **Raspberry PI 4**
 * Play in **Multiplayer** with up to 31 people!
-* Contains a custom LISP interpreter/dialect, _nujel_
+* Contains a custom LISP interpreter/dialect, _Nujel_
 * Reprogram item behaviour, while the game is running
 * Use a **grappling hook** to swing around
 * Nice fire system, beware of forest fires
-* Can even run in your browser, using **Emscripten/WASM**
+* Can even [run in your browser](https://wolkenwelten.net/releases/wasm/index.html?savegame=Test), using **Emscripten/WASM**
 
-![Screenshot 2](https://wolkenwelten.net/img/2.jpg)
+# Releases / Screenshots
+The newest binary releases are available on the [projects website](https://wolkenwelten.net),
+along with some more writings about the game, as well as a couple of screenshots.
 
 ## Contact
 If you run into some bugs, have gameplay questions or want to talk about your
 favorite *nix, join us over on [Discord](https://discord.gg/7rhnYH2), or preferrably on
 [Matrix](https://matrix.to/#/!RKZztYPGhtlgALDvMS:matrix.org?via=matrix.org).
 
-![Screenshot 4](https://wolkenwelten.net/img/4.jpg)
-
 ## Contributing
 As a Free Software Project any form of help you can give would be highly
 appreciated, be it testing the game, drawing nice artwork, coding that cool
 feature or telling your friends about this game. You have my gratitude in advance :)
-
-## Release Builds
-The newest binary releases are available over at this [projects website](https://wolkenwelten.net),
-along with some more writings about the game.
-
-![Screenshot 5](https://wolkenwelten.net/img/5.jpg)
 
 # Development Requirements
 
