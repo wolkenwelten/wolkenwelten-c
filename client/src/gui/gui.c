@@ -458,6 +458,7 @@ void drawDebuginfo(){
 }
 
 void drawActiveItem(){
+	if(player == NULL){return;}
 	float matViewAI[16];
 	item *activeItem = &player->inventory[player->activeItem];
 	if(activeItem == NULL){return;}
@@ -534,6 +535,7 @@ void drawActiveItem(){
 }
 
 void drawActiveGlider(){
+	if(player == NULL){return;}
 	static u64 ticks = 0;
 	float matViewAI[16];
 	if(player->gliderFade < 0.01f){return;}
@@ -555,6 +557,7 @@ void drawActiveGlider(){
 }
 
 void drawAmmunition(){
+	if(player == NULL){return;}
 	item *activeItem = &player->inventory[player->activeItem];
 	if(activeItem == NULL){return;}
 	if(itemIsEmpty(activeItem)){return;}

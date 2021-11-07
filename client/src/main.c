@@ -85,6 +85,21 @@ bool singleplayer      = false;
 bool chnkChngOverflow  = false;
 u64 gameTicks = 0;
 
+void playerInit(){
+	if(player){
+		characterFree(player);
+	}
+	player = characterNew();
+	initInventory();
+}
+
+void playerFree(){
+	if(player){
+		characterFree(player);
+		player = NULL;
+	}
+}
+
 void signalQuit(int signo){
 	(void)signo;
 	if(quit){
@@ -245,8 +260,6 @@ int main( int argc, char* argv[] ){
 	if(!gameRunning){openMainMenu();}
 	cloudsInitGfx();
 
-	player = characterNew();
-	initInventory();
 	gtimeSetTime(1<<19);
 	checkAutostart();
 	#ifdef __EMSCRIPTEN__

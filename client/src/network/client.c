@@ -408,9 +408,11 @@ void clientGoodbye(){
 	if(goodbyeSent)      {return;}
 	if(serverSocket <= 0){return;}
 	printf("[CLI] Goodbye \n");
-	msgSendPlayerPos();
-	msgPlayerSetInventory(-1,player->inventory,CHAR_INV_MAX);
-	msgPlayerSetEquipment(-1,player->equipment,CHAR_EQ_MAX);
+	if(player){
+		msgSendPlayerPos();
+		msgPlayerSetInventory(-1,player->inventory,CHAR_INV_MAX);
+		msgPlayerSetEquipment(-1,player->equipment,CHAR_EQ_MAX);
+	}
 	msgGoodbye(0);
 	clientWrite();
 	goodbyeSent = true;
@@ -431,10 +433,10 @@ void clientFree(){
 	sendBufLen      = 0;
 	sendBufSent     = 0;
 	worldFree();
-	characterInit(player);
 	chatEmpty();
 	connectionState = 0;
 	gameRunning = false;
 	closeSingleplayerServer();
+	playerFree();
 	openMainMenu();
 }

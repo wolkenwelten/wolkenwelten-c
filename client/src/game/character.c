@@ -60,6 +60,7 @@ character *playerList[32];
 char       playerNames[32][32];
 
 void characterInit(character *c){
+	if(c == NULL){return;}
 	if(c->hook != NULL){
 		hookFree(c->hook);
 		c->hook = NULL;

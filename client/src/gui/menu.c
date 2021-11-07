@@ -62,12 +62,13 @@ widget *menuErrorLabel;
 widget *menuAttribution;
 
 void startMultiplayer(){
-	gameRunning     = true;
+	gameRunning = true;
 
 	closeAllMenus();
 	hideMouseCursor();
 	showInventoryPanel();
 	widgetFocus(widgetGameScreen);
+	playerInit();
 	clientInit();
 }
 

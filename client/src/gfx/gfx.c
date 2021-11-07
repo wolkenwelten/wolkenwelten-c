@@ -155,6 +155,7 @@ void initGL(){
 }
 
 void calcFOV(const character *cam){
+	if(cam == NULL){return;}
 	float off = vecMag(cam->vel);
 
 	if(off < 0.025f){
@@ -175,6 +176,7 @@ void calcFOV(const character *cam){
 }
 
 vec calcShake(const character *cam){
+	if(cam == NULL){return vecZero();}
 	static u64 ticks=0;
 	if(cam->shake < 0.001f){return vecZero();}
 	float deg = ((float)++ticks)*0.4f;
@@ -184,6 +186,7 @@ vec calcShake(const character *cam){
 }
 
 void calcView(const character *cam){
+	if(cam == NULL){return;}
 	matIdentity(matView);
 	matIdentity(matSubBlockView);
 	camShake = calcShake(cam);

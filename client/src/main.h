@@ -6,3 +6,6 @@ extern bool gameRunning;
 extern bool singleplayer;
 extern bool playerChunkActive;
 extern bool chnkChngOverflow;
+
+void playerInit();
+void playerFree();
