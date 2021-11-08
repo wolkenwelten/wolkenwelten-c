@@ -165,7 +165,6 @@ void throwableRecvUpdate(const packet *p){
 	}
 }
 
-#include <stdio.h>
 int getClientByCharacter(const character *c);
 static void throwableUpdate(throwable *t){
 	if(t->ent == NULL){return;}
@@ -204,7 +203,6 @@ static void throwableUpdate(throwable *t){
 	}
 	if(!isClient && !(t->ent->flags & ENTITY_NOCLIP) && (t->ent->flags & ENTITY_COLLIDE) && (vecAbsSum(t->ent->vel) < 0.01f)){
 		const i16 clientID = getClientByCharacter(characterGetByBeing(t->thrower));
-		printf("clientID: %i\n",clientID);
 		itemDropNewP(t->ent->pos,&t->itm,clientID);
 		t->itm.amount = 0;
 		t->itm.ID = 0;
@@ -248,7 +246,7 @@ bool throwableTry(item *cItem,character *cChar, float strength, int damage, uint
 
 bool throwableTryAim(item *cItem, character *cChar){
 	if(characterTryToUse(cChar,cItem,200,0)){
-		characterAddCooldown(cChar,200);
+		characterSetCooldown(cChar,800);
 		characterToggleThrowAim(cChar,2.f);
 		characterAddInaccuracy(cChar,32.f);
 		return true;

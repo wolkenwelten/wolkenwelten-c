@@ -27,7 +27,7 @@ void       characterToggleAim      (      character *c, float zoom);
 void       characterToggleThrowAim (      character *c, float zoom);
 void       characterStopAim        (      character *c);
 
-void       characterAddCooldown    (      character *c, int cooldown);
+void       characterSetCooldown    (      character *c, int cooldown);
 void       characterUpdateEquipment(      character *c);
 void       characterSetPos         (      character *c, const vec pos);
 void       characterSetRot         (      character *c, const vec rot);

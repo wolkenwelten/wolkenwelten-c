@@ -299,7 +299,7 @@ void characterHit(character *c){
 	animalHitCheck   (pos,range,itemGetDamage(itm,0),2,iteration, source);
 
 	characterStartAnimation(c,animationHit,240);
-	characterAddCooldown(c,80);
+	characterSetCooldown(c,320);
 }
 
 void characterDoPrimary(character *c){
@@ -350,7 +350,7 @@ void characterDropSingleItem(character *c, int i){
 		itemDropNewC(c, &dItem);
 	}
 	characterStopAim(c);
-	characterAddCooldown(c,50);
+	characterSetCooldown(c,200);
 }
 
 void characterDie(character *c){
@@ -615,7 +615,7 @@ void characterUpdate(character *c){
 		 c->rot.yaw -= 360.f;
 	}
 
-	if(c->actionTimeout < 0){ c->actionTimeout++; }
+	if(c->actionTimeout < 0){ c->actionTimeout += msPerTick; }
 	if(c->flags & CHAR_NOCLIP){
 		c->vel = c->gvel;
 		characterUpdateHook(c);
@@ -702,7 +702,7 @@ void characterFireHook(character *c){
 	if(!playerChunkActive)  {return;}
 	characterCloseGlider(c);
 	c->flags |= CHAR_JUMPING;
-	characterAddCooldown(c,60);
+	characterSetCooldown(c,240);
 	if(c->hook == NULL){
 		c->hook = hookNew(c);
 		sfxPlay(sfxHookFire,1.f);

@@ -137,7 +137,7 @@ void characterStopAim(character *c){
 	c->flags &= ~(CHAR_AIMING | CHAR_THROW_AIM);
 }
 
-void characterAddCooldown(character *c, int cooldown){
+void characterSetCooldown(character *c, int cooldown){
 	c->actionTimeout = -cooldown;
 }
 
@@ -236,7 +236,7 @@ bool characterPlaceBlock(character *c,item *i){
 	if(los.x < 0)                         { return false; }
 	if(itemIsEmpty(i))                    { return false; }
 	characterStartAnimation(c,animationHit,240);
-	characterAddCooldown(c,50);
+	characterSetCooldown(c,200);
 	if((characterCollision(c->pos)&0xFF0)){
 		sfxPlay(sfxStomp,1.f);
 		const vec cvec = characterGetCollisionVec(c->pos);
@@ -475,7 +475,7 @@ bool characterItemReload(character *c, item *i, int cooldown){
 	ammoleft = MIN(MAGSIZE,ammoleft);
 	characterDecItemAmount(c, AMMO, itemIncAmmo(i,ammoleft));
 
-	characterAddCooldown(c,cooldown);
+	characterSetCooldown(c,cooldown);
 	sfxPlay(sfxHookReturned,1.f);
 	characterStartAnimation(c,animationReload,MAX(cooldown*2,500));
 
@@ -487,12 +487,12 @@ bool characterTryToShoot(character *c, item *i, int cooldown, int bulletcount){
 	if(itemGetAmmo(i) < bulletcount){
 		if(characterItemReload(c,i,256)){return false;}
 		sfxPlay(sfxHookFire,0.3f);
-		characterAddCooldown(c,64);
+		characterSetCooldown(c,256);
 		characterStartAnimation(c,animationEmpty,250);
 		return false;
 	}
 	itemDecAmmo(i,bulletcount);
-	characterAddCooldown(c,cooldown);
+	characterSetCooldown(c,cooldown);
 	characterStartAnimation(c,animationFire,250);
 	return true;
 }
@@ -501,11 +501,11 @@ bool characterTryToUse(character *c, item *i, int cooldown, int itemcount){
 	if(c->actionTimeout < 0){return false;}
 	if(i->amount < itemcount){
 		sfxPlay(sfxHookFire,0.3f);
-		characterAddCooldown(c,64);
+		characterSetCooldown(c,256);
 		return false;
 	}
 	itemDecStack(i,itemcount);
-	characterAddCooldown(c,cooldown);
+	characterSetCooldown(c,cooldown);
 	return true;
 }
 

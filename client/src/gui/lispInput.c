@@ -57,9 +57,6 @@ void lispPanelOpen(){
 
 void lispPanelClose(){
 	widgetSlideH(lispPanel, 0);
-	if(gameRunning){
-		widgetFocus(widgetGameScreen);
-	}
 	lispPanelVisible = false;
 }
 
@@ -185,6 +182,11 @@ void handlerLispSelectNext(widget *wid){
 	textInputFocus(wid);
 }
 
+static void handlerLispInputBlur(widget *w){
+	(void)w;
+	lispPanelClose();
+}
+
 void lispInputInit(){
 	lispPanel = widgetNewCP(wPanel,rootMenu,64,0,screenWidth-128,0);
 	lispPanel->flags |= WIDGET_HIDDEN;
@@ -192,6 +194,7 @@ void lispInputInit(){
 	lispLog->flags |= WIDGET_LISP;
 	lispInput = widgetNewCP(wTextInput,lispPanel,0,-1,-1,32);
 	lispInput->flags |= WIDGET_LISP;
+	widgetBind(lispInput,"blur",handlerLispInputBlur);
 	widgetBind(lispInput,"change",handlerLispReset);
 	widgetBind(lispInput,"submit",handlerLispSubmit);
 	widgetBind(lispInput,"selectPrev",handlerLispSelectPrev);

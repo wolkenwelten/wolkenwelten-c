@@ -28,3 +28,18 @@
 	[log [ansi-blue "Let's test the Nujel Runtime"]]
 	[test-run]
 ]]
+
+[def vx+ [λ [v a]
+	"Return the sum of vector v and [vec a 0 0]"
+	[+ v [vec a 0 0]]
+]]
+
+[def vy+ [λ [v a]
+	"Return the sum of vector v and [vec 0 a 0]"
+	[+ v [vec 0 a 0]]
+]]
+
+[def vz+ [λ [v a]
+	"Return the sum of vector v and [vec 0 0 a]"
+	[+ v [vec 0 0 a]]
+]]

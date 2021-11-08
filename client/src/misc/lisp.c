@@ -274,12 +274,12 @@ static lVal *wwlnfPlayerActiveSlotGet(lClosure *c, lVal *v){
 	return lValInt(player->activeItem);
 }
 
-static lVal *wwlnfAddCooldown(lClosure *c, lVal *v){
+static lVal *wwlnfSetCooldown(lClosure *c, lVal *v){
 	(void)c;
 	if(player == NULL){return NULL;}
 	const int cd = castToInt(lCar(v),0);
 
-	characterAddCooldown(player,cd);
+	characterSetCooldown(player,cd);
 
 	return lValInt(player->actionTimeout);
 }
@@ -339,7 +339,7 @@ static lVal *wwlnfServerExecutable(lClosure *c, lVal *v){
 
 static lVal *wwlnfTryToUse(lClosure *c, lVal *v){
 	(void)c;
-	const int ms     = castToInt(lCar(v),200); v = lCdr(v);
+	const int ms     = castToInt(lCar(v),800); v = lCdr(v);
 	const int amount = castToInt(lCar(v),1);
 	item *itm  = &player->inventory[player->activeItem];
 
@@ -475,7 +475,7 @@ static lVal *wwlnfThrowItem(lClosure *c, lVal *v){
 
 static lVal *wwlnfTryToShoot(lClosure *c, lVal *v){
 	(void)c;
-	const int cooldown    = castToInt(lCar(v),200); v = lCdr(v);
+	const int cooldown    = castToInt(lCar(v),800); v = lCdr(v);
 	const int bulletcount = castToInt(lCar(v),1);
 
 	item *itm = &player->inventory[player->activeItem];
@@ -813,7 +813,7 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"draw-boundaries!","(v)",               "Set the current boundary drawing style",                        wwlnfDrawBoundariesSet);
 	lAddNativeFunc(c,"chat-open", "()",                      "Return #t if the chat is open right now",                       wwlnfChatOpenGet);
 	lAddNativeFunc(c,"chat-open!","(v)",                     "Opens/Closes the chat",                                         wwlnfChatOpenSet);
-	lAddNativeFunc(c,"add-cooldown", "(cd)",                 "Add CD to the current cooldown timer",                          wwlnfAddCooldown);
+	lAddNativeFunc(c,"set-cooldown", "(cd)",                 "Add CD to the current cooldown timer",                          wwlnfSetCooldown);
 }
 
 void *lispInitReal(void *a, void *b){
@@ -838,7 +838,8 @@ void lispFree(){
 const char *lispEval(const char *str, bool humanReadable){
 	static char reply[4096];
 	memset(reply,0,sizeof(reply));
-	lVal *v = lnfDo(clRoot,lRead(str));
+
+	lVal *v = lispCallFuncS("repl/console",str);
 	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,humanReadable);
 	return reply;
 }

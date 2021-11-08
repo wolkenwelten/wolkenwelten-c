@@ -22,10 +22,12 @@
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 
+#include <stdio.h>
 void throwableNew(const vec pos, const vec rot, float speed, const item itm, being thrower, i8 damage, u8 flags){
 	packet    *p = &packetBuffer;
 	const uint counter = 0;
 	const vec vel  = vecMulS(vecDegToVec(rot),speed);
+	printf("Throwable new speed: %f\n",speed);
 
 	p->v.u16[ 0] = 0;
 	p->v.u16[ 1] = 0;

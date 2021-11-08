@@ -89,7 +89,6 @@ void grenadeUpdateFromServer(const packet *p){
 	grenadeList[index].clusterPwr = p->v.f[9];
 	if(grenadeList[index].ent == NULL){
 		grenadeList[index].ent = entityNew(vecZero(),vecZero(),grenadeList[index].pwr * 3.f);
-		printf("Cluster: %i",grenadeList[index].cluster);
 		if(grenadeList[index].cluster > 1){
 			grenadeList[index].ent->eMesh = meshClusterbomb;
 		}else if(grenadeList[index].pwr > 5.1f){
