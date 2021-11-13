@@ -168,16 +168,14 @@ static void bunnySFlee(animal *e, int stateChange[16]){
 }
 
 static void bunnyFightOrFlight(animal *e,int stateChange[16]){
-	return;
 	if(e->state == ANIMAL_S_FIGHT){
 		if(e->target == 0){e->target = animalFindFOFTarget(e);}
 		if(e->target != 0){
 			const vec tpos = beingGetPos(e->target);
 			const float dist = vecMag(vecSub(tpos,e->pos));
-
 			if((dist < 3.f) && (rngValA(3)==0)){
 				int dmg = 1;
-				if(rngValM(8)==0){dmg = 4;}
+				if(rngValA(7)==0){dmg = 4;}
 				beingDamage(e->target,dmg,2,1.f,animalGetBeing(e),e->pos);
 			}else if(dist > 16){
 				stateChange[ANIMAL_S_LOITER] += (dist-16)*2048;
