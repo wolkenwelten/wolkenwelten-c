@@ -27,3 +27,10 @@
 		]
 	]]
 ]
+
+[def input-mouse-event [λ [status scancode]
+     [def handler [input-mouse-handler scancode]]
+     [if [lambda? handler]
+         [handler scancode status]
+         #f]
+]]

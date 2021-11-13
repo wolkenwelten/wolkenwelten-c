@@ -165,6 +165,13 @@
 	]
 ]]
 
+[def input-keyboard-event [λ [status scancode]
+     [def handler [input-keyboard-handler scancode]]
+     [if [lambda? handler]
+         [handler scancode status]
+         #f]
+]]
+
 [test-add #t [int? key-1]]
 [test-add #t [arr? input-keyboard-handler]]
 [test-add 58 key-f1]

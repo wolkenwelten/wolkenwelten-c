@@ -237,7 +237,7 @@ void lispPanelCheckAutoComplete(){
 	lispAutoCompleteCompleteSymbol = false;
 	lispAutoCompleteSelection = -1;
 	lispAutoCompleteLen = 0;
-	lVal *newAC = lSearchClosureSym(clRoot,NULL,&widgetFocused->vals[lispAutoCompleteStart],lispAutoCompleteEnd - lispAutoCompleteStart);
+	lVal *newAC = NULL;//lSearchClosureSym(clRoot,NULL,&widgetFocused->vals[lispAutoCompleteStart],lispAutoCompleteEnd - lispAutoCompleteStart);
 	for(lVal *n = newAC;(n != NULL) && (n->type == ltPair);n = n->vList.cdr){
 		lispAutoCompleteList[lispAutoCompleteLen] = lGetSymbol(lCar(n));
 		if(++lispAutoCompleteLen >= countof(lispAutoCompleteList)){break;}

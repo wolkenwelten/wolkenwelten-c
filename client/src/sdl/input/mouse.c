@@ -27,7 +27,7 @@
 
 void mouseEventHandler(const SDL_Event *e){
 	static lSymbol *keyInput = NULL;
-	if(keyInput == NULL){keyInput = lSymS("input-mouse-handler");}
+	if(keyInput == NULL){keyInput = lSymS("input-mouse-event");}
 
 	switch(e->type){
 	case SDL_MOUSEBUTTONDOWN:

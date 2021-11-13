@@ -47,6 +47,7 @@
 #include "../../../common/src/network/messages.h"
 
 #include "../../../common/nujel/lib/api.h"
+#include "../../../common/nujel/lib/nujel.h"
 #include "../../../common/nujel/lib/exception.h"
 #include "../../../common/nujel/lib/allocation/roots.h"
 #include "../../../common/nujel/lib/s-expression/writer.h"
@@ -62,20 +63,16 @@ extern unsigned  int src_tmp_client_nuj_len;
 extern unsigned char src_tmp_client_nuj_data[];
 
 void lispInputHandler(lSymbol *input, int key, int action){
-	lVal *expr;
-	lVal *lInputS = lValSymS(input);
-	lVal *lAction = lValInt(action);
-	lVal *lCode   = lValInt(key);
-	expr = lCons(lCons(lInputS,lCons(lCode,NULL)),lCons(lCode,lCons(lAction,NULL)));
-	lEval(clRoot,expr);
+	const int SP = lRootsGet();
+	lVal *form = RVP(lList(3,RVP(lValSymS(input)),RVP(lValInt(action)),RVP(lValInt(key))));
+	lExceptionTry(lispCallFuncReal,clRoot,form);
+	lRootsRet(SP);
 }
 
 void lispInputTick(){
 	static lVal *form = NULL;
 	if(form == NULL){
-		form = lRootsValPush(lCons(NULL,NULL));
-		form->vList.car = lCons(NULL,NULL);
-		form->vList.car->vList.car = lValSym("input-tick");
+		form = RVP(lCons(RVP(lValSym("input-tick")),NULL));
 	}
 	const int SP = lRootsGet();
 	lExceptionTry(lispCallFuncReal,clRoot,form);
