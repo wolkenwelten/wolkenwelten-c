@@ -187,10 +187,13 @@ void widgetChildRemove(widget *parent, widget *child){
 	}
 	child->next = NULL;
 	child->prev = NULL;
+	child->parent = NULL;
 }
 
 void widgetChild(widget *parent, widget *child){
-	if(child->parent != NULL){widgetChildRemove(child->parent,child);}
+	if(child->parent != NULL){
+		widgetChildRemove(child->parent,child);
+	}
 	if(parent == NULL){ return; }
 	child->parent = parent;
 	if(parent->child == NULL){

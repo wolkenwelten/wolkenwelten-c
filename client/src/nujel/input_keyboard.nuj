@@ -112,6 +112,7 @@
 [arr-set! input-keyboard-handler key-f1    [keyboard-once [λ [] [third-person! #f] [save-options]]]]
 [arr-set! input-keyboard-handler key-f2    [keyboard-once [λ [] [s [debug-stuff! pid]]]]]
 [arr-set! input-keyboard-handler key-f3    [keyboard-once [λ [] [third-person! #t] [save-options]]]]
+[arr-set! input-keyboard-handler key-f4    [keyboard-once [λ [] [widget/test-gc]]]]
 [arr-set! input-keyboard-handler key-f8    [keyboard-once [λ [] [player-hp 12]]]]
 [arr-set! input-keyboard-handler key-f9    [keyboard-once [λ [] [draw-boundaries! [wrap-value [++ [draw-boundaries]] 0 3]]]]]
 [arr-set! input-keyboard-handler key-f10   [keyboard-once [λ [] [wire-frame! [not [wire-frame?]]]]]]

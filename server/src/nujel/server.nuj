@@ -128,7 +128,7 @@
 
 ; Needs to be a dynamic function because the player's ID is only in the calling context
 [def debug-stuff! [λ [pid]
-	"Gives the issuing player some nice stuff to get started with"
+        "Gives the issuing player some nice stuff to get started with"
 	[clear-eq! pid]
 	[clear-inv! pid]
 
@@ -159,4 +159,5 @@
 	[set-inv! 23 i-flamebullet 999 pid]
 	[set-inv! 24 i-flamebullet 999 pid]
 	[set-inv! 25 i-flamebullet 999 pid]
+        "asd"
 ]]

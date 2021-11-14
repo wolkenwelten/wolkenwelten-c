@@ -559,6 +559,7 @@ int parseCommand(uint pid, const char *cmd){
 }
 
 void lispRecvSExpr(uint pid,const packet *p){
+	printf("Recv: %s\n",(const char *)p->v.u8);
 	cmdLisp(pid,(const char *)p->v.u8);
 }
 

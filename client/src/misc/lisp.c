@@ -109,8 +109,11 @@ static lVal *wwlnfSEval(lClosure *c, lVal *v){
 	(void)c;
 	char buf[1<<14];
 	memset(buf,0,sizeof(buf));
-	lSWriteVal(v,buf,&buf[sizeof(buf)-1],0,false);
+	const int SP = lRootsGet();
+	lVal *l = RVP(lCons(RVP(lValSym("do")),v));
+	lSWriteVal(l,buf,&buf[sizeof(buf)-1],0,false);
 	msgLispSExpr(-1,buf);
+	lRootsRet(SP);
 	return NULL;
 }
 
