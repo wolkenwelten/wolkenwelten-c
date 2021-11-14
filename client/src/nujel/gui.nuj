@@ -44,8 +44,6 @@
 	[widget/center-y! w]
 ]]
 
-[def popup-click-handler]
-
 [def popup [λ [headline bodytext]
 	[def panel   [widget/new w-panel]]
 	[def content [widget/new w-panel]]
@@ -80,12 +78,11 @@
 	[widget/y!      button -1]
 	[widget/label!  button "OK"]
 
-	[set! popup-click-handler [λ [w event-name]
+	[widget/bind button "click" [λ [w event-name]
 		[say ["Event handler fired for " [ansi-red event-name] " on " [str/write w]]]
 		[widget/parent! panel #f]
 		[widget/focus! w-game-screen]
 	]]
-	[widget/bind button "click" popup-click-handler]
 
 	[widget/center! panel]
 	[widget/focus! button]
