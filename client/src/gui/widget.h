@@ -77,18 +77,27 @@ struct widget {
 
 extern widget *widgetFocused;
 
-#define WIDGET_COUNT (1<<12)
-extern widget  widgetList[WIDGET_COUNT];
+#define WID_MAX (1<<12)
+extern widget  widgetList[WID_MAX];
+extern int     widgetActive;
 extern int     widgetMax;
 extern widget *widgetFirstFree;
+
+#define EVH_MAX (1<<12)
+extern eventHandler  eventHandlerList[EVH_MAX];
+extern int           eventHandlerActive;
+extern int           eventHandlerMax;
+extern eventHandler *eventHandlerFirstFree;
 
 widget *widgetNew     (widgetType type);
 widget *widgetNewC    (widgetType type, widget *p);
 widget *widgetNewCP   (widgetType type, widget *p, int x, int y, int w, int h);
 widget *widgetNewCPL  (widgetType type, widget *p, int x, int y, int w, int h, const char *label);
 widget *widgetNewCPLH (widgetType type, widget *p, int x, int y, int w, int h, const char *label,const char *eventName, void (*handler)(widget *));
-void    widgetFree    (widget *w);
 void    widgetEmpty   (widget *w);
+
+void    widgetFree    (widget *w);
+void    eventHandlerFree(eventHandler *evh);
 
 void    widgetChild   (widget *parent, widget *child);
 void    widgetChildPre(widget *parent, widget *child);

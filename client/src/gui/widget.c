@@ -37,10 +37,46 @@
 
 widget *widgetFocused = NULL;
 
-#define WIDGET_COUNT (1<<12)
-widget  widgetList[WIDGET_COUNT];
+widget  widgetList[WID_MAX];
+int     widgetActive = 0;
 int     widgetMax = 0;
 widget *widgetFirstFree = NULL;
+
+eventHandler  eventHandlerList[EVH_MAX];
+int           eventHandlerActive;
+int           eventHandlerMax;
+eventHandler *eventHandlerFirstFree;
+
+eventHandler *eventHandlerAlloc(){
+	eventHandler *evh;
+	if(eventHandlerFirstFree == NULL){
+		if(eventHandlerMax >= EVH_MAX){
+			lGarbageCollect();
+			if(eventHandlerFirstFree == NULL){
+				fprintf(stderr,"eventHandler Overflow!!!\n");
+				exit(123);
+			}else{
+				evh = eventHandlerFirstFree;
+				eventHandlerFirstFree = evh->next;
+			}
+		}else{
+			evh = &eventHandlerList[eventHandlerMax++];
+		}
+	}else{
+		evh = eventHandlerFirstFree;
+		eventHandlerFirstFree = evh->next;
+	}
+	eventHandlerActive++;
+	*evh = (eventHandler){0};
+	return evh;
+}
+
+void eventHandlerFree(eventHandler *evh){
+	if(evh == NULL){return;}
+	evh->next = eventHandlerFirstFree;
+	eventHandlerFirstFree = evh;
+	eventHandlerActive--;
+}
 
 static bool mouseInBox(uint x, uint y, uint w, uint h){
 	if(mouseHidden) {return false;}
@@ -51,20 +87,52 @@ static bool mouseInBox(uint x, uint y, uint w, uint h){
 	return true;
 }
 
-widget *widgetNew(widgetType type){
+widget *widgetAlloc(){
 	widget *wid;
-	if(widgetFirstFree != NULL){
+	if(widgetFirstFree == NULL){
+		if(widgetMax >= WID_MAX){
+			lGarbageCollect();
+			if(widgetFirstFree == NULL){
+				fprintf(stderr,"widget Overflow!!!\n");
+				exit(123);
+			}else{
+				wid = widgetFirstFree;
+				widgetFirstFree = wid->next;
+			}
+		}else{
+			wid = &widgetList[widgetMax++];
+		}
+	}else{
 		wid = widgetFirstFree;
 		widgetFirstFree = wid->next;
-	}else{
-		if(widgetMax >= WIDGET_COUNT){
-			fprintf(stderr,"widget Overflow!!!\n");
-			return NULL;
-
-		}
-		wid = &widgetList[widgetMax++];
 	}
+	widgetActive++;
 	*wid = (widget){0};
+	return wid;
+}
+
+void widgetFree(widget *w){
+	if(w == NULL){return;}
+	if(w->parent != NULL){
+		if(w->parent->child == w){
+			if(w->next != NULL){ w->next->prev    = w->prev; }
+			if(w->prev != NULL){ w->parent->child = w->next; }
+		}else{
+			if(w->prev != NULL){ w->prev->next = w->next; }
+			if(w->next != NULL){ w->next->prev = w->prev; }
+		}
+		w->parent = w->next = w->prev = NULL;
+	}
+	if(w->type == wTextInput){free(w->vals); w->vals = NULL;}
+	if(w->label != NULL){free((void *)w->label); w->label = NULL;}
+	*w = (widget){0};
+	w->next = widgetFirstFree;
+	widgetFirstFree = w;
+	widgetActive--;
+}
+
+widget *widgetNew(widgetType type){
+	widget *wid = widgetAlloc();
 	wid->type = type;
 	if(wid->type == wTextInput){
 		wid->vals = calloc(1,256);
@@ -104,36 +172,8 @@ widget *widgetNewCPLH(widgetType type,widget *p, int x, int y, int w, int h, con
 	return wid;
 }
 
-void widgetFree(widget *w){
-	if(w == NULL){return;}
-	if(w->child != NULL){
-		widgetEmpty(w);
-		w->child = NULL;
-	}
-	if(w->parent != NULL){
-		if(w->parent->child == w){
-			if(w->next != NULL){ w->next->prev    = w->prev; }
-			if(w->prev != NULL){ w->parent->child = w->next; }
-		}else{
-			if(w->prev != NULL){ w->prev->next = w->next; }
-			if(w->next != NULL){ w->next->prev = w->prev; }
-		}
-		w->parent = w->next = w->prev = NULL;
-	}
-	if(w->type == wTextInput){free(w->vals); w->vals = NULL;}
-	if(w->label != NULL){free((void *)w->label); w->label = NULL;}
-	w->next = widgetFirstFree;
-	widgetFirstFree = w;
-}
-
 void widgetEmpty(widget *w){
-	widget *n = NULL;
 	if(w == NULL){return;}
-	if(w == w->child){return;}
-	for(widget *c=w->child;c!=NULL;c=n){
-		n = c->next;
-		widgetFree(c);
-	}
 	w->child = NULL;
 }
 
@@ -255,7 +295,7 @@ void widgetLayVert(widget *w, int padding){
 }
 
 void widgetBind(widget *w, const char *eventName, void (*handler)(widget *)){
-	eventHandler *h = calloc(1,sizeof(eventHandler));
+	eventHandler *h = eventHandlerAlloc();
 	h->eventName    = eventName;
 	h->lisp         = false;
 	h->handler      = handler;
@@ -264,7 +304,7 @@ void widgetBind(widget *w, const char *eventName, void (*handler)(widget *)){
 }
 
 void widgetBindL(widget *w, const char *eventName, lVal *handler){
-	eventHandler *h = calloc(1,sizeof(eventHandler));
+	eventHandler *h = eventHandlerAlloc();
 	h->eventName    = eventName;
 	h->lisp         = true;
 	h->lispHandler  = handler;

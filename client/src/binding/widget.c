@@ -53,7 +53,7 @@ lVal *lValW(widget *w){
 }
 
 widget *widgetGet(uint i){
-	if(i >= WIDGET_COUNT){return NULL;}
+	if(i >= WID_MAX){return NULL;}
 	return &widgetList[i];
 }
 
@@ -61,12 +61,7 @@ void widgetExport(widget *w, const char *symbol){
 	lDefineVal(clRoot,symbol,lValW(w));
 }
 
-void lGUIWidgetFree(lVal *v){
-	if(v->type != ltGUIWidget){return;}
-	widgetFree(widgetGet(v->vInt));
-}
-
-lVal *wwlnfWidgetNew(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetNew(lClosure *c, lVal *v){
 	(void)c;
 	const int type = castToInt(lCar(v),-1);
 	if(type < 0){return NULL;}
@@ -77,13 +72,13 @@ lVal *wwlnfWidgetNew(lClosure *c, lVal *v){
 	return ret;
 }
 
-lVal *wwlnfWidgetParent(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetParent(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	return w == NULL ? NULL : lValW(w->parent);
 }
 
-lVal *wwlnfWidgetSetParent(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetSetParent(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	if(w == NULL){return NULL;}
@@ -93,12 +88,12 @@ lVal *wwlnfWidgetSetParent(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetFocusGet(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetFocusGet(lClosure *c, lVal *v){
 	(void)c; (void)v;
 	return (widgetFocused == NULL) ? NULL :lValW(widgetFocused);
 }
 
-lVal *wwlnfWidgetFocusSet(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetFocusSet(lClosure *c, lVal *v){
 	(void)c; (void)v;
 	widget *w = castToWidget(lCar(v));
 	if(w == NULL){return NULL;}
@@ -106,13 +101,13 @@ lVal *wwlnfWidgetFocusSet(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetX(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetX(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	return w == NULL ? NULL : lValInt(w->x);
 }
 
-lVal *wwlnfWidgetSetX(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetSetX(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	const int nv = castToInt(lCadr(v),INT_MIN);
@@ -121,13 +116,13 @@ lVal *wwlnfWidgetSetX(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetY(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetY(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	return w == NULL ? NULL : lValInt(w->y);
 }
 
-lVal *wwlnfWidgetSetY(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetSetY(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	const int nv = castToInt(lCadr(v),INT_MIN);
@@ -136,13 +131,13 @@ lVal *wwlnfWidgetSetY(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetW(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetW(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	return w == NULL ? NULL : lValInt(w->w);
 }
 
-lVal *wwlnfWidgetSetW(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetSetW(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	const int nv = castToInt(lCadr(v),INT_MIN);
@@ -151,13 +146,13 @@ lVal *wwlnfWidgetSetW(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetH(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetH(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	return w == NULL ? NULL : lValInt(w->h);
 }
 
-lVal *wwlnfWidgetSetH(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetSetH(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v)); v = lCdr(v);
 	const int nv = castToInt(lCar(v),INT_MIN);
@@ -166,13 +161,13 @@ lVal *wwlnfWidgetSetH(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetFlags(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetFlags(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	return w == NULL ? NULL : lValInt(w->flags);
 }
 
-lVal *wwlnfWidgetSetFlags(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetSetFlags(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	const int nv = castToInt(lCadr(v),INT_MIN);
@@ -181,14 +176,14 @@ lVal *wwlnfWidgetSetFlags(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetGX(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetGX(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	if(w == NULL){return NULL;}
 	return lValInt(w->gx);
 }
 
-lVal *wwlnfWidgetSetGX(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetSetGX(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v)); v = lCdr(v);
 	int nv = castToInt(lCar(v),INT_MIN);
@@ -197,13 +192,13 @@ lVal *wwlnfWidgetSetGX(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetGY(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetGY(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	return w == NULL ? NULL : lValInt(w->gy);
 }
 
-lVal *wwlnfWidgetSetGY(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetSetGY(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v)); v = lCdr(v);
 	const int nv = castToInt(lCar(v),INT_MIN);
@@ -212,14 +207,14 @@ lVal *wwlnfWidgetSetGY(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetGW(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetGW(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	if(w == NULL){return NULL;}
 	return lValInt(w->gw);
 }
 
-lVal *wwlnfWidgetSetGW(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetSetGW(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v)); v = lCdr(v);
 	int nv = castToInt(lCar(v),INT_MIN);
@@ -228,13 +223,13 @@ lVal *wwlnfWidgetSetGW(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetGH(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetGH(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	return w == NULL ? NULL : lValInt(w->gh);
 }
 
-lVal *wwlnfWidgetSetGH(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetSetGH(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v)); v = lCdr(v);
 	const int nv = castToInt(lCar(v),INT_MIN);
@@ -243,13 +238,13 @@ lVal *wwlnfWidgetSetGH(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetLabel(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetLabel(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	return w == NULL ? NULL : lValString(w->label);
 }
 
-lVal *wwlnfWidgetSetLabel(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetSetLabel(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v)); v = lCdr(v);
 	const char *str = castToString(lCar(v),NULL);
@@ -259,7 +254,7 @@ lVal *wwlnfWidgetSetLabel(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetBind(lClosure *c, lVal *v){
+static lVal *wwlnfWidgetBind(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v)); v = lCdr(v);
 	const char *str = castToString(lCar(v),NULL); v = lCdr(v);
@@ -269,6 +264,11 @@ lVal *wwlnfWidgetBind(lClosure *c, lVal *v){
 	}
 	widgetBindL(w,str,callback);
 	return lCar(v);
+}
+
+lVal *wwlnfWidgetActiveCount(lClosure *c, lVal *v){
+	(void)c; (void)v;
+	return lValInt(widgetActive);
 }
 
 void lOperatorsWidget(lClosure *c){
@@ -301,4 +301,6 @@ void lOperatorsWidget(lClosure *c){
 	lAddNativeFunc(c,"widget/flags",  "[widget]",      "Get the flags WIDGET",    wwlnfWidgetFlags);
 	lAddNativeFunc(c,"widget/flags!", "[widget flags]","Set the FLAGS of WIDGET", wwlnfWidgetSetFlags);
 	lAddNativeFunc(c,"widget/bind",   "[widget event handler]","Binds HANDLER to be evaluated on EVENT for WIDGET", wwlnfWidgetBind);
+
+	lAddNativeFunc(c,"widget/active-count", "[]","Return the amount of widgets that are currently allocated", wwlnfWidgetActiveCount);
 }

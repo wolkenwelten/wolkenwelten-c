@@ -16,8 +16,10 @@
  */
 #include "lisp.h"
 
+
 #include "../main.h"
 #include "../binding/widget.h"
+#include "../binding/widgetGC.h"
 #include "../game/beamblast.h"
 #include "../game/character.h"
 #include "../game/fire.h"
@@ -824,41 +826,8 @@ void *lispInitReal(void *a, void *b){
 	return NULL;
 }
 
-static int widgetID(const widget *w){
-	return w - widgetList;
-}
-
-static void eventHandlerMark(const eventHandler *e){
-	if(e == NULL){return;}
-	if(e->lisp){
-		lValGCMark(e->lispHandler);
-	}
-	eventHandlerMark(e->next);
-}
-
-static void widgetMark(u8 *widgetMarks, const widget *w){
-	if((w == NULL) || widgetMarks[widgetID(w)]){return;}
-	widgetMarks[widgetID(w)] = 1;
-	widgetMark(widgetMarks, w->parent);
-	widgetMark(widgetMarks, w->child);
-	widgetMark(widgetMarks, w->prev);
-	widgetMark(widgetMarks, w->next);
-	eventHandlerMark(w->firstHandler);
-}
-
-void (*rootsMarkerChainNext)() = NULL;
-static void widgetMarker(){
-	u8 widgetMarks[WIDGET_COUNT];
-	memset(widgetMarks,0,sizeof(widgetMarks));
-
-	widgetMark(widgetMarks, rootMenu);
-
-	if(rootsMarkerChainNext){rootsMarkerChainNext();}
-}
-
 void lispInit(){
-	rootsMarkerChainNext = rootsMarkerChain;
-	rootsMarkerChain = widgetMarker;
+	widgetGCInit();
 	lExceptionTry(lispInitReal,NULL,NULL);
 }
 

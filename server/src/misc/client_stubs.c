@@ -91,3 +91,7 @@ uint meshIndex(const mesh *m){
 	(void)m;
 	return 0;
 }
+
+void lWidgetMarkI(uint i){
+	(void)i;
+}
