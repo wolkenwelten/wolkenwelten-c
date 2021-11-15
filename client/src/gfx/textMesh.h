@@ -28,5 +28,5 @@ void      textMeshVGradient        (textMesh *m, int x, int y, int w, int h, u32
 void      textMeshItemSprite       (textMesh *m, int x, int y, int size, int itemID);
 void      textMeshSlot             (textMesh *m, int x, int y, int size, int style);
 void      textMeshItemSlot         (textMesh *m, int x, int y, int size, int style, int itemID, int amount);
-void      textMeshItem             (textMesh *m, int x, int y, int size, int style, item *itm);
+void      textMeshItem             (textMesh *m, int x, int y, int size, int style, const item *itm);
 void      textMeshResetFont        (textMesh *m);

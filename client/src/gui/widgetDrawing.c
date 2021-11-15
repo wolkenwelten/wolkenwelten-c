@@ -77,8 +77,12 @@ void widgetDrawPopups(textMesh *m){
 			const item recipeRes = recipeGetResult(qe->wid->valu);
 			widgetDrawPopupItemSlot(m,&recipeRes,qe->x,qe->y,qe->w,qe->h);
 			break; }
+		case wItem: {
+			const item *itm = &qe->wid->valItem;
+			widgetDrawPopupItemSlot(m,itm,qe->x,qe->y,qe->w,qe->h);
+			break; }
 		case wItemSlot: {
-			const item *itm = qe->wid->valItem;
+			const item *itm = qe->wid->valItemSlot;
 			widgetDrawPopupItemSlot(m,itm,qe->x,qe->y,qe->w,qe->h);
 			break; }
 		}
@@ -440,8 +444,9 @@ static void widgetDrawSlider(const widget *wid, textMesh *m, int x, int y, int w
 	u32  tcolor = 0xFF222222;
 	u32 abcolor = 0xFFC08840;
 	u32 atcolor = 0xFFA04123;
+	const int textLen  = wid->label != NULL ? strnlen(wid->label,w/16) : 0;
 	const int textYOff = (h - (2*8))/2;
-	const int textXOff = (w-(strnlen(wid->label,w/16)*16))/2;
+	const int textXOff = (w-(textLen*16))/2;
 	const int size     = 2;
 	const float v  = MAX(0,MIN(1,wid->vali / 4096.f));
 	int o = v*(w-2);
@@ -481,10 +486,9 @@ static void widgetDrawHR(const widget *wid, textMesh *m, int x, int y, int w, in
 	textMeshVGradient(m,x,y+o,w,4,tcolor,bcolor);
 }
 
-static void widgetDrawItemSlot(const widget *wid, textMesh *m, int x, int y, int w, int h){
+static void widgetDrawItemSlot(const widget *wid, textMesh *m, int x, int y, int w, int h, const item *itm){
 	(void)h;
 	int style = 0;
-	item *itm = wid->valItem;
 	if((wid == widgetFocused) || (wid->flags & WIDGET_HOVER)){
 		widgetAddPopup(wid,x,y,w,h);
 	}
@@ -623,8 +627,11 @@ void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h)
 	case wSlider:
 		widgetDrawSlider(wid,m,x,y,w,h);
 		break;
+	case wItem:
+		widgetDrawItemSlot(wid,m,x,y,w,h,&wid->valItem);
+		break;
 	case wItemSlot:
-		widgetDrawItemSlot(wid,m,x,y,w,h);
+		widgetDrawItemSlot(wid,m,x,y,w,h,wid->valItemSlot);
 		break;
 	case wRecipeSlot:
 		widgetDrawRecipeSlot(wid,m,x,y,w,h);

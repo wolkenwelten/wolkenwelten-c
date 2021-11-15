@@ -49,7 +49,7 @@
 	]]
 
 	[set! player-do-throw! [λ [timeheld]
-		[say ["You held the button for " [/ timeheld 1000.0] " seconds Zoom at: " [player-zoom]]]
+		;[say ["You held the button for " [/ timeheld 1000.0] " seconds Zoom at: " [player-zoom]]]
 		[if [<= [- [time/milliseconds] throw-start] 500]
 			[player-drop-item! [player-active-slot]]
 			[throw-item throw-spin [* [player-zoom] 0.07]]

@@ -46,7 +46,7 @@ widget *craftingRadio;
 widget *craftingInfo;
 
 static void handlerInventoryItemClick(widget *wid){
-	item *cItem = wid->valItem;
+	item *cItem = wid->valItemSlot;
 	if(cItem == NULL){return;}
 
 	if(itemIsEmpty(&inventoryCurrentPickup)){
@@ -67,16 +67,16 @@ static void handlerInventoryItemClick(widget *wid){
 }
 
 static void handlerInventoryItemMidClick(widget *wid){
-	item *cItem = wid->valItem;
+	item *cItem = wid->valItemSlot;
 	if(cItem == NULL){return;}
 	if(itemIsEmpty(cItem)){return;}
-	uint sel = (wid->valItem - player->inventory);
+	uint sel = (wid->valItemSlot - player->inventory);
 	characterDropItem(player,sel);
 	sfxPlay(sfxPock,1.f);
 }
 
 static void handlerInventoryItemAltClick(widget *wid){
-	item *cItem = wid->valItem;
+	item *cItem = wid->valItemSlot;
 	if(cItem == NULL){return;}
 
 	if(itemIsEmpty(&inventoryCurrentPickup)){
@@ -151,7 +151,7 @@ static widget *widgetNewItemSlot(widget *parent, int x, int y, item *iSlot){
 	const int ts = getTilesize();
 
 	widget *slot = widgetNewCP(wItemSlot,parent,x,y,ts,ts);
-	slot->valItem = iSlot;
+	slot->valItemSlot = iSlot;
 	widgetBind(slot,"click",   handlerInventoryItemClick);
 	widgetBind(slot,"altclick",handlerInventoryItemAltClick);
 	widgetBind(slot,"midclick",handlerInventoryItemMidClick);
@@ -159,7 +159,7 @@ static widget *widgetNewItemSlot(widget *parent, int x, int y, item *iSlot){
 }
 
 static void handlerEquipmentItemClick(widget *wid){
-	item *cItem = wid->valItem;
+	item *cItem = wid->valItemSlot;
 	if(cItem == NULL){return;}
 
 	if(itemIsEmpty(&inventoryCurrentPickup)){
@@ -185,7 +185,7 @@ static widget *widgetNewEquipmentSlot(widget *parent, int x, int y, item *iSlot)
 	const int ts = getTilesize();
 
 	widget *slot = widgetNewCP(wItemSlot,parent,x,y,ts,ts);
-	slot->valItem = iSlot;
+	slot->valItemSlot = iSlot;
 	widgetBind(slot,"click",handlerEquipmentItemClick);
 	return slot;
 }

@@ -2,3 +2,29 @@
 	"Sends ...ARGS as a chat message"
 	[send-message [apply cat ...args]]
 ]]
+
+[def display/error [let*
+        [def wrap [λ [i text]
+                [cond [[eq? i 0] [ansi-red text]]
+                      [[eq? i 1] text]
+                      [[eq? i 2] [ansi-yellow text]]
+                      [#t text]
+                ]
+        ]]
+
+        [def iter [λ [error i]
+                [if error
+                    [cons [wrap i [string [car error]]]
+                          [iter [cdr error] [++ i]]]
+                    [cons "" #nil]]
+        ]]
+
+        [λ [error]
+                "Display ERROR in a nice, human readable way"
+                [say [join [iter error 0] "\n"]]
+        ]
+]]
+
+[def repl/exception-handler [λ [error]
+        [display/error error]
+]]

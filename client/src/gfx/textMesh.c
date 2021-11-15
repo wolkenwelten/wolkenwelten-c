@@ -444,7 +444,7 @@ void textMeshItemSlot(textMesh *m, int x, int y, int size, int style, int itemID
 	textMeshNumber(m,x+size-size/4,y+(size-size/4-size/32),1,amount);
 }
 
-void textMeshItem(textMesh *m, int x, int y, int size, int style, item *itm){
+void textMeshItem(textMesh *m, int x, int y, int size, int style, const item *itm){
 	textMeshSlot(m,x,y,size,style);
 	if(itemIsEmpty(itm)){return;}
 	const int itemsize    = size - size / 6;
