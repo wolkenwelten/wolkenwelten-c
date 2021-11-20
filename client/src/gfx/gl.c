@@ -2,6 +2,22 @@
 #include <stdio.h>
 #include "gl.h"
 
+#ifdef WOLKENWELTEN__GL_ES
+bool glIsMultiDrawAvailable;
+#endif
+
+bool glIsBaseInstanceAvailable;
+bool glIsMultiDrawIndirectAvailable;
+
+bool glHasExtension(const char *name){
+	GLint numExt;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &numExt);
+	for(GLint i = 0;i < numExt;++i) {
+		if(strcmp((const char*)glGetStringi(GL_EXTENSIONS, (GLuint)i), name) == 0){ return true; }
+	}
+	return false;
+}
+
 bool glInitialize() {
 	#ifdef WOLKENWELTEN__GL_USE_GL3W
 	int errCode = gl3wInit();
@@ -10,6 +26,9 @@ bool glInitialize() {
 		return false;
 	}
 	#endif
+
+	glIsBaseInstanceAvailable = glHasExtension("GL_ARB_base_instance");
+	glIsMultiDrawIndirectAvailable = glHasExtension("GL_ARB_multi_draw_indirect");
 
 	return true;
 }
