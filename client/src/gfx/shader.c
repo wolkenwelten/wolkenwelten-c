@@ -61,7 +61,7 @@ void shaderInit(){
 	sBoundary  = shaderNew("Boundary",  (const char *)src_shader_boundaryShaderVS_glsl_data, (const char *)src_shader_boundaryShaderFS_glsl_data, SHADER_ATTRMASK_POS | SHADER_ATTRMASK_COLOR);
 }
 
-void shaderPrintLog(uint obj, const char *msg, const char *src){
+static void shaderPrintLog(uint obj, const char *msg, const char *src){
 	int infologLength = 0;
 	int maxLength;
 
@@ -83,27 +83,30 @@ void shaderPrintLog(uint obj, const char *msg, const char *src){
 	}
 }
 
-void compileVertexShader(shader *s){
+static void compileVertexShader(shader *s){
 	char buf[1 << 14];
 	char *bufp[2] = {(char *)&buf,0};
 
 	s->vsID = glCreateShader(GL_VERTEX_SHADER);
 	#ifdef WOLKENWELTEN__GL_ES
 	snprintf(buf,sizeof(buf),"#version 300 es\n"
+"%s\n"
 "precision mediump float;\n"
 "precision mediump int;\n"
 "\n"
-"%s",s->vss);
+"%s",s->defines,s->vss);
 	#elif defined(__APPLE__)
 	snprintf(buf,sizeof(buf),"#version 330 core\n"
+"%s\n"
 "precision mediump float;\n"
 "precision mediump int;\n"
 "\n"
-"%s",s->vss);
+"%s",s->defines,s->vss);
 	#else
 	snprintf(buf,sizeof(buf),"#version 140\n"
+"%s\n"
 "\n"
-"%s",s->vss);
+"%s",s->defines,s->vss);
 	#endif
 	glShaderSource(s->vsID,1,(const GLchar **)&bufp,NULL);
 	glCompileShader(s->vsID);
@@ -111,29 +114,32 @@ void compileVertexShader(shader *s){
 	glAttachShader(s->pID,s->vsID);
 }
 
-void compileFragmentShader(shader *s){
+static void compileFragmentShader(shader *s){
 	char buf[1 << 14];
 	char *bufp[2] = {(char *)&buf,0};
 
 	s->fsID = glCreateShader(GL_FRAGMENT_SHADER);
 	#ifdef WOLKENWELTEN__GL_ES
 	snprintf(buf,sizeof(buf),"#version 300 es\n"
+"%s\n"
 "precision mediump float;\n"
 "precision mediump int;\n"
 "precision lowp sampler2DArray;\n"
 "\n"
-"%s",s->fss);
+"%s",s->defines,s->fss);
 	#elif defined(__APPLE__)
 	snprintf(buf,sizeof(buf),"#version 330 core\n"
+"%s\n"
 "precision mediump float;\n"
 "precision mediump int;\n"
 "precision lowp sampler2DArray;\n"
 "\n"
-"%s",s->fss);
+"%s",s->defines,s->fss);
 	#else
 	snprintf(buf,sizeof(buf),"#version 130\n"
+"%s\n"
 "\n"
-"%s",s->fss);
+"%s",s->defines,s->fss);
 	#endif
 
 	glShaderSource(s->fsID,1,(const GLchar **)&bufp,NULL);
@@ -142,7 +148,7 @@ void compileFragmentShader(shader *s){
 	glAttachShader(s->pID,s->fsID);
 }
 
-void shaderCompile(shader *s,const char *name){
+static void shaderCompile(shader *s,const char *name){
 	s->pID = glCreateProgram();
 	if(glIsDebugAvailable){glObjectLabel(GL_PROGRAM,s->pID,-1,name);}
 	compileVertexShader(s);
@@ -168,6 +174,12 @@ shader *shaderNew(const char *name,const char *vss,const char *fss,uint attrMask
 	shader *s = &shaderList[shaderCount++];
 	s->vss      = (char *)vss;
 	s->fss      = (char *)fss;
+
+	if(glIsMultiDrawAvailable){
+		s->defines  = "#define USE_MULTIDRAW";
+	}else{
+		s->defines  = "";
+	}
 
 	s->pID      = 0;
 	s->vsID     = 0;

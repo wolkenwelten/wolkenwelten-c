@@ -47,7 +47,8 @@ typedef struct {
 typedef struct {
 	uint pID;
 	uint vsID,fsID;
-	char *vss,*fss;
+	const char *vss,*fss;
+	const char *defines;
 	uint attrMask;
   int lMVP,lAlpha,lColor,lTransform,lSideTint,lSizeMul;
 } shader;
