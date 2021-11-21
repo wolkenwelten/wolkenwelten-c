@@ -348,7 +348,14 @@ static void widgetDrawBackground(const widget *wid, textMesh *m, int x, int y, i
 
 static void widgetDrawPanel(const widget *wid, textMesh *m, int x, int y, int w, int h){
 	(void)wid;
-	textMeshSolidBox(m,x,y,w,h,0xE0303030);
+	textMeshSolidBox (m,x+1,y+1,w-2,h-2,0xE0303030);
+
+	u32 tcolor   = 0xFF777777;
+	u32 bcolor   = 0xFF333333;
+	textMeshSolidBox (m,x+1,y  ,w-2,  1,tcolor);
+	textMeshSolidBox (m,x  ,y+1,  1,h-2,tcolor);
+	textMeshSolidBox (m,x+1,y+h-1,w-2,  1,bcolor);
+	textMeshSolidBox (m,x+w-1,y+1,  1,h-2,bcolor);
 }
 
 static void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, int w, int h){
