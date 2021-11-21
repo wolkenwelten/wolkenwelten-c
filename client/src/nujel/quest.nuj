@@ -24,7 +24,7 @@
      [def text    [widget/new w-label]]
 
      [def wid-height 0]
-     [when wid [set! wid-height [widget/height wid]]]
+     [when wid [set! wid-height [+ 8 [widget/height wid]]]]
 
      [widget/parent! panel w-game-screen]
      [widget/x!      panel  -8]
@@ -33,10 +33,10 @@
      [widget/height! panel [+ 120 wid-height]]
 
      [widget/parent! content panel]
-     [widget/width!  content -8]
-     [widget/height! content -8]
-     [widget/x!      content  8]
-     [widget/y!      content  8]
+     [widget/width!  content -16]
+     [widget/height! content  -8]
+     [widget/x!      content   8]
+     [widget/y!      content   8]
 
      [widget/parent! head content]
      [widget/width!  head  -1]

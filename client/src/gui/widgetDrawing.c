@@ -448,11 +448,11 @@ static void widgetDrawSlider(const widget *wid, textMesh *m, int x, int y, int w
 	const int textYOff = (h - (2*8))/2;
 	const int textXOff = (w-(textLen*16))/2;
 	const int size     = 2;
-	const float v  = MAX(0,MIN(1,wid->vali / 4096.f));
+	const float v      = MAX(0,MIN(1,wid->vali / 4096.f));
 	int o = v*(w-2);
 
-	textMeshVGradient(m,x+1, y+1,o-3,h-2, abcolor,atcolor);
-	textMeshSolidBox(m,x+o+3, y+1,w-o-3,h-2,tcolor);
+	textMeshVGradient(m ,x+1, y+1,o-3,h-2, abcolor,atcolor);
+	textMeshSolidBox(m, x+o+3, y+1,w-o-3,h-2,tcolor);
 
 	if(wid == widgetFocused){
 		tcolor = abcolor;
