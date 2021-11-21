@@ -65,7 +65,7 @@ void initSky(){
 	meshFinishStatic( mSky );
 
 	if(sunMesh == NULL){
-		sunMesh = meshNew(NULL);
+		sunMesh = meshNew("sun");
 	}
 	meshEmpty(sunMesh);
 	if(tSun == NULL){
@@ -127,6 +127,7 @@ static void genSkyTexture(){
 
 
 void renderSky(const character *cam){
+	gfxGroupStart("Sky");
 	glClear(GL_DEPTH_BUFFER_BIT);
 	genSkyTexture();
 
@@ -150,4 +151,5 @@ void renderSky(const character *cam){
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(sunMesh);
 	glDepthMask(GL_TRUE);
+	gfxGroupEnd();
 }

@@ -53,7 +53,7 @@ extern u8 src_shader_textShaderVS_glsl_data[];
 void shaderInit(){
 	sMesh      = shaderNew("Mesh",      (const char *)src_shader_meshShaderVS_glsl_data,     (const char *)src_shader_meshShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
 	sShadow    = shaderNew("Shadow",    (const char *)src_shader_shadowShaderVS_glsl_data,   (const char *)src_shader_shadowShaderFS_glsl_data,   SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
-	sBlockMesh = shaderNew("BlockMesh", (const char *)src_shader_blockShaderVS_glsl_data,    (const char *)src_shader_blockShaderFS_glsl_data,    SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_COLOR);
+	sBlockMesh = shaderNew("BlockMesh", (const char *)src_shader_blockShaderVS_glsl_data,    (const char *)src_shader_blockShaderFS_glsl_data,    SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_FLAG);
 	sParticle  = shaderNew("Particle",  (const char *)src_shader_particleShaderVS_glsl_data, (const char *)src_shader_particleShaderFS_glsl_data, SHADER_ATTRMASK_POS | SHADER_ATTRMASK_COLOR);
 	sRain      = shaderNew("Rain",      (const char *)src_shader_rainShaderVS_glsl_data,     (const char *)src_shader_rainShaderFS_glsl_data,     SHADER_ATTRMASK_POS);
 	sTextMesh  = shaderNew("TextMesh",  (const char *)src_shader_textShaderVS_glsl_data,     (const char *)src_shader_textShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_COLOR);
@@ -154,10 +154,11 @@ static void shaderCompile(shader *s,const char *name){
 	compileVertexShader(s);
 	compileFragmentShader(s);
 
-	if(s->attrMask & SHADER_ATTRMASK_POS){glBindAttribLocation(s->pID,0,"pos");}
-	if(s->attrMask & SHADER_ATTRMASK_TEX){glBindAttribLocation(s->pID,1,"tex");}
-	if(s->attrMask & SHADER_ATTRMASK_COLOR){glBindAttribLocation(s->pID,2,"color");}
-	if(s->attrMask & SHADER_ATTRMASK_SIZE){glBindAttribLocation(s->pID,3,"size");}
+	if(s->attrMask & SHADER_ATTRMASK_POS){glBindAttribLocation(s->pID,SHADER_ATTRIDX_POS,"pos");}
+	if(s->attrMask & SHADER_ATTRMASK_TEX){glBindAttribLocation(s->pID,SHADER_ATTRIDX_TEX,"tex");}
+	if(s->attrMask & SHADER_ATTRMASK_COLOR){glBindAttribLocation(s->pID,SHADER_ATTRIDX_COLOR,"color");}
+	if(s->attrMask & SHADER_ATTRMASK_SIZE){glBindAttribLocation(s->pID,SHADER_ATTRIDX_SIZE,"size");}
+	if(s->attrMask & SHADER_ATTRMASK_FLAG){glBindAttribLocation(s->pID,SHADER_ATTRIDX_FLAG,"flag");}
 
 	glLinkProgram(s->pID);
 	shaderPrintLog(s->pID,"Program","");
@@ -165,7 +166,7 @@ static void shaderCompile(shader *s,const char *name){
 	s->lMVP        = glGetUniformLocation(s->pID,"matMVP");
 	s->lColor      = glGetUniformLocation(s->pID,"inColor");
 	s->lAlpha      = glGetUniformLocation(s->pID,"colorAlpha");
-	s->lSideTint   = glGetUniformLocation(s->pID,"sideTint");
+	s->lSideTints  = glGetUniformLocation(s->pID,"sideTints");
 	s->lTransform  = glGetUniformLocation(s->pID,"transPos");
 	s->lSizeMul    = glGetUniformLocation(s->pID,"sizeMul");
 }
@@ -176,7 +177,7 @@ shader *shaderNew(const char *name,const char *vss,const char *fss,uint attrMask
 	s->fss      = (char *)fss;
 
 	if(glIsMultiDrawAvailable){
-		s->defines  = "#define USE_MULTIDRAW";
+		s->defines  = "#define USE_MULTIDRAW2";
 	}else{
 		s->defines  = "";
 	}
@@ -229,9 +230,9 @@ void shaderColor(shader *s, float r, float g, float b, float a){
 	glUniform4f(s->lColor,r,g,b,a);
 }
 
-void shaderSideTint(shader *s, const vec v){
-	if(s->lSideTint == -1){return;}
-	glUniform3f(s->lSideTint,v.x,v.y,v.z);
+void shaderSideTints(shader *s, const vec sideTints[sideMAX]){
+	if(s->lSideTints == -1){return;}
+	glUniform3fv(s->lSideTints,6,(const float*)sideTints);
 }
 
 void shaderTransform(shader *s, float x, float y, float z){

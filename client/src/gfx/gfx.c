@@ -207,6 +207,7 @@ void calcView(const character *cam){
 }
 
 void renderWorld(const character *cam){
+	gfxGroupStart("World");
 	worldDraw(cam);
 	blockMiningDraw();
 	animalDrawAll();
@@ -222,6 +223,7 @@ void renderWorld(const character *cam){
 	particleDraw();
 
 	ropeDrawAll();
+	gfxGroupEnd();
 }
 
 

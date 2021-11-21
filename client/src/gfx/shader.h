@@ -13,6 +13,8 @@
 #define SHADER_ATTRMASK_TRANSPOS (1 << SHADER_ATTRIDX_TRANSPOS)
 #define SHADER_ATTRIDX_FADE 5
 #define SHADER_ATTRMASK_FADE (1 << SHADER_ATTRIDX_FADE)
+#define SHADER_ATTRIDX_FLAG 6
+#define SHADER_ATTRMASK_FLAG (1 << SHADER_ATTRIDX_FLAG)
 
 void    shaderInit();
 void    shaderFree();
@@ -21,7 +23,7 @@ void    shaderBind       (shader *s);
 void    shaderMatrix     (shader *s, float mvp[16]);
 void    shaderAlpha      (shader *s, float alpha);
 void    shaderColor      (shader *s, float r, float g, float b, float a);
-void    shaderSideTint   (shader *s, const vec v);
+void    shaderSideTints  (shader *s, const vec sideTints[sideMAX]);
 void    shaderTransform  (shader *s, float x, float y, float z);
 void    shaderSizeMul    (shader *s, float sizeMul);
 

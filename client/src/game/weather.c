@@ -98,12 +98,14 @@ static inline void cloudPart(cloudChunk *part, float px,float py,float pz,float 
 }
 
 void cloudsRender(){
+	gfxGroupStart("Clouds");
 	const u8 cpart = cloudFrame++ & 31;
 	cloudFrame &= 31;
 
 	shaderBind(sCloud);
 	shaderSizeMul(sCloud,player->zoomFactor);
 	for(int i=0;i<32;i++){
+		if((CLOUDS_MAX - parts[i].count) == 0){ continue; }
 		matMov(matMVP,matView);
 		const vec transOff = vecSub(cloudOff,parts[i].base);
 		matMulTrans(matMVP,transOff.x,transOff.y,transOff.z);
@@ -125,6 +127,7 @@ void cloudsRender(){
 		glDrawArrays(GL_POINTS,0,CLOUDS_MAX - parts[i].count);
 	}
 	parts[cloudFrame & 31].count = CLOUDS_MAX;
+	gfxGroupEnd();
 }
 
 void cloudsDraw(int cx, int cy, int cz){
@@ -239,6 +242,14 @@ void cloudsInitGfx(){
 		glBindBuffer(GL_ARRAY_BUFFER, parts[i].vbo);
 		glEnableVertexAttribArray (SHADER_ATTRIDX_POS);
 		glEnableVertexAttribArray (SHADER_ATTRIDX_COLOR);
+
+		if(glIsDebugAvailable){
+			char name[16];
+			snprintf(name, sizeof(name), "Clouds VAO #%d", i);
+			glObjectLabel(GL_VERTEX_ARRAY, parts[i].vao, -1, name);
+			snprintf(name, sizeof(name), "Clouds VAO #%d", i);
+			glObjectLabel(GL_BUFFER, parts[i].vbo, -1, name);
+		}
 	}
 	cloudsCalcColors();
 
@@ -270,6 +281,7 @@ void rainFakeDrops(){
 }
 
 void rainDrawAll(){
+	gfxGroupStart("Rain");
 	if(!rainCount){return;}
 	rainFakeDrops();
 
@@ -291,6 +303,7 @@ void rainDrawAll(){
 	glDrawArrays(GL_POINTS,0,rainCount);
 
 	glDepthMask(GL_TRUE);
+	gfxGroupEnd();
 }
 
 void rainRecvUpdate(const packet *p){

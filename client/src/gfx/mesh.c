@@ -50,8 +50,27 @@ void meshEmpty(mesh *m){
 	m->dataCount = 0;
 }
 
+static void meshCreateBuffers(mesh *m, const char *name){
+	glGenVertexArrays(1, &m->vao);
+	glBindVertexArray(m->vao);
+	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
+	glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
+	glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
+
+	glGenBuffers(1,&m->vbo);
+
+	if(glIsDebugAvailable && name != NULL){
+		char fullname[256];
+		snprintf(fullname, sizeof(fullname), "%s VAO", name);
+		glObjectLabel(GL_VERTEX_ARRAY, m->vao, -1, fullname);
+		snprintf(fullname, sizeof(fullname), "%s VBO", name);
+		glObjectLabel(GL_BUFFER, m->vbo, -1, fullname);
+	}
+}
+
+
 static void meshDrawVBO(const mesh *m){
-	if(!m->vao){return;}
+	if(m->dataCount == 0){return;}
 	glBindVertexArray(m->vao);
 	glBindBuffer(GL_ARRAY_BUFFER, m->vbo);
 	glDrawArrays(GL_TRIANGLES,0,m->dataCount);
@@ -61,27 +80,18 @@ static void meshDrawVBO(const mesh *m){
 
 static void meshFinish(mesh *m, uint usage){
 	if(m->dataCount == 0){return;}
-	if(!m->vao) {
-		glGenVertexArrays(1, &m->vao);
-		glBindVertexArray(m->vao);
-		glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
-		glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
-		glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
-	}else{
-		glBindVertexArray(m->vao);
-	}
-	if(!m->vbo){ glGenBuffers(1,&m->vbo); }
+	glBindVertexArray(m->vao);
 	glBindBuffer(GL_ARRAY_BUFFER,m->vbo);
 	const void *data = m->roData == NULL ? meshBuffer : m->roData;
 	if(gfxUseSubData && (m->vboSize >= m->dataCount)){
 		glBufferSubData(GL_ARRAY_BUFFER, 0, m->dataCount*sizeof(vertex),  data);
 	}else{
 		glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex),  data, usage);
+		glVertexAttribPointer(SHADER_ATTRIDX_POS,   3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(((char *)&meshBuffer[0].x) - ((char *)meshBuffer)));
+		glVertexAttribPointer(SHADER_ATTRIDX_TEX,   2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(((char *)&meshBuffer[0].u) - ((char *)meshBuffer)));
+		glVertexAttribPointer(SHADER_ATTRIDX_COLOR, 1, GL_FLOAT, GL_TRUE , sizeof(vertex), (void *)(((char *)&meshBuffer[0].c) - ((char *)meshBuffer)));
 		m->vboSize = m->dataCount;
 	}
-	glVertexAttribPointer(SHADER_ATTRIDX_POS,   3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(((char *)&meshBuffer[0].x) - ((char *)meshBuffer)));
-	glVertexAttribPointer(SHADER_ATTRIDX_TEX,   2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(((char *)&meshBuffer[0].u) - ((char *)meshBuffer)));
-	glVertexAttribPointer(SHADER_ATTRIDX_COLOR, 1, GL_FLOAT, GL_TRUE , sizeof(vertex), (void *)(((char *)&meshBuffer[0].c) - ((char *)meshBuffer)));
 }
 
 void meshFinishStatic(mesh *m){
@@ -106,13 +116,14 @@ mesh *meshNew(const char *name){
 	}
 	if(name != NULL){lispDefineID("m-", name, m - meshList);}
 	memset(m,0,sizeof(mesh));
-	m->vao = m->vbo = 0;
+	meshCreateBuffers(m, name);
 	return m;
 }
 
 mesh *meshNewRO(const char *name, const vertex *roData,size_t roSize){
 	mesh *m = &meshList[meshCount++];
 	memset(m,0,sizeof(mesh));
+	meshCreateBuffers(m, name);
 	m->dataCount = roSize;
 	m->roData    = roData;
 	if(name != NULL){lispDefineID("m-", name, m - meshList);}

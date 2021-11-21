@@ -66,11 +66,13 @@ void particleInit(){
 	sparticleVBOSize = 0;
 
 	glGenVertexArrays(1, &particleVAO);
+	if(glIsDebugAvailable){glObjectLabel(GL_VERTEX_ARRAY,particleVAO,-1,"particle VAO");}
 	glBindVertexArray(particleVAO);
 	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
 	glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
 
 	glGenVertexArrays(1,&sparticleVAO);
+	if(glIsDebugAvailable){glObjectLabel(GL_VERTEX_ARRAY,particleVAO,-1,"sparticle VAO");}
 	glBindVertexArray(sparticleVAO);
 	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
 	glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
@@ -213,6 +215,7 @@ void particleUpdate(){
 }
 
 void particleDraw(){
+	gfxGroupStart("Particles");
 	if(!particleCount && !sparticleCount){return;}
 	shaderBind(sParticle);
 	matMul(matMVP,matView,matProjection);
@@ -260,4 +263,5 @@ void particleDraw(){
 
 
 	glDepthMask(GL_TRUE);
+	gfxGroupEnd();
 }

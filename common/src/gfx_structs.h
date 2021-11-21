@@ -50,7 +50,7 @@ typedef struct {
 	const char *vss,*fss;
 	const char *defines;
 	uint attrMask;
-  int lMVP,lAlpha,lColor,lTransform,lSideTint,lSizeMul;
+	int lMVP,lAlpha,lColor,lTransform,lSideTints,lSizeMul;
 } shader;
 
 #pragma pack(push, 1)

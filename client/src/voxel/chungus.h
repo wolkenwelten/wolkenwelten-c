@@ -12,7 +12,7 @@ struct chungus {
 	chunk *chunks[16][16][16];
 };
 
-typedef struct {
+typedef struct queueEntry {
 	float distance;
 	sideMask mask;
 	union {

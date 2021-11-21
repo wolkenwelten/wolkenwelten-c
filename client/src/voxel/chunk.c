@@ -27,6 +27,7 @@
 #include "../gfx/sky.h"
 #include "../sdl/sdl.h"
 #include "../voxel/bigchungus.h"
+#include "../voxel/chunkvertbuf.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
 
@@ -34,13 +35,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#pragma pack(push, 1)
-typedef struct vertexTiny {
-	u8 x,y,z,u,v,w,f;
-} vertexTiny;
-#pragma pack(pop)
-
-vertexTiny blockMeshBuffer[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * 6 * 6];
+vertexTiny blockMeshBuffer[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * 6 * 6 / 2];
+u16 blockMeshSideEnd[sideMAX];
 int chunkFreeCount = 0;
 int chunkCount     = 0;
 int chunksGeneratedThisFrame = 0;
@@ -53,6 +49,7 @@ chunk *chunkFirstFree = NULL;
 chunk *chunkList;
 
 void chunkInit(){
+	chunkvertbufInit();
 	if(chunkList == NULL){
 		chunkList = malloc(sizeof(chunk) * CHUNK_COUNT);
 	}
@@ -93,10 +90,8 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 	c->x         = x & (~POS_MASK);
 	c->y         = y & (~POS_MASK);
 	c->z         = z & (~POS_MASK);
-	c->flags     = 0;
-	c->vbo       = 0;
-	c->vboSize   = 0;
-	c->vao       = 0;
+	c->flags     = CHUNK_FLAG_DIRTY;
+	c->vertbuf   = NULL;
 	memset(c->data,0,sizeof(c->data));
 	return c;
 }
@@ -107,100 +102,95 @@ void chunkFree(chunk *c){
 		fprintf(stderr,"WTF am I freing\n");
 		return;
 	}
+	chunkvertbufFree(c);
 	chunkFreeCount++;
-	if(c->vbo){glDeleteBuffers(1,&c->vbo); c->vbo = 0;}
-	if(c->vao){glDeleteVertexArrays(1,&c->vao); c->vao = 0;}
 	c->nextFree = chunkFirstFree;
 	chunkFirstFree = c;
 }
 
 static inline void chunkFinish(chunk *c){
-	if(!c->vao) {
-		glGenVertexArrays(1, &c->vao);
-		glBindVertexArray(c->vao);
-		glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
-		glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
-		glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
+	if(!c->vertbuf){
 		c->fadeIn = FADE_IN_FRAMES;
-	}else{
-		glBindVertexArray(c->vao);
 	}
-	if(!c->vbo) { glGenBuffers(1,&c->vbo); }
-	glBindBuffer(GL_ARRAY_BUFFER, c->vbo);
-	if(gfxUseSubData && (c->vboSize >= c->sideEnd[sideMAX-1])){
-		glBufferSubData(GL_ARRAY_BUFFER, 0, c->sideEnd[sideMAX-1] * (6 * sizeof(vertexTiny)), blockMeshBuffer);
-	}else{
-		glBufferData(GL_ARRAY_BUFFER, c->sideEnd[sideMAX-1] * (6 * sizeof(vertexTiny)), blockMeshBuffer, GL_STATIC_DRAW);
-		c->vboSize = c->sideEnd[sideMAX-1];
-	}
-	glVertexAttribPointer(SHADER_ATTRIDX_POS, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, x));
-	glVertexAttribPointer(SHADER_ATTRIDX_TEX, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, u));
-	glVertexAttribIPointer(SHADER_ATTRIDX_COLOR, 1, GL_UNSIGNED_BYTE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, f));
 	c->flags &= ~CHUNK_FLAG_DIRTY;
+	u16 sideCounts[sideMAX];
+	for(side sideIndex = 0; sideIndex < sideMAX; sideIndex++){
+		const uint cFirst = sideIndex == 0 ? 0 : blockMeshSideEnd[sideIndex-1];
+		sideCounts[sideIndex] = blockMeshSideEnd[sideIndex] - cFirst;
+	}
+	chunkvertbufUpdate(c, blockMeshBuffer, sideCounts);
 }
 
-static void chunkAddFront(chunk *c, blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const blockId bt = blocks[b].tex[sideFront];
-	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideFront]++ * 6];
-	*vt++ = (vertexTiny){x  ,y  ,z+d,0,h,bt,sideFront};
-	*vt++ = (vertexTiny){x+w,y  ,z+d,w,h,bt,sideFront};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,w,0,bt,sideFront};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,w,0,bt,sideFront};
-	*vt++ = (vertexTiny){x  ,y+h,z+d,0,0,bt,sideFront};
-	*vt++ = (vertexTiny){x  ,y  ,z+d,0,h,bt,sideFront};
+#define mkVert(x,y,z,w,h,bt,side) (vertexTiny){x,y,z,w,h,bt,side}
+
+static void chunkAddFront(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+	const u8 bt = blocks[b].tex[sideFront];
+	vertexTiny *vt = &blockMeshBuffer[blockMeshSideEnd[sideFront]];
+	blockMeshSideEnd[sideFront] += 6;
+	*vt++ = mkVert(x  ,y  ,z+d,0,h,bt,sideFront);
+	*vt++ = mkVert(x+w,y  ,z+d,w,h,bt,sideFront);
+	*vt++ = mkVert(x+w,y+h,z+d,w,0,bt,sideFront);
+	*vt++ = mkVert(x+w,y+h,z+d,w,0,bt,sideFront);
+	*vt++ = mkVert(x  ,y+h,z+d,0,0,bt,sideFront);
+	*vt++ = mkVert(x  ,y  ,z+d,0,h,bt,sideFront);
 }
-static void chunkAddBack(chunk *c, blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+static void chunkAddBack(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)d;
-	const blockId bt = blocks[b].tex[sideBack];
-	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideBack]++ * 6];
-	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,sideBack};
-	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,sideBack};
-	*vt++ = (vertexTiny){x+w,y+h,z  ,w,0,bt,sideBack};
-	*vt++ = (vertexTiny){x+w,y+h,z  ,w,0,bt,sideBack};
-	*vt++ = (vertexTiny){x+w,y  ,z  ,w,h,bt,sideBack};
-	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,sideBack};
+	const u8 bt = blocks[b].tex[sideBack];
+	vertexTiny *vt = &blockMeshBuffer[blockMeshSideEnd[sideBack]];
+	blockMeshSideEnd[sideBack] += 6;
+	*vt++ = mkVert(x  ,y  ,z  ,0,h,bt,sideBack);
+	*vt++ = mkVert(x  ,y+h,z  ,0,0,bt,sideBack);
+	*vt++ = mkVert(x+w,y+h,z  ,w,0,bt,sideBack);
+	*vt++ = mkVert(x+w,y+h,z  ,w,0,bt,sideBack);
+	*vt++ = mkVert(x+w,y  ,z  ,w,h,bt,sideBack);
+	*vt++ = mkVert(x  ,y  ,z  ,0,h,bt,sideBack);
 }
-static void chunkAddTop(chunk *c, blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const blockId bt = blocks[b].tex[sideTop];
-	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideTop]++ * 6];
-	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,sideTop};
-	*vt++ = (vertexTiny){x  ,y+h,z+d,0,d,bt,sideTop};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,w,d,bt,sideTop};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,w,d,bt,sideTop};
-	*vt++ = (vertexTiny){x+w,y+h,z  ,w,0,bt,sideTop};
-	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,sideTop};
+static void chunkAddTop(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+	const u8 bt = blocks[b].tex[sideTop];
+	vertexTiny *vt = &blockMeshBuffer[blockMeshSideEnd[sideTop]];
+	blockMeshSideEnd[sideTop] += 6;
+	*vt++ = mkVert(x  ,y+h,z  ,0,0,bt,sideTop);
+	*vt++ = mkVert(x  ,y+h,z+d,0,d,bt,sideTop);
+	*vt++ = mkVert(x+w,y+h,z+d,w,d,bt,sideTop);
+	*vt++ = mkVert(x+w,y+h,z+d,w,d,bt,sideTop);
+	*vt++ = mkVert(x+w,y+h,z  ,w,0,bt,sideTop);
+	*vt++ = mkVert(x  ,y+h,z  ,0,0,bt,sideTop);
 }
-static void chunkAddBottom(chunk *c, blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+static void chunkAddBottom(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)h;
-	const blockId bt = blocks[b].tex[sideBottom];
-	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideBottom]++ * 6];
-	*vt++ = (vertexTiny){x  ,y  ,z  ,0,0,bt,sideBottom};
-	*vt++ = (vertexTiny){x+w,y  ,z  ,w,0,bt,sideBottom};
-	*vt++ = (vertexTiny){x+w,y  ,z+d,w,d,bt,sideBottom};
-	*vt++ = (vertexTiny){x+w,y  ,z+d,w,d,bt,sideBottom};
-	*vt++ = (vertexTiny){x  ,y  ,z+d,0,d,bt,sideBottom};
-	*vt++ = (vertexTiny){x  ,y  ,z  ,0,0,bt,sideBottom};
+	const u8 bt = blocks[b].tex[sideBottom];
+	vertexTiny *vt = &blockMeshBuffer[blockMeshSideEnd[sideBottom]];
+	blockMeshSideEnd[sideBottom] += 6;
+	*vt++ = mkVert(x  ,y  ,z  ,0,0,bt,sideBottom);
+	*vt++ = mkVert(x+w,y  ,z  ,w,0,bt,sideBottom);
+	*vt++ = mkVert(x+w,y  ,z+d,w,d,bt,sideBottom);
+	*vt++ = mkVert(x+w,y  ,z+d,w,d,bt,sideBottom);
+	*vt++ = mkVert(x  ,y  ,z+d,0,d,bt,sideBottom);
+	*vt++ = mkVert(x  ,y  ,z  ,0,0,bt,sideBottom);
 }
-static void chunkAddLeft(chunk *c, blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+static void chunkAddLeft(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)w;
-	const blockId bt = blocks[b].tex[sideLeft];
-	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideLeft]++ * 6];
-	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,sideLeft};
-	*vt++ = (vertexTiny){x  ,y  ,z+d,d,h,bt,sideLeft};
-	*vt++ = (vertexTiny){x  ,y+h,z+d,d,0,bt,sideLeft};
-	*vt++ = (vertexTiny){x  ,y+h,z+d,d,0,bt,sideLeft};
-	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,sideLeft};
-	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,sideLeft};
+	const u8 bt = blocks[b].tex[sideLeft];
+	vertexTiny *vt = &blockMeshBuffer[blockMeshSideEnd[sideLeft]];
+	blockMeshSideEnd[sideLeft] += 6;
+	*vt++ = mkVert(x  ,y  ,z  ,0,h,bt,sideLeft);
+	*vt++ = mkVert(x  ,y  ,z+d,d,h,bt,sideLeft);
+	*vt++ = mkVert(x  ,y+h,z+d,d,0,bt,sideLeft);
+	*vt++ = mkVert(x  ,y+h,z+d,d,0,bt,sideLeft);
+	*vt++ = mkVert(x  ,y+h,z  ,0,0,bt,sideLeft);
+	*vt++ = mkVert(x  ,y  ,z  ,0,h,bt,sideLeft);
 }
-static void chunkAddRight(chunk *c, blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const blockId bt = blocks[b].tex[sideRight];
-	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideRight]++ * 6];
-	*vt++ = (vertexTiny){x+w,y  ,z  ,0,h,bt,sideRight};
-	*vt++ = (vertexTiny){x+w,y+h,z  ,0,0,bt,sideRight};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,d,0,bt,sideRight};
-	*vt++ = (vertexTiny){x+w,y+h,z+d,d,0,bt,sideRight};
-	*vt++ = (vertexTiny){x+w,y  ,z+d,d,h,bt,sideRight};
-	*vt++ = (vertexTiny){x+w,y  ,z  ,0,h,bt,sideRight};
+static void chunkAddRight(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+	const u8 bt = blocks[b].tex[sideRight];
+	vertexTiny *vt = &blockMeshBuffer[blockMeshSideEnd[sideRight]];
+	blockMeshSideEnd[sideRight] += 6;
+	*vt++ = mkVert(x+w,y  ,z  ,0,h,bt,sideRight);
+	*vt++ = mkVert(x+w,y+h,z  ,0,0,bt,sideRight);
+	*vt++ = mkVert(x+w,y+h,z+d,d,0,bt,sideRight);
+	*vt++ = mkVert(x+w,y+h,z+d,d,0,bt,sideRight);
+	*vt++ = mkVert(x+w,y  ,z+d,d,h,bt,sideRight);
+	*vt++ = mkVert(x+w,y  ,z  ,0,h,bt,sideRight);
 }
 
 static void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
@@ -218,8 +208,8 @@ static void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
 	}
 }
 
-static inline u8 chunkGetSides(u16 x,u16 y,u16 z,blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2]){
-	u8 sides = 0;
+static inline sideMask chunkGetSides(u16 x,u16 y,u16 z,blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2]){
+	sideMask sides = 0;
 
 	if(b[x][y][z+1] == 0){ sides |= sideMaskFront; }
 	if(b[x][y][z-1] == 0){ sides |= sideMaskBack; }
@@ -267,7 +257,7 @@ static void chunkGenMesh(chunk *c) {
 	}
 	}
 
-	c->sideEnd[sideFront] = 0;
+	blockMeshSideEnd[sideFront] = 0;
 	for(int z=CHUNK_SIZE-1;z>=0;--z){
 		bool found = false;
 		memset(plane,0,sizeof(plane));
@@ -290,13 +280,13 @@ static void chunkGenMesh(chunk *c) {
 				const int cw = ((plane[y][x] >> 16) & 0xFF);
 				const int ch = ((plane[y][x] >>  8) & 0xFF);
 				const blockId b = plane[y][x] & 0xFF;
-				chunkAddFront(c,b,x,y,z,cw,ch,cd);
+				chunkAddFront(b,x,y,z,cw,ch,cd);
 			}
 			}
 		}
 	}
 
-	c->sideEnd[sideBack] = c->sideEnd[sideFront];
+	blockMeshSideEnd[sideBack] = blockMeshSideEnd[sideFront];
 	for(int z=CHUNK_SIZE-1;z>=0;--z){
 		bool found = false;
 		memset(plane,0,sizeof(plane));
@@ -319,13 +309,13 @@ static void chunkGenMesh(chunk *c) {
 				const int cw = ((plane[y][x] >> 16) & 0xFF);
 				const int ch = ((plane[y][x] >>  8) & 0xFF);
 				const blockId b = plane[y][x] & 0xFF;
-				chunkAddBack(c,b,x,y,z,cw,ch,cd);
+				chunkAddBack(b,x,y,z,cw,ch,cd);
 			}
 			}
 		}
 	}
 
-	c->sideEnd[sideTop] = c->sideEnd[sideBack];
+	blockMeshSideEnd[sideTop] = blockMeshSideEnd[sideBack];
 	for(int y=CHUNK_SIZE-1;y>=0;--y){
 		bool found = false;
 		memset(plane,0,sizeof(plane));
@@ -348,13 +338,13 @@ static void chunkGenMesh(chunk *c) {
 				const int cw = ((plane[z][x] >> 16) & 0xFF);
 				const int cd = ((plane[z][x] >>  8) & 0xFF);
 				const blockId b = plane[z][x] & 0xFF;
-				chunkAddTop(c,b,x,y,z,cw,ch,cd);
+				chunkAddTop(b,x,y,z,cw,ch,cd);
 			}
 			}
 		}
 	}
 
-	c->sideEnd[sideBottom] = c->sideEnd[sideTop];
+	blockMeshSideEnd[sideBottom] = blockMeshSideEnd[sideTop];
 	for(int y=CHUNK_SIZE-1;y>=0;--y){
 		bool found = false;
 		memset(plane,0,sizeof(plane));
@@ -377,13 +367,13 @@ static void chunkGenMesh(chunk *c) {
 				const int cw = ((plane[z][x] >> 16) & 0xFF);
 				const int cd = ((plane[z][x] >>  8) & 0xFF);
 				const blockId b = plane[z][x] & 0xFF;
-				chunkAddBottom(c,b,x,y,z,cw,ch,cd);
+				chunkAddBottom(b,x,y,z,cw,ch,cd);
 			}
 			}
 		}
 	}
 
-	c->sideEnd[sideLeft] = c->sideEnd[sideBottom];
+	blockMeshSideEnd[sideLeft] = blockMeshSideEnd[sideBottom];
 	for(int x=CHUNK_SIZE-1;x>=0;--x){
 		bool found = false;
 		memset(plane,0,sizeof(plane));
@@ -406,13 +396,13 @@ static void chunkGenMesh(chunk *c) {
 				const int ch = ((plane[y][z] >>  8) & 0xFF);
 				const int cd = ((plane[y][z] >> 16) & 0xFF);
 				const blockId b = plane[y][z] & 0xFF;
-				chunkAddLeft(c,b,x,y,z,cw,ch,cd);
+				chunkAddLeft(b,x,y,z,cw,ch,cd);
 			}
 			}
 		}
 	}
 
-	c->sideEnd[sideRight] = c->sideEnd[sideLeft];
+	blockMeshSideEnd[sideRight] = blockMeshSideEnd[sideLeft];
 	for(int x=CHUNK_SIZE-1;x>=0;--x){
 		bool found = false;
 		memset(plane,0,sizeof(plane));
@@ -435,7 +425,7 @@ static void chunkGenMesh(chunk *c) {
 				const int ch = ((plane[y][z] >>  8) & 0xFF);
 				const int cd = ((plane[y][z] >> 16) & 0xFF);
 				const blockId b = plane[y][z] & 0xFF;
-				chunkAddRight(c,b,x,y,z,cw,ch,cd);
+				chunkAddRight(b,x,y,z,cw,ch,cd);
 			}
 			}
 		}
@@ -475,11 +465,13 @@ void chunkSetB(chunk *c,u16 x,u16 y,u16 z,blockId block){
 	if((z&EDGE) == EDGE){worldSetChunkUpdated(x  ,y  ,z+1);}
 }
 
-void chunkDraw(chunk *c, float d, sideMask mask, const vec sideTints[6]){
+static void chunkDraw(chunk *c, float d, sideMask mask){
 	if(c == NULL){return;}
 	if(c->flags & CHUNK_FLAG_DIRTY){ chunkGenMesh(c); }
-	if(!c->vao){ return; }
-	if(c->sideEnd[sideMAX-1] <= 0){return;}
+
+	// Since chunk mesh generation & upload is rate limited, we might not have a vertbuf yet.
+	// Trying to draw with an empty vertbuf would dereference null, avoid that.
+	if(c->vertbuf == NULL){return;}
 
 	float fIn = 1.f;
 	if(c->fadeIn > 0){
@@ -491,24 +483,15 @@ void chunkDraw(chunk *c, float d, sideMask mask, const vec sideTints[6]){
 	}else{
 		shaderAlpha(sBlockMesh,1.f * fIn);
 	}
-	shaderTransform(sBlockMesh,c->x-subBlockViewOffset.x,c->y-subBlockViewOffset.y,c->z-subBlockViewOffset.z);
 
-	glBindVertexArray(c->vao);
+	chunkvertbufDrawOne(c,mask);
+}
 
-	for(side sideIndex = 0; sideIndex < sideMAX; sideIndex++){
-		if(mask & 1){
-			const uint cFirst = sideIndex == 0 ? 0 : c->sideEnd[sideIndex-1];
-			const uint cCount = c->sideEnd[sideIndex] - cFirst;
-			if(cCount){
-				shaderSideTint(sBlockMesh,sideTints[sideIndex]);
-				glDrawArrays(GL_TRIANGLES,cFirst*6,cCount*6);
-				drawCallCount++;
-				vboTrisCount  += cCount * 2;
-			}
-		}
-		mask = mask >> 1;
+void chunkDrawQueue(queueEntry *queue, int queueLen, const vec sideTints[sideMAX]){
+	shaderSideTints(sBlockMesh,sideTints);
+	for(int i=0;i<queueLen;i++){
+		chunkDraw(queue[i].chnk,queue[i].distance,queue[i].mask);
 	}
-	drawCallCount++;
 }
 
 void chunkRecvUpdate(const packet *p){

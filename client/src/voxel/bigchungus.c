@@ -148,6 +148,7 @@ bool worldSetB(int x,int y,int z,blockId block){
 }
 
 void worldDraw(const character *cam){
+	gfxGroupStart("World geometry");
 	static queueEntry drawQueue[8192*4];
 	static queueEntry loadQueue[1<<9];
 	int drawQueueLen=0,loadQueueLen=0;
@@ -179,10 +180,6 @@ void worldDraw(const character *cam){
 		(vec){{{shadeLeft,  shadeLeft,  shadeLeft}}},
 		(vec){{{shadeRight, shadeRight, shadeRight}}},
 	};
-
-	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
-	glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
-	glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
 
 	const int camCX  = (int)cam->pos.x >> 8;
 	const int camCY  = (int)cam->pos.y >> 8;
@@ -236,10 +233,9 @@ void worldDraw(const character *cam){
 	}
 
 	quicksortQueue(drawQueue,0,drawQueueLen-1);
-	for(int i=0;i<drawQueueLen;i++){
-		chunkDraw(drawQueue[i].chnk,drawQueue[i].distance,drawQueue[i].mask, sideTints);
-	}
+	chunkDrawQueue(drawQueue,drawQueueLen,sideTints);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+	gfxGroupEnd();
 }
 
 void worldBox(int x,int y,int z, int w,int h,int d,blockId block){
