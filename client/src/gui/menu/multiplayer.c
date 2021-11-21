@@ -130,7 +130,7 @@ void initMultiplayerMenu(){
 	multiplayerMenu->flags |= WIDGET_HIDDEN;
 
 	serverList = widgetNewCP(wSpace,multiplayerMenu,0,0,288,32);
-	widgetNewCP(wHR,multiplayerMenu,16,0,256,32);
+	widgetNewCP(wHorizontalRuler,multiplayerMenu,16,0,256,32);
 	buttonNewServer = widgetNewCPLH(wButton,multiplayerMenu,16,0,256,32,"New Server","click",handlerNewServer);
 	widgetNewCPLH(wButton,multiplayerMenu,16,0,256,32,"Back to Menu","click",handlerMPBackToMenu);
 	widgetLayVert(multiplayerMenu,16);

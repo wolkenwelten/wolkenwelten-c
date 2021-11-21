@@ -21,7 +21,7 @@ typedef enum {
 	wSpace,
 	wPanel,
 	wBackground,
-	wHR,
+	wHorizontalRuler,
 	wLabel,
 	wTextInput,
 	wButton,

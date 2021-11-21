@@ -87,10 +87,10 @@ void initMainMenu(){
 	widgetNewCP  (wSpace ,mainMenu,16,0,256,0);
 	buttonSP = widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
 	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Multiplayer","click",handlerMultiplayer);
-	widgetNewCP  (wHR ,mainMenu,16,0,256,32);
+	widgetNewCP  (wHorizontalRuler ,mainMenu,16,0,256,32);
 	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Options","click",handlerOptions);
 	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Attribution","click",handlerAttribution);
-	widgetNewCP  (wHR ,mainMenu,16,0,256,32);
+	widgetNewCP  (wHorizontalRuler ,mainMenu,16,0,256,32);
 	buttonQuit         = widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Quit","click",handlerQuit);
 	buttonExitToMenu   = widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Exit to Menu","click",handlerExitToMenu);
 	buttonReturnToGame = widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Return to Game","click",handlerReturnToGame);

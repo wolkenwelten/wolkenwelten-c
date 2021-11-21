@@ -89,7 +89,7 @@ void initOptionsMenu(){
 	optionsMouseSensitivity->vali = (optionMouseSensitivy-0.01f) * 4096.f;
 	widgetBind(optionsMouseSensitivity,"change",handlerMouseSensitivityChanged);
 
-	widgetNewCP  (wHR ,optionsMenu,16,0,256,32);
+	widgetNewCP  (wHorizontalRuler ,optionsMenu,16,0,256,32);
 	widgetNewCPLH(wButton,optionsMenu,16,0,256,32,"Save","click",handlerOptionsSave);
 	widgetNewCPLH(wButton,optionsMenu,16,0,256,32,"Cancel","click",handlerOptionsCancel);
 	widgetLayVert(optionsMenu,16);

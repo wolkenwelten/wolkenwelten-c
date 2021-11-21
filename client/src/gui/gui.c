@@ -48,7 +48,7 @@
 #include "../gui/repl.h"
 #include "../gui/overlay.h"
 #include "../gui/textInput.h"
-#include "../gui/widgetDrawing.h"
+#include "../gui/widgets/widgets.h"
 #include "../misc/options.h"
 #include "../network/chat.h"
 #include "../network/client.h"

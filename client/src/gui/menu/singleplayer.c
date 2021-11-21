@@ -146,7 +146,7 @@ void initSingleplayerMenu(){
 	singleplayerMenu->flags |= WIDGET_HIDDEN;
 
 	saveList = widgetNewCP(wSpace,singleplayerMenu,0,0,288,32);
-	widgetNewCP(wHR,singleplayerMenu,16,0,256,32);
+	widgetNewCP(wHorizontalRuler, singleplayerMenu,16,0,256,32);
 	buttonNewGame = widgetNewCPLH(wButton,singleplayerMenu,16,0,256,32,"New Game","click",handlerNewGame);
 	widgetNewCPLH(wButton,singleplayerMenu,16,0,256,32,"Back to Menu","click",handlerSPBackToMenu);
 	widgetLayVert(singleplayerMenu,16);

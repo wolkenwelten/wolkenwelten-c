@@ -17,10 +17,10 @@
 
 #include "widget.h"
 
+
 #include "../gui/menu.h"
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
-#include "../gui/widgetDrawing.h"
 #include "../misc/lisp.h"
 #include "../sdl/sdl.h"
 #include "../gfx/gfx.h"
