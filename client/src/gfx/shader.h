@@ -16,7 +16,7 @@
 
 void    shaderInit();
 void    shaderFree();
-shader *shaderNew        (const char *vss,const char *fss,uint attrMask);
+shader *shaderNew        (const char *name,const char *vss,const char *fss,uint attrMask);
 void    shaderBind       (shader *s);
 void    shaderMatrix     (shader *s, float mvp[16]);
 void    shaderAlpha      (shader *s, float alpha);

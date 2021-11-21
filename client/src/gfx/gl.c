@@ -9,6 +9,8 @@ bool glIsMultiDrawAvailable;
 bool glIsBaseInstanceAvailable;
 bool glIsMultiDrawIndirectAvailable;
 
+bool glIsDebugAvailable;
+
 bool glHasExtension(const char *name){
 	GLint numExt;
 	glGetIntegerv(GL_NUM_EXTENSIONS, &numExt);
@@ -29,6 +31,8 @@ bool glInitialize() {
 
 	glIsBaseInstanceAvailable = glHasExtension("GL_ARB_base_instance");
 	glIsMultiDrawIndirectAvailable = glHasExtension("GL_ARB_multi_draw_indirect");
+
+	glIsDebugAvailable = glHasExtension("GL_KHR_debug");
 
 	return true;
 }

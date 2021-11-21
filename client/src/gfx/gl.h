@@ -22,4 +22,6 @@ extern bool glIsMultiDrawAvailable;
 extern bool glIsBaseInstanceAvailable;
 extern bool glIsMultiDrawIndirectAvailable;
 
+extern bool glIsDebugAvailable;
+
 bool glInitialize();
