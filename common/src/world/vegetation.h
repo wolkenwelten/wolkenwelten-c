@@ -1,7 +1,7 @@
 #pragma once
 #include "../common.h"
 
-void vegSurroundWithLeafes (int x,int y,int z, u8 leafB);
+void vegSurroundWithLeafes (int x,int y,int z, blockId leafB);
 void vegRoots              (int x,int y,int z);
 void vegBigRoots           (int x,int y,int z);
 

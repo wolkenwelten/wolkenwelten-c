@@ -105,14 +105,14 @@ void fxBeamBlaster(const vec pa,const vec pb, float beamSize, float damageMultip
 	}
 }
 
-static void fxBlockBreakMining(const vec pos, u8 b){
+static void fxBlockBreakMining(const vec pos, blockId b){
 	sfxPlayPos(sfxTock,1.f,pos);
 	for(int i=0;i<1024;i++){
 		const vec p = vecAdd(pos,vecRngAbs());
 		newParticleS(p.x,p.y,p.z,blockTypeGetParticleColor(b),.7f,96);
 	}
 }
-static void fxBlockBreakFire(const vec pos, u8 b){
+static void fxBlockBreakFire(const vec pos, blockId b){
 	sfxPlayPos(sfxTock,0.2f,pos);
 	for(int i=0;i<128;i++){
 		const vec p = vecAdd(pos,vecRngAbs());
@@ -129,7 +129,7 @@ static void fxBlockBreakFire(const vec pos, u8 b){
 		newSparticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.001f+(rngValf()*0.001f),0),vecMulS(vecRng(),0.0001f)), 0.01f, 0.2f,c,768);
 	}
 }
-static void fxBlockBreakVegetation(const vec pos, u8 b){
+static void fxBlockBreakVegetation(const vec pos, blockId b){
 	sfxPlayPos(sfxTock,0.2f,pos);
 	for(int i=0;i<256;i++){
 		const vec p = vecAdd(pos,vecRngAbs());
@@ -137,7 +137,7 @@ static void fxBlockBreakVegetation(const vec pos, u8 b){
 	}
 }
 
-void fxBlockBreak(const vec pos, u8 b, u8 cause){
+void fxBlockBreak(const vec pos, blockId b, u8 cause){
 	switch(cause){
 	case 0: return fxBlockBreakMining(pos,b);
 	case 1: return fxBlockBreakFire(pos,b);

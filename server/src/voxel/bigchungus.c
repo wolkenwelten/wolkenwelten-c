@@ -96,7 +96,7 @@ chunk *worldTryChunk(int x, int y, int z){
 	return bigchungusTryChunk(&world,x,y,z);
 }
 
-u8 bigchungusGetB(bigchungus *c, int x,int y,int z) {
+blockId bigchungusGetB(bigchungus *c, int x,int y,int z) {
 	chungus *chng;
 	if(!inWorld(x,y,z)){return 0;}
 	chng = bigchungusGetChungus(c,x>>8,y>>8,z>>8);
@@ -104,7 +104,7 @@ u8 bigchungusGetB(bigchungus *c, int x,int y,int z) {
 	return chungusGetB(chng,x&0xFF,y&0xFF,z&0xFF);
 }
 
-u8 bigchungusTryB(bigchungus *c, int x,int y,int z) {
+blockId bigchungusTryB(bigchungus *c, int x,int y,int z) {
 	chungus *chng;
 	if(!inWorld(x,y,z)){return 0;}
 	chng = bigchungusTryChungus(c,x>>8,y>>8,z>>8);
@@ -139,7 +139,7 @@ bool bigchungusGetHighestP(bigchungus *c, int x,int *retY, int z) {
 	return false;
 }
 
-bool bigchungusSetB(bigchungus *c, int x,int y,int z,u8 block){
+bool bigchungusSetB(bigchungus *c, int x,int y,int z,blockId block){
 	chungus *chng;
 	int cx = (x / CHUNGUS_SIZE) & 0xFF;
 	int cy = (y / CHUNGUS_SIZE) & 0x7F;
@@ -154,7 +154,7 @@ bool bigchungusSetB(bigchungus *c, int x,int y,int z,u8 block){
 	return false;
 }
 
-void bigchungusBox(bigchungus *c, int x,int y,int z, int w,int h,int d,u8 block){
+void bigchungusBox(bigchungus *c, int x,int y,int z, int w,int h,int d,blockId block){
 	for(int cx=0;cx<w;cx++){
 	for(int cy=0;cy<h;cy++){
 	for(int cz=0;cz<d;cz++){
@@ -164,7 +164,7 @@ void bigchungusBox(bigchungus *c, int x,int y,int z, int w,int h,int d,u8 block)
 	}
 }
 
-void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, u8 block){
+void bigchungusBoxSphere(bigchungus *c, int x,int y,int z, int r, blockId block){
 	const int md = r*r;
 	for(int cx=-r;cx<=r;cx++){
 	for(int cy=-r;cy<=r;cy++){
@@ -191,7 +191,7 @@ void bigchungusBoxMine(bigchungus *c, int x,int y,int z, int w,int h,int d){
 	for(int cx=0;cx<w;cx++){
 	for(int cy=0;cy<h;cy++){
 	for(int cz=0;cz<d;cz++){
-		u8 b = bigchungusGetB(c,cx+x,cy+y,cz+z);
+		blockId b = bigchungusGetB(c,cx+x,cy+y,cz+z);
 		if(b==0){continue;}
 		bigchungusSetB(c,cx+x,cy+y,cz+z,0);
 		blockMiningDropItemsPos(cx+x,cy+y,cz+z,b);
@@ -205,7 +205,7 @@ void bigchungusBoxMineSphere(bigchungus *c, int x,int y,int z, int r){
 	for(int cx=-r;cx<=r;cx++){
 	for(int cy=-r;cy<=r;cy++){
 	for(int cz=-r;cz<=r;cz++){
-		u8 b = bigchungusGetB(c,cx+x,cy+y,cz+z);
+		blockId b = bigchungusGetB(c,cx+x,cy+y,cz+z);
 		if(b==0){continue;}
 		const int d = (cx*cx)+(cy*cy)+(cz*cz);
 		if(d >= md){continue;}
@@ -367,16 +367,16 @@ void bigchungusDirtyChunk(bigchungus *c, int x, int y, int z, int client){
 	chungusUpdateClient(chng,client);
 }
 
-void worldBox(int x, int y,int z, int w,int h,int d,u8 block){
+void worldBox(int x, int y,int z, int w,int h,int d,blockId block){
 	bigchungusBox(&world,x,y,z,w,h,d,block);
 }
-void worldBoxSphere(int x, int y,int z, int r,u8 block){
+void worldBoxSphere(int x, int y,int z, int r,blockId block){
 	bigchungusBoxSphere(&world,x,y,z,r,block);
 }
-u8 worldGetB(int x, int y, int z){
+blockId worldGetB(int x, int y, int z){
 	return bigchungusGetB(&world,x,y,z);
 }
-u8 worldTryB(int x, int y, int z){
+blockId worldTryB(int x, int y, int z){
 	return bigchungusTryB(&world,x,y,z);
 }
 chungus* worldGetChungus(int x, int y, int z){
@@ -385,7 +385,7 @@ chungus* worldGetChungus(int x, int y, int z){
 chunk* worldGetChunk(int x, int y, int z){
 	return bigchungusGetChunk(&world,x,y,z);
 }
-bool worldSetB(int x, int y, int z, u8 block){
+bool worldSetB(int x, int y, int z, blockId block){
 	return bigchungusSetB(&world,x,y,z,block);
 }
 void worldDirtyChunk(int x, int y, int z, int c){

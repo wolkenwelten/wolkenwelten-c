@@ -159,13 +159,13 @@ chunk *chungusGetChunkOrNew(chungus *c, u16 x, u16 y, u16 z){
 	return chnk;
 }
 
-u8 chungusGetB(chungus *c, u16 x,u16 y,u16 z){
+blockId chungusGetB(chungus *c, u16 x,u16 y,u16 z){
 	chunk *chnk = c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 	if(chnk == NULL){return 0;}
 	return chnk->data[x&0xF][y&0xF][z&0xF];
 }
 
-void chungusSetB(chungus *c, u16 x,u16 y,u16 z,u8 block){
+void chungusSetB(chungus *c, u16 x,u16 y,u16 z,blockId block){
 	chunk *chnk;
 	u16 cx = (x >> 4) & 0xF;
 	u16 cy = (y >> 4) & 0xF;
@@ -177,7 +177,7 @@ void chungusSetB(chungus *c, u16 x,u16 y,u16 z,u8 block){
 	chunkSetB(chnk,x,y,z,block);
 }
 
-void chungusBoxF(chungus *c, u16 x,u16 y,u16 z, u16 w,u16 h,u16 d,u8 block){
+void chungusBoxF(chungus *c, u16 x,u16 y,u16 z, u16 w,u16 h,u16 d,blockId block){
 	const u16 gx = (x+w)>>4;
 	const u16 gy = (y+h)>>4;
 	const u16 gz = (z+d)>>4;
@@ -214,7 +214,7 @@ void chungusBoxF(chungus *c, u16 x,u16 y,u16 z, u16 w,u16 h,u16 d,u8 block){
 	}
 }
 
-void chungusBox(chungus *c, u16 x,u16 y,u16 z, u16 w,u16 h,u16 d,u8 block){
+void chungusBox(chungus *c, u16 x,u16 y,u16 z, u16 w,u16 h,u16 d,blockId block){
 	for(u16 cx=0;cx<w;cx++){
 	for(u16 cy=0;cy<h;cy++){
 	for(u16 cz=0;cz<d;cz++){

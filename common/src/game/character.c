@@ -371,7 +371,7 @@ u32 characterCollision(const vec c){
 }
 
 u8 characterCollisionBlock(const vec c, vec *retPos){
-	u8 b = 0;
+	blockId b = 0;
 	const float wd = 0.4f;
 	const float WD = 0.5f;
 

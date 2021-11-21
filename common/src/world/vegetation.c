@@ -21,7 +21,7 @@
 #include "../game/item.h"
 #include "../network/messages.h"
 
-static void vegSetB(u16 x, u16 y, u16 z, u8 b){
+static void vegSetB(u16 x, u16 y, u16 z, blockId b){
 	if(!isClient){msgMineBlock(x,y,z,b,2);}
 	worldSetB(x,y,z,b);
 }
@@ -38,7 +38,7 @@ void vegShrub(int x,int y,int z){
 void vegRoots(int x,int y,int z){
 	const int size = rngValMM(4,12);
 	for(int cy = 0;cy > -size;--cy){
-		u8 b = worldGetB(x,y+cy,z);
+		blockId b = worldGetB(x,y+cy,z);
 
 		switch(b){
 		case 0:
@@ -161,7 +161,7 @@ void vegBigSpruce(int x,int y,int z){
 	vegBigRoots(x,y-5,z);
 }
 
-void vegSurroundWithLeafes(int x, int y, int z, u8 leafB){
+void vegSurroundWithLeafes(int x, int y, int z, blockId leafB){
 	for(int cx=-1;cx<=1;cx++){
 	for(int cy=0;cy<=1;cy++){
 	for(int cz=-1;cz<=1;cz++){

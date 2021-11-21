@@ -132,7 +132,7 @@ typedef struct {
 	int  leafBlocks;
 
 	int  treeType;
-	u8   grassBlock;
+	blockId grassBlock;
 	bool hasSpecial;
 } wgChances;
 
@@ -462,7 +462,7 @@ static void worldgenRDFirstPass(worldgen *wgen, wgChances *w){
 					cy = cy & (~0xF);
 					continue;
 				}
-				u8 b = chnk->data[x][cy&0xF][z];
+				blockId b = chnk->data[x][cy&0xF][z];
 				switch(b){
 				default:
 					w->airBlocks = 0;
@@ -533,7 +533,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 					cy = cy & (~0xF);
 					continue;
 				}
-				u8 b = chnk->data[x][cy&0xF][z];
+				blockId b = chnk->data[x][cy&0xF][z];
 				switch(b){
 				default:
 					w.leafBlocks = w.airBlocks = 0;

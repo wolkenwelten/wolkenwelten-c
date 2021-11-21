@@ -102,12 +102,12 @@ void chunkFree(chunk *c){
 	chunkFirstFree = c;
 }
 
-void chunkSetB(chunk *c,int x,int y,int z,u8 block){
+void chunkSetB(chunk *c,int x,int y,int z,blockId block){
 	c->data[x&0xF][y&0xF][z&0xF] = block;
 	c->clientsUpdated = 0;
 }
 
-void chunkFill(chunk *c, u8 b){
+void chunkFill(chunk *c, blockId b){
 	memset(c->data,b,CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE);
 	c->clientsUpdated = 0;
 }
@@ -131,7 +131,7 @@ void chunkUnsetUpdated(chunk *c, uint p){
 	c->clientsUpdated &= ~(1 << p);
 }
 
-void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block){
+void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,blockId block){
 	for(int cx = x; cx < gx; cx++){
 	for(int cy = y; cy < gy; cy++){
 	for(int cz = z; cz < gz; cz++){

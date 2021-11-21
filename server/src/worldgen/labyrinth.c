@@ -66,7 +66,7 @@ static void labMapStep(u8 labMap[16][16][16]){
 	}
 }
 
-static void labPavillon(const worldgen *wgen,int posx, int posy, int posz, u8 roofBlock, u8 topRoofBlock){
+static void labPavillon(const worldgen *wgen,int posx, int posy, int posz, blockId roofBlock, blockId topRoofBlock){
 	chungus *clay = wgen->clay;
 	const int bx = (posx<<4)+3;
 	const int by = (posy<<4)+6;

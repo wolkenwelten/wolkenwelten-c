@@ -153,8 +153,8 @@ static float animalBlockRepulsion(animal *c, float *vel){
 }
 
 void animalCheckForHillOrCliff(animal *e){
-	const vec cFDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->vel,vecNew(1,0,1))),0.5f));
-	const u8 cb     = worldGetB(cFDir.x, cFDir.y, cFDir.z);
+	const vec  cFDir = vecAdd(e->pos,vecMulS(vecNorm(vecMul(e->vel,vecNew(1,0,1))),0.5f));
+	const blockId cb = worldGetB(cFDir.x, cFDir.y, cFDir.z);
 	if((cb != 0)){
 		if(!(e->flags & ANIMAL_FALLING)){
 			e->vel.y = 0.04f;
@@ -428,7 +428,7 @@ float animalClosestAnimal(const animal *e, animal **cAnim, int typeFilter, uint 
 }
 
 void animalCheckSuffocation(animal *e){
-	const u8 cb = worldGetB(e->pos.x,e->pos.y,e->pos.z);
+	const blockId cb = worldGetB(e->pos.x,e->pos.y,e->pos.z);
 	if(cb != 0){
 		if(rngValM(128) == 0){e->health--;}
 		const blockCategory cc = blockTypeGetCat(cb);

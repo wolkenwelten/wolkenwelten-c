@@ -36,7 +36,7 @@ typedef struct {
 	u16 x,y,z;
 	int damage;
 	int lastDamage;
-	u8  b;
+	blockId b;
 } blockMining;
 
 blockMining blockMiningList[4096];

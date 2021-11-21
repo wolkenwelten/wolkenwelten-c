@@ -20,19 +20,20 @@
 #include "island.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/common.h"
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/noise.h"
 
 #include <math.h>
 
 static void genStalagtit(const worldgen *wgen, int x, int y, int z){
-	u8 b = 3;
+	blockId b = I_Stone;
 	switch(rngValM(78)){
 	case 0:
-		b = 18;
+		b = I_Crystal;
 		break;
 	case 1:
-		b = 4;
+		b = I_Coal;
 		break;
 	}
 	for(int sx = -3; sx < 4; sx++){

@@ -58,7 +58,7 @@ float blockMiningGetProgress(blockMining *bm){
 	return ((float)bm->damage) / ((float)blockTypeGetHealth(bm->b));
 }
 
-void blockMiningDropItemsPos(int x, int y, int z, u8 b){
+void blockMiningDropItemsPos(int x, int y, int z, blockId b){
 	u16 ID = b;
 	if(b == 0)          {return;}
 	if(b == I_Roots)    {return;}  // Roots
@@ -109,7 +109,7 @@ int blockMiningMinePos(int dmg, int x, int y, int z){
 }
 
 int blockMiningMinePosItem(item *itm, int x, int y, int z){
-	const u8 b = worldGetB(x,y,z);
+	const blockId b = worldGetB(x,y,z);
 	if(b == 0){return 1;}
 	int dmg = 1;
 	if(itm != NULL){
@@ -119,7 +119,7 @@ int blockMiningMinePosItem(item *itm, int x, int y, int z){
 }
 
 void blockMiningMineBlock(int x, int y, int z, u8 cause){
-	const u8 b = worldGetB(x,y,z);
+	const blockId b = worldGetB(x,y,z);
 	if(b == 0){return;}
 	msgMineBlock(x,y,z,b,0);
 	if((b == I_Grass) || (b == I_Dry_Grass) || (b == I_Roots)){
@@ -146,7 +146,7 @@ void blockMiningMineBlock(int x, int y, int z, u8 cause){
 	}
 }
 
-void blockMiningBurnBlock(int x, int y, int z, u8 b){
+void blockMiningBurnBlock(int x, int y, int z, blockId b){
 	msgMineBlock(x,y,z,b,1);
 	if((b == I_Grass) || (b == I_Dry_Grass) || (b == I_Roots)){
 		worldSetB(x,y,z,I_Dirt);

@@ -139,7 +139,7 @@ chunk *chungusGetChunk(chungus *c, int x,int y,int z){
 	return c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 }
 
-u8 chungusGetB(chungus *c, int x,int y,int z){
+blockId chungusGetB(chungus *c, int x,int y,int z){
 	c->freeTimer = freeTime;
 	chunk *chnk = c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 	if(chnk == NULL)        { return 0; }
@@ -156,7 +156,7 @@ int chungusGetHighestP(chungus *c, int x, int *retY, int z){
 		chunk *chnk = c->chunks[cx][cy][cz];
 		if(chnk == NULL){continue;}
 		for(int y=CHUNK_SIZE-1;y>=0;y--){
-			u8 b = chnk->data[x&0xF][y&0xF][z&0xF];
+			blockId b = chnk->data[x&0xF][y&0xF][z&0xF];
 			if(b != 0){
 				*retY = (cy*CHUNK_SIZE)+y;
 				return 1;
@@ -166,7 +166,7 @@ int chungusGetHighestP(chungus *c, int x, int *retY, int z){
 	return 0;
 }
 
-void chungusSetB(chungus *c, int x,int y,int z,u8 block){
+void chungusSetB(chungus *c, int x,int y,int z,blockId block){
 	if((x&(~0xFF)) || (y&(~0xFF)) || (z&(~0xFF))){return;}
 	c->freeTimer = freeTime;
 	int cx = x >> 4;
@@ -185,7 +185,7 @@ void chungusSetB(chungus *c, int x,int y,int z,u8 block){
 	c->clientsUpdated = 0;
 }
 
-void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,u8 block){
+void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,blockId block){
 	c->freeTimer = freeTime;
 	int gx = (x+w)>>4;
 	int gy = (y+h)>>4;
@@ -230,7 +230,7 @@ void chungusBoxFWG(chungus *c,int x,int y,int z,int w,int h,int d){
 	const int gx = (x+w)>>4;
 	const int gy = (y+h)>>4;
 	const int gz = (z+d)>>4;
-	u8 block = I_Stone;
+	blockId block = I_Stone;
 
 	if( (x   | y   | z  ) &(~0xFF)){ return; }
 	if(((x+w)|(y+h)|(z+d))&(~0xFF)){ return; }
@@ -263,7 +263,7 @@ void chungusBoxFWG(chungus *c,int x,int y,int z,int w,int h,int d){
 	}
 }
 
-void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
+void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,blockId block){
 	c->freeTimer = freeTime;
 	if(w < 0){ chungusBox(c,x+w,y  ,z  ,-w, h, d,block);}
 	if(h < 0){ chungusBox(c,x  ,y+h,z  , w,-h, d,block);}
@@ -278,7 +278,7 @@ void chungusBox(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
 	c->clientsUpdated = 0;
 }
 
-void chungusBoxIfEmpty(chungus *c, int x,int y,int z, int w,int h,int d,u8 block){
+void chungusBoxIfEmpty(chungus *c, int x,int y,int z, int w,int h,int d,blockId block){
 	const int cw = x+w;
 	const int ch = y+h;
 	const int cd = z+d;
@@ -293,7 +293,7 @@ void chungusBoxIfEmpty(chungus *c, int x,int y,int z, int w,int h,int d,u8 block
 	}
 }
 
-void chungusBoxSphere(chungus *c, int x, int y, int z, int r, u8 block){
+void chungusBoxSphere(chungus *c, int x, int y, int z, int r, blockId block){
 	const int md = r*r;
 	const int sx = MAX(0,-r + x);
 	const int ex = MIN(CHUNGUS_SIZE-1,r + x);
@@ -316,7 +316,7 @@ void chungusBoxSphere(chungus *c, int x, int y, int z, int r, u8 block){
 	}
 }
 
-void chungusFill(chungus *c, int x,int y,int z,u8 b){
+void chungusFill(chungus *c, int x,int y,int z,blockId b){
 	int cx = (x / CHUNK_SIZE) & 0xF;
 	int cy = (y / CHUNK_SIZE) & 0xF;
 	int cz = (z / CHUNK_SIZE) & 0xF;
@@ -435,9 +435,9 @@ uint chungusFreeOldChungi(u64 threshold){
 		if(chng->nextFree != NULL)      {continue;}
 		if(chng->clientsSubscribed != 0){continue;}
 		if(curTicks < chng->freeTimer + threshold){continue;}
-		const u8 x = chng->x;
-		const u8 y = chng->y;
-		const u8 z = chng->z;
+		const blockId x = chng->x;
+		const blockId y = chng->y;
+		const blockId z = chng->z;
 		if(y >= 128){
 			fprintf(stderr,"Y >= 128, something went wrong!!! [%u,%u,%u]\n",x,y,z);
 			continue;
@@ -467,9 +467,9 @@ void chungusUnsubFarChungi(){
 	for(uint i=0;i<chungusCount;i++){
 		chungus *chng = &chungusList[i];
 		if(chng->nextFree != NULL){continue;}
-		const u8 x = chng->x;
-		const u8 y = chng->y;
-		const u8 z = chng->z;
+		const blockId x = chng->x;
+		const blockId y = chng->y;
+		const blockId z = chng->z;
 		if(y >= 128){
 			fprintf(stderr,"Y >= 128, something went wrong!!! [%u,%u,%u]\n",x,y,z);
 			continue;

@@ -11,7 +11,7 @@ struct chunk{
 	u32   clientsUpdated;
 	void *nextFree;
 	beingList bl;
-	u8    data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+	blockId   data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 };
 
 extern uint chunkCount;
@@ -20,10 +20,10 @@ extern chunk *chunkList;
 void   chunkInit        ();
 chunk *chunkNew         (u16 x,u16 y,u16 z);
 void   chunkFree        (chunk *c);
-void   chunkFill        (chunk *c, u8 b);
+void   chunkFill        (chunk *c, blockId b);
 void   chunkGetB        (chunk *c, int x, int y, int z);
-void   chunkSetB        (chunk *c, int x, int y, int z, u8 b);
-void   chunkBox         (chunk *c, int x,int y,int z,int gx,int gy,int gz,u8 block);
+void   chunkSetB        (chunk *c, int x, int y, int z, blockId b);
+void   chunkBox         (chunk *c, int x,int y,int z,int gx,int gy,int gz,blockId block);
 int    chunkIsUpdated   (chunk *c, uint p);
 void   chunkSetUpdated  (chunk *c, uint p);
 void   chunkUnsetUpdated(chunk *c, uint p);

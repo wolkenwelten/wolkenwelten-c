@@ -34,4 +34,4 @@ worldgen *worldgenNew(chungus *clay);
 void worldgenFree(worldgen *wgen);
 void worldgenGenerate(worldgen *wgen);
 
-void worldgenSphere(int x, int y, int z, int r, u8 b);
+void worldgenSphere(int x, int y, int z, int r, blockId b);

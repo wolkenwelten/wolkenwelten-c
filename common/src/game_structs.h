@@ -41,6 +41,7 @@ typedef struct {
 	char         *name;
 	float         weight;
 } blockType;
+typedef u8 blockId;
 
 typedef struct {
 	u16 ID;

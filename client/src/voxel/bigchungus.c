@@ -108,14 +108,14 @@ chunk *worldGetChunk(int x, int y, int z){
 	return chnk;
 }
 
-u8 worldTryB(int x,int y,int z) {
+blockId worldTryB(int x,int y,int z) {
 	if((x|y|z)&(~0xFFFF)){return 0;}
 	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){ return 0; }
 	return chungusGetB(chng,x,y,z);
 }
 
-u8 worldGetB(int x,int y,int z) {
+blockId worldGetB(int x,int y,int z) {
 	if((x|y|z)&(~0xFFFF)){return 0;}
 	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){ return 0; }
@@ -124,7 +124,7 @@ u8 worldGetB(int x,int y,int z) {
 	return chnk->data[x&0xF][y&0xF][z&0xF];
 }
 
-bool worldSetB(int x,int y,int z,u8 block){
+bool worldSetB(int x,int y,int z,blockId block){
 	if((x|y|z)&(~0xFFFF)){return NULL;}
 	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){return false;}
@@ -227,7 +227,7 @@ void worldDraw(const character *cam){
 	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 }
 
-void worldBox(int x,int y,int z, int w,int h,int d,u8 block){
+void worldBox(int x,int y,int z, int w,int h,int d,blockId block){
 	for(int cx=0;cx<w;cx++){
 	for(int cy=0;cy<h;cy++){
 	for(int cz=0;cz<d;cz++){
@@ -254,7 +254,7 @@ void worldFreeFarChungi(const character *cam){
 	}
 }
 
-void worldBoxSphere(int x,int y,int z, int r, u8 block){
+void worldBoxSphere(int x,int y,int z, int r, blockId block){
 	const int md = r*r;
 	for(int cx=-r;cx<=r;cx++){
 	for(int cy=-r;cy<=r;cy++){
@@ -297,7 +297,7 @@ int checkCollision(int x, int y, int z){
 }
 
 void worldMine(int x, int y, int z){
-	const u8 b = worldGetB(x,y,z);
+	const blockId b = worldGetB(x,y,z);
 	msgMineBlock(x,y,z,b,0);
 	if((b == I_Grass) || (b == I_Dry_Grass)){
 		worldSetB(x,y,z,I_Dirt);
@@ -307,7 +307,7 @@ void worldMine(int x, int y, int z){
 }
 
 void worldBreak(int x, int y, int z){
-	const u8 b = worldGetB(x,y,z);
+	const blockId b = worldGetB(x,y,z);
 	msgMineBlock(x,y,z,b,1);
 	if((b == I_Grass) || (b == I_Dry_Grass)){
 		worldSetB(x,y,z,I_Dirt);

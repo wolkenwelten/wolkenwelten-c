@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-void wgSurroundWithLeafes (chungus *c, int x,int y,int z, u8 leafB);
+void wgSurroundWithLeafes (chungus *c, int x,int y,int z, blockId leafB);
 void wgRoots              (chungus *c, int x,int y,int z);
 void wgBigRoots           (chungus *c, int x,int y,int z);
 

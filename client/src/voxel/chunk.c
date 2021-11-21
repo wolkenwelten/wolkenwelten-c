@@ -133,8 +133,8 @@ static inline void chunkFinish(chunk *c){
 	c->flags &= ~CHUNK_FLAG_DIRTY;
 }
 
-static void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const u8 bt = blocks[b].tex[sideFront];
+static void chunkAddFront(chunk *c, blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+	const blockId bt = blocks[b].tex[sideFront];
 	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideFront]++ * 6];
 	*vt++ = (vertexTiny){x  ,y  ,z+d,0,h,bt,sideFront};
 	*vt++ = (vertexTiny){x+w,y  ,z+d,w,h,bt,sideFront};
@@ -143,9 +143,9 @@ static void chunkAddFront(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	*vt++ = (vertexTiny){x  ,y+h,z+d,0,0,bt,sideFront};
 	*vt++ = (vertexTiny){x  ,y  ,z+d,0,h,bt,sideFront};
 }
-static void chunkAddBack(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+static void chunkAddBack(chunk *c, blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)d;
-	const u8 bt = blocks[b].tex[sideBack];
+	const blockId bt = blocks[b].tex[sideBack];
 	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideBack]++ * 6];
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,sideBack};
 	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,sideBack};
@@ -154,8 +154,8 @@ static void chunkAddBack(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	*vt++ = (vertexTiny){x+w,y  ,z  ,w,h,bt,sideBack};
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,sideBack};
 }
-static void chunkAddTop(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const u8 bt = blocks[b].tex[sideTop];
+static void chunkAddTop(chunk *c, blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+	const blockId bt = blocks[b].tex[sideTop];
 	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideTop]++ * 6];
 	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,sideTop};
 	*vt++ = (vertexTiny){x  ,y+h,z+d,0,d,bt,sideTop};
@@ -164,9 +164,9 @@ static void chunkAddTop(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	*vt++ = (vertexTiny){x+w,y+h,z  ,w,0,bt,sideTop};
 	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,sideTop};
 }
-static void chunkAddBottom(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+static void chunkAddBottom(chunk *c, blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)h;
-	const u8 bt = blocks[b].tex[sideBottom];
+	const blockId bt = blocks[b].tex[sideBottom];
 	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideBottom]++ * 6];
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,0,bt,sideBottom};
 	*vt++ = (vertexTiny){x+w,y  ,z  ,w,0,bt,sideBottom};
@@ -175,9 +175,9 @@ static void chunkAddBottom(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	*vt++ = (vertexTiny){x  ,y  ,z+d,0,d,bt,sideBottom};
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,0,bt,sideBottom};
 }
-static void chunkAddLeft(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+static void chunkAddLeft(chunk *c, blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	(void)w;
-	const u8 bt = blocks[b].tex[sideLeft];
+	const blockId bt = blocks[b].tex[sideLeft];
 	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideLeft]++ * 6];
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,sideLeft};
 	*vt++ = (vertexTiny){x  ,y  ,z+d,d,h,bt,sideLeft};
@@ -186,8 +186,8 @@ static void chunkAddLeft(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	*vt++ = (vertexTiny){x  ,y+h,z  ,0,0,bt,sideLeft};
 	*vt++ = (vertexTiny){x  ,y  ,z  ,0,h,bt,sideLeft};
 }
-static void chunkAddRight(chunk *c, u8 b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	const u8 bt = blocks[b].tex[sideRight];
+static void chunkAddRight(chunk *c, blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
+	const blockId bt = blocks[b].tex[sideRight];
 	vertexTiny *vt = &blockMeshBuffer[c->sideEnd[sideRight]++ * 6];
 	*vt++ = (vertexTiny){x+w,y  ,z  ,0,h,bt,sideRight};
 	*vt++ = (vertexTiny){x+w,y+h,z  ,0,0,bt,sideRight};
@@ -212,7 +212,7 @@ static void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
 	}
 }
 
-static inline u8 chunkGetSides(u16 x,u16 y,u16 z,u8 b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2]){
+static inline u8 chunkGetSides(u16 x,u16 y,u16 z,blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2]){
 	u8 sides = 0;
 
 	if(b[x][y][z+1] == 0){ sides |= sideMaskFront; }
@@ -225,7 +225,7 @@ static inline u8 chunkGetSides(u16 x,u16 y,u16 z,u8 b[CHUNK_SIZE+2][CHUNK_SIZE+2
 	return sides;
 }
 
-static void chunkPopulateBlockData(u8 b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], chunk *c, i16 xoff, i16 yoff, i16 zoff){
+static void chunkPopulateBlockData(blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], chunk *c, i16 xoff, i16 yoff, i16 zoff){
 	if(c == NULL){return;}
 	for(int x=MAX(0,xoff); x<MIN(CHUNK_SIZE+2,xoff+CHUNK_SIZE); x++){
 	for(int y=MAX(0,yoff); y<MIN(CHUNK_SIZE+2,yoff+CHUNK_SIZE); y++){
@@ -239,10 +239,10 @@ static void chunkPopulateBlockData(u8 b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2
 static void chunkGenMesh(chunk *c) {
 	PROFILE_START();
 
-	static u8 blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
-	static u8 sideCache[CHUNK_SIZE  ][CHUNK_SIZE  ][CHUNK_SIZE  ];
-	static u32    plane[CHUNK_SIZE  ][CHUNK_SIZE  ];
 	if((chunksGeneratedThisFrame >= MIN_CHUNKS_GENERATED_PER_FRAME) && (getTicks() > frameRelaxedDeadline)){return;}
+	static blockId  blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
+	static sideMask sideCache[CHUNK_SIZE  ][CHUNK_SIZE  ][CHUNK_SIZE  ];
+	static u32          plane[CHUNK_SIZE  ][CHUNK_SIZE  ];
 	++chunksGeneratedThisFrame;
 	memset(blockData,   0,sizeof(blockData));
 	chunkPopulateBlockData(blockData,c,1,1,1);
@@ -267,7 +267,7 @@ static void chunkGenMesh(chunk *c) {
 		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const u8 b = c->data[x][y][z];
+			const blockId b = c->data[x][y][z];
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] &sideMaskFront){
 				found = true;
@@ -283,7 +283,7 @@ static void chunkGenMesh(chunk *c) {
 				if(!plane[y][x]){continue;}
 				const int cw = ((plane[y][x] >> 16) & 0xFF);
 				const int ch = ((plane[y][x] >>  8) & 0xFF);
-				const u8 b = plane[y][x] & 0xFF;
+				const blockId b = plane[y][x] & 0xFF;
 				chunkAddFront(c,b,x,y,z,cw,ch,cd);
 			}
 			}
@@ -296,7 +296,7 @@ static void chunkGenMesh(chunk *c) {
 		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const u8 b = c->data[x][y][z];
+			const blockId b = c->data[x][y][z];
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskBack){
 				found = true;
@@ -312,7 +312,7 @@ static void chunkGenMesh(chunk *c) {
 				if(!plane[y][x]){continue;}
 				const int cw = ((plane[y][x] >> 16) & 0xFF);
 				const int ch = ((plane[y][x] >>  8) & 0xFF);
-				const u8 b = plane[y][x] & 0xFF;
+				const blockId b = plane[y][x] & 0xFF;
 				chunkAddBack(c,b,x,y,z,cw,ch,cd);
 			}
 			}
@@ -325,7 +325,7 @@ static void chunkGenMesh(chunk *c) {
 		memset(plane,0,sizeof(plane));
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const u8 b = c->data[x][y][z];
+			const blockId b = c->data[x][y][z];
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskTop){
 				found = true;
@@ -341,7 +341,7 @@ static void chunkGenMesh(chunk *c) {
 				if(!plane[z][x]){continue;}
 				const int cw = ((plane[z][x] >> 16) & 0xFF);
 				const int cd = ((plane[z][x] >>  8) & 0xFF);
-				const u8 b = plane[z][x] & 0xFF;
+				const blockId b = plane[z][x] & 0xFF;
 				chunkAddTop(c,b,x,y,z,cw,ch,cd);
 			}
 			}
@@ -354,7 +354,7 @@ static void chunkGenMesh(chunk *c) {
 		memset(plane,0,sizeof(plane));
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const u8 b = c->data[x][y][z];
+			const blockId b = c->data[x][y][z];
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskBottom){
 				found = true;
@@ -370,7 +370,7 @@ static void chunkGenMesh(chunk *c) {
 				if(!plane[z][x]){continue;}
 				const int cw = ((plane[z][x] >> 16) & 0xFF);
 				const int cd = ((plane[z][x] >>  8) & 0xFF);
-				const u8 b = plane[z][x] & 0xFF;
+				const blockId b = plane[z][x] & 0xFF;
 				chunkAddBottom(c,b,x,y,z,cw,ch,cd);
 			}
 			}
@@ -383,7 +383,7 @@ static void chunkGenMesh(chunk *c) {
 		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
-			const u8 b = c->data[x][y][z];
+			const blockId b = c->data[x][y][z];
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskRight){
 				found = true;
@@ -399,7 +399,7 @@ static void chunkGenMesh(chunk *c) {
 				if(!plane[y][z]){continue;}
 				const int ch = ((plane[y][z] >>  8) & 0xFF);
 				const int cd = ((plane[y][z] >> 16) & 0xFF);
-				const u8 b = plane[y][z] & 0xFF;
+				const blockId b = plane[y][z] & 0xFF;
 				chunkAddLeft(c,b,x,y,z,cw,ch,cd);
 			}
 			}
@@ -412,7 +412,7 @@ static void chunkGenMesh(chunk *c) {
 		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
-			const u8 b = c->data[x][y][z];
+			const blockId b = c->data[x][y][z];
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskLeft){
 				found = true;
@@ -428,7 +428,7 @@ static void chunkGenMesh(chunk *c) {
 				if(!plane[y][z]){continue;}
 				const int ch = ((plane[y][z] >>  8) & 0xFF);
 				const int cd = ((plane[y][z] >> 16) & 0xFF);
-				const u8 b = plane[y][z] & 0xFF;
+				const blockId b = plane[y][z] & 0xFF;
 				chunkAddRight(c,b,x,y,z,cw,ch,cd);
 			}
 			}
@@ -441,7 +441,7 @@ static void chunkGenMesh(chunk *c) {
 
 #define EDGE (CHUNK_SIZE-1)
 
-void chunkBox(chunk *c, u16 x,u16 y,u16 z,u16 gx,u16 gy,u16 gz,u8 block){
+void chunkBox(chunk *c, u16 x,u16 y,u16 z,u16 gx,u16 gy,u16 gz,blockId block){
 	for(int cx=x;cx<gx;cx++){
 	for(int cy=y;cy<gy;cy++){
 	for(int cz=z;cz<gz;cz++){
@@ -458,7 +458,7 @@ void chunkBox(chunk *c, u16 x,u16 y,u16 z,u16 gx,u16 gy,u16 gz,u8 block){
 	if((gz&EDGE) == EDGE){worldSetChunkUpdated(x  ,y  ,z+1);}
 }
 
-void chunkSetB(chunk *c,u16 x,u16 y,u16 z,u8 block){
+void chunkSetB(chunk *c,u16 x,u16 y,u16 z,blockId block){
 	c->data[x&POS_MASK][y&POS_MASK][z&POS_MASK] = block;
 	c->flags |= CHUNK_FLAG_DIRTY;
 	if((x&EDGE) ==  0x0){worldSetChunkUpdated(x-1,y  ,z  );}

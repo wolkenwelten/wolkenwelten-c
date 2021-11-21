@@ -166,7 +166,7 @@ static inline int projectileUpdate(projectile *p){
 	if(characterHitCheck (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
 	if(animalHitCheck    (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
 	if((p->style == 6) && fireHitCheck(p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
-	const u8 b = worldGetB(p->pos.x,p->pos.y,p->pos.z);
+	const blockId b = worldGetB(p->pos.x,p->pos.y,p->pos.z);
 	if(b){return projectileBounce(p,b);}
 	if(p->target != 0){return projectileHomeIn(p);}
 	return 0;

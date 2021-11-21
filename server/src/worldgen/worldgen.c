@@ -130,7 +130,7 @@ void worldgenFindSpawn(worldgen *wgen, int x,int z,int tries){
 }
 
 void worldgenTestpattern(worldgen *wgen){
-	u8 b=1;
+	blockId b=1;
 	for(int x=0;x<CHUNK_SIZE;x+=2){
 	for(int y=0;y<CHUNK_SIZE;y+=2){
 	for(int z=0;z<CHUNK_SIZE;z+=2){
@@ -231,7 +231,7 @@ void worldgenFirstInit(){
 	seedRNG(oldSeed);
 }
 
-void worldgenSphere(int x, int y, int z, int r, u8 b){
+void worldgenSphere(int x, int y, int z, int r, blockId b){
 	if(worldgenActive == NULL){return;}
 	chungus *chng = worldgenActive->clay;
 	const int gx = (chng->x << 8);

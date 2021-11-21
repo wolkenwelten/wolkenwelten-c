@@ -92,7 +92,7 @@ static inline void fireSpreadToBlock(fire *f, int r,blockCategory ccat){
 	if((fy < f->y) && (rngValR() & 1)){
 		fy = fy + (f->y-fy);
 	}
-	const u8 nb = worldGetB(fx,fy,fz);
+	const blockId nb = worldGetB(fx,fy,fz);
 	if(ccat != 0){
 		blockCategory nbt = blockTypeGetCat(nb);
 		if(nbt != ccat){return;}
@@ -140,8 +140,8 @@ void fireUpdate(fire *f){
 	}
 	}
 
-	const u8 b    = worldGetB(f->x,f->y,f->z);
-	const int dmg = MIN(f->oxygen,blockTypeGetFireDamage(b));
+	const blockId b = worldGetB(f->x,f->y,f->z);
+	const int   dmg = MIN(f->oxygen,blockTypeGetFireDamage(b));
 
 	f->strength = MIN(30000,f->strength+dmg-1);
 	f->oxygen  -= dmg;

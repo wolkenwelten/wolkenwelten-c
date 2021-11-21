@@ -27,9 +27,9 @@
 #include <string.h>
 
 void blockTypeGenMeshes();
-void blockTypeSetTex(u8 b, side side, u32 tex);
+void blockTypeSetTex(blockId b, side side, u32 tex);
 
-static void blockTypeInitBlock(u8 b, u32 tex, blockCategory ncat,const char *bname,int nhp, int nfirehp, float weight, u32 ncolor1,u32 ncolor2){
+static void blockTypeInitBlock(blockId b, u32 tex, blockCategory ncat,const char *bname,int nhp, int nfirehp, float weight, u32 ncolor1,u32 ncolor2){
 	for(side i=0;i<sideMAX;i++){
 		blockTypeSetTex(b,i,tex);
 	}
@@ -44,21 +44,21 @@ static void blockTypeInitBlock(u8 b, u32 tex, blockCategory ncat,const char *bna
 	lispDefineID("i-",bname,b);
 }
 
-const char *blockTypeGetName(u8 b){
+const char *blockTypeGetName(blockId b){
 	return blocks[b].name;
 }
 
-int blockTypeGetHealth(u8 b){
+int blockTypeGetHealth(blockId b){
 	return blocks[b].hp;
 }
-blockCategory blockTypeGetCat(u8 b){
+blockCategory blockTypeGetCat(blockId b){
 	return blocks[b].cat;
 }
 
-int blockTypeGetFireHealth(u8 b){
+int blockTypeGetFireHealth(blockId b){
 	return blocks[b].firehp;
 }
-int blockTypeGetFireDamage(u8 b){
+int blockTypeGetFireDamage(blockId b){
 	if(b == I_Grass){return 4;}
 	if(b == I_Coal) {return 4;}
 
@@ -72,28 +72,28 @@ int blockTypeGetFireDamage(u8 b){
 	}
 }
 
-float blockTypeGetWeight(u8 b){
+float blockTypeGetWeight(blockId b){
 	return blocks[b].weight;
 }
 
-u16 blockTypeGetTexX(u8 b, side cside){
+u16 blockTypeGetTexX(blockId b, side cside){
 	return blocks[b].texX[cside];
 }
 
-u16 blockTypeGetTexY(u8 b, side cside){
+u16 blockTypeGetTexY(blockId b, side cside){
 	return blocks[b].texY[cside];
 }
 
-mesh *blockTypeGetMesh(u8 b){
+mesh *blockTypeGetMesh(blockId b){
 	return blocks[b].singleBlock;
 }
 
-u32 blockTypeGetParticleColor(u8 b) {
+u32 blockTypeGetParticleColor(blockId b) {
 	if(b==0){return 0xFFFF00FF;}
 	return blocks[b].color[rngValR()&1];
 }
 
-bool blockTypeValid(u8 b){
+bool blockTypeValid(blockId b){
 	return blocks[b].name != NULL;
 }
 

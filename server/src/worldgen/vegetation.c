@@ -33,7 +33,7 @@ void wgShrub(chungus *c, int x,int y,int z){
 	for(int oy =  2;oy<4;oy++){
 	for(int oz = -1;oz<2;oz++){
 		if(rngValA(15) == 0){continue;}
-		const u8 b = rngValA(7) != 0 ? leafBlock : otherLeafBlock;
+		const blockId b = rngValA(7) != 0 ? leafBlock : otherLeafBlock;
 		chungusSetB(c,x+ox,y+oy,z+oz,b);
 	}
 	}
@@ -60,7 +60,7 @@ void wgDate(chungus *c, int x,int y,int z){
 void wgRoots(chungus *c, int x,int y,int z){
 	const int size = rngValMM(4,12);
 	for(int cy = 0;cy > -size;--cy){
-		u8 b = chungusGetB(c,x,y+cy,z);
+		blockId b = chungusGetB(c,x,y+cy,z);
 		switch(b){
 			case 0:
 			case I_Roots:
@@ -206,7 +206,7 @@ void wgMammothSpruce(chungus *c, int x,int y,int z){
 	wgBigRoots(c,x,y-5,z);
 }
 
-void wgSurroundWithLeafes(chungus *c, int x, int y, int z, u8 leafB){
+void wgSurroundWithLeafes(chungus *c, int x, int y, int z, blockId leafB){
 	for(int cx=-1;cx<=1;cx++){
 	for(int cy= 0;cy<=1;cy++){
 	for(int cz=-1;cz<=1;cz++){

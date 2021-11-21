@@ -38,13 +38,13 @@ void blockTypeGenMeshes(){
 	}
 }
 
-void blockTypeSetTex(u8 b, side cside, uint tex){
+void blockTypeSetTex(blockId b, side cside, uint tex){
 	blocks[b].tex[cside]  = tex;
 	blocks[b].texX[cside] = tex & 0xF;
 	blocks[b].texY[cside] = tex >> 4;
 }
 
-void blockTypeAddToMesh(u8 b, mesh *m, const vec pos, const vec size) {
+void blockTypeAddToMesh(blockId b, mesh *m, const vec pos, const vec size) {
 	float tileLoX[6];
 	float tileHiX[6];
 	float tileLoY[6];
@@ -114,7 +114,7 @@ void blockTypeAddToMesh(u8 b, mesh *m, const vec pos, const vec size) {
 	meshAddVertC(m, x  ,y  ,z  ,tileLoX[5],tileHiY[5],0.75f);
 }
 
-void blockTypeDraw(u8 b, vec pos, float alpha, int depthOffset){
+void blockTypeDraw(blockId b, vec pos, float alpha, int depthOffset){
 	matMov      (matMVP,matView);
 	matMulTrans (matMVP,pos.x,pos.y,pos.z);
 	matMul      (matMVP,matMVP,matProjection);

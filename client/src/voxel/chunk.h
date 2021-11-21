@@ -15,15 +15,15 @@ struct chunk {
 	void *nextFree;
 	uint vao,vbo;
 	beingList bl;
-	u8 data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+	blockId data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 };
 
 void    chunkInit                  ();
 chunk  *chunkNew                   (u16 x,u16 y,u16 z);
 void    chunkFree                  (chunk *c);
-void    chunkBox                   (chunk *c, u16 x, u16 y, u16 z,u16 gx,u16 gy,u16 gz,u8 b);
-void    chunkSetB                  (chunk *c, u16 x, u16 y, u16 z, u8 b);
 void    chunkDraw                  (chunk *c, float d, sideMask mask, const vec sideTints[6]);
+void    chunkBox                   (chunk *c, u16 x, u16 y, u16 z,u16 gx,u16 gy,u16 gz,blockId b);
+void    chunkSetB                  (chunk *c, u16 x, u16 y, u16 z, blockId b);
 uint    chunkGetFree               ();
 uint    chunkGetActive             ();
 uint    chunkGetGeneratedThisFrame ();
