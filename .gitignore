@@ -77,6 +77,7 @@ platform/win_cross/pkgs/mingw-w64-sdl2/*
 *.so
 *.o
 *.wo
+*.no
 *.d
 *.deps
 *.gch

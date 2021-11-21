@@ -61,8 +61,8 @@
 
 u8 SEvalID;
 
-extern unsigned  int src_tmp_client_nuj_len;
-extern unsigned char src_tmp_client_nuj_data[];
+extern unsigned  int src_tmp_client_no_len;
+extern unsigned char src_tmp_client_no_data[];
 
 void lispInputHandler(lSymbol *input, int key, int action){
 	const int SP = lRootsGet();
@@ -822,7 +822,7 @@ void *lispInitReal(void *a, void *b){
 	(void)a; (void)b;
 
 	clRoot = lispCommonRoot(lispAddClientNFuncs);
-	lVal *expr = lRead((const char *)src_tmp_client_nuj_data);
+	lVal *expr = lRead((const char *)src_tmp_client_no_data);
 	lnfDo(clRoot,expr);
 	lGarbageCollect();
 

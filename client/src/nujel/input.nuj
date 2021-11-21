@@ -6,67 +6,67 @@
 [def input-tick]
 
 [let*
-	[def did-primary #f]
-	[def did-throw #f]
-	[def throw-start 0]
+        [def did-primary #f]
+        [def did-throw #f]
+        [def throw-start 0]
 
-	[set! player-primary! [λ []
-		"Make the player do a primary action"
+        [set! player-primary! [λ []
+                "Make the player do a primary action"
 
-		[let [[itemid [player-active-item-id]]]
-			[if [< itemid 256] [player-do-primary!] [unless [item-primary! itemid] [player-do-primary!]]]
-		]
+                [let [[itemid [player-active-item-id]]]
+                        [if [< itemid 256] [player-do-primary!] [unless [item-primary! itemid] [player-do-primary!]]]
+                ]
 
-		[set! did-primary #t]
-	]]
+                [set! did-primary #t]
+        ]]
 
-	[set! player-secondary! [λ []
-		"Make the player do a secondary action"
+        [set! player-secondary! [λ []
+                "Make the player do a secondary action"
 
-		[let [[itemid [player-active-item-id]]]
-			[if [< itemid 256] [player-place-block! [player-active-slot]] [item-secondary! itemid]]
-		]
-	]]
+                [let [[itemid [player-active-item-id]]]
+                        [if [< itemid 256] [player-place-block! [player-active-slot]] [item-secondary! itemid]]
+                ]
+        ]]
 
-	[set! player-tertiary! [λ []
-		"Make the player do a tertiary action"
+        [set! player-tertiary! [λ []
+                "Make the player do a tertiary action"
 
-		[let [[itemid [player-active-item-id]]]
-			[when [>= itemid 256] [item-tertiary! itemid]]
-		]
-	]]
+                [let [[itemid [player-active-item-id]]]
+                        [when [>= itemid 256] [item-tertiary! itemid]]
+                ]
+        ]]
 
-	[set! player-throw! [λ []
-		"Try to throw the currently held item"
+        [set! player-throw! [λ []
+                "Try to throw the currently held item"
 
-		[when [zero? throw-start] [set! throw-start [time/milliseconds]]]
-		[when [> [- [time/milliseconds] throw-start] 500]
-			[let [[zoom [+ 1.0 [min 1.0 [/ [- [time/milliseconds] throw-start 500] 1000.0]]]]]
-				[player-zoom! zoom]
-			]
-		]
-		[set! did-throw #t]
-	]]
+                [when [zero? throw-start] [set! throw-start [time/milliseconds]]]
+                [when [> [- [time/milliseconds] throw-start] 500]
+                        [let [[zoom [+ 1.0 [min 1.0 [/ [- [time/milliseconds] throw-start 500] 1000.0]]]]]
+                                [player-zoom! zoom]
+                        ]
+                ]
+                [set! did-throw #t]
+        ]]
 
-	[set! player-do-throw! [λ [timeheld]
-		;[say ["You held the button for " [/ timeheld 1000.0] " seconds Zoom at: " [player-zoom]]]
-		[if [<= [- [time/milliseconds] throw-start] 500]
-			[player-drop-item! [player-active-slot]]
-			[throw-item throw-spin [* [player-zoom] 0.07]]
-		]
-		[set! throw-start 0]
-		[player-zoom! 1.0]
-	]]
+        [set! player-do-throw! [λ [timeheld]
+                ;[say ["You held the button for " [/ timeheld 1000.0] " seconds Zoom at: " [player-zoom]]]
+                [if [<= [- [time/milliseconds] throw-start] 500]
+                        [player-drop-item! [player-active-slot]]
+                        [throw-item throw-spin [* [player-zoom] 0.07]]
+                ]
+                [set! throw-start 0]
+                [player-zoom! 1.0]
+        ]]
 
-	[set! input-tick [λ []
-		"Evals all Input handlers in order"
+        [set! input-tick [λ []
+                "Evals all Input handlers in order"
 
-		[input-mouse-tick]
-		[input-keyboard-tick]
+                [input-mouse-tick]
+                [input-keyboard-tick]
 
-		[when [not did-primary] [player-stop-mining!]]
-		[when did-primary [set! did-primary #f]]
-		[when [and [not did-throw] [ineq? throw-start 0]] [player-do-throw! [- [time/milliseconds] throw-start]]]
-		[set! did-throw #f]
-	]]
+                [when [not did-primary] [player-stop-mining!]]
+                [when did-primary [set! did-primary #f]]
+                [when [and [not did-throw] [ineq? throw-start 0]] [player-do-throw! [- [time/milliseconds] throw-start]]]
+                [set! did-throw #f]
+        ]]
 ]

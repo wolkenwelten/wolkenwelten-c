@@ -1,27 +1,27 @@
 [def quests #nil]
 [def quest/panels #nil]
 
-[def duration-to-clock-string [λ [secs]
-     ["" [string [/ secs 60]] [if [zero? [logand secs 1]] " " ":"] [% secs 60]]
-]]
+[defun duration-to-clock-string [secs]
+     [cat [string [/ secs 60]] [if [zero? [logand secs 1]] " " ":"] [% secs 60]]
+]
 
-[def quest/panel/position! [λ []
+[defun quest/panel/position! []
      [def y 64]
      [for-each [λ [cur-panel]
                   [widget/y! cur-panel y]
                   [set! y [+ y [widget/height cur-panel] 8]]
                ]
                quest/panels]
-]]
+]
 
-[def quest/panel/remove! [λ [panel]
+[defun quest/panel/remove! [panel]
      [set! quest/panels
            [filter [λ [cur-panel]
                       [!= cur-panel panel]]
                    quest/panels]]
-]]
+]
 
-[def quest/panel/new! [λ [headline bodytext wid]
+[defun quest/panel/new! [headline bodytext wid]
      [def panel   [widget/new w-panel]]
      [def head    [widget/new w-label]]
      [def text    [widget/new w-label]]
@@ -58,7 +58,7 @@
      [set! quest/panels [cons panel quest/panels]]
      [quest/panel/position!]
      panel
-]]
+]
 
 [def quest/default [ω
         [def active #f]
@@ -86,14 +86,14 @@
         ]]
 ]]
 
-[def quest/new [λ [@...args]
+[defun quest/new [@...args]
         "Create a new quest object"
         [def ret [quest/default [ω]]]
         [apply ret '[[def active #f] [def finished #f]]]
         [apply ret @...args]
         [set! quests [cons ret quests]]
         ret
-]]
+]
 
 [def quest-test-time [quest/new
         [def name [cat "Staying alive for " [ansi-red "300"] " Seconds"]]
@@ -165,7 +165,7 @@
         ]]
 ]]
 
-[def quest/refresh [λ []
+[defun quest/refresh []
         [def l quests]
         [def cur #nil]
         [while l
@@ -177,7 +177,7 @@
                ]
                [set! l [cdr l]]
         ]
-]]
+]
 
 [event-bind "on-join" [λ []
         [quest/refresh]

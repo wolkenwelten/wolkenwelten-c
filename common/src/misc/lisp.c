@@ -30,8 +30,8 @@
 #include "../../nujel/lib/exception.h"
 #include "../../nujel/lib/allocation/roots.h"
 
-extern unsigned  int src_tmp_wwlib_nuj_len;
-extern unsigned char src_tmp_wwlib_nuj_data[];
+extern unsigned  int src_tmp_wwlib_no_len;
+extern unsigned char src_tmp_wwlib_no_data[];
 
 #include <ctype.h>
 #include <string.h>
@@ -159,7 +159,7 @@ void *lispCommonRootReal(void *a, void *b){
 	itemTypeLispClosure(c);
 	specificInit(c);
 
-	lVal *expr = lRead((const char *)src_tmp_wwlib_nuj_data);
+	lVal *expr = lRead((const char *)src_tmp_wwlib_no_data);
 	lnfDo(c,expr);
 
 	return c;

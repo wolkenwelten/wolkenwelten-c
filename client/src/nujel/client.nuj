@@ -5,141 +5,152 @@
 [test-add #t [string? OS]]
 [test-add #t [and [not server?] client?]]
 
-[def player-active-item-id [λ []
-	"Return the Id of the currenlty selected item"
-	[car [player-inventory [player-active-slot]]]
-]]
+[defun player-active-item-id []
+       "Return the Id of the currenlty selected item"
+       [car [player-inventory [player-active-slot]]]
+]
 
-[def player-active-item-amount [λ []
-	"Return the Id of the currenlty selected item"
-	[cdr [player-inventory [player-active-slot]]]
-]]
+[defun player-active-item-amount []
+       "Return the Id of the currenlty selected item"
+       [cdr [player-inventory [player-active-slot]]]
+]
 
-[def error [λ [...args]
-	"Print its arguments into the LISP console and might alert the user"
-	[console-print ["  " [apply cat ...args]]]
-]]
+[defun error [...args]
+       "Print its arguments into the LISP console and might alert the user"
+       [console-print ["  " [apply cat ...args]]]
+]
 
-[def log [λ [...args]
-	"Print its arguments into the LISP console"
-	[console-print ["  " [apply cat ...args]]]
-]]
+[defun log [...args]
+       "Print its arguments into the LISP console"
+       [console-print ["  " [apply cat ...args]]]
+]
 [def print log]
 
-[def conf-v1! [λ [@...body]
-	"Wrapper for auto generated config s-expressions, will be overwritten on every optionsave"
-	[eval [cons 'begin @...body]]
-]]
+[defun conf-v1! [@...body]
+       "Wrapper for auto generated config s-expressions, will be overwritten on every optionsave"
+       [eval [cons 'begin @...body]]
+]
 
 [def help [let []
-	[def iter [λ [l]
-		[cond [[nil? l] #t]
-		      [#t [log [describe [car l]]] [iter [cdr l]]
-		]]
-	]]
+        [defun iter [l]
+                [cond [[nil? l] #t]
+                      [#t [log [describe [car l]]] [iter [cdr l]]
+                ]]
+        ]
 
-	[λ [i]
-		"Describes 10 functions at offset 1"
-		[let [[off [* [int i] 10]]]
-			[iter [map cat [symbol-table off 10]]]
-			[log ["Help page " [int i] " of " [/ [symbol-count] 10]]]
-		]
-		#t
-	]
+        [λ [i]
+                "Describes 10 functions at offset 1"
+                [let [[off [* [int i] 10]]]
+                        [iter [map cat [symbol-table off 10]]]
+                        [log ["Help page " [int i] " of " [/ [symbol-count] 10]]]
+                ]
+                #t
+        ]
 ]]
 
-[def time/fast! [λ [a]
-	"Speeds up the game to about 4x"
-	[mst!  1] [s [mst!  1]]
-]]
+[defun time/fast! [a]
+        "Speeds up the game to about 4x"
+        [mst!  1]
+        [s [mst!  1]]
+]
 
-[def time/norm! [λ [a]
-	"Sets the game speed to the default 1x"
-	[mst!  4] [s [mst!  4]]
-]]
+[defun time/norm! [a]
+        "Sets the game speed to the default 1x"
+        [mst!  4]
+        [s [mst!  4]]
+]
 
-[def time/slow! [λ [a] "Sets the game speed to about 1/4x"
-	[mst! 16] [s [mst! 16]]]]
+[defun time/slow! [a]
+       "Sets the game speed to about 1/4x"
+       [mst! 16]
+       [s [mst! 16]]
+]
 
-[def time/bullet! [λ [a]
-	"Sets the game speed to about 1/16x"
-	[mst! 64] [s [mst! 64]]
-]]
+[defun time/bullet! [a]
+        "Sets the game speed to about 1/16x"
+        [mst! 64]
+        [s [mst! 64]]
+]
 
-[def time/morning! [λ []
-	"Sets the Time to 8:00 AM"
-	[s [time/morning!]]]]
+[defun time/morning! []
+        "Sets the Time to 8:00 AM"
+        [s [time/morning!]]
+]
 
-[def time/noon! [λ []
-	"Sets the Time to 12:00 PM"
-	[s [time/noon!]]]]
+[defun time/noon! []
+        "Sets the Time to 12:00 PM"
+        [s [time/noon!]]
+]
 
-[def time/evening! [λ []
-	"Sets the Time to 21:30 PM"
-	[s [time/evening!]]
-]]
+[defun time/evening! []
+       "Sets the Time to 21:30 PM"
+       [s [time/evening!]]
+]
 
-[def time/night! [λ []
-	"Set the Time to Midnight"
-	[s [time/night!]]
-]]
+[defun time/night! []
+       "Set the Time to Midnight"
+       [s [time/night!]]
+]
 
-[def animal-stress [λ []
-	"Generate a bunch of bunnies surrounding the player"
-	[s [animal-stress [player-pos] 6]]
-]]
+[defun animal-stress []
+       "Generate a bunch of bunnies surrounding the player"
+       [s [animal-stress [player-pos] 6]]
+]
 
-[def countdown [λ [i]
-	"Count down on the console"
-	[cond [[< [int i] 0] #t]
-	      [#t [log  [cond [[zero? i] [ansi-green "GO!"]] [[< i 4] [ansi-red i]] [[< i 6] [ansi-yellow i]] [#t i]]]
-			[yield [timeout 1000] [lambda []  [countdown [-- i]]]]]
-	]
-]]
+[defun countdown [i]
+       "Count down on the console"
+       [cond [[< [int i] 0] #t]
+             [#t [log  [cond [[zero? i] [ansi-green "GO!"]]
+                             [[< i 4] [ansi-red i]]
+                             [[< i 6] [ansi-yellow i]]
+                             [#t i]]]
+                 [yield [timeout 1000] [lambda []  [countdown [-- i]]]]]
+       ]
+]
 
-[def hammertime [λ [i]
-	"Spawn I countdown coroutines that run for 10 Minutes"
-	[cond [[<= i 0] #t]
-	      [#t [countdown 600] [hammertime [-- i]]]
-	]
-]]
+[defun hammertime [i]
+       "Spawn I countdown coroutines that run for 10 Minutes"
+       [cond [[<= i 0] #t]
+             [#t [countdown 600] [hammertime [-- i]]]
+       ]
+]
 
-[def chiseltime [λ [i]
-	"Spawn I coundown coroutines that run for 10 Seconds"
-	[cond [[<= i 0] #t]
-	      [#t [countdown 5] [chiseltime [-- i]]]
-	]
-]]
+[defun chiseltime [i]
+       "Spawn I coundown coroutines that run for 10 Seconds"
+       [cond [[<= i 0] #t]
+             [#t [countdown 5] [chiseltime [-- i]]]
+       ]
+]
 
 [event-bind "on-spawn" [λ [] [say [ansi-yellow "Better luck next time!"]]]]
 [event-bind "on-join" [λ []
-	[say "Guten Tag!"]
-	[say ["Press " [ansi-green "F2"] " for some equipment"]]
-	[say ["Use your " [ansi-yellow "grappling hook"] " with " [ansi-green "E"]]]
-	[say ["Open Inventory/Crafting panel with " [ansi-green "TAB"]]]
-	;[yield [timeout 10] [λ [] [pop]]]
+        [say "Guten Tag!"]
+        [say ["Press " [ansi-green "F2"] " for some equipment"]]
+        [say ["Use your " [ansi-yellow "grappling hook"] " with " [ansi-green "E"]]]
+        [say ["Open Inventory/Crafting panel with " [ansi-green "TAB"]]]
+        ;[yield [timeout 10] [λ [] [pop]]]
 ]]
 
-[def gameplay-run [λ []
-	[event-fire "on-gameplay-tick"]
-]]
+[defun gameplay-run []
+        [event-fire "on-gameplay-tick"]
+]
 
 [def inv-has-atleast? [let*
-	[def iter [λ [id amount-goal i amount-found]
-		[def slot [player-inventory i]]
-		[when [eq? id [car slot]]
-		      [set! amount-found [+ amount-found [cdr slot]]]
-		]
-		[if [>= amount-found amount-goal]
-		    #t
-		    [if [< i [player-inventory-size]]
-			[iter id amount-goal [+ 1 i] amount-found]
-			#f]]
-	]]
+        [defun iter [id amount-goal i amount-found]
+                [def slot [player-inventory i]]
+                [when [eq? id [car slot]]
+                      [set! amount-found [+ amount-found [cdr slot]]]
+                ]
+                [if [>= amount-found amount-goal]
+                    #t
+                    [if [< i [player-inventory-size]]
+                        [iter id amount-goal [+ 1 i] amount-found]
+                        #f]]
+        ]
 
-	[λ [id amount-goal]
-		[unless id [set! 0]]
-		[unless amount-goal [set! 1]]
-		[iter id amount-goal 0 0]
-	]
+        [λ [id amount-goal]
+                [unless id [set! 0]]
+                [unless amount-goal [set! 1]]
+                [iter id amount-goal 0 0]
+        ]
 ]]

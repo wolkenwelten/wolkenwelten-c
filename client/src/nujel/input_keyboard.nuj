@@ -75,24 +75,23 @@
 
 [def key-lshift 225]
 
-[def input-keyboard-handler-default [λ [code value]
+[defun input-keyboard-handler-default [code value]
 	"Default handler to be used for continuously firing actions"
-
 	[arr-set! input-keyboard-state code [> value 0]]
-]]
+]
 
-[def toggle-chat! [λ
+[defun toggle-chat! []
 	"Toggle the chat visibility"
 	[chat-open! [not [chat-open]]]
-]]
+]
 
-[def keyboard-once [λ [fun]
+[defun keyboard-once [fun]
 	"Run FUN only once per keypress"
 	[λ [code value]
 	   [and value [not [input-keyboard-state code]] [fun]]
 	   [arr-set! input-keyboard-state code [not [zero? value]]]
 	]
-]]
+]
 
 [arr-set! input-keyboard-handler key-r      input-keyboard-handler-default]
 [arr-set! input-keyboard-handler key-q      input-keyboard-handler-default]
@@ -130,14 +129,14 @@
 	]]
 ]
 
-[def inv-active-kh [λ [code value]
+[defun inv-active-kh [code value]
 	"Sets the players active item depending on the keycode passed"
 
 	[when value
 	      [player-active-slot! [- code 30]]
 	      [stop-anim]
 	]
-]]
+]
 
 [arr-set! input-keyboard-handler key-1 inv-active-kh]
 [arr-set! input-keyboard-handler key-2 inv-active-kh]
@@ -150,7 +149,7 @@
 [arr-set! input-keyboard-handler key-9 inv-active-kh]
 [arr-set! input-keyboard-handler key-0 inv-active-kh]
 
-[def input-keyboard-tick [λ []
+[defun input-keyboard-tick []
 	"Keyboard input handler"
 
 	[when [widget-focus-on-game?]
@@ -164,14 +163,14 @@
 	      [player-sneak! [input-keyboard-state key-v]]
 	      [player-boost! [input-keyboard-state key-lshift]]
 	]
-]]
+]
 
-[def input-keyboard-event [λ [status scancode]
+[defun input-keyboard-event [status scancode]
      [def handler [input-keyboard-handler scancode]]
      [if [lambda? handler]
          [handler scancode status]
          #f]
-]]
+]
 
 [test-add #t [int? key-1]]
 [test-add #t [arr? input-keyboard-handler]]

@@ -1,6 +1,7 @@
 ARCH             := $(shell uname -m)
 NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj' | sort)
-COMMON_ASSETS    := common/src/tmp/wwlib.nuj
+NO_WWLIB         := $(NUJ_WWLIB:.nuj=.no)
+COMMON_ASSETS    := common/src/tmp/wwlib.no
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
 COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
@@ -38,9 +39,13 @@ common/nujel/nujel.a: $(NUJEL)
 	@$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) $(if $(findstring client/, $<),$(CLIENT_CFLAGS) $(CLIENT_CINCLUDES),) -g -c $< -o $@ -MMD > ${<:.c=.d}
 	@echo "$(ANSI_GREEN)" "[CC] " "$(ANSI_RESET)" $@
 
-common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
+%.no: %.nuj $(NUJEL)
+	@$(NUJEL) -x "[try repl/exception-handler [file/compile \"$<\"]]"
+	@echo "$(ANSI_YELLOW)" "[NUJ]" "$(ANSI_RESET)" $@
+
+common/src/tmp/wwlib.no: $(NO_WWLIB)
 	@mkdir -p common/src/tmp
-	@cat $(NUJ_WWLIB) > $@
+	@cat $^ > $@
 	@echo "$(ANSI_GREY)" "[CAT]" "$(ANSI_RESET)" $@
 
 common/src/tmp/assets.c: $(ASSET) $(COMMON_ASSETS)

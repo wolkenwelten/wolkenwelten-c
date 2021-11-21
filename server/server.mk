@@ -10,7 +10,8 @@ SERVER_OBJS      := $(SERVER_OBJS_EXCL) $(SERVER_TMP_OBJS) ${COMMON_OBJS}
 SERVER_DEPS      := ${SERVER_SRCS:.c=.d}
 
 SERVER_NUJ       := $(shell find server/src/nujel -type f -name '*.nuj' | sort)
-SERVER_ASSETS    := server/src/tmp/server.nuj
+SERVER_NO        := $(SERVER_NUJ:.nuj=.no)
+SERVER_ASSETS    := server/src/tmp/server.no
 
 $(SERVER_OBJS_EXCL): | common/src/tmp/cto.c
 $(SERVER_OBJS): | server/src/tmp/assets.h
@@ -21,7 +22,7 @@ $(WOLKENWELTEN_SERVER): $(SERVER_OBJS) $(ASM_OBJS) ${SERVER_TMP_OBJS} common/nuj
 	$(CC) -D_GNU_SOURCE $^ -g -o $@ $(OPTIMIZATION) $(CFLAGS) $(SERVER_CFLAGS) $(CINCLUDES) $(SERVER_CINCLUDES) $(SERVER_LIBS) $(CSTD)
 	@echo "$(ANSI_BG_GREEN)" "[LD] " "$(ANSI_RESET)" $@
 
-server/src/tmp/server.nuj: $(SERVER_NUJ)
+server/src/tmp/server.no: $(SERVER_NO)
 	@mkdir -p server/src/tmp
 	@cat $(SERVER_NUJ) > $@
 	@echo "$(ANSI_GREY)" "[CAT]" "$(ANSI_RESET)" $@

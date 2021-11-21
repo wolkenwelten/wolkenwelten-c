@@ -52,8 +52,8 @@
 #include <string.h>
 #include <inttypes.h>
 
-extern unsigned  int src_tmp_server_nuj_len;
-extern unsigned char src_tmp_server_nuj_data[];
+extern unsigned  int src_tmp_server_no_len;
+extern unsigned char src_tmp_server_no_data[];
 
 lSymbol *lsPID;
 
@@ -532,7 +532,7 @@ static void cmdLisp(uint pid, const char *str){
 static void *lispInitReal(void *a, void *b){
 	(void)a; (void)b;
 	clRoot = lispCommonRoot(addServerNativeFuncs);
-	lVal *expr = lRead((char *)src_tmp_server_nuj_data);
+	lVal *expr = lRead((char *)src_tmp_server_no_data);
 	lnfDo(clRoot, expr);
 	lsPID = lSymS("pid");
 
