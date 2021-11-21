@@ -17,9 +17,9 @@
 
 #include "touch.h"
 
-#include "../../game/character.h"
-#include "../../menu/inventory.h"
 #include "../../main.h"
+#include "../../game/character.h"
+#include "../../gui/menu/inventory.h"
 
 #include <SDL.h>
 

@@ -53,7 +53,13 @@ chunk *chunkFirstFree = NULL;
 chunk *chunkList;
 
 void chunkInit(){
-	chunkList = malloc(sizeof(chunk) * CHUNK_COUNT);
+	if(chunkList == NULL){
+		chunkList = malloc(sizeof(chunk) * CHUNK_COUNT);
+	}
+	chunkFreeCount = 0;
+	chunkCount     = 0;
+	chunkFirstFree = 0;
+	chunksGeneratedThisFrame = 0;
 }
 
 uint    chunkGetFree()               { return chunkFreeCount;           }

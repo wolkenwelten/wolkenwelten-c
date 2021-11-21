@@ -36,11 +36,15 @@
 #define CHUNGUS_COUNT (1<<12)
 
 chungus *chungusList;
-uint chungusCount=0;
+uint     chungusCount=0;
 chungus *chungusFirstFree = NULL;
 
 void chungusInit(){
-	chungusList = malloc(sizeof(chungus) * CHUNGUS_COUNT);
+	if(chungusList == NULL){
+		chungusList = malloc(sizeof(chungus) * CHUNGUS_COUNT);
+	}
+	chungusCount     = 0;
+	chungusFirstFree = NULL;
 }
 
 uint chungusGetActiveCount(){

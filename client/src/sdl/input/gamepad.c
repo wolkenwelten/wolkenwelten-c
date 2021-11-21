@@ -17,12 +17,12 @@
 #include "gamepad.h"
 
 #include "../sdl.h"
+#include "../../main.h"
 #include "../../game/character.h"
 #include "../../gui/gui.h"
 #include "../../gui/menu.h"
 #include "../../gui/widget.h"
-#include "../../menu/inventory.h"
-#include "../../main.h"
+#include "../../gui/menu/inventory.h"
 #include "../../../../common/src/common.h"
 
 #include <math.h>
@@ -214,9 +214,9 @@ vec doGamepadupdate(vec vel){
 	if(gamepadButtons[6]){
 		gamepadButtons[6] = false;
 		if(isInventoryOpen()){
-			hideInventory();
+			closeInventory();
 		}else{
-			showInventory();
+			openInventory();
 		}
 	}
 	if(gamepadButtons[4]){

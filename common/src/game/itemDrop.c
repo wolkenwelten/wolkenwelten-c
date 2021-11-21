@@ -32,6 +32,11 @@ itemDrop itemDropList[1<<14];
 uint     itemDropCount = 0;
 int      itemDropFirstFree = -1;
 
+void itemDropInit(){
+	itemDropCount = 0;
+	itemDropFirstFree = -1;
+}
+
 void itemDropEmptyMsg(uint c, uint i){
 	item itm = itemEmpty();
 	msgItemDropUpdate(c,vecNOne(),vecZero(),&itm,i,itemDropCount,-1);

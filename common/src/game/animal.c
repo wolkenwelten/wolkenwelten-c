@@ -43,6 +43,12 @@ uint    animalListMax   = 0;
 uint    animalCount     = 0;
 uint    animalFirstFree = 0xFFFFFFFF;
 
+void animalInit(){
+	animalListMax   = 0;
+	animalCount     = 0;
+	animalFirstFree = 0xFFFFFFFF;
+}
+
 void animalReset(animal *e){
 	memset(e,0,sizeof(animal));
 }

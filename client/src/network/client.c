@@ -29,7 +29,7 @@
 #include "../game/projectile.h"
 #include "../game/throwable.h"
 #include "../game/weather.h"
-#include "../menu/mainmenu.h"
+#include "../gui/menu/mainmenu.h"
 #include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
@@ -73,8 +73,6 @@ bool goodbyeSent = false;
 #else
 #include "client_bsd.h"
 #endif
-
-
 
 #ifdef __APPLE__
 	#include <mach-o/dyld.h>
@@ -427,6 +425,7 @@ void queueToServer(const void *data, uint len){
 }
 
 void clientFree(){
+	lispEval("[event-fire \"on-leave\"]",false);
 	clientFreeSpecific();
 	singlePlayerPID = 0;
 	recvBufLen      = 0;

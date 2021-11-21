@@ -18,7 +18,12 @@
 #include "bigchungus.h"
 
 #include "../sdl/sdl.h"
+#include "../game/animal.h"
 #include "../game/blockType.h"
+#include "../game/fire.h"
+#include "../game/itemDrop.h"
+#include "../game/projectile.h"
+#include "../game/throwable.h"
 #include "../game/weather.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
@@ -38,6 +43,16 @@
 #include <string.h>
 
 chungus *world[256][128][256];
+
+void worldInit(){
+	chungusInit();
+	chunkInit();
+	animalInit();
+	itemDropInit();
+	fireInit();
+	projectileInit();
+	throwableInit();
+}
 
 static int quicksortQueuePart(queueEntry *a, int lo, int hi){
 	float p = a[hi].distance;
@@ -238,7 +253,11 @@ void worldBox(int x,int y,int z, int w,int h,int d,blockId block){
 }
 
 void worldFreeFarChungi(const character *cam){
-	int len = chungusGetActiveCount();
+	if(cam == NULL){
+		worldInit();
+		return;
+	}
+	const int len = chungusGetActiveCount();
 	for(int i=0;i<len;i++){
 		chungus *chng = chungusGetActive(i);
 		if(chng->nextFree != NULL){continue;}

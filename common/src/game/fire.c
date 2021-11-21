@@ -22,11 +22,14 @@
 #include "../network/messages.h"
 #include "../world/world.h"
 
+#include <stdlib.h>
+
 fire fireList[1<<14];
 uint fireCount = 0;
 
-#include <stdio.h>
-#include <stdlib.h>
+void fireInit(){
+	fireCount = 0;
+}
 
 void fireEmptyUpdate(uint c){
 	msgFireUpdate(c,0,0,0,0,0,0);

@@ -20,14 +20,12 @@
 #include "../main.h"
 #include "../binding/widget.h"
 #include "../gui/gui.h"
-#include "../menu/mainmenu.h"
-#include "../menu/singleplayer.h"
-#include "../menu/multiplayer.h"
-#include "../menu/inventory.h"
-#include "../menu/options.h"
-#include "../gui/lispInput.h"
+#include "../gui/repl.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
+#include "../gui/menu/attribution.h"
+#include "../gui/menu/mainmenu.h"
+#include "../gui/menu/inventory.h"
 #include "../gfx/gl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
@@ -42,9 +40,6 @@
 #include <stdio.h>
 #include <string.h>
 
-extern unsigned  int txt_attribution_txt_len;
-extern unsigned char txt_attribution_txt_data[];
-
 bool showAttribution  = false;
 int  attributionLines = 0;
 
@@ -54,19 +49,14 @@ int  serverlistCount = 0;
 char serverlistName[16][32];
 char serverlistIP[16][64];
 
-widget *rootMenu;
-
 widget *menuBackground;
-widget *menuText;
-widget *menuErrorLabel;
-widget *menuAttribution;
 
 void startMultiplayer(){
 	gameRunning = true;
 
 	closeAllMenus();
 	hideMouseCursor();
-	showInventoryPanel();
+	openInventoryPanel();
 	widgetFocus(widgetGameScreen);
 	playerInit();
 	clientInit();
@@ -76,60 +66,6 @@ void startSingleplayer(){
 	singleplayer        = true;
 	mayTryToStartServer = true;
 	startMultiplayer();
-}
-
-void closeAllMenus(){
-	if(gameRunning){
-		menuBackground->flags |=  WIDGET_HIDDEN;
-	}else{
-		menuBackground->flags &= ~WIDGET_HIDDEN;
-	}
-	menuText->flags &= ~WIDGET_HIDDEN;
-	menuAttribution->flags |= WIDGET_HIDDEN;
-	closeMainMenu();
-	closeSingleplayerMenu();
-	closeMultiplayerMenu();
-	closeOptionsMenu();
-	hideInventoryPanel();
-	widgetFocus(NULL);
-}
-
-static void handlerRoot(widget *wid){
-	(void)wid;
-	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return;}
-	if(gameRunning){return;}
-	openMainMenu();
-	lispPanelClose();
-}
-
-void initMenu(){
-	widget *wid;
-
-	rootMenu = widgetNewCP(wSpace,NULL,0,0,-1,-1);
-	widgetExport(rootMenu,"w-root-menu");
-
-	menuBackground = widgetNewCP(wSpace,rootMenu,0,0,-1,-1);
-	menuText = widgetNewCP(wSpace,menuBackground,32,32,256,-65);
-	wid = widgetNewCPL(wLabel,menuText,0,0,256,32,"WolkenWelten");
-	wid->flags |= WIDGET_BIG;
-	widgetNewCPL(wLabel,menuText,0,32,256,32,(const char *)VERSION);
-	menuErrorLabel = widgetNewCPL(wLabel,menuText,1,-97,256,16,"");
-	widgetNewCPL(wLabel,menuText,1,-33,256,16,menuTextInputLabel);
-	menuAttribution = widgetNewCPL(wTextScroller,rootMenu,0,0,-1,-1,(const char *)txt_attribution_txt_data);
-	menuAttribution->flags |= WIDGET_HIDDEN;
-	widgetBind(menuAttribution,"click",handlerRoot);
-	widgetBind(menuAttribution,"blur",handlerRoot);
-
-	initMainMenu();
-	initSingleplayerMenu();
-	initMultiplayerMenu();
-	initOptionsMenu();
-}
-
-void openAttributions(){
-	menuText->flags |=  WIDGET_HIDDEN;
-	menuAttribution->flags &= ~WIDGET_HIDDEN;
-	widgetFocus(menuAttribution);
 }
 
 void menuChangeFocus(int xoff,int yoff,bool ignoreOnTextInput){
@@ -177,8 +113,8 @@ bool menuCancel(){
 	if(gameRunning){
 		closeMainMenu();
 		lispPanelClose();
-		hideInventory();
-		menuAttribution->flags |= WIDGET_HIDDEN;
+		closeInventory();
+		closeAttributions();
 	} else {
 		openMainMenu();
 		lispPanelClose();
@@ -187,9 +123,7 @@ bool menuCancel(){
 }
 
 void menuSetError(const char *error){
-	static char buf[64];
-	snprintf(buf,sizeof(buf),"%s",error);
-	menuErrorLabel->vals = buf;
+	fprintf(stderr,"MenuError: %s\n",error);
 	clientFree();
 	menuCloseGame();
 }

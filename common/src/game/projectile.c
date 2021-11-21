@@ -28,8 +28,13 @@
 #include "../world/world.h"
 
 #include <math.h>
+#include <string.h>
 
 projectile projectileList[8192];
+
+void projectileInit(){
+	memset(projectileList, 0, sizeof(projectileList));
+}
 
 int projectileNewID(){
 	int ID = playerID;

@@ -21,7 +21,7 @@
 #include "../game/recipe.h"
 #include "../gfx/gfx.h"
 #include "../gui/gui.h"
-#include "../gui/lispInput.h"
+#include "../gui/repl.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
 #include "../gfx/textMesh.h"

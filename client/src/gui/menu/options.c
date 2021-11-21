@@ -14,19 +14,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "options.h"
 
-#include "../main.h"
-#include "../gfx/gfx.h"
-#include "../gui/gui.h"
-#include "../gui/menu.h"
-#include "../gui/textInput.h"
-#include "../gui/widget.h"
-#include "../misc/options.h"
-#include "../menu/mainmenu.h"
-#include "../../../common/src/cto.h"
-#include "../../../common/src/misc/misc.h"
+#include "mainmenu.h"
+#include "../gui.h"
+#include "../menu.h"
+#include "../textInput.h"
+#include "../widget.h"
+#include "../../misc/options.h"
+#include "../../main.h"
+#include "../../gfx/gfx.h"
+#include "../../../../common/src/cto.h"
+#include "../../../../common/src/misc/misc.h"
 
 #include <stdio.h>
 #include <string.h>

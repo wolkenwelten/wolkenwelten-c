@@ -39,13 +39,17 @@
 #include "../gfx/sky.h"
 #include "../gui/chat.h"
 #include "../gui/menu.h"
-#include "../gui/lispInput.h"
-#include "../misc/options.h"
-#include "../menu/inventory.h"
-#include "../menu/mainmenu.h"
+#include "../gui/menu/attribution.h"
+#include "../gui/menu/inventory.h"
+#include "../gui/menu/mainmenu.h"
+#include "../gui/menu/multiplayer.h"
+#include "../gui/menu/options.h"
+#include "../gui/menu/singleplayer.h"
+#include "../gui/repl.h"
 #include "../gui/overlay.h"
 #include "../gui/textInput.h"
 #include "../gui/widgetDrawing.h"
+#include "../misc/options.h"
 #include "../network/chat.h"
 #include "../network/client.h"
 #include "../sdl/sdl.h"
@@ -69,6 +73,8 @@ textMesh *crosshairMesh;
 textMesh *cursorMesh;
 textMesh *logoMesh;
 
+widget *rootMenu;
+
 widget *widgetGameScreen;
 
 bool mouseHidden = false;
@@ -77,6 +83,14 @@ uint mouseClicked[3] = {0,0,0};
 uint animalOverlaysDrawn = 0;
 
 float matOrthoProj[16];
+
+void handlerRoot(widget *wid){
+	(void)wid;
+	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return;}
+	if(gameRunning){return;}
+	openMainMenu();
+	lispPanelClose();
+}
 
 void handlerRootHud(widget *wid){
 	(void)wid;
@@ -95,6 +109,21 @@ void hideMouseCursor(){
 	if(mouseHidden){return;}
 	setRelativeMouseMode(mouseHidden = true);
 	warpMouse(screenWidth/2,screenHeight/2);
+}
+
+void closeAllMenus(){
+	if(gameRunning){
+		menuBackground->flags |=  WIDGET_HIDDEN;
+	}else{
+		menuBackground->flags &= ~WIDGET_HIDDEN;
+	}
+	menuAttribution->flags |= WIDGET_HIDDEN;
+	closeMainMenu();
+	closeSingleplayerMenu();
+	closeMultiplayerMenu();
+	closeOptionsMenu();
+	closeInventoryPanel();
+	widgetFocus(NULL);
 }
 
 int getTilesize(){
@@ -150,10 +179,10 @@ void resizeUI(){
 
 static void handlerGameFocus(widget *wid){
 	(void)wid;
-	showInventoryPanel();
+	openInventoryPanel();
 }
 
-void initUI(){
+static void initGameOverlay(){
 	cursorMesh           = textMeshNew(8);
 	cursorMesh->tex      = tCursor;
 
@@ -177,6 +206,20 @@ void initUI(){
 	chatInit();
 
 	resizeUI();
+}
+
+void initGUI(){
+	rootMenu = widgetNewCP(wSpace,NULL,0,0,-1,-1);
+	widgetExport(rootMenu,"w-root-menu");
+
+	menuBackground = widgetNewCP(wSpace,rootMenu,0,0,-1,-1);
+
+	initAttributions();
+	initGameOverlay();
+	initMainMenu();
+	initSingleplayerMenu();
+	initMultiplayerMenu();
+	initOptionsMenu();
 }
 
 void drawCursor(){
@@ -670,7 +713,7 @@ bool guiCancel(){
 		return true;
 	}
 	if(isInventoryOpen()){
-		hideInventory();
+		closeInventory();
 		return true;
 	}
 	if(widgetFocused == chatText){

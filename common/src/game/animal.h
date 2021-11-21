@@ -12,6 +12,7 @@ extern animal  animalList[1<<12];
 extern uint    animalListMax;
 extern uint    animalCount;
 
+void        animalInit             ();
 void        animalDeleteAll        ();
 animal     *animalNew              (const vec pos , int type, int gender);
 void        animalDel              (uint i);

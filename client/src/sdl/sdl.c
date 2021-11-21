@@ -22,7 +22,7 @@
 #include "../gfx/gl.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
-#include "../menu/inventory.h"
+#include "../gui/menu/inventory.h"
 #include "../misc/options.h"
 #include "../sdl/sfx.h"
 

@@ -4,6 +4,7 @@
 extern throwable throwableList[2048];
 extern uint      throwableCount;
 
+void       throwableInit        ();
 void       throwableSendUpdate  (int c, uint i);
 void       throwableEmptyUpdate (int c);
 void       throwableRecvUpdate  (const packet *p);

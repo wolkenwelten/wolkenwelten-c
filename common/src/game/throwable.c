@@ -31,6 +31,11 @@ throwable throwableList[2048];
 uint      throwableCount = 0;
 i16       throwableFirstFree = -1;
 
+void throwableInit(){
+	throwableCount = 0;
+	throwableFirstFree = -1;
+}
+
 throwable *throwableGetByBeing(being b){
 	if(beingType(b) != BEING_THROWABLE){return NULL;}
 	uint i = beingID(b);

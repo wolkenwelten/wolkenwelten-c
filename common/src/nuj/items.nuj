@@ -78,7 +78,6 @@
                         [#t [say [ansi-dark-green "Nom"]]]]
                 [player-hp [+ [player-hp] 1]]
                 [start-anim anim-eat 800]
-                [log [set-cooldown 1100]]
                 [sfx-play sfx-chomp]
                 #t]
         ]

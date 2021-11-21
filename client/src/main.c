@@ -39,9 +39,9 @@
 #include "gfx/texture.h"
 #include "gui/gui.h"
 #include "gui/menu.h"
+#include "gui/menu/inventory.h"
+#include "gui/menu/mainmenu.h"
 #include "gui/overlay.h"
-#include "menu/inventory.h"
-#include "menu/mainmenu.h"
 #include "misc/lisp.h"
 #include "misc/options.h"
 #include "network/chat.h"
@@ -131,7 +131,9 @@ void playerCheckInventory(){
 		if(itemIsEmpty(&player->inventory[i])){continue;}
 		characterDropItem(player,i);
 	}
-	if(isInventoryOpen()){showInventory();}
+	if(isInventoryOpen()){
+		openInventory();
+	}
 }
 
 void playerUpdate(){
@@ -241,8 +243,7 @@ int main( int argc, char* argv[] ){
 	chungusInit();
 	weatherInit();
 
-	initMenu();
-	initUI();
+	initGUI();
 	initSky();
 	shadowInit();
 	blockTypeInit();

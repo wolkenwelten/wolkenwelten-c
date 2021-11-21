@@ -1,5 +1,4 @@
 [def quests #nil]
-
 [def quest/panels #nil]
 
 [def quest/panel/position! [λ []
@@ -27,6 +26,7 @@
      [def wid-height 0]
      [when wid [set! wid-height [widget/height wid]]]
 
+     [widget/parent! panel w-game-screen]
      [widget/x!      panel  -8]
      [widget/y!      panel   8]
      [widget/width!  panel 320]
@@ -187,4 +187,11 @@
 
 [event-bind "on-gameplay-tick" [λ []
         [quest/refresh]
+]]
+
+[event-bind "on-leave" [λ []
+            [println "Test"]
+            [for-each [λ [panel] [widget/parent! panel #nil]] quest/panels]
+            [set! quests #nil]
+            [set! quest/panels #nil]
 ]]

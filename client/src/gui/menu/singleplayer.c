@@ -17,16 +17,16 @@
 
 #include "singleplayer.h"
 
-#include "../main.h"
-#include "../gui/gui.h"
-#include "../gui/menu.h"
-#include "../gui/textInput.h"
-#include "../gui/widget.h"
-#include "../misc/options.h"
-#include "../menu/mainmenu.h"
-#include "../../../common/src/cto.h"
-#include "../../../common/src/misc/misc.h"
-#include "../../../common/src/misc/sha1.h"
+#include "mainmenu.h"
+#include "../gui.h"
+#include "../menu.h"
+#include "../textInput.h"
+#include "../widget.h"
+#include "../../main.h"
+#include "../../misc/options.h"
+#include "../../../../common/src/cto.h"
+#include "../../../../common/src/misc/misc.h"
+#include "../../../../common/src/misc/sha1.h"
 
 #include <dirent.h>
 #include <stdio.h>

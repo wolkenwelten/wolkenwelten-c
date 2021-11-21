@@ -14,20 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "inventory.h"
 
-#include "../gui/menu.h"
-#include "../game/character.h"
-#include "../game/itemDrop.h"
-#include "../game/recipe.h"
-#include "../../../common/src/game/item.h"
-#include "../gfx/gfx.h"
-#include "../gfx/textMesh.h"
-#include "../gui/gui.h"
-#include "../sdl/sdl.h"
-#include "../sdl/sfx.h"
-#include "../main.h"
+#include "../menu.h"
+#include "../gui.h"
+#include "../../main.h"
+#include "../../game/character.h"
+#include "../../game/itemDrop.h"
+#include "../../game/recipe.h"
+#include "../../gfx/gfx.h"
+#include "../../gfx/textMesh.h"
+#include "../../sdl/sdl.h"
+#include "../../sdl/sfx.h"
+#include "../../../../common/src/game/item.h"
 
 #include <stddef.h>
 #include <math.h>
@@ -112,12 +111,12 @@ static void handlerCraftingSlotAltClick(widget *wid){
 
 static void handlerInventoryRadioInventory(widget *wid){
 	(void)wid;
-	showInventory();
+	openInventory();
 }
 
 static void handlerInventoryRadioCrafting(widget *wid){
 	(void)wid;
-	showCrafting();
+	openCrafting();
 }
 
 static void handlerCraftingSlotHover(widget *wid){
@@ -178,7 +177,7 @@ static void handlerEquipmentItemClick(widget *wid){
 	}
 	sfxPlay(sfxPock,1.f);
 	characterUpdateEquipment(player);
-	showInventory();
+	openInventory();
 }
 
 static widget *widgetNewEquipmentSlot(widget *parent, int x, int y, item *iSlot){
@@ -244,25 +243,25 @@ void initInventory(){
 	switch(inventoryOpen){
 	default:
 	case 0:
-		showInventoryPanel();
+		openInventoryPanel();
 		break;
 	case 1:
-		showInventory();
+		openInventory();
 		break;
 	case 2:
-		showCrafting();
+		openCrafting();
 		break;
 	}
 }
 
-void showInventory(){
+void openInventory(){
 	const int invSize = player != NULL ? player->inventorySize : 20;
 	const int gh = (getTilesize() * (3 + (invSize / 10))) + 32;
 	if(!gameRunning){return;}
 	if(inventoryGuiSize != invSize){refreshInventorySpace();}
 
 	if((inventoryPanel->h == gh) && (inventoryRadio->flags & WIDGET_ACTIVE)){
-		hideInventory();
+		closeInventory();
 		return;
 	}
 	inventoryOpen = 1;
@@ -276,16 +275,16 @@ void showInventory(){
 	craftingRadio->flags &= ~WIDGET_ACTIVE;
 	widgetFocus(NULL);
 }
-void showCrafting(){
+void openCrafting(){
 	int gh = getTilesize() * (1+((recipeGetCount()/10)+2)) + 32;
 	if(recipeGetCount() % 10){gh+=getTilesize();}
 	if(!gameRunning){return;}
 	if((inventoryPanel->h == gh) && (craftingRadio->flags & WIDGET_ACTIVE)){
-		hideInventory();
+		closeInventory();
 		return;
 	}
 	inventoryOpen = 2;
-	showMouseCursor();
+	hideMouseCursor();
 	widgetSlideH(inventoryPanel,              gh);
 	widgetSlideW(inventorySpace,               0);
 	widgetSlideW(equipmentSpace,               0);
@@ -295,17 +294,17 @@ void showCrafting(){
 	widgetFocus(NULL);
 }
 
-void hideInventory(){
+void closeInventory(){
 	if(!gameRunning){return;}
 	inventoryOpen = false;
-	showInventoryPanel();
+	openInventoryPanel();
 	widgetFocus(widgetGameScreen);
 }
 void toggleInventory(){
 	if(inventoryOpen){
-		hideInventory();
+		closeInventory();
 	}else{
-		showInventory();
+		openInventory();
 	}
 }
 
@@ -344,7 +343,7 @@ void drawInventory(textMesh *guim){
 	}
 }
 
-void showInventoryPanel(){
+void openInventoryPanel(){
 	widgetSlideH(inventoryPanel,getTilesize()+32);
 	widgetSlideW(inventorySpace,getTilesize()*10);
 	widgetSlideY(inventorySpace,               0);
@@ -352,7 +351,7 @@ void showInventoryPanel(){
 	widgetSlideW(craftingSpace,                0);
 }
 
-void hideInventoryPanel(){
+void closeInventoryPanel(){
 	widgetSlideH(inventoryPanel,               0);
 	widgetSlideW(inventorySpace,getTilesize()*10);
 	widgetSlideW(craftingSpace,                0);

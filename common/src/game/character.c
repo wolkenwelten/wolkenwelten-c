@@ -292,7 +292,7 @@ item *characterGetItemBarSlot(character *c, uint i){
 }
 
 item *characterGetActiveItem(character *c){
-	return characterGetItemBarSlot(c,c->activeItem);
+	return c ? characterGetItemBarSlot(c,c->activeItem) : NULL;
 }
 
 void characterSetItemBarSlot(character *c, uint i, item *itm){

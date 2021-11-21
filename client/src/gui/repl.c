@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "lispInput.h"
+#include "repl.h"
 
 #include "../main.h"
 #include "../gfx/gfx.h"

@@ -3,6 +3,7 @@
 
 extern projectile projectileList[8192];
 
+void projectileInit       ();
 int  projectileNewID      ();
 int  projectileGetClient  (uint i);
 bool projectileNew        (const vec pos, const vec rot, being target, being source, uint style, float speed);

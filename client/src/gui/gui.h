@@ -8,9 +8,11 @@ extern uint mousex,mousey,mouseClicked[3];
 extern bool mouseHidden;
 extern float matOrthoProj[16];
 
+void handlerRoot        (widget *wid);
 void handlerRootHud     (widget *wid);
 int  getTilesize        ();
-void initUI             ();
+void initGUI            ();
+void closeAllMenus      ();
 void resizeUI           ();
 void showMouseCursor    ();
 void hideMouseCursor    ();
