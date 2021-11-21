@@ -1,6 +1,10 @@
 [def quests #nil]
 [def quest/panels #nil]
 
+[def duration-to-clock-string [λ [secs]
+     ["" [string [/ secs 60]] [if [zero? [logand secs 1]] " " ":"] [% secs 60]]
+]]
+
 [def quest/panel/position! [λ []
      [def y 64]
      [for-each [λ [cur-panel]
@@ -99,7 +103,7 @@
         [def progress-widget]
         [def refresh! [λ []
                         [widget/label! progress-widget
-                                       [string [/ [[quest-start + 300000] - [time/milliseconds]] 1000]]]
+                                       [ duration-to-clock-string[/ [[quest-start + 300000] - [time/milliseconds]] 1000]]]
                         [def progress [[[time/milliseconds] - quest-start] / 300000.0]]
                         [widget/val/int! progress-widget
                                          [int [progress * 4096.0]]]
