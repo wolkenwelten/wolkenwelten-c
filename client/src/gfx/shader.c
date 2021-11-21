@@ -51,14 +51,14 @@ extern u8 src_shader_textShaderFS_glsl_data[];
 extern u8 src_shader_textShaderVS_glsl_data[];
 
 void shaderInit(){
-	sMesh      = shaderNew((const char *)src_shader_meshShaderVS_glsl_data,     (const char *)src_shader_meshShaderFS_glsl_data,     0x3);
-	sShadow    = shaderNew((const char *)src_shader_shadowShaderVS_glsl_data,   (const char *)src_shader_shadowShaderFS_glsl_data,   0x3);
-	sBlockMesh = shaderNew((const char *)src_shader_blockShaderVS_glsl_data,    (const char *)src_shader_blockShaderFS_glsl_data,    0x7);
-	sParticle  = shaderNew((const char *)src_shader_particleShaderVS_glsl_data, (const char *)src_shader_particleShaderFS_glsl_data, 0x5);
-	sRain      = shaderNew((const char *)src_shader_rainShaderVS_glsl_data,     (const char *)src_shader_rainShaderFS_glsl_data,     0x1);
-	sTextMesh  = shaderNew((const char *)src_shader_textShaderVS_glsl_data,     (const char *)src_shader_textShaderFS_glsl_data,     0x7);
-	sCloud     = shaderNew((const char *)src_shader_cloudShaderVS_glsl_data,    (const char *)src_shader_cloudShaderFS_glsl_data,    0x5);
-	sBoundary  = shaderNew((const char *)src_shader_boundaryShaderVS_glsl_data, (const char *)src_shader_boundaryShaderFS_glsl_data, 0x5);
+	sMesh      = shaderNew((const char *)src_shader_meshShaderVS_glsl_data,     (const char *)src_shader_meshShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
+	sShadow    = shaderNew((const char *)src_shader_shadowShaderVS_glsl_data,   (const char *)src_shader_shadowShaderFS_glsl_data,   SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
+	sBlockMesh = shaderNew((const char *)src_shader_blockShaderVS_glsl_data,    (const char *)src_shader_blockShaderFS_glsl_data,    SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_COLOR);
+	sParticle  = shaderNew((const char *)src_shader_particleShaderVS_glsl_data, (const char *)src_shader_particleShaderFS_glsl_data, SHADER_ATTRMASK_POS | SHADER_ATTRMASK_COLOR);
+	sRain      = shaderNew((const char *)src_shader_rainShaderVS_glsl_data,     (const char *)src_shader_rainShaderFS_glsl_data,     SHADER_ATTRMASK_POS);
+	sTextMesh  = shaderNew((const char *)src_shader_textShaderVS_glsl_data,     (const char *)src_shader_textShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_COLOR);
+	sCloud     = shaderNew((const char *)src_shader_cloudShaderVS_glsl_data,    (const char *)src_shader_cloudShaderFS_glsl_data,    SHADER_ATTRMASK_POS | SHADER_ATTRMASK_COLOR);
+	sBoundary  = shaderNew((const char *)src_shader_boundaryShaderVS_glsl_data, (const char *)src_shader_boundaryShaderFS_glsl_data, SHADER_ATTRMASK_POS | SHADER_ATTRMASK_COLOR);
 }
 
 void shaderPrintLog(uint obj, const char *msg, const char *src){
@@ -147,10 +147,10 @@ void shaderCompile(shader *s){
 	compileVertexShader(s);
 	compileFragmentShader(s);
 
-	if(s->attrMask & 0x1){glBindAttribLocation(s->pID,0,"pos");}
-	if(s->attrMask & 0x2){glBindAttribLocation(s->pID,1,"tex");}
-	if(s->attrMask & 0x4){glBindAttribLocation(s->pID,2,"color");}
-	if(s->attrMask & 0x8){glBindAttribLocation(s->pID,3,"size");}
+	if(s->attrMask & SHADER_ATTRMASK_POS){glBindAttribLocation(s->pID,0,"pos");}
+	if(s->attrMask & SHADER_ATTRMASK_TEX){glBindAttribLocation(s->pID,1,"tex");}
+	if(s->attrMask & SHADER_ATTRMASK_COLOR){glBindAttribLocation(s->pID,2,"color");}
+	if(s->attrMask & SHADER_ATTRMASK_SIZE){glBindAttribLocation(s->pID,3,"size");}
 
 	glLinkProgram(s->pID);
 	shaderPrintLog(s->pID,"Program","");

@@ -180,9 +180,9 @@ void worldDraw(const character *cam){
 		(vec){{{shadeRight, shadeRight, shadeRight}}},
 	};
 
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
+	glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
+	glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
 
 	const int camCX  = (int)cam->pos.x >> 8;
 	const int camCY  = (int)cam->pos.y >> 8;

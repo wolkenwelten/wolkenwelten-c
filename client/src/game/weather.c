@@ -119,8 +119,8 @@ void cloudsRender(){
 				glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count], GL_DYNAMIC_DRAW);
 				parts[cpart].vboSize = (CLOUDS_MAX - parts[cpart].count);
 			}
-			glVertexAttribPointer(0, 3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&cloudData[0].x) -     ((char *)cloudData)));
-			glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&cloudData[0].color) - ((char *)cloudData)));
+			glVertexAttribPointer(SHADER_ATTRIDX_POS,   3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&cloudData[0].x) -     ((char *)cloudData)));
+			glVertexAttribPointer(SHADER_ATTRIDX_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&cloudData[0].color) - ((char *)cloudData)));
 		}
 		glDrawArrays(GL_POINTS,0,CLOUDS_MAX - parts[i].count);
 	}
@@ -237,15 +237,15 @@ void cloudsInitGfx(){
 		glBindVertexArray(parts[i].vao);
 		glGenBuffers(1,&parts[i].vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, parts[i].vbo);
-		glEnableVertexAttribArray (0);
-		glEnableVertexAttribArray (2);
+		glEnableVertexAttribArray (SHADER_ATTRIDX_POS);
+		glEnableVertexAttribArray (SHADER_ATTRIDX_COLOR);
 	}
 	cloudsCalcColors();
 
 	glGenVertexArrays(1, &rainVAO);
 	glGenBuffers     (1, &rainVBO);
 	glBindVertexArray    (rainVAO);
-	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
 }
 
 void rainFakeDrops(){
@@ -287,7 +287,7 @@ void rainDrawAll(){
 		glBufferData(GL_ARRAY_BUFFER, rainCount*sizeof(glRainDrop), glRainDrops, GL_DYNAMIC_DRAW);
 		rainVBOSize = rainCount;
 	}
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void *)0);
+	glVertexAttribPointer(SHADER_ATTRIDX_POS, 4, GL_FLOAT, GL_FALSE, 0, (void *)0);
 	glDrawArrays(GL_POINTS,0,rainCount);
 
 	glDepthMask(GL_TRUE);

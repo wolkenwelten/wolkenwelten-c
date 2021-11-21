@@ -64,9 +64,9 @@ static void meshFinish(mesh *m, uint usage){
 	if(!m->vao) {
 		glGenVertexArrays(1, &m->vao);
 		glBindVertexArray(m->vao);
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
+		glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
+		glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
 	}else{
 		glBindVertexArray(m->vao);
 	}
@@ -79,9 +79,9 @@ static void meshFinish(mesh *m, uint usage){
 		glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex),  data, usage);
 		m->vboSize = m->dataCount;
 	}
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(((char *)&meshBuffer[0].x) - ((char *)meshBuffer)));
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(((char *)&meshBuffer[0].u) - ((char *)meshBuffer)));
-	glVertexAttribPointer(2, 1, GL_FLOAT, GL_TRUE , sizeof(vertex), (void *)(((char *)&meshBuffer[0].c) - ((char *)meshBuffer)));
+	glVertexAttribPointer(SHADER_ATTRIDX_POS,   3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(((char *)&meshBuffer[0].x) - ((char *)meshBuffer)));
+	glVertexAttribPointer(SHADER_ATTRIDX_TEX,   2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(((char *)&meshBuffer[0].u) - ((char *)meshBuffer)));
+	glVertexAttribPointer(SHADER_ATTRIDX_COLOR, 1, GL_FLOAT, GL_TRUE , sizeof(vertex), (void *)(((char *)&meshBuffer[0].c) - ((char *)meshBuffer)));
 }
 
 void meshFinishStatic(mesh *m){

@@ -67,13 +67,13 @@ void particleInit(){
 
 	glGenVertexArrays(1, &particleVAO);
 	glBindVertexArray(particleVAO);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
+	glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
 
 	glGenVertexArrays(1,&sparticleVAO);
 	glBindVertexArray(sparticleVAO);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
+	glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
 }
 
 void newParticleS(float x,float y,float z, u32 nrgba, float power, uint nttl){
@@ -227,7 +227,7 @@ void particleDraw(){
 	}else{
 		glBufferData(GL_ARRAY_BUFFER, particleCount*sizeof(glParticle), glParticles, GL_DYNAMIC_DRAW);
 	}
-	glVertexAttribPointer(0, 4, GL_FLOAT        , GL_FALSE, 0, (void *)0);
+	glVertexAttribPointer(SHADER_ATTRIDX_POS, 4, GL_FLOAT        , GL_FALSE, 0, (void *)0);
 
 	glBindBuffer(GL_ARRAY_BUFFER,particleVBO[1]);
 	if(gfxUseSubData && (particleVBOSize >+ particleCount)){
@@ -236,7 +236,7 @@ void particleDraw(){
 		glBufferData(GL_ARRAY_BUFFER, particleCount*sizeof(u32), particleRGBA, GL_DYNAMIC_DRAW);
 		particleVBOSize = particleCount;
 	}
-	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  0, (void *)0);
+	glVertexAttribPointer(SHADER_ATTRIDX_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE,  0, (void *)0);
 	glDrawArrays(GL_POINTS,0,particleCount);
 
 	glBindVertexArray(sparticleVAO);
@@ -246,7 +246,7 @@ void particleDraw(){
 	}else{
 		glBufferData(GL_ARRAY_BUFFER, sparticleCount*sizeof(glParticle), glSparticles, GL_DYNAMIC_DRAW);
 	}
-	glVertexAttribPointer(0, 4, GL_FLOAT        , GL_FALSE, 0, (void *)0);
+	glVertexAttribPointer(SHADER_ATTRIDX_POS, 4, GL_FLOAT        , GL_FALSE, 0, (void *)0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, sparticleVBO[1]);
 	if(gfxUseSubData && (sparticleVBOSize >= sparticleCount)){
@@ -255,7 +255,7 @@ void particleDraw(){
 		glBufferData(GL_ARRAY_BUFFER, sparticleCount*sizeof(u32), sparticleRGBA, GL_DYNAMIC_DRAW);
 		sparticleVBOSize = sparticleCount;
 	}
-	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  0, (void *)0);
+	glVertexAttribPointer(SHADER_ATTRIDX_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE,  0, (void *)0);
 	glDrawArrays(GL_POINTS,0,sparticleCount);
 
 

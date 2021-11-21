@@ -118,9 +118,9 @@ static inline void chunkFinish(chunk *c){
 	if(!c->vao) {
 		glGenVertexArrays(1, &c->vao);
 		glBindVertexArray(c->vao);
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
+		glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
+		glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
 		c->fadeIn = FADE_IN_FRAMES;
 	}else{
 		glBindVertexArray(c->vao);
@@ -133,9 +133,9 @@ static inline void chunkFinish(chunk *c){
 		glBufferData(GL_ARRAY_BUFFER, c->sideEnd[sideMAX-1] * (6 * sizeof(vertexTiny)), blockMeshBuffer, GL_STATIC_DRAW);
 		c->vboSize = c->sideEnd[sideMAX-1];
 	}
-	glVertexAttribPointer(0, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, x));
-	glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, u));
-	glVertexAttribIPointer(2, 1, GL_UNSIGNED_BYTE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, f));
+	glVertexAttribPointer(SHADER_ATTRIDX_POS, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, x));
+	glVertexAttribPointer(SHADER_ATTRIDX_TEX, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, u));
+	glVertexAttribIPointer(SHADER_ATTRIDX_COLOR, 1, GL_UNSIGNED_BYTE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, f));
 	c->flags &= ~CHUNK_FLAG_DIRTY;
 }
 

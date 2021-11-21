@@ -109,9 +109,9 @@ void textMeshDraw(textMesh *m){
 	if(!m->vao) {
 		glGenVertexArrays(1, &m->vao);
 		glBindVertexArray(m->vao);
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
+		glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
+		glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
 	}else{
 		glBindVertexArray(m->vao);
 	}
@@ -126,9 +126,9 @@ void textMeshDraw(textMesh *m){
 			glBufferData(GL_ARRAY_BUFFER, m->dataCount*sizeof(vertex2D), m->dataBuffer, GL_DYNAMIC_DRAW);
 			m->vboSize = m->dataCount;
 		}
-		glVertexAttribPointer(0, 2, GL_SHORT        , GL_FALSE, sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].x)    - ((char *)m->dataBuffer)));
-		glVertexAttribPointer(1, 2, GL_SHORT        , GL_FALSE, sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].u)    - ((char *)m->dataBuffer)));
-		glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].rgba) - ((char *)m->dataBuffer)));
+		glVertexAttribPointer(SHADER_ATTRIDX_POS,   2, GL_SHORT        , GL_FALSE, sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].x)    - ((char *)m->dataBuffer)));
+		glVertexAttribPointer(SHADER_ATTRIDX_TEX,   2, GL_SHORT        , GL_FALSE, sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].u)    - ((char *)m->dataBuffer)));
+		glVertexAttribPointer(SHADER_ATTRIDX_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(vertex2D), (void *)(((char *)&m->dataBuffer[0].rgba) - ((char *)m->dataBuffer)));
 		m->finished = 1;
 	}
 	textureBind(m->tex);
