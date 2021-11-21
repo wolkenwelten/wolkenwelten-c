@@ -19,7 +19,6 @@
 
 [def quest/panel/new! [λ [headline bodytext wid]
      [def panel   [widget/new w-panel]]
-     [def content [widget/new w-panel]]
      [def head    [widget/new w-label]]
      [def text    [widget/new w-label]]
 
@@ -31,19 +30,14 @@
      [widget/y!      panel   8]
      [widget/width!  panel 320]
      [widget/height! panel [+ 120 wid-height]]
+     [widget/val/int! panel 8]
 
-     [widget/parent! content panel]
-     [widget/width!  content -16]
-     [widget/height! content  -8]
-     [widget/x!      content   8]
-     [widget/y!      content   8]
-
-     [widget/parent! head content]
+     [widget/parent! head panel]
      [widget/width!  head  -1]
      [widget/height! head  64]
      [widget/label!  head headline]
 
-     [widget/parent! text content]
+     [widget/parent! text panel]
      [widget/y!      text  48]
      [widget/width!  text  -1]
      [widget/height! text [- -48 wid-height]]
@@ -51,7 +45,7 @@
      [widget/label!  text bodytext]
 
      [when wid
-           [widget/parent! wid content]
+           [widget/parent! wid panel]
            [widget/y! 120]
            [widget/x! 8]
            [widget/width! -1]
@@ -129,7 +123,7 @@
                 [set! progress-widget [widget/new w-slider]]
                 [widget/height! progress-widget 32]
                 [widget/width! progress-widget -1]
-                [widget/y! progress-widget -8]
+                [widget/y! progress-widget -1]
                 ;[widget/label! progress-widget ""]
                 [set! panel [quest/panel/new! name body progress-widget]]
         ]]

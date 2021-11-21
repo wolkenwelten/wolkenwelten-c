@@ -448,6 +448,18 @@ void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
 	widgetCheckEvents(wid,x,y,w,h);
 	widgetAnimate(wid);
 	widgetDrawSingle(wid,m,x,y,w,h);
+
+	switch(wid->type){
+	default:
+		break;
+	case wPanel:
+		x += wid->vali;
+		y += wid->vali;
+		w -= wid->vali*2;
+		h -= wid->vali*2;
+		break;
+	}
+
 	for(widget *c=wid->child;c!=NULL;c=c->next){
 		widgetDraw(c,m,x,y,w,h);
 	}
