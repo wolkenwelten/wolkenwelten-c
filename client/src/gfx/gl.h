@@ -26,5 +26,11 @@ extern bool glIsDebugAvailable;
 
 bool glInitialize();
 
-#define gfxGroupStart(name) if(glIsDebugAvailable){glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, name);}
-#define gfxGroupEnd() if(glIsDebugAvailable){glPopDebugGroup();}
+#ifdef __APPLE__
+	#define gfxGroupStart(name) while(false){}
+	#define gfxGroupEnd() while(false){}
+	#define glObjectLabel(a,b,c,d) (void)d;
+#else
+	#define gfxGroupStart(name) if(glIsDebugAvailable){glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, name);}
+	#define gfxGroupEnd() if(glIsDebugAvailable){glPopDebugGroup();}
+#endif
