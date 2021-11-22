@@ -21,11 +21,12 @@
 #include <math.h>
 #include <stdlib.h>
 
-void widgetDrawTextScroller(const widget *wid, textMesh *m, int x, int y, int w, int h){
+void widgetDrawTextScroller(const widget *wid, textMesh *m, const box2D area){
+	const int x = area.x;
+	const int y = area.y;
+
 	static int oy = -128;
 	static int ov = 2;
-	(void)w;
-	(void)h;
 
 	m->wrap = 1;
 	bool overflow = textMeshPrintfPS(m,x+16,y+16-oy,2,"%s",wid->label);

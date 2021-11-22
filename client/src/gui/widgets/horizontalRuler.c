@@ -19,7 +19,11 @@
 
 #include "../../gfx/textMesh.h"
 
-void widgetDrawHorizontalRuler(const widget *wid, textMesh *m, int x, int y, int w, int h){
+void widgetDrawHorizontalRuler(const widget *wid, textMesh *m, box2D area){
+	const int x = area.x;
+	const int y = area.y;
+	const int w = area.w;
+	const int h = area.h;
 	(void)wid;
 	const u32 bcolor = 0xCC444444;
 	const u32 tcolor = 0xCC111111;

@@ -24,7 +24,12 @@
 #include <math.h>
 #include <string.h>
 
-void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, int w, int h){
+void widgetDrawRecipeInfo(const widget *wid, textMesh *m, box2D area){
+	const int x = area.x;
+	const int y = area.y;
+	const int w = area.w;
+	const int h = area.h;
+
 	const uint ticks = getTicks()>>4;
 	const uint ts    = MIN(w,h);
 	uint ii,xx,r = wid->vali;

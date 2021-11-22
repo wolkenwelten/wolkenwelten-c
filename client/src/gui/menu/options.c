@@ -71,27 +71,27 @@ static void handlerOptionsCancel(widget *wid){
 }
 
 void initOptionsMenu(){
-	optionsMenu = widgetNewCP(wPanel,rootMenu,-1,0,0,-1);
+	optionsMenu = widgetNewCP(wPanel,rootMenu,rect(-1,0,0,-1));
 	optionsMenu->flags |= WIDGET_HIDDEN;
 
-	widgetNewCP  (wSpace ,optionsMenu,16,0,256,0);
+	widgetNewCP  (wSpace ,optionsMenu,rect(16,0,256,0));
 
-	optionsName = widgetNewCPL(wTextInput,optionsMenu,16,0,256,32,"Playername");
+	optionsName = widgetNewCPL(wTextInput,optionsMenu,rect(16,0,256,32),"Playername");
 	strncpy(optionsName->vals,playerName,256);
-	optionsVolume = widgetNewCPL(wSlider,optionsMenu,16,0,256,32,"Volume");
+	optionsVolume = widgetNewCPL(wSlider,optionsMenu,rect(16,0,256,32),"Volume");
 	optionsVolume->vali = optionSoundVolume * 4096.f;
 
-	optionsRenderDistance = widgetNewCPL(wSlider,optionsMenu,16,0,256,32,"Render Distance");
+	optionsRenderDistance = widgetNewCPL(wSlider,optionsMenu,rect(16,0,256,32),"Render Distance");
 	optionsRenderDistance->vali = ((renderDistance-64.f) / (512-64)) * 4096.f;
 	widgetBind(optionsRenderDistance,"change",handlerRenderDistanceChanged);
 
-	optionsMouseSensitivity = widgetNewCPL(wSlider,optionsMenu,16,0,256,32,"Mouse Sensitivy");
+	optionsMouseSensitivity = widgetNewCPL(wSlider,optionsMenu,rect(16,0,256,32),"Mouse Sensitivy");
 	optionsMouseSensitivity->vali = (optionMouseSensitivy-0.01f) * 4096.f;
 	widgetBind(optionsMouseSensitivity,"change",handlerMouseSensitivityChanged);
 
-	widgetNewCP  (wHorizontalRuler ,optionsMenu,16,0,256,32);
-	widgetNewCPLH(wButton,optionsMenu,16,0,256,32,"Save","click",handlerOptionsSave);
-	widgetNewCPLH(wButton,optionsMenu,16,0,256,32,"Cancel","click",handlerOptionsCancel);
+	widgetNewCP  (wHorizontalRuler ,optionsMenu,rect(16,0,256,32));
+	widgetNewCPLH(wButton,optionsMenu,rect(16,0,256,32),"Save","click",handlerOptionsSave);
+	widgetNewCPLH(wButton,optionsMenu,rect(16,0,256,32),"Cancel","click",handlerOptionsCancel);
 	widgetLayVert(optionsMenu,16);
 }
 

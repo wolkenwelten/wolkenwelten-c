@@ -2,6 +2,6 @@
 #include "../../../../common/src/common.h"
 #include "../widget.h"
 
-void widgetAddPopup   (const widget *wid, uint x, uint y, uint w, uint h);
-void widgetDrawSingle (const widget *wid, textMesh *mesh, int x, int y, int w, int h);
+void widgetAddPopup   (const widget *wid, box2D area);
+void widgetDrawSingle (const widget *wid, textMesh *mesh, const box2D area);
 void widgetDrawPopups (textMesh *mesh);

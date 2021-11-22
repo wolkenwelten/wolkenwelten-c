@@ -188,11 +188,11 @@ static void handlerLispInputBlur(widget *w){
 }
 
 void lispInputInit(){
-	lispPanel = widgetNewCP(wPanel,rootMenu,64,0,screenWidth-128,0);
+	lispPanel = widgetNewCP(wPanel,rootMenu,rect(64,0,screenWidth-128,0));
 	lispPanel->flags |= WIDGET_HIDDEN;
-	lispLog = widgetNewCP(wTextLog,lispPanel,0,0,-1,-32);
+	lispLog = widgetNewCP(wTextLog,lispPanel,rect(0,0,-1,-32));
 	lispLog->flags |= WIDGET_LISP;
-	lispInput = widgetNewCP(wTextInput,lispPanel,0,-1,-1,32);
+	lispInput = widgetNewCP(wTextInput,lispPanel,rect(0,-1,-1,32));
 	lispInput->flags |= WIDGET_LISP;
 	widgetBind(lispInput,"blur",handlerLispInputBlur);
 	widgetBind(lispInput,"change",handlerLispReset);

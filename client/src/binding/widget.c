@@ -124,7 +124,7 @@ static lVal *wwlnfWidgetFocusSet(lClosure *c, lVal *v){
 static lVal *wwlnfWidgetX(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
-	return w == NULL ? NULL : lValInt(w->x);
+	return w == NULL ? NULL : lValInt(w->area.x);
 }
 
 static lVal *wwlnfWidgetSetX(lClosure *c, lVal *v){
@@ -132,14 +132,14 @@ static lVal *wwlnfWidgetSetX(lClosure *c, lVal *v){
 	widget *w = castToWidget(lCar(v));
 	const int nv = castToInt(lCadr(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
-	w->x = nv;
+	w->area.x = nv;
 	return NULL;
 }
 
 static lVal *wwlnfWidgetY(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
-	return w == NULL ? NULL : lValInt(w->y);
+	return w == NULL ? NULL : lValInt(w->area.y);
 }
 
 static lVal *wwlnfWidgetSetY(lClosure *c, lVal *v){
@@ -147,14 +147,14 @@ static lVal *wwlnfWidgetSetY(lClosure *c, lVal *v){
 	widget *w = castToWidget(lCar(v));
 	const int nv = castToInt(lCadr(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
-	w->y = nv;
+	w->area.y = nv;
 	return NULL;
 }
 
 static lVal *wwlnfWidgetW(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
-	return w == NULL ? NULL : lValInt(w->w);
+	return w == NULL ? NULL : lValInt(w->area.w);
 }
 
 static lVal *wwlnfWidgetSetW(lClosure *c, lVal *v){
@@ -162,14 +162,14 @@ static lVal *wwlnfWidgetSetW(lClosure *c, lVal *v){
 	widget *w = castToWidget(lCar(v));
 	const int nv = castToInt(lCadr(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
-	w->w = nv;
+	w->area.w = nv;
 	return NULL;
 }
 
 static lVal *wwlnfWidgetH(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
-	return w == NULL ? NULL : lValInt(w->h);
+	return w == NULL ? NULL : lValInt(w->area.h);
 }
 
 static lVal *wwlnfWidgetSetH(lClosure *c, lVal *v){
@@ -177,7 +177,7 @@ static lVal *wwlnfWidgetSetH(lClosure *c, lVal *v){
 	widget *w = castToWidget(lCar(v)); v = lCdr(v);
 	const int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
-	w->h = nv;
+	w->area.h = nv;
 	return NULL;
 }
 
@@ -200,7 +200,7 @@ static lVal *wwlnfWidgetGX(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	if(w == NULL){return NULL;}
-	return lValInt(w->gx);
+	return lValInt(w->goalArea.x);
 }
 
 static lVal *wwlnfWidgetSetGX(lClosure *c, lVal *v){
@@ -208,14 +208,14 @@ static lVal *wwlnfWidgetSetGX(lClosure *c, lVal *v){
 	widget *w = castToWidget(lCar(v)); v = lCdr(v);
 	int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
-	w->gx = nv;
+	w->goalArea.x = nv;
 	return NULL;
 }
 
 static lVal *wwlnfWidgetGY(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
-	return w == NULL ? NULL : lValInt(w->gy);
+	return w == NULL ? NULL : lValInt(w->goalArea.y);
 }
 
 static lVal *wwlnfWidgetSetGY(lClosure *c, lVal *v){
@@ -223,7 +223,7 @@ static lVal *wwlnfWidgetSetGY(lClosure *c, lVal *v){
 	widget *w = castToWidget(lCar(v)); v = lCdr(v);
 	const int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
-	w->gy = nv;
+	w->goalArea.y = nv;
 	return NULL;
 }
 
@@ -231,7 +231,7 @@ static lVal *wwlnfWidgetGW(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
 	if(w == NULL){return NULL;}
-	return lValInt(w->gw);
+	return lValInt(w->goalArea.w);
 }
 
 static lVal *wwlnfWidgetSetGW(lClosure *c, lVal *v){
@@ -239,14 +239,14 @@ static lVal *wwlnfWidgetSetGW(lClosure *c, lVal *v){
 	widget *w = castToWidget(lCar(v)); v = lCdr(v);
 	int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
-	w->gw = nv;
+	w->goalArea.w = nv;
 	return NULL;
 }
 
 static lVal *wwlnfWidgetGH(lClosure *c, lVal *v){
 	(void)c;
 	widget *w = castToWidget(lCar(v));
-	return w == NULL ? NULL : lValInt(w->gh);
+	return w == NULL ? NULL : lValInt(w->goalArea.h);
 }
 
 static lVal *wwlnfWidgetSetGH(lClosure *c, lVal *v){
@@ -254,7 +254,7 @@ static lVal *wwlnfWidgetSetGH(lClosure *c, lVal *v){
 	widget *w = castToWidget(lCar(v)); v = lCdr(v);
 	const int nv = castToInt(lCar(v),INT_MIN);
 	if((w == NULL) || (nv == INT_MIN)){return NULL;}
-	w->gh = nv;
+	w->goalArea.h = nv;
 	return NULL;
 }
 

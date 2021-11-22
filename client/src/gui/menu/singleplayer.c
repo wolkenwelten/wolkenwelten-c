@@ -53,13 +53,13 @@ static void refreshSaveList(){
 	widgetEmpty(saveList);
 	firstSave = NULL;
 	for(int i=0;i<savegameCount;i++){
-		widget *button = widgetNewCPL(wButtonDel,saveList,16,i*48,256,32,savegameName[i]);
+		widget *button = widgetNewCPL(wButtonDel,saveList,rect(16,i*48,256,32),savegameName[i]);
 		widgetBind(button,"click",handlerLoadGame);
 		widgetBind(button,"altclick",handlerDeleteGame);
 		button->vali = i;
 		if(firstSave == NULL){firstSave = button;}
 	}
-	saveList->h = savegameCount * 48;
+	saveList->area.h = savegameCount * 48;
 	widgetLayVert(singleplayerMenu,16);
 }
 
@@ -142,21 +142,21 @@ static void handlerSPBackToMenu(widget *wid){
 }
 
 void initSingleplayerMenu(){
-	singleplayerMenu = widgetNewCP(wPanel,rootMenu,-1,0,0,-1);
+	singleplayerMenu = widgetNewCP(wPanel,rootMenu,rect(-1,0,0,-1));
 	singleplayerMenu->flags |= WIDGET_HIDDEN;
 
-	saveList = widgetNewCP(wSpace,singleplayerMenu,0,0,288,32);
-	widgetNewCP(wHorizontalRuler, singleplayerMenu,16,0,256,32);
-	buttonNewGame = widgetNewCPLH(wButton,singleplayerMenu,16,0,256,32,"New Game","click",handlerNewGame);
-	widgetNewCPLH(wButton,singleplayerMenu,16,0,256,32,"Back to Menu","click",handlerSPBackToMenu);
+	saveList = widgetNewCP(wSpace,singleplayerMenu,rect(0,0,288,32));
+	widgetNewCP(wHorizontalRuler, singleplayerMenu,rect(16,0,256,32));
+	buttonNewGame = widgetNewCPLH(wButton,singleplayerMenu,rect(16,0,256,32),"New Game","click",handlerNewGame);
+	widgetNewCPLH(wButton,singleplayerMenu,rect(16,0,256,32),"Back to Menu","click",handlerSPBackToMenu);
 	widgetLayVert(singleplayerMenu,16);
 
-	newGame = widgetNewCP(wPanel,rootMenu,32,-1,288,0);
+	newGame = widgetNewCP(wPanel,rootMenu,rect(32,-1,288,0));
 	newGame->flags |= WIDGET_HIDDEN;
-	newGameName = widgetNewCPLH(wTextInput,newGame,16,16,256,32,"World Name","submit",handlerNewGameNext);
-	newGameSeed = widgetNewCPLH(wTextInput,newGame,16,64,256,32,"World Seed","submit",handlerNewGameSubmit);
-	widgetNewCPLH(wButton,newGame,16,112,120,32,"Cancel","click",handlerNewGameCancel);
-	widgetNewCPLH(wButton,newGame,148,112,120,32,"Create","click",handlerNewGameSubmit);
+	newGameName = widgetNewCPLH(wTextInput,newGame,rect(16,16,256,32),"World Name","submit",handlerNewGameNext);
+	newGameSeed = widgetNewCPLH(wTextInput,newGame,rect(16,64,256,32),"World Seed","submit",handlerNewGameSubmit);
+	widgetNewCPLH(wButton,newGame,rect(16,112,120,32),"Cancel","click",handlerNewGameCancel);
+	widgetNewCPLH(wButton,newGame,rect(148,112,120,32),"Create","click",handlerNewGameSubmit);
 	checkSavegames();
 }
 

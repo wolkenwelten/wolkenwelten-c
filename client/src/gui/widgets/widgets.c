@@ -24,7 +24,7 @@
 #include <string.h>
 
 typedef struct {
-	uint x,y,w,h;
+	box2D area;
 	const widget *wid;
 } popupQueueEntry;
 
@@ -32,25 +32,23 @@ popupQueueEntry popupQueue[16];
 uint popupQueueLength = 0;
 
 
-void widgetDrawTextLog(const widget *wid, textMesh *m, int x, int y, int w, int h);
-void widgetDrawTextScroller(const widget *wid, textMesh *m, int x, int y, int w, int h);
-void widgetDrawRecipeInfo(const widget *wid, textMesh *m, int x, int y, int w, int h);
-void widgetDrawRecipeSlot(const widget *wid, textMesh *m, int x, int y, int w, int h);
-void widgetDrawItemSlot(const widget *wid, textMesh *m, int x, int y, int w, int h, const item *itm);
-void widgetDrawSlider(const widget *wid, textMesh *m, int x, int y, int w, int h);
-void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, int w, int h);
-void widgetDrawBackground(const widget *wid, textMesh *m, int x, int y, int w, int h);
-void widgetDrawRadioButton(const widget *wid, textMesh *m, int x, int y, int w, int h);
-void widgetDrawButtondel(const widget *wid, textMesh *m, int x, int y, int w, int h);
-void widgetDrawButton(const widget *wid, textMesh *m, int x, int y, int w, int h);
-void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h, const char *rawLine, int lambda, int mark, int cursor);
-void widgetDrawHorizontalRuler(const widget *wid, textMesh *m, int x, int y, int w, int h);
-void widgetDrawPanel(const widget *wid, textMesh *m, int x, int y, int w, int h);
-void widgetDrawLabel(const widget *wid, textMesh *m, int x, int y, int w, int h);
+void widgetDrawTextLog(const widget *wid, textMesh *m, box2D area);
+void widgetDrawTextScroller(const widget *wid, textMesh *m, box2D area);
+void widgetDrawRecipeInfo(const widget *wid, textMesh *m, box2D area);
+void widgetDrawRecipeSlot(const widget *wid, textMesh *m, box2D area);
+void widgetDrawItemSlot(const widget *wid, textMesh *m, box2D area, const item *itm);
+void widgetDrawSlider(const widget *wid, textMesh *m, box2D area);
+void widgetDrawTextInput(const widget *wid, textMesh *m, box2D area);
+void widgetDrawBackground(const widget *wid, textMesh *m, box2D area);
+void widgetDrawRadioButton(const widget *wid, textMesh *m, box2D area);
+void widgetDrawButtondel(const widget *wid, textMesh *m, box2D area);
+void widgetDrawButton(const widget *wid, textMesh *m, box2D area);
+void widgetDrawLispLine(textMesh *m, box2D area, int size, const char *rawLine, int lambda, int mark, int cursor);
+void widgetDrawHorizontalRuler(const widget *wid, textMesh *m, box2D area);
+void widgetDrawPanel(const widget *wid, textMesh *m, box2D area);
+void widgetDrawLabel(const widget *wid, textMesh *m, box2D area);
 
-static void widgetDrawPopupItemSlot(textMesh *m,const item *itm, uint x, uint y, uint w, uint h){
-	(void)h;
-
+static void widgetDrawPopupItemSlot(textMesh *m,const item *itm, box2D area){
 	if(itm == NULL){return;}
 	const char *name = itemGetName(itm);
 	if(name == NULL){return;}
@@ -59,16 +57,16 @@ static void widgetDrawPopupItemSlot(textMesh *m,const item *itm, uint x, uint y,
 	u32 bcolor = 0xCC444444;
 	u32 tcolor = 0xCC111111;
 	int xoff   = (len * 8)+8;
-	int yoff   = MAX(0,MIN((int)(y-32),(int)(screenHeight-32)));
+	int yoff   = MAX(0,MIN((int)(area.y-32),(int)(screenHeight-32)));
 	int width  = xoff * 2;
-	xoff = MAX(0,MIN((int)(x+(w/2)-xoff),(int)(screenWidth-width)));
+	xoff = MAX(0,MIN((int)(area.x+(area.w/2)-xoff),(int)(screenWidth-width)));
 	textMeshVGradient(m,xoff,yoff,width,32,tcolor,bcolor);
 	textMeshAddStrPS(m,xoff+8,yoff+8,2,name);
 }
 
-void widgetAddPopup(const widget *wid, uint x, uint y, uint w, uint h){
+void widgetAddPopup(const widget *wid, box2D area){
 	if(popupQueueLength >= 16){return;}
-	popupQueue[popupQueueLength++] = (popupQueueEntry){x,y,w,h,wid};
+	popupQueue[popupQueueLength++] = (popupQueueEntry){area,wid};
 }
 
 void widgetDrawPopups(textMesh *m){
@@ -80,23 +78,23 @@ void widgetDrawPopups(textMesh *m){
 			break;
 		case wRecipeSlot: {
 			const item recipeRes = recipeGetResult(qe->wid->valu);
-			widgetDrawPopupItemSlot(m,&recipeRes,qe->x,qe->y,qe->w,qe->h);
+			widgetDrawPopupItemSlot(m,&recipeRes,qe->area);
 			break; }
 		case wItem: {
 			const item *itm = &qe->wid->valItem;
-			widgetDrawPopupItemSlot(m,itm,qe->x,qe->y,qe->w,qe->h);
+			widgetDrawPopupItemSlot(m,itm,qe->area);
 			break; }
 		case wItemSlot: {
 			const item *itm = qe->wid->valItemSlot;
-			widgetDrawPopupItemSlot(m,itm,qe->x,qe->y,qe->w,qe->h);
+			widgetDrawPopupItemSlot(m,itm,qe->area);
 			break; }
 		}
 	}
 	popupQueueLength = 0;
 }
 
-void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h){
-	if((wid == NULL) || (x >= screenWidth) || (y >= screenHeight) || ((x+w) <= 0) || ((y+h) <= 0)){return;}
+void widgetDrawSingle(const widget *wid, textMesh *m, box2D area){
+	if((wid == NULL) || (area.x >= screenWidth) || (area.y >= screenHeight) || ((area.x + area.w) <= 0) || ((area.y + area.h) <= 0)){return;}
 
 	switch(wid->type){
 	case wNone:
@@ -104,49 +102,49 @@ void widgetDrawSingle(const widget *wid, textMesh *m,int x, int y, int w, int h)
 	case wGameScreen:
 		break;
 	case wPanel:
-		widgetDrawPanel(wid,m,x,y,w,h);
+		widgetDrawPanel(wid,m,area);
 		break;
 	case wBackground:
-		widgetDrawBackground(wid,m,x,y,w,h);
+		widgetDrawBackground(wid,m,area);
 		break;
 	case wHorizontalRuler:
-		widgetDrawHorizontalRuler(wid,m,x,y,w,h);
+		widgetDrawHorizontalRuler(wid,m,area);
 		break;
 	case wLabel:
-		widgetDrawLabel(wid,m,x,y,w,h);
+		widgetDrawLabel(wid,m,area);
 		break;
 	case wTextInput:
-		widgetDrawTextInput(wid,m,x,y,w,h);
+		widgetDrawTextInput(wid,m,area);
 		break;
 	case wButton:
-		widgetDrawButton(wid,m,x,y,w,h);
+		widgetDrawButton(wid,m,area);
 		break;
 	case wButtonDel:
-		widgetDrawButtondel(wid,m,x,y,w,h);
+		widgetDrawButtondel(wid,m,area);
 		break;
 	case wRadioButton:
-		widgetDrawRadioButton(wid,m,x,y,w,h);
+		widgetDrawRadioButton(wid,m,area);
 		break;
 	case wSlider:
-		widgetDrawSlider(wid,m,x,y,w,h);
+		widgetDrawSlider(wid,m,area);
 		break;
 	case wItem:
-		widgetDrawItemSlot(wid,m,x,y,w,h,&wid->valItem);
+		widgetDrawItemSlot(wid,m,area,&wid->valItem);
 		break;
 	case wItemSlot:
-		widgetDrawItemSlot(wid,m,x,y,w,h,wid->valItemSlot);
+		widgetDrawItemSlot(wid,m,area,wid->valItemSlot);
 		break;
 	case wRecipeSlot:
-		widgetDrawRecipeSlot(wid,m,x,y,w,h);
+		widgetDrawRecipeSlot(wid,m,area);
 		break;
 	case wRecipeInfo:
-		widgetDrawRecipeInfo(wid,m,x,y,w,h);
+		widgetDrawRecipeInfo(wid,m,area);
 		break;
 	case wTextScroller:
-		widgetDrawTextScroller(wid,m,x,y,w,h);
+		widgetDrawTextScroller(wid,m,area);
 		break;
 	case wTextLog:
-		widgetDrawTextLog(wid,m,x,y,w,h);
+		widgetDrawTextLog(wid,m,area);
 		break;
 	}
 }

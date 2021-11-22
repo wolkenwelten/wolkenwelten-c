@@ -48,14 +48,14 @@ static void refreshServerList(){
 	widgetEmpty(serverList);
 	firstServer = NULL;
 	for(int i=0;i<serverlistCount;i++){
-		widget *button = widgetNewCPL(wButtonDel,serverList,16,i*48,256,32,serverlistName[i]);
+		widget *button = widgetNewCPL(wButtonDel,serverList,rect(16,i*48,256,32),serverlistName[i]);
 		widgetBind(button,"click",handlerJoinServer);
 		widgetBind(button,"altclick",handlerDeleteServer);
 		button->vali = i;
 		firstServer = button;
 	}
 
-	serverList->h = serverlistCount * 48;
+	serverList->area.h = serverlistCount * 48;
 	widgetLayVert(multiplayerMenu,16);
 	focusMultiPlayer();
 }
@@ -126,21 +126,21 @@ static void handlerMPBackToMenu(widget *wid){
 }
 
 void initMultiplayerMenu(){
-	multiplayerMenu = widgetNewCP(wPanel,rootMenu,-1,0,0,-1);
+	multiplayerMenu = widgetNewCP(wPanel,rootMenu,rect(-1,0,0,-1));
 	multiplayerMenu->flags |= WIDGET_HIDDEN;
 
-	serverList = widgetNewCP(wSpace,multiplayerMenu,0,0,288,32);
-	widgetNewCP(wHorizontalRuler,multiplayerMenu,16,0,256,32);
-	buttonNewServer = widgetNewCPLH(wButton,multiplayerMenu,16,0,256,32,"New Server","click",handlerNewServer);
-	widgetNewCPLH(wButton,multiplayerMenu,16,0,256,32,"Back to Menu","click",handlerMPBackToMenu);
+	serverList = widgetNewCP(wSpace,multiplayerMenu,rect(0,0,288,32));
+	widgetNewCP(wHorizontalRuler,multiplayerMenu,rect(16,0,256,32));
+	buttonNewServer = widgetNewCPLH(wButton,multiplayerMenu,rect(16,0,256,32),"New Server","click",handlerNewServer);
+	widgetNewCPLH(wButton,multiplayerMenu,rect(16,0,256,32),"Back to Menu","click",handlerMPBackToMenu);
 	widgetLayVert(multiplayerMenu,16);
 
-	newServer = widgetNewCP(wPanel,rootMenu,32,-1,288,0);
+	newServer = widgetNewCP(wPanel,rootMenu,rect(32,-1,288,0));
 	newServer->flags |= WIDGET_HIDDEN;
-	newServerName = widgetNewCPLH(wTextInput,newServer,16,16,256,32,"Server Name","submit",handlerNewServerNext);
-	newServerIP = widgetNewCPLH(wTextInput,newServer,16,64,256,32,"IP / Domain","submit",handlerNewServerSubmit);
-	widgetNewCPLH(wButton,newServer,16,112,120,32,"Cancel","click",handlerNewServerCancel);
-	widgetNewCPLH(wButton,newServer,148,112,120,32,"Create","click",handlerNewServerSubmit);
+	newServerName = widgetNewCPLH(wTextInput,newServer,rect(16,16,256,32),"Server Name","submit",handlerNewServerNext);
+	newServerIP = widgetNewCPLH(wTextInput,newServer,rect(16,64,256,32),"IP / Domain","submit",handlerNewServerSubmit);
+	widgetNewCPLH(wButton,newServer,rect(16,112,120,32),"Cancel","click",handlerNewServerCancel);
+	widgetNewCPLH(wButton,newServer,rect(148,112,120,32),"Create","click",handlerNewServerSubmit);
 	checkServers();
 }
 

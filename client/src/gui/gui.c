@@ -79,7 +79,7 @@ widget *rootMenu;
 widget *widgetGameScreen;
 
 bool mouseHidden = false;
-uint mousex,mousey;
+int  mousex,mousey;
 uint mouseClicked[3] = {0,0,0};
 uint animalOverlaysDrawn = 0;
 
@@ -168,9 +168,9 @@ void resizeUI(){
 	matOrtho(matOrthoProj,0.f,screenWidth,screenHeight,0.f,-1.f,16.f);
 
 	const int sx = 10*getTilesize();
-	chatPanel->w = screenWidth - sx;
-	chatText->w  = screenWidth - sx - 64;
-	lispPanel->w = screenWidth - 128;
+	chatPanel->area.w = screenWidth - sx;
+	chatText->area.w  = screenWidth - sx - 64;
+	lispPanel->area.w = screenWidth - 128;
 	if(lispPanelVisible){
 		widgetSlideH(lispPanel, screenHeight-128);
 	}
@@ -197,9 +197,9 @@ static void initGameOverlay(){
 	guim                 = textMeshNew(1<<16);
 	guim->tex            = tGui;
 
-	widgetGameScreen = widgetNewCP(wGameScreen,rootMenu,0,0,-1,-1);
+	widgetGameScreen = widgetNewCP(wGameScreen,rootMenu,rect(0,0,-1,-1));
 	widgetBind(widgetGameScreen,"focus",handlerGameFocus);
-	chatPanel = widgetNewCP(wPanel,rootMenu,0,-1,512,0);
+	chatPanel = widgetNewCP(wPanel,rootMenu,rect(0,-1,512,0));
 	chatPanel->flags |= WIDGET_HIDDEN;
 	widgetExport(widgetGameScreen, "w-game-screen");
 
@@ -210,10 +210,10 @@ static void initGameOverlay(){
 }
 
 void initGUI(){
-	rootMenu = widgetNewCP(wSpace,NULL,0,0,-1,-1);
+	rootMenu = widgetNewCP(wSpace,NULL,rect(0,0,-1,-1));
 	widgetExport(rootMenu,"w-root-menu");
 
-	menuBackground = widgetNewCP(wSpace,rootMenu,0,0,-1,-1);
+	menuBackground = widgetNewCP(wSpace,rootMenu,rect(0,0,-1,-1));
 
 	initAttributions();
 	initGameOverlay();
@@ -239,7 +239,7 @@ void drawCursor(){
 }
 
 void updateMouse(){
-	const uint oldmx = mousex, oldmy = mousey;
+	const int oldmx = mousex, oldmy = mousey;
 	int nmx,nmy, btn = getMouseState(&nmx,&nmy);;
 	mousex = nmx;
 	mousey = nmy;
@@ -613,7 +613,7 @@ void drawAmmunition(){
 	const int tilesize = getTilesize();
 
 	guim->sx = screenWidth-(tilesize*2.f);
-	guim->sy = screenHeight-tilesize-inventoryPanel->h;
+	guim->sy = screenHeight-tilesize-inventoryPanel->area.h;
 	guim->font = 1;
 	textMeshNumber(guim,guim->sx,guim->sy,2,amount);
 	textMeshItemSprite(guim,guim->sx+32,guim->sy-18,64,ammo);
@@ -677,7 +677,9 @@ void drawHud(){
 	}
 	lispPanelCheckAutoComplete();
 	lispPanelCheckAutoCompleteDescription();
-	widgetDraw(rootMenu,guim,0,0,screenWidth,screenHeight);
+	const box2D screen = rect(0,0,screenWidth,screenHeight);
+	widget *hover = widgetDraw(rootMenu,guim,screen);
+	widgetDoMouseEvents(rootMenu,hover, screen);
 	if(isInventoryOpen()){drawInventory(guim);}
 	widgetDrawPopups(guim);
 	textMeshDraw(guim);

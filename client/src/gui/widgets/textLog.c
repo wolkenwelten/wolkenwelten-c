@@ -19,9 +19,11 @@
 #include "lispLine.h"
 #include "../../gfx/textMesh.h"
 
-void widgetDrawTextLog(const widget *wid, textMesh *m, int x, int y, int w, int h){
-	(void)w;
-	(void)h;
+void widgetDrawTextLog(const widget *wid, textMesh *m, const box2D area){
+	const int x = area.x;
+	const int y = area.y;
+	const int w = area.w;
+	const int h = area.h;
 	const int FS = 16;
 	int i=0,bg=0;
 

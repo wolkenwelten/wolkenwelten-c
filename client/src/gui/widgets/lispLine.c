@@ -44,8 +44,12 @@ static void widgetDrawAutocomplete(textMesh *m,int x,int y,int size){
 	}
 }
 
-void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h, const char *rawLine, int lambda, int mark, int cursor){
-	(void)h;
+void widgetDrawLispLine(textMesh *m, box2D area, int size, const char *rawLine, int lambda, int mark, int cursor){
+	const int x = area.x;
+	const int y = area.y;
+	const int w = area.w;
+	const int h = area.h;
+
 	int openParens = 0, cx = x, cy = y, oldFont = m->font;;
 	u32 cfgc = 0xFFFFFFFF;
 	u8 c;
@@ -143,6 +147,6 @@ void widgetDrawLispLine(textMesh *m, int x, int y, int size, int w, int h, const
 
 	if((cursor >= 0) && (lispAutoCompleteDescription[0]!=0)){
 		textMeshVGradient(m, x-size*4, y+size*12, w+size*4 ,size*16,0xB0808080,0xD0606060);
-		widgetDrawLispLine(m, x, y+size*16, size, w, h,lispAutoCompleteDescription , 0, -1, -1);
+		widgetDrawLispLine(m, rect(x, y+size*16, w, h), size,lispAutoCompleteDescription , 0, -1, -1);
 	}
 }

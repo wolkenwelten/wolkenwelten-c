@@ -6,6 +6,14 @@
 typedef struct widget widget;
 typedef struct eventHandler eventHandler;
 
+typedef struct {
+	int x,y,w,h;
+} box2D;
+
+static inline box2D rect(int x, int y, int w, int h){
+	return (box2D){x,y,w,h};
+}
+
 struct eventHandler {
 	const char *eventName;
 	bool lisp;
@@ -38,10 +46,10 @@ typedef enum {
 } widgetType;
 
 struct widget {
-	int x,y,w,h;
+	box2D area;
+	box2D goalArea;
 	widgetType type;
 	uint flags;
-	int gx,gy,gw,gh;
 
 	widget *parent,*child;
 	widget *prev,*next;
@@ -93,9 +101,9 @@ extern eventHandler *eventHandlerFirstFree;
 
 widget *widgetNew     (widgetType type);
 widget *widgetNewC    (widgetType type, widget *p);
-widget *widgetNewCP   (widgetType type, widget *p, int x, int y, int w, int h);
-widget *widgetNewCPL  (widgetType type, widget *p, int x, int y, int w, int h, const char *label);
-widget *widgetNewCPLH (widgetType type, widget *p, int x, int y, int w, int h, const char *label,const char *eventName, void (*handler)(widget *));
+widget *widgetNewCP   (widgetType type, widget *p, const box2D position);
+widget *widgetNewCPL  (widgetType type, widget *p, const box2D position, const char *label);
+widget *widgetNewCPLH (widgetType type, widget *p, const box2D position, const char *label,const char *eventName, void (*handler)(widget *));
 void    widgetEmpty   (widget *w);
 
 void    widgetFree    (widget *w);
@@ -111,7 +119,7 @@ void    widgetBind    (widget *w, const char *eventName, void (*handler)(widget 
 void    widgetBindL   (widget *w, const char *eventName, lVal *val);
 int     widgetEmit    (widget *w, const char *eventName);
 
-void    widgetDraw    (widget *w, textMesh *mesh, int x, int y, int pw, int ph);
+widget *widgetDraw    (widget *w, textMesh *mesh, const box2D parentPosition);
 void    widgetLayVert (widget *w, int padding);
 void    widgetFinish  (widget *w);
 void    widgetSlideW  (widget *w, int nw);
@@ -121,3 +129,4 @@ void    widgetSlideY  (widget *w, int nh);
 void    widgetLabel   (widget *w, const char *newLabel);
 void    widgetAddEntry(widget *w, const char *entry);
 void    widgetUpdateAllEvents();
+bool    widgetDoMouseEvents(widget *w, widget *goal, const box2D screen);

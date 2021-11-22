@@ -20,7 +20,12 @@
 
 #include <string.h>
 
-void widgetDrawRadioButton(const widget *wid, textMesh *m, int x, int y, int w, int h){
+void widgetDrawRadioButton(const widget *wid, textMesh *m, box2D area){
+	const int x = area.x;
+	const int y = area.y;
+	const int w = area.w;
+	const int h = area.h;
+
 	u32 color    = 0xFF555555;
 	u32 tcolor   = 0xFF777777;
 	u32 bcolor   = 0xFF333333;

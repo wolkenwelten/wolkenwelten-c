@@ -21,7 +21,12 @@
 #include "../../gfx/textMesh.h"
 
 
-void widgetDrawRecipeSlot(const widget *wid, textMesh *m, int x, int y, int w, int h){
+void widgetDrawRecipeSlot(const widget *wid, textMesh *m, box2D area){
+	const int x = area.x;
+	const int y = area.y;
+	const int w = area.w;
+	const int h = area.h;
+
 	int style = 0;
 	const item recipeRes = recipeGetResult(wid->valu);
 	i16 a = recipeCanCraft(player,wid->valu);
@@ -30,7 +35,7 @@ void widgetDrawRecipeSlot(const widget *wid, textMesh *m, int x, int y, int w, i
 	}
 	if((wid == widgetFocused) || (wid->flags & WIDGET_HOVER)){
 		style = 1;
-		widgetAddPopup(wid,x,y,w,h);
+		widgetAddPopup(wid,area);
 	}
 	textMeshItemSlot(m,x,y,MIN(w,h),style,recipeRes.ID,a);
 }

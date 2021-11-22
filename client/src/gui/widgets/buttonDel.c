@@ -22,7 +22,7 @@
 
 #include <string.h>
 
-void widgetDrawButtondel(const widget *wid, textMesh *m, int x, int y, int w, int h){
+void widgetDrawButtondel(const widget *wid, textMesh *m, box2D area){
 	u32 color    = 0xFF555555;
 	u32 tcolor   = 0xFF777777;
 	u32 bcolor   = 0xFF333333;
@@ -31,15 +31,15 @@ void widgetDrawButtondel(const widget *wid, textMesh *m, int x, int y, int w, in
 	u32 dtcolor  = 0xFF7777AA;
 	u32 dbcolor  = 0xFF333377;
 
-	int textYOff = (h - (2*8))/2;
-	int textXOff = (w-(wid->label == NULL ? 0 : strnlen(wid->label,w/16) * 16))/2;
+	int textYOff = (area.h - (2*8))/2;
+	int textXOff = (area.w-(wid->label == NULL ? 0 : strnlen(wid->label,area.w/16) * 16))/2;
 
 	if(wid == widgetFocused){
 		 color = 0xFFAA6666;
 		tcolor = 0xFFCC8888;
 		bcolor = 0xFF884444;
 	}else{
-		if((int)mousex > (x+w-40)){
+		if((int)mousex > (area.x+area.w-40)){
 			if(wid->flags & WIDGET_CLICKED){
 				dcolor  = 0xFF2A2A6A;
 				int tmp = dtcolor;
@@ -62,16 +62,16 @@ void widgetDrawButtondel(const widget *wid, textMesh *m, int x, int y, int w, in
 		}
 	}
 
-	textMeshVGradient(m,x+1, y+1,w-41,h-1,    color,bcolor);
-	textMeshSolidBox (m,x+1, y  ,w-42,  1,    tcolor);
-	textMeshSolidBox (m,x  , y+1,   1,h-2,    tcolor);
-	textMeshSolidBox (m,x+1, y+h-1,w-42,  1,  bcolor);
+	textMeshVGradient(m,area.x+1, area.y+1,area.w-41,area.h-1,    color,bcolor);
+	textMeshSolidBox (m,area.x+1, area.y  ,area.w-42,  1,    tcolor);
+	textMeshSolidBox (m,area.x  , area.y+1,   1,area.h-2,    tcolor);
+	textMeshSolidBox (m,area.x+1, area.y+area.h-1,area.w-42,  1,  bcolor);
 
-	textMeshVGradient(m,x+w-41, y+1,40,h-2,   dcolor,dbcolor);
-	textMeshSolidBox (m,x+w-1 , y+1  , 1,h-2, dbcolor);
-	textMeshSolidBox (m,x+w-41, y+h-1,40,  1, dbcolor);
-	textMeshSolidBox (m,x+w-41, y  ,40,  1,   dtcolor);
+	textMeshVGradient(m,area.x+area.w-41, area.y+1,40,area.h-2,   dcolor,dbcolor);
+	textMeshSolidBox (m,area.x+area.w-1 , area.y+1  , 1,area.h-2, dbcolor);
+	textMeshSolidBox (m,area.x+area.w-41, area.y+area.h-1,40,  1, dbcolor);
+	textMeshSolidBox (m,area.x+area.w-41, area.y  ,40,  1,   dtcolor);
 
-	textMeshAddStrPS(m,x+textXOff,y+textYOff,2,wid->label);
-	textMeshAddStrPS(m,x+w-24,y+textYOff,2,"X");
+	textMeshAddStrPS(m,area.x+textXOff,area.y+textYOff,2,wid->label);
+	textMeshAddStrPS(m,area.x+area.w-24,area.y+textYOff,2,"X");
 }

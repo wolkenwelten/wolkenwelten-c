@@ -78,12 +78,12 @@ void eventHandlerFree(eventHandler *evh){
 	eventHandlerActive--;
 }
 
-static bool mouseInBox(uint x, uint y, uint w, uint h){
-	if(mouseHidden) {return false;}
-	if(mousex < x  ){return false;}
-	if(mousex > x+w){return false;}
-	if(mousey < y  ){return false;}
-	if(mousey > y+h){return false;}
+static bool mouseInArea(const box2D area){
+	if(mouseHidden)              {return false;}
+	if(mousex < area.x  )        {return false;}
+	if(mousex > area.x + area.w) {return false;}
+	if(mousey < area.y  )        {return false;}
+	if(mousey > area.y + area.h) {return false;}
 	return true;
 }
 
@@ -150,23 +150,20 @@ widget *widgetNewC(widgetType type,widget *p){
 	widgetChild(p,wid);
 	return wid;
 }
-widget *widgetNewCP(widgetType type,widget *p, int x, int y, int w, int h){
+widget *widgetNewCP(widgetType type,widget *p, box2D area){
 	widget *wid = widgetNewC(type,p);
 	if(wid == NULL){return NULL;}
-	wid->x = x;
-	wid->y = y;
-	wid->w = w;
-	wid->h = h;
+	wid->area = area;
 	return wid;
 }
-widget *widgetNewCPL(widgetType type,widget *p, int x, int y, int w, int h, const char *label){
-	widget *wid = widgetNewCP(type,p,x,y,w,h);
+widget *widgetNewCPL(widgetType type,widget *p, box2D area, const char *label){
+	widget *wid = widgetNewCP(type,p,area);
 	if(wid == NULL){return NULL;}
 	widgetLabel(wid,label);
 	return wid;
 }
-widget *widgetNewCPLH(widgetType type,widget *p, int x, int y, int w, int h, const char *label,const char *eventName, void (*handler)(widget *)){
-	widget *wid = widgetNewCPL(type,p,x,y,w,h,label);
+widget *widgetNewCPLH(widgetType type,widget *p, box2D area, const char *label,const char *eventName, void (*handler)(widget *)){
+	widget *wid = widgetNewCPL(type,p,area,label);
 	if(wid == NULL){return NULL;}
 	widgetBind(wid,eventName,handler);
 	return wid;
@@ -292,8 +289,8 @@ widget *widgetPrevSel(const widget *cur){
 void widgetLayVert(widget *w, int padding){
 	int y = padding;
 	for(widget *c=w->child;c!=NULL;c=c->next){
-		c->y = y;
-		y += c->h + padding;
+		c->area.y = y;
+		y += c->area.h + padding;
 	}
 }
 
@@ -337,23 +334,134 @@ int widgetEmit(widget *w, const char *eventName){
 	return ret;
 }
 
-static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
-	if(wid == NULL){return;}
-	if((wid->type == wSpace) || (wid->type == wPanel)){return;}
-	if(mouseInBox(x,y,w,h)){
+static void widgetAnimate(widget *wid){
+	if(!(wid->flags & WIDGET_ANIMATE)){return;}
+
+	if(wid->flags & WIDGET_ANIMATEX){
+		const int d = MAX(1,(abs(wid->area.x - wid->goalArea.x)) >> 3);
+		if(wid->area.x < wid->goalArea.x){
+			wid->area.x += d;
+		}else if(wid->area.x > wid->goalArea.x){
+			wid->area.x -= d;
+		}else{
+			wid->flags &= ~WIDGET_ANIMATEX;
+		}
+	}
+	if(wid->flags & WIDGET_ANIMATEY){
+		const int d = MAX(1,(abs(wid->area.y - wid->goalArea.y))>>3);
+		if(wid->area.y < wid->goalArea.y){
+			wid->area.y += d;
+		}else if(wid->area.y > wid->goalArea.y){
+			wid->area.y -= d;
+		}else{
+			wid->flags &= ~WIDGET_ANIMATEY;
+		}
+	}
+	if(wid->flags & WIDGET_ANIMATEW){
+		const int d = MAX(1,(abs(wid->area.w - wid->goalArea.w))>>3);
+		if(wid->area.w < wid->goalArea.w){
+			wid->area.w += d;
+		}else if(wid->area.w > wid->goalArea.w){
+			wid->area.w -= d;
+		}else{
+			wid->flags &= ~WIDGET_ANIMATEW;
+		}
+	}
+	if(wid->flags & WIDGET_ANIMATEH){
+		const int d = MAX(1,(abs(wid->area.h - wid->goalArea.h))>>3);
+		if(wid->area.h < wid->goalArea.h){
+			wid->area.h += d;
+		}else if(wid->area.h > wid->goalArea.h){
+			wid->area.h -= d;
+		}else{
+			wid->flags &= ~WIDGET_ANIMATEH;
+		}
+	}
+}
+
+box2D widgetCalcPosition(const widget *wid, const box2D parentArea){
+	int x = parentArea.x + wid->area.x;
+	int y = parentArea.y + wid->area.y;
+	int w = wid->area.w;
+	int h = wid->area.h;
+
+	if(wid->area.x < 0){
+		x = (parentArea.x + parentArea.w) - wid->area.w + (wid->area.x+1);
+	}
+	if(wid->area.y < 0){
+		y = (parentArea.y + parentArea.h) - wid->area.h + (wid->area.y+1);
+	}
+	if(w < 0){ w = parentArea.w+(wid->area.w+1); }
+	if(h < 0){ h = parentArea.h+(wid->area.h+1); }
+
+	return rect(x,y,w,h);
+}
+
+box2D widgetCalcChildPosition(const widget *wid, const box2D area){
+	switch(wid->type){
+	default:
+		return area;
+	case wPanel:
+		return rect(
+			area.x + wid->vali,
+			area.y + wid->vali,
+			area.w - wid->vali * 2,
+			area.h - wid->vali * 2
+		);
+	}
+}
+
+box2D widgetCalcChildPositionDirectly(const widget *wid, const box2D parentArea){
+	return widgetCalcChildPosition(wid, widgetCalcPosition(wid, parentArea));
+}
+
+box2D widgetCalcPositionFromScratch(const widget *wid, const box2D screen){
+	if(wid == NULL){return screen;}
+	return widgetCalcChildPositionDirectly(wid, widgetCalcPositionFromScratch(wid->parent, screen));
+}
+
+widget *widgetDraw(widget *wid, textMesh *m,const box2D parentArea){
+	if((wid == NULL) || (wid->flags & WIDGET_HIDDEN)){return NULL;}
+	widget *ret = NULL;
+	const box2D area = widgetCalcPosition(wid,parentArea);
+	widgetAnimate(wid);
+	widgetDrawSingle(wid,m,area);
+
+	ret = mouseInArea(area) ? wid : NULL;
+	const box2D childArea = widgetCalcChildPosition(wid,area);
+
+	for(widget *c=wid->child;c!=NULL;c=c->next){
+		widget *tmp = widgetDraw(c,m,childArea);
+		if(tmp){ret = tmp;}
+	}
+	return ret;
+}
+
+bool widgetDoMouseEvents(widget *wid, widget *goal, box2D screen){
+	if(wid == NULL){return false;}
+
+	bool active = wid == goal;
+	for(widget *c=wid->child;c!=NULL;c=c->next){
+		active |= widgetDoMouseEvents(c,goal, screen);
+	}
+
+	if(active){
+		if((wid->type == wSpace) || (wid->type == wPanel)){return active;}
 		if(!(wid->flags & WIDGET_HOVER)){widgetEmit(wid,"hover");}
 		wid->flags |= WIDGET_HOVER;
 		if(mouseClicked[0]){
 			wid->flags |= WIDGET_CLICKED;
 			if(wid->type == wSlider){
-				float v = (float)(mousex - x) / (float)w;
+				const box2D widArea = widgetCalcPositionFromScratch(wid, screen);
+				float v = (float)(mousex - widArea.x) / (float)(widArea.w);
 				wid->vali = v*4096;
 				widgetEmit(wid,"change");
 				widgetFocus(wid);
 			}
 		}else{
 			if(wid->flags & WIDGET_CLICKED){
-				if((wid->type == wButtonDel) && ((int)mousex > x+w-40)){
+				const box2D widArea = widgetCalcPositionFromScratch(wid, screen);
+				if((wid->type == wButtonDel) && ((int)mousex > widArea.x+widArea.w-40)){
 					widgetEmit(wid,"altclick");
 				}else if(widgetIsSelectable(wid)){
 					widgetFocus(wid);
@@ -381,101 +489,22 @@ static void widgetCheckEvents(widget *wid, int x, int y, int w, int h){
 			wid->flags &= ~WIDGET_MID_CLICKED;
 		}
 	}else{
-		wid->flags &= ~(WIDGET_HOVER | WIDGET_CLICKED);
+		wid->flags &= ~(WIDGET_MID_CLICKED | WIDGET_ALT_CLICKED | WIDGET_CLICKED | WIDGET_HOVER);
 	}
-}
-
-static void widgetAnimate(widget *wid){
-	if(!(wid->flags & WIDGET_ANIMATE)){return;}
-
-	if(wid->flags & WIDGET_ANIMATEX){
-		const int d = MAX(1,(abs(wid->x - wid->gx))>>3);
-		if(wid->x < wid->gx){
-			wid->x+=d;
-		}else if(wid->x > wid->gx){
-			wid->x-=d;
-		}else{
-			wid->flags &= ~WIDGET_ANIMATEX;
-		}
-	}
-	if(wid->flags & WIDGET_ANIMATEY){
-		const int d = MAX(1,(abs(wid->y - wid->gy))>>3);
-		if(wid->y < wid->gy){
-			wid->y+=d;
-		}else if(wid->y > wid->gy){
-			wid->y-=d;
-		}else{
-			wid->flags &= ~WIDGET_ANIMATEY;
-		}
-	}
-	if(wid->flags & WIDGET_ANIMATEW){
-		const int d = MAX(1,(abs(wid->w - wid->gw))>>3);
-		if(wid->w < wid->gw){
-			wid->w+=d;
-		}else if(wid->w > wid->gw){
-			wid->w-=d;
-		}else{
-			wid->flags &= ~WIDGET_ANIMATEW;
-		}
-	}
-	if(wid->flags & WIDGET_ANIMATEH){
-		const int d = MAX(1,(abs(wid->h - wid->gh))>>3);
-		if(wid->h < wid->gh){
-			wid->h+=d;
-		}else if(wid->h > wid->gh){
-			wid->h-=d;
-		}else{
-			wid->flags &= ~WIDGET_ANIMATEH;
-		}
-	}
-}
-
-void widgetDraw(widget *wid, textMesh *m,int px, int py, int pw, int ph){
-	if(wid == NULL){return;}
-	if(wid->flags & WIDGET_HIDDEN){return;}
-	int x = px + wid->x;
-	int y = py + wid->y;
-	int w = wid->w;
-	int h = wid->h;
-	if(wid->x < 0){
-		x = (px + pw) - wid->w + (wid->x+1);
-	}
-	if(wid->y < 0){
-		y = (py + ph) - wid->h + (wid->y+1);
-	}
-	if(w < 0){ w = pw+(wid->w+1); }
-	if(h < 0){ h = ph+(wid->h+1); }
-	widgetCheckEvents(wid,x,y,w,h);
-	widgetAnimate(wid);
-	widgetDrawSingle(wid,m,x,y,w,h);
-
-	switch(wid->type){
-	default:
-		break;
-	case wPanel:
-		x += wid->vali;
-		y += wid->vali;
-		w -= wid->vali*2;
-		h -= wid->vali*2;
-		break;
-	}
-
-	for(widget *c=wid->child;c!=NULL;c=c->next){
-		widgetDraw(c,m,x,y,w,h);
-	}
+	return active;
 }
 
 void widgetFinish(widget *w){
-	if(w->flags & WIDGET_ANIMATEW){w->w = w->gw;}
-	if(w->flags & WIDGET_ANIMATEH){w->h = w->gh;}
-	if(w->flags & WIDGET_ANIMATEX){w->x = w->gx;}
-	if(w->flags & WIDGET_ANIMATEY){w->y = w->gy;}
+	if(w->flags & WIDGET_ANIMATEW){w->area.w = w->goalArea.w;}
+	if(w->flags & WIDGET_ANIMATEH){w->area.h = w->goalArea.h;}
+	if(w->flags & WIDGET_ANIMATEX){w->area.x = w->goalArea.x;}
+	if(w->flags & WIDGET_ANIMATEY){w->area.y = w->goalArea.y;}
 	w->flags &= ~WIDGET_ANIMATE;
 }
 
 void widgetSlideW(widget *w, int nw){
-	w->gw = nw;
-	if(w->w == nw){return;}
+	w->goalArea.w = nw;
+	if(w->area.w == nw){return;}
 	if(nw == 0){
 		w->flags &= ~WIDGET_HIDDEN;
 		w->flags |= WIDGET_ANIMATEW | WIDGET_NOSELECT;
@@ -486,8 +515,8 @@ void widgetSlideW(widget *w, int nw){
 }
 
 void widgetSlideH(widget *w, int nh){
-	w->gh = nh;
-	if(w->h == nh){return;}
+	w->goalArea.h = nh;
+	if(w->area.h == nh){return;}
 	if(nh == 0){
 		w->flags &= ~WIDGET_HIDDEN;
 		w->flags |= WIDGET_ANIMATEH | WIDGET_NOSELECT;
@@ -498,15 +527,15 @@ void widgetSlideH(widget *w, int nh){
 }
 
 void widgetSlideX(widget *w, int nx){
-	w->gx = nx;
-	if(w->x == nx){return;}
+	w->goalArea.x = nx;
+	if(w->area.x == nx){return;}
 	w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
 	w->flags |= WIDGET_ANIMATEX;
 }
 
 void widgetSlideY(widget *w, int ny){
-	w->gy = ny;
-	if(w->y == ny){return;}
+	w->goalArea.y = ny;
+	if(w->area.y == ny){return;}
 	w->flags &= ~(WIDGET_NOSELECT | WIDGET_HIDDEN);
 	w->flags |= WIDGET_ANIMATEY;
 }

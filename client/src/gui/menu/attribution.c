@@ -25,7 +25,7 @@ extern unsigned char txt_attribution_txt_data[];
 widget *menuAttribution;
 
 void initAttributions(){
-	menuAttribution = widgetNewCPL(wTextScroller,rootMenu,0,0,-1,-1,(const char *)txt_attribution_txt_data);
+	menuAttribution = widgetNewCPL(wTextScroller,rootMenu,rect(0,0,-1,-1),(const char *)txt_attribution_txt_data);
 	menuAttribution->flags |= WIDGET_HIDDEN;
 	widgetBind(menuAttribution,"click",handlerRoot);
 	widgetBind(menuAttribution,"blur",handlerRoot);

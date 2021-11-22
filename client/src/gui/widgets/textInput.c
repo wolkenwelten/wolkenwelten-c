@@ -23,7 +23,12 @@
 #include "../../sdl/sdl.h"
 #include "../../../../common/src/misc/misc.h"
 
-void widgetDrawTextInput(const widget *wid, textMesh *m, int x, int y, int w, int h){
+void widgetDrawTextInput(const widget *wid, textMesh *m, const box2D area){
+	const int x = area.x;
+	const int y = area.y;
+	const int w = area.w;
+	const int h = area.h;
+
 	u32 color    = 0xFF333333;
 	u32 bcolor   = 0xFF555555;
 	u32 tcolor   = 0xFF222222;

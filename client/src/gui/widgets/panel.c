@@ -18,7 +18,12 @@
 
 #include "../../gfx/textMesh.h"
 
-void widgetDrawPanel(const widget *wid, textMesh *m, int x, int y, int w, int h){
+void widgetDrawPanel(const widget *wid, textMesh *m, box2D area){
+	const int x = area.x;
+	const int y = area.y;
+	const int w = area.w;
+	const int h = area.h;
+
 	(void)wid;
 	textMeshSolidBox (m,x+1,y+1,w-2,h-2,0xE0303030);
 

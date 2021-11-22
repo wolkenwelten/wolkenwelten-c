@@ -4,7 +4,8 @@
 
 extern widget *rootMenu,*widgetGameScreen;
 
-extern uint mousex,mousey,mouseClicked[3];
+extern int mousex,mousey;
+extern uint mouseClicked[3];
 extern bool mouseHidden;
 extern float matOrthoProj[16];
 

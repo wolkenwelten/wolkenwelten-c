@@ -21,9 +21,9 @@
 #include "../../gfx/textMesh.h"
 #include "../../sdl/sdl.h"
 
-void widgetDrawBackground(const widget *wid, textMesh *m, int x, int y, int w, int h){
+void widgetDrawBackground(const widget *wid, textMesh *m, box2D area){
 	(void)wid;
-	int o = h/2 + sinf(getTicks()*0.001f)*((float)(h/6));
-	textMeshVGradient(m,x,y    ,w,o,0xFFFFBF83, 0xFFFF6825);
-	textMeshVGradient(m,x,y+o,w,h-o,0xFFFF6825, 0xFFE82410);
+	int o = area.h/2 + sinf(getTicks()*0.001f)*((float)(area.h/6));
+	textMeshVGradient(m,area.x,area.y    ,area.w,o,0xFFFFBF83, 0xFFFF6825);
+	textMeshVGradient(m,area.x,area.y+o,area.w,area.h-o,0xFFFF6825, 0xFFE82410);
 }

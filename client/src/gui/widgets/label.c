@@ -19,9 +19,11 @@
 #include "../../gfx/textMesh.h"
 #include "../../game/character.h"
 
-void widgetDrawLabel(const widget *wid, textMesh *m, int x, int y, int w, int h){
-	(void)w;
-	(void)h;
+void widgetDrawLabel(const widget *wid, textMesh *m, box2D area){
+	const int x = area.x;
+	const int y = area.y;
+	const int w = area.w;
+	const int h = area.h;
 	int size = 2;
 
 	if((wid->flags & WIDGET_BIGGER) == WIDGET_BIGGER){

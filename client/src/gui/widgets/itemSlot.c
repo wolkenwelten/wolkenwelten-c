@@ -20,11 +20,13 @@
 #include "../../game/character.h"
 #include "../../../../common/src/common.h"
 
-void widgetDrawItemSlot(const widget *wid, textMesh *m, int x, int y, int w, int h, const item *itm){
-	(void)h;
+void widgetDrawItemSlot(const widget *wid, textMesh *m, box2D area, const item *itm){
+	const int x = area.x;
+	const int y = area.y;
+	const int w = area.w;
 	int style = 0;
 	if((wid == widgetFocused) || (wid->flags & WIDGET_HOVER)){
-		widgetAddPopup(wid,x,y,w,h);
+		widgetAddPopup(wid,area);
 	}
 	if((wid == widgetFocused) || (wid->flags & WIDGET_HOVER) || (itm == characterGetActiveItem(player))){
 		style = 1;

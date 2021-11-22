@@ -83,17 +83,17 @@ static void handlerExitToMenu(widget *wid){
 }
 
 void initMainMenu(){
-	mainMenu = widgetNewCP(wPanel,rootMenu,-1,0,0,-1);
-	widgetNewCP  (wSpace ,mainMenu,16,0,256,0);
-	buttonSP = widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Singleplayer","click",handlerSingleplayer);
-	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Multiplayer","click",handlerMultiplayer);
-	widgetNewCP  (wHorizontalRuler ,mainMenu,16,0,256,32);
-	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Options","click",handlerOptions);
-	widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Attribution","click",handlerAttribution);
-	widgetNewCP  (wHorizontalRuler ,mainMenu,16,0,256,32);
-	buttonQuit         = widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Quit","click",handlerQuit);
-	buttonExitToMenu   = widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Exit to Menu","click",handlerExitToMenu);
-	buttonReturnToGame = widgetNewCPLH(wButton,mainMenu,16,0,256,32,"Return to Game","click",handlerReturnToGame);
+	mainMenu = widgetNewCP(wPanel,rootMenu,rect(-1,0,0,-1));
+	widgetNewCP  (wSpace ,mainMenu,rect(16,0,256,0));
+	buttonSP = widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Singleplayer","click",handlerSingleplayer);
+	widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Multiplayer","click",handlerMultiplayer);
+	widgetNewCP  (wHorizontalRuler ,mainMenu,rect(16,0,256,32));
+	widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Options","click",handlerOptions);
+	widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Attribution","click",handlerAttribution);
+	widgetNewCP  (wHorizontalRuler ,mainMenu,rect(16,0,256,32));
+	buttonQuit         = widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Quit","click",handlerQuit);
+	buttonExitToMenu   = widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Exit to Menu","click",handlerExitToMenu);
+	buttonReturnToGame = widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Return to Game","click",handlerReturnToGame);
 
 	widgetLayVert(mainMenu,16);
 }
@@ -110,7 +110,7 @@ void openMainMenu(){
 		buttonReturnToGame->flags |=  WIDGET_HIDDEN;
 	}
 	widgetSlideW(mainMenu, 288);
-	mainMenu->gw = 288;
+	mainMenu->goalArea.w = 288;
 	focusMainMenu();
 }
 

@@ -77,15 +77,15 @@ void handlerChatBlur(widget *wid){
 }
 
 void chatInit(){
-	chatText = widgetNewCPLH(wTextInput,chatPanel,16,16,440,32,"Chat Message","submit",handlerChatSubmit);
+	chatText = widgetNewCPLH(wTextInput,chatPanel,rect(16,16,440,32),"Chat Message","submit",handlerChatSubmit);
 	widgetBind(chatText,"blur",handlerChatBlur);
 	widgetBind(chatText,"selectPrev",handlerChatSelectPrev);
 	widgetBind(chatText,"selectNext",handlerChatSelectNext);
-	widgetNewCPLH(wButton,chatPanel,-16,16,24,32,"\xA8","click",handlerChatSubmit);
+	widgetNewCPLH(wButton,chatPanel,rect(-16,16,24,32),"\xA8","click",handlerChatSubmit);
 }
 
 void chatDraw(textMesh *guim){
-	guim->sy   = screenHeight - (9*16) - (chatPanel->h-8);
+	guim->sy   = screenHeight - (9*16) - (chatPanel->area.h-8);
 	guim->sx   = 24;
 	guim->size = 1;
 	guim->font = 1;
