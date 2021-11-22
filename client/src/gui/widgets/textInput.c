@@ -60,9 +60,9 @@ void widgetDrawTextInput(const widget *wid, textMesh *m, const box2D area){
 	m->mx     = x+w - size*8;
 	if(isLisp){
 		if(widgetFocused == wid){
-			widgetDrawLispLine(m, x+textXOff, y+textYOff, size, w-textXOff, size*8, wid->vals, 2, textInputMark, textInputCursorPos);
+			widgetDrawLispLine(m, rect(x+textXOff, y+textYOff, w-textXOff, size*8), size, wid->vals, 2, textInputMark, textInputCursorPos);
 		}else{
-			widgetDrawLispLine(m, x+textXOff, y+textYOff, size, w-textXOff, size*8, wid->vals, 2, -1, -1);
+			widgetDrawLispLine(m, rect(x+textXOff, y+textYOff, w-textXOff, size*8), size, wid->vals, 2, -1, -1);
 		}
 	}else{
 		if(wid->vals[0] == 0){

@@ -76,21 +76,33 @@
 [def key-lshift 225]
 
 [defun input-keyboard-handler-default [code value]
-	"Default handler to be used for continuously firing actions"
-	[arr-set! input-keyboard-state code [> value 0]]
+        "Default handler to be used for continuously firing actions"
+        [arr-set! input-keyboard-state code [> value 0]]
 ]
 
 [defun toggle-chat! []
-	"Toggle the chat visibility"
-	[chat-open! [not [chat-open]]]
+       "Toggle the chat visibility"
+       [chat-open! [not [chat-open]]]
 ]
 
 [defun keyboard-once [fun]
-	"Run FUN only once per keypress"
-	[λ [code value]
-	   [and value [not [input-keyboard-state code]] [fun]]
-	   [arr-set! input-keyboard-state code [not [zero? value]]]
-	]
+        "Run FUN only once per keypress"
+        [λ [code value]
+           [if [zero? value]
+               [arr-set! input-keyboard-state code #f]
+               [when [not [input-keyboard-state code]]
+                     [arr-set! input-keyboard-state code #t]
+                     [fun]]]
+        ]
+]
+
+[defun keyboard-once-game-active [fun]
+       [def handler [keyboard-once fun]]
+       [λ [code value]
+          [if [game-active?]
+              [handler code value]
+              [arr-set! input-keyboard-state code #f]]
+       ]
 ]
 
 [arr-set! input-keyboard-handler key-r      input-keyboard-handler-default]
@@ -103,10 +115,10 @@
 [arr-set! input-keyboard-handler key-v      input-keyboard-handler-default]
 [arr-set! input-keyboard-handler key-lshift input-keyboard-handler-default]
 
-[arr-set! input-keyboard-handler key-c     [keyboard-once [λ [] [cons-mode!  [not [cons-mode!]]]]]]
-[arr-set! input-keyboard-handler key-e     [keyboard-once [λ [] [fire-hook]]]]
+[arr-set! input-keyboard-handler key-c     [keyboard-once-game-active [λ [] [cons-mode!  [not [cons-mode!]]]]]]
+[arr-set! input-keyboard-handler key-e     [keyboard-once-game-active [λ [] [fire-hook]]]]
 [arr-set! input-keyboard-handler key-m     [keyboard-once [λ [] [debug-info! [not [debug-info!]]]]]]
-[arr-set! input-keyboard-handler key-n     [keyboard-once [λ [] [no-clip! [not [no-clip!]]]]]]
+[arr-set! input-keyboard-handler key-n     [keyboard-once-game-active [λ [] [no-clip! [not [no-clip!]]]]]]
 
 [arr-set! input-keyboard-handler key-f1    [keyboard-once [λ [] [third-person! #f] [save-options]]]]
 [arr-set! input-keyboard-handler key-f2    [keyboard-once [λ [] [s [debug-stuff! pid]]]]]
@@ -121,21 +133,21 @@
 [arr-set! input-keyboard-handler key-y     [keyboard-once [λ [] [toggle-chat!]]]]
 
 [unless [eq? OS "Emscripten"]
-	[arr-set! input-keyboard-handler key-f11 [λ [code value]
-		[when value
-			[fullscreen! [not [fullscreen?]]]
-			[save-options]
-		]
-	]]
+        [arr-set! input-keyboard-handler key-f11 [λ [code value]
+                [when value
+                        [fullscreen! [not [fullscreen?]]]
+                        [save-options]
+                ]
+        ]]
 ]
 
 [defun inv-active-kh [code value]
-	"Sets the players active item depending on the keycode passed"
+        "Sets the players active item depending on the keycode passed"
 
-	[when value
-	      [player-active-slot! [- code 30]]
-	      [stop-anim]
-	]
+        [when value
+              [player-active-slot! [- code 30]]
+              [stop-anim]
+        ]
 ]
 
 [arr-set! input-keyboard-handler key-1 inv-active-kh]
@@ -150,19 +162,19 @@
 [arr-set! input-keyboard-handler key-0 inv-active-kh]
 
 [defun input-keyboard-tick []
-	"Keyboard input handler"
+        "Keyboard input handler"
 
-	[when [widget-focus-on-game?]
-	      [when [input-keyboard-state key-w]     [player-walk!   -1.0]]
-	      [when [input-keyboard-state key-s]     [player-walk!    1.0]]
-	      [when [input-keyboard-state key-a]     [player-strafe! -1.0]]
-	      [when [input-keyboard-state key-d]     [player-strafe!  1.0]]
-	      [when [input-keyboard-state key-space] [player-jump!    1.0]]
-	      [when [input-keyboard-state key-r]     [player-tertiary!]]
-	      [when [input-keyboard-state key-q]     [player-throw!]]
-	      [player-sneak! [input-keyboard-state key-v]]
-	      [player-boost! [input-keyboard-state key-lshift]]
-	]
+        [when [widget-focus-on-game?]
+              [when [input-keyboard-state key-w]     [player-walk!   -1.0]]
+              [when [input-keyboard-state key-s]     [player-walk!    1.0]]
+              [when [input-keyboard-state key-a]     [player-strafe! -1.0]]
+              [when [input-keyboard-state key-d]     [player-strafe!  1.0]]
+              [when [input-keyboard-state key-space] [player-jump!    1.0]]
+              [when [input-keyboard-state key-r]     [player-tertiary!]]
+              [when [input-keyboard-state key-q]     [player-throw!]]
+              [player-sneak! [input-keyboard-state key-v]]
+              [player-boost! [input-keyboard-state key-lshift]]
+        ]
 ]
 
 [defun input-keyboard-event [status scancode]

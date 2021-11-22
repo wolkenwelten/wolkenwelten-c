@@ -41,10 +41,10 @@ void widgetDrawTextLog(const widget *wid, textMesh *m, const box2D area){
 		cy -= lines * FS;
 		if(bg){textMeshVGradient(m,x,cy,w,FS*lines,0x40301010,0x40100000);}
 		if(*line == '>'){
-			widgetDrawLispLine(m, x, cy, FS/8, w, FS, &line[2], 1, -1, -1);
+			widgetDrawLispLine(m, rect(x, cy, w, FS), FS/8, &line[2], 1, -1, -1);
 			bg = !bg;
 		}else{
-			widgetDrawLispLine(m, x + FS*3, cy, FS/8, w, FS, &line[2], 0, -1, -1);
+			widgetDrawLispLine(m, rect(x + FS*3, cy, w, FS), FS/8, &line[2], 0, -1, -1);
 		}
 	}
 	m->font = oldFont;

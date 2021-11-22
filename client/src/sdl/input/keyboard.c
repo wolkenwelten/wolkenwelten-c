@@ -50,7 +50,7 @@ void keyboardEventHandler(const SDL_Event *e){
 	static lSymbol *keyInput = NULL;
 	if(keyInput == NULL){keyInput = lSymS("input-keyboard-event");}
 
-	if((e->type == SDL_KEYUP) && !textInputActive()){
+	if(e->type == SDL_KEYUP){
 		lispInputHandler(keyInput,e->key.keysym.scancode,0);
 	}
 	if(e->type == SDL_KEYDOWN){

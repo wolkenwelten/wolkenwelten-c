@@ -44,7 +44,7 @@ static void widgetDrawAutocomplete(textMesh *m,int x,int y,int size){
 	}
 }
 
-void widgetDrawLispLine(textMesh *m, box2D area, int size, const char *rawLine, int lambda, int mark, int cursor){
+void widgetDrawLispLine(textMesh *m, const box2D area, int size, const char *rawLine, int lambda, int mark, int cursor){
 	const int x = area.x;
 	const int y = area.y;
 	const int w = area.w;

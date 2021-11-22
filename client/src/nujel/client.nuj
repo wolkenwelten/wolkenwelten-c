@@ -154,3 +154,7 @@
                 [iter id amount-goal 0 0]
         ]
 ]]
+
+[defun game-active? []
+       [eq? [widget/focus] w-game-screen]
+]
