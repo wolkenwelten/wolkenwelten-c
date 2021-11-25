@@ -265,6 +265,7 @@ void renderFrame(){
 	calcView(player);
 	cloudsCalcColors();
 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if(gameRunning){
 		renderSky(player);
 		if(drawBoundariesStyle){
