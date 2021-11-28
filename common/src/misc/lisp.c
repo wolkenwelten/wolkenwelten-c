@@ -106,11 +106,16 @@ static lVal *wwlnfWVel(lClosure *c, lVal *v){
 	return lValVec(windVel);
 }
 
-static lVal *wwlnfCDen(lClosure *c, lVal *v){
+static lVal *wwlnfCDenGet(lClosure *c, lVal *v){
+	(void)c; (void) v;
+	return lValInt(cloudGDensityMin);
+}
+
+static lVal *wwlnfCDenSet(lClosure *c, lVal *v){
 	(void)c;
 	const int cden = castToInt(lCar(v),-1);
-	if(cden >= 0){cloudsSetDensity(cden);}
-	return lValInt(cloudGDensityMin);
+	cloudsSetDensity(cden);
+	return lCar(v);
 }
 
 static lVal *wwlnfRain(lClosure *c, lVal *v){
@@ -143,18 +148,19 @@ void *lispCommonRootReal(void *a, void *b){
 	lClosure *c = lClosureNewRoot();
 	void (*specificInit)(lClosure *c) = (void (*)(lClosure *))a;
 
-	lAddNativeFunc(c,"mst!",         "(a)",                    "Set ms per tick to s",                                       wwlnfMsPerTick);
-	lAddNativeFunc(c,"prof",         "()",                     "Return profiler info",                                       wwlnfProf);
-	lAddNativeFunc(c,"prof-reset!",  "()",                     "Reset performance counters",                                 wwlnfProfReset);
-	lAddNativeFunc(c,"nprof",        "()",                     "Return network profiler info",                               wwlnfNProf);
-	lAddNativeFunc(c,"nprof-reset!", "()",                     "Reset network counters",                                     wwlnfNProfReset);
-	lAddNativeFunc(c,"asm-switch!",  "(a)",                    "Switch asm/simd routines",                                   wwlnfAsmSwitch);
-	lAddNativeFunc(c,"cloud-thresh!","(&thresh)",              "Set cloud threshold to &THRESH",                             wwlnfCDen);
-	lAddNativeFunc(c,"wind-velocity","(&vel)",                 "Set wind velocity to vector &VEL",                           wwlnfWVel);
-	lAddNativeFunc(c,"rain-set",     "(&intensity)",           "Set rain rate to a",                                         wwlnfRain);
-	lAddNativeFunc(c,"explode",      "(pos &strength &style)", "Create an explosion at POS with &STRENGTH=4.0 and &STYLE=0", wwlnfExplode);
-	lAddNativeFunc(c,"item-drop-new","(pos id amount)",        "Create a new item at POS for AMOUNT ID.",                    wwlnfItemDropNew);
-	lAddNativeFunc(c,"color-inter",  "(a b i)",                "Interpolate between A and B with 0.0 <= i <= 1.0",           wwlnfColorInterpolate);
+	lAddNativeFunc(c,"mst!",            "(a)",                    "Set ms per tick to s",                                       wwlnfMsPerTick);
+	lAddNativeFunc(c,"prof",            "()",                     "Return profiler info",                                       wwlnfProf);
+	lAddNativeFunc(c,"prof-reset!",     "()",                     "Reset performance counters",                                 wwlnfProfReset);
+	lAddNativeFunc(c,"nprof",           "()",                     "Return network profiler info",                               wwlnfNProf);
+	lAddNativeFunc(c,"nprof-reset!",    "()",                     "Reset network counters",                                     wwlnfNProfReset);
+	lAddNativeFunc(c,"asm-switch!",     "(a)",                    "Switch asm/simd routines",                                   wwlnfAsmSwitch);
+	lAddNativeFunc(c,"cloud-threshold", "()",                     "Get the current cloud threshold",                            wwlnfCDenGet);
+	lAddNativeFunc(c,"cloud-threshold!","(thresh)",               "Set cloud threshold to &THRESH",                             wwlnfCDenSet);
+	lAddNativeFunc(c,"wind-velocity",   "(&vel)",                 "Set wind velocity to vector &VEL",                           wwlnfWVel);
+	lAddNativeFunc(c,"rain-set",        "(&intensity)",           "Set rain rate to a",                                         wwlnfRain);
+	lAddNativeFunc(c,"explode",         "(pos &strength &style)", "Create an explosion at POS with &STRENGTH=4.0 and &STYLE=0", wwlnfExplode);
+	lAddNativeFunc(c,"item-drop-new",   "(pos id amount)",        "Create a new item at POS for AMOUNT ID.",                    wwlnfItemDropNew);
+	lAddNativeFunc(c,"color-inter",     "(a b i)",                "Interpolate between A and B with 0.0 <= i <= 1.0",           wwlnfColorInterpolate);
 
 	itemTypeLispClosure(c);
 	specificInit(c);

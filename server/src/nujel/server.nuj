@@ -83,7 +83,6 @@
 		[item-drop-stress-xz pos max x -max]
 		[when [< x max] [item-drop-stress-x pos max [+ 2 x]]]
 	]]
-
 	[λ [pos max]
 		"Stress test the itemDrop code by generating a lot of them"
 		[item-drop-stress-x pos max -max]
@@ -99,7 +98,6 @@
 		[stress-xz pos max x -max]
 		[when [< x max] [stress-x pos max [+ 4 x]]]
 	]]
-
 	[λ [pos max]
 		"Generate a lot of animals"
 		[stress-x pos max -max]
@@ -113,7 +111,7 @@
 
 [def cloud-density [λ [a]
 	"Set the new Goal Density to a which should be a float in the range 0.0 - 1.0."
-	[- 1.0 [/ [cloud-threshold [* [- 1.0 a] 256.0]] 256.0]]
+	[- 1.0 [/ [cloud-threshold! [* [- 1.0 a] 256.0]] 256.0]]
 ]]
 
 [def countdown [λ [i]
