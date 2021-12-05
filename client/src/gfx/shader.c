@@ -19,6 +19,7 @@
 #include "../gfx/gl.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 shader  shaderList[8];
@@ -173,6 +174,7 @@ static void shaderCompile(shader *s,const char *name){
 
 shader *shaderNew(const char *name,const char *vss,const char *fss,uint attrMask){
 	shader *s = &shaderList[shaderCount++];
+	s->name     = name;
 	s->vss      = (char *)vss;
 	s->fss      = (char *)fss;
 
@@ -182,15 +184,17 @@ shader *shaderNew(const char *name,const char *vss,const char *fss,uint attrMask
 		s->defines  = "";
 	}
 
-	s->pID      = 0;
-	s->vsID     = 0;
-	s->fsID     = 0;
+	s->pID        = 0;
+	s->vsID       = 0;
+	s->fsID       = 0;
 
-	s->attrMask = attrMask;
-	s->lMVP     = -1;
-	s->lColor   = -1;
-	s->lAlpha   = -1;
-	s->lSizeMul = -1;
+	s->attrMask   = attrMask;
+	s->lMVP       = -1;
+	s->lColor     = -1;
+	s->lAlpha     = -1;
+	s->lSizeMul   = -1;
+	s->lSideTints = -1;
+	s->lTransform = -1;
 
 	shaderCompile(s,name);
 	return s;
@@ -216,31 +220,49 @@ void shaderBind(shader *s){
 }
 
 void shaderMatrix(shader *s, float mvp[16]){
-	if(s->lMVP == -1){return;}
+	if(s->lMVP == -1){
+		fprintf(stderr,"%s has no location for matrix Uniform\n", s->name);
+		exit(123);
+	}
 	glUniformMatrix4fv(s->lMVP,1,GL_FALSE,mvp);
 }
 
 void shaderAlpha(shader *s, float alpha){
-	if(s->lAlpha == -1){return;}
+	if(s->lAlpha == -1){
+		fprintf(stderr,"%s has no location for alpha Uniform\n", s->name);
+		exit(123);
+	}
 	glUniform1f(s->lAlpha,alpha);
 }
 
 void shaderColor(shader *s, float r, float g, float b, float a){
-	if(s->lColor == -1){return;}
+	if(s->lColor == -1){
+		fprintf(stderr,"%s has no location for inColor Uniform\n",s->name);
+		exit(123);
+	}
 	glUniform4f(s->lColor,r,g,b,a);
 }
 
 void shaderSideTints(shader *s, const vec sideTints[sideMAX]){
-	if(s->lSideTints == -1){return;}
+	if(s->lSideTints == -1){
+		fprintf(stderr,"%s has no location for sideTints Uniform\n", s->name);
+		exit(123);
+	}
 	glUniform3fv(s->lSideTints,6,(const float*)sideTints);
 }
 
 void shaderTransform(shader *s, float x, float y, float z){
-	if(s->lTransform == -1){ return; }
+	if(s->lTransform == -1){
+		fprintf(stderr,"%s has no location for transform Uniform\n", s->name);
+		exit(123);
+	}
 	glUniform3f(s->lTransform,x,y,z);
 }
 
 void shaderSizeMul(shader *s, float sizeMul){
-	if(s->lSizeMul == -1){return;}
+	if(s->lSizeMul == -1){
+		fprintf(stderr,"%s has no location for sizeMult Uniform\n", s->name);
+		exit(123);
+	}
 	glUniform1f(s->lSizeMul,sizeMul);
 }

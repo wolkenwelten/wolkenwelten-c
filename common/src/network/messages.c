@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "messages.h"
 
 #include "../common.h"
@@ -561,6 +560,8 @@ const char *networkGetMessageName(uint i){
 		return "weatherRecvUpdate";
 	case msgtRainRecvUpdate:
 		return "rainRecvUpdate";
+	case msgtSnowRecvUpdate:
+		return "snowRecvUpdate";
 	case msgtThrowableRecvUpdates:
 		return "throwableRecvUpdate";
 	case msgtRequestSpawnPos:

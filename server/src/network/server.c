@@ -29,7 +29,7 @@
 #include "../game/projectile.h"
 #include "../game/throwable.h"
 #include "../game/rope.h"
-#include "../game/weather.h"
+#include "../game/weather/weather.h"
 #include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../network/server_ws.h"
@@ -434,6 +434,7 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtFxAnimalDied:
 	case msgtWeatherRecvUpdate:
 	case msgtRainRecvUpdate:
+	case msgtSnowRecvUpdate:
 	case msgtItemDropUpdate:
 		fprintf(stderr,"%s[%u] received from client, which should never happen\n",networkGetMessageName(pType),pType);
 		serverKill(c);

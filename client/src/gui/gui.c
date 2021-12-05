@@ -25,7 +25,7 @@
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
-#include "../game/weather.h"
+#include "../game/weather/weather.h"
 #include "../sdl/sdl.h"
 #include "../gfx/boundaries.h"
 #include "../gfx/gl.h"
@@ -481,7 +481,10 @@ void drawDebuginfo(){
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"RainDrops   : %s%s\n",colorSignalLow(1<<16,1<<15,1<<14,     rainCount),getHumanReadableSize(rainCount));
 		guim->fgc  = colorPalette[15];
+		textMeshPrintf(guim,"SnowFlakes  : %s%s\n",colorSignalLow(1<<16,1<<15,1<<14,     snowCount),getHumanReadableSize(snowCount));
+		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
+		textMeshPrintf(guim,"Snow Intensity: %3i\n",snowIntensity);
 		textMeshPrintf(guim,"ChunkVert   : %uK/%uK\n",chunkvertbufUsedBytes()/1024,chunkvertbufMaxBytes()/1024);
 		textMeshPrintf(guim,"ActiveChunks: %s\n",getHumanReadableSize(chunkGetActive()));
 		textMeshPrintf(guim,"FreeChunks  : %2i\n",chunkGetFree());

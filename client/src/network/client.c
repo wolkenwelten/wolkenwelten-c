@@ -28,7 +28,7 @@
 #include "../game/rope.h"
 #include "../game/projectile.h"
 #include "../game/throwable.h"
-#include "../game/weather.h"
+#include "../game/weather/weather.h"
 #include "../gui/menu/mainmenu.h"
 #include "../misc/lisp.h"
 #include "../misc/options.h"
@@ -326,6 +326,9 @@ void clientParsePacket(const packet *p){
 		break;
 	case msgtRainRecvUpdate:
 		rainRecvUpdate(p);
+		break;
+	case msgtSnowRecvUpdate:
+		snowRecvUpdate(p);
 		break;
 	case msgtThrowableRecvUpdates:
 		throwableRecvUpdate(p);

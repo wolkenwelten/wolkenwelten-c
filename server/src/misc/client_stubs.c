@@ -39,9 +39,8 @@ __attribute__((aligned(32))) const float sparticleVV[4][4] = {
 void particlePosUpdatePortable(){}
 void sparticlePosUpdatePortable(){}
 
-void fxRainDrop(const vec pos){
-	(void)pos;
-}
+void fxRainDrop(const vec pos){(void)pos;}
+void fxSnowDrop(const vec pos){(void)pos;}
 
 void fxBlockBreak(const vec pos, u8 b, u8 cause){
 	msgMineBlock(pos.x,pos.y,pos.z,b,cause);

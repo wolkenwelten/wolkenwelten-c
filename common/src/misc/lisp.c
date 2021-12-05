@@ -22,7 +22,7 @@
 #include "../game/item.h"
 #include "../game/itemDrop.h"
 #include "../game/itemType.h"
-#include "../game/weather.h"
+#include "../game/weather/weather.h"
 #include "../misc/colors.h"
 #include "../misc/profiling.h"
 
@@ -101,7 +101,7 @@ static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
 static lVal *wwlnfWVel(lClosure *c, lVal *v){
 	(void)c;
 	if((v != NULL) && (lCar(v) != NULL) && (lCar(v)->type == ltVec)){
-		cloudsSetWind(castToVec(lCar(v),vecZero()));
+		windSet(castToVec(lCar(v),vecZero()));
 	}
 	return lValVec(windVel);
 }

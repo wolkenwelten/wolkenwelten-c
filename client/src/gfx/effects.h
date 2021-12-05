@@ -11,3 +11,4 @@ void fxBleeding         (const vec pos, being victim, i16 dmg, blockId cause);
 void fxAnimalDiedPacket (const packet *p);
 void fxProjectileHit    (const packet *p);
 void fxRainDrop         (const vec pos);
+void fxSnowDrop         (const vec pos);

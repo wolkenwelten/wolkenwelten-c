@@ -29,7 +29,7 @@
 #include "game/recipe.h"
 #include "game/rope.h"
 #include "game/throwable.h"
-#include "game/weather.h"
+#include "game/weather/weather.h"
 #include "gfx/gfx.h"
 #include "gfx/mesh.h"
 #include "gfx/particle.h"
@@ -171,7 +171,6 @@ void worldUpdate(){
 		gtimeUpdate();
 		fireCheckPlayerBurn(gameTicks);
 		weatherUpdateAll();
-		rainUpdateAll();
 		throwableUpdateAll();
 		throwableCheckPickup();
 		entityUpdateAll();
@@ -259,6 +258,8 @@ int main( int argc, char* argv[] ){
 
 	if(!gameRunning){openMainMenu();}
 	cloudsInitGfx();
+	rainInitGfx();
+	snowInitGfx();
 
 	gtimeSetTime(1<<19);
 	checkAutostart();

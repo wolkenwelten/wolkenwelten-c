@@ -17,7 +17,7 @@
 
 #include "landscape.h"
 
-#include "../game/weather.h"
+#include "weather/weather.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/game/item.h"

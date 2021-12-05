@@ -14,29 +14,38 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "clouds.h"
 #include "weather.h"
 
-#include "../network/server.h"
-#include "../voxel/bigchungus.h"
-#include "../voxel/chungus.h"
+#include "../../misc/noise.h"
 
-void weatherDoRain(){
+u8  cloudTex[256][256];
+vec cloudOff;
+u8  cloudGDensityMin;
+u8  cloudDensityMin;
+
+void cloudsInit(){
+	generateNoise(0x84407db3, cloudTex);
+	cloudGDensityMin  = 154;
+	cloudDensityMin   = cloudGDensityMin;
+}
+
+void cloudsSetDensity(u8 gd){
+	cloudGDensityMin = gd;
+	if(!isClient){weatherSendUpdate(-1);}
+}
+
+bool isInClouds(const vec p){
+	const int ty = (uint)p.y >> 8;
+	if(ty & 1){return false;}
 	const int toffx = cloudOff.x;
 	const int toffz = cloudOff.z;
-	for(uint i=0;i<chungusCount;i++){
-		for(uint t=0;t<4;t++){
-			if(rngValA(255) > rainIntensity){continue;}
-			const chungus *c = &chungusList[i];
-			if(c->y & 1){continue;}
-			const vec cpos = vecNew(c->x << 8, c->y << 8, c->z << 8);
-			u8 x = rngValA(255);
-			u8 z = rngValA(255);
-			const int tx = (x-toffx) & 0xFF;
-			const int tz = (z-toffz) & 0xFF;
-			int v = cloudTex[tx][tz];
-			if(v > (cloudDensityMin+16)){continue;}
-			const vec rpos = vecAdd(cpos,vecNew(x,32.f,z));
-			rainNew(rpos);
-		}
-	}
+	const int tx = ((u8)p.x-toffx) & 0xFF;
+	const int tz = ((u8)p.z-toffz) & 0xFF;
+	int v = cloudTex[tx][tz];
+	if(v < (cloudDensityMin+2)){return false;}
+	float cy = (ty << 8) + 32.0;
+	float ymax = cy+(v-cloudDensityMin)*0.18;
+	float ymin = cy-(v-cloudDensityMin)*0.09;
+	return (p.y > ymin) && (p.y < ymax);
 }

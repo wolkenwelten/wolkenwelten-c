@@ -27,7 +27,7 @@
 #include "../game/projectile.h"
 #include "../game/recipe.h"
 #include "../game/throwable.h"
-#include "../game/weather.h"
+#include "../game/weather/weather.h"
 #include "../gfx/boundaries.h"
 #include "../gfx/gfx.h"
 #include "../gfx/texture.h"

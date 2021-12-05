@@ -49,6 +49,7 @@ typedef struct {
 	uint vsID,fsID;
 	const char *vss,*fss;
 	const char *defines;
+	const char *name;
 	uint attrMask;
 	int lMVP,lAlpha,lColor,lTransform,lSideTints,lSizeMul;
 } shader;
@@ -56,9 +57,11 @@ typedef struct {
 #pragma pack(push, 1)
 typedef struct {
 	float x,y,z,size;
-} glRainDrop;
+} rainDrop;
 #pragma pack(pop)
 
+#pragma pack(push, 1)
 typedef struct {
-	float vx,vy,vz,vsize;
-} rainDrop;
+	float x,y,z,size;
+} snowDrop;
+#pragma pack(pop)

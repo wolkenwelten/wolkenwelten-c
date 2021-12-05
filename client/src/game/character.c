@@ -25,7 +25,7 @@
 #include "../game/itemDrop.h"
 #include "../game/projectile.h"
 #include "../game/throwable.h"
-#include "../game/weather.h"
+#include "../game/weather/weather.h"
 #include "../gfx/effects.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
@@ -46,9 +46,9 @@
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/game/hook.h"
 #include "../../../common/src/game/item.h"
-#include "../../../common/src/game/weather.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
+#include "../../../common/src/game/weather/weather.h"
 #include "../../../common/src/network/messages.h"
 
 #include <stdio.h>

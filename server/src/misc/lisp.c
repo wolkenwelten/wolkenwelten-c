@@ -24,7 +24,7 @@
 #include "../game/character.h"
 #include "../game/fire.h"
 #include "../game/itemDrop.h"
-#include "../game/weather.h"
+#include "../game/weather/weather.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"

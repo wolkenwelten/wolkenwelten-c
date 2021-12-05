@@ -27,7 +27,7 @@
 #include "game/landscape.h"
 #include "game/grenade.h"
 #include "game/throwable.h"
-#include "game/weather.h"
+#include "game/weather/weather.h"
 #include "misc/lisp.h"
 #include "persistence/savegame.h"
 #include "voxel/bigchungus.h"
@@ -121,7 +121,6 @@ static void updateWorldStep(){
 	animalCheckBurnAll();
 	landscapeUpdateAll();
 	weatherUpdateAll();
-	rainUpdateAll();
 	throwableUpdateAll();
 	entityUpdateAll();
 

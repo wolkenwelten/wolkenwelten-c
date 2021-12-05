@@ -33,7 +33,7 @@
 #include "../voxel/chungus.h"
 #include "../worldgen/worldgen.h"
 #include "../../../common/src/game/time.h"
-#include "../../../common/src/game/weather.h"
+#include "../../../common/src/game/weather/weather.h"
 #include "../../../common/src/misc/lz4.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"

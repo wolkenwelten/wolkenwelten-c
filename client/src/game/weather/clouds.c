@@ -14,36 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "clouds.h"
 
-#include "weather.h"
-
-#include "../main.h"
-#include "../gfx/gl.h"
-#include "../gfx/gfx.h"
-#include "../gfx/mat.h"
-#include "../gfx/shader.h"
-#include "../gfx/sky.h"
-#include "../gfx/particle.h"
-#include "../game/character.h"
-#include "../sdl/sdl.h"
-#include "../voxel/bigchungus.h"
-#include "../voxel/chunk.h"
-#include "../../../common/src/common.h"
-#include "../../../common/src/misc/noise.h"
-#include "../../../common/src/misc/profiling.h"
+#include "../../game/character.h"
+#include "../../gfx/gfx.h"
+#include "../../gfx/gl.h"
+#include "../../gfx/mat.h"
+#include "../../gfx/shader.h"
+#include "../../gfx/sky.h"
+#include "../../voxel/bigchungus.h"
+#include "../../../../common/src/misc/profiling.h"
 
 #include <math.h>
 #include <stdio.h>
-
-uint rainVAO;
-uint rainVBO;
-uint rainVBOSize = 0;
-
-#ifdef __x86_64__
-int rainFakeIters = 128;
-#else
-int rainFakeIters = 16;
-#endif
 
 #pragma pack(push, 1)
 typedef struct {
@@ -252,66 +235,4 @@ void cloudsInitGfx(){
 		}
 	}
 	cloudsCalcColors();
-
-	glGenVertexArrays(1, &rainVAO);
-	glGenBuffers     (1, &rainVBO);
-	glBindVertexArray    (rainVAO);
-	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
 }
-
-void rainFakeDrops(){
-	if(rainIntensity == 0){return;}
-	vec pos = player->pos;
-	int cy = (((int)pos.y) & 0xFE00)-0x100;
-	pos.y = cy + (32.f - 256.f);
-	for(uint i=0;i<8;i++){
-		float v = 48.f;
-		for(int ii=0;ii<4;ii++){
-			for(int iii=0;iii<rainFakeIters;iii++){
-				if(rngValA(255) > rainIntensity){continue;}
-				const vec rpos = vecAdd(pos,vecMul(vecRng(), vecNew( v,0.f, v)));
-				const u8 vv = cloudTex[(uint)(rpos.x - cloudOff.x)&0xFF][(uint)(rpos.z - cloudOff.z)&0xFF];
-				if(vv < cloudDensityMin){continue;}
-				rainNew(rpos);
-			}
-			v *= 2.f;
-		}
-		pos.y += 256.f;
-	}
-}
-
-void rainDrawAll(){
-	gfxGroupStart("Rain");
-	if(!rainCount){return;}
-	rainFakeDrops();
-
-	shaderBind(sRain);
-	matMul(matMVP,matView,matProjection);
-	shaderMatrix(sParticle,matMVP);
-	shaderSizeMul(sRain,player->zoomFactor);
-	glDepthMask(GL_FALSE);
-
-	glBindVertexArray(rainVAO);
-	glBindBuffer(GL_ARRAY_BUFFER,rainVBO);
-	if(gfxUseSubData && (rainVBOSize >= rainCount)){
-		glBufferSubData(GL_ARRAY_BUFFER, 0, rainCount*sizeof(glRainDrop), glRainDrops);
-	}else{
-		glBufferData(GL_ARRAY_BUFFER, rainCount*sizeof(glRainDrop), glRainDrops, GL_DYNAMIC_DRAW);
-		rainVBOSize = rainCount;
-	}
-	glVertexAttribPointer(SHADER_ATTRIDX_POS, 4, GL_FLOAT, GL_FALSE, 0, (void *)0);
-	glDrawArrays(GL_POINTS,0,rainCount);
-
-	glDepthMask(GL_TRUE);
-	gfxGroupEnd();
-}
-
-void rainRecvUpdate(const packet *p){
-	const vec pos  = vecNew(p->v.f[0],p->v.f[1],p->v.f[2]);
-	const vec dist = vecSub(pos,player->pos);
-	const float dd = vecDot(dist,dist);
-	if(dd > renderDistanceSquare){return;}
-	rainNew(pos);
-}
-
-void weatherDoRain(){}

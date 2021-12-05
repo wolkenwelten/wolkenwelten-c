@@ -17,10 +17,10 @@
 
 #include "fire.h"
 
-#include "../game/being.h"
-#include "../game/blockMining.h"
-#include "../game/grenade.h"
-#include "../game/weather.h"
+#include "weather/weather.h"
+#include "being.h"
+#include "blockMining.h"
+#include "grenade.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"

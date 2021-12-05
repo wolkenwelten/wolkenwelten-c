@@ -101,6 +101,7 @@ typedef enum {
 	msgtLispRecvSExpr,
 	msgtWeatherRecvUpdate,
 	msgtRainRecvUpdate,
+	msgtSnowRecvUpdate,
 	msgtThrowableRecvUpdates,
 	msgtRequestSpawnPos,
 	msgtLZ4

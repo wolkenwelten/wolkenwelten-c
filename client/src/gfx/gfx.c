@@ -25,7 +25,7 @@
 #include "../game/fire.h"
 #include "../game/projectile.h"
 #include "../game/rope.h"
-#include "../game/weather.h"
+#include "../game/weather/weather.h"
 #include "../gfx/boundaries.h"
 #include "../gfx/gl.h"
 #include "../gfx/mat.h"
@@ -215,6 +215,7 @@ void renderWorld(const character *cam){
 	characterDrawAll();
 	characterDrawConsHighlight(cam);
 	cloudsRender();
+	snowDrawAll();
 	rainDrawAll();
 	shadowDraw();
 

@@ -24,7 +24,7 @@
 #include "../game/itemDrop.h"
 #include "../game/projectile.h"
 #include "../game/throwable.h"
-#include "../game/weather.h"
+#include "../game/weather/weather.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gl.h"
