@@ -26,6 +26,10 @@
 #include <stdio.h>
 #include <string.h>
 
+static bool shouldThaw(){
+	return ((int)rngValA(255) > (snowIntensity << 4));
+}
+
 static void landscapeUpdateChunk(chunk *c){
 	static blockId topBlocks[CHUNK_SIZE][CHUNK_SIZE];
 
@@ -48,6 +52,51 @@ static void landscapeUpdateChunk(chunk *c){
 
 		switch(b){
 		default:
+			break;
+		case I_Snow_Dirt:
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);
+			}
+			break;
+		case I_Snow_Grass:
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Grass);
+			}
+			break;
+		case I_Snowy_Spruce_Leaf:
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Spruce_Leaf);
+			}
+			break;
+		case I_Snowy_Oak_Leaf:
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Oak_Leaf);
+			}
+			break;
+		case I_Snowy_Flower:
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Flower);
+			}
+			break;
+		case I_Snowy_Date:
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Date);
+			}
+			break;
+		case I_Snowy_Acacia_Leaf:
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Acacia_Leaf);
+			}
+			break;
+		case I_Snowy_Roots:
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Roots);
+			}
+			break;
+		case I_Snowy_Sakura_Leaf:
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Sakura_Leaf);
+			}
 			break;
 		case I_Dry_Grass:
 		case I_Grass:

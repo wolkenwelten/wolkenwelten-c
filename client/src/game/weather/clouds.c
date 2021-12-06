@@ -199,16 +199,17 @@ void cloudsDraw(int cx, int cy, int cz){
 void cloudsCalcColors(){
 	static float lastBrightness = 100.f;
 	static u8 lastCloudDensityMin = 170;
-	if((fabsf(lastBrightness - skyBrightness) < 0.01f) && (cloudDensityMin == lastCloudDensityMin)){return;}
-	lastBrightness = skyBrightness;
+	const float newBrightness = skyBrightness - (stormIntensity / 256.f);
+	if((fabsf(lastBrightness - newBrightness) < 0.01f) && (cloudDensityMin == lastCloudDensityMin)){return;}
+	lastBrightness = newBrightness;
 	lastCloudDensityMin = cloudDensityMin;
 	for(int i=0;i<128;i++){
 		const u8 cdm = cloudDensityMin;
 		const u32 v  = i+128;
-		const u32 ta = MIN(255,((cdm+30)+((256 - v)/2))) * skyBrightness;
-		const u32 tb = MIN(255,((cdm+ 8)+((256 - v)/4))) * skyBrightness;
-		const u32 ba = ((cdm- 8)+((256 - v)  ))          * skyBrightness;
-		const u32 bb = ((cdm-24)+((256 - v)/2))          * skyBrightness;
+		const u32 ta = MIN(255,((cdm+30)+((256 - v)/2))) * newBrightness;
+		const u32 tb = MIN(255,((cdm+ 8)+((256 - v)/4))) * newBrightness;
+		const u32 ba = ((cdm- 8)+((256 - v)  ))          * newBrightness;
+		const u32 bb = ((cdm-24)+((256 - v)/2))          * newBrightness;
 
 		cloudCT[i] = ((tb<<16) | (ta<<8) | ta) & 0x00FFFFFF;
 		cloudCB[i] = ((bb<<16) | (ba<<8) | ba) & 0x00FFFFFF;

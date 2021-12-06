@@ -12,3 +12,4 @@ void snowInit();
 void snowNew(vec pos);
 void snowSendUpdate(uint c, uint i);
 void snowUpdateAll();
+void weatherSetSnowIntensity(u8 intensity);

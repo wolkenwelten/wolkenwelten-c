@@ -52,6 +52,16 @@ const char *itemGetName         (const item *i);
 #define I_Birch         20
 #define I_Flower        21
 #define I_Date          22
+#define I_Snow_Dirt     23
+#define I_Snow_Grass    24
+#define I_Snow_Dirt     23
+#define I_Snowy_Spruce_Leaf 25
+#define I_Snowy_Oak_Leaf    26
+#define I_Snowy_Flower      27
+#define I_Snowy_Date        28
+#define I_Snowy_Acacia_Leaf 29
+#define I_Snowy_Roots       30
+#define I_Snowy_Sakura_Leaf 31
 
 #define I_Grenade       256
 #define I_Bomb          257

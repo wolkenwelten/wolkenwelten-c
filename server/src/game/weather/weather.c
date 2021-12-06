@@ -34,17 +34,14 @@ void rainTick(){
 			const int tx = (x-toffx) & 0xFF;
 			const int tz = (z-toffz) & 0xFF;
 			int v = cloudTex[tx][tz];
-			if(v > (cloudDensityMin+16)){continue;}
+			if(v < (cloudDensityMin-16)){continue;}
 			const vec rpos = vecAdd(cpos,vecNew(x,32.f,z));
 			rainNew(rpos);
 		}
 	}
 }
 
-#include <stdio.h>
-
 void snowTick(){
-	printf("snowTick\n");
 	const int toffx = cloudOff.x;
 	const int toffz = cloudOff.z;
 	for(uint i=0;i<chungusCount;i++){
@@ -53,12 +50,12 @@ void snowTick(){
 			const chungus *c = &chungusList[i];
 			if(c->y & 1){continue;}
 			const vec cpos = vecNew(c->x << 8, c->y << 8, c->z << 8);
-			u8 x = rngValA(255);
-			u8 z = rngValA(255);
+			const u8 x = rngValA(255);
+			const u8 z = rngValA(255);
 			const int tx = (x-toffx) & 0xFF;
 			const int tz = (z-toffz) & 0xFF;
 			int v = cloudTex[tx][tz];
-			if(v > (cloudDensityMin+16)){continue;}
+			if(v < (cloudDensityMin-16)){continue;}
 			const vec rpos = vecAdd(cpos,vecNew(x,32.f,z));
 			snowNew(rpos);
 		}

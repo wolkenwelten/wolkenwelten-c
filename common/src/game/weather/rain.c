@@ -37,8 +37,8 @@ void rainInit(){
 void rainPosUpdate();
 void fxRainDrop(const vec pos);
 
-void weatherSetRainDuration(u8 dur){
-	rainIntensity = dur;
+void weatherSetRainIntensity(u8 intensity){
+	rainIntensity = intensity;
 	if(!isClient){weatherSendUpdate(-1);}
 }
 
@@ -102,7 +102,7 @@ void rainUpdateAll(){
 				if(isClient){
 					fxRainDrop(vecNew(glrd->x,glrd->y,glrd->z));
 				}else{
-					fireBoxExtinguish (glrd->x-1, glrd->y-1, glrd->z-1, 3, 3, 3, 256);
+					fireBoxExtinguish(glrd->x-1, glrd->y-1, glrd->z-1, 3, 3, 3, 256);
 				}
 				rainDel(i);
 				continue;

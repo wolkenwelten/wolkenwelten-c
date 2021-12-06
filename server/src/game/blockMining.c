@@ -122,10 +122,14 @@ void blockMiningMineBlock(int x, int y, int z, u8 cause){
 	const blockId b = worldGetB(x,y,z);
 	if(b == 0){return;}
 	msgMineBlock(x,y,z,b,0);
-	if((b == I_Grass) || (b == I_Dry_Grass) || (b == I_Roots)){
+	if((b == I_Grass) || (b == I_Dry_Grass) || (b == I_Roots) || (b == I_Snow_Grass)){
 		worldSetB(x,y,z,I_Dirt);
 		if(cause == 0){
 			switch(b){
+			case I_Snow_Grass: {
+				item itm = itemNew(I_Plantmatter,1);
+				itemDropNewP(vecNew(x,y,z),&itm,-1);
+				break; }
 			case I_Roots: {
 				item itm = itemNew(I_Oak,1);
 				itemDropNewP(vecNew(x,y,z),&itm,-1);
@@ -140,6 +144,9 @@ void blockMiningMineBlock(int x, int y, int z, u8 cause){
 				break; }
 			}
 		}
+	}else if(b == I_Snow_Dirt){
+		worldSetB(x,y,z,0);
+		blockMiningDropItemsPos(x,y,z,I_Dirt);
 	}else{
 		worldSetB(x,y,z,0);
 		blockMiningDropItemsPos(x,y,z,b);

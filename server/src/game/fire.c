@@ -214,3 +214,23 @@ void fireSyncPlayer(uint c){
 	}
 	if(clients[c].fireUpdateOffset >= fireCount){clients[c].fireUpdateOffset = 0;}
 }
+
+void fireBoxExtinguish(u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, int strength){
+	for(int cx = x;cx < x+w;cx++){
+	for(int cy = y;cy < y+h;cy++){
+	for(int cz = z;cz < z+d;cz++){
+		fire *f = fireGetAtPos(cx,cy,cz);
+		if(f != NULL){
+			f->strength = MAX(-strength,f->strength - strength);
+			fireSendUpdate(-1, f - fireList);
+		}
+		if(!isClient){
+			const blockId b = worldTryB(cx,cy,cz);
+			if((b == I_Dry_Grass) && (rngValA(1) == 0)){
+				worldSetB(cx,cy,cz,I_Grass);
+			}
+		}
+	}
+	}
+	}
+}

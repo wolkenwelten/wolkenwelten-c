@@ -259,6 +259,19 @@ static void savegameParseLine(const char *line){
 		return;
 	}
 
+	if(strcmp(argv[0],"SnowIntensity") == 0){
+		if(argc < 2){return;}
+		snowIntensity = atoi(argv[1]);
+		return;
+	}
+
+	if(strcmp(argv[0],"Storm") == 0){
+		if(argc < 3){return;}
+		stormIntensity = atoi(argv[1]);
+		stormDelta = atoi(argv[2]);
+		return;
+	}
+
 	if(strcmp(argv[0],"CloudDensity") == 0){
 		if(argc < 3){return;}
 		cloudDensityMin  = atoi(argv[1]);
@@ -321,6 +334,8 @@ void savegameSave(){
 	b += snprintf(b,sizeof(buf)-(b-buf),"Time %u\n",gtimeGetTime());
 	b += snprintf(b,sizeof(buf)-(b-buf),"CloudDensity %u %u\n",cloudDensityMin,cloudGDensityMin);
 	b += snprintf(b,sizeof(buf)-(b-buf),"Rain %u\n",rainIntensity);
+	b += snprintf(b,sizeof(buf)-(b-buf),"Storm %u %i\n",stormIntensity, stormDelta);
+	b += snprintf(b,sizeof(buf)-(b-buf),"SnowIntensity %u\n",snowIntensity);
 	b += snprintf(b,sizeof(buf)-(b-buf),"CloudOffset %f %f %f\n",cloudOff.x,cloudOff.y,cloudOff.z);
 	b += snprintf(b,sizeof(buf)-(b-buf),"WindVel %f %f %f\n",windVel.x,windVel.y,windVel.z);
 	b += snprintf(b,sizeof(buf)-(b-buf),"WindGVel %f %f %f\n",windGVel.x,windGVel.y,windGVel.z);

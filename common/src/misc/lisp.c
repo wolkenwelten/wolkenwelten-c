@@ -118,11 +118,43 @@ static lVal *wwlnfCDenSet(lClosure *c, lVal *v){
 	return lCar(v);
 }
 
-static lVal *wwlnfRain(lClosure *c, lVal *v){
+static lVal *wwlnfRainGet(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValInt(rainIntensity);
+}
+
+static lVal *wwlnfRainSet(lClosure *c, lVal *v){
 	(void)c;
 	const int inten = castToInt(lCar(v),-1);
-	if(inten >= 0){weatherSetRainDuration(inten);}
+	if(inten >= 0){weatherSetRainIntensity(inten);}
 	return lValInt(rainIntensity);
+}
+
+static lVal *wwlnfSnowGet(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lValInt(snowIntensity);
+}
+
+static lVal *wwlnfSnowSet(lClosure *c, lVal *v){
+	(void)c;
+	const int inten = castToInt(lCar(v),-1);
+	if(inten >= 0){weatherSetSnowIntensity(inten);}
+	return lValInt(snowIntensity);
+}
+
+static lVal *wwlnfStormGet(lClosure *c, lVal *v){
+	(void)c;(void)v;
+	return lList(4,
+		RVP(lValSym(":intensity")), RVP(lValInt(stormIntensity)),
+		RVP(lValSym(":delta")),     RVP(lValInt(stormDelta)));
+}
+
+static lVal *wwlnfStormSet(lClosure *c, lVal *v){
+	(void)c;
+	stormIntensity = castToInt(lCar(v), stormIntensity);
+	stormDelta     = castToInt(lCadr(v),stormDelta);
+	if(!isClient){weatherSendUpdate(-1);}
+	return NULL;
 }
 
 static lVal *wwlnfColorInterpolate(lClosure *c, lVal *v){
@@ -157,7 +189,12 @@ void *lispCommonRootReal(void *a, void *b){
 	lAddNativeFunc(c,"cloud-threshold", "()",                     "Get the current cloud threshold",                            wwlnfCDenGet);
 	lAddNativeFunc(c,"cloud-threshold!","(thresh)",               "Set cloud threshold to &THRESH",                             wwlnfCDenSet);
 	lAddNativeFunc(c,"wind-velocity",   "(&vel)",                 "Set wind velocity to vector &VEL",                           wwlnfWVel);
-	lAddNativeFunc(c,"rain-set",        "(&intensity)",           "Set rain rate to a",                                         wwlnfRain);
+	lAddNativeFunc(c,"rain",            "()",                     "Set rain rate to INTENSITY",                                 wwlnfRainGet);
+	lAddNativeFunc(c,"snow",            "()",                     "Set rain rate to INTENSITY",                                 wwlnfSnowGet);
+	lAddNativeFunc(c,"rain!",           "(intensity)",            "Set rain rate to INTENSITY",                                 wwlnfRainSet);
+	lAddNativeFunc(c,"snow!",           "(intensity)",            "Set rain rate to INTENSITY",                                 wwlnfSnowSet);
+	lAddNativeFunc(c,"storm",           "()",                     "Set rain rate to INTENSITY",                                 wwlnfStormGet);
+	lAddNativeFunc(c,"storm!",          "(intensity delta)",      "Set rain rate to INTENSITY",                                 wwlnfStormSet);
 	lAddNativeFunc(c,"explode",         "(pos &strength &style)", "Create an explosion at POS with &STRENGTH=4.0 and &STYLE=0", wwlnfExplode);
 	lAddNativeFunc(c,"item-drop-new",   "(pos id amount)",        "Create a new item at POS for AMOUNT ID.",                    wwlnfItemDropNew);
 	lAddNativeFunc(c,"color-inter",     "(a b i)",                "Interpolate between A and B with 0.0 <= i <= 1.0",           wwlnfColorInterpolate);

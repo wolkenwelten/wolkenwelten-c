@@ -12,4 +12,4 @@ void rainNew(vec pos);
 void rainUpdateAll();
 void weatherDoRain();
 void rainSendUpdate(uint c, uint i);
-void weatherSetRainDuration(u8 dur);
+void weatherSetRainIntensity(u8 intensity);

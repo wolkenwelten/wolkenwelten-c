@@ -4,6 +4,7 @@
 #include "clouds.h"
 #include "rain.h"
 #include "snow.h"
+#include "storm.h"
 #include "wind.h"
 
 void weatherInit();

@@ -31,6 +31,7 @@ void weatherInit(){
 	cloudsInit();
 	rainInit();
 	snowInit();
+	stormInit();
 	windInit();
 }
 
@@ -51,38 +52,37 @@ void weatherUpdateAll(){
 	}
 	if(rainIntensity){
 		if(!isClient){rainTick();}
-		if((calls & 0x1FF) == 1){
+		if((calls & 0x1FFF) == 1){
 			if(cloudDensityMin < 160){
 				rainIntensity++;
 			}else{
 				rainIntensity--;
 			}
-		} else if((calls & 0xFF) == 2){
+		} else if((calls & 0xFFF) == 2){
 			if(rngValA(255) < rainIntensity){
 				cloudGDensityMin++;
 				if(!isClient){weatherSendUpdate(-1);}
 			}
-		}else if(((calls & 0x3F) == 3) && (cloudDensityMin > 180)){
+		}else if(((calls & 0x3FF) == 3) && (cloudDensityMin > 180)){
 			rainIntensity--;
 		}
 	}
 	if(snowIntensity){
-		if(!isClient){snowTick();}/*
-		if((calls & 0x1FFF) == 1){
+		if(!isClient){snowTick();}
+		if((calls & 0x1FF) == 1){
 			if(cloudDensityMin < 160){
 				snowIntensity++;
 			}else{
 				snowIntensity--;
 			}
-		} else if((calls & 0xFFF) == 2){
+		} else if((calls & 0x3FFF) == 2){
 			if(rngValA(255) < snowIntensity){
 				cloudGDensityMin++;
 				if(!isClient){weatherSendUpdate(-1);}
 			}
-		}else if(((calls & 0x3FF) == 3) && (cloudDensityMin > 180)){
+		}else if(((calls & 0x3FFF) == 3) && (cloudDensityMin > 180)){
 			snowIntensity--;
 		}
-		*/
 	}
 	if((!isClient) && (rainIntensity == 0) && (cloudDensityMin < 150) && (calls & 0xFFF) == 0){
 		const uint chance = MAX(2,16 - (150 - cloudDensityMin));
@@ -112,6 +112,7 @@ void weatherUpdateAll(){
 
 	rainUpdateAll();
 	snowUpdateAll();
+	stormUpdate();
 }
 
 void weatherSendUpdate(uint c){
@@ -134,7 +135,12 @@ void weatherSendUpdate(uint c){
 	p->v.u8 [38] = rainIntensity;
 	p->v.u8 [39] = snowIntensity;
 
-	packetQueue(p,msgtWeatherRecvUpdate,10*4,c);
+	p->v.u8 [40] = stormIntensity;
+	p->v.u8 [41] = stormDelta;
+	p->v.u8 [42] = 0;
+	p->v.u8 [43] = 0;
+
+	packetQueue(p,msgtWeatherRecvUpdate,11*4,c);
 }
 
 void weatherRecvUpdate(const packet *p){
@@ -144,6 +150,9 @@ void weatherRecvUpdate(const packet *p){
 
 	cloudDensityMin   = p->v.u8[36];
 	cloudGDensityMin  = p->v.u8[37];
-	rainIntensity = p->v.u8[38];
-	snowIntensity = p->v.u8[39];
+	rainIntensity     = p->v.u8[38];
+	snowIntensity     = p->v.u8[39];
+
+	stormIntensity    = p->v.u8[40];
+	stormDelta        = p->v.u8[41];
 }

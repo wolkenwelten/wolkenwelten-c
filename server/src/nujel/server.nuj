@@ -157,5 +157,7 @@
 	[set-inv! 23 i-flamebullet 999 pid]
 	[set-inv! 24 i-flamebullet 999 pid]
 	[set-inv! 25 i-flamebullet 999 pid]
+	[set-inv! 26 i-snow-dirt 99 pid]
+	[set-inv! 27 i-snow-grass 99 pid]
         "asd"
 ]]

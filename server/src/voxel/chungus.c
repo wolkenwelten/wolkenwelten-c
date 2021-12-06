@@ -44,7 +44,6 @@ u64 freeTime = 0;
 
 void chungusInit(){
 	chungusList = malloc(sizeof(chungus) * CHUNGUS_COUNT);
-	//memset(chungusList,0,sizeof(chungusList));
 }
 
 void chungusSetClientUpdated(chungus *c,u64 updated){

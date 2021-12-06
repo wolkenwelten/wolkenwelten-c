@@ -110,3 +110,7 @@ void fireCheckPlayerBurn(uint off){
 		}
 	}
 }
+
+void fireBoxExtinguish(u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, int strength){
+	(void)x;(void)y;(void)z;(void)w;(void)h;(void)d;(void)strength;
+}
