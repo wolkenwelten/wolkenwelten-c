@@ -28,6 +28,7 @@
 #include "../game/rope.h"
 #include "../game/projectile.h"
 #include "../game/throwable.h"
+#include "../game/weather/lightning.h"
 #include "../game/weather/weather.h"
 #include "../gui/menu/mainmenu.h"
 #include "../misc/lisp.h"
@@ -338,6 +339,9 @@ void clientParsePacket(const packet *p){
 		break;
 	case msgtLZ4:
 		decompressPacket(p);
+		break;
+	case msgtLightningStrike:
+		lightningRecvUpdate(p);
 		break;
 
 	case msgtRequestChungus:

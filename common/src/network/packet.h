@@ -97,6 +97,7 @@ typedef enum {
 	msgtRopeUpdate,
 	msgtProjectileUpdate,
 	msgtFxProjectileHit,
+	msgtLightningStrike,
 	msgtFireRecvUpdate,
 	msgtLispRecvSExpr,
 	msgtWeatherRecvUpdate,

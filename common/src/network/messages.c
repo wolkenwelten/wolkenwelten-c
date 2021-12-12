@@ -472,6 +472,22 @@ void msgGoodbye(int c){
 	packetQueue(p,msgtGoodbye,0,c);
 }
 
+void msgLightningStrike(int c, u16 lx, u16 ly, u16 lz, u16 tx, u16 ty, u16 tz, u16 seed){
+	packet *p = &packetBuffer;
+
+	p->v.u16[0] = lx;
+	p->v.u16[1] = ly;
+	p->v.u16[2] = lz;
+
+	p->v.u16[3] = tx;
+	p->v.u16[4] = ty;
+	p->v.u16[5] = tz;
+
+	p->v.u16[6] = seed;
+
+	packetQueue(p,msgtLightningStrike,alignedLen(14),c);
+}
+
 const char *networkGetMessageName(uint i){
 	switch((messageType)i){
 	case msgtKeepalive:
@@ -556,6 +572,8 @@ const char *networkGetMessageName(uint i){
 		return "fireRecvUpdate";
 	case msgtLispRecvSExpr:
 		return "lispRecvSExpr";
+	case msgtLightningStrike:
+		return "lightningStrike";
 	case msgtWeatherRecvUpdate:
 		return "weatherRecvUpdate";
 	case msgtRainRecvUpdate:

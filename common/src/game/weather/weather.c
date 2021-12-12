@@ -113,6 +113,7 @@ void weatherUpdateAll(){
 	rainUpdateAll();
 	snowUpdateAll();
 	stormUpdate();
+	lightningDrawOverlay();
 }
 
 void weatherSendUpdate(uint c){

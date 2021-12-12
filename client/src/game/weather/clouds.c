@@ -199,7 +199,7 @@ void cloudsDraw(int cx, int cy, int cz){
 void cloudsCalcColors(){
 	static float lastBrightness = 100.f;
 	static u8 lastCloudDensityMin = 170;
-	const float newBrightness = skyBrightness - (stormIntensity / 256.f);
+	const float newBrightness = MAX(0.f, skyBrightness - (stormIntensity / 320.f));
 	if((fabsf(lastBrightness - newBrightness) < 0.01f) && (cloudDensityMin == lastCloudDensityMin)){return;}
 	lastBrightness = newBrightness;
 	lastCloudDensityMin = cloudDensityMin;

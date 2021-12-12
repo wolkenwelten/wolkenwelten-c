@@ -94,3 +94,5 @@ uint meshIndex(const mesh *m){
 void lWidgetMarkI(uint i){
 	(void)i;
 }
+
+void lightningDrawOverlay(){}

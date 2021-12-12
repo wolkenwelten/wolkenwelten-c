@@ -436,6 +436,7 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtRainRecvUpdate:
 	case msgtSnowRecvUpdate:
 	case msgtItemDropUpdate:
+	case msgtLightningStrike:
 		fprintf(stderr,"%s[%u] received from client, which should never happen\n",networkGetMessageName(pType),pType);
 		serverKill(c);
 		break;

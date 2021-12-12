@@ -25,3 +25,5 @@ int getClientByCharacter(const character *c){
 	(void)c;
 	return -1;
 }
+
+void tryLightning(){}

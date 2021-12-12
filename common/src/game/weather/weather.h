@@ -7,6 +7,9 @@
 #include "storm.h"
 #include "wind.h"
 
+void tryLightning();
+void lightningDrawOverlay();
+
 void weatherInit();
 void weatherUpdateAll();
 

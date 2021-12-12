@@ -60,6 +60,9 @@ void stormUpdate(){
 			}
 		}
 	}
+	if(!isClient && stormIntensity){
+		tryLightning();
+	}
 
 	calls++;
 	PROFILE_STOP();

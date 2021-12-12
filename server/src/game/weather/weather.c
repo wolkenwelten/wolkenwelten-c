@@ -24,7 +24,7 @@ void rainTick(){
 	const int toffx = cloudOff.x;
 	const int toffz = cloudOff.z;
 	for(uint i=0;i<chungusCount;i++){
-		for(uint t=0;t<4;t++){
+		for(uint t=0;t<8;t++){
 			if(rngValA(255) > rainIntensity){continue;}
 			const chungus *c = &chungusList[i];
 			if(c->y & 1){continue;}
@@ -35,7 +35,7 @@ void rainTick(){
 			const int tz = (z-toffz) & 0xFF;
 			int v = cloudTex[tx][tz];
 			if(v < (cloudDensityMin-16)){continue;}
-			const vec rpos = vecAdd(cpos,vecNew(x,32.f,z));
+			const vec rpos = vecAdd(cpos,vecNew(x,32.f+(rngValf()*4.f),z));
 			rainNew(rpos);
 		}
 	}
@@ -45,7 +45,7 @@ void snowTick(){
 	const int toffx = cloudOff.x;
 	const int toffz = cloudOff.z;
 	for(uint i=0;i<chungusCount;i++){
-		for(uint t=0;t<4;t++){
+		for(uint t=0;t<8;t++){
 			if(rngValA(255) > snowIntensity){continue;}
 			const chungus *c = &chungusList[i];
 			if(c->y & 1){continue;}
