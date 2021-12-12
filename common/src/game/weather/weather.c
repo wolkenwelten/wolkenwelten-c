@@ -41,8 +41,13 @@ void weatherUpdateAll(){
 	cloudDensityMin  = MAX(128,cloudDensityMin);
 	cloudGDensityMin = MAX(128,cloudGDensityMin);
 
-	if(!isClient && (rngValA((1<<18)-1) == 0)){
-		windGVel   = vecMulS(vecRng(),1.f/512.f);
+	if(!isClient && (rngValA((1<<16)-1) == 0)){
+		windGVel   = vecMulS(vecRng(),1.f/256.f);
+		windGVel.y = 0.f;
+		weatherSendUpdate(-1);
+	}
+	if(!isClient && (rngValA((1<<10)-1) == 0)){
+		windGVel   = vecMulS(windGVel,rngValf() + 0.5f);
 		windGVel.y = 0.f;
 		weatherSendUpdate(-1);
 	}

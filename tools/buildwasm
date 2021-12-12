@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-EMSDK_TESTED_VERSION="2.0.27"
+EMSDK_TESTED_VERSION="3.0.0"
 EMSDK_REPO_URL="https://github.com/emscripten-core/emsdk.git"
 
 cd "$( dirname "${BASH_SOURCE[0]}" )" && cd ..

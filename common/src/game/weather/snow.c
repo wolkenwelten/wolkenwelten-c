@@ -103,9 +103,9 @@ void snowBox(u16 x, u16 y, u16 z, u16 w, u16 h, u16 d){
 void snowUpdateAll(){
 	PROFILE_START();
 
-	snowVel[0] = windVel.x / 4.f;
+	snowVel[0] = windVel.x / 8.f;
 	snowVel[1] = -0.0000001;
-	snowVel[2] = windVel.z / 4.f;
+	snowVel[2] = windVel.z / 8.f;
 	snowVel[3] = 0.f;
 
 	for(uint i=0;i<4;i++){
