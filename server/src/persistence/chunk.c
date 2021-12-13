@@ -21,6 +21,7 @@
 #include "../voxel/chunk.h"
 
 #include <string.h>
+#include <stdio.h>
 
 void *chunkSave(chunk *c, void *rbuf){
 	u8 *buf = rbuf;
@@ -43,6 +44,10 @@ const void *chunkLoad(chungus *c, const void *rbuf){
 	chunk *chnk = c->chunks[cx][cy][cz];
 	if(chnk == NULL){
 		c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+(cx<<4),c->y+(cy<<4),c->z+(cz<<4));
+	}
+	if(!chnk){
+		fprintf(stderr,"Error: we ran out of memory!!!\n");
+		return buf+4100;
 	}
 	chnk->clientsUpdated = 0;
 	memcpy(chnk->data,&buf[4],4096);

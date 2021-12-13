@@ -27,7 +27,8 @@ typedef enum deathCause {
 	deathCausePhysics,
 	deathCauseAbyss,
 	deathCauseFire,
-	deathCauseGrenade
+	deathCauseGrenade,
+	deathCauseLightning
 } deathCause;
 
 typedef struct {

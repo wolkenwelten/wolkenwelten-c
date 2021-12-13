@@ -15,36 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "lightning.h"
+#include "../../game/character.h"
 #include "../../gui/overlay.h"
 #include "../../gfx/effects.h"
 #include "../../gfx/particle.h"
 #include "../../sdl/sfx.h"
 #include "../../tmp/sfx.h"
+#include "../../../../common/src/game/weather/lightning.h"
 
 bool lightningQueued = false;
+int playerStruckByLightning = 0;
 
-void fxLightningBeam(const vec a, const vec b, int size){
+void fxLightningBeam(const vec a, const vec b, int bsize){
+	const float mul  = (float)(11 - bsize) / 2.f;
+	const float size = (1 << bsize);
+	const vec dir    = vecSub(b,a);
+	const vec v      = vecMulS(vecNorm(dir),1.f / mul);
+	const int start  = (int)vecMag(dir) * mul;
+	const u32 color  = 0x40FFFFFF | (((1 << bsize) - 1) << 25);
+	const u32 ttl    = MAX(0, (1 << (bsize - 4))) + 64;
 	vec t = a;
-	const vec dir = vecSub(b,a);
-	const vec v = vecMulS(vecNorm(dir),0.5f);
-	const int start = (int)vecMag(dir) * 2;
-	for(int i = start;i > 0; i--){
-		newParticle(t.x,t.y,t.z,0,0,0,size,-0.1f,0xFFFFFF | ((size & 0x3F3) << 14),(size >> 5) + 64);
+	for(int i = start;i >= 0; i--){
+		newParticle(t.x,t.y,t.z,0,0,0,size,-0.001f,color, ttl);
 		t = vecAdd(t, v);
-	}
-}
-
-void fxLightningStrike(const vec a, const vec b, uint stepsLeft, int size){
-	const vec t = vecAdd(vecAdd(a, vecMulS(vecSub(b,a),0.5f)), vecMulS(vecRng(),stepsLeft * 2));
-	if((size > 512.f) && (rngValA(7) == 0)){
-		vec branch = vecAdd(vecAdd(vecAdd(a, vecMulS(vecSub(t,a),0.5f)), vecMulS(vecRng(),stepsLeft * 9)), vecNew(0.f, -(vecMag(vecSub(b,a)) / 2), 0.f));
-		fxLightningStrike(a, branch, 4, size/2.f);
-	}
-	if(stepsLeft > 0){
-		fxLightningStrike(a,t,stepsLeft-1, size);
-		fxLightningStrike(t,b,stepsLeft-1, size);
-	}else{
-		fxLightningBeam(a,b,size);
+		if(vecMag(vecSub(player->pos, t)) < 4.f){
+			playerStruckByLightning = MAX(playerStruckByLightning, bsize);
+		}
 	}
 }
 
@@ -57,9 +53,17 @@ void lightningRecvUpdate(const packet *p){
 	const int ty = p->v.u16[4];
 	const int tz = p->v.u16[5];
 
+	const int seed = p->v.u16[6];
+
 	lightningQueued = true;
-	sfxPlay(sfxImpact, 0.3f);
-	fxLightningStrike(vecNew(lx,ly,lz),vecNew(tx,ty,tz), 6, 1024);
+	//sfxPlay(sfxImpact, 0.3f);
+	lightningStrike(lx,ly,lz,tx,ty,tz,seed,fxLightningBeam);
+	if(playerStruckByLightning){
+		if(characterDamage(player,playerStruckByLightning * 2)){
+			characterDyingMessage(characterGetBeing(player),0,deathCauseLightning);
+		}
+	}
+	playerStruckByLightning = 0;
 }
 
 void lightningDrawOverlay(){

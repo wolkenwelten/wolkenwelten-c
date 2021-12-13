@@ -108,6 +108,7 @@ void chunkSetB(chunk *c,int x,int y,int z,blockId block){
 }
 
 void chunkFill(chunk *c, blockId b){
+	if(!c){return;}
 	memset(c->data,b,CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE);
 	c->clientsUpdated = 0;
 }

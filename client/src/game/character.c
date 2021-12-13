@@ -934,6 +934,9 @@ void characterDyingMessage(const being victim, const being culprit, deathCause c
 	case deathCauseGrenade:
 		snprintf(tmp,sizeof(tmp),"%s bombed %s",culpritName,victimName);
 		break;
+	case deathCauseLightning:
+		snprintf(tmp,sizeof(tmp),"%s got thunderstruck", victimName);
+		break;
 	}
 	msgSendRawMessage(tmp);
 }
