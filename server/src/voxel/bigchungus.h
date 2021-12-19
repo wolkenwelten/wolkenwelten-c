@@ -59,3 +59,10 @@ bool     worldShouldBeLoaded(const vec cpos);
 vec      worldGetSpawnPos   ();
 void     worldSetSpawnPos   (vec pos);
 void     worldSetAllUpdated ();
+
+bool     bigchungusSetFluid(bigchungus *c, int x, int y, int z, int level);
+u8       bigchungusTryFluid(bigchungus *c, int x, int y, int z);
+u8       bigchungusGetFluid(bigchungus *c, int x, int y, int z);
+u8       worldTryFluid(int x, int y, int z);
+u8       worldGetFluid(int x, int y, int z);
+bool     worldSetFluid(int x, int y, int z, int level);

@@ -1,4 +1,4 @@
-/*
+ /*
  * Wolkenwelten - Copyright (C) 2020-2021 - Benjamin Vincent Schulenburg
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@
 #include "game/character.h"
 #include "game/entity.h"
 #include "game/fire.h"
+#include "game/fluid.h"
 #include "game/grenade.h"
 #include "game/itemDrop.h"
 #include "game/projectile.h"
@@ -30,6 +31,7 @@
 #include "game/rope.h"
 #include "game/throwable.h"
 #include "game/weather/weather.h"
+#include "gfx/fluid.h"
 #include "gfx/gfx.h"
 #include "gfx/mesh.h"
 #include "gfx/particle.h"
@@ -175,6 +177,7 @@ void worldUpdate(){
 		throwableCheckPickup();
 		entityUpdateAll();
 		lispEvents();
+		fluidPhysicsTick();
 
 		gameTicks++;
 	}
@@ -194,6 +197,7 @@ void mainloop(){
 		playerUpdate();
 		worldUpdate();
 		renderFrame();
+		fluidGenerateParticles();
 		if(chnkChngOverflow){
 			setRenderDistance(renderDistance*0.9f);
 			chnkChngOverflow = false;

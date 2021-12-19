@@ -79,6 +79,7 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 		chunkFirstFree = c->nextFree;
 		chunkFreeCount--;
 	}
+	memset(c,0,sizeof(chunk));
 	c->x = x & (~0xF);
 	c->y = y & (~0xF);
 	c->z = z & (~0xF);
@@ -89,8 +90,6 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 	}else{
 		beingListInit(&c->bl,&chng->bl);
 	}
-
-	memset(c->data,0,sizeof(c->data));
 	return c;
 }
 

@@ -34,6 +34,8 @@ void         chungusBoxSphere        (chungus *c, int x, int y, int z, int r, bl
 void         chungusFill             (chungus *c, int x, int y, int z, blockId block);
 void         chungusSetB             (chungus *c, int x, int y, int z, blockId block);
 blockId      chungusGetB             (chungus *c, int x, int y, int z);
+void         chungusSetFluid         (chungus *c, int x, int y, int z, int level);
+u8           chungusGetFluid         (chungus *c, int x, int y, int z);
 vec          chungusGetPos           (const chungus *c);
 chunk       *chungusGetChunk         (chungus *c, int x, int y, int z);
 void         chungusSetSpawn         (chungus *c, const vec spawn);

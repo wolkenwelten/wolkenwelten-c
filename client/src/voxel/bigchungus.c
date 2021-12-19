@@ -123,13 +123,6 @@ chunk *worldGetChunk(int x, int y, int z){
 	return chnk;
 }
 
-blockId worldTryB(int x,int y,int z) {
-	if((x|y|z)&(~0xFFFF)){return 0;}
-	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
-	if(chng == NULL){ return 0; }
-	return chungusGetB(chng,x,y,z);
-}
-
 blockId worldGetB(int x,int y,int z) {
 	if((x|y|z)&(~0xFFFF)){return 0;}
 	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
@@ -139,11 +132,38 @@ blockId worldGetB(int x,int y,int z) {
 	return chnk->data[x&0xF][y&0xF][z&0xF];
 }
 
+blockId worldTryB(int x,int y,int z) {
+	return worldGetB(x,y,z);
+}
+
 bool worldSetB(int x,int y,int z,blockId block){
 	if((x|y|z)&(~0xFFFF)){return NULL;}
 	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){return false;}
 	chungusSetB(chng,x,y,z,block);
+	return true;
+}
+
+u8 worldGetFluid(int x,int y,int z) {
+	if((x|y|z)&(~0xFFFF)){return 0;}
+	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
+	if(chng == NULL){ return 0; }
+	chunk *chnk = chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if(chnk == NULL){ return 0; }
+	return chnk->fluid.data[x&0xF][y&0xF][z&0xF];
+}
+
+u8 worldTryFluid(int x,int y,int z) {
+	return worldGetFluid(x,y,z);
+}
+
+bool worldSetFluid(int x,int y,int z, u8 level){
+	if((x|y|z)&(~0xFFFF)){return NULL;}
+	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
+	if(chng == NULL){return false;}
+	chunk *chnk = chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if(chnk == NULL){ return false;}
+	chnk->fluid.data[x&0xF][y&0xF][z&0xF] = level;
 	return true;
 }
 

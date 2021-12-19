@@ -1,17 +1,17 @@
 #pragma once
 #include "../../../common/src/common.h"
 
-#define CHUNK_COORDS (16)
-#define CHUNK_SIZE   (16)
 extern const float CHUNK_RENDER_DISTANCE;
 extern const float CHUNK_FADEOUT_DISTANCE;
 
-struct chunk{
+struct chunk {
 	u16   x,y,z;
 	u32   clientsUpdated;
 	void *nextFree;
 	beingList bl;
-	blockId   data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+
+	chunkOverlay *fluid;
+	blockId data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 };
 
 extern uint chunkCount;

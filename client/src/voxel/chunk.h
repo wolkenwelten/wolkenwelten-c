@@ -2,11 +2,10 @@
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/side.h"
 
+extern chunk *chunkList;
+extern int chunkCount;
+
 #define CHUNK_COUNT (1<<17)
-
-#define CHUNK_SIZE_BITS (4)
-#define CHUNK_SIZE (1<<CHUNK_SIZE_BITS)
-
 #define CHUNK_FLAG_DIRTY 1
 
 typedef struct queueEntry queueEntry;
@@ -15,9 +14,12 @@ struct chunk {
 	u16 x,y,z;
 	u8 flags;
 	u8 fadeIn;
+
 	struct chunkvertbuf *vertbuf;
 	void *nextFree;
 	beingList bl;
+
+	chunkOverlay fluid;
 	blockId data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 };
 

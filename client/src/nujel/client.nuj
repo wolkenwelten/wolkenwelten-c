@@ -158,3 +158,13 @@
 [defun game-active? []
        [eq? [widget/focus] w-game-screen]
 ]
+
+[defun fltest []
+       [fluid/box! #xFF
+                   [- [vec/x [player-pos]] 4]
+                   [- [vec/y [player-pos]] 4]
+                   [- [vec/z [player-pos]] 4]
+                   [+ [vec/x [player-pos]] 4]
+                   [+ [vec/y [player-pos]] 4]
+                   [+ [vec/z [player-pos]] 4]]
+]

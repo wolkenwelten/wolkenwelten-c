@@ -3,9 +3,12 @@
 
 void     worldBox           (int x, int y, int z, int w, int h, int d, u8 block);
 void     worldBoxSphere     (int x, int y, int z, int r, u8 block);
-u8       worldTryB          (int x, int y, int z);
-u8       worldGetB          (int x, int y, int z);
-bool     worldSetB          (int x, int y, int z, u8 block);
+blockId  worldTryB          (int x, int y, int z);
+blockId  worldGetB          (int x, int y, int z);
+bool     worldSetB          (int x, int y, int z, blockId block);
+u8       worldTryFluid      (int x, int y, int z);
+u8       worldGetFluid      (int x, int y, int z);
+bool     worldSetFluid      (int x, int y, int z, u8 level);
 int      checkCollision     (int x, int y, int z);
 chungus *worldTryChungus    (int x, int y, int z);
 chungus *worldGetChungus    (int x, int y, int z);

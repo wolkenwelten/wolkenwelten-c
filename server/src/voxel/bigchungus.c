@@ -447,3 +447,36 @@ bool worldShouldBeLoaded(const vec cpos){
 	}
 	return false;
 }
+
+bool bigchungusSetFluid(bigchungus *c, int x, int y, int z, int level){
+	chungus *chng;
+	int cx = (x / CHUNGUS_SIZE) & 0xFF;
+	int cy = (y / CHUNGUS_SIZE) & 0x7F;
+	int cz = (z / CHUNGUS_SIZE) & 0xFF;
+	chng = c->chungi[cx][cy][cz];
+	if(chng == NULL){return false;}
+	chungusSetFluid(chng, x&0xFF, y&0xFF, z&0xFF, level);
+	return true;
+}
+
+u8 bigchungusTryFluid(bigchungus *c, int x,int y,int z) {
+	chungus *chng;
+	if(!inWorld(x,y,z)){return 0;}
+	chng = bigchungusTryChungus(c,x>>8,y>>8,z>>8);
+	if(chng == NULL){ return 0; }
+	return chungusGetFluid(chng,x&0xFF,y&0xFF,z&0xFF);
+}
+
+u8 bigchungusGetFluid(bigchungus *c, int x,int y,int z) {
+	return bigchungusTryFluid(c,x,y,z);
+}
+
+u8 worldTryFluid(int x, int y, int z){
+	return bigchungusTryFluid(&world,x,y,z);
+}
+u8 worldGetFluid(int x, int y, int z){
+	return bigchungusGetFluid(&world,x,y,z);
+}
+bool worldSetFluid(int x, int y, int z, int level){
+	return bigchungusSetFluid(&world,x,y,z, level);
+}

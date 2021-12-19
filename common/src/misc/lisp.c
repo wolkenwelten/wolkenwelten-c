@@ -23,6 +23,7 @@
 #include "../game/itemDrop.h"
 #include "../game/itemType.h"
 #include "../game/weather/weather.h"
+#include "../world/world.h"
 #include "../misc/colors.h"
 #include "../misc/profiling.h"
 
@@ -166,6 +167,22 @@ static lVal *wwlnfColorInterpolate(lClosure *c, lVal *v){
 	return lValInt(colorInterpolate(ca,cb,i));
 }
 
+static lVal *wwlnfFluidGet(lClosure *c, lVal *v){
+	(void)c;
+	const vec pos = castToVec(lCar(v),vecNOne());
+	if(pos.x < 0){return NULL;}
+	return lValInt(worldGetFluid(pos.x,pos.y,pos.z));
+}
+
+static lVal *wwlnfFluidSet(lClosure *c, lVal *v){
+	(void)c;
+	const vec pos = castToVec(lCar(v),vecNOne());
+	const int level = castToInt(lCadr(v), -1);
+	if((pos.x < 0) || (level < 0)){return NULL;}
+	worldSetFluid(pos.x, pos.y, pos.z, level);
+	return lCar(v);
+}
+
 void lispDefineInt(const char *symbol, int val){
 	lDefineVal(clRoot,symbol,lValInt(val));
 }
@@ -198,6 +215,8 @@ void *lispCommonRootReal(void *a, void *b){
 	lAddNativeFunc(c,"explode",         "(pos &strength &style)", "Create an explosion at POS with &STRENGTH=4.0 and &STYLE=0", wwlnfExplode);
 	lAddNativeFunc(c,"item-drop-new",   "(pos id amount)",        "Create a new item at POS for AMOUNT ID.",                    wwlnfItemDropNew);
 	lAddNativeFunc(c,"color-inter",     "(a b i)",                "Interpolate between A and B with 0.0 <= i <= 1.0",           wwlnfColorInterpolate);
+	lAddNativeFunc(c,"fluid",           "(pos)",                  "Get the fluid level at POS",                                 wwlnfFluidGet);
+	lAddNativeFunc(c,"fluid!",          "(pos level)",            "Set the fluid level at POS to LEVEL",                        wwlnfFluidSet);
 
 	itemTypeLispClosure(c);
 	specificInit(c);

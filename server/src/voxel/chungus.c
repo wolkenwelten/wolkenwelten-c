@@ -28,6 +28,7 @@
 #include "../worldgen/worldgen.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chunk.h"
+#include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 
@@ -491,4 +492,31 @@ void chungusUnsubFarChungi(){
 vec chungusGetPos(const chungus *c){
 	if(c == NULL){return vecNOne();}
 	return vecNew(c->x,c->y,c->z);
+}
+
+u8 chungusGetFluid(chungus *c, int x, int y, int z){
+	c->freeTimer = freeTime;
+	chunk *chnk = c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if((chnk == NULL) || (chnk->fluid == NULL)){ return 0;}
+	return chnk->fluid->data[x&0xF][y&0xF][z&0xF];
+}
+
+void chungusSetFluid(chungus *c, int x, int y, int z, int level){
+	if((x&(~0xFF)) || (y&(~0xFF)) || (z&(~0xFF))){return;}
+	c->freeTimer = freeTime;
+	int cx = x >> 4;
+	int cy = y >> 4;
+	int cz = z >> 4;
+	chunk *chnk = c->chunks[cx][cy][cz];
+	if(chnk == NULL){
+		c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
+		if(chnk == NULL){
+			chungusFreeOldChungi(1000);
+			c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
+			if(chnk == NULL){return;}
+		}
+	}
+	if(chnk->fluid == NULL){chnk->fluid = chunkOverlayAllocate();}
+	chnk->fluid->data[x&0xF][y&0xF][z&0xF] = level;
+	chnk->clientsUpdated = c->clientsUpdated = 0;
 }

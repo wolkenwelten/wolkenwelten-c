@@ -271,7 +271,17 @@ void msgSendChunk(uint c, const chunk *chnk){
 	p->v.u16[2048] = chnk->x;
 	p->v.u16[2049] = chnk->y;
 	p->v.u16[2050] = chnk->z;
+	p->v.u16[2051] = 0;
 	packetQueue(p,msgtChunkData,1026*4,c);
+
+	/*
+	memcpy(p->v.u8,chnk->fluid.data,sizeof(chnk->fluid.data));
+	p->v.u16[2048] = chnk->x;
+	p->v.u16[2049] = chnk->y;
+	p->v.u16[2050] = chnk->z;
+	p->v.u16[2051] = 1;
+	packetQueue(p,msgtChunkData,1026*4,c);
+	*/
 }
 
 void dispatchBeingDmg(uint c, const packet *p){

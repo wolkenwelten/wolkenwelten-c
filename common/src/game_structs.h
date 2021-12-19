@@ -2,6 +2,9 @@
 #include "gfx_structs.h"
 #include "misc/side.h"
 
+#define CHUNK_COORDS (16)
+#define CHUNK_SIZE   (16)
+
 extern u64 gameTicks;
 
 typedef struct sfx sfx;
@@ -43,6 +46,13 @@ typedef struct {
 	float         weight;
 } blockType;
 typedef u8 blockId;
+
+typedef struct {
+	union {
+		u8 data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+		void *nextFree;
+	};
+} chunkOverlay;
 
 typedef struct {
 	u16 ID;

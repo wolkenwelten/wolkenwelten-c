@@ -61,17 +61,17 @@
 
 [def player-x [δ []
 	"Return the current players X Position"
-	[vx [player-pos]]
+	[vec/x [player-pos]]
 ]]
 
 [def player-y [δ []
 	"Return the current players Y Position"
-	[vy [player-pos]]
+	[vec/y [player-pos]]
 ]]
 
 [def player-z [δ []
 	"Return the current players Z Position"
-	[vz [player-pos]]
+	[vec/z [player-pos]]
 ]]
 
 [def item-drop-stress [let []

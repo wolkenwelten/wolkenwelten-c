@@ -42,7 +42,6 @@ int chunkCount     = 0;
 int chunksGeneratedThisFrame = 0;
 chunk *chunkFirstFree = NULL;
 
-#define CHUNK_COUNT (1<<17)
 #define MIN_CHUNKS_GENERATED_PER_FRAME (16)
 #define FADE_IN_FRAMES 48
 
@@ -84,15 +83,14 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 			return NULL;
 		}
 		chunkFirstFree = c->nextFree;
-		//fprintf(stderr,"--cfp=%i\n",chunkFreeCount);
 		chunkFreeCount--;
 	}
+	memset(c,0,sizeof(chunk));
 	c->x         = x & (~POS_MASK);
 	c->y         = y & (~POS_MASK);
 	c->z         = z & (~POS_MASK);
 	c->flags     = CHUNK_FLAG_DIRTY;
 	c->vertbuf   = NULL;
-	memset(c->data,0,sizeof(c->data));
 	return c;
 }
 
@@ -498,10 +496,21 @@ void chunkRecvUpdate(const packet *p){
 	u16 x = p->v.u16[2048];
 	u16 y = p->v.u16[2049];
 	u16 z = p->v.u16[2050];
+	u16 t = p->v.u16[2051];
 	chungus *chng =  worldGetChungus(x>>8,y>>8,z>>8);
 	if(chng == NULL){return;}
 	chunk *chnk = chungusGetChunkOrNew(chng,x,y,z);
 	if(chnk == NULL){return;}
-	memcpy(chnk->data,p->v.u8,sizeof(chnk->data));
+	u8 *dest;
+	switch(t){
+	case 0:
+	default:
+		dest = &chnk->data[0][0][0];
+		break;
+	case 1:
+		dest = &chnk->fluid.data[0][0][0];
+		break;
+	}
+	memcpy(dest,p->v.u8,sizeof(chnk->data));
 	chnk->flags |= CHUNK_FLAG_DIRTY;
 }
