@@ -25,7 +25,7 @@ void fluidPhysicsTick(){
 
 	PROFILE_START();
 
-	for(int i = calls&0x3F; i < chunkCount; i+=0x40){
+	for(int i = calls&0xF; i < chunkCount; i+=0x10){
 		chunk *c = &chunkList[i];
 		if((c->nextFree) || (c->fluid == NULL)){continue;}
 		fluidPhysics(c->fluid, c->x, c->y, c->z);
