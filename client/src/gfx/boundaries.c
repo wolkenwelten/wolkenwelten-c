@@ -54,18 +54,13 @@ static void drawBoundariesReal(const vertexFlat *data, uint dataCount){
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertexFlat), (void *)(((char *)&data[0].x) - ((char *)data)));
 	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(vertexFlat), (void *)(((char *)&data[0].rgba) - ((char *)data)));
 
-	glDrawArrays(GL_LINES,0,dataCount);
+ glDrawArrays(GL_LINES,0,dataCount);
 }
 
-void drawBoundaries(int size){
-	static vertexFlat *buf = NULL;
-	if(buf == NULL){
-		buf = malloc((1 << 18) * sizeof(vertexFlat));
-	}
-	uint bufi = 0;
-
+uint drawBoundariesPrepare(int size, vertexFlat *buf, uint bufi){
 	const int range = (int)renderDistance * 2;
-	const int steps = range / size;
+	const int lineLength = size*2;
+	const int steps = MIN(4,(range / size));
 	const int sx = ((int)player->pos.x) / size * size;
 	const int sy = ((int)player->pos.y) / size * size;
 	const int sz = ((int)player->pos.z) / size * size;
@@ -74,11 +69,11 @@ void drawBoundaries(int size){
 	for(int y = -steps; y <= steps; y++){
 		const int cx = sx + x * size;
 		const int cy = sy + y * size;
-		buf[bufi++] = (vertexFlat){cx,cy,sz - range,0xFF00FFFF};
-		buf[bufi++] = (vertexFlat){cx,cy,sz + range,0xFF00FFFF};
+		buf[bufi++] = (vertexFlat){cx,cy,sz - lineLength,0xFF09BEEF};
+		buf[bufi++] = (vertexFlat){cx,cy,sz + lineLength,0xFF09BEEF};
 		if(bufi >= (1 << 18)){
 			fprintf(stderr,"Boundary overflow!\n");
-			return;
+			return bufi;
 		}
 	}
 	}
@@ -87,11 +82,11 @@ void drawBoundaries(int size){
 	for(int z = -steps; z <= steps; z++){
 		const int cx = sx + x * size;
 		const int cz = sz + z * size;
-		buf[bufi++] = (vertexFlat){cx,sy - range,cz,0xFFFF00FF};
-		buf[bufi++] = (vertexFlat){cx,sy + range,cz,0xFFFF00FF};
+		buf[bufi++] = (vertexFlat){cx,sy - lineLength,cz,0xFFDE30F0};
+		buf[bufi++] = (vertexFlat){cx,sy + lineLength,cz,0xFFDE30F0};
 		if(bufi >= (1 << 18)){
 			fprintf(stderr,"Boundary overflow!\n");
-			return;
+			return bufi;
 		}
 	}
 	}
@@ -100,14 +95,25 @@ void drawBoundaries(int size){
 	for(int z = -steps; z <= steps; z++){
 		const int cy = sy + y * size;
 		const int cz = sz + z * size;
-		buf[bufi++] = (vertexFlat){sx - range,cy,cz,0xFFFFFF00};
-		buf[bufi++] = (vertexFlat){sx + range,cy,cz,0xFFFFFF00};
+		buf[bufi++] = (vertexFlat){sx - lineLength,cy,cz,0xFFF0C33F};
+		buf[bufi++] = (vertexFlat){sx + lineLength,cy,cz,0xFFF0C33F};
 		if(bufi >= (1 << 18)){
 			fprintf(stderr,"Boundary overflow!\n");
-			return;
+			return bufi;
 		}
 	}
 	}
 
-	drawBoundariesReal(buf,bufi);
+	return bufi;
+}
+
+void drawBoundaries(int size){
+	static vertexFlat *buf = NULL;
+	if(buf == NULL){buf = malloc((1 << 18) * sizeof(vertexFlat));}
+	uint bufi = drawBoundariesPrepare(size,buf,0);
+	if(size == 16){
+		bufi = drawBoundariesPrepare(256,buf,bufi);
+	}
+
+	drawBoundariesReal(buf, bufi);
 }
