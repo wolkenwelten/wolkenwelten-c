@@ -35,6 +35,7 @@
 #include "../network/client.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
+#include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/game/item.h"
 
@@ -149,8 +150,8 @@ u8 worldGetFluid(int x,int y,int z) {
 	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){ return 0; }
 	chunk *chnk = chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if(chnk == NULL){ return 0; }
-	return chnk->fluid.data[x&0xF][y&0xF][z&0xF];
+	if((chnk == NULL) || (chnk->fluid == NULL)){ return 0; }
+	return chnk->fluid->data[x&0xF][y&0xF][z&0xF];
 }
 
 u8 worldTryFluid(int x,int y,int z) {
@@ -163,7 +164,8 @@ bool worldSetFluid(int x,int y,int z, u8 level){
 	if(chng == NULL){return false;}
 	chunk *chnk = chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 	if(chnk == NULL){ return false;}
-	chnk->fluid.data[x&0xF][y&0xF][z&0xF] = level;
+	if(chnk->fluid == NULL){chnk->fluid = chunkOverlayAllocate();}
+	chnk->fluid->data[x&0xF][y&0xF][z&0xF] = level;
 	return true;
 }
 

@@ -19,7 +19,7 @@ struct chunk {
 	void *nextFree;
 	beingList bl;
 
-	chunkOverlay fluid;
+	chunkOverlay *fluid;
 	blockId data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 };
 

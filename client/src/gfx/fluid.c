@@ -23,7 +23,7 @@
 
 static void fluidGenerateBlockParticles(int x, int y, int z, u8 level){
 	const u8 amount = level & 0xF1;
-	for(int i=0;i<8;i++){
+	for(int i=0;i<4;i++){
 		const int by = rngValA(0xFF);
 		if(by > amount){continue;}
 		const int bx = rngValA(0xFF);
@@ -32,7 +32,7 @@ static void fluidGenerateBlockParticles(int x, int y, int z, u8 level){
 		const float py = y + (by / 256.0);
 		const float pz = z + (bz / 256.0);
 		const u32 c = COLOR(0x10, 0x20, 0x80, 0xF0) | rngValA(COLOR(0x0F, 0x1F, 0x7F, 0x0F));
-		newParticle(px, py, pz, 0.f, 0.f, 0.f, 128.f, -0.01f, c, 2048);
+		newParticle(px, py, pz, 0.f, 0.f, 0.f, 256.f, -0.01f, c, 256);
 	}
 }
 
@@ -55,10 +55,10 @@ void fluidGenerateParticles(){
 	static int calls = 0;
 	PROFILE_START();
 
-	for(int i = calls & 0x7F; i < chunkCount; i+= 0x80){
+	for(int i = calls & 0xF; i < chunkCount; i+= 0x10){
 		const chunk *c = &chunkList[i];
-		if(c->nextFree){continue;}
-		fluidGenerateChunkParticles(&c->fluid, c->x, c->y, c->z);
+		if((c->nextFree) || (c->fluid == NULL)){continue;}
+		fluidGenerateChunkParticles(c->fluid, c->x, c->y, c->z);
 	}
 	++calls;
 	PROFILE_STOP();

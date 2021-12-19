@@ -28,6 +28,7 @@
 #include "../sdl/sdl.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chunkvertbuf.h"
+#include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
 
@@ -508,7 +509,8 @@ void chunkRecvUpdate(const packet *p){
 		dest = &chnk->data[0][0][0];
 		break;
 	case 1:
-		dest = &chnk->fluid.data[0][0][0];
+		if(chnk->fluid == NULL){chnk->fluid = chunkOverlayAllocate();}
+		dest = &chnk->fluid->data[0][0][0];
 		break;
 	}
 	memcpy(dest,p->v.u8,sizeof(chnk->data));

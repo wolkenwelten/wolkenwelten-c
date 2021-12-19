@@ -24,12 +24,11 @@ void fluidPhysicsTick(){
 	static int calls = 0;
 
 	PROFILE_START();
-	return;
 
-	for(int i = calls&0xF; i < chunkCount; i+=0x10){
+	for(int i = calls&0x3F; i < chunkCount; i+=0x40){
 		chunk *c = &chunkList[i];
-		if(c->nextFree){continue;}
-		fluidPhysics(&c->fluid, c->x, c->y, c->z);
+		if((c->nextFree) || (c->fluid == NULL)){continue;}
+		fluidPhysics(c->fluid, c->x, c->y, c->z);
 	}
 	++calls;
 

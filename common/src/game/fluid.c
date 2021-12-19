@@ -15,27 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fluid.h"
-#include <stdio.h>
+#include "../world/world.h"
 
-void fluidPhysics(chunkOverlay *fluid, int cx, int cy, int cz){
+int fluidPhysics(chunkOverlay *fluid, int cx, int cy, int cz){
 	(void)cx;
 	(void)cy;
 	(void)cz;
+	int accumulator = 0;
 	for(int x=0;x<CHUNK_SIZE;x++){
 	for(int z=0;z<CHUNK_SIZE;z++){
-		int curLevel = fluid->data[x][0][z] & 0xF8;
-		for(int y=CHUNK_SIZE-1;y>=0;y--){
-			const int lastLevel = curLevel;
+		int curLevel = worldGetFluid(cx+x,cy-1,cz+z);
+		u8 curBlock = worldGetB(cx+x,cy-1,cz+z);
+		accumulator += curLevel;
+		for(int y=0;y<CHUNK_SIZE;y++){
+			const int botLevel = curLevel;
+			const u8 botBlock = curBlock;
 			curLevel = fluid->data[x][y][z];
+			curBlock = worldGetB(cx+x,cy+y,cz+z);
 			if(curLevel == 0){continue;}
-			if((curLevel & 0x7) != (lastLevel & 0x7)){continue;}
-			const int flowAmount = MIN((0xF8 - (lastLevel & 0xF8)),(curLevel & 0xF8));
+			if(botBlock){continue;}
+			const u8 botType = (botLevel & 0x7);
+			if(botType && (botType != (curLevel & 0x7))){continue;}
+			const int flowAmount = MIN((0xF8 - (botLevel & 0xF8)),(curLevel & 0xF8));
 			if(flowAmount){
-				printf("a: %x   b: %x  flow:%x\n", curLevel, lastLevel, flowAmount);
-				fluid->data[x][y-1][z] = lastLevel + flowAmount;
-				fluid->data[x][y][z] = curLevel = curLevel - flowAmount;
+				curLevel = fluid->data[x][y][z] = curLevel - flowAmount;
+				if(curLevel < 8){curLevel = fluid->data[x][y][z] = 0;}
+				if(y == 0){
+					worldSetFluid(cx+x,cy-1,cz+z,botLevel+flowAmount);
+				}else{
+					fluid->data[x][y-1][z] = botLevel + flowAmount;
+				}
 			}
 		}
 	}
 	}
+	return accumulator;
 }
