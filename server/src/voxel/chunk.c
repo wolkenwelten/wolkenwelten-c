@@ -20,6 +20,7 @@
 #include "../game/being.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
+#include "../../../common/src/game/chunkOverlay.h"
 
 #include <unistd.h>
 #include <stdio.h>
@@ -102,13 +103,15 @@ void chunkFree(chunk *c){
 }
 
 void chunkSetB(chunk *c,int x,int y,int z,blockId block){
-	c->data[x&0xF][y&0xF][z&0xF] = block;
+	if(c->block == NULL){c->block = chunkOverlayAllocate();}
+	c->block->data[x&0xF][y&0xF][z&0xF] = block;
 	c->clientsUpdated = 0;
 }
 
 void chunkFill(chunk *c, blockId b){
 	if(!c){return;}
-	memset(c->data,b,CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE);
+	if(c->block == NULL){c->block = chunkOverlayAllocate();}
+	memset(c->block->data,b,CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE);
 	c->clientsUpdated = 0;
 }
 
@@ -132,10 +135,11 @@ void chunkUnsetUpdated(chunk *c, uint p){
 }
 
 void chunkBox(chunk *c, int x,int y,int z,int gx,int gy,int gz,blockId block){
+	if(c->block == NULL){c->block = chunkOverlayAllocate();}
 	for(int cx = x; cx < gx; cx++){
 	for(int cy = y; cy < gy; cy++){
 	for(int cz = z; cz < gz; cz++){
-		c->data[cx][cy][cz] = block;
+		c->block->data[cx][cy][cz] = block;
 	}
 	}
 	}

@@ -19,8 +19,7 @@ struct chunk {
 	void *nextFree;
 	beingList bl;
 
-	chunkOverlay *fluid;
-	blockId data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+	chunkOverlay *fluid, *block;
 };
 
 void    chunkInit                  ();

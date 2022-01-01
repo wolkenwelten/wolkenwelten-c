@@ -91,7 +91,6 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 	c->y         = y & (~POS_MASK);
 	c->z         = z & (~POS_MASK);
 	c->flags     = CHUNK_FLAG_DIRTY;
-	c->vertbuf   = NULL;
 	return c;
 }
 
@@ -211,21 +210,21 @@ static inline sideMask chunkGetSides(u16 x,u16 y,u16 z,blockId b[CHUNK_SIZE+2][C
 	sideMask sides = 0;
 
 	if(b[x][y][z+1] == 0){ sides |= sideMaskFront; }
-	if(b[x][y][z-1] == 0){ sides |= sideMaskBack; }
-	if(b[x][y+1][z] == 0){ sides |= sideMaskTop; }
-	if(b[x][y-1][z] == 0){ sides |= sideMaskBottom; }
-	if(b[x+1][y][z] == 0){ sides |= sideMaskLeft; }
+	if(b[x][y][z-1] == 0){ sides |= sideMaskBack;  }
+	if(b[x][y+1][z] == 0){ sides |= sideMaskTop;   }
+	if(b[x][y-1][z] == 0){ sides |= sideMaskBottom;}
+	if(b[x+1][y][z] == 0){ sides |= sideMaskLeft;  }
 	if(b[x-1][y][z] == 0){ sides |= sideMaskRight; }
 
 	return sides;
 }
 
 static void chunkPopulateBlockData(blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], chunk *c, i16 xoff, i16 yoff, i16 zoff){
-	if(c == NULL){return;}
+	if((c == NULL) || (c->block == NULL)){return;}
 	for(int x=MAX(0,xoff); x<MIN(CHUNK_SIZE+2,xoff+CHUNK_SIZE); x++){
 	for(int y=MAX(0,yoff); y<MIN(CHUNK_SIZE+2,yoff+CHUNK_SIZE); y++){
 	for(int z=MAX(0,zoff); z<MIN(CHUNK_SIZE+2,zoff+CHUNK_SIZE); z++){
-		b[x][y][z] = c->data[x-xoff][y-yoff][z-zoff];
+		b[x][y][z] = c->block->data[x-xoff][y-yoff][z-zoff];
 	}
 	}
 	}
@@ -235,11 +234,12 @@ static void chunkGenMesh(chunk *c) {
 	PROFILE_START();
 
 	if((chunksGeneratedThisFrame >= MIN_CHUNKS_GENERATED_PER_FRAME) && (getTicks() > frameRelaxedDeadline)){return;}
+	if((c == NULL) || (c->block == NULL)){return;}
 	static blockId  blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
 	static sideMask sideCache[CHUNK_SIZE  ][CHUNK_SIZE  ][CHUNK_SIZE  ];
 	static u32          plane[CHUNK_SIZE  ][CHUNK_SIZE  ];
 	++chunksGeneratedThisFrame;
-	memset(blockData,   0,sizeof(blockData));
+	memset(blockData, 0,sizeof(blockData)); // ToDo: Remove this!
 	chunkPopulateBlockData(blockData,c,1,1,1);
 	chunkPopulateBlockData(blockData,worldGetChunk(c->x-CHUNK_SIZE,c->y,c->z),1-CHUNK_SIZE,1,1);
 	chunkPopulateBlockData(blockData,worldGetChunk(c->x+CHUNK_SIZE,c->y,c->z),1+CHUNK_SIZE,1,1);
@@ -251,7 +251,7 @@ static void chunkGenMesh(chunk *c) {
 	for(int x=CHUNK_SIZE-1;x>=0;--x){
 	for(int y=CHUNK_SIZE-1;y>=0;--y){
 	for(int z=CHUNK_SIZE-1;z>=0;--z){
-		sideCache[x][y][z] = c->data[x][y][z] == 0 ? 0 : chunkGetSides(x+1,y+1,z+1,blockData);
+		sideCache[x][y][z] = c->block->data[x][y][z] == 0 ? 0 : chunkGetSides(x+1,y+1,z+1,blockData);
 	}
 	}
 	}
@@ -262,7 +262,7 @@ static void chunkGenMesh(chunk *c) {
 		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const blockId b = c->data[x][y][z];
+			const blockId b = c->block->data[x][y][z]; // ToDo: Why does this not use blockData???
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] &sideMaskFront){
 				found = true;
@@ -291,7 +291,7 @@ static void chunkGenMesh(chunk *c) {
 		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const blockId b = c->data[x][y][z];
+			const blockId b = c->block->data[x][y][z];
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskBack){
 				found = true;
@@ -320,7 +320,7 @@ static void chunkGenMesh(chunk *c) {
 		memset(plane,0,sizeof(plane));
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const blockId b = c->data[x][y][z];
+			const blockId b = c->block->data[x][y][z];
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskTop){
 				found = true;
@@ -349,7 +349,7 @@ static void chunkGenMesh(chunk *c) {
 		memset(plane,0,sizeof(plane));
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const blockId b = c->data[x][y][z];
+			const blockId b = c->block->data[x][y][z];
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskBottom){
 				found = true;
@@ -378,7 +378,7 @@ static void chunkGenMesh(chunk *c) {
 		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
-			const blockId b = c->data[x][y][z];
+			const blockId b = c->block->data[x][y][z];
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskRight){
 				found = true;
@@ -407,7 +407,7 @@ static void chunkGenMesh(chunk *c) {
 		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
-			const blockId b = c->data[x][y][z];
+			const blockId b = c->block->data[x][y][z];
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskLeft){
 				found = true;
@@ -437,10 +437,11 @@ static void chunkGenMesh(chunk *c) {
 #define EDGE (CHUNK_SIZE-1)
 
 void chunkBox(chunk *c, u16 x,u16 y,u16 z,u16 gx,u16 gy,u16 gz,blockId block){
+	if(c->block == NULL){c->block = chunkOverlayAllocate();}
 	for(int cx=x;cx<gx;cx++){
 	for(int cy=y;cy<gy;cy++){
 	for(int cz=z;cz<gz;cz++){
-		c->data[cx][cy][cz] = block;
+		c->block->data[cx][cy][cz] = block;
 	}
 	}
 	}
@@ -454,7 +455,8 @@ void chunkBox(chunk *c, u16 x,u16 y,u16 z,u16 gx,u16 gy,u16 gz,blockId block){
 }
 
 void chunkSetB(chunk *c,u16 x,u16 y,u16 z,blockId block){
-	c->data[x&POS_MASK][y&POS_MASK][z&POS_MASK] = block;
+	if(c->block == NULL){c->block = chunkOverlayAllocate();}
+	c->block->data[x&POS_MASK][y&POS_MASK][z&POS_MASK] = block;
 	c->flags |= CHUNK_FLAG_DIRTY;
 	if((x&EDGE) ==  0x0){worldSetChunkUpdated(x-1,y  ,z  );}
 	if((x&EDGE) == EDGE){worldSetChunkUpdated(x+1,y  ,z  );}
@@ -494,25 +496,26 @@ void chunkDrawQueue(queueEntry *queue, int queueLen, const vec sideTints[sideMAX
 }
 
 void chunkRecvUpdate(const packet *p){
-	u16 x = p->v.u16[2048];
-	u16 y = p->v.u16[2049];
-	u16 z = p->v.u16[2050];
-	u16 t = p->v.u16[2051];
-	chungus *chng =  worldGetChungus(x>>8,y>>8,z>>8);
+	const u16 x = p->v.u16[2048];
+	const u16 y = p->v.u16[2049];
+	const u16 z = p->v.u16[2050];
+	const u16 t = p->v.u16[2051];
+	chungus *chng = worldGetChungus(x>>8,y>>8,z>>8);
 	if(chng == NULL){return;}
 	chunk *chnk = chungusGetChunkOrNew(chng,x,y,z);
 	if(chnk == NULL){return;}
 	u8 *dest;
 	switch(t){
-	case 0:
+	case chunkOverlayBlock:
 	default:
-		dest = &chnk->data[0][0][0];
+		if(chnk->block == NULL){chnk->block = chunkOverlayAllocate();}
+		dest = &chnk->block->data[0][0][0];
 		break;
-	case 1:
+	case chunkOverlayFluid:
 		if(chnk->fluid == NULL){chnk->fluid = chunkOverlayAllocate();}
 		dest = &chnk->fluid->data[0][0][0];
 		break;
 	}
-	memcpy(dest,p->v.u8,sizeof(chnk->data));
+	memcpy(dest,p->v.u8,sizeof(chnk->block->data));
 	chnk->flags |= CHUNK_FLAG_DIRTY;
 }

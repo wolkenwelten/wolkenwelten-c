@@ -19,6 +19,7 @@
 #include "savegame.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
+#include "../../../common/src/game/chunkOverlay.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -30,7 +31,7 @@ void *chunkSave(chunk *c, void *rbuf){
 	buf[1] = (c->x >> 4)&0xF;
 	buf[2] = (c->y >> 4)&0xF;
 	buf[3] = (c->z >> 4)&0xF;
-	memcpy(buf+4,c->data,16*16*16);
+	memcpy(buf+4,c->block->data,16*16*16);
 	return buf+4100;
 }
 
@@ -50,7 +51,8 @@ const void *chunkLoad(chungus *c, const void *rbuf){
 		return buf+4100;
 	}
 	chnk->clientsUpdated = 0;
-	memcpy(chnk->data,&buf[4],4096);
+	if(chnk->block == NULL){chnk->block = chunkOverlayAllocate();}
+	memcpy(chnk->block->data,&buf[4],4096);
 
 	return buf+4100;
 }

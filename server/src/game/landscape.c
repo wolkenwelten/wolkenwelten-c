@@ -32,14 +32,15 @@ static bool shouldThaw(){
 
 static void landscapeUpdateChunk(chunk *c){
 	static blockId topBlocks[CHUNK_SIZE][CHUNK_SIZE];
+	if(c->block == NULL){return;}
 
 	chunk *tc = worldTryChunk(c->x,c->y+CHUNK_SIZE,c->z);
-	if(tc == NULL){
+	if((tc == NULL) || (tc->block)){
 		memset(topBlocks,0,sizeof(topBlocks));
 	}else{
 		for(int x=0;x<CHUNK_SIZE;x++){
 		for(int z=0;z<CHUNK_SIZE;z++){
-			topBlocks[x][z] = tc->data[x][0][z];
+			topBlocks[x][z] = tc->block->data[x][0][z];
 		}
 		}
 	}
@@ -47,8 +48,8 @@ static void landscapeUpdateChunk(chunk *c){
 	for(uint x=0; x < CHUNK_SIZE; x++){
 	for(uint y=0; y < CHUNK_SIZE; y++){
 	for(uint z=0; z < CHUNK_SIZE; z++){
-		const blockId b = c->data[x][y][z];
-		const blockId tb = y == CHUNK_SIZE-1 ? topBlocks[x][z] : c->data[x][y+1][z];
+		const blockId b = c->block->data[x][y][z];
+		const blockId tb = y == CHUNK_SIZE-1 ? topBlocks[x][z] : c->block->data[x][y+1][z];
 
 		switch(b){
 		default:

@@ -165,8 +165,8 @@ chunk *chungusGetChunkOrNew(chungus *c, u16 x, u16 y, u16 z){
 
 blockId chungusGetB(chungus *c, u16 x,u16 y,u16 z){
 	chunk *chnk = c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if(chnk == NULL){return 0;}
-	return chnk->data[x&0xF][y&0xF][z&0xF];
+	if((chnk == NULL) || (chnk->block == NULL)){return 0;}
+	return chnk->block->data[x&0xF][y&0xF][z&0xF];
 }
 
 void chungusSetB(chungus *c, u16 x,u16 y,u16 z,blockId block){

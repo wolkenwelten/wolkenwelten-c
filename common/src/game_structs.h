@@ -47,6 +47,11 @@ typedef struct {
 } blockType;
 typedef u8 blockId;
 
+typedef enum chunkOverlayType {
+	chunkOverlayBlock = 0,
+	chunkOverlayFluid
+} chunkOverlayType;
+
 typedef struct {
 	union {
 		u8 data[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];

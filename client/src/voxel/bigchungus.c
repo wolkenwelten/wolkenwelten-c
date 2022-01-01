@@ -129,8 +129,8 @@ blockId worldGetB(int x,int y,int z) {
 	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){ return 0; }
 	chunk *chnk = chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if(chnk == NULL){ return 0; }
-	return chnk->data[x&0xF][y&0xF][z&0xF];
+	if((chnk == NULL) || (chnk->block == NULL)){ return 0; }
+	return chnk->block->data[x&0xF][y&0xF][z&0xF];
 }
 
 blockId worldTryB(int x,int y,int z) {

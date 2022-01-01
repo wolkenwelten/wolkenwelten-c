@@ -456,13 +456,13 @@ static void worldgenRDFirstPass(worldgen *wgen, wgChances *w){
 				if((chnk == NULL) || ((cy&0xF)==0xF)){
 					chnk = clay->chunks[cx>>4][cy>>4][cz>>4];
 				}
-				if(chnk == NULL){
+				if((chnk == NULL) || (chnk->block == NULL)){
 					w->lastBlock = 0;
 					w->airBlocks += cy - (cy&(~0xF));
 					cy = cy & (~0xF);
 					continue;
 				}
-				blockId b = chnk->data[x][cy&0xF][z];
+				blockId b = chnk->block->data[x][cy&0xF][z];
 				switch(b){
 				default:
 					w->airBlocks = 0;
@@ -527,13 +527,13 @@ void worldgenRemoveDirt(worldgen *wgen){
 				if((chnk == NULL) || ((cy&0xF)==0xF)){
 					chnk = clay->chunks[cx>>4][cy>>4][cz>>4];
 				}
-				if(chnk == NULL){
+				if((chnk == NULL) || (chnk->block == NULL)){
 					w.lastBlock = 0;
 					w.airBlocks += cy - (cy&(~0xF));
 					cy = cy & (~0xF);
 					continue;
 				}
-				blockId b = chnk->data[x][cy&0xF][z];
+				blockId b = chnk->block->data[x][cy&0xF][z];
 				switch(b){
 				default:
 					w.leafBlocks = w.airBlocks = 0;
@@ -545,10 +545,10 @@ void worldgenRemoveDirt(worldgen *wgen){
 					w.leafBlocks++; /* Fall through */
 				case 0:
 					if(w.lastBlock == I_Stone){
-						chnk->data[x][cy&0xF][z] = I_Stone;
+						chnk->block->data[x][cy&0xF][z] = I_Stone;
 						w.lastBlock = rngValA(3) ? 0 : I_Stone;
 					} else if(w.lastBlock == I_Dirt){
-						chnk->data[x][cy&0xF][z] = I_Dirt;
+						chnk->block->data[x][cy&0xF][z] = I_Dirt;
 						w.lastBlock = rngValA(7) ? 0 : I_Dirt;
 					}
 					w.airBlocks++;
@@ -559,7 +559,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 				case I_Coal:
 				case I_Crystal:
 					if(w.lastBlock == w.grassBlock){
-						chnk->data[x][cy&0xF][z] = I_Dirt;
+						chnk->block->data[x][cy&0xF][z] = I_Dirt;
 						w.lastBlock = rngValA(1) ? 0 : w.grassBlock;
 						continue;
 					}
@@ -567,10 +567,10 @@ void worldgenRemoveDirt(worldgen *wgen){
 					if(!w.airBlocks)                      {continue;}
 					if(worldgenRDShrub(wgen,&w,cx,cy,cz)) {continue;}
 					if((w.airBlocks > 8) && (w.leafBlocks < 3)){
-						chnk->data[x][cy&0xF][z] = w.grassBlock;
+						chnk->block->data[x][cy&0xF][z] = w.grassBlock;
 						w.lastBlock = w.grassBlock;
 					}else if(w.airBlocks > 3){
-						chnk->data[x][cy&0xF][z] = I_Dirt;
+						chnk->block->data[x][cy&0xF][z] = I_Dirt;
 					}
 					if(worldgenRDAnimal  (wgen,&w,cx,cy,cz)){continue;}
 					w.airBlocks = 0;

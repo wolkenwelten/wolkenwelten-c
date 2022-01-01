@@ -142,8 +142,8 @@ chunk *chungusGetChunk(chungus *c, int x,int y,int z){
 blockId chungusGetB(chungus *c, int x,int y,int z){
 	c->freeTimer = freeTime;
 	chunk *chnk = c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if(chnk == NULL)        { return 0; }
-	return chnk->data[x&0xF][y&0xF][z&0xF];
+	if((chnk == NULL) || (chnk->block == NULL)){ return 0; }
+	return chnk->block->data[x&0xF][y&0xF][z&0xF];
 }
 
 int chungusGetHighestP(chungus *c, int x, int *retY, int z){
@@ -154,9 +154,9 @@ int chungusGetHighestP(chungus *c, int x, int *retY, int z){
 
 	for(int cy=15;cy >= 0;cy--){
 		chunk *chnk = c->chunks[cx][cy][cz];
-		if(chnk == NULL){continue;}
+		if((chnk == NULL) || (chnk->block == NULL)){continue;}
 		for(int y=CHUNK_SIZE-1;y>=0;y--){
-			blockId b = chnk->data[x&0xF][y&0xF][z&0xF];
+			blockId b = chnk->block->data[x&0xF][y&0xF][z&0xF];
 			if(b != 0){
 				*retY = (cy*CHUNK_SIZE)+y;
 				return 1;
