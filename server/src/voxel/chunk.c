@@ -33,54 +33,12 @@
 #define CHUNK_COUNT (1<<18)
 #endif
 
-chunk *chunkList;
-uint   chunkFreeCount = 0;
-uint   chunkCount     = 0;
-chunk *chunkFirstFree = NULL;
-
-void chunkInit(){
-	chunkList = malloc(sizeof(chunk) * CHUNK_COUNT);
-}
-
 float chunkDistance(const vec pos, const chunk *chnk){
 	const vec chunkpos = vecNew(chnk->x,chnk->y,chnk->z);
 	return vecMag(vecSub(chunkpos,pos));
 }
 
-void chunkCheckShed(){
-	if((chunkFreeCount+(chunkCount - CHUNK_COUNT)) > 5000){return;}
-	uint chngFree = chungusFreeOldChungi(1000);
-	fprintf(stderr,"[SRV] preemptive chunk load shedding! [Free:%i Used:%i]\n",chunkFreeCount,chunkCount);
-	fprintf(stderr,"[SRV] disaster  averted, freed some memory [%u chungi | %u chunks]!\n",chngFree,chunkFreeCount);
-}
-
-chunk *chunkNew(u16 x,u16 y,u16 z){
-	chunk *c = NULL;
-	if(chunkFirstFree == NULL){
-		if(chunkCount >= CHUNK_COUNT){
-			fprintf(stderr,"[SRV] chunk load shedding [%u / %u chunks]!\n",chunkFreeCount,chunkCount);
-			uint chngFree = chungusFreeOldChungi(1000);
-			if(chunkFirstFree == NULL){
-				fprintf(stderr,"[SRV] server chunkList Overflow!\n");
-				return NULL;
-			}else{
-				fprintf(stderr,"[SRV] chunkList overflow averted, freed some memory [%u chungi | %u chunks]!\n",chngFree,chunkFreeCount);
-				c = chunkFirstFree;
-				chunkFirstFree = c->nextFree;
-				chunkFreeCount--;
-				if(chunkFreeCount > (1<<18)){
-					printf("SOMETHING HAPPENED!!!");
-				}
-			}
-		}else{
-			c = &chunkList[chunkCount++];
-		}
-	}else{
-		c = chunkFirstFree;
-		chunkFirstFree = c->nextFree;
-		chunkFreeCount--;
-	}
-	memset(c,0,sizeof(chunk));
+void chunkReset(chunk *c, u16 x, u16 y, u16 z){
 	c->x = x & (~0xF);
 	c->y = y & (~0xF);
 	c->z = z & (~0xF);
@@ -91,15 +49,18 @@ chunk *chunkNew(u16 x,u16 y,u16 z){
 	}else{
 		beingListInit(&c->bl,&chng->bl);
 	}
-	return c;
 }
 
 void chunkFree(chunk *c){
 	if(c == NULL){return;}
-	chunkFreeCount++;
-	c->nextFree = chunkFirstFree;
-	c->bl.parent = NULL;
-	chunkFirstFree = c;
+	if(c->fluid){
+		chunkOverlayFree(c->fluid);
+		c->fluid = NULL;
+	}
+	if(c->block){
+		chunkOverlayFree(c->block);
+		c->block = NULL;
+	}
 }
 
 void chunkSetB(chunk *c,int x,int y,int z,blockId block){
@@ -115,12 +76,6 @@ void chunkFill(chunk *c, blockId b){
 	c->clientsUpdated = 0;
 }
 
-uint chunkGetFree(){
-	return chunkFreeCount;
-}
-uint chunkGetActive(){
-	return chunkCount;
-}
 int chunkIsUpdated(chunk *c, uint p){
 	if(c == NULL){return 1;}
 	return c->clientsUpdated & (1 << p);

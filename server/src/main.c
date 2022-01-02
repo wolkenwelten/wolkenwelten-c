@@ -174,7 +174,6 @@ void mainInit(){
 	savegameLoad();
 	beingListEntryInit();
 	chungusInit();
-	chunkInit();
 	lispInit();
 	itemTypeInit();
 	blockTypeInit();

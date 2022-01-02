@@ -454,9 +454,9 @@ static void worldgenRDFirstPass(worldgen *wgen, wgChances *w){
 			chunk *chnk = NULL;
 			for(int cy=wgen->maxY;cy>=wgen->minY;cy--){
 				if((chnk == NULL) || ((cy&0xF)==0xF)){
-					chnk = clay->chunks[cx>>4][cy>>4][cz>>4];
+					chnk = &clay->chunks[cx>>4][cy>>4][cz>>4];
 				}
-				if((chnk == NULL) || (chnk->block == NULL)){
+				if(chnk->block == NULL){
 					w->lastBlock = 0;
 					w->airBlocks += cy - (cy&(~0xF));
 					cy = cy & (~0xF);
@@ -525,7 +525,7 @@ void worldgenRemoveDirt(worldgen *wgen){
 			chunk *chnk  = NULL;
 			for(int cy=wgen->maxY;cy>=wgen->minY;cy--){
 				if((chnk == NULL) || ((cy&0xF)==0xF)){
-					chnk = clay->chunks[cx>>4][cy>>4][cz>>4];
+					chnk = &clay->chunks[cx>>4][cy>>4][cz>>4];
 				}
 				if((chnk == NULL) || (chnk->block == NULL)){
 					w.lastBlock = 0;

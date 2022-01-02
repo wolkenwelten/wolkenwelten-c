@@ -14,7 +14,7 @@ struct chungus {
 	u64    freeTimer;
 	void  *nextFree;
 	beingList bl;
-	chunk *chunks[CHUNGUS_COORDS][CHUNGUS_COORDS][CHUNGUS_COORDS];
+	chunk chunks[CHUNGUS_COORDS][CHUNGUS_COORDS][CHUNGUS_COORDS];
 };
 
 extern chungus *chungusList;
@@ -24,6 +24,8 @@ extern int loadShed;
 
 void         chungusInit             ();
 chungus     *chungusNew              (u8 x,u8 y, u8 z);
+uint         chungusGetLinearMax     ();
+chunk       *chungusGetLinearChunk   (uint i);
 void         chungusWorldGenLoad     (chungus *c);
 void         chungusFree             (chungus *c);
 void         chungusBox              (chungus *c, int x, int y, int z, int w, int h, int d, blockId block);

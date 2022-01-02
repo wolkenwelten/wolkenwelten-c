@@ -52,8 +52,7 @@ void chungusSetClientUpdated(chungus *c,u64 updated){
 	for(int x=0;x<CHUNGUS_COORDS;x++){
 	for(int y=0;y<CHUNGUS_COORDS;y++){
 	for(int z=0;z<CHUNGUS_COORDS;z++){
-		if(c->chunks[x][y][z] == NULL){continue;}
-		c->chunks[x][y][z]->clientsUpdated = updated;
+		c->chunks[x][y][z].clientsUpdated = updated;
 	}
 	}
 	}
@@ -90,24 +89,30 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 		chungusFreeCount--;
 	}
 
+	memset(c, 0, sizeof(chungus));
 	c->x = x;
 	c->y = y;
 	c->z = z;
-	c->nextFree = NULL;
 	c->freeTimer = freeTime;
-	c->sx = c->sy = c->sz = 0;
 	c->clientsSubscribed = (u64)1 << 63;
 	c->clientsUpdated    = (u64)1 << 31;
 	beingListInit(&c->bl,NULL);
 
-	memset(c->chunks,0,16*16*16*sizeof(chunk *));
-	chunkCheckShed();
+	const int cx = x << 8;
+	const int cy = y << 8;
+	const int cz = z << 8;
+	for(int sx=0;sx<16;sx++){
+	for(int sy=0;sy<16;sy++){
+	for(int sz=0;sz<16;sz++){
+		chunkReset(&c->chunks[sx][sy][sz], cx + (sx << 4), cy + (sy << 4), cz + (sz << 4));
+	}
+	}
+	}
 
 	return c;
 }
 
 void chungusWorldGenLoad(chungus *c){
-	chunkCheckShed();
 	worldgen *wgen = worldgenNew(c);
 	worldgenGenerate(wgen);
 	worldgenFree(wgen);
@@ -125,7 +130,7 @@ void chungusFree(chungus *c){
 	for(int x=0;x<CHUNGUS_COORDS;x++){
 	for(int y=0;y<CHUNGUS_COORDS;y++){
 	for(int z=0;z<CHUNGUS_COORDS;z++){
-		chunkFree(c->chunks[x][y][z]);
+		chunkFree(&c->chunks[x][y][z]);
 	}
 	}
 	}
@@ -136,13 +141,13 @@ void chungusFree(chungus *c){
 }
 
 chunk *chungusGetChunk(chungus *c, int x,int y,int z){
-	return c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	return &c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 }
 
 blockId chungusGetB(chungus *c, int x,int y,int z){
 	c->freeTimer = freeTime;
-	chunk *chnk = c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if((chnk == NULL) || (chnk->block == NULL)){ return 0; }
+	chunk *chnk = &c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if(chnk->block == NULL){ return 0; }
 	return chnk->block->data[x&0xF][y&0xF][z&0xF];
 }
 
@@ -153,8 +158,8 @@ int chungusGetHighestP(chungus *c, int x, int *retY, int z){
 	z &= 0xF;
 
 	for(int cy=15;cy >= 0;cy--){
-		chunk *chnk = c->chunks[cx][cy][cz];
-		if((chnk == NULL) || (chnk->block == NULL)){continue;}
+		chunk *chnk = &c->chunks[cx][cy][cz];
+		if(chnk->block == NULL){continue;}
 		for(int y=CHUNK_SIZE-1;y>=0;y--){
 			blockId b = chnk->block->data[x&0xF][y&0xF][z&0xF];
 			if(b != 0){
@@ -172,15 +177,8 @@ void chungusSetB(chungus *c, int x,int y,int z,blockId block){
 	int cx = x >> 4;
 	int cy = y >> 4;
 	int cz = z >> 4;
-	chunk *chnk = c->chunks[cx][cy][cz];
-	if(chnk == NULL){
-		c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
-		if(chnk == NULL){
-			chungusFreeOldChungi(1000);
-			c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
-			if(chnk == NULL){return;}
-		}
-	}
+	chunk *chnk = &c->chunks[cx][cy][cz];
+	if(chnk->block == NULL){chnk->block = chunkOverlayAllocate();}
 	chunkSetB(chnk,x,y,z,block);
 	c->clientsUpdated = 0;
 }
@@ -209,14 +207,10 @@ void chungusBoxF(chungus *c,int x,int y,int z,int w,int h,int d,blockId block){
 				sh = (y+h)&0xF;
 			}
 			for(int cz=z>>4;cz<=gz;cz++){
-				chunk *chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF];
-				if(chnk == NULL){
-					chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
-					c->chunks[cx&0xF][cy&0xF][cz&0xF] = chnk;
-				}
 				if(cz == gz){
 					sd = (z+d)&0xF;
 				}
+				chunk *chnk = &c->chunks[cx&0xF][cy&0xF][cz&0xF];
 				chunkBox(chnk,sx,sy,sz,sw,sh,sd,block);
 				sz = 0;
 			}
@@ -250,10 +244,7 @@ void chungusBoxFWG(chungus *c,int x,int y,int z,int w,int h,int d){
 			int sd = CHUNK_SIZE;
 			for(int cz=bz;cz<=gz;cz++){
 				if(cz == gz){sd = (z+d)&0xF;}
-				chunk *chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF];
-				if(chnk == NULL){
-					chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF] = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
-				}
+				chunk *chnk = &c->chunks[cx&0xF][cy&0xF][cz&0xF];
 				chunkBox(chnk,sx,sy,sz,sw,sh,sd,block);
 				sz = 0;
 			}
@@ -320,10 +311,7 @@ void chungusFill(chungus *c, int x,int y,int z,blockId b){
 	int cx = (x / CHUNK_SIZE) & 0xF;
 	int cy = (y / CHUNK_SIZE) & 0xF;
 	int cz = (z / CHUNK_SIZE) & 0xF;
-	chunk *chnk = c->chunks[cx][cy][cz];
-	if(chnk == NULL){
-		c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
-	}
+	chunk *chnk = &c->chunks[cx][cy][cz];
 	chunkFill(chnk,b);
 	c->clientsUpdated = 0;
 }
@@ -337,9 +325,8 @@ void chungusSubscribePlayer(chungus *c, uint p){
 	for(int x = 0; x < CHUNGUS_COORDS; x++){
 	for(int y = 0; y < CHUNGUS_COORDS; y++){
 	for(int z = 0; z < CHUNGUS_COORDS; z++){
-		if(c->chunks[x][y][z] == NULL){ continue; }
-		c->chunks[x][y][z]->clientsUpdated &= mask;
-		beingListSync(p, &c->chunks[x][y][z]->bl);
+		c->chunks[x][y][z].clientsUpdated &= mask;
+		beingListSync(p, &c->chunks[x][y][z].bl);
 	}
 	}
 	}
@@ -350,8 +337,7 @@ void chungusSetAllUpdated(chungus *c, u64 nUpdated){
 	for(int x = 0; x < CHUNGUS_COORDS; x++){
 	for(int y = 0; y < CHUNGUS_COORDS; y++){
 	for(int z = 0; z < CHUNGUS_COORDS; z++){
-		if(c->chunks[x][y][z] == NULL){ continue; }
-		c->chunks[x][y][z]->clientsUpdated = nUpdated;
+		c->chunks[x][y][z].clientsUpdated = nUpdated;
 	}
 	}
 	}
@@ -366,8 +352,7 @@ int chungusUnsubscribePlayer(chungus *c, uint p){
 	for(int x = 0; x < CHUNGUS_COORDS; x++){
 	for(int y = 0; y < CHUNGUS_COORDS; y++){
 	for(int z = 0; z < CHUNGUS_COORDS; z++){
-		if(c->chunks[x][y][z] == NULL){ continue; }
-		c->chunks[x][y][z]->clientsUpdated &= mask;
+		c->chunks[x][y][z].clientsUpdated &= mask;
 	}
 	}
 	}
@@ -408,8 +393,7 @@ int chungusUpdateClient(chungus *c, uint p){
 	for(uint x=0;x<CHUNGUS_COORDS;x++){
 	for(uint y=0;y<CHUNGUS_COORDS;y++){
 	for(uint z=0;z<CHUNGUS_COORDS;z++){
-		chunk *chnk = c->chunks[x][y][z];
-		if(chnk == NULL){continue;}
+		chunk *chnk = &c->chunks[x][y][z];
 		if(!fullUpdate){
 			const float d = chunkDistance(clients[p].c->pos,chnk);
 			if(d > 32.f){
@@ -496,8 +480,8 @@ vec chungusGetPos(const chungus *c){
 
 u8 chungusGetFluid(chungus *c, int x, int y, int z){
 	c->freeTimer = freeTime;
-	chunk *chnk = c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if((chnk == NULL) || (chnk->fluid == NULL)){ return 0;}
+	chunk *chnk = &c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if(chnk->fluid == NULL){ return 0;}
 	return chnk->fluid->data[x&0xF][y&0xF][z&0xF];
 }
 
@@ -507,16 +491,20 @@ void chungusSetFluid(chungus *c, int x, int y, int z, int level){
 	int cx = x >> 4;
 	int cy = y >> 4;
 	int cz = z >> 4;
-	chunk *chnk = c->chunks[cx][cy][cz];
-	if(chnk == NULL){
-		c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
-		if(chnk == NULL){
-			chungusFreeOldChungi(1000);
-			c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
-			if(chnk == NULL){return;}
-		}
-	}
+	chunk *chnk = &c->chunks[cx][cy][cz];
 	if(chnk->fluid == NULL){chnk->fluid = chunkOverlayAllocate();}
 	chnk->fluid->data[x&0xF][y&0xF][z&0xF] = level;
 	chnk->clientsUpdated = c->clientsUpdated = 0;
+}
+
+uint chungusGetLinearMax(){
+	return chungusCount * 16 * 16 * 16;
+}
+
+chunk *chungusGetLinearChunk(uint i){
+	const uint ci = i >> 12;
+	if(ci >= chungusCount){return NULL;}
+	chungus *chng = &chungusList[i >> 12];
+	if(chng->nextFree != NULL){return NULL;}
+	return &chng->chunks[(i>>8)&0xF][(i>>4)&0xF][i&0xF];
 }

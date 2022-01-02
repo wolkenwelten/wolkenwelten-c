@@ -19,6 +19,7 @@
 
 #include "weather/weather.h"
 #include "../voxel/bigchungus.h"
+#include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/profiling.h"
@@ -32,10 +33,10 @@ static bool shouldThaw(){
 
 static void landscapeUpdateChunk(chunk *c){
 	static blockId topBlocks[CHUNK_SIZE][CHUNK_SIZE];
-	if(c->block == NULL){return;}
+	if((c == NULL) || (c->block == NULL)){return;}
 
 	chunk *tc = worldTryChunk(c->x,c->y+CHUNK_SIZE,c->z);
-	if((tc == NULL) || (tc->block)){
+	if((tc == NULL) || (tc->block == NULL)){
 		memset(topBlocks,0,sizeof(topBlocks));
 	}else{
 		for(int x=0;x<CHUNK_SIZE;x++){
@@ -115,8 +116,9 @@ void landscapeUpdateAll(){
 	static uint calls = 0;
 	PROFILE_START();
 
-	for(uint i=calls&0x3FFF;i<chunkCount;i+=0x4000){
-		landscapeUpdateChunk(&chunkList[i]);
+	const uint max = chungusGetLinearMax();
+	for(uint i=calls&0x3FFF;i<max;i+=0x4000){
+		landscapeUpdateChunk(chungusGetLinearChunk(i));
 	}
 	calls++;
 

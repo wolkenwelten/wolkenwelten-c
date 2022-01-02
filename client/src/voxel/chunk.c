@@ -38,75 +38,43 @@
 
 vertexTiny blockMeshBuffer[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * 6 * 6 / 2];
 u16 blockMeshSideEnd[sideMAX];
-int chunkFreeCount = 0;
-int chunkCount     = 0;
 int chunksGeneratedThisFrame = 0;
-chunk *chunkFirstFree = NULL;
 
 #define MIN_CHUNKS_GENERATED_PER_FRAME (16)
 #define FADE_IN_FRAMES 48
 
-chunk *chunkList;
-
 void chunkInit(){
 	chunkvertbufInit();
-	if(chunkList == NULL){
-		chunkList = malloc(sizeof(chunk) * CHUNK_COUNT);
-	}
-	chunkFreeCount = 0;
-	chunkCount     = 0;
-	chunkFirstFree = 0;
 	chunksGeneratedThisFrame = 0;
 }
 
-uint    chunkGetFree()               { return chunkFreeCount;           }
-uint    chunkGetActive()             { return chunkCount;               }
 uint    chunkGetGeneratedThisFrame() { return chunksGeneratedThisFrame; }
 void    chunkResetCounter()          { chunksGeneratedThisFrame = 0;    }
 
 #define POS_MASK (CHUNK_SIZE-1)
 
-chunk *chunkNew(u16 x,u16 y,u16 z){
-	chunk *c = NULL;
-	if(chunkFirstFree == NULL){
-		if(chunkCount+1 >= CHUNK_COUNT){
-			if(!chnkChngOverflow){
-				fprintf(stderr,"client chunkList Overflow!\n");
-				chnkChngOverflow=true;
-			}
-			return NULL;
-		}
-		c = &chunkList[chunkCount++];
-	}else{
-		c = chunkFirstFree;
-		if((c < &chunkList[0]) || (c > &chunkList[CHUNK_COUNT])){
-			fprintf(stderr,"%p thats not a valid pointer... cfp=%i\n",c,chunkFreeCount);
-			return NULL;
-		}
-		chunkFirstFree = c->nextFree;
-		chunkFreeCount--;
-	}
-	memset(c,0,sizeof(chunk));
-	c->x         = x & (~POS_MASK);
-	c->y         = y & (~POS_MASK);
-	c->z         = z & (~POS_MASK);
-	c->flags     = CHUNK_FLAG_DIRTY;
-	return c;
-}
-
 void chunkFree(chunk *c){
 	if(c == NULL){return;}
-	if((c < &chunkList[0]) || (c > &chunkList[CHUNK_COUNT])){
-		fprintf(stderr,"WTF am I freing\n");
-		return;
-	}
 	chunkvertbufFree(c);
-	chunkFreeCount++;
-	c->nextFree = chunkFirstFree;
-	chunkFirstFree = c;
+	if(c->fluid){
+		chunkOverlayFree(c->fluid);
+		c->fluid = NULL;
+	}
+	if(c->block){
+		chunkOverlayFree(c->block);
+		c->block = NULL;
+	}
 }
 
-static inline void chunkFinish(chunk *c){
+void chunkReset(chunk *c, int x, int y, int z){
+	c->x = x;
+	c->y = y;
+	c->z = z;
+	c->flags = CHUNK_FLAG_DIRTY;
+	chunkFree(c);
+}
+
+static void chunkFinish(chunk *c){
 	if(!c->vertbuf){
 		c->fadeIn = FADE_IN_FRAMES;
 	}
@@ -234,7 +202,7 @@ static void chunkGenMesh(chunk *c) {
 	PROFILE_START();
 
 	if((chunksGeneratedThisFrame >= MIN_CHUNKS_GENERATED_PER_FRAME) && (getTicks() > frameRelaxedDeadline)){return;}
-	if((c == NULL) || (c->block == NULL)){return;}
+	if(c->block == NULL){return;}
 	static blockId  blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
 	static sideMask sideCache[CHUNK_SIZE  ][CHUNK_SIZE  ][CHUNK_SIZE  ];
 	static u32          plane[CHUNK_SIZE  ][CHUNK_SIZE  ];
@@ -467,7 +435,6 @@ void chunkSetB(chunk *c,u16 x,u16 y,u16 z,blockId block){
 }
 
 static void chunkDraw(chunk *c, float d, sideMask mask){
-	if(c == NULL){return;}
 	if(c->flags & CHUNK_FLAG_DIRTY){ chunkGenMesh(c); }
 
 	// Since chunk mesh generation & upload is rate limited, we might not have a vertbuf yet.

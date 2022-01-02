@@ -177,7 +177,6 @@ void chungusLoad(chungus *c){
 	fclose(fp);
 }
 
-#include <stdio.h>
 void chungusSave(chungus *c){
 	#ifdef __EMSCRIPTEN__
 	return;
@@ -191,8 +190,7 @@ void chungusSave(chungus *c){
 	for(int x=0;x<16;x++){
 	for(int y=0;y<16;y++){
 	for(int z=0;z<16;z++){
-		if(c->chunks[x][y][z] == NULL){continue;}
-		cbuf = chunkSave(c->chunks[x][y][z],cbuf);
+		cbuf = chunkSave(&c->chunks[x][y][z],cbuf);
 	}
 	}
 	}

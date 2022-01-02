@@ -55,10 +55,17 @@ void fluidGenerateParticles(){
 	static int calls = 0;
 	PROFILE_START();
 
-	for(int i = calls & 0xF; i < chunkCount; i+= 0x10){
-		const chunk *c = &chunkList[i];
-		if((c->nextFree) || (c->fluid == NULL)){continue;}
-		fluidGenerateChunkParticles(c->fluid, c->x, c->y, c->z);
+	for(uint i = calls&0xF; i < chungusCount; i+=0x10){
+		chungus *cng = &chungusList[i];
+		for(int x=0;x<16;x++){
+		for(int y=0;y<16;y++){
+		for(int z=0;z<16;z++){
+			const chunk *c = &cng->chunks[x][y][z];
+			if(c->fluid == NULL){continue;}
+			fluidGenerateChunkParticles(c->fluid, c->x, c->y, c->z);
+		}
+		}
+		}
 	}
 	++calls;
 	PROFILE_STOP();

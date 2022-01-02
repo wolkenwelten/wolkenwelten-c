@@ -26,6 +26,7 @@
 
 void *chunkSave(chunk *c, void *rbuf){
 	u8 *buf = rbuf;
+	if(c->block == NULL){return buf;}
 	if((c->clientsUpdated & ((u64)1 << 31)) != 0){return buf;}
 	buf[0] = saveTypeChunk;
 	buf[1] = (c->x >> 4)&0xF;
@@ -42,14 +43,7 @@ const void *chunkLoad(chungus *c, const void *rbuf){
 	int cy = buf[2] & 0xF;
 	int cz = buf[3] & 0xF;
 
-	chunk *chnk = c->chunks[cx][cy][cz];
-	if(chnk == NULL){
-		c->chunks[cx][cy][cz] = chnk = chunkNew(c->x+(cx<<4),c->y+(cy<<4),c->z+(cz<<4));
-	}
-	if(!chnk){
-		fprintf(stderr,"Error: we ran out of memory!!!\n");
-		return buf+4100;
-	}
+	chunk *chnk = &c->chunks[cx][cy][cz];
 	chnk->clientsUpdated = 0;
 	if(chnk->block == NULL){chnk->block = chunkOverlayAllocate();}
 	memcpy(chnk->block->data,&buf[4],4096);

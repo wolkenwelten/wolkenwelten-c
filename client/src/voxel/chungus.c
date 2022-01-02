@@ -36,7 +36,7 @@
 #define CHUNGUS_COUNT (1<<12)
 
 chungus *chungusList;
-uint     chungusCount=0;
+uint     chungusCount = 0;
 chungus *chungusFirstFree = NULL;
 
 void chungusInit(){
@@ -81,13 +81,22 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 		chungusFirstFree = c->nextFree;
 	}
 
+	memset(c,0,sizeof(chungus));
 	c->x = x;
 	c->y = y;
 	c->z = z;
-	c->nextFree = NULL;
-	c->requested = 0;
 
-	memset(c->chunks,0,16*16*16*sizeof(chunk *));
+	const int cx = x << 8;
+	const int cy = y << 8;
+	const int cz = z << 8;
+	for(int sx=0;sx<16;sx++){
+	for(int sy=0;sy<16;sy++){
+	for(int sz=0;sz<16;sz++){
+		chunkReset(&c->chunks[sx][sy][sz], cx + (sx << 4), cy + (sy << 4), cz + (sz << 4));
+	}
+	}
+	}
+
 	return c;
 }
 
@@ -100,8 +109,7 @@ void chungusFree(chungus *c){
 	for(int x=0;x<16;x++){
 	for(int y=0;y<16;y++){
 	for(int z=0;z<16;z++){
-		chunkFree(c->chunks[x][y][z]);
-		c->chunks[x][y][z] = NULL;
+		chunkFree(&c->chunks[x][y][z]);
 	}
 	}
 	}
@@ -126,7 +134,7 @@ void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,in
 				cam->pos.y < by + CHUNK_SIZE ? sideMaskBottom | sideMaskTop :
 				sideMaskTop;
 			for(int z=0;z<16;z++){
-				if(c->chunks[x][y][z] == NULL){continue;}
+				if(c->chunks[x][y][z].block == NULL){continue;}
 				if(!chunkInFrustum(vecNew(x,y,z),coff)){continue;}
 				const int bz = z*CHUNK_SIZE+(c->z<<8);
 				const int cz = bz+CHUNK_SIZE/2;
@@ -138,7 +146,7 @@ void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,in
 				if(d > renderDistance){continue;}
 				drawQueue[*drawQueueLen].distance = d;
 				drawQueue[*drawQueueLen].mask = xMask | yMask | zMask;
-				drawQueue[*drawQueueLen].chnk = c->chunks[x][y][z];
+				drawQueue[*drawQueueLen].chnk = &c->chunks[x][y][z];
 
 				*drawQueueLen = *drawQueueLen+1;
 			}
@@ -148,37 +156,27 @@ void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,in
 
 chunk *chungusGetChunk(chungus *c, u16 x,u16 y,u16 z){
 	if(!inWorld(x,y,z)){return NULL;}
-	return c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	return &c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 }
 
 chunk *chungusGetChunkOrNew(chungus *c, u16 x, u16 y, u16 z){
-	chunk *chnk;
 	const u16 cx = (x >> 4) & 0xF;
 	const u16 cy = (y >> 4) & 0xF;
 	const u16 cz = (z >> 4) & 0xF;
-	chnk = c->chunks[cx][cy][cz];
-	if(chnk == NULL){
-		c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx << 4),(c->y<<8)+(cy << 4),(c->z<<8)+(cz << 4));
-	}
-	return chnk;
+	return &c->chunks[cx][cy][cz];
 }
 
 blockId chungusGetB(chungus *c, u16 x,u16 y,u16 z){
-	chunk *chnk = c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if((chnk == NULL) || (chnk->block == NULL)){return 0;}
+	chunk *chnk = &c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if(chnk->block == NULL){return 0;}
 	return chnk->block->data[x&0xF][y&0xF][z&0xF];
 }
 
 void chungusSetB(chungus *c, u16 x,u16 y,u16 z,blockId block){
-	chunk *chnk;
 	u16 cx = (x >> 4) & 0xF;
 	u16 cy = (y >> 4) & 0xF;
 	u16 cz = (z >> 4) & 0xF;
-	chnk = c->chunks[cx][cy][cz];
-	if(chnk == NULL){
-		c->chunks[cx][cy][cz] = chnk = chunkNew((c->x<<8)+(cx << 4),(c->y<<8)+(cy << 4),(c->z<<8)+(cz << 4));
-	}
-	chunkSetB(chnk,x,y,z,block);
+	chunkSetB(&c->chunks[cx][cy][cz],x,y,z,block);
 }
 
 void chungusBoxF(chungus *c, u16 x,u16 y,u16 z, u16 w,u16 h,u16 d,blockId block){
@@ -202,13 +200,10 @@ void chungusBoxF(chungus *c, u16 x,u16 y,u16 z, u16 w,u16 h,u16 d,blockId block)
 				sh = (y+h)&0xF;
 			}
 			for(u16 cz=z>>4;cz<=gz;cz++){
-				chunk *chnk = c->chunks[cx&0xF][cy&0xF][cz&0xF];
-				if(chnk == NULL){
-					c->chunks[cx&0xF][cy&0xF][cz&0xF] = chnk = chunkNew((c->x<<8)+(cx<<4),(c->y<<8)+(cy<<4),(c->z<<8)+(cz<<4));
-				}
 				if(cz == gz){
 					sd = (z+d)&0xF;
 				}
+				chunk *chnk = &c->chunks[cx&0xF][cy&0xF][cz&0xF];
 				chunkBox(chnk,sx,sy,sz,sw,sh,sd,block);
 				sz = 0;
 			}

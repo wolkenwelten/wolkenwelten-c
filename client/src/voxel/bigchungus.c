@@ -128,8 +128,8 @@ blockId worldGetB(int x,int y,int z) {
 	if((x|y|z)&(~0xFFFF)){return 0;}
 	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){ return 0; }
-	chunk *chnk = chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if((chnk == NULL) || (chnk->block == NULL)){ return 0; }
+	chunk *chnk = &chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if(chnk->block == NULL){ return 0; }
 	return chnk->block->data[x&0xF][y&0xF][z&0xF];
 }
 
@@ -149,8 +149,8 @@ u8 worldGetFluid(int x,int y,int z) {
 	if((x|y|z)&(~0xFFFF)){return 0;}
 	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){ return 0; }
-	chunk *chnk = chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if((chnk == NULL) || (chnk->fluid == NULL)){ return 0; }
+	chunk *chnk = &chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if(chnk->fluid == NULL){ return 0; }
 	return chnk->fluid->data[x&0xF][y&0xF][z&0xF];
 }
 
@@ -162,8 +162,7 @@ bool worldSetFluid(int x,int y,int z, u8 level){
 	if((x|y|z)&(~0xFFFF)){return NULL;}
 	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){return false;}
-	chunk *chnk = chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if(chnk == NULL){ return false;}
+	chunk *chnk = &chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
 	if(chnk->fluid == NULL){chnk->fluid = chunkOverlayAllocate();}
 	chnk->fluid->data[x&0xF][y&0xF][z&0xF] = level;
 	return true;

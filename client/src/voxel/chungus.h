@@ -4,12 +4,15 @@
 
 #define CHUNGUS_SIZE (16*CHUNK_SIZE)
 
+extern chungus *chungusList;
+extern uint     chungusCount;
+
 struct chungus {
 	u8 x,y,z;
 	u64 requested;
 	void *nextFree;
 	beingList bl;
-	chunk *chunks[16][16][16];
+	chunk chunks[16][16][16];
 };
 
 typedef struct queueEntry {

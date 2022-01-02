@@ -72,7 +72,7 @@ u32 chunkvertbufMaxBytes(){
 	return 0;
 }
 
-void chunkvertbufUpdate(struct chunk *c, vertexTiny *vertices, u16 sideCounts[sideMAX]) {
+void chunkvertbufUpdate(chunk *c, vertexTiny *vertices, u16 sideCounts[sideMAX]) {
 	struct chunkvertbuf *v = c->vertbuf;
 	if(v == NULL) {
 		v = calloc(1, sizeof(struct chunkvertbuf));
@@ -121,7 +121,7 @@ void chunkvertbufUpdate(struct chunk *c, vertexTiny *vertices, u16 sideCounts[si
 
 	// Upload to the GPU, doing partial updates if possible.
 	if(gfxUseSubData && (count <= v->vboSize)){
-		glBufferSubData(GL_ARRAY_BUFFER,0,sizeof(vertexTiny) * count,vertices);
+		glBufferSubData(GL_ARRAY_BUFFER,0,sizeof(vertexTiny) * count,vertices); // Todo Measure performance impact of this!
 	}else{
 		allocatedGlBufferBytes -= sizeof(vertexTiny) * v->vboSize;
 		glBufferData(GL_ARRAY_BUFFER,sizeof(vertexTiny) * count,vertices,GL_STATIC_DRAW);
