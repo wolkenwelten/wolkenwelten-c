@@ -278,7 +278,7 @@ void msgSendChunkOverlay(uint c, chunkOverlay *o, int x, int y, int z, chunkOver
 
 void msgSendChunk(uint c, const chunk *chnk){
 	msgSendChunkOverlay(c,chnk->block, chnk->x, chnk->y, chnk->z, chunkOverlayBlock);
-	//msgSendChunkOverlay(c,chnk->fluid, chnk->x, chnk->y, chnk->z, chunkOverlayFluid);
+	msgSendChunkOverlay(c,chnk->fluid, chnk->x, chnk->y, chnk->z, chunkOverlayFluid);
 }
 
 void dispatchBeingDmg(uint c, const packet *p){

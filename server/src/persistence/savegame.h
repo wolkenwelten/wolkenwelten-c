@@ -3,11 +3,12 @@
 
 typedef enum {
 	saveTypeUndefined=0,
-	saveTypeChunk,
+	saveTypeChunkBlockData,
 	saveTypeItemDrop,
 	saveTypeAnimal,
 	saveTypeFire,
-	saveTypeThrowable
+	saveTypeThrowable,
+	saveTypeChunkFluidData
 } saveType;
 
 void playerSafeSave        ();

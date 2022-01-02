@@ -24,29 +24,54 @@
 #include <string.h>
 #include <stdio.h>
 
-void *chunkSave(chunk *c, void *rbuf){
+void *chunkSave(chunk *c, void *rbuf, saveType t){
 	u8 *buf = rbuf;
 	if(c->block == NULL){return buf;}
 	if((c->clientsUpdated & ((u64)1 << 31)) != 0){return buf;}
-	buf[0] = saveTypeChunk;
+	buf[0] = t;
 	buf[1] = (c->x >> 4)&0xF;
 	buf[2] = (c->y >> 4)&0xF;
 	buf[3] = (c->z >> 4)&0xF;
-	memcpy(buf+4,c->block->data,16*16*16);
+	void *src = NULL;
+	switch(t){
+	default:
+		return buf;
+	case saveTypeChunkBlockData:
+		src = c->block ? c->block->data : NULL;
+		break;
+	case saveTypeChunkFluidData:
+		src = c->fluid ? c->fluid->data : NULL;
+		break;
+	}
+	if(src == NULL){return buf;}
+	memcpy(buf+4, src, 16*16*16);
 	return buf+4100;
 }
 
 const void *chunkLoad(chungus *c, const void *rbuf){
 	const u8 *buf = rbuf;
 
+	saveType t = buf[0];
 	int cx = buf[1] & 0xF;
 	int cy = buf[2] & 0xF;
 	int cz = buf[3] & 0xF;
 
 	chunk *chnk = &c->chunks[cx][cy][cz];
 	chnk->clientsUpdated = 0;
-	if(chnk->block == NULL){chnk->block = chunkOverlayAllocate();}
-	memcpy(chnk->block->data,&buf[4],4096);
+	void *dest = NULL;
+	switch(t){
+		default:
+		return buf+4100;
+	case saveTypeChunkBlockData:
+		if(chnk->block == NULL){chnk->block = chunkOverlayAllocate();}
+		dest = chnk->block->data;
+		break;
+	case saveTypeChunkFluidData:
+		if(chnk->fluid == NULL){chnk->fluid = chunkOverlayAllocate();}
+		dest = chnk->fluid->data;
+		break;
+	}
+	memcpy(dest, &buf[4], 4096);
 
 	return buf+4100;
 }

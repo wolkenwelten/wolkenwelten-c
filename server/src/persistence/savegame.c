@@ -151,7 +151,8 @@ void chungusLoad(chungus *c){
 	for(b=saveLoadBuffer;b<end;){
 		saveType cType = *b;
 		switch(cType){
-		case saveTypeChunk:
+		case saveTypeChunkFluidData:
+		case saveTypeChunkBlockData:
 			b = chunkLoad(c,b);
 			break;
 		case saveTypeItemDrop:
@@ -190,7 +191,8 @@ void chungusSave(chungus *c){
 	for(int x=0;x<16;x++){
 	for(int y=0;y<16;y++){
 	for(int z=0;z<16;z++){
-		cbuf = chunkSave(&c->chunks[x][y][z],cbuf);
+		cbuf = chunkSave(&c->chunks[x][y][z],cbuf, saveTypeChunkBlockData);
+		cbuf = chunkSave(&c->chunks[x][y][z],cbuf, saveTypeChunkFluidData);
 	}
 	}
 	}

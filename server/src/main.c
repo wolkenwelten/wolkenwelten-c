@@ -23,6 +23,7 @@
 #include "game/being.h"
 #include "game/blockMining.h"
 #include "game/fire.h"
+#include "game/fluid.h"
 #include "game/itemDrop.h"
 #include "game/landscape.h"
 #include "game/grenade.h"
@@ -117,6 +118,7 @@ static void updateWorldStep(){
 	projectileUpdateAll();
 	animalThinkAll();
 	fireUpdateAll();
+	fluidPhysicsTick();
 	animalNeedsAll();
 	animalCheckBurnAll();
 	landscapeUpdateAll();
