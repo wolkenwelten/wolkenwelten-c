@@ -33,7 +33,7 @@
 #include <stddef.h>
 #include <string.h>
 
-#define CHUNGUS_COUNT (1<<12)
+#define CHUNGUS_COUNT (1<<7)
 
 chungus *chungusList;
 uint     chungusCount = 0;
