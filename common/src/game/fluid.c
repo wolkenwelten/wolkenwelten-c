@@ -37,11 +37,11 @@ int fluidPhysics(chunkOverlay *fluid, int cx, int cy, int cz){
 		if(curLevel){
 			curLevel = fluidFlowInto(curLevel, cx+x, cy+y-1, cz+z, curLevel & 0xF8);
 			if(curLevel){
-				const int sideFlow = MAX(((curLevel & 0xF8) / 4),4);
+				const int sideFlow = MAX(((curLevel & 0xF8) / 4), 8);
 				curLevel = fluidFlowInto(curLevel, cx+x-1, cy+y, cz+z, sideFlow);
-				curLevel = fluidFlowInto(curLevel, cx+x+1, cy+y, cz+z, sideFlow);
 				curLevel = fluidFlowInto(curLevel, cx+x, cy+y, cz+z-1, sideFlow);
 				curLevel = fluidFlowInto(curLevel, cx+x, cy+y, cz+z+1, sideFlow);
+				curLevel = fluidFlowInto(curLevel, cx+x+1, cy+y, cz+z, sideFlow);
 			}
 			if(((curLevel & 0xF8) == 0x8) && (rngValA(0xFF) == 0)){curLevel = 0;} // Evaporation
 			fluid->data[x][y][z] = curLevel;

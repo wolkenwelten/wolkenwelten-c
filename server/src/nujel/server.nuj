@@ -134,7 +134,7 @@
 	[set-eq! 1 i-hook 1 pid]
 	[set-eq! 2 i-jetpack 1 pid]
 
-	[set-inv! 0 i-flamethrower 1 pid]
+	[set-inv! 0 i-waterthrower 1 pid]
 	[set-inv! 1 i-masterblaster 1 pid]
 	[set-inv! 2 i-assaultblaster 1 pid]
 	[set-inv! 3 i-shotgun 1 pid]
@@ -148,7 +148,7 @@
 	;[set-inv! 9 i-grenade 99]
 
 	[set-inv! 10 i-blaster 1 pid]
-	[set-inv! 11 i-waterthrower 1 pid]
+	[set-inv! 11 i-flamethrower 1 pid]
 	[set-inv! 12 i-flintandsteel 1 pid]
 
 	[set-inv! 20 i-crystalbullet 999 pid]

@@ -22,18 +22,18 @@
 #include "../../../common/src/misc/profiling.h"
 
 static void fluidGenerateBlockParticles(int x, int y, int z, u8 level){
-	const u8 amount = level & 0xF1;
-	for(int i=0;i<4;i++){
-		const int by = rngValA(0xFF);
-		if(by > amount){continue;}
+	const u8 amount = (level & 0xF8);
+	//for(int i=0;i<2;i++){
+		const int by = rngValR() % amount;
+		//if(by > amount){continue;}
 		const int bx = rngValA(0xFF);
 		const int bz = rngValA(0xFF);
 		const float px = x + (bx / 256.0);
 		const float py = y + (by / 256.0);
 		const float pz = z + (bz / 256.0);
 		const u32 c = COLOR(0x10, 0x20, 0x80, 0xF0) | rngValA(COLOR(0x0F, 0x1F, 0x7F, 0x0F));
-		newParticle(px, py, pz, 0.f, 0.f, 0.f, 256.f, -0.01f, c, 256);
-	}
+		newParticle(px, py, pz, 0.f, 0.f, 0.f, 256.f, -0.01f, c, 128);
+	//}
 }
 
 static void fluidGenerateChunkParticles(const chunkOverlay *fluid, int cx, int cy, int cz){
@@ -42,9 +42,8 @@ static void fluidGenerateChunkParticles(const chunkOverlay *fluid, int cx, int c
 	for(int y = 0; y < CHUNK_SIZE; y++){
 	for(int z = 0; z < CHUNK_SIZE; z++){
 		const u8 level = *d++;
-		if((level & 0x1F) == 0){continue;}
-		const u8 b = worldGetB(x,y,z);
-		if(b){continue;}
+		if((level & 0xF8) == 0){continue;}
+		if(worldGetB(x,y,z)){continue;}
 		fluidGenerateBlockParticles(cx+x, cy+y, cz+z, level);
 	}
 	}
@@ -55,7 +54,8 @@ void fluidGenerateParticles(){
 	static int calls = 0;
 	PROFILE_START();
 
-	for(uint i = calls&0xF; i < chungusCount; i+=0x10){
+	//for(uint i = calls&0xF; i < chungusCount; i+=0x10){
+	for(uint i = 0; i < chungusCount; i++){
 		chungus *cng = &chungusList[i];
 		for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){
