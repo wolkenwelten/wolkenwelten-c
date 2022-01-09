@@ -4,6 +4,7 @@
 
 void          blockTypeInit();
 
+// ToDo: just return the blockType struct directly!
 const char   *blockTypeGetName            (blockId b);
 int           blockTypeGetHealth          (blockId b);
 int           blockTypeGetFireHealth      (blockId b);
@@ -15,3 +16,5 @@ u16           blockTypeGetTexX            (blockId b, side side);
 u16           blockTypeGetTexY            (blockId b, side side);
 u32           blockTypeGetParticleColor   (blockId b);
 mesh         *blockTypeGetMesh            (blockId b);
+u16           blockTypeGetIngressMask     (blockId b);
+u16           blockTypeGetEgressMask      (blockId b);

@@ -31,7 +31,7 @@ void fluidPhysicsTick(){
 		for(int z=0;z<16;z++){
 			chunk *c = &cng->chunks[x][y][z];
 			if(c->fluid == NULL){continue;}
-			fluidPhysics(c->fluid, c->x, c->y, c->z);
+			fluidPhysics(c->fluid, c->block, c->x, c->y, c->z);
 		}
 		}
 		}

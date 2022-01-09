@@ -230,7 +230,7 @@ void fireBoxExtinguish(u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, int strength){
 				worldSetB(cx,cy,cz,I_Grass);
 			}
 			if(!b){
-				worldSetFluid(cx,cy,cz,0xFF);
+				worldSetFluid(cx,cy,cz,0xF0);
 			}
 		}
 	}

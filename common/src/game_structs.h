@@ -44,6 +44,8 @@ typedef struct {
 	blockCategory cat;
 	char         *name;
 	float         weight;
+	u16           ingressMask;
+	u16           egressMask;
 } blockType;
 typedef u8 blockId;
 

@@ -29,17 +29,19 @@
 void blockTypeGenMeshes();
 void blockTypeSetTex(blockId b, side side, u32 tex);
 
-static void blockTypeInitBlock(blockId b, u32 tex, blockCategory ncat,const char *bname,int nhp, int nfirehp, float weight, u32 ncolor1,u32 ncolor2){
+static void blockTypeInitBlock(blockId b, u32 tex, blockCategory ncat,const char *bname,int nhp, int nfirehp, float weight, u32 ncolor1,u32 ncolor2, u16 ingressMask, u16 egressMask){
 	for(side i=0;i<sideMAX;i++){
 		blockTypeSetTex(b,i,tex);
 	}
-	blocks[b].name     = (char *)bname;
-	blocks[b].hp       = nhp;
-	blocks[b].firehp   = nfirehp;
-	blocks[b].cat      = ncat;
-	blocks[b].color[0] = ncolor1;
-	blocks[b].color[1] = ncolor2;
-	blocks[b].weight   = weight;
+	blocks[b].name        = (char *)bname;
+	blocks[b].hp          = nhp;
+	blocks[b].firehp      = nfirehp;
+	blocks[b].cat         = ncat;
+	blocks[b].color[0]    = ncolor1;
+	blocks[b].color[1]    = ncolor2;
+	blocks[b].weight      = weight;
+	blocks[b].ingressMask = ingressMask;
+	blocks[b].egressMask  = egressMask;
 
 	lispDefineID("i-",bname,b);
 }
@@ -98,42 +100,50 @@ bool blockTypeValid(blockId b){
 }
 
 void blockTypeInit(){
-	blockTypeInitBlock    ( 1, 1, DIRT,  "Dirt", 500, 1000, 1.5f, 0xFF0A234F,0xFF051B45);
-	blockTypeInitBlock    ( 2, 0, DIRT,  "Grass", 240,  400, 1.7f, 0xFF004227,0xFF051B45);
-	blockTypeInitBlock    ( 3, 2, STONE, "Stone", 1200, 2000, 5.f, 0xFF5E5E5E,0xFF484848);
-	blockTypeInitBlock    ( 4, 3, STONE, "Coal", 800, 3000, 4.f, 0xFF262626,0xFF101010);
-	blockTypeInitBlock    ( 5, 4, WOOD,  "Spruce Log", 500, 800, 3.f, 0xFF051B25,0xFF07161D);
-	blockTypeInitBlock    ( 6, 5, LEAVES,"Spruce Leafes",  60,  400, 0.2f, 0xFF012C12,0xFF01250F);
-	blockTypeInitBlock    ( 7, 7, WOOD,  "Roots", 480,  480, 1.5f, 0xFF14323E,0xFF0D2029);
-	blockTypeInitBlock    ( 8, 6, LEAVES,  "Dry Grass", 240, 1000, 1.6f, 0xFF11644B,0xFF007552);
-	blockTypeInitBlock    ( 9, 8, STONE, "Obsidian",      2000, 8000, 10.f, 0xFF222222,0xFF171717);
-	blockTypeInitBlock    (10, 9, WOOD,  "Oak Log",        600,  800, 3.f, 0xFF082C3C,0xFF08242E);
-	blockTypeInitBlock    (11,10, LEAVES,"Oak Leaves",     70,  440, 0.2f, 0xFF004227,0xFF003318);
-	blockTypeInitBlock    (12,12, STONE, "Marble Block",  1600, 8000, 8.f, 0xFFF0F0F0,0xFFEBEBEB);
-	blockTypeInitBlock    (13,11, STONE, "Hematite Ore",  1100, 4000, 6.f, 0xFF5B5B72,0xFF5E5E5E);
+	blockTypeInitBlock    ( 1, 1, DIRT,  "Dirt", 500, 1000, 1.5f, 0xFF0A234F,0xFF051B45, 0xF, 0x3FF);
+	blockTypeInitBlock    ( 2, 0, DIRT,  "Grass", 240,  400, 1.7f, 0xFF004227,0xFF051B45, 0x1F, 0x3FF);
+	blockTypeInitBlock    ( 3, 2, STONE, "Stone", 1200, 2000, 5.f, 0xFF5E5E5E,0xFF484848, 0xFFFF, 0xFFF);
+	blockTypeInitBlock    ( 4, 3, STONE, "Coal", 800, 3000, 4.f, 0xFF262626,0xFF101010, 0xFFFF, 0xFFF);
+	blockTypeInitBlock    ( 5, 4, WOOD,  "Spruce Log", 500, 800, 3.f, 0xFF051B25,0xFF07161D, 0xFFFF, 0xFFFF);
+	blockTypeInitBlock    ( 6, 5, LEAVES,"Spruce Leafes",  60,  400, 0.2f, 0xFF012C12,0xFF01250F, 0, 0x1F);
+	blockTypeInitBlock    ( 7, 7, WOOD,  "Roots", 480,  480, 1.5f, 0xFF14323E,0xFF0D2029, 0x7, 0xFFFF);
+	blockTypeInitBlock    ( 8, 6, LEAVES,"Dry Grass", 240, 1000, 1.6f, 0xFF11644B,0xFF007552, 0x1F, 0x3FF);
+	blockTypeInitBlock    ( 9, 8, STONE, "Obsidian",      2000, 8000, 10.f, 0xFF222222,0xFF171717, 0xFFFF, 0xFFF);
+	blockTypeInitBlock    (10, 9, WOOD,  "Oak Log",        600,  800, 3.f, 0xFF082C3C,0xFF08242E, 0xFFFF, 0xFFFF);
+	blockTypeInitBlock    (11,10, LEAVES,"Oak Leaves",     70,  440, 0.2f, 0xFF004227,0xFF003318, 0, 0x1F);
+	blockTypeInitBlock    (12,12, STONE, "Marble Block",  1600, 8000, 8.f, 0xFFF0F0F0,0xFFEBEBEB, 0xFFFF, 0xFFF);
+	blockTypeInitBlock    (13,11, STONE, "Hematite Ore",  1100, 4000, 6.f, 0xFF5B5B72,0xFF5E5E5E, 0xFFFF, 0xFFF);
 
-	blockTypeInitBlock    (14,13, STONE, "Marble Pillar", 1600, 8000, 8.f, 0xFFF0F0F0,0xFFEBEBEB);
+	blockTypeInitBlock    (14,13, STONE, "Marble Pillar", 1600, 8000, 8.f, 0xFFF0F0F0,0xFFEBEBEB, 0xFFFF, 0xFFF);
 	blockTypeSetTex       (14,sideTop,12);
 	blockTypeSetTex       (14,sideBottom,12);
 
-	blockTypeInitBlock    (15,14, STONE, "Marble Blocks",1600, 8000, 8.f,   0xFFF0F0F0,0xFFEBEBEB);
-	blockTypeInitBlock    (16,24, LEAVES,"Acacia Leafes",  70,  600, 0.2f,  0xFF003002,0xFF1c6f32);
-	blockTypeInitBlock    (17,17, WOOD,  "Boards",        400,  600, 2.5f,  0xFF09678f,0xFF1380af);
-	blockTypeInitBlock    (18,18, STONE, "Crystals",     2500, 8000, 2.f,   0xFF997CE8,0xFF4D25B5);
-	blockTypeInitBlock    (19,19, LEAVES,"Sakura Leafes",  70,  420, 0.2f,  0xFF997CE8,0xFF4D25B5);
-	blockTypeInitBlock    (20,20, WOOD,  "Birch Log",     500,  800, 3.f,   0xFF525255,0xFF525555);
-	blockTypeInitBlock    (21,21, LEAVES,"Flower Bush",    90,  640, 0.3f,  0xFF004227,0xFF003318);
-	blockTypeInitBlock    (22,23, LEAVES,"Date Bush",      80,  840, 0.25f, 0xFF00334f,0xFF128394);
+	blockTypeInitBlock    (15,14, STONE, "Marble Blocks",1600, 8000, 8.f,   0xFFF0F0F0,0xFFEBEBEB, 0xFFFF, 0xFFF);
+	blockTypeInitBlock    (16,24, LEAVES,"Acacia Leafes",  70,  600, 0.2f,  0xFF003002,0xFF1c6f32, 0, 0x1F);
+	blockTypeInitBlock    (17,17, WOOD,  "Boards",        400,  600, 2.5f,  0xFF09678f,0xFF1380af, 0x1F, 0xFFF);
+	blockTypeInitBlock    (18,18, STONE, "Crystals",     2500, 8000, 2.f,   0xFF997CE8,0xFF4D25B5, 0xFFFF, 0xFFF);
+	blockTypeInitBlock    (19,19, LEAVES,"Sakura Leafes",  70,  420, 0.2f,  0xFF997CE8,0xFF4D25B5, 0, 0x1F);
+	blockTypeInitBlock    (20,20, WOOD,  "Birch Log",     500,  800, 3.f,   0xFF525255,0xFF525555, 0xFFFF, 0xFFFF);
+	blockTypeInitBlock    (21,21, LEAVES,"Flower Bush",    90,  640, 0.3f,  0xFF004227,0xFF003318, 0, 0x1F);
+	blockTypeInitBlock    (22,23, LEAVES,"Date Bush",      80,  840, 0.25f, 0xFF00334f,0xFF128394, 0, 0x1F);
 
-	blockTypeInitBlock    (23,26, DIRT,  "Snow Dirt",  500, 2000, 1.5f,           0xFF0A234F,0xFF051B45);
-	blockTypeInitBlock    (24,25, DIRT,  "Snow Grass", 240, 1000, 1.7f,           0xFF004227,0xFF051B45);
-	blockTypeInitBlock    (25,27, DIRT,  "Snowy Spruce Leafes",  60, 800, 0.3f,   0xFF012C12,0xFF01250F);
-	blockTypeInitBlock    (26,28, DIRT,  "Snowy Oak Leaves",     70, 880, 0.3f,   0xFF004227,0xFF003318);
-	blockTypeInitBlock    (27,29, DIRT,  "Snowy Flower Bush",    90, 1240, 0.4f,  0xFF004227,0xFF003318);
-	blockTypeInitBlock    (28,30, DIRT,  "Snowy Date Bush",      80, 1640, 0.35f, 0xFF00334f,0xFF128394);
-	blockTypeInitBlock    (29,31, DIRT,  "Snowy Acacia Leafes",  70, 1200, 0.3f,  0xFF003002,0xFF1c6f32);
-	blockTypeInitBlock    (30,32, WOOD,  "Snowy Roots", 480,  680, 1.8f,          0xFF14323E,0xFF0D2029);
-	blockTypeInitBlock    (31,33, DIRT,  "Snowy Sakura Leafes", 70,  820, 0.2f,   0xFF997CE8,0xFF4D25B5);
+	blockTypeInitBlock    (23,26, DIRT,  "Snow Dirt",  500, 2000, 1.5f,           0xFF0A234F,0xFF051B45, 0xF, 0x3FF);
+	blockTypeInitBlock    (24,25, DIRT,  "Snow Grass", 240, 1000, 1.7f,           0xFF004227,0xFF051B45, 0x1F, 0x3FF);
+	blockTypeInitBlock    (25,27, DIRT,  "Snowy Spruce Leafes",  60, 800, 0.3f,   0xFF012C12,0xFF01250F, 0, 0x1F);
+	blockTypeInitBlock    (26,28, DIRT,  "Snowy Oak Leaves",     70, 880, 0.3f,   0xFF004227,0xFF003318, 0, 0x1F);
+	blockTypeInitBlock    (27,29, DIRT,  "Snowy Flower Bush",    90, 1240, 0.4f,  0xFF004227,0xFF003318, 0, 0x1F);
+	blockTypeInitBlock    (28,30, DIRT,  "Snowy Date Bush",      80, 1640, 0.35f, 0xFF00334f,0xFF128394, 0, 0x1F);
+	blockTypeInitBlock    (29,31, DIRT,  "Snowy Acacia Leafes",  70, 1200, 0.3f,  0xFF003002,0xFF1c6f32, 0, 0x1F);
+	blockTypeInitBlock    (30,32, WOOD,  "Snowy Roots", 480,  680, 1.8f,          0xFF14323E,0xFF0D2029, 7, 0xFFFF);
+	blockTypeInitBlock    (31,33, DIRT,  "Snowy Sakura Leafes", 70,  820, 0.2f,   0xFF997CE8,0xFF4D25B5, 0, 0x1F);
 
 	blockTypeGenMeshes();
+}
+
+u16 blockTypeGetIngressMask(blockId b){
+	return blocks[b].ingressMask;
+}
+
+u16 blockTypeGetEgressMask(blockId b){
+	return blocks[b].egressMask;
 }
