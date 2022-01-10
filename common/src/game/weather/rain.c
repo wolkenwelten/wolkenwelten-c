@@ -102,7 +102,7 @@ void rainUpdateAll(){
 				if(isClient){
 					fxRainDrop(vecNew(glrd->x,glrd->y,glrd->z));
 				}else{
-					fireBoxExtinguish(glrd->x-1, glrd->y-1, glrd->z-1, 3, 3, 3, 256);
+					fireBoxExtinguish(glrd->x, glrd->y, glrd->z, 1, 1, 1, 256);
 				}
 				rainDel(i);
 				continue;

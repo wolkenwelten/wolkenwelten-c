@@ -33,7 +33,7 @@ void fxLightningBeam(const vec a, const vec b, int bsize){
 	const vec v      = vecMulS(vecNorm(dir),1.f / mul);
 	const int start  = (int)vecMag(dir) * mul;
 	const u32 color  = 0x40FFFFFF | (((1 << bsize) - 1) << 25);
-	const u32 ttl    = MAX(0, (1 << (bsize - 4))) + 64;
+	const u32 ttl    = MAX(0, (1 << (bsize - 4))) + 256;
 	vec t = a;
 	for(int i = start;i >= 0; i--){
 		newParticle(t.x,t.y,t.z,0,0,0,size,-0.001f,color, ttl);

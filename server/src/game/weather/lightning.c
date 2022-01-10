@@ -87,11 +87,13 @@ void tryLightningChungus(const chungus *chng){
 }
 
 void tryLightning(){
+	static int calls = 0;
 	PROFILE_START();
 
-	for(uint i=0;i < chungusCount; i++){
+	for(uint i=++calls & 0x1F;i < chungusCount; i += 0x20){
 		const chungus *chng = &chungusList[i];
 		if(chng->nextFree != NULL){continue;}
+		//if(rngValA(0x1F)){continue;}
 		tryLightningChungus(chng);
 	}
 
