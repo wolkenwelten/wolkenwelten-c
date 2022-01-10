@@ -16,6 +16,7 @@
  */
 #include "fluid.h"
 #include "../voxel/chungus.h"
+#include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/game/fluid.h"
 #include "../../../common/src/misc/profiling.h"
 
@@ -31,7 +32,10 @@ void fluidPhysicsTick(){
 		for(int z=0;z<16;z++){
 			chunk *c = &cng->chunks[x][y][z];
 			if(c->fluid == NULL){continue;}
-			fluidPhysics(c->fluid, c->block, c->x, c->y, c->z);
+			if(!fluidPhysics(c->fluid, c->block, c->x, c->y, c->z)){
+				chunkOverlayFree(c->fluid);
+				c->fluid = NULL;
+			}
 		}
 		}
 		}

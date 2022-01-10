@@ -57,6 +57,7 @@
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../voxel/chunkvertbuf.h"
+#include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/game/hook.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/game/time.h"
@@ -488,6 +489,7 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"Storm Intensity: %3i [%i]\n",stormIntensity, stormDelta);
 		textMeshPrintf(guim,"ChunkVert   : %uK/%uK\n",chunkvertbufUsedBytes()/1024,chunkvertbufMaxBytes()/1024);
 		textMeshPrintf(guim,"ActiveChungi: %2i\n",chungusGetActiveCount());
+		textMeshPrintf(guim,"ChnkOverlays: %u [Free:%u]\n", chunkOverlayAllocated, chunkOverlayAllocated - chunkOverlayUsed);
 		textMeshPrintf(guim,"GarbageRuns : %u\n",lGCRuns);
 		textMeshPrintf(guim,"Latency     : %s%u\n",colorSignalLow(400,200,50,lastLatency),lastLatency);
 		guim->fgc  = colorPalette[15];
@@ -526,55 +528,55 @@ void drawActiveItem(){
 
 	shaderBind(sMesh);
 	switch(player->animationIndex){
-		case animationHit:
-			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.3f);
-			y = iy+player->yoff-(hitOff/8);
-			matTranslation(matViewAI,ix-hitOff*1.2f,y+(hitOff/3),iz - hitOff*1.1f);
-			matMulRotYX(matViewAI,hitOff*10.f,hitOff*-35.f);
-		break;
+	case animationHit:
+		hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.3f);
+		y = iy+player->yoff-(hitOff/8);
+		matTranslation(matViewAI,ix-hitOff*1.2f,y+(hitOff/3),iz - hitOff*1.1f);
+		matMulRotYX(matViewAI,hitOff*10.f,hitOff*-35.f);
+	break;
 
-		case animationFire:
-			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
-			matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff);
-			matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
-		break;
+	case animationFire:
+		hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
+		matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff);
+		matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
+	break;
 
-		case animationReload:
-			hitOff = animationInterpolationSustain(player->animationTicksLeft,player->animationTicksMax,0.3f,0.5f);
-			y = iy+player->yoff-(hitOff/8);
-			matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
-			matMulRotYX(matViewAI,hitOff*15.f,hitOff*-55.f);
-		break;
+	case animationReload:
+		hitOff = animationInterpolationSustain(player->animationTicksLeft,player->animationTicksMax,0.3f,0.5f);
+		y = iy+player->yoff-(hitOff/8);
+		matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
+		matMulRotYX(matViewAI,hitOff*15.f,hitOff*-55.f);
+	break;
 
-		case animationEmpty:
-			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
-			matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff*0.1f);
-			matMulRotYX(matViewAI,hitOff*3.f,hitOff*9.f);
-		break;
+	case animationEmpty:
+		hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
+		matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff*0.1f);
+		matMulRotYX(matViewAI,hitOff*3.f,hitOff*9.f);
+	break;
 
-		case animationEat:
-			hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,1.f)*3.f;
-			if(hitOff < 1.f){
-				matTranslation(matViewAI,ix-hitOff*1.4,player->yoff+iy+sinf(hitOff*PI)*0.6f,iz + hitOff*0.3f - sinf(hitOff*PI)*0.7f);
-				matMulRotYX(matViewAI,hitOff*20.f,hitOff*40.f);
-			}else if(hitOff < 2.f){
-				hitOff = hitOff-1.f;
-				matTranslation(matViewAI,ix-1.4f - sinf((hitOff-1)*PI)* 0.2f,player->yoff+iy-hitOff*0.2f,iz + 0.3f);
-				matMulRotYX(matViewAI,hitOff*60.f+20.f,hitOff*120.f+40.f);
-				matMulScale(matViewAI, 1.f-hitOff, 1.f-hitOff, 1.f-hitOff);
-			}else if(hitOff < 3.f){
-				hitOff = hitOff-2.f;
-				matTranslation(matViewAI,ix,player->yoff+iy-(1.f-hitOff)*2.f,iz);
-				matMulRotYX(matViewAI,(1.f-hitOff)*3.f,(1.f-hitOff)*9.f);
-			}
-		break;
+	case animationEat:
+		hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,1.f)*3.f;
+		if(hitOff < 1.f){
+			matTranslation(matViewAI,ix-hitOff*1.4,player->yoff+iy+sinf(hitOff*PI)*0.6f,iz + hitOff*0.3f - sinf(hitOff*PI)*0.7f);
+			matMulRotYX(matViewAI,hitOff*20.f,hitOff*40.f);
+		}else if(hitOff < 2.f){
+			hitOff = hitOff-1.f;
+			matTranslation(matViewAI,ix-1.4f - sinf((hitOff-1)*PI)* 0.2f,player->yoff+iy-hitOff*0.2f,iz + 0.3f);
+			matMulRotYX(matViewAI,hitOff*60.f+20.f,hitOff*120.f+40.f);
+			matMulScale(matViewAI, 1.f-hitOff, 1.f-hitOff, 1.f-hitOff);
+		}else if(hitOff < 3.f){
+			hitOff = hitOff-2.f;
+			matTranslation(matViewAI,ix,player->yoff+iy-(1.f-hitOff)*2.f,iz);
+			matMulRotYX(matViewAI,(1.f-hitOff)*3.f,(1.f-hitOff)*9.f);
+		}
+	break;
 
-		case animationSwitch:
-			hitOff = (float)player->animationTicksLeft / (float)player->animationTicksMax;
-			y = iy+player->yoff-hitOff;
-			matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
-			matMulRotYX(matViewAI,hitOff*30.f,hitOff*-70.f);
-		break;
+	case animationSwitch:
+		hitOff = (float)player->animationTicksLeft / (float)player->animationTicksMax;
+		y = iy+player->yoff-hitOff;
+		matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
+		matMulRotYX(matViewAI,hitOff*30.f,hitOff*-70.f);
+	break;
 	};
 	matMul(matViewAI, matViewAI, matProjection);
 	shaderMatrix(sMesh, matViewAI);

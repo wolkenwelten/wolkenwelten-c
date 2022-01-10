@@ -77,115 +77,119 @@ static int fluidFlowDown(int curLevel, int toX, int toY, int toZ){
 }
 
 static int fluidPhysicsA(chunkOverlay *fluid, chunkOverlay *block, int cx, int cy, int cz){
+	int blocksUsed = 0;
 	for(int x=0;x<CHUNK_SIZE;x++){
 	for(int z=0;z<CHUNK_SIZE;z++){
 	for(int y=0;y<CHUNK_SIZE;y++){
 		int curLevel = fluid->data[x][y][z];
 		if(curLevel < 0x10){continue;}
+		blocksUsed++;
 		const u8 b = block ? block->data[x][y][z] : 0;
 		if(b){
 			curLevel = fluidFlowOut(curLevel, b, cx+x, cy+y-1, cz+z);
-			fluid->data[x][y][z] = curLevel;
-			continue;
-		}
-		curLevel = fluidFlowDown(curLevel, cx+x, cy+y-1, cz+z);
-		if(((curLevel & 0xF0) == 0x10) && (rngValA(EVAPORATION_CHANCE) == 0)){curLevel = 0;} // Evaporation
-		if(curLevel >= 0x20){
-			const int sideFlow = MAX(((curLevel & 0xF0) / 4), 0x10);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x-1, cy+y, cz+z, sideFlow);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z-1, sideFlow);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z+1, sideFlow);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x+1, cy+y, cz+z, sideFlow);
+		}else{
+			curLevel = fluidFlowDown(curLevel, cx+x, cy+y-1, cz+z);
+			if(((curLevel & 0xF0) == 0x10) && (rngValA(EVAPORATION_CHANCE) == 0)){curLevel = 0;} // Evaporation
+			if(curLevel >= 0x20){
+				const int sideFlow = MAX(((curLevel & 0xF0) / 4), 0x10);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x-1, cy+y, cz+z, sideFlow);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z-1, sideFlow);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z+1, sideFlow);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x+1, cy+y, cz+z, sideFlow);
+			}
 		}
 		fluid->data[x][y][z] = curLevel;
 	}
 	}
 	}
-	return 0;
+	return blocksUsed;
 }
 
 static int fluidPhysicsB(chunkOverlay *fluid, chunkOverlay *block, int cx, int cy, int cz){
+	int blocksUsed = 0;
 	for(int x=CHUNK_SIZE-1;x>=0;x--){
 	for(int z=0;z<CHUNK_SIZE;z++){
 	for(int y=0;y<CHUNK_SIZE;y++){
 		int curLevel = fluid->data[x][y][z];
 		if(curLevel < 0x10){continue;}
+		blocksUsed++;
 		const u8 b = block ? block->data[x][y][z] : 0;
 		if(b){
 			curLevel = fluidFlowOut(curLevel, b, cx+x, cy+y-1, cz+z);
-			fluid->data[x][y][z] = curLevel;
-			continue;
-		}
-		curLevel = fluidFlowDown(curLevel, cx+x, cy+y-1, cz+z);
-		if(((curLevel & 0xF0) == 0x10) && (rngValA(EVAPORATION_CHANCE) == 0)){curLevel = 0;} // Evaporation
-		if(curLevel >= 0x20){
-			const int sideFlow = MAX(((curLevel & 0xF0) / 4), 0x10);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z-1, sideFlow);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z+1, sideFlow);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x+1, cy+y, cz+z, sideFlow);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x-1, cy+y, cz+z, sideFlow);
+		}else{
+			curLevel = fluidFlowDown(curLevel, cx+x, cy+y-1, cz+z);
+			if(((curLevel & 0xF0) == 0x10) && (rngValA(EVAPORATION_CHANCE) == 0)){curLevel = 0;} // Evaporation
+			if(curLevel >= 0x20){
+				const int sideFlow = MAX(((curLevel & 0xF0) / 4), 0x10);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z-1, sideFlow);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z+1, sideFlow);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x+1, cy+y, cz+z, sideFlow);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x-1, cy+y, cz+z, sideFlow);
+			}
 		}
 		fluid->data[x][y][z] = curLevel;
 	}
 	}
 	}
-	return 0;
+	return blocksUsed;
 }
 
 static int fluidPhysicsC(chunkOverlay *fluid, chunkOverlay *block, int cx, int cy, int cz){
+	int blocksUsed = 0;
 	for(int x=CHUNK_SIZE-1;x>=0;x--){
 	for(int z=CHUNK_SIZE-1;z>=0;z--){
 	for(int y=0;y<CHUNK_SIZE;y++){
 		int curLevel = fluid->data[x][y][z];
 		if(curLevel < 0x10){continue;}
+		blocksUsed++;
 		const u8 b = block ? block->data[x][y][z] : 0;
 		if(b){
 			curLevel = fluidFlowOut(curLevel, b, cx+x, cy+y-1, cz+z);
-			fluid->data[x][y][z] = curLevel;
-			continue;
-		}
-		curLevel = fluidFlowDown(curLevel, cx+x, cy+y-1, cz+z);
-		if(((curLevel & 0xF0) == 0x10) && (rngValA(EVAPORATION_CHANCE) == 0)){curLevel = 0;} // Evaporation
-		if(curLevel >= 0x20){
-			const int sideFlow = MAX(((curLevel & 0xF0) / 4), 0x10);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z+1, sideFlow);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x+1, cy+y, cz+z, sideFlow);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x-1, cy+y, cz+z, sideFlow);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z-1, sideFlow);
+		}else{
+			curLevel = fluidFlowDown(curLevel, cx+x, cy+y-1, cz+z);
+			if(((curLevel & 0xF0) == 0x10) && (rngValA(EVAPORATION_CHANCE) == 0)){curLevel = 0;} // Evaporation
+			if(curLevel >= 0x20){
+				const int sideFlow = MAX(((curLevel & 0xF0) / 4), 0x10);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z+1, sideFlow);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x+1, cy+y, cz+z, sideFlow);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x-1, cy+y, cz+z, sideFlow);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z-1, sideFlow);
+			}
 		}
 		fluid->data[x][y][z] = curLevel;
 	}
 	}
 	}
-	return 0;
+	return blocksUsed;
 }
 
 static int fluidPhysicsD(chunkOverlay *fluid, chunkOverlay *block, int cx, int cy, int cz){
+	int blocksUsed = 0;
 	for(int x=CHUNK_SIZE-1;x>=0;x--){
 	for(int z=0;z<CHUNK_SIZE;z++){
 	for(int y=0;y<CHUNK_SIZE;y++){
 		int curLevel = fluid->data[x][y][z];
 		if(curLevel < 0x10){continue;}
+		blocksUsed++;
 		const u8 b = block ? block->data[x][y][z] : 0;
 		if(b){
 			curLevel = fluidFlowOut(curLevel, b, cx+x, cy+y-1, cz+z);
-			fluid->data[x][y][z] = curLevel;
-			continue;
-		}
-		curLevel = fluidFlowDown(curLevel, cx+x, cy+y-1, cz+z);
-		if(((curLevel & 0xF0) == 0x10) && (rngValA(EVAPORATION_CHANCE) == 0)){curLevel = 0;} // Evaporation
-		if(curLevel >= 0x20){
-			const int sideFlow = MAX(((curLevel & 0xF0) / 4), 0x10);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x+1, cy+y, cz+z, sideFlow);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x-1, cy+y, cz+z, sideFlow);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z-1, sideFlow);
-			curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z+1, sideFlow);
+		}else{
+			curLevel = fluidFlowDown(curLevel, cx+x, cy+y-1, cz+z);
+			if(((curLevel & 0xF0) == 0x10) && (rngValA(EVAPORATION_CHANCE) == 0)){curLevel = 0;} // Evaporation
+			if(curLevel >= 0x20){
+				const int sideFlow = MAX(((curLevel & 0xF0) / 4), 0x10);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x+1, cy+y, cz+z, sideFlow);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x-1, cy+y, cz+z, sideFlow);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z-1, sideFlow);
+				curLevel = fluidFlowHorizontaly(curLevel, cx+x, cy+y, cz+z+1, sideFlow);
+			}
 		}
 		fluid->data[x][y][z] = curLevel;
 	}
 	}
 	}
-	return 0;
+	return blocksUsed;
 }
 
 int fluidPhysics(chunkOverlay *fluid, chunkOverlay *block, int cx, int cy, int cz){

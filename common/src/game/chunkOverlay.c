@@ -20,6 +20,8 @@
 #include <string.h>
 
 chunkOverlay *chunkOverlayFirstFree = NULL;
+int chunkOverlayAllocated = 0;
+int chunkOverlayUsed = 0;
 
 #define ALLOCATION_BLOCK_SIZE (1<<21)
 
@@ -30,6 +32,7 @@ void chunkOverlayAllocateBlock(){
 		d[i].nextFree = chunkOverlayFirstFree;
 		chunkOverlayFirstFree = &d[i];
 	}
+	chunkOverlayAllocated += ALLOCATION_BLOCK_SIZE / sizeof(chunkOverlay);
 }
 
 chunkOverlay *chunkOverlayAllocate(){
@@ -37,10 +40,12 @@ chunkOverlay *chunkOverlayAllocate(){
 	chunkOverlay *ret = chunkOverlayFirstFree;
 	chunkOverlayFirstFree = ret->nextFree;
 	memset(ret,0,sizeof(chunkOverlay));
+	chunkOverlayUsed++;
 	return ret;
 }
 
 void chunkOverlayFree(chunkOverlay *d){
 	d->nextFree = chunkOverlayFirstFree;
 	chunkOverlayFirstFree = d;
+	chunkOverlayUsed--;
 }
