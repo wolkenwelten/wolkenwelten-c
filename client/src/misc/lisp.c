@@ -42,7 +42,7 @@
 #include "../network/chat.h"
 #include "../network/client.h"
 #include "../sdl/sdl.h"
-#include "../sdl/sfx.h"
+#include "../sfx/sfx.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/misc/profiling.h"

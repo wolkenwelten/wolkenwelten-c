@@ -19,7 +19,7 @@
 #include "../../gui/overlay.h"
 #include "../../gfx/effects.h"
 #include "../../gfx/particle.h"
-#include "../../sdl/sfx.h"
+#include "../../sfx/sfx.h"
 #include "../../tmp/sfx.h"
 #include "../../../../common/src/game/weather/lightning.h"
 

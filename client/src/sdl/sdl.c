@@ -24,7 +24,7 @@
 #include "../gui/menu.h"
 #include "../gui/menu/inventory.h"
 #include "../misc/options.h"
-#include "../sdl/sfx.h"
+#include "../sfx/sfx.h"
 
 #include "../sdl/input/mouse.h"
 #include "../sdl/input/keyboard.h"

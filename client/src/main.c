@@ -52,7 +52,8 @@
 #include "sdl/input/keyboard.h"
 #include "sdl/input/touch.h"
 #include "sdl/sdl.h"
-#include "sdl/sfx.h"
+#include "sfx/environment.h"
+#include "sfx/sfx.h"
 #include "tmp/objs.h"
 #include "voxel/bigchungus.h"
 #include "voxel/chungus.h"
@@ -139,9 +140,11 @@ void playerCheckInventory(){
 }
 
 void playerUpdate(){
+	if(player == NULL){return;}
 	chungus *chng = worldGetChungus((int)player->pos.x >> 8,(int)player->pos.y >> 8,(int)player->pos.z >> 8);
 	if(chng != NULL){ playerChunkActive = chng->requested == 0; }
 	if(!vecInWorld(player->pos)){ playerChunkActive = true; }
+	environmentSoundsUpdate();
 	if(player->flags & CHAR_SPAWNING){ return; }
 	if(!playerChunkActive)           { return; }
 	player->controls = vecZero();

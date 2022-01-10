@@ -36,6 +36,22 @@ while (("$#")); do
 		free="$free
 	sfxFree(sfx$uname);"
 	done
+
+        for filename in $1*.wav; do
+		file=${filename##*/}
+		name=${file%.wav}
+		lname=${name//_/-}
+		uname=${name^}
+
+		echo "sfx *sfx$uname;"                                >> $C_FILE
+		echo "extern unsigned char sfx_""$name""_ogg_data[];" >> $C_FILE
+		echo "extern unsigned int sfx_""$name""_ogg_len;"     >> $C_FILE
+		echo "extern sfx *sfx$uname;"   >> $H_FILE
+		new="$new
+	sfx$uname = sfxNew(sfx_""$name""_ogg_data,sfx_""$name""_ogg_len,\"sfx-""$lname""\");"
+		free="$free
+	sfxFree(sfx$uname);"
+	done
 	shift
 done
 

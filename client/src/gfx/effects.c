@@ -23,7 +23,7 @@
 #include "../gfx/particle.h"
 #include "../gui/overlay.h"
 #include "../network/chat.h"
-#include "../sdl/sfx.h"
+#include "../sfx/sfx.h"
 #include "../../../common/src/misc/misc.h"
 
 

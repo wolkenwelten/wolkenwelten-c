@@ -18,7 +18,7 @@
 #include "../game/entity.h"
 
 #include "../main.h"
-#include "../sdl/sfx.h"
+#include "../sfx/sfx.h"
 #include "../game/character.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"

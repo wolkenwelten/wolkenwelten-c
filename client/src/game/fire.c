@@ -23,7 +23,7 @@
 #include "../gui/overlay.h"
 #include "../network/chat.h"
 #include "../sdl/sdl.h"
-#include "../sdl/sfx.h"
+#include "../sfx/sfx.h"
 #include "../../../common/src/network/messages.h"
 
 #include <string.h>

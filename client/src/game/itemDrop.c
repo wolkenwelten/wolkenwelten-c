@@ -19,7 +19,7 @@
 
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../sdl/sfx.h"
+#include "../sfx/sfx.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
@@ -43,6 +43,7 @@ void itemDropNewP(const vec pos,const item *itm, i16 IDPlayer){
 
 void itemDropUpdateAll(){
 	PROFILE_START();
+	if(player == NULL){return;}
 
 	for(uint i=0;i<itemDropCount;i++){
 		float aniStep = ++itemDropList[i].aniStep;

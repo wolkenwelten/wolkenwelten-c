@@ -41,7 +41,7 @@
 #include "../network/chat.h"
 #include "../network/client.h"
 #include "../sdl/sdl.h"
-#include "../sdl/sfx.h"
+#include "../sfx/sfx.h"
 #include "../tmp/objs.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/game/hook.h"
@@ -79,8 +79,6 @@ void characterInit(character *c){
 	c->goalZoomFactor = c->zoomFactor = 1.f;
 
 	if(c == player){
-		sfxLoop(sfxWind,0.f);
-		sfxLoop(sfxHookRope,0.f);
 		c->flags = CHAR_SPAWNING;
 	}
 }
@@ -146,17 +144,9 @@ static void characterUpdateHook(character *c){
 		hookFree(c->hook);
 		c->hook = NULL;
 		if(c == player){
-			sfxLoop(sfxHookRope,0.f);
 			sfxPlay(sfxHookReturned,1.f);
 		}
 		return;
-	}
-	if(c == player){
-		if(c->hook->hooked){
-			sfxLoop(sfxHookRope,0.f);
-		}else{
-			sfxLoop(sfxHookRope,1.f);
-		}
 	}
 
 	if(hookGetHooked(c->hook)){
@@ -213,19 +203,6 @@ static void characterUpdateAnimation(character *c){
 		c->gliderFade -= 0.02f;
 	}
 	c->gliderFade = MINMAX(0.f,1.f,c->gliderFade);
-}
-
-static void characterUpdateWindVolume(const character *c){
-	float windVol = vecMag(c->vel);
-	if(windVol < 0.01f){
-		sfxLoop(sfxWind,0.f);
-	}else{
-		windVol = MIN((windVol - 0.01f),1.0);
-		if(windVol > 0.2){
-			vibrate(windVol);
-		}
-		sfxLoop(sfxWind,windVol);
-	}
 }
 
 static bool characterUpdateJumping(character *c){
@@ -465,7 +442,6 @@ static int characterPhysics(character *c){
 	if(c->flags & CHAR_NOCLIP){
 		col = characterCollision(c->pos);
 		if(col){ c->flags |= CHAR_COLLIDE; }
-		characterUpdateWindVolume(c);
 		return 0;
 	}
 
@@ -633,7 +609,6 @@ void characterUpdate(character *c){
 		characterUpdateAnimation(c);
 		characterUpdateInaccuracy(c);
 		characterUpdateDamage(c,characterPhysics(c));
-		characterUpdateWindVolume(c);
 		return;
 	}
 	nvel = c->vel;
@@ -678,7 +653,6 @@ void characterUpdate(character *c){
 		if((damage > 0) && (hookGetHooked(c->hook))){
 			hookReturnHook(c->hook);
 		}
-		characterUpdateWindVolume(c);
 		characterUpdateHook(c);
 	}
 	characterUpdateInaccuracy(c);

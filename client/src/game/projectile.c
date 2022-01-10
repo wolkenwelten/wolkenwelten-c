@@ -18,7 +18,7 @@
 #include "projectile.h"
 
 #include "../game/character.h"
-#include "../sdl/sfx.h"
+#include "../sfx/sfx.h"
 #include "../gfx/particle.h"
 
 static inline void projectileDrawFlameBullet(const projectile *p){

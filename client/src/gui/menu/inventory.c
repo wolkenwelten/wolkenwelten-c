@@ -25,7 +25,7 @@
 #include "../../gfx/gfx.h"
 #include "../../gfx/textMesh.h"
 #include "../../sdl/sdl.h"
-#include "../../sdl/sfx.h"
+#include "../../sfx/sfx.h"
 #include "../../../../common/src/game/item.h"
 
 #include <stddef.h>
