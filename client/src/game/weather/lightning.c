@@ -56,7 +56,9 @@ void lightningRecvUpdate(const packet *p){
 	const int seed = p->v.u16[6];
 
 	lightningQueued = true;
-	//sfxPlay(sfxImpact, 0.3f);
+	const float dist = player == NULL ? 512.f : MIN(vecMag(vecSub(player->pos, vecNew(tx,ty,tz))),vecMag(vecSub(player->pos, vecNew(lx,ly,lz))));
+	const float volume = MAX(0.f,MIN(0.8f,((1024 - dist) / 1024.f)));
+	sfxPlay(sfxLightning, volume);
 	lightningStrike(lx,ly,lz,tx,ty,tz,seed,fxLightningBeam);
 	if(playerStruckByLightning){
 		if(characterDamage(player,playerStruckByLightning * 2)){

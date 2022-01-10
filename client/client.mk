@@ -43,11 +43,11 @@ client/src/tmp/client.no: $(CLIENT_NO)
 	@echo "$(ANSI_GREY)" "[CAT]" "$(ANSI_RESET)" $@
 
 %.ogg: %.aif
-	@$(FFMPEG) -hide_banner -v panic -i $< -ac 1 -ar 22050 -acodec libvorbis $@ < /dev/null
+	@$(FFMPEG) -hide_banner -y-v panic -i $< -ac 1 -ar 22050 -acodec libvorbis $@ < /dev/null
 	@echo "$(ANSI_CYAN)" "[FF] " "$(ANSI_RESET)" $@
 
 %.ogg: %.wav
-	@$(FFMPEG) -hide_banner -v panic -i $< -ac 1 -ar 22050 -acodec libvorbis $@ < /dev/null
+	@$(FFMPEG) -hide_banner -y -v panic -i $< -ac 1 -ar 22050 -acodec libvorbis $@ < /dev/null
 	@echo "$(ANSI_CYAN)" "[FF] " "$(ANSI_RESET)" $@
 
 client/src/tmp/gfxAssets.c: $(ASSET) $(GFX_ASSETS)
