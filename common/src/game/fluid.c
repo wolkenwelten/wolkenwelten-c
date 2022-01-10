@@ -18,7 +18,7 @@
 #include "../../../common/src/game/blockType.h"
 #include "../world/world.h"
 
-#define EVAPORATION_CHANCE 0xFF
+#define EVAPORATION_CHANCE 0x3F
 
 static int fluidFlowInto(u8 toBlock, u8 toLevel, int curLevel, int toX, int toY, int toZ){
 	const uint ingressMask = blockTypeGetIngressMask(toBlock);
