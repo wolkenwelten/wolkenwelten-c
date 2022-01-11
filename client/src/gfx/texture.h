@@ -7,6 +7,7 @@ texture *textureNewArray          (const u8 *data, uint dataLen,const char *file
 void     textureLoadSurface       (texture *t, uint w, uint h, const void *data, bool linear);
 void     textureFree              ();
 void     textureBind              (const texture *tex);
+void     textureBindID            (uint ID);
 void     textureInit              ();
 void     textureBuildBlockIcons   (int loadFromFile);
 void     textureReload            ();

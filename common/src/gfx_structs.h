@@ -54,6 +54,13 @@ typedef struct {
 	int lMVP,lAlpha,lColor,lTransform,lSideTints,lSizeMul;
 } shader;
 
+typedef struct {
+	uint ID;
+	uint width;
+	uint height;
+	uint texColor, rboDepth;
+} framebufferObject;
+
 #pragma pack(push, 1)
 typedef struct {
 	float x,y,z,size;

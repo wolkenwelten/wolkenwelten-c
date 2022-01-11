@@ -22,9 +22,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-shader  shaderList[8];
+shader  shaderList[16];
 int     shaderCount = 0;
 uint    activeProgram = 0;
+
+shader *sBlit;
 shader *sMesh;
 shader *sShadow;
 shader *sBlockMesh;
@@ -34,6 +36,8 @@ shader *sTextMesh;
 shader *sCloud;
 shader *sBoundary;
 
+extern u8 src_shader_blitShaderFS_glsl_data[];
+extern u8 src_shader_blitShaderVS_glsl_data[];
 extern u8 src_shader_boundaryShaderFS_glsl_data[];
 extern u8 src_shader_boundaryShaderVS_glsl_data[];
 extern u8 src_shader_blockShaderFS_glsl_data[];
@@ -53,6 +57,7 @@ extern u8 src_shader_textShaderVS_glsl_data[];
 
 void shaderInit(){
 	sMesh      = shaderNew("Mesh",      (const char *)src_shader_meshShaderVS_glsl_data,     (const char *)src_shader_meshShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
+	sBlit      = shaderNew("Blit",      (const char *)src_shader_blitShaderVS_glsl_data,     (const char *)src_shader_blitShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
 	sShadow    = shaderNew("Shadow",    (const char *)src_shader_shadowShaderVS_glsl_data,   (const char *)src_shader_shadowShaderFS_glsl_data,   SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
 	sBlockMesh = shaderNew("BlockMesh", (const char *)src_shader_blockShaderVS_glsl_data,    (const char *)src_shader_blockShaderFS_glsl_data,    SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_FLAG);
 	sParticle  = shaderNew("Particle",  (const char *)src_shader_particleShaderVS_glsl_data, (const char *)src_shader_particleShaderFS_glsl_data, SHADER_ATTRMASK_POS | SHADER_ATTRMASK_COLOR);

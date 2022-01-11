@@ -202,17 +202,20 @@ void worldDraw(const character *cam){
 		(vec){{{shadeRight, shadeRight, shadeRight}}},
 	};
 
+	const int dist   = (int)ceilf(renderDistance / CHUNGUS_SIZE)+1;
+	const u64 cTicks = getTicks();
+
 	const int camCX  = (int)cam->pos.x >> 8;
 	const int camCY  = (int)cam->pos.y >> 8;
 	const int camCZ  = (int)cam->pos.z >> 8;
-	const int dist   = (int)ceilf(renderDistance / CHUNGUS_SIZE)+1;
+
 	const int minCX  = MAX(  0,camCX - dist);
 	const int minCY  = MAX(  0,camCY - dist);
 	const int minCZ  = MAX(  0,camCZ - dist);
+
 	const int maxCX  = MIN(256,camCX + dist);
 	const int maxCY  = MIN(128,camCY + dist);
 	const int maxCZ  = MIN(256,camCZ + dist);
-	const u64 cTicks = getTicks();
 
 	for(int x=camCX-dist;x<camCX+dist;x++){
 	for(int y=camCY-dist;y<camCY+dist;y++){

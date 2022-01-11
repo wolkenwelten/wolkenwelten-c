@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../common/src/common.h"
+#include "gl.h"
 
 extern bool   queueScreenshot;
 extern bool   gfxUseSubData;
@@ -29,3 +30,6 @@ void setRenderDistance (float newRD);
 void renderWorld       (const character *cam);
 void renderFrame       ();
 void renderMenuFrame   ();
+
+GLenum glCheckError_(const char *file, int line);
+#define glCheckError() glCheckError_(__FILE__, __LINE__)

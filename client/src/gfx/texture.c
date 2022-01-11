@@ -167,6 +167,12 @@ void textureFree(){
 	}
 }
 
+void textureBindID(uint ID){
+	if(boundTexture == ID){return;}
+	glBindTexture(GL_TEXTURE_2D, ID);
+	boundTexture = ID;
+}
+
 void textureBind(const texture *tex){
 	if(boundTexture == tex->ID){return;}
 	if(tex->d > 1){

@@ -27,6 +27,7 @@ void    shaderSideTints  (shader *s, const vec sideTints[sideMAX]);
 void    shaderTransform  (shader *s, float x, float y, float z);
 void    shaderSizeMul    (shader *s, float sizeMul);
 
+extern shader *sBlit;
 extern shader *sMesh;
 extern shader *sShadow;
 extern shader *sBlockMesh;

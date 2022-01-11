@@ -27,6 +27,7 @@
 #include "../game/rope.h"
 #include "../game/weather/weather.h"
 #include "../gfx/boundaries.h"
+#include "../gfx/fbo.h"
 #include "../gfx/gl.h"
 #include "../gfx/mat.h"
 #include "../gfx/particle.h"
@@ -117,7 +118,6 @@ GLenum glCheckError_(const char *file, int line){
 	}
 	return errorCode;
 }
-#define glCheckError() glCheckError_(__FILE__, __LINE__)
 
 void initGL(){
 	if(!glInitialize()){
@@ -266,6 +266,10 @@ void renderFrame(){
 	calcView(player);
 	cloudsCalcColors();
 
+	if(renderToFBO){
+		fboBind(&fboGame, screenWidth/2, screenHeight/2);
+	}
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if(gameRunning){
 		renderSky(player);
@@ -277,6 +281,13 @@ void renderFrame(){
 	}else{
 		drawMenuBackground();
 	}
+	glDisable(GL_DEPTH_TEST);
+
+	if(renderToFBO){
+		fboBindScreen();
+		fboBlit(&fboGame, 0, 0, screenWidth, screenHeight);
+	}
+
 	renderUI();
 	swapWindow();
 	if(queueScreenshot){doScreenshot();}
