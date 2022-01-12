@@ -10,6 +10,7 @@ bool glIsBaseInstanceAvailable;
 bool glIsMultiDrawIndirectAvailable;
 
 bool glIsDebugAvailable;
+uint16_t glDebugLabelMaxLen;
 
 bool glHasExtension(const char *name){
 	GLint numExt;
@@ -33,6 +34,14 @@ bool glInitialize() {
 	glIsMultiDrawIndirectAvailable = glHasExtension("GL_ARB_multi_draw_indirect");
 
 	glIsDebugAvailable = glHasExtension("GL_KHR_debug");
+	if(glIsDebugAvailable){
+		GLint value;
+		glGetIntegerv(GL_MAX_LABEL_LENGTH, &value);
+		glDebugLabelMaxLen = value > 256 ? 256 : value;
+	}
+	else{
+		glDebugLabelMaxLen = 0;
+	}
 
 	return true;
 }

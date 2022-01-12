@@ -39,12 +39,6 @@ struct chunkvertbuf {
 
 static u32 allocatedGlBufferBytes;
 
-static uint makeVAO(){
-	uint vao;
-	glGenVertexArrays(1, &vao);
-	return vao;
-}
-
 static void setVAOFormat(){
 	glVertexAttribPointer(SHADER_ATTRIDX_POS, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, x));
 	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
@@ -52,12 +46,6 @@ static void setVAOFormat(){
 	glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
 	glVertexAttribIPointer(SHADER_ATTRIDX_FLAG, 1, GL_UNSIGNED_BYTE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, f));
 	glEnableVertexAttribArray(SHADER_ATTRIDX_FLAG);
-}
-
-static uint makeVBO(){
-	uint vbo;
-	glGenBuffers(1,&vbo);
-	return vbo;
 }
 
 void chunkvertbufInit(){
@@ -75,6 +63,7 @@ u32 chunkvertbufMaxBytes(){
 void chunkvertbufUpdate(chunk *c, vertexTiny *vertices, u16 sideCounts[sideMAX]) {
 	struct chunkvertbuf *v = c->vertbuf;
 	if(v == NULL) {
+		// TODO: allocate those contiguously if possible
 		v = calloc(1, sizeof(struct chunkvertbuf));
 		if(v == NULL){
 			fprintf(stderr,"Couldn't allocate chunk vertbuf, exiting!\n");
@@ -100,22 +89,14 @@ void chunkvertbufUpdate(chunk *c, vertexTiny *vertices, u16 sideCounts[sideMAX])
 	}
 
 	if(!v->vao){
-		v->vao = makeVAO();
-		if(glIsDebugAvailable){
-			char name[64];
-			snprintf(name, sizeof(name), "Chunk %d,%d,%d VAO", c->x, c->y, c->z);
-			glObjectLabel(GL_VERTEX_ARRAY, v->vao, -1, name);
-		}
+		glGenVertexArrays(1, &v->vao);
+		gfxObjectLabel(GL_VERTEX_ARRAY, v->vao, "Chunk %d,%d,%d VAO", c->x, c->y, c->z);
 	}
 	glBindVertexArray(v->vao);
 
 	if(!v->vbo){
-		v->vbo = makeVBO();
-		if(glIsDebugAvailable){
-			char name[64];
-			snprintf(name, sizeof(name), "Chunk %d,%d,%d VBO", c->x, c->y, c->z);
-			glObjectLabel(GL_VERTEX_ARRAY, v->vbo, -1, name);
-		}
+		glGenBuffers(1, &v->vbo);
+		gfxObjectLabel(GL_BUFFER, v->vbo, "Chunk %d,%d,%d VBO", c->x, c->y, c->z);
 	}
 	glBindBuffer(GL_ARRAY_BUFFER,v->vbo);
 

@@ -59,12 +59,9 @@ static void meshCreateBuffers(mesh *m, const char *name){
 
 	glGenBuffers(1,&m->vbo);
 
-	if(glIsDebugAvailable && name != NULL){
-		char fullname[256];
-		snprintf(fullname, sizeof(fullname), "%s VAO", name);
-		glObjectLabel(GL_VERTEX_ARRAY, m->vao, -1, fullname);
-		snprintf(fullname, sizeof(fullname), "%s VBO", name);
-		glObjectLabel(GL_BUFFER, m->vbo, -1, fullname);
+	if(name != NULL){
+		gfxObjectLabel(GL_VERTEX_ARRAY, m->vao, "%s VAO", name);
+		gfxObjectLabel(GL_BUFFER, m->vbo, "%s VBO", name);
 	}
 }
 

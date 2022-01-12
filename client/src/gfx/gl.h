@@ -23,14 +23,25 @@ extern bool glIsBaseInstanceAvailable;
 extern bool glIsMultiDrawIndirectAvailable;
 
 extern bool glIsDebugAvailable;
+extern uint16_t glDebugLabelMaxLen;
 
 bool glInitialize();
 
 #ifdef __APPLE__
 	#define gfxGroupStart(name) while(false){}
 	#define gfxGroupEnd() while(false){}
-	#define glObjectLabel(a,b,c,d) (void)d;
+	#define gfxObjectLabel(a,b,...) while(false){};
 #else
 	#define gfxGroupStart(name) if(glIsDebugAvailable){glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, name);}
 	#define gfxGroupEnd() if(glIsDebugAvailable){glPopDebugGroup();}
+
+	#include <string.h>
+	#define gfxObjectLabel(type, id, ...) if(glIsDebugAvailable){\
+		char fullname[256];\
+		if(type==GL_VERTEX_ARRAY){glBindVertexArray(id);}\
+		if(type==GL_BUFFER){glBindBuffer(GL_ARRAY_BUFFER,id);}\
+		/*if(type==GL_PROGRAM){glUseProgram(id);}*/\
+		snprintf(fullname,glDebugLabelMaxLen,__VA_ARGS__);\
+		glObjectLabel(type,id,-1,fullname);\
+	}
 #endif

@@ -168,11 +168,11 @@ bool worldSetFluid(int x,int y,int z, u8 level){
 }
 
 void worldDraw(const character *cam){
-	gfxGroupStart("World geometry");
 	static queueEntry drawQueue[8192*4];
 	static queueEntry loadQueue[1<<9];
 	int drawQueueLen=0,loadQueueLen=0;
 	if(connectionState < 2){return;}
+	gfxGroupStart("World geometry");
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);

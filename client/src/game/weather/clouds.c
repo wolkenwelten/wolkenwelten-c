@@ -227,13 +227,8 @@ void cloudsInitGfx(){
 		glEnableVertexAttribArray (SHADER_ATTRIDX_POS);
 		glEnableVertexAttribArray (SHADER_ATTRIDX_COLOR);
 
-		if(glIsDebugAvailable){
-			char name[16];
-			snprintf(name, sizeof(name), "Clouds VAO #%d", i);
-			glObjectLabel(GL_VERTEX_ARRAY, parts[i].vao, -1, name);
-			snprintf(name, sizeof(name), "Clouds VAO #%d", i);
-			glObjectLabel(GL_BUFFER, parts[i].vbo, -1, name);
-		}
+		gfxObjectLabel(GL_VERTEX_ARRAY, parts[i].vao, "Clouds VAO #%d", i);
+		gfxObjectLabel(GL_BUFFER, parts[i].vbo, "Clouds VBO #%d", i);
 	}
 	cloudsCalcColors();
 }

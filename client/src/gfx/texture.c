@@ -84,6 +84,7 @@ static void textureLoad(texture *t, const u8 *data, const uint dataLen){
 	}
 	if(t->ID == 0){glGenTextures(1, &t->ID);}
 	glBindTexture(GL_TEXTURE_2D, t->ID);
+	gfxObjectLabel(GL_TEXTURE, t->ID, "%s", t->filename);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, t->w, t->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
@@ -121,6 +122,7 @@ static void textureLoadArray(texture *t, const u8 *data, const uint dataLen){
 	}
 	if(t->ID == 0){glGenTextures(1, &t->ID);}
 	glBindTexture(GL_TEXTURE_2D_ARRAY, t->ID);
+	gfxObjectLabel(GL_TEXTURE, t->ID, "%s array", t->filename);
 	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, t->w, t->h, t->d, 0, GL_RGBA, GL_UNSIGNED_BYTE, pbuf);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MAG_FILTER,GL_NEAREST);

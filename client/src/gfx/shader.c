@@ -89,7 +89,7 @@ static void shaderPrintLog(uint obj, const char *msg, const char *src){
 	}
 }
 
-static void compileVertexShader(shader *s){
+static void compileVertexShader(shader *s,const char *name){
 	char buf[1 << 14];
 	char *bufp[2] = {(char *)&buf,0};
 
@@ -117,10 +117,11 @@ static void compileVertexShader(shader *s){
 	glShaderSource(s->vsID,1,(const GLchar **)&bufp,NULL);
 	glCompileShader(s->vsID);
 	shaderPrintLog(s->vsID,"Vertex Shader",buf);
+	gfxObjectLabel(GL_SHADER,s->vsID,"%s VS",name);
 	glAttachShader(s->pID,s->vsID);
 }
 
-static void compileFragmentShader(shader *s){
+static void compileFragmentShader(shader *s,const char *name){
 	char buf[1 << 14];
 	char *bufp[2] = {(char *)&buf,0};
 
@@ -151,14 +152,15 @@ static void compileFragmentShader(shader *s){
 	glShaderSource(s->fsID,1,(const GLchar **)&bufp,NULL);
 	glCompileShader(s->fsID);
 	shaderPrintLog(s->fsID,"Fragment Shader",buf);
+	gfxObjectLabel(GL_SHADER,s->fsID,"%s FS",name);
 	glAttachShader(s->pID,s->fsID);
 }
 
 static void shaderCompile(shader *s,const char *name){
 	s->pID = glCreateProgram();
-	if(glIsDebugAvailable){glObjectLabel(GL_PROGRAM,s->pID,-1,name);}
-	compileVertexShader(s);
-	compileFragmentShader(s);
+	gfxObjectLabel(GL_PROGRAM,s->pID,name);
+	compileVertexShader(s,name);
+	compileFragmentShader(s,name);
 
 	if(s->attrMask & SHADER_ATTRMASK_POS){glBindAttribLocation(s->pID,SHADER_ATTRIDX_POS,"pos");}
 	if(s->attrMask & SHADER_ATTRMASK_TEX){glBindAttribLocation(s->pID,SHADER_ATTRIDX_TEX,"tex");}
