@@ -17,6 +17,7 @@
 
 #include "../gfx/shader.h"
 #include "../gfx/gl.h"
+#include "../voxel/chunkvertbuf.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,15 +27,15 @@ shader  shaderList[16];
 int     shaderCount = 0;
 uint    activeProgram = 0;
 
-shader *sBlit;
-shader *sMesh;
-shader *sShadow;
-shader *sBlockMesh;
-shader *sParticle;
-shader *sRain;
-shader *sTextMesh;
-shader *sCloud;
-shader *sBoundary;
+shader *sBlit = NULL;
+shader *sMesh = NULL;
+shader *sShadow = NULL;
+shader *sBlockMesh = NULL;
+shader *sParticle = NULL;
+shader *sRain = NULL;
+shader *sTextMesh = NULL;
+shader *sCloud = NULL;
+shader *sBoundary = NULL;
 
 extern u8 src_shader_blitShaderFS_glsl_data[];
 extern u8 src_shader_blitShaderVS_glsl_data[];
@@ -55,16 +56,22 @@ extern u8 src_shader_shadowShaderVS_glsl_data[];
 extern u8 src_shader_textShaderFS_glsl_data[];
 extern u8 src_shader_textShaderVS_glsl_data[];
 
+static shader *shaderNew(shader *slot,const char *name,const char *vss,const char *fss,uint attrMask);
+
 void shaderInit(){
-	sMesh      = shaderNew("Mesh",      (const char *)src_shader_meshShaderVS_glsl_data,     (const char *)src_shader_meshShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
-	sBlit      = shaderNew("Blit",      (const char *)src_shader_blitShaderVS_glsl_data,     (const char *)src_shader_blitShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
-	sShadow    = shaderNew("Shadow",    (const char *)src_shader_shadowShaderVS_glsl_data,   (const char *)src_shader_shadowShaderFS_glsl_data,   SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
-	sBlockMesh = shaderNew("BlockMesh", (const char *)src_shader_blockShaderVS_glsl_data,    (const char *)src_shader_blockShaderFS_glsl_data,    SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_FLAG);
-	sParticle  = shaderNew("Particle",  (const char *)src_shader_particleShaderVS_glsl_data, (const char *)src_shader_particleShaderFS_glsl_data, SHADER_ATTRMASK_POS | SHADER_ATTRMASK_COLOR);
-	sRain      = shaderNew("Rain",      (const char *)src_shader_rainShaderVS_glsl_data,     (const char *)src_shader_rainShaderFS_glsl_data,     SHADER_ATTRMASK_POS);
-	sTextMesh  = shaderNew("TextMesh",  (const char *)src_shader_textShaderVS_glsl_data,     (const char *)src_shader_textShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_COLOR);
-	sCloud     = shaderNew("Cloud",     (const char *)src_shader_cloudShaderVS_glsl_data,    (const char *)src_shader_cloudShaderFS_glsl_data,    SHADER_ATTRMASK_POS | SHADER_ATTRMASK_COLOR);
-	sBoundary  = shaderNew("Boundary",  (const char *)src_shader_boundaryShaderVS_glsl_data, (const char *)src_shader_boundaryShaderFS_glsl_data, SHADER_ATTRMASK_POS | SHADER_ATTRMASK_COLOR);
+	sMesh      = shaderNew(NULL, "Mesh",      (const char *)src_shader_meshShaderVS_glsl_data,     (const char *)src_shader_meshShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
+	sBlit      = shaderNew(NULL, "Blit",      (const char *)src_shader_blitShaderVS_glsl_data,     (const char *)src_shader_blitShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
+	sShadow    = shaderNew(NULL, "Shadow",    (const char *)src_shader_shadowShaderVS_glsl_data,   (const char *)src_shader_shadowShaderFS_glsl_data,   SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX);
+	shaderInitBlockMesh();
+	sParticle  = shaderNew(NULL, "Particle",  (const char *)src_shader_particleShaderVS_glsl_data, (const char *)src_shader_particleShaderFS_glsl_data, SHADER_ATTRMASK_POS | SHADER_ATTRMASK_COLOR);
+	sRain      = shaderNew(NULL, "Rain",      (const char *)src_shader_rainShaderVS_glsl_data,     (const char *)src_shader_rainShaderFS_glsl_data,     SHADER_ATTRMASK_POS);
+	sTextMesh  = shaderNew(NULL, "TextMesh",  (const char *)src_shader_textShaderVS_glsl_data,     (const char *)src_shader_textShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_COLOR);
+	sCloud     = shaderNew(NULL, "Cloud",     (const char *)src_shader_cloudShaderVS_glsl_data,    (const char *)src_shader_cloudShaderFS_glsl_data,    SHADER_ATTRMASK_POS | SHADER_ATTRMASK_COLOR);
+	sBoundary  = shaderNew(NULL, "Boundary",  (const char *)src_shader_boundaryShaderVS_glsl_data, (const char *)src_shader_boundaryShaderFS_glsl_data, SHADER_ATTRMASK_POS | SHADER_ATTRMASK_COLOR);
+}
+
+void shaderInitBlockMesh() {
+	sBlockMesh = shaderNew(sBlockMesh, "BlockMesh", (const char *)src_shader_blockShaderVS_glsl_data, (const char *)src_shader_blockShaderFS_glsl_data, vertexMode == vertexModeTiny ? SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_FLAG : SHADER_ATTRMASK_PACKED);
 }
 
 static void shaderPrintLog(uint obj, const char *msg, const char *src){
@@ -167,6 +174,7 @@ static void shaderCompile(shader *s,const char *name){
 	if(s->attrMask & SHADER_ATTRMASK_COLOR){glBindAttribLocation(s->pID,SHADER_ATTRIDX_COLOR,"color");}
 	if(s->attrMask & SHADER_ATTRMASK_SIZE){glBindAttribLocation(s->pID,SHADER_ATTRIDX_SIZE,"size");}
 	if(s->attrMask & SHADER_ATTRMASK_FLAG){glBindAttribLocation(s->pID,SHADER_ATTRIDX_FLAG,"flag");}
+	if(s->attrMask & SHADER_ATTRMASK_PACKED){glBindAttribLocation(s->pID,SHADER_ATTRIDX_PACKED,"packedData");}
 
 	glLinkProgram(s->pID);
 	shaderPrintLog(s->pID,"Program","");
@@ -179,16 +187,28 @@ static void shaderCompile(shader *s,const char *name){
 	s->lSizeMul    = glGetUniformLocation(s->pID,"sizeMul");
 }
 
-shader *shaderNew(const char *name,const char *vss,const char *fss,uint attrMask){
-	shader *s = &shaderList[shaderCount++];
+static shader *shaderNew(shader *slot,const char *name,const char *vss,const char *fss,uint attrMask){
+	shader *s = slot == NULL ? &shaderList[shaderCount++] : slot;
+	// If overwriting an existing shader slot, free up old shader resources
+	if(s->pID){
+		glDeleteProgram(s->pID);
+	}
+	if(s->vsID){
+		glDeleteShader (s->vsID);
+	}
+	if(s->fsID){
+		glDeleteShader (s->fsID);
+	}
 	s->name     = name;
 	s->vss      = (char *)vss;
 	s->fss      = (char *)fss;
 
-	if(glIsMultiDrawAvailable){
+	s->defines = "";
+	/*if(glIsMultiDrawAvailable){
 		s->defines  = "#define USE_MULTIDRAW2";
-	}else{
-		s->defines  = "";
+	}*/
+	if(attrMask & SHADER_ATTRMASK_PACKED){
+		s->defines = "#define PACKED";
 	}
 
 	s->pID        = 0;

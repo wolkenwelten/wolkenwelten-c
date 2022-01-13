@@ -7,5 +7,5 @@ in vec3 lightness;
 out vec4 fragColor;
 
 void main() {
-	fragColor = vec4(texture(curTex, texCoord).rgb * lightness, colorAlpha);
+  fragColor = vec4(texture(curTex, texCoord).rgb * lightness, colorAlpha);
 }

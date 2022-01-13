@@ -25,6 +25,30 @@
 #include <stdio.h>
 #include <string.h>
 
+enum vertexMode vertexMode = vertexModeTiny;
+
+void vertexModeSet(enum vertexMode mode) {
+	if(vertexMode == mode){
+		return;
+	}
+	vertexMode = mode;
+	shaderInitBlockMesh();
+	const uint count = chungusGetActiveCount();
+	for(uint i=0;i<count;++i){
+		chungus *chng = chungusGetActive(i);
+		if(chng->nextFree != NULL){continue;}
+		for(int sx=0;sx<16;sx++){
+		for(int sy=0;sy<16;sy++){
+		for(int sz=0;sz<16;sz++){
+			chunk *c = &chng->chunks[sx][sy][sz];
+			chunkvertbufFree(c);
+			c->flags |= CHUNK_FLAG_DIRTY;
+		}
+		}
+		}
+	}
+}
+
 #define CHUNKVERTBUF_FLAG_USED 1
 struct chunkvertbuf {
 	struct{
@@ -39,13 +63,18 @@ struct chunkvertbuf {
 
 static u32 allocatedGlBufferBytes;
 
-static void setVAOFormat(){
+static void setVAOFormatTiny(){
 	glVertexAttribPointer(SHADER_ATTRIDX_POS, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, x));
 	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
 	glVertexAttribPointer(SHADER_ATTRIDX_TEX, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, u));
 	glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
 	glVertexAttribIPointer(SHADER_ATTRIDX_FLAG, 1, GL_UNSIGNED_BYTE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, f));
 	glEnableVertexAttribArray(SHADER_ATTRIDX_FLAG);
+}
+
+static void setVAOFormatPacked(){
+	glVertexAttribIPointer(SHADER_ATTRIDX_PACKED, 1, GL_UNSIGNED_INT, sizeof(vertexPacked), NULL);
+	glEnableVertexAttribArray(SHADER_ATTRIDX_PACKED);
 }
 
 void chunkvertbufInit(){
@@ -60,7 +89,7 @@ u32 chunkvertbufMaxBytes(){
 	return 0;
 }
 
-void chunkvertbufUpdate(chunk *c, vertexTiny *vertices, u16 sideCounts[sideMAX]) {
+void chunkvertbufUpdate(chunk *c, u8 *vertices, u16 sideCounts[sideMAX]) {
 	struct chunkvertbuf *v = c->vertbuf;
 	if(v == NULL) {
 		// TODO: allocate those contiguously if possible
@@ -101,22 +130,29 @@ void chunkvertbufUpdate(chunk *c, vertexTiny *vertices, u16 sideCounts[sideMAX])
 	glBindBuffer(GL_ARRAY_BUFFER,v->vbo);
 
 	// Upload to the GPU, doing partial updates if possible.
+	const u32 vertexSize = vertexMode == vertexModeTiny ? sizeof(vertexTiny) : sizeof(vertexPacked);
 	if(gfxUseSubData && (count <= v->vboSize)){
-		glBufferSubData(GL_ARRAY_BUFFER,0,sizeof(vertexTiny) * count,vertices); // Todo Measure performance impact of this!
+		glBufferSubData(GL_ARRAY_BUFFER,0,vertexSize * count,vertices); // Todo Measure performance impact of this!
 	}else{
-		allocatedGlBufferBytes -= sizeof(vertexTiny) * v->vboSize;
-		glBufferData(GL_ARRAY_BUFFER,sizeof(vertexTiny) * count,vertices,GL_STATIC_DRAW);
-		allocatedGlBufferBytes += sizeof(vertexTiny) * count;
+		allocatedGlBufferBytes -= vertexSize * v->vboSize;
+		glBufferData(GL_ARRAY_BUFFER,vertexSize * count,vertices,GL_STATIC_DRAW);
+		allocatedGlBufferBytes += vertexSize * count;
 		v->vboSize = count;
-		setVAOFormat();
+		if(vertexMode == vertexModeTiny) {
+			setVAOFormatTiny();
+		}
+		else{
+			setVAOFormatPacked();
+		}
 	}
 }
 
 void chunkvertbufFree(struct chunk *c){
 	if(c->vertbuf == NULL){return;}
 	if(c->vertbuf->vbo){
+		const u32 vertexSize = vertexMode == vertexModeTiny ? sizeof(vertexTiny) : sizeof(vertexPacked);
 		glDeleteBuffers(1,&c->vertbuf->vbo);
-		allocatedGlBufferBytes -= sizeof(vertexTiny) * c->vertbuf->vboSize;
+		allocatedGlBufferBytes -= vertexSize * c->vertbuf->vboSize;
 	}
 	if(c->vertbuf->vao){glDeleteVertexArrays(1,&c->vertbuf->vao);}
 	free(c->vertbuf);

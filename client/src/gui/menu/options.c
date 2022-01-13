@@ -24,6 +24,7 @@
 #include "../../misc/options.h"
 #include "../../main.h"
 #include "../../gfx/gfx.h"
+#include "../../voxel/chunkvertbuf.h"
 #include "../../../../common/src/cto.h"
 #include "../../../../common/src/misc/misc.h"
 
@@ -70,6 +71,16 @@ static void handlerOptionsCancel(widget *wid){
 	openMainMenu();
 }
 
+static void handlerVertexModeTiny(widget *wid){
+	(void)wid;
+	vertexModeSet(vertexModeTiny);
+}
+
+static void handlerVertexModePacked(widget *wid){
+	(void)wid;
+	vertexModeSet(vertexModePacked);
+}
+
 void initOptionsMenu(){
 	optionsMenu = widgetNewCP(wPanel,rootMenu,rect(-1,0,0,-1));
 	optionsMenu->flags |= WIDGET_HIDDEN;
@@ -88,6 +99,11 @@ void initOptionsMenu(){
 	optionsMouseSensitivity = widgetNewCPL(wSlider,optionsMenu,rect(16,0,256,32),"Mouse Sensitivy");
 	optionsMouseSensitivity->vali = (optionMouseSensitivy-0.01f) * 4096.f;
 	widgetBind(optionsMouseSensitivity,"change",handlerMouseSensitivityChanged);
+
+	widgetNewCP  (wHorizontalRuler ,optionsMenu,rect(16,0,256,32));
+	// TODO: replace with a checkbox
+	widgetNewCPLH(wButton,optionsMenu,rect(16,0,256,32),"Tiny vertices","click",handlerVertexModeTiny);
+	widgetNewCPLH(wButton,optionsMenu,rect(16,0,256,32),"Packed vertices","click",handlerVertexModePacked);
 
 	widgetNewCP  (wHorizontalRuler ,optionsMenu,rect(16,0,256,32));
 	widgetNewCPLH(wButton,optionsMenu,rect(16,0,256,32),"Save","click",handlerOptionsSave);

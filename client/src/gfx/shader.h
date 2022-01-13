@@ -15,10 +15,12 @@
 #define SHADER_ATTRMASK_FADE (1 << SHADER_ATTRIDX_FADE)
 #define SHADER_ATTRIDX_FLAG 6
 #define SHADER_ATTRMASK_FLAG (1 << SHADER_ATTRIDX_FLAG)
+#define SHADER_ATTRIDX_PACKED 7
+#define SHADER_ATTRMASK_PACKED (1 << SHADER_ATTRIDX_PACKED)
 
 void    shaderInit();
+void    shaderInitBlockMesh();
 void    shaderFree();
-shader *shaderNew        (const char *name,const char *vss,const char *fss,uint attrMask);
 void    shaderBind       (shader *s);
 void    shaderMatrix     (shader *s, float mvp[16]);
 void    shaderAlpha      (shader *s, float alpha);
