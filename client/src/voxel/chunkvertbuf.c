@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 
-enum vertexMode vertexMode = vertexModeTiny;
+enum vertexMode vertexMode = vertexModePacked;
 
 void vertexModeSet(enum vertexMode mode) {
 	if(vertexMode == mode){
