@@ -8,20 +8,16 @@ typedef struct vertexTiny {
 } vertexTiny;
 #pragma pack(pop)
 
-enum vertexMode {
-	vertexModeTiny,
-	vertexModePacked
-};
 #define VERTEX_PACKED_X_LEN 5
 #define VERTEX_PACKED_X_OFFSET 0
 #define VERTEX_PACKED_Y_LEN 5
 #define VERTEX_PACKED_Y_OFFSET 5
 #define VERTEX_PACKED_Z_LEN 5
 #define VERTEX_PACKED_Z_OFFSET 10
+#define VERTEX_PACKED_BT_LEN 8
+#define VERTEX_PACKED_BT_OFFSET 16
 #define VERTEX_PACKED_SIDE_LEN 3
-#define VERTEX_PACKED_SIDE_OFFSET 20
-#define VERTEX_PACKED_BT_LEN 7
-#define VERTEX_PACKED_BT_OFFSET 24
+#define VERTEX_PACKED_SIDE_OFFSET 24
 typedef uint32_t vertexPacked;
 #define mkVertexPacked(x,y,z,w,h,bt,side) (\
 	((x) << VERTEX_PACKED_X_OFFSET) |\

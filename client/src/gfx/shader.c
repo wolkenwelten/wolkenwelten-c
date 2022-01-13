@@ -71,7 +71,7 @@ void shaderInit(){
 }
 
 void shaderInitBlockMesh() {
-	sBlockMesh = shaderNew(sBlockMesh, "BlockMesh", (const char *)src_shader_blockShaderVS_glsl_data, (const char *)src_shader_blockShaderFS_glsl_data, vertexMode == vertexModeTiny ? SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_FLAG : SHADER_ATTRMASK_PACKED);
+	sBlockMesh = shaderNew(sBlockMesh, "BlockMesh", (const char *)src_shader_blockShaderVS_glsl_data, (const char *)src_shader_blockShaderFS_glsl_data, SHADER_ATTRMASK_PACKED);
 }
 
 static void shaderPrintLog(uint obj, const char *msg, const char *src){
@@ -204,12 +204,6 @@ static shader *shaderNew(shader *slot,const char *name,const char *vss,const cha
 	s->fss      = (char *)fss;
 
 	s->defines = "";
-	/*if(glIsMultiDrawAvailable){
-		s->defines  = "#define USE_MULTIDRAW2";
-	}*/
-	if(attrMask & SHADER_ATTRMASK_PACKED){
-		s->defines = "#define PACKED";
-	}
 
 	s->pID        = 0;
 	s->vsID       = 0;

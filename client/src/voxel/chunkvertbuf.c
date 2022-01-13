@@ -25,29 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 
-enum vertexMode vertexMode = vertexModePacked;
-
-void vertexModeSet(enum vertexMode mode) {
-	if(vertexMode == mode){
-		return;
-	}
-	vertexMode = mode;
-	shaderInitBlockMesh();
-	const uint count = chungusGetActiveCount();
-	for(uint i=0;i<count;++i){
-		chungus *chng = chungusGetActive(i);
-		if(chng->nextFree != NULL){continue;}
-		for(int sx=0;sx<16;sx++){
-		for(int sy=0;sy<16;sy++){
-		for(int sz=0;sz<16;sz++){
-			chunk *c = &chng->chunks[sx][sy][sz];
-			chunkvertbufFree(c);
-			c->flags |= CHUNK_FLAG_DIRTY;
-		}
-		}
-		}
-	}
-}
+#define FADE_IN_FRAMES 48
 
 #define CHUNKVERTBUF_FLAG_USED 1
 struct chunkvertbuf {
@@ -62,15 +40,6 @@ struct chunkvertbuf {
 };
 
 static u32 allocatedGlBufferBytes;
-
-static void setVAOFormatTiny(){
-	glVertexAttribPointer(SHADER_ATTRIDX_POS, 3, GL_BYTE,          GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, x));
-	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
-	glVertexAttribPointer(SHADER_ATTRIDX_TEX, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, u));
-	glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
-	glVertexAttribIPointer(SHADER_ATTRIDX_FLAG, 1, GL_UNSIGNED_BYTE, sizeof(vertexTiny), (void *)offsetof(vertexTiny, f));
-	glEnableVertexAttribArray(SHADER_ATTRIDX_FLAG);
-}
 
 static void setVAOFormatPacked(){
 	glVertexAttribIPointer(SHADER_ATTRIDX_PACKED, 1, GL_UNSIGNED_INT, sizeof(vertexPacked), NULL);
@@ -130,7 +99,7 @@ void chunkvertbufUpdate(chunk *c, u8 *vertices, u16 sideCounts[sideMAX]) {
 	glBindBuffer(GL_ARRAY_BUFFER,v->vbo);
 
 	// Upload to the GPU, doing partial updates if possible.
-	const u32 vertexSize = vertexMode == vertexModeTiny ? sizeof(vertexTiny) : sizeof(vertexPacked);
+	const u32 vertexSize = sizeof(vertexPacked);
 	if(gfxUseSubData && (count <= v->vboSize)){
 		glBufferSubData(GL_ARRAY_BUFFER,0,vertexSize * count,vertices); // Todo Measure performance impact of this!
 	}else{
@@ -138,19 +107,14 @@ void chunkvertbufUpdate(chunk *c, u8 *vertices, u16 sideCounts[sideMAX]) {
 		glBufferData(GL_ARRAY_BUFFER,vertexSize * count,vertices,GL_STATIC_DRAW);
 		allocatedGlBufferBytes += vertexSize * count;
 		v->vboSize = count;
-		if(vertexMode == vertexModeTiny) {
-			setVAOFormatTiny();
-		}
-		else{
-			setVAOFormatPacked();
-		}
+		setVAOFormatPacked();
 	}
 }
 
 void chunkvertbufFree(struct chunk *c){
 	if(c->vertbuf == NULL){return;}
 	if(c->vertbuf->vbo){
-		const u32 vertexSize = vertexMode == vertexModeTiny ? sizeof(vertexTiny) : sizeof(vertexPacked);
+		const u32 vertexSize = sizeof(vertexPacked);
 		glDeleteBuffers(1,&c->vertbuf->vbo);
 		allocatedGlBufferBytes -= vertexSize * c->vertbuf->vboSize;
 	}
@@ -158,8 +122,6 @@ void chunkvertbufFree(struct chunk *c){
 	free(c->vertbuf);
 	c->vertbuf = NULL;
 }
-
-#define FADE_IN_FRAMES 48
 
 void chunkvertbufDrawOne(struct chunk *c, sideMask mask){
 	struct chunkvertbuf *v = c->vertbuf;

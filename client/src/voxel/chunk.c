@@ -96,142 +96,76 @@ static void chunkFinish(chunk *c){
 static void chunkAddFront(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	assert(x+w <= 16);assert(y+h <= 16);assert(z+d <= 16);
 	const u8 bt = blocks[b].tex[sideFront];
-	if(vertexMode == vertexModeTiny){
-		vertexTiny *vt = &blockMeshBufferTiny[blockMeshSideEnd[sideFront]];
-		*vt++ = mkVert(x  ,y  ,z+d,0,h,bt,sideFront);
-		*vt++ = mkVert(x+w,y  ,z+d,w,h,bt,sideFront);
-		*vt++ = mkVert(x+w,y+h,z+d,w,0,bt,sideFront);
-		*vt++ = mkVert(x+w,y+h,z+d,w,0,bt,sideFront);
-		*vt++ = mkVert(x  ,y+h,z+d,0,0,bt,sideFront);
-		*vt++ = mkVert(x  ,y  ,z+d,0,h,bt,sideFront);
-	}
-	else{
-		vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideFront]];
-		*vp++ = mkVertexPacked(x  ,y  ,z+d,0,h,bt,sideFront);
-		*vp++ = mkVertexPacked(x+w,y  ,z+d,w,h,bt,sideFront);
-		*vp++ = mkVertexPacked(x+w,y+h,z+d,w,0,bt,sideFront);
-		*vp++ = mkVertexPacked(x+w,y+h,z+d,w,0,bt,sideFront);
-		*vp++ = mkVertexPacked(x  ,y+h,z+d,0,0,bt,sideFront);
-		*vp++ = mkVertexPacked(x  ,y  ,z+d,0,h,bt,sideFront);
-	}
+	vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideFront]];
+	*vp++ = mkVertexPacked(x  ,y  ,z+d,0,h,bt,sideFront);
+	*vp++ = mkVertexPacked(x+w,y  ,z+d,w,h,bt,sideFront);
+	*vp++ = mkVertexPacked(x+w,y+h,z+d,w,0,bt,sideFront);
+	*vp++ = mkVertexPacked(x+w,y+h,z+d,w,0,bt,sideFront);
+	*vp++ = mkVertexPacked(x  ,y+h,z+d,0,0,bt,sideFront);
+	*vp++ = mkVertexPacked(x  ,y  ,z+d,0,h,bt,sideFront);
 	blockMeshSideEnd[sideFront] += 6;
 }
 static void chunkAddBack(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	assert(x+w <= 16);assert(y+h <= 16);assert(z+d <= 16);
 	(void)d;
 	const u8 bt = blocks[b].tex[sideBack];
-	if(vertexMode == vertexModeTiny){
-		vertexTiny *vt = &blockMeshBufferTiny[blockMeshSideEnd[sideBack]];
-		*vt++ = mkVert(x  ,y  ,z  ,0,h,bt,sideBack);
-		*vt++ = mkVert(x  ,y+h,z  ,0,0,bt,sideBack);
-		*vt++ = mkVert(x+w,y+h,z  ,w,0,bt,sideBack);
-		*vt++ = mkVert(x+w,y+h,z  ,w,0,bt,sideBack);
-		*vt++ = mkVert(x+w,y  ,z  ,w,h,bt,sideBack);
-		*vt++ = mkVert(x  ,y  ,z  ,0,h,bt,sideBack);
-	}
-	else{
-		vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideBack]];
-		*vp++ = mkVertexPacked(x  ,y  ,z  ,0,h,bt,sideBack);
-		*vp++ = mkVertexPacked(x  ,y+h,z  ,0,0,bt,sideBack);
-		*vp++ = mkVertexPacked(x+w,y+h,z  ,w,0,bt,sideBack);
-		*vp++ = mkVertexPacked(x+w,y+h,z  ,w,0,bt,sideBack);
-		*vp++ = mkVertexPacked(x+w,y  ,z  ,w,h,bt,sideBack);
-		*vp++ = mkVertexPacked(x  ,y  ,z  ,0,h,bt,sideBack);
-	}
+	vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideBack]];
+	*vp++ = mkVertexPacked(x  ,y  ,z  ,0,h,bt,sideBack);
+	*vp++ = mkVertexPacked(x  ,y+h,z  ,0,0,bt,sideBack);
+	*vp++ = mkVertexPacked(x+w,y+h,z  ,w,0,bt,sideBack);
+	*vp++ = mkVertexPacked(x+w,y+h,z  ,w,0,bt,sideBack);
+	*vp++ = mkVertexPacked(x+w,y  ,z  ,w,h,bt,sideBack);
+	*vp++ = mkVertexPacked(x  ,y  ,z  ,0,h,bt,sideBack);
 	blockMeshSideEnd[sideBack] += 6;
 }
 static void chunkAddTop(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	assert(x+w <= 16);assert(y+h <= 16);assert(z+d <= 16);
 	const u8 bt = blocks[b].tex[sideTop];
-	if(vertexMode == vertexModeTiny){
-		vertexTiny *vt = &blockMeshBufferTiny[blockMeshSideEnd[sideTop]];
-		*vt++ = mkVert(x  ,y+h,z  ,0,0,bt,sideTop);
-		*vt++ = mkVert(x  ,y+h,z+d,0,d,bt,sideTop);
-		*vt++ = mkVert(x+w,y+h,z+d,w,d,bt,sideTop);
-		*vt++ = mkVert(x+w,y+h,z+d,w,d,bt,sideTop);
-		*vt++ = mkVert(x+w,y+h,z  ,w,0,bt,sideTop);
-		*vt++ = mkVert(x  ,y+h,z  ,0,0,bt,sideTop);
-	}
-	else{
-		vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideTop]];
-		*vp++ = mkVertexPacked(x  ,y+h,z  ,0,0,bt,sideTop);
-		*vp++ = mkVertexPacked(x  ,y+h,z+d,0,d,bt,sideTop);
-		*vp++ = mkVertexPacked(x+w,y+h,z+d,w,d,bt,sideTop);
-		*vp++ = mkVertexPacked(x+w,y+h,z+d,w,d,bt,sideTop);
-		*vp++ = mkVertexPacked(x+w,y+h,z  ,w,0,bt,sideTop);
-		*vp++ = mkVertexPacked(x  ,y+h,z  ,0,0,bt,sideTop);
-	}
+	vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideTop]];
+	*vp++ = mkVertexPacked(x  ,y+h,z  ,0,0,bt,sideTop);
+	*vp++ = mkVertexPacked(x  ,y+h,z+d,0,d,bt,sideTop);
+	*vp++ = mkVertexPacked(x+w,y+h,z+d,w,d,bt,sideTop);
+	*vp++ = mkVertexPacked(x+w,y+h,z+d,w,d,bt,sideTop);
+	*vp++ = mkVertexPacked(x+w,y+h,z  ,w,0,bt,sideTop);
+	*vp++ = mkVertexPacked(x  ,y+h,z  ,0,0,bt,sideTop);
 	blockMeshSideEnd[sideTop] += 6;
 }
 static void chunkAddBottom(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	assert(x+w <= 16);assert(y+h <= 16);assert(z+d <= 16);
 	(void)h;
 	const u8 bt = blocks[b].tex[sideBottom];
-	if(vertexMode == vertexModeTiny){
-		vertexTiny *vt = &blockMeshBufferTiny[blockMeshSideEnd[sideBottom]];
-		*vt++ = mkVert(x  ,y  ,z  ,0,0,bt,sideBottom);
-		*vt++ = mkVert(x+w,y  ,z  ,w,0,bt,sideBottom);
-		*vt++ = mkVert(x+w,y  ,z+d,w,d,bt,sideBottom);
-		*vt++ = mkVert(x+w,y  ,z+d,w,d,bt,sideBottom);
-		*vt++ = mkVert(x  ,y  ,z+d,0,d,bt,sideBottom);
-		*vt++ = mkVert(x  ,y  ,z  ,0,0,bt,sideBottom);
-	}
-	else{
-		vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideBottom]];
-		*vp++ = mkVertexPacked(x  ,y  ,z  ,0,0,bt,sideBottom);
-		*vp++ = mkVertexPacked(x+w,y  ,z  ,w,0,bt,sideBottom);
-		*vp++ = mkVertexPacked(x+w,y  ,z+d,w,d,bt,sideBottom);
-		*vp++ = mkVertexPacked(x+w,y  ,z+d,w,d,bt,sideBottom);
-		*vp++ = mkVertexPacked(x  ,y  ,z+d,0,d,bt,sideBottom);
-		*vp++ = mkVertexPacked(x  ,y  ,z  ,0,0,bt,sideBottom);
-	}
+	vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideBottom]];
+	*vp++ = mkVertexPacked(x  ,y  ,z  ,0,0,bt,sideBottom);
+	*vp++ = mkVertexPacked(x+w,y  ,z  ,w,0,bt,sideBottom);
+	*vp++ = mkVertexPacked(x+w,y  ,z+d,w,d,bt,sideBottom);
+	*vp++ = mkVertexPacked(x+w,y  ,z+d,w,d,bt,sideBottom);
+	*vp++ = mkVertexPacked(x  ,y  ,z+d,0,d,bt,sideBottom);
+	*vp++ = mkVertexPacked(x  ,y  ,z  ,0,0,bt,sideBottom);
 	blockMeshSideEnd[sideBottom] += 6;
 }
 static void chunkAddLeft(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	assert(x+w <= 16);assert(y+h <= 16);assert(z+d <= 16);
 	(void)w;
 	const u8 bt = blocks[b].tex[sideLeft];
-	if(vertexMode == vertexModeTiny){
-		vertexTiny *vt = &blockMeshBufferTiny[blockMeshSideEnd[sideLeft]];
-		*vt++ = mkVert(x  ,y  ,z  ,0,h,bt,sideLeft);
-		*vt++ = mkVert(x  ,y  ,z+d,d,h,bt,sideLeft);
-		*vt++ = mkVert(x  ,y+h,z+d,d,0,bt,sideLeft);
-		*vt++ = mkVert(x  ,y+h,z+d,d,0,bt,sideLeft);
-		*vt++ = mkVert(x  ,y+h,z  ,0,0,bt,sideLeft);
-		*vt++ = mkVert(x  ,y  ,z  ,0,h,bt,sideLeft);
-	}
-	else{
-		vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideLeft]];
-		*vp++ = mkVertexPacked(x  ,y  ,z  ,0,h,bt,sideLeft);
-		*vp++ = mkVertexPacked(x  ,y  ,z+d,d,h,bt,sideLeft);
-		*vp++ = mkVertexPacked(x  ,y+h,z+d,d,0,bt,sideLeft);
-		*vp++ = mkVertexPacked(x  ,y+h,z+d,d,0,bt,sideLeft);
-		*vp++ = mkVertexPacked(x  ,y+h,z  ,0,0,bt,sideLeft);
-		*vp++ = mkVertexPacked(x  ,y  ,z  ,0,h,bt,sideLeft);
-	}
+	vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideLeft]];
+	*vp++ = mkVertexPacked(x  ,y  ,z  ,0,h,bt,sideLeft);
+	*vp++ = mkVertexPacked(x  ,y  ,z+d,d,h,bt,sideLeft);
+	*vp++ = mkVertexPacked(x  ,y+h,z+d,d,0,bt,sideLeft);
+	*vp++ = mkVertexPacked(x  ,y+h,z+d,d,0,bt,sideLeft);
+	*vp++ = mkVertexPacked(x  ,y+h,z  ,0,0,bt,sideLeft);
+	*vp++ = mkVertexPacked(x  ,y  ,z  ,0,h,bt,sideLeft);
 	blockMeshSideEnd[sideLeft] += 6;
 }
 static void chunkAddRight(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	assert(x+w <= 16);assert(y+h <= 16);assert(z+d <= 16);
 	const u8 bt = blocks[b].tex[sideRight];
-	if(vertexMode == vertexModeTiny){
-		vertexTiny *vt = &blockMeshBufferTiny[blockMeshSideEnd[sideRight]];
-		*vt++ = mkVert(x+w,y  ,z  ,0,h,bt,sideRight);
-		*vt++ = mkVert(x+w,y+h,z  ,0,0,bt,sideRight);
-		*vt++ = mkVert(x+w,y+h,z+d,d,0,bt,sideRight);
-		*vt++ = mkVert(x+w,y+h,z+d,d,0,bt,sideRight);
-		*vt++ = mkVert(x+w,y  ,z+d,d,h,bt,sideRight);
-		*vt++ = mkVert(x+w,y  ,z  ,0,h,bt,sideRight);
-	}
-	else{
-		vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideRight]];
-		*vp++ = mkVertexPacked(x+w,y  ,z  ,0,h,bt,sideRight);
-		*vp++ = mkVertexPacked(x+w,y+h,z  ,0,0,bt,sideRight);
-		*vp++ = mkVertexPacked(x+w,y+h,z+d,d,0,bt,sideRight);
-		*vp++ = mkVertexPacked(x+w,y+h,z+d,d,0,bt,sideRight);
-		*vp++ = mkVertexPacked(x+w,y  ,z+d,d,h,bt,sideRight);
-		*vp++ = mkVertexPacked(x+w,y  ,z  ,0,h,bt,sideRight);
-	}
+	vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideRight]];
+	*vp++ = mkVertexPacked(x+w,y  ,z  ,0,h,bt,sideRight);
+	*vp++ = mkVertexPacked(x+w,y+h,z  ,0,0,bt,sideRight);
+	*vp++ = mkVertexPacked(x+w,y+h,z+d,d,0,bt,sideRight);
+	*vp++ = mkVertexPacked(x+w,y+h,z+d,d,0,bt,sideRight);
+	*vp++ = mkVertexPacked(x+w,y  ,z+d,d,h,bt,sideRight);
+	*vp++ = mkVertexPacked(x+w,y  ,z  ,0,h,bt,sideRight);
 	blockMeshSideEnd[sideRight] += 6;
 }
 
