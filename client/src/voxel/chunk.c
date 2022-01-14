@@ -32,16 +32,23 @@
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
 
+#include <assert.h>
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
 
-u8 blockMeshBuffer[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * 6 * 6 / 2 * sizeof(vertexTiny)];
-u16 blockMeshSideEnd[sideMAX];
-int chunksGeneratedThisFrame = 0;
-
 #define MIN_CHUNKS_GENERATED_PER_FRAME (16)
 #define FADE_IN_FRAMES 48
+#define POS_MASK (CHUNK_SIZE-1)
+#define EDGE (CHUNK_SIZE-1)
+
+#define blockMeshBufferPacked ((vertexPacked*)blockMeshBuffer)
+#define mkVert(x,y,z,w,h,bt,side) (vertexTiny){x,y,z,w,h,bt,side}
+
+
+u8 blockMeshBuffer[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * 6 * 6 * sizeof(vertexPacked)];
+u16 blockMeshSideEnd[sideMAX];
+int chunksGeneratedThisFrame = 0;
 
 void chunkInit(){
 	chunkvertbufInit();
@@ -50,8 +57,6 @@ void chunkInit(){
 
 uint    chunkGetGeneratedThisFrame() { return chunksGeneratedThisFrame; }
 void    chunkResetCounter()          { chunksGeneratedThisFrame = 0;    }
-
-#define POS_MASK (CHUNK_SIZE-1)
 
 void chunkFree(chunk *c){
 	if(c == NULL){return;}
@@ -87,14 +92,7 @@ static void chunkFinish(chunk *c){
 	chunkvertbufUpdate(c, blockMeshBuffer, sideCounts);
 }
 
-#define blockMeshBufferTiny ((vertexTiny*)blockMeshBuffer)
-#define blockMeshBufferPacked ((vertexPacked*)blockMeshBuffer)
-#define mkVert(x,y,z,w,h,bt,side) (vertexTiny){x,y,z,w,h,bt,side}
-
-#include <assert.h>
-
 static void chunkAddFront(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	assert(x+w <= 16);assert(y+h <= 16);assert(z+d <= 16);
 	const u8 bt = blocks[b].tex[sideFront];
 	vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideFront]];
 	*vp++ = mkVertexPacked(x  ,y  ,z+d,0,h,bt,sideFront);
@@ -106,7 +104,6 @@ static void chunkAddFront(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	blockMeshSideEnd[sideFront] += 6;
 }
 static void chunkAddBack(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	assert(x+w <= 16);assert(y+h <= 16);assert(z+d <= 16);
 	(void)d;
 	const u8 bt = blocks[b].tex[sideBack];
 	vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideBack]];
@@ -119,7 +116,6 @@ static void chunkAddBack(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	blockMeshSideEnd[sideBack] += 6;
 }
 static void chunkAddTop(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	assert(x+w <= 16);assert(y+h <= 16);assert(z+d <= 16);
 	const u8 bt = blocks[b].tex[sideTop];
 	vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideTop]];
 	*vp++ = mkVertexPacked(x  ,y+h,z  ,0,0,bt,sideTop);
@@ -131,7 +127,6 @@ static void chunkAddTop(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	blockMeshSideEnd[sideTop] += 6;
 }
 static void chunkAddBottom(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	assert(x+w <= 16);assert(y+h <= 16);assert(z+d <= 16);
 	(void)h;
 	const u8 bt = blocks[b].tex[sideBottom];
 	vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideBottom]];
@@ -144,7 +139,6 @@ static void chunkAddBottom(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	blockMeshSideEnd[sideBottom] += 6;
 }
 static void chunkAddLeft(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	assert(x+w <= 16);assert(y+h <= 16);assert(z+d <= 16);
 	(void)w;
 	const u8 bt = blocks[b].tex[sideLeft];
 	vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideLeft]];
@@ -157,7 +151,6 @@ static void chunkAddLeft(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	blockMeshSideEnd[sideLeft] += 6;
 }
 static void chunkAddRight(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
-	assert(x+w <= 16);assert(y+h <= 16);assert(z+d <= 16);
 	const u8 bt = blocks[b].tex[sideRight];
 	vertexPacked *vp = &blockMeshBufferPacked[blockMeshSideEnd[sideRight]];
 	*vp++ = mkVertexPacked(x+w,y  ,z  ,0,h,bt,sideRight);
@@ -169,20 +162,25 @@ static void chunkAddRight(blockId b,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d) {
 	blockMeshSideEnd[sideRight] += 6;
 }
 
+// genmesh avg. 0.677ms
+// chunkVert: 4246K
+
 static void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
 	for(int y=CHUNK_SIZE-1;y>=0;y--){
 	for(int x=CHUNK_SIZE-1;x>=0;x--){
-		if((x < CHUNK_SIZE-1) && (plane[x][y]) && ((plane[x][y] & 0xFF00FF) == (plane[x+1][y] & 0xFF00FF))){
+		if(!plane[x][y]){continue;}
+		if((x < CHUNK_SIZE-2) && ((plane[x][y] & 0xFF00FF) == (plane[x+1][y] & 0xFF00FF))){
 			plane[x  ][y] += plane[x+1][y] & 0xFF00;
 			plane[x+1][y]  = 0;
 		}
-		if((y < CHUNK_SIZE-1) && (plane[x][y]) && ((plane[x][y] & 0x00FFFF) == (plane[x][y+1] & 0x00FFFF))){
+		if((y < CHUNK_SIZE-2) && ((plane[x][y] & 0x00FFFF) == (plane[x][y+1] & 0x00FFFF))){
 			plane[x][y  ] += plane[x][y+1]&0xFF0000;
 			plane[x][y+1]  = 0;
 		}
 	}
 	}
 }
+
 
 static inline sideMask chunkGetSides(u16 x,u16 y,u16 z,blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2]){
 	sideMask sides = 0;
@@ -209,7 +207,7 @@ static void chunkPopulateBlockData(blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_S
 }
 
 
-static void __attribute__((optimize("O0"))) chunkGenMesh(chunk *c) {
+static void chunkGenMesh(chunk *c) {
 	PROFILE_START();
 
 	if((chunksGeneratedThisFrame >= MIN_CHUNKS_GENERATED_PER_FRAME) && (getTicks() > frameRelaxedDeadline)){return;}
@@ -258,7 +256,6 @@ static void __attribute__((optimize("O0"))) chunkGenMesh(chunk *c) {
 				const int cw = ((plane[y][x] >> 16) & 0xF);
 				const int ch = ((plane[y][x] >>  8) & 0xF);
 				const blockId b = plane[y][x] & 0xFF;
-				assert(x+cw <= 16);assert(y+ch <= 16);assert(z+cd <= 16);
 				chunkAddFront(b,x,y,z,cw,ch,cd);
 			}
 			}
@@ -288,7 +285,6 @@ static void __attribute__((optimize("O0"))) chunkGenMesh(chunk *c) {
 				const int cw = ((plane[y][x] >> 16) & 0xF);
 				const int ch = ((plane[y][x] >>  8) & 0xF);
 				const blockId b = plane[y][x] & 0xFF;
-				assert(x+cw <= 16);assert(y+ch <= 16);assert(z+cd <= 16);
 				chunkAddBack(b,x,y,z,cw,ch,cd);
 			}
 			}
@@ -318,7 +314,6 @@ static void __attribute__((optimize("O0"))) chunkGenMesh(chunk *c) {
 				const int cw = ((plane[z][x] >> 16) & 0xF);
 				const int cd = ((plane[z][x] >>  8) & 0xF);
 				const blockId b = plane[z][x] & 0xFF;
-				assert(x+cw <= 16);assert(y+ch <= 16);assert(z+cd <= 16);
 				chunkAddTop(b,x,y,z,cw,ch,cd);
 			}
 			}
@@ -348,7 +343,6 @@ static void __attribute__((optimize("O0"))) chunkGenMesh(chunk *c) {
 				const int cw = ((plane[z][x] >> 16) & 0xF);
 				const int cd = ((plane[z][x] >>  8) & 0xF);
 				const blockId b = plane[z][x] & 0xFF;
-				assert(x+cw <= 16);assert(y+ch <= 16);assert(z+cd <= 16);
 				chunkAddBottom(b,x,y,z,cw,ch,cd);
 			}
 			}
@@ -378,7 +372,6 @@ static void __attribute__((optimize("O0"))) chunkGenMesh(chunk *c) {
 				const int ch = ((plane[y][z] >>  8) & 0xF);
 				const int cd = ((plane[y][z] >> 16) & 0xF);
 				const blockId b = plane[y][z] & 0xFF;
-				assert(x+cw <= 16);assert(y+ch <= 16);assert(z+cd <= 16);
 				chunkAddLeft(b,x,y,z,cw,ch,cd);
 			}
 			}
@@ -408,7 +401,6 @@ static void __attribute__((optimize("O0"))) chunkGenMesh(chunk *c) {
 				const int ch = ((plane[y][z] >>  8) & 0xF);
 				const int cd = ((plane[y][z] >> 16) & 0xF);
 				const blockId b = plane[y][z] & 0xFF;
-				assert(x+cw <= 16);assert(y+ch <= 16);assert(z+cd <= 16);
 				chunkAddRight(b,x,y,z,cw,ch,cd);
 			}
 			}
@@ -418,8 +410,6 @@ static void __attribute__((optimize("O0"))) chunkGenMesh(chunk *c) {
 
 	PROFILE_STOP();
 }
-
-#define EDGE (CHUNK_SIZE-1)
 
 void chunkBox(chunk *c, u16 x,u16 y,u16 z,u16 gx,u16 gy,u16 gz,blockId block){
 	if(c->block == NULL){c->block = chunkOverlayAllocate();}
