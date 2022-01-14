@@ -35,19 +35,40 @@ struct chunkvertbuf {
 		u16 vboSize; // size of vbo in vertices
 	};
 	u8 flags;
-	u16 sideStart[sideMAX],sideCount[sideMAX]; // offset and count of side vertices within the (sub)buffer
-	u16 count; // total number of vertices, used when all sides are drawn
+	u16 sideIdxStart[sideMAX],sideIdxCount[sideMAX]; // offset and count of side indices within the (sub)buffer
+	u16 idxCount; // total number of indices, used when all sides are drawn
 };
 
 static u32 allocatedGlBufferBytes;
+static GLuint indexBuffer;
 
 static void setVAOFormatPacked(){
 	glVertexAttribIPointer(SHADER_ATTRIDX_PACKED, 1, GL_UNSIGNED_INT, sizeof(vertexPacked), NULL);
 	glEnableVertexAttribArray(SHADER_ATTRIDX_PACKED);
 }
 
+#define CUBE_FACES 6
+#define INDICES_PER_FACE 6
 void chunkvertbufInit(){
 	allocatedGlBufferBytes = 0;
+	glGenBuffers(1, &indexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+	gfxObjectLabel(GL_BUFFER, indexBuffer, "Chunk vertex IBO");
+	const GLsizei indexCount = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * CUBE_FACES * INDICES_PER_FACE / 2;
+	u16 *indicesRaw = malloc(indexCount * sizeof(u16));
+	u16 *indices = indicesRaw;
+	const GLsizei indexMax = indexCount/INDICES_PER_FACE - 1;
+	for(GLsizei i=0;i<indexMax;++i){
+		*indices++ = i*4 + 0;
+		*indices++ = i*4 + 1;
+		*indices++ = i*4 + 3;
+
+		*indices++ = i*4 + 3;
+		*indices++ = i*4 + 1;
+		*indices++ = i*4 + 2;
+	}
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount, indicesRaw, GL_STATIC_DRAW);
+	free(indicesRaw);
 }
 
 u32 chunkvertbufUsedBytes(){
@@ -58,7 +79,8 @@ u32 chunkvertbufMaxBytes(){
 	return 0;
 }
 
-void chunkvertbufUpdate(chunk *c, u8 *vertices, u16 sideCounts[sideMAX]) {
+#define VTX_TO_IDX_COUNT(x) ((x*3)>>1)
+void chunkvertbufUpdate(chunk *c, vertexPacked *vertices, u16 sideVtxCounts[sideMAX]) {
 	struct chunkvertbuf *v = c->vertbuf;
 	if(v == NULL) {
 		// TODO: allocate those contiguously if possible
@@ -73,15 +95,15 @@ void chunkvertbufUpdate(chunk *c, u8 *vertices, u16 sideCounts[sideMAX]) {
 
 	// Compute where the geometry for each side starts and how long it is
 	// in the chunk's packed vertex buffer.
-	u16 count = 0;
+	u16 vtxCount = 0;
 	for(side sideIndex=0;sideIndex<sideMAX;sideIndex++){
-		v->sideStart[sideIndex] = count;
-		v->sideCount[sideIndex] = sideCounts[sideIndex];
-		count += sideCounts[sideIndex];
+		v->sideIdxStart[sideIndex] = VTX_TO_IDX_COUNT(vtxCount);
+		v->sideIdxCount[sideIndex] = VTX_TO_IDX_COUNT(sideVtxCounts[sideIndex]);
+		vtxCount += sideVtxCounts[sideIndex];
 	}
-	v->count = count;
+	v->idxCount = VTX_TO_IDX_COUNT(vtxCount);
 
-	if(count == 0){
+	if(vtxCount == 0){
 		// Empty chunk, don't allocate or update anything (except the counts themselves)
 		return;
 	}
@@ -91,22 +113,23 @@ void chunkvertbufUpdate(chunk *c, u8 *vertices, u16 sideCounts[sideMAX]) {
 		gfxObjectLabel(GL_VERTEX_ARRAY, v->vao, "Chunk %d,%d,%d VAO", c->x, c->y, c->z);
 	}
 	glBindVertexArray(v->vao);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 
 	if(!v->vbo){
 		glGenBuffers(1, &v->vbo);
 		gfxObjectLabel(GL_BUFFER, v->vbo, "Chunk %d,%d,%d VBO", c->x, c->y, c->z);
 	}
-	glBindBuffer(GL_ARRAY_BUFFER,v->vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, v->vbo);
 
 	// Upload to the GPU, doing partial updates if possible.
 	const u32 vertexSize = sizeof(vertexPacked);
-	if(gfxUseSubData && (count <= v->vboSize)){
-		glBufferSubData(GL_ARRAY_BUFFER,0,vertexSize * count,vertices); // Todo Measure performance impact of this!
+	if(gfxUseSubData && (vtxCount <= v->vboSize)){
+		glBufferSubData(GL_ARRAY_BUFFER,0,vertexSize * vtxCount,vertices); // Todo Measure performance impact of this!
 	}else{
 		allocatedGlBufferBytes -= vertexSize * v->vboSize;
-		glBufferData(GL_ARRAY_BUFFER,vertexSize * count,vertices,GL_STATIC_DRAW);
-		allocatedGlBufferBytes += vertexSize * count;
-		v->vboSize = count;
+		glBufferData(GL_ARRAY_BUFFER,vertexSize * vtxCount,vertices,GL_STATIC_DRAW);
+		allocatedGlBufferBytes += vertexSize * vtxCount;
+		v->vboSize = vtxCount;
 		setVAOFormatPacked();
 	}
 }
@@ -125,31 +148,34 @@ void chunkvertbufFree(struct chunk *c){
 
 void chunkvertbufDrawOne(struct chunk *c, sideMask mask){
 	struct chunkvertbuf *v = c->vertbuf;
-	if(v->vao == 0 || v->count == 0){return;}
+	if(v->vao == 0 || v->idxCount == 0){return;}
 	uint bufOffset = 0;
 
 	shaderTransform(sBlockMesh,c->x-subBlockViewOffset.x,c->y-subBlockViewOffset.y,c->z-subBlockViewOffset.z);
 
 	glBindVertexArray(v->vao);
 	if(mask == sideMaskALL || !glIsMultiDrawAvailable){
-		glDrawArrays(GL_TRIANGLES,0,v->count);
-		vboTrisCount += v->count / 3;
+		glDrawElements(GL_TRIANGLES,v->idxCount,GL_UNSIGNED_SHORT,NULL);
+		vboTrisCount += v->idxCount / 3;
 		drawCallCount++;
 	}else{
-		GLint first[sideMAX];
-		GLsizei count[sideMAX];
+		// We need one face less max, otherwise it would mean mask == sideMaskALL
+		uintptr_t first[sideMAX - 1];
+		GLsizei count[sideMAX - 1];
 		uint index = 0;
 		bool reuseLastSide = false;
 		for(side sideIndex = 0; sideIndex < sideMAX; sideIndex++){
 			if(mask & (1 << sideIndex)){
-				const uint cFirst = bufOffset + c->vertbuf->sideStart[sideIndex];
-				const uint cCount = c->vertbuf->sideCount[sideIndex];
+				const uint cFirst = bufOffset + c->vertbuf->sideIdxStart[sideIndex];
+				const uint cCount = c->vertbuf->sideIdxCount[sideIndex];
 				if(cCount == 0){continue;}
 				vboTrisCount += cCount / 3;
 				if(reuseLastSide){
 					count[index-1] += cCount;
 				}else{
-					first[index] = cFirst;
+					// OpenGL expects a *byte* offset into the index buffer,
+					// which is interpreted as GL_UNSIGNED_SHORT only afterwards
+					first[index] = cFirst * sizeof(u16);
 					count[index] = cCount;
 					index++;
 					reuseLastSide = true;
@@ -158,7 +184,7 @@ void chunkvertbufDrawOne(struct chunk *c, sideMask mask){
 				reuseLastSide = false;
 			}
 		}
-		glMultiDrawArrays(GL_TRIANGLES,first,count,index);
+		glMultiDrawElements(GL_TRIANGLES,count,GL_UNSIGNED_SHORT,(const void*const*)first,index);
 		drawCallCount++;
 	}
 }
