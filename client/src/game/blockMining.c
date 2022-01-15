@@ -48,6 +48,13 @@ float blockMiningGetProgress(blockMining *bm){
 	return ((float)bm->damage) / ((float)blockTypeGetHealth(bm->b));
 }
 
+void blockMiningBurnBlock(int x, int y, int z, blockId b){
+	(void)x;
+	(void)y;
+	(void)z;
+	(void)b;
+}
+
 int blockMiningUpdateMesh(int d){
 	blockMining *bm = &blockMiningList[d];
 	const int frame = floorf(blockMiningGetProgress(bm)*8);

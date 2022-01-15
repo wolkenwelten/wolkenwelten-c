@@ -84,7 +84,8 @@
 ]]
 
 [def item-burn-up [λ [pos id amount] "Calls the specific burn up handler that AMOUNT ID items have burned up at POS"
-        [cond [[procedure? [[items [- id 256]] burn-up]] [[[items [- id 256]] burn-up] pos id amount]]
+     [cond [[procedure? [items [- id 256]] burn-up] [[[items [- id 256]] burn-up]]
+                                                    [[[items [- id 256]] burn-up] pos id amount]]
                [#t #f]
         ]
 ]]

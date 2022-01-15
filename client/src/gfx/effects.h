@@ -12,3 +12,4 @@ void fxAnimalDiedPacket (const packet *p);
 void fxProjectileHit    (const packet *p);
 void fxRainDrop         (const vec pos);
 void fxSnowDrop         (const vec pos);
+void fxFluidVapor       (int cx, int cy, int cz, int fluidType, int amountLost);

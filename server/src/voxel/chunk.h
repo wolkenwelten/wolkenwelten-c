@@ -10,7 +10,7 @@ struct chunk {
 	void *nextFree;
 	beingList bl;
 
-	chunkOverlay *fluid, *block;
+	chunkOverlay *fluid, *block, *fire;
 };
 
 void   chunkFree        (chunk *c);

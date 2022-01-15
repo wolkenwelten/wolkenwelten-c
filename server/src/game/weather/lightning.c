@@ -31,7 +31,7 @@
 int fireBeamSize = 0;
 void lightningFireBeamCB(int x, int y, int z){
 	if(worldTryB(x,y,z)){
-		fireNew(x,y,z,fireBeamSize);
+		worldSetFire(x,y,z,fireBeamSize);
 	}
 }
 

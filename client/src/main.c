@@ -174,13 +174,13 @@ void worldUpdate(){
 		ropeUpdateAll();
 		projectileUpdateAll();
 		gtimeUpdate();
-		fireCheckPlayerBurn(gameTicks);
 		weatherUpdateAll();
 		throwableUpdateAll();
 		throwableCheckPickup();
 		entityUpdateAll();
 		lispEvents();
 		fluidPhysicsTick();
+		fireUpdateAll();
 
 		gameTicks++;
 	}

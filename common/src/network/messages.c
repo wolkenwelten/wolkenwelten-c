@@ -445,20 +445,6 @@ void msgFxBeamBlastHit(int c, const vec pos, u16 size, u16 style){
 	packetQueue(p,msgtFxProjectileHit,4*4,c);
 }
 
-void msgFireUpdate(int c, u16 i, u16 count, u16 x, u16 y, u16 z, i16 strength){
-	packet *p = &packetBuffer;
-
-	p->v.u16[0] = i;
-	p->v.u16[1] = count;
-
-	p->v.u16[2] = x;
-	p->v.u16[3] = y;
-	p->v.u16[4] = z;
-	p->v.i16[5] = strength;
-
-	packetQueue(p,msgtFireRecvUpdate,6*2,c);
-}
-
 void msgLispSExpr(int c, const char *str){
 	packet *p  = &packetBuffer;
 	int len    = strnlen(str,4192);
@@ -568,8 +554,6 @@ const char *networkGetMessageName(uint i){
 		return "projectileUpdate";
 	case msgtFxProjectileHit:
 		return "fxProjectileHit";
-	case msgtFireRecvUpdate:
-		return "fireRecvUpdate";
 	case msgtLispRecvSExpr:
 		return "lispRecvSExpr";
 	case msgtLightningStrike:

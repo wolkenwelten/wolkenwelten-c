@@ -45,9 +45,6 @@ void beingSync(u8 c, being b){
 	case BEING_ITEMDROP:
 		itemDropUpdateMsg(c,beingID(b));
 		return;
-	case BEING_FIRE:
-		fireSendUpdate(c,beingID(b));
-		return;
 	}
 }
 

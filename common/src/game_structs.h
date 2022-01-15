@@ -51,7 +51,8 @@ typedef u8 blockId;
 
 typedef enum chunkOverlayType {
 	chunkOverlayBlock = 0,
-	chunkOverlayFluid
+	chunkOverlayFluid,
+	chunkOverlayFire
 } chunkOverlayType;
 
 typedef struct {
@@ -290,14 +291,6 @@ typedef struct {
 	u16 style;
 	i16 ttl;
 } projectile;
-
-typedef struct {
-	u16 x,y,z;
-	i16 strength;
-	i16 blockDmg;
-	i16 oxygen;
-	beingList *bl;
-} fire;
 
 typedef struct {
 	entity *ent;

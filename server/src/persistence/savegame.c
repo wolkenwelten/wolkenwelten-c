@@ -19,7 +19,6 @@
 #include "animal.h"
 #include "character.h"
 #include "chunk.h"
-#include "fire.h"
 #include "itemDrop.h"
 #include "throwable.h"
 
@@ -151,6 +150,7 @@ void chungusLoad(chungus *c){
 	for(b=saveLoadBuffer;b<end;){
 		saveType cType = *b;
 		switch(cType){
+		case saveTypeChunkFireData:
 		case saveTypeChunkFluidData:
 		case saveTypeChunkBlockData:
 			b = chunkLoad(c,b);
@@ -160,9 +160,6 @@ void chungusLoad(chungus *c){
 			break;
 		case saveTypeAnimal:
 			b = animalLoad(b);
-			break;
-		case saveTypeFire:
-			b = fireLoad(b);
 			break;
 		case saveTypeThrowable:
 			b = throwableLoad(b);
@@ -193,12 +190,12 @@ void chungusSave(chungus *c){
 	for(int z=0;z<16;z++){
 		cbuf = chunkSave(&c->chunks[x][y][z],cbuf, saveTypeChunkBlockData);
 		cbuf = chunkSave(&c->chunks[x][y][z],cbuf, saveTypeChunkFluidData);
+		cbuf = chunkSave(&c->chunks[x][y][z],cbuf, saveTypeChunkFireData);
 	}
 	}
 	}
 	cbuf = itemDropSaveChungus (c,cbuf);
 	cbuf = animalSaveChungus   (c,cbuf);
-	cbuf = fireSaveChungus     (c,cbuf);
 	cbuf = throwableSaveChungus(c,cbuf);
 	const size_t uncompressedLen = cbuf - saveLoadBuffer;
 	if(uncompressedLen == 0){

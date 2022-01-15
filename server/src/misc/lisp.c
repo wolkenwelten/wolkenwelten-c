@@ -81,10 +81,6 @@ static lVal *wwlnfACount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(animalCount);
 }
-static lVal *wwlnfFCount(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	return lValInt(fireCount);
-}
 static lVal *wwlnfBMCount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(blockMiningGetActive());
@@ -468,7 +464,6 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
 	lAddNativeFunc(c,"animal-count",   "()",                                           "Returns animal count",                                       wwlnfACount);
 	lAddNativeFunc(c,"animal-kill-all","()",                                           "Returns animal count",                                       wwlnfAnimalKillAll);
-	lAddNativeFunc(c,"fire-count",     "()",                                           "Returns fire count",                                         wwlnfFCount);
 	lAddNativeFunc(c,"mining-count",   "()",                                           "Returns block mining count",                                 wwlnfBMCount);
 	lAddNativeFunc(c,"item-drop-count","()",                                           "Returns item drop count",                                    wwlnfIDCount);
 	lAddNativeFunc(c,"item-drop-slow", "()",                                           "Returns amount of itemDrops that have the slow update bit",  wwlnfIDSlowCount);

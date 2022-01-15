@@ -227,7 +227,6 @@ void msgUpdatePlayer(uint c){
 	blockMiningUpdatePlayer(c);
 	animalSyncPlayer(c);
 	projectileSyncPlayer(c);
-	fireSyncPlayer(c);
 	throwableSyncPlayer(c);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
@@ -279,6 +278,7 @@ void msgSendChunkOverlay(uint c, chunkOverlay *o, int x, int y, int z, chunkOver
 void msgSendChunk(uint c, const chunk *chnk){
 	msgSendChunkOverlay(c,chnk->block, chnk->x, chnk->y, chnk->z, chunkOverlayBlock);
 	msgSendChunkOverlay(c,chnk->fluid, chnk->x, chnk->y, chnk->z, chunkOverlayFluid);
+	msgSendChunkOverlay(c,chnk->fire,  chnk->x, chnk->y, chnk->z, chunkOverlayFire);
 }
 
 void dispatchBeingDmg(uint c, const packet *p){
@@ -409,9 +409,6 @@ void serverParseSinglePacket(uint c, packet *p){
 		break;
 	case msgtFxProjectileHit:
 		packetEchoExcept(c,p);
-		break;
-	case msgtFireRecvUpdate:
-		fireRecvUpdate(c,p);
 		break;
 	case msgtLispRecvSExpr:
 		lispRecvSExpr(c,p);

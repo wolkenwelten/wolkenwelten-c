@@ -504,15 +504,6 @@ static lVal *wwlnfProjectile(lClosure *c, lVal *v){
 	return NULL;
 }
 
-static lVal *wwlnfFireNew(lClosure *c, lVal *v){
-	(void)c;
-	const vec pos = castToVec(lCar(v),vecNOne()); v = lCdr(v);
-	const int str = castToInt(lCar(v),8);
-
-	if(vecInWorld(pos)){fireNew(pos.x,pos.y,pos.z,str);}
-	return NULL;
-}
-
 static lVal *wwlnfRaycast(lClosure *c, lVal *v){
 	(void)c;
 	bool before = castToBool(lCar(v));
@@ -808,7 +799,6 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"try-to-shoot",   "(cd ammo)",         "Try to shoot and cooldown for CD and use AMMO bullets",          wwlnfTryToShoot);
 	lAddNativeFunc(c,"beamblast",      "(size damage hits-left)", "Calls cFunc beamblast",                                    wwlnfBeamblast);
 	lAddNativeFunc(c,"projectile",     "(&type &num)",      "Fire &NUM=1 projectiles of &TYPE=0",                             wwlnfProjectile);
-	lAddNativeFunc(c,"fire-new",       "(pos &strength)",   "Create/Grow a fire at POS with &STRENGTH=8",                     wwlnfFireNew);
 	lAddNativeFunc(c,"toggle-inventory!","()",              "Toggle the inveotory",                                           wwlnfToggleInventory);
 	lAddNativeFunc(c,"widget-focus-on-game?","()",          "Return #t if the game is focused and not some menu",             wwlnfGuiFocusOnGame);
 	lAddNativeFunc(c,"draw-boundaries", "()",                "Return the current boundary drawing style",                     wwlnfDrawBoundariesGet);

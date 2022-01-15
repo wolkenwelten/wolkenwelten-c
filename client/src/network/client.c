@@ -316,9 +316,6 @@ void clientParsePacket(const packet *p){
 	case msgtFxProjectileHit:
 		fxProjectileHit(p);
 		break;
-	case msgtFireRecvUpdate:
-		fireRecvUpdate(-1,p);
-		break;
 	case msgtLispRecvSExpr:
 		lispRecvSExpr(p);
 		break;

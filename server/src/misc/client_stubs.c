@@ -96,3 +96,11 @@ void lWidgetMarkI(uint i){
 }
 
 void lightningDrawOverlay(){}
+
+void fxFluidVapor (int cx, int cy, int cz, int fluidType, int amountLost){
+	(void)cx;
+	(void)cy;
+	(void)cz;
+	(void)fluidType;
+	(void)amountLost;
+}

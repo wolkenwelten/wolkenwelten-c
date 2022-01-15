@@ -240,27 +240,25 @@ void itemDropUpdateFire(uint i){
 	const uint cx = e->pos.x;
 	const uint cy = e->pos.y;
 	const uint cz = e->pos.z;
-	fire *f = &fireList[id->lastFire];
-	if((id->lastFire >= fireCount) || (f->x != cx) || (f->y != cy) || (f->z != cz)){
-		f = fireGetAtPos(cx,cy,cz);
-		id->lastFire = (u16)(f - fireList);
-	}
-	if((f != NULL) && (f->x == cx) && (f->y == cy) && (f->z == cz)){
-		const int dmg = MIN(f->oxygen,itemGetFireDamage(&id->itm) * id->itm.amount);
+	const u8 f = worldGetFire(cx,cy,cz);
+	if(f){
+		const int dmg = f;
 		id->fireDmg += dmg;
-		f->strength += dmg - id->itm.amount;
-		f->oxygen   -= dmg;
+		//f->strength += dmg - id->itm.amount;
+		//f->oxygen   -= dmg;
 	}else if(id->fireDmg > 0){
 		const int dmg = MIN(id->fireDmg,itemGetFireDamage(&id->itm) * id->itm.amount);
 		id->fireDmg -= dmg;
-		fireNew(cx,cy,cz,dmg);
+		//fireNew(cx,cy,cz,dmg);
 	}
 
 	int maxhp = itemGetFireHealth(&id->itm) * id->itm.amount;
 	if(id->fireDmg >= maxhp){
+		/*
 		if(id->ent != NULL){
 			lispCallFuncVII("item-burn-up",id->ent->pos, id->itm.ID , id->itm.amount);
 		}
+		*/
 		itemDropDel(i);
 		addPriorityItemDrop(i);
 		id->fireDmg = 0;

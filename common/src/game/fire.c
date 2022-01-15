@@ -15,107 +15,111 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fire.h"
-
-#include "../game/being.h"
-#include "../game/item.h"
-#include "../network/messages.h"
+#include "./blockType.h"
+#include "./blockMining.h"
+#include "./item.h"
+#include "../misc/effects.h"
 #include "../world/world.h"
 
-#include <stdlib.h>
 
-fire fireList[1<<14];
-uint fireCount = 0;
-
-void fireInit(){
-	fireCount = 0;
+int fireSpreadTo(int f, int x, int y, int z){
+	if(f <= 0){return f;}
+	const u8 db = worldGetB(x,y,z);
+	if(!db){return f;}
+	const int df = worldGetFire(x,y,z);
+	if(f <= df){return f;}
+	if(rngValA(0xFF) > (uint)f){return f;}
+	const int ndf = MIN(255,df + f / 16);
+	const int diff = ndf - df;
+	worldSetFire(x,y,z,ndf);
+	return f - diff;
 }
 
-void fireEmptyUpdate(uint c){
-	msgFireUpdate(c,0,0,0,0,0,0);
+int fireTick(chunkOverlay *f, chunkOverlay *fluid, chunkOverlay *block, int cx, int cy, int cz){
+	int blocksLit = 0;
+	for(int x=0;x<CHUNK_SIZE;x++){
+	for(int y=0;y<CHUNK_SIZE;y++){
+	for(int z=0;z<CHUNK_SIZE;z++){
+		int curLevel = f->data[x][y][z];
+		if(!curLevel){continue;}
+		blocksLit++;
+		curLevel--;
+
+		if(block){
+			const u8 b = block->data[x][y][z];
+			if(b){
+				curLevel += blockTypeGetFireDamage(b);
+				if(curLevel >= blockTypeGetFireHealth(b)){
+					blockMiningBurnBlock(cx+x,cy+y,cz+z,b);
+				}
+			}
+		}
+		if(fluid){
+			const u8 fluidLevel = fluid->data[x][y][z] & 0xF0;
+			if(fluidLevel){
+				const int newLevel = MAX(0,curLevel - fluidLevel);
+				const int diff     = curLevel - newLevel;
+				const int newFluid = (fluidLevel - diff) | fluid->data[x][y][z];
+				fluid->data[x][y][z] = newFluid > 0xF ? newFluid : 0;
+				fxFluidVapor(cx+x,cy+y,cz+z,fluid->data[x][y][z] & 0xF, diff);
+				curLevel = newLevel;
+			}
+		}
+		if(curLevel > 16){
+			curLevel = fireSpreadTo(curLevel,cx+x,cy+y+1,cz+z);
+		}
+		if(curLevel > 32){
+			switch(rngValA(3)){
+			case 0:
+				curLevel = fireSpreadTo(curLevel,cx+x-1,cy+y,cz+z);
+				break;
+			case 1:
+				curLevel = fireSpreadTo(curLevel,cx+x+1,cy+y,cz+z);
+				break;
+			case 2:
+				curLevel = fireSpreadTo(curLevel,cx+x,cy+y,cz+z-1);
+				break;
+			case 3:
+				curLevel = fireSpreadTo(curLevel,cx+x,cy+y,cz+z+1);
+				break;
+			}
+		}
+		if(curLevel > 48){
+			curLevel = fireSpreadTo(curLevel,cx+x,cy+y-1,cz+z);
+		}
+
+		f->data[x][y][z] = curLevel;
+	}
+	}
+	}
+	return blocksLit;
 }
 
-void fireSendUpdate(uint c, uint i){
-	fire *f = &fireList[i];
-	msgFireUpdate(c,i,fireCount,f->x,f->y,f->z,f->strength);
-}
-
-void fireBox(u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, int strength){
+void fireBox(u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, u8 strength){
 	for(int cx = x;cx < x+w;cx++){
 	for(int cy = y;cy < y+h;cy++){
 	for(int cz = z;cz < z+d;cz++){
-		const blockId b = worldGetB(cx,cy,cz);
-		if(b == 0){continue;}
-		fireNew(cx,cy,cz,strength);
+		worldSetFire(cx,cy,cz,strength);
 	}
 	}
 	}
 }
 
-void fireDel(uint i){
-	if(i >= fireCount){return;}
-	const int  m   = fireCount - 1;
-	beingList *ibl = fireList[i].bl;
-	beingList *mbl = fireList[m].bl;
-	being      ib  = fireGetBeing(&fireList[i]);
-	being      mb  = fireGetBeing(&fireList[m]);
-
-	beingListDel(ibl,ib);
-	beingListDel(mbl,mb);
-	fireList[i] = fireList[m];
-	fireList[i].bl = beingListUpdate(NULL,ib);
-	fireCount--;
-}
-
-void fireDelChungus(const chungus *c){
-	if(c == NULL){return;}
-	const vec cp = chungusGetPos(c);
-	for(uint i=fireCount-1;i<fireCount;i--){
-		const fire *f = &fireList[i];
-		if((f->x >> 8) != cp.x){continue;}
-		if((f->y >> 8) != cp.y){continue;}
-		if((f->z >> 8) != cp.z){continue;}
-		fireDel(i);
-	}
-}
-
-fire *fireGetAtPos(u16 x, u16 y, u16 z){
-	beingList *bl = beingListGet(x,y,z);
-	if(bl == NULL){return NULL;}
-	for(beingListEntry *ble = bl->first; ble != NULL; ble = ble->next){
-		for(uint i=0;i<countof(ble->v);i++){
-			if(beingType(ble->v[i]) != BEING_FIRE){continue;}
-			fire *t = fireGetByBeing(ble->v[i]);
-			if(t == NULL){continue;}
-			if(t->x != x){continue;}
-			if(t->y != y){continue;}
-			if(t->z != z){continue;}
-			return t;
+void fireBoxExtinguish(u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, u8 strength){
+	(void)strength;
+	for(int cx = x;cx < x+w;cx++){
+	for(int cy = y;cy < y+h;cy++){
+	for(int cz = z;cz < z+d;cz++){
+		if(!isClient){
+			const blockId b = worldTryB(cx,cy,cz);
+			if((b == I_Dry_Grass) && (rngValA(1) == 0)){
+				worldSetB(cx,cy,cz,I_Grass);
+			}
+			if(!b){
+				worldSetFluid(cx,cy,cz,0xF0);
+			}
 		}
 	}
-	return NULL;
-}
-
-fire *fireGetByBeing(being b){
-	if(beingType(b) != BEING_FIRE){return NULL;}
-	uint i = beingID(b);
-	if(i >= fireCount){return NULL;}
-	return &fireList[i];
-}
-
-being fireGetBeing(const fire *f){
-	if(f == NULL){return 0;}
-	return beingFire(f - fireList);
-}
-
-int fireHitCheck(const vec pos, float mdd, int dmg, int cause, u16 iteration, being source){
-	(void)mdd;
-	(void)cause;
-	(void)iteration;
-	(void)source;
-	fire *f = fireGetAtPos(pos.x,pos.y,pos.z);
-	if(f != NULL){
-		f->strength -= dmg*4;
-		return 1;
 	}
-	return 0;
+	}
 }

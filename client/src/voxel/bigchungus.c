@@ -50,7 +50,6 @@ void worldInit(){
 	chunkInit();
 	animalInit();
 	itemDropInit();
-	fireInit();
 	projectileInit();
 	throwableInit();
 }
@@ -377,5 +376,28 @@ void worldSetChunkUpdated(int x, int y, int z){
 
 bool worldShouldBeLoaded(const vec cpos){
 	(void)cpos;
+	return true;
+}
+
+u8 worldGetFire(int x,int y,int z) {
+	if((x|y|z)&(~0xFFFF)){return 0;}
+	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
+	if(chng == NULL){ return 0; }
+	chunk *chnk = &chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if(chnk->fire == NULL){ return 0; }
+	return chnk->fire->data[x&0xF][y&0xF][z&0xF];
+}
+
+u8 worldTryFire(int x,int y,int z) {
+	return worldGetFire(x,y,z);
+}
+
+bool worldSetFire(int x,int y,int z, u8 level){
+	if((x|y|z)&(~0xFFFF)){return NULL;}
+	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
+	if(chng == NULL){return false;}
+	chunk *chnk = &chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if(chnk->fire == NULL){chnk->fire = chunkOverlayAllocate();}
+	chnk->fire->data[x&0xF][y&0xF][z&0xF] = level;
 	return true;
 }

@@ -125,7 +125,6 @@ void chungusFree(chungus *c){
 	chungusSave(c);
 	animalDelChungus(c);
 	itemDropDelChungus(c);
-	fireDelChungus(c);
 	throwableDelChungus(c);
 	for(int x=0;x<CHUNGUS_COORDS;x++){
 	for(int y=0;y<CHUNGUS_COORDS;y++){
@@ -494,6 +493,25 @@ void chungusSetFluid(chungus *c, int x, int y, int z, int level){
 	chunk *chnk = &c->chunks[cx][cy][cz];
 	if(chnk->fluid == NULL){chnk->fluid = chunkOverlayAllocate();}
 	chnk->fluid->data[x&0xF][y&0xF][z&0xF] = level;
+	chnk->clientsUpdated = c->clientsUpdated = 0;
+}
+
+u8 chungusGetFire(chungus *c, int x, int y, int z){
+	c->freeTimer = freeTime;
+	chunk *chnk = &c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if(chnk->fire == NULL){ return 0;}
+	return chnk->fire->data[x&0xF][y&0xF][z&0xF];
+}
+
+void chungusSetFire(chungus *c, int x, int y, int z, int strength){
+	if((x&(~0xFF)) || (y&(~0xFF)) || (z&(~0xFF))){return;}
+	c->freeTimer = freeTime;
+	int cx = x >> 4;
+	int cy = y >> 4;
+	int cz = z >> 4;
+	chunk *chnk = &c->chunks[cx][cy][cz];
+	if(chnk->fire == NULL){chnk->fire = chunkOverlayAllocate();}
+	chnk->fire->data[x&0xF][y&0xF][z&0xF] = strength;
 	chnk->clientsUpdated = c->clientsUpdated = 0;
 }
 

@@ -11,9 +11,6 @@ void     worldBoxSphereDirty   (int x, int y, int z, int r);
 blockId  worldTryB             (int x, int y, int z);
 blockId  worldGetB             (int x, int y, int z);
 bool     worldSetB             (int x, int y, int z, blockId block);
-u8       worldTryFluid         (int x, int y, int z);
-u8       worldGetFluid         (int x, int y, int z);
-bool     worldSetFluid         (int x, int y, int z, blockId block);
 chungus *worldTryChungus       (int x, int y, int z);
 chungus *worldGetChungus       (int x, int y, int z);
 chunk   *worldGetChunk         (int x, int y, int z);
@@ -26,3 +23,11 @@ int      checkCollision        (int x, int y, int z);
 bool     worldIsLoaded         (int x, int y, int z);
 void     worldSetChunkUpdated  (int x, int y, int z);
 bool     worldShouldBeLoaded   (const vec cpos);
+
+u8       worldTryFluid         (int x, int y, int z);
+u8       worldGetFluid         (int x, int y, int z);
+bool     worldSetFluid         (int x, int y, int z, u8 level);
+
+u8       worldTryFire          (int x, int y, int z);
+u8       worldGetFire          (int x, int y, int z);
+bool     worldSetFire          (int x, int y, int z, u8 strength);

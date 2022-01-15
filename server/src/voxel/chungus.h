@@ -38,6 +38,8 @@ void         chungusSetB             (chungus *c, int x, int y, int z, blockId b
 blockId      chungusGetB             (chungus *c, int x, int y, int z);
 void         chungusSetFluid         (chungus *c, int x, int y, int z, int level);
 u8           chungusGetFluid         (chungus *c, int x, int y, int z);
+void         chungusSetFire          (chungus *c, int x, int y, int z, int strength);
+u8           chungusGetFire          (chungus *c, int x, int y, int z);
 vec          chungusGetPos           (const chungus *c);
 chunk       *chungusGetChunk         (chungus *c, int x, int y, int z);
 void         chungusSetSpawn         (chungus *c, const vec spawn);

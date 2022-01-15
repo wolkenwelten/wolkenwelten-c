@@ -21,7 +21,6 @@
 #include "../game/being.h"
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../game/fire.h"
 #include "../game/grenade.h"
 #include "../game/hook.h"
 #include "../game/itemDrop.h"
@@ -71,10 +70,6 @@ being beingItemDrop  (u32 id){
 	return beingNew(BEING_ITEMDROP,  id);
 }
 
-being beingFire      (u32 id){
-	return beingNew(BEING_FIRE,      id);
-}
-
 being beingThrowable (u32 id){
 	return beingNew(BEING_THROWABLE, id);
 }
@@ -104,10 +99,6 @@ vec beingGetPos(being b){
 		if(c == NULL)     {return vecNOne();}
 		if(c->ent == NULL){return vecNOne();}
 		return c->ent->pos; }
-	case BEING_FIRE: {
-		fire *c = fireGetByBeing(b);
-		if(c == NULL)     {return vecNOne();}
-		return vecNew(c->x,c->y,c->z); }
 	default:
 		return vecNOne();
 	}
@@ -141,13 +132,6 @@ void beingSetPos(being b, const vec pos){
 		if(c == NULL){return;}
 		c->ent->pos = pos;
 		return; }
-	case BEING_FIRE: {
-		fire *c = fireGetByBeing(b);
-		if(c == NULL){return;}
-		c->x = pos.x;
-		c->y = pos.y;
-		c->z = pos.z;
-		return; }
 	default:
 		return;
 	}
@@ -180,13 +164,6 @@ void beingAddPos(being b, const vec pos){
 		if(c == NULL){return;}
 		c->ent->pos = vecAdd(c->ent->pos,pos);
 		return; }
-	case BEING_FIRE: {
-		fire *c = fireGetByBeing(b);
-		if(c == NULL){return;}
-		c->x += pos.x;
-		c->y += pos.y;
-		c->z += pos.z;
-		return; }
 	default:
 		return;
 	}
@@ -214,7 +191,6 @@ vec beingGetVel(being b){
 		itemDrop *c = itemDropGetByBeing(b);
 		if(c == NULL){return vecZero();}
 		return c->ent->vel; }
-	case BEING_FIRE:
 	default:
 		return vecZero();
 	}
@@ -247,7 +223,6 @@ void beingSetVel(being b, const vec vel){
 		if(c == NULL){return;}
 		c->ent->vel = vel;
 		return; }
-	case BEING_FIRE:
 	default:
 		return;
 	}
@@ -280,7 +255,6 @@ void beingAddVel(being b, const vec vel){
 		if(c == NULL){return;}
 		c->ent->vel = vecAdd(c->ent->vel,vel);
 		return; }
-	case BEING_FIRE:
 	default:
 		return;
 	}

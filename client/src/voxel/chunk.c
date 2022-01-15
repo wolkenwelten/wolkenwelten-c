@@ -482,6 +482,10 @@ void chunkRecvUpdate(const packet *p){
 		if(chnk->fluid == NULL){chnk->fluid = chunkOverlayAllocate();}
 		dest = &chnk->fluid->data[0][0][0];
 		break;
+	case chunkOverlayFire:
+		if(chnk->fire == NULL){chnk->fire = chunkOverlayAllocate();}
+		dest = &chnk->fire->data[0][0][0];
+		break;
 	}
 	memcpy(dest,p->v.u8,sizeof(chnk->block->data));
 	chnk->flags |= CHUNK_FLAG_DIRTY;

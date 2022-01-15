@@ -14,7 +14,7 @@ struct chunk {
 	struct chunkvertbuf *vertbuf;
 	beingList bl;
 
-	chunkOverlay *fluid, *block;
+	chunkOverlay *fluid, *block, *fire;
 };
 
 void    chunkInit                  ();

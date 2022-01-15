@@ -561,9 +561,8 @@ void animalCheckBurnAll(){
 	static uint calls = 0;
 	for(uint i=(calls&0x7F);i<animalListMax;i+=0x80){
 		animal *a = &animalList[i];
-		fire *f = fireGetAtPos(a->pos.x,a->pos.y,a->pos.z);
-		if(f == NULL)       {continue;}
-		if(f->strength < 64){continue;}
+		const u8 f = worldGetFire(a->pos.x,a->pos.y,a->pos.z);
+		if(f < 16){continue;}
 		a->health--;
 		animalRBurn(a);
 	}

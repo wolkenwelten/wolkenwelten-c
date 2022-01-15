@@ -42,6 +42,9 @@ void *chunkSave(chunk *c, void *rbuf, saveType t){
 	case saveTypeChunkFluidData:
 		src = c->fluid ? c->fluid->data : NULL;
 		break;
+	case saveTypeChunkFireData:
+		src = c->fire ? c->fire->data : NULL;
+		break;
 	}
 	if(src == NULL){return buf;}
 	memcpy(buf+4, src, 16*16*16);
@@ -69,6 +72,10 @@ const void *chunkLoad(chungus *c, const void *rbuf){
 	case saveTypeChunkFluidData:
 		if(chnk->fluid == NULL){chnk->fluid = chunkOverlayAllocate();}
 		dest = chnk->fluid->data;
+		break;
+	case saveTypeChunkFireData:
+		if(chnk->fire == NULL){chnk->fire = chunkOverlayAllocate();}
+		dest = chnk->fire->data;
 		break;
 	}
 	memcpy(dest, &buf[4], 4096);

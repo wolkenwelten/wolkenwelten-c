@@ -21,95 +21,100 @@
 #include "../gfx/gfx.h"
 #include "../gfx/particle.h"
 #include "../gui/overlay.h"
-#include "../network/chat.h"
 #include "../sdl/sdl.h"
 #include "../sfx/sfx.h"
-#include "../../../common/src/network/messages.h"
+#include "../voxel/chungus.h"
+#include "../../../common/src/game/chunkOverlay.h"
+#include "../../../common/src/game/fire.h"
+#include "../../../common/src/misc/colors.h"
+#include "../../../common/src/misc/profiling.h"
 
 #include <string.h>
 
-void fireNew(u16 x, u16 y, u16 z, i16 strength){
-	msgFireUpdate(-1,0,0,x,y,z,strength);
-}
 
-static void fireDraw(const fire *f){
-	if(abs(f->x-(int)player->pos.x) > renderDistance){return;}
-	if(abs(f->y-(int)player->pos.y) > renderDistance){return;}
-	if(abs(f->z-(int)player->pos.z) > renderDistance){return;}
-	const vec spos = vecNew(f->x,f->y,f->z);
-	const float size = (float)(f->strength * 0.01f);
+
+static void fireGenerateParticles(int x, int y, int z, u8 strength){
+	const int bx = rngValA(0xFF);
+	const int by = rngValA(0xFF);
+	const int bz = rngValA(0xFF);
+	const float px = x + (bx / 256.0);
+	const float py = y + (by / 256.0);
+	const float pz = z + (bz / 256.0);
+
+	const vec spos = vecNew(px,py,pz);
+	const float size = MAX(3.f,(float)(strength * 0.03f));
+
 	newParticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.0001f)), size, size*0.5f,0xFF60C8FF, 96);
-	if(f->strength <  64){return;}
+	if(strength <  16){return;}
 	newParticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.0001f)), size*0.7f, size*0.65f,0xFF5098FF, 128);
-	if(f->strength < 128){return;}
+	if(strength < 48){return;}
 	newParticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.0001f)), size*0.6f, size*0.75f,0xFF1F38EF, 156);
-	if(f->strength < 256){return;}
+	if(strength < 128){return;}
 	newParticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.0001f)), size*0.5f, size*0.75f,0xFF1F38EF, 178);
-}
-
-static void fireDrawSmoke(const fire *f){
-	if(f->strength < 256){return;}
-	if(abs(f->x-(int)player->pos.x) > renderDistance){return;}
-	if(abs(f->y-(int)player->pos.y) > renderDistance){return;}
-	if(abs(f->z-(int)player->pos.z) > renderDistance){return;}
-	const vec spos = vecNew(f->x,f->y,f->z);
-	const float size = (float)(f->strength * 0.01f);
+	if(strength < 160){return;}
 	u32 c = 0x00101820 | (rngValR()&0x0003070F);
 	newSparticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.001f,0),vecMulS(vecRng(),0.0001f)), size*0.01f, size*0.2f,c,2048);
 }
 
+static void fireGenerateChunkParticles(const chunkOverlay *f, int cx, int cy, int cz){
+	if(player){
+		if(abs(cx-(int)player->pos.x) > renderDistance){return;}
+		if(abs(cy-(int)player->pos.y) > renderDistance){return;}
+		if(abs(cz-(int)player->pos.z) > renderDistance){return;}
+	}
+
+	const u8 *d = &f->data[0][0][0];
+	for(int x = 0; x < CHUNK_SIZE; x++){
+	for(int y = 0; y < CHUNK_SIZE; y++){
+	for(int z = 0; z < CHUNK_SIZE; z++){
+		const u8 strength = *d++;
+		if(!strength){continue;}
+		fireGenerateParticles(cx+x, cy+y, cz+z, strength);
+	}
+	}
+	}
+}
+
 void fireDrawAll(){
-	static uint calls = 0;
-	static  int lastTick = 0;
-	int curTick;
+	static int calls = 0;
+	PROFILE_START();
 
-	if(lastTick == 0){lastTick = getTicks();}
-	curTick = getTicks();
-	for(;lastTick < curTick;lastTick+=msPerTick){
-		for(uint i=calls&0xF;i<fireCount;i+=0x10){
-			fireDraw(&fireList[i]);
+	for(uint i = calls&0x7; i < chungusCount; i+=8){
+		chungus *cng = &chungusList[i];
+		for(int x=0;x<16;x++){
+		for(int y=0;y<16;y++){
+		for(int z=0;z<16;z++){
+			const chunk *c = &cng->chunks[x][y][z];
+			if(c->fire == NULL){continue;}
+			fireGenerateChunkParticles(c->fire, c->x, c->y, c->z);
 		}
-		for(uint i=calls&0x3F;i<fireCount;i+=0x40){
-			fireDrawSmoke(&fireList[i]);
 		}
-		calls++;
+		}
 	}
+	++calls;
+	PROFILE_STOP();
 }
 
-void fireRecvUpdate(uint c, const packet *p){
-	(void)c;
-	const uint i     = p->v.u16[0];
-	const uint count = p->v.u16[1];
-	if(count > fireCount){
-		memset(&fireList[fireCount],0,sizeof(fire) * (count-fireCount));
-	}
-	fireCount = count;
-	fire *f = &fireList[i];
-	f->x = p->v.u16[2];
-	f->y = p->v.u16[3];
-	f->z = p->v.u16[4];
-	f->strength = p->v.i16[5];
-}
+void fireUpdateAll(){
+	static int calls = 0;
+	PROFILE_START();
 
-void fireCheckPlayerBurn(uint off){
-	for(uint i=off&0x7F;i<fireCount;i+=0x80){
-		const fire *f   = &fireList[i];
-		const vec fpos  = vecNew(f->x,f->y,f->z);
-		const vec  dist = vecSub(player->pos,fpos);
-		const float  dd = vecDot(dist,dist);
-		const float fdd = MIN(9.f,(fireList[i].strength * 0.01f) * (fireList[i].strength * 0.01f));
-		if(dd < fdd){
-			sfxPlay(sfxUngh,1.f);
-			setOverlayColor(0xA03020F0,0);
-			if(characterHP(player,-1)){
-				characterDyingMessage(characterGetBeing(player),0,deathCauseFire);
-				setOverlayColor(0xFF000000,0);
-				commitOverlayColor();
+	for(uint i = calls&0xF; i < chungusCount; i+=0x10){
+		chungus *cng = &chungusList[i];
+		for(int x=0;x<16;x++){
+		for(int y=0;y<16;y++){
+		for(int z=0;z<16;z++){
+			chunk *c = &cng->chunks[x][y][z];
+			if(c->fire == NULL){continue;}
+			if(!fireTick(c->fire, c->fluid, c->block, c->x, c->y, c->z)){
+				chunkOverlayFree(c->fire);
+				c->fire = NULL;
 			}
 		}
+		}
+		}
 	}
-}
+	++calls;
 
-void fireBoxExtinguish(u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, int strength){
-	(void)x;(void)y;(void)z;(void)w;(void)h;(void)d;(void)strength;
+	PROFILE_STOP();
 }

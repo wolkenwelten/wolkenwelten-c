@@ -104,7 +104,6 @@ void chungusFree(chungus *c){
 	if(c == NULL){return;}
 	animalDelChungus(c);
 	itemDropDelChungus(c);
-	fireDelChungus(c);
 	throwableDelChungus(c);
 	for(int x=0;x<16;x++){
 	for(int y=0;y<16;y++){

@@ -8,7 +8,8 @@ typedef enum {
 	saveTypeAnimal,
 	saveTypeFire,
 	saveTypeThrowable,
-	saveTypeChunkFluidData
+	saveTypeChunkFluidData,
+	saveTypeChunkFireData
 } saveType;
 
 void playerSafeSave        ();

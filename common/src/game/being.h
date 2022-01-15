@@ -10,7 +10,6 @@ being beingHook      (u32 id);
 being beingGrenade   (u32 id);
 being beingProjectile(u32 id);
 being beingItemDrop  (u32 id);
-being beingFire      (u32 id);
 being beingThrowable (u32 id);
 
 vec   beingGetPos    (being b);
