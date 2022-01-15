@@ -18,8 +18,8 @@ class WolkenWeltenHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
         self.end_headers()
         self.wfile.write(bytes("Done", "utf-8"))
-        httpd.server_close()
-        quit()
+        #httpd.server_close()
+        #quit()
 
 def open_browser():
     time.sleep(0.01)
