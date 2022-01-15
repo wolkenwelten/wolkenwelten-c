@@ -244,39 +244,39 @@ void textureBuildBlockIcons(int loadFromFile){
 			tgui[((y+dy)*iw) | (x+dx)] = 0x000000FF;
 		}
 		}
-		sx = blockTypeGetTexX(i,0) << 5;
-		sy = blockTypeGetTexY(i,0) << 5;
+		sx = blockTypeGetTexX(i,0) << 6;
+		sy = blockTypeGetTexY(i,0) << 6;
 		for(int y=0;y<16;y++){
 		for(int x=0;x<16;x++){
 			const u32 c = interpol(
-				tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)  )],
-				tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)+1)],
-				tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)  )],
-				tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)+1)]
+				tblocks[((sy+(y<<1)  )*bw) | (sx+(x<<1)  )],
+				tblocks[((sy+(y<<1)  )*bw) | (sx+(x<<1)+1)],
+				tblocks[((sy+(y<<1)+1)*bw) | (sx+(x<<1)  )],
+				tblocks[((sy+(y<<1)+1)*bw) | (sx+(x<<1)+1)]
 			);
 			tgui[((y+dy+8+(x>>1))*iw) | (x+dx)] = darken(c);
 		}
 		}
-		sx = blockTypeGetTexX(i,4) << 5;
-		sy = blockTypeGetTexY(i,4) << 5;
+		sx = blockTypeGetTexX(i,4) << 6;
+		sy = blockTypeGetTexY(i,4) << 6;
 		for(int y=0;y<16;y++){
 		for(int x=0;x<16;x++){
 			const u32 c = interpol(
-				tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)  )],
-				tblocks[((sy+(y<<1)  )<<9) | (sx+(x<<1)+1)],
-				tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)  )],
-				tblocks[((sy+(y<<1)+1)<<9) | (sx+(x<<1)+1)]
+				tblocks[((sy+(y<<1)  )*bw) | (sx+(x<<1)  )],
+				tblocks[((sy+(y<<1)  )*bw) | (sx+(x<<1)+1)],
+				tblocks[((sy+(y<<1)+1)*bw) | (sx+(x<<1)  )],
+				tblocks[((sy+(y<<1)+1)*bw) | (sx+(x<<1)+1)]
 			);
 			tgui[((y+dy+8+(7-(x>>1)))*iw) | (x+dx+16)] = darken(c);
 		}
 		}
-		sx = blockTypeGetTexX(i,2) << 5;
-		sy = blockTypeGetTexY(i,2) << 5;
+		sx = blockTypeGetTexX(i,2) << 6;
+		sy = blockTypeGetTexY(i,2) << 6;
 		for(int y=0;y<32;y++){
 		for(int x=0;x<32;x++){
 			int ndx = 16 + (x>>1) - (y >> 1);
 			int ndy = (x>>2) + (y>>2) + (x&1);
-			tgui[((ndy+dy)*iw) | (ndx+dx)] = tblocks[((sy+y)<<9) | (sx+x)];
+			tgui[((ndy+dy)*iw) | (ndx+dx)] = tblocks[((sy+y)*bw) | (sx+x)];
 		}
 		}
 	}
