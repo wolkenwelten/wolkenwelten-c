@@ -29,11 +29,13 @@
 
 #define CHUNKVERTBUF_FLAG_USED 1
 struct chunkvertbuf {
-	struct{
-		// for regular GL buffers
-		uint vao,vbo;
-		u16 vboSize; // size of vbo in vertices
+	union {
+		struct {
+			uint vao,vbo;
+		};
+		chunkvertbuf *nextFree;
 	};
+	u16 vboSize; // size of vbo in vertices
 	u8 flags;
 	u16 sideIdxStart[sideMAX],sideIdxCount[sideMAX]; // offset and count of side indices within the (sub)buffer
 	u16 idxCount; // total number of indices, used when all sides are drawn
@@ -75,22 +77,52 @@ u32 chunkvertbufUsedBytes(){
 	return allocatedGlBufferBytes;
 }
 
-u32 chunkvertbufMaxBytes(){
-	return 0;
+#define CHUNKVERTBUF_ALLOC_PAGE_SIZE (1<<21) // 2MB == Huge Page on most μArchs
+chunkvertbuf *chunkvertbufFirstFree = NULL;
+
+static void chunkverbufAllocPage(){
+	const int count = CHUNKVERTBUF_ALLOC_PAGE_SIZE / sizeof(chunkvertbuf);
+	chunkvertbuf *page = malloc(CHUNKVERTBUF_ALLOC_PAGE_SIZE);
+	if(page == NULL){
+		fprintf(stderr,"chunkvertbufAllocPage OOM\n");
+		exit(5);
+	}
+	for(int i=0;i<count;i++){
+		page[i].nextFree = chunkvertbufFirstFree;
+		chunkvertbufFirstFree = &page[i];
+	}
 }
+
+static chunkvertbuf *chunkvertbufAlloc(){
+	if(chunkvertbufFirstFree == NULL){chunkverbufAllocPage();}
+	chunkvertbuf *ret = chunkvertbufFirstFree;
+	chunkvertbufFirstFree = chunkvertbufFirstFree->nextFree;
+	memset(ret,0,sizeof(chunkvertbuf));
+	return ret;
+}
+
+void chunkvertbufFree(struct chunk *c){
+	if(c->vertbuf == NULL){return;}
+	if(c->vertbuf->vbo){
+		const u32 vertexSize = sizeof(vertexPacked);
+		glDeleteBuffers(1,&c->vertbuf->vbo);
+		allocatedGlBufferBytes -= vertexSize * c->vertbuf->vboSize;
+	}
+	if(c->vertbuf->vao){glDeleteVertexArrays(1,&c->vertbuf->vao);}
+
+	c->vertbuf->nextFree = chunkvertbufFirstFree;
+	chunkvertbufFirstFree = c->vertbuf;
+
+	c->vertbuf = NULL;
+}
+
 
 #define VTX_TO_IDX_COUNT(x) ((x*3)>>1)
 void chunkvertbufUpdate(chunk *c, vertexPacked *vertices, u16 sideVtxCounts[sideMAX]) {
 	struct chunkvertbuf *v = c->vertbuf;
 	if(v == NULL) {
-		// TODO: allocate those contiguously if possible
-		v = calloc(1, sizeof(struct chunkvertbuf));
-		if(v == NULL){
-			fprintf(stderr,"Couldn't allocate chunk vertbuf, exiting!\n");
-			exit(1);
-		}
+		c->vertbuf = v = chunkvertbufAlloc();
 		v->flags |= CHUNKVERTBUF_FLAG_USED;
-		c->vertbuf = v;
 	}
 
 	// Compute where the geometry for each side starts and how long it is
@@ -132,18 +164,6 @@ void chunkvertbufUpdate(chunk *c, vertexPacked *vertices, u16 sideVtxCounts[side
 		v->vboSize = vtxCount;
 		setVAOFormatPacked();
 	}
-}
-
-void chunkvertbufFree(struct chunk *c){
-	if(c->vertbuf == NULL){return;}
-	if(c->vertbuf->vbo){
-		const u32 vertexSize = sizeof(vertexPacked);
-		glDeleteBuffers(1,&c->vertbuf->vbo);
-		allocatedGlBufferBytes -= vertexSize * c->vertbuf->vboSize;
-	}
-	if(c->vertbuf->vao){glDeleteVertexArrays(1,&c->vertbuf->vao);}
-	free(c->vertbuf);
-	c->vertbuf = NULL;
 }
 
 void chunkvertbufDrawOne(struct chunk *c, sideMask mask){

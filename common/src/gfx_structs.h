@@ -27,6 +27,28 @@ typedef struct vertex2D {
 } vertex2D;
 #pragma pack(pop)
 
+#define VERTEX_PACKED_X_LEN 5
+#define VERTEX_PACKED_X_OFFSET 0
+#define VERTEX_PACKED_Y_LEN 5
+#define VERTEX_PACKED_Y_OFFSET 5
+#define VERTEX_PACKED_Z_LEN 5
+#define VERTEX_PACKED_Z_OFFSET 10
+#define VERTEX_PACKED_BT_LEN 8
+#define VERTEX_PACKED_BT_OFFSET 16
+#define VERTEX_PACKED_SIDE_LEN 3
+#define VERTEX_PACKED_SIDE_OFFSET 24
+typedef uint32_t vertexPacked;
+#define mkVertex(x,y,z,w,h,bt,side) (\
+	((x) << VERTEX_PACKED_X_OFFSET) |\
+	((y) << VERTEX_PACKED_Y_OFFSET) |\
+	((z) << VERTEX_PACKED_Z_OFFSET) |\
+	((side) << VERTEX_PACKED_SIDE_OFFSET) |\
+	((bt) << VERTEX_PACKED_BT_OFFSET)\
+)
+
+typedef struct queueEntry queueEntry;
+typedef struct chunkvertbuf chunkvertbuf;
+
 typedef struct {
 	vertex2D *dataBuffer;
 	int sx,sy,mx,my,wrap,size,font;
@@ -65,9 +87,7 @@ typedef struct {
 typedef struct {
 	float x,y,z,size;
 } rainDrop;
-#pragma pack(pop)
 
-#pragma pack(push, 1)
 typedef struct {
 	float x,y,z,size;
 } snowDrop;

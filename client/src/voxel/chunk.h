@@ -1,17 +1,16 @@
 #pragma once
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/side.h"
+#include "chunkvertbuf.h"
 
 #define CHUNK_FLAG_DIRTY 1
-
-typedef struct queueEntry queueEntry;
 
 struct chunk {
 	u16 x,y,z;
 	u8 flags;
 	u8 fadeIn;
 
-	struct chunkvertbuf *vertbuf;
+	chunkvertbuf *vertbuf;
 	beingList bl;
 
 	chunkOverlay *fluid, *block, *fire;

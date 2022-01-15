@@ -487,7 +487,7 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
 		textMeshPrintf(guim,"Snow Intensity: %3i\n",snowIntensity);
 		textMeshPrintf(guim,"Storm Intensity: %3i [%i]\n",stormIntensity, stormDelta);
-		textMeshPrintf(guim,"ChunkVert   : %uK/%uK\n",chunkvertbufUsedBytes()/1024,chunkvertbufMaxBytes()/1024);
+		textMeshPrintf(guim,"ChunkVert   : %uK\n",chunkvertbufUsedBytes()/1024);
 		textMeshPrintf(guim,"ActiveChungi: %2i\n",chungusGetActiveCount());
 		textMeshPrintf(guim,"ChnkOverlays: %u [Free:%u]\n", chunkOverlayAllocated, chunkOverlayAllocated - chunkOverlayUsed);
 		textMeshPrintf(guim,"GarbageRuns : %u\n",lGCRuns);
