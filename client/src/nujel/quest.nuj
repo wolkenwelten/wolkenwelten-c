@@ -224,11 +224,11 @@
 ]
 
 [event-bind "on-join" [λ []
-        [quest/refresh]
+        ;[quest/refresh]
 ]]
 
 [event-bind "on-gameplay-tick" [λ []
-        [quest/refresh]
+        ;[quest/refresh]
 ]]
 
 [event-bind "on-leave" [λ []
