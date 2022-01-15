@@ -159,5 +159,7 @@
 	[set-inv! 25 i-flamebullet 999 pid]
 	[set-inv! 26 i-snow-dirt 99 pid]
 	[set-inv! 27 i-snow-grass 99 pid]
+	[set-inv! 28 i-marble 99 pid]
+	[set-inv! 29 i-marble-blocks 99 pid]
         "asd"
 ]]

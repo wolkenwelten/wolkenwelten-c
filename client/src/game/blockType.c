@@ -60,8 +60,8 @@ void blockTypeAddToMesh(blockId b, mesh *m, const vec pos, const vec size) {
 	for(int cside=0;cside<6;cside++){
 		tileLoX[cside] = ((float)blocks[b].texX[cside]*TILE);
 		tileLoY[cside] = ((float)blocks[b].texY[cside]*TILE);
-		tileHiX[cside] = tileLoX[cside] + TILE;
-		tileHiY[cside] = tileLoY[cside] + TILE;
+		tileHiX[cside] = tileLoX[cside] + TILE/2;
+		tileHiY[cside] = tileLoY[cside] + TILE/2;
 	}
 
 	// Front Face
