@@ -484,11 +484,11 @@ void drawDebuginfo(){
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"SnowFlakes  : %s%s\n",colorSignalLow(1<<16,1<<15,1<<14,     snowCount),getHumanReadableSize(snowCount));
 		guim->fgc  = colorPalette[15];
-		textMeshPrintf(guim,"Chunks gener: %2i\n",chunkGetGeneratedThisFrame());
-		textMeshPrintf(guim,"Snow Intensity: %3i\n",snowIntensity);
-		textMeshPrintf(guim,"Storm Intensity: %3i [%i]\n",stormIntensity, stormDelta);
+		textMeshPrintf(guim,"Chunks gener: %i\n",chunkGetGeneratedThisFrame());
+		textMeshPrintf(guim,"Snow Power  : %i\n",snowIntensity);
+		textMeshPrintf(guim,"Storm Power : %i [%i]\n",stormIntensity, stormDelta);
 		textMeshPrintf(guim,"ChunkVert   : %uK\n",chunkvertbufUsedBytes()/1024);
-		textMeshPrintf(guim,"ActiveChungi: %2i\n",chungusGetActiveCount());
+		textMeshPrintf(guim,"ActiveChungi: %i\n",chungusGetActiveCount());
 		textMeshPrintf(guim,"ChnkOverlays: %u [Free:%u]\n", chunkOverlayAllocated, chunkOverlayAllocated - chunkOverlayUsed);
 		textMeshPrintf(guim,"GarbageRuns : %u\n",lGCRuns);
 		textMeshPrintf(guim,"Latency     : %s%u\n",colorSignalLow(400,200,50,lastLatency),lastLatency);
