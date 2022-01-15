@@ -166,45 +166,21 @@ void chunkvertbufUpdate(chunk *c, vertexPacked *vertices, u16 sideVtxCounts[side
 	}
 }
 
-void chunkvertbufDrawOne(struct chunk *c, sideMask mask){
+void chunkvertbufDrawOne(struct chunk *c, sideMask mask, const vec sideTints[sideMAX]){
 	struct chunkvertbuf *v = c->vertbuf;
 	if(v->vao == 0 || v->idxCount == 0){return;}
-	uint bufOffset = 0;
 
 	shaderTransform(sBlockMesh,c->x-subBlockViewOffset.x,c->y-subBlockViewOffset.y,c->z-subBlockViewOffset.z);
-
 	glBindVertexArray(v->vao);
-	if(mask == sideMaskALL || !glIsMultiDrawAvailable){
-		glDrawElements(GL_TRIANGLES,v->idxCount,GL_UNSIGNED_SHORT,NULL);
-		vboTrisCount += v->idxCount / 3;
-		drawCallCount++;
-	}else{
-		// We need one face less max, otherwise it would mean mask == sideMaskALL
-		uintptr_t first[sideMAX - 1];
-		GLsizei count[sideMAX - 1];
-		uint index = 0;
-		bool reuseLastSide = false;
-		for(side sideIndex = 0; sideIndex < sideMAX; sideIndex++){
-			if(mask & (1 << sideIndex)){
-				const uint cFirst = bufOffset + c->vertbuf->sideIdxStart[sideIndex];
-				const uint cCount = c->vertbuf->sideIdxCount[sideIndex];
-				if(cCount == 0){continue;}
-				vboTrisCount += cCount / 3;
-				if(reuseLastSide){
-					count[index-1] += cCount;
-				}else{
-					// OpenGL expects a *byte* offset into the index buffer,
-					// which is interpreted as GL_UNSIGNED_SHORT only afterwards
-					first[index] = cFirst * sizeof(u16);
-					count[index] = cCount;
-					index++;
-					reuseLastSide = true;
-				}
-			}else{
-				reuseLastSide = false;
-			}
-		}
-		glMultiDrawElements(GL_TRIANGLES,count,GL_UNSIGNED_SHORT,(const void*const*)first,index);
+
+	for(side sideIndex = 0; sideIndex < sideMAX; sideIndex++){
+		if(!(mask & (1 << sideIndex))){continue;}
+		const uint cCount = c->vertbuf->sideIdxCount[sideIndex];
+		if(cCount == 0){continue;}
+		const uint cFirst = c->vertbuf->sideIdxStart[sideIndex];
+		shaderSideTint(sBlockMesh, sideTints[sideIndex]);
+		glDrawElements(GL_TRIANGLES, cCount, GL_UNSIGNED_SHORT, (const void*const*)(cFirst * sizeof(u16)));
+		vboTrisCount += cCount / 3;
 		drawCallCount++;
 	}
 }

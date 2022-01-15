@@ -13,15 +13,6 @@
 	#define WOLKENWELTEN__GL_USE_GL3W
 #endif
 
-#ifdef WOLKENWELTEN__GL_ES
-extern bool glIsMultiDrawAvailable;
-#else
-#define glIsMultiDrawAvailable (true)
-#endif
-
-extern bool glIsBaseInstanceAvailable;
-extern bool glIsMultiDrawIndirectAvailable;
-
 extern bool glIsDebugAvailable;
 extern uint16_t glDebugLabelMaxLen;
 

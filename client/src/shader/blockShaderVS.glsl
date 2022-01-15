@@ -1,6 +1,5 @@
 uniform mat4 matMVP;
 uniform vec3 transPos;
-uniform vec3 sideTints[6];
 
 in uint packedData;
 
@@ -15,5 +14,4 @@ void main(){
 
   gl_Position = matMVP * (vec4(pos) + vec4(transPos,0.0));
   texCoord    = tex;
-  lightness   = sideTints[flag];
 }

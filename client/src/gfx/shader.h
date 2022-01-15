@@ -25,7 +25,7 @@ void    shaderBind       (shader *s);
 void    shaderMatrix     (shader *s, float mvp[16]);
 void    shaderAlpha      (shader *s, float alpha);
 void    shaderColor      (shader *s, float r, float g, float b, float a);
-void    shaderSideTints  (shader *s, const vec sideTints[sideMAX]);
+void    shaderSideTint   (shader *s, const vec sideTint);
 void    shaderTransform  (shader *s, float x, float y, float z);
 void    shaderSizeMul    (shader *s, float sizeMul);
 

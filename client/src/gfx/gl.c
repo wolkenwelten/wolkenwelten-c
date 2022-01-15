@@ -30,9 +30,6 @@ bool glInitialize() {
 	}
 	#endif
 
-	glIsBaseInstanceAvailable = glHasExtension("GL_ARB_base_instance");
-	glIsMultiDrawIndirectAvailable = glHasExtension("GL_ARB_multi_draw_indirect");
-
 	glIsDebugAvailable = glHasExtension("GL_KHR_debug");
 	if(glIsDebugAvailable){
 		GLint value;

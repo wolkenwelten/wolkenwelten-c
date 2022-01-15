@@ -427,7 +427,7 @@ void chunkSetB(chunk *c,u16 x,u16 y,u16 z,blockId block){
 	if((z&EDGE) == EDGE){worldSetChunkUpdated(x  ,y  ,z+1);}
 }
 
-static void chunkDraw(chunk *c, float d, sideMask mask){
+static void chunkDraw(chunk *c, float d, sideMask mask, const vec sideTints[sideMAX]){
 	if(c->flags & CHUNK_FLAG_DIRTY){ chunkGenMesh(c); }
 
 	// Since chunk mesh generation & upload is rate limited, we might not have a vertbuf yet.
@@ -445,13 +445,12 @@ static void chunkDraw(chunk *c, float d, sideMask mask){
 		shaderAlpha(sBlockMesh,1.f * fIn);
 	}
 
-	chunkvertbufDrawOne(c,mask);
+	chunkvertbufDrawOne(c,mask, sideTints);
 }
 
 void chunkDrawQueue(queueEntry *queue, int queueLen, const vec sideTints[sideMAX]){
-	shaderSideTints(sBlockMesh,sideTints);
 	for(int i=0;i<queueLen;i++){
-		chunkDraw(queue[i].chnk,queue[i].distance,queue[i].mask);
+		chunkDraw(queue[i].chnk,queue[i].distance,queue[i].mask, sideTints);
 	}
 }
 
