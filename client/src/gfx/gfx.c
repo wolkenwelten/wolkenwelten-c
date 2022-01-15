@@ -27,7 +27,6 @@
 #include "../game/rope.h"
 #include "../game/weather/weather.h"
 #include "../gfx/boundaries.h"
-#include "../gfx/fbo.h"
 #include "../gfx/gl.h"
 #include "../gfx/mat.h"
 #include "../gfx/particle.h"
@@ -72,12 +71,10 @@ float  gfxCurFOV            = 90.0f;
 vec    camShake;
 
 
-#if   defined(__HAIKU__)
+#if defined(__HAIKU__) || defined(__EMSCRIPTEN__) || defined(__aarch64__) || defined(__ARM_ARCH_7A__)
 	float renderDistance = 192.f;
-#elif defined(__EMSCRIPTEN__) || defined(__aarch64__) || defined(__ARM_ARCH_7A__)
-	float renderDistance = 256.f;
 #else
-	float renderDistance = 512.f;
+	float renderDistance = 384.f;
 #endif
 
 float fadeoutDistance      =  32.f;
@@ -266,10 +263,6 @@ void renderFrame(){
 	calcView(player);
 	cloudsCalcColors();
 
-	if(renderToFBO){
-		fboBind(&fboGame, screenWidth/2, screenHeight/2);
-	}
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if(gameRunning){
 		renderSky(player);
@@ -282,11 +275,6 @@ void renderFrame(){
 		drawMenuBackground();
 	}
 	glDisable(GL_DEPTH_TEST);
-
-	if(renderToFBO){
-		fboBindScreen();
-		fboBlit(&fboGame, 0, 0, screenWidth, screenHeight);
-	}
 
 	renderUI();
 	swapWindow();
