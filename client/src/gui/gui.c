@@ -696,13 +696,12 @@ void renderUI(){
 		drawActiveGlider();
 	}
 
-
-	//glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
 	shaderBind(sTextMesh);
 	shaderMatrix(sTextMesh,matOrthoProj);
-	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){
+	if(widgetFocused && (widgetFocused->type == wGameScreen)){
 		hideMouseCursor();
 	}else{
 		showMouseCursor();
@@ -711,7 +710,6 @@ void renderUI(){
 	drawCrosshair();
 	updateMouse();
 
-	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	gfxGroupEnd();
 }
