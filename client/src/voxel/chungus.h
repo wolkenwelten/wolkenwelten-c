@@ -38,3 +38,4 @@ void     chungusQueueDraws     (chungus *c,const character *cam, queueEntry *dra
 chungus *chungusGetActive      (uint i);
 void     chungusSetActiveCount (uint i);
 uint     chungusGetActiveCount ();
+bool     chungusInFrustum      (const chungus *c);

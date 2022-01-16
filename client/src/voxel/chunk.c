@@ -19,6 +19,7 @@
 
 #include "../main.h"
 #include "../game/blockType.h"
+#include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gl.h"
 #include "../gui/gui.h"
@@ -53,8 +54,20 @@ void chunkInit(){
 	chunksGeneratedThisFrame = 0;
 }
 
-uint    chunkGetGeneratedThisFrame() { return chunksGeneratedThisFrame; }
-void    chunkResetCounter()          { chunksGeneratedThisFrame = 0;    }
+uint chunkGetGeneratedThisFrame(){
+	return chunksGeneratedThisFrame;
+}
+
+void chunkResetCounter(){
+	chunksGeneratedThisFrame = 0;
+}
+
+bool chunkInFrustum(const chunk *c){
+	const vec pos = vecNew(c->x, c->y, c->z);
+	//const vec pos = vecAdd(off,vecMulS(pos,CHUNK_SIZE))
+	return CubeInFrustum(pos,CHUNK_SIZE);
+}
+
 
 void chunkFree(chunk *c){
 	if(c == NULL){return;}

@@ -81,11 +81,13 @@ void fireDrawAll(){
 
 	for(uint i = calls&0x7; i < chungusCount; i+=8){
 		chungus *cng = &chungusList[i];
+		if(!chungusInFrustum(cng)){continue;}
 		for(int x=0;x<16;x++){
 		for(int y=0;y<16;y++){
 		for(int z=0;z<16;z++){
 			const chunk *c = &cng->chunks[x][y][z];
 			if(c->fire == NULL){continue;}
+			if(!chunkInFrustum(c)){continue;}
 			fireGenerateChunkParticles(c->fire, c->x, c->y, c->z);
 		}
 		}

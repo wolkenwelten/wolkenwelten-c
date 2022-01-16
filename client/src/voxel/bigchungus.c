@@ -78,10 +78,6 @@ static void quicksortQueue(queueEntry *a, int lo, int hi){
 	quicksortQueue        (a, p+1, hi);
 }
 
-static bool chungusInFrustum(const vec pos) {
-	return CubeInFrustum(vecMulS(pos,CHUNGUS_SIZE),CHUNGUS_SIZE);
-}
-
 static float chungusDistance(const vec cam, const vec pos) {
 	const vec np = vecAddS(vecMulS(pos,CHUNGUS_SIZE),CHUNGUS_SIZE/2);
 	return vecMag(vecSub(cam,np));
@@ -230,7 +226,7 @@ void worldDraw(const character *cam){
 	for(int z=minCZ;z<maxCZ;z++){
 		const vec pos = vecNew(x,y,z);
 		float d = chungusDistance(cam->pos,pos);
-		if((d < (renderDistance+CHUNGUS_SIZE)) && (chungusInFrustum(pos))){
+		if((d < (renderDistance+CHUNGUS_SIZE)) && (CubeInFrustum(vecMulS(pos, CHUNGUS_SIZE), CHUNGUS_SIZE))){
 			if(world[x][y][z] == NULL){
 				world[x][y][z] = chungusNew(x,y,z);
 				world[x][y][z]->requested = cTicks;

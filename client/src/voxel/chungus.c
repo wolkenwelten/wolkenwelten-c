@@ -57,8 +57,9 @@ chungus *chungusGetActive(uint i){
 	return &chungusList[i];
 }
 
-int chunkInFrustum(const vec pos, const vec off){
-	return CubeInFrustum(vecAdd(off,vecMulS(pos,CHUNK_SIZE)),CHUNK_SIZE);
+bool chungusInFrustum(const chungus *c){
+	const vec pos = vecNew(c->x * CHUNGUS_SIZE, c->y * CHUNGUS_SIZE, c->z * CHUNGUS_SIZE);
+	return CubeInFrustum(pos,CHUNGUS_SIZE);
 }
 
 float chunkDistance(const vec cam, const vec pos){
@@ -117,7 +118,6 @@ void chungusFree(chungus *c){
 }
 
 void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,int *drawQueueLen){
-	const vec coff = vecNew(c->x<<8,c->y<<8,c->z<<8);
 	for(int x=0;x<16;x++){
 		const int bx = x*CHUNK_SIZE+(c->x<<8);
 		const int cx = bx+CHUNK_SIZE/2;
@@ -134,7 +134,7 @@ void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,in
 				sideMaskTop;
 			for(int z=0;z<16;z++){
 				if(c->chunks[x][y][z].block == NULL){continue;}
-				if(!chunkInFrustum(vecNew(x,y,z),coff)){continue;}
+				if(!chunkInFrustum(&c->chunks[x][y][z])){continue;}
 				const int bz = z*CHUNK_SIZE+(c->z<<8);
 				const int cz = bz+CHUNK_SIZE/2;
 				const sideMask zMask =
