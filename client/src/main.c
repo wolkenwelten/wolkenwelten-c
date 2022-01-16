@@ -84,22 +84,18 @@ bool quit              = false;
 bool gameRunning       = false;
 bool playerChunkActive = false;
 bool singleplayer      = false;
-bool chnkChngOverflow  = false;
 u64 gameTicks = 0;
 
 void playerInit(){
-	if(player){
-		characterFree(player);
-	}
+	if(player){characterFree(player);}
 	player = characterNew();
 	initInventory();
 }
 
 void playerFree(){
-	if(player){
-		characterFree(player);
-		player = NULL;
-	}
+	if(!player){return;}
+	characterFree(player);
+	player = NULL;
 }
 
 void signalQuit(int signo){
@@ -145,9 +141,9 @@ void playerUpdate(){
 	if(chng != NULL){ playerChunkActive = chng->requested == 0; }
 	if(!vecInWorld(player->pos)){ playerChunkActive = true; }
 	environmentSoundsUpdate();
+	player->controls = vecZero();
 	if(player->flags & CHAR_SPAWNING){ return; }
 	if(!playerChunkActive)           { return; }
-	player->controls = vecZero();
 	if(!isInventoryOpen()){
 		lispInputTick();
 	}
@@ -155,6 +151,7 @@ void playerUpdate(){
 	playerCheckInventory();
 
 	msgSendPlayerPos();
+	worldFreeFarChungi(player);
 }
 
 void worldUpdate(){
@@ -185,6 +182,7 @@ void worldUpdate(){
 		gameTicks++;
 	}
 	commitOverlayColor();
+	sfxResetBeingBlocker();
 }
 
 static void UIStuff(){
@@ -199,20 +197,11 @@ void mainloop(){
 		clientTranceive();
 		playerUpdate();
 		worldUpdate();
-		renderFrame();
-		fluidGenerateParticles();
-		if(chnkChngOverflow){
-			setRenderDistance(renderDistance*0.9f);
-			chnkChngOverflow = false;
-		}
-		sfxResetBeingBlocker();
-		worldFreeFarChungi(player);
-		clientTranceive();
 		if(quit){clientGoodbye();}
 	}else{
 		doGamepadMenuUpdate();
-		renderFrame();
 	}
+	renderFrame();
 	#ifdef __EMSCRIPTEN__
 	if(quit && !gameRunning){emscripten_cancel_main_loop();}
 	#endif

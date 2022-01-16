@@ -70,10 +70,7 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	chungus *c = NULL;
 	if(chungusFirstFree == NULL){
 		if(chungusCount+1 >= CHUNGUS_COUNT){
-			if(!chnkChngOverflow){
-				fprintf(stderr,"client chungusList Overflow!\n");
-				chnkChngOverflow = false;
-			}
+			fprintf(stderr,"client chungusList Overflow!\n");
 			return NULL;
 		}
 		c = &chungusList[chungusCount++];

@@ -227,12 +227,5 @@ vec matMulVec(const float m[16], const vec pos){
 	out.z = x*m[ 2] + y*m[ 6] + z*m[10] + w*m[14];
 	    w = x*m[ 3] + y*m[ 7] + z*m[11] + w*m[15];
 
-	/*
-	out.x = x*m[ 0] + y*m[ 1] + z*m[ 2] + w*m[ 3];
-	out.y = x*m[ 4] + y*m[ 5] + z*m[ 6] + w*m[ 7];
-	out.z = x*m[ 8] + y*m[ 9] + z*m[10] + w*m[11];
-	    w = x*m[12] + y*m[13] + z*m[14] + w*m[15];
-	*/
-
 	return out;
 }

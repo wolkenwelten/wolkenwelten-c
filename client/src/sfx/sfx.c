@@ -20,6 +20,7 @@
 #include "../misc/options.h"
 
 #define MAX_BEINGS_EMITTING_SFX 4
+being sfxBeingsBlocked[MAX_BEINGS_EMITTING_SFX];
 
 int sfxEnable = 0;
 
@@ -83,8 +84,6 @@ void sfxStopALl(){
 		sfxLoop(&sfxList[i],0);
 	}
 }
-
-being sfxBeingsBlocked[MAX_BEINGS_EMITTING_SFX];
 
 void sfxResetBeingBlocker(){
 	memset(sfxBeingsBlocked,0,sizeof(sfxBeingsBlocked));

@@ -27,6 +27,7 @@
 #include "../game/rope.h"
 #include "../game/weather/weather.h"
 #include "../gfx/boundaries.h"
+#include "../gfx/fluid.h"
 #include "../gfx/gl.h"
 #include "../gfx/mat.h"
 #include "../gfx/particle.h"
@@ -86,6 +87,9 @@ float cloudMaxD            = 256*256*4;
 float renderDistanceSquare = 256*256;
 bool gfxInitComplete = false;
 
+/* Recalculate all valued dependent on the renderDistance, This is mostly
+ * done for performance reasons, although I haven't tested this and the benefits might be zilch.
+ */
 static void recalcDistances(){
 	renderDistance = MIN(renderDistance,512.f);
 	renderDistanceSquare = renderDistance * renderDistance;
@@ -96,6 +100,7 @@ static void recalcDistances(){
 	cloudMaxD = cloudFadeD+cloudMinD;
 }
 
+/* Set a new Render Distance and recalculate all the dependent values */
 void setRenderDistance(float newRD){
 	renderDistance = newRD;
 	recalcDistances();
@@ -117,6 +122,10 @@ GLenum glCheckError_(const char *file, int line){
 	return errorCode;
 }
 
+/* (re)initialize some OpenGL Values, can be called multiple times, and for the most part
+ * shouldn't have much of an effect, definetly has to be called though when the Viewport Dimensions
+ * have changed
+ */
 void initGL(){
 	if(!glInitialize()){
 		exit(3);
@@ -152,6 +161,8 @@ void initGL(){
 #endif
 }
 
+/* Calculate FOV based on a characters velocity as well as recalculate the Projection Matrices.
+ * Should only be called once when starting to render a new frame. */
 void calcFOV(const character *cam){
 	if(cam == NULL){return;}
 	float off = vecMag(cam->vel);
@@ -173,6 +184,7 @@ void calcFOV(const character *cam){
 	matPerspective(matSkyProjection, fov, (float)screenWidth / (float)screenHeight, 1.f, 4096.f);
 }
 
+/* Return a rotation vector based on a characters shake value */
 vec calcShake(const character *cam){
 	if(cam == NULL){return vecZero();}
 	static u64 ticks=0;
@@ -183,6 +195,8 @@ vec calcShake(const character *cam){
 	return vecNew(yaw,pitch,0.f);
 }
 
+/* Calculate the matView and matSubBlockView matrices, should only be called
+ * once at the beginning of rendering a Frame */
 void calcView(const character *cam){
 	if(cam == NULL){return;}
 	matIdentity(matView);
@@ -204,6 +218,7 @@ void calcView(const character *cam){
 	}
 }
 
+/* Render the World, as seen by character cam. */
 void renderWorld(const character *cam){
 	gfxGroupStart("World");
 	worldDraw(cam);
@@ -219,12 +234,14 @@ void renderWorld(const character *cam){
 
 	projectileDrawAll();
 	fireDrawAll();
+	fluidGenerateParticles();
 	particleDraw();
 
 	ropeDrawAll();
 	gfxGroupEnd();
 }
 
+/* Actually take a screenshot, should only be called when queueScreenshot is true */
 static void doScreenshot(){
 	const uint len = screenWidth * screenHeight * 4;
 	u32 *pixels = malloc(len);
@@ -234,6 +251,7 @@ static void doScreenshot(){
 	free(pixels);
 }
 
+/* Render a single Frame */
 void renderFrame(){
 	chunkResetCounter();
 	frameRelaxedDeadline = getTicks() + ((1000/screenRefreshRate)/4); // Gotta hurry after 1/4 frame
