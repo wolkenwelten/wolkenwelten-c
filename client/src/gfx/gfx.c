@@ -270,7 +270,6 @@ void renderFrame(){
 	}else{
 		drawMenuBackground();
 	}
-	glDisable(GL_DEPTH_TEST);
 
 	renderUI();
 	swapWindow();
