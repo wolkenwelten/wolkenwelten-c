@@ -240,12 +240,12 @@ void fxFluidVapor(int cx, int cy, int cz, int fluidType, int amountLost){
 	(void)amountLost;
 	const vec pos = vecNew(cx,cy,cz);
 	//sfxPlayPos(sfxTock,0.2f,pos);
-	for(int i=0;i<128;i++){
+	for(int i=0;i<amountLost * 4;i++){
 		const vec p = vecAdd(pos,vecRngAbs());
 		newParticleS(p.x,p.y,p.z,0xF0F0E8E0,.7f,96);
 	}
-	for(int i=0;i<16;i++){
+	for(int i=0;i<amountLost;i++){
 		const u32 c = 0x00C0D0E0 + (rngValR()&0x003F2F1F);
-		newSparticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.001f+(rngValf()*0.001f),0),vecMulS(vecRng(),0.0001f)), 0.01f, 0.2f,c,768);
+		newSparticleV(vecAdd(pos,vecRngAbs()), vecAdd(vecNew(0,0.001f+(rngValf()*0.001f),0),vecMulS(vecRng(),0.0003f)), 0.01f, 0.2f,c,768);
 	}
 }
