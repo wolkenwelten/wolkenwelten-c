@@ -26,5 +26,6 @@ u32       colorInterpolateRGB (u32 c1, u32 c2, float i);
 u32       colorInterpolate    (u32 c1, u32 c2, float i);
 rgbaColor hsvToRGB            (hsvaColor hsv);
 hsvaColor rgbToHSV            (rgbaColor rgb);
+u32       RgbaToBgra          (u32 in);
 
 #define COLOR(R,G,B,A) (((A&0xFF) << 24) | ((B&0xFF) << 16) | ((G&0xFF) << 8) | ((R&0xFF)))

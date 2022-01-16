@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "colors.h"
 
 char *ansiRS = "\033[0m";
@@ -137,4 +136,10 @@ u32 colorInterpolate(u32 c1, u32 c2, float i){
 	const u32 cc2 = HSVAToU(rgbToHSV(uToRGBA(c2)));
 	const u32 cc  = colorInterpolateRGB(cc1,cc2,i);
 	return RGBAToU(hsvToRGB(uToHSVA(cc)));
+}
+
+u32 RgbaToBgra(u32 in){
+	return ((in >> 16) & 0xFF) |
+	       ((in & 0xFF) << 16) |
+	        (in & 0xFF00FF00);
 }
