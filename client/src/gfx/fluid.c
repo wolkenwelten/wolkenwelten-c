@@ -23,7 +23,7 @@
 
 static void fluidGenerateBlockParticles(int x, int y, int z, u8 level){
 	const u8 amount = (level & 0xF0);
-	//for(int i=0;i<2;i++){
+	for(int i=0;i<2;i++){
 		const int by = rngValA(0xFF);
 		//if(by > amount){continue;}
 		const int bx = rngValA(0xFF);
@@ -42,7 +42,7 @@ static void fluidGenerateBlockParticles(int x, int y, int z, u8 level){
 			c = COLOR(0x10, 0x20, 0x80, 0xF0) | rngValA(COLOR(0x0F, 0x1F, 0x7F, 0x0F));
 		}
 		newParticle(px, py, pz, 0.f, 0.f, 0.f, 256.f, -0.01f, c, 128);
-	//}
+	}
 }
 
 static void fluidGenerateChunkParticles(const chunkOverlay *fluid, const chunkOverlay *block, int cx, int cy, int cz){
@@ -66,8 +66,8 @@ void fluidGenerateParticles(){
 	static int calls = 0;
 	PROFILE_START();
 
-	//for(uint i = calls&0xF; i < chungusCount; i+=0x10){
-	for(uint i = 0; i < chungusCount; i++){
+	for(uint i = calls&0x1; i < chungusCount; i+=0x2){
+	//for(uint i = 0; i < chungusCount; i++){
 		chungus *cng = &chungusList[i];
 		if(!chungusInFrustum(cng)){continue;}
 		for(int x=0;x<16;x++){
