@@ -1,4 +1,4 @@
-[def input-mouse-handler [arr-new 6]]
+[def input-mouse-handler [array/allocate 6]]
 [def input-mouse-tick]
 
 [let []
@@ -10,14 +10,14 @@
                 [when input-mouse-button-right [player-secondary!]]
         ]]
 
-        [arr-set! input-mouse-handler 0 [λ [code value]
+        [array/set! input-mouse-handler 0 [λ [code value]
                 [when [widget-focus-on-game?] [set! input-mouse-button-left [> value 0]]]
         ]]
-        [arr-set! input-mouse-handler 2 [λ [code value]
+        [array/set! input-mouse-handler 2 [λ [code value]
                 [when [widget-focus-on-game?] [set! input-mouse-button-right [> value 0]]]
         ]]
 
-        [arr-set! input-mouse-handler 5 [λ [code value]
+        [array/set! input-mouse-handler 5 [λ [code value]
                 [when [widget-focus-on-game?]
                         [let [[newvalue [- [player-active-slot] [if [> value 0] 1 -1]]]]
                                 [when [< newvalue 0] [set! newvalue 9]]

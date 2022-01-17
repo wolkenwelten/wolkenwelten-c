@@ -1,35 +1,27 @@
-[def display/error [let*
-	[def wrap [λ [i text]
-		[cond [[eq? i 0] [ansi-red text]]
-		      [[eq? i 1] text]
-		      [[eq? i 2] [ansi-yellow text]]
-		      [#t text]
-		]
-	]]
+[def repl/display/error [let*
+        [defun wrap [i text]
+                  [case i
+                        [0 [ansi-red text]]
+                        [1 text]
+                        [2 [ansi-yellow text]]
+                        [otherwise text]]]
 
-	[def iter [λ [error i]
-		[if error
-		    [cons [wrap i [string [car error]]]
-		          [iter [cdr error] [++ i]]]
-		    [cons "" #nil]]
-	]]
+        [defun iter [error i]
+                [if error
+                    [cons [wrap i [string [car error]]]
+                          [iter [cdr error] [+ 1 i]]]
+                    [cons "" #nil]]]
 
-	[λ [error]
-		"Display ERROR in a nice, human readable way"
-		[join [iter error 0] "\n"]
-	]
+        [λ [error]
+                "Display ERROR in a nice, human readable way"
+                [join [iter error 0] "\n"]]
 ]]
 
 [def repl/exception-handler [λ [error]
-	[display/error error]
-]]
+        [repl/display/error error]]]
 
-[def repl/console [let*
-	[def ctx [ω]]
-
-	[λ [line]
-	[try repl/exception-handler
-	     [def expr [read line]]
-	     [apply ctx [cons do expr]]
-	]]
-]]
+[defun repl/console [line]
+        [try repl/exception-handler
+             [def form [cons do [read line]]]
+             [def compiled-form [list do [compile form root-closure]]]
+             [apply root-closure compiled-form]]]

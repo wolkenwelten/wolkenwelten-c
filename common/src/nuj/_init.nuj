@@ -1,10 +1,10 @@
 ; Contains definitions needed in the other .nuj files
 
-[def on-init  '[]]
-[def on-spawn '[]]
-[def on-join  '[]]
-[def on-leave '[]]
-[def on-gameplay-tick '[]]
+[def on-init          @[]]
+[def on-spawn         @[]]
+[def on-join          @[]]
+[def on-leave         @[]]
+[def on-gameplay-tick @[]]
 
 [def cat-none   0]
 [def cat-dirt   1]
@@ -25,22 +25,23 @@
 [def anim-eat       4]
 [def anim-switch    5]
 
-[event-bind "on-init" [λ []
+[defun on-init-fire  [] [event-fire on-init]]
+[defun on-spawn-fire [] [event-fire on-spawn]]
+[defun on-join-fire  [] [event-fire on-join]]
+[defun on-leave-fire [] [event-fire on-leave]]
+
+[event-bind on-init :test-run [λ []
 	[log [ansi-blue "Let's test the Nujel Runtime"]]
-	[test-run]
-]]
+	[test-run]]]
 
 [def vx+ [λ [v a]
 	"Return the sum of vector v and [vec a 0 0]"
-	[+ v [vec a 0 0]]
-]]
+	[+ v [vec a 0 0]]]]
 
 [def vy+ [λ [v a]
 	"Return the sum of vector v and [vec 0 a 0]"
-	[+ v [vec 0 a 0]]
-]]
+	[+ v [vec 0 a 0]]]]
 
 [def vz+ [λ [v a]
 	"Return the sum of vector v and [vec 0 0 a]"
-	[+ v [vec 0 0 a]]
-]]
+	[+ v [vec 0 0 a]]]]

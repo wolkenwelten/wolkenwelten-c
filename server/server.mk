@@ -11,7 +11,7 @@ SERVER_DEPS      := ${SERVER_SRCS:.c=.d}
 
 SERVER_NUJ       := $(shell find server/src/nujel -type f -name '*.nuj' | sort)
 SERVER_NO        := $(SERVER_NUJ:.nuj=.no)
-SERVER_ASSETS    := server/src/tmp/server.no
+SERVER_ASSETS    := server/src/tmp/server.nuj
 
 $(SERVER_OBJS_EXCL): | common/src/tmp/cto.c
 $(SERVER_OBJS): | server/src/tmp/assets.h
@@ -24,7 +24,12 @@ $(WOLKENWELTEN_SERVER): $(SERVER_OBJS) $(ASM_OBJS) ${SERVER_TMP_OBJS} common/nuj
 
 server/src/tmp/server.no: $(SERVER_NO)
 	@mkdir -p server/src/tmp
-	@cat $(SERVER_NUJ) > $@
+	@cat $^ > $@
+	@echo "$(ANSI_GREY)" "[CAT]" "$(ANSI_RESET)" $@
+
+server/src/tmp/server.nuj: $(SERVER_NUJ)
+	@mkdir -p server/src/tmp
+	@cat $^ > $@
 	@echo "$(ANSI_GREY)" "[CAT]" "$(ANSI_RESET)" $@
 
 server/src/tmp/sfx.c: $(SFX_ASSETS)

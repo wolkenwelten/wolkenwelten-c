@@ -179,7 +179,7 @@ void mainInit(){
 	lispInit();
 	itemTypeInit();
 	blockTypeInit();
-	lispEval("[event-fire \"on-init\"]",false);
+	lispCallFunc("on-init-fire", NULL);
 	savegameSave();
 
 	bigchungusInit(&world);

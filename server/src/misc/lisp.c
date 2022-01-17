@@ -42,7 +42,7 @@
 
 #include "../../../common/nujel/lib/api.h"
 #include "../../../common/nujel/lib/exception.h"
-#include "../../../common/nujel/lib/s-expression/writer.h"
+#include "../../../common/nujel/lib/misc/pf.h"
 #include "../../../common/nujel/lib/allocation/roots.h"
 
 #include <ctype.h>
@@ -52,8 +52,8 @@
 #include <string.h>
 #include <inttypes.h>
 
-extern unsigned  int src_tmp_server_no_len;
-extern unsigned char src_tmp_server_no_data[];
+extern unsigned  int src_tmp_server_nuj_len;
+extern unsigned char src_tmp_server_nuj_data[];
 
 lSymbol *lsPID;
 
@@ -340,14 +340,6 @@ static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
 	return lCar(v);
 }
 
-static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
-	(void)c;
-	const char *msg = castToString(lCar(v),NULL);
-	if(msg == NULL){return NULL;}
-	printf("%s\n",msg);
-	return lCar(v);
-}
-
 static lVal *wwlnfQuit(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	quit = true;
@@ -491,7 +483,6 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"game/time",      "(s)",                                          "Sets the time to the time string s",                         wwlnfTime);
 	lAddNativeFunc(c,"tp",             "(pos)",                                        "Teleports to pos",                                           wwlnfTp);
 	lAddNativeFunc(c,"send-message",   "(s)",                                          "Send a chat message to everyone",                            wwlnfSendMessage);
-	lAddNativeFunc(c,"console-print",  "(s)",                                          "Prints something to stdout",                                 wwlnfConsolePrint);
 	lAddNativeFunc(c,"chunk-info",     "(pos)",                                        "Returns a description of the chunk at pos",                  wwlnfChunkInfo);
 	lAddNativeFunc(c,"chungus-info",   "(pos)",                                        "Returns a description of the chungus at pos",                wwlnfChungusInfo);
 	lAddNativeFunc(c,"spawn-pos",      "()",                                           "Return the current spawn position as a vec",                 wwlnfSpawnPos);
@@ -510,9 +501,8 @@ static void *cmdLispReal(void *a, void *b){
 	u16 pid = *((uint *)a);
 	const char *str = (const char *)b;
 
-	lVal *expr = lRead(str);
-	lVal *v = lnfDo(clients[pid].cl, expr);
-	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,true);
+	lVal *v = lRunS(clients[pid].cl, str, strlen(str));
+	spf(reply, &reply[sizeof(reply)-1], "%v", v);
 
 	msgLispSExpr(pid, reply);
 
@@ -527,9 +517,8 @@ static void cmdLisp(uint pid, const char *str){
 static void *lispInitReal(void *a, void *b){
 	(void)a; (void)b;
 	clRoot = lispCommonRoot(addServerNativeFuncs);
-	lVal *expr = lRead((char *)src_tmp_server_no_data);
-	lnfDo(clRoot, expr);
-	lsPID = lSymS("pid");
+	lLoadS(clRoot,(const char *)src_tmp_server_nuj_data, src_tmp_server_nuj_len);
+	lsPID = RSYMP(lSymS("pid"));
 
 	return NULL;
 }
@@ -581,9 +570,8 @@ void *lispEvalReal(void *a, void *b){
 	bool humanReadable = b != NULL;
 	memset(reply,0,sizeof(reply));
 
-	lVal *expr = lRead(str);
-	lVal *v = lnfDo(clRoot,expr);
-	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,humanReadable);
+	lVal *v = lRunS(clRoot, str, strlen(str));
+	spf(reply, &reply[sizeof(reply)-1], humanReadable ? "%v" : "%V", v);
 
 	return reply;
 }

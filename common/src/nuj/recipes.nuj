@@ -1,6 +1,6 @@
 ; All the Recipes
 
-[def recipes [arr-new 256]]
+[def recipes [array/allocate 256]]
 [def recipe-new-id [let*
 	[def recipe-cur-id 0]
 
@@ -10,472 +10,297 @@
 	]
 ]]
 
-[def recipe-sync [λ [obj]
+[defun recipe-sync [obj]
 	"Syncs the Recipe with the ω OBJ"
-	[when [symbol? [resolve [obj result-id]]] [log "Invalid Result ID for Recipe [:id " [obj id] [ansi-red " :result-id " [obj result-id]] " :result-amt " [obj result-amt] "]"]]
-	[when [zn? [obj result-amt]] [log "Invalid Result Amount for Recipe [:id " [obj id] " :result-id " [obj result-id] [ansi-red " :result-amt " [obj result-amt]] "]"]]
+	#_[when [symbol? [resolve [obj result-id]]] [println "Invalid Result ID for Recipe [:id " [obj id] [ansi-red " :result-id " [obj result-id]] " :result-amt " [obj result-amt] "]"]]
+	#_[when [zero-neg? [obj result-amt]] [println "Invalid Result Amount for Recipe [:id " [obj id] " :result-id " [obj result-id] [ansi-red " :result-amt " [obj result-amt]] "]"]]
 
-	[when [symbol? [resolve [obj ingred-id-0]]] [log "Invalid first Ingredient ID for Recipe [:id " [obj id] [ansi-red " :result-id " [obj ingred-id-0]] " :result-amt " [obj ingred-amt-0] "]"]]
-	[when [zn? [obj ingred-amt-0]] [log "Invalid first Ingredient Amount for Recipe [:id " [obj id] " :result-id " [obj ingred-id-0] [ansi-red " :result-amt " [obj ingred-amt-0]] "]"]]
+	#_[when [symbol? [resolve [obj ingred-id-0]]] [println "Invalid first Ingredient ID for Recipe [:id " [obj id] [ansi-red " :result-id " [obj ingred-id-0]] " :result-amt " [obj ingred-amt-0] "]"]]
+	#_[when [zero-neg? [obj ingred-amt-0]] [println "Invalid first Ingredient Amount for Recipe [:id " [obj id] " :result-id " [obj ingred-id-0] [ansi-red " :result-amt " [obj ingred-amt-0]] "]"]]
 
 	[r-result [obj id]   [resolve [obj result-id]]   [obj result-amt]]
 	[r-ingred [obj id] 0 [resolve [obj ingred-id-0]] [obj ingred-amt-0]]
 	[r-ingred [obj id] 1 [resolve [obj ingred-id-1]] [obj ingred-amt-1]]
 	[r-ingred [obj id] 2 [resolve [obj ingred-id-2]] [obj ingred-amt-2]]
 	[r-ingred [obj id] 3 [resolve [obj ingred-id-3]] [obj ingred-amt-3]]
+]
 
-	[arr-set! recipes [obj id] obj]
-]]
-
-[def recipe-sync-all [λ [i] "Syncs all Recipes with their respective ω"
-	[cond [[nil? [recipes [int i]]] #t]
-	      [#t [recipe-sync [recipes [int i]]] [recipe-sync-all [+ [int i] 1]]]
-	]
-]]
-
-
-[def recipe-craft [λ [id times]
-	"Crafts recipe with ID"
-	[[recipes id] craft]
-]]
+[defun recipe-sync-all []
+       "Syncs all Recipes with their respective ω"
+       [for [i 0 [array/length recipes]]
+	    [def cur-recipe [array/ref recipes i]]
+	    [when cur-recipe [recipe-sync cur-recipe]]]]
 
 [def recipe-default [ω
 	[def id -1]
-	[def type :recipe]
 
-	[def ingred-id-0 0]
+	[def ingred-id-0  0]
 	[def ingred-amt-0 0]
-	[def ingred-id-1 0]
+	[def ingred-id-1  0]
 	[def ingred-amt-1 0]
-	[def ingred-id-2 0]
+	[def ingred-id-2  0]
 	[def ingred-amt-2 0]
-	[def ingred-id-3 0]
+	[def ingred-id-3  0]
 	[def ingred-amt-3 0]
 
-	[def craft [δ [] [say "I got nothing to do"]]]
-	[def sync [δ [] "Syncs the C state with the Object state"
-		[recipe-sync [self]]]]
-
 	[def result-amt 0]
-	[def result-id 0]
-]]
-
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-oak-log]
-	[def ingred-amt-0 1]
-	[def result-id 'i-boards]
-	[def result-amt 2]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-oak-log]
-	[def ingred-amt-0 4]
-	[def result-id 'i-coal]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-boards]
-	[def ingred-amt-0  2]
-	[def ingred-id-1 'i-stone]
-	[def ingred-amt-1  3]
-	[def ingred-id-2 'i-plantmatter]
-	[def ingred-amt-2  2]
-	[def result-id 'i-stoneaxe]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-boards]
-	[def ingred-amt-0  2]
-	[def ingred-id-1 'i-stone]
-	[def ingred-amt-1  4]
-	[def ingred-id-2 'i-plantmatter]
-	[def ingred-amt-2  2]
-	[def result-id 'i-stonepickaxe]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-boards]
-	[def ingred-amt-0  4]
-	[def ingred-id-1 'i-stone]
-	[def ingred-amt-1  2]
-	[def ingred-id-2 'i-plantmatter]
-	[def ingred-amt-2  2]
-	[def result-id 'i-stonespear]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-boards]
-	[def ingred-amt-0  2]
-	[def ingred-id-1 'i-stone]
-	[def ingred-amt-1  1]
-	[def ingred-id-2 'i-plantmatter]
-	[def ingred-amt-2  8]
-	[def result-id 'i-firedrill]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-fur]
-	[def ingred-amt-0  12]
-	[def result-id 'i-backpack]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-boards]
-	[def ingred-amt-0  16]
-	[def ingred-id-1 'i-fur]
-	[def ingred-amt-1  8]
-	[def result-id 'i-glider]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-boards]
-	[def ingred-amt-0  16]
-	[def ingred-id-1 'i-straw]
-	[def ingred-amt-1  32]
-	[def result-id 'i-glider]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-hematite-ore]
-	[def ingred-amt-0  1]
-	[def result-id 'i-irondust]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-ironbar]
-	[def ingred-amt-0  1]
-	[def ingred-id-1 'i-stone]
-	[def ingred-amt-1  2]
-	[def result-id 'i-flintandsteel]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-ironbar]
-	[def ingred-amt-0  8]
-	[def ingred-id-1 'i-coal]
-	[def ingred-amt-1  2]
-	[def result-id 'i-hook]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default
-	[ω [def id [recipe-new-id]]
-	[def ingred-id-0 'i-stoneaxe]
-	[def ingred-amt-0  1]
-	[def ingred-id-1 'i-ironbar]
-	[def ingred-amt-1  4]
-	[def ingred-id-2 'i-coal]
-	[def ingred-amt-2  2]
-	[def result-id 'i-ironaxe]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-stonepickaxe]
-	[def ingred-amt-0  1]
-	[def ingred-id-1 'i-ironbar]
-	[def ingred-amt-1  4]
-	[def ingred-id-2 'i-coal]
-	[def ingred-amt-2  2]
-	[def result-id 'i-ironpickaxe]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-stonespear]
-	[def ingred-amt-0  1]
-	[def ingred-id-1 'i-ironbar]
-	[def ingred-amt-1  4]
-	[def ingred-id-2 'i-coal]
-	[def ingred-amt-2  2]
-	[def result-id 'i-ironspear]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-crystals]
-	[def ingred-amt-0  1]
-	[def result-id 'i-crystaldust]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-ironaxe]
-	[def ingred-amt-0  1]
-	[def ingred-id-1 'i-crystalbar]
-	[def ingred-amt-1  4]
-	[def result-id 'i-crystalaxe]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-ironpickaxe]
-	[def ingred-amt-0  1]
-	[def ingred-id-1 'i-crystalbar]
-	[def ingred-amt-1  4]
-	[def result-id 'i-crystalpickaxe]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-ironspear]
-	[def ingred-amt-0  1]
-	[def ingred-id-1 'i-crystalbar]
-	[def ingred-amt-1  4]
-	[def result-id 'i-crystalspear]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-ironbar]
-	[def ingred-amt-0  2]
-	[def ingred-id-1 'i-coal]
-	[def ingred-amt-1  6]
-	[def ingred-id-2 'i-crystals]
-	[def ingred-amt-2  1]
-	[def result-id 'i-grenade]
-	[def result-amt 4]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-ironbar]
-	[def ingred-amt-0  1]
-	[def ingred-id-1 'i-coal]
-	[def ingred-amt-1  4]
-	[def ingred-id-2 'i-crystals]
-	[def ingred-amt-2  3]
-	[def result-id 'i-bomb]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-ironbar]
-	[def ingred-amt-0  4]
-	[def ingred-id-1 'i-coal]
-	[def ingred-amt-1  16]
-	[def ingred-id-2 'i-crystals]
-	[def ingred-amt-2  8]
-	[def result-id 'i-clusterbomb]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-ironbar]
-	[def ingred-amt-0  2]
-	[def ingred-id-1 'i-coal]
-	[def ingred-amt-1  4]
-	[def result-id 'i-flamebullet]
-	[def result-amt 30]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-crystalbar]
-	[def ingred-amt-0  8]
-	[def ingred-id-1 'i-ironbar]
-	[def ingred-amt-1  6]
-	[def ingred-id-2 'i-flamebullet]
-	[def ingred-amt-2 24]
-	[def result-id 'i-assaultblaster]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-crystalbar]
-	[def ingred-amt-0  12]
-	[def ingred-id-1 'i-ironbar]
-	[def ingred-amt-1  16]
-	[def ingred-id-2 'i-crystalbullet]
-	[def ingred-amt-2  60]
-	[def result-id 'i-shotgun]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-crystalbar]
-	[def ingred-amt-0  4]
-	[def ingred-id-1 'i-ironbar]
-	[def ingred-amt-1 16]
-	[def ingred-id-2 'i-flamebullet]
-	[def ingred-amt-2 12]
-	[def result-id 'i-waterthrower]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-crystalbar]
-	[def ingred-amt-0  8]
-	[def ingred-id-1 'i-ironbar]
-	[def ingred-amt-1  8]
-	[def ingred-id-2 'i-flamebullet]
-	[def ingred-amt-2 16]
-	[def result-id 'i-flamethrower]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-crystals]
-	[def ingred-amt-0  1]
-	[def ingred-id-1 'i-ironbar]
-	[def ingred-amt-1  2]
-	[def ingred-id-2 'i-coal]
-	[def ingred-amt-2  4]
-	[def result-id 'i-crystalbullet]
-	[def result-amt 30]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-crystalbar]
-	[def ingred-amt-0  3]
-	[def ingred-id-1 'i-ironbar]
-	[def ingred-amt-1  6]
-	[def ingred-id-2 'i-crystalbullet]
-	[def ingred-amt-2 12]
-	[def result-id 'i-blaster]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-crystalbar]
-	[def ingred-amt-0  16]
-	[def ingred-id-1 'i-ironbar]
-	[def ingred-amt-1  24]
-	[def ingred-id-2 'i-crystalbullet]
-	[def ingred-amt-2  90]
-	[def result-id 'i-masterblaster]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-crystalbar]
-	[def ingred-amt-0  16]
-	[def ingred-id-1 'i-ironbar]
-	[def ingred-amt-1  16]
-	[def ingred-id-2 'i-coal]
-	[def ingred-amt-2  32]
-	[def result-id 'i-jetpack]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-marble-block]
-	[def ingred-amt-0 1]
-	[def result-id 'i-marble-pillar]
-	[def result-amt 1]
-
-	[sync]
-]]
-
-[recipe-default [ω
-	[def id [recipe-new-id]]
-	[def ingred-id-0 'i-marble-block]
-	[def ingred-amt-0 1]
-	[def result-id 'i-marble-blocks]
-	[def result-amt 1]
-
-	[sync]
-]]
+	[def result-id 0]]]
+
+[defmacro defrecipe body
+          [def r-id [recipe-new-id]]
+          `[do [array/set! recipes ~r-id [recipe-default [ω [def id ~r-id]
+                                                       ~@[map body [\ [v] [cons 'def v]]]]]]
+               [recipe-sync [array/ref recipes ~r-id]]]]
+
+[defrecipe [ingred-id-0 'i-oak-log]
+           [ingred-amt-0 1]
+	   [result-id 'i-boards]
+	   [result-amt 2]]
+
+[defrecipe [ingred-id-0 'i-oak-log]
+           [ingred-amt-0 4]
+	   [result-id 'i-coal]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-boards]
+           [ingred-amt-0  2]
+	   [ingred-id-1 'i-stone]
+	   [ingred-amt-1  3]
+	   [ingred-id-2 'i-plantmatter]
+	   [ingred-amt-2  2]
+	   [result-id 'i-stoneaxe]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-boards]
+	   [ingred-amt-0  2]
+	   [ingred-id-1 'i-stone]
+	   [ingred-amt-1  4]
+	   [ingred-id-2 'i-plantmatter]
+	   [ingred-amt-2  2]
+	   [result-id 'i-stonepickaxe]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-boards]
+	   [ingred-amt-0  4]
+	   [ingred-id-1 'i-stone]
+	   [ingred-amt-1  2]
+	   [ingred-id-2 'i-plantmatter]
+	   [ingred-amt-2  2]
+	   [result-id 'i-stonespear]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-boards]
+	   [ingred-amt-0  2]
+	   [ingred-id-1 'i-stone]
+	   [ingred-amt-1  1]
+	   [ingred-id-2 'i-plantmatter]
+	   [ingred-amt-2  8]
+	   [result-id 'i-firedrill]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-fur]
+           [ingred-amt-0  12]
+	   [result-id 'i-backpack]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-boards]
+           [ingred-amt-0  16]
+	   [ingred-id-1 'i-fur]
+	   [ingred-amt-1  8]
+	   [result-id 'i-glider]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-boards]
+           [ingred-amt-0  16]
+	   [ingred-id-1 'i-straw]
+	   [ingred-amt-1  32]
+	   [result-id 'i-glider]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-hematite-ore]
+	   [ingred-amt-0  1]
+	   [result-id 'i-irondust]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-ironbar]
+           [ingred-amt-0  1]
+	   [ingred-id-1 'i-stone]
+	   [ingred-amt-1  2]
+	   [result-id 'i-flintandsteel]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-ironbar]
+	   [ingred-amt-0  8]
+	   [ingred-id-1 'i-coal]
+	   [ingred-amt-1  2]
+	   [result-id 'i-hook]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-stoneaxe]
+	   [ingred-amt-0  1]
+	   [ingred-id-1 'i-ironbar]
+	   [ingred-amt-1  4]
+	   [ingred-id-2 'i-coal]
+	   [ingred-amt-2  2]
+	   [result-id 'i-ironaxe]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-stonepickaxe]
+	   [ingred-amt-0  1]
+	   [ingred-id-1 'i-ironbar]
+	   [ingred-amt-1  4]
+	   [ingred-id-2 'i-coal]
+	   [ingred-amt-2  2]
+	   [result-id 'i-ironpickaxe]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-stonespear]
+	   [ingred-amt-0  1]
+	   [ingred-id-1 'i-ironbar]
+	   [ingred-amt-1  4]
+	   [ingred-id-2 'i-coal]
+	   [ingred-amt-2  2]
+	   [result-id 'i-ironspear]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-crystals]
+	   [ingred-amt-0  1]
+	   [result-id 'i-crystaldust]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-ironaxe]
+	   [ingred-amt-0  1]
+	   [ingred-id-1 'i-crystalbar]
+	   [ingred-amt-1  4]
+	   [result-id 'i-crystalaxe]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-ironpickaxe]
+	   [ingred-amt-0  1]
+	   [ingred-id-1 'i-crystalbar]
+	   [ingred-amt-1  4]
+	   [result-id 'i-crystalpickaxe]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-ironspear]
+	   [ingred-amt-0  1]
+	   [ingred-id-1 'i-crystalbar]
+	   [ingred-amt-1  4]
+	   [result-id 'i-crystalspear]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-ironbar]
+           [ingred-amt-0  2]
+           [ingred-id-1 'i-coal]
+           [ingred-amt-1  6]
+           [ingred-id-2 'i-crystals]
+           [ingred-amt-2  1]
+           [result-id 'i-grenade]
+           [result-amt 4]]
+
+[defrecipe [ingred-id-0 'i-ironbar]
+           [ingred-amt-0  1]
+           [ingred-id-1 'i-coal]
+           [ingred-amt-1  4]
+           [ingred-id-2 'i-crystals]
+           [ingred-amt-2  3]
+           [result-id 'i-bomb]
+           [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-ironbar]
+	   [ingred-amt-0  4]
+	   [ingred-id-1 'i-coal]
+	   [ingred-amt-1  16]
+	   [ingred-id-2 'i-crystals]
+	   [ingred-amt-2  8]
+	   [result-id 'i-clusterbomb]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-ironbar]
+	   [ingred-amt-0  2]
+	   [ingred-id-1 'i-coal]
+	   [ingred-amt-1  4]
+	   [result-id 'i-flamebullet]
+	   [result-amt 30]]
+
+[defrecipe [ingred-id-0 'i-crystalbar]
+	   [ingred-amt-0  8]
+	   [ingred-id-1 'i-ironbar]
+	   [ingred-amt-1  6]
+	   [ingred-id-2 'i-flamebullet]
+	   [ingred-amt-2 24]
+	   [result-id 'i-assaultblaster]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-crystalbar]
+	   [ingred-amt-0  12]
+	   [ingred-id-1 'i-ironbar]
+	   [ingred-amt-1  16]
+	   [ingred-id-2 'i-crystalbullet]
+	   [ingred-amt-2  60]
+	   [result-id 'i-shotgun]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-crystalbar]
+	   [ingred-amt-0  4]
+	   [ingred-id-1 'i-ironbar]
+	   [ingred-amt-1 16]
+	   [ingred-id-2 'i-flamebullet]
+	   [ingred-amt-2 12]
+	   [result-id 'i-waterthrower]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-crystalbar]
+	   [ingred-amt-0  8]
+	   [ingred-id-1 'i-ironbar]
+	   [ingred-amt-1  8]
+	   [ingred-id-2 'i-flamebullet]
+	   [ingred-amt-2 16]
+	   [result-id 'i-flamethrower]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-crystals]
+	   [ingred-amt-0  1]
+	   [ingred-id-1 'i-ironbar]
+	   [ingred-amt-1  2]
+	   [ingred-id-2 'i-coal]
+	   [ingred-amt-2  4]
+	   [result-id 'i-crystalbullet]
+	   [result-amt 30]]
+
+[defrecipe [ingred-id-0 'i-crystalbar]
+	   [ingred-amt-0  3]
+	   [ingred-id-1 'i-ironbar]
+	   [ingred-amt-1  6]
+	   [ingred-id-2 'i-crystalbullet]
+	   [ingred-amt-2 12]
+	   [result-id 'i-blaster]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-crystalbar]
+	   [ingred-amt-0  16]
+	   [ingred-id-1 'i-ironbar]
+	   [ingred-amt-1  24]
+	   [ingred-id-2 'i-crystalbullet]
+	   [ingred-amt-2  90]
+	   [result-id 'i-masterblaster]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-crystalbar]
+	   [ingred-amt-0  16]
+	   [ingred-id-1 'i-ironbar]
+	   [ingred-amt-1  16]
+	   [ingred-id-2 'i-coal]
+	   [ingred-amt-2  32]
+	   [result-id 'i-jetpack]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-marble-block]
+	   [ingred-amt-0 1]
+	   [result-id 'i-marble-pillar]
+	   [result-amt 1]]
+
+[defrecipe [ingred-id-0 'i-marble-block]
+	   [ingred-amt-0 1]
+	   [result-id 'i-marble-blocks]
+	   [result-amt 1]]

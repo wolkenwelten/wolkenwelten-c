@@ -52,7 +52,7 @@
 #include "../../../common/nujel/lib/nujel.h"
 #include "../../../common/nujel/lib/exception.h"
 #include "../../../common/nujel/lib/allocation/roots.h"
-#include "../../../common/nujel/lib/s-expression/writer.h"
+#include "../../../common/nujel/lib/misc/pf.h"
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -61,8 +61,8 @@
 
 u8 SEvalID;
 
-extern unsigned  int src_tmp_client_no_len;
-extern unsigned char src_tmp_client_no_data[];
+extern unsigned  int src_tmp_client_nuj_len;
+extern unsigned char src_tmp_client_nuj_data[];
 
 void lispInputHandler(lSymbol *input, int key, int action){
 	const int SP = lRootsGet();
@@ -110,8 +110,7 @@ static lVal *wwlnfSEval(lClosure *c, lVal *v){
 	char buf[1<<14];
 	memset(buf,0,sizeof(buf));
 	const int SP = lRootsGet();
-	lVal *l = RVP(lCons(RVP(lValSym("do")),v));
-	lSWriteVal(l,buf,&buf[sizeof(buf)-1],0,false);
+	spf(buf, &buf[sizeof(buf)-1], "%V", lCar(v));
 	msgLispSExpr(-1,buf);
 	lRootsRet(SP);
 	return NULL;
@@ -188,45 +187,57 @@ static lVal *wwlnfWindowed(lClosure *c, lVal *v){
 	return NULL;
 }
 
-static lVal *wwlnfDebugInfo(lClosure *c, lVal *v){
-	(void)c;
-	if((v != NULL) && (v->type == ltPair)){
-		optionDebugInfo = castToBool(lCar(v));
-	}
+static lVal *wwlnfDebugInfoGet(lClosure *c, lVal *v){
+	(void)c; (void)v;
 	return lValBool(optionDebugInfo);
 }
 
-static lVal *wwlnfConsMode(lClosure *c, lVal *v){
-	(void)c;
-	if((v != NULL) && (v->type == ltPair)){
-		if(castToBool(lCar(v))){
-			player->flags |=  CHAR_CONS_MODE;
-		}else{
-			player->flags &= ~CHAR_CONS_MODE;
-		}
-	}
+static lVal *wwlnfDebugInfoSet(lClosure *c, lVal *v){
+	(void)c; (void)v;
+	optionDebugInfo = castToBool(lCar(v));
+	return NULL;
+}
+
+static lVal *wwlnfConsModeGet(lClosure *c, lVal *v){
+	(void)c; (void)v;
 	return lValBool(player->flags & CHAR_CONS_MODE);
 }
 
-static lVal *wwlnfNoClip(lClosure *c, lVal *v){
+static lVal *wwlnfConsModeSet(lClosure *c, lVal *v){
 	(void)c;
-	if((v != NULL) && (v->type == ltPair)){
-		if(castToBool(lCar(v))){
-			player->flags |=  CHAR_NOCLIP;
-		}else{
-			player->flags &= ~CHAR_NOCLIP;
-		}
+	if(castToBool(lCar(v))){
+		player->flags |=  CHAR_CONS_MODE;
+	}else{
+		player->flags &= ~CHAR_CONS_MODE;
 	}
+	return NULL;
+}
+
+static lVal *wwlnfNoClipGet(lClosure *c, lVal *v){
+	(void)c; (void)v;
 	return lValBool(player->flags & CHAR_NOCLIP);
 }
 
-static lVal *wwlnfWireFrame(lClosure *c, lVal *v){
-	(void)c;
-	if((v != NULL) && (v->type == ltPair)){
-		optionWireframe = castToBool(lCar(v));
-		initGL();
+static lVal *wwlnfNoClipSet(lClosure *c, lVal *v){
+	(void)c; (void)v;
+	if(castToBool(lCar(v))){
+		player->flags |=  CHAR_NOCLIP;
+	}else{
+		player->flags &= ~CHAR_NOCLIP;
 	}
+	return NULL;
+}
+
+static lVal *wwlnfWireFrameGet(lClosure *c, lVal *v){
+	(void)c; (void)v;
 	return lValBool(optionWireframe);
+}
+
+static lVal *wwlnfWireFrameSet(lClosure *c, lVal *v){
+	(void)c;
+	optionWireframe = castToBool(lCar(v));
+	initGL();
+	return NULL;
 }
 
 static lVal *wwlnfScreenshot(lClosure *c, lVal *v){
@@ -729,7 +740,7 @@ static lVal *wwlnfChatOpenSet(lClosure *c, lVal *v){
 static void lispAddClientNFuncs(lClosure *c){
 	lOperatorsWidget(c);
 
-	lAddSpecialForm(c,"s",             "(...body)",         "Evaluates ...body on the serverside and returns the last result",wwlnfSEval);
+	lAddNativeFunc(c,"s*",             "(form)",            "Evaluates form on the server and returns the last result",       wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",                "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
 	lAddNativeFunc(c,"player-pos",     "()",                "Return players position",                                        wwlnfPlayerPos);
 	lAddNativeFunc(c,"player-rot",     "()",                "Return players rotation",                                        wwlnfPlayerRot);
@@ -764,10 +775,14 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"window-height",  "()",                "Returns the height of the widow in pixels",                      wwlnfWindowHeight);
 	lAddNativeFunc(c,"save-options",   "()",                "Save options to disk",                                           wwlnfSaveOptions);
 	lAddNativeFunc(c,"reset-worst-f",  "()",                "Resets the worst frame counter",                                 wwlnfResetWorstFrame);
-	lAddNativeFunc(c,"debug-info!",    "(b)",               "Sets debug info view to b",                                      wwlnfDebugInfo);
-	lAddNativeFunc(c,"cons-mode!",     "(b)",               "Sets cons-mode to b if passed, always returns the current state",wwlnfConsMode);
-	lAddNativeFunc(c,"no-clip!",       "(b)",               "Sets no clip to b if passed, always returns the current state",  wwlnfNoClip);
-	lAddNativeFunc(c,"wire-frame!",    "(b)",               "Sets wireframe mode to b, always returns the current state",     wwlnfWireFrame);
+	lAddNativeFunc(c,"debug-info!",    "(b)",               "Sets debug info view to b",                                      wwlnfDebugInfoSet);
+	lAddNativeFunc(c,"debug-info?",    "()",                "Gets debug info view to b",                                      wwlnfDebugInfoGet);
+	lAddNativeFunc(c,"cons-mode!",     "(b)",               "Sets cons-mode to b if passed, always returns the current state",wwlnfConsModeSet);
+	lAddNativeFunc(c,"cons-mode?",     "()",                "Gets cons-mode to b if passed, always returns the current state",wwlnfConsModeGet);
+	lAddNativeFunc(c,"no-clip!",       "(b)",               "Sets no clip to b if passed, always returns the current state",  wwlnfNoClipSet);
+	lAddNativeFunc(c,"no-clip?",       "()",                "Gets no clip to b if passed, always returns the current state",  wwlnfNoClipGet);
+	lAddNativeFunc(c,"wire-frame!",    "(b)",               "Sets wireframe mode to b, always returns the current state",     wwlnfWireFrameSet);
+	lAddNativeFunc(c,"wire-frame?",    "()",                "Sets wireframe mode to b, always returns the current state",     wwlnfWireFrameGet);
 	lAddNativeFunc(c,"send-message",   "(s)",               "Sends string s as a chat message",                               wwlnfSendMessage);
 	lAddNativeFunc(c,"console-print",  "(s)",               "Prints string s to the REPL",                                    wwlnfConsolePrint);
 	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)",     "Plays SFX S with volume &VOL=1.0 as if emitting from &POS.",     wwlnfSfxPlay);
@@ -812,9 +827,7 @@ void *lispInitReal(void *a, void *b){
 	(void)a; (void)b;
 
 	clRoot = lispCommonRoot(lispAddClientNFuncs);
-	lVal *expr = lRead((const char *)src_tmp_client_no_data);
-	lnfDo(clRoot,expr);
-	lGarbageCollect();
+	lLoadS(clRoot, (const char *)src_tmp_client_nuj_data, src_tmp_client_nuj_len);
 
 	return NULL;
 }
@@ -833,7 +846,7 @@ const char *lispEval(const char *str, bool humanReadable){
 	memset(reply,0,sizeof(reply));
 
 	lVal *v = lispCallFuncS("repl/console",str);
-	lSWriteVal(v,reply,&reply[sizeof(reply)-1],0,humanReadable);
+	spf(reply,&reply[sizeof(reply)-1],humanReadable ? "%v" : "%V", v);
 	return reply;
 }
 

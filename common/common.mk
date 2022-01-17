@@ -1,7 +1,7 @@
 ARCH             := $(shell uname -m)
 NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj' | sort)
 NO_WWLIB         := $(NUJ_WWLIB:.nuj=.no)
-COMMON_ASSETS    := common/src/tmp/wwlib.no
+COMMON_ASSETS    := common/src/tmp/wwlib.nuj
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
 COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
@@ -44,6 +44,11 @@ common/nujel/nujel.a: $(NUJEL)
 	@echo "$(ANSI_YELLOW)" "[NUJ]" "$(ANSI_RESET)" $@
 
 common/src/tmp/wwlib.no: $(NO_WWLIB)
+	@mkdir -p common/src/tmp
+	@cat $^ > $@
+	@echo "$(ANSI_GREY)" "[CAT]" "$(ANSI_RESET)" $@
+
+common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
 	@mkdir -p common/src/tmp
 	@cat $^ > $@
 	@echo "$(ANSI_GREY)" "[CAT]" "$(ANSI_RESET)" $@

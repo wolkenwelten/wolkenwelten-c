@@ -14,7 +14,7 @@
                 "Make the player do a primary action"
 
                 [let [[itemid [player-active-item-id]]]
-                        [if [< itemid 256] [player-do-primary!] [unless [item-primary! itemid] [player-do-primary!]]]
+                        [if [< itemid 256] [player-do-primary!] [when-not [item-primary! itemid] [player-do-primary!]]]
                 ]
 
                 [set! did-primary #t]
@@ -66,7 +66,7 @@
 
                 [when [not did-primary] [player-stop-mining!]]
                 [when did-primary [set! did-primary #f]]
-                [when [and [not did-throw] [ineq? throw-start 0]] [player-do-throw! [- [time/milliseconds] throw-start]]]
+                [when [and [not did-throw] [!= throw-start 0]] [player-do-throw! [- [time/milliseconds] throw-start]]]
                 [set! did-throw #f]
         ]]
 ]

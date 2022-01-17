@@ -31,8 +31,8 @@
 #include "../../nujel/lib/exception.h"
 #include "../../nujel/lib/allocation/roots.h"
 
-extern unsigned  int src_tmp_wwlib_no_len;
-extern unsigned char src_tmp_wwlib_no_data[];
+extern uint src_tmp_wwlib_nuj_len;
+extern u8   src_tmp_wwlib_nuj_data[];
 
 #include <ctype.h>
 #include <string.h>
@@ -183,6 +183,20 @@ static lVal *wwlnfFluidSet(lClosure *c, lVal *v){
 	return lCar(v);
 }
 
+static lVal *wwlnfPrint(lClosure *c, lVal *v){
+	(void)c;
+	if(v == NULL){return v;}
+	lWriteVal(lCar(v));
+	return NULL;
+}
+
+static lVal *wwlnfError(lClosure *c, lVal *v){
+	(void)c;
+	if(v == NULL){return v;}
+	lDisplayErrorVal(lCar(v));
+	return NULL;
+}
+
 void lispDefineInt(const char *symbol, int val){
 	lDefineVal(clRoot,symbol,lValInt(val));
 }
@@ -194,9 +208,11 @@ void lispDefineString(const char *symbol, char *str){
 void *lispCommonRootReal(void *a, void *b){
 	(void)a; (void)b;
 	lInit();
-	lClosure *c = lClosureNewRoot();
+	lClosure *c = lNewRoot();
 	void (*specificInit)(lClosure *c) = (void (*)(lClosure *))a;
 
+	lAddNativeFunc(c,"error",           "args",                   "Prints ...args to stderr",                                   wwlnfError);
+	lAddNativeFunc(c,"print",           "args",                   "Displays ...args",                                           wwlnfPrint);
 	lAddNativeFunc(c,"mst!",            "(a)",                    "Set ms per tick to s",                                       wwlnfMsPerTick);
 	lAddNativeFunc(c,"prof",            "()",                     "Return profiler info",                                       wwlnfProf);
 	lAddNativeFunc(c,"prof-reset!",     "()",                     "Reset performance counters",                                 wwlnfProfReset);
@@ -221,8 +237,7 @@ void *lispCommonRootReal(void *a, void *b){
 	itemTypeLispClosure(c);
 	specificInit(c);
 
-	lVal *expr = lRead((const char *)src_tmp_wwlib_no_data);
-	lnfDo(c,expr);
+	lLoadS(c,(const char *)src_tmp_wwlib_nuj_data, src_tmp_wwlib_nuj_len);
 
 	return c;
 }
@@ -237,19 +252,32 @@ void *lispCallFuncReal(void *closure, void *vv){
 	return lEval(c,v);
 }
 
+lVal *lispCallFunc(const char *symbol, lVal *v){
+	const int SP = lRootsGet();
+	lVal *form = RVP(lCons(NULL,NULL));
+	form->vList.car = lValSym(symbol);
+	form->vList.cdr = lCons(v, NULL);
+
+	lVal *ret = lExceptionTry(lispCallFuncReal,clRoot,form);
+	lRootsRet(SP);
+	return ret;
+}
+
 lVal *lispCallFuncI(const char *symbol, int ia){
-	lVal *form = lCons(NULL,NULL);
-	lRootsValPush(form);
+	const int SP = lRootsGet();
+	lVal *form = RVP(lCons(NULL,NULL));
 	form->vList.car = lValSym(symbol);
 	lVal *l = form->vList.cdr = lCons(NULL,NULL);
 	l->vList.car = lValInt(ia);
 
-	return lExceptionTry(lispCallFuncReal,clRoot,form);
+	lVal *ret = lExceptionTry(lispCallFuncReal,clRoot,form);
+	lRootsRet(SP);
+	return ret;
 }
 
 lVal *lispCallFuncIII(const char *symbol, int ia, int ib, int ic){
-	lVal *form = lCons(NULL,NULL);
-	lRootsValPush(form);
+	const int SP = lRootsGet();
+	lVal *form = RVP(lCons(NULL,NULL));
 	form->vList.car = lValSym(symbol);
 	lVal *l = form->vList.cdr = lCons(NULL,NULL);
 	l->vList.car = lValInt(ia);
@@ -260,22 +288,26 @@ lVal *lispCallFuncIII(const char *symbol, int ia, int ib, int ic){
 	l = l->vList.cdr;
 	l->vList.car = lValInt(ic);
 
-	return lExceptionTry(lispCallFuncReal,clRoot,form);
+	lVal *ret = lExceptionTry(lispCallFuncReal,clRoot,form);
+	lRootsRet(SP);
+	return ret;
 }
 
 lVal *lispCallFuncS(const char *symbol, const char *str){
-	lVal *form = lCons(NULL,NULL);
-	lRootsValPush(form);
+	const int SP = lRootsGet();
+	lVal *form = RVP(lCons(NULL,NULL));
 	form->vList.car = lValSym(symbol);
 	lVal *l = form->vList.cdr = lCons(NULL,NULL);
 	l->vList.car = lValString(str);
 
-	return lExceptionTry(lispCallFuncReal,clRoot,form);
+	lVal *ret = lExceptionTry(lispCallFuncReal,clRoot,form);
+	lRootsRet(SP);
+	return ret;
 }
 
 lVal *lispCallFuncVII(const char *symbol,const vec va, int ib , int ic){
-	lVal *form = lCons(NULL,NULL);
-	lRootsValPush(form);
+	const int SP = lRootsGet();
+	lVal *form = RVP(lCons(NULL,NULL));
 	form->vList.car = lValSym(symbol);
 	lVal *l = form->vList.cdr = lCons(NULL,NULL);
 	l->vList.car = lValVec(va);
@@ -286,7 +318,9 @@ lVal *lispCallFuncVII(const char *symbol,const vec va, int ib , int ic){
 	l = l->vList.cdr;
 	l->vList.car = lValInt(ic);
 
-	return lExceptionTry(lispCallFuncReal,clRoot,form);
+	lVal *ret = lExceptionTry(lispCallFuncReal,clRoot,form);
+	lRootsRet(SP);
+	return ret;
 }
 
 void lispDefineID(const char *prefix, const char *symbol, int val){

@@ -14,7 +14,7 @@ TXT_ASSETS        := $(shell find client/txt -type f -name '*')
 MESHASSETS        := $(shell find client/mesh -type f -name '*')
 CLIENT_NUJ        := $(shell find client/src/nujel/ -type f -name '*.nuj' | sort)
 CLIENT_NO         := $(CLIENT_NUJ:.nuj=.no)
-CLIENT_NUJ_ASSETS := client/src/tmp/client.no
+CLIENT_NUJ_ASSETS := client/src/tmp/client.nuj
 CLIENT_TMP_SRCS   := client/src/tmp/objs.c client/src/tmp/gfxAssets.c client/src/tmp/sfxAssets.c client/src/tmp/shdAssets.c client/src/tmp/txtAssets.c client/src/tmp/nujAssets.c client/src/tmp/meshAssets.c common/src/tmp/assets.c common/src/tmp/cto.c client/src/tmp/sfx.c
 CLIENT_TMP_OBJS   := ${CLIENT_TMP_SRCS:.c=.o}
 
@@ -33,11 +33,21 @@ $(CLIENT_OBJS_EXCL): | common/src/tmp/cto.c
 $(CLIENT_OBJS):      | client/src/tmp/objs.h
 $(CLIENT_OBJS):      | client/src/tmp/sfx.h
 
+
+.PHONY: common/nujel/nujel.a
+common/nujel/nujel.a:
+	@$(MAKE) -C common/nujel nujel.a
+
 $(WOLKENWELTEN): $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
 	@$(CC) $^ -g -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_CINCLUDES) $(CINCLUDES) $(CLIENT_LIBS) $(CSTD)
 	@echo "$(ANSI_BG_GREEN)" "[LD] " "$(ANSI_RESET)" $@
 
 client/src/tmp/client.no: $(CLIENT_NO)
+	@mkdir -p client/src/tmp
+	@cat $^ > $@
+	@echo "$(ANSI_GREY)" "[CAT]" "$(ANSI_RESET)" $@
+
+client/src/tmp/client.nuj: $(CLIENT_NUJ)
 	@mkdir -p client/src/tmp
 	@cat $^ > $@
 	@echo "$(ANSI_GREY)" "[CAT]" "$(ANSI_RESET)" $@

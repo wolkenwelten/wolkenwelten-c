@@ -6,7 +6,7 @@
 [def git-get-branch [λ []
 	"Returns the currently active branch"
 	[let [[cur-head [trim [file/read "./.git/HEAD"]]]]
-		[cond [[eq? [substr cur-head 0 4] "ref:"] [join [list-tail [split cur-head "/"] 2] "/"]]
+		[cond [[== [substr cur-head 0 4] "ref:"] [join [list-tail [split cur-head "/"] 2] "/"]]
 		       [#t "UNKNOWN"]
 		]
 	]
@@ -19,12 +19,12 @@
 
 [def infogen-version [λ []
 	"Return the infogen version"
-	[cat [git-get-branch] "-" [strftime [time] "%Y-%m-%d"] "-" [uppercase [substr [git-get-head] 0 8]]]
+	[cat [git-get-branch] "-" [time/strftime [time] "%Y-%m-%d"] "-" [uppercase [substr [git-get-head] 0 8]]]
 ]]
 
 [def infogen-builddate [λ []
 	"Return the infogen builddate"
-	[strftime [time] "%Y-%m-%d %H:%M"]
+	[time/strftime [time] "%Y-%m-%d %H:%M"]
 ]]
 
 [def infogen-commit [λ []

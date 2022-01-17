@@ -348,7 +348,7 @@ void characterDie(character *c){
 	msgRequestPlayerSpawnPos();
 	c->flags |= CHAR_SPAWNING;
 	printf("Character Died\n");
-	lispEval("[event-fire \"on-spawn\"]",false);
+	lispCallFunc("on-spawn-fire", NULL);
 }
 
 static void updateGlide(character *c){
@@ -972,7 +972,7 @@ void characterSetData(character *c, const packet *p){
 	}
 	connectionState = 2;
 	c->flags &= ~CHAR_SPAWNING;
-	lispEval("[event-fire \"on-join\"]",false);
+	lispCallFunc("on-join-fire", NULL);
 }
 
 void characterSetName(const packet *p){

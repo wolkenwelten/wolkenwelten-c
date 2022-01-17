@@ -215,7 +215,7 @@ void checkAutostart(){
 	}
 }
 
-int main( int argc, char* argv[] ){
+int main(int argc, char* argv[]){
 	setvbuf(stdout, NULL, _IONBF, 0);
 	setvbuf(stderr, NULL, _IONBF, 0);
 	asmDetermineSupport();
@@ -248,7 +248,7 @@ int main( int argc, char* argv[] ){
 
 	itemTypeInit();
 	recipeInit();
-	lispCallFuncS("event-fire","on-init");
+	lispCallFunc("on-init-fire", NULL);
 	textureBuildBlockIcons(0);
 	ropeInit();
 
