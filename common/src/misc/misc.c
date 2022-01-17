@@ -92,6 +92,40 @@ void *loadFile(const char *filename,size_t *len){
 	return buf;
 }
 
+const char *loadTextFile(const char *filename){
+	#if defined (__EMSCRIPTEN__)
+	return "";
+	#else
+	FILE *fp;
+	size_t filelen,readlen,read;
+	char *buf = NULL;
+
+	fp = fopen(filename,"rb");
+	if(fp == NULL){return NULL;}
+
+	fseek(fp,0,SEEK_END);
+	filelen = ftell(fp);
+	fseek(fp,0,SEEK_SET);
+
+	buf = malloc(filelen+1);
+	if(buf == NULL){return NULL;}
+
+	readlen = 0;
+	while(readlen < filelen){
+		read = fread(buf+readlen,1,filelen-readlen,fp);
+		if(read == 0){
+			free(buf);
+			return NULL;
+		}
+		readlen += read;
+	}
+	fclose(fp);
+
+	buf[filelen] = 0;
+	return buf;
+	#endif
+}
+
 void saveFile(const char *filename,const void *buf, size_t len){
 	FILE *fp;
 	size_t written,wlen = 0;

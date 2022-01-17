@@ -5,8 +5,9 @@
 float       animationInterpolation(int left, int max , float midPoint);
 float       animationInterpolationSustain(int left, int max , float startPoint, float stopPoint);
 
-void        saveFile(const char *filename,const void *buf, size_t len);
-void       *loadFile(const char *filename,size_t *len);
+void        saveFile(const char *filename, const void *buf, size_t len);
+void       *loadFile(const char *filename, size_t *len);
+const char *loadTextFile(const char *filename);
 
 void        strRemove(char *buf, int size, int start, int end);
 void        strInsert(char *buf, int size, int start, const char *snippet);
