@@ -57,10 +57,10 @@
         [inaccuracy [+ [inaccuracy] amt]]]]
 
 [def do-eat [λ [hp itemid] "Make the player Eat and restores HP health over time"
-        [cond [[ineq? itemid [player-active-item-id]] #t]
+        [cond [[!= itemid [player-active-item-id]] #t]
                 [[or [<= hp 0] [>= [player-hp] [player-maxhp]]] #t]
                 [#t [yield [timeout 1000] [λ [] [do-eat [- hp 1] itemid]]]
-                [cond [[or [= hp 1] [= [player-hp] [- [player-maxhp] 1]]] [say [ansi-green "Omnomnom"]]]
+                [cond [[or [== hp 1] [== [player-hp] [- [player-maxhp] 1]]] [say [ansi-green "Omnomnom"]]]
                         [[even? hp] [say [ansi-green "Om"]]]
                         [#t [say [ansi-dark-green "Nom"]]]]
                 [player-hp [+ [player-hp] 1]]
