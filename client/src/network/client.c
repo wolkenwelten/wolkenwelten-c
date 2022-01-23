@@ -267,6 +267,9 @@ void clientParsePacket(const packet *p){
 	case msgtChunkData:
 		chunkRecvUpdate(p);
 		break;
+	case msgtChunkEmpty:
+		chunkRecvEmpty(p);
+		break;
 	case msgtSetPlayerCount:
 		characterRemovePlayer(p->v.u16[1],p->v.u16[0]);
 		break;

@@ -467,6 +467,39 @@ void chunkDrawQueue(queueEntry *queue, int queueLen, const vec sideTints[sideMAX
 	}
 }
 
+void chunkRecvEmpty(const packet *p){
+	const u16 x = p->v.u16[0];
+	const u16 y = p->v.u16[1];
+	const u16 z = p->v.u16[2];
+	const u16 t = p->v.u16[3];
+	chungus *chng = worldGetChungus(x>>8,y>>8,z>>8);
+	if(chng == NULL){return;}
+	chunk *chnk = chungusGetChunkOrNew(chng,x,y,z);
+	if(chnk == NULL){return;}
+	switch(t){
+	default:
+		break;
+	case chunkOverlayBlock:
+		if(chnk->block){
+			chunkOverlayFree(chnk->block);
+			chnk->block = NULL;
+		}
+		break;
+	case chunkOverlayFluid:
+		if(chnk->fluid){
+			chunkOverlayFree(chnk->fluid);
+			chnk->fluid = NULL;
+		}
+		break;
+	case chunkOverlayFire:
+		if(chnk->fire){
+			chunkOverlayFree(chnk->fire);
+			chnk->fire = NULL;
+		}
+		break;
+	}
+}
+
 void chunkRecvUpdate(const packet *p){
 	const u16 x = p->v.u16[2048];
 	const u16 y = p->v.u16[2049];

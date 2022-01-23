@@ -512,6 +512,8 @@ const char *networkGetMessageName(uint i){
 		return "charaterName";
 	case msgtChatMsg:
 		return "chatMsg";
+	case msgtChunkEmpty:
+		return "chunkEmpty";
 	case msgtChunkData:
 		return "chunkData";
 	case msgtSetPlayerCount:

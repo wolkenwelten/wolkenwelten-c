@@ -265,14 +265,21 @@ void serverParsePlayerPos(uint c,const packet *p){
 }
 
 void msgSendChunkOverlay(uint c, chunkOverlay *o, int x, int y, int z, chunkOverlayType t){
-	if(o == NULL){return;}
 	packet *p = &packetBuffer;
-	memcpy(p->v.u8,o->data,sizeof(o->data));
-	p->v.u16[2048] = x;
-	p->v.u16[2049] = y;
-	p->v.u16[2050] = z;
-	p->v.u16[2051] = t;
-	packetQueue(p,msgtChunkData, 2052*2, c);
+	if(o == NULL){
+		p->v.u16[0] = x;
+		p->v.u16[1] = y;
+		p->v.u16[2] = z;
+		p->v.u16[3] = t;
+		packetQueue(p,msgtChunkEmpty, 4*2, c);
+	}else{
+		memcpy(p->v.u8,o->data,sizeof(o->data));
+		p->v.u16[2048] = x;
+		p->v.u16[2049] = y;
+		p->v.u16[2050] = z;
+		p->v.u16[2051] = t;
+		packetQueue(p,msgtChunkData, 2052*2, c);
+	}
 }
 
 void msgSendChunk(uint c, const chunk *chnk){
@@ -422,7 +429,8 @@ void serverParseSinglePacket(uint c, packet *p){
 
 	case msgtLZ4:
 	case msgtPlayerPos:
-	case msgtChunkData :
+	case msgtChunkData:
+	case msgtChunkEmpty:
 	case msgtSetPlayerCount:
 	case msgtPlayerPickupItem:
 	case msgtExplode:

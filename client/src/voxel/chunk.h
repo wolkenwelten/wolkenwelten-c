@@ -25,4 +25,5 @@ void    chunkSetB                  (chunk *c, u16 x, u16 y, u16 z, blockId b);
 uint    chunkGetGeneratedThisFrame ();
 void    chunkResetCounter          ();
 void    chunkRecvUpdate            (const packet *p);
+void    chunkRecvEmpty             (const packet *p);
 bool    chunkInFrustum             (const chunk *c);

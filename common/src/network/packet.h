@@ -77,6 +77,7 @@ typedef enum {
 	msgtCharacterName,
 	msgtChatMsg,
 	msgtChunkData,
+	msgtChunkEmpty,
 	msgtSetPlayerCount,
 	msgtPlayerPickupItem,
 	msgtExplode,
