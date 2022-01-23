@@ -103,6 +103,7 @@ static void compileVertexShader(shader *s,const char *name){
 "precision mediump float;\n"
 "precision mediump int;\n"
 "\n"
+"#line 0\n"
 "%s",s->defines,s->vss);
 	#elif defined(__APPLE__)
 	snprintf(buf,sizeof(buf),"#version 330 core\n"
@@ -110,11 +111,13 @@ static void compileVertexShader(shader *s,const char *name){
 "precision mediump float;\n"
 "precision mediump int;\n"
 "\n"
+"#line 0\n"
 "%s",s->defines,s->vss);
 	#else
 	snprintf(buf,sizeof(buf),"#version 140\n"
 "%s\n"
 "\n"
+"#line 0\n"
 "%s",s->defines,s->vss);
 	#endif
 	glShaderSource(s->vsID,1,(const GLchar **)&bufp,NULL);
@@ -136,6 +139,7 @@ static void compileFragmentShader(shader *s,const char *name){
 "precision mediump int;\n"
 "precision lowp sampler2DArray;\n"
 "\n"
+"#line 0\n"
 "%s",s->defines,s->fss);
 	#elif defined(__APPLE__)
 	snprintf(buf,sizeof(buf),"#version 330 core\n"
@@ -144,11 +148,13 @@ static void compileFragmentShader(shader *s,const char *name){
 "precision mediump int;\n"
 "precision lowp sampler2DArray;\n"
 "\n"
+"#line 0\n"
 "%s",s->defines,s->fss);
 	#else
 	snprintf(buf,sizeof(buf),"#version 130\n"
 "%s\n"
 "\n"
+"#line 0\n"
 "%s",s->defines,s->fss);
 	#endif
 

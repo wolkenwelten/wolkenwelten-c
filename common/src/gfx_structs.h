@@ -37,14 +37,16 @@ typedef struct vertex2D {
 #define VERTEX_PACKED_BT_OFFSET 16
 #define VERTEX_PACKED_SIDE_LEN 3
 #define VERTEX_PACKED_SIDE_OFFSET 24
+#define VERTEX_PACKED_LIGHT_LEN 5
+#define VERTEX_PACKED_LIGHT_OFFSET 27
 typedef uint32_t vertexPacked;
-#define mkVertex(x,y,z,w,h,bt,side) (\
+#define mkVertex(x,y,z,w,h,bt,side,light) (\
 	((x) << VERTEX_PACKED_X_OFFSET) |\
 	((y) << VERTEX_PACKED_Y_OFFSET) |\
 	((z) << VERTEX_PACKED_Z_OFFSET) |\
 	((side) << VERTEX_PACKED_SIDE_OFFSET) |\
-	((bt) << VERTEX_PACKED_BT_OFFSET)\
-)
+	((bt) << VERTEX_PACKED_BT_OFFSET) |\
+	((light) << VERTEX_PACKED_LIGHT_OFFSET))
 
 typedef struct queueEntry queueEntry;
 typedef struct chunkvertbuf chunkvertbuf;

@@ -23,6 +23,7 @@
 #include "../voxel/chungus.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/common.h"
+#include "../../../common/src/game/item.h"
 #include "../../../common/src/game/time.h"
 #include "../../../common/src/game/weather/weather.h"
 #include "../../../common/src/misc/misc.h"
@@ -143,6 +144,8 @@ void worldgenTestpattern(worldgen *wgen){
 
 void worldgenGenerate(worldgen *wgen){
 	PROFILE_START();
+
+	wgen->clay->grassBlock = I_Grass;
 
 	int oldSeed = getRNGSeed();
 	uint seed = (optionWorldSeed | (optionWorldSeed << 16));

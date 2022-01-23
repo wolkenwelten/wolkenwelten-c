@@ -6,15 +6,16 @@
 #define TIME_NOON    2
 #define TIME_EVENING 3
 
-void        gtimeSetTime         (uint newTime);
-void        gtimeSetTimeOfDay    (uint newTime);
-void        gtimeSetTimeOfDayHR  (uint newHours, uint newMinutes);
-void        gtimeSetTimeOfDayHRS (const char *newTime);
-uint        gtimeGetTime         ();
-uint        gtimeGetTimeOfDay    ();
-uint        gtimeGetTimeCat      ();
-const char *gtimeGetTimeOfDayHRS (uint timeCur);
-float       gtimeGetBrightness   (uint time);
-float       gtimeGetSkyBrightness(uint time);
+void        gtimeSetTime            (uint newTime);
+void        gtimeSetTimeOfDay       (uint newTime);
+void        gtimeSetTimeOfDayHR     (uint newHours, uint newMinutes);
+void        gtimeSetTimeOfDayHRS    (const char *newTime);
+uint        gtimeGetTime            ();
+uint        gtimeGetTimeOfDay       ();
+uint        gtimeGetTimeCat         ();
+const char *gtimeGetTimeOfDayHRS    (uint timeCur);
+float       gtimeGetBrightness      (uint time);
+u8          gtimeGetBlockBrightness (uint time);
+float       gtimeGetSkyBrightness   (uint time);
 
 void gtimeUpdate();

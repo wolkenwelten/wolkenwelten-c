@@ -42,12 +42,17 @@ static void blockTypeInitBlock(blockId b, u32 tex, blockCategory ncat,const char
 	blocks[b].weight      = weight;
 	blocks[b].ingressMask = ingressMask;
 	blocks[b].egressMask  = egressMask;
+	blocks[b].lightEmission = 0;
 
 	lispDefineID("i-",bname,b);
 }
 
 const char *blockTypeGetName(blockId b){
 	return blocks[b].name;
+}
+
+static void blockTypeSetLightEmission(blockId b, u8 le){
+	blocks[b].lightEmission = le;
 }
 
 int blockTypeGetHealth(blockId b){
@@ -137,6 +142,9 @@ void blockTypeInit(){
 	blockTypeInitBlock    (30,32, WOOD,  "Snowy Roots", 480,  68, 1.8f,          0xFF14323E,0xFF0D2029, 7, 0xFFFF);
 	blockTypeInitBlock    (31,33, DIRT,  "Snowy Sakura Leafes", 70,  82, 0.2f,   0xFF997CE8,0xFF4D25B5, 0, 0x1F);
 
+	//blockTypeSetLightEmission(13,  8);
+	blockTypeSetLightEmission(15, 31);
+
 	blockTypeGenMeshes();
 }
 
@@ -146,4 +154,8 @@ u16 blockTypeGetIngressMask(blockId b){
 
 u16 blockTypeGetEgressMask(blockId b){
 	return blocks[b].egressMask;
+}
+
+u8 blockTypeGetLightEmission(blockId b){
+	return blocks[b].lightEmission;
 }

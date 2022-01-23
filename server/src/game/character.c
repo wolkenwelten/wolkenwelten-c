@@ -24,6 +24,8 @@
 
 #include <stdio.h>
 
+character *player;
+
 void characterInit(character *c){
 	c->hookPos = c->gvel = c->vel =  vecZero();
 

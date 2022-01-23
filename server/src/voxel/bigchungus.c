@@ -64,7 +64,6 @@ chungus *bigchungusGetChungus(bigchungus *c, int x,int y,int z) {
 	chungus *chng = c->chungi[x&0xFF][y&0x7F][z&0xFF];
 	if(chng == NULL){
 		chng = c->chungi[x&0xFF][y&0x7F][z&0xFF] = chungusNew(x,y,z);
-		chungusWorldGenLoad(chng);
 	}
 	return chng;
 }
@@ -128,7 +127,6 @@ bool bigchungusGetHighestP(bigchungus *c, int x,int *retY, int z) {
 		chng = c->chungi[cx][cy][cz];
 		if(chng == NULL){
 			chng = c->chungi[cx][cy][cz] = chungusNew(cx,cy,cz);
-			chungusWorldGenLoad(chng);
 		}
 		int y;
 		if(chungusGetHighestP(chng,x,&y,z)){
@@ -147,7 +145,6 @@ bool bigchungusSetB(bigchungus *c, int x,int y,int z,blockId block){
 	chng = c->chungi[cx][cy][cz];
 	if(chng == NULL){
 		chng = c->chungi[cx][cy][cz] = chungusNew(cx,cy,cz);
-		chungusWorldGenLoad(chng);
 		return true;
 	}
 	chungusSetB(chng,x&0xFF,y&0xFF,z&0xFF,block);
@@ -252,7 +249,6 @@ void bigchungusGenSpawn(bigchungus *c){
 		chungus *chng = c->chungi[x][y][z];
 		if(chng == NULL){
 			chng = c->chungi[x][y][z] = chungusNew(x,y,z);
-			chungusWorldGenLoad(chng);
 		}
 		if(chng->sx | chng->sy | chng->sz){
 			c->sx = chng->sx | (x << 8);
@@ -274,7 +270,6 @@ void bigchungusGenHugeSpawn(bigchungus *c){
 		chungus *chng = c->chungi[x][y][z];
 		if(chng == NULL){
 			chng = c->chungi[x][y][z] = chungusNew(x,y,z);
-			chungusWorldGenLoad(chng);
 		}
 		if(chng->sx | chng->sy | chng->sz){
 			c->sx = chng->sx | (x << 8);
@@ -414,14 +409,14 @@ void worldSetSpawnPos(vec pos){
 }
 void worldSetAllUpdated(){
 	for(int ox=0;ox < 256; ox++){
-		for(int oy=0;oy < 128; oy++){
-			for(int oz=0;oz < 256; oz++){
-				chungus *chng = world.chungi[ox][oy][oz];
-				if(chng == NULL){continue;}
-				chng->clientsUpdated = 0;
-				chungusSetAllUpdated(chng, 0);
-			}
-		}
+	for(int oy=0;oy < 128; oy++){
+	for(int oz=0;oz < 256; oz++){
+		chungus *chng = world.chungi[ox][oy][oz];
+		if(chng == NULL){continue;}
+		chng->clientsUpdated = 0;
+		chungusSetAllUpdated(chng, 0);
+	}
+	}
 	}
 }
 
@@ -480,7 +475,6 @@ u8 worldGetFluid(int x, int y, int z){
 bool worldSetFluid(int x, int y, int z, u8 level){
 	return bigchungusSetFluid(&world,x,y,z, level);
 }
-
 
 bool bigchungusSetFire(bigchungus *c, int x, int y, int z, u8 strength){
 	chungus *chng;

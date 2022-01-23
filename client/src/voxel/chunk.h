@@ -3,6 +3,9 @@
 #include "../../../common/src/misc/side.h"
 #include "chunkvertbuf.h"
 
+extern u64 chunksDirtied;
+extern u64 chunksCopied;
+
 #define CHUNK_FLAG_DIRTY 1
 
 struct chunk {
@@ -13,7 +16,7 @@ struct chunk {
 	chunkvertbuf *vertbuf;
 	beingList bl;
 
-	chunkOverlay *fluid, *block, *fire;
+	chunkOverlay *fluid, *block, *fire, *light;
 };
 
 void    chunkInit                  ();
@@ -27,3 +30,6 @@ void    chunkResetCounter          ();
 void    chunkRecvUpdate            (const packet *p);
 void    chunkRecvEmpty             (const packet *p);
 bool    chunkInFrustum             (const chunk *c);
+void    chunkTryDirty              (int x, int y, int z);
+void    chunkDirtyRegion           (int cx, int cy, int cz);
+void    chunkDirtyAll              ();

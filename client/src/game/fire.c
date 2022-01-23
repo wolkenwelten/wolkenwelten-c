@@ -32,7 +32,6 @@
 #include <string.h>
 
 
-
 static void fireGenerateParticles(int x, int y, int z, u8 strength){
 	const int bx = rngValA(0xFF);
 	const int by = rngValA(0xFF);

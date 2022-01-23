@@ -101,9 +101,9 @@ chungus *worldTryChungus(int x,int y,int z){
 }
 
 chunk *worldTryChunk(int x, int y, int z){
-	chungus *chng = worldTryChungus(x,y,z);
-	if(chng == NULL){return NULL;}
-	return chungusGetChunk(chng,x,y,z);
+	if((x|y|z)&(~0xFFFF)){return NULL;}
+	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
+	return chng ? &chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF] : NULL;
 }
 
 chungus *worldGetChungus(int x,int y,int z){
@@ -182,12 +182,12 @@ void worldDraw(const character *cam){
 	// and visible block seams.
 	matMul(matMVP,matSubBlockView,matProjection);
 	shaderMatrix(sBlockMesh,matMVP);
-	const float shadeFront  = .50f*worldBrightness + .5f*MAX(0.f, sinf(sunAngle*PI180));
-	const float shadeBack   = .50f*worldBrightness + .5f*MAX(0.f, sinf(sunAngle*PI180-180*PI180));
-	const float shadeTop    = .50f*worldBrightness + .5f*MAX(0.f, sinf(sunAngle*PI180-270*PI180));
-	const float shadeBottom = .30f*worldBrightness;
-	const float shadeLeft   = .55f*worldBrightness;
-	const float shadeRight  = shadeLeft;
+	const float shadeFront  = 0.85f;
+	const float shadeBack   = 0.9f;
+	const float shadeTop    = 1.0f;
+	const float shadeBottom = 0.65f;
+	const float shadeLeft   = 0.75f;
+	const float shadeRight  = 0.8f;
 	const vec sideTints[sideMAX] = {
 		(vec){{{shadeFront, shadeFront, shadeFront}}},
 		(vec){{{shadeBack,  shadeBack,  shadeBack}}},

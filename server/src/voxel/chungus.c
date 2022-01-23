@@ -113,15 +113,16 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 	}
 	}
 
-	return c;
+	return chungusWorldGenLoad(c);
 }
 
-void chungusWorldGenLoad(chungus *c){
+chungus *chungusWorldGenLoad(chungus *c){
 	worldgen *wgen = worldgenNew(c);
 	worldgenGenerate(wgen);
 	worldgenFree(wgen);
 	chungusSetClientUpdated(c,(u64)1 << 31);
 	chungusLoad(c);
+	return c;
 }
 
 void chungusFree(chungus *c){
@@ -523,10 +524,15 @@ uint chungusGetLinearMax(){
 	return chungusCount * 16 * 16 * 16;
 }
 
-chunk *chungusGetLinearChunk(uint i){
+chungus *chungusGetLinearChungus(uint i){
 	const uint ci = i >> 12;
 	if(ci >= chungusCount){return NULL;}
 	chungus *chng = &chungusList[i >> 12];
 	if(chng->nextFree != NULL){return NULL;}
-	return &chng->chunks[(i>>8)&0xF][(i>>4)&0xF][i&0xF];
+	return chng;
+}
+
+chunk *chungusGetLinearChunk(uint i){
+	chungus *chng = chungusGetLinearChungus(i);
+	return chng ? &chng->chunks[(i>>8)&0xF][(i>>4)&0xF][i&0xF] : NULL;
 }

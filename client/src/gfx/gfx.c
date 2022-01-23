@@ -23,6 +23,7 @@
 #include "../game/character.h"
 #include "../game/entity.h"
 #include "../game/fire.h"
+#include "../game/light.h"
 #include "../game/projectile.h"
 #include "../game/rope.h"
 #include "../game/weather/weather.h"
@@ -254,6 +255,7 @@ static void doScreenshot(){
 /* Render a single Frame */
 void renderFrame(){
 	chunkResetCounter();
+	lightCheckTime();
 	const int rRate = screenRefreshRate ? screenRefreshRate : 60; // Default to 60
 	frameRelaxedDeadline = getTicks() + ((1000/rRate)/4); // Gotta hurry after 1/4 frame
 	calcFOV(player);

@@ -46,6 +46,7 @@ typedef struct {
 	float         weight;
 	u16           ingressMask;
 	u16           egressMask;
+	u8            lightEmission;
 } blockType;
 typedef u8 blockId;
 

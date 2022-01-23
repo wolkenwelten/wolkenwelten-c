@@ -4,14 +4,16 @@ uniform vec3 transPos;
 in uint packedData;
 
 out vec3 texCoord;
-out vec3 lightness;
+out vec3 lightColor;
 
 void main(){
-  uvec4 pos = uvec4(packedData & 0x1Fu, (packedData >> 5) & 0x1Fu, (packedData >> 10) & 0x1Fu, 1);
-  uvec2 taxis[3] = uvec2[3](pos.xy, pos.xz, pos.zy);
-  uint flag = (packedData >> 24) & 0x7u;
-  vec3 tex = vec3(uvec3(taxis[flag >> 1], (packedData >> 16) & 0xFFu)) / vec3(2.0,2.0,1.0);
+	uvec4 pos      = uvec4(packedData & 0x1Fu, (packedData >> 5) & 0x1Fu, (packedData >> 10) & 0x1Fu, 1);
+	uvec2 taxis[3] = uvec2[3](pos.xy, pos.xz, pos.zy);
+	uint flag      = (packedData >> 24) & 0x7u;
+	vec3 tex       = vec3(uvec3(taxis[flag >> 1], (packedData >> 16) & 0xFFu)) / vec3(2.0,2.0,1.0);
+	float light    = float(packedData >> 27) / 32.0;
 
-  gl_Position = matMVP * (vec4(pos) + vec4(transPos,0.0));
-  texCoord    = tex;
+	lightColor  = vec3(light, light, light);
+	gl_Position = matMVP * (vec4(pos) + vec4(transPos,0.0));
+	texCoord    = tex;
 }

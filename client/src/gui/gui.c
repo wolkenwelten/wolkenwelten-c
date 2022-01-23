@@ -497,6 +497,8 @@ void drawDebuginfo(){
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Brightness  : %f\n",gtimeGetBrightness(gtimeGetTimeOfDay()));
 		textMeshPrintf(guim,"Cloudyness  : %i\n",player->cloudyness);
+		textMeshPrintf(guim,"DirtyChunks : %u\n",chunksDirtied);
+		textMeshPrintf(guim,"ChunksCopied: %u\n",chunksCopied);
 
 		animalOverlaysDrawn = 0;
 		for(uint i=0;i<animalListMax;i++){

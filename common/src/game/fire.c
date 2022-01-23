@@ -135,12 +135,7 @@ void fireBoxExtinguish(u16 x, u16 y, u16 z, u16 w, u16 h, u16 d, u8 strength){
 	for(int cz = z;cz < z+d;cz++){
 		if(!isClient){
 			const blockId b = worldTryB(cx,cy,cz);
-			if((b == I_Dry_Grass) && (rngValA(1) == 0)){
-				worldSetB(cx,cy,cz,I_Grass);
-			}
-			if(!b){
-				worldSetFluid(cx,cy,cz,0xF0);
-			}
+			if(!b){worldSetFluid(cx,cy,cz,0xF0);}
 		}
 	}
 	}

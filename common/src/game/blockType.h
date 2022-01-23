@@ -18,3 +18,4 @@ u32           blockTypeGetParticleColor   (blockId b);
 mesh         *blockTypeGetMesh            (blockId b);
 u16           blockTypeGetIngressMask     (blockId b);
 u16           blockTypeGetEgressMask      (blockId b);
+u8            blockTypeGetLightEmission   (blockId b);

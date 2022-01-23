@@ -26,3 +26,5 @@ bool     worldSetFluid      (int x, int y, int z, u8 level);
 u8       worldTryFire       (int x, int y, int z);
 u8       worldGetFire       (int x, int y, int z);
 bool     worldSetFire       (int x, int y, int z, u8 strength);
+
+void     chunkDirtyRegion   (int x, int y, int z);

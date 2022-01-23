@@ -31,7 +31,7 @@ static bool shouldThaw(){
 	return ((int)rngValA(255) > (snowIntensity << 4));
 }
 
-static void landscapeUpdateChunk(chunk *c){
+static void landscapeUpdateChunk(chunk *c, const chungus *chng){
 	static blockId topBlocks[CHUNK_SIZE][CHUNK_SIZE];
 	if((c == NULL) || (c->block == NULL)){return;}
 
@@ -51,59 +51,89 @@ static void landscapeUpdateChunk(chunk *c){
 	for(uint z=0; z < CHUNK_SIZE; z++){
 		const blockId b = c->block->data[x][y][z];
 		const blockId tb = y == CHUNK_SIZE-1 ? topBlocks[x][z] : c->block->data[x][y+1][z];
+		const u8 fluidLevel = c->fluid ? c->fluid->data[x][y][z] : 0;
 
 		switch(b){
 		default:
 			break;
 		case I_Snow_Dirt:
-			if(shouldThaw()){
-				worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);
+			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);}
+			break;
+		case I_Snowy_Spruce_Leaf:
+			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Spruce_Leaf);}
+			break;
+		case I_Snowy_Oak_Leaf:
+			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Oak_Leaf);}
+			break;
+		case I_Snowy_Flower:
+			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Flower);}
+			break;
+		case I_Snowy_Date:
+			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Date);}
+			break;
+		case I_Snowy_Acacia_Leaf:
+			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Acacia_Leaf);}
+			break;
+		case I_Snowy_Roots:
+			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Roots);}
+			break;
+		case I_Snowy_Sakura_Leaf:
+			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Sakura_Leaf);}
+			break;
+		case I_Flower:
+			if(chng->grassBlock != I_Grass){
+				if(chng->grassBlock == I_Dry_Grass){
+					if(!fluidLevel && (rngValA(15) == 0)){
+						worldSetB(c->x+x,c->y+y,c->z+z,chng->grassBlock);
+					}
+				}
+			}
+			break;
+		case I_Date:
+			if(chng->grassBlock != I_Dry_Grass){
+				if(chng->grassBlock == I_Grass){
+					if(fluidLevel || (rngValA(15) == 0)){
+						worldSetB(c->x+x,c->y+y,c->z+z,I_Flower);
+					}
+				}
+			}else{
+				if((fluidLevel) && (rngValA(15) == 0)){worldSetB(c->x+x,c->y+y,c->z+z,I_Flower);}
 			}
 			break;
 		case I_Snow_Grass:
-			if(shouldThaw()){
-				worldSetB(c->x+x,c->y+y,c->z+z,I_Grass);
-			}
-			break;
-		case I_Snowy_Spruce_Leaf:
-			if(shouldThaw()){
-				worldSetB(c->x+x,c->y+y,c->z+z,I_Spruce_Leaf);
-			}
-			break;
-		case I_Snowy_Oak_Leaf:
-			if(shouldThaw()){
-				worldSetB(c->x+x,c->y+y,c->z+z,I_Oak_Leaf);
-			}
-			break;
-		case I_Snowy_Flower:
-			if(shouldThaw()){
-				worldSetB(c->x+x,c->y+y,c->z+z,I_Flower);
-			}
-			break;
-		case I_Snowy_Date:
-			if(shouldThaw()){
-				worldSetB(c->x+x,c->y+y,c->z+z,I_Date);
-			}
-			break;
-		case I_Snowy_Acacia_Leaf:
-			if(shouldThaw()){
-				worldSetB(c->x+x,c->y+y,c->z+z,I_Acacia_Leaf);
-			}
-			break;
-		case I_Snowy_Roots:
-			if(shouldThaw()){
-				worldSetB(c->x+x,c->y+y,c->z+z,I_Roots);
-			}
-			break;
-		case I_Snowy_Sakura_Leaf:
-			if(shouldThaw()){
-				worldSetB(c->x+x,c->y+y,c->z+z,I_Sakura_Leaf);
+			if((tb != 0) && (rngValA(15) == 0)){worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);}
+			if(chng->grassBlock != I_Snow_Grass){
+				if(rngValA(15) == 0){
+					worldSetB(c->x+x,c->y+y,c->z+z,chng->grassBlock);
+				}
 			}
 			break;
 		case I_Dry_Grass:
+			if((tb != 0) && (rngValA(15) == 0)){worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);}
+			if(chng->grassBlock != I_Dry_Grass){
+				if(chng->grassBlock == I_Grass){
+					if(fluidLevel || (rngValA(15) == 0)){
+						worldSetB(c->x+x,c->y+y,c->z+z,chng->grassBlock);
+					}
+				}
+			}else{
+				if(fluidLevel && (rngValA(15) == 0)){
+					worldSetB(c->x+x,c->y+y,c->z+z,I_Grass);
+				}
+			}
+			break;
 		case I_Grass:
-			if((tb != 0) && (rngValA(15) == 0)){
-				worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);
+			if((tb != 0) && (rngValA(15) == 0)){worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);}
+			if(chng->grassBlock != I_Grass){
+				if(chng->grassBlock == I_Dry_Grass){
+					if(rngValA(15) == 0){
+						if(fluidLevel){
+							worldSetFluid(c->x+x,c->y+y,c->z+z,fluidLevel - 0x10);
+						}else{
+							worldSetB(c->x+x,c->y+y,c->z+z,chng->grassBlock);
+						}
+					}
+				}
 			}
 			break;
 		}
@@ -117,8 +147,9 @@ void landscapeUpdateAll(){
 	PROFILE_START();
 
 	const uint max = chungusGetLinearMax();
-	for(uint i=calls&0x3FFF;i<max;i+=0x4000){
-		landscapeUpdateChunk(chungusGetLinearChunk(i));
+	for(uint i=calls&0x3FF;i<max;i+=0x400){
+		const chungus *chng = chungusGetLinearChungus(i);
+		landscapeUpdateChunk(chungusGetLinearChunk(i), chng);
 	}
 	calls++;
 

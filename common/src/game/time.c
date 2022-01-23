@@ -106,3 +106,7 @@ float gtimeGetSkyBrightness(uint time){
 	const float v = gtimeGetRawBrightness(time);
 	return MINMAX(0.0f,1.0f,v);
 }
+
+u8 gtimeGetBlockBrightness(uint time){
+	return gtimeGetBrightness(time) * 32.f;
+}

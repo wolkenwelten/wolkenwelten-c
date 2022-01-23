@@ -22,6 +22,7 @@
 #include "../game/animal.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/common.h"
+#include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 
@@ -194,7 +195,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->dirtChance     = (1<< 5)-1;
 			w->stoneChance    = (1<< 8)-1;
 			w->animalChance   = (1<<15)-1;
-			w->grassBlock     = I_Dry_Grass;
+			wgen->clay->grassBlock = w->grassBlock = I_Dry_Grass;
 			break;
 		case 2:
 			w->treeType       = 2;
@@ -205,7 +206,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->dirtChance     = (1<< 4)-1;
 			w->stoneChance    = (1<< 7)-1;
 			w->animalChance   = (1<<16)-1;
-			w->grassBlock     = I_Dry_Grass;
+			wgen->clay->grassBlock = w->grassBlock = I_Dry_Grass;
 			break;
 		case 1:
 			w->treeType       = 5;
@@ -216,7 +217,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->bigTreeChance  = (1<<14)-1;
 			w->treeChance     = (1<<12)-1;
 			w->animalChance   = (1<<17)-1;
-			w->grassBlock     = I_Dry_Grass;
+			wgen->clay->grassBlock = w->grassBlock = I_Dry_Grass;
 			break;
 		case 0:
 			w->treeType       = 5;
@@ -228,7 +229,7 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->bigTreeChance  = (1<<15)-1;
 			w->treeChance     = (1<<14)-1;
 			w->animalChance   = (1<<18)-1;
-			w->grassBlock     = I_Dry_Grass;
+			wgen->clay->grassBlock = w->grassBlock = I_Dry_Grass;
 			break;
 	}
 	w->bushChance = w->shrubChance >> 1;

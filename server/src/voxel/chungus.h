@@ -9,6 +9,7 @@
 struct chungus {
 	u8     x,y,z;
 	u8     sx,sy,sz;
+	blockId grassBlock;
 	u64    clientsSubscribed;
 	u64    clientsUpdated;
 	u64    freeTimer;
@@ -26,7 +27,8 @@ void         chungusInit             ();
 chungus     *chungusNew              (u8 x,u8 y, u8 z);
 uint         chungusGetLinearMax     ();
 chunk       *chungusGetLinearChunk   (uint i);
-void         chungusWorldGenLoad     (chungus *c);
+chungus     *chungusGetLinearChungus (uint i);
+chungus     *chungusWorldGenLoad     (chungus *c);
 void         chungusFree             (chungus *c);
 void         chungusBox              (chungus *c, int x, int y, int z, int w, int h, int d, blockId block);
 void         chungusBoxIfEmpty       (chungus *c, int x, int y, int z, int w, int h, int d, blockId block);
