@@ -1,0 +1,48 @@
+name: Windows - mingw64
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - uses: msys2/setup-msys2@v2
+      name: "Initial msys2 setup"
+      with:
+        msystem: mingw64
+        update: true
+        install: >-
+          base-devel
+          p7zip
+          rsync
+          openssh
+          mingw-w64-x86_64-autotools
+          mingw-w64-x86_64-toolchain
+          mingw-w64-x86_64-cmake
+          mingw-w64-x86_64-ffmpeg
+          mingw-w64-x86_64-ninja
+    - run: git config --global core.autocrlf input
+      shell: bash
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Compile stripped down SDL2
+      run: cd platform/win/msys2_pkgs/mingw-w64-SDL2/ && makepkg -i --noconfirm
+    - name: Compile stripped down SDL2_mixer
+      run: cd platform/win/msys2_pkgs/mingw-w64-SDL2_mixer/ && makepkg -i --noconfirm
+    - name: Compile Nujel
+      run: make -C common/nujel -j
+    - name: Build release
+      run: make release.win -j
+    - name: Upload build Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: Builds
+        path: "releases/win/*.7z"

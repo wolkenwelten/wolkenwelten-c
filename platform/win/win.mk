@@ -27,14 +27,14 @@ $(WIN_RELDIR)/README.txt: common/README
 	@mkdir -p $(WIN_RELDIR)
 	cp $< $@
 
-$(WIN_RELDIR)/wolkenwelten.exe: $(CLIENT_SRCS)
+$(WIN_RELDIR)/wolkenwelten.exe: $(CLIENT_SRCS) $(CLIENT_TMP_SRCS)
 $(WIN_RELDIR)/wolkenwelten.exe: $(ASM_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
 $(WIN_RELDIR)/wolkenwelten.exe: releases/win/wolkenwelten.res
 	@mkdir -p $(WIN_RELDIR)
 	$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CLIENT_CFLAGS) $(CINCLUDES) $(CLIENT_CINCLUDES) $(STATICLIBS)
 	strip -gxX $@
 
-$(WIN_RELDIR)/wolkenwelten-server.exe: $(SERVER_SRCS) 
+$(WIN_RELDIR)/wolkenwelten-server.exe: $(SERVER_SRCS) $(SERVER_TMP_SRCS)
 $(WIN_RELDIR)/wolkenwelten-server.exe: $(ASM_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
 $(WIN_RELDIR)/wolkenwelten-server.exe: releases/win/wolkenwelten-server.res
 	@mkdir -p $(WIN_RELDIR)
