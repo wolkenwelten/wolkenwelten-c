@@ -424,10 +424,10 @@ void clientGoodbye(){
 }
 
 void queueToServer(const void *data, uint len){
-	if((sendBufLen + len) > sizeof(sendBuf)){
+	if((sendBufLen + len) >= sizeof(sendBuf)){
 		clientWrite();
 	}
-	memcpy(sendBuf + sendBufLen, data, len);
+	memcpy(&sendBuf[sendBufLen], data, len);
 	sendBufLen += len;
 }
 

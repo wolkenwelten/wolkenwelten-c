@@ -60,16 +60,16 @@ vec      worldGetSpawnPos   ();
 void     worldSetSpawnPos   (vec pos);
 void     worldSetAllUpdated ();
 
-bool     bigchungusSetFluid(bigchungus *c, int x, int y, int z, int level);
+bool     bigchungusSetFluid(bigchungus *c, int x, int y, int z, u8 level);
 u8       bigchungusTryFluid(bigchungus *c, int x, int y, int z);
 u8       bigchungusGetFluid(bigchungus *c, int x, int y, int z);
 u8       worldTryFluid(int x, int y, int z);
 u8       worldGetFluid(int x, int y, int z);
-bool     worldSetFluid(int x, int y, int z, int level);
+bool     worldSetFluid(int x, int y, int z, u8 level);
 
-bool     bigchungusSetFire(bigchungus *c, int x, int y, int z, int strength);
+bool     bigchungusSetFire(bigchungus *c, int x, int y, int z, u8 strength);
 u8       bigchungusTryFire(bigchungus *c, int x, int y, int z);
 u8       bigchungusGetFire(bigchungus *c, int x, int y, int z);
 u8       worldTryFire(int x, int y, int z);
 u8       worldGetFire(int x, int y, int z);
-bool     worldSetFire(int x, int y, int z, int level);
+bool     worldSetFire(int x, int y, int z, u8 level);

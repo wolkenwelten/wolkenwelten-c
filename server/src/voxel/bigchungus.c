@@ -448,7 +448,7 @@ bool worldShouldBeLoaded(const vec cpos){
 	return false;
 }
 
-bool bigchungusSetFluid(bigchungus *c, int x, int y, int z, int level){
+bool bigchungusSetFluid(bigchungus *c, int x, int y, int z, u8 level){
 	chungus *chng;
 	int cx = (x / CHUNGUS_SIZE) & 0xFF;
 	int cy = (y / CHUNGUS_SIZE) & 0x7F;
@@ -477,12 +477,12 @@ u8 worldTryFluid(int x, int y, int z){
 u8 worldGetFluid(int x, int y, int z){
 	return bigchungusGetFluid(&world,x,y,z);
 }
-bool worldSetFluid(int x, int y, int z, int level){
+bool worldSetFluid(int x, int y, int z, u8 level){
 	return bigchungusSetFluid(&world,x,y,z, level);
 }
 
 
-bool bigchungusSetFire(bigchungus *c, int x, int y, int z, int strength){
+bool bigchungusSetFire(bigchungus *c, int x, int y, int z, u8 strength){
 	chungus *chng;
 	int cx = (x / CHUNGUS_SIZE) & 0xFF;
 	int cy = (y / CHUNGUS_SIZE) & 0x7F;
@@ -508,9 +508,11 @@ u8 bigchungusGetFire(bigchungus *c, int x,int y,int z) {
 u8 worldTryFire(int x, int y, int z){
 	return bigchungusTryFluid(&world,x,y,z);
 }
+
 u8 worldGetFire(int x, int y, int z){
 	return bigchungusGetFire(&world,x,y,z);
 }
-bool worldSetFire(int x, int y, int z, int strength){
+
+bool worldSetFire(int x, int y, int z, u8 strength){
 	return bigchungusSetFire(&world,x,y,z, strength);
 }
