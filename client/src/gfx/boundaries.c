@@ -54,7 +54,7 @@ static void drawBoundariesReal(const vertexFlat *data, uint dataCount){
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertexFlat), (void *)(((char *)&data[0].x) - ((char *)data)));
 	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(vertexFlat), (void *)(((char *)&data[0].rgba) - ((char *)data)));
 
- glDrawArrays(GL_LINES,0,dataCount);
+	glDrawArrays(GL_LINES,0,dataCount);
 }
 
 uint drawBoundariesPrepare(int size, vertexFlat *buf, uint bufi){
