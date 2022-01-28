@@ -22,8 +22,11 @@
 
 
 (define (get-newest-release-link arch branch)
-	(let* ((prefix (string-append "wolkenwelten-" arch "-" branch)) (p-len (string-length prefix)))
-		(string-append "releases/" arch "/" (car (last-pair (scandir (string-append "releases/" arch) (λ (path) (and (>= (string-length path) p-len) (string=? prefix (substring path 0 p-len))))))))))
+        (let* ((prefix (string-append "wolkenwelten-" arch "-" branch))
+               (p-len (string-length prefix))
+               (ent (scandir (string-append "releases/" arch) (λ (path) (and (>= (string-length path) p-len) (string=? prefix (substring path 0 p-len)))))))
+              (if (> (length ent) 0) (string-append "releases/" arch "/" (car (last-pair ent)))
+                     #nil)))
 
 (define (get-release-path-date path)
 	(let* ((lst (string-split path #\-)) (len (length lst)))
@@ -38,17 +41,24 @@
 	(format #nil "Released: ~a - Size: ~a" (get-release-path-date path) (human-file-size (filesize path))))
 
 (define (get-newest-release-download name arch branch)
-	(let ((path (get-newest-release-link arch branch)))
-	(string-append "<a class=\"button\" href=\"" path "\" download title=\"" (get-release-title path) "\">" "<span class=\"buttonlabel\">" name "</span><span class=\"buttonicon icon-" arch "\"></span></a>")))
+        (let ((path (get-newest-release-link arch branch)))
+          (if path (string-append "<a class=\"button\" href=\"" path "\" download title=\"" (get-release-title path) "\">" "<span class=\"buttonlabel\">" name "</span><span class=\"buttonicon icon-" arch "\"></span></a>") "")))
 
-(define (stable-releases) "")
-(define (experimental-releases)
+(define (stable-releases)
 	(string-append
 		(get-newest-release-download "Windows"          "win"           "master")
 		(get-newest-release-download "MacOS"            "macos"         "master")
 		(get-newest-release-download "GNU/Linux"        "linux-x86_64"  "master")
 		(get-newest-release-download "Linux ARM 64-Bit" "linux-aarch64" "master")
 		(get-newest-release-download "Linux ARM 32-Bit" "linux-armv7l"  "master")))
+
+(define (experimental-releases)
+	(string-append
+		(get-newest-release-download "Windows"          "win"           "develop")
+		(get-newest-release-download "MacOS"            "macos"         "develop")
+		(get-newest-release-download "GNU/Linux"        "linux-x86_64"  "develop")
+		(get-newest-release-download "Linux ARM 64-Bit" "linux-aarch64" "develop")
+		(get-newest-release-download "Linux ARM 32-Bit" "linux-armv7l"  "develop")))
 
 (define (read-all path)
   (apply string (call-with-input-file path
