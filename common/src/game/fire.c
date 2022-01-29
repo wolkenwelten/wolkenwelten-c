@@ -22,7 +22,7 @@
 #include "../world/world.h"
 
 
-int fireSpreadTo(int f, int x, int y, int z){
+static int fireSpreadTo(int f, int x, int y, int z){
 	if(f <= 0){return f;}
 	const u8 db = worldGetB(x,y,z);
 	if(!db){return f;}
@@ -33,6 +33,19 @@ int fireSpreadTo(int f, int x, int y, int z){
 	const int diff = ndf - df;
 	worldSetFire(x,y,z,ndf);
 	return f - diff;
+}
+
+static int fireExtinguishFrom(int curLevel, u8 *fluid, int x, int y, int z){
+        const u8 fluidLevel = *fluid & 0xF0;
+        if(fluidLevel){
+                const int newLevel = MAX(0,curLevel - fluidLevel);
+                const int diff     = curLevel - newLevel;
+                const int newFluid = (fluidLevel - diff) | *fluid;
+                *fluid = newFluid > 0xF ? newFluid : 0;
+                fxFluidVapor(x,y,z,*fluid & 0xF, diff);
+                return newLevel;
+        }
+        return curLevel;
 }
 
 int fireTick(chunkOverlay *f, chunkOverlay *fluid, chunkOverlay *block, int cx, int cy, int cz){
@@ -55,15 +68,25 @@ int fireTick(chunkOverlay *f, chunkOverlay *fluid, chunkOverlay *block, int cx, 
 			}
 		}
 		if(fluid){
-			const u8 fluidLevel = fluid->data[x][y][z] & 0xF0;
-			if(fluidLevel){
-				const int newLevel = MAX(0,curLevel - fluidLevel);
-				const int diff     = curLevel - newLevel;
-				const int newFluid = (fluidLevel - diff) | fluid->data[x][y][z];
-				fluid->data[x][y][z] = newFluid > 0xF ? newFluid : 0;
-				fxFluidVapor(cx+x,cy+y,cz+z,fluid->data[x][y][z] & 0xF, diff);
-				curLevel = newLevel;
-			}
+			curLevel = fireExtinguishFrom(curLevel, &fluid->data[x][y][z], cx+x,cy+y,cz+z);
+                        if(curLevel && (x > 0)){
+                                curLevel = fireExtinguishFrom(curLevel, &fluid->data[x-1][y][z], cx+x-1,cy+y,cz+z);
+                        }
+                        if(curLevel && (x < (CHUNK_SIZE-1))){
+                                curLevel = fireExtinguishFrom(curLevel, &fluid->data[x+1][y][z], cx+x+1,cy+y,cz+z);
+                        }
+                        if(curLevel && (y > 0)){
+                                curLevel = fireExtinguishFrom(curLevel, &fluid->data[x][y-1][z], cx+x,cy+y-1,cz+z);
+                        }
+                        if(curLevel && (y < (CHUNK_SIZE-1))){
+                                curLevel = fireExtinguishFrom(curLevel, &fluid->data[x][y+1][z], cx+x,cy+y+1,cz+z);
+                        }
+                        if(curLevel && (z > 0)){
+                                curLevel = fireExtinguishFrom(curLevel, &fluid->data[x][y][z-1], cx+x,cy+y,cz+z-1);
+                        }
+                        if(curLevel && (z < (CHUNK_SIZE-1))){
+                                curLevel = fireExtinguishFrom(curLevel, &fluid->data[x][y][z+1], cx+x,cy+y,cz+z+1);
+                        }
 		}
 		if(curLevel > 16){
 			curLevel = fireSpreadTo(curLevel,cx+x,cy+y+1,cz+z);
