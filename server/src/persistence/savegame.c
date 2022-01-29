@@ -348,5 +348,6 @@ void playerSafeSave(){
 	lastSave = cm;
 	if(++pi >= clientCount){pi=0;}
 	if(clients[pi].state){return;}
+        if(clients[pi].syncCount == 0){return;}
 	characterSaveData(clients[pi].c,clients[pi].playerName);
 }

@@ -51,6 +51,7 @@ bool mayTryToStartServer = false;
 uint connectionState = 0;
 uint lastPing        = 0;
 uint lastLatency     = 0;
+uint pingCount       = 0;
 uint recvBufLen      = 0;
 u8 recvBuf[1<<22];
 
@@ -132,6 +133,10 @@ void msgSendPlayerPos(){
 	static int inventoryCountDown=0;
 	int pLen = 15 * 4;
 	if(player == NULL){return;}
+        if(pingCount == 0){
+                inventoryCountDown = 0;
+                return;
+        }
 	if(--inventoryCountDown <= 0){
 		msgPlayerSetInventory(-1,player->inventory,CHAR_INV_MAX);
 		msgPlayerSetEquipment(-1,player->equipment,CHAR_EQ_MAX);
@@ -210,6 +215,7 @@ void handleGoodbye(const packet *p){
 
 static void handlePingPong(){
 	uint curPing = getTicks();
+        pingCount++;
 	lastLatency = ((curPing - lastPing) + lastLatency)/2;
 	lastPing = curPing;
 }

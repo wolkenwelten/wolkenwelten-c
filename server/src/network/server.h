@@ -14,7 +14,7 @@ typedef struct {
 	char playerName[32];
 	character *c;
 	int state,flags;
-	uint syncCount;
+	uint syncCount,pingCount;
 	u64 socket,lastPing;
 
 	uint fireUpdateOffset;
@@ -48,13 +48,14 @@ typedef struct {
 	uint sendBufSent;
 	uint sendBufLen;
 	uint sendBufLastCompressed;
-	u8   sendBuf[1<<22];
+	u8   sendBuf[1<<20];
 } clientConnection;
 
 #define STATE_READY      0
 #define STATE_CONNECTING 1
 #define STATE_CLOSED     2
 #define STATE_INTRO      3
+#define STATE_WAITING    4
 
 #define CONNECTION_WEBSOCKET (1   )
 #define CONNECTION_DO_UPDATE (1<<1)

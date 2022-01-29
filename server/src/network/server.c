@@ -303,6 +303,7 @@ void dispatchBeingDmg(uint c, const packet *p){
 
 void handlePingPong(uint c){
 	u64 curPing = getTicks();
+        clients[c].pingCount++;
 	clients[c].lastPing = curPing;
 }
 
@@ -733,7 +734,9 @@ void sendToAllExcept(uint e,const void *data, uint len){
 
 void serverCloseClient(uint c){
 	const char *msg = getPlayerLeaveMessage(c);
-	characterSaveData(clients[c].c,clients[c].playerName);
+        if(clients[c].pingCount && clients[c].syncCount){
+                characterSaveData(clients[c].c,clients[c].playerName);
+        }
 	if(clients[c].c != NULL){
 		characterFree(clients[c].c);
 		clients[c].c = NULL;
