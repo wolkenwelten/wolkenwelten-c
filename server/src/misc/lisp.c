@@ -502,7 +502,7 @@ static void *cmdLispReal(void *a, void *b){
 	const char *str = (const char *)b;
 
 	lVal *v = lRunS(clients[pid].cl, str, strlen(str));
-	spf(reply, &reply[sizeof(reply)-1], "%v", v);
+	spf(reply, &reply[sizeof(reply)-1], "%V", v);
 
 	msgLispSExpr(pid, reply);
 
@@ -543,7 +543,7 @@ int parseCommand(uint pid, const char *cmd){
 }
 
 void lispRecvSExpr(uint pid,const packet *p){
-	printf("Recv: %s\n",(const char *)p->v.u8);
+	//printf("Recv: %s\n",(const char *)p->v.u8);
 	cmdLisp(pid,(const char *)p->v.u8);
 }
 

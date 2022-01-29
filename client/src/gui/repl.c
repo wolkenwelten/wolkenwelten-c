@@ -118,7 +118,7 @@ void handlerLispSubmit(widget *wid){
 	}else{
 		snprintf(buf,sizeof(buf),"> %s",wid->vals);
 		widgetAddEntry(lispLog, buf);
-		const char *result = lispEval(wid->vals,true);
+		const char *result = lispEval(wid->vals,false);
 		snprintf(buf,sizeof(buf),"  %s",result);
 		widgetAddEntry(lispLog, buf);
 	}
