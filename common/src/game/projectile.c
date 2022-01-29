@@ -170,8 +170,12 @@ static inline int projectileUpdate(projectile *p){
 	if(!vecInWorld(p->pos)){return 1;}
 	if(characterHitCheck (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
 	if(animalHitCheck    (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
-	const blockId b = worldGetB(p->pos.x,p->pos.y,p->pos.z);
+	const blockId b = worldTryB(p->pos.x, p->pos.y, p->pos.z);
 	if(b){return projectileBounce(p,b);}
+        if(p->style == 6){
+                if(worldTryFire(p->pos.x, p->pos.y, p->pos.z)){return 1;}
+                if(worldTryFluid(p->pos.x, p->pos.y, p->pos.z)){return 1;}
+        }
 	if(p->target != 0){return projectileHomeIn(p);}
 	return 0;
 }
