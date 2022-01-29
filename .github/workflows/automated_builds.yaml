@@ -1,4 +1,4 @@
-name: Windows - mingw64
+name: Automated Builds
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master, develop ]
 
 jobs:
-  build:
+  build-mingw64:
     runs-on: windows-latest
     defaults:
       run:
@@ -21,8 +21,6 @@ jobs:
         install: >-
           base-devel
           p7zip
-          rsync
-          openssh
           mingw-w64-x86_64-autotools
           mingw-w64-x86_64-toolchain
           mingw-w64-x86_64-cmake
@@ -46,3 +44,4 @@ jobs:
       with:
         name: Builds
         path: "releases/win/*.7z"
+        retention-days: 7
