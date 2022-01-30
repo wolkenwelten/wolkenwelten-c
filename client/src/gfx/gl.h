@@ -27,12 +27,12 @@ bool glInitialize();
 	#define gfxGroupEnd() if(glIsDebugAvailable){glPopDebugGroup();}
 
 	#include <string.h>
-	#define gfxObjectLabel(type, id, ...) if(glIsDebugAvailable){\
+	#define gfxObjectLabel(type, id, format, ...) if(glIsDebugAvailable){\
 		char fullname[256];\
 		if(type==GL_VERTEX_ARRAY){glBindVertexArray(id);}\
 		if(type==GL_BUFFER){glBindBuffer(GL_ARRAY_BUFFER,id);}\
 		/*if(type==GL_PROGRAM){glUseProgram(id);}*/\
-		snprintf(fullname,glDebugLabelMaxLen,__VA_ARGS__);\
+		snprintf(fullname,glDebugLabelMaxLen,format,__VA_ARGS__);\
 		glObjectLabel(type,id,-1,fullname);\
 	}
 #endif

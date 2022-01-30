@@ -52,7 +52,7 @@ static void fluidGenerateChunkParticles(const chunkOverlay *fluid, const chunkOv
 	for(int z = 0; z < CHUNK_SIZE; z++){
 		const u8 level = *d++;
 		if((level & 0xF0) == 0){continue;}
-		if(block->data){
+		if(block){
 			const u8 b = block->data[x][y][z];
 			if(b){continue;}
 		}

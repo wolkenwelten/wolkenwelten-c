@@ -13,6 +13,9 @@ WEBEXCLUDE       += --exclude=releases/win/*.res
 
 TEST_WORLD       := -worldSeed=68040 -savegame=Test
 
+ifeq ("$(ARCH)","amd64")
+ARCH             := x86_64
+endif
 ASM_SRCS         := common/src/asm/$(ARCH).s
 
 ifneq ("$(wildcard $(ASM_SRCS))","")

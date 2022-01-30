@@ -161,7 +161,7 @@ static void compileFragmentShader(shader *s,const char *name){
 
 static void shaderCompile(shader *s,const char *name){
 	s->pID = glCreateProgram();
-	gfxObjectLabel(GL_PROGRAM,s->pID,name);
+	gfxObjectLabel(GL_PROGRAM,s->pID,"%s", name);
 	compileVertexShader(s,name);
 	compileFragmentShader(s,name);
 

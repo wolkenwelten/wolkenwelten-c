@@ -66,13 +66,13 @@ void particleInit(){
 	sparticleVBOSize = 0;
 
 	glGenVertexArrays(1, &particleVAO);
-	gfxObjectLabel(GL_VERTEX_ARRAY,particleVAO,"particle VAO");
+	gfxObjectLabel(GL_VERTEX_ARRAY,particleVAO,"particle VAO %d", 1);
 	glBindVertexArray(particleVAO);
 	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
 	glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);
 
 	glGenVertexArrays(1,&sparticleVAO);
-	gfxObjectLabel(GL_VERTEX_ARRAY,particleVAO,"sparticle VAO");
+	gfxObjectLabel(GL_VERTEX_ARRAY,particleVAO,"sparticle VAO %i", 1);
 	glBindVertexArray(sparticleVAO);
 	glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
 	glEnableVertexAttribArray(SHADER_ATTRIDX_COLOR);

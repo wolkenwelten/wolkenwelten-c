@@ -55,7 +55,7 @@ void chunkvertbufInit(){
 	allocatedGlBufferBytes = 0;
 	glGenBuffers(1, &indexBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-	gfxObjectLabel(GL_BUFFER, indexBuffer, "Chunk vertex IBO");
+	gfxObjectLabel(GL_BUFFER, indexBuffer, "Chunk vertex IBO %u", 1);
 	const GLsizei indexCount = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * CUBE_FACES * INDICES_PER_FACE / 2;
 	u16 *indicesRaw = malloc(indexCount * sizeof(u16));
 	u16 *indices = indicesRaw;
