@@ -254,7 +254,8 @@ static void doScreenshot(){
 /* Render a single Frame */
 void renderFrame(){
 	chunkResetCounter();
-	frameRelaxedDeadline = getTicks() + ((1000/screenRefreshRate)/4); // Gotta hurry after 1/4 frame
+	const int rRate = screenRefreshRate ? screenRefreshRate : 60; // Default to 60
+	frameRelaxedDeadline = getTicks() + ((1000/rRate)/4); // Gotta hurry after 1/4 frame
 	calcFOV(player);
 	calcView(player);
 	cloudsCalcColors();
