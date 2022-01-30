@@ -71,13 +71,13 @@ apt install build-essential clang ffmpeg libsdl2-dev libsdl2-mixer-dev musl-dev 
 
 ### OpenBSD
 ```shell
-pkg_add clang gas gmake bash sdl2 sdl2-mixer glew ffmpeg
+pkg_add clang gas gmake bash sdl2 sdl2-mixer ffmpeg
 ```
 You can then build the game using `gmake`
 
 ### NetBSD
 ```shell
-pkgin in clang gas gmake bash SDL2 SDL2_mixer glew ffmpeg
+pkgin in clang gas gmake bash SDL2 SDL2_mixer ffmpeg pkg-config
 ```
 You can then build the game using `gmake`
 

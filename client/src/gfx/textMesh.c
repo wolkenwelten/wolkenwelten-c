@@ -204,7 +204,7 @@ void textMeshAddGlyphHG(textMesh *m, int x, int y, int size, u8 c, u32 fgc, u32 
 
 static int wordWidth(const char *str){
 	int ret = 0;
-	while(*str && !isspace(*str)){
+	while(*str && !isspace((u8)(*str))){
 		if((((u8)str[0] == 0xCE) && ((u8)str[1] == 0xBB))
 			|| (((u8)str[0] == 0xCE) && ((u8)str[1] == 0xB4))
 			|| (((u8)str[0] == 0xCF) && ((u8)str[1] == 0x89))) // UTF-8 λδω
@@ -240,7 +240,7 @@ bool textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 			if(y+lineHeight > maxY){
 				return 1;
 			}
-			while(*str && isspace(*str++)){}
+			while(*str && isspace((u8)(*str++))){}
 			str--;
 			continue;
 		}
