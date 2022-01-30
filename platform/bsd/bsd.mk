@@ -3,7 +3,10 @@ ifeq (, $(shell which gas))
 	AS       := as
 endif
 
-CC               := clang
+CC       := gcc
+ifneq (, $(shell which clang))
+	CC       := clang
+endif
 
 CFLAGS           += -D_GNU_SOURCE
 

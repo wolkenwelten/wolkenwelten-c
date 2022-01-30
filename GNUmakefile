@@ -73,7 +73,7 @@ else
 	ifeq ($(UNAME_S),Haiku)
 		include platform/haiku/haiku.mk
 	endif
-	ifeq ($(UNAME_S),DragonflyBSD)
+	ifeq ($(UNAME_S),DragonFly)
 		include platform/bsd/bsd.mk
 	endif
 	ifeq ($(UNAME_S),OpenBSD)
