@@ -75,7 +75,7 @@ typedef struct {
 	const char *defines;
 	const char *name;
 	uint attrMask;
-	int lMVP,lAlpha,lColor,lTransform,lSideTint,lSizeMul;
+	int lMVP,lAlpha,lColor,lTransform,lSizeMul;
 } shader;
 
 typedef struct {

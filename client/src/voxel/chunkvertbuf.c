@@ -166,7 +166,7 @@ void chunkvertbufUpdate(chunk *c, vertexPacked *vertices, u16 sideVtxCounts[side
 	}
 }
 
-void chunkvertbufDrawOne(struct chunk *c, sideMask mask, const vec sideTints[sideMAX]){
+void chunkvertbufDrawOne(struct chunk *c, sideMask mask){
 	struct chunkvertbuf *v = c->vertbuf;
 	if(v->vao == 0 || v->idxCount == 0){return;}
 
@@ -178,7 +178,6 @@ void chunkvertbufDrawOne(struct chunk *c, sideMask mask, const vec sideTints[sid
 		const uint cCount = c->vertbuf->sideIdxCount[sideIndex];
 		if(cCount == 0){continue;}
 		const uint cFirst = c->vertbuf->sideIdxStart[sideIndex];
-		shaderSideTint(sBlockMesh, sideTints[sideIndex]);
 		glDrawElements(GL_TRIANGLES, cCount, GL_UNSIGNED_SHORT, (const void*const*)(cFirst * sizeof(u16)));
 		vboTrisCount += cCount / 3;
 		drawCallCount++;

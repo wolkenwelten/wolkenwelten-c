@@ -184,7 +184,6 @@ static void shaderCompile(shader *s,const char *name){
 	s->lMVP        = glGetUniformLocation(s->pID,"matMVP");
 	s->lColor      = glGetUniformLocation(s->pID,"inColor");
 	s->lAlpha      = glGetUniformLocation(s->pID,"colorAlpha");
-	s->lSideTint   = glGetUniformLocation(s->pID,"sideTint");
 	s->lTransform  = glGetUniformLocation(s->pID,"transPos");
 	s->lSizeMul    = glGetUniformLocation(s->pID,"sizeMul");
 }
@@ -216,7 +215,6 @@ static shader *shaderNew(shader *slot,const char *name,const char *vss,const cha
 	s->lColor     = -1;
 	s->lAlpha     = -1;
 	s->lSizeMul   = -1;
-	s->lSideTint  = -1;
 	s->lTransform = -1;
 
 	shaderCompile(s,name);
@@ -264,14 +262,6 @@ void shaderColor(shader *s, float r, float g, float b, float a){
 		exit(123);
 	}
 	glUniform4f(s->lColor,r,g,b,a);
-}
-
-void shaderSideTint(shader *s, const vec sideTint){
-	if(s->lSideTint == -1){
-		fprintf(stderr,"%s has no location for sideTint Uniform\n", s->name);
-		exit(123);
-	}
-	glUniform3f(s->lSideTint, sideTint.x, sideTint.y, sideTint.z);
 }
 
 void shaderTransform(shader *s, float x, float y, float z){

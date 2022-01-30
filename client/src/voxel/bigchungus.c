@@ -182,21 +182,6 @@ void worldDraw(const character *cam){
 	// and visible block seams.
 	matMul(matMVP,matSubBlockView,matProjection);
 	shaderMatrix(sBlockMesh,matMVP);
-	const float shadeFront  = 0.85f;
-	const float shadeBack   = 0.9f;
-	const float shadeTop    = 1.0f;
-	const float shadeBottom = 0.65f;
-	const float shadeLeft   = 0.75f;
-	const float shadeRight  = 0.8f;
-	const vec sideTints[sideMAX] = {
-		(vec){{{shadeFront, shadeFront, shadeFront}}},
-		(vec){{{shadeBack,  shadeBack,  shadeBack}}},
-		(vec){{{shadeTop,   shadeTop,   shadeTop}}},
-		(vec){{{shadeBottom,shadeBottom,shadeBottom}}},
-		(vec){{{shadeLeft,  shadeLeft,  shadeLeft}}},
-		(vec){{{shadeRight, shadeRight, shadeRight}}},
-	};
-
 	const int dist   = (int)ceilf(renderDistance / CHUNGUS_SIZE)+1;
 	const u64 cTicks = getTicks();
 
@@ -252,7 +237,7 @@ void worldDraw(const character *cam){
 	}
 
 	quicksortQueue(drawQueue,0,drawQueueLen-1);
-	chunkDrawQueue(drawQueue,drawQueueLen,sideTints);
+	chunkDrawQueue(drawQueue,drawQueueLen);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 	gfxGroupEnd();
 }
