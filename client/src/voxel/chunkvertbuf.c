@@ -173,13 +173,43 @@ void chunkvertbufDrawOne(struct chunk *c, sideMask mask){
 	shaderTransform(sBlockMesh,c->x-subBlockViewOffset.x,c->y-subBlockViewOffset.y,c->z-subBlockViewOffset.z);
 	glBindVertexArray(v->vao);
 
-	for(side sideIndex = 0; sideIndex < sideMAX; sideIndex++){
-		if(!(mask & (1 << sideIndex))){continue;}
-		const uint cCount = c->vertbuf->sideIdxCount[sideIndex];
-		if(cCount == 0){continue;}
-		const uint cFirst = c->vertbuf->sideIdxStart[sideIndex];
-		glDrawElements(GL_TRIANGLES, cCount, GL_UNSIGNED_SHORT, (const void*const*)(cFirst * sizeof(u16)));
-		vboTrisCount += cCount / 3;
+	if(mask == sideMaskALL){
+		glDrawElements(GL_TRIANGLES, v->idxCount, GL_UNSIGNED_SHORT, (const void*const*)0);
+		vboTrisCount += v->idxCount / 3;
 		drawCallCount++;
+	}else{
+		uintptr_t first[sideMAX];
+		GLsizei count[sideMAX];
+		uint index = 0;
+		bool reuseLastSide = false;
+
+		for(side sideIndex = 0; sideIndex < sideMAX; sideIndex++){
+			if(!(mask & (1 << sideIndex))){
+				reuseLastSide = false;
+				continue;
+			}
+			const uint cCount = c->vertbuf->sideIdxCount[sideIndex];
+			if(cCount == 0){continue;}
+			vboTrisCount += cCount / 3;
+			const uint cFirst = c->vertbuf->sideIdxStart[sideIndex] * sizeof(u16);
+
+			if(reuseLastSide){
+				count[index-1] += cCount;
+			}else{
+				first[index] = cFirst;
+				count[index] = cCount;
+				index++;
+				reuseLastSide = true;
+			}
+		}
+		if(glIsMultiDrawAvailable){
+			glMultiDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, (const void * const *)first, index);
+			drawCallCount++;
+		}else{
+			for(uint i=0;i<index;i++){
+				glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_SHORT, (const void*const*)first[i]);
+			}
+			drawCallCount+=index;
+		}
 	}
 }

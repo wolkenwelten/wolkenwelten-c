@@ -31,6 +31,10 @@ bool glInitialize() {
 	#endif
 
 	glIsDebugAvailable = glHasExtension("GL_KHR_debug");
+
+	#ifdef WOLKENWELTEN__GL_ES
+	glIsMultiDrawAvailable = glHasExtension("GL_EXT_multi_draw_arrays");
+	#endif
 	if(glIsDebugAvailable){
 		GLint value;
 		glGetIntegerv(GL_MAX_LABEL_LENGTH, &value);
