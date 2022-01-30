@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define CHUNGUS_COUNT (1<<14)
+#define CHUNGUS_COUNT (1<<10)
 
 chungus *chungusList;
 uint chungusCount = 0;
@@ -45,6 +45,10 @@ u64 freeTime = 0;
 
 void chungusInit(){
 	chungusList = malloc(sizeof(chungus) * CHUNGUS_COUNT);
+	if(chungusList == NULL){
+		fprintf(stderr,"Can't allocate chungusList, exiting");
+		exit(5);
+	}
 }
 
 void chungusSetClientUpdated(chungus *c,u64 updated){
