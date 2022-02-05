@@ -93,6 +93,7 @@ static void shaderPrintLog(uint obj, const char *msg, const char *src){
 }
 
 static void compileVertexShader(shader *s,const char *name){
+	(void)name;
 	char buf[1 << 14];
 	char *bufp[2] = {(char *)&buf,0};
 
@@ -128,6 +129,7 @@ static void compileVertexShader(shader *s,const char *name){
 }
 
 static void compileFragmentShader(shader *s,const char *name){
+	(void)name;
 	char buf[1 << 14];
 	char *bufp[2] = {(char *)&buf,0};
 

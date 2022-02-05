@@ -35,14 +35,17 @@ bool glInitialize() {
 	#ifdef WOLKENWELTEN__GL_ES
 	glIsMultiDrawAvailable = glHasExtension("GL_EXT_multi_draw_arrays");
 	#endif
+	#ifndef __APPLE__
 	if(glIsDebugAvailable){
 		GLint value;
 		glGetIntegerv(GL_MAX_LABEL_LENGTH, &value);
 		glDebugLabelMaxLen = value > 256 ? 256 : value;
-	}
-	else{
+	} else{
 		glDebugLabelMaxLen = 0;
 	}
+	#else
+	glDebugLabelMaxLen = 0;
+	#endif
 
 	return true;
 }
