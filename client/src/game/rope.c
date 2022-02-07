@@ -129,7 +129,7 @@ void ropeDrawAll(){
 		if((r->a == 0) || (r->b == 0)){continue;}
 		ropeDraw(r);
 	}
-	if(ropeMesh->dataCount == 0){return;}
+	if(ropeMesh->vertexCount == 0){return;}
 	shaderBind(sMesh);
 	matMul(matMVP,matSubBlockView,matProjection);
 	shaderMatrix(sMesh,matMVP);

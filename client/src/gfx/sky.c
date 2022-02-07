@@ -24,6 +24,7 @@
 #include "../gfx/texture.h"
 #include "../gfx/mesh.h"
 #include "../gui/gui.h"
+#include "../tmp/meshAssets.h"
 #include "../tmp/objs.h"
 #include "../game/entity.h"
 #include "../game/weather/weather.h"
@@ -51,11 +52,8 @@ extern uchar gfx_sun_png_data[];
 u32 *skyTextureBuffer;
 int skyTextureSize = 16;
 
-extern vertex skydome_verts[];
-extern unsigned int skydome_count;
-
 void initSky(){
-	mSky = meshNewRO("skydome",skydome_verts,skydome_count);
+	mSky = meshNewAsset("skydome", &skydome_meshdata);
 	tSky = textureNewRaw();
 	tSky->w = skyTextureSize;
 	tSky->h = skyTextureSize;

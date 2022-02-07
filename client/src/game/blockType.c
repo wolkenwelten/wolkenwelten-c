@@ -31,7 +31,7 @@ void blockTypeGenMeshes(){
 		if(!blockTypeValid(i)){continue;}
 		blocks[i].singleBlock = meshNew(NULL);
 		mesh *singleBlock = blocks[i].singleBlock;
-		singleBlock->dataCount = 0;
+		singleBlock->vertexCount = 0;
 		singleBlock->tex = tBlocks;
 		blockTypeAddToMesh(i,singleBlock,vecNew(-0.5f,-0.5f,-0.5f),vecOne());
 		meshFinishStatic(singleBlock);

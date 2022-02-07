@@ -2,7 +2,7 @@
 #include "../../../common/src/common.h"
 
 mesh *meshNew           (const char *name);
-mesh *meshNewRO         (const char *name, const vertex *nroData,size_t roSize);
+mesh *meshNewAsset      (const char *name, const assetMeshdata *asset);
 mesh *meshGet           (uint i);
 uint  meshIndex         (const mesh *m);
 void  meshFreeAll       ();

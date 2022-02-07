@@ -15,8 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
 	float x,y,z;
@@ -40,9 +43,22 @@ int vertPosCount=1;
 vertex verts[8192];
 int vertCount=0;
 
+uint16_t indices[8192];
+int indexCount=0;
+
 char name[256];
 
 FILE *cfp,*hfp;
+
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
+#define NORM(v,min,max,scale) ((v-min)/(max-min)*scale)
+#define U8NORM(v,min,max) ((uint8_t)NORM(v,min,max,255))
+#define U16NORM(v,min,max) ((uint16_t)NORM(v,min,max,65535))
+
+bool vertexEquals(const vertex *a, const vertex *b){
+	return a->x == b->x && a->y == b->y && a->z == b->z && a->u == b->u && a->v == b->v;
+}
 
 void parseLine(char *line){
 	if(*line == 0){return;}
@@ -99,6 +115,37 @@ void parseObj(char *obj){
 	parseLine(sol);
 }
 
+void indexObj(){
+	static const uint16_t NotRemapped = 0xFFFF;
+	static uint16_t vertexRemap[8192];
+	static vertex reduced[8192];
+	for(int i=0; i<sizeof(vertexRemap)/sizeof(vertexRemap[0]); ++i){
+		vertexRemap[i] = NotRemapped;
+	}
+
+	int reducedVertCount=0;
+	for(int v=0; v<vertCount; ++v){
+		vertex current = verts[v];
+		// Find a vertex with same data (at least 1 should, obviously)
+		for(int candidate=0; candidate<=v; ++candidate){
+			if(vertexEquals(&verts[candidate], &current)){
+				// If the equal vertex hasn't been added to the reduced vertex buffer, do so
+				if(vertexRemap[candidate] == NotRemapped){
+					vertexRemap[candidate] = reducedVertCount;
+					reduced[reducedVertCount] = verts[candidate];
+					++reducedVertCount;
+				}
+				indices[v] = vertexRemap[candidate];
+				break;
+			}
+		}
+	}
+
+	indexCount = vertCount;
+	vertCount = reducedVertCount;
+	memcpy(verts, reduced, sizeof(verts));
+}
+
 void loadObj(char *file){
 	char *buf;
 	FILE *fh = fopen(file,"r");
@@ -131,26 +178,106 @@ void loadObj(char *file){
 	}
 	*s = 0;
 	parseObj(buf);
+	indexObj();
 	free(buf);
+}
+
+float cacheEfficiency(int capacity, const uint16_t *indices, int indexCount){
+	static const uint16_t CacheMaxCapacity = 128;
+	uint16_t cache[CacheMaxCapacity];
+	for(int i=0; i<capacity; ++i){
+		cache[i] = 0xFFFF;
+	}
+	int misses=0, hits=0;
+	for(int i=0; i<indexCount; ++i){
+		uint16_t index = indices[i];
+		// Is vertex in cache?
+		uint16_t cachePosition = 0xFFFF;
+		for(int j=0; j<capacity; ++j){
+			if(cache[j] == index){
+				cachePosition = j;
+				break;
+			}
+		}
+		if(cachePosition == 0xFFFF){
+			// Cache miss, shift everything right and add to front, and record miss
+			memmove(cache + 1, cache, (capacity - 1) * sizeof(cache[0]));
+			cache[0] = index;
+			++misses;
+		}else {
+			// Cache hit, move to front & shift inbetween items, and record hit
+			if(cachePosition != 0){
+				memmove(cache + 1, cache, cachePosition * sizeof(cache[0]));
+			}
+			cache[0] = index;
+			++hits;
+		}
+	}
+	return 1.f - ((float)(misses) / (hits + misses));
 }
 
 void printObj(){
 	int i;
 
-	fprintf(cfp,"vertex %s_verts[] = {\n",name);
+	// Determine bounding box
+	vertexPos min = { 0.f, 0.f, 0.f }, max = { 0.f, 0.f, 0.f };
+	for(i=0;i<vertCount;i++){
+		const vertex v = verts[i];
+		min.x = MIN(min.x, v.x);
+		min.y = MIN(min.y, v.y);
+		min.z = MIN(min.z, v.z);
+		max.x = MAX(max.x, v.x);
+		max.y = MAX(max.y, v.y);
+		max.z = MAX(max.z, v.z);
+	}
+
+	// Output vertex data with coords normalized to the bounding box's space, as u16
+	fprintf(cfp,"static const assetVertex %s_verts[] = {\n",name);
 	for(i=0;i<vertCount;i++){
 		if(i != 0){
 			fprintf(cfp," ,");
 		}else{
 			fprintf(cfp,"  ");
 		}
-		fprintf(cfp,"{%f,%f,%f,%f,%f,1.f}\n",verts[i].x,verts[i].y,verts[i].z,verts[i].u,verts[i].v);
+		fprintf(cfp,"{%i,%i,%i,%i,%i}\n",
+			U8NORM(verts[i].x, min.x, max.x),
+			U8NORM(verts[i].y, min.y, max.y),
+			U8NORM(verts[i].z, min.z, max.z),
+			U8NORM(verts[i].u, -1.25f, 1.25f),
+			U8NORM(verts[i].v, -1.25f, 1.25f)
+		);
 	}
 	fprintf(cfp,"};\n");
-	fprintf(cfp,"unsigned int %s_count = %i;\n\n",name,vertCount);
+	// Check for < 256 instead of <= 256, because on primitive restart is always enabled on WebGL,
+	// and 0xFF/0xFFFF are always used as restart indices on u8/u16 index buffers respectively.
+	const char *indexType = vertCount < 256 ? "u8" : "u16";
+	const char *indexTypeEnum = vertCount < 256 ? "meshIndexTypeU8" : "meshIndexTypeU16";
+	fprintf(cfp,"static const %s %s_indices[] = {\n",indexType,name);
+	for(i=0;i<indexCount;i++){
+		fprintf(cfp,i == 0 ? "%i" : ", %i", indices[i]);
+	}
+	fprintf(cfp,"};\n");
 
-	fprintf(hfp,"extern vertex %s_verts[];\n",name);
-	fprintf(hfp,"extern unsigned int %s_count;\n\n",name);
+	fprintf(cfp,
+		"assetMeshdata %s_meshdata = {\n"
+		"\t.bbox = { .min = { %f, %f, %f }, .max = { %f, %f, %f } },\n"
+		"\t.vertexData = %s_verts,\n"
+		"\t.vertexCount = %i,\n"
+		"\t.indexData = { .%s = %s_indices },\n"
+		"\t.indexCount = %i,\n"
+		"\t.indexType = %s\n"
+		"};\n",
+		name,
+		min.x, min.y, min.z, max.x, max.y, max.z,
+		name,
+		vertCount,
+		indexType,
+		name,
+		indexCount,
+		indexTypeEnum
+	);
+
+	fprintf(hfp,"extern assetMeshdata %s_meshdata;\n",name);
 }
 
 int main(int argc,char *argv[]){
@@ -166,11 +293,22 @@ int main(int argc,char *argv[]){
 	fprintf(hfp,"#pragma once\n");
 	fprintf(hfp,"#include \"../gfx/mesh.h\"\n\n");
 	for(i=1;i<argc;i++){
-		loadObj(argv[i]);
-		printObj();
 		vertTexCount=1;
 		vertPosCount=1;
 		vertCount=0;
+		indexCount=0;
+		loadObj(argv[i]);
+		printf("%32s: %4d verts & %4d indices (%.1fx), cache hits %.1f%% %.1f%% %.1f%% %.1f%%\n",
+			argv[i],
+			vertCount,
+			indexCount,
+			(float)(indexCount)/vertCount,
+			cacheEfficiency(16, indices, indexCount)*100,
+			cacheEfficiency(32, indices, indexCount)*100,
+			cacheEfficiency(64, indices, indexCount)*100,
+			cacheEfficiency(128, indices, indexCount)*100
+		);
+		printObj();
 	}
 	fclose(cfp);
 	fclose(hfp);
