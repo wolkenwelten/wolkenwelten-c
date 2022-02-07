@@ -84,7 +84,7 @@ bool quit              = false;
 bool gameRunning       = false;
 bool playerChunkActive = false;
 bool singleplayer      = false;
-u64 gameTicks = 0;
+u64  gameTicks = 0;
 
 void playerInit(){
 	if(player){characterFree(player);}

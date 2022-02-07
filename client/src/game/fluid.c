@@ -35,6 +35,8 @@ void fluidPhysicsTick(){
 			if(!fluidPhysics(c->fluid, c->block, c->x, c->y, c->z)){
 				chunkOverlayFree(c->fluid);
 				c->fluid = NULL;
+			}else{
+				c->flags |= CHUNK_FLAG_FLUID_DIRTY;
 			}
 		}
 		}

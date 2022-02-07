@@ -44,10 +44,6 @@ struct chunkvertbuf {
 static u32 allocatedGlBufferBytes;
 static GLuint indexBuffer;
 
-static void setVAOFormatPacked(){
-	glVertexAttribIPointer(SHADER_ATTRIDX_PACKED, 1, GL_UNSIGNED_INT, sizeof(vertexPacked), NULL);
-	glEnableVertexAttribArray(SHADER_ATTRIDX_PACKED);
-}
 
 #define CUBE_FACES 6
 #define INDICES_PER_FACE 6
@@ -101,27 +97,30 @@ static chunkvertbuf *chunkvertbufAlloc(){
 	return ret;
 }
 
-void chunkvertbufFree(struct chunk *c){
-	if(c->vertbuf == NULL){return;}
-	if(c->vertbuf->vbo){
+static void chunkvertbufFreeSingle(chunkvertbuf *v){
+	if(v == NULL){return;}
+	if(v->vbo){
 		const u32 vertexSize = sizeof(vertexPacked);
-		glDeleteBuffers(1,&c->vertbuf->vbo);
-		allocatedGlBufferBytes -= vertexSize * c->vertbuf->vboSize;
+		glDeleteBuffers(1,&v->vbo);
+		allocatedGlBufferBytes -= vertexSize * v->vboSize;
 	}
-	if(c->vertbuf->vao){glDeleteVertexArrays(1,&c->vertbuf->vao);}
+	if(v->vao){glDeleteVertexArrays(1,&v->vao);}
 
-	c->vertbuf->nextFree = chunkvertbufFirstFree;
-	chunkvertbufFirstFree = c->vertbuf;
-
-	c->vertbuf = NULL;
+	v->nextFree = chunkvertbufFirstFree;
+	chunkvertbufFirstFree = v;
 }
 
+void chunkvertbufFree(chunk *c){
+	chunkvertbufFreeSingle(c->blockVertbuf);
+	chunkvertbufFreeSingle(c->fluidVertbuf);
+	c->blockVertbuf = NULL;
+	c->fluidVertbuf = NULL;
+}
 
 #define VTX_TO_IDX_COUNT(x) ((x*3)>>1)
-void chunkvertbufUpdate(chunk *c, vertexPacked *vertices, u16 sideVtxCounts[sideMAX]) {
-	struct chunkvertbuf *v = c->vertbuf;
-	if(v == NULL) {
-		c->vertbuf = v = chunkvertbufAlloc();
+chunkvertbuf *chunkvertbufBlockUpdate(chunkvertbuf *v, vertexPacked *vertices, u16 sideVtxCounts[sideMAX]){
+	if(v == NULL){
+		v = chunkvertbufAlloc();
 		v->flags |= CHUNKVERTBUF_FLAG_USED;
 	}
 
@@ -137,19 +136,19 @@ void chunkvertbufUpdate(chunk *c, vertexPacked *vertices, u16 sideVtxCounts[side
 
 	if(vtxCount == 0){
 		// Empty chunk, don't allocate or update anything (except the counts themselves)
-		return;
+		return v;
 	}
 
 	if(!v->vao){
 		glGenVertexArrays(1, &v->vao);
-		gfxObjectLabel(GL_VERTEX_ARRAY, v->vao, "Chunk %d,%d,%d VAO", c->x, c->y, c->z);
+		//gfxObjectLabel(GL_VERTEX_ARRAY, v->vao, "Chunk %d,%d,%d VAO", c->x, c->y, c->z);
 	}
 	glBindVertexArray(v->vao);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 
 	if(!v->vbo){
 		glGenBuffers(1, &v->vbo);
-		gfxObjectLabel(GL_BUFFER, v->vbo, "Chunk %d,%d,%d VBO", c->x, c->y, c->z);
+		//gfxObjectLabel(GL_BUFFER, v->vbo, "Chunk %d,%d,%d VBO", c->x, c->y, c->z);
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, v->vbo);
 
@@ -162,15 +161,69 @@ void chunkvertbufUpdate(chunk *c, vertexPacked *vertices, u16 sideVtxCounts[side
 		glBufferData(GL_ARRAY_BUFFER,vertexSize * vtxCount,vertices,GL_STATIC_DRAW);
 		allocatedGlBufferBytes += vertexSize * vtxCount;
 		v->vboSize = vtxCount;
-		setVAOFormatPacked();
+		glVertexAttribIPointer(SHADER_ATTRIDX_PACKED, 1, GL_UNSIGNED_INT, sizeof(vertexPacked), NULL);
+		glEnableVertexAttribArray(SHADER_ATTRIDX_PACKED);
 	}
+	return v;
 }
 
-void chunkvertbufDrawOne(struct chunk *c, sideMask mask){
-	struct chunkvertbuf *v = c->vertbuf;
-	if(v->vao == 0 || v->idxCount == 0){return;}
+chunkvertbuf *chunkvertbufFluidUpdate(chunkvertbuf *v, vertexFluid *vertices, u16 sideVtxCounts[sideMAX]){
+	if(v == NULL){
+		v = chunkvertbufAlloc();
+		v->flags |= CHUNKVERTBUF_FLAG_USED;
+	}
 
-	shaderTransform(sBlockMesh,c->x-subBlockViewOffset.x,c->y-subBlockViewOffset.y,c->z-subBlockViewOffset.z);
+	// Compute where the geometry for each side starts and how long it is
+	// in the chunk's packed vertex buffer.
+	u16 vtxCount = 0;
+	for(side sideIndex=0;sideIndex<sideMAX;sideIndex++){
+		v->sideIdxStart[sideIndex] = VTX_TO_IDX_COUNT(vtxCount);
+		v->sideIdxCount[sideIndex] = VTX_TO_IDX_COUNT(sideVtxCounts[sideIndex]);
+		vtxCount += sideVtxCounts[sideIndex];
+	}
+	v->idxCount = VTX_TO_IDX_COUNT(vtxCount);
+
+	if(vtxCount == 0){
+		// Empty chunk, don't allocate or update anything (except the counts themselves)
+		return v;
+	}
+
+	if(!v->vao){
+		glGenVertexArrays(1, &v->vao);
+		//gfxObjectLabel(GL_VERTEX_ARRAY, v->vao, "Chunk %d,%d,%d VAO", c->x, c->y, c->z);
+	}
+	glBindVertexArray(v->vao);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+	if(!v->vbo){
+		glGenBuffers(1, &v->vbo);
+		//gfxObjectLabel(GL_BUFFER, v->vbo, "Chunk %d,%d,%d VBO", c->x, c->y, c->z);
+	}
+	glBindBuffer(GL_ARRAY_BUFFER, v->vbo);
+
+	// Upload to the GPU, doing partial updates if possible.
+	const u32 vertexSize = sizeof(vertexFluid);
+	if(gfxUseSubData && (vtxCount <= v->vboSize)){
+		glBufferSubData(GL_ARRAY_BUFFER,0,vertexSize * vtxCount,vertices); // Todo Measure performance impact of this!
+	}else{
+		allocatedGlBufferBytes -= vertexSize * v->vboSize;
+		glBufferData(GL_ARRAY_BUFFER,vertexSize * vtxCount,vertices,GL_STATIC_DRAW);
+		allocatedGlBufferBytes += vertexSize * vtxCount;
+		v->vboSize = vtxCount;
+
+		glVertexAttribIPointer(SHADER_ATTRIDX_POS, 3, GL_UNSIGNED_SHORT, sizeof(vertexFluid), (void *)((u8 *)&vertices[0].x - (u8 *)vertices));
+		glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
+		glVertexAttribIPointer(SHADER_ATTRIDX_TEX, 1, GL_UNSIGNED_BYTE, sizeof(vertexFluid), (void *)((u8 *)&vertices[0].texture - (u8 *)vertices));
+		glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
+		glVertexAttribIPointer(SHADER_ATTRIDX_FLAG, 1, GL_UNSIGNED_BYTE, sizeof(vertexFluid), (void *)((u8 *)&vertices[0].sideLight - (u8 *)vertices));
+		glEnableVertexAttribArray(SHADER_ATTRIDX_FLAG);
+	}
+	return v;
+}
+
+void chunkvertbufDrawOne(sideMask mask, chunkvertbuf *v){
+	if(!v || (v->vao == 0) || (v->idxCount == 0)){return;}
+
 	glBindVertexArray(v->vao);
 
 	if(mask == sideMaskALL){
@@ -188,10 +241,10 @@ void chunkvertbufDrawOne(struct chunk *c, sideMask mask){
 				reuseLastSide = false;
 				continue;
 			}
-			const uint cCount = c->vertbuf->sideIdxCount[sideIndex];
+			const uint cCount = v->sideIdxCount[sideIndex];
 			if(cCount == 0){continue;}
 			vboTrisCount += cCount / 3;
-			const uint cFirst = c->vertbuf->sideIdxStart[sideIndex] * sizeof(u16);
+			const uint cFirst = v->sideIdxStart[sideIndex] * sizeof(u16);
 
 			if(reuseLastSide){
 				count[index-1] += cCount;

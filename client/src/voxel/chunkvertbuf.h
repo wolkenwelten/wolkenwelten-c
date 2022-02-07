@@ -5,7 +5,8 @@
 void chunkvertbufInit        ();
 u32  chunkvertbufUsedBytes   ();
 u32  chunkvertbufMaxBytes    ();
-void chunkvertbufUpdate      (chunk *c, vertexPacked *vertices, u16 sideVtxCounts[sideMAX]);
 void chunkvertbufFree        (chunk *c);
 void chunkvertbufDrawQueue   (queueEntry *queue, int queueLen);
-void chunkvertbufDrawOne     (chunk *c, sideMask mask);
+void chunkvertbufDrawOne     (sideMask mask, chunkvertbuf *v);
+chunkvertbuf *chunkvertbufBlockUpdate(chunkvertbuf *v, vertexPacked *vertices, u16 sideVtxCounts[sideMAX]);
+chunkvertbuf *chunkvertbufFluidUpdate(chunkvertbuf *v, vertexFluid *vertices, u16 sideVtxCounts[sideMAX]);

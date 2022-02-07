@@ -16,7 +16,7 @@ struct chungus {
 };
 
 typedef struct queueEntry {
-	float distance;
+	float priority;
 	sideMask mask;
 	union {
 		chunk   *chnk;

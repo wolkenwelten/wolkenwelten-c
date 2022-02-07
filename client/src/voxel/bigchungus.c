@@ -55,10 +55,10 @@ void worldInit(){
 }
 
 static int quicksortQueuePart(queueEntry *a, int lo, int hi){
-	float p = a[hi].distance;
+	float p = a[hi].priority;
 	int i = lo;
 	for(int j = lo;j<=hi;j++){
-		if(a[j].distance < p){
+		if(a[j].priority < p){
 			queueEntry t = a[i];
 			a[i] = a[j];
 			a[j] = t;
@@ -163,25 +163,77 @@ bool worldSetFluid(int x,int y,int z, u8 level){
 	return true;
 }
 
-void worldDraw(const character *cam){
-	static queueEntry drawQueue[8192*4];
-	static queueEntry loadQueue[1<<9];
-	int drawQueueLen=0,loadQueueLen=0;
-	if(connectionState < 2){return;}
+static void worldRequestLoadQueue(queueEntry *loadQueue, int loadQueueLen){
+	if(loadQueueLen <= 0){return;}
+	quicksortQueue(loadQueue,0,loadQueueLen-1);
+	for(int i=loadQueueLen-1;i>=0;i--){
+		chungus *chng = loadQueue[i].chng;
+		msgRequestChungus(chng->x,chng->y,chng->z);
+	}
+}
+
+static void worldRenderDrawQueue(queueEntry *drawQueue, int drawQueueLen){
+	quicksortQueue(drawQueue,0,drawQueueLen-1);
+
 	gfxGroupStart("World geometry");
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	textureBind(tBlocksArr);
-	extractFrustum();
 
-	shaderBind(sBlockMesh);
+	chunkDrawBlockQueue(drawQueue,drawQueueLen);
+	chunkDrawFluidQueue(drawQueue,drawQueueLen);
+
+	gfxGroupEnd();
+}
+
+static int queueEntryAdd(queueEntry *q, int len, int size, float priority, chunk *c){
+	for(int i=0;i<len;i++){
+		if(q[i].priority > priority){
+			for(int ii=size-1;ii > i;ii--){q[ii] = q[ii-1];}
+			q[i].chnk = c;
+			q[i].priority = priority - c->framesSkipped ;
+			return MIN(size,len + 1);
+		}
+	}
+	if(len < size){
+		q[len].chnk = c;
+		q[len].priority = priority;
+		return len+1;
+	}else{
+		return len;
+	}
+}
+
+void worldGeneratorQueue(const queueEntry *drawQueue, int drawQueueLen){
+	queueEntry generatorQueue[32];
+	int generatorQueueLen = 0;
+
+	for(int i=0;i<drawQueueLen;i++){
+		chunk *c = drawQueue[i].chnk;
+		if(!(c->flags & CHUNK_MASK_DIRTY)){continue;}
+		const float priority = drawQueue[i].priority ;
+		generatorQueueLen = queueEntryAdd(generatorQueue, generatorQueueLen, countof(generatorQueue), priority, c);
+		c->framesSkipped++;
+	}
+	for(int i=0;i<generatorQueueLen; i++){
+		chunk *c = generatorQueue[i].chnk;
+		chunkGenBlockMesh(c);
+		chunkGenFluidMesh(c);
+	}
+}
+
+void worldDraw(const character *cam){
+	static queueEntry drawQueue[8192*4];
+	static queueEntry loadQueue[1<<8];
+	int drawQueueLen=0,loadQueueLen=0;
+	if(connectionState < 2){return;}
+
+	extractFrustum();
 	// Use the subBlock view matrix in order to render chunks relative to the player.
 	// This allows for maximum rendering floating point precision to avoid shaky surfaces
 	// and visible block seams.
 	matMul(matMVP,matSubBlockView,matProjection);
-	shaderMatrix(sBlockMesh,matMVP);
+
 	const int dist   = (int)ceilf(renderDistance / CHUNGUS_SIZE)+1;
 	const u64 cTicks = getTicks();
 
@@ -215,31 +267,23 @@ void worldDraw(const character *cam){
 			if(world[x][y][z] == NULL){
 				world[x][y][z] = chungusNew(x,y,z);
 				world[x][y][z]->requested = cTicks;
-				loadQueue[loadQueueLen].distance = d;
+				loadQueue[loadQueueLen].priority = d;
 				loadQueue[loadQueueLen++].chng   = world[x][y][z];
 			}else if(world[x][y][z]->requested == 0){
 				chungusQueueDraws(world[x][y][z],cam,drawQueue,&drawQueueLen);
 			}else if((world[x][y][z]->requested + 3000) < cTicks){
 				world[x][y][z]->requested = cTicks;
-				loadQueue[loadQueueLen].distance = d;
+				loadQueue[loadQueueLen].priority = d;
 				loadQueue[loadQueueLen++].chng   = world[x][y][z];
 			}
 		}
 	}
 	}
 	}
-	if(loadQueueLen > 0){
-		quicksortQueue(loadQueue,0,loadQueueLen-1);
-		for(int i=loadQueueLen-1;i>=0;i--){
-			chungus *chng = loadQueue[i].chng;
-			msgRequestChungus(chng->x,chng->y,chng->z);
-		}
-	}
 
-	quicksortQueue(drawQueue,0,drawQueueLen-1);
-	chunkDrawQueue(drawQueue,drawQueueLen);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-	gfxGroupEnd();
+	worldRequestLoadQueue(loadQueue, loadQueueLen);
+	worldGeneratorQueue(drawQueue, drawQueueLen);
+	worldRenderDrawQueue(drawQueue, drawQueueLen);
 }
 
 void worldBox(int x,int y,int z, int w,int h,int d,blockId block){

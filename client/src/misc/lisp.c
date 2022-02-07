@@ -300,6 +300,7 @@ static lVal *wwlnfSetCooldown(lClosure *c, lVal *v){
 static lVal *wwlnfPlayerActiveSlotSet(lClosure *c, lVal *v){
 	(void)c;
 	const int ai = castToInt(lCar(v),-1);
+	if(player == NULL){return NULL;}
 	if(ai >= 0){
 		player->activeItem = ai;
 		player->flags &= ~(CHAR_AIMING | CHAR_THROW_AIM);

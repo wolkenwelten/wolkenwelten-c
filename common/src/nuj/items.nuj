@@ -42,15 +42,15 @@
 
 [defun item-primary! [id]
        "Evaluates the primary callback of item ID"
-       [cond [[procedure? [[items [- id 256]] primary]] [[[items [- id 256]] primary]]]
+       [cond [[procedure? [[items [- id 256]] 'primary]] [[[items [- id 256]] 'primary]]]
              [#t #f]]]
 
 [def item-secondary! [λ [id] "Evaluates the secondary callback of item ID"
-        [cond [[procedure? [[items [- id 256]] secondary]] [[[items [- id 256]] secondary]]]
+        [cond [[procedure? [[items [- id 256]] 'secondary]] [[[items [- id 256]] 'secondary]]]
               [#t #f]]]]
 
 [def item-tertiary! [λ [id] "Evaluates the tertiary callback of item ID"
-        [cond [[procedure? [[items [- id 256]] tertiary]] [[[items [- id 256]] tertiary]]]
+        [cond [[procedure? [[items [- id 256]] 'tertiary]] [[[items [- id 256]] 'tertiary]]]
               [#t #f]]]]
 
 [def add-inaccuracy [λ [amt] "Increase players inaccuracy my AMT"
@@ -644,8 +644,7 @@
         [fire-health 256]
         [name "Irondust"]
         [burn-up [λ [pos id amount]
-                [item-drop-new pos i-ironbar amount]
-        ]]
+                [item-drop-new pos i-ironbar amount]]]
         [sprite-id-0 285]
         [sprite-color-0 #xFF3e3e8f]
         [weight 2.0]
@@ -656,8 +655,7 @@
         [fire-health 512]
         [name "Crystaldust"]
         [burn-up [λ [pos id amount]
-                [item-drop-new pos i-crystalbar amount]
-        ]]
+                [item-drop-new pos i-crystalbar amount]]]
         [sprite-id-0 285]
         [sprite-color-0 #xFF794DEA]
         [mesh 'm-crystaldust]]
@@ -672,18 +670,14 @@
                         [if [zero? [random 6]]
                             [begin [ansi-green [say [ansi-green "Yay"]]] [fire-new [player-raycast #f] 8]]
                             [begin [say "No luck, maybe next time"]] #t]]
-                      [#t #t]
-                ]
-        ]]
+                      [#t #t]]]]
         [secondary [λ []
                 [cond [[try-to-use 800 0]
                         [set-cooldown 800]
                         [start-anim anim-empty 600]
                         [fire-new [player-raycast 1] 8]
                         #t]
-                       [#t #f]
-                ]
-        ]]
+                       [#t #f]]]]
         [sprite-id-0 287]
         [mesh 'm-firedrill]]
 

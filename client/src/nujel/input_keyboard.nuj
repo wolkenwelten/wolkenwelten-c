@@ -181,10 +181,9 @@
      [def handler [input-keyboard-handler scancode]]
      [if [lambda? handler]
          [handler scancode status]
-         #f]
-]
+         #f]]
 
 [test/add #t [int? key-1]]
-[test/add #t [arr? input-keyboard-handler]]
+[test/add #t [array? input-keyboard-handler]]
 [test/add 58 key-f1]
 [test/add #t [bool? [widget-focus-on-game?]]]

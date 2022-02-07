@@ -15,6 +15,12 @@ typedef struct vertex {
 	float c;
 } vertex;
 
+typedef struct vertexFluid {
+	u16 x,y,z;
+	u8 texture;
+	u8 sideLight;
+} vertexFluid;
+
 typedef struct vertexFlat {
 	float x,y,z;
 	u32 rgba;
@@ -40,7 +46,7 @@ typedef struct vertex2D {
 #define VERTEX_PACKED_LIGHT_LEN 5
 #define VERTEX_PACKED_LIGHT_OFFSET 27
 typedef uint32_t vertexPacked;
-#define mkVertex(x,y,z,w,h,bt,side,light) (\
+#define mkVertex(x,y,z,bt,side,light) (\
 	((x) << VERTEX_PACKED_X_OFFSET) |\
 	((y) << VERTEX_PACKED_Y_OFFSET) |\
 	((z) << VERTEX_PACKED_Z_OFFSET) |\

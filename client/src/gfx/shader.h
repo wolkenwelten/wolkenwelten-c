@@ -33,6 +33,7 @@ void    shaderSizeMul    (shader *s, float sizeMul);
 extern shader *sMesh;
 extern shader *sShadow;
 extern shader *sBlockMesh;
+extern shader *sFluidMesh;
 extern shader *sParticle;
 extern shader *sRain;
 extern shader *sTextMesh;

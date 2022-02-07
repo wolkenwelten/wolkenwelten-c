@@ -44,6 +44,7 @@
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
+#include "../voxel/meshgen/shared.h"
 #include "../../../common/src/game/hook.h"
 #include "../../../common/src/misc/bmp.h"
 #include "../../../common/src/misc/misc.h"

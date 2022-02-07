@@ -57,6 +57,7 @@
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../voxel/chunkvertbuf.h"
+#include "../voxel/meshgen/shared.h"
 #include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/game/hook.h"
 #include "../../../common/src/game/item.h"

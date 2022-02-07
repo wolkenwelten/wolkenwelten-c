@@ -14,8 +14,10 @@
                 "Make the player do a primary action"
 
                 [let [[itemid [player-active-item-id]]]
-                        [if [< itemid 256] [player-do-primary!] [when-not [item-primary! itemid] [player-do-primary!]]]
-                ]
+                     [if [< itemid 256]
+                         [player-do-primary!]
+                         [when-not [item-primary! itemid]
+                                   [player-do-primary!]]]]
 
                 [set! did-primary #t]
         ]]
@@ -24,8 +26,9 @@
                 "Make the player do a secondary action"
 
                 [let [[itemid [player-active-item-id]]]
-                        [if [< itemid 256] [player-place-block! [player-active-slot]] [item-secondary! itemid]]
-                ]
+                     [if [< itemid 256]
+                         [player-place-block! [player-active-slot]]
+                         [item-secondary! itemid]]]
         ]]
 
         [set! player-tertiary! [λ []

@@ -130,7 +130,8 @@ void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,in
 				cam->pos.y < by + CHUNK_SIZE ? sideMaskBottom | sideMaskTop :
 				sideMaskTop;
 			for(int z=0;z<16;z++){
-				if(c->chunks[x][y][z].block == NULL){continue;}
+				chunk *chnk = &c->chunks[x][y][z];
+				if((chnk->block == NULL) && (chnk->fluid == NULL)){continue;}
 				if(!chunkInFrustum(&c->chunks[x][y][z])){continue;}
 				const int bz = z*CHUNK_SIZE+(c->z<<8);
 				const int cz = bz+CHUNK_SIZE/2;
@@ -140,9 +141,9 @@ void chungusQueueDraws(chungus *c,const character *cam, queueEntry *drawQueue,in
 					sideMaskFront;
 				const float d = chunkDistance(cam->pos,vecNew(cx,cy,cz));
 				if(d > renderDistance){continue;}
-				drawQueue[*drawQueueLen].distance = d;
+				drawQueue[*drawQueueLen].priority = d;
 				drawQueue[*drawQueueLen].mask = xMask | yMask | zMask;
-				drawQueue[*drawQueueLen].chnk = &c->chunks[x][y][z];
+				drawQueue[*drawQueueLen].chnk = chnk;
 
 				*drawQueueLen = *drawQueueLen+1;
 			}
