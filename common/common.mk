@@ -82,11 +82,6 @@ clean:
 	@rm -rf client/src/tmp server/src/tmp common/src/tmp web/releases releases nujel-standalone/tmp
 	@echo "$(ANSI_BG_RED)" "[CLEAN]" "$(ANSI_RESET)" "wolkenwelten"
 
-.PHONY: web
-web:
-	rsync -avhe ssh --chown=github web/ wolkenwelten.net:/home/github/wolkenwelten.net/
-	ssh wolkenwelten.net "cd /home/github/wolkenwelten.net/ && su github -c \"guile template.scm\""
-
 .PHONY: debug
 debug: CFLAGS += -O0
 debug: all
