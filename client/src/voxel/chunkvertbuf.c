@@ -211,11 +211,11 @@ chunkvertbuf *chunkvertbufFluidUpdate(chunkvertbuf *v, vertexFluid *vertices, u1
 		allocatedGlBufferBytes += vertexSize * vtxCount;
 		v->vboSize = vtxCount;
 
-		glVertexAttribIPointer(SHADER_ATTRIDX_POS, 3, GL_UNSIGNED_SHORT, sizeof(vertexFluid), (void *)((u8 *)&vertices[0].x - (u8 *)vertices));
+		glVertexAttribIPointer(SHADER_ATTRIDX_POS,  3, GL_UNSIGNED_SHORT, sizeof(vertexFluid), (void *)((u8 *)&vertices[0].x - (u8 *)vertices));
+		glVertexAttribIPointer(SHADER_ATTRIDX_TEX,  1, GL_UNSIGNED_BYTE,  sizeof(vertexFluid), (void *)((u8 *)&vertices[0].texture - (u8 *)vertices));
+		glVertexAttribIPointer(SHADER_ATTRIDX_FLAG, 1, GL_UNSIGNED_BYTE,  sizeof(vertexFluid), (void *)((u8 *)&vertices[0].sideLight - (u8 *)vertices));
 		glEnableVertexAttribArray(SHADER_ATTRIDX_POS);
-		glVertexAttribIPointer(SHADER_ATTRIDX_TEX, 1, GL_UNSIGNED_BYTE, sizeof(vertexFluid), (void *)((u8 *)&vertices[0].texture - (u8 *)vertices));
 		glEnableVertexAttribArray(SHADER_ATTRIDX_TEX);
-		glVertexAttribIPointer(SHADER_ATTRIDX_FLAG, 1, GL_UNSIGNED_BYTE, sizeof(vertexFluid), (void *)((u8 *)&vertices[0].sideLight - (u8 *)vertices));
 		glEnableVertexAttribArray(SHADER_ATTRIDX_FLAG);
 	}
 	return v;

@@ -71,7 +71,7 @@ void shaderInit(){
 
 void shaderInitBlockMesh() {
 	sBlockMesh = shaderNew(sBlockMesh, "BlockMesh", (const char *)src_shader_blockShaderVS_glsl_data, (const char *)src_shader_blockShaderFS_glsl_data, SHADER_ATTRMASK_PACKED);
-	sFluidMesh = shaderNew(sFluidMesh, "FluidMesh", (const char *)src_shader_blockShaderVS_glsl_data, (const char *)src_shader_fluidShaderFS_glsl_data, SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_FLAG);
+	sFluidMesh = shaderNew(sFluidMesh, "FluidMesh", (const char *)src_shader_fluidShaderVS_glsl_data, (const char *)src_shader_fluidShaderFS_glsl_data, SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_FLAG);
 }
 
 static void shaderPrintLog(uint obj, const char *msg, const char *src){

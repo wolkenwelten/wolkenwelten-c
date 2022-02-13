@@ -28,7 +28,8 @@
 vertexFluid fluidMeshBuffer[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * CUBE_FACES * VERTICES_PER_FACE / 2];
 
 static vertexFluid *chunkAddVert(u16 x, u16 y, u16 z, u8 t, u8 s, u8 light, vertexFluid *vp){
-	*vp = (vertexFluid){x,y,z,t,s | (light << 3)};
+	const u8 flag = s | (light << 3);
+	*vp = (vertexFluid){x,y,z,t,flag};
 	return vp+1;
 }
 

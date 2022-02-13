@@ -16,9 +16,9 @@ struct chunk {
 	u8 fadeIn;
 	u16 framesSkipped;
 
-	chunkvertbuf *blockVertbuf, *fluidVertbuf;
 	beingList bl;
 
+	chunkvertbuf *blockVertbuf, *fluidVertbuf;
 	chunkOverlay *fluid, *block, *fire, *light;
 };
 
@@ -35,5 +35,3 @@ bool    chunkInFrustum             (const chunk *c);
 void    chunkTryDirty              (int x, int y, int z);
 void    chunkDirtyRegion           (int cx, int cy, int cz, uint flag);
 void    chunkDirtyAll              ();
-void    chunkGenBlockMesh          (chunk *c);
-void    chunkGenFluidMesh          (chunk *c);

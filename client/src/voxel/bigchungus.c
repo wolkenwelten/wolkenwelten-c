@@ -35,6 +35,8 @@
 #include "../network/client.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
+#include "../voxel/meshgen/block.h"
+#include "../voxel/meshgen/fluid.h"
 #include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/game/item.h"
