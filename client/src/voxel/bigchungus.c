@@ -213,7 +213,7 @@ void worldQueueGenerate(const queueEntry *drawQueue, int drawQueueLen){
 	for(int i=0;i<drawQueueLen;i++){
 		chunk *c = drawQueue[i].chnk;
 		if(!(c->flags & CHUNK_MASK_DIRTY)){continue;}
-		const float priority = drawQueue[i].priority ;
+		const float priority = drawQueue[i].priority - c->framesSkipped * 16;
 		generatorQueueLen = queueEntryAdd(generatorQueue, generatorQueueLen, countof(generatorQueue), priority, c);
 		c->framesSkipped++;
 	}
