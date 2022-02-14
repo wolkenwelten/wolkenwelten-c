@@ -472,7 +472,7 @@ void drawDebuginfo(){
 		guim->sy   = getTilesize();
 		guim->size = 4;
 		textMeshPrintf(guim,"%s\n",gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
-		guim->size = 2;
+		guim->size = 1;
 		textMeshPrintf(guim,"Active Tris.: %s%s\n",colorSignalLow(1<<21,1<<19,1<<18,tris),getHumanReadableSize(tris));
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"Draw calls  : %s%s\n",colorSignalLow(1<<15,1<<14,1<<8,draws),getHumanReadableSize(draws));
