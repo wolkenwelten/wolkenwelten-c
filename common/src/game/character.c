@@ -251,7 +251,7 @@ bool characterPlaceBlock(character *c,item *i){
 		sfxPlay(sfxStomp,1.f);
 		return false;
 	} else {
-		chunkDirtyRegion(los.x, los.y, los.z);
+		chunkDirtyRegion(los.x, los.y, los.z, 3);
 		msgPlaceBlock(los.x,los.y,los.z,i->ID);
 		itemDecStack(i,1);
 		sfxPlay(sfxPock,1.f);

@@ -105,8 +105,9 @@ void fxFluidVapor (int cx, int cy, int cz, int fluidType, int amountLost){
 	(void)amountLost;
 }
 
-void chunkDirtyRegion(int cx, int cy, int cz){
+void chunkDirtyRegion(int cx, int cy, int cz, uint flags){
 	(void)cx;
 	(void)cy;
 	(void)cz;
+	(void)flags;
 }
