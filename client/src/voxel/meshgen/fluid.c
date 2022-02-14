@@ -21,6 +21,7 @@
 #include "../chunkvertbuf.h"
 #include "../chunk.h"
 #include "../bigchungus.h"
+#include "block.h"
 #include "shared.h"
 
 #include <string.h>
@@ -33,50 +34,53 @@ static vertexFluid *chunkAddVert(u16 x, u16 y, u16 z, u8 t, u8 s, u8 light, vert
 	return vp+1;
 }
 
-static vertexFluid *chunkAddFront(u8 bt,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d, u8 light, vertexFluid *vp) {
+static vertexFluid *chunkAddFront(u8 bt,u8 x,u8 y,u8 z, u8 light, u8 fluid, const u8 corners[4], vertexFluid *vp) {
+	(void)fluid;
 	const u8 nl = light < 3 ? 0 : light-3;
-	vp =   chunkAddVert(x  ,y  ,z+d,bt,sideFront, nl, vp);
-	vp =   chunkAddVert(x+w,y  ,z+d,bt,sideFront, nl, vp);
-	vp =   chunkAddVert(x+w,y+h,z+d,bt,sideFront, nl, vp);
-	return chunkAddVert(x  ,y+h,z+d,bt,sideFront, nl, vp);
+	vp =   chunkAddVert((x  )<<8,(y<<8),(z+1)<<8,bt,sideFront, nl, vp);
+	vp =   chunkAddVert((x+1)<<8,(y<<8),(z+1)<<8,bt,sideFront, nl, vp);
+	vp =   chunkAddVert((x+1)<<8,(y<<8)+corners[2],(z+1)<<8,bt,sideFront, nl, vp);
+	return chunkAddVert((x  )<<8,(y<<8)+corners[1],(z+1)<<8,bt,sideFront, nl, vp);
 }
-static vertexFluid *chunkAddBack(u8 bt,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d, u8 light, vertexFluid *vp) {
-	(void)d;
+static vertexFluid *chunkAddBack(u8 bt,u8 x,u8 y,u8 z, u8 light, u8 fluid, const u8 corners[4], vertexFluid *vp) {
+	(void)fluid;
 	const u8 nl = light < 7 ? 0 : light-7;
-	vp =   chunkAddVert(x  ,y  ,z  ,bt,sideBack, nl, vp);
-	vp =   chunkAddVert(x  ,y+h,z  ,bt,sideBack, nl, vp);
-	vp =   chunkAddVert(x+w,y+h,z  ,bt,sideBack, nl, vp);
-	return chunkAddVert(x+w,y  ,z  ,bt,sideBack, nl, vp);
+	vp =   chunkAddVert((x  )<<8,(y<<8),(z  )<<8,bt,sideBack, nl, vp);
+	vp =   chunkAddVert((x  )<<8,(y<<8)+corners[0],(z  )<<8,bt,sideBack, nl, vp);
+	vp =   chunkAddVert((x+1)<<8,(y<<8)+corners[3],(z  )<<8,bt,sideBack, nl, vp);
+	return chunkAddVert((x+1)<<8,(y<<8),(z  )<<8,bt,sideBack, nl, vp);
 }
-static vertexFluid *chunkAddTop(u8 bt,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d, u8 light, vertexFluid *vp) {
+static vertexFluid *chunkAddTop(u8 bt,u8 x,u8 y,u8 z, u8 light, u8 fluid, const u8 corners[4], vertexFluid *vp) {
+	(void)fluid;
 	const u8 nl = light < 3 ? 0 : light-3;
-	vp =   chunkAddVert(x  ,y+h,z  ,bt,sideTop, nl, vp);
-	vp =   chunkAddVert(x  ,y+h,z+d,bt,sideTop, nl, vp);
-	vp =   chunkAddVert(x+w,y+h,z+d,bt,sideTop, nl, vp);
-	return chunkAddVert(x+w,y+h,z  ,bt,sideTop, nl, vp);
+	vp =   chunkAddVert((x  )<<8,(y<<8)+corners[0],(z  )<<8,bt,sideTop, nl, vp);
+	vp =   chunkAddVert((x  )<<8,(y<<8)+corners[1],(z+1)<<8,bt,sideTop, nl, vp);
+	vp =   chunkAddVert((x+1)<<8,(y<<8)+corners[2],(z+1)<<8,bt,sideTop, nl, vp);
+	return chunkAddVert((x+1)<<8,(y<<8)+corners[3],(z  )<<8,bt,sideTop, nl, vp);
 }
-static vertexFluid *chunkAddBottom(u8 bt,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d, u8 light, vertexFluid *vp) {
-	(void)h;
+static vertexFluid *chunkAddBottom(u8 bt,u8 x,u8 y,u8 z, u8 light, u8 fluid, vertexFluid *vp) {
+	(void)fluid;
 	const u8 nl = light < 9 ? 0 : light-9;
-	vp =   chunkAddVert(x  ,y  ,z  ,bt,sideBottom, nl, vp);
-	vp =   chunkAddVert(x+w,y  ,z  ,bt,sideBottom, nl, vp);
-	vp =   chunkAddVert(x+w,y  ,z+d,bt,sideBottom, nl, vp);
-	return chunkAddVert(x  ,y  ,z+d,bt,sideBottom, nl, vp);
+	vp =   chunkAddVert((x  )<<8,(y<<8),(z  )<<8,bt,sideBottom, nl, vp);
+	vp =   chunkAddVert((x+1)<<8,(y<<8),(z  )<<8,bt,sideBottom, nl, vp);
+	vp =   chunkAddVert((x+1)<<8,(y<<8),(z+1)<<8,bt,sideBottom, nl, vp);
+	return chunkAddVert((x  )<<8,(y<<8),(z+1)<<8,bt,sideBottom, nl, vp);
 }
-static vertexFluid *chunkAddLeft(u8 bt,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d, u8 light, vertexFluid *vp) {
-	(void)w;
+static vertexFluid *chunkAddLeft(u8 bt,u8 x,u8 y,u8 z, u8 light, u8 fluid, const u8 corners[4], vertexFluid *vp) {
+	(void)fluid;
 	const u8 nl = light < 1 ? 0 : light-1;
-	vp =   chunkAddVert(x  ,y  ,z  ,bt,sideLeft, nl, vp);
-	vp =   chunkAddVert(x  ,y  ,z+d,bt,sideLeft, nl, vp);
-	vp =   chunkAddVert(x  ,y+h,z+d,bt,sideLeft, nl, vp);
-	return chunkAddVert(x  ,y+h,z  ,bt,sideLeft, nl, vp);
+	vp =   chunkAddVert((x  )<<8,(y<<8),(z  )<<8,bt,sideLeft, nl, vp);
+	vp =   chunkAddVert((x  )<<8,(y<<8),(z+1)<<8,bt,sideLeft, nl, vp);
+	vp =   chunkAddVert((x  )<<8,(y<<8)+corners[1],(z+1)<<8,bt,sideLeft, nl, vp);
+	return chunkAddVert((x  )<<8,(y<<8)+corners[0],(z  )<<8,bt,sideLeft, nl, vp);
 }
-static vertexFluid *chunkAddRight(u8 bt,u8 x,u8 y,u8 z, u8 w, u8 h, u8 d, u8 light, vertexFluid *vp) {
+static vertexFluid *chunkAddRight(u8 bt,u8 x,u8 y,u8 z, u8 light, u8 fluid, const u8 corners[4], vertexFluid *vp) {
+	(void)fluid;
 	const u8 nl = light < 5 ? 0 : light-5;
-	vp =   chunkAddVert(x+w,y  ,z  ,bt,sideRight, nl, vp);
-	vp =   chunkAddVert(x+w,y+h,z  ,bt,sideRight, nl, vp);
-	vp =   chunkAddVert(x+w,y+h,z+d,bt,sideRight, nl, vp);
-	return chunkAddVert(x+w,y  ,z+d,bt,sideRight, nl, vp);
+	vp =   chunkAddVert((x+1)<<8,(y<<8),(z  )<<8,bt,sideRight, nl, vp);
+	vp =   chunkAddVert((x+1)<<8,(y<<8)+corners[3],(z  )<<8,bt,sideRight, nl, vp);
+	vp =   chunkAddVert((x+1)<<8,(y<<8)+corners[2],(z+1)<<8,bt,sideRight, nl, vp);
+	return chunkAddVert((x+1)<<8,(y<<8),(z+1)<<8,bt,sideRight, nl, vp);
 }
 
 static void chunkPopulateFluidData(blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], chunk *c, i16 xoff, i16 yoff, i16 zoff){
@@ -90,12 +94,22 @@ static void chunkPopulateFluidData(blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_S
 	}
 }
 
+static u8 chunkFluidCalcEdge(const u8 fluidData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], const u8 blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], u8 x, u8 y, u8 z){
+	const u8 blockCount = (blockData[x][y+1][z] ? 1 : 0) + (blockData[x+1][y+1][z] ? 1 : 0) + (blockData[x][y+1][z+1] ? 1 : 0) + (blockData[x+1][y+1][z+1] ? 1 : 0);
+	if(blockCount == 0){return 0;}
+	return ((blockData[x][y+1][z] ? 0 : (fluidData[x  ][y+1][z  ] & 0xF0))
+		 + (blockData[x+1][y+1][z] ? 0 : (fluidData[x+1][y+1][z  ] & 0xF0))
+		 + (blockData[x][y+1][z+1] ? 0 : (fluidData[x  ][y+1][z+1] & 0xF0))
+		 + (blockData[x+1][y+1][z+1] ? 0 : (fluidData[x+1][y+1][z+1] & 0xF0))) / blockCount;
+}
+
 void chunkGenFluidMesh(chunk *c){
 	if((c->fluid == NULL) || ((c->flags & CHUNK_FLAG_FLUID_DIRTY) == 0)){return;}
 	if(c->light == NULL){lightGen(c);}
 
 	PROFILE_START();
 	static u8       fluidData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
+	static u8       blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
 	static sideMask sideCache[CHUNK_SIZE  ][CHUNK_SIZE  ][CHUNK_SIZE  ];
 	static u32          plane[CHUNK_SIZE  ][CHUNK_SIZE  ];
 	u16 meshSideCounts[sideMAX];
@@ -109,6 +123,25 @@ void chunkGenFluidMesh(chunk *c){
 	chunkPopulateFluidData(fluidData,worldGetChunk(c->x,c->y+CHUNK_SIZE,c->z),1,1+CHUNK_SIZE,1);
 	chunkPopulateFluidData(fluidData,worldGetChunk(c->x,c->y,c->z-CHUNK_SIZE),1,1,1-CHUNK_SIZE);
 	chunkPopulateFluidData(fluidData,worldGetChunk(c->x,c->y,c->z+CHUNK_SIZE),1,1,1+CHUNK_SIZE);
+
+	chunkPopulateBlockData(blockData,c,1,1,1);
+	chunkPopulateBlockData(blockData,worldGetChunk(c->x-CHUNK_SIZE,c->y,c->z),1-CHUNK_SIZE,1,1);
+	chunkPopulateBlockData(blockData,worldGetChunk(c->x+CHUNK_SIZE,c->y,c->z),1+CHUNK_SIZE,1,1);
+	chunkPopulateBlockData(blockData,worldGetChunk(c->x,c->y-CHUNK_SIZE,c->z),1,1-CHUNK_SIZE,1);
+	chunkPopulateBlockData(blockData,worldGetChunk(c->x,c->y+CHUNK_SIZE,c->z),1,1+CHUNK_SIZE,1);
+	chunkPopulateBlockData(blockData,worldGetChunk(c->x,c->y,c->z-CHUNK_SIZE),1,1,1-CHUNK_SIZE);
+	chunkPopulateBlockData(blockData,worldGetChunk(c->x,c->y,c->z+CHUNK_SIZE),1,1,1+CHUNK_SIZE);
+
+	static u8 cornerHeights[CHUNK_SIZE+1][CHUNK_SIZE][CHUNK_SIZE+1];
+	(void)chunkFluidCalcEdge;
+	for(int x=0;x<CHUNK_SIZE+1;x++){
+	for(int y=0;y<CHUNK_SIZE;y++){
+	for(int z=0;z<CHUNK_SIZE+1;z++){
+		//cornerHeights[x][y][z] = chunkFluidCalcEdge(fluidData,blockData,x,y,z);
+		cornerHeights[x][y][z] = (x << 4) | (z << 4);
+	}
+	}
+	}
 
 	vertexFluid *vp  = fluidMeshBuffer;
 	vertexFluid *lvp = fluidMeshBuffer;
@@ -135,16 +168,17 @@ void chunkGenFluidMesh(chunk *c){
 		}
 		}
 		if(found){
-			chunkOptimizePlane(plane);
-			const int cd = 1;
+			//chunkOptimizePlane(plane);
 			for(int y=CHUNK_SIZE-1;y>=0;--y){
 			for(int x=CHUNK_SIZE-1;x>=0;--x){
 				if(!plane[y][x]){continue;}
 				const int cl = ((plane[y][x] >> 24));
-				const int cw = ((plane[y][x] >> 16) & 0xF);
-				const int ch = ((plane[y][x] >>  8) & 0xF);
-				//const blockId b = plane[y][x] & 0xFF;
-				vp = chunkAddFront(fluidTexture,x,y,z,cw,ch,cd,cl,vp);
+				const u8 fluid = plane[y][x];
+				const u8 corners[4] = {cornerHeights[x][y][z],
+					cornerHeights[x][y][z+1],
+					cornerHeights[x+1][y][z],
+					cornerHeights[x+1][y][z+1]};
+				vp = chunkAddFront(fluidTexture,x,y,z,cl,fluid,corners,vp);
 			}
 			}
 		}
@@ -166,16 +200,17 @@ void chunkGenFluidMesh(chunk *c){
 		}
 		}
 		if(found){
-			chunkOptimizePlane(plane);
-			const int cd = 1;
+			//chunkOptimizePlane(plane);
 			for(int y=CHUNK_SIZE-1;y>=0;--y){
 			for(int x=CHUNK_SIZE-1;x>=0;--x){
 				if(!plane[y][x]){continue;}
 				const int cl = ((plane[y][x] >> 24));
-				const int cw = ((plane[y][x] >> 16) & 0xF);
-				const int ch = ((plane[y][x] >>  8) & 0xF);
-				//const blockId b = plane[y][x] & 0xFF;
-				vp = chunkAddBack(fluidTexture,x,y,z,cw,ch,cd,cl,vp);
+				const u8 fluid = plane[y][x];
+				const u8 corners[4] = {cornerHeights[x][y][z],
+					cornerHeights[x][y][z+1],
+					cornerHeights[x+1][y][z],
+					cornerHeights[x+1][y][z+1]};
+				vp = chunkAddBack(fluidTexture,x,y,z,cl,fluid,corners,vp);
 			}
 			}
 		}
@@ -197,16 +232,16 @@ void chunkGenFluidMesh(chunk *c){
 		}
 		}
 		if(found){
-			chunkOptimizePlane(plane);
-			const int ch = 1;
 			for(int z=CHUNK_SIZE-1;z>=0;--z){
 			for(int x=CHUNK_SIZE-1;x>=0;--x){
 				if(!plane[z][x]){continue;}
 				const int cl = ((plane[z][x] >> 24));
-				const int cw = ((plane[z][x] >> 16) & 0xF);
-				const int cd = ((plane[z][x] >>  8) & 0xF);
-				//const blockId b = plane[z][x] & 0xFF;
-				vp = chunkAddTop(fluidTexture,x,y,z,cw,ch,cd,cl,vp);
+				const u8 fluid = plane[z][x];
+				const u8 corners[4] = {cornerHeights[x][y][z],
+					cornerHeights[x][y][z+1],
+					cornerHeights[x+1][y][z],
+					cornerHeights[x+1][y][z+1]};
+				vp = chunkAddTop(fluidTexture,x,y,z,cl,fluid,corners,vp);
 			}
 			}
 		}
@@ -228,16 +263,13 @@ void chunkGenFluidMesh(chunk *c){
 		}
 		}
 		if(found){
-			chunkOptimizePlane(plane);
-			const int ch = 1;
+			//chunkOptimizePlane(plane);
 			for(int z=CHUNK_SIZE-1;z>=0;--z){
 			for(int x=CHUNK_SIZE-1;x>=0;--x){
 				if(!plane[z][x]){continue;}
 				const int cl = ((plane[z][x] >> 24));
-				const int cw = ((plane[z][x] >> 16) & 0xF);
-				const int cd = ((plane[z][x] >>  8) & 0xF);
-				//const blockId b = plane[z][x] & 0xFF;
-				vp = chunkAddBottom(fluidTexture,x,y,z,cw,ch,cd,cl,vp);
+				const u8 fluid = plane[z][x];
+				vp = chunkAddBottom(fluidTexture,x,y,z,cl,fluid,vp);
 			}
 			}
 		}
@@ -259,16 +291,17 @@ void chunkGenFluidMesh(chunk *c){
 		}
 		}
 		if(found){
-			chunkOptimizePlane(plane);
-			const int cw = 1;
+			//chunkOptimizePlane(plane);
 			for(int y=CHUNK_SIZE-1;y>=0;--y){
 			for(int z=CHUNK_SIZE-1;z>=0;--z){
 				if(!plane[y][z]){continue;}
 				const int cl = ((plane[y][z] >> 24));
-				const int ch = ((plane[y][z] >>  8) & 0xF);
-				const int cd = ((plane[y][z] >> 16) & 0xF);
-				//const blockId b = plane[y][z] & 0xFF;
-				vp = chunkAddLeft(fluidTexture,x,y,z,cw,ch,cd,cl,vp);
+				const u8 fluid = plane[y][z];
+				const u8 corners[4] = {cornerHeights[x][y][z],
+					cornerHeights[x][y][z+1],
+					cornerHeights[x+1][y][z],
+					cornerHeights[x+1][y][z+1]};
+				vp = chunkAddLeft(fluidTexture,x,y,z,cl,fluid,corners,vp);
 			}
 			}
 		}
@@ -290,16 +323,17 @@ void chunkGenFluidMesh(chunk *c){
 		}
 		}
 		if(found){
-			chunkOptimizePlane(plane);
-			const int cw = 1;
+			//chunkOptimizePlane(plane);
 			for(int y=CHUNK_SIZE-1;y>=0;--y){
 			for(int z=CHUNK_SIZE-1;z>=0;--z){
 				if(!plane[y][z]){continue;}
 				const int cl = ((plane[y][z] >> 24));
-				const int ch = ((plane[y][z] >>  8) & 0xF);
-				const int cd = ((plane[y][z] >> 16) & 0xF);
-				//const blockId b = plane[y][z] & 0xFF;
-				vp = chunkAddRight(fluidTexture,x,y,z,cw,ch,cd,cl,vp);
+				const u8 fluid = plane[y][z];
+				const u8 corners[4] = {cornerHeights[x][y][z],
+					cornerHeights[x][y][z+1],
+					cornerHeights[x+1][y][z],
+					cornerHeights[x+1][y][z+1]};
+				vp = chunkAddRight(fluidTexture,x,y,z,cl,fluid,corners,vp);
 			}
 			}
 		}
