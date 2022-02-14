@@ -63,7 +63,8 @@ void startSingleplayerServer(){
 		optionWorldSeed = (int)(time(NULL)&0xFFFF);
 	}
 	char *exeFile = clientGetServerExecutable();
-	if(exeFile == NULL){
+	printf("Starting '%s'\n",exeFile);
+	if(exeFile == NULL || ((exeFile[0] == 20) && (exeFile[1] == 0))){
 		fprintf(stderr,"Couldn't find server executable");
 		closeSingleplayerServer();
 		return;

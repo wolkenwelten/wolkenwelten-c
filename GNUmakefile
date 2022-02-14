@@ -23,7 +23,7 @@ ASFLAGS              :=
 
 CC                   := cc
 CFLAGS               := -g -D_GNU_SOURCE
-CSTD                 := -std=c99
+CSTD                 := -std=c11
 OPTIMIZATION         := -O2 -fno-lto -ffast-math -freciprocal-math
 WARNINGS             := -Wall -Werror -Wextra -Wshadow -Wcast-align -Wno-missing-braces
 

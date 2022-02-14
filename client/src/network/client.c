@@ -80,7 +80,7 @@ bool goodbyeSent = false;
 	#include <mach-o/dyld.h>
 	#include <libgen.h>
 	char *clientGetServerExecutable(){
-		static char path[512];
+		char path[512];
 		static char ret[512];
 		u32 size = sizeof(path);
 		if (_NSGetExecutablePath(path, &size) == 0){
@@ -104,9 +104,11 @@ bool goodbyeSent = false;
 		char *cwd = getcwd(cwdBuf,sizeof(cwdBuf));
 
 		snprintf(buf,sizeof(buf),"%s/%s",cwd,serverExecName);
-		if(access(buf,R_OK|X_OK) >= 0){
-			return buf;
-		}
+		#ifdef __MINGW32__
+		if(access(buf,R_OK) >= 0){return buf;} // Clang64 doesn't seem to play well with checking for X_OK
+		#else
+		if(access(buf,R_OK|X_OK) >= 0){return buf;}
+		#endif
 		*buf=0;
 
 		const int tt = snprintf(buf,sizeof(buf),"%s/%s",optionExecPath,serverExecName);

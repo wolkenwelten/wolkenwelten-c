@@ -146,6 +146,8 @@ runl: all
 	./wolkenwelten -soundVolume=10 -debugInfo=1 -serverName=localhost
 runld: all
 	gdb ./wolkenwelten -ex "r -soundVolume=10 -debugInfo=1 -serverName=localhost"
+runlld: all
+	gdb ./wolkenwelten -ex "r $(TEST_WORLD) -soundVolume=10 -debugInfo=1 -serverName=localhost"
 .PHONY: rund
 rund: all
 	./wolkenwelten-server $(TEST_WORLD) -singleplayer &
