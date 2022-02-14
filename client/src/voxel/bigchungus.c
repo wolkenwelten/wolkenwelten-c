@@ -165,7 +165,7 @@ bool worldSetFluid(int x,int y,int z, u8 level){
 	return true;
 }
 
-static void worldRequestLoadQueue(queueEntry *loadQueue, int loadQueueLen){
+static void worldQueueLoad(queueEntry *loadQueue, int loadQueueLen){
 	if(loadQueueLen <= 0){return;}
 	quicksortQueue(loadQueue,0,loadQueueLen-1);
 	for(int i=loadQueueLen-1;i>=0;i--){
@@ -174,7 +174,7 @@ static void worldRequestLoadQueue(queueEntry *loadQueue, int loadQueueLen){
 	}
 }
 
-static void worldRenderDrawQueue(queueEntry *drawQueue, int drawQueueLen){
+static void worldQueueDraw(queueEntry *drawQueue, int drawQueueLen){
 	quicksortQueue(drawQueue,0,drawQueueLen-1);
 
 	gfxGroupStart("World geometry");
@@ -206,8 +206,8 @@ static int queueEntryAdd(queueEntry *q, int len, int size, float priority, chunk
 	}
 }
 
-void worldGeneratorQueue(const queueEntry *drawQueue, int drawQueueLen){
-	queueEntry generatorQueue[32];
+void worldQueueGenerate(const queueEntry *drawQueue, int drawQueueLen){
+	queueEntry generatorQueue[12];
 	int generatorQueueLen = 0;
 
 	for(int i=0;i<drawQueueLen;i++){
@@ -282,10 +282,9 @@ void worldDraw(const character *cam){
 	}
 	}
 	}
-
-	worldRequestLoadQueue(loadQueue, loadQueueLen);
-	worldGeneratorQueue(drawQueue, drawQueueLen);
-	worldRenderDrawQueue(drawQueue, drawQueueLen);
+	worldQueueLoad(loadQueue, loadQueueLen);
+	worldQueueGenerate(drawQueue, drawQueueLen);
+	worldQueueDraw(drawQueue, drawQueueLen);
 }
 
 void worldBox(int x,int y,int z, int w,int h,int d,blockId block){
