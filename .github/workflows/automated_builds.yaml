@@ -16,16 +16,16 @@ jobs:
     - uses: msys2/setup-msys2@v2
       name: "Initial msys2 setup"
       with:
-        msystem: mingw64
+        msystem: clang64
         update: true
         install: >-
           base-devel
           p7zip
-          mingw-w64-x86_64-autotools
-          mingw-w64-x86_64-toolchain
-          mingw-w64-x86_64-cmake
-          mingw-w64-x86_64-ffmpeg
-          mingw-w64-x86_64-ninja
+          mingw-w64-clang-x86_64-autotools
+          mingw-w64-clang-x86_64-toolchain
+          mingw-w64-clang-x86_64-cmake
+          mingw-w64-clang-x86_64-ffmpeg
+          mingw-w64-clang-x86_64-ninja
     - run: git config --global core.autocrlf input
       shell: bash
     - uses: actions/checkout@v2
