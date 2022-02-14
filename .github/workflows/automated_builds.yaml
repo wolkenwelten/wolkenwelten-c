@@ -24,7 +24,6 @@ jobs:
           base-devel
           p7zip
           gcc
-          git
           mingw-w64-x86_64-binutils
           mingw-w64-clang-x86_64-autotools
           mingw-w64-clang-x86_64-toolchain
