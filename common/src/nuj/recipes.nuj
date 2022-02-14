@@ -12,11 +12,11 @@
 
 [defun recipe-sync [obj]
 	"Syncs the Recipe with the ω OBJ"
-	#_[when [symbol? [resolve [obj result-id]]] [println "Invalid Result ID for Recipe [:id " [obj id] [ansi-red " :result-id " [obj result-id]] " :result-amt " [obj result-amt] "]"]]
-	#_[when [zero-neg? [obj result-amt]] [println "Invalid Result Amount for Recipe [:id " [obj id] " :result-id " [obj result-id] [ansi-red " :result-amt " [obj result-amt]] "]"]]
+	#;[when [symbol? [resolve [obj result-id]]] [println "Invalid Result ID for Recipe [:id " [obj id] [ansi-red " :result-id " [obj result-id]] " :result-amt " [obj result-amt] "]"]]
+	#;[when [zero-neg? [obj result-amt]] [println "Invalid Result Amount for Recipe [:id " [obj id] " :result-id " [obj result-id] [ansi-red " :result-amt " [obj result-amt]] "]"]]
 
-	#_[when [symbol? [resolve [obj ingred-id-0]]] [println "Invalid first Ingredient ID for Recipe [:id " [obj id] [ansi-red " :result-id " [obj ingred-id-0]] " :result-amt " [obj ingred-amt-0] "]"]]
-	#_[when [zero-neg? [obj ingred-amt-0]] [println "Invalid first Ingredient Amount for Recipe [:id " [obj id] " :result-id " [obj ingred-id-0] [ansi-red " :result-amt " [obj ingred-amt-0]] "]"]]
+	#;[when [symbol? [resolve [obj ingred-id-0]]] [println "Invalid first Ingredient ID for Recipe [:id " [obj id] [ansi-red " :result-id " [obj ingred-id-0]] " :result-amt " [obj ingred-amt-0] "]"]]
+	#;[when [zero-neg? [obj ingred-amt-0]] [println "Invalid first Ingredient Amount for Recipe [:id " [obj id] " :result-id " [obj ingred-id-0] [ansi-red " :result-amt " [obj ingred-amt-0]] "]"]]
 
 	[r-result [obj id]   [resolve [obj result-id]]   [obj result-amt]]
 	[r-ingred [obj id] 0 [resolve [obj ingred-id-0]] [obj ingred-amt-0]]

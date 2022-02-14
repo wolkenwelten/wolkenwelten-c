@@ -243,7 +243,7 @@ void *lispCommonRootReal(void *a, void *b){
 }
 
 lClosure *lispCommonRoot(void (*specificInit)(lClosure *)){
-	return lExceptionTry(lispCommonRootReal, (void *)specificInit,NULL);
+	return lExceptionTryExit(lispCommonRootReal, (void *)specificInit,NULL);
 }
 
 void *lispCallFuncReal(void *closure, void *vv){
@@ -258,7 +258,7 @@ lVal *lispCallFunc(const char *symbol, lVal *v){
 	form->vList.car = lValSym(symbol);
 	form->vList.cdr = lCons(v, NULL);
 
-	lVal *ret = lExceptionTry(lispCallFuncReal,clRoot,form);
+	lVal *ret = lExceptionTryExit(lispCallFuncReal,clRoot,form);
 	lRootsRet(SP);
 	return ret;
 }
@@ -270,7 +270,7 @@ lVal *lispCallFuncI(const char *symbol, int ia){
 	lVal *l = form->vList.cdr = lCons(NULL,NULL);
 	l->vList.car = lValInt(ia);
 
-	lVal *ret = lExceptionTry(lispCallFuncReal,clRoot,form);
+	lVal *ret = lExceptionTryExit(lispCallFuncReal,clRoot,form);
 	lRootsRet(SP);
 	return ret;
 }
@@ -288,7 +288,7 @@ lVal *lispCallFuncIII(const char *symbol, int ia, int ib, int ic){
 	l = l->vList.cdr;
 	l->vList.car = lValInt(ic);
 
-	lVal *ret = lExceptionTry(lispCallFuncReal,clRoot,form);
+	lVal *ret = lExceptionTryExit(lispCallFuncReal,clRoot,form);
 	lRootsRet(SP);
 	return ret;
 }
@@ -300,7 +300,7 @@ lVal *lispCallFuncS(const char *symbol, const char *str){
 	lVal *l = form->vList.cdr = lCons(NULL,NULL);
 	l->vList.car = lValString(str);
 
-	lVal *ret = lExceptionTry(lispCallFuncReal,clRoot,form);
+	lVal *ret = lExceptionTryExit(lispCallFuncReal,clRoot,form);
 	lRootsRet(SP);
 	return ret;
 }
@@ -318,7 +318,7 @@ lVal *lispCallFuncVII(const char *symbol,const vec va, int ib , int ic){
 	l = l->vList.cdr;
 	l->vList.car = lValInt(ic);
 
-	lVal *ret = lExceptionTry(lispCallFuncReal,clRoot,form);
+	lVal *ret = lExceptionTryExit(lispCallFuncReal,clRoot,form);
 	lRootsRet(SP);
 	return ret;
 }

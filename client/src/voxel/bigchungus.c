@@ -183,7 +183,7 @@ static void worldRenderDrawQueue(queueEntry *drawQueue, int drawQueueLen){
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
 	chunkDrawBlockQueue(drawQueue,drawQueueLen);
-	chunkDrawFluidQueue(drawQueue,drawQueueLen);
+	//chunkDrawFluidQueue(drawQueue,drawQueueLen);
 
 	gfxGroupEnd();
 }
@@ -220,7 +220,7 @@ void worldGeneratorQueue(const queueEntry *drawQueue, int drawQueueLen){
 	for(int i=0;i<generatorQueueLen; i++){
 		chunk *c = generatorQueue[i].chnk;
 		chunkGenBlockMesh(c);
-		chunkGenFluidMesh(c);
+		//chunkGenFluidMesh(c);
 	}
 }
 

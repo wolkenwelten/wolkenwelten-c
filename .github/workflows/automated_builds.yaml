@@ -7,7 +7,7 @@ on:
     branches: [ master, develop ]
 
 jobs:
-  build-mingw64:
+  build-release:
     runs-on: windows-latest
     defaults:
       run:
@@ -17,10 +17,11 @@ jobs:
       name: "Initial msys2 setup"
       with:
         msystem: clang64
-        update: true
         install: >-
           base-devel
           p7zip
+          gcc
+          mingw-w64-x86_64-binutils
           mingw-w64-clang-x86_64-autotools
           mingw-w64-clang-x86_64-toolchain
           mingw-w64-clang-x86_64-cmake
@@ -32,9 +33,9 @@ jobs:
       with:
         submodules: recursive
     - name: Compile stripped down SDL2
-      run: cd platform/win/msys2_pkgs/mingw-w64-SDL2/ && makepkg -i --noconfirm
+      run: cd platform/win/msys2_pkgs/mingw-w64-SDL2/ && export CC=clang && makepkg -i --noconfirm
     - name: Compile stripped down SDL2_mixer
-      run: cd platform/win/msys2_pkgs/mingw-w64-SDL2_mixer/ && makepkg -i --noconfirm
+      run: cd platform/win/msys2_pkgs/mingw-w64-SDL2_mixer/ && export CC=clang && makepkg -i --noconfirm
     - name: Compile Nujel
       run: make -C common/nujel -j
     - name: Build release

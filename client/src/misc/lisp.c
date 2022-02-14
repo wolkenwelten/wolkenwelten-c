@@ -67,7 +67,7 @@ extern unsigned char src_tmp_client_nuj_data[];
 void lispInputHandler(lSymbol *input, int key, int action){
 	const int SP = lRootsGet();
 	lVal *form = RVP(lList(3,RVP(lValSymS(input)),RVP(lValInt(action)),RVP(lValInt(key))));
-	lExceptionTry(lispCallFuncReal,clRoot,form);
+	lExceptionTryExit(lispCallFuncReal,clRoot,form);
 	lRootsRet(SP);
 }
 
@@ -77,7 +77,7 @@ void lispInputTick(){
 		form = RVP(lCons(RVP(lValSym("input-tick")),NULL));
 	}
 	const int SP = lRootsGet();
-	lExceptionTry(lispCallFuncReal,clRoot,form);
+	lExceptionTryExit(lispCallFuncReal,clRoot,form);
 	lRootsRet(SP);
 }
 
@@ -102,7 +102,7 @@ static void *lispEvalNRReal(void *a, void *b){
 }
 
 lVal *lispEvalNR(const char *str){
-	return lExceptionTry(lispEvalNRReal,(void *)str, NULL);
+	return lExceptionTryExit(lispEvalNRReal,(void *)str, NULL);
 }
 
 static lVal *wwlnfSEval(lClosure *c, lVal *v){
@@ -835,7 +835,7 @@ void *lispInitReal(void *a, void *b){
 
 void lispInit(){
 	widgetGCInit();
-	lExceptionTry(lispInitReal,NULL,NULL);
+	lExceptionTryExit(lispInitReal,NULL,NULL);
 }
 
 void lispFree(){
@@ -852,7 +852,7 @@ const char *lispEval(const char *str, bool humanReadable){
 }
 
 lVal *lispEvalL(lVal *expr){
-	return lExceptionTry(lispCallFuncReal,clRoot,expr);
+	return lExceptionTryExit(lispCallFuncReal,clRoot,expr);
 }
 
 void lispRecvSExpr(const packet *p){
@@ -875,7 +875,7 @@ static void lispGameplay(){
 	lastTicks = cticks;
 
 	const int SP = lRootsGet();
-	lExceptionTry(lispCallFuncReal,clRoot,form);
+	lExceptionTryExit(lispCallFuncReal,clRoot,form);
 	lRootsRet(SP);
 }
 
@@ -896,7 +896,7 @@ void lispEvents(){
 	lastTicks = cticks;
 
 	const int SP = lRootsGet();
-	lExceptionTry(lispCallFuncReal,clRoot,form);
+	lExceptionTryExit(lispCallFuncReal,clRoot,form);
 	lRootsRet(SP);
 	lispGameplay();
 

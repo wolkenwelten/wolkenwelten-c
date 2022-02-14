@@ -511,7 +511,7 @@ static void *cmdLispReal(void *a, void *b){
 
 static void cmdLisp(uint pid, const char *str){
 	volatile uint pidp = pid;
-	lExceptionTry(cmdLispReal, (void *)&pidp, (void *)str);
+	lExceptionTryExit(cmdLispReal, (void *)&pidp, (void *)str);
 }
 
 static void *lispInitReal(void *a, void *b){
@@ -524,7 +524,7 @@ static void *lispInitReal(void *a, void *b){
 }
 
 void lispInit(){
-	lExceptionTry(lispInitReal,NULL,NULL);
+	lExceptionTryExit(lispInitReal,NULL,NULL);
 }
 
 lClosure *lispClientClosure(uint pid){
@@ -577,7 +577,7 @@ void *lispEvalReal(void *a, void *b){
 }
 
 const char *lispEval(const char *str, bool humanReadable){
-	return lExceptionTry(lispEvalReal, (void *)str, humanReadable ? (void *)str : NULL);
+	return lExceptionTryExit(lispEvalReal, (void *)str, humanReadable ? (void *)str : NULL);
 }
 
 void lGUIWidgetFree(lVal *v){
