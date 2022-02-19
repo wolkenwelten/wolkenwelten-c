@@ -4,6 +4,32 @@
  * hand written assembly.
  */
 
+export void lightSunlightChunkISPC(uniform int8 out[48][48][48],uniform const int8 blockData[16][16][16], uniform int8 curLight[16][16], uniform const int8 blockLight[256], uniform const int x, uniform const int y, uniform const int z, uniform const int8 sunlight){
+	for(uniform int cy=15;cy>=0;cy--){
+	for(uniform int cx=0;cx<16;cx++){
+	for(uniform int cz=0;cz<16;cz++){
+		uniform const int8 b = blockData[cx][cy][cz];
+		if(b){
+			curLight[cx][cz] = 0;
+			out[x+cx][y+cy][z+cz] = blockLight[b];
+		}else{
+			curLight[cx][cz] = min(sunlight, curLight[cx][cz]+2);
+			out[x+cx][y+cy][z+cz] = curLight[cx][cz];
+		}
+	}
+	}
+	}
+}
+
+export void lightSunlightAirISPC(uniform int8 out[48][48][48],uniform int8 curLight[16][16],uniform const int x, uniform const int y, uniform const int z, uniform const int8 sunlight){
+	for(uniform int cy=15;cy>=0;cy--){
+	foreach(cx = 0 ... 16, cz = 0 ... 16){
+		curLight[cx][cz] = min(sunlight, curLight[cx][cz]+2);
+		out[cx+x][cy+y][cz+z] = curLight[cx][cz];
+	}
+	}
+}
+
 static void lightBlurZ(uniform int8 out[48][48][48]){
 	for(uniform int x=0;x < 48;x++){
 	for(uniform int y=0;y < 48;y++){
@@ -64,7 +90,7 @@ static void lightBlurX(uniform int8 out[48][48][48]){
 	}
 }
 
-export void ispcLightBlur(uniform int8 out[48][48][48]){
+export void lightBlurISPC(uniform int8 out[48][48][48]){
 	lightBlurX(out);
 	lightBlurZ(out);
 	lightBlurY(out);
