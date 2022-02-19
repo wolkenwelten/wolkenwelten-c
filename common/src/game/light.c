@@ -15,85 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "light.h"
+#include "lightFast.h"
 #include "../game/blockType.h"
-#include "../game/character.h"
 #include "../game/item.h"
 #include "../game/time.h"
 #include "../misc/profiling.h"
 
-#include <math.h>
-#include <stdlib.h>
 #include <string.h>
 
-extern character *player;
-
-static void lightBlurZ(u8 out[48][48][48]){
-	PROFILE_START();
-	for(int x=0;x < 48;x++){
-	for(int y=0;y < 48;y++){
-	i8 a = 0;
-	i8 b = 0;
-	for(int z=0;z < 48;z++){
-		a = MAX(out[x][y][z], a);
-		out[x][y][z] = a;
-		a = MAX(a - 2, 0);
-
-		b = MAX(out[x][y][47-z], b);
-		out[x][y][47-z] = b;
-		b = MAX(b - 2, 0);
-	}
-	}
-	}
-	PROFILE_STOP();
-}
-
-static void lightBlurY(u8 out[48][48][48]){
-	PROFILE_START();
-	for(int x=0;x < 48;x++){
-	for(int z=0;z < 48;z++){
-	i8 a = 0;
-	i8 b = 0;
-	for(int y=0;y < 48;y++){
-		a = MAX(out[x][y][z], a);
-		out[x][y][z] = a;
-		a = MAX(a - 2, 0);
-
-		b = MAX(out[x][47-y][z], b);
-		out[x][47-y][z] = b;
-		b = MAX(b - 2, 0);
-	}
-	}
-	}
-	PROFILE_STOP();
-}
-
-static void lightBlurX(u8 out[48][48][48]){
-	PROFILE_START();
-	for(int y=0;y < 48;y++){
-	for(int z=0;z < 48;z++){
-	i8 a = 0;
-	i8 b = 0;
-	for(int x=0;x < 48;x++){
-		a = MAX(out[x][y][z], a);
-		out[x][y][z] = a;
-		a = MAX(a - 2, 0);
-
-		b = MAX(out[47-x][y][z], b);
-		out[47-x][y][z] = b;
-		b = MAX(b - 2, 0);
-	}
-	}
-	}
-	PROFILE_STOP();
-}
-
-static void lightBlur(u8 buf[48][48][48]){
-	PROFILE_START();
-	lightBlurZ(buf);
-	lightBlurX(buf);
-	lightBlurY(buf);
-	PROFILE_STOP();
-}
 
 static void lightSunlightChunk(u8 out[48][48][48], const u8 blockData[16][16][16], u8 curLight[16][16], const u8 blockLight[256], const int x, const int y, const int z, const u8 sunlight){
 	for(int cy=15;cy>=0;cy--){
@@ -149,6 +78,12 @@ static void lightSunlight(u8 out[48][48][48],const chunkOverlay *block[3][3][3])
 	PROFILE_STOP();
 }
 
+static void lightBlurFast(u8 buf[48][48][48]){
+	PROFILE_START();
+	ispcLightBlur(buf);
+	PROFILE_STOP();
+}
+
 static void lightOut(u8 in[48][48][48], chunkOverlay *out){
 	for(int x=0;x<16;x++){
 	for(int y=0;y<16;y++){
@@ -161,7 +96,7 @@ void lightTick(chunkOverlay *light, const chunkOverlay *block[3][3][3]){
 	static u8 lightBuffer[48][48][48];
 	PROFILE_START();
 	lightSunlight(lightBuffer, block);
-	lightBlur(lightBuffer);
+	lightBlurFast(lightBuffer);
 	lightOut(lightBuffer,light);
 	PROFILE_STOP();
 }

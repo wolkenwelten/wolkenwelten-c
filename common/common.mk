@@ -1,5 +1,5 @@
 ARCH             := $(shell uname -m)
-NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj' | sort)
+7NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj' | sort)
 NO_WWLIB         := $(NUJ_WWLIB:.nuj=.no)
 COMMON_ASSETS    := common/src/tmp/wwlib.nuj
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
@@ -34,12 +34,19 @@ $(COMMON_OBJS): | server/src/tmp/sfx.h
 common/nujel/tmp/stdlib.o: $(NUJEL)
 common/nujel/nujel.a: $(NUJEL)
 
+$(WOLKENWELTEN): common/src/game/lightFast.o
+$(WOLKENWELTEN_SERVER): common/src/game/lightFast.o
+
 %.o: %.s
 	@$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) $< -o $@
 	@echo "$(ANSI_BLUE)" "[AS] " "$(ANSI_RESET)" $@
 
 %.o: %.c
 	@$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) $(if $(findstring client/, $<),$(CLIENT_CFLAGS) $(CLIENT_CINCLUDES),) -g -c $< -o $@ -MMD > ${<:.c=.d}
+	@echo "$(ANSI_GREEN)" "[CC] " "$(ANSI_RESET)" $@
+
+%.o: %.ispc
+	@$(ISPC) $(ISPC_TARGET) $(ISPC_OPTIMIZATION) $^ -o $@
 	@echo "$(ANSI_GREEN)" "[CC] " "$(ANSI_RESET)" $@
 
 %.no: %.nuj $(NUJEL)

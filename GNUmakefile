@@ -21,6 +21,10 @@ AS                   := as
 AS_SYM               := NO_SYM=NO_SYM
 ASFLAGS              :=
 
+ISPC                 := ispc
+ISPC_OPTIMIZATION    := -O3
+ISPC_TARGET          := --target=sse4-i8x16
+
 CC                   := cc
 CFLAGS               := -g -D_GNU_SOURCE
 CSTD                 := -std=c11
