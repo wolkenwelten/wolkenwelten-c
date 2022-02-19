@@ -27,25 +27,19 @@
 
 extern character *player;
 
-#define LIGHT_SIZE (CHUNK_SIZE * 3)
-
-static int lightOff(int x, int y, int z){
-	return z + (y*LIGHT_SIZE) + (x*LIGHT_SIZE*LIGHT_SIZE);
-}
-
-static void lightBlurZ(u8 *out){
+static void lightBlurZ(u8 out[48][48][48]){
 	PROFILE_START();
-	for(int x=0;x < LIGHT_SIZE;x++){
-	for(int y=0;y < LIGHT_SIZE;y++){
+	for(int x=0;x < 48;x++){
+	for(int y=0;y < 48;y++){
 	i8 a = 0;
 	i8 b = 0;
-	for(int z=0;z < LIGHT_SIZE;z++){
-		int off = lightOff(x,y,z);
-		a = out[off] = MAX(out[off], a);
+	for(int z=0;z < 48;z++){
+		a = MAX(out[x][y][z], a);
+		out[x][y][z] = a;
 		a = MAX(a - 2, 0);
 
-		int bff = lightOff(x,y,(LIGHT_SIZE-1)-z);
-		b = out[bff] = MAX(out[bff], b);
+		b = MAX(out[x][y][47-z], b);
+		out[x][y][47-z] = b;
 		b = MAX(b - 2, 0);
 	}
 	}
@@ -53,19 +47,19 @@ static void lightBlurZ(u8 *out){
 	PROFILE_STOP();
 }
 
-static void lightBlurY(u8 *out){
+static void lightBlurY(u8 out[48][48][48]){
 	PROFILE_START();
-	for(int x=0;x < LIGHT_SIZE;x++){
-	for(int z=0;z < LIGHT_SIZE;z++){
+	for(int x=0;x < 48;x++){
+	for(int z=0;z < 48;z++){
 	i8 a = 0;
 	i8 b = 0;
-	for(int y=0;y < LIGHT_SIZE;y++){
-		const int off = lightOff(x,y,z);
-		a = out[off] = MAX(out[off], a);
+	for(int y=0;y < 48;y++){
+		a = MAX(out[x][y][z], a);
+		out[x][y][z] = a;
 		a = MAX(a - 2, 0);
 
-		const int bff = lightOff(x,(LIGHT_SIZE-1) - y,z);
-		b = out[bff] = MAX(out[bff], b);
+		b = MAX(out[x][47-y][z], b);
+		out[x][47-y][z] = b;
 		b = MAX(b - 2, 0);
 	}
 	}
@@ -73,19 +67,19 @@ static void lightBlurY(u8 *out){
 	PROFILE_STOP();
 }
 
-static void lightBlurX(u8 *out){
+static void lightBlurX(u8 out[48][48][48]){
 	PROFILE_START();
-	for(int y=0;y < LIGHT_SIZE;y++){
-	for(int z=0;z < LIGHT_SIZE;z++){
+	for(int y=0;y < 48;y++){
+	for(int z=0;z < 48;z++){
 	i8 a = 0;
 	i8 b = 0;
-	for(int x=0;x < LIGHT_SIZE;x++){
-		const int off = lightOff(x,y,z);
-		a = out[off] = MAX(out[off], a);
+	for(int x=0;x < 48;x++){
+		a = MAX(out[x][y][z], a);
+		out[x][y][z] = a;
 		a = MAX(a - 2, 0);
 
-		const int bff = lightOff((LIGHT_SIZE-1) - x,y,z);
-		b = out[bff] = MAX(out[bff], b);
+		b = MAX(out[47-x][y][z], b);
+		out[47-x][y][z] = b;
 		b = MAX(b - 2, 0);
 	}
 	}
@@ -93,7 +87,7 @@ static void lightBlurX(u8 *out){
 	PROFILE_STOP();
 }
 
-static void lightBlur(u8 *buf){
+static void lightBlur(u8 buf[48][48][48]){
 	PROFILE_START();
 	lightBlurZ(buf);
 	lightBlurX(buf);
@@ -101,33 +95,53 @@ static void lightBlur(u8 *buf){
 	PROFILE_STOP();
 }
 
-static void lightSunlight(u8 *out,const chunkOverlay *block[3][3][3]){
-	PROFILE_START();
-	const u8 sunlight = gtimeGetBlockBrightness(gtimeGetTimeOfDay());
-	for(int x=0;x<LIGHT_SIZE;x++){
-		const u8 cx = x & 0xF;
-	for(int z=0;z<LIGHT_SIZE;z++){
-		const u8 cz = z & 0xF;
-		u8 curLight = sunlight;
-	for(int cy=2;cy>=0;cy--){
-		const chunkOverlay *cur = block[x/CHUNK_SIZE][cy][z/CHUNK_SIZE];
-		const int ccy = cy * CHUNK_SIZE;
-		if(cur){
-			for(int y=CHUNK_SIZE-1;y>=0;y--){
-				const int off = lightOff(x,y+ccy,z);
-				const blockId b = cur->data[cx][y][cz];
-				if(b){
-					out[off] = blockTypeGetLightEmission(b);
-					curLight = 0;
-				}else{
-					out[off] = curLight = MIN(sunlight, curLight+2);
-				}
-			}
+static void lightSunlightChunk(u8 out[48][48][48], const u8 blockData[16][16][16], u8 curLight[16][16], const u8 blockLight[256], const int x, const int y, const int z, const u8 sunlight){
+	for(int cy=15;cy>=0;cy--){
+	for(int cx=0;cx<16;cx++){
+	for(int cz=0;cz<16;cz++){
+		const u8 b = blockData[cx][cy][cz];
+		if(b){
+			curLight[cx][cz] = 0;
+			out[x+cx][y+cy][z+cz] = blockLight[b];
 		}else{
-			for(int y=CHUNK_SIZE-1;y>=0;y--){
-				const int off = lightOff(x,y+ccy,z);
-				out[off] = curLight = MIN(sunlight, curLight+2);
-			}
+			out[x+cx][y+cy][z+cz] = curLight[cx][cz];
+			curLight[cx][cz] = MIN(sunlight, curLight[cx][cz]+2);
+		}
+	}
+	}
+	}
+}
+
+static void lightSunlightAir(u8 out[48][48][48], u8 curLight[16][16], const int x, const int y, const int z, const u8 sunlight){
+	for(int cy=15;cy>=0;cy--){
+	for(int cx=0;cx<16;cx++){
+	for(int cz=0;cz<16;cz++){
+		curLight[cx][cz] = MIN(sunlight, curLight[cx][cz]+2);
+		out[cx+x][cy+y][cz+z] = curLight[cx][cz];
+	}
+	}
+	}
+}
+
+static void lightSunlight(u8 out[48][48][48],const chunkOverlay *block[3][3][3]){
+	PROFILE_START();
+
+	u8 blockLight[256];
+	for(int b=0;b<256;b++){
+		blockLight[b] = blockTypeGetLightEmission(b);
+	}
+	const u8 sunlight = gtimeGetBlockBrightness(gtimeGetTimeOfDay());
+
+	for(int x = 0;x < 3; x++){
+	for(int z = 0;z < 3; z++){
+	u8 curLight[16][16];
+	memset(curLight, 0, sizeof(curLight));
+	for(int y = 2;y >= 0; y--){
+		const chunkOverlay *cur = block[x][y][z];
+		if(cur){
+			lightSunlightChunk(out, cur->data, curLight, blockLight, x*16, y*16, z*16, sunlight);
+		}else{
+			lightSunlightAir(out, curLight, x*16, y*16, z*16, sunlight);
 		}
 	}
 	}
@@ -135,16 +149,16 @@ static void lightSunlight(u8 *out,const chunkOverlay *block[3][3][3]){
 	PROFILE_STOP();
 }
 
-static void lightOut(u8 *in, chunkOverlay *out){
-	for(int x=CHUNK_SIZE;x<CHUNK_SIZE*2;x++){
-	for(int y=CHUNK_SIZE;y<CHUNK_SIZE*2;y++){
-		memcpy(&out->data[x-CHUNK_SIZE][y-CHUNK_SIZE][0],&in[lightOff(x,y,CHUNK_SIZE)],CHUNK_SIZE);
+static void lightOut(u8 in[48][48][48], chunkOverlay *out){
+	for(int x=0;x<16;x++){
+	for(int y=0;y<16;y++){
+		memcpy(&out->data[x][y][0],&in[16+x][16+y][16],16);
 	}
 	}
 }
 
-u8 lightBuffer[LIGHT_SIZE * LIGHT_SIZE * LIGHT_SIZE];
 void lightTick(chunkOverlay *light, const chunkOverlay *block[3][3][3]){
+	static u8 lightBuffer[48][48][48];
 	PROFILE_START();
 	lightSunlight(lightBuffer, block);
 	lightBlur(lightBuffer);
