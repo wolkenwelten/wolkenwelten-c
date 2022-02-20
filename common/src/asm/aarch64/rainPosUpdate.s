@@ -1,8 +1,4 @@
 .text
-.global  particlePosUpdateNEON
-.type    particlePosUpdateNEON, @function
-.global sparticlePosUpdateNEON
-.type   sparticlePosUpdateNEON, @function
 .global      rainPosUpdateNEON
 .type        rainPosUpdateNEON, @function
 

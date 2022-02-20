@@ -16,7 +16,8 @@ TEST_WORLD       := -worldSeed=68040 -savegame=Test
 ifeq ("$(ARCH)","amd64")
 ARCH             := x86_64
 endif
-ASM_SRCS         := common/src/asm/$(ARCH).s
+ASM_DIR          := common/src/asm/$(ARCH)
+ASM_SRCS         := $(shell find $(ASM_DIR) -type f -name '*.s')
 
 ifneq ("$(wildcard $(ASM_SRCS))","")
 	ASM_OBJS := ${ASM_SRCS:.s=.o}
@@ -35,7 +36,7 @@ common/nujel/tmp/stdlib.o: $(NUJEL)
 common/nujel/nujel.a: $(NUJEL)
 
 %.o: %.s
-	@$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) $< -o $@
+	@$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) -I $(ASM_DIR)  $< -o $@
 	@echo "$(ANSI_BLUE)" "[AS] " "$(ANSI_RESET)" $@
 
 %.o: %.c
