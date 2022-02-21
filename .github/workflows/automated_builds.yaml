@@ -24,12 +24,16 @@ jobs:
           base-devel
           p7zip
           gcc
+          git
           mingw-w64-x86_64-binutils
           mingw-w64-clang-x86_64-autotools
           mingw-w64-clang-x86_64-toolchain
           mingw-w64-clang-x86_64-cmake
           mingw-w64-clang-x86_64-ffmpeg
           mingw-w64-clang-x86_64-ninja
+    - uses: actions/checkout@v2
+    - name: Checkout submodules
+      run: git submodule update --init --recursive
     - run: git config --global core.autocrlf input
       shell: bash
     - name: Compile stripped down SDL2
