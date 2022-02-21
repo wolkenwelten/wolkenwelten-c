@@ -1,14 +1,12 @@
 bits 64
 default rel
 
-global  lightBlurXSSE
-
 section .bss
-align 16
-savedFloats: resb 512
+extern savedFloats
 
 section .text
-
+global  lightBlurXSSE
+qq
 lightBlurXSSE:
         fxsave [savedFloats]
 	push rbx
@@ -26,7 +24,7 @@ lightBlurXSSE:
 	movd xmm0, eax
 	vpbroadcastb xmm14, xmm0
 
-	mov ebx, 49
+	mov ebx, 48
 	mov rdi, rcx
 .lightBlurXSSEOuterLoop:
 	mov eax,32

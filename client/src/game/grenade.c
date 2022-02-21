@@ -27,7 +27,6 @@
 #include "../../../common/src/network/messages.h"
 
 #include <math.h>
-#include <stdio.h>
 
 void explode(const vec pos, float pw, int style){
 	const vec   pd  = vecSub(pos,player->pos);
@@ -76,9 +75,8 @@ void grenadeUpdateFromServer(const packet *p){
 	const uint newC  = p->v.u16[1];
 
 	for(uint i=newC;i<grenadeCount;i++){
-		if(grenadeList[i].ent != NULL){
-			entityFree(grenadeList[i].ent);
-		}
+		if(grenadeList[i].ent == NULL){continue;}
+		entityFree(grenadeList[i].ent);
 		grenadeList[i].ent = NULL;
 	}
 	grenadeCount = newC;
