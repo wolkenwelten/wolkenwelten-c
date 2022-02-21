@@ -1,12 +1,11 @@
-BITS 64
+bits 64
 default rel
 
 global  lightBlurXSSE
 
 section .bss
-        align 16
-savedFloats:
-        resb 512
+align 16
+savedFloats: resb 512
 
 section .text
 
