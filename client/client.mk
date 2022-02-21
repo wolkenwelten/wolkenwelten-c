@@ -39,7 +39,7 @@ common/nujel/nujel.a:
 	@$(MAKE) -C common/nujel nujel.a
 
 $(WOLKENWELTEN): $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
-	@$(CC) $^ -g -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_CINCLUDES) $(CINCLUDES) $(CLIENT_LIBS) $(CSTD)
+	$(CC) $^ -g -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_CINCLUDES) $(CINCLUDES) $(CLIENT_LIBS) $(CSTD)
 	@echo "$(ANSI_BG_GREEN)" "[LD] " "$(ANSI_RESET)" $@
 
 client/src/tmp/client.no: $(CLIENT_NO)

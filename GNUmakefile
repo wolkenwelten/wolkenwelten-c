@@ -18,8 +18,11 @@ ifeq ($(OS),Windows_NT)
 endif
 
 AS                   := as
-AS_SYM               := NO_SYM=NO_SYM
+AS_SYM               := --defsym NO_SYM=NO_SYM
 ASFLAGS              :=
+
+NASM                 := nasm
+NASMFLAGS            := -f elf64
 
 CC                   := cc
 CFLAGS               := -g -D_GNU_SOURCE

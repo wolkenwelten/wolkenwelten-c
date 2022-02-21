@@ -3,7 +3,7 @@ CC               := gcc
 STRIP            := strip
 MUSL_CC          := musl-gcc
 
-AS_SYM           := USE_GOT=USE_GOT
+AS_SYM           := --defsym USE_GOT=USE_GOT
 
 GL_LIBS          := $(shell pkg-config --silence-errors --libs gl || pkg-config --libs opengl)
 

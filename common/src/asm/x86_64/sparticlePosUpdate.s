@@ -1,4 +1,4 @@
-.include "macros.s"
+.include "./common/src/asm/x86_64/macros.s"
 
 .data
 .align 16

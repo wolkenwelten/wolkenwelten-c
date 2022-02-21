@@ -6,7 +6,6 @@ COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
 COMMON_OBJS      := ${COMMON_SRCS:.c=.o}
 COMMON_DEPS      := ${COMMON_SRCS:.c=.d}
-ASM_OBJS         :=
 
 WEBEXCLUDE       += --exclude=releases/macos/wolkenwelten.iconset/
 WEBEXCLUDE       += --exclude=releases/win/*.res
@@ -16,17 +15,10 @@ TEST_WORLD       := -worldSeed=68040 -savegame=Test
 ifeq ("$(ARCH)","amd64")
 ARCH             := x86_64
 endif
-ifeq ("$(ARCH)","x86_64")
-AS               := nasm
-endif
 ASM_DIR          := common/src/asm/$(ARCH)
-ASM_SRCS         := $(shell find $(ASM_DIR) -type f -name '*.s')
-
-ifneq ("$(wildcard $(ASM_SRCS))","")
-	ASM_OBJS := ${ASM_SRCS:.s=.o}
-else
-	ASM_SRCS :=
-endif
+ASM_SRCS_S       := $(shell find $(ASM_DIR) -type f -name '*.s')
+ASM_SRCS_ASM     := $(shell find $(ASM_DIR) -type f -name '*.asm')
+ASM_OBJS          = ${ASM_SRCS_S:.s=.o} ${ASM_SRCS_ASM:.asm=.o}
 
 $(COMMON_OBJS): | client/src/tmp/objs.h
 $(COMMON_OBJS): | client/src/tmp/sfx.h
@@ -38,8 +30,12 @@ $(COMMON_OBJS): | server/src/tmp/sfx.h
 common/nujel/tmp/stdlib.o: $(NUJEL)
 common/nujel/nujel.a: $(NUJEL)
 
+%.o: %.asm
+	@$(NASM) $(NASMFLAGS) $< -o $@
+	@echo "$(ANSI_BLUE)" "[ASM]" "$(ANSI_RESET)" $@
+
 %.o: %.s
-	@$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) -I $(ASM_DIR)  $< -o $@
+	@$(AS) $(ASFLAGS) -c $(AS_SYM) -I $(ASM_DIR) $< -o $@
 	@echo "$(ANSI_BLUE)" "[ASM]" "$(ANSI_RESET)" $@
 
 %.o: %.c

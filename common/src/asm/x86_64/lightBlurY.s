@@ -1,5 +1,3 @@
-.include "macros.s"
-
 .data
 .align 16
 savedFloats: .zero 512

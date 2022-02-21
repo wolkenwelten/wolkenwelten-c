@@ -18,4 +18,5 @@ void lightBlurY        (u8 out[48][48][48]);
 void lightBlurYPortable(u8 out[48][48][48]);
 void lightBlurX        (u8 out[48][48][48]);
 void lightBlurXPortable(u8 out[48][48][48]);
+void lightBlurZ        (u8 out[48][48][48]);
 void lightBlurZPortable(u8 out[48][48][48]);
