@@ -16,6 +16,9 @@ TEST_WORLD       := -worldSeed=68040 -savegame=Test
 ifeq ("$(ARCH)","amd64")
 ARCH             := x86_64
 endif
+ifeq ("$(ARCH)","x86_64")
+AS               := nasm
+endif
 ASM_DIR          := common/src/asm/$(ARCH)
 ASM_SRCS         := $(shell find $(ASM_DIR) -type f -name '*.s')
 
@@ -37,7 +40,7 @@ common/nujel/nujel.a: $(NUJEL)
 
 %.o: %.s
 	@$(AS) $(ASFLAGS) -c --defsym $(AS_SYM) -I $(ASM_DIR)  $< -o $@
-	@echo "$(ANSI_BLUE)" "[AS] " "$(ANSI_RESET)" $@
+	@echo "$(ANSI_BLUE)" "[ASM]" "$(ANSI_RESET)" $@
 
 %.o: %.c
 	@$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) $(if $(findstring client/, $<),$(CLIENT_CFLAGS) $(CLIENT_CINCLUDES),) -g -c $< -o $@ -MMD > ${<:.c=.d}
