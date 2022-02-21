@@ -13,6 +13,9 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
     - uses: msys2/setup-msys2@v2
       name: "Initial msys2 setup"
       with:
@@ -29,9 +32,6 @@ jobs:
           mingw-w64-clang-x86_64-ninja
     - run: git config --global core.autocrlf input
       shell: bash
-    - uses: actions/checkout@v2
-      with:
-        submodules: recursive
     - name: Compile stripped down SDL2
       run: cd platform/win/msys2_pkgs/mingw-w64-SDL2/ && export CC=clang && makepkg -i --noconfirm
     - name: Compile stripped down SDL2_mixer
