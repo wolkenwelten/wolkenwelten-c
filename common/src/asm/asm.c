@@ -1,4 +1,5 @@
 #include "asm.h"
+#include "../misc/profiling.h"
 
 int asmRoutineSupport = 0;
 
@@ -41,6 +42,8 @@ void asmDetermineSupport(){
 	void      rainPosUpdateSSE();
 	void  particlePosUpdateSSE();
 	void sparticlePosUpdateSSE();
+	void lightBlurYSSE(u8 out[48][48][48]);
+	void lightBlurXSSE(u8 out[48][48][48]);
 #endif
 
 #ifdef ASM_USE_AVX
@@ -122,4 +125,42 @@ void rainPosUpdate(){
 		break;
 #endif
 	}
+}
+
+void lightBlurY(u8 out[48][48][48]){
+	PROFILE_START();
+	switch(asmRoutineSupport){
+	case 0:
+	case 1:
+	default:
+		lightBlurYPortable(out);
+		break;
+#ifdef ASM_USE_SSE
+	case 2:
+	case 3:
+		lightBlurYSSE(out);
+		break;
+#endif
+	}
+	PROFILE_STOP();
+}
+
+void lightBlurX(u8 out[48][48][48]){
+	PROFILE_START();
+	switch(asmRoutineSupport){
+	case 0:
+	case 1:
+	default:
+		lightBlurXPortable(out);
+		break;
+/*
+#ifdef ASM_USE_SSE
+	case 2:
+	case 3:
+		lightBlurXSSE(out);
+		break;
+#endif
+*/
+	}
+	PROFILE_STOP();
 }

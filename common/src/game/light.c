@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "light.h"
+#include "../asm/asm.h"
 #include "../game/blockType.h"
 #include "../game/character.h"
 #include "../game/item.h"
@@ -33,7 +34,7 @@ static void lightBlurZ(u8 out[48][48][48]){
 	for(int y=0;y < 48;y++){
 	i8 a = 0;
 	i8 b = 0;
-	for(int z=0;z < 48;z++){
+	for(int z=0;z < 32;z++){
 		a = MAX(out[x][y][z], a);
 		out[x][y][z] = a;
 		a = MAX(a - 2, 0);
@@ -47,13 +48,12 @@ static void lightBlurZ(u8 out[48][48][48]){
 	PROFILE_STOP();
 }
 
-static void lightBlurY(u8 out[48][48][48]){
-	PROFILE_START();
+void lightBlurYPortable(u8 out[48][48][48]){
 	for(int x=0;x < 48;x++){
 	for(int z=0;z < 48;z++){
 	i8 a = 0;
 	i8 b = 0;
-	for(int y=0;y < 48;y++){
+	for(int y=0;y < 32;y++){
 		a = MAX(out[x][y][z], a);
 		out[x][y][z] = a;
 		a = MAX(a - 2, 0);
@@ -64,16 +64,15 @@ static void lightBlurY(u8 out[48][48][48]){
 	}
 	}
 	}
-	PROFILE_STOP();
 }
 
-static void lightBlurX(u8 out[48][48][48]){
+void lightBlurXPortable(u8 out[48][48][48]){
 	PROFILE_START();
 	for(int y=0;y < 48;y++){
 	for(int z=0;z < 48;z++){
 	i8 a = 0;
 	i8 b = 0;
-	for(int x=0;x < 48;x++){
+	for(int x=0;x < 32;x++){
 		a = MAX(out[x][y][z], a);
 		out[x][y][z] = a;
 		a = MAX(a - 2, 0);
