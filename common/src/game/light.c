@@ -28,8 +28,7 @@
 
 extern character *player;
 
-static void lightBlurZ(u8 out[48][48][48]){
-	PROFILE_START();
+void lightBlurZPortable(u8 out[48][48][48]){
 	for(int x=0;x < 48;x++){
 	for(int y=0;y < 48;y++){
 	i8 a = 0;
@@ -45,7 +44,6 @@ static void lightBlurZ(u8 out[48][48][48]){
 	}
 	}
 	}
-	PROFILE_STOP();
 }
 
 void lightBlurYPortable(u8 out[48][48][48]){
@@ -67,7 +65,6 @@ void lightBlurYPortable(u8 out[48][48][48]){
 }
 
 void lightBlurXPortable(u8 out[48][48][48]){
-	PROFILE_START();
 	for(int y=0;y < 48;y++){
 	for(int z=0;z < 48;z++){
 	i8 a = 0;
@@ -83,7 +80,6 @@ void lightBlurXPortable(u8 out[48][48][48]){
 	}
 	}
 	}
-	PROFILE_STOP();
 }
 
 static void lightBlur(u8 buf[48][48][48]){

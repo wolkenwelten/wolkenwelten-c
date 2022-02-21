@@ -127,6 +127,24 @@ void rainPosUpdate(){
 	}
 }
 
+void lightBlurX(u8 out[48][48][48]){
+	PROFILE_START();
+	switch(asmRoutineSupport){
+	case 0:
+	case 1:
+	default:
+		lightBlurXPortable(out);
+		break;
+#ifdef ASM_USE_SSE
+	case 2:
+	case 3:
+		lightBlurXSSE(out);
+		break;
+#endif
+	}
+	PROFILE_STOP();
+}
+
 void lightBlurY(u8 out[48][48][48]){
 	PROFILE_START();
 	switch(asmRoutineSupport){
@@ -145,20 +163,14 @@ void lightBlurY(u8 out[48][48][48]){
 	PROFILE_STOP();
 }
 
-void lightBlurX(u8 out[48][48][48]){
+void lightBlurZ(u8 out[48][48][48]){
 	PROFILE_START();
 	switch(asmRoutineSupport){
 	case 0:
 	case 1:
 	default:
-		lightBlurXPortable(out);
+		lightBlurZPortable(out);
 		break;
-#ifdef ASM_USE_SSE
-	case 2:
-	case 3:
-		lightBlurXSSE(out);
-		break;
-#endif
 	}
 	PROFILE_STOP();
 }
