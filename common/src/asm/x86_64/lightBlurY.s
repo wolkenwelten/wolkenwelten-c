@@ -13,6 +13,10 @@ lightBlurYSSE:
   pushq %rcx
   pushq %rdx
 
+.ifndef WIN_ABI
+  movq %rdi, %rcx
+.endif
+
   xor %eax, %eax
   xorps %xmm15, %xmm15
   mov $02, %al

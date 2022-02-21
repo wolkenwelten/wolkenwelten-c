@@ -1,22 +1,18 @@
 AS               := as
 CC               := gcc
+STRIP            := strip
+MUSL_CC          := musl-gcc
 
 AS_SYM           := USE_GOT=USE_GOT
 
 GL_LIBS          := $(shell pkg-config --silence-errors --libs gl || pkg-config --libs opengl)
 
 CLIENT_LIBS      := $(GL_LIBS) -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lvorbis
-DYNLIBS          := $(GL_LIBS) -lm -lpthread -ldl -lSDL2 -lSDL2_mixer -lvorbis
-STATICLIBS       :=
 SERVER_LIBS      := -lm
-
 LIN_REL          := releases/linux-$(VERSION_ARCH)/wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME)
 
 .PHONY:  release.linux
-
-ifndef NOLINUXRELEASE
-	release: release.linux
-endif
+release: release.linux
 
 release.linux: releases/linux-$(VERSION_ARCH)/wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME).tar.xz
 releases/linux-$(VERSION_ARCH)/wolkenwelten-linux-$(VERSION_ARCH)-$(VERSION_NAME).tar.xz: $(LIN_REL)/README
@@ -28,30 +24,14 @@ $(LIN_REL)/README: common/README
 	@mkdir -p $(LIN_REL)
 	cp $< $@
 
-$(LIN_REL)/wolkenwelten: CFLAGS    += $(CLIENT_CFLAGS)
-$(LIN_REL)/wolkenwelten: CINCLUDES += $(CLIENT_CINCLUDES)
-$(LIN_REL)/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_HDRS)
-$(LIN_REL)/wolkenwelten: client/src/tmp/gfxAssets.c  client/src/tmp/gfxAssets.h
-$(LIN_REL)/wolkenwelten: client/src/tmp/sfxAssets.c  client/src/tmp/sfxAssets.h
-$(LIN_REL)/wolkenwelten: client/src/tmp/shdAssets.c  client/src/tmp/shdAssets.h
-$(LIN_REL)/wolkenwelten: client/src/tmp/txtAssets.c  client/src/tmp/txtAssets.h
-$(LIN_REL)/wolkenwelten: client/src/tmp/nujAssets.c  client/src/tmp/nujAssets.h
-$(LIN_REL)/wolkenwelten: client/src/tmp/meshAssets.c client/src/tmp/meshAssets.h
-$(LIN_REL)/wolkenwelten: client/src/tmp/objs.c client/src/tmp/objs.h
-$(LIN_REL)/wolkenwelten: client/src/tmp/sfx.c client/src/tmp/sfx.h
-$(LIN_REL)/wolkenwelten: common/src/tmp/cto.c
-$(LIN_REL)/wolkenwelten: $(ASM_OBJS)
+$(LIN_REL)/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_TMP_SRCS)
+$(LIN_REL)/wolkenwelten: $(ASM_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
 	@mkdir -p $(LIN_REL)
-	gcc $(CLIENT_SRCS) $(ASM_OBJS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CSTD) $(CINCLUDES) $(DYNLIBS) $(STATICLIBS)
-	strip -gxX $@
+	$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CLIENT_CFLAGS) $(CSTD) $(CINCLUDES) $(CLIENT_CINCLUDES) $(CLIENT_LIBS) -static -L./common/nujel/ -lnujel
+	$(STRIP) -gxX $@
 
-$(LIN_REL)/wolkenwelten-server: CFLAGS    += $(SERVER_CFLAGS)
-$(LIN_REL)/wolkenwelten-server: CINCLUDES += $(SERVER_CINCLUDES)
-$(LIN_REL)/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_HDRS)
-$(LIN_REL)/wolkenwelten-server: server/src/tmp/sfx.c server/src/tmp/sfx.h
-$(LIN_REL)/wolkenwelten-server: server/src/tmp/objs.c server/src/tmp/objs.h
-$(LIN_REL)/wolkenwelten-server: common/src/tmp/cto.c
-$(LIN_REL)/wolkenwelten-server: $(ASM_OBJS)
+$(LIN_REL)/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_TMP_SRCS)
+$(LIN_REL)/wolkenwelten-server: $(ASM_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
 	@mkdir -p $(LIN_REL)
-	musl-gcc -static  $(SERVER_SRCS) $(ASM_OBJS) -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CSTD) $(CINCLUDES)
-	strip -gxX $@
+	$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(SERVER_CFLAGS) $(CSTD) $(CINCLUDES) $(SERVER_CINCLUDES) $(SERVER_LIBS)
+	$(STRIP) -gxX $@

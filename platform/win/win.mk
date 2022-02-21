@@ -1,4 +1,5 @@
 AS               := /mingw64/bin/as # Has to be GAS, since clang as doesn't support all the features necessary
+AS_SYM           := NO_SYM=NO_SYM --defsym WIN_ABI=WIN_ABI
 CC               := cc
 
 CLIENT_CFLAGS    := -DSDL_SOUND $(shell pkg-config --cflags sdl2 sdl2_mixer)
