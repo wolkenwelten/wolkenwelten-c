@@ -156,8 +156,8 @@ static void lightOut(u8 in[48][48][48], chunkOverlay *out){
 	}
 }
 
+u8 lightBuffer[48][48][48];
 void lightTick(chunkOverlay *light, const chunkOverlay *block[3][3][3]){
-	static u8 lightBuffer[48][48][48];
 	PROFILE_START();
 	lightSunlight(lightBuffer, block);
 	lightBlur(lightBuffer);

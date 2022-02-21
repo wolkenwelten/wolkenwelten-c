@@ -26,9 +26,15 @@ lightBlurXSSE:
   mov $(32),%eax
 
   movq %rax, %rcx
-  imulq  $48, %rcx
+  dec %rcx
+  imulq $48, %rcx
   addq %rdi, %rcx
-  lea (48 * 47)(%rcx), %rdx
+  movq %rbx, %rdx
+  dec %rdx
+  imulq $48, %rdx
+  addq %rdx, %rcx
+  lea (48 * 48 * 47)(%rcx), %rdx
+
   movdqa   (%rcx),%xmm0
   movdqa 16(%rcx),%xmm1
   movdqa 32(%rcx),%xmm2

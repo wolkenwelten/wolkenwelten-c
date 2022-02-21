@@ -153,14 +153,12 @@ void lightBlurX(u8 out[48][48][48]){
 	default:
 		lightBlurXPortable(out);
 		break;
-/*
 #ifdef ASM_USE_SSE
 	case 2:
 	case 3:
 		lightBlurXSSE(out);
 		break;
 #endif
-*/
 	}
 	PROFILE_STOP();
 }
