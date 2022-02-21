@@ -207,7 +207,11 @@ static int queueEntryAdd(queueEntry *q, int len, int size, float priority, chunk
 }
 
 void worldQueueGenerate(const queueEntry *drawQueue, int drawQueueLen){
-	queueEntry generatorQueue[12];
+	#if defined(__x86_64__) || defined(__APPLE__)
+	queueEntry generatorQueue[24];
+	#else
+	queueEntry generatorQueue[16];
+	#endif
 	int generatorQueueLen = 0;
 
 	for(int i=0;i<drawQueueLen;i++){
