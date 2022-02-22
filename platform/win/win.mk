@@ -1,5 +1,3 @@
-AS               := /mingw64/bin/as # Has to be GAS, since clang as doesn't support all the features necessary
-AS_SYM           := --defsym NO_SYM=NO_SYM --defsym WIN_ABI=WIN_ABI
 CC               := cc
 
 NASMFLAGS        := -f win64

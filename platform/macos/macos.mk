@@ -1,5 +1,6 @@
-AS               := as
 CC               := clang
+
+NASMFLAGS        := -f macho64 --prefix "_"
 
 CLIENT_LIBS      := -F /Library/Frameworks -framework SDL2 -framework SDL2_mixer -framework OpenGL
 CLIENT_CFLAGS    := -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_mixer.framework/Headers -DGL_SILENCE_DEPRECATION

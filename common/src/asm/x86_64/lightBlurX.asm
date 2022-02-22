@@ -6,19 +6,19 @@ extern savedFloats
 
 section .text
 global  lightBlurXSSE
-qq
+
 lightBlurXSSE:
-        fxsave [savedFloats]
+	fxsave [savedFloats]
 	push rbx
 	push rcx
 	push rdx
 	push rdi
 
 %ifnidn __OUTPUT_FORMAT__, win32
-        mov rcx, rdi
+	mov rcx, rdi
 %endif
 
-        xor eax, eax
+	xor eax, eax
 	xorps xmm15, xmm15
 	mov al, 02
 	movd xmm0, eax

@@ -13,7 +13,7 @@ int asmRoutineSupport = 0;
 #endif
 
 /* MacOS has issues because it doesn't include GAS, and Haiku doesn't work with ASMfor now */
-#if defined(__APPLE__) || defined(__HAIKU__)
+#if defined(__HAIKU__)
 	#undef ASM_USE_SSE
 	#undef ASM_USE_AVX
 #endif
