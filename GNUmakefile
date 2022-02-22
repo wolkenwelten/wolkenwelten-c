@@ -27,12 +27,12 @@ NASMFLAGS            := -f elf64
 CC                   := cc
 CFLAGS               := -g -D_GNU_SOURCE
 CSTD                 := -std=c11
-OPTIMIZATION         := -O2 -fno-lto -ffast-math -freciprocal-math
+OPTIMIZATION         := -O2 -fno-lto -ffast-math -freciprocal-math -fno-math-errno
 WARNINGS             := -Wall -Werror -Wextra -Wshadow -Wcast-align -Wno-missing-braces
 
 LIBS                 :=
 
-RELEASE_OPTIMIZATION := -O3 -flto -ffast-math -freciprocal-math
+RELEASE_OPTIMIZATION := -O3 -flto -ffast-math -freciprocal-math -fno-math-errno
 VERSION_ARCH         := $(shell uname -m)
 
 ifneq (, $(shell which $(NUJEL)))
