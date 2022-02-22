@@ -8,7 +8,7 @@ section .text
 global rainPosUpdateSSE, rainPosUpdateAVX
 
 rainPosUpdateSSE:
-	fxsave [savedFloats]
+	fxsave   [savedFloats]
 	mov ecx, [rainCount]
 	shr ecx, 1
 	inc ecx

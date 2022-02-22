@@ -10,7 +10,7 @@ extern sparticleCount, sparticleVV, sparticles, glSparticles
 
 
 sparticlePosUpdateSSE:
-	fxsave [savedFloats]
+	fxsave   [savedFloats]
 	mov ecx, [sparticleCount]
 	shr ecx, 2
 	inc ecx

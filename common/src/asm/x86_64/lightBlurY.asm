@@ -53,11 +53,11 @@ lightBlurYSSE:
 	pmaxsb xmm7, xmm10
 	pmaxsb xmm8, xmm11
 
-	movdqa [rcx],	   xmm0
+	movdqa [rcx],      xmm0
 	movdqa [rcx + 16], xmm1
 	movdqa [rcx + 32], xmm2
 
-	movdqa [rdx],	   xmm6
+	movdqa [rdx],      xmm6
 	movdqa [rdx + 16], xmm7
 	movdqa [rdx + 32], xmm8
 

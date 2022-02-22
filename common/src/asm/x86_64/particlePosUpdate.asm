@@ -5,10 +5,10 @@ section .bss
 extern particleCount, particles, glParticles, savedFloats
 
 section .text
-global	 particlePosUpdateSSE, particlePosUpdateAVX
+global particlePosUpdateSSE, particlePosUpdateAVX
 
 particlePosUpdateSSE:
-	fxsave	 [savedFloats]
+	fxsave   [savedFloats]
 	mov ecx, [particleCount]
 	shr ecx, 2
 	inc ecx
