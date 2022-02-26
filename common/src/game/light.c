@@ -130,7 +130,7 @@ static void lightSunlight(u8 out[48][48][48],const chunkOverlay *block[3][3][3])
 	for(int x = 0;x < 3; x++){
 	for(int z = 0;z < 3; z++){
 	u8 curLight[16][16];
-	memset(curLight, 0, sizeof(curLight));
+	memset(curLight, 2, sizeof(curLight));
 	for(int y = 2;y >= 0; y--){
 		const chunkOverlay *cur = block[x][y][z];
 		if(cur){
