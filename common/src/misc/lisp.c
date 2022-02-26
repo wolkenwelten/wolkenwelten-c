@@ -99,12 +99,17 @@ static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
 	return NULL;
 }
 
-static lVal *wwlnfWVel(lClosure *c, lVal *v){
+static lVal *wwlnfWVelGet(lClosure *c, lVal *v){
+	(void)c; (void)v;
+	return lValVec(windVel);
+}
+
+static lVal *wwlnfWVelSet(lClosure *c, lVal *v){
 	(void)c;
 	if((v != NULL) && (lCar(v) != NULL) && (lCar(v)->type == ltVec)){
 		windSet(castToVec(lCar(v),vecZero()));
 	}
-	return lValVec(windVel);
+	return NULL;
 }
 
 static lVal *wwlnfCDenGet(lClosure *c, lVal *v){
@@ -113,7 +118,7 @@ static lVal *wwlnfCDenGet(lClosure *c, lVal *v){
 }
 
 static lVal *wwlnfCDenSet(lClosure *c, lVal *v){
-	(void)c;
+	(void)c;;
 	const int cden = castToInt(lCar(v),-1);
 	cloudsSetDensity(cden);
 	return lCar(v);
@@ -221,7 +226,8 @@ void *lispCommonRootReal(void *a, void *b){
 	lAddNativeFunc(c,"asm-switch!",     "(a)",                    "Switch asm/simd routines",                                   wwlnfAsmSwitch);
 	lAddNativeFunc(c,"cloud-threshold", "()",                     "Get the current cloud threshold",                            wwlnfCDenGet);
 	lAddNativeFunc(c,"cloud-threshold!","(thresh)",               "Set cloud threshold to &THRESH",                             wwlnfCDenSet);
-	lAddNativeFunc(c,"wind-velocity",   "(&vel)",                 "Set wind velocity to vector &VEL",                           wwlnfWVel);
+	lAddNativeFunc(c,"wind-velocity",   "()",                     "Get wind velocity",                                          wwlnfWVelGet);
+	lAddNativeFunc(c,"wind-velocity!",  "(&vel)",                 "Set wind velocity to vector &VEL",                           wwlnfWVelSet);
 	lAddNativeFunc(c,"rain",            "()",                     "Set rain rate to INTENSITY",                                 wwlnfRainGet);
 	lAddNativeFunc(c,"snow",            "()",                     "Set rain rate to INTENSITY",                                 wwlnfSnowGet);
 	lAddNativeFunc(c,"rain!",           "(intensity)",            "Set rain rate to INTENSITY",                                 wwlnfRainSet);
