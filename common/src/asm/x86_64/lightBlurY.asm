@@ -13,7 +13,8 @@ lightBlurYSSE:
 	push rcx
 	push rdx
 
-%ifnidn __OUTPUT_FORMAT__, win32
+%ifidn __?OUTPUT_FORMAT?__, win64
+%else
 	mov rcx, rdi
 %endif
 	xor eax, eax
