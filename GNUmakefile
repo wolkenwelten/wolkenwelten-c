@@ -26,7 +26,7 @@ NASMFLAGS            := -f elf64
 
 CC                   := cc
 CFLAGS               := -g -D_GNU_SOURCE
-CSTD                 := -std=c11
+CSTD                 := -std=c99
 OPTIMIZATION         := -O2 -fno-lto -ffast-math -freciprocal-math -fno-math-errno
 WARNINGS             := -Wall -Werror -Wextra -Wshadow -Wcast-align -Wno-missing-braces
 
