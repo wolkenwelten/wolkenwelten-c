@@ -35,6 +35,27 @@ void weatherInit(){
 	windInit();
 }
 
+static void boundsCheckWindGoalVelocity(){
+	const float curMin = 0.f + (stormIntensity / 25600.0f);
+	const float curMax = 0.02f + (stormIntensity / 25600.0f);
+
+	if(windGVel.x > 0){
+		windGVel.x = MINMAX( curMin, curMax, windGVel.x);
+	}else{
+		windGVel.x = MINMAX(-curMax,-curMin, windGVel.x);
+	}
+	if(windGVel.y > 0){
+		windGVel.y = MINMAX( curMin, curMax, windGVel.y);
+	}else{
+		windGVel.y = MINMAX(-curMax,-curMin, windGVel.y);
+	}
+	if(windGVel.z > 0){
+		windGVel.z = MINMAX( curMin, curMax, windGVel.z);
+	}else{
+		windGVel.z = MINMAX(-curMax,-curMin, windGVel.z);
+	}
+}
+
 void weatherUpdateAll(){
 	static uint calls = 0;
 	PROFILE_START();
@@ -44,11 +65,13 @@ void weatherUpdateAll(){
 	if(!isClient && (rngValA((1<<16)-1) == 0)){
 		windGVel   = vecMulS(vecRng(),1.f/256.f);
 		windGVel.y = 0.f;
+		boundsCheckWindGoalVelocity();
 		weatherSendUpdate(-1);
 	}
 	if(!isClient && (rngValA((1<<10)-1) == 0)){
 		windGVel   = vecMulS(windGVel,rngValf() + 0.5f);
 		windGVel.y = 0.f;
+		boundsCheckWindGoalVelocity();
 		weatherSendUpdate(-1);
 	}
 	if(!isClient && (rngValA((1<<16)-1) == 0)){
