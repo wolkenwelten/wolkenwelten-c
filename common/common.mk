@@ -46,6 +46,9 @@ common/nujel/nujel.a: $(NUJEL)
 	@$(NUJEL) -x "[try repl/exception-handler [file/compile \"$<\"]]"
 	@echo "$(ANSI_YELLOW)" "[NUJ]" "$(ANSI_RESET)" $@
 
+common/nujel/nujel.a:
+	@$(MAKE) -C common/nujel nujel.a
+
 common/src/tmp/wwlib.no: $(NO_WWLIB)
 	@mkdir -p common/src/tmp
 	@cat $^ > $@
