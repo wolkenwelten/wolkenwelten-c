@@ -163,6 +163,18 @@ static void lightOut(u8 in[48][48][48], chunkOverlay *out){
 	}
 }
 
+void lightCompare(const u8 a[48][48][48],const u8 b[48][48][48]){
+	for(int x=16;x<32;x++){
+	for(int y=16;y<32;y++){
+	for(int z=16;z<32;z++){
+		if(a[x][y][z] != b[x][y][z]){
+			printf("[%u][%u][%u] %u != %u\n",x,y,z,a[x][y][z],b[x][y][z]);
+		}
+	}
+	}
+	}
+}
+
 void lightTick(chunkOverlay *light, const chunkOverlay *block[3][3][3]){
 	static u8 *testBuf = NULL;
 	PROFILE_START();
@@ -175,9 +187,7 @@ void lightTick(chunkOverlay *light, const chunkOverlay *block[3][3][3]){
 		memcpy(testBuf, lightBuffer, sizeof(lightBuffer));
 		lightSunlight(lightBuffer, block);
 		lightBlurPortable(lightBuffer);
-		if(memcmp(testBuf, lightBuffer, sizeof(lightBuffer)) != 0){
-			fprintf(stderr, "Error, Portable and ASM lightBlur are different!\n");
-		}
+		lightCompare(lightBuffer, (const u8 (*)[48][48])testBuf);
 	}
 	lightOut(lightBuffer,light);
 	PROFILE_STOP();

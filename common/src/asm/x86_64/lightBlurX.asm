@@ -15,50 +15,36 @@ lightBlurXSSE:
 	push rdi
 
 %ifidn __?OUTPUT_FORMAT?__, win64
-%else
-	mov rcx, rdi
+	mov rdi, rcx
 %endif
 
-	xor eax, eax
 	xorps xmm15, xmm15
 	mov al, 02
 	movd xmm0, eax
 	vpbroadcastb xmm14, xmm0
 
-	mov ebx, 48             ; ebx == y
-	mov rdi, rcx            ; rdi = lightBuffer
+	mov rbx, 48             ; ebx == y
 .lightBlurXSSEOuterLoop:
-	mov eax,32
+	mov rax, 32
 
-	mov rcx, rax
-	dec rcx
-	imul rcx, 48
-	add rcx, rdi            ; rcx = aOut
-	mov rdx, rbx
-	dec rdx
-	imul rdx, 48
-	add rcx, rdx
+        mov rcx, 48
+        sub rcx, rbx
+        imul rcx, rcx, 48
+        add rcx, rdi
 
-        mov rdx, rbx
-        add rdx, -47
-        imul rdx, 48 * 48
-        add rdx, rdi
+        lea rdx, [rcx + (48 * 48 * 47)]
 
-	;lea rdx, [rcx + (48 * 48 * 47)] ; rdx = bOut
-
-	movdqa xmm0, [rcx]
-	movdqa xmm1, [rcx + 16]
-	movdqa xmm2, [rcx + 32]
-	movdqa xmm6, [rdx]
-	movdqa xmm7, [rdx + 16]
-	movdqa xmm8, [rdx + 32]
+        xorps xmm0, xmm0
+	xorps xmm1, xmm1
+	xorps xmm2, xmm2
+	xorps xmm6, xmm6
+	xorps xmm7, xmm7
+	xorps xmm8, xmm8
 
 .lightBlurXSSEInnerLoop:
-	add rcx, 48 * 48
-	sub rdx, 48 * 48
-	movdqa xmm3, [rcx]
-	movdqa xmm4, [rcx + 16]
-	movdqa xmm5, [rcx + 32]
+	movdqa xmm3,  [rcx]
+	movdqa xmm4,  [rcx + 16]
+	movdqa xmm5,  [rcx + 32]
 
 	movdqa xmm9,  [rdx]
 	movdqa xmm10, [rdx + 16]
@@ -96,9 +82,12 @@ lightBlurXSSE:
 	pmaxsb xmm7, xmm15
 	pmaxsb xmm8, xmm15
 
-	dec eax
+        add rcx, 48 * 48
+	sub rdx, 48 * 48
+	dec rax
+
 	jnz .lightBlurXSSEInnerLoop
-	dec ebx
+	dec rbx
 	jnz .lightBlurXSSEOuterLoop
 	pop rdi
 	pop rdx

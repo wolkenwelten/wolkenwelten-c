@@ -1,6 +1,6 @@
 CC               := cc
 
-NASMFLAGS        := -f win64
+NASMFLAGS        := -f win64 -g
 
 CLIENT_CFLAGS    := -DSDL_SOUND $(shell pkg-config --cflags sdl2 sdl2_mixer)
 

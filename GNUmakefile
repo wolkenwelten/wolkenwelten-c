@@ -22,7 +22,7 @@ AS_SYM               := --defsym NO_SYM=NO_SYM
 ASFLAGS              :=
 
 NASM                 := nasm
-NASMFLAGS            := -f elf64
+NASMFLAGS            := -f elf64 -g
 
 CC                   := cc
 CFLAGS               := -g -D_GNU_SOURCE

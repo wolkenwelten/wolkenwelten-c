@@ -28,16 +28,14 @@ lightBlurYSSE:
 	mov eax, 32
 
 	lea rdx, [rcx + (48 * 47)]
-	movdqa xmm0, [rcx]
-	movdqa xmm1, [rcx + 16]
-	movdqa xmm2, [rcx + 32]
-	movdqa xmm6, [rdx]
-	movdqa xmm7, [rdx + 16]
-	movdqa xmm8, [rdx + 32]
+	xorps xmm0, xmm0
+	xorps xmm1, xmm1
+	xorps xmm2, xmm2
+	xorps xmm6, xmm6
+	xorps xmm7, xmm7
+	xorps xmm8, xmm8
 
 .lightBlurYSSEInnerLoop:
-	add rcx, 48
-	sub rdx, 48
 	movdqa xmm3, [rcx]
 	movdqa xmm4, [rcx + 16]
 	movdqa xmm5, [rcx + 32]
@@ -78,10 +76,11 @@ lightBlurYSSE:
 	pmaxsb xmm7, xmm15
 	pmaxsb xmm8, xmm15
 
+        add rcx, 48
+	sub rdx, 48
 	dec eax
 	jnz .lightBlurYSSEInnerLoop
 	add rcx, (48 * 16)
-	sub rdx, (48 * 16)
 	dec ebx
 	jnz .lightBlurYSSEOuterLoop
 	pop rdx
