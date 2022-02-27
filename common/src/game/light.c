@@ -27,6 +27,9 @@
 #include <string.h>
 
 extern character *player;
+u8 lightBuffer[48][48][48];
+
+extern bool optionTestLightMap;
 
 void lightBlurZPortable(u8 out[48][48][48]){
 	for(int x=0;x < 48;x++){
@@ -87,6 +90,14 @@ static void lightBlur(u8 buf[48][48][48]){
 	lightBlurZ(buf);
 	lightBlurX(buf);
 	lightBlurY(buf);
+	PROFILE_STOP();
+}
+
+static void lightBlurPortable(u8 buf[48][48][48]){
+	PROFILE_START();
+	lightBlurZPortable(buf);
+	lightBlurXPortable(buf);
+	lightBlurYPortable(buf);
 	PROFILE_STOP();
 }
 
@@ -152,11 +163,22 @@ static void lightOut(u8 in[48][48][48], chunkOverlay *out){
 	}
 }
 
-u8 lightBuffer[48][48][48];
 void lightTick(chunkOverlay *light, const chunkOverlay *block[3][3][3]){
+	static u8 *testBuf = NULL;
 	PROFILE_START();
 	lightSunlight(lightBuffer, block);
 	lightBlur(lightBuffer);
+	if(optionTestLightMap){
+		if(testBuf == NULL){
+			testBuf = malloc(sizeof(lightBuffer));
+		}
+		memcpy(testBuf, lightBuffer, sizeof(lightBuffer));
+		lightSunlight(lightBuffer, block);
+		lightBlurPortable(lightBuffer);
+		if(memcmp(testBuf, lightBuffer, sizeof(lightBuffer)) != 0){
+			fprintf(stderr, "Error, Portable and ASM lightBlur are different!\n");
+		}
+	}
 	lightOut(lightBuffer,light);
 	PROFILE_STOP();
 }

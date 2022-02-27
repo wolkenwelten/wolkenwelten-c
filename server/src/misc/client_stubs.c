@@ -39,6 +39,8 @@ __attribute__((aligned(32))) const float sparticleVV[4][4] = {
 void particlePosUpdatePortable(){}
 void sparticlePosUpdatePortable(){}
 
+bool  optionTestLightMap = false;
+
 void fxRainDrop(const vec pos){(void)pos;}
 void fxSnowDrop(const vec pos){(void)pos;}
 

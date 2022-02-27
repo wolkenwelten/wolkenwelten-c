@@ -54,6 +54,7 @@ int   optionWindowHeight     = 600;
 int   optionWindowX          = -1;
 int   optionWindowY          = -1;
 bool  optionFullscreen       = false;
+bool  optionTestLightMap     = false;
 
 void printVersion(){
 	printf("Wolkenwelten Pre-Alpha\n");
@@ -124,6 +125,9 @@ void parseOptions(int argc,char *argv[]){
 		if(checkString(argv[i]+1,"version")){
 			printVersion();
 			exit(0);
+		}
+		if(checkString(argv[i]+1,"testLightMap")){
+			optionTestLightMap = true;
 		}
 	}
 }

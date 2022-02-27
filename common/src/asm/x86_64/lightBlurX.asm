@@ -25,20 +25,26 @@ lightBlurXSSE:
 	movd xmm0, eax
 	vpbroadcastb xmm14, xmm0
 
-	mov ebx, 48
-	mov rdi, rcx
+	mov ebx, 48             ; ebx == y
+	mov rdi, rcx            ; rdi = lightBuffer
 .lightBlurXSSEOuterLoop:
 	mov eax,32
 
 	mov rcx, rax
 	dec rcx
 	imul rcx, 48
-	add rcx, rdi
+	add rcx, rdi            ; rcx = aOut
 	mov rdx, rbx
 	dec rdx
 	imul rdx, 48
 	add rcx, rdx
-	lea rdx, [rcx + (48 * 48 * 47)]
+
+        mov rdx, rbx
+        add rdx, -47
+        imul rdx, 48 * 48
+        add rdx, rdi
+
+	;lea rdx, [rcx + (48 * 48 * 47)] ; rdx = bOut
 
 	movdqa xmm0, [rcx]
 	movdqa xmm1, [rcx + 16]
