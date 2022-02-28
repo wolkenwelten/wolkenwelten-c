@@ -1,6 +1,9 @@
 bits 64
 default rel
 
+section .data
+extern vecTwoLiteral
+
 section .bss
 extern savedFloats
 
@@ -19,9 +22,7 @@ lightBlurYSSE:
 %endif
 	xor eax, eax
 	xorps xmm15, xmm15
-	mov al, 02
-	movd xmm0, eax
-	vpbroadcastb xmm14, xmm0
+	movdqa xmm14, [vecTwoLiteral]
 	mov ebx, 48
 
 .lightBlurYSSEOuterLoop:
