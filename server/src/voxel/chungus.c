@@ -437,13 +437,17 @@ uint chungusFreeOldChungi(u64 threshold){
 	return ret;
 }
 
-float chungusDistance(const character *cam, const chungus *chng){
+float chungusDistanceRaw(const character *cam, u8 cx, u8 cy, u8 cz){
 	if(cam == NULL) {return 8192.f;}
-	if(chng == NULL){return 8192.f;}
-	const uint x = (chng->x << 8) + 128;
-	const uint y = (chng->y << 8) + 128;
-	const uint z = (chng->z << 8) + 128;
+	const uint x = (cx << 8) + 128;
+	const uint y = (cy << 8) + 128;
+	const uint z = (cz << 8) + 128;
 	return vecMag(vecSub(vecNew(x,y,z),cam->pos));
+}
+
+float chungusDistance(const character *cam, const chungus *chng){
+	if(chng == NULL){return 8192.f;}
+	return chungusDistanceRaw(cam, chng->x, chng->y, chng->z);
 }
 
 void chungusUnsubFarChungi(){

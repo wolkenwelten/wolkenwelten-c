@@ -578,6 +578,7 @@ void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 		if(e->z != z){continue;}
 		return;
 	}
+	//printf("+chng[%u][%u][%u] D:%f\n",x,y,z,chungusDistanceRaw(clients[c].c,x,y,z));
 	clients[c].chngReqQueue[clients[c].chngReqQueueLen++] = (chungusReqEntry){x,y,z,0};
 }
 
@@ -591,13 +592,31 @@ void addChunkToQueue(uint c, u16 x, u16 y, u16 z){
 	clients[c].chnkReqQueue[clients[c].chnkReqQueueLen++] = (chunkReqEntry){x,y,z,0};
 }
 
+chungusReqEntry clientGetMostImportantChungusQueueEntry(uint c){
+	uint retI = 0;
+	float d = chungusDistanceRaw(clients[c].c, clients[c].chngReqQueue[retI].x, clients[c].chngReqQueue[retI].y, clients[c].chngReqQueue[retI].z);
+
+	for(uint i=1;i<clients[c].chngReqQueueLen;i++){
+		const float nd = chungusDistanceRaw(clients[c].c, clients[c].chngReqQueue[i].x, clients[c].chngReqQueue[i].y, clients[c].chngReqQueue[i].z);
+		if(nd < d){
+			retI = i;
+			d = nd;
+		}
+	}
+	//printf("Important: [%u/%u]\n",retI, clients[c].chngReqQueueLen);
+	chungusReqEntry ret = clients[c].chngReqQueue[retI];
+	clients[c].chngReqQueue[retI] = clients[c].chngReqQueue[--clients[c].chngReqQueueLen];
+	return ret;
+}
+
 void addChunksToQueue(uint c){
 	if(c >= clientCount){return;}
 	if(clients[c].chngReqQueueLen == 0){return;}
-	const chungusReqEntry entry = clients[c].chngReqQueue[--clients[c].chngReqQueueLen];
+	const chungusReqEntry entry = clientGetMostImportantChungusQueueEntry(c);
 	chungus *chng = worldGetChungus(entry.x,entry.y,entry.z);
 	if(chng == NULL){ return; }
 	float dist = chungusDistance(clients[c].c, chng);
+	//printf("-chng[%u][%u][%u] D:%f\n",chng->x,chng->y,chng->z,dist);
 	if(dist > 4096.f){
 		fprintf(stderr,"Requested Chungus too far away Chungus(%u, %u, %u) Player(%f, %f, %f))\n",chng->x<<8,chng->y<<8,chng->z<<8,clients[c].c->pos.x,clients[c].c->pos.y,clients[c].c->pos.z);
 		return;

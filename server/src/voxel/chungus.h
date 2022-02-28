@@ -54,6 +54,7 @@ void         chungusSetUpdated       (chungus *c, uint p);
 void         chungusUnsetUpdated     (chungus *c, uint p);
 void         chungusSetAllUpdated    (chungus *c, u64 nUpdated);
 int          chungusGetHighestP      (chungus *c, int x, int *retY, int z);
+float        chungusDistanceRaw      (const character *cam, u8 cx, u8 cy, u8 cz);
 float        chungusDistance         (const character *cam, const chungus *chng);
 uint         chungusFreeOldChungi    (u64 threshold);
 void         chungusUnsubFarChungi   ();

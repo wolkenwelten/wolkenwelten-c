@@ -193,7 +193,7 @@ static int queueEntryAdd(queueEntry *q, int len, int size, float priority, chunk
 		if(q[i].priority > priority){
 			for(int ii=size-1;ii > i;ii--){q[ii] = q[ii-1];}
 			q[i].chnk = c;
-			q[i].priority = priority - c->framesSkipped ;
+			q[i].priority = priority;
 			return MIN(size,len + 1);
 		}
 	}
@@ -217,11 +217,12 @@ void worldQueueGenerate(const queueEntry *drawQueue, int drawQueueLen){
 	for(int i=0;i<drawQueueLen;i++){
 		chunk *c = drawQueue[i].chnk;
 		if(!(c->flags & CHUNK_MASK_DIRTY)){continue;}
-		const float priority = drawQueue[i].priority - c->framesSkipped * 16;
+		const float priority = drawQueue[i].priority - c->framesSkipped * 16.f;
 		generatorQueueLen = queueEntryAdd(generatorQueue, generatorQueueLen, countof(generatorQueue), priority, c);
-		c->framesSkipped++;
+		c->framesSkipped = MIN(32,c->framesSkipped+1);
 	}
 	for(int i=0;i<generatorQueueLen; i++){
+		//printf("Priority: %f\n", generatorQueue[i].priority);
 		chunk *c = generatorQueue[i].chnk;
 		chunkGenBlockMesh(c);
 		//chunkGenFluidMesh(c);
