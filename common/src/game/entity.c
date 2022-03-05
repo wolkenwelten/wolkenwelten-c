@@ -264,7 +264,7 @@ float blockRepulsion(const vec pos, float *vel, float weight, u8 (*colFunc)(cons
 	if(blockDamage > blockHealth){
 		worldBreak(blockPos.x,blockPos.y,blockPos.z);
 		strength = strength * ((float)blockHealth / (float)blockDamage);
-		fxBlockBreak(blockPos,b,0);
+		fxBlockBreak(vecFloor(blockPos),b,0);
 	}
 
 	if(fabsf(strength) > 0.1f){ret += (int)(fabsf(strength)*512.f);}
