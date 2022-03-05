@@ -1,75 +1,78 @@
-[def player-primary!]
-[def player-secondary!]
-[def player-tertiary!]
-[def player-throw!]
-[def player-do-throw!]
-[def input-tick]
+[def input/primary-did #f]
+[def input/primary-did-count 0]
 
-[let*
-        [def did-primary #f]
-        [def did-throw #f]
-        [def throw-start 0]
+[def input/secondary-did #f]
+[def input/secondary-did-count 0]
 
-        [set! player-primary! [λ []
-                "Make the player do a primary action"
+[def input/tertiary-did #f]
+[def input/tertiary-did-count 0]
 
-                [let [[itemid [player-active-item-id]]]
-                     [if [< itemid 256]
-                         [player-do-primary!]
-                         [when-not [item-primary! itemid]
-                                   [player-do-primary!]]]]
+[def did-throw #f]
+[def throw-start 0]
 
-                [set! did-primary #t]
-        ]]
+[defun player-primary! []
+       "Make the player do a primary action"
+       [def itemid [player-active-item-id]]
+       [if [< itemid 256]
+           [player-do-primary! input/primary-did-count]
+           [when-not [item-primary! itemid input/primary-did-count]
+                     [player-do-primary! input/primary-did-count]]]
+       [set! input/primary-did #t]]
 
-        [set! player-secondary! [λ []
-                "Make the player do a secondary action"
+[defun player-secondary! []
+       "Make the player do a secondary action"
+       [def itemid [player-active-item-id]]
+       [if [< itemid 256]
+           [player-place-block! [player-active-slot]]
+           [item-secondary! itemid input/secondary-did-count]]
+       [set! input/secondary-did #t]]
 
-                [let [[itemid [player-active-item-id]]]
-                     [if [< itemid 256]
-                         [player-place-block! [player-active-slot]]
-                         [item-secondary! itemid]]]
-        ]]
+[defun player-tertiary! []
+       "Make the player do a tertiary action"
+       [def itemid [player-active-item-id]]
+       [when [>= itemid 256]
+             [item-tertiary! itemid input/tertiary-did-count]]
+       [set! input/tertiary-did #t]]
 
-        [set! player-tertiary! [λ []
-                "Make the player do a tertiary action"
+[defun player-throw! []
+       "Try to throw the currently held item"
+       [when [zero? throw-start] [set! throw-start [time/milliseconds]]]
+       [when [> [- [time/milliseconds] throw-start] 500]
+             [let [[zoom [+ 1.0 [min 1.0 [/ [- [time/milliseconds] throw-start 500] 1000.0]]]]]
+                  [player-zoom! zoom]]]
+       [set! did-throw #t]]
 
-                [let [[itemid [player-active-item-id]]]
-                        [when [>= itemid 256] [item-tertiary! itemid]]
-                ]
-        ]]
+[defun player-do-throw! [timeheld]
+       [if [<= [- [time/milliseconds] throw-start] 500]
+           [player-drop-item! [player-active-slot]]
+           [throw-item throw-spin [* [player-zoom] 0.07]]]
+       [set! throw-start 0]
+       [player-zoom! 1.0]]
 
-        [set! player-throw! [λ []
-                "Try to throw the currently held item"
+[defun input-tick []
+       "Evals all Input handlers in order"
+       [input-mouse-tick]
+       [input-keyboard-tick]
 
-                [when [zero? throw-start] [set! throw-start [time/milliseconds]]]
-                [when [> [- [time/milliseconds] throw-start] 500]
-                        [let [[zoom [+ 1.0 [min 1.0 [/ [- [time/milliseconds] throw-start 500] 1000.0]]]]]
-                                [player-zoom! zoom]
-                        ]
-                ]
-                [set! did-throw #t]
-        ]]
 
-        [set! player-do-throw! [λ [timeheld]
-                ;[say ["You held the button for " [/ timeheld 1000.0] " seconds Zoom at: " [player-zoom]]]
-                [if [<= [- [time/milliseconds] throw-start] 500]
-                        [player-drop-item! [player-active-slot]]
-                        [throw-item throw-spin [* [player-zoom] 0.07]]
-                ]
-                [set! throw-start 0]
-                [player-zoom! 1.0]
-        ]]
+       [++ input/primary-did-count]
+       [when-not input/primary-did
+                 [player-stop-mining!]
+                 [set! input/primary-did-count 0]]
+       [set! input/primary-did #f]
 
-        [set! input-tick [λ []
-                "Evals all Input handlers in order"
+       [++ input/secondary-did-count]
+       [when-not input/secondary-did
+                 [set! input/secondary-did-count 0]]
+       [set! input/secondary-did #f]
 
-                [input-mouse-tick]
-                [input-keyboard-tick]
+       [++ input/tertiary-did-count]
+       [when-not input/tertiary-did
+                 [set! input/tertiary-did-count 0]]
+       [set! input/tertiary-did #f]
 
-                [when [not did-primary] [player-stop-mining!]]
-                [when did-primary [set! did-primary #f]]
-                [when [and [not did-throw] [!= throw-start 0]] [player-do-throw! [- [time/milliseconds] throw-start]]]
-                [set! did-throw #f]
-        ]]
-]
+
+       [when [and [not did-throw]
+                  [!= throw-start 0]]
+             [player-do-throw! [- [time/milliseconds] throw-start]]]
+       [set! did-throw #f]]
