@@ -304,6 +304,7 @@ static lVal *wwlnfPlayerActiveSlotSet(lClosure *c, lVal *v){
 	if(ai >= 0){
 		player->activeItem = ai;
 		player->flags &= ~(CHAR_AIMING | CHAR_THROW_AIM);
+		player->goalZoomFactor = 1.f;
 	}
 	return NULL;
 }
