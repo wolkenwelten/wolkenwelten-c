@@ -214,6 +214,7 @@ void worldgenGenerate(worldgen *wgen){
 	case 0:
 		break;
 	}
+	chungusSetB(wgen->clay, 0, 0, 0, I_Marble_Block);
 	seedRNG(oldSeed);
 
 	PROFILE_STOP();

@@ -170,7 +170,7 @@ static void worldQueueLoad(queueEntry *loadQueue, int loadQueueLen){
 	quicksortQueue(loadQueue,0,loadQueueLen-1);
 	for(int i=loadQueueLen-1;i>=0;i--){
 		chungus *chng = loadQueue[i].chng;
-		msgRequestChungus(chng->x,chng->y,chng->z);
+		msgRequestChungus(-1, chng->x,chng->y,chng->z);
 	}
 }
 
@@ -278,8 +278,8 @@ void worldDraw(const character *cam){
 				loadQueue[loadQueueLen++].chng   = world[x][y][z];
 			}else if(world[x][y][z]->requested == 0){
 				chungusQueueDraws(world[x][y][z],cam,drawQueue,&drawQueueLen);
-			}else if((world[x][y][z]->requested + 3000) < cTicks){
-				world[x][y][z]->requested = cTicks;
+			}else if((world[x][y][z]->requested + 300) < cTicks){
+				world[x][y][z]->requested = cTicks + rngValA(255);
 				loadQueue[loadQueueLen].priority = d;
 				loadQueue[loadQueueLen++].chng   = world[x][y][z];
 			}
@@ -318,7 +318,7 @@ void worldFreeFarChungi(const character *cam){
 		if(d > (renderDistance + 256.f)){
 			chungusFree(world[x][y][z]);
 			world[x][y][z] = NULL;
-			msgUnsubChungus(x,y,z);
+			msgUnsubChungus(-1, x,y,z);
 		}
 	}
 }
@@ -431,4 +431,12 @@ bool worldSetFire(int x,int y,int z, u8 level){
 	if(chnk->fire == NULL){chnk->fire = chunkOverlayAllocate();}
 	chnk->fire->data[x&0xF][y&0xF][z&0xF] = level;
 	return true;
+}
+
+void chungusRecvUnsub(const packet *p){
+	const int cx = p->v.u8[0];
+	const int cy = p->v.u8[1];
+	const int cz = p->v.u8[2];
+
+	chungusFree(worldGetChungus(cx,cy,cz));
 }

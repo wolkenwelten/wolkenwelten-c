@@ -565,10 +565,28 @@ void serverParse(){
 	}
 }
 
+void chungusQueueDropDistantEntries(uint c){
+	for(int i=clients[c].chngReqQueueLen-1;i>=0;--i){
+		const int cx = clients[c].chngReqQueue[i].x;
+		const int cy = clients[c].chngReqQueue[i].y;
+		const int cz = clients[c].chngReqQueue[i].z;
+		const float d = chungusDistanceRaw(clients[c].c, cx, cy, cz);
+		if(d > 1024){
+			clients[c].chngReqQueue[i] = clients[c].chngReqQueue[--clients[c].chngReqQueueLen];
+			msgUnsubChungus(c, cx, cy, cz);
+			if(clients[c].chngReqQueueLen == 0){return;}
+		}
+	}
+}
+
 void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 	if(c >= clientCount){ return; }
 	if(clients[c].state){ return; }
-	if(clients[c].chngReqQueueLen >= countof(clients[c].chngReqQueue)){
+	if(clients[c].chngReqQueueLen > 16){
+		chungusQueueDropDistantEntries(c);
+	}
+	if(clients[c].chnkReqQueueLen >= countof(clients[c].chnkReqQueue)){
+		fprintf(stderr,"Chungys Request Queue full!\n");
 		return;
 	}
 	for(uint i=0;i<clients[c].chngReqQueueLen;i++){

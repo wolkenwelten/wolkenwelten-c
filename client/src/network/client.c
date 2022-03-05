@@ -351,11 +351,12 @@ void clientParsePacket(const packet *p){
 	case msgtLightningStrike:
 		lightningRecvUpdate(p);
 		break;
-
+	case msgtChungusUnsub:
+		chungusRecvUnsub(p);
+		break;
 	case msgtRequestChungus:
 	case msgtPlaceBlock:
 	case msgtRequestSpawnPos:
-	case msgtChungusUnsub:
 	case msgtBeingMove:
 	case msgtItemDropNew:
 	case msgtItemDropPickup:

@@ -53,7 +53,7 @@ void msgPlayerSetPos(int c, const vec pos, const vec rot, const vec vel){
 	packetQueue(p,msgtPlayerPos,9*4,c);
 }
 
-void msgRequestChungus(u8 x, u8 y, u8 z){
+void msgRequestChungus(int c, u8 x, u8 y, u8 z){
 	packet *p = &packetBuffer;
 
 	p->v.u8[0] = x;
@@ -61,10 +61,10 @@ void msgRequestChungus(u8 x, u8 y, u8 z){
 	p->v.u8[2] = z;
 	p->v.u8[3] = 0;
 
-	packetQueueToServer(p,msgtRequestChungus,4);
+	packetQueue(p,msgtRequestChungus,4, c);
 }
 
-void msgUnsubChungus(u8 x, u8 y, u8 z){
+void msgUnsubChungus(int c, u8 x, u8 y, u8 z){
 	packet *p = &packetBuffer;
 
 	p->v.u8[0] = x;
@@ -72,7 +72,7 @@ void msgUnsubChungus(u8 x, u8 y, u8 z){
 	p->v.u8[2] = z;
 	p->v.u8[3] = 0;
 
-	packetQueueToServer(p,msgtChungusUnsub,4);
+	packetQueue(p,msgtChungusUnsub,4, c);
 }
 
 void msgDirtyChunk(u16 x, u16 y, u16 z){
