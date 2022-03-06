@@ -19,7 +19,7 @@ struct chunk {
 	beingList bl;
 
 	chunkvertbuf *blockVertbuf, *fluidVertbuf;
-	chunkOverlay *fluid, *block, *fire, *light;
+	chunkOverlay *fluid, *block, *flame, *light;
 };
 
 void    chunkInit                  ();

@@ -57,28 +57,44 @@ static void landscapeUpdateChunk(chunk *c, const chungus *chng){
 		default:
 			break;
 		case I_Snow_Dirt:
-			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);}
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);
+			}
 			break;
 		case I_Snowy_Spruce_Leaf:
-			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Spruce_Leaf);}
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Spruce_Leaf);
+			}
 			break;
 		case I_Snowy_Oak_Leaf:
-			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Oak_Leaf);}
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Oak_Leaf);
+			}
 			break;
 		case I_Snowy_Flower:
-			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Flower);}
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Flower);
+			}
 			break;
 		case I_Snowy_Date:
-			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Date);}
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Date);
+			}
 			break;
 		case I_Snowy_Acacia_Leaf:
-			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Acacia_Leaf);}
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Acacia_Leaf);
+			}
 			break;
 		case I_Snowy_Roots:
-			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Roots);}
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Roots);
+			}
 			break;
 		case I_Snowy_Sakura_Leaf:
-			if(shouldThaw()){worldSetB(c->x+x,c->y+y,c->z+z,I_Sakura_Leaf);}
+			if(shouldThaw()){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Sakura_Leaf);
+			}
 			break;
 		case I_Flower:
 			if(chng->grassBlock != I_Grass){
@@ -101,7 +117,9 @@ static void landscapeUpdateChunk(chunk *c, const chungus *chng){
 			}
 			break;
 		case I_Snow_Grass:
-			if((tb != 0) && (rngValA(15) == 0)){worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);}
+			if((tb != 0) && (rngValA(15) == 0)){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);
+			}
 			if(chng->grassBlock != I_Snow_Grass){
 				if(rngValA(15) == 0){
 					worldSetB(c->x+x,c->y+y,c->z+z,chng->grassBlock);
@@ -109,7 +127,9 @@ static void landscapeUpdateChunk(chunk *c, const chungus *chng){
 			}
 			break;
 		case I_Dry_Grass:
-			if((tb != 0) && (rngValA(15) == 0)){worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);}
+			if((tb != 0) && (rngValA(15) == 0)){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);
+			}
 			if(chng->grassBlock != I_Dry_Grass){
 				if(chng->grassBlock == I_Grass){
 					if(fluidLevel || (rngValA(15) == 0)){
@@ -123,7 +143,9 @@ static void landscapeUpdateChunk(chunk *c, const chungus *chng){
 			}
 			break;
 		case I_Grass:
-			if((tb != 0) && (rngValA(15) == 0)){worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);}
+			if((tb != 0) && (rngValA(15) == 0)){
+				worldSetB(c->x+x,c->y+y,c->z+z,I_Dirt);
+			}
 			if(chng->grassBlock != I_Grass){
 				if(chng->grassBlock == I_Dry_Grass){
 					if(rngValA(15) == 0){

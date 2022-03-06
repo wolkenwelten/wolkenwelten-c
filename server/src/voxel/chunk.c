@@ -49,6 +49,9 @@ void chunkReset(chunk *c, u16 x, u16 y, u16 z){
 	}else{
 		beingListInit(&c->bl,&chng->bl);
 	}
+	c->block = NULL;
+	c->fluid = NULL;
+	c->flame = NULL;
 }
 
 void chunkFree(chunk *c){

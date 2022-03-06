@@ -508,8 +508,8 @@ void chungusSetFluid(chungus *c, int x, int y, int z, int level){
 u8 chungusGetFire(chungus *c, int x, int y, int z){
 	c->freeTimer = freeTime;
 	chunk *chnk = &c->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if(chnk->fire == NULL){ return 0;}
-	return chnk->fire->data[x&0xF][y&0xF][z&0xF];
+	if(chnk->flame == NULL){ return 0;}
+	return chnk->flame->data[x&0xF][y&0xF][z&0xF];
 }
 
 void chungusSetFire(chungus *c, int x, int y, int z, int strength){
@@ -519,8 +519,8 @@ void chungusSetFire(chungus *c, int x, int y, int z, int strength){
 	int cy = y >> 4;
 	int cz = z >> 4;
 	chunk *chnk = &c->chunks[cx][cy][cz];
-	if(chnk->fire == NULL){chnk->fire = chunkOverlayAllocate();}
-	chnk->fire->data[x&0xF][y&0xF][z&0xF] = strength;
+	if(chnk->flame == NULL){chnk->flame = chunkOverlayAllocate();}
+	chnk->flame->data[x&0xF][y&0xF][z&0xF] = strength;
 	chnk->clientsUpdated = c->clientsUpdated = 0;
 }
 

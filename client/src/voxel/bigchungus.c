@@ -415,8 +415,8 @@ u8 worldGetFire(int x,int y,int z) {
 	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){ return 0; }
 	chunk *chnk = &chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if(chnk->fire == NULL){ return 0; }
-	return chnk->fire->data[x&0xF][y&0xF][z&0xF];
+	if(chnk->flame == NULL){ return 0; }
+	return chnk->flame->data[x&0xF][y&0xF][z&0xF];
 }
 
 u8 worldTryFire(int x,int y,int z) {
@@ -428,8 +428,8 @@ bool worldSetFire(int x,int y,int z, u8 level){
 	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
 	if(chng == NULL){return false;}
 	chunk *chnk = &chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	if(chnk->fire == NULL){chnk->fire = chunkOverlayAllocate();}
-	chnk->fire->data[x&0xF][y&0xF][z&0xF] = level;
+	if(chnk->flame == NULL){chnk->flame = chunkOverlayAllocate();}
+	chnk->flame->data[x&0xF][y&0xF][z&0xF] = level;
 	return true;
 }
 

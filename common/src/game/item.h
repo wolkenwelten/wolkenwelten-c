@@ -30,6 +30,7 @@ const char *itemGetName         (const item *i);
       bool  itemDoSecondary     (item *cItem, character *cChar);
       bool  itemDoTertiary      (item *cItem, character *cChar);
 
+
 #define I_Dirt           1
 #define I_Grass          2
 #define I_Stone          3

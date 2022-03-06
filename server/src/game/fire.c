@@ -43,10 +43,10 @@ void fireUpdateAll(){
 		for(int y=0;y<16;y++){
 		for(int z=0;z<16;z++){
 			chunk *c = &cng->chunks[x][y][z];
-			if(c->fire == NULL){continue;}
-			if(!fireTick(c->fire, c->fluid, c->block, c->x, c->y, c->z)){
-				chunkOverlayFree(c->fire);
-				c->fire = NULL;
+			if(c->flame == NULL){continue;}
+			if(!fireTick(c->flame, c->fluid, c->block, c->x, c->y, c->z)){
+				chunkOverlayFree(c->flame);
+				c->flame = NULL;
 			}
 		}
 		}

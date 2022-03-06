@@ -203,9 +203,9 @@ void chunkRecvEmpty(const packet *p){
 		}
 		break;
 	case chunkOverlayFire:
-		if(chnk->fire){
-			chunkOverlayFree(chnk->fire);
-			chnk->fire = NULL;
+		if(chnk->flame){
+			chunkOverlayFree(chnk->flame);
+			chnk->flame = NULL;
 		}
 		break;
 	}
@@ -257,8 +257,8 @@ void chunkRecvUpdate(const packet *p){
 		if(chunkOverlayCopyAndCompare(dest, p->v.u8)){chunkDirtyRegion(x, y, z, CHUNK_FLAG_FLUID_DIRTY);}
 		break;
 	case chunkOverlayFire:
-		if(chnk->fire == NULL){chnk->fire = chunkOverlayAllocate();}
-		dest = &chnk->fire->data[0][0][0];
+		if(chnk->flame == NULL){chnk->flame = chunkOverlayAllocate();}
+		dest = &chnk->flame->data[0][0][0];
 		break;
 	}
 	memcpy(dest,p->v.u8,sizeof(chnk->block->data));
