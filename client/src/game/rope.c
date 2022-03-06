@@ -17,6 +17,7 @@
 
 #include "rope.h"
 
+#include "../game/character.h"
 #include "../game/entity.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
@@ -26,7 +27,7 @@
 #include "../../../common/src/game/being.h"
 #include "../../../common/src/network/messages.h"
 
-#include <stdio.h>
+#include <math.h>
 #include <string.h>
 
 mesh *ropeMesh = NULL;
@@ -106,14 +107,23 @@ static void ropeDrawSegment(const rope *r, const vec h, const vec p){
 	meshAddVert(ropeMesh,h.x,h.y,h.z-.05f,xo   ,rlen);
 }
 
+static vec beingRopeOffset(being b){
+	switch(beingType(b)){
+	case BEING_CHARACTER: {
+		const character *c = characterGetByBeing(b);
+		return vecNew(0.3 * cosf((c->rot.yaw + 180) * PI180), -0.2, 0.3 * sinf((c->rot.yaw + 180) * PI180)); }
+	default:
+		return vecZero();
+	}
+}
+
 static void ropeDraw(rope *r){
 	if(r == NULL){return;}
 	const vec h = beingGetPos(r->a);
 	const vec p = beingGetPos(r->b);
-	if(h.y < 0.f){return;}
-	if(p.y < 0.f){return;}
+	if((h.y < 0.f) || (p.y < 0.f)){return;}
 
-	ropeDrawSegment(r,vecSub(h,subBlockViewOffset),vecSub(p,subBlockViewOffset));
+	ropeDrawSegment(r,vecSub(vecAdd(beingRopeOffset(r->a),h),subBlockViewOffset),vecSub(vecAdd(beingRopeOffset(r->b),p),subBlockViewOffset));
 }
 
 void ropeInit(){
