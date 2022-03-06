@@ -30,22 +30,26 @@ $(WIN_RELDIR)/wolkenwelten.exe: $(CLIENT_SRCS) $(CLIENT_TMP_SRCS)
 $(WIN_RELDIR)/wolkenwelten.exe: $(ASM_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
 $(WIN_RELDIR)/wolkenwelten.exe: releases/win/wolkenwelten.res
 	@mkdir -p $(WIN_RELDIR)
-	$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CSTD) $(CLIENT_CFLAGS) $(CINCLUDES) $(CLIENT_CINCLUDES) $(STATICLIBS)
-	strip -x $@
+	@$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CSTD) $(CLIENT_CFLAGS) $(CINCLUDES) $(CLIENT_CINCLUDES) $(STATICLIBS)
+	@strip -x $@
+	@echo "$(ANSI_BG_GREEN)" "[CC] " "$(ANSI_RESET)" $@
 
 $(WIN_RELDIR)/wolkenwelten-server.exe: $(SERVER_SRCS) $(SERVER_TMP_SRCS)
 $(WIN_RELDIR)/wolkenwelten-server.exe: $(ASM_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
 $(WIN_RELDIR)/wolkenwelten-server.exe: releases/win/wolkenwelten-server.res
 	@mkdir -p $(WIN_RELDIR)
-	$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CSTD) $(SERVER_CFLAGS) $(CINCLUDES) $(SERVER_CINCLUDES) $(LIBS) $(SERVER_LIBS)
-	strip -x $@
+	@$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CSTD) $(SERVER_CFLAGS) $(CINCLUDES) $(SERVER_CINCLUDES) $(LIBS) $(SERVER_LIBS)
+	@strip -x $@
+	@echo "$(ANSI_BG_GREEN)" "[CC] " "$(ANSI_RESET)" $@
 
 $(WOLKENWELTEN): releases/win/wolkenwelten.res
 $(WOLKENWELTEN_SERVER): releases/win/wolkenwelten-server.res
 
 releases/win/wolkenwelten-server.res: platform/win/wolkenwelten-server.rc platform/win/icon.ico
 	@mkdir -p $(WIN_RELDIR)
-	windres $< -O coff -o $@
+	@windres $< -O coff -o $@
+	@echo "$(ANSI_BG_YELLOW)" "[WIN]" "$(ANSI_RESET)" $@
 releases/win/wolkenwelten.res: platform/win/wolkenwelten.rc platform/win/icon.ico
 	@mkdir -p $(WIN_RELDIR)
-	windres $< -O coff -o $@
+	@windres $< -O coff -o $@
+	@echo "$(ANSI_BG_YELLOW)" "[WIN]" "$(ANSI_RESET)" $@
