@@ -608,21 +608,38 @@ void characterUpdate(character *c){
 		return;
 	}
 	nvel = c->vel;
+	uint col = characterCollision(c->pos);
 
 	if(c->flags & CHAR_FALLING){ walkFactor = 0.2f; }
 	if(c->gvel.x < nvel.x){
-		nvel.x -= 0.05f * (nvel.x - c->gvel.x) * walkFactor;
-		if(nvel.x < c->gvel.x){ nvel.x = c->gvel.x; }
+		if((col&0x3110) == 0){
+			nvel.x -= 0.05f * (nvel.x - c->gvel.x) * walkFactor;
+			if(nvel.x < c->gvel.x){
+				nvel.x = c->gvel.x;
+			}
+		}
 	}else if(c->gvel.x > nvel.x){
-		nvel.x += 0.05f * (c->gvel.x - nvel.x) * walkFactor;
-		if(nvel.x > c->gvel.x){ nvel.x = c->gvel.x; }
+		if((col&0xC220) == 0){
+			nvel.x += 0.05f * (c->gvel.x - nvel.x) * walkFactor;
+			if(nvel.x > c->gvel.x){
+				nvel.x = c->gvel.x;
+			}
+		}
 	}
 	if(c->gvel.z < nvel.z){
-		nvel.z -= 0.05f*(nvel.z - c->gvel.z) * walkFactor;
-		if(nvel.z < c->gvel.z){ nvel.z = c->gvel.z; }
+		if((col&0x5440) == 0){
+			nvel.z -= 0.05f*(nvel.z - c->gvel.z) * walkFactor;
+			if(nvel.z < c->gvel.z){
+				nvel.z = c->gvel.z;
+			}
+		}
 	}else if(c->gvel.z > nvel.z){
-		nvel.z += 0.05f * (c->gvel.z - nvel.z) * walkFactor;
-		if(nvel.z > c->gvel.z){ nvel.z = c->gvel.z; }
+		if((col&0xA880) == 0){
+			nvel.z += 0.05f * (c->gvel.z - nvel.z) * walkFactor;
+			if(nvel.z > c->gvel.z){
+				nvel.z = c->gvel.z;
+			}
+		}
 	}
 	if((c->hook != NULL) && (hookGetHooked(c->hook))){
 		if(fabsf(c->gvel.x) < 0.001)                 {nvel.x=c->vel.x;}

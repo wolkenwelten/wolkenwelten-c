@@ -343,15 +343,35 @@ vec characterLOSBlock(const character *c, bool returnBeforeBlock) {
 	return vecNOne();
 }
 
+static u32 characterCollisionBox(const vec c, float wd, float wh){
+	u32 col = 0;
+
+	if     (checkCollision(c.x-wd,c.y,c.z   )) {col |=  0x1;}
+	else if(checkCollision(c.x-wd,c.y,c.z-wh)) {col |=  0x1;}
+	else if(checkCollision(c.x-wd,c.y,c.z+wh)) {col |=  0x1;}
+
+	if     (checkCollision(c.x+wd,c.y,c.z   )) {col |=  0x2;}
+	else if(checkCollision(c.x+wd,c.y,c.z-wh)) {col |=  0x2;}
+	else if(checkCollision(c.x+wd,c.y,c.z+wh)) {col |=  0x2;}
+
+	if     (checkCollision(c.x   ,c.y,c.z-wd)) {col |=  0x4;}
+	else if(checkCollision(c.x-wh,c.y,c.z-wd)) {col |=  0x4;}
+	else if(checkCollision(c.x+wh,c.y,c.z-wd)) {col |=  0x4;}
+
+	if     (checkCollision(c.x   ,c.y,c.z+wd)) {col |=  0x8;}
+	else if(checkCollision(c.x-wh,c.y,c.z+wd)) {col |=  0x8;}
+	else if(checkCollision(c.x+wh,c.y,c.z+wd)) {col |=  0x8;}
+
+	return col;
+}
+
 u32 characterCollision(const vec c){
 	u32 col = 0;
+	const float wh = 0.35f;
 	const float wd = 0.4f;
 	const float WD = 0.5f;
 
-	if(checkCollision(c.x-wd,c.y+0.9f,c.z   )) {col |=  0x10;}
-	if(checkCollision(c.x+wd,c.y+0.9f,c.z   )) {col |=  0x20;}
-	if(checkCollision(c.x   ,c.y+0.9f,c.z-wd)) {col |=  0x40;}
-	if(checkCollision(c.x   ,c.y+0.9f,c.z+wd)) {col |=  0x80;}
+	col |= characterCollisionBox(vecAdd(c,vecNew(0, 0.9, 0)), wd, wh) << 4;
 
 	if(checkCollision(c.x-wd,c.y-2.f ,c.z   )){col |=   0x1;}
 	if(checkCollision(c.x+wd,c.y-2.f ,c.z   )){col |=   0x2;}
