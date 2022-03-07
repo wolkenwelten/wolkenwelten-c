@@ -40,6 +40,10 @@
 void entityDraw(const entity *e){
 	if(e->eMesh == NULL){return;}
 	const float scale = 0.8f;
+	const u8 light = worldTryLight(e->pos.x, e->pos.y, e->pos.z);
+	const float rawBrightness = (light * (1.f / 32.f));
+	const float brightness = rawBrightness * rawBrightness;
+	shaderColor(sMesh,brightness,brightness,brightness,1.f);
 
 	matMov      (matMVP,matView);
 	matMulTrans (matMVP,e->pos.x,e->pos.y,e->pos.z);
@@ -54,12 +58,11 @@ void entityDraw(const entity *e){
 
 void entityDrawAll(){
 	shaderBind(sMesh);
-	//shaderBrightness(sMesh,worldBrightness);
-	shaderColor(sMesh,worldBrightness,worldBrightness,worldBrightness,1.f);
 	for(uint i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL)                        { continue; }
 		if(entityDistance(&entityList[i],player) > ENTITY_FADEOUT){ continue; }
 		if(!CubeInFrustum(vecSubS(entityList[i].pos,.5f),1.f))    { continue; }
 		entityDraw(&entityList[i]);
 	}
+	shaderColor(sMesh,1.f,1.f,1.f,1.f);
 }

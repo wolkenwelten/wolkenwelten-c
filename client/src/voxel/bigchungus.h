@@ -32,4 +32,6 @@ u8       worldTryFire          (int x, int y, int z);
 u8       worldGetFire          (int x, int y, int z);
 bool     worldSetFire          (int x, int y, int z, u8 strength);
 
+u8       worldTryLight         (int x, int y, int z);
+
 void     chungusRecvUnsub      (const packet *p);

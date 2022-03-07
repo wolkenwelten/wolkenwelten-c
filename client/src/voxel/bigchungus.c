@@ -38,6 +38,7 @@
 #include "../voxel/meshgen/block.h"
 #include "../voxel/meshgen/fluid.h"
 #include "../../../common/src/game/chunkOverlay.h"
+#include "../../../common/src/game/time.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/game/item.h"
 
@@ -421,6 +422,15 @@ u8 worldGetFire(int x,int y,int z) {
 
 u8 worldTryFire(int x,int y,int z) {
 	return worldGetFire(x,y,z);
+}
+
+u8 worldTryLight(int x, int y, int z){
+	if((x|y|z)&(~0xFFFF)){return gtimeGetBlockBrightness(gtimeGetTimeOfDay());}
+	chungus *chng = world[x>>8][(y>>8)&0x7F][z>>8];
+	if(chng == NULL){ return gtimeGetBlockBrightness(gtimeGetTimeOfDay()); }
+	chunk *chnk = &chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
+	if(chnk->light == NULL){ return gtimeGetBlockBrightness(gtimeGetTimeOfDay()); }
+	return chnk->light->data[x&0xF][y&0xF][z&0xF];
 }
 
 bool worldSetFire(int x,int y,int z, u8 level){
