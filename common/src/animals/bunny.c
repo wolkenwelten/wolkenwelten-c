@@ -265,9 +265,9 @@ static void bunnySFoodSearch(animal *e,int stateChange[16]){
 }
 
 static void bunnySEat(animal *e,int stateChange[16]){
-	const u8 cb = worldGetB(e->pos.x,(int)e->pos.y-1,e->pos.z);
-	const u8 tb = worldGetB(e->pos.x,(int)e->pos.y-2,e->pos.z);
-	if((cb != I_Grass) && (tb != I_Grass)){
+	const u8 cb = worldTryB(e->pos.x,(int)e->pos.y-1,e->pos.z);
+	const u8 tb = worldTryB(e->pos.x,(int)e->pos.y-2,e->pos.z);
+	if((cb != I_Grass) && 	(tb != I_Grass)){
 		stateChange[ANIMAL_S_EAT] -= 1<<16;
 		return;
 	}
@@ -279,7 +279,10 @@ static void bunnySEat(animal *e,int stateChange[16]){
 		if(e->health < animalGetMaxHealth(e)){e->health++;}
 	}
 	if(rngValA(127) == 0){
-		worldSetB(e->pos.x,(int)e->pos.y - cb == I_Grass ? -1 : -2,e->pos.z,1);
+		const int bx = e->pos.x;
+		const int by = (int)e->pos.y - (cb == I_Grass ? -1 : -2); // If cb != I_Grass -> tb == I_Grass
+		const int bz = e->pos.z;
+		worldSetB(bx, by, bz, 1);
 	}
 }
 
@@ -308,11 +311,12 @@ static void bunnyPregnancy(animal *e,int stateChange[16]){
 }
 
 static void bunnyPoop(animal *e,int stateChange[16]){
-	if(e->hunger < 24){return;}
-	if(e->hunger < 48){
-		if(rngValA(2047) == 0){bunnyDoPoop(e,stateChange);}
+	if(e->hunger < 24){
+		return;
+	}else if(e->hunger < 48){
+		if(rngValA((1<<16) - 1) == 0){bunnyDoPoop(e,stateChange);}
 	}else{
-		if(rngValA(1023) == 0){bunnyDoPoop(e,stateChange);}
+		if(rngValA((1<<14) - 1) == 0){bunnyDoPoop(e,stateChange);}
 	}
 }
 

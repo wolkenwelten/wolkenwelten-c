@@ -249,7 +249,7 @@ static void werebunnySPlayful(animal *e,int stateChange[16]){
 }
 
 static void werebunnySFoodSearch(animal *e,int stateChange[16]){
-	const u8 cb = worldGetB(e->pos.x,e->pos.y-1,e->pos.z);
+	const u8 cb = worldTryB(e->pos.x,e->pos.y-1,e->pos.z);
 	if(cb == 2){
 		e->gvel = vecZero();
 		stateChange[ANIMAL_S_EAT] += 1<<16;
@@ -274,7 +274,7 @@ static void werebunnySFoodSearch(animal *e,int stateChange[16]){
 }
 
 static void werebunnySEat(animal *e,int stateChange[16]){
-	const u8 cb = worldGetB(e->pos.x,(int)e->pos.y-1,e->pos.z);
+	const u8 cb = worldTryB(e->pos.x,(int)e->pos.y-1,e->pos.z);
 	if(cb != 2){
 		stateChange[ANIMAL_S_EAT] -= 1<<16;
 		return;
