@@ -15,14 +15,14 @@ struct chungus {
 	chunk chunks[16][16][16];
 };
 
-typedef struct queueEntry {
+struct queueEntry {
 	float priority;
 	sideMask mask;
 	union {
 		chunk   *chnk;
 		chungus *chng;
 	};
-} queueEntry;
+};
 
 void     chungusInit           ();
 chungus *chungusNew            (u8 x,u8 y, u8 z);
