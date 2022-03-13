@@ -4,3 +4,4 @@
 
 void     entityDraw      (const entity *e);
 void     entityDrawAll   ();
+vec      entityScreenPos (const entity *e);

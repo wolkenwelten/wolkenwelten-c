@@ -66,3 +66,12 @@ void entityDrawAll(){
 	}
 	shaderColor(sMesh,1.f,1.f,1.f,1.f);
 }
+
+vec entityScreenPos(const entity *e){
+	const float scale = 0.8;
+	matMov      (matMVP,matView);
+	matMulTrans (matMVP,e->pos.x,e->pos.y,e->pos.z);
+	matMulScale (matMVP,scale,scale,scale);
+	matMul      (matMVP,matMVP,matProjection);
+	return matMulVec(matMVP,vecNew(0,scale * 1.5,0));
+}

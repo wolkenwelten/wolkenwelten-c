@@ -28,6 +28,7 @@
 #include "../game/weather/weather.h"
 #include "../sdl/sdl.h"
 #include "../gfx/boundaries.h"
+#include "../gfx/frustum.h"
 #include "../gfx/gl.h"
 #include "../gfx/mesh.h"
 #include "../gfx/gfx.h"
@@ -387,6 +388,32 @@ void drawAnimalDebugOverlay(const animal *e, int i){
 	guim->fgc = ofgc;
 }
 
+void itemDropDrawNumbers(){
+	if(player == NULL){return;}
+	for(uint i=0;i<itemDropCount;i++){
+		if(itemDropList[i].ent == NULL){continue;}
+		if(!pointInFrustum(itemDropList[i].ent->pos)){continue;}
+		const vec dist = vecSub(itemDropList[i].ent->pos, player->pos);
+		const float dd = vecDot(dist,dist);
+		if(dd > 9*8){continue;}
+		vec p = entityScreenPos(itemDropList[i].ent);
+		p.x =      ((p.x / p.z)+1.f)/2.f  * screenWidth;
+		if(p.x < 0)           {continue;}
+		if(p.x > screenWidth) {continue;}
+		p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
+		if(p.y < 0)           {continue;}
+		if(p.y > screenHeight){continue;}
+		guim->sx = p.x;
+		guim->sy = p.y;
+		guim->size = 2;
+		const u8 alpha = MIN(1, 8 - p.z) * 255;
+		if(alpha == 0){continue;}
+		guim->fgc = 0xFFFFFF | (alpha << 24);
+		textMeshPrintfAlignCenter(guim,"%ux %s",itemDropList[i].itm.amount, itemGetName(&itemDropList[i].itm));
+	}
+}
+
+
 static void drawHookIndicator(){
 	const float hookdist = characterCanHookHit(player);
 	if(hookdist < 0.f){return;}
@@ -506,6 +533,7 @@ void drawDebuginfo(){
 			drawAnimalDebugOverlay(&animalList[i],i);
 		}
 	}
+	itemDropDrawNumbers();
 	guim->font = 0;
 }
 
