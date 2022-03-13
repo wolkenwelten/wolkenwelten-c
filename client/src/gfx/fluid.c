@@ -64,6 +64,7 @@ static void fluidGenerateChunkParticles(const chunkOverlay *fluid, const chunkOv
 
 void fluidGenerateParticles(){
 	static int calls = 0;
+	return;
 	PROFILE_START();
 
 	for(uint i = calls&0x1; i < chungusCount; i+=0x2){

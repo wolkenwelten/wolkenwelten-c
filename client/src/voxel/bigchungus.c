@@ -184,7 +184,7 @@ static void worldQueueDraw(queueEntry *drawQueue, int drawQueueLen){
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
 	chunkDrawBlockQueue(drawQueue,drawQueueLen);
-	//chunkDrawFluidQueue(drawQueue,drawQueueLen);
+	chunkDrawFluidQueue(drawQueue,drawQueueLen);
 
 	gfxGroupEnd();
 }
@@ -226,7 +226,7 @@ void worldQueueGenerate(const queueEntry *drawQueue, int drawQueueLen){
 		//printf("Priority: %f\n", generatorQueue[i].priority);
 		chunk *c = generatorQueue[i].chnk;
 		chunkGenBlockMesh(c);
-		//chunkGenFluidMesh(c);
+		chunkGenFluidMesh(c);
 	}
 }
 

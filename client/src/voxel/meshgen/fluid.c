@@ -34,6 +34,7 @@ static vertexFluid *chunkAddVert(u16 x, u16 y, u16 z, u8 t, u8 s, u8 light, vert
 	return vp+1;
 }
 
+/*
 static vertexFluid *chunkAddFront(u8 bt,u8 x,u8 y,u8 z, u8 light, u8 fluid, const u8 corners[4], vertexFluid *vp) {
 	(void)fluid;
 	const u8 nl = light < 3 ? 0 : light-3;
@@ -49,14 +50,6 @@ static vertexFluid *chunkAddBack(u8 bt,u8 x,u8 y,u8 z, u8 light, u8 fluid, const
 	vp =   chunkAddVert((x  )<<8,(y<<8)+corners[0],(z  )<<8,bt,sideBack, nl, vp);
 	vp =   chunkAddVert((x+1)<<8,(y<<8)+corners[3],(z  )<<8,bt,sideBack, nl, vp);
 	return chunkAddVert((x+1)<<8,(y<<8),(z  )<<8,bt,sideBack, nl, vp);
-}
-static vertexFluid *chunkAddTop(u8 bt,u8 x,u8 y,u8 z, u8 light, u8 fluid, const u8 corners[4], vertexFluid *vp) {
-	(void)fluid;
-	const u8 nl = light < 3 ? 0 : light-3;
-	vp =   chunkAddVert((x  )<<8,(y<<8)+corners[0],(z  )<<8,bt,sideTop, nl, vp);
-	vp =   chunkAddVert((x  )<<8,(y<<8)+corners[1],(z+1)<<8,bt,sideTop, nl, vp);
-	vp =   chunkAddVert((x+1)<<8,(y<<8)+corners[2],(z+1)<<8,bt,sideTop, nl, vp);
-	return chunkAddVert((x+1)<<8,(y<<8)+corners[3],(z  )<<8,bt,sideTop, nl, vp);
 }
 static vertexFluid *chunkAddBottom(u8 bt,u8 x,u8 y,u8 z, u8 light, u8 fluid, vertexFluid *vp) {
 	(void)fluid;
@@ -82,7 +75,7 @@ static vertexFluid *chunkAddRight(u8 bt,u8 x,u8 y,u8 z, u8 light, u8 fluid, cons
 	vp =   chunkAddVert((x+1)<<8,(y<<8)+corners[2],(z+1)<<8,bt,sideRight, nl, vp);
 	return chunkAddVert((x+1)<<8,(y<<8),(z+1)<<8,bt,sideRight, nl, vp);
 }
-
+*/
 static void chunkPopulateFluidData(blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], chunk *c, i16 xoff, i16 yoff, i16 zoff){
 	if((c == NULL) || (c->fluid == NULL)){return;}
 	for(int x=MAX(0,xoff); x<MIN(CHUNK_SIZE+2,xoff+CHUNK_SIZE); x++){
@@ -94,13 +87,13 @@ static void chunkPopulateFluidData(blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_S
 	}
 }
 
-static u8 chunkFluidCalcEdge(const u8 fluidData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], const u8 blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], u8 x, u8 y, u8 z){
-	const u8 blockCount = (blockData[x][y+1][z] ? 1 : 0) + (blockData[x+1][y+1][z] ? 1 : 0) + (blockData[x][y+1][z+1] ? 1 : 0) + (blockData[x+1][y+1][z+1] ? 1 : 0);
-	if(blockCount == 0){return 0;}
-	return ((blockData[x][y+1][z] ? 0 : (fluidData[x  ][y+1][z  ] & 0xF0))
-		 + (blockData[x+1][y+1][z] ? 0 : (fluidData[x+1][y+1][z  ] & 0xF0))
-		 + (blockData[x][y+1][z+1] ? 0 : (fluidData[x  ][y+1][z+1] & 0xF0))
-		 + (blockData[x+1][y+1][z+1] ? 0 : (fluidData[x+1][y+1][z+1] & 0xF0))) / blockCount;
+static int chunkFluidCalcEdge(const u8 fluidData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], const u8 blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], int *count, u8 x, u8 y, u8 z){
+	if(blockData[x][y][z]){
+		return 0;
+	}else{
+		*count = *count + 1;
+		return fluidData[x][y][z] & 0xF0;
+	}
 }
 
 void chunkGenFluidMesh(chunk *c){
@@ -110,12 +103,11 @@ void chunkGenFluidMesh(chunk *c){
 	PROFILE_START();
 	static u8       fluidData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
 	static u8       blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
-	static sideMask sideCache[CHUNK_SIZE  ][CHUNK_SIZE  ][CHUNK_SIZE  ];
-	static u32          plane[CHUNK_SIZE  ][CHUNK_SIZE  ];
 	u16 meshSideCounts[sideMAX];
 	const u8 fluidTexture = 34;
 	++chunksGeneratedThisFrame;
 	memset(fluidData, 0,sizeof(fluidData)); // ToDo: Remove this!
+	memset(blockData, 0,sizeof(fluidData)); // ToDo: Remove this!
 	chunkPopulateFluidData(fluidData,c,1,1,1);
 	chunkPopulateFluidData(fluidData,worldGetChunk(c->x-CHUNK_SIZE,c->y,c->z),1-CHUNK_SIZE,1,1);
 	chunkPopulateFluidData(fluidData,worldGetChunk(c->x+CHUNK_SIZE,c->y,c->z),1+CHUNK_SIZE,1,1);
@@ -132,28 +124,12 @@ void chunkGenFluidMesh(chunk *c){
 	chunkPopulateBlockData(blockData,worldGetChunk(c->x,c->y,c->z-CHUNK_SIZE),1,1,1-CHUNK_SIZE);
 	chunkPopulateBlockData(blockData,worldGetChunk(c->x,c->y,c->z+CHUNK_SIZE),1,1,1+CHUNK_SIZE);
 
-	static u8 cornerHeights[CHUNK_SIZE+1][CHUNK_SIZE][CHUNK_SIZE+1];
-	(void)chunkFluidCalcEdge;
-	for(int x=0;x<CHUNK_SIZE+1;x++){
-	for(int y=0;y<CHUNK_SIZE;y++){
-	for(int z=0;z<CHUNK_SIZE+1;z++){
-		//cornerHeights[x][y][z] = chunkFluidCalcEdge(fluidData,blockData,x,y,z);
-		cornerHeights[x][y][z] = (x << 4) | (z << 4);
-	}
-	}
-	}
+	static vec vertOffsets[CHUNK_SIZE+1][CHUNK_SIZE+1][CHUNK_SIZE+1][2];
 
 	vertexFluid *vp  = fluidMeshBuffer;
 	vertexFluid *lvp = fluidMeshBuffer;
 
-	for(int x=CHUNK_SIZE-1;x>=0;--x){
-	for(int y=CHUNK_SIZE-1;y>=0;--y){
-	for(int z=CHUNK_SIZE-1;z>=0;--z){
-		sideCache[x][y][z] = c->fluid->data[x][y][z] == 0 ? 0 : chunkGetSides(x+1,y+1,z+1,fluidData);
-	}
-	}
-	}
-
+	/*
 	for(int z=CHUNK_SIZE-1;z>=0;--z){
 		bool found = false;
 		memset(plane,0,sizeof(plane));
@@ -183,9 +159,10 @@ void chunkGenFluidMesh(chunk *c){
 			}
 		}
 	}
-	meshSideCounts[sideFront] = vp - lvp;
-	lvp = vp;
+	*/
 
+
+	/*
 	for(int z=CHUNK_SIZE-1;z>=0;--z){
 		bool found = false;
 		memset(plane,0,sizeof(plane));
@@ -215,40 +192,98 @@ void chunkGenFluidMesh(chunk *c){
 			}
 		}
 	}
+	*/
+
+	for(int x=0;x<CHUNK_SIZE+1;x++){
+	for(int y=0;y<CHUNK_SIZE+1;y++){
+	for(int z=0;z<CHUNK_SIZE+1;z++){
+			{ // Front
+				int edges = 0;
+				int acc  = chunkFluidCalcEdge(fluidData, blockData, &edges, x, y, z+1);
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y, z+1);
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x  , y+1, z+1);
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y+1, z+1);
+				vertOffsets[x][y][z][0].z = edges ? MIN(255,(acc / edges)) : 0;
+				if(blockData[x][y][z+1]){
+					vertOffsets[x][y][z][0].z = 255;
+				}
+			}
+			{ // Back
+				int edges = 0;
+				int acc  = chunkFluidCalcEdge(fluidData, blockData, &edges, x, y, z+1);
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y, z+1);
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x  , y+1, z+1);
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y+1, z+1);
+				vertOffsets[x][y][z][1].z = edges ? MIN(255,(acc / edges)) : 0;
+				if(blockData[x][y][z]){
+					vertOffsets[x][y][z][0].z = 255;
+				}
+			}
+			{ // Top
+				int edges = 0;
+				int acc  = chunkFluidCalcEdge(fluidData, blockData, &edges, x    , y+1, z  );
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y+1, z  );
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x  , y+1, z+1);
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y+1, z+1);
+				vertOffsets[x][y][z][0].y = edges ? MIN(255,(acc / edges)) : 0;
+			}
+			{ // Bottom
+				int edges = 0;
+				int acc  = chunkFluidCalcEdge(fluidData, blockData, &edges, x    , y+1, z  );
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y+1, z  );
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x  , y+1, z+1);
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y+1, z+1);
+				vertOffsets[x][y][z][1].y = edges ? MIN(255,(acc / edges)) : 0;
+			}
+			{ // Left
+				int edges = 0;
+				int acc  = chunkFluidCalcEdge(fluidData, blockData, &edges, x+1    , y, z  );
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y+1, z  );
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y+1, z+1);
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y, z+1);
+				vertOffsets[x][y][z][0].x = edges ? MIN(255,(acc / edges)) : 0;
+			}
+			{ // Right
+				int edges = 0;
+				int acc  = chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y, z  );
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y+1, z  );
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y+1, z+1);
+				acc += chunkFluidCalcEdge(fluidData, blockData, &edges, x+1, y, z+1);
+				vertOffsets[x][y][z][1].x = edges ? MIN(255,(acc / edges)) : 0;
+			}
+		}
+		}
+	}
+
+	meshSideCounts[sideFront] = vp - lvp;
+	lvp = vp;
 	meshSideCounts[sideBack] = vp - lvp;
 	lvp = vp;
-
-	for(int y=CHUNK_SIZE-1;y>=0;--y){
-		bool found = false;
-		memset(plane,0,sizeof(plane));
-		for(int z=CHUNK_SIZE-1;z>=0;--z){
-		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const blockId b = c->fluid->data[x][y][z];
-			if((b == 0) || (c->block && (c->block->data[x][y][z]))){continue;}
-			if(sideCache[x][y][z] & sideMaskTop){
-				found = true;
-				plane[z][x] = (c->light->data[x][y][z] << 24) | b | 0x010100;
-			}
+	for(int x=0;x<CHUNK_SIZE;x++){
+	for(int y=0;y<CHUNK_SIZE;y++){
+	for(int z=0;z<CHUNK_SIZE;z++){
+		const u8 fluid = fluidData[x+1][y+1][z+1];
+		if(fluid){
+			const int cl = c->light->data[x][y][z];
+			const u8 nl  = MAX(cl-3, 0);
+			vp = chunkAddVert(x * 256, y * 256 + vertOffsets[x][y][z][0].y ,z * 256 + (vertOffsets[x][y][z][0].z / 2)   , fluidTexture, sideTop, nl, vp);
+			vp = chunkAddVert(x * 256, y * 256 + vertOffsets[x][y][z+1][0].y ,z * 256 + 256 - (vertOffsets[x][y][z+1][1].z / 2), fluidTexture, sideTop, nl, vp);
+			vp = chunkAddVert(x * 256 + 256,y * 256 + vertOffsets[x+1][y][z+1][0].y  ,z * 256 + 256 - (vertOffsets[x][y][z+1][1].z / 2), fluidTexture, sideTop, nl, vp);
+			vp = chunkAddVert(x * 256 + 256,y * 256 + vertOffsets[x+1][y][z][0].y ,z * 256 + (vertOffsets[x][y][z][0].z / 2)    , fluidTexture, sideTop, nl, vp);
 		}
-		}
-		if(found){
-			for(int z=CHUNK_SIZE-1;z>=0;--z){
-			for(int x=CHUNK_SIZE-1;x>=0;--x){
-				if(!plane[z][x]){continue;}
-				const int cl = ((plane[z][x] >> 24));
-				const u8 fluid = plane[z][x];
-				const u8 corners[4] = {cornerHeights[x][y][z],
-					cornerHeights[x][y][z+1],
-					cornerHeights[x+1][y][z],
-					cornerHeights[x+1][y][z+1]};
-				vp = chunkAddTop(fluidTexture,x,y,z,cl,fluid,corners,vp);
-			}
-			}
-		}
+	}
+	}
 	}
 	meshSideCounts[sideTop] = vp - lvp;
 	lvp = vp;
+	meshSideCounts[sideBottom] = vp - lvp;
+	lvp = vp;
+	meshSideCounts[sideLeft] = vp - lvp;
+	lvp = vp;
+	meshSideCounts[sideRight] = vp - lvp;
+	lvp = vp;
 
+	/*
 	for(int y=CHUNK_SIZE-1;y>=0;--y){
 		bool found = false;
 		memset(plane,0,sizeof(plane));
@@ -274,9 +309,10 @@ void chunkGenFluidMesh(chunk *c){
 			}
 		}
 	}
-	meshSideCounts[sideBottom] = vp - lvp;
-	lvp = vp;
+	*/
 
+
+	/*
 	for(int x=CHUNK_SIZE-1;x>=0;--x){
 		bool found = false;
 		memset(plane,0,sizeof(plane));
@@ -306,9 +342,10 @@ void chunkGenFluidMesh(chunk *c){
 			}
 		}
 	}
-	meshSideCounts[sideLeft] = vp - lvp;
-	lvp = vp;
+	*/
 
+
+	/*
 	for(int x=CHUNK_SIZE-1;x>=0;--x){
 		bool found = false;
 		memset(plane,0,sizeof(plane));
@@ -338,10 +375,10 @@ void chunkGenFluidMesh(chunk *c){
 			}
 		}
 	}
-	meshSideCounts[sideRight] = vp - lvp;
+	*/
 
 	c->flags &= ~CHUNK_FLAG_FLUID_DIRTY;
-	c->fluidVertbuf = chunkvertbufFluidUpdate(c->fluidVertbuf, fluidMeshBuffer, meshSideCounts);
+	c->fluidVertbuf = chunkvertbufFluidUpdate(NULL, fluidMeshBuffer, meshSideCounts);
 	c->framesSkipped = 0;
 
 	PROFILE_STOP();

@@ -158,13 +158,10 @@ static void chunkFluidDraw(chunk *c, float d, sideMask mask){
 	// Trying to draw with an empty vertbuf would dereference null, avoid that.
 	if(c->fluidVertbuf == NULL){return;}
 
-	const float fadeIn = 0.8f;
-	if(d > (fadeoutStartDistance)){
-		shaderAlpha(sFluidMesh,(1.f-((d-(fadeoutStartDistance))/fadeoutDistance) * fadeIn));
-	}else{
-		shaderAlpha(sFluidMesh,fadeIn);
-	}
+	float fadeIn = 0.8f;
+	const float distanceFade = d < fadeoutStartDistance ? 1.f : (1.f-((d-(fadeoutStartDistance))/fadeoutDistance));
 	shaderTransform(sFluidMesh,c->x-subBlockViewOffset.x,c->y-subBlockViewOffset.y,c->z-subBlockViewOffset.z);
+	shaderAlpha(sFluidMesh,distanceFade * fadeIn);
 	chunkvertbufDrawOne(mask, c->fluidVertbuf);
 }
 
