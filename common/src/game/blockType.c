@@ -142,7 +142,6 @@ void blockTypeInit(){
 	blockTypeInitBlock    (30,32, WOOD,  "Snowy Roots", 480,  68, 1.8f,          0xFF14323E,0xFF0D2029, 7, 0xFFFF);
 	blockTypeInitBlock    (31,33, DIRT,  "Snowy Sakura Leafes", 70,  82, 0.2f,   0xFF997CE8,0xFF4D25B5, 0, 0x1F);
 
-	//blockTypeSetLightEmission(13,  8);
 	blockTypeSetLightEmission(15, 31);
 
 	blockTypeGenMeshes();

@@ -87,6 +87,7 @@ void lightBlurXPortable(u8 out[48][48][48]){
 
 static void lightBlur(u8 buf[48][48][48]){
 	PROFILE_START();
+	(void)buf;
 	lightBlurZ(buf);
 	lightBlurX(buf);
 	lightBlurY(buf);
@@ -110,8 +111,8 @@ static void lightSunlightChunk(u8 out[48][48][48], const u8 blockData[16][16][16
 			curLight[cx][cz] = 0;
 			out[x+cx][y+cy][z+cz] = blockLight[b];
 		}else{
-			out[x+cx][y+cy][z+cz] = curLight[cx][cz];
 			curLight[cx][cz] = MIN(sunlight, curLight[cx][cz]+2);
+			out[x+cx][y+cy][z+cz] = curLight[cx][cz];
 		}
 	}
 	}
