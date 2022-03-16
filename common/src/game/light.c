@@ -26,6 +26,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define LIGHT_DECAY_RATE 1
+
 extern character *player;
 u8 lightBuffer[48][48][48];
 
@@ -39,11 +41,11 @@ void lightBlurZPortable(u8 out[48][48][48]){
 	for(int z=0;z < 32;z++){
 		a = MAX(out[x][y][z], a);
 		out[x][y][z] = a;
-		a = MAX(a - 1, 0);
+		a = MAX(a - LIGHT_DECAY_RATE, 0);
 
 		b = MAX(out[x][y][47-z], b);
 		out[x][y][47-z] = b;
-		b = MAX(b - 1, 0);
+		b = MAX(b - LIGHT_DECAY_RATE, 0);
 	}
 	}
 	}
@@ -57,11 +59,11 @@ void lightBlurYPortable(u8 out[48][48][48]){
 	for(int y=0;y < 32;y++){
 		a = MAX(out[x][y][z], a);
 		out[x][y][z] = a;
-		a = MAX(a - 1, 0);
+		a = MAX(a - LIGHT_DECAY_RATE, 0);
 
 		b = MAX(out[x][47-y][z], b);
 		out[x][47-y][z] = b;
-		b = MAX(b - 1, 0);
+		b = MAX(b - LIGHT_DECAY_RATE, 0);
 	}
 	}
 	}
@@ -75,11 +77,11 @@ void lightBlurXPortable(u8 out[48][48][48]){
 	for(int x=0;x < 32;x++){
 		a = MAX(out[x][y][z], a);
 		out[x][y][z] = a;
-		a = MAX(a - 1, 0);
+		a = MAX(a - LIGHT_DECAY_RATE, 0);
 
 		b = MAX(out[47-x][y][z], b);
 		out[47-x][y][z] = b;
-		b = MAX(b - 1, 0);
+		b = MAX(b - LIGHT_DECAY_RATE, 0);
 	}
 	}
 	}
@@ -87,10 +89,9 @@ void lightBlurXPortable(u8 out[48][48][48]){
 
 static void lightBlur(u8 buf[48][48][48]){
 	PROFILE_START();
-	(void)buf;
-	lightBlurZ(buf);
-	lightBlurX(buf);
-	lightBlurY(buf);
+	lightBlurZPortable(buf);
+	lightBlurXPortable(buf);
+	lightBlurYPortable(buf);
 	PROFILE_STOP();
 }
 

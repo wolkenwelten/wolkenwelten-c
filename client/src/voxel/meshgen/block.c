@@ -110,6 +110,20 @@ static int chunkLightTopBottom(const u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CH
 		   + lightData[x+1][y][z+1]) / 4), 15);
 }
 
+static int chunkLightFrontBack(const u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], int x, int y, int z){
+	return MIN(((lightData[x][y][z]
+		 + lightData[x][y+1][z]
+		 + lightData[x+1][y][z]
+		 + lightData[x+1][y+1][z]) / 4), 31);
+}
+
+static int chunkLightLeftRight(const u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], int x, int y, int z){
+	return MIN(((lightData[x][y][z]
+		 + lightData[x][y+1][z]
+		 + lightData[x][y][z+1]
+		 + lightData[x][y+1][z+1]) / 4), 31);
+}
+
 void chunkGenBlockMesh(chunk *c){
 	if((c == NULL) || (c->block == NULL) || ((c->flags & CHUNK_FLAG_DIRTY) == 0)){return;}
 	lightGen(c);
@@ -158,10 +172,11 @@ void chunkGenBlockMesh(chunk *c){
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] &sideMaskFront){
 				found = true;
-				const u64 light = lightData[x+1][y+1][z+2]
-					| (lightData[x+1][y+1][z+2] <<  4)
-					| (lightData[x+1][y+1][z+2] <<  8)
-					| (lightData[x+1][y+1][z+2] << 12);
+				const u64 light = 0
+					| (chunkLightFrontBack(lightData,x  ,y  ,z+2) <<  0)
+					| (chunkLightFrontBack(lightData,x+1,y  ,z+2) <<  4)
+					| (chunkLightFrontBack(lightData,x+1,y+1,z+2) <<  8)
+					| (chunkLightFrontBack(lightData,x  ,y+1,z+2) << 12);
 				plane[y][x] = (light << 16) | 0x1100 | b;
 			}
 		}
@@ -194,10 +209,11 @@ void chunkGenBlockMesh(chunk *c){
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskBack){
 				found = true;
-				const u64 light = lightData[x+1][y+1][z]
-					| (lightData[x+1][y+1][z] <<  4)
-					| (lightData[x+1][y+1][z] <<  8)
-					| (lightData[x+1][y+1][z] << 12);
+				const u64 light = 0
+					| (chunkLightFrontBack(lightData,x  ,y  ,z) <<  0)
+					| (chunkLightFrontBack(lightData,x  ,y+1,z) <<  4)
+					| (chunkLightFrontBack(lightData,x+1,y+1,z) <<  8)
+					| (chunkLightFrontBack(lightData,x+1,y  ,z) << 12);
 				plane[y][x] = (light << 16) | 0x1100 | b;
 			}
 		}
@@ -230,17 +246,11 @@ void chunkGenBlockMesh(chunk *c){
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskTop){
 				found = true;
-				const u64 light = lightData[x+1][y+2][z+1]
-					| (lightData[x+1][y+2][z+1] <<  4)
-					| (lightData[x+1][y+2][z+1] <<  8)
-					| (lightData[x+1][y+2][z+1] << 12);
-				(void)chunkLightTopBottom;
-				/*
-				const u64 light = chunkLightTopBottom(lightData,x,y+2,z)
-					| (chunkLightTopBottom(lightData,x  ,y+2,z+1) <<  5)
-					| (chunkLightTopBottom(lightData,x+1,y+2,z+1) << 10)
-					| (chunkLightTopBottom(lightData,x+1,y+2,z  ) << 15);
-				*/
+				const u64 light = 0
+					| (chunkLightTopBottom(lightData,x  ,y+2,z  ) <<  0)
+					| (chunkLightTopBottom(lightData,x  ,y+2,z+1) <<  4)
+					| (chunkLightTopBottom(lightData,x+1,y+2,z+1) <<  8)
+					| (chunkLightTopBottom(lightData,x+1,y+2,z  ) << 12);
 				plane[z][x] = (light << 16) | 0x1100 | b;
 			}
 		}
@@ -273,16 +283,11 @@ void chunkGenBlockMesh(chunk *c){
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskBottom){
 				found = true;
-				const u64 light = lightData[x+1][y][z+1]
-					| (lightData[x+1][y][z+1] <<  4)
-					| (lightData[x+1][y][z+1] <<  8)
-					| (lightData[x+1][y][z+1] << 12);
-				/*
-				const u64 light = chunkLightTopBottom(lightData,x,y+1,z)
-					| (chunkLightTopBottom(lightData,x  ,y+1,z+1) <<  5)
-					| (chunkLightTopBottom(lightData,x+1,y+1,z+1) << 10)
-					| (chunkLightTopBottom(lightData,x+1,y+1,z  ) << 15);
-				*/
+				const u64 light = 0
+					| (chunkLightTopBottom(lightData,x  ,y,z  ) <<  0)
+					| (chunkLightTopBottom(lightData,x+1,y,z  ) <<  4)
+					| (chunkLightTopBottom(lightData,x+1,y,z+1) <<  8)
+					| (chunkLightTopBottom(lightData,x  ,y,z+1) << 12);
 				plane[z][x] = (light << 16) | 0x1100 | b;
 			}
 		}
@@ -315,10 +320,11 @@ void chunkGenBlockMesh(chunk *c){
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskRight){
 				found = true;
-				const u64 light = lightData[x][y+1][z+1]
-					| (lightData[x][y+1][z+1] <<  4)
-					| (lightData[x][y+1][z+1] <<  8)
-					| (lightData[x][y+1][z+1] << 12);
+				const u64 light = 0
+					| (chunkLightLeftRight(lightData,x,y  ,z  ) <<  0)
+					| (chunkLightLeftRight(lightData,x,y  ,z+1) <<  4)
+					| (chunkLightLeftRight(lightData,x,y+1,z+1) <<  8)
+					| (chunkLightLeftRight(lightData,x,y+1,z  ) << 12);
 				plane[y][z] = (light << 16) | 0x1100 | b;
 			}
 		}
@@ -351,10 +357,11 @@ void chunkGenBlockMesh(chunk *c){
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskLeft){
 				found = true;
-				const u64 light = lightData[x+2][y+1][z+1]
-					| (lightData[x+2][y+1][z+1] <<  4)
-					| (lightData[x+2][y+1][z+1] <<  8)
-					| (lightData[x+2][y+1][z+1] << 12);
+				const u64 light = 0
+					| (chunkLightLeftRight(lightData,x+2,y  ,z  ) <<  0)
+					| (chunkLightLeftRight(lightData,x+2,y+1,z  ) <<  4)
+					| (chunkLightLeftRight(lightData,x+2,y+1,z+1) <<  8)
+					| (chunkLightLeftRight(lightData,x+2,y  ,z+1) << 12);
 				plane[y][z] = (light << 16) | 0x1100 | b;
 			}
 		}
