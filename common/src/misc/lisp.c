@@ -188,6 +188,22 @@ static lVal *wwlnfFluidSet(lClosure *c, lVal *v){
 	return lCar(v);
 }
 
+static lVal *wwlnfFireGet(lClosure *c, lVal *v){
+	(void)c;
+	const vec pos = castToVec(lCar(v),vecNOne());
+	if(pos.x < 0){return NULL;}
+	return lValInt(worldGetFire(pos.x,pos.y,pos.z));
+}
+
+static lVal *wwlnfFireSet(lClosure *c, lVal *v){
+	(void)c;
+	const vec pos = castToVec(lCar(v),vecNOne());
+	const int level = castToInt(lCadr(v), -1);
+	if((pos.x < 0) || (level < 0)){return NULL;}
+	worldSetFire(pos.x, pos.y, pos.z, level);
+	return lCar(v);
+}
+
 static lVal *wwlnfPrint(lClosure *c, lVal *v){
 	(void)c;
 	if(v == NULL){return v;}
@@ -239,6 +255,8 @@ void *lispCommonRootReal(void *a, void *b){
 	lAddNativeFunc(c,"color-inter",     "(a b i)",                "Interpolate between A and B with 0.0 <= i <= 1.0",           wwlnfColorInterpolate);
 	lAddNativeFunc(c,"fluid",           "(pos)",                  "Get the fluid level at POS",                                 wwlnfFluidGet);
 	lAddNativeFunc(c,"fluid!",          "(pos level)",            "Set the fluid level at POS to LEVEL",                        wwlnfFluidSet);
+	lAddNativeFunc(c,"fire",            "(pos)",                  "Get the fluid level at POS",                                 wwlnfFireGet);
+	lAddNativeFunc(c,"fire!",           "(pos level)",            "Set the fluid level at POS to LEVEL",                        wwlnfFireSet);
 
 	itemTypeLispClosure(c);
 	specificInit(c);
