@@ -51,33 +51,33 @@ feature or telling your friends about this game. You have my gratitude in advanc
 On Windows you need a working installation of [MSYS2](https://www.msys2.org/),
 and then install the following packages from within MSYS2:
 ```shell
-pacman -Sy base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-ffmpeg mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_mixer
+pacman -Sy base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-ffmpeg mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_mixer nasm
 ```
 
 ## MacOS
 On Macintosh you need the XCode command line tools, the SDL2 and SDL2_mixer
-development Frameworks installed. Additionally you need `ffmpeg`,
-which is probably best installed using Homebrew or MacPorts.
+development Frameworks installed. Additionally you need `ffmpeg` and `nasm`,
+which are probably best installed using Homebrew or MacPorts.
 
 ### Arch Linux
 ```shell
-pacman -S base-devel clang ffmpeg sdl2 sdl2_mixer
+pacman -S base-devel clang ffmpeg sdl2 sdl2_mixer nasm
 ```
 
-### Debian / Ubuntu / Raspberry PI OS
+### Debian / Ubuntu / Raspberry PI OS (no nasm needed on Raspberry PI)
 ```shell
-apt install build-essential clang ffmpeg libsdl2-dev libsdl2-mixer-dev musl-dev musl-tools libvorbis-dev
+apt install build-essential clang ffmpeg libsdl2-dev libsdl2-mixer-dev musl-dev musl-tools libvorbis-dev nasm
 ```
 
 ### OpenBSD
 ```shell
-pkg_add clang gas gmake bash sdl2 sdl2-mixer ffmpeg
+pkg_add clang gas gmake bash sdl2 sdl2-mixer ffmpeg nasm
 ```
 You can then build the game using `gmake`
 
 ### NetBSD
 ```shell
-pkgin in clang gas gmake bash SDL2 SDL2_mixer ffmpeg pkg-config
+pkgin in clang gas gmake bash SDL2 SDL2_mixer ffmpeg pkg-config nasm
 ```
 You can then build the game using `gmake`
 
