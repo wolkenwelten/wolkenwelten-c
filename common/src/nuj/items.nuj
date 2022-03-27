@@ -262,7 +262,7 @@
         [mag-size 90]
         [primary [λ []
                      [when [try-to-shoot 1400 45]
-                           [beamblast 6.0 12.0 1024]
+                           [beamblast 3.0 4.0 8]
                            [recoil 16.0]
                            [add-inaccuracy 24.0]
                            #t]]]
