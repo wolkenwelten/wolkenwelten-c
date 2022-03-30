@@ -475,11 +475,13 @@ void characterRotate(character *c, const vec rot){
 }
 
 void characterStopAnimation(character *c){
+	if(c == NULL){return;}
 	c->animationIndex     = 0;
 	c->animationTicksLeft = 0;
 }
 
 void characterStartAnimation(character *c, animType index, int duration){
+	if(c == NULL){return;}
 	c->animationIndex     = index;
 	c->animationTicksLeft = c->animationTicksMax = duration;
 }
