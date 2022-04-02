@@ -75,15 +75,18 @@ static vertexPacked *chunkAddRight(u8 bt, u8 x, u8 y, u8 z, u8 w, u8 h, u8 d, u3
 }
 
 static void chunkPopulateLightData(u8 b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], chunk *c, int xoff, int yoff, int zoff){
-	if((c == NULL)){return;}
 	if(c->light == NULL){
 		if(c->block){
 			lightGen(c);
 		}else{
+			const int xd = xoff == 1 ? 0 : (xoff > 1) ? -1 : 1;
+			const int yd = yoff == 1 ? 0 : (yoff > 1) ? -1 : 1;
+			const int zd = zoff == 1 ? 0 : (zoff > 1) ? -1 : 1;
+			const int ld = yd * 2;
 			for(int x=MAX(0,xoff); x<MIN(CHUNK_SIZE+2,xoff+CHUNK_SIZE); x++){
 			for(int y=MAX(0,yoff); y<MIN(CHUNK_SIZE+2,yoff+CHUNK_SIZE); y++){
 			for(int z=MAX(0,zoff); z<MIN(CHUNK_SIZE+2,zoff+CHUNK_SIZE); z++){
-				b[x][y][z] = 0x1F;
+				b[x][y][z] = MAX(0,MIN(b[x+xd][y+yd][z+zd] - ld, 0x1F));
 			}
 			}
 			}
@@ -118,9 +121,13 @@ void chunkGenBlockMesh(chunk *c){
 	++chunksGeneratedThisFrame;
 	u16 blockMeshSideCounts[sideMAX];
 	memset(blockData, 0,sizeof(blockData)); // ToDo: Remove this!
+
+	chunkPopulateBlockData(blockData,c,1,1,1);
+	chunkPopulateLightData(lightData,c,1,1,1);
 	for(int x=-1;x<2;x++){
 	for(int y=-1;y<2;y++){
 	for(int z=-1;z<2;z++){
+		if((x|y|z) == 0){continue;}
 		const int xo = CHUNK_SIZE*x;
 		const int yo = CHUNK_SIZE*y;
 		const int zo = CHUNK_SIZE*z;

@@ -58,7 +58,7 @@ void chunkOptimizePlane(u64 plane[CHUNK_SIZE][CHUNK_SIZE]){
 }
 
 void chunkPopulateBlockData(blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], chunk *c, i16 xoff, i16 yoff, i16 zoff){
-	if((c == NULL) || (c->block == NULL)){return;}
+	if(c->block == NULL){return;}
 	for(int x=MAX(0,xoff); x<MIN(CHUNK_SIZE+2,xoff+CHUNK_SIZE); x++){
 	for(int y=MAX(0,yoff); y<MIN(CHUNK_SIZE+2,yoff+CHUNK_SIZE); y++){
 	for(int z=MAX(0,zoff); z<MIN(CHUNK_SIZE+2,zoff+CHUNK_SIZE); z++){
