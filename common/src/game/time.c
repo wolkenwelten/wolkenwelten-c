@@ -108,5 +108,5 @@ float gtimeGetSkyBrightness(uint time){
 }
 
 u8 gtimeGetBlockBrightness(uint time){
-	return MIN(31,gtimeGetBrightness(time) * 32.f);
+	return MIN(15,gtimeGetBrightness(time) * 16.f);
 }

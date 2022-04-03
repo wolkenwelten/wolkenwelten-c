@@ -39,11 +39,11 @@ void lightBlurZPortable(u8 out[48][48][48]){
 	for(int z=0;z < 32;z++){
 		a = MAX(out[x][y][z], a);
 		out[x][y][z] = a;
-		a = MAX(a - 2, 0);
+		a = MAX(a - 1, 0);
 
 		b = MAX(out[x][y][47-z], b);
 		out[x][y][47-z] = b;
-		b = MAX(b - 2, 0);
+		b = MAX(b - 1, 0);
 	}
 	}
 	}
@@ -57,11 +57,11 @@ void lightBlurYPortable(u8 out[48][48][48]){
 	for(int y=0;y < 32;y++){
 		a = MAX(out[x][y][z], a);
 		out[x][y][z] = a;
-		a = MAX(a - 2, 0);
+		a = MAX(a - 1, 0);
 
 		b = MAX(out[x][47-y][z], b);
 		out[x][47-y][z] = b;
-		b = MAX(b - 2, 0);
+		b = MAX(b - 1, 0);
 	}
 	}
 	}
@@ -75,11 +75,11 @@ void lightBlurXPortable(u8 out[48][48][48]){
 	for(int x=0;x < 32;x++){
 		a = MAX(out[x][y][z], a);
 		out[x][y][z] = a;
-		a = MAX(a - 2, 0);
+		a = MAX(a - 1, 0);
 
 		b = MAX(out[47-x][y][z], b);
 		out[47-x][y][z] = b;
-		b = MAX(b - 2, 0);
+		b = MAX(b - 1, 0);
 	}
 	}
 	}
@@ -111,7 +111,7 @@ static void lightSunlightChunk(u8 out[48][48][48], const u8 blockData[16][16][16
 			curLight[cx][cz] = 0;
 			out[x+cx][y+cy][z+cz] = blockLight[b];
 		}else{
-			curLight[cx][cz] = MIN(sunlight, curLight[cx][cz]+2);
+			curLight[cx][cz] = MIN(sunlight, curLight[cx][cz]+1);
 			out[x+cx][y+cy][z+cz] = curLight[cx][cz];
 		}
 	}
@@ -123,7 +123,7 @@ static void lightSunlightAir(u8 out[48][48][48], u8 curLight[16][16], const int 
 	for(int cy=15;cy>=0;cy--){
 	for(int cx=0;cx<16;cx++){
 	for(int cz=0;cz<16;cz++){
-		curLight[cx][cz] = MIN(sunlight, curLight[cx][cz]+2);
+		curLight[cx][cz] = MIN(sunlight, curLight[cx][cz]+1);
 		out[cx+x][cy+y][cz+z] = curLight[cx][cz];
 	}
 	}
@@ -142,7 +142,7 @@ static void lightSunlight(u8 out[48][48][48],const chunkOverlay *block[3][3][3])
 	for(int x = 0;x < 3; x++){
 	for(int z = 0;z < 3; z++){
 	u8 curLight[16][16];
-	memset(curLight, 2, sizeof(curLight));
+	memset(curLight, 1, sizeof(curLight));
 	for(int y = 2;y >= 0; y--){
 		const chunkOverlay *cur = block[x][y][z];
 		if(cur){

@@ -2,7 +2,7 @@ bits 64
 default rel
 
 section .data
-extern vecTwoLiteral
+extern vecOneLiteral
 
 section .bss
 extern savedFloats
@@ -22,7 +22,7 @@ lightBlurXSSE:
 %endif
 
 	xorps xmm15, xmm15
-        movdqa xmm14, [vecTwoLiteral]
+        movdqa xmm14, [vecOneLiteral]
 
 	mov rbx, 48             ; ebx == y
 .lightBlurXSSEOuterLoop:

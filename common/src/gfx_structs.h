@@ -43,8 +43,8 @@ typedef struct vertex2D {
 #define VERTEX_PACKED_BT_OFFSET 16
 #define VERTEX_PACKED_SIDE_LEN 3
 #define VERTEX_PACKED_SIDE_OFFSET 24
-#define VERTEX_PACKED_LIGHT_LEN 5
-#define VERTEX_PACKED_LIGHT_OFFSET 27
+#define VERTEX_PACKED_LIGHT_LEN 4
+#define VERTEX_PACKED_LIGHT_OFFSET 28
 typedef uint32_t vertexPacked;
 #define mkVertex(x,y,z,bt,side,light) (\
 	((x) << VERTEX_PACKED_X_OFFSET) |\
