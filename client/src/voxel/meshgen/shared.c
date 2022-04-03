@@ -45,11 +45,11 @@ void chunkOptimizePlane(u64 plane[CHUNK_SIZE][CHUNK_SIZE]){
 	for(int y=CHUNK_SIZE-1;y>=0;y--){
 	for(int x=CHUNK_SIZE-1;x>=0;x--){
 		if(!plane[x][y]){continue;}
-		if((x < CHUNK_SIZE-2) && ((plane[x][y] & 0xFFFF0FF) == (plane[x+1][y] & 0xFFFF0FF))){
+		if((x < CHUNK_SIZE-2) && ((plane[x][y] & 0xFFFFFF0FF) == (plane[x+1][y] & 0xFFFFFF0FF))){
 			plane[x  ][y] += plane[x+1][y] & 0xF00;
 			plane[x+1][y]  = 0;
 		}
-		if((y < CHUNK_SIZE-2) && ((plane[x][y] & 0xFFF0FFF) == (plane[x][y+1] & 0xFFF0FFF))){
+		if((y < CHUNK_SIZE-2) && ((plane[x][y] & 0xFFFFF0FFF) == (plane[x][y+1] & 0xFFFFF0FFF))){
 			plane[x][y  ] += plane[x][y+1]&0xF000;
 			plane[x][y+1]  = 0;
 		}

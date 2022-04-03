@@ -12,6 +12,7 @@ void main(){
 	uint flag      = (packedData >> 24) & 0x7u;
 	vec3 tex       = vec3(uvec3(taxis[flag >> 1], (packedData >> 16) & 0xFFu)) / vec3(2.0,2.0,1.0);
 	float lightRaw = float(packedData >> 28) * (1.0 / 16.0);
+        lightRaw = max(0,lightRaw - 0.75) * 4;
 	float light    = lightRaw * lightRaw;
 
 	lightColor  = vec3(light, light, light);

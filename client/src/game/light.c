@@ -23,7 +23,7 @@
 #include "../../../common/src/misc/profiling.h"
 
 void lightGen(chunk *c){
-	if(c == NULL){return;}
+	if((c == NULL) || ((c->flags & CHUNK_FLAG_LIGHT_DIRTY) == 0)){return;}
 	const chunkOverlay *chunks[3][3][3];
 	if(c->light == NULL){c->light = chunkOverlayAllocate();}
 	const int cx = c->x;
@@ -40,6 +40,7 @@ void lightGen(chunk *c){
 	}
 
 	lightTick(c->light, chunks);
+	c->flags &= ~CHUNK_FLAG_LIGHT_DIRTY;
 }
 
 void lightCheckTime(){

@@ -93,6 +93,8 @@ static void chunkPopulateLightData(u8 b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2
 			}
 			return;
 		}
+	}else if(c->flags & CHUNK_MASK_DIRTY){
+		lightGen(c);
 	}
 	for(int x=MAX(0,xoff); x<MIN(CHUNK_SIZE+2,xoff+CHUNK_SIZE); x++){
 	for(int y=MAX(0,yoff); y<MIN(CHUNK_SIZE+2,yoff+CHUNK_SIZE); y++){
@@ -152,7 +154,7 @@ void chunkGenBlockMesh(chunk *c){
 	}
 	}
 	}
-	vertexPacked *vp = blockMeshBuffer;
+	vertexPacked  *vp = blockMeshBuffer;
 	vertexPacked *lvp = blockMeshBuffer;
 
 	for(int x=CHUNK_SIZE-1;x>=0;--x){
@@ -246,7 +248,7 @@ void chunkGenBlockMesh(chunk *c){
 			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskTop){
 				found = true;
-				const u64 light = 0
+				u64 light = 0
 					| (chunkLightTopBottom(lightData,x  ,y+2,z  ) <<  0)
 					| (chunkLightTopBottom(lightData,x  ,y+2,z+1) <<  4)
 					| (chunkLightTopBottom(lightData,x+1,y+2,z+1) <<  8)
