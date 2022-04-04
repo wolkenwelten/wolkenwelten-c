@@ -19,6 +19,7 @@
 
 #include "../game/being.h"
 #include "../game/character.h"
+#include "../game/light.h"
 #include "../gfx/effects.h"
 #include "../gfx/gfx.h"
 #include "../gfx/particle.h"
@@ -73,12 +74,13 @@ static void animalDraw(animal *e){
 	e->screenPos = matMulVec(matMVP,vecNew(0,scale/2.f,0));
 
 	shaderMatrix(sMesh,matMVP);
+	const float brightness = lightAtPos(e->pos);
 	if(e->effectValue){
 		const float effectMult = 1.f - (--e->effectValue / 31.f);
-		const float lowBrightness = worldBrightness * effectMult * effectMult;
-		shaderColor(sMesh, worldBrightness, lowBrightness, lowBrightness, 1.f);
+		const float lowBrightness = brightness * effectMult * effectMult;
+		shaderColor(sMesh, brightness, lowBrightness, lowBrightness, 1.f);
 	}else{
-		shaderColor(sMesh, worldBrightness, worldBrightness, worldBrightness, 1.f);
+		shaderColorSimple(sMesh, brightness);
 	}
 	meshDraw(animalGetMesh(e));
 	shadowAdd(e->pos,scale*1.5f);

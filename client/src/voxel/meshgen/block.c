@@ -76,26 +76,6 @@ static vertexPacked *chunkAddRight(u8 bt, u8 x, u8 y, u8 z, u8 w, u8 h, u8 d, u3
 
 static void chunkPopulateLightData(u8 b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], chunk *c, int xoff, int yoff, int zoff){
 	if(c == NULL){return;}
-	if(c->light == NULL){
-		if(c->block){
-			lightGen(c);
-		}else{
-			const int xd = xoff == 1 ? 0 : (xoff > 1) ? -1 : 1;
-			const int yd = yoff == 1 ? 0 : (yoff > 1) ? -1 : 1;
-			const int zd = zoff == 1 ? 0 : (zoff > 1) ? -1 : 1;
-			const int ld = yd * 2;
-			for(int x=MAX(0,xoff); x<MIN(CHUNK_SIZE+2,xoff+CHUNK_SIZE); x++){
-			for(int y=MAX(0,yoff); y<MIN(CHUNK_SIZE+2,yoff+CHUNK_SIZE); y++){
-			for(int z=MAX(0,zoff); z<MIN(CHUNK_SIZE+2,zoff+CHUNK_SIZE); z++){
-				b[x][y][z] = MAX(0,MIN(b[x+xd][y+yd][z+zd] - ld, 0xF));
-			}
-			}
-			}
-			return;
-		}
-	}else if(c->flags & CHUNK_MASK_DIRTY){
-		lightGen(c);
-	}
 	for(int x=MAX(0,xoff); x<MIN(CHUNK_SIZE+2,xoff+CHUNK_SIZE); x++){
 	for(int y=MAX(0,yoff); y<MIN(CHUNK_SIZE+2,yoff+CHUNK_SIZE); y++){
 	for(int z=MAX(0,zoff); z<MIN(CHUNK_SIZE+2,zoff+CHUNK_SIZE); z++){
@@ -106,49 +86,46 @@ static void chunkPopulateLightData(u8 b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2
 }
 
 static int chunkLightTopBottom(const u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], int x, int y, int z){
-	return MIN(((lightData[x][y][z]
-		   + lightData[x][y][z+1]
-		   + lightData[x+1][y][z]
-		   + lightData[x+1][y][z+1]) / 4), 15);
+	const int a = lightData[x  ][y][z  ];
+	const int b = lightData[x  ][y][z+1];
+	const int c = lightData[x+1][y][z  ];
+	const int d = lightData[x+1][y][z+1];
+	return MIN((a+b+c+d)/4, 0xF);
 }
 
 static int chunkLightFrontBack(const u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], int x, int y, int z){
-	return MIN(((lightData[x][y][z]
-		 + lightData[x][y+1][z]
-		 + lightData[x+1][y][z]
-		 + lightData[x+1][y+1][z]) / 4), 31);
+	return MIN(((lightData[x  ][y  ][z]
+		   + lightData[x  ][y+1][z]
+		   + lightData[x+1][y  ][z]
+		   + lightData[x+1][y+1][z]) / 4), 0xF);
 }
 
 static int chunkLightLeftRight(const u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], int x, int y, int z){
-	return MIN(((lightData[x][y][z]
-		 + lightData[x][y+1][z]
-		 + lightData[x][y][z+1]
-		 + lightData[x][y+1][z+1]) / 4), 31);
+	return MIN(((lightData[x][y  ][z  ]
+		   + lightData[x][y+1][z  ]
+		   + lightData[x][y  ][z+1]
+		   + lightData[x][y+1][z+1]) / 4), 0xF);
 }
 
 void chunkGenBlockMesh(chunk *c){
 	if((c == NULL) || (c->block == NULL) || ((c->flags & CHUNK_FLAG_DIRTY) == 0)){return;}
-	lightGen(c);
 
 	PROFILE_START();
 	static blockId  blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
 	static u8       lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
 	static sideMask sideCache[CHUNK_SIZE  ][CHUNK_SIZE  ][CHUNK_SIZE  ];
-	static u64          plane[CHUNK_SIZE  ][CHUNK_SIZE  ];
+	static u32          plane[CHUNK_SIZE  ][CHUNK_SIZE  ];
 	++chunksGeneratedThisFrame;
 	u16 blockMeshSideCounts[sideMAX];
-	memset(blockData, 0,sizeof(blockData)); // ToDo: Remove this!
 
-	chunkPopulateBlockData(blockData,c,1,1,1);
-	chunkPopulateLightData(lightData,c,1,1,1);
 	for(int x=-1;x<2;x++){
 	for(int y=-1;y<2;y++){
 	for(int z=-1;z<2;z++){
-		if((x|y|z) == 0){continue;}
 		const int xo = CHUNK_SIZE*x;
 		const int yo = CHUNK_SIZE*y;
 		const int zo = CHUNK_SIZE*z;
 		chunk *cc = worldGetChunk(c->x+xo,c->y+yo,c->z+zo);
+		lightGen(cc);
 		chunkPopulateBlockData(blockData,cc,1+xo,1+yo,1+zo);
 		chunkPopulateLightData(lightData,cc,1+xo,1+yo,1+zo);
 	}

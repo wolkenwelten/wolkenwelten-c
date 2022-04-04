@@ -30,6 +30,10 @@ void    shaderSideTint   (shader *s, const vec sideTint);
 void    shaderTransform  (shader *s, float x, float y, float z);
 void    shaderSizeMul    (shader *s, float sizeMul);
 
+static inline void shaderColorSimple(shader *s, float brightness){
+	shaderColor(s, brightness, brightness, brightness, 1.f);
+}
+
 extern shader *sMesh;
 extern shader *sShadow;
 extern shader *sBlockMesh;

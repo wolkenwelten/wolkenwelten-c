@@ -50,3 +50,9 @@ void lightCheckTime(){
 	lastBrightness = newBrightness;
 	chunkDirtyAll();
 }
+
+float lightAtPos(const vec pos){
+	const u8 light = worldTryLight(pos.x, pos.y, pos.z);
+	const float rawBrightness = (light * (1.f / 16.f));
+	return rawBrightness * rawBrightness;
+}

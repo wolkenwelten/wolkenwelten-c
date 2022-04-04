@@ -38,7 +38,6 @@
 
 float sunAngle = 45.f;
 float skyBrightness;
-float worldBrightness;
 
 mesh *sunMesh = NULL;
 texture *tSun = NULL;
@@ -85,7 +84,6 @@ void initSky(){
 
 static void getSkyColors(u32 *hi, u32 *lo){
 	skyBrightness = gtimeGetSkyBrightness(gtimeGetTimeOfDay());
-	worldBrightness = gtimeGetBrightness(gtimeGetTimeOfDay());
 
 	hsvaColor hsv;
 	hsv.h = 160;

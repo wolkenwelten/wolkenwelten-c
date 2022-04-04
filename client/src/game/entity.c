@@ -20,6 +20,7 @@
 #include "../main.h"
 #include "../sfx/sfx.h"
 #include "../game/character.h"
+#include "../game/light.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
@@ -40,10 +41,7 @@
 void entityDraw(const entity *e){
 	if(e->eMesh == NULL){return;}
 	const float scale = 0.8f;
-	const u8 light = worldTryLight(e->pos.x, e->pos.y, e->pos.z);
-	const float rawBrightness = (light * (1.f / 32.f));
-	const float brightness = rawBrightness * rawBrightness;
-	shaderColor(sMesh,brightness,brightness,brightness,1.f);
+	shaderColorSimple(sMesh, lightAtPos(e->pos));
 
 	matMov      (matMVP,matView);
 	matMulTrans (matMVP,e->pos.x,e->pos.y,e->pos.z);

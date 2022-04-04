@@ -177,11 +177,25 @@ void lightCompare(const u8 a[48][48][48],const u8 b[48][48][48]){
 	}
 }
 
+void lightBlock(u8 light[48][48][48], const chunkOverlay *block){
+	if(block == NULL){return;}
+	PROFILE_START();
+	for(int x=16;x<32;x++){
+	for(int y=16;y<32;y++){
+	for(int z=16;z<32;z++){
+		light[x][y][z] >>= (block->data[x-16][y-16][z-16]!=0);
+	}
+	}
+	}
+	PROFILE_STOP();
+}
+
 void lightTick(chunkOverlay *light, const chunkOverlay *block[3][3][3]){
 	static u8 *testBuf = NULL;
 	PROFILE_START();
 	lightSunlight(lightBuffer, block);
 	lightBlur(lightBuffer);
+	lightBlock(lightBuffer, block[1][1][1]);
 	if(optionTestLightMap){
 		if(testBuf == NULL){
 			testBuf = malloc(sizeof(lightBuffer));

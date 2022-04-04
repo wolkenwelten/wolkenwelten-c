@@ -22,6 +22,7 @@
 #include "../game/blockType.h"
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
+#include "../game/light.h"
 #include "../game/projectile.h"
 #include "../game/throwable.h"
 #include "../game/weather/weather.h"
@@ -863,12 +864,13 @@ void characterDraw(character *c){
 	shadowAdd(c->pos,0.75f);
 
 	const float breath = sinf((float)c->breathing/512.f)*6.f;
+	const float brightness = lightAtPos(c->pos);
 	if(c->effectValue){
 		const float effectMult = 1.f - (--c->effectValue / 31.f);
-		const float lowBrightness = worldBrightness * effectMult * effectMult;
-		shaderColor(sMesh, worldBrightness, lowBrightness, lowBrightness, 1.f);
+		const float lowBrightness = brightness * effectMult * effectMult;
+		shaderColor(sMesh, brightness, lowBrightness, lowBrightness, 1.f);
 	}else{
-		shaderColor(sMesh, worldBrightness, worldBrightness, worldBrightness, 1.f);
+		shaderColorSimple(sMesh, brightness);
 	}
 	matMov(matMVP,matView);
 	matMulTrans(matMVP,c->pos.x,c->pos.y+c->yoff+breath/128.f,c->pos.z);
@@ -877,7 +879,7 @@ void characterDraw(character *c){
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(c->eMesh);
 	c->screenPos = matMulVec(matMVP,vecNew(0,0.5f,0));
-	shaderColor(sMesh, worldBrightness, worldBrightness, worldBrightness, 1.f);
+	shaderColorSimple(sMesh, brightness);
 
 	characterActiveItemDraw(c);
 	characterShadesDraw(c);

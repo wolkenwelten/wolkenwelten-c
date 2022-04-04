@@ -16,7 +16,7 @@
  */
 
 #include "../game/blockType.h"
-
+#include "../game/light.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gl.h"
 #include "../gfx/mat.h"
@@ -126,9 +126,9 @@ void blockTypeDraw(blockId b, vec pos, float alpha, int depthOffset){
 
 	shaderBind(sMesh);
 	shaderMatrix(sMesh,matMVP);
-	shaderColor(sMesh, worldBrightness, worldBrightness, worldBrightness, alpha);
+	const float brightness = lightAtPos(pos);
+	shaderColor(sMesh, brightness, brightness, brightness, alpha);
 	meshDraw(blocks[b].singleBlock);
-	shaderColor(sMesh, worldBrightness, worldBrightness, worldBrightness, 1.f);
 
 	if(depthOffset){
 		glPolygonOffset(0,0);

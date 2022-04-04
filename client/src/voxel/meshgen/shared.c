@@ -41,15 +41,15 @@ sideMask chunkGetSides(u16 x,u16 y,u16 z,blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][C
 	return sides;
 }
 
-void chunkOptimizePlane(u64 plane[CHUNK_SIZE][CHUNK_SIZE]){
+void chunkOptimizePlane(u32 plane[CHUNK_SIZE][CHUNK_SIZE]){
 	for(int y=CHUNK_SIZE-1;y>=0;y--){
 	for(int x=CHUNK_SIZE-1;x>=0;x--){
 		if(!plane[x][y]){continue;}
-		if((x < CHUNK_SIZE-2) && ((plane[x][y] & 0xFFFFFF0FF) == (plane[x+1][y] & 0xFFFFFF0FF))){
+		if((x < CHUNK_SIZE-2) && ((plane[x][y] & 0xFFFFF0FF) == (plane[x+1][y] & 0xFFFFF0FF))){
 			plane[x  ][y] += plane[x+1][y] & 0xF00;
 			plane[x+1][y]  = 0;
 		}
-		if((y < CHUNK_SIZE-2) && ((plane[x][y] & 0xFFFFF0FFF) == (plane[x][y+1] & 0xFFFFF0FFF))){
+		if((y < CHUNK_SIZE-2) && ((plane[x][y] & 0xFFFF0FFF) == (plane[x][y+1] & 0xFFFF0FFF))){
 			plane[x][y  ] += plane[x][y+1]&0xF000;
 			plane[x][y+1]  = 0;
 		}
@@ -58,12 +58,21 @@ void chunkOptimizePlane(u64 plane[CHUNK_SIZE][CHUNK_SIZE]){
 }
 
 void chunkPopulateBlockData(blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], chunk *c, i16 xoff, i16 yoff, i16 zoff){
-	if((c == NULL) || (c->block == NULL)){return;}
-	for(int x=MAX(0,xoff); x<MIN(CHUNK_SIZE+2,xoff+CHUNK_SIZE); x++){
-	for(int y=MAX(0,yoff); y<MIN(CHUNK_SIZE+2,yoff+CHUNK_SIZE); y++){
-	for(int z=MAX(0,zoff); z<MIN(CHUNK_SIZE+2,zoff+CHUNK_SIZE); z++){
-		b[x][y][z] = c->block->data[x-xoff][y-yoff][z-zoff];
-	}
-	}
+	if((c == NULL) || (c->block == NULL)){
+		for(int x=MAX(0,xoff); x<MIN(CHUNK_SIZE+2,xoff+CHUNK_SIZE); x++){
+		for(int y=MAX(0,yoff); y<MIN(CHUNK_SIZE+2,yoff+CHUNK_SIZE); y++){
+		for(int z=MAX(0,zoff); z<MIN(CHUNK_SIZE+2,zoff+CHUNK_SIZE); z++){
+			b[x][y][z] = 0;
+		}
+		}
+		}
+	}else{
+		for(int x=MAX(0,xoff); x<MIN(CHUNK_SIZE+2,xoff+CHUNK_SIZE); x++){
+		for(int y=MAX(0,yoff); y<MIN(CHUNK_SIZE+2,yoff+CHUNK_SIZE); y++){
+		for(int z=MAX(0,zoff); z<MIN(CHUNK_SIZE+2,zoff+CHUNK_SIZE); z++){
+			b[x][y][z] = c->block->data[x-xoff][y-yoff][z-zoff];
+		}
+		}
+		}
 	}
 }
