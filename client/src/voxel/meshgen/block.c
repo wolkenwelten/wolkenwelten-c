@@ -207,7 +207,7 @@ void chunkGenBlockMesh(chunk *c){
 				const int cw = ((plane[y][x] >> 12) &    0xF);
 				const int ch = ((plane[y][x] >>  8) &    0xF);
 				const blockId b = plane[y][x] & 0xFF;
-				const u8 bt = blocks[b].tex[sideFront];
+				const u8 bt = blocks[b].tex[sideBack];
 				vp = chunkAddBack(bt,x,y,z,cw,ch,cd,cl,vp);
 			}
 			}
@@ -244,7 +244,7 @@ void chunkGenBlockMesh(chunk *c){
 				const int cw = ((plane[z][x] >> 12) &    0xF);
 				const int cd = ((plane[z][x] >>  8) &    0xF);
 				const blockId b = plane[z][x] & 0xFF;
-				const u8 bt = blocks[b].tex[sideFront];
+				const u8 bt = blocks[b].tex[sideTop];
 				vp = chunkAddTop(bt,x,y,z,cw,ch,cd,cl,vp);
 			}
 			}
@@ -281,7 +281,7 @@ void chunkGenBlockMesh(chunk *c){
 				const int cw = ((plane[z][x] >> 12) &    0xF);
 				const int cd = ((plane[z][x] >>  8) &    0xF);
 				const blockId b = plane[z][x] & 0xFF;
-				const u8 bt = blocks[b].tex[sideFront];
+				const u8 bt = blocks[b].tex[sideBottom];
 				vp = chunkAddBottom(bt,x,y,z,cw,ch,cd,cl,vp);
 			}
 			}
@@ -318,7 +318,7 @@ void chunkGenBlockMesh(chunk *c){
 				const int cd = ((plane[y][z] >> 12) &    0xF);
 				const int ch = ((plane[y][z] >>  8) &    0xF);
 				const blockId b = plane[y][z] & 0xFF;
-				const u8 bt = blocks[b].tex[sideFront];
+				const u8 bt = blocks[b].tex[sideLeft];
 				vp = chunkAddLeft(bt,x,y,z,cw,ch,cd,cl,vp);
 			}
 			}
@@ -355,7 +355,7 @@ void chunkGenBlockMesh(chunk *c){
 				const int cd = ((plane[y][z] >> 12) &    0xF);
 				const int ch = ((plane[y][z] >>  8) &    0xF);
 				const blockId b = plane[y][z] & 0xFF;
-				const u8 bt = blocks[b].tex[sideFront];
+				const u8 bt = blocks[b].tex[sideRight];
 				vp = chunkAddRight(bt,x,y,z,cw,ch,cd,cl,vp);
 			}
 			}
