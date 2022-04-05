@@ -106,7 +106,10 @@ bool blockTypeValid(blockId b){
 
 void blockTypeInit(){
 	blockTypeInitBlock    ( 1, 1, DIRT,  "Dirt", 500, 100, 1.5f, 0xFF0A234F,0xFF051B45, 0xF, 0x3FF);
-	blockTypeInitBlock    ( 2, 0, DIRT,  "Grass", 240,  40, 1.7f, 0xFF004227,0xFF051B45, 0x1F, 0x3FF);
+	blockTypeInitBlock    ( 2, 16, DIRT,  "Grass", 240,  40, 1.7f, 0xFF004227,0xFF051B45, 0x1F, 0x3FF);
+	blockTypeSetTex       ( 2,sideTop, 0);
+	blockTypeSetTex       ( 2,sideBottom, 1);
+
 	blockTypeInitBlock    ( 3, 2, STONE, "Stone", 1200, 255, 5.f, 0xFF5E5E5E,0xFF484848, 0xFFFF, 0xFFF);
 	blockTypeInitBlock    ( 4, 3, STONE, "Coal", 800, 250, 4.f, 0xFF262626,0xFF101010, 0xFFFF, 0xFFF);
 	blockTypeInitBlock    ( 5, 4, WOOD,  "Spruce Log", 500, 80, 3.f, 0xFF051B25,0xFF07161D, 0xFFFF, 0xFFFF);
