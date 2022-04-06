@@ -1,6 +1,8 @@
+[or cut [def cut substr]]
+
 [defun git-get-commit [branch]
 	"Gets the commit hash of BRANCH"
-	[trim [or [file/read [".git/refs/heads/" branch]] "UNKNOWN"]]]
+	[trim [cut [or [file/read [".git/refs/heads/" branch]] "UNKNOWN"] 0 8]]]
 
 [defun git-get-branch []
 	"Returns the currently active branch"
