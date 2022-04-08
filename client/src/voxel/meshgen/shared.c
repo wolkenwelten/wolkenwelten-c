@@ -31,6 +31,7 @@ void chunkResetCounter(){
 sideMask chunkGetSides(u16 x,u16 y,u16 z,blockId b[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2]){
 	sideMask sides = 0;
 
+	if(b[x][y][z]   == 0){ return 0;}
 	if(b[x][y][z+1] == 0){ sides |= sideMaskFront; }
 	if(b[x][y][z-1] == 0){ sides |= sideMaskBack;  }
 	if(b[x][y+1][z] == 0){ sides |= sideMaskTop;   }

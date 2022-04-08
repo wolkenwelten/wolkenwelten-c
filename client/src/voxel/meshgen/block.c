@@ -26,6 +26,11 @@
 
 #include <string.h>
 
+/* Only planes with at least that many faces vixible will be run through the
+ | optimizer/greedy mesher.
+ */
+#define CHUNK_OPTIMIZE_THRESHOLD 8
+
 vertexPacked blockMeshBuffer[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * CUBE_FACES * VERTICES_PER_FACE / 2];
 
 static vertexPacked *chunkAddFront(u8 bt, u8 x, u8 y, u8 z, u8 w, u8 h, u8 d, u32 light, vertexPacked *vp) {
@@ -94,30 +99,32 @@ static int chunkLightTopBottom(const u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CH
 }
 
 static int chunkLightFrontBack(const u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], int x, int y, int z){
-	return MIN(((lightData[x  ][y  ][z]
-		   + lightData[x  ][y+1][z]
-		   + lightData[x+1][y  ][z]
-		   + lightData[x+1][y+1][z]) / 4), 0xF);
+	const int a = lightData[x  ][y  ][z];
+	const int b = lightData[x  ][y+1][z];
+	const int c = lightData[x+1][y  ][z];
+	const int d = lightData[x+1][y+1][z];
+	return MIN((a+b+c+d)/4, 0xF);
 }
 
 static int chunkLightLeftRight(const u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], int x, int y, int z){
-	return MIN(((lightData[x][y  ][z  ]
-		   + lightData[x][y+1][z  ]
-		   + lightData[x][y  ][z+1]
-		   + lightData[x][y+1][z+1]) / 4), 0xF);
+	const int a = lightData[x][y  ][z  ];
+	const int b = lightData[x][y+1][z  ];
+	const int c = lightData[x][y  ][z+1];
+	const int d = lightData[x][y+1][z+1];
+	return MIN((a+b+c+d)/4, 0xF);
 }
 
-void chunkGenBlockMesh(chunk *c){
-	if((c == NULL) || (c->block == NULL) || ((c->flags & CHUNK_FLAG_DIRTY) == 0)){return;}
+static void chunkPopulateSideCache(sideMask sideCache[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], blockId blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2]){
+	for(int x=CHUNK_SIZE-1;x>=0;--x){
+	for(int y=CHUNK_SIZE-1;y>=0;--y){
+	for(int z=CHUNK_SIZE-1;z>=0;--z){
+		sideCache[x][y][z] = blockData[x+1][y+1][z+1] == 0 ? 0 : chunkGetSides(x+1,y+1,z+1,blockData);
+	}
+	}
+	}
+}
 
-	PROFILE_START();
-	static blockId  blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
-	static u8       lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
-	static sideMask sideCache[CHUNK_SIZE  ][CHUNK_SIZE  ][CHUNK_SIZE  ];
-	static u32          plane[CHUNK_SIZE  ][CHUNK_SIZE  ];
-	++chunksGeneratedThisFrame;
-	u16 blockMeshSideCounts[sideMAX];
-
+static void chunkPopulateBlockAndLightData(chunk *c, blockId  blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2]){
 	for(int x=-1;x<2;x++){
 	for(int y=-1;y<2;y++){
 	for(int z=-1;z<2;z++){
@@ -131,37 +138,33 @@ void chunkGenBlockMesh(chunk *c){
 	}
 	}
 	}
-	vertexPacked  *vp = blockMeshBuffer;
-	vertexPacked *lvp = blockMeshBuffer;
+}
 
-	for(int x=CHUNK_SIZE-1;x>=0;--x){
-	for(int y=CHUNK_SIZE-1;y>=0;--y){
-	for(int z=CHUNK_SIZE-1;z>=0;--z){
-		sideCache[x][y][z] = c->block->data[x][y][z] == 0 ? 0 : chunkGetSides(x+1,y+1,z+1,blockData);
-	}
-	}
-	}
+static vertexPacked *chunkGenBlockMeshFront(vertexPacked *vp, blockId blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], sideMask sideCache[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], u16 blockMeshSideCounts[sideMAX]){
+	u32 plane[CHUNK_SIZE][CHUNK_SIZE];
+	vertexPacked *lvp = vp;
 
+	/* First we slice the chunk into many, zero-initialized, planes */
 	for(int z=CHUNK_SIZE-1;z>=0;--z){
-		bool found = false;
+		int found = 0;
 		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const blockId b = c->block->data[x][y][z]; // ToDo: Why does this not use blockData???
-			if(b == 0){continue;}
-			if(sideCache[x][y][z] &sideMaskFront){
-				found = true;
-				const u64 light = 0
+			if(sideCache[x][y][z] & sideMaskFront){
+				found++;
+				const u32 light = 0
 					| (chunkLightFrontBack(lightData,x  ,y  ,z+2) <<  0)
 					| (chunkLightFrontBack(lightData,x+1,y  ,z+2) <<  4)
 					| (chunkLightFrontBack(lightData,x+1,y+1,z+2) <<  8)
 					| (chunkLightFrontBack(lightData,x  ,y+1,z+2) << 12);
-				plane[y][x] = (light << 16) | 0x1100 | b;
+				plane[y][x] = (light << 16) | 0x1100 | blockData[x+1][y+1][z+1];
 			}
 		}
 		}
 		if(found){
-			chunkOptimizePlane(plane);
+			if(found > CHUNK_OPTIMIZE_THRESHOLD){
+				chunkOptimizePlane(plane);
+			}
 			const int cd = 1;
 			for(int y=CHUNK_SIZE-1;y>=0;--y){
 			for(int x=CHUNK_SIZE-1;x>=0;--x){
@@ -177,28 +180,33 @@ void chunkGenBlockMesh(chunk *c){
 		}
 	}
 	blockMeshSideCounts[sideFront] = vp - lvp;
-	lvp = vp;
+	return vp;
+}
+
+static vertexPacked *chunkGenBlockMeshBack(vertexPacked *vp, blockId blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], sideMask sideCache[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], u16 blockMeshSideCounts[sideMAX]){
+	u32 plane[CHUNK_SIZE][CHUNK_SIZE];
+	vertexPacked *lvp = vp;
 
 	for(int z=CHUNK_SIZE-1;z>=0;--z){
-		bool found = false;
+		int found = 0;
 		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const blockId b = c->block->data[x][y][z];
-			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskBack){
-				found = true;
-				const u64 light = 0
+				found++;
+				const u32 light = 0
 					| (chunkLightFrontBack(lightData,x  ,y  ,z) <<  0)
 					| (chunkLightFrontBack(lightData,x  ,y+1,z) <<  4)
 					| (chunkLightFrontBack(lightData,x+1,y+1,z) <<  8)
 					| (chunkLightFrontBack(lightData,x+1,y  ,z) << 12);
-				plane[y][x] = (light << 16) | 0x1100 | b;
+				plane[y][x] = (light << 16) | 0x1100 | blockData[x+1][y+1][z+1];
 			}
 		}
 		}
 		if(found){
-			chunkOptimizePlane(plane);
+			if(found > CHUNK_OPTIMIZE_THRESHOLD){
+				chunkOptimizePlane(plane);
+			}
 			const int cd = 1;
 			for(int y=CHUNK_SIZE-1;y>=0;--y){
 			for(int x=CHUNK_SIZE-1;x>=0;--x){
@@ -214,28 +222,33 @@ void chunkGenBlockMesh(chunk *c){
 		}
 	}
 	blockMeshSideCounts[sideBack] = vp - lvp;
-	lvp = vp;
+	return vp;
+}
+
+static vertexPacked *chunkGenBlockMeshTop(vertexPacked *vp, blockId blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], sideMask sideCache[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], u16 blockMeshSideCounts[sideMAX]){
+	u32 plane[CHUNK_SIZE][CHUNK_SIZE];
+	vertexPacked *lvp = vp;
 
 	for(int y=CHUNK_SIZE-1;y>=0;--y){
-		bool found = false;
+		int found = 0;
 		memset(plane,0,sizeof(plane));
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const blockId b = c->block->data[x][y][z];
-			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskTop){
-				found = true;
-				u64 light = 0
-					| (chunkLightTopBottom(lightData,x  ,y+2,z  ) <<  0)
-					| (chunkLightTopBottom(lightData,x  ,y+2,z+1) <<  4)
-					| (chunkLightTopBottom(lightData,x+1,y+2,z+1) <<  8)
-					| (chunkLightTopBottom(lightData,x+1,y+2,z  ) << 12);
-				plane[z][x] = (light << 16) | 0x1100 | b;
+				found++;
+				const u32 light = 0
+				  | (chunkLightTopBottom(lightData,x  ,y+2,z  ) <<  0)
+				  | (chunkLightTopBottom(lightData,x  ,y+2,z+1) <<  4)
+				  | (chunkLightTopBottom(lightData,x+1,y+2,z+1) <<  8)
+				  | (chunkLightTopBottom(lightData,x+1,y+2,z  ) << 12);
+				plane[z][x] = (light << 16) | 0x1100 | blockData[x+1][y+1][z+1];
 			}
 		}
 		}
 		if(found){
-			chunkOptimizePlane(plane);
+			if(found > CHUNK_OPTIMIZE_THRESHOLD){
+				chunkOptimizePlane(plane);
+			}
 			const int ch = 1;
 			for(int z=CHUNK_SIZE-1;z>=0;--z){
 			for(int x=CHUNK_SIZE-1;x>=0;--x){
@@ -251,28 +264,33 @@ void chunkGenBlockMesh(chunk *c){
 		}
 	}
 	blockMeshSideCounts[sideTop] = vp - lvp;
-	lvp = vp;
+	return vp;
+}
+
+static vertexPacked *chunkGenBlockMeshBottom(vertexPacked *vp, blockId blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], sideMask sideCache[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], u16 blockMeshSideCounts[sideMAX]){
+	u32 plane[CHUNK_SIZE][CHUNK_SIZE];
+	vertexPacked *lvp = vp;
 
 	for(int y=CHUNK_SIZE-1;y>=0;--y){
-		bool found = false;
+		int found = 0;
 		memset(plane,0,sizeof(plane));
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
 		for(int x=CHUNK_SIZE-1;x>=0;--x){
-			const blockId b = c->block->data[x][y][z];
-			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskBottom){
-				found = true;
-				const u64 light = 0
-					| (chunkLightTopBottom(lightData,x  ,y,z  ) <<  0)
-					| (chunkLightTopBottom(lightData,x+1,y,z  ) <<  4)
-					| (chunkLightTopBottom(lightData,x+1,y,z+1) <<  8)
-					| (chunkLightTopBottom(lightData,x  ,y,z+1) << 12);
-				plane[z][x] = (light << 16) | 0x1100 | b;
+				found++;
+				const u32 light = 0
+				  | (chunkLightTopBottom(lightData,x  ,y,z  ) << ( 0 + 16))
+				  | (chunkLightTopBottom(lightData,x+1,y,z  ) << ( 4 + 16))
+				  | (chunkLightTopBottom(lightData,x+1,y,z+1) << ( 8 + 16))
+				  | (chunkLightTopBottom(lightData,x  ,y,z+1) << (12 + 16));
+				plane[z][x] = light | 0x1100 | blockData[x+1][y+1][z+1];
 			}
 		}
 		}
 		if(found){
-			chunkOptimizePlane(plane);
+			if(found > CHUNK_OPTIMIZE_THRESHOLD){
+				chunkOptimizePlane(plane);
+			}
 			const int ch = 1;
 			for(int z=CHUNK_SIZE-1;z>=0;--z){
 			for(int x=CHUNK_SIZE-1;x>=0;--x){
@@ -288,28 +306,33 @@ void chunkGenBlockMesh(chunk *c){
 		}
 	}
 	blockMeshSideCounts[sideBottom] = vp - lvp;
-	lvp = vp;
+	return vp;
+}
+
+static vertexPacked *chunkGenBlockMeshLeft(vertexPacked *vp, blockId blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], sideMask sideCache[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], u16 blockMeshSideCounts[sideMAX]){
+	u32 plane[CHUNK_SIZE][CHUNK_SIZE];
+	vertexPacked *lvp = vp;
 
 	for(int x=CHUNK_SIZE-1;x>=0;--x){
-		bool found = false;
+		int found = 0;
 		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
-			const blockId b = c->block->data[x][y][z];
-			if(b == 0){continue;}
 			if(sideCache[x][y][z] & sideMaskRight){
-				found = true;
-				const u64 light = 0
+				found++;
+				const u32 light = 0
 					| (chunkLightLeftRight(lightData,x,y  ,z  ) <<  0)
 					| (chunkLightLeftRight(lightData,x,y  ,z+1) <<  4)
 					| (chunkLightLeftRight(lightData,x,y+1,z+1) <<  8)
 					| (chunkLightLeftRight(lightData,x,y+1,z  ) << 12);
-				plane[y][z] = (light << 16) | 0x1100 | b;
+				plane[y][z] = (light << 16) | 0x1100 | blockData[x+1][y+1][z+1];
 			}
 		}
 		}
 		if(found){
-			chunkOptimizePlane(plane);
+			if(found > CHUNK_OPTIMIZE_THRESHOLD){
+				chunkOptimizePlane(plane);
+			}
 			const int cw = 1;
 			for(int y=CHUNK_SIZE-1;y>=0;--y){
 			for(int z=CHUNK_SIZE-1;z>=0;--z){
@@ -325,18 +348,22 @@ void chunkGenBlockMesh(chunk *c){
 		}
 	}
 	blockMeshSideCounts[sideLeft] = vp - lvp;
-	lvp = vp;
+	return vp;
+}
+
+static vertexPacked *chunkGenBlockMeshRight(vertexPacked *vp, blockId blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], u8 lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2], sideMask sideCache[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], u16 blockMeshSideCounts[sideMAX]){
+	u32 plane[CHUNK_SIZE][CHUNK_SIZE];
+	vertexPacked *lvp = vp;
 
 	for(int x=CHUNK_SIZE-1;x>=0;--x){
 		bool found = false;
 		memset(plane,0,sizeof(plane));
 		for(int y=CHUNK_SIZE-1;y>=0;--y){
 		for(int z=CHUNK_SIZE-1;z>=0;--z){
-			const blockId b = c->block->data[x][y][z];
-			if(b == 0){continue;}
-			if(sideCache[x][y][z] & sideMaskLeft){
+			const blockId b = blockData[x+1][y+1][z+1];
+			if(b && (sideCache[x][y][z] & sideMaskLeft)){
 				found = true;
-				const u64 light = 0
+				const u32 light = 0
 					| (chunkLightLeftRight(lightData,x+2,y  ,z  ) <<  0)
 					| (chunkLightLeftRight(lightData,x+2,y+1,z  ) <<  4)
 					| (chunkLightLeftRight(lightData,x+2,y+1,z+1) <<  8)
@@ -362,7 +389,46 @@ void chunkGenBlockMesh(chunk *c){
 		}
 	}
 	blockMeshSideCounts[sideRight] = vp - lvp;
-	if(!c->blockVertbuf){ c->fadeIn = FADE_IN_FRAMES; }
+	return vp;
+}
+
+
+void chunkGenBlockMesh(chunk *c){
+	if((c == NULL) || (c->block == NULL) || ((c->flags & CHUNK_FLAG_DIRTY) == 0)){return;}
+	PROFILE_START();
+
+	blockId  blockData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
+	u8       lightData[CHUNK_SIZE+2][CHUNK_SIZE+2][CHUNK_SIZE+2];
+	sideMask sideCache[CHUNK_SIZE  ][CHUNK_SIZE  ][CHUNK_SIZE  ];
+	u16 blockMeshSideCounts[sideMAX];
+	vertexPacked  *vp = blockMeshBuffer;
+	++chunksGeneratedThisFrame;
+
+	/* First we populate our blockData and lightData buffers, this has to be done since
+	 | we need to look not just at the data within our chunk, but also into every neighboring
+	 | chunk, to make this more convenient and efficient we populate these buffers once in the
+	 | beginning and then do calculations on those. This is also a very convenient place to handle
+	 | empty chunks since during mesh generation we only see zeroes.
+	 */
+	chunkPopulateBlockAndLightData(c, blockData, lightData);
+	/* The sideCache is a bitmask which determines which faces of a block need to be included
+	 | in the mesh.
+	 */
+	chunkPopulateSideCache(sideCache, blockData);
+
+	/* Now we generate all meshes, plane by plane, keeping track of the start/end positions
+	 | within blockMeshSideCounts to enable rendering block planes separately
+	 */
+	vp = chunkGenBlockMeshFront  (vp, blockData, lightData, sideCache, blockMeshSideCounts);
+	vp = chunkGenBlockMeshBack   (vp, blockData, lightData, sideCache, blockMeshSideCounts);
+	vp = chunkGenBlockMeshTop    (vp, blockData, lightData, sideCache, blockMeshSideCounts);
+	vp = chunkGenBlockMeshBottom (vp, blockData, lightData, sideCache, blockMeshSideCounts);
+	vp = chunkGenBlockMeshLeft   (vp, blockData, lightData, sideCache, blockMeshSideCounts);
+	vp = chunkGenBlockMeshRight  (vp, blockData, lightData, sideCache, blockMeshSideCounts);
+
+	if(!c->blockVertbuf){
+		c->fadeIn = FADE_IN_FRAMES;
+	}
 	c->blockVertbuf = chunkvertbufBlockUpdate(c->blockVertbuf, blockMeshBuffer, blockMeshSideCounts);
 	c->flags &= ~CHUNK_FLAG_DIRTY;
 	c->framesSkipped = 0;
