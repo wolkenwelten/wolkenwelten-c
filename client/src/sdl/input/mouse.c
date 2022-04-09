@@ -21,7 +21,7 @@
 #include "../../gui/gui.h"
 #include "../../misc/lisp.h"
 #include "../../misc/options.h"
-#include "../../game/character.h"
+#include "../../game/character/character.h"
 #include "../../main.h"
 #include "../../../../common/nujel/lib/api.h"
 

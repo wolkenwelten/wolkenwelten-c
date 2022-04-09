@@ -39,20 +39,20 @@ void chatEmpty(){
 	}
 }
 
-void msgSendRawMessage(const char *msg){
+void chatSendRaw(const char *msg){
 	size_t len = strnlen(msg,4096);
 	memcpy(packetBuffer.v.u8,msg,len+1);
 	packetQueueToServer(&packetBuffer, msgtChatMsg, alignedLen(len+1));
 }
 
-void msgSendChatMessage(const char *msg){
+void chatSend(const char *msg){
 	char tmp[4096];
 	const size_t len = snprintf(tmp,sizeof(tmp),"%s%s%s: %s",ansiFG[10],playerName,ansiRS,msg);
 	if(len == 0){
 		fprintf(stderr,"Couldn't send message %s",msg);
 		return;
 	}
-	msgSendRawMessage(tmp);
+	chatSendRaw(tmp);
 	char *buf = malloc(len+1);
 	snprintf(buf,len,"%s",packetBuffer.v.u8);
 

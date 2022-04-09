@@ -50,7 +50,7 @@ bool chatIsOpen(){
 
 void handlerChatSubmit(widget *wid){
 	if(chatText->vals[0] != 0){
-		msgSendChatMessage(chatText->vals);
+		chatSend(chatText->vals);
 		chatResetHistorySel();
 	}
 	handlerRootHud(wid);

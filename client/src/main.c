@@ -20,7 +20,7 @@
 #include "game/being.h"
 #include "game/blockMining.h"
 #include "game/blockType.h"
-#include "game/character.h"
+#include "game/character/character.h"
 #include "game/entity.h"
 #include "game/fire.h"
 #include "game/fluid.h"
@@ -128,7 +128,7 @@ void playerCheckInventory(){
 	lastInventorySize = player->inventorySize;
 	for(int i=player->inventorySize;i<CHAR_INV_MAX;i++){
 		if(itemIsEmpty(&player->inventory[i])){continue;}
-		characterDropItem(player,i);
+		characterItemDrop(player,i);
 	}
 	if(isInventoryOpen()){
 		openInventory();
@@ -163,7 +163,7 @@ void worldUpdate(){
 	curTick = SDL_GetTicks();
 	resetOverlayColor();
 	for(;lastTick < curTick;lastTick+=msPerTick){
-		charactersUpdate();
+		characterUpdateAll();
 		grenadeUpdateAll();
 		animalUpdateAll();
 		itemDropUpdateAll();

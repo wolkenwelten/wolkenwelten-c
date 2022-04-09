@@ -14,10 +14,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "projectile.h"
-
-#include "../game/character.h"
+#include "../game/character/character.h"
 #include "../sfx/sfx.h"
 #include "../gfx/particle.h"
 
@@ -92,6 +90,7 @@ static inline float projectileDrawGuardianBigProjectile(const projectile *p){
 
 void projectileDrawAll(){
 	float maxD = 4096.f;
+	if(player == NULL){return;}
 	for(uint i=0;i<countof(projectileList);i++){
 		projectile *p = &projectileList[i];
 		switch(p->style){

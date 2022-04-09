@@ -16,7 +16,7 @@
  */
 #include "sfx.h"
 
-#include "../game/character.h"
+#include "../game/character/character.h"
 #include "../misc/options.h"
 
 #define MAX_BEINGS_EMITTING_SFX 4

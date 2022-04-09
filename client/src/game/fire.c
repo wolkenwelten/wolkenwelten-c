@@ -17,9 +17,9 @@
 #include "fire.h"
 
 #include "../main.h"
-#include "../game/character.h"
-#include "../gfx/gfx.h"
+#include "../game/character/character.h"
 #include "../gfx/particle.h"
+#include "../gfx/gfx.h"
 #include "../gui/overlay.h"
 #include "../sdl/sdl.h"
 #include "../sfx/sfx.h"

@@ -16,7 +16,7 @@
  */
 #include "environment.h"
 #include "sfx.h"
-#include "../game/character.h"
+#include "../game/character/character.h"
 #include "../../../common/src/game/weather/rain.h"
 
 static void windSound(const character *c){

@@ -15,7 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "lightning.h"
-#include "../../game/character.h"
+#include "../../game/character/character.h"
+#include "../../game/character/network.h"
 #include "../../gui/overlay.h"
 #include "../../gfx/effects.h"
 #include "../../gfx/particle.h"

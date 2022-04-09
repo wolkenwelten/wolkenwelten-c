@@ -17,7 +17,6 @@
 #include "widgets.h"
 
 #include "../../gfx/textMesh.h"
-#include "../../game/character.h"
 
 void widgetDrawLabel(const widget *wid, textMesh *m, box2D area){
 	const int x = area.x;

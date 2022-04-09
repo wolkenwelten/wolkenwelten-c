@@ -16,9 +16,8 @@
  */
 
 #include "../game/animal.h"
-
 #include "../game/being.h"
-#include "../game/character.h"
+#include "../game/character/character.h"
 #include "../game/light.h"
 #include "../gfx/effects.h"
 #include "../gfx/gfx.h"

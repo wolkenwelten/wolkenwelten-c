@@ -21,7 +21,8 @@
 #include "../binding/widget.h"
 #include "../binding/widgetGC.h"
 #include "../game/beamblast.h"
-#include "../game/character.h"
+#include "../game/character/character.h"
+#include "../game/character/hook.h"
 #include "../game/fire.h"
 #include "../game/grenade.h"
 #include "../game/projectile.h"
@@ -313,7 +314,7 @@ static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
 	(void)c;
 	const char *msg = castToString(lCar(v),NULL);
 	if(msg == NULL){return NULL;}
-	msgSendChatMessage(msg);
+	chatSend(msg);
 	return lCar(v);
 }
 
@@ -547,7 +548,7 @@ static lVal *wwlnfPlayerDoPrimary(lClosure *c, lVal *v){
 
 static lVal *wwlnfPlayerStopMining(lClosure *c, lVal *v){
 	(void)c;(void)v;
-	characterStopMining(player);
+	characterMineStop(player);
 	return NULL;
 }
 
@@ -638,7 +639,7 @@ static lVal *wwlnfDropItem(lClosure *c, lVal *v){
 
 	if(slot < 0)                               {return NULL;}
 	if(slot >= (int)countof(player->inventory)){return NULL;}
-	characterDropSingleItem(player,slot);
+	characterItemDropSingle(player,slot);
 
 	return NULL;
 }

@@ -17,7 +17,8 @@
 #include "effects.h"
 
 #include "../game/blockType.h"
-#include "../game/character.h"
+#include "../game/character/character.h"
+#include "../game/character/network.h"
 #include "../game/rope.h"
 #include "../gfx/particle.h"
 #include "../gui/overlay.h"

@@ -20,7 +20,7 @@
 #include "../../gfx/gl.h"
 #include "../../gfx/mat.h"
 #include "../../gfx/shader.h"
-#include "../../game/character.h"
+#include "../../game/character/character.h"
 
 uint rainVAO;
 uint rainVBO;

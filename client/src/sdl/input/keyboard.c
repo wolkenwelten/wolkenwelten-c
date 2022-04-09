@@ -18,7 +18,7 @@
 
 #include "../sdl.h"
 #include "../../main.h"
-#include "../../game/character.h"
+#include "../../game/character/character.h"
 #include "../../gfx/texture.h"
 #include "../../gfx/gfx.h"
 #include "../../gui/chat.h"

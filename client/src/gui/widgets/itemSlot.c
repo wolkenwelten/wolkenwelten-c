@@ -17,7 +17,7 @@
 #include "widgets.h"
 
 #include "../../gfx/textMesh.h"
-#include "../../game/character.h"
+#include "../../game/character/character.h"
 #include "../../../../common/src/common.h"
 
 void widgetDrawItemSlot(const widget *wid, textMesh *m, box2D area, const item *itm){

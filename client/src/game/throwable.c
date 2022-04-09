@@ -16,8 +16,7 @@
  */
 
 #include "throwable.h"
-
-#include "character.h"
+#include "character/character.h"
 #include "entity.h"
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"

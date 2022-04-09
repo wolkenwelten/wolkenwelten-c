@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "particle.h"
-#include "../game/character.h"
+#include "../game/character/character.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
 #include "../gfx/mat.h"

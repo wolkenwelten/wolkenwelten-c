@@ -17,7 +17,7 @@
 
 #include "sdl.h"
 #include "../main.h"
-#include "../game/character.h"
+#include "../game/character/character.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gl.h"
 #include "../gui/gui.h"

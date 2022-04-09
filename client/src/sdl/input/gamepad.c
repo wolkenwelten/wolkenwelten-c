@@ -18,7 +18,8 @@
 
 #include "../sdl.h"
 #include "../../main.h"
-#include "../../game/character.h"
+#include "../../game/character/character.h"
+#include "../../game/character/hook.h"
 #include "../../gui/gui.h"
 #include "../../gui/menu.h"
 #include "../../gui/widget.h"

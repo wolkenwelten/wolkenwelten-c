@@ -15,12 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../game/entity.h"
-
+#include "entity.h"
+#include "character/character.h"
+#include "light.h"
 #include "../main.h"
 #include "../sfx/sfx.h"
-#include "../game/character.h"
-#include "../game/light.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
 #include "../gfx/mat.h"
@@ -58,7 +57,7 @@ void entityDrawAll(){
 	shaderBind(sMesh);
 	for(uint i=0;i<entityCount;i++){
 		if(entityList[i].nextFree != NULL)                        { continue; }
-		if(entityDistance(&entityList[i],player) > ENTITY_FADEOUT){ continue; }
+		if(entityDistance(&entityList[i], player) > ENTITY_FADEOUT){ continue; }
 		if(!CubeInFrustum(vecSubS(entityList[i].pos,.5f),1.f))    { continue; }
 		entityDraw(&entityList[i]);
 	}

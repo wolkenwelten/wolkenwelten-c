@@ -19,7 +19,7 @@
 #include "../menu.h"
 #include "../gui.h"
 #include "../../main.h"
-#include "../../game/character.h"
+#include "../../game/character/character.h"
 #include "../../game/itemDrop.h"
 #include "../../game/recipe.h"
 #include "../../gfx/gfx.h"
@@ -70,7 +70,7 @@ static void handlerInventoryItemMidClick(widget *wid){
 	if(cItem == NULL){return;}
 	if(itemIsEmpty(cItem)){return;}
 	uint sel = (wid->valItemSlot - player->inventory);
-	characterDropItem(player,sel);
+	characterItemDrop(player,sel);
 	sfxPlay(sfxPock,1.f);
 }
 

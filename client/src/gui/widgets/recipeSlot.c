@@ -16,7 +16,7 @@
  */
 #include "widgets.h"
 
-#include "../../game/character.h"
+#include "../../game/character/character.h"
 #include "../../game/recipe.h"
 #include "../../gfx/textMesh.h"
 

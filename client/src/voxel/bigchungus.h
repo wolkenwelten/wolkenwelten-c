@@ -19,7 +19,6 @@ void     worldSetChungusLoaded (int x, int y, int z);
 void     worldMine             (int x, int y, int z);
 void     worldBreak            (int x, int y, int z);
 void     worldBoxMine          (int x, int y, int z, int w, int h, int d);
-int      checkCollision        (int x, int y, int z);
 bool     worldIsLoaded         (int x, int y, int z);
 void     worldSetChunkUpdated  (int x, int y, int z);
 bool     worldShouldBeLoaded   (const vec cpos);
@@ -35,3 +34,4 @@ bool     worldSetFire          (int x, int y, int z, u8 strength);
 u8       worldTryLight         (int x, int y, int z);
 
 void     chungusRecvUnsub      (const packet *p);
+int      checkCollision        (int x, int y, int z);

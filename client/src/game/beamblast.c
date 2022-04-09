@@ -18,7 +18,7 @@
 #include "beamblast.h"
 
 #include "../game/animal.h"
-#include "../game/character.h"
+#include "../game/character/character.h"
 #include "../gfx/effects.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/network/messages.h"

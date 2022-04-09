@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "gui.h"
-
 #include "../main.h"
 #include "../binding/widget.h"
 #include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../game/animal.h"
-#include "../game/character.h"
+#include "../game/character/character.h"
+#include "../game/character/hook.h"
+#include "../game/character/network.h"
 #include "../game/entity.h"
 #include "../game/itemDrop.h"
 #include "../game/weather/weather.h"
@@ -537,105 +537,6 @@ void drawDebuginfo(){
 	guim->font = 0;
 }
 
-void drawActiveItem(){
-	if(player == NULL){return;}
-	float matViewAI[16];
-	item *activeItem = &player->inventory[player->activeItem];
-	if(activeItem == NULL){return;}
-	if(itemIsEmpty(activeItem)){return;}
-
-	mesh *aiMesh = itemGetMesh(activeItem);
-	if(aiMesh == NULL){return;}
-
-	const float afx = (player->flags & CHAR_THROW_AIM) ? 1.3f : 1.f;
-	const float ix =  (1.5f * afx);
-	float iy = -1.2f;
-	const float iz = -1.5f;
-	float hitOff,y;
-
-	if(!(player->flags & CHAR_FALLING)){
-		iy += sinf((float)(player->breathing-96)/512.f)*0.05f;
-	}
-
-	shaderBind(sMesh);
-	switch(player->animationIndex){
-	case animationHit:
-		hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.3f);
-		y = iy+player->yoff-(hitOff/8);
-		matTranslation(matViewAI,ix-hitOff*1.2f,y+(hitOff/3),iz - hitOff*1.1f);
-		matMulRotYX(matViewAI,hitOff*10.f,hitOff*-35.f);
-	break;
-
-	case animationFire:
-		hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
-		matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff);
-		matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
-	break;
-
-	case animationReload:
-		hitOff = animationInterpolationSustain(player->animationTicksLeft,player->animationTicksMax,0.3f,0.5f);
-		y = iy+player->yoff-(hitOff/8);
-		matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
-		matMulRotYX(matViewAI,hitOff*15.f,hitOff*-55.f);
-	break;
-
-	case animationEmpty:
-		hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,0.5f);
-		matTranslation(matViewAI,ix,player->yoff+iy,iz + hitOff*0.1f);
-		matMulRotYX(matViewAI,hitOff*3.f,hitOff*9.f);
-	break;
-
-	case animationEat:
-		hitOff = animationInterpolation(player->animationTicksLeft,player->animationTicksMax,1.f)*3.f;
-		if(hitOff < 1.f){
-			matTranslation(matViewAI,ix-hitOff*1.4,player->yoff+iy+sinf(hitOff*PI)*0.6f,iz + hitOff*0.3f - sinf(hitOff*PI)*0.7f);
-			matMulRotYX(matViewAI,hitOff*20.f,hitOff*40.f);
-		}else if(hitOff < 2.f){
-			hitOff = hitOff-1.f;
-			matTranslation(matViewAI,ix-1.4f - sinf((hitOff-1)*PI)* 0.2f,player->yoff+iy-hitOff*0.2f,iz + 0.3f);
-			matMulRotYX(matViewAI,hitOff*60.f+20.f,hitOff*120.f+40.f);
-			matMulScale(matViewAI, 1.f-hitOff, 1.f-hitOff, 1.f-hitOff);
-		}else if(hitOff < 3.f){
-			hitOff = hitOff-2.f;
-			matTranslation(matViewAI,ix,player->yoff+iy-(1.f-hitOff)*2.f,iz);
-			matMulRotYX(matViewAI,(1.f-hitOff)*3.f,(1.f-hitOff)*9.f);
-		}
-	break;
-
-	case animationSwitch:
-		hitOff = (float)player->animationTicksLeft / (float)player->animationTicksMax;
-		y = iy+player->yoff-hitOff;
-		matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
-		matMulRotYX(matViewAI,hitOff*30.f,hitOff*-70.f);
-	break;
-	};
-	matMul(matViewAI, matViewAI, matProjection);
-	shaderMatrix(sMesh, matViewAI);
-	meshDraw(aiMesh);
-}
-
-void drawActiveGlider(){
-	if(player == NULL){return;}
-	static u64 ticks = 0;
-	float matViewAI[16];
-	if(player->gliderFade < 0.01f){return;}
-
-	const float shake = MINMAX(0.f,0.2f,player->shake);
-	float deg  = ((float)++ticks*0.4f);
-	float yoff = fabsf(cosf(deg * 2.1f) * shake);
-	float xoff = fabsf(sinf(deg * 1.3f) * shake);
-
-	float breath = sinf((float)(player->breathing-256)/512.f)*3.f;
-
-	shaderBind(sMesh);
-	matTranslation(matViewAI,0.f,player->yoff*0.35f+0.9f,-0.65f);
-	matMulRotYX(matViewAI,0.f+xoff,player->rot.pitch*-0.08f + yoff + breath*0.01f);
-	matMulScale(matViewAI,player->gliderFade, player->gliderFade, player->gliderFade);
-	matMul(matViewAI, matViewAI, matProjection);
-	shaderMatrix(sMesh, matViewAI);
-	meshDraw(meshGlider);
-}
-
 void drawAmmunition(){
 	if(player == NULL){return;}
 	item *activeItem = &player->inventory[player->activeItem];
@@ -722,10 +623,6 @@ void drawHud(){
 
 void renderUI(){
 	gfxGroupStart("UI");
-	if(!optionThirdPerson){
-		drawActiveItem();
-		drawActiveGlider();
-	}
 
 	glDisable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
