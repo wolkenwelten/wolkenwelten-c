@@ -47,6 +47,11 @@
 #include <string.h>
 
 chungus *world[256][128][256];
+#if defined(__x86_64__) || defined(__APPLE__)
+#define GENERATOR_QUEUE_SIZE 24
+#else
+#define GENERATOR_QUEUE_SIZE 16
+#endif
 
 void worldInit(){
 	chungusInit();
@@ -208,11 +213,7 @@ static int queueEntryAdd(queueEntry *q, int len, int size, float priority, chunk
 }
 
 void worldQueueGenerate(const queueEntry *drawQueue, int drawQueueLen){
-	#if defined(__x86_64__) || defined(__APPLE__)
-	queueEntry generatorQueue[24];
-	#else
-	queueEntry generatorQueue[16];
-	#endif
+	queueEntry generatorQueue[GENERATOR_QUEUE_SIZE];
 	int generatorQueueLen = 0;
 
 	for(int i=0;i<drawQueueLen;i++){

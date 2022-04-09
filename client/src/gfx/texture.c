@@ -92,8 +92,7 @@ static void textureLoad(texture *t, const u8 *data, const uint dataLen){
 }
 
 static void textureGetTile(texture *t, u8 *pixels, u8 *pbuf, int iw, int tx, int ty){
-	for(uint y = 0; y < t->h; y++){
-		//u8 *p = &pixels[(y+ty) * t->h * iw + (tx * t->w) * 4];
+	for(int y = t->h-1; y >= 0; y--){
 		u8 *p = &pixels[((ty*t->h)*iw*4)+(tx*t->w*4)+(y*iw*4)];
 		memcpy(pbuf,p,t->w*4);
 		pbuf += t->w*4;
