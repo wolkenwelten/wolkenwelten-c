@@ -174,9 +174,9 @@ int getClientByCharacter(const character *c);
 static void throwableUpdate(throwable *t){
 	if(t->ent == NULL){return;}
 	entityUpdate(t->ent);
-	if((t->flags & THROWABLE_PIERCE) && (t->ent->flags & ENTITY_COLLIDE)){
+	if(!(t->ent->flags & ENTITY_NOCLIP) && (t->flags & THROWABLE_PIERCE) && (t->ent->flags & ENTITY_COLLIDE)){
 		vec retPos;
-		const u8 b = entityCollisionBlock(t->ent->pos,&retPos);
+		const u8 b = entityCollisionBlock(t->ent->pos, &retPos);
 		const blockCategory cat = blockTypeGetCat(b);
 		if(cat != STONE){
 			t->ent->flags |= ENTITY_NOCLIP;

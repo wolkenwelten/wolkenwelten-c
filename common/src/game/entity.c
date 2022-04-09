@@ -79,12 +79,12 @@ u32 entityCollision(const vec c){
 
 u8 entityCollisionBlock(const vec c, vec *retPos){
 	blockId b;
-	if((b = worldGetB(c.x-0.3f,c.y     ,c.z     ))){*retPos = vecNew(c.x-0.3f,c.y,c.z); return b;}
-	if((b = worldGetB(c.x+0.3f,c.y     ,c.z     ))){*retPos = vecNew(c.x+0.3f,c.y,c.z); return b;}
-	if((b = worldGetB(c.x     ,c.y     ,c.z-0.3f))){*retPos = vecNew(c.x,c.y,c.z-0.3f); return b;}
-	if((b = worldGetB(c.x     ,c.y     ,c.z+0.3f))){*retPos = vecNew(c.x,c.y,c.z+0.3f); return b;}
-	if((b = worldGetB(c.x     ,c.y+0.5f,c.z     ))){*retPos = vecNew(c.x,c.y+0.5f,c.z); return b;}
-	if((b = worldGetB(c.x     ,c.y-0.5f,c.z     ))){*retPos = vecNew(c.x,c.y-0.5f,c.z); return b;}
+	if((b = worldGetB(c.x-0.3f,c.y     ,c.z     ))){*retPos = vecNew(c.x-0.3f,c.y     ,c.z     ); return b;}
+	if((b = worldGetB(c.x+0.3f,c.y     ,c.z     ))){*retPos = vecNew(c.x+0.3f,c.y     ,c.z     ); return b;}
+	if((b = worldGetB(c.x     ,c.y     ,c.z-0.3f))){*retPos = vecNew(c.x     ,c.y     ,c.z-0.3f); return b;}
+	if((b = worldGetB(c.x     ,c.y     ,c.z+0.3f))){*retPos = vecNew(c.x     ,c.y     ,c.z+0.3f); return b;}
+	if((b = worldGetB(c.x     ,c.y+0.5f,c.z     ))){*retPos = vecNew(c.x     ,c.y+0.5f,c.z     ); return b;}
+	if((b = worldGetB(c.x     ,c.y-0.5f,c.z     ))){*retPos = vecNew(c.x     ,c.y-0.5f,c.z     ); return b;}
 	return 0;
 }
 

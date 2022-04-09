@@ -21,6 +21,7 @@
 #include "../misc/options.h"
 #include "../game/animal.h"
 #include "../game/character/character.h"
+#include "../game/character/draw.h"
 #include "../game/character/hook.h"
 #include "../game/character/network.h"
 #include "../game/entity.h"
@@ -311,7 +312,9 @@ void drawHealthbar(){
 void drawPlayerOverlay(uint i){
 	const character *c = characterGetPlayer(i);
 	if(c == NULL){return;}
-	vec p = c->screenPos;
+	float mvp[16];
+	characterCalcMVP(c, mvp);
+	vec p = matMulVec(mvp,vecNew(0,0.5f,0));
 	if(p.z < 0){return;}
 	p.x = ((p.x / p.z)+1.f)/2.f * screenWidth;
 	p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;

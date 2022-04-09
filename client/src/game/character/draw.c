@@ -161,28 +161,31 @@ static void characterActiveItemDraw(const character *c){
 	meshDraw(aiMesh);
 }
 
-void characterDraw(character *c){
+void characterCalcMVP(const character *c, float out[16]){
+	const float breath = sinf((float)c->breathing/512.f) * 6.f;
+	matMov(out, matView);
+	matMulTrans(out, c->pos.x, c->pos.y+c->yoff+breath/128.f, c->pos.z);
+	matMulRotYX(out, -c->rot.yaw, -c->rot.pitch/6.f + breath);
+	matMul(out, out,matProjection);
+}
+
+void characterDraw(const character *c){
 	if(c == NULL)       {return;}
 	if(c->eMesh == NULL){return;}
 	if((c == player) && (!optionThirdPerson)){return;}
 	shadowAdd(c->pos,0.75f);
 
-	const float breath = sinf((float)c->breathing/512.f)*6.f;
 	const float brightness = lightAtPos(c->pos);
 	if(c->effectValue){
-		const float effectMult = 1.f - (--c->effectValue / 31.f);
+		const float effectMult = 1.f - (c->effectValue / 31.f);
 		const float lowBrightness = brightness * effectMult * effectMult;
 		shaderColor(sMesh, brightness, lowBrightness, lowBrightness, 1.f);
 	}else{
 		shaderColorSimple(sMesh, brightness);
 	}
-	matMov(matMVP,matView);
-	matMulTrans(matMVP,c->pos.x,c->pos.y+c->yoff+breath/128.f,c->pos.z);
-	matMulRotYX(matMVP,-c->rot.yaw,-c->rot.pitch/6.f + breath);
-	matMul(matMVP,matMVP,matProjection);
+	characterCalcMVP(c, matMVP);
 	shaderMatrix(sMesh,matMVP);
 	meshDraw(c->eMesh);
-	c->screenPos = matMulVec(matMVP,vecNew(0,0.5f,0));
 	shaderColorSimple(sMesh, brightness);
 
 	characterActiveItemDraw(c);
@@ -214,4 +217,111 @@ void characterDrawConsHighlight(const character *c){
 		const float a = 0.5f + cosf((++counter&0x7F)/128.f*PI*2)*0.15f;
 		blockTypeDraw(I_Marble_Block, vecNew(los.x+0.5f,los.y+0.5f,los.z+0.5f),a,-4);
 	}
+}
+
+void characterDrawActiveItemFirstPerson(const character *c){
+	if(c == NULL){return;}
+	float matViewAI[16];
+	const item *activeItem = &c->inventory[c->activeItem];
+	if(activeItem == NULL){return;}
+	if(itemIsEmpty(activeItem)){return;}
+
+	mesh *aiMesh = itemGetMesh(activeItem);
+	if(aiMesh == NULL){return;}
+
+	const float afx = (c->flags & CHAR_THROW_AIM) ? 1.3f : 1.f;
+	const float ix =  (1.5f * afx);
+	float iy = -1.2f;
+	const float iz = -1.5f;
+	float hitOff,y;
+
+	if(!(c->flags & CHAR_FALLING)){
+		iy += sinf((float)(c->breathing-96)/512.f)*0.05f;
+	}
+
+	switch(c->animationIndex){
+	case animationHit:
+		hitOff = animationInterpolation(c->animationTicksLeft, c->animationTicksMax,0.3f);
+		y = iy+c->yoff-(hitOff/8);
+		matTranslation(matViewAI,ix-hitOff*1.2f,y+(hitOff/3),iz - hitOff*1.1f);
+		matMulRotYX(matViewAI,hitOff*10.f,hitOff*-35.f);
+	break;
+
+	case animationFire:
+		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
+		matTranslation(matViewAI,ix,c->yoff+iy,iz + hitOff);
+		matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
+	break;
+
+	case animationReload:
+		hitOff = animationInterpolationSustain(c->animationTicksLeft,c->animationTicksMax,0.3f,0.5f);
+		y = iy+c->yoff-(hitOff/8);
+		matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
+		matMulRotYX(matViewAI,hitOff*15.f,hitOff*-55.f);
+	break;
+
+	case animationEmpty:
+		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
+		matTranslation(matViewAI,ix,c->yoff+iy,iz + hitOff*0.1f);
+		matMulRotYX(matViewAI,hitOff*3.f,hitOff*9.f);
+	break;
+
+	case animationEat:
+		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,1.f)*3.f;
+		if(hitOff < 1.f){
+			matTranslation(matViewAI,ix-hitOff*1.4,c->yoff+iy+sinf(hitOff*PI)*0.6f,iz + hitOff*0.3f - sinf(hitOff*PI)*0.7f);
+			matMulRotYX(matViewAI,hitOff*20.f,hitOff*40.f);
+		}else if(hitOff < 2.f){
+			hitOff = hitOff-1.f;
+			matTranslation(matViewAI,ix-1.4f - sinf((hitOff-1)*PI)* 0.2f,c->yoff+iy-hitOff*0.2f,iz + 0.3f);
+			matMulRotYX(matViewAI,hitOff*60.f+20.f,hitOff*120.f+40.f);
+			matMulScale(matViewAI, 1.f-hitOff, 1.f-hitOff, 1.f-hitOff);
+		}else if(hitOff < 3.f){
+			hitOff = hitOff-2.f;
+			matTranslation(matViewAI,ix,c->yoff+iy-(1.f-hitOff)*2.f,iz);
+			matMulRotYX(matViewAI,(1.f-hitOff)*3.f,(1.f-hitOff)*9.f);
+		}
+	break;
+
+	case animationSwitch:
+		hitOff = (float)c->animationTicksLeft / (float)c->animationTicksMax;
+		y = iy+c->yoff-hitOff;
+		matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
+		matMulRotYX(matViewAI,hitOff*30.f,hitOff*-70.f);
+	break;
+	};
+	matMul(matViewAI, matViewAI, matProjection);
+	shaderMatrix(sMesh, matViewAI);
+	meshDraw(aiMesh);
+}
+
+
+static void characterDrawGliderFirstPerson(const character *c){
+	if(c == NULL){return;}
+	static u64 ticks = 0;
+	float matViewAI[16];
+	if(c->gliderFade < 0.01f){return;}
+
+	const float shake = MINMAX(0.f, 0.2f, c->shake);
+	float deg  = ((float)++ticks*0.4f);
+	float yoff = fabsf(cosf(deg * 2.1f) * shake);
+	float xoff = fabsf(sinf(deg * 1.3f) * shake);
+
+	float breath = sinf((float)(c->breathing-256)/512.f)*3.f;
+
+	matTranslation(matViewAI, 0.f, c->yoff * 0.35f + 0.9f, -0.65f);
+	matMulRotYX(matViewAI, 0.f+xoff, c->rot. pitch * -0.08f + yoff + breath * 0.01f);
+	matMulScale(matViewAI, c->gliderFade, c->gliderFade, c->gliderFade);
+	matMul(matViewAI, matViewAI, matProjection);
+	shaderMatrix(sMesh, matViewAI);
+	meshDraw(meshGlider);
+}
+
+void characterDrawFirstPerson(const character *c){
+	const float brightness = lightAtPos(c->pos);
+	shaderBind(sMesh);
+	shaderColorSimple(sMesh, brightness);
+
+	characterDrawGliderFirstPerson(c);
+	characterDrawActiveItemFirstPerson(c);
 }

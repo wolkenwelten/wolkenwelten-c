@@ -167,7 +167,7 @@ typedef enum animType {
 #define CHAR_EQ_PACK       2
 
 typedef struct {
-	 vec  pos,vel,gvel,controls,rot,screenPos;
+	 vec  pos,vel,gvel,controls,rot;
 	float yoff,shake,inaccuracy;
 	float gyoff;
 
