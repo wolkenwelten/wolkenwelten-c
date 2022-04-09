@@ -89,9 +89,9 @@ void lightBlurXPortable(u8 out[48][48][48]){
 
 static void lightBlur(u8 buf[48][48][48]){
 	PROFILE_START();
-	lightBlurZPortable(buf);
-	lightBlurXPortable(buf);
-	lightBlurYPortable(buf);
+	lightBlurZ(buf);
+	lightBlurX(buf);
+	lightBlurY(buf);
 	PROFILE_STOP();
 }
 
