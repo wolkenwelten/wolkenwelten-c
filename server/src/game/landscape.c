@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "landscape.h"
 
 #include "weather/weather.h"
@@ -100,7 +99,7 @@ static void landscapeUpdateChunk(chunk *c, const chungus *chng){
 			if(chng->grassBlock != I_Grass){
 				if(chng->grassBlock == I_Dry_Grass){
 					if(!fluidLevel && (rngValA(15) == 0)){
-						worldSetB(c->x+x,c->y+y,c->z+z,chng->grassBlock);
+						worldSetB(c->x+x,c->y+y,c->z+z,I_Date);
 					}
 				}
 			}
@@ -113,7 +112,9 @@ static void landscapeUpdateChunk(chunk *c, const chungus *chng){
 					}
 				}
 			}else{
-				if((fluidLevel) && (rngValA(15) == 0)){worldSetB(c->x+x,c->y+y,c->z+z,I_Flower);}
+				if((fluidLevel) && (rngValA(15) == 0)){
+					worldSetB(c->x+x,c->y+y,c->z+z,I_Flower);
+				}
 			}
 			break;
 		case I_Snow_Grass:
