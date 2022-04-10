@@ -55,7 +55,7 @@ typedef uint32_t vertexPacked;
 	((light) << VERTEX_PACKED_LIGHT_OFFSET))
 
 typedef struct queueEntry queueEntry;
-typedef struct chunkvertbuf chunkvertbuf;
+typedef struct blockMesh blockMesh;
 
 typedef struct {
 	vertex2D *dataBuffer;

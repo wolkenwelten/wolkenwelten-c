@@ -19,9 +19,9 @@
 #include "../../../../common/src/misc/profiling.h"
 #include "../../../../common/src/misc/side.h"
 #include "../../game/light.h"
+#include "../../gfx/blockMesh.h"
 #include "../bigchungus.h"
 #include "../chunk.h"
-#include "../chunkvertbuf.h"
 #include "shared.h"
 
 #include <string.h>
@@ -483,7 +483,7 @@ void chunkGenBlockMesh(chunk *c){
 		c->fadeIn = FADE_IN_FRAMES;
 	}
 	/* Then send the buffer to the GPU. */
-	c->blockVertbuf = chunkvertbufBlockUpdate(c->blockVertbuf, blockMeshBuffer, blockMeshSideCounts);
+	c->blockVertbuf = blockMeshUpdate(c->blockVertbuf, blockMeshBuffer, blockMeshSideCounts);
 	/* And remove the dirty flag so that we don't generate the chunk again
 	 | until that flag has been removed by a change to the underlying
 	 | blockData.

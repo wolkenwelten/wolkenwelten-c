@@ -17,8 +17,8 @@
 #include "fluid.h"
 #include "../../../../common/src/misc/profiling.h"
 #include "../../../../common/src/misc/side.h"
+#include "../../gfx/blockMesh.h"
 #include "../../game/light.h"
-#include "../chunkvertbuf.h"
 #include "../chunk.h"
 #include "../bigchungus.h"
 #include "block.h"
@@ -341,7 +341,7 @@ void chunkGenFluidMesh(chunk *c){
 	meshSideCounts[sideRight] = vp - lvp;
 
 	c->flags &= ~CHUNK_FLAG_FLUID_DIRTY;
-	c->fluidVertbuf = chunkvertbufFluidUpdate(c->fluidVertbuf, fluidMeshBuffer, meshSideCounts);
+	c->fluidVertbuf = blockMeshFluidUpdate(c->fluidVertbuf, fluidMeshBuffer, meshSideCounts);
 	c->framesSkipped = 0;
 
 	PROFILE_STOP();

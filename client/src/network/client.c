@@ -71,11 +71,11 @@ pid_t singlePlayerPID = 0;
 bool goodbyeSent = false;
 
 #ifdef __EMSCRIPTEN__
-#include "client_wasm.h"
+#include "platform_specific/client_wasm.h"
 #elif defined __MINGW32__
-#include "client_win.h"
+#include "platform_specific/client_win.h"
 #else
-#include "client_bsd.h"
+#include "platform_specific/client_bsd.h"
 #endif
 
 #ifdef __APPLE__

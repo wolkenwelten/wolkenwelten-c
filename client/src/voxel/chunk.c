@@ -18,6 +18,7 @@
 
 #include "../main.h"
 #include "../game/blockType.h"
+#include "../gfx/blockMesh.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gl.h"
@@ -28,7 +29,6 @@
 #include "../gfx/texture.h"
 #include "../sdl/sdl.h"
 #include "../voxel/bigchungus.h"
-#include "../voxel/chunkvertbuf.h"
 #include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
@@ -49,7 +49,7 @@ u64 chunksDirtied = 0;
 u64 chunksCopied = 0;
 
 void chunkInit(){
-	chunkvertbufInit();
+	blockMeshInit();
 }
 
 bool chunkInFrustum(const chunk *c){
@@ -59,7 +59,7 @@ bool chunkInFrustum(const chunk *c){
 
 void chunkFree(chunk *c){
 	if(c == NULL){return;}
-	chunkvertbufFree(c);
+	blockMeshFree(c);
 	if(c->fluid){
 		chunkOverlayFree(c->fluid);
 		c->fluid = NULL;
@@ -140,7 +140,7 @@ static void chunkBlockDraw(chunk *c, float d, sideMask mask){
 		shaderAlpha(sBlockMesh,1.f * fIn);
 	}
 	shaderTransform(sBlockMesh,c->x-subBlockViewOffset.x,c->y-subBlockViewOffset.y,c->z-subBlockViewOffset.z);
-	chunkvertbufDrawOne(mask, c->blockVertbuf);
+	blockMeshDrawOne(mask, c->blockVertbuf);
 }
 
 void chunkDrawBlockQueue(const queueEntry *queue, int queueLen){
@@ -165,7 +165,7 @@ static void chunkFluidDraw(chunk *c, float d, sideMask mask){
 		shaderAlpha(sFluidMesh,fadeIn);
 	}
 	shaderTransform(sFluidMesh,c->x-subBlockViewOffset.x,c->y-subBlockViewOffset.y,c->z-subBlockViewOffset.z);
-	chunkvertbufDrawOne(mask, c->fluidVertbuf);
+	blockMeshDrawOne(mask, c->fluidVertbuf);
 }
 
 void chunkDrawFluidQueue(const queueEntry *queue, int queueLen){

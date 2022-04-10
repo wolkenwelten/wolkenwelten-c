@@ -29,6 +29,7 @@
 #include "../game/weather/weather.h"
 #include "../sdl/sdl.h"
 #include "../gfx/boundaries.h"
+#include "../gfx/blockMesh.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gl.h"
 #include "../gfx/mesh.h"
@@ -58,7 +59,6 @@
 #include "../tmp/objs.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
-#include "../voxel/chunkvertbuf.h"
 #include "../voxel/meshgen/shared.h"
 #include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/game/hook.h"
@@ -518,7 +518,7 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"Chunks gener: %i\n",chunkGetGeneratedThisFrame());
 		textMeshPrintf(guim,"Snow Power  : %i\n",snowIntensity);
 		textMeshPrintf(guim,"Storm Power : %i [%i]\n",stormIntensity, stormDelta);
-		textMeshPrintf(guim,"ChunkVert   : %uK\n",chunkvertbufUsedBytes()/1024);
+		textMeshPrintf(guim,"ChunkVert   : %uK\n",blockMeshUsedBytes()/1024);
 		textMeshPrintf(guim,"ActiveChungi: %i\n",chungusGetActiveCount());
 		textMeshPrintf(guim,"ChnkOverlays: %u [Free:%u]\n", chunkOverlayAllocated, chunkOverlayAllocated - chunkOverlayUsed);
 		textMeshPrintf(guim,"GarbageRuns : %u\n",lGCRuns);

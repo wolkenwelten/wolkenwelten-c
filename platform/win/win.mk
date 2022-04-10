@@ -53,3 +53,6 @@ releases/win/wolkenwelten.res: platform/win/wolkenwelten.rc platform/win/icon.ic
 	@mkdir -p $(WIN_RELDIR)
 	@windres $< -O coff -o $@
 	@echo "$(ANSI_BG_YELLOW)" "[WIN]" "$(ANSI_RESET)" $@
+
+
+client/src/network/client.o: client/src/network/platform_specific/client_win.h

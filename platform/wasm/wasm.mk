@@ -45,3 +45,5 @@ releases/wasm/server.js: $(SERVER_WASM_OBJS) $(COMMON_WASM_OBJS) $(NUJEL_WASM_OB
 releases/wasm/manifest.json: platform/wasm/manifest.json
 	@mkdir -p releases/wasm/
 	cp -f $< $@
+
+client/src/network/client.wo: client/src/network/platform_specific/client_wasm.h

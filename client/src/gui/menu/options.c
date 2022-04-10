@@ -23,8 +23,8 @@
 #include "../widget.h"
 #include "../../misc/options.h"
 #include "../../main.h"
+#include "../../gfx/blockMesh.h"
 #include "../../gfx/gfx.h"
-#include "../../voxel/chunkvertbuf.h"
 #include "../../../../common/src/cto.h"
 #include "../../../../common/src/misc/misc.h"
 

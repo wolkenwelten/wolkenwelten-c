@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "../voxel/chunkvertbuf.h"
+#include "blockMesh.h"
 
 #include "../gfx/gfx.h"
 #include "../gfx/gl.h"
@@ -27,17 +27,17 @@
 
 #define FADE_IN_FRAMES 48
 
-#define CHUNKVERTBUF_FLAG_USED 1
-struct chunkvertbuf {
+#define BLOCKMESH_FLAG_USED 1
+struct blockMesh {
 	union {
 		struct {
-			uint vao,vbo;
+			uint vao, vbo;
 		};
-		chunkvertbuf *nextFree;
+		blockMesh *nextFree;
 	};
 	u16 vboSize; // size of vbo in vertices
 	u8 flags;
-	u16 sideIdxStart[sideMAX],sideIdxCount[sideMAX]; // offset and count of side indices within the (sub)buffer
+	u16 sideIdxStart[sideMAX], sideIdxCount[sideMAX]; // offset and count of side indices within the (sub)buffer
 	u16 idxCount; // total number of indices, used when all sides are drawn
 };
 
@@ -47,7 +47,7 @@ static GLuint indexBuffer;
 
 #define CUBE_FACES 6
 #define INDICES_PER_FACE 6
-void chunkvertbufInit(){
+void blockMeshInit(){
 	allocatedGlBufferBytes = 0;
 	glGenBuffers(1, &indexBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -69,35 +69,35 @@ void chunkvertbufInit(){
 	free(indicesRaw);
 }
 
-u32 chunkvertbufUsedBytes(){
+u32 blockMeshUsedBytes(){
 	return allocatedGlBufferBytes;
 }
 
-#define CHUNKVERTBUF_ALLOC_PAGE_SIZE (1<<21) // 2MB == Huge Page on most μArchs
-chunkvertbuf *chunkvertbufFirstFree = NULL;
+#define BLOCKMESH_ALLOC_PAGE_SIZE (1<<21) // 2MB == Huge Page on most μArchs
+blockMesh *blockMeshFirstFree = NULL;
 
 static void chunkverbufAllocPage(){
-	const int count = CHUNKVERTBUF_ALLOC_PAGE_SIZE / sizeof(chunkvertbuf);
-	chunkvertbuf *page = malloc(CHUNKVERTBUF_ALLOC_PAGE_SIZE);
+	const int count = BLOCKMESH_ALLOC_PAGE_SIZE / sizeof(blockMesh);
+	blockMesh *page = malloc(BLOCKMESH_ALLOC_PAGE_SIZE);
 	if(page == NULL){
-		fprintf(stderr,"chunkvertbufAllocPage OOM\n");
+		fprintf(stderr,"blockMeshAllocPage OOM\n");
 		exit(5);
 	}
 	for(int i=0;i<count;i++){
-		page[i].nextFree = chunkvertbufFirstFree;
-		chunkvertbufFirstFree = &page[i];
+		page[i].nextFree = blockMeshFirstFree;
+		blockMeshFirstFree = &page[i];
 	}
 }
 
-static chunkvertbuf *chunkvertbufAlloc(){
-	if(chunkvertbufFirstFree == NULL){chunkverbufAllocPage();}
-	chunkvertbuf *ret = chunkvertbufFirstFree;
-	chunkvertbufFirstFree = chunkvertbufFirstFree->nextFree;
-	memset(ret,0,sizeof(chunkvertbuf));
+static blockMesh *blockMeshAlloc(){
+	if(blockMeshFirstFree == NULL){chunkverbufAllocPage();}
+	blockMesh *ret = blockMeshFirstFree;
+	blockMeshFirstFree = blockMeshFirstFree->nextFree;
+	memset(ret,0,sizeof(blockMesh));
 	return ret;
 }
 
-static void chunkvertbufFreeSingle(chunkvertbuf *v){
+static void blockMeshFreeSingle(blockMesh *v){
 	if(v == NULL){return;}
 	if(v->vbo){
 		const u32 vertexSize = sizeof(vertexPacked);
@@ -106,22 +106,22 @@ static void chunkvertbufFreeSingle(chunkvertbuf *v){
 	}
 	if(v->vao){glDeleteVertexArrays(1,&v->vao);}
 
-	v->nextFree = chunkvertbufFirstFree;
-	chunkvertbufFirstFree = v;
+	v->nextFree = blockMeshFirstFree;
+	blockMeshFirstFree = v;
 }
 
-void chunkvertbufFree(chunk *c){
-	chunkvertbufFreeSingle(c->blockVertbuf);
-	chunkvertbufFreeSingle(c->fluidVertbuf);
+void blockMeshFree(chunk *c){
+	blockMeshFreeSingle(c->blockVertbuf);
+	blockMeshFreeSingle(c->fluidVertbuf);
 	c->blockVertbuf = NULL;
 	c->fluidVertbuf = NULL;
 }
 
 #define VTX_TO_IDX_COUNT(x) ((x*3)>>1)
-chunkvertbuf *chunkvertbufBlockUpdate(chunkvertbuf *v, vertexPacked *vertices, u16 sideVtxCounts[sideMAX]){
+blockMesh *blockMeshUpdate(blockMesh *v, vertexPacked *vertices, u16 sideVtxCounts[sideMAX]){
 	if(v == NULL){
-		v = chunkvertbufAlloc();
-		v->flags |= CHUNKVERTBUF_FLAG_USED;
+		v = blockMeshAlloc();
+		v->flags |= BLOCKMESH_FLAG_USED;
 	}
 
 	// Compute where the geometry for each side starts and how long it is
@@ -167,10 +167,10 @@ chunkvertbuf *chunkvertbufBlockUpdate(chunkvertbuf *v, vertexPacked *vertices, u
 	return v;
 }
 
-chunkvertbuf *chunkvertbufFluidUpdate(chunkvertbuf *v, vertexFluid *vertices, u16 sideVtxCounts[sideMAX]){
+blockMesh *blockMeshFluidUpdate(blockMesh *v, vertexFluid *vertices, u16 sideVtxCounts[sideMAX]){
 	if(v == NULL){
-		v = chunkvertbufAlloc();
-		v->flags |= CHUNKVERTBUF_FLAG_USED;
+		v = blockMeshAlloc();
+		v->flags |= BLOCKMESH_FLAG_USED;
 	}
 
 	// Compute where the geometry for each side starts and how long it is
@@ -221,7 +221,7 @@ chunkvertbuf *chunkvertbufFluidUpdate(chunkvertbuf *v, vertexFluid *vertices, u1
 	return v;
 }
 
-void chunkvertbufDrawOne(sideMask mask, chunkvertbuf *v){
+void blockMeshDrawOne(sideMask mask, blockMesh *v){
 	if(!v || (v->vao == 0) || (v->idxCount == 0)){return;}
 
 	glBindVertexArray(v->vao);

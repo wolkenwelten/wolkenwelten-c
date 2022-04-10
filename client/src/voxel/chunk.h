@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/side.h"
-#include "chunkvertbuf.h"
+#include "../gfx/blockMesh.h"
 
 extern u64 chunksDirtied;
 extern u64 chunksCopied;
@@ -20,7 +20,7 @@ struct chunk {
 
 	beingList bl;
 
-	chunkvertbuf *blockVertbuf, *fluidVertbuf;
+	blockMesh *blockVertbuf, *fluidVertbuf;
 	chunkOverlay *fluid, *block, *flame, *light;
 };
 

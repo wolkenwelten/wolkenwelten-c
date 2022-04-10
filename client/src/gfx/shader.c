@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../gfx/shader.h"
-#include "../gfx/gl.h"
-#include "../voxel/chunkvertbuf.h"
+#include "shader.h"
+#include "gl.h"
+#include "blockMesh.h"
 
 #include <stdio.h>
 #include <stdlib.h>

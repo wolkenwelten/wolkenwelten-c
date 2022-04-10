@@ -156,5 +156,4 @@ runq: all
 	./wolkenwelten -noSave -soundVolume=0  -debugInfo=1 -serverName=localhost -playerName=NumberThree -windowOrientation=bl -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
 	./wolkenwelten -noSave -soundVolume=10 -debugInfo=1 -serverName=localhost -playerName=NumberFour  -windowOrientation=br -windowWidth=$(WINDOW_WIDTH) -windowHeight=$(WINDOW_HEIGHT) &
 
-client/src/network/client.o: client/src/network/client_win.h
-client/src/network/client.o: client/src/network/client_bsd.h
+client/src/network/client.o: client/src/network/platform_specific/client_bsd.h
