@@ -95,7 +95,12 @@ void blockMiningMineBlock(int x, int y, int z, u8 cause){
 
 void blockMiningBurnBlock(int x, int y, int z, blockId b){
 	msgMineBlock(x,y,z,b,1);
-	worldSetB(x,y,z,0);
+	if(b == 0){return;}
+	if((b == I_Grass) || (b == I_Dry_Grass) || (b == I_Roots) || (b == I_Snow_Grass)){
+		worldSetB(x,y,z,I_Dirt);
+	}else{
+		worldSetB(x,y,z,0);
+	}
 }
 
 static void blockMiningDel(int i){

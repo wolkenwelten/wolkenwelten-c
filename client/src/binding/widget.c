@@ -22,17 +22,11 @@
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
 #include "../misc/lisp.h"
-#include "../sdl/sdl.h"
 #include "../gfx/gfx.h"
-#include "../gfx/textMesh.h"
 
 #include "../../../common/nujel/lib/api.h"
 
 #include <limits.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <SDL.h>
 
 widget *castToWidget(lVal *v){
 	if(v == NULL){return NULL;}
