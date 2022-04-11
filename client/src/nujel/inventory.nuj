@@ -30,17 +30,22 @@
                                [widget/val/int! inventory/selection]]]
   [inventory/refresh]]
 
+[defun inventory/select! [sel]
+       "Selects the next item from a players inventory"
+       [set! inventory/selection sel]
+       [when [> inventory/selection 31]
+             [set! inventory/selection 1]]
+       [when [< inventory/selection 1]
+             [set! inventory/selection 31]]
+       [inventory/refresh]]
+
 [defun inventory/select-next! []
        "Selects the next item from a players inventory"
-       [when [> [++ inventory/selection] 31]
-             [set! inventory/selection 1]]
-       [inventory/refresh]]
+       [inventory/select! [+ inventory/selection 1]]]
 
 [defun inventory/select-prev! []
        "Selects the previous item from a players inventory"
-       [when [< [-- inventory/selection] 1]
-             [set! inventory/selection 31]]
-       [inventory/refresh]]
+       [inventory/select! [- inventory/selection 1]]]
 
 
 [event-bind on-join :inventory inventory/w/init!]

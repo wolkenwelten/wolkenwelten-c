@@ -143,12 +143,9 @@
 
 [defun inv-active-kh [code value]
         "Sets the players active item depending on the keycode passed"
-
         [when value
-              [player-active-slot! [- code 30]]
-              [stop-anim]
-        ]
-]
+              [inventory/select! [+ 1 [- code 30]]]
+              [stop-anim]]]
 
 [array/set! input-keyboard-handler key-1 inv-active-kh]
 [array/set! input-keyboard-handler key-2 inv-active-kh]
