@@ -83,7 +83,7 @@
        "Toggle the chat visibility"
        [chat-open! [not [chat-open]]]]
 
-[defun keyboard-once [fun]
+[defun keyboard/once [fun]
         "Run FUN only once per keypress"
         [λ [code value]
            [if [zero? value]
@@ -92,8 +92,8 @@
                      [array/set! input-keyboard-state code #t]
                      [fun]]]]]
 
-[defun keyboard-once-game-active [fun]
-       [def handler [keyboard-once fun]]
+[defun keyboard/once-ingame [fun]
+       [def handler [keyboard/once fun]]
        [λ [code value]
            [if [game-active?]
                [handler code value]
@@ -113,22 +113,22 @@
 [keyboard/bind! key-v      keyboard/default]
 [keyboard/bind! key-lshift keyboard/default]
 
-[keyboard/bind! key-c     [keyboard-once-game-active [λ [] [cons-mode! [not [cons-mode?]]]]]]
-[keyboard/bind! key-e     [keyboard-once-game-active [λ [] [fire-hook]]]]
-[keyboard/bind! key-m     [keyboard-once [λ [] [println "Consing"] [debug-info! [not [debug-info?]]]]]]
-[keyboard/bind! key-n     [keyboard-once-game-active [λ [] [no-clip! [not [no-clip?]]]]]]
+[keyboard/bind! key-c     [keyboard/once-ingame [λ [] [cons-mode! [not [cons-mode?]]]]]]
+[keyboard/bind! key-e     [keyboard/once-ingame [λ [] [fire-hook]]]]
+[keyboard/bind! key-m     [keyboard/once        [λ [] [debug-info! [not [debug-info?]]]]]]
+[keyboard/bind! key-n     [keyboard/once-ingame [λ [] [no-clip! [not [no-clip?]]]]]]
 
-[keyboard/bind! key-f1    [keyboard-once [λ [] [third-person! #f] [save-options]]]]
-[keyboard/bind! key-f2    [keyboard-once [λ [] [s [debug-stuff! pid]]]]]
-[keyboard/bind! key-f3    [keyboard-once [λ [] [third-person! #t] [save-options]]]]
-[keyboard/bind! key-f4    [keyboard-once [λ [] [widget/test-gc]]]]
-[keyboard/bind! key-f8    [keyboard-once [λ [] [player-hp 12]]]]
-[keyboard/bind! key-f9    [keyboard-once [λ [] [draw-boundaries! [wrap-value [+ 1 [draw-boundaries]] 0 3]]]]]
-[keyboard/bind! key-f10   [keyboard-once [λ [] [wire-frame! [not [wire-frame?]]]]]]
-[keyboard/bind! key-print [keyboard-once [λ [] [screenshot]]]]
-[keyboard/bind! key-tab   [keyboard-once [λ [] [toggle-inventory!]]]]
-[keyboard/bind! key-t     [keyboard-once [λ [] [toggle-chat!]]]]
-[keyboard/bind! key-y     [keyboard-once [λ [] [toggle-chat!]]]]
+[keyboard/bind! key-f1    [keyboard/once [λ [] [third-person! #f] [save-options]]]]
+[keyboard/bind! key-f2    [keyboard/once [λ [] [s [debug-stuff! pid]]]]]
+[keyboard/bind! key-f3    [keyboard/once [λ [] [third-person! #t] [save-options]]]]
+[keyboard/bind! key-f4    [keyboard/once [λ [] [widget/test-gc]]]]
+[keyboard/bind! key-f8    [keyboard/once [λ [] [player-hp 16]]]]
+[keyboard/bind! key-f9    [keyboard/once [λ [] [draw-boundaries! [wrap-value [+ 1 [draw-boundaries]] 0 3]]]]]
+[keyboard/bind! key-f10   [keyboard/once [λ [] [wire-frame! [not [wire-frame?]]]]]]
+[keyboard/bind! key-print [keyboard/once [λ [] [screenshot]]]]
+[keyboard/bind! key-tab   [keyboard/once [λ [] [toggle-inventory!]]]]
+[keyboard/bind! key-t     [keyboard/once [λ [] [toggle-chat!]]]]
+[keyboard/bind! key-y     [keyboard/once [λ [] [toggle-chat!]]]]
 
 [when-not [== OS "Emscripten"]
           [keyboard/bind! key-f11 [λ [code value]
@@ -142,20 +142,12 @@
               [inventory/select! [+ 1 [- code 30]]]
               [stop-anim]]]
 
-[keyboard/bind! key-1 inv-active-kh]
-[keyboard/bind! key-2 inv-active-kh]
-[keyboard/bind! key-3 inv-active-kh]
-[keyboard/bind! key-4 inv-active-kh]
-[keyboard/bind! key-5 inv-active-kh]
-[keyboard/bind! key-6 inv-active-kh]
-[keyboard/bind! key-7 inv-active-kh]
-[keyboard/bind! key-8 inv-active-kh]
-[keyboard/bind! key-9 inv-active-kh]
-[keyboard/bind! key-0 inv-active-kh]
+[for [i 0 10]
+     [keyboard/bind! [resolve [str->sym [fmt "key-{i}"]]]
+                     inv-active-kh]]
 
 [defun input-keyboard-tick []
         "Keyboard input handler"
-
         [when [widget-focus-on-game?]
               [when [input-keyboard-state key-w]     [player-walk!   -1.0]]
               [when [input-keyboard-state key-s]     [player-walk!    1.0]]
@@ -168,11 +160,11 @@
               [player-boost! [input-keyboard-state key-lshift]]]]
 
 [defun input-keyboard-event [status scancode]
-     [try repl/exception-handler
-          [def handler [input-keyboard-handler scancode]]
-          [if [lambda? handler]
-              [handler scancode status]
-              #f]]]
+       [try repl/exception-handler
+            [def handler [input-keyboard-handler scancode]]
+            [if [lambda? handler]
+                [handler scancode status]
+                #f]]]
 
 [test/add #t [int? key-1]]
 [test/add #t [array? input-keyboard-handler]]

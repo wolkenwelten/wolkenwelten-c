@@ -9,6 +9,11 @@
   [widget/label! inventory/w/label [fmt "ID: {inventory/selection}"]]
   [cons-mode/block! inventory/selection]]
 
+[defun inventory/toggle! []
+       "Toggle the visibility of the inventory popup"
+       ]
+
+
 [defun inventory/w/init! []
   [set! inventory/w/panel [-> [widget/new w-panel]
                               [widget/width! 128]

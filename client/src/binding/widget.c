@@ -171,9 +171,14 @@ static lVal *wwlnfWidgetSetFlags(lClosure *c, lVal *v){
 	(void)c;
 	lVal *car = lCar(v);
 	widget *w = castToWidget(car);
-	const int nv = castToInt(lCadr(v),INT_MIN);
-	if((w == NULL) || (nv == INT_MIN)){return NULL;}
-	w->flags = nv;
+	if((car == NULL) || (car->type != ltGUIWidget)){
+		lExceptionThrowValClo("type-error", "Expected a widget", car, c);
+	}
+	lVal *cadr = lCadr(v);
+	if((cadr == NULL) || (cadr->type != ltInt)){
+		lExceptionThrowValClo("type-error", "Expected an :int", cadr, c);
+	}
+	w->flags = cadr->vInt;
 	return car;
 }
 
