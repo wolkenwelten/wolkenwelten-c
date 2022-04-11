@@ -1,14 +1,13 @@
 [def input-mouse-handler [array/allocate 6]]
 [def input-mouse-tick]
 
-[let []
+[let*
         [def input-mouse-button-left  #f]
         [def input-mouse-button-right #f]
 
         [set! input-mouse-tick [λ [] "Mouse Input handler"
                 [when input-mouse-button-left  [player-primary!]]
-                [when input-mouse-button-right [player-secondary!]]
-        ]]
+                [when input-mouse-button-right [player-secondary!]]]]
 
         [array/set! input-mouse-handler 0 [λ [code value]
                     [when [widget-focus-on-game?]
@@ -19,17 +18,12 @@
 
         [array/set! input-mouse-handler 5 [λ [code value]
                 [when [widget-focus-on-game?]
-                      [def newvalue [- [player-active-slot] [if [> value 0] 1 -1]]]
-                      [when [< newvalue 0]
-                            [set! newvalue 9]]
-                      [when [> newvalue 9]
-                            [set! newvalue 0]]
-                      [player-active-slot! newvalue]]]]
+                      [if [> value 0]
+                          [inventory/select-prev!]
+                          [inventory/select-next!]]]]]
 ]
 
 [defun input-mouse-event [status scancode]
      [def handler [input-mouse-handler scancode]]
-     [if [lambda? handler]
-         [handler scancode status]
-         #f]
-]
+     [when [lambda? handler]
+           [handler scancode status]]]

@@ -440,6 +440,12 @@ void textMeshHGradient(textMesh *m, int x, int y, int w, int h, u32 c1, u32 c2){
 	textMeshAddVert(m,x  ,y  ,u  ,v  ,c1);
 }
 
+void textMeshSprite(textMesh *m, int x, int y, int w, int h, int sprite, u32 color){
+	int u = sprite % 32;
+	int v = sprite / 32;
+	textMeshBox(m,x,y,w,h,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,color);
+}
+
 void textMeshResetFont(textMesh *m){
 	m->font = 0;
 	m->size = 1;

@@ -1,0 +1,43 @@
+[def inventory/selection 3]
+[def inventory/w/panel #nil]
+[def inventory/w/label #nil]
+[def inventory/w/sprite #nil]
+
+[defun inventory/refresh []
+  [when-not inventory/w/panel [inventory/w/init!]]
+  [widget/val/int! inventory/w/sprite inventory/selection]
+  [widget/label! inventory/w/label [fmt "ID: {inventory/selection}"]]]
+
+[defun inventory/w/init! []
+  [set! inventory/w/panel [-> [widget/new w-panel]
+                              [widget/width! 128]
+                              [widget/height! 128]
+                              [widget/val/int! 8]
+                              [widget/x! -9]
+                              [widget/y! -9]]]
+  [set! inventory/w/label [-> [widget/new w-label]
+                              [widget/parent! inventory/w/panel]
+                              [widget/width!  -1]
+                              [widget/height!  48]
+                              [widget/label! "Test"]]]
+  [set! inventory/w/sprite [-> [widget/new w-sprite]
+                               [widget/parent! inventory/w/panel]
+                               [widget/x! 26]
+                               [widget/y! 32]
+                               [widget/width!  64]
+                               [widget/height!  64]
+                               [widget/val/int! inventory/selection]]]
+  [inventory/refresh]]
+
+[defun inventory/select-next! []
+       "Selects the next item from a players inventory"
+       [when [> [++ inventory/selection] 31] [set! inventory/selection 1]]
+       [inventory/refresh]]
+
+[defun inventory/select-prev! []
+       "Selects the previous item from a players inventory"
+       [when [< [-- inventory/selection] 1] [set! inventory/selection 31]]
+       [inventory/refresh]]
+
+
+[event-bind on-join :inventory inventory/w/init!]

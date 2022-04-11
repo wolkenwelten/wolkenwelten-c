@@ -36,6 +36,7 @@ typedef enum {
 	wRadioButton,
 	wButtonDel,
 	wSlider,
+	wSprite,
 	wGameScreen,
 	wTextScroller,
 	wTextLog

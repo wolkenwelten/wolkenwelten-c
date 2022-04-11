@@ -86,7 +86,11 @@ void blockMiningMineBlock(int x, int y, int z, u8 cause){
 	const blockId b = worldGetB(x,y,z);
 	if(b == 0){return;}
 	msgMineBlock(x,y,z,b,0);
-	worldSetB(x,y,z,0);
+	if((b == I_Grass) || (b == I_Dry_Grass) || (b == I_Roots) || (b == I_Snow_Grass)){
+		worldSetB(x,y,z,I_Dirt);
+	}else{
+		worldSetB(x,y,z,0);
+	}
 }
 
 void blockMiningBurnBlock(int x, int y, int z, blockId b){

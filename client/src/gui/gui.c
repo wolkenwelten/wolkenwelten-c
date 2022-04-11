@@ -385,10 +385,14 @@ void drawAnimalDebugOverlay(const animal *e, int i){
 }
 
 static void drawHookIndicator(){
+	if(!optionDebugInfo){return;}
 	const float hookdist = characterCanHookHit(player);
 	if(hookdist < 0.f){return;}
 	//textMeshItemSprite(guim,screenWidth/2+8,screenHeight/2+8,32,I_Hook);
+	const u32 ofgc = guim->fgc;
+	guim->fgc = 0x60FFFFFF;
 	textMeshPrintfPS(guim,screenWidth/2 + 40, screenHeight/2 + 16,2,"%.1f",hookdist);
+	guim->fgc = ofgc;
 }
 
 void drawDebuginfo(){

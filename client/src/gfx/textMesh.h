@@ -26,4 +26,5 @@ void      textMeshSolidBox         (textMesh *m, int x, int y, int w, int h, u32
 void      textMeshHGradient        (textMesh *m, int x, int y, int w, int h, u32 c1, u32 c2);
 void      textMeshVGradient        (textMesh *m, int x, int y, int w, int h, u32 c1, u32 c2);
 void      textMeshSlot             (textMesh *m, int x, int y, int size, int style);
+void      textMeshSprite           (textMesh *m, int x, int y, int w, int h, int sprite, u32 color);
 void      textMeshResetFont        (textMesh *m);

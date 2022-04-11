@@ -39,6 +39,7 @@ void widgetDrawRadioButton     (const widget *wid, textMesh *m, box2D area);
 void widgetDrawButtondel       (const widget *wid, textMesh *m, box2D area);
 void widgetDrawButton          (const widget *wid, textMesh *m, box2D area);
 void widgetDrawLispLine        (textMesh *m, box2D area, int size, const char *rawLine, int lambda, int mark, int cursor);
+void widgetDrawSprite          (const widget *wid, textMesh *m, box2D area);
 void widgetDrawHorizontalRuler (const widget *wid, textMesh *m, box2D area);
 void widgetDrawPanel           (const widget *wid, textMesh *m, box2D area);
 void widgetDrawLabel           (const widget *wid, textMesh *m, box2D area);
@@ -77,6 +78,9 @@ void widgetDrawSingle(const widget *wid, textMesh *m, box2D area){
 		break;
 	case wSlider:
 		widgetDrawSlider(wid,m,area);
+		break;
+	case wSprite:
+		widgetDrawSprite(wid,m,area);
 		break;
 	case wTextScroller:
 		widgetDrawTextScroller(wid,m,area);

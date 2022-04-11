@@ -10,6 +10,7 @@
 [def did-throw #f]
 [def throw-start 0]
 
+
 [defun player-primary! []
        "Make the player do a primary action"
        [player-do-primary! input/primary-did-count]
@@ -17,7 +18,7 @@
 
 [defun player-secondary! []
        "Make the player do a secondary action"
-       [player-place-block! 3]
+       [player-place-block! inventory/selection]
        [set! input/secondary-did #t]]
 
 [defun player-tertiary! []

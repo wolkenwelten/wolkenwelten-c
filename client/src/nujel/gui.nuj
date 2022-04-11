@@ -9,13 +9,10 @@
 [def w-radio-button     8]
 [def w-button-del       9]
 [def w-slider          10]
-[def w-item            11]
-[def w-item-slot       12]
-[def w-recipe-slot     13]
-[def w-recipe-info     14]
-[def w-game-screen     15]
-[def w-text-scroller   16]
-[def w-text-log        17]
+[def w-sprite          11]
+[def w-game-screen     12]
+[def w-text-scroller   13]
+[def w-text-log        14]
 
 [def wf-hidden      #b0000_0000_0000_0001]
 [def wf-hover       #b0000_0000_0000_0010]
@@ -35,15 +32,14 @@
 
 
 [defun widget/center-x! [w]
-       [widget/x! w [- [/ [window-width] 2] [/ [widget/width w] 2]]]
-]
+  [widget/x! w [- [/ [window-width] 2] [/ [widget/width w] 2]]]]
+
 [defun widget/center-y! [w]
-       [widget/y! w [- [/ [window-height] 2] [/ [widget/height w] 2]]]
-]
+  [widget/y! w [- [/ [window-height] 2] [/ [widget/height w] 2]]]]
+
 [defun widget/center! [w]
        [widget/center-x! w]
-       [widget/center-y! w]
-]
+       [widget/center-y! w]]
 
 [defun popup [headline bodytext]
        [def panel   [widget/new w-panel]]
@@ -103,5 +99,4 @@
      [def msg ["Start: " start-count " Mid: " mid-count " End: " end-count]]
      [say [if [<= end-count start-count]
               [ansi-rainbow msg]
-              [ansi-red msg]]]
-]
+              [ansi-red msg]]]]
