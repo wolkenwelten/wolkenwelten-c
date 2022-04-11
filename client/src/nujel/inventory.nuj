@@ -6,7 +6,8 @@
 [defun inventory/refresh []
   [when-not inventory/w/panel [inventory/w/init!]]
   [widget/val/int! inventory/w/sprite inventory/selection]
-  [widget/label! inventory/w/label [fmt "ID: {inventory/selection}"]]]
+  [widget/label! inventory/w/label [fmt "ID: {inventory/selection}"]]
+  [cons-mode/block! inventory/selection]]
 
 [defun inventory/w/init! []
   [set! inventory/w/panel [-> [widget/new w-panel]
@@ -31,12 +32,14 @@
 
 [defun inventory/select-next! []
        "Selects the next item from a players inventory"
-       [when [> [++ inventory/selection] 31] [set! inventory/selection 1]]
+       [when [> [++ inventory/selection] 31]
+             [set! inventory/selection 1]]
        [inventory/refresh]]
 
 [defun inventory/select-prev! []
        "Selects the previous item from a players inventory"
-       [when [< [-- inventory/selection] 1] [set! inventory/selection 31]]
+       [when [< [-- inventory/selection] 1]
+             [set! inventory/selection 31]]
        [inventory/refresh]]
 
 

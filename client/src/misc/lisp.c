@@ -22,6 +22,7 @@
 #include "../binding/widgetGC.h"
 #include "../game/beamblast.h"
 #include "../game/character/character.h"
+#include "../game/character/draw.h"
 #include "../game/character/hook.h"
 #include "../game/fire.h"
 #include "../game/projectile.h"
@@ -558,6 +559,20 @@ static lVal *wwlnfChatOpenSet(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfConsModeBlockGet(lClosure *c, lVal *v){
+	(void)c; (void)v;
+	return lValInt(consHighlightBlock);
+}
+
+static lVal *wwlnfConsModeBlockSet(lClosure *c, lVal *v){
+	const int b = castToInt(lCar(v), -1);
+	if((b < 0) || (b > 255)){
+		lExceptionThrowValClo("type-error", "Invalid type/range provided, block-type has to be in the range 0-255", lCar(v), c);
+	}
+	consHighlightBlock = b;
+	return NULL;
+}
+
 static void lispAddClientNFuncs(lClosure *c){
 	lOperatorsWidget(c);
 
@@ -600,6 +615,8 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"debug-info?",    "()",                "Gets debug info view to b",                                      wwlnfDebugInfoGet);
 	lAddNativeFunc(c,"cons-mode!",     "(b)",               "Sets cons-mode to b if passed, always returns the current state",wwlnfConsModeSet);
 	lAddNativeFunc(c,"cons-mode?",     "()",                "Gets cons-mode to b if passed, always returns the current state",wwlnfConsModeGet);
+	lAddNativeFunc(c,"cons-mode/block","()",                "Gets the current block being draw in cons-mode",                 wwlnfConsModeBlockGet);
+	lAddNativeFunc(c,"cons-mode/block!","()",               "Sets the current block being draw in cons-mode",                 wwlnfConsModeBlockSet);
 	lAddNativeFunc(c,"no-clip!",       "(b)",               "Sets no clip to b if passed, always returns the current state",  wwlnfNoClipSet);
 	lAddNativeFunc(c,"no-clip?",       "()",                "Gets no clip to b if passed, always returns the current state",  wwlnfNoClipGet);
 	lAddNativeFunc(c,"wire-frame!",    "(b)",               "Sets wireframe mode to b, always returns the current state",     wwlnfWireFrameSet);

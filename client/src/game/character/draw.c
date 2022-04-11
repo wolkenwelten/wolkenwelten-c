@@ -30,6 +30,8 @@
 
 #include <math.h>
 
+blockId consHighlightBlock = 1;
+
 void characterUpdateAnimation(character *c){
 	c->animationTicksLeft -= msPerTick;
 	c->breathing          += msPerTick;
@@ -124,7 +126,7 @@ void characterDrawConsHighlight(const character *c){
 	vec los = characterLOSBlock(c,true);
 	if(los.x < 0){return;}
 	const float a = 0.7f + cosf((++counter&0x7F)/128.f*PI*2)*0.15f;
-	blockTypeDraw(3, vecNew(los.x+0.5f,los.y+0.5f,los.z+0.5f),a,0);
+	blockTypeDraw(consHighlightBlock, vecNew(los.x+0.5f,los.y+0.5f,los.z+0.5f),a,0);
 }
 
 static void characterDrawGliderFirstPerson(const character *c){
