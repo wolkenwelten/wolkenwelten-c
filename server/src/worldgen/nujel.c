@@ -1,5 +1,4 @@
 #include "nujel.h"
-#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/nujel/lib/api.h"
 #include "island.h"

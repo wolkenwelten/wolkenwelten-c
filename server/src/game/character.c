@@ -35,7 +35,6 @@ void characterInit(character *c){
 	c->flags         = 0;
 	c->actionTimeout = 0;
 	c->stepTimeout   = 0;
-	c->activeItem    = 0;
 	c->eMesh         = (void *)1234;
 
 	c->blockMiningX  = c->blockMiningY = c->blockMiningZ = -1;
@@ -46,8 +45,6 @@ void characterInit(character *c){
 	c->pos   = vecAdd(worldGetSpawnPos(),vecNew(.5f,1.f,.5f));
 
 	c->hook  = false;
-
-	characterEmptyInventory(c);
 }
 
 void characterDie(character *c){

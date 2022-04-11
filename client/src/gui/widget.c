@@ -228,8 +228,6 @@ static int widgetIsSelectable(const widget *cur){
 		case wTextInput:
 		case wTextScroller:
 		case wSlider:
-		case wItemSlot:
-		case wRecipeSlot:
 			return 1;
 		default:
 			return 0;

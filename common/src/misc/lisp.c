@@ -18,10 +18,6 @@
 #include "lisp.h"
 
 #include "../asm/asm.h"
-#include "../game/grenade.h"
-#include "../game/item.h"
-#include "../game/itemDrop.h"
-#include "../game/itemType.h"
 #include "../game/weather/weather.h"
 #include "../world/world.h"
 #include "../misc/colors.h"
@@ -74,29 +70,6 @@ lVal *wwlnfAsmSwitch(lClosure *c, lVal *v){
 	const int newVal = castToInt(lCar(v),-1);
 	if(newVal >= 0){asmRoutineSupport = newVal;}
 	return lValInt(asmRoutineSupport);
-}
-
-lVal *wwlnfExplode(lClosure *c, lVal *v){
-	(void)c;
-	const vec   pos      = castToVec(lCar(v),vecNOne()); v = lCdr(v);
-	const float strength = castToFloat(lCar(v),4.f);     v = lCdr(v);
-	const int   style    = castToInt(lCar(v),0);
-
-	if((pos.x < 0.f) || (pos.y < 0.f) || (pos.z < 0.f) || (strength < .1f)){return NULL;}
-	explode(pos,strength,style);
-	return NULL;
-}
-
-static lVal *wwlnfItemDropNew(lClosure *c, lVal *v){
-	(void)c;
-	const vec pos = castToVec(lCar(v),vecNOne()); v = lCdr(v);
-	const int id  = castToInt(lCar(v),0);         v = lCdr(v);
-	const int amt = castToInt(lCar(v),0);
-
-	if((pos.x < 0.f) || (pos.y < 0.f) || (pos.z < 0.f) || (id <= 0) || (amt <= 0)){return NULL;}
-	item itm = itemNew(id,amt);
-	itemDropNewP(pos,&itm,-1);
-	return NULL;
 }
 
 static lVal *wwlnfWVelGet(lClosure *c, lVal *v){
@@ -250,15 +223,12 @@ void *lispCommonRootReal(void *a, void *b){
 	lAddNativeFunc(c,"snow!",           "(intensity)",            "Set rain rate to INTENSITY",                                 wwlnfSnowSet);
 	lAddNativeFunc(c,"storm",           "()",                     "Set rain rate to INTENSITY",                                 wwlnfStormGet);
 	lAddNativeFunc(c,"storm!",          "(intensity delta)",      "Set rain rate to INTENSITY",                                 wwlnfStormSet);
-	lAddNativeFunc(c,"explode",         "(pos &strength &style)", "Create an explosion at POS with &STRENGTH=4.0 and &STYLE=0", wwlnfExplode);
-	lAddNativeFunc(c,"item-drop-new",   "(pos id amount)",        "Create a new item at POS for AMOUNT ID.",                    wwlnfItemDropNew);
 	lAddNativeFunc(c,"color-inter",     "(a b i)",                "Interpolate between A and B with 0.0 <= i <= 1.0",           wwlnfColorInterpolate);
 	lAddNativeFunc(c,"fluid",           "(pos)",                  "Get the fluid level at POS",                                 wwlnfFluidGet);
 	lAddNativeFunc(c,"fluid!",          "(pos level)",            "Set the fluid level at POS to LEVEL",                        wwlnfFluidSet);
 	lAddNativeFunc(c,"fire",            "(pos)",                  "Get the fluid level at POS",                                 wwlnfFireGet);
 	lAddNativeFunc(c,"fire!",           "(pos level)",            "Set the fluid level at POS to LEVEL",                        wwlnfFireSet);
 
-	itemTypeLispClosure(c);
 	specificInit(c);
 
 	lLoadS(c,(const char *)src_tmp_wwlib_nuj_data, src_tmp_wwlib_nuj_len);

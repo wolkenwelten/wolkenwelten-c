@@ -24,10 +24,6 @@
 #include "game/blockMining.h"
 #include "game/fire.h"
 #include "game/fluid.h"
-#include "game/itemDrop.h"
-#include "game/landscape.h"
-#include "game/grenade.h"
-#include "game/throwable.h"
 #include "game/weather/weather.h"
 #include "misc/lisp.h"
 #include "persistence/savegame.h"
@@ -38,7 +34,6 @@
 
 #include "../../common/src/asm/asm.h"
 #include "../../common/src/game/entity.h"
-#include "../../common/src/game/itemType.h"
 #include "../../common/src/game/time.h"
 
 #include "../../common/nujel/lib/api.h"
@@ -112,8 +107,6 @@ static void initTermColors(){
 
 static void updateWorldStep(){
 	blockMiningUpdateAll();
-	itemDropUpdateAll();
-	grenadeUpdateAll();
 	animalUpdateAll();
 	projectileUpdateAll();
 	animalThinkAll();
@@ -121,9 +114,7 @@ static void updateWorldStep(){
 	fluidPhysicsTick();
 	animalNeedsAll();
 	animalCheckBurnAll();
-	landscapeUpdateAll();
 	weatherUpdateAll();
-	throwableUpdateAll();
 	entityUpdateAll();
 
 	gtimeUpdate();
@@ -177,7 +168,6 @@ void mainInit(){
 	beingListEntryInit();
 	chungusInit();
 	lispInit();
-	itemTypeInit();
 	blockTypeInit();
 	lispCallFunc("on-init-fire", NULL);
 	savegameSave();

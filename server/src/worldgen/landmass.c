@@ -20,7 +20,7 @@
 #include "island.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/common.h"
-#include "../../../common/src/game/item.h"
+#include "../../../common/src/game/blockType.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/noise.h"
 

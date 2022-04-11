@@ -21,9 +21,7 @@
 #include "../game/animal.h"
 #include "../game/blockType.h"
 #include "../game/fire.h"
-#include "../game/itemDrop.h"
 #include "../game/projectile.h"
-#include "../game/throwable.h"
 #include "../game/weather/weather.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
@@ -40,7 +38,6 @@
 #include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/game/time.h"
 #include "../../../common/src/network/messages.h"
-#include "../../../common/src/game/item.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -57,9 +54,7 @@ void worldInit(){
 	chungusInit();
 	chunkInit();
 	animalInit();
-	itemDropInit();
 	projectileInit();
-	throwableInit();
 }
 
 static int quicksortQueuePart(queueEntry *a, int lo, int hi){

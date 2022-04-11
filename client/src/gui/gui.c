@@ -25,7 +25,6 @@
 #include "../game/character/hook.h"
 #include "../game/character/network.h"
 #include "../game/entity.h"
-#include "../game/itemDrop.h"
 #include "../game/weather/weather.h"
 #include "../sdl/sdl.h"
 #include "../gfx/boundaries.h"
@@ -43,7 +42,6 @@
 #include "../gui/chat.h"
 #include "../gui/menu.h"
 #include "../gui/menu/attribution.h"
-#include "../gui/menu/inventory.h"
 #include "../gui/menu/mainmenu.h"
 #include "../gui/menu/multiplayer.h"
 #include "../gui/menu/options.h"
@@ -62,7 +60,6 @@
 #include "../voxel/meshgen/shared.h"
 #include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/game/hook.h"
-#include "../../../common/src/game/item.h"
 #include "../../../common/src/game/time.h"
 #include "../../../common/src/misc/colors.h"
 #include "../../../common/src/misc/misc.h"
@@ -127,7 +124,6 @@ void closeAllMenus(){
 	closeSingleplayerMenu();
 	closeMultiplayerMenu();
 	closeOptionsMenu();
-	closeInventoryPanel();
 	widgetFocus(NULL);
 }
 
@@ -178,13 +174,10 @@ void resizeUI(){
 	if(lispPanelVisible){
 		widgetSlideH(lispPanel, screenHeight-128);
 	}
-
-	initInventory();
 }
 
 static void handlerGameFocus(widget *wid){
 	(void)wid;
-	openInventoryPanel();
 }
 
 static void initGameOverlay(){
@@ -391,36 +384,10 @@ void drawAnimalDebugOverlay(const animal *e, int i){
 	guim->fgc = ofgc;
 }
 
-void itemDropDrawNumbers(){
-	if(player == NULL){return;}
-	for(uint i=0;i<itemDropCount;i++){
-		if(itemDropList[i].ent == NULL){continue;}
-		if(!pointInFrustum(itemDropList[i].ent->pos)){continue;}
-		const vec dist = vecSub(itemDropList[i].ent->pos, player->pos);
-		const float dd = vecDot(dist,dist);
-		if(dd > 9*8){continue;}
-		vec p = entityScreenPos(itemDropList[i].ent);
-		p.x =      ((p.x / p.z)+1.f)/2.f  * screenWidth;
-		if(p.x < 0)           {continue;}
-		if(p.x > screenWidth) {continue;}
-		p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
-		if(p.y < 0)           {continue;}
-		if(p.y > screenHeight){continue;}
-		guim->sx = p.x;
-		guim->sy = p.y;
-		guim->size = 2;
-		const u8 alpha = MIN(1, 8 - p.z) * 255;
-		if(alpha == 0){continue;}
-		guim->fgc = 0xFFFFFF | (alpha << 24);
-		textMeshPrintfAlignCenter(guim,"%ux %s",itemDropList[i].itm.amount, itemGetName(&itemDropList[i].itm));
-	}
-}
-
-
 static void drawHookIndicator(){
 	const float hookdist = characterCanHookHit(player);
 	if(hookdist < 0.f){return;}
-	textMeshItemSprite(guim,screenWidth/2+8,screenHeight/2+8,32,I_Hook);
+	//textMeshItemSprite(guim,screenWidth/2+8,screenHeight/2+8,32,I_Hook);
 	textMeshPrintfPS(guim,screenWidth/2 + 40, screenHeight/2 + 16,2,"%.1f",hookdist);
 }
 
@@ -536,36 +503,6 @@ void drawDebuginfo(){
 			drawAnimalDebugOverlay(&animalList[i],i);
 		}
 	}
-	itemDropDrawNumbers();
-	guim->font = 0;
-}
-
-void drawAmmunition(){
-	if(player == NULL){return;}
-	item *activeItem = &player->inventory[player->activeItem];
-	if(activeItem == NULL){return;}
-	if(itemIsEmpty(activeItem)){return;}
-	int ammo = itemGetAmmunition(activeItem);
-	if(ammo <= 0){return;}
-	int amount = characterGetItemAmount(player,ammo);
-
-	const int tilesize = getTilesize();
-
-	guim->sx = screenWidth-(tilesize*2.f);
-	guim->sy = screenHeight-tilesize-inventoryPanel->area.h;
-	guim->font = 1;
-	textMeshNumber(guim,guim->sx,guim->sy,2,amount);
-	textMeshItemSprite(guim,guim->sx+32,guim->sy-18,64,ammo);
-
-	if(itemGetStackSize(activeItem) <= 1){
-		const int magSize = itemGetMagazineSize(activeItem);
-		if(magSize){
-			guim->sx += 4;
-			textMeshNumber(guim,guim->sx-32,guim->sy-tilesize+tilesize/3,2,itemGetAmmo(activeItem));
-			textMeshNumber(guim,guim->sx+32,guim->sy-tilesize+tilesize/3,2,magSize);
-			textMeshDigit(guim,guim->sx-12,guim->sy-tilesize+tilesize/3, 2, 10);
-		}
-	}
 	guim->font = 0;
 }
 
@@ -611,7 +548,6 @@ void drawHud(){
 		drawOverlay(guim);
 		drawHealthbar();
 		drawDebuginfo();
-		drawAmmunition();
 		chatDraw(guim);
 	}
 	lispPanelCheckAutoComplete();
@@ -619,8 +555,6 @@ void drawHud(){
 	const box2D screen = rect(0,0,screenWidth,screenHeight);
 	widget *hover = widgetDraw(rootMenu,guim,screen);
 	widgetDoMouseEvents(rootMenu,hover, screen);
-	if(isInventoryOpen()){drawInventory(guim);}
-	widgetDrawPopups(guim);
 	textMeshDraw(guim);
 }
 
@@ -649,10 +583,6 @@ bool guiCancel(){
 	if(!gameRunning){return true;}
 	if(lispPanelVisible){
 		lispPanelClose();
-		return true;
-	}
-	if(isInventoryOpen()){
-		closeInventory();
 		return true;
 	}
 	if(widgetFocused == chatText){

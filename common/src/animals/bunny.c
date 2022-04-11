@@ -21,12 +21,11 @@
 #include "../game/being.h"
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../game/item.h"
-#include "../game/itemDrop.h"
 #include "../game/time.h"
 #include "../misc/misc.h"
 #include "../network/messages.h"
 #include "../world/world.h"
+#include "../game/blockType.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -286,12 +285,6 @@ static void bunnySEat(animal *e,int stateChange[16]){
 	}
 }
 
-static void bunnyDoPoop(animal *e,int stateChange[16]){
-	item ipoop = itemNew(I_Poop,1);
-	itemDropNewP(e->pos, &ipoop,-1);
-	stateChange[ANIMAL_S_FLEE] += 256;
-}
-
 static void bunnyPregnancy(animal *e,int stateChange[16]){
 	if(e->flags & ANIMAL_MALE){e->pregnancy = -1; return;}
 	if(e->pregnancy  <  0)    {return;}
@@ -305,19 +298,8 @@ static void bunnyPregnancy(animal *e,int stateChange[16]){
 		e->hunger   -= 8;
 		e->sleepy    = MAX(8,e->sleepy-24);
 		e->pregnancy = -1;
-		bunnyDoPoop(e,stateChange);
 	}
 	(void)stateChange;
-}
-
-static void bunnyPoop(animal *e,int stateChange[16]){
-	if(e->hunger < 24){
-		return;
-	}else if(e->hunger < 48){
-		if(rngValA((1<<16) - 1) == 0){bunnyDoPoop(e,stateChange);}
-	}else{
-		if(rngValA((1<<14) - 1) == 0){bunnyDoPoop(e,stateChange);}
-	}
 }
 
 static void bunnySocialDistancing(animal *e,int stateChange[16]){
@@ -381,7 +363,6 @@ void animalThinkBunny(animal *e){
 	bunnySleepyness      (e,stateChange);
 	bunnyHunger          (e,stateChange);
 	bunnyPregnancy       (e,stateChange);
-	bunnyPoop            (e,stateChange);
 	bunnySocialDistancing(e,stateChange);
 
 	int tcat = gtimeGetTimeCat();
@@ -424,10 +405,7 @@ void animalThinkBunny(animal *e){
 }
 
 void animalRDieBunny(animal *e){
-	item mdrop = itemNew(I_Meat,rngValMM(2,4));
-	item fdrop = itemNew(I_Fur, rngValMM(1,2));
-	itemDropNewP(e->pos,&mdrop,-1);
-	itemDropNewP(e->pos,&fdrop,-1);
+	(void)e;
 }
 
 void animalRBurnBunny(animal *e){

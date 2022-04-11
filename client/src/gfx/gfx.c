@@ -48,7 +48,6 @@
 #include "../voxel/chunk.h"
 #include "../voxel/meshgen/shared.h"
 #include "../../../common/src/game/hook.h"
-#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/bmp.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/colors.h"

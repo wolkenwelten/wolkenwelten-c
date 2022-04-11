@@ -58,6 +58,10 @@ void lispPanelOpen(){
 void lispPanelClose(){
 	widgetSlideH(lispPanel, 0);
 	lispPanelVisible = false;
+	if(gameRunning){
+		widgetFocus(widgetGameScreen);
+		hideMouseCursor();
+	}
 }
 
 void lispPanelShowReply(const char *reply){

@@ -17,7 +17,6 @@
 #include "fire.h"
 #include "./blockType.h"
 #include "./blockMining.h"
-#include "./item.h"
 #include "../misc/effects.h"
 #include "../world/world.h"
 

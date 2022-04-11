@@ -171,17 +171,18 @@
               [when [input-keyboard-state key-d]     [player-strafe!  1.0]]
               [when [input-keyboard-state key-space] [player-jump!    1.0]]
               [when [input-keyboard-state key-r]     [player-tertiary!]]
-              [when [input-keyboard-state key-q]     [player-throw!]]
+              ;[when [input-keyboard-state key-q]     [player-throw!]]
               [player-sneak! [input-keyboard-state key-v]]
               [player-boost! [input-keyboard-state key-lshift]]
         ]
 ]
 
 [defun input-keyboard-event [status scancode]
-     [def handler [input-keyboard-handler scancode]]
-     [if [lambda? handler]
-         [handler scancode status]
-         #f]]
+     [try repl/exception-handler
+          [def handler [input-keyboard-handler scancode]]
+          [if [lambda? handler]
+              [handler scancode status]
+              #f]]]
 
 [test/add #t [int? key-1]]
 [test/add #t [array? input-keyboard-handler]]

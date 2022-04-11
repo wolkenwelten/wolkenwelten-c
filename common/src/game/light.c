@@ -18,7 +18,6 @@
 #include "../asm/asm.h"
 #include "../game/blockType.h"
 #include "../game/character.h"
-#include "../game/item.h"
 #include "../game/time.h"
 #include "../misc/profiling.h"
 

@@ -19,7 +19,6 @@
 #include "../game/character.h"
 #include "../misc/options.h"
 #include "../voxel/bigchungus.h"
-#include "../../../common/src/game/item.h"
 #include "../../../common/src/network/messages.h"
 #include "../../../common/src/misc/misc.h"
 
@@ -67,30 +66,6 @@ static void characterParseDataLine(character *p, const char *line){
 		p->flags = atoi(argv[1]) & (CHAR_CONS_MODE | CHAR_NOCLIP);
 		return;
 	}
-
-	if(strcmp(argv[0],"ActiveItem") == 0){
-		if(argc < 2){return;}
-		p->activeItem = atoi(argv[1]);
-		return;
-	}
-
-	if(strcmp(argv[0],"Item") == 0){
-		if(argc < 4){return;}
-		uint i = atoi(argv[1]);
-		if(i >= 40){return;}
-		p->inventory[i].ID     = atoi(argv[2]);
-		p->inventory[i].amount = atoi(argv[3]);
-		return;
-	}
-
-	if(strcmp(argv[0],"Equipment") == 0){
-		if(argc < 4){return;}
-		uint i = atoi(argv[1]);
-		if(i >= 3){return;}
-		p->equipment[i].ID     = atoi(argv[2]);
-		p->equipment[i].amount = atoi(argv[3]);
-		return;
-	}
 }
 
 static const char *characterFileName(const char *name){
@@ -100,11 +75,9 @@ static const char *characterFileName(const char *name){
 }
 
 static void characterSendData(const character *p, uint c){
-	msgPlayerSetPos(c,p->pos,p->rot,p->vel);
-	msgPlayerSetInventory(c,p->inventory,40);
-	msgPlayerSetEquipment(c,p->equipment, 3);
+	msgPlayerSetPos(c, p->pos, p->rot, p->vel);
 
-	msgPlayerSetData(c,p->hp,p->activeItem,p->flags, c);
+	msgPlayerSetData(c,p->hp, p->flags, c);
 }
 
 static int characterLoadData(character *p, const char *pName){
@@ -146,18 +119,8 @@ void characterSaveData(const character *p, const char *pName){
 	b += snprintf(b,sizeof(buf)-(b-buf),"Position %f %f %f\n",p->pos.x,p->pos.y,p->pos.z);
 	b += snprintf(b,sizeof(buf)-(b-buf),"Rotation %f %f %f\n",p->rot.yaw,p->rot.pitch,p->rot.roll);
 	b += snprintf(b,sizeof(buf)-(b-buf),"Velocity %f %f %f\n",p->vel.x,p->vel.y,p->vel.z);
-	b += snprintf(b,sizeof(buf)-(b-buf),"ActiveItem %i\n",p->activeItem);
 	b += snprintf(b,sizeof(buf)-(b-buf),"Health %i\n",p->hp);
 	b += snprintf(b,sizeof(buf)-(b-buf),"Flags %u\n",(p->flags & ~CHAR_SPAWNING));
-
-	for(uint i=0;i<40;i++){
-		if(itemIsEmpty(&p->inventory[i])){continue;}
-		b += snprintf(b,sizeof(buf)-(b-buf),"Item %u %u %i\n",i,p->inventory[i].ID,p->inventory[i].amount);
-	}
-	for(uint i=0;i<3;i++){
-		if(itemIsEmpty(&p->equipment[i])){continue;}
-		b += snprintf(b,sizeof(buf)-(b-buf),"Equipment %u %u %i\n",i,p->equipment[i].ID,p->equipment[i].amount);
-	}
 
 	*b = 0;
 	saveFile(characterFileName(pName),buf,strlen(buf));

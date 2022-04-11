@@ -17,8 +17,8 @@
 
 #include "vegetation.h"
 
-#include "../../../common/src/game/item.h"
 #include "../voxel/chungus.h"
+#include "../../../common/src/game/blockType.h"
 #include "../../../common/src/misc/misc.h"
 
 void wgShrub(chungus *c, int x,int y,int z){

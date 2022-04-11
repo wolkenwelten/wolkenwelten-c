@@ -25,11 +25,8 @@
 #include "../game/character/hook.h"
 #include "../game/character/network.h"
 #include "../game/fire.h"
-#include "../game/grenade.h"
-#include "../game/itemDrop.h"
 #include "../game/rope.h"
 #include "../game/projectile.h"
-#include "../game/throwable.h"
 #include "../game/weather/lightning.h"
 #include "../game/weather/weather.h"
 #include "../gui/menu/mainmenu.h"
@@ -134,18 +131,8 @@ bool goodbyeSent = false;
 #endif
 
 void msgSendPlayerPos(){
-	static int inventoryCountDown=0;
 	int pLen = 15 * 4;
 	if(player == NULL){return;}
-        if(pingCount == 0){
-                inventoryCountDown = 0;
-                return;
-        }
-	if(--inventoryCountDown <= 0){
-		msgPlayerSetInventory(-1,player->inventory,CHAR_INV_MAX);
-		msgPlayerSetEquipment(-1,player->equipment,CHAR_EQ_MAX);
-		inventoryCountDown = 60;
-	}
 	packet *p = &packetBuffer;
 
 	p->v.f[ 0] = player->pos.x;
@@ -167,7 +154,7 @@ void msgSendPlayerPos(){
 	p->v.u16[22] = player->blockMiningZ;
 	p->v.u16[23] = player->hp;
 
-	p->v.u16[24] = player->activeItem;
+	p->v.u16[24] = 0;
 	p->v.u16[25] = player->animationIndex;
 	p->v.u16[26] = player->animationTicksMax;
 	p->v.u16[27] = player->animationTicksLeft;
@@ -283,29 +270,14 @@ void clientParsePacket(const packet *p){
 	case msgtSetPlayerCount:
 		characterRemovePlayer(p->v.u16[1],p->v.u16[0]);
 		break;
-	case msgtPlayerPickupItem:
-		characterPickupPacket(player,p);
-		break;
-	case msgtExplode:
-		explode(vecNewP(&p->v.f[0]),((float)p->v.u16[6])/256.f,p->v.u16[7]);
-		break;
-	case msgtGrenadeUpdate:
-		grenadeUpdateFromServer(p);
-		break;
 	case msgtFxBeamBlaster:
 		fxBeamBlaster(vecNewP(&p->v.f[0]),vecNewP(&p->v.f[3]),p->v.f[6],p->v.f[7]);
-		break;
-	case msgtItemDropUpdate:
-		itemDropUpdateFromServer(p);
 		break;
 	case msgtBeingDamage:
 		characterDamagePacket(player,p);
 		break;
 	case msgtCharacterSetData:
 		characterSetData(player,p);
-		break;
-	case msgtCharacterSetInventory:
-		characterSetInventoryP(player,p);
 		break;
 	case msgtAnimalSync:
 		animalSyncFromServer(p);
@@ -316,9 +288,6 @@ void clientParsePacket(const packet *p){
 		break;
 	case msgtFxAnimalDied:
 		fxAnimalDiedPacket(p);
-		break;
-	case msgtCharacterSetEquipment:
-		characterSetEquipmentP(player,p);
 		break;
 	case msgtRopeUpdate:
 		ropeUpdateP(p);
@@ -341,9 +310,6 @@ void clientParsePacket(const packet *p){
 	case msgtSnowRecvUpdate:
 		snowRecvUpdate(p);
 		break;
-	case msgtThrowableRecvUpdates:
-		throwableRecvUpdate(p);
-		break;
 	case msgtGoodbye:
 		handleGoodbye(p);
 		break;
@@ -360,10 +326,6 @@ void clientParsePacket(const packet *p){
 	case msgtPlaceBlock:
 	case msgtRequestSpawnPos:
 	case msgtBeingMove:
-	case msgtItemDropNew:
-	case msgtItemDropPickup:
-	case msgtItemDropBounce:
-	case msgtGrenadeNew:
 	case msgtBeamblast:
 	case msgtDirtyChunk:
 		fprintf(stderr,"%s[%u] received from server, which should never happen\n",networkGetMessageName(pType),pType);
@@ -426,8 +388,6 @@ void clientGoodbye(){
 	printf("[CLI] Goodbye \n");
 	if(player){
 		msgSendPlayerPos();
-		msgPlayerSetInventory(-1,player->inventory,CHAR_INV_MAX);
-		msgPlayerSetEquipment(-1,player->equipment,CHAR_EQ_MAX);
 	}
 	msgGoodbye(0);
 	clientWrite();

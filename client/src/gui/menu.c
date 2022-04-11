@@ -25,7 +25,6 @@
 #include "../gui/widget.h"
 #include "../gui/menu/attribution.h"
 #include "../gui/menu/mainmenu.h"
-#include "../gui/menu/inventory.h"
 #include "../gfx/gl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
@@ -56,7 +55,6 @@ void startMultiplayer(){
 
 	closeAllMenus();
 	hideMouseCursor();
-	openInventoryPanel();
 	widgetFocus(widgetGameScreen);
 	playerInit();
 	clientInit();
@@ -113,7 +111,6 @@ bool menuCancel(){
 	if(gameRunning){
 		closeMainMenu();
 		lispPanelClose();
-		closeInventory();
 		closeAttributions();
 	} else {
 		openMainMenu();

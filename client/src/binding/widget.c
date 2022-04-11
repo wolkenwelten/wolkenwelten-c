@@ -26,7 +26,6 @@
 #include "../gfx/gfx.h"
 #include "../gfx/textMesh.h"
 
-#include "../../../common/src/game/item.h"
 #include "../../../common/nujel/lib/api.h"
 
 #include <limits.h>
@@ -34,25 +33,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <SDL.h>
-
-item castToItem(lVal *v){
-	if((v == NULL)|| (v->type != ltPair)){return itemEmpty();}
-	lVal *id = lCar(v);
-	lVal *amt = lCdr(v);
-	if((id == NULL) || (amt == NULL)
-		|| (id->type != ltInt) || (amt->type != ltInt)){return itemEmpty();}
-	return itemNew(id->vInt, amt->vInt);
-}
-
-lVal *lValItem(item *itm){
-	if(itm == NULL){return NULL;}
-	const int SP = lRootsGet();
-	lVal *ret = RVP(lCons(NULL,NULL));
-	ret->vList.car = lValInt(itm->ID);
-	ret->vList.cdr = lValInt(itm->amount);
-	lRootsRet(SP);
-	return ret;
-}
 
 widget *castToWidget(lVal *v){
 	if(v == NULL){return NULL;}
@@ -311,23 +291,6 @@ lVal *wwlnfWidgetValIntSet(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfWidgetValItem(lClosure *c, lVal *v){
-(void)c; (void)v;
-	widget *wid = castToWidget(lCar(v));
-	if(wid == NULL){return NULL;}
-	return lValItem(&wid->valItem);
-}
-
-lVal *wwlnfWidgetValItemSet(lClosure *c, lVal *v){
-	(void)c; (void)v;
-	widget *wid = castToWidget(lCar(v));
-	if(wid == NULL){return NULL;}
-	item itm = castToItem(lCadr(v));
-	if(itemIsEmpty(&itm)){return NULL;}
-	wid->valItem = itm;
-	return NULL;
-}
-
 void lOperatorsWidget(lClosure *c){
 	lAddNativeFunc(c,"widget/new",    "[type]",         "Create a new widget of type", wwlnfWidgetNew);
 	lAddNativeFunc(c,"widget/parent", "[widget]",       "Return the parent of widget", wwlnfWidgetParent);
@@ -361,9 +324,6 @@ void lOperatorsWidget(lClosure *c){
 
 	lAddNativeFunc(c,"widget/val/int", "[widget]","Sets the vali field of WIDGET to VAL", wwlnfWidgetValInt);
 	lAddNativeFunc(c,"widget/val/int!","[widget val]","Sets the vali field of WIDGET to VAL", wwlnfWidgetValIntSet);
-
-	lAddNativeFunc(c,"widget/val/item", "[widget]","Sets the valItem field of WIDGET to VAL", wwlnfWidgetValItem);
-	lAddNativeFunc(c,"widget/val/item!","[widget val]","Sets the valItem field of WIDGET to VAL", wwlnfWidgetValItemSet);
 
 	lAddNativeFunc(c,"widget/active-count", "[]","Return the amount of widgets that are currently allocated", wwlnfWidgetActiveCount);
 }

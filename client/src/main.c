@@ -24,12 +24,8 @@
 #include "game/entity.h"
 #include "game/fire.h"
 #include "game/fluid.h"
-#include "game/grenade.h"
-#include "game/itemDrop.h"
 #include "game/projectile.h"
-#include "game/recipe.h"
 #include "game/rope.h"
-#include "game/throwable.h"
 #include "game/weather/weather.h"
 #include "gfx/fluid.h"
 #include "gfx/gfx.h"
@@ -41,7 +37,6 @@
 #include "gfx/texture.h"
 #include "gui/gui.h"
 #include "gui/menu.h"
-#include "gui/menu/inventory.h"
 #include "gui/menu/mainmenu.h"
 #include "gui/overlay.h"
 #include "misc/lisp.h"
@@ -59,8 +54,6 @@
 #include "voxel/chungus.h"
 
 #include "../../common/src/asm/asm.h"
-#include "../../common/src/game/item.h"
-#include "../../common/src/game/itemType.h"
 #include "../../common/src/game/time.h"
 #include "../../common/src/misc/misc.h"
 
@@ -89,7 +82,6 @@ u64  gameTicks = 0;
 void playerInit(){
 	if(player){characterFree(player);}
 	player = characterNew();
-	initInventory();
 }
 
 void playerFree(){
@@ -120,21 +112,6 @@ void initSignals(){
 	signal(SIGINT,  signalQuit);
 }
 
-void playerCheckInventory(){
-	if(player == NULL){return;}
-	static u16 lastInventorySize = 0;
-	if(lastInventorySize == player->inventorySize){return;}
-
-	lastInventorySize = player->inventorySize;
-	for(int i=player->inventorySize;i<CHAR_INV_MAX;i++){
-		if(itemIsEmpty(&player->inventory[i])){continue;}
-		characterItemDrop(player,i);
-	}
-	if(isInventoryOpen()){
-		openInventory();
-	}
-}
-
 void playerUpdate(){
 	if(player == NULL){return;}
 	chungus *chng = worldGetChungus((int)player->pos.x >> 8,(int)player->pos.y >> 8,(int)player->pos.z >> 8);
@@ -144,11 +121,8 @@ void playerUpdate(){
 	player->controls = vecZero();
 	if(player->flags & CHAR_SPAWNING){ return; }
 	if(!playerChunkActive)           { return; }
-	if(!isInventoryOpen()){
-		lispInputTick();
-	}
+	lispInputTick();
 	characterMove(player,player->controls);
-	playerCheckInventory();
 
 	msgSendPlayerPos();
 	worldFreeFarChungi(player);
@@ -164,16 +138,12 @@ void worldUpdate(){
 	resetOverlayColor();
 	for(;lastTick < curTick;lastTick+=msPerTick){
 		characterUpdateAll();
-		grenadeUpdateAll();
 		animalUpdateAll();
-		itemDropUpdateAll();
 		particleUpdate();
 		ropeUpdateAll();
 		projectileUpdateAll();
 		gtimeUpdate();
 		weatherUpdateAll();
-		throwableUpdateAll();
-		throwableCheckPickup();
 		entityUpdateAll();
 		lispEvents();
 		fluidPhysicsTick();
@@ -188,7 +158,6 @@ void worldUpdate(){
 static void UIStuff(){
 	handleEvents();
 	widgetUpdateAllEvents();
-	inventoryCheckCursorItem();
 }
 
 void mainloop(){
@@ -246,8 +215,6 @@ int main(int argc, char* argv[]){
 	initMeshobjs();
 	particleInit();
 
-	itemTypeInit();
-	recipeInit();
 	lispCallFunc("on-init-fire", NULL);
 	textureBuildBlockIcons(0);
 	ropeInit();

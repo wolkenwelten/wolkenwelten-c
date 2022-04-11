@@ -20,7 +20,6 @@
 #include "../../main.h"
 #include "../../game/character/character.h"
 #include "../../game/character/hook.h"
-#include "../../gui/menu/inventory.h"
 
 #include <SDL.h>
 
@@ -77,9 +76,7 @@ vec doTouchupdate(vec vel){
 		xoff = (xoff - 0.5f)*2.f;
 		yoff = (yoff - 0.5f)*2.f;
 
-		if(!isInventoryOpen()){
-			characterRotate(player,vecNew(xoff*5,yoff*5,0));
-		}
+		characterRotate(player,vecNew(xoff*5,yoff*5,0));
 
 	}
 	if(touchzonesPressed[0]){

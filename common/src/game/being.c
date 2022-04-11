@@ -21,9 +21,7 @@
 #include "../game/being.h"
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../game/grenade.h"
 #include "../game/hook.h"
-#include "../game/itemDrop.h"
 #include "../network/messages.h"
 
 #include <stdlib.h>
@@ -58,20 +56,8 @@ being beingHook(u32 id){
 	return beingNew(BEING_HOOK,      id);
 }
 
-being beingGrenade   (u32 id){
-	return beingNew(BEING_GRENADE,   id);
-}
-
 being beingProjectile(u32 id){
 	return beingNew(BEING_PROJECTILE,id);
-}
-
-being beingItemDrop  (u32 id){
-	return beingNew(BEING_ITEMDROP,  id);
-}
-
-being beingThrowable (u32 id){
-	return beingNew(BEING_THROWABLE, id);
 }
 
 vec beingGetPos(being b){
@@ -86,16 +72,6 @@ vec beingGetPos(being b){
 		return c->pos; }
 	case BEING_HOOK: {
 		hook *c = hookGetByBeing(b);
-		if(c == NULL)     {return vecNOne();}
-		if(c->ent == NULL){return vecNOne();}
-		return c->ent->pos; }
-	case BEING_GRENADE: {
-		grenade *c = grenadeGetByBeing(b);
-		if(c == NULL)     {return vecNOne();}
-		if(c->ent == NULL){return vecNOne();}
-		return c->ent->pos; }
-	case BEING_ITEMDROP: {
-		itemDrop *c = itemDropGetByBeing(b);
 		if(c == NULL)     {return vecNOne();}
 		if(c->ent == NULL){return vecNOne();}
 		return c->ent->pos; }
@@ -122,16 +98,6 @@ void beingSetPos(being b, const vec pos){
 		if(c->ent == NULL){return;}
 		c->ent->pos = pos;
 		return; }
-	case BEING_GRENADE: {
-		grenade *c = grenadeGetByBeing(b);
-		if(c == NULL){return;}
-		c->ent->pos = pos;
-		return; }
-	case BEING_ITEMDROP: {
-		itemDrop *c = itemDropGetByBeing(b);
-		if(c == NULL){return;}
-		c->ent->pos = pos;
-		return; }
 	default:
 		return;
 	}
@@ -154,16 +120,6 @@ void beingAddPos(being b, const vec pos){
 		if(c == NULL){return;}
 		c->ent->pos = vecAdd(c->ent->pos, pos);
 		return; }
-	case BEING_GRENADE: {
-		grenade *c = grenadeGetByBeing(b);
-		if(c == NULL){return;}
-		c->ent->pos = vecAdd(c->ent->pos,pos);
-		return; }
-	case BEING_ITEMDROP: {
-		itemDrop *c = itemDropGetByBeing(b);
-		if(c == NULL){return;}
-		c->ent->pos = vecAdd(c->ent->pos,pos);
-		return; }
 	default:
 		return;
 	}
@@ -181,14 +137,6 @@ vec beingGetVel(being b){
 		return c->vel; }
 	case BEING_HOOK: {
 		hook *c = hookGetByBeing(b);
-		if(c == NULL){return vecZero();}
-		return c->ent->vel; }
-	case BEING_GRENADE: {
-		grenade *c = grenadeGetByBeing(b);
-		if(c == NULL){return vecZero();}
-		return c->ent->vel; }
-	case BEING_ITEMDROP: {
-		itemDrop *c = itemDropGetByBeing(b);
 		if(c == NULL){return vecZero();}
 		return c->ent->vel; }
 	default:
@@ -210,16 +158,6 @@ void beingSetVel(being b, const vec vel){
 		return; }
 	case BEING_HOOK: {
 		hook *c = hookGetByBeing(b);
-		if(c == NULL){return;}
-		c->ent->vel = vel;
-		return; }
-	case BEING_GRENADE: {
-		grenade *c = grenadeGetByBeing(b);
-		if(c == NULL){return;}
-		c->ent->vel = vel;
-		return; }
-	case BEING_ITEMDROP: {
-		itemDrop *c = itemDropGetByBeing(b);
 		if(c == NULL){return;}
 		c->ent->vel = vel;
 		return; }
@@ -245,16 +183,6 @@ void beingAddVel(being b, const vec vel){
 		if(c == NULL){return;}
 		c->ent->vel = vecAdd(c->ent->vel,vel);
 		return; }
-	case BEING_GRENADE: {
-		grenade *c = grenadeGetByBeing(b);
-		if(c == NULL){return;}
-		c->ent->vel = vecAdd(c->ent->vel,vel);
-		return; }
-	case BEING_ITEMDROP: {
-		itemDrop *c = itemDropGetByBeing(b);
-		if(c == NULL){return;}
-		c->ent->vel = vecAdd(c->ent->vel,vel);
-		return; }
 	default:
 		return;
 	}
@@ -275,8 +203,6 @@ float beingGetWeight(being b){
 	case BEING_ANIMAL:
 		return 5.f;
 	case BEING_HOOK:
-		return 1.f;
-	case BEING_GRENADE:
 		return 1.f;
 	default:
 		return 1.f;

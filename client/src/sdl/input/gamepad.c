@@ -23,7 +23,6 @@
 #include "../../gui/gui.h"
 #include "../../gui/menu.h"
 #include "../../gui/widget.h"
-#include "../../gui/menu/inventory.h"
 #include "../../../../common/src/common.h"
 
 #include <math.h>
@@ -174,7 +173,7 @@ void doGamepadMenuUpdate(){
 vec doGamepadupdate(vec vel){
 	static uint lastDown[16] = {0};
 	if(!gamepadActive){return vel;}
-	if(isInventoryOpen() || ((widgetFocused != NULL) && (widgetFocused->type != wGameScreen))){
+	if(((widgetFocused != NULL) && (widgetFocused->type != wGameScreen))){
 		doGamepadMenuUpdate();
 	}
 	if( fabsf(gamepadLeftAxisX) > 0.2f){ vel.x = gamepadLeftAxisX; }
@@ -186,24 +185,14 @@ vec doGamepadupdate(vec vel){
 		my = gamepadRightAxisY*4.f;
 		if(fabsf(gamepadRightAxisX) < 0.2f){ mx = 0;}
 		if(fabsf(gamepadRightAxisY) < 0.2f){ my = 0;}
-		if(!isInventoryOpen()){
-			characterRotate(player,vecNew(mx,my,0));
-		}
+		characterRotate(player,vecNew(mx,my,0));
 	}
 	uint curticks = getTicks();
 
 	if(!gamepadButtons[0]){
 		lastDown[0] = 0;
 	}else if(gamepadButtons[0] && (curticks > (lastDown[0] + 600))){
-		if(isInventoryOpen()){
-			if(lastDown[0] == 0){
-				lastDown[0] = curticks;
-			}else{
-				lastDown[0] += 50;
-			}
-		}else{
-			vel.y = 1.f;
-		}
+		vel.y = 1.f;
 	}
 
 	if(gamepadButtons[2]){
@@ -214,11 +203,6 @@ vec doGamepadupdate(vec vel){
 	}
 	if(gamepadButtons[6]){
 		gamepadButtons[6] = false;
-		if(isInventoryOpen()){
-			closeInventory();
-		}else{
-			openInventory();
-		}
 	}
 	if(gamepadButtons[4]){
 		gamepadButtons[4] = false;
@@ -244,21 +228,9 @@ vec doGamepadupdate(vec vel){
 	}
 	if(gamepadButtons[13]){
 		gamepadButtons[13] = false;
-
-		if(!isInventoryOpen()){
-			uint nai = player->activeItem-1;
-			if(nai > 9){nai=9;}
-			characterSetActiveItem(player,nai);
-		}
 	}
 	if(gamepadButtons[14]){
 		gamepadButtons[14] = false;
-
-		if(!isInventoryOpen()){
-			uint nai = player->activeItem+1;
-			if(nai > 9){nai=0;}
-			characterSetActiveItem(player,nai);
-		}
 	}
 	return vel;
 }

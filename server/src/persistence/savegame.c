@@ -19,13 +19,10 @@
 #include "animal.h"
 #include "character.h"
 #include "chunk.h"
-#include "itemDrop.h"
-#include "throwable.h"
 
 #include "../main.h"
 #include "../game/animal.h"
 #include "../game/fire.h"
-#include "../game/itemDrop.h"
 #include "../misc/options.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
@@ -155,14 +152,8 @@ void chungusLoad(chungus *c){
 		case saveTypeChunkBlockData:
 			b = chunkLoad(c,b);
 			break;
-		case saveTypeItemDrop:
-			b = itemDropLoad(b);
-			break;
 		case saveTypeAnimal:
 			b = animalLoad(b);
-			break;
-		case saveTypeThrowable:
-			b = throwableLoad(b);
 			break;
 		default:
 			fprintf(stderr,"Unknown type[%u] found in %i:%i:%i savestate\n",cType,c->x,c->y,c->z);
@@ -194,9 +185,7 @@ void chungusSave(chungus *c){
 	}
 	}
 	}
-	cbuf = itemDropSaveChungus (c,cbuf);
 	cbuf = animalSaveChungus   (c,cbuf);
-	cbuf = throwableSaveChungus(c,cbuf);
 	const size_t uncompressedLen = cbuf - saveLoadBuffer;
 	if(uncompressedLen == 0){
 		PROFILE_STOP();

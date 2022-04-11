@@ -135,23 +135,6 @@ void msgSetTime( int c, u32 time){
 	packetQueue(p,msgtSetTime,4,c);
 }
 
-void msgItemDropNew(int c, const vec pos, const vec vel, const item *itm){
-	packet *p = &packetBuffer;
-
-	p->v.f[0] = pos.x;
-	p->v.f[1] = pos.y;
-	p->v.f[2] = pos.z;
-
-	p->v.f[3] = vel.x;
-	p->v.f[4] = vel.y;
-	p->v.f[5] = vel.z;
-
-	p->v.u16[12] = itm->ID;
-	p->v.i16[13] = itm->amount;
-
-	packetQueue(p,msgtItemDropNew,8*4,c);
-}
-
 void msgBeingMove(being b, vec dpos, vec dvel){
 	packet *p = &packetBuffer;
 
@@ -216,73 +199,6 @@ void msgSetPlayerCount(u16 playerLeaving, u16 playerMax){
 	packetQueue(p,msgtSetPlayerCount,2*2,-1);
 }
 
-void msgPickupItem(int c, const item itm){
-	packet *p = &packetBuffer;
-
-	p->v.u16[0] = itm.ID;
-	p->v.i16[1] = itm.amount;
-
-	packetQueue(p,msgtPlayerPickupItem,2*2,c);
-}
-
-void msgGrenadeExplode(const vec pos,float pwr, u16 style){
-	packet *p = &packetBuffer;
-
-	p->v.f[0] = pos.x;
-	p->v.f[1] = pos.y;
-	p->v.f[2] = pos.z;
-
-	p->v.u16[6] = (u16)(pwr*256.f);
-	p->v.u16[7] = style;
-
-	packetQueue(p,msgtExplode,4*4,-1);
-}
-
-void msgNewGrenade(const vec pos, const vec rot, float pwr, int cluster, float clusterPwr){
-	packet *p = &packetBuffer;
-
-	p->v.f[0] = pos.x;
-	p->v.f[1] = pos.y;
-	p->v.f[2] = pos.z;
-
-	p->v.f[3] = rot.yaw;
-	p->v.f[4] = rot.pitch;
-	p->v.f[5] = rot.roll;
-
-	p->v.f[6] = pwr;
-	p->v.i32[7] = cluster;
-	p->v.f[8] = clusterPwr;
-
-	packetQueueToServer(p,msgtGrenadeNew,9*4);
-}
-
-void msgGrenadeUpdate(int c, const grenade *g, u16 i, u16 count){
-	packet *p = &packetBuffer;
-
-	p->v.u16[0] = i;
-	p->v.u16[1] = count;
-
-	if(g != NULL){
-		p->v.f[1]   = g->ent->pos.x;
-		p->v.f[2]   = g->ent->pos.y;
-		p->v.f[3]   = g->ent->pos.z;
-
-		p->v.f[4]   = g->ent->vel.x;
-		p->v.f[5]   = g->ent->vel.y;
-		p->v.f[6]   = g->ent->vel.z;
-
-		p->v.f[7]   = g->pwr;
-		p->v.i32[8] = g->cluster;
-		p->v.f[9]   = g->clusterPwr;
-	}else{
-		if(i || count){
-			fprintf(stderr,"Trying to sync a NULL grenade!\n");
-		}
-	}
-
-	packetQueue(p,msgtGrenadeUpdate,10*4,c);
-}
-
 void msgFxBeamBlaster(int c, const vec pa, const vec pb, float beamSize, float damageMultiplier){
 	packet *p = &packetBuffer;
 
@@ -298,29 +214,6 @@ void msgFxBeamBlaster(int c, const vec pa, const vec pb, float beamSize, float d
 	p->v.f[7] = damageMultiplier;
 
 	packetQueueExcept(p,msgtFxBeamBlaster,8*4,c);
-}
-
-void msgItemDropUpdate(int c, const vec pos, const vec vel, const item *itm, u16 i, u16 len, i16 IDPlayer){
-	packet *p = &packetBuffer;
-
-	p->v.u16[0] = i;
-	p->v.u16[1] = len;
-
-	p->v.u16[2] = itm->ID;
-	p->v.i16[3] = itm->amount;
-
-	p->v.f[2]   = pos.x;
-	p->v.f[3]   = pos.y;
-	p->v.f[4]   = pos.z;
-
-	p->v.f[5]   = vel.x;
-	p->v.f[6]   = vel.y;
-	p->v.f[7]   = vel.z;
-
-	p->v.i16[16] = IDPlayer;
-	p->v.i16[17] = 0;
-
-	packetQueue(p,msgtItemDropUpdate,9*4,c);
 }
 
 void msgBeingGotHit(i16 hp, u8 cause,float knockbackMult, being target, being culprit){
@@ -355,24 +248,14 @@ void msgBeingDamage(int c, i16 hp, u8 cause, float knockbackMult, being target, 
 	packetQueue(p,msgtBeingDamage,6*4,c);
 }
 
-void msgPlayerSetData(int c, i16 hp, u16 activeItem, u32 flags, u16 id){
+void msgPlayerSetData(int c, i16 hp, u32 flags, u16 id){
 	packet *p = &packetBuffer;
 
 	p->v.i16[0] = hp;
-	p->v.u16[1] = activeItem;
-	p->v.u16[2] = id;
-	p->v.u32[2] = flags;
+	p->v.u16[1] = id;
+	p->v.u32[1] = flags;
 
-	packetQueue(p,msgtCharacterSetData,4*4,c);
-}
-
-void msgPlayerSetInventory(int c,const item *itm, size_t itemCount){
-	packet *p = &packetBuffer;
-	for(uint i=0;i<itemCount;i++){
-		p->v.u16[(i<<1)  ] = itm[i].ID;
-		p->v.i16[(i<<1)+1] = itm[i].amount;
-	}
-	packetQueue(p,msgtCharacterSetInventory,itemCount*4,c);
+	packetQueue(p,msgtCharacterSetData,2*4,c);
 }
 
 void msgPingPong(int c){
@@ -394,31 +277,6 @@ void msgAnimalDied(int c, const animal *a){
 	p->v.u32[4] = animalGetBeing(a);
 
 	packetQueue(p,msgtFxAnimalDied,5*4,c);
-}
-
-void msgPlayerSetEquipment(int c,const item *itm, size_t itemCount){
-	packet *p = &packetBuffer;
-	for(uint i=0;i<itemCount;i++){
-		p->v.u16[(i<<1)  ] = itm[i].ID;
-		p->v.i16[(i<<1)+1] = itm[i].amount;
-	}
-	packetQueue(p,msgtCharacterSetEquipment,itemCount*4,c);
-}
-
-void msgItemDropPickup(int c, uint i){
-	packet *p = &packetBuffer;
-
-	p->v.u16[0] = i;
-
-	packetQueue(p,msgtItemDropPickup,2,c);
-}
-
-void msgItemDropBounce(int c, uint i){
-	packet *p = &packetBuffer;
-
-	p->v.u16[0] = i;
-
-	packetQueue(p,msgtItemDropBounce,2,c);
 }
 
 void msgRopeUpdate(int c, uint i, rope *r){
@@ -498,10 +356,6 @@ const char *networkGetMessageName(uint i){
 		return "beingMove";
 	case msgtSetTime:
 		return "setTime";
-	case msgtItemDropNew:
-		return "itemDropNew";
-	case msgtGrenadeNew:
-		return "grenadeNew";
 	case msgtBeamblast:
 		return "beamblast";
 	case msgtPlayerMoveDelta:
@@ -518,24 +372,14 @@ const char *networkGetMessageName(uint i){
 		return "chunkData";
 	case msgtSetPlayerCount:
 		return "setPlayerCount";
-	case msgtPlayerPickupItem:
-		return "playerPickupItem";
-	case msgtExplode:
-		return "explode";
-	case msgtGrenadeUpdate:
-		return "grenadeUpdate";
 	case msgtFxBeamBlaster:
 		return "fxBeamBlaster";
-	case msgtItemDropUpdate:
-		return "msgItemDropUpdate";
 	case msgtBeingDamage:
 		return "msgBeingDamage";
 	case msgtChungusUnsub:
 		return "chungusUnsubPlayer";
 	case msgtCharacterSetData:
 		return "characterSetData";
-	case msgtCharacterSetInventory:
-		return "characterSetInventory";
 	case msgtAnimalSync:
 		return "animalSync";
 	case msgtDirtyChunk:
@@ -544,12 +388,6 @@ const char *networkGetMessageName(uint i){
 		return "pingPong";
 	case msgtFxAnimalDied:
 		return "fxAnimalDied";
-	case msgtCharacterSetEquipment:
-		return "characterSetEquipment";
-	case msgtItemDropPickup:
-		return "itemDropPickup";
-	case msgtItemDropBounce:
-		return "itemDropBounce";
 	case msgtRopeUpdate:
 		return "ropeUpdate";
 	case msgtProjectileUpdate:
@@ -566,8 +404,6 @@ const char *networkGetMessageName(uint i){
 		return "rainRecvUpdate";
 	case msgtSnowRecvUpdate:
 		return "snowRecvUpdate";
-	case msgtThrowableRecvUpdates:
-		return "throwableRecvUpdate";
 	case msgtRequestSpawnPos:
 		return "RequestSpawnPos";
 	case msgtLZ4:

@@ -21,15 +21,12 @@
 #include "../game/animal.h"
 #include "../game/being.h"
 #include "../game/fire.h"
-#include "../game/itemDrop.h"
-#include "../game/throwable.h"
 #include "../network/server.h"
 #include "../persistence/savegame.h"
 #include "../worldgen/worldgen.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/game/chunkOverlay.h"
-#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 
 #include <stdio.h>
@@ -129,8 +126,6 @@ void chungusFree(chungus *c){
 	if(c == NULL){return;}
 	chungusSave(c);
 	animalDelChungus(c);
-	itemDropDelChungus(c);
-	throwableDelChungus(c);
 	for(int x=0;x<CHUNGUS_COORDS;x++){
 	for(int y=0;y<CHUNGUS_COORDS;y++){
 	for(int z=0;z<CHUNGUS_COORDS;z++){
@@ -228,7 +223,7 @@ void chungusBoxFWG(chungus *c,int x,int y,int z,int w,int h,int d){
 	const int gx = (x+w)>>4;
 	const int gy = (y+h)>>4;
 	const int gz = (z+d)>>4;
-	blockId block = I_Stone;
+	blockId block = 3;
 
 	if( (x   | y   | z  ) &(~0xFF)){ return; }
 	if(((x+w)|(y+h)|(z+d))&(~0xFF)){ return; }

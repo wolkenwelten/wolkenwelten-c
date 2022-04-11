@@ -19,8 +19,6 @@
 #include "../gfx/texture.h"
 #include "../gfx/shader.h"
 
-#include "../../../common/src/game/item.h"
-#include "../../../common/src/game/itemType.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/nujel/lib/nujel.h"
 
@@ -406,62 +404,12 @@ void textMeshSolidBox(textMesh *m, int x, int y, int w, int h, u32 rgba){
 	textMeshBox(m,x, y,w, h,19.f/32.f, 31.f/32.f,1.f/32.f,1.f/32.f,rgba);
 }
 
-void textMeshItemSingleSprite(textMesh *m, int x, int y, int size, int spriteIndex, u32 color){
-	int u = spriteIndex % 32;
-	int v = spriteIndex / 32;
-	textMeshBox(m,x,y,size,size,u*ITEMTILE,v*ITEMTILE,1.f/32.f,1.f/32.f,color);
-}
-
-void textMeshItemSprite(textMesh *m, int x, int y, int size, int itemID){
-	if(itemID < 256){
-		textMeshItemSingleSprite(m,x,y,size,itemID,~1);
-	}else{
-		itemType *it = &itemTypes[itemID-256];
-		for(int i=0;i<4;i++){
-			const int spriteIndex = it->spriteIndex[i];
-			if(spriteIndex < 0){continue;}
-			const u32 color = it->spriteColor[i];
-			textMeshItemSingleSprite(m,x,y,size,spriteIndex,color);
-		}
-	}
-	//itemType *it =
-}
-
 void textMeshSlot(textMesh *m, int x, int y, int size, int style){
 	float u = 20.f;
 	if(style == 1)     { u = 21.f; }
 	else if(style == 2){ u = 22.f; }
 	else if(style == 3){return;    }
 	textMeshBox(m,x,y,size,size,u/32.f,31.f/32.f,1.f/32.f,1.f/32.f,~1);
-}
-
-void textMeshItemSlot(textMesh *m, int x, int y, int size, int style, int itemID, int amount){
-	textMeshSlot(m,x,y,size,style);
-	if(itemID <= 0){return;}
-	const int itemsize    = size - size / 6;
-	const int itemsizeoff = (size-itemsize)/2;
-	textMeshItemSprite(m,x+itemsizeoff,y+itemsizeoff,itemsize,itemID);
-	textMeshNumber(m,x+size-size/4,y+(size-size/4-size/32),1,amount);
-}
-
-void textMeshItem(textMesh *m, int x, int y, int size, int style, const item *itm){
-	textMeshSlot(m,x,y,size,style);
-	if(itemIsEmpty(itm)){return;}
-	const int itemsize    = size - size / 6;
-	const int itemsizeoff = (size-itemsize)/2;
-	textMeshItemSprite(m,x+itemsizeoff,y+itemsizeoff,itemsize,itm->ID);
-	if(itemGetStackSize(itm) <= 1){
-		const int magSize = itemGetMagazineSize(itm);
-		if(magSize){
-			textMeshNumber(m,x+size/4,y+size/8,1,itemGetAmmo(itm));
-			if(screenWidth > 900){
-				textMeshNumber(m,x+size-size/4,y+size/8,1,magSize);
-				textMeshDigit (m,x+size/2-size/16,y+size/8, 1, 10);
-			}
-		}
-	}else{
-		textMeshNumber(m,x+size-size/4,y+(size-size/4-size/32),1,itm->amount);
-	}
 }
 
 void textMeshVGradient(textMesh *m, int x, int y, int w, int h, u32 c1, u32 c2){

@@ -25,7 +25,6 @@
 #include "../../gui/gui.h"
 #include "../../gui/textInput.h"
 #include "../../gui/menu.h"
-#include "../../gui/menu/inventory.h"
 #include "../../gui/repl.h"
 #include "../../misc/lisp.h"
 #include "../../misc/options.h"

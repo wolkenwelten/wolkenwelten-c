@@ -16,7 +16,6 @@
  */
 #include "network.h"
 #include "character.h"
-#include "../itemDrop.h"
 #include "../../gfx/gfx.h"
 #include "../../gfx/effects.h"
 #include "../../gui/overlay.h"
@@ -26,7 +25,6 @@
 #include "../../network/client.h"
 #include "../../../../common/src/game/being.h"
 #include "../../../../common/src/game/hook.h"
-#include "../../../../common/src/game/item.h"
 
 int        playerID = -1;
 character *playerList[32];
@@ -60,8 +58,6 @@ void characterUpdatePacket(const packet *p){
 		}
 	}
 	playerList[i]->hp           = p->v.u16[23];
-	playerList[i]->inventory[0] = itemNew(p->v.u16[24],1);
-	playerList[i]->activeItem   = 0;
 
 	playerList[i]->animationIndex     = p->v.u16[25];
 	playerList[i]->animationTicksMax  = p->v.u16[26];
@@ -164,9 +160,8 @@ void characterGotHitPacket(const packet *p){
 
 void characterSetData(character *c, const packet *p){
 	c->hp         = p->v.i16[0];
-	c->activeItem = p->v.u16[1];
-	playerID      = p->v.u16[2];
-	c->flags      = p->v.u32[2];
+	playerID      = p->v.u16[1];
+	c->flags      = p->v.u32[1];
 	if(playerList[playerID] == NULL){
 		playerList[playerID] = player;
 	}
@@ -178,16 +173,6 @@ void characterSetData(character *c, const packet *p){
 void characterSetName(const packet *p){
 	if(p->v.u16[0] >= 32){return;}
 	memcpy(playerNames[p->v.u16[0]],&p->v.u8[2],32);
-}
-
-void characterPickupPacket(character *c, const packet *p){
-	const u16 ID     = p->v.u16[0];
-	const i16 amount = p->v.i16[1];
-	int a = characterPickupItem(c,ID,amount);
-	if(a ==  0){return;}
-	if(a == -1){a=0;}
-	item drop = itemNew(ID,amount-a);
-	itemDropNewC(c, &drop);
 }
 
 character *characterGetPlayer(uint i){

@@ -22,8 +22,6 @@
 #include "../game/animal.h"
 #include "../game/blockType.h"
 #include "../game/fire.h"
-#include "../game/itemDrop.h"
-#include "../game/throwable.h"
 #include "../gfx/frustum.h"
 #include "../gfx/gfx.h"
 #include "../voxel/chunk.h"
@@ -101,8 +99,6 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
 	animalDelChungus(c);
-	itemDropDelChungus(c);
-	throwableDelChungus(c);
 	for(int x=0;x<16;x++){
 	for(int y=0;y<16;y++){
 	for(int z=0;z<16;z++){

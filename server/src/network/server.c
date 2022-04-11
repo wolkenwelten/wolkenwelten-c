@@ -24,10 +24,7 @@
 #include "../game/blockMining.h"
 #include "../game/character.h"
 #include "../game/fire.h"
-#include "../game/itemDrop.h"
-#include "../game/grenade.h"
 #include "../game/projectile.h"
-#include "../game/throwable.h"
 #include "../game/rope.h"
 #include "../game/weather/weather.h"
 #include "../misc/lisp.h"
@@ -177,7 +174,6 @@ void msgUpdatePlayer(uint c){
 		if(i==c)                {continue;}
 		if(clients[i].state)    {continue;}
 		if(clients[i].c == NULL){continue;}
-		item *itm = characterGetItemBarSlot(clients[i].c,clients[i].c->activeItem);
 		const character *chr = clients[i].c;
 		int pLen = 16*4;
 
@@ -201,11 +197,7 @@ void msgUpdatePlayer(uint c){
 		rp->v.u16[22] = chr->blockMiningZ;
 		rp->v.u16[23] = chr->hp;
 
-		if(itm == NULL){
-			rp->v.u16[24] = 0;
-		}else{
-			rp->v.u16[24] = itm->ID;
-		}
+		rp->v.u16[24] = 0;
 		rp->v.u16[25] = chr->animationIndex;
 		rp->v.u16[26] = chr->animationTicksMax;
 		rp->v.u16[27] = chr->animationTicksLeft;
@@ -222,12 +214,9 @@ void msgUpdatePlayer(uint c){
 		packetQueue(rp,msgtCharacterUpdate,pLen,c);
 	}
 
-	clients[c].itemDropUpdateOffset = itemDropUpdatePlayer(c,clients[c].itemDropUpdateOffset);
-	grenadeUpdatePlayer(c);
 	blockMiningUpdatePlayer(c);
 	animalSyncPlayer(c);
 	projectileSyncPlayer(c);
-	throwableSyncPlayer(c);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 	clients[c].syncCount++;
@@ -249,7 +238,6 @@ void serverParsePlayerPos(uint c,const packet *p){
 	clients[c].c->blockMiningZ       = p->v.u16[22];
 	clients[c].c->hp                 = p->v.u16[23];
 
-	clients[c].c->activeItem         = p->v.u16[24];
 	clients[c].c->animationIndex     = p->v.u16[25];
 	clients[c].c->animationTicksMax  = p->v.u16[26];
 	clients[c].c->animationTicksLeft = p->v.u16[27];
@@ -366,12 +354,6 @@ void serverParseSinglePacket(uint c, packet *p){
 		}
 		printf("[SRV] Client said goodbye\n");
 		break;
-	case msgtItemDropNew:
-		itemDropNewPacket(c,p);
-		break;
-	case msgtGrenadeNew:
-		grenadeNewP(p);
-		break;
 	case msgtBeamblast:
 		beamblastNewP(c,p);
 		break;
@@ -390,24 +372,12 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtChungusUnsub:
 		chungusUnsubscribePlayer(world.chungi[p->v.u8[0]][p->v.u8[1]&0x7F][p->v.u8[2]],c);
 		break;
-	case msgtCharacterSetInventory:
-		characterSetInventoryP(clients[c].c,p);
-		break;
 	case msgtDirtyChunk:
 		worldDirtyChunk(c,p->v.u16[0],p->v.u16[1],p->v.u16[2]);
 		break;
 	case msgtPingPong:
 		handlePingPong(c);
 		msgPingPong(c);
-		break;
-	case msgtCharacterSetEquipment:
-		characterSetEquipmentP(clients[c].c,p);
-		break;
-	case msgtItemDropPickup:
-		itemDropPickupP(c,p);
-		break;
-	case msgtItemDropBounce:
-		itemDropBounceP(c,p);
 		break;
 	case msgtRopeUpdate:
 		ropeUpdateP(c,p);
@@ -421,9 +391,6 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtLispRecvSExpr:
 		lispRecvSExpr(c,p);
 		break;
-	case msgtThrowableRecvUpdates:
-		throwableRecvUpdate(p);
-		break;
 	case msgtBeingMove:
 		beingMove(c,p);
 		break;
@@ -433,9 +400,6 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtChunkData:
 	case msgtChunkEmpty:
 	case msgtSetPlayerCount:
-	case msgtPlayerPickupItem:
-	case msgtExplode:
-	case msgtGrenadeUpdate:
 	case msgtBlockMiningUpdate:
 	case msgtSetChungusLoaded:
 	case msgtBeingGotHit:
@@ -448,7 +412,6 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtWeatherRecvUpdate:
 	case msgtRainRecvUpdate:
 	case msgtSnowRecvUpdate:
-	case msgtItemDropUpdate:
 	case msgtLightningStrike:
 		fprintf(stderr,"%s[%u] received from client, which should never happen\n",networkGetMessageName(pType),pType);
 		serverKill(c);

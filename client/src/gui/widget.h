@@ -36,10 +36,6 @@ typedef enum {
 	wRadioButton,
 	wButtonDel,
 	wSlider,
-	wItem,
-	wItemSlot,
-	wRecipeSlot,
-	wRecipeInfo,
 	wGameScreen,
 	wTextScroller,
 	wTextLog
@@ -61,8 +57,6 @@ struct widget {
 		char **valss;
 		int    vali;
 		uint   valu;
-		item   valItem;
-		item  *valItemSlot;
 	};
 };
 

@@ -18,7 +18,6 @@
 #include "../game/blockMining.h"
 
 #include "../game/blockType.h"
-#include "../game/itemDrop.h"
 #include "../gfx/effects.h"
 #include "../gfx/gl.h"
 #include "../gfx/gfx.h"

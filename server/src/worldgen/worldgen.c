@@ -23,7 +23,7 @@
 #include "../voxel/chungus.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/common.h"
-#include "../../../common/src/game/item.h"
+#include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/time.h"
 #include "../../../common/src/game/weather/weather.h"
 #include "../../../common/src/misc/misc.h"

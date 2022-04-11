@@ -22,8 +22,8 @@
 #include "../game/animal.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/common.h"
+#include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/chunkOverlay.h"
-#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 
 #include <stdlib.h>

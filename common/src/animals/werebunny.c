@@ -21,8 +21,6 @@
 #include "../game/being.h"
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../game/item.h"
-#include "../game/itemDrop.h"
 #include "../game/time.h"
 #include "../misc/misc.h"
 #include "../network/messages.h"
@@ -291,21 +289,6 @@ static void werebunnySEat(animal *e,int stateChange[16]){
 	}
 }
 
-static void werebunnyDoPoop(animal *e,int stateChange[16]){
-	item ipoop = itemNew(I_Poop,1);
-	itemDropNewP(e->pos, &ipoop,-1);
-	stateChange[ANIMAL_S_FLEE] += 256;
-}
-
-static void werebunnyPoop(animal *e,int stateChange[16]){
-	if(e->hunger < 24){return;}
-	if(e->hunger < 48){
-		if(rngValA(2047) == 0){werebunnyDoPoop(e,stateChange);}
-	}else{
-		if(rngValA(1023) == 0){werebunnyDoPoop(e,stateChange);}
-	}
-}
-
 static void werebunnySocialDistancing(animal *e,int stateChange[16]){
 	if(rngValA(31) != 0){return;}
 	float d;
@@ -374,7 +357,6 @@ void animalThinkWerebunny(animal *e){
 	werebunnyAgeing          (e,stateChange);
 	werebunnySleepyness      (e,stateChange);
 	werebunnyHunger          (e,stateChange);
-	werebunnyPoop            (e,stateChange);
 	werebunnySocialDistancing(e,stateChange);
 	werebunnySearchPrey      (e,stateChange);
 
@@ -426,10 +408,6 @@ void animalRBurnWerebunny(animal *e){
 	}
 }
 
-
 void animalRDieWerebunny(animal *e){
-	item mdrop = itemNew(I_Meat,rngValMM(4,6));
-	item fdrop = itemNew(I_Fur, rngValMM(3,4));
-	itemDropNewP(e->pos,&mdrop,-1);
-	itemDropNewP(e->pos,&fdrop,-1);
+	(void)e;
 }

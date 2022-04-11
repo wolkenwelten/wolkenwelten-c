@@ -20,13 +20,11 @@
 #include "weather/weather.h"
 #include "being.h"
 #include "blockMining.h"
-#include "grenade.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/chunkOverlay.h"
-#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
 

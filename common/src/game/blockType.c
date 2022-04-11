@@ -17,7 +17,6 @@
 
 #include "../game/blockType.h"
 
-#include "../../../common/src/game/item.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/side.h"

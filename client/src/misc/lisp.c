@@ -24,10 +24,7 @@
 #include "../game/character/character.h"
 #include "../game/character/hook.h"
 #include "../game/fire.h"
-#include "../game/grenade.h"
 #include "../game/projectile.h"
-#include "../game/recipe.h"
-#include "../game/throwable.h"
 #include "../game/weather/weather.h"
 #include "../gfx/boundaries.h"
 #include "../gfx/gfx.h"
@@ -35,7 +32,6 @@
 #include "../gui/chat.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
-#include "../gui/menu/inventory.h"
 #include "../gui/repl.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
@@ -44,7 +40,6 @@
 #include "../network/client.h"
 #include "../sdl/sdl.h"
 #include "../sfx/sfx.h"
-#include "../../../common/src/game/item.h"
 #include "../../../common/src/misc/lisp.h"
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
@@ -283,11 +278,6 @@ static lVal *wwlnfFireHook(lClosure *c, lVal *v){
 	return NULL;
 }
 
-static lVal *wwlnfPlayerActiveSlotGet(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	return lValInt(player->activeItem);
-}
-
 static lVal *wwlnfSetCooldown(lClosure *c, lVal *v){
 	(void)c;
 	if(player == NULL){return NULL;}
@@ -296,18 +286,6 @@ static lVal *wwlnfSetCooldown(lClosure *c, lVal *v){
 	characterSetCooldown(player,cd);
 
 	return lValInt(player->actionTimeout);
-}
-
-static lVal *wwlnfPlayerActiveSlotSet(lClosure *c, lVal *v){
-	(void)c;
-	const int ai = castToInt(lCar(v),-1);
-	if(player == NULL){return NULL;}
-	if(ai >= 0){
-		player->activeItem = ai;
-		player->flags &= ~(CHAR_AIMING | CHAR_THROW_AIM);
-		player->goalZoomFactor = 1.f;
-	}
-	return NULL;
 }
 
 static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
@@ -353,16 +331,6 @@ static lVal *wwlnfServerExecutable(lClosure *c, lVal *v){
 	return lValString(clientGetServerExecutable());
 }
 
-static lVal *wwlnfTryToUse(lClosure *c, lVal *v){
-	(void)c;
-	const int ms     = castToInt(lCar(v),800); v = lCdr(v);
-	const int amount = castToInt(lCar(v),1);
-	item *itm  = &player->inventory[player->activeItem];
-
-	bool ret = characterTryToUse(player,itm,ms,amount);
-	return lValBool(ret);
-}
-
 static lVal *wwlnfStartAnim(lClosure *c, lVal *v){
 	(void)c;
 	const int anim = castToInt(lCar(v),0); v = lCdr(v);
@@ -375,33 +343,6 @@ static lVal *wwlnfStartAnim(lClosure *c, lVal *v){
 static lVal *wwlnfStopAnim(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	characterStopAnimation(player);
-	return NULL;
-}
-
-static lVal *wwlnfGrenadeNew(lClosure *c, lVal *v){
-	(void)c;
-	const vec pos          = castToVec(lCar(v),player->pos); v = lCdr(v);
-	const vec rot          = castToVec(lCar(v),player->rot); v = lCdr(v);
-	const float pwr        = castToFloat(lCar(v),4.f);       v = lCdr(v);
-	const int cluster      = castToInt(lCar(v),0);           v = lCdr(v);
-	const float clusterPwr = castToFloat(lCar(v),0.f);
-
-	grenadeNew(pos,rot,pwr,cluster,clusterPwr);
-	return NULL;
-}
-
-static lVal *wwlnfTryToThrow(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	item *itm = &player->inventory[player->activeItem];
-	return lValBool(throwableTryAim(itm,player));
-}
-
-static lVal *wwlnfItemReload(lClosure *c, lVal *v){
-	(void)c;
-	const int ms = castToInt(lCar(v),200);
-	item *itm = &player->inventory[player->activeItem];
-
-	characterItemReload(player,itm,ms);
 	return NULL;
 }
 
@@ -441,62 +382,9 @@ static lVal *wwlnfPlayerMaxHP(lClosure *c, lVal *v){
 	return lValInt(player->maxhp);
 }
 
-static lVal *wwlnfRResult(lClosure *c, lVal *v){
-	(void)c;
-	const int id     = castToInt(lCar(v),-1); v = lCdr(v);
-	const int result = castToInt(lCar(v),0);  v = lCdr(v);
-	const int amount = castToInt(lCar(v),0);
-
-	if((id < 0) || (result <= 0) || (amount <= 0)){return NULL;}
-	recipeCount = MAX(id+1,(int)recipeCount);
-	recipes[id].result.ID = result;
-	recipes[id].result.amount = amount;
-	return NULL;
-}
-
-static lVal *wwlnfRIngred(lClosure *c, lVal *v){
-	(void)c;
-	const int id     = castToInt(lCar(v),-1); v = lCdr(v);
-	const int ii     = castToInt(lCar(v),-1); v = lCdr(v);
-	const int ingred = castToInt(lCar(v),0);  v = lCdr(v);
-	const int amount = castToInt(lCar(v),0);
-
-	if((id < 0) || (ii < 0) || (ii >= 4) || (ingred <= 0) || (amount <= 0)){return NULL;}
-	recipeCount = MAX(id+1,(int)recipeCount);
-	recipes[id].ingredient[ii].ID = ingred;
-	recipes[id].ingredient[ii].amount = amount;
-	return NULL;
-}
-
 static lVal *wwlnfAimingPred(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValBool(characterIsAiming(player));
-}
-
-static lVal *wwlnfThrowingPred(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	return lValBool(characterIsThrowAiming(player));
-}
-
-static lVal *wwlnfThrowItem(lClosure *c, lVal *v){
-	(void)c;
-	const int flags   = castToInt(lCar(v),0);      v = lCdr(v);
-	const float force = castToFloat(lCar(v),0.1f); v = lCdr(v);
-	const int damage  = castToInt(lCar(v),1);
-
-	item *itm = &player->inventory[player->activeItem];
-	bool ret  = throwableTry(itm,player,force,damage,flags);
-	return lValBool(ret);
-}
-
-static lVal *wwlnfTryToShoot(lClosure *c, lVal *v){
-	(void)c;
-	const int cooldown    = castToInt(lCar(v),800); v = lCdr(v);
-	const int bulletcount = castToInt(lCar(v),1);
-
-	item *itm = &player->inventory[player->activeItem];
-	bool ret  = characterTryToShoot(player,itm,cooldown,bulletcount);
-	return lValBool(ret);
 }
 
 static lVal *wwlnfBeamblast(lClosure *c, lVal *v){
@@ -552,64 +440,11 @@ static lVal *wwlnfPlayerStopMining(lClosure *c, lVal *v){
 	return NULL;
 }
 
-static lVal *wwlnfPlayerInventoryGet(lClosure *c, lVal *v){
-	(void)c;
-	const int slot = castToInt(lCar(v),-1);
-
-	if(slot < 0)                               {return NULL;}
-	if(slot >= (int)countof(player->inventory)){return NULL;}
-	const item *itm = &player->inventory[slot];
-	return lCons(lValInt(itm->ID),lValInt(itm->amount));
-
-}
-static lVal *wwlnfPlayerInventorySet(lClosure *c, lVal *v){
-	(void)c;
-	const int slot   = castToInt(lCar(v),-1); v = lCdr(v);
-	const int itemID = castToInt(lCar(v),-1); v = lCdr(v);
-	const int amount = castToInt(lCar(v),-1);
-
-	if(slot < 0)                               {return NULL;}
-	if(slot >= (int)countof(player->inventory)){return NULL;}
-	if((itemID > 0) && (amount > 0)){
-		player->inventory[slot] = itemNew(itemID,amount);
-	}
-	return NULL;
-}
-
-static lVal *wwlnfPlayerInventorySizeGet(lClosure *c, lVal *v){
-	(void)c; (void)v;
-	return lValInt(player->inventorySize);
-}
-
-static lVal *wwlnfIngredientAmountGet(lClosure *c, lVal *v){
-	(void)c;
-	const int id = castToInt(lCar(v),-1);
-	if(id <= 0){
-		return lValInt(0);
-	}else{
-		return lValInt(characterGetItemOrSubstituteAmount(player,id));
-	}
-}
-
-static lVal *wwlnfIngredientAmountDecrement(lClosure *c, lVal *v){
-	(void)c;
-	const int id  = castToInt(lCar(v),-1); v = lCdr(v);
-	const int amt = castToInt(lCar(v),-1);
-	if(id <= 0){
-		return lValInt(0);
-	}else{
-		return lValInt(characterDecItemOrSubstituteAmount(player, id, amt));
-	}
-}
-
 static lVal *wwlnfPlayerPlaceBlock(lClosure *c, lVal *v){
 	(void)c;
-	const int slot = castToInt(lCar(v),-1);
-
-	if(slot < 0)                               {return NULL;}
-	if(slot >= (int)countof(player->inventory)){return NULL;}
-	item *itm = &player->inventory[slot];
-	characterPlaceBlock(player,itm);
+	const int b = castToInt(lCar(v), -1);
+	if(b < 0){return NULL;}
+	characterPlaceBlock(player, b);
 
 	return NULL;
 }
@@ -629,17 +464,6 @@ static lVal *wwlnfPlayerZoomSet(lClosure *c, lVal *v){
 		player->goalZoomFactor = 1.f;
 		player->flags &= ~(CHAR_AIMING | CHAR_THROW_AIM);
 	}
-
-	return NULL;
-}
-
-static lVal *wwlnfDropItem(lClosure *c, lVal *v){
-	(void)c;
-	const int slot = castToInt(lCar(v),-1);
-
-	if(slot < 0)                               {return NULL;}
-	if(slot >= (int)countof(player->inventory)){return NULL;}
-	characterItemDropSingle(player,slot);
 
 	return NULL;
 }
@@ -673,12 +497,6 @@ static lVal *wwlnfPlayerStrafe(lClosure *c, lVal *v){
 	(void)c;
 	player->controls.x = castToFloat(lCar(v),0.f);
 
-	return NULL;
-}
-
-static lVal *wwlnfToggleInventory(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	toggleInventory();
 	return NULL;
 }
 
@@ -791,33 +609,15 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)",     "Plays SFX S with volume &VOL=1.0 as if emitting from &POS.",     wwlnfSfxPlay);
 	lAddNativeFunc(c,"screenshot",     "()",                "Takes a screeshot",                                              wwlnfScreenshot);
 	lAddNativeFunc(c,"fire-hook",      "()",                "Fires the players Grappling hook, or retracts it if fired",      wwlnfFireHook);
-	lAddNativeFunc(c,"player-active-slot", "()",            "Get the players active slot",                                    wwlnfPlayerActiveSlotGet);
-	lAddNativeFunc(c,"player-active-slot!","(slot)",        "Set the players active SLOT",                                    wwlnfPlayerActiveSlotSet);
-	lAddNativeFunc(c,"player-inventory",   "(slot)",           "Get the players inventory SLOT",                              wwlnfPlayerInventoryGet);
-	lAddNativeFunc(c,"player-inventory!",  "(slot id &amount)","Set the players inventory SLOT to ID and AMOUNT",             wwlnfPlayerInventorySet);
-	lAddNativeFunc(c,"player-inventory-size","()",          "Return the size of the players inventory",                       wwlnfPlayerInventorySizeGet);
-	lAddNativeFunc(c,"player-ingredient-get","(id)",        "Return the amount of items the player has of ID and its substitutes",wwlnfIngredientAmountGet);
-	lAddNativeFunc(c,"player-ingredient-decrement","(id amount)","Remove AMOUNT items of ID and its substitutes",             wwlnfIngredientAmountDecrement);
 	lAddNativeFunc(c,"server-path",    "()",                "Returns the path to the server executable, if found.",           wwlnfServerExecutable);
-	lAddNativeFunc(c,"try-to-use",     "(&ms &amount)",     "Try to use &AMOUNT=1 and wait for &MS=200.",                     wwlnfTryToUse);
 	lAddNativeFunc(c,"start-anim",     "(id ms)",           "Starts animation &ID=0 for &MS=200",                             wwlnfStartAnim);
 	lAddNativeFunc(c,"stop-anim" ,     "()",                "Stops any animation that is currently playing",                  wwlnfStopAnim);
-	lAddNativeFunc(c,"grenade-new",    "(pos rot pwr cluster clusterpwr)", "Creates a new grenade a POS moving into ROT creating an explosion of size PWR and then splitting into CLUSTER grenades with a power of CLUSTERPWR.", wwlnfGrenadeNew);
-	lAddNativeFunc(c,"try-to-throw",   "()",                "Try to switch into a throwing mode for the currently held item", wwlnfTryToThrow);
-	lAddNativeFunc(c,"item-reload",    "(&ms)",             "Reloads the currently held item in &MS=200.",                    wwlnfItemReload);
 	lAddNativeFunc(c,"toggle-aim",     "(&zoom)",           "Toggles aiming with a &ZOOM=4 factor.",                          wwlnfToggleAim);
 	lAddNativeFunc(c,"inaccuracy",     "(&acc)",            "Set the player inaccuracy to &ACC if set, return inaccuracy",    wwlnfInaccuracy);
 	lAddNativeFunc(c,"recoil",         "(&rec)",            "Adds recoil to the player of &REC=1.0",                          wwlnfRecoil);
-	lAddNativeFunc(c,"r-result",       "(id result amt)",   "Set the result of recipe ID to AMT times RESULT.",               wwlnfRResult);
-	lAddNativeFunc(c,"r-ingred",       "(id i ingred amt)", "Set the ingredient I of recipe ID to AMT times INGRED.",         wwlnfRIngred);
 	lAddNativeFunc(c,"aiming?",        "()",                "Predicate that evaluates to #t when the player is aiming.",      wwlnfAimingPred);
-	lAddNativeFunc(c,"throwing?",      "()",                "Predicate that evaluates to #t when the player is throw-aiming.",wwlnfThrowingPred);
-	lAddNativeFunc(c,"throw-item",     "(flags &force &amount)", "Throw the currently held item with FLAGS, &FORCE=0.1 and &AMOUNT=1",wwlnfThrowItem);
-	lAddNativeFunc(c,"player-drop-item!","(slot)",          "Throw a single item from SLOT in front of the player",           wwlnfDropItem);
-	lAddNativeFunc(c,"try-to-shoot",   "(cd ammo)",         "Try to shoot and cooldown for CD and use AMMO bullets",          wwlnfTryToShoot);
 	lAddNativeFunc(c,"beamblast",      "(size damage hits-left)", "Calls cFunc beamblast",                                    wwlnfBeamblast);
 	lAddNativeFunc(c,"projectile",     "(&type &num)",      "Fire &NUM=1 projectiles of &TYPE=0",                             wwlnfProjectile);
-	lAddNativeFunc(c,"toggle-inventory!","()",              "Toggle the inveotory",                                           wwlnfToggleInventory);
 	lAddNativeFunc(c,"widget-focus-on-game?","()",          "Return #t if the game is focused and not some menu",             wwlnfGuiFocusOnGame);
 	lAddNativeFunc(c,"draw-boundaries", "()",                "Return the current boundary drawing style",                     wwlnfDrawBoundariesGet);
 	lAddNativeFunc(c,"draw-boundaries!","(v)",               "Set the current boundary drawing style",                        wwlnfDrawBoundariesSet);

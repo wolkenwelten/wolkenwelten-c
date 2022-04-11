@@ -14,11 +14,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "being.h"
 #include "../game/animal.h"
 #include "../game/fire.h"
-#include "../game/itemDrop.h"
 #include "../game/projectile.h"
 #include "../voxel/bigchungus.h"
 #include "../voxel/chungus.h"
@@ -41,9 +39,6 @@ void beingSync(u8 c, being b){
 		return;
 	case BEING_PROJECTILE:
 		projectileSendUpdate(c,beingID(b));
-		return;
-	case BEING_ITEMDROP:
-		itemDropUpdateMsg(c,beingID(b));
 		return;
 	}
 }

@@ -27,7 +27,6 @@
 #include "../../sdl/sdl.h"
 #include "../../tmp/objs.h"
 #include "../../../../common/src/misc/misc.h"
-#include "../../../../common/src/game/item.h"
 
 #include <math.h>
 
@@ -80,87 +79,6 @@ static void characterGliderDraw(const character *c){
 	meshDraw(meshGlider);
 }
 
-static void characterActiveItemDraw(const character *c){
-	const item *activeItem;
-	mesh *aiMesh;
-	float sneakOff = 0.f;
-	if(c->flags & CHAR_SNEAK){sneakOff = 1.f;}
-
-	activeItem = &c->inventory[c->activeItem];
-	if(activeItem == NULL)     {return;}
-	if(itemIsEmpty(activeItem)){return;}
-	aiMesh = itemGetMesh(activeItem);
-	if(aiMesh == NULL)         {return;}
-
-	const float breath = cosf((float)c->breathing/512.f)*4.f;
-
-	matMov(matMVP,matView);
-	matMulTrans(matMVP,c->pos.x,c->pos.y+c->yoff,c->pos.z);
-	matMulRotYX(matMVP,-c->rot.yaw+(15.f*sneakOff),-c->rot.pitch+breath);
-
-	const float ix =  0.4f - (sneakOff/20.f);
-	const float iy = -0.2f;
-	const float iz = -0.3f;
-	float hitOff,y;
-
-	switch(c->animationIndex){
-	case animationHit:
-		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.3f);
-		y = iy+c->yoff-(hitOff/8);
-		matMulTrans(matMVP,ix-hitOff*0.2f,y+(hitOff/3),iz - hitOff*0.5f);
-		matMulRotYX(matMVP,hitOff*5.f,hitOff*-20.f);
-	break;
-
-	case animationFire:
-		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
-		matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.3f);
-		matMulRotYX(matMVP,hitOff*10.f,hitOff*45.f);
-	break;
-
-	case animationReload:
-		hitOff = animationInterpolationSustain(c->animationTicksLeft,c->animationTicksMax,0.3f,0.5f);
-		y = iy+c->yoff-(hitOff/8);
-		matMulTrans(matMVP,ix-hitOff*0.5f,y-(hitOff*0.5f),iz - hitOff*0.2f);
-		matMulRotYX(matMVP,hitOff*15.f,hitOff*-55.f);
-	break;
-
-	case animationEmpty:
-		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
-		matMulTrans(matMVP,ix,c->yoff+iy,iz + hitOff*0.1f);
-		matMulRotYX(matMVP,hitOff*3.f,hitOff*9.f);
-	break;
-
-	case animationEat:
-		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,1.f)*3.f;
-		if(hitOff < 1.f){
-			matMulTrans(matMVP,ix-hitOff*0.4,c->yoff+iy,iz - hitOff*0.2f);
-			matMulRotYX(matMVP,hitOff*20.f,hitOff*40.f);
-		}else if(hitOff < 2.f){
-			hitOff = hitOff-1.f;
-			matMulTrans(matMVP,ix-0.4f,c->yoff+iy-hitOff*0.2f,iz - 0.2f);
-			matMulRotYX(matMVP,hitOff*60.f+20.f,hitOff*120.f+40.f);
-			matMulScale(matMVP, 1.f-hitOff, 1.f-hitOff, 1.f-hitOff);
-		}else if(hitOff < 3.f){
-			hitOff = 1.f-(hitOff-2.f);
-			matMulTrans(matMVP,ix-hitOff*0.4,c->yoff+iy,iz + hitOff*0.4f);
-			matMulRotYX(matMVP,hitOff*20.f,hitOff*40.f);
-		}
-	break;
-
-	case animationSwitch:
-		hitOff = (float)c->animationTicksLeft / (float)c->animationTicksMax;
-		y = iy+c->yoff-(hitOff/8);
-		matMulTrans(matMVP,ix-hitOff*0.5f,y-(hitOff*0.5f),iz - hitOff*0.2f);
-		matMulRotYX(matMVP,hitOff*30.f,hitOff*-70.f);
-	break;
-	};
-
-	matMulScale(matMVP,0.5f, 0.5f, 0.5f);
-	matMul(matMVP,matMVP,matProjection);
-	shaderMatrix(sMesh,matMVP);
-	meshDraw(aiMesh);
-}
-
 void characterCalcMVP(const character *c, float out[16]){
 	const float breath = sinf((float)c->breathing/512.f) * 6.f;
 	matMov(out, matView);
@@ -188,7 +106,6 @@ void characterDraw(const character *c){
 	meshDraw(c->eMesh);
 	shaderColorSimple(sMesh, brightness);
 
-	characterActiveItemDraw(c);
 	characterShadesDraw(c);
 	characterGliderDraw(c);
 }
@@ -203,98 +120,12 @@ void characterDrawAll(){
 
 void characterDrawConsHighlight(const character *c){
 	static uint counter = 0;
-	item *activeItem = &player->inventory[player->activeItem];
-	if((activeItem == NULL) || itemIsEmpty(activeItem) || (!(player->flags & CHAR_CONS_MODE))){return;}
-	const u16 id = activeItem->ID;
-	if(id < 256){
-		vec los = characterLOSBlock(c,true);
-		if(los.x < 0){return;}
-		const float a = 0.7f + cosf((++counter&0x7F)/128.f*PI*2)*0.15f;
-		blockTypeDraw(id, vecNew(los.x+0.5f,los.y+0.5f,los.z+0.5f),a,0);
-	}else{
-		vec los = characterLOSBlock(c,false);
-		if(los.x < 0){return;}
-		const float a = 0.5f + cosf((++counter&0x7F)/128.f*PI*2)*0.15f;
-		blockTypeDraw(I_Marble_Block, vecNew(los.x+0.5f,los.y+0.5f,los.z+0.5f),a,-4);
-	}
+	if((c->flags & CHAR_CONS_MODE) == 0){return;}
+	vec los = characterLOSBlock(c,true);
+	if(los.x < 0){return;}
+	const float a = 0.7f + cosf((++counter&0x7F)/128.f*PI*2)*0.15f;
+	blockTypeDraw(3, vecNew(los.x+0.5f,los.y+0.5f,los.z+0.5f),a,0);
 }
-
-void characterDrawActiveItemFirstPerson(const character *c){
-	if(c == NULL){return;}
-	float matViewAI[16];
-	const item *activeItem = &c->inventory[c->activeItem];
-	if(activeItem == NULL){return;}
-	if(itemIsEmpty(activeItem)){return;}
-
-	mesh *aiMesh = itemGetMesh(activeItem);
-	if(aiMesh == NULL){return;}
-
-	const float afx = (c->flags & CHAR_THROW_AIM) ? 1.3f : 1.f;
-	const float ix =  (1.5f * afx);
-	float iy = -1.2f;
-	const float iz = -1.5f;
-	float hitOff,y;
-
-	if(!(c->flags & CHAR_FALLING)){
-		iy += sinf((float)(c->breathing-96)/512.f)*0.05f;
-	}
-
-	switch(c->animationIndex){
-	case animationHit:
-		hitOff = animationInterpolation(c->animationTicksLeft, c->animationTicksMax,0.3f);
-		y = iy+c->yoff-(hitOff/8);
-		matTranslation(matViewAI,ix-hitOff*1.2f,y+(hitOff/3),iz - hitOff*1.1f);
-		matMulRotYX(matViewAI,hitOff*10.f,hitOff*-35.f);
-	break;
-
-	case animationFire:
-		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
-		matTranslation(matViewAI,ix,c->yoff+iy,iz + hitOff);
-		matMulRotYX(matViewAI,hitOff*10.f,hitOff*45.f);
-	break;
-
-	case animationReload:
-		hitOff = animationInterpolationSustain(c->animationTicksLeft,c->animationTicksMax,0.3f,0.5f);
-		y = iy+c->yoff-(hitOff/8);
-		matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
-		matMulRotYX(matViewAI,hitOff*15.f,hitOff*-55.f);
-	break;
-
-	case animationEmpty:
-		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,0.5f);
-		matTranslation(matViewAI,ix,c->yoff+iy,iz + hitOff*0.1f);
-		matMulRotYX(matViewAI,hitOff*3.f,hitOff*9.f);
-	break;
-
-	case animationEat:
-		hitOff = animationInterpolation(c->animationTicksLeft,c->animationTicksMax,1.f)*3.f;
-		if(hitOff < 1.f){
-			matTranslation(matViewAI,ix-hitOff*1.4,c->yoff+iy+sinf(hitOff*PI)*0.6f,iz + hitOff*0.3f - sinf(hitOff*PI)*0.7f);
-			matMulRotYX(matViewAI,hitOff*20.f,hitOff*40.f);
-		}else if(hitOff < 2.f){
-			hitOff = hitOff-1.f;
-			matTranslation(matViewAI,ix-1.4f - sinf((hitOff-1)*PI)* 0.2f,c->yoff+iy-hitOff*0.2f,iz + 0.3f);
-			matMulRotYX(matViewAI,hitOff*60.f+20.f,hitOff*120.f+40.f);
-			matMulScale(matViewAI, 1.f-hitOff, 1.f-hitOff, 1.f-hitOff);
-		}else if(hitOff < 3.f){
-			hitOff = hitOff-2.f;
-			matTranslation(matViewAI,ix,c->yoff+iy-(1.f-hitOff)*2.f,iz);
-			matMulRotYX(matViewAI,(1.f-hitOff)*3.f,(1.f-hitOff)*9.f);
-		}
-	break;
-
-	case animationSwitch:
-		hitOff = (float)c->animationTicksLeft / (float)c->animationTicksMax;
-		y = iy+c->yoff-hitOff;
-		matTranslation(matViewAI,ix-hitOff*0.5f,y-(hitOff*0.6f),iz - hitOff*0.4f);
-		matMulRotYX(matViewAI,hitOff*30.f,hitOff*-70.f);
-	break;
-	};
-	matMul(matViewAI, matViewAI, matProjection);
-	shaderMatrix(sMesh, matViewAI);
-	meshDraw(aiMesh);
-}
-
 
 static void characterDrawGliderFirstPerson(const character *c){
 	if(c == NULL){return;}
@@ -323,5 +154,4 @@ void characterDrawFirstPerson(const character *c){
 	shaderColorSimple(sMesh, brightness);
 
 	characterDrawGliderFirstPerson(c);
-	characterDrawActiveItemFirstPerson(c);
 }

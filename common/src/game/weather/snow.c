@@ -17,8 +17,8 @@
 #include "snow.h"
 #include "weather.h"
 
+#include "../../game/blockType.h"
 #include "../../game/fire.h"
-#include "../../game/item.h"
 #include "../../misc/profiling.h"
 #include "../../network/packet.h"
 #include "../../network/messages.h"

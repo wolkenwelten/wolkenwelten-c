@@ -63,26 +63,6 @@ typedef struct {
 	};
 } chunkOverlay;
 
-typedef struct {
-	u16 ID;
-	i16 amount;
-} item;
-
-typedef struct {
-	char name[32];
-	mesh *iMesh;
-	i16 damage[5];
-	u16 ammunition,stackSize,magazineSize;
-	i16 fireDamage;
-	u16 fireHealth;
-	u32 itemDropChance;
-	float inaccuracy;
-	float weight;
-
-	i16 spriteIndex[4];
-	u32 spriteColor[4];
-} itemType;
-
 typedef uint32_t being;
 #define BEING_NULL       0
 #define BEING_CHARACTER  1
@@ -196,10 +176,6 @@ typedef struct {
 	 int cloudyness;
           u8 effectValue;
 
-	u16 activeItem,inventorySize;
-	item inventory[CHAR_INV_MAX];
-	item equipment[CHAR_EQ_MAX];
-
 	void *nextFree;
 } character;
 
@@ -257,44 +233,8 @@ struct hook {
 };
 
 typedef struct {
-	entity    *ent;
-	item       itm;
-	union {
-		u16 aniStep;
-		i16 nextFree;
-	};
-	i16     player;
-
-	u16 lastFire;
-	i16 fireDmg;
-} itemDrop;
-
-
-typedef struct {
-	entity     *ent;
-	item        itm;
-	i16    nextFree;
-	u16     counter;
-	u8        flags;
-	i8       damage;
-	being   thrower;
-} throwable;
-
-#define THROWABLE_PITCH_SPIN   (1   )
-#define THROWABLE_TIP_HEAVY    (1<<1)
-#define THROWABLE_PIERCE       (1<<2)
-#define THROWABLE_COLLECTABLE  (1<<3)
-#define THROWABLE_BURNING      (1<<4)
-
-typedef struct {
 	vec pos,vel;
 	being target,source;
 	u16 style;
 	i16 ttl;
 } projectile;
-
-typedef struct {
-	entity *ent;
-	int ticksLeft,cluster;
-	float pwr,clusterPwr;
-} grenade;

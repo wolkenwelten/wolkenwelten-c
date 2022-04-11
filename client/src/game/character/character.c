@@ -20,20 +20,18 @@
 #include "network.h"
 #include "../animal.h"
 #include "../entity.h"
-#include "../itemDrop.h"
 #include "../projectile.h"
 #include "../weather/weather.h"
 #include "../../sdl/sdl.h"
 #include "../../gfx/gfx.h"
 #include "../../gfx/particle.h"
 #include "../../gui/overlay.h"
-#include "../../gui/menu/inventory.h"
+#include "../../misc/lisp.h"
 #include "../../sfx/sfx.h"
 #include "../../tmp/objs.h"
 #include "../../voxel/bigchungus.h"
 #include "../../../../common/src/misc/profiling.h"
 #include "../../../../common/src/game/being.h"
-#include "../../../../common/src/game/item.h"
 #include "../../../../common/src/game/hook.h"
 #include "../../../../common/src/network/messages.h"
 
@@ -48,7 +46,6 @@ void characterInit(character *c){
 
 	c->breathing      = rngValM(1024);
 	c->maxhp = c->hp  = 20;
-	c->inventorySize  = 20;
 	c->blockMiningX   = c->blockMiningY = c->blockMiningZ = -1;
 	c->pos            = vecZero();
 	c->controls       = vecZero();
@@ -62,8 +59,7 @@ void characterInit(character *c){
 }
 
 static void characterUpdateInaccuracy(character *c){
-	item *itm = &c->inventory[c->activeItem];
-	float minInaccuracy = itemGetInaccuracy(itm);
+	float minInaccuracy = 4.f;
 
 	if(c->shake > c->inaccuracy){c->inaccuracy = c->shake;}
 	c->inaccuracy = MINMAX(minInaccuracy,128.f,c->inaccuracy - 0.5f);
@@ -130,14 +126,14 @@ static void characterUpdateDamage(character *c, int damage){
 
 void characterHit(character *c){
 	static uint iteration=0;
-	item *itm = &c->inventory[c->activeItem];
 	iteration--;
 
-	const float range = 4.f;
-	const vec pos = vecAdd(c->pos,vecDegToVec(c->rot));
+	const float range  = 4.f;
+	const vec pos      = vecAdd(c->pos,vecDegToVec(c->rot));
 	const being source = beingCharacter(playerID);
-	characterHitCheck(pos,range,itemGetDamage(itm,0),2,iteration, source);
-	animalHitCheck   (pos,range,itemGetDamage(itm,0),2,iteration, source);
+	const int damage   = 1;
+	characterHitCheck(pos,range,damage,2,iteration, source);
+	animalHitCheck   (pos,range,damage,2,iteration, source);
 
 	characterStartAnimation(c,animationHit,240);
 	characterSetCooldown(c,320);
@@ -166,46 +162,10 @@ void characterMineStop(character *c){
 	c->blockMiningX = c->blockMiningY = c->blockMiningZ = -1;
 }
 
-void characterItemDrop(character *c, int i){
-	item *cItem = characterGetItemBarSlot(c,i);
-	if(cItem == NULL)       { return; }
-	if(itemIsEmpty(cItem))  { return; }
-	characterStopAim(c);
-
-	itemDropNewC(c, cItem);
-	itemDiscard(cItem);
-}
-
-void characterItemDropSingle(character *c, int i){
-	if(c->actionTimeout < 0){ return; }
-	item *cItem = characterGetItemBarSlot(c,i);
-	if(cItem == NULL)       { return; }
-	if(itemIsEmpty(cItem))  { return; }
-	if(itemGetStackSize(cItem) <= 1){
-		itemDropNewC(c, cItem);
-		*cItem = itemEmpty();
-	}else{
-		item dItem = itemNew(cItem->ID,1);
-		dItem.amount = itemDecStack(cItem,1);
-		if(itemIsEmpty(&dItem)) { return; }
-		itemDropNewC(c, &dItem);
-	}
-	characterStopAim(c);
-	characterSetCooldown(c,200);
-}
-
 void characterDie(character *c){
 	if(c != player)             {return;}
 	if(c->flags & CHAR_SPAWNING){return;}
 	if(c->flags & CHAR_NOCLIP)  {return;}
-	for(int i=0;i<CHAR_INV_MAX;i++){
-		itemDropNewP(c->pos, characterGetItemBarSlot(c,i),-1);
-	}
-	for(int i=0;i<CHAR_EQ_MAX;i++){
-		itemDropNewP(c->pos, &c->equipment[i],-1);
-	}
-	itemDropNewC(player, &inventoryCurrentPickup);
-	itemDiscard(&inventoryCurrentPickup);
 
 	setOverlayColor(0xFF000000,0);
 	characterInit(c);
@@ -216,9 +176,6 @@ void characterDie(character *c){
 }
 
 static void characterUpdateGlide(character *c){
-	if((c == player) && ((itemIsEmpty(&c->equipment[CHAR_EQ_GLIDER])) || (c->equipment[CHAR_EQ_GLIDER].ID != I_Glider))){
-		c->flags &= ~CHAR_GLIDE;
-	}
 	if(!(c->flags & CHAR_FALLING)){
 		c->flags &= ~CHAR_GLIDE;
 	}
@@ -374,7 +331,6 @@ static int characterPhysics(character *c){
 
 static void characterUpdateBooster(character *c){
 	if(!(c->flags & CHAR_BOOSTING)
-	 || ((c == player) && ((itemIsEmpty(&c->equipment[CHAR_EQ_PACK])) || (c->equipment[CHAR_EQ_PACK].ID != I_Jetpack)))
 	 || (c->flags & CHAR_CONS_MODE)){
 		sfxLoop(sfxJet,0.f);
 		return;

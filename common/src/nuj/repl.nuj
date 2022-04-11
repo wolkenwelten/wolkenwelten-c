@@ -13,12 +13,12 @@
                     [cons "" #nil]]]
 
         [λ [error]
-                "Display ERROR in a nice, human readable way"
-                [join [iter error 0] "\n"]]
+            "Display ERROR in a nice, human readable way"
+            [join [iter error 0] "\n"]]
 ]]
 
 [def repl/exception-handler [λ [error]
-        [repl/display/error error]]]
+        [say [repl/display/error error]]]]
 
 [defun repl/console [line]
         [try repl/exception-handler

@@ -19,8 +19,6 @@
 #include "../game/animal.h"
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../game/item.h"
-#include "../game/itemDrop.h"
 #include "../game/projectile.h"
 #include "../network/messages.h"
 #include "../misc/misc.h"
@@ -121,8 +119,7 @@ void animalThinkGuardian(animal *e){
 }
 
 void animalRDieGuardian(animal *e){
-	item drop = itemNew(I_Crystalbullet,rngValMM(20,40));
-	itemDropNewP(e->pos,&drop,-1);
+	(void)e;
 }
 
 void animalRBurnGuardian(animal *e){

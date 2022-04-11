@@ -191,7 +191,6 @@ void bigchungusBoxMine(bigchungus *c, int x,int y,int z, int w,int h,int d){
 		blockId b = bigchungusGetB(c,cx+x,cy+y,cz+z);
 		if(b==0){continue;}
 		bigchungusSetB(c,cx+x,cy+y,cz+z,0);
-		blockMiningDropItemsPos(cx+x,cy+y,cz+z,b);
 	}
 	}
 	}
@@ -207,7 +206,6 @@ void bigchungusBoxMineSphere(bigchungus *c, int x,int y,int z, int r){
 		const int d = (cx*cx)+(cy*cy)+(cz*cz);
 		if(d >= md){continue;}
 		bigchungusSetB(c,cx+x,cy+y,cz+z,0);
-		blockMiningDropItemsPos(cx+x,cy+y,cz+z,b);
 	}
 	}
 	}

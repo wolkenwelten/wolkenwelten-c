@@ -23,7 +23,6 @@
 #include "../game/blockMining.h"
 #include "../game/character.h"
 #include "../game/fire.h"
-#include "../game/itemDrop.h"
 #include "../game/weather/weather.h"
 #include "../network/server.h"
 #include "../voxel/bigchungus.h"
@@ -32,7 +31,6 @@
 #include "../worldgen/worldgen.h"
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/game/entity.h"
-#include "../../../common/src/game/item.h"
 #include "../../../common/src/game/time.h"
 #include "../../../common/src/misc/line.h"
 #include "../../../common/src/misc/misc.h"
@@ -84,22 +82,6 @@ static lVal *wwlnfACount(lClosure *c, lVal *v){
 static lVal *wwlnfBMCount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(blockMiningGetActive());
-}
-static lVal *wwlnfIDCount(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	return lValInt(itemDropGetActive());
-}
-static lVal *wwlnfIDSlowCount(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	return lValInt(itemDropGetSlow());
-}
-static lVal *wwlnfIDFlush(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	for(int i=itemDropCount-1;i>=0;i--){
-		itemDropDel(i);
-		addPriorityItemDrop(i);
-	}
-	return NULL;
 }
 static lVal *wwlnfECount(lClosure *c, lVal *v){
 	(void)c;(void)v;
@@ -175,16 +157,6 @@ static lVal *wwlnfMSphere(lClosure *c, lVal *v){
 
 	worldBoxMineSphere(pos.x,pos.y,pos.z,r);
 	return lValBool(true);
-}
-
-static lVal *wwlnfGive(lClosure *c, lVal *v){
-	(void)c;
-	const int id       = castToInt(lCar(v), -1); v = lCdr(v);
-	const int amt      = castToInt(lCar(v),  0); v = lCdr(v);
-	const int cplayer  = castToInt(lCar(v),getPID(c));
-
-	msgPickupItem(cplayer,itemNew(id,amt));
-	return NULL;
 }
 
 static lVal *wwlnfDmg(lClosure *c, lVal *v){
@@ -272,61 +244,6 @@ static lVal *wwlnfChungi(lClosure *c, lVal *v){
 	return lValInt(chungusCount - chungusFreeCount);
 }
 
-static lVal *wwlnfClearInv(lClosure *c, lVal *v){
-	const uint target = castToInt(lCar(v),getPID(c));
-	if(!getClientValid(target)){return NULL;}
-	character *player = clients[target].c;
-	if(player == NULL){return NULL;}
-
-	characterEmptyInventory(player);
-	characterUpdateItems(player);
-	return NULL;
-}
-
-static lVal *wwlnfClearEq(lClosure *c, lVal *v){
-	const uint target = castToInt(lCar(v),getPID(c));
-	if(!getClientValid(target)){return NULL;}
-	character *player = clients[target].c;
-	if(player == NULL){return NULL;}
-
-	characterEmptyEquipment(player);
-	characterUpdateItems(player);
-	return NULL;
-}
-
-static lVal *wwlnfSetInv(lClosure *c, lVal *v){
-	const int slot   = castToInt(lCar(v),-1); v = lCdr(v);
-	const int itemID = castToInt(lCar(v),-1); v = lCdr(v);
-	const int amount = castToInt(lCar(v),1);  v = lCdr(v);
-	const int target = castToInt(lCar(v),getPID(c));
-
-	if((!getClientValid(target)) || (slot < 0)){return NULL;}
-	if((itemID < 0) || (itemID > 4096)){return NULL;}
-	character *player = clients[target].c;
-	if(player == NULL){return NULL;}
-	item itm = itemNew(itemID,amount);
-	characterSetItemBarSlot(clients[target].c,slot,&itm);
-	characterUpdateItems(player);
-
-	return NULL;
-}
-
-static lVal *wwlnfSetEq(lClosure *c, lVal *v){
-	const int slot   = castToInt(lCar(v),-1); v = lCdr(v);
-	const int itemID = castToInt(lCar(v),-1); v = lCdr(v);
-	const int amount = castToInt(lCar(v),1);  v = lCdr(v);
-	const int target = castToInt(lCar(v),getPID(c));
-
-	if((!getClientValid(target)) || (slot < 0)){return NULL;}
-	character *player = clients[target].c;
-	if(player == NULL){return NULL;}
-	item itm = itemNew(itemID,amount);
-	characterSetEquipmentSlot(clients[target].c,slot,&itm);
-	characterUpdateItems(player);
-
-	return NULL;
-}
-
 static lVal *wwlnfRCount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(rainCount);
@@ -392,7 +309,7 @@ static lVal *wwlnfWorldgenSphere(lClosure *c, lVal *v){
 	const int y = castToInt(lCar(v),-1); v = lCdr(v);
 	const int z = castToInt(lCar(v),-1); v = lCdr(v);
 	const int r = castToInt(lCar(v),16); v = lCdr(v);
-	const int b = castToInt(lCar(v),I_Dirt);
+	const int b = castToInt(lCar(v), 1);
 
 	worldgenSphere(x,y,z,r,b);
 	return NULL;
@@ -407,7 +324,7 @@ static lVal *wwlnfLine(lClosure *c, lVal *v){
 	(void)c;
 	const vec p1 = castToVec(lCar(v),vecNOne()); v = lCdr(v);
 	const vec p2 = castToVec(lCar(v),vecNOne()); v = lCdr(v);
-	const int b =  castToInt(lCar(v),I_Dirt);
+	const int b =  castToInt(lCar(v), 1);
 
 	wwlnfLineBlockSelection = b;
 	if((p1.x < 0) || (p2.x < 0)){return NULL;}
@@ -421,54 +338,15 @@ lVal *wwlnfAnimalKillAll(lClosure *c, lVal *v){
 	return NULL;
 }
 
-static lVal *wwlnfRResult(lClosure *c, lVal *v){
-	(void)c;
-	const int id     = castToInt(lCar(v),-1); v = lCdr(v);
-	const int result = castToInt(lCar(v),0);  v = lCdr(v);
-	const int amount = castToInt(lCar(v),0);
-
-	if((id < 0) || (result <= 0) || (amount <= 0)){return NULL;}
-	/*
-	recipeCount = MAX(id+1,(int)recipeCount);
-	recipes[id].result.ID = result;
-	recipes[id].result.amount = amount;
-	*/
-	return NULL;
-}
-
-static lVal *wwlnfRIngred(lClosure *c, lVal *v){
-	(void)c;
-	const int id     = castToInt(lCar(v),-1); v = lCdr(v);
-	const int ii     = castToInt(lCar(v),-1); v = lCdr(v);
-	const int ingred = castToInt(lCar(v),0);  v = lCdr(v);
-	const int amount = castToInt(lCar(v),0);
-
-	if((id < 0) || (ii < 0) || (ii >= 4) || (ingred <= 0) || (amount <= 0)){return NULL;}
-	/*
-	recipeCount = MAX(id+1,(int)recipeCount);
-	recipes[id].ingredient[ii].ID = ingred;
-	recipes[id].ingredient[ii].amount = amount;
-	*/
-	return NULL;
-}
-
 void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
 	lAddNativeFunc(c,"animal-count",   "()",                                           "Returns animal count",                                       wwlnfACount);
 	lAddNativeFunc(c,"animal-kill-all","()",                                           "Returns animal count",                                       wwlnfAnimalKillAll);
 	lAddNativeFunc(c,"mining-count",   "()",                                           "Returns block mining count",                                 wwlnfBMCount);
-	lAddNativeFunc(c,"item-drop-count","()",                                           "Returns item drop count",                                    wwlnfIDCount);
-	lAddNativeFunc(c,"item-drop-slow", "()",                                           "Returns amount of itemDrops that have the slow update bit",  wwlnfIDSlowCount);
-	lAddNativeFunc(c,"item-drop-flush!","()",                                          "Remove all itemDrops",                                       wwlnfIDFlush);
 	lAddNativeFunc(c,"entity-count",   "()",                                           "Returns entity count",                                       wwlnfECount);
 	lAddNativeFunc(c,"chungus-count",  "()",                                           "Returns chungus count",                                      wwlnfChungi);
 	lAddNativeFunc(c,"rain-count",     "()",                                           "Returns amount of rain drops",                               wwlnfRCount);
 	lAddNativeFunc(c,"load-shed!",     "()",                                           "Load shedding, mostly unloading chungi",                     wwlnfLShed);
-	lAddNativeFunc(c,"give!",          "(id &amount &player)",                         "Gives &player=pid &amount=1 of item id",                     wwlnfGive);
-	lAddNativeFunc(c,"clear-inv!",     "(&player)",                                    "Clears the inventory of &player=pid",                        wwlnfClearInv);
-	lAddNativeFunc(c,"set-inv!",       "(slot id &amount &player)",                    "Sets inventory slot of &player=pid to &amount=1 id items",   wwlnfSetInv);
-	lAddNativeFunc(c,"clear-eq!",      "(&player)",                                    "Clears the equipment of &player=pid",                        wwlnfClearEq);
-	lAddNativeFunc(c,"set-eq!",        "(slot id &amount &player)",                    "Sets inventory slot of &player=pid to &amount=1 id items",   wwlnfSetEq);
 	lAddNativeFunc(c,"player-dmg",     "(&amount &player)",                            "Damages &player=pid by &amount=4 points",                    wwlnfDmg);
 	lAddNativeFunc(c,"animal-new",     "(pos &type &amount)",                          "Creates &amount=1 new animals of &type=1 at pos",            wwlnfNewAnim);
 	lAddNativeFunc(c,"animal-set",     "(i &hunger &sleepy &pregnancy &state &health)","Sets the fields for animal i",                               wwlnfSetAnim);
@@ -490,8 +368,6 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"worldgen/sphere","(x y z r b)",                                  "Only use during worldgen, sets a sphere of radius R at X Y Z to B",wwlnfWorldgenSphere);
 	lAddNativeFunc(c,"quit!",          "()",                                           "Cleanly shuts down the server",                              wwlnfQuit);
 
-	lAddNativeFunc(c,"r-result",       "(id result amt)",   "Set the result of recipe ID to AMT times RESULT.",       wwlnfRResult);
-	lAddNativeFunc(c,"r-ingred",       "(id i ingred amt)", "Set the ingredient I of recipe ID to AMT times INGRED.", wwlnfRIngred);
 }
 
 static void *cmdLispReal(void *a, void *b){

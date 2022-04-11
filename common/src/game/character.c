@@ -17,7 +17,6 @@
 
 #include "character.h"
 #include "../game/being.h"
-#include "../game/item.h"
 #include "../game/hook.h"
 #include "../misc/sfx.h"
 #include "../network/messages.h"
@@ -48,7 +47,6 @@ character *characterNew(){
 		c = &characterList[characterCount++];
 	}
 	characterInit(c);
-	characterUpdateEquipment(c);
 
 	return c;
 }
@@ -161,80 +159,10 @@ void characterAddInaccuracy(character *c, float inc){
 	c->inaccuracy += inc;
 }
 
-int characterGetItemAmount(const character *c, u16 itemID){
-	int amount = 0;
-	for(uint i=0;i<c->inventorySize;i++){
-		if(c->inventory[i].ID == itemID){
-			amount += c->inventory[i].amount;
-		}
-	}
-	return amount;
-}
-
-int characterDecItemAmount(character *c, u16 itemID,int amount){
-	int ret=0;
-
-	if(amount == 0){return 0;}
-	for(uint i=0;i<c->inventorySize;i++){
-		if(c->inventory[i].ID == itemID){
-			if(c->inventory[i].amount > amount){
-				itemDecStack(&c->inventory[i],amount);
-				return amount;
-			}else{
-				amount -= c->inventory[i].amount;
-				ret    += c->inventory[i].amount;
-				c->inventory[i] = itemEmpty();
-			}
-		}
-	}
-	return ret;
-}
-
-int characterPickupItem(character *c, u16 itemID,int amount){
-	int a = 0;
-	item ci = itemNew(itemID,amount);
-	if(itemGetStackSize(&ci) == 1){
-		ci.amount = amount;
-		for(uint i=0;i<c->inventorySize;i++){
-			if(itemIsEmpty(&c->inventory[i])){
-				c->inventory[i] = ci;
-				sfxPlay(sfxPock,.8f);
-				return 0;
-			}
-		}
-		return -1;
-	}
-
-	for(uint i=0;i<c->inventorySize;i++){
-		if(a >= amount){break;}
-		if(itemCanStack(&c->inventory[i],itemID)){
-			a += itemIncStack(&c->inventory[i],amount - a);
-		}
-	}
-	for(uint i=0;i<c->inventorySize;i++){
-		if(a >= amount){break;}
-		if(itemIsEmpty(&c->inventory[i])){
-			c->inventory[i] = itemNew(itemID,amount - a);
-			a += c->inventory[i].amount;
-		}
-	}
-
-	if(a == amount){
-		sfxPlay(sfxPock,.8f);
-		return 0;
-	}else if(a != 0){
-		sfxPlay(sfxPock,.8f);
-	}else if(a == 0){
-		return -1;
-	}
-	return a;
-}
-
-bool characterPlaceBlock(character *c,item *i){
+bool characterPlaceBlock(character *c, blockId b){
 	if(c->actionTimeout < 0)              { return false; }
 	vec los = characterLOSBlock(c,true);
 	if(los.x < 0)                         { return false; }
-	if(itemIsEmpty(i))                    { return false; }
 	characterStartAnimation(c,animationHit,240);
 	characterSetCooldown(c,200);
 	if((characterCollision(c->pos)&0xFF0)){
@@ -243,7 +171,7 @@ bool characterPlaceBlock(character *c,item *i){
 		c->vel = vecAdd(c->vel,vecMulS(cvec,-0.01f));
 		return false;
 	}
-	worldSetB(los.x,los.y,los.z,i->ID);
+	worldSetB(los.x,los.y,los.z,b);
 	if((characterCollision(c->pos)&0xFF0) != 0){
 		const vec cvec = characterGetCollisionVec(c->pos);
 		c->vel = vecAdd(c->vel,vecMulS(cvec,-0.01f));
@@ -252,8 +180,7 @@ bool characterPlaceBlock(character *c,item *i){
 		return false;
 	} else {
 		chunkDirtyRegion(los.x, los.y, los.z, 3);
-		msgPlaceBlock(los.x,los.y,los.z,i->ID);
-		itemDecStack(i,1);
+		msgPlaceBlock(los.x, los.y, los.z, b);
 		sfxPlay(sfxPock,1.f);
 		return true;
 	}
@@ -273,56 +200,6 @@ bool characterCheckHealth(character *c){
 bool characterHP(character *c, int addhp){
 	c->hp += addhp;
 	return characterCheckHealth(c);
-}
-
-void characterEmptyInventory(character *c){
-	for(uint i=0;i<CHAR_INV_MAX;i++){
-		c->inventory[i] = itemEmpty();
-	}
-}
-
-void characterEmptyEquipment(character *c){
-	for(uint i=0;i<CHAR_EQ_MAX;i++){
-		c->equipment[i] = itemEmpty();
-	}
-}
-
-item *characterGetItemBarSlot(character *c, uint i){
-	if(i >= CHAR_INV_MAX){return NULL;}
-	return &c->inventory[i];
-}
-
-item *characterGetActiveItem(character *c){
-	return c ? characterGetItemBarSlot(c,c->activeItem) : NULL;
-}
-
-void characterSetItemBarSlot(character *c, uint i, item *itm){
-	if(i >= CHAR_INV_MAX){return;}
-	c->inventory[i] = *itm;
-}
-
-void characterSetEquipmentSlot(character *c, uint i, item *itm){
-	if(i >= CHAR_EQ_MAX){return;}
-	c->equipment[i] = *itm;
-}
-
-void characterSetActiveItem(character *c,  int i){
-	if(i > 9){i = 0;}
-	if(i < 0){i = 9;}
-	if((uint)i != c->activeItem){
-		characterStartAnimation(c,animationSwitch,200);
-	}
-	characterStopAim(c);
-	c->activeItem = i;
-}
-
-void characterSwapItemSlots(character *c, uint a,uint b){
-	if(a >= CHAR_INV_MAX){return;}
-	if(b >= CHAR_INV_MAX){return;}
-
-	item tmp = c->inventory[a];
-	c->inventory[a] = c->inventory[b];
-	c->inventory[b] = tmp;
 }
 
 vec characterLOSBlock(const character *c, bool returnBeforeBlock) {
@@ -486,86 +363,14 @@ void characterStartAnimation(character *c, animType index, int duration){
 	c->animationTicksLeft = c->animationTicksMax = duration;
 }
 
-bool characterItemReload(character *c, item *i, int cooldown){
-	const int MAGSIZE = itemGetMagazineSize(i);
-	const int AMMO    = itemGetAmmunition(i);
-	int ammoleft      = characterGetItemAmount(c,AMMO);
-
-	if(c->actionTimeout < 0)      {return false;}
-	if(itemGetAmmo(i) == MAGSIZE) {return false;}
-	if(ammoleft <= 0)             {return false;}
-
-	ammoleft = MIN(MAGSIZE,ammoleft);
-	characterDecItemAmount(c, AMMO, itemIncAmmo(i,ammoleft));
-
-	characterSetCooldown(c,cooldown);
-	sfxPlay(sfxHookReturned,1.f);
-	characterStartAnimation(c,animationReload,MAX(cooldown*2,500));
-
-	return true;
-}
-
-bool characterTryToShoot(character *c, item *i, int cooldown, int bulletcount){
-	if(c->actionTimeout < 0){return false;}
-	if(itemGetAmmo(i) < bulletcount){
-		if(characterItemReload(c,i,256)){return false;}
-		sfxPlay(sfxHookFire,0.3f);
-		characterSetCooldown(c,256);
-		characterStartAnimation(c,animationEmpty,250);
-		return false;
-	}
-	itemDecAmmo(i,bulletcount);
-	characterSetCooldown(c,cooldown);
-	characterStartAnimation(c,animationFire,250);
-	return true;
-}
-
-bool characterTryToUse(character *c, item *i, int cooldown, int itemcount){
-	if(c->actionTimeout < 0){return false;}
-	if(i->amount < itemcount){
-		sfxPlay(sfxHookFire,0.3f);
-		characterSetCooldown(c,256);
-		return false;
-	}
-	itemDecStack(i,itemcount);
-	characterSetCooldown(c,cooldown);
-	return true;
-}
-
-void characterSetInventoryP(character *c, const packet *p){
-	if(c == NULL){return;}
-	uint max = MIN(CHAR_INV_MAX,packetLen(p)/4);
-	uint ii = 0;
-	for(uint i=0;i<max;i++){
-		c->inventory[i].ID     = p->v.u16[ii++];
-		c->inventory[i].amount = p->v.i16[ii++];
-	}
-	characterUpdateEquipment(c);
-}
-
-void characterSetEquipmentP(character *c, const packet *p){
-	if(c == NULL){return;}
-	uint max = MIN(CHAR_EQ_MAX,packetLen(p)/4);
-	uint ii = 0;
-	for(uint i=0;i<max;i++){
-		c->equipment[i].ID     = p->v.u16[ii++];
-		c->equipment[i].amount = p->v.i16[ii++];
-	}
-	characterUpdateEquipment(c);
-}
-
 float characterGetMaxHookLen(const character *c){
-	if(!itemIsEmpty(&c->equipment[CHAR_EQ_HOOK])){
-		if(c->equipment[CHAR_EQ_HOOK].ID == I_Hook){return 256.f;}
-	}
-	return 64;
+	(void)c;
+	return 256.f;
 }
 
 float characterGetHookWinchS(const character *c){
-	if(!itemIsEmpty(&c->equipment[CHAR_EQ_HOOK])){
-		if(c->equipment[CHAR_EQ_HOOK].ID == I_Hook){return 0.1f;}
-	}
-	return 0.04f;
+	(void)c;
+	return 0.1f;
 }
 
 character *characterGetByBeing(being b){
@@ -594,20 +399,4 @@ void characterAddRecoil(character *c, float recoil){
 	const vec vel = vecMulS(vecDegToVec(c->rot),.01f);
 	c->vel = vecAdd(c->vel, vecMulS(vel,-0.75f*recoil));
 	c->rot = vecAdd(c->rot, vecNew((rngValf()-0.5f) * recoil, (rngValf()-.8f) * recoil, 0.f));
-}
-
-void characterUpdateEquipment(character *c){
-	if(c == NULL){return;}
-	int invSize = 20;
-	if(!itemIsEmpty(&c->equipment[CHAR_EQ_PACK])){
-		if(c->equipment[CHAR_EQ_PACK].ID == I_Backpack){invSize = 40;}
-		if(c->equipment[CHAR_EQ_PACK].ID == I_Jetpack){invSize = 60;}
-	}
-	c->inventorySize = invSize;
-}
-
-void characterUpdateItems(const character *c){
-	const int target = getClientByCharacter(c);
-	msgPlayerSetInventory(target, c->inventory,CHAR_INV_MAX);
-	msgPlayerSetEquipment(target, c->equipment,CHAR_EQ_MAX);
 }

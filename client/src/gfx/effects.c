@@ -157,9 +157,9 @@ void fxBleeding(const vec pos, being victim, i16 dmg, u8 cause){
 	(void)dmg;
 	(void)cause;
 	if(!sfxIsBeingBlocked(victim)){
-		sfxBlocKBeing(victim);
-		sfxPlayPos(sfxImpact,1,pos);
-		sfxPlayPos(sfxUngh,1,pos);
+		//sfxBlocKBeing(victim);
+		//sfxPlayPos(sfxImpact,1,pos);
+		//sfxPlayPos(sfxUngh,1,pos);
 	}
 	for(int i=dmg*64;i>0;i--){
 		const vec v  = vecMulS(vecRng(),0.06f);
