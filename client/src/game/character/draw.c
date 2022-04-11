@@ -128,7 +128,7 @@ void characterDrawConsHighlight(const character *c){
 }
 
 static void characterDrawGliderFirstPerson(const character *c){
-	if(c == NULL){return;}
+	if(optionThirdPerson || (c == NULL)){return;}
 	static u64 ticks = 0;
 	float matViewAI[16];
 	if(c->gliderFade < 0.01f){return;}
