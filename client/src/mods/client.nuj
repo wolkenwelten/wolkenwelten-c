@@ -1,0 +1,120 @@
+[def test-context "WolkenWelten Client"]
+[def client? #t]
+[def server? #f]
+
+[event-bind on-spawn :snide-remarks [λ [] [say [ansi-yellow "Better luck next time!"]]]]
+[event-bind on-join :greetings [λ []
+            [yield [timeout 1000] [λ [] [say "Guten Tag!"]]]
+            [yield [timeout 3000] [λ [] [say ["Press " [ansi-green "F2"] " for some equipment"]]]]
+            [yield [timeout 5000] [λ [] [say ["Use your " [ansi-yellow "grappling hook"] " with " [ansi-green "E"]]]]]
+            [yield [timeout 7000] [λ [] [say ["Open Inventory/Crafting panel with " [ansi-green "TAB"]]]]]]]
+
+[test/add #t [string? OS]]
+[test/add #t [and [not server?] client?]]
+
+[defun gameplay-run []
+        [event-fire on-gameplay-tick]]
+
+[defmacro s forms
+          "Run FORMS on the server"
+          `[s* [quote ~[cons do forms]]]]
+
+[defun player-active-item-id []
+       "Return the Id of the currenlty selected item"
+       [car [player-inventory [player-active-slot]]]]
+
+[defun player-active-item-amount []
+       "Return the Id of the currenlty selected item"
+       [cdr [player-inventory [player-active-slot]]]]
+
+[defun error args
+       "Print its arguments into the LISP console and might alert the user"
+       [console-print ["  " [apply cat args]]]]
+
+[defun log args
+       "Print its arguments into the LISP console"
+       [console-print ["  " [apply cat args]]]]
+[def print log]
+
+[defmacro conf-v1! body
+       "Wrapper for auto generated config s-expressions, will be overwritten on every optionsave"
+       `[eval [do ~@body]]]
+
+[defun time/fast! [a]
+        "Speeds up the game to about 4x"
+        [mst!  1]
+        [s [mst!  1]]]
+
+[defun time/norm! [a]
+        "Sets the game speed to the default 1x"
+        [mst!  4]
+        [s [mst!  4]]]
+
+[defun time/slow! [a]
+       "Sets the game speed to about 1/4x"
+       [mst! 16]
+       [s [mst! 16]]]
+
+[defun time/bullet! [a]
+        "Sets the game speed to about 1/16x"
+        [mst! 64]
+        [s [mst! 64]]]
+
+[defun time/morning! []
+        "Sets the Time to 8:00 AM"
+        [s [time/morning!]]]
+
+[defun time/noon! []
+        "Sets the Time to 12:00 PM"
+        [s [time/noon!]]]
+
+[defun time/evening! []
+       "Sets the Time to 21:30 PM"
+       [s [time/evening!]]]
+
+[defun time/night! []
+       "Set the Time to Midnight"
+       [s [time/night!]]]
+
+[defun animal-stress []
+       "Generate a bunch of bunnies surrounding the player"
+       [s [animal-stress [player-pos] 6]]]
+
+[defun countdown [i]
+       "Count down on the console"
+       [cond [[< [int i] 0] #t]
+             [#t [log  [cond [[zero? i] [ansi-green "GO!"]]
+                             [[< i 4] [ansi-red i]]
+                             [[< i 6] [ansi-yellow i]]
+                             [#t i]]]
+                 [yield [timeout 1000] [λ []  [countdown [-- i]]]]]]]
+
+[defun hammertime [i]
+       "Spawn I countdown coroutines that run for 10 Minutes"
+       [cond [[<= i 0] #t]
+             [#t [countdown 600] [hammertime [-- i]]]]]
+
+[defun chiseltime [i]
+       "Spawn I coundown coroutines that run for 10 Seconds"
+       [cond [[<= i 0] #t]
+             [#t [countdown 5] [chiseltime [-- i]]]]]
+
+[def inv-has-atleast? [let*
+        [defun iter [id amount-goal i amount-found]
+                 [def slot [player-inventory i]]
+                [when [== id [car slot]]
+                      [set! amount-found [+ amount-found [cdr slot]]]
+                ]
+                [if [>= amount-found amount-goal]
+                    #t
+                    [if [< i [player-inventory-size]]
+                        [iter id amount-goal [+ 1 i] amount-found]
+                        #f]]]
+
+        [λ [id amount-goal]
+                [when-not id [set! 0]]
+                [when-not amount-goal [set! 1]]
+                [iter id amount-goal 0 0]]]]
+
+[defun game-active? []
+       [== [widget/focus] w-game-screen]]

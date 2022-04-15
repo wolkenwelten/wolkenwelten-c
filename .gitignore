@@ -11,8 +11,6 @@ xcuserdata/
 /tools/*.dSYM/
 /client/sfx/*.ogg
 client.settings
-client.nuj
-custom.nuj
 common/src/asm/amd64.s
 /nujel-standalone/tmp
 

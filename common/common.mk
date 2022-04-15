@@ -1,6 +1,5 @@
 ARCH             := $(shell uname -m)
 NUJ_WWLIB        := $(shell find common/src/mods/ -type f -name '*.nuj' | sort)
-NO_WWLIB         := $(NUJ_WWLIB:.nuj=.no)
 COMMON_ASSETS    := common/src/tmp/wwlib.nuj
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
 COMMON_SRCS      := $(shell find common/src -type f -name '*.c')
@@ -42,17 +41,8 @@ common/nujel/nujel.a: $(NUJEL)
 	@$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) $(if $(findstring client/, $<),$(CLIENT_CFLAGS) $(CLIENT_CINCLUDES),) -g -c $< -o $@ -MMD > ${<:.c=.d}
 	@echo "$(ANSI_GREEN)" "[CC] " "$(ANSI_RESET)" $@
 
-%.no: %.nuj $(NUJEL)
-	@$(NUJEL) -x "[try repl/exception-handler [file/compile \"$<\"]]"
-	@echo "$(ANSI_YELLOW)" "[NUJ]" "$(ANSI_RESET)" $@
-
 common/nujel/nujel.a:
 	@$(MAKE) --no-print-directory -C common/nujel nujel.a
-
-common/src/tmp/wwlib.no: $(NO_WWLIB)
-	@mkdir -p common/src/tmp
-	@cat $^ > $@
-	@echo "$(ANSI_GREY)" "[CAT]" "$(ANSI_RESET)" $@
 
 common/src/tmp/wwlib.nuj: $(NUJ_WWLIB)
 	@mkdir -p common/src/tmp
