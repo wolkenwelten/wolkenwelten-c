@@ -1,5 +1,5 @@
 #include "nujel.h"
-#include "../../../common/src/misc/lisp.h"
+#include "../../../common/src/nujel/nujel.h"
 #include "../../../common/nujel/lib/api.h"
 #include "island.h"
 

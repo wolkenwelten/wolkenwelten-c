@@ -26,9 +26,9 @@
 #include "../game/projectile.h"
 #include "../game/rope.h"
 #include "../game/weather/weather.h"
-#include "../misc/lisp.h"
 #include "../misc/options.h"
 #include "../network/server_ws.h"
+#include "../nujel/nujel.h"
 #include "../persistence/character.h"
 #include "../persistence/savegame.h"
 #include "../voxel/bigchungus.h"
@@ -49,11 +49,11 @@
 #include <unistd.h>
 
 #ifdef __EMSCRIPTEN__
-#include "server_wasm.h"
+#include "platform_specific/wasm.h"
 #elif defined __MINGW32__
-#include "server_win.h"
+#include "platform_specific/win.h"
 #else
-#include "server_bsd.h"
+#include "platform_specific/bsd.h"
 #endif
 
 #ifdef __EMSCRIPTEN__

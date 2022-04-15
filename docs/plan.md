@@ -23,15 +23,6 @@ Something that Nujel needs to provide by that point
 
 # Milestones
 
-## [NUJ] - Module system
-Nothing fancy, might in the beginning actually suffice to just load and evaluate a certain
-file in an empty environment.
-
-# [GM] - Creative/Development Mode
-This gamemode should probably be the first one added, since it also serves as a
-sort of map builder which will probably come in handy for other subsequent
-gamemodes.
-
 ### [C] - Blocktype getter
 Functionality is mostly there, just not exposed to Nujel.  Should be quite simple to provide.
 
@@ -118,9 +109,16 @@ Persistence should be controlled via Nujel, mostly turning it off for Gamemodes 
 ### [C] - Player speed multiplier
 Player speed should be modifiable via Nujel, so we can slow down or speed up players as needed.
 
+## [NUJ] - Module system
+Nothing fancy, might in the beginning actually suffice to just load and evaluate a certain
+files.
+
 ## [C] - Gamemodes
 Actually support for gamemodes, where a player actually switches to the gamemode required by the server. Does not need
 to be loaded automatically from the server in the beginning, although it should be kept in mind while implementing.
+
+# [GM] - Creative/Development Mode
+Should mostly serve to test various mods as well as function as a map editor for other gamemodes/mods.
 
 # [GM] - Trümmerei
 The first real Gamemode, an arena-shooter where just like in smash instead of damaging the other players you instead increase a knockback multiplier. Players should start with pretty much nothing and then have to run around the (static) map picking up various items/weapons as well as useful items like grappling hooks, gliders or seven-league boots
@@ -139,4 +137,3 @@ Should provide a convenient way to change a "map"
 
 ## [MOD] - Maprotate
 Should provide a way to automatically rotate between a preselection of maps.
-

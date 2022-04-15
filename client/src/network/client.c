@@ -29,7 +29,7 @@
 #include "../game/weather/lightning.h"
 #include "../game/weather/weather.h"
 #include "../gui/menu/mainmenu.h"
-#include "../misc/lisp.h"
+#include "../nujel/nujel.h"
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
 #include "../network/chat.h"

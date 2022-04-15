@@ -19,7 +19,7 @@
 #include "../main.h"
 #include "../gui/menu.h"
 #include "../gfx/gfx.h"
-#include "../misc/lisp.h"
+#include "../nujel/nujel.h"
 #include "../sdl/sdl.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/cto.h"

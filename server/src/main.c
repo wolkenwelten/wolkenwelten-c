@@ -17,14 +17,13 @@
 
 #include "main.h"
 
-#include "misc/lisp.h"
 #include "misc/options.h"
 #include "game/being.h"
 #include "game/blockMining.h"
 #include "game/fire.h"
 #include "game/fluid.h"
 #include "game/weather/weather.h"
-#include "misc/lisp.h"
+#include "nujel/nujel.h"
 #include "persistence/savegame.h"
 #include "voxel/bigchungus.h"
 #include "voxel/chungus.h"

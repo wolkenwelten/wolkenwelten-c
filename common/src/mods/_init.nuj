@@ -27,7 +27,7 @@
 
 [defun on-init-fire  [] [event-fire on-init]]
 [defun on-spawn-fire [] [event-fire on-spawn]]
-[defun on-join-fire  [] [event-fire on-join]]
+[defun on-join-fire  [] [error "Test"] [event-fire on-join]]
 [defun on-leave-fire [] [event-fire on-leave]]
 
 [event-bind on-init :test-run [λ []

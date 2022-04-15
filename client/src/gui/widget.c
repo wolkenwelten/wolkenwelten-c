@@ -18,11 +18,11 @@
 #include "widget.h"
 
 #include "widgets/widgets.h"
-#include "../binding/widget.h"
 #include "../gui/menu.h"
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
-#include "../misc/lisp.h"
+#include "../nujel/nujel.h"
+#include "../nujel/widget.h"
 #include "../sdl/sdl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/textMesh.h"

@@ -16,9 +16,9 @@
  */
 #include "gui.h"
 #include "../main.h"
-#include "../binding/widget.h"
-#include "../misc/lisp.h"
 #include "../misc/options.h"
+#include "../nujel/nujel.h"
+#include "../nujel/widget.h"
 #include "../game/character/character.h"
 #include "../game/character/draw.h"
 #include "../game/character/hook.h"

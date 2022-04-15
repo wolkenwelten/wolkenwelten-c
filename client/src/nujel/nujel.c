@@ -14,12 +14,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "lisp.h"
-
+#include "nujel.h"
 
 #include "../main.h"
-#include "../binding/widget.h"
-#include "../binding/widgetGC.h"
 #include "../game/beamblast.h"
 #include "../game/character/character.h"
 #include "../game/character/draw.h"
@@ -39,9 +36,11 @@
 #include "../misc/options.h"
 #include "../network/chat.h"
 #include "../network/client.h"
+#include "../nujel/widget.h"
+#include "../nujel/widgetGC.h"
 #include "../sdl/sdl.h"
 #include "../sfx/sfx.h"
-#include "../../../common/src/misc/lisp.h"
+#include "../../../common/src/nujel/nujel.h"
 #include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/network/messages.h"
 

@@ -1,5 +1,5 @@
-ifneq (, $(shell which dash))
-	SHELL   := $(shell which dash)
+ifneq (, $(shell command -v dash))
+	SHELL   := $(shell command -v dash)
 endif
 
 ifeq (, $(wildcard ./common/nujel/LICENSE))
@@ -35,7 +35,7 @@ LIBS                 :=
 RELEASE_OPTIMIZATION := -O3 -flto -ffast-math -freciprocal-math -fno-math-errno
 VERSION_ARCH         := $(shell uname -m)
 
-ifneq (, $(shell which $(NUJEL)))
+ifneq (, $(shell command -v $(NUJEL)))
 	VERSION_NAME := $(shell $(NUJEL) tools/tools.nuj -x "[display [infogen-version]]")
 endif
 
@@ -43,7 +43,7 @@ all: $(WOLKENWELTEN) $(WOLKENWELTEN_SERVER) $(NUJEL)
 .PHONY: all release .deps
 
  $(NUJEL):
-	@$(MAKE) -C common/nujel
+	@$(MAKE) --no-print-directory -C common/nujel
 
 include common/disable_implicit_rules.mk
 include common/ansi_colors.mk

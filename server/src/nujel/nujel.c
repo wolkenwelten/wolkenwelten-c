@@ -14,8 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include "lisp.h"
+#include "nujel.h"
 
 #include "../main.h"
 #include "../game/being.h"
@@ -34,7 +33,7 @@
 #include "../../../common/src/misc/line.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/src/misc/profiling.h"
-#include "../../../common/src/misc/lisp.h"
+#include "../../../common/src/nujel/nujel.h"
 #include "../../../common/src/network/messages.h"
 
 #include "../../../common/nujel/lib/api.h"

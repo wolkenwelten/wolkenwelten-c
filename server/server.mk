@@ -9,7 +9,7 @@ SERVER_OBJS_EXCL := ${SERVER_SRCS_EXCL:.c=.o}
 SERVER_OBJS      := $(SERVER_OBJS_EXCL) $(SERVER_TMP_OBJS) ${COMMON_OBJS}
 SERVER_DEPS      := ${SERVER_SRCS:.c=.d}
 
-SERVER_NUJ       := $(shell find server/src/nujel -type f -name '*.nuj' | sort)
+SERVER_NUJ       := $(shell find server/src/mods -type f -name '*.nuj' | sort)
 SERVER_NO        := $(SERVER_NUJ:.nuj=.no)
 SERVER_ASSETS    := server/src/tmp/server.nuj
 
@@ -55,8 +55,8 @@ server/src/tmp/assets.c: $(ASSET) $(SERVER_ASSETS)
 server/src/tmp/assets.h: server/src/tmp/assets.c
 	@true
 
-server/src/network/server.o: server/src/network/server_bsd.h
-server/src/network/server.o: server/src/network/server_win.h
+server/src/network/server.o: server/src/network/platform_specific/bsd.h
+server/src/network/server.o: server/src/network/platform_specific/win.h
 
 .PHONY: run
 runs: all

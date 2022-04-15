@@ -1,10 +1,10 @@
 AS               := gas
-ifeq (, $(shell which gas))
+ifeq (, $(shell command -v gas))
 	AS       := as
 endif
 
 CC       := gcc
-ifneq (, $(shell which clang))
+ifneq (, $(shell command -v clang))
 	CC       := clang
 endif
 

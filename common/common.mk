@@ -1,5 +1,5 @@
 ARCH             := $(shell uname -m)
-NUJ_WWLIB        := $(shell find common/src/nuj/ -type f -name '*.nuj' | sort)
+NUJ_WWLIB        := $(shell find common/src/mods/ -type f -name '*.nuj' | sort)
 NO_WWLIB         := $(NUJ_WWLIB:.nuj=.no)
 COMMON_ASSETS    := common/src/tmp/wwlib.nuj
 COMMON_HDRS      := $(shell find common/src -type f -name '*.h')
@@ -47,7 +47,7 @@ common/nujel/nujel.a: $(NUJEL)
 	@echo "$(ANSI_YELLOW)" "[NUJ]" "$(ANSI_RESET)" $@
 
 common/nujel/nujel.a:
-	@$(MAKE) -C common/nujel nujel.a
+	@$(MAKE) --no-print-directory -C common/nujel nujel.a
 
 common/src/tmp/wwlib.no: $(NO_WWLIB)
 	@mkdir -p common/src/tmp
@@ -72,7 +72,7 @@ $(ASSET): tools/assets.c
 
 .PHONY: clean
 clean:
-	@$(MAKE) -C common/nujel clean
+	@$(MAKE) --no-print-directory -C common/nujel clean
 	@rm -f gmon.out client/tools/assets client/tools/objparser callgrind.out.* vgcore.* platform/win/wolkenwelten.res
 	@rm -f client/sfx/*.ogg
 	@rm -f $(shell find client/src common/src server/src -type f -name '*.o')

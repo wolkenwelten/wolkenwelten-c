@@ -16,11 +16,10 @@
  */
 #include "widgetGC.h"
 
+#include "widget.h"
 #include "../main.h"
-#include "../binding/widget.h"
 #include "../gui/widget.h"
 #include "../gui/gui.h"
-
 #include "../../../common/nujel/lib/api.h"
 #include "../../../common/nujel/lib/nujel.h"
 #include "../../../common/nujel/lib/exception.h"

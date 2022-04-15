@@ -38,7 +38,7 @@
 #include "gui/menu.h"
 #include "gui/menu/mainmenu.h"
 #include "gui/overlay.h"
-#include "misc/lisp.h"
+#include "nujel/nujel.h"
 #include "misc/options.h"
 #include "network/chat.h"
 #include "network/client.h"

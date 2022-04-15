@@ -18,7 +18,7 @@
 #include "menu.h"
 
 #include "../main.h"
-#include "../binding/widget.h"
+#include "../nujel/widget.h"
 #include "../gui/gui.h"
 #include "../gui/repl.h"
 #include "../gui/textInput.h"

@@ -25,7 +25,7 @@
 #include "../../gfx/gfx.h"
 #include "../../gfx/particle.h"
 #include "../../gui/overlay.h"
-#include "../../misc/lisp.h"
+#include "../../nujel/nujel.h"
 #include "../../sfx/sfx.h"
 #include "../../tmp/objs.h"
 #include "../../voxel/bigchungus.h"

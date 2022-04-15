@@ -19,7 +19,7 @@
 
 #include "../sdl.h"
 #include "../../gui/gui.h"
-#include "../../misc/lisp.h"
+#include "../../nujel/nujel.h"
 #include "../../misc/options.h"
 #include "../../game/character/character.h"
 #include "../../main.h"

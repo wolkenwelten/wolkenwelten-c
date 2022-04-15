@@ -22,7 +22,7 @@
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
-#include "../misc/lisp.h"
+#include "../nujel/nujel.h"
 #include "../../../common/src/misc/misc.h"
 #include "../../../common/nujel/lib/api.h"
 

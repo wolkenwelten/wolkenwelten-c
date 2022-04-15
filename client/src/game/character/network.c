@@ -20,7 +20,7 @@
 #include "../../gfx/effects.h"
 #include "../../gui/overlay.h"
 #include "../../sfx/sfx.h"
-#include "../../misc/lisp.h"
+#include "../../nujel/nujel.h"
 #include "../../network/chat.h"
 #include "../../network/client.h"
 #include "../../../../common/src/game/being.h"

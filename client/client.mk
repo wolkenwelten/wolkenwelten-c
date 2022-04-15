@@ -1,5 +1,5 @@
 FFMPEG            := ffmpeg
-ifeq (, $(shell which ffmpeg))
+ifeq (, $(shell command -v ffmpeg))
 	FFMPEG    := ffmpeg4
 endif
 CLIENT_CFLAGS     := $(shell pkg-config --cflags sdl2 SDL2_mixer)
@@ -12,7 +12,7 @@ SFX_ASSETS        := ${RAW_SFX:.aif=.ogg} ${RAW_WAV:.wav=.ogg}
 SHD_ASSETS        := $(shell find client/src/shader -type f -name '*.glsl')
 TXT_ASSETS        := $(shell find client/txt -type f -name '*')
 MESHASSETS        := $(shell find client/mesh -type f -name '*')
-CLIENT_NUJ        := $(shell find client/src/nujel/ -type f -name '*.nuj' | sort)
+CLIENT_NUJ        := $(shell find client/src/mods/ -type f -name '*.nuj' | sort)
 CLIENT_NO         := $(CLIENT_NUJ:.nuj=.no)
 CLIENT_NUJ_ASSETS := client/src/tmp/client.nuj
 CLIENT_TMP_SRCS   := client/src/tmp/objs.c client/src/tmp/gfxAssets.c client/src/tmp/sfxAssets.c client/src/tmp/shdAssets.c client/src/tmp/txtAssets.c client/src/tmp/nujAssets.c client/src/tmp/meshAssets.c common/src/tmp/assets.c common/src/tmp/cto.c client/src/tmp/sfx.c

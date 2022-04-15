@@ -21,7 +21,7 @@
 #include "../gui/menu.h"
 #include "../gui/gui.h"
 #include "../gui/textInput.h"
-#include "../misc/lisp.h"
+#include "../nujel/nujel.h"
 #include "../gfx/gfx.h"
 
 #include "../../../common/nujel/lib/api.h"
