@@ -102,6 +102,7 @@ client/tools/objparser: client/tools/objparser.c
 	@echo "$(ANSI_BG_GREY)" "[CC] " "$(ANSI_RESET)" $@
 
 client/src/tmp/objs.c: $(MESHASSETS)
+client/src/tmp/objs.c: client/src/tmp/meshAssets.h
 client/src/tmp/objs.c: client/tools/objgen
 	@mkdir -p client/src/tmp/
 	@client/tools/objgen client/src/tmp/objs client/mesh/

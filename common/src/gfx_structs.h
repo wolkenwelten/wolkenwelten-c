@@ -66,11 +66,39 @@ typedef struct {
 	int finished;
 } textMesh;
 
+typedef enum {
+	meshIndexTypeNone = 0,
+	meshIndexTypeU8 = sizeof(u8),
+	meshIndexTypeU16 = sizeof(u16)
+} meshIndexType;
+
+typedef struct {
+	float x, y, z;
+} assetBboxExtremum;
+
+typedef struct {
+	u8 x, y, z, u, v;
+} assetVertex;
+
+typedef struct {
+	struct {
+		assetBboxExtremum min;
+		assetBboxExtremum max;
+	} bbox;
+	const assetVertex *vertexData;
+	u16 vertexCount;
+	union { const u8 *u8; const u16 *u16; } indexData;
+	u16 indexCount;
+	meshIndexType indexType;
+} assetMeshdata;
+
 typedef struct {
 	texture *tex;
-	const vertex *roData;
-	uint dataCount,vboSize;
-	uint vbo,vao;
+	u16 vertexCount,vboSize;
+	const void *roIndexData;
+	u16 indexCount,iboSize;
+	meshIndexType indexType;
+	uint ibo,vbo,vao;
 	void *nextFree;
 } mesh;
 

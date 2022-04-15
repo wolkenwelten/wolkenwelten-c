@@ -38,7 +38,7 @@ void shadowInit(){
 }
 
 void shadowDraw(){
-	if(meshShadow->dataCount == 0){return;}
+	if(meshShadow->vertexCount == 0){return;}
 	glDepthFunc      (GL_LEQUAL);
 	meshFinishDynamic(meshShadow);
 	shaderBind       (sShadow);

@@ -119,7 +119,7 @@ void blockMiningDraw(){
 	shaderBind(sMesh);
 	matMul(matMVP,matView,matProjection);
 	shaderMatrix(sMesh,matMVP);
-	blockMiningProgressMesh->dataCount = 0;
+	blockMiningProgressMesh->vertexCount = 0;
 	for(int i=0;i<blockMiningCount;i++){
 		blockMiningUpdateMesh(i);
 		if(blockMiningList[i].lastDamage < blockMiningList[i].damage){

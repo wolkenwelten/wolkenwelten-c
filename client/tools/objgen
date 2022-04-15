@@ -11,6 +11,7 @@ echo "void initMeshobjs();"                      >> $H_FILE
 echo ""                                          >> $H_FILE
 
 echo "#include \"objs.h\""                        > $C_FILE
+echo "#include \"meshAssets.h\""                 >> $C_FILE
 echo "#include \"../gfx/texture.h\""             >> $C_FILE
 echo "#include \"../gfx/mesh.h\""                >> $C_FILE
 echo ""                                          >> $C_FILE
@@ -27,15 +28,13 @@ while (("$#")); do
 		echo ""                           >> $C_FILE
 		echo "extern unsigned char gfx_""$name""_png_data[];" >> $C_FILE
 		echo "extern unsigned int gfx_""$name""_png_len;" >> $C_FILE
-		echo "extern vertex ""$name""_verts[];" >> $C_FILE
-		echo "extern unsigned int ""$name""_count;" >> $C_FILE
 
 		echo "extern mesh *mesh$uname;"   >> $H_FILE
 		echo "extern texture *tex$uname;" >> $H_FILE
 		echo ""                           >> $H_FILE
 
 		meshs="$meshs
-	mesh$uname = meshNewRO(\"""$name""\",""$name""_verts,""$name""_count);"
+	mesh$uname = meshNewAsset(\"""$name""\",&""$name""_meshdata);"
 		meshs="$meshs
 	tex$uname = textureNew(gfx_""$name""_png_data,gfx_""$name""_png_len,\"client/gfx/$name.png\");"
 		meshs="$meshs
