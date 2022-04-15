@@ -44,9 +44,9 @@
 
 chungus *world[256][128][256];
 #if defined(__x86_64__) || defined(__APPLE__)
-#define GENERATOR_QUEUE_SIZE 24
+#define GENERATOR_QUEUE_SIZE 8
 #else
-#define GENERATOR_QUEUE_SIZE 16
+#define GENERATOR_QUEUE_SIZE 8
 #endif
 
 void worldInit(){
