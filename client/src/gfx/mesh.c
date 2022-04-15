@@ -26,7 +26,7 @@
 #include <string.h>
 #include "../gfx/gl.h"
 
-vertex meshBuffer[(1<<16)-1];
+vertex meshBuffer[(1<<14)-1];
 mesh meshList[1024];
 uint meshCount = 0;
 mesh *meshFirstFree = NULL;

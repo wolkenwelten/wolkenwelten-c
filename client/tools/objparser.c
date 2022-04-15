@@ -298,6 +298,7 @@ int main(int argc,char *argv[]){
 		vertCount=0;
 		indexCount=0;
 		loadObj(argv[i]);
+		/*
 		printf("%32s: %4d verts & %4d indices (%.1fx), cache hits %.1f%% %.1f%% %.1f%% %.1f%%\n",
 			argv[i],
 			vertCount,
@@ -307,7 +308,8 @@ int main(int argc,char *argv[]){
 			cacheEfficiency(32, indices, indexCount)*100,
 			cacheEfficiency(64, indices, indexCount)*100,
 			cacheEfficiency(128, indices, indexCount)*100
-		);
+			);
+		*/
 		printObj();
 	}
 	fclose(cfp);
