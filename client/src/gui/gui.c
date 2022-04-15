@@ -19,7 +19,6 @@
 #include "../binding/widget.h"
 #include "../misc/lisp.h"
 #include "../misc/options.h"
-#include "../game/animal.h"
 #include "../game/character/character.h"
 #include "../game/character/draw.h"
 #include "../game/character/hook.h"
@@ -339,51 +338,6 @@ const char *colorSignalLow(int err, int warn, int good, int v){
 	return ansiFG[15];
 }
 
-void drawAnimalDebugOverlay(const animal *e, int i){
-	if(e == NULL)   {return;}
-	if(e->type == 0){return;}
-	vec p = e->screenPos;
-	if(p.z <   0)         {return;}
-	if(p.z > 512)         {return;}
-	p.x =      ((p.x / p.z)+1.f)/2.f  * screenWidth;
-	if(p.x < 0)           {return;}
-	if(p.x > screenWidth) {return;}
-	p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
-	if(p.y < 0)           {return;}
-	if(p.y > screenHeight){return;}
-
-	u32 ofgc = guim->fgc;
-	u32 a = (u32)(MIN(128.f,MAX(0.f,(p.z-32.f)))) << 24;
-	const float u = 1/32.f * (float)(32-e->type);
-	const float v = 1/32.f * 30;
-	textMeshBox(guim,p.x-16,p.y-16,32,32,u,v,1/32.f,1/32.f,a|0xFFFFFF);
-
-	if(p.z > 96){guim->fgc = ofgc; return;}
-	if(++animalOverlaysDrawn > 64){return;}
-	guim->fgc = 0xFFFFFFFF;
-	textMeshPrintfPS(guim,p.x+16,p.y-40,2,"%s",animalGetStateName(e));
-	drawSingleHealthbar(e->health, animalGetMaxHealth(e), p.x+16,p.y-16,8,false);
-	if(e->flags & ANIMAL_MALE){
-		textMeshPrintfPS(guim,p.x+56,p.y-22,2,"\x0B");
-	}else{
-		textMeshPrintfPS(guim,p.x+56,p.y-22,2,"\x0C");
-	}
-	textMeshPrintfPS(guim,p.x-48,p.y-40,2,"%i",i);
-	textMeshPrintfPS(guim,p.x-48,p.y-24,2,"%.1f",p.z);
-	guim->fgc = colorPalette[7];
-
-	const char *hungerC = colorSignalHigh(16,32,48,e->hunger);
-	const char *sleepyC = colorSignalHigh(16,32,48,e->sleepy);
-	const char *ageC    = colorSignalLow (78,64,48,e->age);
-	textMeshPrintfPS(guim,p.x+16,p.y   ,1,"Hunger: %s%i%s",hungerC,e->hunger,ansiFG[7]);
-	textMeshPrintfPS(guim,p.x+16,p.y+ 8,1,"Sleepy: %s%i%s",sleepyC,e->sleepy,ansiFG[7]);
-	textMeshPrintfPS(guim,p.x+16,p.y+16,1,"Age:    %s%i%s",ageC,   e->age   ,ansiFG[7]);
-	if(!(e->flags & ANIMAL_MALE)){
-		textMeshPrintfPS(guim,p.x+16,p.y+24,1,"Pregn.: %i",e->pregnancy);
-	}
-	guim->fgc = ofgc;
-}
-
 static void drawHookIndicator(){
 	if(!optionDebugInfo){return;}
 	const float hookdist = characterCanHookHit(player);
@@ -501,11 +455,6 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"Cloudyness  : %i\n",player->cloudyness);
 		textMeshPrintf(guim,"DirtyChunks : %u\n",chunksDirtied);
 		textMeshPrintf(guim,"ChunksCopied: %u\n",chunksCopied);
-
-		animalOverlaysDrawn = 0;
-		for(uint i=0;i<animalListMax;i++){
-			drawAnimalDebugOverlay(&animalList[i],i);
-		}
 	}
 	guim->font = 0;
 }

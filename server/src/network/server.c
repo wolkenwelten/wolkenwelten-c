@@ -18,7 +18,6 @@
 #include "server.h"
 
 #include "../main.h"
-#include "../game/animal.h"
 #include "../game/beamblast.h"
 #include "../game/being.h"
 #include "../game/blockMining.h"
@@ -134,7 +133,6 @@ void serverInitClient(uint c, u64 socket){
 	clients[c].c                        = characterNew();
 	clients[c].cl                       = lispClientClosure(c);
 	clients[c].state                    = STATE_CONNECTING;
-	clients[c].animalUpdateWindowSize   = 1;
 	clients[c].itemDropUpdateWindowSize = 1;
 	clients[c].c->pos = spawn;
 
@@ -215,7 +213,6 @@ void msgUpdatePlayer(uint c){
 	}
 
 	blockMiningUpdatePlayer(c);
-	animalSyncPlayer(c);
 	projectileSyncPlayer(c);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
@@ -407,8 +404,6 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtPlayerMoveDelta:
 	case msgtCharacterName:
 	case msgtCharacterSetData:
-	case msgtAnimalSync:
-	case msgtFxAnimalDied:
 	case msgtWeatherRecvUpdate:
 	case msgtRainRecvUpdate:
 	case msgtSnowRecvUpdate:
@@ -502,7 +497,6 @@ void serverParseIntro(uint c){
 		characterLoadSendData(clients[c].c,clients[c].playerName,c);
 		sendPlayerJoinMessage(c);
 		msgSetTime(c, gtimeGetTime());
-		animalUpdatePriorities(c);
 		weatherSendUpdate(c);
 		clients[c].lastPing = getTicks();
 		msgPingPong(c);

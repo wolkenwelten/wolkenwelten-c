@@ -17,7 +17,6 @@
 #include "messages.h"
 
 #include "../common.h"
-#include "../game/animal.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -263,22 +262,6 @@ void msgPingPong(int c){
 	packetQueue(p,msgtPingPong,0,c);
 }
 
-void msgAnimalDied(int c, const animal *a){
-	packet *p = &packetBuffer;
-
-	p->v.u8[0]  = a->type;
-	p->v.u8[1]  = a->age;
-	p->v.u8[2]  = 0;
-	p->v.u8[3]  = 0;
-
-	p->v.f[1]   = a->pos.x;
-	p->v.f[2]   = a->pos.y;
-	p->v.f[3]   = a->pos.z;
-	p->v.u32[4] = animalGetBeing(a);
-
-	packetQueue(p,msgtFxAnimalDied,5*4,c);
-}
-
 void msgRopeUpdate(int c, uint i, rope *r){
 	packet *p = &packetBuffer;
 
@@ -380,14 +363,10 @@ const char *networkGetMessageName(uint i){
 		return "chungusUnsubPlayer";
 	case msgtCharacterSetData:
 		return "characterSetData";
-	case msgtAnimalSync:
-		return "animalSync";
 	case msgtDirtyChunk:
 		return "dirtyChunk";
 	case msgtPingPong:
 		return "pingPong";
-	case msgtFxAnimalDied:
-		return "fxAnimalDied";
 	case msgtRopeUpdate:
 		return "ropeUpdate";
 	case msgtProjectileUpdate:

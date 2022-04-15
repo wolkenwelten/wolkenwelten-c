@@ -17,7 +17,6 @@
 
 #include "projectile.h"
 
-#include "../game/animal.h"
 #include "../game/being.h"
 #include "../game/blockType.h"
 #include "../game/character.h"
@@ -169,7 +168,6 @@ static inline int projectileUpdate(projectile *p){
 	}
 	if(!vecInWorld(p->pos)){return 1;}
 	if(characterHitCheck (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
-	if(animalHitCheck    (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
 	const blockId b = worldTryB(p->pos.x, p->pos.y, p->pos.z);
 	if(b){return projectileBounce(p,b);}
         if(p->style == 6){

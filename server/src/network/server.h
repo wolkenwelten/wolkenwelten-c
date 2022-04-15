@@ -22,10 +22,6 @@ typedef struct {
 	uint projectileUpdateOffset;
 	uint throwableUpdateOffset;
 
-	uint animalUpdateOffset;
-	uint animalPriorityUpdateOffset;
-	uint animalUpdateWindowSize;
-
 	uint itemDropPriorityQueueLen;
 	u16  itemDropPriorityQueue[128];
 	uint itemDropUpdateOffset;

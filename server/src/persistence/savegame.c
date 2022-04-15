@@ -16,12 +16,10 @@
  */
 #include "savegame.h"
 
-#include "animal.h"
 #include "character.h"
 #include "chunk.h"
 
 #include "../main.h"
-#include "../game/animal.h"
 #include "../game/fire.h"
 #include "../misc/options.h"
 #include "../network/server.h"
@@ -142,7 +140,6 @@ void chungusLoad(chungus *c){
 
 	len = LZ4_decompress_safe((const char *)compressedBuffer, (char *)saveLoadBuffer, len, 4100*4096);
 	end = &saveLoadBuffer[len];
-	animalDelChungus(c);
 
 	for(b=saveLoadBuffer;b<end;){
 		saveType cType = *b;
@@ -151,9 +148,6 @@ void chungusLoad(chungus *c){
 		case saveTypeChunkFluidData:
 		case saveTypeChunkBlockData:
 			b = chunkLoad(c,b);
-			break;
-		case saveTypeAnimal:
-			b = animalLoad(b);
 			break;
 		default:
 			fprintf(stderr,"Unknown type[%u] found in %i:%i:%i savestate\n",cType,c->x,c->y,c->z);
@@ -185,7 +179,6 @@ void chungusSave(chungus *c){
 	}
 	}
 	}
-	cbuf = animalSaveChungus   (c,cbuf);
 	const size_t uncompressedLen = cbuf - saveLoadBuffer;
 	if(uncompressedLen == 0){
 		PROFILE_STOP();

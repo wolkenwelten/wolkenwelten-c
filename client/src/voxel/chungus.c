@@ -19,7 +19,6 @@
 
 #include "../main.h"
 #include "../sdl/sdl.h"
-#include "../game/animal.h"
 #include "../game/blockType.h"
 #include "../game/fire.h"
 #include "../gfx/frustum.h"
@@ -98,7 +97,6 @@ chungus *chungusNew(u8 x, u8 y, u8 z){
 
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
-	animalDelChungus(c);
 	for(int x=0;x<16;x++){
 	for(int y=0;y<16;y++){
 	for(int z=0;z<16;z++){

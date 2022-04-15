@@ -18,7 +18,6 @@
 #include "lisp.h"
 
 #include "../main.h"
-#include "../game/animal.h"
 #include "../game/being.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
@@ -75,10 +74,6 @@ void lPrintError(const char *format, ...){
 	va_end(ap);
 }
 
-static lVal *wwlnfACount(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	return lValInt(animalCount);
-}
 static lVal *wwlnfBMCount(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValInt(blockMiningGetActive());
@@ -167,39 +162,6 @@ static lVal *wwlnfDmg(lClosure *c, lVal *v){
 	return NULL;
 }
 
-static lVal *wwlnfNewAnim(lClosure *c, lVal *v){
-	(void)c;
-	const vec pos    = castToVec(lCar(v),vecNOne()); v = lCdr(v);
-	const int amount = castToInt(lCar(v),1);         v = lCdr(v);
-	const int type   = castToInt(lCar(v),1);
-
-	if(pos.x < 0){return NULL;}
-	for(int i=0;i < amount;i++){
-		animalNew(pos,type,-1);
-	}
-	return NULL;
-}
-
-static lVal *wwlnfSetAnim(lClosure *c, lVal *v){
-	(void)c;
-	const int index  = castToInt(lCar(v),-2); v = lCdr(v);
-	const int hunger = castToInt(lCar(v),-2); v = lCdr(v);
-	const int sleepy = castToInt(lCar(v),-2); v = lCdr(v);
-	const int pregna = castToInt(lCar(v),-2); v = lCdr(v);
-	const int state  = castToInt(lCar(v),-2); v = lCdr(v);
-	const int health = castToInt(lCar(v),-2); v = lCdr(v);
-
-	if((index < 0) || (index > (int)animalListMax)){return NULL;}
-	animal *a = &animalList[index];
-	if(a->type == 0){return NULL;}
-	if(hunger >=  0){a->hunger    = hunger;}
-	if(sleepy >=  0){a->sleepy    = sleepy;}
-	if(pregna >= -1){a->pregnancy = pregna;}
-	if(state  >=  0){a->state     = state;}
-	if(health >=  0){a->health    = health;}
-	return NULL;
-}
-
 static lVal *wwlnfTp(lClosure *c, lVal *v){
 	vec pos     = castToVec(lCar(v),vecNOne()); v = lCdr(v);
 	int cplayer = castToInt(lCar(v),getPID(c));
@@ -225,18 +187,6 @@ static lVal *wwlnfTime(lClosure *c, lVal *v){
 		}
 	}
 	return lValString(gtimeGetTimeOfDayHRS(gtimeGetTimeOfDay()));
-}
-
-static lVal *wwlnfLShed(lClosure *c, lVal *v){
-	(void)c;(void)v;
-
-	chungusFreeOldChungi(100);
-	for(uint i = animalListMax/2-1;i < animalListMax;i--){
-		if(animalList[i].type == 0){continue;}
-		animalDel(i);
-	}
-
-	return NULL;
 }
 
 static lVal *wwlnfChungi(lClosure *c, lVal *v){
@@ -332,24 +282,14 @@ static lVal *wwlnfLine(lClosure *c, lVal *v){
 	return NULL;
 }
 
-lVal *wwlnfAnimalKillAll(lClosure *c, lVal *v){
-	(void)c; (void) v;
-	animalDeleteAll();
-	return NULL;
-}
 
 void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
-	lAddNativeFunc(c,"animal-count",   "()",                                           "Returns animal count",                                       wwlnfACount);
-	lAddNativeFunc(c,"animal-kill-all","()",                                           "Returns animal count",                                       wwlnfAnimalKillAll);
 	lAddNativeFunc(c,"mining-count",   "()",                                           "Returns block mining count",                                 wwlnfBMCount);
 	lAddNativeFunc(c,"entity-count",   "()",                                           "Returns entity count",                                       wwlnfECount);
 	lAddNativeFunc(c,"chungus-count",  "()",                                           "Returns chungus count",                                      wwlnfChungi);
 	lAddNativeFunc(c,"rain-count",     "()",                                           "Returns amount of rain drops",                               wwlnfRCount);
-	lAddNativeFunc(c,"load-shed!",     "()",                                           "Load shedding, mostly unloading chungi",                     wwlnfLShed);
 	lAddNativeFunc(c,"player-dmg",     "(&amount &player)",                            "Damages &player=pid by &amount=4 points",                    wwlnfDmg);
-	lAddNativeFunc(c,"animal-new",     "(pos &type &amount)",                          "Creates &amount=1 new animals of &type=1 at pos",            wwlnfNewAnim);
-	lAddNativeFunc(c,"animal-set",     "(i &hunger &sleepy &pregnancy &state &health)","Sets the fields for animal i",                               wwlnfSetAnim);
 	lAddNativeFunc(c,"setb!",          "(pos b)",                                      "Sets block at pos to b",                                     wwlnfSetB);
 	lAddNativeFunc(c,"tryb",           "(pos)",                                        "Tries and gets block type at pos",                           wwlnfTryB);
 	lAddNativeFunc(c,"getb!",          "(pos)",                                        "Gets block type at pos, might trigger worldgen",             wwlnfGetB);

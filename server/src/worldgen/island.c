@@ -19,7 +19,6 @@
 
 #include "geoworld.h"
 #include "vegetation.h"
-#include "../game/animal.h"
 #include "../voxel/chunk.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/game/blockType.h"
@@ -121,8 +120,6 @@ typedef struct {
 
 	int  monolithChance;
 
-	int  animalChance;
-
 	int  hematiteChance;
 	int  coalChance;
 	int  dirtVeinChance;
@@ -159,7 +156,6 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->bigTreeChance  = (1<< 6)-1;
 			w->treeChance     = (1<< 5)-1;
 			w->shrubChance    = (1<< 4)-1;
-			w->animalChance   = (1<<12)-1;
 			break;
 		case 6:
 			w->treeType       = 0;
@@ -167,7 +163,6 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->bigTreeChance  = (1<< 6)-1;
 			w->treeChance     = (1<< 5)-1;
 			w->shrubChance    = (1<< 4)-1;
-			w->animalChance   = (1<<12)-1;
 			break;
 		default:
 		case 5:
@@ -176,7 +171,6 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->bigTreeChance  = (1<< 7)-1;
 			w->treeChance     = (1<< 6)-1;
 			w->shrubChance    = (1<< 5)-1;
-			w->animalChance   = (1<<13)-1;
 			break;
 		case 4:
 			w->treeType       = 1;
@@ -184,7 +178,6 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->bigTreeChance  = (1<< 9)-1;
 			w->treeChance     = (1<< 9)-1;
 			w->shrubChance    = (1<< 6)-1;
-			w->animalChance   = (1<<14)-1;
 			break;
 		case 3:
 			w->treeType       = 2;
@@ -194,7 +187,6 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->shrubChance    = (1<< 5)-1;
 			w->dirtChance     = (1<< 5)-1;
 			w->stoneChance    = (1<< 8)-1;
-			w->animalChance   = (1<<15)-1;
 			wgen->clay->grassBlock = w->grassBlock = I_Dry_Grass;
 			break;
 		case 2:
@@ -205,7 +197,6 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->shrubChance    = (1<< 6)-1;
 			w->dirtChance     = (1<< 4)-1;
 			w->stoneChance    = (1<< 7)-1;
-			w->animalChance   = (1<<16)-1;
 			wgen->clay->grassBlock = w->grassBlock = I_Dry_Grass;
 			break;
 		case 1:
@@ -216,7 +207,6 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->stoneChance    = (1<< 5)-1;
 			w->bigTreeChance  = (1<<14)-1;
 			w->treeChance     = (1<<12)-1;
-			w->animalChance   = (1<<17)-1;
 			wgen->clay->grassBlock = w->grassBlock = I_Dry_Grass;
 			break;
 		case 0:
@@ -228,7 +218,6 @@ static void worldgenCalcChances(const worldgen *wgen, wgChances *w){
 			w->monolithChance = (1<<18)-1;
 			w->bigTreeChance  = (1<<15)-1;
 			w->treeChance     = (1<<14)-1;
-			w->animalChance   = (1<<18)-1;
 			wgen->clay->grassBlock = w->grassBlock = I_Dry_Grass;
 			break;
 	}
@@ -339,27 +328,6 @@ static bool worldgenRDTree(worldgen *wgen, wgChances *w, int cx, int cy, int cz)
 	}
 	w->lastBlock = I_Oak;
 	w->airBlocks = 0;
-	return true;
-}
-
-static vec vecAddRng(const vec pos, float xz){
-	return vecAdd(pos,vecMul(vecNew(xz,0,xz),vecRng()));
-}
-
-static bool worldgenRDAnimal(worldgen *wgen, wgChances *w, int cx, int cy, int cz){
-	if(!w->animalChance || rngValA(w->animalChance)){return false;}
-	const vec pos = vecNew(wgen->gx+cx,wgen->gy+cy+2.f,wgen->gz+cz);
-	if(rngValA(63) == 0){
-		animalNew(vecAddRng(pos,1.f),3,rngValA(1));
-	}
-	if(rngValA(7)){
-		animalNew(vecAddRng(pos,3.f),1,rngValA(1));
-	}
-	if(rngValA(7)){
-		animalNew(vecAddRng(pos,3.f),1,rngValA(1));
-	}
-	animalNew(vecAddRng(pos,2.f),1,1);
-	animalNew(vecAddRng(pos,2.f),1,0);
 	return true;
 }
 
@@ -573,7 +541,6 @@ void worldgenRemoveDirt(worldgen *wgen){
 					}else if(w.airBlocks > 3){
 						chnk->block->data[x][cy&0xF][z] = I_Dirt;
 					}
-					if(worldgenRDAnimal  (wgen,&w,cx,cy,cz)){continue;}
 					w.airBlocks = 0;
 					break;
 				}

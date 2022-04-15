@@ -16,7 +16,6 @@
  */
 #include "main.h"
 
-#include "game/animal.h"
 #include "game/being.h"
 #include "game/blockMining.h"
 #include "game/blockType.h"
@@ -138,7 +137,6 @@ void worldUpdate(){
 	resetOverlayColor();
 	for(;lastTick < curTick;lastTick+=msPerTick){
 		characterUpdateAll();
-		animalUpdateAll();
 		particleUpdate();
 		ropeUpdateAll();
 		projectileUpdateAll();

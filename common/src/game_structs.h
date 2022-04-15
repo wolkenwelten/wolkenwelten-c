@@ -66,7 +66,6 @@ typedef struct {
 typedef uint32_t being;
 #define BEING_NULL       0
 #define BEING_CHARACTER  1
-#define BEING_ANIMAL     2
 #define BEING_HOOK       3
 #define BEING_GRENADE    4
 #define BEING_PROJECTILE 5
@@ -178,49 +177,6 @@ typedef struct {
 
 	void *nextFree;
 } character;
-
-typedef struct {
-	vec pos,vel,rot;
-	vec gvel,grot;
-	vec screenPos;
-	float yoff;
-
-	i8 age;
-	i8 health;
-	i8 hunger;
-	i8 pregnancy;
-	i8 sleepy;
-	u8 flags;
-	u8 type;
-	u8 state;
-	u8 effectValue;
-
-	u16 nextFree;
-	u16 breathing;
-	u16 temp;
-	being target;
-
-	u64 clientPriorization;
-	u32 stateTicks;
-
-	beingList *bl;
-} animal;
-#define ANIMAL_FALLING    (1   )
-#define ANIMAL_BELLYSLEEP (1<<1)
-#define ANIMAL_AGGRESIVE  (1<<2)
-#define ANIMAL_COLLIDE    (1<<3)
-#define ANIMAL_MALE       (1<<4)
-#define ANIMAL_NO_NEEDS   (1<<5)
-
-#define ANIMAL_S_LOITER      0
-#define ANIMAL_S_FLEE        1
-#define ANIMAL_S_HEAT        2
-#define ANIMAL_S_SLEEP       3
-#define ANIMAL_S_PLAYING     4
-#define ANIMAL_S_FOOD_SEARCH 5
-#define ANIMAL_S_EAT         6
-#define ANIMAL_S_FIGHT       7
-#define ANIMAL_S_HUNT        8
 
 struct hook {
 	entity       *ent;

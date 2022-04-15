@@ -18,7 +18,6 @@
 #include "geoworld.h"
 
 #include "worldgen.h"
-#include "../game/animal.h"
 #include "../voxel/chungus.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/misc.h"
@@ -182,8 +181,5 @@ void worldgenGeoIsland(worldgen *wgen, int x,int y,int z,int size){
 		case 4:
 			worldgenGeoSphere(wgen,x,y,z,size,b,fb);
 		break;
-	}
-	if(rngValM(32) == 0){
-		animalNew(vecNew(wgen->gx+x,wgen->gy+y+size+1.f,wgen->gz+z),2,-1);
 	}
 }

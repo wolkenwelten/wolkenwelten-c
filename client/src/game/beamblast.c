@@ -17,7 +17,6 @@
 
 #include "beamblast.h"
 
-#include "../game/animal.h"
 #include "../game/character/character.h"
 #include "../gfx/effects.h"
 #include "../voxel/bigchungus.h"
@@ -51,7 +50,6 @@ void singleBeamblast(const vec start, const vec rot, float beamSize, float damag
 				}
 			}
 			characterHitCheck(spos, mdd, dmg, 1, iteration, source);
-			animalHitCheck   (spos, mdd, dmg, 1, iteration, source);
 		}
 		pos = vecAdd(pos,vel);
 	}

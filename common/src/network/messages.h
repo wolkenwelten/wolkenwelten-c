@@ -33,7 +33,6 @@ void msgFxBeamBlaster            (int c, const vec pa, const vec pb, float beamS
 void msgFxBeamBlastHit           (int c, const vec pos, u16 size, u16 style);
 void msgPlayerSetData            (int c, i16 hp, u32 flags, u16 id);
 void msgPingPong                 (int c);
-void msgAnimalDied               (int c, const animal *a);
 void msgRopeUpdate               (int c, uint i, rope *r);
 void msgWaterUpdate              (int c, u16 i, u16 count, u16 x, u16 y, u16 z, i16 strength);
 void msgLispSExpr                (int c, const char *str);

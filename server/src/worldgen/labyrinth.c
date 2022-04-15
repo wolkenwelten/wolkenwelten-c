@@ -17,7 +17,6 @@
 
 #include "labyrinth.h"
 
-#include "../game/animal.h"
 #include "../../../common/src/common.h"
 #include "../../../common/src/game/blockType.h"
 #include "../../../common/src/misc/misc.h"
@@ -286,10 +285,6 @@ void worldgenLabyrinth(worldgen *wgen){
 					labStairsZGT(wgen, cx, cy, cz, 1);
 				}else if((cz < 14) && (cy < 15) && labMap[cx][cy+1][cz+2] && !labMap[cx][cy+1][cz+1] && !labMap[cx][cy][cz+1]){
 					labStairsZGT(wgen, cx, cy, cz, 2);
-				}
-
-				if(rngValM(8) == 0){
-					animalNew(vecNew(wgen->gx+(cx<<4)+6,wgen->gy+(cy<<4)+9,wgen->gz+(cz<<4)+6),2,-1);
 				}
 			}
 		}

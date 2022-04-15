@@ -19,7 +19,6 @@
 
 #include "misc/lisp.h"
 #include "misc/options.h"
-#include "game/animal.h"
 #include "game/being.h"
 #include "game/blockMining.h"
 #include "game/fire.h"
@@ -107,13 +106,9 @@ static void initTermColors(){
 
 static void updateWorldStep(){
 	blockMiningUpdateAll();
-	animalUpdateAll();
 	projectileUpdateAll();
-	animalThinkAll();
 	fireUpdateAll();
 	fluidPhysicsTick();
-	animalNeedsAll();
-	animalCheckBurnAll();
 	weatherUpdateAll();
 	entityUpdateAll();
 
@@ -136,23 +131,10 @@ int updateWorld(){
 	return 1;
 }
 
-void handleAnimalPriorities(){
-	static u64 lastCall   = 0;
-	static uint c = 0;
-	const u64 cTicks = getTicks();
-	if(cTicks < lastCall + msPerTick*128) {return;}
-	c = (c+1) & 0x1F;
-	if(clients[c].state)        {return;}
-	if(clients[c].c == NULL)    {return;}
-	lastCall += msPerTick*128;
-	animalUpdatePriorities(c);
-}
-
 void mainTick(){
 	freeTime = getTicks();
 	chungusUnsubFarChungi();
 	chungusFreeOldChungi(30000);
-	handleAnimalPriorities();
 	bigchungusSafeSave(&world,false);
 	playerSafeSave();
 	serverHandleEvents();

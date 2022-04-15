@@ -18,7 +18,6 @@
 #include "draw.h"
 #include "hook.h"
 #include "network.h"
-#include "../animal.h"
 #include "../entity.h"
 #include "../projectile.h"
 #include "../weather/weather.h"
@@ -133,7 +132,6 @@ void characterHit(character *c){
 	const being source = beingCharacter(playerID);
 	const int damage   = 1;
 	characterHitCheck(pos,range,damage,2,iteration, source);
-	animalHitCheck   (pos,range,damage,2,iteration, source);
 
 	characterStartAnimation(c,animationHit,240);
 	characterSetCooldown(c,320);
@@ -234,23 +232,6 @@ static float characterBlockRepulsion(character *c, float *vel){
 	return blockRepulsion(c->pos,vel,80.f,characterCollisionBlock);
 }
 
-// ToDo: Check blockRepulsion and also set Positions */
-static void characterBeingCollisionCallback(vec pos, being b, being source){
-	if(beingType(b) != BEING_ANIMAL){return;}
-	const vec beingPos = beingGetPos(b);
-	const vec delta = vecSub(pos, beingPos);
-	//const float power = (2.f - vecMag(delta));
-	const vec deltaS = vecMulS(vecNorm(delta),0.0001f);
-	const float weightDistribution = beingGetWeight(source) / beingGetWeight(b);
-	beingAddVel(b,vecMulS(deltaS,weightDistribution));
-	msgBeingMove(b,vecZero(),vecMulS(deltaS,-weightDistribution));
-	beingAddVel(source,vecMulS(deltaS,(-1.f + weightDistribution)));
-}
-
-static void characterCheckForAnimalCollision(character *c){
-	beingGetInSphere(c->pos, 2.f, characterGetBeing(c), characterBeingCollisionCallback);
-}
-
 static int characterPhysics(character *c){
 	int ret = 0;
 	u32 col;
@@ -323,7 +304,6 @@ static int characterPhysics(character *c){
 		newParticle(c->pos.x,c->pos.y,c->pos.z,0.f,0.f,0.f,78.f,2.5f,cloudCT[c->cloudyness&0x1F]|0xFF000000, MAX(32,MIN(768,c->cloudyness*2)));
 	}
 
-	characterCheckForAnimalCollision(c);
 	characterUpdateCons(c,oldCol,oldPos);
 	characterUpdateGlide(c);
 	return ret;

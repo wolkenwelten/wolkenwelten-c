@@ -17,7 +17,6 @@
 #include "../gfx/gfx.h"
 
 #include "../main.h"
-#include "../game/animal.h"
 #include "../game/blockMining.h"
 #include "../game/character/draw.h"
 #include "../game/character/character.h"
@@ -227,7 +226,6 @@ void renderWorld(const character *cam){
 	gfxGroupStart("World");
 	worldDraw(cam);
 	blockMiningDraw();
-	animalDrawAll();
 	entityDrawAll();
 	characterDrawAll();
 	characterDrawConsHighlight(cam);

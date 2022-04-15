@@ -18,7 +18,6 @@
 #include "chungus.h"
 
 #include "../main.h"
-#include "../game/animal.h"
 #include "../game/being.h"
 #include "../game/fire.h"
 #include "../network/server.h"
@@ -125,7 +124,6 @@ chungus *chungusWorldGenLoad(chungus *c){
 void chungusFree(chungus *c){
 	if(c == NULL){return;}
 	chungusSave(c);
-	animalDelChungus(c);
 	for(int x=0;x<CHUNGUS_COORDS;x++){
 	for(int y=0;y<CHUNGUS_COORDS;y++){
 	for(int z=0;z<CHUNGUS_COORDS;z++){

@@ -18,7 +18,6 @@
 #include "../main.h"
 #include "../gfx/effects.h"
 #include "../gui/menu.h"
-#include "../game/animal.h"
 #include "../game/being.h"
 #include "../game/blockMining.h"
 #include "../game/character/character.h"
@@ -191,9 +190,6 @@ void dispatchBeingGotHit(const packet *p){
 	case BEING_CHARACTER:
 		characterGotHitPacket(p);
 		break;
-	case BEING_ANIMAL:
-		animalGotHitPacket(p);
-		break;
 	}
 }
 
@@ -279,15 +275,9 @@ void clientParsePacket(const packet *p){
 	case msgtCharacterSetData:
 		characterSetData(player,p);
 		break;
-	case msgtAnimalSync:
-		animalSyncFromServer(p);
-		break;
 	case msgtPingPong:
 		handlePingPong();
 		msgPingPong(-1);
-		break;
-	case msgtFxAnimalDied:
-		fxAnimalDiedPacket(p);
 		break;
 	case msgtRopeUpdate:
 		ropeUpdateP(p);

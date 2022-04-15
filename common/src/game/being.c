@@ -17,7 +17,6 @@
 
 #include "being.h"
 
-#include "../game/animal.h"
 #include "../game/being.h"
 #include "../game/character.h"
 #include "../game/entity.h"
@@ -48,10 +47,6 @@ being beingCharacter (u32 id){
 	return beingNew(BEING_CHARACTER, id);
 }
 
-being beingAnimal(u32 id){
-	return beingNew(BEING_ANIMAL,    id);
-}
-
 being beingHook(u32 id){
 	return beingNew(BEING_HOOK,      id);
 }
@@ -66,10 +61,6 @@ vec beingGetPos(being b){
 		character *c = characterGetByBeing(b);
 		if(c == NULL){return vecNOne();}
 		return vecAdd(c->pos,vecNew(0,c->yoff + 0.2f,0)); }
-	case BEING_ANIMAL: {
-		animal *c = animalGetByBeing(b);
-		if(c == NULL){return vecNOne();}
-		return c->pos; }
 	case BEING_HOOK: {
 		hook *c = hookGetByBeing(b);
 		if(c == NULL)     {return vecNOne();}
@@ -84,11 +75,6 @@ void beingSetPos(being b, const vec pos){
 	switch(beingType(b)){
 	case BEING_CHARACTER: {
 		character *c = characterGetByBeing(b);
-		if(c == NULL){return;}
-		c->pos = pos;
-		return; }
-	case BEING_ANIMAL: {
-		animal *c = animalGetByBeing(b);
 		if(c == NULL){return;}
 		c->pos = pos;
 		return; }
@@ -110,11 +96,6 @@ void beingAddPos(being b, const vec pos){
 		if(c == NULL){return;}
 		c->pos = vecAdd(c->pos, pos);
 		return; }
-	case BEING_ANIMAL: {
-		animal *c = animalGetByBeing(b);
-		if(c == NULL){return;}
-		c->pos = vecAdd(c->pos,pos);
-		return; }
 	case BEING_HOOK: {
 		hook *c = hookGetByBeing(b);
 		if(c == NULL){return;}
@@ -131,10 +112,6 @@ vec beingGetVel(being b){
 		character *c = characterGetByBeing(b);
 		if(c == NULL){return vecZero();}
 		return c->vel; }
-	case BEING_ANIMAL: {
-		animal *c = animalGetByBeing(b);
-		if(c == NULL){return vecZero();}
-		return c->vel; }
 	case BEING_HOOK: {
 		hook *c = hookGetByBeing(b);
 		if(c == NULL){return vecZero();}
@@ -148,11 +125,6 @@ void beingSetVel(being b, const vec vel){
 	switch(beingType(b)){
 	case BEING_CHARACTER: {
 		character *c = characterGetByBeing(b);
-		if(c == NULL){return;}
-		c->vel = vel;
-		return; }
-	case BEING_ANIMAL: {
-		animal *c = animalGetByBeing(b);
 		if(c == NULL){return;}
 		c->vel = vel;
 		return; }
@@ -173,11 +145,6 @@ void beingAddVel(being b, const vec vel){
 		if(c == NULL){return;}
 		c->vel = vecAdd(c->vel,vel);
 		return; }
-	case BEING_ANIMAL: {
-		animal *c = animalGetByBeing(b);
-		if(c == NULL){return;}
-		c->vel = vecAdd(c->vel,vel);
-		return; }
 	case BEING_HOOK: {
 		hook *c = hookGetByBeing(b);
 		if(c == NULL){return;}
@@ -191,8 +158,6 @@ void beingAddVel(being b, const vec vel){
 being beingClosest(const vec pos, float maxDistance){
 	character *c = characterClosest(pos,maxDistance);
 	if(c != NULL){return characterGetBeing(c);}
-	animal *a = animalClosest(pos,maxDistance);
-	if(a != NULL){return animalGetBeing(a);}
 	return 0;
 }
 
@@ -200,8 +165,6 @@ float beingGetWeight(being b){
 	switch(beingType(b)){
 	case BEING_CHARACTER:
 		return 80.f;
-	case BEING_ANIMAL:
-		return 5.f;
 	case BEING_HOOK:
 		return 1.f;
 	default:
@@ -216,8 +179,6 @@ void beingDamage(being b, i16 hp, u8 cause, float knockbackMult, being culprit, 
 		switch(beingType(b)){
 		case BEING_CHARACTER:
 			return msgBeingDamage(beingID(b),hp,cause,knockbackMult,b,culprit,pos);
-		case BEING_ANIMAL:
-			return animalDoDamage(animalGetByBeing(b),hp,cause,knockbackMult,culprit,pos);
 		}
 	}else{
 		msgBeingDamage(beingID(b),hp,cause,knockbackMult,b,culprit,pos);
@@ -229,13 +190,6 @@ bool beingAlive(being b){
 	switch(beingType(b)){
 	default:
 		return true;
-	case BEING_ANIMAL: {
-		animal *a = animalGetByBeing(b);
-		if(a == NULL)     {return false;}
-		if(a->type == 0)  {return false;}
-		if(a->health <= 0){return false;}
-		return true;
-		}
 	}
 }
 
@@ -390,8 +344,6 @@ const char *beingGetName(being b){
 	switch(beingType(b)){
 	case BEING_CHARACTER:
 		return characterGetName(characterGetByBeing(b));
-	case BEING_ANIMAL:
-		return animalGetName(animalGetByBeing(b));
 	case BEING_HOOK:
 		return "Hook";
 	case BEING_GRENADE:

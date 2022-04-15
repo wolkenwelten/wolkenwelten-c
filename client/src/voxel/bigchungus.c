@@ -18,7 +18,6 @@
 #include "bigchungus.h"
 
 #include "../sdl/sdl.h"
-#include "../game/animal.h"
 #include "../game/blockType.h"
 #include "../game/fire.h"
 #include "../game/projectile.h"
@@ -53,7 +52,6 @@ chungus *world[256][128][256];
 void worldInit(){
 	chungusInit();
 	chunkInit();
-	animalInit();
 	projectileInit();
 }
 

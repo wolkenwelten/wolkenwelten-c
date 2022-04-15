@@ -73,9 +73,6 @@ static void ropePullTowards(being a, being b, float goalLen, float mul){
 	}
 	beingAddPos(b,posAdd);
 	beingAddVel(b,velAdd);
-	if(isClient && beingType(b) == BEING_ANIMAL){
-		msgBeingMove(b,posAdd,velAdd);
-	}
 }
 
 static void ropeUpdate(rope *r){
