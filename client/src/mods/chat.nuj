@@ -43,8 +43,10 @@
            [widget/height! chat/widget/panel 0]]]
 
 [defun chat/gui/submit-handler [w e]
-       [chat/send [widget/val/string w]]
-       [widget/val/string! w ""]
+       [def msg [trim [widget/val/string w]]]
+       [when [> [string/length msg] 0]
+             [chat/send msg]
+             [widget/val/string! w ""]]
        [chat/toggle!]]
 
 [defun chat/init/gui []
