@@ -41,7 +41,7 @@ static void fluidGenerateBlockParticles(int x, int y, int z, u8 level){
 		}else{
 			c = COLOR(0x10, 0x20, 0x80, 0xF0) | rngValA(COLOR(0x0F, 0x1F, 0x7F, 0x0F));
 		}
-		newParticle(px, py, pz, 0.f, 0.f, 0.f, 256.f, -0.01f, c, 128);
+		newParticle(px, py, pz, 0.f, 0.f, 0.f, 256.f, -0.01f, c, 256);
 	}
 }
 
@@ -66,7 +66,7 @@ void fluidGenerateParticles(){
 	static int calls = 0;
 	PROFILE_START();
 
-	for(uint i = calls&0x1; i < chungusCount; i+=0x2){
+	for(uint i = calls&0x1F; i < chungusCount; i+=0x20){
 	//for(uint i = 0; i < chungusCount; i++){
 		chungus *cng = &chungusList[i];
 		if(!chungusInFrustum(cng)){continue;}
