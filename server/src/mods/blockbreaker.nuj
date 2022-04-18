@@ -1,0 +1,7 @@
+[defun blockbreaker/handler [sender msg]
+       [setb! [eval [cadr msg]] 0]]
+
+[defun blockbreaker/init []
+       [message/dispatch/add :blockbreaker blockbreaker/handler]]
+
+[event-bind on-init :blockbreaker-init blockbreaker/init]

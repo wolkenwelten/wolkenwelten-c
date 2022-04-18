@@ -97,7 +97,7 @@ static lVal *wwlnfSetB(lClosure *c, lVal *v){
 	const int b = castToInt(lCadr(v),0);
 
 	worldSetB(pos.x,pos.y,pos.z,b);
-	return lValInt(b);
+	return NULL;
 }
 
 static lVal *wwlnfGetB(lClosure *c, lVal *v){

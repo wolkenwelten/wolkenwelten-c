@@ -10,10 +10,17 @@
 [def did-throw #f]
 [def throw-start 0]
 
+[defun player-blockbreak! []
+       [when [zero? input/primary-did-count]
+             [def p [player-raycast #f]]
+             [when p [message/send 0 [list :blockbreaker p]]
+                     [player-do-primary! count]]]]
 
 [defun player-primary! []
        "Make the player do a primary action"
-       [player-do-primary! input/primary-did-count]
+       [if [cons-mode?]
+           [player-blockbreak! input/primary-did-count]
+           [player-do-primary! input/primary-did-count]]
        [set! input/primary-did #t]]
 
 [defun player-secondary! []

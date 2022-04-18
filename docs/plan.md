@@ -26,10 +26,10 @@ Something that Nujel needs to provide by that point
 ### [C] - Blocktype getter
 Functionality is mostly there, just not exposed to Nujel.  Should be quite simple to provide.
 
-## [MOD] - Blockbreaker
+## [MOD] - Blockbreaker - DONE!
 This mod should allow a player to immediatly remove a block from the world as a primary action.
 
-## [MOD] - Blockbuilder
+## [MOD] - Blockbuilder - DONE!
 This mod should give a player the ability to freely choose from all blocktypes currently known
 to the game and place them via a right-click.
 
@@ -51,13 +51,6 @@ Hex might compress slightly better (as well as being simpler to en-/decode)
 
 ## [MOD] - Chunk import/export
 A way to import/export a particular chunk and serialize in into an LZ4 compressed S-Expression.
-
-### [C] - Blocktype setter
-Functionality is mostly there, just not exposed to Nujel.
-
-## [MOD] - Default Blocks
-Should import a set of simple and general blocks which will probably be useful to pretty much every gamemode out there, block like
-grass, dirt, stone and so on, basically whatever blockTypes are currently in the game, although the snowy ones can probably be removed.
 
 ## [MOD] - Chunky files
 A format for storing blockdata, along with palette information mapping bytes to symbolic blockIDs. Plugins used may be stored but should not be loaded automatically, instead an exception should be thrown and the import cancelled.  This is so that we may migrate over to a newer/different version of a plugin with everything working so long that we have a blockType associated with a particular symbol.
@@ -137,3 +130,10 @@ Should provide a convenient way to change a "map"
 
 ## [MOD] - Maprotate
 Should provide a way to automatically rotate between a preselection of maps.
+
+### [C] - Blocktype setter
+Functionality is mostly there, just not exposed to Nujel.
+
+## [MOD] - Default Blocks
+Should import a set of simple and general blocks which will probably be useful to pretty much every gamemode out there, block like
+grass, dirt, stone and so on, basically whatever blockTypes are currently in the game, although the snowy ones can probably be removed.
