@@ -193,9 +193,15 @@ void dispatchBeingGotHit(const packet *p){
 }
 
 void handleGoodbye(const packet *p){
-	const char *msg = (const char *)p->v.u8;
-	if(*msg != 0){ menuSetError(msg); }
-	printf("[CLI] Received Goodbye: '%s'\n",msg);
+	if(packetLen(p) > 0){
+		const char *msg = (const char *)p->v.u8;
+		if(*msg != 0){
+			menuSetError(msg);
+		}
+		printf("[CLI] Received Goodbye: '%s'\n",msg);
+	}else{
+		printf("[CLI] Received Goodbye\n");
+	}
 	clientFree();
 }
 
@@ -398,8 +404,11 @@ void clientFree(){
 	recvBufLen      = 0;
 	sendBufLen      = 0;
 	sendBufSent     = 0;
+	singlePlayerPID = 0;
+	singleplayer    = false;
 	worldFree();
 	connectionState = 0;
+	mayTryToStartServer = false;
 	gameRunning = false;
 	closeSingleplayerServer();
 	playerFree();
