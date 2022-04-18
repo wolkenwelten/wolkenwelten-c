@@ -1,0 +1,8 @@
+[defun chat/message-handler [sender msg]
+       [log [cat [cadr msg] "\n"]]
+       [message/send -1 msg]]
+
+[defun chat/init []
+       [message/dispatch/add :chat-message chat/message-handler]]
+
+[event-bind on-init :chat-init chat/init]

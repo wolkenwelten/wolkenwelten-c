@@ -223,8 +223,8 @@ static int wordWidth(const char *str){
 bool textMeshAddStrPS(textMesh *m, int x, int y, int size, const char *str){
 	const int glyphWidth = 8*size;
 	const int lineHeight = 10*size;
-	const int maxX = (m->mx >= 0 ? m->mx - glyphWidth : screenWidth) - glyphWidth;
-	const int maxY = (m->my >= 0 ? m->my - lineHeight : screenHeight) - lineHeight;
+	const int maxX = (m->mx >= 0 ? m->mx : screenWidth) - glyphWidth;
+	const int maxY = (m->my >= 0 ? m->my : screenHeight) - lineHeight;
 
 	if(str == NULL){return 0;}
 	while(*str != 0){

@@ -1,5 +1,5 @@
  /*
- * Wolkenwelten - Copyright (C) 2020-2021 - Benjamin Vincent Schulenburg
+ * Wolkenwelten - Copyright (C) 2020- 2021 - Benjamin Vincent Schulenburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -40,7 +40,6 @@
 #include "gui/overlay.h"
 #include "nujel/nujel.h"
 #include "misc/options.h"
-#include "network/chat.h"
 #include "network/client.h"
 #include "sdl/input/gamepad.h"
 #include "sdl/input/keyboard.h"

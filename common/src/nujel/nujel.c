@@ -18,9 +18,10 @@
 
 #include "../asm/asm.h"
 #include "../game/weather/weather.h"
-#include "../world/world.h"
+#include "../network/messages.h"
 #include "../misc/colors.h"
 #include "../misc/profiling.h"
+#include "../world/world.h"
 
 #include "../../nujel/lib/api.h"
 #include "../../nujel/lib/exception.h"
@@ -198,6 +199,19 @@ void lispDefineString(const char *symbol, char *str){
 	lDefineVal(clRoot,symbol,lValString(str));
 }
 
+static lVal *wwlnfMessageSend(lClosure *c, lVal *v){
+	const int to = castToInt(lCar(v), -2);
+	if((to < -1) || (to > 32)){
+		lExceptionThrowValClo("out-of-bounds", "Out of bounds recipient", lCar(v), c);
+	}
+	const char *msg = castToString(lCadr(v), NULL);
+	if(msg == NULL){
+		lExceptionThrowValClo("type-error", "Messages have to be serialized S-Expressions", lCadr(v), c);
+	}
+	msgNujelMessage(to,msg);
+	return NULL;
+}
+
 void *lispCommonRootReal(void *a, void *b){
 	(void)a; (void)b;
 	lInit();
@@ -227,6 +241,7 @@ void *lispCommonRootReal(void *a, void *b){
 	lAddNativeFunc(c,"fluid!",          "(pos level)",            "Set the fluid level at POS to LEVEL",                        wwlnfFluidSet);
 	lAddNativeFunc(c,"fire",            "(pos)",                  "Get the fluid level at POS",                                 wwlnfFireGet);
 	lAddNativeFunc(c,"fire!",           "(pos level)",            "Set the fluid level at POS to LEVEL",                        wwlnfFireSet);
+	lAddNativeFunc(c,"message/send*",   "[to msg]",               "Send MSG TO someone",                                        wwlnfMessageSend);
 
 	specificInit(c);
 
@@ -337,4 +352,11 @@ void lispDefineID(const char *prefix, const char *symbol, int val){
 	}
 	lName[sizeof(lName)-1] = 0;
 	lispDefineInt(lName,val);
+}
+
+void nujelReceiveMessage(uint c, const packet *p){
+	const int len = strnlen((char *)p->v.u8, 4188);
+	lVal *args = lList(2, lValInt(c), lValStringNoCopy((char *)p->v.u8, len));
+	lVal *func = lGetClosureSym(clRoot, lSymS("message/receive"));
+	lApply(clRoot, args, func, NULL);
 }

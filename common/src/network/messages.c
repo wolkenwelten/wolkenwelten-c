@@ -289,9 +289,26 @@ void msgFxBeamBlastHit(int c, const vec pos, u16 size, u16 style){
 void msgLispSExpr(int c, const char *str){
 	packet *p  = &packetBuffer;
 	int len    = strnlen(str,4192);
-	memcpy(p->v.u8,str,len);
-	p->v.u8[len] = 0;
-	packetQueue(p,msgtLispRecvSExpr,alignedLen(len+1),c);
+	if(len < 4192){
+		memcpy(p->v.u8,str,len);
+		p->v.u8[len] = 0;
+		packetQueue(p,msgtLispRecvSExpr,alignedLen(len+1),c);
+	}else{
+		fprintf(stderr, "Truncated S-Expression:\n%s\n", str);
+	}
+}
+
+
+void msgNujelMessage(int c, const char *str){
+	packet *p  = &packetBuffer;
+	int len    = strnlen(str,4188);
+	if(len < 4188){
+		memcpy(p->v.u8,str,len);
+		memset(&p->v.u8[len], 0, alignedLen(len+1) - len);
+		packetQueue(p,msgtNujelMessage,alignedLen(len+1),c);
+	}else{
+		fprintf(stderr, "Truncated Message:\n%s\n", str);
+	}
 }
 
 void msgGoodbye(int c){
@@ -347,8 +364,6 @@ const char *networkGetMessageName(uint i){
 		return "charaterUpdate";
 	case msgtCharacterName:
 		return "charaterName";
-	case msgtChatMsg:
-		return "chatMsg";
 	case msgtChunkEmpty:
 		return "chunkEmpty";
 	case msgtChunkData:
@@ -373,6 +388,8 @@ const char *networkGetMessageName(uint i){
 		return "projectileUpdate";
 	case msgtFxProjectileHit:
 		return "fxProjectileHit";
+	case msgtNujelMessage:
+		return "nujelMessage";
 	case msgtLispRecvSExpr:
 		return "lispRecvSExpr";
 	case msgtLightningStrike:

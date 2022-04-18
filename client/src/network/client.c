@@ -32,7 +32,6 @@
 #include "../nujel/nujel.h"
 #include "../misc/options.h"
 #include "../sdl/sdl.h"
-#include "../network/chat.h"
 #include "../../../common/src/game/time.h"
 #include "../../../common/src/misc/lz4.h"
 #include "../../../common/src/misc/misc.h"
@@ -254,9 +253,6 @@ void clientParsePacket(const packet *p){
 	case msgtCharacterUpdate:
 		characterUpdatePacket(p);
 		break;
-	case msgtChatMsg:
-		chatParsePacket(p);
-		break;
 	case msgtChunkData:
 		chunkRecvUpdate(p);
 		break;
@@ -287,6 +283,9 @@ void clientParsePacket(const packet *p){
 		break;
 	case msgtFxProjectileHit:
 		fxProjectileHit(p);
+		break;
+	case msgtNujelMessage:
+		nujelReceiveMessage(-1, p);
 		break;
 	case msgtLispRecvSExpr:
 		lispRecvSExpr(p);
@@ -400,7 +399,6 @@ void clientFree(){
 	sendBufLen      = 0;
 	sendBufSent     = 0;
 	worldFree();
-	chatEmpty();
 	connectionState = 0;
 	gameRunning = false;
 	closeSingleplayerServer();

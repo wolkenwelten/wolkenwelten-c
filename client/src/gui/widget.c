@@ -123,8 +123,14 @@ void widgetFree(widget *w){
 		}
 		w->parent = w->next = w->prev = NULL;
 	}
-	if(w->type == wTextInput){free(w->vals); w->vals = NULL;}
-	if(w->label != NULL){free((void *)w->label); w->label = NULL;}
+	if(w->type == wTextInput){
+		free(w->vals);
+		w->vals = NULL;
+	}
+	if(w->label != NULL){
+		free((void *)w->label);
+		w->label = NULL;
+	}
 	*w = (widget){0};
 	w->next = widgetFirstFree;
 	widgetFirstFree = w;

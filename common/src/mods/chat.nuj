@@ -1,0 +1,7 @@
+[defun chat/message-handler [sender msg]
+       [say [cadr msg]]]
+
+[defun chat/init []
+       [message/dispatch/add :chat-message chat/message-handler]]
+
+[event-bind on-init :chat-init chat/init]

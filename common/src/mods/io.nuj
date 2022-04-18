@@ -1,4 +1,3 @@
 [defun say args
        "Sends ...ARGS as a chat message"
-       [send-message [apply cat args]]
-]
+       [chat/send [apply cat args]]]

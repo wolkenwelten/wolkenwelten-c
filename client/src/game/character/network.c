@@ -21,7 +21,6 @@
 #include "../../gui/overlay.h"
 #include "../../sfx/sfx.h"
 #include "../../nujel/nujel.h"
-#include "../../network/chat.h"
 #include "../../network/client.h"
 #include "../../../../common/src/game/being.h"
 #include "../../../../common/src/game/hook.h"
@@ -108,7 +107,8 @@ void characterDyingMessage(const being victim, const being culprit, deathCause c
 		snprintf(tmp,sizeof(tmp),"%s got thunderstruck", victimName);
 		break;
 	}
-	chatSendRaw(tmp);
+	(void)tmp;
+	//chatSendRaw(tmp);
 }
 
 void characterDamagePacket(character *c, const packet *p){

@@ -65,8 +65,8 @@
         [s [time/morning!]]]
 
 [defun time/noon! []
-        "Sets the Time to 12:00 PM"
-        [s [time/noon!]]]
+       "Sets the Time to 12:00 PM"
+       [s [time/noon!]]]
 
 [defun time/evening! []
        "Sets the Time to 21:30 PM"

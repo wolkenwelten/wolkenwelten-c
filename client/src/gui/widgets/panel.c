@@ -19,6 +19,7 @@
 #include "../../gfx/textMesh.h"
 
 void widgetDrawPanel(const widget *wid, textMesh *m, box2D area){
+	if(wid->flags & WIDGET_NO_BACKGROUND){return;}
 	const int x = area.x;
 	const int y = area.y;
 	const int w = area.w;

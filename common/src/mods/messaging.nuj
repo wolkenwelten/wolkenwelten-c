@@ -1,0 +1,37 @@
+[def message/handler @[]]
+
+[defun msgtest []
+       [message/send 0 [:chat-message @[:text "This is a test!"]]]]
+
+[defun message/dispatch/empty! []
+       "Removes all currently bound message handlers"
+       [set! message/handler @[]]]
+
+[defun message/dispatch/add [id handler]
+       "Adds a new HANDLER for messages with ID"
+       [tree/set! message/handler id handler]]
+
+[defun message/dispatch [sender msg]
+       "Try and call the handler added for the message type of msg"
+       [def handler [tree/get message/handler [car msg]]]
+       [if handler
+           [handler sender msg]
+           [throw [list :unhandled-message-type
+                        "There is no message handler installed for this kind of a message"
+                        msg
+                        [current-lambda]]]]]
+
+[defun message/parse [sender msg]
+       "Parses the message contained in string str"
+       [case [type-of msg]
+             [:string [message/parse sender [read/single msg]]]
+             [:pair   [message/dispatch sender msg]]
+             [otherwise [throw [list :type-error "Can't parse the following msg" msg [current-lambda]]]]]]
+
+[defun message/send [to msg]
+       "Send a MSG TO somebody"
+       [message/send* to [str/write msg]]]
+
+[defun message/receive [sender msg]
+       "Should only be called by the C netcode"
+       [try display/error [message/parse sender msg]]]

@@ -198,14 +198,6 @@ static lVal *wwlnfRCount(lClosure *c, lVal *v){
 	return lValInt(rainCount);
 }
 
-static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
-	(void)c;
-	const char *msg = castToString(lCar(v),NULL);
-	if(msg == NULL){return NULL;}
-	serverSendChatMsg(msg);
-	return lCar(v);
-}
-
 static lVal *wwlnfQuit(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	quit = true;
@@ -299,7 +291,6 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"msphere",        "(pos r)",                                      "Mines every block in the sphere at pos with radius r",       wwlnfMSphere);
 	lAddNativeFunc(c,"game/time",      "(s)",                                          "Sets the time to the time string s",                         wwlnfTime);
 	lAddNativeFunc(c,"tp",             "(pos)",                                        "Teleports to pos",                                           wwlnfTp);
-	lAddNativeFunc(c,"send-message",   "(s)",                                          "Send a chat message to everyone",                            wwlnfSendMessage);
 	lAddNativeFunc(c,"chunk-info",     "(pos)",                                        "Returns a description of the chunk at pos",                  wwlnfChunkInfo);
 	lAddNativeFunc(c,"chungus-info",   "(pos)",                                        "Returns a description of the chungus at pos",                wwlnfChungusInfo);
 	lAddNativeFunc(c,"spawn-pos",      "()",                                           "Return the current spawn position as a vec",                 wwlnfSpawnPos);
@@ -358,8 +349,7 @@ int parseCommand(uint pid, const char *cmd){
 }
 
 void lispRecvSExpr(uint pid,const packet *p){
-	//printf("Recv: %s\n",(const char *)p->v.u8);
-	cmdLisp(pid,(const char *)p->v.u8);
+	cmdLisp(pid, (const char *)p->v.u8);
 }
 
 void lispEvents(){

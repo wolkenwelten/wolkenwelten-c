@@ -88,5 +88,7 @@ platform/win_cross/pkgs/mingw-w64-sdl2/*
 *.res
 /save/
 
+*.stackdump
+
 # Blender Backups
 *.blend1

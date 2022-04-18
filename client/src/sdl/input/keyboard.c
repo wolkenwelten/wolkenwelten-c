@@ -21,7 +21,6 @@
 #include "../../game/character/character.h"
 #include "../../gfx/texture.h"
 #include "../../gfx/gfx.h"
-#include "../../gui/chat.h"
 #include "../../gui/gui.h"
 #include "../../gui/textInput.h"
 #include "../../gui/menu.h"
@@ -30,7 +29,6 @@
 #include "../../nujel/nujel.h"
 #include "../../gui/widget.h"
 #include "../../misc/options.h"
-#include "../../network/chat.h"
 #include "../../../../common/nujel/lib/api.h"
 
 bool textInputEvent(const SDL_Event *e);

@@ -27,14 +27,12 @@
 #include "../gfx/boundaries.h"
 #include "../gfx/gfx.h"
 #include "../gfx/texture.h"
-#include "../gui/chat.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
 #include "../gui/repl.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
 #include "../misc/options.h"
-#include "../network/chat.h"
 #include "../network/client.h"
 #include "../nujel/widget.h"
 #include "../nujel/widgetGC.h"
@@ -112,14 +110,20 @@ static lVal *wwlnfSEval(lClosure *c, lVal *v){
 	return NULL;
 }
 
-static lVal *wwlnfPlayerName(lClosure *c, lVal *v){
+static lVal *wwlnfPlayerNameGet(lClosure *c, lVal *v){
+	(void)c; (void)v;
+	return lValString(playerName);
+}
+
+static lVal *wwlnfPlayerNameSet(lClosure *c, lVal *v){
 	(void)c;
 	const char *npName = castToString(lCar(v),NULL);
 
-	if(npName != NULL){
-		snprintf(playerName,sizeof(playerName),"%s",npName);
+	if(npName == NULL){
+		lExceptionThrowValClo("type-error", "Can only set a players name to a string", lCar(v), c);
 	}
-	return lValString(playerName);
+	snprintf(playerName,sizeof(playerName),"%s",npName);
+	return NULL;
 }
 
 static lVal *wwlnfSoundVolume(lClosure *c, lVal *v){
@@ -286,14 +290,6 @@ static lVal *wwlnfSetCooldown(lClosure *c, lVal *v){
 	characterSetCooldown(player,cd);
 
 	return lValInt(player->actionTimeout);
-}
-
-static lVal *wwlnfSendMessage(lClosure *c, lVal *v){
-	(void)c;
-	const char *msg = castToString(lCar(v),NULL);
-	if(msg == NULL){return NULL;}
-	chatSend(msg);
-	return lCar(v);
 }
 
 static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
@@ -543,21 +539,6 @@ static lVal *wwlnfDrawBoundariesSet(lClosure *c, lVal *v){
 	return NULL;
 }
 
-static lVal *wwlnfChatOpenGet(lClosure *c, lVal *v){
-	(void)c; (void)v;
-	return lValBool(chatIsOpen());
-}
-
-static lVal *wwlnfChatOpenSet(lClosure *c, lVal *v){
-	(void)c;
-	if(castToBool(lCar(v))){
-		chatOpen();
-	}else{
-		chatClose();
-	}
-	return NULL;
-}
-
 static lVal *wwlnfConsModeBlockGet(lClosure *c, lVal *v){
 	(void)c; (void)v;
 	return lValInt(consHighlightBlock);
@@ -582,7 +563,8 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-vel",     "()",                "Return players velocity",                                        wwlnfPlayerVel);
 	lAddNativeFunc(c,"player-flags",   "()",                "Return players flags",                                           wwlnfPlayerGetFlags);
 	lAddNativeFunc(c,"player-flags!",  "(flags)",           "Set players flags",                                              wwlnfPlayerSetFlags);
-	lAddNativeFunc(c,"player-name!",   "(s)",               "Set players name to s",                                          wwlnfPlayerName);
+	lAddNativeFunc(c,"player-name",    "[]",                "Get the players name",                                           wwlnfPlayerNameGet);
+	lAddNativeFunc(c,"player-name!",   "[s]",               "Set players name to s",                                          wwlnfPlayerNameSet);
 	lAddNativeFunc(c,"player-hp",      "(&hp)",             "Set the players health to &HP, returns the current value.",      wwlnfPlayerHP);
 	lAddNativeFunc(c,"player-maxhp",   "(&mhp)",            "Set the players max health to &MHP, returns the current value.", wwlnfPlayerMaxHP);
 	lAddNativeFunc(c,"player-jump!",   "(velocity)",        "Jump with VELOCITY!",                                            wwlnfPlayerJump);
@@ -620,7 +602,6 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"no-clip?",       "()",                "Gets no clip to b if passed, always returns the current state",  wwlnfNoClipGet);
 	lAddNativeFunc(c,"wire-frame!",    "(b)",               "Sets wireframe mode to b, always returns the current state",     wwlnfWireFrameSet);
 	lAddNativeFunc(c,"wire-frame?",    "()",                "Sets wireframe mode to b, always returns the current state",     wwlnfWireFrameGet);
-	lAddNativeFunc(c,"send-message",   "(s)",               "Sends string s as a chat message",                               wwlnfSendMessage);
 	lAddNativeFunc(c,"console-print",  "(s)",               "Prints string s to the REPL",                                    wwlnfConsolePrint);
 	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)",     "Plays SFX S with volume &VOL=1.0 as if emitting from &POS.",     wwlnfSfxPlay);
 	lAddNativeFunc(c,"screenshot",     "()",                "Takes a screeshot",                                              wwlnfScreenshot);
@@ -637,8 +618,6 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"widget-focus-on-game?","()",          "Return #t if the game is focused and not some menu",             wwlnfGuiFocusOnGame);
 	lAddNativeFunc(c,"draw-boundaries", "()",                "Return the current boundary drawing style",                     wwlnfDrawBoundariesGet);
 	lAddNativeFunc(c,"draw-boundaries!","(v)",               "Set the current boundary drawing style",                        wwlnfDrawBoundariesSet);
-	lAddNativeFunc(c,"chat-open", "()",                      "Return #t if the chat is open right now",                       wwlnfChatOpenGet);
-	lAddNativeFunc(c,"chat-open!","(v)",                     "Opens/Closes the chat",                                         wwlnfChatOpenSet);
 	lAddNativeFunc(c,"set-cooldown", "(cd)",                 "Add CD to the current cooldown timer",                          wwlnfSetCooldown);
 }
 

@@ -38,7 +38,6 @@
 #include "../gfx/texture.h"
 #include "../gfx/textMesh.h"
 #include "../gfx/sky.h"
-#include "../gui/chat.h"
 #include "../gui/menu.h"
 #include "../gui/menu/attribution.h"
 #include "../gui/menu/mainmenu.h"
@@ -50,7 +49,6 @@
 #include "../gui/textInput.h"
 #include "../gui/widgets/widgets.h"
 #include "../misc/options.h"
-#include "../network/chat.h"
 #include "../network/client.h"
 #include "../sdl/sdl.h"
 #include "../tmp/objs.h"
@@ -96,7 +94,6 @@ void handlerRoot(widget *wid){
 void handlerRootHud(widget *wid){
 	(void)wid;
 	widgetFocus(widgetGameScreen);
-	chatClose();
 	widgetSlideH(lispPanel, 0);
 }
 
@@ -166,9 +163,6 @@ void drawCrosshair(){
 void resizeUI(){
 	matOrtho(matOrthoProj,0.f,screenWidth,screenHeight,0.f,-1.f,16.f);
 
-	const int sx = 10*getTilesize();
-	chatPanel->area.w = screenWidth - sx;
-	chatText->area.w  = screenWidth - sx - 64;
 	lispPanel->area.w = screenWidth - 128;
 	if(lispPanelVisible){
 		widgetSlideH(lispPanel, screenHeight-128);
@@ -195,12 +189,9 @@ static void initGameOverlay(){
 
 	widgetGameScreen = widgetNewCP(wGameScreen,rootMenu,rect(0,0,-1,-1));
 	widgetBind(widgetGameScreen,"focus",handlerGameFocus);
-	chatPanel = widgetNewCP(wPanel,rootMenu,rect(0,-1,512,0));
-	chatPanel->flags |= WIDGET_HIDDEN;
 	widgetExport(widgetGameScreen, "w-game-screen");
 
 	lispInputInit();
-	chatInit();
 
 	resizeUI();
 }
@@ -501,7 +492,6 @@ void drawHud(){
 		drawOverlay(guim);
 		drawHealthbar();
 		drawDebuginfo();
-		chatDraw(guim);
 	}
 	lispPanelCheckAutoComplete();
 	lispPanelCheckAutoCompleteDescription();
@@ -536,10 +526,6 @@ bool guiCancel(){
 	if(!gameRunning){return true;}
 	if(lispPanelVisible){
 		lispPanelClose();
-		return true;
-	}
-	if(widgetFocused == chatText){
-		handlerRootHud(NULL);
 		return true;
 	}
 	closeAllMenus();

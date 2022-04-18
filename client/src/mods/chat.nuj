@@ -1,0 +1,90 @@
+[defun chat/send [msg]
+       [message/send 0 [list :chat-message [cat [ansi-green [player-name]] ": " msg]]]]
+
+[def chat/widget/panel #nil]
+[def chat/widget/messages #nil]
+[def chat/max 8]
+
+[def chat/widget/input-panel #nil]
+[def chat/widget/input-field #nil]
+
+[defun chat/gui/new [msg]
+       [-> [widget/new w-label]
+           [widget/parent! chat/widget/panel]
+           [widget/label! msg]
+           [widget/height! 20]
+           [widget/y! 0]
+           [widget/x! 0]
+           [widget/width! -1]]]
+
+[defun chat/gui/reflow [l]
+       [if-not l 0
+               [do [widget/y! [car l] [chat/gui/reflow [cdr l]]]
+                   [+ [widget/y [car l]] [widget/height [car l]]]]]]
+
+[defun chat/gui/filter [l i]
+       [if l
+           [if [< i chat/max]
+               [cons [car l]
+                     [chat/gui/filter [cdr l] [+ i 1]]]
+               [do [widget/parent! [car l] #nil]
+                   [chat/gui/filter [cdr l] [+ i 1]]
+                   #nil]]
+           #nil]]
+
+[defun chat/gui/append [msg]
+       [set! chat/widget/messages [cons [chat/gui/new msg]
+                                        [chat/gui/filter chat/widget/messages 1]]]
+       [if chat/widget/messages
+           [widget/height! chat/widget/panel
+                           [+ 16
+                              [chat/gui/reflow chat/widget/messages]]]
+           [widget/height! chat/widget/panel 0]]]
+
+[defun chat/gui/submit-handler [w e]
+       [chat/send [widget/val/string w]]
+       [widget/val/string! w ""]
+       [chat/toggle!]]
+
+[defun chat/init/gui []
+       [set! chat/widget/input-panel [-> [widget/new w-panel]
+                                         [widget/height!  0]
+                                         [widget/width! 768]
+                                         [widget/val/int! 4]
+                                         [widget/y! -1]]]
+       [set! chat/widget/input-field [-> [widget/new w-text-input]
+                                         [widget/parent! chat/widget/input-panel]
+                                         [widget/height! -1]
+                                         [widget/width! -1]
+                                         [widget/bind "blur" chat/fade-out]
+                                         [widget/bind "submit" chat/gui/submit-handler]]]
+       [set! chat/widget/panel [-> [widget/new w-panel]
+                                   [widget/flags! wf-no-background]
+                                   [widget/height! 0]
+                                   [widget/width! 768]
+                                   [widget/y! -1]
+                                   [widget/val/int! 8]]]]
+
+[defun chat/message-handler [sender msg]
+       [chat/gui/append [cadr msg]]]
+
+[defun chat/init []
+       [chat/init/gui]
+       [message/dispatch/add :chat-message chat/message-handler]]
+
+[event-bind on-init :chat-init chat/init]
+
+[defun chat/fade-in []
+       [widget/animate-h! chat/widget/input-panel 32]
+       [widget/animate-y! chat/widget/panel -33]
+       [widget/focus! chat/widget/input-field]]
+
+[defun chat/fade-out []
+       [widget/animate-h! chat/widget/input-panel 0]
+       [widget/animate-y! chat/widget/panel -1]
+       [widget/focus! w-game-screen]]
+
+[defun chat/toggle! []
+       [if [== [widget/focus] chat/widget/input-field]
+           [chat/fade-out]
+           [chat/fade-in]]]

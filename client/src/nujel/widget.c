@@ -308,6 +308,35 @@ lVal *wwlnfWidgetValIntSet(lClosure *c, lVal *v){
 	return car;
 }
 
+static lVal *wwlnfWidgetValStringGet(lClosure *c, lVal *v){
+	widget *wid = castToWidget(lCar(v));
+	if(wid == NULL){
+		lExceptionThrowValClo("type-error", "Needs a widget", lCar(v), c);
+	}
+	if(wid->type != wTextInput){
+		lExceptionThrowValClo("type-error", "Needs a textInput widget", lCar(v), c);
+	}
+	if(wid->vals == NULL){return NULL;}
+	return lValString(wid->vals);
+}
+
+static lVal *wwlnfWidgetValStringSet(lClosure *c, lVal *v){
+	widget *wid = castToWidget(lCar(v));
+	if(wid == NULL){
+		lExceptionThrowValClo("type-error", "Needs a widget", lCar(v), c);
+	}
+	if(wid->type != wTextInput){
+		lExceptionThrowValClo("type-error", "Needs a textInput widget", lCar(v), c);
+	}
+	if(wid->vals == NULL){return NULL;}
+	lVal *strv = lCadr(v);
+	if((strv == NULL) || (strv->type != ltString)){
+		lExceptionThrowValClo("type-error", "Can only set a widgets string val to a string", lCadr(v), c);
+	}
+	snprintf(wid->vals, 256, "%s", strv->vString->buf);
+	return NULL;
+}
+
 void lOperatorsWidget(lClosure *c){
 	lAddNativeFunc(c,"widget/new",    "[type]",         "Create a new widget of type", wwlnfWidgetNew);
 	lAddNativeFunc(c,"widget/parent", "[widget]",       "Return the parent of widget", wwlnfWidgetParent);
@@ -341,6 +370,8 @@ void lOperatorsWidget(lClosure *c){
 
 	lAddNativeFunc(c,"widget/val/int", "[widget]","Sets the vali field of WIDGET to VAL", wwlnfWidgetValInt);
 	lAddNativeFunc(c,"widget/val/int!","[widget val]","Sets the vali field of WIDGET to VAL", wwlnfWidgetValIntSet);
+	lAddNativeFunc(c,"widget/val/string", "[widget]","Gets the vals field of WIDGET to VAL", wwlnfWidgetValStringGet);
+	lAddNativeFunc(c,"widget/val/string!", "[widget val]","Sets the vals field of WIDGET to VAL", wwlnfWidgetValStringSet);
 
 	lAddNativeFunc(c,"widget/active-count", "[]","Return the amount of widgets that are currently allocated", wwlnfWidgetActiveCount);
 }

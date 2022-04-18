@@ -87,35 +87,11 @@ void serverKeepalive(){
 	}
 }
 
-void serverSendChatMsg(const char *msg){
-	packet *p = &packetBuffer;
-	size_t len = snprintf((void *)packetBuffer.v.u8,sizeof(packetBuffer.v.u8),"%s",msg);
-	packetQueue(p,msgtChatMsg,alignedLen(len+1),-1);
-	printf("%s[MSG]%s %s\n",termColors[6],termReset,p->v.u8);
-}
-
 void sendPlayerNames(){
 	for(uint i=0;i<clientCount;i++){
 		if(clients[i].state == STATE_CLOSED){continue;}
 		msgPlayerName(-1,i,clients[i].playerName);
 	}
-}
-
-void sendPlayerJoinMessage(uint c){
-	char msg[256];
-	sendPlayerNames();
-	if((clientCount == 1) && optionSingleplayer){
-		snprintf(msg,sizeof(msg),"Started Singleplayer Server [Seed=%i]",optionWorldSeed);
-		serverSendChatMsg(msg);
-		return;
-	}
-	snprintf(msg,sizeof(msg),"%s[%u] joined",clients[c].playerName,c);
-	serverSendChatMsg(msg);
-}
-
-void serverParseChatMsg(uint c,const packet *m){
-	(void)c;
-	serverSendChatMsg((void *)m->v.u8);
 }
 
 void msgPlayerSpawnPos(uint c){
@@ -357,9 +333,6 @@ void serverParseSinglePacket(uint c, packet *p){
 	case msgtCharacterUpdate:
 		serverParsePlayerPos(c,p);
 		break;
-	case msgtChatMsg:
-		serverParseChatMsg(c,p);
-		break;
 	case msgtFxBeamBlaster:
 		beamblastNewP(c,p);
 		break;
@@ -384,6 +357,9 @@ void serverParseSinglePacket(uint c, packet *p){
 		break;
 	case msgtFxProjectileHit:
 		packetEchoExcept(c,p);
+		break;
+	case msgtNujelMessage:
+		nujelReceiveMessage(c,p);
 		break;
 	case msgtLispRecvSExpr:
 		lispRecvSExpr(c,p);
@@ -495,7 +471,6 @@ void serverParseIntro(uint c){
 		clients[c].state = STATE_READY;
 
 		characterLoadSendData(clients[c].c,clients[c].playerName,c);
-		sendPlayerJoinMessage(c);
 		msgSetTime(c, gtimeGetTime());
 		weatherSendUpdate(c);
 		clients[c].lastPing = getTicks();
@@ -727,7 +702,7 @@ void sendToAllExcept(uint e,const void *data, uint len){
 }
 
 void serverCloseClient(uint c){
-	const char *msg = getPlayerLeaveMessage(c);
+	//const char *msg = getPlayerLeaveMessage(c);
         if(clients[c].pingCount && clients[c].syncCount){
                 characterSaveData(clients[c].c,clients[c].playerName);
         }
@@ -736,7 +711,7 @@ void serverCloseClient(uint c){
 		clients[c].c = NULL;
 	}
 	if(clients[c].state == STATE_READY){
-		serverSendChatMsg(msg);
+		//serverSendChatMsg(msg);
 	}
 	clients[c].state = STATE_CLOSED;
 	msgSetPlayerCount(c,clientCount);
