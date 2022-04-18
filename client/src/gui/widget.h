@@ -77,6 +77,7 @@ struct widget {
 #define WIDGET_ACTIVE        (1<<12)
 #define WIDGET_LISP          (1<<13)
 #define WIDGET_NO_BACKGROUND (1<<14)
+#define WIDGET_OUTLINED      (1<<15)
 
 #define WIDGET_ANIMATE (15<<4)
 #define WIDGET_HNS      (WIDGET_HIDDEN | WIDGET_NOSELECT)

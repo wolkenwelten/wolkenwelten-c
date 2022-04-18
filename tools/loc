@@ -3,9 +3,9 @@ cd "$(dirname "$0")"
 cd ../
 
 make clean 2> /dev/null > /dev/null
-CFILES=`find client/src common/src nujel-standalone server/src tools client/tools -type f -name '*.c' ! -name 'khrplatform.[ch]' ! -name 'gl3w.[ch]' ! -name 'lz4.[ch]' ! -name 'lodepng.[ch]' ! -name 'glcorearb.[ch]'`
-HFILES=`find client/src common/src nujel-standalone server/src tools client/tools -type f -name '*.h' ! -name 'khrplatform.[ch]' ! -name 'gl3w.[ch]' ! -name 'lz4.[ch]' ! -name 'lodepng.[ch]' ! -name 'glcorearb.[ch]'`
-NUJFILES=`find ./ -type f -name '*.nuj' ! -name 'khrplatform.[ch]' ! -name 'gl3w.[ch]' ! -name 'lz4.[ch]' ! -name 'lodepng.[ch]' ! -name 'glcorearb.[ch]'`
+CFILES=`find client/src common/src server/src tools client/tools -type f -name '*.c' ! -name 'khrplatform.[ch]' ! -name 'gl3w.[ch]' ! -name 'lz4.[ch]' ! -name 'lodepng.[ch]' ! -name 'glcorearb.[ch]'`
+HFILES=`find client/src common/src server/src tools client/tools -type f -name '*.h' ! -name 'khrplatform.[ch]' ! -name 'gl3w.[ch]' ! -name 'lz4.[ch]' ! -name 'lodepng.[ch]' ! -name 'glcorearb.[ch]'`
+NUJFILES=`find ./ -type f -name '*.nuj'`
 
 CLINES=`wc -l $CFILES | tail -n1 | awk '{print $1}'`
 HLINES=`wc -l $HFILES | tail -n1 | awk '{print $1}'`

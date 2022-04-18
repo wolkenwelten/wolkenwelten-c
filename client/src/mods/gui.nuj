@@ -30,6 +30,7 @@
 [def wf-active        #b0001_0000_0000_0000]
 [def wf-lisp          #b0010_0000_0000_0000]
 [def wf-no-background #b0100_0000_0000_0000]
+[def wf-outlined      #b1000_0000_0000_0000]
 
 [defun widget/animate-x! [w goal]
        [widget/goal-x! w goal]

@@ -33,11 +33,19 @@ void widgetDrawLabel(const widget *wid, textMesh *m, box2D area){
 		size = 1;
 	}
 
+	if(wid->flags & WIDGET_OUTLINED){
+		m->font = 1;
+	}
+
 	m->sx = x;
 	if(wid->label != NULL){
 		textMeshAddWrappedPS(m,x,y,w,h,size,wid->label);
 	}
 	if(wid->vals != NULL){
 		textMeshAddWrappedPS(m,m->sx,y,w,h,size,wid->vals);
+	}
+
+	if(wid->flags & WIDGET_OUTLINED){
+		m->font = 0;
 	}
 }
