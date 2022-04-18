@@ -6,7 +6,8 @@
 [defun inventory/refresh []
   [when-not inventory/w/panel [inventory/w/init!]]
   [widget/val/int! inventory/w/sprite inventory/selection]
-  [widget/label! inventory/w/label [fmt "ID: {inventory/selection}"]]
+  [def name [block/name inventory/selection]]
+  [widget/label! inventory/w/label [fmt "{name}"]]
   [cons-mode/block! inventory/selection]]
 
 [defun inventory/toggle! []
@@ -38,10 +39,10 @@
 [defun inventory/select! [sel]
        "Selects the next item from a players inventory"
        [set! inventory/selection sel]
-       [when [> inventory/selection 31]
+       [when [>= inventory/selection [block/count]]
              [set! inventory/selection 1]]
        [when [< inventory/selection 1]
-             [set! inventory/selection 31]]
+             [set! inventory/selection [- [block/count] 1]]]
        [inventory/refresh]]
 
 [defun inventory/select-next! []

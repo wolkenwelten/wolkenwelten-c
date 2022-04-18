@@ -25,6 +25,8 @@
 #include <stddef.h>
 #include <string.h>
 
+blockId blockTypeMax = 0;
+
 void blockTypeGenMeshes();
 void blockTypeSetTex(blockId b, side side, u32 tex);
 
@@ -42,6 +44,7 @@ static void blockTypeInitBlock(blockId b, u32 tex, blockCategory ncat,const char
 	blocks[b].ingressMask = ingressMask;
 	blocks[b].egressMask  = egressMask;
 	blocks[b].lightEmission = 0;
+	blockTypeMax = MAX(blockTypeMax, b);
 
 	lispDefineID("i-",bname,b);
 }

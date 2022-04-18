@@ -16,6 +16,8 @@
  */
 #include "nujel.h"
 
+#include "blockType.h"
+
 #include "../asm/asm.h"
 #include "../game/weather/weather.h"
 #include "../network/messages.h"
@@ -242,6 +244,7 @@ void *lispCommonRootReal(void *a, void *b){
 	lAddNativeFunc(c,"fire",            "(pos)",                  "Get the fluid level at POS",                                 wwlnfFireGet);
 	lAddNativeFunc(c,"fire!",           "(pos level)",            "Set the fluid level at POS to LEVEL",                        wwlnfFireSet);
 	lAddNativeFunc(c,"message/send*",   "[to msg]",               "Send MSG TO someone",                                        wwlnfMessageSend);
+	lOperatorsBlockType(c);
 
 	specificInit(c);
 

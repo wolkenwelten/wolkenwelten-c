@@ -2,6 +2,8 @@
 #include "../../../common/src/common.h"
 #include "../../../common/src/misc/side.h"
 
+extern blockId blockTypeMax;
+
 void          blockTypeInit();
 
 // ToDo: just return the blockType struct directly!

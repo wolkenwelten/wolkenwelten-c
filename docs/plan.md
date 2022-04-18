@@ -23,7 +23,7 @@ Something that Nujel needs to provide by that point
 
 # Milestones
 
-### [C] - Blocktype getter
+### [C] - Blocktype getter - DONE!
 Functionality is mostly there, just not exposed to Nujel.  Should be quite simple to provide.
 
 ## [MOD] - Blockbreaker - DONE!
