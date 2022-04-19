@@ -89,6 +89,3 @@ you can use `make clean` to remove every executable/intermedia file you just
 created. There are many more convenience targets I added which you can take a
 look at in the client/common/server Makefiles, most should be explained by the
 command they execute.
-
-To test that the nujel interpreter is working correctly just execute `make test`
-to run the automated testroutines for the nujel interpreter.
