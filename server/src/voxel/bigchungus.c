@@ -211,10 +211,17 @@ void bigchungusBoxMineSphere(bigchungus *c, int x,int y,int z, int r){
 	}
 }
 
+
+
 static int bigchungusTrySpawn(bigchungus *c, int sx, int sy, int sz){
-	return((bigchungusGetB(c,sx,sy  ,sz)!=0) &&
-	       (bigchungusGetB(c,sx,sy+1,sz)==0) &&
-	       (bigchungusGetB(c,sx,sy+2,sz)==0));
+	for(int x = sx-1;x<sx+2;x++){
+	for(int y = sy;x<sy+4;y++){
+	for(int z = sz-1;x<sz+2;z++){
+		if(bigchungusGetB(c,x,y,z)){return false;}
+	}
+	}
+	}
+	return true;
 }
 
 static void bigchungusDetermineSpawn(bigchungus *c, int sx, int sy, int sz){

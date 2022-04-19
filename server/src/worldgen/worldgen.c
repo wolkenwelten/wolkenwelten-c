@@ -123,7 +123,7 @@ void worldgenFindSpawn(worldgen *wgen, int x,int z,int tries){
 	int y = 0;
 	if(chungusGetHighestP(wgen->clay,x,&y,z)){
 		wgen->clay->sx = x & 0xFF;
-		wgen->clay->sy = y & 0xFF;
+		wgen->clay->sy = (y+1) & 0xFF;
 		wgen->clay->sz = z & 0xFF;
 	}else{
 		worldgenFindSpawn(wgen,rngValMM(0,CHUNGUS_SIZE),rngValMM(0,CHUNGUS_SIZE),tries+1);
