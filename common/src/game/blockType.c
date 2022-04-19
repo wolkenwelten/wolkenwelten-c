@@ -117,7 +117,10 @@ void blockTypeInit(){
 	blockTypeInitBlock    ( 5, 4, WOOD,  "Spruce Log", 500, 80, 3.f, 0xFF051B25,0xFF07161D, 0xFFFF, 0xFFFF);
 	blockTypeInitBlock    ( 6, 5, LEAVES,"Spruce Leafes",  80,  40, 0.2f, 0xFF012C12,0xFF01250F, 0, 0x1F);
 	blockTypeInitBlock    ( 7, 7, WOOD,  "Roots", 480,  40, 1.5f, 0xFF14323E,0xFF0D2029, 0x7, 0xFFFF);
-	blockTypeInitBlock    ( 8, 6, LEAVES,"Dry Grass", 240, 80, 1.6f, 0xFF11644B,0xFF007552, 0x1F, 0x3FF);
+	blockTypeInitBlock    ( 8, 35, LEAVES,"Dry Grass", 240, 80, 1.6f, 0xFF11644B,0xFF007552, 0x1F, 0x3FF);
+	blockTypeSetTex       ( 8,sideTop, 6);
+	blockTypeSetTex       ( 8,sideBottom, 1);
+
 	blockTypeInitBlock    ( 9, 8, STONE, "Obsidian",      2000, 250, 10.f, 0xFF222222,0xFF171717, 0xFFFF, 0xFFF);
 	blockTypeInitBlock    (10, 9, WOOD,  "Oak Log",        600,  80, 3.f, 0xFF082C3C,0xFF08242E, 0xFFFF, 0xFFFF);
 	blockTypeInitBlock    (11,10, LEAVES,"Oak Leaves",     70,  44, 0.2f, 0xFF004227,0xFF003318, 0, 0x1F);
