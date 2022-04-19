@@ -38,12 +38,13 @@
 
 [defun inventory/select! [sel]
        "Selects the next item from a players inventory"
-       [set! inventory/selection sel]
-       [when [>= inventory/selection [block/count]]
-             [set! inventory/selection 1]]
-       [when [< inventory/selection 1]
-             [set! inventory/selection [- [block/count] 1]]]
-       [inventory/refresh]]
+       [when [widget-focus-on-game?]
+             [set! inventory/selection sel]
+             [when [>= inventory/selection [block/count]]
+                   [set! inventory/selection 1]]
+             [when [< inventory/selection 1]
+                   [set! inventory/selection [- [block/count] 1]]]
+             [inventory/refresh]]]
 
 [defun inventory/select-next! []
        "Selects the next item from a players inventory"
