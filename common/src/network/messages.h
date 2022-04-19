@@ -19,15 +19,9 @@ void msgBeingGotHit              (       i16 hp, u8 cause, float knockbackMult, 
 void msgBeingDamage              (int c, i16 hp, u8 cause, float knockbackMult, being target, being culprit, const vec pos);
 void msgBeingMove                (being b, vec dpos, vec dvel);
 void msgSetTime                  (int c, u32 time);
-// 9 = playerSendName
 void msgBeamBlast                (const vec pos, const vec rot, float beamSize, float damageMultiplier, float recoilMultiplier, int hitsLeft);
 void msgPlayerMove               (int c, const vec dpos, const vec drot);
 void msgPlayerName               (int c, u16 i, const char *name);
-// 15 = playerPos ???
-// 16 = parseChatMsg ???
-// 17 = parseDyingMsg ???
-// 18 = chunkData ???
-// 19 = setPlayerCount ???
 void msgSetPlayerCount           (u16 playerLeaving, u16 playerMax);
 void msgFxBeamBlaster            (int c, const vec pa, const vec pb, float beamSize, float damageMultiplier);
 void msgFxBeamBlastHit           (int c, const vec pos, u16 size, u16 style);

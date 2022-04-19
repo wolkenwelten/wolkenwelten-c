@@ -92,6 +92,15 @@
                      [array/set! input-keyboard-state code #t]
                      [fun]]]]]
 
+[defun keyboard/once-up [fun]
+        "Run FUN only once per keypress"
+        [λ [code value]
+            [if [zero? value]
+                [when [ref input-keyboard-state code]
+                      [array/set! input-keyboard-state code #f]
+                      [fun]]
+                [array/set! input-keyboard-state code #t]]]]
+
 [defun keyboard/once-ingame [fun]
        [def handler [keyboard/once fun]]
        [λ [code value]
@@ -127,7 +136,7 @@
 [keyboard/bind! key-f10   [keyboard/once [λ [] [wire-frame! [not [wire-frame?]]]]]]
 [keyboard/bind! key-print [keyboard/once [λ [] [screenshot]]]]
 ;[keyboard/bind! key-tab   [keyboard/once [λ [] [toggle-inventory!]]]]
-[keyboard/bind! key-t     [keyboard/once [λ [] [chat/toggle!]]]]
+[keyboard/bind! key-t     [keyboard/once-up [λ [] [chat/toggle!]]]]
 
 [when-not [== OS "Emscripten"]
           [keyboard/bind! key-f11 [λ [code value]
