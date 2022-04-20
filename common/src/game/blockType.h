@@ -3,6 +3,7 @@
 #include "../../../common/src/misc/side.h"
 
 extern blockId blockTypeMax;
+extern u8 blockLight[256];
 
 void          blockTypeInit();
 

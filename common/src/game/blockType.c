@@ -29,6 +29,8 @@ blockId blockTypeMax = 0;
 
 void blockTypeGenMeshes();
 void blockTypeSetTex(blockId b, side side, u32 tex);
+u8 blockLight[256];
+
 
 static void blockTypeInitBlock(blockId b, u32 tex, blockCategory ncat,const char *bname,int nhp, int nfirehp, float weight, u32 ncolor1,u32 ncolor2, u16 ingressMask, u16 egressMask){
 	for(side i=0;i<sideMAX;i++){
@@ -153,6 +155,9 @@ void blockTypeInit(){
 	blockTypeSetLightEmission(15, 15);
 
 	blockTypeGenMeshes();
+	for(int b=0;b<blockTypeMax;b++){
+		blockLight[b] = blockTypeGetLightEmission(b);
+	}
 }
 
 u16 blockTypeGetIngressMask(blockId b){

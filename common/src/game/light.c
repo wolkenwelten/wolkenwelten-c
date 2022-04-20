@@ -102,7 +102,7 @@ static void lightBlurPortable(u8 buf[48][48][48]){
 	PROFILE_STOP();
 }
 
-static void lightSunlightChunk(u8 out[48][48][48], const u8 blockData[16][16][16], u8 curLight[16][16], const u8 blockLight[256], const int x, const int y, const int z, const u8 sunlight){
+static void lightSunlightChunk(u8 out[48][48][48], const u8 blockData[16][16][16], u8 curLight[16][16], const int x, const int y, const int z, const u8 sunlight){
 	for(int cy=15;cy>=0;cy--){
 	for(int cx=0;cx<16;cx++){
 	for(int cz=0;cz<16;cz++){
@@ -132,11 +132,6 @@ static void lightSunlightAir(u8 out[48][48][48], u8 curLight[16][16], const int 
 
 static void lightSunlight(u8 out[48][48][48],const chunkOverlay *block[3][3][3]){
 	PROFILE_START();
-
-	u8 blockLight[256];
-	for(int b=0;b<256;b++){
-		blockLight[b] = blockTypeGetLightEmission(b);
-	}
 	const u8 sunlight = gtimeGetBlockBrightness(gtimeGetTimeOfDay());
 
 	for(int x = 0;x < 3; x++){
@@ -146,7 +141,7 @@ static void lightSunlight(u8 out[48][48][48],const chunkOverlay *block[3][3][3])
 	for(int y = 2;y >= 0; y--){
 		const chunkOverlay *cur = block[x][y][z];
 		if(cur){
-			lightSunlightChunk(out, cur->data, curLight, blockLight, x*16, y*16, z*16, sunlight);
+			lightSunlightChunk(out, cur->data, curLight, x*16, y*16, z*16, sunlight);
 		}else{
 			lightSunlightAir(out, curLight, x*16, y*16, z*16, sunlight);
 		}
