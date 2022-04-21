@@ -42,6 +42,13 @@ typedef struct {
 	vec base;
 } cloudChunk;
 
+typedef struct {
+	int x,y,z;
+} cloudQueueEntry;
+
+int cloudQueueEntrySize = 0;
+cloudQueueEntry cloudQueue[256];
+
 cloudChunk parts[32];
 uint       cloudFrame = 0;
 glCloud    cloudData[CLOUDS_MAX];
@@ -80,44 +87,8 @@ static inline void cloudPart(cloudChunk *part, float px,float py,float pz,float 
 	}
 }
 
-void cloudsRender(){
-	gfxGroupStart("Clouds");
-	const u8 cpart = cloudFrame++ & 31;
-	cloudFrame &= 31;
-
-	shaderBind(sCloud);
-	shaderSizeMul(sCloud,player->zoomFactor);
-	for(int i=0;i<32;i++){
-		if((CLOUDS_MAX - parts[i].count) == 0){ continue; }
-		matMov(matMVP,matView);
-		const vec transOff = vecSub(cloudOff,parts[i].base);
-		matMulTrans(matMVP,transOff.x,transOff.y,transOff.z);
-		matMul(matMVP,matMVP,matProjection);
-		shaderMatrix(sCloud,matMVP);
-
-		glBindVertexArray(parts[i].vao);
-		if(i == cpart){
-			glBindBuffer(GL_ARRAY_BUFFER, parts[cpart].vbo);
-			if(gfxUseSubData && (parts[cpart].vboSize >= (CLOUDS_MAX - parts[cpart].count))){
-				glBufferSubData(GL_ARRAY_BUFFER, 0, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count]);
-			}else{
-				glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count], GL_DYNAMIC_DRAW);
-				parts[cpart].vboSize = (CLOUDS_MAX - parts[cpart].count);
-			}
-			glVertexAttribPointer(SHADER_ATTRIDX_POS,   3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&cloudData[0].x) -     ((char *)cloudData)));
-			glVertexAttribPointer(SHADER_ATTRIDX_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&cloudData[0].color) - ((char *)cloudData)));
-		}
-		glDrawArrays(GL_POINTS,0,CLOUDS_MAX - parts[i].count);
-	}
-	parts[cloudFrame & 31].count = CLOUDS_MAX;
-	gfxGroupEnd();
-}
-
-void cloudsDraw(int cx, int cy, int cz){
-	if(cy&1){return;}
+void cloudsGenerate(int cx, int cy, int cz){
 	const u8 cpart = (cx&3) | ((cy&0x4)) | ((cz&3)<<3 );
-	if((cloudFrame&31) != cpart){return;}
-	PROFILE_START();
 	cloudChunk *part = &parts[cpart];
 	part->base     = vecFloor(cloudOff);
 	//const ivec toff = ivecNewV(part->base);
@@ -193,7 +164,60 @@ void cloudsDraw(int cx, int cy, int cz){
 			}
 		}
 	}
+}
+
+void cloudsGenerateQueue(){
+	PROFILE_START();
+	for(int i=0;i<cloudQueueEntrySize;i++){
+		cloudsGenerate(cloudQueue[i].x, cloudQueue[i].y, cloudQueue[i].z);
+	}
+	cloudQueueEntrySize=0;
 	PROFILE_STOP();
+}
+
+void cloudsRender(){
+	cloudsGenerateQueue();
+	gfxGroupStart("Clouds");
+	const u8 cpart = cloudFrame++ & 31;
+	cloudFrame &= 31;
+
+	shaderBind(sCloud);
+	shaderSizeMul(sCloud,player->zoomFactor);
+	for(int i=0;i<32;i++){
+		if((CLOUDS_MAX - parts[i].count) == 0){ continue; }
+		matMov(matMVP,matView);
+		const vec transOff = vecSub(cloudOff,parts[i].base);
+		matMulTrans(matMVP,transOff.x,transOff.y,transOff.z);
+		matMul(matMVP,matMVP,matProjection);
+		shaderMatrix(sCloud,matMVP);
+
+		glBindVertexArray(parts[i].vao);
+		if(i == cpart){
+			glBindBuffer(GL_ARRAY_BUFFER, parts[cpart].vbo);
+			if(gfxUseSubData && (parts[cpart].vboSize >= (CLOUDS_MAX - parts[cpart].count))){
+				glBufferSubData(GL_ARRAY_BUFFER, 0, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count]);
+			}else{
+				glBufferData(GL_ARRAY_BUFFER, (CLOUDS_MAX - parts[cpart].count)*sizeof(glCloud), &cloudData[parts[cpart].count], GL_DYNAMIC_DRAW);
+				parts[cpart].vboSize = (CLOUDS_MAX - parts[cpart].count);
+			}
+			glVertexAttribPointer(SHADER_ATTRIDX_POS,   3, GL_FLOAT        , GL_FALSE, sizeof(glCloud), (void *)(((char *)&cloudData[0].x) -     ((char *)cloudData)));
+			glVertexAttribPointer(SHADER_ATTRIDX_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(glCloud), (void *)(((char *)&cloudData[0].color) - ((char *)cloudData)));
+		}
+		glDrawArrays(GL_POINTS,0,CLOUDS_MAX - parts[i].count);
+	}
+	parts[cloudFrame & 31].count = CLOUDS_MAX;
+	gfxGroupEnd();
+}
+
+void cloudsDraw(int cx, int cy, int cz){
+	if(cy&1){return;}
+	const u8 cpart = (cx&3) | ((cy&0x4)) | ((cz&3)<<3 );
+	if((cloudFrame&31) != cpart){return;}
+	if(cloudQueueEntrySize >= ((int)(countof(cloudQueue)-1))){
+		fprintf(stderr,"cloudQueue not big enough!\n");
+		return;
+	}
+	cloudQueue[cloudQueueEntrySize++] = (cloudQueueEntry){cx,cy,cz};
 }
 
 void cloudsCalcColors(){
