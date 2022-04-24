@@ -137,12 +137,10 @@
 [keyboard/bind! key-print [keyboard/once [λ [] [screenshot]]]]
 ;[keyboard/bind! key-tab   [keyboard/once [λ [] [toggle-inventory!]]]]
 [keyboard/bind! key-t     [keyboard/once-up [λ [] [chat/toggle!]]]]
+[keyboard/bind! key-comma [keyboard/once-up [λ [] [say "TEST"] [etest]]]]
 
 [when-not [== OS "Emscripten"]
-          [keyboard/bind! key-f11 [λ [code value]
-                [when value
-                      [fullscreen! [not [fullscreen?]]]
-                      [save-options]]]]]
+          [keyboard/bind! key-f11 [keyboard/once-up [\ [] [fullscreen! [not [fullscreen?]]] [save-options]]]]]
 
 [defun inv-active-kh [code value]
         "Sets the players active item depending on the keycode passed"

@@ -22,14 +22,18 @@
 #include "../misc/effects.h"
 #include "../misc/profiling.h"
 #include "../world/world.h"
+#include "../nujel/entity.h"
 
 #include <string.h>
 #include <math.h>
 
 entity  entityList[1<<14];
 uint    entityCount = 0;
+uint    entityMax = 0;
 entity *entityFirstFree = NULL;
 uint    entityUpdateCount = 0;
+
+u32     entityGeneration = 0;
 
 void entityReset(entity *e){
 	memset(e,0,sizeof(entity));
@@ -38,7 +42,7 @@ void entityReset(entity *e){
 entity *entityNew(vec pos, vec rot, float weight){
 	entity *e = NULL;
 	if(entityFirstFree == NULL){
-		e = &entityList[entityCount++];
+		e = &entityList[entityMax++];
 	}else{
 		e = entityFirstFree;
 		entityFirstFree = e->nextFree;
@@ -48,15 +52,20 @@ entity *entityNew(vec pos, vec rot, float weight){
 	}
 	entityReset(e);
 
+	e->generation = ++entityGeneration;
 	e->pos = pos;
 	e->rot = rot;
 	e->weight = weight;
+	e->handler = NULL;
+	entityCount++;
 
 	return e;
 }
 
 void entityFree(entity *e){
 	if(e == NULL){return;}
+	entityCount--;
+	e->handler = NULL;
 	e->nextFree = entityFirstFree;
 	entityFirstFree = e;
 	if(e->nextFree == NULL){
@@ -127,6 +136,7 @@ int entityUpdate(entity *e){
 	}else if(e->yoff < -0.01f){
 		e->yoff += 0.01f;
 	}
+	bool wasColliding = e->flags & ENTITY_COLLIDE;
 
 	e->flags |=  ENTITY_FALLING;
 	e->flags &= ~ENTITY_COLLIDE;
@@ -198,6 +208,12 @@ int entityUpdate(entity *e){
 	col = entityCollision(e->pos);
 
 	entityUpdateCurChungus(e);
+	if(!wasColliding && (e->flags & ENTITY_COLLIDE)){
+		const int SP = lRootsGet();
+		lVal *msg = RVP(lCons(RVP(lValSym(":collision")),NULL));
+		lEntityEvent(e, msg);
+		lRootsRet(SP);
+	}
 	return ret;
 }
 
@@ -233,7 +249,7 @@ uint lineOfSightBlockCount(const vec a, const vec b, uint maxB){
 void entityUpdateAll(){
 	PROFILE_START();
 
-	for(uint i=0;i<entityCount;i++){
+	for(uint i=0;i<entityMax;i++){
 		if(entityList[i].nextFree != NULL){ continue; }
 		if(!(entityList[i].flags & ENTITY_UPDATED)){
 			entityUpdate(&entityList[i]);
@@ -248,7 +264,7 @@ void entityUpdateAll(){
 entity *entityGetByBeing(being b){
 	const uint i = beingID(b);
 	if(beingType(b) != BEING_GRENADE){ return NULL; }
-	if(i >= entityCount)             { return NULL; }
+	if(i >= entityMax)             { return NULL; }
 	return &entityList[i];
 }
 
@@ -271,4 +287,23 @@ float blockRepulsion(const vec pos, float *vel, float weight, u8 (*colFunc)(cons
 	*vel += strength* -0.7f;
 
 	return ret;
+}
+
+i64 entityID(const entity *e){
+	if(e < entityList){return 0;}
+	if(e >= &entityList[entityMax]){return 0;}
+	const i32 id = (e - entityList);
+	i64 ret = (i64)e->generation | ((i64)id << 32);
+	return ret;
+}
+
+entity *entityGetByID(i64 raw){
+	const i64 id = (raw >> 32) & 0xFFFFFFFF;
+	if(id >= entityMax){
+		return NULL;
+	}
+	entity *ent = &entityList[id];
+	if(ent->nextFree){return NULL;}
+	const i64 generation = raw & 0xFFFF;
+	return generation == ent->generation ? ent : NULL;
 }

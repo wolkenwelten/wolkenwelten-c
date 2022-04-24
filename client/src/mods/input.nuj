@@ -20,7 +20,8 @@
        "Make the player do a primary action"
        [if [cons-mode?]
            [player-blockbreak! input/primary-did-count]
-           [player-do-primary! input/primary-did-count]]
+           [pear/shoot!]
+           #;[player-do-primary! input/primary-did-count]]
        [set! input/primary-did #t]]
 
 [defun player-secondary! []

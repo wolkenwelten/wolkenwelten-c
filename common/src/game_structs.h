@@ -92,9 +92,11 @@ typedef struct {
 	float yoff;
 	float weight;
 	u32 flags;
+	u32 generation;
 
-	mesh    *eMesh;
+	mesh    *mesh;
 	chungus *curChungus;
+	lVal    *handler;
 	void    *nextFree;
 } entity;
 #define ENTITY_FALLING     (1   )
@@ -103,6 +105,7 @@ typedef struct {
 #define ENTITY_COLLIDE     (1<<3)
 #define ENTITY_NOREPULSION (1<<4)
 #define ENTITY_SLOW_UPDATE (1<<5)
+#define ENTITY_HIDDEN      (1<<6)
 
 typedef struct {
 	being a,b;

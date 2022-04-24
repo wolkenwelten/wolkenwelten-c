@@ -53,7 +53,7 @@ hook *hookNew(character *p){
 	ghk->parent       = p;
 	ghk->ent          = entityNew(vecAdd(vecNew(0,1,0),p->pos),vecNew(-p->rot.yaw,-p->rot.pitch-90.f,p->rot.roll),3000.f);
 	ghk->ent->vel     = vecAdd(vecMulS(vecDegToVec(p->rot),1.3f),p->vel);
-	ghk->ent->eMesh   = meshHook;
+	ghk->ent->mesh    = meshHook;
 	ghk->ent->flags   = ENTITY_NOREPULSION;
 	ghk->rope         = ropeNew(hookGetBeing(ghk),characterGetBeing(p),flags);
 	ghk->rope->length = -1.f;

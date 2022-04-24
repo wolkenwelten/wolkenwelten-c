@@ -37,8 +37,8 @@
 
 #define ENTITY_FADEOUT (256.f)
 
-void entityDraw(const entity *e){
-	if(e->eMesh == NULL){return;}
+static void entityDraw(const entity *e){
+	if((e->mesh == NULL) || (e->flags & ENTITY_HIDDEN)){return;}
 	const float scale = 0.8f;
 	shaderColorSimple(sMesh, lightAtPos(e->pos));
 
@@ -49,13 +49,13 @@ void entityDraw(const entity *e){
 	matMul      (matMVP,matMVP,matProjection);
 
 	shaderMatrix(sMesh,matMVP);
-	meshDraw(e->eMesh);
+	meshDraw(e->mesh);
 	shadowAdd(e->pos,scale);
 }
 
 void entityDrawAll(){
 	shaderBind(sMesh);
-	for(uint i=0;i<entityCount;i++){
+	for(uint i=0;i<entityMax;i++){
 		if(entityList[i].nextFree != NULL)                        { continue; }
 		if(entityDistance(&entityList[i], player) > ENTITY_FADEOUT){ continue; }
 		if(!CubeInFrustum(vecSubS(entityList[i].pos,.5f),1.f))    { continue; }

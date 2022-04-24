@@ -48,6 +48,9 @@
 #include "../../../common/nujel/lib/allocation/roots.h"
 #include "../../../common/nujel/lib/misc/pf.h"
 
+#include "effects.h"
+#include "entityGC.h"
+
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -555,6 +558,7 @@ static lVal *wwlnfConsModeBlockSet(lClosure *c, lVal *v){
 
 static void lispAddClientNFuncs(lClosure *c){
 	lOperatorsWidget(c);
+	lOperatorsEffects(c);
 
 	lAddNativeFunc(c,"s*",             "(form)",            "Evaluates form on the server and returns the last result",       wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",                "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
@@ -632,6 +636,7 @@ void *lispInitReal(void *a, void *b){
 
 void lispInit(){
 	widgetGCInit();
+	entityGCInit();		/*  */
 	lExceptionTryExit(lispInitReal,NULL,NULL);
 }
 

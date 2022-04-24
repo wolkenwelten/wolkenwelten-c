@@ -1,0 +1,44 @@
+[def entity/flag/falling      [ash 1 0]]
+[def entity/flag/no-clip      [ash 1 1]]
+[def entity/flag/updated      [ash 1 2]]
+[def entity/flag/collide      [ash 1 3]]
+[def entity/flag/no-repulsion [ash 1 4]]
+[def entity/flag/hidden       [ash 1 5]]
+
+[defun entity/flag/set! [e f]
+       [entity/flags! e [logior [entity/flags e] f]]]
+
+[defun entity/flag/clear! [e f]
+       [entity/flags! e [logand [entity/flags e] [lognot f]]]]
+
+[defun entity/no-clip! [e v]
+       [if v
+           [entity/flag/set!   e entity/flag/no-clip]
+           [entity/flag/clear! e entity/flag/no-clip]]]
+
+
+[def pear/shot/timeout 0]
+
+[defun pear/collision-handler [ent]
+       [effect/explode [entity/pos ent] 2]
+       [entity/delete ent]]
+
+[defun pear/shoot! []
+       [when [> [time/milliseconds] pear/shot/timeout]
+             [set! pear/shot/timeout [+ 200 [time/milliseconds]]]
+             [def ent [-> [entity/new*]
+                          [entity/pos! [player-pos]]
+                          [entity/rotation! [- [player-rot]]]
+                          [entity/velocity! [* [vec/rot->vel [player-rot]] [vec 0.2]]]
+                          [entity/flags! 0]
+                          [entity/handler! [\ [t v]
+                                              [case t
+                                                    [:collision [pear/collision-handler ent]]
+                                                    [otherwise [say [cat [ansi-yellow "Unknown event: "] t]]]]]]
+                          ]]
+             [yield [timeout 1500]
+                    [\ []
+                       [try car
+                            [effect/explode [entity/pos ent] 2]
+                            [entity/delete ent]]]]
+]]
