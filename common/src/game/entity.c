@@ -208,6 +208,8 @@ int entityUpdate(entity *e){
 	col = entityCollision(e->pos);
 
 	entityUpdateCurChungus(e);
+	e->flags &= ~ENTITY_UPDATED;
+
 	if(!wasColliding && (e->flags & ENTITY_COLLIDE)){
 		const int SP = lRootsGet();
 		lVal *msg = RVP(lCons(RVP(lValSym(":collision")),NULL));
@@ -253,8 +255,9 @@ void entityUpdateAll(){
 		if(entityList[i].nextFree != NULL){ continue; }
 		if(!(entityList[i].flags & ENTITY_UPDATED)){
 			entityUpdate(&entityList[i]);
+		}else{
+			entityList[i].flags &= ~ENTITY_UPDATED;
 		}
-		entityList[i].flags &= ~ENTITY_UPDATED;
 	}
 	entityUpdateCount++;
 

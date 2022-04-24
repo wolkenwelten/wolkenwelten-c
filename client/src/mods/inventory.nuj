@@ -8,7 +8,10 @@
   [widget/val/int! inventory/w/sprite inventory/selection]
   [def name [block/name inventory/selection]]
   [widget/label! inventory/w/label [fmt "{name}"]]
-  [cons-mode/block! inventory/selection]]
+  [cons-mode/block! inventory/selection]
+  [when player/pear-shooter-active
+    [widget/label! inventory/w/label [fmt "Pears"]]
+    [widget/val/int! inventory/w/sprite 258]]]
 
 [defun inventory/toggle! []
        "Toggle the visibility of the inventory popup"
