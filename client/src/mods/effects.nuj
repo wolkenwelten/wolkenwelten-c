@@ -1,0 +1,8 @@
+[defun effects/explosion/handler [sender msg]
+       [effect/explode/bomb [eval [cadr msg]]
+                            [caddr msg]]]
+
+[defun effects/init []
+       [message/dispatch/add :effect/explosion effects/explosion/handler]]
+
+[event-bind on-init :effects-init effects/init]

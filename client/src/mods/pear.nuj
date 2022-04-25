@@ -1,0 +1,6 @@
+[def pear/shot/timeout 0]
+
+[defun pear/shoot! []
+       [when [> [time/milliseconds] pear/shot/timeout]
+             [set! pear/shot/timeout [+ 200 [time/milliseconds]]]
+             [message/send 0 [list :pear-shoot [player-pos] [player-rot]]]]]

@@ -1,0 +1,6 @@
+[def hook/shot/timeout 0]
+
+[defun hook/shoot! []
+       [when [> [time/milliseconds] hook/shot/timeout]
+             [set! hook/shot/timeout [+ 200 [time/milliseconds]]]
+             [message/send 0 [list :hook-shoot [player-pos] [player-rot]]]]]

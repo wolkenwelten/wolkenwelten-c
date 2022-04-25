@@ -21,7 +21,6 @@
 #include "../nujel/widget.h"
 #include "../game/character/character.h"
 #include "../game/character/draw.h"
-#include "../game/character/hook.h"
 #include "../game/character/network.h"
 #include "../game/entity.h"
 #include "../game/weather/weather.h"
@@ -56,7 +55,6 @@
 #include "../voxel/chunk.h"
 #include "../voxel/meshgen/shared.h"
 #include "../../../common/src/game/chunkOverlay.h"
-#include "../../../common/src/game/hook.h"
 #include "../../../common/src/game/time.h"
 #include "../../../common/src/misc/colors.h"
 #include "../../../common/src/misc/misc.h"
@@ -329,17 +327,6 @@ const char *colorSignalLow(int err, int warn, int good, int v){
 	return ansiFG[15];
 }
 
-static void drawHookIndicator(){
-	if(!optionDebugInfo){return;}
-	const float hookdist = characterCanHookHit(player);
-	if(hookdist < 0.f){return;}
-	//textMeshItemSprite(guim,screenWidth/2+8,screenHeight/2+8,32,I_Hook);
-	const u32 ofgc = guim->fgc;
-	guim->fgc = 0x60FFFFFF;
-	textMeshPrintfPS(guim,screenWidth/2 + 40, screenHeight/2 + 16,2,"%.1f",hookdist);
-	guim->fgc = ofgc;
-}
-
 void drawDebuginfo(){
 	static uint ticks = 0;
 	size_t tris = vboTrisCount, draws = drawCallCount;
@@ -365,7 +352,6 @@ void drawDebuginfo(){
 	guim->sx   = screenWidth;
 	guim->sy   = 4;
 	textMeshPrintfAlignRight(guim,"%s",VERSION);
-	drawHookIndicator();
 
 	if(player->flags & CHAR_CONS_MODE){
 		guim->sx   = screenWidth  - 256;

@@ -18,6 +18,7 @@
 
 #include "../main.h"
 #include "../game/being.h"
+#include "../game/beamblast.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
 #include "../game/fire.h"
@@ -273,6 +274,13 @@ static lVal *wwlnfLine(lClosure *c, lVal *v){
 	return NULL;
 }
 
+static lVal *wwlnfExplode(lClosure *c, lVal *v){
+	const vec pos   = requireVec(c, lCar(v));
+	const float pow = requireFloat(c, lCadr(v));
+	const int style = requireInt(c, lCaddr(v));
+	explode(pos,pow,style);
+	return lCar(v);
+}
 
 void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
@@ -297,6 +305,8 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"spawn-pos!",     "(pos)",                                        "Set the spawn POS",                                          wwlnfSetSpawnPos);
 	lAddNativeFunc(c,"worldgen/sphere","(x y z r b)",                                  "Only use during worldgen, sets a sphere of radius R at X Y Z to B",wwlnfWorldgenSphere);
 	lAddNativeFunc(c,"quit!",          "()",                                           "Cleanly shuts down the server",                              wwlnfQuit);
+	lAddNativeFunc(c,"explode!",       "[pos pow style]",                              "Create a new explision at POS with POW and STYLE",           wwlnfExplode);
+
 
 }
 

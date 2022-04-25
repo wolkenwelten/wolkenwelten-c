@@ -20,7 +20,6 @@
 #include "../game/beamblast.h"
 #include "../game/character/character.h"
 #include "../game/character/draw.h"
-#include "../game/character/hook.h"
 #include "../game/fire.h"
 #include "../game/projectile.h"
 #include "../game/weather/weather.h"
@@ -277,12 +276,6 @@ static lVal *wwlnfPlayerRot(lClosure *c, lVal *v){
 static lVal *wwlnfPlayerVel(lClosure *c, lVal *v){
 	(void)c;(void)v;
 	return lValVec(player->vel);
-}
-
-static lVal *wwlnfFireHook(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	characterFireHook(player);
-	return NULL;
 }
 
 static lVal *wwlnfSetCooldown(lClosure *c, lVal *v){
@@ -609,7 +602,6 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"console-print",  "(s)",               "Prints string s to the REPL",                                    wwlnfConsolePrint);
 	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)",     "Plays SFX S with volume &VOL=1.0 as if emitting from &POS.",     wwlnfSfxPlay);
 	lAddNativeFunc(c,"screenshot",     "()",                "Takes a screeshot",                                              wwlnfScreenshot);
-	lAddNativeFunc(c,"fire-hook",      "()",                "Fires the players Grappling hook, or retracts it if fired",      wwlnfFireHook);
 	lAddNativeFunc(c,"server-path",    "()",                "Returns the path to the server executable, if found.",           wwlnfServerExecutable);
 	lAddNativeFunc(c,"start-anim",     "(id ms)",           "Starts animation &ID=0 for &MS=200",                             wwlnfStartAnim);
 	lAddNativeFunc(c,"stop-anim" ,     "()",                "Stops any animation that is currently playing",                  wwlnfStopAnim);

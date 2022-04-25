@@ -47,7 +47,7 @@ void fxExplosionBomb(const vec pos,float pw){
 	}
 
 	const float pd  = vecMag(vecSub(pos,player->pos));
-	const float max = 8 * pw;
+	const float max = 2 * pw;
 	if(pd < max){
 		if(characterDamage(player,((max-pd)/max)*pw)){
 			characterDyingMessage(characterGetBeing(player),0,deathCauseGrenade);

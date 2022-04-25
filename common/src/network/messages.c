@@ -311,6 +311,13 @@ void msgNujelMessage(int c, const char *str){
 	}
 }
 
+void msgEntityDelete(int c, u32 index, u32 generation){
+	packet *p = &packetBuffer;
+	p->v.entityDelete.index = index;
+	p->v.entityDelete.generation = generation;
+	packetQueue(p, msgtEntityDelete, sizeof(netEntityDelete) + 4, c);
+}
+
 void msgGoodbye(int c){
 	packet *p = &packetBuffer;
 	packetQueue(p,msgtGoodbye,0,c);
@@ -402,6 +409,10 @@ const char *networkGetMessageName(uint i){
 		return "snowRecvUpdate";
 	case msgtRequestSpawnPos:
 		return "RequestSpawnPos";
+	case msgtEntityUpdate:
+		return "EntityUpdate";
+	case msgtEntityDelete:
+		return "EntityDelete";
 	case msgtLZ4:
 		return "LZ4 Message";
 	}

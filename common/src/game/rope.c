@@ -87,13 +87,6 @@ static void ropeUpdate(rope *r){
 
 	float bm = MAX(0.01f,MIN(1.f,aw / w));
 	float am = MAX(0.01f,MIN(1.f,bw / w));
-	if(beingType(r->a) == BEING_HOOK){
-		am = 0.f;
-		bm = 1.f;
-	}else if(beingType(r->b) == BEING_HOOK){
-		am = 1.f;
-		bm = 0.f;
-	}
 
 	ropePullTowards(r->b,r->a,r->length,am);
 	ropePullTowards(r->a,r->b,r->length,bm);

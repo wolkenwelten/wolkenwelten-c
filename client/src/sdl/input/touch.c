@@ -19,7 +19,6 @@
 
 #include "../../main.h"
 #include "../../game/character/character.h"
-#include "../../game/character/hook.h"
 
 #include <SDL.h>
 
@@ -84,7 +83,6 @@ vec doTouchupdate(vec vel){
 	}
 	if(touchzonesPressed[1]){
 		touchzonesPressed[1] = false;
-		characterFireHook(player);
 	}
 	return vel;
 }

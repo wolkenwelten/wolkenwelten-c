@@ -107,7 +107,7 @@ static void ropeDrawSegment(const rope *r, const vec h, const vec p){
 
 static vec beingRopeOffset(being b){
 	switch(beingType(b)){
-	case BEING_CHARACTER: {
+	case bkCharacter: {
 		const character *c = characterGetByBeing(b);
 		return vecNew(0.3 * cosf((c->rot.yaw + 180) * PI180), -0.2, 0.3 * sinf((c->rot.yaw + 180) * PI180)); }
 	default:

@@ -17,7 +17,6 @@
 
 #include "character.h"
 #include "../game/being.h"
-#include "../game/hook.h"
 #include "../misc/sfx.h"
 #include "../network/messages.h"
 #include "../network/network.h"
@@ -54,10 +53,6 @@ character *characterNew(){
 void characterFree(character *c){
 	c->eMesh = NULL;
 	c->hp = -1;
-	if((c->hook != NULL) && isClient){
-		hookFree(c->hook);
-		c->hook = NULL;
-	}
 }
 
 int characterGetHP(const character *c){
@@ -363,24 +358,14 @@ void characterStartAnimation(character *c, animType index, int duration){
 	c->animationTicksLeft = c->animationTicksMax = duration;
 }
 
-float characterGetMaxHookLen(const character *c){
-	(void)c;
-	return 256.f;
-}
-
-float characterGetHookWinchS(const character *c){
-	(void)c;
-	return 0.1f;
-}
-
 character *characterGetByBeing(being b){
 	const uint i = beingID(b);
-	if(beingType(b) != BEING_CHARACTER){ return NULL; }
+	if(beingType(b) != bkCharacter){ return NULL; }
 	if(i >= characterCount)            { return NULL; }
 	return &characterList[i];
 }
 
-uint characterGetBeing(const character *c){
+being characterGetBeing(const character *c){
 	if(c == NULL){return 0;}
 	return beingCharacter(c - &characterList[0]);
 }

@@ -1,0 +1,39 @@
+[def hook/entites [array/allocate 32]]
+
+[defun hook/collision-handler [ent]
+       [-> ent
+           [entity/no-clip! #t]
+           [entity/velocity! [vec 0]]
+]]
+
+[defun hook/return! [sender]
+  [def ent [ref hook/entites sender]]
+  [entity/delete ent]
+  [array/set! hook/entites sender #nil]]
+
+
+[defun hook/new! [pos rot]
+  [def ent [-> [entity/new*]
+               [entity/pos! pos]
+               [entity/rotation! [- rot]]
+               [entity/velocity! [* [vec/rot->vel rot] [vec 0.6]]]
+               [entity/flags! 0]
+               [entity/handler! [\ [t v]
+                                 [case t
+                                   [:collision [hook/collision-handler ent]]
+                                   [otherwise [say [cat [ansi-yellow "Unknown event: "] t]]]]]]
+               ]]
+]
+
+[defun hook/message-handler [sender msg]
+  [if [ref hook/entites sender]
+      [hook/return! sender]
+      [array/set! hook/entites
+                  sender
+                  [hook/new! [eval [cadr msg]]
+                             [eval [caddr msg]]]]]]
+
+[defun hook/init []
+  [message/dispatch/add :hook-shoot hook/message-handler]]
+
+[event-bind on-init :hook-init hook/init]

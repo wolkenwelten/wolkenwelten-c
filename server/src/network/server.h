@@ -13,19 +13,12 @@ typedef struct {
 typedef struct {
 	char playerName[32];
 	character *c;
-	int state,flags;
-	uint syncCount,pingCount;
-	u64 socket,lastPing;
+	int state, flags;
+	uint syncCount, pingCount;
+	u64 socket, lastPing;
 
-	uint fireUpdateOffset;
-	uint waterUpdateOffset;
 	uint projectileUpdateOffset;
-	uint throwableUpdateOffset;
-
-	uint itemDropPriorityQueueLen;
-	u16  itemDropPriorityQueue[128];
-	uint itemDropUpdateOffset;
-	uint itemDropUpdateWindowSize;
+	uint entityUpdateOffset;
 
 	uint chngReqQueueLen;
 	chungusReqEntry chngReqQueue[128];

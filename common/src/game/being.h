@@ -5,11 +5,8 @@ u8    beingType      (being b);
 u32   beingID        (being b);
 being beingNew       (u8 type, u32 id);
 being beingCharacter (u32 id);
-being beingHook      (u32 id);
-being beingGrenade   (u32 id);
+being beingEntity    (u32 id);
 being beingProjectile(u32 id);
-being beingItemDrop  (u32 id);
-being beingThrowable (u32 id);
 
 vec   beingGetPos    (being b);
 void  beingSetPos    (being b, const vec pos);

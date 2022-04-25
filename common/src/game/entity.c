@@ -23,7 +23,9 @@
 #include "../misc/profiling.h"
 #include "../world/world.h"
 #include "../nujel/entity.h"
+#include "../network/messages.h"
 
+#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
@@ -40,6 +42,11 @@ void entityReset(entity *e){
 }
 
 entity *entityNew(vec pos, vec rot, float weight){
+	if(isClient){
+		fprintf(stderr, "Can't use entityNew on clients!\n");
+		exit(3);
+		return NULL;
+	}
 	entity *e = NULL;
 	if(entityFirstFree == NULL){
 		e = &entityList[entityMax++];
@@ -64,6 +71,13 @@ entity *entityNew(vec pos, vec rot, float weight){
 
 void entityFree(entity *e){
 	if(e == NULL){return;}
+	if(isClient){
+		fprintf(stderr, "Can't use entityNew on clients!\n");
+		exit(3);
+		return;
+	}else{
+		msgEntityDelete(-1, e - entityList, e->generation);
+	}
 	entityCount--;
 	e->handler = NULL;
 	e->nextFree = entityFirstFree;
@@ -264,13 +278,6 @@ void entityUpdateAll(){
 	PROFILE_STOP();
 }
 
-entity *entityGetByBeing(being b){
-	const uint i = beingID(b);
-	if(beingType(b) != BEING_GRENADE){ return NULL; }
-	if(i >= entityMax)             { return NULL; }
-	return &entityList[i];
-}
-
 float blockRepulsion(const vec pos, float *vel, float weight, u8 (*colFunc)(const vec,vec *)){
 	int ret = 0;
 	vec blockPos;
@@ -309,4 +316,16 @@ entity *entityGetByID(i64 raw){
 	if(ent->nextFree){return NULL;}
 	const i64 generation = raw & 0xFFFF;
 	return generation == ent->generation ? ent : NULL;
+}
+
+entity *entityGetByBeing(being b){
+	const uint i = beingID(b);
+	if(beingType(b) != bkEntity){ return NULL; }
+	if(i >= entityMax)             { return NULL; }
+	return &entityList[i];
+}
+
+being entityGetBeing(const entity *e){
+	if(e == NULL){return 0;}
+	return beingEntity(e - entityList);
 }

@@ -72,3 +72,27 @@ vec entityScreenPos(const entity *e){
 	matMul      (matMVP,matMVP,matProjection);
 	return matMulVec(matMVP,vecNew(0,scale * 1.5,0));
 }
+
+void entityUpdateFromServer(const packet *p){
+	const netEntityUpdate *data = &p->v.entityUpdate;
+	const u32 ID  = data->index;
+	entity *ent   = &entityList[ID];
+	if(ent->generation == data->generation){return;}
+	entityMax     = MAX(ID+1, entityMax);
+	ent->pos      = data->pos;
+	ent->rot      = data->rot;
+	ent->vel      = data->vel;
+	ent->flags    = data->flags;
+	ent->weight   = data->weight;
+	ent->mesh     = meshPear;
+	ent->nextFree = NULL;
+}
+
+void entityDeleteFromServer(const packet *p){
+	const netEntityDelete *data = &p->v.entityDelete;
+	const u32 ID    = data->index;
+	entity *ent     = &entityList[ID];
+	ent->mesh       = NULL;
+	ent->nextFree   = (void *)1;
+	ent->generation = data->generation;
+}

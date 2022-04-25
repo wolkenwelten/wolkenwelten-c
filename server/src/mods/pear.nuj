@@ -1,0 +1,34 @@
+[defun explode [pos pow]
+       [explode! pos pow 0]
+       [message/send -1 [list :effect/explosion pos pow]]]
+
+[defun pear/collision-handler [ent]
+       [explode [entity/pos ent] 5]
+       [entity/delete ent]]
+
+[defun pear/new! [pos rot]
+       [def ent [-> [entity/new*]
+                    [entity/pos! pos]
+                    [entity/rotation! [- rot]]
+                    [entity/velocity! [* [vec/rot->vel rot] [vec 0.2]]]
+                    [entity/flags! 0]
+                    [entity/handler! [\ [t v]
+                                        [case t
+                                          [:collision [pear/collision-handler ent]]
+                                          [otherwise [say [cat [ansi-yellow "Unknown event: "] t]]]]]]
+                    ]]
+       [yield [timeout 1500]
+              [\ []
+               [try car
+                    [explode [entity/pos ent] 5]
+                    [entity/delete ent]]]]
+]
+
+[defun pear/message-handler [sender msg]
+       [pear/new! [eval [cadr msg]]
+                  [eval [caddr msg]]]]
+
+[defun pear/init []
+       [message/dispatch/add :pear-shoot pear/message-handler]]
+
+[event-bind on-init :pear-init pear/init]

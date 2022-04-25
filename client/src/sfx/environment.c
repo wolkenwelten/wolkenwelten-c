@@ -29,16 +29,11 @@ static void windSound(const character *c){
 	}
 }
 
-static void grapplingHookRopeSound(const character *c){
-	sfxLoop(sfxHookRope, (c == NULL) || (c->hook == NULL) || c->hook->hooked ? 0.f : 1.f);
-}
-
 static void rainSound(){
 	sfxLoop(sfxRainloop, (rainIntensity == 0) ? 0.f : MIN(1.f,(rainIntensity / 8.f)));
 }
 
 void environmentSoundsUpdate(){
 	windSound(player);
-	grapplingHookRopeSound(player);
 	rainSound();
 }

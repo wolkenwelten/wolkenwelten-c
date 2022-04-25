@@ -17,6 +17,8 @@ u8       entityCollisionBlock   (const vec pos, vec *retPos);
 void     entityUpdateAll        ();
 i64      entityID               (const entity *e);
 entity  *entityGetByID          (i64 id);
+entity  *entityGetByBeing       (being b);
+being    entityGetBeing         (const entity *e);
 float    blockRepulsion         (const vec pos, float *vel, float weight, u8 (*colFunc)(const vec,vec *));
 
 uint   lineOfSightBlockCount    (const vec a, const vec b, uint maxB);

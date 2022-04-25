@@ -23,7 +23,6 @@
 #include "../../nujel/nujel.h"
 #include "../../network/client.h"
 #include "../../../../common/src/game/being.h"
-#include "../../../../common/src/game/hook.h"
 
 int        playerID = -1;
 character *playerList[32];
@@ -41,22 +40,7 @@ void characterUpdatePacket(const packet *p){
 	playerList[i]->yoff     = p->v.f[5];
 	playerList[i]->vel      = vecNewP(&p->v.f[6]);
 	playerList[i]->flags    = p->v.u32[9];
-
-	if(packetLen(p) >= 19*4){
-		if(playerList[i]->hook == NULL){
-			playerList[i]->hook = hookNew(playerList[i]);
-		}
-		playerList[i]->hook->hooked     = true;
-		playerList[i]->hook->ent->flags = ENTITY_NOCLIP;
-		playerList[i]->hook->ent->pos   = vecNewP(&p->v.f[16]);
-		playerList[i]->hook->ent->vel   = vecZero();
-	}else{
-		if(playerList[i]->hook != NULL){
-			hookFree(playerList[i]->hook);
-			playerList[i]->hook = NULL;
-		}
-	}
-	playerList[i]->hp           = p->v.u16[23];
+	playerList[i]->hp       = p->v.u16[23];
 
 	playerList[i]->animationIndex     = p->v.u16[25];
 	playerList[i]->animationTicksMax  = p->v.u16[26];
@@ -117,7 +101,7 @@ void characterDamagePacket(character *c, const packet *p){
 	const i16 hp        = p->v.u16[0];
 	const u8 cause      = p->v.u8[2];
 	const float knockbackMult = ((float)p->v.u8[3])/16.f;
-	if(beingType(target) != BEING_CHARACTER){return;}
+	if(beingType(target) != bkCharacter){return;}
 	if(beingID(target) != (uint)playerID)   {return;}
 
 	if(cause == 2){
@@ -139,7 +123,7 @@ void characterDamagePacket(character *c, const packet *p){
 void characterGotHitPacket(const packet *p){
 	const being target  = p->v.u32[1];
 	character *c = NULL;
-	if(beingType(target) != BEING_CHARACTER){return;}
+	if(beingType(target) != bkCharacter){return;}
 	if(beingID(target) == (uint)playerID){
 		c = player;
 		nextOverlayColor(0xA03020F0,0);

@@ -22,6 +22,7 @@
 #include "../game/being.h"
 #include "../game/blockMining.h"
 #include "../game/character.h"
+#include "../game/entity.h"
 #include "../game/fire.h"
 #include "../game/projectile.h"
 #include "../game/rope.h"
@@ -105,40 +106,13 @@ void msgPlayerSpawnPos(uint c){
 void serverInitClient(uint c, u64 socket){
 	memset(&clients[c],0,sizeof(clients[c]));
 	clients[c].socket = socket;
-	const vec spawn = vecAdd(worldGetSpawnPos(),vecNew(1.f,4.f,1.f));
-	clients[c].c                        = characterNew();
-	clients[c].cl                       = lispClientClosure(c);
-	clients[c].state                    = STATE_CONNECTING;
-	clients[c].itemDropUpdateWindowSize = 1;
+	const vec spawn  = vecAdd(worldGetSpawnPos(),vecNew(1.f,4.f,1.f));
+	clients[c].c     = characterNew();
+	clients[c].cl    = lispClientClosure(c);
+	clients[c].state = STATE_CONNECTING;
 	clients[c].c->pos = spawn;
 
 	bigchungusUnsubscribeClient(&world,c);
-}
-
-void addPriorityItemDrop(u16 d){
-	for(uint c=0;c<clientCount;c++){
-		if(clients[c].state)                          {continue;}
-		if(clients[c].itemDropPriorityQueueLen > 127) {continue;}
-
-		for(uint i=0;i<clients[c].itemDropPriorityQueueLen;i++){
-			if(clients[c].itemDropPriorityQueue[i] == d){goto continueClientLoop;}
-		}
-		clients[c].itemDropPriorityQueue[clients[c].itemDropPriorityQueueLen++] = d;
-		continueClientLoop:
-		(void)d;
-	}
-}
-
-void delPriorityItemDrop(u16 d){
-	for(uint c=0;c<clientCount;c++){
-		if(clients[c].state){continue;}
-
-		u16 *iq = clients[c].itemDropPriorityQueue;
-		for(uint i=0;i<clients[c].itemDropPriorityQueueLen;i++){
-			if(iq[i] != d){continue;}
-			iq[i] = iq[--clients[c].itemDropPriorityQueueLen];
-		}
-	}
 }
 
 void msgUpdatePlayer(uint c){
@@ -150,7 +124,6 @@ void msgUpdatePlayer(uint c){
 		if(clients[i].c == NULL){continue;}
 		const character *chr = clients[i].c;
 		int pLen = 16*4;
-
 
 		rp->v.f[ 0]   = chr->pos.x;
 		rp->v.f[ 1]   = chr->pos.y;
@@ -178,18 +151,12 @@ void msgUpdatePlayer(uint c){
 
 		rp->v.u32[15] = i;
 
-		if(chr->hook != NULL){
-			rp->v.f[16]   = chr->hookPos.x;
-			rp->v.f[17]   = chr->hookPos.y;
-			rp->v.f[18]   = chr->hookPos.z;
-			pLen = 19*4;
-		}
-
 		packetQueue(rp,msgtCharacterUpdate,pLen,c);
 	}
 
 	blockMiningUpdatePlayer(c);
 	projectileSyncPlayer(c);
+	entitySyncPlayer(c);
 	addQueuedChunks(c);
 	clients[c].flags &= ~(CONNECTION_DO_UPDATE);
 	clients[c].syncCount++;
@@ -214,13 +181,6 @@ void serverParsePlayerPos(uint c,const packet *p){
 	clients[c].c->animationIndex     = p->v.u16[25];
 	clients[c].c->animationTicksMax  = p->v.u16[26];
 	clients[c].c->animationTicksLeft = p->v.u16[27];
-
-	if(packetLen(p) >= 18*4 ){
-		clients[c].c->hook           = (hook *)0x8;
-		clients[c].c->hookPos        = vecNewP(&p->v.f[15]);
-	}else{
-		clients[c].c->hook           = NULL;
-	}
 
 	clients[c].flags |= CONNECTION_DO_UPDATE;
 }
@@ -368,6 +328,8 @@ void serverParseSinglePacket(uint c, packet *p){
 		beingMove(c,p);
 		break;
 
+	case msgtEntityUpdate:
+	case msgtEntityDelete:
 	case msgtLZ4:
 	case msgtPlayerPos:
 	case msgtChunkData:

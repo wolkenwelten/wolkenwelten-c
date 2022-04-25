@@ -21,8 +21,8 @@
 #include "../game/being.h"
 #include "../game/blockMining.h"
 #include "../game/character/character.h"
-#include "../game/character/hook.h"
 #include "../game/character/network.h"
+#include "../game/entity.h"
 #include "../game/fire.h"
 #include "../game/rope.h"
 #include "../game/projectile.h"
@@ -157,12 +157,6 @@ void msgSendPlayerPos(){
 	p->v.u16[26] = player->animationTicksMax;
 	p->v.u16[27] = player->animationTicksLeft;
 
-	if(player->hook != NULL){
-		p->v.f[15] = player->hook->ent->pos.x;
-		p->v.f[16] = player->hook->ent->pos.y;
-		p->v.f[17] = player->hook->ent->pos.z;
-		pLen = 18*4;
-	}
 	packetQueueToServer(p,msgtCharacterUpdate,pLen);
 }
 
@@ -186,7 +180,7 @@ void dispatchBeingGotHit(const packet *p){
 	default:
 		fprintf(stderr,"dispatchBeingGotHit: Unknown being %x",target);
 		break;
-	case BEING_CHARACTER:
+	case bkCharacter:
 		characterGotHitPacket(p);
 		break;
 	}
@@ -231,9 +225,13 @@ void clientParsePacket(const packet *p){
 		characterSetPos(player,vecNewP(&p->v.f[0]));
 		characterSetRot(player,vecNewP(&p->v.f[3]));
 		characterSetVelocity(player,vecNewP(&p->v.f[6]));
-		characterFreeHook(player);
-		printf("Respawn Finished!\n");
 		player->flags &= ~CHAR_SPAWNING;
+		break;
+	case msgtEntityUpdate:
+		entityUpdateFromServer(p);
+		break;
+	case msgtEntityDelete:
+		entityDeleteFromServer(p);
 		break;
 	case msgtMineBlock:
 		fxBlockBreak(vecNew(p->v.u16[0],p->v.u16[1],p->v.u16[2]),p->v.u8[6],p->v.u8[7]);

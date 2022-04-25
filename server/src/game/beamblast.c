@@ -25,7 +25,7 @@
 
 #include <math.h>
 
-static void explode(const vec pos, float pw, int style){
+void explode(const vec pos, float pw, int style){
 	(void)style;
 	pw = MIN(pw,64.f);
 	worldBoxMineSphere(pos.x,pos.y,pos.z,pw);

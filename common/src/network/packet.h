@@ -1,6 +1,19 @@
 #pragma once
 #include "../stdint.h"
 
+typedef struct {
+	vec pos, rot, vel;
+	float weight;
+	u32 flags;
+	u32 index;
+	u32 generation;
+} netEntityUpdate ;
+
+typedef struct {
+	u32 index;
+	u32 generation;
+} netEntityDelete ;
+
 #pragma pack(push, 1)
 typedef struct {
 	u32 typesize;
@@ -16,6 +29,8 @@ typedef struct {
 		i16   i16[2060];
 		u8    u8[4120];
 		i8    i8[4120];
+		netEntityUpdate entityUpdate;
+		netEntityDelete entityDelete;
 	} v;
 } packet;
 
@@ -92,5 +107,7 @@ typedef enum {
 	msgtRainRecvUpdate,
 	msgtSnowRecvUpdate,
 	msgtRequestSpawnPos,
+	msgtEntityUpdate,
+	msgtEntityDelete,
 	msgtLZ4
 } messageType;

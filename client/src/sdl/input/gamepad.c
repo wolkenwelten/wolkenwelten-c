@@ -19,7 +19,6 @@
 #include "../sdl.h"
 #include "../../main.h"
 #include "../../game/character/character.h"
-#include "../../game/character/hook.h"
 #include "../../gui/gui.h"
 #include "../../gui/menu.h"
 #include "../../gui/widget.h"
@@ -217,7 +216,6 @@ vec doGamepadupdate(vec vel){
 
 	if(gamepadButtons[10]){
 		gamepadButtons[10] = false;
-		characterFireHook(player);
 	}
 
 	if(gamepadButtons[11]){

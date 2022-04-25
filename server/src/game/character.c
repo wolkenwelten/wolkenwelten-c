@@ -27,7 +27,7 @@
 character *player;
 
 void characterInit(character *c){
-	c->hookPos = c->gvel = c->vel =  vecZero();
+	c->gvel = c->vel =  vecZero();
 
 	c->gliderFade = 0.f;
 	c->animationIndex = c->animationTicksMax = c->animationTicksLeft = 0;
@@ -43,8 +43,6 @@ void characterInit(character *c){
 	c->rot   = vecNew(135.f,0.f,0.f);
 	c->gyoff = c->yoff = 0.f;
 	c->pos   = vecAdd(worldGetSpawnPos(),vecNew(.5f,1.f,.5f));
-
-	c->hook  = false;
 }
 
 void characterDie(character *c){

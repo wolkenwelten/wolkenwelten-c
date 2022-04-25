@@ -33,7 +33,7 @@ void beingSync(u8 c, being b){
 	switch(beingType(b)){
 	default:
 		return;
-	case BEING_PROJECTILE:
+	case bkProjectile:
 		projectileSendUpdate(c,beingID(b));
 		return;
 	}

@@ -9,7 +9,6 @@ extern u64 gameTicks;
 
 typedef struct sfx sfx;
 typedef struct bgm bgm;
-typedef struct hook hook;
 typedef struct bigchungus bigchungus;
 typedef struct chungus chungus;
 typedef struct chunk chunk;
@@ -64,15 +63,12 @@ typedef struct {
 } chunkOverlay;
 
 typedef uint32_t being;
-#define BEING_NULL       0
-#define BEING_CHARACTER  1
-#define BEING_HOOK       3
-#define BEING_GRENADE    4
-#define BEING_PROJECTILE 5
-#define BEING_ITEMDROP   6
-#define BEING_FIRE       7
-
-#define BEING_THROWABLE  9
+typedef enum beingKind {
+	bkNull,
+	bkCharacter,
+	bkEntity,
+	bkProjectile
+} beingKind;
 
 typedef struct beingListEntry beingListEntry;
 struct beingListEntry {
@@ -166,11 +162,9 @@ typedef struct {
 	float zoomFactor;
 
 	mesh *eMesh;
-	hook *hook;
 
 	 i16 hp,maxhp;
 
-	 vec hookPos;
 	 int blockMiningX,blockMiningY,blockMiningZ;
 
 	 int actionTimeout;
@@ -180,16 +174,6 @@ typedef struct {
 
 	void *nextFree;
 } character;
-
-struct hook {
-	entity       *ent;
-	character *parent;
-	rope        *rope;
-	being    attached;
-	float  goalLength;
-	bool       hooked;
-	bool    returning;
-};
 
 typedef struct {
 	vec pos,vel;

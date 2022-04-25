@@ -20,7 +20,6 @@
 #include "../game/being.h"
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../game/hook.h"
 #include "../network/messages.h"
 
 #include <stdlib.h>
@@ -44,28 +43,27 @@ being beingNew(u8 type, u32 id){
 }
 
 being beingCharacter (u32 id){
-	return beingNew(BEING_CHARACTER, id);
+	return beingNew(bkCharacter, id);
 }
 
-being beingHook(u32 id){
-	return beingNew(BEING_HOOK,      id);
+being beingEntity (u32 id){
+	return beingNew(bkEntity, id);
 }
 
 being beingProjectile(u32 id){
-	return beingNew(BEING_PROJECTILE,id);
+	return beingNew(bkProjectile,id);
 }
 
 vec beingGetPos(being b){
 	switch(beingType(b)){
-	case BEING_CHARACTER: {
+	case bkCharacter: {
 		character *c = characterGetByBeing(b);
 		if(c == NULL){return vecNOne();}
-		return vecAdd(c->pos,vecNew(0,c->yoff + 0.2f,0)); }
-	case BEING_HOOK: {
-		hook *c = hookGetByBeing(b);
-		if(c == NULL)     {return vecNOne();}
-		if(c->ent == NULL){return vecNOne();}
-		return c->ent->pos; }
+		return c->pos; }
+	case bkEntity: {
+		entity *e = entityGetByBeing(b);
+		if(e == NULL){return vecNOne();}
+		return e->pos; }
 	default:
 		return vecNOne();
 	}
@@ -73,16 +71,15 @@ vec beingGetPos(being b){
 
 void beingSetPos(being b, const vec pos){
 	switch(beingType(b)){
-	case BEING_CHARACTER: {
+	case bkCharacter: {
 		character *c = characterGetByBeing(b);
 		if(c == NULL){return;}
 		c->pos = pos;
 		return; }
-	case BEING_HOOK: {
-		hook *c = hookGetByBeing(b);
-		if(c == NULL)     {return;}
-		if(c->ent == NULL){return;}
-		c->ent->pos = pos;
+	case bkEntity: {
+		entity *e = entityGetByBeing(b);
+		if(e == NULL){return;}
+		e->pos = pos;
 		return; }
 	default:
 		return;
@@ -91,15 +88,15 @@ void beingSetPos(being b, const vec pos){
 
 void beingAddPos(being b, const vec pos){
 	switch(beingType(b)){
-	case BEING_CHARACTER: {
+	case bkCharacter: {
 		character *c = characterGetByBeing(b);
 		if(c == NULL){return;}
 		c->pos = vecAdd(c->pos, pos);
 		return; }
-	case BEING_HOOK: {
-		hook *c = hookGetByBeing(b);
-		if(c == NULL){return;}
-		c->ent->pos = vecAdd(c->ent->pos, pos);
+	case bkEntity: {
+		entity *e = entityGetByBeing(b);
+		if(e == NULL){return;}
+		e->pos = vecAdd(e->pos, pos);
 		return; }
 	default:
 		return;
@@ -108,14 +105,14 @@ void beingAddPos(being b, const vec pos){
 
 vec beingGetVel(being b){
 	switch(beingType(b)){
-	case BEING_CHARACTER: {
+	case bkCharacter: {
 		character *c = characterGetByBeing(b);
 		if(c == NULL){return vecZero();}
 		return c->vel; }
-	case BEING_HOOK: {
-		hook *c = hookGetByBeing(b);
-		if(c == NULL){return vecZero();}
-		return c->ent->vel; }
+	case bkEntity: {
+		entity *e = entityGetByBeing(b);
+		if(e == NULL){return vecZero();}
+		return e->vel; }
 	default:
 		return vecZero();
 	}
@@ -123,15 +120,15 @@ vec beingGetVel(being b){
 
 void beingSetVel(being b, const vec vel){
 	switch(beingType(b)){
-	case BEING_CHARACTER: {
+	case bkCharacter: {
 		character *c = characterGetByBeing(b);
 		if(c == NULL){return;}
 		c->vel = vel;
 		return; }
-	case BEING_HOOK: {
-		hook *c = hookGetByBeing(b);
-		if(c == NULL){return;}
-		c->ent->vel = vel;
+	case bkEntity: {
+		entity *e = entityGetByBeing(b);
+		if(e == NULL){return;}
+		e->vel = vel;
 		return; }
 	default:
 		return;
@@ -140,15 +137,15 @@ void beingSetVel(being b, const vec vel){
 
 void beingAddVel(being b, const vec vel){
 	switch(beingType(b)){
-	case BEING_CHARACTER: {
+	case bkCharacter: {
 		character *c = characterGetByBeing(b);
 		if(c == NULL){return;}
 		c->vel = vecAdd(c->vel,vel);
 		return; }
-	case BEING_HOOK: {
-		hook *c = hookGetByBeing(b);
-		if(c == NULL){return;}
-		c->ent->vel = vecAdd(c->ent->vel,vel);
+	case bkEntity: {
+		entity *e = entityGetByBeing(b);
+		if(e == NULL){return;}
+		e->vel = vecAdd(e->vel, vel);
 		return; }
 	default:
 		return;
@@ -163,10 +160,12 @@ being beingClosest(const vec pos, float maxDistance){
 
 float beingGetWeight(being b){
 	switch(beingType(b)){
-	case BEING_CHARACTER:
+	case bkCharacter:
 		return 80.f;
-	case BEING_HOOK:
-		return 1.f;
+	case bkEntity: {
+		entity *e = entityGetByBeing(b);
+		if(e == NULL){return 1.f;}
+		return e->weight; }
 	default:
 		return 1.f;
 	}
@@ -177,7 +176,7 @@ void beingDamage(being b, i16 hp, u8 cause, float knockbackMult, being culprit, 
 		msgBeingGotHit(hp,cause,knockbackMult,b,culprit);
 
 		switch(beingType(b)){
-		case BEING_CHARACTER:
+		case bkCharacter:
 			return msgBeingDamage(beingID(b),hp,cause,knockbackMult,b,culprit,pos);
 		}
 	}else{
@@ -342,12 +341,8 @@ being beingListGetClosest(const beingList *bl, const being source, uint type, fl
 
 const char *beingGetName(being b){
 	switch(beingType(b)){
-	case BEING_CHARACTER:
+	case bkCharacter:
 		return characterGetName(characterGetByBeing(b));
-	case BEING_HOOK:
-		return "Hook";
-	case BEING_GRENADE:
-		return "Grenade";
 	default:
 		return NULL;
 	}

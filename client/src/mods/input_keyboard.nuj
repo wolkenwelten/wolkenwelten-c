@@ -123,7 +123,7 @@
 [keyboard/bind! key-lshift keyboard/default]
 
 [keyboard/bind! key-c     [keyboard/once-ingame [λ [] [cons-mode! [not [cons-mode?]]]]]]
-[keyboard/bind! key-e     [keyboard/once-ingame [λ [] [fire-hook]]]]
+[keyboard/bind! key-e     [keyboard/once-ingame [λ [] [hook/shoot!]]]]
 [keyboard/bind! key-m     [keyboard/once        [λ [] [debug-info! [not [debug-info?]]]]]]
 [keyboard/bind! key-n     [keyboard/once-ingame [λ [] [no-clip! [not [no-clip?]]]]]]
 

@@ -16,7 +16,6 @@
  */
 #include "character.h"
 #include "draw.h"
-#include "hook.h"
 #include "network.h"
 #include "../entity.h"
 #include "../projectile.h"
@@ -31,7 +30,6 @@
 #include "../../voxel/bigchungus.h"
 #include "../../../../common/src/misc/profiling.h"
 #include "../../../../common/src/game/being.h"
-#include "../../../../common/src/game/hook.h"
 #include "../../../../common/src/network/messages.h"
 
 character *player;
@@ -40,7 +38,6 @@ character *player;
 
 void characterInit(character *c){
 	if(c == NULL){return;}
-	characterFreeHook(c);
 	memset(c,0,sizeof(character));
 
 	c->breathing      = rngValM(1024);
@@ -89,7 +86,7 @@ static void characterUpdateYOff(character *c){
 }
 
 static bool characterUpdateJumping(character *c){
-	if((c->controls.y > 0) && !(c->flags & (CHAR_FALLING | CHAR_JUMPING)) && ((c->hook == NULL) || (!hookGetHooked(c->hook)))){
+	if((c->controls.y > 0) && !(c->flags & (CHAR_FALLING | CHAR_JUMPING))){
 		if((rngValA(15))==0){
 			sfxPlay(sfxYahoo,1.f);
 		}else{
@@ -177,7 +174,7 @@ static void characterUpdateGlide(character *c){
 	if(!(c->flags & CHAR_FALLING)){
 		c->flags &= ~CHAR_GLIDE;
 	}
-	if(!(c->flags & CHAR_JUMPING) && (c->controls.y > 0) && (c->flags & CHAR_FALLING) && (c->hook == NULL)){
+	if(!(c->flags & CHAR_JUMPING) && (c->controls.y > 0) && (c->flags & CHAR_FALLING)){
 		characterToggleGlider(c);
 		c->flags |= CHAR_JUMPING;
 	}
@@ -391,7 +388,6 @@ void characterUpdate(character *c){
 	if(c->actionTimeout < 0){ c->actionTimeout += msPerTick; }
 	if(c->flags & CHAR_NOCLIP){
 		c->vel = c->gvel;
-		characterUpdateHook(c);
 		characterUpdateAnimation(c);
 		characterUpdateInaccuracy(c);
 		characterPhysics(c);
@@ -402,7 +398,6 @@ void characterUpdate(character *c){
 		c->flags &= ~CHAR_JUMPING;
 	}
 	if((c->flags & (CHAR_GLIDE | CHAR_FALLING)) == (CHAR_GLIDE | CHAR_FALLING)){
-		characterUpdateHook(c);
 		characterUpdateAnimation(c);
 		characterUpdateInaccuracy(c);
 		characterUpdateDamage(c,characterPhysics(c));
@@ -442,14 +437,6 @@ void characterUpdate(character *c){
 			}
 		}
 	}
-	if((c->hook != NULL) && (hookGetHooked(c->hook))){
-		if(fabsf(c->gvel.x) < 0.001)                 {nvel.x=c->vel.x;}
-		if(fabsf(c->gvel.z) < 0.001)                 {nvel.z=c->vel.z;}
-		if((c->gvel.x < -0.001)&&(nvel.x > c->vel.x)){nvel.x=c->vel.x;}
-		if((c->gvel.x >  0.001)&&(nvel.x < c->vel.x)){nvel.x=c->vel.x;}
-		if((c->gvel.z < -0.001)&&(nvel.z > c->vel.z)){nvel.z=c->vel.z;}
-		if((c->gvel.z >  0.001)&&(nvel.z < c->vel.z)){nvel.z=c->vel.z;}
-	}
 	if(characterUpdateJumping(c)){
 		nvel.y = 0.055f;
 		c->flags |= CHAR_JUMPING;
@@ -464,10 +451,6 @@ void characterUpdate(character *c){
 		} else if((nvel.y < -0.05f) && c->vel.y > -0.01f){
 			sfxPlay(sfxStomp,1.f);
 		}
-		if((damage > 0) && (hookGetHooked(c->hook))){
-			hookReturnHook(c->hook);
-		}
-		characterUpdateHook(c);
 	}
 	characterUpdateInaccuracy(c);
 	characterUpdateYOff(c);
@@ -486,7 +469,7 @@ void characterUpdateAll(){
 }
 
 float characterFirstBlockDist (const character *c){
-	const float maxLen = characterGetMaxHookLen(c);
+	const float maxLen = 64.f;
 	vec pos = vecAdd(vecNew(0,1,0),c->pos);
 	vec vel = vecAdd(vecMulS(vecDegToVec(c->rot),1.3f),c->vel);
 	for(int i=0;i<1024;i++){
