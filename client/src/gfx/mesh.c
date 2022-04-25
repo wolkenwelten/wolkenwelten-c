@@ -34,7 +34,6 @@ mesh *meshFirstFree = NULL;
 void meshAddVert(mesh *m, float x,float y,float z,float u,float v){
 	meshBuffer[m->vertexCount] = (vertex){x,y,z,u,v,1.f};
 	if(++m->vertexCount > countof(meshBuffer)){
-		__asm__ volatile("int $0x03");
 		fprintf(stderr,"meshBuffer Overflow!\n");
 	}
 }
@@ -42,7 +41,6 @@ void meshAddVert(mesh *m, float x,float y,float z,float u,float v){
 void meshAddVertC(mesh *m, float x,float y,float z,float u,float v,float c){
 	meshBuffer[m->vertexCount] = (vertex){x,y,z,u,v,c};
 	if(++m->vertexCount > countof(meshBuffer)){
-		__asm__ volatile("int $0x03");
 		fprintf(stderr,"meshBuffer Overflow!\n");
 	}
 }

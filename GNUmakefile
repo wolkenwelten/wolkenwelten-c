@@ -1,7 +1,3 @@
-ifneq (, $(shell command -v dash))
-	SHELL   := $(shell command -v dash)
-endif
-
 ifeq (, $(wildcard ./common/nujel/LICENSE))
 $(error Cant find Nujel, try loading submodules using "git submodule update --init --recursive")
 endif
