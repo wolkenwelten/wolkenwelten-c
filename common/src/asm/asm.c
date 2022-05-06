@@ -42,6 +42,7 @@ void asmDetermineSupport(){
 	void      rainPosUpdateSSE();
 	void  particlePosUpdateSSE();
 	void sparticlePosUpdateSSE();
+	static void         lightBlurXSSEIntrinsic(u8 out[48][48][48]);
 	void         lightBlurXSSE(u8 out[48][48][48]);
 	void         lightBlurYSSE(u8 out[48][48][48]);
 #endif
@@ -138,7 +139,7 @@ void lightBlurX(u8 out[48][48][48]){
 #ifdef ASM_TRY_SSE
 	case 2:
 	case 3:
-		lightBlurXSSE(out);
+		lightBlurXSSEIntrinsic (out);
 		break;
 #endif
 	}
@@ -174,3 +175,44 @@ void lightBlurZ(u8 out[48][48][48]){
 	}
 	PROFILE_STOP();
 }
+
+#ifdef ASM_TRY_SSE
+
+#include <x86intrin.h>
+static inline void lightBlurXSSEIntrinsic(u8 out[48][48][48]){
+	__m128i *o = (__m128i *)out;
+	__m128i zero,incr;
+	zero = _mm_set_epi64x(0,0);
+	incr = _mm_set_epi8(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+	for(int y=0;y < 48;y++){
+	__m128i a[3],b[3];
+	for(int i=0;i<3;i++){
+		_mm_xor_si128(a[i],a[i]);
+		_mm_xor_si128(b[i],b[i]);
+	}
+	for(int x=0;x < 32;x++){
+		a[0] = _mm_max_epi8(_mm_load_si128(&o[(x*3*16)+(y*3)+0]),a[0]);
+		a[1] = _mm_max_epi8(_mm_load_si128(&o[(x*3*16)+(y*3)+1]),a[1]);
+		a[2] = _mm_max_epi8(_mm_load_si128(&o[(x*3*16)+(y*3)+2]),a[2]);
+		b[0] = _mm_max_epi8(_mm_load_si128(&o[((47-x)*3*16)+(y*3)+0]),b[0]);
+		b[1] = _mm_max_epi8(_mm_load_si128(&o[((47-x)*3*16)+(y*3)+1]),b[1]);
+		b[2] = _mm_max_epi8(_mm_load_si128(&o[((47-x)*3*16)+(y*3)+2]),b[2]);
+
+		_mm_store_si128(&o[(    x *3*16)+(y*3)+0],a[0]);
+		_mm_store_si128(&o[(    x *3*16)+(y*3)+1],a[1]);
+		_mm_store_si128(&o[(    x *3*16)+(y*3)+2],a[2]);
+		_mm_store_si128(&o[((47-x)*3*16)+(y*3)+0],b[0]);
+		_mm_store_si128(&o[((47-x)*3*16)+(y*3)+1],b[1]);
+		_mm_store_si128(&o[((47-x)*3*16)+(y*3)+2],b[2]);
+
+		a[0] = _mm_max_epi8(zero, _mm_sub_epi8(a[0], incr));
+		a[1] = _mm_max_epi8(zero, _mm_sub_epi8(a[1], incr));
+		a[2] = _mm_max_epi8(zero, _mm_sub_epi8(a[2], incr));
+		b[0] = _mm_max_epi8(zero, _mm_sub_epi8(b[0], incr));
+		b[1] = _mm_max_epi8(zero, _mm_sub_epi8(b[1], incr));
+		b[2] = _mm_max_epi8(zero, _mm_sub_epi8(b[2], incr));
+	}
+	}
+}
+
+#endif

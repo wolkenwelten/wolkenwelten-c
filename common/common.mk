@@ -38,7 +38,7 @@ common/nujel/nujel.a: $(NUJEL)
 	@echo "$(ANSI_BLUE)" "[ASM]" "$(ANSI_RESET)" $@
 
 %.o: %.c
-	@$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) $(if $(findstring client/, $<),$(CLIENT_CFLAGS) $(CLIENT_CINCLUDES),) -g -c $< -o $@ -MMD > ${<:.c=.d}
+	@$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) $(if $(findstring client/, $<),$(CLIENT_CFLAGS) $(CLIENT_CINCLUDES),) -g -c $< -o $@ -MMD > ${<:.c=.d} -msse4.1
 	@echo "$(ANSI_GREEN)" "[CC] " "$(ANSI_RESET)" $@
 
 common/nujel/nujel.a:
