@@ -73,10 +73,10 @@ void fpsTick() {
 static void initSDLMixer(){
 	if(optionMute){return;}
 	if(Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024)==-1) {
-		fprintf(stderr,"Mix_OpenAudio: %s\n", Mix_GetError());
+		fprintf(stderr,"SDL2_mixer error - Mix_OpenAudio(): %s\n", Mix_GetError());
 	}
 	if(Mix_Init(MIX_INIT_OGG) == 0){
-		fprintf(stderr,"Mix_Init Error\n");
+		fprintf(stderr,"SDL2_mixer error - Mix_Init(MIX_INIT_OGG): %s\n", Mix_GetError());
 	}
 	Mix_AllocateChannels(128);
 	sfxEnable = true;
