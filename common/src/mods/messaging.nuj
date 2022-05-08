@@ -35,3 +35,11 @@
 [defun message/receive [sender msg]
        "Should only be called by the C netcode"
        [try display/error [message/parse sender msg]]]
+
+[defun kw->sym [kw]
+  "Dirty way of turning keywords into "
+  [str->sym [substr [string kw] 1]]]
+
+[defmacro defhandler [type args . body]
+  `[do [defun ~[kw->sym type] ~args ~@body]
+       [event-bind on-init ~type [λ [] [message/dispatch/add ~type ~[kw->sym type]]]]]]

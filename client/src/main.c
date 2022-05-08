@@ -54,6 +54,7 @@
 #include "../../common/src/asm/asm.h"
 #include "../../common/src/game/time.h"
 #include "../../common/src/misc/misc.h"
+#include "../../common/src/misc/profiling.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -126,6 +127,23 @@ void playerUpdate(){
 	worldFreeFarChungi(player);
 }
 
+void worldDoTick(){
+	PROFILE_START();
+	characterUpdateAll();
+	particleUpdate();
+	ropeUpdateAll();
+	projectileUpdateAll();
+	gtimeUpdate();
+	weatherUpdateAll();
+	entityUpdateAll();
+	lispEvents();
+	fluidPhysicsTick();
+	fireUpdateAll();
+
+	gameTicks++;
+	PROFILE_STOP();
+}
+
 void worldUpdate(){
 	static int lastTick = 0;
 	int curTick;
@@ -135,18 +153,7 @@ void worldUpdate(){
 	curTick = SDL_GetTicks();
 	resetOverlayColor();
 	for(;lastTick < curTick;lastTick+=msPerTick){
-		characterUpdateAll();
-		particleUpdate();
-		ropeUpdateAll();
-		projectileUpdateAll();
-		gtimeUpdate();
-		weatherUpdateAll();
-		entityUpdateAll();
-		lispEvents();
-		fluidPhysicsTick();
-		fireUpdateAll();
-
-		gameTicks++;
+		worldDoTick();
 	}
 	commitOverlayColor();
 	sfxResetBeingBlocker();

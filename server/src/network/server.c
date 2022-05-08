@@ -108,7 +108,6 @@ void serverInitClient(uint c, u64 socket){
 	clients[c].socket = socket;
 	const vec spawn  = vecAdd(worldGetSpawnPos(),vecNew(1.f,4.f,1.f));
 	clients[c].c     = characterNew();
-	clients[c].cl    = lispClientClosure(c);
 	clients[c].state = STATE_CONNECTING;
 	clients[c].c->pos = spawn;
 
@@ -320,9 +319,6 @@ void serverParseSinglePacket(uint c, packet *p){
 		break;
 	case msgtNujelMessage:
 		nujelReceiveMessage(c,p);
-		break;
-	case msgtLispRecvSExpr:
-		lispRecvSExpr(c,p);
 		break;
 	case msgtBeingMove:
 		beingMove(c,p);
@@ -678,8 +674,6 @@ void serverCloseClient(uint c){
 	clients[c].state = STATE_CLOSED;
 	msgSetPlayerCount(c,clientCount);
 	sendPlayerNames();
-	lClosureFree(clients[c].cl);
-	clients[c].cl = NULL;
 
 	int lowestClient=0;
 	for(uint i=0;i<clientCount;i++){

@@ -102,9 +102,9 @@ static lVal *lEntityHandlerSet(lClosure *c, lVal *v){
 	return lCar(v);
 }
 
-void lEntityEvent(entity *e, lVal *msg){
-	if((e == NULL) || (e->handler == NULL)){return;}
-	lApply(clRoot, msg, e->handler, NULL);
+static lVal *lEntityBeingGet(lClosure *c, lVal *v){
+	entity *ent = requireEntity(c, lCar(v));
+	return lValInt(entityGetBeing(ent));
 }
 
 void lOperatorsEntity(lClosure *c){
@@ -120,4 +120,10 @@ void lOperatorsEntity(lClosure *c){
 	lAddNativeFunc(c,"entity/flags!",    "[e flags]",    "Set the flags for entity E", lEntityFlagsSet);
 	lAddNativeFunc(c,"entity/handler",   "[e]",          "Return the flags for entity E", lEntityHandlerGet);
 	lAddNativeFunc(c,"entity/handler!",  "[e flags]",    "Set the flags for entity E", lEntityHandlerSet);
+	lAddNativeFunc(c,"entity/being",     "[e]",          "Return a being referenceing entity E", lEntityBeingGet);
+}
+
+void lEntityEvent(entity *e, lVal *msg){
+	if((e == NULL) || (e->handler == NULL)){return;}
+	lApply(clRoot, msg, e->handler, NULL);
 }

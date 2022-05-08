@@ -25,6 +25,19 @@
 
 rope ropeList[512];
 
+rope *ropeGetByID(uint i){
+	if(i == 0){return NULL;}
+	if(i-1 >= countof(ropeList)){return NULL;}
+	rope *r = &ropeList[i-1];
+	if((r->a == 0) || (r->b == 0)){return NULL;}
+	return r;
+}
+
+uint ropeGetID(const rope *r){
+	if(r == NULL){return 0;}
+	return (r - ropeList)+1;
+}
+
 rope *ropeNew(being a, being b, u32 flags){
 	const int newID = ropeNewID();
 	if(newID < 0){return NULL;}
@@ -41,6 +54,11 @@ float ropeGetLength(const rope *r){
 	const vec ap = beingGetPos(r->a);
 	const vec bp = beingGetPos(r->b);
 	return vecMag(vecSub(ap,bp));
+}
+
+void ropeSetLength(rope *r, float l){
+	if(r == NULL){return;}
+	r->length = l;
 }
 
 void ropeFree(rope *r){
@@ -76,7 +94,6 @@ static void ropePullTowards(being a, being b, float goalLen, float mul){
 }
 
 static void ropeUpdate(rope *r){
-	if(r == NULL)      { return; }
 	if(r->a == 0)      { return; }
 	if(r->b == 0)      { return; }
 	if(r->length < 0.f){ return; }
@@ -92,9 +109,8 @@ static void ropeUpdate(rope *r){
 	ropePullTowards(r->a,r->b,r->length,bm);
 }
 
-void  ropeUpdateAll(){
+void ropeUpdateAll(){
 	for(uint i=0;i<512;i++){
-		if(beingType(ropeList[i].a) == 0){continue;}
 		ropeUpdate(&ropeList[i]);
 	}
 }

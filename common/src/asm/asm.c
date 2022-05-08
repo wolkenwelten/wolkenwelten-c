@@ -42,7 +42,6 @@ void asmDetermineSupport(){
 	void      rainPosUpdateSSE();
 	void  particlePosUpdateSSE();
 	void sparticlePosUpdateSSE();
-	static void         lightBlurXSSEIntrinsic(u8 out[48][48][48]);
 	void         lightBlurXSSE(u8 out[48][48][48]);
 	void         lightBlurYSSE(u8 out[48][48][48]);
 #endif

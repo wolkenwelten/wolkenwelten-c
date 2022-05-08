@@ -54,17 +54,10 @@ extern unsigned char src_tmp_server_nuj_data[];
 
 lSymbol *lsPID;
 
-char replyBuf[256];
-
 static uint getPID(lClosure *c){
 	lVal *pid = lCar(lGetClosureSym(c, lsPID));
 	if(pid == NULL){return 123;}
 	return pid->vInt;
-}
-
-static void setPID(lClosure *c, uint pid){
-	(void)c;
-	lDefineVal(clRoot,"pid",lValInt(pid));
 }
 
 void lPrintError(const char *format, ...){
@@ -282,7 +275,16 @@ static lVal *wwlnfExplode(lClosure *c, lVal *v){
 	return lCar(v);
 }
 
+static lVal *wwlnfCharacterBeing(lClosure *c, lVal *v){
+	const int clientID = requireInt(c, lCar(v));
+	if((clientID < 0) || (clientID > (int)countof(clients)) || (clients[clientID].state)){
+		lExceptionThrowValClo("invalid-reference", "Can't turn that into a player being", lCar(v), c);
+	}
+	return lValInt(characterGetBeing(clients[clientID].c));
+}
+
 void addServerNativeFuncs(lClosure *c){
+	lAddNativeFunc(c,"character/being", "[player]",                                     "Returns player pos vector",                                 wwlnfCharacterBeing);
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
 	lAddNativeFunc(c,"mining-count",   "()",                                           "Returns block mining count",                                 wwlnfBMCount);
 	lAddNativeFunc(c,"entity-count",   "()",                                           "Returns entity count",                                       wwlnfECount);
@@ -306,28 +308,6 @@ void addServerNativeFuncs(lClosure *c){
 	lAddNativeFunc(c,"worldgen/sphere","(x y z r b)",                                  "Only use during worldgen, sets a sphere of radius R at X Y Z to B",wwlnfWorldgenSphere);
 	lAddNativeFunc(c,"quit!",          "()",                                           "Cleanly shuts down the server",                              wwlnfQuit);
 	lAddNativeFunc(c,"explode!",       "[pos pow style]",                              "Create a new explision at POS with POW and STYLE",           wwlnfExplode);
-
-
-}
-
-static void *cmdLispReal(void *a, void *b){
-	char reply[1<<16];
-	memset(reply,0,sizeof(reply));
-
-	u16 pid = *((uint *)a);
-	const char *str = (const char *)b;
-
-	lVal *v = lRunS(clients[pid].cl, str, strlen(str));
-	spf(reply, &reply[sizeof(reply)-1], "%V", v);
-
-	msgLispSExpr(pid, reply);
-
-	return NULL;
-}
-
-static void cmdLisp(uint pid, const char *str){
-	volatile uint pidp = pid;
-	lExceptionTryExit(cmdLispReal, (void *)&pidp, (void *)str);
 }
 
 static void *lispInitReal(void *a, void *b){
@@ -341,25 +321,6 @@ static void *lispInitReal(void *a, void *b){
 
 void lispInit(){
 	lExceptionTryExit(lispInitReal,NULL,NULL);
-}
-
-lClosure *lispClientClosure(uint pid){
-	lClosure *ret = lClosureNew(clRoot);
-	lRootsClosurePush(ret);
-	setPID(ret,pid);
-	return ret;
-}
-
-int parseCommand(uint pid, const char *cmd){
-	if(cmd[0] != '.'){return 0;}
-	const char *tcmp = cmd+1;
-
-	cmdLisp(pid,tcmp);
-	return 1;
-}
-
-void lispRecvSExpr(uint pid,const packet *p){
-	cmdLisp(pid, (const char *)p->v.u8);
 }
 
 void lispEvents(){
@@ -377,22 +338,6 @@ void lispEvents(){
 	lEval(clRoot,yieldRun);
 
 	PROFILE_STOP();
-}
-
-void *lispEvalReal(void *a, void *b){
-	static char reply[1<<12];
-	const char *str = a;
-	bool humanReadable = b != NULL;
-	memset(reply,0,sizeof(reply));
-
-	lVal *v = lRunS(clRoot, str, strlen(str));
-	spf(reply, &reply[sizeof(reply)-1], humanReadable ? "%v" : "%V", v);
-
-	return reply;
-}
-
-const char *lispEval(const char *str, bool humanReadable){
-	return lExceptionTryExit(lispEvalReal, (void *)str, humanReadable ? (void *)str : NULL);
 }
 
 void lGUIWidgetFree(lVal *v){

@@ -11,8 +11,7 @@
   [entity/delete ent]
   [array/set! hook/entites sender #nil]]
 
-
-[defun hook/new! [pos rot]
+[defun hook/new! [pos rot player]
   [def ent [-> [entity/new*]
                [entity/pos! pos]
                [entity/rotation! [- rot]]
@@ -23,7 +22,10 @@
                                    [:collision [hook/collision-handler ent]]
                                    [otherwise [say [cat [ansi-yellow "Unknown event: "] t]]]]]]
                ]]
-]
+  [-> [rope/new* [character/being player]
+                 [entity/being ent]]
+      [rope/length! 32]]
+  ent]
 
 [defun hook/message-handler [sender msg]
   [if [ref hook/entites sender]
@@ -31,7 +33,8 @@
       [array/set! hook/entites
                   sender
                   [hook/new! [eval [cadr msg]]
-                             [eval [caddr msg]]]]]]
+                             [eval [caddr msg]]
+                             sender]]]]
 
 [defun hook/init []
   [message/dispatch/add :hook-shoot hook/message-handler]]

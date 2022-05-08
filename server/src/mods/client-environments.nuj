@@ -1,0 +1,13 @@
+[def client/environments [array/allocate 32]]
+[for [i 0 32]
+     [array/set! client/environments i [ω*]]
+     [apply [array/ref client/environments i] `[def pid ~i]]]
+
+[defun client/eval [client-id expr]
+  [try display/error
+       [apply [array/ref client/environments client-id]
+              [list 'do expr]]]]
+
+[defhandler :client-environments-eval [client-id msg]
+  [message/send client-id [list :client-environments-reply
+                                [client/eval client-id [cadr msg]]]]]

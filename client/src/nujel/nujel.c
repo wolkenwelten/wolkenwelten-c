@@ -84,12 +84,6 @@ void lPrintError(const char *format, ...){
 	va_end(ap);
 }
 
-lVal *lispSEvalSym(u8 id){
-	static char buf[8];
-	snprintf(buf,sizeof(buf),"SEv%03u",id);
-	return lValSym(buf);
-}
-
 static void *lispEvalNRReal(void *a, void *b){
 	(void)b;
 	const char *str = a;
@@ -99,17 +93,6 @@ static void *lispEvalNRReal(void *a, void *b){
 
 lVal *lispEvalNR(const char *str){
 	return lExceptionTryExit(lispEvalNRReal,(void *)str, NULL);
-}
-
-static lVal *wwlnfSEval(lClosure *c, lVal *v){
-	(void)c;
-	char buf[1<<14];
-	memset(buf,0,sizeof(buf));
-	const int SP = lRootsGet();
-	spf(buf, &buf[sizeof(buf)-1], "%V", lCar(v));
-	msgLispSExpr(-1,buf);
-	lRootsRet(SP);
-	return NULL;
 }
 
 static lVal *wwlnfPlayerNameGet(lClosure *c, lVal *v){
@@ -553,7 +536,6 @@ static void lispAddClientNFuncs(lClosure *c){
 	lOperatorsWidget(c);
 	lOperatorsEffects(c);
 
-	lAddNativeFunc(c,"s*",             "(form)",            "Evaluates form on the server and returns the last result",       wwlnfSEval);
 	lAddNativeFunc(c,"text-focus?",    "()",                "Returns if a text input field is currently focused",             wwlnfTextInputFocusPred);
 	lAddNativeFunc(c,"player-pos",     "()",                "Return players position",                                        wwlnfPlayerPos);
 	lAddNativeFunc(c,"player-rot",     "()",                "Return players rotation",                                        wwlnfPlayerRot);
@@ -628,7 +610,7 @@ void *lispInitReal(void *a, void *b){
 
 void lispInit(){
 	widgetGCInit();
-	entityGCInit();		/*  */
+	entityGCInit();
 	lExceptionTryExit(lispInitReal,NULL,NULL);
 }
 
@@ -647,10 +629,6 @@ const char *lispEval(const char *str, bool humanReadable){
 
 lVal *lispEvalL(lVal *expr){
 	return lExceptionTryExit(lispCallFuncReal,clRoot,expr);
-}
-
-void lispRecvSExpr(const packet *p){
-	lispPanelShowReply((const char *)&p->v.u8);
 }
 
 static void lispGameplay(){

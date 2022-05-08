@@ -18,6 +18,7 @@
 
 #include "blockType.h"
 #include "entity.h"
+#include "rope.h"
 
 #include "../asm/asm.h"
 #include "../game/weather/weather.h"
@@ -247,6 +248,7 @@ void *lispCommonRootReal(void *a, void *b){
 	lAddNativeFunc(c,"message/send*",   "[to msg]",               "Send MSG TO someone",                                        wwlnfMessageSend);
 	lOperatorsBlockType(c);
 	lOperatorsEntity(c);
+	lOperatorsRope(c);
 
 	specificInit(c);
 

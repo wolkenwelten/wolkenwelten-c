@@ -48,6 +48,7 @@
 #include "../voxel/meshgen/shared.h"
 #include "../../../common/src/misc/bmp.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 #include "../../../common/src/misc/colors.h"
 
 #include <stdlib.h>
@@ -254,6 +255,8 @@ static void doScreenshot(){
 
 /* Render a single Frame */
 void renderFrame(){
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	PROFILE_START();
 	chunkResetCounter();
 	lightCheckTime();
 	const int rRate = screenRefreshRate ? screenRefreshRate : 60; // Default to 60
@@ -262,7 +265,6 @@ void renderFrame(){
 	calcView(player);
 	cloudsCalcColors();
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if(gameRunning){
 		renderSky(player);
 		if(drawBoundariesStyle){
@@ -276,6 +278,8 @@ void renderFrame(){
 	}
 
 	renderUI();
+	PROFILE_STOP();
+
 	swapWindow();
 	if(queueScreenshot){doScreenshot();}
 	fpsTick();

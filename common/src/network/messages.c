@@ -286,19 +286,6 @@ void msgFxBeamBlastHit(int c, const vec pos, u16 size, u16 style){
 	packetQueue(p,msgtFxProjectileHit,4*4,c);
 }
 
-void msgLispSExpr(int c, const char *str){
-	packet *p  = &packetBuffer;
-	int len    = strnlen(str,4192);
-	if(len < 4192){
-		memcpy(p->v.u8,str,len);
-		p->v.u8[len] = 0;
-		packetQueue(p,msgtLispRecvSExpr,alignedLen(len+1),c);
-	}else{
-		fprintf(stderr, "Truncated S-Expression:\n%s\n", str);
-	}
-}
-
-
 void msgNujelMessage(int c, const char *str){
 	packet *p  = &packetBuffer;
 	int len    = strnlen(str,4188);
@@ -397,8 +384,6 @@ const char *networkGetMessageName(uint i){
 		return "fxProjectileHit";
 	case msgtNujelMessage:
 		return "nujelMessage";
-	case msgtLispRecvSExpr:
-		return "lispRecvSExpr";
 	case msgtLightningStrike:
 		return "lightningStrike";
 	case msgtWeatherRecvUpdate:

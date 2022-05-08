@@ -24,11 +24,6 @@
                     [entity/delete ent]]]]
 ]
 
-[defun pear/message-handler [sender msg]
-       [pear/new! [eval [cadr msg]]
-                  [eval [caddr msg]]]]
-
-[defun pear/init []
-       [message/dispatch/add :pear-shoot pear/message-handler]]
-
-[event-bind on-init :pear-init pear/init]
+[defhandler :pear-shoot [sender msg]
+  [pear/new! [eval [cadr msg]]
+             [eval [caddr msg]]]]

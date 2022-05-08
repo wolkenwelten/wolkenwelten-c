@@ -29,7 +29,6 @@ void msgPlayerSetData            (int c, i16 hp, u32 flags, u16 id);
 void msgPingPong                 (int c);
 void msgRopeUpdate               (int c, uint i, rope *r);
 void msgWaterUpdate              (int c, u16 i, u16 count, u16 x, u16 y, u16 z, i16 strength);
-void msgLispSExpr                (int c, const char *str);
 void msgNujelMessage             (int c, const char *str);
 void msgEntityDelete             (int c, u32 index, u32 generation);
 void msgLightningStrike          (int c, u16 lx, u16 ly, u16 lz, u16 tx, u16 ty, u16 tz, u16 seed);

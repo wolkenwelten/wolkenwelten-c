@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "client.h"
+
 #include "../main.h"
 #include "../gfx/effects.h"
 #include "../gui/menu.h"
@@ -290,9 +291,6 @@ void clientParsePacket(const packet *p){
 		break;
 	case msgtNujelMessage:
 		nujelReceiveMessage(-1, p);
-		break;
-	case msgtLispRecvSExpr:
-		lispRecvSExpr(p);
 		break;
 	case msgtWeatherRecvUpdate:
 		weatherRecvUpdate(p);

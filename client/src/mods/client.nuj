@@ -13,11 +13,15 @@
 [test/add #t [and [not server?] client?]]
 
 [defun gameplay-run []
-        [event-fire on-gameplay-tick]]
+  [event-fire on-gameplay-tick]]
+
+[defun server/eval [form]
+  "Run FORM on the server"
+  [message/send -1 [list :client-environments-eval form]]]
 
 [defmacro s forms
-          "Run FORMS on the server"
-          `[s* [quote ~[cons do forms]]]]
+  "Run FORMS on the server"
+  `[server/eval [quote ~[cons do forms]]]]
 
 [defun player-active-item-id []
        "Return the Id of the currenlty selected item"
@@ -42,8 +46,8 @@
 
 [defun time/fast! [a]
         "Speeds up the game to about 4x"
-        [mst!  1]
-        [s [mst!  1]]]
+        [mst! 1]
+        [s [mst! 1]]]
 
 [defun time/norm! [a]
         "Sets the game speed to the default 1x"

@@ -68,14 +68,10 @@
                                    [widget/y! -1]
                                    [widget/val/int! 8]]]]
 
-[defun chat/message-handler [sender msg]
+[defhandler :chat-message [sender msg]
        [chat/gui/append [cadr msg]]]
 
-[defun chat/init []
-       [chat/init/gui]
-       [message/dispatch/add :chat-message chat/message-handler]]
-
-[event-bind on-init :chat-init chat/init]
+[event-bind on-init :chat-init chat/init/gui]
 
 [defun chat/fade-in []
        [widget/animate-h! chat/widget/input-panel 32]
