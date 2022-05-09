@@ -308,9 +308,6 @@ void serverParseSinglePacket(uint c, packet *p){
 		handlePingPong(c);
 		msgPingPong(c);
 		break;
-	case msgtRopeUpdate:
-		ropeUpdateP(c,p);
-		break;
 	case msgtProjectileUpdate:
 		projectileRecvUpdate(c,p);
 		break;
@@ -486,7 +483,6 @@ void addChungusToQueue(uint c, u8 x, u8 y, u8 z){
 		if(e->z != z){continue;}
 		return;
 	}
-	//printf("+chng[%u][%u][%u] D:%f\n",x,y,z,chungusDistanceRaw(clients[c].c,x,y,z));
 	clients[c].chngReqQueue[clients[c].chngReqQueueLen++] = (chungusReqEntry){x,y,z,0};
 }
 
@@ -511,7 +507,6 @@ chungusReqEntry clientGetMostImportantChungusQueueEntry(uint c){
 			d = nd;
 		}
 	}
-	//printf("Important: [%u/%u]\n",retI, clients[c].chngReqQueueLen);
 	chungusReqEntry ret = clients[c].chngReqQueue[retI];
 	clients[c].chngReqQueue[retI] = clients[c].chngReqQueue[--clients[c].chngReqQueueLen];
 	return ret;
@@ -524,7 +519,6 @@ void addChunksToQueue(uint c){
 	chungus *chng = worldGetChungus(entry.x,entry.y,entry.z);
 	if(chng == NULL){ return; }
 	float dist = chungusDistance(clients[c].c, chng);
-	//printf("-chng[%u][%u][%u] D:%f\n",chng->x,chng->y,chng->z,dist);
 	if(dist > 4096.f){
 		fprintf(stderr,"Requested Chungus too far away Chungus(%u, %u, %u) Player(%f, %f, %f))\n",chng->x<<8,chng->y<<8,chng->z<<8,clients[c].c->pos.x,clients[c].c->pos.y,clients[c].c->pos.z);
 		return;
@@ -565,7 +559,6 @@ void serverCheckCompression(int c){
 	int len,compressLen;
 	u8 *start;
 	static u8 compressBuf[LZ4_COMPRESSBOUND(sizeof(clients[c].sendBuf))];
-	//if(clients[c].flags & CONNECTION_WEBSOCKET){return;}
 	start = &clients[c].sendBuf[clients[c].sendBufLastCompressed];
 	len = &clients[c].sendBuf[clients[c].sendBufLen] - start;
 	if(len <= (1<<8)){return;}
@@ -575,7 +568,6 @@ void serverCheckCompression(int c){
 		fprintf(stderr,"%i > %i = Compression does not decrease size\n",compressLen,len);
 		return;
 	}
-	//printf("Z %u -> %u\n",len,compressLen);
 	clients[c].sendBufLen -= len;
 	memcpy(start + 4,compressBuf,compressLen);
 	packetSet((packet *)start,msgtLZ4,compressLen);
@@ -602,7 +594,6 @@ void serverHandleEvents(){
 	serverRead();
 	serverParse();
 	serverKeepalive();
-	ropeSyncAll();
 	serverSend();
 }
 
@@ -660,16 +651,12 @@ void sendToAllExcept(uint e,const void *data, uint len){
 }
 
 void serverCloseClient(uint c){
-	//const char *msg = getPlayerLeaveMessage(c);
         if(clients[c].pingCount && clients[c].syncCount){
                 characterSaveData(clients[c].c,clients[c].playerName);
         }
 	if(clients[c].c != NULL){
 		characterFree(clients[c].c);
 		clients[c].c = NULL;
-	}
-	if(clients[c].state == STATE_READY){
-		//serverSendChatMsg(msg);
 	}
 	clients[c].state = STATE_CLOSED;
 	msgSetPlayerCount(c,clientCount);

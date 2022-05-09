@@ -284,7 +284,7 @@ static lVal *wwlnfCharacterBeing(lClosure *c, lVal *v){
 }
 
 void addServerNativeFuncs(lClosure *c){
-	lAddNativeFunc(c,"character/being", "[player]",                                     "Returns player pos vector",                                 wwlnfCharacterBeing);
+	lAddNativeFunc(c,"character->being", "[player]",                                     "Returns PLAYER as a being",                                wwlnfCharacterBeing);
 	lAddNativeFunc(c,"player-pos",     "()",                                           "Returns player pos vector",                                  wwlnfPlayerPos);
 	lAddNativeFunc(c,"mining-count",   "()",                                           "Returns block mining count",                                 wwlnfBMCount);
 	lAddNativeFunc(c,"entity-count",   "()",                                           "Returns entity count",                                       wwlnfECount);

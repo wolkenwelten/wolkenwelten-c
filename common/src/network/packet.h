@@ -97,7 +97,6 @@ typedef enum {
 	msgtCharacterSetData,
 	msgtDirtyChunk,
 	msgtPingPong,
-	msgtRopeUpdate,
 	msgtProjectileUpdate,
 	msgtFxProjectileHit,
 	msgtLightningStrike,

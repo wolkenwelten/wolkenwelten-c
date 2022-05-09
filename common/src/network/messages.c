@@ -262,18 +262,6 @@ void msgPingPong(int c){
 	packetQueue(p,msgtPingPong,0,c);
 }
 
-void msgRopeUpdate(int c, uint i, rope *r){
-	packet *p = &packetBuffer;
-
-	p->v.u16[0] = i;
-	p->v.u16[1] = r->flags;
-	p->v.u32[1] = r->a;
-	p->v.u32[2] = r->b;
-	p->v.f  [3] = r->length;
-
-	packetQueue(p,msgtRopeUpdate,4*4,c);
-}
-
 void msgFxBeamBlastHit(int c, const vec pos, u16 size, u16 style){
 	packet *p = &packetBuffer;
 
@@ -376,8 +364,6 @@ const char *networkGetMessageName(uint i){
 		return "dirtyChunk";
 	case msgtPingPong:
 		return "pingPong";
-	case msgtRopeUpdate:
-		return "ropeUpdate";
 	case msgtProjectileUpdate:
 		return "projectileUpdate";
 	case msgtFxProjectileHit:

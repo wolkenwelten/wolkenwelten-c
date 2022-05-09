@@ -98,12 +98,24 @@ static void ropeUpdate(rope *r){
 	if(r->b == 0)      { return; }
 	if(r->length < 0.f){ return; }
 
-	float aw = beingGetWeight(r->a);
-	float bw = beingGetWeight(r->b);
-	float w  = aw+bw;
+	const bool aNoClip = beingGetNoClip(r->a);
+	const bool bNoClip = beingGetNoClip(r->b);
+	if(aNoClip || bNoClip){
+		if(aNoClip && bNoClip){return;}
+		if(aNoClip){
+			ropePullTowards(r->a, r->b,r->length,1);
+		}else{
+			ropePullTowards(r->b, r->a,r->length,1);
+		}
+		return;
+	}
 
-	float bm = MAX(0.01f,MIN(1.f,aw / w));
-	float am = MAX(0.01f,MIN(1.f,bw / w));
+	const float aw = beingGetWeight(r->a);
+	const float bw = beingGetWeight(r->b);
+	const float w  = aw+bw;
+
+	const float bm = MAX(0.01f,MIN(1.f,aw / w));
+	const float am = MAX(0.01f,MIN(1.f,bw / w));
 
 	ropePullTowards(r->b,r->a,r->length,am);
 	ropePullTowards(r->a,r->b,r->length,bm);

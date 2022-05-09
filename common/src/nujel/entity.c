@@ -120,7 +120,7 @@ void lOperatorsEntity(lClosure *c){
 	lAddNativeFunc(c,"entity/flags!",    "[e flags]",    "Set the flags for entity E", lEntityFlagsSet);
 	lAddNativeFunc(c,"entity/handler",   "[e]",          "Return the flags for entity E", lEntityHandlerGet);
 	lAddNativeFunc(c,"entity/handler!",  "[e flags]",    "Set the flags for entity E", lEntityHandlerSet);
-	lAddNativeFunc(c,"entity/being",     "[e]",          "Return a being referenceing entity E", lEntityBeingGet);
+	lAddNativeFunc(c,"entity->being",    "[e]",          "Return a being referenceing entity E", lEntityBeingGet);
 }
 
 void lEntityEvent(entity *e, lVal *msg){

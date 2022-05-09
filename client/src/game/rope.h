@@ -4,5 +4,4 @@
 
 void  ropeInit     ();
 void  ropeDrawAll  ();
-void  ropeUpdateP  (const packet *p);
 void  ropeSyncAll  ();

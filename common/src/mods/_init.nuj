@@ -27,21 +27,28 @@
 
 [defun on-init-fire  [] [event-fire on-init]]
 [defun on-spawn-fire [] [event-fire on-spawn]]
-[defun on-join-fire  [] [error "Test"] [event-fire on-join]]
+[defun on-join-fire  [] [event-fire on-join]]
 [defun on-leave-fire [] [event-fire on-leave]]
 
-[event-bind on-init :test-run [λ []
-	[log [ansi-blue "Let's test the Nujel Runtime"]]
-	[test-run]]]
+[event-bind on-init
+            :test-run
+            [λ []
+	      [log [ansi-blue "Let's test the Nujel Runtime"]]
+	      [test-run]]]
 
-[def vx+ [λ [v a]
-	"Return the sum of vector v and [vec a 0 0]"
-	[+ v [vec a 0 0]]]]
+[defun vx+ [v a]
+  "Return the sum of vector v and [vec a 0 0]"
+  [+ v [vec a 0 0]]]
 
-[def vy+ [λ [v a]
-	"Return the sum of vector v and [vec 0 a 0]"
-	[+ v [vec 0 a 0]]]]
+[defun vy+ [v a]
+  "Return the sum of vector v and [vec 0 a 0]"
+  [+ v [vec 0 a 0]]]
 
-[def vz+ [λ [v a]
-	"Return the sum of vector v and [vec 0 0 a]"
-	[+ v [vec 0 0 a]]]]
+[defun vz+ [v a]
+  "Return the sum of vector v and [vec 0 0 a]"
+  [+ v [vec 0 0 a]]]
+
+[defun event-fire-safe [event values]
+  [try display/error
+       [for-in [h [tree/values event]]
+               [apply h values]]]]

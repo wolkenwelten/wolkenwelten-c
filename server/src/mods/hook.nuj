@@ -1,10 +1,18 @@
 [def hook/entites [array/allocate 32]]
 
+[defun hook/entity->client-id [ent]
+  [def ret #nil]
+  [for [i 0 32]
+       [when [== ent [array/ref hook/entites i]]
+         [set! ret i]]]
+  ret]
+
 [defun hook/collision-handler [ent]
        [-> ent
            [entity/no-clip! #t]
-           [entity/velocity! [vec 0]]
-]]
+           [entity/velocity! [vec 0]]]
+       [def client-id [hook/entity->client-id ent]]
+       [when client-id [message/send client-id [list :hook-hit]]]]
 
 [defun hook/return! [sender]
   [def ent [ref hook/entites sender]]
@@ -22,9 +30,10 @@
                                    [:collision [hook/collision-handler ent]]
                                    [otherwise [say [cat [ansi-yellow "Unknown event: "] t]]]]]]
                ]]
-  [-> [rope/new* [character/being player]
-                 [entity/being ent]]
-      [rope/length! 32]]
+  [-> [rope/new* [character->being player]
+                 [entity->being ent]]
+      [rope/length! 128]]
+  [message/send -1 [list :hook-rope [character->being player] [entity->being ent]]]
   ent]
 
 [defun hook/message-handler [sender msg]

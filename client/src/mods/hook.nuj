@@ -1,6 +1,24 @@
 [def hook/shot/timeout 0]
+[def hook/rope #nil]
+
+[defun hook/pull-in! []
+  [if [rope/valid? hook/rope]
+      [do [def new-length [max [- [rope/length hook/rope] 0.0001] 2.0]]
+          [rope/length! hook/rope new-length]]
+      [set! hook/rope #nil]]]
 
 [defun hook/shoot! []
        [when [> [time/milliseconds] hook/shot/timeout]
              [set! hook/shot/timeout [+ 200 [time/milliseconds]]]
              [message/send 0 [list :hook-shoot [player-pos] [player-rot]]]]]
+
+[defhandler :hook-rope [client-id msg]
+  [def player [cadr msg]]
+  [def ent [caddr msg]]
+  [set! hook/rope
+    [-> [rope/new* player ent]
+        [rope/length! 128]]]]
+
+[defhandler :hook-hit [client-id msg]
+  [say "hook hit!"]
+  [when hook/rope [rope/length! hook/rope [+ 4.0 [rope/distance hook/rope]]]]]

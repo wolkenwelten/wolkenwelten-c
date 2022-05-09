@@ -367,3 +367,11 @@ void nujelReceiveMessage(uint c, const packet *p){
 	lVal *func = lGetClosureSym(clRoot, lSymS("message/receive"));
 	lApply(clRoot, args, func, NULL);
 }
+
+void nujelFireEvent(lClosure *c, const char *name, lVal *arguments){
+	const int SP = lRootsGet();
+	lVal *fun = lGetClosureSym(clRoot, lSymS("event-fire-safe"));
+	lVal *handler = RVP(lValSym(name));
+	lApply(c, RVP(lCons(handler, arguments)), fun, fun);
+	lRootsRet(SP);
+}

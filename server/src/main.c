@@ -22,6 +22,7 @@
 #include "game/blockMining.h"
 #include "game/fire.h"
 #include "game/fluid.h"
+#include "game/rope.h"
 #include "game/weather/weather.h"
 #include "nujel/nujel.h"
 #include "persistence/savegame.h"
@@ -110,6 +111,7 @@ static void updateWorldStep(){
 	fluidPhysicsTick();
 	weatherUpdateAll();
 	entityUpdateAll();
+	ropeUpdateAll();
 
 	gtimeUpdate();
 	gameTicks++;

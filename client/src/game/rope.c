@@ -145,33 +145,8 @@ void ropeDrawAll(){
 	meshDraw(ropeMesh);
 }
 
-void ropeUpdateP(const packet *p){
-	const uint i = p->v.u32[0];
-	int rclient = ropeGetClient(i);
-	if(rclient < 0)         {return;}
-	if(rclient == playerID) {return;}
-	rope *r = &ropeList[i];
-	r->a      = p->v.u32[1];
-	r->b      = p->v.u32[2];
-	r->flags  = p->v.u32[3];
-	r->length = p->v.f  [4];
-
-	r->flags |= ROPE_DIRTY;
-}
-
-void ropeSyncAll(){
-	const uint start = playerID << 2;
-	for(uint i=start;i<start+4;i++){
-		if(!(ropeList[i].flags & ROPE_DIRTY)){continue;}
-		msgRopeUpdate(-1, i, &ropeList[i]);
-		ropeList[i].flags &= ~ROPE_DIRTY;
-	}
-}
-
 void ropeDelBeing(const being t){
-	if(playerID < 0){return;}
-	const uint start = playerID << 2;
-	for(uint i = start;i<start+4;i++){
+	for(uint i = 0;i<countof(ropeList);i++){
 		if((ropeList[i].a == t) || (ropeList[i].b == t)){
 			ropeList[i].flags = 0;
 			ropeList[i].a     = 0;

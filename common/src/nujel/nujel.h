@@ -15,3 +15,4 @@ lVal     *lispCallFuncVII     (const char *symbol, const vec va, int ib, int ic)
 
 void     *lispCallFuncReal    (void *closure, void *vv);
 void      nujelReceiveMessage (uint c, const packet *p);
+void      nujelFireEvent      (lClosure *c, const char *name, lVal *arguments);

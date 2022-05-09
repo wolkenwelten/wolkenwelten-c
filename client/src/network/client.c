@@ -280,9 +280,6 @@ void clientParsePacket(const packet *p){
 		handlePingPong();
 		msgPingPong(-1);
 		break;
-	case msgtRopeUpdate:
-		ropeUpdateP(p);
-		break;
 	case msgtProjectileUpdate:
 		projectileRecvUpdate(-1,p);
 		break;
@@ -369,7 +366,6 @@ void clientTranceive(){
 	clientCheckPing();
 	clientRead();
 	clientParse();
-	ropeSyncAll();
 	clientWrite();
 }
 
@@ -394,7 +390,7 @@ void queueToServer(const void *data, uint len){
 }
 
 void clientFree(){
-	lispEval("[event-fire \"on-leave\"]",false);
+	nujelFireEvent(clRoot, "on-leave", NULL);
 	clientFreeSpecific();
 	singlePlayerPID = 0;
 	recvBufLen      = 0;

@@ -16,6 +16,7 @@
  */
 #include "entity.h"
 #include "nujel.h"
+#include "../game/being.h"
 #include "../game/rope.h"
 #include "../../nujel/lib/type-system.h"
 
@@ -37,7 +38,7 @@ static being requireBeing(lClosure *c, lVal *v){
 static lVal *lRopeNew(lClosure *c, lVal *v){
 	being a = requireBeing(c,  lCar(v));
 	being b = requireBeing(c, lCadr(v));
-	rope *r = ropeNew(a, b, 0);
+	rope *r = ropeNew(a, b, ROPE_DIRTY);
 	r->length = 32;
 	const int ID = ropeGetID(r);
 	return lValInt(ID);
@@ -60,27 +61,48 @@ static lVal *lRopeFlagsGet(lClosure *c, lVal *v){
 }
 
 static lVal *lRopeLengthSet(lClosure *c, lVal *v){
-	rope *r = requireRope(c, lCar(v));
+	lVal *car = lCar(v);
+	rope *r = requireRope(c, car);
 	if(r == NULL){
 		lExceptionThrowValClo("invalid-reference", "Can't find a rope for:", lCar(v), c);
 	}
-	r->length = requireInt(c, lCadr(v));
-	return NULL;
+	r->length = requireFloat(c, lCadr(v));
+	return car;
 }
 
 static lVal *lRopeFlagsSet(lClosure *c, lVal *v){
-	rope *r = requireRope(c, lCar(v));
+	lVal *car = lCar(v);
+	rope *r = requireRope(c, car);
 	if(r == NULL){
 		lExceptionThrowValClo("invalid-reference", "Can't find a rope for:", lCar(v), c);
 	}
 	r->flags = requireInt(c, lCadr(v));
-	return NULL;
+	return car;
+}
+
+static lVal *lRopeDistanceGet(lClosure *c, lVal *v){
+	rope *r = requireRope(c, lCar(v));
+	if(r == NULL){
+		lExceptionThrowValClo("invalid-reference", "Can't find a rope for:", lCar(v), c);
+	}
+	return lValFloat(vecMag(vecSub(beingGetPos(r->a), beingGetPos(r->b))));
+}
+
+static lVal *lRopeValidP(lClosure *c, lVal *v){
+	const i64 ID = requireInt(c, lCar(v));
+	rope *r = ID > 0 ? ropeGetByID(ID) : NULL;
+	if(r == NULL){
+		return lValBool(false);
+	}
+	return lValBool(r->a && r->b);
 }
 
 void lOperatorsRope(lClosure *c){
-	lAddNativeFunc(c,"rope/new*",    "[a b]",         "Create a new rope connecting beings A and B", lRopeNew);
-	lAddNativeFunc(c,"rope/length",  "[rope]",        "Return the length of ROPE", lRopeLengthGet);
-	lAddNativeFunc(c,"rope/length!", "[rope length]", "Set the length of ROPE to LENGTH", lRopeLengthSet);
-	lAddNativeFunc(c,"rope/flags",   "[rope]",        "Get the flags of ROPE", lRopeFlagsGet);
-	lAddNativeFunc(c,"rope/flags!",  "[rope flags]",  "Set the flags of ROPE", lRopeFlagsSet);
+	lAddNativeFunc(c, "rope/new*",     "[a b]",         "Create a new rope connecting beings A and B", lRopeNew);
+	lAddNativeFunc(c, "rope/valid?",   "[rope]",        "Returns #t if ROPE is valid", lRopeValidP);
+	lAddNativeFunc(c, "rope/distance", "[rope]",        "Returns the distance between the two beings connected via ROPE", lRopeDistanceGet);
+	lAddNativeFunc(c, "rope/length",   "[rope]",        "Return the length of ROPE", lRopeLengthGet);
+	lAddNativeFunc(c, "rope/length!",  "[rope length]", "Set the length of ROPE to LENGTH", lRopeLengthSet);
+	lAddNativeFunc(c, "rope/flags",    "[rope]",        "Get the flags of ROPE", lRopeFlagsGet);
+	lAddNativeFunc(c, "rope/flags!",   "[rope flags]",  "Set the flags of ROPE", lRopeFlagsSet);
 }

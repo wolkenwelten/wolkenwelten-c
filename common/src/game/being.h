@@ -16,6 +16,8 @@ vec   beingGetVel    (being b);
 void  beingSetVel    (being b, const vec vel);
 void  beingAddVel    (being b, const vec vel);
 
+bool  beingGetNoClip (being b);
+
 float beingGetWeight (being b);
 void  beingDamage    (being b, i16 hp, u8 cause, float knockbackMult, being culprit, const vec pos);
 bool   beingAlive     (being b);

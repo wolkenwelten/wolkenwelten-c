@@ -171,6 +171,21 @@ float beingGetWeight(being b){
 	}
 }
 
+bool beingGetNoClip(being b){
+	switch(beingType(b)){
+	case bkCharacter: {
+		character *c = characterGetByBeing(b);
+		if(c == NULL){return false;}
+		return c->flags & CHAR_NOCLIP; }
+	case bkEntity: {
+		entity *e = entityGetByBeing(b);
+		if(e == NULL){return false;}
+		return e->flags & ENTITY_NOCLIP; }
+	default:
+		return false;
+	}
+}
+
 void beingDamage(being b, i16 hp, u8 cause, float knockbackMult, being culprit, const vec pos){
 	if(!isClient){
 		msgBeingGotHit(hp,cause,knockbackMult,b,culprit);

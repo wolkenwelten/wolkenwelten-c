@@ -18,6 +18,7 @@
 #include "entity.h"
 #include "character/character.h"
 #include "light.h"
+#include "rope.h"
 #include "../main.h"
 #include "../sfx/sfx.h"
 #include "../gfx/frustum.h"
@@ -92,6 +93,7 @@ void entityDeleteFromServer(const packet *p){
 	const netEntityDelete *data = &p->v.entityDelete;
 	const u32 ID    = data->index;
 	entity *ent     = &entityList[ID];
+	ropeDelBeing(entityGetBeing(ent));
 	ent->mesh       = NULL;
 	ent->nextFree   = (void *)1;
 	ent->generation = data->generation;
