@@ -103,23 +103,6 @@
        [cond [[<= i 0] #t]
              [#t [countdown 5] [chiseltime [-- i]]]]]
 
-[def inv-has-atleast? [let*
-        [defun iter [id amount-goal i amount-found]
-                 [def slot [player-inventory i]]
-                [when [== id [car slot]]
-                      [set! amount-found [+ amount-found [cdr slot]]]
-                ]
-                [if [>= amount-found amount-goal]
-                    #t
-                    [if [< i [player-inventory-size]]
-                        [iter id amount-goal [+ 1 i] amount-found]
-                        #f]]]
-
-        [λ [id amount-goal]
-                [when-not id [set! 0]]
-                [when-not amount-goal [set! 1]]
-                [iter id amount-goal 0 0]]]]
-
 [defun game-active? []
        [== [widget/focus] w-game-screen]]
 

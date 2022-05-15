@@ -1,5 +1,5 @@
 [defun chat/send [msg]
-       [message/send 0 [list :chat-message [cat [ansi-green [player-name]] ": " msg]]]]
+  [message/send 0 [list :chat-message [cat [ansi-green [player-name]] ": " msg]]]]
 
 [def chat/widget/panel #nil]
 [def chat/widget/messages #nil]

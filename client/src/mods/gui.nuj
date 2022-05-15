@@ -14,6 +14,21 @@
 [def w-text-scroller   13]
 [def w-text-log        14]
 
+[def widget/type/map @[:space w-space
+                              :panel w-panel
+                              :background w-background
+                              :horizontal-ruler w-horizontal-ruler
+                              :label w-label
+                              :text-input w-text-input
+                              :button w-button
+                              :radio-button w-radio-button
+                              :button-del w-button-del
+                              :slider w-slider
+                              :sprite w-sprite
+                              :game-screen w-game-screen
+                              :text-scroller w-text-scroller
+                              :text-log w-text-log]]
+
 [def wf-hidden        #b0000_0000_0000_0001]
 [def wf-hover         #b0000_0000_0000_0010]
 [def wf-clicked       #b0000_0000_0000_0100]
@@ -58,73 +73,89 @@
        [widget/center-x! w]
        [widget/center-y! w]]
 
+[defun widget/set-flag! [w flag]
+  [widget/flags! w [logior [widget/flags w] flag]]]
+
 [defun widget/val! [w val]
        [case [type-of val]
              [:int [widget/val/int! w val]]
              [otherwise [throw [list :type-error "Unsupported type" val [current-closure]]]]]]
 
-#;[defun popup-new [headline bodytext]
-       [widget [:panel :id panel :w 400 :h 400 :val 8 :center
-                       [:label :id head :h 48 :label headline :big]
-                       [:label :id text :h -88 :y 56 :label bodytext]
-                       [:button :id button :w 64 :h 32 :x [- [/ 384 2] [/ 56 2]] :y -1 :label "OK" :selected
-                                :click [λ [w event-name]
-                                           [say ["Event handler fired for " [ansi-red event-name] " on " [str/write w]]]
-                                           [widget/parent! panel #nil]
-                                           [widget/focus! w-game-screen]]]]]]
+[defun widget/add-child! [parent child]
+  [widget/parent! child parent]
+  parent]
+
+[defun widget/type/get [name]
+  [or [tree/get widget/type/map name]
+      [throw [list :unknown-widget "Can't find a value for that particular widget type" name [current-lambda]]]]]
+
+[defun widget/parse/rest [type v]
+  [when [car v]
+    [if [keyword? [car v]]
+        [case [car v]
+          [:focussed [cons [list 'widget/focus!]
+                           [widget/parse/rest type [cdr v]]]]
+          [:center [cons [list 'widget/center!]
+                         [widget/parse/rest type [cdr v]]]]
+          [:small [cons [list 'widget/set-flag! wf-small]
+                      [widget/parse/rest type [cdr v]]]]
+          [:big [cons [list 'widget/set-flag! wf-big]
+                      [widget/parse/rest type [cdr v]]]]
+          [:bigger [cons [list 'widget/set-flag! wf-bigger]
+                         [widget/parse/rest type [cdr v]]]]
+          [:active [cons [list 'widget/set-flag! wf-active]
+                         [widget/parse/rest type [cdr v]]]]
+          [:outlined [cons [list 'widget/set-flag! wf-outlined]
+                      [widget/parse/rest type [cdr v]]]]
+          [otherwise [cons [case [car v]
+                             [:x [list 'widget/x! [cadr v]]]
+                             [:y [list 'widget/y! [cadr v]]]
+                             [:flags [list 'widget/flags! [cadr v]]]
+                             [:parent [list 'widget/parent! [cadr v]]]
+                             [:label [list 'widget/label! [cadr v]]]
+                             [:val [list 'widget/val! [cadr v]]]
+                             [:on-click [list 'widget/bind "click" [cadr v]]]
+                             [:on-focus [list 'widget/bind "focus" [cadr v]]]
+                             [:on-blur [list 'widget/bind "blur" [cadr v]]]
+                             [:width [list 'widget/width! [cadr v]]]
+                             [:height [list 'widget/height! [cadr v]]]
+                             [otherwise [throw [list :unknown-attribute "Don't know what to do with that particular widget attribute" [car v] [current-lambda]]]]]
+                           [widget/parse/rest type [cddr v]]]]]
+        [cons [list 'widget/add-child! [widget/parse [car v]]]
+              [widget/parse/rest type [cdr v]]]]]]
+
+[defun widget/parse [v]
+  [cons '-> [cons [list 'widget/new [widget/type/get [car v]]] [widget/parse/rest [car v] [cdr v]]]]]
+
+[defmacro widget args
+  [widget/parse [car args]]]
 
 [defun popup [headline bodytext]
-       [def panel [-> [widget/new   w-panel]
-                      [widget/width!    640]
-                      [widget/height!   400]
-                      [widget/val!        8]]]
-
-       [def head [-> [widget/new     w-label]
-                     [widget/parent!   panel]
-                     [widget/width!       -1]
-                     [widget/height!     80]
-                     [widget/label! headline]]]
-       [widget/flags! head wf-big]
-
-       [def text [-> [widget/new      w-label]
-                     [widget/parent!    panel]
-                     [widget/y!            56]
-                     [widget/width!        -1]
-                     [widget/height!      -88]
-                     [widget/label!  bodytext]]]
-
-       [def button [-> [widget/new    w-button]
-                       [widget/parent!   panel]
-                       [widget/width!       64]
-                       [widget/height!      32]
-                       [widget/x!      [- [/ 384 2] [/ 56 2]]]
-                       [widget/y!           -1]
-                       [widget/label!     "OK"]
-                       [widget/focus!]
-                       [widget/bind "click" [λ [w event-name]
-                                                [say ["Event handler fired for " [ansi-red event-name] " on " [str/write w]]]
-                                                [widget/parent! panel #nil]
-                                                [widget/focus! w-game-screen]]]]]
-       [widget/center! panel]
-       panel]
+  [widget [:panel :width 640 :height 400 :val 8 :center
+                  [:label :big :parent panel :width -1 :height 80 :label headline]
+                  [:label :y 56 :width -1 :height -88 :label bodytext]
+                  [:button :width 64 :height 32 :x [- [/ 640 2] [/ 56 2]] :y -1 :label "OK" :focussed
+                           :on-click [λ [w event-name]
+                                       [say ["Event handler fired for " [ansi-red event-name] " on " [str/write w]]]
+                                       [widget/parent! panel #nil]
+                                       [widget/focus! w-game-screen]]]]]]
 
 [defun pop []
-        [say [ansi-rainbow "Creating popup"]]
-        [popup "Test popup" [cat "This is just a short "
-                                 [ansi-rainbow "test message,"]
-                                 " not really indented for something useful. just long enough in order to trigger an automated line break and see if anything breaks because of the amount of characters contained in this text paragraph. Paketeinbandueberschriftsmarkierung."]]]
+  [popup "Test popup" [cat "This is just a short "
+                           [ansi-rainbow "test message,"]
+                           " not really indented for something useful. just long enough in order to trigger an automated line break and see if anything breaks because of the amount of characters contained in this text paragraph. Paketeinbandueberschriftsmarkierung."]]]
 
 [defun widget/test-gc []
-     [test-run]
-     [def start-count [widget/active-count]]
-     [def mid-count 0]
-     [let* [def panel [pop]]
-           [set! mid-count [widget/active-count]]
-           [widget/parent! panel #nil]
-           [widget/focus! w-game-screen]]
-     [test-run]
-     [def end-count [widget/active-count]]
-     [def msg ["Start: " start-count " Mid: " mid-count " End: " end-count]]
-     [say [if [<= end-count start-count]
-              [ansi-rainbow msg]
-              [ansi-red msg]]]]
+  [test-run]
+  [def start-count [widget/active-count]]
+  [def mid-count 0]
+  [let* [def panel [pop]]
+    [set! mid-count [widget/active-count]]
+    [widget/parent! panel #nil]
+    [widget/focus! w-game-screen]]
+  [test-run]
+  [def end-count [widget/active-count]]
+  [def msg ["Start: " start-count " Mid: " mid-count " End: " end-count]]
+  [say [if [<= end-count start-count]
+           [ansi-rainbow msg]
+           [ansi-red msg]]]]
