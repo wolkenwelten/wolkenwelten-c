@@ -20,5 +20,4 @@
         [rope/length! 128]]]]
 
 [defhandler :hook-hit [client-id msg]
-  [say "hook hit!"]
   [when hook/rope [rope/length! hook/rope [+ 4.0 [rope/distance hook/rope]]]]]
