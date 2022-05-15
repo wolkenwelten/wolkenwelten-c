@@ -122,3 +122,6 @@
 
 [defun game-active? []
        [== [widget/focus] w-game-screen]]
+
+[defun player/close-glider! []
+  [player-flags! [logand [player-flags] [lognot 32]]]]

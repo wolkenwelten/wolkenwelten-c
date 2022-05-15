@@ -33,10 +33,10 @@
   [-> [rope/new* [character->being player]
                  [entity->being ent]]
       [rope/length! 128]]
-  [message/send -1 [list :hook-rope [character->being player] [entity->being ent]]]
+  [message/send -1 [list :hook-rope [character->being player] [entity->being ent] player]]
   ent]
 
-[defun hook/message-handler [sender msg]
+[defhandler :hook-shoot [sender msg]
   [if [ref hook/entites sender]
       [hook/return! sender]
       [array/set! hook/entites
@@ -45,7 +45,7 @@
                              [eval [caddr msg]]
                              sender]]]]
 
-[defun hook/init []
-  [message/dispatch/add :hook-shoot hook/message-handler]]
-
-[event-bind on-init :hook-init hook/init]
+[defhandler :hook-clear [sender msg]
+  [when [ref hook/entites sender]
+    [hook/return! sender]
+    [message/send -1 [list :hook-clear sender]]]]

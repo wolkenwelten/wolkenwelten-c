@@ -49,7 +49,7 @@ static lVal *lRopeLengthGet(lClosure *c, lVal *v){
 	if(r == NULL){
 		lExceptionThrowValClo("invalid-reference", "Can't find a rope for:", lCar(v), c);
 	}
-	return lValInt(r->length);
+	return lValFloat(r->length);
 }
 
 static lVal *lRopeFlagsGet(lClosure *c, lVal *v){

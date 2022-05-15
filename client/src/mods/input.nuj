@@ -44,6 +44,7 @@
        "Evals all Input handlers in order"
        [input-mouse-tick]
        [input-keyboard-tick]
+       [hook/tick]
 
        [++ input/primary-did-count]
        [when-not input/primary-did

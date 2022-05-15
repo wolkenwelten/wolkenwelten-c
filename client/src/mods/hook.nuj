@@ -1,23 +1,39 @@
 [def hook/shot/timeout 0]
 [def hook/rope #nil]
+[def hook/ropes [array/allocate 32]]
 
 [defun hook/pull-in! []
   [if [rope/valid? hook/rope]
-      [do [def new-length [max [- [rope/length hook/rope] 0.0001] 2.0]]
+      [do [def new-length [max [- [rope/length hook/rope] 0.4] 2.0]]
           [rope/length! hook/rope new-length]]
       [set! hook/rope #nil]]]
 
 [defun hook/shoot! []
-       [when [> [time/milliseconds] hook/shot/timeout]
-             [set! hook/shot/timeout [+ 200 [time/milliseconds]]]
-             [message/send 0 [list :hook-shoot [player-pos] [player-rot]]]]]
+  [player/close-glider!]
+  [when [> [time/milliseconds] hook/shot/timeout]
+    [set! hook/shot/timeout [+ 200 [time/milliseconds]]]
+    [message/send 0 [list :hook-shoot [player-pos] [player-rot]]]]]
 
 [defhandler :hook-rope [client-id msg]
   [def player [cadr msg]]
   [def ent [caddr msg]]
-  [set! hook/rope
-    [-> [rope/new* player ent]
-        [rope/length! 128]]]]
+  [def sender [cadddr msg]]
+  [def rope [-> [rope/new* player ent]
+                [rope/length! 192]]]
+  [array/set! hook/ropes sender rope]
+  [when [zero? sender]
+    [set! hook/rope rope]]]
+
+[defun hook/tick []
+  [try display/error
+       [and hook/rope
+            [> [rope/distance hook/rope] 96.0]
+            [message/send 0 [list :hook-clear]]
+            [set! hook/rope #nil]]]]
 
 [defhandler :hook-hit [client-id msg]
-  [when hook/rope [rope/length! hook/rope [+ 4.0 [rope/distance hook/rope]]]]]
+  [when hook/rope
+    [rope/length! hook/rope [+ 8 [rope/distance hook/rope]]]]]
+
+[defhandler :hook-clear [client-id msg]
+  [array/set! hook/ropes [cadr msg] #nil]]
