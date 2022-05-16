@@ -167,10 +167,6 @@ void resizeUI(){
 	}
 }
 
-static void handlerGameFocus(widget *wid){
-	(void)wid;
-}
-
 static void initGameOverlay(){
 	cursorMesh           = textMeshNew(8);
 	cursorMesh->tex      = tCursor;
@@ -185,8 +181,7 @@ static void initGameOverlay(){
 	guim                 = textMeshNew(1<<16);
 	guim->tex            = tGui;
 
-	widgetGameScreen = widgetNewCP(wGameScreen,rootMenu,rect(0,0,-1,-1));
-	widgetBind(widgetGameScreen,"focus",handlerGameFocus);
+	widgetGameScreen = widgetNewCP(wGameScreen, rootMenu, rect(0,0,-1,-1));
 	widgetExport(widgetGameScreen, "w-game-screen");
 
 	lispInputInit();

@@ -3,6 +3,8 @@
 [def inventory/w/label #nil]
 [def inventory/w/sprite #nil]
 
+[def inventory/w/popup #nil]
+
 [defun inventory/refresh []
   [when-not inventory/w/panel [inventory/w/init!]]
   [widget/val/int! inventory/w/sprite inventory/selection]
@@ -13,30 +15,46 @@
     [widget/label! inventory/w/label [fmt "Pears"]]
     [widget/val/int! inventory/w/sprite 258]]]
 
-[defun inventory/toggle! []
-       "Toggle the visibility of the inventory popup"
-       ]
+[defun inventory/hide! []
+  [widget/parent! inventory/w/popup #nil]
+  [set! inventory/w/popup #nil]
+  [widget/focus! w-game-screen]]
 
+[defun inventory/show! []
+  [def h [+ 64 16 [* [/ [block/count] 8] 72]]]
+  [set! inventory/w/popup [widget [:panel :width 584 :height h :val 8 :center
+                                          [:label :label "Block chooser" :big :width -1 :height 64]]]]
+  [def hover-info [widget [:label :parent inventory/w/popup :y 40 :width -1 :height 32]]]
+  [for [x 0 8]
+       [for [y 0 8]
+            [let [[i [+ x [* 8 y]]]]
+              [when [and [> i 0] [< i [block/count]]]
+                [widget [:button :parent inventory/w/popup
+                                 :x [* x 72]
+                                 :y [+ 64 [* y 72]]
+                                 :width 64
+                                 :height 64
+                                 :focussed
+                                 [:sprite :x 4 :y 4 :width -9 :height -9 :val i]
+                                 :on-hover [\ []
+                                            [widget/label! hover-info [block/name i]]]
+                                 :on-click [\ []
+                                            [set! player/pear-shooter-active #f]
+                                            [set! inventory/selection i]
+                                            [inventory/refresh]
+                                            ]]]]]]]]
+
+[defun inventory/toggle! []
+  "Toggle the visibility of the inventory popup"
+  [if inventory/w/popup
+      [inventory/hide!]
+      [inventory/show!]]]
 
 [defun inventory/w/init! []
-  [set! inventory/w/panel [-> [widget/new w-panel]
-                              [widget/width! 128]
-                              [widget/height! 128]
-                              [widget/val/int! 8]
-                              [widget/x! -1]
-                              [widget/y! -1]]]
-  [set! inventory/w/label [-> [widget/new w-label]
-                              [widget/parent! inventory/w/panel]
-                              [widget/width!  -1]
-                              [widget/height!  48]
-                              [widget/label! "Test"]]]
-  [set! inventory/w/sprite [-> [widget/new w-sprite]
-                               [widget/parent! inventory/w/panel]
-                               [widget/x! 26]
-                               [widget/y! 32]
-                               [widget/width!  64]
-                               [widget/height!  64]
-                               [widget/val/int! inventory/selection]]]
+  [set! inventory/w/panel [widget [:panel :width 128 :height 128 :val 8 :x -1 :y -1]]]
+  [set! inventory/w/label [widget [:label :parent inventory/w/panel :width -1 :height 48 :label "Test"]]]
+  [set! inventory/w/sprite [widget [:sprite :parent inventory/w/panel :x 26 :y 32 :width 64 :height 64 :val inventory/selection]]]
+  [widget/bind w-game-screen "focus" inventory/hide!]
   [inventory/refresh]]
 
 [defun inventory/select! [sel]

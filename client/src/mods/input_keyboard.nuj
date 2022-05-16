@@ -135,7 +135,7 @@
 [keyboard/bind! key-f9    [keyboard/once [λ [] [draw-boundaries! [wrap-value [+ 1 [draw-boundaries]] 0 3]]]]]
 [keyboard/bind! key-f10   [keyboard/once [λ [] [wire-frame! [not [wire-frame?]]]]]]
 [keyboard/bind! key-print [keyboard/once [λ [] [screenshot]]]]
-;[keyboard/bind! key-tab   [keyboard/once [λ [] [toggle-inventory!]]]]
+[keyboard/bind! key-tab   [keyboard/once [λ [] [inventory/toggle!]]]]
 [keyboard/bind! key-t     [keyboard/once-up [λ [] [chat/toggle!]]]]
 [keyboard/bind! key-comma [keyboard/once-up [λ [] [say "TEST"] [etest]]]]
 
