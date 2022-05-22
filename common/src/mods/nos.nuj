@@ -1,0 +1,9 @@
+[def <item> [defobject #nil]]
+[defproperty <item> :name "Unknown item"]
+[defproperty <item> :entity #nil]
+
+[defun entity/bind-to-object [o ent]
+  [entity/handler! ent [\ msg
+                        [try display/error
+                             [nos/funcall*/try o [car msg] [cons o [cdr msg]]]]]]
+  o]

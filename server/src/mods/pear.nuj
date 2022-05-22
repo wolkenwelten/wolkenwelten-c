@@ -2,28 +2,34 @@
        [explode! pos pow 0]
        [message/send -1 [list :effect/explosion pos pow]]]
 
-[defun pear/collision-handler [ent]
-       [explode [entity/pos ent] 5]
-       [entity/delete ent]]
+[def <pear> [defobject <item>]]
+[defproperty <pear> :name "Unknown Pear"]
+[defproperty <pear> :power 3]
+[defmethod <pear> :collision []
+  [def ent [tree/get this :ent]]
+  [explode [entity/pos ent] [tree/get this :power]]
+  [entity/delete ent]]
 
-[defun pear/new! [pos rot]
-       [def ent [-> [entity/new*]
-                    [entity/pos! pos]
-                    [entity/rotation! [- rot]]
-                    [entity/velocity! [* [vec/rot->vel rot] [vec 0.2]]]
-                    [entity/flags! 0]
-                    [entity/handler! [\ [t v]
-                                        [case t
-                                          [:collision [pear/collision-handler ent]]
-                                          [otherwise [say [cat [ansi-yellow "Unknown event: "] t]]]]]]
-                    ]]
-       [yield [timeout 1500]
-              [\ []
-               [try car
-                    [explode [entity/pos ent] 5]
-                    [entity/delete ent]]]]
-]
+[defmethod <pear> :shoot [pos rot]
+  [tree/set! this :ent [-> [entity/new*]
+                           [entity/pos! pos]
+                           [entity/rotation! [- rot]]
+                           [entity/velocity! [* [vec/rot->vel rot] [vec 0.2]]]
+                           [entity/flags! 0]]]
+  [entity/bind-to-object this [tree/get this :ent]]]
+
+[def <mega-pear> [defobject <pear>]]
+[defproperty <mega-pear> :power 7]
+
+[defun pear/new! [class pos rot]
+  [_ [defobject class] :shoot pos rot]]
 
 [defhandler :pear-shoot [sender msg]
-  [pear/new! [eval [cadr msg]]
+  [pear/new! <pear>
+             [eval [cadr msg]]
+             [eval [caddr msg]]]]
+
+[defhandler :mega-pear-shoot [sender msg]
+  [pear/new! <mega-pear>
+             [eval [cadr msg]]
              [eval [caddr msg]]]]

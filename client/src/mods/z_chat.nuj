@@ -52,7 +52,7 @@
 [defun chat/init/gui []
        [set! chat/widget/input-panel [widget [:panel :height 0 :width 768 :val 4 :y -1]]]
        [set! chat/widget/input-field [widget [:text-input :parent chat/widget/input-panel :height -1 :width -1 :on-blur chat/fade-out :on-submit chat/gui/submit-handler]]]
-       [set! chat/widget/panel [widget [:panel :no-background :height 0 :width 768 :y 1 :val 8]]]]
+       [set! chat/widget/panel [widget [:panel :no-background :height 0 :width 768 :y -1 :val 8]]]]
 
 [defhandler :chat-message [sender msg]
        [chat/gui/append [cadr msg]]]

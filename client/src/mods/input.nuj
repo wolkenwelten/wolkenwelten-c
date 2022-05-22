@@ -28,9 +28,11 @@
        [set! input/primary-did #t]]
 
 [defun player-secondary! []
-       "Make the player do a secondary action"
-       [player-place-block! inventory/selection]
-       [set! input/secondary-did #t]]
+  "Make the player do a secondary action"
+  [if player/pear-shooter-active
+      [pear/shoot! #t]
+      [player-place-block! inventory/selection]]
+  [set! input/secondary-did #t]]
 
 [defun player-tertiary! []
        "Make the player do a tertiary action"
