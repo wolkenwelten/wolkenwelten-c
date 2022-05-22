@@ -33,7 +33,7 @@ This mod should allow a player to immediatly remove a block from the world as a 
 This mod should give a player the ability to freely choose from all blocktypes currently known
 to the game and place them via a right-click.
 
-## [MOD] - Blockchooser
+## [MOD] - Blockchooser - DONE!
 This mod should provide a simple window when pressing the inventory key and show a nice grid
 of all known blocks.
 
@@ -66,7 +66,7 @@ Weather and Clouds need to be controlled via Nujel since they don't make sense f
 ## [MOD] - Static chunks
 A worldgen mod that just inserts a static chunk whenever it is called. Should allow for a sort of copy/pasting of blockdata.
 
-### [C] - Grappling Hook
+### [C] - Grappling Hook - DONE!
 Grappling hook must be controlled from within Nujel
 
 ### [C] - Glider

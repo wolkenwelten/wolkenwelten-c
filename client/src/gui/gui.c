@@ -98,13 +98,11 @@ void handlerRootHud(widget *wid){
 void showMouseCursor(){
 	if(!mouseHidden){return;}
 	setRelativeMouseMode(mouseHidden = false);
-	warpMouse(mousex,mousey);
 }
 
 void hideMouseCursor(){
 	if(mouseHidden){return;}
 	setRelativeMouseMode(mouseHidden = true);
-	warpMouse(screenWidth/2,screenHeight/2);
 }
 
 void closeAllMenus(){
@@ -490,11 +488,13 @@ void renderUI(){
 
 	shaderBind(sTextMesh);
 	shaderMatrix(sTextMesh,matOrthoProj);
+
 	if(widgetFocused && (widgetFocused->type == wGameScreen)){
 		hideMouseCursor();
 	}else{
 		showMouseCursor();
 	}
+
 	drawHud();
 	drawCrosshair();
 	updateMouse();

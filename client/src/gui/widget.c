@@ -220,7 +220,6 @@ void widgetChildPre(widget *parent, widget *child){
 }
 
 void widgetFocus(widget *w){
-	if(w == widgetFocused){return;}
 	widgetFocused = w;
 }
 

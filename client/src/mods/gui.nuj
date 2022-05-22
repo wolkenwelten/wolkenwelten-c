@@ -73,6 +73,9 @@
        [widget/center-x! w]
        [widget/center-y! w]]
 
+[defun widget/delete! [wid]
+  [widget/parent! wid #nil]]
+
 [defun widget/set-flag! [w flag]
   [widget/flags! w [logior [widget/flags w] flag]]]
 
@@ -135,14 +138,14 @@
   [widget/parse [car args]]]
 
 [defun popup [headline bodytext]
-  [widget [:panel :width 640 :height 400 :val 8 :center
+  [def panel [widget [:panel :width 640 :height 400 :val 8 :center
                   [:label :big :parent panel :width -1 :height 80 :label headline]
                   [:label :y 56 :width -1 :height -88 :label bodytext]
                   [:button :width 64 :height 32 :x [- [/ 640 2] [/ 56 2]] :y -1 :label "OK" :focussed
                            :on-click [λ [w event-name]
                                        [say ["Event handler fired for " [ansi-red event-name] " on " [str/write w]]]
-                                       [widget/parent! panel #nil]
-                                       [widget/focus! w-game-screen]]]]]]
+                                       [widget/delete! panel]
+                                       [widget/focus! w-game-screen]]]]]]]
 
 [defun pop []
   [popup "Test popup" [cat "This is just a short "

@@ -84,11 +84,11 @@ static void initSDLMixer(){
 #ifdef __EMSCRIPTEN__
 
 EM_JS(int, emGetWindowWidth, (), {
-  return window.innerWidth;
+	return window.innerWidth;
 });
 
 EM_JS(int, emGetWindowHeight, (), {
-  return window.innerHeight;
+	return window.innerHeight;
 });
 
 #endif
@@ -183,10 +183,10 @@ void initSDL(){
 void setFullscreen(bool fs){
 	if(fs){
 		SDL_SetWindowFullscreen(gWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
-	}else{
+	} else {
 		SDL_SetWindowFullscreen(gWindow,0);
 		SDL_SetWindowSize(gWindow,800,600);
-		SDL_SetWindowPosition(gWindow,SDL_WINDOWPOS_CENTERED ,SDL_WINDOWPOS_CENTERED);
+		SDL_SetWindowPosition(gWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	}
 	optionFullscreen = fs;
 }
@@ -222,7 +222,7 @@ void sdlResize(int newW,int newH){
 	if((newW == screenWidth) && (newH == screenHeight)){return;}
 	screenWidth  = newW;
 	screenHeight = newH;
-	SDL_SetWindowSize(gWindow,screenWidth,screenHeight);
+	SDL_SetWindowSize(gWindow, screenWidth, screenHeight);
 
 	initGL();
 	resizeUI();
@@ -236,7 +236,7 @@ void setWindowed(int width, int height, int x, int y){
 		setFullscreen(false);
 		SDL_SetWindowPosition(gWindow,x,y);
 		sdlResize(width,height);
-	}else{
+	} else {
 		optionFullscreen   = false;
 		optionWindowWidth  = width;
 		optionWindowHeight = height;;
@@ -254,12 +254,12 @@ void closeSDL(){
 
 int getWindowX(){
 	int x,y;
-	SDL_GetWindowPosition(gWindow,&x,&y);
+	SDL_GetWindowPosition(gWindow, &x, &y);
 	return x;
 }
 int getWindowY(){
 	int x,y;
-	SDL_GetWindowPosition(gWindow,&x,&y);
+	SDL_GetWindowPosition(gWindow, &x, &y);
 	return y;
 }
 
@@ -268,7 +268,7 @@ void swapWindow(){
 }
 
 void warpMouse(int mx,int my){
-	SDL_WarpMouseInWindow(gWindow,mx,my);
+	SDL_WarpMouseInWindow(gWindow, mx, my);
 }
 
 void setRelativeMouseMode(bool ra){
@@ -276,7 +276,7 @@ void setRelativeMouseMode(bool ra){
 }
 
 uint getMouseState(int *mx, int *my){
-	return SDL_GetMouseState(mx,my);
+	return SDL_GetMouseState(mx, my);
 }
 
 uint getTicks(){
