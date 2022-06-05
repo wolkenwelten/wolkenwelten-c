@@ -159,6 +159,10 @@
       [hook/pull-in!]
       [player-jump! 1.0]]]
 
+[defun player-crouch! []
+  [when hook/rope
+    [hook/extend!]]]
+
 [defun input-keyboard-tick []
   "Keyboard input handler"
   [try display/error
@@ -169,6 +173,7 @@
          [when [input-keyboard-state key-d]     [player-strafe!  1.0]]
          [when [input-keyboard-state key-space] [player-jump-hook!]]
          [when [input-keyboard-state key-r]     [player-tertiary!]]
+         [when [input-keyboard-state key-v]     [player-crouch!]]
          [player-sneak! [input-keyboard-state key-v]]
          [player-boost! [input-keyboard-state key-lshift]]]]]
 

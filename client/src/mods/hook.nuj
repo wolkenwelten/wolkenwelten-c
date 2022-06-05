@@ -1,13 +1,26 @@
 [def hook/shot/timeout 0]
 [def hook/rope #nil]
 [def hook/ropes [array/allocate 32]]
+[def hook/max-length 96.0]
+[def hook/min-length  2.0]
+[def hook/winch-speed 0.2]
+
+[defun hook/valid? []
+  [if [rope/valid? hook/rope]
+      #t
+      [do [player/dont-move! #f]
+          [set! hook/rope #nil]
+          #f]]]
+
+[defun hook/extend! []
+  [when [hook/valid?]
+    [rope/length! hook/rope [min [+ [rope/length hook/rope] hook/winch-speed]
+                                 hook/max-length]]]]
 
 [defun hook/pull-in! []
-  [if [rope/valid? hook/rope]
-      [do [def new-length [max [- [rope/length hook/rope] 0.4] 2.0]]
-          [rope/length! hook/rope new-length]]
-      [do [player/dont-move! #f]
-          [set! hook/rope #nil]]]]
+  [when [hook/valid?]
+    [rope/length! hook/rope [max [- [rope/length hook/rope] hook/winch-speed]
+                                 hook/min-length]]]]
 
 [defun hook/shoot! []
   [player/close-glider!]
@@ -28,10 +41,8 @@
 [defun hook/tick []
   [try display/error
        [and hook/rope
-            [or [rope/valid? hook/rope]
-                [player/dont-move! #f]
-                [set! hook/rope #nil]]
-            [> [rope/distance hook/rope] 96.0]
+            [hook/valid?]
+            [> [rope/distance hook/rope] hook/max-length]
             [message/send 0 [list :hook-clear]]
             [do [player/dont-move! #f]
                 [set! hook/rope #nil]]]]]
@@ -39,7 +50,7 @@
 [defhandler :hook-hit [client-id msg]
             [when hook/rope
               [player/dont-move! #t]
-              [rope/length! hook/rope [+ 8 [rope/distance hook/rope]]]]]
+              [rope/length! hook/rope [min hook/max-length [+ 8 [rope/distance hook/rope]]]]]]
 
 [defhandler :hook-clear [client-id msg]
             [player/dont-move! #f]
