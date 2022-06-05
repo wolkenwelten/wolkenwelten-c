@@ -108,3 +108,10 @@
 
 [defun player/close-glider! []
   [player-flags! [logand [player-flags] [lognot 32]]]]
+
+[def player-flag-dont-move [ash 1 13]]
+
+[defun player/dont-move! [v]
+  [if v
+      [player-flags! [logior [player-flags] player-flag-dont-move]]
+      [player-flags! [logand [player-flags] [lognot player-flag-dont-move]]]]]

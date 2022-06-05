@@ -114,8 +114,8 @@ static void ropeUpdate(rope *r){
 	const float bw = beingGetWeight(r->b);
 	const float w  = aw+bw;
 
-	const float bm = MAX(0.01f,MIN(1.f,aw / w));
-	const float am = MAX(0.01f,MIN(1.f,bw / w));
+	float bm = MAX(0.01f,MIN(1.f,aw / w));
+	float am = MAX(0.01f,MIN(1.f,bw / w));
 
 	ropePullTowards(r->b,r->a,r->length,am);
 	ropePullTowards(r->a,r->b,r->length,bm);

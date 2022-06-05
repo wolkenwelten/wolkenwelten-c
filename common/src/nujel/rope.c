@@ -17,6 +17,7 @@
 #include "entity.h"
 #include "nujel.h"
 #include "../game/being.h"
+#include "../game/entity.h"
 #include "../game/rope.h"
 #include "../../nujel/lib/type-system.h"
 
@@ -97,6 +98,30 @@ static lVal *lRopeValidP(lClosure *c, lVal *v){
 	return lValBool(r->a && r->b);
 }
 
+static lVal *lRopeGetA(lClosure *c, lVal *v){
+	rope *r = requireRope(c, lCar(v));
+	if(r == NULL){
+		lExceptionThrowValClo("invalid-reference", "Can't find a rope for:", lCar(v), c);
+	}
+	if(beingType(r->a) != bkEntity){
+		lExceptionThrowValClo("invalid-reference", "Can only return entities, no other beings for now", lCar(v), c);
+	}
+	const i64 ID = entityID(entityGetByBeing(r->a));
+	return lValInt(ID);
+}
+
+static lVal *lRopeGetB(lClosure *c, lVal *v){
+	rope *r = requireRope(c, lCar(v));
+	if(r == NULL){
+		lExceptionThrowValClo("invalid-reference", "Can't find a rope for:", lCar(v), c);
+	}
+	if(beingType(r->b) != bkEntity){
+		lExceptionThrowValClo("invalid-reference", "Can only return entities, no other beings for now", lCar(v), c);
+	}
+	const i64 ID = entityID(entityGetByBeing(r->b));
+	return lValInt(ID);
+}
+
 void lOperatorsRope(lClosure *c){
 	lAddNativeFunc(c, "rope/new*",     "[a b]",         "Create a new rope connecting beings A and B", lRopeNew);
 	lAddNativeFunc(c, "rope/valid?",   "[rope]",        "Returns #t if ROPE is valid", lRopeValidP);
@@ -105,4 +130,6 @@ void lOperatorsRope(lClosure *c){
 	lAddNativeFunc(c, "rope/length!",  "[rope length]", "Set the length of ROPE to LENGTH", lRopeLengthSet);
 	lAddNativeFunc(c, "rope/flags",    "[rope]",        "Get the flags of ROPE", lRopeFlagsGet);
 	lAddNativeFunc(c, "rope/flags!",   "[rope flags]",  "Set the flags of ROPE", lRopeFlagsSet);
+	lAddNativeFunc(c, "rope/a",        "[rope]",        "Get the first being connected by ROPE", lRopeGetA);
+	lAddNativeFunc(c, "rope/b",        "[rope]",        "Get the second being connected by ROPE", lRopeGetB);
 }

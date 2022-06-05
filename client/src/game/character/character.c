@@ -407,6 +407,11 @@ void characterUpdate(character *c){
 	uint col = characterCollision(c->pos);
 
 	if(c->flags & CHAR_FALLING){ walkFactor = 0.2f; }
+	if(c->flags & CHAR_DONT_MOVE){
+		if(vecAbsSum(c->gvel) < 0.0001f){
+			walkFactor = 0.f;
+		}
+	}
 	if(c->gvel.x < nvel.x){
 		if((col&0x3110) == 0){
 			nvel.x -= 0.05f * (nvel.x - c->gvel.x) * walkFactor;
@@ -436,6 +441,14 @@ void characterUpdate(character *c){
 				nvel.z = c->gvel.z;
 			}
 		}
+	}
+	if(c->flags & CHAR_DONT_MOVE){
+		if(fabsf(c->gvel.x) < 0.001)                 {nvel.x=c->vel.x;}
+		if(fabsf(c->gvel.z) < 0.001)                 {nvel.z=c->vel.z;}
+		if((c->gvel.x < -0.001)&&(nvel.x > c->vel.x)){nvel.x=c->vel.x;}
+		if((c->gvel.x >  0.001)&&(nvel.x < c->vel.x)){nvel.x=c->vel.x;}
+		if((c->gvel.z < -0.001)&&(nvel.z > c->vel.z)){nvel.z=c->vel.z;}
+		if((c->gvel.z >  0.001)&&(nvel.z < c->vel.z)){nvel.z=c->vel.z;}
 	}
 	if(characterUpdateJumping(c)){
 		nvel.y = 0.055f;

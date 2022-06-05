@@ -127,6 +127,7 @@ typedef struct {
 #define CHAR_THROW_AIM    (1<<10)
 #define CHAR_CONS_MODE    (1<<11)
 #define CHAR_JUMP_NEXT    (1<<12)
+#define CHAR_DONT_MOVE    (1<<13)
 
 typedef enum animType {
 	animationHit = 0,

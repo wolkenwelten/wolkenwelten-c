@@ -6,7 +6,8 @@
   [if [rope/valid? hook/rope]
       [do [def new-length [max [- [rope/length hook/rope] 0.4] 2.0]]
           [rope/length! hook/rope new-length]]
-      [set! hook/rope #nil]]]
+      [do [player/dont-move! #f]
+          [set! hook/rope #nil]]]]
 
 [defun hook/shoot! []
   [player/close-glider!]
@@ -27,13 +28,19 @@
 [defun hook/tick []
   [try display/error
        [and hook/rope
+            [or [rope/valid? hook/rope]
+                [player/dont-move! #f]
+                [set! hook/rope #nil]]
             [> [rope/distance hook/rope] 96.0]
             [message/send 0 [list :hook-clear]]
-            [set! hook/rope #nil]]]]
+            [do [player/dont-move! #f]
+                [set! hook/rope #nil]]]]]
 
 [defhandler :hook-hit [client-id msg]
-  [when hook/rope
-    [rope/length! hook/rope [+ 8 [rope/distance hook/rope]]]]]
+            [when hook/rope
+              [player/dont-move! #t]
+              [rope/length! hook/rope [+ 8 [rope/distance hook/rope]]]]]
 
 [defhandler :hook-clear [client-id msg]
-  [array/set! hook/ropes [cadr msg] #nil]]
+            [player/dont-move! #f]
+            [array/set! hook/ropes [cadr msg] #nil]]
