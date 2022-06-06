@@ -1,6 +1,29 @@
-[def <item> [defobject #nil]]
+[defobject <item> #nil]
 [defproperty <item> :name "Unknown item"]
 [defproperty <item> :entity #nil]
+[defmethod <item> :serialize []
+           [str/write [-> [tree/dup this]
+                          [tree/set! :classname [list quote [tree/get this :classname]]]
+                          [tree/set! :parent '<item>]]]]
+
+[defmethod <item> :gui-sprite [] 258]
+[defmethod <item> :gui-count [] 44]
+
+
+[defun nos/deserialize [v]
+  [eval [read/single v]]]
+
+[defobject <grenade> <item>]
+[defproperty <grenade> :power 3]
+[defmethod <grenade> :gui-sprite []
+           256]
+[defmethod <grenade> :collision []
+           [def ent [tree/get this :entity]]
+           [explode [entity/pos ent] [tree/get this :power]]
+           [entity/delete ent]]
+
+[defobject <bomb> <grenade>]
+[defmethod <bomb> :gui-sprite [] 257]
 
 [defun entity/bind-to-object [o ent]
   [entity/handler! ent [\ msg

@@ -2,27 +2,27 @@
        [explode! pos pow 0]
        [message/send -1 [list :effect/explosion pos pow]]]
 
-[def <pear> [defobject <item>]]
+[defobject <pear> <item>]
 [defproperty <pear> :name "Unknown Pear"]
 [defproperty <pear> :power 3]
 [defmethod <pear> :collision []
-  [def ent [tree/get this :ent]]
+  [def ent [tree/get this :entity]]
   [explode [entity/pos ent] [tree/get this :power]]
   [entity/delete ent]]
 
 [defmethod <pear> :shoot [pos rot]
-  [tree/set! this :ent [-> [entity/new*]
-                           [entity/pos! pos]
-                           [entity/rotation! [- rot]]
-                           [entity/velocity! [* [vec/rot->vel rot] [vec 0.2]]]
-                           [entity/flags! 0]]]
-  [entity/bind-to-object this [tree/get this :ent]]]
+  [tree/set! this :entity [-> [entity/new*]
+                              [entity/pos! pos]
+                              [entity/rotation! [- rot]]
+                              [entity/velocity! [* [vec/rot->vel rot] [vec 0.2]]]
+                              [entity/flags! 0]]]
+  [entity/bind-to-object this [tree/get this :entity]]]
 
-[def <mega-pear> [defobject <pear>]]
+[defobject <mega-pear> <pear>]
 [defproperty <mega-pear> :power 7]
 
 [defun pear/new! [class pos rot]
-  [_ [defobject class] :shoot pos rot]]
+  [_ [make-instance #nil class] :shoot pos rot]]
 
 [defhandler :pear-shoot [sender msg]
   [pear/new! <pear>
