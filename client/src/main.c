@@ -1,4 +1,4 @@
- /*
+/*
  * Wolkenwelten - Copyright (C) 2020- 2021 - Benjamin Vincent Schulenburg
  *
  * This program is free software: you can redistribute it and/or modify
