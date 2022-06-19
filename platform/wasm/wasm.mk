@@ -18,7 +18,7 @@ $(SERVER_WASM_OBJS): | common/src/tmp/cto.c
 $(SERVER_WASM_OBJS): | common/src/tmp/assets.h
 
 %.wo: %.c
-	$(EMCC) -c $< $(EMLIBS) -D_GNU_SOURCE $(CSTD) -O3 -fno-rtti -o $@ -MMD
+	$(EMCC) -c $< $(EMLIBS) -D_GNU_SOURCE $(CSTD) -O2 -g -o $@ -MMD
 
 all: wolkenwelten
 
@@ -36,11 +36,11 @@ common/nujel/nujel.wa:
 
 releases/wasm/index.html: $(CLIENT_WASM_OBJS) $(COMMON_WASM_OBJS) common/nujel/nujel.wa
 	@mkdir -p releases/wasm/
-	$(EMCC) $^ -D_GNU_SOURCE $(CSTD) -O3 -fno-rtti --closure 0 -s MINIFY_HTML=0 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 -s MAX_WEBGL_VERSION=2 $(CLIENT_EMMEM) $(EMLIBS) --shell-file platform/wasm/shell.html -o $@
+	$(EMCC) $^ -D_GNU_SOURCE $(CSTD) -O2 -g --closure 0 -s MINIFY_HTML=0 -s OFFSCREEN_FRAMEBUFFER=1 -s OFFSCREENCANVAS_SUPPORT=1 -s MAX_WEBGL_VERSION=2 $(CLIENT_EMMEM) $(EMLIBS) --shell-file platform/wasm/shell.html -o $@
 
 releases/wasm/server.js: $(SERVER_WASM_OBJS) $(COMMON_WASM_OBJS) $(NUJEL_WASM_OBJS) common/nujel/nujel.wa
 	@mkdir -p releases/wasm/
-	$(EMCC) $^ -D_GNU_SOURCE $(CSTD) -O3 -s BUILD_AS_WORKER=1 -s EXPORTED_FUNCTIONS="['_wasmInit','_wasmTranceive']" -fno-rtti --closure 0 $(SERVER_EMMEM) -o releases/wasm/server.js
+	$(EMCC) $^ -D_GNU_SOURCE $(CSTD) -O2 -g -s BUILD_AS_WORKER=1 -s EXPORTED_FUNCTIONS="['_wasmInit','_wasmTranceive']" -fno-rtti --closure 0 $(SERVER_EMMEM) -o releases/wasm/server.js
 
 releases/wasm/manifest.json: platform/wasm/manifest.json
 	@mkdir -p releases/wasm/

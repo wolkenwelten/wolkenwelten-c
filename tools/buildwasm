@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-EMSDK_TESTED_VERSION="3.0.0"
+EMSDK_TESTED_VERSION="3.1.13"
 EMSDK_REPO_URL="https://github.com/emscripten-core/emsdk.git"
 
 cd "$( dirname "${BASH_SOURCE[0]}" )" && cd ..
@@ -15,4 +15,4 @@ git pull
 cd "$DIR"
 
 source "platform/wasm/emsdk/emsdk_env.sh"
-make -j16 release.wasm
+make -j release.wasm
