@@ -22,7 +22,7 @@
 [defproperty <mega-pear> :power 7]
 
 [defun pear/new! [class pos rot]
-  [_ [make-instance #nil class] :shoot pos rot]]
+  [_ [make-instance class] :shoot pos rot]]
 
 [defhandler :pear-shoot [sender msg]
   [pear/new! <pear>
