@@ -12,6 +12,7 @@
     [def item [array/ref inventory i]]
     [when item
       [say "Found an item!"]
+      [say [str/write item]]
       [widget/val! [array/ref inventory/panel/widget/slots i]
                    [_ item :gui-sprite]]]]]
 

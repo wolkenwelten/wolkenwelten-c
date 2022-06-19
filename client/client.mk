@@ -33,7 +33,7 @@ $(CLIENT_OBJS_EXCL): | common/src/tmp/cto.c
 $(CLIENT_OBJS):      | client/src/tmp/objs.h
 $(CLIENT_OBJS):      | client/src/tmp/sfx.h
 
-$(WOLKENWELTEN): $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
+$(WOLKENWELTEN): $(CLIENT_OBJS) $(ASM_OBJS) $(CLIENT_TMP_OBJS) common/nujel/nujel.a
 	@$(CC) $^ -g -o $@ $(OPTIMIZATION) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_CINCLUDES) $(CINCLUDES) $(CLIENT_LIBS) $(CSTD)
 	@echo "$(ANSI_BG_GREEN)" "[LD] " "$(ANSI_RESET)" $@
 

@@ -41,6 +41,7 @@ common/nujel/nujel.a: $(NUJEL)
 	@$(CC) $(OPTIMIZATION) $(WARNINGS) $(CSTD) $(CFLAGS) $(CINCLUDES) $(if $(findstring client/, $<),$(CLIENT_CFLAGS) $(CLIENT_CINCLUDES),) -g -c $< -o $@ -MMD > ${<:.c=.d} -msse4.1
 	@echo "$(ANSI_GREEN)" "[CC] " "$(ANSI_RESET)" $@
 
+.PHONY: common/nujel/nujel.a
 common/nujel/nujel.a:
 	@$(MAKE) --no-print-directory -C common/nujel nujel.a
 
