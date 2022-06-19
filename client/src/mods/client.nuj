@@ -115,3 +115,17 @@
   [if v
       [player-flags! [logior [player-flags] player-flag-dont-move]]
       [player-flags! [logand [player-flags] [lognot player-flag-dont-move]]]]]
+
+[defun client/selection []
+  [cond [blockchooser/active blockchooser/selection]
+        [#t blockchooser/selection]]]
+
+[defun client/select! [sel]
+  [cond [blockchooser/active [blockchooser/select! sel]]
+        [#t [inventory/select! sel]]]]
+
+[defun client/select-next! []
+  [client/select! [+ [client/selection] 1]]]
+
+[defun client/select-prev! []
+  [client/select! [- [client/selection] 1]]]

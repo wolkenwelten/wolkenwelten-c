@@ -10,8 +10,6 @@
 [def did-throw #f]
 [def throw-start 0]
 
-[def player/pear-shooter-active #t]
-
 [defun player-blockbreak! []
        [when [zero? input/primary-did-count]
              [def p [player-raycast #f]]
@@ -22,23 +20,23 @@
        "Make the player do a primary action"
        [if [cons-mode?]
            [player-blockbreak! input/primary-did-count]
-           [if player/pear-shooter-active
-               [pear/shoot!]
-               [player-do-primary! input/primary-did-count]]]
+           [if blockchooser/active
+               [player-do-primary! input/primary-did-count]
+               [pear/shoot!]]]
        [set! input/primary-did #t]]
 
 [defun player-secondary! []
   "Make the player do a secondary action"
-  [if player/pear-shooter-active
-      [pear/shoot! #t]
-      [player-place-block! inventory/selection]]
+  [if blockchooser/active
+      [blockchooser/place!]
+      [pear/shoot! #t]]
   [set! input/secondary-did #t]]
 
 [defun player-tertiary! []
        "Make the player do a tertiary action"
        [when [zero? input/tertiary-did-count]
-             [set! player/pear-shooter-active [not player/pear-shooter-active]]
-             [inventory/refresh]]
+             [set! blockchooser/active [not blockchooser/active]]
+             [blockchooser/refresh]]
        #;[item-tertiary! 0 input/tertiary-did-count]
        [set! input/tertiary-did #t]]
 

@@ -45,6 +45,10 @@ void widgetDrawButton(const widget *wid, textMesh *m, box2D area){
 	}else if(wid->flags & WIDGET_HOVER){
 		color = 0xFF444444;
 	}
+	if(wid->flags & WIDGET_OUTLINED){
+		tcolor = 0xFFBB7733;
+		bcolor = 0xFF994411;
+	}
 
 	textMeshVGradient(m,area.x+1,area.y+1,area.w-2,area.h-2, color,bcolor);
 	textMeshSolidBox (m,area.x+1,area.y  ,area.w-2,  1,tcolor);

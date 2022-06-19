@@ -30,6 +30,10 @@ void widgetDrawPanel(const widget *wid, textMesh *m, box2D area){
 
 	u32 tcolor   = 0xFF777777;
 	u32 bcolor   = 0xFF333333;
+	if(wid->flags & WIDGET_OUTLINED){
+		tcolor = 0xFFBB7733;
+		bcolor = 0xFF994411;
+	}
 	textMeshSolidBox (m,x+1,y  ,w-2,  1,tcolor);
 	textMeshSolidBox (m,x  ,y+1,  1,h-2,tcolor);
 	textMeshSolidBox (m,x+1,y+h-1,w-2,  1,bcolor);

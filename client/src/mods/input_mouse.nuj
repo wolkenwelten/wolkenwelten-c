@@ -19,8 +19,8 @@
         [array/set! input-mouse-handler 5 [λ [code value]
                 [when [widget-focus-on-game?]
                       [if [> value 0]
-                          [inventory/select-prev!]
-                          [inventory/select-next!]]]]]
+                          [client/select-prev!]
+                          [client/select-next!]]]]]
 ]
 
 [defun input-mouse-event [status scancode]

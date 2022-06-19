@@ -1,5 +1,5 @@
 [def inventory/selection 3]
-[def inventory [array/allocate 8]]
+[def inventory [array/allocate 10]]
 [def inventory/tile-size 64]
 [def inventory/panel/widget #nil]
 [def inventory/panel/widget/slots [array/allocate 8]]
@@ -10,32 +10,37 @@
 [defun inventory/panel/update! []
   [for [i 0 [array/length inventory]]
     [def item [array/ref inventory i]]
+    [def slot [array/ref inventory/panel/widget/slots i]]
+
+    [widget/outline! [widget/parent slot] [== i inventory/selection]]
+
     [when item
-      [say "Found an item!"]
-      [say [str/write item]]
-      [widget/val! [array/ref inventory/panel/widget/slots i]
-                   [_ item :gui-sprite]]]]]
+      [widget/val! slot [_ item :gui-sprite]]]]]
 
 [defun inventory/panel/init! []
-  [set! inventory/panel/widget [widget [:panel :width [* [array/length inventory] inventory/tile-size]
-                                               :height inventory/tile-size
-                                               :x -129
-                                               :y -1
-                                               :val 0]]]
+  [set! inventory/panel/widget [widget [ :panel
+                                         :width [* [array/length inventory] inventory/tile-size]
+                                         :height inventory/tile-size
+                                         :x -129
+                                         :y -1
+                                         :val 0]]]
   [array/length! inventory/panel/widget/slots [array/length inventory]]
   [for [i 0 [array/length inventory]]
-    [def slot [widget [:button :parent inventory/panel/widget
-                               :x [* i 64]
-                               :y 0
-                               :width 64
-                               :height 64]]]
+    [def slot [widget [ :button
+                        :parent inventory/panel/widget
+                        :x [* i 64]
+                        :y 0
+                        :width 64
+                        :height 64]]]
+
     [array/set! inventory/panel/widget/slots i
-                [widget [:sprite :parent slot
-                         :x 0
-                         :y 0
-                         :width -1
-                         :height -1
-                         :val 0]]]]
+                [widget [ :sprite
+                          :parent slot
+                          :x 0
+                          :y 0
+                          :width -1
+                          :height -1
+                          :val 0]]]]
   [inventory/panel/update!]]
 
 [defun inventory/toggle! []
@@ -44,15 +49,23 @@
 
 [defun inventory/select! [sel]
   "Selects the next item from a players inventory"
-  [blockchooser/select! sel]]
+  [when [widget-focus-on-game?]
+    [set! inventory/selection sel]
+    [when [>= inventory/selection [array/length inventory]]
+      [set! inventory/selection 0]]
+    [when [< inventory/selection 0]
+      [set! inventory/selection [- [block/count] 1]]]
+    [inventory/panel/update!]]]
 
 [defun inventory/select-next! []
   "Selects the next item from a players inventory"
-  [blockchooser/select-next!]]
+  [inventory/select! [+ inventory/selection 1]]
+  [inventory/panel/update!]]
 
 [defun inventory/select-prev! []
   "Selects the previous item from a players inventory"
-  [blockchooser/select-prev!]]
+  [inventory/select! [- inventory/selection 1]]
+  [inventory/panel/update!]]
 
 [defun inventory/refresh []
   [blockchooser/refresh]]

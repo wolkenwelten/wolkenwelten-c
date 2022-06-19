@@ -1,3 +1,5 @@
+[def blockchooser/active #f]
+[def blockchooser/selection 2]
 [def blockchooser/w/panel #nil]
 [def blockchooser/w/label #nil]
 [def blockchooser/w/sprite #nil]
@@ -5,11 +7,12 @@
 
 [defun blockchooser/refresh []
   [when-not blockchooser/w/panel [blockchooser/w/init!]]
-  [widget/val/int! blockchooser/w/sprite inventory/selection]
-  [def name [block/name inventory/selection]]
+  [def cur-block blockchooser/selection]
+  [widget/val/int! blockchooser/w/sprite cur-block]
+  [def name [block/name cur-block]]
   [widget/label! blockchooser/w/label [fmt "{name}"]]
-  [cons-mode/block! inventory/selection]
-  [when player/pear-shooter-active
+  [cons-mode/block! cur-block]
+  [when-not blockchooser/active
     [widget/label! blockchooser/w/label [fmt "Pears"]]
     [widget/val/int! blockchooser/w/sprite 258]]]
 
@@ -20,27 +23,44 @@
 
 [defun blockchooser/show! []
   [def h [+ 64 16 [* [/ [block/count] 8] 72]]]
-  [set! blockchooser/w/popup [widget [:panel :width 584 :height h :val 8 :center
-                                             [:label :label "Block chooser" :big :width -1 :height 64]]]]
-  [def hover-info [widget [:label :parent blockchooser/w/popup :y 40 :width -1 :height 32]]]
+  [set! blockchooser/w/popup [widget [ :panel
+                                       :width 584
+                                       :height h
+                                       :val 8
+                                       :center
+                                       [ :label
+                                         :label "Block chooser"
+                                         :big
+                                         :width -1
+                                         :height 64]]]]
+  [def hover-info [widget [ :label
+                            :parent blockchooser/w/popup
+                            :y 40
+                            :width -1
+                            :height 32]]]
   [for [x 0 8]
        [for [y 0 8]
             [let [[i [+ x [* 8 y]]]]
               [when [and [> i 0] [< i [block/count]]]
-                [widget [:button :parent blockchooser/w/popup
-                                 :x [* x 72]
-                                 :y [+ 64 [* y 72]]
-                                 :width 64
-                                 :height 64
-                                 :focussed
-                                 [:sprite :x 4 :y 4 :width -9 :height -9 :val i]
-                                 :on-hover [\ []
-                                            [widget/label! hover-info [block/name i]]]
-                                 :on-click [\ []
-                                            [set! player/pear-shooter-active #f]
-                                            [set! inventory/selection i]
-                                            [blockchooser/refresh]
-                                            ]]]]]]]]
+                [widget [ :button
+                          :parent blockchooser/w/popup
+                          :x [* x 72]
+                          :y [+ 64 [* y 72]]
+                          :width 64
+                          :height 64
+                          :focussed
+                          [ :sprite
+                            :x 4
+                            :y 4
+                            :width -9
+                            :height -9
+                            :val i]
+                          :on-hover [\ []
+                                     [widget/label! hover-info [block/name i]]]
+                          :on-click [\ []
+                                     [set! player/pear-shooter-active #f]
+                                     [set! blockchooser/selection [- i 1]]
+                                     [blockchooser/refresh]]]]]]]]]
 
 [defun blockchooser/toggle! []
   "Toggle the visibility of the inventory popup"
@@ -51,26 +71,29 @@
 [defun blockchooser/w/init! []
   [set! blockchooser/w/panel [widget [:panel :width 128 :height 128 :val 8 :x -1 :y -1]]]
   [set! blockchooser/w/label [widget [:label :parent blockchooser/w/panel :width -1 :height 48 :label "Test"]]]
-  [set! blockchooser/w/sprite [widget [:sprite :parent blockchooser/w/panel :x 26 :y 32 :width 64 :height 64 :val inventory/selection]]]
+  [set! blockchooser/w/sprite [widget [:sprite :parent blockchooser/w/panel :x 26 :y 32 :width 64 :height 64 :val [- blockchooser/selection 1]]]]
   [widget/bind w-game-screen "focus" blockchooser/hide!]
   [blockchooser/refresh]]
 
 [defun blockchooser/select! [sel]
-       "Selects the next item from a players inventory"
+       "Select a particular block"
        [when [widget-focus-on-game?]
-             [set! inventory/selection sel]
-             [when [>= inventory/selection [block/count]]
-                   [set! inventory/selection 1]]
-             [when [< inventory/selection 1]
-                   [set! inventory/selection [- [block/count] 1]]]
+             [set! blockchooser/selection sel]
+             [when [>= blockchooser/selection [block/count]]
+                   [set! blockchooser/selection 1]]
+             [when [< blockchooser/selection 1]
+                   [set! blockchooser/selection [- [block/count] 1]]]
              [blockchooser/refresh]]]
 
 [defun blockchooser/select-next! []
        "Selects the next item from a players inventory"
-       [blockchooser/select! [+ inventory/selection 1]]]
+       [blockchooser/select! [+ blockchooser/selection 1]]]
 
 [defun blockchooser/select-prev! []
        "Selects the previous item from a players inventory"
-       [blockchooser/select! [- inventory/selection 1]]]
+       [blockchooser/select! [- blockchooser/selection 1]]]
+
+[defun blockchooser/place! []
+      [player-place-block! blockchooser/selection]]
 
 [event-bind on-join :blockchooser blockchooser/w/init!]

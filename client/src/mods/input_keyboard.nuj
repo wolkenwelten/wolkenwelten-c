@@ -124,7 +124,11 @@
 
 [keyboard/bind! key-u     [keyboard/once-ingame [λ [] [pop]]]]
 
-[keyboard/bind! key-c     [keyboard/once-ingame [λ [] [cons-mode! [not [cons-mode?]]]]]]
+[keyboard/bind! key-c     [keyboard/once-ingame [λ []
+                                                  [cons-mode! [not [cons-mode?]]]
+                                                  [when [cons-mode?]
+                                                    [set! blockchooser/active #t]
+                                                    [blockchooser/refresh]]]]]
 [keyboard/bind! key-e     [keyboard/once-ingame [λ [] [hook/shoot!]]]]
 [keyboard/bind! key-m     [keyboard/once        [λ [] [debug-info! [not [debug-info?]]]]]]
 [keyboard/bind! key-n     [keyboard/once-ingame [λ [] [no-clip! [not [no-clip?]]]]]]
@@ -147,7 +151,7 @@
 [defun inv-active-kh [code value]
         "Sets the players active item depending on the keycode passed"
         [when value
-              [inventory/select! [+ 1 [- code 30]]]
+              [client/select! [- code 30]]
               [stop-anim]]]
 
 [for [i 0 10]

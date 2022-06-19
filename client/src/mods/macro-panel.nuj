@@ -1,0 +1,7 @@
+[def macro-panel #nil]
+
+[defun macro-panel/init! []
+  [set! macro-panel [widget :
+  ]
+
+[event-bind on-join :macro-pnael macro-panel/init!]

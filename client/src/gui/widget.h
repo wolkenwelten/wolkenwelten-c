@@ -46,7 +46,7 @@ struct widget {
 	box2D area;
 	box2D goalArea;
 	widgetType type;
-	uint flags;
+	u32 flags;
 
 	widget *parent,*child;
 	widget *prev,*next;
