@@ -1,5 +1,3 @@
-out vec3 lightness;
-
 uniform sampler2DArray curTex;
 uniform float colorAlpha;
 
