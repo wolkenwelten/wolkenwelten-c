@@ -118,7 +118,7 @@
 
 [defun client/selection []
   [cond [blockchooser/active blockchooser/selection]
-        [#t blockchooser/selection]]]
+        [#t inventory/selection]]]
 
 [defun client/select! [sel]
   [cond [blockchooser/active [blockchooser/select! sel]]
