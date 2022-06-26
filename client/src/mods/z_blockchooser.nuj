@@ -67,9 +67,7 @@
                           :on-hover [\ []
                                      [widget/label! hover-info [block/name i]]]
                           :on-click [\ []
-                                     [set! player/pear-shooter-active #f]
-                                     [set! blockchooser/selection [- i 1]]
-                                     [blockchooser/refresh]]]]]]]]]
+                                     [blockchooser/select! i]]]]]]]]]
 
 [defun blockchooser/toggle! []
   "Toggle the visibility of the inventory popup"
@@ -95,13 +93,13 @@
 
 [defun blockchooser/select! [sel]
        "Select a particular block"
-       [when [widget-focus-on-game?]
-             [set! blockchooser/selection sel]
-             [when [>= blockchooser/selection [block/count]]
-                   [set! blockchooser/selection 1]]
-             [when [< blockchooser/selection 1]
-                   [set! blockchooser/selection [- [block/count] 1]]]
-             [blockchooser/refresh]]]
+       [set! blockchooser/active #t]
+       [set! blockchooser/selection sel]
+       [when [>= blockchooser/selection [block/count]]
+         [set! blockchooser/selection 1]]
+       [when [< blockchooser/selection 1]
+         [set! blockchooser/selection [- [block/count] 1]]]
+       [blockchooser/refresh]]
 
 [defun blockchooser/select-next! []
        "Selects the next item from a players inventory"

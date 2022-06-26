@@ -117,11 +117,11 @@
       [player-flags! [logand [player-flags] [lognot player-flag-dont-move]]]]]
 
 [defun client/selection []
-  [cond [blockchooser/active blockchooser/selection]
+  [cond [blockchooser/active [- blockchooser/selection 1]]
         [#t inventory/selection]]]
 
 [defun client/select! [sel]
-  [cond [blockchooser/active [blockchooser/select! sel]]
+  [cond [blockchooser/active [blockchooser/select! [+ 1 sel]]]
         [#t [inventory/select! sel]]]]
 
 [defun client/select-next! []
