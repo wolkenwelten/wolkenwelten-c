@@ -1,5 +1,7 @@
 ; Contains definitions needed in the other .nuj files
 
+[def action/timeout 0]
+
 [def on-init          @[]]
 [def on-spawn         @[]]
 [def on-join          @[]]
@@ -52,3 +54,8 @@
   [try display/error
        [for-in [h [tree/values event]]
                [apply h values]]]]
+
+[defmacro action-every [ms . form]
+          `[when [or server? [> [time/milliseconds] action/timeout]]
+             [set! action/timeout [+ ~ms [time/milliseconds]]]
+             ~@form]]

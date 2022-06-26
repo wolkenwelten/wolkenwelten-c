@@ -343,18 +343,28 @@ static lVal *wwlnfRecoil(lClosure *c, lVal *v){
 	return NULL;
 }
 
-static lVal *wwlnfPlayerHP(lClosure *c, lVal *v){
-	(void)c;
-	const int hp = castToInt(lCar(v),-1024);
-	if(hp > -1024){ player->hp = MIN(player->maxhp,hp); }
+static lVal *wwlnfPlayerHPGet(lClosure *c, lVal *v){
+	(void)c; (void)v;
 	return lValInt(player->hp);
 }
 
-static lVal *wwlnfPlayerMaxHP(lClosure *c, lVal *v){
+static lVal *wwlnfPlayerHPSet(lClosure *c, lVal *v){
 	(void)c;
-	const int maxhp = castToInt(lCar(v),-1024);
-	if(maxhp > -1024){ player->maxhp = MAX(1,maxhp); }
+	const int hp = requireInt(c, lCar(v));
+	player->hp = hp;
+	return NULL;
+}
+
+static lVal *wwlnfPlayerMaxHPGet(lClosure *c, lVal *v){
+	(void)c; (void)v;
 	return lValInt(player->maxhp);
+}
+
+static lVal *wwlnfPlayerMaxHPSet(lClosure *c, lVal *v){
+	(void)c;
+	const int maxhp = requireInt(c, lCar(v));
+	player->maxhp = maxhp;
+	return NULL;
 }
 
 static lVal *wwlnfAimingPred(lClosure *c, lVal *v){
@@ -544,8 +554,10 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"player-flags!",  "(flags)",           "Set players flags",                                              wwlnfPlayerSetFlags);
 	lAddNativeFunc(c,"player-name",    "[]",                "Get the players name",                                           wwlnfPlayerNameGet);
 	lAddNativeFunc(c,"player-name!",   "[s]",               "Set players name to s",                                          wwlnfPlayerNameSet);
-	lAddNativeFunc(c,"player-hp",      "(&hp)",             "Set the players health to &HP, returns the current value.",      wwlnfPlayerHP);
-	lAddNativeFunc(c,"player-maxhp",   "(&mhp)",            "Set the players max health to &MHP, returns the current value.", wwlnfPlayerMaxHP);
+	lAddNativeFunc(c,"player-hp",      "(&hp)",             "Get the players health",                                         wwlnfPlayerHPGet);
+	lAddNativeFunc(c,"player-hp!",     "[hp]",              "Set the players health to HP",                                   wwlnfPlayerHPSet);
+	lAddNativeFunc(c,"player-maxhp",   "[]",                "Get the players max health",                                     wwlnfPlayerMaxHPGet);
+	lAddNativeFunc(c,"player-maxhp!",  "[mhp]",             "Set the players max health to MHP",                              wwlnfPlayerMaxHPSet);
 	lAddNativeFunc(c,"player-jump!",   "(velocity)",        "Jump with VELOCITY!",                                            wwlnfPlayerJump);
 	lAddNativeFunc(c,"player-sneak!",  "()",                "Sneak for a while",                                              wwlnfPlayerSneak);
 	lAddNativeFunc(c,"player-walk!",   "(velocity)",        "Walk forward with VELOCITY",                                     wwlnfPlayerWalk);

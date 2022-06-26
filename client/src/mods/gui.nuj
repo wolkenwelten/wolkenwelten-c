@@ -143,7 +143,8 @@
               [widget/parse/rest type [cdr v]]]]]]
 
 [defun widget/parse [v]
-  [cons '-> [cons [list 'widget/new [widget/type/get [car v]]] [widget/parse/rest [car v] [cdr v]]]]]
+  [cons '-> [cons [list 'widget/new [widget/type/get [car v]]]
+                  [widget/parse/rest [car v] [cdr v]]]]]
 
 [defmacro widget args
           [widget/parse [car args]]]
@@ -177,3 +178,9 @@
   [say [if [<= end-count start-count]
            [ansi-rainbow msg]
            [ansi-red msg]]]]
+
+[defmacro widget/remove! l
+          [cons 'do [map l [λ [w]
+                               `[when ~w
+                                  [widget/parent! ~w #nil]
+                                  [set! ~w #nil]]]]]]

@@ -1,6 +1,21 @@
+[defmacro item-use-up [timeout . action]
+          `[do [def q [tree/get this :quantity]]
+               [when [> q 0]
+                 [action-every ~timeout
+                               [tree/set! this :quantity [- q 1]]
+                               [when [== q 1]
+                                 [inventory/remove! this]]
+                               [inventory/panel/update!]
+                               ~@action]]]]
+
 [defobject <item> #nil]
-[defproperty <item> :name "Unknown item"]
 [defproperty <item> :entity #nil]
+[defmethod <item> :primary [] #f]
+[defmethod <item> :secondary [] #f]
+[defmethod <item> :tertiary [] #f]
+[defmethod <item> :get-quantity [] #nil]
+[defmethod <item> :set-quantity [] #nil]
+
 [defmethod <item> :serialize []
            [str/write [-> [tree/dup this]
                           [tree/set! :classname [list quote [tree/get this :classname]]]
@@ -9,14 +24,41 @@
 [defmethod <item> :gui-sprite [] 258]
 [defmethod <item> :gui-count [] 44]
 
-[defobject <grenade> <item>]
+[defobject <stackable-item> <item>]
+[defproperty <stackable-item> 0]
+[defmethod <stackable-item> :get-quantity []
+           [tree/get this :quantity]]
+
+[defmethod <stackable-item> :set-quantity [new-quantity]
+           [tree/set! this :quantity new-quantity]]
+
+[defobject <pear> <item>]
+[defmethod <pear> :name [] "Pear"]
+[defmethod <pear> :gui-sprite [] 258]
+[defmethod <pear> :secondary [] [action-every 1000
+                                              [player-hp! [player-maxhp]]
+                                              [sfx-play sfx-hoo]
+                                              [say [ansi-green "Yum!"]]]]
+
+[defobject <grenade> <stackable-item>]
+[defproperty <grenade> :quantity 50]
 [defproperty <grenade> :power 3]
 [defmethod <grenade> :gui-sprite []
            256]
+[defmethod <grenade> :name [] "Grenade"]
+[defmethod <grenade> :primary []
+           [item-use-up 20 [pear/shoot! :pear-shoot]]]
+
+[defmethod <grenade> :tertiary [] [say [ansi-green "Can do!"]] #f]
+
 [defmethod <grenade> :collision []
            [def ent [tree/get this :entity]]
            [explode [entity/pos ent] [tree/get this :power]]
            [entity/delete ent]]
 
 [defobject <bomb> <grenade>]
+[defmethod <bomb> :name [] "Bomb"]
 [defmethod <bomb> :gui-sprite [] 257]
+[defmethod <bomb> :primary []
+           [item-use-up 200 [pear/shoot! :mega-pear-shoot]]]
+[defmethod <bomb> :tertiary [] [say [ansi-red "Can't do that!"]] #t]

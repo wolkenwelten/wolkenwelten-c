@@ -6,16 +6,55 @@
 
 [array/set! inventory 3 [make-instance <grenade>]]
 [array/set! inventory 2 [make-instance <bomb>]]
+[array/set! inventory 1 [make-instance <pear>]]
+
+[def inventory/macro-panel/sprite #nil]
+[def inventory/macro-panel/name #nil]
+
+[defun inventory/get-active []
+  [array/ref inventory inventory/selection]]
+
+[defun inventory/widgets/refresh []
+  [when macro-panel
+    [when-not inventory/macro-panel/name
+              [set! inventory/macro-panel/name
+                [widget [ :label
+                          :parent macro-panel
+                          :width -1
+                          :height 48
+                          :label "asd"]]]]
+    [when-not inventory/macro-panel/sprite
+              [set! inventory/macro-panel/sprite
+                [widget [ :sprite
+                          :parent macro-panel
+                          :x 24
+                          :y 32
+                          :width 64
+                          :height 64
+                          :val 257]]]]
+    [def item [inventory/get-active]]
+    [widget/label! inventory/macro-panel/name [if item [_ item :name] ""]]
+    [widget/val! inventory/macro-panel/sprite [if item [_ item :gui-sprite] 0]]]]
+
+[defun inventory/widgets/remove []
+  [widget/remove! inventory/macro-panel/sprite
+                  inventory/macro-panel/name]]
 
 [defun inventory/panel/update! []
+  [if blockchooser/active
+      [inventory/widgets/remove]
+      [inventory/widgets/refresh]]
   [for [i 0 [array/length inventory]]
     [def item [array/ref inventory i]]
     [def slot [array/ref inventory/panel/widget/slots i]]
-
-    [widget/outline! [widget/parent slot] [== i inventory/selection]]
-
-    [when item
-      [widget/val! slot [_ item :gui-sprite]]]]]
+    [widget/outline! [widget/parent [tree/get slot :slot]] [== i inventory/selection]]
+    [if item
+        [do [widget/val! [tree/get slot :slot] [_ item :gui-sprite]]
+            [def q [_ item :get-quantity]]
+          [when q
+            [widget/label! [tree/get slot :quantity] [string q]]]]
+        [do [widget/val! [tree/get slot :slot] 0]
+            [widget/label! [tree/get slot :quantity] ""]]]]]
 
 [defun inventory/panel/init! []
   [set! inventory/panel/widget [widget [ :panel
@@ -32,15 +71,22 @@
                         :y 0
                         :width 64
                         :height 64]]]
-
-    [array/set! inventory/panel/widget/slots i
-                [widget [ :sprite
+    [def sprite [widget [ :sprite
                           :parent slot
                           :x 0
                           :y 0
                           :width -1
                           :height -1
-                          :val 0]]]]
+                          :val 0]]]
+    [array/set! inventory/panel/widget/slots i
+                @[ :slot sprite
+                   :quantity [widget [ :label
+                                       :parent sprite
+                                       :x -1
+                                       :y -1
+                                       :width 32
+                                       :height 20
+                                       :label ""]]]]]
   [inventory/panel/update!]]
 
 [defun inventory/toggle! []
@@ -72,5 +118,37 @@
 
 [defun inventory/w/init! []
   [inventory/panel/init!]]
+
+[defun inventory/find [item]
+  [def ret -1]
+  [for [i 0 [array/length inventory]]
+    [when [== [array/ref inventory i] item]
+      [set! ret i]
+      [set! i [array/length inventory]]]]
+  ret]
+
+[defun inventory/remove! [item]
+  [def i [inventory/find item]]
+  [when [< i 0]
+    [throw [list :invalid-item "Couldn't find that item so we can't remove it" item [current-lambda]]]]
+  [array/set! inventory i #nil]]
+
+[defun inventory/primary! [did-count]
+  [def item [inventory/get-active]]
+  [if [and item [_ item :primary]] #t
+      [player-do-primary! did-count]]]
+
+[defun inventory/secondary! []
+  [def item [inventory/get-active]]
+  [and item [_ item :secondary]]]
+
+[defun inventory/tertiary! []
+  [when [zero? input/tertiary-did-count]
+    [def item [inventory/get-active]]
+    [if [and item [_ item :tertiary]]
+        #t
+        [do [set! blockchooser/active [not blockchooser/active]]
+            [inventory/panel/update!]
+            [blockchooser/refresh]]]]]
 
 [event-bind on-join :inventory inventory/w/init!]

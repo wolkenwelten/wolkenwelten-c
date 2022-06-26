@@ -20,23 +20,19 @@
        "Make the player do a primary action"
        [if [cons-mode?]
            [player-blockbreak! input/primary-did-count]
-           [if blockchooser/active
-               [player-do-primary! input/primary-did-count]
-               [pear/shoot!]]]
+           [inventory/primary! input/primary-did-count]]
        [set! input/primary-did #t]]
 
 [defun player-secondary! []
   "Make the player do a secondary action"
   [if blockchooser/active
       [blockchooser/place!]
-      [pear/shoot! #t]]
+      [inventory/secondary!]]
   [set! input/secondary-did #t]]
 
 [defun player-tertiary! []
        "Make the player do a tertiary action"
-       [when [zero? input/tertiary-did-count]
-             [set! blockchooser/active [not blockchooser/active]]
-             [blockchooser/refresh]]
+       [inventory/tertiary!]
        #;[item-tertiary! 0 input/tertiary-did-count]
        [set! input/tertiary-did #t]]
 

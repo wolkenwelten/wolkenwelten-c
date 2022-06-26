@@ -13,12 +13,8 @@
   [cons-mode/block! blockchooser/selection]]
 
 [defun blockchooser/remove/widgets []
-  [when blockchooser/w/label
-    [widget/parent! blockchooser/w/label #nil]
-    [set! blockchooser/w/label #nil]]
-  [when blockchooser/w/sprite
-    [widget/parent! blockchooser/w/sprite #nil]
-    [set! blockchooser/w/label #nil]]]
+  [widget/remove! blockchooser/w/label
+                  blockchooser/w/sprite]]
 
 [defun blockchooser/refresh []
   [if blockchooser/active

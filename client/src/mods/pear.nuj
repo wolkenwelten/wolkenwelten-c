@@ -1,7 +1,2 @@
-[def pear/shot/timeout 0]
-
-[defun pear/shoot! [mega?]
-  [def name [if mega? :mega-pear-shoot :pear-shoot]]
-       [when [> [time/milliseconds] pear/shot/timeout]
-             [set! pear/shot/timeout [+ 200 [time/milliseconds]]]
-             [message/send 0 [list name [player-pos] [player-rot]]]]]
+[defun pear/shoot! [name]
+  [message/send 0 [list name [player-pos] [player-rot]]]]

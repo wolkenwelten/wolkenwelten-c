@@ -1,4 +1,3 @@
-[def hook/shot/timeout 0]
 [def hook/rope #nil]
 [def hook/ropes [array/allocate 32]]
 [def hook/max-length 96.0]
@@ -6,7 +5,7 @@
 [def hook/winch-speed 0.2]
 
 [defun hook/valid? []
-  [if [rope/valid? hook/rope]
+  [if [and hook/rope [rope/valid? hook/rope]]
       #t
       [do [player/dont-move! #f]
           [set! hook/rope #nil]
@@ -24,9 +23,11 @@
 
 [defun hook/shoot! []
   [player/close-glider!]
-  [when [> [time/milliseconds] hook/shot/timeout]
-    [set! hook/shot/timeout [+ 200 [time/milliseconds]]]
-    [message/send 0 [list :hook-shoot [player-pos] [player-rot]]]]]
+  [action-every 200
+                [if [hook/valid?]
+                    [sfx-play sfx-hookReturn]
+                    [sfx-play sfx-hookFire]]
+                [message/send 0 [list :hook-shoot [player-pos] [player-rot]]]]]
 
 [defhandler :hook-rope [client-id msg]
   [def player [cadr msg]]
