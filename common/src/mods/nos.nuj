@@ -1,5 +1,5 @@
 [defun nos/deserialize [v]
-  [eval [read/single v]]]
+  [eval v]]
 
 [defun entity/bind-to-object [o ent]
   [entity/handler! ent [\ msg

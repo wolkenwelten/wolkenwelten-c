@@ -1,2 +1,2 @@
 [defhandler :client-environments-reply [client-id msg]
-  [log [cat [ansi-blue "> "][cadr msg]]]]
+  [log [cat [ansi-blue "> "] [cadr msg]]]]

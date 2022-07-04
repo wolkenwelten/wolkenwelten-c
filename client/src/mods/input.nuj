@@ -11,17 +11,17 @@
 [def throw-start 0]
 
 [defun player-blockbreak! []
-       [when [zero? input/primary-did-count]
-             [def p [player-raycast #f]]
-             [when p [message/send 0 [list :blockbreaker p]]
-                     [player-do-primary! count]]]]
+  [when [zero? input/primary-did-count]
+    [def p [player-raycast #f]]
+    [when p [message/send 0 [list :blockbreaker p]]
+          [player-do-primary! count]]]]
 
 [defun player-primary! []
-       "Make the player do a primary action"
-       [if [cons-mode?]
-           [player-blockbreak! input/primary-did-count]
-           [inventory/primary! input/primary-did-count]]
-       [set! input/primary-did #t]]
+  "Make the player do a primary action"
+  [if [cons-mode?]
+      [player-blockbreak! input/primary-did-count]
+      [inventory/primary! input/primary-did-count]]
+  [set! input/primary-did #t]]
 
 [defun player-secondary! []
   "Make the player do a secondary action"
@@ -31,29 +31,34 @@
   [set! input/secondary-did #t]]
 
 [defun player-tertiary! []
-       "Make the player do a tertiary action"
-       [inventory/tertiary!]
-       #;[item-tertiary! 0 input/tertiary-did-count]
-       [set! input/tertiary-did #t]]
+  "Make the player do a tertiary action"
+  [inventory/tertiary!]
+  #;[item-tertiary! 0 input/tertiary-did-count]
+  [set! input/tertiary-did #t]]
 
-[defun input-tick []
-       "Evals all Input handlers in order"
-       [input-mouse-tick]
-       [input-keyboard-tick]
-       [hook/tick]
+[defun player-drop! []
+  "Drop whatever the player is holding"
+  [when-not blockchooser/active
+            [inventory/drop!]]]
 
-       [++ input/primary-did-count]
-       [when-not input/primary-did
-                 [player-stop-mining!]
-                 [set! input/primary-did-count 0]]
-       [set! input/primary-did #f]
+  [defun input-tick []
+    "Evals all Input handlers in order"
+    [input-mouse-tick]
+    [input-keyboard-tick]
+    [hook/tick]
 
-       [++ input/secondary-did-count]
-       [when-not input/secondary-did
-                 [set! input/secondary-did-count 0]]
-       [set! input/secondary-did #f]
+    [++ input/primary-did-count]
+    [when-not input/primary-did
+              [player-stop-mining!]
+              [set! input/primary-did-count 0]]
+    [set! input/primary-did #f]
 
-       [++ input/tertiary-did-count]
-       [when-not input/tertiary-did
-                 [set! input/tertiary-did-count 0]]
-       [set! input/tertiary-did #f]]
+    [++ input/secondary-did-count]
+    [when-not input/secondary-did
+              [set! input/secondary-did-count 0]]
+    [set! input/secondary-did #f]
+
+    [++ input/tertiary-did-count]
+    [when-not input/tertiary-did
+              [set! input/tertiary-did-count 0]]
+    [set! input/tertiary-did #f]]

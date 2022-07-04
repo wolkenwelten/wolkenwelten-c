@@ -15,11 +15,17 @@
 [defmethod <item> :tertiary [] #f]
 [defmethod <item> :get-quantity [] #nil]
 [defmethod <item> :set-quantity [] #nil]
+[defmethod <item> :collision [] #f]
 
 [defmethod <item> :serialize []
-           [str/write [-> [tree/dup this]
-                          [tree/set! :classname [list quote [tree/get this :classname]]]
-                          [tree/set! :parent '<item>]]]]
+           [-> [tree/dup this]
+               [tree/set! :name [list 'quote [or [tree/get this :name] '<unknown-item>]]]
+               [tree/set! :parent [tree/get [tree/get this :parent] :name]]]]
+
+[defmethod <item> :drop [pos rot force amount]
+           [if client?
+               [message/send 0 [list :item-drop pos rot force amount [_ this :serialize]]]
+               [item-drop! this pos rot force amount]]]
 
 [defmethod <item> :gui-sprite [] 258]
 [defmethod <item> :gui-count [] 44]
@@ -33,11 +39,12 @@
            [tree/set! this :quantity new-quantity]]
 
 [defobject <pear> <item>]
-[defmethod <pear> :name [] "Pear"]
+[defproperty <pear> :power 1]
+[defmethod <pear> :item-name [] "Pear"]
 [defmethod <pear> :gui-sprite [] 258]
 [defmethod <pear> :secondary [] [action-every 1000
                                               [player-hp! [player-maxhp]]
-                                              [sfx-play sfx-hoo]
+                                              [sfx-play sfx-chomp]
                                               [say [ansi-green "Yum!"]]]]
 
 [defobject <grenade> <stackable-item>]
@@ -45,20 +52,18 @@
 [defproperty <grenade> :power 3]
 [defmethod <grenade> :gui-sprite []
            256]
-[defmethod <grenade> :name [] "Grenade"]
+[defmethod <grenade> :item-name [] "Grenade"]
 [defmethod <grenade> :primary []
-           [item-use-up 20 [pear/shoot! :pear-shoot]]]
-
+           [item-use-up 200 [pear/shoot! :pear-shoot]]]
 [defmethod <grenade> :tertiary [] [say [ansi-green "Can do!"]] #f]
-
-[defmethod <grenade> :collision []
+#;[defmethod <grenade> :collision []
            [def ent [tree/get this :entity]]
            [explode [entity/pos ent] [tree/get this :power]]
            [entity/delete ent]]
 
 [defobject <bomb> <grenade>]
-[defmethod <bomb> :name [] "Bomb"]
+[defmethod <bomb> :item-name [] "Bomb"]
 [defmethod <bomb> :gui-sprite [] 257]
-[defmethod <bomb> :primary []
-           [item-use-up 200 [pear/shoot! :mega-pear-shoot]]]
+#;[defmethod <bomb> :primary []
+           [item-use-up 500 [pear/shoot! :mega-pear-shoot]]]
 [defmethod <bomb> :tertiary [] [say [ansi-red "Can't do that!"]] #t]

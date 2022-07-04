@@ -1,4 +1,4 @@
-[def inventory/selection 3]
+ [def inventory/selection 3]
 [def inventory [array/allocate 10]]
 [def inventory/tile-size 64]
 [def inventory/panel/widget #nil]
@@ -150,5 +150,9 @@
         [do [set! blockchooser/active [not blockchooser/active]]
             [inventory/panel/update!]
             [blockchooser/refresh]]]]]
+
+[defun inventory/drop! []
+  [def item [inventory/get-active]]
+  [and item [_ item :drop [player-pos] [player-rot] 1.0 1]]]
 
 [event-bind on-join :inventory inventory/w/init!]

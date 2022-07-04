@@ -178,6 +178,7 @@
          [when [input-keyboard-state key-space] [player-jump-hook!]]
          [when [input-keyboard-state key-r]     [player-tertiary!]]
          [when [input-keyboard-state key-v]     [player-crouch!]]
+         [when [input-keyboard-state key-q]     [player-drop!]]
          [player-sneak! [input-keyboard-state key-v]]
          [player-boost! [input-keyboard-state key-lshift]]]]]
 
