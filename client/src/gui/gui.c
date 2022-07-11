@@ -461,6 +461,16 @@ void drawMenuBackground(){
 	textMeshDraw(logoMesh);
 }
 
+void blockMeshDrawDebugUI(){
+	static textMesh *tm = NULL;
+	if(tm == NULL){
+	    tm = textMeshNew(256 * 6);
+	}
+	textMeshEmpty(tm);
+	textMeshPrintfPS(tm, 8, screenHeight - 40, 1, "XX %d", time(NULL));
+	textMeshDraw(tm);
+}
+
 void drawHud(){
 	textMeshEmpty(guim);
 	guim->wrap = 0;
@@ -472,12 +482,11 @@ void drawHud(){
 		drawHealthbar();
 		drawDebuginfo();
 	}
-	lispPanelCheckAutoComplete();
-	lispPanelCheckAutoCompleteDescription();
 	const box2D screen = rect(0,0,screenWidth,screenHeight);
 	widget *hover = widgetDraw(rootMenu,guim,screen);
 	widgetDoMouseEvents(rootMenu,hover, screen);
 	textMeshDraw(guim);
+	blockMeshDrawDebugUI();
 }
 
 void renderUI(){
