@@ -57,18 +57,15 @@ textMesh *textMeshNew(uint bufferSize){
 		fprintf(stderr,"Error allocation textMesh\n");
 		return NULL;
 	}
-	m->vbo        = m->vao       =  0;
-	m->sx         = m->sy        =  0;
+	memset(m, 0, sizeof(textMesh));
 	m->mx         = m->my        = -1;
 	m->size       = 1;
 	m->tex        = tGui;
-	m->dataCount  = m->finished   = 0;
 	m->usage      = GL_DYNAMIC_DRAW;
 	m->fgc        = colorPalette[15];
 	m->bgc        = colorPalette[ 0];
 	m->dataBuffer = malloc(sizeof(vertex2D) * bufferSize);
 	m->bufferSize = bufferSize;
-	m->vboSize    = 0;
 
 	return m;
 }
