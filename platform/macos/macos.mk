@@ -26,7 +26,7 @@ releases/macos/wolkenwelten-macos-$(VERSION_NAME).tgz: $(OSX_APP)/Contents/Resou
 	cd releases/macos/ && tar -czf wolkenwelten-macos-$(VERSION_NAME).tgz wolkenwelten-$(VERSION_NAME).app
 
 $(OSX_APP)/Contents/MacOS/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_TMP_SRCS)
-$(OSX_APP)/Contents/MacOS/wolkenwelten: $(ASM_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
+$(OSX_APP)/Contents/MacOS/wolkenwelten: $(ASM_OBJS) common/nujel/nujel.a
 	mkdir -p $(OSX_APP)/Contents/MacOS
 	$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_CINCLUDES) $(CINCLUDES) $(WARNINGS) $(CLIENT_LIBS) $(LIBS)
 	strip -SxX $@
@@ -34,7 +34,7 @@ $(OSX_APP)/Contents/MacOS/wolkenwelten: $(ASM_OBJS) common/nujel/nujel.a common/
 	install_name_tool -change "@rpath/SDL2_mixer.framework/Versions/A/SDL2_mixer" "@executable_path/../Frameworks/SDL2_mixer.framework/SDL2_mixer" $@
 
 $(OSX_APP)/Contents/MacOS/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_TMP_SRCS)
-$(OSX_APP)/Contents/MacOS/wolkenwelten-server: $(ASM_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
+$(OSX_APP)/Contents/MacOS/wolkenwelten-server: $(ASM_OBJS) common/nujel/nujel.a
 	mkdir -p $(OSX_APP)/Contents/MacOS
 	$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(SERVER_CFLAGS) $(CSTD) $(CINCLUDES) $(SERVER_CINCLUDES) $(LIBS) $(SERVER_LIBS)
 	strip -SxX $@

@@ -25,13 +25,13 @@ $(LIN_REL)/README: common/README
 	cp $< $@
 
 $(LIN_REL)/wolkenwelten: $(CLIENT_SRCS) $(CLIENT_TMP_SRCS)
-$(LIN_REL)/wolkenwelten: $(ASM_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
+$(LIN_REL)/wolkenwelten: $(ASM_OBJS) common/nujel/nujel.a
 	@mkdir -p $(LIN_REL)
 	$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CLIENT_CFLAGS) $(CSTD) $(CINCLUDES) $(CLIENT_CINCLUDES) $(CLIENT_LIBS) -static -L./common/nujel/ -lnujel
 	$(STRIP) -gxX $@
 
 $(LIN_REL)/wolkenwelten-server: $(SERVER_SRCS) $(SERVER_TMP_SRCS)
-$(LIN_REL)/wolkenwelten-server: $(ASM_OBJS) common/nujel/nujel.a common/nujel/tmp/stdlib.o
+$(LIN_REL)/wolkenwelten-server: $(ASM_OBJS) common/nujel/nujel.a
 	@mkdir -p $(LIN_REL)
 	$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(SERVER_CFLAGS) $(CSTD) $(CINCLUDES) $(SERVER_CINCLUDES) $(SERVER_LIBS)
 	$(STRIP) -gxX $@
