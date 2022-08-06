@@ -40,7 +40,6 @@
 #include "../gui/menu/attribution.h"
 #include "../gui/menu/mainmenu.h"
 #include "../gui/menu/options.h"
-#include "../gui/repl.h"
 #include "../gui/overlay.h"
 #include "../gui/textInput.h"
 #include "../gui/widgets/widgets.h"
@@ -82,13 +81,11 @@ void handlerRoot(widget *wid){
 	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return;}
 	if(gameRunning){return;}
 	openMainMenu();
-	lispPanelClose();
 }
 
 void handlerRootHud(widget *wid){
 	(void)wid;
 	widgetFocus(widgetGameScreen);
-	widgetSlideH(lispPanel, 0);
 }
 
 void showMouseCursor(){
@@ -127,6 +124,7 @@ int getTilesize(){
 
 void drawCrosshair(){
 	if(!mouseHidden){return;}
+	if(player == NULL){return;}
 	textMeshEmpty(crosshairMesh);
 	int  off = (int)player->inaccuracy;
 	int size = 16;
@@ -152,11 +150,6 @@ void drawCrosshair(){
 
 void resizeUI(){
 	matOrtho(matOrthoProj,0.f,screenWidth,screenHeight,0.f,-1.f,16.f);
-
-	lispPanel->area.w = screenWidth - 128;
-	if(lispPanelVisible){
-		widgetSlideH(lispPanel, screenHeight-128);
-	}
 }
 
 static void initGameOverlay(){
@@ -175,8 +168,6 @@ static void initGameOverlay(){
 
 	widgetGameScreen = widgetNewCP(wGameScreen, rootMenu, rect(0,0,-1,-1));
 	widgetExport(widgetGameScreen, "w-game-screen");
-
-	lispInputInit();
 
 	resizeUI();
 }
@@ -398,8 +389,6 @@ void drawHud(){
 		drawHealthbar();
 		drawDebuginfo();
 	}
-	lispPanelCheckAutoComplete();
-	lispPanelCheckAutoCompleteDescription();
 	const box2D screen = rect(0,0,screenWidth,screenHeight);
 	widget *hover = widgetDraw(rootMenu,guim,screen);
 	widgetDoMouseEvents(rootMenu,hover, screen);
@@ -431,10 +420,6 @@ void renderUI(){
 
 bool guiCancel(){
 	if(!gameRunning){return true;}
-	if(lispPanelVisible){
-		lispPanelClose();
-		return true;
-	}
 	closeAllMenus();
 	widgetFocus(widgetGameScreen);
 	return false;

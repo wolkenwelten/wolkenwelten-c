@@ -1,8 +1,5 @@
 [def message/handler @[]]
 
-[defun msgtest []
-       [message/send 0 [:chat-message @[:text "This is a test!"]]]]
-
 [defun message/dispatch/empty! []
        "Removes all currently bound message handlers"
        [set! message/handler @[]]]

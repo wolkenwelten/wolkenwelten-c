@@ -145,9 +145,6 @@ widget *widgetNew(widgetType type){
 		widgetBind(wid,"focus",textInputFocus);
 		widgetBind(wid,"blur",textInputBlur);
 	}
-	if(wid->type == wTextLog){
-		wid->valss = calloc(1,256 * sizeof(char *));
-	}
 	return wid;
 }
 widget *widgetNewC(widgetType type,widget *p){
@@ -223,9 +220,10 @@ void widgetFocus(widget *w){
 	widgetFocused = w;
 }
 
-static int widgetIsSelectable(const widget *cur){
-	if(cur == NULL){return 0;}
-	if(cur->flags & WIDGET_HNS){return 0;}
+static bool widgetIsSelectable(const widget *cur){
+	if(cur == NULL){return false;}
+	if(cur->flags & WIDGET_HIDDEN){return false;}
+	if(cur->flags & WIDGET_HNS){return false;}
 	switch(cur->type){
 		case wButton:
 		case wButtonDel:
@@ -233,9 +231,9 @@ static int widgetIsSelectable(const widget *cur){
 		case wTextInput:
 		case wTextScroller:
 		case wSlider:
-			return 1;
+			return true;
 		default:
-			return 0;
+			return false;
 	}
 }
 
@@ -545,7 +543,6 @@ void widgetSlideY(widget *w, int ny){
 
 void widgetAddEntry(widget *w, const char *entry){
 	if(w == NULL)          {return;}
-	if(w->type != wTextLog){return;}
 	if(w->valss == NULL)   {return;}
 	if(entry == NULL)      {return;}
 	if(*entry == 0)        {return;}

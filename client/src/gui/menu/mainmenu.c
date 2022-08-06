@@ -31,19 +31,23 @@
 
 widget *mainMenu;
 
-widget *buttonSP;
+widget *buttonPlay;
 widget *buttonQuit;
 widget *buttonReturnToGame;
 widget *buttonExitToMenu;
 
 static void focusMainMenu(){
-	widgetFocus(gameRunning ? buttonReturnToGame : buttonSP);
+	widgetFocus(gameRunning ? buttonReturnToGame : buttonPlay);
+}
+
+static void handlerPlay(widget *wid){
+	(void)wid;
+	startGame("goldmine");
 }
 
 static void handlerOptions(widget *wid){
 	(void)wid;
 	openOptionsMenu();
-
 }
 static void handlerAttribution(widget *wid){
 	(void)wid;
@@ -71,8 +75,19 @@ static void handlerExitToMenu(widget *wid){
 	focusMainMenu();
 }
 
+static void handlerFocusFirst(widget *wid){
+	(void)wid;
+	widgetFocus(buttonPlay);
+}
+
+static void handlerFocusLast(widget *wid){
+	(void)wid;
+	widgetFocus(buttonQuit);
+}
+
 void initMainMenu(){
 	mainMenu = widgetNewCP(wPanel,rootMenu,rect(-1,0,0,-1));
+	buttonPlay = widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Play","click",handlerPlay);
 	widgetNewCP  (wSpace ,mainMenu,rect(16,0,256,0));
 	widgetNewCP  (wHorizontalRuler ,mainMenu,rect(16,0,256,32));
 	widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Options","click",handlerOptions);
@@ -83,6 +98,8 @@ void initMainMenu(){
 	buttonReturnToGame = widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Return to Game","click",handlerReturnToGame);
 
 	widgetLayVert(mainMenu,16);
+	widgetBind(buttonQuit, "selectNext", handlerFocusFirst);
+	widgetBind(buttonPlay, "selectPrev", handlerFocusLast);
 }
 
 void openMainMenu(){

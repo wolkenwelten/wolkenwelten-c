@@ -4,7 +4,9 @@
 extern bool quit;
 extern bool gameRunning;
 extern bool singleplayer;
-extern bool playerChunkActive;
 
 void playerInit();
 void playerFree();
+void startGame(const char *moduleName);
+void closeGame();
+void exitCleanly();

@@ -16,7 +16,6 @@
  */
 
 #include "textInput.h"
-#include "../gui/repl.h"
 #include "../sdl/input/keyboard.h"
 #include "../sdl/sdl.h"
 #include "../gfx/textMesh.h"

@@ -28,7 +28,6 @@
 #include "../gfx/texture.h"
 #include "../gui/gui.h"
 #include "../gui/menu.h"
-#include "../gui/repl.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
 #include "../misc/options.h"
@@ -273,7 +272,7 @@ static lVal *wwlnfConsolePrint(lClosure *c, lVal *v){
 	(void)c;
 	const char *msg = castToString(lCar(v),NULL);
 	if(msg == NULL){return NULL;}
-	widgetAddEntry(lispLog, msg);
+	printf("[Console]> %s\n", msg);
 	return lCar(v);
 }
 

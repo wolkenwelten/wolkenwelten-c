@@ -37,6 +37,7 @@ widget *optionsName;
 widget *optionsVolume;
 widget *optionsRenderDistance;
 widget *optionsMouseSensitivity;
+widget *buttonCancel;
 
 float oldRenderDistance   = 0.f;
 float oldMouseSensitivity = 0.f;
@@ -71,6 +72,16 @@ static void handlerOptionsCancel(widget *wid){
 	openMainMenu();
 }
 
+static void handlerFocusFirst(widget *wid){
+	(void)wid;
+	widgetFocus(optionsName);
+}
+
+static void handlerFocusLast(widget *wid){
+	(void)wid;
+	widgetFocus(buttonCancel);
+}
+
 void initOptionsMenu(){
 	optionsMenu = widgetNewCP(wPanel,rootMenu,rect(-1,0,0,-1));
 	optionsMenu->flags |= WIDGET_HIDDEN;
@@ -91,11 +102,12 @@ void initOptionsMenu(){
 	widgetBind(optionsMouseSensitivity,"change",handlerMouseSensitivityChanged);
 
 	widgetNewCP  (wHorizontalRuler ,optionsMenu,rect(16,0,256,32));
-
-	widgetNewCP  (wHorizontalRuler ,optionsMenu,rect(16,0,256,32));
 	widgetNewCPLH(wButton,optionsMenu,rect(16,0,256,32),"Save","click",handlerOptionsSave);
-	widgetNewCPLH(wButton,optionsMenu,rect(16,0,256,32),"Cancel","click",handlerOptionsCancel);
+	buttonCancel = widgetNewCPLH(wButton,optionsMenu,rect(16,0,256,32),"Cancel","click",handlerOptionsCancel);
 	widgetLayVert(optionsMenu,16);
+
+	widgetBind(optionsName, "selectPrev", handlerFocusLast);
+	widgetBind(buttonCancel, "selectNext", handlerFocusFirst);
 }
 
 void openOptionsMenu(){

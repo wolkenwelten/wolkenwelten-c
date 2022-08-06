@@ -12,6 +12,10 @@
 [test/add #t [string? OS]]
 [test/add #t [and [not server?] client?]]
 
+[defun message/send* m
+  [console-print "Tried to [message/send*]\n"]
+  [console-print [str/write m]]]
+
 [defun gameplay-run []
   [event-fire on-gameplay-tick]]
 

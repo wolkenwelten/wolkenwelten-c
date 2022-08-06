@@ -71,9 +71,24 @@
 bool isClient          = true;
 bool quit              = false;
 bool gameRunning       = false;
-bool playerChunkActive = false;
 bool singleplayer      = false;
 u64  gameTicks = 0;
+
+const char *gameModuleName = NULL;
+
+void startGame(const char *moduleName){
+	gameModuleName = moduleName;
+	printf("Starting '%s'\n", moduleName);
+	closeAllMenus();
+	player = characterNew();
+	gameRunning = true;
+	widgetFocus(widgetGameScreen);
+	lispCallFunc("on-join-fire", NULL);
+}
+
+void closeGame(){
+	gameModuleName = NULL;
+}
 
 void playerInit(){
 	if(player){characterFree(player);}
@@ -110,13 +125,9 @@ void initSignals(){
 
 void playerUpdate(){
 	if(player == NULL){return;}
-	chungus *chng = worldGetChungus((int)player->pos.x >> 8,(int)player->pos.y >> 8,(int)player->pos.z >> 8);
-	if(chng != NULL){ playerChunkActive = chng->requested == 0; }
-	if(!vecInWorld(player->pos)){ playerChunkActive = true; }
 	environmentSoundsUpdate();
 	player->controls = vecZero();
 	if(player->flags & CHAR_SPAWNING){ return; }
-	if(!playerChunkActive)           { return; }
 	lispInputTick();
 	characterMove(player,player->controls);
 
@@ -145,7 +156,6 @@ void worldUpdate(){
 	int curTick;
 
 	if(lastTick == 0){lastTick = SDL_GetTicks();}
-	if(!playerChunkActive){lastTick = SDL_GetTicks();return;}
 	curTick = SDL_GetTicks();
 	resetOverlayColor();
 	for(;lastTick < curTick;lastTick+=msPerTick){
@@ -218,11 +228,14 @@ int main(int argc, char* argv[]){
 		while(!quit || gameRunning){ mainloop(); }
 	#endif
 
+	return 0;
+}
+
+void exitCleanly(){
 	sfxFreeAll();
 	meshFreeAll();
 	textureFree();
 	shaderFree();
 	closeSDL();
 	printf("[CLI] Exiting cleanly\n");
-	return 0;
 }

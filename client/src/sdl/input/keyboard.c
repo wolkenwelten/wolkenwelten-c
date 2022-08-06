@@ -24,7 +24,6 @@
 #include "../../gui/gui.h"
 #include "../../gui/textInput.h"
 #include "../../gui/menu.h"
-#include "../../gui/repl.h"
 #include "../../misc/options.h"
 #include "../../nujel/nujel.h"
 #include "../../gui/widget.h"
@@ -56,11 +55,13 @@ void keyboardEventHandler(const SDL_Event *e){
 		}
 		switch(e->key.keysym.scancode){
 		case SDL_SCANCODE_Q:
-			if(keyboardCmdKey(e)){quit=true;}
+			if(keyboardCmdKey(e)){
+				exitCleanly();
+			}
 			break;
 		case SDL_SCANCODE_F12:
 		case SDL_SCANCODE_GRAVE:
-			lispPanelOpen();
+			//lispPanelOpen();
 			break;
 		case SDL_SCANCODE_ESCAPE:
 			if(menuCancel()){break;}

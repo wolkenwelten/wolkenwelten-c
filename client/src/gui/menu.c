@@ -20,7 +20,6 @@
 #include "../main.h"
 #include "../nujel/widget.h"
 #include "../gui/gui.h"
-#include "../gui/repl.h"
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
 #include "../gui/menu/attribution.h"
@@ -93,11 +92,9 @@ bool menuCancel(){
 	if((widgetFocused != NULL) && (widgetFocused->type == wGameScreen)){return false;}
 	if(gameRunning){
 		closeMainMenu();
-		lispPanelClose();
 		closeAttributions();
 	} else {
 		openMainMenu();
-		lispPanelClose();
 	}
 	return true;
 }

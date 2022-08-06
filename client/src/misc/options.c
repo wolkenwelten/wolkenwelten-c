@@ -172,9 +172,7 @@ void saveOptions(){
 	}
 	b += snprintf(b,sizeof(buf)-(b-buf),"[third-person! %s]\n",optionThirdPerson ? "#t" : "#f");
 	b += snprintf(b,sizeof(buf)-(b-buf),"[debug-info!   %s]",optionDebugInfo ? "#t" : "#f");
-	for(int i=0;i<serverlistCount;i++){
-		b += snprintf(b,sizeof(buf)-(b-buf),"\n[server-add! \"%s\" \"%s\"]",serverlistIP[i],serverlistName[i]);
-	}
+
 	b += snprintf(b,sizeof(buf)-(b-buf),"\n");
 
 	saveFile("client.nuj",buf,strlen(buf));

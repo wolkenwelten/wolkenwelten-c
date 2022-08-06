@@ -40,6 +40,7 @@ void mouseEventHandler(const SDL_Event *e){
 		lispInputHandler(keyInput,5,e->wheel.y);
 		break;
 	case SDL_MOUSEMOTION:
+		if(!player){break;}
 		if(mouseHidden && !gameControlsInactive()){
 			float mouseSpeed = (0.25f / player->zoomFactor) * optionMouseSensitivy;
 			characterRotate(player,vecNew(e->motion.xrel*mouseSpeed,e->motion.yrel*mouseSpeed,0));

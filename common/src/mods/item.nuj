@@ -23,9 +23,7 @@
                [tree/set! :parent [tree/get [tree/get this :parent] :name]]]]
 
 [defmethod <item> :drop [pos rot force amount]
-           [if client?
-               [message/send 0 [list :item-drop pos rot force amount [_ this :serialize]]]
-               [item-drop! this pos rot force amount]]]
+           :to-be-implemented]
 
 [defmethod <item> :gui-sprite [] 258]
 [defmethod <item> :gui-count [] 44]
