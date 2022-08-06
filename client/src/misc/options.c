@@ -93,6 +93,9 @@ void parseOptions(int argc,char *argv[]){
 	for(int i=1;i<argc;i++){
 		if(argv[i][0] != '-'){continue;}
 
+		if((l = checkString(argv[i]+1,"-start-game="))){
+			gameModuleName = argv[i]+l;
+		}
 		if((l = checkString(argv[i]+1,"soundVolume="))){
 			tmp = atoi(argv[i]+l);
 			optionSoundVolume = (float)tmp / 100.f;

@@ -4,10 +4,11 @@
 
 [event-bind on-spawn :snide-remarks [λ [] [say [ansi-yellow "Better luck next time!"]]]]
 [event-bind on-join :greetings [λ []
-            [yield [timeout 1000] [λ [] [say "Guten Tag!"]]]
-            [yield [timeout 3000] [λ [] [say ["Press " [ansi-green "F2"] " for some equipment"]]]]
-            [yield [timeout 5000] [λ [] [say ["Use your " [ansi-yellow "grappling hook"] " with " [ansi-green "E"]]]]]
-            [yield [timeout 7000] [λ [] [say ["Open Inventory/Crafting panel with " [ansi-green "TAB"]]]]]]]
+                                 [no-clip! #t]
+                                 [yield [timeout 1000] [λ [] [say "Guten Tag!"]]]
+                                 [yield [timeout 3000] [λ [] [say ["Press " [ansi-green "F2"] " for some equipment"]]]]
+                                 [yield [timeout 5000] [λ [] [say ["Use your " [ansi-yellow "grappling hook"] " with " [ansi-green "E"]]]]]
+                                 [yield [timeout 7000] [λ [] [say ["Open Inventory/Crafting panel with " [ansi-green "TAB"]]]]]]]
 
 [test/add #t [string? OS]]
 [test/add #t [and [not server?] client?]]

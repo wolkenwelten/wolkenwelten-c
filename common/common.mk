@@ -9,7 +9,7 @@ COMMON_DEPS      := ${COMMON_SRCS:.c=.d}
 WEBEXCLUDE       += --exclude=releases/macos/wolkenwelten.iconset/
 WEBEXCLUDE       += --exclude=releases/win/*.res
 
-TEST_WORLD       := -worldSeed=68040 -savegame=Test
+TEST_WORLD       := --start-game=goldmine
 
 ifeq ("$(ARCH)","amd64")
 ARCH             := x86_64

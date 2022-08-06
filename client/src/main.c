@@ -77,6 +77,7 @@ u64  gameTicks = 0;
 const char *gameModuleName = NULL;
 
 void startGame(const char *moduleName){
+	gtimeSetTime(1<<19);
 	gameModuleName = moduleName;
 	printf("Starting '%s'\n", moduleName);
 	closeAllMenus();
@@ -216,12 +217,14 @@ int main(int argc, char* argv[]){
 	textureBuildBlockIcons(0);
 	ropeInit();
 
-	if(!gameRunning){openMainMenu();}
 	cloudsInitGfx();
 	rainInitGfx();
 	snowInitGfx();
+	if(gameModuleName){
+		startGame(gameModuleName);
+	}
 
-	gtimeSetTime(1<<19);
+	if(!gameRunning){openMainMenu();}
 	#ifdef __EMSCRIPTEN__
 		emscripten_set_main_loop(mainloop, 0, true);
 	#else
