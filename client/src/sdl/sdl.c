@@ -194,7 +194,7 @@ void handleEvents(){
 	while( SDL_PollEvent( &e ) != 0 ){
 		switch(e.type){
 		case SDL_QUIT:
-			quit = true;
+			exitCleanly();
 		break;
 
 		case SDL_WINDOWEVENT:

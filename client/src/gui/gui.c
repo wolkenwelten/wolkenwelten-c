@@ -40,6 +40,7 @@
 #include "../gui/menu/attribution.h"
 #include "../gui/menu/mainmenu.h"
 #include "../gui/menu/options.h"
+#include "../gui/repl.h"
 #include "../gui/overlay.h"
 #include "../gui/textInput.h"
 #include "../gui/widgets/widgets.h"
@@ -182,6 +183,7 @@ void initGUI(){
 	initGameOverlay();
 	initMainMenu();
 	initOptionsMenu();
+	initLispPanel();
 }
 
 void drawCursor(){

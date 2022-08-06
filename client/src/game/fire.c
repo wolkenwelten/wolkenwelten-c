@@ -44,13 +44,13 @@ static void fireGenerateParticles(int x, int y, int z, u8 strength){
 	const float size = MAX(3.f,(float)(strength * 0.03f));
 
 	newParticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.0001f)), size, size*0.5f,0xFF60C8FF, 96);
-	if(strength <  16){return;}
+	if(strength <  4){return;}
 	newParticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.0001f)), size*0.7f, size*0.65f,0xFF5098FF, 128);
-	if(strength < 48){return;}
+	if(strength < 16){return;}
 	newParticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.0001f)), size*0.6f, size*0.75f,0xFF1F38EF, 156);
-	if(strength < 128){return;}
+	if(strength < 48){return;}
 	newParticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.01f,0),vecMulS(vecRng(),0.0001f)), size*0.5f, size*0.75f,0xFF1F38EF, 178);
-	if(strength < 160){return;}
+	if(strength < 96){return;}
 	u32 c = 0x00101820 | (rngValR()&0x0003070F);
 	newSparticleV(vecAdd(spos,vecRngAbs()), vecAdd(vecNew(0,0.001f,0),vecMulS(vecRng(),0.0001f)), size*0.01f, size*0.2f,c,2048);
 }

@@ -82,6 +82,9 @@ void startGame(const char *moduleName){
 	printf("Starting '%s'\n", moduleName);
 	closeAllMenus();
 	player = characterNew();
+	player->pos.x = 1<<15;
+	player->pos.y = 280;
+	player->pos.z = 1<<15;
 	gameRunning = true;
 	widgetFocus(widgetGameScreen);
 	lispCallFunc("on-join-fire", NULL);

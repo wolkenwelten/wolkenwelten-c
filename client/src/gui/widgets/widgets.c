@@ -85,5 +85,8 @@ void widgetDrawSingle(const widget *wid, textMesh *m, box2D area){
 	case wTextScroller:
 		widgetDrawTextScroller(wid,m,area);
 		break;
+	case wTextLog:
+		widgetDrawTextLog(wid,m,area);
+		break;
 	}
 }

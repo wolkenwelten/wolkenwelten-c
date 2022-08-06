@@ -145,6 +145,9 @@ widget *widgetNew(widgetType type){
 		widgetBind(wid,"focus",textInputFocus);
 		widgetBind(wid,"blur",textInputBlur);
 	}
+	if(wid->type == wTextLog){
+		wid->valss = calloc(1,256 * sizeof(char *));
+	}
 	return wid;
 }
 widget *widgetNewC(widgetType type,widget *p){

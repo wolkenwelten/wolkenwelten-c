@@ -22,6 +22,7 @@
 #include "../../gfx/texture.h"
 #include "../../gfx/gfx.h"
 #include "../../gui/gui.h"
+#include "../../gui/repl.h"
 #include "../../gui/textInput.h"
 #include "../../gui/menu.h"
 #include "../../misc/options.h"
@@ -61,7 +62,7 @@ void keyboardEventHandler(const SDL_Event *e){
 			break;
 		case SDL_SCANCODE_F12:
 		case SDL_SCANCODE_GRAVE:
-			//lispPanelOpen();
+			lispPanelOpen();
 			break;
 		case SDL_SCANCODE_ESCAPE:
 			if(menuCancel()){break;}

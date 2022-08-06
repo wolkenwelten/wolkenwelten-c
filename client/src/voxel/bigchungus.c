@@ -33,6 +33,7 @@
 #include "../voxel/chunk.h"
 #include "../voxel/meshgen/block.h"
 #include "../voxel/meshgen/fluid.h"
+#include "../worldgen/worldgen.h"
 #include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/game/time.h"
 
@@ -223,8 +224,8 @@ void worldDraw(const character *cam){
 	// and visible block seams.
 	matMul(matMVP,matSubBlockView,matProjection);
 
+	bool worldGenDoneThisTick = false;
 	const int dist   = (int)ceilf(renderDistance / CHUNGUS_SIZE)+1;
-	const u64 cTicks = getTicks();
 
 	const int camCX  = (int)cam->pos.x >> 8;
 	const int camCY  = (int)cam->pos.y >> 8;
@@ -253,13 +254,12 @@ void worldDraw(const character *cam){
 		const vec pos = vecNew(x,y,z);
 		float d = chungusDistance(cam->pos,pos);
 		if((d < (renderDistance+CHUNGUS_SIZE)) && (CubeInFrustum(vecMulS(pos, CHUNGUS_SIZE), CHUNGUS_SIZE))){
-			if(world[x][y][z] == NULL){
-				world[x][y][z] = chungusNew(x,y,z);
-				world[x][y][z]->requested = cTicks;
-			}else if(world[x][y][z]->requested == 0){
+			if((world[x][y][z] == NULL) && (!worldGenDoneThisTick)){
+				worldGenDoneThisTick = true;
+				world[x][y][z] = worldGenChungus(chungusNew(x,y,z));
+			}
+			if(world[x][y][z]){
 				chungusQueueDraws(world[x][y][z],cam,drawQueue,&drawQueueLen);
-			}else if((world[x][y][z]->requested + 300) < cTicks){
-				world[x][y][z]->requested = cTicks + rngValA(255);
 			}
 		}
 	}
@@ -322,11 +322,6 @@ void worldBoxSphereDirty(int x,int y,int z, int r){
 	int zs = (z-r)>>4;
 	int ze = (z+r)>>4;
 	if(ze==zs){ze++;}
-}
-
-void worldSetChungusLoaded(int x, int y, int z){
-	chungus *chng = world[x&0xFF][y&0x7F][z&0xFF];
-	if(chng != NULL){chng->requested = 0;}
 }
 
 int checkCollision(int x, int y, int z){

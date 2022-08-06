@@ -17,6 +17,7 @@
 #include "widgets.h"
 
 #include "../textInput.h"
+#include "lispLine.h"
 #include "../../gfx/textMesh.h"
 #include "../../sdl/sdl.h"
 #include "../../../../common/src/misc/misc.h"
@@ -56,14 +57,21 @@ void widgetDrawTextInput(const widget *wid, textMesh *m, const box2D area){
 	if(wid->vals == NULL){return;}
 	int oldmx = m->mx;
 	m->mx     = x+w - size*8;
-
-	if(wid->vals[0] == 0){
-		u32 fgc = m->fgc;
-		m->fgc &= 0x7FFFFFFF;
-		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->label);
-		m->fgc = fgc;
+	if(isLisp){
+		if(widgetFocused == wid){
+			widgetDrawLispLine(m, rect(x+textXOff, y+textYOff, w-textXOff, size*8), size, wid->vals, 2, textInputMark, textInputCursorPos);
+		}else{
+			widgetDrawLispLine(m, rect(x+textXOff, y+textYOff, w-textXOff, size*8), size, wid->vals, 2, -1, -1);
+		}
 	}else{
-		textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->vals);
+		if(wid->vals[0] == 0){
+			u32 fgc = m->fgc;
+			m->fgc &= 0x7FFFFFFF;
+			textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->label);
+			m->fgc = fgc;
+		}else{
+			textMeshAddStrPS(m,x+textXOff,y+textYOff,size,wid->vals);
+		}
 	}
 
 	if(widgetFocused == wid){

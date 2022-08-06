@@ -38,7 +38,8 @@ typedef enum {
 	wSlider,
 	wSprite,
 	wGameScreen,
-	wTextScroller
+	wTextScroller,
+	wTextLog
 } widgetType;
 
 struct widget {

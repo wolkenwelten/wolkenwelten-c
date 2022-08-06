@@ -24,6 +24,7 @@
 #include "../gui/widget.h"
 #include "../gui/menu/attribution.h"
 #include "../gui/menu/mainmenu.h"
+#include "../gui/repl.h"
 #include "../gfx/gl.h"
 #include "../gfx/gfx.h"
 #include "../gfx/shader.h"
@@ -93,8 +94,10 @@ bool menuCancel(){
 	if(gameRunning){
 		closeMainMenu();
 		closeAttributions();
+		lispPanelClose();
 	} else {
 		openMainMenu();
+		lispPanelClose();
 	}
 	return true;
 }

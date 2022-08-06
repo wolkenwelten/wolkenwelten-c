@@ -4,7 +4,6 @@
 
 [event-bind on-spawn :snide-remarks [λ [] [say [ansi-yellow "Better luck next time!"]]]]
 [event-bind on-join :greetings [λ []
-                                 [no-clip! #t]
                                  [yield [timeout 1000] [λ [] [say "Guten Tag!"]]]
                                  [yield [timeout 3000] [λ [] [say ["Press " [ansi-green "F2"] " for some equipment"]]]]
                                  [yield [timeout 5000] [λ [] [say ["Use your " [ansi-yellow "grappling hook"] " with " [ansi-green "E"]]]]]
