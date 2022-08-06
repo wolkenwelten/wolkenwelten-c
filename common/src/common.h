@@ -1,7 +1,6 @@
 #pragma once
 
 #include "stdint.h"
-#include "network/packet.h"
 #include "gfx_structs.h"
 #include "game_structs.h"
 #include "misc/rng.h"

@@ -12,5 +12,4 @@ void  characterUpdate          (      character *c);
 float characterFirstBlockDist  (const character *c);
 void  characterItemDrop        (character *c, int i);
 void  characterItemDropSingle  (character *c, int i);
-int   characterHitCheck        (const vec pos, float mdd, int damage, int cause, u16 iteration, being source);
 void  characterUpdateAll       ();

@@ -19,7 +19,6 @@
 
 #include "../game/being.h"
 #include "../game/entity.h"
-#include "../network/messages.h"
 
 #include <string.h>
 

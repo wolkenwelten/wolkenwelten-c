@@ -18,8 +18,6 @@
 #include "character.h"
 #include "../game/being.h"
 #include "../misc/sfx.h"
-#include "../network/messages.h"
-#include "../network/network.h"
 #include "../world/world.h"
 
 #include <stdio.h>
@@ -175,7 +173,6 @@ bool characterPlaceBlock(character *c, blockId b){
 		return false;
 	} else {
 		chunkDirtyRegion(los.x, los.y, los.z, 3);
-		msgPlaceBlock(los.x, los.y, los.z, b);
 		sfxPlay(sfxPock,1.f);
 		return true;
 	}

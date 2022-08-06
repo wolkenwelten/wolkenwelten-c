@@ -94,14 +94,6 @@ static void lightBlur(u8 buf[48][48][48]){
 	PROFILE_STOP();
 }
 
-static void lightBlurPortable(u8 buf[48][48][48]){
-	PROFILE_START();
-	lightBlurZPortable(buf);
-	lightBlurXPortable(buf);
-	lightBlurYPortable(buf);
-	PROFILE_STOP();
-}
-
 static void lightSunlightChunk(u8 out[48][48][48], const u8 blockData[16][16][16], u8 curLight[16][16], const int x, const int y, const int z, const u8 sunlight){
 	for(int cy=15;cy>=0;cy--){
 	for(int cx=0;cx<16;cx++){
@@ -185,20 +177,10 @@ void lightBlock(u8 light[48][48][48], const chunkOverlay *block){
 }
 
 void lightTick(chunkOverlay *light, const chunkOverlay *block[3][3][3]){
-	static u8 *testBuf = NULL;
 	PROFILE_START();
 	lightSunlight(lightBuffer, block);
 	lightBlur(lightBuffer);
 	lightBlock(lightBuffer, block[1][1][1]);
-	if(optionTestLightMap){
-		if(testBuf == NULL){
-			testBuf = malloc(sizeof(lightBuffer));
-		}
-		memcpy(testBuf, lightBuffer, sizeof(lightBuffer));
-		lightSunlight(lightBuffer, block);
-		lightBlurPortable(lightBuffer);
-		lightCompare(lightBuffer, (const u8 (*)[48][48])testBuf);
-	}
 	lightOut(lightBuffer,light);
 	PROFILE_STOP();
 }

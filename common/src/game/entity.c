@@ -22,7 +22,6 @@
 #include "../misc/profiling.h"
 #include "../world/world.h"
 #include "../nujel/entity.h"
-#include "../network/messages.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -74,8 +73,6 @@ void entityFree(entity *e){
 		fprintf(stderr, "Can't use entityNew on clients!\n");
 		exit(3);
 		return;
-	}else{
-		msgEntityDelete(-1, e - entityList, e->generation);
 	}
 	entityCount--;
 	e->handler = NULL;

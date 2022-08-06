@@ -10,6 +10,5 @@ bool projectileNew        (const vec pos, const vec rot, being target, being sou
 bool projectileNewC       (const character *c, being target, uint style);
 void projectileUpdateAll  ();
 void projectileSendUpdate (uint c, uint i);
-void projectileRecvUpdate (uint c, const packet *p);
 int  projectileHitCheck   (const vec pos, float mdd, being source);
 being projectileGetBeing  (const projectile *p);

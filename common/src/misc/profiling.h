@@ -24,3 +24,5 @@ void        nprofAddPacket (uint type, uint size);
 double      nprofGetShare  (uint type);
 const char *nprofGetReport ();
 void        nprofReset     ();
+
+void profileStartupTime(const char *msg);

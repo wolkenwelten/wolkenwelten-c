@@ -45,19 +45,14 @@ void stormUpdate(){
 				stormDelta = 1;
 			}
 		}
-		if(!isClient){weatherSendUpdate(-1);}
 	}
 	if(((calls & 0x1FF) == 0)){
-		if(!isClient && stormIntensity){
-			if(rngValA(1<<20) < stormIntensity){
-				windGVel   = vecMulS(vecRng(),1.f / (512-stormIntensity));
-				windGVel.y = 0;
-				weatherSendUpdate(-1);
-			}
-			if(rngValA(1<<14) < stormIntensity){
-				windGVel = vecMulS(windGVel, (rngValf() * 0.3) + 0.9f);
-				weatherSendUpdate(-1);
-			}
+		if(rngValA(1<<20) < stormIntensity){
+			windGVel   = vecMulS(vecRng(),1.f / (512-stormIntensity));
+			windGVel.y = 0;
+		}
+		if(rngValA(1<<14) < stormIntensity){
+			windGVel = vecMulS(windGVel, (rngValf() * 0.3) + 0.9f);
 		}
 	}
 	if(!isClient && stormIntensity){

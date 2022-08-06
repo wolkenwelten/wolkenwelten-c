@@ -16,7 +16,6 @@
  */
 #include "character.h"
 #include "draw.h"
-#include "network.h"
 #include "../entity.h"
 #include "../projectile.h"
 #include "../weather/weather.h"
@@ -30,7 +29,6 @@
 #include "../../voxel/bigchungus.h"
 #include "../../../../common/src/misc/profiling.h"
 #include "../../../../common/src/game/being.h"
-#include "../../../../common/src/network/messages.h"
 
 character *player;
 
@@ -111,7 +109,6 @@ static void characterUpdateDamage(character *c, int damage){
 		setOverlayColor(0xA03020F0,0);
 		c->flags &= ~CHAR_GLIDE;
 		if(characterHP(c,damage / -8)){
-			characterDyingMessage(characterGetBeing(c),0,deathCausePhysics);
 			setOverlayColor(0xFF000000,0);
 			commitOverlayColor();
 		}
@@ -124,11 +121,6 @@ void characterHit(character *c){
 	static uint iteration=0;
 	iteration--;
 
-	const float range  = 4.f;
-	const vec pos      = vecAdd(c->pos,vecDegToVec(c->rot));
-	const being source = beingCharacter(playerID);
-	const int damage   = 1;
-	characterHitCheck(pos,range,damage,2,iteration, source);
 
 	characterStartAnimation(c,animationHit,240);
 	characterSetCooldown(c,320);
@@ -148,7 +140,6 @@ void characterDoPrimary(character *c){
 	c->blockMiningZ = los.z;
 	if(c->actionTimeout >= 0){
 		sfxPlay(sfxTock,1.f);
-		vibrate(0.3f);
 		characterHit(c);
 	}
 }
@@ -164,7 +155,6 @@ void characterDie(character *c){
 
 	setOverlayColor(0xFF000000,0);
 	characterInit(c);
-	msgRequestPlayerSpawnPos();
 	c->flags |= CHAR_SPAWNING;
 	printf("Character Died\n");
 	lispCallFunc("on-spawn-fire", NULL);
@@ -353,7 +343,6 @@ static void characterUpdateFalling(character *c){
 	}
 	if(c->pos.y < -512){
 		characterDie(c);
-		characterDyingMessage(characterGetBeing(player),0,deathCauseAbyss);
 	}
 }
 
@@ -493,23 +482,6 @@ float characterFirstBlockDist (const character *c){
 		if(worldGetB(pos.x,pos.y,pos.z) != 0){return d;}
 	}
 	return -1.f;
-}
-
-int characterHitCheck(const vec pos, float mdd, int damage, int cause, u16 iteration, being source){
-	int hits = 0;
-	for(int i=0;i<32;i++){
-		if(playerList[i] == NULL  )          {continue;}
-		if(playerList[i]->temp == iteration) {continue;}
-		if(beingCharacter(i) == source)      {continue;}
-		vec dis = vecSub(pos,playerList[i]->pos);
-
-		if(vecDot(dis,dis) < mdd){
-			msgBeingDamage(0,damage,cause,0.01f,beingCharacter(i),0,pos);
-			playerList[i]->temp = iteration;
-			hits++;
-		}
-	}
-	return hits;
 }
 
 bool characterDamage(character *c, int hp){

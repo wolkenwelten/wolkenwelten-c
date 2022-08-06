@@ -32,7 +32,6 @@ void cloudsInit(){
 
 void cloudsSetDensity(u8 gd){
 	cloudGDensityMin = gd;
-	if(!isClient){weatherSendUpdate(-1);}
 }
 
 bool isInClouds(const vec p){

@@ -29,14 +29,12 @@
 #include "../gfx/shader.h"
 #include "../gfx/sky.h"
 #include "../gfx/texture.h"
-#include "../network/client.h"
 #include "../voxel/chungus.h"
 #include "../voxel/chunk.h"
 #include "../voxel/meshgen/block.h"
 #include "../voxel/meshgen/fluid.h"
 #include "../../../common/src/game/chunkOverlay.h"
 #include "../../../common/src/game/time.h"
-#include "../../../common/src/network/messages.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -164,15 +162,6 @@ bool worldSetFluid(int x,int y,int z, u8 level){
 	return true;
 }
 
-static void worldQueueLoad(queueEntry *loadQueue, int loadQueueLen){
-	if(loadQueueLen <= 0){return;}
-	quicksortQueue(loadQueue,0,loadQueueLen-1);
-	for(int i=loadQueueLen-1;i>=0;i--){
-		chungus *chng = loadQueue[i].chng;
-		msgRequestChungus(-1, chng->x,chng->y,chng->z);
-	}
-}
-
 static void worldQueueDraw(queueEntry *drawQueue, int drawQueueLen){
 	quicksortQueue(drawQueue,0,drawQueueLen-1);
 
@@ -226,9 +215,7 @@ void worldQueueGenerate(const queueEntry *drawQueue, int drawQueueLen){
 
 void worldDraw(const character *cam){
 	static queueEntry drawQueue[8192*4];
-	static queueEntry loadQueue[1<<8];
-	int drawQueueLen=0,loadQueueLen=0;
-	if(connectionState < 2){return;}
+	int drawQueueLen=0;
 
 	extractFrustum();
 	// Use the subBlock view matrix in order to render chunks relative to the player.
@@ -269,20 +256,15 @@ void worldDraw(const character *cam){
 			if(world[x][y][z] == NULL){
 				world[x][y][z] = chungusNew(x,y,z);
 				world[x][y][z]->requested = cTicks;
-				loadQueue[loadQueueLen].priority = d;
-				loadQueue[loadQueueLen++].chng   = world[x][y][z];
 			}else if(world[x][y][z]->requested == 0){
 				chungusQueueDraws(world[x][y][z],cam,drawQueue,&drawQueueLen);
 			}else if((world[x][y][z]->requested + 300) < cTicks){
 				world[x][y][z]->requested = cTicks + rngValA(255);
-				loadQueue[loadQueueLen].priority = d;
-				loadQueue[loadQueueLen++].chng   = world[x][y][z];
 			}
 		}
 	}
 	}
 	}
-	worldQueueLoad(loadQueue, loadQueueLen);
 	worldQueueGenerate(drawQueue, drawQueueLen);
 	worldQueueDraw(drawQueue, drawQueueLen);
 }
@@ -313,7 +295,6 @@ void worldFreeFarChungi(const character *cam){
 		if(d > (renderDistance + 256.f)){
 			chungusFree(world[x][y][z]);
 			world[x][y][z] = NULL;
-			msgUnsubChungus(-1, x,y,z);
 		}
 	}
 }
@@ -341,14 +322,6 @@ void worldBoxSphereDirty(int x,int y,int z, int r){
 	int zs = (z-r)>>4;
 	int ze = (z+r)>>4;
 	if(ze==zs){ze++;}
-
-	for(int cx=xs;cx<=xe;cx++){
-	for(int cy=ys;cy<=ye;cy++){
-	for(int cz=zs;cz<=ze;cz++){
-		msgDirtyChunk(cx<<4,cy<<4,cz<<4);
-	}
-	}
-	}
 }
 
 void worldSetChungusLoaded(int x, int y, int z){
@@ -362,7 +335,6 @@ int checkCollision(int x, int y, int z){
 
 void worldMine(int x, int y, int z){
 	const blockId b = worldGetB(x,y,z);
-	msgMineBlock(x,y,z,b,0);
 	if((b == I_Grass) || (b == I_Dry_Grass)){
 		worldSetB(x,y,z,I_Dirt);
 	}else{
@@ -372,7 +344,6 @@ void worldMine(int x, int y, int z){
 
 void worldBreak(int x, int y, int z){
 	const blockId b = worldGetB(x,y,z);
-	msgMineBlock(x,y,z,b,1);
 	if((b == I_Grass) || (b == I_Dry_Grass)){
 		worldSetB(x,y,z,I_Dirt);
 	}else{
@@ -437,10 +408,17 @@ bool worldSetFire(int x,int y,int z, u8 level){
 	return true;
 }
 
-void chungusRecvUnsub(const packet *p){
-	const int cx = p->v.u8[0];
-	const int cy = p->v.u8[1];
-	const int cz = p->v.u8[2];
-
-	chungusFree(worldGetChungus(cx,cy,cz));
+void worldBoxMineSphere(int x, int y, int z, int r){
+	const int md = r*r;
+	for(int cx=-r;cx<=r;cx++){
+	for(int cy=-r;cy<=r;cy++){
+	for(int cz=-r;cz<=r;cz++){
+		blockId b = worldGetB(cx+x,cy+y,cz+z);
+		if(b==0){continue;}
+		const int d = (cx*cx)+(cy*cy)+(cz*cz);
+		if(d >= md){continue;}
+		worldSetB(cx+x,cy+y,cz+z,0);
+	}
+	}
+	}
 }

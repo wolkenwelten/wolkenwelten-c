@@ -52,6 +52,5 @@ float      characterGetMaxHookLen  (const character *c);
 float      characterGetHookWinchS  (const character *c);
 character *characterClosest        (const vec pos, float maxDistance);
 
-int         characterHitCheck      (const vec pos, float mdd, int damage, int cause, u16 iteration, being source);
 const char *characterGetName       (const character *c);
 void        characterUpdateItems   (const character *c);

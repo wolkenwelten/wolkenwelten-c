@@ -9,5 +9,4 @@ void lispInit        ();
 void lispFree        ();
 const char *lispEval (const char *str, bool humanReadable);
 lVal *lispEvalL(lVal *expr);
-void lispRecvSExpr   (const packet *p);
 void lispEvents      ();

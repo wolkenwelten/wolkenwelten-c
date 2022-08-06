@@ -19,8 +19,6 @@ extern int   optionWindowX;
 extern int   optionWindowY;
 extern bool  optionFullscreen;
 
-extern bool  optionTestLightMap;
-
 void parseOptions       (int argc,char *argv[]);
 void initOptions        (int argc,char *argv[]);
 void sanityCheckOptions ();

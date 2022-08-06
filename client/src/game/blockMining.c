@@ -27,6 +27,7 @@
 #include "../gfx/texture.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/misc/misc.h"
+#include "../../../common/src/misc/profiling.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -36,9 +37,10 @@ typedef struct {
 	int damage;
 	int lastDamage;
 	blockId b;
+	u8 wasMined;
 } blockMining;
 
-blockMining blockMiningList[4096];
+blockMining blockMiningList[512];
 int         blockMiningCount = 0;
 mesh       *blockMiningProgressMesh;
 
@@ -48,10 +50,12 @@ float blockMiningGetProgress(blockMining *bm){
 }
 
 void blockMiningBurnBlock(int x, int y, int z, blockId b){
-	(void)x;
-	(void)y;
-	(void)z;
-	(void)b;
+	if(b == 0){return;}
+	if((b == I_Grass) || (b == I_Dry_Grass) || (b == I_Roots) || (b == I_Snow_Grass)){
+		worldSetB(x,y,z,I_Dirt);
+	}else{
+		worldSetB(x,y,z,0);
+	}
 }
 
 int blockMiningUpdateMesh(int d){
@@ -143,15 +147,81 @@ void blockMiningInit(){
 	blockMiningProgressMesh->tex = tBlockMining;
 }
 
-void blockMiningUpdateFromServer(const packet *p){
-	blockMiningCount = p->v.u16[5];
-	const int i = p->v.u16[4];
-	if(i >= blockMiningCount){return;}
-	if(i >= (int)countof(blockMiningList)){return;}
+int blockMiningNew(int x,int y,int z){
+	blockMining *bm;
+	if(!inWorld(x,y,z)){return -1;}
+	if(blockMiningCount >= (int)countof(blockMiningList)){return -1;}
+	bm = &blockMiningList[blockMiningCount++];
+	bm->x = x;
+	bm->y = y;
+	bm->z = z;
+	bm->damage = 0;
+	bm->wasMined = false;
+	bm->b = worldGetB(x,y,z);
+	return blockMiningCount-1;
+}
+
+void blockMiningMine(uint i, int dmg){
 	blockMining *bm = &blockMiningList[i];
-	bm->x      = p->v.u16[0];
-	bm->y      = p->v.u16[1];
-	bm->z      = p->v.u16[2];
-	bm->damage = p->v.i16[3];
-	bm->b      = worldGetB(bm->x,bm->y,bm->z);
+
+	bm->damage  += dmg;
+	bm->wasMined = true;
+}
+
+int blockMiningMinePos(int dmg, int x, int y, int z){
+	if(!inWorld(x,y,z)){return 1;}
+	for(int i=0;i<blockMiningCount;i++){
+		blockMining *bm = &blockMiningList[i];
+		if(bm->x != x){continue;}
+		if(bm->y != y){continue;}
+		if(bm->z != z){continue;}
+		blockMiningMine(i,dmg);
+		return 0;
+	}
+	if(worldGetB(x,y,z) == 0){return 1;}
+	int i = blockMiningNew(x,y,z);
+	if(i >= 0){
+		blockMiningMine(i,dmg);
+	}
+	return 0;
+}
+
+void blockMiningMineBlock(int x, int y, int z, u8 cause){
+	(void)cause;
+	const blockId b = worldGetB(x,y,z);
+	if(b == 0){return;}
+	if((b == I_Grass) || (b == I_Dry_Grass) || (b == I_Roots) || (b == I_Snow_Grass)){
+		worldSetB(x,y,z,I_Dirt);
+	}else{
+		worldSetB(x,y,z,0);
+	}
+}
+
+static void blockMiningDel(int i){
+	blockMiningList[i] = blockMiningList[--blockMiningCount];
+}
+
+void blockMiningUpdateAll(){
+	PROFILE_START();
+
+	for(int i=blockMiningCount-1;i>=0;i--){
+		blockMining *bm = &blockMiningList[i];
+		if(!bm->wasMined){
+			const int maxhp = blockTypeGetHealth(bm->b);
+			bm->damage -= maxhp >> 5;
+			if(bm->damage <= 0){blockMiningDel(i);}
+		}else{
+			bm->wasMined = false;
+			if(bm->damage > blockTypeGetHealth(bm->b)){
+				blockMiningMineBlock(bm->x,bm->y,bm->z,0);
+				blockMiningDel(i);
+			}
+		}
+	}
+
+	PROFILE_STOP();
+}
+
+uint blockMiningGetActive(){
+	return blockMiningCount;
 }

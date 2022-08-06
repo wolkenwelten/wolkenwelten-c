@@ -31,8 +31,6 @@ void    chunkDrawBlockQueue        (const queueEntry *queue, int queueLen);
 void    chunkDrawFluidQueue        (const queueEntry *queue, int queueLen);
 void    chunkBox                   (chunk *c, u16 x, u16 y, u16 z,u16 gx,u16 gy,u16 gz,blockId b);
 void    chunkSetB                  (chunk *c, u16 x, u16 y, u16 z, blockId b);
-void    chunkRecvUpdate            (const packet *p);
-void    chunkRecvEmpty             (const packet *p);
 bool    chunkInFrustum             (const chunk *c);
 void    chunkTryDirty              (int x, int y, int z);
 void    chunkDirtyRegion           (int cx, int cy, int cz, uint flag);

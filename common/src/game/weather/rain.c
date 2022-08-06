@@ -19,8 +19,6 @@
 
 #include "../../game/fire.h"
 #include "../../misc/profiling.h"
-#include "../../network/packet.h"
-#include "../../network/messages.h"
 #include "../../world/world.h"
 
 __attribute__((aligned(32)))   rainDrop glRainDrops[RAIN_MAX];
@@ -39,7 +37,6 @@ void fxRainDrop(const vec pos);
 
 void weatherSetRainIntensity(u8 intensity){
 	rainIntensity = intensity;
-	if(!isClient){weatherSendUpdate(-1);}
 }
 
 void rainNew(vec pos){
@@ -49,8 +46,6 @@ void rainNew(vec pos){
 	glRainDrops[i]  = (rainDrop){ pos.x, pos.y, pos.z, 256.f };
 	  rainDrops[i]  = (rainDrop){ windVel.x, -0.1f, windVel.z, -0.1f };
           rainCoords[i] = 0;
-
-	if(!isClient){rainSendUpdate(-1,i);}
 }
 
 static void rainDel(uint i){
@@ -112,14 +107,4 @@ void rainUpdateAll(){
 	}
 
 	PROFILE_STOP();
-}
-
-void rainSendUpdate(uint c, uint i){
-	packet *p = &packetBuffer;
-
-	p->v.f[0] = glRainDrops[i].x;
-	p->v.f[1] = glRainDrops[i].y;
-	p->v.f[2] = glRainDrops[i].z;
-
-	packetQueue(p,msgtRainRecvUpdate,3*4,c);
 }

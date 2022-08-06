@@ -13,5 +13,4 @@ void lightningDrawOverlay();
 void weatherInit();
 void weatherUpdateAll();
 
-void weatherRecvUpdate(const packet *p);
 void weatherSendUpdate(uint c);

@@ -1,4 +1,5 @@
 #pragma once
 #include "../../../../common/src/common.h"
 
-void lightningRecvUpdate(const packet *p);
+void tryLightning();
+void tryLightningChungus(const chungus *chng);

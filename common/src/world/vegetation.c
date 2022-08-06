@@ -18,11 +18,9 @@
 #include "vegetation.h"
 
 #include "world.h"
-#include "../network/messages.h"
 #include "../../../common/src/game/blockType.h"
 
 static void vegSetB(u16 x, u16 y, u16 z, blockId b){
-	if(!isClient){msgMineBlock(x,y,z,b,2);}
 	worldSetB(x,y,z,b);
 }
 

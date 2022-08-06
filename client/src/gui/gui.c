@@ -21,7 +21,6 @@
 #include "../nujel/widget.h"
 #include "../game/character/character.h"
 #include "../game/character/draw.h"
-#include "../game/character/network.h"
 #include "../game/entity.h"
 #include "../game/weather/weather.h"
 #include "../sdl/sdl.h"
@@ -40,15 +39,12 @@
 #include "../gui/menu.h"
 #include "../gui/menu/attribution.h"
 #include "../gui/menu/mainmenu.h"
-#include "../gui/menu/multiplayer.h"
 #include "../gui/menu/options.h"
-#include "../gui/menu/singleplayer.h"
 #include "../gui/repl.h"
 #include "../gui/overlay.h"
 #include "../gui/textInput.h"
 #include "../gui/widgets/widgets.h"
 #include "../misc/options.h"
-#include "../network/client.h"
 #include "../sdl/sdl.h"
 #include "../tmp/objs.h"
 #include "../voxel/chungus.h"
@@ -113,8 +109,6 @@ void closeAllMenus(){
 	}
 	menuAttribution->flags |= WIDGET_HIDDEN;
 	closeMainMenu();
-	closeSingleplayerMenu();
-	closeMultiplayerMenu();
 	closeOptionsMenu();
 	widgetFocus(NULL);
 }
@@ -196,8 +190,6 @@ void initGUI(){
 	initAttributions();
 	initGameOverlay();
 	initMainMenu();
-	initSingleplayerMenu();
-	initMultiplayerMenu();
 	initOptionsMenu();
 }
 
@@ -283,30 +275,6 @@ void drawHealthbar(){
 	drawSingleHealthbar(player->hp, 20, tilesize/2, tilesize/2, tilesize,true);
 }
 
-void drawPlayerOverlay(uint i){
-	const character *c = characterGetPlayer(i);
-	if(c == NULL){return;}
-	float mvp[16];
-	characterCalcMVP(c, mvp);
-	vec p = matMulVec(mvp,vecNew(0,0.5f,0));
-	if(p.z < 0){return;}
-	p.x = ((p.x / p.z)+1.f)/2.f * screenWidth;
-	p.y = (1.f-((p.y / p.z)+1.f)/2.f) * screenHeight;
-
-	u32 ofgc = guim->fgc;
-	float a = MIN(255.f,MAX(0.f,(p.z-32.f)));
-	guim->fgc = 0x00B0D0 | ((u32)a<<24);
-	textMeshPrintfPS(guim,p.x,p.y - 16,2,"|");
-	textMeshPrintfPS(guim,p.x,p.y + 16,2,"|");
-	textMeshPrintfPS(guim,p.x-16,p.y,2,"-");
-	textMeshPrintfPS(guim,p.x+16,p.y,2,"-");
-	guim->fgc = 0xFF00C0E0;
-	textMeshPrintfPS(guim,p.x+16,p.y-16,1,"%s",characterGetPlayerName(i));
-	drawSingleHealthbar(characterGetPlayerHP(i),20,p.x+16,p.y-4,8,false);
-
-	guim->fgc = ofgc;
-}
-
 const char *colorSignalHigh(int err, int warn, int good, int v){
 	if(v <= err) {return ansiFG[ 9];}
 	if(v <= warn){return ansiFG[11];}
@@ -321,26 +289,12 @@ const char *colorSignalLow(int err, int warn, int good, int v){
 }
 
 void drawDebuginfo(){
-	static uint ticks = 0;
 	size_t tris = vboTrisCount, draws = drawCallCount;
 	if(!gameRunning){return;}
 
 	guim->font = 1;
 	guim->size = 2;
 	guim->sy   = screenHeight/2+32;
-	if(recvBytesCurrentSession <= 0){
-		guim->sx   = screenWidth/2-(10*16);
-		textMeshPrintf(guim,"%.*s",20 + ((ticks++ >> 4)&3),"Connecting to server...");
-	}else if(player->flags & CHAR_SPAWNING){
-		guim->sx   = screenWidth/2-(8*16);
-		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Respawning...");
-	}else if(!playerChunkActive){
-		guim->sx   = screenWidth/2-(8*16);
-		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Loading World...");
-	}else if(goodbyeSent){
-		guim->sx   = screenWidth/2-(8*16);
-		textMeshPrintf(guim,"%.*s",13 + ((ticks++ >> 4)&3),"Closing . . .");
-	}
 	guim->size = 2;
 	guim->sx   = screenWidth;
 	guim->sy   = 4;
@@ -361,33 +315,6 @@ void drawDebuginfo(){
 	guim->sy  += 16;
 	guim->sx   = screenWidth;
 	guim->size = 2;
-	for(uint i=0;i<32;i++){
-		const char *cname = characterGetPlayerName(i);
-		if(i == (uint)playerID){continue;}
-		if(cname == NULL){continue;}
-		guim->sx = screenWidth;
-		guim->sy = 64+(i*42);
-		textMeshPrintfAlignRight(guim,"%s",cname);
-		drawSingleHealthbar(characterGetPlayerHP(i),20,screenWidth-96,guim->sy+22,14,false);
-		drawPlayerOverlay(i);
-	}
-
-	const u64 curPing = getTicks();
-	if(curPing > lastPing + 30000){
-		guim->sx   = (screenWidth/2);
-		guim->sy   = (screenHeight/2)-(screenHeight/8);
-		guim->size = 4;
-		guim->fgc  = colorPalette[9];
-		textMeshPrintfAlignCenter(guim,"Critically High Ping!!!");
-		guim->fgc  = colorPalette[15];
-	}else if(curPing > lastPing + 3000){
-		guim->sx   = (screenWidth/2);
-		guim->sy   = (screenHeight/2)-(screenHeight/4);
-		guim->size = 2;
-		guim->fgc  = colorPalette[11];
-		textMeshPrintfAlignCenter(guim,"High Ping!");
-		guim->fgc  = colorPalette[15];
-	}
 
 	vboTrisCount = 0;
 	drawCallCount = 0;
@@ -417,7 +344,6 @@ void drawDebuginfo(){
 		textMeshPrintf(guim,"ActiveChungi: %i\n",chungusGetActiveCount());
 		textMeshPrintf(guim,"ChnkOverlays: %u [Free:%u]\n", chunkOverlayAllocated, chunkOverlayAllocated - chunkOverlayUsed);
 		textMeshPrintf(guim,"GarbageRuns : %u\n",lGCRuns);
-		textMeshPrintf(guim,"Latency     : %s%u\n",colorSignalLow(400,200,50,lastLatency),lastLatency);
 		guim->fgc  = colorPalette[15];
 		textMeshPrintf(guim,"WorstFrame  : %s%u\n",colorSignalLow(60,20,18,worstFrame),worstFrame);
 		guim->fgc  = colorPalette[15];

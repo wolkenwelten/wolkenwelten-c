@@ -18,11 +18,32 @@
 #include "beamblast.h"
 
 #include "../game/character/character.h"
+#include "../game/entity.h"
+#include "../game/projectile.h"
 #include "../gfx/effects.h"
 #include "../voxel/bigchungus.h"
-#include "../../../common/src/network/messages.h"
 
 #include <math.h>
+
+void explode(const vec pos, float pw, int style){
+	(void)style;
+	pw = MIN(pw,64.f);
+	worldBoxMineSphere(pos.x,pos.y,pos.z,pw);
+
+	for(uint i=0;i<entityCount;i++){
+		entity *exEnt = &entityList[i];
+		const vec exd = vecSub(pos,exEnt->pos);
+		const float expd = vecMag(exd);
+		if(expd > (2*pw)){continue;}
+		const float dm = sqrtf((2*pw)/expd) * -0.05f;
+		exEnt->vel = vecAdd(exEnt->vel,vecMulS(exd,dm));
+	}
+
+	for(int i=pw;i>=0;i--){
+		const vec rot = vecMul(vecRng(),vecNew(180.f,90.f,0.f));
+		if(projectileNew(pos, rot, 0, 0, 5, 0.07f)){break;}
+	}
+}
 
 void singleBeamblast(const vec start, const vec rot, float beamSize, float damageMultiplier, int hitsLeft){
 	static u16 iteration = 0;
@@ -30,9 +51,9 @@ void singleBeamblast(const vec start, const vec rot, float beamSize, float damag
 	vec pos         = start;
 	vec vel         = vecDegToVec(rot);
 	vec tvel        = vecMulS(vel,1.f/2.f);
-	const float mdd = MAX(1,beamSize * beamSize);
-	const int dmg   = ((int)damageMultiplier)+1;
-	being source    = characterGetBeing(player);
+	//const float mdd = MAX(1,beamSize * beamSize);
+	//const int dmg   = ((int)damageMultiplier)+1;
+	//being source    = characterGetBeing(player);
 	--iteration;
 
 	for(int ticksLeft = 0x7FF; ticksLeft > 0; ticksLeft--){
@@ -49,12 +70,11 @@ void singleBeamblast(const vec start, const vec rot, float beamSize, float damag
 					break;
 				}
 			}
-			characterHitCheck(spos, mdd, dmg, 1, iteration, source);
+			//characterHitCheck(spos, mdd, dmg, 1, iteration, source);
 		}
 		pos = vecAdd(pos,vel);
 	}
-	   fxBeamBlaster(  start,pos,beamSize,damageMultiplier);
-	msgFxBeamBlaster(0,start,pos,beamSize,damageMultiplier);
+	fxBeamBlaster(  start,pos,beamSize,damageMultiplier);
 }
 
 void beamblast(character *ent, float beamSize, float damageMultiplier, int hitsLeft){

@@ -18,7 +18,7 @@
 #include "profiling.h"
 
 #include "../misc/misc.h"
-#include "../network/messages.h"
+#include "../../../client/src/sdl/sdl.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -145,21 +145,10 @@ double nprofGetShare(uint type){
 	return (double)nprofEntryList[type].total / (double)totalSum;
 }
 
-const char *nprofGetReport(){
-	char *buf = reportBuf;
-	buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"%sNetwork Profiling Report%s\n",ansiFG[4],ansiRS);
-	for(uint i=1;i<256;i++){
-		if(nprofEntryList[i].count == 0){continue;}
-		int cc = 8;
-		if(nprofEntryList[i].total > (1024*1024*1024)){
-			cc = 1;
-		}else if(nprofEntryList[i].total > (1024*1024)){
-			cc = 3;
-		}else if(nprofEntryList[i].total > 1024){
-			cc = 15;
-		}
-		buf += snprintf(buf,sizeof(reportBuf)-(buf-reportBuf),"[%02X] %5.2f%% %-24s Count: %8u Total: %s%s%s\n",i,nprofGetShare(i)*100.0,networkGetMessageName(i), (uint)nprofEntryList[i].count, ansiFG[cc],getHumanReadableSize(nprofEntryList[i].total),ansiRS);
-	}
-	*buf = 0;
-	return reportBuf;
+void profileStartupTime(const char *msg){
+	static u64 last = 0;
+	const u64 cur = getTicks();
+	if(last == 0){last = cur;}
+	fprintf(stderr, "[%u] - %s\n", (int)(cur - last), msg);
+	last = cur;
 }

@@ -30,7 +30,6 @@
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
 #include "../gfx/textMesh.h"
-#include "../network/client.h"
 #include "../misc/options.h"
 #include "../voxel/bigchungus.h"
 #include "../../../common/src/cto.h"
@@ -49,22 +48,6 @@ char serverlistName[16][32];
 char serverlistIP[16][64];
 
 widget *menuBackground;
-
-void startMultiplayer(){
-	gameRunning = true;
-
-	closeAllMenus();
-	hideMouseCursor();
-	widgetFocus(widgetGameScreen);
-	playerInit();
-	clientInit();
-}
-
-void startSingleplayer(){
-	singleplayer        = true;
-	mayTryToStartServer = true;
-	startMultiplayer();
-}
 
 void menuChangeFocus(int xoff,int yoff,bool ignoreOnTextInput){
 	if(widgetFocused != NULL){
@@ -121,13 +104,10 @@ bool menuCancel(){
 
 void menuSetError(const char *error){
 	fprintf(stderr,"MenuError: %s\n",error);
-	clientFree();
 	menuCloseGame();
 }
 
 void menuCloseGame(){
-	clientGoodbye();
-	clientFree();
 	openMainMenu();
 }
 

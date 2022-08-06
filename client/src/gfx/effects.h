@@ -8,8 +8,6 @@ void fxBeamBlaster      (const vec pa,const vec pb, float beamSize, float damage
 void fxBlockBreak       (const vec pos, blockId b, u8 cause);
 void fxBlockMine        (const vec pos, int dmg, uchar b);
 void fxBleeding         (const vec pos, being victim, i16 dmg, blockId cause);
-void fxAnimalDiedPacket (const packet *p);
-void fxProjectileHit    (const packet *p);
 void fxRainDrop         (const vec pos);
 void fxSnowDrop         (const vec pos);
 void fxFluidVapor       (int cx, int cy, int cz, int fluidType, int amountLost);

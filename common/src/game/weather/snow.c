@@ -20,8 +20,6 @@
 #include "../../game/blockType.h"
 #include "../../game/fire.h"
 #include "../../misc/profiling.h"
-#include "../../network/packet.h"
-#include "../../network/messages.h"
 #include "../../world/world.h"
 
 __attribute__((aligned(32)))   snowDrop glSnowDrops[SNOW_MAX];
@@ -147,21 +145,8 @@ void snowNew(vec pos){
 	glSnowDrops[i]  = (snowDrop){ pos.x, pos.y, pos.z, 256.f };
 	  snowDrops[i]  = (snowDrop){ windVel.x, -0.1f, windVel.z, -0.02f };
           snowCoords[i] = 0;
-
-	if(!isClient){snowSendUpdate(-1,i);}
-}
-
-void snowSendUpdate(uint c, uint i){
-	packet *p = &packetBuffer;
-
-	p->v.f[0] = glSnowDrops[i].x;
-	p->v.f[1] = glSnowDrops[i].y;
-	p->v.f[2] = glSnowDrops[i].z;
-
-	packetQueue(p,msgtSnowRecvUpdate,3*4,c);
 }
 
 void weatherSetSnowIntensity(u8 intensity){
 	snowIntensity = intensity;
-	if(!isClient){weatherSendUpdate(-1);}
 }

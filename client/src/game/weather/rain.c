@@ -21,6 +21,7 @@
 #include "../../gfx/mat.h"
 #include "../../gfx/shader.h"
 #include "../../game/character/character.h"
+#include "../../voxel/chungus.h"
 
 uint rainVAO;
 uint rainVBO;
@@ -61,11 +62,23 @@ void rainDrawAll(){
 	gfxGroupEnd();
 }
 
-void rainRecvUpdate(const packet *p){
-	if(player == NULL){return;}
-	const vec pos  = vecNew(p->v.f[0],p->v.f[1],p->v.f[2]);
-	const vec dist = vecSub(pos,player->pos);
-	const float dd = vecDot(dist,dist);
-	if(dd > renderDistanceSquare){return;}
-	rainNew(pos);
+void rainTick(){
+	const int toffx = cloudOff.x;
+	const int toffz = cloudOff.z;
+	for(uint i=0;i<chungusCount;i++){
+		for(uint t=0;t<8;t++){
+			if(rngValA(255) > rainIntensity){continue;}
+			const chungus *c = &chungusList[i];
+			if(c->y & 1){continue;}
+			const vec cpos = vecNew(c->x << 8, c->y << 8, c->z << 8);
+			u8 x = rngValA(255);
+			u8 z = rngValA(255);
+			const int tx = (x-toffx) & 0xFF;
+			const int tz = (z-toffz) & 0xFF;
+			int v = cloudTex[tx][tz];
+			if(v < (cloudDensityMin-16)){continue;}
+			const vec rpos = vecAdd(cpos,vecNew(x,32.f+(rngValf()*4.f),z));
+			rainNew(rpos);
+		}
+	}
 }

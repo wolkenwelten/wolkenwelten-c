@@ -20,7 +20,6 @@
 #include "../game/being.h"
 #include "../game/character.h"
 #include "../game/entity.h"
-#include "../network/messages.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -186,19 +185,6 @@ bool beingGetNoClip(being b){
 	}
 }
 
-void beingDamage(being b, i16 hp, u8 cause, float knockbackMult, being culprit, const vec pos){
-	if(!isClient){
-		msgBeingGotHit(hp,cause,knockbackMult,b,culprit);
-
-		switch(beingType(b)){
-		case bkCharacter:
-			return msgBeingDamage(beingID(b),hp,cause,knockbackMult,b,culprit,pos);
-		}
-	}else{
-		msgBeingDamage(beingID(b),hp,cause,knockbackMult,b,culprit,pos);
-	}
-}
-
 bool beingAlive(being b){
 	if(b == 0){return false;}
 	switch(beingType(b)){
@@ -356,8 +342,6 @@ being beingListGetClosest(const beingList *bl, const being source, uint type, fl
 
 const char *beingGetName(being b){
 	switch(beingType(b)){
-	case bkCharacter:
-		return characterGetName(characterGetByBeing(b));
 	default:
 		return NULL;
 	}

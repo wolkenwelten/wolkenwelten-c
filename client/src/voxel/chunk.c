@@ -178,39 +178,6 @@ void chunkDrawFluidQueue(const queueEntry *queue, int queueLen){
 	}
 }
 
-void chunkRecvEmpty(const packet *p){
-	const u16 x = p->v.u16[0];
-	const u16 y = p->v.u16[1];
-	const u16 z = p->v.u16[2];
-	const u16 t = p->v.u16[3];
-	chungus *chng = worldGetChungus(x>>8,y>>8,z>>8);
-	if(chng == NULL){return;}
-	chunk *chnk = chungusGetChunkOrNew(chng,x,y,z);
-	if(chnk == NULL){return;}
-	switch(t){
-	default:
-		break;
-	case chunkOverlayBlock:
-		if(chnk->block){
-			chunkOverlayFree(chnk->block);
-			chnk->block = NULL;
-		}
-		break;
-	case chunkOverlayFluid:
-		if(chnk->fluid){
-			chunkOverlayFree(chnk->fluid);
-			chnk->fluid = NULL;
-		}
-		break;
-	case chunkOverlayFire:
-		if(chnk->flame){
-			chunkOverlayFree(chnk->flame);
-			chnk->flame = NULL;
-		}
-		break;
-	}
-}
-
 void chunkDirtyRegion(int cx, int cy, int cz, uint flag){
 	for(int x=-1;x<2;x++){
 	for(int y=-1;y<2;y++){
@@ -233,35 +200,6 @@ int chunkOverlayCopyAndCompare(void *dest, const void *source){
 	}
 	if(ret){chunksCopied++;}
 	return ret;
-}
-
-void chunkRecvUpdate(const packet *p){
-	const u16 x = p->v.u16[2048];
-	const u16 y = p->v.u16[2049];
-	const u16 z = p->v.u16[2050];
-	const u16 t = p->v.u16[2051];
-	chungus *chng = worldGetChungus(x>>8,y>>8,z>>8);
-	if(chng == NULL){return;}
-	chunk *chnk = &chng->chunks[(x>>4)&0xF][(y>>4)&0xF][(z>>4)&0xF];
-	void *dest;
-	switch(t){
-	case chunkOverlayBlock:
-	default:
-		if(chnk->block == NULL){chnk->block = chunkOverlayAllocate();}
-		dest = &chnk->block->data[0][0][0];
-		if(chunkOverlayCopyAndCompare(dest, p->v.u8)){chunkDirtyRegion(x, y, z, CHUNK_FLAG_DIRTY);}
-		return;
-	case chunkOverlayFluid:
-		if(chnk->fluid == NULL){chnk->fluid = chunkOverlayAllocate();}
-		dest = &chnk->fluid->data[0][0][0];
-		if(chunkOverlayCopyAndCompare(dest, p->v.u8)){chunkDirtyRegion(x, y, z, CHUNK_FLAG_FLUID_DIRTY);}
-		break;
-	case chunkOverlayFire:
-		if(chnk->flame == NULL){chnk->flame = chunkOverlayAllocate();}
-		dest = &chnk->flame->data[0][0][0];
-		break;
-	}
-	memcpy(dest,p->v.u8,sizeof(chnk->block->data));
 }
 
 void chunkDirtyAll(){

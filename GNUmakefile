@@ -3,14 +3,12 @@ $(error Cant find Nujel, try loading submodules using "git submodule update --in
 endif
 
 WOLKENWELTEN        := ./wolkenwelten
-WOLKENWELTEN_SERVER := ./wolkenwelten-server
 NUJEL               := ./common/nujel/nujel
 ASSET               := ./tools/assets
 ifeq ($(OS),Windows_NT)
 	NUJEL               := ./common/nujel/nujel.exe
 	ASSET               := ./tools/assets.exe
 	WOLKENWELTEN        := ./wolkenwelten.exe
-	WOLKENWELTEN_SERVER := ./wolkenwelten-server.exe
 endif
 
 AS                   := as
@@ -35,7 +33,7 @@ ifneq (, $(shell command -v $(NUJEL)))
 	VERSION_NAME := $(shell $(NUJEL) tools/tools.nuj -x "[display [infogen-version]]")
 endif
 
-all: $(WOLKENWELTEN) $(WOLKENWELTEN_SERVER) $(NUJEL)
+all: $(WOLKENWELTEN) $(NUJEL)
 .PHONY: all release .deps
 
  $(NUJEL):
@@ -45,12 +43,10 @@ include common/disable_implicit_rules.mk
 include common/ansi_colors.mk
 include common/common.mk
 include client/client.mk
-include server/server.mk
 
 ifneq ($(MAKECMDGOALS),clean)
 -include $(CLIENT_DEPS)
 -include $(COMMON_DEPS)
--include $(SERVER_DEPS)
 endif
 
 ifeq ($(OS),Windows_NT)

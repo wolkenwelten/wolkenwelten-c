@@ -22,8 +22,6 @@
 #include "../game/character.h"
 #include "../game/fire.h"
 #include "../misc/profiling.h"
-#include "../network/packet.h"
-#include "../network/messages.h"
 #include "../world/world.h"
 
 #include <math.h>
@@ -36,14 +34,7 @@ void projectileInit(){
 }
 
 int projectileNewID(){
-	int ID = playerID;
-	if(ID < 0){return -1;}
-	if(ID == 64){ID = 31;} // ToDo: make this a bit nicer
-	const int start = ID << 8;
-	for(int i = start;i<start+256;i++){
-		if(projectileList[i].style == 0){return  i;}
-	}
-	return -1;
+	return 0;
 }
 
 bool projectileNew(const vec pos, const vec rot, being target, being source, uint style, float speed){
@@ -59,8 +50,6 @@ bool projectileNew(const vec pos, const vec rot, being target, being source, uin
 	p->style  = style;
 	p->ttl    = ttl*4;
 	p->vel    = vecMulS(vecDegToVec(rot),speed*0.25f);
-
-	projectileSendUpdate(-1,ID);
 	return false;
 }
 
@@ -99,7 +88,6 @@ static inline int projectileHomeIn(projectile *p){
 			const vec rot = vecNew(rngValf()*360.f,(rngValf()*180)-90.f,0.f);
 			projectileNew(p->pos, rot, p->target, p->source, 2, 0.05f);
 		}
-		msgFxBeamBlastHit(-1, p->pos, 256, 1);
 		return 1;
 	}
 	float mul;
@@ -157,17 +145,13 @@ static inline int projectileUpdate(projectile *p){
 	p->pos    = vecAdd(p->pos,p->vel);
 	p->vel.y -= 0.00003f;
 	--iteration;
-	float mdd = 1.f;
 
 	if(p->target != 0){
-		mdd = 1.f;
 		if(projectileSelfHitCheck(p, 2.f, projectileGetBeing(p))){
-			msgFxBeamBlastHit(-1, p->pos, 1, 3);
 			return 1;
 		}
 	}
 	if(!vecInWorld(p->pos)){return 1;}
-	if(characterHitCheck (p->pos, mdd, 1, 3, iteration, p->source)){return 1;}
 	const blockId b = worldTryB(p->pos.x, p->pos.y, p->pos.z);
 	if(b){return projectileBounce(p,b);}
         if(p->style == 6){
@@ -183,17 +167,13 @@ static void projectileStep(projectile *p){
 	if(projectileUpdate(p)){
 		if(p->style == 6){
 			fireBoxExtinguish(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3, 128);
-			if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 2);}
 		}else if(p->style == 5){
 			fireBox(p->pos.x-1,p->pos.y-1,p->pos.z-1,3,3,3,64);
-			if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 1);}
 		}else{
 			fireBox(p->pos.x,p->pos.y,p->pos.z,1,1,1,64);
-			if(!isClient){msgFxBeamBlastHit(-1, p->pos, 256, 1);}
 		}
 		p->style = 0;
 		if(isClient){return;}
-		projectileSendUpdate(-1,p - projectileList);
 	}
 }
 
@@ -207,51 +187,6 @@ void projectileUpdateAll(){
 		projectileStep(p);
 	}
 	PROFILE_STOP();
-}
-
-void projectileSendUpdate(uint c, uint i){
-	projectile *a = &projectileList[i];
-	packet *p = &packetBuffer;
-
-	p->v.u16[0] = i;
-	p->v.u16[1] = a->style;
-	p->v.i16[2] = a->ttl;
-	p->v.i16[3] = 0;
-
-	p->v.u32[2] = a->source;
-	p->v.u32[3] = a->target;
-
-	p->v.f  [4] = a->pos.x;
-	p->v.f  [5] = a->pos.y;
-	p->v.f  [6] = a->pos.z;
-
-	p->v.f  [7] = a->vel.x;
-	p->v.f  [8] = a->vel.y;
-	p->v.f  [9] = a->vel.z;
-
-	packetQueue(p,msgtProjectileUpdate,10*4,c);
-}
-
-void projectileRecvUpdate(uint c, const packet *p){
-	uint i = p->v.u16[0];
-	if(i > countof(projectileList)){return;}
-	if(isClient){
-		if((i >> 8) == (uint)playerID){return;}
-	}else{
-		if((i >> 8) != c){return;}
-	}
-
-	projectile *a = &projectileList[i];
-
-	a->style  = p->v.u16[1];
-	a->ttl    = p->v.i16[2];
-	a->source = p->v.u32[2];
-	a->target = p->v.u32[3];
-
-	a->pos = vecNewP(&p->v.f[4]);
-	a->vel = vecNewP(&p->v.f[7]);
-
-	if(!isClient){projectileSendUpdate(-1,i);}
 }
 
 being projectileGetBeing (const projectile *p){

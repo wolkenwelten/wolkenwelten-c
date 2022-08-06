@@ -40,10 +40,7 @@
 #include "gui/overlay.h"
 #include "nujel/nujel.h"
 #include "misc/options.h"
-#include "network/client.h"
-#include "sdl/input/gamepad.h"
 #include "sdl/input/keyboard.h"
-#include "sdl/input/touch.h"
 #include "sdl/sdl.h"
 #include "sfx/environment.h"
 #include "sfx/sfx.h"
@@ -123,7 +120,6 @@ void playerUpdate(){
 	lispInputTick();
 	characterMove(player,player->controls);
 
-	msgSendPlayerPos();
 	worldFreeFarChungi(player);
 }
 
@@ -167,12 +163,8 @@ static void UIStuff(){
 void mainloop(){
 	UIStuff();
 	if(gameRunning){
-		clientTranceive();
 		playerUpdate();
 		worldUpdate();
-		if(quit){clientGoodbye();}
-	}else{
-		doGamepadMenuUpdate();
 	}
 	renderFrame();
 	#ifdef __EMSCRIPTEN__
@@ -180,13 +172,6 @@ void mainloop(){
 	#endif
 }
 
-void checkAutostart(){
-	if(optionSavegame[0] != 0){
-		startSingleplayer();
-	}else if(serverName[0] != 0){
-		startMultiplayer();
-	}
-}
 
 int main(int argc, char* argv[]){
 	setvbuf(stdout, NULL, _IONBF, 0);
@@ -195,10 +180,8 @@ int main(int argc, char* argv[]){
 	initSignals();
 	seedRNG(time(NULL));
 
-	clientGetName();
 	lispInit();
 	initOptions(argc,argv);
-	clientGetServerExecutable();
 	changeToDataDir();  // Change to data dir after parsing args so we can add an argument later to set the data dir
 	loadOptions();
 	initSDL();
@@ -229,7 +212,6 @@ int main(int argc, char* argv[]){
 	snowInitGfx();
 
 	gtimeSetTime(1<<19);
-	checkAutostart();
 	#ifdef __EMSCRIPTEN__
 		emscripten_set_main_loop(mainloop, 0, true);
 	#else
@@ -240,9 +222,7 @@ int main(int argc, char* argv[]){
 	meshFreeAll();
 	textureFree();
 	shaderFree();
-	clientFree();
 	closeSDL();
-	closeSingleplayerServer();
 	printf("[CLI] Exiting cleanly\n");
 	return 0;
 }

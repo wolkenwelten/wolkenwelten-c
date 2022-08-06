@@ -23,7 +23,6 @@
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
 #include "../../../common/src/game/being.h"
-#include "../../../common/src/network/messages.h"
 
 #include <math.h>
 #include <string.h>
@@ -31,13 +30,7 @@
 mesh *ropeMesh = NULL;
 
 int ropeNewID(){
-	if(playerID < 0){return -1;}
-	const uint start = playerID << 2;
-	for(uint i=start;i<start+4;i++){
-		if(ropeList[i].a == 0){return i;}
-		if(ropeList[i].b == 0){return i;}
-	}
-	return -1;
+	return 0;
 }
 
 static void ropeDrawSegment(const rope *r, const vec h, const vec p){

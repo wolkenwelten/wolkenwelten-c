@@ -16,8 +16,6 @@
  */
 #include "mainmenu.h"
 
-#include "singleplayer.h"
-#include "multiplayer.h"
 #include "options.h"
 #include "../gui.h"
 #include "../menu.h"
@@ -40,15 +38,6 @@ widget *buttonExitToMenu;
 
 static void focusMainMenu(){
 	widgetFocus(gameRunning ? buttonReturnToGame : buttonSP);
-}
-
-static void handlerSingleplayer(widget *wid){
-	(void)wid;
-	openSingleplayerMenu();
-}
-static void handlerMultiplayer(widget *wid){
-	(void)wid;
-	openMultiplayerMenu();
 }
 
 static void handlerOptions(widget *wid){
@@ -85,8 +74,6 @@ static void handlerExitToMenu(widget *wid){
 void initMainMenu(){
 	mainMenu = widgetNewCP(wPanel,rootMenu,rect(-1,0,0,-1));
 	widgetNewCP  (wSpace ,mainMenu,rect(16,0,256,0));
-	buttonSP = widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Singleplayer","click",handlerSingleplayer);
-	widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Multiplayer","click",handlerMultiplayer);
 	widgetNewCP  (wHorizontalRuler ,mainMenu,rect(16,0,256,32));
 	widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Options","click",handlerOptions);
 	widgetNewCPLH(wButton,mainMenu,rect(16,0,256,32),"Attribution","click",handlerAttribution);

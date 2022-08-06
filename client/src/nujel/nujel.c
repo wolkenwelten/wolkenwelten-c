@@ -32,14 +32,12 @@
 #include "../gui/textInput.h"
 #include "../gui/widget.h"
 #include "../misc/options.h"
-#include "../network/client.h"
 #include "../nujel/widget.h"
 #include "../nujel/widgetGC.h"
 #include "../sdl/sdl.h"
 #include "../sfx/sfx.h"
 #include "../../../common/src/nujel/nujel.h"
 #include "../../../common/src/misc/profiling.h"
-#include "../../../common/src/network/messages.h"
 
 #include "../../../common/nujel/lib/api.h"
 #include "../../../common/nujel/lib/nujel.h"
@@ -299,11 +297,6 @@ static lVal *wwlnfResetWorstFrame(lClosure *c, lVal *v){
 static lVal *wwlnfTextInputFocusPred(lClosure *c, lVal *v){
 	(void)v; (void)c;
 	return lValBool(textInputActive());
-}
-
-static lVal *wwlnfServerExecutable(lClosure *c, lVal *v){
-	(void)c;(void)v;
-	return lValString(clientGetServerExecutable());
 }
 
 static lVal *wwlnfStartAnim(lClosure *c, lVal *v){
@@ -596,7 +589,6 @@ static void lispAddClientNFuncs(lClosure *c){
 	lAddNativeFunc(c,"console-print",  "(s)",               "Prints string s to the REPL",                                    wwlnfConsolePrint);
 	lAddNativeFunc(c,"sfx-play",       "(s &vol &pos)",     "Plays SFX S with volume &VOL=1.0 as if emitting from &POS.",     wwlnfSfxPlay);
 	lAddNativeFunc(c,"screenshot",     "()",                "Takes a screeshot",                                              wwlnfScreenshot);
-	lAddNativeFunc(c,"server-path",    "()",                "Returns the path to the server executable, if found.",           wwlnfServerExecutable);
 	lAddNativeFunc(c,"start-anim",     "(id ms)",           "Starts animation &ID=0 for &MS=200",                             wwlnfStartAnim);
 	lAddNativeFunc(c,"stop-anim" ,     "()",                "Stops any animation that is currently playing",                  wwlnfStopAnim);
 	lAddNativeFunc(c,"toggle-aim",     "(&zoom)",           "Toggles aiming with a &ZOOM=4 factor.",                          wwlnfToggleAim);

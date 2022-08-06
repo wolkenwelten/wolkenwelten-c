@@ -25,5 +25,4 @@ void windInit(){
 
 void windSet(const vec ngv){
 	windGVel = ngv;
-	if(!isClient){weatherSendUpdate(-1);}
 }

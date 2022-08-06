@@ -18,7 +18,6 @@
 
 #include "../game/blockType.h"
 #include "../game/character/character.h"
-#include "../game/character/network.h"
 #include "../game/rope.h"
 #include "../gfx/particle.h"
 #include "../gui/overlay.h"
@@ -50,7 +49,6 @@ void fxExplosionBomb(const vec pos,float pw){
 	const float max = 2 * pw;
 	if(pd < max){
 		if(characterDamage(player,((max-pd)/max)*pw)){
-			characterDyingMessage(characterGetBeing(player),0,deathCauseGrenade);
 			setOverlayColor(0x00000000,0);
 			commitOverlayColor();
 		}else{
@@ -163,59 +161,6 @@ void fxBleeding(const vec pos, being victim, i16 dmg, u8 cause){
 	for(int i=dmg*64;i>0;i--){
 		const vec v  = vecMulS(vecRng(),0.06f);
 		newParticleV(pos,v,64.f,1.f,0xFF44AAFF,64);
-	}
-}
-
-void fxAnimalDiedPacket (const packet *p){
-	//const u8 type = p->v.u8[0];
-	//const u8 age  = p->v.u8[1];
-	const vec pos = vecNewP(&p->v.f[1]);
-	const float d = vecMag(vecSub(pos,player->pos));
-	being t = p->v.u32[4];
-	if(!sfxIsBeingBlocked(t)){
-		sfxBlocKBeing(t);
-		sfxPlayPos(sfxBomb,0.3,pos);
-		sfxPlayPos(sfxUngh,0.6,pos);
-	}
-	for(int i=0;i<(512-(int)d);i++){
-		const vec v  = vecMulS(vecRng(),0.06f);
-		newParticleV(pos,v,64.f,1.f,0xFF44AAFF,64);
-	}
-	ropeDelBeing(t);
-}
-
-void fxProjectileHit(const packet *p){
-	const u32 colorOffsets[] = {
-		0x00010713,
-		0x00031F39,
-		0x000F0B1B,
-		0x000C1D38
-	};
-	const u16 style = p->v.u16[0];
-
-	//const u16 size  = p->v.u16[1];
-	const vec pos = vecNewP(&p->v.f[1]);
-	for(int i=256;i>0;i--){
-		u32 color;
-		uint ttl = 64;
-		if(style == 3){
-			color = 0xFF50A0F0 | colorOffsets[rngValA(3)];
-			ttl   = 96;
-		}else if(style == 2){
-			if(rngValA(1)){
-				color = 0xFFB05020;
-			}else{
-				color = 0xFF9F7830;
-			}
-		}else{
-			if(rngValA(1)){
-				color = 0xFF60C8FF;
-			}else{
-				color = 0xFF1F38EF;
-			}
-		}
-		const vec v  = vecMulS(vecRng(),0.03f);
-		newParticleV(pos,v,48.f,4.f,color,ttl);
 	}
 }
 

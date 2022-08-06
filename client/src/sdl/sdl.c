@@ -27,8 +27,6 @@
 
 #include "../sdl/input/mouse.h"
 #include "../sdl/input/keyboard.h"
-#include "../sdl/input/gamepad.h"
-#include "../sdl/input/touch.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -177,7 +175,6 @@ void initSDL(){
 	initSDLMixer();
 
 	initGL();
-	gamepadInit();
 }
 
 void setFullscreen(bool fs){
@@ -209,8 +206,6 @@ void handleEvents(){
 		if(textInputEvent(&e)){continue;}
 		mouseEventHandler(&e);
 		keyboardEventHandler(&e);
-		gamepadEventHandler(&e);
-		touchEventHandler(&e);
 	}
 }
 
@@ -247,7 +242,6 @@ void setWindowed(int width, int height, int x, int y){
 
 void closeSDL(){
 	SDL_DestroyWindow(gWindow);
-	closeGamepad();
 	Mix_Quit();
 	SDL_Quit();
 }

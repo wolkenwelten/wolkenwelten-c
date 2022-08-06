@@ -1,2 +1,0 @@
-[defhandler :blockbreaker [sender msg]
-       [setb! [eval [cadr msg]] 0]]

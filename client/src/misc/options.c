@@ -53,7 +53,6 @@ int   optionWindowHeight     = 600;
 int   optionWindowX          = -1;
 int   optionWindowY          = -1;
 bool  optionFullscreen       = false;
-bool  optionTestLightMap     = false;
 
 void printVersion(){
 	printf("Wolkenwelten Pre-Alpha\n");
@@ -110,23 +109,9 @@ void parseOptions(int argc,char *argv[]){
 		if((l = checkString(argv[i]+1,"playerName="))){
 			strncpy(playerName,argv[i]+l,sizeof(playerName)-1);
 		}
-		if((l = checkString(argv[i]+1,"serverName="))){
-			strncpy(serverName,argv[i]+l,sizeof(serverName)-1);
-		}
-		if((l = checkString(argv[i]+1,"savegame="))){
-			strncpy(optionSavegame,argv[i]+l,sizeof(optionSavegame)-1);
-			optionSavegame[sizeof(optionSavegame)-1]=0;
-		}
-
-		if(checkString(argv[i]+1,"noSave")){
-			optionNoSave = true;
-		}
 		if(checkString(argv[i]+1,"version")){
 			printVersion();
 			exit(0);
-		}
-		if(checkString(argv[i]+1,"testLightMap")){
-			optionTestLightMap = true;
 		}
 	}
 }

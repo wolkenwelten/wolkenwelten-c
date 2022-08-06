@@ -1,6 +1,0 @@
-[defun chat/send [msg]
-       [message/send -1 [list :chat-message [cat [ansi-blue "System"] ": " msg]]]]
-
-[defhandler :chat-message [sender msg]
-       [log [cat [cadr msg] "\n"]]
-       [message/send -1 msg]]
