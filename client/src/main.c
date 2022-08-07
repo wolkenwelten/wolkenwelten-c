@@ -83,7 +83,7 @@ void startGame(const char *moduleName){
 	closeAllMenus();
 	player = characterNew();
 	player->pos.x = 1<<15;
-	player->pos.y = 280;
+	player->pos.y = 400;
 	player->pos.z = 1<<15;
 	gameRunning = true;
 	widgetFocus(widgetGameScreen);
