@@ -1,4 +1,8 @@
-# WolkenWelten
+# Archive of the WolkenWelten C Engine
+
+This is an archive of the C/Nujel version of WolkenWelten, development continues
+on a [Rust/TS based version](https://github.com/wolkenwelten/wolkenwelten).
+
 
 ## Mixing the best parts of Minecraft, Quake ]I[ and Emacs.
 WolkenWelten is meant to be the ultimate **voxel sandbox**, letting not only
